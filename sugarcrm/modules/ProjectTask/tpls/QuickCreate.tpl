@@ -13,6 +13,7 @@
 
 
 <form name="projectTaskQuickCreate" id="projectTaskQuickCreate" method="POST" action="index.php">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="ProjectTask">
 <input type="hidden" name="project_id" value="{$REQUEST.project_id}">
 <input type="hidden" name="contact_name" value="{$REQUEST.contact_name}">

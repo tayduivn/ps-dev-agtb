@@ -12,8 +12,6 @@
  */
 
 $viewdefs['base']['view']['shortcuts-help-headerpane'] = array(
-    'type' => 'shortcuts-help-headerpane',
-    'name' => 'shortcuts-help-headerpane',
     'fields' => array(
         array(
             'name' => 'title',

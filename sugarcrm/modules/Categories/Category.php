@@ -99,7 +99,7 @@ class Category extends SugarBean implements NestedBeanInterface
     /**
      * {@inheritDoc}
      */
-    public function getСhildren($depth = 1)
+    public function getChildren($depth = 1)
     {
         $db = DBManagerFactory::getInstance();
         $query = $this->getQuery();
@@ -438,7 +438,7 @@ class Category extends SugarBean implements NestedBeanInterface
         $this->retrieve($id);
         $hasChild = ($this->rgt - $this->lft) !== 1;
         if ($hasChild) {
-            $descendants = $this->getСhildren();
+            $descendants = $this->getChildren();
             while ($record = array_shift($descendants)) {
                 parent::mark_deleted($record['id']);
             }

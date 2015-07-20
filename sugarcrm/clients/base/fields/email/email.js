@@ -184,6 +184,7 @@
             $input = this.$(evt.currentTarget),
             index = $inputs.index($input),
             newEmail = $input.val(),
+            emails = this.model.get(this.name) || [],
             primaryRemoved;
 
         newEmail = $.trim(newEmail);
@@ -199,8 +200,7 @@
             if (primaryRemoved) {
                 // on list views we need to set the current value on the input
                 if (this.view && this.view.action === 'list') {
-                    var addresses = this.model.get(this.name) || [];
-                    var primaryAddress = _.filter(addresses, function(address){
+                    var primaryAddress = _.filter(emails, function(address) {
                         if (address.primary_address) {
                             return true;
                         }
@@ -218,9 +218,18 @@
                     .first()
                     .addClass('active');
             }
-        } else {
-            this._updateExistingAddressInModel(index, newEmail);
+            return;
         }
+        if (this.tplName === 'list-edit') {
+            // In list-edit mode the index is not always at the index of the current target.
+            _.find(emails, function(email, i) {
+                if (email.primary_address) {
+                    index = i;
+                    return true;
+                }
+            });
+        }
+        this._updateExistingAddressInModel(index, newEmail);
     },
 
     /**

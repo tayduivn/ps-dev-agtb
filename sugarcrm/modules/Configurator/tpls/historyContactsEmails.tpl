@@ -15,6 +15,7 @@
     <div class="clear"></div>
 </div>
 <form name="AdminSettings" method="POST">
+{sugar_csrf_form_token}
     <input type="hidden" name="action" value="historyContactsEmailsSave">
     <input type="hidden" name="module" value="Configurator">
 

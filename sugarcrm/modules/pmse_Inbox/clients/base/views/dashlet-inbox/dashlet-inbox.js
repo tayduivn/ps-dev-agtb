@@ -27,6 +27,8 @@
         visibility: 'user'
     },
 
+    thresholdRelativeTime: 2, //Show relative time for 2 days and then date time after
+
     /**
      * {@inheritDoc}
      */
@@ -174,6 +176,17 @@
     },
 
     /**
+     * Sets property useRelativeTime to show date created as a relative time or as date time.
+     *
+     * @private
+     */
+    _setRelativeTimeAvailable: function(date) {
+        var diffInDays = Math.abs(app.date().diff(date, 'days', true));
+        var useRelativeTime = (diffInDays <= this.thresholdRelativeTime);
+        return useRelativeTime;
+    },
+
+    /**
      * {@inheritDoc}
      *
      * New model related properties are injected into each model:
@@ -209,12 +222,22 @@
             }
             model.set('picture_url', pictureUrl);
             model.set('is_assigned', this.isAssigned(model));
+            if (model.attributes.cas_due_date) {
+                var useRelativeTime = this._setRelativeTimeAvailable(model.attributes.cas_due_date);
+                if (useRelativeTime) {
+                    model.useRelativeTime = true;
+                } else {
+                    model.useAbsoluteTime = true;
+                }
+            }
         }, this);
         this._super('_renderHtml');
     },
 
     isAssigned: function(model) {
-        if(model.get('cas_status') == 'static' || model.get('cas_status') == 'balanced'){
+        if (model.get('cas_status') == 'static'
+            || model.get('cas_status') == 'balanced'
+            || model.get('cas_user_id') == app.user.id) {
             return true;
         } else {
             return (model.get('cas_started') > 0);

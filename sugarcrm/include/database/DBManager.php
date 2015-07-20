@@ -174,6 +174,13 @@ abstract class DBManager
 	 */
 	protected $type_map = array();
 
+    /**
+     * Type min:max value
+     * @abstract
+     * @var array
+     */
+    protected $type_range = array();
+
 	/**
 	 * Type classification into:
 	 * - int
@@ -2112,6 +2119,22 @@ protected function checkQuery($sql, $object_name = false)
 		return array();
 	}
 
+    /**
+     * Returns the min and max number that the field can store. False if not supported
+     * @param array $fieldDef
+     * @return array | boolean eg array('min_value'=>-2147483648, 'max_value'=>2147483647) for int field
+     */
+    public function getFieldRange($fieldDef)
+    {
+        $type = $this->getFieldType($fieldDef);
+
+        if ($type && isset($this->type_range[$type])) {
+            return $this->type_range[$type];
+        }
+
+        return false;
+    }
+
 	/**
 	 * Returns the index description for a given index in table
 	 *
@@ -3484,6 +3507,22 @@ protected function checkQuery($sql, $object_name = false)
                                 break;
                             }
                         }
+                    }
+                }
+
+                // if we have a type of currency, we need to convert the value into the base for the system.
+                if (!empty($field_type) && $field_type === 'currency') {
+                    if (empty($before_value)) {
+                        //further processing expects a string, so change empty array into blank string
+                        $before_value = '';
+                    } else {
+                        $before_value = SugarCurrency::convertAmountToBase($before_value, $bean->currency_id);
+                    }
+                    if (empty($after_value)) {
+                        //further processing expects a string, so change empty array into blank string
+                        $after_value = '';
+                    } else {
+                        $after_value = SugarCurrency::convertAmountToBase($after_value, $bean->currency_id);
                     }
                 }
 

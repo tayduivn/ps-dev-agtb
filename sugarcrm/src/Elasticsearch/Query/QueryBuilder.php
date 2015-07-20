@@ -19,7 +19,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationStack;
-use Sugarcrm\Sugarcrm\Elasticsearch\Query\MultiMatch\MultiMatchQuery;
 
 /**
  *
@@ -28,6 +27,21 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Query\MultiMatch\MultiMatchQuery;
  */
 class QueryBuilder
 {
+    /**
+     * Field separator
+     */
+    const FIELD_SEP = '.';
+
+    /**
+     * Module name prefix separator
+     */
+    const PREFIX_SEP = '__';
+
+    /**
+     * Boost value separator
+     */
+    const BOOST_SEP = '^';
+
     /**
      * @var \Sugarcrm\Sugarcrm\Elasticsearch\Container
      */
@@ -46,7 +60,7 @@ class QueryBuilder
     protected $applyVisibility = true;
 
     /**
-     * @var \Elastica\Query
+     * @var QueryInterface
      */
     protected $query;
 
@@ -137,27 +151,12 @@ class QueryBuilder
 
     /**
      * Set query
-     * @param \Elastica\Query $query
+     * @param QueryInterface $query
      * @return QueryBuilder
      */
-    public function setQuery(\Elastica\Query\AbstractQuery $query)
+    public function setQuery(QueryInterface $query)
     {
         $this->query = $query;
-        return $this;
-    }
-
-    /**
-     * Set multimatch query
-     * @param string $term Search term
-     * @param array $modules List of modules
-     * @param object $provider the global search provider
-     * @return QueryBuilder
-     */
-    public function setMultiMatchQuery($term, array $modules)
-    {
-        $provider = $this->container->getProvider('GlobalSearch');
-        $mQuery = new MultiMatchQuery();
-        $this->query  = $mQuery->create($term, $modules, $provider);
         return $this;
     }
 
@@ -320,7 +319,7 @@ class QueryBuilder
     {
         // Wrap query in a filtered query
         $query = new \Elastica\Query\Filtered();
-        $query->setQuery($this->query);
+        $query->setQuery($this->query->build());
 
         // Apply visibility filtering
         if ($this->applyVisibility) {

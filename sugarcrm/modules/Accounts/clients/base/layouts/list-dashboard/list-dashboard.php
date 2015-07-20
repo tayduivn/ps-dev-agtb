@@ -12,28 +12,22 @@
  */
 
 $viewdefs['Accounts']['base']['layout']['list-dashboard'] = array(
-    'metadata' =>
-    array(
-        'components' =>
-        array(
+    'metadata' => array(
+        'components' => array(
             array(
-                'rows' =>
-                array(
+                'rows' => array(
                     array(
                         array(
-                            'view' =>
-                            array(
+                            'view' => array(
                                 'type' => 'dashablelist',
                                 'label' => 'TPL_DASHLET_MY_MODULE',
-                                'display_columns' =>
-                                array(
+                                'display_columns' => array(
                                     'name',
                                     'billing_address_country',
                                     'billing_address_city',
                                 ),
                             ),
-                            'context' =>
-                            array(
+                            'context' => array(
                                 'module' => 'Accounts',
                             ),
                             'width' => 12,

@@ -12,13 +12,13 @@
  */
 
 $viewdefs['Home']['base']['layout']['record'] = array(
-    'components' =>
-    array(
+    'name' => 'dashboard',
+    'components' => array(
         array(
-            'layout' =>
-            array(
-                'components' =>
-                array(
+            'layout' => array(
+                'type' => 'base',
+                'name' => 'list',
+                'components' => array(
                     array(
                         'view' => 'dashboard-headerpane',
                     ),
@@ -26,14 +26,9 @@ $viewdefs['Home']['base']['layout']['record'] = array(
                         'layout' => 'dashlet-main',
                     ),
                 ),
-                'type' => 'simple',
-                'name' => 'list',
-                'span' => 12,
             ),
         ),
     ),
-    'type' => 'dashboard',
-    'span' => 12,
     'method' => 'record',
     'last_state' => array(
         'id' => 'last-visit',

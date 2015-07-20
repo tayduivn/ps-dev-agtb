@@ -50,8 +50,9 @@ class One2MBeanRelationship extends One2MRelationship
             $oldLink = $rhs->$rhsLinkName;
             $prevRelated = $oldLink->getBeans(null);
             foreach($prevRelated as $oldLHS) {
-                if ($oldLHS->id != $lhs->id)
+                if ($oldLHS->id != $lhs->id) {
                     $this->remove($oldLHS, $rhs, false);
+                }
             }
         }
 
@@ -148,6 +149,13 @@ class One2MBeanRelationship extends One2MRelationship
                     SET {$rhsID} = $nullValue
                     WHERE id = '{$rhs->id}'";
             $rhs->db->query($sql);
+        }
+
+
+        // remove the rhs bean from the lhs link
+        $link = $this->lhsLink;
+        if ($lhs->load_relationship($link)) {
+            $lhs->$link->removeBean($rhs);
         }
 
         if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes") {

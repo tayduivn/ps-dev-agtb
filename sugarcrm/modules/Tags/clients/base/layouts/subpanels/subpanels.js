@@ -21,6 +21,14 @@
         // Create dynamic subpanel metadata
         var dSubpanels = app.utils.getDynamicSubpanelMetadata(this.options.module);
 
+        if (dSubpanels.components) {
+            _.each(dSubpanels.components, function(sub) {
+                if (sub.layout) {
+                    sub.layout = 'subpanel-readonly';
+                }
+            }, this);
+        }
+
         // Merge dynamic subpanels with existing metadata
         options.meta = _.extend(
             options.meta || {},

@@ -57,8 +57,7 @@ class PMSEImageGenerator
             //Get running elements
             $this->running_elements = $this->get_running_elements();
             //Get prj_id from Bpmn_Process
-            $processBean = BeanFactory::getBean('pmse_BpmnProcess');
-            $processBean->retrieve_by_string_fields(array('id' => $this->pro_id));
+            $processBean = BeanFactory::getBean('pmse_BpmnProcess', $this->pro_id);
             $this->prj_id = $processBean->prj_id;
 
             //GET DIAGRAMS

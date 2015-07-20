@@ -40,7 +40,7 @@
 
         this.page_doc = app.view.createView({
                 context: this.context,
-                name: this.page_name,
+                type: this.page_name,
                 module: 'Styleguide',
                 layout: this,
                 model: this.model,

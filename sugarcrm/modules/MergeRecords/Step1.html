@@ -21,6 +21,7 @@
 </script>
 <script src="include/javascript/quicksearch.js?v={VERSION_MARK}" type="text/javascript"></script>
 <form name="DedupSetup" id="DedupSetup" method="POST" action="index.php">
+{sugar_csrf_form_token}
 	<input type="hidden" name="module" value="MergeRecords"/>
 	<input type="hidden" name="merge_module" value="{MERGE_MODULE}"/>
 	<input type="hidden" name="record" value="{ID}"/>

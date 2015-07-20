@@ -16,11 +16,12 @@
 <link type="text/css" href="{sugar_getjspath file='modules/pmse_Project/css/jcore.adam-ui.extend.css'}" rel="stylesheet" />
 <!---------------  START WORKFLOW SHOWCASE ------------>
 <form action="index.php?module=pmse_Inbox&action=routeCase" id="EditView" name="EditView" method="POST">
+{sugar_csrf_form_token}
     {foreach from=$customButtons key='key' item='item'}
         {if $item.value=='Claim'}
             <a href="{$item.onclick}" title="{$item.value}"><span class="btn">{$item.value}</span></a>
         {else}
-            <input name="{$item.name}" type="{$item.type}" value={$item.value} onclick="{$item.onclick}">
+            <input id="{$item.id}" name="{$item.name}" type="{$item.type}" value={$item.value} onclick="{$item.onclick}">
         {/if}
     {/foreach}
     <div id="detailpanel_0" class= "edit view edit508">
@@ -32,6 +33,7 @@
     <input type="hidden" name="cas_current_user_id" id="cas_current_user_id" value="{$cas_current_user_id}"/>
     <input type="hidden" name="act_adhoc_behavior" id="act_adhoc_behavior" value="{$act_adhoc_behavior}"/>
     <input type="hidden" name="act_adhoc_assignment" id="act_adhoc_assignment" value="{$act_adhoc_assignment}"/>
+    <input type="hidden" name="taskContinue" id="taskContinue" value="{$task_continue}"/>
     <table cellpadding='0' cellspacing='1' width='100%' class="edit view panelContainer">
         <tr class="pagination"  role=”presentation”>
             <td align='right' colspan="2">
@@ -128,3 +130,8 @@
 <script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/formAction.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/get_process_image.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/notes.js'}"></script>
+{if ($caseData.cas_sugar_module == "Documents")}
+    <script type="text/javascript" src="{sugar_getjspath file="modules/Documents/documents.js"}"></script>
+    <script type="text/javascript" src="{sugar_getjspath file="cache/include/javascript/sugar_grp_jsolait.js"}"></script>
+    <script type="text/javascript" src="{sugar_getjspath file="include/javascript/popup_parent_helper.js"}"></script>
+{/if}

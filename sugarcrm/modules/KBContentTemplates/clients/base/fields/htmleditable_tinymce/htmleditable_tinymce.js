@@ -9,16 +9,16 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    extendsFrom: 'Htmleditable_tinymceField',
+    extendsFrom: 'BaseKBContentsHtmleditable_tinymceField',
 
     /**
-     * {@inheritDoc}
-     *
-     * Apply select image behaviour to editor.
+     * Override to load handlebar templates from `KBContents module
+     * {@inheritdoc}
      */
-    getTinyMCEConfig: function() {
-        var config = this._super('getTinyMCEConfig');
-        config.file_browser_callback = _.bind(this.tinyMCEFileBrowseCallback, this);
-        return config;
+    _loadTemplate: function() {
+        var module = this.module;
+        this.module = 'KBContents';
+        this._super('_loadTemplate');
+        this.module = module;
     }
 })

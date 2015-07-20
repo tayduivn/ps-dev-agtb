@@ -32,6 +32,7 @@
 	<tr>
 		<td>
 <form action="index.php" method="post" name="UpgradeWizardForm" id="form">
+{sugar_csrf_form_token}
 	<input type="hidden" name="module" value="UpgradeWizard">
 	<input type="hidden" name="action" value="index">
 	<input type="hidden" name="step" id="step" value="{$UW_STEP}">
@@ -138,6 +139,7 @@
 	<tr>
 		<td>
 <form action="index.php" method="post" name="UpgradeWizardForm" id="form">
+{sugar_csrf_form_token}
 	<input type="hidden" name="module" value="UpgradeWizard">
 	<input type="hidden" name="action" value="index">
 	<input type="hidden" name="step" value="{$UW_STEP}">

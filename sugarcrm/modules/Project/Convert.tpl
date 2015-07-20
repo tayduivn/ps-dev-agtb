@@ -14,6 +14,7 @@
 	<tr>
 		<td>
 			<form name="EditView" id="EditView" method="post" action="index.php">
+{sugar_csrf_form_token}
 			<input type="hidden" name="module" value="Project" />
 			<input type="hidden" name="record" value="{$ID}" />
 			<input type="hidden" name="team_id" value="{$TEAM}" />

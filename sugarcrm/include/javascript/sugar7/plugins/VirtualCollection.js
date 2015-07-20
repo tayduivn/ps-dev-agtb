@@ -889,14 +889,11 @@
              *
              * @param {Data.Bean} model The model to copy to the collection
              * field of the target.
-             * @return {Object} Attributes hash for the model.
+             * @return {Data.Bean} copied model
              */
             clone = function(model) {
-                var attributes = _.clone(model.attributes);
-
-                delete attributes._action;
-
-                return attributes;
+                var attributes = _.chain(model.attributes).clone().omit('_action').value();
+                return app.data.createBean(model.module, attributes);
             };
 
             _.each(fields, function(name) {

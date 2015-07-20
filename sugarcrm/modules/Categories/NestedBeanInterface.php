@@ -114,7 +114,7 @@ interface NestedBeanInterface
      * @param int $depth Max depth to load for children, by default direct children only.
      * @return array List of descendants.
      */
-    public function getСhildren($depth = 1);
+    public function getChildren($depth = 1);
 
     /**
      * Gets next sibling of current node according to position in tree.

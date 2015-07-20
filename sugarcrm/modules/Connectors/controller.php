@@ -754,12 +754,10 @@ class ConnectorsController extends SugarController {
 	    $source = SourceFactory::getSource($source_id);
 	    $properties = array();
 	    foreach($_REQUEST as $name=>$value) {
-	    	    if(preg_match("/^{$source_id}_(.*?)$/", $name, $matches)) {
-	    	       $properties[$matches[1]] = $value;
-	    	    }
+            if(preg_match("/^{$source_id}_(.*?)$/", $name, $matches)) {
+               $properties[$matches[1]] = $value;
+            }
 	    }
-	    $source->setProperties($properties);
-	    $source->saveConfig();
 
 	    //Call again and call init
 	    $source = SourceFactory::getSource($source_id);
@@ -768,7 +766,7 @@ class ConnectorsController extends SugarController {
 	    global $mod_strings;
 
 	    try {
-		    if($source->isRequiredConfigFieldsForButtonSet() && $source->test()) {
+		    if($source->isRequiredConfigFieldsForButtonSet($properties) && $source->test($properties)) {
 		      echo $mod_strings['LBL_TEST_SOURCE_SUCCESS'];
 		    } else {
 		      echo $mod_strings['LBL_TEST_SOURCE_FAILED'];

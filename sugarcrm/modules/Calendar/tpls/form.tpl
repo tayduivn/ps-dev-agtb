@@ -11,6 +11,7 @@
  */
 *}
 <form id="CalendarEditView" name="CalendarEditView" method="POST">	
+{sugar_csrf_form_token}
 		
 <input type="hidden" name="current_module" id="current_module" value="Meetings">
 <input type="hidden" name="return_module" id="return_module" value = "Calendar">

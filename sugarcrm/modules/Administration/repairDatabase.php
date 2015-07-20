@@ -13,8 +13,9 @@ if (!defined('sugarEntry') || !sugarEntry)
  */
 
 global $current_user, $beanFiles;
-set_time_limit(3600);
-
+if (ini_get('max_execution_time') > 0 && ini_get('max_execution_time') < 3600) {
+    ini_set('max_execution_time', 3600);
+}
 
 $db = DBManagerFactory::getInstance();
 

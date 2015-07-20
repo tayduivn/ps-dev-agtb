@@ -111,7 +111,6 @@ class MBLanguage{
 			$this->appListStrings = array('en_us.lang.php'=>array());
 			//By default, generate app strings for the current language as well.
 			$this->appListStrings[$GLOBALS [ 'current_language' ] . ".lang.php"] = array();
-			$this->loadAppListStrings($this->path . '/../../language/application');
 
 			if($buildFromTemplate){
 				//go through the templates application strings and load anything that is needed
@@ -124,6 +123,7 @@ class MBLanguage{
 					$this->loadAppListStrings($file);
 				}
 			}
+                        $this->loadAppListStrings($this->path . '/../../language/application');
 		}
 
     function save($key_name, $duplicate = false, $rename = false)

@@ -20,6 +20,7 @@
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 	 <tr>
       <form action="index.php" method="post" name="popup_query_form" id="popup_query_form">
+{sugar_csrf_form_token}
 		<td scope="row" noWrap>{MOD.LBL_LIST_FIRST_NAME}&nbsp;&nbsp;<input type=text size="20" name="first_name" class=dataField  value="{FIRST_NAME}" /></td>
 		<td scope="row" noWrap>{MOD.LBL_LIST_LAST_NAME}&nbsp;&nbsp;<input type=text size="20" name="last_name" class=dataField  value="{LAST_NAME}" /></td>
 		<td align="right"><input type="hidden" name="action" value="PopupProspects"/>

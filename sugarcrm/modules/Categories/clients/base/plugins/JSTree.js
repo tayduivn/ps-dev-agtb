@@ -588,8 +588,8 @@
                             this._jstreeShowContextmenu(event, data);
                             break;
                         case 'jstree-addnode':
-                            if (this.jsTreeCallbacks.onAdd &&
-                                !this.jsTreeCallbacks.onAdd.apply(this, [event, data])) {
+                            if ($(data.args[0]).hasClass('disabled') || (this.jsTreeCallbacks.onAdd &&
+                                !this.jsTreeCallbacks.onAdd.apply(this, [event, data]))) {
                                 return false;
                             }
                             this._onAdd(event, data);
@@ -627,6 +627,10 @@
                         success: function(item) {
                             newNode.attr('data-id', item.id);
                             newNode.attr('data-level', item.level);
+                            if (newNode.is('[disabled=disabled]')) {
+                                newNode.attr('disabled', false);
+                            }
+                            self._toggleAddNodeButton(newNode, false);
                             self._toggleVisibility(false);
                         },
                         error: function() {
@@ -686,7 +690,8 @@
              * @private
              */
             _onAdd: function(event, data) {
-                this.jsTree.jstree('create', data.inst._get_node());
+                var createdNode = this.jsTree.jstree('create', data.inst._get_node());
+                this._toggleAddNodeButton(createdNode, true);
             },
 
             /**
@@ -719,18 +724,20 @@
              * @param {String|Number} position
              * @param {Boolean} editable
              * @param {Boolean} addToRoot
+             * @param {Boolean} isHidden
              */
-            addNode: function(title, position, editable, addToRoot) {
+            addNode: function(title, position, editable, addToRoot, isDisabled) {
                 var self = this,
                     selectedNode = (addToRoot === true) ? [] : this.jsTree.jstree('get_selected'),
                     pos = position || 'last',
-                    isEdit = editable || false;
+                    isEdit = editable || false,
+                    customAttr = (isDisabled === true) ? {disabled: 'disabled'} : {};
 
                 this.jsTree.jstree(
                     'create',
                     selectedNode,
                     pos,
-                    {data: !_.isUndefined(title) ? title : 'New item'},
+                    {data: !_.isUndefined(title) ? title : 'New item', attr: customAttr},
                     function(obj) {
                         if (self.collection.length === 0) {
                             self._toggleVisibility(false);
@@ -921,6 +928,21 @@
                             }
                         }
                     });
+            },
+
+            /**
+             * Disable/enable 'Add Node' button for a given node.
+             * @param {Object} node JSTree node object.
+             * @param {Boolean} disable
+             * @private
+             */
+            _toggleAddNodeButton: function(node, disable) {
+                var addButton = $(node).find('[data-action="jstree-addnode"]');
+                if (disable) {
+                    addButton.addClass('disabled');
+                } else {
+                    addButton.removeClass('disabled');
+                }
             }
         });
     });

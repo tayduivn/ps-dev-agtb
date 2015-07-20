@@ -18,7 +18,6 @@ $viewdefs['base']['layout']['subpanel-create']  = array (
             'view' => 'subpanel-list-create',
         )
     ),
-    'span' => 12,
     'last_state' => array(
         'id' => 'subpanel-create'
     ),

@@ -1,5 +1,4 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,16 +9,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Tasks']['base']['layout']['subpanels'] = array (
-  'components' => array (
-      array(
-          'layout' => 'subpanel',
-          'label' => 'LBL_NOTES_SUBPANEL_TITLE',
-          'context' => array(
-              'link' => 'notes',
-          ),
-      ),
-  ),
-  'type' => 'subpanels',
-  'span' => 12,
+$viewdefs['Tasks']['base']['layout']['subpanels'] = array(
+    'components' => array(
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_NOTES_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'notes',
+            ),
+        ),
+    ),
 );

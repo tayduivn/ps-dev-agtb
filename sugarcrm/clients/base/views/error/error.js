@@ -58,7 +58,7 @@
                 attributes = {
                     title: 'ERR_HTTP_404_TITLE',
                     type: 'ERR_HTTP_404_TYPE',
-                    messages: ['ERR_HTTP_404_TEXT'],
+                    messages: ['ERR_HTTP_404_TEXT_LINE1', 'ERR_HTTP_404_TEXT_LINE2'],
                     linkText: app.lang.get('ERR_HTTP_404_ACTION')
                 };
                 break;
@@ -74,8 +74,22 @@
                 attributes = {
                     title: 'ERR_HTTP_500_TITLE',
                     type: 'ERR_HTTP_500_TYPE',
-                    messages: ['ERR_HTTP_500_TEXT'],
+                    messages: ['ERR_HTTP_500_TEXT_LINE1', 'ERR_HTTP_500_TEXT_LINE2'],
                     linkText: app.lang.get('ERR_HTTP_500_ACTION')
+                };
+                break;
+            case '502':
+                attributes = {
+                    title: 'ERR_HTTP_502_TITLE',
+                    type: 'ERR_HTTP_502_TYPE',
+                    messages: ['ERR_HTTP_502_TEXT_LINE1', 'ERR_HTTP_502_TEXT_LINE2']
+                };
+                break;
+            case '503':
+                attributes = {
+                    title: 'ERR_HTTP_503_TITLE',
+                    type: 'ERR_HTTP_503_TYPE',
+                    messages: ['ERR_HTTP_503_TEXT_LINE1', 'ERR_HTTP_503_TEXT_LINE2']
                 };
                 break;
             default:

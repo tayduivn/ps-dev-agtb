@@ -70,7 +70,7 @@
             return app.api.call("read", url, null, callbacks);
         };
 
-        this.context.set("collectionOptions", {
+        this.context.get('collection').setOption({
             endpoint: endpoint,
             success: function(collection) {
                 collection.each(function(model) {
@@ -149,7 +149,7 @@
         } else {
             view = app.view.createView({
                 context: this.context,
-                name: "activitystream",
+                type: "activitystream",
                 module: this.module,
                 layout: this,
                 model: model,

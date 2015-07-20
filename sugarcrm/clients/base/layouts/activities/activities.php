@@ -15,9 +15,14 @@ $viewdefs['base']['layout']['activities'] = array(
     'components' => array(
         array(
             'layout' => array(
+                'type' => 'default',
+                'name' => 'sidebar',
                 'components' => array(
                     array(
                         'layout' => array(
+                            'type' => 'base',
+                            'name' => 'main-pane',
+                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'list-headerpane',
@@ -25,10 +30,9 @@ $viewdefs['base']['layout']['activities'] = array(
                                 array(
                                     'layout' => array(
                                         'type' => 'filterpanel',
-                                        'span' => 12,
                                         'availableToggles' => array(
                                             array(
-                                                'name' => 'activitystream',
+                                                'type' => 'activitystream',
                                                 'icon' => 'fa-clock-o',
                                                 'label' => 'LBL_ACTIVITY_STREAM',
                                             ),
@@ -57,13 +61,12 @@ $viewdefs['base']['layout']['activities'] = array(
                                     ),
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'main-pane',
-                            'span' => 8,
                         ),
                     ),
                     array(
                         'layout' => array(
+                            'type' => 'base',
+                            'targetEl' => '.dashboard-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'dashboard',
@@ -73,31 +76,21 @@ $viewdefs['base']['layout']['activities'] = array(
                                     ),
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'dashboard-pane',
-                            'span' => 4,
                         ),
                     ),
                     array(
                         'layout' => array(
+                            'type' => 'base',
+                            'targetEl' => '.preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'preview-pane',
-                            'span' => 8,
                         ),
                     ),
                 ),
-                'type' => 'default',
-                'name' => 'sidebar',
-                'span' => 12,
             ),
         ),
     ),
-    'type' => 'simple',
-    'name' => 'base',
-    'span' => 12,
 );

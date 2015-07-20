@@ -66,33 +66,38 @@ class AbstractRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      * Test the functionality using OOB module
      *
      * @covers AbstractRelationship::getRelateFieldDefinition
+     * @dataProvider relateFieldDefinitionRNameProvider
      */
-    public function testRelateFieldDefinitionOOBModule()
+    public function testRelateFieldDefinitionRName($module, $relationshipName, $expected)
     {
         $ar = new AbstractRelationship(array());
 
         $definition = SugarTestReflection::callProtectedMethod(
             $ar,
             'getRelateFieldDefinition',
-            array('Contacts', 'contacts_documents')
+            array($module, $relationshipName)
         );
-        $this->assertEquals('full_name', $definition['rname']);
+        $this->assertEquals($expected, $definition['rname']);
     }
 
-    /**
-     * Test the functionality using custom non-deployed module
-     *
-     * @covers AbstractRelationship::getRelateFieldDefinition
-     */
-    public function testRelateFieldDefinitionCustomModule()
+    public static function relateFieldDefinitionRNameProvider()
     {
-        $ar = new AbstractRelationship(array());
-
-        $definition = SugarTestReflection::callProtectedMethod(
-            $ar,
-            'getRelateFieldDefinition',
-            array('test_test', 'test_documents')
+        return array(
+            'person' => array(
+                'Contacts',
+                'contacts_documents',
+                'full_name',
+            ),
+            'basic' => array(
+                'Accounts',
+                'accounts_documents',
+                'name',
+            ),
+            'non-deployed' => array(
+                'test_test',
+                'test_documents',
+                'full_name',
+            ),
         );
-        $this->assertEquals('full_name', $definition['rname']);
     }
 }

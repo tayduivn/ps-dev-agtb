@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['Forecasts']['base']['layout']['config-drawer-content'] = array(
-    'type' => 'config-drawer-content',
-    'name' => 'config-drawer-content',
     'components' => array(
         // BEGIN SUGARCRM flav=int ONLY
         // todo-sfa - forecastBy will be revisited in a future release

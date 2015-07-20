@@ -43,4 +43,6 @@ $mod_strings = array (
     'LBL_PMSE_EMAIL_TEMPLATES_EMPTY_WARNING' => 'Please select a valid *.pet file.',
 
     'LBL_PMSE_IMPORT_EMAIL_TEMPLATES_FAILURE' => 'Failed to create Process Email Template from file',
+    'LBL_PMSE_PROCESS_EMAIL_TEMPLATES_EDIT' => 'This Email Template is currently being used in a Process Definition. Do you still want to edit this Email Template?',
+    'LBL_PMSE_PROCESS_EMAIL_TEMPLATES_DELETE' => "You cannot delete this Email Template because it is currently used in a Process Definition.",
 );

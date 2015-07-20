@@ -71,6 +71,7 @@ class pmse_InboxViewShowCase extends SugarView
             $this->bean = BeanFactory::getBean($module, $id);
             $altViewMode = array();
             if (is_array($viewMode)) {
+                $isBpm = true;
                 $altViewMode = $viewMode;
                 $viewMode = $viewMode['displayMode'];
             } else {
@@ -97,15 +98,21 @@ class pmse_InboxViewShowCase extends SugarView
                 $dynaformBean = BeanFactory::getBean('pmse_BpmDynaForm');//new BpmDynaForm();
                 $dynaformBean->retrieve_by_string_fields(array('dyn_uid' => $altViewMode['dyn_uid']));
                 $this->dyn_uid = $altViewMode['dyn_uid'];
-                $viewdefs = unserialize(base64_decode($dynaformBean->dyn_view_defs));//unserialize(base64_decode('YToxOntzOjc6IkJwbVZpZXciO2E6Mjp7czoxMjoidGVtcGxhdGVNZXRhIjthOjU6e3M6NDoiZm9ybSI7YToyOntzOjY6ImhpZGRlbiI7YTo0OntpOjA7czoxNDg6IjxpbnB1dCB0eXBlPSJoaWRkZW4iIG5hbWU9InByb3NwZWN0X2lkIiB2YWx1ZT0ie2lmIGlzc2V0KCRzbWFydHkucmVxdWVzdC5wcm9zcGVjdF9pZCl9eyRzbWFydHkucmVxdWVzdC5wcm9zcGVjdF9pZH17ZWxzZX17JGJlYW4tPnByb3NwZWN0X2lkfXsvaWZ9Ij4iO2k6MTtzOjE0NDoiPGlucHV0IHR5cGU9ImhpZGRlbiIgbmFtZT0iYWNjb3VudF9pZCIgdmFsdWU9IntpZiBpc3NldCgkc21hcnR5LnJlcXVlc3QuYWNjb3VudF9pZCl9eyRzbWFydHkucmVxdWVzdC5hY2NvdW50X2lkfXtlbHNlfXskYmVhbi0+YWNjb3VudF9pZH17L2lmfSI+IjtpOjI7czoxNDQ6IjxpbnB1dCB0eXBlPSJoaWRkZW4iIG5hbWU9ImNvbnRhY3RfaWQiIHZhbHVlPSJ7aWYgaXNzZXQoJHNtYXJ0eS5yZXF1ZXN0LmNvbnRhY3RfaWQpfXskc21hcnR5LnJlcXVlc3QuY29udGFjdF9pZH17ZWxzZX17JGJlYW4tPmNvbnRhY3RfaWR9ey9pZn0iPiI7aTozO3M6MTYwOiI8aW5wdXQgdHlwZT0iaGlkZGVuIiBuYW1lPSJvcHBvcnR1bml0eV9pZCIgdmFsdWU9IntpZiBpc3NldCgkc21hcnR5LnJlcXVlc3Qub3Bwb3J0dW5pdHlfaWQpfXskc21hcnR5LnJlcXVlc3Qub3Bwb3J0dW5pdHlfaWR9e2Vsc2V9eyRiZWFuLT5vcHBvcnR1bml0eV9pZH17L2lmfSI+Ijt9czo3OiJidXR0b25zIjthOjI6e2k6MDtzOjQ6IlNBVkUiO2k6MTtzOjY6IkNBTkNFTCI7fX1zOjEwOiJtYXhDb2x1bW5zIjtzOjE6IjIiO3M6NzoidXNlVGFicyI7YjoxO3M6Njoid2lkdGhzIjthOjI6e2k6MDthOjI6e3M6NToibGFiZWwiO3M6MjoiMTAiO3M6NToiZmllbGQiO3M6MjoiMzAiO31pOjE7YToyOntzOjU6ImxhYmVsIjtzOjI6IjEwIjtzOjU6ImZpZWxkIjtzOjI6IjMwIjt9fXM6MTA6ImphdmFzY3JpcHQiO3M6ODU1OiI8c2NyaXB0IHR5cGU9InRleHQvamF2YXNjcmlwdCIgbGFuZ3VhZ2U9IkphdmFzY3JpcHQiPmZ1bmN0aW9uIGNvcHlBZGRyZXNzUmlnaHQoZm9ybSkgIHtsZGVsaW19IGZvcm0uYWx0X2FkZHJlc3Nfc3RyZWV0LnZhbHVlID0gZm9ybS5wcmltYXJ5X2FkZHJlc3Nfc3RyZWV0LnZhbHVlO2Zvcm0uYWx0X2FkZHJlc3NfY2l0eS52YWx1ZSA9IGZvcm0ucHJpbWFyeV9hZGRyZXNzX2NpdHkudmFsdWU7Zm9ybS5hbHRfYWRkcmVzc19zdGF0ZS52YWx1ZSA9IGZvcm0ucHJpbWFyeV9hZGRyZXNzX3N0YXRlLnZhbHVlO2Zvcm0uYWx0X2FkZHJlc3NfcG9zdGFsY29kZS52YWx1ZSA9IGZvcm0ucHJpbWFyeV9hZGRyZXNzX3Bvc3RhbGNvZGUudmFsdWU7Zm9ybS5hbHRfYWRkcmVzc19jb3VudHJ5LnZhbHVlID0gZm9ybS5wcmltYXJ5X2FkZHJlc3NfY291bnRyeS52YWx1ZTtyZXR1cm4gdHJ1ZTsge3JkZWxpbX0gZnVuY3Rpb24gY29weUFkZHJlc3NMZWZ0KGZvcm0pICB7bGRlbGltfSBmb3JtLnByaW1hcnlfYWRkcmVzc19zdHJlZXQudmFsdWUgPWZvcm0uYWx0X2FkZHJlc3Nfc3RyZWV0LnZhbHVlO2Zvcm0ucHJpbWFyeV9hZGRyZXNzX2NpdHkudmFsdWUgPSBmb3JtLmFsdF9hZGRyZXNzX2NpdHkudmFsdWU7Zm9ybS5wcmltYXJ5X2FkZHJlc3Nfc3RhdGUudmFsdWUgPSBmb3JtLmFsdF9hZGRyZXNzX3N0YXRlLnZhbHVlO2Zvcm0ucHJpbWFyeV9hZGRyZXNzX3Bvc3RhbGNvZGUudmFsdWUgPWZvcm0uYWx0X2FkZHJlc3NfcG9zdGFsY29kZS52YWx1ZTtmb3JtLnByaW1hcnlfYWRkcmVzc19jb3VudHJ5LnZhbHVlID0gZm9ybS5hbHRfYWRkcmVzc19jb3VudHJ5LnZhbHVlO3JldHVybiB0cnVlOyB7cmRlbGltfSA8L3NjcmlwdD4iO31zOjY6InBhbmVscyI7YTozOntzOjIzOiJMQkxfQ09OVEFDVF9JTkZPUk1BVElPTiI7YTo4OntpOjA7YToxOntpOjA7YToyOntzOjQ6Im5hbWUiO3M6MTA6ImZpcnN0X25hbWUiO3M6MTA6ImN1c3RvbUNvZGUiO3M6MjM3OiJ7aHRtbF9vcHRpb25zIG5hbWU9InNhbHV0YXRpb24iIGlkPSJzYWx1dGF0aW9uIiBvcHRpb25zPSRmaWVsZHMuc2FsdXRhdGlvbi5vcHRpb25zIHNlbGVjdGVkPSRmaWVsZHMuc2FsdXRhdGlvbi52YWx1ZX0mbmJzcDs8aW5wdXQgbmFtZT0iZmlyc3RfbmFtZSIgIGlkPSJmaXJzdF9uYW1lIiBzaXplPSIyNSIgbWF4bGVuZ3RoPSIyNSIgdHlwZT0idGV4dCIgdmFsdWU9InskZmllbGRzLmZpcnN0X25hbWUudmFsdWV9Ij4iO319aToxO2E6Mjp7aTowO3M6OToibGFzdF9uYW1lIjtpOjE7czoxMDoicGhvbmVfd29yayI7fWk6MjthOjI6e2k6MDtzOjU6InRpdGxlIjtpOjE7czoxMjoicGhvbmVfbW9iaWxlIjt9aTozO2E6Mjp7aTowO3M6MTA6ImRlcGFydG1lbnQiO2k6MTtzOjk6InBob25lX2ZheCI7fWk6NDthOjI6e2k6MDthOjQ6e3M6NDoibmFtZSI7czoxMjoiYWNjb3VudF9uYW1lIjtzOjQ6InR5cGUiO3M6NzoidmFyY2hhciI7czoxODoidmFsaWRhdGVEZXBlbmRlbmN5IjtiOjA7czoxMDoiY3VzdG9tQ29kZSI7czoxODU6IjxpbnB1dCBuYW1lPSJhY2NvdW50X25hbWUiIGlkPSJFZGl0Vmlld19hY2NvdW50X25hbWUiIHtpZiAoJGZpZWxkcy5jb252ZXJ0ZWQudmFsdWUgPT0gMSl9ZGlzYWJsZWQ9InRydWUiey9pZn0gc2l6ZT0iMzAiIG1heGxlbmd0aD0iMjU1IiB0eXBlPSJ0ZXh0IiB2YWx1ZT0ieyRmaWVsZHMuYWNjb3VudF9uYW1lLnZhbHVlfSI+Ijt9aToxO3M6Nzoid2Vic2l0ZSI7fWk6NTthOjI6e2k6MDthOjQ6e3M6NDoibmFtZSI7czoyMjoicHJpbWFyeV9hZGRyZXNzX3N0cmVldCI7czo5OiJoaWRlTGFiZWwiO2I6MTtzOjQ6InR5cGUiO3M6NzoiYWRkcmVzcyI7czoxMzoiZGlzcGxheVBhcmFtcyI7YTo0OntzOjM6ImtleSI7czo3OiJwcmltYXJ5IjtzOjQ6InJvd3MiO2k6MjtzOjQ6ImNvbHMiO2k6MzA7czo5OiJtYXhsZW5ndGgiO2k6MTUwO319aToxO2E6NDp7czo0OiJuYW1lIjtzOjE4OiJhbHRfYWRkcmVzc19zdHJlZXQiO3M6OToiaGlkZUxhYmVsIjtiOjE7czo0OiJ0eXBlIjtzOjc6ImFkZHJlc3MiO3M6MTM6ImRpc3BsYXlQYXJhbXMiO2E6NTp7czozOiJrZXkiO3M6MzoiYWx0IjtzOjQ6ImNvcHkiO3M6NzoicHJpbWFyeSI7czo0OiJyb3dzIjtpOjI7czo0OiJjb2xzIjtpOjMwO3M6OToibWF4bGVuZ3RoIjtpOjE1MDt9fX1pOjY7YToxOntpOjA7czo2OiJlbWFpbDEiO31pOjc7YToxOntpOjA7czoxMToiZGVzY3JpcHRpb24iO319czoxODoiTEJMX1BBTkVMX0FEVkFOQ0VEIjthOjQ6e2k6MDthOjI6e2k6MDtzOjY6InN0YXR1cyI7aToxO3M6MTE6ImxlYWRfc291cmNlIjt9aToxO2E6Mjp7aTowO2E6MTp7czo0OiJuYW1lIjtzOjE4OiJzdGF0dXNfZGVzY3JpcHRpb24iO31pOjE7YToxOntzOjQ6Im5hbWUiO3M6MjM6ImxlYWRfc291cmNlX2Rlc2NyaXB0aW9uIjt9fWk6MjthOjI6e2k6MDtzOjE4OiJvcHBvcnR1bml0eV9hbW91bnQiO2k6MTtzOjEwOiJyZWZlcmVkX2J5Ijt9aTozO2E6Mjp7aTowO3M6MTM6ImNhbXBhaWduX25hbWUiO2k6MTtzOjExOiJkb19ub3RfY2FsbCI7fX1zOjIwOiJMQkxfUEFORUxfQVNTSUdOTUVOVCI7YToxOntpOjA7YToyOntpOjA7YToyOntzOjQ6Im5hbWUiO3M6MTg6ImFzc2lnbmVkX3VzZXJfbmFtZSI7czo1OiJsYWJlbCI7czoxNToiTEJMX0FTU0lHTkVEX1RPIjt9aToxO2E6Mjp7czo0OiJuYW1lIjtzOjk6InRlYW1fbmFtZSI7czoxMzoiZGlzcGxheVBhcmFtcyI7YToxOntzOjc6ImRpc3BsYXkiO2I6MTt9fX19fX19'));
+                $viewdefs = unserialize(base64_decode($dynaformBean->dyn_view_defs));
                 if ($readonly) {
-                    $this->setHeaderFootersReadOnly(&$viewdefs);
+                    $this->setHeaderFootersReadOnly($viewdefs);
+                }
+                if($isBpm){
+                    $viewdefs['EditView'] = $viewdefs['BpmView'];
                 }
                 $tmpArray = array();
                 $tmpArray[$this->bean->module_name] = $viewdefs;
                 $viewdefs = $tmpArray;
             }
             $this->view = ucfirst($viewMode) . 'View';
+            if($isBpm){
+                $this->view = "EditView";
+            }
             if (isset($viewdefs[$this->bean->module_name][$this->view])) {
                 $this->defs = $viewdefs[$this->bean->module_name][$this->view];
             } else {
@@ -114,6 +121,9 @@ class pmse_InboxViewShowCase extends SugarView
 
             $this->focus = $this->bean;
             $tpl = get_custom_file_if_exists('modules/pmse_Inbox/tpls/' . $this->view . '.tpl');
+            if($isBpm){
+                $tpl = get_custom_file_if_exists('modules/pmse_Inbox/tpls/BpmView.tpl');
+            }
             $this->th = new TemplateHandler();
             $this->th->ss = &$this->ss;
             $this->tpl = $tpl;
@@ -153,8 +163,20 @@ class pmse_InboxViewShowCase extends SugarView
                 'type' => 'button',
                 'onclick' => 'javascript:claim_case(\'' . $casId . '\', \'' . $casIndex . '\', \'' . $title . '\', \'' . $idInbox . '\');'
             ),
-            'approve' => array('id' => 'ApproveBtn', 'name' => 'Type', 'value' => 'Approve', 'type' => 'submit'),
-            'reject' => array('id' => 'RejectBtn', 'name' => 'Type', 'value' => 'Reject', 'type' => 'submit'),
+            'approve' => array(
+                'id' => 'ApproveBtn',
+                'name' => 'Type',
+                'value' => 'Approve',
+                'type' => 'button',
+                'onclick' => "if (app.btSubmitClicked != true) return (check_form('EditView') && confirmAction(this)); else return true;"
+            ),
+            'reject' => array(
+                'id' => 'RejectBtn',
+                'name' => 'Type',
+                'value' => 'Reject',
+                'type' => 'button',
+                'onclick' => "if (app.btSubmitClicked != true) return (check_form('EditView') && confirmAction(this)); else return true;"
+            ),
             'reassign' => array(
                 'id' => 'ReassignBtn',
                 'name' => 'Type',
@@ -169,7 +191,13 @@ class pmse_InboxViewShowCase extends SugarView
                 'type' => 'button',
                 'onclick' => 'adhocForm(\'' . $casId . '\', \'' . $casIndex . '\');'
             ),
-            'route' => array('id' => 'RouteBtn', 'name' => 'Type', 'value' => 'Route Task', 'type' => 'submit'),
+            'route' => array(
+                'id' => 'RouteBtn',
+                'name' => 'Type',
+                'value' => 'Route Task',
+                'type' => 'button',
+                'onclick' => "if (app.btSubmitClicked != true) return (check_form('EditView') && confirmAction(this)); else return true;"
+            ),
             'cancel' => array(
                 'name' => 'Cancel',
                 'value' => 'Cancel',
@@ -242,14 +270,31 @@ class pmse_InboxViewShowCase extends SugarView
 
                 //FORM TEMPLATE SECTION
                 global $db;
-                $sql = "SELECT *  FROM pmse_bpmn_activity
-                        INNER JOIN pmse_bpm_activity_definition ON pmse_bpm_activity_definition.id = pmse_bpmn_activity.id
-                        WHERE pmse_bpmn_activity.id='" . $caseData['bpmn_id'] . "'";
+$select = <<<FLIST
+                pmse_bpmn_activity.id, pmse_bpmn_activity.name actiname,  pmse_bpmn_activity.date_entered,
+                pmse_bpm_activity_definition.name,
+                pmse_bpmn_activity.date_modified, pmse_bpmn_activity.modified_user_id, pmse_bpmn_activity.created_by,
+                pmse_bpmn_activity.description, pmse_bpmn_activity.deleted, pmse_bpmn_activity.assigned_user_id, act_uid prj_id,
+                pmse_bpm_activity_definition.pro_id, pmse_bpm_activity_definition.act_type, act_is_for_compensation, act_start_quantity,
+                act_completion_quantity, act_task_type, act_implementation, act_instantiate, act_script_type, act_script,
+                act_loop_type, act_test_before, act_loop_maximum, act_loop_condition, act_loop_cardinality, act_loop_behavior,
+                act_is_adhoc, act_is_collapsed, act_completion_condition, act_ordering, act_cancel_remaining_instances, act_protocol,
+                act_method, act_is_global, act_referer, act_default_flow, act_master_diagram, act_duration, act_duration_unit,
+                act_send_notification, act_assignment_method, act_assign_team, act_assign_user, act_value_based_assignment, act_reassign,
+                act_reassign_team, act_adhoc, act_adhoc_behavior,act_adhoc_team, act_response_buttons,act_last_user_assigned,
+                act_field_module,act_fields,act_readonly_fields,act_expected_time,act_required_fields, act_related_modules,
+                act_service_url,act_service_params,act_service_method,act_update_record_owner,execution_mode
+FLIST;
+                $sql = "SELECT $select
+                    FROM pmse_bpmn_activity
+                    INNER JOIN pmse_bpm_activity_definition
+                        ON pmse_bpm_activity_definition.id = pmse_bpmn_activity.id
+                    WHERE pmse_bpmn_activity.id = '{$caseData['bpmn_id']}'";
                 $resultActi = $db->Query($sql);
 
 
                 $this->activityRow = $db->fetchByAssoc($resultActi);
-                $activityName = $this->activityRow['name'];
+                $activityName = $this->activityRow['actiname'];
                 $taskName = $this->activityRow['name'];
                 $smarty->assign('nameTask', $taskName);
                 $smarty->assign('flowId', $id_flow);
@@ -272,20 +317,19 @@ class pmse_InboxViewShowCase extends SugarView
                 $reclaimCaseByUser = false;
                 if (isset($caseData['cas_adhoc_type']) && ($caseData['cas_adhoc_type'] === '') && ($caseData['cas_start_date'] == '') && ($this->activityRow['act_assignment_method'] == 'selfservice')) {
                     $reclaimCaseByUser = true;
-//                    $displayMode = 'detail';
-
                 }
-                //
+
                 $beanTemplate = $this->displayDataForm($caseData['cas_sugar_module'], $caseData['cas_sugar_object_id'],
                     $displayMode, $reclaimCaseByUser);
                 if (isset($caseData['cas_adhoc_type']) && ($caseData['cas_adhoc_type'] === '') && ($caseData['cas_start_date'] == '') && ($this->activityRow['act_assignment_method'] == 'selfservice')) {
                     $displayMode = 'detail';
-
                 }
                 //BUTTON SECTIONS
+                $customButtons = array();
                 $defaultButtons = $this->getButtonArray(array('approve' => true, 'reject' => true));
                 if ($reclaimCaseByUser) {
                     $this->defs['BPM']['buttons']['claim'] = true;
+                    $customButtons = array('claim' => true);
                 } elseif (isset($caseData['cas_adhoc_type']) && ($caseData['cas_adhoc_type'] === '')) {
                     $this->defs['BPM']['buttons']['approve'] = (strtoupper($this->activityRow['act_response_buttons']) == 'APPROVE') ? true : false;
                     $this->defs['BPM']['buttons']['route'] = (strtoupper($this->activityRow['act_response_buttons']) == 'ROUTE') ? true : false;
@@ -293,8 +337,19 @@ class pmse_InboxViewShowCase extends SugarView
                     $this->defs['BPM']['buttons']['route'] = true;
                 }
 
+                $taskContinue = false;
                 if (!$reclaimCaseByUser && !empty($beanFlow->cas_adhoc_actions)) {
-                    $this->defs['BPM']['buttons'] = unserialize($beanFlow->cas_adhoc_actions);
+                    $buttons = unserialize($beanFlow->cas_adhoc_actions);
+                    unset($buttons['link_cancel']);
+                    unset($buttons['edit']);
+                    $continue = array_search('continue', $buttons);
+                    if ($continue !== false) {
+                        unset($buttons[$continue]);
+                        $taskContinue = true;
+                    }
+                    foreach($buttons as $key => $value) {
+                        $this->defs['BPM']['buttons'][$value] = $customButtons[$value] = true;
+                    }
                 }
 
                 //ASSIGN SECTION
@@ -311,6 +366,7 @@ class pmse_InboxViewShowCase extends SugarView
                 $smarty->assign('expected_time', $expected_time);
                 $smarty->assign('reclaimCaseByUser', $reclaimCaseByUser);
                 $smarty->assign('totalNotes', $totalNotes);
+                $smarty->assign('task_continue', $taskContinue);
                 $smarty->assign('SUGAR_URL', $sugar_config['site_url']);
                 $smarty->assign('SUGAR_AJAX_URL',
                     $sugar_config['site_url'] . "/index.php?module=pmse_Inbox&action=ajaxapi");
@@ -325,7 +381,7 @@ class pmse_InboxViewShowCase extends SugarView
                     $smarty->assign('validations', array());
                 }
                 $idInbox = isset($caseData['idInbox']) ? $caseData['idInbox'] : null;
-                $customButtons = $this->getButtonArray($this->defs['BPM']['buttons'], $cas_id, $cas_index,
+                $customButtons = $this->getButtonArray($customButtons, $cas_id, $cas_index,
                     $this->focus->team_id, $caseData['cas_title'], $idInbox);
                 if (count($customButtons) > 1) {
                     $smarty->assign('customButtons', $customButtons);

@@ -31,7 +31,6 @@ $viewdefs['base']['layout']['dashablelist-filter'] = array(
                                     ),
                                     'layoutType' => 'records',
                                 ),
-                                'span' => 12,
                                 'type' =>'filter',
                             ),
                             'targetEl' => '.filter',
@@ -55,6 +54,4 @@ $viewdefs['base']['layout']['dashablelist-filter'] = array(
             ),
         ),
     ),
-    'name' => 'dashablelist-filter',
-    'span' => 12,
 );

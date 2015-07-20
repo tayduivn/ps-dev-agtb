@@ -18,13 +18,12 @@ $viewdefs['base']['layout']['subpanel-with-massupdate']  = array (
             'view' => 'massupdate',
         ),
         array (
-            'view' => 'subpanel-list',
+            'view' => 'subpanel-list-with-massupdate',
         ),
         array (
             'view' => 'list-bottom',
         ),
     ),
-    'span' => 12,
     'last_state' => array(
         'id' => 'subpanel'
     ),

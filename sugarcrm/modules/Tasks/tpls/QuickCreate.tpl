@@ -13,6 +13,7 @@
 
 
 <form name="tasksQuickCreate" id="tasksQuickCreate" method="POST" action="index.php">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Tasks">
 <input type="hidden" name="record" value="">
 <input type="hidden" name="lead_id" value="{$REQUEST.lead_id}">

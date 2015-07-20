@@ -11,7 +11,6 @@
  */
 
 $viewdefs['base']['layout']['first-login-wizard'] = array(
-    'type' => 'wizard',
     'buttons' => array(
         array(
             'name' => 'previous_button',

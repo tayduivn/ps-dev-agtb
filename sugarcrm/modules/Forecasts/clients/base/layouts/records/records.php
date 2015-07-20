@@ -12,18 +12,18 @@
  */
 
 $viewdefs['Forecasts']['base']['layout']['records'] = array(
-    'components' =>
-    array(
+    'components' => array(
         array(
-            'layout' =>
-            array(
-                'components' =>
-                array(
+            'layout' => array(
+                'type' => 'default',
+                'name' => 'sidebar',
+                'components' => array(
                     array(
-                        'layout' =>
-                        array(
-                            'components' =>
-                            array(
+                        'layout' => array(
+                            'type' => 'base',
+                            'name' => 'main-pane',
+                            'targetEl' => '.main-pane',
+                            'components' => array(
                                 array(
                                     'view' => 'list-headerpane',
                                 ),
@@ -32,26 +32,24 @@ $viewdefs['Forecasts']['base']['layout']['records'] = array(
                                 ),
                                 array(
                                     'layout' => 'list',
-                                    'context' =>
-                                    array(
+                                    'context' => array(
                                         'module' => 'ForecastManagerWorksheets',
                                     ),
                                 ),
                                 array(
                                     'layout' => 'list',
-                                    'context' =>
-                                    array(
+                                    'context' => array(
                                         'module' => 'ForecastWorksheets',
                                     ),
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'main-pane',
-                            'span' => 8,
                         ),
                     ),
                     array(
                         'layout' => array(
+                            'type' => 'base',
+                            'name' => 'dashboard-pane',
+                            'targetEl' => '.dashboard-pane',
                             'components' => array(
                                 array(
                                     'layout' => array(
@@ -66,34 +64,21 @@ $viewdefs['Forecasts']['base']['layout']['records'] = array(
                                     ),
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'dashboard-pane',
-                            'span' => 4,
                         ),
                     ),
                     array(
-                        'layout' =>
-                        array(
-                            'components' =>
-                            array(
+                        'layout' => array(
+                            'type' => 'base',
+                            'targetEl' => '.preview-pane',
+                            'components' => array(
                                 array(
                                     'layout' => 'preview',
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'preview-pane',
-                            'span' => 8,
                         ),
                     ),
                 ),
-                'type' => 'default',
-                'name' => 'sidebar',
-                'span' => 12,
             ),
         ),
     ),
-    'type' => 'records',
-    'name' => 'base',
-    'span' => 12,
 );
-

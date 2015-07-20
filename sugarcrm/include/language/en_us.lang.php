@@ -1514,6 +1514,22 @@ $app_list_strings = array (
         'Yearly' => 'year(s)',
     ),
 
+    'duration_hours_intervals' => array(
+      0 => '0',
+      1 => '1',
+      2 => '2',
+      3 => '3',
+      4 => '4',
+      5 => '5',
+      6 => '6',
+      7 => '7',
+      8 => '8',
+      9 => '9',
+      10 => '10',
+      11 => '11',
+      12 => '12',
+    ),
+
     'repeat_interval_number' => array(
         1 => '1',
         2 => '2',
@@ -8671,7 +8687,7 @@ $app_strings = array (
     'EXCEPTION_MAINTENANCE'             => 'SugarCRM is in maintenance mode. Only admins can login. Please contact your administrator for details.',
     'EXCEPTION_SERVICE_UNAVAILABLE'     => 'The server cannot process your request because it is busy or unavailable at this time.',
     'EXCEPTION_SEARCH_UNAVAILABLE'      => 'Search engine is temporarily unavailable.',
-    'EXCEPTION_SEARCH_RUNTIME'          => 'A search engine runtime error occurred: {0}',
+    'EXCEPTION_SEARCH_RUNTIME'          => 'A search engine runtime error occurred. Please contact your System Administrator.',
 
     // Default SugarApiException descriptions, used in the exceptions help endpoint
     'EXCEPTION_UNKNOWN_EXCEPTION_DESC'     => 'A condition was encountered because of a general failure or error. The reasons for this exception range but generally fall outside the scope of a more specific API exception.',
@@ -11178,13 +11194,27 @@ Sincerely, SugarCRM',
 
     'ERR_HTTP_404_TYPE' => '404',
     'ERR_HTTP_404_TITLE' => 'Data not available',
-    'ERR_HTTP_404_TEXT' => 'Page does not exist or you do not have permission to access this page.',
+    'ERR_HTTP_404_TEXT_LINE1' => 'Page does not exist or you do not have permission to access this page.',
+    'ERR_HTTP_404_TEXT_LINE2' => 'Please try again. If the error persists, please contact your Sugar Administrator.',
     'ERR_HTTP_404_ACTION' => 'Go back to previous page.',
 
     'ERR_HTTP_500_TYPE' => '500',
     'ERR_HTTP_500_TITLE' => 'HTTP: 500 Internal Server Error',
-    'ERR_HTTP_500_TEXT' => 'There was an error on the server.',
+    'ERR_HTTP_500_TEXT_LINE1' => 'The server encountered an error and could not complete your request.',
+    'ERR_HTTP_500_TEXT_LINE2' => 'Please try again. If the error persists, please contact your Sugar Administrator.',
     'ERR_HTTP_500_ACTION' => 'Please contact technical support.',
+
+    'ERR_HTTP_502_TYPE' => '502',
+    'ERR_HTTP_502_TITLE' => 'HTTP: 502 Internal Server Error',
+    'ERR_HTTP_502_TEXT_LINE1' => 'The server encountered a temporary error and could not complete your request.',
+    'ERR_HTTP_502_TEXT_LINE2' => 'Please try again. If the error persists, please contact your Sugar Administrator.',
+    'ERR_HTTP_502_ACTION' => 'Please contact technical support.',
+
+    'ERR_HTTP_503_TYPE' => '503',
+    'ERR_HTTP_503_TITLE' => 'HTTP: 503 Internal Server Error',
+    'ERR_HTTP_503_TEXT_LINE1' => 'The server is unavailable to complete your request.',
+    'ERR_HTTP_503_TEXT_LINE2' => 'Please try again later. If the error persists, please contact your Sugar Administrator.',
+    'ERR_HTTP_503_ACTION' => 'Please contact technical support.',
 
     'ERR_RENDER_FAILED_TITLE' => 'View Render Failed',
     'ERR_RENDER_FAILED_MSG' => 'Failed to render a view',
@@ -11551,6 +11581,9 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_START_AND_END_DATE_SAME_DAY' => '{{date}} {{start}} - {{end}} ({{duration}})',
     'LBL_START_AND_END_DATE_TO' => 'to',
     'LBL_START_AND_END_DATE_DETAIL_VIEW' => 'Start & End Date',
+
+    // notifications
+    'TPL_NOTIFICATION_TITLE' => '{{moduleName}} starts at {{startTime}}',
 
     'LBL_CALENDAR_START_DATE' => "Start Date",
     'LBL_CALENDAR_END_DATE' => "End Date",
@@ -12533,10 +12566,10 @@ $app_list_strings['state_dom'] = array(
     'Twitter'=>'Twitter',
   );
   $app_list_strings['eapm_list_import']= array(
-  	'Google' => 'Google Contacts',
+    'Google' => 'Google Contacts',
   );
-$app_list_strings['eapm_list_documents']= array(
-  	'Google' => 'Google Docs',
+  $app_list_strings['eapm_list_documents']= array(
+    'Google' => 'Google Drive',
   );
 	$app_list_strings['token_status'] = array(
         1 => 'Request',

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['KBContents']['base']['layout']['config-drawer-content'] = array(
-    'type' => 'config-drawer-content',
-    'name' => 'config-drawer-content',
     'components' => array(
         array(
             'view' => 'config-languages',

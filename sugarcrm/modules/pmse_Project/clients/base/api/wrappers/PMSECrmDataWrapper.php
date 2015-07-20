@@ -936,9 +936,9 @@ class PMSECrmDataWrapper implements PMSEObservable
         $where .= ' AND users.employee_status = \'Active\' ';
 
         if (!empty($filter)) {
-            $where = ' AND (users.first_name LIKE \'' . $filter . '%\' ';
-            $where .= 'OR users.last_name LIKE \'' . $filter . '%\' ';
-            $where .= 'OR users.user_name LIKE \'' . $filter . '%\' )';
+            $where .= ' AND (users.first_name LIKE \'%' . $filter . '%\' ';
+            $where .= 'OR users.last_name LIKE \'%' . $filter . '%\' ';
+            $where .= 'OR users.user_name LIKE \'%' . $filter . '%\' )';
         }
 
         $order = 'users.first_name, users.last_name';
@@ -1057,7 +1057,7 @@ class PMSECrmDataWrapper implements PMSEObservable
 //        $res->search = $filter;
 //        $res->success = true;
         $output = array();
-        if ($projectBean->retrieve_by_string_fields(array('id' => $filter))) {
+        if ($projectBean->retrieve($filter)) {
 
             $processBean->retrieve_by_string_fields(array('prj_id' => $projectBean->id));
 
@@ -1363,7 +1363,7 @@ class PMSECrmDataWrapper implements PMSEObservable
 
         $updateDefaultForm = false;
 
-        if ($projectBean->retrieve_by_string_fields(array('id' => $args['filter']))) {
+        if ($projectBean->retrieve($args['filter'])) {
             unset($args['prj_uid']);
             $args['prj_id'] = $projectBean->id;
             $processBean->retrieve_by_string_fields(array('prj_id' => $projectBean->id));
@@ -1557,6 +1557,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         $fieldTypes = $module_strings['fieldTypes'];
         //add datetimecombo type field from the vardef overrides to point to Datetime type
         $fieldTypes['datetime'] = $fieldTypes['datetimecombo'];
+        $fieldTypes['name'] = "Name";
 
         global $app_list_strings;
         $output = array();
@@ -1786,7 +1787,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         $projectBean = $this->getProjectBean();
         $ruleSetBean = $this->getRuleSetBean();
         $output = array();
-        if ($projectBean->retrieve_by_string_fields(array('id' => $filter))) {
+        if ($projectBean->retrieve($filter)) {
             $processDefinitionBean->retrieve_by_string_fields(array('prj_id' => $projectBean->id));
             if (isset($this->beanList[$processDefinitionBean->pro_module])) {
                 $newModuleFilter = $processDefinitionBean->pro_module;
@@ -2171,12 +2172,12 @@ class PMSECrmDataWrapper implements PMSEObservable
         $field = array();
         switch ($def['name']) {
             case 'assigned_user_id':
-                $field['type'] = 'enum';
+                $field['type'] = 'user';
                 $field['vname'] = 'LBL_ASSIGNED_TO';
                 break;
             case 'created_by':
             case 'modified_user_id':
-                $field['type'] = 'enum';
+                $field['type'] = 'user';
                 break;
             default:
                 $result = $field;

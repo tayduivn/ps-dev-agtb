@@ -213,12 +213,12 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test retrieve a valid children data using Category::getСhildren method.
+     * Test retrieve a valid children data using Category::getChildren method.
      */
-    public function testGetСhildren()
+    public function testGetChildren()
     {
-        $this->assertInternalType('array', self::$root->getСhildren());
-        $this->assertInternalType('array', self::$root->getСhildren(1));
+        $this->assertInternalType('array', self::$root->getChildren());
+        $this->assertInternalType('array', self::$root->getChildren(1));
     }
 
     /**
@@ -330,53 +330,4 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertInternalType('null', $result);
     }
 
-}
-
-class CategoryMock extends Category
-{
-
-    /**
-     * Public wrapper method to access protected Category::getQuery method.
-     * @return SugarQuery
-     */
-    public function getQueryMock()
-    {
-        return parent::getQuery();
-    }
-
-    /**
-     * Public wrapper method to access protected Category::getTreeData method.
-     * @return array
-     */
-    public function getTreeDataMock($root)
-    {
-        return parent::getTreeData($root);
-    }
-
-    /**
-     * Public wrapper method to access protected Category::shiftLeftRight method.
-     * @return null
-     */
-    public function shiftLeftRightMock($key, $delta)
-    {
-        return parent::shiftLeftRight($key, $delta);
-    }
-
-    /**
-     * Public wrapper method to access protected Category::addNode method.
-     * @return null
-     */
-    public function addNodeMock($node, $key, $levelUp)
-    {
-        return parent::addNode($node, $key, $levelUp);
-    }
-
-    /**
-     * Public wrapper method to access protected Category::moveNode method.
-     * @return null
-     */
-    public function moveNodeMock($target, $key, $levelUp)
-    {
-        return parent::moveNode($target, $key, $levelUp);
-    }
 }

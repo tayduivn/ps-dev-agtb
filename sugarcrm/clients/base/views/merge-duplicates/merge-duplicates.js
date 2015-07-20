@@ -1640,7 +1640,7 @@
         if (!progressView) {
             progressView = app.view.createView({
                 context: this.context,
-                name: 'merge-duplicates-progress',
+                type: 'merge-duplicates-progress',
                 layout: this.layout,
                 model: this.mergeProgressModel
             });

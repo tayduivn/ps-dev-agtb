@@ -12,7 +12,6 @@
  */
 
 $viewdefs['base']['layout']['sweetspot'] = array(
-    'name' => 'sweetspot',
     'components' => array(
         array(
             'view' => 'sweetspot-searchbar',

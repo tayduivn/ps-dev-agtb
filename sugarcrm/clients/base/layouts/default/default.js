@@ -175,8 +175,8 @@
      * @inheritDoc
      */
     _placeComponent: function(component) {
-        if (component.meta.name) {
-            this.$('.' + component.meta.name).append(component.$el);
+        if (component.meta.targetEl) {
+            this.$(component.meta.targetEl).append(component.$el);
         }
     },
 

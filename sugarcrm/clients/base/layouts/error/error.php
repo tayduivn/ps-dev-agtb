@@ -12,9 +12,7 @@
  */
 
 $viewdefs['base']['layout']['error'] = array(
-    'type' => 'simple',
-    'components' =>
-    array(
+    'components' =>  array(
         array(
             'view' => 'error',
         ),

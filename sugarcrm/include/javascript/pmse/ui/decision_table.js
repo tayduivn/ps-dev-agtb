@@ -36,6 +36,7 @@
         this.globalCBControl = null;
         this.globalDDSelector = null;
         this.moduleFieldSeparator = "|||";
+        this._currencies = [];
         this._dateFormat = null;
         this._timeFormat = null;
         this._isApplyingColumnScrolling = null;
@@ -65,6 +66,7 @@
             onRemoveColumn: null,
             onChange: null,
             showDirtyIndicator: true,
+            currencies: [],
             dateFormat: "YYYY-MM-DD",
             timeFormat: "H:i",
             language: {
@@ -111,6 +113,7 @@
         this.language = defaults.language;
 
         this.setName(defaults.name)
+            .setCurrencies(defaults.currencies)
             .setDateFormat(defaults.dateFormat)
             .setTimeFormat(defaults.timeFormat)
             .setProxy(defaults.proxy/*, defaults.restClient*/)
@@ -139,7 +142,8 @@
             itemContainerHeight: 70,
             dateFormat: this._dateFormat,
             timeFormat: this._timeFormat,
-            appendTo: jQuery("#businessrulecontainer").get(0)
+            appendTo: jQuery("#businessrulecontainer").get(0),
+            currencies: this._currencies
         });
 
         this.globalDDSelector = new DropdownSelector({
@@ -147,6 +151,14 @@
         });
 
         this.getFields();
+    };
+
+    DecisionTable.prototype.setCurrencies = function (currencies) {
+        this._currencies = currencies;
+        if (this.globalCBControl) {
+            this.globalCBControl.setCurrencies(this._currencies);
+        }
+        return this;
     };
 
     DecisionTable.prototype.setDateFormat = function (dateFormat) {
@@ -1569,6 +1581,9 @@
                 }
                 option = this.createHTMLElement('option');
                 label = SUGAR.App.lang.get(this.fields[i].label, this.base_module);
+                if (typeof label === 'object'){
+                    label = this.fields[i].label;
+                }
                 option.label = label;
                 option.value = this.fields[i].moduleValue + this.parent.moduleFieldSeparator + this.fields[i].value;
                 option.appendChild(document.createTextNode(label));
@@ -1655,8 +1670,7 @@
             closeButton = this.createHTMLElement("button");
             closeButton.appendChild(document.createTextNode(" "));
             closeButton.className = 'decision-table-close-button';
-            //TODO Create this label with the text 'Remove Column'
-            closeButton.title = this.language.LBL_TITLE_CLOSE_BUTTON;
+            closeButton.title = translate('LBL_PMSE_TOOLTIP_REMOVE_COLUMN','pmse_Business_Rules');
             this.closeButton = closeButton;
             html.appendChild(this.closeButton);
         }
@@ -1688,8 +1702,7 @@
         if(this.getFilledValuesNum()) {
             App.alert.show('variable-check', {
                 level: 'confirmation',
-                //TODO Create a label to handle this message
-                messages: "Do you really want to remove this variable?",
+                messages: translate('LBL_PMSE_MESSAGE_LABEL_REMOVE_VARIABLE','pmse_Business_Rules'),
                 onCancel: function() {
                     return;
                 },
@@ -1715,10 +1728,10 @@
             oldField = self.module + self.parent.moduleFieldSeparator  + self.field;
             newField = this.value;
 
-            if (self.hasValues()) {
+            if (self.hasValues(true)) {
                 App.alert.show('select-change-confirm', {
                     level: 'confirmation',
-                    messages: 'Values associated to this variable will be removed. Do you want to continue?',
+                    messages: translate('LBL_PMSE_MESSAGE_LABEL_CHANGE_COLUMN_TYPE','pmse_Business_Rules'),
                     autoClose: false,
                     onConfirm: function () {
                         self.setField(newField || null);
@@ -1734,6 +1747,7 @@
                 });
             } else {
                 self.setField(this.value || null);
+                self.clearAllValues();
 
                 if (typeof self.onChange === 'function') {
                     self.onChange.call(self, self.field, oldField);
@@ -1756,17 +1770,30 @@
         return this;
     };
 
-    DecisionTableVariable.prototype.hasValues = function () {
-        return (this.getFilledValuesNum() !== 0);
+    DecisionTableVariable.prototype.hasValues = function (partiallyFilled) {
+        return (this.getFilledValuesNum(partiallyFilled) !== 0);
     };
 
-    DecisionTableVariable.prototype.getFilledValuesNum = function() {
+    DecisionTableVariable.prototype.getFilledValuesNum = function(partiallyFilled) {
         var i,
-            n = 0;
-
-        for(i = 0; i < this.values.length; i+=1) {
-            if(this.values[i].filledValue()) {
-                n +=1;
+            n = 0,
+            current;
+        if (partiallyFilled) {
+            for(i = 0; i < this.values.length; i+=1) {
+                current = this.values[i];
+                if (current.isPartiallyFilled) {
+                    if(current.isPartiallyFilled()) {
+                        n +=1;
+                    }
+                } else if (current.filledValue()) {
+                    n +=1;
+                }
+            }
+        } else {
+            for(i = 0; i < this.values.length; i+=1) {
+                if(this.values[i].filledValue()) {
+                    n +=1;
+                }
             }
         }
         return n;
@@ -2115,9 +2142,15 @@
     };
 
     DecisionTableValueEvaluation.prototype.setOperator = function(operator) {
+        var $span;
         this.operator = operator;
         if (this.html && this.html[0]) {
-            jQuery(this.html[0]).find('span').empty().append(operator);
+            $span = jQuery(this.html[0]).find('span').empty();
+            if (operator) {
+                $span.append(operator);
+            } else {
+                $span.html("&nbsp;");
+            }
         }
         return this;
     };
@@ -2219,6 +2252,10 @@
 
     DecisionTableValueEvaluation.prototype.filledValue = function() {
         return !!this.operator && DecisionTableValue.prototype.filledValue.call(this);
+    };
+
+    DecisionTableValueEvaluation.prototype.isPartiallyFilled = function() {
+        return !!this.operator || DecisionTableValue.prototype.filledValue.call(this);
     };
 
     DecisionTableValueEvaluation.prototype.isValid = function() {

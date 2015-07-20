@@ -1,5 +1,4 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -14,15 +13,13 @@ $viewdefs['Styleguide']['base']['layout']['view'] = array(
     'components' => array(
         array(
             'layout' => array(
+                'type' => 'base',
                 'components' => array(
                     array(
                         'view' => 'sg-headerpane',
                     ),
                 ),
-                'type' => 'simple',
-                'name' => 'main-pane',
             ),
         ),
     ),
-    'type' => 'view',
 );

@@ -42,6 +42,7 @@ function set_return(opener_id, href_object){
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr>
 <form name="EditView" method="POST" action="index.php">
+{sugar_csrf_form_token}
 	<td scope="row" align="right" nowrap><slot>{PLEASE_SELECT}&nbsp;</slot></td>
 	<td  align="right" nowrap><slot><select id='selector' name='selector' tabindex='2'>{SELECTOR_DROPDOWN}</select></slot></td>
 	<td align='right' nowrap>

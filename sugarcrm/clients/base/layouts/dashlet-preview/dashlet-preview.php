@@ -12,12 +12,9 @@
  */
 
 $viewdefs['base']['layout']['dashlet-preview'] = array(
-    'components' =>
-    array(
+    'components' => array(
         array(
             'view' => 'preview-header',
         ),
     ),
-    'type' => 'preview',
-    'span' => 12,
 );

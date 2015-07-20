@@ -27,7 +27,6 @@ $vardefs = array(
                 'name' => 'name',
                 'vname' => 'LBL_NAME',
                 'type' => 'name',
-                'link' => true, // bug 39288
                 'dbType' => 'varchar',
                 'len' => 255,
                 'unified_search' => true,
@@ -229,7 +228,7 @@ $vardefs = array(
     ),
     'indices' => array(
         'id' => array(
-            'name' => 'idx_' . preg_replace('/[^a-z_\-]/i', '', strtolower($module)) . '_pk',
+            'name' => 'idx_' . preg_replace('/[^a-z0-9_\-]/i', '', strtolower($module)) . '_pk',
             'type' => 'primary',
             'fields' => array('id')
         ),

@@ -615,6 +615,7 @@ $dictionary['User'] = array(
         'kbusefulness' => array(
             'name' => 'kbusefulness',
             'type' => 'link',
+            'reportable' => false,
             'relationship' => 'usefulness',
             'link_file' => 'modules/KBContents/UsefulnessLink.php',
             'link_class' => 'UsefulnessLink',

@@ -21,6 +21,7 @@
     <tr><td colspan='100'>
         {if empty($msg)}
             <form name="ConfigureShortcutBar" method="POST" action="index.php">
+{sugar_csrf_form_token}
                 <input type="hidden" name="module" value="Administration">
                 <input type="hidden" name="action" value="ConfigureShortcutBar">
                 <input type="hidden" id="enabled_modules" name="enabled_modules" value="">
@@ -122,7 +123,7 @@
                             Connect.method,
                             Connect.url,
                             {success: SUGAR.saveCallBack},
-                            'to_pdf=1&module=Administration&action=ConfigureShortcutBar&enabled_modules=' + YAHOO.lang.JSON.stringify(modules)
+                            'to_pdf=1&module=Administration&action=ConfigureShortcutBar&enabled_modules=' + YAHOO.lang.JSON.stringify(modules) + '&csrf_token=' + SUGAR.csrf.form_token
                     );
 
                     return true;

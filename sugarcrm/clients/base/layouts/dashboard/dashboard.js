@@ -106,6 +106,8 @@
 
         this._super('initialize', [options]);
 
+        this._bindButtonEvents();
+
         this.model.on('setMode', function(mode) {
             if (mode === 'edit' || mode === 'create') {
                 this.$('.dashboard').addClass('edit');
@@ -113,7 +115,6 @@
                 this.$('.dashboard').removeClass('edit');
             }
         }, this);
-
 
         // help dashboard triggers
         app.events.on('app:help:show', this.openHelpDashboard, this);
@@ -175,6 +176,15 @@
                 });
             }, this);
         }
+    },
+
+    /**
+     * Binds the button events that are specific to the record pane.
+     *
+     * @protected
+     */
+    _bindButtonEvents: function() {
+        this.context.on('button:save_button:click', this.handleSave, this);
     },
 
     /**
@@ -509,6 +519,7 @@
                 // make sure that the model actually has some metadata
                 if (!_.isUndefined(model.get('metadata'))) {
                     model.save({}, this._getDashboardModelSaveParams());
+                    this.collection.add(model);
                 }
             }, this);
         }
@@ -763,6 +774,10 @@
                 if (method === 'read') {
                     options.params.view_name = layoutName;
                 }
+
+                app.data.trigger('data:sync:start', method, model, options);
+                model.trigger('data:sync:start', method, options);
+
                 app.api.records(method, path, model.attributes, options.params, callbacks);
             };
 
@@ -891,5 +906,44 @@
 
         this.dashboardLayouts = null;
         this._super('_dispose');
+    },
+
+    /**
+     * Saves the dashboard to the server.
+     */
+    handleSave: function() {
+        this.model.save({}, {
+            //Show alerts for this request
+            showAlerts: true,
+            fieldsToValidate: {
+                'name' : {
+                    required: true
+                },
+                'metadata' : {
+                    required: true
+                }
+            },
+            success: _.bind(function() {
+                this.model.unset('updated');
+                if (this.context.get('create')) {
+                    // We have a parent context only for dashboards in the RHS.
+                    if (this.context.parent) {
+                        this.getContextBro('Home').get('collection').add(this.model);
+                        this.navigateLayout(this.model.id);
+                    } else {
+                        app.navigate(this.context, this.model);
+                    }
+                } else {
+                    this.context.trigger('record:set:state', 'view');
+                }
+            }, this),
+            error: function() {
+                app.alert.show('error_while_save', {
+                    level: 'error',
+                    title: app.lang.get('ERR_INTERNAL_ERR_MSG'),
+                    messages: app.lang.get('ERR_HTTP_500_TEXT')
+                });
+            }
+        });
     }
 })

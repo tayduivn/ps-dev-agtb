@@ -1066,9 +1066,9 @@ class HealthCheckScanner
         }
 
         // Check if ModuleBuilder module needs to be run as BWC
-        // Checks from 6_ScanModules
+        // Checks from 6_ScanModules. 'isSidecarModule' is added later - @see CRYS-1068.
         $bwc = false;
-        if (!$this->isMBModule($module)) {
+        if (!$this->isMBModule($module) && !$this->isSidecarModule($module)) {
             $bwc = true;
             $this->updateStatus("toBeRunAsBWC", $module);
         } else {
@@ -2198,6 +2198,27 @@ ENDP;
         }
 
         return $return;
+    }
+
+    /**
+     * Check if a module has Sidecar characteristics.
+     * @param string $module name of the module.
+     * @return bool
+     */
+    protected function isSidecarModule($module)
+    {
+        $directoriesToCheck = array(
+            "$module/clients/base",
+            "custom/$module/clients/base",
+        );
+
+        foreach ($directoriesToCheck as $dir) {
+            if (file_exists($dir)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

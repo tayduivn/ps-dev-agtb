@@ -160,7 +160,7 @@
     disableActivityStreamToggle: function(moduleName, moduleMeta, viewMeta) {
         if (moduleName !== 'Activities' && !moduleMeta.activityStreamEnabled) {
             _.each(viewMeta.availableToggles, function(toggle) {
-                if (toggle.name === 'activitystream') {
+                if (toggle.type === 'activitystream') {
                     toggle.disabled = true;
                     toggle.label = 'LBL_ACTIVITY_STREAM_DISABLED';
                 }

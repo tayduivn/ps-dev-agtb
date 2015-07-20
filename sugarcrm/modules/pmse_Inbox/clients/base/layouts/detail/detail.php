@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -12,11 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 $module_name = 'pmse_Inbox';
 $viewdefs[$module_name]['base']['layout']['detail'] = array(
-    'type' => 'detail',
     'components' => array(
         array(
             'view' => 'subnavdetail',

@@ -15,6 +15,16 @@ require_once('data/SugarBeanApiHelper.php');
 class CalendarEventsApiHelper extends SugarBeanApiHelper
 {
     /**
+     * List of fields for calendar events that should be returned as an integer
+     *
+     * @var array
+     */
+    protected $numericFields = array(
+        'duration_hours',
+        'duration_minutes',
+    );
+
+    /**
      * {@inheritdoc}
      *
      * The bean must have values for `date_start`, `duration_hours`, and `duration_minutes` after it has been populated.
@@ -104,7 +114,24 @@ class CalendarEventsApiHelper extends SugarBeanApiHelper
         unset($data['send_invites']);
         unset($data['auto_invite_parent']);
 
+        // Handle enforcement of numerics, an issue introduced in MACAROON-684.
+        foreach ($this->numericFields as $field) {
+            if (array_key_exists($field, $data)) {
+                $data[$field] = $this->getNumericValue($data[$field]);
+            }
+        }
         return $data;
+    }
+
+    /**
+     * Gets a numeric value for certain calendar event fields.
+     *
+     * @param string $data Numeric value of data, as a string
+     * @return integer The numeric value of data, as an integer
+     */
+    protected function getNumericValue($data)
+    {
+        return is_numeric($data) ? (int) $data : null;
     }
 
     /**

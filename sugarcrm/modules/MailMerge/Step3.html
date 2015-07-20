@@ -15,6 +15,7 @@
 <span class="error">{ERROR}</span>
 <!-- END: error -->
 			<form enctype="multipart/form-data" name="EditView" method="POST" action="index.php">
+{sugar_csrf_form_token}
 			<input type="hidden" name="module" value="MailMerge">
 			<input type="hidden" name="step" value="4">
 			<input type="hidden" name="action" value="index">

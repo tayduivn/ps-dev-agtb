@@ -35,6 +35,7 @@ window.opener.YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "mo
 </script>
 <div id="dcSearchFormDiv" style="left:20px;">
 <form id="dcSearchForm">
+{sugar_csrf_form_token}
 <table class='dcSearch' border='0' cellpadding='2' cellspacing='2'>
 <tr>
 <td>

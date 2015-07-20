@@ -41,6 +41,15 @@
          */
         this.isFocusable = false;
 
+        /**
+         * Used for indicating the state of the button icon.
+         *
+         * @property {boolean}
+         * - `true` means magnifying glass.
+         * - `false` means X icon.
+         */
+        this.searchButtonIcon = true;
+
         this.layout.on('quicksearch:button:toggle', this.toggleSearchIcon, this);
     },
 
@@ -54,6 +63,7 @@
      */
     toggleSearchIcon: function(searchButtonIcon) {
         var iconEl = this.$('[data-action=search_icon] .fa').first();
+        this.searchButtonIcon = searchButtonIcon;
         if (searchButtonIcon) {
             iconEl.removeClass('fa-times');
             iconEl.addClass('fa-search');
@@ -67,11 +77,11 @@
      * Handler for clicks on the search icon (or x, depending on state).
      */
     searchIconClickHandler: function() {
-        if (this.layout.expanded) {
+        if (this.searchButtonIcon) {
+            this.layout.trigger('quicksearch:bar:search');
+        } else {
             this.layout.trigger('quicksearch:bar:clear');
             this.layout.trigger('quicksearch:close');
-        } else {
-            this.layout.trigger('quicksearch:bar:search');
         }
     }
 })

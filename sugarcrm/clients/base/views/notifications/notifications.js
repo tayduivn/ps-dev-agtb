@@ -106,7 +106,10 @@
         this._initCollection();
         this._initReminders();
         this._initFavicon();
-        this.startPulling();
+
+        //Start pulling data after 1 second so that other more important calls to
+        //the server can be processed first.
+        window.setTimeout(_.bind(this.startPulling, this), 1000);
 
         this.collection.on('change:is_read', this.render, this);
         return this;
@@ -243,7 +246,6 @@
         this._remindersIntervalStamp = new Date().getTime();
 
         this.pull();
-        this._pullReminders();
         this._intervalId = window.setTimeout(_.bind(this._pullAction, this), this.delay);
         this._remindersIntervalId = window.setTimeout(_.bind(this.checkReminders, this), this.reminderDelay);
         return this;
@@ -263,7 +265,6 @@
         this._intervalId = window.setTimeout(_.bind(this._pullAction, this), this.delay);
 
         this.pull();
-        this._pullReminders();
     },
 
     /**
@@ -284,8 +285,8 @@
     },
 
     /**
-     * Pull and render notifications, if view isn't disposed or dropdown isn't
-     * open.
+     * Pull notifications and reminders via bulk API. Render notifications
+     * if view isn't disposed or dropdown isn't open.
      *
      * @return {View.Views.BaseNotificationsView} Instance of this view.
      */
@@ -294,7 +295,8 @@
             return this;
         }
 
-        var self = this;
+        var self = this,
+            bulkApiId = _.uniqueId();
 
         this.collection.fetch({
             success: function() {
@@ -303,8 +305,15 @@
                 }
 
                 self.render();
+            },
+            apiOptions: {
+                bulk: bulkApiId
             }
         });
+
+        this._pullReminders(bulkApiId);
+
+        app.api.triggerBulkCall(bulkApiId);
 
         return this;
     },
@@ -314,8 +323,10 @@
      *
      * This will give us all the reminders that should be triggered during the
      * next maximum reminders time (with pull delay).
+     *
+     * @param {string} bulkApiId Bulk ID that the reminders should be a part of
      */
-    _pullReminders: function() {
+    _pullReminders: function(bulkApiId) {
 
         if (this.disposed || !_.isFinite(this.reminderMaxTime)) {
             return this;
@@ -341,7 +352,10 @@
                 silent: true,
                 merge: true,
                 //Notifications should never trigger a metadata refresh
-                apiOptions: {skipMetadataHash: true}
+                apiOptions: {
+                    skipMetadataHash: true,
+                    bulk: bulkApiId
+                }
             });
         }, this);
 
@@ -384,20 +398,16 @@
      */
     _showReminderAlert: function(model) {
         var url = app.router.buildRoute(model.module, model.id),
-            dateFormat = app.user.getPreference('datepref') + ' ' + app.user.getPreference('timepref'),
-            dateValue = app.date.format(new Date(model.get('date_start')), dateFormat),
-            template = app.template.getView('notifications.notifications-alert'),
-            message = template({
-                title: new Handlebars.SafeString(app.lang.get('LBL_REMINDER_TITLE', model.module)),
-                module: model.module,
-                name: new Handlebars.SafeString(model.get('name')),
-                location: new Handlebars.SafeString(model.get('location')),
-                description: model.get('description'),
-                dateStart: dateValue,
-                parentName: new Handlebars.SafeString(model.get('parent_name'))
-            });
-        _.defer(function() {
-            if (confirm(message)) {
+            startTime = app.date(model.get('date_start')).format(app.date.getUserTimeFormat()),
+            data = {
+                moduleName: app.lang.getModuleName(model.module),
+                startTime: startTime
+            },
+            title = app.lang.get('TPL_NOTIFICATION_TITLE', model.module, data);
+
+        app.browserNotification.show(title, {
+            body: new Handlebars.SafeString(model.get('name')),
+            onclick: function() {
                 app.router.navigate(url, {trigger: true});
             }
         });

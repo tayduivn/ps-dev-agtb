@@ -61,6 +61,7 @@ var resources = new Array();
 <td>
 
 <form name="EditViewGrid" id="EditViewGrid" method="post" action="index.php" data-disablebwchaschanged="true">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Project" />
 <input type="hidden" name="record" value="{$ID}" />
 <input type="hidden" name="team_id" value="{$TEAM}" />

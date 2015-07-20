@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -12,63 +11,31 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
 $viewdefs['pmse_Emails_Templates']['base']['layout']['emailtemplates'] = array(
-    'components' =>
+    'components' => array(
         array(
-            array(
-                'layout' =>
+            'layout' => array(
+                'type' => 'default',
+                'name' => 'sidebar',
+                'components' => array(
                     array(
-                        'components' =>
-                            array(
+                        'layout' => array(
+                            'type' => 'base',
+                            'name' => 'main-pane',
+                            'targetEl' => '.main-pane',
+                            'components' => array(
                                 array(
-                                    'layout' =>
-                                        array(
-                                            'components' =>
-                                                array(
-                                                    array(
-                                                        'view' => 'compose',
-                                                        'primary' => true,
-                                                    ),
-                                                    array(
-                                                        'layout' => 'extra-info',
-                                                    ),
-                                                ),
-
-                                            'type' => 'simple',
-                                            'name' => 'main-pane',
-                                            'span' => 8,
-                                        ),
+                                    'view' => 'compose',
+                                    'primary' => true,
                                 ),
                                 array(
-                                    'layout' =>
-                                        array(
-                                            'components' =>
-                                                array(),
-                                            'type' => 'simple',
-                                            'name' => 'dashboard-pane',
-                                            'span' => 4,
-                                        ),
-                                ),
-                                array(
-                                    'layout' =>
-                                        array(
-                                            'components' =>
-                                                array(),
-                                            'type' => 'simple',
-                                            'name' => 'preview-pane',
-                                            'span' => 8,
-                                        ),
+                                    'layout' => 'extra-info',
                                 ),
                             ),
-                        'type' => 'default',
-                        'name' => 'sidebar',
-                        'span' => 12,
+                        ),
                     ),
+                ),
             ),
         ),
-    'type' => 'simple',
-    'name' => 'base',
-    'span' => 12,
+    ),
 );
-

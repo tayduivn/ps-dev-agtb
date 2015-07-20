@@ -26,6 +26,7 @@
 </head>
 <body class='tabForm'>
 <form action='index.php' name='add_schedule' method='POST'>
+{sugar_csrf_form_token}
 <table  width='100%'  id='schedule_table' border='0'>
 <tr>
     <td scope="row" id="date_start_label" ><slot>{$MOD.LBL_START_DATE}: </slot></td>

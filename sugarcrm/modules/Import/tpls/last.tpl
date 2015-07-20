@@ -45,6 +45,7 @@ div.resultsTable {
 {/if}
 </span>
 <form name="importlast" id="importlast" method="POST" action="index.php">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="action" value="Undo">
 <input type="hidden" name="has_header" value="{$smarty.request.has_header}">
@@ -154,6 +155,7 @@ div.resultsTable {
 
 {if $PROSPECTLISTBUTTON != ''}
 <form name="DetailView">
+{sugar_csrf_form_token}
     <input type="hidden" name="module" value="Prospects">
     <input type="hidden" name="record" value="id">
 </form>

@@ -204,27 +204,46 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
                     continue;
             }
 
-            if(!is_array($value)){
-                $seed->$name = $value;
-                $return_fields[] = $name;
-            }else{
-                $seed->$value['name'] = $value['value'];
-                $return_fields[] = $value['name'];
+            if (is_array($value)) {
+                $name = $value['name'];
+                $value = $value['value'];
             }
+
+            if (!self::$helperObject->checkFieldValue($seed, $name, $value)) {
+                $error->set_error('invalid_data_format');
+                self::$helperObject->setFaultObject($error);
+                $GLOBALS['log']->info('End: SugarWebServiceImpl->set_entry');
+                return;
+            }
+
+            $seed->$name = $value;
+            $return_fields[] = $name;
+
         }
         if (!self::$helperObject->checkACLAccess($seed, 'Save', $error, 'no_access') || ($seed->deleted == 1  && !self::$helperObject->checkACLAccess($seed, 'Delete', $error, 'no_access'))) {
             $GLOBALS['log']->info('End: SugarWebServiceImpl->set_entry');
             return;
         } // if
 
-        if ($module_name == 'Users' && !$seed->verify_data()) {
-            $GLOBALS['log']->info('End: SugarWebServiceImpl->set_entry');
-            $error->set_error('invalid_data_format');
+        try{
+            $seed->save(self::$helperObject->checkSaveOnNotify());
+        } catch (SugarApiExceptionNotAuthorized $ex) {
+            $GLOBALS['log']->info('End: SugarWebServiceImplv3_1->set_entry');
+            switch($ex->messageLabel) {
+                case 'ERR_USER_NAME_EXISTS':
+                    $error_string = 'duplicates';
+                    break;
+                case 'ERR_REPORT_LOOP':
+                    $error_string = 'user_loop';
+                    break;
+                default:
+                    $error_string = 'error_user_create_update';
+            }
+            $error->set_error($error_string);
             self::$helperObject->setFaultObject($error);
             return;
         }
 
-        $seed->save(self::$helperObject->checkSaveOnNotify());
 
         $return_entry_list = self::$helperObject->get_name_value_list_for_fields($seed, $return_fields );
 

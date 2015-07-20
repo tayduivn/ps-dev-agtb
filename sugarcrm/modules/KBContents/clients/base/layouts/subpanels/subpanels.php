@@ -39,6 +39,4 @@ $viewdefs['KBContents']['base']['layout']['subpanels'] = array (
           'acl_action' => 'edit',
       ),
   ),
-  'type' => 'subpanels',
-  'span' => 12,
 );

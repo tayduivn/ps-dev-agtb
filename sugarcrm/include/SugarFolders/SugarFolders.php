@@ -59,6 +59,8 @@ class SugarFolder {
     var $defaultSort = 'date';
     var $defaultDirection = "DESC";
 
+    protected $emailBean;
+
 	// private attributes
 	var $_depth;
 
@@ -134,6 +136,7 @@ class SugarFolder {
 	 */
 	function SugarFolder() {
 		$this->db = DBManagerFactory::getInstance();
+        $this->emailBean = BeanFactory::getBean('Emails');
 	}
 
 	function deleteEmailFromAllFolder($id) {
@@ -326,13 +329,18 @@ class SugarFolder {
 	    $q = <<<ENDQ
 SELECT emails.id , emails.name, emails.date_sent, emails.status, emails.type, emails.flagged, emails.reply_to_status, emails_text.from_addr, emails_text.to_addrs, 'Emails' polymorphic_module FROM emails
 JOIN emails_text on emails.id = emails_text.email_id
-{$this->addTeamSecurityClause()}
-WHERE emails.deleted=0 AND emails.type NOT IN ('out', 'draft') AND emails.status NOT IN ('sent', 'draft') AND emails.id IN (
+ENDQ;
+        $this->emailBean->addVisibilityFrom($q, array('where_condition' => true));
+
+        $q .= <<<ENDW
+ WHERE emails.deleted=0 AND emails.type NOT IN ('out', 'draft') AND emails.status NOT IN ('sent', 'draft')
+AND emails.id IN (
 SELECT eear.email_id FROM emails_email_addr_rel eear
 JOIN email_addr_bean_rel eabr ON eabr.email_address_id=eear.email_address_id AND eabr.bean_id = '{$current_user->id}' AND eabr.bean_module = 'Users'
 WHERE eear.deleted=0
 )
-ENDQ;
+ENDW;
+        $this->emailBean->addVisibilityWhere($q, array('where_condition' => true));
         return $q;
 	}
 
@@ -369,29 +377,16 @@ ENDQ;
                 emails_text
             on
                 emails.id = emails_text.email_id
-                " . $this->addTeamSecurityClause() . "
+                ";
+        $this->emailBean->addVisibilityFrom($q, array('where_condition' => true));
+        $q .= "
             WHERE
                 (type = '{$type}' OR status = '{$status}')
                 AND assigned_user_id = '{$current_user->id}'
-                AND emails.deleted = 0"
-        ;
+                AND emails.deleted = 0 ";
+        $this->emailBean->addVisibilityWhere($q, array('where_condition' => true));
 		return $q . $ret;
 	} // fn
-
-	function addTeamSecurityClause() {
-		global $current_user;
-		if(!is_admin($current_user)) {
-            $dbResult = $this->db->query(
-                'SELECT team_id FROM team_memberships WHERE user_id=' .
-                $this->db->quoted($current_user->id) . ' AND deleted=0'
-            );
-            $teamsIds = array();
-            while ($team = $this->db->fetchByAssoc($dbResult)) {
-                $teamsIds[] = $this->db->quoted($team['team_id']);
-            }
-            return ' AND emails.team_id IN (' . implode(',', array_unique($teamsIds)) . ') ';
-		}
-	}
 
 	/**
 	 * returns array of items for listView display in yui-ext Grid
@@ -444,12 +439,15 @@ ENDQ;
                     emails_text
                 on
                     emails.id = emails_text.email_id
-                    " . $this->addTeamSecurityClause() . "
+                    ";
+            $this->emailBean->addVisibilityFrom($q, array('where_condition' => true));
+            $q .= "
                 WHERE
                     folders_rel.folder_id = '{$folderId}'
                     AND folders_rel.deleted = 0
-                    AND emails.deleted = 0"
+                    AND emails.deleted = 0 "
             ;
+            $this->emailBean->addVisibilityWhere($q, array('where_condition' => true));
 			if ($this->is_group) {
 				$q = $q . " AND (emails.assigned_user_id is null or emails.assigned_user_id = '')";
 			}
@@ -512,12 +510,15 @@ ENDQ;
                     emails
                 ON
                     emails.id = folders_rel.polymorphic_id
-                    " . $this->addTeamSecurityClause() . "
+                    ";
+            $this->emailBean->addVisibilityFrom($q, array('where_condition' => true));
+            $q .= "
                 WHERE
                     folder_id = '{$folderId}'
                     AND folders_rel.deleted = 0
-                    AND emails.deleted = 0"
+                    AND emails.deleted = 0 "
             ;
+            $this->emailBean->addVisibilityWhere($q, array('where_condition' => true));
 			if ($this->is_group) {
 				$q .= " AND (emails.assigned_user_id is null or emails.assigned_user_id = '')";
 			}
@@ -550,12 +551,15 @@ ENDQ;
                     emails
                 on
                     fr.folder_id = '{$folderId}'
-				" . $this->addTeamSecurityClause() . "
+				";
+            $this->emailBean->addVisibilityFrom($q, array('where_condition' => true));
+            $q .= "
                     AND fr.deleted = 0
                     AND fr.polymorphic_id = emails.id
                     AND emails.status = 'unread'
-                    AND emails.deleted = 0"
+                    AND emails.deleted = 0 "
             ;
+            $this->emailBean->addVisibilityWhere($q, array('where_condition' => true));
             if ($this->is_group) {
                 $q .= " AND (emails.assigned_user_id is null or emails.assigned_user_id = '')";
             }
@@ -631,6 +635,8 @@ ENDQ;
 
 		$found = array();
 		while($a = $this->db->fetchByAssoc($r, false)) {
+            $a['created_by'] = $this->db->fromConvert($a['created_by'], 'id');
+
 			if ((($a['folder_type'] == $myEmailTypeString) ||
 				($a['folder_type'] == $myDraftsTypeString) ||
 				($a['folder_type'] == $mySentEmailTypeString)) &&

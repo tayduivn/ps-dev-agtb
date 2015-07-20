@@ -204,6 +204,7 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
 
     /**
      * Remove old KB from menu and add new one.
+     * Remove old KB from portal and add new one.
      */
     protected function checkMenu()
     {
@@ -211,13 +212,16 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
         $tc = new TabController();
 
         $tabs = $tc->get_system_tabs();
-        if (isset($tabs['KBDocuments'])) {
-            unset($tabs['KBDocuments']);
-        }
+        unset($tabs['KBDocuments']);
         if (!isset($tabs['KBContents'])) {
             $tabs['KBContents'] = 'KBContents';
         }
         $tc->set_system_tabs($tabs);
+
+        $tabs = $tc->getPortalTabs();
+        $tabs = array_diff(array_values($tabs), array('KBDocuments', 'KBContents'));
+        array_push($tabs, 'KBContents');
+        $tc->setPortalTabs(array_values($tabs));
     }
 
     /**

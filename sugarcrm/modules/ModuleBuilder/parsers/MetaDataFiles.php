@@ -565,10 +565,10 @@ class MetaDataFiles
      * @param string $component Layout or view
      * @return string
      */
-    public static function getSugarObjectFileDir($module, $client = '', $component = self::COMPONENTVIEW)
+    public static function getSugarObjectFileDir($module, $client = '', $component = self::COMPONENTVIEW, $seed = null)
     {
         require_once 'modules/ModuleBuilder/Module/StudioModule.php';
-        $sm = new StudioModule($module);
+        $sm = StudioModuleFactory::getStudioModule($module, $seed);
 
         $dirname = 'include/SugarObjects/templates/' . $sm->getType();
         if (!empty($client)) {
@@ -846,8 +846,8 @@ class MetaDataFiles
         }
         foreach ($modules as $module) {
             $seed = BeanFactory::getBean($module);
-            $fileList = self::getClientFiles($platforms, $type, $module, $context);
-            $moduleResults = self::getClientFileContents($fileList, $type, $module);
+            $fileList = self::getClientFiles($platforms, $type, $module, $context, $seed);
+            $moduleResults = self::getClientFileContents($fileList, $type, $module, $seed);
 
             if ($type == "view") {
                 foreach ($moduleResults as $view => $defs) {
@@ -899,7 +899,7 @@ class MetaDataFiles
      *
      * @return array
      */
-    public static function getClientFiles( $platforms, $type, $module = null, MetaDataContextInterface $context = null)
+    public static function getClientFiles( $platforms, $type, $module = null, MetaDataContextInterface $context = null, $bean = null)
     {
         $checkPaths = array();
 
@@ -918,12 +918,14 @@ class MetaDataFiles
                 // The template flag is if that file needs to be "built" by the metadata loader so it
                 // is no longer a template file, but a real file.
                 // Use the module_dir if available to support submodules
-                $bean = BeanFactory::getBean($module);
+                if (!$bean) {
+                    $bean = BeanFactory::getBean($module);
+                }
                 $module_path  = isset($bean->module_dir) ? $bean->module_dir : $module;
                 $checkPaths['custom/modules/'.$module_path.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
                 $checkPaths['modules/'.$module_path.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
                 $baseTemplateDir = 'include/SugarObjects/templates/basic/clients/'.$platform.'/'.$type.'s';
-                $nonBaseTemplateDir = self::getSugarObjectFileDir($module, $platform, $type);
+                $nonBaseTemplateDir = self::getSugarObjectFileDir($module, $platform, $type, $bean);
                 if (!empty($nonBaseTemplateDir) && $nonBaseTemplateDir != $baseTemplateDir ) {
                     $checkPaths['custom/'.$nonBaseTemplateDir] = array('platform'=>$platform,'template'=>true);
                     $checkPaths[$nonBaseTemplateDir] = array('platform'=>$platform, 'template'=>true);
@@ -1060,7 +1062,7 @@ class MetaDataFiles
      *
      * @return array
      */
-    public static function getClientFileContents( $fileList, $type, $module = '' )
+    public static function getClientFileContents( $fileList, $type, $module = '', $bean = null)
     {
         $results = array();
 
@@ -1113,7 +1115,9 @@ class MetaDataFiles
                     if ($fileInfo['template']) {
                         // This is a template file, not a real one.
                         require $fileInfo['path'];
-                        $bean = BeanFactory::getBean($module);
+                        if (!$bean) {
+                            $bean = BeanFactory::getBean($module);
+                        }
                         if ( !is_a($bean,'SugarBean') ) {
                             // I'm not sure what this is, but it's not something we can template
                             continue;

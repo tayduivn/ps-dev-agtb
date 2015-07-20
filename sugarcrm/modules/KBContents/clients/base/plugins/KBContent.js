@@ -41,8 +41,7 @@
                     this.context.on('button:create_revision_button:click', this.createRevision, this);
                     this.context.on('button:create_article_button:click', this.createArticle, this);
                     this.context.on('button:create_article_button_subpanel:click', this.createArticleSubpanel, this);
-
-                    if (this.action == 'list') {
+                    if (this.tplName === 'list' || this.tplName === 'panel-top') {
                         this.context.on('list:editrow:fire', _.bind(function(model, view) {
                             this._initValidationHandler(model);
                         }, this));
@@ -73,8 +72,15 @@
              * @param {Data.Bean} model A record view model caused creation.
              */
             createArticle: function(model) {
-                var link = 'kbcontents',
-                    module = 'KBContents',
+                var module = 'KBContents',
+                    fields = app.metadata.getModule(model.module).fields,
+                    links = _.filter(fields, function(field) {
+                        if (field.type !== 'link' || !field.relationship) {
+                            return false;
+                        }
+                        return app.data.getRelatedModule(model.module, field.name) === module;
+                    }),
+                    link = links.length === 1 ? links[0].name : 'kbcontents',
                     bodyTmpl = app.template.getField('htmleditable_tinymce', 'create-article', module),
                     attrs = {name: model.get('name'), kbdocument_body: bodyTmpl({model: model})},
                     prefill = app.data.createRelatedBean(model, null, link, attrs),
@@ -94,7 +100,12 @@
                         model: prefill,
                         module: module
                     }},
-                    function(context, newModel) {}
+                    function(context, newModel) {
+                        if (newModel !== undefined) {
+                            var viewContext = context.parent.parent || context.parent;
+                            viewContext.trigger('subpanel:reload', {links: _.union(links, [link])});
+                        }
+                    }
                 );
             },
 
@@ -113,11 +124,19 @@
              */
             createRelatedContent: function(parentModel, type) {
                 var self = this,
-                    prefill = app.data.createBean('KBContents');
+                    prefill = app.data.createBean('KBContents', {id: parentModel.get('id')});
 
-                parentModel.fetch({
+                prefill.fetch({
                     success: function() {
-                        self._copyRelatedContent(prefill, parentModel);
+                        var removeList = ['id', 'is_external'];
+
+                        _.each(removeList, function(field) {
+                            prefill.unset(field);
+                        });
+
+                        prefill.set('status', 'draft');
+                        prefill.set('assigned_user_id', app.user.get('id'));
+                        prefill.set('assigned_user_name', app.user.get('full_name'));
 
                         if (type === self.CONTENT_LOCALIZATION) {
                             self._onCreateLocalization(prefill, parentModel);
@@ -132,38 +151,6 @@
                         });
                     }
                 });
-            },
-
-            /**
-             * Uses standard Model's copy mechanism and adds/removes additional fields, specific to related content.
-             * The purpose is to use vardefs' 'duplicate_on_record_copy' only for general copying.
-             * @param {Data.Model} prefill New created model.
-             * @param {Data.Model} parentModel Parent model.
-             * @private
-             */
-            _copyRelatedContent: function(prefill, parentModel) {
-                var removeList = ['id', 'is_external'],
-                    addList = [
-                        'active_date', 'exp_date', 'attachment_list', 'usefulness_user_vote',
-                        'kbsapprover_id', 'kbsapprover_name', 'approved',
-                        'kbscase_id', 'kbscase_name',
-                        'localizations', 'revisions', 'related_languages',
-                        'kbdocument_id', 'kbdocument_name', 'kbdocuments_kbcontents',
-                        'kbarticle_id', 'kbarticle_name', 'kbarticles_kbcontents'
-                    ];
-
-                prefill.copy(parentModel);
-
-                _.each(removeList, function(field) {
-                    prefill.unset(field);
-                });
-                _.each(addList, function(field) {
-                    prefill.set(field, parentModel.get(field));
-                });
-
-                prefill.set('status', 'draft');
-                prefill.set('assigned_user_id', app.user.get('id'));
-                prefill.set('assigned_user_name', app.user.get('full_name'));
             },
 
             /**
@@ -367,11 +354,14 @@
                     expDate = model.get(fieldName),
                     publishingDate = model.get('active_date'),
                     status = model.get('status'),
-                    changed = model.changedAttributes(model.getSyncedAttributes());
+                    changed = model.changedAttributes(model.getSyncedAttributes()),
+                    errorKeys = [];
 
                 if (
-                    this._isPublishingStatus(status) &&
-                    (!changed.status || !this._isPublishingStatus(changed.status))
+                    (this._isPublishingStatus(status) &&
+                    (!changed.status || !this._isPublishingStatus(changed.status))) ||
+                    (this._massupdateStatusValidation('published') &&
+                    (!publishingDate || app.date(publishingDate).isBefore(Date.now())))
                 ) {
                     publishingDate = app.date().formatServer(true);
                     model.set('active_date', publishingDate);
@@ -383,6 +373,11 @@
                     }
                     errors[fieldName] = errors[fieldName] || {};
                     errors[fieldName].expDateLow = true;
+                    errorKeys.push('expDateLow');
+                }
+
+                if (this.context.get('layout') !== 'record' && !_.isUndefined(errors[fieldName])) {
+                    this._alertError(errorKeys);
                 }
 
                 callback(null, fields, errors);
@@ -401,14 +396,18 @@
                 var fieldName = 'active_date',
                     status = model.get('status'),
                     publishingDate = model.get(fieldName),
-                    pubDateObject = new Date(publishingDate);
+                    errorKeys = [];
 
-                if (status == 'approved') {
-                    if (publishingDate && pubDateObject && pubDateObject.getTime() < Date.now()) {
+                if (status == 'approved' || this._massupdateStatusValidation('approved')) {
+                    if (publishingDate && app.date(publishingDate).isBefore(Date.now())) {
                         errors[fieldName] = errors[fieldName] || {};
                         errors[fieldName].activeDateLow = true;
+                        errorKeys.push('activeDateLow');
+                        if (this.context.get('layout') !== 'record' && !_.isUndefined(errors[fieldName])) {
+                            this._alertError(errorKeys);
+                        }
                         callback(null, fields, errors);
-                    } else if (!publishingDate) {
+                    } else if (!publishingDate && !this._massupdateStatusValidation('approved')) {
                         app.alert.show('save_without_publish_date_confirmation', {
                             level: 'confirmation',
                             messages: app.lang.get('LBL_SPECIFY_PUBLISH_DATE', 'KBContents'),
@@ -459,6 +458,16 @@
             },
 
             /**
+             * Check if massupdate status called.
+             * @param status
+             * @return {boolean}
+             * @private
+             */
+            _massupdateStatusValidation: function(status) {
+                return (this.action === 'massupdate' && this.model.changedAttributes()['status'] === status);
+            },
+
+            /**
              * Called whenever validation completes.
              * Change publishing and expiration dates to current on manual change.
              *
@@ -477,6 +486,28 @@
                     ) {
                         model.set('active_date', app.date().formatServer(true));
                     }
+                }
+            },
+
+            /**
+             * Alert error message.
+             *
+             * @param keys
+             * @private
+             */
+            _alertError: function(keys) {
+                var messages = [];
+
+                _.each(keys, function(key) {
+                    messages.push(app.lang.get(app.error.errorName2Keys[key], 'KBContents'));
+                });
+
+                if (messages.length > 0) {
+                    app.alert.show('validation-error', {
+                        level: 'error',
+                        messages: messages,
+                        autoClose: true
+                    });
                 }
             },
 

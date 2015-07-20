@@ -12,8 +12,7 @@
  */
 
 $viewdefs['base']['layout']['preview'] = array(
-    'components' =>
-    array(
+    'components' => array(
         array(
             'view' => 'preview-header',
         ),
@@ -22,14 +21,11 @@ $viewdefs['base']['layout']['preview'] = array(
         ),
         array(
             'layout' => 'preview-activitystream',
-            'context' =>
-            array(
+            'context' => array(
                 'module' => 'Activities',
                 'forceNew' => true,
             ),
         ),
     ),
-    'type' => 'preview',
-    'span' => 12,
 );
 

@@ -12,7 +12,6 @@
 
 $viewdefs['base']['layout']['help-dashboard'] = array(
     'name' => 'LBL_DEFAULT_HELP_DASHBOARD_TITLE',
-    'type' => 'help-dashboard',
     'dashboard_type' => 'help-dashboard',
     'metadata' => array(
         'components' => array(

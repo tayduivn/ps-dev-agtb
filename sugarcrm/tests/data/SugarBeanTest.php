@@ -16,6 +16,10 @@ require_once('data/SugarBean.php');
 use SugarTestAccountUtilities as AccountHelper;
 use SugarTestUserUtilities as UserHelper;
 
+/**
+ * Class SugarBeanTest
+ * @coversDefaultClass SugarBean
+ */
 class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()
@@ -721,6 +725,243 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertContains("contact_id", $query["secondary_select"], "secondary_select should contain rel_key field (e.g. contact_id).");
     }
+
+    /**
+     * @dataProvider dataProviderFieldDefs
+     * @param array $defs
+     * @covers ::getFieldDefinitions
+     */
+    public function testGetFieldDefinitionsWithNoFilter($defs)
+    {
+        $bean = new BeanMockTestObjectName();
+
+        $bean->field_defs = $defs;
+
+        $actual = $bean->getFieldDefinitions();
+        $this->assertSameSize($defs, $actual);
+        $this->assertSame($defs, $actual);
+    }
+
+    /**
+     * @dataProvider dataProviderFieldDefs
+     * @param array $defs
+     * @covers ::getFieldDefinitions
+     */
+    public function testGetFieldDefinitionsWithFilter($defs)
+    {
+        $bean = new BeanMockTestObjectName();
+
+        $bean->field_defs = $defs;
+
+        $actual = $bean->getFieldDefinitions('id_name', array('opportunity_id'));
+        $this->assertCount(1, $actual);
+        $this->assertArrayHasKey('id_name', $actual['opportunity_name']);
+    }
+
+
+    public static function dataProviderFieldDefs()
+    {
+        return array(
+            array(array(
+                'opportunity_id' => array(
+                    'name' => 'opportunity_id'
+                ),
+                'opportunity_name' => array(
+                    'name' => 'opportunity_name',
+                    'id_name' => 'opportunity_id'
+                ),
+                'name' => array(
+                    'name' => 'name'
+                ),
+            ))
+        );
+    }
+
+    /**
+     * @covers ::handle_remaining_relate_fields
+     */
+    public function testHandleRemainingRelateFields()
+    {
+        $bean = $this->getMockBuilder('SugarBean')
+            ->disableOriginalConstructor()
+            ->setMethods(array('load_relationship'))
+            ->getMock();
+
+        $bean->id = 'unit_test_id';
+        $bean->opportunity_id = 'new_unit_test_id';
+
+        $bean->rel_fields_before_value = array('opportunity_id' => 'old_unit_test_id');
+
+        $link2 = $this->getMockBuilder('Link2')
+            ->setMethods(array('add', 'delete', 'resetLoaded'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $link2->expects($this->once())
+            ->method('delete')
+            ->with('unit_test_id', 'old_unit_test_id')
+            ->willReturn(true);
+
+        $link2->expects($this->once())
+            ->method('add')
+            ->with('new_unit_test_id')
+            ->willReturn(true);
+
+        $link2->expects($this->never())
+            ->method('resetLoaded');
+
+        $bean->expects($this->once())
+            ->method('load_relationship')
+            ->with('opportunities')
+            ->willReturn(true);
+
+        $bean->opportunities = $link2;
+        $bean->field_defs = array(
+            'opportunity_id' => array(
+                'name' => 'opportunity_id',
+                'type' => 'id'
+            ),
+            'opportunity_name' => array(
+                'name' => 'opportunity_name',
+                'id_name' => 'opportunity_id',
+                'link' => 'opportunities',
+                'save' => true,
+                'type' => 'relate'
+            ),
+            'opportunities' => array(
+                'name' => 'opportunities',
+                'type' => 'link',
+            )
+        );
+
+        $actual = SugarTestReflection::callProtectedMethod($bean, 'handle_remaining_relate_fields');
+
+        $this->assertContains('opportunities', $actual['add']['success']);
+        $this->assertContains('opportunities', $actual['remove']['success']);
+    }
+
+    /**
+     * @covers ::handle_remaining_relate_fields
+     */
+    public function testHandleRemainingRelateFieldsDoesNotRemove()
+    {
+        $bean = $this->getMockBuilder('SugarBean')
+            ->disableOriginalConstructor()
+            ->setMethods(array('load_relationship'))
+            ->getMock();
+
+        $bean->id = 'unit_test_id';
+        $bean->opportunity_id = 'new_unit_test_id';
+
+        $bean->rel_fields_before_value = array();
+
+        $link2 = $this->getMockBuilder('Link2')
+            ->setMethods(array('add', 'delete', 'resetLoaded'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $link2->expects($this->never())
+            ->method('delete');
+
+        $link2->expects($this->once())
+            ->method('add')
+            ->with('new_unit_test_id')
+            ->willReturn(true);
+
+        $link2->expects($this->never())
+            ->method('resetLoaded');
+
+        $bean->expects($this->once())
+            ->method('load_relationship')
+            ->with('opportunities')
+            ->willReturn(true);
+
+        $bean->opportunities = $link2;
+        $bean->field_defs = array(
+            'opportunity_id' => array(
+                'name' => 'opportunity_id',
+                'type' => 'id'
+            ),
+            'opportunity_name' => array(
+                'name' => 'opportunity_name',
+                'id_name' => 'opportunity_id',
+                'link' => 'opportunities',
+                'save' => true,
+                'type' => 'relate'
+            ),
+            'opportunities' => array(
+                'name' => 'opportunities',
+                'type' => 'link',
+            )
+        );
+
+        $actual = SugarTestReflection::callProtectedMethod($bean, 'handle_remaining_relate_fields');
+
+        $this->assertContains('opportunities', $actual['add']['success']);
+        $this->assertEmpty($actual['remove']['success']);
+    }
+
+    /**
+     * @covers ::handle_remaining_relate_fields
+     */
+    public function testHandleRemainingRelateFieldsDoesNotAdd()
+    {
+        $bean = $this->getMockBuilder('SugarBean')
+            ->disableOriginalConstructor()
+            ->setMethods(array('load_relationship'))
+            ->getMock();
+
+        $bean->id = 'unit_test_id';
+        $bean->opportunity_id = '';
+
+        $bean->rel_fields_before_value = array('opportunity_id' => 'old_unit_test_id');
+
+        $link2 = $this->getMockBuilder('Link2')
+            ->setMethods(array('add', 'delete', 'resetLoaded'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $link2->expects($this->never())
+            ->method('add');
+
+        $link2->expects($this->once())
+            ->method('delete')
+            ->with('unit_test_id', 'old_unit_test_id')
+            ->willReturn(true);
+
+        $link2->expects($this->never())
+            ->method('resetLoaded');
+
+        $bean->expects($this->once())
+            ->method('load_relationship')
+            ->with('opportunities')
+            ->willReturn(true);
+
+        $bean->opportunities = $link2;
+        $bean->field_defs = array(
+            'opportunity_id' => array(
+                'name' => 'opportunity_id',
+                'type' => 'id'
+            ),
+            'opportunity_name' => array(
+                'name' => 'opportunity_name',
+                'id_name' => 'opportunity_id',
+                'link' => 'opportunities',
+                'save' => true,
+                'type' => 'relate'
+            ),
+            'opportunities' => array(
+                'name' => 'opportunities',
+                'type' => 'link',
+            )
+        );
+
+        $actual = SugarTestReflection::callProtectedMethod($bean, 'handle_remaining_relate_fields');
+
+        $this->assertContains('opportunities', $actual['remove']['success']);
+        $this->assertEmpty($actual['add']['success']);
+    }
+
 }
 
 // Using Mssql here because mysql needs real connection for quoting

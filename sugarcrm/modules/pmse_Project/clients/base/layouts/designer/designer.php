@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -13,14 +12,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $module_name = 'pmse_Project';
-    $viewdefs[$module_name]['base']['layout']['designer'] = array(
-    'type' => 'simple',
+$viewdefs[$module_name]['base']['layout']['designer'] = array(
     'uid' => '1234',
-    'name' => 'designer',
-    'components' =>
+    'components' => array(
         array(
-            array(
-                'view' => 'designer',
-            ),
+            'view' => 'designer',
         ),
+    ),
 );

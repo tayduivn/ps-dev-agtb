@@ -97,8 +97,8 @@ var project,
         myLayout.toggle('east');
     });*/
 
-var getAutoIncrementName = function (type) {
-    var i, j, k = canvas.getCustomShapes().getSize(), exists, index = 1, auxMap = {
+var getAutoIncrementName = function (type, targetElement) {
+    var i, j, k = canvas.getCustomShapes().getSize(), element, exists, index = 1, auxMap = {
         AdamUserTask: translate('LBL_PMSE_ADAM_DESIGNER_TASK'),
         AdamScriptTask: translate('LBL_PMSE_ADAM_DESIGNER_ACTION'),
         AdamEventLead: translate('LBL_PMSE_ADAM_DESIGNER_LEAD_START_EVENT'),
@@ -118,8 +118,9 @@ var getAutoIncrementName = function (type) {
     for (i = 0; i < k; i += 1) {
         exists = false;
         for (j = 0; j < k; j += 1) {
-            if (canvas.getCustomShapes().get(j).getName() === auxMap[type] + " # " + (i + 1)) {
-                exists = true;
+            element =  canvas.getCustomShapes().get(j);
+            if (element.getName() === auxMap[type] + " # " + (i + 1)) {
+                exists = !(targetElement && targetElement === element);
                 break;
             }
         }
@@ -1265,6 +1266,7 @@ function renderProject (prjCode) {
                 });
                 break;
             }
+
             return customShape;
         }
     });

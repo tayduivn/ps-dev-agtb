@@ -11,7 +11,6 @@
  */
 
 $viewdefs['base']['layout']['access-denied'] = array(
-    'type' => 'simple',
     'components' => array(
         array(
             'view' => 'access-denied',

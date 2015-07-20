@@ -13,6 +13,7 @@
 {$TITLE}
 <p>
 <form action='index.php' method='post' name='Save'>
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Leads">
 <input type="hidden" name="return_module" value="{$RETURN_MODULE}">
 <input type="hidden" name="return_action" value="{$RETURN_ACTION}">

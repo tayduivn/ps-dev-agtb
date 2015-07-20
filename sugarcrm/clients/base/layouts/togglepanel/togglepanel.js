@@ -105,11 +105,11 @@
             if (component.view) {
                 toggle = component.view;
             } else if (component.layout) {
-                toggle = (_.isString(component.layout)) ? component.layout : component.layout.name;
+                toggle = (_.isString(component.layout)) ? component.layout : component.layout.type;
             }
 
             var availableToggle = _.find(this.options.meta.availableToggles, function (curr) {
-                return curr.name === toggle;
+                return curr.type === toggle;
             }, this);
             if (toggle && availableToggle) {
                 var disabled = !!availableToggle.disabled;
@@ -121,8 +121,8 @@
             // Sort the toggles by the order in the availableToggles list
             for (var i = 0; i < this.options.meta.availableToggles.length; i++) {
                 var curr = this.options.meta.availableToggles[i];
-                if (temp[curr.name]) {
-                    this.toggles.push(temp[curr.name]);
+                if (temp[curr.type]) {
+                    this.toggles.push(temp[curr.type]);
                 }
             }
         }
@@ -147,7 +147,7 @@
             // If we recognize the view, prevent it from rendering until it's
             // requested explicitly by the user.
             var toggleAvailable = _.isObject(_.find(this.options.meta.availableToggles, function (curr) {
-                return curr.name === component.name;
+                return curr.type === component.name;
             }));
             if (toggleAvailable) {
                 this.toggleComponents.push(component);

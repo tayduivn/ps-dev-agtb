@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -13,68 +12,44 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $viewdefs['pmse_Inbox']['base']['layout']['casesList'] = array(
-    'components' =>
+    'components' => array(
         array(
-            array(
-                'layout' =>
+            'layout' => array(
+                'type' => 'default',
+                'components' => array(
                     array(
-                        'components' =>
-                            array(
+                        'layout' => array(
+                            'type' => 'base',
+                            'targetEl' => 'main-pane',
+                            'components' => array(
                                 array(
-                                    'layout' =>
-                                        array(
-                                            'components' =>
-                                                array(
-                                                    array(
-                                                        'view' => 'casesList-headerpane',
-                                                    ),
-//                                                    array(
-//                                                        'view' => 'casesList-recipientscontainer',
-//                                                    ),
-                                                    array(
-                                                        'view' => 'casesList-filter',
-                                                    ),
-                                                    array(
-                                                        'layout' => 'casesList-list',
-                                                    ),
-                                                ),
-                                            'type' => 'simple',
-                                            'name' => 'main-pane',
-                                            'span' => 8,
-                                        ),
+                                    'view' => 'casesList-headerpane',
+                                ),
+//                                array(
+//                                    'view' => 'casesList-recipientscontainer',
+//                                ),
+                                array(
+                                    'view' => 'casesList-filter',
                                 ),
                                 array(
-                                    'layout' =>
-                                        array(
-                                            'components' =>
-                                                array(),
-                                            'type' => 'simple',
-                                            'name' => 'dashboard-pane',
-                                            'span' => 4,
-                                        ),
-                                ),
-                                array(
-                                    'layout' =>
-                                        array(
-                                            'components' =>
-                                                array(
-                                                    array(
-                                                        'layout' => 'preview',
-                                                    ),
-                                                ),
-                                            'type' => 'simple',
-                                            'name' => 'preview-pane',
-                                            'span' => 8,
-                                        ),
+                                    'layout' => 'casesList-list',
                                 ),
                             ),
-                        'type' => 'default',
-                        'name' => 'sidebar',
-                        'span' => 12,
+                        ),
                     ),
+                    array(
+                        'layout' => array(
+                            'type' => 'base',
+                            'targetEl' => 'preview-pane',
+                            'components' => array(
+                                array(
+                                    'layout' => 'preview',
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
             ),
         ),
-    'type' => 'casesList',
-    'name' => 'base',
-    'span' => 12,
+    ),
 );

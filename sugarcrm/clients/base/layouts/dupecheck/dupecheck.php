@@ -11,23 +11,15 @@
  */
 
 $viewdefs['base']['layout']['dupecheck'] = array(
-    'components' =>
-    array(
+    'components' => array(
         array(
             'layout' => array(
                 'type' => 'filterpanel',
-                'span' => 12,
                 'components' => array(
                     array(
                         'layout' => 'dupecheck-filter',
-                        'name' => 'filter',
                         'targetEl' => '.filter',
                         'position' => 'prepend',
-                        'components' => array(
-                            array(
-                                'view' => 'filter-quicksearch'
-                            ),
-                        )
                     ),
                     array(
                         'view' => 'filter-rows',
@@ -39,7 +31,6 @@ $viewdefs['base']['layout']['dupecheck'] = array(
                     ),
                 )
             ),
-            'name' => 'filterpanel'
         ),
         array(
             'name' => 'dupecheck-list',
@@ -50,6 +41,4 @@ $viewdefs['base']['layout']['dupecheck'] = array(
             'view' => 'list-bottom',
         ),
     ),
-    'type' => 'dupecheck',
-    'span' => 12,
 );

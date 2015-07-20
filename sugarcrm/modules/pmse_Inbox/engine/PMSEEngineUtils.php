@@ -61,6 +61,12 @@ class PMSEEngineUtils
     );
 
     /**
+     * Process Author does not handle the below field types currently. So skip displaying them.
+     * @var array
+     */
+    public static $blacklistedFieldTypes = array('image','password','file');
+
+    /**
      * Method get key fields
      * @param type $pattern
      * @param type $array
@@ -709,12 +715,8 @@ class PMSEEngineUtils
      */
     public static function getElementUid($id, $elementEntity, $uidField)
     {
-        //$beanFactory = new ADAMBeanFactory();
         $elementEntity = ucfirst($elementEntity);
-//        $bean = new $elementEntity();
-        //$bean = $beanFactory->getBean($elementEntity);
-        $bean = BeanFactory::getBean('pmse_' . $elementEntity);
-        $bean->retrieve_by_string_fields(array('id' => $id));
+        $bean = BeanFactory::getBean('pmse_' . $elementEntity, $id);
         return $bean->$uidField;
     }
 
@@ -964,6 +966,7 @@ class PMSEEngineUtils
             'tags',
             'tag',
             'tag_lower',
+            'tag_link',
         );
         //UNSET comun fields
         foreach ($projectData as $key => $value) {
@@ -984,11 +987,17 @@ class PMSEEngineUtils
 
     public static function isValidField($def, $type = '')
     {
+        // If a field is explicitly allowed it should automatically be valid
+        if (!empty($def['processes'])) {
+            return true;
+        }
+
         $result = self::isValidStudioField($def);
         if (isset($def['source']) && $def['source'] == 'non-db') {
             $result = false;
         }
-        if (isset($def['type']) && ($def['type'] == 'image' || $def['type'] == 'password')) {
+        // Process Author does not handle some field types like image, password, file, etc currently
+        if (isset($def['type']) && in_array($def['type'], self::$blacklistedFieldTypes)) {
             $result = false;
         }
         if ($type == 'AC') {

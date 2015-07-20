@@ -12,14 +12,12 @@
  */
 
 $viewdefs['Home']['base']['layout']['list'] = array(
-    'components' =>
-    array(
+    'name' => 'dashboard',
+    'components' => array(
         array(
             'view' => 'dashboard-headerpane',
         ),
     ),
-    'type' => 'dashboard',
-    'span' => 12,
     'last_state' => array(
         'id' => 'last-visit',
     )

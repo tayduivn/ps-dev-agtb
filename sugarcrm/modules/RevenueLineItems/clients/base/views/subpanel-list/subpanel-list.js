@@ -27,7 +27,7 @@
     parseFields : function() {
         var catalog = this._super('parseFields'),
             config = app.metadata.getModule('Forecasts', 'config'),
-            isForecastSetup = config.is_setup;
+            isForecastSetup = (config && config.is_setup);
 
         // if forecast is not setup, we need to make sure that we hide the commit_stage field
         _.each(catalog, function (group, i) {

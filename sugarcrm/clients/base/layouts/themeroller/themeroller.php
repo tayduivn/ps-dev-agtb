@@ -16,40 +16,35 @@ $viewdefs['base']['layout']['themeroller'] = array(
     'components' => array(
         array(
             'layout' => array(
+                'type' => 'default',
+                'name' => 'sidebar',
                 'components' => array(
                     array(
                         'layout' => array(
-                            'components' => array(
-                                    array(
-                                        'view' => 'themeroller',
-                                        'primary' => true,
-                                    ),
-                            ),
-                            'type' => 'simple',
+                            'type' => 'base',
                             'name' => 'main-pane',
-                            'span' => 8,
+                            'targetEl' => '.main-pane',
+                            'components' => array(
+                                array(
+                                    'view' => 'themeroller',
+                                    'primary' => true,
+                                ),
+                            ),
                         ),
                     ),
                     array(
                         'layout' => array(
+                            'type' => 'base',
+                            'targetEl' => '.side-pane',
                             'components' => array(
                                 array(
                                     'view' => 'themerollerpreview',
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'side-pane',
-                            'span' => 4,
                         ),
                     ),
                 ),
-                'type' => 'default',
-                'name' => 'sidebar',
-                'span' => 12,
             ),
         ),
     ),
-    'type' => 'simple',
-    'name' => 'base',
-    'span' => 12,
 );

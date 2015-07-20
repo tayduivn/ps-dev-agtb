@@ -23,6 +23,7 @@ function setRecord(id)
 <script type="text/javascript" src="include/workflow/jutils.js?v={VERSION_MARK}"></script>
 {JAVASCRIPT_LANGUAGE_FILES}
 <form action="index.php" method="post" name="alert_form" id="alert_form">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="{MODULE_NAME}" />
 <input type="hidden" name="workflow_id" value="{WORKFLOW_ID}" />
 <input type="hidden" name="action" value="SaveRelationship" />

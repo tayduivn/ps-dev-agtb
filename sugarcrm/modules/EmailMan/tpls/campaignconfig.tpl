@@ -30,6 +30,7 @@ function change_state(radiobutton)
 -->
 </script>
 <form name="ConfigureSettings" id="EditView" method="POST" >
+    {sugar_csrf_form_token}
 	<input type="hidden" name="module" value="EmailMan">
 	<input type="hidden" name="campaignConfig" value="true">
 	<input type="hidden" name="action">

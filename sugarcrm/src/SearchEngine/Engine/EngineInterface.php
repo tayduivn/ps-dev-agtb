@@ -85,6 +85,13 @@ interface EngineInterface
     public function scheduleIndexing(array $modules = array(), $clearData = false);
 
     /**
+     * Create the mappings for given module without re-creating the index.
+     * @param array $modules
+     * @return bool
+     */
+    public function addMappings(array $modules = array());
+
+    /**
      * Index given bean
      *
      * @param \SugarBean $bean The bean to index

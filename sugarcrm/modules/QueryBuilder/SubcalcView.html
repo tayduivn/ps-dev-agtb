@@ -93,6 +93,7 @@ function check_type(type_field, module_field, frame_field, value_field){
 
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 <form  name="SubCalcView"  method="POST" action="index.php">
+{sugar_csrf_form_token}
 {SUBCALC_FORM}
 <input type="hidden" name="filter_id" value="{FILTER_ID}">
 		<tr>

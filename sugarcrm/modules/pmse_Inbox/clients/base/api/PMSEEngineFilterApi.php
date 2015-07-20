@@ -300,7 +300,14 @@ class PMSEEngineFilterApi extends FilterApi
         list($operator, $value) = self::getExpression($expression);
         switch($operator) {
             case '$equals':
-                $where->equals($field, $value);
+                //more dirty hack
+                //will be fixed when we redo relationships with vardefs
+                if ($field === 'act_name') {
+                    $sql = "activity.name = '$value'";
+                    $where->queryOr()->addRaw($sql);
+                } else {
+                    $where->equals($field, $value);
+                }
                 break;
             case '$not_equals':
                 $where->notEquals($field, $value);
@@ -358,18 +365,21 @@ class PMSEEngineFilterApi extends FilterApi
      */
     public static function getExpression($expression)
     {
-        if (is_array($expression)) {
-            $keys = array_keys($expression);
-            $operator = $keys[0];
-            if (in_array($operator, self::$supportedOperators)) {
-                return array($operator, $expression[$operator]);
-            } else {
-                throw new SugarApiExceptionInvalidParameter('ERROR_PA_FILTER_UNSUPPORTED_OPERATOR');
-            }
-
-        } else {
-            throw new SugarApiExceptionInvalidParameter('ERROR_PA_FILTER_INVALID_OPERATOR');
+        // we don't send an operator in args if the operator is $equals
+        if (!is_array($expression)) {
+            $value = $expression;
+            $expression = array();
+            $expression['$equals'] = $value;
         }
+
+        $keys = array_keys($expression);
+        $operator = $keys[0];
+        if (in_array($operator, self::$supportedOperators)) {
+            return array($operator, $expression[$operator]);
+        } else {
+            throw new SugarApiExceptionInvalidParameter('ERROR_PA_FILTER_UNSUPPORTED_OPERATOR');
+        }
+
     }
 
     /**

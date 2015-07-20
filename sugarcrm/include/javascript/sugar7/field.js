@@ -47,11 +47,18 @@
             ),
 
             /**
-             * Handle validation errors
-             * Set to edit mode and decorates the field
-             * @param {Object} errors The validation error(s) affecting this field
+             * Handle validation errors.
+             *
+             * Errors are being handled only when the view has the `ErrorDecoration` plugin.
+             * Sets the field to `edit` mode and decorates the field.
+             *
+             * @param {Object} errors The validation error(s) affecting this field.
              */
             handleValidationError: function (errors) {
+                if (this.view && !_.contains(this.view.plugins, 'ErrorDecoration')) {
+                    return;
+                }
+
                 this.clearErrorDecoration();
                 _.defer(function (field) {
                     field._errors = errors;
@@ -463,8 +470,9 @@
 
                 // FIXME: this check for datetime should be made generic (when
                 // SC-2568 gets in) based on use of normal addon
-                var isDateField = $ftag.parent().hasClass('date');
-                if (isDateField) {
+                var isDateField = $ftag.parent().hasClass('date'),
+                    isCurrencyField = $ftag.parent().hasClass('currency');
+                if (isDateField || isCurrencyField) {
                     $ftag.parent().removeClass('error');
                 } else if (isWrapped) {
                     $ftag.unwrap();

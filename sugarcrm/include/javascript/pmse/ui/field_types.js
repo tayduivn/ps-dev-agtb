@@ -132,24 +132,6 @@ TextField.prototype.attachListeners = function () {
     return this;
 };
 
-TextField.prototype.disable = function () {
-    this.labelObject.className = 'adam-form-label-disabled';
-    this.controlObject.disabled = true;
-    if (!this.oldRequiredValue) {
-        this.oldRequiredValue = this.required;
-    }
-    this.setRequired(false);
-    $(this.controlObject).removeClass('required');
-};
-TextField.prototype.enable = function () {
-    this.labelObject.className = 'adam-form-label';
-    this.controlObject.disabled = false;
-    if (this.oldRequiredValue) {
-        this.setRequired(this.oldRequiredValue);
-    }
-};
-//
-
 /**
  * @class ComboboxField
  * Handles drop down fields
@@ -262,6 +244,12 @@ ComboboxField.prototype.createHTML = function () {
     this.labelObject = fieldLabel;
     this.controlObject = selectInput;
 
+    if (this.disabled) {
+        this.disable();
+    } else if (!this.readOnly) {
+        this.enable();
+    }
+
     return this.html;
 };
 
@@ -314,25 +302,6 @@ ComboboxField.prototype.attachListeners = function () {
     }
     return this;
 };
-
-ComboboxField.prototype.disable = function () {
-    this.labelObject.className = 'adam-form-label-disabled';
-    this.controlObject.disabled = true;
-    if (!this.oldRequiredValue) {
-        this.oldRequiredValue = this.required;
-    }
-    this.setRequired(false);
-    $(this.controlObject).removeClass('required');
-};
-
-ComboboxField.prototype.enable = function () {
-    this.labelObject.className = 'adam-form-label';
-    this.controlObject.disabled = false;
-    if (this.oldRequiredValue) {
-        this.setRequired(this.oldRequiredValue);
-    }
-};
-//
 
 /**
  * @class TextareaField
@@ -417,6 +386,13 @@ TextareaField.prototype.createHTML = function () {
     }
 
     this.controlObject = textInput;
+    this.labelObject = fieldLabel;
+
+    if (this.disabled) {
+        this.disable();
+    } else {
+        this.enable();
+    }
 
     return this.html;
 };
@@ -517,6 +493,12 @@ CheckboxField.prototype.createHTML = function () {
     this.labelObject = fieldLabel;
     this.controlObject = textInput;
 
+    if (this.disabled) {
+        this.disable();
+    } else {
+        this.enable();
+    }
+
     return this.html;
 };
 
@@ -575,23 +557,6 @@ CheckboxField.prototype.evalRequired = function () {
         }
     }
     return response;
-};
-CheckboxField.prototype.disable = function () {
-    this.labelObject.className = 'adam-form-label-disabled';
-    this.controlObject.disabled = true;
-    if (!this.oldRequiredValue) {
-        this.oldRequiredValue = this.required;
-    }
-    this.setRequired(false);
-    $(this.controlObject).removeClass('required');
-
-};
-CheckboxField.prototype.enable = function () {
-    this.labelObject.className = 'adam-form-label';
-    this.controlObject.disabled = false;
-    if (this.oldRequiredValue) {
-        this.setRequired(this.oldRequiredValue);
-    }
 };
 /**
  * @class RadiobuttonField
@@ -676,6 +641,13 @@ RadiobuttonField.prototype.createHTML = function () {
     }
 
     this.controlObject = textInput;
+    this.labelObject = fieldLabel;
+
+    if (this.disabled) {
+        this.disable();
+    } else {
+        this.enable();
+    }
 
     return this.html;
 };
@@ -917,6 +889,13 @@ DateField.prototype.createHTML = function () {
     }
     this.labelObject = fieldLabel;
     this.controlObject = textInput;
+
+    if (this.disabled) {
+        this.disable();
+    } else {
+        this.enable();
+    }
+
     return this.html;
 };
 
@@ -946,21 +925,9 @@ DateField.prototype.attachListeners = function () {
     return this;
 };
 DateField.prototype.disable = function () {
-    this.labelObject.className = 'adam-form-label-disabled';
-    this.controlObject.disabled = true;
-    if (!this.oldRequiredValue) {
-        this.oldRequiredValue = this.required;
-    }
-    this.setRequired(false);
-    $(this.controlObject).removeClass('required');
+    Field.prototype.disable.call(this);
     $(this.controlObject).datepicker('hide');
-};
-DateField.prototype.enable = function () {
-    this.labelObject.className = 'adam-form-label';
-    this.controlObject.disabled = false;
-    if (this.oldRequiredValue) {
-        this.setRequired(this.oldRequiredValue);
-    }
+    return this;
 };
 
 /**
@@ -1032,10 +999,8 @@ NumberField.prototype.createHTML = function () {
     this.html.appendChild(fieldLabel);
 
     textInput = this.createHTMLElement('input');
-    textInput.type = "number";
     textInput.id = this.name;
     textInput.value = this.value || "";
-    textInput.min = "0";
     if (this.fieldWidth) {
         textInput.style.width = this.fieldWidth;
     }
@@ -1053,6 +1018,12 @@ NumberField.prototype.createHTML = function () {
     }
     this.labelObject = fieldLabel;
     this.controlObject = textInput;
+
+    if (this.disabled) {
+        this.disable();
+    } else {
+        this.enable();
+    }
 
     return this.html;
 };
@@ -1103,26 +1074,6 @@ NumberField.prototype.attachListeners = function () {
     });
     return this;
 };
-
-NumberField.prototype.disable = function () {
-    this.labelObject.className = 'adam-form-label-disabled';
-    this.controlObject.disabled = true;
-    if (!this.oldRequiredValue) {
-        this.oldRequiredValue = this.required;
-    }
-    this.setRequired(false);
-    $(this.controlObject).removeClass('required');
-};
-NumberField.prototype.enable = function () {
-    this.labelObject.className = 'adam-form-label';
-    this.controlObject.disabled = false;
-    if (this.oldRequiredValue) {
-        this.setRequired(this.oldRequiredValue);
-    }
-};
-
-
-
 
 /**
  * @class CheckboxGroup
@@ -1244,7 +1195,12 @@ CheckboxGroup.prototype.createHTML = function () {
         this.html.appendChild(this.helpTooltip.getHTML());
     }
     this.labelObject = fieldLabel;
-    //
+
+    if (this.disabled) {
+        this.disable();
+    } else {
+        this.enable();
+    }
 
     return this.html;
 };
@@ -1309,20 +1265,336 @@ CheckboxGroup.prototype.evalRequired = function () { var response = true;
     }
     return response;
 };
-CheckboxGroup.prototype.disable = function () {
-    this.labelObject.className = 'adam-form-label-disabled';
-    this.controlObject.disabled = true;
+
+var SearchableCombobox = function (options, parent) {
+    Field.call(this, options, parent);
+    this._placeholder = null;
+    this._minimumInputLength = null;
+    this._valueField = null;
+    this._textField = null;
+    this._options = [];
+    this._searchURL = null;
+    this._searchValue = null;
+    this._searchLabel = null;
+    this._searchFunction = null;
+    this._searchDelay = null;
+    SearchableCombobox.prototype.initObject.call(this, options, parent);
+};
+
+SearchableCombobox.prototype = new Field();
+SearchableCombobox.prototype.constructor = SearchableCombobox;
+SearchableCombobox.prototype.type = "SearchableCombobox";
+
+SearchableCombobox.prototype.initObject = function (options, parent) {
+    var defaults = {
+        placeholder: "",
+        minimumInputLength: 1,
+        textField: "text",
+        valueField: "value",
+        fieldWidth: "200px",
+        options: [],
+        searchURL: null,
+        searchLabel: "text",
+        searchValue: "value",
+        searchDelay: 1500
+    };
+
+    $.extend(true, defaults, options);
+
+    this._placeholder = defaults.placeholder;
+    this._minimumInputLength = defaults.minimumInputLength;
+    this._textField = defaults.textField;
+    this._valueField = defaults.valueField;
+    this.setFieldWidth(defaults.fieldWidth)
+        .setSearchDelay(defaults.searchDelay)
+        .setSearchValue(defaults.searchValue)
+        .setSearchLabel(defaults.searchLabel)
+        .setSearchURL(defaults.searchURL)
+        .setOptions(defaults.options);
+};
+
+SearchableCombobox.prototype.setSearchDelay = function (delay) {
+    if (typeof delay !== 'number') {
+        throw new Error("setSearchDelay(): The parameter must be a number.");
+    }
+
+    this._searchDelay = delay;
+
+    return this;
+};
+
+SearchableCombobox.prototype.setSearchValue = function(value) {
+    if (!(typeof value === 'string' || typeof value === 'function' || value === null)) {
+        throw new Error("setSearchValue(): The parameter must be a string or a function or null.");
+    }
+    this._searchValue = value;
+    return this;
+};
+
+SearchableCombobox.prototype.setSearchLabel = function(label) {
+    if (!(typeof label === 'string' || typeof label === 'function' || label === null)) {
+        throw new Error("setSearchLabel(): The parameter must be a string or a function or null.")
+    }
+    this._searchLabel = label;
+    return this;
+};
+
+SearchableCombobox.prototype._getFilteredOptions = function (queryObject, items, textField, valueField) {
+    var finalData = [],
+        term = jQuery.trim(queryObject.term);
+
+    items.forEach(function(item, index, arr) {
+        if (!term || queryObject.matcher(term, item[textField])) {
+            finalData.push({
+                id: item[valueField],
+                text: item[textField]
+            });
+        }
+    });
+
+    return finalData;
+};
+
+SearchableCombobox.prototype.setSearchURL = function(url) {
+    var delayToUse, that = this;
+
+    if (!(typeof url === 'string' || url === null)) {
+        throw new Error("setSearchURL(): The parameter must be a string or null.");
+    }
+    if (url !== null && (!this._searchLabel || !this._searchValue)) {
+        throw new Error("setSearchURL(): You can't set the Suggestions URL if the Suggestions Label or "
+        + "Suggestions Value are set to null.");
+    }
+    this._searchURL = url;
+
+    delayToUse = url ? this._searchDelay : 0;
+
+    this._searchFunction = _.debounce(function(queryObject) {
+        var proxy = new SugarProxy(),
+            termRegExp = /\{TERM\}/g,
+            result = {
+                more: false
+            }, term = jQuery.trim(queryObject.term),
+            finalData,
+            getText = function(obj, criteria) {
+                if (typeof criteria === 'function') {
+                    return criteria(obj);
+                } else {
+                    return obj[criteria];
+                }
+            };
+
+        finalData = that._getFilteredOptions(queryObject, that._options, "")
+
+        if (term && that._searchURL) {
+            proxy.url = this._searchURL.replace(termRegExp, queryObject.term);
+
+            proxy.getData(null, {
+                success: function (data) {
+                    if (!data.success) {
+                        throw new Error("SearchableCombobox's search function: Error.");
+                    }
+                    data = data.result;
+                    data.forEach(function (item) {
+                        finalData.push({
+                            id: getText(item, that._searchValue),
+                            text: getText(item, that._searchLabel)
+                        });
+                    });
+
+                    result.results = finalData;
+                    queryObject.callback(result);
+                },
+                error: function () {
+                    console.log("failure", arguments);
+                }
+            });
+        } else {
+            result.results = finalData;
+            queryObject.callback(result);
+        }
+    }, delayToUse);
+
+    return this;
+};
+
+SearchableCombobox.prototype.setOptions = function (options) {
+    var that = this;
+    if (!$.isArray(options)) {
+        throw new Error("setOptions(): The parameter must be an array.");
+    }
+
+    this._options = [];
+
+    options.forEach(function(item, index, arr) {
+        that._options.push({
+            id: item.value,
+            text: item.text
+        });
+    });
+    return this;
+};
+
+SearchableCombobox.prototype._setValueToControl = function (value) {
+    if (this.html && this.controlObject) {
+        this.controlObject.select2("val", value);
+    }
+    return this;
+};
+
+SearchableCombobox.prototype.setValue = function (value, change) {
+    var theValue, theText;
+
+    if (value && typeof value === 'object') {
+        theText = value[this._textField];
+        value = value[this._valueField];
+    }
+
+    theValue = change ? value : value || this.initialValue;
+
+    if (this.controlObject) {
+        this.controlObject.data("text", theText);
+        this.controlObject.select2("val", theValue, false);
+        this.value = this.controlObject.select2("val");
+    } else {
+        this.value = theValue;
+    }
+    return this;
+};
+
+SearchableCombobox.prototype.setReadOnly = function (value) {
+    this.readOnly = value;
+    if (this.html) {
+        this.controlObject.select2("readonly", value);
+    }
+    return this;
+};
+
+SearchableCombobox.prototype.disable = function () {
+    if (this.controlObject) {
+        this.labelObject.className = 'adam-form-label-disabled';
+        this.controlObject.select2("disable");
+    }
     if (!this.oldRequiredValue) {
         this.oldRequiredValue = this.required;
     }
     this.setRequired(false);
-    $(this.controlObject).removeClass('required');
-
+    this.disabled = true;
+    return this;
 };
-CheckboxGroup.prototype.enable = function () {
-    this.labelObject.className = 'adam-form-label';
-    this.controlObject.disabled = false;
+
+SearchableCombobox.prototype.enable = function () {
+    if (this.controlObject) {
+        this.labelObject.className = 'adam-form-label';
+        this.controlObject.select2("enable");
+    }
     if (this.oldRequiredValue) {
         this.setRequired(this.oldRequiredValue);
     }
+    this.disabled = false;
+    return this;
+};
+
+SearchableCombobox.prototype._queryFunction = function () {
+    var that = this;
+    return function (queryObject) {
+        var result = {
+            more: false
+        }, finalData;
+        if (jQuery.trim(queryObject.term)) {
+            that._searchFunction(queryObject);
+        } else {
+            finalData = that._getFilteredOptions(queryObject, that._options, 'text', 'id');
+            result.results = finalData;
+            queryObject.callback(result);
+        }
+    };
+};
+
+SearchableCombobox.prototype._initSelection = function () {
+    var that = this;
+    return function ($el, callback) {
+        var value = $el.val(), i, text = $el.data("text");
+        for (i = 0; i < that._options.length; i += 1) {
+            if (that._options[i]["id"] === value) {
+                callback({
+                    id: that._options[i]["id"],
+                    text: that._options[i]["text"]
+                });
+                return;
+            }
+        }
+        callback({
+            id: value,
+            text: text || value
+        })
+    };
+};
+
+SearchableCombobox.prototype.getSelectedText = function () {
+    var data = {};
+
+    if (this.controlObject) {
+        data = $(this.controlObject).select2("data");
+    }
+    return data.text || "";
+};
+
+SearchableCombobox.prototype.attachListeners = function () {
+    var that = this;
+    if (this.controlObject) {
+        this.controlObject.on("change", function () {
+            that.value = that.controlObject.select2("val");
+            that.onChange();
+        });
+    }
+    return this;
+};
+
+SearchableCombobox.prototype.createHTML = function () {
+    var fieldLabel, textInput, required = '', readAtt;
+    Field.prototype.createHTML.call(this);
+
+    if (this.required) {
+        required = '<i>*</i> ';
+    }
+
+    fieldLabel = this.createHTMLElement('span');
+    fieldLabel.className = 'adam-form-label';
+    fieldLabel.innerHTML = this.label + ': ' + required;
+    fieldLabel.style.width = this.parent.labelWidth;
+    this.html.appendChild(fieldLabel);
+
+    textInput = this.createHTMLElement('input');
+    textInput.type = "text";
+    textInput.id = this.name;
+    this.controlObject = $(textInput);
+    this.controlObject.select2({
+        placeholder: this._placeholder,
+        query: this._queryFunction(),
+        initSelection: this._initSelection(),
+        width: this.fieldWidth || "200px"
+    });
+    this.controlObject.select2("val", this.value, false);
+    if (this.readOnly) {
+        this.setReadOnly(true);
+    }
+    this.html.appendChild(this.controlObject.data("select2").container[0]);
+    this.html.appendChild(textInput);
+
+    if (this.errorTooltip) {
+        this.html.appendChild(this.errorTooltip.getHTML());
+    }
+    if (this.helpTooltip) {
+        this.html.appendChild(this.helpTooltip.getHTML());
+    }
+    this.labelObject = fieldLabel;
+
+    if (this.disabled) {
+        this.disable();
+    } else {
+        this.enable();
+    }
+
+    return this.html;
 };

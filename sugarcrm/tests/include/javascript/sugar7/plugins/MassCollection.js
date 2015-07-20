@@ -220,46 +220,4 @@ describe('MassCollection plugin:', function() {
             expect(view.clearMassCollection).toHaveBeenCalled();
         });
     });
-
-    describe('getTotalRecords:', function(){
-
-        beforeEach(function() {
-            sinon.collection.stub(app.api, 'buildURL');
-            view.meta = {
-              selection: {
-                  isLinkAction: false,
-                  actions: []
-              }
-            };
-        });
-
-        it('should call build url without an attribute and with a param', function(){
-            view.collection.link = undefined;
-            view.getTotalRecords();
-            expect(app.api.buildURL).toHaveBeenCalledWith(
-                view.module,
-                null,
-                null,
-                {
-                    fields: 'id',
-                    max_num: undefined
-                }
-            );
-        });
-
-        it('should call build url with an attribute and without a param', function(){
-            view.collection.link = {notUndefined: true};
-            view.context.set('parentModel', { id: 42 });
-            view.context.set('parentModule', 'foo');
-
-            view.getTotalRecords();
-            expect(app.api.buildURL).toHaveBeenCalledWith(
-                view.context.get('parentModule'),
-                null,
-                view.context.toJSON(),
-                null
-            );
-            expect(view.context.get('id')).toEqual(42);
-        });
-    })
 });

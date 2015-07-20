@@ -27,8 +27,10 @@
              */
             auditClicked: function() {
                 var context = this.context.getChildContext({
-                    module: 'Audit'
+                    module: 'Audit',
+                    model: this.context && this.context.get('model') || this.model
                 });
+
                 app.drawer.open({
                     layout: 'audit',
                     context: context

@@ -15,9 +15,14 @@ $viewdefs['base']['layout']['search'] = array(
     'components' => array(
         array(
             'layout' => array(
+                'type' => 'default',
+                'name' => 'sidebar',
                 'components' => array(
                     array(
                         'layout' => array(
+                            'type' => 'base',
+                            'name' => 'main-pane',
+                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'search-headerpane',
@@ -34,16 +39,15 @@ $viewdefs['base']['layout']['search'] = array(
                                     ),
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'main-pane',
                         ),
                     ),
                     array(
                         'layout' => array(
+                            'type' => 'base',
+                            'targetEl' => '.dashboard-pane',
                             'components' => array(
                                 array(
                                     'layout' => array(
-                                        'name' => 'search-dashboard',
                                         'type' => 'dashboard',
                                         'last_state' => array(
                                             'id' => 'last-visit',
@@ -55,26 +59,21 @@ $viewdefs['base']['layout']['search'] = array(
                                     ),
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'dashboard-pane',
                         ),
                     ),
                     array(
                         'layout' => array(
+                            'type' => 'base',
+                            'targetEl' => '.preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'preview-pane',
                         ),
                     ),
                 ),
-                'type' => 'default',
-                'name' => 'sidebar',
             ),
         ),
     ),
-    'name' => 'search',
 );

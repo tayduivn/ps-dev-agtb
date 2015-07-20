@@ -238,6 +238,8 @@ class ModuleInstaller{
             // clients.
             MetaDataManager::enableCache();
             MetaDataManager::clearAPICache(true, true);
+            LanguageManager::invalidateJsLanguageCache();
+
             //TODO: we need to setup the metadata for the platforms via a job queue.
             //Doing this inline is prohibitively expensive
             //MetaDataManager::setupMetadata();
@@ -2843,6 +2845,7 @@ class ModuleInstaller{
      */
     public static function getBaseConfig()
     {
+        $config = SugarConfig::getInstance();
         $sidecarConfig = array(
             'appId' => 'SugarCRM',
             'env' => 'prod',
@@ -2873,6 +2876,7 @@ class ModuleInstaller{
             'loadCss' => false,
             'themeName' => 'default',
             'clientID' => 'sugar',
+            'collapseSubpanels' => $config->get('collapse_subpanels', false),
             'serverTimeout' => self::getBaseTimeoutValue(),
             'metadataTypes' => array(
                 "currencies",
@@ -2896,7 +2900,6 @@ class ModuleInstaller{
             ),
         );
 
-        $config = SugarConfig::getInstance();
         $jsConfig = $config->get('additional_js_config', array());
         $sidecarConfig = array_merge($sidecarConfig, $jsConfig);
 
@@ -3097,8 +3100,6 @@ class ModuleInstaller{
      */
     protected function updateSystemTabs($action, $installed_modules)
     {
-        global $moduleList;
-
         $controller = new TabController();
         $isSystemTabsInDB = $controller->is_system_tabs_in_db();
         if ($isSystemTabsInDB && !empty($installed_modules)) {
@@ -3121,10 +3122,6 @@ class ModuleInstaller{
                     }
                     $controller->set_system_tabs($currentTabs);
                     break;
-            }
-
-            if (isset($_SESSION['get_workflow_admin_modules_for_user'])) {
-                return $_SESSION['get_workflow_admin_modules_for_user'];
             }
         }
     }

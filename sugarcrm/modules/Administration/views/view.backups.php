@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,6 +9,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
 
 class ViewBackups extends SugarView
 {
@@ -115,6 +116,7 @@ class ViewBackups extends SugarView
         ?>
         
             <?php 
+            $csrf = CsrfAuthenticator::getInstance();
             echo getClassicModuleTitle(
                 "Administration", 
                 array(
@@ -127,6 +129,7 @@ class ViewBackups extends SugarView
             <br>
             <?php echo $mod_strings['LBL_BACKUP_INSTRUCTIONS_2']; ?><br>
             <form name="Backups" action="<?php print( $form_action );?>" method="post" onSubmit="return (check_for_errors());">
+            <input type="hidden" name="csrf_token" value="<?php echo $csrf->getFormToken();?>" />
             <table>
             <tr>
                 <td><?php echo $mod_strings['LBL_BACKUP_DIRECTORY']; ?><br><i><?php echo $mod_strings['LBL_BACKUP_DIRECTORY_WRITABLE']; ?></i></td>

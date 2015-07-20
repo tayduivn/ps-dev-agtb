@@ -67,6 +67,10 @@ MenuItem.prototype.createHTML = function () {
         this.itemAnchor.className = 'adam-item-arrow';
     }
 
+    if (this.toolTip) {
+        this.itemAnchor.title = this.toolTip;
+    }
+
     labelSpan = this.createHTMLElement('span');
     labelSpan.innerHTML = this.label;
     labelSpan.className = "adam-label";
@@ -120,7 +124,7 @@ MenuItem.prototype.attachListeners = function () {
 };
 
 MenuItem.prototype.setActiveItem = function (value) {
-    if (!this.disabled) {
+    if (!this.disabled && !this.unavailable) {
         if (value) {
             if (!this.focused) {
                 this.style.addClasses(['adam-item-active']);

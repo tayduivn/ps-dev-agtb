@@ -11,6 +11,7 @@
             "name": "Sarah Smith",
             "title": "Sales Manager West",
             "image": "avatar_nate.jpg",
+            "url": "http://www.cnn.com",
             "children": [
                 {
                     "id": 2,

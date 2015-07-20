@@ -17,6 +17,7 @@
 
 
 <form enctype="multipart/form-data" real_id="importstep3" id="importstep3" name="importstep3" method="POST" action="index.php">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="previous_action" value="Confirm">
 <input type="hidden" name="custom_delimiter" value="{$CUSTOM_DELIMITER}">

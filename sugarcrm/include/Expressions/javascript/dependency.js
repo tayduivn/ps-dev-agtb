@@ -1306,6 +1306,15 @@ SUGAR.forms.Dependency.prototype.getRelatedFields = function () {
     }
 
     /**
+     * Determines if actions is allowed to set new value on the record in the given context
+     * @param {ExpressionContext} context
+     * @returns {boolean}
+     */
+    SUGAR.forms.AbstractAction.prototype.canSetValue = function (context) {
+        return true;
+    };
+
+    /**
      * This object resembles a trigger where a change in any of the specified
      * variables triggers the dependencies to be re-evaluated again.
      */

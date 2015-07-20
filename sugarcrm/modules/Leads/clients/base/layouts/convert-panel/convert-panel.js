@@ -117,7 +117,7 @@
     addHeaderComponent: function() {
         var header = app.view.createView({
             context: this.context,
-            name: 'convert-panel-header',
+            type: 'convert-panel-header',
             layout: this,
             meta: this.meta
         });
@@ -143,7 +143,7 @@
 
         this.duplicateView = app.view.createLayout({
             context: context,
-            name: this.TOGGLE_DUPECHECK,
+            type: this.TOGGLE_DUPECHECK,
             layout: this,
             module: context.get('module')
         });
@@ -165,7 +165,7 @@
 
         this.createView = app.view.createView({
             context: context,
-            name: this.TOGGLE_CREATE,
+            type: this.TOGGLE_CREATE,
             module: context.module,
             layout: this
         });
@@ -415,6 +415,8 @@
         model.doValidate(view.getFields(view.module), _.bind(function(isValid) {
             if (isValid) {
                 this.markPanelComplete(model);
+            } else {
+                this.resetPanel();
             }
         }, this));
     },
@@ -432,9 +434,11 @@
         this.trigger('lead:convert-panel:complete', this.currentState.associatedName);
 
         app.alert.dismissAll('error');
-        
-        //disable sub-panel until reset
-        this.$(this.accordionBody).addClass('disabled');
+
+        //re-run validation if create model changes after completion
+        if (!model.id) {
+            model.on('change', this.runCreateValidation, this);
+        }
 
         //if this panel was open, close & tell the next panel to open
         if (this.isPanelOpen()) {
@@ -464,7 +468,7 @@
      * Reset the panel back to a state the user can modify associated values
      */
     resetPanel: function() {
-        this.$(this.accordionBody).removeClass('disabled');
+        this.createView.model.off('change', this.runCreateValidation, this);
         this.currentState.complete = false;
         this.context.trigger('lead:convert-panel:reset', this.meta.module);
         this.trigger('lead:convert-panel:reset');

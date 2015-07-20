@@ -44,6 +44,7 @@ function set_return(href_object, action_type){
 </tr>
 <tr>
 			<form name="EditView" method="POST" action="index.php">
+{sugar_csrf_form_token}
 	<td scope="row" width="60%" align="right"><slot>{SELECTOR_TAG}&nbsp;</slot></td>
 	<td ><slot><select id='selector' name='selector' tabindex='2' onchange="set_return({SELECTOR_JSCRIPT_RETURN});">{SELECTOR_DROPDOWN}</select></slot></td>
 			</form>

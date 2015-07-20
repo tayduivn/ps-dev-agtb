@@ -108,18 +108,49 @@ class ParserDropDown extends ModuleBuilderParser
                 $contents = $this->getNewCustomContents($dropdown_name, $dropdown, $selected_lang);
             }
 
-            $this->saveContents($contents, $selected_lang);
+            $this->saveContents($dropdown_name, $contents, $selected_lang);
         }
         $this->finalize($selected_lang);
     }
 
-    public function saveContents($contents, $lang)
+    /**
+     * Saves the dropdown as an Extension, and rebuilds the extensions for given language
+     *
+     * @param string $dropdownName - dropdown name, used for file name
+     * @param string $contents - the edited dropdown contents
+     * @param string $lang - the edited dropdown language
+     * @return bool Success
+     */
+    protected function saveContents($dropdownName, $contents, $lang)
     {
-        save_custom_app_list_strings_contents($contents, $lang);
+        $dirName = 'custom/Extension/application/Ext/Language';
+        if (SugarAutoLoader::ensureDir($dirName)) {
+            $fileName = "$dirName/$lang.sugar_$dropdownName.php";
+            if (!SugarAutoLoader::put($fileName, $contents, true)) {
+                $GLOBALS['log']->fatal("Unable to write edited dropdown language to file: $fileName");
+            }
+            return true;
+        } else {
+            $GLOBALS['log']->fatal("Unable to create dir: $dirName");
+        }
+        return false;
     }
 
+    /**
+     * Clears the js cache and rebuilds the language files
+     *
+     * @param string $lang - language to be rebuilt, and cache cleared
+     */
     public function finalize($lang)
     {
+        $mi = new ModuleInstaller();
+        $mi->silent = true;
+        $mi->rebuild_languages(
+            array(
+                $lang => $lang
+            )
+        );
+
         sugar_cache_reset();
         sugar_cache_reset_full();
         clearAllJsAndJsLangFilesWithoutOutput();
@@ -150,7 +181,7 @@ class ParserDropDown extends ModuleBuilderParser
                     $langDropDown = $dropdown;
                 }
                 $contents = $this->getNewCustomContents($dropdown_name, $langDropDown, $lang);
-                save_custom_app_list_strings_contents($contents, $lang);
+                $this->saveContents($dropdown_name, $contents, $lang);
             }
         }
     }
@@ -245,8 +276,12 @@ class ParserDropDown extends ModuleBuilderParser
             }
             // We need to copy the NULLs if they are not set in the new dropdown
             // because return_app_list_strings_language() removes them from the array
-            $customLanguage = "custom/include/language/$selectedLang.lang.php";
-            if (file_exists($customLanguage)) {
+            $files = SugarAutoLoader::existing(
+                "custom/application/Ext/Language/$selectedLang.lang.ext.php",
+                "custom/include/language/$selectedLang.lang.php"
+            );
+
+            foreach ($files as $customLanguage) {
                 include($customLanguage);
                 if (isset($app_list_strings[$dropdownName])) {
                     foreach ($app_list_strings[$dropdownName] as $key => $value) {

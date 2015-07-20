@@ -1236,14 +1236,17 @@
      * We are just routing to Record View for now since we can't
      * open Sidecar record views in a drawer (and allow the user to close)
      *
+     * Only open the record if we are not dragging the event around the calendar.
+     *
      * @param {String} module_name The name of the module
      * @param {String} record The id of the record
      * @param {Boolean} edit_all_recurrences Whether there are recurrences
      */
     CAL.load_form = function (module_name, record, edit_all_recurrences) {
-        //TODO: Open this in a drawer in edit mode - right now we can't do this
-        var navigateUrl = '#' + app.router.buildRoute(module_name, record);
-        app.router.navigate(navigateUrl, {trigger: true});
+        if (CAL.records_openable) {
+            var navigateUrl = '#' + app.router.buildRoute(module_name, record);
+            app.router.navigate(navigateUrl, {trigger: true});
+        }
     };
 
 	CAL.editAllRecurrences = function() {

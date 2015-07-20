@@ -80,6 +80,9 @@
             // if there is more than one record in the related context collection, then return true
             if (rli_context.get('collection').length > 1) {
                 ret = true;
+            } else if (rli_context.get('collection').length === 0) {
+                // if there is no RLI in the related context collection, then return false
+                ret = false;
             } else {
                 // if there is only one model, we need to verify that the model is not dirty.
                 // check the non default attributes to make sure they are not empty.

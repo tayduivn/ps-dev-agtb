@@ -136,11 +136,11 @@ class PMSEProjectExporter extends PMSEExporter
             if (!empty($rows)) {
                 foreach ($rows as $row) {
                     $row['bou_element'] = $row['bou_uid'];
-                    $tmpObject = $flowBean->retrieve_by_string_fields(array("id" => $row['act_default_flow']));
+                    $tmpObject = $flowBean->retrieve($row['act_default_flow']);
                     $row['act_default_flow'] = isset($tmpObject->flo_uid) ? $tmpObject->flo_uid : '';
                     if ($row['act_task_type'] == "SCRIPTTASK" && $row['act_script_type'] == "BUSINESS_RULE") {
                         $row['act_fields'] = isset($row['act_fields']) ? $row['act_fields'] : '';
-                        $ruleset = $rulesetBean->retrieve_by_string_fields(array('id' => $row['act_fields']));
+                        $ruleset = $rulesetBean->retrieve($row['act_fields']);
                         if ($ruleset) {
                             $row['act_fields'] = $ruleset->rst_uid;
                             $this->rulesetList[] = $ruleset->fetched_row;
@@ -177,11 +177,11 @@ class PMSEProjectExporter extends PMSEExporter
             if (!empty($rows)) {
                 foreach ($rows as $row) {
                     $row['bou_element'] = $row['bou_uid'];
-                    $tmpActBean = $activityBean->retrieve_by_string_fields(array("id" => $row['evn_attached_to']));
+                    $tmpActBean = $activityBean->retrieve($row['evn_attached_to']);
                     $row['evn_attached_to'] = isset($tmpActBean->act_uid) ? $tmpActBean->act_uid : '';
-                    $tmpActBean = $activityBean->retrieve_by_string_fields(array("id" => $row['evn_cancel_activity']));
+                    $tmpActBean = $activityBean->retrieve($row['evn_cancel_activity']);
                     $row['evn_cancel_activity'] = isset($tmpActBean->act_uid) ? $tmpActBean->act_uid : '';
-                    $tmpActBean = $activityBean->retrieve_by_string_fields(array("id" => $row['evn_activity_ref']));
+                    $tmpActBean = $activityBean->retrieve($row['evn_activity_ref']);
                     $row['evn_activity_ref'] = isset($tmpActBean->act_uid) ? $tmpActBean->act_uid : '';
                     $row = PMSEEngineUtils::unsetCommonFields($row, array('name', 'description'));
                     $row = PMSEEngineUtils::sanitizeFields($row);
@@ -209,7 +209,7 @@ class PMSEProjectExporter extends PMSEExporter
             if (!empty($rows)) {
                 foreach ($rows as $row) {
                     $row['bou_element'] = $row['bou_uid'];
-                    $flowObject = $flowBean->retrieve_by_string_fields(array("id" => $row['gat_default_flow']));
+                    $flowObject = $flowBean->retrieve($row['gat_default_flow']);
                     $row['gat_default_flow'] = isset($flowObject->flo_uid) ? $flowObject->flo_uid : '';
                     $row = PMSEEngineUtils::unsetCommonFields($row, array('name', 'description'));
                     $row = PMSEEngineUtils::sanitizeFields($row);
@@ -420,8 +420,7 @@ class PMSEProjectExporter extends PMSEExporter
         if (is_array($conditionArray)) {
             foreach ($conditionArray as $key => $value) {
                 if (isset($value->expType) && $value->expType == 'BUSINESS_RULES') {
-                    $activityBeam = BeanFactory::getBean('pmse_BpmnActivity');
-                    $activityBeam->retrieve_by_string_fields(array('id' => $value->expField));
+                    $activityBeam = BeanFactory::getBean('pmse_BpmnActivity', $value->expField);
                     $conditionArray[$key]->expField = $activityBeam->act_uid;
                 }
             }

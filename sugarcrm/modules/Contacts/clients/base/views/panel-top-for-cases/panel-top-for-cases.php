@@ -11,7 +11,7 @@
  */
 
 $viewdefs['Contacts']['base']['view']['panel-top-for-cases'] = array(
-    'type' => 'panel-top',
+    'template' => 'panel-top',
     'buttons' => array(
         array(
             'type' => 'actiondropdown',

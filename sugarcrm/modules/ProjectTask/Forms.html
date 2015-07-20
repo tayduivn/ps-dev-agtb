@@ -14,6 +14,7 @@
 <!-- BEGIN: main -->
 <script type="text/javascript" src="include/javascript/popup_parent_helper.js?v={VERSION_MARK}"></script>
 <form action="index.php" method="post" id="quick_save" name="quick_save"
+{sugar_csrf_form_token}
 	onsubmit="return check_form('quick_save');">
 <input type="hidden" name="module" value="ProjectTask" />
 <input type="hidden" name="action" value="Save" />
