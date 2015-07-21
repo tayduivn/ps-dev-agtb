@@ -662,6 +662,7 @@ $app_list_strings = array (
 
     'Meetings' => 'Meeting',
     'Calls' => 'Call',
+      'KBContents' => 'Knowledge Base',
   ),
 
   'parent_type_display' =>
@@ -681,6 +682,7 @@ $app_list_strings = array (
     'ProjectTask' => 'Project Task',
 
     'Prospects' => 'Target',
+      'KBContents' => 'Knowledge Base',
 
   ),
 
