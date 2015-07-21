@@ -269,6 +269,8 @@ class OpportunitiesSeedData {
         $fwRows = array();
         $fwSql = 'INSERT INTO '. $fw->table_name . '('. join(',', array_keys($fw->toArray(true))) . ') VALUES';
 
+        $opp_date_closed = '';
+        $opp_date_closed_timestamp = 0;
 
         //SugarBean::enterOperation('saving_related');
         while($rlis_created < $rlis_to_create) {
@@ -381,6 +383,11 @@ class OpportunitiesSeedData {
             $opp_best_case += $rli->best_case;
             $opp_worst_case += $rli->worst_case;
             $rlis_created++;
+
+            if ($opp_date_closed_timestamp < $rli->date_closed_timestamp) {
+                $opp_date_closed_timestamp = $rli->date_closed_timestamp;
+                $opp_date_closed = $rli->date_closed;
+            }
         }
 
         if ($rlis_to_create > ($closedWon + $closedLost) || $rlis_to_create === 0) {
@@ -409,6 +416,8 @@ class OpportunitiesSeedData {
 
 
         return array(
+            'date_closed' => $opp_date_closed,
+            'date_closed_timestamp' => $opp_date_closed_timestamp,
             'amount' => $opp_amount,
             'best_case' => $opp_best_case,
             'worst_case' => $opp_worst_case
