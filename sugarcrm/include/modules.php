@@ -716,6 +716,9 @@ $beanList['EmbeddedFiles'] = 'EmbeddedFile';
 $beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';
 $modInvisList[] = 'EmbeddedFiles';
 
+$moduleList[] = 'CarrierSocket';
+$modInvisList[] = 'CarrierSocket';
+
 // this module doesn't need a Bean
 $modInvisList[] = 'Feedbacks';
 
