@@ -718,6 +718,8 @@ $modInvisList[] = 'EmbeddedFiles';
 
 $moduleList[] = 'CarrierSocket';
 $modInvisList[] = 'CarrierSocket';
+$moduleList[] = 'CarrierEmail';
+$modInvisList[] = 'CarrierEmail';
 
 // this module doesn't need a Bean
 $modInvisList[] = 'Feedbacks';
