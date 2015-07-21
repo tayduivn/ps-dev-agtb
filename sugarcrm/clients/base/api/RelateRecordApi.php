@@ -373,8 +373,7 @@ class RelateRecordApi extends SugarApi
                 $primaryBean->$linkName->add(array($relatedBean),$relatedData);
 
                 // BR-2964, related objects are not populated
-                $tempBean = $primaryBean->$linkName->getBeanById($relatedBean->id);
-                $relatedBean = !empty($tempBean)? $tempBean : $relatedBean;
+                $primaryBean->$linkName->populateRelationshipFieldsForBean($relatedBean);
 
                 // BR-2937 The edit view cache issue for relate documents of a module
                 // nomad still needs this related array
