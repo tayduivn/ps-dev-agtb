@@ -76,6 +76,7 @@ $mod_strings = array (
         'Unable to create a new localization as a localization version exists for all available languages.',
     'LBL_SPECIFY_PUBLISH_DATE' => 'Schedule this article to be published by specifying the Publish Date. Do you wish to continue without entering a Publish Date?',
     'LBL_PANEL_INMORELESS' => 'Usefulness',
+    'LBL_USEFULNESS' => 'Usefulness',
     'LBL_MORE_OTHER_LANGUAGES' => 'More Other Languages...',
     'EXCEPTION_VOTE_USEFULNESS_NOT_AUTHORIZED' => 'You are not authorized to vote useful/not useful {moduleName}. Contact your administrator if you need access.',
     'LNK_NEW_KBCONTENT_TEMPLATE' => 'Create Template',
