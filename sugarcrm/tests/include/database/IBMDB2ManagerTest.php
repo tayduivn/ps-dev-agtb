@@ -104,7 +104,7 @@ class IBMDB2ManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $fieldDef = array(
             'name' => 'testColumn',
             'required' => true,
-            'type' => 'bool',
+            'type' => 'int',
             'isnull' => false
         );
         $this->assertNotContains('NOT NULL', $this->_db->addColumnSQL('testTable', $fieldDef), 'New column should be nullable if required but no default');

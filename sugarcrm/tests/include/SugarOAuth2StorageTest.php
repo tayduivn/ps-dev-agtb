@@ -194,16 +194,16 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
 
         // First login should work.
         $firstCheck = $storage->checkUserCredentials('support_portal','unittestportal1','unittestportal1');
-        $storage->setAccessToken('unittestportal1','support_portal',$contact1->id,time()+30,NULL);
+        $storage->setAccessToken(create_guid(),'support_portal',$contact1->id,time()+30,NULL);
 
         // Second login is borderline, but we let them pass because we are nice.
         $firstCheck = $storage->checkUserCredentials('support_portal','unittestportal2','unittestportal2');
-        $storage->setAccessToken('unittestportal2','support_portal',$contact2->id,time()+30,NULL);
+        $storage->setAccessToken(create_guid(),'support_portal',$contact2->id,time()+30,NULL);
 
         try {
             // Third login is time to fail
             $firstCheck = $storage->checkUserCredentials('support_portal','unittestportal3','unittestportal3');
-            $storage->setAccessToken('unittestportal3','support_portal',$contact3->id,time()+30,NULL);
+            $storage->setAccessToken(create_guid(),'support_portal',$contact3->id,time()+30,NULL);
 
 
             $errorLabel = 'no_error';

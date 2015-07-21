@@ -80,24 +80,24 @@ class KBContentsApiHelper extends SugarBeanApiHelper {
                 $bean->new_with_id = true;
             }
             foreach ($attachment_list as $info) {
-                $found = false;
                 foreach ($attachments as $attachment) {
                     if ($attachment->id === $info['id']) {
-                        $found = true;
-                        break;
+                        continue 2;
                     }
                 }
-                if (!$found) {
-                    $note = BeanFactory::getBean('Notes', $info['id']);
-                    if ($note) {
-                        $attachment = clone $note;
-                        $attachment->new_with_id = true;
-                        $attachment->portal_flag = true;
-                        $attachment->id = create_guid();
-                        UploadFile::duplicate_file($note->id, $attachment->id);
-                        $bean->attachments->add($attachment);
-                    }
+                $note = BeanFactory::getBean('Notes', $info['id']);
+                if ($note->parent_id && $note->parent_type) {
+                    // Note of an original record.
+                    $attachment = clone $note;
+                    $attachment->new_with_id = true;
+                    $attachment->portal_flag = true;
+                    $attachment->id = create_guid();
+                    UploadFile::duplicate_file($note->id, $attachment->id);
+                } else {
+                    // A new note created on client.
+                    $attachment = $note;
                 }
+                $bean->attachments->add($attachment);
             }
         }
         return $result;

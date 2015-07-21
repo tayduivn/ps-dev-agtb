@@ -19,8 +19,7 @@
         this.contextEvents = _.extend({}, this.contextEvents, {
             "list:opendesigner:fire": "openDesigner",
             "list:exportprocess:fire": "showExportingWarning",
-            "list:enabledRow:fire": "enabledProcess",
-            "list:disabledRow:fire": "disabledProcess"
+            "list:enabledDisabledRow:fire": "enableDisableProcess"
         });
 
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args:[options]});
@@ -97,21 +96,34 @@
             }
         });
     },
+    _showSuccessAlert: function () {
+        app.alert.show("data:sync:success", {
+            level: "success",
+            messages: App.lang.get('LBL_RECORD_SAVED'),
+            autoClose: true
+        });
+    },
     _updateProStatusEnabled: function(model) {
         var self = this;
+        var alertID = model.id + ':refresh';
         url = App.api.buildURL(model.module, null, {id: model.id});
         attributes = {prj_status: 'ACTIVE'};
         app.api.call('update', url, attributes,{
             success:function(){
-                self.reloadList();
+                self.$el.find("[name=pmse_Project_" + model.id + "] .label-important")
+                    .removeClass('label-important')
+                    .addClass('label-success')
+                    .text(App.lang.get('LBL_PMSE_PROCESS_DEFINITIONS_ENABLED', 'pmse_Project'));
+
+                self._showSuccessAlert();
+                model.set('prj_status', 'ACTIVE');
             }
         });
-        app.alert.show(model.id + ':refresh', {
+        app.alert.show(alertID, {
             level:"process",
-            title: app.lang.get('LBL_PRO_ENABLE', model.module),
+            title: app.lang.get('LBL_SAVING', model.module),
             autoClose: true
         });
-//        self.reloadList();
     },
     disabledProcess: function(model) {
         var self = this;
@@ -149,28 +161,33 @@
     },
     _updateProStatusDisabled: function(model) {
         var self = this;
+        var alertID = model.id + ':refresh';
         url = App.api.buildURL(model.module, null, {id: model.id});
         attributes = {prj_status: 'INACTIVE'};
         app.api.call('update', url, attributes,{
             success:function(){
-                self.reloadList();
+                self.$el.find("[name=pmse_Project_" + model.id + "] .label-success")
+                    .removeClass('label-success')
+                    .addClass('label-important')
+                    .text(App.lang.get('LBL_PMSE_PROCESS_DEFINITIONS_DISABLED', 'pmse_Project'));
+
+                self._showSuccessAlert();
+                model.set('prj_status', 'INACTIVE');
             }
         });
-        app.alert.show(model.id + ':refresh', {
+        app.alert.show(alertID, {
             level:"process",
-            title: app.lang.get('LBL_PRO_DISABLE', model.module),
+            title: app.lang.get('LBL_SAVING', model.module),
             autoClose: true
         });
-//        self.reloadList();
     },
-    reloadList: function() {
-        var self = this;
-        self.context.reloadData({
-            recursive:false,
-            error:function(error){
-                console.log(error);
-            }
-        });
+    enableDisableProcess: function (model) {
+        var status = model.get("prj_status");
+        if (status === 'ACTIVE') {
+            this.disabledProcess(model);
+        } else {
+            this.enabledProcess(model);
+        }
     },
     getDeleteMessages: function(model) {
         var messages = {};

@@ -55,7 +55,7 @@
                 viewName = 'record';
             }
             this.meta = this._previewifyMetadata(_.extend({}, recordMeta, previewMeta));
-
+            model.set('id', model.get('id2'));
             if (fetch) {
                 model.fetch({
                     //Show alerts for this request
