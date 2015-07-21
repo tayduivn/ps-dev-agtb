@@ -351,6 +351,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
   array (
   	'name' => 'contacts',
     'type' => 'link',
+    'module' => 'Contacts',
     'relationship' => 'meetings_contacts',
     'source'=>'non-db',
 		'vname'=>'LBL_CONTACTS',

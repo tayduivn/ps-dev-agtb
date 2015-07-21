@@ -123,7 +123,7 @@
                             Connect.method,
                             Connect.url,
                             {success: SUGAR.saveCallBack},
-                            'to_pdf=1&module=Administration&action=ConfigureShortcutBar&enabled_modules=' + YAHOO.lang.JSON.stringify(modules)
+                            'to_pdf=1&module=Administration&action=ConfigureShortcutBar&enabled_modules=' + YAHOO.lang.JSON.stringify(modules) + '&csrf_token=' + SUGAR.csrf.form_token
                     );
 
                     return true;

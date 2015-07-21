@@ -181,6 +181,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'modules/EmailMan/Save.php',
             //CRYS-773 Delete version.json from upgrade wizard directory
             'modules/UpgradeWizard/version.json',
+            // PAT-2081 Move Google API library to composer
+            'include/google-api-php-client',
         );
 
         // must be upgrading from between 710 to 722

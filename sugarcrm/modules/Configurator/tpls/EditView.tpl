@@ -430,7 +430,7 @@ function toggleDisplay_2(div_string){
     document.getElementById("company_logo").value='';
     document.getElementById('loading_img_company').style.display="inline";
     var file_name = document.getElementById('my_file_company').value;
-    postData = '&entryPoint=UploadFileCheck&forQuotes=false';
+    postData = '&entryPoint=UploadFileCheck&forQuotes=false&csrf_token=' + SUGAR.csrf.form_token;
     YAHOO.util.Connect.setForm(document.getElementById('upload_form'), true,true);
     if(file_name){
         if(postData.substring(0,1) == '&'){

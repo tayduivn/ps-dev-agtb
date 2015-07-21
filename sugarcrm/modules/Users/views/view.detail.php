@@ -35,7 +35,7 @@ class UsersViewDetail extends ViewDetail {
 
         parent::preDisplay();
 
-        $viewHelper = new UserViewHelper($this->ss, $this->bean, 'DetailView');
+        $viewHelper = UserViewHelper::create($this->ss, $this->bean, 'DetailView');
         $viewHelper->setupAdditionalFields();
 
         $errors = "";
