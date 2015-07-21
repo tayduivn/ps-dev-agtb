@@ -454,7 +454,7 @@ class DynamicField {
                      array('id_c' => $values['id_c']),
                      null,
                      true,
-                     $db->supports('prepared_statements')
+                     $db->usePreparedStatements
                  );
              } else {
                  $db->insertParams(
@@ -463,7 +463,7 @@ class DynamicField {
                      $values,
                      null,
                      true,
-                     $db->supports('prepared_statements')
+                     $db->usePreparedStatements
                  );
              }
          }
