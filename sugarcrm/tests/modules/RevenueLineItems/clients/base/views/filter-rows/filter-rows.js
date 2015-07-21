@@ -8,13 +8,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 describe('RevenueLineItems.Base.Views.FilterRows', function() {
-    var app, view, options, sandbox;
+    var app,
+        view,
+        options,
+        sandbox;
 
     beforeEach(function() {
         app = SugarTest.app;
-
         sandbox = sinon.sandbox.create();
 
         options = {
@@ -47,16 +48,15 @@ describe('RevenueLineItems.Base.Views.FilterRows', function() {
         SugarTest.seedMetadata(true, './fixtures');
         app.metadata.getModule("Forecasts", "config").is_setup = 1;
 
-        sandbox.stub(app.view.views.BaseFilterRowsView.prototype, 'getFilterableFields', function() {
-            return {
+        sandbox.stub(app.view.views.BaseFilterRowsView.prototype, 'loadFilterFields', function() {
+            this.filterFields = this.fieldList = {
                 'name': [],
                 'commit_stage': [],
                 'best_case': [],
                 'likely_case': []
             }
         });
-        sandbox.stub(app.view.views.BaseFilterRowsView.prototype, 'initialize', function() {
-        });
+        sandbox.stub(app.view.views.BaseFilterRowsView.prototype, 'initialize', function() {});
 
         view = SugarTest.createView('base', 'RevenueLineItems', 'filter-rows', options.meta, null, true);
     });
@@ -72,25 +72,26 @@ describe('RevenueLineItems.Base.Views.FilterRows', function() {
     describe('getFilterableFields', function() {
         it('should delete commit_stage if forecast is not setup', function() {
             app.metadata.getModule("Forecasts", "config").is_setup = 0;
-            var fields = view.getFilterableFields('test');
-            expect(fields['commit_stage']).toBeUndefined();
+            view.loadFilterFields('test');
+            expect(view.filterFields['commit_stage']).toBeUndefined();
         });
+
         it('should not delete commit_stage if forecast is setup', function() {
             app.metadata.getModule("Forecasts", "config").is_setup = 1;
-            var fields = view.getFilterableFields('test');
-            expect(fields['commit_stage']).toBeDefined();
+            view.loadFilterFields('test');
+            expect(view.filterFields['commit_stage']).toBeDefined();
         });
 
         it('should delete base_case', function() {
             app.metadata.getModule("Forecasts", "config").show_worksheet_best = 0;
-            var fields = view.getFilterableFields('test');
-            expect(fields['best_case']).toBeUndefined();
+            view.loadFilterFields('test');
+            expect(view.filterFields['best_case']).toBeUndefined();
         });
+
         it('should not delete base_case', function() {
             app.metadata.getModule("Forecasts", "config").show_worksheet_best = 1;
-            var fields = view.getFilterableFields('test');
-            expect(fields['best_case']).toBeDefined();
+            view.loadFilterFields('test');
+            expect(view.filterFields['best_case']).toBeDefined();
         });
     });
-
 });
