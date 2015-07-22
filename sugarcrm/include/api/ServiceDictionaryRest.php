@@ -18,6 +18,17 @@
  */
 class ServiceDictionaryRest extends ServiceDictionary
 {
+    // definition of score weight
+    const SCORE_WILDCARD = 0.75;
+    const SCORE_MODULE = 1;
+    const SCORE_EXACTMATCH = 1.75;
+    const SCORE_CUSTOMEXTRA = 0.5;
+
+    const WEIGHT_MINVERSION = 0.02;
+    const WEIGHT_MAXVERSION = 0.02;
+    const WEIGHT_MINMAXVERSION_MATCH = 0.02;
+    const WEIGHT_BASE = 1000;
+
     /**
      * Loads the dictionary so it can be searche
      */
@@ -133,13 +144,40 @@ class ServiceDictionaryRest extends ServiceDictionary
                 // Max version is too high, look for another route
                 continue;
             }
-            if ( $route['score'] > $bestScore ) {
+
+            // calculate extra weight for version
+            $routeScore = $route['score'] + $this->getScoreWeightForVersion($route, $version);
+            if ( $routeScore > $bestScore ) {
                 $bestRoute = $route;
-                $bestScore = $route['score'];
+                $bestRoute['score'] = $routeScore;
+                $bestScore = $bestRoute['score'];
             }
         }
 
         return $bestRoute;
+    }
+
+    /**
+     * get extra score weight based on version
+     * @param array $route The current candidate route
+     * @param float $version The API version you are looking for
+     * @return float
+     */
+    protected function getScoreWeightForVersion ($route, $version){
+        $extraScore = 0.0;
+        if (isset($route['minVersion']) && $route['minVersion'] <= $version ) {
+            $extraScore += self::WEIGHT_MINVERSION + round($route['minVersion']/self::WEIGHT_BASE, 4);
+        }
+
+        if (isset($route['maxVersion']) && $route['maxVersion'] >= $version ) {
+            $extraScore += self::WEIGHT_MAXVERSION;
+        }
+
+        if (isset($route['maxVersion']) && isset($route['maxVersion']) && $route['maxVersion'] == $version ) {
+            $extraScore += self::WEIGHT_MINMAXVERSION_MATCH;
+        }
+
+        return $extraScore;
     }
 
     protected function matchModule( $pathElement ) {
@@ -192,7 +230,7 @@ class ServiceDictionaryRest extends ServiceDictionary
 
                 if ($isCustom) {
                     // Give some extra weight to custom endpoints so they can override built in endpoints
-                    $endpointScore = $endpointScore + 0.5;
+                    $endpointScore = $endpointScore + self::SCORE_CUSTOMEXTRA;
                 }
 
                 $endpoint['file'] = $file;
@@ -225,13 +263,13 @@ class ServiceDictionaryRest extends ServiceDictionary
 
         if ($currPath === '?') {
             // This matches anything
-            $myScore = 0.75;
+            $myScore = self::SCORE_WILDCARD;
         } elseif ($currPath[0] === '<') {
             // This is looking for a specfic data type
-            $myScore = 1.0;
+            $myScore = self::SCORE_MODULE;
         } else {
             // This is looking for a specific string
-            $myScore = 1.75;
+            $myScore = self::SCORE_EXACTMATCH;
         }
 
 
