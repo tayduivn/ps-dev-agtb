@@ -131,7 +131,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
             // for studio we don't know all cases, value can be array or 'visible' etc.
             // because of that we use expected studio not to be false or 'false'.
             // when we'll know all values we should replace that condition with suitable one.
-            && (!isset($field['studio']) || ($field['studio'] !== false && $field['studio'] != 'false')
+            && (!isset($field['studio']) || ($field['studio'] !== false && $field['studio'] !== 'false')
         );
     }
 
