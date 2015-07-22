@@ -359,7 +359,7 @@
         var parentCtx = this.context && this.context.parent,
             setFromCtx;
 
-        setFromCtx = value === null && parentCtx &&
+        setFromCtx = value === null && parentCtx &&  _.isEmpty(this.context.get('model').link) &&
             this.view instanceof app.view.views.BaseCreateView &&
             parentCtx.get('module') === this.def.module &&
             this.module !== this.def.module;
