@@ -1383,7 +1383,7 @@ SearchUpdaterItem.prototype.clear = function() {
  * @returns {string}
  */
 SearchUpdaterItem.prototype.getSelectedText = function() {
-    return this.select2Control.select2('data').text || '';
+    return (this.select2Control.select2('data') && this.select2Control.select2('data').text) || '';
 }
 
 /**
