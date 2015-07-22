@@ -11,6 +11,8 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\MetaData\RefreshQueue;
+
 require_once 'soap/SoapHelperFunctions.php';
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 require_once 'include/SugarFields/SugarFieldHandler.php';
@@ -176,12 +178,13 @@ class MetaDataManager
 
     /**
      * The actual cache refresher queue. When the cache refresher queue runner is
-     * called, this array will drive what is done. First by section then by module
-     * unless 'full' is set to true.
+     * called, this array will drive what is done.
      *
-     * @var array
+     * @var RefreshQueue
      */
     protected static $queue  = array();
+
+    protected static $fullRefresh = array();
 
     /**
      * Set by the cache refresh queue runner, if true, the refresh*Cache functions
@@ -1610,7 +1613,7 @@ class MetaDataManager
         // If we are in queue state (like in RepairAndRebuild), hold on to this
         // request until we are told to run it
         if (static::$isQueued) {
-            static::$queue['full'] = $platforms;
+            static::$fullRefresh = array('platforms' => $platforms);
             return;
         }
 
@@ -1689,15 +1692,15 @@ class MetaDataManager
      * since these all have their own caches that need to be dealt with.
      *
      * @param string $part which part of the cache to build
-     * @param array $args List of items to be passed to the rebuild method
+     * @param array $items List of items to be passed to the rebuild method
      * @param array $platforms List of platforms to carry out the refresh for
      * @param array $params Additional metadata parameters
      * @return null
      */
-    protected static function refreshCachePart($part, $args = array(), $platforms = array(), $params = array())
+    protected static function refreshCachePart($part, $items = array(), $platforms = array(), $params = array())
     {
         // No args, no worries
-        if (empty($args)) {
+        if (empty($items)) {
             return;
         }
 
@@ -1709,7 +1712,7 @@ class MetaDataManager
         // If we are in queue state (like in RepairAndRebuild), hold on to this
         // request until we are told to run it
         if (self::$isQueued) {
-            self::buildCacheRefreshQueueSection($part, $args, array_merge($params, array(
+            self::buildCacheRefreshQueueSection($part, $items, array_merge($params, array(
                 'platforms' => $platforms,
             )));
             return;
@@ -1754,7 +1757,7 @@ class MetaDataManager
                         }
 
                         foreach ($contexts as $context) {
-                            $mm->$method($args, $context);
+                            $mm->$method($items, $context);
                         }
                     }
                 }
@@ -1766,30 +1769,20 @@ class MetaDataManager
      * Builds up a section of the refreshCacheQueue based on name.
      *
      * @param string $name Name of the queue section
-     * @param array  $data The list of modules or sections
+     * @param array  $items The list of modules or sections
      * @param array  $params Additional metadata parameters
      */
-    protected static function buildCacheRefreshQueueSection($name, $data, $params)
+    protected static function buildCacheRefreshQueueSection($name, $items, $params)
     {
-        if (is_array($data)) {
-            foreach ($data as $item) {
-                self::$queue[$name][$item] = $item;
-            }
-        } else {
-            self::$queue[$name][$data] = $data;
+        if (!self::$queue) {
+            self::$queue = new RefreshQueue();
         }
 
-        // Keep track of additional parameters... use the fullest list presented
-        foreach ($params as $paramName => $value) {
-            if (!isset(self::$queue[$name]['params'][$paramName])) {
-                self::$queue[$name]['params'][$paramName] = array();
-            }
-
-            self::$queue[$name]['params'][$paramName] = array_merge(
-                self::$queue[$name]['params'][$paramName],
-                (array) $value
-            );
+        if (!is_array($items)) {
+            $items = array($items);
         }
+
+        self::$queue->enqueue($name, $items, $params);
     }
 
     /**
@@ -1810,31 +1803,27 @@ class MetaDataManager
             self::$isQueued = false;
 
             // If full is set, run all cache clears and be done
-            if (isset(self::$queue['full'])) {
+            if (!empty(self::$fullRefresh)) {
                 // Handle the refreshing of the cache and emptying of the queue
-                self::refreshCache(self::$queue['full']);
-                self::$queue = array();
+                self::refreshCache(self::$fullRefresh['platforms']);
+                if (self::$queue) {
+                    self::$queue->clear();
+                }
             }
 
-            // Run modules first
-            foreach (self::$cacheParts as $part => $method) {
-                if (isset(self::$queue[$part])) {
-                    if (isset(self::$queue[$part]['params'])) {
-                        $params = self::$queue[$part]['params'];
-                        unset(self::$queue[$part]['params']);
-                    } else {
-                        $params = array();
+            if (self::$queue) {
+                while ($task = self::$queue->dequeue()) {
+                    list($name, $items, $params) = $task;
+                    if (isset(self::$cacheParts[$name])) {
+                        $method = self::$cacheParts[$name];
+                        if (isset($params['platforms'])) {
+                            $platforms = $params['platforms'];
+                            unset($params['platforms']);
+                        } else {
+                            $platforms = array();
+                        }
+                        self::$method($items, $platforms, $params);
                     }
-
-                    if (isset($params['platforms'])) {
-                        $platforms = $params['platforms'];
-                        unset($params['platforms']);
-                    } else {
-                        $platforms = array();
-                    }
-
-                    self::$method(self::$queue[$part], $platforms, $params);
-                    unset(self::$queue[$part]);
                 }
             }
 
@@ -3997,7 +3986,7 @@ class MetaDataManager
         $contexts = array();
 // BEGIN SUGARCRM flav=ent ONLY
         if (!$public && isset($params['role'])) {
-            $roleSets = self::getRoleSetsByRoles($params['role']);
+            $roleSets = self::getRoleSetsByRoles(array($params['role']));
             foreach ($roleSets as $roleSet) {
                 $contexts[] = new MetaDataContextRoleSet($roleSet);
             }

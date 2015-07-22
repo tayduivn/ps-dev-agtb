@@ -43,19 +43,19 @@ class SugarTestReflection
         return $rm->invokeArgs($object, $args);
     }
 
-    public static function setProtectedValue($object, $property, $value)
+    public static function setProtectedValue($classOrObject, $property, $value)
     {
-        $ro = new ReflectionObject($object);
-        $rp = $ro->getProperty($property);
+        $rp = new ReflectionProperty($classOrObject, $property);
         $rp->setAccessible(true);
+        $object = is_object($classOrObject) ? $classOrObject : null;
         $rp->setValue($object, $value);
     }
 
-    public static function getProtectedValue($object, $property)
+    public static function getProtectedValue($classOrObject, $property)
     {
-        $ro = new ReflectionObject($object);
-        $rp = $ro->getProperty($property);
+        $rp = new ReflectionProperty($classOrObject, $property);
         $rp->setAccessible(true);
+        $object = is_object($classOrObject) ? $classOrObject : null;
         return $rp->getValue($object);
     }
 }
