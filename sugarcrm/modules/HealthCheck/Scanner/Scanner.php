@@ -697,6 +697,7 @@ class HealthCheckScanner
             }
         }
 
+        restore_error_handler();
         return $this->logMeta;
     }
 
