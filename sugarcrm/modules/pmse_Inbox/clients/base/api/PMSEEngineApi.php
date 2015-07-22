@@ -1116,6 +1116,8 @@ class PMSEEngineApi extends SugarApi
         $returnArray['case']['title']['time'] = $this->caseWrapper->processDueDateTime($returnArray['case']['flow']['cas_due_date']);
         $bpmnProcess = BeanFactory::retrieveBean('pmse_BpmnProcess', $bpmFlow->pro_id);
         $returnArray['case']['title']['process'] = $bpmnProcess->name;
+        $bpmInbox = BeanFactory::retrieveBean('pmse_Inbox', $args['id']);
+        $returnArray['case']['title']['rec_name'] = $bpmInbox->name;
         $bpmnActivity = BeanFactory::retrieveBean('pmse_BpmnActivity', $bpmFlow->bpmn_id);
         $returnArray['case']['title']['activity'] = $bpmnActivity->name;
         $returnArray['case']['inboxId'] = $bpmnActivity->name;
