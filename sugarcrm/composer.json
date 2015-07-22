@@ -48,11 +48,11 @@
         }
     },
     "require": {
-        "psr/log": "1.0",
+        "psr/log": "1.0.0",
         "ruflin/elastica" : "v1.4.3.0",
         "onelogin/php-saml" : "2.1.0.1",
         "aws/aws-sdk-php": "2.7.7",
-        "PHPMailer/PHPMailer" : "v5.2.9",
+        "phpmailer/phpmailer" : "v5.2.9",
         "ircmaxell/password-compat": "v1.0.4",
         "symfony/security-core": "v2.7.1",
         "symfony/security-csrf": "v2.7.1",
@@ -70,7 +70,7 @@
         },
         {
             "type" : "git",
-            "url" : "https://github.com/sugarcrm/php-saml"
+            "url" : "https://github.com/sugarcrm/php-saml.git"
         },
         {
             "type" : "git",
