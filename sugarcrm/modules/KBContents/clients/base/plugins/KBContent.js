@@ -37,10 +37,7 @@
              */
             onAttach: function(component, plugin) {
                 this.on('init', function() {
-                    this.context.on('button:create_localization_button:click', this.createLocalization, this);
-                    this.context.on('button:create_revision_button:click', this.createRevision, this);
-                    this.context.on('button:create_article_button:click', this.createArticle, this);
-                    this.context.on('button:create_article_button_subpanel:click', this.createArticleSubpanel, this);
+                    this._initKBListeners();
                     if (this.tplName === 'list' || this.tplName === 'panel-top') {
                         this.context.on('list:editrow:fire', _.bind(function(model, view) {
                             this._initValidationHandler(model);
@@ -49,6 +46,21 @@
                         this._initValidationHandler(this.model);
                     }
                 });
+            },
+
+            /**
+             * Initialize KB specific listeners with ability to override.
+             * @private
+             */
+            _initKBListeners: function() {
+                if (_.isFunction(Object.getPrototypeOf(this)._initKBListeners)) {
+                    Object.getPrototypeOf(this)._initKBListeners.call(this);
+                    return;
+                }
+                this.context.on('button:create_localization_button:click', this.createLocalization, this);
+                this.context.on('button:create_revision_button:click', this.createRevision, this);
+                this.context.on('button:create_article_button:click', this.createArticle, this);
+                this.context.on('button:create_article_button_subpanel:click', this.createArticleSubpanel, this);
             },
 
             /**
@@ -350,9 +362,11 @@
              * @param {Function} callback Async.js waterfall callback.
              */
             _doValidateExpDateField: function(model, fields, errors, callback) {
-                var fieldName = 'exp_date',
+                var expFName = 'exp_date',
+                    actFName = 'active_date',
+                    fieldName = expFName,
                     expDate = model.get(fieldName),
-                    publishingDate = model.get('active_date'),
+                    publishingDate = model.get(actFName),
                     status = model.get('status'),
                     changed = model.changedAttributes(model.getSyncedAttributes()),
                     errorKeys = [];
@@ -364,12 +378,12 @@
                     (!publishingDate || app.date(publishingDate).isBefore(Date.now())))
                 ) {
                     publishingDate = app.date().formatServer(true);
-                    model.set('active_date', publishingDate);
+                    model.set(actFName, publishingDate);
                 }
 
                 if (status !== 'expired' && expDate && publishingDate && app.date(expDate).isBefore(publishingDate)) {
-                    if (!this.getField(fieldName)) {
-                        fieldName = 'active_date';
+                    if (!this.getField(fieldName) && this.getField(actFName)) {
+                        fieldName = actFName;
                     }
                     errors[fieldName] = errors[fieldName] || {};
                     errors[fieldName].expDateLow = true;

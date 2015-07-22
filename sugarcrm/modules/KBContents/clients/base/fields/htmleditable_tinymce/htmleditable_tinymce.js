@@ -108,7 +108,7 @@
     setMode: function(mode) {
         this.shouldDisable = (mode === 'edit' &&
             (this.view.tplName === 'list' ||
-            (this.view.tplName == '' && this.tplName == 'subpanel-list')
+            (this.view.tplName == '' && (this.tplName == 'subpanel-list' || this.tplName == 'list'))
             )
         );
         this._super('setMode', [mode]);

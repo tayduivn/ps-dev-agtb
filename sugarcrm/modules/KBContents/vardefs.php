@@ -32,6 +32,7 @@ $dictionary['KBContent'] = array(
                 'boost' => 0.60,
             ),
             'audited' => true,
+            'duplicate_on_record_copy' => 'always',
         ),
         'language' => array(
             'name' => 'language',
@@ -42,6 +43,7 @@ $dictionary['KBContent'] = array(
             'sortable' => false,
             'audited' => false,
             'studio' => false,
+            'duplicate_on_record_copy' => 'always',
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => false,
@@ -83,6 +85,7 @@ $dictionary['KBContent'] = array(
             'reportable' => true,
             'audited' => true,
             'studio' => true,
+            'duplicate_on_record_copy' => 'no',
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => false,
@@ -197,7 +200,7 @@ $dictionary['KBContent'] = array(
             'link' => 'kbdocuments_kbcontents',
             'module' => 'KBDocuments',
             'duplicate_merge' => 'disabled',
-            'duplicate_on_record_copy' => 'no',
+            'duplicate_on_record_copy' => 'always',
             'studio' => false,
             'massupdate' => false,
         ),
@@ -230,6 +233,7 @@ $dictionary['KBContent'] = array(
             'comment' => 'External article flag',
             'default' => 0,
             'studio' => true,
+            'duplicate_on_record_copy' => 'always',
         ),
         'kbarticles_kbcontents' => array(
             'name' => 'kbarticles_kbcontents',
@@ -397,6 +401,7 @@ $dictionary['KBContent'] = array(
             'comment' => 'Category ID',
             'audited' => true,
             'studio' => false,
+            'duplicate_on_record_copy' => 'always',
         ),
         'category_name' => array(
             'name' => 'category_name',
@@ -412,6 +417,7 @@ $dictionary['KBContent'] = array(
             'massupdate' => false,
             'source' => 'non-db',
             'studio' => 'visible',
+            'duplicate_on_record_copy' => 'always',
         ),
         'usefulness' => array(
             'name' => 'usefulness',
@@ -446,7 +452,7 @@ $dictionary['KBContent'] = array(
             'rhs_key' => 'parent_id',
             'relationship_type' => 'one-to-many',
             'relationship_role_column' => 'parent_type',
-            'relationship_role_column_value' => 'KBContentsNotes',
+            'relationship_role_column_value' => 'KBContents',
         ),
         'kbcontent_attachments' => array(
             'lhs_module' => 'KBContents',
@@ -551,4 +557,6 @@ VardefManager::createVardef(
 );
 $dictionary['KBContent']['fields']['name']['audited'] = true;
 $dictionary['KBContent']['fields']['name']['importable'] = 'required';
-
+$dictionary['KBContent']['fields']['tag']['duplicate_on_record_copy'] = 'no';
+$dictionary['KBContent']['fields']['assigned_user_id']['duplicate_on_record_copy'] = 'always';
+$dictionary['KBContent']['fields']['team_name']['duplicate_on_record_copy'] = 'always';

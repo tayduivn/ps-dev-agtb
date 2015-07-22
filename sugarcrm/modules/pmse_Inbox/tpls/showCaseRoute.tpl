@@ -40,7 +40,7 @@
                 <table border='0' cellpadding='0' cellspacing='0' width='100%'>
                     <tr>
                         <td align='left'>
-                            <h2 id="showCaseTitle">ID: {$caseData.cas_id} &#124; {$caseData.pro_title} &#62; {$caseData.cas_title}
+                            <h2 id="showCaseTitle">ID: {$caseData.cas_id} &#124; {$caseData.name} &#62; {$caseData.cas_title}
                                 {if isset($act_name)} &#62; {$act_name} {/if}
                                 {if isset($expected_time)}(
                                     <span {if $expected_time_warning} style="color:red;" {/if}>{if isset($expected_time_message)} {$expected_time_message} {/if}{$expected_time}</span>

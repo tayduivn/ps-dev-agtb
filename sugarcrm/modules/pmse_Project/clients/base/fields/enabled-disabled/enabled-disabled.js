@@ -17,11 +17,14 @@
 
     _render: function () {
         var value=this.model.get('prj_status');
-        if(value==='INACTIVE'){
-            this._super("_render");
+
+        if (value === 'ACTIVE') {
+            this.label = App.lang.get("LBL_PMSE_LABEL_DISABLE", "pmse_Project");
         } else {
-            this.hide();
+            this.label = App.lang.get("LBL_PMSE_LABEL_ENABLE", "pmse_Project");
         }
+
+        this._super("_render");
     },
 
     bindDataChange: function () {

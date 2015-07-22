@@ -69,6 +69,9 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
     public $refreshToken;
 
     const SAML_GRANT_TYPE = 'urn:ietf:params:oauth:grant-type:saml2-bearer';
+
+    const SEAMLESS_GRANT_TYPE = 'urn:ietf:params:oauth:grant-type:seamless-bearer';
+
     const TOKEN_CHECK_TIME = 120;
 
     // BEGIN METHOD FROM SugarOAuth2StorageInterface
@@ -457,6 +460,12 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         // Disable cookies
         ini_set("session.use_cookies",false);
         session_start();
+        if (!empty($_SESSION['user_id'])) {
+            $GLOBALS['log']->fatal("A new access token was created for another users existing session id. User_id:{$_SESSION['user_id']}, session_id: $oauth_token");
+            session_destroy();
+            throw new SugarApiExceptionInvalidGrant();
+        }
+
         // Clear out the old session data
         $_SESSION = array();
 
@@ -732,13 +741,15 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
     // BEGIN METHOD FROM IOAuth2GrantExtension
     public function checkGrantExtension($uri, array $inputData, array $authHeaders)
 	{
-	    if($uri == self::SAML_GRANT_TYPE) {
+        if($uri == self::SAML_GRANT_TYPE) {
             if(empty($inputData['assertion'])) {
                 return false;
             }
             $_POST['SAMLResponse'] = $inputData['assertion'];
             return $this->checkUserCredentials('sugar', '', '');
-	    }
+	    } else if ($uri == self::SEAMLESS_GRANT_TYPE) {
+            return $this->checkUserCredentials('sugar', '', '');
+        }
         return false;
 	}
 	// END METHOD FROM IOAuth2GrantExtension

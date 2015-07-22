@@ -138,6 +138,7 @@
         // due to _loadTemplate function logic from sidecar/src/view.js file
         this._super('_render',[]);
 
+        this.$node = this.$(this.fieldSelector + '[data-type=attachments]');
         this.setSelect2Node();
         if (this.$node.length > 0) {
             this.$node.select2({
@@ -169,38 +170,34 @@
 
     /**
      * Set `$node` as `Select2` object.
+     * Unlink and delete attached notes on remove from select2.
      */
     setSelect2Node: function () {
         var self = this;
-        if (this.$node !== null && this.$node.length > 0) {
-            this.$node.off('change');
-            this.$node.off('select2-opening');
+        if (!this.$node || this.$node.length == 0) {
+            return;
         }
-        this.$node = this.$(this.fieldSelector + '[data-type=attachments]');
-        this.$node.on('change',
-            function (evt) {
-                if (!_.isEmpty(evt.removed)) {
-                    self.model.set(
-                        self.name,
-                        _.filter(
-                            self.model.get(self.name),
-                            function(file) {return (file.id != evt.removed.id);}
-                        )
-                    );
-                    /**
-                     * Deletes relate attachment from server.
-                     */
-                    if (!_.isEmpty(self.model.id)) {
-                        var relates = self.model.getRelatedCollection(self.def.link),
-                            relate = relates.get(evt.removed.id);
+        this.$node.off('select2-removed');
+        this.$node.off('select2-opening');
 
-                        if (relate) {
-                            relate.destroy({relate: true});
-                        }
+        this.$node.on('select2-removed', function(evt) {
+            var note = app.data.createBean('Notes', {id: evt.val});
+            note.fetch({
+                success: function(model) {
+                    // Do nothing with a note of original record.
+                    if (!self.model.id && model.get('parent_id')) {
+                        return;
                     }
+                    model.destroy();
                 }
-                self.render();
             });
+            self.model.set(self.name, _.filter(self.model.get(self.name),
+                function(file) {
+                    return (file.id !== evt.val);
+                }
+            ));
+            self.render();
+        });
         /**
          * Disables dropdown for `Select2`
          */
@@ -227,6 +224,8 @@
 
     /**
      * Upload file to server.
+     * Create a real note for an attachment to use drag and drop and the file in body.
+     * Do not create a related note because the attachment field is enabled on create view.
      */
     uploadFile: function() {
         var self = this,
@@ -359,7 +358,7 @@
      * Disposes event listeners on `Select2` object.
      */
     dispose: function () {
-        this.$node.off('change');
+        this.$node.off('select2-removed');
         this.$node.off('select2-opening');
         this._super('dispose');
     }

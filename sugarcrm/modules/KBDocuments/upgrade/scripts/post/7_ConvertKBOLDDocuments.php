@@ -273,6 +273,7 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
             $note->new_with_id = true;
             $note->name = $row['filename'];
             $note->filename = $row['filename'];
+            $note->portal_flag = true;
             $noteFile = "upload://{$note->id}";
             $note->file_mime_type = $row['file_mime_type'];
             copy($fileLocation, $noteFile);

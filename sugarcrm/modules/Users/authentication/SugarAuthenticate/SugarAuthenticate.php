@@ -296,52 +296,25 @@ class SugarAuthenticate{
 
 	/**
 	 * Make sure a user isn't stealing sessions so check the ip to ensure that the ip address hasn't dramatically changed
-	 *
 	 */
-	public function validateIP() {
-		global $sugar_config;
-		$isValidIP = true;
-		
-		// grab client ip address
-		$clientIP = query_client_ip();
-		$classCheck = 0;
-		// check to see if config entry is present, if not, verify client ip
-		if (!isset ($sugar_config['verify_client_ip']) || $sugar_config['verify_client_ip'] == true) {
-			// check to see if we've got a current ip address in $_SESSION
-			// and check to see if the session has been hijacked by a foreign ip
-			if (isset ($_SESSION["ipaddress"])) {
-				$session_parts = explode(".", $_SESSION["ipaddress"]);
-				$client_parts = explode(".", $clientIP);
-				if(count($session_parts) < 4) {
-					$classCheck = 0;
-				}
-				else {
-					// match class C IP addresses
-					for ($i = 0; $i < 3; $i ++) {
-						if ($session_parts[$i] == $client_parts[$i]) {
-							$classCheck = 1;
-							continue;
-						} else {
-							$classCheck = 0;
-							break;
-						}
-					}
-				}
-				// we have a different IP address
-				if ($_SESSION["ipaddress"] != $clientIP && empty ($classCheck)) {
-                                    $GLOBALS['log']->fatal("IP Address mismatch: SESSION IP: {$_SESSION['ipaddress']} CLIENT IP: {$clientIP}");
-					$isValidIP = false;
-				}
-			} else {
-				$_SESSION["ipaddress"] = $clientIP;
-			}
-		}
-		return $isValidIP;
+    public function validateIP()
+    {
+        $clientIp = query_client_ip();
+        if (isset($_SESSION['ipaddress'])) {
+            if (!validate_ip($clientIp, $_SESSION['ipaddress'])) {
+                $GLOBALS['log']->fatal(sprintf(
+                    'IP address mismatch: SESSION IP: %s, CLIENT IP: %s',
+                    $_SESSION['ipaddress'],
+                    $clientIp
+                ));
+                return false;
+            }
+            return true;
+        }
 
-	}
-
-
-
+        $_SESSION['ipaddress'] = $clientIp;
+        return true;
+    }
 
 	/**
 	 * Called when a user requests to logout

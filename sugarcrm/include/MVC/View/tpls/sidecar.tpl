@@ -74,12 +74,18 @@
             } else {
                 var App;
                 {/literal}{if $authorization}
-                SUGAR.App.cache.set("{$appPrefix}AuthAccessToken", "{$authorization.access_token}")
+                SUGAR.App.cache.set("{$appPrefix}AuthAccessToken", "{$authorization.access_token}");
                 {if $authorization.refresh_token}
-                SUGAR.App.cache.set("{$appPrefix}AuthRefreshToken", "{$authorization.refresh_token}")
+                SUGAR.App.cache.set("{$appPrefix}AuthRefreshToken", "{$authorization.refresh_token}");
                 {/if}
                 if (window.SUGAR.App.config.siteUrl != '') {ldelim}
-                    history.replaceState(null, 'SugarCRM', window.SUGAR.App.config.siteUrl+"/"+window.location.hash)
+                    history.replaceState(null, 'SugarCRM', window.SUGAR.App.config.siteUrl+"/"+window.location.hash);
+                {rdelim} else {ldelim}
+                    history.replaceState(
+                            null,
+                            'SugarCRM',
+                            window.location.origin + window.location.pathname + window.location.hash
+                    );
                 {rdelim}
                 {/if}{literal}
                 App = SUGAR.App.init({
