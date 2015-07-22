@@ -2211,7 +2211,10 @@
 				placeholder: this._placeholder,
 				query: this._queryFunction(),
 				initSelection: this._initSelection(),
-				width: "100%"
+				width: "100%",
+                formatNoMatches: function (term) {
+                    return (term && (term !== '')) ? translate('LBL_PA_FORM_COMBO_NO_MATCHES_FOUND') : '';
+                }
 			});
 			this._setValueToControl(this._value);
 			control = this._htmlControl[0].data("select2").container[0];

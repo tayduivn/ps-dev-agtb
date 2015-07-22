@@ -945,15 +945,15 @@ class PMSECrmDataWrapper implements PMSEObservable
         $order = 'users.first_name, users.last_name';
 
         $usersData = $this->usersBean->get_full_list($order, $where);
-        //$beanFactory = new ADAMBeanFactory();
-        //$beanFactory = $this->getADAMBeanFactory();
-        foreach ($usersData as $user) {
-            $userTmp = array();
-            $userTmp['value'] = $user->id;
-            $userFullName = $this->teamsBean->getDisplayName($user->first_name, $user->last_name);
-            $userTmp['text'] = $userFullName;
+        if (is_array($usersData)) {
+            foreach ($usersData as $user) {
+                $userTmp = array();
+                $userTmp['value'] = $user->id;
+                $userFullName = $this->teamsBean->getDisplayName($user->first_name, $user->last_name);
+                $userTmp['text'] = $userFullName;
 
-            $output[] = $userTmp;
+                $output[] = $userTmp;
+            }
         }
         $res->result = $output;
         return $output;

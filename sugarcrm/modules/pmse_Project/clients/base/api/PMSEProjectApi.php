@@ -307,7 +307,7 @@ class PMSEProjectApi extends ModuleApi
     public function verifyRunningProcess($api, $args)
     {
         $this->checkACL($api, $args);
-        if (!$args['baseModule']) {
+        if (empty($args['baseModule'])) {
             $projectBean = BeanFactory::getBean($args['module'], $args['record'],
                 array('strict_retrieve' => true, 'disable_row_level_security' => true));
             $processBean = BeanFactory::getBean('pmse_BpmnProcess')->retrieve_by_string_fields(array("prj_id" => $projectBean->id));
