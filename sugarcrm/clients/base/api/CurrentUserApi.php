@@ -157,16 +157,8 @@ class CurrentUserApi extends SugarApi
     public function retrieveCurrentUser($api, $args)
     {
         $current_user = $this->getUserBean();
-
-        // FIXME temporary fix for SC-4596
-        $mHashValid = true;
-        if (isset($api->request_headers[$api::HEADER_META_HASH])) {
-            $mM = MetaDataManager::getManager(array($api->platform));
-            $mHashValid = $mM->isMetadataHashValid($api->request_headers[$api::HEADER_META_HASH]);
-        }
-
         $hash = $current_user->getUserMDHash();
-        if ($mHashValid && $api->generateETagHeader($hash)) {
+        if ($api->generateETagHeader($hash)) {
             return;
         }
 
