@@ -714,15 +714,16 @@ class RestService extends ServiceBase
      * simply have to generate the ETag, pass it in, and the function handles the rest.
      *
      * @param  string $etag ETag to use for this content.
+     * @param int $cache_age age in seconds for Cache-control max-age header
      * @return bool   Did we have a match?
      */
-    public function generateETagHeader($etag)
+    public function generateETagHeader($etag, $cache_age = 0)
     {
         if (empty($this->response)) {
            return false;
         }
 
-        return $this->response->generateETagHeader($etag);
+        return $this->response->generateETagHeader($etag, $cache_age);
     }
 
     /**
