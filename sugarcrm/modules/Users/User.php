@@ -2466,7 +2466,11 @@ EOQ;
     }
 
     public function getUserMDHash() {
-        return md5($this->hashTS);
+        //Add the tab hash to include the change of tabs (e.g. module order) as a part of the user hash
+        $tabs = new TabController();
+        $tabHash = $tabs->getMySettingsTabHash();
+
+        return md5($this->hashTS . $tabHash);
     }
 
     public function setupSession() {

@@ -394,7 +394,7 @@ class RestService extends ServiceBase
             // valid metadata hash so the client knows if it is worth
             // re-syncing.
             $replyData['metadata_hash'] = $mM->getMetadataHash();
-            $replyData['user_hash'] = $replyData['metadata_hash'] ? $this->user->getUserMDHash() : false;
+            $replyData['user_hash'] = $this->user->getUserMDHash();
         }
         if ( !empty($message) ) {
             $replyData['error_message'] = $message;
@@ -808,16 +808,15 @@ class RestService extends ServiceBase
         } else {
             $postContents = $this->request->getPostContents();
             if ( !empty($postContents) ) {
-                    // This looks like the post contents are JSON
-                    // Note: If we want to support rest based XML, we will need to change this
-
-                    $postVars = @json_decode($postContents, true, 32);
-                    if (json_last_error() !== 0) {
-                        // Bad JSON data, throw an exception instead of trying to process it
-                        throw new SugarApiExceptionInvalidParameter();
-                    }
+                // This looks like the post contents are JSON
+                // Note: If we want to support rest based XML, we will need to change this
+                $postVars = @json_decode($postContents,true,32);
+                if (json_last_error() !== 0) {
+                    // Bad JSON data, throw an exception instead of trying to process it
+                    throw new SugarApiExceptionInvalidParameter();
                 }
             }
+        }
 
         // I know this looks a little weird, overriding post vars with get vars, but
         // in the case of REST, get vars are fairly uncommon and pretty explicit, where

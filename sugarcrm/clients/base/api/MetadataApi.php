@@ -333,7 +333,7 @@ class MetadataApi extends SugarApi
         // Get the metadata manager we need first
         $mm = $this->getMetaDataManager($api->platform, $public);
 
-        //Since this is a raw response we need to set the content type ourselves.
+         //Since this is a raw response we need to set the content type ourselves.
         $api->getResponse()->setHeader("Content-Type", "application/json");
         //Cache language files forever as the request includes the hash in the URL
         $api->getResponse()->setHeader("Cache-Control" , "max-age=31556940, private");
