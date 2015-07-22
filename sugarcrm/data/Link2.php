@@ -454,7 +454,9 @@ class Link2 {
                     $result[$id] = $this->beans[$id];
                 }
 
-                $this->populateRelationships($relationshipFields, $vals, $result[$id]);
+                if (!empty($result[$id])) {
+                    $this->populateRelationships($relationshipFields, $vals, $result[$id]);
+                }
             }
 
             //If we did a complete load, cache the result in $this->beans
@@ -479,7 +481,7 @@ class Link2 {
      * @param $relBean SugarBean
      * @return void
      */
-    public function populateRelationshipFieldsForBean(SugarBean $relBean){
+    public function populateRelationshipFields(SugarBean $relBean){
 
         if(empty($relBean) || empty($relBean->id)){
             return;
