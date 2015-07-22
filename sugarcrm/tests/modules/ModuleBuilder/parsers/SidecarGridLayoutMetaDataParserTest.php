@@ -653,6 +653,37 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
 
         $this->assertCount(3, $this->_parser->_viewdefs['panels']['LBL_RECORD_BODY']);
     }
+
+    /**
+     * @covers SidecarGridLayoutMetaDataParser::removeField
+     */
+    public function testRemoveFieldRemovesEmptyPanel()
+    {
+        $panels = array(
+            'LBL_PANEL_1' => array(
+                array(
+                    'field_1',
+                ),
+            ),
+            'LBL_PANEL_2' => array(
+                array(
+                    'field_2',
+                ),
+            ),
+        );
+
+        $this->_parser->_viewdefs['panels'] = $panels;
+
+        $this->_parser->removeField('field_1');
+
+        $this->assertSame(array(
+            'LBL_PANEL_2' => array(
+                array(
+                    'field_2',
+                ),
+            ),
+        ), $this->_parser->_viewdefs['panels']);
+    }
 }
 
 
