@@ -95,4 +95,57 @@ class StudioModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($isBWC, !empty($layouts[translate('LBL_SEARCH', "ModuleBuilder")]),
             'Failed asserting that module:' . $module . ' has a search layout when BWC');
     }
+
+    /**
+     * @covers ::checkRelatedModule
+     * @dataProvider providerCheckRelatedModule
+     */
+    public function testCheckRelatedModule($defs, $sourceModule, $expected)
+    {
+        $stub = $this->getStudioModuleMock();
+
+        $result = SugarTestReflection::callProtectedMethod(
+            $stub,
+            'checkRelatedModule',
+            array($defs, $sourceModule)
+        );
+
+        $this->assertEquals($result, $expected);
+    }
+
+    public function providerCheckRelatedModule()
+    {
+        return array(
+            array(
+                array(
+                    "accounts_meetings_1" => array("module" => "Accounts")
+                ),
+                "Accounts",
+                true
+            ),
+            array(
+                array(
+                    "notes" => array("module" => "Notes")
+                ),
+                "Accounts",
+                false
+            ),
+            array(
+                array(),
+                "Accounts",
+                false
+            ),
+        );
+    }
+
+    /**
+     * @return StudioModule
+     */
+    protected function getStudioModuleMock(array $methods = null)
+    {
+        return $this->getMockBuilder('StudioModule')
+            ->disableOriginalConstructor()
+            ->setMethods($methods)
+            ->getMock();
+    }
 }
