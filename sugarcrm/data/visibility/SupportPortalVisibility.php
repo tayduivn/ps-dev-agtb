@@ -151,7 +151,7 @@ class SupportPortalVisibility extends SugarVisibility
                     //ENd SUGARCRM flav=ent ONLY
 
                 } elseif ($queryType == 'where') {
-                    $KBContentsCondition = "{$table_alias}.parent_type = 'KBContentsNotes' "
+                    $KBContentsCondition = "{$table_alias}.parent_type = 'KBContents' "
                                     . "OR {$table_alias}.parent_type = 'KBContentsAttachments'";
 
                     if ( !empty($accountIds) ) {

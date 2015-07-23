@@ -662,6 +662,7 @@ $app_list_strings = array (
 
     'Meetings' => 'Meeting',
     'Calls' => 'Call',
+      'KBContents' => 'Knowledge Base',
   ),
 
   'parent_type_display' =>
@@ -681,6 +682,7 @@ $app_list_strings = array (
     'ProjectTask' => 'Project Task',
 
     'Prospects' => 'Target',
+      'KBContents' => 'Knowledge Base',
 
   ),
 
@@ -9404,6 +9406,7 @@ Sincerely, SugarCRM',
     'ERROR_ACTIVE_DATE_APPROVE_REQUIRED' => 'Error. The Approved status requires publishing date.',
     'ERROR_ACTIVE_DATE_LOW' => 'Error. The publish date should be more than current date.',
     'LBL_DUP_MERGE'=>'Find Duplicates',
+    'ERR_DUPLICATE_CHECK_IS_DISABLED' => 'Duplicate check is disabled for {{module}}.',
     'LBL_MANAGE_SUBSCRIPTIONS'=>'Manage Subscriptions',
     'LBL_MANAGE_SUBSCRIPTIONS_FOR'=>'Manage Subscriptions for ',
     'LBL_SUBSCRIBE'=>'Subscribe',
