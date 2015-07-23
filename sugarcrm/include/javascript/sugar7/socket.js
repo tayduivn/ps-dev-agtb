@@ -101,22 +101,29 @@
      * To join and leave specified channels.
      *
      * @param {SUGAR.App} app Instance of current application.
+     * @param {Function} lazyTrigger closure to catch subscriptions.
      * @constructor
      */
-    var Socket = function(app) {
+    var Socket = function(app, lazyTrigger) {
         this._super = Backbone.Events;
-        this._url = '';
         this._socket = null;
         this._channels = {};
         this._app = app;
-        this._app.events.on('app:init', this._initConfig, this);
+        var trigger = _.bind(function() {
+            this._app.events.on('app:init', this._initConfig, this);
+        }, this);
+        if (lazyTrigger) {
+            lazyTrigger(trigger);
+        } else {
+            trigger();
+        }
     };
     _.extend(Socket.prototype, Backbone.Events, {
 
         /**
          * Entry point for Socket object.
          * That should be executed when application has been initialized and app.config is present.
-         * it detects this._url and forward logic to this._initClientLibrary.
+         * it detects url and forward logic to this._initClientLibrary.
          *
          * @private
          */
@@ -130,40 +137,40 @@
             if (this._app.config.websockets.client.balancer) {
                 this._Factory$().get(this._app.config.websockets.client.url).done(_.bind(function(data) {
                     if (!_.isUndefined(data) && !_.isUndefined(data.location)) {
-                        this._url = data.location;
-                        this._initClientLibrary();
+                        this._initClientLibrary(data.location);
                     }
                 }, this));
             } else {
-                this._url = this._app.config.websockets.client.url;
-                this._initClientLibrary();
+                this._initClientLibrary(this._app.config.websockets.client.url);
             }
         },
 
         /**
-         * When this._url was detected we need to load client js library to work with socket.io.
+         * When url was detected we need to load client js library to work with socket.io.
          * When the library has been loaded we forward logic to this._initSocket.
          *
+         * @param {string} url URL of Socket Server
          * @private
          */
-        _initClientLibrary: function() {
-            var scriptUrl = this._url + (this._url.substr(-1) == '/' ? '' : '/') + 'socket.io/socket.io.js';
+        _initClientLibrary: function(url) {
+            var scriptUrl = url + (url.substr(-1) == '/' ? '' : '/') + 'socket.io/socket.io.js';
             this._Factory$().getScript(scriptUrl, _.bind(function () {
-                this._initSocket();
+                this._initSocket(url);
             }, this));
         },
 
         /**
          * Initializes socket.io client library, binds required events and open connection to socket server.
          *
+         * @param {string} url URL of Socket Server
          * @private
          */
-        _initSocket: function() {
-            this._socket = this._FactoryIO(this._url, {
+        _initSocket: function(url) {
+            this._socket = this._FactoryIO(url, {
                 autoConnect: false
             });
             this._bind();
-            this._socket.open();
+            this.socket().open();
         },
 
         /**
@@ -174,8 +181,8 @@
         _bind: function() {
             this._app.events.on('app:login:success', this.authorize, this);
             this._app.events.on('app:logout', this.authorize, this);
-            this._socket.on('connect', _.bind(this.authorize, this));
-            this._socket.on('message', _.bind(this._message, this));
+            this.socket().on('connect', _.bind(this.authorize, this));
+            this.socket().on('message', _.bind(this._message, this));
         },
 
         /**
@@ -207,7 +214,7 @@
          * Sends all required information to socket server to authorize current client.
          */
         authorize: function() {
-            this._socket.emit('OAuthToken', {
+            this.socket().emit('OAuthToken', {
                 'siteUrl': this._app.config.siteUrl,
                 'serverUrl': this._app.config.serverUrl,
                 'token': this._app.api.getOAuthToken(),
@@ -226,7 +233,7 @@
             _.each(this._channels, function(channel, name) {
                 if (!channel.isEmpty()) {
                     result.push(name);
-                }f
+                }
             });
             return result;
         },
@@ -258,6 +265,16 @@
         },
 
         /**
+         * Returns current socket object.
+         * Created for testing to allow mock of socket object.
+         *
+         * @returns {io|null}
+         */
+        socket: function() {
+            return this._socket;
+        },
+
+        /**
          * Factory method which returns new object of channel class.
          *
          * @param {string} name Name of new channel, will be passed to constructor of Channel class.
@@ -265,7 +282,7 @@
          * @private
          */
         _FactoryChannel: function(name) {
-            return new Channel(name, this._socket);
+            return new Channel(name, this.socket());
         },
 
         /**
@@ -291,5 +308,5 @@
         }
     });
 
-    app.augment("socket", new Socket(app), false);
+    app.augment("socket", new Socket(app, typeof lazySocketConstructor == 'function' ? lazySocketConstructor : null ), false);
 })(SUGAR.App);
