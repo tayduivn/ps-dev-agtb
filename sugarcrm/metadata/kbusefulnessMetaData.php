@@ -40,7 +40,7 @@ $dictionary['kbusefulness'] = array(
         ),
         'vote' => array(
             'name' => 'vote',
-            'type' => 'tinyint',
+            'type' => 'smallint',
             'isnull' => 'true',
         ),
         'zeroflag' => array(
