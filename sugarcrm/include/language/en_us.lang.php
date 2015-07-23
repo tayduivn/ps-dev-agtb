@@ -11673,6 +11673,9 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     // Javascript enable string
     'LBL_ENABLE_JAVASCRIPT' => 'Sugar 7 requires javascript. Please enable Javascript in your browser to use Sugar 7.',
+
+    'LBL_DAFAULT_CALDAV_NAME' => 'Default',
+    'LBL_DAFAULT_CALDAV_URI' => 'default',
 );
 
 $app_list_strings['activity_user_options'] = array (

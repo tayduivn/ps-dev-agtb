@@ -13,6 +13,8 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Base\Helper;
 
+use Sugarcrm\Sugarcrm\Dav\Cal;
+
 /**
  * Class UserHelper
  * @package Sugarcrm\Sugarcrm\Dav\Base\Helper
@@ -138,5 +140,33 @@ class UserHelper
     public function getUserBean()
     {
         return \BeanFactory::getBean('Users');
+    }
+
+    /**
+     * Retrieve default calendar for user.
+     * If calendar doesn't exists create it
+     *
+     * @param string $principalUri
+     * @return array | null
+     */
+    public function getCalendars($principalUri)
+    {
+        $user = $this->getUserByPrincipalString($principalUri);
+        if ($user->load_relationship('caldav_calendars')) {
+
+            $calendarBeans = $user->caldav_calendars->getBeans();
+            if ($calendarBeans) {
+                return $calendarBeans;
+            }
+
+            $calendarBean = \BeanFactory::getBean('CalDavCalendars');
+            $calendar = $calendarBean->createDefaultForUser($user);
+
+            if ($calendar) {
+                return array($calendar);
+            }
+        }
+
+        return null;
     }
 }

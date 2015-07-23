@@ -1,8 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -13,6 +9,10 @@ if(!defined('sugarEntry') || !sugarEntry) {
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sabre\DAV;
+use Sabre\CalDAV;
+use Sugarcrm\Sugarcrm\Dav\Base;
 
 /**
  * Class CalDavCalendar
@@ -33,7 +33,7 @@ class CalDavCalendar extends SugarBean
     public $id;
 
     /**
-     * Calendar name
+     * Calendar display name
      * @var string
      */
     public $name;
@@ -75,12 +75,6 @@ class CalDavCalendar extends SugarBean
     public $deleted;
 
     /**
-     * Calendar title
-     * @var string
-     */
-    public $displayname;
-
-    /**
      * Calendar URI
      * @var string
      */
@@ -90,7 +84,7 @@ class CalDavCalendar extends SugarBean
      * Synchronization token for CalDav server purposes
      * @var integer
      */
-    public $synctoken;
+    public $synctoken = 0;
 
     /**
      * Calendar order for iCal
@@ -114,17 +108,109 @@ class CalDavCalendar extends SugarBean
      * Supported calendar components set
      * @var string
      */
-    public $components;
+    public $components = 'VEVENT,VTODO';
 
     /**
      * Determines whether the calendar object resources in a calendar collection will affect the owner's busy time information.
      * @var integer
      */
-    public $transparent;
+    public $transparent = 0;
 
     /**
      * Owner of the calendar
      * @var string
      */
     public $assigned_user_id;
+
+    /**
+     * Convert bean to CalDav calendar array format
+     *
+     * @param Base\Helper\UserHelper $userHelper Instance of userHelper
+     * @param array $propertyMap Mapping CalDav properties -> Calendar bean fields
+     *
+     * @return array
+     */
+    public function toCalDavArray(array $propertyMap, Base\Helper\UserHelper $userHelper)
+    {
+        $result = array();
+
+        $result['id'] = $this->id;
+        $result['uri'] = $this->uri;
+
+        foreach ($propertyMap as $davProperty => $calendarProperty) {
+            $result[$davProperty] = $this->$calendarProperty;
+        }
+
+        $result['{' . CalDAV\Plugin::NS_CALDAV . '}supported-calendar-component-set'] =
+            new CalDAV\Xml\Property\SupportedCalendarComponentSet($this->getComponents());
+
+        $result['{' . CalDAV\Plugin::NS_CALENDARSERVER . '}getctag'] = 'http://sabre.io/ns/sync/' . $this->synctoken;
+        $result['{http://sabredav.org/ns}sync-token'] = $this->synctoken;
+
+        $result['{' . CalDAV\Plugin::NS_CALDAV . '}schedule-calendar-transp'] =
+            new CalDAV\Xml\Property\ScheduleCalendarTransp($this->getTransparent());
+
+        $user = BeanFactory::getBean('Users', $this->assigned_user_id);
+        $result['principaluri'] = $userHelper->getPrincipalStringByUser($user);
+
+        return $result;
+    }
+
+    /**
+     * Get calendar componets array
+     * @return array | null
+     */
+    public function getComponents()
+    {
+        if ($this->components) {
+            return explode(',', $this->components);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get transparent info
+     * @return string
+     */
+    public function getTransparent()
+    {
+        return $this->transparent ? 'transparent' : 'opaque';
+    }
+
+    /**
+     * Create default calendar for selected user
+     * @param User $user
+     * @return $this
+     */
+    public function createDefaultForUser(User $user)
+    {
+        $this->uri = translate('LBL_DAFAULT_CALDAV_URI');
+        $this->name = translate('LBL_DAFAULT_CALDAV_NAME');
+        $this->assigned_user_id = $user->id;
+        $this->save();
+
+        return $this;
+    }
+
+    /**
+     * Adds a change record to the calendarchanges table.
+     * @return void
+     *
+     * @todo Don't forget save changes to caldav_changes table in future
+     */
+    public function addChange()
+    {
+        $this->synctoken ++;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function save($check_notify = false)
+    {
+        $this->addChange();
+
+        return parent::save($check_notify);
+    }
 }

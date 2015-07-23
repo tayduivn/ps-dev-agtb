@@ -16,15 +16,6 @@ $dictionary['CalDavCalendar'] = array(
     'full_text_search' => false,
     'fields' =>
         array(
-            'displayname' =>
-                array(
-                    'name' => 'displayname',
-                    'vname' => 'LBL_DISPLAYNAME',
-                    'type' => 'varchar',
-                    'len' => '255',
-                    'isnull' => 'true',
-                    'comment' => 'Calendar title',
-                ),
             'uri' =>
                 array(
                     'name' => 'uri',
