@@ -165,17 +165,6 @@
             var lastVisitedStateKey = this.getLastStateKey();
             app.user.lastState.set(lastVisitedStateKey, context.get('modelId'));
         }
-
-        // When the module is Activities, and it doesn't have a modelId set and the model mode is undefined
-        // it should fetch the collection and hand off to the setDefaultDashboard
-        if (module === 'Activities' && !context.has('modelId') && _.isUndefined(this.model.mode)) {
-            this.once('render', function() {
-                this.collection.fetch({
-                    silent: true,
-                    success: _.bind(this.setDefaultDashboard, this)
-                });
-            }, this);
-        }
     },
 
     /**
