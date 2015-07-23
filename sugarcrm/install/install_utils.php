@@ -762,6 +762,22 @@ function handleSugarConfig() {
         );
     }
 
+    // Setup WebSocket configuration
+    if (!empty($_SESSION['websockets_server_url']) && !empty($_SESSION['websockets_client_url'])) {
+        $sugar_config['websockets'] = array(
+            'server' => array(
+                'url' => $_SESSION['websockets_server_url'],
+            ),
+            'client' => array(
+                'url' => $_SESSION['websockets_client_url'],
+                'balancer' => !empty($_SESSION['websockets_client_balancer'])
+            )
+        );
+        unset($_SESSION['websockets_server_url']);
+        unset($_SESSION['websockets_client_url']);
+        unset($_SESSION['websockets_client_balancer']);
+    }
+
     /* nsingh(bug 22402): Consolidate logger settings under $config['logger'] as liked by the new logger! If log4pphp exists,
        these settings will be overwritten by those in log4php.properties when the user access admin->system settings. */
     $sugar_config['logger']	= array(
@@ -1619,7 +1635,6 @@ function validate_dbConfig() {
     global $mod_strings;
     require_once('install/checkDBSettings.php');
     return checkDBSettings(true);
-
 }
 
 function validate_siteConfig($type){
@@ -1723,6 +1738,16 @@ function pullSilentInstallVarsIntoSession() {
     if(isset($sugar_config_si['install_method']))
         $derived['install_method'] = $sugar_config_si['install_method'];
 
+    if (isset($sugar_config_si['websockets']['server']['url'])) {
+        $derived['websockets_server_url'] = $sugar_config_si['websockets']['server']['url'];
+    }
+    if (isset($sugar_config_si['websockets']['client']['url'])) {
+        $derived['websockets_client_url'] = $sugar_config_si['websockets']['client']['url'];
+    }
+    if (isset($sugar_config_si['websockets']['client']['balancer'])) {
+        $derived['websockets_client_balancer'] = $sugar_config_si['websockets']['client']['balancer'];
+    }
+    
     $needles = array(
         'setup_db_create_database',
         'setup_db_create_sugarsales_user',
