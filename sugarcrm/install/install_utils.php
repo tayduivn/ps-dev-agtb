@@ -1635,13 +1635,6 @@ function validate_dbConfig() {
     global $mod_strings;
     require_once('install/checkDBSettings.php');
     return checkDBSettings(true);
-
-}
-
-function validate_wsConfig() {
-    global $mod_strings;
-    require_once('install/checkWSConfiguration.php');
-    return checkWSConfiguration(true);
 }
 
 function validate_siteConfig($type){

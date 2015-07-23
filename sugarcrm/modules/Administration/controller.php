@@ -199,8 +199,6 @@ class AdministrationController extends SugarController
     }
 
     /**
-     * action_saveWebSocketsConfiguration
-     *
      * This method handles the saving websockets configuration.
      */
     public function action_saveWebSocketsConfiguration()

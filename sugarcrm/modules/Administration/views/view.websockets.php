@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -14,39 +13,38 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class ViewWebSockets extends SugarView
 {
     /**
-	 * @see SugarView::_getModuleTitleParams()
-	 */
-	protected function _getModuleTitleParams($browserTitle = false)
-	{
-	    global $mod_strings;
+     * @see SugarView::_getModuleTitleParams()
+     */
+    protected function _getModuleTitleParams($browserTitle = false)
+    {
+        global $mod_strings;
 
-    	return array(
-    	   "<a href='index.php?module=Administration&action=index'>".$mod_strings['LBL_MODULE_NAME']."</a>",
-    	   $mod_strings['LBL_WEB_SOCKET_CONFIGURATION']
-    	   );
+        return array(
+            "<a href='index.php?module=Administration&action=index'>".$mod_strings['LBL_MODULE_NAME']."</a>",
+            $mod_strings['LBL_WEB_SOCKET_CONFIGURATION']
+        );
     }
 
     /**
-	 * @see SugarView::preDisplay()
-	 */
-	public function preDisplay()
-	{
-	    global $current_user;
+     * @see SugarView::preDisplay()
+     */
+    public function preDisplay()
+    {
+        global $current_user;
 
-	    if (!is_admin($current_user)) {
-	        sugar_die("Unauthorized access to administration.");
+        if (!is_admin($current_user)) {
+            sugar_die("Unauthorized access to administration.");
         }
-	}
+    }
 
     /**
-	 * @see SugarView::display()
-	 */
-	public function display()
-	{
+     * @see SugarView::display()
+     */
+    public function display()
+    {
         global $mod_strings;
         global $app_strings;
 
-        $form_action = "index.php?module=Administration&action=saveWebSocketsConfiguration";
         $config = $GLOBALS['sugar_config']['websockets'];
 
         $sugar_smarty = new Sugar_Smarty();

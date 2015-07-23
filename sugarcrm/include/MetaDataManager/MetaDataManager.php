@@ -291,7 +291,7 @@ class MetaDataManager
         'websockets' => array(
             'client' => array(
                 'url' => true,
-                'balancer' => true
+                'balancer' => true,
             ),
         ),
         'lead_conv_activity_opt' => true,

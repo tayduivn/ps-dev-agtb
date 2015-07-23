@@ -94,17 +94,13 @@ $out2 =<<<EOQ2
 	<td colspan="2">
 EOQ2;
 
-if ( !empty($si_errors) && sizeof($db_errors) > 0 )
-{
+if (!empty($si_errors) && sizeof($db_errors) > 0) {
     $out2 .= '<div id="errorMsgs"><ul>';
-    foreach ($db_errors as $error)
-    {
+    foreach ($db_errors as $error) {
         $out2 .= '<li class="error">' . $error . '</li>';
     }
     $out2 .= '</ul></div>';
-}
-else
-{
+} else {
     $out2 .= '<div id="errorMsgs" style="display:none"></div>';
 }
 

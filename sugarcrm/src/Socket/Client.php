@@ -152,7 +152,7 @@ class Client
                 'token' => $token,
                 'data' => array(
                     'message' => $message,
-                    'args' => $data
+                    'args' => $data,
                 )
             )
         );

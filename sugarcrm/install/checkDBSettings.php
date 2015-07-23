@@ -69,13 +69,14 @@ function checkWSConfiguration($silent = false)
             }
         }
     }
+
+    installLog("End WebSocket Configuration Check Process *************");
+
     if ($silent) {
         return $errors;
     } else {
-        printErrorsWS($errors);
+        printErrors($errors);
     }
-
-    installLog("End WebSocket Configuration Check Process *************");
 }
 
 function checkDBSettings($silent=false) {
@@ -251,12 +252,13 @@ function checkDBSettings($silent=false) {
     $WSErrors = checkWSConfiguration(true);
     $errors = array_merge($errors, $WSErrors);
 
+    installLog("End DB Check Process *************");
+
     if ($silent) {
         return $errors;
     } else {
         printErrors($errors);
     }
-    installLog("End DB Check Process *************");
 }
 
 function printErrors($errors ){

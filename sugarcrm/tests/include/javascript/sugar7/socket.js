@@ -1,22 +1,31 @@
 describe('Sugar Socket Server Client', function() {
-    var app = {
-        config: {},
-        events: {
-            on: sinon.stub().returnsThis(),
-            off: sinon.stub().returnsThis(),
-            trigger: sinon.stub().returnsThis()
-        },
-        augment: function(name, data) {
-            app[name] = data;
-        },
-        socket: null
-    };
-    var source = SugarTest.loadFile('../include/javascript/sugar7', 'socket', 'js', function(source) {
-        return source;
-    });
-    var initSocketConstructor = sinon.spy();
+    var scope, app, initSocketConstructor, source;
+
 
     beforeEach(function() {
+        scope = sinon.sandbox.create();
+
+        if (!source) {
+            source = SugarTest.loadFile('../include/javascript/sugar7', 'socket', 'js', function(source) {
+                return source;
+            });
+        }
+
+        app = {
+            config: {},
+            events: {
+                on: scope.stub().returnsThis(),
+                off: scope.stub().returnsThis(),
+                trigger: scope.stub().returnsThis()
+            },
+            augment: function(name, data) {
+                app[name] = data;
+            },
+            socket: null
+        };
+
+        initSocketConstructor = scope.spy();
+
         var SUGAR = {
             App: app
         };
@@ -26,20 +35,14 @@ describe('Sugar Socket Server Client', function() {
         eval(source);
     });
     afterEach(function() {
-        app.events.on.reset();
-        app.events.off.reset();
-        app.events.trigger.reset();
-        initSocketConstructor = sinon.spy();
+        scope.restore();
     });
 
     describe('Socket', function() {
         describe('Socket', function() {
             beforeEach(function() {
-                sinon.stub(app.socket, '_initConfig');
+                scope.stub(app.socket, '_initConfig');
                 initSocketConstructor();
-            });
-            afterEach(function() {
-                app.socket._initConfig.restore();
             });
 
             it('binds _initConfig on app:init event', function() {
@@ -61,16 +64,12 @@ describe('Sugar Socket Server Client', function() {
 
             beforeEach(function() {
                 $Stub = {
-                    get: sinon.stub().returnsThis(),
-                    done: sinon.stub().returnsThis()
+                    get: scope.stub().returnsThis(),
+                    done: scope.stub().returnsThis()
                 };
 
-                sinon.stub(app.socket, '_initClientLibrary');
-                sinon.stub(app.socket, '_Factory$').returns($Stub);
-            });
-            afterEach(function() {
-                app.socket._initClientLibrary.restore();
-                app.socket._Factory$.restore();
+                scope.stub(app.socket, '_initClientLibrary');
+                scope.stub(app.socket, '_Factory$').returns($Stub);
             });
 
             it('does not execute _initClientLibrary if config.websockets is not defined', function() {
@@ -160,16 +159,12 @@ describe('Sugar Socket Server Client', function() {
 
             beforeEach(function() {
                 $Stub = {
-                    getScript: sinon.stub().returnsThis()
+                    getScript: scope.stub().returnsThis()
                 };
                 url = 'http://domain' + Math.round(Math.random() * 100) + '.com';
 
-                sinon.stub(app.socket, '_Factory$').returns($Stub);
-                sinon.stub(app.socket, '_initSocket');
-            });
-            afterEach(function () {
-                app.socket._Factory$.restore();
-                app.socket._initSocket.restore();
+                scope.stub(app.socket, '_Factory$').returns($Stub);
+                scope.stub(app.socket, '_initSocket');
             });
 
             it('calls getScript with correct url', function() {
@@ -192,16 +187,12 @@ describe('Sugar Socket Server Client', function() {
 
             beforeEach(function() {
                 IOStub = {
-                    open: sinon.stub().returnsThis()
+                    open: scope.stub().returnsThis()
                 };
                 url = 'http://domain' + Math.round(Math.random() * 100) + '.com';
 
-                sinon.stub(app.socket, '_bind');
-                sinon.stub(app.socket, '_FactoryIO').returns(IOStub);
-            });
-            afterEach(function() {
-                app.socket._bind.restore();
-                app.socket._FactoryIO.restore();
+                scope.stub(app.socket, '_bind');
+                scope.stub(app.socket, '_FactoryIO').returns(IOStub);
             });
 
             it('calls _FactoryIO with correct url and parameters', function() {
@@ -229,19 +220,13 @@ describe('Sugar Socket Server Client', function() {
 
             beforeEach(function() {
                 IOStub = {
-                    on: sinon.stub().returnsThis()
+                    on: scope.stub().returnsThis()
                 };
                 url = 'http://domain' + Math.round(Math.random() * 100) + '.com';
 
-                sinon.stub(app.socket, 'authorize');
-                sinon.stub(app.socket, '_message');
-                sinon.stub(app.socket, 'socket').returns(IOStub);
-
-            });
-            afterEach(function() {
-                app.socket.authorize.restore();
-                app.socket._message.restore();
-                app.socket.socket.restore();
+                scope.stub(app.socket, 'authorize');
+                scope.stub(app.socket, '_message');
+                scope.stub(app.socket, 'socket').returns(IOStub);
             });
 
             it('subscribes to app:login:success event of app with authorize method', function() {
@@ -296,19 +281,19 @@ describe('Sugar Socket Server Client', function() {
                     args: Math.random()
                 };
                 channel1Stub = {
-                    trigger: sinon.stub().returnsThis(),
+                    trigger: scope.stub().returnsThis(),
                     systemEvents: {
-                        on: sinon.stub().returnsThis()
+                        on: scope.stub().returnsThis()
                     }
                 };
                 channel2Stub = {
-                    trigger: sinon.stub().returnsThis(),
+                    trigger: scope.stub().returnsThis(),
                     systemEvents: {
-                        on: sinon.stub().returnsThis()
+                        on: scope.stub().returnsThis()
                     }
                 };
-                triggerStub = sinon.stub(app.socket, 'trigger');
-                factoryChannelStub = sinon.stub(app.socket, '_FactoryChannel');
+                triggerStub = scope.stub(app.socket, 'trigger');
+                factoryChannelStub = scope.stub(app.socket, '_FactoryChannel');
 
                 factoryChannelStub.withArgs('channel1').returns(channel1Stub);
                 factoryChannelStub.withArgs('channel2').returns(channel2Stub);
@@ -317,8 +302,6 @@ describe('Sugar Socket Server Client', function() {
                 app.socket.channel('channel2');
             });
             afterEach(function() {
-                app.socket.trigger.restore();
-                app.socket._FactoryChannel.restore();
                 app.socket._destroyChannel('channel1');
                 app.socket._destroyChannel('channel2');
             });
@@ -356,22 +339,15 @@ describe('Sugar Socket Server Client', function() {
                 app.config.siteUrl = Math.random();
                 app.config.serverUrl = Math.random();
                 app.api = {
-                    getOAuthToken: sinon.stub().returns(token)
+                    getOAuthToken: scope.stub().returns(token)
                 };
 
                 IOStub = {
-                    emit: sinon.stub().returnsThis()
+                    emit: scope.stub().returnsThis()
                 };
 
-                sinon.stub(app.socket, '_currentChannels').returns(channels);
-                sinon.stub(app.socket, 'socket').returns(IOStub);
-            });
-            afterEach(function() {
-                app.socket.socket.restore();
-                app.socket._currentChannels.restore();
-                delete app.config.siteUrl;
-                delete app.config.serverUrl;
-                delete app.api;
+                scope.stub(app.socket, '_currentChannels').returns(channels);
+                scope.stub(app.socket, 'socket').returns(IOStub);
             });
 
             it('emits OAuthToken message to socket', function() {
@@ -410,33 +386,29 @@ describe('Sugar Socket Server Client', function() {
 
             beforeEach(function() {
                 IOStub = {
-                    on: sinon.stub().returnsThis()
+                    on: scope.stub().returnsThis()
                 };
 
                 channel1Stub = {
                     name: Math.random() + '',
-                    isEmpty: sinon.stub().returns(false),
+                    isEmpty: scope.stub().returns(false),
                     systemEvents: {
-                        on: sinon.stub().returns(this)
+                        on: scope.stub().returns(this)
                     }
                 };
 
                 channel2Stub = {
                     name: Math.random() + '',
-                    isEmpty: sinon.stub().returns(false),
+                    isEmpty: scope.stub().returns(false),
                     systemEvents: {
-                        on: sinon.stub().returns(this)
+                        on: scope.stub().returns(this)
                     }
                 };
 
-                sinon.stub(app.socket, 'socket').returns(IOStub);
-                sinon.stub(app.socket, '_FactoryChannel');
+                scope.stub(app.socket, 'socket').returns(IOStub);
+                scope.stub(app.socket, '_FactoryChannel');
                 app.socket._FactoryChannel.withArgs(channel1Stub.name).returns(channel1Stub);
                 app.socket._FactoryChannel.withArgs(channel2Stub.name).returns(channel2Stub);
-            });
-            afterEach(function() {
-                app.socket.socket.restore();
-                app.socket._FactoryChannel.restore();
             });
 
             it('returns empty array when no channels were joined', function() {
@@ -463,16 +435,13 @@ describe('Sugar Socket Server Client', function() {
             beforeEach(function() {
                 channelStub = {
                     name: Math.random() + '',
-                    isEmpty: sinon.stub().returns(false),
+                    isEmpty: scope.stub().returns(false),
                     systemEvents: {
-                        on: sinon.stub().returns(this)
+                        on: scope.stub().returns(this)
                     }
                 };
 
-                sinon.stub(app.socket, '_FactoryChannel').returns(channelStub);
-            });
-            afterEach(function() {
-                app.socket._FactoryChannel.restore();
+                scope.stub(app.socket, '_FactoryChannel').returns(channelStub);
             });
 
             it('uses factory for new channels', function() {
@@ -500,33 +469,29 @@ describe('Sugar Socket Server Client', function() {
 
             beforeEach(function() {
                 IOStub = {
-                    on: sinon.stub().returnsThis()
+                    on: scope.stub().returnsThis()
                 };
 
                 channel1Stub = {
                     name: Math.random() + '',
-                    isEmpty: sinon.stub().returns(false),
+                    isEmpty: scope.stub().returns(false),
                     systemEvents: {
-                        on: sinon.stub().returns(this)
+                        on: scope.stub().returns(this)
                     }
                 };
 
                 channel2Stub = {
                     name: Math.random() + '',
-                    isEmpty: sinon.stub().returns(false),
+                    isEmpty: scope.stub().returns(false),
                     systemEvents: {
-                        on: sinon.stub().returns(this)
+                        on: scope.stub().returns(this)
                     }
                 };
 
-                sinon.stub(app.socket, 'socket').returns(IOStub);
-                sinon.stub(app.socket, '_FactoryChannel');
+                scope.stub(app.socket, 'socket').returns(IOStub);
+                scope.stub(app.socket, '_FactoryChannel');
                 app.socket._FactoryChannel.withArgs(channel1Stub.name).returns(channel1Stub);
                 app.socket._FactoryChannel.withArgs(channel2Stub.name).returns(channel2Stub);
-            });
-            afterEach(function() {
-                app.socket.socket.restore();
-                app.socket._FactoryChannel.restore();
             });
 
             it('deletes channel object from socket', function() {
@@ -545,17 +510,16 @@ describe('Sugar Socket Server Client', function() {
 
         beforeEach(function() {
             IOStub = {
-                'emit': sinon.stub().returnsThis()
+                'emit': scope.stub().returnsThis()
             };
 
-            sinon.stub(app.socket, 'socket').returns(IOStub);
+            scope.stub(app.socket, 'socket').returns(IOStub);
 
             channelName = Math.random() + '';
             channel = app.socket.channel(channelName);
         });
         afterEach(function() {
             app.socket._destroyChannel(channelName);
-            app.socket.socket.restore();
         });
 
         describe('name', function() {
@@ -566,12 +530,8 @@ describe('Sugar Socket Server Client', function() {
         });
         describe('on', function() {
             beforeEach(function() {
-                sinon.stub(channel, 'isEmpty');
-                sinon.stub(channel, '_join');
-            });
-            afterEach(function() {
-                channel.isEmpty.restore();
-                channel._join.restore();
+                scope.stub(channel, 'isEmpty');
+                scope.stub(channel, '_join');
             });
 
             it('calls _join method if channel was empty', function() {
@@ -587,12 +547,8 @@ describe('Sugar Socket Server Client', function() {
         });
         describe('off', function() {
             beforeEach(function() {
-                sinon.stub(channel, 'isEmpty');
-                sinon.stub(channel, '_leave');
-            });
-            afterEach(function() {
-                channel.isEmpty.restore();
-                channel._leave.restore();
+                scope.stub(channel, 'isEmpty');
+                scope.stub(channel, '_leave');
             });
 
             it('calls _leave method if channel is empty', function() {
@@ -608,11 +564,9 @@ describe('Sugar Socket Server Client', function() {
         });
         describe('_join', function() {
             beforeEach(function() {
-                sinon.stub(channel.systemEvents, 'trigger');
+                scope.stub(channel.systemEvents, 'trigger');
             });
-            afterEach(function() {
-                channel.systemEvents.trigger.restore();
-            });
+
             it('emits join message to socket with own name', function() {
                 channel._join();
                 sinon.assert.calledOnce(IOStub.emit);
@@ -628,11 +582,9 @@ describe('Sugar Socket Server Client', function() {
         });
         describe('_leave', function() {
             beforeEach(function() {
-                sinon.stub(channel.systemEvents, 'trigger');
+                scope.stub(channel.systemEvents, 'trigger');
             });
-            afterEach(function() {
-                channel.systemEvents.trigger.restore();
-            });
+
             it('emits leave message to socket with own name', function() {
                 channel._leave();
                 sinon.assert.calledOnce(IOStub.emit);

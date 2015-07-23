@@ -1,6 +1,4 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -35,26 +33,30 @@ class SocketTokenAuthApi extends SugarApi
     /**
      * Function verifies socket token.
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return string
+     * @throws SugarApiExceptionEditConflict when tokens are not the same
+     * @throws SugarApiExceptionMissingParameter when args does not contain all required data
      */
-    public function verifySocketToken($api, $args)
+    public function verifySocketToken(ServiceBase $api, array $args)
     {
+        if (empty($args['original']) || empty($args['verified'])) {
+            throw new SugarApiExceptionMissingParameter();
+        }
+
         $admin = BeanFactory::getBean('Administration');
         $config = $admin->getConfigForModule('auth');
 
-        if (!empty($args['original']) && !empty($args['verified'])
-            && $config['socket_token'] == $args['original']
-        ) {
-            $admin->saveSetting('auth', 'socket_token', $args['verified'], 'base');
-
-            return json_encode(array(
-                'verified' => true,
-                'token' => $args['verified']
-            ));
-        } else {
+        if ($config['socket_token'] != $args['original']) {
             throw new SugarApiExceptionEditConflict();
         }
+
+        $admin->saveSetting('auth', 'socket_token', $args['verified'], 'base');
+
+        return json_encode(array(
+            'verified' => true,
+            'token' => $args['verified']
+        ));
     }
 }

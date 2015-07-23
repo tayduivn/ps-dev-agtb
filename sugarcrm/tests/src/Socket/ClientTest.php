@@ -29,40 +29,46 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'url' => 'http://come.sugar.url.com/some/path',
                     'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_USER_ID,
-                    'id' => 123)
+                    'id' => 123,
+                ),
             ),
             'team' => array(
                 array(
                     'url' => 'http://come.sugar.url.com/some/path',
                     'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_TEAM_ID,
-                    'id' => 456)
+                    'id' => 456,
+                ),
             ),
             'group' => array(
                 array(
                     'url' => 'http://come.sugar.url.com/some/path',
                     'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_USER_TYPE,
-                    'id' => 'admin')
+                    'id' => 'admin',
+                ),
             ),
             'channel_user' => array(
                 array(
                     'url' => 'http://come.sugar.url.com/some/path',
                     'channel' => 'channel-home',
                     'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_USER_ID,
-                    'id' => 123)
+                    'id' => 123,
+                ),
             ),
             'channel_team' => array(
                 array(
                     'url' => 'http://come.sugar.url.com/some/path',
                     'channel' => 'channel-home',
                     'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_TEAM_ID,
-                    'id' => 456)
+                    'id' => 456,
+                ),
             ),
             'channel_group' => array(
                 array(
                     'url' => 'http://come.sugar.url.com/some/path',
                     'channel' => 'channel-home',
                     'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_USER_TYPE,
-                    'id' => 'admin')
+                    'id' => 'admin',
+                ),
             ),
         );
     }
@@ -76,7 +82,7 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             'invalidUrl' => array(false),
-            'validUrl' => array(true)
+            'validUrl' => array(true),
         );
     }
 
@@ -88,14 +94,16 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     public function messageDataProvider()
     {
         return array(
-
             'messageToUser' => array(
                 'test message',
                 null,
             ),
             'messageWithData' => array(
                 'test message',
-                array('var1' => 123, 'var2' => 'test'),
+                array(
+                    'var1' => 123,
+                    'var2' => 'test',
+                ),
             ),
         );
     }
@@ -174,9 +182,8 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
             'url' => $url,
             'type' => 'client',
             'available' => true,
-            'isBalancer' => false
+            'isBalancer' => false,
         );
-
 
         $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
         $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper'));
@@ -207,7 +214,7 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
             'url' => $url,
             'type' => 'server',
             'available' => true,
-            'isBalancer' => false
+            'isBalancer' => false,
         );
 
         $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
@@ -239,7 +246,7 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
             'url' => $url,
             'type' => false,
             'available' => false,
-            'isBalancer' => false
+            'isBalancer' => false,
         );
 
         $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
@@ -269,7 +276,7 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
             'url' => $url,
             'type' => false,
             'available' => false,
-            'isBalancer' => false
+            'isBalancer' => false,
         );
 
         $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
@@ -296,19 +303,18 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
         $finalUrl = 'http://dummy.net';
         $balancerResponse = array(
             'type' => 'balancer',
-            'location' => $finalUrl
+            'location' => $finalUrl,
         );
         $finalResponse = array(
-            'type' => 'client'
+            'type' => 'client',
         );
 
         $expectedResult = array(
             'url' => $url,
             'type' => 'client',
             'available' => true,
-            'isBalancer' => true
+            'isBalancer' => true,
         );
-
 
         $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
         $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper'));
@@ -335,14 +341,14 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
         $url = 'http://balanced.dummy.net';
         $balancerResponse = array(
             'type' => 'balancer',
-            'location' => 'http://dummy.net/invalid_response'
+            'location' => 'http://dummy.net/invalid_response',
         );
 
         $expectedResult = array(
             'url' => $url,
             'available' => false,
             'type' => false,
-            'isBalancer' => true
+            'isBalancer' => true,
         );
 
         $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
@@ -438,7 +444,8 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
         $config->expects($this->any())
             ->method('get')
             ->will($this->returnCallback(function ($arg) use ($expectedTo) {
-                $map = array('site_url'     => $expectedTo['url'],
+                $map = array(
+                    'site_url' => $expectedTo['url'],
                     'websockets.server.url' => 'http://someValue',
                 );
                 return $map[$arg];
@@ -533,7 +540,9 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRetrieveToken()
     {
-        $config = array('socket_token' => 'sample-token');
+        $config = array(
+            'socket_token' => 'sample-token',
+        );
 
         $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getAdministrationBean'));
         $admin = $this->getMock('Administration', array('getConfigForModule', 'saveSetting'));
@@ -553,7 +562,9 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGenerateToken()
     {
-        $config = array('socket_token' => '');
+        $config = array(
+            'socket_token' => '',
+        );
 
         $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getAdministrationBean'));
         $admin = $this->getMock('Administration', array('getConfigForModule', 'saveSetting'));
