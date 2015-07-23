@@ -116,6 +116,7 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $settings = $admin->getConfigForModule('Forecasts');
         if (!isset($settings['has_commits']) || !$settings['has_commits']) {
             $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
+            MetaDataManager::refreshModulesCache(array('Forecasts'));
         }
 
         $forecast->date_entered = $this->convertDateTimeToISO($db->fromConvert($forecast->date_entered, 'datetime'));
