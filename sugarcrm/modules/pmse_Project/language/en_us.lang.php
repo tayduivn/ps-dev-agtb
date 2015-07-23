@@ -121,7 +121,7 @@ $mod_strings = array (
     'LBL_PMSE_FORM_OPTION_DAYS' => 'Days',
     'LBL_PMSE_FORM_OPTION_HOURS' => 'Hours',
     'LBL_PMSE_FORM_OPTION_MINUTES' => 'Minutes',
-
+    'LBL_PMSE_MESSAGE_CANNOTDROPOUTSIDECANVAS' => 'Cannot drop element outside of canvas',
     'LBL_PMSE_FORM_TOOLTIP_DURATION' => 'Defines the duration of the timer event',
 
     /**PROCESSDEFINTION**/
