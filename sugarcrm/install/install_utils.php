@@ -2466,3 +2466,14 @@ function handleMissingSmtpServerSettingsNotifications()
     $notification->assigned_user_id = $user->id;
     $notification->save();
 }
+
+/**
+ * Formats license text as HTML
+ *
+ * @param string $text Text
+ * @return string HTML
+ */
+function formatLicense($text)
+{
+    return preg_replace('/https?:\/\/.+(?=\.\s)/im', '<a href="${0}" target="_blank">${0}</a>', $text);
+}
