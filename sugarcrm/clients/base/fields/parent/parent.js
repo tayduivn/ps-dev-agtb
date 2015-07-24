@@ -87,7 +87,7 @@
         var parentCtx = this.context && this.context.parent,
             setFromCtx;
 
-        setFromCtx = !value && parentCtx &&
+        setFromCtx = !value && parentCtx && _.isEmpty(this.context.get('model').link) &&
             this.view instanceof app.view.views.BaseCreateView &&
             _.contains(_.keys(app.lang.getAppListStrings(this.def.parent_type)), parentCtx.get('module')) &&
             this.module !== this.def.module;
