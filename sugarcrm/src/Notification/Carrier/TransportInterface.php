@@ -22,9 +22,4 @@ interface TransportInterface
      */
     public function send($recipient, $message);
 
-    /**
-     * @return bool
-     */
-    public function test();
-
 }

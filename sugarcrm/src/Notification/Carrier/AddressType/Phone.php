@@ -21,13 +21,15 @@ class Phone implements AddressTypeInterface
      */
     public function getOptions(\User $user)
     {
-        return array('phone_office',
+        return array(
+            'phone_office',
             'phone_fax',
             'phone_alternate',
             'phone_home',
             'phone_mobile',
             'phone_work',
-            'phone_other');
+            'phone_other'
+        );
     }
 
     /**
