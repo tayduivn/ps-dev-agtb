@@ -134,6 +134,7 @@ $viewdefs['KBContents']['base']['view']['record'] = array(
                         'useful',
                         'notuseful',
                         'usefulness_user_vote',
+                        'kbdocument_id',
                     ),
                 ),
                 array(
