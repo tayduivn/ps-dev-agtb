@@ -1111,8 +1111,9 @@ class PMSEEngineApi extends SugarApi
         $data_aux->cas_task_start_date = $returnArray['case']['flow']['cas_task_start_date'];
         $data_aux->cas_delegate_date = $returnArray['case']['flow']['cas_delegate_date'];
 
-        $returnArray['case']['title']['time'] = $this->caseWrapper->expectedTime($activity->act_expected_time,
-            $data_aux);
+        // Commenting out below line. We don't want due date to be calculated dynamically. Once a process due date is set it should stay.
+        // $returnArray['case']['title']['time'] = $this->caseWrapper->expectedTime($activity->act_expected_time, $data_aux);
+        $returnArray['case']['title']['time'] = $this->caseWrapper->processDueDateTime($returnArray['case']['flow']['cas_due_date']);
         $bpmnProcess = BeanFactory::retrieveBean('pmse_BpmnProcess', $bpmFlow->pro_id);
         $returnArray['case']['title']['process'] = $bpmnProcess->name;
         $bpmnActivity = BeanFactory::retrieveBean('pmse_BpmnActivity', $bpmFlow->bpmn_id);
