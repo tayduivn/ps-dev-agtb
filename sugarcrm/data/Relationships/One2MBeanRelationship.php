@@ -104,9 +104,10 @@ class One2MBeanRelationship extends One2MRelationship
 
     protected function updateFields($lhs, $rhs, $additionalFields)
     {
-        //Now update the RHS bean's ID field
+        //Now update the RHS bean's key field
+        $lhsID = $this->def['lhs_key'];
         $rhsID = $this->def['rhs_key'];
-        $rhs->$rhsID = $lhs->id;
+        $rhs->$rhsID = $lhs->$lhsID;
         foreach ($additionalFields as $field => $val) {
             $rhs->$field = $val;
         }
