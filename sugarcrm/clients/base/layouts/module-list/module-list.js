@@ -111,7 +111,6 @@
      * @protected
      */
     _placeComponent: function(component) {
-
         if (component.name !== 'module-menu') {
             this.$el.append(component.el);
             return;
@@ -161,7 +160,7 @@
      * Adds all default menu views as components in both full and short
      * version.
      *
-     * This will set the menu as sticky to diferentiate from the others that
+     * This will set the menu as sticky to differentiate from the others that
      * are added based on navigation/reference only.
      *
      * @private
@@ -279,7 +278,6 @@
      * @param {Number} width The current width we have available.
      */
     addModulesToList: function($modules, width) {
-
         var $dropdown = this._$moreModulesDD.find('[data-container=overflow]'),
             $toHide = $dropdown.children('li').not('.hidden').first(),
             currentWidth = $modules.outerWidth(true);
