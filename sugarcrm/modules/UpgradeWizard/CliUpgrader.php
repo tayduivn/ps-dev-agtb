@@ -77,9 +77,21 @@ class CliUpgrader extends UpgradeDriver
      */
     public function runStage($stage)
     {
-        $cmd = "{$this->context['php']} -f {$this->context['script']} -- " . $this->buildArgString(
-                array('stage' => $stage, 'all' => true)
-            );
+        $scriptPathInfo = pathinfo($this->context['script']);
+
+        $argsToBeIncludedInCommand = $this->buildArgString( array('stage' => $stage, 'all' => true) );
+
+        //Check if we're executing from a phar, if so we need to adjust the command executed
+        if(substr($scriptPathInfo['dirname'] , 0, strlen('phar://')) === 'phar://') {
+
+            $pharPath = substr($scriptPathInfo['dirname'] , strlen('phar://'));
+
+            $cmd = "{$this->context['php']} {$pharPath}" . $argsToBeIncludedInCommand;
+        }
+        else {
+            $cmd = "{$this->context['php']} -f {$this->context['script']} -- " . $argsToBeIncludedInCommand;
+        }
+
         $this->log("Running $cmd");
         passthru($cmd, $retcode);
         return ($retcode == self::STOP_SIGNAL) ? self::STOP_SIGNAL : ($retcode == 0);
