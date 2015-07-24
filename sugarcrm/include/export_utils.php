@@ -202,11 +202,15 @@ function exportFromApi($args, $sample=false) {
     }
 
     if ($focus->bean_implements('ACL')) {
+        $tba = new TeamBasedACLConfigurator();
+        $access = ACLAction::getUserAccessLevel($current_user->id, $focus->module_dir, 'export');
         if (ACLController::requireOwner($focus->module_dir, 'export')) {
             if (!empty($where)) {
                 $where .= ' AND ';
             }
             $where .= $focus->getOwnerWhere($current_user->id);
+        } elseif ($tba->isValidAccess($access)) {
+            $focus->addVisibilityStrategy('TeamBasedACLVisibility');
         }
     }
 
