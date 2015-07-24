@@ -650,12 +650,34 @@ class StudioModule
 
             //create new subpanel definition instance and get list of tabs
             $spd = new SubPanelDefinitions($bean);
-            if (isset($spd->layout_defs['subpanel_setup'][strtolower($subpanel)]['module'])) {
-                $spd_arr[] = $mod_name;
+            if (isset($spd->layout_defs['subpanel_setup'])) {
+                if ($this->checkRelatedModule($spd->layout_defs['subpanel_setup'], $subpanel)) {
+                    $spd_arr[] = $mod_name;
+                }
             }
         }
 
         return  $spd_arr;
+    }
+
+    /**
+     * Check if the related module is matched.
+     * @param array $defs the definition of subpanel layout.
+     * @param string $sourceModule the name of the source module in subpanel
+     * @return boolean
+     */
+    protected function checkRelatedModule(array $defs, $sourceModule)
+    {
+        foreach ($defs as $name => $def) {
+            //Example:
+            //subpanel link name: accounts_meetings_1
+            //related module: Meetings
+            //source module: Accounts (should be equal to $sourceModule)
+            if (isset($def['module']) && $def['module'] == $sourceModule) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

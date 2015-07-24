@@ -54,8 +54,8 @@
     */
     _renderField: function(field, $fieldEl) {
         //for custom modules, we need the pluralized form of module name
-        if (field.model.get('base_module')) {
-            field.model.set('base_module', app.lang.getModuleName(field.model.get('base_module'), {plural:true}));
+        if (!field.model.get('lbl_base_module')) {
+            field.model.set('lbl_base_module', app.lang.getModuleName(field.model.get('base_module'), {plural: true}));
         }
         this._super('_renderField', [field, $fieldEl]);
     },

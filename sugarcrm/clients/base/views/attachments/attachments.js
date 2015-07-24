@@ -20,7 +20,7 @@
  * @extends View.View
  */
 ({
-    plugins: ['LinkedModel', 'Dashlet', 'Timeago', 'Pagination'],
+    plugins: ['LinkedModel', 'Dashlet', 'Pagination'],
     events: {
         'click [data-event=create_button]': 'createRelatedNote',
         'click [data-event=select_button]': 'openSelectDrawer'

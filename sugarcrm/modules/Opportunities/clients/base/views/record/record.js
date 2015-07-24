@@ -32,7 +32,7 @@
          * this.model.changed, so it doesn't warn the user.
          */
         var changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
-        this.model.set(changedAttributes);
+        this.model.set(changedAttributes, { revert: true });
         this._super('cancelClicked');
     },
 

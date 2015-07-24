@@ -10,7 +10,7 @@
  */
 
 ({
-    plugins: ['Dashlet', 'Timeago'],
+    plugins: ['Dashlet'],
 
     events: {
         'click [data-action=show-more]': 'loadMoreData'

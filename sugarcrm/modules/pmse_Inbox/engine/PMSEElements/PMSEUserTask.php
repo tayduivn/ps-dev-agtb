@@ -26,13 +26,10 @@ class PMSEUserTask extends PMSEActivity
         $this->engineFields = array(
             'idInbox',
             'idFlow',
-            //'moduleName',
-            //'beanId',
             'date_entered',
             'date_modified',
             'created_by_name',
             'team_name',
-            'assigned_user_id',
             '__sugar_url',
         );
 

@@ -895,7 +895,12 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 }
             }
 
-            $this->_viewdefs['panels'][$panelID] = $newRows;
+            if (count($newRows) > 0) {
+                $this->_viewdefs['panels'][$panelID] = $newRows;
+            } else {
+                unset($this->_viewdefs['panels'][$panelID]);
+            }
+
             return true;
         }
 

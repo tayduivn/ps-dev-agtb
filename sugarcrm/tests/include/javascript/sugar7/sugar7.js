@@ -47,8 +47,7 @@ describe('Sugar7.Routes', function() {
                 expect(setStub).toHaveBeenCalledWith(mockKey, 'activities');
                 expect(loadViewStub).toHaveBeenCalledWith({
                     layout: 'activities',
-                    module: 'Activities',
-                    skipFetch: true
+                    module: 'Activities'
                 });
             });
         });

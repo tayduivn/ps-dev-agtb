@@ -46,8 +46,13 @@ function getModuleNameFromLabel(label) {
 
 var removeLayout = function(row) {
     if (confirm("Are you sure you wish to remove this layout?")) {
+        var module = row.getData("module");
+        var moduleName = row.getData("moduleName");
+
         ModuleBuilder.convertLayoutGrid.deleteRow(row);
-        ModuleBuilder.saveConvertLeadLayout();
+        ModuleBuilder.state.markAsDirty();
+
+        addOption(module, moduleName);
     }
 };
 
@@ -181,6 +186,7 @@ ModuleBuilder.saveConvertLeadLayout = function() {
         data:YAHOO.lang.JSON.stringify(out)
     };
 
+    ModuleBuilder.state.markAsClean();
 	ModuleBuilder.asyncRequest(params, function(o) {
 	    ajaxStatus.hideStatus();
 	    ModuleBuilder.updateContent(o);
@@ -188,13 +194,22 @@ ModuleBuilder.saveConvertLeadLayout = function() {
 };
 
 ModuleBuilder.addConvertLeadLayout = function() {
-    var Dom = YAHOO.util.Dom,
-        newModule = Dom.get("convertSelectNewModule").value,
-        insertIndex = determineNewRowIndex(newModule),
-        newRowSettings = moduleDefaults[newModule];
+    var select = YAHOO.util.Dom.get("convertSelectNewModule");
+    if (select.selectedIndex < 0) {
+        return;
+    }
 
-    ModuleBuilder.convertLayoutGrid.addRow(newRowSettings, insertIndex);
-    ModuleBuilder.saveConvertLeadLayout();
+    var option = select.options[select.selectedIndex],
+        module = option.value,
+        insertIndex = determineNewRowIndex(module),
+        data = YAHOO.lang.merge({}, moduleDefaults[module], {
+            module: module,
+            moduleName: option.text
+        });
+
+    ModuleBuilder.convertLayoutGrid.addRow(data, insertIndex);
+    select.removeChild(option);
+    ModuleBuilder.state.markAsDirty();
 };
 
 var determineNewRowIndex = function(newModule) {
@@ -223,6 +238,21 @@ var determineNewRowIndex = function(newModule) {
         insertIndex = tempIndex;
     }
     return insertIndex;
+};
+
+var addOption = function(module, moduleName) {
+    var select = YAHOO.util.Dom.get("convertSelectNewModule"),
+        options = select.options;
+    for (var i = 0, length = select.length; i < length; i++) {
+        if (options[i].text.localeCompare(moduleName) >= 0) {
+            break;
+        }
+    }
+
+    var option = document.createElement("option");
+    option.value = module;
+    option.text = moduleName;
+    select.add(option, i);
 };
 
 {/literal}
