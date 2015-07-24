@@ -260,20 +260,44 @@
         this.defaultOption = null;
         this.setDefault();
     },
+
+    /**
+     * Removes the field value at the provided index.
+     *
+     * @param {integer} index
+     */
     removeUpdateField: function(index) {
         var fieldValue = this.fieldValues[index];
-        if(fieldValue) {
-            if(fieldValue.name) {
-                this.model.unset(fieldValue.name);
-                this.fieldValues.splice(index, 1);
-            } else {
-                //last item should be empty
-                var removed = this.fieldValues.splice(index - 1, 1);
-                this.defaultOption = removed[0];
-            }
-            this.setDefault();
+
+        if (_.isUndefined(fieldValue)) {
+            return;
         }
+        // If the fieldValue has a name, we need to remove it from the model and
+        // the fieldValues object.
+        if (fieldValue.name) {
+            this.model.unset(fieldValue.name);
+            // For relate fields, we need to clear fieldValue.id_name.
+            // Note that if fieldValue.id_name is undefined, this is still safe.
+            this.model.unset(fieldValue.id_name);
+            this.fieldValues.splice(index, 1);
+        // If the fieldValue does not have a name, reset the default option to
+        // the last item, which should be empty
+        } else {
+            var removed = this.fieldValues.splice(index - 1, 1);
+            this.defaultOption = removed[0];
+        }
+
+        // If there is a populate_list (i.e. this is a relate field)
+        // clear the related data.
+        // Fixme: This should be cleaned up on the relate field. See TY-651
+        if (!_.isUndefined(fieldValue.populate_list)) {
+            _.each(fieldValue.populate_list, function(key) {
+                this.model.unset(key);
+            }, this);
+        }
+        this.setDefault();
     },
+
     replaceUpdateField: function(selectedOption, targetIndex) {
         var fieldValue = this.fieldValues[targetIndex];
 
