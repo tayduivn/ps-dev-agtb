@@ -1030,6 +1030,7 @@ $mod_strings = array (
 'ML_SUGAR_LOADING_POLICY'=>'The Sugar Open Cloud package loading policies are detailed in the',
 'ML_SUGAR_KB'=>'SugarCRM Knowledge Base',
 'ML_SUGAR_DZ'=>'SugarCRM Developer Zone',
+'ML_PKG_SCAN_GUIDE'=>'Package Scan Policy Guide',
 'ML_AVAIL_RESTRICTION'=>'The available restrictions and exceptions are detailed in the',
 'ML_OVERRIDE_CORE_FILES'=>'Overriding of core SugarCRM files is not allowed ',
 'ML_PATH_MAY_NOT_CONTAIN'=>'File path may not contain',
