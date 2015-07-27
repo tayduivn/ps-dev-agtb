@@ -92,18 +92,23 @@
                         }
                         return app.data.getRelatedModule(model.module, field.name) === module;
                     }),
-                    link = links.length === 1 ? links[0].name : 'kbcontents',
                     bodyTmpl = app.template.getField('htmleditable_tinymce', 'create-article', module),
                     attrs = {name: model.get('name'), kbdocument_body: bodyTmpl({model: model})},
-                    prefill = app.data.createRelatedBean(model, null, link, attrs),
+                    link, prefill, relatedFields;
+                if (links.length === 0) {
+                    prefill = app.data.createBean(module, attrs);
+                } else {
+                    link = links.length === 1 ? links[0].name : 'kbcontents';
+                    prefill = app.data.createRelatedBean(model, null, link, attrs);
                     relatedFields = app.data.getRelateFields(model.module, link);
 
-                if (!_.isEmpty(relatedFields)) {
-                    _.each(relatedFields, function(field) {
-                        var parentValue = model.get(field.rname);
-                        prefill.set(field.name, parentValue);
-                        prefill.set(field.id_name, model.get('id'));
-                    }, this);
+                    if (!_.isEmpty(relatedFields)) {
+                        _.each(relatedFields, function(field) {
+                            var parentValue = model.get(field.rname);
+                            prefill.set(field.name, parentValue);
+                            prefill.set(field.id_name, model.get('id'));
+                        }, this);
+                    }
                 }
                 app.drawer.open({
                     layout: 'create',
@@ -113,7 +118,7 @@
                         module: module
                     }},
                     function(context, newModel) {
-                        if (newModel !== undefined) {
+                        if (newModel !== undefined && links.length > 0) {
                             var viewContext = context.parent.parent || context.parent;
                             viewContext.trigger('subpanel:reload', {links: _.union(links, [link])});
                         }
