@@ -756,6 +756,7 @@ EOF;
         'ConfigureShortcutBar',
         'wizard',
         'historyContactsEmails',
+        'GoogleOauth2Redirect',
     );
 
     /**
