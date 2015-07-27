@@ -115,6 +115,8 @@
                     function(context, newModel) {
                         if (newModel !== undefined) {
                             var viewContext = context.parent.parent || context.parent;
+                            var moduleContext = viewContext.getChildContext({module: module});
+                            moduleContext.set('skipFetch','false');
                             viewContext.trigger('subpanel:reload', {links: _.union(links, [link])});
                         }
                     }
