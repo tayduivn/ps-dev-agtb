@@ -153,6 +153,12 @@ if (!empty($config['base_dir'])) {
         }
     }
 
+    if (!empty($config['dir'])) {
+        foreach ($config['builds'] as $flav) {
+            $dir = $build_dir . '/' . $flav . $config['dir'];
+            $rome->generateMD5($dir);
+        }
+    }
 } else {
     $rome->throwException("No Base Directory To Build From", true);
 }
