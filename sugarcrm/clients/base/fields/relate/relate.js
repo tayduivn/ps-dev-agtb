@@ -523,7 +523,7 @@
              */
             this._valueSetOnce = true;
         }
-        setFromCtx = value === null && !this._valueSetOnce && parentCtx &&
+        setFromCtx = value === null && !this._valueSetOnce && parentCtx && _.isEmpty(this.context.get('model').link) &&
             this.view instanceof app.view.views.BaseCreateView &&
             parentCtx.get('module') === this.def.module &&
             this.module !== this.def.module;
