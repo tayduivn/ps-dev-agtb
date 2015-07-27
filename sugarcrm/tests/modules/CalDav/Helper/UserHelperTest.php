@@ -56,6 +56,6 @@ class UserHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($sugarUser->id, $calendars[0]->assigned_user_id);
         $this->assertEquals(translate('LBL_DAFAULT_CALDAV_NAME'), $calendars[0]->name);
 
-        SugarTestCalDavUtilities::addToCreated($calendars[0]->id);
+        SugarTestCalDavUtilities::addCalendarToCreated($calendars[0]->id);
     }
 }

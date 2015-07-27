@@ -40,6 +40,8 @@ class CalendarDataTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertInternalType('array',$result);
         $this->assertEquals(1,count($result));
         $this->assertEquals('principals/'.$sugarUser->user_name, $result[0]['principaluri']);
+
+        SugarTestCalDavUtilities::addCalendarToCreated($result[0]['id']);
     }
 
     public function testUpdateCalendar()

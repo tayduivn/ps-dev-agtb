@@ -16,11 +16,11 @@ use Sugarcrm\Sugarcrm\Dav\Base;
 class SugarTestCalDavUtilities
 {
     private static $_createdCalendars = array();
+    private static $createdEvents = array();
 
     /**
      * Create CalDav calendar
      * @param User $sugarUser
-     * @param array $properties
      * @return string
      */
     public static function createCalendar(User $sugarUser)
@@ -40,8 +40,53 @@ class SugarTestCalDavUtilities
         }
     }
 
-    public static function addToCreated($calendarID)
+    public static function addCalendarToCreated($calendarID)
     {
         self::$_createdCalendars[] = $calendarID;
+    }
+
+    /**
+     * Create CalDav event by parameters
+     * @param array $eventData Set of object properties
+     * @return SugarBean
+     */
+    public static function createEvent(array $eventData = array())
+    {
+        $event = BeanFactory::getBean('CalDav');
+
+        if (isset($eventData['calendardata'])) {
+            $event->setCalendarEventData($eventData['calendardata']);
+        }
+
+        $event->save();
+        self::$createdEvents[] = $event;
+
+        return $event;
+    }
+
+    /**
+     * Gets list of all created objects identifiers
+     * @return array
+     */
+    public static function getCreatedEventsId()
+    {
+        $createdIDs = array();
+
+        foreach (self::$createdEvents as $event) {
+            $createdIDs[] = $event->id;
+        }
+
+        return $createdIDs;
+    }
+
+    /**
+     * Delete all created events
+     */
+    public static function deleteCreatedEvents()
+    {
+        $createdID = self::getCreatedEventsId();
+        if ($createdID) {
+            $GLOBALS['db']->query('DELETE FROM caldav_events WHERE id IN (\'' . implode("', '", $createdID) . '\')');
+        }
     }
 }
