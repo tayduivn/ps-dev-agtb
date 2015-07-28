@@ -233,7 +233,7 @@
             note = app.data.createBean('Notes'),
             fieldName = 'filename';
 
-        note.save({name: $input[0].files[0].name}, {
+        note.save({name: $input[0].files[0].name, portal_flag: true}, {
             success: function(model) {
                 // FileApi uses one name for file key and defs.
                 var $cloneInput = _.clone($input);
