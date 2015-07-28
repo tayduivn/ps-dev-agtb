@@ -2698,20 +2698,81 @@ ENDP;
  * Class that ignores everything, needs for loading
  * metadata with code
  */
-class BlackHole
+class BlackHole implements ArrayAccess, Countable, Iterator
 {
     protected $called;
 
     public function __get($v)
     {
         $this->called = true;
-        return null;
+        return $this;
     }
 
     public function __call($n, $a)
     {
         $this->called = true;
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return '';
+    }
+
+    public function offsetExists($offset)
+    {
+        return false;
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this;
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        // Nothing to do
+    }
+
+    public function offsetUnset($offset)
+    {
+        // Nothing to do
+    }
+
+    public function count()
+    {
+        return 0;
+    }
+
+    function __invoke()
+    {
+        $this->called = true;
+        return $this;
+    }
+
+    public function current()
+    {
+        return $this;
+    }
+
+    public function next()
+    {
+        // Nothing to do
+    }
+
+    public function key()
+    {
         return null;
+    }
+
+    public function valid()
+    {
+        return false;
+    }
+
+    public function rewind()
+    {
+        // Nothing to do
     }
 }
 
@@ -2724,6 +2785,18 @@ class BlackHole
  */
 class FileLoaderWrapper extends BlackHole
 {
+    public function __get($v)
+    {
+        $this->called = true;
+        return $this;
+    }
+
+    public function __call($n, $a)
+    {
+        $this->called = true;
+        return $this;
+    }
+
     public function loadFile($deffile, $varname)
     {
         ob_start();
@@ -2738,4 +2811,3 @@ class FileLoaderWrapper extends BlackHole
         return $$varname;
     }
 }
-
