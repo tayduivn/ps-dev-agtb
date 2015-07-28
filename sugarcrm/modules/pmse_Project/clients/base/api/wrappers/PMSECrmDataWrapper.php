@@ -893,26 +893,37 @@ class PMSECrmDataWrapper implements PMSEObservable
      */
     public function retrieveTeams($filter = '')
     {
-
+        $beansTeams = $this->getTeamsBean();
         $output = array();
-        $where = '';
+
+        $q = $this->sugarQueryObject;
+        $q->from($beansTeams, array('add_deleted' => true));
+        $q->distinct(false);
+        $fields = array(
+            'id',
+            'name',
+            'name2',
+        );
 
         if ($filter == 'public' || $filter == 'reassign') {
-            $condition = 0;
-            $where = 'teams.private=' . $condition;
+            $q->where()
+                ->equals('private', 0);
         } else {
             if ($filter == 'private') {
-                $condition = 1;
-                $where = 'teams.private=' . $condition;
+                $q->where()
+                    ->equals('private', 1);
             }
         }
 
-        $teamsData = $this->teamsBean->get_full_list('', $where);
+        $q->orderBy('id', 'ASC');
+        $q->select($fields);
+
+        $teamsData = $q->execute();
         foreach ($teamsData as $team) {
             $teamTmp = array();
-            $teamTmp['value'] = $team->id;
-            $teamTmp['text'] = $team->name;
-            if (($team->id != 'current_team') || ($team->id == 'current_team' && $filter == 'reassign')) {
+            $teamTmp['value'] = $team['id'];
+            $teamTmp['text'] = $team['name'];
+            if (($team['id'] != 'current_team') || ($team['id'] == 'current_team' && $filter == 'reassign')) {
                 $output[] = $teamTmp;
             }
         }
