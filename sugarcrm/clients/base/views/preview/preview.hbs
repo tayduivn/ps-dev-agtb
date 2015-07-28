@@ -13,9 +13,9 @@
 <div class="block preview-data">
 {{#each meta.panels}}
 {{#each fields}}
-    <div class="row-fluid{{#if ../hide}}{{#if ../../../hidePanel}} hide{{/if}} panel_hidden{{/if}}">
-        <div class="span5">{{str  this.label ../../this.model.module}}</div>
-        <div class="span7" data-type="{{type}}" name="{{name}}">
+    <div class="row-fluid{{#if ../hide}}{{#if ../../../hidePanel}} hide{{/if}} panel_hidden{{/if}}" >
+        <div class="span5 edit-field" data-name="{{this.name}}">{{str  this.label ../../this.model.module}}</div>
+        <div class="span7 edit-field" data-type="{{type}}" name="{{name}}" data-name="{{this.name}}">
             {{field ../../this model=../../model template="preview"}}
         </div>
     </div>

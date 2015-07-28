@@ -14,7 +14,7 @@
  * @extends View.View
  */
 ({
-    plugins: ['ToggleMoreLess'],
+    plugins: ['ToggleMoreLess', 'Editable'],
     fallbackFieldTemplate: 'detail',
     /**
      * Events related to the preview view:
@@ -33,6 +33,10 @@
 
     hiddenPanelExists: false,
 
+    events: {
+        'click .edit-field': 'handleEdit'
+    },
+
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.action = 'detail';
@@ -40,6 +44,23 @@
         this.collection = app.data.createBeanCollection(this.module);
     },
 
+    handleEdit: function(e, cell) {
+        debugger;
+        var target,
+            field;
+
+        if (e) { // If result of click event, extract target and cell.
+            target = this.$(e.target);
+        }
+
+        field = this.getField(target.closest('.edit-field').data().name);
+
+        // Set Editing mode to on.
+        this.inlineEditMode = true;
+
+        this.toggleField(field);
+
+    },
     /**
      * Add event listeners
      *
