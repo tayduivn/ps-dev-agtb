@@ -301,3 +301,5 @@ if ($.browser.msie){{/literal}} {ldelim}
 {if isset($footerTpl)}
 {{include file=$footerTpl}}
 {/if}
+<script src="{sugar_getjspath file='include/javascript/select2/select2.js'}"></script>
+<link rel="stylesheet" href="{sugar_getjspath file='include/javascript/select2/select2.css'}"/>
