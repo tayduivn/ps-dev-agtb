@@ -20,6 +20,21 @@ class CarrierRegistry
 {
 
     /**
+     * Path to file in which store cached dictionary array
+     */
+    const CACHE_FILE = 'Notification/carrierRegistry.php';
+
+    /**
+     * Variable name in which store cached dictionary array
+     */
+    const CACHE_VARIABLE = 'carrierRegistry';
+
+    /**
+     * Full path to CarrierInterface with nameSpace
+     */
+    const CARRIER_INTERFACE = 'Sugarcrm\\Sugarcrm\\Notification\\Carrier\\CarrierInterface';
+
+    /**
      * Returns object of CarrierRegistry, customized if it's present
      *
      * @return CarrierRegistry
@@ -38,14 +53,14 @@ class CarrierRegistry
      */
     public function getCarriers()
     {
-        return array_keys(self::getDictionary());
+        return array_keys($this->getDictionary());
     }
 
     /**
-     * Get Carrier class name
+     * Get Carrier by module name
      *
      * @param string $moduleName
-     * @return string|null
+     * @return CarrierInterface|null
      */
     public function getCarrier($moduleName)
     {
@@ -53,8 +68,9 @@ class CarrierRegistry
 
         if (isset($carriers[$moduleName])) {
             \SugarAutoLoader::load($carriers[$moduleName]['path']);
+            $class = $carriers[$moduleName]['class'];
 
-            return $carriers[$moduleName]['class'];
+            return new $class();
         } else {
             return null;
         }
@@ -74,38 +90,28 @@ class CarrierRegistry
      */
     protected function scan()
     {
-
         $dictionary = array();
-        foreach ($this->getCarrierModules() as $module) {
-            $pathCarrier = \SugarAutoLoader::existingCustomOne('modules/' . $module . '/Carrier.php');
-            \SugarAutoLoader::load($pathCarrier);
+        foreach ($GLOBALS['moduleList'] as $module) {
+            $path = 'modules/' . $module . '/Carrier.php';
+            if (!\SugarAutoLoader::fileExists($path)) {
+                continue;
+            }
+            \SugarAutoLoader::load($path);
+            $class = $module . 'Carrier';
+
+            if (!(class_exists($class) && in_array(self::CARRIER_INTERFACE, class_implements($class)))) {
+                continue;
+            }
+
+            $path = \SugarAutoLoader::existingCustomOne($path);
+            \SugarAutoLoader::load($path);
             $dictionary[$module] = array(
-                'path' => $pathCarrier,
+                'path' => $path,
                 'class' => \SugarAutoLoader::customClass($module . 'Carrier')
             );
         }
 
         return $dictionary;
-    }
-
-    /**
-     * Function scan $moduleList and return only Carrier modules
-     *
-     * @return array
-     */
-    protected function getCarrierModules()
-    {
-        return array_filter($GLOBALS['moduleList'], function ($module) {
-            $file = 'modules/' . $module . '/Carrier.php';
-            if (!\SugarAutoLoader::fileExists($file)) {
-                return false;
-            }
-            $class = $module . 'Carrier';
-            \SugarAutoLoader::load($file);
-
-            return class_exists($class)
-            && in_array('Sugarcrm\\Sugarcrm\\Notification\\Carrier\\CarrierInterface', class_implements($class));
-        });
     }
 
     /**
@@ -118,14 +124,43 @@ class CarrierRegistry
      */
     protected function getDictionary()
     {
-
-        $data = \SugarCache::instance()->carrierRegistry;
+        $data = $this->getCache();
         if (empty($data)) {
             $data = $this->scan();
-            \SugarCache::instance()->carrierRegistry = $data;
+            $this->setCache($data);
         }
 
         return $data;
+    }
+
+    /**
+     * Retrieving array(dictionary array with carrier class names and path to it) from cache file if it exists
+     *
+     * @return array|null
+     */
+    protected function getCache()
+    {
+        $path = sugar_cached(self::CACHE_FILE);
+        if (\SugarAutoLoader::fileExists($path)) {
+            include($path);
+        }
+
+        if (isset(${self::CACHE_VARIABLE})) {
+            return ${self::CACHE_VARIABLE};
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Saving array(dictionary array with carrier class names and path to it) to cache file
+     *
+     * @param array data
+     */
+    protected function setCache($data)
+    {
+        create_cache_directory(self::CACHE_FILE);
+        write_array_to_file(self::CACHE_VARIABLE, $data, sugar_cached(self::CACHE_FILE));
     }
 
 }
