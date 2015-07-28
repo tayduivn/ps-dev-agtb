@@ -37,6 +37,7 @@
     }
     .span7 {
       padding: 6px;
+      position: relative;
     }
     [data-type="textarea"] {
       span {
@@ -69,5 +70,35 @@
         }
       }
     }
+  }
+
+  .preview-edit-wrapper {
+    min-height: 28px;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    .preview-edit-link {
+      display: none;
+    }
+  }
+
+  .record-cell:not(.edit) {
+    .preview-edit-wrapper:hover {
+      border: 1px solid #000000;
+      .preview-edit-link {
+        display: inline-block;
+        position: relative;
+        float: right;
+      }
+    }
+  }
+
+  .preview-row-data {
+    min-height: 28px;
+    height: 100%;
+    width: 90%;
   }
 }

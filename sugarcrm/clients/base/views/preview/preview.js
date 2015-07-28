@@ -34,7 +34,7 @@
     hiddenPanelExists: false,
 
     events: {
-        'click .edit-field': 'handleEdit'
+        'click .preview-edit-wrapper': 'handleEdit'
     },
 
     initialize: function(options) {
@@ -45,22 +45,23 @@
     },
 
     handleEdit: function(e, cell) {
-        debugger;
-        var target,
-            field;
+        var target;
+        var field;
 
         if (e) { // If result of click event, extract target and cell.
             target = this.$(e.target);
+            // toggle mouseleave to turn off the hover stuff
+            target.closest('.preview-edit-wrapper').mouseleave();
         }
 
-        field = this.getField(target.closest('.edit-field').data().name);
+        field = this.getField(target.closest('.record-cell').data().name);
 
         // Set Editing mode to on.
         this.inlineEditMode = true;
 
-        this.toggleField(field);
-
+        this.toggleField(field, true);
     },
+
     /**
      * Add event listeners
      *
@@ -137,7 +138,7 @@
      * but the model id is the same, preview should still render the same model.
      * @private
      */
-    _renderPreview: function(model, collection, fetch, previewId){
+    _renderPreview: function(model, collection, fetch, previewId) {
         var self = this;
 
         // If there are drawers there could be multiple previews, make sure we are only rendering preview for active drawer
