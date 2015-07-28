@@ -18,4 +18,5 @@ $mod_strings = array(
     'LNK_NEW_KBCONTENT_TEMPLATE' => 'Create Template',
     'LNK_LIST_KBCONTENT_TEMPLATES' => 'View Templates',
     'LBL_TEXT_BODY' => 'Body',
+    'LBL_LIST_TEMPLATE_NAME' => 'Template Name',
 );
