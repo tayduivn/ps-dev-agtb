@@ -247,6 +247,11 @@ $vardefs = array(
             'type' => 'index',
             'fields' => array('date_entered')
         ),
+        'name_del' => array(
+            'name' => 'idx_' . strtolower($table_name) . '_name_del',
+            'type' => 'index',
+            'fields' => array('name', 'deleted')
+        ),
     ),
     'relationships' => array(
         strtolower($module) . '_modified_user' =>

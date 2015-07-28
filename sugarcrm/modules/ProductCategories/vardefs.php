@@ -80,9 +80,6 @@ $dictionary['ProductCategory'] = array(
         ),
     ),
     'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Products', 'allowUserRead' => true)),
-    'indices' => array(
-        array('name' => 'idx_productcategories', 'type' => 'index', 'fields' => array('name', 'deleted')),
-    ),
     'relationships' => array(
         'member_categories' => array(
             'lhs_module' => 'ProductCategories',

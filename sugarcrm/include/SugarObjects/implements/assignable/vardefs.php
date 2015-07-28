@@ -68,7 +68,7 @@ $vardefs = array(
     'table' => 'users',
   ),
 ),
-    'indicies' => array(
+    'indices' => array(
         'assigned_user_id' => array(
             'name' => 'idx_' . strtolower($table_name) . '_assigned_del',
             'type' => 'index',
