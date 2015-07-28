@@ -44,7 +44,7 @@ class Status
         $config = $config->getSettings(self::CONFIG_CATEGORY);
         $key = self::CONFIG_CATEGORY . '_' . $carrierName;
         if (isset($config->settings[$key])) {
-            return $config->settings[$key];
+            return !empty($config->settings[$key]);
         } else {
             return false;
         }
