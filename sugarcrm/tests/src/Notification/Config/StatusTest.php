@@ -24,11 +24,11 @@ class StatusTest extends \Sugar_PHPUnit_Framework_TestCase
     public function statusTypes()
     {
         return array(
-            array(0,        false),
-            array(null,     false),
-            array(false,    false),
-            array(true,     true),
-            array(1,        true),
+            array(0, false),
+            array(null, false),
+            array(false, false),
+            array(true, true),
+            array(1, true),
         );
     }
 
@@ -49,15 +49,29 @@ class StatusTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Behavior carrier not exists or not saved yet
+     * Behavior carrier not exists
      *
+     * @expectedException \LogicException
      */
-    public function testNotSavedCarrier()
+    public function testGetExistsCarrier()
     {
-        $name = 'NotExists'.time();
+        $name = 'NotExists' . time();
 
         $status = Status::getInstance();
-        $this->assertFalse($status->getCarrierStatus($name));
+        $status->getCarrierStatus($name);
+    }
+
+    /**
+     * Behavior carrier not exists
+     *
+     * @expectedException \LogicException
+     */
+    public function testSetExistsCarrier()
+    {
+        $name = 'NotExists' . time();
+
+        $status = Status::getInstance();
+        $status->setCarrierStatus($name, true);
     }
 
 }

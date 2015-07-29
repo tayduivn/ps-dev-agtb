@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Notification\Config;
 
+use Sugarcrm\Sugarcrm\Notification\CarrierRegistry;
+
 /**
  * Class Status
  * @package Notification
@@ -40,6 +42,7 @@ class Status
      */
     public function getCarrierStatus($carrierName)
     {
+        $this->verifyModule($carrierName);
         $config = \BeanFactory::getBean('Administration');
         $config = $config->getSettings(self::CONFIG_CATEGORY);
         $key = self::CONFIG_CATEGORY . '_' . $carrierName;
@@ -58,8 +61,23 @@ class Status
      */
     public function setCarrierStatus($carrierName, $status)
     {
+        $this->verifyModule($carrierName);
         $config = \BeanFactory::getBean('Administration');
         $config->saveSetting(self::CONFIG_CATEGORY, $carrierName, $status);
+    }
+
+    /**
+     * Verifies existing carrier module
+     *
+     * @param string $module
+     * @throws \SugarApiExceptionNotFound
+     */
+    protected function verifyModule($module)
+    {
+        $registry = CarrierRegistry::getInstance();
+        if (!in_array($module, $registry->getCarriers())) {
+            throw new \LogicException('Not found carrier module: ' . $module);
+        }
     }
 
 }

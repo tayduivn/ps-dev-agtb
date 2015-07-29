@@ -31,7 +31,6 @@ class CarriersConfigApi extends SugarApi
                 'longHelp' => '',
                 'acl' => 'adminOrDev',
             ),
-
             'handleSave' => array(
                 'reqType' => 'PUT',
                 'path' => array('NotificationCenter', 'config', '?'),
@@ -54,7 +53,6 @@ class CarriersConfigApi extends SugarApi
     public function getConfig(ServiceBase $api, array $args)
     {
         $this->requireArgs($args, array('module'));
-        $this->verifyModule($args['module']);
 
         $status = Status::getInstance();
         return $status->getCarrierStatus($args['module']);
@@ -69,25 +67,10 @@ class CarriersConfigApi extends SugarApi
     public function handleSave(ServiceBase $api, array $args)
     {
         $this->requireArgs($args, array('module', 'status'));
-        $this->verifyModule($args['module']);
 
         $status = Status::getInstance();
         $status->setCarrierStatus($args['module'], $args['status']);
         return $status->getCarrierStatus($args['module']);
-    }
-
-    /**
-     * Verifies existing carrier module
-     *
-     * @param string $module
-     * @throws SugarApiExceptionNotFound
-     */
-    protected function verifyModule($module)
-    {
-        $registry = CarrierRegistry::getInstance();
-        if (!in_array($module, $registry->getCarriers())){
-            throw new SugarApiExceptionNotFound('Not found carrier module: '.$module);
-        }
     }
 
 }
