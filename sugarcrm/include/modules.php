@@ -716,7 +716,7 @@ $beanList['EmbeddedFiles'] = 'EmbeddedFile';
 $beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';
 $modInvisList[] = 'EmbeddedFiles';
 
-$beanList['CalDav'] = 'CalDavEvent';
+$beanList['CalDavEvents'] = 'CalDavEvent';
 $beanFiles['CalDavEvent'] = 'modules/CalDav/Event.php';
 
 $beanList['CalDavCalendars'] = 'CalDavCalendar';

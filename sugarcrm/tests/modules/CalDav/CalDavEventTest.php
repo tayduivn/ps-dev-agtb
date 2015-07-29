@@ -29,6 +29,7 @@ class CalDavEventTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        SugarTestCalDavUtilities::deleteAllCreatedCalendars();
         SugarTestCalDavUtilities::deleteCreatedEvents();
         parent::tearDown();
     }
@@ -212,12 +213,64 @@ END:VCALENDAR',
         );
     }
 
+    public function toCalDavArrayProvider()
+    {
+        return array(
+            array(
+                'beanData' => array(
+                    'id' => '1',
+                    'uri' => 'test',
+                    'date_modified' => '2015-07-28 13:41:29',
+                    'etag' => 'test',
+                    'calendarid' => '2',
+                    'size' => '2',
+                    'calendardata' => '22',
+                    'componenttype' => 'VEVENT',
+                ),
+                'expectedArray' => array(
+                    'id' => '1',
+                    'uri' => 'test',
+                    'lastmodified' => strtotime('2015-07-28 13:41:29'),
+                    'etag' => '"test"',
+                    'calendarid' => '2',
+                    'size' => '2',
+                    'calendardata' => '22',
+                    'component' => 'vevent',
+                ),
+            )
+        );
+    }
+
+    public function addChangeProvider()
+    {
+        return array(
+            array(
+                'beanData' => array('id' => 1, 'calendarid' => 1, 'deleted' => 0, 'uri' => 'uri'),
+                'expectedChange' => array('calendarid' => 1, 'operation' => 2, 'uri' => 'uri'),
+            ),
+            array(
+                'beanData' => array('id' => null, 'calendarid' => 1, 'deleted' => 0, 'uri' => 'uri'),
+                'expectedChange' => array('calendarid' => 1, 'operation' => 1, 'uri' => 'uri')
+            ),
+            array(
+                'beanData' => array('id' => 1, 'calendarid' => 1, 'deleted' => 1, 'uri' => 'uri'),
+                'expectedChange' => array('calendarid' => 1, 'operation' => 3, 'uri' => 'uri')
+            ),
+        );
+    }
+
     /**
      * Checking the calculation of params while bean saving
      * @param string $data
      * @param integer $expectedSize
      * @param string $expectedETag
      * @param string $expectedType
+     * @param int $expectedFirstOccurrence
+     * @param int $expectedLastOccurrence
+     * @param string $expectedUID
+     *
+     * @covers       \CalDavEvent::save
+     * @covers       \CalDavEvent::setCalendarEventData
      *
      * @dataProvider saveBeanDataProvider
      */
@@ -230,9 +283,15 @@ END:VCALENDAR',
         $expectedLastOccurrence,
         $expectedUID
     ) {
-        $event = SugarTestCalDavUtilities::createEvent(array('calendardata' => $data));
+        $sugarUser = SugarTestUserUtilities::createAnonymousUser();
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+        $event = SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => $data,
+            'calendarid' => $calendarID,
+            'eventURI' => 'test'
+        ));
 
-        $saved = BeanFactory::getBean('CalDav', $event->id, array('use_cache' => false, 'encode' => false));
+        $saved = BeanFactory::getBean('CalDavEvents', $event->id, array('use_cache' => false, 'encode' => false));
 
         $this->assertEquals($expectedSize, $saved->size);
         $this->assertEquals($expectedETag, $saved->etag);
@@ -241,6 +300,17 @@ END:VCALENDAR',
         $this->assertEquals($expectedLastOccurrence, $saved->lastoccurence);
         $this->assertEquals($expectedUID, $saved->uid);
         $this->assertEquals($data, $saved->calendardata);
+
+        SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => $data,
+            'calendarid' => $calendarID,
+            'eventURI' => 'test1'
+        ));
+
+        $calendar =
+            BeanFactory::getBean('CalDavCalendars', $calendarID, array('use_cache' => false, 'encode' => false));
+
+        $this->assertEquals(2, $calendar->synctoken);
     }
 
     /**
@@ -256,16 +326,16 @@ END:VCALENDAR',
      */
     public function testSizeAndETag($data, $expectedSize, $expectedETag)
     {
-        $bean = $this->getMockBuilder('CalDavEvent')
-                     ->disableOriginalConstructor()
-                     ->setMethods(null)
-                     ->getMock();
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
 
-        TestReflection::callProtectedMethod($bean, 'calculateSize', array($data));
-        TestReflection::callProtectedMethod($bean, 'calculateETag', array($data));
+        TestReflection::callProtectedMethod($beanMock, 'calculateSize', array($data));
+        TestReflection::callProtectedMethod($beanMock, 'calculateETag', array($data));
 
-        $this->assertEquals($expectedSize, $bean->size);
-        $this->assertEquals($expectedETag, $bean->etag);
+        $this->assertEquals($expectedSize, $beanMock->size);
+        $this->assertEquals($expectedETag, $beanMock->etag);
     }
 
     /**
@@ -278,13 +348,13 @@ END:VCALENDAR',
      */
     public function testComponentType($data, $expectedComponent)
     {
-        $bean = $this->getMockBuilder('CalDavEvent')
-                     ->disableOriginalConstructor()
-                     ->setMethods(null)
-                     ->getMock();
-        TestReflection::callProtectedMethod($bean, 'calculateComponentType', array($data));
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
+        TestReflection::callProtectedMethod($beanMock, 'calculateComponentType', array($data));
 
-        $this->assertEquals($expectedComponent, $bean->componenttype);
+        $this->assertEquals($expectedComponent, $beanMock->componenttype);
     }
 
     /**
@@ -296,24 +366,24 @@ END:VCALENDAR',
      */
     public function testSetCalendarObject($data)
     {
-        $bean = $this->getMockBuilder('CalDavEvent')
-                     ->disableOriginalConstructor()
-                     ->setMethods(array(
-                         'calculateSize',
-                         'calculateETag',
-                         'calculateComponentType',
-                         'calculateTimeBoundaries'
-                     ))
-                     ->getMock();
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array(
+                             'calculateSize',
+                             'calculateETag',
+                             'calculateComponentType',
+                             'calculateTimeBoundaries'
+                         ))
+                         ->getMock();
 
-        $bean->expects($this->once())->method('calculateComponentType')->with($data)->willReturn(true);
-        $bean->expects($this->once())->method('calculateSize')->with($data);
-        $bean->expects($this->once())->method('calculateETag')->with($data);
-        $bean->expects($this->once())->method('calculateTimeBoundaries')->with($data);
+        $beanMock->expects($this->once())->method('calculateComponentType')->with($data)->willReturn(true);
+        $beanMock->expects($this->once())->method('calculateSize')->with($data);
+        $beanMock->expects($this->once())->method('calculateETag')->with($data);
+        $beanMock->expects($this->once())->method('calculateTimeBoundaries')->with($data);
 
-        $bean->setCalendarEventData($data);
+        $beanMock->setCalendarEventData($data);
 
-        $this->assertEquals($data, $bean->calendardata);
+        $this->assertEquals($data, $beanMock->calendardata);
     }
 
     /**
@@ -328,15 +398,15 @@ END:VCALENDAR',
      */
     public function testCalculateTimeBoundaries($data, $expectedFirstOccurrence, $expectedLastOccurrence)
     {
-        $bean = $this->getMockBuilder('CalDavEvent')
-                     ->disableOriginalConstructor()
-                     ->setMethods(null)
-                     ->getMock();
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
 
-        TestReflection::callProtectedMethod($bean, 'calculateTimeBoundaries', array($data));
+        TestReflection::callProtectedMethod($beanMock, 'calculateTimeBoundaries', array($data));
 
-        $this->assertEquals($expectedFirstOccurrence, $bean->firstoccurence);
-        $this->assertEquals($expectedLastOccurrence, $bean->lastoccurence);
+        $this->assertEquals($expectedFirstOccurrence, $beanMock->firstoccurence);
+        $this->assertEquals($expectedLastOccurrence, $beanMock->lastoccurence);
     }
 
     /**
@@ -345,12 +415,12 @@ END:VCALENDAR',
      */
     public function testSetCalendarId()
     {
-        $bean = $this->getMockBuilder('CalDavEvent')
-                     ->disableOriginalConstructor()
-                     ->setMethods(null)
-                     ->getMock();
-        $bean->setCalendarId('test');
-        $this->assertEquals('test', $bean->calendarid);
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
+        $beanMock->setCalendarId('test');
+        $this->assertEquals('test', $beanMock->calendarid);
     }
 
     /**
@@ -359,11 +429,73 @@ END:VCALENDAR',
      */
     public function testSetCalendarObjectURI()
     {
-        $bean = $this->getMockBuilder('CalDavEvent')
-                     ->disableOriginalConstructor()
-                     ->setMethods(null)
-                     ->getMock();
-        $bean->setCalendarEventURI('test');
-        $this->assertEquals('test', $bean->uri);
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
+        $beanMock->setCalendarEventURI('test');
+        $this->assertEquals('test', $beanMock->uri);
+    }
+
+    /**
+     * @param array $beanData
+     * @param array $expectedArray
+     *
+     * @covers       \CalDavEvent::toCalDavArray
+     *
+     * @dataProvider toCalDavArrayProvider
+     */
+    public function testToCalDavArray($beanData, $expectedArray)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
+
+        foreach ($beanData as $key => $value) {
+            $beanMock->$key = $value;
+        }
+
+        $result = $beanMock->toCalDavArray();
+
+        $this->assertEquals($expectedArray, $result);
+    }
+
+    /**
+     * @param array $beanData
+     * @param array $expectedChange
+     *
+     * @covers       \CalDavEvent::addChange
+     *
+     * @dataProvider addChangeProvider
+     */
+    public function testAddChange(array $beanData, array $expectedChange)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('getChangesBean', 'getRelatedCalendar'))
+                         ->getMock();
+
+        foreach ($beanData as $key => $value) {
+            $beanMock->$key = $value;
+        }
+
+        $changesMock = $this->getMockBuilder('CalDavChange')
+                            ->disableOriginalConstructor()
+                            ->setMethods(array('add'))
+                            ->getMock();
+
+        $calendarMock = $this->getMockBuilder('CalDavCalendar')
+                            ->disableOriginalConstructor()
+                            ->setMethods(array('save'))
+                            ->getMock();
+
+        $beanMock->expects($this->once())->method('getChangesBean')->willReturn($changesMock);
+        $beanMock->expects($this->once())->method('getRelatedCalendar')->willReturn($calendarMock);
+
+        $changesMock->expects($this->once())->method('add')
+                    ->with($calendarMock, $expectedChange['uri'], $expectedChange['operation']);
+
+        TestReflection::callProtectedMethod($beanMock, 'addChange', array($expectedChange['operation']));
     }
 }

@@ -24,26 +24,146 @@ class CalendarDataTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestCalDavUtilities::deleteAllCreatedCalendars();
+        SugarTestCalDavUtilities::deleteCreatedEvents();
+        parent::tearDown();
+    }
+
+    public function calendarQueryProvider()
+    {
+        return array(
+            array(
+                'calendarData' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+DURATION:P2D
+END:VEVENT
+END:VCALENDAR',
+                'filter' => array(
+                    'name' => 'VCALENDAR',
+                    'comp-filters' => array(
+                        array(
+                            'name' => 'VEVENT',
+                            'comp-filters' => array(),
+                            'prop-filters' => array(),
+                            'is-not-defined' => false,
+                            'time-range' => null,
+                        ),
+                    ),
+                    'prop-filters' => array(),
+                    'is-not-defined' => false,
+                    'time-range' => null,
+                ),
+                'found' => true,
+            ),
+            array(
+                'calendarData' => 'BEGIN:VCALENDAR
+BEGIN:VTODO
+uid:test1
+END:VTODO
+END:VCALENDAR',
+                'filter' => array(
+                    'name' => 'VCALENDAR',
+                    'comp-filters' => array(
+                        array(
+                            'name' => 'VEVENT',
+                            'comp-filters' => array(),
+                            'prop-filters' => array(),
+                            'is-not-defined' => false,
+                            'time-range' => null,
+                        ),
+                    ),
+                    'prop-filters' => array(),
+                    'is-not-defined' => false,
+                    'time-range' => null,
+                ),
+                'found' => false,
+            ),
+            array(
+                'calendarData' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+DTSTART;VALUE=DATE:20170101
+DURATION:P2D
+END:VEVENT
+END:VCALENDAR',
+                'filter' => array(
+                    'name' => 'VCALENDAR',
+                    'comp-filters' => array(
+                        array(
+                            'name' => 'VEVENT',
+                            'comp-filters' => array(),
+                            'prop-filters' => array(),
+                            'is-not-defined' => false,
+                            'time-range' => array(
+                                'start' => new \DateTime('2011-01-01 10:00:00', new \DateTimeZone('GMT')),
+                            ),
+                        ),
+                    ),
+                    'prop-filters' => array(),
+                    'is-not-defined' => false,
+                    'time-range' => null,
+                ),
+                'found' => true,
+            ),
+            array(
+                'calendarData' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+DTSTART;VALUE=DATE:20170101
+DURATION:P2D
+END:VEVENT
+END:VCALENDAR',
+                'filter' => array(
+                    'name' => 'VCALENDAR',
+                    'comp-filters' => array(
+                        array(
+                            'name' => 'VEVENT',
+                            'comp-filters' => array(),
+                            'prop-filters' => array(),
+                            'is-not-defined' => false,
+                            'time-range' => array(
+                                'start' => new \DateTime('2011-01-01 10:00:00', new \DateTimeZone('GMT')),
+                                'end' => new \DateTime('2012-01-01 10:00:00', new \DateTimeZone('GMT'))
+                            ),
+                        ),
+                    ),
+                    'prop-filters' => array(),
+                    'is-not-defined' => false,
+                    'time-range' => null,
+                ),
+                'found' => false,
+            ),
+        );
     }
 
     /**
      * Retrieve user calendar test
+     *
+     * @covers Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::getCalendarsForUser
      */
     public function testGetCalendarsForUser()
     {
         $sugarUser = SugarTestUserUtilities::createAnonymousUser();
 
-        $calendar = new CalendarData();
+        $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
+                            ->disableOriginalConstructor()
+                            ->setMethods(null)
+                            ->getMock();
 
-        $result = $calendar->getCalendarsForUser('principals/'.$sugarUser->user_name);
+        $result = $backendMock->getCalendarsForUser('principals/' . $sugarUser->user_name);
 
-        $this->assertInternalType('array',$result);
-        $this->assertEquals(1,count($result));
-        $this->assertEquals('principals/'.$sugarUser->user_name, $result[0]['principaluri']);
+        $this->assertInternalType('array', $result);
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('principals/' . $sugarUser->user_name, $result[0]['principaluri']);
 
         SugarTestCalDavUtilities::addCalendarToCreated($result[0]['id']);
     }
 
+    /**
+     * Update calendar test
+     *
+     * @covers Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::updateCalendar
+     */
     public function testUpdateCalendar()
     {
         $sugarUser = SugarTestUserUtilities::createAnonymousUser();
@@ -59,17 +179,293 @@ class CalendarDataTest extends Sugar_PHPUnit_Framework_TestCase
             '{urn:ietf:params:xml:ns:caldav}schedule-calendar-transp' => new CalDAV\Xml\Property\ScheduleCalendarTransp('opaque'),
         ));
 
-        $calendar = new CalendarData();
+        $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
+                            ->disableOriginalConstructor()
+                            ->setMethods(null)
+                            ->getMock();
 
-        $calendar->updateCalendar($calendarID, $propPatch);
+        $backendMock->updateCalendar($calendarID, $propPatch);
         $result = $propPatch->commit();
 
         $this->assertTrue($result);
 
-        $result = $calendar->getCalendarsForUser('principals/'.$sugarUser->user_name);
+        $result = $backendMock->getCalendarsForUser('principals/' . $sugarUser->user_name);
 
         $this->assertEquals('myCalendar', $result[0]['{DAV:}displayname']);
-        $this->assertEquals('opaque', $result[0]['{urn:ietf:params:xml:ns:caldav}schedule-calendar-transp']->getValue());
+        $this->assertEquals('opaque',
+            $result[0]['{urn:ietf:params:xml:ns:caldav}schedule-calendar-transp']->getValue());
+        $this->assertEquals(1, $result[0]['{http://sabredav.org/ns}sync-token']);
+    }
+
+    /**
+     * @covers Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::getEventsBean
+     */
+    public function testGetCalendarEventsBean()
+    {
+        $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
+                            ->disableOriginalConstructor()
+                            ->setMethods(null)
+                            ->getMock();
+
+        $event = $backendMock->getEventsBean();
+
+        $this->assertInstanceOf('\CalDavEvent', $event);
+    }
+
+    /**
+     * @covers Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::getCalendarObjects
+     */
+    public function testGetCalendarObjects()
+    {
+        $sugarUser = SugarTestUserUtilities::createAnonymousUser();
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+        $event1 = SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+DURATION:P2D
+END:VEVENT
+END:VCALENDAR',
+            'calendarid' => $calendarID,
+            'eventURI' => 'test'
+        ));
+
+        $event2 = SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+DURATION:P2D
+END:VEVENT
+END:VCALENDAR',
+            'calendarid' => $calendarID,
+            'eventURI' => 'test1'
+        ));
+
+        $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
+                            ->disableOriginalConstructor()
+                            ->setMethods(null)
+                            ->getMock();
+
+        $result = $backendMock->getCalendarObjects($calendarID);
+
+        $idData = array();
+
+        foreach ($result as $event) {
+            $idData[] = $event['id'];
+        }
+
+        $this->assertEquals(2, count($idData));
+        $this->assertContains($event1->id, $idData);
+        $this->assertContains($event2->id, $idData);
+    }
+
+    /**
+     * @param string $calendarData
+     * @param array $filters
+     * @param bool $found
+     *
+     * @covers       Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::calendarQuery
+     *
+     * @dataProvider calendarQueryProvider
+     */
+    public function testCalendarQuery($calendarData, array $filters, $found)
+    {
+        $sugarUser = SugarTestUserUtilities::createAnonymousUser();
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+        $event = SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => $calendarData,
+            'calendarid' => $calendarID,
+            'eventURI' => 'test'
+        ));
+
+        $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
+                            ->disableOriginalConstructor()
+                            ->setMethods(null)
+                            ->getMock();
+
+        $result = $backendMock->calendarQuery($calendarID, $filters);
+
+        if ($found) {
+            $this->assertContains($event->uri, $result);
+        } else {
+            $this->assertNotContains($event->uri, $result);
+        }
+    }
+
+    /**
+     * @covers       Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::getCalendarObject
+     */
+    public function testGetCalendarObject()
+    {
+        $sugarUser = SugarTestUserUtilities::createAnonymousUser();
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+        SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+DURATION:P2D
+END:VEVENT
+END:VCALENDAR',
+            'calendarid' => $calendarID,
+            'eventURI' => 'test'
+        ));
+
+        SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+DURATION:P2D
+END:VEVENT
+END:VCALENDAR',
+            'calendarid' => $calendarID,
+            'eventURI' => 'test2'
+        ));
+
+        $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
+                            ->disableOriginalConstructor()
+                            ->setMethods(null)
+                            ->getMock();
+
+        $result = $backendMock->getCalendarObject($calendarID, 'test');
+
+        $this->assertEquals('test', $result['uri']);
+    }
+
+    /**
+     * @covers       Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::getMultipleCalendarObjects
+     */
+    public function testGetMultipleCalendarObjects()
+    {
+        $sugarUser = SugarTestUserUtilities::createAnonymousUser();
+        $sugarUser1 = SugarTestUserUtilities::createAnonymousUser();
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+        $calendarID1 = SugarTestCalDavUtilities::createCalendar($sugarUser1, array());
+
+        SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+DURATION:P2D
+END:VEVENT
+END:VCALENDAR',
+            'calendarid' => $calendarID,
+            'eventURI' => 'test1'
+        ));
+
+        SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+DURATION:P2D
+END:VEVENT
+END:VCALENDAR',
+            'calendarid' => $calendarID,
+            'eventURI' => 'test2'
+        ));
+
+        SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+DURATION:P2D
+END:VEVENT
+END:VCALENDAR',
+            'calendarid' => $calendarID,
+            'eventURI' => 'test3'
+        ));
+        SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+DURATION:P2D
+END:VEVENT
+END:VCALENDAR',
+            'calendarid' => $calendarID1,
+            'eventURI' => 'test4'
+        ));
+
+        $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
+                            ->disableOriginalConstructor()
+                            ->setMethods(null)
+                            ->getMock();
+
+        $result = $backendMock->getMultipleCalendarObjects($calendarID, array('test1', 'test3', 'test4'));
+
+        $uriData = array();
+
+        foreach ($result as $event) {
+            $uriData[] = $event['uri'];
+        }
+
+        $this->assertEquals(2, count($uriData));
+        $this->assertContains('test1', $uriData);
+        $this->assertContains('test3', $uriData);
+        $this->assertNotContains('test2', $uriData);
+        $this->assertNotContains('test4', $uriData);
+    }
+
+    /**
+     * @covers       Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::deleteCalendarObject
+     */
+    public function testDeleteCalendarObject()
+    {
+        $sugarUser = SugarTestUserUtilities::createAnonymousUser();
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+
+        $event = SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+DURATION:P2D
+END:VEVENT
+END:VCALENDAR',
+            'calendarid' => $calendarID,
+            'eventURI' => 'test1'
+        ));
+
+        $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
+                            ->disableOriginalConstructor()
+                            ->setMethods(null)
+                            ->getMock();
+
+        $backendMock->deleteCalendarObject($calendarID, 'test1');
+
+        $deletedEvent = $event->retrieve($event->id);
+
+        $this->assertNull($deletedEvent);
+
+        $result = $backendMock->getCalendarsForUser('principals/' . $sugarUser->user_name);
+
         $this->assertEquals(2, $result[0]['{http://sabredav.org/ns}sync-token']);
+    }
+
+    public function testGetCalendarObjectByUID()
+    {
+        $sugarUser = SugarTestUserUtilities::createAnonymousUser();
+
+        $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
+                            ->disableOriginalConstructor()
+                            ->setMethods(null)
+                            ->getMock();
+
+        $calendarInfo = $backendMock->getCalendarsForUser('principals/' . $sugarUser->user_name);
+
+        $event = SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+DURATION:P2D
+UID:uidtest1
+END:VEVENT
+END:VCALENDAR',
+            'calendarid' => $calendarInfo[0]['id'],
+            'eventURI' => 'test1'
+        ));
+
+        SugarTestCalDavUtilities::addCalendarToCreated($calendarInfo[0]['id']);
+
+        $result = $backendMock->getCalendarObjectByUID('principals/' . $sugarUser->user_name, 'uidtest1');
+
+        $this->assertEquals($calendarInfo[0]['uri'] . '/' . $event->uri, $result);
     }
 }

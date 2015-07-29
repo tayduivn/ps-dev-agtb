@@ -93,4 +93,23 @@ class CalDavChange extends SugarBean
      * @var integer
      */
     public $operation;
+
+    /**
+     * Adds a change record to the calendarchanges table.
+     *
+     * @param \CalDavCalendar $calendar
+     * @param string $objectUri
+     * @param int $operation 1 = add, 2 = modify, 3 = delete.
+     * @return void
+     */
+    public function add(\CalDavCalendar $calendar, $objectUri, $operation)
+    {
+        if ($calendar) {
+            $this->synctoken = $calendar->synctoken;
+            $this->uri = $objectUri;
+            $this->operation = $operation;
+            $this->calendarid = $calendar->id;
+            $this->save();
+        }
+    }
 }

@@ -11,6 +11,7 @@
  */
 
 use Sabre\VObject;
+use Sugarcrm\Sugarcrm\Dav\Base;
 
 /**
  * Class CalDav
@@ -20,7 +21,7 @@ class CalDavEvent extends SugarBean
 {
     public $new_schema = true;
     public $module_dir = 'CalDav';
-    public $module_name = 'CalDav';
+    public $module_name = 'CalDavEvents';
     public $object_name = 'CalDavEvent';
     public $table_name = 'caldav_events';
 
@@ -94,12 +95,6 @@ class CalDavEvent extends SugarBean
      * @var string
      */
     public $calendarid;
-
-    /**
-     * Event modification date. Used for CalDAV server purposes only
-     * @var integer
-     */
-    public $lastmodified;
 
     /**
      * Event ETag. MD5 hash from $calendardata
@@ -301,5 +296,107 @@ class CalDavEvent extends SugarBean
     public function setCalendarEventURI($eventURI)
     {
         $this->uri = $eventURI;
+    }
+
+    /**
+     * Convert bean to array which used by CalDav backend
+     * @return array
+     */
+    public function toCalDavArray()
+    {
+        return array(
+            'id' => $this->id,
+            'uri' => $this->uri,
+            'lastmodified' => strtotime($this->date_modified),
+            'etag' => '"' . $this->etag . '"',
+            'calendarid' => $this->calendarid,
+            'size' => $this->size,
+            'calendardata' => $this->calendardata,
+            'component' => strtolower($this->componenttype),
+        );
+    }
+
+    /**
+     * Get instance of CalDavChange
+     * @return null|CalDavChange
+     */
+    public function getChangesBean()
+    {
+        return \BeanFactory::getBean('CalDavChanges');
+    }
+
+    public function getRelatedCalendar($calendarID)
+    {
+        if ($this->load_relationship('events_calendar')) {
+            return \BeanFactory::getBean($this->events_calendar->getRelatedModuleName(), $calendarID);
+        }
+    }
+
+    /**
+     * Add Change to CalDav changes table
+     * @param $operation
+     */
+    protected function addChange($operation)
+    {
+        $calendar = $this->getRelatedCalendar($this->calendarid);
+        if ($calendar) {
+            $changes = $this->getChangesBean();
+            $changes->add($calendar, $this->uri, $operation);
+
+            $calendar->synctoken ++;
+            $calendar->save();
+        }
+    }
+
+    /**
+     * Retrieve set of events by calendarID and URI
+     * @param string $calendarId
+     * @param array $uri
+     * @param bool $fetchOne Fetch only one event or not
+     * @return CalDavEvent[]|CalDavEvent
+     * @throws SugarQueryException
+     */
+    public function getByURI($calendarId, array $uri, $fetchOne = false)
+    {
+        $result = array();
+        if ($this->load_relationship('events_calendar')) {
+
+            $query = new \SugarQuery();
+            $query->from($this);
+            $query->where()->equals('calendarid', $calendarId);
+            $query->where()->in('caldav_events.uri', $uri);
+            if ($fetchOne) {
+                $query->limit(1);
+            }
+
+            $result = $this->fetchFromQuery($query);
+            if($result && $fetchOne) {
+                return array_shift($result);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function save($check_notify = false)
+    {
+        $operation = $this->isUpdate() ? Base\Constants::OPERATION_MODIFY : Base\Constants::OPERATION_ADD;
+        $this->addChange($operation);
+
+        return parent::save($check_notify);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function mark_deleted($id)
+    {
+        if (!$this->deleted) {
+            $this->addChange(Base\Constants::OPERATION_DELETE);
+        }
+        parent::mark_deleted($id);
     }
 }

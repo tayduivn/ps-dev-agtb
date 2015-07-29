@@ -10,28 +10,38 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
 $mod_strings = array(
-    'LBL_ID' => 'Object ID',
-    'LBL_DATA' => 'Object in VOBJECT format',
-    'LBL_URI' => 'Object URI',
-    'LBL_CALENDAR_ID' => 'Calendar ID',
-    'LBL_LASTMODIFIED' => 'Modified time',
-    'LBL_ETAG' => 'HTTP Etag',
-    'LBL_SIZE' => 'Object size in bytes',
-    'LBL_COMPONENTTYPE' => 'Object component type',
-    'LBL_FIRSTOCCURENCE' => 'Recurring event first occurrence',
-    'LBL_LASTOCCURENCE' => 'Recurring event last occurrence',
-    'LBL_UID' => 'The object\'s UID',
-    'LBL_RELATED_MODULE'=> 'Related Module',
-    'LBL_RELATED_MODULE_ID' => 'Related Module ID',
-    'LBL_SYNC_COUNTER' => 'Object sync counter',
-    'LBL_MODULE_SYNC_COUNTER' => 'Related module object sync counter',
-    'LBL_PRINCIPALURI' => 'Principal uri',
-    'LBL_DISPLAYNAME' => 'Calendar title',
-    'LBL_ORDER' => 'Calendar order',
-    'LBL_COLOR' => 'Calendar color',
-    'LBL_TIMEZONE' => 'Timezone',
-    'LBL_SYNCTOKEN' => 'Sync token',
-    'LBL_OPERATION' => 'Operation with object'
+    'LBL_EVENT_DATA' => 'Event data in VOBJECT format',
+    'LBL_EVENT_URI' => 'Event URI',
+    'LBL_EVENT_COMPONENTTYPE' => 'Event component type',
+    'LBL_EVENT_FIRSTOCCURENCE' => 'Recurring event first occurrence',
+    'LBL_EVENT_LASTOCCURENCE' => 'Recurring event last occurrence',
+    'LBL_EVENT_UID' => 'The event\'s UID',
+    'LBL_EVENT_RELATED_MODULE'=> 'Related Module',
+    'LBL_EVENT_RELATED_MODULE_ID' => 'Related Module ID',
+    'LBL_EVENT_SYNC_COUNTER' => 'Event sync counter',
+    'LBL_EVENT_MODULE_SYNC_COUNTER' => 'Related module object sync counter',
+    'LBL_EVENT_ETAG' => 'Etag for caching' ,
+    'LBL_EVENT_SIZE' => 'Size in bytes',
+    'LBL_EVENT_CALENDAR_ID' => 'Calendar ID',
+
+    'LBL_CALENDAR_URI' => 'Calendar uri',
+    'LBL_CALENDAR_ORDER' => 'Calendar order',
+    'LBL_CALENDAR_COLOR' => 'Calendar color',
+    'LBL_CALENDAR_TIMEZONE' => 'Timezone',
+    'LBL_CALENDAR_SYNCTOKEN' => 'Calendar Sync token',
+    'LBL_CALENDAR_COMPONENTS' => 'Supported calendar components',
+    'LBL_CALENDAR_EVENTS' => 'Calendar events link',
+
+    'LBL_CHANGE_OPERATION' => 'Operation type with object',
+    'LBL_CHANGE_EVENT_URI' => 'Event URI',
+    'LBL_CHANGE_CALENDAR_SYNCTOKEN' => 'Calendar Sync token',
+    'LBL_CHANGE_CALENDAR_ID' => 'Calendar id',
+
+    'LBL_SCHEDULING_PRINCIPALURI' => 'Principal uri',
+    'LBL_SCHEDULING_LASTMODIFIED' => 'Modified time',
+    'LBL_SCHEDULING_ETAG' => 'Etag for caching' ,
+    'LBL_SCHEDULING_SIZE' => 'Size in bytes',
+
+    'LBL_TITLE' => 'CalDav',
 );

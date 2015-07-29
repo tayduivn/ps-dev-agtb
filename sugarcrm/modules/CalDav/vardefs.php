@@ -14,46 +14,40 @@ $dictionary['CalDavEvent'] = array(
     'table' => 'caldav_events',
     'comment' => 'This table used for store calendar objects',
     'full_text_search' => false,
+    'audited' => false,
+    'activity_enabled' => false,
+    'favorites' => false,
     'fields' =>
         array(
             'calendardata' =>
                 array(
                     'name' => 'calendardata',
-                    'vname' => 'LBL_DATA',
+                    'vname' => 'LBL_EVENT_DATA',
                     'type' => 'longblob',
                     'isnull' => 'true',
-                    'comment' => 'Object in VOBJECT format',
+                    'comment' => 'Event data in VOBJECT format',
                 ),
             'uri' =>
                 array(
                     'name' => 'uri',
-                    'vname' => 'LBL_URI',
+                    'vname' => 'LBL_EVENT_URI',
                     'type' => 'varchar',
                     'len' => '200',
                     'isnull' => 'true',
-                    'comment' => 'Object URI',
+                    'comment' => 'Event URI',
                 ),
             'calendarid' =>
                 array(
                     'required' => true,
                     'name' => 'calendarid',
-                    'vname' => 'LBL_CALENDAR_ID',
+                    'vname' => 'LBL_EVENT_CALENDAR_ID',
                     'type' => 'id',
                     'comment' => 'Calendar ID',
-                ),
-            'lastmodified' =>
-                array(
-                    'name' => 'lastmodified',
-                    'vname' => 'LBL_LASTMODIFIED',
-                    'type' => 'int',
-                    'len' => '11',
-                    'isnull' => 'true',
-                    'comment' => 'Modified time',
                 ),
             'etag' =>
                 array(
                     'name' => 'etag',
-                    'vname' => 'LBL_ETAG',
+                    'vname' => 'LBL_EVENT_ETAG',
                     'type' => 'varchar',
                     'len' => '32',
                     'isnull' => 'true',
@@ -63,24 +57,24 @@ $dictionary['CalDavEvent'] = array(
                 array(
                     'required' => true,
                     'name' => 'size',
-                    'vname' => 'LBL_SIZE',
+                    'vname' => 'LBL_EVENT_SIZE',
                     'type' => 'int',
                     'len' => '11',
-                    'comment' => 'Object size in bytes',
+                    'comment' => 'Event size in bytes',
                 ),
             'componenttype' =>
                 array(
                     'name' => 'componenttype',
-                    'vname' => 'LBL_COMPONENTTYPE',
+                    'vname' => 'LBL_EVENT_COMPONENTTYPE',
                     'type' => 'varchar',
                     'len' => '8',
                     'isnull' => 'true',
-                    'comment' => 'Object component type',
+                    'comment' => 'Event component type',
                 ),
             'firstoccurence' =>
                 array(
                     'name' => 'firstoccurence',
-                    'vname' => 'LBL_FIRSTOCCURENCE',
+                    'vname' => 'LBL_EVENT_FIRSTOCCURENCE',
                     'type' => 'int',
                     'len' => '11',
                     'isnull' => 'true',
@@ -89,7 +83,7 @@ $dictionary['CalDavEvent'] = array(
             'lastoccurence' =>
                 array(
                     'name' => 'lastoccurence',
-                    'vname' => 'LBL_LASTOCCURENCE',
+                    'vname' => 'LBL_EVENT_LASTOCCURENCE',
                     'type' => 'int',
                     'len' => '11',
                     'isnull' => 'true',
@@ -98,18 +92,18 @@ $dictionary['CalDavEvent'] = array(
             'uid' =>
                 array(
                     'name' => 'uid',
-                    'vname' => 'LBL_UID',
+                    'vname' => 'LBL_EVENT_UID',
                     'type' => 'varchar',
                     'len' => '200',
                     'isnull' => 'true',
-                    'comment' => 'The object\'s UID',
+                    'comment' => 'The event\'s UID',
                 ),
             'related_module' =>
                 array(
                     'name' => 'related_module',
                     'type' => 'varchar',
                     'len' => '255',
-                    'vname' => 'LBL_RELATED_MODULE',
+                    'vname' => 'LBL_EVENT_RELATED_MODULE',
                     'isnull' => 'true',
                     'comment' => 'Related Module',
                 ),
@@ -117,35 +111,66 @@ $dictionary['CalDavEvent'] = array(
                 array(
                     'name' => 'related_module_id',
                     'type' => 'id',
-                    'vname' => 'LBL_RELATED_MODULE_ID',
+                    'vname' => 'LBL_EVENT_RELATED_MODULE_ID',
                     'isnull' => 'true',
                     'comment' => 'Related Module ID',
                 ),
             'sync_counter' =>
                 array(
                     'name' => 'sync_counter',
-                    'vname' => 'LBL_SYNC_COUNTER',
+                    'vname' => 'LBL_EVENT_SYNC_COUNTER',
                     'type' => 'int',
                     'len' => '11',
                     'default' => '0',
-                    'comment' => 'Object sync counter',
+                    'comment' => 'Event sync counter',
                 ),
             'module_sync_counter' =>
                 array(
                     'name' => 'module_sync_counter',
-                    'vname' => 'LBL_MODULE_SYNC_COUNTER',
+                    'vname' => 'LBL_EVENT_MODULE_SYNC_COUNTER',
                     'type' => 'int',
                     'len' => '11',
                     'default' => '0',
                     'comment' => 'Related module object sync counter',
                 ),
+            'events_calendar' =>
+                array(
+                    'name' => 'events_calendar',
+                    'type' => 'link',
+                    'relationship' => 'events_calendar',
+                    'source' => 'non-db',
+                    'link_type' => 'one',
+                    'vname' => 'LBL_CALENDAR_EVENTS',
+                ),
+
         ),
+    'relationships' => array(
+        'events_calendar' => array(
+            'rhs_module' => 'CalDavEvents',
+            'rhs_table' => 'caldav_events',
+            'rhs_key' => 'calendarid',
+            'lhs_module' => 'CalDavCalendars',
+            'lhs_table' => 'caldav_calendars',
+            'lhs_key' => 'id',
+            'relationship_type' => 'one-to-many',
+        ),
+    ),
     'indices' => array(
         array(
             'name' => 'idx_calendarid',
             'type' => 'index',
             'fields' => array('calendarid', 'uri'),
         ),
+        array(
+            'name' => 'idx_timerange',
+            'type' => 'index',
+            'fields' => array('firstoccurence', 'lastoccurence'),
+        ),
+    ),
+    'ignore_templates' => array(
+        'following',
+        'favorite',
+        'taggable',
     ),
 );
 
@@ -153,12 +178,15 @@ $dictionary['CalDavCalendar'] = array(
     'table' => 'caldav_calendars',
     'comment' => 'This table used for store calendars',
     'full_text_search' => false,
+    'audited' => false,
+    'activity_enabled' => false,
+    'favorites' => false,
     'fields' =>
         array(
             'uri' =>
                 array(
                     'name' => 'uri',
-                    'vname' => 'LBL_URI',
+                    'vname' => 'LBL_CALENDAR_URI',
                     'type' => 'varchar',
                     'len' => '200',
                     'isnull' => 'true',
@@ -168,7 +196,7 @@ $dictionary['CalDavCalendar'] = array(
                 array(
                     'required' => true,
                     'name' => 'synctoken',
-                    'vname' => 'LBL_SYNCTOKEN',
+                    'vname' => 'LBL_CALENDAR_SYNCTOKEN',
                     'type' => 'int',
                     'len' => '11',
                     'isnull' => 'false',
@@ -178,7 +206,7 @@ $dictionary['CalDavCalendar'] = array(
                 array(
                     'required' => true,
                     'name' => 'calendarorder',
-                    'vname' => 'LBL_ORDER',
+                    'vname' => 'LBL_CALENDAR_ORDER',
                     'type' => 'int',
                     'len' => '5',
                     'default' => '0',
@@ -188,7 +216,7 @@ $dictionary['CalDavCalendar'] = array(
             'calendarcolor' =>
                 array(
                     'name' => 'calendarcolor',
-                    'vname' => 'LBL_COLOR',
+                    'vname' => 'LBL_CALENDAR_COLOR',
                     'type' => 'varchar',
                     'len' => '10',
                     'isnull' => 'true',
@@ -197,7 +225,7 @@ $dictionary['CalDavCalendar'] = array(
             'timezone' =>
                 array(
                     'name' => 'timezone',
-                    'vname' => 'LBL_TIMEZONE',
+                    'vname' => 'LBL_CALENDAR_TIMEZONE',
                     'type' => 'text',
                     'isnull' => 'true',
                     'comment' => 'Specifies a time zone on a calendar collection',
@@ -205,11 +233,11 @@ $dictionary['CalDavCalendar'] = array(
             'components' =>
                 array(
                     'name' => 'components',
-                    'vname' => 'LBL_COMPONENTTYPE',
+                    'vname' => 'LBL_CALENDAR_COMPONENTS',
                     'type' => 'varchar',
                     'len' => '20',
                     'isnull' => 'true',
-                    'comment' => 'Supported calendar components set',
+                    'comment' => 'Supported calendar components',
                 ),
             'transparent' =>
                 array(
@@ -220,7 +248,27 @@ $dictionary['CalDavCalendar'] = array(
                     'isnull' => 'false',
                     'comment' => 'Determines whether the calendar object resources in a calendar collection will affect the owner\'s busy time information.',
                 ),
+            'calendar_events' =>
+                array(
+                    'name' => 'calendar_events',
+                    'type' => 'link',
+                    'relationship' => 'calendar_events',
+                    'source' => 'non-db',
+                    'link_type' => 'one',
+                    'vname' => 'LBL_CALENDAR_EVENTS',
+                ),
         ),
+    'relationships' => array(
+        'calendar_events' => array(
+            'rhs_module' => 'CalDavEvents',
+            'rhs_table' => 'caldav_events',
+            'rhs_key' => 'calendarid',
+            'lhs_module' => 'CalDavCalendars',
+            'lhs_table' => 'caldav_calendars',
+            'lhs_key' => 'id',
+            'relationship_type' => 'one-to-many',
+        ),
+    ),
     'indices' => array(
         array(
             'name' => 'idx_assigned_user_id',
@@ -232,39 +280,47 @@ $dictionary['CalDavCalendar'] = array(
         'default',
         'assignable',
     ),
+    'ignore_templates' => array(
+        'following',
+        'favorite',
+        'taggable',
+    ),
 );
 
 $dictionary['CalDavChange'] = array(
     'table' => 'caldav_changes',
     'comment' => 'Calendar changes history',
     'full_text_search' => false,
+    'audited' => false,
+    'activity_enabled' => false,
+    'favorites' => false,
     'fields' =>
         array(
             'uri' =>
                 array(
                     'required' => true,
                     'name' => 'uri',
-                    'vname' => 'LBL_URI',
+                    'vname' => 'LBL_CHANGE_EVENT_URI',
                     'type' => 'varchar',
                     'len' => '200',
                     'isnull' => 'false',
-                    'comment' => 'Object URI',
+                    'comment' => 'Event URI',
                 ),
             'synctoken' =>
                 array(
                     'required' => true,
                     'name' => 'synctoken',
-                    'vname' => 'LBL_SYNCTOKEN',
+                    'vname' => 'LBL_CHANGE_CALENDAR_SYNCTOKEN',
                     'type' => 'int',
                     'len' => '11',
                     'isnull' => 'false',
-                    'comment' => 'Synchronization token for CalDav server purposes',
+                    'comment' => 'Calendar events link',
                 ),
             'calendarid' =>
                 array(
                     'required' => true,
                     'name' => 'calendarid',
-                    'vname' => 'LBL_CALENDAR_ID',
+                    'vname' => 'LBL_CHANGE_CALENDAR_ID',
                     'type' => 'id',
                     'comment' => 'Calendar ID',
                     'isnull' => 'false',
@@ -273,7 +329,7 @@ $dictionary['CalDavChange'] = array(
                 array(
                     'required' => true,
                     'name' => 'operation',
-                    'vname' => 'LBL_OPERATION',
+                    'vname' => 'LBL_CHANGE_OPERATION',
                     'type' => 'tinyint',
                     'isnull' => 'false',
                     'comment' => 'Operation with object',
@@ -286,18 +342,26 @@ $dictionary['CalDavChange'] = array(
             'fields' => array('calendarid', 'synctoken'),
         ),
     ),
+    'ignore_templates' => array(
+        'following',
+        'favorite',
+        'taggable',
+    ),
 );
 
 $dictionary['CalDavScheduling'] = array(
     'table' => 'caldav_scheduling',
     'comment' => 'Scheduling objects for caldav',
     'full_text_search' => false,
+    'audited' => false,
+    'activity_enabled' => false,
+    'favorites' => false,
     'fields' =>
         array(
             'principaluri' =>
                 array(
                     'name' => 'principaluri',
-                    'vname' => 'LBL_PRINCIPALURI',
+                    'vname' => 'LBL_SCHEDULING_PRINCIPALURI',
                     'type' => 'varchar',
                     'len' => '255',
                     'isnull' => 'true',
@@ -306,24 +370,24 @@ $dictionary['CalDavScheduling'] = array(
             'calendardata' =>
                 array(
                     'name' => 'calendardata',
-                    'vname' => 'LBL_DATA',
+                    'vname' => 'LBL_EVENT_DATA',
                     'type' => 'longblob',
                     'isnull' => 'true',
-                    'comment' => 'Object in VOBJECT format',
+                    'comment' => 'Event data in VOBJECT format',
                 ),
             'uri' =>
                 array(
                     'name' => 'uri',
-                    'vname' => 'LBL_URI',
+                    'vname' => 'LBL_EVENT_URI',
                     'type' => 'varchar',
                     'len' => '200',
                     'isnull' => 'true',
-                    'comment' => 'Object URI',
+                    'comment' => 'Event URI',
                 ),
             'lastmodified' =>
                 array(
                     'name' => 'lastmodified',
-                    'vname' => 'LBL_LASTMODIFIED',
+                    'vname' => 'LBL_SCHEDULING_LASTMODIFIED',
                     'type' => 'int',
                     'len' => '11',
                     'isnull' => 'true',
@@ -332,7 +396,7 @@ $dictionary['CalDavScheduling'] = array(
             'etag' =>
                 array(
                     'name' => 'etag',
-                    'vname' => 'LBL_ETAG',
+                    'vname' => 'LBL_SCHEDULING_ETAG',
                     'type' => 'varchar',
                     'len' => '32',
                     'isnull' => 'true',
@@ -342,7 +406,7 @@ $dictionary['CalDavScheduling'] = array(
                 array(
                     'required' => true,
                     'name' => 'size',
-                    'vname' => 'LBL_SIZE',
+                    'vname' => 'LBL_SCHEDULING_SIZE',
                     'type' => 'int',
                     'len' => '11',
                     'isnull' => 'false',
@@ -350,16 +414,21 @@ $dictionary['CalDavScheduling'] = array(
                 ),
         ),
     'indices' => array(),
-);
-
-VardefManager::createVardef(
-    'CalDavCalendars',
-    'CalDavCalendar'
+    'ignore_templates' => array(
+        'following',
+        'favorite',
+        'taggable',
+    ),
 );
 
 VardefManager::createVardef(
     'CalDavEvents',
     'CalDavEvent'
+);
+
+VardefManager::createVardef(
+    'CalDavCalendars',
+    'CalDavCalendar'
 );
 
 VardefManager::createVardef(
