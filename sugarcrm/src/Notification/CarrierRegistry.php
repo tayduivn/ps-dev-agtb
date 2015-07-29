@@ -99,19 +99,36 @@ class CarrierRegistry
             \SugarAutoLoader::load($path);
             $class = $module . 'Carrier';
 
-            if (!(class_exists($class) && in_array(self::CARRIER_INTERFACE, class_implements($class)))) {
+            if (!$this->isCarrierClass($class)) {
                 continue;
             }
 
-            $path = \SugarAutoLoader::existingCustomOne($path);
-            \SugarAutoLoader::load($path);
+            $customPath = \SugarAutoLoader::existingCustomOne($path);
+            \SugarAutoLoader::load($customPath);
+            $customClass = \SugarAutoLoader::customClass($class);
+            if ($this->isCarrierClass($customClass)) {
+                $class = $customClass;
+                $path = $customPath;
+            }
+
             $dictionary[$module] = array(
                 'path' => $path,
-                'class' => \SugarAutoLoader::customClass($module . 'Carrier')
+                'class' => $class
             );
         }
 
         return $dictionary;
+    }
+
+    /**
+     * Is class implements CarrierInterface
+     *
+     * @param string $class
+     * @return bool
+     */
+    protected function isCarrierClass($class)
+    {
+        return class_exists($class) && in_array(self::CARRIER_INTERFACE, class_implements($class));
     }
 
     /**
@@ -125,7 +142,7 @@ class CarrierRegistry
     protected function getDictionary()
     {
         $data = $this->getCache();
-        if (empty($data)) {
+        if (is_null($data)) {
             $data = $this->scan();
             $this->setCache($data);
         }
