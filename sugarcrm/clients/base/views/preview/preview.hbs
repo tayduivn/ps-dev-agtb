@@ -11,6 +11,10 @@
  */
 --}}
 <div class="block preview-data">
+    <div class="row-fluid" align="right">
+        <button class="btn-link cancel-btn hide" data-action="cancel">{{str "Cancel"}}</button>
+        <button class="btn btn-primary save-btn hide" data-action="save">{{str "Save"}}</button>
+    </div>
 {{#each meta.panels}}
 {{#each fields}}
     <div class="row-fluid{{#if ../hide}}{{#if ../../../hidePanel}} hide{{/if}} panel_hidden{{/if}}">
@@ -37,5 +41,9 @@
                     data-moreless="less"
                     data-target=".panel_hidden">{{str "LBL_SHOW_LESS"}}</button>
         </div>
+    </div>
+    <div class="row-fluid" align="right">
+        <button class="btn-link cancel-btn" data-action="cancel">{{str "Cancel"}}</button>
+        <button class="btn btn-primary save-btn" data-action="save">{{str "Save"}}</button>
     </div>
 </div>

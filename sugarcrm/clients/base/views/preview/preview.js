@@ -14,7 +14,7 @@
  * @extends View.View
  */
 ({
-    plugins: ['ToggleMoreLess', 'Editable'],
+    plugins: ['ToggleMoreLess', 'Editable', 'ErrorDecoration'],
     fallbackFieldTemplate: 'detail',
     /**
      * Events related to the preview view:
@@ -34,7 +34,9 @@
     hiddenPanelExists: false,
 
     events: {
-        'click .preview-edit-wrapper': 'handleEdit'
+        'click .preview-edit-wrapper': 'handleEdit',
+        'click [data-action=save]': 'saveClicked',
+        'click [data-action=cancel]': 'cancelClicked'
     },
 
     initialize: function(options) {
@@ -60,6 +62,181 @@
         this.inlineEditMode = true;
 
         this.toggleField(field, true);
+        this.setEditFields(field);
+        this.showSaveAndCancel();
+    },
+
+    showSaveAndCancel: function() {
+        this.$('.save-btn').show();
+        this.$('.cancel-btn').show();
+    },
+
+    hideSaveAndCancel: function() {
+        this.$('.save-btn').hide();
+        this.$('.cancel-btn').hide();
+    },
+
+    saveClicked: function() {
+        this.model.doValidate(this.getFields(this.module), _.bind(this.validationComplete, this));
+    },
+
+    setEditFields: function(field) {
+        delete this.editableFields;
+        this.editableFields = field;
+    },
+
+    /**
+     * Called each time a validation pass is completed on the model.
+     *
+     * Enables the action button and calls {@link #handleSave} if the model is
+     * valid.
+     *
+     * @param {boolean} isValid TRUE if model is valid.
+     */
+    validationComplete: function(isValid) {
+        if (isValid) {
+            this.handleSave();
+        }
+    },
+
+    handleSave: function() {
+        if (this.disposed) {
+            return;
+        }
+        this._saveModel();
+        this.hideSaveAndCancel();
+
+        if (!this.disposed) {
+            this.setRoute();
+            this.unsetContextAction();
+            this.toggleField(this.editableFields, false);
+            this.inlineEditMode = false;
+        }
+    },
+
+    _saveModel: function() {
+        var options,
+            successCallback = _.bind(function() {
+                // Loop through the visible subpanels and have them sync. This is to update any related
+                // fields to the record that may have been changed on the server on save.
+                _.each(this.context.children, function(child) {
+                    if (!_.isUndefined(child.attributes) && !_.isUndefined(child.attributes.isSubpanel)) {
+                        if (child.attributes.isSubpanel && !child.attributes.hidden) {
+                            child.reloadData({recursive: false});
+                        }
+                    }
+                });
+                if (this.createMode) {
+                    app.navigate(this.context, this.model);
+                } else if (!this.disposed && !app.acl.hasAccessToModel('edit', this.model)) {
+                    //re-render the view if the user does not have edit access after save.
+                    this.render();
+                }
+            }, this);
+
+        //Call editable to turn off key and mouse events before fields are disposed (SP-1873)
+        this.turnOffEvents(this.fields);
+
+        options = {
+            showAlerts: true,
+            success: successCallback,
+            error: _.bind(function(error) {
+                if (error.status === 412 && !error.request.metadataRetry) {
+                    this.handleMetadataSyncError(error);
+                } else if (error.status === 409) {
+                    app.utils.resolve409Conflict(error, this.model, _.bind(function(model, isDatabaseData) {
+                        if (model) {
+                            if (isDatabaseData) {
+                                successCallback();
+                            } else {
+                                this._saveModel();
+                            }
+                        }
+                    }, this));
+                } else {
+                    this.editClicked();
+                }
+            }, this),
+            lastModified: this.model.get('date_modified'),
+            viewed: true
+        };
+
+        options = _.extend({}, options, this.getCustomSaveOptions(options));
+
+        this.model.save({}, options);
+    },
+
+    handleMetadataSyncError: function(error) {
+        var self = this;
+        //On a metadata sync error, retry the save after the app is synced
+        self.resavingAfterMetadataSync = true;
+        app.once('app:sync:complete', function() {
+            error.request.metadataRetry = true;
+            self.model.once('sync', function() {
+                self.resavingAfterMetadataSync = false;
+                //self.model.changed = {};
+                app.router.refresh();
+            });
+            //add a new success callback to refresh the page after the save completes
+            error.request.execute(null, app.api.getMetadataHash());
+        });
+    },
+
+    /**
+     * Updates url without triggering the router.
+     *
+     * @param {string} action Action to pass when building the route
+     *   with {@link Core.Router#buildRoute}.
+     */
+    setRoute: function(action) {
+        if (!this.meta.hashSync) {
+            return;
+        }
+        app.router.navigate(app.router.buildRoute(this.module, this.model.id, action), {trigger: false});
+    },
+
+    /**
+     * Unsets the `action` attribute from the current context.
+     *
+     * Once 'action' is unset, the action is 'detail' and the view will render
+     * next in detail mode.
+     */
+    unsetContextAction: function() {
+        this.context.unset('action');
+    },
+
+    /**
+     * Dismisses all {@link #_viewAlerts alerts} defined in this view.
+     *
+     * @protected
+     */
+    _dismissAllAlerts: function() {
+        if (_.isEmpty(this._viewAlerts)) {
+            return;
+        }
+        _.each(_.uniq(this._viewAlerts), function(alert) {
+            app.alert.dismiss(alert);
+        });
+        this._viewAlerts = [];
+    },
+
+    getCustomSaveOptions: function(options) {
+        return {};
+    },
+
+    cancelClicked: function() {
+        this.handleCancel();
+        this.clearValidationErrors(this.editableFields);
+        this.setRoute();
+        this.unsetContextAction();
+    },
+
+    handleCancel: function() {
+        this.model.revertAttributes();
+        this.toggleField(this.editableFields, false);
+        this.inlineEditMode = false;
+        this.hideSaveAndCancel();
+        this._dismissAllAlerts();
     },
 
     /**
