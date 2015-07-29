@@ -82,7 +82,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose'] = array(
                 ),
                 array(
                     'name'          => 'body_html',
-                    'type'          => 'pmse_htmleditable_tinymce',
+                    'type'          => 'htmleditable_tinymce',
                     'dismiss_label' => true,
                     'span'          => 12,
                     'tinyConfig'    => array(
