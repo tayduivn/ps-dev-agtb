@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Hook;
 
 use \Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
+use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
 
 /**
  *
@@ -58,6 +59,6 @@ class Handler
      */
     protected function getAdapterFactory()
     {
-        return Factory::getInstance();
+        return CalDavAdapterFactory::getInstance();
     }
 }

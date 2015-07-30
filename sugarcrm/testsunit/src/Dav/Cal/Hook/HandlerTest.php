@@ -49,6 +49,16 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler::getAdapterFactory
+     */
+    public function testGetAdapterFactory()
+    {
+        $handlerObject = new LogicHookHandler();
+        $manager = TestReflection::callProtectedMethod($handlerObject, 'getAdapterFactory');
+        $this->assertInstanceOf('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory', $manager);
+    }
+
+    /**
      * @param $managerMock
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
