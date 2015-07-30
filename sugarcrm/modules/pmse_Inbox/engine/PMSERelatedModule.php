@@ -140,8 +140,8 @@ class PMSERelatedModule {
 
         // Sort on the label
         array_multisort($labels, SORT_ASC, $output);
-
-        $filterArray = array('value' => $filter, 'text' => '<' . $filter . '>', 'module' => $filter, 'relationship' => $filter);
+        $moduleName = (translate("LBL_MODULE_NAME", $filter) == "LBL_MODULE_NAME") ? $filter : translate("LBL_MODULE_NAME", $filter);
+        $filterArray = array('value' => $filter, 'text' => '<' . $moduleName . '>', 'module' => $filter, 'relationship' => $filter);
         array_unshift($output, $filterArray);
 
         $res['search'] = $filter;
