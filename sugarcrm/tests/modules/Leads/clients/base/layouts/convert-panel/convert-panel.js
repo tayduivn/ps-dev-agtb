@@ -590,4 +590,24 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
         layout.turnOffUnsavedChanges(); //happens when lead convert completes successfully
         expect(hasUnsavedChanges(layout.createView)).toBeFalsy();
     });
+
+    describe("field transfer validation", function() {
+        it("should return true for source field values that should be transferred", function() {
+            expect(layout.shouldSourceValueBeCopied(25)).toBeTruthy();
+            expect(layout.shouldSourceValueBeCopied(1.234)).toBeTruthy();
+            expect(layout.shouldSourceValueBeCopied(0)).toBeTruthy();
+            expect(layout.shouldSourceValueBeCopied('Foo')).toBeTruthy();
+            expect(layout.shouldSourceValueBeCopied(false)).toBeTruthy();
+            expect(layout.shouldSourceValueBeCopied([1,2,3])).toBeTruthy();
+            expect(layout.shouldSourceValueBeCopied({a:25})).toBeTruthy();
+        });
+
+        it("should return false for source field values that should not be transferred", function() {
+            expect(layout.shouldSourceValueBeCopied('')).toBeFalsy();
+            expect(layout.shouldSourceValueBeCopied(null)).toBeFalsy();
+            expect(layout.shouldSourceValueBeCopied([])).toBeFalsy();
+            expect(layout.shouldSourceValueBeCopied({})).toBeFalsy();
+            expect(layout.shouldSourceValueBeCopied(undefined)).toBeFalsy();
+        });
+    });
 });
