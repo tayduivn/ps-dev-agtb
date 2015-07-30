@@ -46,24 +46,22 @@ class Status
         $config = \BeanFactory::getBean('Administration');
         $config = $config->getSettings(self::CONFIG_CATEGORY);
         $key = self::CONFIG_CATEGORY . '_' . $carrierName;
-        if (isset($config->settings[$key])) {
-            return !empty($config->settings[$key]);
-        } else {
-            return false;
-        }
+        return !empty($config->settings[$key]);
     }
 
     /**
      * Saving status carrier
      *
-     * @param string $carrierName
-     * @param boolean $status
+     * @param $carrierName
+     * @param $status
+     * @return bool
      */
     public function setCarrierStatus($carrierName, $status)
     {
         $this->verifyModule($carrierName);
         $config = \BeanFactory::getBean('Administration');
         $config->saveSetting(self::CONFIG_CATEGORY, $carrierName, $status);
+        return !empty($status);
     }
 
     /**
