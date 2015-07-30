@@ -67,13 +67,13 @@
     },
 
     showSaveAndCancel: function() {
-        this.$('.save-btn').show();
-        this.$('.cancel-btn').show();
+        this.layout.$('.save-btn, .cancel-btn').show();
+        this.layout.$('.btn-left, .btn-right, .closeSubdetail').hide();
     },
 
     hideSaveAndCancel: function() {
-        this.$('.save-btn').hide();
-        this.$('.cancel-btn').hide();
+        this.layout.$('.save-btn, .cancel-btn').hide();
+        this.layout.$('.btn-left, .btn-right, .closeSubdetail').show();
     },
 
     saveClicked: function() {
@@ -81,8 +81,8 @@
     },
 
     setEditFields: function(field) {
-        delete this.editableFields;
-        this.editableFields = field;
+        delete this.layout.editableFields;
+        this.layout.editableFields = field;
     },
 
     /**
@@ -109,7 +109,7 @@
         if (!this.disposed) {
             this.setRoute();
             this.unsetContextAction();
-            this.toggleField(this.editableFields, false);
+            this.toggleField(this.layout.editableFields, false);
             this.inlineEditMode = false;
         }
     },
@@ -226,14 +226,14 @@
 
     cancelClicked: function() {
         this.handleCancel();
-        this.clearValidationErrors(this.editableFields);
+        this.clearValidationErrors(this.layout.editableFields);
         this.setRoute();
         this.unsetContextAction();
     },
 
     handleCancel: function() {
         this.model.revertAttributes();
-        this.toggleField(this.editableFields, false);
+        this.toggleField(this.layout.editableFields, false);
         this.inlineEditMode = false;
         this.hideSaveAndCancel();
         this._dismissAllAlerts();
