@@ -1,0 +1,49 @@
+<?php
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+namespace Sugarcrm\Sugarcrm\Dav\Cal\Hook;
+
+/**
+ *
+ * Logic hook handler
+ *
+ */
+
+class Handler
+{
+    /**
+     * To be used from logic hooks to index a bean.
+     *
+     * @param \SugarDav $bean
+     * @param string $event Triggered event
+     * @param array $arguments Optional arguments
+     * @return void
+     */
+
+    public function run($bean, $event, $arguments)
+    {
+        if ($bean instanceof \CalDavEvent) {
+            $this->getDavHandler()->import($bean);
+        } elseif ($bean instanceof \SugarBean) {
+            $this->getDavHandler()->export($bean);
+        }
+    }
+
+    /**
+     * Get handler that will processed import or export action on bean saving event
+     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Handler
+     */
+    protected function getDavHandler()
+    {
+        return new \Sugarcrm\Sugarcrm\Dav\Cal\Handler();
+    }
+}
