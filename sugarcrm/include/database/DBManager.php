@@ -3474,6 +3474,33 @@ protected function checkQuery($sql, $object_name = false)
                 if(!empty($field_type) && $field_type == 'date'){
                     $before_value = $this->fromConvert($before_value , $field_type);
                 }
+
+                //email field contains an array so loop through and grab the addresses marked as primary for comparison
+                if (!empty($field_type) && $field_type == 'email') {
+                    if (empty($before_value)) {
+                        //further processing expects a string, so change empty array into blank string
+                        $before_value = '';
+                    } else {
+                        foreach ($before_value as $emailArr ) {
+                            if ($emailArr['primary_address']) {
+                                $before_value = $emailArr['email_address'];
+                                break;
+                            }
+                        }
+                    }
+                    if (empty($after_value)) {
+                        //further processing expects a string, so change empty array into blank string
+                        $after_value = '';
+                    } else {
+                        foreach ($after_value as $emailArr ) {
+                            if ($emailArr['primary_address']) {
+                                $after_value = $emailArr['email_address'];
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 //if the type and values match, do nothing.
                 if (!($this->_emptyValue($before_value,$field_type) && $this->_emptyValue($after_value,$field_type))) {
                     $change = false;
