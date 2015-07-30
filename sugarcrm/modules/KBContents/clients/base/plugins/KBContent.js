@@ -36,7 +36,9 @@
             onAttach: function(component, plugin) {
                 this.on('init', function() {
                     this._initKBListeners();
-                    if (this.tplName === 'list' || this.tplName === 'panel-top') {
+                    if (this.tplName === 'list' || this.tplName === 'panel-top' ||
+                        (!_.isUndefined(this.meta.type) && this.meta.type === 'subpanel-list')
+                    ) {
                         this.context.on('list:editrow:fire', _.bind(function(model, view) {
                             this._initValidationHandler(model);
                         }, this));

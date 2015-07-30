@@ -8,20 +8,21 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 /**
- * @class View.Views.Base.KBContentsPanelTopForCases
- * @alias SUGAR.App.view.views.BaseKBContentsPanelTopForCases
- * @extends View.Views.Base.PanelTopView
+ * Custom Subpanel Layout for Revenue Line Items.
+ *
+ * @class View.Views.Base.KBContents.SubpanelListView
+ * @alias SUGAR.App.view.views.BaseKBContentsSubpanelListView
+ * @extends View.Views.Base.SubpanelListView
  */
-
 ({
-    extendsFrom: 'PanelTopView',
+    extendsFrom: 'SubpanelListView',
 
     /**
      * {@inheritDoc}
      */
     initialize: function(options) {
+        this.plugins = _.union(this.plugins || [], ['KBContent']);
         this._super('initialize', [options]);
     }
 })

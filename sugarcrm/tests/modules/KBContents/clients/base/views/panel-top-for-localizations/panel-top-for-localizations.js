@@ -1,6 +1,6 @@
 describe('KBContents.Base.Views.PanelTopForLocalizations', function() {
 
-    var app, view, sandbox, context, moduleName = 'KBContents';
+    var app, view, sandbox, context, meta, moduleName = 'KBContents';
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -19,6 +19,7 @@ describe('KBContents.Base.Views.PanelTopForLocalizations', function() {
             });
         context.set('model', new app.Bean());
         context.parent = new Backbone.Model();
+        meta = {};
 
         SugarTest.loadComponent(
             'base',
@@ -37,7 +38,7 @@ describe('KBContents.Base.Views.PanelTopForLocalizations', function() {
             'base',
             moduleName,
             'panel-top-for-localizations',
-            null,
+            meta,
             context,
             moduleName
         );
