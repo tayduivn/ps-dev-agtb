@@ -215,11 +215,12 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
             $tabs['KBContents'] = 'KBContents';
         }
         $tc->set_system_tabs($tabs);
-
+        //BEGIN SUGARCRM flav=ent ONLY
         $tabs = $tc->getPortalTabs();
         $tabs = array_diff(array_values($tabs), array('KBDocuments', 'KBContents'));
         array_push($tabs, 'KBContents');
         $tc->setPortalTabs(array_values($tabs));
+        //END SUGARCRM flav=ent ONLY
     }
 
     /**
