@@ -248,6 +248,8 @@
         app.events.on('preview:render', this._renderPreview, this);
         app.events.on('preview:collection:change', this.updateCollection, this);
         app.events.on('preview:close', this.closePreview, this);
+        this.layout.on('button:save_button:click', this.saveClicked, this);
+        this.layout.on('button:cancel_button:click', this.cancelClicked, this);
 
         // TODO: Remove when pagination on activity streams is fixed.
         app.events.on('preview:module:update', this.updatePreviewModule, this);

@@ -12,6 +12,10 @@
 --}}
 <h1>{{str "LBL_PREVIEW"}}</h1>
 <div class="btn-toolbar pull-right">
+    <div class="preview-headerpane" align="right">
+        <button class="btn-link cancel-btn " data-action="cancel">{{str "Cancel"}}</button>
+        <button class="btn btn-primary save-btn" data-action="save" data-event="button:save_button:click" track="button:save_button:click">{{str "Save"}}</button>
+    </div>
     <div class="btn-group">
         {{#unless layout.hideNextPrevious}}
         <a class="btn btn-invisible{{#unless layout.previous}} disabled{{/unless}}" data-direction="left"><i class="fa fa-chevron-left"></i></a>

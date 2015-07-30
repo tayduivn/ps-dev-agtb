@@ -18,7 +18,10 @@
 
     events: {
         'click [data-direction]': 'triggerPagination',
-        'click .preview-headerbar .closeSubdetail': 'triggerClose'
+        'click .preview-headerbar .closeSubdetail': 'triggerClose',
+        'click .save-btn': 'triggerSave',
+        'click .cancel-btn': 'triggerCancel'
+
     },
 
     initialize: function(options) {
@@ -37,5 +40,13 @@
     triggerClose: function() {
         app.events.trigger("list:preview:decorate", null, this);
         app.events.trigger("preview:close");
+    },
+
+    triggerSave: function() {
+        this.layout.trigger("button:save_button:click");
+    },
+
+    triggerCancel: function() {
+        this.layout.trigger("button:cancel_button:click");
     }
 })
