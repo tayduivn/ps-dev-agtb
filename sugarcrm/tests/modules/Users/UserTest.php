@@ -37,6 +37,17 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('dog', $this->_user->getPreference('test_pref'));
     }
 
+    public function testRemoveAUserPreference()
+    {
+        $this->_user->setPreference('test_pref2', 'DeleteThis');
+
+        $this->assertEquals('DeleteThis', $this->_user->getPreference('test_pref2'));
+
+        $this->_user->removePreference('test_pref2');
+
+        $this->assertEmpty($this->_user->getPreference('test_pref2'));
+    }
+
     public function testGettingSystemPreferenceWhenNoUserPreferenceExists()
     {
         $GLOBALS['sugar_config']['somewhackypreference'] = 'somewhackyvalue';

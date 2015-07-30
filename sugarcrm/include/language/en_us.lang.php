@@ -12750,3 +12750,10 @@ $app_list_strings['business_rule_type_list'] = array(
 );
 //END SUGARCRM flav=ent ONLY
 
+$app_list_strings['caldav_oldest_sync_date'] = array(
+    '2 weeks' => '2 weeks',
+    '1 month' => '1 month',
+    '3 month' => '3 months',
+    '6 month' => '6 months',
+    0 => 'All events',
+);
