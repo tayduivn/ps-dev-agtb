@@ -128,7 +128,7 @@ class CarrierRegistry
      */
     protected function isCarrierClass($class)
     {
-        return class_exists($class) && in_array(self::CARRIER_INTERFACE, class_implements($class));
+        return class_exists($class) && in_array(static::CARRIER_INTERFACE, class_implements($class));
     }
 
     /**
@@ -157,13 +157,13 @@ class CarrierRegistry
      */
     protected function getCache()
     {
-        $path = sugar_cached(self::CACHE_FILE);
+        $path = sugar_cached(static::CACHE_FILE);
         if (\SugarAutoLoader::fileExists($path)) {
             include($path);
         }
 
-        if (isset(${self::CACHE_VARIABLE})) {
-            return ${self::CACHE_VARIABLE};
+        if (isset(${static::CACHE_VARIABLE})) {
+            return ${static::CACHE_VARIABLE};
         } else {
             return null;
         }
@@ -176,8 +176,8 @@ class CarrierRegistry
      */
     protected function setCache($data)
     {
-        create_cache_directory(self::CACHE_FILE);
-        write_array_to_file(self::CACHE_VARIABLE, $data, sugar_cached(self::CACHE_FILE));
+        create_cache_directory(static::CACHE_FILE);
+        write_array_to_file(static::CACHE_VARIABLE, $data, sugar_cached(static::CACHE_FILE));
     }
 
 }

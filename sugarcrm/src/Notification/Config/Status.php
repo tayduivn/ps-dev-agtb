@@ -44,8 +44,8 @@ class Status
     {
         $this->verifyModule($carrierName);
         $config = \BeanFactory::getBean('Administration');
-        $config = $config->getSettings(self::CONFIG_CATEGORY);
-        $key = self::CONFIG_CATEGORY . '_' . $carrierName;
+        $config = $config->getSettings(static::CONFIG_CATEGORY);
+        $key = static::CONFIG_CATEGORY . '_' . $carrierName;
         return !empty($config->settings[$key]);
     }
 
@@ -60,7 +60,7 @@ class Status
     {
         $this->verifyModule($carrierName);
         $config = \BeanFactory::getBean('Administration');
-        $config->saveSetting(self::CONFIG_CATEGORY, $carrierName, $status);
+        $config->saveSetting(static::CONFIG_CATEGORY, $carrierName, $status);
         return !empty($status);
     }
 
