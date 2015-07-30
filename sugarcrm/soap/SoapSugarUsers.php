@@ -96,7 +96,7 @@ function login($user_auth, $application){
 			LogicHook::initialize();
 			$GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
 			return array('id'=>-1, 'error'=>$error);
-	} else if(function_exists('mcrypt_cbc')){
+    } elseif (extension_loaded('mcrypt')) {
 		$password = decrypt_string($user_auth['password']);
         $authController = AuthenticationController::getInstance();
         $authController->loggedIn = false; // reset login attempt to try again with decrypted password
@@ -1307,7 +1307,7 @@ function handle_set_relationship($set_relationship_value, $session='')
 	else{
     	$key = array_search(strtolower($module2),$mod->relationship_fields);
     	if(!$key) {
-    	    $key = Relationship::retrieve_by_modules($module1, $module2, $GLOBALS['db']);
+            $key = $mod->retrieve_by_modules($module1, $module2, $GLOBALS['db']);
 
             // BEGIN SnapLogic fix for bug 32064
             if ($module1 == "Quotes" && $module2 == "ProductBundles") {

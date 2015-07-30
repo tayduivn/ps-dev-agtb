@@ -145,13 +145,14 @@ function get_module_title(
     }
     if (!empty($iconPath)) {
         $the_title .= '<h2>';
+        $breadCrumbSymbol = SugarView::staticGetBreadCrumbSymbol();
     	if (SugarThemeRegistry::current()->directionality == "ltr") {
 	        $the_title .= "<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' " . "alt='".$module."' title='".$module."' align='absmiddle'></a>";
-	        $the_title .= ($count >= 1) ? SugarView::getBreadCrumbSymbol() : "";
+            $the_title .= ($count >= 1) ? $breadCrumbSymbol : "";
 	        $the_title .=  $module_title.'';
     	} else {
     		$the_title .= $module_title;
-    		$the_title .= ($count > 1) ? SugarView::getBreadCrumbSymbol() : "";
+            $the_title .= ($count > 1) ? $breadCrumbSymbol : "";
     		$the_title .= "<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' "  . "alt='".$module."' title='".$module."' align='absmiddle'></a>";
     	}
         $the_title .= '</h2>';

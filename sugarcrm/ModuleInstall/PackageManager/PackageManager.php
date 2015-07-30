@@ -39,7 +39,8 @@ class PackageManager{
      * Obtain a promotion from SugarDepot
      * @return string   the string from the promotion
      */
-    function getPromotion(){
+    public static function getPromotion()
+    {
         $name_value_list = PackageManagerComm::getPromotion();
         if(!empty($name_value_list)){
             $name_value_list = PackageManager::fromNameValueList($name_value_list);
@@ -52,8 +53,8 @@ class PackageManager{
     /**
      * Obtain a list of category/packages/releases for use within the module loader
      */
-    function getModuleLoaderCategoryPackages($category_id = ''){
-    	$filter = array();
+    public static function getModuleLoaderCategoryPackages($category_id = '')
+    {
     	$filter = array('type' => "'module', 'theme', 'langpack'");
     	$filter = PackageManager::toNameValueList($filter);
     	return PackageManager::getCategoryPackages($category_id, $filter);
@@ -63,7 +64,8 @@ class PackageManager{
      * Obtain the list of category_packages from SugarDepot
      * @return category_packages
      */
-    function getCategoryPackages($category_id = '', $filter = array()){
+    public static function getCategoryPackages($category_id = '', $filter = array())
+    {
          $results = PackageManagerComm::getCategoryPackages($category_id, $filter);
          PackageManagerComm::errorCheck();
          $nodes = array();
@@ -108,7 +110,8 @@ class PackageManager{
      * @param filter        an array of filters to pass to limit the query
      * @return array        an array of categories for display on the client
      */
-    function getCategories($category_id, $filter = array()){
+    public static function getCategories($category_id, $filter = array())
+    {
         $nodes = array();
         $results = PackageManagerComm::getCategories($category_id, $filter);
         PackageManagerComm::errorCheck();
@@ -121,7 +124,8 @@ class PackageManager{
         return $nodes;
     }
 
-    function getPackages($category_id, $filter = array()){
+    public static function getPackages($category_id, $filter = array())
+    {
         $nodes = array();
         $results = PackageManagerComm::getPackages($category_id, $filter);
         PackageManagerComm::errorCheck();
@@ -144,7 +148,8 @@ class PackageManager{
         return $packages;
     }
 
-    function getReleases($category_id, $package_id, $filter = array()){
+    public static function getReleases($category_id, $package_id, $filter = array())
+    {
         $releases = PackageManagerComm::getReleases($category_id, $package_id, $filter);
         PackageManagerComm::errorCheck();
         return $releases;
@@ -183,7 +188,8 @@ class PackageManager{
      * @param systemname   the user's download key
      * @return              true if successful, false otherwise
      */
-    function authenticate($username, $password, $systemname='', $terms_checked = true){
+    public static function authenticate($username, $password, $systemname = '', $terms_checked = true)
+    {
         PackageManager::setCredentials($username, $password, $systemname);
         PackageManagerComm::clearSession();
         $result = PackageManagerComm::login($terms_checked);
@@ -193,8 +199,8 @@ class PackageManager{
         	return true;
     }
 
-    function setCredentials($username, $password, $systemname){
-
+    public static function setCredentials($username, $password, $systemname)
+    {
         $admin = Administration::getSettings();
          $admin->saveSetting(CREDENTIAL_CATEGORY, CREDENTIAL_USERNAME, $username);
          $admin->saveSetting(CREDENTIAL_CATEGORY, CREDENTIAL_PASSWORD, $password);
@@ -203,8 +209,8 @@ class PackageManager{
          }
     }
 
-    function getCredentials(){
-
+    public static function getCredentials()
+    {
         $admin = Administration::getSettings(CREDENTIAL_CATEGORY, true);
         $credentials = array();
         $credentials['username'] = '';
@@ -222,7 +228,8 @@ class PackageManager{
         return $credentials;
     }
 
-    function getTermsAndConditions(){
+    public static function getTermsAndConditions()
+    {
     	return PackageManagerComm::getTermsAndConditions();
 
     }
@@ -235,7 +242,8 @@ class PackageManager{
      *
      * @return documents
      */
-    function getDocumentation($package_id, $release_id){
+    public static function getDocumentation($package_id, $release_id)
+    {
     	 if(!empty($release_id) || !empty($package_id)){
             $documents = PackageManagerComm::getDocumentation($package_id, $release_id);
             return $documents;
@@ -259,7 +267,8 @@ class PackageManager{
 
      ////////////////////////////////////////////////////////
      /////////// HELPER FUNCTIONS
-    function toNameValueList($array){
+    public static function toNameValueList($array)
+    {
 		$list = array();
 		foreach($array as $name=>$value){
 			$list[] = array('name'=>$name, 'value'=>$value);
@@ -267,7 +276,8 @@ class PackageManager{
 		return $list;
 	}
 
-	function toNameValueLists($arrays){
+    public static function toNameValueLists($arrays)
+    {
 		$lists = array();
 		foreach($arrays as $array){
 			$lists[] = PackageManager::toNameValueList($array);
@@ -275,7 +285,8 @@ class PackageManager{
 		return $lists;
 	}
 
-     function fromNameValueList($nvl){
+    public static function fromNameValueList($nvl)
+    {
         $array = array();
         foreach($nvl as $list){
             $array[$list['name']] = $list['value'];

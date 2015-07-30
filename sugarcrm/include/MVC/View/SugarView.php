@@ -1400,11 +1400,20 @@ EOHTML;
      */
     public function getBreadCrumbSymbol()
     {
-    	if(SugarThemeRegistry::current()->directionality == "ltr") {
-        	return "<span class='breadCrumbSymbol'>&raquo;</span>";
-        }
-        else {
-        	return "<span class='breadCrumbSymbol'>&laquo;</span>";
+        return self::staticGetBreadCrumbSymbol();
+    }
+
+    /**
+     * Returns the correct breadcrumb symbol according to theme's directionality setting
+     *
+     * @return string
+     */
+    public static function staticGetBreadCrumbSymbol()
+    {
+        if (SugarThemeRegistry::current()->directionality == "ltr") {
+            return "<span class='breadCrumbSymbol'>&raquo;</span>";
+        } else {
+            return "<span class='breadCrumbSymbol'>&laquo;</span>";
         }
     }
 

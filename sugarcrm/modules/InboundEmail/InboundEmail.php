@@ -1091,7 +1091,8 @@ class InboundEmail extends SugarBean {
 				$diff = array_diff_assoc($UIDLs, $cacheUIDLs);
 				$diff = $this->pop3_shiftCache($diff, $cacheUIDLs);
 				require_once('modules/Emails/EmailUI.php');
-				EmailUI::preflightEmailCache("{$this->EmailCachePath}/{$this->id}");
+                $ui = new EmailUI();
+                $ui->preflightEmailCache("{$this->EmailCachePath}/{$this->id}");
 
 				if (count($diff)> 50) {
                 	$newDiff = array_slice($diff, 50, count($diff), true);
@@ -2302,7 +2303,13 @@ class InboundEmail extends SugarBean {
 		$this->mailbox_type = 'pick'; // forcing this
 
 		if(!empty($userId)) {
-			$teamId = ($_REQUEST['ie_team'] == '-1') ? User::getPrivateTeam($userId) : $_REQUEST['ie_team'];
+            if ($_REQUEST['ie_team'] == -1) {
+                /** @var User $user */
+                $user = BeanFactory::getBean('Users', $userId);
+                $teamId = $user->getPrivateTeamID();
+            } else {
+                $teamId = $_REQUEST['ie_team'];
+            }
 			$this->team_id = $teamId;
 			$this->team_set_id = $this->getTeamSetIdForTeams($teamId);
 		}
@@ -4685,19 +4692,22 @@ eoq;
         return false;
     }
 
-	function get_stored_options($option_name,$default_value=null,$stored_options=null) {
-		if (empty($stored_options)) {
-			$stored_options=$this->stored_options;
-		}
-		if(!empty($stored_options)) {
-			$storedOptions = Serialized::unserialize($stored_options, array(), true);
-			if (isset($storedOptions[$option_name])) {
-				$default_value=$storedOptions[$option_name];
-			}
-		}
-		return $default_value;
-	}
+    public function get_stored_options($option_name, $default_value = null)
+    {
+        return self::decode_stored_option($this->stored_options, $option_name, $default_value);
+    }
 
+    public static function decode_stored_option($stored_options, $option_name, $default_value = null)
+    {
+        if (!empty($stored_options)) {
+			$storedOptions = Serialized::unserialize($stored_options, array(), true);
+            if (isset($decoded[$option_name])) {
+                return $decoded[$option_name];
+            }
+        }
+
+        return $default_value;
+    }
 
 	/**
 	 * This function returns a contact or user ID if a matching email is found

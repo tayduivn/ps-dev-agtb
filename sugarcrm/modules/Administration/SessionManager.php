@@ -142,7 +142,8 @@ class SessionManager extends SugarBean {
      *
      * return   true if session is still valid, false otherwise
      */
-    function getValidSession($session_id){
+    public static function getValidSession($session_id)
+    {
         $GLOBALS['log']->debug("Checking session validity");
         $sessionManager = new SessionManager();
         $session = $sessionManager->retrieve_by_string_fields(array('session_id'=>$session_id));

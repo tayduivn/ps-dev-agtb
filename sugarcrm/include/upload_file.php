@@ -693,7 +693,7 @@ class UploadStream
     /**
      * Register the stream
      */
-    public function register()
+    public static function register()
     {
         if(isset($GLOBALS['sugar_config']['upload_wrapper_class'])) {
             SugarAutoLoader::requireWithCustom("include/{$GLOBALS['sugar_config']['upload_wrapper_class']}.php");

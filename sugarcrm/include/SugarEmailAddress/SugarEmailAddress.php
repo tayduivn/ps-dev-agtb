@@ -711,7 +711,7 @@ class SugarEmailAddress extends SugarBean
      * @param string $addr Dirty email address
      * @return string clean email address
      */
-    function _cleanAddress($addr)
+    static function _cleanAddress($addr)
     {
         $addr = trim(from_html($addr));
 

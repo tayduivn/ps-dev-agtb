@@ -165,7 +165,8 @@ class UserDemoData {
 		}
 	}
 
-	function _copy_user_image($id) {
+    public static function _copy_user_image($id)
+    {
 		global $sugar_config;
 		$picture_file = create_guid();
 		$file = "include/images/".$id.".gif";

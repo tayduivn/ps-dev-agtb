@@ -220,7 +220,7 @@ class ACLController
 	 * @param string $module
 	 * @return bool
 	 */
-	public function moduleSupportsACL($module)
+	public static function moduleSupportsACL($module)
 	{
 	    // FIXME: add support for non-bean ACLs
 	    if(!isset($GLOBALS['beanList'][$module])) return false;
@@ -232,7 +232,7 @@ class ACLController
      * Display "access denied" message
      * @api
      */
-    public function displayNoAccess($redirect_home = false)
+    public static function displayNoAccess($redirect_home = false)
     {
         echo '<script>function set_focus(){}</script><p class="error">' . translate('LBL_NO_ACCESS', 'ACL') . '</p>';
         if ($redirect_home) {

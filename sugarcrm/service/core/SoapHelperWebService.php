@@ -147,7 +147,7 @@ function validate_user($user_name, $password){
 
 		$GLOBALS['log']->info('End: SoapHelperWebServices->validate_user - validation passed');
 		return true;
-	}else if(function_exists('mcrypt_cbc')){
+    } elseif (extension_loaded('mcrypt')) {
 		$password = $this->decrypt_string($password);
 		if($authController->login($user_name, $password) && isset($_SESSION['authenticated_user_id'])){
 			$user->retrieve($_SESSION['authenticated_user_id']);
@@ -1136,6 +1136,18 @@ function validate_user($user_name, $password){
 			return null;
 	}
 
+    /**
+     * Decrypt a string using the TripleDES algorithm.
+     *
+     * @param string $string
+     * @param string $key
+     * @param string $iv
+     * @return string
+     */
+    public static function decrypt_tripledes($string, $key, $iv)
+    {
+        return mcrypt_decrypt(MCRYPT_3DES, $key, pack("H*", $string), MCRYPT_MODE_CBC, $iv);
+    }
 
 	/**
 	 * decrypt a string use the TripleDES algorithm. This meant to be
@@ -1147,7 +1159,7 @@ function validate_user($user_name, $password){
 	 */
 	function decrypt_string($string){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->decrypt_string');
-		if(function_exists('mcrypt_cbc')){
+        if (extension_loaded('mcrypt')) {
 			require_once('modules/Administration/Administration.php');
 			$focus = Administration::getSettings();
 			$key = '';
@@ -1158,11 +1170,10 @@ function validate_user($user_name, $password){
 				$GLOBALS['log']->info('End: SoapHelperWebServices->decrypt_string - empty key');
 				return $string;
 			} // if
-			$buffer = $string;
 			$key = substr(md5($key),0,24);
 		    $iv = "password";
 			$GLOBALS['log']->info('End: SoapHelperWebServices->decrypt_string');
-		    return mcrypt_cbc(MCRYPT_3DES, $key, pack("H*", $buffer), MCRYPT_DECRYPT, $iv);
+            return self::decrypt_tripledes($string, $key, $iv);
 		}else{
 			$GLOBALS['log']->info('End: SoapHelperWebServices->decrypt_string');
 			return $string;

@@ -75,7 +75,8 @@ class Viewpackage extends SugarView
 					if(!empty($entry['data']['label']) && $name != $entry['data']['label'])
 					{
 						$package_labels[] = strtoupper($entry['data']['label']);
-                                                $key_labels[] = strtoupper(ModuleBuilder::getPackageKey($entry['data']['label']));
+                        $mb = new ModuleBuilder();
+                        $key_labels[] = strtoupper($mb->getPackageKey($entry['data']['label']));
 					}
 				}
 			}

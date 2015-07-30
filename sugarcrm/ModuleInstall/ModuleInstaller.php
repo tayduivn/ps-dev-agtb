@@ -2808,7 +2808,7 @@ class ModuleInstaller{
     /**
      * Get portal configuration
      */
-    public function getPortalConfig()
+    public static function getPortalConfig()
     {
         $config = SugarConfig::getInstance();
 

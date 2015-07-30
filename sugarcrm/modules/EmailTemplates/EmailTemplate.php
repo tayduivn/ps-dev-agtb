@@ -426,8 +426,8 @@ class EmailTemplate extends SugarBean {
 		return $repl_arr;
 	}
 
-
-	function parse_template_bean($string, $bean_name, &$focus) {
+    public static function parse_template_bean($string, $bean_name, &$focus)
+    {
 		global $current_user;
 		global $beanFiles, $beanList;
 		$repl_arr = array();
@@ -643,9 +643,8 @@ class EmailTemplate extends SugarBean {
         return $data;
     }
 
-	function parse_template($string, $bean_arr) {
-		global $beanFiles, $beanList;
-
+    public static function parse_template($string, $bean_arr)
+    {
 		foreach($bean_arr as $bean_name => $bean_id) {
 		    $focus = BeanFactory::getBean($bean_name, $bean_id);
 
@@ -653,11 +652,7 @@ class EmailTemplate extends SugarBean {
 				$bean_name = 'Contacts';
 			}
 
-			if(isset($this) && isset($this->module_dir) && $this->module_dir == 'EmailTemplates') {
-				$string = $this->parse_template_bean($string, $bean_name, $focus);
-			} else {
-				$string = EmailTemplate::parse_template_bean($string, $bean_name, $focus);
-			}
+            $string = EmailTemplate::parse_template_bean($string, $bean_name, $focus);
 		}
 		return $string;
 	}

@@ -767,7 +767,7 @@ class PMSEProjectImporter extends PMSEImporter
             'OPPORTUNITIES' => 'Opportunities',
             'DOCUMENTS' => 'Documents'
         );
-        if (key_exists($message, $arr)) {
+        if (array_key_exists($message, $arr)) {
             return $arr[$message];
         } else {
             return $message;

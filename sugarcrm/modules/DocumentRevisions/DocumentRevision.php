@@ -255,8 +255,8 @@ class DocumentRevision extends SugarBean {
 		return $revision_fields;
 	}
 
-	//static function..
-	function get_document_revision_name($doc_revision_id){
+    public static function get_document_revision_name($doc_revision_id)
+    {
 		if (empty($doc_revision_id)) return null;
 		
 		$db = DBManagerFactory::getInstance();				
@@ -270,9 +270,9 @@ class DocumentRevision extends SugarBean {
 		}
 		return null;
 	}
-	
-	//static function.
-	function get_document_revisions($doc_id){
+
+    public static function get_document_revisions($doc_id)
+    {
 		$return_array= Array();
 		if (empty($doc_id)) return $return_array;
 		

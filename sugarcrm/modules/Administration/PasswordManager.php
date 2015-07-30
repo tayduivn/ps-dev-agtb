@@ -179,7 +179,7 @@ $sugar_smarty->assign('saml_enabled_checked', false);
 //}
 
 
-if(!function_exists('mcrypt_cbc')){
+if (!extension_loaded('mcrypt')) {
 	$sugar_smarty->assign("LDAP_ENC_KEY_READONLY", 'readonly');
 	$sugar_smarty->assign("LDAP_ENC_KEY_DESC", $config_strings['LDAP_ENC_KEY_NO_FUNC_DESC']);
 }else{

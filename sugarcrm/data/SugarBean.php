@@ -1205,7 +1205,7 @@ class SugarBean
      *
      * Internal function, do not override.
      */
-    function removeRelationshipMeta($key,$db,$tablename,$dictionary,$module_dir)
+    public static function removeRelationshipMeta($key, $db, $tablename, $dictionary, $module_dir)
     {
         //load the module dictionary if not supplied.
         if ((!isset($dictionary) or empty($dictionary)) && !empty($module_dir))
@@ -1267,7 +1267,7 @@ class SugarBean
      *
      *  Internal function, do not override.
      */
-    function createRelationshipMeta($key,$db,$tablename,$_,$module_dir,$iscustom=false)
+    public static function createRelationshipMeta($key, $db, $tablename, $_, $module_dir, $iscustom = false)
     {
         $GLOBALS['log']->deprecated("Deprecated function createRelationshipMeta called");
     }
@@ -1654,7 +1654,9 @@ class SugarBean
             if ($this->db->tableExists($this->table_name. '_cstm'))
             {
                 $this->db->dropTableName($this->table_name. '_cstm');
-                DynamicField::deleteCache();
+                if (isset($this->custom_fields)) {
+                    $this->custom_fields->deleteCache();
+                }
             }
             if ($this->db->tableExists($this->get_audit_table_name())) {
                 $this->db->dropTableName($this->get_audit_table_name());
@@ -4072,9 +4074,17 @@ class SugarBean
      * Internal Function, do not overide.
      * @deprecated Use SugarQuery & $this->fetchFromQuery() instead
      */
-    function get_union_related_list($parentbean, $order_by = "", $sort_order='', $where = "",
-    $row_offset = 0, $limit=-1, $max=-1, $show_deleted = 0, $subpanel_def)
-    {
+    public static function get_union_related_list(
+        $parentbean,
+        $order_by = "",
+        $sort_order = '',
+        $where = "",
+        $row_offset = 0,
+        $limit = -1,
+        $max = -1,
+        $show_deleted = 0,
+        $subpanel_def
+    ) {
         $secondary_queries = array();
         global $layout_edit_mode, $beanFiles, $beanList;
 

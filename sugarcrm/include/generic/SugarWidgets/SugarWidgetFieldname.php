@@ -151,7 +151,7 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 			$input_name0 = $current_user->id;
 		}
 
-		return SugarWidgetFieldid::_get_column_select($layout_def)."="
+        return parent::_get_column_select($layout_def)."="
 			.$this->reporter->db->quoted($input_name0)."\n";
 	}
 

@@ -627,11 +627,10 @@ class ConnectorUtils
         return true;
     }
 
-    public function removeHoverField(&$viewdefs, $module)
+    public static function removeHoverField(&$viewdefs, $module)
     {
         require_once('include/SugarFields/Parsers/MetaParser.php');
-        $metaParser = new MetaParser();
-        if(!$metaParser->hasMultiplePanels($viewdefs[$module]['DetailView']['panels'])) {
+        if (!MetaParser::hasMultiplePanels($viewdefs[$module]['DetailView']['panels'])) {
             $keys = array_keys($viewdefs[$module]['DetailView']['panels']);
             if(!empty($keys) && count($keys) != 1) {
                $viewdefs[$module]['DetailView']['panels'] = array('default'=>$viewdefs[$module]['DetailView']['panels']);
@@ -658,8 +657,7 @@ class ConnectorUtils
     {
        //Check for metadata files that aren't correctly created
        require_once('include/SugarFields/Parsers/MetaParser.php');
-       $metaParser = new MetaParser();
-       if(!$metaParser->hasMultiplePanels($viewdefs[$module]['DetailView']['panels'])) {
+       if (!MetaParser::hasMultiplePanels($viewdefs[$module]['DetailView']['panels'])) {
             $keys = array_keys($viewdefs[$module]['DetailView']['panels']);
             if(!empty($keys) && count($keys) != 1) {
                $viewdefs[$module]['DetailView']['panels'] = array('default'=>$viewdefs[$module]['DetailView']['panels']);

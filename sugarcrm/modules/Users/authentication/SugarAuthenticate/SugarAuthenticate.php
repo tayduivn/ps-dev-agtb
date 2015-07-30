@@ -339,7 +339,8 @@ class SugarAuthenticate{
 	 * @param STRING $password
 	 * @return STRING $encoded_password
 	 */
-	function encodePassword($password){
+    public static function encodePassword($password)
+    {
 		return strtolower(md5($password));
 	}
 

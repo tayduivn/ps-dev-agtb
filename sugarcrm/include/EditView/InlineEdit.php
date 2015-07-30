@@ -21,8 +21,7 @@ require_once('include/SugarFields/Parsers/MetaParser.php');
 
 		private function getEditInPlace($panels, $bean){
 					$fields = array();
-					$parser = new MetaParser();
-					if(!$parser->hasMultiplePanels($panels)){
+					if (!MetaParser::hasMultiplePanels($panels)) {
 						$panels = array($panels);
 					}
 					foreach($panels as $panel){

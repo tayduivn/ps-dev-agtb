@@ -1094,8 +1094,7 @@ function get_decoded($object){
  * @return a decrypted string if we can decrypt, the original string otherwise
  */
 function decrypt_string($string){
-	if(function_exists('mcrypt_cbc')){
-
+    if (extension_loaded('mcrypt')) {
 		$focus = Administration::getSettings();
 		$key = '';
 		if(!empty($focus->settings['ldap_enc_key'])){
@@ -1103,10 +1102,10 @@ function decrypt_string($string){
 		}
 		if(empty($key))
 			return $string;
-		$buffer = $string;
 		$key = substr(md5($key),0,24);
 	    $iv = "password";
-	    return mcrypt_cbc(MCRYPT_3DES, $key, pack("H*", $buffer), MCRYPT_DECRYPT, $iv);
+            require_once 'service/core/SoapHelperWebService.php';
+            return SoapHelperWebServices::decrypt_tripledes($string, $key, $iv);
 	}else{
 		return $string;
 	}

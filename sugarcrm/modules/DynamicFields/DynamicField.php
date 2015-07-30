@@ -78,9 +78,9 @@ class DynamicField {
         return null ;
     }
 
-    function deleteCache(){
+    public static function deleteCache()
+    {
     }
-
 
     /**
     * This will add the bean as a reference in this object as well as building the custom field cache if it has not been built

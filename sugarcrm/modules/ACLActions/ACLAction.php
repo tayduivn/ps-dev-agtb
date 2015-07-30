@@ -516,7 +516,7 @@ class ACLAction  extends SugarBean
      */
     public function clearSessionCache()
     {
-        $this->clearACLCache();
+        self::clearACLCache();
     }
 
     /**
@@ -524,7 +524,7 @@ class ACLAction  extends SugarBean
     * clears the session variable storing the cache information for acls
     *
     */
-    public function clearACLCache()
+    public static function clearACLCache()
     {
         self::$acls = array();
         AclCache::getInstance()->clear();
@@ -532,15 +532,13 @@ class ACLAction  extends SugarBean
 
     public function save()
     {
-    	// reset caches
-    	$this->clearACLCache();
+        self::clearACLCache();
     	parent::save();
     }
 
     public function mark_deleted($id)
     {
-    	// reset caches
-    	$this->clearACLCache();
+        self::clearACLCache();
         parent::mark_deleted($id);
     }
 

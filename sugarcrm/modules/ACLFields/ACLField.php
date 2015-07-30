@@ -105,9 +105,10 @@ class ACLField  extends ACLAction
      * @param string $module
      * @param string $user_id
      * @param string $role_id
+     * @return array
      */
-    function getFields($module,$user_id='',$role_id=''){
-
+    public static function getFields($module, $user_id = '', $role_id = '')
+    {
         $fields = ACLField::getAvailableFields($module, false);
         if(!empty($role_id)){
             $query = "SELECT  af.id, af.name, af.category, af.role_id, af.aclaccess FROM acl_fields af ";
@@ -140,12 +141,15 @@ class ACLField  extends ACLAction
     /**
      * @internal
      * @param string $role_id
+     * @return array
      */
-    function getACLFieldsByRole($role_id){
+    public static function getACLFieldsByRole($role_id)
+    {
         $query = "SELECT  af.id, af.name, af.category, af.role_id, af.aclaccess FROM acl_fields af ";
         $query .=  " WHERE af.deleted = 0 ";
         $query .= " AND af.role_id='$role_id' ";
         $result = $GLOBALS['db']->query($query);
+        $fields = array();
         while($row = $GLOBALS['db']->fetchByAssoc($result)){
             $fields[$row['id']] =  $row;
         }
@@ -416,7 +420,7 @@ class ACLField  extends ACLAction
      * @param string $field_id
      * @param string $access
      */
-    function setAccessControl($module, $role_id, $field_id, $access)
+    public static function setAccessControl($module, $role_id, $field_id, $access)
     {
         $acl = new ACLField();
         $id = md5($module. $role_id . $field_id);
@@ -435,7 +439,7 @@ class ACLField  extends ACLAction
 
     }
 
-    public function clearACLCache()
+    public static function clearACLCache()
     {
         self::$acl_fields = array();
         parent::clearACLCache();

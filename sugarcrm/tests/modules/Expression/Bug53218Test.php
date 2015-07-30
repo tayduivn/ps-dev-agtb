@@ -30,6 +30,7 @@ class Bug53218Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        SugarTestHelper::setUp('dictionary');
         SugarTestHelper::setUp('current_user', array(true, 1));
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanList');

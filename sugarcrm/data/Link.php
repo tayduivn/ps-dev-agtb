@@ -1048,7 +1048,7 @@ class Link {
 	 */
 	function _get_alternate_key_fields($table_name) {
 		$alternateKey=null;
-		$indices=Link::_get_link_table_definition($table_name,'indices');
+        $indices = $this->_get_link_table_definition($table_name, 'indices');
 		if (!empty($indices)) {
 			foreach ($indices as $index) {
                 if ( isset($index['type']) && $index['type'] == 'alternate_key' ) {
@@ -1056,7 +1056,7 @@ class Link {
                 }
 			}
 		}
-		$relationships=Link::_get_link_table_definition($table_name,'relationships');
+        $relationships = $this->_get_link_table_definition($table_name, 'relationships');
 		if (!empty($relationships)) {//bug 32623, when the relationship is built in old version, there is no alternate_key. we have to use join_key_lhs and join_key_lhs.
 			if(!empty($relationships[$this->_relationship_name]) && !empty($relationships[$this->_relationship_name]['join_key_lhs']) && !empty($relationships[$this->_relationship_name]['join_key_rhs'])) {
 				return array($relationships[$this->_relationship_name]['join_key_lhs'], $relationships[$this->_relationship_name]['join_key_rhs']);
@@ -1064,9 +1064,12 @@ class Link {
 		}
 	}
 
-	/*
-	 */
-	function _get_link_table_definition($table_name,$def_name)
+    function _get_link_table_definition($table_name, $def_name)
+    {
+        return self::get_link_table_definition($table_name, $this->_relationship_name, $def_name);
+    }
+
+    public static function get_link_table_definition($table_name, $relationshipName, $def_name)
 	{
 	    global $dictionary;
 
@@ -1076,9 +1079,10 @@ class Link {
             return $dictionary[$table_name][$def_name];
         }
 
-		if (isset($dictionary[$this->_relationship_name][$def_name])) {
-			return ($dictionary[$this->_relationship_name][$def_name]);
+        if ($relationshipName && isset($dictionary[$relationshipName][$def_name])) {
+            return $dictionary[$relationshipName][$def_name];
 		}
+
         // custom metadata is found in custom/metadata (naturally) and the naming follows the convention $relationship_name_c, and $relationship_name = $table_name
         $relationshipName = preg_replace( '/_c$/' , '' , $table_name ) ;
 

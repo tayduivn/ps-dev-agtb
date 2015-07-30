@@ -336,9 +336,17 @@ class Email extends SugarBean {
 	    return get_file_mime_type($fileLocation, 'application/octet-stream');
 	}
 
-
-	function sendEmailTest($mailserver_url, $port, $ssltls, $smtp_auth_req, $smtp_username, $smtppassword, $fromaddress,
-        $toaddress, $mail_sendtype = 'smtp', $fromname = ''
+    public static function sendEmailTest(
+        $mailserver_url,
+        $port,
+        $ssltls,
+        $smtp_auth_req,
+        $smtp_username,
+        $smtppassword,
+        $fromaddress,
+        $toaddress,
+        $mail_sendtype = 'smtp',
+        $fromname = ''
     ) {
 		global $current_user,
                $app_strings;
@@ -925,7 +933,8 @@ class Email extends SugarBean {
 
 				} else {
                     $c = BeanFactory::getBean('Cases');
-                    if($caseId = InboundEmail::getCaseIdFromCaseNumber($subject, $c)) {
+                    $ie = BeanFactory::getBean('InboundEmail');
+                    if ($caseId = $ie->getCaseIdFromCaseNumber($subject, $c)) {
                         $c->retrieve($caseId);
                         $c->load_relationship('emails');
                         $c->emails->add($this->id);
