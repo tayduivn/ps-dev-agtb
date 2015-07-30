@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -24,19 +23,19 @@ class CarriersConfigApi extends SugarApi
         return array(
             'getConfig' => array(
                 'reqType' => 'GET',
-                'path' => array('NotificationCenter', 'config', '?'),
+                'path' => array('NotificationCenter', 'config'),
                 'pathVars' => array('', '', 'module'),
                 'method' => 'getConfig',
-                'shortHelp' => 'Get configuration for specific carrier',
+                'shortHelp' => 'Function return list of all carriers with their',
                 'longHelp' => '',
                 'acl' => 'adminOrDev',
             ),
             'handleSave' => array(
                 'reqType' => 'PUT',
-                'path' => array('NotificationCenter', 'config', '?'),
+                'path' => array('NotificationCenter', 'config'),
                 'pathVars' => array('', '', 'module'),
                 'method' => 'handleSave',
-                'shortHelp' => 'Handle save configuration for specific carrier',
+                'shortHelp' => 'Handle save carriers statuses',
                 'longHelp' => '',
                 'acl' => 'adminOrDev',
             ),
@@ -44,33 +43,43 @@ class CarriersConfigApi extends SugarApi
     }
 
     /**
-     * Function return carrier status
+     * Function return list of all carriers with their statuses
      *
      * @param ServiceBase $api
      * @param array $args
-     * @return bool
+     * @return array
      */
     public function getConfig(ServiceBase $api, array $args)
     {
-        $this->requireArgs($args, array('module'));
-
         $status = Status::getInstance();
-        return $status->getCarrierStatus($args['module']);
+        $registry = CarrierRegistry::getInstance();
+        $data = array();
+        foreach ($registry->getCarriers() as $module) {
+            $data[$module] = $status->getCarrierStatus($module);
+        }
+
+        return $data;
     }
 
     /**
+     * Save carriers statuses, if not exists carrier in $args thn lived old status
+     *
      * @param ServiceBase $api
      * @param array $args
      * @return array
-     * @throws SugarApiExceptionNotFound
      */
     public function handleSave(ServiceBase $api, array $args)
     {
-        $this->requireArgs($args, array('module', 'status'));
-
         $status = Status::getInstance();
-        $status->setCarrierStatus($args['module'], $args['status']);
-        return $status->getCarrierStatus($args['module']);
+        $registry = CarrierRegistry::getInstance();
+        foreach ($registry->getCarriers() as $module) {
+            if (!isset($args[$module])) {
+                continue;
+            }
+            $status->setCarrierStatus($module, $args[$module]);
+        }
+
+        return $this->getConfig($api, $args);
     }
 
 }
