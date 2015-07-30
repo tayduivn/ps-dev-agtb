@@ -66,6 +66,8 @@ class Manager implements ClientInterface, RunnerInterface
         'UpdateBeanDemo' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\UpdateBeanDemo',
         'ExportListViewDemo' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportListViewDemo',
         'ExportToCSVDemo' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportToCSVDemo',
+        'CalDavImport' => 'Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue\Import',
+        'CalDavExport' => 'Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue\Export'
     );
 
     /**
