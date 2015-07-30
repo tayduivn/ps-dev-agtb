@@ -96,7 +96,7 @@ function addDecisionTable(data) {
     $('#businessruledesigner').prepend(decision_table.getHTML());
 }
 
-function saveBR(route) {
+function saveBR(route, id) {
     var json,
         base64encoded,
         validation = decision_table.isValid();
@@ -104,7 +104,7 @@ function saveBR(route) {
     if (decision_table && validation.valid) {
         json = decision_table.getJSON();
         base64encoded = JSON.stringify(json);
-        url = App.api.buildURL('pmse_Business_Rules', null, {id: decision_table.id});
+        url = App.api.buildURL('pmse_Business_Rules', null, {id: id});
         attributes = {rst_source_definition: base64encoded};
 
         App.alert.show('upload', {level: 'process', title: 'LBL_SAVING', autoclose: false});

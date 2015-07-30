@@ -14,7 +14,6 @@
         this.base_module = null;
         this.hitType = null;
         this.dom = null;
-        this.name = null;
         this.proxy = null;
         this.conditions = null;
         this.conclusions = null;
@@ -49,7 +48,6 @@
 
     DecisionTable.prototype.initObject = function(options) {
         var defaults = {
-            name: "",
             proxy: new SugarProxy(),
             restClient: null,
             base_module: "",
@@ -112,8 +110,7 @@
         this.rows = parseInt(defaults.rows, 10);
         this.language = defaults.language;
 
-        this.setName(defaults.name)
-            .setCurrencies(defaults.currencies)
+        this.setCurrencies(defaults.currencies)
             .setDateFormat(defaults.dateFormat)
             .setTimeFormat(defaults.timeFormat)
             .setProxy(defaults.proxy/*, defaults.restClient*/)
@@ -653,11 +650,6 @@
             }
         });
 
-        return this;
-    };
-
-    DecisionTable.prototype.setName = function(name) {
-        this.name = name;
         return this;
     };
 
@@ -1323,10 +1315,8 @@
 
     DecisionTable.prototype.getJSON = function() {
         var json = {
-            id: this.id,
             base_module: this.base_module,
             type: this.hitType,
-            name: this.name,
             columns: {
                 conditions: [],
                 conclusions: []

@@ -37,11 +37,11 @@
     },
 
     saveBusinessRules: function() {
-        saveBR(App.router.buildRoute("pmse_Business_Rules"));
+        saveBR(App.router.buildRoute("pmse_Business_Rules"), this.model.id);
     },
 
     saveOnlyBusinessRules: function() {
-        saveBR();
+        saveBR(null, this.model.id);
     },
 
     cancelBusinessRules: function () {
