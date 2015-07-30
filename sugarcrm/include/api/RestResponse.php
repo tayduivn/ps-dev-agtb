@@ -241,9 +241,10 @@ class RestResponse extends Zend_Http_Response
      * simply have to generate the ETag, pass it in, and the function handles the rest.
      *
      * @param string $etag ETag to use for this content.
+     * @param int $cache_age Age in seconds of the cache-control max-age header
      * @return bool Did we have a match?
      */
-    public function generateETagHeader($etag = null, $cache_age = 10)
+    public function generateETagHeader($etag = null, $cache_age = 0)
     {
         if (is_null($etag)) {
             if (is_array($this->body)) {
