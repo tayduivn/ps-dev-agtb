@@ -182,7 +182,7 @@
                 });
                 editor.addButton('mybutton', {
                     title : 'Fields Selector',
-                    image : 'modules/pmse_Project/img/icon_processmaker_32.gif',
+                    class: 'mce_selectfield',
                     onclick : function() {
                         self._showVariablesBook();
                     }
