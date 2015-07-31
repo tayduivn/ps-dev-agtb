@@ -574,7 +574,13 @@
     unformat: function(value) {
         if (this.def.isMultiSelect && _.isArray(value)) {
             var possibleKeys = _.keys(this.items);
-            value = _.intersection(possibleKeys, value);
+            if (!this.def.ordered) {
+                // if it's not ordered, i.e. sortable, force order
+                value = _.intersection(possibleKeys, value);
+            } else {
+                // no need to force order, just keep valid keys
+                value = _.intersection(value, possibleKeys);
+            }
             return value;
         }
 
