@@ -846,8 +846,18 @@ function reconstruct_target_body($focus, $target_body, $component_array, $notify
 							//Create href link to target record
 							$replacement_value = get_invite_link($rel_object, $notify_user_id);
 						} else {
-							//use future always for rel because fetched should always be the same
-							$replacement_value = check_special_fields($field_array['name'], $rel_object, false, array());
+                            //with the exception of date fields,
+                            //use future always for rel because fetched should always be the same
+                            if(($rel_object->field_defs[$field_array['name']]['type'] == 'datetime')
+                                || (isset($rel_object->field_defs[$field_array['name']]['dbType'])
+                                    && $rel_object->field_defs[$field_array['name']]['dbType'] == 'datetime')
+                            ) {
+                                //this is a date field on a related object so use the fetched row
+                                $replacement_value = check_special_fields($field_array['name'], $rel_object, true, array());
+                            } else {
+                                //use the future value on the related object
+                                $replacement_value = check_special_fields($field_array['name'], $rel_object, false, array());
+                            }
 						}
 					} else {
 						$replacement_value = "Invalid Value";
