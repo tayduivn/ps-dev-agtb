@@ -1250,7 +1250,7 @@ select a.index_name, c.column_name, b.constraint_type, c.column_position
         inner join user_ind_columns c
             on c.index_name = a.index_name
         left join user_constraints b
-            on b.constraint_name = a.index_name
+            on b.index_name = a.index_name
                 and b.table_name='$tablename'
     where a.table_name='$tablename'
         and a.index_type='NORMAL'
