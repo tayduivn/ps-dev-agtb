@@ -123,7 +123,10 @@ class HealthCheckScannerCli extends HealthCheckScanner
         }
         require_once('include/entryPoint.php');
 
-        $GLOBALS['current_user'] = new BlackHole();
+        $GLOBALS['current_user'] = new BlackHole(
+            array('id' => null),
+            array('getPreference' => null)
+        );
 
         return parent::init();
     }

@@ -2702,16 +2702,39 @@ class BlackHole implements ArrayAccess, Countable, Iterator
 {
     protected $called;
 
+    /**
+     * Fields to be stubbed.
+     * @var array
+     */
+    protected $stubFields = array();
+
+    /**
+     * Methods to be stubbed.
+     * @var array
+     */
+    protected $stubMethods = array();
+
+    /**
+     * You can set fields and methods to be stubbed when __get() or __call() are triggered on a BlackHole.
+     * @param array $fields list of fields (name => value)
+     * @param array $methods list of methods (name => returnValue)
+     */
+    public function __construct($fields = array(), $methods = array())
+    {
+        $this->stubFields = $fields;
+        $this->stubMethods = $methods;
+    }
+
     public function __get($v)
     {
         $this->called = true;
-        return $this;
+        return array_key_exists($v, $this->stubFields) ? $this->stubFields[$v] : $this;
     }
 
     public function __call($n, $a)
     {
         $this->called = true;
-        return $this;
+        return array_key_exists($n, $this->stubMethods) ? $this->stubMethods[$n] : $this;
     }
 
     public function __toString()
