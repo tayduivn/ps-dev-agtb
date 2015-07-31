@@ -504,8 +504,8 @@ class iCal extends vCal {
         $ical_array[] = array("X-WR-CALNAME", "$cal_name (SugarCRM)");
         $ical_array[] = array("PRODID", "-//SugarCRM//SugarCRM Calendar//EN");
         $tz_array = $this->getTimezoneArray();
-        foreach ($tz_array as $key => $value) {
-            $ical_array[] = array($key, $value);
+        foreach ($tz_array as $value) {
+            $ical_array[] = array($value[0], $value[1]);
         }
         $ical_array[] = array("CALSCALE", "GREGORIAN");
 
