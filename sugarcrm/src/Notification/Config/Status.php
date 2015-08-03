@@ -53,15 +53,16 @@ class Status
      * Saving status carrier
      *
      * @param $carrierName
-     * @param $status
+     * @param bool $status
      * @return bool
      */
     public function setCarrierStatus($carrierName, $status)
     {
         $this->verifyModule($carrierName);
+        /** @var \Administration $config */
         $config = \BeanFactory::getBean('Administration');
-        $config->saveSetting(static::CONFIG_CATEGORY, $carrierName, $status);
-        return !empty($status);
+        $result = $config->saveSetting(static::CONFIG_CATEGORY, $carrierName, $status);
+        return !empty($result);
     }
 
     /**

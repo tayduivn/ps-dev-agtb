@@ -26,7 +26,7 @@ class CarriersConfigApi extends SugarApi
                 'path' => array('NotificationCenter', 'config'),
                 'pathVars' => array('', '', 'module'),
                 'method' => 'getConfig',
-                'shortHelp' => 'Function return list of all carriers with their',
+                'shortHelp' => 'Returns status & options of carriers',
                 'longHelp' => '',
                 'acl' => 'adminOrDev',
             ),
@@ -35,7 +35,7 @@ class CarriersConfigApi extends SugarApi
                 'path' => array('NotificationCenter', 'config'),
                 'pathVars' => array('', '', 'module'),
                 'method' => 'handleSave',
-                'shortHelp' => 'Handle save carriers statuses',
+                'shortHelp' => 'Saves status of carrier',
                 'longHelp' => '',
                 'acl' => 'adminOrDev',
             ),
@@ -43,7 +43,7 @@ class CarriersConfigApi extends SugarApi
     }
 
     /**
-     * Function return list of all carriers with their statuses
+     * Returns status & options of carriers
      *
      * @param ServiceBase $api
      * @param array $args
@@ -62,24 +62,24 @@ class CarriersConfigApi extends SugarApi
     }
 
     /**
-     * Save carriers statuses, if not exists carrier in $args thn lived old status
+     * Updates statuses of carriers
      *
      * @param ServiceBase $api
      * @param array $args
-     * @return array
+     * @return bool
      */
     public function handleSave(ServiceBase $api, array $args)
     {
         $status = Status::getInstance();
         $registry = CarrierRegistry::getInstance();
+        $result = true;
         foreach ($registry->getCarriers() as $module) {
-            if (!isset($args[$module])) {
+            if (array_key_exists($module, $args)) {
                 continue;
             }
-            $status->setCarrierStatus($module, $args[$module]);
+            $result = $result | $status->setCarrierStatus($module, !empty($args[$module]));
         }
 
-        return $this->getConfig($api, $args);
+        return $result;
     }
-
 }

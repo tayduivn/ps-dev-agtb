@@ -14,12 +14,12 @@ namespace Sugarcrm\Sugarcrm\Notification\Carrier;
 
 interface TransportInterface
 {
-
     /**
+     * Sends message to specified recipient
+     *
      * @param $recipient
      * @param $message
      * @return mixed
      */
     public function send($recipient, $message);
-
 }

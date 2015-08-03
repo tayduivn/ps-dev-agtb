@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Notification;
 
+use Sugarcrm\Sugarcrm\Notification\Carrier\CarrierInterface;
+
 /**
  * Class CarrierRegistry
  * @package Notification
@@ -172,7 +174,7 @@ class CarrierRegistry
     /**
      * Saving array(dictionary array with carrier class names and path to it) to cache file
      *
-     * @param array data
+     * @param array $data
      */
     protected function setCache($data)
     {
