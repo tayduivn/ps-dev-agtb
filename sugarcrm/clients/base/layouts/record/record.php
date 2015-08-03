@@ -22,7 +22,6 @@ $viewdefs['base']['layout']['record'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'record',
@@ -42,17 +41,17 @@ $viewdefs['base']['layout']['record'] = array(
                                         ),
                                         'availableToggles' => array(
                                             array(
-                                                'type' => 'subpanels',
+                                                'name' => 'subpanels',
                                                 'icon' => 'fa-table',
                                                 'label' => 'LBL_DATA_VIEW',
                                             ),
                                             array(
-                                                'type' => 'list',
+                                                'name' => 'list',
                                                 'icon' => 'fa-table',
                                                 'label' => 'LBL_LISTVIEW',
                                             ),
                                             array(
-                                                'type' => 'activitystream',
+                                                'name' => 'activitystream',
                                                 'icon' => 'fa-clock-o',
                                                 'label' => 'LBL_ACTIVITY_STREAM',
                                             ),
@@ -60,16 +59,12 @@ $viewdefs['base']['layout']['record'] = array(
                                         'components' => array(
                                             array(
                                                 'layout' => 'filter',
-                                                'targetEl' => '.filter',
-                                                'position' => 'prepend'
                                             ),
                                             array(
                                                 'view' => 'filter-rows',
-                                                "targetEl" => '.filter-options'
                                             ),
                                             array(
                                                 'view' => 'filter-actions',
-                                                "targetEl" => '.filter-options'
                                             ),
                                             array(
                                                 'layout' => 'activitystream',
@@ -91,7 +86,6 @@ $viewdefs['base']['layout']['record'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'dashboard-pane',
-                            'targetEl' => '.dashboard-pane',
                             'components' => array(
                                 array(
                                     'layout' => array(
@@ -111,7 +105,7 @@ $viewdefs['base']['layout']['record'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

@@ -14,8 +14,7 @@ $viewdefs['Styleguide']['base']['layout']['docs'] = array(
         array(
             'layout' => array(
                 'type' => 'base',
-                'name' => 'sidebar',
-                'targetEl' => '.main-pane',
+                'name' => 'main-pane',
                 'components' => array(
                     array(
                         'view' => 'sg-headerpane',
@@ -26,7 +25,7 @@ $viewdefs['Styleguide']['base']['layout']['docs'] = array(
         array(
             'layout' => array(
                 'type' => 'base',
-                'targetEl' => '.preview-pane',
+                'name' => 'preview-pane',
                 'components' => array(
                     array(
                         'layout' => 'dashlet-preview',

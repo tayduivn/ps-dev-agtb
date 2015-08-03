@@ -22,7 +22,6 @@ $viewdefs['base']['layout']['create-nodupecheck'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'create-nodupecheck',
@@ -33,7 +32,7 @@ $viewdefs['base']['layout']['create-nodupecheck'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

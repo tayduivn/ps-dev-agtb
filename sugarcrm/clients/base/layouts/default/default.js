@@ -172,15 +172,6 @@
     },
 
     /**
-     * @inheritDoc
-     */
-    _placeComponent: function(component) {
-        if (component.meta.targetEl) {
-            this.$(component.meta.targetEl).append(component.$el);
-        }
-    },
-
-    /**
      * Get the width of either the main or side pane depending upon where the
      * component resides.
      *

@@ -20,7 +20,6 @@ $viewdefs['base']['layout']['history-summary'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'history-summary-headerpane',
@@ -37,7 +36,7 @@ $viewdefs['base']['layout']['history-summary'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'history-summary-preview',

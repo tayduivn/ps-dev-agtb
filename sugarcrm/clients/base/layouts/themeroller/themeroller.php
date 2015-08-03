@@ -23,7 +23,6 @@ $viewdefs['base']['layout']['themeroller'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'themeroller',
@@ -35,7 +34,7 @@ $viewdefs['base']['layout']['themeroller'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.side-pane',
+                            'name' => 'side-pane',
                             'components' => array(
                                 array(
                                     'view' => 'themerollerpreview',

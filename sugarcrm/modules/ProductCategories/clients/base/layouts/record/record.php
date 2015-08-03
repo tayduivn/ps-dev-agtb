@@ -22,7 +22,6 @@ $viewdefs['ProductCategories']['base']['layout']['record'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'record',
@@ -38,7 +37,6 @@ $viewdefs['ProductCategories']['base']['layout']['record'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'dashboard-pane',
-                            'targetEl' => '.dashboard-pane',
                             'components' => array(
                                 array(
                                     'layout' => array(
@@ -58,7 +56,7 @@ $viewdefs['ProductCategories']['base']['layout']['record'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

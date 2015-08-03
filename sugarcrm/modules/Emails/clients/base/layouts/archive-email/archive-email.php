@@ -22,7 +22,6 @@ $viewdefs['Emails']['base']['layout']['archive-email'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'archive-email',

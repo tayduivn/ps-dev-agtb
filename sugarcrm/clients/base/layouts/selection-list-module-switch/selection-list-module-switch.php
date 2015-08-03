@@ -21,7 +21,6 @@ $viewdefs['base']['layout']['selection-list-module-switch'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'selection-headerpane',
@@ -55,16 +54,12 @@ $viewdefs['base']['layout']['selection-list-module-switch'] = array(
                                                         'layoutType' => 'records',
                                                     ),
                                                 ),
-                                                'targetEl' => '.filter',
-                                                'position' => 'prepend',
                                             ),
                                             array(
                                                 'view' => 'filter-rows',
-                                                "targetEl" => '.filter-options'
                                             ),
                                             array(
                                                 'view' => 'filter-actions',
-                                                "targetEl" => '.filter-options'
                                             ),
                                             array(
                                                 'view' => 'selection-list',
@@ -80,8 +75,8 @@ $viewdefs['base']['layout']['selection-list-module-switch'] = array(
                     ),
                     array(
                         'layout' => array(
-                            'type' => 'simple',
-                            'targetEl' => '.preview-pane',
+                            'type' => 'base',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',
