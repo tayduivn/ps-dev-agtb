@@ -50,7 +50,6 @@
             var domParentTypeVal = this.$(this.typeFieldTag).val();
             if(this.model.get(this.def.type_name) !== domParentTypeVal) {
                 this.model.setDefault(this.def.type_name, domParentTypeVal);
-                this._createFiltersCollection();
                 this._createSearchCollection();
             }
 
@@ -87,7 +86,7 @@
             this._valueSetOnce = true;
         }
 
-        setFromCtx = !value && !this._valueSetOnce && parentCtx &&
+        setFromCtx = !value && !this._valueSetOnce && parentCtx && _.isEmpty(this.context.get('model').link) &&
             this.view instanceof app.view.views.BaseCreateView &&
             _.contains(_.keys(app.lang.getAppListStrings(this.def.parent_type)), parentCtx.get('module')) &&
             this.module !== this.def.module;
@@ -131,7 +130,6 @@
             // receive a true Backbone.Model or Data.Bean
                 module = model.module || model._module;
 
-            this._createFiltersCollection();
 
             if (app.acl.hasAccessToModel(this.action, this.model, this.name)) {
                 if (module) {

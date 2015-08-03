@@ -243,10 +243,10 @@ describe("enum field", function() {
     });
 
     describe('_sortResults', function() {
-        var getAppListKeysStub, _sortBySpy, results, _order;
+        var getAppListKeysStub, _sortBySpy, results, _order, getEditableDropdownFilterStub;
 
         var _expectOrder = function(results, order) {
-            _.each(_order, function(key, i) {
+            _.each(order, function(key, i) {
                 expect(results[i].id).toEqual(key + '');
             });
         };
@@ -269,7 +269,7 @@ describe("enum field", function() {
             _sortBySpy = sinon.collection.spy(_, 'sortBy');
         });
 
-        using('undefined `app_list_keys` or same order',
+        using('undefined `app_list_keys` or already filtered results',
             [
                 [{}],
                 [[90, 100, '1', '', 'Defect', 'Feature']]
@@ -282,6 +282,14 @@ describe("enum field", function() {
                     _expectOrder(results, values);
                     expect(_sortBySpy).not.toHaveBeenCalled();
 
+                    results = field._sortResults(results);
+                    expect(_sortBySpy).not.toHaveBeenCalled();
+                });
+
+                it('should not sort already filtered results', function() {
+                    _order = ['', 'Defect', 100, 'Feature', 90];
+                    field.items = values;
+                    field.filteredOptions = true;
                     results = field._sortResults(results);
                     expect(_sortBySpy).not.toHaveBeenCalled();
                 });
@@ -307,6 +315,37 @@ describe("enum field", function() {
                     expect(_sortBySpy).toHaveBeenCalled();
 
                     expect(field._keysOrder).not.toEqual({});
+                });
+            });
+
+        using('role-specific ordering or no-role',
+            [
+                {
+                    order: [{'': '', 'Defect': 'DefectValue', '90': 90}],
+                    expected: ['', 90, 'Defect'],
+                    _keysOrder: {
+                        '': 0,
+                        90: 1,
+                        'Defect': 2
+                    }
+                }
+            ],
+            function(values) {
+                it('should sort the results', function() {
+                    var expected = values.expected;
+                    var ddFilterResult = [['', true], ['Feature', false], [90, true], ['1', false], ['Defect', true], [100, false]];
+                    getEditableDropdownFilterStub = sinon.stub(app.metadata, 'getEditableDropdownFilter').returns(ddFilterResult);
+                    field._keysOrder = values._keysOrder;
+                    field.isFiltered = true;
+                    _order = values.order;
+                    results = _.map(_order[0], function(label, key) {
+                        return {id: key, text: label};
+                    });
+                    results = field._sortResults(results);
+                    _expectOrder(results, expected);
+                    expect(_sortBySpy).toHaveBeenCalled();
+                    expect(field._keysOrder).not.toEqual({});
+                    getEditableDropdownFilterStub.restore();
                 });
             });
     });

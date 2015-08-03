@@ -9,12 +9,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 var w, hp;
+// This var should be used locally to point to global App variable in sidecar and BWC views
 var _App;
 if(App){
     _App = App;
 }
 else{
     _App = parent.SUGAR.App;
+    // This should define App variable when some function is used in BWC and reference it.
+    App = parent.SUGAR.App;
 }
 
 var confirmAdhocReassign = function()
