@@ -716,6 +716,9 @@ $beanList['EmbeddedFiles'] = 'EmbeddedFile';
 $beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';
 $modInvisList[] = 'EmbeddedFiles';
 
+$beanList['CalDavCalendars'] = 'CalDavCalendar';
+$beanFiles['CalDavCalendar'] = 'modules/CalDav/Calendar.php';
+
 // this module doesn't need a Bean
 $modInvisList[] = 'Feedbacks';
 

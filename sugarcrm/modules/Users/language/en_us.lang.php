@@ -293,6 +293,7 @@ $mod_strings = array (
     'LBL_QUOTAS'                        => 'Quotas',
     'LBL_FORECASTS'                     => 'Forecasts',
     'LBL_WORKSHEETS'                    => 'Worksheets',
+	'LBL_CALENDARS'                     => 'Calendars',
 	'LBL_RECAPTCHA_NEW_CAPTCHA'         => 'Get another CAPTCHA',
 	'LBL_RECAPTCHA_SOUND'				=> 'Switch to Sound',
 	'LBL_RECAPTCHA_IMAGE'				=> 'Switch to Image',

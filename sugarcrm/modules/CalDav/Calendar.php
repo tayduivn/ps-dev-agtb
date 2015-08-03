@@ -1,0 +1,216 @@
+<?php
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+use Sabre\DAV;
+use Sabre\CalDAV;
+use Sugarcrm\Sugarcrm\Dav\Base;
+
+/**
+ * Class CalDavCalendar
+ * Represents implementation of Sugar Bean for CalDAV backend operations with user calendar
+ */
+class CalDavCalendar extends SugarBean
+{
+    public $new_schema = true;
+    public $module_dir = 'CalDav';
+    public $module_name = 'CalDavCalendars';
+    public $object_name = 'CalDavCalendar';
+    public $table_name = 'caldav_calendars';
+
+    /**
+     * Calendar ID
+     * @var string
+     */
+    public $id;
+
+    /**
+     * Calendar display name
+     * @var string
+     */
+    public $name;
+
+    /**
+     * Calendar creation date
+     * @var string
+     */
+    public $date_entered;
+
+    /**
+     * Calendar modification date
+     * @var string
+     */
+    public $date_modified;
+
+    /**
+     * User who modified the object
+     * @var string
+     */
+    public $modified_user_id;
+
+    /**
+     * User who created the object
+     * @var string
+     */
+    public $created_by;
+
+    /**
+     * Calendar description
+     * @var string
+     */
+    public $description;
+
+    /**
+     * Is calendar deleted or not
+     * @var string
+     */
+    public $deleted;
+
+    /**
+     * Calendar URI
+     * @var string
+     */
+    public $uri;
+
+    /**
+     * Synchronization token for CalDav server purposes
+     * @var integer
+     */
+    public $synctoken = 0;
+
+    /**
+     * Calendar order for iCal
+     * @var integer
+     */
+    public $calendarorder;
+
+    /**
+     * Calendar color for iCal
+     * @var string
+     */
+    public $calendarcolor;
+
+    /**
+     * Specifies a time zone on a calendar collection
+     * @var string
+     */
+    public $timezone;
+
+    /**
+     * Supported calendar components set
+     * @var string
+     */
+    public $components = 'VEVENT,VTODO';
+
+    /**
+     * Determines whether the calendar object resources in a calendar collection will affect the owner's busy time information.
+     * @var integer
+     */
+    public $transparent = 0;
+
+    /**
+     * Owner of the calendar
+     * @var string
+     */
+    public $assigned_user_id;
+
+    /**
+     * Convert bean to CalDav calendar array format
+     *
+     * @param Base\Helper\UserHelper $userHelper Instance of userHelper
+     * @param array $propertyMap Mapping CalDav properties -> Calendar bean fields
+     *
+     * @return array
+     */
+    public function toCalDavArray(array $propertyMap, Base\Helper\UserHelper $userHelper)
+    {
+        $result = array();
+
+        $result['id'] = $this->id;
+        $result['uri'] = $this->uri;
+
+        foreach ($propertyMap as $davProperty => $calendarProperty) {
+            $result[$davProperty] = $this->$calendarProperty;
+        }
+
+        $result['{' . CalDAV\Plugin::NS_CALDAV . '}supported-calendar-component-set'] =
+            new CalDAV\Xml\Property\SupportedCalendarComponentSet($this->getComponents());
+
+        $result['{' . CalDAV\Plugin::NS_CALENDARSERVER . '}getctag'] = 'http://sabre.io/ns/sync/' . $this->synctoken;
+        $result['{http://sabredav.org/ns}sync-token'] = $this->synctoken;
+
+        $result['{' . CalDAV\Plugin::NS_CALDAV . '}schedule-calendar-transp'] =
+            new CalDAV\Xml\Property\ScheduleCalendarTransp($this->getTransparent());
+
+        $user = BeanFactory::getBean('Users', $this->assigned_user_id);
+        $result['principaluri'] = $userHelper->getPrincipalStringByUser($user);
+
+        return $result;
+    }
+
+    /**
+     * Get calendar componets array
+     * @return array | null
+     */
+    public function getComponents()
+    {
+        if ($this->components) {
+            return explode(',', $this->components);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get transparent info
+     * @return string
+     */
+    public function getTransparent()
+    {
+        return $this->transparent ? 'transparent' : 'opaque';
+    }
+
+    /**
+     * Create default calendar for selected user
+     * @param User $user
+     * @return $this
+     */
+    public function createDefaultForUser(User $user)
+    {
+        $this->uri = translate('LBL_DAFAULT_CALDAV_URI');
+        $this->name = translate('LBL_DAFAULT_CALDAV_NAME');
+        $this->assigned_user_id = $user->id;
+        $this->save();
+
+        return $this;
+    }
+
+    /**
+     * Adds a change record to the calendarchanges table.
+     * @return void
+     *
+     * @todo Don't forget save changes to caldav_changes table in future
+     */
+    public function addChange()
+    {
+        $this->synctoken ++;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function save($check_notify = false)
+    {
+        $this->addChange();
+
+        return parent::save($check_notify);
+    }
+}
