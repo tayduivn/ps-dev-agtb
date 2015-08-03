@@ -365,7 +365,7 @@ var AjaxObject = {
 		//END SUGARCRM flav=int ONLY
 
         // add CSRF form token
-        if (args != '') {
+        if (args && args.length > 0) {
             args += '&';
         }
         args += 'csrf_token=' + SUGAR.csrf.form_token;

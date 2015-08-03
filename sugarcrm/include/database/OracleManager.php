@@ -469,16 +469,39 @@ class OracleManager extends DBManager
      * (non-PHPdoc)
      * @see DBManager::insertParams()
      */
-    public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePrepared=false)
+    public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePrepared = false)
     {
 
-        if ( !$usePrepared ) {
+        if (!$usePrepared) {
             $sql = parent::insertParams($table, $field_defs, $data, $field_map, false, $usePrepared);
-            if(!$execute) return $sql;
+            if (!$execute) {
+                return $sql;
+            }
+
             return $this->AltlobExecute($table, $field_defs, $data, $sql);
-        }
-        else {
+        } else {
             return parent::insertParams($table, $field_defs, $data, $field_map, $execute, $usePrepared);
+        }
+    }
+
+
+    /**
+     * TODO: may want to join it with Altlobexecute
+     * (non-PHPdoc)
+     * @see DBManager::updateParams()
+     */
+    public function updateParams($table, $field_defs, $data, array $where = array(), $field_map = null, $execute = true, $usePrepared = false)
+    {
+
+        if (!$usePrepared) {
+            $sql = parent::updateParams($table, $field_defs, $data, $where, $field_map, false, $usePrepared);
+            if (!$execute) {
+                return $sql;
+            }
+
+            return $this->AltlobExecute($table, $field_defs, $data, $sql);
+        } else {
+            return parent::updateParams($table, $field_defs, $data, $where, $field_map, $execute, $usePrepared);
         }
     }
 
