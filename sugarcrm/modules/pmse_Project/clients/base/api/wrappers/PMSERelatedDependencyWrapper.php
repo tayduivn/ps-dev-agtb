@@ -13,6 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
+require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
 
 /**
  * Description of PMSERelatedDependencyWrapper
@@ -33,6 +34,11 @@ class PMSERelatedDependencyWrapper
     protected $logger;
 
     /**
+     * @var type
+     */
+    protected $relatedModule;
+
+    /**
      * Class constructor
      * @codeCoverageIgnore
      */
@@ -40,6 +46,7 @@ class PMSERelatedDependencyWrapper
     {
         $this->logger = PMSELogger::getInstance();
         $this->relationship = BeanFactory::getBean('Relationships');
+        $this->relatedModule = new PMSERelatedModule();
     }
 
     /**
@@ -80,6 +87,15 @@ class PMSERelatedDependencyWrapper
     public function setLogger($logger)
     {
         $this->logger = $logger;
+    }
+
+    /**
+     * @param $relatedModule
+     * @codeCoverageIgnore
+     */
+    public function setRelatedModule($relatedModule)
+    {
+        $this->relatedModule = $relatedModule;
     }
 
     /**
@@ -213,8 +229,7 @@ class PMSERelatedDependencyWrapper
         if ($tmpObject->rel_process_module == $tmpToken->expModule) {
             $tmpObject->rel_element_module = $tmpToken->expModule;
         } else {
-            $tmpObject->rel_element_module = $this->relationship->get_other_module($tmpToken->expModule,
-                $tmpObject->rel_process_module, $this->relationship->db);
+            $tmpObject->rel_element_module = $this->relatedModule->getRelatedModuleName($tmpObject->rel_process_module, $tmpToken->expModule);
         }
     }
 
