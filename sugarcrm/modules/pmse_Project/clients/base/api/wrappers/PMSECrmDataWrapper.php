@@ -2178,6 +2178,7 @@ class PMSECrmDataWrapper implements PMSEObservable
             case 'assigned_user_id':
                 $field['type'] = 'user';
                 $field['vname'] = 'LBL_ASSIGNED_TO';
+                $field['required'] = true;
                 break;
             case 'created_by':
             case 'modified_user_id':
