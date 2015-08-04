@@ -241,8 +241,10 @@ abstract class SugarRelationship
         if (!empty($values)) {
             $query = "INSERT INTO {$this->getRelationshipTable(
             )} ($columns) VALUES ($values)";
-            DBManagerFactory::getInstance()->query($query);
+            return DBManagerFactory::getInstance()->query($query);
         }
+
+        return false;
     }
 
     /**
@@ -701,6 +703,7 @@ abstract class SugarRelationship
         self::$resaveIndex = array();
 
         SugarBean::clearRecursiveResave();
+        return true;
     }
 
     /**

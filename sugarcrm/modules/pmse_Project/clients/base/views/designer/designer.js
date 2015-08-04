@@ -52,7 +52,9 @@
                     app.router.navigate(targetUrl , {trigger: true, replace: true });
                     window.location.reload()
                 },
-                onCancel: $.noop
+                onCancel: function () {
+                    app.router.navigate('' , {trigger: false, replace: false })
+                }
             });
             return false;
         }

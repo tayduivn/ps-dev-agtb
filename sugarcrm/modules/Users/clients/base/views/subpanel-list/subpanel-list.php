@@ -25,6 +25,7 @@ $viewdefs['Users']['base']['view']['subpanel-list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'sortable' => false,
+                    'link' => true,
                 ),
                 array(
                     'name' => 'user_name',

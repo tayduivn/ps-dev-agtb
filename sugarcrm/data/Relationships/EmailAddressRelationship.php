@@ -46,10 +46,16 @@ class EmailAddressRelationship extends M2MRelationship
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
         $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
 
-        $this->addRow($dataToInsert);
+        $success = true;
+        if ($this->addRow($dataToInsert) === false) {
+            $success = false;
+            LoggerManager::getLogger()->error("Warning: failed trying to call addRow() for relationship {$this->name} within EmailAddressRelationship->add(). dataToInsert: $dataToInsert");
+        }
 
-        if ($this->self_referencing)
-            $this->addSelfReferencing($lhs, $rhs, $additionalFields);
+        if ($this->addSelfReferencing($lhs, $rhs, $additionalFields) === false) {
+            $success = false;
+            LoggerManager::getLogger()->error("Warning: failure calling addSelfReferencing for relationship {$this->name} within EmailAddressRelationship->add() ");
+        }
 
         if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes"))
         {
@@ -59,7 +65,7 @@ class EmailAddressRelationship extends M2MRelationship
             $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
         }
 
-        return true;
+        return $success;
     }
 
     public function remove($lhs, $rhs)
@@ -94,10 +100,19 @@ class EmailAddressRelationship extends M2MRelationship
             $this->def['join_key_rhs'] => $rhs->id
         );
 
-        $this->removeRow($dataToRemove);
+        $success = true;
+        if ($this->removeRow($dataToRemove) === false) {
+            LoggerManager::getLogger()->error("Warning: failure calling removingRow() for relationship {$this->name} within EmailAddressRelationship->remove()  dataToRemove: ".var_export($dataToRemove,true));
+            $success = false;
+        }
 
-        if ($this->self_referencing)
-            $this->removeSelfReferencing($lhs, $rhs);
+
+        if ($this->self_referencing) {
+            if ($this->removeSelfReferencing($lhs, $rhs) === false) {
+                $success = false;
+                LoggerManager::getLogger()->error("Warning: failure calling removeSelfReferencing() for relationship {$this->name} within EmailAddressRelationship->remove() ");
+            }
+        }
 
         if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
         {
@@ -108,6 +123,6 @@ class EmailAddressRelationship extends M2MRelationship
             }
         }
 
-        return true;
+        return $success;
     }
 }

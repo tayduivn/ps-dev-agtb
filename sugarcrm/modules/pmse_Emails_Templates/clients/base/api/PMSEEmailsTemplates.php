@@ -150,7 +150,13 @@ class PMSEEmailsTemplates extends vCardApi
         $nextOffset = -1;
 
         if ($offset !== "end") {
-            $records = $this->retrieveFields($args["module_list"], $direction, $limit, $offset, $args["base_module"], $q);
+            $records = $this->retrieveFields(
+                $args["module_list"],
+                $direction,
+                $limit,
+                $offset,
+                $args["base_module"],
+                $q);
             $totalRecords = $records['totalRecords'];
             $trueOffset = $offset + $limit;
 

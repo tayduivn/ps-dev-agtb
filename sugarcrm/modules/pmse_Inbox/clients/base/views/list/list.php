@@ -29,7 +29,8 @@ $viewdefs['pmse_Inbox']['base']['view']['list'] = array(
                     'label' => 'LBL_PROCESS_DEFINITION_NAME',
                     'default' => true,
                     'enabled' => true,
-                    'link' => false,
+                    'link' => true,
+                    'type' => 'pmse-link',
                 ),
                 array(
                     'name' => 'task_name',
@@ -43,7 +44,8 @@ $viewdefs['pmse_Inbox']['base']['view']['list'] = array(
                     'label' => 'LBL_RECORD_NAME',
                     'default' => true,
                     'enabled' => true,
-                    'link' => false,
+                    'link' => true,
+                    'type' => 'pmse-link',
                 ),
                 array(
                     'name' => 'assigned_user_name',

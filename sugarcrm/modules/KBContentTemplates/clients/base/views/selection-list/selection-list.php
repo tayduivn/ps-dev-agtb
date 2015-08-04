@@ -18,7 +18,7 @@ $viewdefs['KBContentTemplates']['base']['view']['selection-list'] = array(
                 array(
                     'name' => 'name',
                     'link' => true,
-                    'label' => 'LBL_LIST_ACCOUNT_NAME',
+                    'label' => 'LBL_LIST_TEMPLATE_NAME',
                     'enabled' => true,
                     'default' => true,
                 ),
