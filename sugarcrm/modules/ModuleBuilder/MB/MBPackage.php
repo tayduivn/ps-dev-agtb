@@ -41,7 +41,7 @@ class MBPackage{
      */
     protected static $appExtensions = array(
         'language' => array(
-            'dir' => 'include/language',
+            'dir' => 'Extension/application/Ext/Language',
             'varName' => 'app_list_strings',
         ),
 // BEGIN SUGARCRM flav=ent ONLY
