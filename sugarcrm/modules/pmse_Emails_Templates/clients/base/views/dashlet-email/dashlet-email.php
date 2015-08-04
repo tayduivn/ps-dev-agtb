@@ -169,6 +169,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
                 'assigned_user_name',
                 'assigned_user_id',
                 'date_entered',
+                'description'
             ),
         ),
     ),
