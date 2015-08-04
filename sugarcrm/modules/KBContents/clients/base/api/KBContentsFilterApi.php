@@ -15,6 +15,7 @@ require_once 'clients/base/api/FilterApi.php';
 
 use \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use \Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
+use \Sugarcrm\Sugarcrm\Elasticsearch\Query\KBFilterQuery;
 
 class KBContentsFilterApi extends FilterApi
 {
@@ -120,6 +121,8 @@ class KBContentsFilterApi extends FilterApi
     protected function filterByContainingExcludingWords($api, $args, $filterArgs, $idsOnly)
     {
         $options = $this->parseArguments($api, $args);
+        $bean = BeanFactory::newBean($args['module']);
+        $orderBy = array();
 
         $operators = array();
         foreach ($filterArgs as $filterDef) {
@@ -129,42 +132,52 @@ class KBContentsFilterApi extends FilterApi
             $operators[$key] = $operators[$key] + $values;
         }
 
-        $engineContainer = SearchEngine::getInstance()->getEngine()->getContainer();
-        $builder = new QueryBuilder($engineContainer);
-        $builder
-            ->setUser(self::$current_user)
-            ->setModules(array($args['module']));
+        if (!empty($args['order_by'])) {
+            $orderBys = explode(',', $args['order_by']);
 
-        if (!$idsOnly) {
-            $builder->setLimit($options['limit'])->setOffset($options['offset']);
+            foreach ($orderBys as $sortBy) {
+                $column = $sortBy;
+                $direction = 'asc';
+
+                if (strpos($sortBy, ':')) {
+                    // it has a :, it's specifying ASC / DESC
+                    list($column, $direction) = explode(':', $sortBy);
+
+                    if (strtolower($direction) == 'desc') {
+                        $direction = 'desc';
+                    } else {
+                        $direction = 'asc';
+                    }
+                }
+
+                // only add column once to the order-by clause
+                if (empty($orderBy[$column])) {
+                    $orderBy[$column] = $direction;
+                }
+            }
         }
 
-        // Get special field's name used for search.
-        $bean = BeanFactory::newBean($args['module']);
+        $builder = $this->getElasticQueryBuilder($args, $options);
         $ftsFields = ApiHelper::getHelper($api, $bean)->getElasticSearchFields(array('kbdocument_body'));
 
-        // Containing/excluding words main query.
-        $boolQuery = new \Elastica\Query\Bool();
-        foreach ($ftsFields['kbdocument_body'] as $searchFieldName) {
-            if (isset($operators['$contains'])) {
-                $matchContaining = new Elastica\Query\Match();
-                $matchContaining->setField($searchFieldName, implode(' ', $operators['$contains']));
-                $boolQuery->addMust($matchContaining);
-            }
-            if (isset($operators['$not_contains'])) {
-                $matchExcluding = new Elastica\Query\Match();
-                $matchExcluding->setField($searchFieldName, implode(' ', $operators['$not_contains']));
-                $boolQuery->addMustNot($matchExcluding);
-            }
-        }
+        $query = new KBFilterQuery();
+        $query->setBean($bean);
+        $query->setFields($ftsFields);
+        $query->setTerm($operators);
 
-        // Active revision filter.
-        $activeRevFilter = new \Elastica\Filter\Term();
-        $activeRevFilter->setTerm('active_rev', 1);
+        //set the filter
+        $filter = $query->createFilter();
+        $builder
+            ->addFilter($filter);
 
-        // Execute the search.
-        $builder->setQuery($boolQuery);
-        $builder->addFilter($activeRevFilter);
+        //set sort
+        $builder
+            ->setSort($orderBy);
+
+        // set query
+        $builder
+            ->setQuery($query);
+
         $resultSet = $builder->executeSearch();
 
         // Return all ids for further filtering ... or records with pagination.
@@ -191,5 +204,26 @@ class KBContentsFilterApi extends FilterApi
             }
             return array('next_offset' => $nextOffset, 'records' => $data);
         }
+    }
+
+    /**
+     * Get configured Elastic search builder.
+     * @param $args array The arguments array passed in from the API.
+     * @param $options array An array with the options limit, offset, fields and order_by set
+     * @return QueryBuilder
+     */
+    protected function getElasticQueryBuilder(array $args, array $options)
+    {
+        global $current_user;
+
+        $engineContainer = SearchEngine::getInstance()->getEngine()->getContainer();
+        $builder = new QueryBuilder($engineContainer);
+        $builder
+            ->setUser($current_user)
+            ->setModules(array($args['module']))
+            ->setOffset($options['offset'])
+            ->setLimit($options['limit']);
+
+        return $builder;
     }
 }
