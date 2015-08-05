@@ -84,7 +84,7 @@ $dictionary['RevenueLineItem'] = array(
             'formula' => '
                 ifElse(and(isNumeric($quantity), isNumeric($discount_price)),
                   ifElse(equal($quantity, 0),
-                    "0",
+                    $total_amount,
                       currencySubtract(
                         currencyMultiply($discount_price, $quantity),
                         ifElse(isNumeric($discount_amount), $discount_amount, 0
@@ -241,11 +241,10 @@ $dictionary['RevenueLineItem'] = array(
             ifElse(
                 and(
                     equal($product_template_id, ""),
-                    not(isNumeric($discount_price))
+                    not(isNumeric($discount_price)),
+                    greaterThan($quantity, 0)
                 ),
-                divide($likely_case,
-                    ifElse(greaterThan($quantity, 0), $quantity, 1)
-                ),
+                divide($likely_case, $quantity),
                 $discount_price
             )',
             'enforced' => false,
@@ -458,7 +457,7 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'decimal',
             'len' => 12,
             'precision' => 2,
-            'validation' => array('type' => 'range', 'greaterthan' => 0),
+            'validation' => array('type' => 'range', 'greaterthan' => -1),
             'comment' => 'Quantity in use',
             'default' => 1.0
         ),

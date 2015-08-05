@@ -373,11 +373,14 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $rli->quantity);
     }
 
+
     public static function dataProviderCheckQuantity()
     {
         return array(
-            array('', 1),
-            array(null, 1),
+            array('', 0),
+            array(null, 0),
+            array(0, 0),
+            array(1, 1),
             array(42,42),
         );
     }
