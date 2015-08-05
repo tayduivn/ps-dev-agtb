@@ -828,8 +828,14 @@ function buildInstall($path){
         $modules = array_merge($this->getSubdirectories('custom/modules/'), $modulesWithCustomDropdowns);
         $modules = array_unique($modules);
 
-        $exclude = array_merge($modInvisList, array('Project', 'ProjectTask'));
-        $modules = array_diff($modules, $exclude);
+        //Use StudioBrowser to grab list of modules that are customizeable through studio.
+        require_once('modules/ModuleBuilder/Module/StudioBrowser.php');
+        $sb = new StudioBrowser();
+        $sb->loadModules();
+        $studioModules = array_keys($sb->modules);
+
+        //limit modules to process to the ones that can be edited in studio
+        $modules = array_intersect($modules, $studioModules);
 
         $result = array();
         foreach ($modules as $module) {

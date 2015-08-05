@@ -336,7 +336,7 @@
         }
 
         var title = app.lang.get(this.LABELSET.TITLE, this.module, {
-            module: this.module
+            module: this.modulePlural
         });
         this.$holders.title.text(title);
 

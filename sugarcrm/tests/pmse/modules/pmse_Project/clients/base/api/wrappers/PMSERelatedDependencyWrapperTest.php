@@ -14,6 +14,8 @@ class PMSERelatedDependencyWrapperTest extends PHPUnit_Framework_TestCase
 {    
     protected $loggerMock;
 
+    protected $relatedModuleMock;
+
     /**
      * Sets up the test data, for example, 
      *     opens a network connection.
@@ -25,6 +27,11 @@ class PMSERelatedDependencyWrapperTest extends PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(array('info', 'debug', 'warning', 'error'))
                 ->getMock();
+
+        $this->relatedModuleMock = $this->getMockBuilder('PMSERelatedModule')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getRelatedModuleName'))
+            ->getMock();
     }
 
     /**
@@ -53,6 +60,9 @@ class PMSERelatedDependencyWrapperTest extends PHPUnit_Framework_TestCase
         $this->loggerMock->expects($this->once())
                 ->method('info');
 
+        $this->relatedModuleMock->expects($this->any())
+            ->method('getRelatedModuleName');
+
         $relatedDepWrapperMock->expects($this->once())
                 ->method('processEventCriteria');
         $relatedDepWrapperMock->expects($this->once())
@@ -61,6 +71,7 @@ class PMSERelatedDependencyWrapperTest extends PHPUnit_Framework_TestCase
                 ->method('createRelatedDependencies');
 
         $relatedDepWrapperMock->setLogger($this->loggerMock);
+        $relatedDepWrapperMock->setRelatedModule($this->relatedModuleMock);
 
         $eventData = array('evn_criteria' => 'Some Criteria');
 
@@ -98,7 +109,9 @@ class PMSERelatedDependencyWrapperTest extends PHPUnit_Framework_TestCase
 
         $this->loggerMock->expects($this->once())
                 ->method('debug');
-        
+        $this->relatedModuleMock->expects($this->any())
+            ->method('getRelatedModuleName');
+
         $eventCriteria = '[]';
 
         $eventData = array(
@@ -109,6 +122,8 @@ class PMSERelatedDependencyWrapperTest extends PHPUnit_Framework_TestCase
             'rel_element_module' => 'Notes',
         );
         $relatedDepWrapperMock->setLogger($this->loggerMock);
+        $relatedDepWrapperMock->setRelatedModule($this->relatedModuleMock);
+
         $result = $relatedDepWrapperMock->processEventCriteria($eventCriteria, $eventData);
         
     }
@@ -143,7 +158,9 @@ class PMSERelatedDependencyWrapperTest extends PHPUnit_Framework_TestCase
 
         $this->loggerMock->expects($this->once())
                 ->method('debug');
-        
+        $this->relatedModuleMock->expects($this->any())
+            ->method('getRelatedModuleName');
+
         $eventCriteria = '['
                 . '{'
                     . '"expType" : "MODULE",'
@@ -164,6 +181,8 @@ class PMSERelatedDependencyWrapperTest extends PHPUnit_Framework_TestCase
         );
         
         $relatedDepWrapperMock->setLogger($this->loggerMock);
+        $relatedDepWrapperMock->setRelatedModule($this->relatedModuleMock);
+
         $result = $relatedDepWrapperMock->processEventCriteria($eventCriteria, $eventData);
         
     }
@@ -184,7 +203,9 @@ class PMSERelatedDependencyWrapperTest extends PHPUnit_Framework_TestCase
         
         $this->loggerMock->expects($this->once())
                 ->method('debug');
-        
+        $this->relatedModuleMock->expects($this->any())
+            ->method('getRelatedModuleName');
+
         $eventCriteria = '['
                 . '{'
                     . '"expType" : "MODULE",'
@@ -205,6 +226,8 @@ class PMSERelatedDependencyWrapperTest extends PHPUnit_Framework_TestCase
         );
 
         $relatedDepWrapperMock->setLogger($this->loggerMock);
+        $relatedDepWrapperMock->setRelatedModule($this->relatedModuleMock);
+
         $result = $relatedDepWrapperMock->processEventCriteria($eventCriteria, $eventData);
         $this->assertEmpty($result);
     }
@@ -250,7 +273,9 @@ class PMSERelatedDependencyWrapperTest extends PHPUnit_Framework_TestCase
         
         $this->loggerMock->expects($this->once())
                 ->method('debug');
-        
+        $this->relatedModuleMock->expects($this->any())
+            ->method('getRelatedModuleName');
+
         $relationshipMock = $this->getMockBuilder('Relationship')
                 ->disableOriginalConstructor()
                 ->setMethods(array('get_other_module'))
@@ -265,6 +290,7 @@ class PMSERelatedDependencyWrapperTest extends PHPUnit_Framework_TestCase
         $tmpCriteria->expModule = 'Notes';
         
         $relatedDepWrapperMock->setLogger($this->loggerMock);
+        $relatedDepWrapperMock->setRelatedModule($this->relatedModuleMock);
 
         $relatedDepWrapperMock->getRelatedElementModule($tmpObject, $tmpCriteria);
     }

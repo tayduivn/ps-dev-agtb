@@ -33,7 +33,7 @@ function callRebuildSprites() {
 
         //set loading message and create url
         ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_PROCESSING_REQUEST'));
-        postData = 'module=Administration&action=callRebuildSprites';
+        postData = 'module=Administration&action=callRebuildSprites' + '&csrf_token=' + SUGAR.csrf.form_token;
 
         //if this is a call already in progress, then just return
         if(typeof ajxProgress != 'undefined')

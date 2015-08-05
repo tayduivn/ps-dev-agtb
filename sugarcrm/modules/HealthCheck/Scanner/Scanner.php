@@ -686,6 +686,7 @@ class HealthCheckScanner
             }
         }
 
+        restore_error_handler();
         return $this->logMeta;
     }
 
@@ -2265,6 +2266,7 @@ ENDP;
         'ForecastOpportunities' => array('description'),
         'Quotas' => array('assigned_user_id'),
         'ProductTemplates' => array('assigned_user_link'),
+        'Calls' => array('contact_id'),
         'Meetings' => array('contact_id'),
         'KBDocuments' => array('keywords'),
         'KBContents' => array('created_by_link', 'modified_user_link'),
@@ -2629,12 +2631,7 @@ ENDP;
      */
     public function getPackageManifest()
     {
-        if (!empty($this->upgrader->context['extract_dir'])) {
-            $fileReader = new FileLoaderWrapper();
-            $manifest = $fileReader->loadFile($this->upgrader->context['extract_dir'] . '/manifest.php', 'manifest');
-            return !empty($manifest) ? $manifest : array();
-        }
-        return array();
+        return $this->upgrader->getManifest();
     }
 
     /**

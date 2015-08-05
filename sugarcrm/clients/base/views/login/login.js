@@ -274,8 +274,8 @@
             // number.
             msie : {min:9, max:11}, // IE 9, 10, 11
             safari : {min:537}, // Safari 7.1
-            mozilla : {min:37}, // Firefox 37
-            chrome : {min:537.36} // Chrome 42
+            mozilla : {min:38}, // Firefox 38, 39
+            chrome : {min:537.36} // Chrome 43
         };
 
         var current = parseFloat($.browser.version);
