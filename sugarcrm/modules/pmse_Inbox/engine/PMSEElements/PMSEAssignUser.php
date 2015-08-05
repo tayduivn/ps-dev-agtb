@@ -41,11 +41,12 @@ class PMSEAssignUser extends PMSEScriptTask
      */
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
-         switch ($externalAction) {
+        global $app_strings;
+        switch ($externalAction) {
             case 'RESUME_EXECUTION':
                 $flowAction = 'UPDATE';
                 break;
-            default :
+            default:
                 $flowAction = 'CREATE';
                 break;
         }
@@ -74,8 +75,8 @@ class PMSEAssignUser extends PMSEScriptTask
             $params['act_id'] = $bpmnElement['id'];
             $params['pro_id'] = $bpmnElement['pro_id'];
             $params['user_id'] = $this->currentUser->id;
-            $params['frm_action'] = 'Assing user';
-            $params['frm_comment'] = 'Assing user Applied';
+            $params['frm_action'] = $app_strings['LBL_PMSE_ASSIGN_USER'];
+            $params['frm_comment'] = $app_strings['LBL_PMSE_ASSIGN_USER_APPLIED'];
             $params['log_data'] = $historyData->getLog();
             $this->caseFlowHandler->saveFormAction($params);
             // just update the record instead
