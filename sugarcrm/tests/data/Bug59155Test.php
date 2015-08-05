@@ -29,6 +29,11 @@ class Bug59155Test extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        // if shadow is detected, we need to skip this test as it doesn't play nice with shadow
+        if (extension_loaded('shadow')) {
+            self::markTestSkipped('Does not work on Shadow Enabled System');
+        }
+
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');

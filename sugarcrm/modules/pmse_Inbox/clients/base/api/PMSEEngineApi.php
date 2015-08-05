@@ -808,13 +808,25 @@ class PMSEEngineApi extends SugarApi
         return $result;
     }
 
+    /**
+     * Returns a list of all activities that can be reassigned
+     * @param $api
+     * @param $args
+     * @return array
+     * @throws SugarApiExceptionNotAuthorized
+     * @throws SugarQueryException
+     */
     public function getReassignFlows($api, $args)
     {
         $this->checkACL($api, $args);
         $result = array('success' => true);
-        //$result['args'] = $args;
+
+        // This is set to -1 because this API is not considering the max_num or
+        // offset values and always will return all occurrences
+        $result['next_offset'] = -1;
+
         $bpmFlow = BeanFactory::retrieveBean('pmse_BpmFlow');
-        //$rows = $bpmFlow->get_full_list('','cas_id = ' . $args['record'] . ' AND cas_flow_status = \'FORM\'');
+
         $queryOptions = array('add_deleted' => (!isset($options['add_deleted']) || $options['add_deleted']) ? true : false);
         if ($queryOptions['add_deleted'] == false) {
             $options['select'][] = 'deleted';
@@ -859,10 +871,8 @@ class PMSEEngineApi extends SugarApi
 
         $q->select($fields);
 
-        //$result['sql']= $q->compileSql();
-
         $rows = $q->execute();
-        $rows_aux = array();
+
         foreach ($rows as $key => $row) {
             //Expected time section
             $casData = new stdClass();

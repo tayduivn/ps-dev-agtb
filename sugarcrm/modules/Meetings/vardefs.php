@@ -150,6 +150,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'massupdate' => false,
     'studio' => false,
     'processes' => true,
+    'default' => 0,
   ),
   'date_start' =>
   array (
