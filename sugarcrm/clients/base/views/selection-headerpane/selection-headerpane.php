@@ -42,7 +42,7 @@ $viewdefs['base']['view']['selection-headerpane'] = array(
             'buttons' => array(
                 array(
                     'name' => 'link_button',
-                    'type' => 'rowaction',
+                    'type' => 'link-button',
                     'label' => 'LBL_ADD_BUTTON',
                     'events' => array(
                         'click' => 'selection:link:fire',
