@@ -33,13 +33,18 @@ class ViewRelationship extends SugarView
 
     public function overrideDefinitionFromPOST($definition)
     {
+        global $RAW_REQUEST;
+
         require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationship.php';
         foreach ( AbstractRelationship::$definitionKeys as $key ) {
-            if (!empty($_REQUEST['ajaxLoad']) && in_array($key, array('label', 'rhs_label', 'lhs_label'))) {
-                continue;
-            }
             if (!empty($_REQUEST[$key])) {
-                $definition[$key] = $_REQUEST[$key];
+                if (in_array($key, array('label', 'rhs_label', 'lhs_label'))) {
+                    if (empty($_REQUEST['ajaxLoad'])) {
+                        $definition[$key] = isset($RAW_REQUEST[$key]) ? $RAW_REQUEST[$key] : $_REQUEST[$key];
+                    }
+                } else {
+                    $definition[$key] = $_REQUEST[$key];
+                }
             }
         }
         return $definition ;
