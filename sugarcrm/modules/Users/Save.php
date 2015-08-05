@@ -162,6 +162,17 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
             $focus->setPreference('mailmerge_on','off', 0, 'global');
         }
 
+        if (!empty($only_verify_data)) {
+            $status = $focus->verify_data();
+            $data = array(
+                'status' => $status,
+                'error_string' => $focus->error_string
+            );
+            header('Content-Type: application/json');
+            echo json_encode($data);
+            sugar_cleanup(true);
+        }
+
         if (isset($_POST['user_swap_last_viewed'])) {
             $focus->setPreference('swap_last_viewed', $_POST['user_swap_last_viewed'], 0, 'global');
         } else {
