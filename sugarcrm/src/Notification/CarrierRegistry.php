@@ -123,7 +123,7 @@ class CarrierRegistry
     }
 
     /**
-     * Is class implements CarrierInterface
+     * Does class implement CarrierInterface
      *
      * @param string $class
      * @return bool
