@@ -130,7 +130,7 @@ class PMSECasesListApi extends FilterApi
         // Removed the pro_title column because it contains old data and is never updated
         $inboxFields = array(
             'id', 'name', 'date_entered', 'date_modified',
-            'modified_user_id', 'created_by', 'description', 'deleted',
+            'modified_user_id', 'created_by', 'deleted',
             'cas_id', 'cas_parent', 'cas_status', 'pro_id',
             'cas_title', 'cas_custom_status', 'cas_init_user', 'cas_create_date',
             'cas_update_date', 'cas_finish_date', 'cas_pin cas_pin', 'cas_assigned_status',
@@ -171,9 +171,13 @@ class PMSECasesListApi extends FilterApi
             ->equalsField('process.id', 'a.pro_id')
             ->equals('process.deleted', 0);
 
+        //INNER BPM FLOW
+        // This relationship is adding several duplicated rows to the query
+        // use of DISTINCT should be added
         $q->joinTable('pmse_bpm_flow', array('alias' => 'pf', 'joinType' => 'INNER', 'linkingTable' => true))
             ->on()
             ->equalsField('pf.cas_id','a.cas_id');
+
         $fields[] = array("pf.cas_sugar_module", 'cas_sugar_module');
         $fields[] = array("pf.cas_sugar_object_id", 'cas_sugar_object_id');
 
@@ -182,6 +186,9 @@ class PMSECasesListApi extends FilterApi
         $fields[] = array('process.name', 'pro_title');
 
         $q->select($fields);
+
+        // Adding DISTINCT inside query to avoid validate duplicated rows on WHERE section
+        $q->distinct(true);
 
         $q->where()
             ->in('prj.prj_module', PMSEEngineUtils::getSupportedModules());
@@ -221,7 +228,7 @@ class PMSECasesListApi extends FilterApi
                     break;
             }
         }
-        $q->where()->queryAnd()->addraw('pf.cas_flow_status != "CLOSED"');
+
         foreach ($options['order_by'] as $orderBy) {
             $q->orderBy($orderBy[0], $orderBy[1]);
         }
@@ -229,7 +236,6 @@ class PMSECasesListApi extends FilterApi
         $q->limit($options['limit']);
         $q->offset($options['offset']);
 
-        $offset = $options['offset'] + $options['limit'];
         $count = 0;
         $list = $q->execute();
         foreach ($list as $key => $value) {

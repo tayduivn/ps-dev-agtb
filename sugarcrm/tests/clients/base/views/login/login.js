@@ -82,17 +82,25 @@ describe("Login View", function() {
             };
             expect(view._isSupportedBrowser()).toBeTruthy();
         });
-        //Mozilla Firefox
-        it("should deem Firefox 36 as an unsupported browser", function() {
+        it("should deem IE11 as a supported browser", function() {
             $.browser = {
-                'version': '36',
+                'version': '11',
+                'msie': true
+            };
+            expect(view._isSupportedBrowser()).toBeTruthy();
+        });
+
+        //Mozilla Firefox
+        it("should deem Firefox 37 as an unsupported browser", function() {
+            $.browser = {
+                'version': '37',
                 'mozilla': true
             };
             expect(view._isSupportedBrowser()).toBeFalsy();
         });
-        it("should deem Firefox 37 as a supported browser", function() {
+        it("should deem Firefox 38 as a supported browser", function() {
             $.browser = {
-                'version': '37',
+                'version': '38',
                 'mozilla': true
             };
             expect(view._isSupportedBrowser()).toBeTruthy();
@@ -131,7 +139,7 @@ describe("Login View", function() {
             };
             expect(view._isSupportedBrowser()).toBeTruthy();
         });
-        it("should deem Chrome 42 as a supported browser", function() {
+        it("should deem Chrome 43 as a supported browser", function() {
             $.browser = {
                 'version': '537.36',
                 'chrome': true,

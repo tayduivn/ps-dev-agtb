@@ -10,6 +10,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
+
 echo getClassicModuleTitle('Administration', array($mod_strings['LBL_REBUILD_SCHEDULERS_TITLE']), false);
 
 if(isset($_REQUEST['perform_rebuild']) && $_REQUEST['perform_rebuild'] == 'true') {
@@ -31,6 +33,7 @@ $admin_mod_strings = return_module_language($current_language, 'Administration')
 ?>	
 <p>
 <form name="RebuildSchedulers" method="post" action="index.php">
+<?php echo smarty_function_sugar_csrf_form_token(array(), $smarty); ?>
 <input type="hidden" name="module" value="Administration">
 <input type="hidden" name="action" value="RebuildSchedulers">
 <input type="hidden" name="return_module" value="Administration">

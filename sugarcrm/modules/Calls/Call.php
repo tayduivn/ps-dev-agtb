@@ -146,6 +146,10 @@ class Call extends SugarBean {
 
         $check_notify = $this->send_invites;
         if ($this->send_invites == false) {
+            if (empty(CalendarEvents::$old_assigned_user_id)) {
+                $ce = new CalendarEvents();
+                $ce->setOldAssignedUser($this->module_dir, $this->id);
+            }
             $old_assigned_user_id = CalendarEvents::$old_assigned_user_id;
             if ((empty($GLOBALS['installing']) || $GLOBALS['installing'] != true) &&
                 (!empty($this->assigned_user_id) &&

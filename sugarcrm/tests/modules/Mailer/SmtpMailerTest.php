@@ -405,13 +405,16 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->send();
     }
 
-    public function testSend_AllMethodCallsAreSuccessful_NoExceptionsThrown()
+    public function testSend_AllMethodCallsAreSuccessful_ReturnsSentMessage()
     {
-        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("send"));
+        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("send", 'getSentMIMEMessage'));
 
         $mockPhpMailerProxy->expects(self::once())
             ->method("send")
             ->will(self::returnValue(true));
+
+        $expected = 'the sent email';
+        $mockPhpMailerProxy->expects($this->once())->method('getSentMIMEMessage')->willReturn($expected);
 
         $mockMailer = self::getMock(
             "SmtpMailer",
@@ -455,6 +458,11 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("transferAttachments")
             ->will(self::returnValue(true));
 
-        $mockMailer->send();
+        $actual = $mockMailer->send();
+        $this->assertEquals(
+            $expected,
+            $actual,
+            'The sent MIME message should have been returned as confirmation for the send'
+        );
     }
 }
