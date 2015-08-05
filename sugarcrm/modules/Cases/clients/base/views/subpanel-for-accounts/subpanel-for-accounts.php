@@ -30,6 +30,7 @@ $viewdefs['Cases']['base']['view']['subpanel-for-accounts'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'name',
+          'link' => true,
         ),
         array(
           'label' => 'LBL_LIST_STATUS',

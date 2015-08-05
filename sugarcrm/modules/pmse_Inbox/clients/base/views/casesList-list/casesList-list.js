@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    extendsFrom: 'RecordlistView',
-    plugins: ['ListColumnEllipsis', 'ListRemoveLinks', 'Pagination', 'MassCollection'],
+    extendsFrom: 'FlexListView',
+    plugins: ['ListColumnEllipsis', 'Pagination', 'MassCollection'],
 
     /**
      * Removes the event listeners that were added to the mass collection.

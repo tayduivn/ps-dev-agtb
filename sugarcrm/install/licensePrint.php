@@ -21,6 +21,7 @@ require_once("install/language/{$_GET['language']}.lang.php");
 require_once("install/install_utils.php");
 
 $license_file = getLicenseContents("LICENSE");
+$license_file = formatLicense($license_file);
 $langHeader = get_language_header();
 $out =<<<EOQ
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -44,9 +45,7 @@ $out =<<<EOQ
     <tr>
       <td width="2%">&nbsp;</td>
       <td>
-        <pre>
-            {$license_file}
-        </pre>
+        <pre>{$license_file}</pre>
       </td>
       <td width="2%">&nbsp;</td>
     </tr>
@@ -61,4 +60,3 @@ $out =<<<EOQ
 </html>
 EOQ;
 echo $out;
-?>

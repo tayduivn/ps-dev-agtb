@@ -1,6 +1,6 @@
 describe('KBContents.Base.Views.PanelTopForRevisions', function() {
 
-    var app, view, sandbox, context, moduleName = 'KBContents';
+    var app, view, sandbox, context, meta, moduleName = 'KBContents';
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -10,6 +10,7 @@ describe('KBContents.Base.Views.PanelTopForRevisions', function() {
         });
         context.set('model', new app.Bean());
         context.parent = new Backbone.Model();
+        meta = {};
 
         SugarTest.loadComponent(
             'base',
@@ -28,7 +29,7 @@ describe('KBContents.Base.Views.PanelTopForRevisions', function() {
             'base',
             moduleName,
             'panel-top-for-revisions',
-            null,
+            meta,
             context,
             moduleName
         );

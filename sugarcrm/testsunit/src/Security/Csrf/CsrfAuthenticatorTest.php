@@ -51,7 +51,7 @@ class CsrfAuthenticatorTest extends \PHPUnit_Framework_TestCase
      * @covers ::isTokenValid
      * @dataProvider providerTestIsFormTokenValid
      */
-    public function testIsFormTokenValid($beta, $softFail, array $post, $valid, $expected)
+    public function testIsFormTokenValid($softFail, array $post, $valid, $expected)
     {
         $manager = $this->getMock('Symfony\Component\Security\Csrf\CsrfTokenManagerInterface');
         $manager->expects($this->any())
@@ -60,7 +60,6 @@ class CsrfAuthenticatorTest extends \PHPUnit_Framework_TestCase
 
         $sut = $this->getCsrfAuthMock(null);
         TestReflection::setProtectedValue($sut, 'manager', $manager);
-        TestReflection::setProtectedValue($sut, 'beta', $beta);
         TestReflection::setProtectedValue($sut, 'softFailForm', $softFail);
 
         $this->assertEquals($expected, $sut->isFormTokenValid($post));
@@ -70,56 +69,36 @@ class CsrfAuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                false, // opt-in disable, all the rest has no effect
-                false,
-                array(),
-                false,
-                true,  // ... result is always true
-            ),
-            array(
-                false, // opt-in disable, all the rest has no effect
-                false,
-                array(),
-                true,
-                true,  // ... result is always true
-            ),
-            array(
-                true,
                 false,  // no soft fail
                 array(),// no data, always fails
                 false,  // token test result
                 false,  // expected
             ),
             array(
-                true,
                 false,  // no soft fail
                 array(),// no data, always fails
                 true,   // token test result
                 false,  // expected
             ),
             array(
-                true,
                 false,  // no soft fail
                 array('csrf_token' => '1234567890'),
                 true,  // token test result
                 true,  // expected
             ),
             array(
-                true,
                 false,  // no soft fail
                 array('csrf_token' => '1234567890'),
                 false,  // token test result
                 false,  // expected
             ),
             array(
-                true,
                 true,  // soft fail
                 array('csrf_token' => '1234567890'),
                 false,  // token test result
                 true,  // expected
             ),
             array(
-                true,
                 false,  // no soft fail
                 array('wrong_csrf' => '1234567890'),
                 true,  // token test result - has no influence on this test

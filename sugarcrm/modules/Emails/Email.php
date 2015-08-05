@@ -208,7 +208,8 @@ class Email extends SugarBean {
 		$fileName = $upload->create_stored_filename();
         $GLOBALS['log']->debug("Email Attachment [$fileName]");
         if($upload->final_move($guid)) {
-        	copy("upload://$guid", sugar_cached("$email_uploads/$guid"));
+			sugar_mkdir(sugar_cached("$email_uploads/"));
+			copy("upload://$guid", sugar_cached("$email_uploads/$guid"));
 			return array(
 					'guid' => $guid,
 					'name' => $GLOBALS['db']->quote($fileName),
