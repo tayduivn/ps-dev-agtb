@@ -15,26 +15,30 @@ namespace Sugarcrm\Sugarcrm\Notification\BeanEmitter;
 use Sugarcrm\Sugarcrm\Notification\ModuleEventInterface;
 
 /**
+ * Class event which emits in Bean related to Bean.
+ *
  * class BeanEmitter/Event
  * @package Notification
  */
 class Event implements ModuleEventInterface
 {
     /**
+     * Bean in which event is emitted.
+     *
      * @var \SugarBean
      */
     protected $bean;
 
     /**
-     * Event name
+     * Event name.
      *
      * @var string
      */
     protected $name;
 
     /**
-     * @param string $name
-     * @param \SugarBean $bean
+     * @param string $name event name
+     * @param \SugarBean $bean in which event is emitted
      */
     public function __construct($name, \SugarBean $bean)
     {
@@ -43,7 +47,7 @@ class Event implements ModuleEventInterface
     }
 
     /**
-     * event name
+     * Event name.
      *
      * @return string
      */
@@ -53,7 +57,7 @@ class Event implements ModuleEventInterface
     }
 
     /**
-     * Function return SugarBean with which expired event
+     * Function return SugarBean with which event is emitted.
      *
      * @return \SugarBean
      */
@@ -63,7 +67,7 @@ class Event implements ModuleEventInterface
     }
 
     /**
-     * Function return module name in with which expired event
+     * Function return module name in with which event is emitted.
      *
      * @return string
      */
