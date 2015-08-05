@@ -572,7 +572,7 @@
         var hasChanged = false;
 
         _.each(fieldMapping, function(sourceField, targetField) {
-            if (model.has(sourceField) && !_.isEmpty(model.get(sourceField)) &&
+            if (model.has(sourceField) && this.shouldSourceValueBeCopied(model.get(sourceField)) &&
                 model.get(sourceField) !== this.createView.model.get(targetField)) {
                     this.createView.model.setDefault(targetField, model.get(sourceField));
                     this.createView.model.set(targetField, model.get(sourceField));
@@ -661,6 +661,13 @@
         var defaults = _.extend({}, this.createView.model._defaults, this.createView.model.getDefault());
         this.createView.model.clear({silent: true});
         this.createView.model.set(defaults, {silent: true});
+    },
+
+    /**
+     * Determine whether to copy the the supplied value when it appears in the Source module during conversion
+     */
+    shouldSourceValueBeCopied: function(val) {
+        return _.isNumber(val) || _.isBoolean(val) || !_.isEmpty(val);
     },
 
     /**

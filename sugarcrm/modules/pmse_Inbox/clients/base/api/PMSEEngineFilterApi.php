@@ -468,8 +468,7 @@ class PMSEEngineFilterApi extends FilterApi
             ->on()
             ->equalsField('user_data.id', 'cas_user_id')
             ->equals('user_data.deleted', 0);
-        $fields[] = array("user_data.first_name", 'first_name');
-        $fields[] = array("user_data.last_name", 'last_name');
+        $fields[] = array("user_data.user_name", 'user_name');
 
         //INNER JOIN TEAM_DATA DEFINTION
         $q->joinTable('teams', array('alias' => 'team_data', 'joinType' => 'LEFT', 'linkingTable' => true))

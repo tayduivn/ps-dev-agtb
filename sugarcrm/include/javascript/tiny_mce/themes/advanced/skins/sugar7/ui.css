@@ -1269,3 +1269,7 @@
 .sugar7Skin a.mceAction span.mce_backcolor:before {
   content: "\f040";
 }
+
+.sugar7Skin span.mce_selectfield:before {
+  content: "\f013";
+}

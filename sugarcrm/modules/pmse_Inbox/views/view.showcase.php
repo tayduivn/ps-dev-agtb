@@ -304,7 +304,9 @@ FLIST;
                 $data_aux = new stdClass();
                 $data_aux->cas_task_start_date = $caseData['cas_task_start_date'];
                 $data_aux->cas_delegate_date = $caseData['cas_delegate_date'];
-                $expTime = PMSECaseWrapper::expectedTime($this->activityRow['act_expected_time'], $data_aux);
+                // Commenting out below line. We don't want due date to be calculated dynamically. Once a process due date is set it should stay.
+                // $expTime = PMSECaseWrapper::expectedTime($this->activityRow['act_expected_time'], $data_aux);
+                $expTime = PMSECaseWrapper::processDueDateTime($caseData['cas_due_date']);
                 $expected_time = $expTime['expected_time'];
                 $expected_time_warning = $expTime['expected_time_warning'];
                 if ($expected_time_warning == true) {

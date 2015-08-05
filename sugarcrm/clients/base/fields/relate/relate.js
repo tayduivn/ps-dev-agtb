@@ -247,11 +247,17 @@
         switch(this.tplName) {
             case 'edit':
             case 'massupdate':
-                this._createFiltersCollection({
-                    success: _.bind(function() {
-                        this._renderEditableDropdown();
-                    }, this)
-                });
+                if (_.isUndefined(this.filters)) {
+                    this._createFiltersCollection({
+                        success: _.bind(function() {
+                            if (!this.disposed) {
+                                this._renderEditableDropdown();
+                            }
+                        }, this)
+                    });
+                } else {
+                    this._renderEditableDropdown();
+                }
                 break;
             case 'disabled':
                 this._renderDisabledDropdown();
@@ -275,7 +281,6 @@
         var $dropdown = this.$(this.fieldTag);
 
         var loadingLabel = app.lang.get('LBL_LOADING', this.module);
-        this._createFiltersCollection();
 
         var inList = this.view.name === 'recordlist';
         $dropdown.select2({
@@ -323,7 +328,6 @@
                     } else {
                         return;
                     }
-                    plugin.opts.element.data('rname', dataRname.join(self._separator));
                     var models = _.map(ids, function(id, index) {
                         return {id: id, value: dataRname[index]};
                     });
@@ -335,8 +339,6 @@
                 var value = (id) ? plugin.selection.find('span').text() : $(this).data('rname'),
                     collection = plugin.context,
                     attributes = {};
-                //Update the source element or else reverting back to the original value will not trigger a change event.
-                plugin.opts.element.data('rname', id);
                 if (collection && !_.isEmpty(id)) {
                     // if we have search results use that to set new values
                     var model = collection.get(id);
@@ -523,7 +525,7 @@
              */
             this._valueSetOnce = true;
         }
-        setFromCtx = value === null && !this._valueSetOnce && parentCtx &&
+        setFromCtx = value === null && !this._valueSetOnce && parentCtx && _.isEmpty(this.context.get('model').link) &&
             this.view instanceof app.view.views.BaseCreateView &&
             parentCtx.get('module') === this.def.module &&
             this.module !== this.def.module;
@@ -579,9 +581,8 @@
             values[this.def.name].push(model[this.getRelatedModuleField()] || model.value);
         }, this));
 
-        // If there is only one value, we get rid of the array before setting
-        // the value.
-        if (values[this.def.id_name].length === 1) {
+        // If it's not a multiselect relate, we get rid of the array.
+        if (!this.def.isMultiSelect) {
             values[this.def.id_name] = values[this.def.id_name][0];
             values[this.def.name] = values[this.def.name][0];
         }
@@ -911,14 +912,25 @@
             }, this);
 
             this.model.on('change:' + this.name, function() {
+                if (this.disposed) {
+                    return;
+                }
                 var $dropdown = this.$(this.fieldTag);
                 if (!_.isEmpty($dropdown.data('select2'))) {
-                    // Just setting the value on select2 doesn't cause the label to show up
-                    // so we need to render the field next after setting this value
-                    $dropdown.select2('val', this.model.get(this.def.idName));
-                }
-                // double-check field isn't disposed before trying to render
-                if (!this.disposed) {
+                    var value = this.model.get(this.def.name);
+                    value = _.isArray(value) ? value.join(this._separator) : value;
+                    value = value ? value.trim() : value;
+
+                    $dropdown.data('rname', value);
+
+                    // `id` can be an array of ids if the field is a multiselect.
+                    var id = this.model.get(this.def.id_name);
+                    if (_.isEqual($dropdown.select2('val'), id)) {
+                        return;
+                    }
+
+                    $dropdown.select2('val', id);
+                } else {
                     this.render();
                 }
             }, this);

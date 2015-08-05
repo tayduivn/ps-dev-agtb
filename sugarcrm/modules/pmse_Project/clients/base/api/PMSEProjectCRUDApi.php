@@ -16,6 +16,8 @@ require_once 'clients/base/api/ModuleApi.php';
 
 require_once 'wrappers/PMSEDynaForm.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
+require_once 'modules/pmse_Inbox/engine/PMSEProjectExporter.php';
+require_once 'modules/pmse_Inbox/engine/PMSEProjectImporter.php';
 
 class PMSEProjectCRUDApi extends ModuleApi
 {
@@ -141,5 +143,28 @@ class PMSEProjectCRUDApi extends ModuleApi
         $dynaForm = new PMSEDynaForm();
         $dynaForm->generateDefaultDynaform($processDefinitionBean->pro_module, $keysArray, $editDyna);
 
+    }
+
+
+    public function createRecord($api, $args) {
+        if (!isset($args['picture_duplicateBeanId'])) {
+            return parent::createRecord($api, $args);
+        }
+
+        $id = $args['picture_duplicateBeanId'];
+
+        $exporter = new PMSEProjectExporter();
+        $project = $exporter->getProject(array('id' => $id));
+
+        $project['project']['name'] =  $args['name'];
+        $project['project']['assigned_user_id'] =  $args['assigned_user_id'];
+        $project['project']['description'] =  $args['description'];
+
+        $importer = new PMSEProjectImporter();
+        $project['_module']['project'] = 'pmse_Project';
+        // The importation always changes the project status to INACTIVE
+        $project['project']['id'] = $importer->saveProjectData($project['project']);
+
+        return $project['project'];
     }
 }

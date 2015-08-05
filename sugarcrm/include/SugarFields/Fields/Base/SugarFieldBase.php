@@ -105,19 +105,24 @@ class SugarFieldBase {
         return self::$base[$view];
     }
 
-    function findTemplate($view){
+    protected function findTemplate($view, $formName = '')
+    {
         static $tplCache = array();
 
         if ( isset($tplCache[$this->type][$view]) ) {
             return $tplCache[$this->type][$view];
         }
 
-        $lastClass = get_class($this);
-        $classList = array($this->type,str_replace('SugarField','',$lastClass));
-        while ( $lastClass = get_parent_class($lastClass) ) {
-            $classList[] = str_replace('SugarField','',$lastClass);
+        if (isset($this->formTemplateMap[$formName])) {
+            $classList = array($this->formTemplateMap[$formName]);
+        } else {
+            $lastClass = get_class($this);
+            $classList = array($this->type, str_replace('SugarField', '', $lastClass));
+            while ($lastClass = get_parent_class($lastClass)) {
+                $classList[] = str_replace('SugarField', '', $lastClass);
+            }
+            array_pop($classList); // remove this class - $base handles that
         }
-        array_pop($classList); // remove this class - $base handles that
 
         $tplName = '';
         global $current_language;
@@ -206,8 +211,8 @@ class SugarFieldBase {
     function getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex = -1, $view){
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
 
-
-    	return $this->fetch($this->findTemplate($view));
+        $formName = isset($displayParams['formName']) ? $displayParams['formName'] : '';
+        return $this->fetch($this->findTemplate($view, $formName));
     }
 
     function getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col) {

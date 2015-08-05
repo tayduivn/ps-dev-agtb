@@ -43,7 +43,7 @@ class One2MBeanRelationship extends One2MRelationship
 
         $lhsLinkName = $this->lhsLink;
         $rhsLinkName = $this->rhsLink;
-
+        $success = true;
         //Since this is bean based, we know updating the RHS's field will overwrite any old value,
         //But we need to use delete to make sure custom logic is called correctly
         if ($rhs->load_relationship($rhsLinkName)) {
@@ -51,16 +51,18 @@ class One2MBeanRelationship extends One2MRelationship
             $prevRelated = $oldLink->getBeans(null);
             foreach($prevRelated as $oldLHS) {
                 if ($oldLHS->id != $lhs->id) {
-                    $this->remove($oldLHS, $rhs, false);
+                    if($this->remove($oldLHS, $rhs, false) === false) {
+                        LoggerManager::getLogger()->error("Warning: failed trying to call remove() for relationship {$this->name} within One2MBeanRelationship->add(). rhsLinkName: $rhsLinkName");
+                        $success = false;
+                    }
                 }
             }
         }
-
         //Make sure we load the current relationship state to the LHS link
         if ((isset($lhs->$lhsLinkName) && is_a(
-            $lhs->$lhsLinkName,
-            "Link2"
-        )) || $lhs->load_relationship($lhsLinkName)
+                    $lhs->$lhsLinkName,
+                    "Link2"
+                )) || $lhs->load_relationship($lhsLinkName)
         ) {
             $lhs->$lhsLinkName->load();
         }
@@ -89,7 +91,7 @@ class One2MBeanRelationship extends One2MRelationship
             SugarRelationship::resaveRelatedBeans(false);
         }
 
-        return true;
+        return $success;
     }
 
     protected function updateLinks($lhs, $lhsLinkName, $rhs, $rhsLinkName)
@@ -105,9 +107,10 @@ class One2MBeanRelationship extends One2MRelationship
 
     protected function updateFields($lhs, $rhs, $additionalFields)
     {
-        //Now update the RHS bean's ID field
+        //Now update the RHS bean's key field
+        $lhsID = $this->def['lhs_key'];
         $rhsID = $this->def['rhs_key'];
-        $rhs->$rhsID = $lhs->id;
+        $rhs->$rhsID = $lhs->$lhsID;
         foreach ($additionalFields as $field => $val) {
             $rhs->$field = $val;
         }
@@ -122,7 +125,7 @@ class One2MBeanRelationship extends One2MRelationship
     public function remove($lhs, $rhs, $save = true)
     {
         $rhsID = $this->def['rhs_key'];
-
+        $success = true;
         // If this relationship has already been removed, we can just return.
         // Check both current value of related ID field and the one from fetched row.
         // The latter is valid in case, if relation was removed by changing bean's related ID field to another value.
@@ -148,7 +151,10 @@ class One2MBeanRelationship extends One2MRelationship
             $sql = "UPDATE {$rhs->table_name}
                     SET {$rhsID} = $nullValue
                     WHERE id = '{$rhs->id}'";
-            $rhs->db->query($sql);
+            if ($rhs->db->query($sql) === false) {
+                $success = false;
+                LoggerManager::getLogger()->error("Warning: failed trying to set null value on rhs for relationship {$this->name} within One2MBeanRelationship->remove(). sql: $sql");
+            }
         }
 
 
@@ -157,13 +163,12 @@ class One2MBeanRelationship extends One2MRelationship
         if ($lhs->load_relationship($link)) {
             $lhs->$link->removeBean($rhs);
         }
-
         if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes") {
             $this->callAfterDelete($lhs, $rhs, $this->getLHSLink());
             $this->callAfterDelete($rhs, $lhs, $this->getRHSLink());
         }
 
-        return true;
+        return $success;
     }
 
     /**
