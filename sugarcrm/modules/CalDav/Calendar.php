@@ -123,6 +123,19 @@ class CalDavCalendar extends SugarBean
     public $assigned_user_id;
 
     /**
+     * Fields that are allowed to change
+     * @var array
+     */
+    protected $allowedFieldsToChange = array(
+        'name',
+        'description',
+        'timezone',
+        'calendarorder',
+        'calendarcolor',
+        'transparent',
+    );
+
+    /**
      * Convert bean to CalDav calendar array format
      *
      * @param Base\Helper\UserHelper $userHelper Instance of userHelper
@@ -194,19 +207,36 @@ class CalDavCalendar extends SugarBean
     }
 
     /**
-     * Adds a change record to the calendarchanges table.
-     * @return void
-     *
-     * @todo Don't forget save changes to caldav_changes table in future
+     * Checks if calendar was changed
+     * @return bool
      */
-    public function addChange()
+    public function isChanged()
     {
-        $this->synctoken ++;
+        if (empty($this->fetched_row)) {
+            return true;
+        }
+
+        foreach ($this->allowedFieldsToChange as $field) {
+            if (!array_key_exists($field, $this->fetched_row) || $this->$field != $this->fetched_row[$field]) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
-     * @inheritdoc
+     * Add change to database
      */
+    protected function addChange()
+    {
+        if ($this->isUpdate() && $this->isChanged()) {
+            $changes = \BeanFactory::getBean('CalDavChanges');
+            $changes->add($this, "", Base\Constants::OPERATION_MODIFY);
+            $this->synctoken ++;
+        }
+    }
+
     public function save($check_notify = false)
     {
         $this->addChange();

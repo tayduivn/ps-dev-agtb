@@ -16,10 +16,10 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Backend;
 use Sabre\DAV;
 use Sabre\CalDAV;
 
-use Sabre\CalDAV\Backend\BackendInterface;
+use Sabre\CalDAV\Backend\AbstractBackend;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper;
 
-class CalendarData implements BackendInterface
+class CalendarData extends AbstractBackend
 {
     /**
      * Instance of UserHelper
@@ -69,6 +69,16 @@ class CalendarData implements BackendInterface
     public function getCalendarBean($calendarID = null)
     {
         return \BeanFactory::getBean('CalDavCalendars', $calendarID);
+    }
+
+    /**
+     * Get CalDavEvent bean object
+     *
+     * @return null|\CalDavEvent
+     */
+    public function getEventsBean()
+    {
+        return \BeanFactory::getBean('CalDavEvents');
     }
 
     /**
@@ -142,7 +152,17 @@ class CalendarData implements BackendInterface
      */
     public function getCalendarObjects($calendarId)
     {
-        return array();
+        $events = array();
+        $calendar = $this->getCalendarBean($calendarId);
+        if ($calendar->load_relationship('calendar_events')) {
+            $result = $calendar->calendar_events->getBeans();
+
+            foreach ($result as $bean) {
+                $events[] = $bean->toCalDavArray();
+            }
+        }
+
+        return $events;
     }
 
     /**
@@ -150,6 +170,13 @@ class CalendarData implements BackendInterface
      */
     public function getCalendarObject($calendarId, $objectUri)
     {
+        $eventBean = $this->getEventsBean();
+        $event = $eventBean->getByURI($calendarId, array($objectUri), true);
+
+        if ($event && $event->id) {
+            return $event->toCalDavArray();
+        }
+
         return array();
     }
 
@@ -158,7 +185,15 @@ class CalendarData implements BackendInterface
      */
     public function getMultipleCalendarObjects($calendarId, array $uris)
     {
-        return array();
+        $events = array();
+
+        $eventBean = $this->getEventsBean();
+        $result = $eventBean->getByURI($calendarId, $uris);
+        foreach ($result as $bean) {
+            $events[] = $bean->toCalDavArray();
+        }
+
+        return $events;
     }
 
     /**
@@ -166,7 +201,18 @@ class CalendarData implements BackendInterface
      */
     public function createCalendarObject($calendarId, $objectUri, $calendarData)
     {
-        // TODO: Implement createCalendarObject() method.
+        $event = $this->getEventsBean();
+
+        if ($event && $event->setCalendarEventData($calendarData)) {
+
+            $event->setCalendarEventURI($objectUri);
+            $event->setCalendarId($calendarId);
+            $event->save();
+
+            return '"' . $event->etag . '"';
+        }
+
+        return null;
     }
 
     /**
@@ -174,7 +220,15 @@ class CalendarData implements BackendInterface
      */
     public function updateCalendarObject($calendarId, $objectUri, $calendarData)
     {
-        // TODO: Implement updateCalendarObject() method.
+        $eventBean = $this->getEventsBean();
+        $event = $eventBean->getByURI($calendarId, array($objectUri), true);
+        if ($event && $event->id && $event->setCalendarEventData($calendarData)) {
+            $event->save();
+
+            return '"' . $event->etag . '"';
+        }
+
+        return null;
     }
 
     /**
@@ -182,7 +236,11 @@ class CalendarData implements BackendInterface
      */
     public function deleteCalendarObject($calendarId, $objectUri)
     {
-        // TODO: Implement deleteCalendarObject() method.
+        $eventBean = $this->getEventsBean();
+        $event = $eventBean->getByURI($calendarId, array($objectUri), true);
+        if ($event && $event->id) {
+            $event->mark_deleted($event->id);
+        }
     }
 
     /**
@@ -190,7 +248,84 @@ class CalendarData implements BackendInterface
      */
     public function calendarQuery($calendarId, array $filters)
     {
-        return array();
+        $componentType = null;
+        $requirePostFilter = true;
+        $timeRange = null;
+
+        // if no filters were specified, we don't need to filter after a query
+        if (empty($filters['prop-filters']) && empty($filters['comp-filters'])) {
+            $requirePostFilter = false;
+        }
+
+        if (!empty($filters['comp-filters'])) {
+            // Figuring out if there's a component filter
+            if (empty($filters['comp-filters'][0]['is-not-defined'])) {
+
+                $componentType = $filters['comp-filters'][0]['name'];
+
+                // Checking if we need post-filters
+                if (empty($filters['prop-filters']) &&
+                    empty($filters['comp-filters'][0]['comp-filters']) &&
+                    empty($filters['comp-filters'][0]['time-range']) &&
+                    empty($filters['comp-filters'][0]['prop-filters'])
+                ) {
+                    $requirePostFilter = false;
+                }
+
+                // There was a time-range filter
+                if (($componentType == 'VEVENT' || $componentType == 'VTODO') &&
+                    isset($filters['comp-filters'][0]['time-range'])
+                ) {
+
+                    $timeRange = $filters['comp-filters'][0]['time-range'];
+
+                    // If start time OR the end time is not specified, we can do a
+                    // 100% accurate mysql query.
+                    if (empty($filters['prop-filters']) &&
+                        empty($filters['comp-filters'][0]['comp-filters']) &&
+                        empty($filters['comp-filters'][0]['prop-filters']) &&
+                        (empty($timeRange['start']) || empty($timeRange['end']))
+                    ) {
+                        $requirePostFilter = false;
+                    }
+                }
+            }
+        }
+
+        $events = array();
+        $eventBean = $this->getEventsBean();
+        $eventQuery = $this->getSugarQuery();
+
+        $eventQuery->from($eventBean);
+        $eventQuery->where()->equals('calendarid', $calendarId);
+
+        if ($componentType) {
+            $eventQuery->where()->equals('componenttype', $componentType);
+        }
+
+        if ($timeRange) {
+
+            if (isset($timeRange['start'])) {
+                $eventQuery->where()->gte('lastoccurence', $timeRange['start']->getTimeStamp());
+            }
+
+            if (isset($timeRange['end'])) {
+                $eventQuery->where()->lte('firstoccurence', $timeRange['end']->getTimeStamp());
+            }
+
+        }
+
+        $result = $eventQuery->execute();
+
+        foreach ($result as $key => $row) {
+
+            if ($requirePostFilter && !$this->validateFilterForObject($row, $filters)) {
+                continue;
+            }
+            $events[] = $row['uri'];
+        }
+
+        return $events;
     }
 
     /**
@@ -198,6 +333,33 @@ class CalendarData implements BackendInterface
      */
     public function getCalendarObjectByUID($principalUri, $uid)
     {
-        return array();
+        $userHelper = $this->getUserHelper();
+        $calendars = $userHelper->getCalendars($principalUri);
+
+        if ($calendars) {
+
+            $calendarURIS = $calendarIDS = array();
+            foreach ($calendars as $calendar) {
+                $calendarIDS[] = $calendar->id;
+                $calendarURIS[$calendar->id] = $calendar->uri;
+            }
+
+            $eventBean = $this->getEventsBean();
+            $eventQuery = $this->getSugarQuery();
+
+            $eventQuery->from($eventBean);
+            $eventQuery->where()->in('calendarid', $calendarIDS);
+            $eventQuery->where()->equals('uid', $uid);
+
+            $events = $eventBean->fetchFromQuery($eventQuery);
+
+            if ($events) {
+                $event = array_shift($events);
+
+                return $calendarURIS[$event->calendarid] . '/' . $event->uri;
+            }
+        }
+
+        return null;
     }
 }

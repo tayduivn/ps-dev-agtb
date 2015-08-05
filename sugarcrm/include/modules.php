@@ -716,8 +716,17 @@ $beanList['EmbeddedFiles'] = 'EmbeddedFile';
 $beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';
 $modInvisList[] = 'EmbeddedFiles';
 
+$beanList['CalDavEvents'] = 'CalDavEvent';
+$beanFiles['CalDavEvent'] = 'modules/CalDav/Event.php';
+
 $beanList['CalDavCalendars'] = 'CalDavCalendar';
 $beanFiles['CalDavCalendar'] = 'modules/CalDav/Calendar.php';
+
+$beanList['CalDavChanges'] = 'CalDavChange';
+$beanFiles['CalDavChange'] = 'modules/CalDav/Change.php';
+
+$beanList['CalDavSchedulings'] = 'CalDavScheduling';
+$beanFiles['CalDavScheduling'] = 'modules/CalDav/Scheduling.php';
 
 // this module doesn't need a Bean
 $modInvisList[] = 'Feedbacks';
