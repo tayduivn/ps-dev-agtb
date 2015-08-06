@@ -69,7 +69,7 @@
             .margin({top: 0})
             .direction(app.lang.direction)
             .tooltipContent(function(key, x, y, e, graph) {
-                var val = app.currency.formatAmountLocale(y, app.currency.getBaseCurrencyId());
+                var val = app.currency.formatAmount(y, app.user.getCurrency().currency_id);
                 var salesStageLabels = app.lang.getAppListStrings('sales_stage_dom');
                 return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + ((salesStageLabels && salesStageLabels[key]) ? salesStageLabels[key] : key) + '</b></p>' +
                     '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + val + '</b></p>' +
