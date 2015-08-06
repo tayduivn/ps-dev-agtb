@@ -1304,7 +1304,8 @@ class PMSECrmDataWrapper implements PMSEObservable
                 }
             }
         }
-        $filterArray = array('value' => $filter, 'text' => '<' . $filter . '>');
+        $moduleName = (translate("LBL_MODULE_NAME", $filter) == "LBL_MODULE_NAME") ? $filter : translate("LBL_MODULE_NAME", $filter);
+        $filterArray = array('value' => $filter, 'text' => '<' . $moduleName . '>');
         array_unshift($output, $filterArray);
 
         //$res->result = $output;
