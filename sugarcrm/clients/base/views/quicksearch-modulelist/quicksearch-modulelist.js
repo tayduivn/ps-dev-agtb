@@ -43,7 +43,12 @@
          *
          * @type {Backbone.Collection}
          */
-        this.searchModuleFilter = new Backbone.Collection();
+        this.searchModuleFilter = new Backbone.Collection(null, {
+            //adds models in alphabetical order of model's id's module name translation
+            comparator: function(model) {
+                return app.lang.getModuleName(model.id, {plural: true});
+            }
+        });
 
         /**
          * The lastState key for local storage.
@@ -289,13 +294,19 @@
         if (this.disposed) {
             return;
         }
-        // Reset the collection of module filters so we don't add duplicate elements to the original collection.
+
+        //Reset the collection of module filters so we don't add duplicate
+        //elements to the original collection.
         this.searchModuleFilter.reset();
         var modules = app.metadata.getModules() || {};
+
+        //filter the module names out based on global search enabled, has
+        //access to acl, and is not a blacklisted module
         _.each(modules, function(meta, module) {
-            // Check that the module is searchable and accessible.
-            if (meta.globalSearchEnabled && app.acl.hasAccess.call(app.acl, 'view', module)
-                    && !_.contains(this.blacklistModules, module)) {
+            if (meta.globalSearchEnabled &&
+                app.acl.hasAccess.call(app.acl, 'view', module) &&
+                !_.contains(this.blacklistModules, module)
+            ) {
                 var moduleModel = new Backbone.Model({id: module, selected: false});
                 this.searchModuleFilter.add(moduleModel);
             }

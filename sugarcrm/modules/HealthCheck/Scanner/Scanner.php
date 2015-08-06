@@ -686,6 +686,7 @@ class HealthCheckScanner
             }
         }
 
+        restore_error_handler();
         return $this->logMeta;
     }
 
@@ -2265,6 +2266,7 @@ ENDP;
         'ForecastOpportunities' => array('description'),
         'Quotas' => array('assigned_user_id'),
         'ProductTemplates' => array('assigned_user_link'),
+        'Calls' => array('contact_id'),
         'Meetings' => array('contact_id'),
         'KBDocuments' => array('keywords'),
         'KBContents' => array('created_by_link', 'modified_user_link'),
@@ -2629,12 +2631,7 @@ ENDP;
      */
     public function getPackageManifest()
     {
-        if (!empty($this->upgrader->context['extract_dir'])) {
-            $fileReader = new FileLoaderWrapper();
-            $manifest = $fileReader->loadFile($this->upgrader->context['extract_dir'] . '/manifest.php', 'manifest');
-            return !empty($manifest) ? $manifest : array();
-        }
-        return array();
+        return $this->upgrader->getManifest();
     }
 
     /**
@@ -2702,16 +2699,39 @@ class BlackHole implements ArrayAccess, Countable, Iterator
 {
     protected $called;
 
+    /**
+     * Fields to be stubbed.
+     * @var array
+     */
+    protected $stubFields = array();
+
+    /**
+     * Methods to be stubbed.
+     * @var array
+     */
+    protected $stubMethods = array();
+
+    /**
+     * You can set fields and methods to be stubbed when __get() or __call() are triggered on a BlackHole.
+     * @param array $fields list of fields (name => value)
+     * @param array $methods list of methods (name => returnValue)
+     */
+    public function __construct($fields = array(), $methods = array())
+    {
+        $this->stubFields = $fields;
+        $this->stubMethods = $methods;
+    }
+
     public function __get($v)
     {
         $this->called = true;
-        return $this;
+        return array_key_exists($v, $this->stubFields) ? $this->stubFields[$v] : $this;
     }
 
     public function __call($n, $a)
     {
         $this->called = true;
-        return $this;
+        return array_key_exists($n, $this->stubMethods) ? $this->stubMethods[$n] : $this;
     }
 
     public function __toString()

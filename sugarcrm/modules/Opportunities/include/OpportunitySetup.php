@@ -487,7 +487,6 @@ abstract class OpportunitySetup
     protected function processWorkFlows()
     {
         $this->markWorkFlowsWithOppActionShellsInactive();
-        $this->markWorkFlowsWithOppAlertShellsInactive();
         $this->markWorkFlowsWithOppTriggerShellsInactive();
 
         // mark all WorkFlows with their base of opportunities as status '0' (Inactive)
@@ -534,35 +533,6 @@ abstract class OpportunitySetup
         foreach ($rows as $row) {
             $actionShells->retrieve($row['id']);
             $workflow = $actionShells->get_workflow_object();
-            $workflow->status = 0;
-            $workflow->save();
-            $workflow->write_workflow();
-        }
-    }
-
-    /**
-     * Find any Alert Shells for the Opportunity Module and Mark it's related workflow inactive
-     *
-     * @throws SugarQueryException
-     */
-    private function markWorkFlowsWithOppAlertShellsInactive()
-    {
-        // get the action shells
-        $alertShells = BeanFactory::getBean('WorkFlowAlertShells');
-
-        $sq = new SugarQuery();
-        $sq->select(array('id', 'parent_id'));
-        $sq->from($alertShells);
-        $sq->where()
-            ->queryOr()
-            ->equals('rel_module2', 'opportunities')
-            ->equals('rel_module2', 'opportunities');
-
-        $rows = $sq->execute();
-
-        foreach ($rows as $row) {
-            $alertShells->retrieve($row['id']);
-            $workflow = $alertShells->get_workflow_object();
             $workflow->status = 0;
             $workflow->save();
             $workflow->write_workflow();
