@@ -549,6 +549,9 @@
             //check to see if horizontal scrolling needs to be enabled
             this.resize();
         }
+        if (!_.isEqual(model.attributes, model._syncedAttributes)) {
+            model.setSyncedAttributes(model.attributes);
+        }
     },
 
     /**
