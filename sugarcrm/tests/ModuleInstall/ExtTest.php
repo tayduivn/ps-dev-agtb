@@ -18,6 +18,9 @@ class ExtTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        if (extension_loaded('shadow')) {
+            self::markTestSkipped('Does not work on Shadow because of a custom module installed before test run, see TDD-80');
+        }
         $GLOBALS['current_language'] = "en_us";
 
         SugarTestHelper::setUp("current_user");
