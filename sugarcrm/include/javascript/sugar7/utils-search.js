@@ -219,7 +219,10 @@
                         if (firstParamDefined) {
                             paramString = paramString + '&'
                         }
-                        paramString = paramString + 'tags=' + tags.join(',');
+                        var encodedTags = _.map(tags, function(tag){
+                            return encodeURIComponent(tag);
+                        });
+                        paramString = paramString + 'tags=' + encodedTags.join(',');
                     }
                     return app.router.buildRoute('search', term + paramString);
                 }
