@@ -11,6 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Socket\Client as SugarSocketClient;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\AdminSettings;
 
@@ -143,7 +144,7 @@ class AdministrationController extends SugarController
             //Users doesn't appear in the normal module list, but its value is cached on login.
             sugar_cache_clear("CONTROLLER_wireless_module_registry_Users");
             sugar_cache_reset();
-            
+
             // Bug 59121 - Clear the metadata cache for the mobile platform
             MetaDataManager::refreshCache(array('mobile'));
         }
@@ -195,6 +196,63 @@ class AdministrationController extends SugarController
 
         echo json_encode(array('valid' => $valid, 'status' => $status));
         sugar_cleanup(true);
+    }
+
+    /**
+     * This method handles the saving websockets configuration.
+     */
+    public function action_saveWebSocketsConfiguration()
+    {
+        $websocket_client_url = !empty($_REQUEST['websocket_client_url']) ? urldecode($_REQUEST['websocket_client_url']) : '';
+        $websocket_server_url = !empty($_REQUEST['websocket_server_url']) ? urldecode($_REQUEST['websocket_server_url']) : '';
+
+        $errors = array();
+
+        if (!empty($websocket_client_url) && !empty($websocket_server_url)) {
+            $clientSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_client_url);
+            if (!$clientSettings['available'] || $clientSettings['type'] != 'client') {
+                $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_CLIENT_ERROR'];
+            }
+            $serverSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_server_url);
+            if (!$serverSettings['available'] || $serverSettings['type'] != 'server') {
+                $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SERVER_ERROR'];
+            }
+        } else {
+            if (empty($websocket_client_url)) {
+                $errors['ERR_WEB_SOCKET_CLIENT_URL'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_CLIENT_URL'];
+            }
+            if (empty($websocket_server_url)) {
+                $errors['ERR_WEB_SOCKET_SERVER_URL'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SERVER_URL'];
+            }
+        }
+
+        if (count($errors) == 0) {
+            $result['status'] = true;
+
+            $this->cfg = new Configurator();
+            $this->cfg->config['websockets'] = array(
+                'server' => array(
+                    'url' => $websocket_server_url
+                ),
+                'client' => array(
+                    'url' => $websocket_client_url,
+                    'balancer' => $clientSettings['isBalancer']
+                ),
+            );
+            $this->cfg->handleOverride();
+        } else {
+            $result['status'] = false;
+            $validationErr = array();
+            foreach ($errors as $key => $erMsg) {
+                array_push($validationErr, $erMsg);
+            }
+            $result = array(
+                'status' => false,
+                'errMsg' => implode(PHP_EOL, $validationErr)
+            );
+        }
+
+        echo json_encode($result);
     }
 
     /**

@@ -1006,7 +1006,7 @@
 
 	FormPanelNumber.prototype._evalRequired = function() {
 		if(this.required && !this._disabled) {
-			return !isNaN(this._value);
+			return !isNaN(this._value) && (this._value !== null);
 		}
 		return true;
 	};

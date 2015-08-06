@@ -36,7 +36,7 @@ require_once('data/SugarBean.php');
 //check to see if the script files need to be rebuilt, add needed variables to request array
 $_REQUEST['root_directory'] = getcwd();
 $_REQUEST['js_rebuild_concat'] = 'rebuild';
-if (isset($_REQUEST['goto']) && $_REQUEST['goto'] != 'SilentInstall' && empty($_SESSION['js_minified'])) {    
+if (isset($_REQUEST['goto']) && $_REQUEST['goto'] != 'SilentInstall' && empty($_SESSION['js_minified'])) {
     require_once('jssource/minify.php');
     $_SESSION['js_minified'] = true;
 }
@@ -621,8 +621,8 @@ EOQ;
             $sugar_config['unique_key'] = get_unique_key();
         }
 
-        $validation_errors = validate_dbConfig('a');
-        if(count($validation_errors) > 0) {
+        $db_errors = validate_dbConfig('a');
+        if(count($db_errors) > 0) {
             $the_file = 'dbConfig_a.php';
             $si_errors = true;
         }

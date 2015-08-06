@@ -56,7 +56,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose'] = array(
             'placeholders' => true,
             'fields'       => array(
                 array(
-                    'name'           => 'base_module',
+                    'name'           => 'lbl_base_module',
                     'type'           => 'readonly',
                     'label'          => 'LBL_BASE_MODULE',
                     'span'           => 12,

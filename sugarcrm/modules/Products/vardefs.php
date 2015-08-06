@@ -155,7 +155,6 @@ $dictionary['Product'] = array(
         'contact_name' => array(
             'name' => 'contact_name',
             'rname' => 'name',
-            'db_concat_fields' => array(0 => 'first_name', 1 => 'last_name'),
             'source' => 'non-db',
             'len' => '510',
             'group' => 'contact_name',
@@ -510,7 +509,7 @@ $dictionary['Product'] = array(
             'type' => 'decimal',
             'len' => '12',
             'precision' => '2',
-            'validation' => array('type' => 'range', 'greaterthan' => 0),
+            'validation' => array('type' => 'range', 'greaterthan' => -1),
             'comment' => 'Quantity in use',
             'default' => 1.0
         ),

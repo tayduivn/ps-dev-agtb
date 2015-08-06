@@ -75,15 +75,39 @@
                 //onTab
                 if (e.which == 9) {
                     e.preventDefault();
+                    var $elem = $(e.target);
+                    var ctePlugin = app.plugins._get('ClickToEdit', 'field');
                     if(!e.shiftKey){
                         if (this.currentIndex + 1 < this.currentCTEList.length) {
-                            this.currentIndex++;
+                            if (_.isUndefined(ctePlugin)) {
+                                // no plugin exists to validate, tab to next element
+                                this.currentIndex++;
+                            } else {
+                                var isValid = ctePlugin.validateField($elem, $elem.val());
+                                if (isValid) {
+                                    $elem.parents('.isEditable').removeClass('error');
+                                    this.currentIndex++;
+                                } else {
+                                    $elem.parents('.isEditable').addClass('error');
+                                }
+                            }
                         } else {
                             this.currentIndex = 0;
                         }
                     } else {
                         if (this.currentIndex - 1 >= 0) {
-                            this.currentIndex--;
+                            if (_.isUndefined(ctePlugin)) {
+                                // no plugin exists to validate, tab to next element
+                                this.currentIndex--;
+                            } else {
+                                var isValid = ctePlugin.validateField($elem, $elem.val());
+                                if (isValid) {
+                                    $elem.parents('.isEditable').removeClass('error');
+                                    this.currentIndex--;
+                                } else {
+                                    $elem.parents('.isEditable').addClass('error');
+                                }
+                            }
                         } else {
                             this.currentIndex = this.currentCTEList.length - 1;
                         }
@@ -96,7 +120,7 @@
              * resets the CTE list of dom elements
              */
             resetCTEList: function() {
-                var oldLength = this.currentCTEList.length
+                var oldLength = this.currentCTEList.length;
                 this.currentCTEList = this.$el.find('.isEditable');
 
                 /*
@@ -277,8 +301,6 @@
              * Overwrite the default bindDomChange since we need to do inline validation
              */
             bindDomChange: function() {
-                if (this.type === 'date') return;   // we need to ignore the date field here
-
                 if (!(this.model instanceof Backbone.Model)) return;
 
                 var self = this;
@@ -567,26 +589,39 @@
              * @returns {*}
              */
             validateField: function(field, newValue) {
+                var fieldType = field.type || field.data("type");
 
                 if (_.isUndefined(newValue) || _.isEmpty(newValue)) {
                     // try to get the value again
+                    if (_.isUndefined(this.fieldTag)) {
+                        return false;
+                    }
                     newValue = this.$el.find(this.fieldTag).val();
                 }
 
-                if (field.type === 'int') {
+                if (fieldType === 'int') {
                     // check for percentages
                     newValue = this._parsePercentage(newValue, 0);
                     if (this._verifyIntValue(newValue)) {
                         return newValue;
                     }
-                } else if (field.type === 'currency') {
+                } else if (fieldType === 'currency') {
                     newValue = this._parsePercentage(newValue);
                     if (this._verifyCurrencyValue(newValue)) {
                         return newValue;
                     }
-                } else if (field.type === 'date') {
-                    if (this._verifyDateString(newValue)) {
-                        return newValue;
+                } else if (fieldType === 'date') {
+                    var dateFormat = app.date.convertFormat(app.user.getPreference('datepref'));
+
+                    if (dateFormat) {
+                        if (app.date(newValue, [dateFormat], true).isValid()) {
+                            return newValue;
+                        }
+                    } else {
+                        // revert to simple date checking if no preference exists
+                        if (app.date(newValue).isValid()) {
+                            return newValue;
+                        }
                     }
                 } else {
                     return newValue;
@@ -672,18 +707,6 @@
 
                 // the value passed all validation, return true
                 return true;
-            },
-
-            /**
-             * overridden from date.js -- Forecasts must validate date before setting the model
-             * whereas the base date.js field sets the model, then does validation when you save
-             *
-             * @param value
-             * @return {Boolean}
-             * @private
-             */
-            _verifyDateString: function(value) {
-                return _.isUndefined(app.validation.validators.datetime(this, value))
             },
 
             /**

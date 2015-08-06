@@ -24,7 +24,11 @@ class Bug61201Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function tearDown()
     {
-        MetaDataManagerBug61201::resetMetadataCacheQueueState();
+        SugarTestReflection::setProtectedValue('MetaDataManager', 'isQueued', false);
+        SugarTestReflection::setProtectedValue('MetaDataManager', 'inProcess', false);
+        $queue = SugarTestReflection::getProtectedValue('MetaDataManager', 'queue');
+        $queue->clear();
+
         TimeDate::getInstance()->allow_cache = true;
         SugarTestHelper::tearDown();
     }
@@ -53,17 +57,12 @@ class Bug61201Test extends Sugar_PHPUnit_Framework_TestCase
         MetaDataManager::enableCacheRefreshQueue();
         
         // Test the state of the queued flag
-        $state = MetaDataManagerBug61201::getQueueState();
+        $state = SugarTestReflection::getProtectedValue('MetaDataManager', 'isQueued');
         $this->assertTrue($state, "MetaDataManager cache queue state was not properly set");
         
         // Try to refresh a section while queueing is on
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_SERVERINFO);
-        
-        // Get the queue for checking its content
-        $queue = MetaDataManagerBug61201::getQueue();
-        $this->assertArrayHasKey('section', $queue, "The queue does not have a section element");
-        $this->assertArrayHasKey(MetaDataManager::MM_SERVERINFO, $queue['section'], "Server Info key of the cache queue was not set");
-        
+
         // Get the metadata again and ensure it is the same
         $mm->getMetadata();
         $newDateModified =  $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta_hash_base'"), 'datetime');
@@ -89,25 +88,5 @@ class Bug61201Test extends Sugar_PHPUnit_Framework_TestCase
             TimeDate::getInstance()->fromDb($newDateModified)->getTimestamp(),
             "Second cache file make time is not greater than the first."
         );
-    }
-}
-
-class MetaDataManagerBug61201 extends MetaDataManager
-{
-    public static function resetMetadataCacheQueueState()
-    {
-        MetaDataManager::$isQueued = false;
-        MetaDataManager::$inProcess = false;
-        MetaDataManager::$queue    = array();
-    }
-    
-    public static function getQueueState()
-    {
-        return MetaDataManager::$isQueued;
-    }
-    
-    public static function getQueue()
-    {
-        return MetaDataManager::$queue;
     }
 }

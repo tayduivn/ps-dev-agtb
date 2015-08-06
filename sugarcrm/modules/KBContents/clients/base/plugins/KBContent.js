@@ -1,14 +1,12 @@
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 (function(app) {
     app.events.on('app:init', function() {
@@ -37,11 +35,10 @@
              */
             onAttach: function(component, plugin) {
                 this.on('init', function() {
-                    this.context.on('button:create_localization_button:click', this.createLocalization, this);
-                    this.context.on('button:create_revision_button:click', this.createRevision, this);
-                    this.context.on('button:create_article_button:click', this.createArticle, this);
-                    this.context.on('button:create_article_button_subpanel:click', this.createArticleSubpanel, this);
-                    if (this.tplName === 'list' || this.tplName === 'panel-top') {
+                    this._initKBListeners();
+                    if (this.tplName === 'list' || this.tplName === 'panel-top' ||
+                        (!_.isUndefined(this.meta.type) && this.meta.type === 'subpanel-list')
+                    ) {
                         this.context.on('list:editrow:fire', _.bind(function(model, view) {
                             this._initValidationHandler(model);
                         }, this));
@@ -49,6 +46,21 @@
                         this._initValidationHandler(this.model);
                     }
                 });
+            },
+
+            /**
+             * Initialize KB specific listeners with ability to override.
+             * @private
+             */
+            _initKBListeners: function() {
+                if (_.isFunction(Object.getPrototypeOf(this)._initKBListeners)) {
+                    Object.getPrototypeOf(this)._initKBListeners.call(this);
+                    return;
+                }
+                this.context.on('button:create_localization_button:click', this.createLocalization, this);
+                this.context.on('button:create_revision_button:click', this.createRevision, this);
+                this.context.on('button:create_article_button:click', this.createArticle, this);
+                this.context.on('button:create_article_button_subpanel:click', this.createArticleSubpanel, this);
             },
 
             /**
@@ -80,18 +92,23 @@
                         }
                         return app.data.getRelatedModule(model.module, field.name) === module;
                     }),
-                    link = links.length === 1 ? links[0].name : 'kbcontents',
                     bodyTmpl = app.template.getField('htmleditable_tinymce', 'create-article', module),
                     attrs = {name: model.get('name'), kbdocument_body: bodyTmpl({model: model})},
-                    prefill = app.data.createRelatedBean(model, null, link, attrs),
+                    link, prefill, relatedFields;
+                if (links.length === 0) {
+                    prefill = app.data.createBean(module, attrs);
+                } else {
+                    link = links.length === 1 ? links[0].name : 'kbcontents';
+                    prefill = app.data.createRelatedBean(model, null, link, attrs);
                     relatedFields = app.data.getRelateFields(model.module, link);
 
-                if (!_.isEmpty(relatedFields)) {
-                    _.each(relatedFields, function(field) {
-                        var parentValue = model.get(field.rname);
-                        prefill.set(field.name, parentValue);
-                        prefill.set(field.id_name, model.get('id'));
-                    }, this);
+                    if (!_.isEmpty(relatedFields)) {
+                        _.each(relatedFields, function(field) {
+                            var parentValue = model.get(field.rname);
+                            prefill.set(field.name, parentValue);
+                            prefill.set(field.id_name, model.get('id'));
+                        }, this);
+                    }
                 }
                 app.drawer.open({
                     layout: 'create',
@@ -101,8 +118,10 @@
                         module: module
                     }},
                     function(context, newModel) {
-                        if (newModel !== undefined) {
+                        if (newModel !== undefined && links.length > 0) {
                             var viewContext = context.parent.parent || context.parent;
+                            var moduleContext = viewContext.getChildContext({module: module});
+                            moduleContext.set('skipFetch','false');
                             viewContext.trigger('subpanel:reload', {links: _.union(links, [link])});
                         }
                     }
@@ -350,9 +369,11 @@
              * @param {Function} callback Async.js waterfall callback.
              */
             _doValidateExpDateField: function(model, fields, errors, callback) {
-                var fieldName = 'exp_date',
+                var expFName = 'exp_date',
+                    actFName = 'active_date',
+                    fieldName = expFName,
                     expDate = model.get(fieldName),
-                    publishingDate = model.get('active_date'),
+                    publishingDate = model.get(actFName),
                     status = model.get('status'),
                     changed = model.changedAttributes(model.getSyncedAttributes()),
                     errorKeys = [];
@@ -364,12 +385,12 @@
                     (!publishingDate || app.date(publishingDate).isBefore(Date.now())))
                 ) {
                     publishingDate = app.date().formatServer(true);
-                    model.set('active_date', publishingDate);
+                    model.set(actFName, publishingDate);
                 }
 
                 if (status !== 'expired' && expDate && publishingDate && app.date(expDate).isBefore(publishingDate)) {
-                    if (!this.getField(fieldName)) {
-                        fieldName = 'active_date';
+                    if (!this.getField(fieldName) && this.getField(actFName)) {
+                        fieldName = actFName;
                     }
                     errors[fieldName] = errors[fieldName] || {};
                     errors[fieldName].expDateLow = true;
@@ -429,12 +450,16 @@
                                         this.handleFieldError(field, true);
                                     }
 
-                                    if (fieldElement.find('input[data-type=date]').length === 0) {
+                                    if (fieldElement.find(field.fieldTag).length === 0) {
                                         fieldElement.closest('[data-name=' + fieldName + ']')
                                             .find('.record-edit-link-wrapper')
                                             .click();
                                     }
-                                    fieldElement.find('input[data-type=date]').focus();
+                                    _.defer(function() {
+                                        field.$(field.fieldTag).focus();
+                                        field.focus();
+                                    });
+
                                 }
 
                                 // enable buttons in recordview

@@ -70,18 +70,17 @@
                 }
             },
             {
-                name: "activities",
-                route: "activities",
-                callback: function(){
+                name: 'activities',
+                route: 'activities',
+                callback: function() {
                     //when visiting activity stream, save last state of activities
                     //so future Home routes go back to activities
                     var lastHomeKey = getLastHomeKey();
                     app.user.lastState.set(lastHomeKey, homeOptions.activities);
 
                     app.controller.loadView({
-                        layout: "activities",
-                        module: "Activities",
-                        skipFetch: true
+                        layout: 'activities',
+                        module: 'Activities'
                     });
                 }
             },

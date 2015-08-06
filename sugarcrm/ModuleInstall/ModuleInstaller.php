@@ -1634,6 +1634,8 @@ class ModuleInstaller{
                 if (file_exists("custom/metadata/{$rel_name}MetaData.php"))
                     unlink( "custom/metadata/{$rel_name}MetaData.php" );
             }
+
+            unset($GLOBALS['dictionary'][$rel_name]);
         }
     }
 

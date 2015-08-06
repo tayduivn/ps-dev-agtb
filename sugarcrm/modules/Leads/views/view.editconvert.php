@@ -97,6 +97,8 @@ class ViewEditConvert extends SugarView
                 $moduleDefaults[$mod] = $this->parser->getDefaultDefForModule($mod);
             }
         }
+
+        asort($displayModules);
         $smarty->assign('availableModules', $displayModules);
         $smarty->assign('moduleDefaults', $this->jsonHelper->encode($moduleDefaults));
 

@@ -741,6 +741,37 @@ class Rome
         }
         return $blackListPath;
     }
+
+    public function generateMD5($dir)
+    {
+        $md5 = $this->calculateMD5($dir);
+        $md5String = var_export($md5, true);
+        $contents = <<<MD5
+<?php
+
+\$md5_string = $md5String;
+
+MD5;
+        file_put_contents($dir . '/files.md5', $contents);
+    }
+
+    protected function calculateMD5($dir)
+    {
+        $it = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($dir)
+        );
+
+        $results = array();
+        foreach ($it as $fileInfo) {
+            if (!$fileInfo->isFile()) {
+                continue;
+            }
+            $results['./' . $it->getSubPathName()] = md5_file($fileInfo);
+        }
+
+        ksort($results);
+        return $results;
+    }
 }
 
 function RomeErrorHandler($errno, $errstr, $errfile, $errline, $context)

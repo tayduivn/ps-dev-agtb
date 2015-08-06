@@ -15,10 +15,9 @@ require_once 'include/api/ApiHelper.php';
 
 class ApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    protected $toDelete = array();
-
     public function setUp()
     {
+        parent::setUp();
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -26,31 +25,10 @@ class ApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_list_strings');
     }
 
-    public static function tearDownAfterClass()
-    {
-        // rebuild the map JIC
-        SugarAutoLoader::buildCache();
-    }
-
     public function tearDown()
     {
+        parent::tearDown();
         SugarTestHelper::tearDown();
-
-        foreach($this->toDelete as $file) {
-            if(is_dir($file)) {
-                rmdir_recursive($file);
-                SugarAutoLoader::delFromMap($file, false);
-                continue;
-            }
-            @SugarAutoLoader::unlink($file);
-        }
-        $this->toDelete = array();
-    }
-
-    protected function put($file, $data)
-    {
-        $this->toDelete[] = $file;
-        SugarAutoLoader::put($file, $data);
     }
 
     public function testGetHelper_ReturnsBaseHelper()
@@ -77,19 +55,15 @@ class ApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetHelper_ModulePathSubDirectory_ReturnModuleHelper()
     {
-        $moduleName = 'Contacts';
-        $modulePath = 'Activities/Contacts';
-
-        mkdir_recursive("modules/Activities/Contacts");
-        $this->put('modules/' . $modulePath . '/' . $moduleName . 'ApiHelper.php', "<?php class {$moduleName}ApiHelper {}");
-
+        $moduleName = 'Activities';
         $api = new RestService();
 
-        $bean = BeanFactory::newBean('Contacts');
-        $bean->module_dir = $modulePath;
+        $bean = BeanFactory::newBean($moduleName);
+        $helper = ApiHelper::getHelper($api, $bean);
 
-        $helper = ApiHelper::getHelper($api,$bean);
+        $this->assertContains("/", $bean->module_dir);
+        $this->assertNotEquals($bean->module_name, $bean->module_dir);
+        $this->assertEquals("{$moduleName}ApiHelper", get_class($helper));
 
-        $this->assertEquals('ContactsApiHelper', get_class($helper));
     }
 }

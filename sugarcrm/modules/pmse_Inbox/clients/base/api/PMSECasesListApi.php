@@ -171,6 +171,12 @@ class PMSECasesListApi extends FilterApi
             ->equalsField('process.id', 'a.pro_id')
             ->equals('process.deleted', 0);
 
+        $q->joinTable('pmse_bpm_flow', array('alias' => 'pf', 'joinType' => 'INNER', 'linkingTable' => true))
+            ->on()
+            ->equalsField('pf.cas_id','a.cas_id');
+        $fields[] = array("pf.cas_sugar_module", 'cas_sugar_module');
+        $fields[] = array("pf.cas_sugar_object_id", 'cas_sugar_object_id');
+
         // get pro_title (process name) from pmse_bpmn_process table
         // because that is updated when process definition is edited
         $fields[] = array('process.name', 'pro_title');
@@ -215,6 +221,7 @@ class PMSECasesListApi extends FilterApi
                     break;
             }
         }
+        $q->where()->queryAnd()->addraw('pf.cas_flow_status != "CLOSED"');
         foreach ($options['order_by'] as $orderBy) {
             $q->orderBy($orderBy[0], $orderBy[1]);
         }
@@ -226,15 +233,6 @@ class PMSECasesListApi extends FilterApi
         $count = 0;
         $list = $q->execute();
         foreach ($list as $key => $value) {
-            if ($value["cas_status"] === 'IN PROGRESS') {
-                $list[$key]["cas_status"] = '<data class="label label-Leads">' . $value["cas_status"] . '</data>';
-            } elseif ($value["cas_status"] === 'COMPLETED' || $value["cas_status"] === 'TERMINATED') {
-                $list[$key]["cas_status"] = '<data class="label label-success">' . $value["cas_status"] . '</data>';
-            } elseif ($value["cas_status"] === 'CANCELLED') {
-                $list[$key]["cas_status"] = '<data class="label label-warning">' . $value["cas_status"] . '</data>';
-            } else {
-                $list[$key]["cas_status"] = '<data class="label label-important">' . $value["cas_status"] . '</data>';
-            }
 
             $list[$key]['cas_create_date'] = PMSEEngineUtils::getDateToFE($value['cas_create_date'],'datetime');
             $list[$key]['date_entered'] = PMSEEngineUtils::getDateToFE($value['date_entered'],'datetime');

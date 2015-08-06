@@ -95,13 +95,11 @@ describe('Plugins.JSTree', function() {
 
     it('On sync complete should rerender field.', function() {
         var nestedCollection = new app.NestedSetCollection(treeData);
-        var menuRefreshStub = sinonSandbox.stub(field, '_refreshContextMenu');
         var renderStub = sinonSandbox.stub(field, 'render');
 
         nestedCollection.root = 1;
         field.collection.root = 1;
         field.onNestedSetSyncComplete(nestedCollection);
-        expect(menuRefreshStub).toHaveBeenCalled();
         expect(renderStub).toHaveBeenCalled();
 
         renderStub.restore();

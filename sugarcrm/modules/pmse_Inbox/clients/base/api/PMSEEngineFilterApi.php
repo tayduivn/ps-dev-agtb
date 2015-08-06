@@ -468,8 +468,7 @@ class PMSEEngineFilterApi extends FilterApi
             ->on()
             ->equalsField('user_data.id', 'cas_user_id')
             ->equals('user_data.deleted', 0);
-        $fields[] = array("user_data.first_name", 'first_name');
-        $fields[] = array("user_data.last_name", 'last_name');
+        $fields[] = array("user_data.user_name", 'user_name');
 
         //INNER JOIN TEAM_DATA DEFINTION
         $q->joinTable('teams', array('alias' => 'team_data', 'joinType' => 'LEFT', 'linkingTable' => true))
@@ -538,7 +537,6 @@ class PMSEEngineFilterApi extends FilterApi
             $arr_aux['cas_sugar_object_id'] = $bean->fetched_row['cas_sugar_object_id'];
             $arr_aux['prj_id'] = $bean->fetched_row['prj_id'];
             $arr_aux['in_time'] = true;
-            $arr_aux['id'] = $bean->fetched_row['inbox_id'];
 
             $arr_aux['cas_user_id'] = $bean->fetched_row['cas_user_id'];
             $arr_aux['prj_created_by'] = $bean->fetched_row['prj_created_by'];

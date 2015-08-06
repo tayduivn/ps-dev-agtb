@@ -29,6 +29,7 @@ $viewdefs['Cases']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'name',
+          'link' => true,
         ),
         array(
           'target_record_key' => 'account_id',

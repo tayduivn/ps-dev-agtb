@@ -39,7 +39,15 @@
         errors = {};
 
         _.each(languages, function(lang) {
-            languagesToSave.push(_.first(_.keys(_.omit(lang, 'primary'))).toLowerCase());
+            var lng = _.omit(lang, 'primary'),
+                key = _.first(_.keys(lng)),
+                val = lang[key].trim();
+            if (val.length === 0) {
+                message = app.lang.get('ERR_CONFIG_LANGUAGES_EMPTY', 'KBContents');
+                errors['lang'] = {'required': true};
+            }
+            lang[key] = val;
+            languagesToSave.push(key.trim().toLowerCase());
         }, this);
 
         if (_.indexOf(languagesToSave, '') !== -1) {
@@ -56,8 +64,9 @@
                 level: 'error',
                 messages: message
             });
+        } else {
+            this.model.set('languages', languages);
         }
-
         callback(null, fields, errors);
     }
 })

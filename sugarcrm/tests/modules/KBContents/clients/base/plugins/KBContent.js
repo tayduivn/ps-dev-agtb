@@ -232,6 +232,9 @@ describe('Plugins.KBContents', function() {
         sandbox.stub(app.date.fn, 'formatServer', function() {
             return '2011-11-11';
         });
+        sandbox.stub(view, 'getField', function(name) {
+            return name !== 'exp_date';
+        });
 
         // Publish article with exp date. Should set the active_date automatically.
         view._doValidateExpDateField(fakeModel, [], errors, sandbox.stub());

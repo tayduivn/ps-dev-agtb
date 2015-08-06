@@ -388,5 +388,35 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['price_formulas']);
     }
 
+    /**
+     * @dataProvider dataProviderCheckQuantity
+     * @covers ::checkQuantity
+     * @param mixed $actual
+     * @param integer $expected
+     */
+    public function testQuantityNotDefaulted($actual, $expected)
+    {
+        $product = $this->getMockBuilder('Product')
+            ->setMethods(array('save'))
+            ->getMock();
+
+        $product->quantity = $actual;
+
+        SugarTestReflection::callProtectedMethod($product, 'checkQuantity');
+
+        $this->assertEquals($expected, $product->quantity);
+    }
+
+    public static function dataProviderCheckQuantity()
+    {
+        return array(
+            array('', 0),
+            array(null, 0),
+            array(0, 0),
+            array(1, 1),
+            array(42,42),
+        );
+    }
+
 
 }

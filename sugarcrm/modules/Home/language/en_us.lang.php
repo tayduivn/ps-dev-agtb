@@ -52,7 +52,6 @@ $mod_strings = array (
     'LBL_SOURCE_BOOTSTRAP' => 'Twitterbootstrap - HTML, CSS, and JS toolkit from Twitter.',
     'LBL_SOURCE_ASYNC' => 'Async - Async utilities for node and the browser.',
     'LBL_SOURCE_PHPEXCEL' => 'PHPExcel - A pure PHP library for reading and writing spreadsheet files.', 
-    'LBL_SOURCE_TIMEAGO' => 'jquery timeago - A jQuery plugin that makes it easy to support automatically updating fuzzy timestamps.',
   'LNK_NEW_LEAD' => 'Create Lead',
   'LNK_NEW_CASE' => 'Create Case',
   'LNK_NEW_NOTE' => 'Create Note or Attachment',

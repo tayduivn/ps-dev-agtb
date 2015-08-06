@@ -1030,6 +1030,7 @@ $mod_strings = array (
 'ML_SUGAR_LOADING_POLICY'=>'The Sugar Open Cloud package loading policies are detailed in the',
 'ML_SUGAR_KB'=>'SugarCRM Knowledge Base',
 'ML_SUGAR_DZ'=>'SugarCRM Developer Zone',
+'ML_PKG_SCAN_GUIDE'=>'Package Scan Policy Guide',
 'ML_AVAIL_RESTRICTION'=>'The available restrictions and exceptions are detailed in the',
 'ML_OVERRIDE_CORE_FILES'=>'Overriding of core SugarCRM files is not allowed ',
 'ML_PATH_MAY_NOT_CONTAIN'=>'File path may not contain',
@@ -1158,6 +1159,19 @@ $mod_strings = array (
     'LBL_SPRITES_PROCESSING_DIR' => 'Processing directory {0}',
     'LBL_SPRITES_ADDED' => 'Added sprite {0}',
     'LBL_SPRITES_EXCLUDING_FILE' => 'Excluding file: {0}',
+
+    // Web Sockets
+    'LBL_WEB_SOCKET_CONFIGURATION_CLIENT' => 'WebSocket Client Side',
+    'LBL_WEB_SOCKET_CONFIGURATION_SERVER' => 'WebSocket Server Side',
+    'LBL_WEB_SOCKET_CONFIGURATION_URL' => 'URL',
+    'LBL_WEB_SOCKET_CONFIGURATION_SECURED' => 'Secure connection',
+    'LBL_WEB_SOCKET_CONFIGURATION' => 'WebSocket Configuration',
+    'LBL_WEB_SOCKET_CONFIGURATION_DESC' => 'Here you can specify client and server URLs to web socket server.',
+
+    'ERR_WEB_SOCKET_CLIENT_URL'         => 'WebSocket Client URL required',
+    'ERR_WEB_SOCKET_SERVER_URL'         => 'WebSocket Server URL required',
+    'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL.',
+    'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL.',
 
     //FTS
     'LBL_FTS_TYPE' => 'System Type',

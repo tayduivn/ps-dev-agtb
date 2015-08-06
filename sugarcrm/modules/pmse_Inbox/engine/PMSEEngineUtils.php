@@ -54,7 +54,7 @@ class PMSEEngineUtils
      */
     public static $specialFields = array(
         'All' => array('created_by', 'modified_user_id'),
-        'BR' => array('assigned_user_id', 'email1'),
+        'BR' => array('assigned_user_id', 'email1', 'outlook_id'),
         'ET' => array('email1'),
         'AC' => array('assigned_user_id'),
         'RR' => array(),
@@ -988,7 +988,8 @@ class PMSEEngineUtils
     public static function isValidField($def, $type = '')
     {
         // If a field is explicitly allowed it should automatically be valid
-        if (!empty($def['processes'])) {
+        // unless it is blacklisted for a specific type (like business rules)
+        if (!empty($def['processes']) && self::blackListFields($def, $type)) {
             return true;
         }
 
@@ -1011,13 +1012,31 @@ class PMSEEngineUtils
             }
         }
         $result = (self::specialFields($def, $type)) ? true : $result;
-        $result = $result && self::blackListFields($def);
+        $result = $result && self::blackListFields($def, $type);
         return $result;
     }
 
-    public static function blackListFields($def)
+    public static function blackListFields($def, $type)
     {
-        $blackList = array('deleted', 'system_id', 'mkto_sync', 'mkto_id', 'mkto_lead_score', 'parent_type', 'user_name', 'user_hash', 'portal_app', 'portal_active', 'portal_name');
+        //set up black list to be dependent on which view (type) we are looking at
+        $blackList = array(
+            'ALL' => array(
+                'deleted', 'system_id', 'mkto_sync', 'mkto_id', 'mkto_lead_score',
+                'parent_type', 'user_name', 'user_hash', 'portal_app', 'portal_active',
+                'portal_name', 'password',
+            ),
+            'BR' => array(
+                'duration_hours', 'duration_minutes', 'repeat_type',
+            ),
+        );
+
+        //merge global pmse blacklist with the view specific one if type is given
+        if (!empty($type) && isset($blackList[$type])) {
+            $blackList = array_merge($blackList['ALL'], $blackList[$type]);
+        } else {
+            $blackList = $blackList['ALL'];
+        }
+
         if (in_array($def['name'], $blackList)) {
             return false;
         }

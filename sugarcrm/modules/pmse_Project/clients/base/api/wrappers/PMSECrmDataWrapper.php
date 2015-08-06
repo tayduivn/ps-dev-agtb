@@ -933,7 +933,8 @@ class PMSECrmDataWrapper implements PMSEObservable
         $res->success = true;
         $output = array();
         $where = 'users.deleted = 0 ';
-        $where .= ' AND users.employee_status = \'Active\' ';
+        $where .= ' AND users.status = \'Active\' ';
+        $where .= ' AND NOT (users.is_group = 1 OR users.portal_only = 1)';
 
         if (!empty($filter)) {
             $where .= ' AND (users.first_name LIKE \'%' . $filter . '%\' ';
@@ -2174,6 +2175,7 @@ class PMSECrmDataWrapper implements PMSEObservable
             case 'assigned_user_id':
                 $field['type'] = 'user';
                 $field['vname'] = 'LBL_ASSIGNED_TO';
+                $field['required'] = true;
                 break;
             case 'created_by':
             case 'modified_user_id':

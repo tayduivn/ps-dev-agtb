@@ -277,6 +277,16 @@ class Product extends SugarBean
         return $the_where;
     }
 
+    /**
+     * Utility method for checking the quantity
+     */
+    protected function checkQuantity()
+    {
+        if ($this->quantity === '' || is_null($this->quantity)) {
+            $this->quantity = 0;
+        }
+    }
+
     public function save($check_notify = false)
     {
         //If an opportunity_id value is provided, lookup the Account information (if available)
@@ -309,9 +319,7 @@ class Product extends SugarBean
             $this->deal_calc = 0;
         }
 
-        if ($this->quantity == '') {
-            $this->quantity = 1;
-        }
+        $this->checkQuantity();
 
         $this->calculateDiscountPrice();
 

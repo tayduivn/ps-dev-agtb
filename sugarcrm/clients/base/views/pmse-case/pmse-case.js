@@ -24,6 +24,7 @@
         options.meta.hashSync = _.isUndefined(options.meta.hashSync) ? true : options.meta.hashSync;
         options.meta.buttons = this.case.buttons;
         this._super('initialize', [options]);
+        this.context.set("layout", "record");
         this.buttons = {};
         this.createMode = this.context.get('create') ? true : false;
         this.action = 'detail';
@@ -105,6 +106,7 @@
             }
         });
     },
+
     caseApprove: function () {
         var value = this;
         app.alert.show( 'confirm_approve', {
@@ -134,6 +136,7 @@
             var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route','',{},{});
             app.api.call('update', pmseInboxUrl, value,{
                 success: function (){
+                    self.save(self);
                     app.alert.show('success_approve', {
                         level: 'success',
                         messages: app.lang.get('LBL_PA_PROCESS_APPROVED_SUCCESS', 'pmse_Inbox'),
@@ -174,6 +177,7 @@
             var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route','',{},{});
             app.api.call('update', pmseInboxUrl, value,{
                 success: function (){
+                    self.save(self);
                     app.alert.show('success_reject', {
                         level: 'success',
                         messages: app.lang.get('LBL_PA_PROCESS_REJECTED_SUCCESS', 'pmse_Inbox'),
@@ -218,6 +222,7 @@
             var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route','',{},{});
             app.api.call('update', pmseInboxUrl, value,{
                 success: function () {
+                    self.save(self);
                     app.alert.show('success_route', {
                         level: 'success',
                         messages: app.lang.get('LBL_PA_PROCESS_ROUTED_SUCCESS', 'pmse_Inbox'),
@@ -227,6 +232,13 @@
                 }
             });
         }
+    },
+
+    save: function (self) {
+        var options;
+        options = { showAlerts: false };
+        options = _.extend({}, options, self.getCustomSaveOptions(options));
+        self.model.save({}, options);
     },
 
     redirectCase: function(isRoute){

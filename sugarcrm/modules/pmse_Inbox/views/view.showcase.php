@@ -249,7 +249,8 @@ class pmse_InboxViewShowCase extends SugarView
 
         $caseBean = BeanFactory::newBean('pmse_Inbox');
         $joinTables = array(
-            array('LEFT', 'pmse_bpm_flow', 'pmse_inbox.cas_id = pmse_bpm_flow.cas_id')
+            array('LEFT', 'pmse_bpm_flow', 'pmse_inbox.cas_id = pmse_bpm_flow.cas_id'),
+            array('INNER', 'pmse_bpmn_process', 'pmse_inbox.pro_id = pmse_bpmn_process.id'),
         );
         $records = $this->wrapper->getSelectRows($caseBean, 'cas_id desc',
             "pmse_bpm_flow.cas_id = $cas_id and cas_index = $cas_index ", 0, -1, -1, array('*'), $joinTables);
@@ -303,7 +304,9 @@ FLIST;
                 $data_aux = new stdClass();
                 $data_aux->cas_task_start_date = $caseData['cas_task_start_date'];
                 $data_aux->cas_delegate_date = $caseData['cas_delegate_date'];
-                $expTime = PMSECaseWrapper::expectedTime($this->activityRow['act_expected_time'], $data_aux);
+                // Commenting out below line. We don't want due date to be calculated dynamically. Once a process due date is set it should stay.
+                // $expTime = PMSECaseWrapper::expectedTime($this->activityRow['act_expected_time'], $data_aux);
+                $expTime = PMSECaseWrapper::processDueDateTime($caseData['cas_due_date']);
                 $expected_time = $expTime['expected_time'];
                 $expected_time_warning = $expTime['expected_time_warning'];
                 if ($expected_time_warning == true) {
