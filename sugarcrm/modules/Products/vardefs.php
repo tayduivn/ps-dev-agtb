@@ -509,7 +509,7 @@ $dictionary['Product'] = array(
             'type' => 'decimal',
             'len' => '12',
             'precision' => '2',
-            'validation' => array('type' => 'range', 'greaterthan' => 0),
+            'validation' => array('type' => 'range', 'greaterthan' => -1),
             'comment' => 'Quantity in use',
             'default' => 1.0
         ),

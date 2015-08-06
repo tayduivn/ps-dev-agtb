@@ -175,7 +175,7 @@ class RevenueLineItem extends SugarBean
     protected function checkQuantity()
     {
         if ($this->quantity === '' || is_null($this->quantity)) {
-            $this->quantity = 1;
+            $this->quantity = 0;
         }
     }
 
