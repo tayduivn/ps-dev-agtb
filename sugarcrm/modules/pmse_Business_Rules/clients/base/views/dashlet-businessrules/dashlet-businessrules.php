@@ -162,6 +162,7 @@ $viewdefs[$module_name]['base']['view']['dashlet-businessrules'] = array(
             ),
             'fields' => array(
                 'name',
+                'rst_module',
                 'assigned_user_name',
                 'assigned_user_id',
                 'date_entered',
