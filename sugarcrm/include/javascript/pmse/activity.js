@@ -1943,6 +1943,7 @@ AdamActivity.prototype.createAssignUsersAction = function () {
         change: hiddenUpdateFn,
         disabled: true,
         searchURL: 'pmse_Project/CrmData/users?filter={TERM}',
+        placeholder: translate('LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT'),
         options: [
             {'text': translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), 'value': 'currentuser'},
             {'text': translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), 'value': 'owner'},
@@ -2152,7 +2153,8 @@ AdamActivity.prototype.actionFactory = function (type) {
                 name: 'act_assign_user',
                 submit: true,
                 searchURL: 'pmse_Project/CrmData/users?filter={TERM}',
-                required: true
+                required: true,
+                placeholder: translate('LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT')
             });
             //here add checkbox
             updateRecordOwner = new CheckboxField({
@@ -2533,7 +2535,7 @@ AdamActivity.prototype.actionFactory = function (type) {
                             if (rules && rules.success) {
                                 aRules = aRules.concat(rules.result);
                                 combo_business.setOptions(aRules);
-                                if (data) {
+                                if (data && data.act_fields) {
                                     combo_business.setValue(data.act_fields || '');
                                 }
                             }

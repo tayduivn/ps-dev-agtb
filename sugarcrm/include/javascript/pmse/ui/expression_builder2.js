@@ -1699,6 +1699,10 @@ ExpressionControl.prototype._createUserPanel = function () {
                         switch (condition) {
                             case 'USER_ADMIN':
                                 dependantField.clearOptions().disable();
+                                var spans = document.getElementsByClassName('select2-chosen');
+                                for (var i=0;i<spans.length;i++) {
+                                    spans[i].innerText = "";
+                                }
                                 break;
                             case 'USER_ROLE':
                                 dependantField.setDataURL(settings.userRolesDataURL)
@@ -1712,6 +1716,10 @@ ExpressionControl.prototype._createUserPanel = function () {
                                 dependantField.clearOptions()
                                     .setSearchURL('pmse_Project/CrmData/users?filter={TERM}')
                                     .enable();
+                                    var spans = document.getElementsByClassName('select2-chosen');
+                                    for (var i=0;i<spans.length;i++) {
+                                        spans[i].innerText = translate('LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT');
+                                    }
                         }
                     }
                 }

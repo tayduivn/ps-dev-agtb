@@ -1573,7 +1573,10 @@ SearchableCombobox.prototype.createHTML = function () {
         placeholder: this._placeholder,
         query: this._queryFunction(),
         initSelection: this._initSelection(),
-        width: this.fieldWidth || "200px"
+        width: this.fieldWidth || "200px",
+        formatNoMatches: function (term) {
+            return (term && (term !== '')) ? translate('LBL_PA_FORM_COMBO_NO_MATCHES_FOUND') : '';
+        }
     });
     this.controlObject.select2("val", this.value, false);
     if (this.readOnly) {
