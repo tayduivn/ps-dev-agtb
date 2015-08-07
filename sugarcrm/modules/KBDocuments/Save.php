@@ -31,6 +31,11 @@ if(!$KBDocument->ACLAccess('Save')){
 		sugar_cleanup(true);
 }
 
+//Clean the HTML body before we start operating on input.
+if (isset($_REQUEST['body_html'])) {
+    $_REQUEST['body_html'] = SugarCleaner::getInstance()->cleanHtml($_REQUEST['body_html'], true);
+}
+
 $KBDocument = populateFromPost('', $KBDocument);
 //set check_notify flag
 $check_notify = false;
@@ -82,34 +87,34 @@ if (isset($KBDocument->id)) {
 
   //save document tags
 
-  $KBDocument->save($check_notify);
-  $return_id = $KBDocument->id;
-  $KBRevision->retrieve($KBDocument->kbdocument_revision_id);
-  //update the content
-  $KBContent = BeanFactory::getBean('KBContents', $KBRevision->kbcontent_id);
-  $KBContent->team_id = $KBDocument->team_id;
-  if(strpos(getenv('HTTP_USER_AGENT'), 'MSIE')){
+    $KBDocument->save($check_notify);
+    $return_id = $KBDocument->id;
+    $KBRevision->retrieve($KBDocument->kbdocument_revision_id);
+    //update the content
+    $KBContent = BeanFactory::getBean('KBContents', $KBRevision->kbcontent_id);
+    $KBContent->team_id = $KBDocument->team_id;
+    if (strpos(getenv('HTTP_USER_AGENT'), 'MSIE')) {
       $KBContent->kbdocument_body = $_REQUEST['body_html'];
-  } else{
-      $article_body = '';
-      $url_arr = parse_url($sugar_config['site_url']);
+    } else {
+        $article_body = '';
+        $url_arr = parse_url($sugar_config['site_url']);
       $article_body = str_replace($sugar_config['site_url'].'/cache/images/', $url_arr['path'].'/cache/images/', $_REQUEST['body_html']);
-      $article_body = str_replace($url_arr['path'].'/cache/images/', $sugar_config['site_url'].'/cache/images/', $article_body);
-      $KBContent->kbdocument_body = $article_body;
-  }
-  $KBContent->save();
-  //save tags
-	if(isset($_REQUEST['docTagIds'])  && $_REQUEST['docTagIds'] != null){
-		for($i=0;$i<count($_REQUEST['docTagIds']);$i++){
-			if(isset($_REQUEST['docTagIds'][$i]) && !empty($_REQUEST['docTagIds'][$i])) {
-	           $KBDocumentKBTag = BeanFactory::getBean('KBDocumentKBTags');
-			   $KBDocumentKBTag->kbtag_id = $_REQUEST['docTagIds'][$i];
-			   $KBDocumentKBTag->kbdocument_id = $KBDocument->id;
-			   $KBDocumentKBTag->team_id = $KBDocument->team_id;
-			   $KBDocumentKBTag->save();
-			}
-		}
-	}
+        $article_body = str_replace($url_arr['path'] . '/cache/images/', $sugar_config['site_url'] . '/cache/images/', $article_body);
+        $KBContent->kbdocument_body = $article_body;
+    }
+    $KBContent->save();
+    //save tags
+    if (isset($_REQUEST['docTagIds']) && $_REQUEST['docTagIds'] != null) {
+        for ($i = 0; $i < count($_REQUEST['docTagIds']); $i++) {
+            if (isset($_REQUEST['docTagIds'][$i]) && !empty($_REQUEST['docTagIds'][$i])) {
+                $KBDocumentKBTag = BeanFactory::getBean('KBDocumentKBTags');
+                $KBDocumentKBTag->kbtag_id = $_REQUEST['docTagIds'][$i];
+                $KBDocumentKBTag->kbdocument_id = $KBDocument->id;
+                $KBDocumentKBTag->team_id = $KBDocument->team_id;
+                $KBDocumentKBTag->save();
+            }
+        }
+    }
 
 	//also update the already saved kbdocuments_kbtags team_id
 	$KBDocumentKBTag = BeanFactory::getBean('KBDocumentKBTags');
