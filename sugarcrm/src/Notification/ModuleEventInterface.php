@@ -13,7 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Notification;
 
 /**
- * Interface for events which can be emitted in Module or can be related to module.
+ * Interface for events in module.
  *
  * interface Event
  * @package Notification
@@ -22,7 +22,7 @@ interface ModuleEventInterface extends EventInterface
 {
 
     /**
-     * Function return module name in which emitted event.
+     * Returns name of module.
      *
      * @return string module name
      */

@@ -15,7 +15,7 @@ namespace Sugarcrm\Sugarcrm\Notification\BeanEmitter;
 use Sugarcrm\Sugarcrm\Notification\ModuleEventInterface;
 
 /**
- * Class event which emits in Bean related to Bean.
+ * Prototype event for Bean Emitter. Should be used for all events on bean.
  *
  * class BeanEmitter/Event
  * @package Notification
@@ -23,7 +23,7 @@ use Sugarcrm\Sugarcrm\Notification\ModuleEventInterface;
 class Event implements ModuleEventInterface
 {
     /**
-     * Bean in which event is emitted.
+     * Target bean is enough here.
      *
      * @var \SugarBean
      */
@@ -38,7 +38,7 @@ class Event implements ModuleEventInterface
 
     /**
      * @param string $name event name
-     * @param \SugarBean $bean in which event is emitted
+     * @param \SugarBean $bean target bean
      */
     public function __construct($name, \SugarBean $bean)
     {
@@ -47,9 +47,9 @@ class Event implements ModuleEventInterface
     }
 
     /**
-     * Event name.
+     * Returns name of event.
      *
-     * @return string
+     * @return string event name
      */
     public function __toString()
     {
@@ -57,9 +57,9 @@ class Event implements ModuleEventInterface
     }
 
     /**
-     * Function return SugarBean with which event is emitted.
+     * Returns target bean.
      *
-     * @return \SugarBean
+     * @return \SugarBean target bean
      */
     public function getBean()
     {
@@ -67,9 +67,9 @@ class Event implements ModuleEventInterface
     }
 
     /**
-     * Function return module name in with which event is emitted.
+     * Returns name of module of target bean.
      *
-     * @return string
+     * @return string name of module
      */
     public function getModuleName()
     {

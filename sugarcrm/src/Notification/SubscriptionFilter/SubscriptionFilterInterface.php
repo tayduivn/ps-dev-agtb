@@ -15,7 +15,8 @@ namespace Sugarcrm\Sugarcrm\Notification\SubscriptionFilter;
 use Sugarcrm\Sugarcrm\Notification\EventInterface;
 
 /**
- * Query builder which filter out users by some reference to an event.
+ * Interface for filters.
+ * Filter should detect events and extend query to filter users for suitable events.
  *
  * Interface SubscriptionFilter/SubscriptionFilterInterface
  * @package Notification
@@ -24,7 +25,7 @@ interface SubscriptionFilterInterface
 {
 
     /**
-     * Function return string label from $app_string in which hold subscription filter name.
+     * Returns key of label from $app_string with own name.
      *
      * @return string label from app_string
      */
@@ -33,24 +34,24 @@ interface SubscriptionFilterInterface
     /**
      * Filtering query, join user, return joined user table name.
      *
-     * @param EventInterface $event for which will be filter outed users
-     * @param \SugarQuery $query which will be filter out users by some reference
+     * @param EventInterface $event with source data to build query
+     * @param \SugarQuery $query empty SugarQuery object
      * @return string alias of the user table in query
      */
     public function filterQuery(EventInterface $event, \SugarQuery $query);
 
     /**
-     * Order which depict priority subscription filter.
+     * Returns order of filter, higher number wins.
      *
-     * @return integer index number
+     * @return integer order number
      */
     public function getOrder();
 
     /**
-     * Function return is Subscription Filter support current event.
+     * Checks passed event object and returns true of false if the event can be processed by this filter.
      *
-     * @param EventInterface $event for checking is subscription filter support it
-     * @return boolean is subscription filter support event
+     * @param EventInterface $event for checking
+     * @return boolean true if event is supported or false
      */
     public function supports(EventInterface $event);
 }
