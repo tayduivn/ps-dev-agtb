@@ -505,8 +505,6 @@ class Lead extends Person {
 	}
 
 	function save($check_notify = false) {
-		if(empty($this->status))
-			$this->status = 'New';
 		// call save first so that $this->id will be set
 		$value = parent::save($check_notify);
 		return $value;

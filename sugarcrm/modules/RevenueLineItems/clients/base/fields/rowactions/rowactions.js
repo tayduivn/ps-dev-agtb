@@ -8,18 +8,20 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+/*
+ * @class View.Fields.Base.RevenueLineItems.RowactionsField
+ * @alias SUGAR.App.view.fields.BaseRevenueLineItemsRowactionsField
+ * @extends View.Fields.Base.RowactionsField
+ */
 ({
-    extendsFrom: 'PreviewView',
+    extendsFrom: 'RowactionsField',
 
     /**
-     * Track the original model passed in from the worksheet, this is needed becuase of how the base preview works
+     * Enable or disable caret depending on if there are any enabled actions in the dropdown list
+     * @private
+     * @override
      */
-    originalModel: undefined,
-
-    _renderField: function(field, $fieldEl) {
-        if (field.type === 'hidden') {
-            $fieldEl.parents('.row-fluid').eq(0).hide();
-        }
-        this._super("_renderField", arguments);
+    _updateCaret: function() {
+        // Left empty on purpose, the menu should always show
     }
 })

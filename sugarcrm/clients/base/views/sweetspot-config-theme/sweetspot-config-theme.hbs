@@ -11,8 +11,6 @@
  */
 --}}
 <h1>{{str 'LBL_SWEETSPOT_THEME'}}</h1>
-<div>
-    {{#each meta.fields}}
+{{#each meta.fields}}
     {{field ../this model=../model template=../action}}
-    {{/each}}
-</div>
+{{/each}}
