@@ -414,6 +414,11 @@ class Email extends SugarBean {
 		global $current_user;
 		global $timedate;
 
+        // The fully constructed MIME message -- the email as it was transmitted to the mail server, complete with
+        // headers and message parts -- is stored in this variable to allow the caller to choose to do something with
+        // original content that was delivered.
+        $sentMessage = null;
+
         $saveAsDraft = !empty($request['saveDraft']);
         if (!$saveAsDraft && !empty($request["MAIL_RECORD_STATUS"]) &&  $request["MAIL_RECORD_STATUS"]=='archived') {
             $archived = true;
@@ -799,7 +804,7 @@ class Email extends SugarBean {
             }
 
             if (!is_null($mailer)) {
-                $mailer->send();
+                $sentMessage = $mailer->send();
             }
         }
         catch (MailerException $me) {
@@ -917,31 +922,37 @@ class Email extends SugarBean {
 			$this->save();
 		}
 
+        $mailConfigId = ($mailConfig instanceof OutboundEmailConfiguration) ? $mailConfig->getConfigId() : null;
 
-        /**** --------------------------------- ?????????
-		if(!empty($request['fromAccount'])) {
-            $ie = new InboundEmail();
-            $ie->retrieve($request['fromAccount']);
-			if (isset($ie->id) && !$ie->isPop3Protocol() && $mail->oe->mail_smtptype != 'gmail') {
-				$sentFolder = $ie->get_stored_options("sentFolder");
-				if (!empty($sentFolder)) {
-					$data = $mail->CreateHeader() . "\r\n" . $mail->CreateBody() . "\r\n";
-					$ie->mailbox = $sentFolder;
-					if ($ie->connectMailserver() == 'true') {
-						$connectString = $ie->getConnectString($ie->getServiceString(), $ie->mailbox);
-						$returnData = imap_append($ie->conn,$connectString, $data, "\\Seen");
-						if (!$returnData) {
-							$GLOBALS['log']->debug("could not copy email to {$ie->mailbox} for {$ie->name}");
-						} // if
-					} else {
-						$GLOBALS['log']->debug("could not connect to mail serve for folder {$ie->mailbox} for {$ie->name}");
-					} // else
-				} else {
-					$GLOBALS['log']->debug("could not copy email to {$ie->mailbox} sent folder as its empty");
-				} // else
-			} // if
-		} // if
-        ------------------------------------- ****/
+        if (!empty($request['fromAccount']) && !empty($sentMessage) && !empty($mailConfigId)) {
+            $ie = BeanFactory::getBean('InboundEmail', $request['fromAccount']);
+            $oe = new OutboundEmail();
+            $oe->retrieve($mailConfigId);
+
+            if (isset($ie->id) && !$ie->isPop3Protocol() && !empty($oe->id) && $oe->mail_smtptype != 'gmail') {
+                $sentFolder = $ie->get_stored_options('sentFolder');
+
+                if (!empty($sentFolder)) {
+                    $ie->mailbox = $sentFolder;
+
+                    if ($ie->connectMailserver() == 'true') {
+                        $connectString = $ie->getConnectString($ie->getServiceString(), $ie->mailbox);
+
+                        if (imap_append($ie->conn, $connectString, $sentMessage, '\\Seen')) {
+                            $GLOBALS['log']->info("copied email ({$this->id}) to {$ie->mailbox} for {$ie->name}");
+                        } else {
+                            $GLOBALS['log']->debug("could not copy email to {$ie->mailbox} for {$ie->name}");
+                        }
+                    } else {
+                        $GLOBALS['log']->debug(
+                            "could not connect to mail server for folder {$ie->mailbox} for {$ie->name}"
+                        );
+                    }
+                } else {
+                    $GLOBALS['log']->debug("could not copy email to {$ie->mailbox} sent folder as its empty");
+                }
+            }
+        }
 
 		return true;
 	} // end email2Send

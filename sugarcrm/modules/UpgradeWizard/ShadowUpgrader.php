@@ -136,7 +136,12 @@ eoq2;
             $context['script_mask'] = UpgradeScript::UPGRADE_CUSTOM|UpgradeScript::UPGRADE_DB;
         }
         $context['new_source_dir'] = $context['post_template'];
+        $context['original_source_dir'] = $context['source_dir'];
         $context['backup'] = 0;
+
+        //As of 7.6.1.0 Health check is now included and packaged in the Shadow Upgrader
+        $context['health_check_path'] = __DIR__ . DIRECTORY_SEPARATOR . 'HealthCheck';
+
         return $context;
     }
 
@@ -169,10 +174,19 @@ eoq2;
     }
 
     /**
+     * Load version file from path
+     * @return array
+     */
+    protected function loadVersion($dir = "")
+    {
+        return parent::loadVersion($this->context['post_template']);
+    }
+
+    /**
      * @see CliUpgrader::getManifest()
      * @return array
      */
-    protected function getManifest()
+    public function getManifest()
     {
         // load target data
         chdir($this->context['post_template']);
@@ -212,8 +226,8 @@ eoq2;
             $templ_dir = $this->context['post_template'];
         }
         chdir($templ_dir);
-        $this->log("Shadow configuration: $templ_dir -> {$this->context['source_dir']}");
-        shadow($templ_dir, $this->context['source_dir'], array("cache", "upload", "config.php"));
+        $this->log("Shadow configuration: $templ_dir -> {$this->context['original_source_dir']}");
+        shadow($templ_dir, $this->context['original_source_dir'], array("cache", "upload", "config.php"));
         $this->context['source_dir'] = $templ_dir;
         return parent::initSugar();
     }
@@ -235,6 +249,24 @@ eoq2;
     protected function getPackageUid()
     {
         return md5($this->context['post_template']);
+    }
+
+    /**
+     * @see UpgradeDriver::getScripts()
+     *
+     * @param string $dir Sugar directory
+     * @param string $stage
+     * @return array
+     */
+    protected function getScripts($dir, $stage)
+    {
+        //For the pre stage step, use the post template location
+        if($stage == 'pre') {
+            $dir = $this->context['post_template'];
+            $this->log("Pre stage will get scripts from location: $dir");
+        }
+
+        return parent::getScripts($dir, $stage);
     }
 }
 

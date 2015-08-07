@@ -45,10 +45,9 @@ class SmtpMailer extends BaseMailer
     const MailTransmissionProtocol = "smtp";
 
     /**
-     * Performs the send of an email using PHPMailer (currently version 5.2.1).
+     * Sends email using PHPMailer.
      *
-     * @access public
-     * @throws MailerException
+     * {@inheritDoc}
      */
     public function send()
     {
@@ -88,6 +87,8 @@ class SmtpMailer extends BaseMailer
             $message .= "--- Mail Headers ---\n" . print_r($headers, true);
             $GLOBALS["log"]->debug($message);
             /*--- Debug Only ----------------------------------------------------*/
+
+            return $mailer->getSentMIMEMessage();
         } catch (Exception $e) {
             // eat the phpmailerException but use it's message to provide context for the failure
             $me = new MailerException($e->getMessage(), MailerException::FailedToSend);

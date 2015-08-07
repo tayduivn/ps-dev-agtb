@@ -14,7 +14,7 @@
  * @extends View.Layout
  */
 ({
-    className: 'container-fluid',
+    className: 'columns',
 
     // FIXME: Change this to 'UnsavedChanges' when SC-4167 gets merged. It won't
     // work until then, because 'Editable' can only be attached to a view.

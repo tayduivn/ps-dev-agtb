@@ -133,7 +133,6 @@ class PipelineChartApi extends SugarApi
             if (empty($row['amount'])) {
                 $row['amount'] = 0;
             }
-
             // convert to the base currency
             $base_amount = SugarCurrency::convertWithRate($row[$amount_field], $row['base_rate']);
 
@@ -147,16 +146,16 @@ class PipelineChartApi extends SugarApi
             $total->add($base_amount);
         }
 
-        // get the default currency
+        // get the default currency for the user
         /* @var $currency Currency */
-        $currency = SugarCurrency::getBaseCurrency();
+        $currency = Currency::getUserCurrency();
 
         // setup for return format
         $return_data = array();
         $series = 0;
         $previous_value = SugarMath::init('0');
         foreach ($data as $key => $item) {
-            $value = $item['total'];
+            $value = SugarCurrency::convertAmountFromBase($item['total'], $currency->id);
             // set up each return key
             $return_data[] = array(
                 'key' => $key,          // the label/sales stage
@@ -181,7 +180,7 @@ class PipelineChartApi extends SugarApi
         // actually return the formatted data
         $mod_strings = return_module_language($GLOBALS['current_language'], $seed->module_name);
         //return the total from the SugarMath Object.
-        $total = $total->result();
+        $total = SugarCurrency::convertAmountFromBase($total->result(), $currency->id);
         return array(
             'properties' => array(
                 'title' => $mod_strings['LBL_PIPELINE_TOTAL_IS'] . SugarCurrency::formatAmount($total, $currency->id),
