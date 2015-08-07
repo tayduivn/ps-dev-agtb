@@ -10,8 +10,8 @@
  */
 /**
  * The MultiSelectionListView extends SelectionListView and adds the ability to
- * select multiple records in the list. The way to use it is similar to the
- * SelectionListView.
+ * select multiple records in the list and get the selected items as the output.
+ * The way to use it is similar to the SelectionListView.
  *
  * It adds the following properties which have to be set in the context:
  *
