@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 
-require_once 'PMSERunnable.php';
+require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSERunnable.php';
 require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
 require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEBeanHandler.php';
 require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEUserAssignmentHandler.php';

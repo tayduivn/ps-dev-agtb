@@ -74,7 +74,7 @@ $app_list_strings = array (
     'pmse_Inbox' => 'Processes',
     'pmse_Project' => 'Process Definitions',
     'pmse_Business_Rules' => 'Process Business Rules',
-    'pmse_Emails_Templates' => 'Process Emails Templates',
+    'pmse_Emails_Templates' => 'Process Email Templates',
 //END SUGARCRM flav=ent ONLY
     'WorkFlow' => 'Workflow Definitions',
     'EAPM' => 'External Accounts',
@@ -187,7 +187,7 @@ $app_list_strings = array (
     'pmse_Inbox' => 'Process',
     'pmse_Project' => 'Process Definition',
     'pmse_Business_Rules' => 'Process Business Rule',
-    'pmse_Emails_Templates' => 'Process Emails Template',
+    'pmse_Emails_Templates' => 'Process Email Template',
     //END SUGARCRM flav=ent ONLY
     'WorkFlow' => 'Workflow',
     'EAPM' => 'External Account',
@@ -662,6 +662,7 @@ $app_list_strings = array (
 
     'Meetings' => 'Meeting',
     'Calls' => 'Call',
+      'KBContents' => 'Knowledge Base',
   ),
 
   'parent_type_display' =>
@@ -681,6 +682,7 @@ $app_list_strings = array (
     'ProjectTask' => 'Project Task',
 
     'Prospects' => 'Target',
+      'KBContents' => 'Knowledge Base',
 
   ),
 
@@ -1512,6 +1514,22 @@ $app_list_strings = array (
         'Weekly' => 'week(s)',
         'Monthly' => 'month(s)',
         'Yearly' => 'year(s)',
+    ),
+
+    'duration_hours_intervals' => array(
+      0 => '0',
+      1 => '1',
+      2 => '2',
+      3 => '3',
+      4 => '4',
+      5 => '5',
+      6 => '6',
+      7 => '7',
+      8 => '8',
+      9 => '9',
+      10 => '10',
+      11 => '11',
+      12 => '12',
     ),
 
     'repeat_interval_number' => array(
@@ -8671,7 +8689,7 @@ $app_strings = array (
     'EXCEPTION_MAINTENANCE'             => 'SugarCRM is in maintenance mode. Only admins can login. Please contact your administrator for details.',
     'EXCEPTION_SERVICE_UNAVAILABLE'     => 'The server cannot process your request because it is busy or unavailable at this time.',
     'EXCEPTION_SEARCH_UNAVAILABLE'      => 'Search engine is temporarily unavailable.',
-    'EXCEPTION_SEARCH_RUNTIME'          => 'A search engine runtime error occurred: {0}',
+    'EXCEPTION_SEARCH_RUNTIME'          => 'A search engine runtime error occurred. Please contact your System Administrator.',
 
     // Default SugarApiException descriptions, used in the exceptions help endpoint
     'EXCEPTION_UNKNOWN_EXCEPTION_DESC'     => 'A condition was encountered because of a general failure or error. The reasons for this exception range but generally fall outside the scope of a more specific API exception.',
@@ -8820,6 +8838,7 @@ $app_strings = array (
     'LBL_EDIT_AS_NEW_BUTTON_TITLE' => 'Edit As New',
     'LBL_FAVORITES' => 'Favorites',
     'LBL_FILTER' => 'Filter',
+    'LBL_DEFAULT_DATA_FILTER' => 'Default Data Filter',
     'LBL_FILTER_MENU_BY' => 'Filter Menu By',
     'LBL_FILTER_SELECT_FIELD' => 'Select field...',
     'LBL_FILTER_SELECT_OPERATOR' => 'Select operator...',
@@ -9348,7 +9367,7 @@ Sincerely, SugarCRM',
     'ERROR_LICENSE_VALIDATION'=> "Your company's license for SugarCRM needs to be validated. Only admins may login.",
     'WARN_LICENSE_VALIDATION'=> "Your company's license for SugarCRM needs to be validated soon.",
     'ERROR_EXCEEDING_OC_LICENSES' =>"The number of enabled Offline Clients currently exceeds the number specified in your license.",
-    'WARN_BROWSER_VERSION_WARNING' => "<b>Warning:</b> Your browser version is no longer supported or you are using an unsupported browser.<p></p>The following browser versions are recommended:<p></p><ul><li>Internet Explorer 11 (compatibility view not supported)<li>Firefox 38<li>Safari 7.1<li>Chrome 42</ul>",
+    'WARN_BROWSER_VERSION_WARNING' => "<b>Warning:</b> Your browser version is no longer supported or you are using an unsupported browser.<p></p>The following browser versions are recommended:<p></p><ul><li>Internet Explorer 11 (compatibility view not supported)<li>Firefox 39<li>Safari 7.1<li>Chrome 43</ul>",
     'WARN_BROWSER_IE_COMPATIBILITY_MODE_WARNING' => "<b>Warning:</b> Your browser is in IE compatibility view which is not supported.",
     'WARN_LICENSE_SEATS'=>  "Warning: The number of active users is already the maximum number of licenses allowed.",
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users exceeds the maximum number of licenses allowed.",
@@ -9386,6 +9405,7 @@ Sincerely, SugarCRM',
     'ERROR_ACTIVE_DATE_APPROVE_REQUIRED' => 'Error. The Approved status requires publishing date.',
     'ERROR_ACTIVE_DATE_LOW' => 'Error. The publish date should be more than current date.',
     'LBL_DUP_MERGE'=>'Find Duplicates',
+    'ERR_DUPLICATE_CHECK_IS_DISABLED' => 'Duplicate check is disabled for {{module}}.',
     'LBL_MANAGE_SUBSCRIPTIONS'=>'Manage Subscriptions',
     'LBL_MANAGE_SUBSCRIPTIONS_FOR'=>'Manage Subscriptions for ',
     'LBL_SUBSCRIBE'=>'Subscribe',
@@ -11169,12 +11189,14 @@ Sincerely, SugarCRM',
 
     'ERR_HTTP_404_TYPE' => '404',
     'ERR_HTTP_404_TITLE' => 'Data not available',
-    'ERR_HTTP_404_TEXT' => 'Page does not exist or you do not have permission to access this page.',
+    'ERR_HTTP_404_TEXT_LINE1' => 'Page does not exist or you do not have permission to access this page.',
+    'ERR_HTTP_404_TEXT_LINE2' => 'Please try again. If the error persists, please contact your Sugar Administrator.',
     'ERR_HTTP_404_ACTION' => 'Go back to previous page.',
 
     'ERR_HTTP_500_TYPE' => '500',
     'ERR_HTTP_500_TITLE' => 'HTTP: 500 Internal Server Error',
-    'ERR_HTTP_500_TEXT' => 'There was an error on the server.',
+    'ERR_HTTP_500_TEXT_LINE1' => 'The server encountered an error and could not complete your request.',
+    'ERR_HTTP_500_TEXT_LINE2' => 'Please try again. If the error persists, please contact your Sugar Administrator.',
     'ERR_HTTP_500_ACTION' => 'Please contact technical support.',
 
     'ERR_RENDER_FAILED_TITLE' => 'View Render Failed',
@@ -11309,7 +11331,7 @@ Sincerely, SugarCRM',
     'LBL_ALERT_TITLE_ERROR' => 'Error:',
     'LBL_ALERT_TITLE_LOADING' => 'Loading',
     'LBL_ALERT_BROWSER_NOT_SUPPORTED' => 'Your browser version is no longer supported or you are using an unsupported browser.',
-    'LBL_ALERT_BROWSER_SUPPORT' => 'The following browser versions are recommended: <ul><li>Internet Explorer 11</li><li>Firefox 38</li><li>Safari 7.1</li><li>Chrome 42</li></ul>',
+    'LBL_ALERT_BROWSER_SUPPORT' => 'The following browser versions are recommended: <ul><li>Internet Explorer 11</li><li>Firefox 39</li><li>Safari 7.1</li><li>Chrome 43</li></ul>',
     'TPL_ALERT_BROWSER_SUPPORT' => 'Please see the {{link}} page for suggested browsers.',
     'LBL_ALERT_SUPPORTED_PLATFORMS_LINK' => 'Supported Platforms',
 
@@ -12518,10 +12540,10 @@ $app_list_strings['state_dom'] = array(
     'Twitter'=>'Twitter',
   );
   $app_list_strings['eapm_list_import']= array(
-  	'Google' => 'Google Contacts',
+    'Google' => 'Google Contacts',
   );
-$app_list_strings['eapm_list_documents']= array(
-  	'Google' => 'Google Docs',
+  $app_list_strings['eapm_list_documents']= array(
+    'Google' => 'Google Drive',
   );
 	$app_list_strings['token_status'] = array(
         1 => 'Request',

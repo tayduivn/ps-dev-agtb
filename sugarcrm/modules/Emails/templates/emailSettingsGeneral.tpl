@@ -11,6 +11,7 @@
  */
 *}
 <form name="formEmailSettingsGeneral" id="formEmailSettingsGeneral">
+{sugar_csrf_form_token}
 <table cellpadding="4" cellspacing="0" border="0" width="100%" class="view">
 	<tr>
 		<th colspan="4" align="left" colspan="4" scope="row">

@@ -18,6 +18,7 @@ addForm('popup_form');
 {/literal}
 
 <form name='popup_form' id='popup_form_id' onsubmit='return false;'>
+{sugar_csrf_form_token}
 <input type='hidden' name='module' value='ModuleBuilder'>
 <input type='hidden' name='action' value='{$action}'>
 <input type='hidden' name='new_dropdown' value=''>

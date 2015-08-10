@@ -168,7 +168,8 @@ class GlobalSearchApi extends SugarApi
         try {
             $resultSet = $this->executeGlobalSearch($globalSearch);
         } catch (\Exception $e) {
-            throw new SugarApiExceptionSearchRuntime(null, array($e->getMessage()));
+            $GLOBALS['log']->error("A search engine runtime error occurred:\n" . $e->getMessage());
+            throw new SugarApiExceptionSearchRuntime();
         }
 
         // Handle the regular result set
@@ -367,7 +368,8 @@ class GlobalSearchApi extends SugarApi
         try {
             $engine = SearchEngine::getInstance('GlobalSearch');
         } catch (\Exception $e) {
-            throw new SugarApiExceptionSearchRuntime(null, array($e->getMessage()));
+            $GLOBALS['log']->error("A search engine runtime error occurred:\n" . $e->getMessage());
+            throw new SugarApiExceptionSearchRuntime();
         }
 
         // Make sure engine is available

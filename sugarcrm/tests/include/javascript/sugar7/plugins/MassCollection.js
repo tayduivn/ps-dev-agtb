@@ -31,6 +31,7 @@ describe('MassCollection plugin:', function() {
         layout = null;
         view = null;
         data = null;
+        sinon.collection.restore();
     });
 
     describe('Initialize:', function() {

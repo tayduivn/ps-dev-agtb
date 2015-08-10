@@ -12,6 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 global $current_user, $mod_strings;
 
+require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
+
 if(is_admin($current_user)){
     if(count($_POST)){
     	if(!empty($_POST['activate'])){
@@ -37,6 +39,7 @@ if(is_admin($current_user)){
 			?>
 				<p>
 				<form name="RepairSeedUsers" method="post" action="index.php">
+                <?php echo smarty_function_sugar_csrf_form_token(array(), $smarty); ?>
 				<input type="hidden" name="module" value="Administration">
 				<input type="hidden" name="action" value="RepairSeedUsers">
 				<input type="hidden" name="return_module" value="Administration">

@@ -35,8 +35,9 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 	}
 
 	public function queryFilteris_not($layout_def) {
-        $input_name0 = $this->getInputValue($layout_def);
-		return $this->_get_column_select($layout_def)." <> ".$this->reporter->db->quoted($input_name0)."\n";
+        $input_name0 = $this->reporter->db->quoted($this->getInputValue($layout_def));
+        $field_name = $this->_get_column_select($layout_def);
+        return "{$field_name} <> {$input_name0} OR ({$field_name} IS NULL AND {$input_name0} IS NOT NULL)";
 	}
 
 	public function queryFilterone_of($layout_def) {
@@ -108,10 +109,8 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 		}
 		$cell = '';
 
-			if(isset($field_def['options'])){
-				$cell = translate($field_def['options'], $field_def['module'], $value);
-			}else if(isset($field_def['type']) && $field_def['type'] == 'enum' && isset($field_def['function'])){
-                if (isset($field_def['function_bean'])) {
+        if (isset($field_def['type']) && $field_def['type'] == 'enum' && isset($field_def['function'])) {
+            if (isset($field_def['function_bean'])) {
                     $bean = BeanFactory::getBean($field_def['function_bean']);
                     $list = $bean->$field_def['function']();
                 } else {
@@ -124,8 +123,11 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
                     $list = $field_def['function']();
                 }
                 $cell = $list[$value];
-	        }
-		if (is_array($cell)) {
+        } elseif (isset($field_def['options'])) {
+            $cell = translate($field_def['options'], $field_def['module'], $value);
+        }
+
+        if (is_array($cell)) {
 
 			//#22632
 			$value = unencodeMultienum($value);

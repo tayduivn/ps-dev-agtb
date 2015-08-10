@@ -30,19 +30,6 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
             'editable' => false,
         ),
         array(
-            'id' => 'pending-my-approval',
-            'name' => 'LBL_KBSTATUS_PENDING_APPROVAL',
-            'filter_definition' => array(
-                array(
-                    '$owner' => '',
-                ),
-                array(
-                    'status' => array('$equals' => KBContent::ST_IN_REVIEW),
-                ),
-            ),
-            'editable' => false,
-        ),
-        array(
             'id' => 'favorites',
             'name' => 'LBL_FAVORITES',
             'filter_definition' => array(
@@ -59,6 +46,14 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
                 ),
             ),
             'editable' => false,
+        ),
+        array(
+            'id' => 'by_category',
+            'filter_definition' => array(
+                    array('category_id' => ''),
+                ),
+            'editable' => true,
+            'is_template' => true,
         ),
         array(
             'id' => 'recently_viewed',

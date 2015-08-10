@@ -11,11 +11,15 @@
 
 describe("Base.Layout.Dashboard", function() {
 
-    var app, layout;
+    var app, layout, apiStub;
 
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.loadComponent('base', 'layout', 'default');
+        apiStub = sinon.collection.stub(app.api, 'records', function(method, module, data, params, callbacks, options) {
+           callbacks.success();
+           callbacks.complete();
+        });
     });
 
     afterEach(function() {
@@ -86,25 +90,21 @@ describe("Base.Layout.Dashboard", function() {
         it("should initialize dashboard model and collection", function() {
             var model = layout.context.get("model");
             expect(model.apiModule).toBe("Dashboards");
-            var syncStuff = sinon.stub(app.api, 'records');
             layout.loadData();
             var expectedApiUrl = "Dashboards";
-            expect(syncStuff).toHaveBeenCalledWith("read", expectedApiUrl);
-            syncStuff.restore();
+            expect(apiStub).toHaveBeenCalledWith('read', expectedApiUrl);
+            apiStub.reset();
 
-            syncStuff = sinon.stub(app.api, 'records');
             model.set("foo", "Blah");
             expectedApiUrl = "Dashboards";
             model.save();
-            expect(syncStuff).toHaveBeenCalledWith("create", expectedApiUrl, {view_name: "", foo: "Blah"});
-            syncStuff.restore();
+            expect(apiStub).toHaveBeenCalledWith('create', expectedApiUrl, {view_name: '', foo: 'Blah'});
+            apiStub.reset();
 
-            syncStuff = sinon.stub(app.api, 'records');
             model.set("id", "fake-id-value");
             expectedApiUrl = "Dashboards";
             model.save();
-            expect(syncStuff).toHaveBeenCalledWith("update", expectedApiUrl);
-            syncStuff.restore();
+            expect(apiStub).toHaveBeenCalledWith('update', expectedApiUrl);
         });
     });
 
@@ -431,37 +431,29 @@ describe("Base.Layout.Dashboard", function() {
             expect(model.apiModule).toBe("Dashboards");
             expect(model.dashboardModule).toBe(parentModule);
             sinon.collection.stub(layout.context.parent, 'isDataFetched').returns(true);
-            var syncStub = sinon.stub(app.api, 'records');
             layout.loadData();
 
             expectedApiUrl = "Dashboards/" + parentModule;
-            expect(syncStub).toHaveBeenCalledWith("read", expectedApiUrl);
-            syncStub.restore();
+            expect(apiStub).toHaveBeenCalledWith('read', expectedApiUrl);
+            apiStub.reset();
 
-            syncStub = sinon.stub(app.api, 'records');
             model.set("foo", "Blah");
             expectedApiUrl = "Dashboards/" + parentModule;
             model.save();
-            expect(syncStub).toHaveBeenCalledWith("create", expectedApiUrl, {view_name: "records", foo: "Blah"});
-            syncStub.restore();
+            expect(apiStub).toHaveBeenCalledWith("create", expectedApiUrl, {view_name: "records", foo: "Blah"});
+            apiStub.reset();
 
-            syncStub = sinon.stub(app.api, 'records');
             model.set("id", "fake-id-value");
             expectedApiUrl = "Dashboards";
             model.save();
-            expect(syncStub).toHaveBeenCalledWith("update", expectedApiUrl);
-            syncStub.restore();
+            expect(apiStub).toHaveBeenCalledWith("update", expectedApiUrl);
         });
 
         it("should navigate RHS panel without replacing document URL", function() {
-            var syncStub, expectedApiUrl;
             sinon.collection.stub(layout.context.parent, 'isDataFetched').returns(true);
-            syncStub = sinon.stub(app.api, 'records');
             layout.navigateLayout('new-fake-id-value');
-            expectedApiUrl = "Dashboards";
-            expect(syncStub).toHaveBeenCalledWith("read", expectedApiUrl, {view_name: 'records', id: 'new-fake-id-value'});
-
-            syncStub.restore();
+            var expectedApiUrl = "Dashboards";
+            expect(apiStub).toHaveBeenCalledWith("read", expectedApiUrl, {view_name: 'records', id: 'new-fake-id-value'});
         });
 
         afterEach(function() {

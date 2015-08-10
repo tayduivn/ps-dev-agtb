@@ -9,8 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/MVC/Controller/ControllerFactory.php');
-require_once('include/MVC/View/ViewFactory.php');
+
+require_once 'include/MVC/Controller/ControllerFactory.php';
+require_once 'include/MVC/View/ViewFactory.php';
 
 /**
  * SugarCRM application
@@ -24,8 +25,26 @@ class SugarApplication
     var $default_module = 'Home';
     var $default_action = 'sidecar';
 
-    function SugarApplication()
+    /**
+     * @var boolean
+     */
+    protected $inBwc = false;
+
+    /**
+     * Use __construct
+     * @deprecated
+     */
+    protected function SugarApplication()
     {
+        self::__construct();
+    }
+
+    /**
+     * Ctor
+     */
+    public function __construct()
+    {
+        $this->inBwc = !empty($_GET['bwcFrame']);
     }
 
     /**
@@ -48,7 +67,29 @@ class SugarApplication
 
         // make sidecar view load faster
         // TODO the rest of the code will be removed as soon as we migrate all modules to sidecar
-        if ($this->controller->action === 'sidecar' ||
+        if (!empty($_REQUEST['MSID'])
+            && ($this->controller->action !== 'Authenticate' || $this->controller->module !== 'Users')
+        ) {
+            //This is not longer a valid path for MSID. We can only accept it through view.authenticate.php
+            $url = 'index.php?module=Users&action=Authenticate&MSID=' . urlencode($_REQUEST['MSID']);
+            $req = array_diff_key($this->getRequestVars(), array("MSID" => 1));
+            if (!empty($req['module'])) {
+                if (isModuleBWC($req['module'])) {
+                    $url .= '#bwc/index.php?' . http_build_query($req);
+                } else {
+                    // otherwise compose basic Sidecar route
+                    $url .= '#' . rawurlencode($req['module']);
+                    if (isset($req['record'])) {
+                        $url .= '/' . rawurlencode($req['record']);
+                    }
+                }
+            }
+            session_write_close();
+            header('HTTP/1.1 301 Moved Permanently');
+            header("Location: $url");
+
+            exit();
+        } elseif ($this->controller->action === 'sidecar' ||
             (
                 $this->controller->action === 'index' && $this->controller->module === 'Home' &&
                 (empty($_REQUEST['entryPoint']) || (isset($_REQUEST['action']) && $_REQUEST['action'] === 'DynamicAction'))
@@ -104,6 +145,7 @@ class SugarApplication
             $this->preProcess();
             $this->controller->preProcess();
             $this->checkHTTPReferer();
+            $this->csrfAuthenticate();
         }
 
         SugarThemeRegistry::buildRegistry();
@@ -121,6 +163,77 @@ class SugarApplication
         $this->setupResourceManagement($module);
         $this->controller->execute();
         sugar_cleanup();
+    }
+
+    /**
+     * CSRF authentication for all non-GET requests. When invalid we terminate
+     * our execution. Note that this functionality is beta and needs to be
+     * explicitly enabled.
+     * 
+     * @see CsrfAuthenticator
+     */
+    public function csrfAuthenticate()
+    {
+        /* 
+         * Limit protected to modify actions only. A next step will be to
+         * require CSRF tokens for every non-GET request.
+         *
+         * TODO 1:
+         * Refactoring whiteListActions[] and isModifyAction() to be part of
+         * the controller itself starting with a generic base list from
+         * SugarApplication. Controllers need to be able to determine which
+         * actions are eligible as modify actions (this includes custom code).
+         *
+         * TODO 2:
+         * Move checkHTTPReferer logic into a separate class and make it
+         * an integral part of the csrfAuthentication logic. 
+         *
+         */
+        if (!$this->isModifyAction()) {
+            return;
+        }
+
+        // Get request method, if not present this isn't a web server call
+        if (!$requestMethod = $this->getRequestMethod()) {
+            return;
+        }
+
+        if ($requestMethod !== 'get') {
+            if (!$this->controller->isCsrfValid($this->getRequestData())) {
+                $this->xsrfResponse('', true, $this->inBwc, true);
+            }
+            return;
+        }
+
+        // catch any GET modify actions
+        $GLOBALS['log']->debug(sprintf(
+            'CSRF: GET modify action detected %s -> %s',
+            $this->controller->module,
+            $this->controller->action
+        ));
+    }
+
+    /**
+     * Get HTTP request method
+     * @return string|false
+     */
+    protected function getRequestMethod()
+    {
+        return !empty($_SERVER['REQUEST_METHOD'])
+            ? strtolower($_SERVER['REQUEST_METHOD'])
+            : false;
+    }
+
+    /**
+     * Return $_REQUEST data. Instead of using $_REQUEST, manually merge both
+     * $_GET and $_POST to avoid having any $_COOKIE key/value pairs slipping
+     * through this validation. By default php doesn't include $_COOKIE but an
+     * excotic configuration might (see php.ini request_order).
+     * @return array
+     */
+    protected function getRequestData()
+    {
+        return array_merge($_GET, $_POST);
     }
 
     public function checkMobileRedirect () {
@@ -638,16 +751,18 @@ EOF;
         'ConfigureShortcutBar',
         'wizard',
         'historyContactsEmails',
+        'GoogleOauth2Redirect',
     );
 
     /**
      * Respond to XSF attempt
      * @param string $http_host HTTP host sent
-     * @param bool $dieIfInvalid
-     * @param bool $inBWC Are we in BWC frame?
+     * @param boolean $dieIfInvalid
+     * @param boolean $inBWC Are we in BWC frame?
+     * @param boolean $authFailure Authentication failure instead of referrer
      * @return boolean Returns false
      */
-    protected function xsrfResponse($http_host, $dieIfInvalid, $inBWC)
+    protected function xsrfResponse($http_host, $dieIfInvalid, $inBWC, $authFailure = false)
     {
         $whiteListActions = $this->whiteListActions;
         $whiteListActions[] = $this->controller->action;
@@ -662,9 +777,16 @@ EOF;
             } else {
                 header("Cache-Control: no-cache, must-revalidate");
                 $ss = new Sugar_Smarty;
-                $ss->assign('host', $http_host);
-                $ss->assign('action', $this->controller->action);
-                $ss->assign('whiteListString', $whiteListString);
+                if ($authFailure) {
+                    $ss->assign('csrfAuthFailure', true);
+                    $ss->assign('module', $this->controller->module);
+                    $ss->assign('action', $this->controller->action);
+                } else {
+                    $ss->assign('csrfAuthFailure', false);
+                    $ss->assign('host', $http_host);
+                    $ss->assign('action', $this->controller->action);
+                    $ss->assign('whiteListString', $whiteListString);
+                }
                 $ss->display('include/MVC/View/tpls/xsrf.tpl');
             }
             sugar_cleanup(true);
@@ -694,14 +816,13 @@ EOF;
             $whiteListReferers = array_merge($whiteListReferers, $sugar_config['http_referer']['list']);
         }
 
-        $inBWC = !empty($_GET['bwcFrame']);
         // for BWC iframe, matching referer is not enough
-        if ($strong && (empty($_SERVER['HTTP_REFERER']) || $inBWC)
+        if ($strong && (empty($_SERVER['HTTP_REFERER']) || $this->inBwc)
             && !in_array($this->controller->action, $this->whiteListActions)
             && $this->isModifyAction()
         ) {
             $http_host = empty($_SERVER['HTTP_HOST'])?array(''):explode(':',$_SERVER['HTTP_HOST']);
-            return $this->xsrfResponse($http_host[0], $dieIfInvalid, $inBWC);
+            return $this->xsrfResponse($http_host[0], $dieIfInvalid, $this->inBwc);
         } else {
             if (!empty($_SERVER['HTTP_REFERER']) && !empty($_SERVER['SERVER_NAME'])) {
                 $http_ref = parse_url($_SERVER['HTTP_REFERER']);
@@ -709,7 +830,7 @@ EOF;
                     && !in_array($this->controller->action, $this->whiteListActions)
                     && (empty($whiteListReferers) || !in_array($http_ref['host'], $whiteListReferers))
                 ) {
-                    return $this->xsrfResponse($http_ref['host'], $dieIfInvalid, $inBWC);
+                    return $this->xsrfResponse($http_ref['host'], $dieIfInvalid, $this->inBwc);
                 }
             }
         }
@@ -719,23 +840,8 @@ EOF;
     function startSession()
     {
         $sessionIdCookie = isset($_COOKIE['PHPSESSID']) ? $_COOKIE['PHPSESSID'] : null;
-        if (!empty($_REQUEST['MSID'])) {
-            session_id($_REQUEST['MSID']);
+        if (can_start_session()) {
             session_start();
-            if (isset($_SESSION['user_id']) && isset($_SESSION['seamless_login'])) {
-                unset ($_SESSION['seamless_login']);
-            } else {
-                if (isset($_COOKIE['PHPSESSID'])) {
-                    self::setCookie('PHPSESSID', '', time() - 42000, '/');
-                }
-                sugar_cleanup(false);
-                session_destroy();
-                exit('Not a valid entry method');
-            }
-        } else {
-            if (can_start_session()) {
-                session_start();
-            }
         }
 
         if (isset($_REQUEST['login_module']) && isset($_REQUEST['login_action'])

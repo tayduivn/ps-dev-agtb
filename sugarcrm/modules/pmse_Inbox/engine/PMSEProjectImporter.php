@@ -12,8 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'PMSEEngineUtils.php';
-require_once 'PMSEImporter.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
+require_once 'modules/pmse_Inbox/engine/PMSEImporter.php';
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSERelatedDependencyWrapper.php';
 
 /**
@@ -183,6 +183,8 @@ class PMSEProjectImporter extends PMSEImporter
             }
         }
         $projectObject->prj_uid = PMSEEngineUtils::generateUniqueID();
+        // by default imported projects should be disabled
+        $projectObject->prj_status = 'INACTIVE';
         $keysArray['prj_id'] = $projectObject->save();
 
         $diagramBean = BeanFactory::newBean('pmse_BpmnDiagram');
@@ -215,6 +217,8 @@ class PMSEProjectImporter extends PMSEImporter
         }
         $processDefinitionBean->id = $keysArray['pro_id'];
         $processDefinitionBean->new_with_id = true;
+        // by default an imported project should be disabled
+        $processDefinitionBean->pro_status = 'INACTIVE';
         $processDefinitionBean->save();
 
         $this->saveProjectActivitiesData($projectData['diagram'][0]['activities'], $keysArray);
@@ -304,7 +308,7 @@ class PMSEProjectImporter extends PMSEImporter
             $definitionBean->pro_id = $keysArray['pro_id'];
             $definitionBean->dia_id = $keysArray['dia_id'];
             if ($element['act_task_type'] == 'SCRIPTTASK' && $element['act_script_type'] == 'BUSINESS_RULE') {
-                $definitionBean->act_fields = $this->savedElements['BpmRuleSet'][$element['act_fields']];
+                $definitionBean->act_fields = $element['act_fields'];
             }
             $definitionBean->new_with_id = true;
             $defID = $definitionBean->save();

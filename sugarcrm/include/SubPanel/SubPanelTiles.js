@@ -169,6 +169,7 @@ function get_record_id()
 {
 	return window.document.forms['DetailView'].elements['record'].value;
 }
+
 function get_layout_def_key()
 {
 	if(typeof(window.document.forms['DetailView'].elements['layout_def_key']) == 'undefined')return '';
@@ -215,6 +216,7 @@ function set_return_and_save_background(popup_reply_data)
 	var module = get_module_name();
 	var id = get_record_id();
 
+    query_array.push('csrf_token=' + SUGAR.csrf.form_token);
 	query_array.push('value=DetailView');
 	query_array.push('module='+module);
 	query_array.push('http_method=get');

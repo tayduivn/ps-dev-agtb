@@ -449,6 +449,7 @@ class AbstractRelationship
                 break;
             default:
                 $module = $sourceModule;
+                $vardef['rname'] = 'name';
                 break;
         }
 
@@ -473,6 +474,8 @@ class AbstractRelationship
             } elseif (is_subclass_of($class, 'Person') || in_array('person', $tplconfig)) {
                 $vardef['rname'] = 'full_name';
                 $vardef['db_concat_fields'] = array(0 => 'first_name', 1 => 'last_name');
+            } elseif ($class && $class->getFieldDefinition('name')) {
+                $vardef['rname'] = 'name';
             }
         }
 

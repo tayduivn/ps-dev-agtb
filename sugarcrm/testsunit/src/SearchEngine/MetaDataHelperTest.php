@@ -343,6 +343,76 @@ class MetaDataHelperTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+
+    /**
+     * @covers ::getCache
+     * @covers ::setCache
+     * @dataProvider providerTestInMemoryCache
+     */
+    public function testInMemoryCache($key, $value, $isCacheDisabled, $isRealCacheDisabled, $expected)
+    {
+
+        $helper = $this->getMetaDataHelperMock(
+            array('getRealCacheKey', 'isRealCacheDisabled', 'getRealCache', 'setRealCache')
+        );
+        $helper->expects($this->any())
+            ->method('getRealCacheKey')
+            ->will($this->returnValue("mdmhelper_" . $key));
+        $helper->expects($this->any())
+            ->method('isRealCacheDisabled')
+            ->will($this->returnValue($isRealCacheDisabled));
+        $helper->expects($this->any())
+            ->method('getRealCache')
+            ->will($this->returnValue($value));
+        $helper->expects($this->any())
+            ->method('setRealCache')
+            ->will($this->returnValue($value));
+
+
+        TestReflection::setProtectedValue($helper, 'disableCache', $isCacheDisabled);
+        TestReflection::setProtectedValue($helper, 'inMemoryCache', array());
+
+        TestReflection::callProtectedMethod($helper, 'setCache', array($key, $value));
+        $result = TestReflection::callProtectedMethod($helper, 'getCache', array($key));
+
+        $this->assertSame($result, $expected);
+
+    }
+
+    public function providerTestInMemoryCache()
+    {
+        return array(
+            array(
+                "enabled_modules",
+                array("Accounts", "Contacts"),
+                false,
+                false,
+                array("Accounts", "Contacts"),
+            ),
+            array(
+                "enabled_modules",
+                array("Accounts", "Contacts"),
+                true,
+                true,
+                array("Accounts", "Contacts"),
+            ),
+            array(
+                "enabled_modules",
+                array("Accounts", "Contacts"),
+                true,
+                false,
+                null,
+            ),
+            array(
+                "enabled_modules",
+                array("Accounts", "Contacts"),
+                false,
+                true,
+                array("Accounts", "Contacts"),
+            ),
+        );
+    }
+
     /**
      * Get MetaDataHelper mock
      * @param array $methods

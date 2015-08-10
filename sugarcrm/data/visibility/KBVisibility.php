@@ -18,40 +18,37 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 
 /**
  * Class KBVisibility
- * Addidional visibility check for KB.
+ * Additional visibility check for KB.
  */
 class KBVisibility extends SugarVisibility implements StrategyInterface
 {
     /**
      * {@inheritDoc}
-     * Need to check where it's used.
+     * Used in \SugarBean::create_new_list_query
      */
     public function addVisibilityWhere(&$query)
     {
+        $addon = $this->getWhereVisibilityRaw();
+        if (!empty($addon)) {
+            if (!empty($query)) {
+                $query .= " AND $addon";
+            } else {
+                $query = $addon;
+            }
+        }
         return $query;
     }
 
     /**
-     * {@inheritDoc}
+     * Create additional query for `where` part, if needed.
+     * @return string Additional query or empty string.
      */
-    public function addVisibilityWhereQuery(SugarQuery $query)
+    protected function getWhereVisibilityRaw()
     {
-        $currentUser = $GLOBALS['current_user'];
-        $module = $this->bean->module_name;
         $db = DBManagerFactory::getInstance();
-        if (!method_exists($this->bean, 'getPublishedStatuses') ||
-            $currentUser->isAdminForModule($module) ||
-            $currentUser->isDeveloperForModule($module)
-        ) {
-            return $query;
+        if (!method_exists($this->bean, 'getPublishedStatuses') || !$this->shouldCheckVisibility()) {
+            return '';
         } else {
-            /**
-             * It's better to use
-             *             $query->orWhere()
-             *   ->equals('created_by', $currentUser->id)
-             *   ->in('status', $statuses);
-             * but it doesn't work.
-             */
             $statuses = $this->bean->getPublishedStatuses();
             foreach ($statuses as $_ => $status) {
                 $statuses[$_] = $db->quoted($status);
@@ -60,11 +57,20 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
             $ow = new OwnerVisibility($this->bean, $this->params);
             $addon = '';
             $ow->addVisibilityWhere($addon);
-
-            $addon = "({$addon} OR {$this->bean->table_name}.status IN ($statuses))";
-            $query->whereRaw($addon);
-            return $query;
+            return "({$addon} OR {$this->bean->table_name}.status IN ($statuses))";
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addVisibilityWhereQuery(SugarQuery $query)
+    {
+        $addon = $this->getWhereVisibilityRaw();
+        if (!empty($addon)) {
+            $query->whereRaw($addon);
+        }
+        return $query;
     }
 
     /**
@@ -104,8 +110,7 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
      */
     public function elasticAddFilters(\User $user, \Elastica\Filter\Bool $filter, Visibility $provider)
     {
-        $module = $this->bean->module_name;
-        if ($user->isAdminForModule($module) || $user->isDeveloperForModule($module)) {
+        if (!$this->shouldCheckVisibility()) {
             return;
         }
 
@@ -138,5 +143,16 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
             return array();
         }
         return $this->bean->getPublishedStatuses();
+    }
+
+    /**
+     * Check whether we need to check visibility
+     * @return bool Return true if need to check, false otherwise.
+     */
+    protected function shouldCheckVisibility()
+    {
+        $currentUser = $GLOBALS['current_user'];
+        $portalUserId = BeanFactory::getBean('Users')->retrieve_user_id('SugarCustomerSupportPortalUser');
+        return $currentUser->id == $portalUserId;
     }
 }

@@ -313,7 +313,6 @@ $dictionary['pmse_Inbox'] = array(
         'name' => 'name',
         'vname' => 'LBL_NAME',
         'type' => 'name',
-        'link' => true, // bug 39288
         'dbType' => 'varchar',
         'len' => 255,
         'unified_search' => false,
@@ -347,9 +346,19 @@ $dictionary['pmse_Inbox'] = array(
                     'studio' => 'visible',
                     'dependency' => false,
                 ),
+            //We need this field to set "Process Name" on quicksearch filter
+            'act_name' => array(
+                'name' => 'act_name',
+                'vname' => 'LBL_PROCESS_NAME',
+                'type' => 'varchar',
+                'source' => 'non-db',
+                'studio' => false,
+                'reportable' => false,
+                'massupdate' => false,
+            ),
     ),
-	'relationships'=>array (
-),
+	'relationships' => array(
+    ),
     'indices' => array(
     array(
       'name'   => 'idx_pmse_inbox_case_id',
@@ -374,6 +383,6 @@ $dictionary['pmse_Inbox'] = array(
     ),
 );
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
+        require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('pmse_Inbox','pmse_Inbox', array('basic','team_security','assignable'));

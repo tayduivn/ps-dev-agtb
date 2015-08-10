@@ -48,7 +48,7 @@
 
         // Can't use getRelevantContextList here, because the context may not
         // have all the children we need.
-        if (this.layoutType === 'records') {
+        if (this.layoutType === 'records' || this.layoutType === 'activities') {
             // filters will handle data fetching so we skip the standard data fetch
             this.context.set('skipFetch', true);
         } else {
@@ -436,8 +436,56 @@
         this._toggleClearQuickSearchIcon(!_.isEmpty(query));
         var self = this;
         var ctxList = this.getRelevantContextList();
-        var batchId = ctxList.length > 1 ? _.uniqueId() : false;
-        _.each(ctxList, function(ctx) {
+
+        // Here we split the relevant contexts into two groups, 'count', and
+        // 'fetch'. For the 'count' contexts, we do a 'fetchOnlyIds' on their
+        // collection so we can update the count and highlight the subpanel
+        // icon, even though they are collapsed. For the 'fetch' group, we do a
+        // full collection fetch so the subpanel can render its list view.
+        var relevantCtx = _.groupBy(ctxList, function(ctx) {
+            return ctx.get('collapsed') ? 'count' : 'fetch';
+        });
+
+        var batchId = relevantCtx.count && relevantCtx.count.length > 1 ? _.uniqueId() : false;
+        _.each(relevantCtx.count, function(ctx) {
+            var ctxCollection = ctx.get('collection');
+            var origFilterDef = dynamicFilterDef || ctxCollection.origFilterDef || [];
+            var filterDef = self.buildFilterDef(origFilterDef, query, ctx);
+            var options = {
+                //Show alerts for this request
+                showAlerts: true,
+                apiOptions: {
+                    bulk: batchId
+                }
+            };
+
+            ctxCollection.filterDef = filterDef;
+            ctxCollection.origFilterDef = origFilterDef;
+            ctxCollection.resetPagination();
+
+            options = _.extend(options, ctx.get('collectionOptions'));
+            ctx.resetLoadFlag(false);
+            ctx.set('skipFetch', true);
+            ctx.loadData(options);
+
+            // We need to reset twice so we can trigger the other bulk call.
+            ctx.resetLoadFlag(false);
+            options.success = _.bind(function(hasAmount, properties) {
+                if (!this.disposed) {
+                    ctx.trigger('refresh:count', hasAmount, properties);
+                }
+            }, this);
+            ctxCollection.hasAtLeast(ctx.get('limit'), options);
+        });
+
+        // FIXME: Filters should not be triggering the bulk request and should
+        // be moved to subpanels instead. Will be fixed as part of SC-4533.
+        if (batchId) {
+            app.api.triggerBulkCall(batchId);
+        }
+
+        batchId = relevantCtx.fetch && relevantCtx.fetch.length > 1 ? _.uniqueId() : false;
+        _.each(relevantCtx.fetch, function(ctx) {
             var ctxCollection = ctx.get('collection');
             var origFilterDef = dynamicFilterDef || ctxCollection.origFilterDef || [];
             var filterDef = self.buildFilterDef(origFilterDef, query, ctx);
@@ -456,9 +504,6 @@
 
             ctxCollection.filterDef = filterDef;
             ctxCollection.origFilterDef = origFilterDef;
-            ctxCollection.resetPagination();
-
-            options = _.extend(options, ctx.get('collectionOptions'));
 
             ctx.resetLoadFlag(false);
             if (!_.isEmpty(ctx._recordListFields)) {
@@ -469,15 +514,6 @@
         });
         if (batchId) {
             app.api.triggerBulkCall(batchId);
-
-            // FIXME (SC-3670): This is introduced as a quick-fix for SC-3647
-            // This will not be necessary with the PR for SC-3670
-            _.each(ctxList, function(ctx) {
-                var collection = ctx.get('collection');
-                if (collection && collection.options && collection.options.apiOptions) {
-                    collection.options.apiOptions = undefined;
-                }
-            });
         }
     },
 

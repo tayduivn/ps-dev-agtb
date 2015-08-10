@@ -11,6 +11,7 @@
  */
 *}
 <form name='CreatePackage' id='CreatePackage'>
+{sugar_csrf_form_token}
 <input type='hidden' name='module' value='ModuleBuilder'>
 <input type='hidden' name='action' value='SavePackage'>
 <input type='hidden' name='duplicate' value='0'>

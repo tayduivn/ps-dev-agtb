@@ -12,8 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'PMSEDynaForm.php';
-require_once 'PMSEObservers/PMSEObservable.php';
+require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEDynaForm.php';
+require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEObservers/PMSEObservable.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
 
@@ -177,7 +177,7 @@ class PMSECrmDataWrapper implements PMSEObservable
          * @name $db
          */
         global $db;
-        require_once('modules/ACLRoles/ACLRole.php');
+        require_once 'modules/ACLRoles/ACLRole.php';
         $this->aclRoleObject = new ACLRole();
 
         $this->defaultDynaform = new PMSEDynaForm();
@@ -893,26 +893,37 @@ class PMSECrmDataWrapper implements PMSEObservable
      */
     public function retrieveTeams($filter = '')
     {
-
+        $beansTeams = $this->getTeamsBean();
         $output = array();
-        $where = '';
+
+        $q = $this->sugarQueryObject;
+        $q->from($beansTeams, array('add_deleted' => true));
+        $q->distinct(false);
+        $fields = array(
+            'id',
+            'name',
+            'name2',
+        );
 
         if ($filter == 'public' || $filter == 'reassign') {
-            $condition = 0;
-            $where = 'teams.private=' . $condition;
+            $q->where()
+                ->equals('private', 0);
         } else {
             if ($filter == 'private') {
-                $condition = 1;
-                $where = 'teams.private=' . $condition;
+                $q->where()
+                    ->equals('private', 1);
             }
         }
 
-        $teamsData = $this->teamsBean->get_full_list('', $where);
+        $q->orderBy('id', 'ASC');
+        $q->select($fields);
+
+        $teamsData = $q->execute();
         foreach ($teamsData as $team) {
             $teamTmp = array();
-            $teamTmp['value'] = $team->id;
-            $teamTmp['text'] = $team->name;
-            if (($team->id != 'current_team') || ($team->id == 'current_team' && $filter == 'reassign')) {
+            $teamTmp['value'] = $team['id'];
+            $teamTmp['text'] = $team['name'];
+            if (($team['id'] != 'current_team') || ($team['id'] == 'current_team' && $filter == 'reassign')) {
                 $output[] = $teamTmp;
             }
         }
@@ -933,26 +944,27 @@ class PMSECrmDataWrapper implements PMSEObservable
         $res->success = true;
         $output = array();
         $where = 'users.deleted = 0 ';
-        $where .= ' AND users.employee_status = \'Active\' ';
+        $where .= ' AND users.status = \'Active\' ';
+        $where .= ' AND NOT (users.is_group = 1 OR users.portal_only = 1)';
 
         if (!empty($filter)) {
-            $where = ' AND (users.first_name LIKE \'' . $filter . '%\' ';
-            $where .= 'OR users.last_name LIKE \'' . $filter . '%\' ';
-            $where .= 'OR users.user_name LIKE \'' . $filter . '%\' )';
+            $where .= ' AND (users.first_name LIKE \'%' . $filter . '%\' ';
+            $where .= 'OR users.last_name LIKE \'%' . $filter . '%\' ';
+            $where .= 'OR users.user_name LIKE \'%' . $filter . '%\' )';
         }
 
         $order = 'users.first_name, users.last_name';
 
         $usersData = $this->usersBean->get_full_list($order, $where);
-        //$beanFactory = new ADAMBeanFactory();
-        //$beanFactory = $this->getADAMBeanFactory();
-        foreach ($usersData as $user) {
-            $userTmp = array();
-            $userTmp['value'] = $user->id;
-            $userFullName = $this->teamsBean->getDisplayName($user->first_name, $user->last_name);
-            $userTmp['text'] = $userFullName;
+        if (is_array($usersData)) {
+            foreach ($usersData as $user) {
+                $userTmp = array();
+                $userTmp['value'] = $user->id;
+                $userFullName = $this->teamsBean->getDisplayName($user->first_name, $user->last_name);
+                $userTmp['text'] = $userFullName;
 
-            $output[] = $userTmp;
+                $output[] = $userTmp;
+            }
         }
         $res->result = $output;
         return $output;
@@ -1057,7 +1069,7 @@ class PMSECrmDataWrapper implements PMSEObservable
 //        $res->search = $filter;
 //        $res->success = true;
         $output = array();
-        if ($projectBean->retrieve_by_string_fields(array('id' => $filter))) {
+        if ($projectBean->retrieve($filter)) {
 
             $processBean->retrieve_by_string_fields(array('prj_id' => $projectBean->id));
 
@@ -1363,7 +1375,7 @@ class PMSECrmDataWrapper implements PMSEObservable
 
         $updateDefaultForm = false;
 
-        if ($projectBean->retrieve_by_string_fields(array('id' => $args['filter']))) {
+        if ($projectBean->retrieve($args['filter'])) {
             unset($args['prj_uid']);
             $args['prj_id'] = $projectBean->id;
             $processBean->retrieve_by_string_fields(array('prj_id' => $projectBean->id));
@@ -1527,7 +1539,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * Retrieve list of Fieds
+     * Retrieve list of fields
      * @param string $filter
      * @param array $additionalArgs
      * @return object
@@ -1557,6 +1569,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         $fieldTypes = $module_strings['fieldTypes'];
         //add datetimecombo type field from the vardef overrides to point to Datetime type
         $fieldTypes['datetime'] = $fieldTypes['datetimecombo'];
+        $fieldTypes['name'] = "Name";
 
         global $app_list_strings;
         $output = array();
@@ -1565,26 +1578,26 @@ class PMSECrmDataWrapper implements PMSEObservable
         foreach ($fieldsData as $field) {
             //$retrieveId = isset($additionalArgs['retrieveId']) && !empty($additionalArgs['retrieveId']) && $field['name'] == 'id' ? $additionalArgs['retrieveId'] : false;
             if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, $type))) {
-                if (($type == 'AC' || $type == 'BR') && $field['name'] == 'assigned_user_id') {
-                    $field['method'] = 'assignedUsers';
-                    $field['type'] = 'enum';
-                    $field['vname'] = 'LBL_ASSIGNED_TO';
+                if (PMSEEngineUtils::specialFields($field, $type)){
+                    $field = array_merge($field, $this->replaceItemsValues($field));
                 }
                 $tmpField = array();
                 $tmpField['value'] = $field['name'];
                 $tmpField['text'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
-                $tmpField['type'] = isset($fieldTypes[$field['type']]) ? $fieldTypes[$field['type']] : ucfirst(
-                    $field['type']
-                );
-                $tmpField['type'] = (isset($tmpField['relationship']) && stristr(
-                        $tmpField['relationship'],
-                        'email'
-                    )) || stristr($tmpField['value'], 'email') ? 'email' : $tmpField['type'];
+                
+                // Handle field typing, starting with the vardef type for this field
+                $tmpField['type'] = $field['type'];
+
+                // If there is a known type for this type, use THAT
+                if (isset($fieldTypes[$field['type']])) {
+                    $tmpField['type'] = $fieldTypes[$field['type']];
+                }
+
                 $tmpField['optionItem'] = 'none';
                 if ($field['type'] == 'enum' || $field['type'] == 'radioenum') {
                     if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
-                        if (($type == 'AC' || $type == 'BR') && $field['name'] == 'assigned_user_id') {
-                            $tmpField['optionItem'] = $this->gatewayModulesMethod($field['method']);
+                        if (PMSEEngineUtils::specialFields($field, $type)) {
+                            $tmpField['optionItem'] = $this->gatewayModulesMethod($field);
                         } else {
                             $tmpField['optionItem'] = $moduleApi->getEnumValues(
                                 array(),
@@ -1786,7 +1799,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         $projectBean = $this->getProjectBean();
         $ruleSetBean = $this->getRuleSetBean();
         $output = array();
-        if ($projectBean->retrieve_by_string_fields(array('id' => $filter))) {
+        if ($projectBean->retrieve($filter)) {
             $processDefinitionBean->retrieve_by_string_fields(array('prj_id' => $projectBean->id));
             if (isset($this->beanList[$processDefinitionBean->pro_module])) {
                 $newModuleFilter = $processDefinitionBean->pro_module;
@@ -2140,20 +2153,49 @@ class PMSECrmDataWrapper implements PMSEObservable
     /**
      * @codeCoverageIgnore
      */
-    private function gatewayModulesMethod($method)
+    private function gatewayModulesMethod($def)
     {
         $values = '';
-        switch ($method) {
-            case 'assignedUsers':
-//                $values = $this->assignedUsers();
+        switch ($def['name']) {
+            case 'assigned_user_id':
                 $users = $this->retrieveUsers();
                 $values = $users;
+                break;
+            case 'created_by':
+            case 'modified_user_id':
+                $users = $this->retrieveUsers();
+                foreach ($users as $rows) {
+                    $newUsers[$rows['value']] = $rows['text'];
+                }
+                $values = $newUsers;
                 break;
             default:
                 $values = null;
                 break;
         }
         return $values;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    private function replaceItemsValues($def)
+    {
+        $field = array();
+        switch ($def['name']) {
+            case 'assigned_user_id':
+                $field['type'] = 'user';
+                $field['vname'] = 'LBL_ASSIGNED_TO';
+                $field['required'] = true;
+                break;
+            case 'created_by':
+            case 'modified_user_id':
+                $field['type'] = 'user';
+                break;
+            default:
+                $result = $field;
+        }
+        return $field;
     }
 
     /**

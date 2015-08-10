@@ -70,18 +70,17 @@
                 }
             },
             {
-                name: "activities",
-                route: "activities",
-                callback: function(){
+                name: 'activities',
+                route: 'activities',
+                callback: function() {
                     //when visiting activity stream, save last state of activities
                     //so future Home routes go back to activities
                     var lastHomeKey = getLastHomeKey();
                     app.user.lastState.set(lastHomeKey, homeOptions.activities);
 
                     app.controller.loadView({
-                        layout: "activities",
-                        module: "Activities",
-                        skipFetch: true
+                        layout: 'activities',
+                        module: 'Activities'
                     });
                 }
             },
@@ -201,6 +200,10 @@
                     // Set the new search term and module list in the context, if necessary.
                     var termHasChanged = appContext.get('searchTerm') !== searchTerm;
                     var modulesHaveChanged = !_.isEqual(appContext.get('module_list'), params.modules);
+
+                    params.tags = _.map(params.tags, function(tag){
+                        return decodeURIComponent(tag);
+                    });
                     var tagsHaveChanged = !_.isEqual(appContext.get('tagParams'), params.tags);
 
                     if (termHasChanged) {

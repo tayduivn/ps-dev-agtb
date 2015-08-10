@@ -72,6 +72,12 @@ if (!empty($config['cleanCache'])) {
     }
 }
 
+
+if(!empty($config['retainCommentSpacing']))
+{
+    $rome->setRetainCommentSpacing($config['retainCommentSpacing']);
+}
+
 if (!empty($config['base_dir'])) {
     $config['base_dir'] = realpath($config['base_dir']);
 
@@ -147,6 +153,12 @@ if (!empty($config['base_dir'])) {
         }
     }
 
+    if (!empty($config['dir'])) {
+        foreach ($config['builds'] as $flav) {
+            $dir = $build_dir . '/' . $flav . $config['dir'];
+            $rome->generateMD5($dir);
+        }
+    }
 } else {
     $rome->throwException("No Base Directory To Build From", true);
 }

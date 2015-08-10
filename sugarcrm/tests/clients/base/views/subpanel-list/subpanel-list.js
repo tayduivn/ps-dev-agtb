@@ -24,24 +24,6 @@ describe("Subpanel List View", function() {
         layout = null;
     });
 
-    describe('Toggle list', function() {
-        var showStub, hideStub;
-        beforeEach(function() {
-            showStub = sinonSandbox.stub(view.$el, 'show');
-            hideStub = sinonSandbox.stub(view.$el, 'hide');
-        });
-        it('should toggle list to show', function() {
-            view.toggleList(true);
-            expect(showStub).toHaveBeenCalled();
-            expect(hideStub).not.toHaveBeenCalled();
-        });
-        it('should toggle list to hide', function() {
-            view.toggleList(false);
-            expect(showStub).not.toHaveBeenCalled();
-            expect(hideStub).toHaveBeenCalled();
-        });
-    });
-
     describe('Subpanel metadata intiialization', function() {
         it('should return most specific subpanel view metadata if found', function() {
             sinonSandbox.stub(view.options.context, "get").returns("Accounts");
@@ -64,9 +46,7 @@ describe("Subpanel List View", function() {
         });
         it('set the fetch limit on the context to app.config.maxSubpanelResult', function() {
             view = SugarTest.createView("base", 'Cases', 'subpanel-list', null, null, null, layout);
-            var opts = view.context.get("collectionOptions");
-            expect(opts).toBeDefined();
-            expect(opts.limit).toEqual(app.config.maxSubpanelResult);
+            expect(view.context.get('limit')).toEqual(app.config.maxSubpanelResult);
         });
     });
 

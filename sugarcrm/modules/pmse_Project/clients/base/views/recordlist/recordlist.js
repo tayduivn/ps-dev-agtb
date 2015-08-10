@@ -19,15 +19,37 @@
         this.contextEvents = _.extend({}, this.contextEvents, {
             "list:opendesigner:fire": "openDesigner",
             "list:exportprocess:fire": "showExportingWarning",
-            "list:enabledRow:fire": "enabledProcess",
-            "list:disabledRow:fire": "disabledProcess"
+            "list:enabledDisabledRow:fire": "enableDisableProcess"
         });
 
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args:[options]});
     },
 
     openDesigner: function(model) {
-        app.navigate(this.context, model, 'layout/designer');
+        var verifyURL = app.api.buildURL(
+                this.module,
+                'verify',
+                {
+                    id : model.get('id')
+                }
+            ),
+            self = this;
+        app.api.call('read', verifyURL, null, {
+            success: function(data) {
+                if (!data) {
+                    app.navigate(this.context, model, 'layout/designer');
+                } else {
+                    app.alert.show('project-design-confirmation',  {
+                        level: 'confirmation',
+                        messages: App.lang.get('LBL_PMSE_PROCESS_DEFINITIONS_EDIT', model.module),
+                        onConfirm: function () {
+                            app.navigate(this.context, model, 'layout/designer');
+                        },
+                        onCancel: $.noop
+                    });
+                }
+            }
+        });
     },
 
     showExportingWarning: function (model) {
@@ -74,57 +96,98 @@
             }
         });
     },
+    _showSuccessAlert: function () {
+        app.alert.show("data:sync:success", {
+            level: "success",
+            messages: App.lang.get('LBL_RECORD_SAVED'),
+            autoClose: true
+        });
+    },
     _updateProStatusEnabled: function(model) {
         var self = this;
+        var alertID = model.id + ':refresh';
         url = App.api.buildURL(model.module, null, {id: model.id});
         attributes = {prj_status: 'ACTIVE'};
         app.api.call('update', url, attributes,{
             success:function(){
-                self.reloadList();
+                self.$el.find("[name=pmse_Project_" + model.id + "] .label-important")
+                    .removeClass('label-important')
+                    .addClass('label-success')
+                    .text(App.lang.get('LBL_PMSE_PROCESS_DEFINITIONS_ENABLED', 'pmse_Project'));
+
+                self._showSuccessAlert();
+                model.set('prj_status', 'ACTIVE');
             }
         });
-        app.alert.show(model.id + ':refresh', {
+        app.alert.show(alertID, {
             level:"process",
-            title: app.lang.get('LBL_PRO_ENABLE', model.module),
+            title: app.lang.get('LBL_SAVING', model.module),
             autoClose: true
         });
-//        self.reloadList();
     },
     disabledProcess: function(model) {
         var self = this;
         var name = model.get('name') || '';
-        app.alert.show(model.get('id') + ':deleted', {
-            level: 'confirmation',
-            messages: app.utils.formatString(app.lang.get('LBL_PRO_DISABLE_CONFIRMATION', model.module),[name.trim()]),
-            onConfirm: function() {
-                self._updateProStatusDisabled(model);
+
+        var verifyURL = app.api.buildURL(
+                this.module,
+                'verify',
+                {
+                    id : model.get('id')
+                }
+            );
+        app.api.call('read', verifyURL, null, {
+            success: function(data) {
+                if (!data) {
+                    app.alert.show('project_disable', {
+                        level: 'confirmation',
+                        messages: app.utils.formatString(app.lang.get('LBL_PRO_DISABLE_CONFIRMATION', model.module),[name.trim()]),
+                        onConfirm: function() {
+                            self._updateProStatusDisabled(model);
+                        }
+                    });
+                } else {
+                    app.alert.show('project-disable-confirmation',  {
+                        level: 'confirmation',
+                        messages: App.lang.get('LBL_PMSE_DISABLE_CONFIRMATION_PD', model.module),
+                        onConfirm: function () {
+                            self._updateProStatusDisabled(model);
+                        },
+                        onCancel: $.noop
+                    });
+                }
             }
         });
     },
     _updateProStatusDisabled: function(model) {
         var self = this;
+        var alertID = model.id + ':refresh';
         url = App.api.buildURL(model.module, null, {id: model.id});
         attributes = {prj_status: 'INACTIVE'};
         app.api.call('update', url, attributes,{
             success:function(){
-                self.reloadList();
+                self.$el.find("[name=pmse_Project_" + model.id + "] .label-success")
+                    .removeClass('label-success')
+                    .addClass('label-important')
+                    .text(App.lang.get('LBL_PMSE_PROCESS_DEFINITIONS_DISABLED', 'pmse_Project'));
+
+                self._showSuccessAlert();
+                model.set('prj_status', 'INACTIVE');
             }
         });
-        app.alert.show(model.id + ':refresh', {
+        app.alert.show(alertID, {
             level:"process",
-            title: app.lang.get('LBL_PRO_DISABLE', model.module),
+            title: app.lang.get('LBL_SAVING', model.module),
             autoClose: true
         });
-//        self.reloadList();
     },
-    reloadList: function() {
-        var self = this;
-        self.context.reloadData({
-            recursive:false,
-            error:function(error){
-                console.log(error);
-            }
-        });
+    enableDisableProcess: function (model) {
+        var status = model.get("prj_status");
+        if (status === 'ACTIVE') {
+            this.disabledProcess(model);
+        } else {
+            this.enabledProcess(model);
+        }
     },
     getDeleteMessages: function(model) {
         var messages = {};
@@ -176,7 +239,6 @@
                 }
             ),
             self = this;
-        this._modelToDelete = model;
         app.api.call('read', verifyURL, null, {
             success: function(data) {
                 if (!data) {
@@ -191,18 +253,11 @@
                             level: 'confirmation',
                             messages: self.getDeleteMessages(model).confirmation,
                             onConfirm: function() {
+                                self._modelToDelete = model;
                                 self.deleteModel();
                                 app.lastNamePdDel = namePd;
-                            },
-                            onCancel: function() {
-                                self._modelToDelete = null;
-                                app.lastNamePdDel = '';
                             }
                         });
-                    }
-                    else {
-                        self._modelToDelete = null;
-                        app.lastNamePdDel = '';
                     }
                 } else {
                     app.alert.show('message-id', {

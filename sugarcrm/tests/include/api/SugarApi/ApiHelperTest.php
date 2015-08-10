@@ -17,6 +17,7 @@ class ApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
+        parent::setUp();
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -26,10 +27,11 @@ class ApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        parent::tearDown();
         SugarTestHelper::tearDown();
     }
 
-    public function testFindBaseHelper()
+    public function testGetHelper_ReturnsBaseHelper()
     {
         $api = new RestService();
 
@@ -40,7 +42,7 @@ class ApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('SugarBeanApiHelper',get_class($helper));
     }
 
-    public function testFindModuleHelper()
+    public function testGetHelper_ReturnsModuleHelper()
     {
         $api = new RestService();
 
@@ -49,5 +51,19 @@ class ApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $helper = ApiHelper::getHelper($api,$bugsBean);
 
         $this->assertEquals('UsersApiHelper',get_class($helper));
+    }
+
+    public function testGetHelper_ModulePathSubDirectory_ReturnModuleHelper()
+    {
+        $moduleName = 'Activities';
+        $api = new RestService();
+
+        $bean = BeanFactory::newBean($moduleName);
+        $helper = ApiHelper::getHelper($api, $bean);
+
+        $this->assertContains("/", $bean->module_dir);
+        $this->assertNotEquals($bean->module_name, $bean->module_dir);
+        $this->assertEquals("{$moduleName}ApiHelper", get_class($helper));
+
     }
 }

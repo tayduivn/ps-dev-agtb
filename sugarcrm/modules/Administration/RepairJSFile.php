@@ -10,6 +10,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
+
 if(is_admin($current_user)){
     global $mod_strings; 
 
@@ -39,7 +42,8 @@ if(is_admin($current_user)){
                         
                 //set loading message and create url
                 ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_PROCESSING_REQUEST'));
-                postData = \"module=Administration&action=callJSRepair&js_admin_repair=".$_REQUEST['type']."&root_directory=".urlencode(getcwd())."\";
+                postData = \"module=Administration&action=callJSRepair&js_admin_repair=".$_REQUEST['type']."&root_directory=".urlencode(getcwd()).
+                "&csrf_token=".smarty_function_sugar_csrf_form_token(array('raw'=>true), $smarty)."\";
                  
     
                         

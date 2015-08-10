@@ -12,9 +12,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'PMSEValidate.php';
+require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEValidate.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEvaluator.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
+require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
 
 /**
  * Description of PMSERecordValidator
@@ -84,7 +85,7 @@ class PMSEExpressionValidator implements PMSEValidate
     }
 
     /**
-     * 
+     *
      * @param type $evaluator
      * @codeCoverageIgnore
      */
@@ -166,10 +167,8 @@ class PMSEExpressionValidator implements PMSEValidate
     public function validateParamsRelated($bean, $flowData, $request)
     {
         $paramsRelated = array();
-
         if ($request->getExternalAction() == 'EVALUATE_RELATED_MODULE') {
-            if ($bean->parent_type == $flowData['rel_process_module'] && $bean->parent_id == $flowData['cas_sugar_object_id']
-            ) {
+            if ($this->hasValidRelationship($bean, $flowData)) {
                 $paramsRelated = array(
                     'replace_fields' => array(
                         $flowData['rel_element_relationship'] => $flowData['rel_element_module']
@@ -193,4 +192,24 @@ class PMSEExpressionValidator implements PMSEValidate
         return $paramsRelated;
     }
 
+
+    /**
+     * Return true if bean specified by data in flowdata and bean specified by bean have a link defined
+     * @param $bean
+     * @param $flowData
+     * @return bool
+     */
+    public function hasValidRelationship($bean, $flowData) {
+        $seedBean = BeanFactory::getBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
+        $seedBean->load_relationship($flowData['rel_element_relationship']);
+        $relationship = $seedBean->$flowData['rel_element_relationship'];
+        if (!empty($relationship)) {
+            $relObj = $relationship->getRelationshipObject();
+            if ($relObj->relationship_exists($seedBean, $bean)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

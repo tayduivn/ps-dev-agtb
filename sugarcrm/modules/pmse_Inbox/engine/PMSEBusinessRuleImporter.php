@@ -12,8 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('PMSEImporter.php');
-require_once('PMSEEngineUtils.php');
+require_once 'modules/pmse_Inbox/engine/PMSEImporter.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
 /**
  * Imports a record of encrypted file.
@@ -44,7 +44,10 @@ class PMSEBusinessRuleImporter extends PMSEImporter
     public function saveProjectData($projectData)
     {
         $source_definition = json_decode($projectData['rst_source_definition']);
-        if (isset($projectData[$this->suffix . 'name']) && !empty($projectData[$this->suffix . 'name'])) {
+        if (empty($source_definition)) {
+            $source_definition = new stdClass();
+        }
+        if (!empty($projectData[$this->suffix . 'name'])) {
             $name = $this->getNameWithSuffix($projectData[$this->suffix . 'name']);
         } else {
             $name = $this->getNameWithSuffix($projectData[$this->name]);

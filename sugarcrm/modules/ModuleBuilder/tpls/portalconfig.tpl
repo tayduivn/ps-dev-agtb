@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="{sugar_getjspath file='include/javascript/select2/select2.css'}"/>
 <script language='javascript' src="{sugar_getjspath file='include/javascript/select2/select2.js'}"></script>
 <form id='0' name='0'>
+{sugar_csrf_form_token}
     <table class='tabform' width='100%' cellpadding=4>
 
         <tr>

@@ -94,7 +94,7 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
     ),
 //BEGIN SUGARCRM flav=ent ONLY
       array(
-          'layout' => 'subpanel-with-massupdate',
+          'layout' => 'subpanel',
           'label' => 'LBL_RLI_SUBPANEL_TITLE',
           'context' => array(
               'link' => 'revenuelineitems',

@@ -49,7 +49,7 @@ array (
                   'buttons' => array(
                       array(
                           'type' => 'rowaction',
-                          'event' => 'button:edit_button:click',
+                          'event' => 'button:edit_businessrules:click',
                           'name' => 'edit_button',
                           'label' => 'LBL_EDIT_BUTTON_LABEL',
                           'acl_action' => 'edit',
@@ -79,13 +79,6 @@ array (
                       ),
                       array(
                           'type' => 'rowaction',
-                          'event' => 'button:find_duplicates_button:click',
-                          'name' => 'find_duplicates_button',
-                          'label' => 'LBL_DUP_MERGE',
-                          'acl_action' => 'edit',
-                      ),
-                      array(
-                          'type' => 'rowaction',
                           'event' => 'button:duplicate_button:click',
                           'name' => 'duplicate_button',
                           'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
@@ -97,7 +90,7 @@ array (
                       ),
                       array(
                           'type' => 'rowaction',
-                          'event' => 'button:delete_button:click',
+                          'event' => 'button:delete_businessrules:click',
                           'name' => 'delete_button',
                           'label' => 'LBL_DELETE_BUTTON_LABEL',
                           'acl_action' => 'delete',
@@ -170,9 +163,14 @@ array (
                 'label' => 'LBL_RST_TYPE',
               ),
               2 => 'assigned_user_name',
+                3 => array(
+                    'name' => 'rst_source_definition',
+                    'readonly' => true,
+                    'type' => 'hidden',
+                ),
             ),
           ),
-          2 => 
+          2 =>
           array (
             'name' => 'panel_hidden',
             'label' => 'LBL_SHOW_MORE',

@@ -214,7 +214,11 @@ class Team extends SugarBean
 	 * Retrieve all of the users that are members of this team.
 	 * This list only includes explicitly assigned members.  (i.e. it will not show the manager of a member unless they are also explicty assigned).
 	 */
-	function get_team_members($only_active_users = false) {
+	function get_team_members($only_active_users = false, $filter = null) {
+		$where = "team_id='$this->id' and explicit_assign=1";
+		$filter = trim($filter);
+		$filter = is_string($filter) && !empty($filter) ? $filter : null;
+
 		// Get the list of members
 		$member = BeanFactory::getBean('TeamMemberships');
 		$member_list = $member->get_full_list("", "team_id='$this->id' and explicit_assign=1");
@@ -231,6 +235,11 @@ class Team extends SugarBean
 		foreach($member_list as $current_member)
 		{
 			$user = BeanFactory::getBean('Users', $current_member->user_id);
+
+			if (isset($filter) && (!(preg_match("/$filter/i", $user->user_name)
+				|| preg_match("/$filter/i", $user->first_name) || preg_match("/$filter/i", $user->last_name)))) {
+					continue;
+			}
 
 			//if the flag $only_active_users is set to true, then we only want to return
 			//active users. This was defined as part of workflow to not send out notifications

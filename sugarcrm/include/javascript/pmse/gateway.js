@@ -615,6 +615,7 @@ AdamGateway.prototype.createConfigureAction = function () {
                 //make criteria fields sortable
                 $(f.body).sortable({
                     connectWith: ".adam-field",
+                    handle: '.adam-form-label',
                     stop: function (event, ui) {
 
                         root.reorderItem(f, ui.item.attr('id'));
@@ -659,6 +660,7 @@ AdamGateway.prototype.createConfigureAction = function () {
                                 fieldHeight: 128,
                                 decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
                                 numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
+                                currencies: project.getMetadata("currencies"),
                                 dateFormat: App.date.getUserDateFormat(),
                                 timeFormat: App.user.getPreference("timepref"),
                                 operators: {

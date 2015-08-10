@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,6 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
 
 /**
  * Base Sugar view
@@ -671,6 +672,9 @@ EOHTML;
                 echo "<script>\n".implode("\n", $config_js)."</script>\n";
             }
 
+            // CSRF form token
+            echo $this->getCsrfFormTokenJscript();
+
             if ( isset($sugar_config['email_sugarclient_listviewmaxselect']) ) {
                 echo "<script>SUGAR.config.email_sugarclient_listviewmaxselect = {$GLOBALS['sugar_config']['email_sugarclient_listviewmaxselect']};</script>";
             }
@@ -1265,11 +1269,12 @@ EOHTML;
      *
      * @return string File location of the metadata file.
      */
-    public function getMetaDataFile()
+    public function getMetaDataFile($type = null)
     {
-        $metadataFile = null;
-        $foundViewDefs = false;
-        $viewDef = strtolower($this->type) . 'viewdefs';
+        if ($type === null) {
+            $type = $this->type;
+        }
+        $viewDef = strtolower($type) . 'viewdefs';
         return SugarAutoLoader::loadWithMetafiles($this->module, $viewDef);
     }
 
@@ -1578,5 +1583,15 @@ EOHTML;
         return false;
     }
 
-
+    /**
+     * Return CSRF form token jscript
+     * @return string
+     */
+    protected function getCsrfFormTokenJscript()
+    {
+        return sprintf(
+            '<script>SUGAR.csrf = {}; SUGAR.csrf.form_token = "%s";</script>',
+            CsrfAuthenticator::getInstance()->getFormToken()
+        );
+    }
 }

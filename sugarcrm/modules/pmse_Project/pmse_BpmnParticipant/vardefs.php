@@ -217,6 +217,6 @@ $dictionary['pmse_BpmnParticipant'] = array(
 		'unified_search'=>true,
 	);
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
+        require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('pmse_BpmnParticipant','pmse_BpmnParticipant', array('basic','assignable'));

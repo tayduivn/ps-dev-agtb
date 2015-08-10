@@ -25,16 +25,21 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose'] = array(
             'css_class' => 'btn-invisible btn-link',
         ),
         array(
-            'type'      => 'button',
-            'name'      => 'save_button',
-            'label'     => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'btn-primary',
-        ),
-        array(
-            'type'      => 'button',
-            'name'      => 'save_buttonExit',
-            'label'     => 'LBL_PMSE_SAVE_EXIT_BUTTON_LABEL',
-            'css_class' => 'btn-primary',
+            'type'    => 'actiondropdown',
+            'name'    => 'main_dropdown',
+            'primary' => true,
+            'buttons' => array(
+                array(
+                    'type'   => 'rowaction',
+                    'name'   => 'save_button',
+                    'label'  => 'LBL_SAVE_BUTTON_LABEL',
+                ),
+                array(
+                    'type'  => 'rowaction',
+                    'name'  => 'save_buttonExit',
+                    'label' => 'LBL_PMSE_SAVE_EXIT_BUTTON_LABEL',
+                ),
+            ),
         ),
         array(
             'name' => 'sidebar_toggle',
@@ -51,24 +56,20 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose'] = array(
             'placeholders' => true,
             'fields'       => array(
                 array(
-                    'name'           => 'base_module',
+                    'name'           => 'lbl_base_module',
                     'type'           => 'readonly',
                     'label'          => 'LBL_BASE_MODULE',
                     'span'           => 12,
-                    'cell_css_class' => 'controls-one btn-fit',
-
                 ),
                 array(
                     'name'            => 'name',
                     'label'           => 'LBL_NAME',
                     'span'            => 12,
-                    'label_css_class' => 'controls-one btn-fit',
                 ),
                 array(
                     'name'            => 'description',
                     'label'           => 'LBL_DESCRIPTION',
                     'span'            => 12,
-                    'label_css_class' => 'controls-one btn-fit',
                 ),
                 array(
                     'name'            => 'subject',
@@ -77,10 +78,11 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose'] = array(
                     'span'            => 12,
                     'cell_css_class'  => 'btn-fit',
                     'required'        => true,
+                    'label_css_class' => 'end-fieldgroup',
                 ),
                 array(
                     'name'          => 'body_html',
-                    'type'          => 'pmse_htmleditable_tinymce',
+                    'type'          => 'htmleditable_tinymce',
                     'dismiss_label' => true,
                     'span'          => 12,
                     'tinyConfig'    => array(

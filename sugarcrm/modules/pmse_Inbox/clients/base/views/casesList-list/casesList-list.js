@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    extendsFrom: 'RecordlistView',
-    plugins: ['ListColumnEllipsis', 'ListRemoveLinks', 'Pagination', 'MassCollection'],
+    extendsFrom: 'FlexListView',
+    plugins: ['ListColumnEllipsis', 'Pagination', 'MassCollection'],
 
     /**
      * Removes the event listeners that were added to the mass collection.
@@ -57,6 +57,11 @@
      */
     _renderField: function(field) {
             this._super("_renderField", [field]);
+    },
+
+    _dispose: function() {
+        jQuery('.adam-modal').remove();
+        this._super("_dispose", arguments);
     }
 
 })

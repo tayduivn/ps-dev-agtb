@@ -166,6 +166,11 @@ class Rome
         }
     }
 
+    public function setRetainCommentSpacing($val)
+    {
+        $this->retainCommentSpacing = $val;
+    }
+
     /**
      *  dynamic generate sugarcrm version
      *
@@ -457,21 +462,19 @@ class Rome
             $out = '';
             $this->clearOutput();
             while ($line = fgets($fp)) {
-
                 $this->lineCount++;
                 //not a comment keep moving along
 
                 if (substr_count($line, '//') == 0) {
                     $this->addToOutput($line);
                 } else {
-
                     $result = $this->parseComment($line);
                     if (!empty($result)) {
-
                         $this->changeActive($result);
-                        // print_r($this->active);
+                        if ($this->retainCommentSpacing) {
+                            $this->addToOutput("\n");
+                        }
                     } else {
-
                         //just a normal comment let's add it back
                         $this->addToOutput($line);
                     }
@@ -737,6 +740,37 @@ class Rome
             $blackListPath = 'sugarcrm/' . $blackListPath;
         }
         return $blackListPath;
+    }
+
+    public function generateMD5($dir)
+    {
+        $md5 = $this->calculateMD5($dir);
+        $md5String = var_export($md5, true);
+        $contents = <<<MD5
+<?php
+
+\$md5_string = $md5String;
+
+MD5;
+        file_put_contents($dir . '/files.md5', $contents);
+    }
+
+    protected function calculateMD5($dir)
+    {
+        $it = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($dir)
+        );
+
+        $results = array();
+        foreach ($it as $fileInfo) {
+            if (!$fileInfo->isFile()) {
+                continue;
+            }
+            $results['./' . $it->getSubPathName()] = md5_file($fileInfo);
+        }
+
+        ksort($results);
+        return $results;
     }
 }
 

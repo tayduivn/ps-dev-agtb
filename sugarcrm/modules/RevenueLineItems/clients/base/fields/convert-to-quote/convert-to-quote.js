@@ -26,7 +26,6 @@
         this._super('initialize', [options]);
         this.type = 'rowaction';
 
-        this.once('init', this._toggleDisable, this);
         this.context.on('button:convert_to_quote:click', this.convertToQuote, this);
     },
 
@@ -34,6 +33,7 @@
      * @inheritdoc
      */
     bindDataChange: function() {
+        this.model.on('sync', this._toggleDisable, this);
         this.model.on('change:quote_id', this._toggleDisable, this);
     },
 

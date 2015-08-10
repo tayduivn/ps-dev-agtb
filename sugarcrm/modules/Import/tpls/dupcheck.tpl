@@ -32,6 +32,7 @@
 
 {$INSTRUCTION}
 <form enctype="multipart/form-data" real_id="importstepdup" id="importstepdup" name="importstepdup" method="POST" action="index.php">
+{sugar_csrf_form_token}
 
 {foreach from=$smarty.request key=k item=v}
     {if $k neq 'current_step'}

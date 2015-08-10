@@ -13,6 +13,7 @@
 <script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
 <form name="enableWirelessModules" method="POST">
+    {sugar_csrf_form_token}
 	<input type="hidden" name="module" value="Administration">
 	<input type="hidden" name="action" value="updateWirelessEnabledModules">
 	<input type="hidden" name="enabled_modules" value="">
@@ -98,6 +99,7 @@
 	var disabled_modules = {$disabled_modules};
 	var lblEnabled = '{sugar_translate label="LBL_ACTIVE_MODULES"}';
 	var lblDisabled = '{sugar_translate label="LBL_DISABLED_MODULES"}';
+
 	{literal}
 	SUGAR.mobileEnabledTable = new YAHOO.SUGAR.DragDropTable(
 		"enabled_div",
@@ -134,18 +136,21 @@
 			    modules += "," + data.module;
 		}
 		modules = modules == "" ? modules : modules.substr(1);
+
+        var urlParams = {
+            module: "Administration",
+            action: "updateWirelessEnabledModules",
+            enabled_modules: modules,
+            offlineEnabled: $('#offline_enabled').is(':checked'),
+            csrf_token: SUGAR.csrf.form_token 
+        }
 		
 		ajaxStatus.showStatus(SUGAR.language.get('Administration', 'LBL_SAVING'));
 		Connect.asyncRequest(
             Connect.method, 
             Connect.url, 
             {success: SUGAR.saveCallBack},
-			SUGAR.util.paramsToUrl({
-				module: "Administration",
-				action: "updateWirelessEnabledModules",
-				enabled_modules: modules,
-				offlineEnabled: $('#offline_enabled').is(':checked')
-			}) + "to_pdf=1"
+			SUGAR.util.paramsToUrl(urlParams) + "to_pdf=1"
         );
 		
 		return true;

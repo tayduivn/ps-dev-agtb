@@ -261,14 +261,17 @@ class OAuthToken extends SugarBean
         }
 
         // delete request tokens from this user on this platform that aren't for this user
-        $db->query(
-            "DELETE FROM oauth_tokens WHERE "
+        $query = "DELETE FROM oauth_tokens WHERE "
             ." tstate = ".self::ACCESS
             ." AND id NOT IN ('".implode("', '",$ids)."') "
             ." AND platform = '".$db->quote($this->platform)."' "
-            ." AND assigned_user_id = '".$db->quote($this->assigned_user_id)."' "
-            ." AND contact_id = '".$db->quote($this->contact_id)."' "
-        );
+            ." AND assigned_user_id = '".$db->quote($this->assigned_user_id)."' ";
+
+            if (!empty($this->contact_id)) {
+                $query .= " AND contact_id = '".$db->quote($this->contact_id)."' ";
+            }
+            
+        $db->query($query);
     }
 
 	/**

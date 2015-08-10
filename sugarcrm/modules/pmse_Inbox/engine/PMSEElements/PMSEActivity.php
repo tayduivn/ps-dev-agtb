@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'modules/pmse_Inbox/engine/PMSEHistoryData.php';
-require_once 'PMSEShape.php';
+require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEShape.php';
 
 /**
  * Description of PMSEActivity

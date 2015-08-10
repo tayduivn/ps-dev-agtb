@@ -60,7 +60,8 @@ var resources = new Array();
 <tr>
 <td>
 
-<form name="EditViewGrid" id="EditViewGrid" method="post" action="index.php" data-disablebwchaschanged="true">
+<form name="EditView" id="EditView" method="post" action="index.php">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Project" />
 <input type="hidden" name="record" value="{$ID}" />
 <input type="hidden" name="team_id" value="{$TEAM}" />
@@ -141,7 +142,7 @@ var resources = new Array();
 	{/if}
 	<span id="view_filter_button_span"></span>
 	{if $SELECTED_VIEW == 5 || $SELECTED_VIEW == 6}
-		<input class="button" type=button id="view_filter_button" value="{$MOD.LBL_FILTER_VIEW}" onclick="document.forms['EditViewGrid'].action.value='EditGridView';document.forms['EditViewGrid'].to_pdf.value	= '0';document.getElementById('EditViewGrid').submit();" />
+		<input class="button" type=button id="view_filter_button" value="{$MOD.LBL_FILTER_VIEW}" onclick="document.forms['EditView'].action.value='EditGridView';document.forms['EditView'].to_pdf.value	= '0';document.getElementById('EditView').submit();" />
 	{/if}
 	<span id="exportToPDFSpan">
 		<input class="button" type="button" name="button" value="{$MOD.LBL_EXPORT_TO_PDF}" onclick="SUGAR.grid.exportToPDF();"/>

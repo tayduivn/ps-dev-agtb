@@ -87,13 +87,16 @@ Modal.prototype.setClickHandler = function (fn) {
 /**
  * Shows the modal object
  */
-Modal.prototype.show = function () {
+Modal.prototype.show = function (child) {
     var modalDiv;
     if (!this.html) {
         modalDiv = document.createElement('div');
         modalDiv.className = 'adam-modal';
         modalDiv.id = this.id;
         this.html = modalDiv;
+    }
+    if (child instanceof Element) {
+        this.html.appendChild(child.getHTML());
     }
     document.body.appendChild(this.html);
     this.setVisible(true);
@@ -130,9 +133,6 @@ Modal.prototype.attachListeners = function () {
                 e.stopPropagation();
             })
             .mouseout(function (e) {
-                e.stopPropagation();
-            })
-            .mouseup(function (e) {
                 e.stopPropagation();
             })
             .mousedown(function (e) {

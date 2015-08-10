@@ -25,7 +25,7 @@ $vardefs = array(
         'base_rate' => array(
             'name' => 'base_rate',
             'vname' => 'LBL_CURRENCY_RATE',
-            'type' => 'string',
+            'type' => 'text',
             'dbType' => 'decimal',
             'len' => '26,6'
         ),
@@ -42,7 +42,8 @@ $vardefs = array(
             'source' => 'non-db',
             'studio' => false,
             'duplicate_merge' => 'disabled',
-            'function' => 'getCurrencyDropDown',  // This is needed for BWC modules
+            'function' => 'getCurrencies',
+            'function_bean' => 'Currencies',
             'massupdate' => false
         ),
         'currency_symbol' => array(
@@ -58,6 +59,8 @@ $vardefs = array(
             'source' => 'non-db',
             'studio' => false,
             'duplicate_merge' => 'disabled',
+            'function' => 'getCurrencySymbols',
+            'function_bean' => 'Currencies',
             'massupdate' => false
         ),
         'currencies' => array(
@@ -70,12 +73,12 @@ $vardefs = array(
     ),
     'relationships' => array(
         strtolower($module) . '_currencies' => array(
-            'lhs_module' => $module,
-            'lhs_table' => strtolower($table_name),
-            'lhs_key' => 'currency_id',
-            'rhs_module' => 'Currencies',
-            'rhs_table' => 'currencies',
-            'rhs_key' => 'id',
+            'lhs_module' => 'Currencies',
+            'lhs_table' => 'currencies',
+            'lhs_key' => 'id',
+            'rhs_module' => $module,
+            'rhs_table' => strtolower($table_name),
+            'rhs_key' => 'currency_id',
             'relationship_type' => 'one-to-many'
         )
     )

@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php');
+require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php';
 
 /**
  * Description of PMSEUserAssignmentHandler
@@ -236,7 +236,7 @@ class PMSEUserAssignmentHandler
         } else {
             $newFlowRow->cas_adhoc_parent_id = $flowRow->cas_adhoc_parent_id;
         }
-        
+
         if ($isRoundTripReassign) {
             $newFlowRow->cas_reassign_level--;
         } else {
@@ -383,7 +383,7 @@ class PMSEUserAssignmentHandler
         }
         return $result;
     }
-    
+
     /**
      * Check if the reassignment task is one way
      * @param type $caseData
@@ -485,9 +485,9 @@ class PMSEUserAssignmentHandler
      * @return type
      * @codeCoverageIgnore
      */
-    public function getReassignableUserList($beanFlow, $fullList = false)
+    public function getReassignableUserList($beanFlow, $fullList = false, $filter = null)
     {
-        return $this->getAssignableUserList($beanFlow, $fullList, 'REASSIGN');
+        return $this->getAssignableUserList($beanFlow, $fullList, 'REASSIGN', $filter);
     }
 
     /**
@@ -499,9 +499,9 @@ class PMSEUserAssignmentHandler
      * @return type
      * @codeCoverageIgnore
      */
-    public function getAdhocAssignableUserList($beanFlow, $fullList = false)
+    public function getAdhocAssignableUserList($beanFlow, $fullList = false, $filter = null)
     {
-        return $this->getAssignableUserList($beanFlow, $fullList, 'ADHOC');
+        return $this->getAssignableUserList($beanFlow, $fullList, 'ADHOC', $filter);
     }
 
     /**
@@ -511,7 +511,7 @@ class PMSEUserAssignmentHandler
      * @param string $type
      * @return array
      */
-    public function getAssignableUserList($beanFlow, $fullList = false, $type = 'ADHOC')
+    public function getAssignableUserList($beanFlow, $fullList = false, $type = 'ADHOC', $filter = null)
     {
         $membersList = array();
         $membersIds = array();
@@ -524,7 +524,7 @@ class PMSEUserAssignmentHandler
         $activityDefinition = $this->retrieveBean('pmse_BpmActivityDefinition');
         $memberList = array();
         if ($beanFlow->bpmn_type == 'bpmnActivity') {
-            $activityDefinition->retrieve_by_string_fields(array('id' => $beanFlow->bpmn_id));
+            $activityDefinition->retrieve($beanFlow->bpmn_id);
             $teamBean = $this->retrieveBean('Teams'); //$this->beanFactory->getBean('Teams');
             $teamId = ($type == 'ADHOC') ? $activityDefinition->act_adhoc_team : $activityDefinition->act_reassign_team;
             if ($teamId == 'current_team') {
@@ -547,7 +547,7 @@ class PMSEUserAssignmentHandler
                 }
             } else {
                 $teamBean = $this->retrieveBean('Teams', $teamId);
-                $membersList = $teamBean->get_team_members(true);
+                $membersList = $teamBean->get_team_members(true, $filter);
                 usort($membersList, function ($a, $b) {
                     return strcmp($a->full_name, $b->full_name);
                 });

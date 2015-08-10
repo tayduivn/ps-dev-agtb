@@ -85,6 +85,15 @@
 
             this.currentFieldValue = this.context.get('model').get(this.extraModule.field);
         }
+
+        currentContext.on('subpanel:reload', function(args) {
+            if (!_.isUndefined(args) &&
+                _.isArray(args.links) &&
+                (_.contains(args.links, 'revisions') || _.contains(args.links, 'localizations'))
+            ) {
+                this.layout.reloadDashlet({complete: function() {}, saveLeafs: false});
+            }
+        }, this);
     },
 
     /**
@@ -98,6 +107,10 @@
      * {@inheritDoc}
      */
     _render: function() {
+        this._super('_render');
+        if (this.meta.config) {
+            return;
+        }
         var treeOptions = {
             settings: {
                 category_root: this.categoryRoot,
@@ -124,7 +137,6 @@
                 storage: this._getStorage()
             };
         }
-        this._super('_render');
         this._renderTree($('[data-place=dashlet-tree]'), treeOptions, callbacks);
     },
 
@@ -210,38 +222,40 @@
                 return;
             }
             var nestedBean = self.collection.getChild(id);
-            nestedBean.getPath({
-                success: function(data) {
-                    var path = [];
-                    _.each(data, function(cat) {
-                        if (cat.id == this.categoryRoot) {
-                            return;
-                        }
+            if (!_.isUndefined(nestedBean)) {
+                nestedBean.getPath({
+                    success: function(data) {
+                        var path = [];
+                        _.each(data, function(cat) {
+                            if (cat.id == this.categoryRoot) {
+                                return;
+                            }
+                            path.push({
+                                id: cat.id,
+                                name: cat.name
+                            });
+                        }, self);
                         path.push({
-                            id: cat.id,
-                            name: cat.name
+                            id: nestedBean.id,
+                            name: nestedBean.get('name')
                         });
-                    }, self);
-                    path.push({
-                        id: nestedBean.id,
-                        name: nestedBean.get('name')
-                    });
-                    async.forEach(
-                        path,
-                        function(item, c) {
-                            self.folderToggled({
-                                id: item.id,
-                                name: item.name,
-                                type: 'folder',
-                                open: true
-                            }, c);
-                        },
-                        function() {
-                            self.selectNode(currentModel.id);
-                        }
-                    );
-                }
-            });
+                        async.forEach(
+                            path,
+                            function(item, c) {
+                                self.folderToggled({
+                                    id: item.id,
+                                    name: item.name,
+                                    type: 'folder',
+                                    open: true
+                                }, c);
+                            },
+                            function() {
+                                self.selectNode(currentModel.id);
+                            }
+                        );
+                    }
+                });
+            }
         });
     },
 
@@ -344,6 +358,7 @@
         }
         if (_.isEmpty(this.extraModule)
             || id === undefined
+            || _.isEmpty(id)
             || _.isEmpty(this.extraModule.module)
             || _.isEmpty(this.extraModule.field)
             || !_.isUndefined(this.loadedLeafs[id])

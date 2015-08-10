@@ -12,9 +12,22 @@
 
 /* Internal Module Imports */
 
-require_once 'PHPMailerProxy.php';
-require_once 'BaseMailer.php';
-require_once 'modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.php';
+/**
+ * Needs a proxy to the PHPMailer library.
+ */
+require_once "modules/Mailer/PHPMailerProxy.php";
+
+/**
+ * Requires BaseMailer in order to extend it.
+ */
+require_once "modules/Mailer/BaseMailer.php";
+
+/* External Imports */
+
+/**
+ * Needs to take on an OutboundSmtpEmailConfiguration.
+ */
+require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.php";
 
 /**
  * This class implements the basic functionality that is expected from a Mailer that uses PHPMailer to deliver its
@@ -32,10 +45,9 @@ class SmtpMailer extends BaseMailer
     const MailTransmissionProtocol = "smtp";
 
     /**
-     * Performs the send of an email using PHPMailer (currently version 5.2.1).
+     * Sends email using PHPMailer.
      *
-     * @access public
-     * @throws MailerException
+     * {@inheritDoc}
      */
     public function send()
     {
@@ -75,6 +87,8 @@ class SmtpMailer extends BaseMailer
             $message .= "--- Mail Headers ---\n" . print_r($headers, true);
             $GLOBALS["log"]->debug($message);
             /*--- Debug Only ----------------------------------------------------*/
+
+            return $mailer->getSentMIMEMessage();
         } catch (Exception $e) {
             // eat the phpmailerException but use it's message to provide context for the failure
             $me = new MailerException($e->getMessage(), MailerException::FailedToSend);

@@ -17,7 +17,7 @@ $mod_strings = array (
 
   'LBL_MODULE_NAME' => 'Process Business Rules',
   'LBL_MODULE_TITLE' => 'Process Business Rules',
-  'LBL_MODULE_NAME_SINGULAR' => 'Process Business Rules',
+  'LBL_MODULE_NAME_SINGULAR' => 'Process Business Rule',
 
   'LBL_RST_UID' => 'Business Rule ID',
   'LBL_RST_TYPE' => 'Business Rule Type',
@@ -31,6 +31,8 @@ $mod_strings = array (
   'LBL_RST_UPDATE_DATE' => 'Business Rule Update Date',
 
     'LNK_LIST' => 'View Process Business Rules',
+    'LNK_NEW_PMSE_BUSINESS_RULES' => 'Create Process Business Rule',
+    'LNK_IMPORT_PMSE_BUSINESS_RULES' => 'Import Process Business Rules',
 
     'LBL_PMSE_TITLE_BUSINESS_RULES_BUILDER' => 'Business Rules Builder',
 
@@ -59,6 +61,8 @@ $mod_strings = array (
     'LBL_PMSE_MESSAGE_LABEL_MIN_ROWS' => 'The decision table must have at least 1 row',
     'LBL_PMSE_MESSAGE_LABEL_MIN_CONDITIONS_COLS' => 'The decision table must have at least 1 condition column',
     'LBL_PMSE_MESSAGE_LABEL_MIN_CONCLUSIONS_COLS' => 'The decision table must have at least 1 conclusion column',
+    'LBL_PMSE_MESSAGE_LABEL_CHANGE_COLUMN_TYPE' => 'Values associated to this variable will be removed. Do you want to continue?',
+    'LBL_PMSE_MESSAGE_LABEL_REMOVE_VARIABLE' => 'Do you really want to remove this variable?',
 
     'LBL_PMSE_LABEL_CONDITIONS' => 'Conditions',
     'LBL_PMSE_LABEL_RETURN' => 'Return',
@@ -67,10 +71,13 @@ $mod_strings = array (
     'LBL_PMSE_TOOLTIP_ADD_CONDITION' => 'Add condition',
     'LBL_PMSE_TOOLTIP_ADD_CONCLUSION' => 'Add conclusion',
     'LBL_PMSE_TOOLTIP_ADD_ROW' => 'Add row',
+    'LBL_PMSE_TOOLTIP_REMOVE_COLUMN' => 'Remove column',
 
     'LBL_PMSE_DROP_DOWN_CHECKED' => 'Yes',
     'LBL_PMSE_DROP_DOWN_UNCHECKED' => 'No',
     'LBL_PMSE_IMPORT_BUSINESS_RULES_FAILURE' => 'Failed to create Process Business Rule from file',
 
     'LBL_PMSE_MESSAGE_REQUIRED_FIELDS_BUSINESSRULES' => 'This Business Rule cannot be displayed because it is associated with fields not available in this instance.',
+    'LBL_PMSE_PROCESS_BUSINESS_RULES_EDIT' => 'This Business Rule is currently being used in a Process Definition. Do you still want to edit this Business Rule?',
+    'LBL_PMSE_PROCESS_BUSINESS_RULES_DELETE' => "You cannot delete this Business Rule because it is currently used in a Process Definition.",
 );

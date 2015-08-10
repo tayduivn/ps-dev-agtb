@@ -16,7 +16,8 @@
     },
 
     closeDesigner: function() {
-        app.router.navigate('pmse_Project', {trigger: true});
+        var route = app.router.buildRoute(this.module, this.prj_uid);
+        app.router.navigate(route, {trigger: true});
     },
 
     loadData: function (options) {
@@ -51,11 +52,18 @@
                     app.router.navigate(targetUrl , {trigger: true, replace: true });
                     window.location.reload()
                 },
-                onCancel: $.noop
+                onCancel: function () {
+                    app.router.navigate('' , {trigger: false, replace: false })
+                }
             });
             return false;
         }
         project.dispose();
         return true;
+    },
+
+    _dispose: function () {
+        app.routing.offBefore('route', this.beforeRouteChange);
+        this._super("_dispose", arguments);
     }
 })

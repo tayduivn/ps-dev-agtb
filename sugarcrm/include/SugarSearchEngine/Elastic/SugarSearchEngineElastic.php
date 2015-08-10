@@ -164,6 +164,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     public function isTypeFtsEnabled($type)
     {
         $this->logger->deprecated('SugarSearchEngineElastic::isTypeFtsEnabled is deprecated');
-        return in_array($type, $this->engine->getSupportedTypes());
+        return in_array($type, $this->engine->getStudioSupportedTypes());
     }
 }

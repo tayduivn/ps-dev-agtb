@@ -130,6 +130,12 @@ abstract class OpportunitySetup
                 continue;
             }
 
+            // the TemplateCurrency has a default of 0, but out OOB files, they are required
+            // to not have a default value of 0, so it's set to null here
+            if ($field_defs['type'] === 'currency' && !isset($field_defs['default'])) {
+                $diff['default'] = null;
+            }
+
             // populate the row from the vardefs that were loaded and the new_defs
             $f->populateFromRow(array_merge($field_defs, $diff));
 
@@ -144,6 +150,9 @@ abstract class OpportunitySetup
             // after the field has been saved in Studio
             if (!isset($f->vardef_map['studio'])) {
                 $f->vardef_map['studio'] = 'studio';
+            }
+            if (!isset($f->vardef_map['convertToBase'])) {
+                $f->vardef_map['convertToBase'] = 'convertToBase';
             }
 
             $f->save($df);
@@ -478,7 +487,6 @@ abstract class OpportunitySetup
     protected function processWorkFlows()
     {
         $this->markWorkFlowsWithOppActionShellsInactive();
-        $this->markWorkFlowsWithOppAlertShellsInactive();
         $this->markWorkFlowsWithOppTriggerShellsInactive();
 
         // mark all WorkFlows with their base of opportunities as status '0' (Inactive)
@@ -525,35 +533,6 @@ abstract class OpportunitySetup
         foreach ($rows as $row) {
             $actionShells->retrieve($row['id']);
             $workflow = $actionShells->get_workflow_object();
-            $workflow->status = 0;
-            $workflow->save();
-            $workflow->write_workflow();
-        }
-    }
-
-    /**
-     * Find any Alert Shells for the Opportunity Module and Mark it's related workflow inactive
-     *
-     * @throws SugarQueryException
-     */
-    private function markWorkFlowsWithOppAlertShellsInactive()
-    {
-        // get the action shells
-        $alertShells = BeanFactory::getBean('WorkFlowAlertShells');
-
-        $sq = new SugarQuery();
-        $sq->select(array('id', 'parent_id'));
-        $sq->from($alertShells);
-        $sq->where()
-            ->queryOr()
-            ->equals('rel_module2', 'opportunities')
-            ->equals('rel_module2', 'opportunities');
-
-        $rows = $sq->execute();
-
-        foreach ($rows as $row) {
-            $alertShells->retrieve($row['id']);
-            $workflow = $alertShells->get_workflow_object();
             $workflow->status = 0;
             $workflow->save();
             $workflow->write_workflow();

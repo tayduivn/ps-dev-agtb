@@ -278,7 +278,7 @@ class PMSEHistoryLogWrapper
                 } else {
                     if ($caseData['bpmn_type'] == 'bpmnGateway') {
                         $name = sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTIVITY_NAME', 'pmse_Inbox'),
-                            $this->getEventName($caseData['bpmn_id']));
+                            $this->getGatewayName($caseData['bpmn_id']));
                         $currentCaseState = sprintf(translate('LBL_PMSE_HISTORY_LOG_WITH_GATEWAY', 'pmse_Inbox'),
                             $name);
                         $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_MODULE_ACTION', 'pmse_Inbox'),
@@ -318,6 +318,17 @@ class PMSEHistoryLogWrapper
         //$row = $this->db->fetchByAssoc($result);
         $eventBean = BeanFactory::getBean('pmse_BpmnEvent', $id);
         return $eventBean->name; //$row['name'];
+    }
+
+    /**
+     * Get Gateway name by id. make the query and return the name of an gateway
+     * @param integer $id
+     * @return string
+     */
+    private function getGatewayName($id)
+    {
+        $gatewayBean = BeanFactory::getBean('pmse_BpmnGateway', $id);
+        return $gatewayBean->name;
     }
 
     /**

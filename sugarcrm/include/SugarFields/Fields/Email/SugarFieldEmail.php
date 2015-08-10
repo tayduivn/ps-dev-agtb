@@ -16,6 +16,9 @@ require_once 'include/SugarFields/Fields/Base/SugarFieldBase.php';
 class SugarFieldEmail extends SugarFieldBase
 {
     public $needsSecondaryQuery = true;
+    protected $formTemplateMap = array(
+        'popup_query_form' => 'Base',
+    );
 
     /**
      * {@inheritDoc}
@@ -186,6 +189,7 @@ class SugarFieldEmail extends SugarFieldBase
         $has_primary = array();
 
         foreach ($rows as $row) {
+            $row['bean_id'] = $GLOBALS['db']->fromConvert($row['bean_id'], 'id');
             $bean = $beans[$row['bean_id']];
             if (empty($has_primary[$row['bean_id']])) {
                 $row['primary_address'] = true;

@@ -18,7 +18,7 @@ require_once 'upgrade/scripts/pre/CheckComposerConfig.php';
  * CheckComposerConfig pre script test suite
  *
  */
-class CheckComposerConfigTest extends UpgradeTestCase
+class SugarUpgradeCheckComposerConfigTest extends UpgradeTestCase
 {
     /**
      * @var string Default context source_dir
@@ -459,7 +459,7 @@ class CheckComposerConfigTest extends UpgradeTestCase
      * Get mock for subject under test
      * @param null|array $method
      * @param array $context Additional context settings
-     * @return SugarUpgradeCheckComposerConfig
+     * @return SugarUpgradeCheckComposerConfig|PHPUnit_Framework_MockObject_MockObject
      */
     protected function getMockSut($method = null, array $context = array())
     {
@@ -471,5 +471,44 @@ class CheckComposerConfigTest extends UpgradeTestCase
             ->setConstructorArgs(array($this->upgrader))
             ->setMethods($method)
             ->getMock();
+    }
+
+    public function testIsStockComposer()
+    {
+        $isStockComposer = $this->isStockComposer('the-hash', 'the-hash', 'the-hash');
+        $this->assertTrue($isStockComposer);
+    }
+
+    /**
+     * @dataProvider isNotStockComposerProvider
+     */
+    public function testIsNotStockComposer($lockHash, $actualHash, $stockHash)
+    {
+        $isStockComposer = $this->isStockComposer($lockHash, $actualHash, $stockHash);
+        $this->assertFalse($isStockComposer);
+    }
+
+    public static function isNotStockComposerProvider()
+    {
+        return array(
+            'empty-lock-hash' => array(null, null, null),
+            'empty-actual-hash' => array('X', null, null),
+            'actual-lock-mismatch' => array('X', null, 'Y'),
+            'empty-stock-hash' => array('X', null, 'X'),
+            'actual-stock-mismatch' => array('X', 'Y', 'X'),
+        );
+    }
+
+    private function isStockComposer($lockHash, $stockHash, $actualHash)
+    {
+        $sut = $this->getMockSut(array('loadLock', 'getActualHash', 'getStockHash'));
+        SugarTestReflection::setProtectedValue($sut, 'lockHash', $lockHash);
+        $sut->expects($this->any())
+            ->method('getActualHash')
+            ->willReturn($actualHash);
+        $sut->expects($this->any())
+            ->method('getStockHash')
+            ->willReturn($stockHash);
+        return SugarTestReflection::callProtectedMethod($sut, 'isStockComposer');
     }
 }

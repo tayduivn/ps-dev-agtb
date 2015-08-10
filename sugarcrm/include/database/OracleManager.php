@@ -102,6 +102,20 @@ class OracleManager extends DBManager
         'file'     => 'varchar2(255)',
         'decimal_tpl' => 'number(%d, %d)',
             );
+
+    /**
+     * Integer fields' min and max values
+     * @var array
+     */
+    protected $type_range = array(
+        'int'      => array('min_value'=>-99999999999999999999999999999999999999, 'max_value'=>99999999999999999999999999999999999999),
+        'uint'     => array('min_value'=>-999999999999999, 'max_value'=>999999999999999), // number(15)
+        'ulong'    => array('min_value'=>-99999999999999999999999999999999999999, 'max_value'=>99999999999999999999999999999999999999),
+        'long'     => array('min_value'=>-99999999999999999999999999999999999999, 'max_value'=>99999999999999999999999999999999999999),
+        'short'    => array('min_value'=>-999, 'max_value'=>999),// number(3)
+        'tinyint'  => array('min_value'=>-999, 'max_value'=>999), // number(3)
+    );
+
 	/**
      * List of known sequences
      * @var array
@@ -466,16 +480,39 @@ class OracleManager extends DBManager
      * (non-PHPdoc)
      * @see DBManager::insertParams()
      */
-    public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePrepared=false)
+    public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePrepared = false)
     {
 
-        if ( !$usePrepared ) {
+        if (!$usePrepared) {
             $sql = parent::insertParams($table, $field_defs, $data, $field_map, false, $usePrepared);
-            if(!$execute) return $sql;
+            if (!$execute) {
+                return $sql;
+            }
+
             return $this->AltlobExecute($table, $field_defs, $data, $sql);
-        }
-        else {
+        } else {
             return parent::insertParams($table, $field_defs, $data, $field_map, $execute, $usePrepared);
+        }
+    }
+
+
+    /**
+     * TODO: may want to join it with Altlobexecute
+     * (non-PHPdoc)
+     * @see DBManager::updateParams()
+     */
+    public function updateParams($table, $field_defs, $data, array $where = array(), $field_map = null, $execute = true, $usePrepared = false)
+    {
+
+        if (!$usePrepared) {
+            $sql = parent::updateParams($table, $field_defs, $data, $where, $field_map, false, $usePrepared);
+            if (!$execute) {
+                return $sql;
+            }
+
+            return $this->AltlobExecute($table, $field_defs, $data, $sql);
+        } else {
+            return parent::updateParams($table, $field_defs, $data, $where, $field_map, $execute, $usePrepared);
         }
     }
 
@@ -856,7 +893,7 @@ class OracleManager extends DBManager
 
     public function renameColumnSQL($tablename, $column, $newname)
     {
-        return "ALTER TABLE $tablename RENAME COLUMN '$column' TO '$newname'";
+        return "ALTER TABLE $tablename RENAME COLUMN $column TO $newname";
     }
 
     /**
@@ -882,6 +919,30 @@ class OracleManager extends DBManager
         }
 
         return parent::massageValue($val, $fieldDef, $forPrepared);
+    }
+
+    /**
+     * Generates set of queries to change column type via temporary column.
+     * @param string $tablename Name of the table we are working with
+     * @param array $oldColumn Old column metadata
+     * @param array $newColumn New column metadata
+     * @param bool $ignoreRequired
+     * @return array
+     */
+    protected function alterVarchar2ToNumber($tablename, $oldColumn, $newColumn, $ignoreRequired)
+    {
+        $sql = array();
+        $newColumn['name'] = 'tmp_' . mt_rand();
+
+        $columnSQL = $this->changeOneColumnSQL($tablename, $newColumn, 'ADD', $ignoreRequired);
+        $sql[] = "ALTER TABLE $tablename ADD $columnSQL";
+
+        $sql[] = "UPDATE $tablename SET {$newColumn['name']} = {$oldColumn['name']}";
+
+        $sql[] = "ALTER TABLE $tablename DROP COLUMN {$oldColumn['name']}";
+
+        $sql[] = $this->renameColumnSQL($tablename, $newColumn['name'], $oldColumn['name']);
+        return $sql;
     }
 
 	/**
@@ -1044,6 +1105,20 @@ class OracleManager extends DBManager
                 }
 	    		if ( !$ignoreRequired && ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
 	    			$colArray['required'] = '';
+
+                // If we try to change column from/to completely different types (e.g. from varchar2 to number)
+                // and the column affected has some data, let's do it via a separate method, otherwise we get ORA-01439.
+                $precisionPattern = '/\([^)]*\)/';
+                $oldType = !empty($nowCol['type']) ? $nowCol['type'] : '';
+                // delete precision if exists - types with different precision are the same.
+                $oldType = preg_replace($precisionPattern, '', $oldType);
+                $newType = preg_replace($precisionPattern, '', $colData['type']);
+
+                $alterMethod = 'alter' . ucfirst($oldType) . 'To' . ucfirst($newType);
+                if (method_exists($this, $alterMethod)) {
+                    return $this->$alterMethod($tablename, $nowCol, $fieldDef, $ignoreRequired);
+                }
+
 	    		return "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
 	    }
         return '';
@@ -1083,6 +1158,11 @@ class OracleManager extends DBManager
         }
         if ( $action == 'DROP' )
             $action = 'DROP COLUMN';
+
+        if (is_array($columns)) {
+            return $columns;
+        }
+
         return ($columns == '' || empty($columns))
             ? ""
             : "ALTER TABLE $tablename $action $columns";

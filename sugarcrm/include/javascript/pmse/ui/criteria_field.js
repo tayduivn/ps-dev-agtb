@@ -34,7 +34,8 @@ CriteriaField.prototype.init = function(settings) {
 		dateFormat: "YYYY-MM-DD",
 		timeFormat: "H:i",
 		decimalSeparator: ".",
-		numberGroupingSeparator: ","
+		numberGroupingSeparator: ",",
+		currencies: []
 	};
 
 	jQuery.extend(true, defaults, settings);
@@ -68,6 +69,7 @@ CriteriaField.prototype.init = function(settings) {
 		constant: defaults.constant,
 		decimalSeparator: defaults.decimalSeparator,
 		numberGroupingSeparator: defaults.numberGroupingSeparator,
+		currencies: defaults.currencies,
 		onChange: this._onChange(),
 		appendTo: function () {
 			return (that.parent && that.parent.parent && that.parent.parent.html) || document.body;
@@ -88,14 +90,18 @@ CriteriaField.prototype.init = function(settings) {
 
 CriteriaField.prototype.disable = function () {
 	this._disabled = true;
-	this.controlObject.disable();
+	if (this.controlObject) {
+		this.controlObject.disable();
+	}
 	jQuery(this.labelObject).addClass('adam-form-label-disabled');
 	return this;
 };
 
 CriteriaField.prototype.enable = function () {
 	this._disabled = false;
-	this.controlObject.enable();
+	if (this.controlObject) {
+		this.controlObject.enable();
+	}
 	jQuery(this.labelObject).removeClass('adam-form-label-disabled');
 	return this;
 };

@@ -213,7 +213,6 @@ $dictionary['pmse_Project'] = array(
     'name' => 'name',
     'vname' => 'LBL_NAME',
     'type' => 'name',
-    'link' => true,
     'dbType' => 'varchar',
     'len' => '255',
     'unified_search' => false,
@@ -304,6 +303,6 @@ $dictionary['pmse_Project'] = array(
     ),
 );
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
+        require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('pmse_Project','pmse_Project', array('basic','team_security','assignable'));

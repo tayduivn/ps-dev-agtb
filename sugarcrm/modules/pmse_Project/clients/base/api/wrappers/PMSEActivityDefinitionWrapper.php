@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/pmse_Inbox/engine/PMSEEngineUtils.php');
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
 /**
  * The ADAMWrapperActivityDefinition is a class part of the family of wrapper classes
@@ -111,7 +111,7 @@ class PMSEActivityDefinitionWrapper
         $this->activity->retrieve_by_string_fields(array('act_uid' => $args['record']));
         if ($this->activity->fetched_row != false) {
 //            $this->activityDefinition = new BpmActivityDefinition();
-            $this->activityDefinition->retrieve_by_string_fields(array('id' => $this->activity->id));
+            $this->activityDefinition->retrieve($this->activity->id);
             if ($this->activityDefinition->fetched_row != false) {
                 $result['success'] = true;
                 if (empty($this->activityDefinition->fetched_row['act_readonly_fields'])) {
@@ -195,7 +195,7 @@ class PMSEActivityDefinitionWrapper
 
 
                     $args['id'] = $this->activity->id;
-                    $this->activityDefinition->retrieve_by_string_fields(array('id' => $this->activity->id));
+                    $this->activityDefinition->retrieve($this->activity->id);
 
                     $args = $args['data'];
 
@@ -270,7 +270,7 @@ class PMSEActivityDefinitionWrapper
      */
     public function getDefaultRequiredFields()
     {
-        $this->processDefinition->retrieve_by_string_fields(array('id' => $this->activityDefinition->pro_id));
+        $this->processDefinition->retrieve($this->activityDefinition->pro_id);
         $bean = $this->factory->getBean($this->processDefinition->pro_module);
         $fieldsData = isset($bean->field_defs) ? $bean->field_defs : array();
 

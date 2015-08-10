@@ -110,9 +110,6 @@
                     self.context.get('collection').resetPagination();
                     self.context.resetLoadFlag();
                     self.context.set('skipFetch', false);
-                    //Reset limit on context so we don't "over fetch" (lose pagination)
-                    var collectionOptions = self.context.get('collectionOptions') || {};
-                    if (collectionOptions.limit) self.context.set('limit', collectionOptions.limit);
                     self.context.loadData({
                         success: function() {
                             self.view.layout.trigger('filter:record:linked');

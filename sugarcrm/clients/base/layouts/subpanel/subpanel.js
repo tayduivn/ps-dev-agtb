@@ -63,13 +63,10 @@
         var ignoreRole = this.context.get('ignore_role');
         if (ignoreRole) {
             var collection = this.collection;
-            // FIXME in SC-3973 - we should not pass the options in such a hacky way.
-            // This needs to change when we have a method to set fetch options.
-            collection._initOptions.params = collection._initOptions.params || {};
-            collection._initOptions.params.ignore_role = ignoreRole;
-            collection.options = collection.options || {};
-            collection.options.params = collection.options.params || {};
-            collection.options.params.ignore_role = ignoreRole;
+            var options = collection.getOption() || {};
+            var params = options.params || {};
+            params.ignore_role = ignoreRole;
+            collection.setOption('params', params);
         }
 
         // binding so subpanels can trigger other subpanels to reload by link name
@@ -81,5 +78,21 @@
                 }
             }, this);
         }
+    },
+
+    /**
+     * @inheritDoc
+     */
+    show: function() {
+        this.context.set('hidden', false);
+        this._super('show');
+    },
+
+    /**
+     * @inheritDoc
+     */
+    hide: function() {
+        this.context.set('hidden', true);
+        this._super('hide');
     }
 })

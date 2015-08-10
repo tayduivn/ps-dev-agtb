@@ -155,7 +155,6 @@ $dictionary['Product'] = array(
         'contact_name' => array(
             'name' => 'contact_name',
             'rname' => 'name',
-            'db_concat_fields' => array(0 => 'first_name', 1 => 'last_name'),
             'source' => 'non-db',
             'len' => '510',
             'group' => 'contact_name',
@@ -1057,12 +1056,12 @@ $dictionary['Product'] = array(
             'relationship_role_column_value' => 'Products'
         ),
         'product_manufacturers' => array(
-            'rhs_module' => 'Manufacturers',
-            'rhs_table' => 'manufacturers',
-            'rhs_key' => 'id',
-            'lhs_module' => 'Products',
-            'lhs_table' => 'products',
-            'lhs_key' => 'manufacturer_id',
+            'lhs_module' => 'Manufacturers',
+            'lhs_table' => 'manufacturers',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Products',
+            'rhs_table' => 'products',
+            'rhs_key' => 'manufacturer_id',
             'relationship_type' => 'one-to-many'
         ),
     ),

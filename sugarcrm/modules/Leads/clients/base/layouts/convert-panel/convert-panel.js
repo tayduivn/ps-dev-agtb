@@ -415,6 +415,8 @@
         model.doValidate(view.getFields(view.module), _.bind(function(isValid) {
             if (isValid) {
                 this.markPanelComplete(model);
+            } else {
+                this.resetPanel();
             }
         }, this));
     },
@@ -432,9 +434,11 @@
         this.trigger('lead:convert-panel:complete', this.currentState.associatedName);
 
         app.alert.dismissAll('error');
-        
-        //disable sub-panel until reset
-        this.$(this.accordionBody).addClass('disabled');
+
+        //re-run validation if create model changes after completion
+        if (!model.id) {
+            model.on('change', this.runCreateValidation, this);
+        }
 
         //if this panel was open, close & tell the next panel to open
         if (this.isPanelOpen()) {
@@ -464,7 +468,7 @@
      * Reset the panel back to a state the user can modify associated values
      */
     resetPanel: function() {
-        this.$(this.accordionBody).removeClass('disabled');
+        this.createView.model.off('change', this.runCreateValidation, this);
         this.currentState.complete = false;
         this.context.trigger('lead:convert-panel:reset', this.meta.module);
         this.trigger('lead:convert-panel:reset');
@@ -568,7 +572,7 @@
         var hasChanged = false;
 
         _.each(fieldMapping, function(sourceField, targetField) {
-            if (model.has(sourceField) && !_.isEmpty(model.get(sourceField)) &&
+            if (model.has(sourceField) && this.shouldSourceValueBeCopied(model.get(sourceField)) &&
                 model.get(sourceField) !== this.createView.model.get(targetField)) {
                     this.createView.model.setDefault(targetField, model.get(sourceField));
                     this.createView.model.set(targetField, model.get(sourceField));
@@ -657,6 +661,13 @@
         var defaults = _.extend({}, this.createView.model._defaults, this.createView.model.getDefault());
         this.createView.model.clear({silent: true});
         this.createView.model.set(defaults, {silent: true});
+    },
+
+    /**
+     * Determine whether to copy the the supplied value when it appears in the Source module during conversion
+     */
+    shouldSourceValueBeCopied: function(val) {
+        return _.isNumber(val) || _.isBoolean(val) || !_.isEmpty(val);
     },
 
     /**

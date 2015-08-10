@@ -28,6 +28,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/FiltersWidget.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='include/SugarFields/Fields/Teamset/Teamset.js'}"></script>
 <form name="ReportsWizardForm" id="ReportsWizardForm" method="post" action="index.php">
+{sugar_csrf_form_token}
 	<input type="hidden" name="module" value="Reports">
 	<input type="hidden" name="current_module" value="">
 	<input type="hidden" name="page" value="report">

@@ -308,7 +308,12 @@ AdamShape.prototype.attachErrorToShape = function (objArray) {
             testCount = this.countFlow(rule.element, rule.direction);
             if (objArray[i].family === 8 && objArray[i].familyType === 4) {
                 sw = sw || (testCount > rule.value);
-
+            } else if (objArray[i].family === 5 && objArray[i].familyType === 1 && objArray[i].familySubType === 1) {
+                switch (rule.compare){
+                    case '!=':
+                        sw = sw && ('NONE' !== rule.value);
+                        break;
+                }
             } else {
                 switch (rule.compare){
                     case '=':
@@ -350,8 +355,10 @@ AdamShape.prototype.attachErrorToShape = function (objArray) {
                 countErrors.style.display = "block";
                 sizeItems = listPanelError.getAllErros();
                 countErrors.textContent =  sizeItems === 1 ? sizeItems + translate('LBL_PMSE_BPMN_WARNING_SINGULAR_LABEL') : sizeItems + translate('LBL_PMSE_BPMN_WARNING_LABEL');
+                $("#error-div").show();
             } else {
                 countErrors.textContent = "0" + translate('LBL_PMSE_BPMN_WARNING_SINGULAR_LABEL');
+                $("#error-div").hide();
             }
         }
 };

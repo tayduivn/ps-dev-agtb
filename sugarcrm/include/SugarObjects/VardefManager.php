@@ -59,8 +59,6 @@ class VardefManager{
     {
         global $dictionary;
 
-        include_once('modules/TableDictionary.php');
-
         if (isset($GLOBALS['dictionary'][$object]['uses'])) {
             // Load in the vardef 'uses' first
             $templates = array_merge($GLOBALS['dictionary'][$object]['uses'], $templates);
@@ -542,17 +540,31 @@ class VardefManager{
      * @param string $module the name of the module
      * @param string $object the name of the object
      */
-    static function saveCache($module,$object, $additonal_objects= array()){
+    public static function saveCache($module, $object)
+    {
+        $object = self::updateObjectDictionary($module, $object);
+        $file = self::getCacheFileName($module, $object);
+
+        $out = "<?php \n \$GLOBALS[\"dictionary\"][\"" . $object . "\"]=" .
+             var_export($GLOBALS['dictionary'][$object], true) . ";";
+        sugar_file_put_contents_atomic($file, $out);
+    }
+
+    /**
+     * Update the dictionary object.
+     * @param string $module the name of the module
+     * @param string $object the name of the object
+     * @return string
+     */
+    public static function updateObjectDictionary($module, $object)
+    {
         if (empty($GLOBALS['dictionary'][$object]))
             $object = BeanFactory::getObjectName($module);
 
-        $file = self::getCacheFileName($module, $object);
-
         $GLOBALS['dictionary'][$object]['fields'] = self::cleanVardefs($GLOBALS['dictionary'][$object]['fields']);
-        $out="<?php \n \$GLOBALS[\"dictionary\"][\"". $object . "\"]=" . var_export($GLOBALS['dictionary'][$object], true) .";";
-        sugar_file_put_contents_atomic($file, $out);
-
+        return $object;
     }
+
 
     /**
      * clear out the vardef cache. If we receive a module name then just clear the vardef cache for that module
@@ -603,9 +615,18 @@ class VardefManager{
      * @param string $module the given module we want to load the vardefs for
      * @param string $object the given object we wish to load the vardefs for
      * @param array $additional_search_paths an array which allows a consumer to pass in additional vardef locations to search
+     * @param boolean $cacheCustom a flag to include rebuilding custom fields into cache
+     * @param array $params a set of parameters
+     * @param boolean $includeExtension a flag to include rebuilding the extension files or not
      */
-    static function refreshVardefs($module, $object, $additional_search_paths = null, $cacheCustom = true, $params = array())
-    {
+    public static function refreshVardefs(
+        $module,
+        $object,
+        $additional_search_paths = null,
+        $cacheCustom = true,
+        $params = array(),
+        $includeExtension = true
+    ) {
         // Some of the vardefs do not correctly define dictionary as global.  Declare it first.
         global $dictionary, $beanList;
         // some tests do new SugarBean(), we can't do much with it here.
@@ -619,11 +640,17 @@ class VardefManager{
         } else {
             self::$inReload[$guard_name] = 1;
         }
-        $vardef_paths = array(
-                    'modules/'.$module.'/vardefs.php',
-                    SugarAutoLoader::loadExtension("vardefs", $module),
-                    'custom/Extension/modules/'.$module.'/Ext/Vardefs/vardefs.php'
-                 );
+
+        if ($includeExtension === true) {
+            $vardef_paths = array(
+                'modules/'.$module.'/vardefs.php',
+                SugarAutoLoader::loadExtension("vardefs", $module),
+                'custom/Extension/modules/'.$module.'/Ext/Vardefs/vardefs.php'
+            );
+        } else {
+            $vardef_paths = array('modules/'.$module.'/vardefs.php');
+        }
+
 
         // Add in additional search paths if they were provided.
         if(!empty($additional_search_paths) && is_array($additional_search_paths))
@@ -694,8 +721,14 @@ class VardefManager{
 
         //great! now that we have loaded all of our vardefs.
         //let's go save them to the cache file
-        if(!empty($dictionary[$object])) {
-            VardefManager::saveCache($module, $object);
+        //note that we don't write to cache when $includeExtension = false,
+        //where we only need vardef values temporarily (see 1_UpdateFTSSettings.php::getNewFieldDefs()
+        if (!empty($dictionary[$object])) {
+            if ($includeExtension) {
+                VardefManager::saveCache($module, $object);
+            } else {
+                VardefManager::updateObjectDictionary($module, $object);
+            }
             SugarBean::clearLoadedDef($object);
         }
         if(isset(self::$inReload[$guard_name])) {
@@ -994,6 +1027,9 @@ class VardefManager{
 
         // Some of the vardefs do not correctly define dictionary as global.  Declare it first.
         global $dictionary;
+
+        include_once('modules/TableDictionary.php');
+
         if (empty($GLOBALS['dictionary'][$object]) || $refresh || !isset($GLOBALS['dictionary'][$object]['fields'])) {
             //if the consumer has demanded a refresh or the cache/modules... file
             //does not exist, then we should do out and try to reload things

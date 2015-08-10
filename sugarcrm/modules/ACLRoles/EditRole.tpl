@@ -11,6 +11,7 @@
  */
 *}
 <form method='POST' name='EditView' id='ACLEditView'>
+{sugar_csrf_form_token}
 <input type='hidden' name='record' value='{$ROLE.id}'>
 <input type='hidden' name='module' value='ACLRoles'>
 <input type='hidden' name='action' value='Save'>

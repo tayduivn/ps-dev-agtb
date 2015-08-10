@@ -49,7 +49,7 @@ $viewdefs[$module_name] =
                                         'buttons' => array(
                                             array(
                                                 'type' => 'rowaction',
-                                                'event' => 'button:edit_button:click',
+                                                'event' => 'button:edit_emailstemplates:click',
                                                 'name' => 'edit_button',
                                                 'label' => 'LBL_EDIT_BUTTON_LABEL',
                                                 'acl_action' => 'edit',
@@ -79,13 +79,6 @@ $viewdefs[$module_name] =
                                             ),
                                             array(
                                                 'type' => 'rowaction',
-                                                'event' => 'button:find_duplicates_button:click',
-                                                'name' => 'find_duplicates_button',
-                                                'label' => 'LBL_DUP_MERGE',
-                                                'acl_action' => 'edit',
-                                            ),
-                                            array(
-                                                'type' => 'rowaction',
                                                 'event' => 'button:duplicate_button:click',
                                                 'name' => 'duplicate_button',
                                                 'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
@@ -97,7 +90,7 @@ $viewdefs[$module_name] =
                                             ),
                                             array(
                                                 'type' => 'rowaction',
-                                                'event' => 'button:delete_button:click',
+                                                'event' => 'button:delete_emailstemplates:click',
                                                 'name' => 'delete_button',
                                                 'label' => 'LBL_DELETE_BUTTON_LABEL',
                                                 'acl_action' => 'delete',

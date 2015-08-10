@@ -276,13 +276,17 @@ nv.models.multiBar = function() {
         .attr(dimY, 0); //x.rangeBand() / (stacked ? 1 : data.length)
 
       function buildEventObject(e, d, i, j) {
+        var pos = [
+          e.offsetX == undefined ? e.layerX : e.offsetX,
+          e.offsetY == undefined ? e.layerY : e.offsetY
+        ];
         return {
             value: getY(d, i),
             point: d,
             series: data[j],
             pointIndex: i,
             seriesIndex: j,
-            pos: [e.offsetX, e.offsetY],
+            pos: pos,
             id: id,
             e: e
           };

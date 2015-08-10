@@ -29,6 +29,7 @@
 	<tr>
 		<td>
 		<form name="WebToLeadForm" id="WebToLeadForm" method="POST" action="index.php" enctype="multipart/form-data">
+{sugar_csrf_form_token}
 		<input type="hidden" name="module" value="Campaigns">
 		<input type="hidden" name="record" value="{ID}">
 		<input type="hidden" name="action"> <input type="hidden" name="form">

@@ -56,11 +56,11 @@ class MetaDataHelper
 
 
     /**
-     * Force an in memory cache of enabled module to be used when
+     * Force an in memory cache to be used when
      * both SugarCache and MetadataCache are disabled
      * @var array
      */
-    protected $enabledModules = array();
+    protected $inMemoryCache = array();
 
     /**
      * @param \MetaDataManager $mdm
@@ -117,16 +117,13 @@ class MetaDataHelper
         }
 
         $list = array();
-        if ($this->mdm->cacheEnabled() || empty($this->enabledModules)) {
-            $modules = $this->mdm->getModuleList();
-            foreach ($modules as $module) {
-                $vardefs = $this->getModuleVardefs($module);
-                if (!empty($vardefs['full_text_search'])) {
-                    $list[] = $module;
-                }
+        $modules = $this->mdm->getModuleList();
+        foreach ($modules as $module) {
+            $vardefs = $this->getModuleVardefs($module);
+            if (!empty($vardefs['full_text_search'])) {
+                $list[] = $module;
             }
         }
-        $this->enabledModules = $list;
 
         return $this->setCache($cacheKey, $list);
     }
@@ -292,15 +289,19 @@ class MetaDataHelper
     /**
      * Get cached content
      * @param string $key Cache key
-     * @param null|mixed
+     * @return null|mixed
      */
     protected function getCache($key)
     {
         if ($this->disableCache) {
+            //use the in-memory cache when the sugar cache is disabled
+            if ($this->isRealCacheDisabled() && isset($this->inMemoryCache[$key])) {
+                return $this->inMemoryCache[$key];
+            }
             return null;
         }
         $key = $this->getRealCacheKey($key);
-        if (!$cached = $this->sugarCache->$key) {
+        if (!$cached = $this->getRealCache($key)) {
             $this->logger->debug("MetaDataHelper: cache miss for '{$key}'");
         }
         return $cached;
@@ -316,9 +317,43 @@ class MetaDataHelper
     {
         if (!$this->disableCache) {
             $key = $this->getRealCacheKey($key);
-            $this->sugarCache->set($key, $value);
+            $this->setRealCache($key, $value);
+        } else {
+            //set to the in-memory cache when the sugar cache is disabled
+            if ($this->isRealCacheDisabled()) {
+                $this->inMemoryCache[$key] = $value;
+            }
         }
         return $value;
+    }
+
+    /**
+     * Check if the cache of MetaDataManager is disabled.
+     * @return bool
+     */
+    protected function isRealCacheDisabled()
+    {
+        return !\MetaDataManager::cacheEnabled();
+    }
+
+    /**
+     * Get the value from the real cache.
+     * @param $key
+     * @return mixed
+     */
+    protected function getRealCache($key)
+    {
+        return $this->sugarCache->$key;
+    }
+
+    /**
+     * Set the value to the real cache.
+     * @param string $key
+     * @param mixed $value
+     */
+    protected function setRealCache($key, $value)
+    {
+        $this->sugarCache->set($key, $value);
     }
 
     /**

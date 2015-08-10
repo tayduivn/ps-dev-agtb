@@ -71,6 +71,7 @@ currentFolders = {$group_folder_array};
 </head>
 <body>
 <form action="index.php" method="post" name="EditView" id="EditView">
+{sugar_csrf_form_token}
 	<input type="hidden" name="module" value="InboundEmail">
 	<input type="hidden" name="action" value="SaveGroupFolder">
 	<input type="hidden" id="errorMessage" name="errorMessage" value="{$app_strings.LBL_EMAIL_ERROR_ADD_GROUP_FOLDER}">

@@ -14,6 +14,7 @@
 
 
 			<form enctype="multipart/form-data" name="MailMerge" method="POST" action="index.php">
+{sugar_csrf_form_token}
 			<input type="hidden" name="module" value="MailMerge">
 			<input type="hidden" name="step" id="step" value="{STEP}">
 			<input type="hidden" name="action" value="index">

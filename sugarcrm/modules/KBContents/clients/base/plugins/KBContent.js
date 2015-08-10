@@ -1,14 +1,12 @@
 /*
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
  *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
+ * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 (function(app) {
     app.events.on('app:init', function() {
@@ -37,11 +35,10 @@
              */
             onAttach: function(component, plugin) {
                 this.on('init', function() {
-                    this.context.on('button:create_localization_button:click', this.createLocalization, this);
-                    this.context.on('button:create_revision_button:click', this.createRevision, this);
-                    this.context.on('button:create_article_button:click', this.createArticle, this);
-
-                    if (this.action == 'list') {
+                    this._initKBListeners();
+                    if (this.tplName === 'list' || this.tplName === 'panel-top' ||
+                        (!_.isUndefined(this.meta.type) && this.meta.type === 'subpanel-list')
+                    ) {
                         this.context.on('list:editrow:fire', _.bind(function(model, view) {
                             this._initValidationHandler(model);
                         }, this));
@@ -49,6 +46,21 @@
                         this._initValidationHandler(this.model);
                     }
                 });
+            },
+
+            /**
+             * Initialize KB specific listeners with ability to override.
+             * @private
+             */
+            _initKBListeners: function() {
+                if (_.isFunction(Object.getPrototypeOf(this)._initKBListeners)) {
+                    Object.getPrototypeOf(this)._initKBListeners.call(this);
+                    return;
+                }
+                this.context.on('button:create_localization_button:click', this.createLocalization, this);
+                this.context.on('button:create_revision_button:click', this.createRevision, this);
+                this.context.on('button:create_article_button:click', this.createArticle, this);
+                this.context.on('button:create_article_button_subpanel:click', this.createArticleSubpanel, this);
             },
 
             /**
@@ -72,19 +84,31 @@
              * @param {Data.Bean} model A record view model caused creation.
              */
             createArticle: function(model) {
-                var link = 'kbcontents',
-                    module = 'KBContents',
+                var module = 'KBContents',
+                    fields = app.metadata.getModule(model.module).fields,
+                    links = _.filter(fields, function(field) {
+                        if (field.type !== 'link' || !field.relationship) {
+                            return false;
+                        }
+                        return app.data.getRelatedModule(model.module, field.name) === module;
+                    }),
                     bodyTmpl = app.template.getField('htmleditable_tinymce', 'create-article', module),
                     attrs = {name: model.get('name'), kbdocument_body: bodyTmpl({model: model})},
-                    prefill = app.data.createRelatedBean(model, null, link, attrs),
+                    link, prefill, relatedFields;
+                if (links.length === 0) {
+                    prefill = app.data.createBean(module, attrs);
+                } else {
+                    link = links.length === 1 ? links[0].name : 'kbcontents';
+                    prefill = app.data.createRelatedBean(model, null, link, attrs);
                     relatedFields = app.data.getRelateFields(model.module, link);
 
-                if (!_.isEmpty(relatedFields)) {
-                    _.each(relatedFields, function(field) {
-                        var parentValue = model.get(field.rname);
-                        prefill.set(field.name, parentValue);
-                        prefill.set(field.id_name, model.get('id'));
-                    }, this);
+                    if (!_.isEmpty(relatedFields)) {
+                        _.each(relatedFields, function(field) {
+                            var parentValue = model.get(field.rname);
+                            prefill.set(field.name, parentValue);
+                            prefill.set(field.id_name, model.get('id'));
+                        }, this);
+                    }
                 }
                 app.drawer.open({
                     layout: 'create',
@@ -93,8 +117,23 @@
                         model: prefill,
                         module: module
                     }},
-                    function(context, newModel) {}
+                    function(context, newModel) {
+                        if (newModel !== undefined && links.length > 0) {
+                            var viewContext = context.parent.parent || context.parent;
+                            var moduleContext = viewContext.getChildContext({module: module});
+                            moduleContext.set('skipFetch','false');
+                            viewContext.trigger('subpanel:reload', {links: _.union(links, [link])});
+                        }
+                    }
                 );
+            },
+
+            /**
+             * Handler to create a new article from subpanel.
+             */
+            createArticleSubpanel: function() {
+                var model = this.context.parent.get('model');
+                this.createArticle(model);
             },
 
             /**
@@ -104,11 +143,19 @@
              */
             createRelatedContent: function(parentModel, type) {
                 var self = this,
-                    prefill = app.data.createBean('KBContents');
+                    prefill = app.data.createBean('KBContents', {id: parentModel.get('id')});
 
-                parentModel.fetch({
+                prefill.fetch({
                     success: function() {
-                        self._copyRelatedContent(prefill, parentModel);
+                        var removeList = ['id', 'is_external'];
+
+                        _.each(removeList, function(field) {
+                            prefill.unset(field);
+                        });
+
+                        prefill.set('status', 'draft');
+                        prefill.set('assigned_user_id', app.user.get('id'));
+                        prefill.set('assigned_user_name', app.user.get('full_name'));
 
                         if (type === self.CONTENT_LOCALIZATION) {
                             self._onCreateLocalization(prefill, parentModel);
@@ -123,38 +170,6 @@
                         });
                     }
                 });
-            },
-
-            /**
-             * Uses standard Model's copy mechanism and adds/removes additional fields, specific to related content.
-             * The purpose is to use vardefs' 'duplicate_on_record_copy' only for general copying.
-             * @param {Data.Model} prefill New created model.
-             * @param {Data.Model} parentModel Parent model.
-             * @private
-             */
-            _copyRelatedContent: function(prefill, parentModel) {
-                var removeList = ['id', 'is_external'],
-                    addList = [
-                        'active_date', 'exp_date', 'attachment_list', 'usefulness_user_vote',
-                        'kbsapprover_id', 'kbsapprover_name', 'approved',
-                        'kbscase_id', 'kbscase_name',
-                        'localizations', 'revisions', 'related_languages',
-                        'kbdocument_id', 'kbdocument_name', 'kbdocuments_kbcontents',
-                        'kbarticle_id', 'kbarticle_name', 'kbarticles_kbcontents'
-                    ];
-
-                prefill.copy(parentModel);
-
-                _.each(removeList, function(field) {
-                    prefill.unset(field);
-                });
-                _.each(addList, function(field) {
-                    prefill.set(field, parentModel.get(field));
-                });
-
-                prefill.set('status', 'draft');
-                prefill.set('assigned_user_id', app.user.get('id'));
-                prefill.set('assigned_user_name', app.user.get('full_name'));
             },
 
             /**
@@ -234,9 +249,11 @@
                 } else {
                     app.drawer.open(layoutDef, function(context, newModel) {
                         // Just parent - header's create, parent.parent - subpanel's create.
-                        var recordViewContext = context.parent.parent || context.parent;
-                        parentModel.fetch();
-                        recordViewContext.trigger('subpanel:reload', {links: ['revisions', 'localizations']});
+                        var viewContext = context.parent.parent || context.parent;
+                        viewContext.resetLoadFlag();
+                        viewContext.set('skipFetch', false);
+                        viewContext.loadData();
+                        viewContext.trigger('subpanel:reload', {links: ['revisions', 'localizations']});
                         context.createAction = null;
                         context.loadDrawer = null;
                     });
@@ -352,26 +369,36 @@
              * @param {Function} callback Async.js waterfall callback.
              */
             _doValidateExpDateField: function(model, fields, errors, callback) {
-                var fieldName = 'exp_date',
+                var expFName = 'exp_date',
+                    actFName = 'active_date',
+                    fieldName = expFName,
                     expDate = model.get(fieldName),
-                    publishingDate = model.get('active_date'),
+                    publishingDate = model.get(actFName),
                     status = model.get('status'),
-                    changed = model.changedAttributes(model.getSyncedAttributes());
+                    changed = model.changedAttributes(model.getSyncedAttributes()),
+                    errorKeys = [];
 
                 if (
-                    this._isPublishingStatus(status) &&
-                    (!changed.status || !this._isPublishingStatus(changed.status))
+                    (this._isPublishingStatus(status) &&
+                    (!changed.status || !this._isPublishingStatus(changed.status))) ||
+                    (this._massupdateStatusValidation('published') &&
+                    (!publishingDate || app.date(publishingDate).isBefore(Date.now())))
                 ) {
                     publishingDate = app.date().formatServer(true);
-                    model.set('active_date', publishingDate);
+                    model.set(actFName, publishingDate);
                 }
 
                 if (status !== 'expired' && expDate && publishingDate && app.date(expDate).isBefore(publishingDate)) {
-                    if (!this.getField(fieldName)) {
-                        fieldName = 'active_date';
+                    if (!this.getField(fieldName) && this.getField(actFName)) {
+                        fieldName = actFName;
                     }
                     errors[fieldName] = errors[fieldName] || {};
                     errors[fieldName].expDateLow = true;
+                    errorKeys.push('expDateLow');
+                }
+
+                if (this.context.get('layout') !== 'record' && !_.isUndefined(errors[fieldName])) {
+                    this._alertError(errorKeys);
                 }
 
                 callback(null, fields, errors);
@@ -390,14 +417,18 @@
                 var fieldName = 'active_date',
                     status = model.get('status'),
                     publishingDate = model.get(fieldName),
-                    pubDateObject = new Date(publishingDate);
+                    errorKeys = [];
 
-                if (status == 'approved') {
-                    if (publishingDate && pubDateObject && pubDateObject.getTime() < Date.now()) {
+                if (status == 'approved' || this._massupdateStatusValidation('approved')) {
+                    if (publishingDate && app.date(publishingDate).isBefore(Date.now())) {
                         errors[fieldName] = errors[fieldName] || {};
                         errors[fieldName].activeDateLow = true;
+                        errorKeys.push('activeDateLow');
+                        if (this.context.get('layout') !== 'record' && !_.isUndefined(errors[fieldName])) {
+                            this._alertError(errorKeys);
+                        }
                         callback(null, fields, errors);
-                    } else if (!publishingDate) {
+                    } else if (!publishingDate && !this._massupdateStatusValidation('approved')) {
                         app.alert.show('save_without_publish_date_confirmation', {
                             level: 'confirmation',
                             messages: app.lang.get('LBL_SPECIFY_PUBLISH_DATE', 'KBContents'),
@@ -419,12 +450,16 @@
                                         this.handleFieldError(field, true);
                                     }
 
-                                    if (fieldElement.find('input[data-type=date]').length === 0) {
+                                    if (fieldElement.find(field.fieldTag).length === 0) {
                                         fieldElement.closest('[data-name=' + fieldName + ']')
                                             .find('.record-edit-link-wrapper')
                                             .click();
                                     }
-                                    fieldElement.find('input[data-type=date]').focus();
+                                    _.defer(function() {
+                                        field.$(field.fieldTag).focus();
+                                        field.focus();
+                                    });
+
                                 }
 
                                 // enable buttons in recordview
@@ -448,6 +483,16 @@
             },
 
             /**
+             * Check if massupdate status called.
+             * @param status
+             * @return {boolean}
+             * @private
+             */
+            _massupdateStatusValidation: function(status) {
+                return (this.action === 'massupdate' && this.model.changedAttributes()['status'] === status);
+            },
+
+            /**
              * Called whenever validation completes.
              * Change publishing and expiration dates to current on manual change.
              *
@@ -466,6 +511,28 @@
                     ) {
                         model.set('active_date', app.date().formatServer(true));
                     }
+                }
+            },
+
+            /**
+             * Alert error message.
+             *
+             * @param keys
+             * @private
+             */
+            _alertError: function(keys) {
+                var messages = [];
+
+                _.each(keys, function(key) {
+                    messages.push(app.lang.get(app.error.errorName2Keys[key], 'KBContents'));
+                });
+
+                if (messages.length > 0) {
+                    app.alert.show('validation-error', {
+                        level: 'error',
+                        messages: messages,
+                        autoClose: true
+                    });
                 }
             },
 

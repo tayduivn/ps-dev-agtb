@@ -79,13 +79,6 @@ array (
                       ),
                       array(
                           'type' => 'rowaction',
-                          'event' => 'button:find_duplicates_button:click',
-                          'name' => 'find_duplicates_button',
-                          'label' => 'LBL_DUP_MERGE',
-                          'acl_action' => 'edit',
-                      ),
-                      array(
-                          'type' => 'rowaction',
                           'event' => 'button:duplicate_button:click',
                           'name' => 'duplicate_button',
                           'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
@@ -162,6 +155,10 @@ array (
                 'label' => 'LBL_PRJ_MODULE',
               ),
               'assigned_user_name',
+              array(
+                'name' => 'prj_status',
+                'span' => 6,
+              ),
             ),
           ),
           2 => 

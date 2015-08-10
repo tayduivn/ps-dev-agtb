@@ -166,6 +166,7 @@ function make_sugar_config(&$sugar_config)
     'import_max_execution_time' => empty($import_max_execution_time) ? 3600 : $import_max_execution_time,
     'lock_homepage' => false,
     'lock_subpanels' => false,
+    'collapse_subpanels' => false,
     'max_dashlets_homepage' => 15,
     'dashlet_display_row_options' => array('1','3','5','10'),
     'default_max_tabs' => empty($max_tabs) ? '7' : $max_tabs,
@@ -378,6 +379,7 @@ function get_sugar_config_defaults()
     'default_decimal_seperator' => '.',
     'lock_homepage' => false,
     'lock_subpanels' => false,
+    'collapse_subpanels' => false,
     'max_dashlets_homepage' => '15',
     'default_max_tabs' => '7',
     'dashlet_display_row_options' => array('1','3','5','10'),
@@ -3136,10 +3138,10 @@ function check_php_version($sys_php_version = '')
     // versions below $min_considered_php_version considered invalid by default,
     // versions equal to or above this ver will be considered depending
     // on the rules that follow
-    $min_considered_php_version = '5.3.0';
+    $min_considered_php_version = '5.3.25';
     //always use .unsupported to make sure that the dev/beta/rc releases are excluded as well
 
-    $version_threshold  = '5.5.unsupported';
+    $version_threshold  = '5.6.unsupported';
 
     // only the supported versions,
     // should be mutually exclusive with $invalid_php_versions
@@ -3441,6 +3443,7 @@ function remove_logic_hook($module_name, $event, $action_array)
             $new_contents = replace_or_add_logic_type($hook_array);
             write_logic_file($module_name, $new_contents);
 
+            LogicHook::refreshHooks();
         }
     }
 }
@@ -4575,8 +4578,12 @@ function html_entity_decode_utf8($string)
     static $trans_tbl;
     // replace numeric entities
     //php will have issues with numbers with leading zeros, so do not include them in what we send to code2utf.
-    $string = preg_replace('~&#x0*([0-9a-f]+);~ei', 'code2utf(hexdec("\\1"))', $string);
-    $string = preg_replace('~&#0*([0-9]+);~e', 'code2utf(\\1)', $string);
+    $string = preg_replace_callback('~&#x0*([0-9a-f]+);~i', function ($matches) {
+        return code2utf(hexdec($matches[1]));
+    }, $string);
+    $string = preg_replace_callback('~&#0*([0-9]+);~', function ($matches) {
+        return code2utf($matches[1]);
+    }, $string);
     // replace literal entities
     if (!isset($trans_tbl)) {
         $trans_tbl = array();
@@ -5982,4 +5989,50 @@ function sortExtensionFiles(array $files)
     });
 
     return array_keys($sorted);
+}
+
+/**
+ * Make sure a user isn't stealing sessions so check the ip to ensure that the ip address hasn't dramatically changed
+ *
+ * @param string $clientIp Client IP address
+ * @param string $sessionIp Session IP address
+ * @return bool
+ */
+function validate_ip($clientIp, $sessionIp)
+{
+    global $sugar_config;
+
+    // check to see if config entry is present
+    if (isset($sugar_config['verify_client_ip']) && !$sugar_config['verify_client_ip']) {
+        return true;
+    }
+    
+    $isValidIP = true;
+
+    $classCheck = 0;
+
+    $session_parts = explode(".", $sessionIp);
+    $client_parts = explode(".", $clientIp);
+    if (count($session_parts) < 4) {
+        $classCheck = 0;
+    } else {
+        // match class C IP addresses
+        for ($i = 0; $i < 3; $i ++) {
+            if ($session_parts[$i] == $client_parts[$i]) {
+                $classCheck = 1;
+                continue;
+            } else {
+                $classCheck = 0;
+                break;
+            }
+        }
+    }
+
+    // we have a different IP address
+    if ($sessionIp != $clientIp && empty($classCheck)) {
+        $isValidIP = false;
+    }
+
+    return $isValidIP;
+
 }

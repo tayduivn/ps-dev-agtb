@@ -128,11 +128,6 @@
             }
         }, this);
 
-        this.model.on('change', function() {
-            this.getFilterOptions(true);
-        }, this);
-
-        this._createFiltersCollection();
         this._createSearchCollection();
     },
 
@@ -143,7 +138,7 @@
      *
      * @protected
      */
-    _createFiltersCollection: function() {
+    _createFiltersCollection: function(options) {
         var searchModule = this.getSearchModule();
 
         if (!app.acl.hasAccess('list', searchModule)) {
@@ -155,7 +150,7 @@
             this.filters = app.data.createBeanCollection('Filters');
             this.filters.setModuleName(searchModule);
             this.filters.setFilterOptions(this.getFilterOptions());
-            this.filters.load();
+            this.filters.load(options);
         }
     },
     /**
@@ -181,8 +176,9 @@
      * @param {Function} callback Callback function for keydown.
      */
     bindKeyDown: function(callback) {
-        this.$(this.fieldTag).on('keydown.record', {field: this}, callback);
-        var plugin = this.$(this.fieldTag).data('select2');
+        var $dropdown = this.$(this.fieldTag);
+        $dropdown.on('keydown.record', {field: this}, callback);
+        var plugin = $dropdown.data('select2');
         if (plugin) {
             plugin.focusser.on('keydown.record', {field: this}, callback);
             plugin.search.on('keydown.record', {field: this}, callback);
@@ -196,8 +192,9 @@
      * @param {Function} callback Callback function for keydown.
      */
     unbindKeyDown: function(callback) {
-        this.$(this.fieldTag).off('keydown.record', callback);
-        var plugin = this.$(this.fieldTag).data('select2');
+        var $dropdown = this.$(this.fieldTag);
+        $dropdown.off('keydown.record', callback);
+        var plugin = $dropdown.data('select2');
         if (plugin) {
             plugin.search.off('keydown.record', callback);
         }
@@ -237,40 +234,74 @@
      * Renders relate field
      */
     _render: function() {
-        var self = this;
         var searchModule = this.getSearchModule();
-        var loadingLabel = app.lang.get('LBL_LOADING', this.module);
 
         //Do not render if the related module is invalid
         if (searchModule && !_.contains(app.metadata.getModuleNames(), searchModule)) {
             return this;
         }
 
-        var result = this._super('_render');
+        this._super('_render');
 
         //FIXME remove check for tplName SC-2608
-        if (this.tplName === 'edit' || this.tplName === 'massupdate') {
+        switch(this.tplName) {
+            case 'edit':
+            case 'massupdate':
+                if (_.isUndefined(this.filters)) {
+                    this._createFiltersCollection({
+                        success: _.bind(function() {
+                            if (!this.disposed) {
+                                this._renderEditableDropdown();
+                            }
+                        }, this)
+                    });
+                } else {
+                    this._renderEditableDropdown();
+                }
+                break;
+            case 'disabled':
+                this._renderDisabledDropdown();
+                break;
+        }
+        return this;
+    },
 
-            var inList = this.view.name === 'recordlist';
-            this.$(this.fieldTag).select2({
-                width: inList ? 'off' : '100%',
-                dropdownCssClass: _.bind(this._buildCssClasses, this),
-                multiple: !!this.def.isMultiSelect,
-                containerCssClass: _.bind(this._buildCssClasses, this),
-                separator: this._separator,
-                initSelection: _.bind(this._onInitSelect, this),
-                formatInputTooShort: function() {
-                    return '';
-                },
-                formatSelection: _.bind(this._onFormatSelection, this),
-                formatSearching: loadingLabel,
-                placeholder: this.getPlaceHolder(),
-                allowClear: self._allow_single_deselect,
-                minimumInputLength: self._minChars,
-                maximumSelectionSize: 20,
-                query: _.bind(this.search, this)
-            }).on('select2-open', _.bind(this._onSelect2Open, this))
-              .on('searchmore', function() {
+    /**
+     * Renders the editable dropdown using the `select2` plugin.
+     *
+     * Since a filter may have to be applied on the field, we need to fetch
+     * the list of filters for the current module before rendering the dropdown
+     * (and enabling the searchahead feature that requires the filter
+     * definition).
+     *
+     * @private
+     */
+    _renderEditableDropdown: function() {
+        var self = this;
+        var $dropdown = this.$(this.fieldTag);
+
+        var loadingLabel = app.lang.get('LBL_LOADING', this.module);
+
+        var inList = this.view.name === 'recordlist';
+        $dropdown.select2({
+            width: inList ? 'off' : '100%',
+            dropdownCssClass: _.bind(this._buildCssClasses, this),
+            multiple: !!this.def.isMultiSelect,
+            containerCssClass: _.bind(this._buildCssClasses, this),
+            separator: this._separator,
+            initSelection: _.bind(this._onInitSelect, this),
+            formatInputTooShort: function() {
+                return '';
+            },
+            formatSelection: _.bind(this._onFormatSelection, this),
+            formatSearching: loadingLabel,
+            placeholder: this.getPlaceHolder(),
+            allowClear: self._allow_single_deselect,
+            minimumInputLength: self._minChars,
+            maximumSelectionSize: 20,
+            query: _.bind(this.search, this)
+        }).on('select2-open', _.bind(this._onSelect2Open, this))
+            .on('searchmore', function() {
                 $(this).select2('close');
                 self.openSelectDrawer();
             }).on('change', function(e) {
@@ -297,7 +328,6 @@
                     } else {
                         return;
                     }
-                    plugin.opts.element.data('rname', dataRname.join(self._separator));
                     var models = _.map(ids, function(id, index) {
                         return {id: id, value: dataRname[index]};
                     });
@@ -309,14 +339,12 @@
                 var value = (id) ? plugin.selection.find('span').text() : $(this).data('rname'),
                     collection = plugin.context,
                     attributes = {};
-                //Update the source element or else reverting back to the original value will not trigger a change event.
-                plugin.opts.element.data('rname', id);
                 if (collection && !_.isEmpty(id)) {
                     // if we have search results use that to set new values
                     var model = collection.get(id);
                     attributes.id = model.id;
                     attributes.value = model.get('name');
-                    _.each(model.attributes, function (value, field) {
+                    _.each(model.attributes, function(value, field) {
                         if (app.acl.hasAccessToModel('view', model, field)) {
                             attributes[field] = attributes[field] || model.get(field);
                         }
@@ -333,33 +361,41 @@
 
                 self.setValue(attributes);
             });
-            var plugin = this.$(this.fieldTag).data('select2');
-            if (plugin && plugin.focusser) {
-                plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
-            }
-        } else if (this.tplName === 'disabled') {
-            this.$(this.fieldTag).select2({
-                width: '100%',
-                initSelection: function(el, callback) {
-                    var $el = $(el),
-                        id = $el.val(),
-                        text = $el.data('rname');
-                    callback({id: id, text: text});
-                },
-                formatInputTooShort: function() {
-                    return '';
-                },
-                formatSearching: function() {
-                    return app.lang.get('LBL_LOADING', self.module);
-                },
-                placeholder: this.getPlaceHolder(),
-                allowClear: self._allow_single_deselect,
-                minimumInputLength: self._minChars,
-                query: _.bind(this.search, this)
-            });
-            this.$(this.fieldTag).select2('disable');
+        var plugin = $dropdown.data('select2');
+        if (plugin && plugin.focusser) {
+            plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
         }
-        return result;
+    },
+
+    /**
+     * Renders the dropdown in disabled mode.
+     *
+     * @private
+     */
+    _renderDisabledDropdown: function() {
+        var loadingLabel = app.lang.get('LBL_LOADING', this.module);
+        var $dropdown = this.$(this.fieldTag);
+
+        $dropdown.select2({
+            width: '100%',
+            initSelection: function(el, callback) {
+                var $el = $(el),
+                    id = $el.val(),
+                    text = $el.data('rname');
+                callback({id: id, text: text});
+            },
+            formatInputTooShort: function() {
+                return '';
+            },
+            formatSearching: function() {
+                return loadingLabel;
+            },
+            placeholder: this.getPlaceHolder(),
+            allowClear: self._allow_single_deselect,
+            minimumInputLength: self._minChars,
+            query: _.bind(this.search, this)
+        });
+        $dropdown.select2('disable');
     },
 
     /**
@@ -440,9 +476,14 @@
         var action = (this.def.link && this.def.route)? this.def.route.action :"view";
         if(app.acl.hasAccess(action, oldModule)) {
             this.href = '#' + app.router.buildRoute(module, id);
+        } else {
+            // if no access to module, remove the href
+            this.href = undefined;
         }
     },
-    //Derived controllers can override these if related module and id in another place
+
+    // Derived controllers can override these if related module and id in another
+    // place.
     _buildRoute: function () {
         this.buildRoute(this.getSearchModule(), this._getRelateId());
     },
@@ -484,7 +525,7 @@
              */
             this._valueSetOnce = true;
         }
-        setFromCtx = value === null && !this._valueSetOnce && parentCtx &&
+        setFromCtx = value === null && !this._valueSetOnce && parentCtx && _.isEmpty(this.context.get('model').link) &&
             this.view instanceof app.view.views.BaseCreateView &&
             parentCtx.get('module') === this.def.module &&
             this.module !== this.def.module;
@@ -540,9 +581,8 @@
             values[this.def.name].push(model[this.getRelatedModuleField()] || model.value);
         }, this));
 
-        // If there is only one value, we get rid of the array before setting
-        // the value.
-        if (values[this.def.id_name].length === 1) {
+        // If it's not a multiselect relate, we get rid of the array.
+        if (!this.def.isMultiSelect) {
             values[this.def.id_name] = values[this.def.id_name][0];
             values[this.def.name] = values[this.def.name][0];
         }
@@ -867,14 +907,30 @@
      */
     bindDataChange: function() {
         if (this.model) {
+            this.model.on('change', function() {
+                this.getFilterOptions(true);
+            }, this);
+
             this.model.on('change:' + this.name, function() {
-                if (!_.isEmpty(this.$(this.fieldTag).data('select2'))) {
-                    // Just setting the value on select2 doesn't cause the label to show up
-                    // so we need to render the field next after setting this value
-                    this.$(this.fieldTag).select2('val', this.model.get(this.def.idName));
+                if (this.disposed) {
+                    return;
                 }
-                // double-check field isn't disposed before trying to render
-                if (!this.disposed) {
+                var $dropdown = this.$(this.fieldTag);
+                if (!_.isEmpty($dropdown.data('select2'))) {
+                    var value = this.model.get(this.def.name);
+                    value = _.isArray(value) ? value.join(this._separator) : value;
+                    value = value ? value.trim() : value;
+
+                    $dropdown.data('rname', value);
+
+                    // `id` can be an array of ids if the field is a multiselect.
+                    var id = this.model.get(this.def.id_name);
+                    if (_.isEqual($dropdown.select2('val'), id)) {
+                        return;
+                    }
+
+                    $dropdown.select2('val', id);
+                } else {
                     this.render();
                 }
             }, this);

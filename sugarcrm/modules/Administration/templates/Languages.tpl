@@ -21,6 +21,7 @@
 </td></tr><tr><td><br></td></tr><tr><td colspan='100'>
 
 <form name="ConfigureLangs" method="POST"  method="POST" action="index.php">
+    {sugar_csrf_form_token}
 	<input type="hidden" name="module" value="Administration">
 	<input type="hidden" name="action" value="SaveLanguages">
 	<input type="hidden" id="enabled_langs" name="enabled_langs" value="">

@@ -22,6 +22,7 @@ class ConfiguratorController extends SugarController
     protected $allowKeysSaveConfig = array(
         'list_max_entries_per_page',
         'list_max_entries_per_subpanel',
+        'collapse_subpanels',
         'calculate_response_time',
         'default_module_favicon',
         'use_real_names',

@@ -58,14 +58,16 @@ $viewdefs[$module_name]['base']['view']['unattendedCases-list'] = array(
                     'label' => 'LBL_PROCESS_DEFINITION_NAME',
                     'default' => true,
                     'enabled' => true,
-                    'link' => false,
+                    'link' => true,
+                    'type' => 'pmse-link',
                 ),
                 array(
                     'name' => 'cas_title',
                     'label' => 'LBL_RECORD_NAME',
                     'default' => true,
                     'enabled' => true,
-                    'link' => false,
+                    'link' => true,
+                    'type' => 'pmse-link',
                 ),
                 array(
                     'name' => 'cas_status',
@@ -82,7 +84,7 @@ $viewdefs[$module_name]['base']['view']['unattendedCases-list'] = array(
                     'link' => false,
                 ),
                 array(
-                    'name' => 'cas_init_user',
+                    'name' => 'cas_user_full_name',
                     'label' => 'LBL_ACTIVITY_OWNER',
                     'default' => true,
                     'enabled' => true,

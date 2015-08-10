@@ -622,48 +622,49 @@ class SugarEmailAddress extends SugarBean
     }
 
     /**
-     * Preps internal array structure for email addresses
+     * Add new or update existing email address
      * @param string $addr Email address
      * @param bool $primary Default false
      * @param bool $replyTo Default false
+     * @param bool $invalid
+     * @param bool $optOut
+     * @param string $email_id 
+     * @param bool $validate
+     * @return bool result
      */
-
-    function addAddress($addr, $primary=false, $replyTo=false, $invalid=false, $optOut=false, $email_id = null, $validate = true) {
+    public function addAddress($addr, $primary=false, $replyTo=false, $invalid=false, $optOut=false, $email_id = null, $validate = true) {
         $addr = trim(html_entity_decode($addr, ENT_QUOTES));
-        if (!$validate || SugarEmailAddress::isValidEmail($addr)) {
-            $primaryFlag = ($primary) ? '1' : '0';
-            $replyToFlag = ($replyTo) ? '1' : '0';
-            $invalidFlag = ($invalid) ? '1' : '0';
-            $optOutFlag = ($optOut) ? '1' : '0';
 
-            // If we have such address already, replace it with the new one.
-            $key = false;
-            foreach ($this->addresses as $k => $address) {
-                if ($address['email_address'] == $addr) {
-                    $key = $k;
-                } elseif ($primary && isset($address['primary_address']) && $address['primary_address'] == '1') {
-                    // We should only have one primary. If we are adding a primary but
-                    // we find an existing primary, reset this one's primary flag.
-                    $address['primary_address'] = '0';
+        if ($validate && !SugarEmailAddress::isValidEmail($addr)) {
+            $GLOBALS['log']->fatal("SUGAREMAILADDRESS: email address is not valid [ {$addr} ]");
+            return false; 
+        }
+
+        $key = false;
+        foreach ($this->addresses as $k => $address) {
+            if ($address['email_address'] == $addr) {
+                $key = $k;
+
+                if ($address['primary_address'] === '1') {
+                    $GLOBALS['log']->fatal("SUGAREMAILADDRESS: Existing primary address could not be overriden [ {$addr} ]");
+                    return false;
                 }
             }
+        }
 
-            $attributes = array(
-                'email_address' => $addr,
-                'primary_address' => $primaryFlag,
-                'reply_to_address' => $replyToFlag,
-                'invalid_email' => $invalidFlag,
-                'opt_out' => $optOutFlag,
-                'email_address_id' => $email_id,
-            );
+        $new_address = array(
+            'email_address' => $addr,
+            'primary_address' => ($primary) ? '1' : '0',
+            'reply_to_address' => ($replyTo) ? '1' : '0',
+            'invalid_email' => ($invalid) ? '1' : '0',
+            'opt_out' => ($optOut) ? '1' : '0',
+            'email_address_id' => $email_id,
+        );
 
-            if ($key === false) {
-                $this->addresses[] = $attributes;
-            } else {
-                $this->addresses[$key] = $attributes;
-            }
+        if ($key === false) {
+            $this->addresses[] = $new_address;
         } else {
-            $GLOBALS['log']->fatal("SUGAREMAILADDRESS: address did not validate [ {$addr} ]");
+            $this->addresses[$key] = $new_address;
         }
     }
 

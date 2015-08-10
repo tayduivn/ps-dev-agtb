@@ -435,9 +435,9 @@ class iCal extends vCal {
     /**
     * Gets the timezone string for the current user.
     *
-    * @return string the full timezone definition including daylight savings for the iCal
+    * @return array the full timezone definition including daylight savings for the iCal
     */
-    protected function getTimezoneString()
+    protected function getTimezoneArray()
     {
         global $current_user, $timedate;
         $timezoneName = $current_user->getPreference('timezone');
@@ -480,7 +480,7 @@ class iCal extends vCal {
 
         $ical_array[] = array("END", "VTIMEZONE");
 
-        return vCal::create_ical_string_from_array($ical_array);
+        return $ical_array;
     }
 
     /**
@@ -503,8 +503,10 @@ class iCal extends vCal {
         $ical_array[] = array("METHOD", "PUBLISH");
         $ical_array[] = array("X-WR-CALNAME", "$cal_name (SugarCRM)");
         $ical_array[] = array("PRODID", "-//SugarCRM//SugarCRM Calendar//EN");
-        $timezonestr = explode(":", $this->getTimezoneString(), 2);
-        $ical_array[] = array($timezonestr[0], $timezonestr[1]);
+        $tz_array = $this->getTimezoneArray();
+        foreach ($tz_array as $value) {
+            $ical_array[] = array($value[0], $value[1]);
+        }
         $ical_array[] = array("CALSCALE", "GREGORIAN");
 
         $now_date_time = $timedate->getNow(true);

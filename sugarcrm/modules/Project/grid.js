@@ -1,4 +1,3 @@
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -2689,10 +2688,10 @@ SUGAR.grid = function() {
 		save: function() {
 			if (SUGAR.grid.validateGridForSave()) {
 				document.getElementById("numRowsToSave").value = totalRowsInGrid;
-				document.getElementById('EditViewGrid').action.value='SaveGrid';
+				document.getElementById('EditView').action.value='SaveGrid';
 				document.getElementById("saveGridLink").style.visibility="hidden";
 				ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
-				YAHOO.util.Connect.setForm(document.getElementById("EditViewGrid"));
+				YAHOO.util.Connect.setForm(document.getElementById("EditView"));
 				openConnection = YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: SUGAR.grid.success, failure: SUGAR.grid.failure});
 			}
 		},
@@ -2703,11 +2702,11 @@ SUGAR.grid = function() {
 		exportToPDF: function() {
 			document.getElementById("numRowsToSave").value = totalRowsInGrid;
 			if(document.getElementById("pdfclass").value == "EZPDF"){
-			    document.getElementById('EditViewGrid').action.value='Layouts';
+			    document.getElementById('EditView').action.value='Layouts';
 			}else{
-				document.getElementById('EditViewGrid').action.value='sugarpdf';
+				document.getElementById('EditView').action.value='sugarpdf';
 			}
-			document.getElementById('EditViewGrid').submit();
+			document.getElementById('EditView').submit();
 
 		},
 
@@ -2735,8 +2734,8 @@ SUGAR.grid = function() {
 		 */
 		changeView: function() {
 			document.getElementById("selected_view").value = document.getElementById("gridViewSelect").value;
-			document.forms['EditViewGrid'].action.value	= "EditGridView";
-			document.forms['EditViewGrid'].to_pdf.value	= "0";
+			document.forms['EditView'].action.value	= "EditGridView";
+			document.forms['EditView'].to_pdf.value	= "0";
 
 			if (parseInt(document.getElementById("gridViewSelect").value) == 5) {
 				document.getElementById("view_filter_resource").style.display = "";
@@ -2751,7 +2750,7 @@ SUGAR.grid = function() {
 					button.setAttribute('id', 'view_filter_button');
 					//button.setAttribute('class', 'button');
 					button.setAttribute('value', SUGAR.language.get('Project', 'LBL_FILTER_VIEW'));
-					button.onclick = function() {document.getElementById("EditViewGrid").submit();};
+					button.onclick = function() {document.getElementById("EditView").submit();};
 					filterDiv.appendChild(button);
 				}
 				document.getElementById('view_filter_button').className = "button";
@@ -2769,7 +2768,7 @@ SUGAR.grid = function() {
 					//button.setAttribute('class', 'button');
 					button.setAttribute('id', 'view_filter_button');
 					button.setAttribute('value', SUGAR.language.get('Project', 'LBL_FILTER_VIEW'));
-					button.onclick = function() {document.getElementById("EditViewGrid").submit();};
+					button.onclick = function() {document.getElementById("EditView").submit();};
 					filterDiv.appendChild(button);
 				}
 				document.getElementById('view_filter_button').className = "button";
@@ -2777,7 +2776,7 @@ SUGAR.grid = function() {
 				Calendar.setup ({inputField : "view_filter_date_finish", ifFormat : calendar_dateformat, showsTime : false, button : "view_filter_date_finish", singleClick : true, step : 1, weekNumbers:false});
 			}
 			else
-				document.getElementById("EditViewGrid").submit();
+				document.getElementById("EditView").submit();
 
 		},
 

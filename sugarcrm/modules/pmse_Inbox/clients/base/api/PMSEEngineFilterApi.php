@@ -44,7 +44,8 @@ class PMSEEngineFilterApi extends FilterApi
         '$not_equals',
         '$in',
         '$not_in',
-        '$dateRange'
+        '$dateRange',
+        '$starts',
     );
 
     public function registerApiRest()
@@ -299,7 +300,14 @@ class PMSEEngineFilterApi extends FilterApi
         list($operator, $value) = self::getExpression($expression);
         switch($operator) {
             case '$equals':
-                $where->equals($field, $value);
+                //more dirty hack
+                //will be fixed when we redo relationships with vardefs
+                if ($field === 'act_name') {
+                    $sql = "activity.name = '$value'";
+                    $where->queryOr()->addRaw($sql);
+                } else {
+                    $where->equals($field, $value);
+                }
                 break;
             case '$not_equals':
                 $where->notEquals($field, $value);
@@ -312,6 +320,15 @@ class PMSEEngineFilterApi extends FilterApi
                 break;
             case '$dateRange':
                 $where->dateRange($field, $value);
+                break;
+            case '$starts':
+                //Dirty hack to allow quicksearch filtering by activity name (process name)
+                if ($field === 'act_name') {
+                    $sql = "activity.name LIKE '" . $value . "%'";
+                    $where->queryOr()->addRaw($sql);
+                } else {
+                    $where->starts($field, $value);
+                }
                 break;
         }
     }
@@ -348,18 +365,21 @@ class PMSEEngineFilterApi extends FilterApi
      */
     public static function getExpression($expression)
     {
-        if (is_array($expression)) {
-            $keys = array_keys($expression);
-            $operator = $keys[0];
-            if (in_array($operator, self::$supportedOperators)) {
-                return array($operator, $expression[$operator]);
-            } else {
-                throw new SugarApiExceptionInvalidParameter('ERROR_PA_FILTER_UNSUPPORTED_OPERATOR');
-            }
-
-        } else {
-            throw new SugarApiExceptionInvalidParameter('ERROR_PA_FILTER_INVALID_OPERATOR');
+        // we don't send an operator in args if the operator is $equals
+        if (!is_array($expression)) {
+            $value = $expression;
+            $expression = array();
+            $expression['$equals'] = $value;
         }
+
+        $keys = array_keys($expression);
+        $operator = $keys[0];
+        if (in_array($operator, self::$supportedOperators)) {
+            return array($operator, $expression[$operator]);
+        } else {
+            throw new SugarApiExceptionInvalidParameter('ERROR_PA_FILTER_UNSUPPORTED_OPERATOR');
+        }
+
     }
 
     /**
@@ -448,8 +468,7 @@ class PMSEEngineFilterApi extends FilterApi
             ->on()
             ->equalsField('user_data.id', 'cas_user_id')
             ->equals('user_data.deleted', 0);
-        $fields[] = array("user_data.first_name", 'first_name');
-        $fields[] = array("user_data.last_name", 'last_name');
+        $fields[] = array("user_data.user_name", 'user_name');
 
         //INNER JOIN TEAM_DATA DEFINTION
         $q->joinTable('teams', array('alias' => 'team_data', 'joinType' => 'LEFT', 'linkingTable' => true))
@@ -518,7 +537,6 @@ class PMSEEngineFilterApi extends FilterApi
             $arr_aux['cas_sugar_object_id'] = $bean->fetched_row['cas_sugar_object_id'];
             $arr_aux['prj_id'] = $bean->fetched_row['prj_id'];
             $arr_aux['in_time'] = true;
-            $arr_aux['id'] = $bean->fetched_row['inbox_id'];
 
             $arr_aux['cas_user_id'] = $bean->fetched_row['cas_user_id'];
             $arr_aux['prj_created_by'] = $bean->fetched_row['prj_created_by'];

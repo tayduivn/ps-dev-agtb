@@ -41,12 +41,19 @@ class RestResponse extends Zend_Http_Response
     protected $filename;
 
     /**
+     * Flag for sending body or not
+     * @var bool
+     */
+    protected $shouldSendBody;
+
+    /**
      * Create HTTP response
      * @param array $server _SERVER array from the request
      */
     public function __construct($server)
     {
         $this->code = 200;
+        $this->shouldSendBody = true;
         if(!empty($server['SERVER_PROTOCOL'])) {
             list($http, $version) = explode('/', $server['SERVER_PROTOCOL']);
             $this->version = $version;
@@ -234,10 +241,13 @@ class RestResponse extends Zend_Http_Response
      * simply have to generate the ETag, pass it in, and the function handles the rest.
      *
      * @param string $etag ETag to use for this content.
+     * @param int $cache_age Age in seconds of the cache-control max-age header
      * @return bool Did we have a match?
      */
-    public function generateETagHeader($etag = null, $cache_age = 0)
+    public function generateETagHeader($etag = null, $cache_age = null)
     {
+        $cache_age = is_null($cache_age) ? SugarConfig::getInstance()->get('rest_response_etag_cache_age', 10) : $cache_age;
+
         if (is_null($etag)) {
             if (is_array($this->body)) {
                 $etag = md5(json_encode($this->body));
@@ -256,6 +266,9 @@ class RestResponse extends Zend_Http_Response
             $this->body = '';
             $this->code = 304;
             $this->type = self::RAW;
+            $this->shouldSendBody = false;
+            // disable gzip so that apache won't add compression header to response body
+            @ini_set('zlib.output_compression', 'Off');
             return true;
         }
 
@@ -324,7 +337,9 @@ class RestResponse extends Zend_Http_Response
         }
         $response = $this->processContent();
         $this->sendHeaders();
-        echo $response;
+        if ($this->shouldSendBody) {
+            echo $response;
+        }
     }
 
     /**

@@ -184,6 +184,58 @@ var AdamCanvas = function (options) {
                         }
                     ]
                 }
+            ],
+            scripttask: [
+                {
+                    id : '105101',
+                    type: 1,
+                    family: 5,
+                    familyType: 1,
+                    familySubType: 0,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_ACTIVITY_INCOMING'),
+                    rules: [
+                        {
+                            compare: '>',
+                            value: 0,
+                            direction: 'incoming',
+                            element: 'sequenceFlow'
+                        }
+                    ]
+                },
+                {
+                    id : '105102',
+                    type: 1,
+                    family: 5,
+                    familyType: 1,
+                    familySubType: 0,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_ACTIVITY_OUTGOING'),
+                    rules: [
+                        {
+                            compare: '>',
+                            value: 0,
+                            direction: 'outgoing',
+                            element: 'sequenceFlow'
+                        }
+                    ]
+                },
+                {
+                    id : '105103',
+                    type: 1,
+                    family: 5,
+                    familyType: 1,
+                    familySubType: 1,
+                    action: 1,
+                    message: translate('LBL_PMSE_MESSAGE_ERROR_ACTIVITY_SCRIPT_TASK'),
+                    rules: [
+                        {
+                            compare: '!=',
+                            value: '',
+                            type: 'script_type'
+                        }
+                    ]
+                }
             ]
         },
         AdamGateway: {
@@ -476,6 +528,7 @@ AdamCanvas.prototype.getContextMenu = function () {
         fieldHeight: 80,
         decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
         numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
+        currencies: project.getMetadata("currencies"),
         operators: {
             logic: true,
             group: true
@@ -1089,11 +1142,13 @@ AdamCanvas.prototype.onRemoveElementHandler = function (element) {
     this.bpmnValidation();
     if (countErrors){
         if (listPanelError.getItems().length){
-                countErrors.style.display = "block";
-                sizeItems = listPanelError.getAllErros();
-                countErrors.textContent =  sizeItems === 1 ? sizeItems + translate('LBL_PMSE_BPMN_WARNING_SINGULAR_LABEL') : sizeItems + translate('LBL_PMSE_BPMN_WARNING_LABEL');
+            $("#error-div").show();
+            countErrors.style.display = "block";
+            sizeItems = listPanelError.getAllErros();
+            countErrors.textContent = sizeItems === 1 ? sizeItems + translate('LBL_PMSE_BPMN_WARNING_SINGULAR_LABEL') : sizeItems + translate('LBL_PMSE_BPMN_WARNING_LABEL');
         } else {
             countErrors.textContent = "0" + translate('LBL_PMSE_BPMN_WARNING_SINGULAR_LABEL');
+            $("#error-div").hide();
         }
     }
 };
@@ -1609,10 +1664,15 @@ AdamCanvas.prototype.bpmnValidation = function () {
         family = shape.getFamilyNumber(shape);
         switch (family) {
             case 5:
-                if (shape.getActivityType() === 'TASK'
-                    || shape.getActivityType() === 'SUBPROCESS') {
+                if ((shape.getActivityType() === 'TASK'
+                    || shape.getActivityType() === 'SUBPROCESS')
+                    && shape.getActivityTaskType() != 'SCRIPTTASK') {
                     objArray = rulesObject[shape.getType()]
                         ['task'];
+                } else if (shape.getActivityTaskType() === 'SCRIPTTASK') {
+                    objArray = rulesObject[shape.getType()]
+                        ['scripttask'];
+                    objArray[2].rules[0].value = shape.getActivityScriptType();
                 }
                 break;
             case 6:

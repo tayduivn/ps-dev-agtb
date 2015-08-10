@@ -12,6 +12,7 @@
  */
 
 require_once 'modules/Categories/NestedBeanInterface.php';
+require_once 'modules/Categories/exception/CategoriesRuntimeException.php';
 
 class Category extends SugarBean implements NestedBeanInterface
 {
@@ -29,11 +30,12 @@ class Category extends SugarBean implements NestedBeanInterface
     /**
      * Save current node as new root.
      * @return String Id of new created bean.
+     * @throws CategoriesExceptionInterface
      */
     public function saveAsRoot()
     {
         if (!empty($this->id)) {
-            throw new Exception('The node cannot be makes root because it is not new.');
+            throw new CategoriesRuntimeException('The node cannot be makes root because it is not new.');
         }
         $this->lft = 1;
         $this->rgt = 2;
@@ -97,7 +99,7 @@ class Category extends SugarBean implements NestedBeanInterface
     /**
      * {@inheritDoc}
      */
-    public function getСhildren($depth = 1)
+    public function getChildren($depth = 1)
     {
         $db = DBManagerFactory::getInstance();
         $query = $this->getQuery();
@@ -352,24 +354,29 @@ class Category extends SugarBean implements NestedBeanInterface
      * @param Category $node new child node.
      * @param int $key.
      * @param int $levelUp.
-     * @throws Exception
+     * @return string
+     * @throws CategoriesExceptionInterface
      */
     protected function addNode(Category $node, $key, $levelUp)
     {
         if (!empty($node->id)) {
-            throw new Exception('The node cannot be added because it is not new.');
+            throw new CategoriesRuntimeException('The node cannot be added because it is not new.');
+        }
+
+        if (empty($node->name)) {
+            throw new CategoriesRuntimeException('The node cannot be added because name is required.');
         }
 
         if ($this->deleted == 1) {
-            throw new Exception('The node cannot be added because category is deleted.');
+            throw new CategoriesRuntimeException('The node cannot be added because category is deleted.');
         }
 
         if ($node->deleted == 1) {
-            throw new Exception('The node cannot be added because it is deleted.');
+            throw new CategoriesRuntimeException('The node cannot be added because it is deleted.');
         }
 
         if (!$levelUp && $this->isRoot()) {
-            throw new Exception('The node should not be root.');
+            throw new CategoriesRuntimeException('The node should not be root.');
         }
 
         $node->root = $this->root;
@@ -435,7 +442,7 @@ class Category extends SugarBean implements NestedBeanInterface
         $this->retrieve($id);
         $hasChild = ($this->rgt - $this->lft) !== 1;
         if ($hasChild) {
-            $descendants = $this->getСhildren();
+            $descendants = $this->getChildren();
             while ($record = array_shift($descendants)) {
                 parent::mark_deleted($record['id']);
             }

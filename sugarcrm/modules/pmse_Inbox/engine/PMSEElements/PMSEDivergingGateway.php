@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'PMSEGateway.php';
+require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEGateway.php';
 
 class PMSEDivergingGateway extends PMSEGateway
 {
@@ -23,7 +23,7 @@ class PMSEDivergingGateway extends PMSEGateway
     {
         $bpmnFlowBean = $this->caseFlowHandler->retrieveBean('pmse_BpmnFlow');
         $where = "flo_element_origin_type = 'bpmnGateway' and flo_element_origin = '{$flowData['bpmn_id']}' ";
-        $orderBy = 'flo_type DESC, flo_eval_priority ASC';
+        $orderBy = 'flo_eval_priority ASC, flo_type DESC';
         $rows = $bpmnFlowBean->get_full_list($orderBy, $where);
         return $rows;
     }

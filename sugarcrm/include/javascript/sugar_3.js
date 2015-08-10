@@ -169,8 +169,8 @@ SUGAR.isSupportedBrowser = function(){
     var supportedBrowsers = {
         msie : {min:9, max:11}, // IE 9, 10, 11
         safari : {min:537}, // Safari 7.1
-        mozilla : {min:37}, // Firefox 37
-        chrome : {min:537.36} // Chrome 42
+        mozilla : {min:38}, // Firefox 38,39
+        chrome : {min:537.36} // Chrome 43
     };
     var current = String($.browser.version);
         var supported;
@@ -5190,7 +5190,7 @@ closeActivityPanel: {
                             SUGAR.util.closeActivityPanel.panel.hide();
 
                         ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
-                        var args = "action=save&id=" + id + "&record=" + id + "&status=" + new_status + "&module=" + module;
+                        var args = "action=save&id=" + id + "&record=" + id + "&status=" + new_status + "&module=" + module + "&csrf_token=" + SUGAR.csrf.form_token;
                         // 20110307 Frank Steegmans: Fix for bug 42361, Any field with a default configured in any activity will be set to this default when closed using the close dialog
                         // TODO: Take id out and regression test. Left id in for now to not create any other unexpected problems
                         //var args = "action=save&id=" + id + "&status=" + new_status + "&module=" + module;

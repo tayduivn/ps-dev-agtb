@@ -1,4 +1,4 @@
-ddescribe('Plugins.KBContents', function() {
+describe('Plugins.KBContents', function() {
     var moduleName = 'KBContents',
         app, view, viewMeta, sandbox, context, copiedUser;
 
@@ -82,6 +82,11 @@ ddescribe('Plugins.KBContents', function() {
         sandbox.stub(app.data, 'getRelateFields', function() {
             return [];
         });
+        sandbox.stub(app.metadata, 'getModule', function() {
+            return {
+                fields: []
+            };
+        });
         view.createArticle(model);
         expect(drawerStub).toHaveBeenCalled();
         expect(drawerStub.args[0][0].context.model.get('name')).toEqual('fakeName');
@@ -89,16 +94,11 @@ ddescribe('Plugins.KBContents', function() {
     });
 
     it('Created localizations and revisions should have draft status.', function() {
+        var fakeModel = app.data.createBean(moduleName);
+        fakeModel.set('status', 'published');
+
         sandbox.stub(app.data, 'createBean', function() {
-            var prefillModel = new Backbone.Model();
-            prefillModel.copy = function() {
-            };
-            return prefillModel;
-        });
-        var fakeModel = new Backbone.Model({
-            module: moduleName,
-            name: 'fakeName',
-            status: ''
+            return fakeModel;
         });
         sandbox.stub(fakeModel, 'fetch', function(options) {
             options.success();
@@ -117,14 +117,11 @@ ddescribe('Plugins.KBContents', function() {
     });
 
     it('Created localizations and revisions should change authorship to a current user.', function() {
+        var fakeModel = app.data.createBean(moduleName);
+        fakeModel.set('status', 'published');
+
         sandbox.stub(app.data, 'createBean', function() {
-            var prefillModel = new Backbone.Model();
-            prefillModel.copy = function() {};
-            return prefillModel;
-        });
-        var fakeModel = new Backbone.Model({
-            module: moduleName,
-            name: 'fakeName'
+            return fakeModel;
         });
         sandbox.stub(fakeModel, 'fetch', function(options) {
             options.success();
@@ -234,6 +231,9 @@ ddescribe('Plugins.KBContents', function() {
         });
         sandbox.stub(app.date.fn, 'formatServer', function() {
             return '2011-11-11';
+        });
+        sandbox.stub(view, 'getField', function(name) {
+            return name !== 'exp_date';
         });
 
         // Publish article with exp date. Should set the active_date automatically.

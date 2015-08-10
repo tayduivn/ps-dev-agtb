@@ -8,7 +8,6 @@
     top: 0;
     height: 100%;
     width: 100%;
-    overflow: hidden;
 
     /* backdrop cover */
     .drawer-backdrop {
@@ -61,6 +60,8 @@ body.noscroll {
 //UIUX-808: remove buttons from headerpane when in drawer
 //UIUX-888: remove fixed position of header bar in drawer
 .drawer.inactive {
+    overflow: hidden;
+
     .main-pane {
         position: relative;
         top: 5px;
@@ -83,18 +84,39 @@ body.noscroll {
     }
 }
 
-.touch .drawer.active {
-    &.transition .main-pane {
-        padding-top: 0 !important
+@media only screen and (orientation:landscape) {
+    .touch {
+        .drawer {
+            &.active {
+                .main-pane > div {
+                    display: inline;
+                    .flex-list-view-content {
+                        display: inline;
+                    }
+                    .list-view {
+                        height: 100%;
+                    }
+                }
+            }
+        }
     }
 }
 
-.touch .drawer.inactive {
-    .main-pane {
-        padding-top: 0 !important;
-    }
-    .dashboard {
-        padding-top: 0 !important;
+.touch {
+    .drawer {
+        &.active {
+            &.transition .main-pane {
+                padding-top: 0 !important
+            }
+        }
+        &.inactive {
+            .main-pane {
+                padding-top: 0 !important;
+            }
+            .dashboard {
+                padding-top: 0 !important;
+            }
+        }
     }
 }
 
@@ -119,8 +141,6 @@ body.noscroll {
   }
 }
 
-
-
 @media (max-width: 768px) {
     .transition {
         .main-pane.span8,
@@ -130,7 +150,6 @@ body.noscroll {
     }
     .drawer.active {
         overflow: auto;
-        background-image: url('@{textureSecondary}');
         .main-pane {
             background: @white;
         }

@@ -31,8 +31,20 @@ $dictionary['kbusefulness'] = array(
             'len' => 36,
             'required' => true,
         ),
+        'contact_id' => array(
+            'name' => 'contact_id',
+            'type' => 'id',
+            'len' => 36,
+            'required' => false,
+            'isnull' => true,
+        ),
         'vote' => array(
             'name' => 'vote',
+            'type' => 'smallint',
+            'isnull' => 'true',
+        ),
+        'zeroflag' => array(
+            'name' => 'zeroflag',
             'type' => 'tinyint',
             'isnull' => 'true',
         ),
@@ -96,10 +108,17 @@ $dictionary['kbusefulness'] = array(
                 'user_id' => array(
                     'name' => 'user_id',
                 ),
+                'contact_id' => array(
+                    'name' => 'contact_id',
+                ),
                 'date_modified' => array(
                     'name' => 'date_modified'
+                ),
+                'zeroflag' => array(
+                    'name' => 'zeroflag',
                 )
-            )
+            ),
+            'primary_flag_column' => 'zeroflag'
         ),
     )
 );

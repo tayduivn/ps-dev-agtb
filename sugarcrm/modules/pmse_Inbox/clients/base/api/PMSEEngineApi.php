@@ -413,6 +413,9 @@ class PMSEEngineApi extends SugarApi
         $bean = BeanFactory::retrieveBean($case['moduleName'], $case['beanId']);
         // The handler will call to the preprocessor in this step
         $this->retrieveRequestHandler('direct')->executeRequest($case, false, $bean, 'REASSIGN');
+        if(!empty($args['data']['not_content'])){
+            $this->saveNotes($api,$args);
+        }
         return $result;
     }
 
@@ -422,6 +425,7 @@ class PMSEEngineApi extends SugarApi
         $flowBeanObject = BeanFactory::getBean('pmse_BpmFlow', $args['flowId']);
         $args['cas_id'] = $flowBeanObject->cas_id;
         $args['cas_index'] = $flowBeanObject->cas_index;
+        $filter = isset($args['filter']) ? $args['filter'] : '';
         $result = array();
         $result['success'] = false;
         if (empty($args['cas_id']) && empty($args['cas_index'])) {
@@ -429,7 +433,7 @@ class PMSEEngineApi extends SugarApi
         }
         switch ($args['data']) {
             case 'users':
-                $result['result'] = $this->getUsersListReassign($flowBeanObject);
+                $result['result'] = $this->getUsersListReassign($flowBeanObject, $filter);
                 $result['success'] = true;
                 break;
             default:
@@ -446,10 +450,10 @@ class PMSEEngineApi extends SugarApi
      * @param array $args
      * @return array
      */
-    public function getUsersListReassign($beanFlow)
+    public function getUsersListReassign($beanFlow, $filter = null)
     {
         $resultArray = array();
-        $userList = $this->userAssignmentHandler->getReassignableUserList($beanFlow, true);
+        $userList = $this->userAssignmentHandler->getReassignableUserList($beanFlow, true, $filter);
         foreach ($userList as $user) {
             $tmpArray = array();
             $tmpArray['value'] = $user->id;
@@ -507,6 +511,7 @@ class PMSEEngineApi extends SugarApi
         $flowBeanObject = BeanFactory::getBean('pmse_BpmFlow', $args['flowId']);
         $args['cas_id'] = $flowBeanObject->cas_id;
         $args['cas_index'] = $flowBeanObject->cas_index;
+        $filter = isset($args['filter']) ? $args['filter'] : '';
         $result = array();
         $result['success'] = false;
         if (empty($args['cas_id']) && empty($args['cas_index'])) {
@@ -514,7 +519,7 @@ class PMSEEngineApi extends SugarApi
         }
         switch ($args['data']) {
             case 'users':
-                $result['result'] = $this->getUsersListAdhoc($flowBeanObject);
+                $result['result'] = $this->getUsersListAdhoc($flowBeanObject, $filter);
                 $result['success'] = true;
                 break;
             default:
@@ -531,10 +536,10 @@ class PMSEEngineApi extends SugarApi
      * @param array $args
      * @return array
      */
-    public function getUsersListAdhoc($beanFlow)
+    public function getUsersListAdhoc($beanFlow, $filter = null)
     {
         $resultArray = array();
-        $userList = $this->userAssignmentHandler->getAdhocAssignableUserList($beanFlow);
+        $userList = $this->userAssignmentHandler->getAdhocAssignableUserList($beanFlow, false, $filter);
         foreach ($userList as $user) {
             $tmpArray = array();
             $tmpArray['value'] = $user->id;
@@ -803,13 +808,25 @@ class PMSEEngineApi extends SugarApi
         return $result;
     }
 
+    /**
+     * Returns a list of all activities that can be reassigned
+     * @param $api
+     * @param $args
+     * @return array
+     * @throws SugarApiExceptionNotAuthorized
+     * @throws SugarQueryException
+     */
     public function getReassignFlows($api, $args)
     {
         $this->checkACL($api, $args);
         $result = array('success' => true);
-        //$result['args'] = $args;
+
+        // This is set to -1 because this API is not considering the max_num or
+        // offset values and always will return all occurrences
+        $result['next_offset'] = -1;
+
         $bpmFlow = BeanFactory::retrieveBean('pmse_BpmFlow');
-        //$rows = $bpmFlow->get_full_list('','cas_id = ' . $args['record'] . ' AND cas_flow_status = \'FORM\'');
+
         $queryOptions = array('add_deleted' => (!isset($options['add_deleted']) || $options['add_deleted']) ? true : false);
         if ($queryOptions['add_deleted'] == false) {
             $options['select'][] = 'deleted';
@@ -854,10 +871,8 @@ class PMSEEngineApi extends SugarApi
 
         $q->select($fields);
 
-        //$result['sql']= $q->compileSql();
-
         $rows = $q->execute();
-        $rows_aux = array();
+
         foreach ($rows as $key => $row) {
             //Expected time section
             $casData = new stdClass();
@@ -1008,8 +1023,8 @@ class PMSEEngineApi extends SugarApi
         foreach ($rows as $key => $row) {
             $arrayId = array_search($row['cas_id'], $result);
             if ($arrayId !== false ) {
-                $usersBean = BeanFactory::getBean('Users', $row['cas_init_user']);
-                $row['cas_init_user'] = $usersBean->full_name;
+                $usersBean = BeanFactory::getBean('Users', $arrayUnattendedCases[$arrayId]['cas_user_id']);
+                $row['cas_user_full_name'] = $usersBean->full_name;
                 $processBean = BeanFactory::getBean('pmse_BpmnProcess', $row['pro_id']);
                 $row['prj_id']=$processBean->prj_id;
                 $prjUsersBean = BeanFactory::getBean('Users', $processBean->created_by);
@@ -1036,13 +1051,12 @@ class PMSEEngineApi extends SugarApi
         $q = new SugarQuery();
         $q->from($beanFlow, $queryOptions);
         $q->distinct(true);
-        $fields = array('cas_id','cas_sugar_module','cas_sugar_object_id');
+        $fields = array('cas_id','cas_sugar_module','cas_sugar_object_id','cas_user_id');
 
         //INNER JOIN USERS TABLE
         $q->joinTable('users', array('alias' => 'users', 'joinType' => 'INNER', 'linkingTable' => true))
                 ->on()
-                ->equalsField('users.id', 'cas_user_id')
-                ->equals('users.deleted', 0);
+                ->equalsField('users.id', 'cas_user_id');
 
         $q->where()
                 ->equals('cas_flow_status', 'FORM')
@@ -1067,7 +1081,16 @@ class PMSEEngineApi extends SugarApi
         $bpmFlow = BeanFactory::retrieveBean('pmse_BpmFlow', $args['idflow']);
         $returnArray['case']['flow'] = $bpmFlow->fetched_row;
 
-        $activity = BeanFactory::getBean('pmse_BpmActivityDefinition')->retrieve_by_string_fields(array('id' => $bpmFlow->bpmn_id));
+        $activity = BeanFactory::getBean('pmse_BpmActivityDefinition', $bpmFlow->bpmn_id);
+        $teamSets = TeamSet::getTeamSetIdsForUser($api->user->id);
+        if ($api->user->id != $bpmFlow->cas_user_id) {
+            if (($activity->act_assignment_method == 'selfservice' && !in_array($bpmFlow->cas_user_id, $teamSets))
+                || $activity->act_assignment_method == 'static'
+                || $activity->act_assignment_method == 'balanced'
+            ) {
+                throw new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED', null, null, 403);
+            }
+        }
 
         $reclaimCaseByUser = false;
         if (isset($bpmFlow->cas_adhoc_type) && ($bpmFlow->cas_adhoc_type === '') && ($bpmFlow->cas_start_date == '') && ($activity->act_assignment_method == 'selfservice')) {
@@ -1098,10 +1121,13 @@ class PMSEEngineApi extends SugarApi
         $data_aux->cas_task_start_date = $returnArray['case']['flow']['cas_task_start_date'];
         $data_aux->cas_delegate_date = $returnArray['case']['flow']['cas_delegate_date'];
 
-        $returnArray['case']['title']['time'] = $this->caseWrapper->expectedTime($activity->act_expected_time,
-            $data_aux);
+        // Commenting out below line. We don't want due date to be calculated dynamically. Once a process due date is set it should stay.
+        // $returnArray['case']['title']['time'] = $this->caseWrapper->expectedTime($activity->act_expected_time, $data_aux);
+        $returnArray['case']['title']['time'] = $this->caseWrapper->processDueDateTime($returnArray['case']['flow']['cas_due_date']);
         $bpmnProcess = BeanFactory::retrieveBean('pmse_BpmnProcess', $bpmFlow->pro_id);
         $returnArray['case']['title']['process'] = $bpmnProcess->name;
+        $bpmInbox = BeanFactory::retrieveBean('pmse_Inbox', $args['id']);
+        $returnArray['case']['title']['rec_name'] = $bpmInbox->name;
         $bpmnActivity = BeanFactory::retrieveBean('pmse_BpmnActivity', $bpmFlow->bpmn_id);
         $returnArray['case']['title']['activity'] = $bpmnActivity->name;
         $returnArray['case']['inboxId'] = $bpmnActivity->name;

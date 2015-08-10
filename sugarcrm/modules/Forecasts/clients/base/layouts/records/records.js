@@ -56,9 +56,9 @@
 
         var acls = app.user.getAcls().Forecasts,
             hasAccess = (!_.has(acls, 'access') || acls.access == 'yes');
-        if(hasAccess) {
+        if (hasAccess) {
             // check the module we are forecasting by for access
-            var forecastByAcl = app.user.getAcls()[app.metadata.getModule('Forecasts', 'config').forecast_by];
+            var forecastByAcl = app.user.getAcls()[app.metadata.getModule('Forecasts', 'config').forecast_by] || {};
             if (_.has(forecastByAcl, 'access') && forecastByAcl.access === 'no') {
                 // the user doesn't have access to what is being forecast by
                 this.codeBlockForecasts('LBL_FORECASTS_ACLS_NO_ACCESS_TITLE', 'LBL_FORECASTS_RECORDS_ACLS_NO_ACCESS_MSG');
@@ -284,7 +284,18 @@
         this.trigger("data:sync:start", 'read', model, options);
 
         url = app.api.buildURL("Forecasts/init", null, null, options.params);
-        app.api.call("read", url, null, callbacks);
+
+        var params = {},
+            cfg = app.metadata.getModule('Forecasts', 'config');
+        if (cfg && cfg.is_setup === 0) {
+            // add no-cache header if forecasts isnt set up yet
+            params = {
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
+            };
+        }
+        app.api.call("read", url, null, callbacks, params);
     },
 
     /**

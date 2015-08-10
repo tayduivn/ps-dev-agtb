@@ -270,6 +270,14 @@
     },
 
     /**
+     * {@inheritdoc}
+     *
+     * No data changes to bind.
+     */
+    bindDomChange: function () {
+    },
+
+    /**
      * {@inheritDoc}
      *
      * Set right value in DOM for the field.
@@ -301,9 +309,6 @@
             }
             this.$('[data-role="treevalue"]','[name=' + this.def.name + ']').text(name);
             this.$('[name=' + this.def.id_name + ']').val(id);
-        }
-        if (this.action !== 'edit') {
-            this.render();
         }
     },
 
@@ -397,8 +402,16 @@
      */
     addNew: function(evt) {
         var name = $(evt.target).val().trim();
-        this.addNode(name, 'last', true);
-        this.switchCreate();
+        if (!name) {
+            app.alert.show('wrong_node_name', {
+                level: 'error',
+                messages: app.lang.get('LBL_EMPTY_NODE_NAME', 'Categories'),
+                autoClose: true
+            });
+        } else {
+            this.addNode(name, 'last', true, false, true);
+            this.switchCreate();
+        }
     },
 
     /**
@@ -439,7 +452,7 @@
      * @param data {Object} Data from selected node.
      */
     selectedNode: function(data) {
-        if (_.isEmpty(data)) {
+        if (_.isEmpty(data) || _.isEmpty(data.id) || _.isEmpty(data.name)) {
             return;
         }
         var id = data.id,

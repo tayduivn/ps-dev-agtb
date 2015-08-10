@@ -29,7 +29,9 @@ if ( !isset($_SERVER['HTTP_USER_AGENT']) )
     $_SERVER['HTTP_USER_AGENT'] = 'cli';
 
 // move current working directory
-chdir(dirname(__FILE__) . '/..');
+if (basename(getcwd()) == 'tests' || !is_file('include/entryPoint.php')) {
+  chdir(dirname(__FILE__) . '/..');
+}
 
 // this is needed so modules.php properly registers the modules globals, otherwise they
 // end up defined in wrong scope
@@ -135,6 +137,7 @@ require_once 'SugarTestTagUtilities.php';
 require_once 'SugarTestDatabaseMock.php';
 require_once 'SugarTestKBContentUtilities.php';
 require_once 'SugarTestSchedulersJobUtilities.php';
+require_once 'SugarTestCategoryUtilities.php';
 
 //BEGIN SUGARCRM flav=ent ONLY
 require_once 'SugarTestProcessAuthorUtilities.php';
@@ -183,7 +186,6 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
         if (isset($GLOBALS['log'])) {
             $GLOBALS['log']->info("START TEST: {$this->getName(false)}");
         }
-        SugarCache::instance()->flush();
     }
 
     protected function assertPostConditions()
@@ -402,6 +404,8 @@ class SugarTestHelper
         if (self::$isInited == true) {
             return true;
         }
+
+        SugarCache::instance()->flush();
 
         // initialization & backup of sugar_config
         self::$initVars['GLOBALS']['sugar_config'] = null;

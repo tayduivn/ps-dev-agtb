@@ -686,6 +686,7 @@ class HealthCheckScanner
             }
         }
 
+        restore_error_handler();
         return $this->logMeta;
     }
 
@@ -1066,9 +1067,9 @@ class HealthCheckScanner
         }
 
         // Check if ModuleBuilder module needs to be run as BWC
-        // Checks from 6_ScanModules
+        // Checks from 6_ScanModules. 'isSidecarModule' is added later - @see CRYS-1068.
         $bwc = false;
-        if (!$this->isMBModule($module)) {
+        if (!$this->isMBModule($module) && !$this->isSidecarModule($module)) {
             $bwc = true;
             $this->updateStatus("toBeRunAsBWC", $module);
         } else {
@@ -2201,6 +2202,27 @@ ENDP;
     }
 
     /**
+     * Check if a module has Sidecar characteristics.
+     * @param string $module name of the module.
+     * @return bool
+     */
+    protected function isSidecarModule($module)
+    {
+        $directoriesToCheck = array(
+            "$module/clients/base",
+            "custom/$module/clients/base",
+        );
+
+        foreach ($directoriesToCheck as $dir) {
+            if (file_exists($dir)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Check if views dir was created by file template
      * @param string $view_dir
      * @param string $status Status to assign if check fails
@@ -2244,6 +2266,7 @@ ENDP;
         'ForecastOpportunities' => array('description'),
         'Quotas' => array('assigned_user_id'),
         'ProductTemplates' => array('assigned_user_link'),
+        'Calls' => array('contact_id'),
         'Meetings' => array('contact_id'),
         'KBDocuments' => array('keywords'),
         'KBContents' => array('created_by_link', 'modified_user_link'),
@@ -2608,12 +2631,7 @@ ENDP;
      */
     public function getPackageManifest()
     {
-        if (!empty($this->upgrader->context['extract_dir'])) {
-            $fileReader = new FileLoaderWrapper();
-            $manifest = $fileReader->loadFile($this->upgrader->context['extract_dir'] . '/manifest.php', 'manifest');
-            return !empty($manifest) ? $manifest : array();
-        }
-        return array();
+        return $this->upgrader->getManifest();
     }
 
     /**
@@ -2677,20 +2695,104 @@ ENDP;
  * Class that ignores everything, needs for loading
  * metadata with code
  */
-class BlackHole
+class BlackHole implements ArrayAccess, Countable, Iterator
 {
     protected $called;
+
+    /**
+     * Fields to be stubbed.
+     * @var array
+     */
+    protected $stubFields = array();
+
+    /**
+     * Methods to be stubbed.
+     * @var array
+     */
+    protected $stubMethods = array();
+
+    /**
+     * You can set fields and methods to be stubbed when __get() or __call() are triggered on a BlackHole.
+     * @param array $fields list of fields (name => value)
+     * @param array $methods list of methods (name => returnValue)
+     */
+    public function __construct($fields = array(), $methods = array())
+    {
+        $this->stubFields = $fields;
+        $this->stubMethods = $methods;
+    }
 
     public function __get($v)
     {
         $this->called = true;
-        return null;
+        return array_key_exists($v, $this->stubFields) ? $this->stubFields[$v] : $this;
     }
 
     public function __call($n, $a)
     {
         $this->called = true;
+        return array_key_exists($n, $this->stubMethods) ? $this->stubMethods[$n] : $this;
+    }
+
+    public function __toString()
+    {
+        return '';
+    }
+
+    public function offsetExists($offset)
+    {
+        return false;
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this;
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        // Nothing to do
+    }
+
+    public function offsetUnset($offset)
+    {
+        // Nothing to do
+    }
+
+    public function count()
+    {
+        return 0;
+    }
+
+    function __invoke()
+    {
+        $this->called = true;
+        return $this;
+    }
+
+    public function current()
+    {
+        return $this;
+    }
+
+    public function next()
+    {
+        // Nothing to do
+    }
+
+    public function key()
+    {
         return null;
+    }
+
+    public function valid()
+    {
+        return false;
+    }
+
+    public function rewind()
+    {
+        // Nothing to do
     }
 }
 
@@ -2703,6 +2805,18 @@ class BlackHole
  */
 class FileLoaderWrapper extends BlackHole
 {
+    public function __get($v)
+    {
+        $this->called = true;
+        return $this;
+    }
+
+    public function __call($n, $a)
+    {
+        $this->called = true;
+        return $this;
+    }
+
     public function loadFile($deffile, $varname)
     {
         ob_start();
@@ -2717,4 +2831,3 @@ class FileLoaderWrapper extends BlackHole
         return $$varname;
     }
 }
-

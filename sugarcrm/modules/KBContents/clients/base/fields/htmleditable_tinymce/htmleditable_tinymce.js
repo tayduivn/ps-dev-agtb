@@ -23,6 +23,9 @@
      * Additional override fieldSelector property from field's meta.
      */
     initialize: function(opts) {
+        if (opts.view.action === 'filter-rows') {
+            opts.viewName = 'filter-rows-edit';
+        }
         this._super('initialize', [opts]);
         this.shouldDisable = false;
         if (!_.isUndefined(this.def.fieldSelector)) {
@@ -105,9 +108,22 @@
     setMode: function(mode) {
         this.shouldDisable = (mode === 'edit' &&
             (this.view.tplName === 'list' ||
-            (this.view.tplName == '' && this.tplName == 'subpanel-list')
+            (this.view.tplName == '' && (this.tplName == 'subpanel-list' || this.tplName == 'list'))
             )
         );
         this._super('setMode', [mode]);
+    },
+
+    /**
+     * {@inheritdoc}
+     */
+    destroyTinyMCEEditor: function() {
+        // Clean up existing TinyMCE editor
+        if (!_.isNull(this._htmleditor)) {
+            this._saveEditor(this.options.viewName === 'edit');
+            this._htmleditor.remove();
+            this._htmleditor.destroy();
+            this._htmleditor = null;
+        }
     }
 })

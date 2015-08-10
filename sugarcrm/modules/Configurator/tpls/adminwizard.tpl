@@ -34,6 +34,7 @@ function disableReturnSubmission(e) {
         <table style="width:auto;height:600px;" align="center"><tr><td align="center">
         
 <form name="AdminWizard" id="AdminWizard" enctype='multipart/form-data' method="POST" action="index.php" onkeypress="return disableReturnSubmission(event);">
+{sugar_csrf_form_token}
 <input type='hidden' name='action' value='SaveAdminWizard'/>
 <input type='hidden' name='module' value='Configurator'/>
 <span class='error'>{$error.main}</span>
@@ -358,6 +359,7 @@ addToValidate('ConfigureSettings', 'system_name', 'varchar', true,'System Name' 
 
 <div id='upload_panel' style="display:none">
     <form id="upload_form" name="upload_form" method="POST" action='index.php' enctype="multipart/form-data">
+{sugar_csrf_form_token}
         <input type="file" id="my_file_company" name="file_1" size="20" onchange="uploadCheck(false)"/>
         {sugar_getimage name="sqsWait" ext=".gif" alt=$mod_strings.LBL_LOADING other_attributes='id="loading_img_company" style="display:none" '}
     </form>
@@ -635,7 +637,7 @@ function uploadCheck(quotes){
     document.getElementById("company_logo").value='';
     document.getElementById('loading_img_company').style.display="inline";
     var file_name = document.getElementById('my_file_company').value;
-    postData = '&entryPoint=UploadFileCheck&forQuotes=false';
+    postData = '&entryPoint=UploadFileCheck&forQuotes=false&csrf_token=' + SUGAR.csrf.form_token;
     YAHOO.util.Connect.setForm(document.getElementById('upload_form'), true,true);
     if(file_name){
         if(postData.substring(0,1) == '&'){

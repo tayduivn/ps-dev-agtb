@@ -190,9 +190,11 @@ $viewdefs[$module_name]['base']['view']['dashlet-processes'] = array(
             ),
             'fields' => array(
                 'name',
+                'prj_module',
                 'assigned_user_name',
                 'assigned_user_id',
                 'date_entered',
+                'description',
             ),
         ),
         array(
@@ -253,9 +255,11 @@ $viewdefs[$module_name]['base']['view']['dashlet-processes'] = array(
             ),
             'fields' => array(
                 'name',
+                'prj_module',
                 'assigned_user_name',
                 'assigned_user_id',
                 'date_entered',
+                'description',
             ),
         ),
     ),

@@ -200,6 +200,7 @@ class KBContent extends SugarBean {
      */
     public function save($check_notify = false)
     {
+        $dataChanges = $this->db->getDataChanges($this);
         if(empty($this->id) || !empty($this->new_with_id)) {
             if (empty($this->language)) {
                 $lang = $this->getPrimaryLanguage();
@@ -229,7 +230,16 @@ class KBContent extends SugarBean {
 
         $this->checkActiveRev();
 
-        return parent::save($check_notify);
+        $beanId = parent::save($check_notify);
+        if (!empty($this->category_id)) {
+            $this->updateCategoryExternalVisibility($this->category_id);
+        }
+        if (isset($dataChanges['category_id'])) {
+            if ($dataChanges['category_id']['before'] != $dataChanges['category_id']['after']) {
+                $this->updateCategoryExternalVisibility($dataChanges['category_id']['before']);
+            }
+        }
+        return $beanId;
     }
 
     /**
@@ -237,6 +247,7 @@ class KBContent extends SugarBean {
      */
     public function mark_deleted($id)
     {
+        $deletedBean = BeanFactory::getBean('KBContents', $id);
         if ($this->active_rev == 1) {
             $query = new SugarQuery();
             $query->from(BeanFactory::getBean('KBContents'));
@@ -264,6 +275,9 @@ class KBContent extends SugarBean {
             }
         }
         parent::mark_deleted($id);
+        if (!empty($deletedBean->category_id)) {
+            $this->updateCategoryExternalVisibility($deletedBean->category_id);
+        }
     }
 
     /**
@@ -432,13 +446,19 @@ class KBContent extends SugarBean {
         parent::fill_in_relationship_fields();
         $user = $GLOBALS['current_user'];
         $this->usefulness_user_vote = 0;
-        $ssid = session_id();
         $this->load_relationship('usefulness');
         $validUser = $this->usefulness->isValidSugarUser($user);
+        $contact_id = null;
+        $params = array();
+        if (!$validUser && $contact = $this->usefulness->getPortalContact()) {
+            $contact_id = $contact->id;
+            $params['where'] = 'contact_id = ' . DBManagerFactory::getInstance()->quoted($contact_id);
+        }
+        $this->usefulness->load($params);
         foreach ($this->usefulness->rows as $row) {
             if ($validUser && $row['id'] == $user->id) {
                 $this->usefulness_user_vote = $row['vote'];
-            } elseif (!$validUser && $row['ssid'] == $ssid) {
+            } elseif (!$validUser && $row['contact_id'] == $contact_id) {
                 $this->usefulness_user_vote = $row['vote'];
             }
         }
@@ -496,5 +516,118 @@ class KBContent extends SugarBean {
         $xtpl->assign('NOTIFICATION_MESSAGE', $preMessage . translate($messageLbl, $this->module_dir));
 
         return $xtpl;
+    }
+
+    /**
+     * Update category visibility for external use (portal, etc.).
+     * @param int $categoryId
+     */
+    protected function updateCategoryExternalVisibility($categoryId)
+    {
+        $isUpdated = false;
+        $documentExternalFlag = false;
+        $category = BeanFactory::retrieveBean('Categories', $categoryId);
+        if ($category instanceof Category) {
+            if (!$category->isRoot()) {
+                $documentExternalFlag = $this->_isExternal($category);
+                $isUpdated = $this->_updateCategory($category, $documentExternalFlag);
+            }
+            if ($isUpdated) {
+                $parentExternalFlag = false;
+                foreach ($category->getParents(null, true) as $node) {
+                    $seed = BeanFactory::retrieveBean('Categories', $node['id']);
+                    if (!$seed->isRoot()) {
+                        if ($documentExternalFlag) {
+                            $this->_updateCategory($seed, $documentExternalFlag);
+                            continue;
+                        }
+                        if ($parentExternalFlag) {
+                            continue;
+                        }
+                        $parentExternalFlag = $this->_isExternal($seed);
+                        $this->_updateCategory($seed, $parentExternalFlag);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Check if category is external (Has external articles within or has external children).
+     * @param Category $category
+     * @return bool
+     */
+    private function _isExternal(Category $category)
+    {
+        return $this->_countExternalArticlesInCategory($category) || $this->_countExternalCategories($category);
+    }
+
+    /**
+     * Calculate if category has external articles with active revision.
+     * @param Category $bean
+     * @return bool
+     * @throws SugarQueryException
+     */
+    private function _countExternalArticlesInCategory(Category $bean)
+    {
+        $query = new SugarQuery();
+        $query->select()->setCountQuery();
+        $query->from(new KBContent)
+            ->where()
+            ->equals('category_id', $bean->id)
+            ->equals('is_external', 1)
+            ->equals('status', KBContent::ST_PUBLISHED)
+            ->equals('active_rev', 1);
+
+        $data = $query->execute();
+        $row = array_shift($data);
+        $count = array_shift($row);
+        return (boolean) $count > 0;
+    }
+
+    /**
+     * Count if category has external children.
+     * @param Category $bean
+     * @return bool
+     * @throws SugarQueryException
+     */
+    private function _countExternalCategories(Category $bean) {
+        $ids = array();
+        foreach ($bean->getChildren() as $child) {
+            $ids[] = $child['id'];
+        }
+
+        if (count($ids)) {
+            $query = new SugarQuery();
+            $query->select()->setCountQuery();
+            $query->from(new Category)
+                ->where()
+                ->equals('is_external', 1);
+
+            $query->where()->in('id', $ids);
+
+            $data = $query->execute();
+            $row = array_shift($data);
+            $count = array_shift($row);
+            return (boolean) $count > 0;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Update category if external flag has been changed.
+     * @param Category $category
+     * @param $isExternal
+     * @return boolean
+     */
+    private function _updateCategory(Category $category, $isExternal)
+    {
+        if ($category->is_external != $isExternal) {
+            $category->is_external = $isExternal;
+            $category->save();
+            return true;
+        }
+        return false;
     }
 }

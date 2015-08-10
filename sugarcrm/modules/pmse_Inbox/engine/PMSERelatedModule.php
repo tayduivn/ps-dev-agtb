@@ -9,8 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'PMSELogger.php';
-require_once 'PMSEEngineUtils.php';
+require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
 class PMSERelatedModule {
 
@@ -135,6 +135,7 @@ class PMSERelatedModule {
 
 
         // Needed to multisort on the label
+        $labels = array();
         foreach ($output as $k => $o) {
             $labels[$k] = $o['text'];
         }
@@ -205,6 +206,9 @@ class PMSERelatedModule {
         if (!$relatedModuleBean->in_save) {
             $rel_id = $relatedModuleBean->id;
             $moduleBean->$fieldName->add($rel_id);
+            if (!$moduleBean->$fieldName->beansAreLoaded()) {
+                $moduleBean->$fieldName->getBeans();
+            }
             return $relatedModuleBean;
         } else {
             return null;

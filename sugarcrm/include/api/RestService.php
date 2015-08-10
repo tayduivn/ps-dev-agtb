@@ -168,6 +168,10 @@ class RestService extends ServiceBase
             // Get it back in case hook changed it
             $route = $this->request->getRoute();
 
+            if (empty($route['keepSession'])) {
+                $this->releaseSession();
+            }
+
             // Get the request args early for use in current user api
             $argArray = $this->getRequestArgs($route);
             if ( !$isLoggedIn && !empty($route['allowDownloadCookie'])) {
@@ -203,22 +207,18 @@ class RestService extends ServiceBase
                     // resync so that the new metadata gets picked up if it is
                     // out of date
                     if (!$this->isMetadataCurrent()) {
-                        // Mismatch in hashes... Return error so the cleint will
+                        // Mismatch in hashes... Return error so the client will
                         // resync its metadata and try again.
                         throw new SugarApiExceptionInvalidHash();
                     }
                 }
             }
 
-
             if ($isLoggedIn) {
                 // This is needed to load in the app_strings and the app_list_strings and the such
                 $this->loadUserEnvironment();
             } else {
                 $this->loadGuestEnvironment();
-            }
-            if(empty($route['keepSession'])) {
-                $this->releaseSession();
             }
 
             $headers = array();
@@ -394,7 +394,7 @@ class RestService extends ServiceBase
             // valid metadata hash so the client knows if it is worth
             // re-syncing.
             $replyData['metadata_hash'] = $mM->getMetadataHash();
-            $replyData['user_hash'] = $this->user->getUserMDHash();
+            $replyData['user_hash'] = $replyData['metadata_hash'] ? $this->user->getUserMDHash() : false;
         }
         if ( !empty($message) ) {
             $replyData['error_message'] = $message;
@@ -714,15 +714,16 @@ class RestService extends ServiceBase
      * simply have to generate the ETag, pass it in, and the function handles the rest.
      *
      * @param  string $etag ETag to use for this content.
+     * @param int $cache_age age in seconds for Cache-control max-age header
      * @return bool   Did we have a match?
      */
-    public function generateETagHeader($etag)
+    public function generateETagHeader($etag, $cache_age = null)
     {
         if (empty($this->response)) {
            return false;
         }
 
-        return $this->response->generateETagHeader($etag);
+        return $this->response->generateETagHeader($etag, $cache_age);
     }
 
     /**
@@ -807,12 +808,20 @@ class RestService extends ServiceBase
         } else {
             $postContents = $this->request->getPostContents();
             if ( !empty($postContents) ) {
-                // This looks like the post contents are JSON
-                // Note: If we want to support rest based XML, we will need to change this
-                $postVars = @json_decode($postContents,true,32);
-                if (json_last_error() !== 0) {
-                    // Bad JSON data, throw an exception instead of trying to process it
-                    throw new SugarApiExceptionInvalidParameter();
+                // BR-2916 Bulk API doesn't support requests containing body
+                // handling content body which has already been json decoded
+                if (is_array($postContents)) {
+                    $postVars = $postContents;
+                }
+                else {
+                    // This looks like the post contents are JSON
+                    // Note: If we want to support rest based XML, we will need to change this
+
+                    $postVars = @json_decode($postContents, true, 32);
+                    if (json_last_error() !== 0) {
+                        // Bad JSON data, throw an exception instead of trying to process it
+                        throw new SugarApiExceptionInvalidParameter();
+                    }
                 }
             }
         }

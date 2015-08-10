@@ -25,6 +25,8 @@
         visibility: 'user'
     },
 
+    thresholdRelativeTime: 2, //Show relative time for 2 days and then date time after
+
     /**
      * {@inheritDoc}
      */
@@ -57,7 +59,28 @@
      */
     editRecord: function(model) {
         var redirect = model.module + "/" + model.id + "/layout/emailtemplates";
-        app.router.navigate(redirect, {trigger: true, replace: true });
+        var verifyURL = app.api.buildURL(
+                'pmse_Project',
+                'verify',
+                {id: model.get('id')},
+                {baseModule: this.module}),
+            self = this;
+        app.api.call('read', verifyURL, null, {
+            success: function(data) {
+                if (!data) {
+                    app.router.navigate(redirect, {trigger: true, replace: true });
+                } else {
+                    app.alert.show('email-templates-edit-confirmation',  {
+                        level: 'confirmation',
+                        messages: App.lang.get('LBL_PMSE_PROCESS_EMAIL_TEMPLATES_EDIT', model.module),
+                        onConfirm: function () {
+                            app.router.navigate(redirect, {trigger: true, replace: true });
+                        },
+                        onCancel: $.noop
+                    });
+                }
+            }
+        });
     },
 
     /**
@@ -178,19 +201,38 @@
      * @param {String} params.module Module name.
      */
     deleteRecord: function(model) {
-        var self = this;
-        this._modelToDelete = true;
-        var name = model.get('name') || '',
-            context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' - ' + name.trim();
-        app.alert.show(model.get('id') + ':deleted', {
-            level: 'confirmation',
-            messages: app.utils.formatString(app.lang.get('LBL_PRO_DELETE_CONFIRMATION', model.module)),
-            onConfirm: function() {
-                model.destroy({
-                    showAlerts: true,
-//                    relate: true
-                    success: self._getRemoveRecord()
-                });
+        var verifyURL = app.api.buildURL(
+                'pmse_Project',
+                'verify',
+                {id: model.get('id')},
+                {baseModule: this.module}),
+            self = this;
+        this._modelToDelete = model;
+        app.api.call('read', verifyURL, null, {
+            success: function(data) {
+                if (!data) {
+                    app.alert.show('delete_confirmation', {
+                        level: 'confirmation',
+                        messages: app.utils.formatString(app.lang.get('LBL_PRO_DELETE_CONFIRMATION', model.module)),
+                        onConfirm: function () {
+                            model.destroy({
+                                showAlerts: true,
+                                success: self._getRemoveRecord()
+                            });
+                        },
+                        onCancel: function () {
+                            self._modelToDelete = null;
+                        }
+                    });
+                } else {
+                    app.alert.show('message-id', {
+                        level: 'warning',
+                        title: app.lang.get('LBL_WARNING'),
+                        messages: app.lang.get('LBL_PMSE_PROCESS_EMAIL_TEMPLATES_DELETE', model.module),
+                        autoClose: false
+                    });
+                    self._modelToDelete = null;
+                }
             }
         });
     },
@@ -232,13 +274,26 @@
      * descriptionRecord: View description in table pmse_Emails_Templates in fields
      */
     descriptionRecord: function(model) {
+        app.alert.dismiss('message-id');
         app.alert.show('message-id', {
             level: 'info',
-            title:'DESCRIPTION',
-            messages: '<br/>'+model.get('description'),
+            title: app.lang.get('LBL_DESCRIPTION'),
+            messages: '<br/>' + model.get('description'),
             autoClose: false
         });
     },
+
+    /**
+     * Sets property useRelativeTime to show date created as a relative time or as date time.
+     *
+     * @private
+     */
+    _setRelativeTimeAvailable: function(date) {
+        var diffInDays = app.date().diff(date, 'days', true);
+        var useRelativeTime = (diffInDays <= this.thresholdRelativeTime);
+        return useRelativeTime;
+    },
+
     /**
      * {@inheritDoc}
      *
@@ -266,6 +321,7 @@
                 field: 'picture'
             });
             model.set('picture_url', pictureUrl);
+            model.useRelativeTime = this._setRelativeTimeAvailable(model.attributes.date_entered);
         }, this);
 
         this._super('_renderHtml');

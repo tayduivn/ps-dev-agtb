@@ -24,6 +24,8 @@ describe('View.Layouts.Base.SearchLayout', function() {
             sampleTag = {name: 'tag1', id: '1234'};
             layout.context.set('tags', [sampleTag]);
             stub = sinon.stub(layout, '_super');
+
+            spyOn(layout.collection, 'fetch');
         });
 
         afterEach(function() {
@@ -34,17 +36,19 @@ describe('View.Layouts.Base.SearchLayout', function() {
             var options = {};
             var setFields = false;
             layout.loadData(options, setFields);
-            expect(options.apiOptions).toEqual({data:{tag_filters: [sampleTag.id]}, fetchWithPost: true});
+            expect(options.apiOptions).toEqual({data:{tag_filters: [sampleTag.id]}, fetchWithPost: true, useNewApi : true});
         });
 
         it('adds tag_filters to search collection', function() {
             layout.search();
-            expect(layout.collection.options.apiOptions.data.tag_filters).toEqual([sampleTag.id]);
+            var args = layout.collection.fetch.mostRecentCall.args[0];
+            expect(args.apiOptions.data.tag_filters).toEqual([sampleTag.id]);
         });
 
         it('adds tag_filters to filter collection', function() {
             layout.filter();
-            expect(layout.collection.options.apiOptions.data.tag_filters).toEqual([sampleTag.id]);
+            var args = layout.collection.fetch.mostRecentCall.args[0];
+            expect(args.apiOptions.data.tag_filters).toEqual([sampleTag.id]);
         });
     });
 });

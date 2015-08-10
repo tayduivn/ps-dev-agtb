@@ -39,6 +39,19 @@ function query_opportunity_subject_exists($subj)
     return $db->getOne($query) > 0;
 }
 
+
+function get_commit_stage($probability)
+{
+    $settings = Forecast::getSettings();
+    $ranges = $settings[$settings['forecast_ranges'] . '_ranges'];
+
+    foreach($ranges as $commit_stage => $range) {
+        if ($range['min']<= $probability && $range['max'] >= $probability) {
+            return $commit_stage;
+        }
+    }
+}
+
 function generate_name_form(&$var)
 {
     global $app_strings;
@@ -123,6 +136,7 @@ if ($quote->getRelatedOpportunityCount() > 0) {
         $opp->amount = $quote->total;
         $opp->best_case = $quote->total;
         $opp->worst_case = $quote->total;
+        $opp->commit_stage = get_commit_stage($opp->probability);
     }
 
 
@@ -133,18 +147,23 @@ if ($quote->getRelatedOpportunityCount() > 0) {
         // load the relationship up
         $opp->load_relationship('revenuelineitems');
 
-        $products = $quote->get_linked_beans('products', 'Products');
-        /* @var $product Product */
-        foreach ($products as $product) {
-            $rli = $product->convertToRevenueLineItem();
-            $rli->date_closed = $quote->date_quote_expected_closed;
-            $rli->sales_stage = isset($app_list_strings['sales_stage_dom']['Proposal/Price Quote']) ? 'Proposal/Price Quote' : null;
-            $rli->probability = isset($rli->sales_stage) ? $app_list_strings['sales_probability_dom'][$rli->sales_stage] : 0;
-            $rli->assigned_user_id = $quote->assigned_user_id;
-            $rli->save();
+        $bundles = $quote->get_product_bundles();
+        foreach($bundles as $bundle) {
+            $products = $bundle->getProducts();
 
-            // save the RLI to the relationship
-            $opp->revenuelineitems->add($rli);
+            /* @var $product Product */
+            foreach ($products as $product) {
+                $rli = $product->convertToRevenueLineItem();
+                $rli->date_closed = $quote->date_quote_expected_closed;
+                $rli->sales_stage = isset($app_list_strings['sales_stage_dom']['Proposal/Price Quote']) ? 'Proposal/Price Quote' : null;
+                $rli->probability = isset($rli->sales_stage) ? $app_list_strings['sales_probability_dom'][$rli->sales_stage] : 0;
+                $rli->assigned_user_id = $quote->assigned_user_id;
+                $rli->commit_stage = get_commit_stage($rli->probability);
+                $rli->save();
+
+                // save the RLI to the relationship
+                $opp->revenuelineitems->add($rli);
+            }
         }
 
         //link quote contracts with the opportunity.

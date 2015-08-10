@@ -865,6 +865,15 @@ nv.utils.stringEllipsify = function(_string, _container, _length) {
   return str + (strLen > _length ? '...' : '');
 };
 
+nv.utils.getTextBBox = function(text, floats) {
+  var bbox = text.node().getBBox(),
+      size = {
+        width: floats ? bbox.width : parseInt(bbox.width, 10),
+        height: floats ? bbox.height : parseInt(bbox.height, 10)
+      };
+  return size;
+};
+
 nv.utils.getTextContrast = function(c, i, callback) {
   var back = c,
       backLab = d3.lab(back),
@@ -887,20 +896,19 @@ nv.utils.isRTLChar = function(c) {
 };
 
 nv.utils.polarToCartesian = function(centerX, centerY, radius, angleInDegrees) {
-  var angleInRadians = angleInDegrees * Math.PI / 180.0;
+  var angleInRadians = nv.utils.angleToRadians(angleInDegrees);
   var x = centerX + radius * Math.cos(angleInRadians);
   var y = centerY + radius * Math.sin(angleInRadians);
   return [x, y];
 };
 
-nv.utils.getTextBBox = function(text, float) {
-  var bbox = text.node().getBBox();
-  if (!float) {
-    bbox.width = parseInt(bbox.width, 10);
-    bbox.height = parseInt(bbox.height, 10);
-  }
-  return bbox;
-};
+nv.utils.angleToRadians = function(angleInDegrees) {
+  return angleInDegrees * Math.PI / 180.0;
+}
+
+nv.utils.angleToDegrees = function(angleInRadians) {
+  return angleInRadians * 180.0 / Math.PI;
+}
 nv.models.axis = function() {
 
   //============================================================
@@ -2969,12 +2977,16 @@ nv.models.scatter = function() {
         );
 
         function buildEventObject(e, d, i, j) {
+          var pos = [
+            e.offsetX == undefined ? e.layerX : e.offsetX,
+            e.offsetY == undefined ? e.layerY : e.offsetY
+          ];
           return {
               series: data[j],
               point: data[j].values[i],
               pointIndex: i,
               seriesIndex: j,
-              pos: [e.offsetX, e.offsetY],
+              pos: pos,
               id: id,
               e: e
             };
@@ -3004,7 +3016,7 @@ nv.models.scatter = function() {
                 .attr('clip-path', 'url(#nv-points-clip-' + id + ')');
           }
 
-          if (vertices.length < 3) {
+          if (vertices.length <= 3) {
             // Issue #283 - Adding 2 dummy points to the voronoi b/c voronoi requires min 3 points to work
             vertices.push([x.range()[0] - 20, y.range()[0] - 20, null, null]);
             vertices.push([x.range()[1] + 20, y.range()[1] + 20, null, null]);
@@ -4368,12 +4380,16 @@ nv.models.funnel = function() {
           });
 
       function buildEventObject(e, d, i) {
+        var pos = [
+          e.offsetX == undefined ? e.layerX : e.offsetX,
+          e.offsetY == undefined ? e.layerY : e.offsetY
+        ];
         return {
             value: getV(d, i),
             point: d,
             id: id,
             series: data[d.series],
-            pos: [e.offsetX, e.offsetY],
+            pos: pos,
             pointIndex: i,
             seriesIndex: d.series,
             e: e
@@ -8250,13 +8266,17 @@ nv.models.multiBar = function() {
         .attr(dimY, 0); //x.rangeBand() / (stacked ? 1 : data.length)
 
       function buildEventObject(e, d, i, j) {
+        var pos = [
+          e.offsetX == undefined ? e.layerX : e.offsetX,
+          e.offsetY == undefined ? e.layerY : e.offsetY
+        ];
         return {
             value: getY(d, i),
             point: d,
             series: data[j],
             pointIndex: i,
             seriesIndex: j,
-            pos: [e.offsetX, e.offsetY],
+            pos: pos,
             id: id,
             e: e
           };
@@ -10725,10 +10745,10 @@ nv.models.pie = function() {
       rotateDegrees = 0,
       startAngle = function(d) {
         // DNR (Math): simplify d.startAngle - ((rotateDegrees * Math.PI / 180) * (360 / arcDegrees)) * (arcDegrees / 360);
-        return d.startAngle * arcDegrees / 360 - rotateDegrees * Math.PI / 180;
+        return d.startAngle * arcDegrees / 360 + nv.utils.angleToRadians(rotateDegrees);
       },
       endAngle = function(d) {
-        return d.endAngle * arcDegrees / 360 - rotateDegrees * Math.PI / 180;
+        return d.endAngle * arcDegrees / 360 + nv.utils.angleToRadians(rotateDegrees);
       },
       donutRatio = 0.447,
       minRadius = 75,
@@ -10988,7 +11008,7 @@ nv.models.pie = function() {
             }
             var anchor = alignedRight(d, labelArc) === 1 ? 'start' : 'end';
             if (direction === 'rtl') {
-              anchor === 'start' ? 'end' : 'start';
+              anchor = anchor === 'start' ? 'end' : 'start';
             }
             return anchor;
           });
@@ -11058,12 +11078,16 @@ nv.models.pie = function() {
       //------------------------------------------------------------
 
       function buildEventObject(e, d, i) {
+        var pos = [
+          e.offsetX == undefined ? e.layerX : e.offsetX,
+          e.offsetY == undefined ? e.layerY : e.offsetY
+        ];
         return {
             label: getX(d.data),
             value: getY(d.data),
             point: d.data,
             pointIndex: i,
-            pos: [e.offsetX, e.offsetY],
+            pos: pos,
             id: id,
             e: e
           };
@@ -11073,40 +11097,66 @@ nv.models.pie = function() {
       function calcScalars(slices, maxWidth, maxHeight) {
         var widths = [],
             heights = [],
-            Pi = Math.PI;
+            Pi = Math.PI,
+            twoPi = 2 * Math.PI,
+            north = 0,
+            east = Math.PI / 2,
+            south = Math.PI,
+            west = 3 * Math.PI / 2,
+            norm = 0;
+
+        function normalize(a) {
+          return (a + norm) % twoPi;
+        }
 
         slices.each(function(d, i) {
-          var aStart = (startAngle(d) + 2 * Pi) % (2 * Pi),
-              aEnd = (endAngle(d) + 2 * Pi) % (2 * Pi),
+          var aStart = (startAngle(d) + twoPi) % twoPi,
+              aEnd = (endAngle(d) + twoPi) % twoPi;
 
-              wStart = Math.round(Math.sin(aStart) * 10000) / 10000,
+          var wStart = Math.round(Math.sin(aStart) * 10000) / 10000,
               wEnd = Math.round(Math.sin(aEnd) * 10000) / 10000,
               hStart = Math.round(Math.cos(aStart) * 10000) / 10000,
               hEnd = Math.round(Math.cos(aEnd) * 10000) / 10000;
 
+          // if angles go around the horn, normalize
+          norm = aEnd < aStart ? twoPi - aStart : 0;
+
+          if (aEnd === aStart) {
+            aStart = 0;
+            aEnd = twoPi;
+          } else {
+            aStart = normalize(aStart);
+            aEnd = normalize(aEnd);
+          }
+
+          north = normalize(north);
+          east = normalize(east);
+          south = normalize(south);
+          west = normalize(west);
+
           // North
-          if (startAngle(d) <= 0 && endAngle(d) >= 0) {
+          if (aStart % twoPi === 0 || aEnd % twoPi === 0) {
             heights.push(maxHeight);
             if (donut) {
               heights.push(maxHeight * donutRatio);
             }
           }
           // East
-          if (aStart <= Pi / 2 && (aEnd >= Pi / 2 || aEnd === 0)) {
+          if (aStart <= east && aEnd >= east) {
             widths.push(maxWidth);
             if (donut) {
               widths.push(maxWidth * donutRatio);
             }
           }
           // South
-          if (aStart <= Pi && (aEnd >= Pi || aEnd === 0)) {
+          if (aStart <= south && aEnd >= south) {
             heights.push(-maxHeight);
             if (donut) {
               heights.push(-maxHeight * donutRatio);
             }
           }
           // West
-          if (aStart <= 3 * Pi / 2 && (aEnd >= 3 * Pi / 2 || aEnd === 0)) {
+          if (aStart <= west && aEnd >= west) {
             widths.push(-maxWidth);
             if (donut) {
               widths.push(-maxWidth * donutRatio);
@@ -14329,7 +14379,7 @@ nv.models.tree = function() {
   //------------------------------------------------------------
 
   // specific to org chart
-  var r = 5.5,
+  var r = 6,
     padding = {'top': 10, 'right': 10, 'bottom': 10, 'left': 10}, // this is the distance from the edges of the svg to the chart,
     duration = 300,
     zoomExtents = {'min': 0.25, 'max': 2},
@@ -14337,6 +14387,8 @@ nv.models.tree = function() {
     nodeImgPath = '../img/',
     nodeRenderer = function(d) { return '<div class="nv-tree-node"></div>'; },
     zoomCallback = function(d) { return; },
+    nodeCallback = function(d) { return; },
+    nodeClick = function(d) { return; },
     horizontal = false;
 
   var id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one,
@@ -14394,6 +14446,7 @@ nv.models.tree = function() {
             'width': parseInt(svg.style('width'), 10) - padding.left - padding.right,
             'height': parseInt(svg.style('height'), 10) - padding.top - padding.bottom
           };
+      var container = d3.select(svg.node().parentNode);
 
       var wrap = svg.selectAll('.nv-wrap').data([1]);
       var wrapEnter = wrap.enter().append('g')
@@ -14402,7 +14455,8 @@ nv.models.tree = function() {
       wrap.call(zoom);
 
       wrapEnter.append('defs');
-      var defsEnter = wrap.select('defs');
+      var defs = wrap.select('defs');
+      var nodeShadow = nv.utils.dropShadow('node_back_' + id, defs, {blur: 2});
 
       wrapEnter.append('svg:rect')
             .attr('class', 'nv-chartBackground')
@@ -14513,6 +14567,7 @@ nv.models.tree = function() {
       };
 
       chart.zoomLevel = function(level) {
+
         var scale = Math.min(Math.max(level, zoomExtents.min), zoomExtents.max),
 
             prevScale = zoom.scale(),
@@ -14614,16 +14669,40 @@ nv.models.tree = function() {
                 }
               });
 
+        var nodeOffsetX = (horizontal ? r - nodeSize.width : nodeSize.width / -2) + 'px',
+            nodeOffsetY = (horizontal ? (r - nodeSize.height) / 2 : r * 2 - nodeSize.height) + 'px';
+
+        nodeEnter.each(function(d) {
+          if (defs.select('#myshape-' + getId(d)).empty()) {
+            var nodeObject = defs.append('svg').attr('class', 'nv-foreign-object')
+                  .attr('id', 'myshape-' + getId(d))
+                  .attr('version', '1.1')
+                  .attr('xmlns', 'http://www.w3.org/2000/svg')
+                  .attr('xmlns:xmlns:xlink', 'http://www.w3.org/1999/xlink')
+                  .attr('x', nodeOffsetX)
+                  .attr('y', nodeOffsetY)
+                  .attr('width', nodeSize.width + 'px')
+                  .attr('height', nodeSize.height + 'px')
+                  .attr('viewBox', '0 0 ' + nodeSize.width + ' ' + nodeSize.height)
+                  .attr('xml:space', 'preserve');
+
+            var nodeContent = nodeObject.append('g').attr('class', 'nv-tree-node-content')
+                  .attr('transform', 'translate(' + r + ',' + r + ')');
+
+            nodeRenderer(nodeContent, d, nodeSize.width - r * 2, nodeSize.height - r * 3);
+
+            nodeContent.on('click', nodeClick);
+
+            nodeCallback(nodeObject);
+          }
+        });
+
         // node content
-        nodeEnter.append('foreignObject').attr('class', 'nv-foreign-object')
-            .attr('width', 1)
-            .attr('height', 1)
-            .attr('x', -1)
-            .attr('y', -1)
-            .attr('externalResourcesRequired', true)
-          .append('xhtml:body')
-            .style('font', '14px "Helvetica Neue"')
-            .html(nodeRenderer);
+        nodeEnter.append('use')
+            .attr('xlink:href', function(d) {
+              return '#myshape-' + getId(d);
+            })
+            .attr('filter', nodeShadow);
 
         // node circle
         var xcCircle = nodeEnter.append('svg:g').attr('class', 'nv-expcoll')
@@ -14656,11 +14735,12 @@ nv.models.tree = function() {
               .style('stroke', function(d) {
                 return (d._children && d._children.length) ? '#fff' : '#bbb';
               });
-            nodeUpdate.selectAll('.nv-foreign-object')
-              .attr('width', nodeSize.width)
-              .attr('height', nodeSize.height)
-              .attr('x', (horizontal ? -nodeSize.width + r : -nodeSize.width / 2))
-              .attr('y', (horizontal ? -nodeSize.height / 2 + r : -nodeSize.height + r * 2));
+
+            nodeUpdate.each(function(d) {
+              container.select('#myshape-' + getId(d))
+                .attr('x', nodeOffsetX)
+                .attr('y', nodeOffsetY);
+            });
 
         // Transition exiting nodes to the parent's new position.
         var nodeExit = node.exit().transition()
@@ -14853,6 +14933,18 @@ nv.models.tree = function() {
   chart.nodeRenderer = function(_) {
     if (!arguments.length) return nodeRenderer;
     nodeRenderer = _;
+    return chart;
+  };
+
+  chart.nodeCallback = function(_) {
+    if (!arguments.length) return nodeCallback;
+    nodeCallback = _;
+    return chart;
+  };
+
+  chart.nodeClick = function(_) {
+    if (!arguments.length) return nodeClick;
+    nodeClick = _;
     return chart;
   };
 

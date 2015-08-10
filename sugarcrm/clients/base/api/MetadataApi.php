@@ -330,17 +330,23 @@ class MetadataApi extends SugarApi
      */
     public function getLanguage(ServiceBase $api, array $args, $public = false)
     {
+        $return = '';
+
+        //Since this is a raw response we need to set the content type ourselves.
+        $api->getResponse()->setHeader("Content-Type", "application/json");
+
         // Get the metadata manager we need first
         $mm = $this->getMetaDataManager($api->platform, $public);
+        $lang = $mm->getLanguage($args);
 
-         //Since this is a raw response we need to set the content type ourselves.
-        $api->getResponse()->setHeader("Content-Type", "application/json");
-        //Cache language files forever as the request includes the hash in the URL
-        $api->getResponse()->setHeader("Cache-Control" , "max-age=31556940, private");
-        $api->getResponse()->setHeader("Pragma" , "");
-        $api->getResponse()->setHeader('Expires', gmdate('D, d M Y H:i:s \G\M\T', time() + 31556940));
+        //generate hash
+        $hash = md5($lang);
 
-        return $mm->getLanguage($args);
+        if (!$api->generateETagHeader($hash, 0)) {
+            $return = $lang;
+        }
+
+        return $return;
     }
 
     /**

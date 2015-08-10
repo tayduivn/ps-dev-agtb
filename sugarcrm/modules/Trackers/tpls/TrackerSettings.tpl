@@ -11,6 +11,7 @@
  */
 *}
 <form name="TrackerSettings" method="POST">
+{sugar_csrf_form_token}
 <input type="hidden" name="action" value="TrackerSettings">
 <input type="hidden" name="module" value="Trackers">
 <input type="hidden" name="process" value="">

@@ -87,6 +87,8 @@ var Field = function (options, parent) {
 
     this.oldRequiredValue = null;
 
+    this.disabled = null;
+
     Field.prototype.initObject.call(this, options, parent);
 };
 Field.prototype = new Element();
@@ -121,7 +123,8 @@ Field.prototype.initObject = function (options, parent) {
         change: function () {},
         readOnly: false,
         submit: true,
-        proxy: null
+        proxy: null,
+        disabled: false
     };
     $.extend(true, defaults, options);
     this.setParent(parent);
@@ -139,6 +142,12 @@ Field.prototype.initObject = function (options, parent) {
         .setSubmit(defaults.submit)
         .setProxy(defaults.proxy)
         .setValue(defaults.value);
+
+        if (defaults.disabled) {
+            this.disable();
+        } else {
+            this.enable();
+        }
 };
 
 /**
@@ -492,4 +501,30 @@ Field.prototype.doLoad = function () {
  */
 Field.prototype.load = function () {
 
+};
+
+Field.prototype.enable = function () {
+    if (this.controlObject) {
+        this.labelObject.className = 'adam-form-label';
+        this.controlObject.disabled = false;
+    }
+    if (this.oldRequiredValue) {
+        this.setRequired(this.oldRequiredValue);
+    }
+    this.disabled = false;
+    return this;
+};
+
+Field.prototype.disable = function () {
+    if (!this.oldRequiredValue) {
+        this.oldRequiredValue = this.required;
+    }
+    this.setRequired(false);
+    if (this.controlObject) {
+        this.labelObject.className = 'adam-form-label-disabled';
+        this.controlObject.disabled = true;
+        $(this.controlObject).removeClass('required');
+    }
+    this.disabled = true;
+    return this;
 };

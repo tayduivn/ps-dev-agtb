@@ -56,7 +56,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
     public function testForecastManagerWorksheetsGet($args, $expectedUserId, $expectedTimePeriodId, $expectedType)
     {
         $api = $this->getMock('ForecastManagerWorksheetsFilterApi', array('createFilter', 'filterList'));
-        $api->expects($this->once())->method('createFilter')->with($this->equalTo($this->service), $this->equalTo($expectedUserId), $this->equalTo($expectedTimePeriodId), $this->equalTo($expectedType));
+        $api->expects($this->once())->method('createFilter')->with($this->equalTo($this->service), $this->equalTo($expectedUserId), $this->equalTo($expectedTimePeriodId));
         $api->forecastManagerWorksheetsGet($this->service, $args);
     }
 
@@ -81,7 +81,6 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
                     'module' => 'ForecastManagerWorksheets',
                     'user_id' => 1,
                     'timeperiod_id' => 2,
-                    'type' => 3,
                 ),
                 1,
                 2,
@@ -153,8 +152,11 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetDirectHierarchyUsers()
     {
-        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user']->save();
+        $fields = array(
+            'reports_to_id' => $GLOBALS['current_user']->id,
+        );
+        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
+
         $api = new ForecastManagerWorksheetsFilterApi();
         $actual = SugarTestReflection::callProtectedMethod($api, 'getDirectHierarchyUsers', array(
                 $this->service,
@@ -164,7 +166,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('records', $actual);
         $record = reset($actual['records']);
         $this->assertNotEmpty($record);
-        $this->assertEquals($GLOBALS['current_user']->id, $record['id']);
+        $this->assertEquals($user->id, $record['id']);
     }
 
     /**
@@ -210,8 +212,10 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetDirectHierarchyUsersCustomUserInvalidParameter()
     {
-        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user']->save();
+        $fields = array(
+            'reports_to_id' => $GLOBALS['current_user']->id,
+        );
+        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
         $api = new ForecastManagerWorksheetsFilterApi();
         SugarTestReflection::callProtectedMethod($api, 'getDirectHierarchyUsers', array(
                 $this->service,
@@ -236,8 +240,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
         $api->expects($this->once())->method('createFilter')->with(
             $this->equalTo($this->service),
             $this->equalTo($expectedAssignedUser),
-            $this->equalTo($expectedTimePeriod),
-            $this->equalTo($expectedType)
+            $this->equalTo($expectedTimePeriod)
         );
         $api->filterList($this->service, $args);
     }
@@ -277,9 +280,6 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
                         array(
                             'timeperiod_id' => 2,
                         ),
-                        array(
-                            'type' => 3,
-                        ),
                     ),
                 ),
                 1,
@@ -294,8 +294,10 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateFilter()
     {
-        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user']->save();
+        $fields = array(
+            'reports_to_id' => $GLOBALS['current_user']->id,
+        );
+        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
         $api = new ForecastManagerWorksheetsFilterApi();
         $actual = SugarTestReflection::callProtectedMethod($api, 'createFilter', array(
                 $this->service,
@@ -360,8 +362,10 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateFilterCustomUserInvalidParameter()
     {
-        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user']->save();
+        $fields = array(
+            'reports_to_id' => $GLOBALS['current_user']->id,
+        );
+        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
         $api = new ForecastManagerWorksheetsFilterApi();
         SugarTestReflection::callProtectedMethod($api, 'createFilter', array(
                 $this->service,
@@ -375,8 +379,10 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateFilterTimePeriod()
     {
-        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user']->save();
+        $fields = array(
+            'reports_to_id' => $GLOBALS['current_user']->id,
+        );
+        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
         $api = new ForecastManagerWorksheetsFilterApi();
         $actual = SugarTestReflection::callProtectedMethod($api, 'createFilter', array(
                 $this->service,
@@ -399,8 +405,10 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateFilterTimePeriodInvalidParameter()
     {
-        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user']->save();
+        $fields = array(
+            'reports_to_id' => $GLOBALS['current_user']->id,
+        );
+        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
         $api = new ForecastManagerWorksheetsFilterApi();
         SugarTestReflection::callProtectedMethod($api, 'createFilter', array(
                 $this->service,

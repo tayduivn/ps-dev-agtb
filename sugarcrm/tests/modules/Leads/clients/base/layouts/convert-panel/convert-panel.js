@@ -261,6 +261,21 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
         expect(contextTriggerStub.secondCall.args).toEqual(['lead:convert:2:open']);
     });
 
+    it('should re-run validation when model changes after marking panel complete', function() {
+        var createModel = layout.createView.model,
+            runValidationStub = sandbox.stub(layout, 'runCreateValidation');;
+
+        createModel.set({full_name: 'Foo Bar'});
+        layout.$(layout.accordionHeading).addClass('enabled');
+        layout.openPanel();
+        layout.currentState.complete = false;
+        layout.markPanelComplete(createModel);
+
+        expect(runValidationStub.callCount).toEqual(0);
+        createModel.set('full_name', 'Foo Bar 2');
+        expect(runValidationStub.callCount).toEqual(1);
+    });
+
     it('should not attempt to close panel and open next panel when marking complete and already closed', function() {
         var closePanelSpy,
             requestNextPanelOpenSpy = sandbox.spy(layout, 'requestNextPanelOpen');
@@ -574,5 +589,25 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
 
         layout.turnOffUnsavedChanges(); //happens when lead convert completes successfully
         expect(hasUnsavedChanges(layout.createView)).toBeFalsy();
+    });
+
+    describe("field transfer validation", function() {
+        it("should return true for source field values that should be transferred", function() {
+            expect(layout.shouldSourceValueBeCopied(25)).toBeTruthy();
+            expect(layout.shouldSourceValueBeCopied(1.234)).toBeTruthy();
+            expect(layout.shouldSourceValueBeCopied(0)).toBeTruthy();
+            expect(layout.shouldSourceValueBeCopied('Foo')).toBeTruthy();
+            expect(layout.shouldSourceValueBeCopied(false)).toBeTruthy();
+            expect(layout.shouldSourceValueBeCopied([1,2,3])).toBeTruthy();
+            expect(layout.shouldSourceValueBeCopied({a:25})).toBeTruthy();
+        });
+
+        it("should return false for source field values that should not be transferred", function() {
+            expect(layout.shouldSourceValueBeCopied('')).toBeFalsy();
+            expect(layout.shouldSourceValueBeCopied(null)).toBeFalsy();
+            expect(layout.shouldSourceValueBeCopied([])).toBeFalsy();
+            expect(layout.shouldSourceValueBeCopied({})).toBeFalsy();
+            expect(layout.shouldSourceValueBeCopied(undefined)).toBeFalsy();
+        });
     });
 });

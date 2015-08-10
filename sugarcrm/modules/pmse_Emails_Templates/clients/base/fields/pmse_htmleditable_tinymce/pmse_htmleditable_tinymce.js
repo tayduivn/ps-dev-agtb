@@ -182,12 +182,8 @@
                 });
                 editor.addButton('mybutton', {
                     title : 'Fields Selector',
-                    image : 'modules/pmse_Project/img/icon_processmaker_32.gif',
-//                    class: 'adam-menu-icon-cog',
-//                    class: 'icon-cog',
-//                    icon : false,
+                    class: 'mce_selectfield',
                     onclick : function() {
-//                        alert('My button custom button');
                         self._showVariablesBook();
                     }
                 });

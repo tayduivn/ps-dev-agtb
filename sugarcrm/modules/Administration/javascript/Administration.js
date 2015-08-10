@@ -48,7 +48,7 @@ SUGAR.Administration = {
 			if(selected != "0") {
 				button.style.display = 'inline';
 				repairedCounter.value = 0;
-				AjaxObject.startRequest(callbackRepairXssRefreshEstimate, "&adminAction=refreshEstimate&bean=" + selected);
+				AjaxObject.startRequest(callbackRepairXssRefreshEstimate, "&adminAction=refreshEstimate&bean=" + selected + '&csrf_token=' + SUGAR.csrf.form_token);
 			} else {
 				button.style.display = 'none';
 				totalDisplay.style.display = 'none';
@@ -80,7 +80,7 @@ SUGAR.Administration = {
 				}
 
 				var beanId = YAHOO.lang.JSON.stringify(beanIds);
-				AjaxObject.startRequest(callbackRepairXssExecute, "&adminAction=repairXssExecute&bean=" + this.currentRepairObject + "&id=" + beanId);
+				AjaxObject.startRequest(callbackRepairXssExecute, "&adminAction=repairXssExecute&bean=" + this.currentRepairObject + "&id=" + beanId + '&csrf_token=' + SUGAR.csrf.form_token);
 			}
 		},
 

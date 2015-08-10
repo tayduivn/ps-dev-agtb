@@ -12,6 +12,7 @@
 *}
 <link rel="stylesheet" href="modules/Administration/css/map-roles.css">
 <form id="map-roles" method="post" action="index.php?module=Administration&view=module&action=UpgradeWizard_commit">
+{sugar_csrf_form_token}
     {foreach from=$smarty.post item=value key=name}
         <input type="hidden" name="{$name|escape}" value="{$value|escape}">
     {/foreach}

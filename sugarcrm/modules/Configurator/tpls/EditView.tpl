@@ -23,6 +23,7 @@
 </style>
 {/literal}
 <form name="ConfigureSettings" enctype='multipart/form-data' method="POST" action="index.php" onSubmit="return (add_checks(document.ConfigureSettings) && check_form('ConfigureSettings'));">
+{sugar_csrf_form_token}
 <input type='hidden' name='action' value='SaveConfig'/>
 <input type='hidden' name='module' value='Configurator'/>
 <span class='error'>{$error.main}</span>
@@ -121,6 +122,16 @@
     <tr>
         <td scope="row">{$MOD.LBL_LEAD_CONV_OPTION}:&nbsp;{sugar_help text=$MOD.LEAD_CONV_OPT_HELP}</td>
         <td><select name="lead_conv_activity_opt">{$lead_conv_activities}</select></td>
+        <td scope="row">{$MOD.COLLAPSE_SUBPANELS}: &nbsp;{sugar_help text=$MOD.LBL_COLLAPSE_SUBPANELS_DESC}</td>
+        <td>
+            {if !empty($config.collapse_subpanels)}
+                {assign var='collapse_subpanels_checked' value='CHECKED'}
+            {else}
+                {assign var='collapse_subpanels_checked' value=''}
+            {/if}
+            <input type='hidden' name='collapse_subpanels' value='false'>
+            <input type='checkbox' name='collapse_subpanels' value='true' {$collapse_subpanels_checked}>
+        </td>
     </tr>
     <tr>
         <td  scope="row" nowrap>{$MOD.LBL_ENABLE_ACTION_MENU}: &nbsp;{sugar_help text=$MOD.LBL_ENABLE_ACTION_MENU_DESC}</td>
@@ -361,6 +372,7 @@
 </form>
 <div id='upload_panel' style="display:none">
     <form id="upload_form" name="upload_form" method="POST" action='index.php' enctype="multipart/form-data">
+{sugar_csrf_form_token}
         <input type="file" id="my_file_company" name="file_1" size="20" onchange="uploadCheck(false)"/>
         {sugar_getimage name="sqsWait" ext=".gif" alt=$mod_strings.LBL_LOADING other_attributes='id="loading_img_company" style="display:none" '}
     </form>
@@ -420,7 +432,7 @@ function toggleDisplay_2(div_string){
     document.getElementById("company_logo").value='';
     document.getElementById('loading_img_company').style.display="inline";
     var file_name = document.getElementById('my_file_company').value;
-    postData = '&entryPoint=UploadFileCheck&forQuotes=false';
+    postData = '&entryPoint=UploadFileCheck&forQuotes=false&csrf_token=' + SUGAR.csrf.form_token;
     YAHOO.util.Connect.setForm(document.getElementById('upload_form'), true,true);
     if(file_name){
         if(postData.substring(0,1) == '&'){

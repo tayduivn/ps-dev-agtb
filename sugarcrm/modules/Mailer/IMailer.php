@@ -12,9 +12,9 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "Encoding.php";      // needs to know the valid encodings that are available for email
-require_once "EmailIdentity.php"; // requires EmailIdentity for representing email senders and recipients
-require_once "EmbeddedImage.php"; // requires Attachment and EmbeddedImage, which imports Attachment
+require_once "modules/Mailer/Encoding.php";      // needs to know the valid encodings that are available for email
+require_once "modules/Mailer/EmailIdentity.php"; // requires EmailIdentity for representing email senders and recipients
+require_once "modules/Mailer/EmbeddedImage.php"; // requires Attachment and EmbeddedImage, which imports Attachment
 
 // external imports
 require_once "modules/OutboundEmailConfiguration/OutboundEmailConfiguration.php"; // needs to take on an
@@ -207,6 +207,7 @@ interface IMailer
      * @abstract
      * @access public
      * @throws MailerException
+     * @return string The complete MIME message that was sent.
      */
     public function send();
 }

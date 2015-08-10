@@ -9,12 +9,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 var w, hp;
+// This var should be used locally to point to global App variable in sidecar and BWC views
 var _App;
 if(App){
     _App = App;
 }
 else{
     _App = parent.SUGAR.App;
+    // This should define App variable when some function is used in BWC and reference it.
+    App = parent.SUGAR.App;
 }
 
 var confirmAdhocReassign = function()
@@ -84,7 +87,6 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         combo_users,
         items,
         proxy,
-        proxyUsers,
         textArea,
         url,
         wtitle,
@@ -144,19 +146,6 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         name: 'inbox_id',
         value: pmseInboxId
     });
-    combo_users = new ComboboxField({
-        jtype: 'combobox',
-        label: translate('LBL_PMSE_FORM_LABEL_USER', 'pmse_Inbox'),
-        name: 'adhoc_user',
-        submit: true,
-        //change: hiddenUpdateFn,
-        proxy:null,
-        required: true,
-        helpTooltip: {
-            message: translate('LBL_PMSE_FORM_TOOLTIP_SELECT_USER', 'pmse_Inbox')
-        }
-
-    });
     combo_type = new ComboboxField({
         name: 'adhoc_type',
         label: translate('LBL_PMSE_FORM_LABEL_TYPE', 'pmse_Inbox'),
@@ -189,6 +178,19 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         wtitle = translate('LBL_PMSE_TITLE_AD_HOC', 'pmse_Inbox');
         wWidth = 550;
         wHeight = 300;
+
+        combo_users = new SearchableCombobox({
+            label: translate('LBL_PMSE_FORM_LABEL_USER', 'pmse_Inbox'),
+            name: 'adhoc_user',
+            submit: true,
+            required: true,
+            searchURL: url+'/users/'+ flowId + '?filter={TERM}',
+            placeholder: translate('LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT', 'pmse_Project'),
+            helpTooltip: {
+                message: translate('LBL_PMSE_FORM_TOOLTIP_SELECT_USER', 'pmse_Inbox')
+            }
+        });
+
         items = [
             casIdField,
             casIndexField,
@@ -205,11 +207,26 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
             reassignForm
         ];
         combo_users.setName('adhoc_user');
+        textArea.setName('not_content');
     } else {
+        // If wtype is set to user selection, change the tooltip msg
         url = 'pmse_Inbox/ReassignForm';
         wtitle = translate('LBL_PMSE_TITLE_REASSIGN', 'pmse_Inbox');
         wWidth = 500;
         wHeight = 250;
+
+        combo_users = new SearchableCombobox({
+            label: translate('LBL_PMSE_FORM_LABEL_USER', 'pmse_Inbox'),
+            name: 'adhoc_user',
+            submit: true,
+            searchURL: url+'/users/'+ flowId + '?filter={TERM}',
+            required: true,
+            placeholder: translate('LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT', 'pmse_Project'),
+            helpTooltip: {
+                message: translate('LBL_PMSE_FORM_TOOLTIP_CHANGE_USER', 'pmse_Inbox')
+            }
+        });
+
         items = [
             casIdField,
             casIndexField,
@@ -227,12 +244,6 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         textArea.setName('reassign_comment');
     }
     flowId = (flowId) ? flowId : urlCase.id;
-    proxyUsers =  new SugarProxy({
-        url: url + '/users/' + flowId,
-        uid: null,
-        callback: null
-    });
-    combo_users.setProxy(proxyUsers);
     proxy = new SugarProxy({
         url: url,
         uid : '',
@@ -249,11 +260,11 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                 handler: function () {
                     if (f.validate()) {
                         _App.alert.show('upload', {level: 'process', title: 'LBL_SAVING', autoClose: false});
-                        var cbDate = $("#reassign_user option:selected").html();
-                        if (cbDate) {
+                        var cbDate = combo_users.getSelectedText();
+                        if (combo_users.name == 'reassign_user') {
                             items[6].setValue(cbDate);
                         } else {
-                            items[7].setValue($("#adhoc_user option:selected").html());
+                            items[7].setValue(cbDate);
                         }
                         var urlIni = _App.api.buildURL(url, null, null);
                         attributes = {
@@ -297,17 +308,6 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
             'loaded': function (data) {
                 casIdField.setValue(casId);
                 casIndexField.setValue(casIndex);
-
-                var users, aUsers = [{'text':translate('LBL_PMSE_FORM_OPTION_SELECT', 'pmse_Inbox'), 'value':''}];
-                //--
-                var urlGet = _App.api.buildURL(url+'/users/'+ flowId, null, null);
-                _App.api.call('read', urlGet, {}, {
-                    success: function (response) {
-                        aUsers = aUsers.concat(response.result);
-                        combo_users.setOptions(aUsers);
-                    }
-                });
-                //--
                 f.setProxy(proxy);
             }
         }
@@ -397,6 +397,36 @@ function onSubmit(e) {
     }
 
     return result2;
+};
+
+function confirmAction(obj){
+    sbtn = obj.id;
+    switch (sbtn) {
+        case 'ApproveBtn':
+            msg = app.lang.get('LBL_PA_PROCESS_APPROVE_QUESTION', 'pmse_Inbox');
+            break;
+        case 'RejectBtn':
+            msg = app.lang.get('LBL_PA_PROCESS_REJECT_QUESTION', 'pmse_Inbox');
+            break;
+        default:
+            msg = app.lang.get('LBL_PA_PROCESS_ROUTE_QUESTION', 'pmse_Inbox');
+    }
+    app.alert.show('confirm', {
+        level: 'confirmation',
+        messages: msg,
+        autoClose: false,
+        onConfirm: function(){
+            btn = $('#EditView :input[id="' + sbtn + '"]');
+            btn.prop('type', 'submit');
+            btn.show();
+            app.btSubmitClicked = true;
+            btn.click();
+            app.btSubmitClicked = false;
+        },
+        onCancel: function(){
+            app.btSubmitClicked = false;
+        }
+    });
 };
 
 $(function () {

@@ -3,45 +3,26 @@ describe('Base.Field.Name', function() {
 
     beforeEach(function() {
         app = SugarTest.app;
-        field = SugarTest.createField('base', 'name', 'name', 'detail', {});
+        field = SugarTest.createField('base', 'name', 'name', 'detail');
     });
 
     afterEach(function() {
-        app.cache.cutAll();
-        app.view.reset();
-        Handlebars.templates = {};
         field.dispose();
-        sinon.collection.restore();
     });
 
     describe('Render', function() {
         using('different view names and values', [
-            {
-                view: 'audit',
-                linkValue: undefined,
-                expected: false
-            },
-            {
-                view: 'preview',
-                linkValue: undefined,
-                expected: true
-            },
-            {
-                view: 'preview',
-                linkValue: false,
-                expected: false
-            },
-            {
-                view: 'other',
-                linkValue: undefined,
-                expected: undefined
-            }
-        ], function(options) {
-            it('should set def.link appropriately on preview and audit view', function() {
-                field.view.name = options.view;
-                field.def.link = options.linkValue;
+            ['audit', undefined, false],
+            ['preview', undefined, true],
+            ['preview', false, false],
+            ['preview', true, true],
+            ['other', undefined, undefined]
+        ], function(view, linkValue, expected) {
+            it('should set `def.link` appropriately based on view', function() {
+                field.view.name = view;
+                field.def.link = linkValue;
                 field.render();
-                expect(field.def.link).toEqual(options.expected);
+                expect(field.def.link).toBe(expected);
             });
         });
     });

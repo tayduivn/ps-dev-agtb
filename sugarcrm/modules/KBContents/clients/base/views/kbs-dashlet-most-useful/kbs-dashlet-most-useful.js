@@ -49,7 +49,8 @@
         this.collection = app.data.createBeanCollection(this.module);
         this.collection.options = {
             params: {
-                order_by: 'useful:desc,notuseful:asc'
+                order_by: 'useful:desc,notuseful:asc,viewcount:desc,date_entered:desc',
+                mostUseful: true
             },
             limit: 3,
             fields: [
@@ -62,6 +63,11 @@
             filter: {
                 'active_rev': {
                     '$equals': 1
+                },
+                'useful': {
+                    '$gt': {
+                        '$field': 'notuseful'
+                    }
                 },
                 'status': {
                     '$equals': 'published'

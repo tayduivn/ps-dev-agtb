@@ -165,7 +165,7 @@
             if (_.isEqual(val, self.model.get(self.name))) {
                 self.setCurrencyValue(val);
             } else {
-                self.model.set(self.name, el.val());
+                self.model.set(self.name, val);
             }
         });
     },
@@ -194,7 +194,7 @@
             }, this);
             this.model.on('change:' + currencyField, function(model, currencyId, options) {
                 //When model is reset, it should not be called
-                if (!currencyId || !this._lastCurrencyId) {
+                if (!currencyId || !this._lastCurrencyId || options.revert === true) {
                     this._lastCurrencyId = currencyId;
                     return;
                 }

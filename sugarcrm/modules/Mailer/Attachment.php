@@ -12,8 +12,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "MailerException.php"; // requires MailerException in order to throw exceptions of that type
-require_once "Encoding.php";        // needs the valid encodings defined in Encoding
+require_once "modules/Mailer/MailerException.php"; // requires MailerException in order to throw exceptions of that type
+require_once "modules/Mailer/Encoding.php";        // needs the valid encodings defined in Encoding
 
 /**
  * This class encapsulates properties and behavior of an attachment so that a common interface can be expected
@@ -107,6 +107,14 @@ class Attachment
      * @param string $mimeType
      */
     public function setMimeType($mimeType = "") {
+        // Reject Email if it has Executable Attachments
+        if ($mimeType === 'application/x-dosexec') {
+            throw new MailerException(
+                "Executable attachment not accepted",
+                MailerException::ExecutableAttachment
+            );
+        }
+
         $this->mimeType = $mimeType;
     }
 

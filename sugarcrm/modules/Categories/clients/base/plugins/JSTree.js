@@ -88,7 +88,6 @@
                     Object.getPrototypeOf(this).onNestedSetSyncComplete.call(this, collection);
                     return;
                 }
-                this._refreshContextMenu();
                 if (this.disposed || _.isUndefined(this.collection) ||
                     this.collection.root !== collection.root
                 ) {
@@ -581,15 +580,15 @@
                             }
                             break;
                         case 'jstree-contextmenu':
-                            if (this.jsTreeCallbacks.onShowContextmenu &&
-                                !this.jsTreeCallbacks.onShowContextmenu.apply(this, [event, data])) {
+                            if ($(data.args[0]).hasClass('disabled') || (this.jsTreeCallbacks.onShowContextmenu &&
+                                !this.jsTreeCallbacks.onShowContextmenu.apply(this, [event, data]))) {
                                 return false;
                             }
                             this._jstreeShowContextmenu(event, data);
                             break;
                         case 'jstree-addnode':
-                            if (this.jsTreeCallbacks.onAdd &&
-                                !this.jsTreeCallbacks.onAdd.apply(this, [event, data])) {
+                            if ($(data.args[0]).hasClass('disabled') || (this.jsTreeCallbacks.onAdd &&
+                                !this.jsTreeCallbacks.onAdd.apply(this, [event, data]))) {
                                 return false;
                             }
                             this._onAdd(event, data);
@@ -626,11 +625,22 @@
                         data: {name: node.title},
                         success: function(item) {
                             newNode.attr('data-id', item.id);
-                            newNode.attr('data-level', item.level);
+                            newNode.attr('data-level', item.lvl);
+                            if (newNode.is('[disabled=disabled]')) {
+                                newNode.attr('disabled', false);
+                            }
+                            self._toggleAddNodeButton(newNode, false);
                             self._toggleVisibility(false);
                         },
-                        error: function() {
-                        // ToDo: remove node - will be implemented
+                        error: function(error) {
+                            if (!_.isUndefined(error.message)) {
+                                app.alert.show('wrong_node_name', {
+                                    level: 'error',
+                                    messages: error.message,
+                                    autoClose: true
+                                });
+                            }
+                            self.jsTree.jstree('remove', newNode);
                         }
                     });
                 }
@@ -659,6 +669,14 @@
                     lastNodeId = $(container).find('li[data-level=' + level + ']').last().data('id');
 
                 if (!_.isUndefined(data.inst.get_settings().contextmenu.items) && this.jsTreeSettings.acl.edit) {
+                    // Clear contextmenu.items.moveto.submenu property.
+                    data.inst._set_settings({
+                        contextmenu: {items: {moveto: {submenu: null}}}
+                    });
+                    // Refresh contextmenu.items.moveto.submenu property.
+                    data.inst._set_settings({
+                        contextmenu: {items: {moveto: {submenu: this._buildRootsSubmenu(this.jsTreeSettings)}}}
+                    });
                     data.inst._set_settings({
                         contextmenu: {
                             items: {
@@ -686,7 +704,8 @@
              * @private
              */
             _onAdd: function(event, data) {
-                this.jsTree.jstree('create', data.inst._get_node());
+                var createdNode = this.jsTree.jstree('create', data.inst._get_node());
+                this._toggleAddNodeButton(createdNode, true);
             },
 
             /**
@@ -719,25 +738,31 @@
              * @param {String|Number} position
              * @param {Boolean} editable
              * @param {Boolean} addToRoot
+             * @param {Boolean} isHidden
              */
-            addNode: function(title, position, editable, addToRoot) {
+            addNode: function(title, position, editable, addToRoot, isDisabled) {
                 var self = this,
                     selectedNode = (addToRoot === true) ? [] : this.jsTree.jstree('get_selected'),
                     pos = position || 'last',
-                    isEdit = editable || false;
+                    isEdit = editable || false,
+                    isDisabled = isDisabled || true,
+                    customAttr = (isDisabled === true) ? {disabled: 'disabled'} : {};
 
-                this.jsTree.jstree(
-                    'create',
-                    selectedNode,
-                    pos,
-                    {data: !_.isUndefined(title) ? title : 'New item'},
-                    function(obj) {
-                        if (self.collection.length === 0) {
-                            self._toggleVisibility(false);
-                        }
-                    },
-                    isEdit
-                );
+                if (title) {
+                    var createdNode = this.jsTree.jstree(
+                        'create',
+                        selectedNode,
+                        pos,
+                        {data: title, attr: customAttr},
+                        function(obj) {
+                            if (self.collection.length === 0) {
+                                self._toggleVisibility(false);
+                            }
+                        },
+                        isEdit
+                    );
+                    this._toggleAddNodeButton(createdNode, true);
+                }
             },
 
             /**
@@ -880,7 +905,7 @@
                 if (idRecord === idTarget) {
                     app.alert.show('wrong_path_confirmation', {
                         level: 'error',
-                        messages: app.lang.get('LBL_WRONG_MOVE_PATH', this.module)
+                        messages: app.lang.get('LBL_WRONG_MOVE_PATH', 'Categories')
                     });
                 }
 
@@ -904,23 +929,21 @@
             },
 
             /**
-             * Refresh context menu.
+             * Disable/enable 'Add Node' button for a given node.
+             * @param {Object} node JSTree node object.
+             * @param {Boolean} disable
              * @private
              */
-            _refreshContextMenu: function() {
-                // Set items to null due to avoid merge from $.extend
-                $.jstree._focused()._set_settings({contextmenu: {items: {moveto: {submenu: null}}}});
-                // Set items to updated list
-                $.jstree._focused()._set_settings(
-                    {
-                        contextmenu: {
-                            items: {
-                                moveto: {
-                                    submenu: this._buildRootsSubmenu(this.jsTreeSettings)
-                                }
-                            }
-                        }
-                    });
+            _toggleAddNodeButton: function(node, disable) {
+                var addButton = $(node).find('[data-action="jstree-addnode"]'),
+                    contextButton = $(node).find('[data-action="jstree-contextmenu"]');
+                if (disable) {
+                    addButton.addClass('disabled');
+                    contextButton.addClass('disabled');
+                } else {
+                    addButton.removeClass('disabled');
+                    contextButton.removeClass('disabled');
+                }
             }
         });
     });

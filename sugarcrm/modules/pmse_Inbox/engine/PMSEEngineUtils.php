@@ -26,20 +26,45 @@ class PMSEEngineUtils
      * PA target blacklisted modules
      * @var array
      */
-    public static $targetBlacklistedModules = array('Users', 'Employees');
+    public static $targetBlacklistedModules = array(
+        'Users',
+        'Employees',
+    );
 
     /**
-     * PA related blacklisted modules and blacklisted links
+     * PA related blacklisted modules
      * @var array
      */
     public static $relatedBlacklistedModules = array();
 
+    /**
+     * PA related blacklisted links
+     * @var array
+     */
     public static $relatedBlacklistedLinks = array(
         'contact',
         'following_link',
         'favorite_link',
         'user_sync',
     );
+
+    /**
+     * PA special fields
+     * @var array
+     */
+    public static $specialFields = array(
+        'All' => array('created_by', 'modified_user_id'),
+        'BR' => array('assigned_user_id', 'email1', 'outlook_id'),
+        'ET' => array('email1'),
+        'AC' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case'),
+        'RR' => array(),
+    );
+
+    /**
+     * Process Author does not handle the below field types currently. So skip displaying them.
+     * @var array
+     */
+    public static $blacklistedFieldTypes = array('image','password','file');
 
     /**
      * Method get key fields
@@ -690,12 +715,8 @@ class PMSEEngineUtils
      */
     public static function getElementUid($id, $elementEntity, $uidField)
     {
-        //$beanFactory = new ADAMBeanFactory();
         $elementEntity = ucfirst($elementEntity);
-//        $bean = new $elementEntity();
-        //$bean = $beanFactory->getBean($elementEntity);
-        $bean = BeanFactory::getBean('pmse_' . $elementEntity);
-        $bean->retrieve_by_string_fields(array('id' => $id));
+        $bean = BeanFactory::getBean('pmse_' . $elementEntity, $id);
         return $bean->$uidField;
     }
 
@@ -945,6 +966,7 @@ class PMSEEngineUtils
             'tags',
             'tag',
             'tag_lower',
+            'tag_link',
         );
         //UNSET comun fields
         foreach ($projectData as $key => $value) {
@@ -965,17 +987,21 @@ class PMSEEngineUtils
 
     public static function isValidField($def, $type = '')
     {
+        // If a field is explicitly allowed it should automatically be valid
+        // unless it is blacklisted for a specific type (like business rules)
+        if (!empty($def['processes']) && self::blackListFields($def, $type)) {
+            return true;
+        }
+
         $result = self::isValidStudioField($def);
         if (isset($def['source']) && $def['source'] == 'non-db') {
             $result = false;
         }
-        if (isset($def['type']) && ($def['type'] == 'image' || $def['type'] == 'password')) {
+        // Process Author does not handle some field types like image, password, file, etc currently
+        if (isset($def['type']) && in_array($def['type'], self::$blacklistedFieldTypes)) {
             $result = false;
         }
         if ($type == 'AC') {
-            if (isset($def['name']) && $def['name'] == 'assigned_user_id') {
-                $result = true;
-            }
             if (isset($def['formula'])) {
                 $result = false;
             }
@@ -985,29 +1011,44 @@ class PMSEEngineUtils
                 $result = false;
             }
         }
-        if ($type == 'ET') {
-            if (isset($def['name']) && $def['name'] == 'email1') {
-                $result = true;
-            }
-        }
-        if ($type == 'BR') {
-            if (isset($def['name']) && $def['name'] == 'assigned_user_id') {
-                $result = true;
-            }
-            if (isset($def['name']) && $def['name'] == 'email1') {
-                $result = true;
-            }
-        }
-        $result = $result && self::blackListFields($def);
+        $result = (self::specialFields($def, $type)) ? true : $result;
+        $result = $result && self::blackListFields($def, $type);
         return $result;
     }
 
-    public static function blackListFields($def) {
-        $blackList = array('deleted', 'system_id', 'mkto_sync', 'mkto_id', 'mkto_lead_score', 'parent_type', 'user_name', 'user_hash', 'portal_app', 'portal_active', 'portal_name');
+    public static function blackListFields($def, $type)
+    {
+        //set up black list to be dependent on which view (type) we are looking at
+        $blackList = array(
+            'ALL' => array(
+                'deleted', 'system_id', 'mkto_sync', 'mkto_id', 'mkto_lead_score',
+                'parent_type', 'user_name', 'user_hash', 'portal_app', 'portal_active',
+                'portal_name', 'password',
+            ),
+            'BR' => array(
+                'duration_hours', 'duration_minutes', 'repeat_type',
+            ),
+        );
+
+        //merge global pmse blacklist with the view specific one if type is given
+        if (!empty($type) && isset($blackList[$type])) {
+            $blackList = array_merge($blackList['ALL'], $blackList[$type]);
+        } else {
+            $blackList = $blackList['ALL'];
+        }
+
         if (in_array($def['name'], $blackList)) {
             return false;
         }
         return true;
+    }
+
+    public static function specialFields($def, $type= 'All')
+    {
+        if (empty($type)) {
+            $type = 'All';
+        }
+        return isset($def['name'], self::$specialFields[$type]) && in_array($def['name'], self::$specialFields[$type]);
     }
 
     /**
@@ -1069,7 +1110,7 @@ class PMSEEngineUtils
     }
 
     public static function getStudioModules($type = '') {
-        include 'PMSEModules.php';
+        include 'modules/pmse_Inbox/engine/PMSEModules.php';
         $studioBrowser = new StudioBrowser();
         if ($type == 'related') {
             $studioBrowser->loadRelatableModules();

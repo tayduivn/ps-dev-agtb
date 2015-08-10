@@ -14,6 +14,7 @@
 
 <div id='wiz_stage'>
 <form  id="wizform" name="wizform" method="POST" action="index.php">
+{sugar_csrf_form_token}
 	<input type="hidden" name="module" value="Campaigns">
 	<input type="hidden" id="record" name="record" value="{$MRKT_ID}">
 	<input type="hidden" name="campaign_id" value="{$CAMPAIGN_ID}">

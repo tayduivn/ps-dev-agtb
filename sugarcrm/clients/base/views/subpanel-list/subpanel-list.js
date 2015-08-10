@@ -37,24 +37,19 @@
 
         this._super("initialize", [options]);
 
-        var limit = this.context.get('limit') || app.config.maxSubpanelResult;
         // Setup max limit on collection's fetch options for this subpanel's context
+        var limit = this.context.get('limit') || app.config.maxSubpanelResult;
 
         if (limit) {
             this.context.set('limit', limit);
             //supanel-list extends indirectly ListView, and `limit` determines # records displayed
             this.limit = limit;
-            // FIXME SC-3670 needs to remove this `collectionOptions` mess.
-            var collectionOptions = this.context.has('collectionOptions') ? this.context.get('collectionOptions') : {};
-            this.context.set('collectionOptions', _.extend(collectionOptions, {limit: limit}));
         }
 
         //Override the recordlist row template
         this.rowTemplate = app.template.getView('recordlist.row');
 
-        this.layout.on("hide", this.toggleList, this);
         // Listens to parent of subpanel layout (subpanels)
-        this.listenTo(this.layout.layout, 'filter:change', this.renderOnFilterChanged);
         this.listenTo(this.layout, 'filter:record:linked', this.renderOnFilterChanged);
 
         //event register for preventing actions
@@ -116,14 +111,6 @@
                 self.render();
             }
         });
-    },
-
-    /**
-     * Toggles the list visibility
-     * @param {Boolean} show TRUE to show, FALSE to hide.
-     */
-    toggleList: function(show) {
-        this.$el[show ? 'show' : 'hide']();
     },
 
     /**

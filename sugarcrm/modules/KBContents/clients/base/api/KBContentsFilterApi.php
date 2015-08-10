@@ -13,6 +13,10 @@
 
 require_once 'clients/base/api/FilterApi.php';
 
+use \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+use \Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
+use \Sugarcrm\Sugarcrm\Elasticsearch\Query\KBFilterQuery;
+
 class KBContentsFilterApi extends FilterApi
 {
     public function registerApiRest()
@@ -53,7 +57,7 @@ class KBContentsFilterApi extends FilterApi
 
     /**
      * {@inheritDoc}
-     * Add filter to return only active revisions for filetrApi.
+     * Add filter to return only active revisions for filterApi.
      */
     public function filterListSetup(ServiceBase $api, array $args, $acl = 'list')
     {
@@ -61,6 +65,165 @@ class KBContentsFilterApi extends FilterApi
 
         $q->where()->equals('active_rev', '1');
 
+        if (!empty($args['mostUseful'])) {
+            $q->select()->fieldRaw('(kbcontents.useful - kbcontents.notuseful)', 'mu');
+            $orderBy = new SugarQuery_Builder_Orderby($q, 'DESC');
+            $orderBy->addRaw('mu');
+            array_unshift($q->order_by, $orderBy);
+        }
+
         return array($args, $q, $options, $seed);
+    }
+
+    /**
+     * {@inheritDoc}
+     * If we want to filter by KB Article Body let's do it via ElasticSearch.
+     */
+    public function filterList(ServiceBase $api, array $args, $acl = 'list')
+    {
+        // If we have 'Body containing/excluding these words' filter, separate it from the rest filters, so that
+        // it is searched via Elastic and the rest is searched via standard engine.
+        $bodySearchFilter = array();
+        $modifiedMainFilter = array();
+
+        if (isset($args['filter'])) {
+            foreach ($args['filter'] as $filter) {
+                if (array_key_exists('kbdocument_body', $filter)) {
+                    $bodySearchFilter[] = $filter['kbdocument_body'];
+                } else {
+                    $modifiedMainFilter[] = $filter;
+                }
+            }
+            $args['filter'] = $modifiedMainFilter;
+        }
+
+        // We've got 3 cases:
+        // 1. Composite filter with KBBody - retrieve all records found via Elastic & augment filter with their ids;
+        // 2. Filter with only KBBody - use only Elastic search with built-in pagination;
+        // 3. Filter without KBBody - just use standard Sugar filtering mechanism.
+        if ($bodySearchFilter && count($modifiedMainFilter) === 0) {
+            return $this->filterByContainingExcludingWords($api, $args, $bodySearchFilter, false);
+        } elseif ($bodySearchFilter) {
+            $ids = $this->filterByContainingExcludingWords($api, $args, $bodySearchFilter, true);
+            $args['filter'][] = array('id' => array('$in' => $ids));
+        }
+        return parent::filterList($api, $args, $acl);
+    }
+
+    /**
+     * Search for 'containing/excluding these words' filter via Elastic.
+     * @param ServiceBase $api
+     * @param array $args
+     * @param array $filterArgs filter args that contain only 'containing/excluding these words' filter
+     * @param bool $idsOnly return only ids for further filtering or resulting records
+     * @return array
+     */
+    protected function filterByContainingExcludingWords($api, $args, $filterArgs, $idsOnly)
+    {
+        $options = $this->parseArguments($api, $args);
+        $bean = BeanFactory::newBean($args['module']);
+        $orderBy = array();
+
+        $operators = array();
+        foreach ($filterArgs as $filterDef) {
+            $key = key($filterDef);
+            $values = preg_split('/[\s[:punct:]]+/', $filterDef[$key]);
+            $operators[$key] = !isset($operators[$key]) ? array() : $operators[$key];
+            $operators[$key] = $operators[$key] + $values;
+        }
+
+        if (!empty($args['order_by'])) {
+            $orderBys = explode(',', $args['order_by']);
+
+            foreach ($orderBys as $sortBy) {
+                $column = $sortBy;
+                $direction = 'asc';
+
+                if (strpos($sortBy, ':')) {
+                    // it has a :, it's specifying ASC / DESC
+                    list($column, $direction) = explode(':', $sortBy);
+
+                    if (strtolower($direction) == 'desc') {
+                        $direction = 'desc';
+                    } else {
+                        $direction = 'asc';
+                    }
+                }
+
+                // only add column once to the order-by clause
+                if (empty($orderBy[$column])) {
+                    $orderBy[$column] = $direction;
+                }
+            }
+        }
+
+        $builder = $this->getElasticQueryBuilder($args, $options);
+        $ftsFields = ApiHelper::getHelper($api, $bean)->getElasticSearchFields(array('kbdocument_body'));
+
+        $query = new KBFilterQuery();
+        $query->setBean($bean);
+        $query->setFields($ftsFields);
+        $query->setTerm($operators);
+
+        //set the filter
+        $filter = $query->createFilter();
+        $builder
+            ->addFilter($filter);
+
+        //set sort
+        $builder
+            ->setSort($orderBy);
+
+        // set query
+        $builder
+            ->setQuery($query);
+
+        $resultSet = $builder->executeSearch();
+
+        // Return all ids for further filtering ... or records with pagination.
+        $data = array();
+        if ($idsOnly) {
+            foreach ($resultSet as $result) {
+                $data[] = $result->getId();
+            }
+            return $data;
+        } else {
+            foreach ($resultSet as $result) {
+                $record = BeanFactory::retrieveBean($result->getType(), $result->getId());
+                if (!$record) {
+                    continue;
+                }
+                $formattedRecord = $this->formatBean($api, $args, $record);
+                $formattedRecord['_module'] = $result->getType();
+                $data[] = $formattedRecord;
+            }
+            if ($resultSet->getTotalHits() > ($options['limit'] + $options['offset'])) {
+                $nextOffset = $options['offset'] + $options['limit'];
+            } else {
+                $nextOffset = -1;
+            }
+            return array('next_offset' => $nextOffset, 'records' => $data);
+        }
+    }
+
+    /**
+     * Get configured Elastic search builder.
+     * @param $args array The arguments array passed in from the API.
+     * @param $options array An array with the options limit, offset, fields and order_by set
+     * @return QueryBuilder
+     */
+    protected function getElasticQueryBuilder(array $args, array $options)
+    {
+        global $current_user;
+
+        $engineContainer = SearchEngine::getInstance()->getEngine()->getContainer();
+        $builder = new QueryBuilder($engineContainer);
+        $builder
+            ->setUser($current_user)
+            ->setModules(array($args['module']))
+            ->setOffset($options['offset'])
+            ->setLimit($options['limit']);
+
+        return $builder;
     }
 }

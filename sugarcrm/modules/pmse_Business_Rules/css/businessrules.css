@@ -104,7 +104,6 @@
 
 .decision-table select {
   width: 100%;
-  height: 100%;
   white-space: nowrap;
 }
 
@@ -357,12 +356,21 @@ table.decision-table-index span {
   margin: 0px;
 }
 
+.expression-container.list-mode {
+  padding: 0;
+  width: 10.8em;
+}
+
 .expression-container-cell {
   height: 1.5em;
   display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.expression-container-input {
+  width: 100%;
 }
 
 .adam.single-item {
@@ -596,6 +604,11 @@ table.decision-table-index span {
   box-sizing: border-box;
 }
 
+.adam.form-panel-field {
+  margin-bottom: 0.5em;
+  vertical-align: top;
+}
+
 .adam.form-panel-button {
   text-align: center;
 }
@@ -609,14 +622,24 @@ table.decision-table-index span {
   font-size: 12px;
   line-height: 18px;
   height: 24px;
-  margin-bottom: 0.75em;
+  margin-bottom: 0;
 }
 .adam.form-panel-field-control .formpanel-radio {
   margin-right: 5px;
 }
 
-.adam.form-panel-field.adam-formpanelnumber .adam.form-panel-field-control {
+.adam.form-panel-field.adam-formpanelnumber .adam.form-panel-field-control,
+.adam.form-panel-field.adam-formpanelcurrency .adam.form-panel-field-control {
   text-align: right;
+}
+
+.adam.form-panel-field.adam-formpanelcurrency input[type="text"].adam.form-panel-field-control {
+  width: 50% !important;
+}
+
+.adam-formpanelcurrency .currency-part {
+  width: 50%;
+  float: left;
 }
 
 .adam.form-panel-footer {
