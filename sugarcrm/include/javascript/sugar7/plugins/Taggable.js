@@ -470,7 +470,8 @@
 
                     // Append search results to the dropdown list
                     collection.each(function(model, index) {
-                        var htmlName = model.get('name').replace(new RegExp('(' + searchTerm + ')', 'ig'), function($1, match) {
+                        var name = Handlebars.Utils.escapeExpression(model.get('name')),
+                            htmlName = name.replace(new RegExp('(' + searchTerm + ')', 'ig'), function($1, match) {
                                 return '<strong>' + match + '</strong>';
                             }),
                             data = {

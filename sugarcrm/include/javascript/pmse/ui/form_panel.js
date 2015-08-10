@@ -1628,6 +1628,7 @@
 			var items = that._dataRoot ? data[that._dataRoot] : data;
 			that._removeLoadingMessage();
 			that.setOptions(items);
+            that.setSelect2Tooltips();
 		};
 	};
 
@@ -1643,6 +1644,30 @@
 		});
 		return this;
 	};
+
+    FormPanelDropdown.prototype.setSelect2Tooltips = function() {
+        //bind whenever select2 loads
+        //this includes when select2 initializes and when it completes a search
+        $(document).on('select2-loaded.select2event', function(){
+            //remove any stuck tooltips
+            $('.tooltip').remove();
+
+            //add attributes required for tooltips
+            $('.select2-result').attr('rel', 'tooltip');
+            $('.select2-result').attr('data-placement', 'right');
+            _.each($('.select2-result'), function(result){
+                //We do $($(result).find('div')[0]).text() to get the value of the option
+                //the tooltip plugin uses data-original-title to set the content of the tooltip
+                $(result).attr('data-original-title', $($(result).find('div')[0]).text());
+                App.utils.tooltip.initialize($(result));
+            });
+        });
+
+        //remove all tooltips when closing select2
+        $(document).on('select2-close.select2event', function() {
+            $('.tooltip').remove();
+        });
+    };
 
 	FormPanelDropdown.prototype.setDataRoot = function (root) {
 		if (!(root === null || typeof root === 'string')) {
