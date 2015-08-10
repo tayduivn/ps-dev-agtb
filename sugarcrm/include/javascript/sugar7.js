@@ -632,20 +632,19 @@
 
             //If the password has expired (and we're not logging out which is ignored)
             if (route && route !== 'logout' && app.user && app.user.get('is_password_expired')) {
-                        if (app.user.get('is_password_expired')) {
-                            app.controller.loadView({
-                                layout: 'password-expired',
-                                module: 'Users',
-                                callbacks: {
-                                    complete: function() {
-                                        // Reload when password reset
-                                        window.location.reload();
-                                    }
-                                },
-                                modelId: app.user.get('id')
-                            });
-                            app.additionalComponents.header.hide();
+                app.controller.loadView({
+                    layout: 'password-expired',
+                    module: 'Users',
+                    callbacks: {
+                        complete: function() {
+                            // Reload when password reset
+                            window.location.reload();
                         }
+                    },
+                    modelId: app.user.get('id')
+                });
+                app.additionalComponents.header.hide();
+
                 return false;
             }
 
