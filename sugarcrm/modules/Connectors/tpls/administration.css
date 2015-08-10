@@ -1,4 +1,3 @@
-{{!--
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,13 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
 
-{{#if tagList}}
-    <div class="ellipsis_inline" data-placement="bottom" data-container="body" title="{{tagList}}" rel="tooltip">
-        {{#each value}}
-        <a class="ellipsis-inline" href="#search/?tags={{encodedValue}}" data-action="tag-search" data-tag="{{this.name}}">
-            {{this.name}}</a>{{#unless @last}}, {{/unless}}
-        {{/each}}
-    </div>
-{{/if}}
+.connector-img {
+    cursor: pointer;
+}

@@ -717,7 +717,7 @@ class RestService extends ServiceBase
      * @param int $cache_age age in seconds for Cache-control max-age header
      * @return bool   Did we have a match?
      */
-    public function generateETagHeader($etag, $cache_age = 0)
+    public function generateETagHeader($etag, $cache_age = null)
     {
         if (empty($this->response)) {
            return false;

@@ -24,14 +24,27 @@ class SugarCacheAPC extends SugarCacheAbstract
      */
     public function useBackend()
     {
-        if ( !parent::useBackend() )
+        if (!parent::useBackend()) {
             return false;
+        }
 
-        if ( function_exists("apc_store")
-                && empty($GLOBALS['sugar_config']['external_cache_disabled_apc']))
-            return true;
+        if (!empty($GLOBALS['sugar_config']['external_cache_disabled_apc'])) {
+            return false;
+        }
 
-        return false;
+        if (!extension_loaded('apc')) {
+            return false;
+        }
+
+        if (!ini_get('apc.enabled')) {
+            return false;
+        }
+
+        if (php_sapi_name() === 'cli' && !ini_get('apc.enable_cli')) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
