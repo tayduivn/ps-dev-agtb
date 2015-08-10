@@ -98,22 +98,25 @@ $dictionary['CalDavEvent'] = array(
                     'isnull' => 'true',
                     'comment' => 'The event\'s UID',
                 ),
-            'related_module' =>
-                array(
-                    'name' => 'related_module',
-                    'type' => 'varchar',
-                    'len' => '255',
-                    'vname' => 'LBL_EVENT_RELATED_MODULE',
-                    'isnull' => 'true',
-                    'comment' => 'Related Module',
+            'parent_type' =>
+                array (
+                    'name' => 'parent_type',
+                    'vname'=>'LBL_PARENT_TYPE',
+                    'type' =>'parent_type',
+                    'dbType' => 'varchar',
+                    'options'=> 'parent_type_display',
+                    'len' => 100,
+                    'comment' => 'Module CalDav is associated with',
+                    'studio' => array('searchview'=>false, 'wirelesslistview'=>false),
                 ),
-            'related_module_id' =>
-                array(
-                    'name' => 'related_module_id',
+            'parent_id' =>
+                array (
+                    'name' => 'parent_id',
+                    'vname'=>'LBL_PARENT_ID',
                     'type' => 'id',
-                    'vname' => 'LBL_EVENT_RELATED_MODULE_ID',
-                    'isnull' => 'true',
-                    'comment' => 'Related Module ID',
+                    'reportable'=>false,
+                    'comment' => 'ID of item indicated by parent_type',
+                    'studio' => array('searchview'=>false),
                 ),
             'sync_counter' =>
                 array(
@@ -142,7 +145,6 @@ $dictionary['CalDavEvent'] = array(
                     'link_type' => 'one',
                     'vname' => 'LBL_CALENDAR_EVENTS',
                 ),
-
         ),
     'relationships' => array(
         'events_calendar' => array(

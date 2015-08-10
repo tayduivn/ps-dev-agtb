@@ -22,15 +22,20 @@ class Constants
     /**
      * Add operation code
      */
-    CONST OPERATION_ADD = 1;
+    const OPERATION_ADD = 1;
 
     /**
      * Modify operation code
      */
-    CONST OPERATION_MODIFY = 2;
+    const OPERATION_MODIFY = 2;
 
     /**
      * Delete operation code
      */
-    CONST OPERATION_DELETE = 3;
+    const OPERATION_DELETE = 3;
+
+    /**
+     * Maximum date count for INFINITE RECCURENCE
+     */
+    const MAX_INFINITE_RECCURENCE_COUNT = 1000;
 }
