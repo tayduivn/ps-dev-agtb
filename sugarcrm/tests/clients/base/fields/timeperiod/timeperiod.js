@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe("Base.Field.Timeperiod", function() {
+describe('Base.Field.Timeperiod', function() {
     var app, field, template,
         module = 'Bugs',
         fieldName = 'foo',
@@ -23,8 +23,11 @@ describe("Base.Field.Timeperiod", function() {
         SugarTest.testMetadata.init();
         template = SugarTest.loadHandlebarsTemplate('timeperiod', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('timeperiod', 'field', 'base', 'tooltip-default');
+        SugarTest.loadHandlebarsTemplate('timeperiod', 'field', 'base', 'tooltip');
         SugarTest.testMetadata.set();
+        SugarTest.loadComponent('base', 'field', 'enum');
         field = SugarTest.createField('base', fieldName, 'timeperiod', 'detail', fieldDef, module);
+        field.cssClassSelector = 'test';
     });
 
     afterEach(function() {
@@ -41,10 +44,128 @@ describe("Base.Field.Timeperiod", function() {
         });
 
         describe('initialize', function() {
-            it('should set the proper language direction label', function () {
+            it('should set the proper language direction label', function() {
                 var lbl = 'LBL_DROPDOWN_TOOLTIP' + (value == 'rtl' ? '_RTL' : '');
                 expect(field.tooltipKey).toBe(lbl);
             });
+        });
+    });
+
+    describe('onSelectOpen', function() {
+        it('will remove and add tooltips', function() {
+            sinon.collection.stub(field, 'removePluginTooltips');
+            sinon.collection.stub(field, 'addPluginTooltips');
+
+            field.onSelectOpen();
+
+            expect(field.removePluginTooltips).toHaveBeenCalled();
+            expect(field.addPluginTooltips).toHaveBeenCalled();
+        });
+    });
+
+    describe('onSelectClear', function() {
+        it('will remove and add tooltips', function() {
+            sinon.collection.stub(field, 'removePluginTooltips');
+            sinon.collection.stub(field, 'addPluginTooltips');
+
+            field.onSelectClear();
+
+            expect(field.removePluginTooltips).toHaveBeenCalled();
+            expect(field.addPluginTooltips).toHaveBeenCalled();
+        });
+    });
+
+    describe('getLoadEnumOptionsModule', function() {
+        it('will return forecasts', function() {
+            expect(field.getLoadEnumOptionsModule(), 'Forecasts');
+        });
+    });
+
+    describe('_destroyTpCollection', function() {
+        it('will run the off command on the tpl collection and set it to null on the model', function() {
+            var offStub = sinon.collection.stub(field.tpCollection, 'off');
+            field._destroyTpCollection();
+            expect(offStub).toHaveBeenCalled();
+            expect(field.tpCollection).toBe(null);
+        });
+    });
+
+    describe('getSelect2Options', function() {
+        it('will return something', function() {
+            var options = field.getSelect2Options(['']);
+            expect(options.formatResult).toBeDefined();
+            expect(options.formatSelection).toBeDefined();
+            expect(field.cssClassSelector).toEqual(options.dropdownCssClass);
+        });
+    });
+
+    describe('_render', function() {
+        beforeEach(function() {
+            field.items = ['1'];
+        });
+        it('renders the field and call initializeAllPluginTooltips', function() {
+            sinon.collection.stub(field, 'initializeAllPluginTooltips');
+            field._render();
+            expect(field.initializeAllPluginTooltips).toHaveBeenCalled();
+        });
+        it('does not render when no access', function() {
+            sinon.collection.stub(field, 'initializeAllPluginTooltips');
+            sinon.collection.stub(field, '_loadTemplate');
+            field.tplName = 'noaccess';
+            field._render();
+            expect(field.initializeAllPluginTooltips).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('bindDataChange', function() {
+        it('adds a listener to the model', function() {
+            sinon.collection.stub(field.model, 'on');
+            field.bindDataChange();
+
+            expect(field.model.on)
+                .toHaveBeenCalledWith(
+                'change:' + field.name,
+                field.initializeAllPluginTooltips,
+                field
+            );
+        });
+    });
+
+    describe('formatTooltips', function() {
+        it('creates the tooltip map', function() {
+            sinon.collection.stub(field, '_destroyTpCollection');
+            var data = new Backbone.Collection([
+                new Backbone.Model(
+                    {id: 'one', start_date: '2015-08-01', end_date: '2015-08-30'}
+                )
+            ]);
+
+            sinon.collection.stub(app.user, 'getPreference', function() {
+                return 'Y-m-d';
+            });
+
+            field.formatTooltips(data);
+
+            expect(field.tpTooltipMap).toEqual(
+                {one: {start: '2015-08-01', end: '2015-08-30'}}
+            );
+            expect(field._destroyTpCollection).toHaveBeenCalled();
+
+        });
+    });
+
+    describe('formatOption', function() {
+        it('will contain the text passed in and set updateDefaultTooltip to be true', function() {
+            var val = field.formatOption({id: 'test', text: 'Jasmine Test'});
+            expect(val).toContain('Jasmine Test');
+            expect(field.updateDefaultTooltip).toBe(true);
+        });
+
+        it('will contain the text passed in and set updateDefaultTooltip to be false', function() {
+            field.tpTooltipMap = {test: {}};
+            var val = field.formatOption({id: 'test', text: 'Jasmine Test'});
+            expect(val).toContain('Jasmine Test');
+            expect(field.updateDefaultTooltip).toBe(false);
         });
     });
 });

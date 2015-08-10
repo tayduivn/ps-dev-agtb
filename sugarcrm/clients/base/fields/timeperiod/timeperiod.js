@@ -68,7 +68,7 @@
         }
 
         ttTemplate = app.template.getField('timeperiod', 'tooltip-default');
-        Handlebars.registerPartial("tooltipHtmlTemplate", ttTemplate({
+        Handlebars.registerPartial('tooltipHtmlTemplate', ttTemplate({
             cssClasses: tooltipCssClasses
         }));
 
@@ -109,32 +109,30 @@
      * Add a change event handler for initializing all the plugin tooltips again
      */
     bindDataChange: function() {
-        this._super("bindDataChange");
+        this._super('bindDataChange');
         if (this.model) {
             // when the value changes on the model, we need to initialize the Tooltips again
-            this.model.on('change:' + this.name, function() {
-                this.initializeAllPluginTooltips();
-            }, this);
+            this.model.on('change:' + this.name, this.initializeAllPluginTooltips, this);
         }
     },
 
     /**
      * Utility method to take the TimePeriod collection and parse our the start and end dates to be in the user
      * date preference and store them for when the enum is actually opened
-     * @param data
+     * @param {Backbone.Collection} data
      */
     formatTooltips: function(data) {
         var usersDatePrefs = app.user.getPreference('datepref');
         data.each(function(model) {
           this.tpTooltipMap[model.id] = {
-              start :app.date.format(app.date.parse(model.get('start_date')), usersDatePrefs),
+              start: app.date.format(app.date.parse(model.get('start_date')), usersDatePrefs),
               end: app.date.format(app.date.parse(model.get('end_date')), usersDatePrefs)
-          }
+          };
         }, this);
         // since we don't need it any more, destroy it
-        this._destroyTplCollection();
+        this._destroyTpCollection();
 
-        if(this.updateDefaultTooltip) {
+        if (this.updateDefaultTooltip) {
             this.updateDefaultTooltip = false;
             // manually update the default selected item's tooltip
             var tooltipText = app.lang.get('LBL_DROPDOWN_TOOLTIP', 'TimePeriods', this.tpTooltipMap[this.value[0]]);
@@ -146,7 +144,7 @@
      * {@inheritDoc}
      */
     _render: function() {
-        this._super("_render");
+        this._super('_render');
         if (this.tplName == 'noaccess') {
             return this;
         }
@@ -194,7 +192,7 @@
      * {@inheritDoc}
      */
     getSelect2Options: function(optionsKeys) {
-        var options = this._super("getSelect2Options", [optionsKeys]);
+        var options = this._super('getSelect2Options', [optionsKeys]);
 
         // this is to format the results
         options.formatResult = _.bind(this.formatOption, this);
@@ -216,7 +214,7 @@
      * that gets output
      *
      * @param {Object} object
-     * @returns {string}
+     * @return {string}
      */
     formatOption: function(object) {
         // check once if the tpTooltipMap has been built yet
@@ -225,19 +223,19 @@
             tooltip: this.tpTooltipMap[object.id],
             value: object.text,
             tooltipDir: this.tooltipDir,
-            tooltipKey: this.tooltipKey,
+            tooltipKey: this.tooltipKey
         });
     },
 
     /**
-     * Disposes the {@link #tplCollection} properly.
+     * Disposes the {@link #tpCollection} properly.
      *
      * @private
      */
-    _destroyTplCollection: function() {
+    _destroyTpCollection: function() {
         if (this.tpCollection) {
             this.tpCollection.off(null, null, this);
-            this.tplCollection = null;
+            this.tpCollection = null;
         }
     },
 
@@ -245,7 +243,7 @@
      * @inheritDoc
      */
     _dispose: function() {
-        this._destroyTplCollection();
+        this._destroyTpCollection();
         this._super('_dispose');
     }
 })
