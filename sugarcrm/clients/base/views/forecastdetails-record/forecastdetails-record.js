@@ -348,6 +348,7 @@
 
             // process numbers before parent calculateData
             if(_.has(model.changed, 'likely_case') || _.has(model.changed, 'amount')) {
+                data.likely_case = (_.isNaN(Number(data.likely_case)) || _.isEqual(data.likely_case, '')) ? 0 : data.likely_case;
                 old = data.likely_case;
                 diff = app.math.sub(data.likely_case, totals.likely);
                 data.likely_case = app.math.add(this.likelyTotal, diff);
@@ -357,6 +358,7 @@
             }
 
             if(_.has(model.changed, 'best_case')) {
+                data.best_case = (_.isNaN(Number(data.best_case)) || _.isEqual(data.best_case, '')) ? 0 : data.best_case;
                 old = data.best_case;
                 diff = app.math.sub(data.best_case, totals.best);
                 data.best_case = app.math.add(this.bestTotal, diff);
@@ -366,6 +368,7 @@
             }
 
             if(_.has(model.changed, 'worst_case')) {
+                data.worst_case = (_.isNaN(Number(data.worst_case)) || _.isEqual(data.worst_case, '')) ? 0 : data.worst_case;
                 old = data.worst_case;
                 diff = app.math.sub(data.worst_case, totals.worst);
                 data.worst_case = app.math.add(this.worstTotal, diff);
