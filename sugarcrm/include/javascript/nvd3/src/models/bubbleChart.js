@@ -285,10 +285,7 @@ nv.models.bubbleChart = function() {
         .ticks(yValues.length)
         .tickValues(yValues.map(function(d, i) {
           return yValues[i].y;
-        }))
-        .tickFormat(function(d, i) {
-          return yValues[i].key;
-        });
+        }));
 
       //------------------------------------------------------------
       // Main chart draw

@@ -54,6 +54,7 @@ nv.models.axis = function() {
           maxMinRange = [],
           maxTickWidth = 0,
           maxTickHeight = 0,
+          wrapTickHeight = 0,
           fmt = axis.tickFormat(),
           extent = getRangeExtent(),
           scaleWidth = Math.abs(extent[1] - extent[0]),
@@ -73,9 +74,6 @@ nv.models.axis = function() {
       }
 
       // test to see if rotateTicks was passed as a boolean
-      if (!wrapTicks && !staggerTicks && !rotateTicks) {
-        rotateTicks = true;
-      }
       if (rotateTicks && !isFinite(String(rotateTicks))) {
         rotateTicks = 30;
       }
@@ -117,7 +115,7 @@ nv.models.axis = function() {
       if (showMaxMin) {
         axisMaxMin.select('text')
           .text(function(d, i) {
-            var v = fmt(d);
+            var v = fmt(d, i, false);
             return ('' + v).match('NaN') ? '' : v;
           });
       }
@@ -227,7 +225,6 @@ nv.models.axis = function() {
             calcTicks = showMaxMin ? axisMaxMin.select('text') : axisTicks.select('text'),
             l = calcTicks.size() - 1;
 
-
         calcTicks.each(function(d, i) {
           var textWidth = Math.ceil(this.getBoundingClientRect().width),
               tickPosition = showMaxMin ? (i ? extent[1] : extent[0]) : (scaleCalc(d) + (isOrdinal ? barWidth : 0)),
@@ -302,8 +299,10 @@ nv.models.axis = function() {
       }
 
       function handleWrap() {
-        tickText.each(function(d) {
-          var textContent = this.textContent, //TODO: will fmt(d) work?
+        wrapTickHeight = maxTickHeight;
+
+        tickText.each(function(d, i) {
+          var textContent = fmt(d, i, true),
               textNode = d3.select(this),
               textArray = textContent.replace('/', '/ ').split(' '),
               i = 0,
@@ -341,6 +340,9 @@ nv.models.axis = function() {
               }
             }
           }
+
+          var bbox = this.getBoundingClientRect();
+          wrapTickHeight = Math.max(bbox.height - maxTickHeight * 0.315, wrapTickHeight);
         });
       }
 
@@ -422,7 +424,7 @@ nv.models.axis = function() {
               // check to see if we still have collisions
               if (!labelCollision(1)) {
                 wrapSucceeded = true;
-                thickness = defaultThickness() + maxTickHeight;
+                thickness = defaultThickness() + wrapTickHeight;
               }
             }
 
@@ -442,6 +444,9 @@ nv.models.axis = function() {
             // if we still have a collision
             // add a test in the following if block to support opt-out of rotate method
             if (!wrapSucceeded && !staggerSucceeded) {
+              if (!rotateTicks) {
+                rotateTicks = 30;
+              }
               resetTicks();
               handleRotation(rotateTicks);
               recalcMargin(rotateTicks);

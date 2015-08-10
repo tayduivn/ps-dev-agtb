@@ -538,7 +538,15 @@ nv.models.multiBarChart = function() {
         // X-Axis
         xAxis
           .orient(vertical ? 'bottom' : 'left')
-          .margin(innerMargin);
+          .margin(innerMargin)
+          .tickFormat(function(d, i, noEllipsis) {
+            // Set xAxis to use trimmed array rather than data
+            var label = groupLabels[i] || 'undefined';
+            if (!noEllipsis) {
+              label = nv.utils.stringEllipsify(label, container, Math.max(vertical ? baseDimension * 2 : availableWidth * 0.2, 75));
+            }
+            return label;
+          });
         xAxisWrap
           .call(xAxis);
         // reset inner dimensions
