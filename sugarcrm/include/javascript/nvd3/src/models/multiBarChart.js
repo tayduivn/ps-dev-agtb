@@ -152,29 +152,30 @@ nv.models.multiBarChart = function() {
 
         // if you have activated a data series, inactivate the rest
         if (series.active === 'active') {
-          data.filter(function(d) {
-            return d.active !== 'active';
-          }).map(function(d) {
-            d.active = 'inactive';
-            d.values.map(function(d) {
+          data
+            .filter(function(d) {
+              return d.active !== 'active';
+            })
+            .map(function(d) {
               d.active = 'inactive';
+              d.values.map(function(d) {
+                d.active = 'inactive';
+              });
+              return d;
             });
-            return d;
-          });
         }
 
         // if there are no active data series, activate them all
-        if (!data.filter(function(d) {
-          return d.active === 'active';
-        }).length) {
-          data.map(function(d) {
-            d.active = '';
-            d.values.map(function(d) {
+        if (!data.filter(function(d) { return d.active === 'active'; }).length) {
+          data
+            .map(function(d) {
               d.active = '';
+              d.values.map(function(d) {
+                d.active = '';
+              });
+              container.selectAll('.nv-series').classed('nv-inactive', false);
+              return d;
             });
-            container.selectAll('.nv-series').classed('nv-inactive', false);
-            return d;
-          });
         }
 
         container.call(chart);
@@ -190,25 +191,27 @@ nv.models.multiBarChart = function() {
 
       //make sure untrimmed values array exists
       if (hideEmptyGroups) {
-        data.map(function(d) {
-          if (!d._values) {
-            d._values = d.values;
-          }
-          return d;
-        });
+        data
+          .map(function(d) {
+            if (!d._values) {
+              d._values = d.values;
+            }
+            return d;
+          });
       }
 
       // add series index to each data point for reference
       // and disable data series if total is zero
-      data.map(function(d, i) {
-        d.series = i;
-        d.total = d3.sum(d.values, function(d) {
-          return d.y;
+      data
+        .map(function(d, i) {
+          d.series = i;
+          d.total = d3.sum(d.values, function(d) {
+            return d.y;
+          });
+          if (!d.total) {
+            d.disabled = true;
+          }
         });
-        if (!d.total) {
-          d.disabled = true;
-        }
-      });
 
       // update groupTotal amounts based on enabled data series
       groupTotals = properties.values
@@ -346,8 +349,7 @@ nv.models.multiBarChart = function() {
         var wrap = container.selectAll('.nvd3.nv-wrap').data([data]),
             gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap').append('g'),
             g = wrap.select('g').attr('class', 'nv-chartWrap');
-        wrap
-          .attr('class', 'nvd3 nv-wrap nv-' + className);
+        wrap.attr('class', 'nvd3 nv-wrap nv-' + className);
 
         /* Clipping box for scroll */
         gEnter.append('defs');
@@ -501,7 +503,6 @@ nv.models.multiBarChart = function() {
           .data([dataBars])
           .call(multibar);
 
-
         //------------------------------------------------------------
         // Setup Axes
 
@@ -586,15 +587,15 @@ nv.models.multiBarChart = function() {
         xAxisWrap.select('.nv-axislabel')
           .attr('x', (vertical ? innerWidth : -innerHeight) / 2);
 
-
         //------------------------------------------------------------
         // Enable scrolling
+
         if (scrollEnabled) {
           var diff = (vertical ? innerWidth : innerHeight) - minDimension,
               panMultibar = function() {
-                if (d3.event && d3.event.type === 'click') {
-                  return;
-                }
+                // if (d3.event && d3.event.type === 'click') {
+                //   return;
+                // }
                 dispatch.tooltipHide(d3.event);
                 scrollOffset = scroll.pan(diff);
                 xAxisWrap.select('.nv-axislabel')
@@ -656,7 +657,6 @@ nv.models.multiBarChart = function() {
       });
 
       controls.dispatch.on('legendClick', function(d, i) {
-
         //if the option is currently enabled (i.e., selected)
         if (!d.disabled) {
           return;
