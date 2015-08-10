@@ -54,6 +54,12 @@ class PMSEProjectImporter extends PMSEImporter
     protected $dependenciesWrapper;
 
     /**
+     * The target module from the import
+     * @var string
+     */
+    protected $targetModule;
+
+    /**
      * The class constructor
      * @codeCoverageIgnore
      */
@@ -147,6 +153,23 @@ class PMSEProjectImporter extends PMSEImporter
         $this->changedUidElements = $changedUidElements;
     }
 
+    /**
+     * Sets the targetModule property
+     * @param string $targetModule The target module for this project
+     */
+    public function setTargetModule($targetModule)
+    {
+        $this->targetModule = $targetModule;
+    }
+
+    /**
+     * Gets the targetModule
+     * @return string
+     */
+    public function getTargetModule()
+    {
+        return $this->targetModule;
+    }
 
     /**
      * Save the project data into the bpm project, and process beans, validates the uniqueness of
@@ -159,10 +182,13 @@ class PMSEProjectImporter extends PMSEImporter
         global $current_user;
         $projectBean = $this->getBean();
         $keysArray = array();
+
+        // This will be needed down the road
+        $this->setTargetModule($projectData[$this->module]);
+
         unset($projectData[$this->id]);
         //Unset common fields
         $this->unsetCommonFields($projectData);
-        //unset($projectData['assigned_user_id']);
         if (!isset($projectData['assigned_user_id'])) {
             $projectData['assigned_user_id'] = $current_user->id;
         }
@@ -272,6 +298,12 @@ class PMSEProjectImporter extends PMSEImporter
             $element['act_uid'] = PMSEEngineUtils::generateUniqueID();
             $this->changedUidElements[$previousUid] = array('new_uid' => $element['act_uid'] );
             foreach ($element as $key => $value) {
+                // Handle sanitization of the JSON string for activity fields
+                // See MACAROON-867
+                if ($key === 'act_fields') {
+                    $value = PMSEEngineUtils::sanitizeImportActivityFields($element, $this->getTargetModule());
+                }
+
                 if (isset($activityBean->field_defs[$key])){
                     $activityBean->$key = $value;
                 }
