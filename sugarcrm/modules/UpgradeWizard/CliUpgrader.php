@@ -16,8 +16,6 @@ require_once dirname(__FILE__)  . '/UpgradeDriver.php';
  */
 class CliUpgrader extends UpgradeDriver
 {
-    protected static $healthCheckerHelperInstance;
-
     protected $options = array(
         // required, short, long
         "zip" => array(true, 'z', 'zip'),
@@ -580,10 +578,6 @@ eoq2;
      */
     protected function getHelper()
     {
-        if (!empty(self::$healthCheckerHelperInstance)){
-            return self::$healthCheckerHelperInstance;
-        }
-
         /*
          * Loading SugarSystemInfo from health check only if version < 7.2.2
          * If version 7.2.2 and above SugarSystemInfo also loading in entryPoint.php
@@ -593,12 +587,14 @@ eoq2;
         if (file_exists(dirname(__FILE__).'/SugarSystemInfo.php') && version_compare($sugar_version, '7.2.2', '<')) {
             require_once 'SugarSystemInfo.php';
         }
-        require_once 'SugarHeartbeatClient.php';
-        require_once 'HealthCheckClient.php';
-        require_once 'HealthCheckHelper.php';
+        if (!class_exists('SugarHeartbeatClient'))
+            require_once 'SugarHeartbeatClient.php';
+        if (!class_exists('HealthCheckClient'))
+            require_once 'HealthCheckClient.php';
+        if (!class_exists('HealthCheckHelper'))
+            require_once 'HealthCheckHelper.php';
 
-        self::$healthCheckerHelperInstance = HealthCheckHelper::getInstance();
-        return self::$healthCheckerHelperInstance;
+        return HealthCheckHelper::getInstance();
     }
 
     /**
