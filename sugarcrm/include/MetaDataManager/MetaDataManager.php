@@ -1683,7 +1683,7 @@ class MetaDataManager
      */
     public static function refreshLanguagesCache($languages, $platforms = array(), $params = array())
     {
-        self::refreshCachePart('languages', $languages, $platforms, $params = array());
+        self::refreshCachePart('languages', $languages, $platforms, $params);
     }
 
     /**
