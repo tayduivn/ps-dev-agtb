@@ -525,7 +525,7 @@ class MockSugarCurrency extends SugarCurrency
     /**
      * @return Currency|SugarCurrency
      */
-    protected static function getCurrency()
+    public static function getCurrency()
     {
         return static::$mockCurrency;
     }

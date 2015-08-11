@@ -9,16 +9,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * The SelectionListView provides an easy way to select records from a list and
- * get selected items as an output. It's designed to be used in a drawer.
+ * The SelectionListView provides an easy way to select a record from a list.
+ * It's designed to be used in a drawer. The model attributes of the selected
+ * record will be passed to the drawer callback.
  *
  * The SelectionListView has a generic implementation and can be overriden for
  * particular uses.
- *
- * It has the following properties that have to be passed in the context:
- *
- * - `maxSelectedRecords` The max number of records the user can select in the
- *    case of multiselect selecttion list.
  *
  * It has to be opened passing the following data in the drawer's context:
  *
@@ -34,9 +30,6 @@
  *                   module: this.getSearchModule(),
  *                   fields: this.getSearchFields(),
  *                   filterOptions: this.getFilterOptions(),
- *                   preselectedModelIds: _.clone(this.model.get(this.def.id_name)),
- *                   isMultiSelect: this.def.isMultiSelect,
- *                   maxSelectedRecords: this.maxSelectedRecords
  *               }
  *           }, _.bind(this.setValue, this));
  *     },
