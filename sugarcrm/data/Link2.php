@@ -477,11 +477,11 @@ class Link2 {
     }
 
     /***
-     * populate relationship data to a related Bean
+     * refresh relationship data to a related Bean
      * @param $relBean SugarBean
      * @return void
      */
-    public function populateRelationshipFields(SugarBean $relBean){
+    public function refreshRelationshipFields(SugarBean $relBean){
 
         if(empty($relBean) || empty($relBean->id)){
             return;
