@@ -1699,6 +1699,8 @@ class SugarBean
 
         $isUpdate = $this->isUpdate();
 
+        $prev_date_modified = isset($this->date_modified)
+            ? $this->date_modified : null;
 		if(empty($this->date_modified) || $this->update_date_modified)
 		{
 			$this->date_modified = $GLOBALS['timedate']->nowDb();
@@ -1772,6 +1774,10 @@ class SugarBean
 
         $this->call_custom_logic("before_save", $custom_logic_arguments);
         unset($custom_logic_arguments);
+
+        if (!$this->update_date_modified) {
+            $this->date_modified = $prev_date_modified;
+        }
 
         if(isset($this->custom_fields))
         {
