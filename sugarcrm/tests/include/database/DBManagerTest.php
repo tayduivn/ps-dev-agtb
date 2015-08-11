@@ -1415,6 +1415,47 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->dropTableName($t2);
     }
 
+    public function testOracleAlterVarchar2ToNumber()
+    {
+        $insertValue = '100';
+        if (!($this->_db instanceof OracleManager)) {
+            $this->markTestSkipped('This test can run only on Oracle instance');
+        }
+        $params = array(
+            'foo' => array(
+                'name' => 'foo',
+                'vname' => 'LBL_FOO',
+                'type' => 'enum',
+                'dbType' => 'varchar',
+            ),
+        );
+        $tableName = 'testVarchar2ToNumber' . mt_rand();
+
+        if ($this->_db->tableExists($tableName)) {
+            $this->_db->dropTableName($tableName);
+        }
+        $this->createTableParams($tableName, $params, array());
+
+        $this->_db->insertParams($tableName, $params, array('foo' => $insertValue), null, true, true);
+
+        $params = array(
+            'foo' => array(
+                'name' => 'foo',
+                'vname' => 'LBL_FOO',
+                'type' => 'enum',
+                'dbType' => 'int',
+            ),
+        );
+
+        $this->_db->repairTableParams($tableName, $params, array(), true);
+
+        $columns = $this->_db->get_columns($tableName);
+        $this->assertEquals('number', $columns['foo']['type']);
+
+        $checkResult = $this->_db->fetchOne('SELECT foo FROM ' . $tableName);
+        $this->assertEquals($insertValue, $checkResult['foo']);
+    }
+
     public function testDropTable()
     {
         // TODO: Write this test
