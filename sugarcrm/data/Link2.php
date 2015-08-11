@@ -455,7 +455,7 @@ class Link2 {
                 }
 
                 if (!empty($result[$id])) {
-                    $this->populateRelationships($relationshipFields, $vals, $result[$id]);
+                    $this->populateRelationshipOnlyFields($relationshipFields, $vals, $result[$id]);
                 }
             }
 
@@ -500,7 +500,7 @@ class Link2 {
 
         if (isset($rows[$relBean->id])) {
             $relationshipFields = $this->getRelationshipFields($relBean);
-            $this->populateRelationships($relationshipFields, $rows[$relBean->id], $relBean);
+            $this->populateRelationshipOnlyFields($relationshipFields, $rows[$relBean->id], $relBean);
             // add bean
             $this->addBean($relBean);
         }
@@ -513,7 +513,7 @@ class Link2 {
      * @param $relBean SugarBean, relative Bean
      * @return void
      */
-    protected function populateRelationships(array $relationshipFields, array $relData, SugarBean $relBean)
+    protected function populateRelationshipOnlyFields(array $relationshipFields, array $relData, SugarBean $relBean)
     {
         if (!empty($relationshipFields) &&
             !empty($relData) &&
