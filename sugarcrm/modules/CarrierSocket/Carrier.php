@@ -16,27 +16,24 @@ class CarrierSocketCarrier implements CarrierInterface
 {
 
     /**
-     * @return \Sugarcrm\Sugarcrm\Notification\Carrier\TransportInterface
+     * Get Transport to deliver messages to SocketServer.
+     * @return \CarrierSocketTransport
      */
     public function getTransport()
     {
-        // TODO: Implement getTransport() method.
+        return new CarrierSocketTransport();
     }
 
     /**
-     *
-     * @return array(
-     *      'label' => '', - full info but short
-     *      'url' => '', - url to event
-     *      'subject' => '',- can be not full info, used for email, rss
-     *      'text' => '', - full info can be long
-     *      'html' => '', full info can be long
-     *  );
-     *
+     * Messages to SocketServer have only 'title' and 'text'.
+     * {@inheritdoc}
      */
     public function getMessageSignature()
     {
-        // TODO: Implement getMessageSignature() method.
+        return array(
+            'title' => '',
+            'text' => '',
+        );
     }
 
     /**

@@ -23,9 +23,9 @@ interface CarrierInterface
     public function getTransport();
 
     /**
-     *
+     * ToDo: decide 'label' or 'title'.
      * @return array(
-     *      'label' => '', - full info but short
+     *      'label' => '', - full info, but short
      *      'url' => '', - url to event
      *      'subject' => '',- can be not full info, used for email, rss
      *      'text' => '', - full info can be long
