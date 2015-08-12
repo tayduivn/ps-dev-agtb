@@ -1210,8 +1210,15 @@ function validate_form(formname, startsWith){
 
 					//If a field is hidden, skip validation.
 					var field = form[validate[formname][i][nameIndex]];
-					if ((isFieldHidden(field, validate[formname][i][typeIndex]) && validate[formname][i][typeIndex] != 'file' && field.id != 'tiny_vals') || field.disabled)
-					{
+                    if (isFieldHidden(field, validate[formname][i][typeIndex])
+                        && validate[formname][i][typeIndex] != "file"
+                        && field.id != "tiny_vals"
+                        && !field.hasAttribute("data-force-validate")
+                    ) {
+                        continue;
+                    }
+
+                    if (field.disabled) {
 						continue;
 					}
 

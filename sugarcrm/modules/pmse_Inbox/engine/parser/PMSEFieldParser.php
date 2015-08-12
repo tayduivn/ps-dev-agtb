@@ -181,11 +181,14 @@ class PMSEFieldParser implements PMSEDataParserInterface
         $criteriaToken->currentValue = $tokenValue;
         $criteriaToken->expValue = $this->setExpValueFromCriteria($criteriaToken);
 
-        if ($this->evaluatedBean->field_name_map[$criteriaToken->expField]['type']=='date') {
+        $fieldType = $this->evaluatedBean->field_name_map[$criteriaToken->expField]['type'];
+
+        if ($fieldType == 'date') {
             $criteriaToken->expSubtype = 'date';
-        } elseif ($this->evaluatedBean->field_name_map[$criteriaToken->expField]['type']=='datetime'
-                || $this->evaluatedBean->field_name_map[$criteriaToken->expField]['type']=='datetimecombo') {
+        } elseif ($fieldType == 'datetime' || $fieldType =='datetimecombo') {
             $criteriaToken->expSubtype = 'date';
+        } elseif ($fieldType == 'currency') {
+            $criteriaToken->expValue = $this->setCurrentValueIfCurrency($criteriaToken);
         }
         return $criteriaToken;
     }
@@ -331,6 +334,19 @@ class PMSEFieldParser implements PMSEDataParserInterface
         }
 
         return $token->expValue;
+    }
+
+    /**
+     * Parse the token value for Currency
+     * @param $token
+     * @return float
+     */
+    public function setCurrentValueIfCurrency($token)
+    {
+        $expCurrency = empty($token->expCurrency) ? '-99' : $token->expCurrency;
+        $defCurrency = SugarCurrency::getCurrency($this->evaluatedBean);
+        $amount = SugarCurrency::convertAmount((float)$token->expValue, $expCurrency, $defCurrency->id);
+        return $amount;
     }
 
     /**

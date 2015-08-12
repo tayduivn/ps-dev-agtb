@@ -16,7 +16,7 @@
             <li>
                 {{#each this.fields}}
                     {{#eq name "name"}}
-                        <h4>{{field ../../../this model=../../this}}</h4>
+                        <h4><a href="#{{buildRoute model=../../this}}">{{field ../../../this model=../../this}}</a></h4>
                     {{/eq}}
                     {{#eq name "created_by_name"}}
                         <div class="details">
