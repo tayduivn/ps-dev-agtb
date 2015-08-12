@@ -220,7 +220,7 @@ eoq2;
      */
     protected function initSugar()
     {
-        if($this->context['stage'] == 'pre' || $this->context['stage'] == 'unpack') {
+        if($this->context['stage'] == 'pre' || $this->context['stage'] == 'unpack'  || $this->context['stage'] == 'healthcheck' ) {
             $templ_dir = $this->context['pre_template'];
         } else {
             $templ_dir = $this->context['post_template'];
