@@ -47,7 +47,7 @@
      */
     _initCollection: function () {
         this.collection = app.data.createBeanCollection(this.module);
-        this.collection.options = {
+        this.collection.setOption({
             params: {
                 order_by: 'useful:desc,notuseful:asc,viewcount:desc,date_entered:desc',
                 mostUseful: true
@@ -73,18 +73,7 @@
                     '$equals': 'published'
                 }
             }
-        };
-        this.collection.sync = _.wrap(
-            this.collection.sync,
-            function (sync, method, model, options) {
-                options = options || {};
-                options.endpoint = function (method, model, options, callbacks) {
-                    var url = app.api.buildURL(model.module, null, {}, options.params);
-                    return app.api.call('read', url, {}, callbacks);
-                };
-                sync(method, model, options);
-            }
-        );
+        });
         return this;
     },
 
@@ -117,12 +106,7 @@
      * @inheritDoc
      */
     loadData: function (options) {
-        if (this.collection.dataFetched) {
-            if (options && options.complete) {
-                options.complete();
-            }
-            return;
-        }
+        this.collection.resetPagination();
         this.collection.fetch({
             success: function () {
                 if (options && options.complete) {
