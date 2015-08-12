@@ -1245,4 +1245,16 @@ class PMSEEngineUtils
 
         return $element['act_fields'];
     }
+
+    /**
+     * This method add information about PA used to discriminate beans when are
+     * launched hooks
+     * @param SugarBean $bean
+     * @return bool|String
+     */
+    public static function saveAssociatedBean(SugarBean $bean)
+    {
+        $bean->isPASaveRequest = true;
+        return $bean->save();
+    }
 }
