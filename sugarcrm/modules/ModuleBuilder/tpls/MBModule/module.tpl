@@ -55,7 +55,7 @@
         <td>
             <table>
                 <tr{if empty($module->name)} id="factory_modules"{/if}>
-                {if empty($module->name)}<input type='hidden' name='type'>{/if}
+                {if empty($module->name)}<input type="hidden" name="type" data-force-validate>{/if}
                 {foreach from=$types key='type' item='name'}
 					{assign var='imgurl' value=$type|cat:'_32'}
                     {if empty($module->name) || $type != 'basic' || count($module->mbvardefs->templates) == 1}

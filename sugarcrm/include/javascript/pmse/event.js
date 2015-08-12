@@ -869,6 +869,7 @@ AdamEvent.prototype.createConfigureAction = function () {
             timeFormat: App.user.getPreference("timepref"),
             decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
             numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
+            currencies: project.getMetadata("currencies"),
             operators: {
                 logic: true,
                 group: true
@@ -1536,6 +1537,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                 fieldHeight: 80,
                 decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
                 numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
+                currencies: project.getMetadata("currencies"),
                 operators: {
                     arithmetic: ['+', '-']
                 },

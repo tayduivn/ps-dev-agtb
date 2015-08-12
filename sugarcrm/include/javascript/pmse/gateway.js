@@ -660,6 +660,7 @@ AdamGateway.prototype.createConfigureAction = function () {
                                 fieldHeight: 128,
                                 decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
                                 numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
+                                currencies: project.getMetadata("currencies"),
                                 dateFormat: App.date.getUserDateFormat(),
                                 timeFormat: App.user.getPreference("timepref"),
                                 operators: {

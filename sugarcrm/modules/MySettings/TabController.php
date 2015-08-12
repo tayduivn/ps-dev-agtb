@@ -33,6 +33,21 @@ function is_system_tabs_in_db(){
         }
 }
 
+    /**
+     * Get the hash of the tabs.
+     * @return string
+     */
+    public function getMySettingsTabHash()
+    {
+        //Administration MySettings are already sugar-cached, and hence only need to retrieve it directly
+        $administration = Administration::getSettings('MySettings');
+        if (isset($administration->settings) && isset($administration->settings['MySettings_tab'])) {
+            $tabs = $administration->settings['MySettings_tab'];
+            return md5($tabs);
+        }
+        return "";
+    }
+
 function get_system_tabs(){
 	global $moduleList;
 
