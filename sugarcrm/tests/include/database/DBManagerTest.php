@@ -317,6 +317,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                   'type' => 'varchar',
                   'len' =>100,
                   'reportable'=>true,
+                    'required'=>true,
+                    'isnull' => false,
                   'comment' => 'Category of the allowable action (usually the name of a module)'
                 ),
             'acltype' =>
@@ -451,17 +453,98 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 'isnull'	=> false,
             ),
         );
+        $indexes = array(
+            array(
+                'name' => "idx_{$tableName}",
+                'type' =>'primary',
+                'fields' => array(
+                    'id',
+                    'category',
+                )
+            )
+        );
 
         if($this->_db->tableExists($tableName)) {
             $this->_db->dropTableName($tableName);
         }
-		$this->createTableParams($tableName, $params, array());
 
-        $repair = $this->_db->repairTableParams($tableName, $params, array(), false);
+        $this->createTableParams($tableName, $params, $indexes);
 
+        $repair = $this->_db->repairTableParams($tableName, $params, $indexes, true);
         $this->assertEmpty($repair, "Unexpected repairs: " . $repair);
 
         $this->dropTableName($tableName);
+    }
+
+    /**
+     * Test creation of primary key on existing index.
+     */
+    public function testPrimaryKeyOnExistingIndex()
+    {
+        $tableName = 'testRTNC2_' . mt_rand();
+        $fields = array (
+            'list_id' => array(
+                'name' => 'list_id',
+                'type' => 'id',
+                'required' => true,
+                'reportable' => false,
+            ),
+            'bean_id' => array(
+                'name' => 'bean_id',
+                'type' => 'id',
+                'required' => true,
+                'reportable' => false,
+            ),
+        );
+        $indices = array(
+            array(
+                'name' => 'testRTNC2_list_id_idx',
+                'type' =>'index',
+                'fields' => array(
+                    'list_id',
+                )
+            ),
+            array(
+                'name' => 'testRTNC2_list_id_bean_idx',
+                'type' =>'index',
+                'fields' => array(
+                    'list_id',
+                    'bean_id',
+                )
+            ),
+        );
+        $this->createTableParams($tableName, $fields, $indices);
+        $indices = array(
+            array(
+                'name' => 'testRTNC2_list_id_idx',
+                'type' =>'index',
+                'fields' => array(
+                    'list_id',
+                )
+            ),
+            array(
+                'name' => 'idx_testRTNC2_pk',
+                'type' =>'primary',
+                'fields' => array(
+                    'list_id',
+                    'bean_id',
+                )
+            ),
+        );
+        $repair = $this->_db->repairTableParams($tableName, $fields, $indices, true);
+        $this->assertNotEmpty($repair, "Shouldn't be empty repair");
+
+        $dbIndexes = $this->_db->get_indices($tableName);
+
+        //Should replaced with assertArraySubset in future
+        $pk = false;
+        foreach ($dbIndexes as $ind) {
+            if ($ind['type'] == 'primary') {
+                $pk = true;
+                break;
+            }
+        }
+        $this->assertTrue($pk, 'There should be primary index for table');
     }
 
     public function testRepairTableParamsAddData()
