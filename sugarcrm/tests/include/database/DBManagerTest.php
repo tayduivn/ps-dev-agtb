@@ -1534,7 +1534,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $sql = <<<SQL
 SELECT
     id,
-    name name_alias 
+    name name_alias
 FROM
     accounts
 WHERE
@@ -4278,6 +4278,28 @@ SQL;
             array('testAlterTableBlobToClob'),
             array('縢嫆璻侁刵 榎 偢偣唲鷩'),
             array(serialize(range(1, 262144))),
+        );
+    }
+
+    /**
+     * @dataProvider orderByEnumProvider
+     * @param $order_by order by column
+     * @param $values value array
+     * @param $order_dir order by direction
+     * @param $result expected result
+     */
+    public function testOrderByEnum($order_by, $values, $order_dir, $expected)
+    {
+        $result = $this->_db->orderByEnum($order_by, $values, $order_dir);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function orderByEnumProvider()
+    {
+        return array(
+            array('', array(), '', ''),
+            array('foo', array("bar"), "desc", "CASE WHEN (foo='' OR foo IS NULL) THEN 0 ELSE 1 END desc\n"),
+            array('foo', array("bar"=>"val"), "desc", "CASE WHEN foo='bar' THEN 0 ELSE 1 END desc\n")
         );
     }
 }

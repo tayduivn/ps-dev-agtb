@@ -1656,7 +1656,9 @@ class Report
                     }
                 }
                 // Changed the sort order, so it would sort by the initial options first
-                array_unshift($this->group_order_by_arr, $order_by);
+                if (!empty($order_by)) {
+                    array_unshift($this->group_order_by_arr, $order_by);
+                }
             }
         }
     }
