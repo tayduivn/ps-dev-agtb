@@ -178,7 +178,7 @@ class MetadataApi extends SugarApi
         $hash = $mm->getMetadataHash(true);
 
         // ETag that bad boy
-        if ($hash && $api->generateETagHeader($hash, 10)) {
+        if ($hash && $api->generateETagHeader($hash)) {
             return;
         }
 
@@ -224,7 +224,7 @@ class MetadataApi extends SugarApi
         $hash = $mm->getMetadataHash(true);
 
         // ETag that bad boy
-        if ($hash && $api->generateETagHeader($hash, 10)) {
+        if ($hash && $api->generateETagHeader($hash)) {
             return;
         }
 
@@ -342,7 +342,7 @@ class MetadataApi extends SugarApi
         //generate hash
         $hash = md5($lang);
 
-        if (!$api->generateETagHeader($hash)) {
+        if (!$api->generateETagHeader($hash, 0)) {
             $return = $lang;
         }
 

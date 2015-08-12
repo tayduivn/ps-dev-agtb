@@ -10,15 +10,21 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['KBContents']['base']['filter']['operators'] = array(
-    'nestedset' => array(
-        '$in' => 'LBL_OPERATOR_IS',
-        '$not_in' => 'LBL_OPERATOR_IS_NOT',
-        '$empty' => 'LBL_OPERATOR_EMPTY',
-        '$not_empty' => 'LBL_OPERATOR_NOT_EMPTY',
-    ),
-    'htmleditable_tinymce' => array(
-        '$contains' => 'LBL_OPERATOR_CONTAINING_THESE_WORDS',
-        '$not_contains' => 'LBL_OPERATOR_EXCLUDING_THESE_WORDS',
-    ),
-);
+require_once 'tests/include/SugarCache/SugarCacheAbstractTest.php';
+
+/**
+ * @covers SugarCacheAPC
+ * @uses SugarCacheAbstract
+ */
+class SugarCacheApcTest extends SugarCacheAbstractTest
+{
+    protected function newInstance()
+    {
+        return new SugarCacheAPC();
+    }
+
+    public function testExpiration()
+    {
+        $this->markTestSkipped('Cannot test APC expiration since the value is cleaned on the next request.');
+    }
+}

@@ -528,6 +528,7 @@ AdamCanvas.prototype.getContextMenu = function () {
         fieldHeight: 80,
         decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
         numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
+        currencies: project.getMetadata("currencies"),
         operators: {
             logic: true,
             group: true
@@ -1141,11 +1142,13 @@ AdamCanvas.prototype.onRemoveElementHandler = function (element) {
     this.bpmnValidation();
     if (countErrors){
         if (listPanelError.getItems().length){
-                countErrors.style.display = "block";
-                sizeItems = listPanelError.getAllErros();
-                countErrors.textContent =  sizeItems === 1 ? sizeItems + translate('LBL_PMSE_BPMN_WARNING_SINGULAR_LABEL') : sizeItems + translate('LBL_PMSE_BPMN_WARNING_LABEL');
+            $("#error-div").show();
+            countErrors.style.display = "block";
+            sizeItems = listPanelError.getAllErros();
+            countErrors.textContent = sizeItems === 1 ? sizeItems + translate('LBL_PMSE_BPMN_WARNING_SINGULAR_LABEL') : sizeItems + translate('LBL_PMSE_BPMN_WARNING_LABEL');
         } else {
             countErrors.textContent = "0" + translate('LBL_PMSE_BPMN_WARNING_SINGULAR_LABEL');
+            $("#error-div").hide();
         }
     }
 };

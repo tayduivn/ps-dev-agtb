@@ -297,6 +297,19 @@ EOL;
     }
 
     /**
+     * Create a notification for the current user informing them of mode switch completion.
+     */
+    protected function sendNotification()
+    {
+        $notification = BeanFactory::getBean('Notifications');
+        $notification->assigned_user_id = $GLOBALS['current_user']->id;
+        $notification->name = $GLOBALS['app_strings']['LBL_JOB_NOTIFICATION_OPPS_WITH_RLIS_SUBJECT'];
+        $notification->description = $GLOBALS['app_strings']['LBL_JOB_NOTIFICATION_OPPS_WITH_RLIS_SUBJECT'];
+        $notification->severity = 'success';
+        $notification->save();
+    }
+
+    /**
      * Find all the Opportunities and Create RLI's for them, this will process the last 100 modified Opportunities
      * right away, and schedule the rest in chunks of 100 for the Scheduler to Take care of
      *
@@ -313,6 +326,7 @@ EOL;
         $opps = $sq->execute();
 
         if (empty($opps)) {
+            $this->sendNotification();
             return false;
         }
 
@@ -322,9 +336,13 @@ EOL;
 
         $job_group = md5(microtime());
 
-        // process any remaining in the background
-        for ($x = 1; $x < count($bean_chunks); $x++) {
-            $this->createRevenueLineItemJob($bean_chunks[$x], $job_group);
+        if(count($bean_chunks) > 1) {
+            // process any remaining in the background
+            for ($x = 1; $x < count($bean_chunks); $x++) {
+                $this->createRevenueLineItemJob($bean_chunks[$x], $job_group);
+            }
+        } else {
+            $this->sendNotification();
         }
     }
 

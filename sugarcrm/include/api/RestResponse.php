@@ -244,8 +244,10 @@ class RestResponse extends Zend_Http_Response
      * @param int $cache_age Age in seconds of the cache-control max-age header
      * @return bool Did we have a match?
      */
-    public function generateETagHeader($etag = null, $cache_age = 0)
+    public function generateETagHeader($etag = null, $cache_age = null)
     {
+        $cache_age = is_null($cache_age) ? SugarConfig::getInstance()->get('rest_response_etag_cache_age', 10) : $cache_age;
+
         if (is_null($etag)) {
             if (is_array($this->body)) {
                 $etag = md5(json_encode($this->body));

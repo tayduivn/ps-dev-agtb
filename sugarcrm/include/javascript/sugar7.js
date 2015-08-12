@@ -200,6 +200,10 @@
                     // Set the new search term and module list in the context, if necessary.
                     var termHasChanged = appContext.get('searchTerm') !== searchTerm;
                     var modulesHaveChanged = !_.isEqual(appContext.get('module_list'), params.modules);
+
+                    params.tags = _.map(params.tags, function(tag){
+                        return decodeURIComponent(tag);
+                    });
                     var tagsHaveChanged = !_.isEqual(appContext.get('tagParams'), params.tags);
 
                     if (termHasChanged) {

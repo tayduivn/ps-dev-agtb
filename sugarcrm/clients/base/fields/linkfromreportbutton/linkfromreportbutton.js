@@ -41,12 +41,10 @@
         }
 
         app.drawer.open({
-            layout: 'multi-selection-list-link',
+            layout: 'selection-list',
             context: {
                 module: 'Reports',
-                filterOptions: filterOptions.format(),
-                parent: this.context,
-                independentMassCollection: true
+                filterOptions: filterOptions.format()
             }
         }, _.bind(this.selectDrawerCallback, this));
     },
