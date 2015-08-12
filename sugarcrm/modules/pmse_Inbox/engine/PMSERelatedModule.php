@@ -142,7 +142,8 @@ class PMSERelatedModule {
 
         // Sort on the label
         array_multisort($labels, SORT_ASC, $output);
-
+        
+        
         // Send text with pluralized module name
         $filterText = isset($app_list_strings['moduleList'][$filter]) ? $app_list_strings['moduleList'][$filter] : $filter;
         $filterArray = array(

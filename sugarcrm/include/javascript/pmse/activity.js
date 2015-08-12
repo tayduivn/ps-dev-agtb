@@ -2470,7 +2470,8 @@ AdamActivity.prototype.actionFactory = function (type) {
                                updater_field.proxy.uid = PROJECT_MODULE;
                                updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + initialModule;
                                project.addMetadata('projectModuleFieldsRelated', {
-                                    dataURL: 'pmse_Project/CrmData/addRelatedRecord/'+ PROJECT_MODULE,
+                                    dataURL: 'pmse_Project/CrmData/fields/'+ PROJECT_MODULE
+                                        + "?base_module=" + PROJECT_MODULE,
                                     dataRoot: 'result',
                                     success: function (data) {
                                         updater_field.setVariables(data);
