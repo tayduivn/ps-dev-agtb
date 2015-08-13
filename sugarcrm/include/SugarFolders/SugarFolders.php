@@ -449,7 +449,7 @@ ENDW;
             ;
             $this->emailBean->addVisibilityWhere($q, array('where_condition' => true));
 			if ($this->is_group) {
-				$q = $q . " AND (emails.assigned_user_id is null or emails.assigned_user_id = '')";
+				$q = $q . " AND ((emails.assigned_user_id is null or emails.assigned_user_id = '') OR (emails.intent = 'createcase'))";
 			}
 			$r = $this->db->limitQuery($q . $order, $start, $pageSize);
 		}
@@ -520,7 +520,7 @@ ENDW;
             ;
             $this->emailBean->addVisibilityWhere($q, array('where_condition' => true));
 			if ($this->is_group) {
-				$q .= " AND (emails.assigned_user_id is null or emails.assigned_user_id = '')";
+				$q .= " AND ((emails.assigned_user_id is null or emails.assigned_user_id = '') OR (emails.intent = 'createcase'))";
 			}
 			$r = $this->db->query ( $q ) ;
 		}
@@ -561,7 +561,7 @@ ENDW;
             ;
             $this->emailBean->addVisibilityWhere($q, array('where_condition' => true));
             if ($this->is_group) {
-                $q .= " AND (emails.assigned_user_id is null or emails.assigned_user_id = '')";
+                $q .= " AND ((emails.assigned_user_id is null or emails.assigned_user_id = '') OR (emails.intent = 'createcase'))";
             }
             $r = $this->db->query ( $q ) ;
         }
