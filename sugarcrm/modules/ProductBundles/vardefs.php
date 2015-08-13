@@ -365,7 +365,6 @@ $dictionary['ProductBundle'] = array(
     ),
     'indices' => array(
         array('name' => 'procuct_bundlespk', 'type' => 'primary', 'fields' => array('id')),
-        array('name' => 'idx_products_bundles', 'type' => 'index', 'fields' => array('name', 'deleted')),
     ),
     'relationships' => array(
         'product_bundle_taxrate' => array(
