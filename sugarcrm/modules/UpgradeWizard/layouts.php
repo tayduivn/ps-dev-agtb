@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry)
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: commit.php 56510 2010-05-17 18:54:49Z jenny $
+
  * Description:
  * Portions created by SugarCRM are Copyright(C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..

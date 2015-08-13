@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: ImportDuplicateCheck.php 31561 2008-02-04 18:41:10Z jmertic $
+
  * Description: Handles getting a list of fields to duplicate check and doing the duplicate checks
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.

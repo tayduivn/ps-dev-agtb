@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: javascript.php 50983 2009-09-21 20:45:37Z ajay $
+
  * Description:  Creates the runtime database connection.
  ********************************************************************************/
 class javascript{
