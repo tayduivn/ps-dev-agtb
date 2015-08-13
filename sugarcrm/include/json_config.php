@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: json_config.php 52448 2009-11-13 10:21:35Z mitani $
+
  * Description:  This class is used to include the json server config inline. Previous method
  * of using <script src=json_server.php></script> causes multiple server hits per page load
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
