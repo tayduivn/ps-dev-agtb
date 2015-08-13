@@ -174,12 +174,18 @@ eoq2;
     }
 
     /**
-     * Load version file from path
+     * Load instance version
+     *
+     * @param string $dir Instance directory
      * @return array
      */
-    protected function loadVersion($dir = "")
+    protected function loadVersion($dir = null)
     {
-        return parent::loadVersion($this->context['post_template']);
+        if (!$dir) {
+            $dir = $this->context['pre_template'];
+        }
+
+        return parent::loadVersion($dir);
     }
 
     /**
@@ -190,7 +196,7 @@ eoq2;
     {
         // load target data
         chdir($this->context['post_template']);
-        list($to_version, $to_flavor) = $this->loadVersion();
+        list($to_version, $to_flavor) = $this->loadVersion($this->context['post_template']);
         chdir($this->context['source_dir']);
         // return fake manifest
         return array(
