@@ -102,6 +102,8 @@ $vardefs = array(
                ), // don't show in studio fields list
             'duplicate_on_record_copy' => 'always',
             'exportable'=>true,
+			// Until the same control is used for selecting.
+			'fields' => array('team_set_selected_id'),
         ),
 		'team_link' =>
 	    array (
