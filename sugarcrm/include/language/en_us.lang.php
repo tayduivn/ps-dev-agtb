@@ -10326,6 +10326,7 @@ Sincerely, SugarCRM',
   'MSG_IS_LESS_THAN' => 'is less than',
   'MSG_SHOULD_BE' => 'should be',
   'MSG_OR_GREATER' => 'or greater',
+    'MSG_EXCEEDS_MAXLEN' => 'exceeds the max length specified ',
 
     'LBL_PORTAL_WELCOME_TITLE' => 'Welcome to Sugar Portal 5.1.0',
     'LBL_PORTAL_WELCOME_INFO' => 'Sugar Portal is a framework which provides real-time view of cases, bugs & newsletters etc to customers. This is an external facing interface to Sugar that can be deployed within any website.  Stay tuned for more customer self service features like Project Management and Forums in our future releases.',
