@@ -265,13 +265,37 @@ class PMSEElementValidator implements PMSEValidate
      */
     public function validateStartEvent($bean, $flowData, $request)
     {
-        if ((($this->isNewRecord($bean) && $flowData['evn_params'] == 'new' ||
-                !$this->isNewRecord($bean) && $flowData['evn_params'] == 'updated')
-                 && !$this->isCaseDuplicated($bean, $flowData)) ||
-                    !$this->isNewRecord($bean) && $flowData['evn_params'] == 'allupdates'
-                &&  !$this->isPMSEEdit($bean) && !$this->already_triggered($bean, $flowData)
-        ) {
-            $request->validate();
+        $pmseEdit = !empty($bean->pa_related_module_save) ? true : $this->isPMSEEdit($bean);
+        if (!$pmseEdit) {
+            $isNewRecord = $this->isNewRecord($bean);
+            $caseDuplicated = $this->isCaseDuplicated($bean, $flowData);
+            switch ($flowData['evn_params']) {
+                case 'new':
+                    if ($isNewRecord && !$caseDuplicated) {
+                        $request->validate();
+                    } else {
+                        $request->invalidate();
+                    }
+                    break;
+                case 'updated':
+                    if (!$isNewRecord && !$caseDuplicated) {
+                        $request->validate();
+                    } else {
+                        $request->invalidate();
+                    }
+                    break;
+                case 'allupdates':
+                    $alreadyTriggered = $this->already_triggered($bean, $flowData);
+                    if (!$isNewRecord && !$alreadyTriggered) {
+                        $request->validate();
+                    } else {
+                        $request->invalidate();
+                    }
+                    break;
+                default:
+                    $request->invalidate();
+                    break;
+            }
         } else {
             $request->invalidate();
         }
