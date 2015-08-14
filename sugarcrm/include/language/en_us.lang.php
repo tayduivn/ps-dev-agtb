@@ -8592,6 +8592,7 @@ $app_strings = array (
     'LBL_TEAMS' =>'Teams',
     'LBL_TEAM_SET_ID' => 'Team Set ID',
     'LBL_TEAM_SET'=>'Team Set',
+    'LBL_TEAM_SET_SELECTED_TEAMS' => 'Selected Teams',
     'LBL_SEARCH_UNAVAILABLE' => 'Search unavailable, please try again later.',
     'ERR_NO_PRIMARY_TEAM_SPECIFIED' => 'No Primary Team specified',
     'LBL_REMOVE_PRIMARY_TEAM_ERROR' => 'Error attempting to remove primary team id [{0}] for [{1}] module with id [{2}]',

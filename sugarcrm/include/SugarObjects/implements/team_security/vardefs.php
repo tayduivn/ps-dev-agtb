@@ -92,6 +92,24 @@ $vardefs = array(
             'duplicate_on_record_copy' => 'always',
             'exportable'=>true,
         ),
+      'team_selected_name' => array(
+          'name' => 'team_selected_name',
+          'vname' => 'LBL_TEAM_SET_SELECTED_TEAMS',
+          // Or db_concat_fields.
+          'rname' => 'name',
+          // To prevent a notice during import.
+          'id_name' => 'team_id',
+          'source' => 'non-db',
+          // Relate is the only way to export non-db field, link value is replaced in getExportContentFromResult()
+          // value doesn't matter but "many" type is filtered by create_export_query().
+          'link' => 'team_link',
+          // On client equals "teamset", see "hacks.js".
+          'type' => 'relate',
+          // To replace an exported value in getExportContentFromResult()
+          'custom_type' => 'teamset',
+          'exportable' => true,
+          'studio' => false,
+      ),
 		'team_link' =>
 	    array (
 	      'name' => 'team_link',

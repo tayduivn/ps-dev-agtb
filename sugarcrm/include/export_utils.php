@@ -19,6 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('clients/base/api/FilterApi.php');
 require_once('include/SugarFields/SugarFieldHandler.php');
+require_once 'modules/Teams/TeamSetManager.php';
 
 /**
  * gets the system default delimiter or an user-preference based override
@@ -499,9 +500,14 @@ function getExportContentFromResult(
                     $options[$pre_id] = $value;
                 }
 
-                if(isset($focus->field_name_map[$fields_array[$key]]['custom_type']) && $focus->field_name_map[$fields_array[$key]]['custom_type'] == 'teamset'){
-                    require_once('modules/Teams/TeamSetManager.php');
-                    $value = TeamSetManager::getCommaDelimitedTeams($val['team_set_id'], !empty($val['team_id']) ? $val['team_id'] : '');
+                if (isset($focus->field_name_map[$fields_array[$key]]['custom_type']) &&
+                    $focus->field_name_map[$fields_array[$key]]['custom_type'] == 'teamset' &&
+                    isset(Team::$nameTeamsetMapping[$fields_array[$key]])
+                ) {
+                    $value = TeamSetManager::getCommaDelimitedTeams(
+                        $val[Team::$nameTeamsetMapping[$fields_array[$key]]],
+                        !empty($val['team_id']) ? $val['team_id'] : ''
+                    );
                 }
 
                 if ($useRealNames) {

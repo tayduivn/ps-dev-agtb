@@ -22,6 +22,9 @@
                     delete field.len;
                     field.type = "teamset";
                 }
+                if (module.fields.team_selected_name) {
+                    module.fields.team_selected_name.type = 'teamset';
+                }
 
                 _.each(module.fields,function(field) {
                     // Metadata is invalid for relate fields like "account_id"
