@@ -90,23 +90,8 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
                             $date = $timedate->fromIsoDate($finishDate);
                             $newValue = $date->asDbDate();
                         } elseif ($key == 'assigned_user_id') {
-                            switch ($value->value) {
-                                case 'currentuser':
-                                    $newValue = $this->beanHandler->mergeBeanInTemplate($bean,
-                                        $this->userAssignmentHandler->getCurrentUserId());
-                                    break;
-                                case 'supervisor':
-                                    $newValue = $this->beanHandler->mergeBeanInTemplate($bean,
-                                        $this->userAssignmentHandler->getSupervisorId($this->getCurrentUserId()));
-                                    break;
-                                case 'owner':
-                                    $newValue = $this->beanHandler->mergeBeanInTemplate($bean,
-                                        $this->userAssignmentHandler->getRecordOwnerId($bean->id, $sugarModule));
-                                    break;
-                                default:
-                                    $newValue = $this->beanHandler->mergeBeanInTemplate($bean, $value->value);
-                                    break;
-                            }
+                            $newValue = $this->beanHandler->mergeBeanInTemplate($bean,
+                                $this->getCustomUser($value->value, $bean));
                         } elseif ($value->type == 'Integer' || $value->type == 'Float' ||
                             $value->type == 'Decimal' || $value->type == 'Currency'
                         ) {
