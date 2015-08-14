@@ -250,7 +250,7 @@
 
     DecisionTable.prototype.removeAllConclusions = function() {
         while(this.conclusions.length) {
-            this.conclusions[0].remove();
+            this.conclusions[0].remove(true);
         }
 
         return this;
@@ -258,7 +258,7 @@
 
     DecisionTable.prototype.removeAllConditions = function() {
         while(this.conditions.length) {
-            this.conditions[0].remove();
+            this.conditions[0].remove(true);
         }
         return this;
     };
@@ -1684,10 +1684,14 @@
     };
 
 
-    DecisionTableVariable.prototype.remove = function() {
+    DecisionTableVariable.prototype.remove = function(force) {
         var self = this;
+        if (force) {
+            this.removeWithoutConfirmation();
+            return this;
+        }
         if(!this.parent.canBeRemoved(this)) {
-            return;
+            return this;
         }
         if(this.getFilledValuesNum()) {
             App.alert.show('variable-check', {
@@ -1703,6 +1707,7 @@
         } else {
             this.removeWithoutConfirmation();
         }
+        return this;
     };
 
     DecisionTableVariable.prototype.attachListeners = function() {
