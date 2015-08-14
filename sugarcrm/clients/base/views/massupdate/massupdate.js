@@ -594,7 +594,7 @@
                     app.alert.show('error_while_mass_update', {
                         level:'error',
                         title: app.lang.get('ERR_INTERNAL_ERR_MSG'),
-                        messages: app.lang.get('ERR_HTTP_500_TEXT')
+                        messages: app.lang.get('ERR_HTTP_500_TEXT_LINE1')
                     });
                 },
                 success: function(data, response, options) {
@@ -698,7 +698,7 @@
                                 app.alert.show('error_while_mass_update', {
                                     level: 'error',
                                     title: app.lang.get('ERR_INTERNAL_ERR_MSG'),
-                                    messages: app.lang.get('ERR_HTTP_500_TEXT')
+                                    messages: app.lang.get('ERR_HTTP_500_TEXT_LINE1')
                                 });
                             },
                             success: function(data, response, options) {
