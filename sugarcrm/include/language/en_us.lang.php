@@ -9301,6 +9301,8 @@ Sincerely, SugarCRM',
     'LBL_VIEW_PDF_BUTTON_LABEL' => 'Print as PDF',
     'LBL_VIEW_PDF_BUTTON_TITLE' => 'Print as PDF',
 
+    'LBL_KBDOCUMENTS' => 'Knowledge Base',
+
 
     'LNK_ABOUT' => 'About',
     'LNK_ADVANCED_SEARCH' => 'Advanced Search',
