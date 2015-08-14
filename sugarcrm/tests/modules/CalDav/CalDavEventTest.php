@@ -269,122 +269,21 @@ END:VCALENDAR',
         );
     }
 
-    protected function getVObjectEventData()
+    /**
+     * Load template for event
+     * @param string $templateName
+     * @return string;
+     */
+    protected function getEventTemplate($templateName)
     {
-        return 'BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Mozilla.org/NONSGML Mozilla Calendar V1.1//EN
-BEGIN:VTIMEZONE
-TZID:Europe/Berlin
-X-LIC-LOCATION:Europe/Berlin
-BEGIN:DAYLIGHT
-TZOFFSETFROM:+0100
-TZOFFSETTO:+0200
-TZNAME:CEST
-DTSTART:19700329T020000
-RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3
-END:DAYLIGHT
-BEGIN:STANDARD
-TZOFFSETFROM:+0200
-TZOFFSETTO:+0100
-TZNAME:CET
-DTSTART:19701025T030000
-RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10
-END:STANDARD
-END:VTIMEZONE
-BEGIN:VEVENT
-CREATED:20150806T065243Z
-LAST-MODIFIED:20150806T130928Z
-DTSTAMP:20150806T130928Z
-UID:9bff32ff-efcc-4250-8cc1-3512433587fb
-SUMMARY:Test event title
-ORGANIZER;RSVP=TRUE;PARTSTAT=ACCEPTED;ROLE=CHAIR:mailto:test@sugarcrm.com
-ATTENDEE;RSVP=TRUE;PARTSTAT=NEEDS-ACTION;ROLE=REQ-PARTICIPANT:mailto:SALLY@
- EXAMPLE.COM
-ATTENDEE;RSVP=TRUE;PARTSTAT=NEEDS-ACTION;ROLE=CHAIR:mailto:test@test.com
-ATTENDEE;RSVP=TRUE;PARTSTAT=NEEDS-ACTION;ROLE=OPT-PARTICIPANT:mailto:test1@
- test.com
-RRULE:FREQ=DAILY;UNTIL=20150813T080000Z
-X-MOZ-LASTACK:20150806T074504Z
-DTSTART;TZID=Europe/Berlin:20150806T100000
-DTEND;TZID=Europe/Berlin:20150806T110000
-TRANSP:OPAQUE
-LOCATION:office
-X-MOZ-SEND-INVITATIONS:TRUE
-X-MOZ-SEND-INVITATIONS-UNDISCLOSED:FALSE
-DESCRIPTION:Test event description
-X-MOZ-GENERATION:3
-SEQUENCE:1
-CLASS:PUBLIC
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER;VALUE=DURATION:-PT15M
-DESCRIPTION:Default Mozilla Description
-END:VALARM
-END:VEVENT
-END:VCALENDAR
-';
-    }
-
-    protected function getVObjectTaskData()
-    {
-        return 'BEGIN:VCALENDAR
-PRODID:-//Mozilla.org/NONSGML Mozilla Calendar V1.1//EN
-VERSION:2.0
-BEGIN:VTIMEZONE
-TZID:Europe/Minsk
-X-LIC-LOCATION:Europe/Minsk
-BEGIN:STANDARD
-TZOFFSETFROM:+0300
-TZOFFSETTO:+0300
-TZNAME:FET
-DTSTART:19700101T000000
-END:STANDARD
-END:VTIMEZONE
-BEGIN:VTODO
-CREATED:20150806T075546Z
-LAST-MODIFIED:20150806T075625Z
-DTSTAMP:20150806T075625Z
-UID:63bf1da3-5918-455c-9493-617ef0f7f68a
-SUMMARY:Test task title
-RRULE:FREQ=WEEKLY;COUNT=5
-DTSTART;TZID=Europe/Minsk:20150814T110000
-DUE;TZID=Europe/Minsk:20150814T130000
-DESCRIPTION:Test task description
-LOCATION:office1
-CLASS:CONFIDENTIAL
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER;VALUE=DATE-TIME:20150810T120000Z
-DESCRIPTION:Default Mozilla Description
-END:VALARM
-END:VTODO
-END:VCALENDAR';
-    }
-
-    protected function getEmptyVObject()
-    {
-        return 'BEGIN:VCALENDAR
-PRODID:-//Mozilla.org/NONSGML Mozilla Calendar V1.1//EN
-VERSION:2.0
-BEGIN:VTIMEZONE
-TZID:Europe/Minsk
-X-LIC-LOCATION:Europe/Minsk
-BEGIN:STANDARD
-TZOFFSETFROM:+0300
-TZOFFSETTO:+0300
-TZNAME:FET
-DTSTART:19700101T000000
-END:STANDARD
-END:VTIMEZONE
-END:VCALENDAR';
+        return file_get_contents(dirname(__FILE__).'/EventTemplates/'.$templateName.'.ics');
     }
 
     public function getVObjectProvider()
     {
         return array(
-            array('vCalendar' => $this->getVObjectEventData()),
-            array('vCalnedar' => $this->getVObjectTaskData()),
+            array('vCalendar' => $this->getEventTemplate('vevent')),
+            array('vCalnedar' => $this->getEventTemplate('vtodo')),
             array('vCalendar' => null),
         );
     }
@@ -393,11 +292,11 @@ END:VCALENDAR';
     {
         return array(
             array(
-                'vCalendar' => $this->getVObjectEventData(),
+                'vCalendar' => $this->getEventTemplate('vevent'),
                 'result' => 'Test event title',
             ),
             array(
-                'vCalendar' => $this->getVObjectTaskData(),
+                'vCalendar' => $this->getEventTemplate('vtodo'),
                 'result' => 'Test task title',
             ),
             array(
@@ -411,11 +310,11 @@ END:VCALENDAR';
     {
         return array(
             array(
-                'vCalendar' => $this->getVObjectEventData(),
+                'vCalendar' => $this->getEventTemplate('vevent'),
                 'result' => 'Test event description',
             ),
             array(
-                'vCalendar' => $this->getVObjectTaskData(),
+                'vCalendar' => $this->getEventTemplate('vtodo'),
                 'result' => 'Test task description',
             ),
             array(
@@ -429,11 +328,11 @@ END:VCALENDAR';
     {
         return array(
             array(
-                'vCalendar' => $this->getVObjectEventData(),
+                'vCalendar' => $this->getEventTemplate('vevent'),
                 'result' => '2015-08-06 08:00:00',
             ),
             array(
-                'vCalendar' => $this->getVObjectTaskData(),
+                'vCalendar' => $this->getEventTemplate('vtodo'),
                 'result' => '2015-08-14 08:00:00',
             ),
             array(
@@ -447,11 +346,11 @@ END:VCALENDAR';
     {
         return array(
             array(
-                'vCalendar' => $this->getVObjectEventData(),
+                'vCalendar' => $this->getEventTemplate('vevent'),
                 'result' => 60,
             ),
             array(
-                'vCalendar' => $this->getVObjectTaskData(),
+                'vCalendar' => $this->getEventTemplate('vtodo'),
                 'result' => 120,
             ),
             array(
@@ -510,11 +409,11 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'vCalendar' => $this->getVObjectEventData(),
+                'vCalendar' => $this->getEventTemplate('vevent'),
                 'result' => '2015-08-06 09:00:00',
             ),
             array(
-                'vCalendar' => $this->getVObjectTaskData(),
+                'vCalendar' => $this->getEventTemplate('vtodo'),
                 'result' => '2015-08-14 10:00:00',
             ),
             array(
@@ -528,11 +427,11 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'vCalendar' => $this->getVObjectEventData(),
+                'vCalendar' => $this->getEventTemplate('vevent'),
                 'result' => 'Europe/Berlin',
             ),
             array(
-                'vCalendar' => $this->getVObjectTaskData(),
+                'vCalendar' => $this->getEventTemplate('vtodo'),
                 'result' => 'Europe/Minsk',
             ),
             array(
@@ -546,11 +445,11 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'vCalendar' => $this->getVObjectEventData(),
+                'vCalendar' => $this->getEventTemplate('vevent'),
                 'result' => 'office',
             ),
             array(
-                'vCalendar' => $this->getVObjectTaskData(),
+                'vCalendar' => $this->getEventTemplate('vtodo'),
                 'result' => 'office1',
             ),
             array(
@@ -564,11 +463,11 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'vCalendar' => $this->getVObjectEventData(),
+                'vCalendar' => $this->getEventTemplate('vevent'),
                 'result' => 'PUBLIC',
             ),
             array(
-                'vCalendar' => $this->getVObjectTaskData(),
+                'vCalendar' => $this->getEventTemplate('vtodo'),
                 'result' => 'CONFIDENTIAL',
             ),
             array(
@@ -582,7 +481,7 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'vCalendar' => $this->getVObjectEventData(),
+                'vCalendar' => $this->getEventTemplate('vevent'),
                 'result' => array(
                     'user' => 'mailto:test@sugarcrm.com',
                     'status' => 'ACCEPTED',
@@ -590,7 +489,7 @@ END:VCALENDAR',
                 ),
             ),
             array(
-                'vCalendar' => $this->getVObjectTaskData(),
+                'vCalendar' => $this->getEventTemplate('vtodo'),
                 'result' => null,
             ),
             array(
@@ -604,7 +503,7 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'vCalendar' => $this->getVObjectEventData(),
+                'vCalendar' => $this->getEventTemplate('vevent'),
                 'result' => array(
                     array(
                         'user' => 'mailto:SALLY@EXAMPLE.COM',
@@ -624,7 +523,7 @@ END:VCALENDAR',
                 ),
             ),
             array(
-                'vCalendar' => $this->getVObjectTaskData(),
+                'vCalendar' => $this->getEventTemplate('vtodo'),
                 'result' => array(),
             ),
             array(
@@ -638,7 +537,7 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'vCalendar' => $this->getVObjectEventData(),
+                'vCalendar' => $this->getEventTemplate('vevent'),
                 'result' => array(
                     'DISPLAY' => array(
                         'duration' => 900,
@@ -648,32 +547,11 @@ END:VCALENDAR',
                 )
             ),
             array(
-                'vCalendar' => $this->getVObjectTaskData(),
+                'vCalendar' => $this->getEventTemplate('vtodo'),
                 'result' => array(),
             ),
             array(
-                'vCalendar' => 'BEGIN:VCALENDAR
-BEGIN:VEVENT
-BEGIN:VALARM
-X-EVOLUTION-ALARM-UID:20150812T121904Z-13371-1000-6716-2@dolbik-ubu
-ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;
- RSVP=FALSE:test@test.com
-TRIGGER;VALUE=DURATION;RELATED=START:-PT15M
-ACTION:DISPLAY
-DESCRIPTION:alarm test
-END:VALARM
-BEGIN:VALARM
-X-EVOLUTION-ALARM-UID:20150812T121932Z-13371-1000-6716-3@dolbik-ubu
-ACTION:EMAIL
-TRIGGER;VALUE=DURATION;RELATED=START:-PT20M
-ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;
- RSVP=FALSE:test@test.com
-ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;
- RSVP=FALSE:test1@test.com
-DESCRIPTION:alarm test
-END:VALARM
-END:VEVENT
-END:VCALENDAR',
+                'vCalendar' => $this->getEventTemplate('vGetReminder1'),
                 'result' => array(
                     'DISPLAY' => array(
                         'duration' => 900,
@@ -705,28 +583,7 @@ END:VCALENDAR',
                 )
             ),
             array(
-                'vCalendar' => 'BEGIN:VCALENDAR
-BEGIN:VEVENT
-BEGIN:VALARM
-X-EVOLUTION-ALARM-UID:20150812T121904Z-13371-1000-6716-2@dolbik-ubu
-ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;
- RSVP=FALSE:test@test.com
-TRIGGER;VALUE=DURATION;RELATED=START:PT15M
-ACTION:DISPLAY
-DESCRIPTION:alarm test
-END:VALARM
-BEGIN:VALARM
-X-EVOLUTION-ALARM-UID:20150812T121932Z-13371-1000-6716-3@dolbik-ubu
-ACTION:EMAIL
-TRIGGER;VALUE=DURATION;RELATED=START:-PT20M
-ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;
- RSVP=FALSE:test@test.com
-ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;
- RSVP=FALSE:test1@test.com
-DESCRIPTION:alarm test
-END:VALARM
-END:VEVENT
-END:VCALENDAR',
+                'vCalendar' => $this->getEventTemplate('vGetReminder2'),
                 'result' => array(
                     'EMAIL' => array(
                         'duration' => 1200,
@@ -757,14 +614,14 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'vCalendar' => $this->getVObjectEventData(),
+                'vCalendar' => $this->getEventTemplate('vevent'),
                 'result' => array(
                     'until' => '2015-08-13 08:00:00',
                     'type' => 'Daily',
                 )
             ),
             array(
-                'vCalendar' => $this->getVObjectTaskData(),
+                'vCalendar' => $this->getEventTemplate('vtodo'),
                 'result' => array(
                     'count' => 5,
                     'type' => 'Weekly',
@@ -781,7 +638,7 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'vCalendar' => $this->getVObjectEventData(),
+                'vCalendar' => $this->getEventTemplate('vevent'),
                 'result' => null,
             ),
             array(
@@ -819,12 +676,12 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'currentEvent' => $this->getVObjectEventData(),
+                'currentEvent' => $this->getEventTemplate('vevent'),
                 'component' => 'VEVENT',
                 'class' => 'Sabre\VObject\Component\VEvent'
             ),
             array(
-                'currentEvent' => $this->getEmptyVObject(),
+                'currentEvent' => $this->getEventTemplate('vempty'),
                 'component' => 'VTODO',
                 'class' => 'Sabre\VObject\Component\VTodo'
             ),
@@ -835,17 +692,17 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'currentEvent' => $this->getVObjectEventData(),
+                'currentEvent' => $this->getEventTemplate('vevent'),
                 'newValue' => 'test1',
                 'result' => true
             ),
             array(
-                'currentEvent' => $this->getVObjectEventData(),
+                'currentEvent' => $this->getEventTemplate('vevent'),
                 'newValue' => 'Test event title',
                 'result' => false
             ),
             array(
-                'currentEvent' => $this->getEmptyVObject(),
+                'currentEvent' => $this->getEventTemplate('vempty'),
                 'newValue' => 'test',
                 'result' => true
             ),
@@ -856,17 +713,17 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'currentEvent' => $this->getVObjectEventData(),
+                'currentEvent' => $this->getEventTemplate('vevent'),
                 'newValue' => 'test1',
                 'result' => true
             ),
             array(
-                'currentEvent' => $this->getVObjectEventData(),
+                'currentEvent' => $this->getEventTemplate('vevent'),
                 'newValue' => 'Test event description',
                 'result' => false
             ),
             array(
-                'currentEvent' => $this->getEmptyVObject(),
+                'currentEvent' => $this->getEventTemplate('vempty'),
                 'newValue' => 'test',
                 'result' => true
             ),
@@ -877,17 +734,17 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'currentEvent' => $this->getVObjectEventData(),
+                'currentEvent' => $this->getEventTemplate('vevent'),
                 'newValue' => 'test1',
                 'result' => true
             ),
             array(
-                'currentEvent' => $this->getVObjectEventData(),
+                'currentEvent' => $this->getEventTemplate('vevent'),
                 'newValue' => 'office',
                 'result' => false
             ),
             array(
-                'currentEvent' => $this->getEmptyVObject(),
+                'currentEvent' => $this->getEventTemplate('vempty'),
                 'newValue' => 'test',
                 'result' => true
             ),
@@ -928,13 +785,13 @@ END:VCALENDAR',
                 'newStatus' => 'CANCELLED'
             ),
             array(
-                'currentEvent' => $this->getEmptyVObject(),
+                'currentEvent' => $this->getEventTemplate('vempty'),
                 'newValue' => 'Planned',
                 'result' => true,
                 'newStatus' => 'CONFIRMED'
             ),
             array(
-                'currentEvent' => $this->getEmptyVObject(),
+                'currentEvent' => $this->getEventTemplate('vempty'),
                 'newValue' => 'Planned1',
                 'result' => false,
                 'newStatus' => null,
@@ -970,7 +827,7 @@ END:VCALENDAR',
                 'result' => false,
             ),
             array(
-                'currentEvent' => $this->getEmptyVObject(),
+                'currentEvent' => $this->getEventTemplate('vempty'),
                 'hours' => 2,
                 'minutes' => 30,
                 'newValue' => 'PT2H30M',
@@ -983,7 +840,7 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'vCalendar' => $this->getVObjectEventData(),
+                'vCalendar' => $this->getEventTemplate('vevent'),
                 'params' => array(
                     array(
                         'seconds' => 1200,
@@ -994,7 +851,7 @@ END:VCALENDAR',
                 ),
             ),
             array(
-                'vCalendar' => $this->getVObjectEventData(),
+                'vCalendar' => $this->getEventTemplate('vevent'),
                 'params' => array(
                     array(
                         'seconds' => 900,
@@ -1005,7 +862,7 @@ END:VCALENDAR',
                 ),
             ),
             array(
-                'vCalendar' => $this->getVObjectEventData(),
+                'vCalendar' => $this->getEventTemplate('vevent'),
                 'params' => array(
                     array(
                         'seconds' => 900,
@@ -1016,7 +873,7 @@ END:VCALENDAR',
                 ),
             ),
             array(
-                'vCalendar' => $this->getEmptyVObject(),
+                'vCalendar' => $this->getEventTemplate('vempty'),
                 'params' => array(
                     array(
                         'seconds' => 600,
@@ -1045,19 +902,19 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'currentEvent' => $this->getVObjectEventData(),
+                'currentEvent' => $this->getEventTemplate('vevent'),
                 'sugarDateTime' => '2014-12-31 21:00:01',
                 'datetime' => '20141231T210001Z',
                 'result' => true,
             ),
             array(
-                'currentEvent' => $this->getVObjectEventData(),
+                'currentEvent' => $this->getEventTemplate('vevent'),
                 'sugarDateTime' => '2015-08-06 08:00:00',
                 'datetime' => '20150806T100000',
                 'result' => false,
             ),
             array(
-                'currentEvent' => $this->getEmptyVObject(),
+                'currentEvent' => $this->getEventTemplate('vempty'),
                 'sugarDateTime' => '2014-12-31 21:00:01',
                 'datetime' => '20141231T210001Z',
                 'result' => true,
@@ -1069,19 +926,19 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'currentEvent' => $this->getVObjectEventData(),
+                'currentEvent' => $this->getEventTemplate('vevent'),
                 'sugarDateTime' => '2014-12-31 21:00:01',
                 'datetime' => '20141231T210001Z',
                 'result' => true,
             ),
             array(
-                'currentEvent' => $this->getVObjectEventData(),
+                'currentEvent' => $this->getEventTemplate('vevent'),
                 'sugarDateTime' => '2015-08-06 09:00:00',
                 'datetime' => '20150806T110000',
                 'result' => false,
             ),
             array(
-                'currentEvent' => $this->getEmptyVObject(),
+                'currentEvent' => $this->getEventTemplate('vempty'),
                 'sugarDateTime' => '2014-12-31 21:00:01',
                 'datetime' => '20141231T210001Z',
                 'result' => true,
@@ -1093,22 +950,101 @@ END:VCALENDAR',
     {
         return array(
             array(
-                'currentEvent' => $this->getVObjectTaskData(),
+                'currentEvent' => $this->getEventTemplate('vtodo'),
                 'sugarDateTime' => '2014-12-31 21:00:01',
                 'datetime' => '20141231T210001Z',
                 'result' => true,
             ),
             array(
-                'currentEvent' => $this->getVObjectTaskData(),
+                'currentEvent' => $this->getEventTemplate('vtodo'),
                 'sugarDateTime' => '2015-08-14 10:00:00',
                 'datetime' => '20150814T130000',
                 'result' => false,
             ),
             array(
-                'currentEvent' => $this->getEmptyVObject(),
+                'currentEvent' => $this->getEventTemplate('vempty'),
                 'sugarDateTime' => '2014-12-31 21:00:01',
                 'datetime' => '20141231T210001Z',
                 'result' => true,
+            ),
+        );
+    }
+
+    public function getStatusMapProvider()
+    {
+        return array(
+            array(
+                'appListString' => array(
+                    'meeting_status_dom' => array(
+                        'Planned' => 'Scheduled',
+                        'Held' => 'Held',
+                        'Not Held' => 'Canceled',
+                    ),
+                ),
+                'moduleDefs' => array(
+                    'status' =>
+                        array(
+                            'options' => 'meeting_status_dom',
+                        ),
+                ),
+                'mapping' => array(
+                    'CANCELLED' => 'Not Held',
+                    'CONFIRMED' => 'Planned',
+                ),
+                'result' => array(
+                    'CANCELLED' => 'Not Held',
+                    'CONFIRMED' => 'Planned',
+                ),
+            ),
+            array(
+                'appListString' => array(),
+                'moduleDefs' => array(
+                    'status' =>
+                        array(
+                            'options' => 'meeting_status_dom',
+                        ),
+                ),
+                'mapping' => array(
+                    'CANCELLED' => 'Not Held',
+                    'CONFIRMED' => 'Planned',
+                ),
+                'result' => array(),
+            ),
+            array(
+                'appListString' => array(
+                    'meeting_status_dom' => array(
+                        'Planned' => 'Scheduled',
+                        'Held' => 'Held',
+                        'Not Held' => 'Canceled',
+                    ),
+                ),
+                'moduleDefs' => array(),
+                'mapping' => array(
+                    'CANCELLED' => 'Not Held',
+                    'CONFIRMED' => 'Planned',
+                ),
+                'result' => array(),
+            ),
+            array(
+                'appListString' => array(
+                    'meeting_status_dom' => array(
+                        'Planned' => 'Scheduled',
+                        'Held' => 'Held',
+                    ),
+                ),
+                'moduleDefs' => array(
+                    'status' =>
+                        array(
+                            'options' => 'meeting_status_dom',
+                        ),
+                ),
+                'mapping' => array(
+                    'CANCELLED' => 'Not Held',
+                    'CONFIRMED' => 'Planned',
+                ),
+                'result' => array(
+                    'CONFIRMED' => 'Planned',
+                ),
             ),
         );
     }
@@ -1645,7 +1581,7 @@ END:VCALENDAR',
 
     public function testVObjectToString()
     {
-        $vCalendarEventText = $this->getVObjectEventData();
+        $vCalendarEventText = $this->getEventTemplate('vevent');
         $beanMock = $this->getObjectForGetters($vCalendarEventText);
 
         $result = $beanMock->vObjectToString();
@@ -1942,6 +1878,48 @@ END:VCALENDAR',
     }
 
     /**
+     * @param array $appListStrings
+     * @param array $moduleDefs
+     * @param array $mapping
+     * @param array $result
+     *
+     * @covers       \CalDavEvent::getStatusMap
+     *
+     * @dataProvider getStatusMapProvider
+     */
+    public function testGetStatusMap(array $appListStrings, array $moduleDefs, array $mapping, array $expectedMapping)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('getAppListStrings', 'getLogger', 'getBean'))
+                         ->getMock();
+
+
+        $meetingsMock = $this->getMockBuilder('Meetings')
+                             ->disableOriginalConstructor()
+                             ->setMethods(null)
+                             ->getMock();
+
+        $meetingsMock->module_name = 'Meetings';
+
+        $loggerMock = $this->getMockBuilder('LoggerManager')
+                           ->disableOriginalConstructor()
+                           ->setMethods(array('error'))
+                           ->getMock();
+
+        $meetingsMock->field_defs = $moduleDefs;
+
+        $beanMock->expects($this->once())->method('getAppListStrings')->willReturn($appListStrings);
+        $beanMock->expects($this->once())->method('getBean')->willReturn($meetingsMock);
+        $beanMock->expects($this->any())->method('getLogger')->willReturn($loggerMock);
+
+        TestReflection::setProtectedValue($beanMock, 'statusMap', $mapping);
+        $result = TestReflection::callProtectedMethod($beanMock, 'getStatusMap');
+
+        $this->assertEquals($expectedMapping, $result);
+    }
+
+    /**
      * Configure mocks for set data tests
      * @param string $currentEvent
      * @param string $type VEVENT of VTODO
@@ -1951,7 +1929,7 @@ END:VCALENDAR',
     {
         $this->beanMock = $this->getMockBuilder('CalDavEvent')
                                ->disableOriginalConstructor()
-                               ->setMethods(null)
+                               ->setMethods(array('getStatusMap'))
                                ->getMock();
 
         $dateTimeHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
@@ -1960,6 +1938,10 @@ END:VCALENDAR',
                                ->getMock();
 
         TestReflection::setProtectedValue($this->beanMock, 'dateTimeHelper', $dateTimeHelper);
+
+        $this->beanMock->expects($this->any())
+                       ->method('getStatusMap')
+                       ->willReturn(TestReflection::getProtectedValue($this->beanMock, 'statusMap'));
 
         $this->beanMock->calendardata = $currentEvent;
 
@@ -1975,7 +1957,7 @@ END:VCALENDAR',
     {
         $beanMock = $this->getMockBuilder('CalDavEvent')
                          ->disableOriginalConstructor()
-                         ->setMethods(null)
+                         ->setMethods(array('getStatusMap'))
                          ->getMock();
 
         $dateTimeHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
@@ -1984,6 +1966,10 @@ END:VCALENDAR',
                                ->getMock();
 
         TestReflection::setProtectedValue($beanMock, 'dateTimeHelper', $dateTimeHelper);
+
+        $beanMock->expects($this->any())
+                 ->method('getStatusMap')
+                 ->willReturn(TestReflection::getProtectedValue($beanMock, 'statusMap'));
 
         $beanMock->calendardata = $currentEvent;
 

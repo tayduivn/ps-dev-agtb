@@ -99,24 +99,24 @@ $dictionary['CalDavEvent'] = array(
                     'comment' => 'The event\'s UID',
                 ),
             'parent_type' =>
-                array (
+                array(
                     'name' => 'parent_type',
-                    'vname'=>'LBL_PARENT_TYPE',
-                    'type' =>'parent_type',
+                    'vname' => 'LBL_PARENT_TYPE',
+                    'type' => 'parent_type',
                     'dbType' => 'varchar',
-                    'options'=> 'parent_type_display',
+                    'options' => 'parent_type_display',
                     'len' => 100,
                     'comment' => 'Module CalDav is associated with',
-                    'studio' => array('searchview'=>false, 'wirelesslistview'=>false),
+                    'studio' => array('searchview' => false, 'wirelesslistview' => false),
                 ),
             'parent_id' =>
-                array (
+                array(
                     'name' => 'parent_id',
-                    'vname'=>'LBL_PARENT_ID',
+                    'vname' => 'LBL_PARENT_ID',
                     'type' => 'id',
-                    'reportable'=>false,
+                    'reportable' => false,
                     'comment' => 'ID of item indicated by parent_type',
-                    'studio' => array('searchview'=>false),
+                    'studio' => array('searchview' => false),
                 ),
             'sync_counter' =>
                 array(

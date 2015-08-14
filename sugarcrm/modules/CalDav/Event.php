@@ -191,6 +191,57 @@ class CalDavEvent extends SugarBean
     }
 
     /**
+     * Retrieve logger instance
+     * @return \LoggerManager
+     */
+    protected function getLogger()
+    {
+        return $GLOBALS['log'];
+    }
+
+    /**
+     * Get global application strings
+     * @return array
+     */
+    protected function getAppListStrings()
+    {
+        global $app_list_strings;
+
+        return $app_list_strings;
+    }
+
+    /**
+     * Filter $statusMap for valid mappings key and return it
+     * If mapping not found empty array should be returned to allow CalDav or SugarCRM module to select the default value
+     * @return array
+     */
+    protected function getStatusMap()
+    {
+        $appStrings = $this->getAppListStrings();
+        $relatedModule = $this->getBean();
+        if (!isset($relatedModule->field_defs['status']['options'])) {
+            $this->getLogger()->error('CalDavEvent can\'t retrieve status options for module '.$relatedModule->module_name);
+            return array();
+        }
+
+        $optionsKey = $relatedModule->field_defs['status']['options'];
+
+        if (!isset($appStrings[$optionsKey])) {
+            $this->getLogger()->error('CalDavEvent can\'t retrieve status options for module '.$relatedModule->module_name);
+            return array();
+        }
+
+        $result = array();
+        foreach ($this->statusMap as $davKey => $sugarKey) {
+            if (isset($appStrings[$optionsKey][$sugarKey])) {
+                $result[$davKey] = $sugarKey;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Retrieve component from vObject
      * @param Sabre\VObject\Component\VCalendar $vObject
      * @return \Sabre\VObject\Component\VEvent | null
@@ -470,6 +521,11 @@ class CalDavEvent extends SugarBean
         return \BeanFactory::getBean('CalDavChanges');
     }
 
+    /**
+     * Retrieve Calendar for event
+     * @param $calendarId
+     * @return null|SugarBean
+     */
     public function getRelatedCalendar($calendarId)
     {
         if ($this->load_relationship('events_calendar')) {
@@ -779,12 +835,13 @@ class CalDavEvent extends SugarBean
      * Set organizer of event
      * @param mixed $value
      * @param VObject\Component $parent
+     * @return bool
      *
      * @todo It will be implemented when "participant helper" becomes available
      */
     public function setOrganizer($value, Sabre\VObject\Component $parent)
     {
-
+        return false;
     }
 
     /**
@@ -817,12 +874,13 @@ class CalDavEvent extends SugarBean
      * Set participants of event
      * @param mixed $value
      * @param VObject\Component $parent
+     * @return bool
      *
      * @todo It will be implemented when "participant helper" becomes available
      */
     public function setParticipants($value, Sabre\VObject\Component $parent)
     {
-
+        return false;
     }
 
     /**
@@ -979,12 +1037,13 @@ class CalDavEvent extends SugarBean
      * Set recurring rules of event
      * @param mixed $value
      * @param VObject\Component $parent
+     * @return bool
      *
      * @todo It will be implemented when "recurring helper" becomes available
      */
     public function setRRule($value, Sabre\VObject\Component $parent)
     {
-
+        return false;
     }
 
     /**
@@ -995,9 +1054,9 @@ class CalDavEvent extends SugarBean
     public function getStatus()
     {
         $status = $this->getVObjectStringProperty('STATUS');
-
-        if (isset($this->statusMap[$status])) {
-            return $this->statusMap[$status];
+        $statusMap = $this->getStatusMap();
+        if (isset($statusMap[$status])) {
+            return $statusMap[$status];
         }
 
         return null;
@@ -1013,7 +1072,7 @@ class CalDavEvent extends SugarBean
      */
     public function setStatus($value, Sabre\VObject\Component $parent)
     {
-        $statusMap = array_flip($this->statusMap);
+        $statusMap = array_flip($this->getStatusMap());
 
         if (!isset($statusMap[$value])) {
             return false;
@@ -1025,6 +1084,7 @@ class CalDavEvent extends SugarBean
     public function vObjectToString()
     {
         $event = $this->getVCalendarEvent();
+
         return $event->serialize();
     }
 
