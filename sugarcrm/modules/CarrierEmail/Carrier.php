@@ -14,29 +14,27 @@ use Sugarcrm\Sugarcrm\Notification\Carrier\CarrierInterface;
 
 class CarrierEmailCarrier implements CarrierInterface
 {
-
     /**
-     * @return \Sugarcrm\Sugarcrm\Notification\Carrier\TransportInterface
+     * Get Transport to deliver messages via Email.
+     * @return CarrierEmailTransport
      */
     public function getTransport()
     {
-        // TODO: Implement getTransport() method.
+        return new CarrierEmailTransport();
     }
 
     /**
-     *
-     * @return array(
-     *      'label' => '', - full info but short
-     *      'url' => '', - url to event
-     *      'subject' => '',- can be not full info, used for email, rss
-     *      'text' => '', - full info can be long
-     *      'html' => '', full info can be long
-     *  );
-     *
+     * Messages to SocketServer have only 'title', 'text' and 'html';
+     * 'title' is subject, 'text' and 'html' are parts of email body.
+     * {@inheritdoc}
      */
     public function getMessageSignature()
     {
-        // TODO: Implement getMessageSignature() method.
+        return array(
+            'title' => '',
+            'text' => '',
+            'html' => '',
+        );
     }
 
     /**
