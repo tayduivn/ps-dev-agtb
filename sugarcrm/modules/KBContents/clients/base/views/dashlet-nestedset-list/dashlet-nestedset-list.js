@@ -58,6 +58,11 @@
     currentFieldValue: null,
 
     /**
+     * Flag indicates should we hide tree.
+     */
+    hidden: null,
+
+    /**
      * Initialize dashlet properties.
      */
     initDashlet: function() {
@@ -84,6 +89,9 @@
             this.context.get('model').on('data:sync:complete', this.modelSaved, this);
 
             this.currentFieldValue = this.context.get('model').get(this.extraModule.field);
+            this.on('openCurrentParent', this.hideTree, this);
+        } else {
+            this.on('stateLoaded', this.hideTree, this);
         }
 
         currentContext.on('subpanel:reload', function(args) {
@@ -111,6 +119,7 @@
         if (this.meta.config) {
             return;
         }
+        this.hideTree(this.hidden);
         var treeOptions = {
             settings: {
                 category_root: this.categoryRoot,
@@ -251,10 +260,13 @@
                             },
                             function() {
                                 self.selectNode(currentModel.id);
+                                self.trigger('openCurrentParent', false);
                             }
                         );
                     }
                 });
+            } else {
+                self.trigger('openCurrentParent', false);
             }
         });
     },
@@ -280,6 +292,7 @@
                     self.openNode(value.id);
                 });
                 self.useStates = originalUseState;
+                self.trigger('stateLoaded', false);
             }
         );
         return true;
@@ -406,6 +419,7 @@
      * @override
      */
     loadData: function(options) {
+        this.hideTree(true);
         if (!options || _.isUndefined(options.saveLeafs) || options.saveLeafs === false) {
             this.loadedLeafs = {};
         }
@@ -477,6 +491,23 @@
                 timestamp: Date.now(),
                 models: models
             };
+        }
+    },
+
+    /**
+     * Hide or show tree,
+     * @param {boolean} hide Whether we need to hide tree.
+     */
+    hideTree: function(hide) {
+        hide = hide || false;
+        if (!hide) {
+            this.hidden = false;
+            this.$('[data-place=dashlet-tree]').removeClass('hide').show();
+            this.$('[data-place=loading]').addClass('hide').hide();
+        } else {
+            this.hidden = true;
+            this.$('[data-place=dashlet-tree]').addClass('hide').hide();
+            this.$('[data-place=loading]').removeClass('hide').show();
         }
     }
 })
