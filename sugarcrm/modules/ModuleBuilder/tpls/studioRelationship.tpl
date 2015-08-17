@@ -72,7 +72,8 @@
 				{sugar_translate label='LBL_MODULE'}:
 				</td>
 				<td>
-					<input name='ignore' value="{sugar_translate label=$module_key escape=true}" disabled >
+					{capture name="module_label"}{sugar_translate label=$module_key}{/capture}
+					<input name='ignore' value="{$smarty.capture.module_label|escape}" disabled>
 					<input type='hidden' name='lhs_module' value='{$module_key}'>
 				</td>
 				<td>
@@ -119,7 +120,8 @@
             </tr>
             <tr>
                 {if $rel.relationship_type == 'many-to-many' || $rel.relationship_type == 'many-to-one'}
-                <td align="right" scope="row">{$mod_strings.LBL_SUBPANEL_FROM} {sugar_translate label=$rel.lhs_module escape=true}:</td>
+                {capture name="lhs_module"}{sugar_translate label=$rel.lhs_module}{/capture}
+                <td align="right" scope="row">{$mod_strings.LBL_SUBPANEL_FROM} {$smarty.capture.lhs_module|escape}:</td>
                 <td> {if $rel.readonly}
                     <input name="lhs_subpanel" id="lhs_subpanel" value="{$rel.lhs_subpanel}" disabled>
                     {else}
@@ -128,8 +130,9 @@
                 </td>
                 {else}<td></td><td></td>{/if}
                 <td></td>
-                {if $rel.relationship_type != 'many-to-one'} 
-                <td align="right" scope="row">{$mod_strings.LBL_SUBPANEL_FROM} {sugar_translate label=$rel.rhs_module escape=true}:</td>
+                {if $rel.relationship_type != 'many-to-one'}
+                {capture name="rhs_module"}{sugar_translate label=$rel.rhs_module}{/capture}
+                <td align="right" scope="row">{$mod_strings.LBL_SUBPANEL_FROM} {$smarty.capture.rhs_module|escape}:</td>
                 <td>
                 {if $rel.readonly}
                     <input name="lhs_subpanel" id="lhs_subpanel" value="{$rel.rhs_subpanel}" disabled>
