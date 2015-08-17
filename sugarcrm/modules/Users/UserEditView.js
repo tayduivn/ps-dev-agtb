@@ -309,8 +309,34 @@ function verify_data(form)
     }
 	return true;
 }
-    
-    
+
+function submit_form(form) {
+    var action;
+    action = form.action.value;
+    form.action.value = 'validate';
+    $("#SAVE_HEADER").attr('disabled','disabled');
+    $("#SAVE_FOOTER").attr('disabled','disabled');
+    $.ajax({
+        type: 'POST',
+        data: $(form).serialize(),
+        success: function (data) {
+            if (!data.status) {
+                $('#ajax_error_string').text(data.error_string);
+            } else {
+                $('#ajax_error_string').hide();
+                form.action.value = action;
+                form.submit();
+            }
+        },
+        complete: function() {
+            setTimeout(function(){
+                $("#SAVE_HEADER").removeAttr('disabled');
+                $("#SAVE_FOOTER").removeAttr('disabled');
+            },100);
+        }
+    });
+}
+
 function set_chooser()
 {
     var display_tabs_def = '';

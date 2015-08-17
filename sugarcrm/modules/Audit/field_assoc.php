@@ -77,8 +77,12 @@ $moduleAssocFieldsArray = array(
             'table_name' => 'cases',
             'select_field_name' => 'name',
             'select_field_join' => 'id',
-        )
-
+        ),
+        'kbsapprover_id' => array(
+            'table_name' => 'users',
+            'select_field_name' => 'user_name',
+            'select_field_join' => 'id',
+        ),
     ),
 );
 

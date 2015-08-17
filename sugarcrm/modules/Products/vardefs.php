@@ -930,7 +930,6 @@ $dictionary['Product'] = array(
         ),
     ),
     'indices' => array(
-        array('name' => 'idx_products', 'type' => 'index', 'fields' => array('name', 'deleted')),
         array(
             'name' => 'idx_prod_user_dc_timestamp',
             'type' => 'index',
