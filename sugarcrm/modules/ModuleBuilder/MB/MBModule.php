@@ -909,8 +909,6 @@ class MBModule
 
     function populateFromPost ()
     {
-        global $RAW_REQUEST;
-
         foreach ( $this->implementable as $key => $value )
         {
             $this->config [ $key ] = ! empty ( $_REQUEST [ $key ] ) ;
@@ -928,11 +926,11 @@ class MBModule
         {
             // this is encoded by securexss,
             // but since this is a label that will go into language files, decode it
-            $this->config['label'] = SugarCleaner::stripTags($RAW_REQUEST['label'], false);
+            $this->config['label'] = htmlspecialchars_decode($_REQUEST['label'], ENT_QUOTES);
         }
 
         if (!empty($_REQUEST['label_singular'])) {
-            $this->config['label_singular'] = SugarCleaner::stripTags($RAW_REQUEST['label_singular'], false);
+            $this->config['label_singular'] = htmlspecialchars_decode($_REQUEST['label_singular'], ENT_QUOTES);
         }
 
         $this->config [ 'importable' ] = ! empty( $_REQUEST[ 'importable' ] ) ;
