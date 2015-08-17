@@ -16,7 +16,12 @@
 class SugarUpgradeUserPrefs extends UpgradeScript
 {
     public $order = 5000;
-    public $type = self::UPGRADE_DB;
+
+    public function __construct($upgrader)
+    {
+        $this->type = self::UPGRADE_CUSTOM | self::UPGRADE_DB;
+        parent::__construct($upgrader);
+    }
 
     protected function upgradeLocaleNameFormat($name_format)
     {

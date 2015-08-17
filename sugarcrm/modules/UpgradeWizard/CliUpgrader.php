@@ -587,9 +587,13 @@ eoq2;
         if (file_exists(dirname(__FILE__).'/SugarSystemInfo.php') && version_compare($sugar_version, '7.2.2', '<')) {
             require_once 'SugarSystemInfo.php';
         }
-        require_once 'SugarHeartbeatClient.php';
-        require_once 'HealthCheckClient.php';
-        require_once 'HealthCheckHelper.php';
+        if (!class_exists('SugarHeartbeatClient'))
+            require_once 'SugarHeartbeatClient.php';
+        if (!class_exists('HealthCheckClient'))
+            require_once 'HealthCheckClient.php';
+        if (!class_exists('HealthCheckHelper'))
+            require_once 'HealthCheckHelper.php';
+
         return HealthCheckHelper::getInstance();
     }
 
