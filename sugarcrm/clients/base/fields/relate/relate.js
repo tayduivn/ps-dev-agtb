@@ -200,12 +200,13 @@
         }
     },
 
-    focus: function () {
-        var self = this;
-        if(this.action !== 'disabled') {
+    focus: function() {
+        if (this.action !== 'disabled') {
             //Need to defer to ensure that all the related elements have finished
             //rendering before attempting to open the dropdown.
-            _.defer(function(){self.$(self.fieldTag).select2('open')});
+            _.defer(_.bind(function() {
+                this.$(this.fieldTag).first().select2('open');
+            }, this));
         }
     },
 
