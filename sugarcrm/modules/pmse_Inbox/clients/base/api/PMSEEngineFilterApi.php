@@ -225,7 +225,10 @@ class PMSEEngineFilterApi extends FilterApi
                 global $current_user;
                 $where->queryAnd()->equals('cas_user_id', $current_user->id);
             } else {
-                $where->queryAnd()->in('cas_sugar_module', PMSEEngineUtils::getSupportedModules());
+                $supportedModules = PMSEEngineUtils::getSupportedModules();
+                if (!empty($supportedModules)) {
+                    $where->queryAnd()->in('cas_sugar_module', $supportedModules);
+                }
             }
         }
         self::$isVisibilityApplied = true;
