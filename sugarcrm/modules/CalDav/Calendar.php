@@ -201,6 +201,8 @@ class CalDavCalendar extends SugarBean
         $this->uri = translate('LBL_DAFAULT_CALDAV_URI');
         $this->name = translate('LBL_DAFAULT_CALDAV_NAME');
         $this->assigned_user_id = $user->id;
+        $this->timezone = $user->getPreference('timezone');
+
         $this->save();
 
         return $this;

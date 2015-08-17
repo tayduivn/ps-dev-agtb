@@ -1,0 +1,109 @@
+<?php
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+namespace Sugarcrm\Sugarcrm\Dav\Base\Helper;
+
+use Sabre\VObject;
+
+class DateTimeHelper
+{
+
+    /**
+     * Convert DURATION format to seconds
+     * @see http://tools.ietf.org/html/rfc5545#page-34
+     * @param string $duration
+     * @return int
+     */
+    public function durationToSeconds($duration)
+    {
+        $durationInterval = VObject\DateTimeParser::parseDuration($duration, false);
+        $currentDateTime = new \DateTime();
+        $durationDateTime = clone $currentDateTime;
+        $durationDateTime->add($durationInterval);
+
+        return $durationDateTime->getTimestamp() - $currentDateTime->getTimestamp();
+    }
+
+    /**
+     * Convert seconds to DURATION format
+     * @see http://tools.ietf.org/html/rfc5545#page-34
+     * @param int $seconds
+     * @return string
+     */
+    public function secondsToDuration($seconds)
+    {
+        $parts = array(
+            'date' => array('Y' => 'y', 'M' => 'm', 'D' => 'd'),
+            'time' => array('H' => 'h', 'M' => 'i', 'S' => 's'),
+        );
+        $currentDate = new \DateTime();
+        $durationDate = clone $currentDate;
+        $durationDate->modify($seconds . ' seconds');
+        $dateInterval = $currentDate->diff($durationDate);
+
+        $aParts = array();
+        foreach ($parts as $group) {
+            $tmpPart = '';
+            foreach ($group as $part => $key) {
+                if ($dateInterval->$key) {
+                    $tmpPart .= $dateInterval->$key . $part;
+                }
+            }
+            $aParts[] = $tmpPart;
+        }
+
+        return ($dateInterval->invert ? '-' : '') . 'P' . implode($aParts, 'T');
+    }
+
+    /**
+     * Convert DAV Datetime format to SugarCRM DB format
+     * @param VObject\Property\ICalendar\DateTime $vDateTime
+     * @return string
+     */
+    public function davDateToSugar(VObject\Property\ICalendar\DateTime $vDateTime)
+    {
+        $date = $vDateTime->getValue();
+        $params = $vDateTime->parameters();
+
+        if (isset($params['TZID'])) {
+            $timezone = $params['TZID']->getValue();
+            $dateFormat = 'Ymd\THis';
+        } else {
+            $dt = new \DateTime($date);
+            $timezone = $dt->getTimezone()->getName();
+            if ($timezone == 'Z') {
+                $dateFormat = 'Ymd\THis\Z';
+                $timezone = 'UTC';
+            } else {
+                $dateFormat = 'Ymd\THis';
+                $timezone = null;
+            }
+        }
+        $dateTime = \SugarDateTime::createFromFormat($dateFormat, $date, new \DateTimeZone($timezone));
+
+        return $dateTime->asDb();
+    }
+
+    /**
+     * Create DateTime object with UTC timetone
+     * @param $dateTime
+     * @return \DateTime
+     */
+    public function sugarDateToDav($dateTime)
+    {
+        $tz = new \DateTimeZone('UTC');
+        $dt = new \DateTime($dateTime, $tz);
+        $dt->setTimeZone($tz);
+
+        return $dt;
+    }
+}

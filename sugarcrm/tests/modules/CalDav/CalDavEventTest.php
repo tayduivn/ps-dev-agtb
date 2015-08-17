@@ -15,22 +15,32 @@ require_once 'modules/CalDav/Event.php';
 
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
+use Sabre\VObject;
+
 /**
  * CalDav bean tests
  * Class CalDavTest
+ *
+ * @coversDefaultClass \CalDavEvent
  */
 class CalDavEventTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @var \CalDavEventMock
+     */
+    protected $beanMock;
+
     public function setUp()
     {
-        SugarTestHelper::setUp('current_user');
         parent::setUp();
+        SugarTestHelper::setUp('current_user');
     }
 
     public function tearDown()
     {
         SugarTestCalDavUtilities::deleteAllCreatedCalendars();
         SugarTestCalDavUtilities::deleteCreatedEvents();
+        SugarTestMeetingUtilities::removeAllCreatedMeetings();
         parent::tearDown();
     }
 
@@ -255,6 +265,786 @@ END:VCALENDAR',
             array(
                 'beanData' => array('id' => 1, 'calendarid' => 1, 'deleted' => 1, 'uri' => 'uri'),
                 'expectedChange' => array('calendarid' => 1, 'operation' => 3, 'uri' => 'uri')
+            ),
+        );
+    }
+
+    /**
+     * Load template for event
+     * @param string $templateName
+     * @return string;
+     */
+    protected function getEventTemplate($templateName)
+    {
+        return file_get_contents(dirname(__FILE__).'/EventTemplates/'.$templateName.'.ics');
+    }
+
+    public function getVObjectProvider()
+    {
+        return array(
+            array('vCalendar' => $this->getEventTemplate('vevent')),
+            array('vCalnedar' => $this->getEventTemplate('vtodo')),
+            array('vCalendar' => null),
+        );
+    }
+
+    public function getTitleProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'result' => 'Test event title',
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vtodo'),
+                'result' => 'Test task title',
+            ),
+            array(
+                'vCalendar' => null,
+                'result' => null,
+            ),
+        );
+    }
+
+    public function getDescriptionProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'result' => 'Test event description',
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vtodo'),
+                'result' => 'Test task description',
+            ),
+            array(
+                'vCalendar' => null,
+                'result' => null,
+            ),
+        );
+    }
+
+    public function getStartDateProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'result' => '2015-08-06 08:00:00',
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vtodo'),
+                'result' => '2015-08-14 08:00:00',
+            ),
+            array(
+                'vCalendar' => null,
+                'result' => null,
+            ),
+        );
+    }
+
+    public function getDurationProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'result' => 60,
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vtodo'),
+                'result' => 120,
+            ),
+            array(
+                'vCalendar' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART:20110101T120000Z
+DURATION:P15DT5H0M20S
+END:VEVENT
+END:VCALENDAR',
+                'result' => 21900,
+            ),
+            array(
+                'vCalendar' => null,
+                'result' => 0,
+            ),
+        );
+    }
+
+    public function getDurationHoursProvider()
+    {
+        return array(
+            array(
+                'minutes' => 65,
+                'result' => 1,
+            ),
+            array(
+                'minutes' => 120,
+                'result' => 2,
+            ),
+            array(
+                'minutes' => 10,
+                'result' => 0
+            ),
+        );
+    }
+
+    public function getDurationMinutesProvider()
+    {
+        return array(
+            array(
+                'minutes' => 65,
+                'result' => 5,
+            ),
+            array(
+                'minutes' => 120,
+                'result' => 0,
+            ),
+            array(
+                'minutes' => 10,
+                'result' => 10
+            ),
+        );
+    }
+
+    public function getEndDateProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'result' => '2015-08-06 09:00:00',
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vtodo'),
+                'result' => '2015-08-14 10:00:00',
+            ),
+            array(
+                'vCalendar' => null,
+                'result' => null,
+            ),
+        );
+    }
+
+    public function getTimeZoneProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'result' => 'Europe/Berlin',
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vtodo'),
+                'result' => 'Europe/Minsk',
+            ),
+            array(
+                'vCalendar' => null,
+                'result' => 'Europe/Berlin',
+            ),
+        );
+    }
+
+    public function getLocationProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'result' => 'office',
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vtodo'),
+                'result' => 'office1',
+            ),
+            array(
+                'vCalendar' => null,
+                'result' => null,
+            ),
+        );
+    }
+
+    public function getVisibilityProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'result' => 'PUBLIC',
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vtodo'),
+                'result' => 'CONFIDENTIAL',
+            ),
+            array(
+                'vCalendar' => null,
+                'result' => null,
+            ),
+        );
+    }
+
+    public function getOrganizerProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'result' => array(
+                    'user' => 'mailto:test@sugarcrm.com',
+                    'status' => 'ACCEPTED',
+                    'role' => 'CHAIR',
+                ),
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vtodo'),
+                'result' => null,
+            ),
+            array(
+                'vCalendar' => null,
+                'result' => null,
+            ),
+        );
+    }
+
+    public function getParticipantsProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'result' => array(
+                    array(
+                        'user' => 'mailto:SALLY@EXAMPLE.COM',
+                        'status' => 'NEEDS-ACTION',
+                        'role' => 'REQ-PARTICIPANT',
+                    ),
+                    array(
+                        'user' => 'mailto:test@test.com',
+                        'status' => 'NEEDS-ACTION',
+                        'role' => 'CHAIR',
+                    ),
+                    array(
+                        'user' => 'mailto:test1@test.com',
+                        'status' => 'NEEDS-ACTION',
+                        'role' => 'OPT-PARTICIPANT',
+                    ),
+                ),
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vtodo'),
+                'result' => array(),
+            ),
+            array(
+                'vCalendar' => null,
+                'result' => array(),
+            ),
+        );
+    }
+
+    public function getReminderProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'result' => array(
+                    'DISPLAY' => array(
+                        'duration' => 900,
+                        'description' => 'Default Mozilla Description',
+                        'attendees' => array(),
+                    )
+                )
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vtodo'),
+                'result' => array(),
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vGetReminder1'),
+                'result' => array(
+                    'DISPLAY' => array(
+                        'duration' => 900,
+                        'description' => 'alarm test',
+                        'attendees' => array(
+                            array(
+                                'user' => 'test@test.com',
+                                'status' => 'NEEDS-ACTION',
+                                'role' => 'REQ-PARTICIPANT',
+                            ),
+                        ),
+                    ),
+                    'EMAIL' => array(
+                        'duration' => 1200,
+                        'description' => 'alarm test',
+                        'attendees' => array(
+                            array(
+                                'user' => 'test@test.com',
+                                'status' => 'NEEDS-ACTION',
+                                'role' => 'REQ-PARTICIPANT',
+                            ),
+                            array(
+                                'user' => 'test1@test.com',
+                                'status' => 'NEEDS-ACTION',
+                                'role' => 'REQ-PARTICIPANT',
+                            ),
+                        ),
+                    ),
+                )
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vGetReminder2'),
+                'result' => array(
+                    'EMAIL' => array(
+                        'duration' => 1200,
+                        'description' => 'alarm test',
+                        'attendees' => array(
+                            array(
+                                'user' => 'test@test.com',
+                                'status' => 'NEEDS-ACTION',
+                                'role' => 'REQ-PARTICIPANT',
+                            ),
+                            array(
+                                'user' => 'test1@test.com',
+                                'status' => 'NEEDS-ACTION',
+                                'role' => 'REQ-PARTICIPANT',
+                            ),
+                        ),
+                    ),
+                )
+            ),
+            array(
+                'vCalendar' => null,
+                'result' => array(),
+            ),
+        );
+    }
+
+    public function getRRuleProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'result' => array(
+                    'until' => '2015-08-13 08:00:00',
+                    'type' => 'Daily',
+                )
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vtodo'),
+                'result' => array(
+                    'count' => 5,
+                    'type' => 'Weekly',
+                )
+            ),
+            array(
+                'vCalendar' => null,
+                'result' => null,
+            ),
+        );
+    }
+
+    public function getStatusProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'result' => null,
+            ),
+            array(
+                'vCalendar' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+STATUS:CANCELLED
+END:VEVENT
+END:VCALENDAR',
+                'result' => 'Not Held',
+            ),
+            array(
+                'vCalendar' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR',
+                'result' => 'Planned',
+            ),
+            array(
+                'vCalendar' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+STATUS:TENTATIVE
+END:VEVENT
+END:VCALENDAR',
+                'result' => null,
+            ),
+            array(
+                'vCalendar' => null,
+                'result' => null,
+            ),
+        );
+    }
+
+    public function setComponentProvider()
+    {
+        return array(
+            array(
+                'currentEvent' => $this->getEventTemplate('vevent'),
+                'component' => 'VEVENT',
+                'class' => 'Sabre\VObject\Component\VEvent'
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vempty'),
+                'component' => 'VTODO',
+                'class' => 'Sabre\VObject\Component\VTodo'
+            ),
+        );
+    }
+
+    public function setTitleProvider()
+    {
+        return array(
+            array(
+                'currentEvent' => $this->getEventTemplate('vevent'),
+                'newValue' => 'test1',
+                'result' => true
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vevent'),
+                'newValue' => 'Test event title',
+                'result' => false
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vempty'),
+                'newValue' => 'test',
+                'result' => true
+            ),
+        );
+    }
+
+    public function setDescriptionProvider()
+    {
+        return array(
+            array(
+                'currentEvent' => $this->getEventTemplate('vevent'),
+                'newValue' => 'test1',
+                'result' => true
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vevent'),
+                'newValue' => 'Test event description',
+                'result' => false
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vempty'),
+                'newValue' => 'test',
+                'result' => true
+            ),
+        );
+    }
+
+    public function setLocationProvider()
+    {
+        return array(
+            array(
+                'currentEvent' => $this->getEventTemplate('vevent'),
+                'newValue' => 'test1',
+                'result' => true
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vevent'),
+                'newValue' => 'office',
+                'result' => false
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vempty'),
+                'newValue' => 'test',
+                'result' => true
+            ),
+        );
+    }
+
+    public function setStatusProvider()
+    {
+        return array(
+            array(
+                'currentEvent' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+STATUS:CANCELLED
+END:VEVENT
+END:VCALENDAR',
+                'newValue' => 'Planned',
+                'result' => true,
+                'newStatus' => 'CONFIRMED'
+            ),
+            array(
+                'currentEvent' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR',
+                'newValue' => 'Not Held',
+                'result' => true,
+                'newStatus' => 'CANCELLED'
+            ),
+            array(
+                'currentEvent' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+STATUS:CANCELLED
+END:VEVENT
+END:VCALENDAR',
+                'newValue' => 'Not Held',
+                'result' => false,
+                'newStatus' => 'CANCELLED'
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vempty'),
+                'newValue' => 'Planned',
+                'result' => true,
+                'newStatus' => 'CONFIRMED'
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vempty'),
+                'newValue' => 'Planned1',
+                'result' => false,
+                'newStatus' => null,
+            ),
+        );
+    }
+
+    public function setDurationProvider()
+    {
+        return array(
+            array(
+                'currentEvent' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART:20110101T120000Z
+DURATION:PT1H
+END:VEVENT
+END:VCALENDAR',
+                'hours' => 2,
+                'minutes' => 0,
+                'newValue' => 'PT2H',
+                'result' => true,
+            ),
+            array(
+                'currentEvent' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART:20110101T120000Z
+DURATION:PT1H
+END:VEVENT
+END:VCALENDAR',
+                'hours' => 0,
+                'minutes' => 60,
+                'newValue' => 'PT1H',
+                'result' => false,
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vempty'),
+                'hours' => 2,
+                'minutes' => 30,
+                'newValue' => 'PT2H30M',
+                'result' => true,
+            ),
+        );
+    }
+
+    public function setReminderProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'params' => array(
+                    array(
+                        'seconds' => 1200,
+                        'action' => 'DISPLAY',
+                        'duration' => '-PT20M',
+                        'result' => true,
+                    ),
+                ),
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'params' => array(
+                    array(
+                        'seconds' => 900,
+                        'action' => 'DISPLAY',
+                        'duration' => '-PT15M',
+                        'result' => false,
+                    ),
+                ),
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'params' => array(
+                    array(
+                        'seconds' => 900,
+                        'action' => 'EMAIL',
+                        'duration' => '-PT15M',
+                        'result' => true,
+                    ),
+                ),
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vempty'),
+                'params' => array(
+                    array(
+                        'seconds' => 600,
+                        'action' => 'DISPLAY',
+                        'duration' => '-PT10M',
+                        'result' => true,
+                    ),
+                    array(
+                        'seconds' => 600,
+                        'action' => 'DISPLAY',
+                        'duration' => '-PT10M',
+                        'result' => false,
+                    ),
+                    array(
+                        'seconds' => 600,
+                        'action' => 'EMAIL',
+                        'duration' => '-PT10M',
+                        'result' => true,
+                    ),
+                ),
+            ),
+        );
+    }
+
+    public function setStartDateProvider()
+    {
+        return array(
+            array(
+                'currentEvent' => $this->getEventTemplate('vevent'),
+                'sugarDateTime' => '2014-12-31 21:00:01',
+                'datetime' => '20141231T210001Z',
+                'result' => true,
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vevent'),
+                'sugarDateTime' => '2015-08-06 08:00:00',
+                'datetime' => '20150806T100000',
+                'result' => false,
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vempty'),
+                'sugarDateTime' => '2014-12-31 21:00:01',
+                'datetime' => '20141231T210001Z',
+                'result' => true,
+            ),
+        );
+    }
+
+    public function setEndDateProvider()
+    {
+        return array(
+            array(
+                'currentEvent' => $this->getEventTemplate('vevent'),
+                'sugarDateTime' => '2014-12-31 21:00:01',
+                'datetime' => '20141231T210001Z',
+                'result' => true,
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vevent'),
+                'sugarDateTime' => '2015-08-06 09:00:00',
+                'datetime' => '20150806T110000',
+                'result' => false,
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vempty'),
+                'sugarDateTime' => '2014-12-31 21:00:01',
+                'datetime' => '20141231T210001Z',
+                'result' => true,
+            ),
+        );
+    }
+
+    public function setDueDateProvider()
+    {
+        return array(
+            array(
+                'currentEvent' => $this->getEventTemplate('vtodo'),
+                'sugarDateTime' => '2014-12-31 21:00:01',
+                'datetime' => '20141231T210001Z',
+                'result' => true,
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vtodo'),
+                'sugarDateTime' => '2015-08-14 10:00:00',
+                'datetime' => '20150814T130000',
+                'result' => false,
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vempty'),
+                'sugarDateTime' => '2014-12-31 21:00:01',
+                'datetime' => '20141231T210001Z',
+                'result' => true,
+            ),
+        );
+    }
+
+    public function getStatusMapProvider()
+    {
+        return array(
+            array(
+                'appListString' => array(
+                    'meeting_status_dom' => array(
+                        'Planned' => 'Scheduled',
+                        'Held' => 'Held',
+                        'Not Held' => 'Canceled',
+                    ),
+                ),
+                'moduleDefs' => array(
+                    'status' =>
+                        array(
+                            'options' => 'meeting_status_dom',
+                        ),
+                ),
+                'mapping' => array(
+                    'CANCELLED' => 'Not Held',
+                    'CONFIRMED' => 'Planned',
+                ),
+                'result' => array(
+                    'CANCELLED' => 'Not Held',
+                    'CONFIRMED' => 'Planned',
+                ),
+            ),
+            array(
+                'appListString' => array(),
+                'moduleDefs' => array(
+                    'status' =>
+                        array(
+                            'options' => 'meeting_status_dom',
+                        ),
+                ),
+                'mapping' => array(
+                    'CANCELLED' => 'Not Held',
+                    'CONFIRMED' => 'Planned',
+                ),
+                'result' => array(),
+            ),
+            array(
+                'appListString' => array(
+                    'meeting_status_dom' => array(
+                        'Planned' => 'Scheduled',
+                        'Held' => 'Held',
+                        'Not Held' => 'Canceled',
+                    ),
+                ),
+                'moduleDefs' => array(),
+                'mapping' => array(
+                    'CANCELLED' => 'Not Held',
+                    'CONFIRMED' => 'Planned',
+                ),
+                'result' => array(),
+            ),
+            array(
+                'appListString' => array(
+                    'meeting_status_dom' => array(
+                        'Planned' => 'Scheduled',
+                        'Held' => 'Held',
+                    ),
+                ),
+                'moduleDefs' => array(
+                    'status' =>
+                        array(
+                            'options' => 'meeting_status_dom',
+                        ),
+                ),
+                'mapping' => array(
+                    'CANCELLED' => 'Not Held',
+                    'CONFIRMED' => 'Planned',
+                ),
+                'result' => array(
+                    'CONFIRMED' => 'Planned',
+                ),
             ),
         );
     }
@@ -486,9 +1276,9 @@ END:VCALENDAR',
                             ->getMock();
 
         $calendarMock = $this->getMockBuilder('CalDavCalendar')
-                            ->disableOriginalConstructor()
-                            ->setMethods(array('save'))
-                            ->getMock();
+                             ->disableOriginalConstructor()
+                             ->setMethods(array('save'))
+                             ->getMock();
 
         $beanMock->expects($this->once())->method('getChangesBean')->willReturn($changesMock);
         $beanMock->expects($this->once())->method('getRelatedCalendar')->willReturn($calendarMock);
@@ -497,5 +1287,692 @@ END:VCALENDAR',
                     ->with($calendarMock, $expectedChange['uri'], $expectedChange['operation']);
 
         TestReflection::callProtectedMethod($beanMock, 'addChange', array($expectedChange['operation']));
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     *
+     * @covers       \CalDavEvent::getVCalendarEvent
+     *
+     * @dataProvider getVObjectProvider
+     */
+    public function testGetVObject($vCalendarEventText)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
+
+        $beanMock->calendardata = $vCalendarEventText;
+
+        $result = TestReflection::callProtectedMethod($beanMock, 'getVCalendarEvent', array());
+
+        $this->assertInstanceOf('Sabre\VObject\Component\VCalendar', $result);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param string $expectedResult
+     *
+     * @covers       \CalDavEvent::getTitle
+     *
+     * @dataProvider getTitleProvider
+     */
+    public function testGetTitle($vCalendarEventText, $expectedResult)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $beanMock->calendardata = $vCalendarEventText;
+
+        $result = $beanMock->getTitle();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param string $expectedResult
+     *
+     * @covers       \CalDavEvent::getDescription
+     *
+     * @dataProvider getDescriptionProvider
+     */
+    public function testGetDescription($vCalendarEventText, $expectedResult)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = $beanMock->getDescription();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param string $expectedResult
+     *
+     * @covers       \CalDavEvent::getStartDate
+     *
+     * @dataProvider getStartDateProvider
+     */
+    public function testGetStartDate($vCalendarEventText, $expectedResult)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = $beanMock->getStartDate();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param string $expectedResult
+     *
+     * @covers       \CalDavEvent::getEndDate
+     *
+     * @dataProvider getEndDateProvider
+     */
+    public function testGetEndDate($vCalendarEventText, $expectedResult)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = $beanMock->getEndDate();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param string $expectedResult
+     *
+     * @covers       \CalDavEvent::getTimeZone
+     *
+     * @dataProvider getTimeZoneProvider
+     */
+    public function testGetTimeZone($vCalendarEventText, $expectedResult)
+    {
+        $GLOBALS['current_user']->setPreference('timezone', 'Europe/Berlin');
+
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = $beanMock->getTimeZone();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param string $expectedResult
+     *
+     * @covers       \CalDavEvent::getLocation
+     *
+     * @dataProvider getLocationProvider
+     */
+    public function testGetLocation($vCalendarEventText, $expectedResult)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = $beanMock->getLocation();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param string $expectedResult
+     *
+     * @covers       \CalDavEvent::getDuration
+     *
+     * @dataProvider getDurationProvider
+     */
+    public function testGetDuration($vCalendarEventText, $expectedResult)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = $beanMock->getDuration();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @param int $minutes
+     * @param int $expectedResult
+     *
+     * @covers       \CalDavEvent::getDurationHours
+     *
+     * @dataProvider getDurationHoursProvider
+     */
+    public function testGetDurationHours($minutes, $expectedResult)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('getDuration'))
+                         ->getMock();
+
+        $beanMock->expects($this->once())->method('getDuration')->willReturn($minutes);
+
+        $result = $beanMock->getDurationHours();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @param int $minutes
+     * @param int $expectedResult
+     *
+     * @covers       \CalDavEvent::getDurationMinutes
+     *
+     * @dataProvider getDurationMinutesProvider
+     */
+    public function testGetDurationMinutes($minutes, $expectedResult)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('getDuration'))
+                         ->getMock();
+
+        $beanMock->expects($this->once())->method('getDuration')->willReturn($minutes);
+
+        $result = $beanMock->getDurationMinutes();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param string $expectedResult
+     *
+     * @covers       \CalDavEvent::getVisibility
+     *
+     * @dataProvider getVisibilityProvider
+     */
+    public function testGetVisibility($vCalendarEventText, $expectedResult)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = $beanMock->getVisibility();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param string $expectedResult
+     *
+     * @covers       \CalDavEvent::getOrganizer
+     *
+     * @dataProvider getOrganizerProvider
+     */
+    public function testGetOrganizer($vCalendarEventText, $expectedResult)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = $beanMock->getOrganizer();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param string $expectedResult
+     *
+     * @covers       \CalDavEvent::getParticipants
+     *
+     * @dataProvider getParticipantsProvider
+     */
+    public function testGetParticipants($vCalendarEventText, $expectedResult)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = $beanMock->getParticipants();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param string $expectedResult
+     *
+     * @covers       \CalDavEvent::getReminders
+     *
+     * @dataProvider getReminderProvider
+     */
+    public function testGetReminder($vCalendarEventText, $expectedResult)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = $beanMock->getReminders();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param string $expectedResult
+     *
+     * @covers       \CalDavEvent::getRRule
+     *
+     * @dataProvider getRRuleProvider
+     */
+    public function testGetRRule($vCalendarEventText, $expectedResult)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = $beanMock->getRRule();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param string $expectedResult
+     *
+     * @covers       \CalDavEvent::getStatus
+     *
+     * @dataProvider getStatusProvider
+     */
+    public function testGetStatus($vCalendarEventText, $expectedResult)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = $beanMock->getStatus();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    public function testVObjectToString()
+    {
+        $vCalendarEventText = $this->getEventTemplate('vevent');
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = $beanMock->vObjectToString();
+
+        $this->assertTrue(is_string($result));
+    }
+
+    /**
+     * @covers \CalDavEvent::getBean
+     */
+    public function testGetBean()
+    {
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('save'))
+                         ->getMock();
+
+        $result = $beanMock->getBean();
+
+        $this->assertInstanceOf('Meeting', $result);
+
+        $callsMock = $this->getMockBuilder('Call')
+                          ->disableOriginalConstructor()
+                          ->setMethods(null)
+                          ->getMock();
+
+        $callsMock->module_name = 'Calls';
+        $callsMock->id = '1';
+
+        $beanMock->setBean($callsMock);
+
+        $result = $beanMock->getBean();
+
+        $this->assertInstanceOf('Call', $result);
+    }
+
+    /**
+     * @covers \CalDavEvent::setBean
+     */
+    public function testSetBean()
+    {
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('save'))
+                         ->getMock();
+
+        $meetingsMock = $this->getMockBuilder('Meeting')
+                             ->disableOriginalConstructor()
+                             ->setMethods(null)
+                             ->getMock();
+
+        $meetingsMock->module_name = 'Meetings';
+        $meetingsMock->id = '1';
+
+        $beanMock->setBean($meetingsMock);
+
+        $this->assertEquals($meetingsMock->module_name, $beanMock->parent_type);
+        $this->assertEquals($meetingsMock->id, $beanMock->parent_id);
+    }
+
+    /**
+     * @covers \CalDavEvent::findByBean
+     */
+    public function testFindByBean()
+    {
+        $event = SugarTestCalDavUtilities::createEvent();
+        $meeting = SugarTestMeetingUtilities::createMeeting();
+
+        $event->setBean($meeting);
+        $event->save();
+
+        $caldavBean = \BeanFactory::getBean('CalDavEvents');
+
+        $result = $caldavBean->findByBean($meeting);
+
+        $this->assertEquals($meeting->id, $result->parent_id);
+    }
+
+    /**
+     * @param string $currentEvent
+     * @param string $componentType
+     * @param string $expectedClass
+     *
+     * @covers       \CalDavEvent::setType
+     *
+     * @dataProvider setComponentProvider
+     */
+    public function testSetComponent($currentEvent, $componentType, $expectedClass)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('getVCalendarEvent'))
+                         ->getMock();
+
+        $vObject = Sabre\VObject\Reader::read($currentEvent);
+
+        $beanMock->expects($this->once())->method('getVCalendarEvent')->willReturn($vObject);
+
+        $beanMock->setType($componentType);
+
+        $components = $vObject->getComponents();
+
+        $this->assertEquals(2, count($components));
+        $component = $vObject->select($componentType);
+        $this->assertInstanceOf($expectedClass, array_shift($component));
+    }
+
+    /**
+     * @param string $currentEvent
+     * @param string $newValue
+     * @param bool $expectedResult
+     *
+     * @covers       \CalDavEvent::setTitle
+     *
+     * @dataProvider setTitleProvider
+     */
+    public function testSetTitle($currentEvent, $newValue, $expectedResult)
+    {
+        $component = $this->getObjectForSetters($currentEvent);
+
+        $result = $this->beanMock->setTitle($newValue, $component);
+
+        $this->assertEquals($expectedResult, $result);
+        $this->assertEquals(1, count($component->select('SUMMARY')));
+        $this->assertEquals($newValue, $component->SUMMARY);
+
+    }
+
+    /**
+     * @param string $currentEvent
+     * @param string $newValue
+     * @param bool $expectedResult
+     *
+     * @covers       \CalDavEvent::setDescription
+     *
+     * @dataProvider setDescriptionProvider
+     */
+    public function testSetDescription($currentEvent, $newValue, $expectedResult)
+    {
+        $component = $this->getObjectForSetters($currentEvent);
+
+        $result = $this->beanMock->setDescription($newValue, $component);
+
+        $this->assertEquals($expectedResult, $result);
+        $this->assertEquals(1, count($component->select('DESCRIPTION')));
+        $this->assertEquals($newValue, $component->DESCRIPTION);
+
+    }
+
+    /**
+     * @param string $currentEvent
+     * @param string $newValue
+     * @param bool $expectedResult
+     *
+     * @covers       \CalDavEvent::setLocation
+     *
+     * @dataProvider setLocationProvider
+     */
+    public function testSetLocation($currentEvent, $newValue, $expectedResult)
+    {
+        $component = $this->getObjectForSetters($currentEvent);
+
+        $result = $this->beanMock->setLocation($newValue, $component);
+
+        $this->assertEquals($expectedResult, $result);
+        $this->assertEquals(1, count($component->select('LOCATION')));
+        $this->assertEquals($newValue, $component->LOCATION);
+
+    }
+
+    /**
+     * @param string $currentEvent
+     * @param string $newValue
+     * @param bool $expectedResult
+     *
+     * @covers       \CalDavEvent::setStatus
+     *
+     * @dataProvider setStatusProvider
+     */
+    public function testSetStatus($currentEvent, $newValue, $expectedResult, $expectedStatus)
+    {
+        $component = $this->getObjectForSetters($currentEvent);
+
+        $result = $this->beanMock->setStatus($newValue, $component);
+
+        $this->assertEquals($expectedResult, $result);
+        $this->assertEquals($expectedStatus, $component->STATUS);
+    }
+
+    /**
+     * @param string $currentEvent
+     * @param int $hours
+     * @param int $minutes
+     * @param string $expectedDuration
+     * @param bool $expectedResult
+     *
+     * @covers       \CalDavEvent::setDuration
+     *
+     * @dataProvider setDurationProvider
+     */
+    public function testSetDuration($currentEvent, $hours, $minutes, $expectedDuration, $expectedResult)
+    {
+        $component = $this->getObjectForSetters($currentEvent);
+
+        $result = $this->beanMock->setDuration($hours, $minutes, $component);
+
+        $this->assertEquals($expectedResult, $result);
+        $this->assertEquals($expectedDuration, $component->DURATION);
+    }
+
+    /**
+     * @param string $currentEvent
+     * @param array $reminderParams
+     *
+     * @covers       \CalDavEvent::setReminder
+     *
+     * @dataProvider setReminderProvider
+     */
+    public function testSetReminder($currentEvent, array $reminderParams)
+    {
+        $component = $this->getObjectForSetters($currentEvent);
+
+        foreach ($reminderParams as $param) {
+            $result = $this->beanMock->setReminder($param['seconds'], $component, $param['action']);
+            $this->assertEquals($param['result'], $result);
+        }
+
+        $result = $this->beanMock->getReminders();
+
+        foreach ($reminderParams as $param) {
+            $this->assertNotEmpty($result[$param['action']]);
+            $this->assertEquals($param['seconds'], $result[$param['action']]['duration']);
+        }
+    }
+
+    /**
+     * @param string $currentEvent
+     * @param string $dateTime
+     * @param string $expectedDateTime
+     * @param bool $expectedResult
+     *
+     * @covers       \CalDavEvent::setStartDate
+     *
+     * @dataProvider setStartDateProvider
+     */
+    public function testSetStartDate($currentEvent, $dateTime, $expectedDateTime, $expectedResult)
+    {
+        $component = $this->getObjectForSetters($currentEvent);
+
+        $result = $this->beanMock->setStartDate($dateTime, $component);
+
+        $this->assertEquals($expectedResult, $result);
+        $this->assertEquals($expectedDateTime, $component->DTSTART->getValue());
+    }
+
+    /**
+     * @param string $currentEvent
+     * @param string $dateTime
+     * @param string $expectedDateTime
+     * @param bool $expectedResult
+     *
+     * @covers       \CalDavEvent::setEndDate
+     *
+     * @dataProvider setEndDateProvider
+     */
+    public function testSetEndDate($currentEvent, $dateTime, $expectedDateTime, $expectedResult)
+    {
+        $component = $this->getObjectForSetters($currentEvent);
+
+        $result = $this->beanMock->setEndDate($dateTime, $component);
+
+        $this->assertEquals($expectedResult, $result);
+        $this->assertEquals($expectedDateTime, $component->DTEND->getValue());
+    }
+
+    /**
+     * @param string $currentEvent
+     * @param string $dateTime
+     * @param string $expectedDateTime
+     * @param bool $expectedResult
+     *
+     * @covers       \CalDavEvent::setDueDate
+     *
+     * @dataProvider setDueDateProvider
+     */
+    public function testSetDueDate($currentEvent, $dateTime, $expectedDateTime, $expectedResult)
+    {
+        $component = $this->getObjectForSetters($currentEvent, 'VTODO');
+
+        $result = $this->beanMock->setDueDate($dateTime, $component);
+
+        $this->assertEquals($expectedResult, $result);
+        $this->assertEquals($expectedDateTime, $component->DUE->getValue());
+    }
+
+    /**
+     * @param array $appListStrings
+     * @param array $moduleDefs
+     * @param array $mapping
+     * @param array $result
+     *
+     * @covers       \CalDavEvent::getStatusMap
+     *
+     * @dataProvider getStatusMapProvider
+     */
+    public function testGetStatusMap(array $appListStrings, array $moduleDefs, array $mapping, array $expectedMapping)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('getAppListStrings', 'getLogger', 'getBean'))
+                         ->getMock();
+
+
+        $meetingsMock = $this->getMockBuilder('Meetings')
+                             ->disableOriginalConstructor()
+                             ->setMethods(null)
+                             ->getMock();
+
+        $meetingsMock->module_name = 'Meetings';
+
+        $loggerMock = $this->getMockBuilder('LoggerManager')
+                           ->disableOriginalConstructor()
+                           ->setMethods(array('error'))
+                           ->getMock();
+
+        $meetingsMock->field_defs = $moduleDefs;
+
+        $beanMock->expects($this->once())->method('getAppListStrings')->willReturn($appListStrings);
+        $beanMock->expects($this->once())->method('getBean')->willReturn($meetingsMock);
+        $beanMock->expects($this->any())->method('getLogger')->willReturn($loggerMock);
+
+        TestReflection::setProtectedValue($beanMock, 'statusMap', $mapping);
+        $result = TestReflection::callProtectedMethod($beanMock, 'getStatusMap');
+
+        $this->assertEquals($expectedMapping, $result);
+    }
+
+    /**
+     * Configure mocks for set data tests
+     * @param string $currentEvent
+     * @param string $type VEVENT of VTODO
+     * @return Sabre\VObject\Component
+     */
+    protected function getObjectForSetters($currentEvent, $type = 'VEVENT')
+    {
+        $this->beanMock = $this->getMockBuilder('CalDavEvent')
+                               ->disableOriginalConstructor()
+                               ->setMethods(array('getStatusMap'))
+                               ->getMock();
+
+        $dateTimeHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
+                               ->disableOriginalConstructor()
+                               ->setMethods(null)
+                               ->getMock();
+
+        TestReflection::setProtectedValue($this->beanMock, 'dateTimeHelper', $dateTimeHelper);
+
+        $this->beanMock->expects($this->any())
+                       ->method('getStatusMap')
+                       ->willReturn(TestReflection::getProtectedValue($this->beanMock, 'statusMap'));
+
+        $this->beanMock->calendardata = $currentEvent;
+
+        return $this->beanMock->setType($type);
+    }
+
+    /**
+     * Configure mocks for get data tests
+     * @param string $currentEvent
+     * @return \CalDavEvent_Mock
+     */
+    protected function getObjectForGetters($currentEvent)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('getStatusMap'))
+                         ->getMock();
+
+        $dateTimeHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
+                               ->disableOriginalConstructor()
+                               ->setMethods(null)
+                               ->getMock();
+
+        TestReflection::setProtectedValue($beanMock, 'dateTimeHelper', $dateTimeHelper);
+
+        $beanMock->expects($this->any())
+                 ->method('getStatusMap')
+                 ->willReturn(TestReflection::getProtectedValue($beanMock, 'statusMap'));
+
+        $beanMock->calendardata = $currentEvent;
+
+        return $beanMock;
     }
 }
