@@ -38,12 +38,14 @@ class Event implements ModuleEventInterface
 
     /**
      * @param string $name event name
-     * @param \SugarBean $bean target bean
+     * @param \SugarBean $bean (optional) Target bean.
      */
-    public function __construct($name, \SugarBean $bean)
+    public function __construct($name, \SugarBean $bean = null)
     {
         $this->name = $name;
-        $this->bean = $bean;
+        if (!is_null($bean)) {
+            $this->setBean($bean);
+        }
     }
 
     /**
@@ -60,19 +62,39 @@ class Event implements ModuleEventInterface
      * Returns target bean.
      *
      * @return \SugarBean target bean
+     * @throws \LogicException if bean property is not set.
      */
     public function getBean()
     {
+        if (is_null($this->bean)) {
+            throw new \LogicException('$this->bean should be set');
+        }
         return $this->bean;
+    }
+
+    /**
+     * Set target bean.
+     *
+     * @param \SugarBean $bean  target bean
+     * @return Event $this
+     */
+    public function setBean(\SugarBean $bean)
+    {
+        $this->bean = $bean;
+        return $this;
     }
 
     /**
      * Returns name of module of target bean.
      *
      * @return string name of module
+     * @throws \LogicException if bean property is not set.
      */
     public function getModuleName()
     {
+        if (is_null($this->bean)) {
+            throw new \LogicException('$this->bean should be set');
+        }
         return $this->bean->module_name;
     }
 }
