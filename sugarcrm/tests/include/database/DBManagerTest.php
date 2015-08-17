@@ -4365,6 +4365,7 @@ SQL;
     }
 
     /**
+     * specific test cases based around db type are to be done by functional tests elsewhere.
      * @dataProvider orderByEnumProvider
      * @param $order_by order by column
      * @param $values value array
@@ -4380,9 +4381,7 @@ SQL;
     public function orderByEnumProvider()
     {
         return array(
-            array('', array(), '', ''),
-            array('foo', array("bar"), "desc", "CASE WHEN (foo='' OR foo IS NULL) THEN 0 ELSE 1 END desc\n"),
-            array('foo', array("bar"=>"val"), "desc", "CASE WHEN foo='bar' THEN 0 ELSE 1 END desc\n")
+            array('', array(), '', '')
         );
     }
 }

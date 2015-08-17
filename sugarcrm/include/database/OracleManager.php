@@ -884,11 +884,16 @@ class OracleManager extends DBManager
     {
 		$i = 0;
         $order_by_arr = array();
+        $returnValue = '';
         foreach ($values as $key => $value) {
 			array_push($order_by_arr, $this->quoted($key).", $i");
 			$i++;
 		}
-		return "DECODE($order_by, ".implode(',', $order_by_arr).", $i) $order_dir\n";
+        if (count($order_by_arr) > 0) {
+            $returnValue = "DECODE($order_by, " . implode(',', $order_by_arr) . ", $i) $order_dir\n";
+        }
+
+        return $returnValue;
     }
 
     public function renameColumnSQL($tablename, $column, $newname)
