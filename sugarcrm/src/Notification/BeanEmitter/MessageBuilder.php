@@ -10,20 +10,21 @@
 * Copyright (C) SugarCRM Inc. All rights reserved.
 */
 
-namespace Sugarcrm\Sugarcrm\Notification\ApplicationEmitter;
+namespace Sugarcrm\Sugarcrm\Notification\BeanEmitter;
 
 use Sugarcrm\Sugarcrm\Notification\EventInterface;
 use Sugarcrm\Sugarcrm\Notification\MessageBuilder\MessageBuilderInterface;
 
 /**
  * Class MessageBuilder.
- * Basic application-wide MessageBuilder implementation.
- * @package Sugarcrm\Sugarcrm\Notification\ApplicationEmitter
+ * Application's bean entity MessageBuilder implementation.
+ * Is used to build messages for notifications of the bean-level events.
+ * @package Sugarcrm\Sugarcrm\Notification\BeanEmitter
  */
 class MessageBuilder implements MessageBuilderInterface
 {
     /**
-     * This is basic application-wide MessageBuilder indicator.
+     * This is basic bean-level MessageBuilder indicator.
      * @var int
      */
     protected $level = self::LEVEL_BASE;
@@ -33,8 +34,19 @@ class MessageBuilder implements MessageBuilderInterface
      */
     public function build(EventInterface $event, \User $user, array $messageSignature)
     {
-        // ToDo: write actual logic.
-        return array();
+        $message = array();
+        $module = $event->getModuleName();
+        $bean = $event->getBean();
+
+        // ToDo: build a correct message.
+        if (array_key_exists('title', $messageSignature)) {
+            $message['title'] = "$event triggered";
+        }
+        if (array_key_exists('text', $messageSignature)) {
+            $message['text'] = "Triggered in $module:'{$bean->name}'";
+        }
+
+        return $message;
     }
 
     /**
@@ -50,7 +62,6 @@ class MessageBuilder implements MessageBuilderInterface
      */
     public function supports(EventInterface $event)
     {
-        // ToDo: write actual logic.
-        return true;
+        return $event instanceof Event;
     }
 }

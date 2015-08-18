@@ -16,7 +16,7 @@ use Sugarcrm\Sugarcrm\Notification\EventInterface;
 
 /**
  * Class Event.
- * Should be used, when something happens on an application-level.
+ * Should be used, when something happens on an application level.
  * @package Sugarcrm\Sugarcrm\Notification\ApplicationEmitter
  */
 class Event implements EventInterface

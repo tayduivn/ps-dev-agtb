@@ -18,7 +18,7 @@ use Sugarcrm\Sugarcrm\Notification\EventInterface;
  * Interface MessageBuilderInterface.
  * General interface for all system or custom Notification MessageBuilders.
  * Notification MessageBuilder is an entity that parses and generates messages
- * depending on an event type, recipient and additional data.
+ * depending on an event type, recipient and message signature.
  * @package Sugarcrm\Sugarcrm\Notification\MessageBuilder
  */
 interface MessageBuilderInterface
@@ -52,10 +52,10 @@ interface MessageBuilderInterface
      * Build a message depending on an event type, recipient and additional data.
      * @param EventInterface $event event to build a message from.
      * @param \User $user SugarCRM user who is addressed to receive a message.
-     * @param array $params additional parameters needed for build.
+     * @param array $messageSignature message signature.
      * @return array complete message pack.
      */
-    public function build(EventInterface $event, \User $user, array $params);
+    public function build(EventInterface $event, \User $user, array $messageSignature);
 
     /**
      * Get MessageBuilder level.
@@ -64,9 +64,9 @@ interface MessageBuilderInterface
     public function getLevel();
 
     /**
-     * Say whether Message Builder supports a given Event or not.
+     * Say whether Message Builder can build a message for a given Event or not.
      * @param EventInterface $event Event to test
-     * @return boolean true if supports, otherwise false.
+     * @return boolean true if can build, otherwise false.
      */
     public function supports(EventInterface $event);
 }
