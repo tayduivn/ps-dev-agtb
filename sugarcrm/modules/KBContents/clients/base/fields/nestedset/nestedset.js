@@ -138,6 +138,7 @@
         if (dropdown.opened === true) {
             return;
         }
+        this.view.trigger('list:scrollLock', true);
         $('body').on('click.bs.dropdown.data-api', this.dropdownCallback);
         evt.stopPropagation();
         evt.preventDefault();
@@ -151,6 +152,29 @@
             dropdown.opened = true;
             $input.focus();
         }, dropdown, this);
+    },
+
+    /**
+     * Close dropdown.
+     * @return {Boolean} Return `true` if dropdown has been closed, `false` otherwise.
+     */
+    closeDropDown: function() {
+        var dropdown = this.$(this.ddEl).data('dropdown');
+        if (!dropdown) {
+            return false;
+        }
+        if (!dropdown.opened === true) {
+            return false;
+        }
+        this.view.trigger('list:scrollLock', false);
+        this.$(this.ddEl).dropdown('toggle');
+        if (this.inCreation) {
+            this.switchCreate();
+        }
+        dropdown.opened = false;
+        $('body').off('click.bs.dropdown.data-api', this.dropdownCallback);
+        this.clearSelection();
+        return true;
     },
 
     /**
@@ -181,7 +205,7 @@
      */
     handleGlobalClick: function(evt) {
         if (this._dropdownExists()) {
-            this.closeDD();
+            this.closeDropDown();
             evt.preventDefault();
             evt.stopPropagation();
         }
@@ -249,7 +273,7 @@
             case 27:
                 switch (role) {
                     case 'secondinput':
-                        this.closeDD();
+                        this.closeDropDown();
                         break;
                     case 'add-item':
                         this.switchCreate();
@@ -322,28 +346,6 @@
             $('body').off('click.bs.dropdown.data-api', this.dropdownCallback);
         }
         this._super('_dispose');
-    },
-
-    /**
-     * Close dropdown.
-     * @return {Boolean} Return `true` if dropdown has been closed, `false` otherwise.
-     */
-    closeDD: function() {
-        var dropdown = this.$(this.ddEl).data('dropdown');
-        if (!dropdown) {
-            return false;
-        }
-        if (dropdown.opened === true) {
-            this.$(this.ddEl).dropdown('toggle');
-            if (this.inCreation) {
-                this.switchCreate();
-            }
-            dropdown.opened = false;
-            $('body').off('click.bs.dropdown.data-api', this.dropdownCallback);
-            this.clearSelection();
-            return true;
-        }
-        return false;
     },
 
     /**
@@ -469,7 +471,7 @@
         var id = data.id,
             val = data.name;
         this.setValue(id, val);
-        this.closeDD();
+        this.closeDropDown();
         this.toggleClearIcon();
     },
 
