@@ -44,7 +44,17 @@
       }
     }
     .dashlet:not(.empty) {
-      opacity: .5;
+      &:after {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        background-color: @white;
+        opacity: 0.5;
+        z-index: 0;
+      }
       .swappable-dashlet {
         display: block;
         position: absolute;
@@ -53,8 +63,9 @@
         font-weight: 900;
         text-align: center;
         top: 30%;
-        text-shadow: none;
         color: @white !important;
+        text-shadow: 0 0 2px @grayDarker;
+        z-index: 1;
       }
     }
   }
