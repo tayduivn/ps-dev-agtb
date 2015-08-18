@@ -57,11 +57,11 @@ class PMSEImageGenerator
             //Get running elements
             $this->running_elements = $this->get_running_elements();
             //Get prj_id from Bpmn_Process
-            $processBean = BeanFactory::getBean('pmse_BpmnProcess', $this->pro_id);
+            $processBean = BeanFactory::getBean('pmse_BpmnProcess', $this->pro_id, array(), false);
             $this->prj_id = $processBean->prj_id;
 
             //GET DIAGRAMS
-            $diagrams = $this->get_project_diagrams($this->prj_id);
+            $diagrams = $this->get_project_diagrams($this->prj_id, $processBean->deleted == "1" ? 1 : 0);
             foreach ($diagrams as $diagram) {
                 $files = $this->diagram_to_png($diagram);
             }
@@ -127,11 +127,11 @@ class PMSEImageGenerator
         return $arrElements;
     }
 
-    private function get_project_diagrams($prj_id)
+    private function get_project_diagrams($prj_id, $show_deleted = 0)
     {
         if (!empty($prj_id)) {
             $diagramBean = BeanFactory::getBean('pmse_BpmnDiagram');
-            $rows = $diagramBean->get_full_list("", "prj_id = '{$prj_id}'");
+            $rows = $diagramBean->get_full_list("", "prj_id = '{$prj_id}'", false, $show_deleted);
             $response = array();
             //Retrieve Shapes of diagrams
             foreach ($rows as $row) {
