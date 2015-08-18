@@ -51,6 +51,7 @@ $mod_strings = array (
     'LBL_PMSE_PROCESS_DEFINITION_IMPORT_TEXT' => 'Automatically create a new Process Definitions record by importing a *.bpm file from your file system.',
     'LBL_PMSE_PROCESS_DEFINITION_IMPORT_SUCCESS' => 'Process Definitions was successfully imported into the system.',
     'LBL_PMSE_PROCESS_DEFINITION_EMPTY_WARNING' => 'Please select a valid *.bpm file.',
+    'LBL_PMSE_PROCESS_DEFINITION_IMPORT_BR' => 'The Process Definition has been imported but contains one or more Business Rule actions for which business rules have not been selected.',
 
 
 //    /*PMSE*/

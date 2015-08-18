@@ -122,7 +122,6 @@ $dictionary['TeamNotices'] = array('table' => 'team_notices'
 )
                                                       , 'indices' => array (
        array('name' =>'team_noticesspk', 'type' =>'primary', 'fields'=>array('id')),
-       array('name' =>'idx_team_notice', 'type'=>'index', 'fields'=>array('name','deleted')),
                                                       )
                             );
 

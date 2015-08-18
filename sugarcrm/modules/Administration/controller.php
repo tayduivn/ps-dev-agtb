@@ -93,6 +93,9 @@ class AdministrationController extends SugarController
 
             // Clear the metadata cache so changes to languages are picked up right away
             MetaDataManager::refreshLanguagesCache($enabled_langs);
+            require_once('modules/Administration/QuickRepairAndRebuild.php');
+            $repair = new RepairAndClear();
+            $repair->clearLanguageCache();
         }
 
         //Call Ping API to refresh the language list.

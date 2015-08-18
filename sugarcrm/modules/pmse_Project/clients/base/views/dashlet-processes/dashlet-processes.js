@@ -70,14 +70,15 @@
         app.api.call('read', verifyURL, null, {
             success: function(data) {
                 if (!data) {
-                    var redirect = model.module+"/"+model.id+"/layout/designer";
+                    var redirect = app.router.buildRoute(model.module, model.id, 'layout/designer');
                     app.router.navigate(redirect , {trigger: true, replace: true });
                 } else {
                     app.alert.show('project-design-confirmation',  {
                         level: 'confirmation',
                         messages: App.lang.get('LBL_PMSE_PROCESS_DEFINITIONS_EDIT', model.module),
                         onConfirm: function () {
-                            app.navigate(this.context, model, 'layout/designer');
+                            var redirect = app.router.buildRoute(model.module, model.id, 'layout/designer');
+                            app.router.navigate(redirect , {trigger: true, replace: true });
                         },
                         onCancel: $.noop
                     });

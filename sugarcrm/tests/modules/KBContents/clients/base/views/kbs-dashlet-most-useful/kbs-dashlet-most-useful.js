@@ -8,8 +8,10 @@ describe('KBContents.Base.Views.KBSDashletMostUseful', function() {
         context = app.context.getContext({
             module: moduleName
         });
+        context.set('model', new Backbone.Model());
         context.parent = new Backbone.Model();
         context.parent.set('module', moduleName);
+
         context.prepare();
         meta = {
             config: false
@@ -18,7 +20,8 @@ describe('KBContents.Base.Views.KBSDashletMostUseful', function() {
         sandbox.stub(context.parent, 'get', function() {
             return new Backbone.Collection();
         });
-
+        layout = SugarTest.createLayout('base', moduleName, 'list', null, context.parent);
+        SugarTest.loadPlugin('Dashlet');
         SugarTest.loadComponent(
             'base',
             'view',
@@ -38,7 +41,8 @@ describe('KBContents.Base.Views.KBSDashletMostUseful', function() {
             'kbs-dashlet-most-useful',
             meta,
             context,
-            moduleName
+            moduleName,
+            layout
         );
         sandbox.stub(view.collection, 'sync');
     });
@@ -76,30 +80,16 @@ describe('KBContents.Base.Views.KBSDashletMostUseful', function() {
             view.loadMoreData();
             expect(paginateStub).not.toHaveBeenCalled();
         });
-    });
 
-    describe('loadData()', function() {
-        var fetchStub, dataFetched;
-
-        beforeEach(function() {
+        it('should fetch data on load', function() {
             fetchStub = sandbox.stub(view.collection, 'fetch');
-            dataFetched = view.collection.dataFetched;
-        });
-
-        afterEach(function() {
-            view.collection.dataFetched = dataFetched;
-        });
-
-        it('should fetch data when data not fetched yet', function() {
-            view.collection.dataFetched = false;
+            resetPaginationStub = sandbox.stub(view.collection, 'resetPagination');
             view.loadData();
+
+            expect(resetPaginationStub).toHaveBeenCalled();
             expect(fetchStub).toHaveBeenCalled();
-        });
-
-        it('should not fetch data when data already fetched', function() {
-            view.collection.dataFetched = true;
-            view.loadData();
-            expect(fetchStub).not.toHaveBeenCalled();
+            expect(view.collection.getOption('params').mostUseful).toBeTruthy();
+            expect(view.collection.getOption('params').next_offset).not.toBeDefined();
         });
     });
 

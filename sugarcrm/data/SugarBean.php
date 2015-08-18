@@ -973,7 +973,32 @@ class SugarBean
         global $dictionary;
         if(isset($dictionary[$this->getObjectName()]['indices']))
         {
-            return $dictionary[$this->getObjectName()]['indices'];
+            $indices = $dictionary[$this->getObjectName()]['indices'];
+            $newIndices = array();
+            $fieldDefs = $this->getFieldDefinitions();
+
+            // to exclude the non-db fields from indices
+            foreach ($indices as $key => $index) {
+                if (isset($index['fields'])) {
+                    // make sure it's an array
+                    if (!is_array($index['fields'])) {
+                        $index['fields'] = array($index['fields']);
+                    }
+                    foreach ($index['fields'] as $field) {
+                        if (isset($fieldDefs[$field])
+                            && isset($fieldDefs[$field]['source'])
+                            && $fieldDefs[$field]['source'] == 'non-db'
+                        ) {
+                            // index contains non-db fields
+                            continue 2;
+                        }
+                    }
+                }
+
+                // this index does not contain non-db fields
+                $newIndices[$key] = $index;
+            }
+            return $newIndices;
         }
         return array();
     }
