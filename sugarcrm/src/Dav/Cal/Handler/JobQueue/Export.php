@@ -13,6 +13,10 @@
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue;
 
 use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
+use Sugarcrm\Sugarcrm\Dav\Cal\Handler as CalDavHandler;
+use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException as JQLogicException;
+use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException as JQInvalidArgumentException;
 
 /**
  * Class Export
@@ -23,22 +27,46 @@ class Export implements RunnableInterface
 {
     /**
     * @param \SugarBean $sugarBean
-    * @throws \Exception
     */
     public function __construct($sugarBean)
     {
-        if (!($sugarBean instanceof \SugarBean)) {
-            throw new \Exception('Argument should be instance of SugarBean');
-        }
         $this->bean = $sugarBean;
     }
 
     /**
-    * start export process for current bean
+    * start export process for current bean if it extends from SugarBean
+    * @throws \Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException if bean not instance of SugarBean
+    * @throws \Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException if bean doesn't have adapter
     * @return string
     */
     public function run()
     {
+        $adapter = $this->getAdapterFactory();
+        if (!($this->bean instanceof \SugarBean)) {
+            throw new JQInvalidArgumentException('Bean must be an instance of SugarBean. Instance of '.get_class($this->bean).' given');
+        }
+        if (!$adapter->getAdapter($this->bean->module_name)) {
+            throw new JQLogicException('Bean '.$this->bean->module_name.' does not have CalDav adapter');
+        }
+        $handler = $this->getHandler();
+        $handler->export($this->bean);
         return \SchedulersJob::JOB_SUCCESS;
+    }
+
+    /**
+     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory
+     */
+    protected function getAdapterFactory()
+    {
+        return CalDavAdapterFactory::getInstance();
+    }
+
+    /**
+     * return CalDav handler for export processing
+     * @return Handler
+     */
+    protected function getHandler()
+    {
+        return new CalDavHandler();
     }
 }
