@@ -12,12 +12,13 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Hook;
 
+use \Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
+
 /**
  *
  * Logic hook handler
  *
  */
-
 class Handler
 {
     /**
@@ -28,22 +29,35 @@ class Handler
      * @param array $arguments Optional arguments
      * @return void
      */
-
     public function run($bean, $event, $arguments)
     {
+        $adapter = $this->getAdapterFactory();
+        $manager = $this->getManager();
         if ($bean instanceof \CalDavEvent) {
-            $this->getDavHandler()->import($bean);
+            if ($adapter->getAdapter($bean->getBean()->module_name)) {
+                $manager->calDavImport($bean);
+            }
         } elseif ($bean instanceof \SugarBean) {
-            $this->getDavHandler()->export($bean);
+            if ($adapter->getAdapter($bean->module_name)) {
+                $manager->calDavExport($bean);
+            }
         }
     }
 
     /**
-     * Get handler that will processed import or export action on bean saving event
-     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Handler
+     * function return manager object for handler processing
+     * @return \Sugarcrm\Sugarcrm\JobQueue\Manager\Manager
      */
-    protected function getDavHandler()
+    protected function getManager()
     {
-        return new \Sugarcrm\Sugarcrm\Dav\Cal\Handler();
+        return new JQManager();
+    }
+
+    /**
+     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory
+     */
+    protected function getAdapterFactory()
+    {
+        return Factory::getInstance();
     }
 }
