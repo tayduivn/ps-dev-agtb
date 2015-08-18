@@ -88,10 +88,6 @@
     _bindEvents: function() {
         if (this.layout) {
             this.listenTo(this.layout, 'subpanel:change', this.showSubpanel);
-            this.listenTo(this.layout, 'filter:change', function(linkModuleName, linkName) {
-                // Broadcast on subpanels layout so subpanel-lists update.
-                this.trigger('filter:change', linkModuleName, linkName);
-            });
         }
 
         this.on('subpanels:reordered', this._saveNewOrder, this);
@@ -304,18 +300,20 @@
      * @param {String} linkName name of subpanel link
      */
     showSubpanel: function(linkName) {
-        var self = this,
-            //this.layout is the filter layout which subpanels is child of; we
-            //use it here as it has a last_state key in its meta
-            cacheKey = app.user.lastState.key('subpanels-last', this.layout);
+        // this.layout is the filter layout which subpanels is child of; we
+        // use it here as it has a last_state key in its meta
+        var cacheKey = app.user.lastState.key('subpanels-last', this.layout);
 
         if (linkName) {
             app.user.lastState.set(cacheKey, linkName);
         }
         _.each(this._components, function(component) {
             var link = component.context.get('link');
-            if (!linkName || linkName === link) {
+            if (!linkName) {
                 component.show();
+            } else if (linkName === link) {
+                component.show();
+                component.context.set('collapsed', false);
             } else {
                 component.hide();
             }

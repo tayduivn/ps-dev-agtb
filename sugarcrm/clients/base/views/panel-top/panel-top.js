@@ -62,6 +62,10 @@
                 context.get('collection').fetch();
             }
         });
+
+        this.on('linked-model:create', function() {
+            this.context.set('collapsed', false);
+        }, this);
     },
 
     /**
@@ -93,8 +97,6 @@
             return;
         }
 
-        if (!this.layout.disposed) {
-            this.layout.toggle();
-        }
+        this.context.set('collapsed', !this.context.get('collapsed'));
     }
 })

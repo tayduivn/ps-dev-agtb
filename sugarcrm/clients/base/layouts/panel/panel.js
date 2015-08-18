@@ -75,6 +75,10 @@
         this.listenTo(this.context, 'refresh:count', function(hasAtLeast, properties) {
             this.$('.subpanel').toggleClass('empty', !properties.length);
         }, this);
+
+        this.context.on('change:collapsed', function(context, collapsed) {
+            this.toggle(!collapsed);
+        }, this);
     },
 
     /**
@@ -113,8 +117,20 @@
     },
 
     /**
+     * Saves the collapsed/expanded state of the subpanel in localStorage.
+     *
+     * @param {boolean} [show] `true` to expand, `false` to collapse. Collapses
+     *   by default.
+     */
+    _setCollapsedState: function(show) {
+        var state = show ? this.HIDE_SHOW.SHOW : this.HIDE_SHOW.HIDE;
+        app.user.lastState.set(this.hideShowLastStateKey, state);
+    },
+
+    /**
      * Toggles the panel.
      *
+     * @private
      * @param {boolean} [show] `true` to show, `false` to hide, `undefined` to
      *   toggle.
      */
@@ -134,7 +150,7 @@
         this.context.set('skipFetch', false);
         this.context.loadData();
 
-        app.user.lastState.set(this.hideShowLastStateKey, show ? this.HIDE_SHOW.SHOW : this.HIDE_SHOW.HIDE);
+        this._setCollapsedState(show);
     },
 
     /**

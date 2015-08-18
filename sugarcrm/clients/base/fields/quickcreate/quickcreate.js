@@ -19,11 +19,30 @@
     },
 
     plugins: ['LinkedModel'],
-    initialize: function (options) {
-        app.view.Field.prototype.initialize.call(this, options);
+
+    /**
+     * @inheritDoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
         //Listen to create view model changes to keep track of unsaved changes
-        app.events.on("create:model:changed", this.createModelChanged, this);
+        app.events.on('create:model:changed', this.createModelChanged, this);
+        this.on('linked-model:create', this._prepareCtxForReload, this);
     },
+
+    /**
+     * Changes properties on the context so that its collection can be
+     * re-fetched.
+     *
+     * FIXME: This will be removed when SC-4775 is implemented.
+     *
+     * @private
+     */
+    _prepareCtxForReload: function() {
+        this.context.resetLoadFlag();
+        this.context.set('skipFetch', false);
+    },
+
     /**
      * Keeps track of if the create view's model has changed.
      * @param hasChanged

@@ -19,7 +19,7 @@
     extendsFrom: 'RecordlistView',
     fallbackFieldTemplate: 'list',
     plugins: ['ErrorDecoration', 'Editable', 'SugarLogic', 'Pagination',
-        'LinkedModel', 'ResizableColumns', 'MassCollection'],
+        'ResizableColumns', 'MassCollection'],
 
     contextEvents: {
         "list:editall:fire": "toggleEdit",
@@ -49,19 +49,10 @@
         //Override the recordlist row template
         this.rowTemplate = app.template.getView('recordlist.row');
 
-        // Listens to parent of subpanel layout (subpanels)
-        this.listenTo(this.layout, 'filter:record:linked', this.renderOnFilterChanged);
-
         //event register for preventing actions
         //when user escapes the page without confirming deletion
         app.routing.before("route", this.beforeRouteUnlink, this);
         $(window).on("beforeunload.unlink" + this.cid, _.bind(this.warnUnlinkOnRefresh, this));
-    },
-    // SP-1383: Subpanel filters hide some panels when related filters are changed
-    // So when 'Related' filter changed, this ensures recordlist gets reloaded
-    renderOnFilterChanged: function() {
-        this.collection.trigger('reset');
-        this.render();
     },
 
     /**
