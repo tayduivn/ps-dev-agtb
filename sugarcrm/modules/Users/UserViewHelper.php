@@ -412,14 +412,7 @@ class UserViewHelper {
             $publish_url .= '&user_name='.$this->bean->user_name;
         }
 
-        $ical_url = $sugar_config['site_url']."/ical_server.php?type=ics&key=<span id=\"ical_pub_key_span\">$publish_key</span>";
-        if (! empty($this->bean->email1))
-        {
-            $ical_url .= '&email='.$this->bean->email1;
-        } else
-        {
-            $ical_url .= '&user_name='.$this->bean->user_name;
-        }
+        $ical_url = $sugar_config['site_url']."/ical_server.php?type=ics&key=<span id=\"ical_pub_key_span\">$publish_key</span>&user_name=".$this->bean->user_name;
 
         $this->ss->assign("CALENDAR_PUBLISH_URL", $publish_url);
         $this->ss->assign("CALENDAR_SEARCH_URL", $sugar_config['site_url']."/vcal_server.php/type=vfb&key=<span id=\"search_pub_key_span\">$publish_key</span>&email=%NAME%@%SERVER%");
