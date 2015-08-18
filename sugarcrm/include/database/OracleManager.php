@@ -1342,11 +1342,11 @@ LEFT JOIN user_constraints uc
         $query .= ' WHERE ' . implode(' AND ', $where);
 
         $order = array();
-        if ($filterByTable) {
+        if (!$filterByTable) {
             $order[] = 'ui.table_name';
         }
 
-        if ($filterByIndex) {
+        if (!$filterByIndex) {
             $order[] = 'ui.index_name';
         }
 

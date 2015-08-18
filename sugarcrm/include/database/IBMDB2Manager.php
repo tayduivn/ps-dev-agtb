@@ -1172,11 +1172,11 @@ INNER JOIN SYSCAT."INDEXCOLUSE" c
         $query .= ' WHERE ' . implode(' AND ', $where);
 
         $order = array();
-        if ($filterByTable) {
+        if (!$filterByTable) {
             $order[] = 'i.TABNAME';
         }
 
-        if ($filterByIndex) {
+        if (!$filterByIndex) {
             $order[] = 'i.INDNAME';
         }
 

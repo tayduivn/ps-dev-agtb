@@ -937,11 +937,11 @@ FROM information_schema.statistics';
         $query .= ' WHERE ' . implode(' AND ', $where);
 
         $order = array();
-        if ($filterByTable) {
+        if (!$filterByTable) {
             $order[] = 'table_name';
         }
 
-        if ($filterByIndex) {
+        if (!$filterByIndex) {
             $order[] = 'index_name';
         }
 

@@ -1606,11 +1606,11 @@ INNER JOIN sys.columns c
         }
 
         $order = array();
-        if ($filterByTable) {
+        if (!$filterByTable) {
             $order[] = 't.name';
         }
 
-        if ($filterByIndex) {
+        if (!$filterByIndex) {
             $order[] = 'i.name';
         }
 
