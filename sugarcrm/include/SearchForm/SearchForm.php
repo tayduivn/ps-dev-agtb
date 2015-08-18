@@ -184,6 +184,21 @@ class SearchForm {
         $this->populateFromArray($_REQUEST, $switchVar, $addAllBeanFields);
     }
 
+    /**
+     * Converts column name and value to upper case for case insensitive search if needed.
+     * @param string $subquery eg, 'select * from t where c like'
+     * @param string $value
+     * @return string
+     */
+    protected function getLikeSubquery($subquery, $value, $likechar = '%')
+    {
+        if ($this->bean->db->supports('case_insensitive') && preg_match('/(.*\S)\s+(\S+)\s+like$/i', trim($subquery), $matches)) {
+            return $matches[1]. ' ' . $this->seed->db->getLikeSQL($matches[2], "$value$likechar");
+        }
+        else {
+            return "$subquery ".$this->bean->db->quoted("$value$likechar");
+        }
+    }
 
     /**
      * The fuction will returns an array of filter conditions.
@@ -342,19 +357,19 @@ class SearchForm {
                                         if(!$first){
                                             $where .= $and_or;
                                         }
-                                        $where .= " {$db_field} $in ({$q} '{$field_value}%') ";
+                                        $where .= " {$db_field} $in (".$this->getLikeSubquery($q, $field_value).") ";
                                         $first = false;
                                     }
                                 }elseif(!empty($parms['query_type']) && $parms['query_type'] == 'format'){
                                     $stringFormatParams = array(0 => $field_value, 1 => $GLOBALS['current_user']->id);
                                     $where .= "{$db_field} $in (".string_format($parms['subquery'], $stringFormatParams).")";
                                 }else{
-                                    $where .= "{$db_field} $in ({$parms['subquery']} '{$field_value}%')";
+                                    $where .= "{$db_field} $in (".$this->getLikeSubquery($parms['subquery'] , $field_value).")";
                                 }
 
     	                    	break;
                             case 'like':
-                                $where .=  $db_field . " like ".$this->bean->db->quoted($field_value.'%');
+                                $where .= $this->bean->db->getLikeSQL($db_field, "$field_value%");
                                 break;
                             case 'in':
                                 $where .=  $db_field . " in (".$field_value.')';

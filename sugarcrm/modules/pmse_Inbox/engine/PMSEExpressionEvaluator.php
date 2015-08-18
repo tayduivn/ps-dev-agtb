@@ -614,8 +614,21 @@ class PMSEExpressionEvaluator
                 if ($value instanceof DateTime) {
                     $newValue = $value;
                 } else {
-                    $newDate = $timedate->fromIso($value);
-                    $newValue = $timedate->tzGMT($newDate);
+                    // If there is a date based criteria evaluation, but there is
+                    // no date presented, this will fatal out at the tzGMT part
+                    // So we set a reasonable default here and handle setting if
+                    // there is something to set
+                    $newValue = false;
+
+                    // If there is an actual value given, use it
+                    if (!empty($value)) {
+                        $newDate = $timedate->fromIso($value);
+
+                        // If the conversion worked, use THAT
+                        if ($newDate) {
+                            $newValue = $timedate->tzGMT($newDate);
+                        }
+                    }
                 }
                 break;
             case 'enum'://int
