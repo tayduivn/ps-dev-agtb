@@ -66,6 +66,8 @@ ExpressionControl.prototype._typeToControl = {
     "float": "number",
     "email": "text",
     "name": "text",
+    "htmleditable_tinymce": "text",
+    "tinyint": "integer",
     //"html": "html",
     //"iframe": "iframe",
     //"image": "image" ,
