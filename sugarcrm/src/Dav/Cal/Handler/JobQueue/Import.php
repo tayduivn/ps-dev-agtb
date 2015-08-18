@@ -13,6 +13,10 @@
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue;
 
 use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
+use Sugarcrm\Sugarcrm\Dav\Cal\Handler as CalDavHandler;
+use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException as JQLogicException;
+use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException as JQInvalidArgumentException;
 
 /**
  * Class Import
@@ -23,22 +27,47 @@ class Import implements RunnableInterface
 {
     /**
      * @param \CalDavEvent $calDavBean
-     * @throws \Exception
      */
     public function __construct($calDavBean)
     {
-        if (!($calDavBean instanceof \CalDavEvent)) {
-            throw new \Exception('Argument should be instance of CalDavEvent');
-        }
         $this->bean = $calDavBean;
     }
 
     /**
      * start imports process for current CalDavEvent object
+     * @throws \Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException if bean not instance of CalDavEvent
+     * @throws \Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException if related bean doesn't have adapter
      * @return string
      */
     public function run()
     {
+        $adapter = $this->getAdapterFactory();
+        if (!($this->bean instanceof \CalDavEvent)) {
+            throw new JQInvalidArgumentException('Bean must be an instance of CalDavEvent. Instance of '.get_class($this->bean).' given');
+        }
+        if (!$adapter->getAdapter($this->bean->getBean()->module_name)) {
+            throw new JQLogicException('Bean '.$this->bean->getBean()->module_name.' does not have CalDav adapter');
+        }
+
+        $handler = $this->getHandler();
+        $handler->import($this->bean);
         return \SchedulersJob::JOB_SUCCESS;
+    }
+
+    /**
+     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory
+     */
+    protected function getAdapterFactory()
+    {
+        return CalDavAdapterFactory::getInstance();
+    }
+
+    /**
+     * return CalDav handler for import processing
+     * @return Handler
+     */
+    protected function getHandler()
+    {
+        return new CalDavHandler();
     }
 }
