@@ -15,9 +15,14 @@ class SugarUpgradeOpportunityWithRevenueLineItems extends UpgradeScript
 {
     public $order = 2050;
     public $version = "7.6.0.0";
-    public $type = self::UPGRADE_CORE;
 
     protected $validFlavors = array('ent', 'ult');
+
+    public function __construct($upgrader)
+    {
+        $this->type = self::UPGRADE_CUSTOM | self::UPGRADE_DB;
+        parent::__construct($upgrader);
+    }
 
     public function run()
     {
