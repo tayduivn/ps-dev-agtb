@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: CampaignTracker.php 51719 2009-10-22 17:18:00Z mitani $
+
  * Description: The primary Function of this file is to manage all the data
  * used by other files in this nodule. It should extend the SugarBean which implements
  * all the basic database operations. Any custom behaviors can be implemented here by

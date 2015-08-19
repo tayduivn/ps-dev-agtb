@@ -152,6 +152,9 @@ class PMSEChangeField extends PMSEScriptTask
                                 );                                
                                 $newValue = $this->postProcessValue($newValue, $bean->field_name_map[$field->field]['type']);
                             } else {
+                                if ($field->field == 'assigned_user_id') {
+                                    $field->value = $this->getCustomUser($field->value, $beanModule);
+                                }
                                 $newValue = $this->beanHandler->mergeBeanInTemplate($beanModule, $field->value);
                             }
                             $bean->{$field->field} = $newValue; //$field->value;
@@ -198,15 +201,16 @@ class PMSEChangeField extends PMSEScriptTask
     
     public function postProcessValue($value, $fieldType)
     {
+        global $timedate;
         switch (strtolower($fieldType)) {
             case 'date':
-                $value = new DateTime($value);
-                $value = $value->format("Y-m-d");
+                $date = $timedate->fromIsoDate($value);
+                $value = $date->asDbDate();
                 break;
             case 'datetime':
             case 'datetimecombo':
-                $value = new DateTime($value);
-                $value = $value->format("Y-m-d H:i:s");
+                $date = $timedate->fromIso($value);
+                $value = $date->asDb();
                 break;
             case 'float':
             case 'double':
