@@ -45,6 +45,9 @@ class MessageBuilder implements MessageBuilderInterface
         if (array_key_exists('text', $messageSignature)) {
             $message['text'] = "Triggered in $module:'{$bean->name}'";
         }
+        if (array_key_exists('html', $messageSignature)) {
+            $message['html'] = $this->generateHtml($module, $bean);
+        }
 
         return $message;
     }
@@ -63,5 +66,31 @@ class MessageBuilder implements MessageBuilderInterface
     public function supports(EventInterface $event)
     {
         return $event instanceof Event;
+    }
+
+    /**
+     * ToDo: We should generate HTML from some EmailTemplate or something like that.
+     * Generates HTML part of the message, based on the information contained in the given event.
+     * @param string $module Name of the module where event occurred.
+     * @param \SugarBean $bean Bean where event occurred.
+     * @return string HTML text with information about the event.
+     */
+    protected function generateHtml($module, $bean)
+    {
+        $msg = "Data of $module: {$bean->name}</br>";
+        $msg .= "<table>";
+
+        foreach ($bean->field_defs as $field => $fieldDef) {
+            if ($fieldDef['type'] == 'link' || (isset($fieldDef['source']) && $fieldDef['source'] == 'non-db')) {
+                continue;
+            }
+            $fieldName = $fieldDef['name'];
+            $data = htmlspecialchars($bean->$field);
+            $msg .= "<tr><td>$fieldName</td><td>$data</td></tr>";
+        }
+
+        $msg .= '</table>';
+
+        return $msg;
     }
 }
