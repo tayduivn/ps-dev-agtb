@@ -10,7 +10,7 @@
  */
 
 /**
- * @class View.Fields.Base.NestedsetField
+ * @class View.Fields.Base.KBContents.NestedsetField
  * @alias SUGAR.App.view.fields.BaseNestedsetField
  * @extends View.Fields.Base.BaseField
  */
@@ -422,28 +422,27 @@
      * Create and hide input for new element.
      */
     switchCreate: function() {
-        var $a = this.$('[data-action=create-label-cover]'),
-            $el = this.$('[data-role=add-item]');
-
+        var $options = this.$('[data-place=bottom-options]'),
+            $create = this.$('[data-place=bottom-create]'),
+            $input = this.$('[data-role=add-item]'),
+            placeholder = app.lang.get('LBL_CREATE_CATEGORY_PLACEHOLDER', this.module);
         if (this.inCreation === false) {
-            $el = $('<input />', {'data-role': 'add-item', 'type': 'text', 'value': app.lang.get('LBL_DEFAULT_TITLE', 'Categories')});
-            $a.hide();
-            $el.insertAfter($a);
-            $('<div />', {class: 'fa fa-folder-open', 'data-role': 'pseudo'}).html('&nbsp;').insertBefore($el);
-            $el
+            $options.hide();
+            $create.show();
+            $input
                 .tooltip({
-                    title: app.lang.get('LBL_CREATE_CATEGORY_PLACEHOLDER', 'KBContents'),
+                    title: placeholder,
                     container: 'body',
                     trigger: 'manual',
                     delay: {show: 200, hide: 100}
                 })
                 .tooltip('show');
-            $el.focus().select();
+            $input.focus().select();
         } else {
-            $el.tooltip('destroy');
-            $el.remove();
-            this.$('[data-role=pseudo]').remove();
-            $a.show();
+            $input.tooltip('destroy');
+            $input.val('');
+            $create.hide();
+            $options.show();
         }
         this.inCreation = !this.inCreation;
     },
