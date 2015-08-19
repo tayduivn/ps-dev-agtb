@@ -926,7 +926,7 @@ class MysqlManager extends DBManager
 FROM information_schema.statistics';
 
         $schema = $this->getOne('SELECT DATABASE()');
-        $where = array('index_schema = ' . $this->quoted($schema));
+        $where = array('table_schema = ' . $this->quoted($schema));
         if ($filterByTable) {
             $where[] = 'table_name = ' . $this->quoted($table_name);
         }
