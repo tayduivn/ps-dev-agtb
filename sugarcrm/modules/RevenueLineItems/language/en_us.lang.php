@@ -161,6 +161,7 @@ $mod_strings = array(
     'LBL_CONVERT_INVALID_RLI' => 'One or more of the Revenue Line Items that you selected can not be converted into a Quote:<br /><br />',
     'LBL_CONVERT_INVALID_RLI_PRODUCT' => 'The Revenue Line Item needs a Product from the Product Catalog before a Quote can be generated.',
     'LBL_CONVERT_INVALID_RLI_PRODUCT_PLURAL' => 'One or more of the Revenue Line Items needs a Product from the Product Catalog before a Quote can be generated.',
+    'LBL_CONVERT_INVALID_RLI_ALREADYQUOTED' => 'The Revenue Line Item is already quoted.',
     'LBL_CONVERT_INVALID_RLI_ALREADYQUOTED_PLURAL' => 'One or more of the selected Revenue Line Items are already quoted.',
 
     'LBL_CONVERT_TO_QUOTE_ERROR' => 'Error:',

@@ -99,4 +99,28 @@ class RevenueLineItemToQuoteConvertApiTests extends Sugar_PHPUnit_Framework_Test
     {
         $this->assertEquals(RevenueLineItem::STATUS_QUOTED, $revenueLineItem->status);
     }
+
+    /**
+     * @expectedException SugarApiExceptionRequestMethodFailure
+     */
+    public function testCreateProductBundleFromRLIListThrowsException()
+    {
+        $mock_rli = $this->getMockBuilder('RevenueLineItem')
+            ->setMethods(array('canConvertToQuote'))
+            ->getMock();
+
+        $mock_rli->id = 'unit_test_1';
+
+        $mock_rli->expects($this->once())
+            ->method('canConvertToQuote')
+            ->willReturn('Some Random String');
+
+        BeanFactory::registerBean($mock_rli);
+
+        $api = new RevenueLineItemToQuoteConvertApi();
+
+        SugarTestReflection::callProtectedMethod($api, 'createProductBundleFromRLIList', array(array('unit_test_1')));
+
+        BeanFactory::unregisterBean($mock_rli);
+    }
 }
