@@ -408,6 +408,16 @@ tr.tr-inline-edit {
     cursor: pointer;
     .dropdown-menu {
       border-top: 1px solid @linkColor;
+      input[data-role=add-item] {
+        margin-top: -6px;
+      }
+      .fa-expand[data-action=full-screen] {
+        margin-top: 0;
+        font-size: @smallTreeFont;
+      }
+      .fa-folder-open {
+        font-size: @smallTreeFont;
+      }
     }
     .select-arrow, span[data-role="treevalue"], .clear-field {
       font-size: @smallTreeFont;
