@@ -9,12 +9,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Base.Calls.CreateView
- * @alias SUGAR.App.view.views.CallsCreateView
- * @extends View.Views.Base.CreateView
+ * @class View.Views.Base.Meetings.CreateNodupecheckView
+ * @alias SUGAR.App.view.views.MeetingsCreateNodupecheckView
+ * @extends View.Views.Base.CreateNodupecheckView
  */
 ({
-    extendsFrom: 'CreateView',
+    extendsFrom: 'CreateNodupecheckView',
 
     /**
      * @inheritdoc
