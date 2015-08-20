@@ -415,7 +415,7 @@ abstract class DBManager
 	 *
 	 * @param string $query  value of query to track
 	 */
-	protected function track_slow_queries($query)
+    public function track_slow_queries($query)
 	{
 		$trackerManager = TrackerManager::getInstance();
 		if($trackerManager->isPaused()) {

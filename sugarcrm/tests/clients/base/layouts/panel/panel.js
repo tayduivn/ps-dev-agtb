@@ -105,4 +105,22 @@ describe('Base.Layout.Panel', function() {
             });
         });
     });
+
+    describe('_stopComponentToggle', function() {
+        using('components with different classes', [
+            {
+                $el: $('<div></div>').addClass('subpanel-header'),
+                expected: true
+            },
+            {
+                $el: $('<div></div>').addClass('test-class'),
+                expected: false
+            }
+        ], function(component) {
+            it('should stop toggle with certain criteria', function() {
+                var result = layout._stopComponentToggle(component);
+                expect(result).toEqual(component.expected);
+            });
+        });
+    });
 });

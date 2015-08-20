@@ -1346,6 +1346,9 @@
 						}
 					})
 				).children(".jstree-rename-input"); 
+				this.get_container().triggerHandler("show_input.jstree", {
+					"obj": obj, "h1": h1, "h2": h2, "w": w, "t": t
+				});
 				this.set_text(obj, "");
 				h1.css({
 						fontFamily		: h2.css('fontFamily')		|| '',

@@ -183,6 +183,7 @@ class PMSEUserTask extends PMSEActivity
      */
     public function saveBeanData($beanData)
     {
+        global $current_user;
         $fields = $beanData;
         $sfh = new SugarFieldHandler();
 
@@ -232,27 +233,39 @@ class PMSEUserTask extends PMSEActivity
 
             $disable_redirects = false;
         } else {
-            foreach ($beanObject->field_defs as $fieldName => $properties) {
-                if ( !isset($fields[$fieldName]) ) {
-                    // They aren't trying to modify this field
-                    continue;
-                }
-
-                $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
-                $field = $sfh->getSugarField($type);
-                $field->setOptions("");
-
-                if ($field != null) {
-                    // validate submitted data
-                    if (!$field->apiValidate($beanObject, $fields, $fieldName, $properties)) {
-                        throw new SugarApiExceptionInvalidParameter(
-                            'Invalid field value: ' . $fieldName . ' in module: ' . $beanObject->module_name
-                        );
+            try {
+                $api = new RestService();
+                $api->user = $current_user;
+                $api->getRequest();
+                $beanPopulate = ApiHelper::getHelper($api, $beanObject)
+                    ->populateFromApi($beanObject, $beanData);
+            } catch (SugarApiExceptionRequestMethodFailure $conflict) {
+                $conflict->setExtraData("record", $beanObject);
+                throw $conflict;
+            }
+            if ($beanPopulate !== true){
+                foreach ($beanObject->field_defs as $fieldName => $properties) {
+                    if ( !isset($fields[$fieldName])) {
+                        // They aren't trying to modify this field
+                        continue;
                     }
-                    $historyData->verifyRepeated($beanObject->$fieldName, $fields[$fieldName]);
-                    $historyData->savePredata($fieldName, $beanObject->$fieldName);
-                    $field->apiSave($beanObject, $fields, $fieldName, $properties);
-                    $historyData->savePostdata($fieldName, $fields[$fieldName]);
+
+                    $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
+                    $field = $sfh->getSugarField($type);
+                    $field->setOptions("");
+
+                    if ($field != null) {
+                        // validate submitted data
+                        if (!$field->apiValidate($beanObject, $fields, $fieldName, $properties)) {
+                            throw new SugarApiExceptionInvalidParameter(
+                                'Invalid field value: ' . $fieldName . ' in module: ' . $beanObject->module_name
+                            );
+                        }
+                        $historyData->verifyRepeated($beanObject->$fieldName, $fields[$fieldName]);
+                        $historyData->savePredata($fieldName, $beanObject->$fieldName);
+                        $field->apiSave($beanObject, $fields, $fieldName, $properties);
+                        $historyData->savePostdata($fieldName, $fields[$fieldName]);
+                    }
                 }
             }
 

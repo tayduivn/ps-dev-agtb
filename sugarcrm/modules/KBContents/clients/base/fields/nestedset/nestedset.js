@@ -419,15 +419,24 @@
      */
     switchCreate: function() {
         var $a = this.$('[data-action=create-label-cover]'),
-            $el = this.$('[data-role=add-item]'),
-            placeholder = app.lang.get('LBL_CREATE_CATEGORY_PLACEHOLDER', this.module);
+            $el = this.$('[data-role=add-item]');
+
         if (this.inCreation === false) {
-            $el = $('<input />', {'data-role': 'add-item', 'type': 'text', 'placeholder': placeholder});
+            $el = $('<input />', {'data-role': 'add-item', 'type': 'text', 'value': app.lang.get('LBL_DEFAULT_TITLE', 'Categories')});
             $a.hide();
             $el.insertAfter($a);
             $('<div />', {class: 'fa fa-folder-open', 'data-role': 'pseudo'}).html('&nbsp;').insertBefore($el);
-            $el.focus();
+            $el
+                .tooltip({
+                    title: app.lang.get('LBL_CREATE_CATEGORY_PLACEHOLDER', 'KBContents'),
+                    container: 'body',
+                    trigger: 'manual',
+                    delay: {show: 200, hide: 100}
+                })
+                .tooltip('show');
+            $el.focus().select();
         } else {
+            $el.tooltip('destroy');
             $el.remove();
             this.$('[data-role=pseudo]').remove();
             $a.show();

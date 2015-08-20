@@ -57,8 +57,6 @@ nv.models.multiBar = function() {
           maxY = vertical ? availableHeight : availableWidth,
           dimX = vertical ? 'width' : 'height',
           dimY = vertical ? 'height' : 'width',
-          limDimX = 0,
-          limDimY = 0,
           valX = vertical ? 'x' : 'y',
           valY = vertical ? 'y' : 'x',
           valuePadding = 0,
@@ -119,20 +117,16 @@ nv.models.multiBar = function() {
         height = h;
         availableWidth = w - margin.left - margin.right;
         availableHeight = h - margin.top - margin.bottom;
-        maxX = vertical ? availableWidth : availableHeight;
-        maxY = vertical ? availableHeight : availableWidth;
+        resetScale();
       };
 
-      chart.resetScale = function() {
-
-        availableWidth = width - margin.left - margin.right;
-        availableHeight = height - margin.top - margin.bottom;
-        limDimX = vertical ? availableWidth : availableHeight;
-        limDimY = vertical ? availableHeight : availableWidth;
+      function resetScale() {
+        maxX = vertical ? availableWidth : availableHeight;
+        maxY = vertical ? availableHeight : availableWidth;
 
         var boundsWidth = stacked ? baseDimension : baseDimension * seriesCount + baseDimension,
             gap = baseDimension * (stacked ? 0.25 : 1),
-            outerPadding = Math.max(0.25, (maxX - (groupCount * boundsWidth + gap)) / (2 * boundsWidth));
+            outerPadding = Math.max(0.25, (maxX - (groupCount * boundsWidth) - gap) / (2 * boundsWidth));
 
         if (withLine) {
           /*TODO: used in reports to keep bars from being too wide
@@ -150,6 +144,7 @@ nv.models.multiBar = function() {
             return stacked ? (d.y > 0 ? d.y1 + posOffset : d.y1 + negOffset) : d.y;
           }).concat(forceY)))
           .range(vertical ? [availableHeight, 0] : [0, availableWidth]);
+
         if (nice) {
           y.nice();
         }
@@ -176,18 +171,18 @@ nv.models.multiBar = function() {
           if (vertical) {
             y.range([
               maxY - (y.domain()[0] < 0 ? valuePadding : 0),
-                         y.domain()[1] > 0 ? valuePadding : 0
+                      y.domain()[1] > 0 ? valuePadding : 0
             ]);
           } else {
             y.range([
-                         y.domain()[0] < 0 ? valuePadding : 0,
+                      y.domain()[0] < 0 ? valuePadding : 0,
               maxY - (y.domain()[1] > 0 ? valuePadding : 0)
             ]);
           }
         }
-      };
+      }
 
-      chart.resetScale();
+      resetScale();
 
 
       //------------------------------------------------------------
@@ -273,7 +268,7 @@ nv.models.multiBar = function() {
 
       barsEnter.append('rect')
         .attr(dimX, 0)
-        .attr(dimY, 0); //x.rangeBand() / (stacked ? 1 : data.length)
+        .attr(dimY, 0);
 
       function buildEventObject(e, d, i, j) {
         var pos = [

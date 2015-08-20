@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: Account.php 53875 2010-01-20 18:10:23Z roger $
+
  * Description:  Defines the Account SugarBean Account entity with the necessary
  * methods and variables.
  ********************************************************************************/

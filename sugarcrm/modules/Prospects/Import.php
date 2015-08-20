@@ -14,7 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
 
- * $Id: Import.php 13782 2006-06-06 17:58:55Z majed $
+
 
  * Description:  TODO: To be written.
 
