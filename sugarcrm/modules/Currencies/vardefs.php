@@ -39,6 +39,9 @@ $dictionary['Currency'] = array(
             'len' => '36',
             'required' => true,
             'comment' => 'Symbol representing the currency',
+            'formula' => 'ifElse(or(equal($id, -99), equal($iso4217, "")), $symbol, getDropdownValue("iso_currency_symbol", $iso4217))',
+            'calculated' => true,
+            'enforced' => false,
             'importable' => 'required',
         ),
         'iso4217' => array(
@@ -57,6 +60,7 @@ $dictionary['Currency'] = array(
             'required' => true,
             'comment' => 'Conversion rate factor (relative to stored value)',
             'importable' => 'required',
+            'validation' => array('type' => 'range', 'min' => 0.000001),
         ),
         'status' => array(
             'name' => 'status',
