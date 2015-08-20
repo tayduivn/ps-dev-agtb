@@ -1732,7 +1732,11 @@ $app_list_strings = array (
     'exempt' => 'Suppression List - By Id',
     'test' => 'Test',
   ),
-
+  'currency_status_dom' =>
+  array (
+    'Active' => 'Active',
+    'Inactive' => 'Inactive',
+  ),
   'email_settings_num_dom' =>
   array(
         '10'    => '10',

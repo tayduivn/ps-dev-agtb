@@ -607,7 +607,6 @@ $bwcModules = array(
     'Charts',
     'Configurator',
     'Connectors',
-    'Currencies',
     //BEGIN SUGARCRM flav=ent ONLY
     'CustomQueries',
     'DataSets',

@@ -11,6 +11,7 @@
  */
 $dictionary['Currency'] = array(
     'table' => 'currencies',
+    'favorites' => false,
     'comment' => 'Currencies allow Sugar to store and display monetary values in various denominations',
     'fields' => array(
         'id' => array(
@@ -24,7 +25,8 @@ $dictionary['Currency'] = array(
         'name' => array(
             'name' => 'name',
             'vname' => 'LBL_LIST_NAME',
-            'type' => 'varchar',
+            'type' => 'name',
+            'dbType' => 'varchar',
             'len' => '36',
             'required' => true,
             'comment' => 'Name of the currency',
