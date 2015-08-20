@@ -2274,7 +2274,7 @@ EOQ;
     {
         $db = DBManagerFactory::getInstance();
         $query = 'SELECT count(id) as total FROM users
-                WHERE reports_to_id = ' .  $db->quoted(clean_string($user_id)) . ' AND status = ' . $db->quoted(clean_string('Active'));
+                WHERE reports_to_id = ' .  $db->quoted($user_id) . ' AND status = ' . $db->quoted('Active');
         if (!$include_deleted) {
             $query .= " AND deleted=0";
         }
@@ -2310,7 +2310,7 @@ EOQ;
         if (!$include_deleted) {
             $query .= "AND u2.deleted = 0 ";
         }
-        $query .= "WHERE u.reports_to_id = {$db->quoted(clean_string($user_id))} ";
+        $query .= "WHERE u.reports_to_id = {$db->quoted($user_id)} ";
         if (!$include_deleted) {
             $query .= "AND u.deleted = {$deleted} AND u.status = 'Active' ";
         }
@@ -2383,7 +2383,7 @@ EOQ;
     {
         if(User::isManager($user_id, $include_deleted))
         {
-            $query = 'SELECT reports_to_id FROM users WHERE id = ' . $GLOBALS['db']->quoted(clean_string($user_id));
+            $query = 'SELECT reports_to_id FROM users WHERE id = ' . $GLOBALS['db']->quoted($user_id);
             $reports_to_id = $GLOBALS['db']->getOne($query);
             return empty($reports_to_id);
         }
