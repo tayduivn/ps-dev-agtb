@@ -156,6 +156,7 @@ class ParserDropDown extends ModuleBuilderParser
         clearAllJsAndJsLangFilesWithoutOutput();
 
         // Clear out the api metadata languages cache for selected language
+        LanguageManager::invalidateJsLanguageCache();
         MetaDataManager::refreshLanguagesCache($lang);
     }
 
