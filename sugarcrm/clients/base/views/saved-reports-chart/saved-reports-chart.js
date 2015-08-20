@@ -541,6 +541,7 @@
             }
             if (tickDisplayMethods) {
                 tickDisplayMethods.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions || !showTickOptions);
+                tickDisplayMethods.$el.find('.disabled').find('input').prop( 'checked', true ).prop('disabled', true);
             }
 
             if (yOptionsFieldset) {

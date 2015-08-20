@@ -214,6 +214,11 @@
                         },
                         search: {
                             case_insensitive: true
+                        },
+                        core: {
+                            strings: {
+                                new_node: app.lang.get('LBL_DEFAULT_TITLE', 'Categories')
+                            }
                         }
                     };
                 jsTreeOptions = _.extend({}, jsTreeOptions, this.jsTreeOptions);
@@ -226,9 +231,11 @@
                 }, this))
                 .on('select_node.jstree', _.bind(this._selectNodeHandler, this))
                 .on('create.jstree', _.bind(this._createHandler, this))
+                .on('show_input.jstree', _.bind(this._showInputHandler, this))
                 .on('move_node.jstree', _.bind(this._moveHandler, this))
                 .on('remove.jstree', _.bind(this._removeHandler, this))
-                .on('rename_node.jstree', _.bind(this._renameHandler, this))
+                .on('rename_node.jstree', _.bind(this._renameNodeHandler, this))
+                .on('rename.jstree', _.bind(this._renameHandler, this))
                 .on('load_state.jstree', _.bind(this._loadedStateHandler, this))
                 .on('search.jstree', _.bind(this._searchHandler, this));
             },
@@ -310,7 +317,7 @@
              * @param {Object} data
              * @private
              */
-            _renameHandler: function(event, data) {
+            _renameNodeHandler: function(event, data) {
                 if (!_.isUndefined(data.rslt.obj.data('id'))) {
                     var bean = this.collection.getChild(data.rslt.obj.data('id'));
                     if (!_.isUndefined(bean)) {
@@ -320,6 +327,16 @@
                         }
                     }
                 }
+            },
+
+            /**
+             * Rename handler.
+             * @param {Event} event
+             * @param {Object} data
+             * @private
+             */
+            _renameHandler: function(event, data) {
+                this._toggleAddNodeButton(data.rslt.obj, false);
             },
 
             /**
@@ -647,6 +664,87 @@
             },
 
             /**
+             * Handle actions when edit input is displayed.
+             * @param {Event} event
+             * @param {Object} data
+             * @private
+             */
+            _showInputHandler: function(event, data) {
+                var self = this,
+                    el = data.obj.find('input'),
+                    clonedElement = el.clone(),
+                    obj = data.obj,
+                    t = data.t,
+                    h1 = data.h1,
+                    h2 = data.h2,
+                    w = data.w;
+
+                h1.css({
+                    fontFamily: h2.css('fontFamily') || '',
+                    fontSize: h2.css('fontSize') || '',
+                    fontWeight: h2.css('fontWeight') || '',
+                    fontStyle: h2.css('fontStyle') || '',
+                    fontStretch: h2.css('fontStretch') || '',
+                    fontVariant: h2.css('fontVariant') || '',
+                    letterSpacing: h2.css('letterSpacing') || '',
+                    wordSpacing: h2.css('wordSpacing') || ''
+                });
+
+                el.hide();
+                obj.append(clonedElement);
+
+                this._toggleAddNodeButton(obj, true);
+                this._toggleTooltip(obj, true);
+
+                clonedElement.width(Math.min(h1.text("pW" + clonedElement[0].value).width(), w))[0].select();
+
+                clonedElement
+                    .on('keydown', function(event) {
+                        var key = event.which;
+                        if (key === 27) {
+                            $(this).attr('rel') === 'add' ? $(this).attr('rel', 'delete') : this.value = t;
+                            el.attr('rel') === 'add' ? el.attr('rel', 'delete') : el.value = t;
+                        }
+                        if (key === 27 || key === 13 || key === 37 || key === 38 || key === 39 || key === 40 ||
+                            key === 32) {
+                            event.stopImmediatePropagation();
+                        }
+                        if (key === 13 && this.value.trim().length === 0) {
+                            app.alert.show('wrong_node_name', {
+                                level: 'error',
+                                messages: app.lang.get('LBL_EMPTY_NODE_NAME', 'Categories'),
+                                autoClose: true
+                            });
+                            return false;
+                        }
+                        if (key === 27 || key === 13) {
+                            self._toggleTooltip(obj, false);
+                            event.preventDefault();
+                            self._blur($(this), el);
+                        }
+                    })
+                    .on('keyup', function(event) {
+                        clonedElement.width(Math.min(h1.text("pW" + this.value).width(), w));
+                    })
+                    .on('keypress', function(event) {
+                        if (event.which === 13) {
+                            return false;
+                        }
+                    });
+            },
+
+            /**
+             * Process custom blur for cloned object and call blur event in original object.
+             * @param {Object} clonedObj
+             * @param {Object} originalObj
+             * @private
+             */
+            _blur: function(clonedObj, originalObj) {
+                originalObj.val(clonedObj.val());
+                originalObj.blur();
+            },
+
+            /**
              * Toggle tree node.
              * @param {Event} event
              * @param {Object} data
@@ -943,6 +1041,29 @@
                 } else {
                     addButton.removeClass('disabled');
                     contextButton.removeClass('disabled');
+                }
+            },
+
+            /**
+             *
+             * @param {Object} node JSTree node object.
+             * @param {Boolean} show
+             * @private
+             */
+            _toggleTooltip: function(node, show) {
+                var input = node.find('input.jstree-rename-input');
+                if (show) {
+                    input
+                        .tooltip({
+                            title: app.lang.get('LBL_CREATE_CATEGORY_PLACEHOLDER', 'KBContents'),
+                            container: 'body',
+                            trigger: 'focus',
+                            delay: { show: 200, hide: 100 }
+                        })
+                        .tooltip('show');
+                } else {
+                    input
+                        .tooltip('destroy');
                 }
             }
         });

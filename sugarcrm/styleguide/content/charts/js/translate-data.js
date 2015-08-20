@@ -1,18 +1,28 @@
 
-function translateDataToD3(json, chartType) {
+function translateDataToD3(json, chartType, barType) {
     var data = [],
         value = 0,
         strUndefined = 'undefined';
+
+    function sumValues(values) {
+        return values.reduce(function(a, b) { return parseFloat(a) + parseFloat(b); }, 0); // 0 is default value if reducing an empty list
+    }
+
+    function pickLabel(label) {
+        var l = [].concat(label)[0];
+        //d.label && d.label !== '' ? Array.isArray(d.label) ? d.label[0] : d.label : strUndefined
+        return l ? l : strUndefined;
+    }
 
     if (json.values.filter(function(d) { return d.values && d.values.length; }).length) {
 
         switch (chartType) {
 
             case 'barChart':
-                data = chartConfig.barType === 'stacked' || chartConfig.barType === 'grouped' ?
+                data = barType === 'stacked' || barType === 'grouped' ?
                     json.label.map(function(d, i) {
                         return {
-                            'key': d !== '' ? d : strUndefined,
+                            'key': pickLabel(d),
                             'type': 'bar',
                             'values': json.values.map(function(e, j) {
                                 return {
@@ -26,13 +36,13 @@ function translateDataToD3(json, chartType) {
                     }) :
                     json.values.map(function(d, i) {
                         return {
-                            'key': d.values.length > 1 ? d.label : d.label[0] !== '' ? d.label[0] : strUndefined,
+                            'key': d.values.length > 1 ? d.label : pickLabel(d.label),
                             'type': 'bar',
                             'values': json.values.map(function(e, j) {
                                 return {
                                   'series': i,
                                   'x': j + 1,
-                                  'y': i === j ? e.values.length > 1 ? e.values.reduce(function(a, b) { return parseFloat(a) + parseFloat(b); }) : parseFloat(e.values[0]) : 0,
+                                  'y': i === j ? sumValues(e.values) : 0,
                                   'y0': 0
                                 };
                             })
@@ -43,8 +53,8 @@ function translateDataToD3(json, chartType) {
             case 'pieChart':
                 data = json.values.map(function(d, i) {
                     var data = {
-                        'key': [].concat(d.label)[0] !== '' ? [].concat(d.label)[0] : strUndefined,
-                        'value': parseFloat(d.values.reduce(function(a, b) { return a + b; }, 0))
+                        'key': pickLabel(d.label),
+                        'value': sumValues(d.values)
                     };
                     if (d.color !== undefined) {
                         data.color = d.color;
@@ -59,12 +69,12 @@ function translateDataToD3(json, chartType) {
             case 'funnelChart':
                 data = json.values.reverse().map(function(d, i) {
                     return {
-                        'key': [].concat(d.label)[0] !== '' ? [].concat(d.label)[0] : strUndefined,
+                        'key': pickLabel(d.label),
                         'values': [{
                           'series': i,
                           'label': d.valuelabels[0] ? d.valuelabels[0] : d.values[0],
                           'x': 0,
-                          'y': parseFloat(d.values.reduce(function(a, b) { return a + b; }, 0)) || 0,
+                          'y': sumValues(d.values),
                           'y0': 0
                         }]
                     };
@@ -74,7 +84,7 @@ function translateDataToD3(json, chartType) {
             case 'lineChart':
                 data = json.values.map(function(d, i) {
                     return {
-                        'key': d.label !== '' ? d.label : strUndefined,
+                        'key': pickLabel(d.label),
                         'values': d.values.map(function(e, j) {
                             return [j, parseFloat(e)];
                         })
@@ -88,7 +98,7 @@ function translateDataToD3(json, chartType) {
 
                 data = json.values.map(function(d, i) {
                     var values = {
-                        'key': d.label !== '' ? d.label : strUndefined,
+                        'key': pickLabel(d.label),
                         'y': parseFloat(d.values[0]) + y0
                     };
                     y0 += parseFloat(d.values[0]);
@@ -102,22 +112,28 @@ function translateDataToD3(json, chartType) {
         'properties': {
             'title': json.properties[0].title,
             // bar group data (x-axis)
-            'labels': !json.values.filter(function(d) { return d.values.length; }).length ? [] :
-                json.values.map(function(d, i) {
-                return {
-                    'group': i + 1,
-                    'l': d.label !== '' ? d.label : strUndefined
-                };
-            }),
+            'labels': chartType === 'lineChart' && json.label ?
+                json.label.map(function(d, i) {
+                    return {
+                        'group': i + 1,
+                        'l': pickLabel(d)
+                    };
+                }) :
+                json.values.filter(function(d) { return d.values.length; }).length ?
+                    json.values.map(function(d, i) {
+                        return {
+                            'group': i + 1,
+                            'l': pickLabel(d.label)
+                        };
+                    }) :
+                    [],
             'values': chartType === 'gaugeChart' ?
                 [{'group' : 1, 't': value}] :
                 json.values.filter(function(d) { return d.values.length; }).length ?
                     json.values.map(function(d, i) {
                         return {
                             'group': i + 1,
-                            't': d.values.reduce(function(a, b) {
-                                return parseFloat(a) + parseFloat(b);
-                            })
+                            't': sumValues(d.values)
                         };
                     }) :
                     []

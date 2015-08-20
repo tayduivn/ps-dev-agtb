@@ -83,7 +83,7 @@
                     app.alert.show('server-error', {
                         level: 'error',
                         title: app.lang.get('ERR_INTERNAL_ERR_MSG'),
-                        messages: app.lang.get('ERR_HTTP_500_TEXT')
+                        messages: app.lang.get('ERR_HTTP_500_TEXT_LINE1')
                     });
                 }
             }
@@ -151,7 +151,7 @@
         app.alert.show('server-error', {
             level: 'error',
             title: app.lang.get('ERR_INTERNAL_ERR_MSG'),
-            messages: app.lang.get('ERR_HTTP_500_TEXT')
+            messages: app.lang.get('ERR_HTTP_500_TEXT_LINE1')
         });
     },
 

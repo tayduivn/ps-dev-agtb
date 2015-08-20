@@ -83,49 +83,35 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
                         if (!empty($value->field) && !empty($value->value)) {
                             $key = $value->field;
                             $newValue = '';
-                            if ($value->type == 'Datetime') {
-                                $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
-                                $date = $timedate->fromIso($finishDate);
-                                $newValue = $date->asDb();
-                            } elseif ($value->type == 'Date') {
-                                $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
-                                $date = $timedate->fromIsoDate($finishDate);
-                                $newValue = $date->asDbDate();
-                            } elseif ($key == 'assigned_user_id') {
-                                switch ($value->value) {
-                                    case 'currentuser':
-                                        $newValue = $this->beanHandler->mergeBeanInTemplate(
-                                            $bean,
-                                            $this->userAssignmentHandler->getCurrentUserId()
-                                        );
-                                        break;
-                                    case 'supervisor':
-                                        $newValue = $this->beanHandler->mergeBeanInTemplate(
-                                            $bean,
-                                            $this->userAssignmentHandler->getSupervisorId($this->getCurrentUserId())
-                                        );
-                                        break;
-                                    case 'owner':
-                                        $newValue = $this->beanHandler->mergeBeanInTemplate(
-                                            $bean,
-                                            $this->userAssignmentHandler->getRecordOwnerId($bean->id, $sugarModule)
-                                        );
-                                        break;
-                                    default:
-                                        $newValue = $this->beanHandler->mergeBeanInTemplate($bean, $value->value);
-                                        break;
-                                }
-                            } elseif ($value->type == 'Integer' || $value->type == 'Float' ||
-                                $value->type == 'Decimal'
-                            ) {
-                                $newValue = $this->beanHandler->processValueExpression($value->value, $bean);
-                            } elseif ($value->type == 'Currency') {
-                                $newValue = $this->beanHandler->processValueExpression($value->value, $bean);
-                                $newValue = unserialize($newValue);
-                                $fields['currency_id'] = $newValue->expField;
-                                $newValue = $newValue->expValue;
-                            } else {
-                                $newValue = $this->beanHandler->mergeBeanInTemplate($bean, $value->value);
+                            switch ($value->type) {
+                                case 'Date':
+                                    $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
+                                    $date = $timedate->fromIsoDate($finishDate);
+                                    $newValue = $date->asDbDate();
+                                    break;
+                                case 'Datetime':
+                                    $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
+                                    $date = $timedate->fromIso($finishDate);
+                                    $newValue = $date->asDb();
+                                    break;
+                                case 'Integer':
+                                case 'Float':
+                                case 'Decimal':
+                                    $newValue = $this->beanHandler->processValueExpression($value->value, $bean);
+                                    break;
+                                case 'Currency':
+                                    $newValue = $this->beanHandler->processValueExpression($value->value, $bean);
+                                    $newValue = unserialize($newValue);
+                                    $fields['currency_id'] = $newValue->expField;
+                                    $newValue = $newValue->expValue;
+                                    break;
+                                default:
+                                    $newValue = $this->beanHandler->mergeBeanInTemplate($bean, $value->value);
+                            }
+
+                            if ($key == 'assigned_user_id') {
+                                $newValue = $this->beanHandler->mergeBeanInTemplate($bean,
+                                    $this->getCustomUser($value->value, $bean));
                             }
                             $fields[$key] = $newValue;
                             $this->logger->info("Data generated $newValue for $key");
