@@ -202,6 +202,10 @@ class PMSERelatedModule {
             $relatedModuleBean->parent_id = $moduleBean->id;
         }
 
+        if ($moduleBean->module_name == $rModule) {
+            $relatedModuleBean->pa_related_module_save = true;
+        }
+
         $relatedModuleBean->save();
 
         if (!$relatedModuleBean->in_save) {
