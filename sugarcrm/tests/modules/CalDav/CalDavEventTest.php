@@ -41,6 +41,9 @@ class CalDavEventTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestCalDavUtilities::deleteAllCreatedCalendars();
         SugarTestCalDavUtilities::deleteCreatedEvents();
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestMeetingUtilities::removeAllCreatedMeetings();
+        SugarTestMeetingUtilities::removeMeetingUsers();
         parent::tearDown();
     }
 
@@ -276,7 +279,7 @@ END:VCALENDAR',
      */
     protected function getEventTemplate($templateName)
     {
-        return file_get_contents(dirname(__FILE__).'/EventTemplates/'.$templateName.'.ics');
+        return file_get_contents(dirname(__FILE__) . '/EventTemplates/' . $templateName . '.ics');
     }
 
     public function getVObjectProvider()
@@ -479,55 +482,71 @@ END:VCALENDAR',
 
     public function getOrganizerProvider()
     {
+        $id1 = create_guid();
+
         return array(
             array(
                 'vCalendar' => $this->getEventTemplate('vevent'),
+                'user' => array(
+                    array('email1' => 'test0@test.com', 'new_with_id' => true, 'id' => $id1),
+                ),
                 'result' => array(
-                    'user' => 'mailto:test@sugarcrm.com',
-                    'status' => 'ACCEPTED',
-                    'role' => 'CHAIR',
+                    $id1 => array(
+                        'email' => 'test0@test.com',
+                        'accept_status' => 'accept',
+                        'cn' => '',
+                        'role' => 'CHAIR',
+                    ),
                 ),
             ),
             array(
                 'vCalendar' => $this->getEventTemplate('vtodo'),
-                'result' => null,
+                'user' => array(),
+                'result' => array(),
             ),
             array(
                 'vCalendar' => null,
-                'result' => null,
+                'user' => array(),
+                'result' => array(),
             ),
         );
     }
 
     public function getParticipantsProvider()
     {
+        $id1 = create_guid();
+        $id2 = create_guid();
+
         return array(
             array(
                 'vCalendar' => $this->getEventTemplate('vevent'),
+                'users' => array(
+                    array('email1' => 'test@test.com', 'new_with_id' => true, 'id' => $id1),
+                    array('email1' => 'test2@test.com', 'new_with_id' => true, 'id' => $id2)
+                ),
                 'result' => array(
-                    array(
-                        'user' => 'mailto:SALLY@EXAMPLE.COM',
-                        'status' => 'NEEDS-ACTION',
+                    $id1 => array(
+                        'email' => 'test@test.com',
+                        'accept_status' => 'none',
+                        'cn' => '',
                         'role' => 'REQ-PARTICIPANT',
                     ),
-                    array(
-                        'user' => 'mailto:test@test.com',
-                        'status' => 'NEEDS-ACTION',
-                        'role' => 'CHAIR',
-                    ),
-                    array(
-                        'user' => 'mailto:test1@test.com',
-                        'status' => 'NEEDS-ACTION',
+                    $id2 => array(
+                        'email' => 'test2@test.com',
+                        'accept_status' => 'decline',
+                        'cn' => '',
                         'role' => 'OPT-PARTICIPANT',
                     ),
                 ),
             ),
             array(
                 'vCalendar' => $this->getEventTemplate('vtodo'),
+                'users' => array(),
                 'result' => array(),
             ),
             array(
                 'vCalendar' => null,
+                'users' => array(),
                 'result' => array(),
             ),
         );
@@ -535,9 +554,13 @@ END:VCALENDAR',
 
     public function getReminderProvider()
     {
+        $id1 = create_guid();
+        $id2 = create_guid();
+
         return array(
             array(
                 'vCalendar' => $this->getEventTemplate('vevent'),
+                'users' => array(),
                 'result' => array(
                     'DISPLAY' => array(
                         'duration' => 900,
@@ -548,18 +571,24 @@ END:VCALENDAR',
             ),
             array(
                 'vCalendar' => $this->getEventTemplate('vtodo'),
+                'users' => array(),
                 'result' => array(),
             ),
             array(
                 'vCalendar' => $this->getEventTemplate('vGetReminder1'),
+                'users' => array(
+                    array('email1' => 'test@test.com', 'new_with_id' => true, 'id' => $id1),
+                    array('email1' => 'test1@test.com', 'new_with_id' => true, 'id' => $id2)
+                ),
                 'result' => array(
                     'DISPLAY' => array(
                         'duration' => 900,
                         'description' => 'alarm test',
                         'attendees' => array(
-                            array(
-                                'user' => 'test@test.com',
-                                'status' => 'NEEDS-ACTION',
+                            $id1 => array(
+                                'email' => 'test@test.com',
+                                'accept_status' => 'none',
+                                'cn' => '',
                                 'role' => 'REQ-PARTICIPANT',
                             ),
                         ),
@@ -568,14 +597,16 @@ END:VCALENDAR',
                         'duration' => 1200,
                         'description' => 'alarm test',
                         'attendees' => array(
-                            array(
-                                'user' => 'test@test.com',
-                                'status' => 'NEEDS-ACTION',
+                            $id1 => array(
+                                'email' => 'test@test.com',
+                                'accept_status' => 'none',
+                                'cn' => '',
                                 'role' => 'REQ-PARTICIPANT',
                             ),
-                            array(
-                                'user' => 'test1@test.com',
-                                'status' => 'NEEDS-ACTION',
+                            $id2 => array(
+                                'email' => 'test1@test.com',
+                                'accept_status' => 'none',
+                                'cn' => '',
                                 'role' => 'REQ-PARTICIPANT',
                             ),
                         ),
@@ -584,19 +615,25 @@ END:VCALENDAR',
             ),
             array(
                 'vCalendar' => $this->getEventTemplate('vGetReminder2'),
+                'users' => array(
+                    array('email1' => 'test@test.com', 'new_with_id' => true, 'id' => $id1),
+                    array('email1' => 'test1@test.com', 'new_with_id' => true, 'id' => $id2)
+                ),
                 'result' => array(
                     'EMAIL' => array(
                         'duration' => 1200,
                         'description' => 'alarm test',
                         'attendees' => array(
-                            array(
-                                'user' => 'test@test.com',
-                                'status' => 'NEEDS-ACTION',
+                            $id1 => array(
+                                'email' => 'test@test.com',
+                                'accept_status' => 'none',
+                                'cn' => '',
                                 'role' => 'REQ-PARTICIPANT',
                             ),
-                            array(
-                                'user' => 'test1@test.com',
-                                'status' => 'NEEDS-ACTION',
+                            $id2 => array(
+                                'email' => 'test1@test.com',
+                                'accept_status' => 'none',
+                                'cn' => '',
                                 'role' => 'REQ-PARTICIPANT',
                             ),
                         ),
@@ -605,6 +642,7 @@ END:VCALENDAR',
             ),
             array(
                 'vCalendar' => null,
+                'users' => array(),
                 'result' => array(),
             ),
         );
@@ -970,80 +1008,280 @@ END:VCALENDAR',
         );
     }
 
-    public function getStatusMapProvider()
+    public function deleteParticipantsProvider()
     {
         return array(
             array(
-                'appListString' => array(
-                    'meeting_status_dom' => array(
-                        'Planned' => 'Scheduled',
-                        'Held' => 'Held',
-                        'Not Held' => 'Canceled',
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'participants' => array(
+                    'mailto:test@test.com' => array(
+                        'PARTSTAT' => null,
+                        'CN' => null,
+                        'ROLE' => '',
+                        'davLink' => null,
+                    ),
+                    'mailto:test1@test.com' => array(
+                        'PARTSTAT' => null,
+                        'CN' => null,
+                        'ROLE' => '',
+                        'davLink' => null,
                     ),
                 ),
-                'moduleDefs' => array(
-                    'status' =>
-                        array(
-                            'options' => 'meeting_status_dom',
-                        ),
+            ),
+        );
+    }
+
+    public function addParticipantsProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vempty'),
+                'participants' => array(
+                    'mailto:test@test.com' => array(
+                        'PARTSTAT' => 'ACCEPTED',
+                        'CN' => 'Test Test',
+                        'ROLE' => '',
+                        'davLink' => null,
+                    ),
+                    'mailto:test1@test.com' => array(
+                        'PARTSTAT' => 'DECLINED',
+                        'CN' => 'Test1 Test1',
+                        'ROLE' => '',
+                        'davLink' => null,
+                    ),
                 ),
-                'mapping' => array(
-                    'CANCELLED' => 'Not Held',
-                    'CONFIRMED' => 'Planned',
+            ),
+        );
+    }
+
+    public function modifyParticipantsProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'participants' => array(
+                    'mailto:test2@test.com' => array(
+                        'PARTSTAT' => 'DECLINED',
+                        'CN' => 'Test Test',
+                        'ROLE' => '',
+                        'davLink' => null,
+                    ),
+                    'mailto:test10@test.com' => array(
+                        'PARTSTAT' => 'DECLINED',
+                        'CN' => 'Test Test',
+                        'ROLE' => '',
+                        'davLink' => 'mailto:test@test.com',
+                    ),
+                    'mailto:test11@test.com' => array(
+                        'PARTSTAT' => 'DECLINED',
+                        'CN' => 'Test Test',
+                        'ROLE' => '',
+                        'davLink' => 'mailto:test1@test.com',
+                    ),
                 ),
-                'result' => array(
-                    'CANCELLED' => 'Not Held',
-                    'CONFIRMED' => 'Planned',
+            ),
+        );
+    }
+
+    public function setOrganizerProvider()
+    {
+        $id1 = 'baba4eca-59f2-f1ad-1f03-55d5d45e3f83';
+
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vempty'),
+                'user' => array(
+                    'email1' => 'test0@test.com',
+                    'new_with_id' => true,
+                    'id' => $id1,
+                    'full_name' => 'SugarUser 756101654',
+                    'first_name' => 'SugarUser',
+                    'last_name' => '756101654',
+                ),
+                'davUser' => array(),
+                'result' => true,
+                'expectedMethods' => array('addParticipants'),
+                'expectedArguments' => array(
+                    'mailto:test0@test.com' => array(
+                        'PARTSTAT' => 'NEEDS-ACTION',
+                        'CN' => 'SugarUser 756101654',
+                        'ROLE' => '',
+                        'davLink' => '',
+                        'X-SUGARUID' => $id1,
+                    ),
                 ),
             ),
             array(
-                'appListString' => array(),
-                'moduleDefs' => array(
-                    'status' =>
-                        array(
-                            'options' => 'meeting_status_dom',
-                        ),
+                'vCalendar' => $this->getEventTemplate('vparticipants'),
+                'user' => array(
+                    'email1' => 'test10@test.com',
+                    'new_with_id' => true,
+                    'id' => $id1,
+                    'full_name' => 'SugarUser 756101654',
+                    'first_name' => 'SugarUser',
+                    'last_name' => '756101654',
                 ),
-                'mapping' => array(
-                    'CANCELLED' => 'Not Held',
-                    'CONFIRMED' => 'Planned',
+                'davUsers' => array(
+                    'email1' => 'test0@test.com',
+                    'new_with_id' => true,
+                    'id' => $id1,
+                    'full_name' => 'SugarUser 756101654',
+                    'first_name' => 'SugarUser',
+                    'last_name' => '756101654',
                 ),
-                'result' => array(),
-            ),
-            array(
-                'appListString' => array(
-                    'meeting_status_dom' => array(
-                        'Planned' => 'Scheduled',
-                        'Held' => 'Held',
-                        'Not Held' => 'Canceled',
+                'result' => true,
+                'expectedMethods' => array('modifyParticipants'),
+                'expectedArguments' => array(
+                    'mailto:test10@test.com' => array(
+                        'PARTSTAT' => 'NEEDS-ACTION',
+                        'CN' => 'SugarUser 756101654',
+                        'ROLE' => 'CHAIR',
+                        'davLink' => 'mailto:test0@test.com',
+                        'X-SUGARUID' => $id1,
                     ),
                 ),
-                'moduleDefs' => array(),
-                'mapping' => array(
-                    'CANCELLED' => 'Not Held',
-                    'CONFIRMED' => 'Planned',
-                ),
-                'result' => array(),
+            ),
+        );
+    }
+
+    public function setParticipantsProvider()
+    {
+        $id1 = create_guid();
+        $id2 = create_guid();
+
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vempty'),
+                'users' => array(),
+                'davUsers' => array(),
+                'result' => false,
+                'expectedMethods' => null,
+                'expectedArguments' => array(),
             ),
             array(
-                'appListString' => array(
-                    'meeting_status_dom' => array(
-                        'Planned' => 'Scheduled',
-                        'Held' => 'Held',
+                'vCalendar' => $this->getEventTemplate('vempty'),
+                'users' => array(
+                    array(
+                        'email1' => 'test@test.com',
+                        'new_with_id' => true,
+                        'id' => $id1,
+                        'full_name' => 'SugarUser 756101654',
+                        'first_name' => 'SugarUser',
+                        'last_name' => '756101654',
+                    ),
+                    array(
+                        'email1' => 'test1@test.com',
+                        'new_with_id' => true,
+                        'id' => $id2,
+                        'full_name' => 'SugarUser 1735411632',
+                        'first_name' => 'SugarUser',
+                        'last_name' => '1735411632',
+                    )
+                ),
+                'davUsers' => array(),
+                'result' => true,
+                'expectedMethods' => array('addParticipants'),
+                'expectedArguments' => array(
+                    'mailto:test@test.com' => array(
+                        'PARTSTAT' => 'NEEDS-ACTION',
+                        'CN' => 'SugarUser 756101654',
+                        'ROLE' => '',
+                        'davLink' => '',
+                        'X-SUGARUID' => $id1,
+                    ),
+                    'mailto:test1@test.com' => array(
+                        'PARTSTAT' => 'NEEDS-ACTION',
+                        'CN' => 'SugarUser 1735411632',
+                        'ROLE' => '',
+                        'davLink' => '',
+                        'X-SUGARUID' => $id2,
                     ),
                 ),
-                'moduleDefs' => array(
-                    'status' =>
-                        array(
-                            'options' => 'meeting_status_dom',
-                        ),
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'users' => array(),
+                'davUsers' => array(
+                    array('email1' => 'test2@test.com', 'new_with_id' => true, 'id' => $id1, 'addToMeeting' => false),
+                    array('email1' => 'test1@test.com', 'new_with_id' => true, 'id' => $id2, 'addToMeeting' => false)
                 ),
-                'mapping' => array(
-                    'CANCELLED' => 'Not Held',
-                    'CONFIRMED' => 'Planned',
+                'result' => true,
+                'expectedMethods' => array('deleteParticipants'),
+                'expectedArguments' => array(
+                    'mailto:test2@test.com' => array(
+                        'PARTSTAT' => '',
+                        'CN' => '',
+                        'ROLE' => '',
+                        'davLink' => '',
+                        'X-SUGARUID' => $id1,
+                    ),
+                    'mailto:test1@test.com' => array(
+                        'PARTSTAT' => '',
+                        'CN' => '',
+                        'ROLE' => '',
+                        'davLink' => '',
+                        'X-SUGARUID' => $id2,
+                    ),
                 ),
-                'result' => array(
-                    'CONFIRMED' => 'Planned',
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vparticipants'),
+                'users' => array(
+                    array(
+                        'email1' => 'test12@test.com',
+                        'new_with_id' => true,
+                        'id' => 'baba4eca-59f2-f1ad-1f03-55d5d45e3f82',
+                        'full_name' => 'SugarUser 1735411632',
+                        'first_name' => 'SugarUser',
+                        'last_name' => '1735411632',
+                    ),
+                    array(
+                        'email1' => 'test1@test.com',
+                        'new_with_id' => true,
+                        'id' => $id2,
+                        'full_name' => 'SugarUser 1735411632',
+                        'first_name' => 'SugarUser',
+                        'last_name' => '1735411632',
+                    ),
+                ),
+                'davUsers' => array(
+                    array(
+                        'email1' => 'test2@test.com',
+                        'new_with_id' => true,
+                        'id' => 'baba4eca-59f2-f1ad-1f03-55d5d45e3f82',
+                        'full_name' => 'SugarUser 1735411632',
+                        'first_name' => 'SugarUser',
+                        'last_name' => '1735411632',
+                        'addToMeeting' => true,
+                    ),
+                    array(
+                        'email1' => 'test1@test.com',
+                        'new_with_id' => true,
+                        'id' => $id2,
+                        'full_name' => 'SugarUser 1735411632',
+                        'first_name' => 'SugarUser',
+                        'last_name' => '1735411632',
+                        'addToMeeting' => true,
+                    )
+                ),
+                'result' => true,
+                'expectedMethods' => array('modifyParticipants'),
+                'expectedArguments' => array(
+                    'mailto:test12@test.com' => array(
+                        'PARTSTAT' => 'NEEDS-ACTION',
+                        'CN' => 'SugarUser 1735411632',
+                        'ROLE' => 'OPT-PARTICIPANT',
+                        'davLink' => 'mailto:test2@test.com',
+                        'X-SUGARUID' => 'baba4eca-59f2-f1ad-1f03-55d5d45e3f82',
+                    ),
+                    'mailto:test1@test.com' => array(
+                        'PARTSTAT' => 'NEEDS-ACTION',
+                        'CN' => 'SugarUser 1735411632',
+                        'ROLE' => 'CHAIR',
+                        'davLink' => 'mailto:test1@test.com',
+                        'X-SUGARUID' => $id2,
+                    ),
+
                 ),
             ),
         );
@@ -1496,14 +1734,19 @@ END:VCALENDAR',
 
     /**
      * @param string $vCalendarEventText
-     * @param string $expectedResult
+     * @param array $users
+     * @param array|null $expectedResult
      *
      * @covers       \CalDavEvent::getOrganizer
      *
      * @dataProvider getOrganizerProvider
      */
-    public function testGetOrganizer($vCalendarEventText, $expectedResult)
+    public function testGetOrganizer($vCalendarEventText, array $users, $expectedResult)
     {
+        foreach ($users as $user) {
+            SugarTestUserUtilities::createAnonymousUser(true, 0, $user);
+        }
+
         $beanMock = $this->getObjectForGetters($vCalendarEventText);
 
         $result = $beanMock->getOrganizer();
@@ -1513,14 +1756,19 @@ END:VCALENDAR',
 
     /**
      * @param string $vCalendarEventText
-     * @param string $expectedResult
+     * @param array $users
+     * @param array|null $expectedResult
      *
      * @covers       \CalDavEvent::getParticipants
      *
      * @dataProvider getParticipantsProvider
      */
-    public function testGetParticipants($vCalendarEventText, $expectedResult)
+    public function testGetParticipants($vCalendarEventText, array $users, $expectedResult)
     {
+        foreach ($users as $user) {
+            SugarTestUserUtilities::createAnonymousUser(true, 0, $user);
+        }
+
         $beanMock = $this->getObjectForGetters($vCalendarEventText);
 
         $result = $beanMock->getParticipants();
@@ -1530,14 +1778,18 @@ END:VCALENDAR',
 
     /**
      * @param string $vCalendarEventText
-     * @param string $expectedResult
+     * @param array $users
+     * @param array $expectedResult
      *
      * @covers       \CalDavEvent::getReminders
      *
      * @dataProvider getReminderProvider
      */
-    public function testGetReminder($vCalendarEventText, $expectedResult)
+    public function testGetReminder($vCalendarEventText, array $users, array $expectedResult)
     {
+        foreach ($users as $user) {
+            SugarTestUserUtilities::createAnonymousUser(true, 0, $user);
+        }
         $beanMock = $this->getObjectForGetters($vCalendarEventText);
 
         $result = $beanMock->getReminders();
@@ -1869,7 +2121,7 @@ END:VCALENDAR',
      */
     public function testSetDueDate($currentEvent, $dateTime, $expectedDateTime, $expectedResult)
     {
-        $component = $this->getObjectForSetters($currentEvent, 'VTODO');
+        $component = $this->getObjectForSetters($currentEvent, null, 'VTODO');
 
         $result = $this->beanMock->setDueDate($dateTime, $component);
 
@@ -1878,58 +2130,224 @@ END:VCALENDAR',
     }
 
     /**
-     * @param array $appListStrings
-     * @param array $moduleDefs
-     * @param array $mapping
-     * @param array $result
+     * @param string $currentEvent
+     * @param array $participants
      *
-     * @covers       \CalDavEvent::getStatusMap
+     * @covers       \CalDavEvent::modifyParticipants
      *
-     * @dataProvider getStatusMapProvider
+     * @dataProvider modifyParticipantsProvider
      */
-    public function testGetStatusMap(array $appListStrings, array $moduleDefs, array $mapping, array $expectedMapping)
+    public function testModifyParticipants($currentEvent, $participants)
     {
-        $beanMock = $this->getMockBuilder('CalDavEvent')
-                         ->disableOriginalConstructor()
-                         ->setMethods(array('getAppListStrings', 'getLogger', 'getBean'))
-                         ->getMock();
+        $component = $this->getObjectForSetters($currentEvent);
 
+        TestReflection::callProtectedMethod(
+            $this->beanMock,
+            'modifyParticipants',
+            array($participants, $component, 'ATTENDEE')
+        );
 
-        $meetingsMock = $this->getMockBuilder('Meetings')
-                             ->disableOriginalConstructor()
-                             ->setMethods(null)
-                             ->getMock();
+        $nodes = $component->select('ATTENDEE');
 
-        $meetingsMock->module_name = 'Meetings';
+        foreach ($nodes as $node) {
 
-        $loggerMock = $this->getMockBuilder('LoggerManager')
-                           ->disableOriginalConstructor()
-                           ->setMethods(array('error'))
-                           ->getMock();
+            $props = $node->parameters();
+            $email = $node->getValue();
+            $this->assertArrayHasKey($email, $participants);
+            $this->assertEquals($participants[$email]['PARTSTAT'], $props['PARTSTAT']);
+        }
+    }
 
-        $meetingsMock->field_defs = $moduleDefs;
+    /**
+     * @param string $currentEvent
+     * @param array $participants
+     *
+     * @covers       \CalDavEvent::addParticipants
+     *
+     * @dataProvider addParticipantsProvider
+     */
+    public function testAddParticipants($currentEvent, $participants)
+    {
+        $component = $this->getObjectForSetters($currentEvent);
 
-        $beanMock->expects($this->once())->method('getAppListStrings')->willReturn($appListStrings);
-        $beanMock->expects($this->once())->method('getBean')->willReturn($meetingsMock);
-        $beanMock->expects($this->any())->method('getLogger')->willReturn($loggerMock);
+        TestReflection::callProtectedMethod(
+            $this->beanMock,
+            'addParticipants',
+            array($participants, $component, 'ATTENDEE')
+        );
 
-        TestReflection::setProtectedValue($beanMock, 'statusMap', $mapping);
-        $result = TestReflection::callProtectedMethod($beanMock, 'getStatusMap');
+        $nodes = $component->select('ATTENDEE');
 
-        $this->assertEquals($expectedMapping, $result);
+        foreach ($nodes as $node) {
+            $props = $node->parameters();
+            $email = $node->getValue();
+            $this->assertArrayHasKey($email, $participants);
+            $this->assertEquals($participants[$email]['PARTSTAT'], $props['PARTSTAT']);
+            $this->assertEquals($participants[$email]['CN'], $props['CN']);
+            $this->assertEquals($participants[$email]['ROLE'], $props['ROLE']);
+        }
+    }
+
+    /**
+     * @param string $currentEvent
+     * @param array $participants
+     *
+     * @covers       \CalDavEvent::deleteParticipants
+     *
+     * @dataProvider deleteParticipantsProvider
+     */
+    public function testDeleteParticipants($currentEvent, $participants)
+    {
+        $component = $this->getObjectForSetters($currentEvent);
+
+        TestReflection::callProtectedMethod(
+            $this->beanMock,
+            'deleteParticipants',
+            array($participants, $component, 'ATTENDEE')
+        );
+
+        $nodes = $component->select('ATTENDEE');
+
+        $emails = array();
+        foreach ($nodes as $node) {
+            $emails[$node->getValue()] = $node->getValue();
+        }
+
+        foreach ($participants as $key => $value) {
+            $this->assertArrayNotHasKey($key, $emails);
+        }
+
+        $this->assertArrayHasKey('mailto:test2@test.com', $emails);
+    }
+
+    /**
+     * @param string $currentEvent
+     * @param array $users
+     * @param array $davUsers
+     * @param bool $expectedResult
+     * @param array $expectedArguments
+     * @param array|null $expectedMethods List of expected methods
+     *
+     * @covers       \CalDavEvent::setParticipants
+     *
+     * @dataProvider setParticipantsProvider
+     */
+    public function testSetParticipants(
+        $currentEvent,
+        array $users,
+        array $davUsers,
+        $expectedResult,
+        $expectedMethods,
+        array $expectedArguments
+    ) {
+        $component = $this->getObjectForSetters($currentEvent, $expectedMethods, 'VEVENT');
+
+        $meeting = SugarTestMeetingUtilities::createMeeting();
+
+        foreach ($davUsers as $user) {
+            $createdUser = SugarTestUserUtilities::createAnonymousUser(true, 0, $user);
+            if (!empty($user['addToMeeting'])) {
+                SugarTestMeetingUtilities::addMeetingUserRelation($meeting->id, $createdUser->id);
+            }
+        }
+
+        foreach ($users as $user) {
+            $existingUser = BeanFactory::getBean('Users', $user['id']);
+            if ($existingUser->id) {
+                $existingUser->email1 = $user['email1'];
+                $existingUser->save();
+            } else {
+                $createdUser = SugarTestUserUtilities::createAnonymousUser(true, 0, $user);
+                SugarTestMeetingUtilities::addMeetingUserRelation($meeting->id, $createdUser->id);
+            }
+        }
+
+        $this->beanMock->parent_type = 'Meetings';
+        $this->beanMock->parent_id = $meeting->id;
+
+        if ($expectedMethods) {
+            foreach ($expectedMethods as $method) {
+                $this->beanMock->expects($this->once())->method($method)->with($expectedArguments, $component);
+            }
+        } else {
+            $this->beanMock->expects($this->never())->method('addParticipants');
+            $this->beanMock->expects($this->never())->method('deleteParticipants');
+            $this->beanMock->expects($this->never())->method('modifyParticipants');
+        }
+
+        $result = $this->beanMock->setParticipants($component);
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @param string $currentEvent
+     * @param array $user
+     * @param array $davUser
+     * @param bool $expectedResult
+     * @param array $expectedArguments
+     * @param array|null $expectedMethods List of expected methods
+     *
+     * @covers       \CalDavEvent::setOrganizer
+     *
+     * @dataProvider setOrganizerProvider
+     */
+    public function testSetOrganizer(
+        $currentEvent,
+        array $user,
+        array $davUser,
+        $expectedResult,
+        $expectedMethods,
+        array $expectedArguments
+    ) {
+        $component = $this->getObjectForSetters($currentEvent, $expectedMethods, 'VEVENT');
+
+        $createdUser = null;
+
+        if ($davUser) {
+            SugarTestUserUtilities::createAnonymousUser(true, 0, $davUser);
+            $createdUser = \BeanFactory::getBean('Users', $davUser['id']);
+        }
+
+        if ($createdUser) {
+            $createdUser->email1 = $user['email1'];
+            $createdUser->save();
+        } else {
+            $createdUser = SugarTestUserUtilities::createAnonymousUser(true, 0, $user);
+        }
+        $meeting = SugarTestMeetingUtilities::createMeeting('', $createdUser);
+        SugarTestMeetingUtilities::addMeetingUserRelation($meeting->id, $createdUser->id);
+
+        $this->beanMock->parent_type = 'Meetings';
+        $this->beanMock->parent_id = $meeting->id;
+
+        if ($expectedMethods) {
+            foreach ($expectedMethods as $method) {
+                $this->beanMock->expects($this->once())->method($method)->with($expectedArguments, $component);
+            }
+        } else {
+            $this->beanMock->expects($this->never())->method('addParticipants');
+            $this->beanMock->expects($this->never())->method('deleteParticipants');
+            $this->beanMock->expects($this->never())->method('modifyParticipants');
+        }
+
+        $result = $this->beanMock->setOrganizer($component);
+
+        $this->assertEquals($expectedResult, $result);
     }
 
     /**
      * Configure mocks for set data tests
      * @param string $currentEvent
+     * @param $eventMethods
      * @param string $type VEVENT of VTODO
      * @return Sabre\VObject\Component
      */
-    protected function getObjectForSetters($currentEvent, $type = 'VEVENT')
+    protected function getObjectForSetters($currentEvent, $eventMethods = null, $type = 'VEVENT')
     {
         $this->beanMock = $this->getMockBuilder('CalDavEvent')
                                ->disableOriginalConstructor()
-                               ->setMethods(array('getStatusMap'))
+                               ->setMethods($eventMethods)
                                ->getMock();
 
         $dateTimeHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
@@ -1937,11 +2355,34 @@ END:VCALENDAR',
                                ->setMethods(null)
                                ->getMock();
 
-        TestReflection::setProtectedValue($this->beanMock, 'dateTimeHelper', $dateTimeHelper);
+        $participantsHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper')
+                                   ->disableOriginalConstructor()
+                                   ->setMethods(null)
+                                   ->getMock();
 
-        $this->beanMock->expects($this->any())
-                       ->method('getStatusMap')
-                       ->willReturn(TestReflection::getProtectedValue($this->beanMock, 'statusMap'));
+        $acceptedMapper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\AcceptedMap')
+                               ->disableOriginalConstructor()
+                               ->setMethods(array('getMapping'))
+                               ->getMock();
+
+        $statusMapper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\EventMap')
+                             ->disableOriginalConstructor()
+                             ->setMethods(array('getMapping'))
+                             ->getMock();
+
+        TestReflection::setProtectedValue($participantsHelper, 'statusMapper', $acceptedMapper);
+
+        TestReflection::setProtectedValue($this->beanMock, 'dateTimeHelper', $dateTimeHelper);
+        TestReflection::setProtectedValue($this->beanMock, 'participantsHelper', $participantsHelper);
+        TestReflection::setProtectedValue($this->beanMock, 'statusMapper', $statusMapper);
+
+        $statusMapper->expects($this->any())
+                     ->method('getMapping')
+                     ->willReturn(TestReflection::getProtectedValue($statusMapper, 'statusMap'));
+
+        $acceptedMapper->expects($this->any())
+                       ->method('getMapping')
+                       ->willReturn(TestReflection::getProtectedValue($acceptedMapper, 'statusMap'));
 
         $this->beanMock->calendardata = $currentEvent;
 
@@ -1957,7 +2398,7 @@ END:VCALENDAR',
     {
         $beanMock = $this->getMockBuilder('CalDavEvent')
                          ->disableOriginalConstructor()
-                         ->setMethods(array('getStatusMap'))
+                         ->setMethods(null)
                          ->getMock();
 
         $dateTimeHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
@@ -1965,11 +2406,34 @@ END:VCALENDAR',
                                ->setMethods(null)
                                ->getMock();
 
-        TestReflection::setProtectedValue($beanMock, 'dateTimeHelper', $dateTimeHelper);
+        $participantsHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper')
+                                   ->disableOriginalConstructor()
+                                   ->setMethods(null)
+                                   ->getMock();
 
-        $beanMock->expects($this->any())
-                 ->method('getStatusMap')
-                 ->willReturn(TestReflection::getProtectedValue($beanMock, 'statusMap'));
+        $statusMapper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\EventMap')
+                             ->disableOriginalConstructor()
+                             ->setMethods(array('getMapping'))
+                             ->getMock();
+
+        $acceptedMapper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\AcceptedMap')
+                               ->disableOriginalConstructor()
+                               ->setMethods(array('getMapping'))
+                               ->getMock();
+
+        TestReflection::setProtectedValue($participantsHelper, 'statusMapper', $acceptedMapper);
+
+        TestReflection::setProtectedValue($beanMock, 'dateTimeHelper', $dateTimeHelper);
+        TestReflection::setProtectedValue($beanMock, 'participantsHelper', $participantsHelper);
+        TestReflection::setProtectedValue($beanMock, 'statusMapper', $statusMapper);
+
+        $statusMapper->expects($this->any())
+                     ->method('getMapping')
+                     ->willReturn(TestReflection::getProtectedValue($statusMapper, 'statusMap'));
+
+        $acceptedMapper->expects($this->any())
+                       ->method('getMapping')
+                       ->willReturn(TestReflection::getProtectedValue($acceptedMapper, 'statusMap'));
 
         $beanMock->calendardata = $currentEvent;
 
