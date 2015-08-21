@@ -28,6 +28,7 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument
 
     protected $scopes = array(
         'https://www.googleapis.com/auth/contacts.readonly',
+        Google_Service_Drive::DRIVE_READONLY,
         Google_Service_Drive::DRIVE_FILE,
     );
 
