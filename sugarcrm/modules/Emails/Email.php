@@ -1051,11 +1051,7 @@ class Email extends SugarBean {
 			$this->bcc_addrs_names = $this->cleanEmails($this->bcc_addrs_names);
 			$this->reply_to_addr = $this->cleanEmails($this->reply_to_addr);
 			$this->description = SugarCleaner::cleanHtml($this->description);
-
-            $descriptionHtml = htmlspecialchars_decode($this->description_html, ENT_QUOTES);
-            $descriptionHtml = SugarCleaner::cleanHtml($descriptionHtml);
-            $this->description_html = htmlspecialchars($descriptionHtml, ENT_QUOTES, 'UTF-8');
-
+            $this->description_html = SugarCleaner::cleanHtml($this->description_html, true);
             $this->raw_source = SugarCleaner::cleanHtml($this->raw_source, true);
 			$this->saveEmailText();
 			$this->saveEmailAddresses();
