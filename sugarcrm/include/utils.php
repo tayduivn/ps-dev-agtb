@@ -493,6 +493,8 @@ function get_sugar_config_defaults()
             'error_number_of_cycles' =>  '10',
             'error_timeout' => '40',
         ),
+        'default_caldav_module' => 'Meetings',
+        'default_caldav_interval' => '6 month',
     );
 
     if (empty($locale)) {
