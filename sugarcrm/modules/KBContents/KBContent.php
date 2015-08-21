@@ -228,6 +228,16 @@ class KBContent extends SugarBean {
             $this->active_rev = (int) empty($this->kbarticle_id);
         }
 
+        if (isset($dataChanges['status'])) {
+            switch ($dataChanges['status']['after']) {
+                // automatically set ApprovedBy if status was changed to Approved
+                case self::ST_APPROVED:
+                    $user = $GLOBALS['current_user'];
+                    $this->kbsapprover_id = $user->id;
+                    break;
+            }
+        }
+
         $this->checkActiveRev();
 
         $beanId = parent::save($check_notify);
