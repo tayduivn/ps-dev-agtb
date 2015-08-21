@@ -1,3 +1,13 @@
+/*
+Modification information
+
+commit b09cb8f7937948c1428f8378885f9e70ecb59467
+Author: Sergey Morozov <smorozov@sugarcrm.com>
+Date:   Fri Aug 21 15:08:37 2015 +0300
+
+[BR-3239] Save Button is not functional while saving the formula for the calculated field.
+*/
+
 /*!
  * jQuery UI 1.8.16
  *
