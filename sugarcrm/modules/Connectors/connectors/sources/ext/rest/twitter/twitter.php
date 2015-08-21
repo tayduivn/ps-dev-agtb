@@ -18,7 +18,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * Reserved. Contributor(s): contact@synolia.com - www.synolia.com
 * *******************************************************************************/
 
-require_once('include/connectors/sources/ext/rest/rest.php');
+require_once 'include/connectors/sources/ext/rest/rest.php';
+require_once 'vendor/Zend/Oauth/Consumer.php';
 
 class ext_rest_twitter extends ext_rest {
 
@@ -31,7 +32,6 @@ class ext_rest_twitter extends ext_rest {
     }
 
     /**
-     * test
      * This method is called from the administration interface to run a test of the service
      * It is up to subclasses to implement a test and set _has_testing_enabled to true so that
      * a test button is rendered in the administration interface
@@ -39,35 +39,31 @@ class ext_rest_twitter extends ext_rest {
      * @param $propParam optional param that'll override internal properties if set
      * @return result boolean result of the test function
      */
-    public function test($propParam = null) {
-        require_once 'vendor/Zend/Oauth/Consumer.php';
+    public function test() {
+        $properties = $this->getProperties();
 
         $api = ExternalAPIFactory::loadAPI('Twitter', true);
 
+        // Start with a reasonable default
+        $config = array(
+            'callbackUrl' => 'http://www.sugarcrm.com',
+            'requestTokenUrl' => 'https://api.twitter.com/oauth/request_token',
+            'consumerKey' => $properties['oauth_consumer_key'],
+            'consumerSecret' => $properties['oauth_consumer_secret']
+        );
+
         if ($api) {
-            if (isset($propParam)) {
-                $properties = $propParam;
-            } else {
-                $properties = $this->getProperties();
-            }
-            $config = array(
-                'callbackUrl' => 'http://www.sugarcrm.com',
-                'siteUrl' => $api->getOauthRequestURL(),
-                'requestTokenUrl' => $api->getOauthRequestURL(),
-                'consumerKey' => $properties['oauth_consumer_key'],
-                'consumerSecret' => $properties['oauth_consumer_secret']
-            );
-            try {
-                $consumer = new Zend_Oauth_Consumer($config);
-                $consumer->getRequestToken();
-                return true;
-            } catch (Exception $e) {
-                $GLOBALS['log']->error("Error getting request token for twitter:".$e->getMessage());
-                return false;
-            }
+            $config['requestTokenUrl'] = $api->getOauthRequestURL();
         }
-        
-        return false;
+
+        try {
+            $consumer = new Zend_Oauth_Consumer($config);
+            $consumer->getRequestToken();
+            return true;
+        } catch (Exception $e) {
+            $GLOBALS['log']->error("Error getting request token for twitter:".$e->getMessage());
+            return false;
+        }
     }
 
     /*
