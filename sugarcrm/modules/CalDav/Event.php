@@ -9,9 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 use Sabre\VObject;
-use Sugarcrm\Sugarcrm\Dav\Base;
+use Sabre\VObject\Component as SabreComponent;
+use Sugarcrm\Sugarcrm\Dav\Base\Helper as DavHelper;
+use Sugarcrm\Sugarcrm\Dav\Base\Constants as DavConstants;
+use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as DavStatusMapper;
 
 /**
  * Class CalDav
@@ -151,7 +153,6 @@ class CalDavEvent extends SugarBean
      */
     public $module_sync_counter;
 
-
     /**
      * Calendar event is stored here
      * @var Sabre\VObject\Component\VCalendar
@@ -159,18 +160,19 @@ class CalDavEvent extends SugarBean
     protected $vCalendarEvent = null;
 
     /**
-     * Map for CalDav event status => SugarCRM meetings/calls status
-     * @var array
-     */
-    protected $statusMap = array(
-        'CANCELLED' => 'Not Held',
-        'CONFIRMED' => 'Planned',
-    );
-
-    /**
      * @var Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper
      */
     protected $dateTimeHelper;
+
+    /**
+     * @var Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper
+     */
+    protected $participantsHelper;
+
+    /**
+     * @var Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\EventMap
+     */
+    protected $statusMapper;
 
     /**
      * Calculate and set the size of the event data in bytes
@@ -191,62 +193,11 @@ class CalDavEvent extends SugarBean
     }
 
     /**
-     * Retrieve logger instance
-     * @return \LoggerManager
-     */
-    protected function getLogger()
-    {
-        return $GLOBALS['log'];
-    }
-
-    /**
-     * Get global application strings
-     * @return array
-     */
-    protected function getAppListStrings()
-    {
-        global $app_list_strings;
-
-        return $app_list_strings;
-    }
-
-    /**
-     * Filter $statusMap for valid mappings key and return it
-     * If mapping not found empty array should be returned to allow CalDav or SugarCRM module to select the default value
-     * @return array
-     */
-    protected function getStatusMap()
-    {
-        $appStrings = $this->getAppListStrings();
-        $relatedModule = $this->getBean();
-        if (!isset($relatedModule->field_defs['status']['options'])) {
-            $this->getLogger()->error('CalDavEvent can\'t retrieve status options for module '.$relatedModule->module_name);
-            return array();
-        }
-
-        $optionsKey = $relatedModule->field_defs['status']['options'];
-
-        if (!isset($appStrings[$optionsKey])) {
-            $this->getLogger()->error('CalDavEvent can\'t retrieve status options for module '.$relatedModule->module_name);
-            return array();
-        }
-
-        $result = array();
-        foreach ($this->statusMap as $davKey => $sugarKey) {
-            if (isset($appStrings[$optionsKey][$sugarKey])) {
-                $result[$davKey] = $sugarKey;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Retrieve component from vObject
      * @param Sabre\VObject\Component\VCalendar $vObject
-     * @return \Sabre\VObject\Component\VEvent | null
+     * @return Sabre\VObject\Component\VEvent | null
      */
-    protected function getComponent(Sabre\VObject\Component\VCalendar $vObject)
+    protected function getComponent(SabreComponent\VCalendar $vObject)
     {
         $components = $vObject->getComponents();
         foreach ($components as $component) {
@@ -305,7 +256,7 @@ class CalDavEvent extends SugarBean
                 }
             } else {
                 $it = new VObject\Recur\EventIterator($vObject, $component->UID);
-                $maxRecur = Base\Constants::MAX_INFINITE_RECCURENCE_COUNT;
+                $maxRecur = DavConstants::MAX_INFINITE_RECCURENCE_COUNT;
 
                 $endDate = clone $component->DTSTART->getDateTime();
                 $endDate->modify('+' . $maxRecur . ' day');
@@ -341,7 +292,7 @@ class CalDavEvent extends SugarBean
 
     /**
      * Retrieve VCalendar Event
-     * @return VObject\Component\VCalendar|VObject\Document
+     * @return Sabre\VObject\Component\VCalendar
      */
     protected function getVCalendarEvent()
     {
@@ -349,7 +300,7 @@ class CalDavEvent extends SugarBean
             return $this->vCalendarEvent;
         }
         if (empty($this->calendardata)) {
-            $this->vCalendarEvent = new Sabre\VObject\Component\VCalendar();
+            $this->vCalendarEvent = new SabreComponent\VCalendar();
             $timezone = $this->vCalendarEvent->createComponent('VTIMEZONE');
             $timezone->TZID = $GLOBALS['current_user']->getPreference('timezone');
             $this->vCalendarEvent->add($timezone);
@@ -381,10 +332,10 @@ class CalDavEvent extends SugarBean
      * Return true if property was changed or false otherwise
      * @param string $propertyName
      * @param string $value
-     * @param VObject\Component $parent Parent component for property
+     * @param Sabre\VObject\Component $parent Parent component for property
      * @return bool
      */
-    protected function setVObjectStringProperty($propertyName, $value, Sabre\VObject\Component $parent)
+    protected function setVObjectStringProperty($propertyName, $value, SabreComponent $parent)
     {
         if (!$parent->$propertyName) {
             $prop = $parent->parent->createProperty($propertyName, $value);
@@ -402,13 +353,72 @@ class CalDavEvent extends SugarBean
     }
 
     /**
+     * Modify existing participants to event
+     * @param array $participants Participants to modify
+     * @param Sabre\VObject\Component $parent
+     * @param string $componentName
+     */
+    protected function modifyParticipants(array $participants, SabreComponent $parent, $componentName = 'ATTENDEE')
+    {
+        $nodes = $parent->select($componentName);
+
+        foreach ($nodes as $node) {
+            $part = $participants;
+            $participant = array_filter($part, function ($arr) use ($node) {
+                return $arr['davLink'] == strtolower($node->getValue());
+            });
+
+            if ($participant) {
+                $key = key($participant);
+                $node->setValue($key);
+
+                if (isset($node->parameters['PARTSTAT'])) {
+                    $node->parameters['PARTSTAT'] = $participant[$key]['PARTSTAT'];
+                }
+            }
+        }
+    }
+
+    /**
+     * Add participants to event
+     * @param array $participants Participants to add
+     * @param Sabre\VObject\Component $parent
+     */
+    protected function addParticipants(array $participants, SabreComponent $parent, $componentName = 'ATTENDEE')
+    {
+        foreach ($participants as $email => $parcipiant) {
+            if (array_key_exists('davLink', $parcipiant)) {
+                unset($parcipiant['davLink']);
+            }
+            $parent->add($componentName, $email, $parcipiant);
+        }
+    }
+
+    /**
+     * Delete participants from event
+     * @param array $participants Participants to delete
+     * @param Sabre\VObject\Component $parent
+     * @param string $componentName
+     */
+    protected function deleteParticipants(array $participants, SabreComponent $parent, $componentName = 'ATTENDEE')
+    {
+        $nodes = $parent->select($componentName);
+
+        foreach ($nodes as $node) {
+            if (isset($participants[strtolower($node->getValue())])) {
+                $parent->remove($node);
+            }
+        }
+    }
+
+    /**
      * Set DateTime property of event
      * @param string $propertyName
      * @param string $value
-     * @param VObject\Component $parent
+     * @param Sabre\VObject\Component $parent
      * @return bool
      */
-    protected function setVObjectDateTimeProperty($propertyName, $value, Sabre\VObject\Component $parent)
+    protected function setVObjectDateTimeProperty($propertyName, $value, SabreComponent $parent)
     {
         if (!$parent->$propertyName) {
             $dateTimeElement = $parent->parent->createProperty($propertyName);
@@ -434,11 +444,10 @@ class CalDavEvent extends SugarBean
     /**
      * Create VALARM component
      * @param string $duration Duration in DURATION format
-     * @param VObject\Component $parent
+     * @param Sabre\VObject\Component $parent
      * @param string $action
-     * @todo For full reminders functionality  participant helper should be used.
      */
-    protected function createReminderComponent($duration, Sabre\VObject\Component $parent, $action)
+    protected function createReminderComponent($duration, SabreComponent $parent, $action)
     {
         $alarm = $parent->parent->createComponent('VALARM');
         $alarm->add($parent->parent->createProperty('ACTION', $action));
@@ -448,7 +457,9 @@ class CalDavEvent extends SugarBean
 
     public function __construct()
     {
-        $this->dateTimeHelper = new Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper();
+        $this->dateTimeHelper = new DavHelper\DateTimeHelper();
+        $this->participantsHelper = new DavHelper\ParticipantsHelper();
+        $this->statusMapper = new DavStatusMapper\EventMap();
         parent::__construct();
     }
 
@@ -528,6 +539,10 @@ class CalDavEvent extends SugarBean
      */
     public function getRelatedCalendar($calendarId)
     {
+        if (!$calendarId) {
+            return null;
+        }
+
         if ($this->load_relationship('events_calendar')) {
             return \BeanFactory::getBean($this->events_calendar->getRelatedModuleName(), $calendarId);
         }
@@ -569,7 +584,7 @@ class CalDavEvent extends SugarBean
      */
     public function save($check_notify = false)
     {
-        $operation = $this->isUpdate() ? Base\Constants::OPERATION_MODIFY : Base\Constants::OPERATION_ADD;
+        $operation = $this->isUpdate() ? DavConstants::OPERATION_MODIFY : DavConstants::OPERATION_ADD;
         $this->addChange($operation);
 
         return parent::save($check_notify);
@@ -581,7 +596,7 @@ class CalDavEvent extends SugarBean
     public function mark_deleted($id)
     {
         if (!$this->deleted) {
-            $this->addChange(Base\Constants::OPERATION_DELETE);
+            $this->addChange(DavConstants::OPERATION_DELETE);
         }
         parent::mark_deleted($id);
     }
@@ -599,10 +614,10 @@ class CalDavEvent extends SugarBean
      * Set the title (SUMMARY) of event
      * Return true if title was changed or false otherwise
      * @param string $value
-     * @param VObject\Component $parent Parent component for title
+     * @param Sabre\VObject\Component $parent Parent component for title
      * @return bool
      */
-    public function setTitle($value, Sabre\VObject\Component $parent)
+    public function setTitle($value, SabreComponent $parent)
     {
         return $this->setVObjectStringProperty('SUMMARY', $value, $parent);
     }
@@ -620,10 +635,10 @@ class CalDavEvent extends SugarBean
      * Set the description of event
      * Return true if description was changed or false otherwise
      * @param string $value
-     * @param VObject\Component $parent Parent component from CalDavEvent::setType
+     * @param Sabre\VObject\Component $parent Parent component from CalDavEvent::setType
      * @return bool
      */
-    public function setDescription($value, Sabre\VObject\Component $parent)
+    public function setDescription($value, SabreComponent $parent)
     {
         return $this->setVObjectStringProperty('DESCRIPTION', $value, $parent);
     }
@@ -647,10 +662,10 @@ class CalDavEvent extends SugarBean
     /**
      * Set start date of event
      * @param string $value
-     * @param VObject\Component $parent
+     * @param Sabre\VObject\Component $parent
      * @return bool
      */
-    public function setStartDate($value, Sabre\VObject\Component $parent)
+    public function setStartDate($value, SabreComponent $parent)
     {
         return $this->setVObjectDateTimeProperty('DTSTART', $value, $parent);
     }
@@ -680,12 +695,12 @@ class CalDavEvent extends SugarBean
     /**
      * Set end date of event
      * @param string $value
-     * @param VObject\Component $parent
+     * @param Sabre\VObject\Component $parent
      * @return bool
      */
-    public function setEndDate($value, Sabre\VObject\Component $parent)
+    public function setEndDate($value, SabreComponent $parent)
     {
-        if ($parent instanceof Sabre\VObject\Component\VEvent) {
+        if ($parent instanceof SabreComponent\VEvent) {
             return $this->setVObjectDateTimeProperty('DTEND', $value, $parent);
         }
 
@@ -695,12 +710,12 @@ class CalDavEvent extends SugarBean
     /**
      * Set due date of vtodo
      * @param string $value
-     * @param VObject\Component $parent
+     * @param Sabre\VObject\Component $parent
      * @return bool
      */
-    public function setDueDate($value, Sabre\VObject\Component $parent)
+    public function setDueDate($value, SabreComponent $parent)
     {
-        if ($parent instanceof Sabre\VObject\Component\VTodo) {
+        if ($parent instanceof SabreComponent\VTodo) {
             return $this->setVObjectDateTimeProperty('DUE', $value, $parent);
         }
 
@@ -734,10 +749,10 @@ class CalDavEvent extends SugarBean
      * Set the location of event
      * Return true if location was changed or false otherwise
      * @param string $value
-     * @param VObject\Component $parent Parent component from CalDavEvent::setType
+     * @param Sabre\VObject\Component $parent Parent component from CalDavEvent::setType
      * @return bool
      */
-    public function setLocation($value, Sabre\VObject\Component $parent)
+    public function setLocation($value, SabreComponent $parent)
     {
         return $this->setVObjectStringProperty('LOCATION', $value, $parent);
     }
@@ -769,10 +784,10 @@ class CalDavEvent extends SugarBean
      * Set event duration by hours and minutes
      * @param int $hours
      * @param int $minutes
-     * @param VObject\Component $parent
+     * @param Sabre\VObject\Component $parent
      * @return bool
      */
-    public function setDuration($hours, $minutes, Sabre\VObject\Component $parent)
+    public function setDuration($hours, $minutes, SabreComponent $parent)
     {
         $duration = $this->dateTimeHelper->secondsToDuration($hours * 3600 + $minutes * 60);
 
@@ -808,48 +823,59 @@ class CalDavEvent extends SugarBean
 
     /**
      * Get organizer of event.  At now returns array with organizer's email, status and role only
-     * @return null|array
-     *
-     * @todo For full functionality participant helper should be used.
+     * @see Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper::prepareForSugar
+     * @return array
      */
     public function getOrganizer()
     {
         $event = $this->getVCalendarEvent();
         $component = $this->getComponent($event);
-
+        $result = array();
         if ($component && $component->ORGANIZER) {
-            $organizer = $component->ORGANIZER->getValue();
-            $params = $component->ORGANIZER->parameters();
-
-            return array(
-                'user' => $organizer,
-                'status' => $params['PARTSTAT']->getValue(),
-                'role' => $params['ROLE']->getValue(),
-            );
+            $result = $this->participantsHelper->prepareForSugar($this, $component->ORGANIZER);
         }
 
-        return null;
+        return $result;
     }
 
     /**
      * Set organizer of event
-     * @param mixed $value
-     * @param VObject\Component $parent
+     * @param Sabre\VObject\Component $parent
      * @return bool
-     *
-     * @todo It will be implemented when "participant helper" becomes available
      */
-    public function setOrganizer($value, Sabre\VObject\Component $parent)
+    public function setOrganizer(SabreComponent $parent)
     {
-        return false;
+        $attendees = $this->participantsHelper->prepareForDav($this, 'ORGANIZER');
+
+        if (!$attendees) {
+            return false;
+        }
+
+        $nodes = $parent->select('ORGANIZER');
+        foreach ($nodes as $node) {
+            $parent->remove($node);
+        }
+
+        foreach ($attendees as $operation => $attendees) {
+            switch ($operation) {
+                case DavConstants::PARTICIPIANT_ADDED:
+                    $this->addParticipants($attendees, $parent, 'ORGANIZER');
+                    break;
+                case DavConstants::PARTICIPIANT_MODIFIED:
+                    $this->modifyParticipants($attendees, $parent, 'ORGANIZER');
+                    break;
+                default:
+                    return false;
+            }
+        }
+
+        return true;
     }
 
     /**
      * Get participants of event
-     * At now returns array with email, status and role only
+     * @see Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper::prepareForSugar
      * @return array[]
-     *
-     * @todo For full functionality participant helper should be used.
      */
     public function getParticipants()
     {
@@ -857,14 +883,7 @@ class CalDavEvent extends SugarBean
         $component = $this->getComponent($event);
         $result = array();
         if ($component && $component->ATTENDEE) {
-            foreach ($component->ATTENDEE as $participant) {
-                $params = $participant->parameters();
-                $result[] = array(
-                    'user' => $participant->getValue(),
-                    'status' => $params['PARTSTAT']->getValue(),
-                    'role' => $params['ROLE']->getValue(),
-                );
-            }
+            $result = $this->participantsHelper->prepareForSugar($this, $component->ATTENDEE);
         }
 
         return $result;
@@ -872,15 +891,34 @@ class CalDavEvent extends SugarBean
 
     /**
      * Set participants of event
-     * @param mixed $value
-     * @param VObject\Component $parent
+     * @param Sabre\VObject\Component $parent
      * @return bool
-     *
-     * @todo It will be implemented when "participant helper" becomes available
      */
-    public function setParticipants($value, Sabre\VObject\Component $parent)
+    public function setParticipants(SabreComponent $parent)
     {
-        return false;
+        $attendees = $this->participantsHelper->prepareForDav($this, 'ATTENDEE');
+
+        if (!$attendees) {
+            return false;
+        }
+
+        foreach ($attendees as $operation => $attendees) {
+            switch ($operation) {
+                case DavConstants::PARTICIPIANT_ADDED:
+                    $this->addParticipants($attendees, $parent, 'ATTENDEE');
+                    break;
+                case DavConstants::PARTICIPIANT_DELETED:
+                    $this->deleteParticipants($attendees, $parent, 'ATTENDEE');
+                    break;
+                case DavConstants::PARTICIPIANT_MODIFIED:
+                    $this->modifyParticipants($attendees, $parent, 'ATTENDEE');
+                    break;
+                default:
+                    return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -898,7 +936,6 @@ class CalDavEvent extends SugarBean
      * @return array[] See above
      *
      * @todo Need helper to convert duration to SugarCRM allowed reminder duration
-     * @todo For full reminders functionality  participant helper should be used.
      */
     public function getReminders()
     {
@@ -918,15 +955,7 @@ class CalDavEvent extends SugarBean
 
                     $description = $alarm->DESCRIPTION ? $alarm->DESCRIPTION->getValue() : '';
                     if ($alarm->ATTENDEE) {
-                        foreach ($alarm->ATTENDEE as $attendee) {
-                            $email = $attendee->getValue();
-                            $params = $attendee->parameters();
-                            $attendees[] = array(
-                                'user' => $email,
-                                'status' => $params['PARTSTAT']->getValue(),
-                                'role' => $params['ROLE']->getValue(),
-                            );
-                        }
+                        $attendees = $this->participantsHelper->prepareForSugar($this, $alarm->ATTENDEE);
                     }
 
                     $result[$alarm->ACTION->getValue()] = array(
@@ -944,14 +973,14 @@ class CalDavEvent extends SugarBean
     /**
      * Set reminder params.
      * It is possible to set several reminders such as "popup window" and "email message"
-     * @param int $value Duration in seconds
-     * @param VObject\Component $parent
+     * @param int $value     Duration in seconds
+     * @param Sabre\VObject\Component $parent
      * @param string $action :
-     *      DISPLAY - popup window
-     *      EMAIL - email message
+     *                       DISPLAY - popup window
+     *                       EMAIL - email message
      * @return bool
      */
-    public function setReminder($value, Sabre\VObject\Component $parent, $action = 'DISPLAY')
+    public function setReminder($value, SabreComponent $parent, $action = 'DISPLAY')
     {
         if (!$value) {
             return false;
@@ -1036,12 +1065,12 @@ class CalDavEvent extends SugarBean
     /**
      * Set recurring rules of event
      * @param mixed $value
-     * @param VObject\Component $parent
+     * @param Sabre\VObject\Component $parent
      * @return bool
      *
      * @todo It will be implemented when "recurring helper" becomes available
      */
-    public function setRRule($value, Sabre\VObject\Component $parent)
+    public function setRRule($value, SabreComponent $parent)
     {
         return false;
     }
@@ -1054,7 +1083,7 @@ class CalDavEvent extends SugarBean
     public function getStatus()
     {
         $status = $this->getVObjectStringProperty('STATUS');
-        $statusMap = $this->getStatusMap();
+        $statusMap = $this->statusMapper->getMapping($this);
         if (isset($statusMap[$status])) {
             return $statusMap[$status];
         }
@@ -1067,12 +1096,12 @@ class CalDavEvent extends SugarBean
      * @see $statusMap for avaliable statuses
      * Return true if status was changed or false otherwise
      * @param string $value
-     * @param VObject\Component $parent Parent component from CalDavEvent::setType
+     * @param Sabre\VObject\Component $parent Parent component from CalDavEvent::setType
      * @return bool
      */
-    public function setStatus($value, Sabre\VObject\Component $parent)
+    public function setStatus($value, SabreComponent $parent)
     {
-        $statusMap = array_flip($this->getStatusMap());
+        $statusMap = array_flip($this->statusMapper->getMapping($this));
 
         if (!isset($statusMap[$value])) {
             return false;
@@ -1092,7 +1121,7 @@ class CalDavEvent extends SugarBean
      * Create component and return it
      * If component already exists it should be returned
      * @param string $componentType Component type VEVENT or VTODO
-     * @return VObject\Component
+     * @return Sabre\VObject\Component
      *
      * @throws \InvalidArgumentException
      */

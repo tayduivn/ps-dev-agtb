@@ -38,4 +38,12 @@ class Constants
      * Maximum date count for INFINITE RECCURENCE
      */
     const MAX_INFINITE_RECCURENCE_COUNT = 1000;
+
+    const PARTICIPIANT_NOT_MODIFIED = 'notModified';
+
+    const PARTICIPIANT_MODIFIED = 'modified';
+
+    const PARTICIPIANT_ADDED = 'added';
+
+    const PARTICIPIANT_DELETED = 'delete';
 }

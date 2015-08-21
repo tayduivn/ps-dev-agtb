@@ -71,6 +71,7 @@ class SugarTestCalDavUtilities
             $event->setCalendarEventURI($eventData['eventURI']);
         }
 
+        $event->processed = true;
         $event->save();
         $event->retrieve($event->id);
         self::$createdEvents[] = $event;
