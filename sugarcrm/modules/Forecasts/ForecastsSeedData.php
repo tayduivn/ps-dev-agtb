@@ -89,11 +89,12 @@ class ForecastsSeedData
 
                     $quota->save();
 
-                    if (!$user->isManager($commit_type_array[0])) {
+                    $commitUserId = clean_string($commit_type_array[0]);
+                    if (!$user->isManager($commitUserId)) {
                         /* @var $quotaRollup Quota */
                         $quotaRollup = BeanFactory::getBean('Quotas');
                         $quotaRollup->timeperiod_id = $timeperiod_id;
-                        $quotaRollup->user_id = $commit_type_array[0];
+                        $quotaRollup->user_id = $commitUserId;
                         $quotaRollup->quota_type = 'Rollup';
                         $quota->currency_id = -99;
                         $quotaRollup->amount = $quota->amount;
@@ -106,10 +107,10 @@ class ForecastsSeedData
                         ) {
                             $quotaRollup->created_by = 'seed_jim_id';
                         } else {
-                            if ($commit_type_array[0] == 'seed_sally_id' || $commit_type_array[0] == 'seed_max_id') {
+                            if ($commitUserId == 'seed_sally_id' || $commitUserId == 'seed_max_id') {
                                 $quotaRollup->created_by = 'seed_sarah_id';
                             } else {
-                                if ($commit_type_array[0] == 'seed_chris_id') {
+                                if ($commitUserId == 'seed_chris_id') {
                                     $quotaRollup->created_by = 'seed_will_id';
                                 } else {
                                     $quotaRollup->created_by = $current_user->id;

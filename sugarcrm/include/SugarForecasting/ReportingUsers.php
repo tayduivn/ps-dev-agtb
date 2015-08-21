@@ -23,10 +23,11 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
 
         // check if the current user is a manager, if they are not, we will load up their reports to
         // as the starting user
-        $getReportsTo = (!User::isManager($this->getArg('user_id')));
+        $userId = clean_string($this->getArg('user_id'));
+        $getReportsTo = (!User::isManager($userId));
 
         /* @var $userBean User */
-        $userBean = BeanFactory::getBean('Users', $this->getArg('user_id'));
+        $userBean = BeanFactory::getBean('Users', $userId);
 
         if($getReportsTo === true) {
             $userBean = BeanFactory::getBean('Users', $userBean->reports_to_id);
@@ -41,7 +42,7 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
 
         $tree = $this->formatForTree($userBean, $children);
 
-        if ($GLOBALS['current_user']->id != $this->getArg('user_id')) {
+        if ($GLOBALS['current_user']->id != $userId) {
             // we need to create a parent record
             if (!empty($userBean->reports_to_id)) {
                 $parent = $this->getParentLink($userBean->reports_to_id);
