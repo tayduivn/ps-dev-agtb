@@ -23,7 +23,7 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
 
         // check if the current user is a manager, if they are not, we will load up their reports to
         // as the starting user
-        $userId = clean_string($this->getArg('user_id'));
+        $userId = $this->getArg('user_id');
         $getReportsTo = (!User::isManager($userId));
 
         /* @var $userBean User */
