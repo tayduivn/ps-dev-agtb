@@ -104,26 +104,9 @@
         });
     },
     _updateProStatusEnabled: function(model) {
-        var self = this;
-        var alertID = model.id + ':refresh';
-        url = App.api.buildURL(model.module, null, {id: model.id});
-        attributes = {prj_status: 'ACTIVE'};
-        app.api.call('update', url, attributes,{
-            success:function(){
-                self.$el.find("[name=pmse_Project_" + model.id + "] .label-important")
-                    .removeClass('label-important')
-                    .addClass('label-success')
-                    .text(App.lang.get('LBL_PMSE_PROCESS_DEFINITIONS_ENABLED', 'pmse_Project'));
-
-                self._showSuccessAlert();
-                model.set('prj_status', 'ACTIVE');
-            }
-        });
-        app.alert.show(alertID, {
-            level:"process",
-            title: app.lang.get('LBL_SAVING', model.module),
-            autoClose: true
-        });
+        model.set('prj_status', 'ACTIVE');
+        model.save();
+        this._showSuccessAlert();
     },
     disabledProcess: function(model) {
         var self = this;
@@ -160,26 +143,9 @@
         });
     },
     _updateProStatusDisabled: function(model) {
-        var self = this;
-        var alertID = model.id + ':refresh';
-        url = App.api.buildURL(model.module, null, {id: model.id});
-        attributes = {prj_status: 'INACTIVE'};
-        app.api.call('update', url, attributes,{
-            success:function(){
-                self.$el.find("[name=pmse_Project_" + model.id + "] .label-success")
-                    .removeClass('label-success')
-                    .addClass('label-important')
-                    .text(App.lang.get('LBL_PMSE_PROCESS_DEFINITIONS_DISABLED', 'pmse_Project'));
-
-                self._showSuccessAlert();
-                model.set('prj_status', 'INACTIVE');
-            }
-        });
-        app.alert.show(alertID, {
-            level:"process",
-            title: app.lang.get('LBL_SAVING', model.module),
-            autoClose: true
-        });
+        model.set('prj_status', 'INACTIVE');
+        model.save();
+        this._showSuccessAlert();
     },
     enableDisableProcess: function (model) {
         var status = model.get("prj_status");
