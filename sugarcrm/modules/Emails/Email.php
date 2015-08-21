@@ -1052,8 +1052,9 @@ class Email extends SugarBean {
 			$this->reply_to_addr = $this->cleanEmails($this->reply_to_addr);
 			$this->description = SugarCleaner::cleanHtml($this->description);
 
-            $this->description_html = $this->htmlDecodeAll($this->description_html);
-            $this->description_html = SugarCleaner::cleanHtml($this->description_html);
+            $descriptionHtml = htmlspecialchars_decode($this->description_html, ENT_QUOTES);
+            $descriptionHtml = SugarCleaner::cleanHtml($descriptionHtml);
+            $this->description_html = htmlspecialchars($descriptionHtml, ENT_QUOTES, 'UTF-8');
 
             $this->raw_source = SugarCleaner::cleanHtml($this->raw_source, true);
 			$this->saveEmailText();
@@ -3202,20 +3203,5 @@ eoq;
         $sugarDateTime->setTimezone($tz);
         $dbSearchDateTime = $timedate->asDb($sugarDateTime);
         return $dbSearchDateTime;
-    }
-
-    /**
-     * Decode special characters iteratively until fully decoded
-     *
-     * @param  string $html  - HTML string to decode
-     * @return string $html  - Decoded HTML string
-     */
-    protected function htmlDecodeAll($html)
-    {
-        do {
-            $saveHtml = $html;
-            $html = htmlspecialchars_decode($html, ENT_QUOTES);
-        } while ($html != $saveHtml);
-        return $html;
     }
 } // end class def
