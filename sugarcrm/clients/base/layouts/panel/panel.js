@@ -119,6 +119,7 @@
     /**
      * Saves the collapsed/expanded state of the subpanel in localStorage.
      *
+     * @private
      * @param {boolean} [show] `true` to expand, `false` to collapse. Collapses
      *   by default.
      */

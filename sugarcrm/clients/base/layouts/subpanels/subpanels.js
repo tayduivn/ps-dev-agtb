@@ -60,10 +60,6 @@
         this._super('initialize', [options]);
         this._initSettings();
         this._bindEvents();
-
-        if (app.config.collapseSubpanels) {
-            this.showSubpanel(false);
-        }
     },
 
     /**
@@ -300,13 +296,20 @@
      * @param {String} linkName name of subpanel link
      */
     showSubpanel: function(linkName) {
-        // this.layout is the filter layout which subpanels is child of; we
-        // use it here as it has a last_state key in its meta
-        var cacheKey = app.user.lastState.key('subpanels-last', this.layout);
-
-        if (linkName) {
-            app.user.lastState.set(cacheKey, linkName);
+        if (!app.config.collapseSubpanels) {
+            // this.layout is the filter layout which subpanels is child of; we
+            // use it here as it has a last_state key in its meta
+            // FIXME: TY-499 will address removing the dependancy on this.layout
+            var cacheKey = app.user.lastState.key('subpanels-last', this.layout);
+            if (linkName) {
+                app.user.lastState.set(cacheKey, linkName);
+            } else {
+                // Fixes SP-836; esentially, we need to clear subpanel-last-<module>
+                // anytime 'All' selected.
+                app.user.lastState.remove(cacheKey);
+            }
         }
+
         _.each(this._components, function(component) {
             var link = component.context.get('link');
             if (!linkName) {
