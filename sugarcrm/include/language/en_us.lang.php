@@ -8591,6 +8591,7 @@ $app_strings = array (
     'LBL_TEAM' => 'Team:',
     'LBL_TEAMS' =>'Teams',
     'LBL_TEAM_SET_ID' => 'Team Set ID',
+    'LBL_TEAM_SET_SELECTED_ID' => 'Selected Team Set ID',
     'LBL_TEAM_SET'=>'Team Set',
     'LBL_SEARCH_UNAVAILABLE' => 'Search unavailable, please try again later.',
     'ERR_NO_PRIMARY_TEAM_SPECIFIED' => 'No Primary Team specified',
