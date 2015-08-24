@@ -4576,8 +4576,8 @@ class SugarBean
         }
 
 	if ($ifListForExport) {
-		if(isset($this->field_defs['email1'])) {
-            $ret_array['select'] .= ', email_addresses.email_address email1';
+		if(isset($this->field_defs['email'])) {
+            $ret_array['select'] .= ', email_addresses.email_address email';
             $ret_array['select'] .= ', email_addresses.invalid_email';
             $ret_array['select'] .= ', email_addresses.opt_out email_opt_out';
 			$ret_array['from'].= " LEFT JOIN email_addr_bean_rel on {$this->table_name}.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='{$this->module_dir}' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id ";
