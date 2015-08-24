@@ -140,12 +140,11 @@
                     success: _.bind(function(data) {
                         this.createTree(data.jsonTree, this.$treeContainer, this.loadPluginsList());
                     }, this),
-                    error: function(error) {
-                        app.alert.show('server-error', {
-                            level: 'error',
-                            messages: 'ERR_GENERIC_SERVER_ERROR'
-                        });
-                    }
+                    error: _.bind(function(error) {
+                        this._alertError(error, _.bind(function() {
+                            this.createTree([], this.$treeContainer, this.loadPluginsList());
+                        }, this));
+                    }, this)
                 });
             },
 
@@ -650,14 +649,9 @@
                             self._toggleVisibility(false);
                         },
                         error: function(error) {
-                            if (!_.isUndefined(error.message)) {
-                                app.alert.show('wrong_node_name', {
-                                    level: 'error',
-                                    messages: error.message,
-                                    autoClose: true
-                                });
-                            }
-                            self.jsTree.jstree('remove', newNode);
+                            self._alertError(error, _.bind(function(){
+                                this.jsTree.jstree('remove', newNode);
+                            }, self));
                         }
                     });
                 }
@@ -761,10 +755,23 @@
              * @private
              */
             _jstreeShowContextmenu: function(event, data) {
-                var container = data.inst._get_node().parent(),
+                var treeInstance = $.jstree._focused(),
+                    container = data.inst._get_node().parent(),
                     level = data.inst._get_node().attr('data-level'),
                     firstNodeId = $(container).find('li[data-level=' + level + ']').first().data('id'),
-                    lastNodeId = $(container).find('li[data-level=' + level + ']').last().data('id');
+                    lastNodeId = $(container).find('li[data-level=' + level + ']').last().data('id'),
+                    clickedNode,
+                    findNodeFunc = function(el) {
+                        if (el.id === data.rslt.obj.data('id')) {
+                            clickedNode = el;
+                            return;
+                        }
+                        if (!_.isEmpty(el.children)) {
+                            _.each(el.children, findNodeFunc);
+                        }
+                    };
+
+                _.each(treeInstance.get_settings().json_data.data, findNodeFunc);
 
                 if (!_.isUndefined(data.inst.get_settings().contextmenu.items) && this.jsTreeSettings.acl.edit) {
                     // Clear contextmenu.items.moveto.submenu property.
@@ -790,6 +797,32 @@
                         }
                     });
                 }
+
+                if (!_.isUndefined(clickedNode)) {
+                    var editAccess = clickedNode._acl.edit === 'no',
+                        deleteAccess = clickedNode._acl.delete === 'no';
+
+                    data.inst._set_settings({
+                        contextmenu: {items: {edit: {_disabled: editAccess || !this.jsTreeSettings.acl.edit}}}
+                    });
+                    data.inst._set_settings({
+                        contextmenu: {items: {moveup: {_disabled: editAccess || !this.jsTreeSettings.acl.edit}}}
+                    });
+                    data.inst._set_settings({
+                        contextmenu: {items: {movedown: {_disabled: editAccess || !this.jsTreeSettings.acl.edit}}}
+                    });
+                    data.inst._set_settings({
+                        contextmenu: {items: {moveto: {_disabled: editAccess || !this.jsTreeSettings.acl.edit}}}
+                    });
+                    data.inst._set_settings({
+                        contextmenu: {items: {delete: {_disabled: deleteAccess || !this.jsTreeSettings.acl.delete}}}
+                    });
+
+                    if (editAccess) {
+                        data.inst._set_settings({contextmenu: {items: {moveto: {submenu: null}}}});
+                    }
+                }
+
                 if (!$(event.currentTarget).hasClass('jstree-loading')) {
                     data.inst.show_contextmenu($(data.args[0]), data.args[2].pageX, data.args[2].pageY);
                 }
@@ -836,7 +869,7 @@
              * @param {String|Number} position
              * @param {Boolean} editable
              * @param {Boolean} addToRoot
-             * @param {Boolean} isHidden
+             * @param {Boolean} isDisabled
              */
             addNode: function(title, position, editable, addToRoot, isDisabled) {
                 var self = this,
@@ -1017,12 +1050,38 @@
                             }
                         },
                         error: function(error) {
-                            app.alert.show('server-error', {
-                                level: 'error',
-                                messages: 'ERR_GENERIC_SERVER_ERROR'
-                            });
+                            self._alertError(error);
                         }
                     });
+                }
+            },
+
+            /**
+             * Alert server error.
+             * @param {Object} error
+             * @param {Function} callback
+             * @private
+             */
+            _alertError: function(error, callback) {
+                if (!_.isUndefined(error.message)) {
+                    var level = 'error',
+                        messages = error.message,
+                        title;
+                    switch(error.code) {
+                        case 'not_authorized':
+                            title = 'ERR_NO_VIEW_ACCESS_TITLE';
+                            level = 'warning';
+                            messages = error.message;
+                            break;
+                    }
+                    app.alert.show('server-error', {
+                        title: title,
+                        level: level,
+                        messages: messages
+                    });
+                }
+                if (_.isFunction(callback)) {
+                    callback();
                 }
             },
 

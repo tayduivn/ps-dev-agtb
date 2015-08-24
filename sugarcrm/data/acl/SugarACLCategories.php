@@ -11,23 +11,66 @@
  */
 
 /**
- * Class SugarACLKB
- * Additional ACL for KB.
+ * Class SugarACLCategories
+ * Additional ACL for Categories.
  */
-class SugarACLCategories extends SugarACLKB
+class SugarACLCategories extends SugarACLStatic
 {
+    protected $aclModule = '';
+
+    public function __construct($aclOptions)
+    {
+        if (empty($aclOptions['aclModule'])) {
+            throw new SugarException('No sense to use SugarACLCategories strategy without aclModule definition.');
+        }
+        $this->aclModule = $aclOptions['aclModule'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function checkAccess($module, $view, $context)
+    {
+        if ($view == "field") {
+            return true;
+        }
+        return parent::checkAccess($this->aclModule, $view, $context);
+    }
 
     /**
      * {@inheritDoc}
      *
-     * Need to override default ACL in future.
+     * Check access for the list of fields
+     * @param string $module
+     * @param array $field_list key=>value list of fields
+     * @param string $action Action to check
+     * @param array $context
+     * @return array[boolean] Access for each field, array() means all allowed
      */
-    public function checkAccess($module, $view, $context)
+    public function checkFieldList($module, $field_list, $action, $context)
     {
-        $current_user = $this->getCurrentUser($context);
-        if ( !$current_user ) {
-            return false;
-        }
-        return true;
+        return array();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Get access for the list of fields
+     * @param string $module
+     * @param array $field_list key=>value list of fields
+     * @param array $context
+     * @return array[int] Access for each field, array() means all allowed
+     */
+    public function getFieldListAccess($module, $field_list, $context)
+    {
+        return array();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getUserAccess($module, $access_list, $context)
+    {
+        return parent::getUserAccess($this->aclModule, $access_list, $context);
     }
 }

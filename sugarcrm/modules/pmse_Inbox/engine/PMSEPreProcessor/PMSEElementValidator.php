@@ -226,7 +226,8 @@ class PMSEElementValidator implements PMSEValidate
         if (isset($_REQUEST['moduleName']) && isModuleBWC($_REQUEST['moduleName'])) {
             $url = $_REQUEST['module'];
         } else {
-            $url = $_REQUEST['__sugar_url'];
+            // In most cases __sugar_url will be set, but if it isn't, handle it
+            $url = isset($_REQUEST['__sugar_url']) ? $_REQUEST['__sugar_url'] : '';
         }
 
         if (strpos($url, 'pmse') === false) {

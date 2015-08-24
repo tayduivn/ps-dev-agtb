@@ -601,9 +601,11 @@ class PMSEExpressionEvaluator
                 }
                 break;
             case 'date'://date
+                // Same as datetime fields, if we have a DateTime object, use it
                 if ($value instanceof DateTime) {
                     $newValue = $value;
                 } else {
+                    // Otherwise try to get the value from the date string
                     $newValue = !empty($value) ? $timedate->fromString($value) : false;
                 }
                 break;
@@ -622,6 +624,7 @@ class PMSEExpressionEvaluator
 
                     // If there is an actual value given, use it
                     if (!empty($value)) {
+                        // Assumption here is that the date value is in ISO format
                         $newDate = $timedate->fromIso($value);
 
                         // If the conversion worked, use THAT

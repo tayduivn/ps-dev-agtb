@@ -63,4 +63,24 @@ class MetaDataFile implements MetaDataFileInterface
 
         return array('modules', $this->module, $names[$this->view]);
     }
+
+    /**
+     * Gets the view from this class
+     *
+     * @return string
+     */
+    public function getView()
+    {
+        return $this->view;
+    }
+
+    /**
+     * Gets the module from this class
+     *
+     * @return string
+     */
+    public function getModule()
+    {
+        return $this->module;
+    }
 }
