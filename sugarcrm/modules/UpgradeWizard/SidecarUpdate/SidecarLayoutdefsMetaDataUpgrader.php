@@ -228,8 +228,7 @@ class SidecarLayoutdefsMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
 
             // Skip subpanels that have links to non-existing modules
             // BR-3248, using full list
-            $fullModuleList = array_merge($GLOBALS['moduleList'], $GLOBALS['modInvisList']);
-            if (!empty($def['module']) && !in_array($def['module'], $fullModuleList)) {
+            if (!empty($def['module']) && !in_array($def['module'], $GLOBALS['beanList'])) {
                 unset($convertSubpanelDefs[$key]);
                 $this->logUpgradeStatus(
                     "Skipping subpanel $key in {$this->module} module. Linked module '{$def['module']}' does not exist"
