@@ -23,24 +23,22 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterface
 {
     /**
+     * Apply TBA in from clause.
      * {@inheritdoc}
      */
     public function addVisibilityFrom(&$query)
     {
-        global $current_user;
         if ($this->getOption('where_condition') || !$this->isApplicable()) {
             return $query;
         }
-
         list($teamTableAlias, $tableAlias) = $this->getAliases();
+        // Inner join is not used because owner visibility implements a where part only.
+        $where = $this->getWhereClause();
         $query .= " INNER JOIN (
-            SELECT tst.team_set_id
-            FROM team_sets_teams tst
-            INNER JOIN team_memberships {$teamTableAlias} ON tst.team_id = {$teamTableAlias}.team_id
-                AND {$teamTableAlias}.user_id = '{$current_user->id}'
-                AND {$teamTableAlias}.deleted=0
-            GROUP BY tst.team_set_id
-            ) {$tableAlias}_tba ON {$tableAlias}_tba.team_set_id = {$tableAlias}.team_set_selected_id";
+                SELECT {$tableAlias}.id
+                FROM {$tableAlias}
+                WHERE deleted = 0 {$where}
+            ) {$tableAlias}_agr ON {$tableAlias}_agr.id = {$tableAlias}.id";
 
         return $query;
     }
@@ -59,23 +57,15 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
     }
 
     /**
+     * Apply TBA in where clause.
      * {@inheritdoc}
      */
     public function addVisibilityWhere(&$query)
     {
-        global $current_user;
         if (!$this->getOption('where_condition') || !$this->isApplicable()) {
             return $query;
         }
-
-        list($teamTableAlias, $tableAlias) = $this->getAliases();
-        $inClause = "SELECT tst.team_set_id
-            FROM team_sets_teams tst
-            INNER JOIN team_memberships {$teamTableAlias} ON tst.team_id = {$teamTableAlias}.team_id
-                AND {$teamTableAlias}.user_id = '{$current_user->id}'
-                AND {$teamTableAlias}.deleted = 0";
-
-        $query .= " AND {$tableAlias}.team_set_selected_id IN ({$inClause}) ";
+        $query .= $this->getWhereClause();
         return $query;
     }
 
@@ -93,6 +83,28 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
     }
 
     /**
+     * Get a TBA where clause.
+     * @return string Where clause
+     */
+    protected function getWhereClause()
+    {
+        global $current_user;
+
+        list($teamTableAlias, $tableAlias) = $this->getAliases();
+        $inClause = "SELECT tst.team_set_id
+            FROM team_sets_teams tst
+            INNER JOIN team_memberships {$teamTableAlias} ON tst.team_id = {$teamTableAlias}.team_id
+                AND {$teamTableAlias}.user_id = '{$current_user->id}'
+                AND {$teamTableAlias}.deleted = 0";
+
+        $ow = new OwnerVisibility($this->bean, $this->params);
+        $ownerVisibilityRaw = '';
+        $ow->addVisibilityWhere($ownerVisibilityRaw);
+
+        return " AND ({$ownerVisibilityRaw} OR {$tableAlias}.team_set_selected_id IN ({$inClause})) ";
+    }
+
+    /**
      * Verifies if Team Based ACL needs to be applied.
      * @return bool
      */
@@ -100,9 +112,7 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
     {
         global $current_user;
 
-        if (empty($current_user) ||
-            empty($this->bean->team_set_selected_id)
-        ) {
+        if (empty($current_user)) {
             return false;
         }
         return true;
@@ -160,9 +170,14 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
     public function elasticAddFilters(\User $user, \Elastica\Filter\Bool $filter, Visibility $provider)
     {
         if ($this->isApplicable()) {
-            $filter->addMust(
+            $combo = new \Elastica\Filter\BoolOr();
+            $combo->addFilter(
                 $provider->createFilter('TeamSet', array('user' => $user, 'field' => 'team_set_selected_id'))
             );
+            $combo->addFilter(
+                $provider->createFilter('Owner', array('bean' => $this->bean, 'user' => $user))
+            );
+            $filter->addMust($combo);
         }
     }
 }

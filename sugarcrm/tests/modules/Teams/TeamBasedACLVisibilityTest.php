@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Teams/include/TeamBasedACLConfigurator.php';
-
 class TeamBasedACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
@@ -70,6 +68,7 @@ class TeamBasedACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->user = SugarTestUserUtilities::createAnonymousUser();
         $this->bean = SugarTestAccountUtilities::createAccount();
+        $this->bean->addVisibilityStrategy('TeamBasedACLVisibility');
         $this->bean->team_set_selected_id = $this->teamSet->id;
         $this->bean->save();
     }
@@ -97,6 +96,19 @@ class TeamBasedACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->team->remove_user_from_team($this->user->id);
         $this->assertFalse($this->isBeanAvailableUsingFrom());
         $this->assertFalse($this->isBeanAvailableUsingWhere());
+    }
+
+    /**
+     * Owner should have full access despite team membership.
+     */
+    public function testOwnerPassVisibility()
+    {
+        $this->bean->assigned_user_id = $this->user->id;
+        $this->bean->save();
+        $this->team->remove_user_from_team($this->user->id);
+
+        $this->assertTrue($this->isBeanAvailableUsingWhere());
+        $this->assertTrue($this->isBeanAvailableUsingFrom());
     }
 
     /**
