@@ -62,6 +62,7 @@
 
         this.on('render render:rows', this._setRowFields, this);
 
+
         //fire resize scroll-width on column add/remove
         this.on('list:toggle:column', this.resize, this);
         this.on('mergeduplicates:complete', this.refreshCollection, this);
@@ -76,6 +77,10 @@
             this.layout.on('list:record:deleted', function() {
                 this.refreshCollection();
             }, this);
+
+            // The `MassCollection` plugin triggers these events when it shows an
+            // alert and the table height changes.
+            this.layout.on('list:alert:show list:alert:hide', this._refreshReorderableColumns, this);
         }
         this.toggledModels = {};
 
@@ -683,5 +688,17 @@
     resize: function() {
         this._super('resize');
         this._bordersPosition = null;
+    },
+
+    /**
+     * Refreshes the `ReorderableColumns` when the table height changes.
+     *
+     * The `ReorderableColumns` plugin listens to the window `resize` event to
+     * update and position the handlers correctly.
+     *
+     * @private
+     */
+    _refreshReorderableColumns: function() {
+        $(window).resize();
     }
 })
