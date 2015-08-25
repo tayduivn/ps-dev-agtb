@@ -39,6 +39,8 @@ class CurrentUserApi extends SugarApi
         'default_locale_name_format' => 'default_locale_name_format',
         'fdow' => 'first_day_of_week',
         'sweetspot' => 'sweetspot',
+        'reminder_time' => 'reminder_time',
+        'email_reminder_time' => 'email_reminder_time',
     );
 
     const TYPE_ADMIN = "admin";
