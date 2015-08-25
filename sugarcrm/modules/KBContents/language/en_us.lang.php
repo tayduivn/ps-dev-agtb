@@ -56,6 +56,7 @@ $mod_strings = array (
     'LBL_ADD_ATTACHMENT' => 'Browse',
     'LBL_CATEGORIES' => 'Knowledge Base Categories',
     'LBL_CATEGORY_NAME' => 'Category',
+    'LBL_USEFULNESS' => 'Usefulness',
     'LBL_CATEGORY_ID' => 'Category Id',
     'LBL_KBSAPPROVERS' => 'Approvers',
     'LBL_KBSAPPROVER_ID' => 'Approved By',
