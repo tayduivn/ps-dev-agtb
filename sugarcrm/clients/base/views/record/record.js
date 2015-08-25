@@ -112,6 +112,25 @@
                     level: 'error',
                     messages: 'ERR_RESOLVE_ERRORS'
                 });
+            },
+            showNoAccessError: function() {
+                if (!this instanceof app.view.View) {
+                    app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
+                    'an instance of this view.');
+                    return;
+                }
+                // dismiss the default error
+                app.alert.dismiss('data:sync:error');
+                // display no access error
+                app.alert.show('server-error', {
+                    level: 'error',
+                    messages: 'ERR_HTTP_404_TEXT_LINE1'
+                });
+                // discard any changes before redirect
+                this.handleCancel();
+                // redirect to list view
+                var route = app.router.buildRoute(this.module);
+                app.router.navigate(route, {trigger: true});
             }
         };
         this.createMode = this.context.get('create') ? true : false;
@@ -762,6 +781,8 @@
                             }
                         }
                     }, this));
+                } else if (error.status === 403 || error.status === 404) {
+                    this.alerts.showNoAccessError.call(this);
                 } else {
                     this.editClicked();
                 }
