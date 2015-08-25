@@ -980,6 +980,17 @@ function check_form(formname) {
 	return validate_form(formname, '');
 }
 
+function disable_submit(formname) {
+    //disable the submit buttons to prevent double submits
+    var form = document.forms[formname];
+    var inputs = form.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i ++) {
+        if (inputs[i].type === 'submit') {
+            inputs[i].disabled = 'disabled';
+        }
+    }
+}
+
 var REQUIRED_VALIDATION_MESSAGE_CLASS = 'required validation-message';
 
 function remove_error_style(formName, input) {
