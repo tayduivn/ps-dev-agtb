@@ -201,7 +201,7 @@
             minimumInputLength: 1,
             tags: true,
             multiple: true,
-            closeOnSelect: false,
+            closeOnSelect: true,
             width: '100%',
             containerCssClass: 'select2-choices-pills-close',
             tokenSeparators: [','],
