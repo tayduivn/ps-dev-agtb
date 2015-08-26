@@ -1057,10 +1057,7 @@ class Email extends SugarBean {
 			$this->bcc_addrs_names = $this->cleanEmails($this->bcc_addrs_names);
 			$this->reply_to_addr = $this->cleanEmails($this->reply_to_addr);
 			$this->description = SugarCleaner::cleanHtml($this->description);
-
-            $this->description_html = $this->htmlDecodeAll($this->description_html);
-            $this->description_html = SugarCleaner::cleanHtml($this->description_html);
-
+            $this->description_html = SugarCleaner::cleanHtml($this->description_html, true);
             $this->raw_source = SugarCleaner::cleanHtml($this->raw_source, true);
 			$this->saveEmailText();
 			$this->saveEmailAddresses();
@@ -1502,6 +1499,9 @@ class Email extends SugarBean {
 		if(empty($text)) {
 			return '';
 		}
+        // <p></p> is not really needed here and it will make TinyMCE to inert <br> between them and 
+        // cause more display issues
+        $text = preg_replace('/<p[^>]*><\/p>/i', '', $text);
 		$out = "<div style='border-left:1px solid #00c; padding:5px; margin-left:10px;'>{$text}</div>";
 
 		return $out;
@@ -3214,20 +3214,5 @@ eoq;
         $sugarDateTime->setTimezone($tz);
         $dbSearchDateTime = $timedate->asDb($sugarDateTime);
         return $dbSearchDateTime;
-    }
-
-    /**
-     * Decode special characters iteratively until fully decoded
-     *
-     * @param  string $html  - HTML string to decode
-     * @return string $html  - Decoded HTML string
-     */
-    protected function htmlDecodeAll($html)
-    {
-        do {
-            $saveHtml = $html;
-            $html = htmlspecialchars_decode($html, ENT_QUOTES);
-        } while ($html != $saveHtml);
-        return $html;
     }
 } // end class def

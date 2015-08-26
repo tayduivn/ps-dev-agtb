@@ -47,7 +47,8 @@
                         if (!parentValue && parentModel.fields[field.rname] &&
                             parentModel.fields[field.rname].type == 'fullname'
                         ) {
-                            parentValue = parentModel.get('full_name');
+                            parentValue = parentModel.get('full_name')
+                                || app.utils.formatNameLocale(parentModel.attributes);
                         }
                         model.set(field.name, parentValue);
                         model.set(field.id_name, parentModel.get('id'));
@@ -178,6 +179,7 @@
                                     parentModel.get("full_name")
                                         || parentModel.get("document_name")
                                         || parentModel.get("name")
+                                        || app.utils.formatNameLocale(parentModel.attributes)
                                         || ""
                                 );
                             }

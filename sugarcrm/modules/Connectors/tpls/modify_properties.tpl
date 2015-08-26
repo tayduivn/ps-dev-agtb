@@ -87,7 +87,7 @@ var SourceTabs = {
 YAHOO.util.Event.onDOMReady(SourceTabs.init);
 </script>
 {/literal}
-<form name="ModifyProperties" method="POST" action="index.php">
+<form name="ModifyProperties" method="POST" action="index.php" onsubmit="disable_submit('ModifyProperties');">
 {sugar_csrf_form_token}
 <input type="hidden" name="modify" value="true">
 <input type="hidden" name="module" value="Connectors">

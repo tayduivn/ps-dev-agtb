@@ -190,6 +190,8 @@ describe('KBContents.Base.Views.KBSDashletLocalizations', function() {
         });
 
         it('should fetch data when data not fetched yet', function() {
+            var model = new Backbone.Model({id: 'test', kbdocument_id: 'test'});
+            view.context.parent.set('model', model);
             view.collection.dataFetched = false;
             view.loadData();
             expect(fetchStub).toHaveBeenCalled();
