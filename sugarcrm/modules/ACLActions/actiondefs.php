@@ -10,12 +10,17 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+$tbaConfig = new TeamBasedACLConfigurator();
+$tbaModuleOptions = $tbaConfig->getModuleOptions();
+
 if (!defined('ACL_ALLOW_NONE')) {
     define('ACL_ALLOW_ADMIN_DEV', 100);
     define('ACL_ALLOW_ADMIN', 99);
     define('ACL_ALLOW_DEV', 95);
     define('ACL_ALLOW_ALL', 90);
     define('ACL_ALLOW_ENABLED', 89);
+    define('ACL_ALLOW_SELECTED_TEAMS', $tbaModuleOptions['ACL_ALLOW_SELECTED_TEAMS']);
     define('ACL_ALLOW_OWNER', 75);
     define('ACL_ALLOW_NORMAL', 1);
     define('ACL_ALLOW_DEFAULT', 0);
@@ -34,6 +39,11 @@ $GLOBALS['ACLActionAccessLevels'] = array(
     ACL_ALLOW_OWNER => array(
         'color' => '#6F6800',
         'label' => 'LBL_ACCESS_OWNER',
+        'text_color' => 'white',
+    ),
+    ACL_ALLOW_SELECTED_TEAMS => array(
+        'color' => '#FFAA00',
+        'label' => 'LBL_ACCESS_SELECTED_TEAMS',
         'text_color' => 'white',
     ),
     ACL_ALLOW_NONE => array(
@@ -78,6 +88,16 @@ $GLOBALS['ACLActionAccessLevels'] = array(
     ),
 );
 
+$actionsDropdown = array(
+    ACL_ALLOW_ALL,
+    ACL_ALLOW_OWNER,
+);
+if ($tbaConfig->isEnabledGlobally()) {
+    $actionsDropdown[] = ACL_ALLOW_SELECTED_TEAMS;
+}
+$actionsDropdown[] = ACL_ALLOW_DEFAULT;
+$actionsDropdown[] = ACL_ALLOW_NONE;
+
 // These are the actions for a given type. It includes the ACCESS Levels for 
 // that action and the label for that action.
 $GLOBALS['ACLActions'] = array(
@@ -104,42 +124,22 @@ $GLOBALS['ACLActions'] = array(
                 'default' => ACL_ALLOW_ENABLED,
             ),
             'view' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_VIEW',
                 'default' => ACL_ALLOW_ALL,
             ),
             'list' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_LIST',
                 'default' => ACL_ALLOW_ALL,
             ),
             'edit' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_EDIT',
                 'default' => ACL_ALLOW_ALL,
             ),
             'delete' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_DELETE',
                 'default' => ACL_ALLOW_ALL,
             ),
@@ -153,12 +153,7 @@ $GLOBALS['ACLActions'] = array(
                 'default' => ACL_ALLOW_ALL,
             ),
             'export' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_EXPORT',
                 'default' => ACL_ALLOW_ALL,
             ),
