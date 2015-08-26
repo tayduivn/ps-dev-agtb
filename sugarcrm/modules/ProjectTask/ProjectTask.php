@@ -689,7 +689,7 @@ class ProjectTask extends SugarBean {
     public function updateRelatedCalcFields($linkName = "")
     {
         parent::updateRelatedCalcFields($linkName);
-        if ($linkName == 'projects' && !$this->project_id) {
+        if ($linkName == 'projects' && !$this->project_id && $this->deleted != 1) {
             $this->mark_deleted($this->id);
         }
     }

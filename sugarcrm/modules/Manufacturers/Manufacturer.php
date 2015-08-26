@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: Manufacturer.php 51719 2009-10-22 17:18:00Z mitani $
+
  * Description:
  ********************************************************************************/
 
@@ -153,6 +153,20 @@ class Manufacturer extends SugarBean {
 	return $the_where;
 }
 
+    /**
+     * Indicate this module implements ACL.
+     * @param string $interface the interface name
+     * @return bool
+     */
+    public function bean_implements($interface)
+    {
+        switch($interface)
+        {
+            case 'ACL':
+                return true;
+        }
+        return false;
+    }
 
 }
 

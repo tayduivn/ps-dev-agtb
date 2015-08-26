@@ -34,7 +34,8 @@ CriteriaField.prototype.init = function(settings) {
 		dateFormat: "YYYY-MM-DD",
 		timeFormat: "H:i",
 		decimalSeparator: ".",
-		numberGroupingSeparator: ","
+		numberGroupingSeparator: ",",
+		currencies: []
 	};
 
 	jQuery.extend(true, defaults, settings);
@@ -68,6 +69,7 @@ CriteriaField.prototype.init = function(settings) {
 		constant: defaults.constant,
 		decimalSeparator: defaults.decimalSeparator,
 		numberGroupingSeparator: defaults.numberGroupingSeparator,
+		currencies: defaults.currencies,
 		onChange: this._onChange(),
 		appendTo: function () {
 			return (that.parent && that.parent.parent && that.parent.parent.html) || document.body;

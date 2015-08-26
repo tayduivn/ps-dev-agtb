@@ -390,11 +390,11 @@ class Currency extends SugarBean
      *
      * @return object currency object
      */
-    public function getUserCurrency()
+    public static function getUserCurrency()
     {
         $currency_id = self::getCurrentCurrency();
-        $this->retrieve($currency_id);
-        return $this;
+        $currency = BeanFactory::getBean('Currencies', $currency_id);
+        return $currency;
     }
 
     /**

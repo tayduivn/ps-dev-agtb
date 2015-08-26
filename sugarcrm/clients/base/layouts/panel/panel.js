@@ -148,7 +148,7 @@
         _.each(this._components, function(component) {
             // FIXME: The layout should not be responsible for this. Will be
             // addressed as part of SC-4533.
-            if (component.$el.hasClass('subpanel-header')) {
+            if (this._stopComponentToggle(component)) {
                 return;
             }
             if (!this._canToggle) {
@@ -160,5 +160,18 @@
             }
         }, this);
         this._canToggle = true;
+    },
+
+    /**
+     * Extensible check to see if this component should be allowed to be toggled.
+     * If this returns true: _toggleComponent will return without further render/show/hide checks
+     * If this returns false: _toggleComponent will continue through render/show/hide checks
+     *
+     * @param component
+     * @returns {boolean}
+     * @private
+     */
+    _stopComponentToggle: function(component) {
+        return component.$el.hasClass('subpanel-header');
     }
 })

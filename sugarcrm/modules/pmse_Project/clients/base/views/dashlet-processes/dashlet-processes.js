@@ -70,14 +70,15 @@
         app.api.call('read', verifyURL, null, {
             success: function(data) {
                 if (!data) {
-                    var redirect = model.module+"/"+model.id+"/layout/designer";
+                    var redirect = app.router.buildRoute(model.module, model.id, 'layout/designer');
                     app.router.navigate(redirect , {trigger: true, replace: true });
                 } else {
                     app.alert.show('project-design-confirmation',  {
                         level: 'confirmation',
                         messages: App.lang.get('LBL_PMSE_PROCESS_DEFINITIONS_EDIT', model.module),
                         onConfirm: function () {
-                            app.navigate(this.context, model, 'layout/designer');
+                            var redirect = app.router.buildRoute(model.module, model.id, 'layout/designer');
+                            app.router.navigate(redirect , {trigger: true, replace: true });
                         },
                         onCancel: $.noop
                     });
@@ -390,15 +391,15 @@
      * descriptionRecord: View description in table pmse_Project in fields
      */
     descriptionRecord: function(model) {
-        //app.alert.show('Description \n\n'+model.get('description'));
+        app.alert.dismiss('message-id');
         app.alert.show('message-id', {
             level: 'info',
-            title:'DESCRIPTION',
-            messages: '<br/>'+model.get('description'),
+            title: app.lang.get('LBL_DESCRIPTION'),
+            messages: '<br/>' + model.get('description'),
             autoClose: false
         });
-        //app.alert.dismiss('DESCRIPTION : \n\n'+model.get('description'));
     },
+
     //tabs Switcher load
     tabSwitcher: function(event) {
         var index = this.$(event.currentTarget).data('index');

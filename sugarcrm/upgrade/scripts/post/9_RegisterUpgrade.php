@@ -16,7 +16,12 @@
 class SugarUpgradeRegisterUpgrade extends UpgradeScript
 {
     public $order = 9900;
-    public $type = self::UPGRADE_DB;
+
+    public function __construct($upgrader)
+    {
+        $this->type = self::UPGRADE_CUSTOM | self::UPGRADE_DB;
+        parent::__construct($upgrader);
+    }
 
     public function run()
     {

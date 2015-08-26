@@ -165,6 +165,98 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
                 }
             }
         }
+        //Check correct definitions for fields in primary keys.
+        foreach ($this->getBeanPrimaryIndexes($bean) as $index) {
+            $this->assertInternalType('array', $index['fields'], 'Fields for primary index should be as array');
+            foreach ($index['fields'] as $field) {
+                $def = $bean->getFieldDefinition($field);
+                $this->assertNotEmpty($def, 'Field for primary key should exists');
+                $bean->db->massageFieldDef($def, $bean->getTableName());
+                $this->assertFalse(
+                    SugarTestReflection::callProtectedMethod($bean->db, 'isNullable', array($def)),
+                    'Field for primary key shouldn\'t be nullable'
+                );
+            }
+        }
+    }
+
+    /**
+     * Test definitions in metadata for fields in primary keys.
+     */
+    public function testMetaDefs()
+    {
+        $db = DBManagerFactory::getInstance();
+        $dictionary = array();
+        include ("modules/TableDictionary.php");
+        foreach ($dictionary as $meta) {
+            foreach ($this->getMetaPrimaryIndexes($meta) as $index) {
+                $this->assertInternalType('array', $index['fields'], 'Fields for primary index should be as array');
+                foreach ($index['fields'] as $field) {
+                    $def = $this->getFieldDefFromMeta($meta, $field);
+                    $this->assertNotEmpty($def, 'Field for primary key should exists');
+                    $db->massageFieldDef($def, $meta['table']);
+                    $this->assertFalse(
+                        SugarTestReflection::callProtectedMethod($db, 'isNullable', array($def)),
+                        'Field for primary key shouldn\'t be nullable'
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * Return field definition from metadata.
+     * @param array $meta
+     * @param string $fieldName
+     * @return array
+     */
+    protected function getFieldDefFromMeta($meta, $fieldName)
+    {
+        $result = array();
+        foreach ($meta['fields'] as $field) {
+            if ($field['name'] == $fieldName) {
+                $result = $field;
+                break;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Get primary indexes definition from metadata.
+     * @param array $meta
+     * @return array
+     */
+    protected function getMetaPrimaryIndexes($meta)
+    {
+        $result = array();
+
+        if (empty($meta['indices'])) {
+            return $result;
+        }
+
+        foreach ($meta['indices'] as $index) {
+            if (strtolower($index['type']) == 'primary') {
+                array_push($result, $index);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Return primary indexes for provided bean.
+     * @param SugarBean $bean
+     * @return array
+     */
+    protected function getBeanPrimaryIndexes($bean)
+    {
+        $result = array();
+        foreach ($bean->getIndices() as $index) {
+            if (strtolower($index['type']) == 'primary') {
+                array_push($result, $index);
+            }
+        }
+        return $result;
     }
 
     public function provideLinkFields()

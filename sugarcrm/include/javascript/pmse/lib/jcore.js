@@ -3786,11 +3786,11 @@ var jCore = (function ($, window) {
      */
     NoResizeBehavior.prototype.init = function (shape) {
         var $shape = $(shape.getHTML());
-        ResizeBehavior.prototype.init.call(this, shape);
-        $shape.resizable('disable');
-        $shape
-//        .removeClass('ui-resizable-disabled')
-            .removeClass('ui-state-disabled');
+        // Replacing the way this is disabled on JQueryUI 1.11.4
+        try {
+            $shape.resizable('destroy');
+        } catch(e) {}
+        $shape.removeClass('ui-state-disabled');
         shape.applyStyleToHandlers('nonResizableStyle');
         shape.showOrHideResizeHandlers(false);
     };

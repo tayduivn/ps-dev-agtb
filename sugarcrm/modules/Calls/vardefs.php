@@ -327,6 +327,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   array (
   	'name' => 'contacts',
     'type' => 'link',
+    'module' => 'Contacts',
     'relationship' => 'calls_contacts',
     'source'=>'non-db',
 		'vname'=>'LBL_CONTACTS',
@@ -591,10 +592,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     	'type' => 'index',
     	'fields' => array('parent_id','parent_type','deleted')
     ),
-    array(
-        'name' =>'idx_calls_assigned_del',
-        'type' =>'index',
-        'fields'=>array( 'deleted', 'assigned_user_id')),
     array('name' => 'idx_call_direction', 'type' => 'index', 'fields' => array('direction')),
 ),
 'relationships' => array (

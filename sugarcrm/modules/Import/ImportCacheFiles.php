@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: ImportCacheFiles.php 31561 2008-02-04 18:41:10Z jmertic $
+
  * Description: Static class to that is used to get the filenames for the various
  * cache files used
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.

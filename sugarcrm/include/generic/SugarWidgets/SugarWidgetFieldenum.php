@@ -109,10 +109,8 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 		}
 		$cell = '';
 
-			if(isset($field_def['options'])){
-				$cell = translate($field_def['options'], $field_def['module'], $value);
-			}else if(isset($field_def['type']) && $field_def['type'] == 'enum' && isset($field_def['function'])){
-                if (isset($field_def['function_bean'])) {
+        if (isset($field_def['type']) && $field_def['type'] == 'enum' && isset($field_def['function'])) {
+            if (isset($field_def['function_bean'])) {
                     $bean = BeanFactory::getBean($field_def['function_bean']);
                     $list = $bean->$field_def['function']();
                 } else {
@@ -125,8 +123,11 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
                     $list = $field_def['function']();
                 }
                 $cell = $list[$value];
-	        }
-		if (is_array($cell)) {
+        } elseif (isset($field_def['options'])) {
+            $cell = translate($field_def['options'], $field_def['module'], $value);
+        }
+
+        if (is_array($cell)) {
 
 			//#22632
 			$value = unencodeMultienum($value);
@@ -150,7 +151,7 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 			$order_by = $this->_get_column_select($layout_def);
 		}
 		$list = array();
-        if(isset($field_def['options'])) {
+        if(isset($field_def['options']) && !empty($field_def['options'])) {
 		    $list = translate($field_def['options'], $field_def['module']);
         } elseif(isset($field_def['type']) && $field_def['type'] == 'enum' && isset($field_def['function'])) {
 	        global $beanFiles;

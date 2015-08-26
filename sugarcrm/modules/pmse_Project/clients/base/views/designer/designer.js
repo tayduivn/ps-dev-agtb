@@ -64,6 +64,21 @@
 
     _dispose: function () {
         app.routing.offBefore('route', this.beforeRouteChange);
+        this.removeSelect2Events();
         this._super("_dispose", arguments);
+    },
+
+    removeSelect2Events: function() {
+        //turn off event listeners
+        $(document).off('select2-loaded.select2event');
+        $(document).off('select2-close.select2event');
+    },
+    _renderHtml: function () {
+        var args = Array.prototype.slice.call(arguments);
+        if (args[0] === undefined) {
+            args[0] = {};
+        }
+        args[0].cacheKiller = (new Date()).getTime();
+        this._super("_renderHtml", args);
     }
 })

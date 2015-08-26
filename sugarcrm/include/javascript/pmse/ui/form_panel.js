@@ -94,6 +94,9 @@
 			case 'number':
 				field = new FormPanelNumber(defaults);
 				break;
+			case 'currency':
+				field = new FormPanelCurrency(defaults);
+				break;
 			case 'dropdown':
 				field = new FormPanelDropdown(defaults);
 				break;
@@ -694,7 +697,11 @@
 	FormPanelField.prototype.setLabel = function (label) {
 		FormPanelItem.prototype.setLabel.call(this, label);
 		if(this._htmlLabelContainer) {
-			this._htmlLabelContainer.textContent = label;
+			if (jQuery.trim(label)) {
+				this._htmlLabelContainer.textContent = label;
+			} else {
+				this._htmlLabelContainer.innerHTML = '&nbsp;';
+			}
 		}
 		return this;
 	};
@@ -986,6 +993,12 @@
 	FormPanelNumber.prototype.constructor = FormPanelNumber;
 	FormPanelNumber.prototype.type = "FormPanelNumber";
 
+	FormPanelNumber.format = function (value, settings) {
+		value = isNaN(value) ? 0 : value;
+		return App.utils.formatNumber(value, settings.precision, settings.precision, settings.groupingSeparator,
+			settings.decimalSeparator);
+	};
+
 	FormPanelNumber.prototype.init = function (settings) {
 		var defaults = {
 			decimalSeparator: ".",
@@ -1014,7 +1027,11 @@
 	FormPanelNumber.prototype._setValueToControl = function (value) {
 		var integer, decimal, label = "", aux, power, i, decimalSeparator;
 		if (this._htmlControl[0]) {
-			this._htmlControl[0].value = this._parseToUserString(value);
+			this._htmlControl[0].value = FormPanelNumber.format(value, {
+				precision: this._precision,
+				groupingSeparator: this._groupingSeparator,
+				decimalSeparator: this._decimalSeparator
+			});
 		}
 		return this;
 	};
@@ -1036,7 +1053,11 @@
 		numericValue = parseInt(numberParts[0], 10);
 		numericValue += (parseInt(numberParts[1], 10) / Math.pow(10, numberParts[1].length));
 
-		this._htmlControl[0].value = this._parseToUserString(numericValue);
+		this._htmlControl[0].value = FormPanelNumber.format(numericValue, {
+			precision: this._precision,
+			groupingSeparator: this._groupingSeparator,
+			decimalSeparator: this._decimalSeparator
+		});
 
 		return numericValue;
 	};
@@ -1137,14 +1158,12 @@
 		return isValid;
 	};
 
-	FormPanelNumber.prototype._parseToUserString = function (value) {
-		value = isNaN(value) ? 0 : value;
-		return App.utils.formatNumber(value, this._precision, this._precision, this._groupingSeparator, 
-			this._decimalSeparator);
-	};
-
 	FormPanelNumber.prototype.getFormattedValue = function() {
-		return this._parseToUserString(this._value || 0);
+		return FormPanelNumber.format(this._value || 0, {
+			precision: this._precision,
+			groupingSeparator: this._groupingSeparator,
+			decimalSeparator: this._decimalSeparator
+		});
 	};
 
 	FormPanelNumber.prototype._onKeyDown = function () {
@@ -1168,7 +1187,11 @@
 
 			number = parseInt(this.value.replace(/[^0-9]/g, "") + printableKey, 10) / Math.pow(10, that._precision);
 			number = isNaN(number) ? 0 : number;
-			this.value = that._parseToUserString(number);
+			this.value = FormPanelNumber.format(number, {
+				precision: that._precision,
+				groupingSeparator: that._groupingSeparator,
+				decimalSeparator: that._decimalSeparator
+			});
 		};
 	};
 
@@ -1613,6 +1636,7 @@
 			var items = that._dataRoot ? data[that._dataRoot] : data;
 			that._removeLoadingMessage();
 			that.setOptions(items);
+            that.setSelect2Tooltips();
 		};
 	};
 
@@ -1628,6 +1652,30 @@
 		});
 		return this;
 	};
+
+    FormPanelDropdown.prototype.setSelect2Tooltips = function() {
+        //bind whenever select2 loads
+        //this includes when select2 initializes and when it completes a search
+        $(document).on('select2-loaded.select2event', function(){
+            //remove any stuck tooltips
+            $('.tooltip').remove();
+
+            //add attributes required for tooltips
+            $('.select2-result').attr('rel', 'tooltip');
+            $('.select2-result').attr('data-placement', 'right');
+            _.each($('.select2-result'), function(result){
+                //We do $($(result).find('div')[0]).text() to get the value of the option
+                //the tooltip plugin uses data-original-title to set the content of the tooltip
+                $(result).attr('data-original-title', $($(result).find('div')[0]).text());
+                App.utils.tooltip.initialize($(result));
+            });
+        });
+
+        //remove all tooltips when closing select2
+        $(document).on('select2-close.select2event', function() {
+            $('.tooltip').remove();
+        });
+    };
 
 	FormPanelDropdown.prototype.setDataRoot = function (root) {
 		if (!(root === null || typeof root === 'string')) {
@@ -2211,7 +2259,10 @@
 				placeholder: this._placeholder,
 				query: this._queryFunction(),
 				initSelection: this._initSelection(),
-				width: "100%"
+				width: "100%",
+                formatNoMatches: function (term) {
+                    return (term && (term !== '')) ? translate('LBL_PA_FORM_COMBO_NO_MATCHES_FOUND') : '';
+                }
 			});
 			this._setValueToControl(this._value);
 			control = this._htmlControl[0].data("select2").container[0];
@@ -2221,3 +2272,288 @@
 		}
 		return this;
 	};
+
+var FormPanelCurrency = function(settings) {
+    if (!(settings && settings.currencies && settings.currencies.length)) {
+        throw new Error("FormPanelCurrency(): At least one currency must be specified");
+    }
+    settings = jQuery.extend(true, {value: settings.currencies[0].id + "|" + 0}, settings, {precision: 2});
+    FormPanelNumber.call(this, settings);
+    this._currencies = {};
+    this._htmlCurrencyIDContainer = null;
+    this._valueSeparator = null;
+    this._preferredCurrency = null;
+    FormPanelCurrency.prototype.init.call(this, settings);
+};
+
+FormPanelCurrency.prototype = new FormPanelNumber();
+FormPanelCurrency.prototype.constructor = FormPanelCurrency;
+FormPanelCurrency.prototype.type = 'FormPanelCurrency';
+
+FormPanelCurrency.prototype.init = function(settings) {
+    var defaults = {
+        currencies: [],
+        valueSeparator: "|"
+    };
+
+    jQuery.extend(true, defaults, settings);
+
+    this.setValueSeparator(defaults.valueSeparator)
+        .setCurrencies(defaults.currencies);
+
+    if (!defaults.value && this._preferredCurrency !== null) {
+        defaults.value = this._preferredCurrency + this._valueSeparator + "0";
+    }
+
+    this.setValue(defaults.value);
+    this._initialValue = this._value;
+};
+
+FormPanelCurrency.prototype._setValueToControl = function(amount, currency) {
+    if (this._htmlControl.length === 2) {
+        FormPanelNumber.prototype._setValueToControl.call(this, amount);
+        this._htmlControl[1].select2("val", currency, false);
+    }
+    return this;
+};
+
+FormPanelCurrency.prototype.enable = function() {
+    if (this._htmlControl.length) {
+        this._htmlControl[0].disabled = false;
+        this._htmlControl[1].select2("enable");
+    }
+    return FormPanelItem.prototype.enable.call(this);
+};
+
+FormPanelCurrency.prototype.disable = function() {
+    if (this._htmlControl.length) {
+        this._htmlControl[0].disabled = true;
+        this._htmlControl[1].select2("disable");
+    }
+    return FormPanelItem.prototype.disable.call(this);
+};
+
+FormPanelCurrency.prototype._getValueFromControl = function() {
+    var amount = FormPanelNumber.prototype._getValueFromControl.call(this);
+    return this._htmlControl[1].val() + this._valueSeparator + amount;
+};
+
+FormPanelCurrency.prototype.setValue = function(value) {
+    var valueArray, amount, currency;
+    if (this._valueSeparator) {
+        valueArray = value.split(this._valueSeparator);
+        if (valueArray.length !== 2) {
+            throw new Error("setValue(): Invalid format.");
+        }
+        amount = parseFloat(valueArray[1]);
+        currency = valueArray[0];
+
+        this._setValueToControl(amount, currency);
+
+        this._value = value;
+    }
+    return this;
+};
+
+FormPanelCurrency.prototype.getAmount = function() {
+    return parseFloat(this._value.split(this._valueSeparator)[1]);
+};
+
+FormPanelCurrency.prototype.getCurrency = function() {
+    return this._value.split(this._valueSeparator)[0];
+};
+
+FormPanelCurrency.prototype.getFormattedValue = function() {
+    return this._getCurrencyText(this.getCurrency()) + " " + FormPanelNumber.format(
+            this.getAmount() || 0,
+            {
+                precision: this._precision,
+                groupingSeparator: this._groupingSeparator,
+                decimalSeparator: this._decimalSeparator
+            });
+};
+
+FormPanelCurrency.prototype.setValueSeparator = function(valueSeparator) {
+    var oldSeparator;
+    if (!(typeof valueSeparator === 'string' && valueSeparator.length === 1)) {
+        throw new Error("setValueSeparator(): The parameter must be a char.");
+    }
+    if (/[\+\-\d,\.]/.test(valueSeparator)) {
+        throw new Error("setValueSeparator(): Invalid parameter");
+    }
+    oldSeparator = this._valueSeparator;
+    this._valueSeparator = valueSeparator;
+
+    if (oldSeparator !== valueSeparator && oldSeparator !== null) {
+        this._value = this._getValueFromControl();
+    }
+
+    return this;
+};
+
+FormPanelCurrency.prototype.setCurrencies = function(currencies) {
+    var that = this;
+    if (!jQuery.isArray(currencies)) {
+        throw new Error("_registerCurrencies(): The parameter must be an array.");
+    }
+
+    that._currencies = {};
+
+    currencies.forEach(function(item, index, arr) {
+        that._currencies[item.id] = {
+            id: item.id,
+            iso: item.iso,
+            name: item.name,
+            rate: item.rate,
+            preferred: item.preferred,
+            symbol: item.symbol
+        };
+
+        if (item.preferred) {
+            that._preferredCurrency = item.id;
+        }
+    });
+
+    return this;
+};
+
+FormPanelCurrency.prototype._query = function() {
+    var that = this, key;
+    return function(queryObject) {
+        var data = {
+            results: [],
+            more: false
+        };
+
+        for (key in that._currencies) {
+            var text = that._getCurrencyText(that._currencies[key]);
+            if (queryObject.matcher(queryObject.term, text)) {
+                data.results.push({
+                    id: that._currencies[key].id,
+                    text: text
+                });
+            }
+        }
+
+        queryObject.callback(data);
+    };
+};
+
+FormPanelCurrency.prototype._getCurrencyText = function(currencyObject) {
+    var i, currencies;
+    if (typeof currencyObject === 'string') {
+        currencyObject = this._currencies[currencyObject];
+    }
+
+    return currencyObject.symbol + " (" + currencyObject.iso + ")";
+};
+
+FormPanelCurrency.prototype.getCurrencyText = function() {
+    return this._getCurrencyText(this.getCurrency());
+};
+
+FormPanelCurrency.convertCurrency = function(amount, originalRate, targetRate) {
+    if (!(originalRate && targetRate && originalRate > 0 && targetRate > 0)) {
+        throw new Error("_convertCurrency(): One or both currency rates are invalid.");
+    }
+
+    if (originalRate === targetRate) {
+        return amount;
+    } else if (originalRate === 1) {
+        return targetRate * amount;
+    } else if (targetRate === 1) {
+        return amount / originalRate;
+    } else {
+        return FormPanelCurrency.convertCurrency(FormPanelCurrency.convertCurrency(amount, originalRate, 1), 1, targetRate);
+    }
+};
+
+FormPanelCurrency.prototype._onChangeHandler = function() {
+    var that = this;
+    return function() {
+        var currValue = that._value,
+            newValue = that._getValueFromControl(),
+            oldValue = that._value.split(that._valueSeparator),
+            newCurrency = newValue.split(that._valueSeparator)[0];
+
+        if (oldValue[0] !== newCurrency) {
+            FormPanelNumber.prototype._setValueToControl.call(that,
+                FormPanelCurrency.convertCurrency(parseFloat(
+                        oldValue[1]),
+                    that._currencies[oldValue[0]].rate,
+                    that._currencies[newCurrency].rate));
+        }
+        return (FormPanelNumber.prototype._onChangeHandler.call(that))();
+    };
+};
+
+FormPanelCurrency.prototype._initSelection = function() {
+    var that = this;
+    return function($el, callback) {
+        var selectedCurrency = $el.val(), data;
+
+        selectedCurrency = that._currencies[selectedCurrency];
+        if (selectedCurrency) {
+            data = {
+                id: selectedCurrency.id,
+                text: that._getCurrencyText(selectedCurrency)
+            };
+        }
+        callback(data);
+    };
+};
+
+FormPanelCurrency.prototype._createControl = function() {
+    var currencyIDControl, amountControl;
+    if (!this._htmlControl.length && this._htmlCurrencyIDContainer) {
+        currencyIDControl = document.createElement('input');
+        currencyIDControl.type = 'hidden';
+        currencyIDControl.className = 'select2';
+        this._htmlCurrencyIDContainer.appendChild(currencyIDControl);
+
+        amountControl = this.createHTMLElement("input");
+        amountControl.type = "text";
+        amountControl.className += ' inherit-width adam form-panel-field-control';
+        this._htmlControlContainer.appendChild(amountControl);
+        this._htmlControl[0] = amountControl;
+
+        this._htmlControl[1] = $(currencyIDControl).select2({
+            query: this._query(),
+            initSelection: this._initSelection(),
+            width: '100%',
+            allowClear: false,
+            minimumResultsForSearch: 7
+        });
+
+        this._setValueToControl(this._value);
+        this.setValue(this._value);
+    }
+    return this;
+};
+
+FormPanelCurrency.prototype._postCreateHTML = function() {
+    if (this._htmlCurrencyIDContainer) {
+        FormPanelNumber.prototype._postCreateHTML.call(this);
+    }
+    return this;
+};
+
+FormPanelCurrency.prototype.createHTML = function() {
+    var controlDiv, currencyIDSpan;
+    if (!this.html) {
+        FormPanelNumber.prototype.createHTML.call(this);
+        controlDiv = document.createElement('div');
+        controlDiv.className = 'select2-addon';
+        currencyIDSpan = document.createElement('span');
+        currencyIDSpan.className = 'currency-part';
+
+        controlDiv.appendChild(currencyIDSpan);
+
+        this._htmlControlContainer.appendChild(controlDiv);
+        this._htmlControlContainer = controlDiv;
+        this._htmlCurrencyIDContainer = currencyIDSpan;
+
+        this._createControl()
+            ._postCreateHTML();
+    }
+};

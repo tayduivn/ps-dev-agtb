@@ -61,6 +61,7 @@ $dictionary['Lead'] = array(
             'type' => 'enum',
             'len' => '100',
             'options' => 'lead_status_dom',
+            'default' => 'New',
             'audited' => true,
             'comment' => 'Status of the lead',
             'merge_filter' => 'enabled',

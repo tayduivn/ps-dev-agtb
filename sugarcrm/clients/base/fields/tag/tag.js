@@ -66,6 +66,15 @@
     },
 
     /**
+     * {@inheritDoc}
+     */
+    format: function(value) {
+        return _.map(value, function(tag){
+            return _.extend(tag, {encodedValue: encodeURIComponent(tag.name)});
+        });
+    },
+
+    /**
      * Overrides select2 function. For more details, check out select2's documentation
      *
      * @param term

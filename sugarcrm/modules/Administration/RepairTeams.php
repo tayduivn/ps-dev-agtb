@@ -12,6 +12,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+
+require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
+
+
+
+
 class ScanTeams{
 	/**
 	 * Checks that every user has explicit memberships to the global team
@@ -183,8 +189,11 @@ ABC;
         $process_private_team_checked="checked";
     }
 
+    $csrfToken = smarty_function_sugar_csrf_form_token(array(), $smarty);
+
     $xyz=<<<EOF
         <form name="RepairTeams" method="POST" >
+            {$csrfToken}
             <input type="hidden" name="module" value="Administration">
             <input type="hidden" name="action"  value="RepairTeams">
             <input type="hidden" name="process"  value="1">

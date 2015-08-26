@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: SugarBean.php 58121 2010-09-09 18:35:17Z kjing $
+
  * Description:  Defines the base class for all data entities used throughout the
  * application.  The base class including its methods and variables is designed to
  * be overloaded with module-specific methods and variables particular to the
@@ -973,7 +973,32 @@ class SugarBean
         global $dictionary;
         if(isset($dictionary[$this->getObjectName()]['indices']))
         {
-            return $dictionary[$this->getObjectName()]['indices'];
+            $indices = $dictionary[$this->getObjectName()]['indices'];
+            $newIndices = array();
+            $fieldDefs = $this->getFieldDefinitions();
+
+            // to exclude the non-db fields from indices
+            foreach ($indices as $key => $index) {
+                if (isset($index['fields'])) {
+                    // make sure it's an array
+                    if (!is_array($index['fields'])) {
+                        $index['fields'] = array($index['fields']);
+                    }
+                    foreach ($index['fields'] as $field) {
+                        if (isset($fieldDefs[$field])
+                            && isset($fieldDefs[$field]['source'])
+                            && $fieldDefs[$field]['source'] == 'non-db'
+                        ) {
+                            // index contains non-db fields
+                            continue 2;
+                        }
+                    }
+                }
+
+                // this index does not contain non-db fields
+                $newIndices[$key] = $index;
+            }
+            return $newIndices;
         }
         return array();
     }
@@ -1699,6 +1724,8 @@ class SugarBean
 
         $isUpdate = $this->isUpdate();
 
+        $prev_date_modified = isset($this->date_modified)
+            ? $this->date_modified : null;
 		if(empty($this->date_modified) || $this->update_date_modified)
 		{
 			$this->date_modified = $GLOBALS['timedate']->nowDb();
@@ -1772,6 +1799,10 @@ class SugarBean
 
         $this->call_custom_logic("before_save", $custom_logic_arguments);
         unset($custom_logic_arguments);
+
+        if (!$this->update_date_modified) {
+            $this->date_modified = $prev_date_modified;
+        }
 
         if(isset($this->custom_fields))
         {
@@ -7204,7 +7235,10 @@ class SugarBean
             }
 
             //skip assigned_user_name, and email1 fields as they are handled seperately after the loop
-            if($field == 'assigned_user_name' || $field == 'email1'){
+            if ($field == 'assigned_user_name'
+                || $field == 'email1'
+                || $field == 'modified_by_name'
+                || $field == 'created_by_name') {
                 continue;
             }
 
@@ -7289,10 +7323,17 @@ class SugarBean
             true
         );
 
-        //Process assigned user seperately.  They require slightly different query and should be included by default.
-        if (isset($this->field_defs['assigned_user_name']) && !empty($this->field_defs['assigned_user_name']['exportable'])) {
-            $returnArray['select'].= ', assigned_user.user_name as assigned_user_name';
-            $returnArray['from'].= " LEFT JOIN users assigned_user ON {$this->table_name}.assigned_user_id=assigned_user.id";
+        //Process related users seperately.  They require slightly different query and should be included by default.
+        $relatedNameFields = array(
+            array('name' => 'assigned_user_name', 'alias' => 'assigned_user', 'id' => 'assigned_user_id'),
+            array('name' => 'modified_by_name', 'alias' => 'modified_by_user', 'id' => 'modified_user_id'),
+            array('name' => 'created_by_name', 'alias' => 'created_by_user', 'id' => 'created_by'),
+        );
+        foreach ($relatedNameFields as $field) {
+            if (isset($this->field_defs[$field['name']]) && !empty($this->field_defs[$field['name']]['exportable'])) {
+                $returnArray['select'].= ', ' . $field['alias'] . '.user_name as ' . $field['name'];
+                $returnArray['from'].= ' LEFT JOIN users ' . $field['alias'] . " ON {$this->table_name}." . $field['id'] . '=' . $field['alias'] . '.id';
+            }
         }
 
         return  $returnArray['select'] . $returnArray['from'] . $returnArray['where']. $returnArray['order_by'];

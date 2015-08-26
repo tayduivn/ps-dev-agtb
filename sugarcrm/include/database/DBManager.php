@@ -415,7 +415,7 @@ abstract class DBManager
 	 *
 	 * @param string $query  value of query to track
 	 */
-	protected function track_slow_queries($query)
+    public function track_slow_queries($query)
 	{
 		$trackerManager = TrackerManager::getInstance();
 		if($trackerManager->isPaused()) {
@@ -3749,6 +3749,7 @@ protected function checkQuery($sql, $object_name = false)
 	{
 		$i = 0;
 		$order_by_arr = array();
+        $returnValue = '';
 		foreach ($values as $key => $value) {
 			if($key == '') {
 				$order_by_arr[] = "WHEN ($order_by='' OR $order_by IS NULL) THEN $i";
@@ -3756,8 +3757,14 @@ protected function checkQuery($sql, $object_name = false)
 				$order_by_arr[] = "WHEN $order_by=".$this->quoted($key)." THEN $i";
 			}
 			$i++;
-		}
-		return "CASE ".implode("\n", $order_by_arr)." ELSE $i END $order_dir\n";
+
+        }
+
+        if (count($order_by_arr) > 0){
+            $returnValue = "CASE ".implode("\n", $order_by_arr)." ELSE $i END $order_dir\n";
+        }
+
+        return $returnValue;
 	}
 
 	/**

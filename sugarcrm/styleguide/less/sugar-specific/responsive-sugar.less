@@ -328,6 +328,7 @@
     width: 100%;
     margin-top: 61px;
     border-bottom: @borderWidget;
+    z-index: 2;
   }
 
   .touch .main-pane {
@@ -343,7 +344,7 @@
     overflow-y: visible;
     border-right: none;
     width: 100%;
-    z-index: @zindexHeaderpane + 1;
+    z-index: 1;
     .box-shadow(~"inset 0 8px 8px -8px rgba(0, 0, 0, .2)");
     .dashboard {
       top: auto;
@@ -391,13 +392,15 @@
     top: 48px;
     left: 100%;
     margin-left: 25%;
-    .box-shadow(~"-3px 0 4px rgba(0,0,0,0.1)");
     width: 75%;
     height: ~"-moz-calc(100% - 93px) !important";
     height: ~"-webkit-calc(100% - 93px) !important";
     height: ~"calc(100% - 93px) !important";
     z-index: 1090;
     overflow: scroll;
+    &.active {
+      .box-shadow(~"-3px 0 4px rgba(0,0,0,0.1)");
+    }
     .preview-headerbar {
       .box-shadow(none) !important;
       border-top: none;

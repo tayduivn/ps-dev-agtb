@@ -15,7 +15,7 @@ class SugarUpgradeOpportunityFixSalesStageDefault extends UpgradeScript
 {
     public $order = 6500;
     public $version = "7.5.0.0";
-    public $type = self::UPGRADE_CORE;
+    public $type = self::UPGRADE_CUSTOM;
 
     public function run()
     {

@@ -51,6 +51,7 @@ $mod_strings = array (
     'LBL_PMSE_PROCESS_DEFINITION_IMPORT_TEXT' => 'Automatically create a new Process Definitions record by importing a *.bpm file from your file system.',
     'LBL_PMSE_PROCESS_DEFINITION_IMPORT_SUCCESS' => 'Process Definitions was successfully imported into the system.',
     'LBL_PMSE_PROCESS_DEFINITION_EMPTY_WARNING' => 'Please select a valid *.bpm file.',
+    'LBL_PMSE_PROCESS_DEFINITION_IMPORT_BR' => 'The Process Definition has been imported but contains one or more Business Rule actions for which business rules have not been selected.',
 
 
 //    /*PMSE*/
@@ -174,6 +175,8 @@ $mod_strings = array (
     'LBL_PMSE_FORM_OPTION_STATIC_ASSIGNMENT' => 'Static Assignment',
     'LBL_PMSE_FORM_LABEL_ASSIGN_TO_TEAM' => 'Assign to Team',
     'LBL_PMSE_FORM_LABEL_ASSIGN_TO_USER' => 'Assign to User',
+    'LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT' => 'Select...',
+    'LBL_PA_FORM_COMBO_NO_MATCHES_FOUND' => 'No matches found',
     'LBL_PA_FORM_LABEL_ASSIGN_TO_TEAM' => 'Select Process User from Team',
     'LBL_PA_FORM_LABEL_ASSIGN_TO_USER' => 'Select Process User',
     'LBL_PMSE_FORM_OPTION_CURRENT_USER' => 'Current user',

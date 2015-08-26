@@ -122,6 +122,7 @@ img.pull-left {
 .ui-draggable-dragging {
   @shadow: 0 2px 10px rgba(0,0,0,.1), 0 0 10px rgba(0,0,0,.4), -1px -1px 20px rgba(0,0,0,.1), 1px 1px 20px rgba(0,0,0,.1);
   .box-shadow(@shadow);
+  z-index: 2;
 }
 
 .titlebar {
@@ -545,4 +546,18 @@ hr.soften {
 // Bidirectional fix
 .bidi-override {
   unicode-bidi: bidi-override;
+}
+
+/* Retina */
+@media only screen and (min--moz-device-pixel-ratio: 2),
+only screen and (-o-min-device-pixel-ratio: 2/1),
+only screen and (-webkit-min-device-pixel-ratio: 2),
+only screen and (min-device-pixel-ratio: 2) {
+  .subpanel table {
+    th, td {
+      &:not(:first-child):not(:last-child) > span {
+        position: static;
+      }
+    }
+  }
 }

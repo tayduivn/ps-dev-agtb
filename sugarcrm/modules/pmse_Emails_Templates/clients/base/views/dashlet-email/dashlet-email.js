@@ -274,10 +274,11 @@
      * descriptionRecord: View description in table pmse_Emails_Templates in fields
      */
     descriptionRecord: function(model) {
+        app.alert.dismiss('message-id');
         app.alert.show('message-id', {
             level: 'info',
-            title:'DESCRIPTION',
-            messages: '<br/>'+model.get('description'),
+            title: app.lang.get('LBL_DESCRIPTION'),
+            messages: '<br/>' + model.get('description'),
             autoClose: false
         });
     },

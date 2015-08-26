@@ -317,6 +317,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                   'type' => 'varchar',
                   'len' =>100,
                   'reportable'=>true,
+                    'required'=>true,
+                    'isnull' => false,
                   'comment' => 'Category of the allowable action (usually the name of a module)'
                 ),
             'acltype' =>
@@ -451,17 +453,98 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 'isnull'	=> false,
             ),
         );
+        $indexes = array(
+            array(
+                'name' => "idx_{$tableName}",
+                'type' =>'primary',
+                'fields' => array(
+                    'id',
+                    'category',
+                )
+            )
+        );
 
         if($this->_db->tableExists($tableName)) {
             $this->_db->dropTableName($tableName);
         }
-		$this->createTableParams($tableName, $params, array());
 
-        $repair = $this->_db->repairTableParams($tableName, $params, array(), false);
+        $this->createTableParams($tableName, $params, $indexes);
 
+        $repair = $this->_db->repairTableParams($tableName, $params, $indexes, true);
         $this->assertEmpty($repair, "Unexpected repairs: " . $repair);
 
         $this->dropTableName($tableName);
+    }
+
+    /**
+     * Test creation of primary key on existing index.
+     */
+    public function testPrimaryKeyOnExistingIndex()
+    {
+        $tableName = 'testRTNC2_' . mt_rand();
+        $fields = array (
+            'list_id' => array(
+                'name' => 'list_id',
+                'type' => 'id',
+                'required' => true,
+                'reportable' => false,
+            ),
+            'bean_id' => array(
+                'name' => 'bean_id',
+                'type' => 'id',
+                'required' => true,
+                'reportable' => false,
+            ),
+        );
+        $indices = array(
+            array(
+                'name' => 'testRTNC2_list_id_idx',
+                'type' =>'index',
+                'fields' => array(
+                    'list_id',
+                )
+            ),
+            array(
+                'name' => 'testRTNC2_list_id_bean_idx',
+                'type' =>'index',
+                'fields' => array(
+                    'list_id',
+                    'bean_id',
+                )
+            ),
+        );
+        $this->createTableParams($tableName, $fields, $indices);
+        $indices = array(
+            array(
+                'name' => 'testRTNC2_list_id_idx',
+                'type' =>'index',
+                'fields' => array(
+                    'list_id',
+                )
+            ),
+            array(
+                'name' => 'idx_testRTNC2_pk',
+                'type' =>'primary',
+                'fields' => array(
+                    'list_id',
+                    'bean_id',
+                )
+            ),
+        );
+        $repair = $this->_db->repairTableParams($tableName, $fields, $indices, true);
+        $this->assertNotEmpty($repair, "Shouldn't be empty repair");
+
+        $dbIndexes = $this->_db->get_indices($tableName);
+
+        //Should replaced with assertArraySubset in future
+        $pk = false;
+        foreach ($dbIndexes as $ind) {
+            if ($ind['type'] == 'primary') {
+                $pk = true;
+                break;
+            }
+        }
+        $this->assertTrue($pk, 'There should be primary index for table');
     }
 
     public function testRepairTableParamsAddData()
@@ -1415,6 +1498,47 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->dropTableName($t2);
     }
 
+    public function testOracleAlterVarchar2ToNumber()
+    {
+        $insertValue = '100';
+        if (!($this->_db instanceof OracleManager)) {
+            $this->markTestSkipped('This test can run only on Oracle instance');
+        }
+        $params = array(
+            'foo' => array(
+                'name' => 'foo',
+                'vname' => 'LBL_FOO',
+                'type' => 'enum',
+                'dbType' => 'varchar',
+            ),
+        );
+        $tableName = 'testVarchar2ToNumber' . mt_rand();
+
+        if ($this->_db->tableExists($tableName)) {
+            $this->_db->dropTableName($tableName);
+        }
+        $this->createTableParams($tableName, $params, array());
+
+        $this->_db->insertParams($tableName, $params, array('foo' => $insertValue), null, true, true);
+
+        $params = array(
+            'foo' => array(
+                'name' => 'foo',
+                'vname' => 'LBL_FOO',
+                'type' => 'enum',
+                'dbType' => 'int',
+            ),
+        );
+
+        $this->_db->repairTableParams($tableName, $params, array(), true);
+
+        $columns = $this->_db->get_columns($tableName);
+        $this->assertEquals('number', $columns['foo']['type']);
+
+        $checkResult = $this->_db->fetchOne('SELECT foo FROM ' . $tableName);
+        $this->assertEquals($insertValue, $checkResult['foo']);
+    }
+
     public function testDropTable()
     {
         // TODO: Write this test
@@ -1493,7 +1617,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $sql = <<<SQL
 SELECT
     id,
-    name name_alias 
+    name name_alias
 FROM
     accounts
 WHERE
@@ -4237,6 +4361,28 @@ SQL;
             array('testAlterTableBlobToClob'),
             array('縢嫆璻侁刵 榎 偢偣唲鷩'),
             array(serialize(range(1, 262144))),
+        );
+    }
+
+    /**
+     * @dataProvider orderByEnumProvider
+     * @param $order_by order by column
+     * @param $values value array
+     * @param $order_dir order by direction
+     * @param $result expected result
+     */
+    public function testOrderByEnum($order_by, $values, $order_dir, $expected)
+    {
+        $result = $this->_db->orderByEnum($order_by, $values, $order_dir);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function orderByEnumProvider()
+    {
+        return array(
+            array('', array(), '', ''),
+            array('foo', array("bar"), "desc", "CASE WHEN (foo='' OR foo IS NULL) THEN 0 ELSE 1 END desc\n"),
+            array('foo', array("bar"=>"val"), "desc", "CASE WHEN foo='bar' THEN 0 ELSE 1 END desc\n")
         );
     }
 }

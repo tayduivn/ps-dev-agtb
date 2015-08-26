@@ -151,6 +151,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'massupdate' => false,
     'studio' => false,
     'processes' => true,
+    'default' => 0,
   ),
   'date_start' =>
   array (
@@ -349,6 +350,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
   array (
   	'name' => 'contacts',
     'type' => 'link',
+    'module' => 'Contacts',
     'relationship' => 'meetings_contacts',
     'source'=>'non-db',
 		'vname'=>'LBL_CONTACTS',

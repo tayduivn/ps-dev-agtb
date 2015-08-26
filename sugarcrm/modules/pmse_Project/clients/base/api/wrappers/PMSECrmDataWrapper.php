@@ -893,26 +893,37 @@ class PMSECrmDataWrapper implements PMSEObservable
      */
     public function retrieveTeams($filter = '')
     {
-
+        $beansTeams = $this->getTeamsBean();
         $output = array();
-        $where = '';
+
+        $q = $this->sugarQueryObject;
+        $q->from($beansTeams, array('add_deleted' => true));
+        $q->distinct(false);
+        $fields = array(
+            'id',
+            'name',
+            'name2',
+        );
 
         if ($filter == 'public' || $filter == 'reassign') {
-            $condition = 0;
-            $where = 'teams.private=' . $condition;
+            $q->where()
+                ->equals('private', 0);
         } else {
             if ($filter == 'private') {
-                $condition = 1;
-                $where = 'teams.private=' . $condition;
+                $q->where()
+                    ->equals('private', 1);
             }
         }
 
-        $teamsData = $this->teamsBean->get_full_list('', $where);
+        $q->orderBy('id', 'ASC');
+        $q->select($fields);
+
+        $teamsData = $q->execute();
         foreach ($teamsData as $team) {
             $teamTmp = array();
-            $teamTmp['value'] = $team->id;
-            $teamTmp['text'] = $team->name;
-            if (($team->id != 'current_team') || ($team->id == 'current_team' && $filter == 'reassign')) {
+            $teamTmp['value'] = $team['id'];
+            $teamTmp['text'] = $team['name'];
+            if (($team['id'] != 'current_team') || ($team['id'] == 'current_team' && $filter == 'reassign')) {
                 $output[] = $teamTmp;
             }
         }
@@ -945,15 +956,15 @@ class PMSECrmDataWrapper implements PMSEObservable
         $order = 'users.first_name, users.last_name';
 
         $usersData = $this->usersBean->get_full_list($order, $where);
-        //$beanFactory = new ADAMBeanFactory();
-        //$beanFactory = $this->getADAMBeanFactory();
-        foreach ($usersData as $user) {
-            $userTmp = array();
-            $userTmp['value'] = $user->id;
-            $userFullName = $this->teamsBean->getDisplayName($user->first_name, $user->last_name);
-            $userTmp['text'] = $userFullName;
+        if (is_array($usersData)) {
+            foreach ($usersData as $user) {
+                $userTmp = array();
+                $userTmp['value'] = $user->id;
+                $userFullName = $this->teamsBean->getDisplayName($user->first_name, $user->last_name);
+                $userTmp['text'] = $userFullName;
 
-            $output[] = $userTmp;
+                $output[] = $userTmp;
+            }
         }
         $res->result = $output;
         return $output;
@@ -1301,7 +1312,8 @@ class PMSECrmDataWrapper implements PMSEObservable
                 }
             }
         }
-        $filterArray = array('value' => $filter, 'text' => '<' . $filter . '>');
+        $moduleName = (translate("LBL_MODULE_NAME", $filter) == "LBL_MODULE_NAME") ? $filter : translate("LBL_MODULE_NAME", $filter);
+        $filterArray = array('value' => $filter, 'text' => '<' . $moduleName . '>');
         array_unshift($output, $filterArray);
 
         //$res->result = $output;
@@ -1528,7 +1540,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * Retrieve list of Fieds
+     * Retrieve list of fields
      * @param string $filter
      * @param array $additionalArgs
      * @return object

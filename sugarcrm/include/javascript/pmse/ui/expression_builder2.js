@@ -66,6 +66,8 @@ ExpressionControl.prototype._typeToControl = {
     "float": "number",
     "email": "text",
     "name": "text",
+    "htmleditable_tinymce": "text",
+    "tinyint": "integer",
     //"html": "html",
     //"iframe": "iframe",
     //"image": "image" ,
@@ -282,12 +284,18 @@ ExpressionControl.prototype._createCurrencyObject = function(data) {
 };
 
 ExpressionControl.prototype._updateCurrenciesToCurrenciesForm = function() {
-    var currenciesDropdown;
+    var currenciesField;
     if (this._constantPanels.currency) {
-        currenciesDropdown = this._constantPanels.currency.getItem("currency");
-        currenciesDropdown.setOptions(this._currencies);
+        currenciesField = this._constantPanels.currency.getItem("currency");
+        currenciesField.setOptions(this._currencies);
         if (this._preferredCurrency) {
-            currenciesDropdown.setValue(this._preferredCurrency);
+            currenciesField.setValue(this._preferredCurrency);
+        }
+    }
+    if (this._evaluationPanels.module) {
+        currenciesField = this._evaluationPanels.module.getItem("value");
+        if (currenciesField instanceof FormPanelCurrency) {
+            currenciesField.setCurrencies(this._currencies);
         }
     }
     return this;
@@ -950,6 +958,12 @@ ExpressionControl.prototype.getLabel = function (data) {
                 return FormPanelDate.format(data.expValue, that._dateFormat);
             } else if (aux === "datetime") {
                 return FormPanelDatetime.format(data.expValue, that._dateFormat, that._timeFormat);
+            } else if (aux === 'currency') {
+                return FormPanelNumber.format(data.expValue, {
+                    precision: 2,
+                    groupingSeparator: this._numberGroupingSeparator,
+                    decimalSeparator: this._decimalSeparator
+                });
             } else {
                 return data.expLabel;
             }
@@ -1016,15 +1030,22 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     break;
                 case "form-module-field-evaluation":
                     aux = data.field.split(that._auxSeparator);
-                    value = that._getStringOrNumber(data.value);
+                    valueField = subpanel.getItem("value");
+                    if (aux[1] === 'Currency') {
+                        value = valueField.getAmount();
+                    } else {
+                        value = that._getStringOrNumber(data.value);
+                    }
                     valueType = typeof data.value === 'string' ? typeof value : typeof data.value;
                     label = subpanel.getItem("field").getSelectedText() + " " +
                             subpanel.getItem("operator").getSelectedText() + " ";
-                    valueField = subpanel.getItem("value");
+
                     if (aux[1] === "Date" || aux[1] === 'Datetime') {
                         label += '%VALUE%';
                     } else if (aux[1] === 'user') {
                         label += valueField.getSelectedText();
+                    } else if (aux[1] === 'Currency') {
+                        label += valueField.getCurrencyText() + ' %VALUE%';
                     } else {
                         label += (valueType === "string" ? "\"" + value + "\"" : data.value);
                     }
@@ -1037,6 +1058,9 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                         expModule: data.module,
                         expField: aux[0]
                     };
+                    if (aux[1] === 'Currency') {
+                        itemData.expCurrency = valueField.getCurrency();
+                    }
                     break;
                 case 'form-business-rule-evaluation':
                     value = that._getStringOrNumber(data.response);
@@ -1403,7 +1427,7 @@ ExpressionControl.prototype._createModulePanel = function () {
                     type: "dropdown",
                     name: "operator",
                     label: "",
-                    width: "35%",
+                    width: "30%",
                     labelField: "text",
                     valueField: "value",
                     required: true,
@@ -1413,7 +1437,7 @@ ExpressionControl.prototype._createModulePanel = function () {
                     type: "text",
                     name: "value",
                     label: translate("LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_VALUE"),
-                    width: "30%",
+                    width: "35%",
                     required: true,
                     dependencyHandler: function (dependantField, parentField, value) {
                         var type = value.split(that._auxSeparator)[1],
@@ -1464,8 +1488,9 @@ ExpressionControl.prototype._createModulePanel = function () {
                                     operators = [that.OPERATORS.comparison[2], that.OPERATORS.comparison[0], that.OPERATORS.comparison[4]];
                                     newFieldSettings.dateFormat = that._dateFormat;
                                     break;
-                                case 'decimal':
                                 case 'currency':
+                                    newFieldSettings.currencies = that._currencies;
+                                case 'decimal':
                                 case 'float':
                                 case 'integer':
                                     operators = that.OPERATORS.comparison;
@@ -1699,6 +1724,10 @@ ExpressionControl.prototype._createUserPanel = function () {
                         switch (condition) {
                             case 'USER_ADMIN':
                                 dependantField.clearOptions().disable();
+                                var spans = document.getElementsByClassName('select2-chosen');
+                                for (var i=0;i<spans.length;i++) {
+                                    spans[i].innerText = "";
+                                }
                                 break;
                             case 'USER_ROLE':
                                 dependantField.setDataURL(settings.userRolesDataURL)
@@ -1712,6 +1741,10 @@ ExpressionControl.prototype._createUserPanel = function () {
                                 dependantField.clearOptions()
                                     .setSearchURL('pmse_Project/CrmData/users?filter={TERM}')
                                     .enable();
+                                    var spans = document.getElementsByClassName('select2-chosen');
+                                    for (var i=0;i<spans.length;i++) {
+                                        spans[i].innerText = translate('LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT');
+                                    }
                         }
                     }
                 }

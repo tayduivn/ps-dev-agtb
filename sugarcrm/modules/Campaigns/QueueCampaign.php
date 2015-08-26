@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: QueueCampaign.php 51719 2009-10-22 17:18:00Z mitani $
+
  * Description: Schedules email for delivery. emailman table holds emails for delivery.
  * A cron job polls the emailman table and delivers emails when intended send date time is reached.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.

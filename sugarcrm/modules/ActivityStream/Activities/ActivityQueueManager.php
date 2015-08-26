@@ -142,7 +142,7 @@ class ActivityQueueManager
      */
     protected function createOrUpdate(SugarBean $bean, array $args, Activity $act)
     {
-        if ($bean->deleted || $bean->inOperation('saving_related')) {
+        if ($bean->deleted) {
             return false;
         }
 

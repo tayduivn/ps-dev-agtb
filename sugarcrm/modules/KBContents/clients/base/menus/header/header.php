@@ -23,8 +23,8 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route' => "#KBContentTemplates/create",
         'label' => 'LNK_NEW_KBCONTENT_TEMPLATE',
-        'acl_action' => 'create',
-        'acl_module' => 'KBContentTemplates',
+        'acl_action' => 'admin',
+        'acl_module' => $module_name,
         'icon' => 'fa-plus',
     ),
     array(
@@ -37,7 +37,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route' => "#KBContentTemplates",
         'label' => 'LNK_LIST_KBCONTENT_TEMPLATES',
-        'acl_action' => 'create',
+        'acl_action' => 'admin',
         'acl_module' => $module_name,
         'icon' => 'fa-reorder',
     ),
