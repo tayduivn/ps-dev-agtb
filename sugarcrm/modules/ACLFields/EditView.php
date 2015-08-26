@@ -12,6 +12,10 @@
 
 class ACLFieldsEditView{
 	function getView($module, $role_id){
+        $options = array();
+        $tbaConfigurator = new TeamBasedACLConfigurator();
+        $tbaEnabled = $tbaConfigurator->isEnabledForModule($module);
+        $tbaFieldKeys = array_values($tbaConfigurator->getFieldOptions());
 		$fields = ACLField::getFields( $module, '', $role_id);
 		$sugar_smarty = new Sugar_Smarty();
         $sugar_smarty->assign('LBL_MODULE', $module);
@@ -22,13 +26,16 @@ class ACLFieldsEditView{
 		$sugar_smarty->assign('FLC_MODULE', $module);
 		$sugar_smarty->assign('APP_LIST', $GLOBALS['app_list_strings']);
 		$sugar_smarty->assign('FIELDS', $fields);
-		foreach($GLOBALS['aclFieldOptions'] as $key=>$option){
-			$GLOBALS['aclFieldOptions'][$key] = translate($option, 'ACLFields');
-		}
-		$sugar_smarty->assign('OPTIONS',  $GLOBALS['aclFieldOptions']);
+        foreach ($GLOBALS['aclFieldOptions'] as $key => $option) {
+            if (!$tbaEnabled && in_array($key, $tbaFieldKeys)) {
+                continue;
+            }
+            $options[$key] = translate($option, 'ACLFields');
+        }
+        $sugar_smarty->assign('OPTIONS', $options);
 		$req_options = $GLOBALS['aclFieldOptions'];
 		unset($req_options[-99]);
-		$sugar_smarty->assign('OPTIONS_REQUIRED',  $req_options);
+		$sugar_smarty->assign('OPTIONS_REQUIRED', $req_options);
 		return  $sugar_smarty->fetch('modules/ACLFields/EditView.tpl');
 	}
 }
