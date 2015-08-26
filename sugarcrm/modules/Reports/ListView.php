@@ -45,7 +45,7 @@ if(isset($_REQUEST['Reports2_SAVEDREPORT_offset'])) {//if you click the paginati
         	$blockVariables[] = 'lvso';
         }
 
-        $current_query_by_page = unserialize(base64_decode($_REQUEST['current_query_by_page']));
+        $current_query_by_page = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($_REQUEST['current_query_by_page']));
         foreach($current_query_by_page as $search_key=>$search_value) {
             if($search_key != 'Reports2_SAVEDREPORT_offset' && !in_array($search_key, $blockVariables)) {
                 //bug 48620

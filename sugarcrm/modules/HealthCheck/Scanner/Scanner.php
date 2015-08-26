@@ -793,7 +793,7 @@ class HealthCheckScanner
                             true,
                             false
                         );
-                        $manifest = unserialize(base64_decode($uh->manifest));
+                        $manifest = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($uh->manifest));
                         $manifest = $manifest['manifest'];
                         $scp = strcasecmp($manifest['author'], $req['author']);
                         $incompatible = $incompatible && ($req['author'] == '*' || empty($scp));

@@ -715,7 +715,7 @@ class Importer
     {
         global $current_user;
 
-        $firstrow    = unserialize(base64_decode($_REQUEST['firstrow']));
+        $firstrow    = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($_REQUEST['firstrow']));
         $mappingValsArr = $this->importColumns;
         $mapping_file = BeanFactory::getBean('Import_1');
         $mapping_file->delimiter = $_REQUEST['custom_delimiter'];

@@ -116,7 +116,7 @@ class PMSEHookHandler
                     $resultProcess = $this->dbHandler->Query($queryProcess);
                     $rowProcess = $this->dbHandler->fetchByAssoc($resultProcess);
                     if (trim($rowProcess['pro_locked_variables']) != '') {
-                        $array1 = unserialize(trim(htmlspecialchars_decode($rowProcess['pro_locked_variables'])));
+                        $array1 = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(trim(htmlspecialchars_decode($rowProcess['pro_locked_variables'])));
                         $pro_locked_variables = array_merge($pro_locked_variables, $array1);
                     }
                     $rowDupli = $this->dbHandler->fetchByAssoc($resultDupli);

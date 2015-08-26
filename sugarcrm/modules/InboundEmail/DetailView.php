@@ -108,7 +108,7 @@ $onlySince = $mod_strings['LBL_ONLY_SINCE_NO'];
 
 if(!empty($focus->stored_options)) {
 	// FROM NAME and Address
-	$storedOptions = unserialize(base64_decode($focus->stored_options));
+	$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($focus->stored_options));
 
 	$from_name = (isset($storedOptions['from_name']) ? $storedOptions['from_name'] : "");
 	$from_addr = (isset($storedOptions['from_addr']) ? $storedOptions['from_addr'] : "");

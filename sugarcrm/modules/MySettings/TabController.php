@@ -65,7 +65,7 @@ function get_system_tabs(){
 			if (!empty($trimmed_tabs)){
                 // TODO: decode JSON rather than base64
 				$tabs = base64_decode($tabs);
-				$tabs = unserialize($tabs);
+				$tabs = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($tabs);
 				//Ensure modules saved in the prefences exist.
 				foreach($tabs as $id => $tab) {
 					if (!in_array($tab, $moduleList))

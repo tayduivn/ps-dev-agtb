@@ -1047,7 +1047,7 @@ class InboundEmail extends SugarBean {
 	    			flush();
 				} // while
 				fclose($fh);
-				$diff = unserialize($data);
+				$diff = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($data);
 				if (!empty($diff)) {
 					if (count($diff)> 50) {
 	                	$newDiff = array_slice($diff, 50, count($diff), true);
@@ -1502,7 +1502,7 @@ class InboundEmail extends SugarBean {
                     flush();
                 } // while
                 fclose($fh);
-                $results = unserialize($data);
+                $results = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($data);
             } // if
         } // if
         if (!$cacheDataExists) {
@@ -1656,7 +1656,7 @@ class InboundEmail extends SugarBean {
 		global $sugar_config;
 		global $current_user;
 
-		$showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+		$showFolders = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
 
 		if(empty($showFolders)) {
 			$showFolders = array();
@@ -2111,7 +2111,7 @@ class InboundEmail extends SugarBean {
 		$criteria .= (!empty($dateTo)) ? ' BEFORE "'.$timedate->fromString($dateTo)->format('d-M-Y').'"' : "";
 		//$criteria .= (!empty($from)) ? ' FROM "'.$from.'"' : "";
 
-		$showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+		$showFolders = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
 
 		$out = array();
 
@@ -2703,7 +2703,7 @@ class InboundEmail extends SugarBean {
 			&& $this->checkFilterDomain($email)) { // if we haven't sent this guy 10 replies in 24hours
 
 				if(!empty($this->stored_options)) {
-					$storedOptions = unserialize(base64_decode($this->stored_options));
+					$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($this->stored_options));
 				}
 				// get FROM NAME
 				if(!empty($storedOptions['from_name'])) {
@@ -2919,7 +2919,7 @@ class InboundEmail extends SugarBean {
 			$GLOBALS['log']->debug('InboundEmail created one case with number: '.$c->case_number);
 			$createCaseTemplateId = $this->get_stored_options('create_case_email_template', "");
 			if(!empty($this->stored_options)) {
-				$storedOptions = unserialize(base64_decode($this->stored_options));
+				$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($this->stored_options));
 			}
 			if(!empty($createCaseTemplateId)) {
 				$fromName = "";
@@ -4685,7 +4685,7 @@ eoq;
 			$stored_options=$this->stored_options;
 		}
 		if(!empty($stored_options)) {
-			$storedOptions = unserialize(base64_decode($stored_options));
+			$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($stored_options));
 			if (isset($storedOptions[$option_name])) {
 				$default_value=$storedOptions[$option_name];
 			}
@@ -4740,7 +4740,7 @@ eoq;
 	 * @return array Array of messageNumbers (mail server's internal keys)
 	 */
 	function getNewMessageIds() {
-		$storedOptions = unserialize(base64_decode($this->stored_options));
+		$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($this->stored_options));
 
 		//TODO figure out if the since date is UDT
 		if($storedOptions['only_since']) {// POP3 does not support Unseen flags
@@ -5187,7 +5187,7 @@ eoq;
 		if(empty($user)) $user = $current_user;
 
 		$emailSettings = $current_user->getPreference('emailSettings', 'Emails');
-		$emailSettings = is_string($emailSettings) ? unserialize($emailSettings) : $emailSettings;
+		$emailSettings = is_string($emailSettings) ? \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($emailSettings) : $emailSettings;
 
 		$this->autoImport = (isset($emailSettings['autoImport']) && !empty($emailSettings['autoImport'])) ? true : false;
 		return $this->autoImport;
@@ -5652,7 +5652,7 @@ eoq;
 			include($cache); // profides $cacheFile
             /** @var $cacheFile array */
 
-            $metaOut = unserialize($cacheFile['out']);
+            $metaOut = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($cacheFile['out']);
 			$meta = $metaOut['meta']['email'];
 			$email = BeanFactory::getBean('Emails');
 
@@ -6120,7 +6120,7 @@ eoq;
 		$direction = 'desc';
 		$sortSerial = $current_user->getPreference('folderSortOrder', 'Emails');
 		if(!empty($sortSerial) && !empty($_REQUEST['ieId']) && !empty($_REQUEST['mbox'])) {
-			$sortArray = unserialize($sortSerial);
+			$sortArray = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($sortSerial);
 			$sort = $sortArray[$_REQUEST['ieId']][$_REQUEST['mbox']]['current']['sort'];
 			$direction = $sortArray[$_REQUEST['ieId']][$_REQUEST['mbox']]['current']['direction'];
 		}
@@ -6174,7 +6174,7 @@ eoq;
 	    $usersList = $team->get_team_members(true);
 	    foreach($usersList as $userObject)
 	    {
-	        $previousSubscriptions = unserialize(base64_decode($userObject->getPreference('showFolders', 'Emails',$userObject)));
+	        $previousSubscriptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($userObject->getPreference('showFolders', 'Emails',$userObject)));
 	        if($previousSubscriptions === FALSE)
 	            $previousSubscriptions = array();
 
@@ -6324,7 +6324,7 @@ eoq;
 				$delimiter = $mbox->delimiter;
 			}
 		}
-		$storedOptions = unserialize(base64_decode($this->stored_options));
+		$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($this->stored_options));
 		$storedOptions['folderDelimiter'] = $delimiter;
 		$this->stored_options = base64_encode(serialize($storedOptions));
         $this->save();

@@ -117,7 +117,7 @@ $mailbox_type = get_select_options_with_id($domMailBoxType, $focus->mailbox_type
 $email_templates_arr = get_bean_select_array(true, 'EmailTemplate','name', '','name',true);
 
 if(!empty($focus->stored_options)) {
-	$storedOptions = unserialize(base64_decode($focus->stored_options));
+	$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($focus->stored_options));
 	$from_name = $storedOptions['from_name'];
 	$from_addr = $storedOptions['from_addr'];
 

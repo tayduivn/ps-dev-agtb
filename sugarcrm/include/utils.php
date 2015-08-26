@@ -2172,7 +2172,7 @@ function clean_xss($str, $cleanImg=true)
     if(empty($sugar_config['email_xss']))
     $sugar_config['email_xss'] = getDefaultXssTags();
 
-    $xsstags = unserialize(base64_decode($sugar_config['email_xss']));
+    $xsstags = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($sugar_config['email_xss']));
 
     // cn: bug 13079 - "on\w" matched too many non-events (cONTact, strONG, etc.)
     $jsEvents  = "onblur|onfocus|oncontextmenu|onresize|onscroll|onunload|ondblclick|onclick|";
