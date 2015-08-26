@@ -2439,4 +2439,48 @@ END:VCALENDAR',
 
         return $beanMock;
     }
+
+    /**
+     * test the Bean Sync Counter
+     *
+     * @group caldav
+     * @covers CalDavEvent::setBeanSyncCounter
+     * @covers CalDavEvent::getBeanSyncCounter
+     */
+    public function testBeanSyncCounter()
+    {
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $rand = rand(0, 999);
+
+        $beanMock->module_sync_counter = $rand;
+
+        $this->assertEquals(++$rand, $beanMock->setBeanSyncCounter());
+        $this->assertEquals($rand, $beanMock->getBeanSyncCounter());
+    }
+
+    /**
+     * test the Dav Sync Counter
+     *
+     * @group caldav
+     * @covers CalDavEvent::setDavSyncCounter
+     * @covers CalDavEvent::getDavSyncCounter
+     */
+    public function testDavSyncCounter()
+    {
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $rand = rand(0, 999);
+
+        $beanMock->sync_counter = $rand;
+
+        $this->assertEquals(++$rand, $beanMock->setDavSyncCounter());
+        $this->assertEquals($rand, $beanMock->getDavSyncCounter());
+    }
 }

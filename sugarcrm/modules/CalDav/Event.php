@@ -11,15 +11,17 @@
  */
 use Sabre\VObject;
 use Sabre\VObject\Component as SabreComponent;
+use Sugarcrm\Sugarcrm\Dav\Base\SugarDavSyncInterface;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper as DavHelper;
 use Sugarcrm\Sugarcrm\Dav\Base\Constants as DavConstants;
 use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as DavStatusMapper;
+
 
 /**
  * Class CalDav
  * Represents implementation of Sugar Bean for CalDAV backend operations with calendar events
  */
-class CalDavEvent extends SugarBean
+class CalDavEvent extends SugarBean implements SugarDavSyncInterface
 {
     public $new_schema = true;
     public $module_dir = 'CalDav';
@@ -145,13 +147,13 @@ class CalDavEvent extends SugarBean
      * CalDAV server event synchronization counter
      * @var integer
      */
-    public $sync_counter;
+    public $sync_counter = 0;
 
     /**
      * Related module record synchronization counter
      * @var integer
      */
-    public $module_sync_counter;
+    public $module_sync_counter = 0;
 
     /**
      * Calendar event is stored here
@@ -173,6 +175,38 @@ class CalDavEvent extends SugarBean
      * @var Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\EventMap
      */
     protected $statusMapper;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setBeanSyncCounter()
+    {
+        return ++$this->module_sync_counter;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setDavSyncCounter()
+    {
+        return ++$this->sync_counter;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getBeanSyncCounter()
+    {
+        return $this->module_sync_counter;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDavSyncCounter()
+    {
+        return $this->sync_counter;
+    }
 
     /**
      * Calculate and set the size of the event data in bytes
