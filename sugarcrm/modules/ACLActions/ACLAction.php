@@ -466,6 +466,7 @@ class ACLAction  extends SugarBean
         global $ACLActions, $current_user;
         $names = array();
         $disabled = array();
+        $tbaConfigurator = new TeamBasedACLConfigurator();
         foreach($categories as $cat_name=>$category){
             foreach($category as $type_name=>$type){
                 foreach($type as $act_name=>$action){
@@ -491,6 +492,14 @@ class ACLAction  extends SugarBean
                     }
                     else{
                     $categories[$cat_name][$type_name][$act_name]['accessOptions'] =  ACLAction::getAccessOptions($act_name, $type_name);
+                        if (!$tbaConfigurator->isEnabledForModule($cat_name)) {
+                            $tbaModuleKeys = array_values($tbaConfigurator->getModuleOptions());
+                            foreach ($categories[$cat_name][$type_name][$act_name]['accessOptions'] as $key => $label) {
+                                if (in_array($key, $tbaModuleKeys)) {
+                                    unset($categories[$cat_name][$type_name][$act_name]['accessOptions'][$key]);
+                                }
+                            }
+                        }
                     }
                 }
             }
