@@ -714,15 +714,16 @@ class RestService extends ServiceBase
      * simply have to generate the ETag, pass it in, and the function handles the rest.
      *
      * @param  string $etag ETag to use for this content.
+     * @param int $cache_age age in seconds for Cache-control max-age header
      * @return bool   Did we have a match?
      */
-    public function generateETagHeader($etag)
+    public function generateETagHeader($etag, $cache_age = null)
     {
         if (empty($this->response)) {
            return false;
         }
 
-        return $this->response->generateETagHeader($etag);
+        return $this->response->generateETagHeader($etag, $cache_age);
     }
 
     /**
@@ -735,7 +736,7 @@ class RestService extends ServiceBase
         }
         $this->response->setType(RestResponse::FILE)->setFilename($filename);
         $this->response->setHeader("Pragma", "public");
-        $this->response->setHeader("Cache-Control", "maxage=1, post-check=0, pre-check=0");
+        $this->response->setHeader("Cache-Control", "max-age=1, post-check=0, pre-check=0");
         $this->response->setHeader("X-Content-Type-Options", "nosniff");
     }
 
@@ -807,15 +808,16 @@ class RestService extends ServiceBase
         } else {
             $postContents = $this->request->getPostContents();
             if ( !empty($postContents) ) {
-                // This looks like the post contents are JSON
-                // Note: If we want to support rest based XML, we will need to change this
-                $postVars = @json_decode($postContents,true,32);
-                if (json_last_error() !== 0) {
-                    // Bad JSON data, throw an exception instead of trying to process it
-                    throw new SugarApiExceptionInvalidParameter();
+                    // This looks like the post contents are JSON
+                    // Note: If we want to support rest based XML, we will need to change this
+
+                    $postVars = @json_decode($postContents, true, 32);
+                    if (json_last_error() !== 0) {
+                        // Bad JSON data, throw an exception instead of trying to process it
+                        throw new SugarApiExceptionInvalidParameter();
+                    }
                 }
             }
-        }
 
         // I know this looks a little weird, overriding post vars with get vars, but
         // in the case of REST, get vars are fairly uncommon and pretty explicit, where
