@@ -2631,7 +2631,33 @@ ENDP;
      */
     public function getPackageManifest()
     {
-        return $this->upgrader->getManifest();
+
+        /**
+         * Our upgrade drivers (web,cli, and shadow) differ slightly in what context is available during the healthcheck
+         * process.  Cli and shadow both have access to the new UpgradeDriver and utilize it when initiated.  Web upgrader
+         * must use the previous WebUpgrade/UpgradeDriver during the healthcheck stage.  This means the new Scanner
+         * is tightly coupled with the previous upgrade driver and therefore care must be taken when modifying existing
+         * APIs.  The algorithm to deduce how to load the manifest is:
+         *
+         *      1.  If our upgrade driver has a public method available entitled getManifest use that implementation (7.6.1 >)
+         *      2.  If the getManifest method on the upgrade driver is not callable indicating an old version of the
+         *          upgrade driver then use the old mechanism for retrieving the package manifest. (Pre-7.6.10)
+         *      3.  If none of these methods work return nothing (indicating the health check will fail.
+         *
+         * We can skip step #2 and only go with step #1 once we only support upgrades from 7.6.1 going forward.
+         *
+         */
+        if (is_callable(array($this->upgrader, 'getManifest'))){
+            return $this->upgrader->getManifest();
+        }
+        else if (!empty($this->upgrader->context['extract_dir'])) {
+            $fileReader = new FileLoaderWrapper();
+            $manifest = $fileReader->loadFile($this->upgrader->context['extract_dir'] . '/manifest.php', 'manifest');
+            return !empty($manifest) ? $manifest : array();
+        }
+        return array();
+
+
     }
 
     /**
