@@ -46,6 +46,12 @@
         <th scope='col' align='center' id="lineLabel_{$vardef.name}_primary" rowspan='1' scope='row' style='white-space: nowrap; word-wrap: normal;'>
             {sugar_translate label='LBL_COLLECTION_PRIMARY'}
         </th>
+        {if $isTBAEnabled}
+            <th scope='col' align='center' id="lineLabel_{$idname}_selected" rowspan='1' scope='row'
+                style='white-space: nowrap; word-wrap:normal;'>
+                {sugar_translate label='LBL_TEAM_SET_SELECTED'}
+            </th>
+        {/if}
 <!-- BEGIN Add and collapse -->
         <td rowspan='1' scope='row' style='white-space:nowrap; word-wrap:normal;'>
             &nbsp;
@@ -88,6 +94,18 @@
             <input id="primary_{$vardef.name}_collection_0" name="primary_{$vardef.name}_collection" type="radio" class="radio" {if $displayParams.primaryChecked}checked="checked" {/if} title="{sugar_translate label='LBL_TEAM_SELECT_AS_PRIM_TITLE'}"value="0" onclick="collection['{$displayParams.formName}_{$vardef.name}'].changePrimary(true);"/>
             </span>
         </td>
+        {if $isTBAEnabled}
+            <td valign='top' align='center' class="teamset-row">
+            <span id='{$displayParams.formName}_{$vardef.name}_checkbox_div_0'>
+            &nbsp;
+            <input id="selected_{$vardef.name}_collection_0" name="selected_{$vardef.name}_collection_0"
+                   type="checkbox" class="checkbox"
+                   {if $values.primary.selected}checked="checked"
+                   title="{sugar_translate label='LBL_TEAM_TBSELECTED_TITLE'}"
+                   {else}title="{sugar_translate label='LBL_TEAM_SELECT_AS_TBSELECTED_TITLE'}"{/if}/>
+            </span>
+            </td>
+        {/if}
         <td>
         &nbsp;
         </td>
@@ -114,6 +132,7 @@
 			var temp_array = new Array();  
 			temp_array['name'] = '{$secondary_field.name}';
 			temp_array['id'] = '{$secondary_field.id}';
+			{if $isTBAEnabled}temp_array['selected'] = '{$secondary_field.selected}';{/if}
 			collection["{$displayParams.formName}_{$vardef.name}"].secondaries_values.push(temp_array);
 			{/foreach}
 		{/if}
