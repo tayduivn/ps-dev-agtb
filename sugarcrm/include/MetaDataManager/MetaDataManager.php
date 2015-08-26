@@ -1982,6 +1982,8 @@ class MetaDataManager
 
             if($auth->isExternal()) {
                 $configs['externalLogin'] = true;
+                $configs['externalLoginUrl'] = $auth->getLoginUrl();
+                $configs['externalLoginSameWindow'] = SugarConfig::getInstance()->get('SAML_SAME_WINDOW');
             }
         }
 

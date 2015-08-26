@@ -510,6 +510,10 @@
     var refreshExternalLogin = function() {
         var config = app.metadata.getConfig();
         app.api.setExternalLogin(config && config['externalLogin']);
+
+        if (config && (_.isNull(config['externalLoginSameWindow']) || config['externalLoginSameWindow'] === false)) {
+            app.api.setExternalLoginUICallback(window.open);
+        }
     };
 
     app.events.on("app:sync:complete", refreshExternalLogin, this);
