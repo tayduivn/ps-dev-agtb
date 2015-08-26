@@ -141,6 +141,7 @@ class ACLField  extends ACLAction
      * @param string $role_id
      */
     function getACLFieldsByRole($role_id){
+        $fields = array();
         $query = "SELECT  af.id, af.name, af.category, af.role_id, af.aclaccess FROM acl_fields af ";
         $query .=  " WHERE af.deleted = 0 ";
         $query .= " AND af.role_id='$role_id' ";
