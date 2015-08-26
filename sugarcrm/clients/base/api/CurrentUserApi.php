@@ -170,7 +170,7 @@ class CurrentUserApi extends SugarApi
         }
 
         $hash = $current_user->getUserMDHash();
-        if ($mHashValid && $api->generateETagHeader($hash)) {
+        if ($mHashValid && $api->generateETagHeader($hash, 3)) {
             return;
         }
 
