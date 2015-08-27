@@ -15,6 +15,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /** @var ACLRole $role */
 $role = BeanFactory::getBean('ACLRoles');
+$tbaConfigurator = new TeamBasedACLConfigurator();
+
 if(isset($_REQUEST['record']))$role->id = $_POST['record'];
 if(!empty($_REQUEST['name'])){
 	$role->name = $_POST['name'];
@@ -42,12 +44,23 @@ if(!empty($_REQUEST['name'])){
     $flc_module = 'All';
     foreach($_POST as $name=>$value){
     	if(substr_count($name, 'act_guid') > 0){
-    		$name = str_replace('act_guid', '', $name);
+            $name = str_replace('act_guid', '', $name);
+            $aclAction = BeanFactory::getBean('ACLActions', $name);
+            if ($tbaConfigurator->isValidAccess($value) &&
+                !$tbaConfigurator->isEnabledForModule($aclAction->category)
+            ) {
+                $value = constant($tbaConfigurator->getModuleFallbackOption());
+            }
     		$role->setAction($role->id,$name, $value);
     	}
     	if(substr_count($name, 'flc_guid') > 0){
     		$flc_module = $_REQUEST['flc_module'];
     		$name = str_replace('flc_guid', '', $name);
+            if ($tbaConfigurator->isValidAccess($value) &&
+                !$tbaConfigurator->isEnabledForModule($flc_module)
+            ) {
+                $value = constant($tbaConfigurator->getFieldFallbackOption());
+            }
     		ACLField::setAccessControl($flc_module, $role->id, $name, $value);
     	}
     	
