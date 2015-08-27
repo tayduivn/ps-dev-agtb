@@ -90,19 +90,6 @@
             parentModel.setSyncedAttributes(data.record);
         }
 
-        context.resetLoadFlag();
-        context.set('skipFetch', false);
-
-        context.loadData({
-            success: function() {
-                view.layout.trigger('filter:record:linked');
-            },
-            error: function() {
-                app.alert.show('server-error', {
-                    level: 'error',
-                    messages: 'ERR_GENERIC_SERVER_ERROR'
-                });
-            }
-        });
+        context.set('collapsed', false);
     }
 })

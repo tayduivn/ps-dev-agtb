@@ -52,7 +52,20 @@
         this.on('dashlet-processes:disable-record:fire', this.disableRecord, this);
         this.on('dashlet-processes:download:fire', this.showExportingWarning, this);
         this.on('dashlet-processes:description-record:fire', this.descriptionRecord, this);
+        this.on('linked-model:create', this._reloadData, this);
         return this;
+    },
+
+    /**
+     * Re-fetches the data for the context's collection.
+     *
+     * FIXME: This will be removed when SC-4775 is implemented.
+     *
+     * @private
+     */
+    _reloadData: function() {
+        this.context.set('skipFetch', false);
+        this.context.reloadData();
     },
 
     /**
