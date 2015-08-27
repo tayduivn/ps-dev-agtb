@@ -153,6 +153,8 @@ $mod_strings = array (
     'LBL_PMSE_CONTEXT_MENU_ASSIGN_TEAM' => 'Round Robin',
     'LBL_PMSE_CONTEXT_MENU_CHANGE_FIELD' => 'Change Field',
     'LBL_PMSE_CONTEXT_MENU_ADD_RELATED_RECORD' => 'Add Related Record',
+    // CONFIRMATIONS
+    'LBL_PMSE_CHANGE_ACTION_TYPE_CONFIRMATION' => 'By changing the action type all the previous settings for this action will be lost. Do you want to proceed?',
     // FORMS
     'LBL_PMSE_FORM_TITLE_ACTIVITY' => 'Activity',
     'LBL_PMSE_FORM_LABEL_READ_ONLY_FIELDS' => 'Readonly fields',
