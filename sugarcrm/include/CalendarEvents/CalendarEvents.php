@@ -205,7 +205,7 @@ class CalendarEvents
     {
         static::$old_assigned_user_id = '';
         if (!empty($module) && !empty($id)) {
-            $old_record = BeanFactory::getBean($module, $id);
+            $old_record = BeanFactory::retrieveBean($module, $id);
             if (!empty($old_record->assigned_user_id)) {
                 static::$old_assigned_user_id = $old_record->assigned_user_id;
             }
