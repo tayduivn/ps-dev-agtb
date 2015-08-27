@@ -5630,17 +5630,6 @@ class SugarBean
             $custom_logic_arguments['id'] = $id;
             $this->call_custom_logic("before_delete", $custom_logic_arguments);
             $this->deleted = 1;
-
-            if (isset($this->field_defs['team_id'])) {
-                if (empty($this->teams)) {
-                    $this->load_relationship('teams');
-                }
-
-                if (!empty($this->teams)) {
-                    $this->teams->removeTeamSetModule();
-                }
-            }
-
             $this->mark_relationships_deleted($id);
             if (isset($this->field_defs['modified_user_id'])) {
                 if (!empty($current_user)) {
