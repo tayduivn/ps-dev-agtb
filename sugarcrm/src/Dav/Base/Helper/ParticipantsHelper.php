@@ -151,7 +151,7 @@ class ParticipantsHelper
             if ($email) {
                 $displayName =
                     !empty($davParticipants[$userId]['cn']) ? $davParticipants[$userId]['cn'] : $userBean->full_name;
-                $role = !empty(isset($davParticipants[$userId]['role'])) ? $davParticipants[$userId]['role'] : null;
+                $role = !empty($davParticipants[$userId]['role']) ? $davParticipants[$userId]['role'] : null;
 
                 $preResult[DavConstants::PARTICIPIANT_NOT_MODIFIED][$userId] = array(
                     'email' => $email,

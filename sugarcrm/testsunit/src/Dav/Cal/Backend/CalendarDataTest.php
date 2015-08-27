@@ -36,7 +36,21 @@ DTSTART;VALUE=DATE:20160101
 END:VEVENT
 END:VCALENDAR',
                 'ETag' => '"c3d48c3c99615a99a764be4fc95c9ca9"',
+            ),
+        );
+    }
 
+    public function createUnsupportedCalendarObjectProvider()
+    {
+        return array(
+            array(
+                'content' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+uid:test
+RRULE:FREQ=MONTHLY;BYMONTHDAY=17,18,19,22,27,30,-1
+DTSTART;VALUE=DATE:20160101
+END:VEVENT
+END:VCALENDAR',
             ),
         );
     }
@@ -121,6 +135,44 @@ END:VCALENDAR',
     }
 
     /**
+     * @param string $calendarData
+     *
+     * @covers       Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::createCalendarObject
+     *
+     * @dataProvider createUnsupportedCalendarObjectProvider
+     *
+     * @expectedException \Sabre\DAV\Exception\NotImplemented
+     */
+    public function testCreateUnsupportedCalendarObject($calendarData)
+    {
+        $calendarMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
+                             ->disableOriginalConstructor()
+                             ->setMethods(null)
+                             ->getMock();
+
+        $calendarMock->createCalendarObject(1, 'uri', $calendarData);
+    }
+
+    /**
+     * @param string $calendarData
+     *
+     * @covers       Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::updateCalendarObject
+     *
+     * @dataProvider createUnsupportedCalendarObjectProvider
+     *
+     * @expectedException \Sabre\DAV\Exception\NotImplemented
+     */
+    public function testUpdateUnsupportedCalendarObject($calendarData)
+    {
+        $calendarMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
+                             ->disableOriginalConstructor()
+                             ->setMethods(null)
+                             ->getMock();
+
+        $calendarMock->updateCalendarObject(1, 'uri', $calendarData);
+    }
+
+    /**
      * @param $calendarId
      * @param $objectUri
      * @param $calendarData
@@ -138,7 +190,7 @@ END:VCALENDAR',
 
         $eventMock = $this->getMockBuilder('CalDavEvent')
                           ->disableOriginalConstructor()
-                          ->setMethods(array('save'))
+                          ->setMethods(array('save', 'getByURI'))
                           ->getMock();
 
         $eventMock->id = $calendarId;
@@ -146,6 +198,7 @@ END:VCALENDAR',
         $calendarMock->expects($this->once())->method('getEventsBean')->willReturn($eventMock);
 
         $eventMock->expects($this->once())->method('save');
+        $eventMock->expects($this->once())->method('getByURI')->willReturn($eventMock);
 
         $calendarMock->updateCalendarObject($calendarId, $objectUri, $calendarData);
     }

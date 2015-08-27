@@ -71,24 +71,14 @@ class DateTimeHelper
      */
     public function davDateToSugar(VObject\Property\ICalendar\DateTime $vDateTime)
     {
-        $date = $vDateTime->getValue();
-        $params = $vDateTime->parameters();
-
-        if (isset($params['TZID'])) {
-            $timezone = $params['TZID']->getValue();
-            $dateFormat = 'Ymd\THis';
+        $dt = $vDateTime->getDateTime();
+        if ($vDateTime->getValueType() == 'DATE-TIME') {
+            $date = $dt->format('Ymd\THis');
         } else {
-            $dt = new \DateTime($date);
-            $timezone = $dt->getTimezone()->getName();
-            if ($timezone == 'Z') {
-                $dateFormat = 'Ymd\THis\Z';
-                $timezone = 'UTC';
-            } else {
-                $dateFormat = 'Ymd\THis';
-                $timezone = null;
-            }
+            $date = $dt->format('Ymd') . 'T000000';
         }
-        $dateTime = \SugarDateTime::createFromFormat($dateFormat, $date, new \DateTimeZone($timezone));
+
+        $dateTime = \SugarDateTime::createFromFormat('Ymd\THis', $date, $dt->getTimezone());
 
         return $dateTime->asDb();
     }

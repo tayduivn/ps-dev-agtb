@@ -209,6 +209,11 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
     }
 
     /**
+     * @var Sugarcrm\Sugarcrm\Dav\Base\Helper\RecurringHelper
+     */
+    protected $recurringHelper;
+
+    /**
      * Calculate and set the size of the event data in bytes
      * @param string $data Calendar event text data
      */
@@ -231,7 +236,7 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
      * @param Sabre\VObject\Component\VCalendar $vObject
      * @return Sabre\VObject\Component\VEvent | null
      */
-    protected function getComponent(SabreComponent\VCalendar $vObject)
+    public function getComponent(SabreComponent\VCalendar $vObject)
     {
         $components = $vObject->getComponents();
         foreach ($components as $component) {
@@ -325,10 +330,19 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
     }
 
     /**
+     * Retrieve current_user
+     * @return \User
+     */
+    protected function getCurrentUser()
+    {
+        return $GLOBALS['current_user'];
+    }
+
+    /**
      * Retrieve VCalendar Event
      * @return Sabre\VObject\Component\VCalendar
      */
-    protected function getVCalendarEvent()
+    public function getVCalendarEvent()
     {
         if (!empty($this->vCalendarEvent)) {
             return $this->vCalendarEvent;
@@ -336,7 +350,7 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
         if (empty($this->calendardata)) {
             $this->vCalendarEvent = new SabreComponent\VCalendar();
             $timezone = $this->vCalendarEvent->createComponent('VTIMEZONE');
-            $timezone->TZID = $GLOBALS['current_user']->getPreference('timezone');
+            $timezone->TZID = $this->getCurrentUser()->getPreference('timezone');
             $this->vCalendarEvent->add($timezone);
         } else {
             $this->vCalendarEvent = VObject\Reader::read($this->calendardata);
@@ -492,9 +506,19 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
     public function __construct()
     {
         $this->dateTimeHelper = new DavHelper\DateTimeHelper();
+        $this->recurringHelper = new DavHelper\RecurringHelper();
         $this->participantsHelper = new DavHelper\ParticipantsHelper();
         $this->statusMapper = new DavStatusMapper\EventMap();
         parent::__construct();
+    }
+
+    /**
+     * Get component name for event
+     * @return string
+     */
+    public function getComponentTypeName()
+    {
+        return 'VEVENT';
     }
 
     /**
@@ -669,7 +693,7 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
      * Set the description of event
      * Return true if description was changed or false otherwise
      * @param string $value
-     * @param Sabre\VObject\Component $parent Parent component from CalDavEvent::setType
+     * @param Sabre\VObject\Component $parent Parent component from CalDavEvent::setComponent
      * @return bool
      */
     public function setDescription($value, SabreComponent $parent)
@@ -783,7 +807,7 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
      * Set the location of event
      * Return true if location was changed or false otherwise
      * @param string $value
-     * @param Sabre\VObject\Component $parent Parent component from CalDavEvent::setType
+     * @param Sabre\VObject\Component $parent Parent component from CalDavEvent::setComponent
      * @return bool
      */
     public function setLocation($value, SabreComponent $parent)
@@ -1055,58 +1079,24 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
 
     /**
      * Get recurring event info
+     * @see Sugarcrm\Sugarcrm\Dav\Base\Helper\RecurringHelper::getRecurringInfo for array format
      * @return null | array
-     *
-     * @todo For full functionality recurring helper should be used.
      */
     public function getRRule()
     {
-        $event = $this->getVCalendarEvent();
-        $component = $this->getComponent($event);
-        if ($component && $component->RRULE) {
-            $aRule = $component->RRULE->getParts();
-            if ($aRule) {
-                $result = array();
-
-                if (isset($aRule['FREQ'])) {
-                    $result['type'] = ucfirst(strtolower($aRule['FREQ']));
-                }
-
-                if (isset($aRule['INTERVAL'])) {
-                    $result['interval'] = $aRule['INTERVAL'];
-                }
-
-                if (isset($aRule['UNTIL'])) {
-                    $dateTime = SugarDateTime::createFromFormat('Ymd\THis\Z', $aRule['UNTIL'], new DateTimeZone('UTC'));
-                    $result['until'] = $dateTime->asDb();
-                }
-
-                if (isset($aRule['COUNT'])) {
-                    $result['count'] = $aRule['COUNT'];
-                }
-
-                if (isset($aRule['BYDAY'])) {
-                    $result['byday'] = $aRule['BYDAY'];
-                }
-
-                return $result;
-            }
-        }
-
-        return null;
+        return $this->recurringHelper->getRecurringInfo($this);
     }
 
     /**
      * Set recurring rules of event
-     * @param mixed $value
-     * @param Sabre\VObject\Component $parent
+     * @param array $recuringInfo
+     * @see Sugarcrm\Sugarcrm\Dav\Base\Helper\RecurringHelper::setRecurringInfo for array format
      * @return bool
      *
-     * @todo It will be implemented when "recurring helper" becomes available
      */
-    public function setRRule($value, SabreComponent $parent)
+    public function setRRule(array $recuringInfo)
     {
-        return false;
+        return $this->recurringHelper->setRecurringInfo($this, $recuringInfo);
     }
 
     /**
@@ -1130,7 +1120,7 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
      * @see $statusMap for avaliable statuses
      * Return true if status was changed or false otherwise
      * @param string $value
-     * @param Sabre\VObject\Component $parent Parent component from CalDavEvent::setType
+     * @param Sabre\VObject\Component $parent Parent component from CalDavEvent::setComponent
      * @return bool
      */
     public function setStatus($value, SabreComponent $parent)
@@ -1159,7 +1149,7 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
      *
      * @throws \InvalidArgumentException
      */
-    public function setType($componentType)
+    public function setComponent($componentType)
     {
         $event = $this->getVCalendarEvent();
         $currentComponent = $this->getComponent($event);

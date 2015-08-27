@@ -366,6 +366,15 @@ END:VCALENDAR',
                 'result' => 21900,
             ),
             array(
+                'vCalendar' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20110101
+DTEND;VALUE=DATE:20110102
+END:VEVENT
+END:VCALENDAR',
+                'result' => 1440,
+            ),
+            array(
                 'vCalendar' => null,
                 'result' => 0,
             ),
@@ -653,21 +662,19 @@ END:VCALENDAR',
         return array(
             array(
                 'vCalendar' => $this->getEventTemplate('vevent'),
-                'result' => array(
-                    'until' => '2015-08-13 08:00:00',
-                    'type' => 'Daily',
-                )
+                'method' => 'getRecurringInfo',
+                'count' => 1,
             ),
+        );
+    }
+
+    public function setRRuleProvider()
+    {
+        return array(
             array(
-                'vCalendar' => $this->getEventTemplate('vtodo'),
-                'result' => array(
-                    'count' => 5,
-                    'type' => 'Weekly',
-                )
-            ),
-            array(
-                'vCalendar' => null,
-                'result' => null,
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'method' => 'setRecurringInfo',
+                'count' => 1,
             ),
         );
     }
@@ -1543,7 +1550,7 @@ END:VCALENDAR',
 
         $beanMock->calendardata = $vCalendarEventText;
 
-        $result = TestReflection::callProtectedMethod($beanMock, 'getVCalendarEvent', array());
+        $result = $beanMock->getVCalendarEvent();
 
         $this->assertInstanceOf('Sabre\VObject\Component\VCalendar', $result);
     }
@@ -1799,19 +1806,27 @@ END:VCALENDAR',
 
     /**
      * @param string $vCalendarEventText
-     * @param string $expectedResult
+     * @param string $expectedMethod
+     * @param int $callCount
      *
      * @covers       \CalDavEvent::getRRule
      *
      * @dataProvider getRRuleProvider
      */
-    public function testGetRRule($vCalendarEventText, $expectedResult)
+    public function testGetRRule($vCalendarEventText, $expectedMethod, $callCount)
     {
         $beanMock = $this->getObjectForGetters($vCalendarEventText);
 
-        $result = $beanMock->getRRule();
+        $recurringHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\RecurringHelper')
+                                ->disableOriginalConstructor()
+                                ->setMethods(array($expectedMethod))
+                                ->getMock();
 
-        $this->assertEquals($expectedResult, $result);
+        TestReflection::setProtectedValue($beanMock, 'recurringHelper', $recurringHelper);
+
+        $recurringHelper->expects($this->exactly($callCount))->method($expectedMethod)->with($beanMock);
+
+        $beanMock->getRRule();
     }
 
     /**
@@ -1932,7 +1947,7 @@ END:VCALENDAR',
 
         $beanMock->expects($this->once())->method('getVCalendarEvent')->willReturn($vObject);
 
-        $beanMock->setType($componentType);
+        $beanMock->setComponent($componentType);
 
         $components = $vObject->getComponents();
 
@@ -2042,6 +2057,38 @@ END:VCALENDAR',
 
         $this->assertEquals($expectedResult, $result);
         $this->assertEquals($expectedDuration, $component->DURATION);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param string $expectedMethod
+     * @param int $callCount
+     *
+     * @covers       \CalDavEvent::setRRule
+     *
+     * @dataProvider setRRuleProvider
+     */
+    public function testSetRRule($vCalendarEventText, $expectedMethod, $callCount)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
+
+        $beanMock->setCalendarEventData($vCalendarEventText);
+
+        $recurringHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\RecurringHelper')
+                                ->disableOriginalConstructor()
+                                ->setMethods(array($expectedMethod))
+                                ->getMock();
+
+        TestReflection::setProtectedValue($beanMock, 'recurringHelper', $recurringHelper);
+
+        $testArray = array('value' => 1);
+
+        $recurringHelper->expects($this->exactly($callCount))->method($expectedMethod)->with($beanMock, $testArray);
+
+        $beanMock->setRRule($testArray);
     }
 
     /**
@@ -2360,6 +2407,11 @@ END:VCALENDAR',
                                    ->setMethods(null)
                                    ->getMock();
 
+        $recurringHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\RecurringHelper')
+                                ->disableOriginalConstructor()
+                                ->setMethods(null)
+                                ->getMock();
+
         $acceptedMapper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\AcceptedMap')
                                ->disableOriginalConstructor()
                                ->setMethods(array('getMapping'))
@@ -2373,6 +2425,7 @@ END:VCALENDAR',
         TestReflection::setProtectedValue($participantsHelper, 'statusMapper', $acceptedMapper);
 
         TestReflection::setProtectedValue($this->beanMock, 'dateTimeHelper', $dateTimeHelper);
+        TestReflection::setProtectedValue($this->beanMock, 'recurringHelper', $recurringHelper);
         TestReflection::setProtectedValue($this->beanMock, 'participantsHelper', $participantsHelper);
         TestReflection::setProtectedValue($this->beanMock, 'statusMapper', $statusMapper);
 
@@ -2386,7 +2439,7 @@ END:VCALENDAR',
 
         $this->beanMock->calendardata = $currentEvent;
 
-        return $this->beanMock->setType($type);
+        return $this->beanMock->setComponent($type);
     }
 
     /**

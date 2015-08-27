@@ -17,6 +17,7 @@ use Sabre\DAV;
 use Sabre\CalDAV;
 
 use Sabre\CalDAV\Backend\AbstractBackend;
+use Sabre\VObject;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper;
 
 class CalendarData extends AbstractBackend
@@ -59,6 +60,27 @@ class CalendarData extends AbstractBackend
         }
 
         return self::$userHelperInstance;
+    }
+
+    /**
+     * Get recurring helper
+     * @return Helper\RecurringHelper
+     */
+    public function getRecurringHelper()
+    {
+        return new Helper\RecurringHelper();
+    }
+
+    protected function isUnsupported($calendarData)
+    {
+        $recurringHelper = $this->getRecurringHelper();
+        $vObject = VObject\Reader::read($calendarData);
+        $mainComponent = $vObject->getBaseComponent();
+        if ($mainComponent->RRULE) {
+            return $recurringHelper->isUnsupported($mainComponent->RRULE->getParts());
+        }
+
+        return false;
     }
 
     /**
@@ -201,9 +223,14 @@ class CalendarData extends AbstractBackend
      */
     public function createCalendarObject($calendarId, $objectUri, $calendarData)
     {
+        if ($this->isUnsupported($calendarData)) {
+            throw new DAV\Exception\NotImplemented('RRULE format not supported');
+        }
         $event = $this->getEventsBean();
 
         if ($event && $event->setCalendarEventData($calendarData)) {
+
+
 
             $event->setCalendarEventURI($objectUri);
             $event->setCalendarId($calendarId);
@@ -220,6 +247,9 @@ class CalendarData extends AbstractBackend
      */
     public function updateCalendarObject($calendarId, $objectUri, $calendarData)
     {
+        if ($this->isUnsupported($calendarData)) {
+            throw new DAV\Exception\NotImplemented('RRULE format not supported');
+        }
         $eventBean = $this->getEventsBean();
         $event = $eventBean->getByURI($calendarId, array($objectUri), true);
         if ($event && $event->id && $event->setCalendarEventData($calendarData)) {

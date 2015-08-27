@@ -21,6 +21,19 @@ namespace Sugarcrm\SugarcrmTestsUnit\Dav\Base\Helper;
  */
 class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
 {
+    protected function getEventTemplateObject($template, $isText = false)
+    {
+        $calendarData = file_get_contents(dirname(__FILE__) . '/EventsTemplates/' . $template . '.ics');
+
+        if ($isText) {
+            return $calendarData;
+        }
+
+        $vEvent = \Sabre\VObject\Reader::read($calendarData);
+
+        return $vEvent;
+    }
+
     public function durationToSecondsProvider()
     {
         return array(
@@ -57,15 +70,25 @@ class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                'datetime' => '2015-01-01 00:00:01',
-                'timezone' => 'Europe/Minsk',
-                'sugarDateTime' => '2014-12-31 21:00:01',
+                'vEvent' => $this->getEventTemplateObject('datetime'),
+                'select' => 'DTSTART',
+                'sugarDateTime' => '2015-08-06 08:00:00',
             ),
             array(
-                'datetime' => '2015-01-01 00:00:01',
-                'timezone' => 'UTC',
-                'sugarDateTime' => '2015-01-01 00:00:01',
-            )
+                'vEvent' => $this->getEventTemplateObject('datetime1'),
+                'select' => 'DTSTART',
+                'sugarDateTime' => '2015-08-06 10:00:00',
+            ),
+            array(
+                'vEvent' => $this->getEventTemplateObject('datetime2'),
+                'select' => 'DTSTART',
+                'sugarDateTime' => '2015-08-06 10:00:00',
+            ),
+            array(
+                'vEvent' => $this->getEventTemplateObject('datetime3'),
+                'select' => 'DTSTART',
+                'sugarDateTime' => '2015-08-06 00:00:00',
+            ),
         );
     }
 
@@ -108,32 +131,22 @@ class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $datetime
-     * @param string $timezone
+     * @param $vEvent
+     * @param string $elementToSelect
      * @param string $expectedDateTime
      *
      * @covers       Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper::davDateToSugar
      *
      * @dataProvider davDateToSugarProvider
      */
-    public function testDavDateToSugar($datetime, $timezone, $expectedDateTime)
+    public function testDavDateToSugar($vEvent, $elementToSelect, $expectedDateTime)
     {
         $helperMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
                            ->disableOriginalConstructor()
                            ->setMethods(null)
                            ->getMock();
 
-        $calendarMock = $this->getMockBuilder('Sabre\VObject\Component\VCalendar')
-                             ->disableOriginalConstructor()
-                             ->setMethods(null)
-                             ->getMock();
-
-        $tz = new \DateTimeZone($timezone);
-        $dt = new \DateTime($datetime, $tz);
-        $dt->setTimeZone($tz);
-
-        $dateTimeElement = $calendarMock->createProperty('DTSTART');
-        $dateTimeElement->setDateTime($dt);
+        $dateTimeElement = array_shift($vEvent->getBaseComponent()->select($elementToSelect));
 
         $result = $helperMock->davDateToSugar($dateTimeElement);
 

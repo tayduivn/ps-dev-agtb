@@ -341,7 +341,7 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
     {
         $participantsMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper')
                                  ->disableOriginalConstructor()
-                                 ->setMethods(null)
+                                 ->setMethods(array('getUserPrimaryAddress'))
                                  ->getMock();
 
         $mapperMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\AcceptedMap')
@@ -363,6 +363,14 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                                      ->disableOriginalConstructor()
                                      ->setMethods(array('getBeans', 'load'))
                                      ->getMockForAbstractClass();
+
+        $currentBean = 0;
+
+        foreach ($beansResult as $key => $value) {
+            $participantsMock->expects($this->at($currentBean))->method('getUserPrimaryAddress')
+                             ->willReturn($value['email']);
+            $currentBean ++;
+        }
 
         $users = array();
         foreach ($beansResult as $userId => $userInfo) {
