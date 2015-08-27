@@ -38,6 +38,8 @@ class ParserDropdownTest extends Sugar_PHPUnit_Framework_TestCase
         // Reload app_list_strings
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
 
+        $_REQUEST = array();
+
         SugarTestHelper::tearDown();
     }
 
@@ -158,5 +160,124 @@ class ParserDropdownTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             ),
         );
+    }
+
+
+    /**
+     * @param $params
+     * @param $existingFileContents
+     * @param $expectedFileContents
+     *
+     * @dataProvider saveDropdownProvider
+     */
+    public function testSaveDropdown(
+        $params,
+        $existingFileContents,
+        $expected
+    ) {
+        $lang = $GLOBALS['current_language'];
+        $params['dropdown_lang'] = $lang;
+        $dropdownName = $params['dropdown_name'];
+        $this->customFile = "custom/Extension/application/Ext/Language/$lang.sugar_$dropdownName.php";
+        if (!empty($existingFileContents)) {
+            sugar_file_put_contents($this->customFile, $existingFileContents);
+        }
+
+        $_REQUEST['view_package'] = $params['view_package'];
+
+        $parser = $this->getMockBuilder('ParserDropDown')
+            ->disableOriginalConstructor()
+            ->setMethods(array('finalize'))
+            ->getMock();
+
+        $parser->saveDropDown($params);
+
+        if (!empty($expected)) {
+            $this->assertFileExists($this->customFile);
+
+            $app_list_strings = array();
+            include($this->customFile);
+
+            $this->assertSame($expected, $app_list_strings, 'Save Dropdown not working properly.');
+        } else {
+            $this->assertFileNotExists($this->customFile);
+        }
+    }
+
+
+    public static function saveDropdownProvider()
+    {
+        $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
+        return array(
+            //Add a new module with no existing customization
+            array(
+                //Params
+                array(
+                    'dropdown_name' => 'moduleList',
+                    'list_value' => static::encodeList(array_merge(
+                        $app_list_strings['moduleList'],
+                        array('NewModule' => 'New Module'))
+                    ),
+                    'view_package' => 'studio',
+                    'use_push' => true,
+                ),
+                '',
+                array('moduleList' => array('NewModule' => 'New Module'))
+            ),
+            //Rename existing module
+            array(
+                //Params
+                array(
+                    'dropdown_name' => 'moduleList',
+                    'list_value' => static::encodeList(array_merge(
+                            $app_list_strings['moduleList'],
+                            array('Accounts' => 'New Accounts')
+                        )
+                    ),
+                    'view_package' => 'studio',
+                    'use_push' => true,
+                ),
+                '',
+                array('moduleList' => array('Accounts' => 'New Accounts'))
+            ),
+            //No change
+            array(
+                //Params
+                array(
+                    'dropdown_name' => 'moduleList',
+                    'list_value' => static::encodeList($app_list_strings['moduleList']),
+                    'view_package' => 'studio',
+                    'use_push' => true,
+                ),
+                '',
+                false
+            ),
+            //Keep existing customization
+            array(
+                //Params
+                array(
+                    'dropdown_name' => 'moduleList',
+                    'list_value' => static::encodeList(array_merge(
+                            $app_list_strings['moduleList'],
+                            array('NewModule' => 'New Module')
+                        )
+                    ),
+                    'view_package' => 'studio',
+                    'use_push' => true,
+                ),
+                '<?php $app_list_strings[\'moduleList\'][\'foo\']=\'bar\';',
+                array('moduleList' => array('foo' => 'bar', 'NewModule' => 'New Module'))
+            )
+        );
+    }
+
+    protected static function encodeList(Array $list)
+    {
+        $new_list = array();
+        foreach ($list as $k => $v) {
+            $new_list[] = array($k, $v);
+        }
+
+        return json_encode($new_list);
     }
 }
