@@ -60,7 +60,6 @@
                 this.context.on('button:create_localization_button:click', this.createLocalization, this);
                 this.context.on('button:create_revision_button:click', this.createRevision, this);
                 this.context.on('button:create_article_button:click', this.createArticle, this);
-                this.context.on('button:create_article_button_subpanel:click', this.createArticleSubpanel, this);
             },
 
             /**
