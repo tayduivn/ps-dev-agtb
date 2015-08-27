@@ -231,12 +231,6 @@
     },
 
     isAssigned: function(model) {
-        if (model.get('cas_status') == 'static'
-            || model.get('cas_status') == 'balanced'
-            || model.get('cas_user_id') == app.user.id) {
-            return true;
-        } else {
-            return (model.get('cas_started') > 0);
-        }
+        return model.get('cas_assignment_method') != 'selfservice';
     }
 })
