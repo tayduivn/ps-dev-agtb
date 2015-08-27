@@ -608,6 +608,13 @@ function addToValidateVerified(formname, name, type, required, msg, arr, operato
 	validate[formname][validate[formname].length - 1][jstypeIndex] = 'verified';
 }
 
+function addToValidateMaxLength(formname, name, type, required, max, msg)
+{
+    addToValidate(formname, name, type, required, msg);
+    validate[formname][validate[formname].length - 1][jstypeIndex] = 'maxlen';
+    validate[formname][validate[formname].length - 1][maxIndex] = max;
+}
+
 function addToValidateLessThan(formname, name, type, required, msg, max, max_field_msg) {
 	addToValidate(formname, name, type, required, msg);
 	validate[formname][validate[formname].length - 1][jstypeIndex] = 'less';
@@ -971,6 +978,17 @@ function check_form(formname) {
 		&& typeof(siw.selectingSomething) != 'undefined' && siw.selectingSomething)
 			return false;
 	return validate_form(formname, '');
+}
+
+function disable_submit(formname) {
+    //disable the submit buttons to prevent double submits
+    var form = document.forms[formname];
+    var inputs = form.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i ++) {
+        if (inputs[i].type === 'submit') {
+            inputs[i].disabled = 'disabled';
+        }
+    }
 }
 
 var REQUIRED_VALIDATION_MESSAGE_CLASS = 'required validation-message';
@@ -1435,6 +1453,16 @@ function validate_form(formname, startsWith){
                                         }
                                     }
                                 break;
+                                case 'maxlen':
+                                    value = trim(form[validate[formname][i][nameIndex]].value);
+                                    maximum = parseFloat(validate[formname][i][maxIndex]);
+                                    if (typeof maximum != 'undefined') {
+                                        if (value.length > maximum) {
+                                            isError = true;
+                                            add_error_style(formname, validate[formname][i][nameIndex], validate[formname][i][msgIndex] + " " + SUGAR.language.get('app_strings', 'MSG_EXCEEDS_MAXLEN'));
+                                        }
+                                    }
+                                    break;
                                 case 'less':
                                     value=unformatNumber(trim(form[validate[formname][i][nameIndex]].value), num_grp_sep, dec_sep);
                                     maximum = parseFloat(validate[formname][i][maxIndex]);

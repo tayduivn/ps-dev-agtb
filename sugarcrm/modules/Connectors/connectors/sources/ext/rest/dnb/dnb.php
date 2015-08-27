@@ -41,8 +41,16 @@ class ext_rest_dnb extends ext_rest {
         $this->_enable_in_admin_mapping = false;
     }
 
+    /**
+     * This method is called from the administration interface to run a test of the service
+     * It is up to subclasses to implement a test and set _has_testing_enabled to true so that
+     * a test button is rendered in the administration interface
+     *
+     * @return result boolean result of the test function
+     */
     public function test() {
         $api = ExternalAPIFactory::loadAPI('Dnb', true);
+        $api->setConnector($this);
         return $api->checkTokenValidity(false);
     }
 

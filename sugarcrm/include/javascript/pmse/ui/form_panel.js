@@ -1381,8 +1381,8 @@
 		return this;
 	};
 
-	FormPanelDatetime.prototype.closeAll = function() {
-		return this.close().closeTime();
+	FormPanelDatetime.prototype.close = function() {
+		return FormPanelDate.prototype.close.call(this).closeTime();
 	};
 
 	FormPanelDatetime.prototype._setValueToControl = function (value) {
