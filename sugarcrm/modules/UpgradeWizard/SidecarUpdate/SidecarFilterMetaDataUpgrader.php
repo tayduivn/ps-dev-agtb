@@ -13,6 +13,7 @@
 // This will need to be pathed properly when packaged
 require_once 'SidecarAbstractMetaDataUpgrader.php';
 require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php';
+require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 
 class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
 {
@@ -82,6 +83,7 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
     {
         // load SearchFields.php
         $searchFields = $this->loadSearchFields();
+        $defaultSidecarFilter = $this->loadFilterDef();
 
         $fields = array();
         if(!empty($this->legacyViewdefs['layout']['basic_search'])) {
@@ -139,6 +141,8 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 );
                 if (!empty($searchFields[$name]['type'])) {
                     $fields[$name]['type'] = $searchFields[$name]['type'];
+                } else if (!empty($defaultSidecarFilter[$name]['type'])) {
+                    $fields[$name]['type'] = $defaultSidecarFilter[$name]['type'];
                 }
                 if (empty($fields[$name]['dbFields']) && !$this->isValidField($name)) {
                     unset($fields[$name]);
@@ -183,6 +187,19 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         $client = $this->client == 'wireless' ? 'mobile' : $this->client;
         $out  = "<?php\n\$viewdefs['{$module}']['{$client}']['filter']['default'] = " . var_export($this->sidecarViewdefs, true) . ";\n";
         return $out;
+    }
+
+    /**
+     * Load the field definitions from clients/$client/filters/default/default.php.
+     * @return array
+     */
+    protected function loadFilterDef()
+    {
+        $module = $this->getNormalizedModuleName();
+        $parser = ParserFactory::getParser(MB_BASICSEARCH, $module);
+        $defs = $parser->getOriginalViewDefs();
+
+        return $defs['fields'];
     }
 
 }
