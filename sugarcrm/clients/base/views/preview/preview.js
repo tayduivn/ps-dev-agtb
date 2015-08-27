@@ -34,7 +34,6 @@
     hiddenPanelExists: false,
 
     events: {
-        'click .preview-edit-wrapper': 'handleEdit',
         'click [data-action=save]': 'saveClicked',
         'click [data-action=cancel]': 'cancelClicked'
     },
@@ -46,43 +45,34 @@
         this.collection = app.data.createBeanCollection(this.module);
     },
 
-    handleEdit: function(e, cell) {
-        var target;
-        var field;
-
-        if (e) { // If result of click event, extract target and cell.
-            target = this.$(e.target);
-            // toggle mouseleave to turn off the hover stuff
-            target.closest('.preview-edit-wrapper').mouseleave();
-        }
-
-        field = this.getField(target.closest('.record-cell').data().name);
-
-        // Set Editing mode to on.
-        this.inlineEditMode = true;
-
-        this.toggleField(field, true);
-        this.setEditFields(field);
-        this.showSaveAndCancel();
-    },
-
+    /**
+     * Show the save and cancel buttons in the preview-header and
+     * hide the left, right and x buttons if user has acl access
+     *
+     */
     showSaveAndCancel: function() {
-        this.layout.$('.save-btn, .cancel-btn').show();
-        this.layout.$('.btn-left, .btn-right, .closeSubdetail').hide();
+        if (app.acl.hasAccessToModel('edit', this.model)) {
+            this.layout.$('.save-btn, .cancel-btn').show();
+            this.layout.$('.btn-left, .btn-right, .closeSubdetail').hide();
+        }
     },
 
+    /**
+     * Hide the save and cancel buttons and show the left, right and
+     * x buttons
+     *
+     */
     hideSaveAndCancel: function() {
         this.layout.$('.save-btn, .cancel-btn').hide();
         this.layout.$('.btn-left, .btn-right, .closeSubdetail').show();
     },
 
+    /**
+     * When clicking on save, validate all the fields
+     *
+     */
     saveClicked: function() {
         this.model.doValidate(this.getFields(this.module), _.bind(this.validationComplete, this));
-    },
-
-    setEditFields: function(field) {
-        delete this.layout.editableFields;
-        this.layout.editableFields = field;
     },
 
     /**
@@ -99,6 +89,11 @@
         }
     },
 
+    /**
+     * Runs when validation is successful
+     * Returns the preview to detail view
+     *
+     */
     handleSave: function() {
         if (this.disposed) {
             return;
@@ -109,11 +104,15 @@
         if (!this.disposed) {
             this.setRoute();
             this.unsetContextAction();
-            this.toggleField(this.layout.editableFields, false);
-            this.inlineEditMode = false;
+            this.toggleFields(this.editableFields, false);
         }
     },
 
+    /**
+     * Saves the model
+     *
+     * @private
+     */
     _saveModel: function() {
         var options,
             successCallback = _.bind(function() {
@@ -166,6 +165,11 @@
         this.model.save({}, options);
     },
 
+    /**
+     * Deals with metadata sync error
+     *
+     * @param error
+     */
     handleMetadataSyncError: function(error) {
         var self = this;
         //On a metadata sync error, retry the save after the app is synced
@@ -224,17 +228,22 @@
         return {};
     },
 
+    /**
+     * When clciking cancel, return the preview view to detail state
+     */
     cancelClicked: function() {
         this.handleCancel();
-        this.clearValidationErrors(this.layout.editableFields);
+        this.clearValidationErrors(this.editableFields);
         this.setRoute();
         this.unsetContextAction();
     },
 
+    /**
+     * Undo the changes on the model
+     */
     handleCancel: function() {
         this.model.revertAttributes();
-        this.toggleField(this.layout.editableFields, false);
-        this.inlineEditMode = false;
+        this.toggleFields(this.editableFields, false);
         this.hideSaveAndCancel();
         this._dismissAllAlerts();
     },
@@ -248,14 +257,16 @@
         app.events.on('preview:render', this._renderPreview, this);
         app.events.on('preview:collection:change', this.updateCollection, this);
         app.events.on('preview:close', this.closePreview, this);
-        this.layout.on('button:save_button:click', this.saveClicked, this);
-        this.layout.on('button:cancel_button:click', this.cancelClicked, this);
 
         // TODO: Remove when pagination on activity streams is fixed.
         app.events.on('preview:module:update', this.updatePreviewModule, this);
 
         if (this.layout) {
             this.layout.on('preview:pagination:fire', this.switchPreview, this);
+            this.layout.on('preview:edit', this.handleEdit, this);
+            this.layout.on('button:save_button:click', this.saveClicked, this);
+            this.layout.on('button:cancel_button:click', this.cancelClicked, this);
+
         }
     },
 
@@ -479,5 +490,70 @@
                 }
             }, this);
         }
+    },
+    /**
+     * When clicking on the pencil icon, toggle all editable fields
+     * to edit mode
+     */
+    handleEdit: function() {
+        this.setEditableFields();
+        this.toggleFields(this.editableFields, true, this.showSaveAndCancel());
+    },
+
+    /**
+     * Set a list of editable fields
+     */
+    setEditableFields: function() {
+        // we only want to edit non readonly fields
+        this.editableFields = _.reject(this.fields, function(field) {
+            return field.def.readOnly === true
+                || !app.acl.hasAccessToModel('edit', this.model, field.name)
+                || field.def.preview_edit === false;
+        });
+    },
+
+    /**
+     * Check if the model has any unsaved changes
+     *
+     * @return {boolean} `true` if current model contains unsaved changes,
+     *   `false` otherwise.
+     */
+    hasUnsavedChanges: function() {
+        var changedAttributes,
+            editableFieldNames = [],
+            unsavedFields;
+
+        if (_.isUndefined(this.model)) {
+            return false;
+        }
+
+        if (this.resavingAfterMetadataSync) {
+            return false;
+        }
+
+        changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
+
+        if (_.isEmpty(changedAttributes)) {
+            return false;
+        }
+
+        // get names of all editable fields on the page including fields in a fieldset and add fields that
+        // are not readonly and user has acl access
+        _.each(this.meta.panels, function(panel) {
+            _.each(panel.fields, function(field) {
+                if (field.type === 'fieldset' && !field.readonly && _.every(field.fields, function(field) {
+                        return app.acl.hasAccessToModel('edit', this.model, field.name);
+                    }, this)) {
+                    editableFieldNames.push(field.name)
+                } else if (!field.readonly && app.acl.hasAccessToModel('edit', this.model, field.name)) {
+                    editableFieldNames.push(field.name)
+                }
+            });
+        });
+
+        // check whether the changed attributes are among the editable fields
+        unsavedFields = _.intersection(_.keys(changedAttributes), editableFieldNames);
+
+        return !_.isEmpty(unsavedFields);
     }
 })

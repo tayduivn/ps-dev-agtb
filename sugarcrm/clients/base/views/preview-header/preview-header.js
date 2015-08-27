@@ -19,9 +19,9 @@
     events: {
         'click [data-direction]': 'triggerPagination',
         'click .preview-headerbar .closeSubdetail': 'triggerClose',
+        'click .preview-edit-link': 'triggerEdit',
         'click .save-btn': 'triggerSave',
         'click .cancel-btn': 'triggerCancel'
-
     },
 
     initialize: function(options) {
@@ -29,6 +29,10 @@
         if (this.layout) {
             this.layout.off("preview:pagination:update", null, this);
             this.layout.on("preview:pagination:update", this.render, this);
+        }
+        //only allow preview edit when on a recordlist and user has acl access
+        if (this.context.get('layout') === 'records' && app.acl.hasAccessToModel('edit', this.model)) {
+            this.previewEdit = true;
         }
     },
 
@@ -42,11 +46,15 @@
         app.events.trigger("preview:close");
     },
 
+    triggerEdit: function() {
+        this.layout.trigger('preview:edit');
+    },
+
     triggerSave: function() {
-        this.layout.trigger("button:save_button:click");
+        this.layout.trigger('button:save_button:click');
     },
 
     triggerCancel: function() {
-        this.layout.trigger("button:cancel_button:click");
+        this.layout.trigger('button:cancel_button:click');
     }
 })

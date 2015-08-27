@@ -16,14 +16,7 @@
     <div class="row-fluid{{#if ../hide}}{{#if ../../../hidePanel}} hide{{/if}} panel_hidden{{/if}}">
         <div class="span5" data-name="{{this.name}}">{{str  this.label ../../this.model.module}}</div>
         <div class="span7 record-cell" data-type="{{type}}" name="{{name}}" data-name="{{this.name}}">
-            <span class="preview-row-data">
-                {{field ../../this model=../../model template="preview"}}
-            </span>
-            {{#unless this.readonly}}
-                <span class="preview-edit-wrapper">
-                    <a class="preview-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="fa fa-pencil"></i></a>
-                </span>
-            {{/unless}}
+            {{field ../../this model=../../model template="preview"}}
         </div>
     </div>
 {{/each}}
