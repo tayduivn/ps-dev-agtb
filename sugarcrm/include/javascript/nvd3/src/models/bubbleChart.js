@@ -69,14 +69,14 @@ nv.models.bubbleChart = function() {
         .align('center')
         .key(function(d) { return d.key + '%'; });
 
-  var showTooltip = function(e, offsetElement, properties) {
-    var left = e.pos[0],
-        top = e.pos[1],
-        x = e.point.x,
-        y = e.point.y,
-        content = tooltipContent(e.series.key, x, y, e, chart);
+  var showTooltip = function(eo, offsetElement, properties) {
+    var key = eo.series.key,
+        x = eo.point.x,
+        y = eo.point.y,
+        content = tooltipContent(key, x, y, eo, chart),
+        gravity = eo.value < 0 ? 'n' : 's';
 
-    tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
+    tooltip = nv.tooltip.show(eo.e, content, gravity, null, offsetElement);
   };
 
   //============================================================
@@ -522,9 +522,9 @@ nv.models.bubbleChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(eo) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
-          nv.tooltip.position(that.parentNode, tooltip, eo.pos, 's');
+          nv.tooltip.position(that.parentNode, tooltip, e, 's');
         }
       });
 
@@ -571,8 +571,8 @@ nv.models.bubbleChart = function() {
     dispatch.tooltipShow(eo);
   });
 
-  scatter.dispatch.on('elementMousemove.tooltip', function(eo) {
-    dispatch.tooltipMove(eo);
+  scatter.dispatch.on('elementMousemove.tooltip', function(e) {
+    dispatch.tooltipMove(e);
   });
 
   scatter.dispatch.on('elementMouseout.tooltip', function() {

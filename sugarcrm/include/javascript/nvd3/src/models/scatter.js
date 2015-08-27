@@ -27,15 +27,20 @@ nv.models.scatter = function() {
       padData = false, // If true, adds half a data points width to front and back, for lining up a line chart with a bar chart
       padDataOuter = 0.1, //outerPadding to imitate ordinal scale outer padding
       clipEdge = false, // if true, masks points within x and y scale
+      useVoronoi = true,
       clipVoronoi = true, // if true, masks each point with a circle... can turn off to slightly increase performance
-      clipRadius = function() { return 10; }, // function to get the radius for voronoi point clips
+      circleRadius = function(d, i) {
+        return Math.sqrt(z(getSize(d, i)) / Math.PI);
+      }, // function to get the radius for voronoi point clips
+      symbolSize = function(d, i) {
+        return z(getSize(d, i));
+      },
       xDomain = null, // Override x domain (skips the calculation from data)
       yDomain = null, // Override y domain
       sizeDomain = null, // Override point size domain
       sizeRange = [16, 256],
       singlePoint = false,
       dispatch = d3.dispatch('elementClick', 'elementMouseover', 'elementMouseout', 'elementMousemove'),
-      useVoronoi = true,
       nice = false;
 
   //============================================================
@@ -218,16 +223,11 @@ nv.models.scatter = function() {
         );
 
         function buildEventObject(e, d, i, j) {
-          var pos = [
-            e.offsetX == undefined ? e.layerX : e.offsetX,
-            e.offsetY == undefined ? e.layerY : e.offsetY
-          ];
           return {
               series: data[j],
               point: data[j].values[i],
               pointIndex: i,
               seriesIndex: j,
-              pos: pos,
               id: id,
               e: e
             };
@@ -246,12 +246,14 @@ nv.models.scatter = function() {
 
             var pointClips = wrap.select('#nv-points-clip-' + id).selectAll('circle')
                 .data(vertices);
-            pointClips.enter().append('circle')
-                .attr('r', clipRadius);
+            pointClips.enter().append('circle');
             pointClips.exit().remove();
             pointClips
                 .attr('cx', function(d) { return d[0] })
-                .attr('cy', function(d) { return d[1] });
+                .attr('cy', function(d) { return d[1] })
+                .attr('r', function(d, i) {
+                  return circleRadius(d[4], i);
+                });
 
             wrap.select('.nv-point-paths')
                 .attr('clip-path', 'url(#nv-points-clip-' + id + ')');
@@ -298,12 +300,12 @@ nv.models.scatter = function() {
                 if (needsUpdate) return 0;
                 dispatch.elementMouseover(buildEventObject(d3.event, d, d.point, d.series));
               })
+              .on('mousemove', function(d, i) {
+                dispatch.elementMousemove(d3.event);
+              })
               .on('mouseout', function(d, i) {
                 if (needsUpdate) return 0;
                 dispatch.elementMouseout(buildEventObject(d3.event, d, d.point, d.series));
-              })
-              .on('mousemove', function(d, i) {
-                dispatch.elementMousemove(buildEventObject(d3.event, d, d.point, d.series));
               });
         } else {
           // add event handlers to points instead voronoi paths
@@ -319,12 +321,12 @@ nv.models.scatter = function() {
                 if (needsUpdate || !data[d.series]) return 0; //check if this is a dummy point
                 dispatch.elementMouseover(buildEventObject(d3.event, d, i, d.series));
               })
+              .on('mousemove', function(d, i) {
+                dispatch.elementMousemove(d3.event);
+              })
               .on('mouseout', function(d, i) {
                 if (needsUpdate || !data[d.series]) return 0; //check if this is a dummy point
-                dispatch.elementMouseout(buildEventObject(d3.event, d, i, d.series));
-              })
-              .on('mousemove', function(d, i) {
-                dispatch.elementMousemove(buildEventObject(d3.event, d, i, d.series));
+                dispatch.elementMouseout(buildEventObject(d3.event, d, d.point, d.series));
               });
         }
 
@@ -334,7 +336,7 @@ nv.models.scatter = function() {
       needsUpdate = true;
 
       var groups = wrap.select('.nv-groups').selectAll('.nv-group')
-          .data(function(d) { return d }, function(d) { return d.key });
+          .data(function(d) { return d; }, function(d) { return d.key; });
       groups.enter().append('g')
           .style('stroke-opacity', 1e-6)
           .style('fill-opacity', 1e-6);
@@ -349,32 +351,32 @@ nv.models.scatter = function() {
           .classed('hover', function(d) { return d.hover; });
       d3.transition(groups)
           .style('stroke-opacity', 1)
-          .style('fill-opacity', .5);
+          .style('fill-opacity', 0.5);
 
 
       if (onlyCircles) {
 
         var points = groups.selectAll('circle.nv-point')
-            .data(function(d) { return d.values });
+            .data(function(d) { return d.values; });
         points.enter().append('circle')
-            .attr('cx', function(d, i) { return x0(getX(d, i)) })
-            .attr('cy', function(d, i) { return y0(getY(d, i)) })
-            .attr('r', function(d, i) { return Math.sqrt(z(getSize(d, i)) / Math.PI) });
+            .attr('cx', function(d, i) { return x0(getX(d, i)); })
+            .attr('cy', function(d, i) { return y0(getY(d, i)); })
+            .attr('r', circleRadius);
         points.exit().remove();
         d3.transition(groups.exit().selectAll('path.nv-point'))
-            .attr('cx', function(d, i) { return x(getX(d, i)) })
-            .attr('cy', function(d, i) { return y(getY(d, i)) })
+            .attr('cx', function(d, i) { return x(getX(d, i)); })
+            .attr('cy', function(d, i) { return y(getY(d, i)); })
             .remove();
-        points.attr('class', function(d, i) { return 'nv-point nv-point-' + i });
+        points.attr('class', function(d, i) { return 'nv-point nv-point-' + i; });
         d3.transition(points)
-            .attr('cx', function(d, i) { return x(getX(d, i)) })
-            .attr('cy', function(d, i) { return y(getY(d, i)) })
-            .attr('r', function(d, i) { return Math.sqrt(z(getSize(d, i)) / Math.PI) });
+            .attr('cx', function(d, i) { return x(getX(d, i)); })
+            .attr('cy', function(d, i) { return y(getY(d, i)); })
+            .attr('r', circleRadius);
 
       } else {
 
         var points = groups.selectAll('path.nv-point')
-            .data(function(d) { return d.values });
+            .data(function(d) { return d.values; });
         points.enter().append('path')
             .attr('transform', function(d, i) {
               return 'translate(' + x0(getX(d, i)) + ',' + y0(getY(d, i)) + ')';
@@ -382,7 +384,7 @@ nv.models.scatter = function() {
             .attr('d',
               d3.svg.symbol()
                 .type(getShape)
-                .size(function(d, i) { return z(getSize(d, i)) })
+                .size(symbolSize)
             );
         points.exit().remove();
         d3.transition(groups.exit().selectAll('path.nv-point'))
@@ -390,16 +392,15 @@ nv.models.scatter = function() {
               return 'translate(' + x(getX(d, i)) + ',' + y(getY(d, i)) + ')';
             })
             .remove();
-        points.attr('class', function(d, i) { return 'nv-point nv-point-' + i });
+        points.attr('class', function(d, i) { return 'nv-point nv-point-' + i; });
         d3.transition(points)
             .attr('transform', function(d, i) {
-              //nv.log(d,i,getX(d, i), x(getX(d, i)));
               return 'translate(' + x(getX(d, i)) + ',' + y(getY(d, i)) + ')';
             })
             .attr('d',
               d3.svg.symbol()
                 .type(getShape)
-                .size(function(d, i) { return z(getSize(d, i)) })
+                .size(symbolSize)
             );
       }
 
@@ -610,9 +611,9 @@ nv.models.scatter = function() {
     return chart;
   };
 
-  chart.clipRadius = function(_) {
-    if (!arguments.length) return clipRadius;
-    clipRadius = _;
+  chart.circleRadius = function(_) {
+    if (!arguments.length) return circleRadius;
+    circleRadius = _;
     return chart;
   };
 
@@ -651,4 +652,4 @@ nv.models.scatter = function() {
   //============================================================
 
   return chart;
-}
+};
