@@ -381,4 +381,12 @@ class AdministrationController extends SugarController
         $engine = SearchEngine::newEngine($type, $this->mergeFtsConfig($type, $config));
         return $engine->isAvailable(true);
     }
+
+    /**
+     * Map package ACL roles to the instance's ones
+     */
+    public function action_UpgradeWizard_map_roles()
+    {
+        $this->view = 'maproles';
+    }
 }
