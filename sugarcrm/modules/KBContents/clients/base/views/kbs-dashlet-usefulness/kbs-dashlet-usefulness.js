@@ -59,8 +59,8 @@
                 // correcting values for pie chart,
                 // because pie chart not support all zero values.
                 if (0 === useful && 0 === notuseful) {
-                    useful = 1;
-                    notuseful = 1;
+                    self.chartData.set({rawChartData: {values: []}});
+                    return;
                 }
                 var chartData = {
                         properties: [
