@@ -150,12 +150,6 @@
         // Trim the query term right up front since it needs to be clean
         query.term = $.trim(query.term);
 
-        // If tag already exists, no need to query db
-        if (this.checkExistingTags(query.term)) {
-            query.callback(shortlist);
-            return;
-        }
-
         this.filterResults.filterDef = {
             'filter': [{
                 'name_lower': { '$starts': query.term.toLowerCase() }
@@ -165,6 +159,12 @@
         this.filterResults.fetch({
             success: function(data) {
                 shortlist.results = self.parseRecords(data.models);
+
+                //Format results so that already existing records don't show up
+                shortlist.results = _.reject(shortlist.results, function(result) {
+                    return self.checkExistingTags(result.text)
+                });
+
                 query.callback(shortlist);
             },
             error: function() {
@@ -271,7 +271,7 @@
      * @param {array} list of objects/beans
      */
     parseRecords: function(list) {
-        var select2 = [];
+        var results = [];
 
         _.each(list, function(item) {
             var record = item;
@@ -281,11 +281,10 @@
                 record = record.toJSON();
             }
 
-            // locked parameter can be used in the future to prevent removal
-            select2.push({id: record.name, text: record.name, locked: false});
+            results.push({id: record.name, text: record.name});
         });
 
-        return select2;
+        return results;
     },
 
     /**
