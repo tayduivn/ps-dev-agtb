@@ -773,9 +773,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                 $out = $json->encode($ret, true);
                 echo $out;
             } else {
+                // Html Description handled in displayOneEmail() including HTML Cleaning if needed
                 $out = $ie->displayOneEmail($_REQUEST['uid'], $_REQUEST['mbox']);
-                $out['meta']['email']['description'] =
-                	empty($email->description_html) ? str_replace("\n", "\n<BR/>", $email->description) : $email->description_html;
                 $out['meta']['email']['date_start'] = $email->date_start;
                 $out['meta']['email']['time_start'] = $email->time_start;
                 $out['meta']['ieId'] = $_REQUEST['ieId'];
