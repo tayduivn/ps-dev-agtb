@@ -39,7 +39,7 @@ $mode           = $_REQUEST['mode'];
 $hidden_fields .= "<input type=hidden name=\"mode\" value=\"$mode\"/>";
 $hidden_fields .= smarty_function_sugar_csrf_form_token(array(), $smarty);
 
-$install_type   = getInstallType( $install_file );
+$install_type   = UpgradeWizardCommon::getInstallType( $install_file );
 
 $version        = "";
 $previous_version = "";
@@ -170,7 +170,7 @@ switch( $install_type ){
 		}
 		$hidden_fields .= "<input type=hidden name=\"new_lang_name\" value=\"$new_lang_name\"/>";
 
-		$new_lang_desc = getLanguagePackName( "$unzip_dir/$zip_from_dir/include/language/$new_lang_name.lang.php" );
+		$new_lang_desc = UpgradeWizardCommon::getLanguagePackName( "$unzip_dir/$zip_from_dir/include/language/$new_lang_name.lang.php" );
 		if( $new_lang_desc == "" ){
 			die( $mod_strings['ERR_UW_NO_LANG_DESC_1']."include/language/$new_lang_name.lang.php".$mod_strings['ERR_UW_NO_LANG_DESC_2']."$install_file." );
 		}
@@ -447,7 +447,7 @@ if( $show_files == true ){
 //    echo '</div>';
 if($mode == "Disable" || $mode == "Enable"){
 	//check to see if any files have been modified
-	$modified_files = getDiffFiles($unzip_dir, $install_file, ($mode == 'Enable'), $previous_version);
+	$modified_files = UpgradeWizardCommon::getDiffFiles($unzip_dir, $install_file, ($mode == 'Enable'), $previous_version);
 	if(count($modified_files) > 0){
 		//we need to tell the user that some files have been modified since they last did an install
 		echo '<script>' .
