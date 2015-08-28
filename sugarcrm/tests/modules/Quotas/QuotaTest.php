@@ -48,43 +48,7 @@ class QuotaTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetRollupQuotaReturnsArrayForEmptyQuota()
     {
         $quota = SugarTestQuotaUtilities::createQuota();
-        $quota->db = $this->getMock("DBManager", array(
-            "quote",
-            "convert",
-            "fromConvert",
-            "query",
-            "freeDbResult",
-            "renameColumnSQL",
-            "get_indices",
-            "get_columns",
-            "add_drop_constraint",
-            "getFieldsArray",
-            "getTablesArray",
-            "version",
-            "tableExists",
-            "fetchRow",
-            "connect",
-            "changeColumnSQL",
-            "disconnect",
-            "lastDbError",
-            "validateQuery",
-            "valid",
-            "dbExists",
-            "tablesLike",
-            "createDatabase",
-            "dropDatabase",
-            "getDbInfo",
-            "userExists",
-            "createDbUser",
-            "full_text_indexing_installed",
-            "getFulltextQuery",
-            "installConfig",
-            "getGuidSQL",
-            "limitQuery",
-            "fetchByAssoc",
-            "createTableSQLParams",
-            "getFromDummyTable",
-        ));
+        $quota->db = $this->getMockForAbstractClass('DBManager', array('fetchByAssoc'));
         $quota->db->expects($this->any())->method('limitQuery')->will($this->returnValue('foo'));
         $quota->db->expects($this->any())->method('fetchByAssoc')->will($this->returnValue(false));
         $this->assertEquals(
