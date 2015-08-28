@@ -189,7 +189,7 @@ abstract class SidecarAbstractMetaDataUpgrader
         //END SUGARCRM flav=pro ONLY
         'baselist'        => MB_SIDECARLISTVIEW,
         'baserecordview'  => MB_RECORDVIEW,
-        'basefilter'      => MB_SEARCHVIEW,
+        'basefilter'      => MB_BASICSEARCH,
         'basepopuplist'   => MB_SIDECARPOPUPVIEW,
     );
 

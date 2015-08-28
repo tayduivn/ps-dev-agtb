@@ -46,6 +46,7 @@ class SidecarFilterMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestReflection::setProtectedValue($mock, 'legacyViewdefs', $searchFields);
 
         SugarTestReflection::setProtectedValue($mock, 'client', 'base');
+        SugarTestReflection::setProtectedValue($mock, 'module', 'Accounts');
         SugarTestReflection::setProtectedValue($mock, 'viewtype', 'filter');
 
         $mock->convertLegacyViewDefsToSidecar();
