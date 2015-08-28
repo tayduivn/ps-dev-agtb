@@ -10812,7 +10812,9 @@ nv.models.pie = function() {
           slices.select('.nv-label-leader')
             .attr('points', function(d) {
               if (!labelOpacity(d)) {
-                return '0,0 0,0';
+                  // canvg needs at least 2 points because the lib doesnt have
+                  // any defensive code around an array with 1 element, it expects 2+ els
+                  return '0,0 0,0';
               }
               var leadOffset = showLeaders ? leaderLength * alignedRight(d) : 0,
                   outerArcPoints = d3.svg.arc()
