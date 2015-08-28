@@ -30,17 +30,7 @@ $uh = new UpgradeHistory();
  * up properly moving all logic within the class instead of having
  * functional code all over the place.
  */
-class UpgradeWizard
-{
-    /**
-     * Remove temporary files from upload
-     */
-    public static function unlinkTempFiles() {
-        global $sugar_config;
-        @unlink($_FILES['upgrade_zip']['tmp_name']);
-        @unlink("upload://".$_FILES['upgrade_zip']['name']);
-    }
-}
+
 
 $base_upgrade_dir       = "upload://upgrades";
 $base_tmp_upgrade_dir   = sugar_cached('upgrades/temp');
@@ -110,7 +100,7 @@ if( isset( $_REQUEST['run'] ) && ($_REQUEST['run'] != "") ){
                     strtolower(pathinfo($upload->get_stored_file_name(), PATHINFO_EXTENSION)) != 'zip' ||
                     !$upload->final_move($upload->get_stored_file_name())
                     ) {
-    			    UpgradeWizard::unlinkTempFiles();
+    			    UpgradeWizardCommon::unlinkTempFiles();
                     sugar_die($mod_strings['LBL_UPGRADE_WIZARD_INVALID_PKG']);
             	} else {
     			     $tempFile = "upload://".$upload->get_stored_file_name();
@@ -120,7 +110,7 @@ if( isset( $_REQUEST['run'] ) && ($_REQUEST['run'] != "") ){
             }
         }
         if($perform) {
-            $manifest_file = extractManifest( $tempFile );
+            $manifest_file = UpgradeWizardCommon::extractManifest( $tempFile );
 			if(is_file($manifest_file))
 			{
     			//SCAN THE MANIFEST FILE TO MAKE SURE NO COPIES OR ANYTHING ARE HAPPENING IN IT
@@ -140,7 +130,7 @@ if( isset( $_REQUEST['run'] ) && ($_REQUEST['run'] != "") ){
     			}
 
                 try {
-                    validate_manifest($manifest);
+					UpgradeWizardCommon::validate_manifest($manifest);
                 } catch (Exception $e) {
                     $msg = $e->getMessage();
                     $GLOBALS['log']->fatal("$msg\n" . $e->getTraceAsString());
@@ -152,12 +142,12 @@ if( isset( $_REQUEST['run'] ) && ($_REQUEST['run'] != "") ){
     			// exclude the bad permutations
     			if( $view == "module" )	{
     				if ($upgrade_zip_type != "module" && $upgrade_zip_type != "theme" && $upgrade_zip_type != "langpack") {
-    					UpgradeWizard::unlinkTempFiles();
+    					UpgradeWizardCommon::unlinkTempFiles();
     					 die($mod_strings['ERR_UW_NOT_ACCEPTIBLE_TYPE']);
     				}
     			} elseif( $view == "default" ) {
     				if($upgrade_zip_type != "patch" ) {
-    					UpgradeWizard::unlinkTempFiles();
+    					UpgradeWizardCommon::unlinkTempFiles();
     					die($mod_strings['ERR_UW_ONLY_PATCHES']);
     				}
     			}
@@ -169,7 +159,7 @@ if( isset( $_REQUEST['run'] ) && ($_REQUEST['run'] != "") ){
 			    $target_manifest = remove_file_extension( $target_path ) . "-manifest.php";
 
     			if( isset($manifest['icon']) && $manifest['icon'] != "" ){
-	    			 $icon_location = extractFile( $tempFile ,$manifest['icon'] );
+	    			 $icon_location = UpgradeWizardCommon::extractFile( $tempFile ,$manifest['icon'] );
     				 copy($icon_location, remove_file_extension( $target_path )."-icon.".pathinfo($icon_location, PATHINFO_EXTENSION));
 	    		}
 
@@ -180,7 +170,7 @@ if( isset( $_REQUEST['run'] ) && ($_REQUEST['run'] != "") ){
 					 $GLOBALS['ML_STATUS_MESSAGE'] = $mod_strings['ERR_UW_UPLOAD_ERROR'];
 				}
 			} else {
-				UpgradeWizard::unlinkTempFiles();
+				UpgradeWizardCommon::unlinkTempFiles();
 				die($mod_strings['ERR_UW_NO_MANIFEST']);
 			}
         }
@@ -320,7 +310,7 @@ foreach($upgrade_contents as $upgrade_content)
 
 		if(empty($manifest['icon']))
 		{
-			$icon = getImageForType( $manifest['type'] );
+			$icon = UpgradeWizardCommon::getImageForType( $manifest['type'] );
 		}
 		else
 		{
