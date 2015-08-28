@@ -14,6 +14,7 @@ require_once 'include/MetaDataManager/MetaDataManager.php';
 class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $mm;
+    protected $mdc;
     protected $configBackup;
 
     public function setup()
@@ -31,6 +32,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->setTestLanguageSettings();
         $this->mm = MetaDataManager::getManager();
+        $this->mdc = new MetaDataCache(DBManagerFactory::getInstance());
     }
 
     public function tearDown()
@@ -44,7 +46,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         MetaDataFiles::clearModuleClientCache();
-        MetaDataFiles::clearModuleClientCache();
+        $this->mdc->reset();
         MetaDataManager::resetManagers();
         SugarTestHelper::tearDown();
     }
@@ -556,54 +558,7 @@ PLATFORMS;
     public static function cacheStaticProvider()
     {
         return array(
-            array('clearCacheTable', array(), 'query'),
             array('getPlatformsWithCachesInDatabase', array('some-key'), 'query'),
-        );
-    }
-
-    /**
-     * @dataProvider cacheNonStaticProvider
-     */
-    public function testEnableCacheNonStatic($method, array $arguments, $dbMethod)
-    {
-        $db = $this->getCacheEnabledDatabaseMock($dbMethod);
-        $this->callCacheNonStatic($db, $method, $arguments);
-    }
-
-    /**
-     * @dataProvider cacheNonStaticProvider
-     */
-    public function testDisableCacheNonStatic($method, array $arguments, $dbMethod)
-    {
-        MetaDataManager::disableCache();
-        $db = $this->getCacheDisabledDatabaseMock($dbMethod);
-        $this->callCacheNonStatic($db, $method, $arguments);
-    }
-
-    private function callCacheNonStatic(DBManager $db, $method, array $arguments)
-    {
-        $this->mm->db = $db;
-        SugarTestReflection::callProtectedMethod($this->mm, $method, $arguments);
-    }
-
-    public static function cacheNonStaticProvider()
-    {
-        return array(
-            array(
-                'getFromCacheTable',
-                array('some-key'),
-                'limitQuery',
-            ),
-            array(
-                'storeToCacheTable',
-                array('some-key', 'some-data'),
-                'query',
-            ),
-            array(
-                'removeFromCacheTable',
-                array('some-key'),
-                'query',
-            )
         );
     }
 
@@ -664,7 +619,7 @@ PLATFORMS;
     public function testGetPlatformsWithCachesInDatabase($key, $expected)
     {
         $this->assertNotEmpty($expected);
-        SugarTestReflection::callProtectedMethod($this->mm, 'storeToCacheTable', array($key, null));
+        $this->mdc->set($key, true);
 
         $platforms = SugarTestReflection::callProtectedMethod('MetaDataManager', 'getPlatformsWithCachesInDatabase');
         foreach ($expected as $platform) {
