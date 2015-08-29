@@ -10686,9 +10686,10 @@ nv.models.pie = function() {
             if (!labelOpacity(d)) {
               return;
             }
-            var Θ = d.startAngle + (d.endAngle - d.startAngle) / 2,
-                sin = Math.abs(Math.sin(Θ)),
-                cos = Math.abs(Math.cos(Θ)),
+            // when the upgrade pkg gets built/minified, "var Θ" becomes "varΘ"
+            var angleΘ = d.startAngle + (d.endAngle - d.startAngle) / 2,
+                sin = Math.abs(Math.sin(angleΘ)),
+                cos = Math.abs(Math.cos(angleΘ)),
                 bW = maxWidthRadius - leaderLength - textOffset - labelLengths[i],
                 bH = maxHeightRadius - 7,
                 rW = sin ? bW / sin : bW, //don't divide by zero, fool
@@ -10811,7 +10812,9 @@ nv.models.pie = function() {
           slices.select('.nv-label-leader')
             .attr('points', function(d) {
               if (!labelOpacity(d)) {
-                return '0,0';
+                  // canvg needs at least 2 points because the lib doesnt have
+                  // any defensive code around an array with 1 element, it expects 2+ els
+                  return '0,0 0,0';
               }
               var leadOffset = showLeaders ? leaderLength * alignedRight(d) : 0,
                   outerArcPoints = d3.svg.arc()
