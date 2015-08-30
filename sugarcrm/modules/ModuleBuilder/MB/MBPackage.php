@@ -828,13 +828,14 @@ function buildInstall($path){
         $modules = array_merge($this->getSubdirectories('custom/modules/'), $modulesWithCustomDropdowns);
         $modules = array_unique($modules);
 
-        $exclude = array_merge($modInvisList, array('Project', 'ProjectTask'));
+        $exclude = array_intersect($modInvisList, array('Project', 'ProjectTask'));
         $modules = array_diff($modules, $exclude);
 
         $result = array();
         foreach ($modules as $module) {
             $result[$module] = $this->getModuleCustomizations($module);
-            if (in_array($module, $modulesWithCustomDropdowns)) {
+            if (in_array($module, $modulesWithCustomDropdowns) &&
+                SugarAutoLoader::existingCustomOne("modules/{$module}/metadata/studio.php")) {
                 $result[$module]['Dropdown'] = $mod_strings['LBL_EC_CUSTOMDROPDOWN'];
             }
         }
