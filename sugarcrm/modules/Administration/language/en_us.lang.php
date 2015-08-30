@@ -1173,6 +1173,10 @@ $mod_strings = array (
     'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL.',
     'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL.',
 
+    // Team-Based Access Rights
+    'LBL_TBA_CONFIGURATION' => 'Team-based Access Rights',
+    'LBL_TBA_CONFIGURATION_DESC' => 'Enable team access, and manage access by module.',
+
     //FTS
     'LBL_FTS_TYPE' => 'System Type',
     'LBL_FTS_HOST' => 'Host',

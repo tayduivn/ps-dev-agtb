@@ -21,7 +21,7 @@ class TeamBasedACLConfigurator
     protected $defaultConfig = array(
         'enabled' => false,
         'disabled_modules' => array(
-            'Tracker',
+            'Trackers'
         ),
     );
 
@@ -143,7 +143,7 @@ class TeamBasedACLConfigurator
         if (!$this->isEnabledGlobally()) {
             return false;
         }
-        $config = SugarConfig::getInstance()->get(self::CONFIG_KEY, $this->getDefaultConfig());
+        $config = $this->getConfig();
         return !in_array($module, $config['disabled_modules']);
     }
 
@@ -175,7 +175,7 @@ class TeamBasedACLConfigurator
      */
     public function isEnabledGlobally()
     {
-        $config = SugarConfig::getInstance()->get(self::CONFIG_KEY, $this->getDefaultConfig());
+        $config = $this->getConfig();
         return $config['enabled'];
     }
 
@@ -191,6 +191,8 @@ class TeamBasedACLConfigurator
         } else {
             VardefManager::clearVardef();
         }
+        //Rebuild Sidecar config file
+        ModuleInstaller::handleBaseConfig();
     }
 
     /**
@@ -379,5 +381,14 @@ class TeamBasedACLConfigurator
     public function getDefaultConfig()
     {
         return $this->defaultConfig;
+    }
+
+    /**
+     * Return config.
+     * @return array
+     */
+    public function getConfig()
+    {
+        return SugarConfig::getInstance()->get(self::CONFIG_KEY, $this->getDefaultConfig());
     }
 }
