@@ -143,8 +143,9 @@ class Audit extends SugarBean
             $dateCreated = $timedate->fromDbType($db->fromConvert($row['date_created'], 'datetime'), "datetime");
             $row['date_created'] = $timedate->asIso($dateCreated);
 
-            //If the team_set_id field has a log entry, we retrieve the list of teams to display
-            if ($row['field_name'] == 'team_set_id') {
+            $viewName = array_search($row['field_name'], Team::$nameTeamsetMapping);
+            if ($viewName) {
+                $row['field_name'] = $viewName;
                 $return[] = $this->handleTeamSetField($row);
                 continue;
             }
@@ -214,7 +215,6 @@ class Audit extends SugarBean
             return $row;
         }
 
-        $row['field_name'] = 'team_name';
         require_once 'modules/Teams/TeamSetManager.php';
         $row['before_value_string'] = TeamSetManager::getTeamsFromSet($row['before_value_string']);
         $row['after_value_string'] = TeamSetManager::getTeamsFromSet($row['after_value_string']);
