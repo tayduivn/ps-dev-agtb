@@ -5888,7 +5888,7 @@ eoq;
 
 		// body
         $meta['email']['description'] = $this->email->description;
-        $meta['email']['description_html'] = $this->email->description_html;
+        $meta['email']['description_html'] = SugarCleaner::cleanHtml(from_html($this->email->description_html), false);
 
 		// meta-metadata
 		$meta['is_sugarEmail'] = ($exMbox[0] == 'sugar') ? true : false;
