@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Notification\BeanEmitter;
 
+use Sugarcrm\Sugarcrm\Notification\EmitterRegistry;
+
 /**
  * Class Hook.
  * Is used to perform Notifications Event Trigger logic after some event has occurred in Sugar Bean.
@@ -26,9 +28,25 @@ class Hook
      * @param \SugarBean $bean Bean object.
      * @param string $event Logic hook event name.
      * @param array $arguments Arguments about event from logic-hook call.
+     * @return bool Result of method execution
      */
     public function hook(\SugarBean $bean, $event, $arguments)
     {
-        // ToDo: write actual logic here.
+        $result = false;
+        $emitterRegistry = $this->getEmitterRegistry();
+        $moduleEmitter = $emitterRegistry->getModuleEmitter($bean->module_name);
+        if ($moduleEmitter) {
+            $result = $moduleEmitter->exec($bean, $event, $arguments);
+        }
+        return $result;
+    }
+
+    /**
+     * Get EmitterRegistry.
+     * @return EmitterRegistry Registry instance.
+     */
+    protected function getEmitterRegistry()
+    {
+        return EmitterRegistry::getInstance();
     }
 }
