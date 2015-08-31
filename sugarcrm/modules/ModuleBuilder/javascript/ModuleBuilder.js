@@ -583,7 +583,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
             var requestUrl = url;
 // BEGIN SUGARCRM flav=ent ONLY
             var role = $("input[name=role]").val();
-            if (role && ModuleBuilder.isLayoutTheSame(url)) {
+            if (role && url.indexOf("&role=") < 0 && ModuleBuilder.isLayoutTheSame(url)) {
                 requestUrl += "&role=" + encodeURIComponent(role);
             }
 // END SUGARCRM flav=ent ONLY
@@ -1648,14 +1648,12 @@ if (typeof(ModuleBuilder) == 'undefined') {
             var params = ModuleBuilder.urlToParams(ModuleBuilder.contentURL);
             params.role = role;
             var url = ModuleBuilder.paramsToUrl(params);
-            $input.val('');
             ModuleBuilder.getContent(
                 url,
                 function(r) {
                     $input.val(role);
                     ModuleBuilder.updateContent(r);
                 }, function() {
-                    $input.val(previousRole);
                     $select.val(previousRole);
                 }
             );
