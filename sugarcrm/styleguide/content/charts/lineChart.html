@@ -32,9 +32,12 @@
         <div class="option-row">
           <span>Data File</span><br>
           <select id="chartData">
-            <option value="line_data">Test Line Chart Data #1</option>
-            <option value="line_raw_data" selected="selected">Test Line Chart Data #2</option>
-            <option value="line_single_data">Test Single Data Point</option>
+            <option value="line_data" selected="selected">Test Line Chart Data #1</option>
+            <option value="line_raw_data">Test Line Chart Data (raw) #2</option>
+            <option value="line_data_bar">Test Bar Data</option>
+            <option value="line_single_data">Test Single Data Point (time)</option>
+            <option value="line_single_bar">Test Single Data Point (bar data)</option>
+            <option value="line_two_single">Test Two Single Data Points</option>
             <option value="data_null">Test Null Data</option>
           </select>
         </div>
@@ -156,12 +159,17 @@
           .staggerTicks(staggerTicks)
           .rotateTicks(rotateTicks)
           .useVoronoi(true)
+          .clipEdge(false)
           //.forceY([0,400])
           //.forceX([0,6]);
           .tooltipContent(function(key, x, y, e, graph) {
-            return '<p>Category: <b>' + key + '</b></p>' +
-                   '<p>Amount: <b>$' + parseInt(y) + 'M</b></p>' +
-                   '<p>Date: <b>' + x + '</b></p>';
+            var content = '<p>Category: <b>' + key + '</b></p>' +
+                   '<p>Amount: <b>$' + parseInt(y) + 'M</b></p>',
+                dateCheck = new Date(x);
+            if (dateCheck instanceof Date && !isNaN(dateCheck.valueOf())) {
+              content += '<p>Date: <b>' + x + '</b></p>';
+            }
+            return content;
           });
 
     d3.select('#chart1')
@@ -186,66 +194,50 @@
         chart
           .colorData(color, {c1: '#e8e2ca', c2: '#3e6c0a', l: colorLength});
 
-        if (chartData.data && chartData.data.length) {
+        var xTickLabels = chartData.properties.labels ?
+              chartData.properties.labels.map(function(d) { return d.l || d; }) :
+              [];
 
-          var firstSeries = chartData.data[0].values,
-              firstValueAsDate = new Date(firstSeries[0][0]),
-              isTimeSeries = firstSeries[0][0] !== 0 && firstValueAsDate instanceof Date && !isNaN(firstValueAsDate.valueOf()),
-              singlePoint = firstSeries.length === 1,
-              xLabels = chartData.properties.labels;
+        if (chartData.data.length) {
+          if (chartData.data[0].values[0] instanceof Array) {
+            chart
+              .x(function(d) { return d[0]; })
+              .y(function(d) { return d[1]; });
 
-          // set x-scale as time instead of linear
-          var xScale = isTimeSeries ? d3.time.scale() : d3.scale.linear(),
-              tickFormat = isTimeSeries ?
-                function(d, i) {
+            if (nv.utils.isValidDate(chartData.data[0].values[0][0])) {
+              chart.xAxis
+                .tickFormat(function(d) {
                   return d3.time.format('%x')(new Date(d));
-                } :
-                function(d, i) {
-                  return xLabels[d].l;
-                };
+                });
+            } else if (xTickLabels.length > 0) {
+              chart.xAxis
+                .tickFormat(function(d) {
+                  return xTickLabels[d] || ' ';
+                });
+            }
+          } else {
+            chart
+              .x(function(d) { return d.x; })
+              .y(function(d) { return d.y; });
 
-          var xDomain = null,
-              yDomain = null;
-
-          if (singlePoint) {
-            var xValue = firstSeries[0][0],
-                xStart = xValue - 1 * (isTimeSeries ? 86400000 : 1),
-                xEnd = xValue + 1 * (isTimeSeries ? 86400000 : 1);
-            var yValue = firstSeries[0][1],
-                yStart = yValue - 2,
-                yEnd = yValue + 2;
-            xDomain = [xStart, xEnd];
-            yDomain = [yStart, yEnd];
+            if (xTickLabels.length > 0) {
+              chart.xAxis
+                .tickFormat(function(d) {
+                  return xTickLabels[d - 1] || ' ';
+                });
+            }
           }
-
-          chart
-            .xScale(xScale)
-            .xDomain(xDomain)
-            .yDomain(yDomain);
-          chart.lines
-            .padData(singlePoint ? false : true)
-            .padDataOuter(-1)
-            .clipEdge(false)
-            .singlePoint(singlePoint);
-          chart.xAxis
-            .highlightZero(false)
-            .reduceXTicks(false)
-            .tickFormat(tickFormat)
-            .tickValues(singlePoint ? [firstSeries[0][0]] : null)
-            .ticks(singlePoint ? 1 : null)
-            .showMaxMin(!singlePoint)
-            .orient(mirrorAxes === 'lab' ? 'bottom' : 'top')
-            .axisLabel(showLabels === 'yes' ? xAxisLabel : '');
-          chart.yAxis
-            .ticks(singlePoint ? 5 : null)
-            .showMaxMin(!singlePoint)
-            .orient(mirrorAxes === 'lab' ? 'left' : 'right')
-            .axisLabel(showLabels === 'yes' ? yAxisLabel : '');
         }
 
-        // d3.select('#chart1 svg')
-        //     .datum(null)
-        //     .call(chart);
+        chart.xAxis
+          .highlightZero(false)
+          .reduceXTicks(false)
+          .orient(mirrorAxes === 'lab' ? 'bottom' : 'top')
+          .axisLabel(showLabels === 'yes' ? xAxisLabel : '');
+        chart.yAxis
+          .orient(mirrorAxes === 'lab' ? 'left' : 'right')
+          .axisLabel(showLabels === 'yes' ? yAxisLabel : '');
+
         d3.select('#chart1 svg')
             .datum(chartData)
             .call(chart);
