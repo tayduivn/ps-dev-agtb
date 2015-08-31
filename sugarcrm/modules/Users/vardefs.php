@@ -435,6 +435,17 @@ $dictionary['User'] = array(
 			    'audited' => true,
 			    'studio' => 'false',
 			),
+        'team_set_selected_id' => array(
+            'name' => 'team_set_selected_id',
+            'rname' => 'id',
+            'id_name' => 'team_set_selected_id',
+            'vname' => 'LBL_TEAM_SET_SELECTED_ID',
+            'type' => 'id',
+            'audited' => true,
+            'studio' => false,
+            'isnull' => true,
+            'duplicate_on_record_copy' => 'always',
+        ),
 			'team_count' =>
 			array (
 				'name' => 'team_count',
@@ -485,6 +496,8 @@ $dictionary['User'] = array(
                     'wirelesseditview' => false,
                 ),
                 'exportable'=> true,
+                // Until the same control is used for selecting.
+                'fields' => array('team_set_selected_id'),
 			),
 			'team_link' =>
 		    array (

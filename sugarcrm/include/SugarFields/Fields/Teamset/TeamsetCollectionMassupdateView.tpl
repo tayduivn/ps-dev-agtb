@@ -40,6 +40,12 @@
         <th scope='col' id="lineLabel_{$vardef.name}_primary" {if empty($values.role_field)}style="display:none"{/if}>
             {sugar_translate label='LBL_COLLECTION_PRIMARY'}
         </th>
+         {if $isTBAEnabled}
+             <th scope='col' align='center' id="lineLabel_{$vardef.name}_selected" rowspan='1' scope='row'
+                 style='white-space: nowrap; word-wrap:normal;'>
+                 {sugar_translate label='LBL_TEAM_SET_SELECTED'}
+             </th>
+         {/if}
 		<td>
         <a class="utilsLink" href="javascript:collection['{$displayParams.formName}_{$vardef.name}'].js_more();" id='more_{$displayParams.formName}_{$vardef.name}' {if empty($values.secondaries)}style="display:none"{/if}></a>
         </td>
@@ -67,6 +73,16 @@
             <input id="primary_{$vardef.name}_collection_0" name="primary_{$vardef.name}_collection" type="radio" class="radio" value="0" style="visibility:visible{if empty($values.role_field)};display:none;{/if}" onclick="collection['{$displayParams.formName}_{$vardef.name}'].changePrimary(true);" title="{sugar_translate label='LBL_TEAM_SELECT_AS_PRIM_TITLE'}" />
             </span>
         </td>
+        {if $isTBAEnabled}
+        <td valign='top' align='center' class="teamset-row">
+            <span id='{$displayParams.formName}_{$vardef.name}_checkbox_div_0'>
+            &nbsp;
+            <input id="selected_{$vardef.name}_collection_0" name="selected_{$vardef.name}_collection_0"
+                   type="checkbox" class="checkbox"
+                   title="{sugar_translate label='LBL_TEAM_SELECT_AS_TBSELECTED_TITLE'}"/>
+            </span>
+        </td>
+        {/if}
         <td>&nbsp;</td>
 <!-- END Remove and Radio -->
     </tr>
@@ -87,6 +103,7 @@
                     var temp_array = new Array();
                     temp_array['name'] = '{$secondary_field.name}';
                     temp_array['id'] = '{$secondary_field.id}';
+                    {if $isTBAEnabled}temp_array['selected'] = '{$secondary_field.selected}';{/if}
                     //collection["{$displayParams.formName}_{$vardef.name}"].secondaries_values.push(temp_array);
                 </script>
             {/foreach}
@@ -109,6 +126,7 @@ and push it outside the screen.
                 var temp_array = new Array();
                 temp_array['name'] = '{$secondary_field.name}';
                 temp_array['id'] = '{$secondary_field.id}';
+                {if $isTBAEnabled}temp_array['selected'] = '{$secondary_field.selected}';{/if}
                 collection[field_id].secondaries_values.push(temp_array);
                 {/foreach}
             {/if}

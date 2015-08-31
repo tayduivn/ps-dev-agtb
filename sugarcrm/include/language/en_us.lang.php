@@ -10529,6 +10529,8 @@ Sincerely, SugarCRM',
     'LBL_SELECT_THIS_ROW_TITLE' => 'Select this row',
     'LBL_TEAM_SELECTED_TITLE' => 'Team Selected ',
     'LBL_TEAM_SELECT_AS_PRIM_TITLE' => 'Select to make this team primary',
+    'LBL_TEAM_TBSELECTED_TITLE' => 'Team marked as Team-Based Selected ',
+    'LBL_TEAM_SELECT_AS_TBSELECTED_TITLE' => 'Mark this team as Team-Based Selected',
     'LBL_SEARCH_AND_SELECT' => 'Search and Select {{module}}',
     'TPL_SEARCH_AND_ADD' => 'Search and Add {{module}}',
 
