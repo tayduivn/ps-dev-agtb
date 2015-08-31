@@ -631,7 +631,6 @@ $bwcModules = array(
     'iCals',
     'Import',
     'InboundEmail',
-    'Manufacturers',
     'MergeRecords',
     'ModuleBuilder',
     'MySettings',

@@ -169,15 +169,6 @@ class ImportFormsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertRegExp('/type=\'text\'/',$html);
         $this->assertRegExp('/value=\'poo\'/',$html);
     }
-    /**
-     * @ticket 32626
-     */
-    public function testGetControlEnumWhenOptionsAreInTheModStrings()
-    {
-        $html = getControl('Manufacturers','status',null,'poo');
-
-        $this->assertNotContains('manufacturer_status_dom',$html);
-    }
 
     /**
      * @group bug41447
