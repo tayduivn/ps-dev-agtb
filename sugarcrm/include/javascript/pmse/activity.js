@@ -2030,11 +2030,11 @@ AdamActivity.prototype.createAssignUsersAction = function () {
                         if (data.act_assignment_method === 'static') {
                             combo_users.setValue(data.act_assign_user);
                             combo_users.enable();
-                            combo_teams.setReadOnly(false);
+                            combo_teams.setReadOnly(true);
                         } else {
                             combo_teams.setValue(data.act_assign_team);
                             combo_users.disable();
-                            combo_teams.setReadOnly(true);
+                            combo_teams.setReadOnly(false);
                         }
                     }
                     f.proxy = null;

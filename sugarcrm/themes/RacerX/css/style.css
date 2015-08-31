@@ -550,6 +550,25 @@ line-height: 16px;
     display: none;
 }
 
+/* WorkFlow Sunset styles added in 7.6.1 */
+div.moduleTitle.workflow-sunset-title
+{
+    margin-bottom: 15px;
+}
+
+/* Brings the messaging up closer to the h2 element */
+.moduleTitle.workflow-sunset-title h2
+{
+    margin-bottom: -5px;
+}
+
+/* Increase the size of the notice of the message */
+.error.workflow-sunset
+{
+    font-size: 14px;
+}
+/* End WorkFlow Sunset styles */
+
 /* EditView/projects -> grid  */
 .sqsSelectedSmartInputItem
 {
