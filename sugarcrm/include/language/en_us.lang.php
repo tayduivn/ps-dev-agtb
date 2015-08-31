@@ -335,6 +335,11 @@ $app_list_strings = array (
     'Existing Business' => 'Existing Business',
     'New Business' => 'New Business',
   ),
+  'taxrate_status_dom' => 
+  array (
+    'Active' => 'Active',
+    'Inactive' => 'Inactive',
+  ),
   'roi_type_dom' =>
     array (
     'Revenue' => 'Revenue',

@@ -19,7 +19,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'fa-bars',
     ),
     array(
-        'route'=>'#bwc/index.php?module=TaxRates&action=EditView&return_module=TaxRates&return_action=DetailView',
+        'route'=>'#TaxRates/create',
         'label' =>'LNK_NEW_TAXRATE',
         'acl_action'=>'admin',
         'acl_module'=>'Products',

@@ -77,3 +77,5 @@ VardefManager::createVardef(
         'default'
     )
 );
+
+$dictionary['TaxRate']['fields']['tag']['massupdate'] = false;

@@ -657,7 +657,6 @@ $bwcModules = array(
     'SNIP',
     'Studio',
     'SugarFavorites',
-    'TaxRates',
     'Teams',
     'TeamMemberships',
     'TeamSets',
