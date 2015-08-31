@@ -64,7 +64,13 @@ header("Content-Length: ".mb_strlen($transContent, '8bit'));
     if (!empty($sugar_config['export_excel_compatible'])) {
         print $transContent;
     } else {
-        $BOM = "\xEF\xBB\xBF";
+        $user_agent = (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : '';
+        if ($locale->getExportCharset() == 'UTF-8' &&
+            ! preg_match('/macintosh|mac os x|mac_powerpc/i', $user_agent)) {
+            $BOM = "\xEF\xBB\xBF";
+        } else {
+            $BOM = ''; // Mac Excel does not support utf-8
+        }
         print $BOM . $transContent;
     }
 }

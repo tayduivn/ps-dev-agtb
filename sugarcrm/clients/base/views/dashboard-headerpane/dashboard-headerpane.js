@@ -180,7 +180,7 @@
                         app.alert.show('error_while_save', {
                             level: 'error',
                             title: app.lang.get('ERR_INTERNAL_ERR_MSG'),
-                            messages: app.lang.get('ERR_HTTP_500_TEXT_LINE1')
+                            messages: ['ERR_HTTP_500_TEXT_LINE1', 'ERR_HTTP_500_TEXT_LINE2']
                         });
                     },
                     //Show alerts for this request

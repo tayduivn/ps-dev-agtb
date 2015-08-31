@@ -12,7 +12,7 @@
 ({
     extendsFrom: 'PanelTopView',
 
-    plugins: ['LinkedModel', 'KBContent'],
+    plugins: ['KBContent'],
 
     /**
      * {@inheritDoc}
