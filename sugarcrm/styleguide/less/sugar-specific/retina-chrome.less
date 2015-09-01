@@ -1,0 +1,18 @@
+@media only screen and (min--moz-device-pixel-ratio: 2),
+only screen and (-o-min-device-pixel-ratio: 2/1),
+only screen and (-webkit-min-device-pixel-ratio: 2),
+only screen and (min-device-pixel-ratio: 2) {
+
+    .subpanel table {
+        th, td {
+            &:not(:first-child):not(:last-child) > span {
+                position: static; /*SC-4546*/
+            }
+        }
+    }
+
+    .flex-list-view {
+        padding-right: 1px; /*SC-4767*/
+    }
+
+}
