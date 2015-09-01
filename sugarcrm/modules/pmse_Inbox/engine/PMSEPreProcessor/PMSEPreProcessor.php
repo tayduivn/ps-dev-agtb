@@ -258,12 +258,12 @@ class PMSEPreProcessor
         $verifiedProcesses = array();
         foreach ($flows as $flow) {
             if (empty($data) || $flow['pro_id'] == $data['pro_id']) {
-                if (!array_key_exists($flow['pro_id'], $verifiedProcesses)) {
-                    $verifiedProcesses[$flow['pro_id']] = true;
+                if (!array_key_exists($flow['cas_id'], $verifiedProcesses)) {
+                    $verifiedProcesses[$flow['cas_id']] = true;
                 }
-                if ($verifiedProcesses[$flow['pro_id']]) {
+                if ($verifiedProcesses[$flow['cas_id']]) {
                     $this->caseFlowHandler->terminateCase($flow, $processBean, "TERMINATED");
-                    $verifiedProcesses[$flow['pro_id']] = false;
+                    $verifiedProcesses[$flow['cas_id']] = false;
                 }
             }
         }
