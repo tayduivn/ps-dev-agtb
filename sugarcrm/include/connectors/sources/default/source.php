@@ -327,17 +327,16 @@ abstract class source{
  		return $this->_has_testing_enabled;
  	}
 
- 	/**
- 	 * test
- 	 * This method is called from the administration interface to run a test of the service
- 	 * It is up to subclasses to implement a test and set _has_testing_enabled to true so that
- 	 * a test button is rendered in the administration interface
+    /**
+     * test
+     * This method is called from the administration interface to run a test of the service
+     * It is up to subclasses to implement a test and set _has_testing_enabled to true so that
+     * a test button is rendered in the administration interface
      *
- 	 * @param object properties to be used for the test
- 	 * @return result boolean result of the test function
- 	 */
-    public function test($prop_param = null) {
-    	return true;
+     * @return result boolean result of the test function
+     */
+    public function test() {
+        return true;
     }
 
 
@@ -472,23 +471,17 @@ abstract class source{
      * This method checks the configuration parameters against the required config fields
      * for the "Get Button" to see if they are set
      *
-     * @param $properties object containing properties
      * @return $set boolean value indicating whether or not the required config fields are set
      */
-    public function isRequiredConfigFieldsForButtonSet($prop_param = null) {
-        if (isset($prop_param)) {
-            $properties = $prop_param;
-        } else {
-            $properties = $this->_config['properties'];
+    public function isRequiredConfigFieldsForButtonSet() {
+        //Check if required fields for button are set
+        foreach ($this->_required_config_fields_for_button as $field) {
+            if (empty($this->_config['properties'][$field])) {
+               return false;
+            }
         }
 
-        //Check if required fields for button are set
-   		foreach($this->_required_config_fields_for_button as $field) {
-	    	if(empty($properties[$field])) {
-	    	   return false;
-	    	}
-   		}
-    	return true;
+        return true;
     }
 
 

@@ -315,8 +315,8 @@ class Importer
                 }
             }
 
-            // Handle email1 and email2 fields ( these don't have the type of email )
-            if ( $field == 'email1' || $field == 'email2' )
+            // Handle email, email1 and email2 fields ( these don't have the type of email )
+            if ( $field == 'email' || $field == 'email1' || $field == 'email2' )
             {
                 $returnValue = $this->ifs->email($rowValue, $fieldDef, $focus);
                 // try the default value on fail
@@ -333,7 +333,7 @@ class Importer
 
                     $address = array(
                         'email_address' => $rowValue,
-                        'primary_address' => $field == 'email1',
+                        'primary_address' => $field == 'email',
                         'invalid_email' => false,
                         'opt_out' => false,
                     );
@@ -346,7 +346,7 @@ class Importer
                         $address = array_merge($address, $emailrow);
                     }
 
-                    if ($field === 'email1') {
+                    if ($field === 'email') {
 
                         //flip the array so we can use it to get the key #
                         $flippedVals = array_flip($this->importColumns);

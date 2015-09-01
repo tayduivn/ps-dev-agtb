@@ -317,8 +317,12 @@ $mod_strings = array (
     'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL' => 'is greater than or equal to',
     'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR' => 'is greater than',
     'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_DATE' => 'after',
+
+    'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL_DATE' => 'on or after',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_EQUAL_DATE' => 'on or before',
     'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL' => 'is not equal to',
     'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_TEXT' => 'is not',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_DATE' => 'not equal to',
 
     'LBL_PMSE_FORMPANEL_SUBMIT' => 'Submit',
 

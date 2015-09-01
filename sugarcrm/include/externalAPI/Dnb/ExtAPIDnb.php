@@ -81,12 +81,17 @@ class ExtAPIDnb extends ExternalAPIBase
 
     function __construct()
     {
-        $this->dnbUsername = trim($this->getConnectorParam('dnb_username'));
-        $this->dnbPassword = trim($this->getConnectorParam('dnb_password'));
-        $this->dnbEnv = trim($this->getConnectorParam('dnb_env'));
         $this->contactModules = array('Contacts','Leads','Prospects');
         $this->logger = LoggerManager::getLogger();
         $this->setCurlWrapper(new DnbCurlWrapper());
+        $this->loadConnectionCredentials();
+    }
+
+    private function loadConnectionCredentials()
+    {
+        $this->dnbUsername = trim($this->getConnectorParam('dnb_username'));
+        $this->dnbPassword = trim($this->getConnectorParam('dnb_password'));
+        $this->dnbEnv = trim($this->getConnectorParam('dnb_env'));
     }
 
     /**
@@ -853,6 +858,12 @@ class ExtAPIDnb extends ExternalAPIBase
     private function getAuthenticationToken($save = true)
     {
         global $current_user;
+
+        // In test, these values will be set AFTER contruction, so load them now
+        if (empty($this->dnbUsername) || empty($this->dnbPassword)) {
+            $this->loadConnectionCredentials();
+        }
+
         $username = $this->dnbUsername;
         $password = $this->dnbPassword;
         $curl_headers = array(
