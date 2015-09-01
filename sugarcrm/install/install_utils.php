@@ -2475,5 +2475,5 @@ function handleMissingSmtpServerSettingsNotifications()
  */
 function formatLicense($text)
 {
-    return preg_replace('/https?:\/\/.+(?=\.\s)/im', '<a href="${0}" target="_blank">${0}</a>', $text);
+    return preg_replace('/https?:\/\/\S*(?<!\.)/', '<a href="${0}" target="_blank">${0}</a>', $text);
 }
