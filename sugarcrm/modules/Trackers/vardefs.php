@@ -186,7 +186,15 @@ $dictionary['Tracker'] = array(
    	),
     'acls' => array('SugarACLStatic' => true),
 );
-require "modules/Trackers/tracker_sessionsMetaData.php";
-require "modules/Trackers/tracker_perfMetaData.php";
-require "modules/Trackers/tracker_queriesMetaData.php";
-require "modules/Trackers/tracker_tracker_queriesMetaData.php";
+if (!isset($dictionary['tracker_sessions']['fields'])) {
+    require "modules/Trackers/tracker_sessionsMetaData.php";
+}
+if (!isset($dictionary['tracker_perf']['fields'])) {
+    require "modules/Trackers/tracker_perfMetaData.php";
+}
+if (!isset($dictionary['tracker_queries']['fields'])) {
+    require "modules/Trackers/tracker_queriesMetaData.php";
+}
+if (!isset($dictionary['tracker_tracker_queries']['fields'])) {
+    require "modules/Trackers/tracker_tracker_queriesMetaData.php";
+}

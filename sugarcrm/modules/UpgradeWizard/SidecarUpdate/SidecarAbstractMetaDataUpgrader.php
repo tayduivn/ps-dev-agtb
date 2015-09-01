@@ -185,7 +185,7 @@ abstract class SidecarAbstractMetaDataUpgrader
         'wirelesssearch' => MB_WIRELESSBASICSEARCH,
         'baselist'        => MB_SIDECARLISTVIEW,
         'baserecordview'  => MB_RECORDVIEW,
-        'basefilter'      => MB_SEARCHVIEW,
+        'basefilter'      => MB_BASICSEARCH,
         'basepopuplist'   => MB_SIDECARPOPUPVIEW,
     );
 
