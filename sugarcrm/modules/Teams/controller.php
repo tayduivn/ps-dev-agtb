@@ -111,19 +111,18 @@ class TeamsController extends SugarController {
     {
         global $current_user;
 
-        $enabled = !empty($_POST['enabled']) ?
-            (urldecode($_POST['enabled']) == 'true') : false;
-        $disabledModules = (!empty($_POST['disabled_modules']) && $enabled) ?
-            explode(',', $_POST['disabled_modules']) : array();
+        $enabled = !empty($_POST['enabled']) ? $_POST['enabled'] == 'true' : false;
+        $disabledModules = !empty($_POST['disabled_modules']) ? explode(',', $_POST['disabled_modules']) : array();
 
         $tbaConfigurator = new TeamBasedACLConfigurator();
         $tbaConfigurator->setGlobal($enabled);
 
-        $actionsList = array_keys(ACLAction::getUserActions($current_user->id));
-        foreach ($actionsList as $module) {
-            $tbaConfigurator->setForModule($module, !in_array($module, $disabledModules));
+        if ($enabled) {
+            $actionsList = array_keys(ACLAction::getUserActions($current_user->id));
+            foreach ($actionsList as $module) {
+                $tbaConfigurator->setForModule($module, !in_array($module, $disabledModules));
+            }
         }
-
         echo json_encode(array('status' => true));
     }
 }
