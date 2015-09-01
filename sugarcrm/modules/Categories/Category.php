@@ -28,6 +28,12 @@ class Category extends SugarBean implements NestedBeanInterface
     public $lvl;
 
     /**
+     * Flag indicates that we shouldn't create ACL actions for the module.
+     * @var bool
+     */
+    public $acl_display_only = true;
+
+    /**
      * Save current node as new root.
      * @return String Id of new created bean.
      * @throws CategoriesExceptionInterface
@@ -462,5 +468,16 @@ class Category extends SugarBean implements NestedBeanInterface
                 return true;
         }
         return false;
+    }
+
+    /**
+     * We don't need standard ACL for module.
+     * {@inheritdoc}
+     */
+    public function defaultACLs()
+    {
+        $data = isset($GLOBALS['dictionary'][$this->object_name]['acls']) ?
+            $GLOBALS['dictionary'][$this->object_name]['acls'] : array();
+        return array_merge($data, self::$default_acls);
     }
 }

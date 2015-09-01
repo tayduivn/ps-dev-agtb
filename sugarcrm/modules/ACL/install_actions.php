@@ -38,10 +38,20 @@ if(is_admin($current_user)){
                     if(!isset($_REQUEST['upgradeWizard'])){
                         echo translate('LBL_ADDING','ACL','') . $mod->module_dir . '<br>';
                     }
-                    if(!empty($mod->acltype)){
-                        ACLAction::addActions($mod->getACLCategory(), $mod->acltype);
-                    }else{
-                        ACLAction::addActions($mod->getACLCategory());
+                    $createACL = false;
+                    $aclList = SugarACL::loadACLs($mod->getACLCategory());
+                    foreach ($aclList as $acl) {
+                        if ($acl instanceof SugarACLStatic) {
+                            $createACL = true;
+                        }
+                    }
+
+                    if (!empty($createACL)) {
+                        if (!empty($mod->acltype)) {
+                            ACLAction::addActions($mod->getACLCategory(), $mod->acltype);
+                        } else {
+                            ACLAction::addActions($mod->getACLCategory());
+                        }
                     }
 
                     $installed_classes[$class] = true;

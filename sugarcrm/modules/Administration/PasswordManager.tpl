@@ -839,6 +839,13 @@
                                 </td>
 
                             </tr>
+                            <tr>
+                                <td width='25%' scope="row" valign='top'
+                                    nowrap>{$MOD.LBL_SAML_SAME_WINDOW} {sugar_help text=$MOD.LBL_SAML_SAME_WINDOW_DESC}</td>
+                                <td width='25%' align="left" valign='top'><input type="checkbox" name="SAML_SAME_WINDOW" {if $config.SAML_SAME_WINDOW}checked="1"{/if}>
+                                </td>
+
+                            </tr>
 
 
                         </table>

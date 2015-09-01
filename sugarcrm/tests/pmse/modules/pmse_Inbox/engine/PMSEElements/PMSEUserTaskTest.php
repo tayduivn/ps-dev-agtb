@@ -53,6 +53,7 @@ class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
 
         $activityDefinition = new stdClass();
         $activityDefinition->act_response_buttons = 'ROUTE';
+        $activityDefinition->act_assignment_method = 'static';
 
         $bean = new stdClass();
         $externalAction = '';
@@ -71,6 +72,7 @@ class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
             'assigned_user_id' => 2,
             'cas_adhoc_actions' => serialize(array('link_cancel', 'route', 'edit', 'continue')),
             'bpmn_id' => 'c5189a2e-1cff-e214-3e86-55664fcc93e6',
+            'cas_assignment_method' => 'static',
         );
         
         $expectedResult = array(

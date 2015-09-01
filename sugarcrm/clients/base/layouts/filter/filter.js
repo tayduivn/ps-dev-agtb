@@ -326,7 +326,8 @@
 
         this.$el.css('visibility', app.acl.hasAccess(this.aclToCheck, module) ? 'visible' : 'hidden');
         if(this.layoutType === 'record' && !this.showingActivities) {
-            module = link = app.user.lastState.get(app.user.lastState.key("subpanels-last", this)) || 'all_modules';
+            // FIXME: TY-499 will address removing the dependancy on this.layout
+            module = link = app.user.lastState.get(app.user.lastState.key('subpanels-last', this.layout)) || 'all_modules';
             if (link !== 'all_modules') {
                 module = app.data.getRelatedModule(this.module, link);
             }
@@ -616,7 +617,8 @@
             moduleName = moduleName || this.module;
 
             if (this.layoutType === 'record') {
-                linkName = app.user.lastState.get(app.user.lastState.key('subpanels-last', this)) ||
+                // FIXME: TY-499 will address removing the dependancy on this.layout
+                linkName = app.user.lastState.get(app.user.lastState.key('subpanels-last', this.layout)) ||
                     linkName ||
                     'all_modules';
 

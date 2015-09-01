@@ -360,9 +360,9 @@ class ModuleBuilderController extends SugarController
         $mb = new ModuleBuilder ();
         $load = (!empty ($_REQUEST ['original_name'])) ? $_REQUEST ['original_name'] : $_REQUEST ['name'];
         if (!empty ($load)) {
-            $mb->getPackage($_REQUEST ['package']);
-            $mb->packages [$_REQUEST ['package']]->getModule($load);
-            $module = & $mb->packages [$_REQUEST ['package']]->modules [$load];
+            $package = $mb->getPackage($_REQUEST['package']);
+            $package->loadModuleTitles();
+            $module = $package->getModule($load);
             $module->populateFromPost();
             $mb->save();
             if (!empty ($_REQUEST ['duplicate'])) {

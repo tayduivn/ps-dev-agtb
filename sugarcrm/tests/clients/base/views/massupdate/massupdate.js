@@ -28,6 +28,7 @@ describe("Base.View.Massupdate", function() {
         layout = SugarTest.createLayout('base', 'Contacts', 'list');
         view = SugarTest.createView("base", "Contacts", "massupdate", {}, null, null, layout);
         view.model = new Backbone.Model();
+        sinon.collection.spy(view.model, 'unset');
     });
 
 
@@ -39,6 +40,7 @@ describe("Base.View.Massupdate", function() {
         view = null;
         stub.restore();
         layout.dispose();
+        sinon.collection.restore();
     });
 
 
@@ -83,7 +85,7 @@ describe("Base.View.Massupdate", function() {
         expect(actual).toEqual(expected);
     });
 
-    it("should add, remove, and/or replace field values", function(){
+    it('should add, remove, and/or replace field values', function() {
         view.setDefault();
         var selectedOption = view.defaultOption;
 
@@ -96,6 +98,7 @@ describe("Base.View.Massupdate", function() {
         expect(_.contains(view.fieldValues, selectedOption)).toBeFalsy();
         expect(_.contains(view.fieldOptions, selectedOption)).toBeTruthy();
         expect(view.defaultOption).toBe(nextSelectedOption);
+        expect(view.model.unset).toHaveBeenCalled();
 
         view.replaceUpdateField(selectedOption, 0);
         expect(view.defaultOption).toBe(selectedOption);

@@ -440,6 +440,7 @@ abstract class OpportunitySetup
                 'dropdown_lang' => $default_lang,
                 'list_value' => json_encode($new_list),
                 'view_package' => 'studio',
+                'use_push' => ($list_key == 'moduleList'),
             );
             // for some reason, the ParserDropDown class uses $_REQUEST vs getting it from what
             // was passed in.
