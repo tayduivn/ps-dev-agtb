@@ -272,6 +272,14 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             }
         }
 
+        // MACAROON-901... remove quickcreate files for PMSE modules
+        if (version_compare($this->to_version, '7.6.1', '>=')) {
+            $files[] = 'modules/pmse_Business_Rules/metadata/quickcreatedefs.php';
+            $files[] = 'modules/pmse_Emails_Templates/metadata/quickcreatedefs.php';
+            $files[] = 'modules/pmse_Inbox/metadata/quickcreatedefs.php';
+            $files[] = 'modules/pmse_Project/metadata/quickcreatedefs.php';
+        }
+
         $this->fileToDelete($files);
     }
 

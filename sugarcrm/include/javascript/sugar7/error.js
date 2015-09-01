@@ -236,7 +236,7 @@
      * 500 Internal server error handler. 
      */
     app.error.handleServerError = function(error) {
-        if(error.payload.url) {
+        if(error.payload && error.payload.url) {
             // Redirect admins instead of loading the error view.
             if (app.acl.hasAccess('admin','Administration')) {
                 app.router.navigate(error.payload.url,{trigger: true, replace: true});
