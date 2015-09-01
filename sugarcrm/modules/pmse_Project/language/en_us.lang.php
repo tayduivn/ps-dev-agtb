@@ -346,4 +346,5 @@ $mod_strings = array (
 
     'LBL_PMSE_IMPORT_PROCESS_DEFINITION_FAILURE' => 'Failed to create Process Definition from file',
     'LBL_PMSE_CANNOT_CONFIGURE_ADD_RELATED_RECORD' => '"Add Related Record" actions are not available for this module because it does not have any related modules.',
+    'LBL_PMSE_PROJECT_NAME_EMPTY' => 'Process Definition Name should not be saved as blank as it is required field.',
 );
