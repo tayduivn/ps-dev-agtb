@@ -56,4 +56,10 @@ $mod_strings = array(
     'NTC_DELETE_CONFIRMATION' => 'Are you sure you want to delete this record?',
     'NTC_REMOVE_TEAM_MEMBER_CONFIRMATION' => 'Are you sure you want to remove this user\\\'s membership?',
     'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+
+    // Team-Based Access Rights
+    'LBL_TBA_CONFIGURATION' => 'Team-based Access Rights',
+    'LBL_TBA_CONFIGURATION_DESC' => 'Enable team access, and manage access by module.',
+    'LBL_TBA_CONFIGURATION_LABEL' => 'Enable team-based access rights',
+    'LBL_TBA_CONFIGURATION_TITLE' => 'Enabling team-based access rights will allow you to assign specific access and edit rights to teams and people for individual modules.',
 );

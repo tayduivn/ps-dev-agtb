@@ -1,0 +1,15 @@
+table.edit.view th, table.edit.view td {
+    padding: 10px !important;
+}
+table.edit.view .padding-0 {
+    padding: 0 !important;
+}
+table.edit.view .left {
+    text-align: left;
+}
+table.edit.view td.title {
+    background-color: #EEEEEE;
+}
+table.edit.view td.value {
+    background-color: #F6F6F6;
+}
