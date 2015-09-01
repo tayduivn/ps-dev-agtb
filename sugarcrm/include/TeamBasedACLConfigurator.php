@@ -192,6 +192,7 @@ class TeamBasedACLConfigurator
             VardefManager::clearVardef();
         }
         //Rebuild Sidecar config file
+        // TODO: isn't applied to the client side.
         ModuleInstaller::handleBaseConfig();
     }
 
@@ -249,7 +250,9 @@ class TeamBasedACLConfigurator
     protected function restoreTBA($module = null)
     {
         $savedActions = $this->getSavedAffectedRows();
-        if (!$savedActions) {
+        if (($module && !isset($savedActions[$module])) ||
+            (!$module && !$savedActions)
+        ) {
             return;
         }
         $aclRole = new ACLRole();
