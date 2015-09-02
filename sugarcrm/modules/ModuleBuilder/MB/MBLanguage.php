@@ -179,7 +179,6 @@ class MBLanguage{
             $values['moduleListSingular'][$key_name] = $this->label_singular;
 
             $appFile = $header . "\n";
-            require_once('include/utils/array_utils.php');
             $this->getGlobalAppListStringsForMB($values);
             foreach ($values as $key => $array) {
                 if ($duplicate) {

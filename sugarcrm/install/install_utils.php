@@ -13,6 +13,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/utils/zip_utils.php');
 require_once('include/upload_file.php');
 
+use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+
 ////////////////
 ////  GLOBAL utility
 /**
@@ -94,7 +96,7 @@ function commitLanguagePack($uninstall=false) {
     $zip_to_dir     = ".";
     $zip_force_copy = array();
 
-    if($uninstall == false && isset($_SESSION['INSTALLED_LANG_PACKS']) && in_array($zipFile, $_SESSION['INSTALLED_LANG_PACKS'])) {
+    if($uninstall == false && isset($_SESSION['INSTALLED_LANG_PACKS']) && ArrayFunctions::in_array_access($zipFile, $_SESSION['INSTALLED_LANG_PACKS'])) {
         return;
     }
 
@@ -166,7 +168,7 @@ function commitLanguagePack($uninstall=false) {
         }
 
         // remove session entry
-        if(isset($_SESSION['INSTALLED_LANG_PACKS']) && is_array($_SESSION['INSTALLED_LANG_PACKS'])) {
+        if(isset($_SESSION['INSTALLED_LANG_PACKS']) && ArrayFunctions::is_array_access($_SESSION['INSTALLED_LANG_PACKS'])) {
             foreach($_SESSION['INSTALLED_LANG_PACKS'] as $k => $langPack) {
                 if($langPack == $zipFile) {
                     unset($_SESSION['INSTALLED_LANG_PACKS'][$k]);
@@ -797,7 +799,7 @@ function handleSugarConfig() {
 
     // add installed langs to config
     // entry in upgrade_history comes AFTER table creation
-    if(isset($_SESSION['INSTALLED_LANG_PACKS']) && is_array($_SESSION['INSTALLED_LANG_PACKS']) && !empty($_SESSION['INSTALLED_LANG_PACKS'])) {
+    if(isset($_SESSION['INSTALLED_LANG_PACKS']) && ArrayFunctions::is_array_access($_SESSION['INSTALLED_LANG_PACKS']) && !empty($_SESSION['INSTALLED_LANG_PACKS'])) {
         foreach($_SESSION['INSTALLED_LANG_PACKS'] as $langZip) {
             $lang = getSugarConfigLanguageArray($langZip);
             if(!empty($lang)) {
