@@ -549,12 +549,14 @@ class SugarFieldTeamset extends SugarFieldBase {
         	$bean->team_id = $primaryTeamId;
 	    }
 
-        $selectedTeamIds = $this->getSelectedTeamIdsFromRequest($field, $params, $team_ids);
-        if (!empty($selectedTeamIds)) {
-            $teamSet = BeanFactory::getBean('TeamSets');
-            $bean->team_set_selected_id = $teamSet->addTeams($selectedTeamIds);
-        } else {
-            $bean->team_set_selected_id = '';
+        if (!empty($team_ids)) {
+            $selectedTeamIds = $this->getSelectedTeamIdsFromRequest($field, $params, $team_ids);
+            if (!empty($selectedTeamIds)) {
+                $teamSet = BeanFactory::getBean('TeamSets');
+                $bean->team_set_selected_id = $teamSet->addTeams($selectedTeamIds);
+            } else {
+                $bean->team_set_selected_id = '';
+            }
         }
 
 		if(!empty($team_ids)){
