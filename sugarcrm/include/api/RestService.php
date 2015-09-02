@@ -566,7 +566,6 @@ class RestService extends ServiceBase
             LogicHook::initialize()->call_custom_logic('', 'after_session_start');
 
             $this->user = $GLOBALS['current_user'];
-            $this->user->setupSession();
         }
 
         return $valid;

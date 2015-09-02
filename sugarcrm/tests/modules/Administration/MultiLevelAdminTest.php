@@ -49,8 +49,6 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
     protected function mlaResetSession()
     {
         $sessionVars = array(
-            'get_developer_modules_for_user',
-            'get_admin_modules_for_user',
             'display_studio_for_user',
             'display_workflow_for_user',
             'get_workflow_admin_modules_for_user',
