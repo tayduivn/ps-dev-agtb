@@ -68,7 +68,7 @@ class VarDefHandler {
 	//end function setup
 	}
 
-	function get_vardef_array($use_singular=false, $remove_dups = false, $use_field_name = false, $use_field_label = false, $visible_only = false){
+	function get_vardef_array($use_singular=false, $remove_dups = false, $use_field_name = false, $use_field_label = false, $visible_only = false, $mlink = true){
 		global $dictionary;
 		global $current_language;
 		global $app_strings;
@@ -97,7 +97,6 @@ class VarDefHandler {
 		}
 	/////////end special one off//////////////////////////////////
 
-
 		foreach($base_array as $key => $value_array){
 			$compare_results = $this->compare_type($value_array);
 
@@ -108,13 +107,19 @@ class VarDefHandler {
 			}
 
 			if($compare_results == true){
-				 $label_name = '';
-                 if($value_array['type'] == 'link' && !$use_field_label){
-                 	$this->module_object->load_relationship($value_array['name']);
-                 	if(empty($this->module_object->$value_array['name'])) {
-                 	    $GLOBALS['log']->fatal("Failed to load relationship {$value_array['name']}");
-                 	    continue;
-                 	}
+                $label_name = '';
+                if ($value_array['type'] == 'link') {
+                    $this->module_object->load_relationship($value_array['name']);
+                    if (empty($this->module_object->$value_array['name'])) {
+                        $GLOBALS['log']->fatal("Failed to load relationship {$value_array['name']}");
+                        continue;
+                    }
+                    // Exclude modules on the many side if $mlink == false
+                    if (!$mlink && $this->module_object->$value_array['name']->getType() === 'many') {
+                        continue;
+                    }
+                }
+                if ($value_array['type'] == 'link' && !$use_field_label) {
                     $relModName = $this->module_object->$value_array['name']->getRelatedModuleName();
                     if(!empty($app_list_strings['moduleList'][$relModName])){
                     	$label_name = $app_list_strings['moduleList'][$relModName];
