@@ -653,13 +653,10 @@ class HealthCheckScannerMeta
      */
     protected function loadModStrings()
     {
-        if (is_callable('return_module_language')) {
-            $this->modStrings = return_module_language($this->locale, 'HealthCheck');
-        } else {
-            $mod_strings = array();
-            include dirname(__FILE__) . '/../language/' . self::DEFAULT_LOCALE . '.lang.php';
-            $this->modStrings = $mod_strings;
-        }
+        //From 7.6.1 and onwards HealthCheck language files are always bundled with HC.
+        $mod_strings = array();
+        include dirname(__FILE__) . '/../language/' . self::DEFAULT_LOCALE . '.lang.php';
+        $this->modStrings = $mod_strings;
     }
 
     protected function setupLocale()
