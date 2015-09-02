@@ -66,15 +66,11 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
         }
 
         if ($this->def['type'] == 'fullname') {
+            $from = $this->query->getFromBean();
             $nameFields = Localization::getObject()->getNameFormatFields($this->moduleName);
             foreach ($nameFields as $partOfName) {
-                $alias = !empty($this->alias) ? "{$this->alias}__{$partOfName}" : "{$this->def['name']}__{$partOfName}";
-                $dbAlias = DBManagerFactory::getInstance()->getValidDBName($alias, false, 'alias');
-                if ($dbAlias != strtolower($alias)) {
-                    $this->addToSelect(array(array("{$this->table}.{$partOfName}", $dbAlias, $alias)));
-                } else {
-                    $this->addToSelect(array(array("{$this->table}.{$partOfName}", $alias)));
-                }
+                $alias = $from->getRelateAlias(!empty($this->alias) ? $this->alias : $this->def['name'], $partOfName);
+                $this->addToSelect(array(array("{$this->table}.{$partOfName}", $alias)));
             }
             $this->markNonDb();
             return;

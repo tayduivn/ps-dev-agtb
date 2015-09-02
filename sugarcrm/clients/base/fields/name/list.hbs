@@ -14,9 +14,8 @@
     {{#if ../ellipsis}}
         <div class="ellipsis_inline" data-placement="bottom" title="{{value}}">
     {{/if}}
-    {{#if def.link}}<a href="{{#if def.events}}javascript:void(0);{{else}}{{href}}{{/if}}">{{value}}</a>{{else}}{{value}}{{/if}}
+    {{#if href}}<a href="{{#if def.events}}javascript:void(0);{{else}}{{href}}{{/if}}">{{value}}</a>{{else}}{{value}}{{/if}}
     {{#if ../ellipsis}}
         </div>
     {{/if}}
 {{/if}}
-
