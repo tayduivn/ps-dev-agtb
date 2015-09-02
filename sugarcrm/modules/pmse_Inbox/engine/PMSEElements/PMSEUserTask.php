@@ -124,7 +124,7 @@ class PMSEUserTask extends PMSEActivity
         $flowData['assigned_user_id'] = $userId;
 
         if ($saveBeanData) {
-            $this->lockFlowRoute($arguments['flow_id']);
+            $this->lockFlowRoute($arguments['idFlow']);
             $this->saveBeanData($arguments);
         }
 
@@ -188,7 +188,7 @@ class PMSEUserTask extends PMSEActivity
     {
         $fields = $beanData;
 
-        $bpmInboxId = $fields['flow_id'];
+        $bpmInboxId = $fields['idInbox'];
         $moduleName = $fields['moduleName'];
         $moduleId = $fields['beanId'];
 
@@ -199,15 +199,13 @@ class PMSEUserTask extends PMSEActivity
         }
         //modified_by_name => Current
         if (!isset($moduleName) || $moduleName == '') {
-            $GLOBALS ['log']->fatal('moduleName Empty cannot complete the route case');
-            header('Location: #Home');
+            throw new SugarApiExceptionMissingParameter('Error: Missing argument moduleName.');
         }
 
         //If Process is Completed break...
         $bpmI = PMSEEngineUtils::getBPMInboxStatus($bpmInboxId);
         if ($bpmI === false) {
-            header('Location: #pmse_Inbox/$bpmInboxId/layout/no-show-case/$bpmFlowId');
-            die();
+            throw new SugarApiExceptionEditConflict('Error: Process status complete.');
         }
 
         $beanObject = BeanFactory::getBean($moduleName, $moduleId);
