@@ -11647,6 +11647,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     // Javascript enable string
     'LBL_ENABLE_JAVASCRIPT' => 'Sugar 7 requires javascript. Please enable Javascript in your browser to use Sugar 7.',
+
+    'LBL_FIELD_TRIMMED' => 'Field was trimmed, due to exceeding the maximum character limit.',
 );
 
 $app_list_strings['activity_user_options'] = array (
