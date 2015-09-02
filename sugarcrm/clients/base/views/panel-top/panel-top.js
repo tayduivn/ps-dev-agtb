@@ -53,15 +53,9 @@
 
         this._super('initialize', [options]);
 
-        var context = this.context;
         // This is in place to get the lang strings from the right module. See
         // if there is a better way to do this later.
-        this.parentModule = context.parent.get('module');
-        context.parent.on('panel-top:refresh', function(link) {
-            if (context.get('link') === link) {
-                context.get('collection').fetch();
-            }
-        });
+        this.parentModule = this.context.parent.get('module');
     },
 
     /**

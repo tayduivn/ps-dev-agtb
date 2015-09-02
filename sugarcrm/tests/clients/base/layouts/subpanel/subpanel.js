@@ -30,7 +30,14 @@ describe('Base.Layout.Subpanel', function() {
                     'override_subpanel_list_view': 'jasmine_test'
                 }
             };
-            testLayout = SugarTest.createLayout('base', 'Accounts', 'subpanel', testMeta, undefined, false, testParams);
+            var context = app.context.getContext();
+            context.set({
+                module: 'Accounts',
+                layout: 'subpanel'
+            });
+            context.prepare();
+            context.parent = app.context.getContext();
+            testLayout = SugarTest.createLayout('base', 'Accounts', 'subpanel', testMeta, context, false, testParams);
         });
 
         afterEach(function() {
