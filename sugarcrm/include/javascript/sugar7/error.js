@@ -119,6 +119,7 @@
      * 403 Forbidden error handler. 
      */
     app.error.handleForbiddenError = function(error) {
+        var message;
         if(error.code != "not_authorized"){
             app.alert.dismissAll();
         }
@@ -126,7 +127,9 @@
         if(error.code == "portal_not_configured"){
             backToLogin(true);
         }
-        app.logger.error(app.lang.get(error.message ? error.message : "LBL_RESOURCE_UNAVAILABLE"));
+        //assume the server message should NOT be valid HTML and escape it.
+        message = Handlebars.Utils.escapeExpression(error.message) || "LBL_RESOURCE_UNAVAILABLE";
+        app.logger.error(app.lang.get(message));
     };
     
     /**
@@ -171,7 +174,8 @@
      * 422 Handle validation error
      */
     app.error.handleValidationError = function(error) {
-        var layout = app.controller.layout;
+        var layout = app.controller.layout,
+            message;
         if( !_.isObject(layout.error) ||
             !_.isFunction(layout.error.handleValidationError) ||
             layout.error.handleValidationError(error) !== false
@@ -180,7 +184,9 @@
             if (error instanceof app.data.beanModel) {
                 return;
             }
-            alertUser("validation_error", "LBL_PRECONDITION_MISSING_TITLE", error.message || "LBL_PRECONDITION_MISSING");
+            //assume the server message should NOT be valid HTML and escape it.
+            message = Handlebars.Utils.escapeExpression(error.message) || "LBL_PRECONDITION_MISSING";
+            alertUser("validation_error", "LBL_PRECONDITION_MISSING_TITLE", message);
             error.handled = true;
         }
     };
