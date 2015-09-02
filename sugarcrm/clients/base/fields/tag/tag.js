@@ -332,9 +332,8 @@
             return record.name;
         });
 
-        if (records.length) {
-            this.$select2.select2('val', records);
-        }
+        this.$select2.select2('val', records);
+
     },
 
     /**
@@ -344,11 +343,11 @@
     bindDataChange: function() {
         if (this.model) {
             this.model.on('change:' + this.name, function() {
-                // only set the field if we are on merge-duplicates view
-                // it allows tags to copy over when choosing primaryRecord's tags
-                if (this.context.get('selectedDuplicates')) {
+                if (!_.isEmpty(this.$select2.data('select2'))) {
                     this.setTagList();
                     this.setSelect2Records();
+                } else {
+                    this.render();
                 }
             }, this);
         }
