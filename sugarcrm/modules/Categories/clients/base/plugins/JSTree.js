@@ -1110,7 +1110,7 @@
              * @private
              */
             _toggleTooltip: function(node, show) {
-                var input = node.children('input.jstree-rename-input');
+                var input = node.children('input.jstree-rename-input:visible');
                 if (show) {
                     input
                         .tooltip({
@@ -1121,6 +1121,13 @@
                         })
                         .tooltip('show');
                 } else {
+                    /*
+                     [RS-1063]
+                     This is the known bug of an old version of the Bootstrap Tooltip.
+                     (see https://github.com/twbs/bootstrap/issues/10740)
+                     Next line (in combination with .find('..:visible') above) is a fix for current version
+                     */
+                    input.data('bs.tooltip').$tip.remove();
                     input
                         .tooltip('destroy');
                 }
