@@ -51,6 +51,27 @@
     },
 
     /**
+     * @inheritDoc
+     */
+    _initEvents: function() {
+        this._super('_initEvents');
+        this.on('linked-model:create', this._reloadData, this);
+        return this;
+    },
+
+    /**
+     * Re-fetches the data for the context's collection.
+     *
+     * FIXME: This will be removed when SC-4775 is implemented.
+     *
+     * @private
+     */
+    _reloadData: function() {
+        this.context.set('skipFetch', false);
+        this.context.reloadData();
+    },
+
+    /**
      * Create new record.
      *
      * @param {Event} event Click event.

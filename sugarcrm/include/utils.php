@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: utils.php 56927 2010-06-11 23:19:26Z smalyshev $
+
  * Description:  Includes generic helper functions used throughout the application.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -493,6 +493,8 @@ function get_sugar_config_defaults()
             'error_number_of_cycles' =>  '10',
             'error_timeout' => '40',
         ),
+        'default_caldav_module' => 'Meetings',
+        'default_caldav_interval' => '6 month',
     );
 
     if (empty($locale)) {
@@ -3355,6 +3357,11 @@ function sugar_cleanup($exit = false)
 
     }
     SugarAutoLoader::saveClassMap();
+
+    // Clean PA session arrays
+    if (isset($_SESSION['triggeredFlows'])) {
+        unset($_SESSION['triggeredFlows']);
+    }
 
     if (class_exists('DBManagerFactory', false)) {
         DBManagerFactory::disconnectAll();

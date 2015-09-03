@@ -9302,6 +9302,8 @@ Sincerely, SugarCRM',
     'LBL_VIEW_PDF_BUTTON_LABEL' => 'Print as PDF',
     'LBL_VIEW_PDF_BUTTON_TITLE' => 'Print as PDF',
 
+    'LBL_KBDOCUMENTS' => 'Knowledge Base',
+
 
     'LNK_ABOUT' => 'About',
     'LNK_ADVANCED_SEARCH' => 'Advanced Search',
@@ -10334,6 +10336,7 @@ Sincerely, SugarCRM',
   'MSG_IS_LESS_THAN' => 'is less than',
   'MSG_SHOULD_BE' => 'should be',
   'MSG_OR_GREATER' => 'or greater',
+    'MSG_EXCEEDS_MAXLEN' => 'exceeds the max length specified ',
 
     'LBL_PORTAL_WELCOME_TITLE' => 'Welcome to Sugar Portal 5.1.0',
     'LBL_PORTAL_WELCOME_INFO' => 'Sugar Portal is a framework which provides real-time view of cases, bugs & newsletters etc to customers. This is an external facing interface to Sugar that can be deployed within any website.  Stay tuned for more customer self service features like Project Management and Forums in our future releases.',
@@ -12750,3 +12753,10 @@ $app_list_strings['business_rule_type_list'] = array(
 );
 //END SUGARCRM flav=ent ONLY
 
+$app_list_strings['caldav_oldest_sync_date'] = array(
+    '2 weeks' => '2 weeks',
+    '1 month' => '1 month',
+    '3 month' => '3 months',
+    '6 month' => '6 months',
+    0 => 'All events',
+);

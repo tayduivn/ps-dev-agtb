@@ -151,7 +151,7 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 			$order_by = $this->_get_column_select($layout_def);
 		}
 		$list = array();
-        if(isset($field_def['options'])) {
+        if(isset($field_def['options']) && !empty($field_def['options'])) {
 		    $list = translate($field_def['options'], $field_def['module']);
         } elseif(isset($field_def['type']) && $field_def['type'] == 'enum' && isset($field_def['function'])) {
 	        global $beanFiles;

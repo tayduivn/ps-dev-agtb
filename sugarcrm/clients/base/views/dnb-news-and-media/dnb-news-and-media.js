@@ -234,7 +234,7 @@
         //grouping social media by DNB Code values
         //socialMedia variable will be a map
         //whose keys will be DNB Code values
-        //whose values will be social medial information in an array
+        //whose values will be social media information in an array
         var socialMedia = _.groupBy(dnbApiResponse, function(socialObj) {
             return socialObj.SocialMediaPlatformName['@DNBCodeValue'];
         });

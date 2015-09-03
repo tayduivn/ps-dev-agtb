@@ -1010,7 +1010,6 @@ $dictionary['RevenueLineItem'] = array(
         ),
     ),
     'indices' => array(
-        array('name' => 'idx_revenuelineitem', 'type' => 'index', 'fields' => array('name', 'deleted')),
         array(
             'name' => 'idx_rli_user_dc_timestamp',
             'type' => 'index',

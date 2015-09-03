@@ -1690,7 +1690,7 @@ class MetaDataManager
      */
     public static function refreshLanguagesCache($languages, $platforms = array(), $params = array())
     {
-        self::refreshCachePart('languages', $languages, $platforms, $params = array());
+        self::refreshCachePart('languages', $languages, $platforms, $params);
     }
 
     /**
@@ -1989,6 +1989,8 @@ class MetaDataManager
 
             if($auth->isExternal()) {
                 $configs['externalLogin'] = true;
+                $configs['externalLoginUrl'] = $auth->getLoginUrl();
+                $configs['externalLoginSameWindow'] = SugarConfig::getInstance()->get('SAML_SAME_WINDOW');
             }
         }
 
@@ -2898,7 +2900,7 @@ class MetaDataManager
             // don't force a metadata refresh
             $urlList[$lang] = getVersionedPath(
                 $this->getUrlForCacheFile($file),
-                $this->getMetadataHash(),
+                $this->getLanguageCacheAttributes(),
                 true
             );
         }

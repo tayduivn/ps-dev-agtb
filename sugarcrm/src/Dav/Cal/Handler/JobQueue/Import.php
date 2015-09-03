@@ -27,9 +27,14 @@ class Import implements RunnableInterface
 {
     /**
      * @param \CalDavEvent $calDavBean
+     * @throws \Exception
      */
     public function __construct($calDavBean)
     {
+
+        if (!($calDavBean instanceof \CalDavEvent)) {
+            throw new \Exception('Argument should be instance of CalDavEvent');
+        }
         $this->bean = $calDavBean;
     }
 

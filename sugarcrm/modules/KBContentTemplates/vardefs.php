@@ -37,6 +37,10 @@ $dictionary['KBContentTemplate'] = array(
     ),
     'acls' => array(
         'SugarACLKB' => true,
+        'SugarACLDeveloperOrAdmin' => array(
+            'aclModule' => 'KBContents',
+            'allowUserRead' => true
+        ),
     ),
 );
 

@@ -322,6 +322,11 @@
                                 options.success(data, response);
                             }
                             app.events.trigger('app:nestedset:sync:complete', self);
+                        }, this),
+                        error: _.bind(function(error) {
+                            if (_.isFunction(options.error)) {
+                                options.error(error);
+                            }
                         }, this)
                     });
                 }, this);

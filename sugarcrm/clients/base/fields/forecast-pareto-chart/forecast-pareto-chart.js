@@ -244,7 +244,7 @@
                 // Format the value using currency class and user settings
                 var val = app.currency.formatAmountLocale(e.value),
                     lbl = app.lang.get('LBL_SALES_STAGE', 'Forecasts');
-                if(this.model.get('group_by') == 'probability') {
+                if (this.model.get('group_by') == 'probability') {
                     lbl = app.lang.get('LBL_OW_PROBABILITY', 'Forecasts') + ' (%)';
                 }
 
@@ -255,10 +255,12 @@
             .colorData('default')
             .colorFill('default')
             .yAxisTickFormat(function(d) {
-                return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + d3.format(',.2s')(d);
+                var si = d3.formatPrefix(d, 2);
+                return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + d3.round(si.scale(d), 2) + si.symbol;
             })
             .quotaTickFormat(function(d) {
-                return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + d3.format(',.3s')(d);
+                var si = d3.formatPrefix(d, 2);
+                return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + d3.round(si.scale(d), 2) + si.symbol;
             })
             //TODO: only do barClick if dashlet in Forecasts intelligence pane
             .barClick(function(data, eo, chart, container) {

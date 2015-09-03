@@ -14,7 +14,7 @@ require_once('vendor/ytree/Node.php');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: AddUserToTeam.php 13782 2006-06-06 17:58:55Z majed $
+
  * Description:  TODO: To be written.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.

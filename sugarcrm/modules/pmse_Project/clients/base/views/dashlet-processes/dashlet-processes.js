@@ -52,7 +52,20 @@
         this.on('dashlet-processes:disable-record:fire', this.disableRecord, this);
         this.on('dashlet-processes:download:fire', this.showExportingWarning, this);
         this.on('dashlet-processes:description-record:fire', this.descriptionRecord, this);
+        this.on('linked-model:create', this._reloadData, this);
         return this;
+    },
+
+    /**
+     * Re-fetches the data for the context's collection.
+     *
+     * FIXME: This will be removed when SC-4775 is implemented.
+     *
+     * @private
+     */
+    _reloadData: function() {
+        this.context.set('skipFetch', false);
+        this.context.reloadData();
     },
 
     /**
@@ -70,14 +83,15 @@
         app.api.call('read', verifyURL, null, {
             success: function(data) {
                 if (!data) {
-                    var redirect = model.module+"/"+model.id+"/layout/designer";
+                    var redirect = app.router.buildRoute(model.module, model.id, 'layout/designer');
                     app.router.navigate(redirect , {trigger: true, replace: true });
                 } else {
                     app.alert.show('project-design-confirmation',  {
                         level: 'confirmation',
                         messages: App.lang.get('LBL_PMSE_PROCESS_DEFINITIONS_EDIT', model.module),
                         onConfirm: function () {
-                            app.navigate(this.context, model, 'layout/designer');
+                            var redirect = app.router.buildRoute(model.module, model.id, 'layout/designer');
+                            app.router.navigate(redirect , {trigger: true, replace: true });
                         },
                         onCancel: $.noop
                     });

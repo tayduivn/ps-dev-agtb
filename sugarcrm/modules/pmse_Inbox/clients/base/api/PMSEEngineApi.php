@@ -343,47 +343,31 @@ class PMSEEngineApi extends SugarApi
     public function engineClaim($api, $args)
     {
         $this->checkACL($api, $args);
-        global $db;
         $cas_id = $args['cas_id'];
         $cas_index = $args['cas_index'];
         $taskName = $args['taskName'];
-        $today = TimeDate::getInstance()->nowDb();
 
-        $query = "select cas_flow_status, cas_started, bpmn_type, bpmn_id " .
-                " from pmse_bpm_flow where cas_id = $cas_id and cas_index = $cas_index ";
-        $result = $db->Query($query);
-        $row = $db->fetchByAssoc($result);
-        $cas_flow_status = $row['cas_flow_status'];
-        $cas_started = $row['cas_started'];
-        $bpmn_type = $row['bpmn_type'];
-        $bpmn_id = $row['bpmn_id'];
+        $flowBean = BeanFactory::getBean('pmse_BpmFlow');
+        $flowBean->retrieve_by_string_fields(array(
+            'cas_id' => $cas_id,
+            'cas_index' => $cas_index,
+        ));
 
-        if ($cas_started != 1) {
+        if ($flowBean->cas_started != 1) {
             //get the bpm_activity_definition record, to check if it is SELFSERVICE
-            $isSelfService = '';
-            if ($cas_flow_status == 'FORM' && $bpmn_type == 'bpmnActivity') {
-                $queryAct = "select act_assignment_method from pmse_bpm_activity_definition where id = '$bpmn_id'";
-                $resultAct = $db->Query($queryAct);
-                $rowAct = $db->fetchByAssoc($resultAct);
-                $assign_method = trim($rowAct['act_assignment_method']);
-                if ($assign_method == 'selfservice') {
+            if ($flowBean->cas_flow_status== 'FORM' && $flowBean->bpmn_type == 'bpmnActivity') {
+                $activityDefinitionBean = BeanFactory::getBean('pmse_BpmActivityDefinition', $flowBean->bpmn_id);
+                if (trim($activityDefinitionBean->act_assignment_method) == 'selfservice') {
                     global $current_user;
-                    $isSelfService = ", cas_user_id = '" . $current_user->id . "' ";
+                    $flowBean->assigned_user_id = $current_user->id;
+                    $flowBean->cas_user_id =  $current_user->id;
+                    $flowBean->cas_assignment_method = 'static';
                 }
             }
-
-            $query = "update pmse_bpm_flow set " .
-                    " cas_start_date = '$today', " .
-                    " cas_started    = 1 " .
-                    $isSelfService .
-                    " where cas_id = $cas_id and cas_index = $cas_index ";
-
-            if ($db->query($query, true, "Error updating pmse_bpm_flow record ")) {
-                return array('success' => false);
-            }
+            $flowBean->cas_start_date = TimeDate::getInstance()->nowDb();
+            $flowBean->cas_started = 1;
+            $flowBean->save();
         }
-        //$readable = $cas_id . '-' . $cas_index;
-        //return PMSEEngineUtils::simpleEncode($readable);
         return array('success' => true);
     }
 

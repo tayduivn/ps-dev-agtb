@@ -36,6 +36,7 @@ class Configurator {
         'SAML_loginurl',
         'SAML_X509Cert',
         'SAML_SLO',
+        'SAML_SAME_WINDOW',
         'dashlet_auto_refresh_min',
         'show_download_tab',
         'enable_action_menu',
@@ -276,9 +277,9 @@ class Configurator {
 	        $GLOBALS['log']->fatal("Unable to write to the config_override.php file. Check the file permissions");
 	        return;
 	    }
-		$fp = sugar_fopen('config_override.php', 'w');
-		fwrite($fp, $override);
-		fclose($fp);
+
+        // write out contents to file
+        sugar_file_put_contents_atomic('config_override.php', $override);
 	}
 
 	function overrideClearDuplicates($array_name, $key) {

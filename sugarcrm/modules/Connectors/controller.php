@@ -748,34 +748,39 @@ class ConnectorsController extends SugarController {
 	}
 
 
-	function action_RunTest() {
-	    $this->view = 'ajax';
-	    $source_id = $_REQUEST['source_id'];
-	    $source = SourceFactory::getSource($source_id);
-	    $properties = array();
-	    foreach($_REQUEST as $name=>$value) {
-            if(preg_match("/^{$source_id}_(.*?)$/", $name, $matches)) {
+    function action_RunTest() {
+        global $mod_strings;
+
+        $this->view = 'ajax';
+
+        // Get the source object and init it all at once
+        $source_id = $_REQUEST['source_id'];
+        $source = SourceFactory::getSource($source_id, true);
+
+        // Build a properties array
+        $properties = array();
+        foreach($_REQUEST as $name=>$value) {
+            if (preg_match("/^{$source_id}_(.*?)$/", $name, $matches)) {
                $properties[$matches[1]] = $value;
             }
-	    }
+        }
 
-	    //Call again and call init
-	    $source = SourceFactory::getSource($source_id);
-	    $source->init();
+        // If there are properties, set them into the source for testing
+        if ($properties) {
+            $source->setProperties($properties);
+        }
 
-	    global $mod_strings;
-
-	    try {
-		    if($source->isRequiredConfigFieldsForButtonSet($properties) && $source->test($properties)) {
-		      echo $mod_strings['LBL_TEST_SOURCE_SUCCESS'];
-		    } else {
-		      echo $mod_strings['LBL_TEST_SOURCE_FAILED'];
-		    }
-	    } catch (Exception $ex) {
-	    	$GLOBALS['log']->fatal($ex->getMessage());
-	    	echo $ex->getMessage();
-	    }
-	}
+        try {
+            if ($source->isRequiredConfigFieldsForButtonSet() && $source->test()) {
+                echo $mod_strings['LBL_TEST_SOURCE_SUCCESS'];
+            } else {
+              echo $mod_strings['LBL_TEST_SOURCE_FAILED'];
+            }
+        } catch (Exception $ex) {
+            $GLOBALS['log']->fatal($ex->getMessage());
+            echo $ex->getMessage();
+        }
+    }
 
 
 	/**

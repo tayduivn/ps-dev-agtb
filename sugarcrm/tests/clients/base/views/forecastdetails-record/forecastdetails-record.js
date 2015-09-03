@@ -52,8 +52,12 @@ describe("Base.View.Forecastdetails-record", function() {
 
         app.user.setPreference('decimal_precision', 2);
 
-        SugarTest.createView('base', '', 'forecastdetails', meta, context, false, null, true);
-        view = SugarTest.createView('base', '', 'forecastdetails-record', meta, context, false, null, true);
+        var layout = app.view.createLayout({
+            type: 'dashlet',
+            context: context
+        });
+        SugarTest.createView('base', '', 'forecastdetails', meta, context, false, layout, true);
+        view = SugarTest.createView('base', '', 'forecastdetails-record', meta, context, false, layout, true);
     });
 
     afterEach(function() {
@@ -133,6 +137,72 @@ describe("Base.View.Forecastdetails-record", function() {
                 view.includedIds = ['modelId'];
                 result = view.processCases(model);
                 expect(result.likely_case).toBe(90);
+            });
+
+            it("should make likely_case 0 when given a string", function() {
+                view.oldTotals = {
+                    best: 200,
+                    likely: 100,
+                    worst: 50,
+                    models: new Backbone.Model()
+                };
+
+                view.oldTotals.models.set('modelId', {
+                    best: 200,
+                    likely: 100,
+                    worst: 50
+                });
+
+                model.set({
+                    amount: ''
+                });
+                view.includedIds = ['modelId'];
+                result = view.processCases(model);
+                expect(result.likely_case).toBe(-100);
+            });
+
+            it("should make best_case 0 when given a string", function() {
+                view.oldTotals = {
+                    best: 200,
+                    likely: 100,
+                    worst: 50,
+                    models: new Backbone.Model()
+                };
+
+                view.oldTotals.models.set('modelId', {
+                    best: 200,
+                    likely: 100,
+                    worst: 50
+                });
+
+                model.set({
+                    best_case: ''
+                });
+                view.includedIds = ['modelId'];
+                result = view.processCases(model);
+                expect(result.best_case).toBe(-200);
+            });
+
+            it("should make worst_case 0 when given a string", function() {
+                view.oldTotals = {
+                    best: 200,
+                    likely: 100,
+                    worst: 50,
+                    models: new Backbone.Model()
+                };
+
+                view.oldTotals.models.set('modelId', {
+                    best: 200,
+                    likely: 100,
+                    worst: 50
+                });
+
+                model.set({
+                    worst_case: ''
+                });
+                view.includedIds = ['modelId'];
+                result = view.processCases(model);
+                expect(result.worst_case).toBe(-50);
             });
         });
     });

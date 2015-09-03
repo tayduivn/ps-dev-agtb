@@ -93,6 +93,9 @@ class AdministrationController extends SugarController
 
             // Clear the metadata cache so changes to languages are picked up right away
             MetaDataManager::refreshLanguagesCache($enabled_langs);
+            require_once('modules/Administration/QuickRepairAndRebuild.php');
+            $repair = new RepairAndClear();
+            $repair->clearLanguageCache();
         }
 
         //Call Ping API to refresh the language list.
@@ -435,5 +438,13 @@ class AdministrationController extends SugarController
     {
         $engine = SearchEngine::newEngine($type, $this->mergeFtsConfig($type, $config));
         return $engine->isAvailable(true);
+    }
+
+    /**
+     * Map package ACL roles to the instance's ones
+     */
+    public function action_UpgradeWizard_map_roles()
+    {
+        $this->view = 'maproles';
     }
 }

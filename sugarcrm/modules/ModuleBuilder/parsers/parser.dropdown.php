@@ -87,15 +87,22 @@ class ParserDropDown extends ModuleBuilderParser
             //add new drop down to the bottom
             if (!empty($params['use_push'])) {
                 //this is for handling moduleList and such where nothing should be deleted or anything but they can be renamed
+                $app_list_strings = array();
+                $filePath = $this->getExtensionFilePath($dropdown_name, $selected_lang);
+                //Include the original extension to ensure any values sourced from it are kept.
+                if (sugar_is_file($filePath)) {
+                    include($filePath);
+                }
+                $contents = "<?php\n //created: " . date('Y-m-d H:i:s') . "\n";
                 foreach ($dropdown as $key=>$value) {
                     //only if the value has changed or does not exist do we want to add it this way
                     if (!isset($my_list_strings[$dropdown_name][$key]) || strcmp($my_list_strings[$dropdown_name][$key], $value) != 0 ) {
-                        //clear out the old value
-                        $pattern_match = '/\s*\$app_list_strings\s*\[\s*\''.$dropdown_name.'\'\s*\]\[\s*\''.$key.'\'\s*\]\s*=\s*[\'\"]{1}.*?[\'\"]{1};\s*/ism';
-                        $contents = preg_replace($pattern_match, "\n", $contents);
-                        //add the new ones without using GLOBALS
-                        $contents .= "\n\$app_list_strings['$dropdown_name']['$key']=" . var_export_helper($value) . ";";
+                        $app_list_strings[$dropdown_name][$key] = $value;
                     }
+                }
+                //Now that we have all the values, save the overrides to the extension
+                foreach($app_list_strings[$dropdown_name] as $key => $value) {
+                    $contents .= "\n\$app_list_strings['$dropdown_name']['$key']=" . var_export_helper($value) . ";";
                 }
             } else {
                 if (empty($params['skip_sync'])) {
@@ -105,7 +112,7 @@ class ParserDropDown extends ModuleBuilderParser
                     $this->synchDropDown($dropdown_name, $dropdown, $selected_lang);
                 }
 
-                $contents = $this->getNewCustomContents($dropdown_name, $dropdown, $selected_lang);
+                $contents = $this->getExtensionContents($dropdown_name, $dropdown);
             }
 
             $this->saveContents($dropdown_name, $contents, $selected_lang);
@@ -123,18 +130,30 @@ class ParserDropDown extends ModuleBuilderParser
      */
     protected function saveContents($dropdownName, $contents, $lang)
     {
-        $dirName = 'custom/Extension/application/Ext/Language';
-        if (SugarAutoLoader::ensureDir($dirName)) {
-            $fileName = "$dirName/$lang.sugar_$dropdownName.php";
-            if (!SugarAutoLoader::put($fileName, $contents, true)) {
-                $GLOBALS['log']->fatal("Unable to write edited dropdown language to file: $fileName");
+        $fileName = $this->getExtensionFilePath($dropdownName, $lang);
+        if ($fileName) {
+            if (SugarAutoLoader::put($fileName, $contents, true)) {
+                return true;
             }
-            return true;
-        } else {
-            $GLOBALS['log']->fatal("Unable to create dir: $dirName");
+            $GLOBALS['log']->fatal("Unable to write edited dropdown language to file: $fileName");
         }
         return false;
     }
+
+    protected function getExtensionFilePath($dropdownName, $lang)
+    {
+        $dirName = 'custom/Extension/application/Ext/Language';
+        if (SugarAutoLoader::ensureDir($dirName)) {
+            $fileName = "$dirName/$lang.sugar_$dropdownName.php";
+
+            return $fileName;
+        } else {
+            $GLOBALS['log']->fatal("Unable to create dir: $dirName");
+        }
+
+        return false;
+    }
+
 
     /**
      * Clears the js cache and rebuilds the language files
@@ -156,6 +175,7 @@ class ParserDropDown extends ModuleBuilderParser
         clearAllJsAndJsLangFilesWithoutOutput();
 
         // Clear out the api metadata languages cache for selected language
+        LanguageManager::invalidateJsLanguageCache();
         MetaDataManager::refreshLanguagesCache($lang);
     }
 
@@ -163,9 +183,9 @@ class ParserDropDown extends ModuleBuilderParser
      * function synchDropDown
      * 	Ensures that the set of dropdown keys is consistant accross all languages.
      *
-     * @param $dropdown_name The name of the dropdown to be synched
-     * @param $dropdown array The dropdown currently being saved
-     * @param $selected_lang String the language currently selected in Studio/MB
+     * @param string $dropdown_name The name of the dropdown to be synched
+     * @param array $dropdown The dropdown currently being saved
+     * @param string $selected_lang the language currently selected in Studio/MB
      */
     public function synchDropDown($dropdown_name, $dropdown, $selected_lang)
     {
@@ -180,7 +200,7 @@ class ParserDropDown extends ModuleBuilderParser
                     //if the dropdown does not exist in the language, justt use what we have.
                     $langDropDown = $dropdown;
                 }
-                $contents = $this->getNewCustomContents($dropdown_name, $langDropDown, $lang);
+                $contents = $this->getExtensionContents($dropdown_name, $langDropDown);
                 $this->saveContents($dropdown_name, $contents, $lang);
             }
         }
@@ -251,6 +271,21 @@ class ParserDropDown extends ModuleBuilderParser
         if (empty($contents)) $contents = "<?php";
         $contents = preg_replace($this->getPatternMatch($dropdown_name), "\n\n", $contents);
         $contents .= "\n\n\$app_list_strings['$dropdown_name']=" . var_export_helper($dropdown) . ";";
+        return $contents;
+    }
+
+    /**
+     * Retrieves the contents for a language extension that includes only the dropdown modified in the contents
+     * @param string $dropdown_name
+     * @param array $dropdown
+     *
+     * @return string
+     */
+    protected function getExtensionContents($dropdown_name, $dropdown)
+    {
+        $contents = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n";
+        $contents .= "\n\$app_list_strings['$dropdown_name']=" . var_export_helper($dropdown) . ";";
+
         return $contents;
     }
 

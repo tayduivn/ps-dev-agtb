@@ -192,7 +192,7 @@
      * @return {String} content from the editor
      */
     getEditorContent: function() {
-        return this._htmleditor.getContent();
+        return this._htmleditor.getContent({format: 'raw'});
     },
 
     /**

@@ -141,7 +141,16 @@ class PMSEImporter
             $project = unserialize($_data);
             if ($project['project']) {
                 if (in_array($project['project'][$this->module], PMSEEngineUtils::getSupportedModules())) {
-                    $result = $this->saveProjectData($project['project']);
+                    $result['id'] = $this->saveProjectData($project['project']);
+                    //check if business rules action was part of the process definition
+                    if (isset($project['project']['diagram'])) {
+                        $activities = $project['project']['diagram'][0]['activities'];
+                        foreach ($activities as $activity) {
+                            if ($activity['act_script_type'] === 'BUSINESS_RULE') {
+                                $result['br_warning'] = true;
+                            }
+                        }
+                    }
                 } else {
                     throw new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
                 }
