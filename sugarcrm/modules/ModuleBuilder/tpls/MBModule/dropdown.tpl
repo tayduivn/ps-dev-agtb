@@ -30,6 +30,7 @@
         {if ($refreshTree)}
             <input type='hidden' name='refreshTree' value='1'>
         {/if}
+        <input type="hidden" name="new" value="{$new|intval}">
         <table>
             <tr>
                 <td colspan='2'>
@@ -45,7 +46,7 @@
 {* // BEGIN SUGARCRM flav=ent ONLY *}
                 <td style="text-align: right">
                     <label>{sugar_translate label='LBL_ROLE'}
-                        {if $name }
+                        {if not $new }
                             {html_options name='dropdown_role' options=$roles onchange='this.form.action.value="roledropdownfilter";ModuleBuilder.handleSave("dropdown_form")'}
                         {else}
                            {html_options name='dropdown_role' options=$roles disabled=true}
@@ -62,11 +63,11 @@
             <tr>
                 <td colspan="3">
                     <span class='mbLBLL'>{sugar_translate label='LBL_DROPDOWN_TITLE_NAME'}:&nbsp;</span>
-                    {if $name }
+                    {if not $new }
                         <input type='hidden' id='dropdown_name' name='dropdown_name'
                                value='{$dropdown_name}'>{$dropdown_name}
                     {else}
-                        <input type='text' id='dropdown_name' name='dropdown_name' value={$prepopulated_name}>
+                        <input type='text' id='dropdown_name' name='dropdown_name' value={$dropdown_name}>
                     {/if}
                 </td>
             </tr>

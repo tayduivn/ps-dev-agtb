@@ -307,7 +307,7 @@ class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
             ->will($this->returnValue($viewdef));
         $defs = array();
         $defs['layout']['basic_search'] = $viewdef;
-        $fields = $mock->convertLegacyViewDefsToSidecar($defs, "", $vardef, "", "");
+        $fields = $mock->convertLegacyViewDefsToSidecar($defs, "", $vardef, "", "", "");
         $this->assertEquals($result, $fields['fields']);
     }
 

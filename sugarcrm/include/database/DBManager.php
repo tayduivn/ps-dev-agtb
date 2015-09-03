@@ -1908,8 +1908,10 @@ protected function checkQuery($sql, $object_name = false)
 	 */
 	public function countQuery($sql = '')
 	{
-		if (self::$queryLimit != 0 && ++self::$queryCount > self::$queryLimit
-			&&(empty($GLOBALS['current_user']) || !is_admin($GLOBALS['current_user']))) {
+        global $current_user;
+        if (self::$queryLimit != 0 && ++self::$queryCount > self::$queryLimit
+            && (empty($GLOBALS['current_user']) || !$current_user->isDeveloperForAnyModule())
+        ) {
             require_once('include/resource/ResourceManager.php');
             if ($sql) {
                 $GLOBALS['log']->fatal("Last query before failure:\n" . $sql);

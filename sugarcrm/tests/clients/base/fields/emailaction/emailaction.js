@@ -1,5 +1,5 @@
 describe('Base.Field.Emailaction', function() {
-    var app, fieldName, parentModel, context, field, createField;
+    var app, fieldName, parentModel, context, field, createField, sandbox;
 
     beforeEach(function() {
         var moduleName = 'Contacts';
@@ -10,9 +10,11 @@ describe('Base.Field.Emailaction', function() {
         context = app.context.getContext();
         context.set('model', parentModel);
         SugarTest.loadComponent('base', 'field', 'button');
+        sandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
+        sandbox.restore();
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
@@ -56,5 +58,15 @@ describe('Base.Field.Emailaction', function() {
         parentModel.set('name', changeName);
         expect(field.emailOptions.related.get('name')).toEqual(changeName);
         expect(field.emailOptions.to_addresses[0].bean.get('name')).toEqual(changeName);
+    });
+
+    it('should render after updating email options if the parent model changes', function() {
+        parentModel.set('name', 'foo');
+        field = createField();
+        sandbox.stub(field, '_updateEmailOptions');
+        sandbox.stub(field, 'render');
+        parentModel.set('name', 'bar');
+        expect(field._updateEmailOptions).toHaveBeenCalled();
+        expect(field.render).toHaveBeenCalled();
     });
 });
