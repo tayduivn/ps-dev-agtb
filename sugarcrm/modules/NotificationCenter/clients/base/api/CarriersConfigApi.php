@@ -51,8 +51,8 @@ class CarriersConfigApi extends SugarApi
      */
     public function getConfig(ServiceBase $api, array $args)
     {
-        $status = Status::getInstance();
-        $registry = CarrierRegistry::getInstance();
+        $status = $this->getStatus();
+        $registry = $this->getCarrierRegistry();
         $data = array();
         foreach ($registry->getCarriers() as $module) {
             $data[$module] = $status->getCarrierStatus($module);
@@ -70,16 +70,32 @@ class CarriersConfigApi extends SugarApi
      */
     public function handleSave(ServiceBase $api, array $args)
     {
-        $status = Status::getInstance();
-        $registry = CarrierRegistry::getInstance();
+        $status = $this->getStatus();
+        $registry = $this->getCarrierRegistry();
         $result = true;
         foreach ($registry->getCarriers() as $module) {
-            if (array_key_exists($module, $args)) {
+            if (!array_key_exists($module, $args)) {
                 continue;
             }
             $result = $result | $status->setCarrierStatus($module, !empty($args[$module]));
         }
 
         return $result;
+    }
+
+    /**
+     * @see Status::getInstance
+     */
+    protected function getStatus()
+    {
+        return Status::getInstance();
+    }
+
+    /**
+     * @see CarrierRegistry::getInstance
+     */
+    protected function getCarrierRegistry()
+    {
+        return CarrierRegistry::getInstance();
     }
 }

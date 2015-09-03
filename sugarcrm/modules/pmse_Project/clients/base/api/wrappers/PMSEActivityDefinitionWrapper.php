@@ -203,7 +203,7 @@ class PMSEActivityDefinitionWrapper
                         if ($key == 'act_readonly_fields' || $key == 'act_required_fields' || $key == 'act_expected_time' || $key == 'act_related_modules') {
                             $this->activityDefinition->$key = base64_encode(json_encode($args[$key]));
                         } else {
-                            $this->activityDefinition->$key = $args[$key];
+                            $this->activityDefinition->$key = !empty($args[$key]) ? $args[$key] : '';
                         }
                     }
                     if ($this->activity->act_type != 'TASK') {

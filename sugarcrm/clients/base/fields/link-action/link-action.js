@@ -84,8 +84,9 @@
      * it to the parent record.
      * On success, it refreshes the subpanel collection so the new record
      * appears in the subpanel.
-     * Finally, it triggers `filter:record:linked` on the parent layout of the
-     * parent view, i.e. {@link View.Layouts.Base.SubpanelLayout}
+     *
+     * Finally, it expands the subpanel context by setting the `collapsed`
+     * property to `false`.
      *
      * @param {Data.Bean} model The selected record to link to parent record.
      */
@@ -96,32 +97,19 @@
 
         var parentModel = this.context.get('parentModel');
         var link = this.context.get('link');
-        var self = this;
 
         var relatedModel = app.data.createRelatedBean(parentModel, model.id, link),
             options = {
                 //Show alerts for this request
                 showAlerts: true,
                 relate: true,
-                success: function(model) {
+                success: _.bind(function(model) {
                     //We've just linked a related, however, the list of records from
                     //loadData will come back in DESC (reverse chronological order
                     //with our newly linked on top). Hence, we reset pagination here.
-                    self.context.get('collection').resetPagination();
-                    self.context.resetLoadFlag();
-                    self.context.set('skipFetch', false);
-                    self.context.loadData({
-                        success: function() {
-                            self.view.layout.trigger('filter:record:linked');
-                        },
-                        error: function(error) {
-                            app.alert.show('server-error', {
-                                level: 'error',
-                                messages: 'ERR_GENERIC_SERVER_ERROR'
-                            });
-                        }
-                    });
-                },
+                    this.context.get('collection').resetPagination();
+                    this.context.set('collapsed', false);
+                }, this),
                 error: function(error) {
                     app.alert.show('server-error', {
                         level: 'error',

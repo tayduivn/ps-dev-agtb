@@ -57,7 +57,7 @@ $viewdefs['KBContents']['base']['view']['create'] = array(
             'buttons' => array(
                 array(
                     'type' => 'rowaction',
-                    'name' => 'save_button',
+                    'name' => 'duplicate_button',
                     'label' => 'LBL_IGNORE_DUPLICATE_AND_SAVE',
                     'events' => array(
                         'click' => 'button:save_button:click',
@@ -73,7 +73,7 @@ $viewdefs['KBContents']['base']['view']['create'] = array(
             'buttons' => array(
                 array(
                     'type' => 'rowaction',
-                    'name' => 'save_button',
+                    'name' => 'select_button',
                     'label' => 'LBL_SAVE_BUTTON_LABEL',
                     'events' => array(
                         'click' => 'button:save_button:click',

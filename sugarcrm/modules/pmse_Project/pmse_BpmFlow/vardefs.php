@@ -188,6 +188,28 @@ $dictionary['pmse_BpmFlow'] = array(
     'len' => '32',
     'size' => '32',
   ),
+'cas_assignment_method' =>
+  array (
+    'required' => true,
+    'name' => 'cas_assignment_method',
+    'vname' => '',
+    'type' => 'varchar',
+    'massupdate' => false,
+    'default' => '',
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'calculated' => false,
+    'len' => '32',
+    'size' => '32',
+  ),
 'cas_user_id' =>
   array (
     'required' => true,

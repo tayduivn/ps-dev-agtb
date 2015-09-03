@@ -159,6 +159,22 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
 	    return null;
 	}
 
+    /**
+     * Allows the setting of a connector object. Useful for testing.
+     *
+     * @param source $connector
+     */
+    public function setConnector(source $connector)
+    {
+        if (isset($this->connector) && $connector instanceof $this->connector) {
+            $this->connector_source = $connector;
+            $this->connector_source->setEAPM($this);
+            return true;
+        }
+
+        return false;
+    }
+
 	/**
 	 * Get parameter from source
 	 * @param string $name

@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: ReportListView.php 53116 2009-12-10 01:24:37Z mitani $
+
  * Description:  generic list view class.
  ********************************************************************************/
 //FILE SUGARCRM flav=ent ONLY

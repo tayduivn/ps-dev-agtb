@@ -226,7 +226,8 @@ class PMSEElementValidator implements PMSEValidate
         if (isset($_REQUEST['moduleName']) && isModuleBWC($_REQUEST['moduleName'])) {
             $url = $_REQUEST['module'];
         } else {
-            $url = $_REQUEST['__sugar_url'];
+            // In most cases __sugar_url will be set, but if it isn't, handle it
+            $url = isset($_REQUEST['__sugar_url']) ? $_REQUEST['__sugar_url'] : '';
         }
 
         if (strpos($url, 'pmse') === false) {
@@ -265,13 +266,37 @@ class PMSEElementValidator implements PMSEValidate
      */
     public function validateStartEvent($bean, $flowData, $request)
     {
-        if ((($this->isNewRecord($bean) && $flowData['evn_params'] == 'new' ||
-                !$this->isNewRecord($bean) && $flowData['evn_params'] == 'updated')
-                 && !$this->isCaseDuplicated($bean, $flowData)) ||
-                    !$this->isNewRecord($bean) && $flowData['evn_params'] == 'allupdates'
-                &&  !$this->isPMSEEdit($bean) && !$this->already_triggered($bean, $flowData)
-        ) {
-            $request->validate();
+        $pmseEdit = !empty($bean->pa_related_module_save) ? true : $this->isPMSEEdit($bean);
+        if (!$pmseEdit) {
+            $isNewRecord = $this->isNewRecord($bean);
+            $caseDuplicated = $this->isCaseDuplicated($bean, $flowData);
+            switch ($flowData['evn_params']) {
+                case 'new':
+                    if ($isNewRecord && !$caseDuplicated) {
+                        $request->validate();
+                    } else {
+                        $request->invalidate();
+                    }
+                    break;
+                case 'updated':
+                    if (!$isNewRecord && !$caseDuplicated) {
+                        $request->validate();
+                    } else {
+                        $request->invalidate();
+                    }
+                    break;
+                case 'allupdates':
+                    $alreadyTriggered = $this->already_triggered($bean, $flowData);
+                    if (!$isNewRecord && !$alreadyTriggered) {
+                        $request->validate();
+                    } else {
+                        $request->invalidate();
+                    }
+                    break;
+                default:
+                    $request->invalidate();
+                    break;
+            }
         } else {
             $request->invalidate();
         }

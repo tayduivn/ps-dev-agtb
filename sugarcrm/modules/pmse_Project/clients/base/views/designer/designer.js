@@ -22,6 +22,7 @@
 
     loadData: function (options) {
         this.prj_uid = this.options.context.attributes.modelId;
+        this.cacheKiller = (new Date()).getTime();
     },
 
     initialize: function (options) {
@@ -64,6 +65,13 @@
 
     _dispose: function () {
         app.routing.offBefore('route', this.beforeRouteChange);
+        this.removeSelect2Events();
         this._super("_dispose", arguments);
+    },
+
+    removeSelect2Events: function() {
+        //turn off event listeners
+        $(document).off('select2-loaded.select2event');
+        $(document).off('select2-close.select2event');
     }
 })

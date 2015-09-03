@@ -65,6 +65,20 @@
                     messages: 'ERR_GENERIC_SERVER_ERROR'
                 });
             },
+            showNoAccessError: function() {
+                if (!this instanceof app.view.View) {
+                    app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
+                    'an instance of this view.');
+                    return;
+                }
+                var name = 'server-error';
+                this._viewAlerts.push(name);
+                this.cancel();
+                app.alert.show(name, {
+                    level: 'error',
+                    messages: 'ERR_HTTP_404_TEXT_LINE1'
+                });
+            },
             showSuccessButDeniedAccess: function() {
                 if (!this instanceof app.view.View) {
                     app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
@@ -376,7 +390,11 @@
                 if (e.status == 412 && !e.request.metadataRetry) {
                     this.handleMetadataSyncError(e);
                 } else {
-                    this.alerts.showServerError.call(this);
+                    if (e.status == 403) {
+                        this.alerts.showNoAccessError.call(this);
+                    } else {
+                        this.alerts.showServerError.call(this);
+                    }
                     callback(true);
                 }
             }, this);

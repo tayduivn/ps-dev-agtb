@@ -123,4 +123,66 @@ class SugarQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($expected, $q->usePreparedStatements, 'Prepared statements flag not properly set');
     }
 
+    /**
+     * @dataProvider dataProviderGetJoinOnField
+     *
+     * @param string $side
+     * @param string $expected
+     */
+    public function testGetJoinOnField($side, $expected)
+    {
+        $q = $this->getMockBuilder('SugarQuery')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $link2 = $this->getMockBuilder('Link2')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getRelationshipObject', 'getSide'))
+            ->getMock();
+
+        $rel = $this->getMockBuilder('M2MRelationship')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        SugarTestReflection::setProtectedValue($rel, 'def', array(
+            'join_key_rhs' => 'right_hand_side_id',
+            'join_key_lhs' => 'left_hand_side_id'
+        ));
+
+        $link2->expects($this->once())
+            ->method('getRelationshipObject')
+            ->willReturn($rel);
+
+        $link2->expects($this->atLeastOnce())
+            ->method('getSide')
+            ->willReturn($side);
+
+        $bean = $this->getMockBuilder('SugarBean')
+            ->disableOriginalConstructor()
+            ->setMethods(array('load_relationship'))
+            ->getMock();
+
+        $bean->expects($this->once())
+            ->method('load_relationship')
+            ->willReturn(true);
+
+        $bean->test_link = $link2;
+
+        $q->from = $bean;
+
+        $actual = SugarTestReflection::callProtectedMethod($q, 'getJoinOnField', array('test_link'));
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function dataProviderGetJoinOnField()
+    {
+        return array(
+            array('RHS', 'left_hand_side_id'),
+            array('LHS', 'right_hand_side_id')
+        );
+    }
+
 }

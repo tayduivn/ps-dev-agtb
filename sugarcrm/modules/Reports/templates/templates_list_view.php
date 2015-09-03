@@ -709,14 +709,8 @@ function getColumnDataAndFillRowsFor3By3GPBY($reporter, $header_row, &$rowsAndCo
 			$newLegend[] = $legend[$i];
 		} // for
 		$legend = $newLegend;
-	}	
-	//_pp($grandTotal);
-	//$rowsAndColumnsData[] = $grandTotal;
-	//_pp($headerColumnNameArray[0]);
-	//_ppd($rowsAndColumnsData);
-	//_ppd($columnData);
-	//return $columnData;
-} // fn
+	}
+}
 
 function getSummaryColumnLableToNameArray($summary_columns_array) {
 
@@ -772,7 +766,7 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 	for ($i = 0 ; $i < count($rowArray) ; $i++) {
 		$row = $rowArray[$i];
 		$changeGroupHappend = false;
-		//_pp(whereToStartGroupByRow($reporter, $i, $header_row, $previousRow, $row));
+
 		$whereToStartGroupByRow = whereToStartGroupByRow($reporter, $i, $rowsAndColumnsData, $row);
 		if ($whereToStartGroupByRow === -1) {
 			$rowsAndColumnsData[$count] = array();
@@ -790,22 +784,29 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 			if ($j == 0) {
 				$rowsAndColumnsData[$countIndex][$groupByColumnLabel] = $row['cells'][$key];
 			} else {
-				if (!array_key_exists($row['cells'][$key], $rowsAndColumnsData[$countIndex])) {
-					$rowsAndColumnsData[$countIndex][$row['cells'][$key]] = array();
-					for ($k = 0 ; $k < count($headerRowIndexExceptGpBy) ; $k++) {
-						$indexOfHeaderRow = $headerRowIndexExceptGpBy[$k];
-						$rowsAndColumnsData[$countIndex][$row['cells'][$key]][$header_row[$indexOfHeaderRow]] = $row['cells'][$indexOfHeaderRow];
-					} // for
+				$rowData = array();
+				for ($k = 0 ; $k < count($headerRowIndexExceptGpBy) ; $k++) {
+					$indexOfHeaderRow = $headerRowIndexExceptGpBy[$k];
+					$rowData[$header_row[$indexOfHeaderRow]] = $row['cells'][$indexOfHeaderRow];
 				}
-			} // else
-		} // for
-		
-		
+
+				if ($rowsAndColumnsData[$countIndex][$row['cells'][$key]] != $rowData) {
+					$countIndex = $count;
+					$rowsAndColumnsData[$countIndex][$groupByColumnLabel] = $row['cells'][$key];
+					$changeGroupHappend = true;
+				}
+
+				if (!array_key_exists($row['cells'][$key], $rowsAndColumnsData[$countIndex])) {
+					$rowsAndColumnsData[$countIndex][$row['cells'][$key]] = $rowData;
+				}
+			}
+		}
+
 		if ($changeGroupHappend) {
 			$count++;
-		} // if
-		$previousRow = $row;
-	} // for
+		}
+	}
+
 	// generates row level summation and grand total
 	$grandTotal = array();
 	$grandTotal['Total'] = array();
@@ -983,12 +984,7 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 		} // for
 		$legend = $newLegend;
 	}
-	//_pp($grandTotal);	
-	//_pp($headerColumnNameArray[0]);
-	//_ppd($rowsAndColumnsData);
-	//_ppd($columnData);
-	//return $columnData;
-} // fn
+}
 
 function getHeaderColumnNamesForMatrix($reporter, $header_row, $columnDataFor2ndGroup) {
     global $mod_strings;

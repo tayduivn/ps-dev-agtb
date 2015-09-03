@@ -230,13 +230,15 @@ class PMSEHistoryLogWrapper
             if ($caseData['cas_previous'] == 0) {
                 //cas_flow_status field should set something instead be empty.
                 $dataString = sprintf(translate('LBL_PMSE_HISTORY_LOG_CREATED_CASE', 'pmse_Inbox'), $caseData['cas_id']);
+            } else if ($caseData['bpmn_type'] === 'bpmnFlow') {
+                $dataString = translate('LBL_PMSE_HISTORY_LOG_FLOW', 'pmse_Inbox');
             } else {
                 if ($caseData['cas_flow_status'] == 'CLOSED') {
                     $dataString = sprintf(translate('LBL_PMSE_HISTORY_LOG_DERIVATED_CASE', 'pmse_Inbox'),
-                        $caseData['bpmn_id']);
+                        $caseData['cas_id']);
                 } else {
                     $dataString = sprintf(translate('LBL_PMSE_HISTORY_LOG_CURRENTLY_HAS_CASE', 'pmse_Inbox'),
-                        $caseData['bpmn_id']);
+                        $caseData['cas_id']);
                 }
             }
 
@@ -257,7 +259,7 @@ class PMSEHistoryLogWrapper
                     if (isset($this->formAction->frm_action) && !empty($this->formAction->frm_action)) {
                         $action = strtoupper($this->formAction->frm_action);
                     } else {
-                        $action = translate('LBL_PMSE_HISTORY_LOG_NOT_REGISTED_ACTION', 'pmse_Inbox');
+                        $action = translate('LBL_PMSE_HISTORY_LOG_NOT_REGISTERED_ACTION', 'pmse_Inbox');
                     }
                     $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTION_PERFORMED', 'pmse_Inbox'), $action);
                     if (isset($this->formAction->cas_pre_data)) {
@@ -286,6 +288,7 @@ class PMSEHistoryLogWrapper
                     }
                 }
             }
+            $dataString .= '.';
             $entry['data_info'] = $dataString;
             $entries[] = $entry;
         }

@@ -23,7 +23,7 @@ class SugarUpgradeDropTrackerSessionsRoundTrips extends UpgradeScript
 
     public function run()
     {
-        if (!version_compare($this->from_version, '7.7.0.0', '<')) {
+        if (!version_compare($this->from_version, '7.7', '<')) {
             return;
         }
 

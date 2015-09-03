@@ -298,6 +298,8 @@
         if (data.open) {
             var model = this.collection.getChild(data.id),
                 items = [];
+            //isModelUndefined = _.isUndefined(model) || _.isUndefined(model.id);
+            //if (!isModelUndefined) {
             if (model.id) {
                 items = model.children.models;
                 if (items.length !== 0) {

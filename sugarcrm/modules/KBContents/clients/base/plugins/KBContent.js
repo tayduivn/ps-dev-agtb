@@ -222,6 +222,7 @@
                     [parentModel.get('language')],
                     {silent: true}
                 );
+                prefill.set('revision', '');
 
                 this._openCreateRelatedDrawer(prefill, parentModel);
             },
