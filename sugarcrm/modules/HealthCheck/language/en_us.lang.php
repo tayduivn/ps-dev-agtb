@@ -84,6 +84,7 @@ $mod_strings = array(
     'LBL_SCAN_529_LOG' => '%s: %s in file %s on line %s',
     'LBL_SCAN_530_LOG' => 'Missing custom file: %s',
     'LBL_SCAN_433_LOG' => 'Found custom Elastic Search files %s',
+    'LBL_SCAN_434_LOG' => 'Found usage of array functions on $_SESSION in files: %s',
 
     'LBL_SCAN_501_LOG' => 'Missing file: %s',
     'LBL_SCAN_502_LOG' => 'md5 mismatch for %s, expected %s',
@@ -166,6 +167,7 @@ $mod_strings = array(
     'LBL_SCAN_524_TITLE' => 'Vardef HTML function %s in %s module for field %s',
     'LBL_SCAN_432_TITLE' => 'Bad vardefs - \'name\' field type is invalid \'%s\', module - \'%s\'',
     'LBL_SCAN_433_TITLE' => 'Found custom Elastic Search files %s',
+    'LBL_SCAN_434_TITLE' => 'Found usage of array functions on $_SESSION in files: %s',
 
     'LBL_SCAN_501_TITLE' => 'Missing file: %s',
     'LBL_SCAN_502_TITLE' => 'md5 mismatch for %s, expected %s',
@@ -251,6 +253,7 @@ $mod_strings = array(
     'LBL_SCAN_524_DESCR' => 'Field is defined as function producing HTML and can not be auto-converted (we know how to convert some stock fields like emails and currency)',
     'LBL_SCAN_432_DESCR' => 'Field \'name\' has a type other than name, fullname, varchar or id',
     'LBL_SCAN_433_DESCR' => 'Found custom Elastic Search files %s',
+    'LBL_SCAN_434_DESCR' => 'Found usage of array functions on $_SESSION in files: %s',
 
     'LBL_SCAN_501_DESCR' => 'One of the core files is not present in the instance',
     'LBL_SCAN_502_DESCR' => 'One of the core files has been modified in this install',
