@@ -127,7 +127,7 @@ class CalendarEvents
      */
     public function reconcileTags(array $parentTagBeans, SugarBean $childBean, $childTagBeans = array())
     {
-        $sf = new SugarFieldTag('tag');
+        $sf = SugarFieldHandler::getSugarField('tag');
         $parentTags = $sf->getOriginalTags($parentTagBeans);
         $childTags = $sf->getOriginalTags($childTagBeans);
         list($addTags, $removeTags) = $sf->getChangedValues($childTags, $parentTags);
