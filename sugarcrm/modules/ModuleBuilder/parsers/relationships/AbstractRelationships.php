@@ -259,6 +259,7 @@ class AbstractRelationships
         $relationships = SugarRelationshipFactory::getInstance()->getRelationshipDefs();
         array_walk($relationships, function (&$def) {
             $def['readonly'] = true;
+            $def['relationship_name'] = $def['name'];
         });
 
         return $relationships;
