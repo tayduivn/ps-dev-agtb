@@ -892,30 +892,78 @@ class MysqlManager extends DBManager
 		return "";
 	}
 
-	/**
-	 * @see DBManager::get_indices()
-	 */
-	public function get_indices($tablename)
-	{
-		//find all unique indexes and primary keys.
-		$result = $this->query("SHOW INDEX FROM $tablename");
+    /** {@inheritDoc} */
+    protected function get_index_data($table_name = null, $index_name = null)
+    {
+        $filterByTable = $table_name !== null;
+        $filterByIndex = $index_name !== null;
 
-		$indices = array();
-		while (($row=$this->fetchByAssoc($result)) !=null) {
-			$index_type='index';
-			if ($row['Key_name'] =='PRIMARY') {
-				$index_type='primary';
-			}
-			elseif ( $row['Non_unique'] == '0' ) {
-				$index_type='unique';
-			}
-			$name = strtolower($row['Key_name']);
-			$indices[$name]['name']=$name;
-			$indices[$name]['type']=$index_type;
-			$indices[$name]['fields'][]=strtolower($row['Column_name']);
-		}
-		return $indices;
-	}
+        $columns = array();
+        if (!$filterByTable) {
+            $columns[] = 'table_name';
+        }
+
+        if (!$filterByIndex) {
+            $columns[] = 'index_name';
+        }
+
+        $columns[] = 'non_unique';
+        $columns[] = 'column_name';
+
+        $query = 'SELECT ' . implode(', ', $columns) . '
+FROM information_schema.statistics';
+
+        $schema = $this->getOne('SELECT DATABASE()');
+        $where = array('table_schema = ' . $this->quoted($schema));
+        if ($filterByTable) {
+            $where[] = 'table_name = ' . $this->quoted($table_name);
+        }
+
+        if ($filterByIndex) {
+            $query_index_name = strtoupper($this->getValidDBName($index_name, true, 'index'));
+            $where[] = 'index_name = ' . $this->quoted($query_index_name);
+        }
+        $query .= ' WHERE ' . implode(' AND ', $where);
+
+        $order = array();
+        if (!$filterByTable) {
+            $order[] = 'table_name';
+        }
+
+        if (!$filterByIndex) {
+            $order[] = 'index_name';
+        }
+
+        $order[] = 'seq_in_index';
+        $query .= ' ORDER BY ' . implode(', ', $order);
+
+        $result = $this->query($query);
+
+        $data = array();
+        while ($row = $this->fetchByAssoc($result)) {
+            if (!$filterByTable) {
+                $table_name = $row['table_name'];
+            }
+
+            if (!$filterByIndex) {
+                $index_name = $row['index_name'];
+            }
+
+            if ($index_name == 'PRIMARY') {
+                $type = 'primary';
+            } elseif ($row['non_unique'] == '0') {
+                $type = 'unique';
+            } else {
+                $type = 'index';
+            }
+
+            $data[$table_name][$index_name]['name'] = $index_name;
+            $data[$table_name][$index_name]['type'] = $type;
+            $data[$table_name][$index_name]['fields'][] = $row['column_name'];
+        }
+
+        return $data;
+    }
 
 	/**
 	 * @see DBManager::add_drop_constraint()

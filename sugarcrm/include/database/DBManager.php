@@ -1167,8 +1167,23 @@ protected function checkQuery($sql, $object_name = false)
      */
     private function repairTableIndices($tableName, $indices, $execute)
     {
+        $schemaIndices = $this->get_indices($tableName);
+        return $this->alterTableIndices($tableName, $indices, $schemaIndices, $execute);
+    }
+
+    /**
+     * Supplies the SQL commands that alters table to match the definition
+     *
+     * @param string $tableName Table name
+     * @param array $indices Index definitions from vardefs
+     * @param array $compareIndices Index definitions obtained from database
+     * @param bool $execute Whether we want the queries executed instead of returned
+     *
+     * @return string
+     */
+    public function alterTableIndices($tableName, $indices, $compareIndices, $execute)
+    {
         $take_action = false;
-        $compareIndices = $this->get_indices($tableName);
         $tableDefs = $this->get_columns($tableName);
         $sql = "/* INDEXES */\n";
         $correctedIndexes = array();
@@ -4065,6 +4080,17 @@ protected function checkQuery($sql, $object_name = false)
 	    return null;
 	}
 
+    /**
+     * Set DB option
+     *
+     * @param string $option Option name
+     * @param mixed $value Option value
+     */
+    public function setOption($option, $value)
+    {
+        $this->options[$option] = $value;
+    }
+
 	/**
 	 * Commits pending changes to the database when the driver is setup to support transactions.
 	 * Note that the default implementation is applicable for transaction-less or auto commit scenarios.
@@ -4352,6 +4378,16 @@ protected function checkQuery($sql, $object_name = false)
 	 */
 	abstract function renameColumnSQL($tablename, $column, $newname);
 
+    /**
+     * Returns definitions of all indices for current schema.
+     *
+     * @return array
+     */
+    public function get_schema_indices()
+    {
+        return $this->get_index_data();
+    }
+
 	/**
 	 * Returns definitions of all indies for passed table.
 	 *
@@ -4370,10 +4406,46 @@ protected function checkQuery($sql, $object_name = false)
 	 * </code>
 	 * This format is similar to how indicies are defined in vardef file.
 	 *
-	 * @param  string $tablename
+     * @param string $table_name Table name
 	 * @return array
 	 */
-	abstract public function get_indices($tablename);
+    public function get_indices($table_name)
+    {
+        $data = $this->get_index_data($table_name);
+        if (isset($data[$table_name])) {
+            return $data[$table_name];
+        }
+
+        return array();
+    }
+
+    /**
+     * Returns definitions of the given index.
+     *
+     * @param string $table_name Table name
+     * @param string $index_name Index name
+     *
+     * @return array
+     */
+    public function get_index($table_name, $index_name)
+    {
+        $data = $this->get_index_data($table_name, $index_name);
+        if (isset($data[$table_name][$index_name])) {
+            return $data[$table_name][$index_name];
+        }
+
+        return array();
+    }
+
+    /**
+     * Returns information of all indices matching the given criteria.
+     *
+     * @param string $table_name Table name
+     * @param string $index_name Index name
+     *
+     * @return array
+     */
+    abstract protected function get_index_data($table_name = null, $index_name = null);
 
 	/**
 	 * Returns definitions of all indies for passed table.
