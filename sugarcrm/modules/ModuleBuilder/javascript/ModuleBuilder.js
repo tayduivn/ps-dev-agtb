@@ -622,7 +622,6 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			ModuleBuilder.callInProgress = false;
 			//Check if a save action was called and now we need to move-on
 			if (ModuleBuilder.state.saving) {
-				ModuleBuilder.toggleButtons();
 				ModuleBuilder.state.loadOnSaveComplete();
 				return;
 			}
@@ -778,7 +777,16 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			
 			// Capture aspects of the request in case the need to resend arises
 			ModuleBuilder.requestElements.fields = Connect.setForm(document.getElementById(formname) || document.forms[formname]);
-			ModuleBuilder.requestElements.callbacks = {success: successCall, failure: ModuleBuilder.failed};
+            ModuleBuilder.requestElements.callbacks = {
+                success: function() {
+                    ModuleBuilder.toggleButtons();
+                    successCall.apply(this, arguments);
+                },
+                failure: function() {
+                    ModuleBuilder.toggleButtons();
+                    ModuleBuilder.failed.apply(this, arguments);
+                }
+            };
 			Connect.asyncRequest(
 			    Connect.method, 
 			    Connect.url, 
