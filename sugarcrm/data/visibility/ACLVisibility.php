@@ -23,20 +23,49 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 class ACLVisibility extends SugarVisibility implements StrategyInterface
 {
     /**
+     * @var TeamBasedACLConfigurator
+     */
+    protected $tbaConfig;
+
+    /**
+     * {@inheritdoc}
+     * Instance TeamBasedAcl configurator.
+     */
+    public function __construct(SugarBean $bean, $params = null)
+    {
+        $this->tbaConfig = new TeamBasedACLConfigurator();
+        parent::__construct($bean, $params);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function addVisibilityWhere(&$query)
     {
         $action = $this->getOption('action', 'list');
         if ($this->bean->bean_implements('ACL') &&
-            !empty($GLOBALS['current_user']->id) &&
-            ACLController::requireOwner($this->bean->module_dir, $action))
-        {
-            $owner_where = $this->bean->getOwnerWhere($GLOBALS['current_user']->id, $this->getOption('table_alias'));
-            if (!empty($query)) {
-                $query .= " AND $owner_where";
-            } else {
-                $query = $owner_where;
+            !empty($GLOBALS['current_user']->id)
+        ) {
+            $queryPart = '';
+            $actualAccess = ACLAction::getUserAccessLevel(
+                $GLOBALS['current_user']->id,
+                $this->bean->module_dir,
+                $action
+            );
+            if (ACLController::requireOwner($this->bean->module_dir, $action)) {
+                $queryPart = $this->bean->getOwnerWhere(
+                    $GLOBALS['current_user']->id,
+                    $this->getOption('table_alias')
+                );
+            } elseif ($this->tbaConfig->isValidAccess($actualAccess)) {
+                $tbaVisibility = new TeamBasedACLVisibility($this->bean);
+                $tbaVisibility->setOptions(array('where_condition' => true));
+                $tbaVisibility->addVisibilityWhere($queryPart);
+            }
+            if ($query && $queryPart) {
+                $query .= " AND $queryPart";
+            } elseif ($queryPart) {
+                $query = $queryPart;
             }
         }
         return $query;
@@ -70,6 +99,11 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
     {
         $ownerField = $provider->getFilter('Owner')->getOwnerField($this->bean);
         $mapping->addNotAnalyzedField($ownerField);
+
+        if ($this->tbaConfig->isImplementTBA($this->bean->module_dir)) {
+            $tbaVisibility = new TeamBasedACLVisibility($this->bean);
+            $tbaVisibility->elasticBuildMapping($mapping, $provider);
+        }
     }
 
     /**
@@ -85,9 +119,16 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
      */
     public function elasticGetBeanIndexFields($module, Visibility $provider)
     {
+        $result = array();
         // retrieve the owner field directly from the bean
         $ownerField = $provider->getFilter('Owner')->getOwnerField($this->bean);
-        return array($ownerField => 'id');
+        $result[$ownerField] = 'id';
+
+        if ($this->tbaConfig->isImplementTBA($this->bean->module_dir)) {
+            $tbaVisibility = new TeamBasedACLVisibility($this->bean);
+            $result = array_merge($result, $tbaVisibility->elasticGetBeanIndexFields($module, $provider));
+        }
+        return $result;
     }
 
     /**
@@ -95,12 +136,20 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
      */
     public function elasticAddFilters(\User $user, \Elastica\Filter\Bool $filter, Visibility $provider)
     {
-        if ($this->bean->bean_implements('ACL') && ACLController::requireOwner($this->bean->module_dir, 'list')) {
-            $options = array(
-                'bean' => $this->bean,
-                'user' => $user,
-            );
-            $filter->addMust($provider->createFilter('Owner', $options));
+        $accessToHandle = 'list';
+        if ($this->bean->bean_implements('ACL')) {
+            $actualAccess = ACLAction::getUserAccessLevel($user->id, $this->bean->module_dir, $accessToHandle);
+
+            if (ACLController::requireOwner($this->bean->module_dir, $accessToHandle)) {
+                $options = array(
+                    'bean' => $this->bean,
+                    'user' => $user,
+                );
+                $filter->addMust($provider->createFilter('Owner', $options));
+            } elseif ($this->tbaConfig->isValidAccess($actualAccess)) {
+                $tbaVisibility = new TeamBasedACLVisibility($this->bean);
+                $tbaVisibility->elasticAddFilters($user, $filter, $provider);
+            }
         }
     }
 }

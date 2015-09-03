@@ -394,4 +394,15 @@ class TeamBasedACLConfigurator
     {
         return SugarConfig::getInstance()->get(self::CONFIG_KEY, $this->getDefaultConfig());
     }
+
+    /**
+     * Check if the module implements TBA.
+     * @param string $module Module name.
+     * @return bool
+     */
+    public function isImplementTBA($module)
+    {
+        $bean = BeanFactory::getBean($module);
+        return (bool)$bean->getFieldDefinition('team_set_selected_id');
+    }
 }

@@ -37,7 +37,7 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
         $query .= " INNER JOIN (
                 SELECT {$tableAlias}.id
                 FROM {$tableAlias}
-                WHERE deleted = 0 {$where}
+                WHERE deleted = 0 AND {$where}
             ) {$tableAlias}_agr ON {$tableAlias}_agr.id = {$tableAlias}.id";
 
         return $query;
@@ -65,7 +65,12 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
         if (!$this->getOption('where_condition') || !$this->isApplicable()) {
             return $query;
         }
-        $query .= $this->getWhereClause();
+        $where = $this->getWhereClause();
+        if (!empty($query)) {
+            $query .= " AND $where";
+        } else {
+            $query = $where;
+        }
         return $query;
     }
 
@@ -101,7 +106,7 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
         $ownerVisibilityRaw = '';
         $ow->addVisibilityWhere($ownerVisibilityRaw);
 
-        return " AND ({$ownerVisibilityRaw} OR {$tableAlias}.team_set_selected_id IN ({$inClause})) ";
+        return "({$ownerVisibilityRaw} OR {$tableAlias}.team_set_selected_id IN ({$inClause})) ";
     }
 
     /**
