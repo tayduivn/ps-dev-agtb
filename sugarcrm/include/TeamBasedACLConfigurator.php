@@ -129,6 +129,7 @@ class TeamBasedACLConfigurator
         }
         $cfg->config[self::CONFIG_KEY]['disabled_modules'] = $actualList;
         $cfg->handleOverride();
+        $cfg->clearCache();
         SugarConfig::getInstance()->clearCache();
         $this->clearVardefs($module);
     }
@@ -165,6 +166,7 @@ class TeamBasedACLConfigurator
         $cfg = new Configurator();
         $cfg->config[self::CONFIG_KEY]['enabled'] = $enable;
         $cfg->handleOverride();
+        $cfg->clearCache();
         SugarConfig::getInstance()->clearCache();
         $this->clearVardefs();
     }
@@ -191,9 +193,6 @@ class TeamBasedACLConfigurator
         } else {
             VardefManager::clearVardef();
         }
-        //Rebuild Sidecar config file
-        // TODO: isn't applied to the client side.
-        ModuleInstaller::handleBaseConfig();
     }
 
     /**
