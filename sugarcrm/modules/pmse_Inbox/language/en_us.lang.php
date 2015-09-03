@@ -70,6 +70,9 @@ $mod_strings = array (
     'LBL_PMSE_FORM_TOOLTIP_SELECT_USER' => 'Assigns this process to the user.',
     'LBL_PMSE_FORM_TOOLTIP_CHANGE_USER' => 'Updates "Assigned To" field on the record to this user.',
 
+    'LBL_PMSE_ALERT_REASSIGN_UNSAVED_FORM' => 'There are unsaved changes in the current form, they will be discarded if you reassign the current task. Do you want to proceed?',
+    'LBL_PMSE_ALERT_REASSIGN_SUCCESS' => 'The process was successfully reassigned',
+
     'LBL_PMSE_LABEL_CURRENT_ACTIVITY' => 'Current Activity',
     'LBL_PMSE_LABEL_ACTIVITY_DELEGATE_DATE' => 'Activity Delegate Date',
     'LBL_PMSE_LABEL_ACTIVITY_START_DATE' => 'Start Date',
