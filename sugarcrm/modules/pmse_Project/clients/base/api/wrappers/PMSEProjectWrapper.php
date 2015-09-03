@@ -1176,10 +1176,11 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                 $primaryField = $this->getPrimaryFieldName($bean);
                 $elementID = $bean->fetched_row[$primaryField];
 
-                if ($id && $elementArray['act_script_type'] != $originalScriptType
-                 && $entityData['bean_object'] == 'pmse_BpmnActivity') {
-                    $relatedBean = $this->getBean('pmse_BpmActivityDefinition');
-                    $relatedBean->retrieve($id);
+                if ($id &&
+                    $entityData['bean_object'] == 'pmse_BpmnActivity' &&
+                    !empty($elementArray['act_script_type']) &&
+                    $elementArray['act_script_type'] != $originalScriptType) {
+                    $relatedBean = $this->getBean('pmse_BpmActivityDefinition', $id);
                     $this->update($relatedBean, array(
                         'act_fields' => '',
                         'act_field_module' => '',

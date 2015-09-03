@@ -93,7 +93,7 @@ MenuItem.prototype.attachListeners = function () {
             .click(function (e) {
 
                e.stopPropagation();
-               if (!self.menu && !self.disabled) {
+               if (!self.menu && !self.disabled && !self.selected) {
                     self.closeMenu();
                     self.action.handler();
                 }
