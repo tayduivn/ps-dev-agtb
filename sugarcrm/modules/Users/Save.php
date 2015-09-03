@@ -311,7 +311,14 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
         if(isset($_REQUEST['default_email_charset']))
             $focus->setPreference('default_email_charset', $_REQUEST['default_email_charset'], 0, 'global');
 
-        if(isset($_POST['calendar_publish_key'])) $focus->setPreference('calendar_publish_key',$_POST['calendar_publish_key'], 0, 'global');
+        if (isset($_POST['calendar_publish_key'])) {
+            $focus->setPreference(
+                'calendar_publish_key',
+                SugarCleaner::cleanHtml($_POST['calendar_publish_key'], true),
+                0,
+                'global'
+            );
+        }
     }
 
     if (!$focus->verify_data()) {
