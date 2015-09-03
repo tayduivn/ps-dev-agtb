@@ -142,6 +142,10 @@ $.fn.extend({
 	}
 });
 
+// @link https://github.com/jquery/jquery-ui/commit/033f83f
+// support: jQuery <1.8
+if ( !$( "<a>" ).outerWidth( 1 ).jquery ) {
+
 $.each( [ "Width", "Height" ], function( i, name ) {
 	var side = name === "Width" ? [ "Left", "Right" ] : [ "Top", "Bottom" ],
 		type = name.toLowerCase(),
@@ -185,6 +189,8 @@ $.each( [ "Width", "Height" ], function( i, name ) {
 		});
 	};
 });
+
+}
 
 // selectors
 function focusable( element, isTabIndexNotNaN ) {
