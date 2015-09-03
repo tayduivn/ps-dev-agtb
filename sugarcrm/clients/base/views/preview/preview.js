@@ -33,38 +33,11 @@
 
     hiddenPanelExists: false,
 
-    events: {
-        'click [data-action=save]': 'saveClicked',
-        'click [data-action=cancel]': 'cancelClicked'
-    },
-
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.action = 'detail';
         this._delegateEvents();
         this.collection = app.data.createBeanCollection(this.module);
-    },
-
-    /**
-     * Show the save and cancel buttons in the preview-header and
-     * hide the left, right and x buttons if user has acl access
-     *
-     */
-    showSaveAndCancel: function() {
-        if (app.acl.hasAccessToModel('edit', this.model)) {
-            this.layout.$('.save-btn, .cancel-btn').show();
-            this.layout.$('.btn-left, .btn-right, .closeSubdetail').hide();
-        }
-    },
-
-    /**
-     * Hide the save and cancel buttons and show the left, right and
-     * x buttons
-     *
-     */
-    hideSaveAndCancel: function() {
-        this.layout.$('.save-btn, .cancel-btn').hide();
-        this.layout.$('.btn-left, .btn-right, .closeSubdetail').show();
     },
 
     /**
@@ -99,10 +72,9 @@
             return;
         }
         this._saveModel();
-        this.hideSaveAndCancel();
+        this.layout.trigger('preview:save:complete');
 
         if (!this.disposed) {
-            this.setRoute();
             this.unsetContextAction();
             this.toggleFields(this.editableFields, false);
         }
@@ -114,89 +86,14 @@
      * @private
      */
     _saveModel: function() {
-        var options,
-            successCallback = _.bind(function() {
-                // Loop through the visible subpanels and have them sync. This is to update any related
-                // fields to the record that may have been changed on the server on save.
-                _.each(this.context.children, function(child) {
-                    if (!_.isUndefined(child.attributes) && !_.isUndefined(child.attributes.isSubpanel)) {
-                        if (child.attributes.isSubpanel && !child.attributes.hidden) {
-                            child.reloadData({recursive: false});
-                        }
-                    }
-                });
-                if (this.createMode) {
-                    app.navigate(this.context, this.model);
-                } else if (!this.disposed && !app.acl.hasAccessToModel('edit', this.model)) {
-                    //re-render the view if the user does not have edit access after save.
-                    this.render();
-                }
-            }, this);
-
-        //Call editable to turn off key and mouse events before fields are disposed (SP-1873)
-        this.turnOffEvents(this.fields);
-
-        options = {
-            showAlerts: true,
-            success: successCallback,
-            error: _.bind(function(error) {
-                if (error.status === 412 && !error.request.metadataRetry) {
-                    this.handleMetadataSyncError(error);
-                } else if (error.status === 409) {
-                    app.utils.resolve409Conflict(error, this.model, _.bind(function(model, isDatabaseData) {
-                        if (model) {
-                            if (isDatabaseData) {
-                                successCallback();
-                            } else {
-                                this._saveModel();
-                            }
-                        }
-                    }, this));
-                } else {
-                    this.editClicked();
-                }
-            }, this),
-            lastModified: this.model.get('date_modified'),
-            viewed: true
-        };
-
-        options = _.extend({}, options, this.getCustomSaveOptions(options));
-
-        this.model.save({}, options);
-    },
-
-    /**
-     * Deals with metadata sync error
-     *
-     * @param error
-     */
-    handleMetadataSyncError: function(error) {
         var self = this;
-        //On a metadata sync error, retry the save after the app is synced
-        self.resavingAfterMetadataSync = true;
-        app.once('app:sync:complete', function() {
-            error.request.metadataRetry = true;
-            self.model.once('sync', function() {
-                self.resavingAfterMetadataSync = false;
-                //self.model.changed = {};
-                app.router.refresh();
-            });
-            //add a new success callback to refresh the page after the save completes
-            error.request.execute(null, app.api.getMetadataHash());
+        this.turnOffEvents(this.fields);
+        this.model.save({}, {
+            showAlerts: true,
+            error: function(error) {
+                self.model.revertAttributes();
+            }
         });
-    },
-
-    /**
-     * Updates url without triggering the router.
-     *
-     * @param {string} action Action to pass when building the route
-     *   with {@link Core.Router#buildRoute}.
-     */
-    setRoute: function(action) {
-        if (!this.meta.hashSync) {
-            return;
-        }
-        app.router.navigate(app.router.buildRoute(this.module, this.model.id, action), {trigger: false});
     },
 
     /**
@@ -224,28 +121,16 @@
         this._viewAlerts = [];
     },
 
-    getCustomSaveOptions: function(options) {
-        return {};
-    },
-
     /**
-     * When clciking cancel, return the preview view to detail state
+     * When clicking cancel, return the preview view to detail state
+     * and revert the model
      */
     cancelClicked: function() {
-        this.handleCancel();
-        this.clearValidationErrors(this.editableFields);
-        this.setRoute();
-        this.unsetContextAction();
-    },
-
-    /**
-     * Undo the changes on the model
-     */
-    handleCancel: function() {
         this.model.revertAttributes();
         this.toggleFields(this.editableFields, false);
-        this.hideSaveAndCancel();
         this._dismissAllAlerts();
+        this.clearValidationErrors(this.editableFields);
+        this.unsetContextAction();
     },
 
     /**
@@ -497,7 +382,7 @@
      */
     handleEdit: function() {
         this.setEditableFields();
-        this.toggleFields(this.editableFields, true, this.showSaveAndCancel());
+        this.toggleFields(this.editableFields, true);
     },
 
     /**

@@ -10,11 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<h1>{{str "LBL_PREVIEW"}} {{#if previewEdit}}<a class="preview-edit-link"><i class="fa fa-pencil"></i></a>{{/if}}</h1>
+<h1>{{str "LBL_PREVIEW"}} {{#if previewEdit}}<a class="preview-edit-link" data-action="edit"><i class="fa fa-pencil"></i></a>{{/if}}</h1>
 <div class="btn-toolbar pull-right">
     <div class="preview-headerpane" align="right">
-    <button class="btn-link cancel-btn hide" data-action="cancel" data-event="button:cancel_button:click">{{str "Cancel"}}</button>
-    <button class="btn btn-primary save-btn hide" data-action="save" data-event="button:save_button:click" track="button:save_button:click">{{str "Save"}}</button>
+    <button class="btn-link cancel-btn hide" data-action="cancel">{{str "LBL_CANCEL_BUTTON_LABEL"}}</button>
+    <button class="btn btn-primary save-btn hide" data-action="save">{{str "LBL_SAVE_BUTTON_LABEL"}}</button>
         </div>>
     <div class="btn-group">
         {{#unless layout.hideNextPrevious}}

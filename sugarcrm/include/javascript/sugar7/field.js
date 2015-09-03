@@ -62,7 +62,9 @@
                 this.clearErrorDecoration();
                 _.defer(function (field) {
                     field._errors = errors;
-                    // only call setMode to re-render if this is the current field we are editing
+                    // Only call setMode to re-render if this is the current field we are editing
+                    // Solves issue when the model is on the page more than once, yet we are editing
+                    // in only 1 view. Example Recordlist and Preview together
                     if (field.parent && field.parent.action === 'edit') {
                         field.parent.setMode('edit')
                     } else if (field.action === 'edit') {
