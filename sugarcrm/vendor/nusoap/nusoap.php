@@ -3,6 +3,12 @@
 /*
 Modification information for LGPL compliance
 
+commit 1144e041b6075ac46197dbd601998f7977e84d91
+Author: csezheng <ezheng@sugarcrm.com>
+Date:   Wed Sep 2 23:45:08 2015 -0700
+
+    br3246: add http1.1 in curl skip headers
+
 commit d270030a6fa40cb9da7725f32f4f768e276fda9b
 Author: skymeyer <jelle.vink@gmail.com>
 Date:   Mon Nov 3 21:10:12 2014 -0800
