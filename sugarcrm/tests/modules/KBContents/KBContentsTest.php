@@ -228,4 +228,30 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(0, $categoryBean->is_external);
     }
+
+    /**
+     * After Content is approved set Approved By to current user
+     */
+    public function testApprovedbyAutoset()
+    {
+        $bean = SugarTestKBContentUtilities::createBean();
+        /**
+         * this line is needed for getting a valid data
+         * from $this->db->getDataChanges in the KBContent::save method
+         */
+        $bean->loadFromRow($bean->toArray());
+
+        $this->assertNotEquals(KBContent::ST_APPROVED, $bean->status);
+
+        //$user = SugarTestUserUtilities::createAnonymousUser();
+        $user = $GLOBALS['current_user'];
+
+        $bean->status = KBContent::ST_APPROVED;
+        $bean->save();
+
+        $this->assertEquals(KBContent::ST_APPROVED, $bean->status);
+        // approver id should be equal to the current user id
+        $this->assertEquals($bean->kbsapprover_id, $user->id);
+    }
+
 }

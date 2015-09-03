@@ -74,6 +74,7 @@ class PMSEUserTask extends PMSEActivity
                     $flowData['cas_adhoc_actions'] = serialize(array('link_cancel', 'approve', 'reject', 'edit'));
                 }
                 $flowData['cas_flow_status'] = 'FORM';
+                $flowData['cas_assignment_method'] = $activityDefinitionBean->act_assignment_method;
                 $flowAction = 'CREATE';
                 $routeAction = 'WAIT';
                 $saveBeanData = false;

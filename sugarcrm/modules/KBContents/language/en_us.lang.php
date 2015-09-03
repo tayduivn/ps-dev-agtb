@@ -77,7 +77,6 @@ $mod_strings = array (
         'Unable to create a new localization as a localization version exists for all available languages.',
     'LBL_SPECIFY_PUBLISH_DATE' => 'Schedule this article to be published by specifying the Publish Date. Do you wish to continue without entering a Publish Date?',
     'LBL_PANEL_INMORELESS' => 'Usefulness',
-    'LBL_USEFULNESS' => 'Usefulness',
     'LBL_MORE_OTHER_LANGUAGES' => 'More Other Languages...',
     'EXCEPTION_VOTE_USEFULNESS_NOT_AUTHORIZED' => 'You are not authorized to vote useful/not useful {moduleName}. Contact your administrator if you need access.',
     'LNK_NEW_KBCONTENT_TEMPLATE' => 'Create Template',
@@ -99,4 +98,6 @@ $mod_strings = array (
     'ERROR_EXP_DATE_LOW' => 'The expiration date can not be before date of publishing.',
     'ERROR_ACTIVE_DATE_APPROVE_REQUIRED' => 'The Approved status requires publishing date.',
     'ERROR_ACTIVE_DATE_LOW' => 'The publish date should be more than current date.',
+    'LBL_RECORD_SAVED_SUCCESS' => 'You successfully created the {{moduleSingularLower}} article <a href="#{{buildRoute model=this}}">{{name}}</a>.', // use when a model is available
+    'TPL_SHOW_MORE_MODULE' => 'More {{module}} articles...',
 );

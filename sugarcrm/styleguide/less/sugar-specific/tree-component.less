@@ -8,6 +8,7 @@
   line-height: @smallTreeHeight;
   min-height: @smallTreeHeight;
   font-size: @smallTreeFont;
+  display: table;
 }
 .smallTreeA {
   line-height: @smallTreeHeight;
@@ -430,6 +431,14 @@ tr.tr-inline-edit {
     }
     .clear-field .fa {
       top: 6px;
+    }
+  }
+}
+//hide arrows in filter.
+.filter-definition-container {
+  [data-role=treeinput] {
+    .clear-field, .select-arrow {
+      display: none;
     }
   }
 }
