@@ -142,7 +142,8 @@ class PMSERelatedModule {
 
         // Sort on the label
         array_multisort($labels, SORT_ASC, $output);
-
+        
+        
         // Send text with pluralized module name
         $filterText = isset($app_list_strings['moduleList'][$filter]) ? $app_list_strings['moduleList'][$filter] : $filter;
         $filterArray = array(
@@ -199,6 +200,10 @@ class PMSERelatedModule {
         if (isset($relatedModuleBean->field_defs['parent_type'], $relatedModuleBean->field_defs['parent_id'])) {
             $relatedModuleBean->parent_type = $moduleBean->module_dir;
             $relatedModuleBean->parent_id = $moduleBean->id;
+        }
+
+        if ($moduleBean->module_name == $rModule) {
+            $relatedModuleBean->pa_related_module_save = true;
         }
 
         $relatedModuleBean->save();

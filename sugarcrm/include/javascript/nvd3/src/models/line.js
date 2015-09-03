@@ -1,34 +1,26 @@
-
 nv.models.line = function() {
 
   //============================================================
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var scatter = nv.models.scatter()
-    ;
+  var scatter = nv.models.scatter();
 
-  var margin = {top: 0, right: 0, bottom: 0, left: 0}
-    , width = 960
-    , height = 500
-    , getX = function(d) { return d.x; } // accessor to get the x value from a data point
-    , getY = function(d) { return d.y; } // accessor to get the y value from a data point
-    , defined = function(d,i) { return !isNaN(getY(d,i)) && getY(d,i) !== null; } // allows a line to be not continuous when it is not defined
-    , isArea = function(d) { return (d && d.area) || false; } // decides if a line is an area or just a line
-    , clipEdge = false // if true, masks lines within x and y scale
-    , x //can be accessed via chart.xScale()
-    , y //can be accessed via chart.yScale()
-    , delay = 200
-    , interpolate = "linear" // controls the line interpolation
-    , color = function (d, i) { return nv.utils.defaultColor()(d, d.series); }
-    , fill = color
-    , classes = function (d,i) { return 'nv-group nv-series-' + d.series; }
-    ;
+  var margin = {top: 0, right: 0, bottom: 0, left: 0},
+      width = 960,
+      height = 500,
+      getX = function(d) { return d.x; }, // accessor to get the x value from a data point
+      getY = function(d) { return d.y; }, // accessor to get the y value from a data point
+      defined = function(d, i) { return !isNaN(getY(d, i)) && getY(d, i) !== null; }, // allows a line to be not continuous when it is not defined
+      isArea = function(d) { return (d && d.area) || false; }, // decides if a line is an area or just a line
+      clipEdge = false, // if true, masks lines within x and y scale
+      x, //can be accessed via chart.xScale()
+      y, //can be accessed via chart.yScale()
+      interpolate = 'linear', // controls the line interpolation
+      color = function(d, i) { return nv.utils.defaultColor()(d, d.series); },
+      fill = color,
+      classes = function(d, i) { return 'nv-group nv-series-' + d.series; };
 
-  scatter
-    .size(16) // default size
-    .sizeDomain([16,256]) //set to speed up calculation, needs to be unset if there is a custom size accessor
-    ;
 
   //============================================================
 
@@ -37,8 +29,7 @@ nv.models.line = function() {
   // Private Variables
   //------------------------------------------------------------
 
-  var x0, y0 //used to store previous scales
-      ;
+  var x0, y0; //used to store previous scales
 
   //============================================================
 
@@ -60,7 +51,6 @@ nv.models.line = function() {
 
       //------------------------------------------------------------
 
-
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
 
@@ -71,8 +61,8 @@ nv.models.line = function() {
       var g = wrap.select('g');
 
       //set up the gradient constructor function
-      chart.gradient = function(d,i,p) {
-        return nv.utils.colorLinearGradient( d, chart.id() + '-' + i, p, color(d,i), wrap.select('defs') );
+      chart.gradient = function(d, i, p) {
+        return nv.utils.colorLinearGradient(d, chart.id() + '-' + i, p, color(d, i), wrap.select('defs'));
       };
 
       gEnter.append('g').attr('class', 'nv-groups');
@@ -89,7 +79,7 @@ nv.models.line = function() {
       var scatterWrap = wrap.select('.nv-scatterWrap');
           //.datum(data); // Data automatically trickles down from the wrap
 
-      d3.transition(scatterWrap).call(scatter);
+      scatterWrap.call(scatter);
 
 
       defsEnter.append('clipPath')
@@ -100,7 +90,7 @@ nv.models.line = function() {
           .attr('width', availableWidth)
           .attr('height', availableHeight);
 
-      g   .attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + scatter.id() + ')' : '');
+      g.attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + scatter.id() + ')' : '');
       scatterWrap
           .attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + scatter.id() + ')' : '');
 
@@ -132,9 +122,9 @@ nv.models.line = function() {
             return d3.svg.area()
                 .interpolate(interpolate)
                 .defined(defined)
-                .x(function(d,i) { return x0(getX(d,i)); })
-                .y0(function(d,i) { return y0(getY(d,i)); })
-                .y1(function(d,i) { return y0( y.domain()[0] <= 0 ? y.domain()[1] >= 0 ? 0 : y.domain()[1] : y.domain()[0] ); })
+                .x(function(d, i) { return x0(getX(d, i)); })
+                .y0(function(d, i) { return y0(getY(d, i)); })
+                .y1(function(d, i) { return y0(y.domain()[0] <= 0 ? y.domain()[1] >= 0 ? 0 : y.domain()[1] : y.domain()[0]); })
                 //.y1(function(d,i) { return y0(0) }) //assuming 0 is within y domain.. may need to tweak this
                 .apply(this, [d.values]);
           });
@@ -145,9 +135,9 @@ nv.models.line = function() {
             return d3.svg.area()
                 .interpolate(interpolate)
                 .defined(defined)
-                .x(function(d,i) { return x0(getX(d,i)); })
-                .y0(function(d,i) { return y0(getY(d,i)); })
-                .y1(function(d,i) { return y0( y.domain()[0] <= 0 ? y.domain()[1] >= 0 ? 0 : y.domain()[1] : y.domain()[0] ); })
+                .x(function(d, i) { return x0(getX(d, i)); })
+                .y0(function(d, i) { return y0(getY(d, i)); })
+                .y1(function(d, i) { return y0(y.domain()[0] <= 0 ? y.domain()[1] >= 0 ? 0 : y.domain()[1] : y.domain()[0]); })
                 //.y1(function(d,i) { return y0(0) }) //assuming 0 is within y domain.. may need to tweak this
                 .apply(this, [d.values]);
           });
@@ -156,40 +146,44 @@ nv.models.line = function() {
             return d3.svg.area()
                 .interpolate(interpolate)
                 .defined(defined)
-                .x(function(d,i) { return x(getX(d,i)); })
-                .y0(function(d,i) { return y(getY(d,i)); })
-                .y1(function(d,i) { return y0( y.domain()[0] <= 0 ? y.domain()[1] >= 0 ? 0 : y.domain()[1] : y.domain()[0] ); })
+                .x(function(d, i) { return x(getX(d, i)); })
+                .y0(function(d, i) { return y(getY(d, i)); })
+                .y1(function(d, i) { return y0(y.domain()[0] <= 0 ? y.domain()[1] >= 0 ? 0 : y.domain()[1] : y.domain()[0]); })
                 //.y1(function(d,i) { return y0(0) }) //assuming 0 is within y domain.. may need to tweak this
                 .apply(this, [d.values]);
           });
 
-
       var linePaths = groups.selectAll('path.nv-line')
-          .data(function(d) { return [d.values]; });
+          .data(function(d) {
+            var values = scatter.singlePoint() ? x.domain().map(function(x, i) {
+              return [x, d.values[0][1]];
+            }) : d.values;
+            return [values];
+          });
       linePaths.enter().append('path')
           .attr('class', 'nv-line')
           .attr('d',
             d3.svg.line()
               .interpolate(interpolate)
               .defined(defined)
-              .x(function(d,i) { return x0(getX(d,i)); })
-              .y(function(d,i) { return y0(getY(d,i)); })
+              .x(function(d, i) { return x0(getX(d, i)); })
+              .y(function(d, i) { return y0(getY(d, i)); })
           );
       d3.transition(groups.exit().selectAll('path.nv-line'))
           .attr('d',
             d3.svg.line()
               .interpolate(interpolate)
               .defined(defined)
-              .x(function(d,i) { return x0(getX(d,i)); })
-              .y(function(d,i) { return y0(getY(d,i)); })
+              .x(function(d, i) { return x0(getX(d, i)); })
+              .y(function(d, i) { return y0(getY(d, i)); })
           );
       d3.transition(linePaths)
           .attr('d',
             d3.svg.line()
               .interpolate(interpolate)
               .defined(defined)
-              .x(function(d,i) { return x(getX(d,i)); })
-              .y(function(d,i) { return y(getY(d,i)); })
+              .x(function(d, i) { return x(getX(d, i)); })
+              .y(function(d, i) { return y(getY(d, i)); })
           );
 
 
@@ -210,7 +204,7 @@ nv.models.line = function() {
   chart.dispatch = scatter.dispatch;
   chart.scatter = scatter;
 
-  d3.rebind(chart, scatter, 'id', 'interactive', 'size', 'xScale', 'yScale', 'zScale', 'xDomain', 'yDomain', 'sizeDomain', 'forceX', 'forceY', 'forceSize', 'useVoronoi', 'clipVoronoi', 'clipRadius', 'padData', 'nice');
+  d3.rebind(chart, scatter, 'id', 'interactive', 'size', 'xScale', 'yScale', 'zScale', 'xDomain', 'yDomain', 'sizeDomain', 'sizeRange', 'forceX', 'forceY', 'forceSize', 'useVoronoi', 'clipVoronoi', 'clipRadius', 'padData', 'padDataOuter', 'singlePoint', 'nice');
 
   chart.color = function(_) {
     if (!arguments.length) { return color; }
@@ -268,12 +262,6 @@ nv.models.line = function() {
     if (!arguments.length) { return getY; }
     getY = _;
     scatter.y(_);
-    return chart;
-  };
-
-  chart.delay = function(_) {
-    if (!arguments.length) { return delay; }
-    delay = _;
     return chart;
   };
 

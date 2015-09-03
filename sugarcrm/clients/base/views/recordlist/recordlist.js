@@ -24,7 +24,6 @@
         'Editable',
         'MergeDuplicates',
         'Pagination',
-        'LinkedModel',
         'MassCollection'
     ],
 
@@ -543,7 +542,12 @@
      */
     editClicked: function(model, field) {
         if (field.def.full_form) {
-            this.createRelatedRecord(this.module, this.context.get('link'), model.id);
+            var parentModel = this.context.parent.get('model');
+            var link = this.context.get('link');
+
+            // `app.bwc.createRelatedRecord` navigates to the BWC EditView if an
+            // id is passed to it.
+            app.bwc.createRelatedRecord(this.module, parentModel, link, model.id);
         } else {
             this.toggleRow(model.id, true);
             //check to see if horizontal scrolling needs to be enabled

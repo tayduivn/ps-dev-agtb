@@ -574,19 +574,31 @@ class PMSEExecuter
 
     public function validateNestedLoopCount($flowData)
     {
-        if (key_exists($flowData['bpmn_id'], $this->executedElements)) {
-            $this->executedElements[$flowData['bpmn_id']]++;
-        } else {
-            $this->executedElements[$flowData['bpmn_id']] = 1;
-        }
+        // start elements doesn't have id, and they only execute once, so no need to count
+        if (!empty($flowData['cas_sugar_object_id'])) {
+            $sugar_id = $flowData['cas_sugar_object_id'];
+            $element_id = $flowData['bpmn_id'];
 
-        $count = $this->executedElements[$flowData['bpmn_id']];
-        $limit = $this->maxExecutionCycleNumber;
+            // If the element (activity, flow, etc) is triggered by the record for first time
+            // initiate the counter by executedElements[record_id][element_id]
+            // else increase the counter
+            if (empty($this->executedElements[$sugar_id][$element_id])) {
+                $this->executedElements[$sugar_id][$element_id] = 1;
+            } else {
+                $this->executedElements[$sugar_id][$element_id]++;
+            }
 
-        if ($count > $limit) {
-            throw new Exception("Nested loops limit of {$limit} reached", 1);
+            // if count exceed the cycle number throw a exception.
+            $count = $this->executedElements[$sugar_id][$element_id];
+            $limit = $this->maxExecutionCycleNumber;
+
+            if ($count > $limit) {
+                throw new Exception("Nested loops limit of {$limit} reached", 1);
+            } else {
+                return $count;
+            }
         } else {
-            return $count;
+            return 0;
         }
     }
 

@@ -224,8 +224,12 @@ class PMSEEngineFilterApi extends FilterApi
             if ($access == 'regular_user') {
                 global $current_user;
                 $where->queryAnd()->equals('cas_user_id', $current_user->id);
+                $where->queryAnd()->notEquals('cas_assignment_method', 'selfservice');
             } else {
-                $where->queryAnd()->in('cas_sugar_module', PMSEEngineUtils::getSupportedModules());
+                $supportedModules = PMSEEngineUtils::getSupportedModules();
+                if (!empty($supportedModules)) {
+                    $where->queryAnd()->in('cas_sugar_module', $supportedModules);
+                }
             }
         }
         self::$isVisibilityApplied = true;
@@ -429,6 +433,7 @@ class PMSEEngineFilterApi extends FilterApi
 
         $fields[] = array("cas_sugar_object_id", 'cas_sugar_object_id');
         $fields[] = array("cas_user_id",'cas_user_id');
+        $fields[] = array("cas_assignment_method",'cas_assignment_method');
 
 
         $q->joinTable('pmse_inbox', array('alias' => 'inbox', 'joinType' => 'INNER', 'linkingTable' => true))
@@ -531,7 +536,7 @@ class PMSEEngineFilterApi extends FilterApi
             $arr_aux['flow_id'] = $bean->fetched_row['id'];
             $arr_aux['id2'] = $bean->fetched_row['inbox_id'];
             $arr_aux['task_name'] = $bean->fetched_row['act_name'];
-            $arr_aux['cas_status'] = $bean->fetched_row['act_assignment_method'];
+            $arr_aux['cas_assignment_method'] = $bean->fetched_row['cas_assignment_method'];
             $arr_aux['assigned_user_name'] = $bean->fetched_row['assigned_user_name'];
             $arr_aux['cas_sugar_module'] = $bean->fetched_row['cas_sugar_module'];
             $arr_aux['cas_sugar_object_id'] = $bean->fetched_row['cas_sugar_object_id'];

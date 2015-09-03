@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: ProcessBouncedEmails.php 56797 2010-06-02 23:48:33Z asandberg $
+
  * Description:
  ********************************************************************************/
 //find all mailboxes of type bounce.

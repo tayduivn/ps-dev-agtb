@@ -42,14 +42,23 @@
     /**
      * Process Login
      */
-    login: function() {
-    	app.router.login();
+    login: function() {        
+        if (app.config && 
+            app.config.externalLogin === true &&
+            app.config.externalLoginSameWindow === true &&
+            !_.isEmpty(app.config.externalLoginUrl)
+        ) {
+            window.location.replace(app.config.externalLoginUrl);
+        } else {
+            app.router.login();
+        }
     },
-    
+
     /**
      * Show Login form
      */
     login_form: function() {
+        app.config.externalLogin = false;
         app.controller.loadView({
             module: "Login",
             layout: "login",

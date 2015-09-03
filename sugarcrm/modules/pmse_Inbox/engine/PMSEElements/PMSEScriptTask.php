@@ -45,4 +45,28 @@ class PMSEScriptTask extends PMSEActivity
     {
         return $this->currentUser;
     }
+
+    /**
+     * @param $value
+     * @param $bean
+     * @return string|type
+     */
+    public function getCustomUser($value, $bean)
+    {
+        switch ($value) {
+            case 'currentuser':
+                $newValue = $this->userAssignmentHandler->getCurrentUserId();
+                break;
+            case 'supervisor':
+                $newValue = $this->userAssignmentHandler->getSupervisorId($this->currentUser->id);
+                break;
+            case 'owner':
+                $newValue = $this->userAssignmentHandler->getRecordOwnerId($bean->id, $bean->module_dir);
+                break;
+            default:
+                $newValue = $value;
+                break;
+        }
+        return $newValue;
+    }
 }

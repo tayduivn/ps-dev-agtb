@@ -64,29 +64,7 @@
      * Initialize feature collection.
      */
     _initCollection: function () {
-        var self = this;
         this.collection = app.data.createBeanCollection(this.module);
-        this.collection.sync = _.wrap(
-            this.collection.sync,
-            function (sync, method, model, options) {
-                options = options || {};
-                if (!options.error) {
-                    options.error = function(error) {
-                        if (error.status == 412) {
-                            app.once('app:sync:complete', function() {
-                                self.loadData(options);
-                            });
-                        }
-                    }
-                }
-                options.endpoint = function (method, model, options, callbacks) {
-                    var url = app.api.buildURL(model.module, null, {}, options.params);
-                    return app.api.call('read', url, {}, callbacks);
-                };
-                sync(method, model, options);
-            }
-        );
-
         this.context.set('collection', this.collection);
         return this;
     },
@@ -120,11 +98,18 @@
      * {@inheritDoc}
      */
     loadData: function (options) {
-        options = options || {};
         if (this.collection.dataFetched) {
             return;
         }
-        this.collection.options = {
+        var currentContext = this.context.parent || this.context,
+            model = currentContext.get('model');
+
+        if (!model.get('kbdocument_id')) {
+            model.once('sync', function() {this.loadData();}, this);
+            return;
+        }
+        options = options || {};
+        this.collection.setOption({
             limit: this.settings.get('limit'),
             fields: [
                 'id',
@@ -135,11 +120,11 @@
                 'language'
             ],
             filter: {
-                'kbdocument_id' : {
-                    '$equals': this.model.get('kbdocument_id')
+                'kbdocument_id': {
+                    '$equals': model.get('kbdocument_id')
                 },
                 'id' : {
-                    '$not_equals': this.model.get('id')
+                    '$not_equals': model.get('id')
                 },
                 'status': {
                     '$equals': 'published'
@@ -148,7 +133,14 @@
                     '$equals': 1
                 }
             }
-        };
+        });
+        if (!options.error) {
+            options.error = _.bind(function(error) {
+                if (error.code === 'not_authorized') {
+                    this.$el.find('.block-footer').html(app.lang.get('LBL_NO_DATA_AVAILABLE', this.module));
+                }
+            }, this);
+        }
         this.collection.fetch(options);
     }
 })

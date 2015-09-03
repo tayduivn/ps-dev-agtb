@@ -958,6 +958,28 @@ AdamActivity.prototype.getActivityType = function () {
     return this.act_type;
 };
 
+AdamActivity.prototype._getScriptTypeActionHandler = function (newScriptAction) {
+    var self = this;
+    return function () {
+        if (self.act_script_type === 'NONE') {
+            self.updateScriptType(newScriptAction);
+            self.getCanvas().project.save();
+        } else {
+            App.alert.show(
+                'change_script_type_confirmation',
+                {
+                    level: 'confirmation',
+                    messages: translate('LBL_PMSE_CHANGE_ACTION_TYPE_CONFIRMATION'),
+                    onConfirm: function () {
+                        self.updateScriptType(newScriptAction);
+                        self.getCanvas().project.save();
+                    }
+                }
+            );
+        }
+    };
+};
+
 AdamActivity.prototype.getContextMenu = function () {
     var self = this,
         deleteAction,
@@ -1001,36 +1023,28 @@ AdamActivity.prototype.getContextMenu = function () {
     noneAction = new Action({
         text: translate('LBL_PMSE_CONTEXT_MENU_UNASSIGNED'),
         cssStyle: 'adam-menu-script-none',
-        handler: function () {
-            self.updateScriptType('NONE');
-        },
+        handler: self._getScriptTypeActionHandler('NONE'),
         disabled: (this.act_script_type === 'NONE')
     });
 
     assignUserAction = new Action({
         text: translate('LBL_PMSE_CONTEXT_MENU_ASSIGN_USER'),
         cssStyle: 'adam-menu-script-assign_user',
-        handler: function () {
-            self.updateScriptType('ASSIGN_USER');
-        },
+        handler: self._getScriptTypeActionHandler('ASSIGN_USER'),
         disabled: (this.act_script_type === 'ASSIGN_USER')
     });
 
     assignTeamAction = new Action({
         text: translate('LBL_PMSE_CONTEXT_MENU_ASSIGN_TEAM'),
         cssStyle: 'adam-menu-script-assign_team',
-        handler: function () {
-            self.updateScriptType('ASSIGN_TEAM');
-        },
+        handler: self._getScriptTypeActionHandler('ASSIGN_TEAM'),
         disabled: (this.act_script_type === 'ASSIGN_TEAM')
     });
 
     changeFieldAction = new Action({
         text: translate('LBL_PMSE_CONTEXT_MENU_CHANGE_FIELD'),
         cssStyle: 'adam-menu-script-change_field',
-        handler: function () {
-            self.updateScriptType('CHANGE_FIELD');
-        },
+        handler: self._getScriptTypeActionHandler('CHANGE_FIELD'),
         disabled: (this.act_script_type === 'CHANGE_FIELD')
     });
 
@@ -1039,18 +1053,14 @@ AdamActivity.prototype.getContextMenu = function () {
         cssStyle: 'adam-menu-script-add_related_record',
         toolTip: _.isEmpty(this.canvas.project.script_tasks.add_related_record) ? translate('LBL_PMSE_CANNOT_CONFIGURE_ADD_RELATED_RECORD') : null,
         unavailable: _.isEmpty(this.canvas.project.script_tasks.add_related_record) ? true : false,
-        handler: function () {
-            self.updateScriptType('ADD_RELATED_RECORD');
-        },
+        handler: self._getScriptTypeActionHandler('ADD_RELATED_RECORD'),
         disabled: (this.act_script_type === 'ADD_RELATED_RECORD')
     });
 
     businessRuleAction = new Action({
         text: translate('LBL_PMSE_CONTEXT_MENU_BUSINESS_RULE'),
         cssStyle: 'adam-menu-script-business_rule',
-        handler: function () {
-            self.updateScriptType('BUSINESS_RULE');
-        },
+        handler: self._getScriptTypeActionHandler('BUSINESS_RULE'),
         disabled: (this.act_script_type === 'BUSINESS_RULE')
     });
 
@@ -2470,7 +2480,8 @@ AdamActivity.prototype.actionFactory = function (type) {
                                updater_field.proxy.uid = PROJECT_MODULE;
                                updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + initialModule;
                                project.addMetadata('projectModuleFieldsRelated', {
-                                    dataURL: 'pmse_Project/CrmData/addRelatedRecord/'+ PROJECT_MODULE,
+                                    dataURL: 'pmse_Project/CrmData/fields/'+ PROJECT_MODULE
+                                        + "?base_module=" + PROJECT_MODULE,
                                     dataRoot: 'result',
                                     success: function (data) {
                                         updater_field.setVariables(data);

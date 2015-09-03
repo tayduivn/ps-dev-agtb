@@ -128,7 +128,7 @@ describe('Plugins.JSTree', function() {
             };
         field.collection = new app.NestedSetCollection(treeData);
 
-        field._renameHandler(null, jsTreeData);
+        field._renameNodeHandler(null, jsTreeData);
         expect(field.collection.getChild(id).get('name')).toEqual(name);
     });
 

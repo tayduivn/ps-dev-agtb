@@ -20,9 +20,15 @@ require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 
 class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementation implements MetaDataImplementationInterface
 {
-
     const HISTORYFILENAME = 'restored.php';
     const HISTORYVARIABLENAME = 'viewdefs';
+
+    /**
+     * Subpanel link name
+     *
+     * @var string
+     */
+    protected $linkName;
 
     /**
      * The constructor
@@ -37,7 +43,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         $this->mdc = new MetaDataConverter();
         $this->loadedModule = $loadedModule;
         $this->setViewClient($client);
-        $linkName = $this->linkName = $this->getLinkName($subpanelName, $loadedModule);
+        $linkName = $this->linkName = $this->detectLinkName($subpanelName, $loadedModule);
 
         // get the link and the related module name as the module we need the subpanel from
         $bean = BeanFactory::getBean($loadedModule);
@@ -106,6 +112,26 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
     }
 
     /**
+     * Returns subpanel primary module name
+     *
+     * @return string
+     */
+    public function getPrimaryModuleName()
+    {
+        return $this->loadedModule;
+    }
+
+    /**
+     * Returns subpanel link name
+     *
+     * @return string
+     */
+    public function getLinkName()
+    {
+        return $this->linkName;
+    }
+
+    /**
      * If a subpanel cannot be found in sidecar, try to find it in legacy
      * and convert it
      * @return bool
@@ -157,12 +183,13 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
     }
 
     /**
-     * Get the link name for a subpanel using witchcraft and wizardry
+     * Detects the link name for a subpanel using witchcraft and wizardry
+     *
      * @param string $subpanelName - this is the name of the subpanel
      * @param string $loadedModule - this is the name of the module that is loaded
      * @return string the linkname for the subpanel
      */
-    protected function getLinkName($subpanelName, $loadedModule)
+    protected function detectLinkName($subpanelName, $loadedModule)
     {
         if (isModuleBWC($loadedModule) && !file_exists("modules/{$loadedModule}/clients/" . $this->getViewClient() . "/layouts/subpanels/subpanels.php")) {
             @include "modules/{$loadedModule}/metadata/subpaneldefs.php";

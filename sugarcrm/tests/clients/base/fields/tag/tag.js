@@ -85,8 +85,6 @@ describe("tag field", function() {
         expect(resultTags[1].text).toEqual(name1);
         expect(resultTags[0].id).toEqual(name0);
         expect(resultTags[1].id).toEqual(name1);
-        expect(resultTags[0].locked).toBe(false);
-        expect(resultTags[1].locked).toBe(false);
     });
 
     describe('storeValues', function() {

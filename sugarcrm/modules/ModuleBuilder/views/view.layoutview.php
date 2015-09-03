@@ -135,15 +135,24 @@ class ViewLayoutView extends SugarView
 // END SUGARCRM flav=ent ONLY
         }
 
+        $available_fields = $parser->getAvailableFields();
+        $field_defs = $parser->getFieldDefs();
+
+        foreach($available_fields as $key => $value) {
+            if(isset($field_defs[$value['name']]['studio']) && $field_defs[$value['name']]['studio'] === false) {
+                unset($available_fields[$key]);
+            }
+        }
+
         $smarty->assign('buttons', $this->getButtonHTML($buttons));
 
         // assign fields and layout
-        $smarty->assign ( 'available_fields', $parser->getAvailableFields () ) ;
+        $smarty->assign ( 'available_fields', $available_fields ) ;
         
         $smarty->assign ( 'disable_layout', $disableLayout) ;
         $smarty->assign ( 'required_fields', $requiredFields) ;
         $smarty->assign ( 'layout', $parser->getLayout () ) ;
-        $smarty->assign ( 'field_defs', $parser->getFieldDefs () ) ;
+        $smarty->assign ( 'field_defs', $field_defs ) ;
         $smarty->assign ( 'view_module', $this->editModule ) ;
         $smarty->assign ( 'view', $this->editLayout ) ;
 // BEGIN SUGARCRM flav=ent ONLY

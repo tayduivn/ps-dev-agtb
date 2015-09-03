@@ -20,7 +20,7 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        this.plugins = _.union(this.plugins || [], ['AddAsInvitee']);
+        this.plugins = _.union(this.plugins || [], ['AddAsInvitee', 'ReminderTimeDefaults']);
         this._super('initialize', [options]);
     }
 })

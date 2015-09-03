@@ -365,6 +365,7 @@ $dictionary['Opportunity'] = array(
             'name' => 'contact_role',
             'type' => 'enum',
             'source' => 'non-db',
+            'massupdate' => false,
             'vname' => 'LBL_OPPORTUNITY_ROLE',
             'options' => 'opportunity_relationship_type_dom',
             'link' => 'contacts',

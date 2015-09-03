@@ -55,6 +55,8 @@ define('MB_PORTALSEARCHVIEW', 'portalsearchview');
 define('MB_PORTAL', 'portal');
 //END SUGARCRM flav=ent ONLY
 define('MB_RECORDVIEW', 'recordview');
+define('MB_FILTERVIEW', 'filter');
+define('MB_BWCFILTERVIEW', 'searchfields');
 
 class MBConstants
 {

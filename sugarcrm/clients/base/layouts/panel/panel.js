@@ -75,6 +75,10 @@
         this.listenTo(this.context, 'refresh:count', function(hasAtLeast, properties) {
             this.$('.subpanel').toggleClass('empty', !properties.length);
         }, this);
+
+        this.context.on('change:collapsed', function(context, collapsed) {
+            this.toggle(!collapsed);
+        }, this);
     },
 
     /**
@@ -113,8 +117,21 @@
     },
 
     /**
+     * Saves the collapsed/expanded state of the subpanel in localStorage.
+     *
+     * @private
+     * @param {boolean} [show] `true` to expand, `false` to collapse. Collapses
+     *   by default.
+     */
+    _setCollapsedState: function(show) {
+        var state = show ? this.HIDE_SHOW.SHOW : this.HIDE_SHOW.HIDE;
+        app.user.lastState.set(this.hideShowLastStateKey, state);
+    },
+
+    /**
      * Toggles the panel.
      *
+     * @private
      * @param {boolean} [show] `true` to show, `false` to hide, `undefined` to
      *   toggle.
      */
@@ -134,7 +151,7 @@
         this.context.set('skipFetch', false);
         this.context.loadData();
 
-        app.user.lastState.set(this.hideShowLastStateKey, show ? this.HIDE_SHOW.SHOW : this.HIDE_SHOW.HIDE);
+        this._setCollapsedState(show);
     },
 
     /**
@@ -148,7 +165,7 @@
         _.each(this._components, function(component) {
             // FIXME: The layout should not be responsible for this. Will be
             // addressed as part of SC-4533.
-            if (component.$el.hasClass('subpanel-header')) {
+            if (this._stopComponentToggle(component)) {
                 return;
             }
             if (!this._canToggle) {
@@ -160,5 +177,18 @@
             }
         }, this);
         this._canToggle = true;
+    },
+
+    /**
+     * Extensible check to see if this component should be allowed to be toggled.
+     * If this returns true: _toggleComponent will return without further render/show/hide checks
+     * If this returns false: _toggleComponent will continue through render/show/hide checks
+     *
+     * @param component
+     * @returns {boolean}
+     * @private
+     */
+    _stopComponentToggle: function(component) {
+        return component.$el.hasClass('subpanel-header');
     }
 })

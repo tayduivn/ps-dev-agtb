@@ -128,6 +128,7 @@ $dictionary['Contact'] = array(
             'options' => 'opportunity_relationship_type_dom',
             'link' => 'opportunities',
             'rname_link' => 'contact_role',
+            'massupdate' => false
         ),
         'reports_to_id' => array(
             'name' => 'reports_to_id',
