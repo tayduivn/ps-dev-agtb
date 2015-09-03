@@ -13,6 +13,7 @@
 use \Sugarcrm\Sugarcrm\Security\Password\Hash;
 
 require_once 'include/SugarObjects/templates/person/Person.php';
+require_once 'modules/ACL/AclCache.php';
 
 /**
  * User is used to store customer information.
@@ -1805,12 +1806,14 @@ EOQ;
      * @return array
      */
     public function getDeveloperModules() {
-        static $developerModules;
-        if (!isset($_SESSION[$this->user_name.'_get_developer_modules_for_user']) ) {
-            $_SESSION[$this->user_name.'_get_developer_modules_for_user'] = $this->_getModulesForACL('dev');
+        $cache = AclCache::getInstance();
+        $modules = $cache->retrieve($this->id, 'developer_modules');
+        if ($modules === null) {
+            $modules = $this->_getModulesForACL('dev');
+            $cache->store($this->id, 'developer_modules', $modules);
         }
 
-        return $_SESSION[$this->user_name.'_get_developer_modules_for_user'];
+        return $modules;
     }
     /**
      * Is this user a developer for the specified module
@@ -1845,11 +1848,14 @@ EOQ;
      * @return array
      */
     public function getAdminModules() {
-        if (!isset($_SESSION[$this->user_name.'_get_admin_modules_for_user']) ) {
-            $_SESSION[$this->user_name.'_get_admin_modules_for_user'] = $this->_getModulesForACL('admin');
+        $cache = AclCache::getInstance();
+        $modules = $cache->retrieve($this->id, 'admin_modules');
+        if ($modules === null) {
+            $modules = $this->_getModulesForACL('admin');
+            $cache->store($this->id, 'admin_modules', $modules);
         }
 
-        return $_SESSION[$this->user_name.'_get_admin_modules_for_user'];
+        return $modules;
     }
     /**
      * Is this user an admin for the specified module
@@ -2484,14 +2490,6 @@ EOQ;
         return md5($this->hashTS . $tabHash);
     }
 
-    public function setupSession() {
-        if (!isset($_SESSION[$this->user_name.'_get_developer_modules_for_user'])) {
-            $this->getDeveloperModules();
-        }
-        if (!isset($_SESSION[$this->user_name.'_get_admin_modules_for_user'])) {
-            $this->getAdminModules();
-        }
-    }
     /**
      * Checks if the passed email is primary.
      *
