@@ -2,6 +2,12 @@
 /*
 Modification information
 
+commit efed78eddcd5037ff441868bf278ee308664413e (HEAD -> BR-3307, origin/BR-3307)
+Author: Sergey Morozov <smorozov@sugarcrm.com>
+Date:   Thu Sep 3 13:50:03 2015 +0300
+
+[BR-3307] [Studio] Visibility Editor: dragging available options creates multiple items in the available options list and cannot be dragged
+
 commit b09cb8f7937948c1428f8378885f9e70ecb59467
 Author: Sergey Morozov <smorozov@sugarcrm.com>
 Date:   Fri Aug 21 15:08:37 2015 +0300
