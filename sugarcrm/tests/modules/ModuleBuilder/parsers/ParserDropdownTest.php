@@ -15,29 +15,48 @@ class ParserDropdownTest extends Sugar_PHPUnit_Framework_TestCase
     // Custom include/language file path
     private $customFile;
 
+    // Custom modlist file path
+    private $customModList;
+
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('moduleList');
 
         $this->customFile =  'custom/include/language/' . $GLOBALS['current_language'] . '.lang.php';
         if (file_exists($this->customFile)) {
             $this->fileBackup = file_get_contents($this->customFile);
         }
+
+        $this->customModList = 'custom/Extension/application/Ext/Language/' . $GLOBALS['current_language'] . '.sugar_moduleList.php';
+        if (file_exists($this->customModList)) {
+            $this->modListBackup = file_get_contents($this->customModList);
+            SugarAutoLoader::unlink($this->customModList, true);
+        }
+
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('moduleList');
     }
 
     public function tearDown()
     {
         if (isset($this->fileBackup)) {
             file_put_contents($this->customFile, $this->fileBackup);
+        } elseif (file_exists($this->customFile)) {
+            SugarAutoLoader::unlink($this->customFile, true);
+        }
+
+        if (isset($this->modListBackup)) {
+            file_put_contents($this->customModList, $this->modListBackup);
         }
 
         // Clear cache so it can be reloaded later
         $cache_key = 'app_list_strings.' . $GLOBALS['current_language'];
         sugar_cache_clear($cache_key);
+
+        // Reload app_list_strings
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         
         $_REQUEST = array();
         
