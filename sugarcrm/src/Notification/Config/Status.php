@@ -61,8 +61,8 @@ class Status
         $this->verifyModule($carrierName);
         /** @var \Administration $config */
         $config = \BeanFactory::getBean('Administration');
-        $result = $config->saveSetting(static::CONFIG_CATEGORY, $carrierName, $status);
-        return !empty($result);
+        $config->saveSetting(static::CONFIG_CATEGORY, $carrierName, $status);
+        return !empty($status);
     }
 
     /**
@@ -73,10 +73,17 @@ class Status
      */
     protected function verifyModule($module)
     {
-        $registry = CarrierRegistry::getInstance();
-        if (!in_array($module, $registry->getCarriers())) {
+        if (!in_array($module, $this->getCarriers())) {
             throw new \LogicException('Not found carrier module: ' . $module);
         }
     }
 
+    /**
+     * @see CarrierRegistry::getCarriers
+     */
+    protected function getCarriers()
+    {
+        $registry = CarrierRegistry::getInstance();
+        return $registry->getCarriers();
+    }
 }
