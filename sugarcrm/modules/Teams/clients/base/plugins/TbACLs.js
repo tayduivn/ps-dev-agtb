@@ -28,9 +28,7 @@
              */
             onAttach: function(component, plugin) {
                 this.on('init', function() {
-                    if (!_.isUndefined(app.config.teamBasedAcl.enabled) && !_.isUndefined(app.config.teamBasedAcl.disabled_modules)) {
-                        this.isTBAEnabled = this.isEnabledForModule(this.module);
-                    }
+                    this.isTBAEnabled = this.isEnabledForModule(this.module);
                 });
             },
 
@@ -51,15 +49,27 @@
              * @param {number} index Row index.
              */
             toggleSelectedTeam: function(index) {
-                var btnName = 'select-team',
-                    btnSelector = '.btn[data-rname='+ btnName +'][data-index=' + index + ']',
-                    btnIconSelector = btnSelector + ' i.fa';
                 if (!this.value[index] || !this.value[index].id) {
                     return;
                 }
                 this.value[index].selected = this.value[index].selected ? false : true;
                 this._updateAndTriggerChange(this.value);
-                if (this.value[index].selected) {
+                this._toggleSelectedButton(index, this.value[index].selected);
+            },
+
+            /**
+             * Toggle selected button.
+             * @param {number} index
+             * @param {boolean} state
+             * @private
+             */
+            _toggleSelectedButton: function(index, state) {
+                var state = state || false,
+                    btnName = 'select-team',
+                    btnSelector = '.btn[data-rname='+ btnName +'][data-index=' + index + ']',
+                    btnIconSelector = btnSelector + ' i.fa';
+
+                if (state) {
                     this.$(btnSelector).addClass('active');
                     this.$(btnIconSelector).removeClass('fa-lock').addClass('fa-unlock-alt');
                 } else {
@@ -74,8 +84,12 @@
              * @return {boolean}
              */
             isEnabledForModule: function(module) {
-                return app.config.teamBasedAcl.enabled &&
-                    (_.indexOf(app.config.teamBasedAcl.disabled_modules, module) === -1)
+                if (!_.isUndefined(app.config.teamBasedAcl.enabled) && !_.isUndefined(app.config.teamBasedAcl.disabledModules)) {
+                    return app.config.teamBasedAcl.enabled &&
+                        (_.indexOf(app.config.teamBasedAcl.disabledModules, module) === -1);
+                } else {
+                    return false;
+                }
             },
 
             /**
