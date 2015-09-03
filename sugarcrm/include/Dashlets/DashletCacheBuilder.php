@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: DashletCacheBuilder.php 54544 2010-02-17 00:53:34Z mitani $
+
  * Description: Handles Generic Widgets 
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.

@@ -150,6 +150,19 @@
             this.collection.on('reset', this.render, this);
         }
         this.on('render', this.applySvgIcon, this);
+        this.on('linked-model:create', this._reloadData, this);
+    },
+
+    /**
+     * Re-fetches the data for the context's collection.
+     *
+     * FIXME: This will be removed when SC-4775 is implemented.
+     *
+     * @private
+     */
+    _reloadData: function() {
+        this.context.set('skipFetch', false);
+        this.context.reloadData();
     },
 
     /**

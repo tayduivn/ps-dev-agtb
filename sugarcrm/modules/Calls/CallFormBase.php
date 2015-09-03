@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: CallFormBase.php 56853 2010-06-08 02:36:54Z clee $
+
  * Description: Call Form Base
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.

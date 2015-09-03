@@ -28,7 +28,6 @@ $viewdefs['KBContents']['base']['layout']['subpanels'] = array (
           'context' => array(
               'link' => 'revisions',
           ),
-          'acl_action' => 'edit',
       ),
       array(
           'layout' => 'subpanel',
@@ -36,7 +35,6 @@ $viewdefs['KBContents']['base']['layout']['subpanels'] = array (
           'context' => array(
               'link' => 'notes',
           ),
-          'acl_action' => 'edit',
       ),
   ),
 );

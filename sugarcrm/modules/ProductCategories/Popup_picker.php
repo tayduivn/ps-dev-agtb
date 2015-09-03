@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: Popup_picker.php 50752 2009-09-10 22:18:28Z dwong $
+
  * Description:  This file is used for all popups on this module
  * The popup_picker.html file is used for generating a list from which to find and
  * choose one instance.

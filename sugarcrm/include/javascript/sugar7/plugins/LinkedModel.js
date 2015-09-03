@@ -47,7 +47,8 @@
                         if (!parentValue && parentModel.fields[field.rname] &&
                             parentModel.fields[field.rname].type == 'fullname'
                         ) {
-                            parentValue = parentModel.get('full_name');
+                            parentValue = parentModel.get('full_name')
+                                || app.utils.formatNameLocale(parentModel.attributes);
                         }
                         model.set(field.name, parentValue);
                         model.set(field.id_name, parentModel.get('id'));
@@ -95,12 +96,12 @@
              *
              * @param {String} module Module name.
              */
-            createRelatedRecord: function(module, link, id) {
+            createRelatedRecord: function(module, link) {
                 var bwcExceptions = ['Emails'],
                     moduleMeta = app.metadata.getModule(module);
 
                 if (moduleMeta && moduleMeta.isBwcEnabled && !_.contains(bwcExceptions, module)) {
-                    this.routeToBwcCreate(module, id);
+                    this.routeToBwcCreate(module);
                 } else {
                     this.openCreateDrawer(module, link);
                 }
@@ -111,14 +112,14 @@
              *
              * @param {String} module Module name.
              */
-            routeToBwcCreate: function(module, id) {
+            routeToBwcCreate: function(module) {
                 var proto = Object.getPrototypeOf(this);
                 if (_.isFunction(proto.routeToBwcCreate)) {
                     return proto.routeToBwcCreate.call(this, module);
                 }
                 var parentModel = this.context.parent.get('model'),
                     link = this.context.get('link');
-                app.bwc.createRelatedRecord(module, parentModel, link, id);
+                app.bwc.createRelatedRecord(module, parentModel, link);
             },
 
             /**
@@ -152,14 +153,7 @@
                         return;
                     }
 
-                    self.context.resetLoadFlag();
-                    self.context.set('skipFetch', false);
-                    // All the views have this method, but since this plugin
-                    // can officially be attached to a field, we need this
-                    // safe check.
-                    if (_.isFunction(self.loadData)) {
-                        self.loadData();
-                    }
+                    self.trigger('linked-model:create', model);
                 });
             },
 
@@ -178,6 +172,7 @@
                                     parentModel.get("full_name")
                                         || parentModel.get("document_name")
                                         || parentModel.get("name")
+                                        || app.utils.formatNameLocale(parentModel.attributes)
                                         || ""
                                 );
                             }

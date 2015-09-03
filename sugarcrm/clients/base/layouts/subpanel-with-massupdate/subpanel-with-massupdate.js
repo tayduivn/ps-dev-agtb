@@ -17,16 +17,11 @@
     extendsFrom:"SubpanelLayout",
 
     /**
-     * Show or hide component except `panel-top` and `massupdate`
-     * @param {Component} component
+     * Overriding to just check the items in a subpanel-with-massupdate
+     * @inheritdoc
+     * @override
      */
-    _hideComponent: function(component, show) {
-        if (component.name != "panel-top" && component.name != 'massupdate') {
-            if (show) {
-                component.show();
-            } else {
-                component.hide();
-            }
-        }
+    _stopComponentToggle: function(component) {
+        return component.name === "panel-top" || component.name === 'massupdate';
     }
 })

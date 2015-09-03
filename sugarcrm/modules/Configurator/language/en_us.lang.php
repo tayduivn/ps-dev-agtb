@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: en_us.lang.php 56965 2010-06-15 17:57:35Z jenny $
+
  * Description:  Defines the English language pack for the base application.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.

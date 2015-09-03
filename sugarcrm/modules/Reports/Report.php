@@ -1572,7 +1572,7 @@ class Report
 
     function create_order_by()
     {
-
+        $generated_order_by = '';
         $this->layout_manager->setAttribute('context', 'OrderBy');
         $this->order_by = '';
         $this->order_by_arr = array();
@@ -1582,8 +1582,10 @@ class Report
 
             $this->register_field_for_query($order_by);
 
-            array_push($this->order_by_arr, $this->layout_manager->widgetQuery($order_by));
-
+            $generated_order_by = $this->layout_manager->widgetQuery($order_by);
+            if($generated_order_by != "") {
+                array_push($this->order_by_arr, $generated_order_by);
+            }
         }
         $this->summary_order_by = '';
         //$this->summary_order_by_arr= array();
@@ -1656,7 +1658,9 @@ class Report
                     }
                 }
                 // Changed the sort order, so it would sort by the initial options first
-                array_unshift($this->group_order_by_arr, $order_by);
+                if (!empty($order_by)) {
+                    array_unshift($this->group_order_by_arr, $order_by);
+                }
             }
         }
     }

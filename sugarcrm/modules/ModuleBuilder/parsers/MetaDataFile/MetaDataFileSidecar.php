@@ -23,6 +23,22 @@ require_once 'modules/ModuleBuilder/parsers/MetaDataFileInterface.php';
 class MetaDataFileSidecar implements MetaDataFileInterface
 {
     /**
+     * The path for almost all views
+     *
+     * @var string
+     */
+    protected $viewDir = 'views';
+
+    /**
+     * Mapping of special views to their path
+     *
+     * @var array
+     */
+    protected $viewDirs = array(
+        MB_FILTERVIEW => 'filters',
+    );
+
+    /**
      * @var MetaDataFile
      */
     protected $file;
@@ -48,9 +64,25 @@ class MetaDataFileSidecar implements MetaDataFileInterface
     public function getPath()
     {
         $path = $this->file->getPath();
-        array_splice($path, 2, 0, array('clients', $this->client, 'views'));
+        $viewDir = $this->getViewPath();
+        array_splice($path, 2, 0, array('clients', $this->client, $viewDir));
         $path[] = end($path);
 
         return $path;
+    }
+
+    /**
+     * Gets the view directory for the path from the view
+     *
+     * @return string
+     */
+    protected function getViewPath()
+    {
+        $view = $this->file->getView();
+        if (isset($this->viewDirs[$view])) {
+            return $this->viewDirs[$view];
+        }
+
+        return $this->viewDir;
     }
 }

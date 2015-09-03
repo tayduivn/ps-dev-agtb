@@ -32,10 +32,6 @@
         options.meta = options.meta || {};
         options.meta.template = 'tabbed-dashlet';
 
-        this.plugins = _.union(this.plugins, [
-            'LinkedModel'
-        ]);
-
         this._super('initialize', [options]);
     },
 

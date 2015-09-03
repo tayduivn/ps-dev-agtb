@@ -23,7 +23,11 @@
         this._super('loadData');
 
         if (app.metadata.getModule('Opportunities', 'config').opps_view_by == 'RevenueLineItems') {
-            this.context.parent.trigger('subpanel:reload', {links: ['revenuelineitems']});
+            var $rliSubpanel = $('div[data-subpanel-link="revenuelineitems"]');
+            // only reload RLI subpanel if it is opened
+            if (!$('li.subpanel', $rliSubpanel).hasClass('closed')) {
+                this.context.parent.trigger('subpanel:reload', {links: ['revenuelineitems']});
+            }
         }
     }
 })

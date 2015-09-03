@@ -97,24 +97,7 @@ class ReportsSugarpdfSummary_combo extends ReportsSugarpdfReports
         );
 
         while (($row = $this->bean->get_summary_next_row()) != 0) {
-            $item = array();
-            $count = 0;
-
-            for ($i=0; $i < $this->bean->current_summary_row_count; $i++) {
-                if (($column_row = $this->bean->get_next_row('result', 'display_columns', false, true)) != 0) {
-                    for ($j=0; $j < sizeof($columns_row); $j++) {
-                        $label = $columns_row[$j];
-                        $item[$count][$label] = $column_row['cells'][$j];
-                    }
-                    $count++;
-                } else {
-                    break;
-                }
-            }
-
-            $this->writeHTMLTable($item, false, $options);
-            $this->Ln1();
-
+            // summary columns
             $item = array();
             $count = 0;
 
@@ -133,7 +116,34 @@ class ReportsSugarpdfSummary_combo extends ReportsSugarpdfReports
                 }
                 $value = $row['cells'][$j];
                 $item[$count][$label] = $value;
+            }
 
+            foreach ($item as $i) {
+                $text = '';
+                foreach ($i as $l => $j) {
+                    if ($text) {
+                        $text .= ', ';
+                    }
+                    $text .= $l . ' = ' . $j;
+                }
+                $this->Write(1, $text);
+                $this->Ln1();
+            }
+
+            // display columns
+            $item = array();
+            $count = 0;
+
+            for ($i=0; $i < $this->bean->current_summary_row_count; $i++) {
+                if (($column_row = $this->bean->get_next_row('result', 'display_columns', false, true)) != 0) {
+                    for ($j=0; $j < sizeof($columns_row); $j++) {
+                        $label = $columns_row[$j];
+                        $item[$count][$label] = $column_row['cells'][$j];
+                    }
+                    $count++;
+                } else {
+                    break;
+                }
             }
 
             $this->writeHTMLTable($item, false, $options);

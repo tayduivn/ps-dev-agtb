@@ -181,6 +181,8 @@
         setFields = false;
         options = options || {};
 
+        options.module_list = this.context.get('module_list') || [];
+
         // pull tag ids out of context and pass them into our options to filter
         var tagFilters = _.pluck(this.context.get('tags'), 'id');
         if (tagFilters) {

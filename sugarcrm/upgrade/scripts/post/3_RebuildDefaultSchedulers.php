@@ -20,6 +20,8 @@ class SugarUpgradeRebuildDefaultSchedulers extends UpgradeScript
     protected $stockSchedulers;
     protected $existingSchedulers;
 
+    protected $deprecatedSchedulers = array(); // add deprecated jobs here
+
     public function run()
     {
         /** @var Scheduler $scheduler */
@@ -59,8 +61,8 @@ class SugarUpgradeRebuildDefaultSchedulers extends UpgradeScript
     protected function deleteNonStockSchedulers()
     {
         foreach ($this->existingSchedulers as $job => $existing) {
-            if (!array_key_exists($job, $this->stockSchedulers)) {
-                $this->log("Deleting all non-OOTB '{$job}' scheduler jobs");
+            if (!array_key_exists($job, $this->stockSchedulers) && isset($this->deprecatedSchedulers[$job])) {
+                $this->log("Deleting all deprecated-OOTB '{$job}' scheduler jobs");
                 $this->db->query("DELETE FROM schedulers WHERE job = " . $this->db->quoted($job));
             }
         }

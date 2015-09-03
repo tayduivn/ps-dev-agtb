@@ -80,6 +80,9 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 		VardefManager::clearVardef();
 		$repairedTables = array();
 
+        $db->setOption('skip_index_rebuild', true);
+        $indices = $db->get_schema_indices();
+
 		foreach ($beanFiles as $bean => $file) {
 			if(file_exists($file)){
 				require_once ($file);
@@ -87,6 +90,8 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 				$focus = BeanFactory::newBeanByName($bean);
 				if (($focus instanceOf SugarBean) && !isset($repairedTables[$focus->table_name])) {
 				    $sql .= $db->repairTable($focus, $execute);
+                    $compareIndices = isset($indices[$focus->table_name]) ? $indices[$focus->table_name] : array();
+                    $sql .= $db->alterTableIndices($focus->table_name, $focus->getIndices(), $compareIndices, $execute);
 				    $repairedTables[$focus->table_name] = true;
 				}
                 //Repair Custom Fields

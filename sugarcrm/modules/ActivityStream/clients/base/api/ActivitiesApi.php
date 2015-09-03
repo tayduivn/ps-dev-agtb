@@ -138,11 +138,15 @@ class ActivitiesApi extends FilterApi
             $nextOffset = -1;
         }
 
+        $options = array(
+            'requestBean' => $bean,
+        );
+
         foreach ($data as $row) {
             $seed->populateFromRow($row);
-            $record = $this->formatBean($api, array(), $seed);
+            $record = $this->formatBean($api, $args, $seed, $options);
 
-            if ($record['activity_type'] == 'update') {
+            if ($record['activity_type'] === 'update') {
                 if (is_null($bean) || empty($bean->id)) {
                     $fields = json_decode($row['fields'], true);
                     $changedData = array();

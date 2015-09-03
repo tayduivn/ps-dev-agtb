@@ -11,6 +11,11 @@
 ({
     extendsFrom: 'BaseField',
 
+    plugins: [
+        'EllipsisInline',
+        'Tooltip'
+    ],
+
     initialize: function(options) {
         this._super('initialize', arguments);
     },
@@ -23,7 +28,8 @@
         if (this.def.link && this.def.route) {
             action = this.def.route.action;
         }
-        if ((!app.acl.hasAccess('developer', this.model.get('cas_sugar_module')) && this.def.name == 'pro_title') ||
+        if (((!app.acl.hasAccess('developer', this.model.get('cas_sugar_module')) || this.model.get('prj_deleted') === '1')
+            && this.def.name == 'pro_title') ||
             (!app.acl.hasAccess(action, this.model.get('cas_sugar_module')) && this.def.name == 'cas_title')) {
             this.def.link = false;
         }

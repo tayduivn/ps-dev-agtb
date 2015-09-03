@@ -151,12 +151,8 @@ describe('KBContents.Base.Views.KBSDashletUsefulness', function() {
             view.loadData({});
             var rawChartData = view.chartData.attributes.rawChartData;
             expect(rawChartData).toBeDefined();
-            expect(rawChartData.properties).toBeDefined();
             expect(rawChartData.values).toBeDefined();
-            expect(rawChartData.values[0].values).toBeDefined();
-            expect(rawChartData.values[0].values[0]).toEqual(1);
-            expect(rawChartData.values[1].values).toBeDefined();
-            expect(rawChartData.values[1].values[0]).toEqual(1);
+            expect(rawChartData.values).toEqual({});
         });
     });
 });

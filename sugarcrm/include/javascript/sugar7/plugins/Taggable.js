@@ -470,7 +470,7 @@
                     collection.each(function(model, index) {
                         var $tagListOption, data, name, htmlName;
 
-                        name = app.utils.getRecordName(model);
+                        name = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model));
                         htmlName = name.replace(new RegExp('(' + searchTerm + ')', 'ig'), function($1, match) {
                             return '<strong>' + match + '</strong>';
                         });

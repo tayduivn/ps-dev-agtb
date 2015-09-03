@@ -193,10 +193,25 @@ class WebLogicHook extends SugarBean implements RunnableSchedulerJob
             }
         }
 
-        $arguments['data'] = $data;
+        $arguments['data'] = $this->decodeHTML($data);
+        $arguments['dataChanges'] = $this->decodeHTML($arguments['dataChanges']);
         $arguments['event'] = $event;
 
         return $arguments;
     }
 
+    private function decodeHTML($data)
+    {
+        $returnData = array();
+
+        $db = DBManagerFactory::getInstance();
+        foreach ($data as $key => $value) {
+            $returnData[$key] = $db->decodeHTML($value);
+            if (is_array($value)) {
+                $returnData[$key] = $this->decodeHTML($value);
+            }
+        }
+
+        return $returnData;
+    }
 }

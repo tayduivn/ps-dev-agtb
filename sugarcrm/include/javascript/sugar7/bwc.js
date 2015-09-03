@@ -123,11 +123,15 @@
         _createRelatedRecordUrlParams: function(parentModel, link) {
             var params = {
                 parent_type: parentModel.module,
-                parent_name: parentModel.get('name') || parentModel.get('full_name'),
+                parent_name: parentModel.get('name')
+                                || parentModel.get('full_name')
+                                || app.utils.formatNameLocale(parentModel.attributes),
                 parent_id: parentModel.get("id"),
                 return_module: parentModel.module,
                 return_id: parentModel.get("id"),
-                return_name: parentModel.get('name') || parentModel.get('full_name')
+                return_name: parentModel.get('name')
+                                || parentModel.get('full_name')
+                                || app.utils.formatNameLocale(parentModel.attributes)
             };
 
             // find relationship name
@@ -145,7 +149,7 @@
             //Set relate field values as part of URL so they get pre-filled
             var fields = app.data.getRelateFields(parentModel.module, link);
             _.each(fields, function(field){
-                params[field.name] = parentModel.get(field.rname);
+                params[field.name] = parentModel.get(field.rname) || app.utils.formatNameLocale(parentModel.attributes);
                 params[field.id_name] = parentModel.get("id");
                 if(field.populate_list) {
                     // We need to populate fields from parent record into new related record

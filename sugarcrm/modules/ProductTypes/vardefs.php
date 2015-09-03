@@ -106,7 +106,6 @@ $dictionary['ProductType'] = array(
 'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Products', 'allowUserRead' => true)),
 'indices' => array (
        array('name' =>'product_typespk', 'type' =>'primary', 'fields'=>array('id')),
-       array('name' =>'idx_producttypes', 'type'=>'index', 'fields'=>array('name','deleted')),
                                                       )
                             );
 ?>

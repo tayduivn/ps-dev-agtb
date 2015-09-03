@@ -792,7 +792,7 @@ $mod_strings = array(
 'LBL_REMOVE_CUSTOM' => 'Remove Customizations',
 'LBL_CLEAR_RELATIONSHIPS' => 'Clear Relationships',
 'LBL_RESET_LABELS' => 'Reset Labels',
-'LBL_RESET_LAYOUTS' => 'Reset Layouts"',
+'LBL_RESET_LAYOUTS' => 'Reset Layouts',
 'LBL_REMOVE_FIELDS' => 'Remove Custom Fields',
 'LBL_CLEAR_EXTENSIONS' => 'Clear Extensions',
 

@@ -485,11 +485,6 @@ $dictionary['ForecastWorksheet'] = array(
     'indices' => array(
         array('name' => 'idx_worksheets_parent', 'type' => 'index', 'fields' => array('parent_id', 'parent_type')),
         array(
-            'name' => 'idx_worksheets_assigned_del',
-            'type' => 'index',
-            'fields' => array('deleted', 'assigned_user_id')
-        ),
-        array(
             'name' => 'idx_worksheets_assigned_del_time_draft_parent_type',
             'type' => 'index',
             'fields' => array('deleted','assigned_user_id', 'draft', 'date_closed_timestamp', 'parent_type')

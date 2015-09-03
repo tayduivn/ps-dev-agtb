@@ -130,7 +130,6 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         d3.select('#' + d3ChartId)
                             .append('svg')
                             .datum(json)
-                            .transition().duration(500)
                             .call(paretoChart)
                             .selectAll('.nv-y.nv-axis text')
                             .text(function(d) {
@@ -188,9 +187,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         });
 
                     barChart.yAxis
-                        .tickSize(0)
-                        .axisLabel(params.show_y_label)
-                        .tickFormat(d3.format('s'));
+                        .tickSize(0);
 
                     if (params.show_x_label) {
                         barChart.xAxis
@@ -238,13 +235,12 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 if (SUGAR.charts.isDataEmpty(data)) {
 
                     var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
-                    var xLabels = data.label;
+                    var xLabels = json.properties.labels;
 
                     var lineChart = nv.models.lineChart()
                         .id(d3ChartId)
                         .x(function(d) { return d[0]; })
                         .y(function(d) { return d[1]; })
-                        .size(function() { return 123; })
                         .margin(params.margin)
                         .tooltips(params.show_tooltips)
                         .tooltipContent(function(key, x, y, e, graph) {
@@ -255,6 +251,9 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .showTitle(params.show_title)
                         .showLegend(params.show_legend)
                         .showControls(params.show_controls)
+                        .useVoronoi(true)
+                        .wrapTicks(params.wrapTicks)
+                        .staggerTicks(params.staggerTicks)
                         .rotateTicks(params.rotateTicks)
                         .colorData(params.colorData)
                         .strings({
@@ -275,13 +274,53 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             .axisLabel(params.y_axis_label);
                     }
 
-                    lineChart.xAxis
-                        .showMaxMin(false)
-                        .highlightZero(false)
-                        .tickFormat(function(d, i) { return xLabels[d]; });
+                    if (json.data && json.data.length) {
 
-                    lineChart.yAxis
-                        .tickFormat(d3.format('s'));
+                        var firstSeries = json.data[0].values,
+                            firstValueAsDate = new Date(firstSeries[0][0]),
+                            isTimeSeries = firstSeries[0][0] !== 0 && firstValueAsDate instanceof Date && !isNaN(firstValueAsDate.valueOf()),
+                            singlePoint = firstSeries.length === 1;
+
+                        // set x-scale as time instead of linear
+                        var xScale = isTimeSeries ? d3.time.scale() : d3.scale.linear(),
+                            xDomain = null,
+                            yDomain = null;
+
+                        if (singlePoint) {
+                            var xValue = firstSeries[0][0],
+                                xStart = xValue - 1 * (isTimeSeries ? 86400000 : 1),
+                                xEnd = xValue + 1 * (isTimeSeries ? 86400000 : 1);
+                            var yValue = firstSeries[0][1],
+                                yStart = yValue - 2,
+                                yEnd = yValue + 2;
+                            xDomain = [xStart, xEnd];
+                            yDomain = [yStart, yEnd];
+                        }
+
+                        lineChart
+                            .xScale(xScale)
+                            .xDomain(xDomain)
+                            .yDomain(yDomain);
+                        lineChart.lines
+                            .padData(singlePoint ? false : true)
+                            .padDataOuter(-1)
+                            .clipEdge(false)
+                            .singlePoint(singlePoint);
+                        lineChart.xAxis
+                            .highlightZero(false)
+                            .reduceXTicks(false)
+                            .tickFormat(function(d, i) {
+                                return isTimeSeries ?
+                                    d3.time.format('%x')(new Date(d)) :
+                                    xLabels[d].l;
+                            })
+                            .tickValues(singlePoint ? [firstSeries[0][0]] : null)
+                            .ticks(singlePoint ? 1 : null)
+                            .showMaxMin(!singlePoint);
+                        lineChart.yAxis
+                            .ticks(singlePoint ? 5 : null)
+                            .showMaxMin(!singlePoint);
+                    }
 
                     that.chartObject = lineChart;
 
@@ -645,6 +684,15 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                 value = 0,
                 strUndefined = SUGAR.charts.translateString('LBL_CHART_UNDEFINED');
 
+            function sumValues(values) {
+                return values.reduce(function(a, b) { return parseFloat(a) + parseFloat(b); }, 0); // 0 is default value if reducing an empty list
+            }
+
+            function pickLabel(label) {
+                var l = [].concat(label)[0];
+                return l ? l : strUndefined;
+            }
+
             if (json.values.filter(function(d) { return d.values && d.values.length; }).length) {
 
                 switch (chartConfig['chartType']) {
@@ -653,7 +701,7 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                         data = chartConfig.barType === 'stacked' || chartConfig.barType === 'grouped' ?
                             json.label.map(function(d, i) {
                                 return {
-                                    'key': d !== '' ? d : strUndefined,
+                                    'key': pickLabel(d),
                                     'type': 'bar',
                                     'values': json.values.map(function(e, j) {
                                         return {
@@ -667,13 +715,13 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                             }) :
                             json.values.map(function(d, i) {
                                 return {
-                                    'key': d.values.length > 1 ? d.label : d.label[0] !== '' ? d.label[0] : strUndefined,
+                                    'key': d.values.length > 1 ? d.label : pickLabel(d.label),
                                     'type': 'bar',
                                     'values': json.values.map(function(e, j) {
                                         return {
                                           'series': i,
                                           'x': j + 1,
-                                          'y': i === j ? e.values.length > 1 ? e.values.reduce(function(a, b) { return parseFloat(a) + parseFloat(b); }) : parseFloat(e.values[0]) : 0,
+                                          'y': i === j ? sumValues(e.values) : 0,
                                           'y0': 0
                                         };
                                     })
@@ -684,8 +732,8 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                     case 'pieChart':
                         data = json.values.map(function(d, i) {
                             var data = {
-                                'key': [].concat(d.label)[0] !== '' ? [].concat(d.label)[0] : strUndefined,
-                                'value': parseFloat(d.values.reduce(function(a, b) { return a + b; }, 0))
+                                'key': pickLabel(d.label),
+                                'value': sumValues(d.values)
                             };
                             if (d.color !== undefined) {
                                 data.color = d.color;
@@ -700,12 +748,12 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                     case 'funnelChart':
                         data = json.values.reverse().map(function(d, i) {
                             return {
-                                'key': [].concat(d.label)[0] !== '' ? [].concat(d.label)[0] : strUndefined,
+                                'key': pickLabel(d.label),
                                 'values': [{
                                   'series': i,
                                   'label': d.valuelabels[0] ? d.valuelabels[0] : d.values[0],
                                   'x': 0,
-                                  'y': parseFloat(d.values.reduce(function(a, b) { return a + b; }, 0)) || 0,
+                                  'y': sumValues(d.values),
                                   'y0': 0
                                 }]
                             };
@@ -715,7 +763,7 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                     case 'lineChart':
                         data = json.values.map(function(d, i) {
                             return {
-                                'key': d.label !== '' ? d.label : strUndefined,
+                                'key': pickLabel(d.label),
                                 'values': d.values.map(function(e, j) {
                                     return [j, parseFloat(e)];
                                 })
@@ -729,7 +777,7 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
 
                         data = json.values.map(function(d, i) {
                             var values = {
-                                'key': d.label !== '' ? d.label : strUndefined,
+                                'key': pickLabel(d.label),
                                 'y': parseFloat(d.values[0]) + y0
                             };
                             y0 += parseFloat(d.values[0]);
@@ -743,22 +791,28 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                 'properties': {
                     'title': json.properties[0].title,
                     // bar group data (x-axis)
-                    'labels': !json.values.filter(function(d) { return d.values.length; }).length ? [] :
-                        json.values.map(function(d, i) {
-                        return {
-                            'group': i + 1,
-                            'l': d.label !== '' ? d.label : strUndefined
-                        };
-                    }),
+                    'labels': chartConfig['chartType'] === 'lineChart' && json.label ?
+                        json.label.map(function(d, i) {
+                            return {
+                                'group': i + 1,
+                                'l': pickLabel(d)
+                            };
+                        }) :
+                        json.values.filter(function(d) { return d.values.length; }).length ?
+                            json.values.map(function(d, i) {
+                                return {
+                                    'group': i + 1,
+                                    'l': pickLabel(d.label)
+                                };
+                            }) :
+                            [],
                     'values': chartConfig['chartType'] === 'gaugeChart' ?
                         [{'group' : 1, 't': value}] :
                         json.values.filter(function(d) { return d.values.length; }).length ?
                             json.values.map(function(d, i) {
                                 return {
                                     'group': i + 1,
-                                    't': d.values.reduce(function(a, b) {
-                                        return parseFloat(a) + parseFloat(b);
-                                    })
+                                    't': sumValues(d.values)
                                 };
                             }) :
                             []

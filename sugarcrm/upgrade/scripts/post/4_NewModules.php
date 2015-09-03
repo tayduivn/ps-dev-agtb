@@ -16,7 +16,7 @@
 class SugarUpgradeNewModules extends UpgradeScript
 {
     public $order = 4100;
-    public $type = self::UPGRADE_DB;
+    public $type = self::UPGRADE_CUSTOM;
 
     public function run()
     {
