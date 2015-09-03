@@ -58,11 +58,8 @@ class DocumentsFileApi extends FileApi {
         }
     }
 
-    /**
-     * (non-PHPdoc)
-     * @see FileApi::saveBean()
-     */
-    protected function saveBean($bean)
+    /** {@inheritDoc} */
+    protected function saveBean(SugarBean $bean, ServiceBase $api, array $args)
     {
         // Recreate revision bean with correct data
         if($bean->document_revision_id) {
@@ -72,14 +69,16 @@ class DocumentsFileApi extends FileApi {
         }
         $revision = $bean->createRevisionBean();
         $bean->document_revision_id = $revision->id;
+
+        // Save the revision object
+        $revision->save();
+
         // Save the bean
-        $bean->save();
+        parent::saveBean($bean, $api, $args);
         // move the file to the revision's ID
         if(empty($bean->doc_type) || $bean->doc_type == 'Sugar') {
             rename("upload://{$bean->id}", "upload://{$revision->id}");
         }
-        // Save the revision object
-        $revision->save();
         // update the fields
         $bean->fill_in_additional_detail_fields();
     }
