@@ -154,22 +154,19 @@ class PMSECasesListApi extends FilterApi
         //INNER PROCESS TABLE
         $q->joinTable('pmse_bpmn_process', array('alias' => 'pr', 'joinType' => 'INNER', 'linkingTable' => true))
             ->on()
-            ->equalsField('pr.id', 'a.pro_id')
-            ->equals('pr.deleted', 0);
+            ->equalsField('pr.id', 'a.pro_id');
         $fields[] = array("pr.prj_id", 'prj_id');
 
         //INNER PROJECT TABLE
         $q->joinTable('pmse_project', array('alias' => 'prj', 'joinType' => 'INNER', 'linkingTable' => true))
             ->on()
-            ->equalsField('prj.id', 'pr.prj_id')
-            ->equals('prj.deleted', 0);
+            ->equalsField('prj.id', 'pr.prj_id');
         $fields[] = array("prj.assigned_user_id", 'prj_created_by');
         $fields[] = array("prj.prj_module", 'prj_module');
 
         $q->joinTable('pmse_bpmn_process', array('alias' => 'process', 'joinType' => 'INNER', 'linkingTable' => true))
             ->on()
-            ->equalsField('process.id', 'a.pro_id')
-            ->equals('process.deleted', 0);
+            ->equalsField('process.id', 'a.pro_id');
 
         //INNER BPM FLOW
         // This relationship is adding several duplicated rows to the query
@@ -184,6 +181,10 @@ class PMSECasesListApi extends FilterApi
         // get pro_title (process name) from pmse_bpmn_process table
         // because that is updated when process definition is edited
         $fields[] = array('process.name', 'pro_title');
+
+        // Since we are retrieving deleted project's processes, we need to know
+        // which of them are from deleted projects.
+        $fields[] = array('pr.deleted', 'prj_deleted');
 
         $q->select($fields);
 

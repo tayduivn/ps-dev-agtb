@@ -557,10 +557,9 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq = new SugarQuery();
         $sq->select(array("id","last_name", "opportunity_role"));
         $sq->from(BeanFactory::getBean('Contacts'));
-        $sq->setJoinOn(array('baseBean'=>'contact', 'baseBeanId' => 'test'));
-        $sq->where('id', 'test');
+        $sq->setJoinOn(array('baseBeanId' => 'test_opp_id'));
         $sql = $sq->compileSql();
-        $this->assertcontains("contact_id = 'test'", $sql);
+        $this->assertcontains("opportunity_id = 'test_opp_id'", $sql);
     }
 
 

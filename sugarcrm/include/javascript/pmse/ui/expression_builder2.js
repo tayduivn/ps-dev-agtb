@@ -66,6 +66,8 @@ ExpressionControl.prototype._typeToControl = {
     "float": "number",
     "email": "text",
     "name": "text",
+    "htmleditable_tinymce": "text",
+    "tinyint": "integer",
     //"html": "html",
     //"iframe": "iframe",
     //"image": "image" ,
@@ -124,34 +126,37 @@ ExpressionControl.prototype.OPERATORS  = {
     ],
     "comparison": [
         {
+            text: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR'),
+            datefield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_DATE'),
+            value: "major_than"
+        },
+        {
             text: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_THAN'),
             datefield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_THAN_DATE'),
             value: "minor_than"
-         },
-         {
-            text: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_EQUAL_THAN'),
-            value: "minor_equals_than"
-         },
-         {
+        },
+        {
             text: translate('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL'),
             textfield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL_TEXT'),
             datefield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL'),
             value: "equals"
-         },
-         {
+        },
+        {
             text: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL'),
+            datefield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL_DATE'),
             value: "major_equals_than"
-         },
-         {
-            text: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR'),
-            datefield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_DATE'),
-            value: "major_than"
-         },
-         {
+        },
+        {
+            text: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_EQUAL_THAN'),
+            datefield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_EQUAL_DATE'),
+            value: "minor_equals_than"
+        },
+        {
             text: translate('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL'),
             textfield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_TEXT'),
+            datefield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_DATE'),
             value: "not_equals"
-         }
+        }
     ],
     "group": [
         {
@@ -1483,7 +1488,7 @@ ExpressionControl.prototype._createModulePanel = function () {
                                     newFieldSettings.timeFormat = that._timeFormat;
                                 case 'date':
                                     labelField = "datefield";
-                                    operators = [that.OPERATORS.comparison[2], that.OPERATORS.comparison[0], that.OPERATORS.comparison[4]];
+                                    operators = that.OPERATORS.comparison;
                                     newFieldSettings.dateFormat = that._dateFormat;
                                     break;
                                 case 'currency':
@@ -1527,7 +1532,7 @@ ExpressionControl.prototype._createModulePanel = function () {
                 var valueField = formPanel.getItem("value");
 
                 if (valueField instanceof FormPanelDate) {
-                    valueField.closeAll();
+                    valueField.close();
                 }
             }
         });

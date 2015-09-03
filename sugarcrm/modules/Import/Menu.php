@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: Menu.php 55122 2010-03-08 16:27:28Z jmertic $
+
  * Description: Menu for the Import module. Just inherits the menu used in 
  * whatever module is being imported into.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.

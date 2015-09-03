@@ -53,7 +53,20 @@
 //        this.on('dashlet-businessrules:enable-record:fire', this.enableRecord, this);
         this.on('dashlet-businessrules:download:fire', this.warnExportBusinessRules, this);
         this.on('dashlet-businessrules:description-record:fire', this.descriptionRecord, this);
+        this.on('linked-model:create', this._reloadData, this);
         return this;
+    },
+
+    /**
+     * Re-fetches the data for the context's collection.
+     *
+     * FIXME: This will be removed when SC-4775 is implemented.
+     *
+     * @private
+     */
+    _reloadData: function() {
+        this.context.set('skipFetch', false);
+        this.context.reloadData();
     },
 
     /**

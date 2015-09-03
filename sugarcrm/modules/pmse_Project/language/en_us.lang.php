@@ -51,6 +51,7 @@ $mod_strings = array (
     'LBL_PMSE_PROCESS_DEFINITION_IMPORT_TEXT' => 'Automatically create a new Process Definitions record by importing a *.bpm file from your file system.',
     'LBL_PMSE_PROCESS_DEFINITION_IMPORT_SUCCESS' => 'Process Definitions was successfully imported into the system.',
     'LBL_PMSE_PROCESS_DEFINITION_EMPTY_WARNING' => 'Please select a valid *.bpm file.',
+    'LBL_PMSE_PROCESS_DEFINITION_IMPORT_BR' => 'The Process Definition has been imported but contains one or more Business Rule actions for which business rules have not been selected.',
 
 
 //    /*PMSE*/
@@ -152,6 +153,8 @@ $mod_strings = array (
     'LBL_PMSE_CONTEXT_MENU_ASSIGN_TEAM' => 'Round Robin',
     'LBL_PMSE_CONTEXT_MENU_CHANGE_FIELD' => 'Change Field',
     'LBL_PMSE_CONTEXT_MENU_ADD_RELATED_RECORD' => 'Add Related Record',
+    // CONFIRMATIONS
+    'LBL_PMSE_CHANGE_ACTION_TYPE_CONFIRMATION' => 'By changing the action type all the previous settings for this action will be lost. Do you want to proceed?',
     // FORMS
     'LBL_PMSE_FORM_TITLE_ACTIVITY' => 'Activity',
     'LBL_PMSE_FORM_LABEL_READ_ONLY_FIELDS' => 'Readonly fields',
@@ -316,8 +319,12 @@ $mod_strings = array (
     'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL' => 'is greater than or equal to',
     'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR' => 'is greater than',
     'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_DATE' => 'after',
+
+    'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL_DATE' => 'on or after',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_EQUAL_DATE' => 'on or before',
     'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL' => 'is not equal to',
     'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_TEXT' => 'is not',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_DATE' => 'not equal to',
 
     'LBL_PMSE_FORMPANEL_SUBMIT' => 'Submit',
 

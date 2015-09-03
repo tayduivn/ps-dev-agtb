@@ -1170,10 +1170,24 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                 break;
             case 'update':
                 $bean->retrieve_by_string_fields(array($entityData['uid_field'] => $elementArray[$entityData['uid_field']]));
+                $originalScriptType = $bean->act_script_type;
 
                 $id = $this->update($bean, $elementArray);
                 $primaryField = $this->getPrimaryFieldName($bean);
                 $elementID = $bean->fetched_row[$primaryField];
+
+                if ($id && $elementArray['act_script_type'] != $originalScriptType
+                 && $entityData['bean_object'] == 'pmse_BpmnActivity') {
+                    $relatedBean = $this->getBean('pmse_BpmActivityDefinition');
+                    $relatedBean->retrieve($id);
+                    $this->update($relatedBean, array(
+                        'act_fields' => '',
+                        'act_field_module' => '',
+                        'act_assign_team' => '',
+                        'act_update_record_owner' => '',
+                        'act_assign_user' => ''
+                    ));
+                }
 
                 if ($entityData['bean'] != 'BpmnFlow') {
                     $bound = $this->getBean('pmse_BpmnBound');

@@ -31,7 +31,9 @@
      */
     events: {
         'click [name=login_button]': 'login',
-        'keypress': 'handleKeypress'
+        'keypress': 'handleKeypress',
+        "click [name=external_login_button]": "external_login",
+        "click [name=login_form_button]": "login_form"
     },
 
     /**
@@ -120,6 +122,15 @@
         var config = app.metadata.getConfig();
         if (config && app.config.forgotpasswordON === true) {
             this.showPasswordReset = true;
+        }
+        
+        if (config && 
+            app.config.externalLogin === true && 
+            app.config.externalLoginSameWindow === true &&
+            !_.isEmpty(app.config.externalLoginUrl)
+        ) {
+            this.externalLoginForm = true;
+            this.externalLoginUrl = app.config.externalLoginUrl;
         }
 
         // Set the page title to 'SugarCRM' while on the login screen
@@ -295,5 +306,24 @@
                 }
             }
         }
+    },
+    
+    /**
+     * Process Login
+     */
+    external_login: function() {
+        window.location.replace(this.externalLoginUrl);
+    },
+    
+    /**
+     * Show Login form
+     */
+    login_form: function() {
+        app.config.externalLogin = false;
+        app.controller.loadView({
+            module: "Login",
+            layout: "login",
+            create: true
+        });
     }
 })

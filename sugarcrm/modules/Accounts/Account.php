@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: Account.php 53875 2010-01-20 18:10:23Z roger $
+
  * Description:  Defines the Account SugarBean Account entity with the necessary
  * methods and variables.
  ********************************************************************************/
@@ -135,6 +135,7 @@ class Account extends Company {
 		global $current_user;
 		if(!empty($current_user)) {
 			$this->team_id = $current_user->default_team;	//default_team is a team id
+			$this->team_set_id = $current_user->team_set_id;
 		} else {
 			$this->team_id = 1; // make the item globally accessible
 		}

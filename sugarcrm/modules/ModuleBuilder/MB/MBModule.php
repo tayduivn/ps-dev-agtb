@@ -817,6 +817,13 @@ class MBModule
                     {
                         //bug 39598 Relationship Name Is Not Updated If Module Name Is Changed In Module Builder
                         $contents = str_replace  ( "'{$old_name}'", "'{$this->key_name}'" , $contents ) ;
+
+                        if (!empty($this->config['label'])) {
+                            $oldLabel = translate($old_name);
+                            $newLabel = $this->config['label'];
+                            $contents = $this->replaceDefinition('lhs_label', $oldLabel, $newLabel, $contents);
+                            $contents = $this->replaceDefinition('rhs_label', $oldLabel, $newLabel, $contents);
+                        }
                     }
 
                     $fp = sugar_fopen ( $new_dir . '/' . $e, 'w' ) ;
@@ -825,6 +832,25 @@ class MBModule
                 }
             }
         }
+    }
+
+    /**
+     * Replaces parameter which has old value with the new value in relationship definition
+     *
+     * @param string $param Parameter name
+     * @param mixed $oldValue Old value
+     * @param mixed $newValue New value
+     * @param string $contents Relationship definition source contents
+     *
+     * @return string
+     */
+    protected function replaceDefinition($param, $oldValue, $newValue, $contents)
+    {
+        $param = preg_quote(var_export($param, true), '/');
+        $oldValue = preg_quote(var_export($oldValue, true), '/');
+        $newValue = var_export($newValue, true);
+
+        return preg_replace('/(' . $param . '\s*=>\s*)' . $oldValue . '/', '$1' . $newValue, $contents);
     }
 
     function copy ($new_name)

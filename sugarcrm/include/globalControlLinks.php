@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: globalControlLinks.php 52976 2009-12-03 21:10:31Z jmertic $
+
  * Description:  controls which link show up in the upper right hand corner of the app
  ********************************************************************************/
 

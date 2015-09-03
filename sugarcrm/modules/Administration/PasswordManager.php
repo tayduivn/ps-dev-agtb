@@ -93,8 +93,8 @@ if (!empty($_POST['saveConfig'])) {
 		if( isset($_REQUEST['passwordsetting_lockoutexpirationtime']) && is_numeric($_REQUEST['passwordsetting_lockoutexpirationtime'])  )
 		    $_POST['passwordsetting_lockoutexpiration'] = 2;
 
-		// Check SAML settings
-		if (!empty($_POST['authenticationClass']) && $_POST['authenticationClass'] == 'SAMLAuthenticate') {
+        // Check SAML settings
+        if (!empty($_POST['authenticationClass']) && $_POST['authenticationClass'] == 'SAMLAuthenticate') {
             if (empty($_POST['SAML_loginurl'])) {
                 $configurator->addError($config_strings['ERR_EMPTY_SAML_LOGIN']);
                 break;
@@ -116,7 +116,12 @@ if (!empty($_POST['saveConfig'])) {
                 $configurator->addError($config_strings['ERR_EMPTY_SAML_CERT']);
                 break;
             }
-		}
+            if (isset($_REQUEST['SAML_SAME_WINDOW'])) {
+                $_POST['SAML_SAME_WINDOW'] = true;
+            } else {
+                $_POST['SAML_SAME_WINDOW'] = false;
+            }            
+        }
 
 		$configurator->saveConfig();
 		$focus->saveConfig();

@@ -140,12 +140,11 @@
                     success: _.bind(function(data) {
                         this.createTree(data.jsonTree, this.$treeContainer, this.loadPluginsList());
                     }, this),
-                    error: function(error) {
-                        app.alert.show('server-error', {
-                            level: 'error',
-                            messages: 'ERR_GENERIC_SERVER_ERROR'
-                        });
-                    }
+                    error: _.bind(function(error) {
+                        this._alertError(error, _.bind(function() {
+                            this.createTree([], this.$treeContainer, this.loadPluginsList());
+                        }, this));
+                    }, this)
                 });
             },
 
@@ -214,6 +213,11 @@
                         },
                         search: {
                             case_insensitive: true
+                        },
+                        core: {
+                            strings: {
+                                new_node: app.lang.get('LBL_DEFAULT_TITLE', 'Categories')
+                            }
                         }
                     };
                 jsTreeOptions = _.extend({}, jsTreeOptions, this.jsTreeOptions);
@@ -226,9 +230,11 @@
                 }, this))
                 .on('select_node.jstree', _.bind(this._selectNodeHandler, this))
                 .on('create.jstree', _.bind(this._createHandler, this))
+                .on('show_input.jstree', _.bind(this._showInputHandler, this))
                 .on('move_node.jstree', _.bind(this._moveHandler, this))
                 .on('remove.jstree', _.bind(this._removeHandler, this))
-                .on('rename_node.jstree', _.bind(this._renameHandler, this))
+                .on('rename_node.jstree', _.bind(this._renameNodeHandler, this))
+                .on('rename.jstree', _.bind(this._renameHandler, this))
                 .on('load_state.jstree', _.bind(this._loadedStateHandler, this))
                 .on('search.jstree', _.bind(this._searchHandler, this));
             },
@@ -310,7 +316,7 @@
              * @param {Object} data
              * @private
              */
-            _renameHandler: function(event, data) {
+            _renameNodeHandler: function(event, data) {
                 if (!_.isUndefined(data.rslt.obj.data('id'))) {
                     var bean = this.collection.getChild(data.rslt.obj.data('id'));
                     if (!_.isUndefined(bean)) {
@@ -320,6 +326,16 @@
                         }
                     }
                 }
+            },
+
+            /**
+             * Rename handler.
+             * @param {Event} event
+             * @param {Object} data
+             * @private
+             */
+            _renameHandler: function(event, data) {
+                this._toggleAddNodeButton(data.rslt.obj, false);
             },
 
             /**
@@ -633,17 +649,93 @@
                             self._toggleVisibility(false);
                         },
                         error: function(error) {
-                            if (!_.isUndefined(error.message)) {
-                                app.alert.show('wrong_node_name', {
-                                    level: 'error',
-                                    messages: error.message,
-                                    autoClose: true
-                                });
-                            }
-                            self.jsTree.jstree('remove', newNode);
+                            self._alertError(error, _.bind(function(){
+                                this.jsTree.jstree('remove', newNode);
+                            }, self));
                         }
                     });
                 }
+            },
+
+            /**
+             * Handle actions when edit input is displayed.
+             * @param {Event} event
+             * @param {Object} data
+             * @private
+             */
+            _showInputHandler: function(event, data) {
+                var self = this,
+                    el = data.obj.find('input'),
+                    clonedElement = el.clone(),
+                    obj = data.obj,
+                    t = data.t,
+                    h1 = data.h1,
+                    h2 = data.h2,
+                    w = data.w;
+
+                h1.css({
+                    fontFamily: h2.css('fontFamily') || '',
+                    fontSize: h2.css('fontSize') || '',
+                    fontWeight: h2.css('fontWeight') || '',
+                    fontStyle: h2.css('fontStyle') || '',
+                    fontStretch: h2.css('fontStretch') || '',
+                    fontVariant: h2.css('fontVariant') || '',
+                    letterSpacing: h2.css('letterSpacing') || '',
+                    wordSpacing: h2.css('wordSpacing') || ''
+                });
+
+                el.hide();
+                obj.append(clonedElement);
+
+                this._toggleAddNodeButton(obj, true);
+                this._toggleTooltip(obj, true);
+
+                clonedElement.width(Math.min(h1.text("pW" + clonedElement[0].value).width(), w))[0].select();
+
+                clonedElement
+                    .on('keydown', function(event) {
+                        var key = event.which;
+                        if (key === 27) {
+                            $(this).attr('rel') === 'add' ? $(this).attr('rel', 'delete') : this.value = t;
+                            el.attr('rel') === 'add' ? el.attr('rel', 'delete') : el.value = t;
+                        }
+                        if (key === 27 || key === 13 || key === 37 || key === 38 || key === 39 || key === 40 ||
+                            key === 32) {
+                            event.stopImmediatePropagation();
+                        }
+                        if (key === 13 && this.value.trim().length === 0) {
+                            app.alert.show('wrong_node_name', {
+                                level: 'error',
+                                messages: app.lang.get('LBL_EMPTY_NODE_NAME', 'Categories'),
+                                autoClose: true
+                            });
+                            return false;
+                        }
+                        if (key === 27 || key === 13) {
+                            self._toggleTooltip(obj, false);
+                            event.preventDefault();
+                            self._blur($(this), el);
+                        }
+                    })
+                    .on('keyup', function(event) {
+                        clonedElement.width(Math.min(h1.text("pW" + this.value).width(), w));
+                    })
+                    .on('keypress', function(event) {
+                        if (event.which === 13) {
+                            return false;
+                        }
+                    });
+            },
+
+            /**
+             * Process custom blur for cloned object and call blur event in original object.
+             * @param {Object} clonedObj
+             * @param {Object} originalObj
+             * @private
+             */
+            _blur: function(clonedObj, originalObj) {
+                originalObj.val(clonedObj.val());
+                originalObj.blur();
             },
 
             /**
@@ -663,10 +755,23 @@
              * @private
              */
             _jstreeShowContextmenu: function(event, data) {
-                var container = data.inst._get_node().parent(),
+                var treeInstance = $.jstree._focused(),
+                    container = data.inst._get_node().parent(),
                     level = data.inst._get_node().attr('data-level'),
                     firstNodeId = $(container).find('li[data-level=' + level + ']').first().data('id'),
-                    lastNodeId = $(container).find('li[data-level=' + level + ']').last().data('id');
+                    lastNodeId = $(container).find('li[data-level=' + level + ']').last().data('id'),
+                    clickedNode,
+                    findNodeFunc = function(el) {
+                        if (el.id === data.rslt.obj.data('id')) {
+                            clickedNode = el;
+                            return;
+                        }
+                        if (!_.isEmpty(el.children)) {
+                            _.each(el.children, findNodeFunc);
+                        }
+                    };
+
+                _.each(treeInstance.get_settings().json_data.data, findNodeFunc);
 
                 if (!_.isUndefined(data.inst.get_settings().contextmenu.items) && this.jsTreeSettings.acl.edit) {
                     // Clear contextmenu.items.moveto.submenu property.
@@ -692,6 +797,32 @@
                         }
                     });
                 }
+
+                if (!_.isUndefined(clickedNode)) {
+                    var editAccess = clickedNode._acl.edit === 'no',
+                        deleteAccess = clickedNode._acl.delete === 'no';
+
+                    data.inst._set_settings({
+                        contextmenu: {items: {edit: {_disabled: editAccess || !this.jsTreeSettings.acl.edit}}}
+                    });
+                    data.inst._set_settings({
+                        contextmenu: {items: {moveup: {_disabled: editAccess || !this.jsTreeSettings.acl.edit}}}
+                    });
+                    data.inst._set_settings({
+                        contextmenu: {items: {movedown: {_disabled: editAccess || !this.jsTreeSettings.acl.edit}}}
+                    });
+                    data.inst._set_settings({
+                        contextmenu: {items: {moveto: {_disabled: editAccess || !this.jsTreeSettings.acl.edit}}}
+                    });
+                    data.inst._set_settings({
+                        contextmenu: {items: {delete: {_disabled: deleteAccess || !this.jsTreeSettings.acl.delete}}}
+                    });
+
+                    if (editAccess) {
+                        data.inst._set_settings({contextmenu: {items: {moveto: {submenu: null}}}});
+                    }
+                }
+
                 if (!$(event.currentTarget).hasClass('jstree-loading')) {
                     data.inst.show_contextmenu($(data.args[0]), data.args[2].pageX, data.args[2].pageY);
                 }
@@ -738,7 +869,7 @@
              * @param {String|Number} position
              * @param {Boolean} editable
              * @param {Boolean} addToRoot
-             * @param {Boolean} isHidden
+             * @param {Boolean} isDisabled
              */
             addNode: function(title, position, editable, addToRoot, isDisabled) {
                 var self = this,
@@ -919,12 +1050,38 @@
                             }
                         },
                         error: function(error) {
-                            app.alert.show('server-error', {
-                                level: 'error',
-                                messages: 'ERR_GENERIC_SERVER_ERROR'
-                            });
+                            self._alertError(error);
                         }
                     });
+                }
+            },
+
+            /**
+             * Alert server error.
+             * @param {Object} error
+             * @param {Function} callback
+             * @private
+             */
+            _alertError: function(error, callback) {
+                if (!_.isUndefined(error.message)) {
+                    var level = 'error',
+                        messages = error.message,
+                        title;
+                    switch(error.code) {
+                        case 'not_authorized':
+                            title = 'ERR_NO_VIEW_ACCESS_TITLE';
+                            level = 'warning';
+                            messages = error.message;
+                            break;
+                    }
+                    app.alert.show('server-error', {
+                        title: title,
+                        level: level,
+                        messages: messages
+                    });
+                }
+                if (_.isFunction(callback)) {
+                    callback();
                 }
             },
 
@@ -943,6 +1100,29 @@
                 } else {
                     addButton.removeClass('disabled');
                     contextButton.removeClass('disabled');
+                }
+            },
+
+            /**
+             *
+             * @param {Object} node JSTree node object.
+             * @param {Boolean} show
+             * @private
+             */
+            _toggleTooltip: function(node, show) {
+                var input = node.find('input.jstree-rename-input');
+                if (show) {
+                    input
+                        .tooltip({
+                            title: app.lang.get('LBL_CREATE_CATEGORY_PLACEHOLDER', 'KBContents'),
+                            container: 'body',
+                            trigger: 'focus',
+                            delay: { show: 200, hide: 100 }
+                        })
+                        .tooltip('show');
+                } else {
+                    input
+                        .tooltip('destroy');
                 }
             }
         });

@@ -247,18 +247,24 @@
      * @inheritDoc
      */
     _dispose: function() {
-        var $dashlet = this.$('.dashlet'),
-            $dashletContainer = this.$('.dashlet-container');
+        var $dashlets = this.$('.dashlet');
+        var $dashletContainers = this.$('.dashlet-container');
 
         // Make sure the element is initialized to be draggable before destroying.
-        if ($dashlet.length > 0 && !_.isUndefined($dashlet.draggable('instance'))) {
-            $dashlet.draggable('destroy');
-        }
+        _.each($dashlets, function(dashlet) {
+            var $dashlet = $(dashlet);
+            if (!_.isUndefined($dashlet.draggable('instance'))) {
+                $dashlet.draggable('destroy');
+            }
+        });
 
         // Make sure the element is initialized to be droppable before destroying.
-        if ($dashletContainer.length > 0 && !_.isUndefined($dashletContainer.droppable('instance'))) {
-            $dashletContainer.droppable('destroy');
-        }
+        _.each($dashletContainers, function(dashletContainer) {
+            var $dashletContainer = $(dashletContainer);
+            if (!_.isUndefined($dashletContainer.droppable('instance'))) {
+                $dashletContainer.droppable('destroy');
+            }
+        });
 
         this._super('_dispose');
     }

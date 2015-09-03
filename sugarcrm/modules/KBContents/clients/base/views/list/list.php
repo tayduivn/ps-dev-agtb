@@ -93,7 +93,7 @@ $viewdefs['KBContents']['base']['view']['list'] = array(
         ),
     ),
     'orderBy' => array(
-        'field' => 'date_entered',
+        'field' => 'date_modified',
         'direction' => 'desc',
     ),
 );

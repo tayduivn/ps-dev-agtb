@@ -79,6 +79,7 @@ $dictionary['Product'] = array(
                 'discount_usdollar' => 'discount_usdollar',
                 'tax_class' => 'tax_class',
                 'weight' => 'weight',
+                'type_id' => 'type_id',
                 'type_name' => 'type_name',
                 'manufacturer_id' => 'manufacturer_id',
                 'manufacturer_name' => 'manufacturer_name',
@@ -930,7 +931,6 @@ $dictionary['Product'] = array(
         ),
     ),
     'indices' => array(
-        array('name' => 'idx_products', 'type' => 'index', 'fields' => array('name', 'deleted')),
         array(
             'name' => 'idx_prod_user_dc_timestamp',
             'type' => 'index',

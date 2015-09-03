@@ -68,6 +68,7 @@ class LeadConvert
      */
     public function convertLead($modules, $transferActivitiesAction = '', $transferActivitiesModules = array())
     {
+        $calcFieldBeans = array();
         $this->modules = $modules;
         if (isset($this->modules['Contacts'])) {
             $this->contact = $this->modules['Contacts'];
@@ -95,6 +96,15 @@ class LeadConvert
             $this->setRelationshipForModulesToLeads($moduleDef);
 
             $this->modules[$moduleName]->save();
+
+            //iterate through each field in field map and check meta for calculated fields
+            foreach ($this->modules[$moduleName]->field_name_map as $calcFieldDefs) {
+                if (!empty($calcFieldDefs['calculated'])) {
+                    //bean has a calculated field, lets add it to the array for later processing
+                    $calcFieldBeans[$moduleName] = $this->modules[$moduleName];
+                    break;
+                }
+            }
         }
 
         if($this->contact != null && $this->contact instanceof Contact) {
@@ -109,6 +119,13 @@ class LeadConvert
         $this->lead->in_workflow = true;
         $this->lead->get_Opportunity();
         $this->lead->save();
+
+        //IF beans have calculated fields, re-save now  so calculated values can be updated
+        foreach ($calcFieldBeans as $calcFieldBean) {
+            //refetch bean and save to update Calculated Fields.
+            $calcFieldBean->retrieve($calcFieldBean->id);
+            $calcFieldBean->save();
+        }
 
         return $this->modules;
     }

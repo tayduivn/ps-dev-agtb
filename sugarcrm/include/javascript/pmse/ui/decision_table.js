@@ -250,7 +250,7 @@
 
     DecisionTable.prototype.removeAllConclusions = function() {
         while(this.conclusions.length) {
-            this.conclusions[0].remove();
+            this.conclusions[0].remove(true);
         }
 
         return this;
@@ -258,7 +258,7 @@
 
     DecisionTable.prototype.removeAllConditions = function() {
         while(this.conditions.length) {
-            this.conditions[0].remove();
+            this.conditions[0].remove(true);
         }
         return this;
     };
@@ -1684,10 +1684,14 @@
     };
 
 
-    DecisionTableVariable.prototype.remove = function() {
+    DecisionTableVariable.prototype.remove = function(force) {
         var self = this;
+        if (force) {
+            this.removeWithoutConfirmation();
+            return this;
+        }
         if(!this.parent.canBeRemoved(this)) {
-            return;
+            return this;
         }
         if(this.getFilledValuesNum()) {
             App.alert.show('variable-check', {
@@ -1703,6 +1707,7 @@
         } else {
             this.removeWithoutConfirmation();
         }
+        return this;
     };
 
     DecisionTableVariable.prototype.attachListeners = function() {
@@ -2010,17 +2015,24 @@
         var that = this;
         return function() {
             var span = document.createElement('span'),
-                cell = this.parentElement, oldValue = that[member], changed = false;
+                cell = this.parentElement, oldValue = that[member], changed = false,
+                text;
             span.tabIndex = 0;
             changed = oldValue !== this.value;
             that[member] = this.value;
             if(that[member]) {
-                span.appendChild(document.createTextNode(that[member]));
+                text = $(this).find("option:selected").text();
+                span.appendChild(document.createTextNode(text));
             } else {
                 span.innerHTML = '&nbsp;';
             }
             try {
                 $(cell).empty().append(span);
+                if (text && $(span).innerWidth() < span.scrollWidth) {
+                    span.setAttribute("title", text);
+                } else {
+                    span.removeAttribute("title");
+                }
             } catch(e){}
             that.isValid();
             if(changed && typeof that.onChange === 'function') {
@@ -2191,8 +2203,9 @@
 
         for(i = 0; i < enabledOperators.length; i+=1) {
             option = this.createHTMLElement("option");
+
             option.label = option.value = enabledOperators[i];
-            option.appendChild(document.createTextNode(enabledOperators[i]));
+            option.appendChild(document.createTextNode(option.label));
             option.selected = enabledOperators[i] === this.operator;
             select.appendChild(option);
         }

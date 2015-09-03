@@ -12,7 +12,7 @@ if (!defined('sugarEntry') || !sugarEntry)
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id: WapAuthenticate.php 51443 2009-10-12 20:34:36Z jmertic $
+
  * Description:  TODO: To be written.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.

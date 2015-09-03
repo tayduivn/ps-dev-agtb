@@ -129,6 +129,7 @@ $vardefs = array(
                 'duplicate_on_record_copy' => 'no',
                 'readonly' => true,
                 'sort_on' => array('last_name'),
+                'exportable' => true,
             ),
         'created_by' => array(
                 'name' => 'created_by',
@@ -173,6 +174,7 @@ $vardefs = array(
                 'duplicate_on_record_copy' => 'no',
                 'readonly' => true,
                 'sort_on' => array('last_name'),
+                'exportable' => true,
             ),
         'description' => array(
                 'name' => 'description',
@@ -246,6 +248,11 @@ $vardefs = array(
             'name' => 'idx_' . strtolower($table_name) . '_date_entered',
             'type' => 'index',
             'fields' => array('date_entered')
+        ),
+        'name_del' => array(
+            'name' => 'idx_' . strtolower($table_name) . '_name_del',
+            'type' => 'index',
+            'fields' => array('name', 'deleted')
         ),
     ),
     'relationships' => array(

@@ -469,6 +469,7 @@ class ViewConvertLead extends SugarView
         $beans = array_merge($tempBeans, $beans);
         unset($tempBeans);
 
+        $calcFieldBeans = array();
         //Handle non-contacts relationships
         foreach ($beans as $bean)
         {
@@ -526,6 +527,16 @@ class ViewConvertLead extends SugarView
             {
                 campaign_log_lead_or_contact_entry($lead->campaign_id, $lead, $beans['Contacts'], 'contact');
             }
+
+            //iterate through each field in field map and check meta for calculated fields
+            foreach ($bean->field_name_map as $calcFieldDefs) {
+                if (!empty($calcFieldDefs['calculated'])) {
+                    //bean has a calculated field, lets add it to the array for later processing
+                    $calcFieldBeans[] = $bean;
+                    break;
+                }
+            }
+
         }
         if (!empty($lead))
         {	//Mark the original Lead converted
@@ -533,6 +544,13 @@ class ViewConvertLead extends SugarView
             $lead->converted = '1';
             $lead->in_workflow = true;
             $lead->save();
+        }
+
+        //IF beans have calculated fields, re-save now that all beans and relationships have been updated
+        foreach ($calcFieldBeans as $calcFieldBean) {
+            //refetch bean and save to update Calculated Fields.
+            $calcFieldBean->retrieve($calcFieldBean->id);
+            $calcFieldBean->save();
         }
 
         $this->displaySaveResults($beans);
