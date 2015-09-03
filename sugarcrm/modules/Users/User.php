@@ -937,7 +937,12 @@ EOQ;
 		$this->savePreferencesToDB();
         //set new password
         $now = TimeDate::getInstance()->nowDb();
-		$query = "UPDATE $this->table_name SET user_hash='$user_hash', system_generated_password='$system_generated', pwd_last_changed='$now' where id='$this->id'";
+        $query =
+            "UPDATE $this->table_name " .
+            "SET user_hash={$this->db->quoted($user_hash)}, " .
+                " system_generated_password={$this->db->quoted($system_generated)}, " .
+                " pwd_last_changed={$this->db->quoted($now)}, date_modified={$this->db->quoted($now)} " .
+            "WHERE id={$this->db->quoted($this->id)}";
 		$this->db->query($query, true, "Error setting new password for $this->user_name: ");
         $_SESSION['hasExpiredPassword'] = '0';
 	}
@@ -2487,6 +2492,7 @@ EOQ;
         //Add the tab hash to include the change of tabs (e.g. module order) as a part of the user hash
         $tabs = new TabController();
         $tabHash = $tabs->getMySettingsTabHash();
+
         return md5($this->hashTS . $tabHash);
     }
 

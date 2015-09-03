@@ -34,12 +34,7 @@ class Bug47010Test extends Sugar_PHPUnit_Framework_TestCase {
     public function testModuleNameMissingDoesNotThrowExceptionWhenGenereatingSmarty() {
 
         $view = new ViewDropdown();
-        try {
-            $smarty = $view->generateSmarty($_REQUEST);
-        } catch (Exception $e) {
-            $this->fail('An exception has been raised: ' . $e->getMessage());
-        }
+        $smarty = $view->generateSmarty($_REQUEST);
         $this->assertEmpty($smarty->get_template_vars('module_name'));
-
     }
 }

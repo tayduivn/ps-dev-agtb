@@ -15,6 +15,7 @@ require_once 'include/SugarFields/SugarFieldHandler.php';
 require_once 'include/MetaDataManager/MetaDataManager.php';
 require_once 'include/TimeDate.php';
 require_once 'include/api/SugarApi.php';
+require_once('modules/Users/password_utils.php');
 
 class CurrentUserApi extends SugarApi
 {
@@ -159,9 +160,12 @@ class CurrentUserApi extends SugarApi
     public function retrieveCurrentUser($api, $args)
     {
         $current_user = $this->getUserBean();
-        $hash = $current_user->getUserMDHash();
-        if ($api->generateETagHeader($hash)) {
-            return;
+        //If the users password is expired, don't generate an etag.
+        if (!hasPasswordExpired($current_user)) {
+            $hash = $current_user->getUserMDHash();
+            if ($api->generateETagHeader($hash, 3)) {
+                return;
+            }
         }
 
         return $this->getUserData($api->platform, $args);

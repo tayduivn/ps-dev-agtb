@@ -5886,7 +5886,12 @@ eoq;
 		$meta['email']['cc_addrs'] = $ccs;
 
 		// body
-        $meta['email']['description'] = $this->email->description;
+        if (empty($this->email->description_html)) {
+            $description = nl2br($this->email->description);
+        } else {
+            $description = SugarCleaner::cleanHtml(from_html($this->email->description_html), false);
+        }
+		$meta['email']['description'] = $description;
         $meta['email']['description_html'] = SugarCleaner::cleanHtml(from_html($this->email->description_html), false);
 
 		// meta-metadata
