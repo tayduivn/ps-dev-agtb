@@ -42,17 +42,17 @@
                     // Set the session name into the cache so that certain bwc
                     // modules can access it as needed (studio)
                     if (data && data.name) {
-                        app.cache.set("SessionName", data.name);
+                        app.cache.set('SessionName', data.name);
                     }
 
                     // If there was a callback, call it. This will almost always
-                    // be used exlusively by studio when trying to refresh the 
+                    // be used exclusively by studio when trying to refresh the
                     // session after it expires.
                     if (callback) {
                         callback();
                     }
 
-                    // If there was a redirectUrl passed, go there. This will 
+                    // If there was a redirectUrl passed, go there. This will
                     // almost always be the case, except in studio when a login
                     // is simply updating the session id
                     if (redirectUrl) {
