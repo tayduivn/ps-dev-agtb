@@ -28,13 +28,13 @@
 	<tr>
 		<td>
 		<form name="WebToLeadDownloadForm" id="WebToLeadDownloadForm" method="POST" action="index.php"
-{sugar_csrf_form_token}
 			enctype="multipart/form-data"><input type="hidden" name="module" value="Campaigns"> <input
 			type="hidden" name="record" value="{ID}"> <input type="hidden" name="action"> <input type="hidden"
 			name="form"> <input type="hidden" name="return_module" value="{RETURN_MODULE}"> <input type="hidden"
 			name="return_id" value="{RETURN_ID}"> <input type="hidden" name="return_action" value="{RETURN_ACTION}">
 		<input type="hidden" name="inpopupwindow" value="{INPOPUPWINDOW}"> <input type="hidden" name="old_id"
 			value="{OLD_ID}">
+		{sugar_csrf_form_token}
 		<td align="right" nowrap><span class="required">{APP.LBL_REQUIRED_SYMBOL}</span> {APP.NTC_REQUIRED}</td>
 		<td align='right'>{ADMIN_EDIT}</td>
 	</tr>

@@ -11,7 +11,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/utils/array_utils.php');
 class TemplatePricingFormula extends TemplateText{
     public $type = 'pricing-formula';
     public $ext1 = 'pricing_formula_dom';

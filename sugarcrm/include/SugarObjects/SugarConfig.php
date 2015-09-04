@@ -16,7 +16,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class SugarConfig
 {
-    var $_cached_values = array();
+    public $_cached_values = array();
 
     static function getInstance() {
         static $instance = null;
@@ -28,9 +28,6 @@ class SugarConfig
 
     function get($key, $default = null) {
         if (!isset($this->_cached_values[$key])) {
-            if (!class_exists('SugarArray', true)) {
-				require 'include/utils/array_utils.php';
-			}
             $this->_cached_values[$key] = isset($GLOBALS['sugar_config']) ?
                 SugarArray::staticGet($GLOBALS['sugar_config'], $key, $default) :
                 $default;
