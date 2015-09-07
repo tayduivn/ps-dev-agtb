@@ -124,7 +124,7 @@
      * @param {Object} metadata Configuration metadata.
      */
     selectDashlet: function(metadata) {
-        var model = new Backbone.Model();
+        var model = new app.Bean();
 
         app.drawer.load({
             layout: {
