@@ -10199,12 +10199,12 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_COUNTRY_CHART_DESCRIPTION' => 'Displays the sales chart by country map.',
 
     /* Knowledge base category tree dashlet */
-    'LBL_DASHLET_CATEGORIES_NAME' => 'Knowledge Base Categories',
-    'LBL_DASHLET_CATEGORIES_DESCRIPTION' => 'A tree view of the Knowledge Base Categories',
+    'LBL_DASHLET_CATEGORIES_NAME' => 'Knowledge Base Categories & Published Articles',
+    'LBL_DASHLET_CATEGORIES_DESCRIPTION' => 'A tree view of the Knowledge Base Categories & published articles',
 
     /* Knowledge base localizations dashlet */
-    'LBL_DASHLET_LOCALIZATIONS_NAME' => 'Other Languages',
-    'LBL_DASHLET_LOCALIZATIONS_DESCRIPTION' => 'A list of localized Knowledge Base Articles',
+    'LBL_DASHLET_LOCALIZATIONS_NAME' => 'Published Articles in Other Languages',
+    'LBL_DASHLET_LOCALIZATIONS_DESCRIPTION' => 'A list of published localized Knowledge Base Articles',
 
     // Most Useful Knowledge Base Articles dashlet
     'LBL_DASHLET_MOST_USEFUL_NAME' => 'Most Useful Published Knowledge Base Articles',
@@ -11417,8 +11417,8 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_SAVED_REPORTS_CHART_DESC' => 'Displays any chart from a saved report.',
     'LBL_QUESTION_MARK' => '?',
 
-    'LBL_DASHLET_RELATED_DOCUMENTS' => 'Related Articles',
-    'LBL_DASHLET_RELATED_DOCUMENTS_DESC' => 'A list of related Knowledge Base articles',
+    'LBL_DASHLET_RELATED_DOCUMENTS' => 'Published Related Articles',
+    'LBL_DASHLET_RELATED_DOCUMENTS_DESC' => 'A list of published related Knowledge Base articles',
 
     // Historical Summary
     'LBL_HISTORICAL_SUMMARY' => 'Historical Summary',
