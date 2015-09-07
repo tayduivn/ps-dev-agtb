@@ -97,43 +97,44 @@ class StudioModuleTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::checkRelatedModule
-     * @dataProvider providerCheckRelatedModule
+     * @covers ::getModuleSubpanels
+     * @dataProvider providerGetModuleSubpanels
      */
-    public function testCheckRelatedModule($defs, $sourceModule, $expected)
+    public function testGetModuleSubpanels($defs, $sourceModule, $expected)
     {
         $stub = $this->getStudioModuleMock();
 
         $result = SugarTestReflection::callProtectedMethod(
             $stub,
-            'checkRelatedModule',
+            'getModuleSubpanels',
             array($defs, $sourceModule)
         );
 
         $this->assertEquals($result, $expected);
     }
 
-    public function providerCheckRelatedModule()
+    public function providerGetModuleSubpanels()
     {
         return array(
             array(
                 array(
-                    "accounts_meetings_1" => array("module" => "Accounts")
+                    "accounts_meetings_1" => array("module" => "Accounts"),
+                    "notes_meetings_1" => array("module" => "Notes"),
                 ),
                 "Accounts",
-                true
+                array('accounts_meetings_1'),
             ),
             array(
                 array(
                     "notes" => array("module" => "Notes")
                 ),
                 "Accounts",
-                false
+                array(),
             ),
             array(
                 array(),
                 "Accounts",
-                false
+                array(),
             ),
         );
     }
