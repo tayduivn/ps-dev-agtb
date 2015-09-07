@@ -223,7 +223,7 @@ END:VCALENDAR',
                     'date_modified' => '2015-07-28 13:41:29',
                     'etag' => 'test',
                     'calendarid' => '2',
-                    'size' => '2',
+                    'data_size' => '2',
                     'calendardata' => '22',
                     'componenttype' => 'VEVENT',
                 ),
@@ -293,12 +293,12 @@ END:VCALENDAR',
 
         $saved = BeanFactory::getBean('CalDavEvents', $event->id, array('use_cache' => false, 'encode' => false));
 
-        $this->assertEquals($expectedSize, $saved->size);
+        $this->assertEquals($expectedSize, $saved->data_size);
         $this->assertEquals($expectedETag, $saved->etag);
         $this->assertEquals($expectedType, $saved->componenttype);
         $this->assertEquals($expectedFirstOccurrence, $saved->firstoccurence);
         $this->assertEquals($expectedLastOccurrence, $saved->lastoccurence);
-        $this->assertEquals($expectedUID, $saved->uid);
+        $this->assertEquals($expectedUID, $saved->event_uid);
         $this->assertEquals($data, $saved->calendardata);
 
         SugarTestCalDavUtilities::createEvent(array(
@@ -334,7 +334,7 @@ END:VCALENDAR',
         TestReflection::callProtectedMethod($beanMock, 'calculateSize', array($data));
         TestReflection::callProtectedMethod($beanMock, 'calculateETag', array($data));
 
-        $this->assertEquals($expectedSize, $beanMock->size);
+        $this->assertEquals($expectedSize, $beanMock->data_size);
         $this->assertEquals($expectedETag, $beanMock->etag);
     }
 

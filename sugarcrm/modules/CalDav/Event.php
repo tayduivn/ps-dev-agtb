@@ -106,7 +106,7 @@ class CalDavEvent extends SugarBean
      * $calendardata size in bytes
      * @var integer
      */
-    public $size;
+    public $data_size;
 
     /**
      * Event component type
@@ -130,7 +130,7 @@ class CalDavEvent extends SugarBean
      * Event's UID
      * @var string
      */
-    public $uid;
+    public $event_uid;
 
     /**
      * Related module name
@@ -162,7 +162,7 @@ class CalDavEvent extends SugarBean
      */
     protected function calculateSize($data)
     {
-        $this->size = strlen($data);
+        $this->data_size = strlen($data);
     }
 
     /**
@@ -203,7 +203,7 @@ class CalDavEvent extends SugarBean
         $component = $this->getComponent($vObject);
         if ($component) {
             $this->componenttype = $component->name;
-            $this->uid = $component->UID;
+            $this->event_uid = $component->UID;
 
             return true;
         }
@@ -310,7 +310,7 @@ class CalDavEvent extends SugarBean
             'lastmodified' => strtotime($this->date_modified),
             'etag' => '"' . $this->etag . '"',
             'calendarid' => $this->calendarid,
-            'size' => $this->size,
+            'size' => $this->data_size,
             'calendardata' => $this->calendardata,
             'component' => strtolower($this->componenttype),
         );

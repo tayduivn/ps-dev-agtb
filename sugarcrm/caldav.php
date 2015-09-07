@@ -14,7 +14,6 @@ if (!defined('sugarEntry')) {
  */
 
 define('ENTRY_POINT_TYPE', 'api');
-require_once 'vendor/autoload.php';
 require_once 'include/entryPoint.php';
 
 $authClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Base\\Auth\\SugarAuth');
