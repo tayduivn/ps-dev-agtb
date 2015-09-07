@@ -223,7 +223,7 @@
                     {silent: true}
                 );
                 prefill.set('revision', '');
-
+                this.context.set('skipFetch', false);
                 this._openCreateRelatedDrawer(prefill, parentModel);
             },
 
