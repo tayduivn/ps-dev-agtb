@@ -289,7 +289,15 @@ describe('View.Fields.Base.ParticipantsField', function() {
             field.model.set(field.name, participants);
         });
 
-        it('should hide the select initially', function() {
+        it('should show the select when there are no participants', function() {
+            sandbox.stub($.fn, 'select2');
+            field.model.set(field.name, []);
+            field.render();
+            expect(field.$('[name=newRow]').css('display')).toEqual('table-row');
+            expect(field.$('button[data-action=removeRow]').hasClass('disabled')).toBe(true);
+        });
+
+        it('should hide the select when there are participants', function() {
             field.render();
             expect(field.$('[name=newRow]').css('display')).toEqual('none');
         });

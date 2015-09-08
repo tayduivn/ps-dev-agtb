@@ -840,7 +840,8 @@ function buildInstall($path){
         $result = array();
         foreach ($modules as $module) {
             $result[$module] = $this->getModuleCustomizations($module);
-            if (in_array($module, $modulesWithCustomDropdowns)) {
+            if (in_array($module, $modulesWithCustomDropdowns) &&
+                SugarAutoLoader::existingCustomOne("modules/{$module}/metadata/studio.php")) {
                 $result[$module]['Dropdown'] = $mod_strings['LBL_EC_CUSTOMDROPDOWN'];
             }
         }

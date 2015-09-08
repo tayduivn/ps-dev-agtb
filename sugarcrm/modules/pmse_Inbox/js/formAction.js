@@ -50,22 +50,61 @@ var reassignFormBWC = function(casId, casIndex, flowId, pmseInboxId, taskName, v
     value.moduleName = valuesA;
     value.beanId = valuesB;
     value.full_name = fullName;
-    reassignForm(casId, casIndex, flowId, pmseInboxId, taskName, value);
+    showForm(casId, casIndex, flowId, pmseInboxId, taskName, value, 'reassign');
 };
-var reassignForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values)
+/**
+ * Open the reassignation form for the current case.
+ *
+ * @deprecated This will be removed on future versions.
+ * Use showForm() and send it the same parameters in the same order plus the constant 'reassign' string as last parameter.
+ */
+var reassignForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values) {
+    _App.logger.warn('reassignForm() is deprecated, it will be removed in a future release. ' +
+    'Use showForm() using the same parameters in the same order plus constant "reassign" string as last parameter instead.');
+    showForm(casId, casIndex, flowId, pmseInboxId, taskName, values, 'reassign');
+};
+
+var showForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values, type)
 {
-    //showModalWindow("?module=ProcessMaker&action=reassignForm&to_pdf=1&cas_id=" + casId + "&cas_index=" + casIndex + "&team_id=" + teamId, '# ' + casId + ': Reassignment');
-    showModalWindow(casId, casIndex, 'reassign', flowId, pmseInboxId, taskName, values);
+    var formView = _App.controller.layout.getComponent("bwc"),
+        openModal = function () {
+            showModalWindow(casId, casIndex, type, flowId, pmseInboxId, taskName, values);
+        };
+
+    if (formView.hasUnsavedChanges()) {
+        _App.alert.show('reassign_confirmation', {
+            level: 'confirmation',
+                messages: translate('LBL_PMSE_ALERT_REASSIGN_UNSAVED_FORM', 'pmse_Inbox'),
+                onConfirm: function () {
+                    formView.$('iframe').get(0).contentWindow.EditView.reset();
+                    formView.revertBwcModel();
+                    openModal();
+                },
+            onCancel: $.noop
+        });
+    } else {
+        openModal();
+    }
 };
 var adhocFormBWC = function(casId, casIndex, flowId, pmseInboxId, taskName, valuesA,valuesB){
     var value=new Object();
     value.moduleName = valuesA;
     value.beanId = valuesB;
-    adhocForm(casId, casIndex, flowId, pmseInboxId, taskName, value);
+    showForm(casId, casIndex, flowId, pmseInboxId, taskName, value, 'adhoc');
 };
-var adhocForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values){
-    showModalWindow(casId, casIndex, 'adhoc', flowId, pmseInboxId, taskName, values);
+
+/**
+ * Open the adhoc form for the current case.
+ *
+ * @deprecated This will be removed on future versions.
+ * Use showForm() and send it the same parameters in the same order plus the constant 'adhoc' string as last parameter.
+ */
+var adhocForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values) {
+    _App.logger.warn('adhocForm() is deprecated, it will be removed in a future release. ' +
+    'Use showForm() using the same parameters in the same order plus the constant "adhoc" string as last parameter instead.');
+    showForm(casId, casIndex, flowId, pmseInboxId, taskName, values, 'adhoc');
 };
+
 var claim_case = function(cas_id, cas_index, full_name, idInbox){
     var value = {};
     value.cas_id = cas_id;
@@ -270,8 +309,14 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                         attributes = {
                             data: f.getData()
                         };
+                        $(w.html).remove();
                         _App.api.call('update', urlIni, attributes, {
                             success: function (response) {
+                                _App.alert.show('pmse_reassign_success', {
+                                    autoClose: true,
+                                    level: 'success',
+                                    messages: translate('LBL_PMSE_ALERT_REASSIGN_SUCCESS', 'pmse_Inbox')
+                                });
                                 if (wtype == 'reassign') {
                                     w.close();
                                     _App.router.redirect('Home');

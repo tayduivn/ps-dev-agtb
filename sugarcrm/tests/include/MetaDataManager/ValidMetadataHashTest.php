@@ -66,7 +66,9 @@ class ValidMetadataHashMetadataManager extends MetaDataManager
 
     function setHashCacheForTest($hashes)
     {
-        $this->storeToCacheTable('hashes', $hashes);
+        foreach ($hashes as $key => $hash) {
+            $this->addToHashCache($key, $hash);
+        }
     }
 
 }

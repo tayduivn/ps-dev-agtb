@@ -25,6 +25,8 @@ define('REL_ONE_MANY', 'one-to-many');
 define('REL_ONE_ONE', 'one-to-one');
 define('REL_TYPE_ONE', 'one');
 define('REL_TYPE_MANY', 'many');
+define('REL_TYPE_UNDEFINED', 'undefined');
+
 /**
  * A relationship is between two modules.
  * It contains at least two links.

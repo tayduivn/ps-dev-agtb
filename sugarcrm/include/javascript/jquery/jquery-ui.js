@@ -1,4 +1,14 @@
 //FILE SUGARCRM flav=int ONLY
+/*
+Modification information
+
+commit b09cb8f7937948c1428f8378885f9e70ecb59467
+Author: Sergey Morozov <smorozov@sugarcrm.com>
+Date:   Fri Aug 21 15:08:37 2015 +0300
+
+[BR-3239] Save Button is not functional while saving the formula for the calculated field.
+*/
+
 /*!
  * jQuery UI 1.8.16
  *
@@ -992,6 +1002,12 @@ if ( !$.offset.setOffset ) {
 		}
 		return _offset.call( this );
 	};
+}
+
+// @link https://github.com/jquery/jquery-ui/commit/04df2b9
+// jQuery <1.4.3 uses curCSS, in 1.4.3 - 1.7.2 curCSS = css, 1.8+ only has css
+if ( !$.curCSS ) {
+	$.curCSS = $.css;
 }
 
 }( jQuery ));

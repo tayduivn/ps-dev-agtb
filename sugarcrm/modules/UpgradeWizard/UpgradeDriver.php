@@ -520,19 +520,64 @@ abstract class UpgradeDriver
     }
 
     /**
-     * Load version file from path
+     * Returns version and flavor which the upgrade is being done from
+     *
      * @return array
      */
-    protected function loadVersion($dir = "")
+    protected function getFromVersion()
+    {
+        $version = $this->loadFromVersion();
+        $this->log('The from version is detected as ' . implode(' ', $version));
+        return $version;
+    }
+
+    /**
+     * Returns version and flavor which the upgrade is being done to
+     *
+     * @return array
+     */
+    protected function getToVersion()
+    {
+        $version = $this->loadToVersion();
+        $this->log('The to version is detected as ' . implode(' ', $version));
+        return $version;
+    }
+
+    /**
+     * Loads version and flavor which the upgrade is being done from
+     *
+     * @return array
+     */
+    protected function loadFromVersion()
+    {
+        return $this->loadVersion($this->context['source_dir']);
+    }
+
+    /**
+     * Loads version and flavor which the upgrade is being done to
+     *
+     * @return array
+     */
+    protected function loadToVersion()
+    {
+        return $this->loadVersion($this->context['new_source_dir']);
+    }
+
+    /**
+     * Load version file from path
+     *
+     * @param string $dir Data source path
+     *
+     * @return array
+     */
+    protected function loadVersion($dir)
     {
         if (!defined('sugarEntry')) {
             define('sugarEntry', true);
         }
-        if ($dir) {
-            include "$dir/sugar_version.php";
-        } else {
-            include "sugar_version.php";
-        }
+
+        $sugar_version = $sugar_flavor = null;
+        include "$dir/sugar_version.php";
         $sugar_flavor = strtolower($sugar_flavor);
         return array($sugar_version, $sugar_flavor);
     }
@@ -893,7 +938,11 @@ abstract class UpgradeDriver
         }
 
         // validate manifest
-        list($this->from_version, $this->from_flavor) = $this->loadVersion();
+        list($this->from_version, $this->from_flavor) = $this->getFromVersion();
+        $db = DBManagerFactory::getInstance();
+        if (version_compare($this->from_version, 7, '<') && !$db instanceof MysqlManager) {
+            return $this->error("Can't upgrade version 6.x on non-Mysql database", true);
+        }
         $res = $this->validateManifest();
         if ($res !== true) {
             if ($this->clean_on_fail) {
@@ -1529,7 +1578,7 @@ abstract class UpgradeDriver
             $this->to_flavor = strtolower($this->manifest['flavor']);
         } else {
             if (!empty($this->context['new_source_dir'])) {
-                list($to_version, $to_flavor) = $this->loadVersion($this->context['new_source_dir']);
+                list(, $to_flavor) = $this->getToVersion();
                 $this->to_flavor = $to_flavor;
             } else {
                 $this->to_flavor = $this->from_flavor;
@@ -1744,10 +1793,8 @@ abstract class UpgradeDriver
                     break;
                 case "pre":
                     // Run pre-upgrade
-                    // TODO: pre-script are currently taken from old envt.
-                    // We need to consider how to take them from new envt instead.
                     $this->initSugar();
-                    list($this->from_version, $this->from_flavor) = $this->loadVersion();
+                    list($this->from_version, $this->from_flavor) = $this->getFromVersion();
                     $this->state['old_version'] = array($this->from_version, $this->from_flavor);
                     $this->saveState();
                     if (!$this->runScripts("pre")) {
@@ -1872,7 +1919,7 @@ abstract class UpgradeDriver
      */
     public function healthcheck()
     {
-        list($version,) = $this->loadVersion($this->context['source_dir']);
+        list($version,) = $this->getFromVersion();
         return $this->doHealthcheck();
     }
 
