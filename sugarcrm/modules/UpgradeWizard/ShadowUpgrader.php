@@ -174,18 +174,19 @@ eoq2;
     }
 
     /**
-     * Load instance version
-     *
-     * @param string $dir Instance directory
-     * @return array
+     * {@inheritDoc}
      */
-    protected function loadVersion($dir = null)
+    protected function loadFromVersion()
     {
-        if (!$dir) {
-            $dir = $this->context['pre_template'];
-        }
+        return $this->loadVersion($this->context['pre_template']);
+    }
 
-        return parent::loadVersion($dir);
+    /**
+     * {@inheritDoc}
+     */
+    protected function loadToVersion()
+    {
+        return $this->loadVersion($this->context['post_template']);
     }
 
     /**
@@ -195,9 +196,7 @@ eoq2;
     public function getManifest()
     {
         // load target data
-        chdir($this->context['post_template']);
-        list($to_version, $to_flavor) = $this->loadVersion($this->context['post_template']);
-        chdir($this->context['source_dir']);
+        list($to_version, $to_flavor) = $this->getToVersion();
         // return fake manifest
         return array(
             'description' => 'Shadow Upgrade from {$this->from_version}/{$this->from_flavor} to $to_version/$to_flavor',

@@ -21,6 +21,11 @@ require_once 'clients/base/api/CurrentUserApi.php';
 class TrackersTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public $service;
+    /**
+     * @var SugarConfig $sc
+     */
+    protected $sc;
+
 
     private $files = array(
         "tracker_perfvardefs.php",
@@ -31,8 +36,19 @@ class TrackersTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        //Ensure the cache for all the vardef files must be rebuilt for each run.
+        foreach($this->files as $file) {
+            $path =  sugar_cached("modules/Trackers/" . $file);
+            if (file_exists($path)) {
+                SugarAutoLoader::unlink($path);
+            }
+        }
+
         $GLOBALS['reload_vardefs'] = true;
         SugarCache::$isCacheReset = false;
+        //Force the use of the file system cache during this test.
+        $this->sc = SugarConfig::getInstance();
+        $this->sc->_cached_values['noFilesystemMetadataCache'] = false;
 
         SugarTestHelper::setUp("app_list_strings");
 
@@ -46,11 +62,19 @@ class TrackersTest extends Sugar_PHPUnit_Framework_TestCase
             $filepath = sugar_cached("modules/Trackers/" . $file);
             @unlink($filepath);
         }
+        $this->sc->clearCache('noFilesystemMetadataCache');
     }
 
+    /**
+     * Testing scenario found in PAT-1314
+     */
     public function testCacheRewriteAPI()
     {
         $timestamp = array();
+        new Tracker();
+        new TrackerPerf();
+        new TrackerQuery();
+        new TrackerSession();
 
         // Store cached file timestamps
         foreach ($this->files as $file) {
@@ -78,7 +102,12 @@ class TrackersTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCacheRewriteClassInstantiation()
     {
+        unset($GLOBALS['dictionary']);
         $timestamp = array();
+        new Tracker();
+        new TrackerPerf();
+        new TrackerQuery();
+        new TrackerSession();
 
         // Store cached file timestamps
         foreach ($this->files as $file) {

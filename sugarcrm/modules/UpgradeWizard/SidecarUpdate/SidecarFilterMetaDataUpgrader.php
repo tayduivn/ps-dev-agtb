@@ -14,6 +14,7 @@
 require_once 'SidecarAbstractMetaDataUpgrader.php';
 require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php';
 require_once 'modules/ModuleBuilder/parsers/views/DeployedSearchMetaDataImplementation.php';
+require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 
 class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
 {
@@ -60,11 +61,11 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         //Translate the viewName, only handling the base filter case
         if ($viewName == MB_SEARCHVIEW) {
             $viewName = MB_BASICSEARCH;
-        } else {
+        } elseif ($viewName != MB_BASICSEARCH) {
             return array();
         }
         $impl = new DeployedSearchMetaDataImplementation($viewName, $module);
-        return $impl->createSidecarFilterDefsFromLegacy();
+        return $impl->createSidecarFilterDefsFromLegacy(array(), $this->loadFilterDef());
     }
 
     public function getNewFileName($viewname)
@@ -75,4 +76,16 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         return $dirname . "/clients/$client/filters/default/default.php";
     }
 
+    /**
+     * Load the field definitions from clients/$client/filters/default/default.php.
+     * @return array
+     */
+    protected function loadFilterDef()
+    {
+        $module = $this->getNormalizedModuleName();
+        $parser = ParserFactory::getParser(MB_BASICSEARCH, $module);
+        $defs = $parser->getOriginalViewDefs();
+
+        return $defs['fields'];
+    }
 }

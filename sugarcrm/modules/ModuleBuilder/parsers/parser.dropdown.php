@@ -93,16 +93,21 @@ class ParserDropDown extends ModuleBuilderParser
                 if (sugar_is_file($filePath)) {
                     include($filePath);
                 }
-                $contents = "<?php\n //created: " . date('Y-m-d H:i:s') . "\n";
-                foreach ($dropdown as $key=>$value) {
+
+                foreach ($dropdown as $key => $value) {
                     //only if the value has changed or does not exist do we want to add it this way
-                    if (!isset($my_list_strings[$dropdown_name][$key]) || strcmp($my_list_strings[$dropdown_name][$key], $value) != 0 ) {
+                    if (!isset($my_list_strings[$dropdown_name][$key])
+                        || strcmp($my_list_strings[$dropdown_name][$key], $value) != 0) {
                         $app_list_strings[$dropdown_name][$key] = $value;
                     }
                 }
                 //Now that we have all the values, save the overrides to the extension
-                foreach($app_list_strings[$dropdown_name] as $key => $value) {
-                    $contents .= "\n\$app_list_strings['$dropdown_name']['$key']=" . var_export_helper($value) . ";";
+                if (!empty($app_list_strings[$dropdown_name])) {
+                    $contents = "<?php\n //created: " . date('Y-m-d H:i:s') . "\n";
+                    foreach($app_list_strings[$dropdown_name] as $key => $value) {
+                        $contents .= "\n\$app_list_strings['$dropdown_name']['$key']=" . var_export_helper($value) . ";";
+                    }
+                    $this->saveContents($dropdown_name, $contents, $selected_lang);
                 }
             } else {
                 if (empty($params['skip_sync'])) {
@@ -113,9 +118,8 @@ class ParserDropDown extends ModuleBuilderParser
                 }
 
                 $contents = $this->getExtensionContents($dropdown_name, $dropdown);
+                $this->saveContents($dropdown_name, $contents, $selected_lang);
             }
-
-            $this->saveContents($dropdown_name, $contents, $selected_lang);
         }
         $this->finalize($selected_lang);
     }
