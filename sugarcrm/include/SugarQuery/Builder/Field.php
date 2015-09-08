@@ -25,6 +25,11 @@ require_once 'include/SugarQuery/Builder/Field/Select.php';
 class SugarQuery_Builder_Field
 {
     /**
+     * @var SugarQuery
+     */
+    public $query;
+
+    /**
      * @var string Field
      */
     public $field;

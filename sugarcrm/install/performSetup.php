@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 
 // $Id: performSetup.php 55505 2010-03-22 15:20:57Z clee $
 // This file will load the configuration settings from session data,
@@ -488,12 +489,12 @@ $enabled_tabs[] = 'Cases';
 $enabled_tabs[] = 'Prospects';
 $enabled_tabs[] = 'ProspectLists';
 $enabled_tabs[] = 'Tags';
+$enabled_tabs[] = 'KBContents';
 //BEGIN SUGARCRM flav=ent ONLY
 $enabled_tabs[] = 'pmse_Project';
 $enabled_tabs[] = 'pmse_Inbox';
 $enabled_tabs[] = 'pmse_Business_Rules';
 $enabled_tabs[] = 'pmse_Emails_Templates';
-$enabled_tabs[] = 'KBContents';
 
 if ($_SESSION['demoData'] != 'no') {
     $enabled_tabs[] = 'Bugs';
@@ -602,9 +603,8 @@ if (isset($_SESSION['oc_install']) && $_SESSION['oc_install'] == true) {
 
 ///////////////////////////////////////////////////////////////////////////
 ////    FINALIZE LANG PACK INSTALL
-if (isset($_SESSION['INSTALLED_LANG_PACKS']) && is_array(
-        $_SESSION['INSTALLED_LANG_PACKS']
-    ) && !empty($_SESSION['INSTALLED_LANG_PACKS'])
+if (isset($_SESSION['INSTALLED_LANG_PACKS']) && ArrayFunctions::is_array_access($_SESSION['INSTALLED_LANG_PACKS'])
+    && !empty($_SESSION['INSTALLED_LANG_PACKS'])
 ) {
     updateUpgradeHistory();
 }

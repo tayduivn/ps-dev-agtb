@@ -349,9 +349,6 @@ class Configurator {
 	 */
 
 	function parseLoggerSettings(){
-		if(!function_exists('setDeepArrayValue')){
-			require('include/utils/array_utils.php');
-		}
 		if (file_exists('log4php.properties')) {
 			$fileContent = file_get_contents('log4php.properties');
 			$old_props = explode('\n', $fileContent);

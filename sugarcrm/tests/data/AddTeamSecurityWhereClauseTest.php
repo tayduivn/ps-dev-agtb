@@ -176,7 +176,14 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
      */
 	public function testAddTeamSecurityWhereClauseForAdminForModule()
 	{
-	    $_SESSION[$GLOBALS['current_user']->user_name.'_get_admin_modules_for_user'] = array('Foo');
+        global $current_user;
+
+        /** @var User|PHPUnit_Framework_MockObject_MockObject $current_user */
+        $current_user = $this->getMock('User', array('isAdminForModule'));
+        $current_user->expects($this->atLeastOnce())
+            ->method('isAdminForModule')
+            ->with('Foo')
+            ->willReturn(true);
 
         $bean = new SugarBean();
         $bean->module_dir = 'Foo';
@@ -186,11 +193,6 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
 
         $bean->add_team_security_where_clause($query);
 
-        $this->assertEquals(
-            '',
-            $query
-            );
-
-        unset($_SESSION[$GLOBALS['current_user']->user_name.'_get_admin_modules_for_user']);
+        $this->assertEquals('', $query);
     }
 }

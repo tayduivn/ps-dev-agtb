@@ -14,6 +14,8 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
 require_once('service/v3/SugarWebServiceImplv3.php');
 require_once('SugarWebServiceUtilv3_1.php');
 
+use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+
 /**
  * This class is an implemenatation class for all the rest services
  */
@@ -372,8 +374,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
 
             if($application == 'mobile')
             {
-                $modules = $availModuleNames = array();
-                $availModules = array_keys($_SESSION['avail_modules']); //ACL check already performed.
+                $availModules = ArrayFunctions::array_access_keys($_SESSION['avail_modules']); //ACL check already performed.
                 $modules = self::$helperObject->get_visible_mobile_modules($availModules);
                 $nameValueArray['available_modules'] = $modules;
                 //Get the vardefs md5
@@ -415,8 +416,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
     		return;
     	} // if
 
-    	$modules = array();
-    	$availModules = array_keys($_SESSION['avail_modules']); //ACL check already performed.
+    	$availModules = ArrayFunctions::array_access_keys($_SESSION['avail_modules']); //ACL check already performed.
     	switch ($filter){
     	    case 'default':
     	        $modules = self::$helperObject->get_visible_modules($availModules);

@@ -288,7 +288,7 @@ describe('Base.Field.Relate', function() {
 
             field.module = 'Accounts';
             field.model = new Backbone.Model({account_id: "1234", account_name: "bob"});
-            field.buildRoute('Users', 1);
+            field.buildRoute('Users', '1');
 
             expect(aclHasAccessStub).toHaveBeenCalled();
             expect(field.href).toBeUndefined();
@@ -296,7 +296,7 @@ describe('Base.Field.Relate', function() {
             aclHasAccessStub.restore();
             aclHasAccessStub = sinon.collection.stub(app.acl, 'hasAccess').returns(true);
 
-            field.buildRoute('Users', 1);
+            field.buildRoute('Users', '1');
             expect(aclHasAccessStub).toHaveBeenCalled();
             expect(field.href).toBeDefined();
 

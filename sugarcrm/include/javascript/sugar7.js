@@ -633,27 +633,26 @@
                 // FIXME: Should be event-driven, see:
                 // https://github.com/sugarcrm/Mango/pull/18722#discussion_r11782561
                 // Will be addressed in SC-2761.
-                $('#header').hide();
+                app.additionalComponents.header.hide();
                 return false;
             }
 
-            var passwordExpired = false;
             //If the password has expired (and we're not logging out which is ignored)
-            if (route && route !== 'logout' && app.user && app.user.has('is_password_expired')) {
-                passwordExpired = app.user.get('is_password_expired');
-                if (passwordExpired) {
-                    app.controller.loadView({
-                        layout: 'password-expired',
-                        module: 'Users',
-                        callbacks: {
-                            complete: function() {
-                                window.location.reload();//Reload when password reset
-                            }
-                        },
-                        modelId: app.user.get('id')
-                    });
-                    return false;
-                }
+            if (route && route !== 'logout' && app.user && app.user.get('is_password_expired')) {
+                app.controller.loadView({
+                    layout: 'password-expired',
+                    module: 'Users',
+                    callbacks: {
+                        complete: function() {
+                            // Reload when password reset
+                            window.location.reload();
+                        }
+                    },
+                    modelId: app.user.get('id')
+                });
+                app.additionalComponents.header.hide();
+
+                return false;
             }
 
             var subroute;
