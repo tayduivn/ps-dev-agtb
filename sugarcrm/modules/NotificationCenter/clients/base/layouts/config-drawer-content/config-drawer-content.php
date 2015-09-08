@@ -1,5 +1,5 @@
 <?php
- /*
+/*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
  * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
@@ -9,8 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-$mod_strings = array(
-    'LBL_TITLE' => 'Carrier Socket',
-    'LBL_CONFIG_LABEL' => 'On SugarCRM',
+$viewdefs['NotificationCenter']['base']['layout']['config-drawer-content'] = array(
+    'components' => array(
+        array(
+            'view' => 'config-carriers',
+        ),
+    ),
 );

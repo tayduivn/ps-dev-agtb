@@ -31,7 +31,7 @@ class CarriersConfigApi extends SugarApi
                 'acl' => 'adminOrDev',
             ),
             'handleSave' => array(
-                'reqType' => 'PUT',
+                'reqType' => 'POST',
                 'path' => array('NotificationCenter', 'config'),
                 'pathVars' => array('', '', 'module'),
                 'method' => 'handleSave',
@@ -55,10 +55,13 @@ class CarriersConfigApi extends SugarApi
         $registry = $this->getCarrierRegistry();
         $data = array();
         foreach ($registry->getCarriers() as $module) {
-            $data[$module] = $status->getCarrierStatus($module);
+
+            $data[$module] = array(
+                'status' => $status->getCarrierStatus($module),
+                );
         }
 
-        return $data;
+        return array('carriers' => $data);
     }
 
     /**
@@ -73,12 +76,15 @@ class CarriersConfigApi extends SugarApi
         $status = $this->getStatus();
         $registry = $this->getCarrierRegistry();
         $result = true;
-        foreach ($registry->getCarriers() as $module) {
-            if (!array_key_exists($module, $args)) {
-                continue;
+        if (!empty($args['carriers'])) {
+            foreach ($registry->getCarriers() as $module) {
+                if (!array_key_exists($module, $args['carriers'])) {
+                    continue;
+                }
+                $result = $result | $status->setCarrierStatus($module, !empty($args['carriers'][$module]['status']));
             }
-            $result = $result | $status->setCarrierStatus($module, !empty($args[$module]));
         }
+
 
         return $result;
     }
