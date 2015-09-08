@@ -23,8 +23,8 @@
         this.on('header:update:route', this.resize, this);
         app.events.on('app:view:change', this.resize, this);
         // Event listeners for showing and hiding the megamenu on auth expiration
-        app.events.on('router:reauth:load', this.hideMenu, this);
-        app.events.on('router:reauth:success', this.showMenu, this);
+        app.events.on('app:login', this.hide, this);
+        app.events.on('app:login:success', this.show, this);
 
         var resize = _.bind(this.resize, this);
         $(window)
@@ -102,24 +102,35 @@
 
         // If we are authenticated show the megamenu
         if (app.api.isAuthenticated()) {
-            this.showMenu();
+            this.show();
         } else {
-            this.hideMenu();
+            this.hide();
         }
     },
 
     /**
-     * Shows the megamenu
+     * @inheritDoc
      */
-    showMenu: function() {
-        this.$el.show();
+    show: function() {
+        this._super('show');
         this.resize();
     },
 
     /**
-     * Hides the megamenu
+     * Shows the megamenu
+     * @deprecated since 7.7 and will be removed in 7.8, use {@link #show}.
      */
-    hideMenu: function() {
-        this.$el.hide();
+    showMenu: function () {
+        app.logger.warn('showMenu is deprecated, please use show instead.');
+        this.show();
+    },
+
+    /**
+     * Hides the megamenu
+     * @deprecated since 7.7 and will be removed in 7.8, use {@link #hide}.
+     */
+    hideMenu: function () {
+        app.logger.warn('hideMenu is deprecated, please use hide instead.');
+        this.hide();
     }
 })

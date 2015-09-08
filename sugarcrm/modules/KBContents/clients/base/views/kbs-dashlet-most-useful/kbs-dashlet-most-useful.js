@@ -23,6 +23,11 @@
     collection: null,
 
     /**
+     * We'll use this property to bind loadData function for event
+     */
+    refresh: null,
+
+    /**
      * @inheritDoc
      */
     initialize: function (options) {
@@ -30,7 +35,7 @@
         
         options.module = 'KBContents';
         this._super('initialize', [options]);
-        this._initCollection();
+        this.refresh = _.bind(this.loadData, this);
 
         if (_.isUndefined(this.meta.config) || this.meta.config === false){
             this.listenTo(this.context.parent.get('collection'), 'sync', function () {
@@ -40,6 +45,10 @@
                 }
             });
         }
+
+        this._initCollection();
+        this.listenTo(app.controller.context.get('model'), 'change:useful', this.refresh);
+        this.listenTo(app.controller.context.get('model'), 'change:notuseful', this.refresh);
     },
 
     /**
@@ -119,5 +128,16 @@
                 }
             }, this)
         });
+    },
+
+    /**
+     * {@inheritDocs}
+     *
+     * Dispose listeners for 'change:useful' and 'change:notuseful' events.
+     */
+    dispose: function() {
+        this.stopListening(app.controller.context.get('model'), 'change:useful', this.refresh);
+        this.stopListening(app.controller.context.get('model'), 'change:notuseful', this.refresh);
+        this._super('dispose');
     }
 })

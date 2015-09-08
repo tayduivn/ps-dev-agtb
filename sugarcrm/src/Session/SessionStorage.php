@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Session;
 
 use Sugarcrm\Sugarcrm\Util\Arrays\TrackableArray\TrackableArray;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 
 /**
@@ -111,7 +112,9 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
 
     public function sessionHasId()
     {
-        if (!empty($_GET['PHPSESSID'])) {
+        //Grab the PHP session name
+        $session_name = session_name();
+        if (!empty($_GET[$session_name])) {
             return true;
         }
 
@@ -125,6 +128,7 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
     protected static function registerShutdownFunction($previousUserId)
     {
         register_shutdown_function(function () use ($previousUserId) {
+            $logger = new LoggerTransition(LoggerManager::getLogger());
             //Now write out the session data again during shutdown
             $sessionObject = $_SESSION;
             session_start();
@@ -134,8 +138,7 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
                     && $previousUserId != $_SESSION['user_id']
                 )
             ) {
-                LoggerManager::getLogger()->log(
-                    'warn',
+                $logger->warning(
                     'Unexpected change in user or logout during session write at shutdown'
                 );
             } else {
@@ -143,8 +146,7 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
                     $sessionObject->applyTrackedChangesToArray($_SESSION);
                     session_write_close();
                 } else {
-                    LoggerManager::getLogger()->log(
-                        'fatal',
+                    $logger->alert(
                         '$_SESSION changed from TrackableArray obect to ' . get_class($_SESSION)
                     );
                 }

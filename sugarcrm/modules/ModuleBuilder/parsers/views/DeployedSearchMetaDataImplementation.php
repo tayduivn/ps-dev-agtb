@@ -15,6 +15,8 @@ require_once 'modules/ModuleBuilder/parsers/views/DeployedMetaDataImplementation
 require_once 'include/MetaDataManager/MetaDataConverter.php';
 //include the class to deploy sidecar files
 require_once 'modules/ModuleBuilder/parsers/views/DeployedSidecarFilterImplementation.php';
+
+
 /*
  * Implementation class for handling search metadata
  */
@@ -35,7 +37,7 @@ class DeployedSearchMetaDataImplementation extends DeployedMetaDataImplementatio
      * @param array $defs : the defs of BWC modules to be converted
      * @return array
      */
-    public function createSidecarFilterDefsFromLegacy($defs = array())
+    public function createSidecarFilterDefsFromLegacy($defs = array(), $filterDefs = array())
     {
         if (empty($defs)) {
             $defs = $this->getViewdefs();
@@ -46,7 +48,8 @@ class DeployedSearchMetaDataImplementation extends DeployedMetaDataImplementatio
             $this->_moduleName,
             $this->getFieldDefs(),
             $this->_viewType,
-            $this->_viewClient
+            $this->_viewClient,
+            $filterDefs
         );
         $sidecarFilter = new DeployedSidecarFilterImplementation($this->_moduleName);
         return $sidecarFilter->deploy($scDefs);

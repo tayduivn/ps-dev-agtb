@@ -69,36 +69,39 @@ function canSendPassword() {
 
 /**
  * Check if password has expired.
+ * @param {User|string} $user
  * @return Boolean indicating if password is expired or not
  */
-function hasPasswordExpired($username, $updateNumberLogins = false)
+function hasPasswordExpired($user, $updateNumberLogins = false)
 {
-    $usr_id=User::retrieve_user_id($username);
-	$usr= BeanFactory::getBean('Users', $usr_id);
+    if (!$user instanceof User) {
+        $usr_id = User::retrieve_user_id($user);
+        $user = BeanFactory::getBean('Users', $usr_id);
+    }
     $type = '';
-	if ($usr->system_generated_password == '1'){
+	if ($user->system_generated_password == '1'){
         $type='syst';
     }
     else{
         $type='user';
     }
 
-    if ($usr->portal_only=='0'){
+    if ($user->portal_only=='0'){
 	    $res=$GLOBALS['sugar_config']['passwordsetting'];
 
 	  	if ($type != '') {
 		    switch($res[$type.'expiration']) {
 	        case '1':
 		    	global $timedate;
-                    if ($usr->pwd_last_changed == '') {
-                        $usr->pwd_last_changed= $timedate->nowDb();
+                    if ($user->pwd_last_changed == '') {
+                        $user->pwd_last_changed= $timedate->nowDb();
                         //Suppress date_modified so a new _hash isn't generated
-                        $usr->update_date_modified = false;
-                        $usr->save();
+                        $user->update_date_modified = false;
+                        $user->save();
 
-                        $pass_changed_timestamp = $timedate->fromDb($usr->pwd_last_changed);
+                        $pass_changed_timestamp = $timedate->fromDb($user->pwd_last_changed);
                     } else {
-                        $pass_changed_timestamp = $timedate->fromUser($usr->pwd_last_changed, $usr);
+                        $pass_changed_timestamp = $timedate->fromUser($user->pwd_last_changed, $user);
                     }
                 // SP-1790: Creating user with default password expiration settings results in password expired page on first login
                 // Below, we calc $expireday essentially doing type*time; that requires that expirationtype factor is 1 or
@@ -118,14 +121,14 @@ function hasPasswordExpired($username, $updateNumberLogins = false)
                 break;
 
 		    case '2':
-		    	$login = $usr->getPreference('loginexpiration');
+		    	$login = $user->getPreference('loginexpiration');
                 //Only increment number of logins if we're actually doing an update
                 if ($updateNumberLogins) {
                     $login = $login + 1;
-                    $usr->setPreference('loginexpiration',$login);
+                    $user->setPreference('loginexpiration',$login);
                     //Suppress date_modified so a new _hash isn't generated
-                    $usr->update_date_modified = false;
-                    $usr->save();
+                    $user->update_date_modified = false;
+                    $user->save();
                 }
 		        if ($login >= $res[$type.'expirationlogin']){
 		        	$_SESSION['expiration_label']= 'LBL_PASSWORD_EXPIRATION_LOGIN';

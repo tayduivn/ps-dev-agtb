@@ -179,7 +179,7 @@ class AuthenticationController
 			    $_SESSION['userStats']['pages'] = 0;
 			}
 			$_SESSION['userStats']['lastTime'] = time();
-			$_SESSION['userStats']['pages']++;
+			$_SESSION['userStats']['pages'] += 1;
 
 		}
 		return $this->authenticated;
@@ -207,7 +207,7 @@ class AuthenticationController
 			    $_SESSION['userStats']['pages'] = 0;
 			}
 			$_SESSION['userStats']['lastTime'] = time();
-			$_SESSION['userStats']['pages']++;
+			$_SESSION['userStats']['pages'] += 1;
 
 		}
 		return $this->authenticated;

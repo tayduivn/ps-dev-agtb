@@ -148,11 +148,15 @@ class AbstractRelationships
         $definition = array ( ) ;
         require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationship.php' ;
 
-        foreach ( AbstractRelationship::$definitionKeys as $key )
-        {
-            if (! empty ( $_REQUEST [ $key ] ))
-            {
-                $definition [ $key ] = ($key == 'relationship_type') ? AbstractRelationship::parseRelationshipType ( $_REQUEST [ $key ] ) : $_REQUEST [ $key ] ;
+        foreach (AbstractRelationship::$definitionKeys as $key) {
+            if (!empty($_REQUEST[$key])) {
+                if (in_array($key, array('label', 'rhs_label', 'lhs_label'))) {
+                    $definition[$key] = htmlspecialchars_decode($_REQUEST[$key], ENT_QUOTES);
+                } else if ($key == 'relationship_type') {
+                    $definition[$key] = AbstractRelationship::parseRelationshipType($_REQUEST[$key]);
+                } else {
+                    $definition[$key] = $_REQUEST[$key];
+                }
             }
         }
 
@@ -255,6 +259,7 @@ class AbstractRelationships
         $relationships = SugarRelationshipFactory::getInstance()->getRelationshipDefs();
         array_walk($relationships, function (&$def) {
             $def['readonly'] = true;
+            $def['relationship_name'] = $def['name'];
         });
 
         return $relationships;

@@ -53,10 +53,10 @@ $dictionary['CalDavEvent'] = array(
                     'isnull' => 'true',
                     'comment' => 'HTTP ETag. If the resource content at that URI ever changes, a new and different ETag is assigned',
                 ),
-            'size' =>
+            'data_size' =>
                 array(
                     'required' => true,
-                    'name' => 'size',
+                    'name' => 'data_size',
                     'vname' => 'LBL_EVENT_SIZE',
                     'type' => 'int',
                     'len' => '11',
@@ -89,9 +89,9 @@ $dictionary['CalDavEvent'] = array(
                     'isnull' => 'true',
                     'comment' => 'Recurring event last occurrence',
                 ),
-            'uid' =>
+            'event_uid' =>
                 array(
-                    'name' => 'uid',
+                    'name' => 'event_uid',
                     'vname' => 'LBL_EVENT_UID',
                     'type' => 'varchar',
                     'len' => '200',
@@ -300,7 +300,7 @@ $dictionary['CalDavChange'] = array(
         array(
             'uri' =>
                 array(
-                    'required' => true,
+                    'required' => false,
                     'name' => 'uri',
                     'vname' => 'LBL_CHANGE_EVENT_URI',
                     'type' => 'varchar',
@@ -404,10 +404,10 @@ $dictionary['CalDavScheduling'] = array(
                     'isnull' => 'true',
                     'comment' => 'HTTP ETag. If the resource content at that URI ever changes, a new and different ETag is assigned',
                 ),
-            'size' =>
+            'data_size' =>
                 array(
                     'required' => true,
-                    'name' => 'size',
+                    'name' => 'data_size',
                     'vname' => 'LBL_SCHEDULING_SIZE',
                     'type' => 'int',
                     'len' => '11',

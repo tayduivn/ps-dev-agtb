@@ -14,6 +14,8 @@ require_once('include/SugarObjects/templates/basic/Basic.php');
 require_once('include/externalAPI/ExternalAPIFactory.php');
 require_once('include/SugarOauth.php');
 
+use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+
 class EAPM extends Basic {
 	var $new_schema = true;
 	var $module_dir = 'EAPM';
@@ -61,7 +63,7 @@ class EAPM extends Basic {
        $eapmBean = BeanFactory::getBean('EAPM');
 
        if ( isset($_SESSION['EAPM'][$application]) && !$includeInactive ) {
-           if ( is_array($_SESSION['EAPM'][$application]) ) {
+           if ( ArrayFunctions::is_array_access($_SESSION['EAPM'][$application]) ) {
                $eapmBean->fromArray($_SESSION['EAPM'][$application]);
            } else {
                return null;
