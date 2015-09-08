@@ -137,14 +137,20 @@ class ViewDropdown extends SugarView
             $smarty->assign('options', $selected_dropdown);
         } else {
             $smarty->assign('ul_list', 'list = {}');
-            //we should try to find a name for this dropdown based on the field name.
-            //ensure this dropdown name does not already exist
-            $use_name = $params['field'] . '_list';
-            $i = 0;
-            while (isset($my_list_strings[$use_name])) {
-                $use_name = $params['field'] . '_' . ++$i;
+
+            if ($params['dropdown_name']) {
+                $dropdown_name = $params['dropdown_name'];
+            } else {
+                //we should try to find a name for this dropdown based on the field name.
+                //ensure this dropdown name does not already exist
+                $dropdown_name = $params['field'] . '_list';
+                $i = 0;
+                while (isset($my_list_strings[$dropdown_name])) {
+                    $dropdown_name = $params['field'] . '_' . ++$i;
+                }
             }
-            $smarty->assign('prepopulated_name', $use_name);
+
+            $smarty->assign('dropdown_name', $dropdown_name);
         }
 
         $smarty->assign('required_items', json_encode($required_items));
@@ -155,6 +161,8 @@ class ViewDropdown extends SugarView
         $smarty->assign('roles', $this->getAvailableRoleList($params['dropdown_name']));
 // END SUGARCRM flav=ent ONLY
         $smarty->assign('package_name', $package_name);
+        $smarty->assign('new', !empty($params['new']));
+
         return $smarty;
     }
 
@@ -166,9 +174,11 @@ class ViewDropdown extends SugarView
             $params['dropdown_lang'] = $GLOBALS['locale']->getAuthenticatedUserLanguage();
         }
 
-        if (empty($params['dropdown_name']) && !empty($params['field'])) {
-            $params['dropdown_name'] = $params['field'] . '_list';
+        if (empty($params['dropdown_name'])) {
             $params['new'] = true;
+            if (!empty($params['field'])) {
+                $params['dropdown_name'] = $params['field'] . '_list';
+            }
         }
 
         return $params;

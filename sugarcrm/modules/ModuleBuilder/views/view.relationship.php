@@ -35,11 +35,14 @@ class ViewRelationship extends SugarView
     {
         require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationship.php';
         foreach ( AbstractRelationship::$definitionKeys as $key ) {
-            if (!empty($_REQUEST['ajaxLoad']) && in_array($key, array('label', 'rhs_label', 'lhs_label'))) {
-                continue;
-            }
             if (!empty($_REQUEST[$key])) {
-                $definition[$key] = $_REQUEST[$key];
+                if (in_array($key, array('label', 'rhs_label', 'lhs_label'))) {
+                    if (empty($_REQUEST['ajaxLoad'])) {
+                        $definition[$key] = htmlspecialchars_decode($_REQUEST[$key], ENT_QUOTES);
+                    }
+                } else {
+                    $definition[$key] = $_REQUEST[$key];
+                }
             }
         }
         return $definition ;

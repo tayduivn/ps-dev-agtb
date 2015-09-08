@@ -1345,7 +1345,17 @@ function renderProject (prjCode) {
         }
     }).keypress(function(e) {
         if(e.which == 13) {
-            save_name();
+            if ($.trim(this.value) != '') {
+                App.alert.dismiss('error-project-name');
+                save_name();
+            }
+            else {
+                App.alert.show('error-project-name', {
+                    level: 'warning',
+                    messages: translate('LBL_PMSE_PROJECT_NAME_EMPTY','pmse_Project'),
+                    autoClose: false
+                });
+            }
         }
     });
 

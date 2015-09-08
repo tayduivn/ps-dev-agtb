@@ -13,6 +13,8 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
 require_once('service/core/SugarWebServiceImpl.php');
 require_once('SugarWebServiceUtilv3.php');
 
+use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+
 /**
  * This class is an implemenatation class for all the rest services
  */
@@ -255,8 +257,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     		return;
     	} // if
 
-    	$modules = array();
-    	$availModules = array_keys($_SESSION['avail_modules']); //ACL check already performed.
+    	$availModules = ArrayFunctions::array_access_keys($_SESSION['avail_modules']); //ACL check already performed.
     	switch ($filter){
     	    case 'default':
     	        $modules = self::$helperObject->get_visible_modules($availModules);

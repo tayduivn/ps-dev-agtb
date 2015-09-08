@@ -147,20 +147,11 @@
                 viewName = 'record';
             }
             this.meta = this._previewifyMetadata(_.extend({}, recordMeta, previewMeta));
-
-            if (fetch) {
-                model.fetch({
-                    //Show alerts for this request
-                    showAlerts: true,
-                    success: function(model) {
-                        self.renderPreview(model, collection);
-                    },
-                    //The view parameter is used at the server end to construct field list
-                    view: viewName
-                });
-            } else {
-                this.renderPreview(model, collection);
-            }
+            this.renderPreview(model, collection);
+            fetch && model.fetch({
+                showAlerts: true,
+                view: viewName
+            });
         }
 
         this.previewId = previewId;
@@ -170,8 +161,8 @@
      * @param {Bean} model Model to render preview
      */
     switchModel: function(model) {
+        this.model && this.model.abortFetchRequest();
         this.stopListening(this.model);
-        this._disposeFields();
         this.model = model;
 
         // Close preview when model destroyed by deleting the record

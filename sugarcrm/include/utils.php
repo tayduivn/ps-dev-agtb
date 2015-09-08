@@ -19,6 +19,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once 'include/SugarObjects/SugarConfig.php';
 require_once 'include/utils/security_utils.php';
+require_once 'include/utils/array_utils.php';
+
 
 function make_sugar_config(&$sugar_config)
 {
@@ -2214,7 +2216,6 @@ function clean_special_arguments()
     if (!empty($_REQUEST) && !empty($_REQUEST['login_theme'])) clean_string($_REQUEST['login_theme'], "STANDARD");
     if (!empty($_REQUEST) && !empty($_REQUEST['login_module'])) clean_string($_REQUEST['login_module'], "STANDARD");
     if (!empty($_REQUEST) && !empty($_REQUEST['login_action'])) clean_string($_REQUEST['login_action'], "STANDARD");
-    if (!empty($_REQUEST) && !empty($_REQUEST['ck_login_theme_20'])) clean_string($_REQUEST['ck_login_theme_20'], "STANDARD");
     if (!empty($_SESSION) && !empty($_SESSION['authenticated_user_theme'])) clean_string($_SESSION['authenticated_user_theme'], "STANDARD");
     if (!empty($_REQUEST) && !empty($_REQUEST['module_name'])) clean_string($_REQUEST['module_name'], "STANDARD");
     if (!empty($_REQUEST) && !empty($_REQUEST['module'])) clean_string($_REQUEST['module'], "STANDARD");

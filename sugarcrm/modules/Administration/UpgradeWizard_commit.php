@@ -145,7 +145,7 @@ if(empty($_REQUEST['install_file'])){
 }
 
 $install_file   = hashToFile($_REQUEST['install_file'] );
-$install_type   = getInstallType( $install_file );
+$install_type   = UpgradeWizardCommon::getInstallType( $install_file );
 
 //from here on out, the install_file is used as the file path to copy or rename the physical file, so let's remove the stream wrapper if it's set
 //and replace it with the proper upload location
@@ -568,7 +568,7 @@ if ($shouldClearCache) {
 <?php
 echo smarty_function_sugar_csrf_form_token(array(), $smarty);
 echo "<div>";
-print( getUITextForType($install_type) . " ". getUITextForMode($mode) . " ". $mod_strings['LBL_UW_SUCCESSFULLY']);
+print( UpgradeWizardCommon::getUITextForType($install_type) . " ". UpgradeWizardCommon::getUITextForMode($mode) . " ". $mod_strings['LBL_UW_SUCCESSFULLY']);
 echo "<br>";
 echo "<br>";
 print( "<input type=submit value=\"{$mod_strings['LBL_UW_BTN_BACK_TO_MOD_LOADER']}\" /><br>" );
