@@ -71,7 +71,7 @@ var showForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values, 
             showModalWindow(casId, casIndex, type, flowId, pmseInboxId, taskName, values);
         };
 
-    if (formView.hasUnsavedChanges()) {
+    if (!_.isUndefined(formView) && formView.hasUnsavedChanges()) {
         _App.alert.show('reassign_confirmation', {
             level: 'confirmation',
                 messages: translate('LBL_PMSE_ALERT_REASSIGN_UNSAVED_FORM', 'pmse_Inbox'),
