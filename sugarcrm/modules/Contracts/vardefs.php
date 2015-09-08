@@ -12,6 +12,7 @@
 
 $dictionary['Contract'] = array(
     'table' => 'contracts',
+    'favorites' => false,
     'audited' => true,
     'activity_enabled' => true,
     'unified_search' => true,
@@ -405,6 +406,8 @@ VardefManager::createVardef(
         'team_security'
     )
 );
+
+$dictionary['Contract']['fields']['tag']['massupdate'] = false;
 
 //boost value for full text search
 $dictionary['Contract']['fields']['description']['full_text_search']['boost'] = 0.63;

@@ -606,7 +606,6 @@ $bwcModules = array(
     'CampaignTrackers',
     'Charts',
     'Configurator',
-    'Contracts',
     'ContractTypes',
     'Connectors',
     'Currencies',
