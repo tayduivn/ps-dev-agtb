@@ -510,6 +510,8 @@ class RenameModules
                 }
             }
         }
+
+        return $return;
     }
 
     /**

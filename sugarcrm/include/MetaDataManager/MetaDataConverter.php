@@ -830,7 +830,7 @@ class MetaDataConverter
      * @param string $viewClient : the name of the client
      * @return array
      */
-    public function convertLegacyViewDefsToSidecar($defs, $moduleName, $fieldDefs, $viewType, $viewClient)
+    public function convertLegacyViewDefsToSidecar($defs, $moduleName, $fieldDefs, $viewType, $viewClient, $defaultSidecarFilter)
     {
         // load SearchFields.php
         $searchFields = $this->loadSearchFields($moduleName);
@@ -891,6 +891,8 @@ class MetaDataConverter
                 );
                 if (!empty($searchFields[$name]['type'])) {
                     $fields[$name]['type'] = $searchFields[$name]['type'];
+                } else if (!empty($defaultSidecarFilter[$name]['type'])) {
+                    $fields[$name]['type'] = $defaultSidecarFilter[$name]['type'];
                 }
                 if (empty($fields[$name]['dbFields']) &&
                     !$this->isValidField($name, $fieldDefs, $viewType, $viewClient)) {

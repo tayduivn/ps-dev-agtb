@@ -52,10 +52,7 @@
         if (this.def.link && this.def.route) {
             action = this.def.route.action;
         }
-        if (!app.acl.hasAccessToModel(action, this.model)) {
-            this.def.link = false;
-        }
-        if (this.def.link) {
+        if (this.def.link && app.acl.hasAccessToModel(action, this.model)) {
             this.href = this.buildHref();
         }
         app.view.Field.prototype._render.call(this);

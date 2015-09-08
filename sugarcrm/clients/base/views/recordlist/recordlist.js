@@ -59,12 +59,28 @@
             'keydown': '_setScrollPosition'
         });
 
+        this.toggledModels = {};
+
+        this.context._recordListFields = this.getFieldNames(null, true);
+
+        this._currentUrl = Backbone.history.getFragment();
+
+        this._bindEvents();
+    },
+
+    /**
+     * Bind various events that are associated with this view.
+     *
+     * @protected
+     */
+    _bindEvents: function() {
         this.on('render render:rows', this._setRowFields, this);
 
         //fire resize scroll-width on column add/remove
         this.on('list:toggle:column', this.resize, this);
         this.on('mergeduplicates:complete', this.refreshCollection, this);
         this.on('field:focus:location', this.setPanelPosition, this);
+
         if (this.layout) {
             this.layout.on('list:mergeduplicates:fire', this.mergeDuplicatesClicked, this);
 
@@ -75,17 +91,16 @@
             this.layout.on('list:record:deleted', function() {
                 this.refreshCollection();
             }, this);
+
+            // The `MassCollection` plugin triggers these events when it shows an
+            // alert and the table height changes.
+            this.layout.on('list:alert:show list:alert:hide', this._refreshReorderableColumns, this);
         }
-        this.toggledModels = {};
-
-        this.context._recordListFields = this.getFieldNames(null, true);
-
-        this._currentUrl = Backbone.history.getFragment();
 
         //event register for preventing actions
         // when user escapes the page without confirming deleting
-        app.routing.before("route", this.beforeRouteDelete, this);
-        $(window).on("beforeunload.delete" + this.cid, _.bind(this.warnDeleteOnRefresh, this));
+        app.routing.before('route', this.beforeRouteDelete, this);
+        $(window).on('beforeunload.delete' + this.cid, _.bind(this.warnDeleteOnRefresh, this));
     },
 
     /**
@@ -737,5 +752,17 @@
     resize: function() {
         this._super('resize');
         this._bordersPosition = null;
+    },
+
+    /**
+     * Refreshes the `ReorderableColumns` when the table height changes.
+     *
+     * The `ReorderableColumns` plugin listens to the window `resize` event to
+     * update and position the handlers correctly.
+     *
+     * @private
+     */
+    _refreshReorderableColumns: function() {
+        $(window).resize();
     }
 })

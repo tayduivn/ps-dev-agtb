@@ -16,6 +16,8 @@ require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEActivity.php';
 require_once 'modules/pmse_Inbox/engine/PMSEHistoryData.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
+use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+
 class PMSEUserTask extends PMSEActivity
 {
 
@@ -285,7 +287,7 @@ class PMSEUserTask extends PMSEActivity
     public function lockFlowRoute($id)
     {
         if (isset($_SESSION['locked_flows'])) {
-            if (!in_array($id, $_SESSION['locked_flows'])) {
+            if (!ArrayFunctions::in_array_access($id, $_SESSION['locked_flows'])) {
                 $_SESSION['locked_flows'][] = $id;
             }
         } else {

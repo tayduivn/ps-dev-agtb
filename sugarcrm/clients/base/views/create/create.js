@@ -341,6 +341,7 @@
                     callback(true);
                 } else {
                     this.resetDuplicateState();
+                    this.disableButtons();
                     callback(false);
                 }
             }, this),

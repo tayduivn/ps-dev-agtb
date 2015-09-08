@@ -1497,7 +1497,8 @@ SE.detailView = {
         }
 
         var displayFrame = document.getElementById('displayEmailFrame' + targetDiv.id);
-        displayFrame.contentWindow.document.write(email.description);
+        description = email.description_html || nl2br(email.description);
+        displayFrame.contentWindow.document.write(description);
         displayFrame.contentWindow.document.close();
 
         displayFrame.contentWindow.setTargetAttributeForUrls = function() {
@@ -1565,7 +1566,8 @@ SE.detailView = {
         });
 
         var displayFrame = document.getElementById('displayEmailFramePreview');
-        displayFrame.contentWindow.document.write(email.description);
+        description = email.description_html || nl2br(email.description);
+        displayFrame.contentWindow.document.write(description);
         displayFrame.contentWindow.document.close();
 
         displayFrame.contentWindow.setTargetAttributeForUrls = function() {
@@ -3514,6 +3516,11 @@ function removeHiddenNodes(nodes, grid) {
     		nodes.splice(i,1);
        }
     }
+}
+
+function nl2br(str, is_xhtml) {
+    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
 }
 
 function strpad(val) {

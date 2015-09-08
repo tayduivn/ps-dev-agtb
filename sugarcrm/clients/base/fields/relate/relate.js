@@ -475,7 +475,7 @@
             return;
         }
         var action = (this.def.link && this.def.route)? this.def.route.action :"view";
-        if(app.acl.hasAccess(action, oldModule)) {
+        if (!_.isEmpty(id) && app.acl.hasAccess(action, oldModule)) {
             this.href = '#' + app.router.buildRoute(module, id);
         } else {
             // if no access to module, remove the href

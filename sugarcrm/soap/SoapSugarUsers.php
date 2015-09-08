@@ -12,9 +12,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 require_once('soap/SoapHelperFunctions.php');
 require_once('soap/SoapTypes.php');
-
-
 require_once('modules/Reports/Report.php');
+
+use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+
 /*************************************************************************************
 
 THIS IS FOR SUGARCRM USERS
@@ -931,7 +932,7 @@ function get_available_modules($session){
 		$error->set_error('invalid_session');
 		return array('modules'=> $modules, 'error'=>$error->get_soap_array());
 	}
-	$modules = array_keys($_SESSION['avail_modules']);
+	$modules = ArrayFunctions::array_access_keys($_SESSION['avail_modules']);
 
 	return array('modules'=> $modules, 'error'=>$error->get_soap_array());
 }

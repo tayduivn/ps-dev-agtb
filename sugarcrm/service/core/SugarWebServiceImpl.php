@@ -11,11 +11,15 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+
 /**
  * This class is an implemenatation class for all the web services
  */
 require_once('service/core/SoapHelperWebService.php');
 SugarWebServiceImpl::$helperObject = new SoapHelperWebServices();
+
+
 
 class SugarWebServiceImpl{
 
@@ -1019,8 +1023,7 @@ function get_available_modules($session){
 		return;
 	} // if
 
-	$modules = array();
-	$modules = array_keys($_SESSION['avail_modules']);
+	$modules = ArrayFunctions::array_access_keys($_SESSION['avail_modules']);
 
 	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_available_modules');
 	return array('modules'=> $modules);

@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Csrf;
 
 use Sugarcrm\Sugarcrm\Security\Csrf\CsrfTokenStorage;
+use Sugarcrm\Sugarcrm\Session\SessionStorage;
 
 /**
  *
@@ -40,7 +41,7 @@ class CsrfTokenStorageTest extends \PHPUnit_Framework_TestCase
      */
     public function testTokenStorage($tokenId, $token)
     {
-        $storage = new CsrfTokenStorage();
+        $storage = new CsrfTokenStorage(new SessionStorage());
 
         // no token should be found here
         $this->assertFalse($storage->hasToken($tokenId));
@@ -79,7 +80,7 @@ class CsrfTokenStorageTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetTokenException()
     {
-        $storage = new CsrfTokenStorage();
+        $storage = new CsrfTokenStorage(new SessionStorage());
         $storage->getToken('foobar');
     }
 }

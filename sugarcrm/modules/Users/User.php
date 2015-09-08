@@ -13,6 +13,7 @@
 use \Sugarcrm\Sugarcrm\Security\Password\Hash;
 
 require_once 'include/SugarObjects/templates/person/Person.php';
+require_once 'modules/ACL/AclCache.php';
 
 /**
  * User is used to store customer information.
@@ -950,7 +951,12 @@ EOQ;
 		$this->savePreferencesToDB();
         //set new password
         $now = TimeDate::getInstance()->nowDb();
-		$query = "UPDATE $this->table_name SET user_hash='$user_hash', system_generated_password='$system_generated', pwd_last_changed='$now' where id='$this->id'";
+        $query =
+            "UPDATE $this->table_name " .
+            "SET user_hash={$this->db->quoted($user_hash)}, " .
+                " system_generated_password={$this->db->quoted($system_generated)}, " .
+                " pwd_last_changed={$this->db->quoted($now)}, date_modified={$this->db->quoted($now)} " .
+            "WHERE id={$this->db->quoted($this->id)}";
 		$this->db->query($query, true, "Error setting new password for $this->user_name: ");
         $_SESSION['hasExpiredPassword'] = '0';
 	}
@@ -1819,12 +1825,14 @@ EOQ;
      * @return array
      */
     public function getDeveloperModules() {
-        static $developerModules;
-        if (!isset($_SESSION[$this->user_name.'_get_developer_modules_for_user']) ) {
-            $_SESSION[$this->user_name.'_get_developer_modules_for_user'] = $this->_getModulesForACL('dev');
+        $cache = AclCache::getInstance();
+        $modules = $cache->retrieve($this->id, 'developer_modules');
+        if ($modules === null) {
+            $modules = $this->_getModulesForACL('dev');
+            $cache->store($this->id, 'developer_modules', $modules);
         }
 
-        return $_SESSION[$this->user_name.'_get_developer_modules_for_user'];
+        return $modules;
     }
     /**
      * Is this user a developer for the specified module
@@ -1859,11 +1867,14 @@ EOQ;
      * @return array
      */
     public function getAdminModules() {
-        if (!isset($_SESSION[$this->user_name.'_get_admin_modules_for_user']) ) {
-            $_SESSION[$this->user_name.'_get_admin_modules_for_user'] = $this->_getModulesForACL('admin');
+        $cache = AclCache::getInstance();
+        $modules = $cache->retrieve($this->id, 'admin_modules');
+        if ($modules === null) {
+            $modules = $this->_getModulesForACL('admin');
+            $cache->store($this->id, 'admin_modules', $modules);
         }
 
-        return $_SESSION[$this->user_name.'_get_admin_modules_for_user'];
+        return $modules;
     }
     /**
      * Is this user an admin for the specified module
@@ -2288,7 +2299,7 @@ EOQ;
     {
         $db = DBManagerFactory::getInstance();
         $query = 'SELECT count(id) as total FROM users
-                WHERE reports_to_id = ' .  $db->quoted(clean_string($user_id)) . ' AND status = ' . $db->quoted(clean_string('Active'));
+                WHERE reports_to_id = ' .  $db->quoted($user_id) . ' AND status = ' . $db->quoted('Active');
         if (!$include_deleted) {
             $query .= " AND deleted=0";
         }
@@ -2324,7 +2335,7 @@ EOQ;
         if (!$include_deleted) {
             $query .= "AND u2.deleted = 0 ";
         }
-        $query .= "WHERE u.reports_to_id = {$db->quoted(clean_string($user_id))} ";
+        $query .= "WHERE u.reports_to_id = {$db->quoted($user_id)} ";
         if (!$include_deleted) {
             $query .= "AND u.deleted = {$deleted} AND u.status = 'Active' ";
         }
@@ -2397,7 +2408,7 @@ EOQ;
     {
         if(User::isManager($user_id, $include_deleted))
         {
-            $query = 'SELECT reports_to_id FROM users WHERE id = ' . $GLOBALS['db']->quoted(clean_string($user_id));
+            $query = 'SELECT reports_to_id FROM users WHERE id = ' . $GLOBALS['db']->quoted($user_id);
             $reports_to_id = $GLOBALS['db']->getOne($query);
             return empty($reports_to_id);
         }
@@ -2506,6 +2517,7 @@ EOQ;
             $this->getAdminModules();
         }
     }
+
     /**
      * Checks if the passed email is primary.
      *
