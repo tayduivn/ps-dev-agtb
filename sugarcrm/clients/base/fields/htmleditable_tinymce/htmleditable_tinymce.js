@@ -195,7 +195,7 @@
                 self.context.trigger('tinymce:oninit', inst);
             };
 
-            $('.htmleditable').tinymce(config);
+            this._getHtmlEditableField().tinymce(config);
         }
     },
 
