@@ -26,16 +26,29 @@ use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException as JQInvalidAr
 class Import implements RunnableInterface
 {
     /**
-     * @param \CalDavEvent $calDavBean
-     * @throws \Exception
+     * @var string
      */
-    public function __construct($calDavBean)
-    {
+    protected $moduleName;
+    /**
+     * @var string
+     */
+    protected $beanId;
 
-        if (!($calDavBean instanceof \CalDavEvent)) {
-            throw new \Exception('Argument should be instance of CalDavEvent');
-        }
-        $this->bean = $calDavBean;
+    /**
+     * @var string
+     */
+    protected $userId;
+
+    /**
+     * @param string $moduleName
+     * @param string $beanId
+     * @param string $userId
+     */
+    public function __construct($moduleName, $beanId, $userId)
+    {
+        $this->moduleName = $moduleName;
+        $this->beanId = $beanId;
+        $this->userId = $userId;
     }
 
     /**
@@ -46,17 +59,31 @@ class Import implements RunnableInterface
      */
     public function run()
     {
+        /** @var \CalDavEvent $bean */
+        $currentUser = $this->getCurrentUser();
+        $GLOBALS['current_user'] = $this->getAssignedUser();
+        $bean = $this->getBean();
         $adapter = $this->getAdapterFactory();
-        if (!($this->bean instanceof \CalDavEvent)) {
-            throw new JQInvalidArgumentException('Bean must be an instance of CalDavEvent. Instance of '.get_class($this->bean).' given');
+        if (!($bean instanceof \CalDavEvent)) {
+            throw new JQInvalidArgumentException('Bean must be an instance of CalDavEvent. Instance of ' . get_class($bean) . ' given');
         }
-        if (!$adapter->getAdapter($this->bean->getBean()->module_name)) {
-            throw new JQLogicException('Bean '.$this->bean->getBean()->module_name.' does not have CalDav adapter');
+        if (!$adapter->getAdapter($bean->getBean()->module_name)) {
+            throw new JQLogicException('Bean ' . $bean->getBean()->module_name . ' does not have CalDav adapter');
         }
 
         $handler = $this->getHandler();
-        $handler->import($this->bean);
+        $handler->import($bean);
+        $GLOBALS['current_user'] = $currentUser;
         return \SchedulersJob::JOB_SUCCESS;
+    }
+
+    /**
+     * get bean for import process
+     * @return null|\SugarBean
+     */
+    protected function getBean()
+    {
+        return \BeanFactory::getBean($this->moduleName, $this->beanId);
     }
 
     /**
@@ -74,5 +101,22 @@ class Import implements RunnableInterface
     protected function getHandler()
     {
         return new CalDavHandler();
+    }
+
+    /**
+     * return user bean for assign user to bean
+     * @return \User
+     */
+    protected function getAssignedUser()
+    {
+        return \BeanFactory::getBean('Users', $this->userId);
+    }
+
+    /**
+     * @return \User
+     */
+    protected function getCurrentUser()
+    {
+        return $GLOBALS['current_user'];
     }
 }

@@ -71,24 +71,14 @@ class DateTimeHelper
      */
     public function davDateToSugar(VObject\Property\ICalendar\DateTime $vDateTime)
     {
-        $date = $vDateTime->getValue();
-        $params = $vDateTime->parameters();
-
-        if (isset($params['TZID'])) {
-            $timezone = $params['TZID']->getValue();
-            $dateFormat = 'Ymd\THis';
+        $dt = $vDateTime->getDateTime();
+        if ($vDateTime->getValueType() == 'DATE-TIME') {
+            $date = $dt->format('Ymd\THis');
         } else {
-            $dt = new \DateTime($date);
-            $timezone = $dt->getTimezone()->getName();
-            if ($timezone == 'Z') {
-                $dateFormat = 'Ymd\THis\Z';
-                $timezone = 'UTC';
-            } else {
-                $dateFormat = 'Ymd\THis';
-                $timezone = null;
-            }
+            $date = $dt->format('Ymd') . 'T000000';
         }
-        $dateTime = \SugarDateTime::createFromFormat($dateFormat, $date, new \DateTimeZone($timezone));
+
+        $dateTime = \SugarDateTime::createFromFormat('Ymd\THis', $date, $dt->getTimezone());
 
         return $dateTime->asDb();
     }
@@ -105,5 +95,35 @@ class DateTimeHelper
         $dt->setTimeZone($tz);
 
         return $dt;
+    }
+
+    /**
+     * Return date in user set format
+     * @param string $dateTime
+     * @return string
+     */
+    public function sugarDateToUserDate($dateTime)
+    {
+        $formattedDate = false;
+        $sugarDate = \SugarDateTime::createFromFormat(\TimeDate::DB_DATETIME_FORMAT, $dateTime);
+        if ($sugarDate) {
+            $formattedDate = $sugarDate->format($GLOBALS['timedate']->get_date_format());
+        }
+        return $formattedDate;
+    }
+
+    /**
+     * Return date and time in user set format
+     * @param string $dateTime
+     * @return string
+     */
+    public function sugarDateToUserDateTime($dateTime)
+    {
+        $formattedDate = false;
+        $sugarDate = \SugarDateTime::createFromFormat(\TimeDate::DB_DATETIME_FORMAT, $dateTime);
+        if ($sugarDate) {
+            $formattedDate = $sugarDate->format($GLOBALS['timedate']->get_date_time_format());
+        }
+        return $formattedDate;
     }
 }

@@ -231,7 +231,7 @@ class CalendarEvents
     {
         static::$old_assigned_user_id = '';
         if (!empty($module) && !empty($id)) {
-            $old_record = BeanFactory::retrieveBean($module, $id);
+            $old_record = BeanFactory::getBean($module, $id);
             if (!empty($old_record->assigned_user_id)) {
                 static::$old_assigned_user_id = $old_record->assigned_user_id;
             }
@@ -398,7 +398,7 @@ class CalendarEvents
      * @return SugarQuery Modify the object to restrict the result set based on additional conditions.
      * @throws SugarQueryException
      */
-    protected function getChildrenQuery(SugarBean $parent)
+    public function getChildrenQuery(SugarBean $parent)
     {
         $GLOBALS['log']->debug(sprintf(
             'Building a query to retrieve the IDs for %s records where the repeat_parent_id is %s',
