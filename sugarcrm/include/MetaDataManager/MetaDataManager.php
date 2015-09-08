@@ -22,6 +22,7 @@ require_once 'include/SubPanel/SubPanelDefinitions.php';
 require_once 'modules/MySettings/TabController.php';
 
 SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataHacks.php');
+SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataCache.php');
 /**
  * This class is for access to metadata for all sugarcrm modules in a read only
  * state.  This means that you can not modify any of the metadata using this
@@ -355,17 +356,22 @@ class MetaDataManager
     protected static $runQueueOnCall = true;
 
     /**
+     * Flag indicating that metadata caching is enabled
+     *
+     * @var bool
+     */
+    protected static $isCacheEnabled = true;
+
+    /**
      * Name of the cache table used to store metadata cache data
      * @var string
      */
     protected static $cacheTable = "metadata_cache";
 
     /**
-     * Flag indicating that metadata caching is enabled
-     *
-     * @var bool
+     * @var MetaDataCache
      */
-    protected static $isCacheEnabled = true;
+    protected $cache;
 
     /**
      * List of connector properties needed by the client
@@ -440,6 +446,22 @@ class MetaDataManager
         $this->loadSections($public);
 
         $this->db = DBManagerFactory::getInstance();
+
+        $this->cache = new MetaDataCache($this->db);
+    }
+
+    /**
+     * Gets member cache, the MetadataCache
+     *
+     *
+     * @return MetaDataCache
+     */
+    protected function getCache() {
+
+        if (self::$isCacheEnabled && !isset($this->cache)){
+            $this->cache = new MetaDataCache($this->db);
+        }
+        return $this->cache;
     }
 
     /**
@@ -1222,10 +1244,9 @@ class MetaDataManager
 
         // Get the listing of files in the cache directory
         $db = DBManagerFactory::getInstance();
-        $sql = 'SELECT type FROM ' . static::$cacheTable;
-        $result = $db->query($sql);
-        while ($row = $db->fetchByAssoc($result)) {
-            $type = $row['type'];
+        $cache = new MetaDataCache($db);
+        $types = $cache->getKeys();
+        foreach($types as $type) {
             // If the cache key fits the pattern of a metadata cache key get the
             // platforms for the cache entry
             // @see static::getCachedMetadataHashKey()
@@ -1340,7 +1361,8 @@ class MetaDataManager
                     unlink($metadataFile);
                 }
             }
-            static::clearCacheTable();
+            $cache = new MetaDataCache(DBManagerFactory::getInstance());
+            $cache->reset();
 
             // clear the platform cache from sugar_cache to avoid out of date data as well as platform component files
             $platforms = self::getPlatformList();
@@ -2295,7 +2317,7 @@ class MetaDataManager
             $context = $this->getCurrentUserContext();
         }
 
-        return $this->getFromCacheTable($this->getCachedMetadataHashKey($context));
+        return $this->getCache()->get($this->getCachedMetadataHashKey($context));
     }
 
     /**
@@ -3077,140 +3099,8 @@ class MetaDataManager
      */
     protected function getFromHashCache($key)
     {
-        $hashes = $this->getFromCacheTable('hashes');
+        $hashes = self::$isCacheEnabled ? $this->getCache()->get('hashes') : array();
         return !empty($hashes[$key]) ? $hashes[$key] : false;
-    }
-
-    /**
-     * Used to cache metadata responses in the database
-     * @param String $key key for data stored in the cache table
-     *
-     * @return mixed|null Value pulled from cache table blob if found.
-     */
-    protected function getFromCacheTable($key) {
-        $result = null;
-        //During install/setup, this function might get called before the DB is setup.
-        if (self::$isCacheEnabled && !empty($this->db)) {
-            $cacheResult = $this->db->getOne(
-                "SELECT data FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key)
-            );
-            if (!empty($cacheResult)) {
-                try {
-                    $result = unserialize(gzinflate(base64_decode($cacheResult)));
-                } catch (Exception $e) {
-                    $GLOBALS['log']->error("Exception when decompressing metadata hash for $key:" . $e->getMessage());
-
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Stores data in the cache table compressed and serialized. Any PHP data is valid.
-     *
-     * @param String $key key to store data with
-     * @param mixed $data Data to store in the cache table blob
-     *
-     * @return bool
-     */
-    protected function storeToCacheTable($key, $data) {
-        //During install/setup, this function might get called before the DB is setup.
-        if (self::$isCacheEnabled && !empty($this->db)) {
-            try {
-                $encoded = base64_encode(gzdeflate(serialize($data)));
-            } catch (Exception $e) {
-                $GLOBALS['log']->fatal("Exception when compressing metadata for $key:" . $e->getMessage());
-                return false;
-            }
-
-            $values = array(
-                'id' => $this->db->getOne("SELECT id FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key)),
-                'type' => $key,
-                'data' => $encoded,
-                'date_modified' => TimeDate::getInstance()->nowDb(),
-                'deleted' => 0,
-            );
-
-            $fields = array();
-            foreach ($this->getFields() as $field) {
-                $fields[$field['name']] = $field;
-            }
-            $this->db->commit();
-            if (empty($values['id'])) {
-                $values['id'] = create_guid();
-                $return = $this->db->insertParams(
-                    static::$cacheTable,
-                    $fields,
-                    $values,
-                    null,
-                    true,
-                    $this->db->supports('prepared_statements')
-                );
-            } else {
-                $return = $this->db->updateParams(
-                    static::$cacheTable,
-                    $fields,
-                    $values,
-                    array('id' => $values['id']),
-                    null,
-                    true,
-                    $this->db->supports('prepared_statements')
-                );
-            }
-            $this->db->commit();
-
-            return $return;
-        }
-        return false;
-    }
-
-    /**
-     * Returns array of fields of static::$cacheTable
-     *
-     * @return array
-     */
-    protected function getFields()
-    {
-        global $dictionary;
-        include_once 'modules/TableDictionary.php';
-
-        $fields = array();
-        if (!empty($dictionary[static::$cacheTable]['fields'])) {
-            $fields = $dictionary[static::$cacheTable]['fields'];
-        }
-        return $fields;
-    }
-
-    /**
-     * Remove an entry in the cache table.
-     * @param String $key
-     *
-     * @return mixed
-     */
-    protected function removeFromCacheTable($key)
-    {
-        if (!self::$isCacheEnabled) {
-            return true;
-        }
-
-        return $this->db->query("DELETE FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key));
-    }
-
-    /**
-     * Clears all entries in the cache table.
-     */
-    protected static function clearCacheTable()
-    {
-        if (!self::$isCacheEnabled) {
-            return true;
-        }
-
-        $db = DBManagerFactory::getInstance();
-        $db->commit();
-        $db->query($db->truncateTableSQL(static::$cacheTable));
-        $db->commit();
     }
 
     /**
@@ -3248,12 +3138,15 @@ class MetaDataManager
      */
     protected function addToHashCache($key, $hash)
     {
-        $hashes = $this->getFromCacheTable('hashes');
+        if (!self::$isCacheEnabled) {
+            return;
+        }
+        $hashes = $this->getCache()->get('hashes');
         if (empty($hashes)) {
             $hashes = array();
         }
         $hashes[$key] = $hash;
-        $this->storeToCacheTable('hashes', $hashes);
+        $this->getCache()->set('hashes', $hashes);
     }
 
     /**
@@ -3306,7 +3199,7 @@ class MetaDataManager
      */
     protected function putMetadataCache($data, MetaDataContextInterface $context)
     {
-        $this->storeToCacheTable($this->getCachedMetadataHashKey($context), $data);
+        $this->getCache()->set($this->getCachedMetadataHashKey($context), $data);
 
         // Cache the hash as well
         if (isset($data['_hash'])) {
@@ -3326,7 +3219,7 @@ class MetaDataManager
         $deleted = false;
 
         // Get the hashes array
-        $hashes = $this->getFromCacheTable('hashes');
+        $hashes = $this->getCache()->get('hashes');
         if (empty($hashes)) {
             $hashes = array();
         }
@@ -3334,7 +3227,6 @@ class MetaDataManager
         // Delete language caches and remove from the hash cache
         foreach (array(true, false) as $ordered) {
             $pattern = $this->getLangUrl('(.*)', $ordered);
-            // $k is the file path, $v is the hash for it
             foreach ($hashes as $k => $v) {
                 if (preg_match("#^{$pattern}$#", $k, $m)) {
                     // Add the deleted language to the stack
@@ -3357,14 +3249,14 @@ class MetaDataManager
         // is a cache to handle
         $cacheKey = $this->getCachedMetadataHashKey($context);
         if (!empty($hashes[$cacheKey])) {
-            $this->removeFromCacheTable($cacheKey);
+            $this->getCache()->set($cacheKey, null);
             unset($hashes[$cacheKey]);
             $deleted = true;
         }
 
         // Save file I/O by only writing if there are changes to write
         if ($deleted) {
-            $this->storeToCacheTable('hashes', $hashes);
+            $this->getCache()->set('hashes', $hashes);
         }
 
         // Return the flag

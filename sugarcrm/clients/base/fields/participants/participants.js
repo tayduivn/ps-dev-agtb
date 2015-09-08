@@ -170,8 +170,6 @@
     /**
      * @inheritdoc
      *
-     * Renders the select2 widget and hides it so it is not shown by default.
-     *
      * @chainable
      * @private
      */
@@ -192,13 +190,46 @@
         });
         this.addSearchForMoreButton($el);
 
-        this.$('[name=newRow]').hide();
+        this._renderWithNewRow();
 
         this.renderTimelineInfo();
 
         this.hideShowMoreButton();
 
         return this;
+    },
+
+    /**
+     * Called by {@link #_render} to handle the visibility of the new
+     * participant row during rendering of the field.
+     *
+     * The select2 widget is hidden by default and never shown unless in edit
+     * mode. The select2 widget is shown after render if in edit mode and the
+     * collection is empty.
+     *
+     * If the select2 widget is shown, the delete button is disabled to prevent
+     * users from deleting the row and putting the field in a state where new
+     * participants cannot be added without re-rendering.
+     */
+    _renderWithNewRow: function() {
+        var value;
+
+        this.$('[name=newRow]').hide();
+
+        if (this.action !== 'edit') {
+            return;
+        }
+
+        try {
+            value = this.getFieldValue();
+
+            if (value.length === 0) {
+                this.addRow();
+                this.$('button[data-action=removeRow]').addClass('disabled');
+            }
+        } catch (e) {
+            app.logger.warn(e);
+        }
     },
 
     /**
@@ -738,12 +769,16 @@
      *
      * Hides the [+] button.
      *
-     * @param {Event} event
+     * @param {Event} [event]
      */
     addRow: function(event) {
         this.$('.participants-schedule').addClass('new');
         this.$('[name=newRow]').css('display', 'table-row');
-        $(event.currentTarget).hide();
+
+        if (event) {
+            $(event.currentTarget).hide();
+        }
+
         this.getFieldElement().select2('open');
         this.adjustStartAndEnd();
     },

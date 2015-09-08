@@ -44,7 +44,10 @@
 
         if (parentModel instanceof Backbone.Model) {
             this._updateEmailOptions(parentModel);
-            parentModel.on('change', this._updateEmailOptions, this);
+            parentModel.on('change', function(model) {
+                this._updateEmailOptions(model);
+                this.render();
+            }, this);
         }
     },
 

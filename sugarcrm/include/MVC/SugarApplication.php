@@ -13,6 +13,9 @@
 require_once 'include/MVC/Controller/ControllerFactory.php';
 require_once 'include/MVC/View/ViewFactory.php';
 
+use Sugarcrm\Sugarcrm\Session\SessionStorage;
+use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+
 /**
  * SugarCRM application
  *
@@ -84,7 +87,7 @@ class SugarApplication
                     }
                 }
             }
-            session_write_close();
+            SessionStorage::getInstance()->unlock();
             header('HTTP/1.1 301 Moved Permanently');
             header("Location: $url");
 
@@ -379,26 +382,6 @@ EOF;
         $GLOBALS['logic_hook']->call_custom_logic('', 'after_load_user');
         // Reset ACLs in case after_load_user hook changed ACL setups
         SugarACL::resetACLs();
-
-		//set cookies
-		if(isset($_SESSION['authenticated_user_theme'])){
-			$GLOBALS['log']->debug("setting cookie ck_login_theme_20 to ".$_SESSION['authenticated_user_theme']);
-			self::setCookie('ck_login_theme_20', $_SESSION['authenticated_user_theme'], time() + 86400 * 90);
-		}
-		if(isset($_SESSION['authenticated_user_theme_color'])){
-			$GLOBALS['log']->debug("setting cookie ck_login_theme_color_20 to ".$_SESSION['authenticated_user_theme_color']);
-			self::setCookie('ck_login_theme_color_20', $_SESSION['authenticated_user_theme_color'], time() + 86400 * 90);
-		}
-		if(isset($_SESSION['authenticated_user_theme_font'])){
-			$GLOBALS['log']->debug("setting cookie ck_login_theme_font_20 to ".$_SESSION['authenticated_user_theme_font']);
-			self::setCookie('ck_login_theme_font_20', $_SESSION['authenticated_user_theme_font'], time() + 86400 * 90);
-		}
-		if(isset($_SESSION['authenticated_user_language'])){
-			$GLOBALS['log']->debug("setting cookie ck_login_language_20 to ".$_SESSION['authenticated_user_language']);
-			self::setCookie('ck_login_language_20', $_SESSION['authenticated_user_language'], time() + 86400 * 90);
-		}
-		//check if user can access
-
     }
 
     public function ACLFilter()
@@ -835,15 +818,16 @@ EOF;
 
     function startSession()
     {
+        $sess = SessionStorage::getInstance();
         $sessionIdCookie = isset($_COOKIE['PHPSESSID']) ? $_COOKIE['PHPSESSID'] : null;
         if (can_start_session()) {
-            session_start();
+            $sess->start();
         }
 
         if (isset($_REQUEST['login_module']) && isset($_REQUEST['login_action'])
             && !($_REQUEST['login_module'] == 'Home' && $_REQUEST['login_action'] == 'index')
         ) {
-            if (!is_null($sessionIdCookie) && empty($_SESSION)) {
+            if (!is_null($sessionIdCookie) && empty($sess)) {
                 self::setCookie('loginErrorMessage', 'LBL_SESSION_EXPIRED', time() + 30, '/');
             }
         }
@@ -929,7 +913,7 @@ EOF;
 
     public static function appendErrorMessage($error_message)
     {
-        if (empty($_SESSION['user_error_message']) || !is_array($_SESSION['user_error_message'])) {
+        if (empty($_SESSION['user_error_message']) || !ArrayFunctions::is_array_access($_SESSION['user_error_message'])) {
             $_SESSION['user_error_message'] = array();
         }
         $_SESSION['user_error_message'][] = $error_message;
@@ -937,7 +921,7 @@ EOF;
 
     public static function getErrorMessages()
     {
-        if (isset($_SESSION['user_error_message']) && is_array($_SESSION['user_error_message'])) {
+        if (isset($_SESSION['user_error_message']) && ArrayFunctions::is_array_access($_SESSION['user_error_message'])) {
             $msgs = $_SESSION['user_error_message'];
             unset($_SESSION['user_error_message']);
             return $msgs;

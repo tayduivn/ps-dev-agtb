@@ -59,11 +59,7 @@
         }, [], this);
         this.def.fields = app.metadata._patchFields(this.module, meta, this.def.fields);
 
-        if (!app.acl.hasAccessToModel('view', this.model) && this.def && this.def.link) {
-            this.def.link = false;
-        }
-
-        if (this.def && this.def.link) {
+        if (this.def && this.def.link && app.acl.hasAccessToModel('view', this.model)) {
             var action = this.def.route && this.def.route.action ? this.def.route.action : '';
             //If `this.template` resolves to `base/list.hbs`, that template expects an
             //initialized `this.href`. That's normally handled by the `base.js` controller,

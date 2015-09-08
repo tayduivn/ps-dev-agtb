@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
@@ -116,7 +118,7 @@ class Contract extends SugarBean
             if (!empty($_SESSION["workflow_cron"])
                 && $_SESSION["workflow_cron"] == "Yes"
                 && !empty($_SESSION["workflow_id_cron"])
-                && in_array(CONTRACT_BUILT_IN_WORKFLOW_ID, $_SESSION["workflow_id_cron"])
+                && ArrayFunctions::in_array_access(CONTRACT_BUILT_IN_WORKFLOW_ID, $_SESSION["workflow_id_cron"])
             ) {
                 $this->special_notification = true;
                 $check_notify = true;
@@ -153,7 +155,7 @@ class Contract extends SugarBean
         if (!empty($_SESSION["workflow_cron"])
             && $_SESSION["workflow_cron"] == "Yes"
             && !empty($_SESSION["workflow_id_cron"])
-            && in_array(CONTRACT_BUILT_IN_WORKFLOW_ID, $_SESSION["workflow_id_cron"])
+            && ArrayFunctions::in_array_access(CONTRACT_BUILT_IN_WORKFLOW_ID, $_SESSION["workflow_id_cron"])
         ) {
             $this->special_notification = false;
         }

@@ -85,7 +85,7 @@ class Link2 {
             if (empty($this->def['name']))
             {
                 $GLOBALS['log']->fatal("failed to find link for $linkName");
-                return false;
+                return;
             }
 
             $this->name = $this->def['name'];
@@ -169,6 +169,7 @@ class Link2 {
      * <li><b>offset:</b> Offset to pass to the database query when loading.</li>
      * <li><b>order_by:</b> field to order the result set by</li>
      * <li><b>deleted:</b> If deleted is set to 1, only deleted records related to the current record will be returned.</li></ul>
+     * @return string|array query used to load this relationship
      */
     public function query($params){
         return $this->relationship->load($this, $params);
@@ -306,6 +307,9 @@ class Link2 {
         }
 
         $GLOBALS['log']->error("Unable to get proper side for link {$this->name}");
+
+        // make sure there is a return
+        return REL_TYPE_UNDEFINED;
     }
 
 
@@ -438,39 +442,8 @@ class Link2 {
 
             //If there are any relationship fields, we need to figure out the mapping from the relationship fields to the
             //fields in the related module
-            $relationshipFields = array();
-            $seed = BeanFactory::getBean($rel_module);
-            if($seed !== false)
-            {
-                // Deprecated: This format of relationship fields will be removed
-                // please use the rname_link format instead
-                $relationshipFields = $this->getRelationshipFieldMapping($seed);
-                if (!empty($this->def['rel_fields']))
-                {
-                    //Find the field in the related module that maps to this
-                    foreach($this->def['rel_fields'] as $rfName => $rfDef)
-                    {
-                        //This is pretty badly designed, but there is no mapping stored for fields in the relationship table
-                        //to the fields to be populated in the related record.
-                        foreach($seed->field_defs as $f => $d)
-                        {
-                            if (!empty($d['relationship_fields'][$rfName])){
-                                $relationshipFields[$rfName] = $d['relationship_fields'][$rfName];
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if ($seed && is_array($seed->field_defs)) {
-                    foreach ($seed->field_defs as $fieldName => $def) {
-                        if (empty($def['rname_link'])) {
-                            continue;
-                        }
-                        $relationshipFields[$def['rname_link']] = $fieldName;
-                    }
-                }
-            }
+            $relBean = BeanFactory::getBean($rel_module);
+            $relationshipFields = $this->getRelationshipFields($relBean);
 
             //now load from the rows
             foreach ($rows as $id => $vals)
@@ -484,18 +457,13 @@ class Link2 {
                 } else {
                     $result[$id] = $this->beans[$id];
                 }
-                //Populate any relationship fields
-                foreach($relationshipFields as $rfName => $field) {
-                    if (isset($vals[$rfName]))
-                    {
-                        if (!empty($result[$id])) {
-                            $result[$id]->$field = $vals[$rfName];
-                        }
-                    }
+
+                if (!empty($result[$id])) {
+                    $this->populateRelationshipOnlyFields($relationshipFields, $vals, $result[$id]);
                 }
             }
 
-            //If we did a compelte load, cache the result in $this->beans
+            //If we did a complete load, cache the result in $this->beans
             if (empty($params)) {
                 $this->beans = $result;
                 foreach($result as $id => $bean)
@@ -511,6 +479,103 @@ class Link2 {
 
         return $result;
     }
+
+    /***
+     * refresh relationship data to a related Bean
+     * @param $relBean SugarBean
+     * @return void
+     */
+    public function refreshRelationshipFields(SugarBean $relBean){
+
+        if(empty($relBean) || empty($relBean->id)){
+            return;
+        }
+
+        // load relationship data
+        $data = $this->query(array(
+            'where' => array(
+                'lhs_field' => 'id',
+                'operator' => '=',
+                'rhs_value' => $relBean->id,
+            )
+        ));
+
+        $rows = $data['rows'];
+
+        if (isset($rows[$relBean->id])) {
+            $relationshipFields = $this->getRelationshipFields($relBean);
+            $this->populateRelationshipOnlyFields($relationshipFields, $rows[$relBean->id], $relBean);
+            // add bean
+            $this->addBean($relBean);
+        }
+    }
+
+    /***
+     * helper method, to populate relationship data to a related Bean
+     * @param $relationshipFields RelationshipFields
+     * @param $relData array of relationship data
+     * @param $relBean SugarBean, relative Bean
+     * @return void
+     */
+    protected function populateRelationshipOnlyFields(array $relationshipFields, array $relData, SugarBean $relBean)
+    {
+        if (!empty($relationshipFields) &&
+            !empty($relData) &&
+            !empty($relBean)) {
+
+            foreach($relationshipFields as $rfName => $field) {
+                if (isset($relData[$rfName]))
+                {
+                    if (!empty($relBean)) {
+                        $relBean->$field = $relData[$rfName];
+                    }
+                }
+            }
+        }
+    }
+
+    /***
+     * helper method, to get relationship fields for a related Bean
+     * @param $relBean SugarBean, relative Bean
+     * @return $relationshipFields array()
+     */
+    protected function getRelationshipFields(SugarBean $relBean){
+        $relationshipFields = array();
+        if($relBean !== false)
+        {
+            // Deprecated: This format of relationship fields will be removed
+            // please use the rname_link format instead
+            $relationshipFields = $this->getRelationshipFieldMapping($relBean);
+            if (!empty($this->def['rel_fields']))
+            {
+                //Find the field in the related module that maps to this
+                foreach($this->def['rel_fields'] as $rfName => $rfDef)
+                {
+                    //This is pretty badly designed, but there is no mapping stored for fields in the relationship table
+                    //to the fields to be populated in the related record.
+                    foreach($relBean->field_defs as $f => $d)
+                    {
+                        if (!empty($d['relationship_fields'][$rfName])){
+                            $relationshipFields[$rfName] = $d['relationship_fields'][$rfName];
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if ($relBean && is_array($relBean->field_defs)) {
+                foreach ($relBean->field_defs as $fieldName => $def) {
+                    if (empty($def['rname_link'])) {
+                        continue;
+                    }
+                    $relationshipFields[$def['rname_link']] = $fieldName;
+                }
+            }
+        }
+
+        return $relationshipFields;
+    }
+
 
     /***
      * If there are any relationship fields, we need to figure out the mapping from the relationship fields to the
@@ -779,6 +844,8 @@ class Link2 {
         $relDef = $this->relationship->def;
         if (!empty($relDef['join_key_lhs']) && !empty($relDef['join_key_rhs']))
             return array($relDef['join_key_lhs'], $relDef['join_key_rhs']);
+
+        return array();
     }
 
     /**

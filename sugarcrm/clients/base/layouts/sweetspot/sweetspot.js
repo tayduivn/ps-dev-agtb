@@ -32,7 +32,7 @@
             callOnFocus: true,
             handler: this.toggle
         });
-        app.events.on('app:logout router:reauth:load', this.hide, this);
+        app.events.on('app:logout app:login', this.hide, this);
         app.events.on('app:sync:complete sweetspot:reset', this._setTheme, this);
 
         this.on('sweetspot:config', this.openConfigPanel, this);
