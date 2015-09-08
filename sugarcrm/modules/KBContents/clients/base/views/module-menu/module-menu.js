@@ -80,11 +80,13 @@
             },
         // @TODO: Find out why params from context for drawer don't pass to our view tree::_initSettings
             context = _.extend({}, this.context, {treeoptions: treeOptions, treecallbacks: treeCallbacks});
-
+        if (app.drawer.getActiveDrawerLayout() === this.moduleRoot) {
+            app.drawer.closeImmediately();
+        }
         app.drawer.open({
             layout: 'nested-set-list',
             context: {
-                module: 'Categories',
+                module: this.moduleRoot,
                 parent: context,
                 title: app.lang.getModString(this.label, this.module),
                 treeoptions: treeOptions,
