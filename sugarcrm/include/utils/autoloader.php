@@ -1205,7 +1205,7 @@ class SugarAutoLoader
     {
         $files = self::getIncludeReturn(self::$composerPaths['autoload_files']);
         foreach ($files as $file) {
-            require $file;
+            require_once $file;
         }
     }
 

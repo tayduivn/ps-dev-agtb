@@ -349,7 +349,7 @@ class CalendarData extends AbstractBackend
 
             $eventQuery->from($eventBean);
             $eventQuery->where()->in('calendarid', $calendarIDS);
-            $eventQuery->where()->equals('uid', $uid);
+            $eventQuery->where()->equals('event_uid', $uid);
 
             $events = $eventBean->fetchFromQuery($eventQuery);
 
