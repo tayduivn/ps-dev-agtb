@@ -33,6 +33,7 @@ $dictionary['NotificationCenterSubscription'] = array(
             'type' => 'id',
             'reportable' => false,
             'isnull' => true,
+            'required' => false,
             'audited' => true,
             'duplicate_on_record_copy' => 'always',
             'comment' => 'User ID or null if global',
@@ -76,7 +77,20 @@ $dictionary['NotificationCenterSubscription'] = array(
             'comment' => 'Recipient value for carrier',
         ),
     ),
-    'indices' => array(),
+    'indices' => array(
+        array(
+            'name' => 'idx_notif_subscr',
+            'type' => 'unique',
+            'fields' => array(
+                'user_id',
+                'type',
+                'emitter_module_name',
+                'event_name',
+                'relation_name',
+                'carrier_name'
+            )
+        ),
+    ),
     'relationships' => array(),
     'optimistic_lock' => true,
     'ignore_templates' => array(
