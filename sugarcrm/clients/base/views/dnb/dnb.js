@@ -1310,13 +1310,24 @@
                 }
             }
         }, this);
-        //importing new data
-        if (newData.length > 0) {
+
+        // Import new data, but only if updated data is empty, otherwise the
+        // next conditional block will handle it
+        if (newData.length > 0 && updatedData.length === 0) {
             this.updateAccountsModel(newData, setModelFlag);
         }
-        //update existing data
+
+        // Update the model based on changes, making sure to not save the model
         if (updatedData.length > 0) {
-            var confirmationMsgKey, confirmationMsgData;
+            var confirmationMsgKey;
+            var confirmationMsgData;
+
+            // Import flag is true when we've already set the model based on an
+            // import selection. If it comes in again as false, the model will
+            // save when updated, which will save a new record in the database
+            // without a save event being fired. This fixes that.
+            var setModelOnlyFlag = importFlag === true;
+
             //show a detailed warning message about the single data element being imported
             if (updatedData.length === 1) {
                 var fieldName = app.lang.get(accountsModel.fields[updatedData[0].propName].vname, 'Accounts');
@@ -1348,7 +1359,7 @@
                 level: 'confirmation',
                 title: 'LBL_WARNING',
                 messages: confirmationMsgTpl(confirmationMsgData),
-                onConfirm: _.bind(this.updateAccountsModel, this, updatedData)
+                onConfirm: _.bind(this.updateAccountsModel, this, updatedData, setModelOnlyFlag)
             });
         }
     },
