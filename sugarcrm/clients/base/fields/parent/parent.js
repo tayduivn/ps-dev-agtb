@@ -61,7 +61,7 @@
         } else if(this.tplName === 'disabled'){
             this.$(this.typeFieldTag).select2('disable');
         }
-        return result;
+        return this;
     },
     _getRelateId: function() {
         return this.model.get("parent_id");
