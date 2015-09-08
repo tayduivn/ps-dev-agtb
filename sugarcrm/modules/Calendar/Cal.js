@@ -1510,7 +1510,17 @@
                 'date_end': app.date(dateStart).add('m', meetingDurationMinutes).formatServer(),
                 'duration_hours': 0,
                 'duration_minutes': meetingDurationMinutes
-            };
+            },
+            $userDiv;
+
+        if (CAL.view === 'shared') {
+            $userDiv = $(cell).closest('div[user_id][user_name]');
+
+            if ($userDiv.length > 0) {
+                meetingAttributes.assigned_user_id = $userDiv.attr('user_id');
+                meetingAttributes.assigned_user_name = $userDiv.attr('user_full_name');
+            }
+        }
 
         CAL.openActivityCreateDrawer('Meetings', meetingAttributes);
 
