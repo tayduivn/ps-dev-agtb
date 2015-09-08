@@ -51,10 +51,10 @@ var Item = function (options, parent) {
      */
     this.toolTip = null;
     /**
-     * Define an availability state
+     * Define an selected state
      * @type {null}
      */
-    this.unavailable = null;
+    this.selected = null;
 
     this.disabled = null;
 
@@ -88,7 +88,7 @@ Item.prototype.initObject = function (options, parent) {
         label: null,
         menu: null,
         toolTip: null,
-        unavailable: false,
+        selected: false,
         parentMenu: parent || null,
         disabled: false,
         focused: false,
@@ -100,7 +100,7 @@ Item.prototype.initObject = function (options, parent) {
         $.extend(true, defaults, options);
         this.setLabel(defaults.label)
             .setToolTip(defaults.toolTip)
-            .setUnavailable(defaults.unavailable)
+            .setSelected(defaults.selected)
             .setParentMenu(defaults.parentMenu)
             .setDisabled(defaults.disabled)
             .setIcon(defaults.icon)
@@ -127,7 +127,7 @@ Item.prototype.loadAction = function (action, parent) {
     this.setLabel(this.action.text);
     this.setIcon(this.action.cssStyle);
     this.setToolTip(this.action.toolTip);
-    this.setUnavailable(this.action.unavailable);
+    this.setSelected(this.action.selected);
     this.setDisabled(this.action.disabled);
     this.setParentMenu(parent);
     this.setFocused(false);
@@ -217,12 +217,12 @@ Item.prototype.setToolTip = function (value) {
 };
 
 /**
- * Sets the tool tip value
- * @param {String} value
+ * Sets the selected value
+ * @param {Boolean} value
  * @return {*}
  */
-Item.prototype.setUnavailable = function (value) {
-    this.unavailable = value;
+Item.prototype.setSelected = function (value) {
+    this.selected = value;
     return this;
 };
 
@@ -230,10 +230,10 @@ Item.prototype.createHTML = function () {
     var li;
     li = this.createHTMLElement('li');
     li.className = 'adam-item';
-    if (this.unavailable) {
-        li.className = li.className + ' adam-disabled';
-    } else if (this.disabled) {
+    if (this.selected) {
         li.className = li.className + ' adam-selected';
+    } else if (this.disabled) {
+        li.className = li.className + ' adam-disabled';
     }
     li.id = UITools.getIndex();
     this.html = li;
