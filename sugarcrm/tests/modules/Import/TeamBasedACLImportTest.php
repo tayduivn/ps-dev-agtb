@@ -81,7 +81,7 @@ class TeamBasedACLImportTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * The team_set_selected_id field should be importable.
      */
-    public function testExportTBA()
+    public function testImporttTBA()
     {
         $importedRecordId = $this->prepareImporter(array(
             'team_id' => $this->beanToExport->team_id,
@@ -97,7 +97,7 @@ class TeamBasedACLImportTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * The team_set_selected_id field should be populated by team_selected_name.
      */
-    public function testExportByTeamSelectedName()
+    public function testImportByTeamSelectedName()
     {
         $expectedTeamSet = $this->beanToExport->team_set_selected_id;
 
