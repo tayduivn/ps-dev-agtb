@@ -673,6 +673,10 @@ class SugarFieldTeamset extends SugarFieldBase {
     ) {
         $this->ensureApiFormatFieldArguments($fieldList, $service);
 
+        if ($fieldName == 'team_selected_name') {
+            return;
+        }
+
         $selectedTeamIds = array_map(function ($el) {
             return $el['id'];
         }, TeamSetManager::getTeamsFromSet($bean->team_set_selected_id));

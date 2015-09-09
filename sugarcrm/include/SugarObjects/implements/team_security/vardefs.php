@@ -105,6 +105,7 @@ $vardefs = array(
 			// Until the same control is used for selecting.
 			'fields' => array('team_set_selected_id'),
         ),
+	  // handled by SugarFieldTeamset
       'team_selected_name' => array(
           'name' => 'team_selected_name',
           'vname' => 'LBL_TEAM_SET_SELECTED_TEAMS',
@@ -122,6 +123,7 @@ $vardefs = array(
           'custom_type' => 'teamset',
           'exportable' => true,
           'studio' => false,
+          'massupdate' => false,
       ),
 		'team_link' =>
 	    array (
