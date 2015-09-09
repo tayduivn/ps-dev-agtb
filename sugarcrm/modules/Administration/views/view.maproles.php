@@ -81,7 +81,7 @@ class ViewMapRoles extends SugarView
     protected function getManifest()
     {
         if (isset($_POST['s_manifest'])) {
-            return unserialize(base64_decode($_POST['s_manifest']));
+            return \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($_POST['s_manifest']));
         }
 
         return null;

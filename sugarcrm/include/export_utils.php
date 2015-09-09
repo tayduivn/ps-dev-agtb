@@ -666,7 +666,7 @@ function generateSearchWhere($module, $query)
         $searchForm = getSearchForm($seed, $module);
         $searchForm->setup($searchdefs, $searchFields, 'SearchFormGeneric.tpl');
     }
-    $searchForm->populateFromArray(unserialize(base64_decode($query)));
+    $searchForm->populateFromArray(\Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($query)));
     $where_clauses = $searchForm->generateSearchWhere(true, $module);
     if (count($where_clauses) > 0 )$where = '('. implode(' ) AND ( ', $where_clauses) . ')';
         $GLOBALS['log']->info("Export Where Clause: {$where}");

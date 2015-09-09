@@ -112,7 +112,7 @@ class ReportsController extends SugarController
         //so when we call MassUpdate with $addAllBeanFields then it will use this in the query.
         if(!empty($_REQUEST['current_query_by_page']))
         {
-            $query = unserialize(base64_decode($_REQUEST['current_query_by_page']));
+            $query = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($_REQUEST['current_query_by_page']));
             if(!empty($query['module']))
             {
                 unset($query['module']);
