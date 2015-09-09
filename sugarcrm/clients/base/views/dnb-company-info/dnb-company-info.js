@@ -74,8 +74,6 @@
         //initializing the data dictionary for cleanse match
         this.cleanseMatchDD = this.searchDD;
         this.cleanseMatchDD.confidenceCode = { 'json_path' : 'MatchQualityInformation.ConfidenceCodeValue' };
-        //listen on expand all button click on the dashboard
-        this.layout.layout.context.on('dashboard:collapse:fire', this.loadImportEnrich, this);
         this.rowTmpl = app.template.get('dnb.dnb-account-row');
     },
 
@@ -92,6 +90,10 @@
      * @param  {Boolean} isCollapsed
      */
     loadImportEnrich: function(isCollapsed) {
+        if (this.disposed) {
+            return;
+        }
+
         //if the dashlet is not collapsed load data from D&B
         if (!isCollapsed) {
             var errTmpl = this.name + '.dnb-no-duns';
@@ -406,8 +408,18 @@
      * @return {Array}
      */
     populateState: function(selectedCountry) {
+        // Initialize the array of states that will populate the dropdown
         var stateOptionsArray = [];
-        var state_arr = this.statesList[selectedCountry];
+
+        // Get the full states array from the app list strings
+        var statesArray = app.lang.getAppListStrings('dnb_states_iso');
+
+        // Grab the selected country code, since the states array is based on
+        // country code
+        var selectedCountryCode = this.countryList[selectedCountry];
+
+        // Now build the states array properly, from the right states
+        var state_arr = statesArray[selectedCountryCode];
         if (selectedCountry !== 'Country' && !_.isUndefined(state_arr)) {
             _.each(state_arr, function(element, index) {
                 stateOptionsArray.push({
