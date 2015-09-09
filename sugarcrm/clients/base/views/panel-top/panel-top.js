@@ -33,7 +33,7 @@
      */
     events: {
         'click': 'togglePanel',
-        'click a[name=create_button]:not(".disabled")': 'createRelatedClicked',
+        'click a[name=create_button]:not(".disabled")': 'createRelatedClicked'
     },
 
     plugins: ['LinkedModel', 'Tooltip'],
@@ -57,8 +57,10 @@
         // if there is a better way to do this later.
         this.parentModule = this.context.parent.get('module');
 
+        // FIXME: Revisit with SC-4775.
         this.on('linked-model:create', function() {
-            this.context.set('collapsed', false);
+            this.context.set('skipFetch', false);
+            this.context.reloadData();
         }, this);
     },
 
@@ -68,7 +70,7 @@
      * @param {Event} event The click event.
      */
     createRelatedClicked: function(event) {
-        this.createRelatedRecord(this.module)
+        this.createRelatedRecord(this.module);
     },
 
     /**
@@ -77,7 +79,7 @@
     *
     * Triggers the `panel:toggle` event to toggle the subpanel.
     *
-    * @param evt The `click` event.
+    * @param {Event} The `click` event.
     */
     togglePanel: function(evt) {
         if (_.isNull(this.$el)) {
