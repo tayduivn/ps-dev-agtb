@@ -12,6 +12,10 @@
 
 namespace Sugarcrm\Sugarcrm\Notification;
 
+use Sugarcrm\Sugarcrm\Notification\BeanEmitter\Event as BeanEvent;
+use Sugarcrm\Sugarcrm\Notification\SubscriptionFilter\SubscriptionFilterInterface;
+use Sugarcrm\Sugarcrm\Notification\SubscriptionFilter\SubscriptionFilterRegistry;
+
 /**
  * Subscription Registry will be our entry point to work with configuration of subscriptions.
  *
@@ -21,37 +25,125 @@ namespace Sugarcrm\Sugarcrm\Notification;
 class SubscriptionsRegistry
 {
     /**
+     * Flag disabled notification for specific emitter, event, role.
+     */
+    const CARRIER_VALUE_DISABLED = 'disabled';
+
+    /**
+     * Flag use default configuration of notification for specific emitter, event, role.
+     */
+    const CARRIER_VALUE_DEFAULT = 'default';
+
+    /**
      * Return configuration.
      *
      * @return array configuration
      */
     public function getGlobalConfiguration()
     {
-        $res = array();
+        $res = $this->getTree();
         $beans = $this->getBeans($this->getSugarQuery());
 
         foreach ($beans as $bean) {
-            $emitter = (string)$this->getEmitter($bean);
-
-            if (!array_key_exists($emitter, $res)) {
-                $res[$emitter] = array();
+            if ($this->isValidBeanForTree($res, $bean)) {
+                $emitter = (string)$this->getEmitter($bean);
+                $res[$emitter][$bean->event_name][$bean->relation_name][] = array(
+                    $bean->carrier_name,
+                    $bean->carrier_option
+                );
             }
-            if (!array_key_exists($bean->event_name, $res[$emitter])) {
-                $res[$emitter][$bean->event_name] = array();
-            }
-            if (!array_key_exists($bean->relation_name, $res[$emitter][$bean->event_name])) {
-                $res[$emitter][$bean->event_name][$bean->relation_name] = array();
-            }
-            $res[$emitter][$bean->event_name][$bean->relation_name][$bean->carrier_name] = $bean->carrier_option;
         }
 
         return $res;
     }
 
     /**
+     * Create base configuration tree.
+     * @return array base configuration tree
+     */
+    protected function getTree()
+    {
+        $tree = array();
+        $emitters = $this->getEmitters();
+        $sfList = $this->getSubscriptionFilters();
+        foreach ($emitters as $module => $emitter) {
+            $emitterName = (string)$emitter;
+            $bean = null;
+            if (is_string($module)) {
+                $bean = \BeanFactory::newBean($module);
+            }
+            $tree[$emitterName] = array();
+            $eventStrings = $emitter->getEventStrings();
+            foreach ($eventStrings as $eventName) {
+                $tree[$emitterName][$eventName] = array();
+                $event = $emitter->getEventPrototypeByString($eventName);
+                if (!is_null($bean) && $event instanceof BeanEvent) {
+                    $event->setBean($bean);
+                }
+                foreach ($sfList as $subscriptionFilter) {
+                    if ($subscriptionFilter->supports($event)) {
+                        $subscriptionFilterName = (string)$subscriptionFilter;
+                        $tree[$emitterName][$eventName][$subscriptionFilterName] = array();
+                    }
+                }
+            }
+        }
+        return $tree;
+    }
+
+    /**
+     * List of Emitters.
+     * List of Emitters if key is string that means kay consist name of module for emitter.
+     *
+     * @return EmitterInterface[]
+     */
+    protected function getEmitters()
+    {
+        $registry = $this->getEmitterRegistry();
+        $list = array($registry->getApplicationEmitter());
+        foreach ($registry->getModuleEmitters() as $module) {
+            $list[$module] = $registry->getModuleEmitter($module);
+        }
+        return $list;
+    }
+
+    /**
+     * @see EmitterRegistry::getInstance
+     * @return EmitterRegistry
+     */
+    protected function getEmitterRegistry()
+    {
+        return EmitterRegistry::getInstance();
+    }
+
+    /**
+     * List of SubscriptionFilters.
+     *
+     * @return SubscriptionFilterInterface[]
+     */
+    protected function getSubscriptionFilters()
+    {
+        $list = array();
+        $registry = $this->getSubscriptionFilterRegistry();
+        foreach ($registry->getFilters() as $filterName) {
+            $list[] = $registry->getFilter($filterName);
+        }
+        return $list;
+    }
+
+    /**
+     * see SubscriptionFilterRegistry::getInstance
+     * @return SubscriptionFilterRegistry
+     */
+    protected function getSubscriptionFilterRegistry()
+    {
+        return SubscriptionFilterRegistry::getInstance();
+    }
+
+    /**
      * Retrieve list of NotificationCenterSubscription beans from Sugar Query
      *
-     * @return NotificationCenterSubscription[] list of beans
+     * @return \NotificationCenterSubscription[] list of beans
      */
     protected function getBeans(\SugarQuery $query, $fields = null)
     {
@@ -66,7 +158,7 @@ class SubscriptionsRegistry
             );
         }
 
-        $seed = $this->getNewBean();
+        $seed = $this->getNewBaseBean();
         $beans = $seed->fetchFromQuery($query, $fields);
         return $beans;
     }
@@ -76,9 +168,12 @@ class SubscriptionsRegistry
      *
      * @return \NotificationCenterSubscription new Bean
      */
-    protected function getNewBean()
+    protected function getNewBaseBean()
     {
-        return \BeanFactory::newBean('NotificationCenterSubscriptions');
+        $bean = \BeanFactory::newBean('NotificationCenterSubscriptions');
+        $bean->new_with_id = true;
+        $bean->id = create_guid();
+        return $bean;
     }
 
     /**
@@ -87,12 +182,32 @@ class SubscriptionsRegistry
      * @return \SugarQuery pre-configured Sugar query
      * @throws \SugarQueryException
      */
-    protected function getSugarQuery()
+    protected function getSugarQuery($userId = null)
     {
         $query = new \SugarQuery();
-        $query->from($this->getNewBean());
-        $query->where()->isNull('user_id');
+        $query->from($this->getNewBaseBean());
+        if (is_null($userId)) {
+            $query->where()->isNull('user_id');
+        } else {
+            $query->where()->equals('user_id', $userId);
+        }
+
         return $query;
+    }
+
+    /**
+     * Is bean in tree
+     *
+     * @param array $tree
+     * @param \NotificationCenterSubscription $bean
+     * @return bool is bean in tree
+     */
+    protected function isValidBeanForTree(array $tree, \NotificationCenterSubscription $bean)
+    {
+        $emitter = (string)$this->getEmitter($bean);
+        return array_key_exists($emitter, $tree)
+        && array_key_exists($bean->event_name, $tree[$emitter])
+        && array_key_exists($bean->relation_name, $tree[$emitter][$bean->event_name]);
     }
 
     /**
@@ -103,7 +218,7 @@ class SubscriptionsRegistry
      */
     protected function getEmitter(\NotificationCenterSubscription $bean)
     {
-        $registry = $this->getRegistry();
+        $registry = $this->getEmitterRegistry();
         switch ($bean->type) {
             case 'application':
                 $emitter = $registry->getApplicationEmitter();
@@ -122,12 +237,51 @@ class SubscriptionsRegistry
     }
 
     /**
-     * @see EmitterRegistry::getInstance
-     * @return EmitterRegistry
+     * Return configuration.
+     *
+     * @param GUID $userId user id
+     * @return array configuration
      */
-    protected function getRegistry()
+    public function getUserConfiguration($userId)
     {
-        return EmitterRegistry::getInstance();
+        $res = $this->getTree();
+        $beans = $this->getBeans($this->getSugarQuery($userId));
+
+        foreach ($beans as $bean) {
+            if ($this->isValidBeanForTree($res, $bean)) {
+                $emitter = (string)$this->getEmitter($bean);
+                if ($bean->carrier_name == self::CARRIER_VALUE_DISABLED) {
+                    $res[$emitter][$bean->event_name][$bean->relation_name] = self::CARRIER_VALUE_DISABLED;
+                } else {
+                    $res[$emitter][$bean->event_name][$bean->relation_name][] = array(
+                        $bean->carrier_name,
+                        $bean->carrier_option
+                    );
+                }
+            }
+        }
+
+        $this->fillDefaultConfig($res);
+
+        return $res;
+    }
+
+    /**
+     * Fill in the configuration of the default values.
+     *
+     * @param array $configuration for filling of the default values
+     */
+    protected function fillDefaultConfig(array &$configuration)
+    {
+        foreach ($configuration as $emitterName => $emitterConfig) {
+            foreach ($emitterConfig as $eventName => $eventConfig) {
+                foreach ($eventConfig as $relationName => $relationConfig) {
+                    if (is_array($relationConfig) && empty($relationConfig)) {
+                        $configuration[$emitterName][$eventName][$relationName] = self::CARRIER_VALUE_DEFAULT;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -137,33 +291,78 @@ class SubscriptionsRegistry
      */
     public function setGlobalConfiguration($config)
     {
-        $ids = array();
-        foreach ($config as $emitterName => $emitterConfig) {
-            foreach ($emitterConfig as $eventName => $eventConfig) {
-                foreach ($eventConfig as $relationName => $relationConfig) {
-                    foreach ($relationConfig as $carrierName => $carrierOption) {
-                        $emitterArr = $this->decodeEmitter($emitterName);
-                        $bean = $this->getNewBean();
-                        $bean->type = $emitterArr['type'];
-                        $bean->emitter_module_name = $emitterArr['emitter_module_name'];
-                        $bean->event_name = $eventName;
-                        $bean->relation_name = $relationName;
-                        $bean->carrier_name = $carrierName;
-                        $bean->carrier_option = $carrierOption;
-                        $this->checkExisting($bean);
-                        $bean->save();
-                        $ids[] = $bean->id;
+        $this->setConfiguration(null, $config, true);
+    }
+
+    /**
+     * Save configuration.
+     *
+     * @param GUID|null $userId identifier for user or null for global configuration
+     * @param array $config configuration for saving
+     * @param bool $delCarrierOption is necessary delete carrier option(need in global config case)
+     */
+    protected function setConfiguration($userId, $config, $delCarrierOption)
+    {
+        $beans = $this->getBeans($this->getSugarQuery($userId));
+
+        $tree = $this->getTree();
+        foreach ($tree as $emitter => $emitterConfig) {
+            foreach ($emitterConfig as $event => $eventConfig) {
+                foreach (array_keys($eventConfig) as $relation) {
+                    if (!empty($config[$emitter][$event][$relation])) {
+                        $path = $this->pathToBranch($emitter, $event, $relation);
+                        $branchBeans = $this->moveBeans($beans, $path);
+                        $carriers = $config[$emitter][$event][$relation];
+                        if ($carriers == self::CARRIER_VALUE_DISABLED) {
+                            $carriers = array(array(self::CARRIER_VALUE_DISABLED));
+                        }
+                        if ($carriers == self::CARRIER_VALUE_DEFAULT) {
+                            $carriers = array();
+                        }
+
+                        if ($delCarrierOption) {
+                            foreach (array_keys($carriers) as $key) {
+                                unset($carriers[$key][1]);
+                            }
+                        }
+
+                        $diff = $this->diffBranch($branchBeans, $carriers);
+
+                        if ($userId) {
+                            $path += array('user_id' => $userId);
+                        }
+                        $this->mergeDiff($path, $diff['delete'], $diff['insert']);
                     }
                 }
             }
         }
-        $this->deleteOther($ids);
+
+        $this->deleteConfigBeans($beans);
+    }
+
+    /**
+     * Generate search options map based on emitter name, event name, relation name
+     *
+     * @param string $emitter emitter name
+     * @param string $event event name
+     * @param string $relation relation name
+     * @return array generated search option
+     */
+    protected function pathToBranch($emitter, $event, $relation)
+    {
+        $emitterArr = $this->decodeEmitter($emitter);
+        return array(
+            'type' => $emitterArr['type'],
+            'emitter_module_name' => $emitterArr['emitter_module_name'],
+            'event_name' => $event,
+            'relation_name' => $relation
+        );
     }
 
     /**
      * Parse emitter name and emitter type and emitter_module_name.
      *
-     * @param $emitterName emitte name for parsing
+     * @param string $emitterName emitter name for parsing
      * @return array emitter type and emitter_module_name
      */
     protected function decodeEmitter($emitterName)
@@ -185,44 +384,144 @@ class SubscriptionsRegistry
     }
 
     /**
-     * Function check is bean exists.
+     * Filter beans and move separate list.
      *
-     * @param \NotificationCenterSubscription $bean for checking
+     * @param \NotificationCenterSubscription[] &$beans
+     * @param array $searchOpts map field and value which should be equal as in bean
+     * @return \NotificationCenterSubscription[]
      */
-    protected function checkExisting(\NotificationCenterSubscription $bean)
+    protected function moveBeans(array &$beans, array $searchOpts)
     {
-        $query = $this->getSugarQuery();
-        foreach (array('type', 'emitter_module_name', 'event_name', 'relation_name', 'carrier_name') as $field) {
-            $query->where()->equals($field, $bean->getFieldValue($field));
+        $out = array();
+        $ids = $this->search($beans, $searchOpts);
+        foreach ($ids as $id) {
+            $out[$id] = $beans[$id];
+            unset($beans[$id]);
+        }
+        return $out;
+    }
+
+    /**
+     * Searches the SugarBean list for a given search map and returns the corresponding ids if successful.
+     *
+     * @param \SugarBean[] $beans list of bean for
+     * @param array $opts map field and value which should be equal as in bean
+     * @return GUID[] list found bean ids
+     */
+    protected function search($beans, array $opts)
+    {
+        $ids = array();
+        foreach ($beans as $bean) {
+            if ($this->isApproach($bean, $opts)) {
+                $ids[] = $bean->id;
+            }
         }
 
-        $beans = $bean->fetchFromQuery($query);
-        if (0 == count($beans)) {
-            $bean->new_with_id = true;
-            $bean->id = create_guid();
-        } else {
-            $ids = array_keys($beans);
-            $bean->retrieve($ids[0]);
+        return $ids;
+    }
+
+    /**
+     * Comparing is bean field values same as in search map.
+     *
+     * @param \SugarBean $bean for comparing
+     * @param array $searchOptions map field and value which should be equal as in bean
+     * @return bool is approach
+     */
+    protected function isApproach(\SugarBean $bean, array $searchOptions)
+    {
+        foreach ($searchOptions as $field => $value) {
+            if (!($value == $bean->getFieldValue($field))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Compare list of beans from db and carriers form config
+     *
+     * @param \NotificationCenterSubscription[] $beans list of beans from db
+     * @param array $carriers list of carriers from config
+     * @return array diff with 2 lists, which beans should be deleted, carriers that and should inserted
+     */
+    protected function diffBranch($beans, $carriers)
+    {
+        foreach ($carriers as $key => $carrier) {
+            $carrier[1] = array_key_exists(1, $carrier) ? $carrier[1] : '';
+            $carrierArr = array(
+                'carrier_name' => $carrier[0],
+                'carrier_option' => $carrier[1]
+            );
+            if ($this->moveBeans($beans, $carrierArr)) {
+                unset($carriers[$key]);
+            };
+        }
+
+        return array('delete' => $beans, 'insert' => $carriers);
+    }
+
+    /**
+     * Merging diff. Update outdated beans, delete remove excess. And insert lacking careers.
+     *
+     * @param array $path in which branch making merge
+     * @param \NotificationCenterSubscription[] $beansForDelete list of beans which contain outdated data
+     * @param array $carriersForInsert list of carriers which not stored
+     */
+    protected function mergeDiff($path, $beansForDelete, $carriersForInsert)
+    {
+        foreach ($beansForDelete as $key => $bean) {
+            if (!empty($carriersForInsert)) {
+                $carrier = array_shift($carriersForInsert);
+                $carrierArr = array(
+                    'carrier_name' => $carrier[0],
+                    'carrier_option' => array_key_exists(1, $carrier) ? $carrier[1] : ''
+                );
+                $bean->fromArray($carrierArr);
+                $bean->save();
+                unset($beansForDelete[$key]);
+            }
+        }
+
+        $this->createCarriers($path, $carriersForInsert);
+        $this->deleteConfigBeans($beansForDelete);
+    }
+
+    /**
+     * Create beans based on branch path and carrier list from config.
+     *
+     * @param array $path path to branch in with located carriers
+     * @param array $carriers list carrier data which consist of carrier name and carrier option
+     */
+    protected function createCarriers(array $path, array $carriers)
+    {
+        foreach ($carriers as $key => $carrier) {
+            $carrier[1] = array_key_exists(1, $carrier) ? $carrier[1] : '';
+            $bean = $this->getNewBaseBean();
+            $bean->fromArray($path + array('carrier_name' => $carrier[0], 'carrier_option' => $carrier[1]));
+            $bean->save();
         }
     }
 
     /**
-     * Delete subscriptions but $ids.
+     * Deleting list of beans.
      *
-     * @param string[] $ids list of ids that will not be deleted
+     * @param \SugarBean[] $beans list for deleting
      */
-    protected function deleteOther($ids)
+    protected function deleteConfigBeans(array $beans)
     {
-        if (count($ids) > 0) {
-            $query = $this->getSugarQuery();
-            $query->where()->notIn('id', $ids);
-        } else {
-            throw new \LogicException('Can not be fully delete global settings');
+        foreach ($beans as $bean2Del) {
+            $bean2Del->mark_deleted($bean2Del->id);
         }
+    }
 
-        $beans = $this->getBeans($query, array('id', 'deleted'));
-        foreach ($beans as $bean) {
-            $bean->mark_deleted($bean->id);
-        };
+    /**
+     * Save configuration for user.
+     *
+     * @param  $userId
+     * @param array $config configuration for saving
+     */
+    public function setUserConfiguration($userId, $config)
+    {
+        $this->setConfiguration($userId, $config, false);
     }
 }
