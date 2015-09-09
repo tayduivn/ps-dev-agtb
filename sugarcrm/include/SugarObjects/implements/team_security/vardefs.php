@@ -108,6 +108,8 @@ $vardefs = array(
 	  // handled by SugarFieldTeamset
       'team_selected_name' => array(
           'name' => 'team_selected_name',
+          // Prevent a notice during import.
+          'table' => 'teams',
           'vname' => 'LBL_TEAM_SET_SELECTED_TEAMS',
           // Or db_concat_fields.
           'rname' => 'name',
