@@ -1968,6 +1968,8 @@
                 forceNew: true
             }
         }, _.bind(function(context, model) {
+            app.alert.dismiss('create-option-alert');
+
             if (model) {
                 //reload the iframe to display new calendar events
                 document.location.reload();
