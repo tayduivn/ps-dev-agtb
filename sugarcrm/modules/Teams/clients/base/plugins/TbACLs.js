@@ -29,6 +29,9 @@
             onAttach: function(component, plugin) {
                 this.on('init', function() {
                     this.isTBAEnabled = this.isEnabledForModule(this.module);
+                    this.model.on('change:_acl', function() {
+                        this.view.render();
+                    }, this);
                 });
             },
 
