@@ -11,15 +11,15 @@
  */
 --}}
 {{! if the first panel uses panels, then the rest use panels, so don't use tabview }}
-<div class="record tab-layout">
-{{#if meta.firstPanelIsTab}}
+<div class="record tab-layout" style="padding-top: 30px;">
+{{#if this.meta.firstPanelIsTab}}
     <div class="content-tabs">
         <ul class="nav nav-tabs" id="recordTab">
-            {{#each meta.panels}}
+            {{#each this.meta.panels}}
                 {{#unless header}}
                     {{#if newTab}}
                         <li class="tab {{name}}">
-                            <a href="#{{name}}{{../../../cid}}" data-toggle="tab">{{str label ../../../this.module}}</a>
+                            <a href="#{{name}}{{../../../this.cid}}" data-toggle="tab">{{str label ../../../this.module}}</a>
                         </li>
                     {{/if}}
                 {{/unless}}
@@ -27,11 +27,11 @@
             <li class="tab dropdown more hidden">
                 <a class="dropdown-toggle" data-toggle="dropdown"><b class="fa fa-chevron-down"></b></a>
                 <ul class="dropdown-menu scroll pull-right" role="menu">
-                    {{#each meta.panels}}
+                    {{#each this.meta.panels}}
                         {{#unless header}}
                             {{#if newTab}}
                                 <li class="{{name}}">
-                                    <a href="#{{name}}{{../../../cid}}">{{str label ../../../this.module}}</a>
+                                    <a href="#{{name}}{{../../../this.cid}}">{{str label ../../../this.module}}</a>
                                 </li>
                             {{/if}}
                         {{/unless}}
@@ -41,13 +41,13 @@
         </ul>
     <div id="tabContent" class="tab-content">
 {{/if}}
-{{#each meta.panels}}
+{{#each this.meta.panels}}
     {{#unless header}}
         {{#if newTab}}
-            {{#notEq @index ../../../../meta.firstNonHeaderPanelIndex}}
+            {{#notEq @index ../../../this.meta.firstNonHeaderPanelIndex}}
                 </div>
             {{/notEq}}
-            <div class="tab-pane fade" id="{{name}}{{../../../cid}}">
+            <div class="tab-pane fade" id="{{name}}{{../../../this.cid}}">
         {{else}}
             <div class="row-fluid record-panel" data-panelName="{{name}}">
                 <div class="row-fluid record-panel-header {{#eq panelState "collapsed"}}panel-inactive{{/eq}}{{#notEq panelState "collapsed"}}panel-active{{/notEq}}">
@@ -63,26 +63,26 @@
             <div class="row-fluid record-panel-content {{#eq panelState "collapsed"}}hide{{/eq}}">
         {{/if}}
         {{#each grid}}
-                <div class="row-fluid {{../name}}">
+                <div class="row-fluid panel_body {{../name}}">
                     {{#each this}}
                         <div class="span{{span}} record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
                             {{#if ../../labels}}
                                 {{#unless dismiss_label}}
                                     <div class="record-label" data-name="{{name}}">
-                                        {{#if label}}{{str label ../../../../../../../../module}}{{/if}}
+                                        {{#if label}}{{str label ../../../../../../../this.module}}{{/if}}
                                     </div>
                                 {{/unless}}
                             {{/if}}
                             {{#if name}}
                                 <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
-                                    {{field ../../../../../../this model=../../../../../../model template=../../../../../../action}}
+                                    {{field ../../../../../this model=../../../../../this.model template=../../../../../this.action}}
                                 </span>
                             {{/if}}
-                            {{#unless ../../../../../../createMode}}
-                                {{#notHas name ../../../../../../../noEditFields}}
+                            {{#unless ../../../../this.createMode}}
+                                {{#notHas name ../../../../../this.noEditFields}}
                                     <span class="record-edit-link-wrapper" data-name="{{name}}">
-                                                <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="fa fa-pencil"></i></a>
-                                            </span>
+                                        <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="fa fa-pencil"></i></a>
+                                    </span>
                                 {{/notHas}}
                             {{/unless}}
                         </div>
@@ -90,10 +90,10 @@
                 </div>
         {{/each}}
         {{#unless newTab}}</div></div>{{/unless}}
-        {{#eq @index ../../../../meta.lastPanelIndex}}</div>{{/eq}}
+        {{#eq @index ../../this.meta.lastPanelIndex}}</div>{{/eq}}
     {{/unless}}
 {{/each}}
-{{#if meta.firstPanelIsTab}}
+{{#if this.meta.firstPanelIsTab}}
     </div>
     </div>
 {{/if}}

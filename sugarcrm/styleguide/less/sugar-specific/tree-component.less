@@ -150,6 +150,17 @@ div.fa-expand[data-action=full-screen] {
   margin-top: 14px;
 }
 
+[data-role=parent] {
+  &.error {
+    span[data-role="treevalue"] {
+      color: @error;
+    }
+    .clear-field {
+      right: 36px;
+    }
+  }
+}
+
 .parenttree {
   width:100%;
   background-color: #f6f6f6;
@@ -161,6 +172,9 @@ div.fa-expand[data-action=full-screen] {
   box-sizing: border-box;
   font-weight: 500;
   border: 1px solid #dddddd;
+  &.error{
+    border-color: @error;
+  }
   div.divinput {
     display: block;
     overflow: hidden;
@@ -172,6 +186,22 @@ div.fa-expand[data-action=full-screen] {
     padding-left:2px;
     width: 100%;
     height: 26px;
+    .error-tooltip {
+      display: inline-block;
+      position: absolute;
+      right: 18px;
+      &.top4 {
+        top: 4px;
+      }
+      &.top0 {
+        top: 0px;
+      }
+      .fa {
+        color: @error;
+        line-height: 16px;
+        font-size: @smallTreeFont;
+      }
+    }
   }
   .dropdown-menu {
     text-align: left;
