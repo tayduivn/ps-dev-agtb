@@ -214,6 +214,7 @@ class ForecastManagerWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestForecastUtilities::removeAllCreatedForecasts();
+        SugarTestHelper::tearDown();
         parent::tearDown();
     }
 
