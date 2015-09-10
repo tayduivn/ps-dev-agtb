@@ -479,5 +479,42 @@
      */
     _dropdownExists: function() {
         return this.action === 'edit' || (this.meta && this.meta.view === 'edit');
+    },
+
+    /**
+     * We don't need tooltip, because it breaks dropdown.
+     * {@inheritdoc}
+     */
+    decorateError: function(errors) {
+        var $tooltip = $(this.exclamationMarkTemplate()),
+            $ftag = this.$('span.select-arrow');
+        this.$el.closest('.record-cell').addClass('error');
+        this.$el.addClass('error');
+        $ftag.after($tooltip);
+        this.$('[data-role=parent]').addClass('error');
+    },
+
+    /**
+     * Need to remove own error decoration.
+     * {@inheritdoc}
+     */
+    clearErrorDecoration: function() {
+        this.$el.closest('.record-cell').removeClass('error');
+        this.$el.removeClass('error');
+        this.$('[data-role=parent]').removeClass('error');
+        this.$('.add-on.error-tooltip').remove();
+        if (this.view && this.view.trigger) {
+            this.view.trigger('field:error', this, false);
+        }
+    },
+
+    /**
+     * {@inheritdoc}
+     */
+    exclamationMarkTemplate: function() {
+        var extraClass = this.view.tplName === 'record' ? 'top0' : 'top4';
+        return '<span class="error-tooltip ' + extraClass + ' add-on" data-contexclamationMarkTemplateainer="body">' +
+        '<i class="fa fa-exclamation-circle">&nbsp;</i>' +
+        '</span>';
     }
 })
