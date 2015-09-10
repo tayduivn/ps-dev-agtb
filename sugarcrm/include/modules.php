@@ -721,6 +721,11 @@ $modInvisList[] = 'CarrierSocket';
 $moduleList[] = 'CarrierEmail';
 $modInvisList[] = 'CarrierEmail';
 
+$moduleList[] = 'NotificationCenterSubscriptions';
+$beanList['NotificationCenterSubscriptions'] = 'NotificationCenterSubscription';
+$beanFiles['NotificationCenterSubscription']
+    = 'modules/NotificationCenterSubscriptions/NotificationCenterSubscription.php';
+
 // this module doesn't need a Bean
 $modInvisList[] = 'Feedbacks';
 

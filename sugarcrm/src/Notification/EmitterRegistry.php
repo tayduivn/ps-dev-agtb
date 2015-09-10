@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Notification;
 
+use Sugarcrm\Sugarcrm\Notification\BeanEmitter\BeanEmitterInterface;
+
 /**
  * Class EmitterRegistry.
  * Is a registry of all system and custom Notification emitters.
@@ -20,6 +22,22 @@ namespace Sugarcrm\Sugarcrm\Notification;
  */
 class EmitterRegistry
 {
+
+    /**
+     * Path to file in which store cached dictionary array
+     */
+    const CACHE_FILE = 'Notification/emitterRegistry.php';
+
+    /**
+     * Variable name in which store cached dictionary array
+     */
+    const CACHE_VARIABLE = 'emitterRegistry';
+
+    /**
+     * Full path to BeanEmitterInterface with nameSpace
+     */
+    const BEAN_EMITTER_INTERFACE = 'Sugarcrm\\Sugarcrm\\Notification\\BeanEmitter\\BeanEmitterInterface';
+
     /**
      * Get object of EmitterRegistry, customized if it's present.
      * @return EmitterRegistry Registry instance.
@@ -41,20 +59,32 @@ class EmitterRegistry
     }
 
     /**
-     * Get a Bean-level Emitter.
+     * Get a Bean-level Emitter, customized if it's present.
+     * @return EmitterInterface Bean-level Emitter.
      */
     public function getBeanEmitter()
     {
-        // ToDo: add code.
+        $class = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Notification\BeanEmitter\\Emitter');
+        return new $class();
     }
 
     /**
      * Get a Module-level Emitter.
      * @param string $moduleName
+     * @return BeanEmitterInterface|null Emitter instance
      */
     public function getModuleEmitter($moduleName)
     {
-        // ToDo: add code.
+        $emitters = $this->getDictionary();
+
+        if (isset($emitters[$moduleName])) {
+            \SugarAutoLoader::load($emitters[$moduleName]['path']);
+            $class = $emitters[$moduleName]['class'];
+
+            return new $class($this->getBeanEmitter());
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -63,7 +93,136 @@ class EmitterRegistry
      */
     public function getModuleEmitters()
     {
-        // ToDo: add return EmitterInterface[].
-        return array();
+        return array_keys($this->getDictionary());
+    }
+
+    /**
+     * Build dictionary array(array with module-level emitters class names and path to it)
+     *
+     *  array(
+     *      'moduleName' => array(
+     *          'class' => 'className',
+     *          'path' => 'pathToClass'
+     *      )
+     *  );
+     *
+     * @return array
+     */
+    protected function scan()
+    {
+        $dictionary = array();
+        foreach ($GLOBALS['moduleList'] as $module) {
+            if (!array_key_exists($module, $GLOBALS['beanList'])) {
+                continue;
+            }
+
+            $moduleEmitters = array();
+
+            $path = 'modules/' . $module . '/Emitter.php';
+            $class = $GLOBALS['beanList'][$module] . 'Emitter';
+            \SugarAutoLoader::load($path);
+            if ($this->isEmitterClass($class)) {
+                $moduleEmitters[] = array(
+                    'path' => $path,
+                    'class' => $class,
+                );
+            }
+
+            $customPath = $this->customPath($path);
+            if (!empty($customPath)) {
+                \SugarAutoLoader::load($customPath);
+                $customClass = $this->customClass($class);
+                if ($this->isEmitterClass($customClass)) {
+                    $moduleEmitters[] = array(
+                        'path' => $customPath,
+                        'class' => $customClass,
+                    );
+                }
+            }
+
+            if (count($moduleEmitters) > 0) {
+                $dictionary[$module] = array_pop($moduleEmitters);
+            }
+        }
+
+        return $dictionary;
+    }
+
+    /**
+     * Does class implement EmitterInterface
+     *
+     * @param string $class name for checking
+     * @return bool is class implements EmitterInterface
+     */
+    protected function isEmitterClass($class)
+    {
+        return class_exists($class) && in_array(static::BEAN_EMITTER_INTERFACE, class_implements($class));
+    }
+
+    /**
+     * Retrieving array(dictionary array with module-level emitters class names and path to it)
+     *
+     * Retrieving array(dictionary array with module-level emitters class names and path to it)
+     * from cache file if it not exists rebuild cache
+     *
+     * @return array
+     */
+    protected function getDictionary()
+    {
+        $data = $this->getCache();
+        if (is_null($data)) {
+            $data = $this->scan();
+            $this->setCache($data);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Retrieving array from cache file if it exists
+     * Retrieving array(dictionary array with module-level emitters class names and path to it)
+     * from cache file if it exists
+     *
+     * @return array|null
+     */
+    protected function getCache()
+    {
+        $path = sugar_cached(static::CACHE_FILE);
+        if (\SugarAutoLoader::fileExists($path)) {
+            include($path);
+        }
+
+        if (isset(${static::CACHE_VARIABLE})) {
+            return ${static::CACHE_VARIABLE};
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Saving array(dictionary array with module-level emitter class names and path to it) to cache file
+     *
+     * @param array $data
+     */
+    protected function setCache($data)
+    {
+        create_cache_directory(static::CACHE_FILE);
+        write_array_to_file(static::CACHE_VARIABLE, $data, sugar_cached(static::CACHE_FILE));
+    }
+
+    /**
+     * @see \SugarAutoLoader::existingCustomOne
+     */
+    protected function customPath($path)
+    {
+        return \SugarAutoLoader::existingCustomOne($path);
+    }
+
+    /**
+     * @see \SugarAutoLoader::customClass
+     */
+    protected function customClass($class)
+    {
+        return \SugarAutoLoader::customClass($class);
     }
 }
