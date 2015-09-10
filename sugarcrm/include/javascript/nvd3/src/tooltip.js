@@ -8,14 +8,14 @@
 
   var nvtooltip = window.nv.tooltip = {};
 
-  nvtooltip.show = function(pos, content, gravity, dist, container, classes) {
+  nvtooltip.show = function(evt, content, gravity, dist, container, classes) {
 
     var tooltip = document.createElement('div'),
         inner = document.createElement('div'),
         arrow = document.createElement('div');
 
     gravity = gravity || 's';
-    dist = dist || 10;
+    dist = dist || 5;
 
     inner.className = 'tooltip-inner';
     arrow.className = 'tooltip-arrow';
@@ -29,7 +29,7 @@
     tooltip.appendChild(arrow);
     container.appendChild(tooltip);
 
-    nvtooltip.position(container, tooltip, pos, gravity, dist);
+    nvtooltip.position(container, tooltip, evt, gravity, dist);
     tooltip.style.opacity = 1;
 
     return tooltip;
@@ -62,9 +62,14 @@
       }, 500);
   };
 
-  nvtooltip.position = function(container, tooltip, pos, gravity, dist) {
+  nvtooltip.position = function(container, tooltip, evt, gravity, dist) {
+    var pos = [
+      typeof evt.layerX === 'undefined' ? evt.offsetX : evt.layerX,
+      typeof evt.layerY === 'undefined' ? evt.offsetY : evt.layerY
+    ];
+
     gravity = gravity || 's';
-    dist = dist || 10;
+    dist = dist || 5;
     var tooltipWidth = parseInt(tooltip.offsetWidth, 10),
         tooltipHeight = parseInt(tooltip.offsetHeight, 10),
         containerWidth = container.clientWidth,
