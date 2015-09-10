@@ -257,11 +257,18 @@ class PMSEHistoryLogWrapper
                         'user_id' => $caseData['cas_user_id']
                     ));
                     if (isset($this->formAction->frm_action) && !empty($this->formAction->frm_action)) {
-                        $action = strtoupper($this->formAction->frm_action);
+                        // frm_action can contains action strings such as "Approved" or json return values (in 
+                        // case of Business Rules). We want to skip json return values from appearing in the 
+                        // Process History 
+                        if (json_decode($this->formAction->frm_action) == null) {
+                            $action = strtoupper($this->formAction->frm_action);
+                        }
                     } else {
                         $action = translate('LBL_PMSE_HISTORY_LOG_NOT_REGISTERED_ACTION', 'pmse_Inbox');
                     }
-                    $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTION_PERFORMED', 'pmse_Inbox'), $action);
+                    if (!empty($action)) {
+                        $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTION_PERFORMED', 'pmse_Inbox'), $action);
+                    }
                     if (isset($this->formAction->cas_pre_data)) {
                         $logdata = unserialize($this->formAction->cas_pre_data);
                         $entry['var_values'] = $logdata;
