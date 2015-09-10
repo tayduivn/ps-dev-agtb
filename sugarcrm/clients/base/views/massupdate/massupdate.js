@@ -518,10 +518,16 @@
                                     options.complete(xhr, status);
                                 }
                             }
-                        },
-                        method = options.method || this.defaultMethod,
-                        data = this.getAttributes(options.attributes, method),
-                        url = app.api.buildURL(baseModule, this.module, data, options.params);
+                    };
+                    var method = options.method || this.defaultMethod;
+                    var data = this.getAttributes(options.attributes, method);
+
+                    if (_.isEmpty(data.massupdate_params.uid)) {
+                        // No records to update, end the mass update.
+                        model.trigger('massupdate:end');
+                        return;
+                    }
+                    var url = app.api.buildURL(baseModule, this.module, data, options.params);
                     app.api.call(method, url, data, callbacks);
                 },
 
