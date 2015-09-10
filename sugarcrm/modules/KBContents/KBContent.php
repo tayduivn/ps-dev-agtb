@@ -125,6 +125,23 @@ class KBContent extends SugarBean {
     }
 
     /**
+     * Return pairs `key` => `value` of available languages.
+     * @return array
+     */
+    public function getLanguageOptions()
+    {
+        $data = $this->getLanguages();
+        $result = array();
+        foreach ($data as $value) {
+            unset($value['primary']);
+            $key = reset(array_keys($value));
+            $val = reset(array_values($value));
+            $result[$key] = $val;
+        }
+        return $result;
+    }
+
+    /**
      * Setup Default Languages for KBContents.
      */
     public function setupPrimaryLanguage()
