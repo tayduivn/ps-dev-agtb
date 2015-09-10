@@ -29,7 +29,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     ),
     array(
         'route' => "#{$module_name}",
-        'label' => 'LBL_LIST_ARTICLES',
+        'label' => 'LNK_LIST_ARTICLES',
         'acl_action' => 'list',
         'acl_module' => $module_name,
         'icon' => 'fa-reorder',

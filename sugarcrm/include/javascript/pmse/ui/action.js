@@ -51,10 +51,10 @@ var Action = function (options) {
      */
     this.toolTip = null;
     /**
-     * Define an availability state
+     * Define an selected state
      * @type {null}
      */
-    this.unavailable = null;
+    this.selected = null;
     /**
      * Defines the object associated to this action
      * @type {Object}
@@ -84,7 +84,7 @@ Action.prototype.initObject = function (options) {
         cssStyle: null,
         disabled: false,
         hidden: false,
-        unavailable: false,
+        selected: false,
         handler: function () {
 
         },
@@ -94,7 +94,7 @@ Action.prototype.initObject = function (options) {
     this.setText(defaults.text)
         .setCssClass(defaults.cssStyle)
         .setToolTip(defaults.toolTip)
-        .setUnavailable(defaults.unavailable)
+        .setSelected(defaults.selected)
         .setDisabled(defaults.disabled)
         .setHidden(defaults.hidden)
         .setHandler(defaults.handler)
@@ -144,12 +144,12 @@ Action.prototype.setToolTip = function (tooltip) {
 }
 
 /**
- * Sets the tooltip
- * @param tooltip
+ * Set the selected property
+ * @param selected
  * @returns {Action}
  */
-Action.prototype.setUnavailable = function (unavailable) {
-    this.unavailable = unavailable;
+Action.prototype.setSelected = function (selected) {
+    this.selected = selected;
     return this;
 }
 

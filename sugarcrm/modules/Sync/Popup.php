@@ -375,7 +375,7 @@ foreach($sync_modules as $name=>$val){
 					if (empty ($_REQUEST['rel_offset'])) {
 						update_progress_bar('records', 55, 100);
 						if($clean_sync == 1){
-							$result_arr = unserialize(base64_decode($result['result']));
+							$result_arr = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($result['result']));
 							execute_query($sync_module, $result_arr['data']);
 							execute_query($sync_module, $result_arr['cstm']);
 						}
@@ -450,7 +450,7 @@ foreach($sync_modules as $name=>$val){
 							if (!has_error($result)) {
 								update_progress_bar('records', 50, 100);
 								if($clean_sync == 1){
-									$result_arr = unserialize(base64_decode($result['result']));
+									$result_arr = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($result['result']));
 									execute_query($sync_module, $result_arr['data']);
 									execute_query($sync_module, $result_arr['cstm']);
 								}
