@@ -45,16 +45,8 @@ class Emitter implements EmitterInterface
      */
     public function exec(\SugarBean $bean, $event, $arguments)
     {
-        // ToDo: for now we only create 'update' event. The above logic is only for reference how to treat hook-events.
-        $eventName = '';
-        if ($event == 'after_save') {
-            $eventName = $arguments['isUpdate'] ? 'update' : 'create';
-        } elseif ($event == 'after_delete') {
-            $eventName = 'delete';
-        }
+        $event = $this->getEventPrototypeByString('update')->setBean($bean);
 
-        $eventName = 'update';
-        $eventObject = $this->getEventPrototypeByString($eventName)->setBean($bean);
     }
 
     /**

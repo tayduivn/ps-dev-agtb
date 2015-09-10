@@ -128,10 +128,10 @@ class EmitterRegistry
                 );
             }
 
-            $customPath = \SugarAutoLoader::existingCustomOne($path);
+            $customPath = $this->customPath($path);
             if (!empty($customPath)) {
                 \SugarAutoLoader::load($customPath);
-                $customClass = \SugarAutoLoader::customClass($class);
+                $customClass = $this->customClass($class);
                 if ($this->isEmitterClass($customClass)) {
                     $moduleEmitters[] = array(
                         'path' => $customPath,
@@ -208,5 +208,21 @@ class EmitterRegistry
     {
         create_cache_directory(static::CACHE_FILE);
         write_array_to_file(static::CACHE_VARIABLE, $data, sugar_cached(static::CACHE_FILE));
+    }
+
+    /**
+     * @see \SugarAutoLoader::existingCustomOne
+     */
+    protected function customPath($path)
+    {
+        return \SugarAutoLoader::existingCustomOne($path);
+    }
+
+    /**
+     * @see \SugarAutoLoader::customClass
+     */
+    protected function customClass($class)
+    {
+        return \SugarAutoLoader::customClass($class);
     }
 }
