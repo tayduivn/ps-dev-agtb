@@ -17,6 +17,22 @@ require_once 'include/MetaDataManager/MetaDataManager.php';
 require_once 'include/api/SugarApi.php';
 require_once 'clients/base/api/CurrentUserApi.php';
 
+/**
+ * Verifies the given user's data, sends the result as JSON, and then exits
+ * @param User $user The user whose data you want to verify
+ */
+function verifyAndCleanup($user)
+{
+    $status = $user->verify_data();
+    $data = array(
+        'status' => $status,
+        'error_string' => $user->error_string
+    );
+    header('Content-Type: application/json');
+    echo json_encode($data);
+    sugar_cleanup(true);
+}
+
 $display_tabs_def = isset($_REQUEST['display_tabs_def']) ? html_entity_decode($_REQUEST['display_tabs_def']) : '';
 $hide_tabs_def = isset($_REQUEST['hide_tabs_def']) ? html_entity_decode($_REQUEST['hide_tabs_def']): '';
 $remove_tabs_def = isset($_REQUEST['remove_tabs_def']) ? html_entity_decode($_REQUEST['remove_tabs_def']): '';
@@ -169,14 +185,7 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
         }
 
         if (!empty($only_verify_data)) {
-            $status = $focus->verify_data();
-            $data = array(
-                'status' => $status,
-                'error_string' => $focus->error_string
-            );
-            header('Content-Type: application/json');
-            echo json_encode($data);
-            sugar_cleanup(true);
+            verifyAndCleanup($focus);
         }
 
         if (isset($_POST['user_swap_last_viewed'])) {
@@ -333,6 +342,9 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
                 'global'
             );
         }
+    } elseif (!empty($only_verify_data) && ($focus->is_group || $focus->portal_only)) {
+        // provide the only-verify option for groups and portal users too
+        verifyAndCleanup($focus);
     }
 
     if (!$focus->verify_data()) {
