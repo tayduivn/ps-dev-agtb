@@ -171,9 +171,7 @@ class IBMDB2Manager  extends DBManager
 						$this->log->info("Return message from stored procedure call '$sql': $sp_msg");
 					}
 
-					if($this->dump_slow_queries($sql)) {
-						$this->track_slow_queries($sql);
-					}
+					$this->dump_slow_queries($sql);
 				}
 			} else {
 				$this->log->error("Failed to bind parameter for query : $sql");

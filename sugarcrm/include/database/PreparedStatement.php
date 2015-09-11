@@ -262,9 +262,7 @@ abstract class PreparedStatement
             $this->DBM->registerError($msg, "Query Failed");
             $this->stmt = false; // Making sure we don't use the statement resource for error reporting
         } else {
-            if($this->DBM->dump_slow_queries($this->parsedSQL)) {
-                $this->DBM->track_slow_queries($this->parsedSQL);
-            }
+            $this->DBM->dump_slow_queries($this->parsedSQL);
         }
 
         return $this;
