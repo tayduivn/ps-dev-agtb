@@ -94,7 +94,8 @@
                     }),
                     bodyTmpl = app.template.getField('htmleditable_tinymce', 'create-article', module),
                     attrs = {name: model.get('name'), kbdocument_body: bodyTmpl({model: model})},
-                    link, prefill, relatedFields;
+                    link, prefill, relatedFields,
+                    self = this;
                 if (links.length === 0) {
                     prefill = app.data.createBean(module, attrs);
                 } else {
@@ -120,9 +121,9 @@
                     function(context, newModel) {
                         if (newModel !== undefined && links.length > 0) {
                             var viewContext = context.parent.parent || context.parent;
-                            var moduleContext = viewContext.getChildContext({module: module});
-                            moduleContext.set('skipFetch','false');
-                            viewContext.trigger('subpanel:reload', {links: _.union(links, [link])});
+                            // find&reload target subpanel
+                            var subPanel = self._findSubpanel(viewContext, link);
+                            self._reloadSubpanel(subPanel, link);
                         }
                     }
                 );
@@ -248,19 +249,73 @@
                 if (this.context.loadDrawer == true) {
                     app.drawer.load(layoutDef);
                 } else {
+                    var self = this;
                     app.drawer.open(layoutDef, function(context, newModel) {
-                        // Just parent - header's create, parent.parent - subpanel's create.
-                        var viewContext = context.parent.parent || context.parent;
-                        viewContext.resetLoadFlag();
-                        viewContext.set('skipFetch', false);
-                        viewContext.loadData();
-                        viewContext.trigger('subpanel:reload', {links: ['revisions', 'localizations']});
-                        context.createAction = null;
-                        context.loadDrawer = null;
+                        // it's necessary to find appropriate subpanel
+                        var link = self._getLinkNameByContextAction(context.get('createAction')),
+                            viewContext, subPanel;
+                        if (link) {
+                            // Just parent - header's create, parent.parent - subpanel's create.
+                            viewContext = context.parent.parent || context.parent;
+                            // reload model data to update at least related_languages
+                            viewContext.resetLoadFlag();
+                            viewContext.loadData();
+                            // find&reload target subpanel
+                            subPanel = self._findSubpanel(viewContext, link);
+                            self._reloadSubpanel(subPanel, link);
+                            context.set('createAction', null);
+                            context.loadDrawer = null;
+                        }
                     });
                 }
 
                 prefill.trigger('duplicate:field', parentModel);
+            },
+
+            /**
+             * Prepares and triggers subpanel reload.
+             *
+             * @param {Core.Context} subPanel Subpanel object to reload.
+             * @param {String} link Link name for the trigger.
+             * @private
+             */
+            _reloadSubpanel: function(subPanel, link) {
+                if (!subPanel) {
+                    return;
+                }
+                subPanel.set('skipFetch', false);
+                subPanel.set('collapsed', false);
+                subPanel.parent.trigger('subpanel:reload', {links: [link]});
+            },
+
+            /**
+             * Returns children subpanel.
+             *
+             * @param {Core.Context} context Context object that contains subpanels.
+             * @param {String} link Link name to found an appropriate subpanel.
+             * @returns {Core.Context|null}
+             * @private
+             */
+            _findSubpanel: function(context, link) {
+                var child = context.getChildContext({link: link});
+                return child.get('isSubpanel') === true ? child : null;
+            },
+
+            /**
+             * Returns Link Name by content constant.
+             *
+             * @param {Number} contextAction A Context Action constant value.
+             * @returns {String|boolean}
+             * @private
+             */
+            _getLinkNameByContextAction: function(contextAction) {
+                switch (contextAction) {
+                    case this.CONTENT_LOCALIZATION:
+                        return 'localizations';
+                    case this.CONTENT_REVISION:
+                        return 'revisions';
+                }
+                return false;
             },
 
             /**
