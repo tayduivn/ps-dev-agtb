@@ -158,16 +158,6 @@ class FileApi extends SugarApi {
     }
 
     /**
-     * Save the data into the bean
-     * For overriding in APIs that require more complex save, like Documents
-     * @param SugarBean $bean
-     */
-    protected function saveBean($bean)
-    {
-        $bean->save();
-    }
-
-    /**
      * Saves a file to a module field using the POST method
      *
      * @param ServiceBase $api The service base
@@ -274,7 +264,7 @@ class FileApi extends SugarApi {
                 }
                 else {
                     // Save the bean
-                    $this->saveBean($bean);
+                    $this->saveBean($bean, $api, $args);
 
                     $fileinfo = $this->getFileInfo($bean, $field, $api);
 
