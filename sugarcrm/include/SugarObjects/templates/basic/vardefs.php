@@ -103,6 +103,7 @@ $vardefs = array(
                 'duplicate_on_record_copy' => 'no',
                 'readonly' => true,
                 'sort_on' => array('last_name'),
+                'exportable' => true,
             ),
         'created_by' => array(
                 'name' => 'created_by',
@@ -136,6 +137,7 @@ $vardefs = array(
                 'duplicate_on_record_copy' => 'no',
                 'readonly' => true,
                 'sort_on' => array('last_name'),
+                'exportable' => true,
             ),
         'doc_owner' => array(
                 'name' => 'doc_owner',
