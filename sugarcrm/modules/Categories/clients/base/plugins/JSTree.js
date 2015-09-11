@@ -665,7 +665,7 @@
              */
             _showInputHandler: function(event, data) {
                 var self = this,
-                    el = data.obj.find('input'),
+                    el = data.obj.children('input'),
                     clonedElement = el.clone(),
                     obj = data.obj,
                     t = data.t,
@@ -1110,7 +1110,7 @@
              * @private
              */
             _toggleTooltip: function(node, show) {
-                var input = node.find('input.jstree-rename-input');
+                var input = node.children('input.jstree-rename-input');
                 if (show) {
                     input
                         .tooltip({
