@@ -176,7 +176,10 @@ abstract class UpgradeDriver
 
             // If we're running on a case-insensitive file-system, delete
             // the file first to ensure we pick up filename case changes.
-            if ($this->context['case_insensitive_fs']) {
+            if ($this->context['case_insensitive_fs']
+                && pathinfo(realpath($file), PATHINFO_BASENAME) !== $file
+            ) {
+                $this->log("Warning: delete file: {$file} before copy it in the case insensitive fs");
                 $this->unlink($target_dir . '/' . $file);
             }
 
