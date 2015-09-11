@@ -50,11 +50,9 @@
      * View.Fields.Base.ParticipantsField#previewRow, and
      * View.Fields.Base.ParticipantsField#search methods so that these event
      * handlers do not execute too frequently.
-     *
-     * The current user is added to the collection if the model is new.
      */
     initialize: function(options) {
-        var currentUser, fieldValue;
+        var fieldValue;
 
         this._super('initialize', [options]);
 
@@ -67,16 +65,11 @@
         this.search = _.debounce(this.search, app.config.requiredElapsed || 500);
 
         if (this.model.isNew()) {
-            fieldValue = this.model.get(this.name);
-            currentUser = _.extend({_module: 'Users'}, app.utils.deepCopy(app.user));
-
-            if (fieldValue instanceof app.BeanCollection) {
-                fieldValue.add(currentUser);
-            } else {
+            try {
+                fieldValue = this.getFieldValue();
+            } catch (e) {
                 // create a new virtual collection
                 this.model.set(this.name, []);
-                // add to the virtual collection
-                this.model.get(this.name).add(currentUser);
             }
         }
 
@@ -687,20 +680,11 @@
         };
 
         deletable = function(participant) {
-            var assignedUser, undeletable;
-
             if (participant.deletable === false) {
                 return false;
             }
 
-            assignedUser = self.model.get('assigned_user_id');
-            undeletable = [assignedUser];
-
-            if (app.user.id !== assignedUser && self.model.isNew()) {
-                undeletable.push(app.user.id);
-            }
-
-            return !_.contains(undeletable, participant.id);
+            return participant.id !== self.model.get('assigned_user_id');
         };
 
         preview = function(participant) {
