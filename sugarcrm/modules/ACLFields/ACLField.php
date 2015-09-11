@@ -63,7 +63,8 @@ class ACLField  extends ACLAction
                 if ((
                         !empty($def['source']) && $def['source'] == 'custom_fields') &&
                         $def['type'] != 'id' && (empty($def['dbType']) || ($def['dbType'] != 'id')
-                    ) || !empty($def['group']) ||
+                    ) ||
+                    (!empty($def['group']) && empty($def['hideacl'])) ||
                     (
                         empty($def['hideacl']) && !empty($def['type']) && !in_array($field, $exclude) &&
                         (

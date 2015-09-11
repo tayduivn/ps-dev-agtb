@@ -120,6 +120,7 @@ $dictionary['KBContent'] = array(
             'duplicate_on_record_copy' => 'no',
             'studio' => false,
             'group' => 'usefulness',
+            'hideacl' => true,
         ),
         'notuseful' => array(
             'name' => 'notuseful',
@@ -129,6 +130,7 @@ $dictionary['KBContent'] = array(
             'duplicate_on_record_copy' => 'no',
             'studio' => false,
             'group' => 'usefulness',
+            'hideacl' => true,
         ),
         'attachment_list' => array(
             'name' => 'attachment_list',

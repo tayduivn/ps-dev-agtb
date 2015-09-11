@@ -11,6 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once('modules/ACLActions/actiondefs.php');
+require_once 'modules/ACL/AclCache.php';
+
 /**
  * ACL actions
  * @api
@@ -29,11 +31,6 @@ class ACLAction  extends SugarBean
      * @var array
      */
     protected static $acls;
-    /**
-     * Map of user/session pairs to ACL keys
-     * @var array
-     */
-    protected static $acl_map;
 
     /**
     * static addActions($category, $type='module')
@@ -197,39 +194,12 @@ class ACLAction  extends SugarBean
 
     protected static function loadFromCache($user_id, $type)
     {
-        if(empty($user_id)) {
-            return array();
-        }
-    	if(is_null(self::$acl_map)) {
-    		self::$acl_map = sugar_cache_retrieve('ACL');
-    	}
-
-    	$sessid = session_id();
-    	if(empty($sessid) || empty(self::$acl_map)) {
-    		return array();
-    	}
-
-    	if(isset(self::$acl_map[$user_id][$type])) {
-            $key = self::$acl_map[$user_id][$type];
-            return sugar_cache_retrieve($key);
-    	}
-        return array();
+        return AclCache::getInstance()->retrieve($user_id, $type);
     }
 
     protected static function storeToCache($user_id, $type, $data)
     {
-    	$sessid = session_id();
-    	if(empty($sessid)) {
-            return;
-    	}
-
-        $key = md5(serialize($data));
-        if (!isset(self::$acl_map[$user_id][$type]) || self::$acl_map[$user_id][$type] !== $key) {
-            self::$acl_map[$user_id][$type] = $key;
-    		 sugar_cache_put('ACL', self::$acl_map, 0);
-    	}
-
-        sugar_cache_put($key, $data, session_cache_expire() * 60);
+        return AclCache::getInstance()->store($user_id, $type, $data);
     }
 
     /**
@@ -562,10 +532,9 @@ class ACLAction  extends SugarBean
     */
     public function clearACLCache()
     {
-        self::$acl_map = null;
         self::$acls = array();
-        sugar_cache_clear("ACL");
         unset($_SESSION['ACL']);
+        AclCache::getInstance()->clear();
     }
 
     public function save()

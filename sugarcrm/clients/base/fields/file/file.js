@@ -118,6 +118,11 @@
             };
         }
         this.model.set(fieldName + '_guid', guid);
+
+        // Update filename of the model with the value from response,
+        // since it may have been modified on the server side
+        this.model.set(fieldName, data.record[fieldName]);
+
         callback(null, fields, errors);
     },
 

@@ -211,7 +211,6 @@ $admin->saveSetting('system','adminwizard',1);
  /////////////////////////Old Logger settings///////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 if(file_exists('modules/Configurator/Configurator.php')){
-	require_once('include/utils/array_utils.php');
 	require_once('modules/Configurator/Configurator.php');
 	$Configurator = new Configurator();
 	$Configurator->parseLoggerSettings();
