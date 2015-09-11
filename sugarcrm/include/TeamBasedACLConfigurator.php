@@ -117,6 +117,7 @@ class TeamBasedACLConfigurator
         // Configurator doesn't handle lists, to remove an element overriding needed.
         $cfg->config[self::CONFIG_KEY]['disabled_modules'] = false;
         $cfg->handleOverride();
+        $this->clearVardefs($module);
 
         if ($enable) {
             $actualList = array_values(array_diff($actualList, array($module)));
@@ -192,6 +193,11 @@ class TeamBasedACLConfigurator
             VardefManager::clearVardef($bean->module_dir, $bean->object_name);
         } else {
             VardefManager::clearVardef();
+        }
+        // PHP 5.5+. Because of the default value for "opcache.revalidate_freq" is 2 seconds and for modules
+        // the config_override.php is being overridden frequently.
+        if (function_exists('opcache_invalidate')) {
+            opcache_invalidate('config_override.php', true);
         }
     }
 
