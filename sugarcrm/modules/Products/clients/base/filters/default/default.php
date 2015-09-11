@@ -15,14 +15,7 @@ $viewdefs['Products']['base']['filter']['default'] = array(
     'default_filter' => 'all_records',
     'fields' => array(
         'name' => array(),
-        'contact_name' => array(
-            'dbFields' => array(
-                'contact_link.first_name',
-                'contact_link.last_name',
-            ),
-            'type' => 'text',
-            'vname' => 'LBL_CONTACT_NAME',
-        ),
+        'contact_name' => array(),
         'status' => array(),
         'type_name' => array(),
         'category_name' => array(),
