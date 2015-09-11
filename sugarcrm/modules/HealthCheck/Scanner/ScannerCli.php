@@ -110,7 +110,7 @@ class HealthCheckScannerCli extends HealthCheckScanner
             return $this->fail("{$this->instance} is not a directory");
         }
         $this->log("Initializing the environment");
-        defined('SUGAR_SHADOW_PATH') ? chdir(SUGAR_SHADOW_PATH) : chdir($this->instance);
+        defined('SUGAR_SHADOW_TEMPLATEPATH') ? chdir(SUGAR_SHADOW_TEMPLATEPATH) : chdir($this->instance);
         if (!file_exists("include/entryPoint.php")) {
             return $this->fail("{$this->instance} is not a Sugar instance");
         }
