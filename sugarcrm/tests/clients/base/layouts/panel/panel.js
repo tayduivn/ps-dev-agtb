@@ -15,7 +15,14 @@ describe('Base.Layout.Panel', function() {
 
     beforeEach(function() {
         app = SugarTest.app;
-        layout = SugarTest.createLayout('base', module, 'panel', null, null);
+        var context = app.context.getContext();
+        context.set({
+            module: module,
+            layout: 'panel'
+        });
+        context.prepare();
+        context.parent = app.context.getContext();
+        layout = SugarTest.createLayout('base', module, 'panel', null, context);
     });
 
     afterEach(function() {
@@ -60,7 +67,14 @@ describe('Base.Layout.Panel', function() {
                 sinon.collection.stub(app.user.lastState, 'get').returns(options.lastState);
                 app.config.collapseSubpanels = options.collapsedSubpanels;
 
-                var testLayout = SugarTest.createLayout('base', module, 'panel', {});
+                var context = app.context.getContext();
+                context.set({
+                    module: module,
+                    layout: 'panel'
+                });
+                context.prepare();
+                context.parent = app.context.getContext();
+                var testLayout = SugarTest.createLayout('base', module, 'panel', null, context);
                 expect(testLayout.context.get('collapsed')).toEqual(options.expected);
 
                 testLayout.dispose();

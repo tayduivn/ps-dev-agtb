@@ -56,7 +56,7 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
         $this->populateFromArray($_SESSION);
         $_SESSION = $this;
 
-        if ($lock) {
+        if (!$lock) {
             $this->unlock();
         }
 
@@ -128,7 +128,7 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
     protected static function registerShutdownFunction($previousUserId)
     {
         register_shutdown_function(function () use ($previousUserId) {
-            $logger = new LoggerTransition(LoggerManager::getLogger());
+            $logger = new LoggerTransition(\LoggerManager::getLogger());
             //Now write out the session data again during shutdown
             $sessionObject = $_SESSION;
             session_start();

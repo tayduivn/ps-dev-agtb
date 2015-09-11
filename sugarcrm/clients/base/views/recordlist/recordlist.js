@@ -167,16 +167,33 @@
      * @return {*}
      * @private
      */
-    _filterMeta : function(meta, options){
-        //Don't show the update calc field option if the module has no calculated fields or the user is not a dev for that module
-        var context = options.context,
-            isDeveloper = app.acl.hasAccess("developer", context.get("module")),
-            hasCalcFields = context && context.get("model") && !!_.find(context.get("model").fields, function(def) {
-                return def && def.calculated && def.calculated != "false";
-            });
+    _filterMeta : function(meta, options) {
+        // Don't show the update calc field option if the module has no calculated
+        // fields or the user is not a dev for that module
+        var context = options.context;
+        var isDeveloper = app.acl.hasAccess("developer", context.get("module"));
+        var hasCalcFields = context && context.get("model") && !!_.find(context.get("model").fields, function(def) {
+            return def && def.calculated && def.calculated != "false";
+        });
+        // Used in sanitizing subpanel row actions for Tags module
+        var isTagsParent = options.context.get('parentModule') === 'Tags';
+
         if ((!isDeveloper || !hasCalcFields) && meta.selection && meta.selection.actions) {
             meta.selection.actions = _.reject(meta.selection.actions, function(action) {
                 return action.name == "calc_field_button";
+            });
+        }
+
+        // Handle Tags module specific rules. Yes, this is dirty, but given how
+        // Subpanels on Tags need to be treated, this is just about the only way
+        // to do this
+        if (isTagsParent && meta.rowactions && meta.rowactions.actions) {
+            // Tags does not support Unlinking of records in subpanels, so we
+            // need to traverse the row actions array of options.meta and, if
+            // any of the rowactions is a type unlink-action we need to remove
+            // it from the rowactions array
+            meta.rowactions.actions = _.reject(meta.rowactions.actions, function(row) {
+                return row.type === 'unlink-action';
             });
         }
 

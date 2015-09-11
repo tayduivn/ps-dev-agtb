@@ -50,9 +50,11 @@
                         module: 'Emails',
                         prepopulate: options
                     }
-                }, _.bind(function() {
-                    //allow for component to perform action after close
-                    this.trigger('emailclient:close');
+                }, _.bind(function(model) {
+                    if (model) {
+                        //allow for component to perform action after close
+                        this.trigger('emailclient:close');
+                    }
                 }, this));
             },
 
