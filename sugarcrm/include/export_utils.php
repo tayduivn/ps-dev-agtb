@@ -508,9 +508,10 @@ function getExportContentFromResult(
                     $focus->field_name_map[$fields_array[$key]]['custom_type'] == 'teamset' &&
                     isset(Team::$nameTeamsetMapping[$fields_array[$key]])
                 ) {
+                    $primaryId = Team::$namePrimaryIdMapping[$fields_array[$key]];
                     $value = TeamSetManager::getCommaDelimitedTeams(
                         $val[Team::$nameTeamsetMapping[$fields_array[$key]]],
-                        !empty($val['team_id']) ? $val['team_id'] : ''
+                        !empty($val[$primaryId]) ? $val[$primaryId] : ''
                     );
                 }
 

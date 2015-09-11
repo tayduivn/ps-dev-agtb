@@ -634,14 +634,14 @@ class SugarFieldTeamset extends SugarFieldBase {
 		}
 
 		if(!empty($team_ids)){
-            if ($vardef['name'] == 'team_selected_name') {
-                $teamSet = BeanFactory::getBean('TeamSets');
-                $selectedTeamSet = Team::$nameTeamsetMapping[$vardef['name']];
-                $focus->$selectedTeamSet = $teamSet->addTeams($team_ids);
-            } else {
+            if ($vardef['name'] == $this->field_name) {
                 $focus->load_relationship('teams');
                 $focus->teams->replace($team_ids, array(), true);
                 $focus->team_id = $team_ids[0];
+            } else {
+                $teamSet = BeanFactory::getBean('TeamSets');
+                $selectedTeamSet = Team::$nameTeamsetMapping[$vardef['name']];
+                $focus->$selectedTeamSet = $teamSet->addTeams($team_ids);
             }
 		} else {
             $focus->setDefaultTeam();
@@ -673,7 +673,7 @@ class SugarFieldTeamset extends SugarFieldBase {
     ) {
         $this->ensureApiFormatFieldArguments($fieldList, $service);
 
-        if ($fieldName == 'team_selected_name') {
+        if ($fieldName !== $this->field_name) {
             return;
         }
 
