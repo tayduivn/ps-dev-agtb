@@ -8,24 +8,17 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 ({
-    extendsFrom: 'FilterpanelLayout',
+    extendsFrom: 'EditablelistbuttonField',
 
     /**
+     * Overriding because Currencies cannot be unlinked nor deleted
+     *
      * @inheritdoc
+     * @override
      */
-    initialize: function(options) {
-
-        this._super('initialize', [options]);
-
-        if (this.context.get('layout') === 'record') {
-            this.before('render', function() {
-                return false;
-            }, this);
-
-            this.template = app.template.empty;
-            this.$el.html(this.template());
-        }
+    getCustomSaveOptions: function(options) {
+        options.complete = function() {};
+        return options;
     }
 })

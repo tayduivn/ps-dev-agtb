@@ -26,7 +26,11 @@
             this.collection.each(function(model) {
                 if (model.get('id') == '-99') {
                     model.isDefault = true;
-                    model.set('name', model.get('name') + ' (' + app.lang.get("LBL_DEFAULT", "Currencies") + ')');
+                    var defaultLang = app.lang.get("LBL_DEFAULT", "Currencies");
+                    if(model.get('name').indexOf(defaultLang) === -1) {
+                        // todo: Fix this because this will not be RTL-friendly
+                        model.set('name', model.get('name') + ' (' + defaultLang + ')');
+                    }
                 }
             }, this);
 
@@ -59,4 +63,4 @@
         }
     },
 
-});
+})
