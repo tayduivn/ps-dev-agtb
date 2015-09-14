@@ -54,6 +54,8 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
         //Setup category root
         $KBContent = BeanFactory::getBean('KBContents');
         $KBContent->setupCategoryRoot();
+        //Setup primary language
+        $KBContent->setupPrimaryLanguage();
         $this->convertTags();
 
         while ($documents = $this->getOldDocuments()) {

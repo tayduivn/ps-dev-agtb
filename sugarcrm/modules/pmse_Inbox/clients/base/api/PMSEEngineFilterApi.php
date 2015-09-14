@@ -221,6 +221,18 @@ class PMSEEngineFilterApi extends FilterApi
     public static function addVisibilityFilter($access, SugarQuery_Builder_Where $where)
     {
         if (!self::$isVisibilityApplied) {
+            // First things first... filter all records through ACLs. Start by
+            // getting the PMSE supported module list...
+            $supportedModules = PMSEEngineUtils::getSupportedModules();
+
+            // Filter the PMSE modules through ACLs
+            $supportedModules = SugarACL::filterModuleList($supportedModules, 'access', true);
+
+            if (!empty($supportedModules)) {
+                $where->queryAnd()->in('cas_sugar_module', $supportedModules);
+            }
+
+            // Now handle the access setting, if there is one
             if ($access == 'regular_user') {
                 global $current_user;
                 $where->queryAnd()->equals('cas_user_id', $current_user->id);

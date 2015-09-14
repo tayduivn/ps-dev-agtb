@@ -137,8 +137,8 @@ class PMSEImporter
     {
         $_data = $this->getDataFile($file);
 
-        if (unserialize($_data)) {
-            $project = unserialize($_data);
+        if (\Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($_data)) {
+            $project = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($_data);
             if ($project['project']) {
                 if (in_array($project['project'][$this->module], PMSEEngineUtils::getSupportedModules())) {
                     $result['id'] = $this->saveProjectData($project['project']);

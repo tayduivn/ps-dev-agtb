@@ -270,7 +270,7 @@ class PMSEHistoryLogWrapper
                         $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTION_PERFORMED', 'pmse_Inbox'), $action);
                     }
                     if (isset($this->formAction->cas_pre_data)) {
-                        $logdata = unserialize($this->formAction->cas_pre_data);
+                        $logdata = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($this->formAction->cas_pre_data);
                         $entry['var_values'] = $logdata;
                     }
                 } else {

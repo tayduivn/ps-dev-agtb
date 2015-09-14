@@ -679,7 +679,7 @@ class SugarController
                 }
             }
             $_REQUEST = array();
-            $_REQUEST = unserialize(base64_decode($temp_req['current_query_by_page']));
+            $_REQUEST = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($temp_req['current_query_by_page']));
             unset($_REQUEST[$seed->module_dir.'2_'.strtoupper($seed->object_name).'_offset']);//after massupdate, the page should redirect to no offset page
             $storeQuery->saveFromRequest($_REQUEST['module']);
             $_REQUEST = array(

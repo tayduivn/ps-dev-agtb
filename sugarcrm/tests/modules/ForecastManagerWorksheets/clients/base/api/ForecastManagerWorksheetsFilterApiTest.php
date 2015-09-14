@@ -170,9 +170,18 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
             ));
         $this->assertNotEmpty($actual);
         $this->assertArrayHasKey('records', $actual);
-        $record = reset($actual['records']);
-        $this->assertNotEmpty($record);
-        $this->assertEquals($user->id, $record['id']);
+        $result = array();
+        foreach ($actual['records'] as $value) {
+            array_push($result, $value['id']);
+        }
+        $this->assertEquals(
+            array($GLOBALS['current_user']->id, $user->id),
+            $result,
+            'Should contains 2 users',
+            0,
+            1,
+            true
+        );
     }
 
     /**
