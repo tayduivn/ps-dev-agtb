@@ -143,6 +143,7 @@ class TeamBasedACLConfigurator
         }
         $cfg = new Configurator();
         $actualList = $cfg->config[self::CONFIG_KEY]['disabled_modules'];
+        $newList = $actualList;
 
         foreach ($modules as $module) {
             $enabledGlobally = $this->isEnabledForModule($module);
@@ -150,17 +151,23 @@ class TeamBasedACLConfigurator
                 continue;
             }
             if ($enable) {
-                $actualList = array_values(array_diff($actualList, array($module)));
-                $this->restoreTBA($module);
+                $newList = array_values(array_diff($newList, array($module)));
             } else {
-                $actualList[] = $module;
-                $this->fallbackTBA($module);
+                $newList[] = $module;
             }
+        }
+        if ($newList == $actualList) {
+            return;
+        }
+        if ($enable) {
+            $this->restoreTBA();
+        } else {
+            $this->fallbackTBA();
         }
         $cfg->config[self::CONFIG_KEY]['disabled_modules'] = false;
         $this->saveConfig($cfg);
 
-        $cfg->config[self::CONFIG_KEY]['disabled_modules'] = $actualList;
+        $cfg->config[self::CONFIG_KEY]['disabled_modules'] = $newList;
         $this->saveConfig($cfg);
         $this->applyTBA();
     }
