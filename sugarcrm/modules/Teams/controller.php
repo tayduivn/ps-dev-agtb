@@ -119,9 +119,10 @@ class TeamsController extends SugarController {
 
         if ($enabled) {
             $actionsList = array_keys(ACLAction::getUserActions($current_user->id));
-            foreach ($actionsList as $module) {
-                $tbaConfigurator->setForModule($module, !in_array($module, $disabledModules));
-            }
+            $enabledModules = array_values(array_diff($actionsList, $disabledModules));
+
+            $tbaConfigurator->setForModulesList($disabledModules, false);
+            $tbaConfigurator->setForModulesList($enabledModules, true);
         }
         echo json_encode(array('status' => true));
     }
