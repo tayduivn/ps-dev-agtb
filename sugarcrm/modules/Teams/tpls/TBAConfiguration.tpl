@@ -56,10 +56,10 @@
         </tr>
     </table>
 
-    <table id="tba_dm_block" width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view"
+    <table id="tba_em_block" width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view"
            {if !$config.enabled}style="display: none;"{/if}>
         <tr>
-            <th align="left" scope="row"><h4>Select disabled Modules:</h4></th>
+            <th align="left" scope="row"><h4>{$MOD.LBL_TBA_CONFIGURATION_MOD_LABEL}:</h4></th>
         </tr>
         <tr>
             <td align="left" class="padding-0">
@@ -71,8 +71,8 @@
                             </td>
                             <td class="value">
                                 <input type="checkbox" name="team_based[disabled_modules][]"
-                                       data-group="tba_dm" value="{$key}"
-                                       {if $key|in_array:$config.disabled_modules}checked="checked"{/if}/>
+                                       data-group="tba_em" value="{$key}"
+                                       {if !$key|in_array:$config.disabled_modules}checked="checked"{/if}/>
                             </td>
                         </tr>
                     {/foreach}
@@ -88,16 +88,18 @@
     {literal}
     $(document).ready(function() {
         if ($('input#tba_set_enabled').attr('checked') === 'checked') {
-            $('#tba_dm_block').show();
+            $('#tba_em_block').show();
         } else {
-            $('#tba_dm_block').hide();
+            $('#tba_em_block').hide();
         }
 
         $('input#tba_set_enabled').on('click', function() {
             if ($(this).attr('checked') === 'checked') {
-                $('#tba_dm_block').show();
+                $('input[data-group=tba_em]').attr('checked', 'checked');
+                $('#tba_em_block').show();
             } else {
-                $('#tba_dm_block').hide();
+                $('#tba_em_block').hide();
+                $('input[data-group=tba_em]').attr('checked', '');
             }
         });
 
@@ -106,7 +108,7 @@
                 isTBEnabled = $('input#tba_set_enabled').attr('checked') === 'checked';
 
             if (isTBEnabled) {
-                $.each($('input[data-group=tba_dm]:checked'), function(index, item) {
+                $.each($('input[data-group=tba_em]:not(:checked)'), function(index, item) {
                     disabledModules.push($(item).val());
                 });
             }

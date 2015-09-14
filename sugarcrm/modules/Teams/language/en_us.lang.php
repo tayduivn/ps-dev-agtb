@@ -61,5 +61,6 @@ $mod_strings = array(
     'LBL_TBA_CONFIGURATION' => 'Team-based Access Rights',
     'LBL_TBA_CONFIGURATION_DESC' => 'Enable team access, and manage access by module.',
     'LBL_TBA_CONFIGURATION_LABEL' => 'Enable team-based access rights',
+    'LBL_TBA_CONFIGURATION_MOD_LABEL' => 'Select enabled Modules',
     'LBL_TBA_CONFIGURATION_TITLE' => 'Enabling team-based access rights will allow you to assign specific access and edit rights to teams and people for individual modules.',
 );
