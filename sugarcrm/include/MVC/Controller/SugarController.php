@@ -901,6 +901,18 @@ class SugarController
         return true;
     }
 
+    /**
+     * Checks to see if the requested entry point exists
+     *
+     * @param  $entrypoint string name of the entrypoint
+     * @return bool true if entrypoint exists, false if not
+     */
+    public function entryPointExists($entryPoint)
+    {
+        $this->loadMapping('entry_point_registry');
+        return !empty($this->entry_point_registry[$entryPoint]);
+    }
+
 	/**
 	 * Meant to handle old views e.g. DetailView.php.
 	 *
