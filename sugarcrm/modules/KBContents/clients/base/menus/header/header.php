@@ -64,7 +64,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     ),
     array(
         'route' => "#{$module_name}/config",
-        'label' => 'LBL_KNOWLEDGE_BASE_ADMIN_MENU',
+        'label' => 'LNK_KNOWLEDGE_BASE_ADMIN_MENU',
         'acl_action' => 'admin',
         'acl_module' => $module_name,
         'icon' => 'fa-cog',
