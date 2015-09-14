@@ -42,7 +42,10 @@ class TeamBasedACLSetupTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         SugarTestHelper::setUp('current_user', array(true, true));
-        $this->tbaConfig = $this->getMock('TeamBasedACLConfigurator', array('clearVardefs'));
+        $this->tbaConfig = $this->getMock(
+            'TeamBasedACLConfigurator',
+            array('applyTBA', 'restoreTBA', 'fallbackTBA', 'applyFallback')
+        );
         $this->globalTBA = $GLOBALS['sugar_config'][TeamBasedACLConfigurator::CONFIG_KEY]['enabled'];
 
         $this->tbaConfig->setGlobal(true);
@@ -81,8 +84,6 @@ class TeamBasedACLSetupTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testModuleConfig()
     {
-        $this->tbaConfig->setGlobal(true);
-
         $this->tbaConfig->setForModule($this->module, false);
         $this->assertFalse($this->tbaConfig->isEnabledForModule($this->module));
 
@@ -94,6 +95,24 @@ class TeamBasedACLSetupTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test module level using a set of modules.
+     */
+    public function testModuleListConfig()
+    {
+        $extraModule = 'Bugs';
+        $moduleList = array($this->module, $extraModule);
+        $this->tbaConfig->setForModule($extraModule, true);
+
+        $this->tbaConfig->setForModulesList($moduleList, false);
+        $this->assertFalse($this->tbaConfig->isEnabledForModule($this->module));
+        $this->assertFalse($this->tbaConfig->isEnabledForModule($extraModule));
+
+        $this->tbaConfig->setForModulesList($moduleList, true);
+        $this->assertTrue($this->tbaConfig->isEnabledForModule($this->module));
+        $this->assertTrue($this->tbaConfig->isEnabledForModule($extraModule));
+    }
+
+    /**
      * Test cases:
      * Fallback - should replace TBA options.
      * Restore - should restore the previous TBA options.
@@ -101,6 +120,7 @@ class TeamBasedACLSetupTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFallbackAndRestore()
     {
+        $this->tbaConfig = $this->getMock('TeamBasedACLConfigurator', array('applyTBA'));
         $action = 'view';
         $field = 'name';
         $aclField = new ACLField();

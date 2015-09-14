@@ -20,9 +20,7 @@ class TeamBasedACLConfigurator
      */
     protected $defaultConfig = array(
         'enabled' => false,
-        'disabled_modules' => array(
-            'Trackers'
-        ),
+        'disabled_modules' => array(),
     );
 
     /**
@@ -114,10 +112,6 @@ class TeamBasedACLConfigurator
         }
         $cfg = new Configurator();
         $actualList = $cfg->config[self::CONFIG_KEY]['disabled_modules'];
-        // Configurator doesn't handle lists, to remove an element overriding needed.
-        $cfg->config[self::CONFIG_KEY]['disabled_modules'] = false;
-        $cfg->handleOverride();
-        $this->clearVardefs($module);
 
         if ($enable) {
             $actualList = array_values(array_diff($actualList, array($module)));
@@ -128,11 +122,47 @@ class TeamBasedACLConfigurator
 
             $this->fallbackTBA($module);
         }
+        // Configurator doesn't handle lists, to remove an element overriding needed.
+        $cfg->config[self::CONFIG_KEY]['disabled_modules'] = false;
+        $this->saveConfig($cfg);
+
         $cfg->config[self::CONFIG_KEY]['disabled_modules'] = $actualList;
-        $cfg->handleOverride();
-        $cfg->clearCache();
-        SugarConfig::getInstance()->clearCache();
-        $this->clearVardefs($module);
+        $this->saveConfig($cfg);
+        $this->applyTBA($module);
+    }
+
+    /**
+     * Set Team Based ACL for a set of modules.
+     * @param array $modules List of modules.
+     * @param boolean $enable
+     */
+    public function setForModulesList(array $modules, $enable)
+    {
+        if (empty($modules)) {
+            return;
+        }
+        $cfg = new Configurator();
+        $actualList = $cfg->config[self::CONFIG_KEY]['disabled_modules'];
+
+        foreach ($modules as $module) {
+            $enabledGlobally = $this->isEnabledForModule($module);
+            if (($enable && $enabledGlobally) || (!$enable && !$enabledGlobally)) {
+                continue;
+            }
+            if ($enable) {
+                $actualList = array_values(array_diff($actualList, array($module)));
+                $this->restoreTBA($module);
+            } else {
+                $actualList[] = $module;
+                $this->fallbackTBA($module);
+            }
+        }
+        $cfg->config[self::CONFIG_KEY]['disabled_modules'] = false;
+        $this->saveConfig($cfg);
+
+        $cfg->config[self::CONFIG_KEY]['disabled_modules'] = $actualList;
+        $this->saveConfig($cfg);
+        $this->applyTBA();
     }
 
     /**
@@ -166,10 +196,8 @@ class TeamBasedACLConfigurator
         }
         $cfg = new Configurator();
         $cfg->config[self::CONFIG_KEY]['enabled'] = $enable;
-        $cfg->handleOverride();
-        $cfg->clearCache();
-        SugarConfig::getInstance()->clearCache();
-        $this->clearVardefs();
+        $this->saveConfig($cfg);
+        $this->applyTBA();
     }
 
     /**
@@ -186,18 +214,13 @@ class TeamBasedACLConfigurator
      * Update modules vardefs to apply the Team Based visibility.
      * @param string $module Module name.
      */
-    protected function clearVardefs($module = null)
+    protected function applyTBA($module = null)
     {
         if ($module) {
             $bean = BeanFactory::getBean($module);
             VardefManager::clearVardef($bean->module_dir, $bean->object_name);
         } else {
             VardefManager::clearVardef();
-        }
-        // PHP 5.5+. Because of the default value for "opcache.revalidate_freq" is 2 seconds and for modules
-        // the config_override.php is being overridden frequently.
-        if (function_exists('opcache_invalidate')) {
-            opcache_invalidate('config_override.php', true);
         }
     }
 
@@ -409,5 +432,21 @@ class TeamBasedACLConfigurator
     {
         $bean = BeanFactory::getBean($module);
         return (bool)$bean->getFieldDefinition('team_set_selected_id');
+    }
+
+    /**
+     * Save new config and clear cache.
+     * @param Configurator $cfg
+     */
+    protected function saveConfig(\Configurator $cfg)
+    {
+        $cfg->handleOverride();
+        $cfg->clearCache();
+        SugarConfig::getInstance()->clearCache();
+        // PHP 5.5+. Because of the default value for "opcache.revalidate_freq" is 2 seconds and for modules
+        // the config_override.php is being overridden frequently.
+        if (function_exists('opcache_invalidate')) {
+            opcache_invalidate('config_override.php', true);
+        }
     }
 }
