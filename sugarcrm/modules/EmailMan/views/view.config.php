@@ -134,7 +134,7 @@ class ViewConfig extends SugarView
             $sugar_config['email_xss'] = getDefaultXssTags();
         }
 
-        foreach(unserialize(base64_decode($sugar_config['email_xss'])) as $k => $v) {
+        foreach(\Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($sugar_config['email_xss'])) as $k => $v) {
             $this->ss->assign($k."Checked", 'CHECKED');
         }
 

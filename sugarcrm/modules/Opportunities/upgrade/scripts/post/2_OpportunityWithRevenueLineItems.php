@@ -113,8 +113,8 @@ class SugarUpgradeOpportunityWithRevenueLineItems extends UpgradeScript
                                     WHEN rli.sales_stage = 'Closed Lost' THEN 0
                                     ELSE (rli.best_case/rli.base_rate)
                                   END AS best_case
-                           FROM   revenue_line_items AS rli
-                           WHERE  rli.deleted = 0) AS t
+                           FROM   revenue_line_items rli
+                           WHERE  rli.deleted = 0) t
                    GROUP  BY t.opportunity_id";
 
         $results = $this->db->query($sql);

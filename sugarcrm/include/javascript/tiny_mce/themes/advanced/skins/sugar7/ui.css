@@ -1273,3 +1273,18 @@
 .sugar7Skin span.mce_selectfield:before {
   content: "\f013";
 }
+
+/* make toolbar buttons' position flexible */
+.sugar7Skin tr.mceFirst .mceToolbar tr td {
+  float: left;
+  margin-bottom: 4px;
+  margin-top: 2px;
+}
+/* except complex buttons */
+.sugar7Skin tr.mceFirst .mceToolbar tr td div[role=button] td {
+  float: none;
+}
+/* fix separator, make it fit the line */
+.sugar7Skin .mceSeparator {
+  margin: 7px 6px 5px 0;
+}

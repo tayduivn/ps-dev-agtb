@@ -322,16 +322,26 @@ class ExtAPIWebEx extends ExternalAPIBase implements WebMeeting {
           } else {
               $reply['responseXML'] = $responseXML;
               $xpath = new DOMXPath($responseXML);
-              // $status = (string)$responseXML->header->response->result;
-              $status = (string)$xpath->query('/serv:message/serv:header/serv:response/serv:result')->item(0)->nodeValue;
-              if ( $status == 'SUCCESS' ) {
-                  $reply['success'] = TRUE;
-                  $reply['errorMessage'] = '';
+
+              // Get the base node of the xpath query result to see if there is
+              // something we can inspect further
+              $baseNode = (string)$xpath->query('/serv:message/serv:header/serv:response/serv:result');
+
+              // If there is no baseNode then we fail here
+              if (empty($baseNode)) {
+                $reply['success'] = false;
+                $reply['errorMessage'] = translate('LBL_ERR_NO_RESPONSE', 'EAPM');
               } else {
-                  $GLOBALS['log']->debug("Status:\n".print_r($status,true));
-                  $reply['success'] = FALSE;
-                  // $reply['errorMessage'] = (string)$responseXML->header->response->reason;
-                  $reply['errorMessage'] = (string)$xpath->query('/serv:message/serv:header/serv:response/serv:reason')->item(0)->nodeValue;
+                // Otherwise carry on with what we were doing
+                $status = $baseNode->item(0)->nodeValue;
+                if ($status == 'SUCCESS') {
+                    $reply['success'] = true;
+                    $reply['errorMessage'] = '';
+                } else {
+                    $GLOBALS['log']->debug("Status:\n".print_r($status,true));
+                    $reply['success'] = false;
+                    $reply['errorMessage'] = (string)$xpath->query('/serv:message/serv:header/serv:response/serv:reason')->item(0)->nodeValue;
+                }
               }
           }
       }

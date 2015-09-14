@@ -294,7 +294,7 @@ class OutboundEmailConfigurationPeer
         foreach ($ieAccounts as $inbox_id => $ie) {
             $name = $ie->get_stored_options('from_name');
             $addr = $ie->get_stored_options('from_addr');
-            $storedOptions = unserialize(base64_decode($ie->stored_options));
+            $storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($ie->stored_options));
             $isAllowedGroup = $ie->get_stored_options('allow_outbound_group_usage',false);
             if (!$ie->is_personal && !$isAllowedGroup) {
                 continue;
