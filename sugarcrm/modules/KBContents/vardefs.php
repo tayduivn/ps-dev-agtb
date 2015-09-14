@@ -11,6 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $dictionary['KBContent'] = array(
+    'optimistic_locking' => true,
     'table' => 'kbcontents',
     'audited' => true,
     'activity_enabled' => true,

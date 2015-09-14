@@ -76,6 +76,14 @@
             this.$('.subpanel').toggleClass('empty', !properties.length);
         }, this);
 
+        // FIXME this needs to be reviewed on 7.7.
+        this.listenTo(this.context.parent, 'panel-top:refresh', function(link) {
+            if (this.context.get('link') === link) {
+                this.context.resetLoadFlag();
+                this.toggle(true);
+            }
+        });
+
         this.context.on('change:collapsed', function(context, collapsed) {
             this.toggle(!collapsed);
         }, this);

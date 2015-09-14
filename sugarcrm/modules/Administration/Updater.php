@@ -81,7 +81,7 @@ if(!empty($license->settings['license_latest_versions'])){
 
 	$encodedVersions = $license->settings['license_latest_versions'];
 
-	$versions = unserialize(base64_decode( $encodedVersions));
+	$versions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode( $encodedVersions));
 	include('sugar_version.php');
 	if(!empty($versions)){
 		foreach($versions as $version){

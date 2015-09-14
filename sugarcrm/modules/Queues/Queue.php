@@ -318,7 +318,7 @@ class Queue extends SugarBean {
 	function getPersistentMemory($key) {
 		$r = $this->db->query('SELECT persistent_memory FROM queues WHERE id = "'.$this->id.'"');
 		$a = $this->db->fetchByAssoc($r);
-		$persistent_memory = unserialize(base64_decode($a['persistent_memory']));
+		$persistent_memory = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($a['persistent_memory']));
 		if(empty($persistent_memory[$key])) {
 			_pp($this->name.' did not return anything from $persistent_memory with key of '.$key);
 			return false;

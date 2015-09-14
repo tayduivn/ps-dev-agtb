@@ -49,6 +49,7 @@ describe("tag field", function() {
 
     it('should populate tagList with comma-space separated tags', function() {
         field = SugarTest.createField('base', fieldName, 'tag', 'list');
+        field.initializeSelect2();
         var sampleTag = [{name: 'aaa'}, {name: 'bbb'}];
         var expectedTagList = 'aaa, bbb';
 
@@ -93,6 +94,7 @@ describe("tag field", function() {
 
         beforeEach(function() {
             field = SugarTest.createField('base', fieldName, 'tag', 'edit');
+            field.initializeSelect2();
         });
 
         afterEach(function() {

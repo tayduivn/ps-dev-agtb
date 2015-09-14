@@ -240,7 +240,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
         $tokenValue = $this->parseTokenValue($assembledTokenString);
         $criteriaToken->expToken = $assembledTokenString;
         if ($criteriaToken->expSubtype == 'Currency') {
-            $unserialized = unserialize($tokenValue);
+            $unserialized = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($tokenValue);
             $criteriaToken->expField = $unserialized["currency_id"];
             $criteriaToken->currentValue = $unserialized["amount"];
         } else {
