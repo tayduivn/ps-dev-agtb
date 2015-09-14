@@ -2750,7 +2750,7 @@ class MetaDataManager
     public function getTabList()
     {
         $controller = new TabController();
-        return array_keys($controller->getACLFilteredSysTabs());
+        return array_keys($controller->get_system_tabs());
     }
 
     /**
