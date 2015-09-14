@@ -367,6 +367,8 @@ var AjaxObject = {
         // add CSRF form token
         if (args && args.length > 0) {
             args += '&';
+        } else {
+            args = '';
         }
         args += 'csrf_token=' + SUGAR.csrf.form_token;
 
