@@ -145,8 +145,8 @@ class RevenueLineItemsCurrencyRateUpdate extends CurrencyRateUpdateAbstract
                                       (rli.likely_case/rli.base_rate) AS likely_case,
                                       (rli.worst_case/rli.base_rate) AS worst_case,
                                       (rli.best_case/rli.base_rate) AS best_case
-                               FROM   revenue_line_items AS rli
-                               WHERE  rli.deleted = 0) AS T
+                               FROM   revenue_line_items rli
+                               WHERE  rli.deleted = 0) T
                        GROUP  BY opp_id";
             $results = $this->db->query($sql);
 
