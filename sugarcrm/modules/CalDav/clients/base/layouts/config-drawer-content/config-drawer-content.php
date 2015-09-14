@@ -1,3 +1,4 @@
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -8,8 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-[
-    'modules/CalDav/clients/**/*.js',
-    'modules/Forecasts/clients/layouts/**/*.js',
-]
+$viewdefs['CalDav']['base']['layout']['config-drawer-content'] = array(
+    'components' => array(
+        array(
+            'view' => 'config',
+        ),
+    ),
+);

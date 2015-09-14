@@ -28,7 +28,7 @@ class CalDavApi extends SugarApi
                 'reqType' => 'GET',
                 'path' => array('caldav', 'config'),
                 'pathVars' => array('module', ''),
-                'method' => 'caldavConfigGet',
+                'method' => 'configGet',
                 'shortHelp' => 'Retrieves the config settings for a caldav module',
                 'longHelp' => 'include/api/help/module_config_get_help.html',
             ),
@@ -36,7 +36,7 @@ class CalDavApi extends SugarApi
                 'reqType' => 'PUT',
                 'path' => array('caldav', 'config'),
                 'pathVars' => array('module', ''),
-                'method' => 'caldavConfigSave',
+                'method' => 'configSave',
                 'shortHelp' => 'Updates the config entries for the caldav module',
                 'longHelp' => 'include/api/help/module_config_put_help.html',
             ),
@@ -44,7 +44,7 @@ class CalDavApi extends SugarApi
                 'reqType' => 'GET',
                 'path' => array('caldav', 'config', 'user'),
                 'pathVars' => array('module', '', ''),
-                'method' => 'caldavUserConfigGet',
+                'method' => 'userConfigGet',
                 'shortHelp' => 'Retrieves the config settings for a caldav module',
                 'longHelp' => 'include/api/help/module_config_get_help.html',
             ),
@@ -52,7 +52,7 @@ class CalDavApi extends SugarApi
                 'reqType' => 'PUT',
                 'path' => array('caldav', 'config', 'user'),
                 'pathVars' => array('module', '', ''),
-                'method' => 'caldavUserConfigSave',
+                'method' => 'userConfigSave',
                 'shortHelp' => 'Updates the config entries for the caldav module',
                 'longHelp' => 'include/api/help/module_config_put_help.html',
             ),
@@ -62,12 +62,11 @@ class CalDavApi extends SugarApi
     /**
      * Get function for the caldav config admin settings
      *
-     * @throws SugarApiExceptionNotAuthorized
      * @param ServiceBase $api
      * @param $args 'platform' is optional and defaults to 'base'
      * @return array
      */
-    public function caldavConfigGet(ServiceBase $api, $args)
+    public function configGet(ServiceBase $api, $args)
     {
         $this->checkAdmin($api);
 
@@ -83,39 +82,47 @@ class CalDavApi extends SugarApi
     /**
      * Get function for the caldav config admin settings
      *
-     * @throws SugarApiExceptionNotAuthorized
      * @param ServiceBase $api
      * @param $args 'platform' is optional and defaults to 'base'
      * @return array
      */
-    public function caldavConfigSave(ServiceBase $api, $args)
+    public function configSave(ServiceBase $api, $args)
     {
         $this->checkAdmin($api);
 
-        $cfg = new Configurator();
-
         $values = $this->checkArgs($args);
 
+        $this->adminconfigSave($values);
+
+        return $this->configGet($api, $args);
+    }
+
+    /**
+     * Admin config save CalDav settings
+     *
+     * @param array $values then returned checkArgs
+     */
+    public function adminConfigSave($values)
+    {
         if (!empty($values['update'])) {
+            $cfg = $this->getConfigurator();
+
             foreach ($values['update'] as $val) {
                 $cfg->config['default_' . $val] = $values[$val];
             }
             // set new config values
             $cfg->handleOverride();
         }
-
-        return $this->caldavConfigGet($api, $args);
     }
 
     /**
      * Get function for the caldav config user settings
      *
-     * @throws SugarApiExceptionNotAuthorized
      * @param ServiceBase $api
      * @param $args 'platform' is optional and defaults to 'base'
      * @return array
      */
-    public function caldavUserConfigGet(ServiceBase $api, $args)
+    public function userConfigGet(ServiceBase $api, $args)
     {
         global $current_user;
 
@@ -134,34 +141,56 @@ class CalDavApi extends SugarApi
     /**
      * Get function for the caldav config user settings
      *
-     * @throws SugarApiExceptionNotAuthorized
      * @param ServiceBase $api
      * @param $args 'platform' is optional and defaults to 'base'
      * @return array
      */
-    public function caldavUserConfigSave(ServiceBase $api, $args)
+    public function userConfigSave(ServiceBase $api, $args)
+    {
+        $values = $this->checkArgs($args);
+
+        $this->userConfigUpdate($values);
+        $this->userConfigDelete($values);
+
+        return $this->userConfigGet($api, $args);
+    }
+
+    /**
+     * User config update CalDav settings
+     *
+     * @param array $values then returned checkArgs
+     */
+    public function userConfigUpdate($values)
     {
         global $current_user;
-
-        $values = $this->checkArgs($args);
 
         if (!empty($values['update'])) {
             foreach ($values['update'] as $val) {
                 $current_user->setPreference($val, $values[$val]);
             }
+            $current_user->save();
+        }
+    }
+
+    /**
+     * User config delete/set default CalDav settings
+     *
+     * @param array $values then returned checkArgs
+     */
+    public function userConfigDelete($values)
+    {
+        global $current_user;
+
+        if (!empty($values['delete'])) {
             foreach ($values['delete'] as $val) {
                 $current_user->removePreference($val);
             }
             $current_user->save();
         }
-
-        return $this->caldavUserConfigGet($api, $args);
     }
 
     /**
      * Return enable CalDav modules
-     *
-     * @throws SugarApiExceptionNotAuthorized
      *
      * @return array CalDav modules
      */
@@ -175,8 +204,6 @@ class CalDavApi extends SugarApi
     /**
      * Return oldestSyncDates array
      *
-     * @throws SugarApiExceptionNotAuthorized
-     *
      * @return array
      */
     public function getOldestSyncDates()
@@ -189,35 +216,37 @@ class CalDavApi extends SugarApi
     /**
      * Returns checked values
      *
-     * @throws SugarApiExceptionNotAuthorized
-     *
      * @param $args 'platform' is optional and defaults to 'base'
      * @return array args
      */
-    protected function checkArgs($args)
+    public function checkArgs($args)
     {
         $out = $this->getDefaultsValues();
         $out['update'] = array();
         $out['delete'] = array();
 
-        $modules = $this->getSupportedCalDavModules();
-        if (in_array($args['caldav_module'], $modules)) {
-            if ($out['caldav_module'] != $args['caldav_module']) {
-                $out['update'][] = 'caldav_module';
-            } else {
-                $out['delete'][] = 'caldav_module';
+        if (isset($args['caldav_module'])) {
+            $modules = $this->getSupportedCalDavModules();
+            if (in_array($args['caldav_module'], $modules)) {
+                if ($out['caldav_module'] != $args['caldav_module']) {
+                    $out['update'][] = 'caldav_module';
+                } else {
+                    $out['delete'][] = 'caldav_module';
+                }
+                $out['caldav_module'] = $args['caldav_module'];
             }
-            $out['caldav_module'] = $args['caldav_module'];
         }
 
-        $intervals = $this->getOldestSyncDates();
-        if (isset($intervals[$args['caldav_interval']])) {
-            if ($out['caldav_interval'] != $args['caldav_interval']) {
-                $out['update'][] = 'caldav_interval';
-            } else {
-                $out['delete'][] = 'caldav_interval';
+        if (isset($args['caldav_interval'])) {
+            $intervals = $this->getOldestSyncDates();
+            if (isset($intervals[$args['caldav_interval']])) {
+                if ($out['caldav_interval'] != $args['caldav_interval']) {
+                    $out['update'][] = 'caldav_interval';
+                } else {
+                    $out['delete'][] = 'caldav_interval';
+                }
+                $out['caldav_interval'] = $args['caldav_interval'];
             }
-            $out['caldav_interval'] = $args['caldav_interval'];
         }
 
         return $out;
@@ -226,18 +255,26 @@ class CalDavApi extends SugarApi
     /**
      * Return defaults values
      *
-     * @throws SugarApiExceptionNotAuthorized
-     *
      * @return array
      */
     public function getDefaultsValues()
     {
-        $cfg = new Configurator();
+        $cfg = $this->getConfigurator();
 
         return array(
             'caldav_module' => $cfg->config['default_caldav_module'],
             'caldav_interval' => $cfg->config['default_caldav_interval']
         );
+    }
+
+    /**
+     * Return Configurator
+     *
+     * @return Configurator
+     */
+    public function getConfigurator()
+    {
+        return new Configurator();
     }
 
     /**
