@@ -37,7 +37,7 @@ class SugarUpgradeOpportunityFixRevenueLineItemsHidden extends UpgradeScript
         $results = $this->db->query($sql);
 
         while ($row = $this->db->fetchRow($results)) {
-            $tabArray = unserialize(base64_decode($row['value']));
+            $tabArray = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($row['value']));
             // find the key
             $key = array_search($value, $tabArray);
             if ($key === false && $show === true) {

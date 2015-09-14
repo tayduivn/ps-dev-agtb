@@ -278,7 +278,7 @@ class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
             ->with($flowData)
             ->will($this->returnValue('ROUTE'));
 
-        $arguments = array('flow_id'=>'abc123');
+        $arguments = array('idFlow'=>'abc123');
         $result = $this->userTask->run($flowData, $bean, $externalAction, $arguments);
         $this->assertEquals($expectedResult, $result);
     } 

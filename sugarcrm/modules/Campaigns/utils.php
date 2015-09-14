@@ -98,7 +98,7 @@ function get_campaign_mailboxes_with_stored_options() {
     $r = $db->query($q);
 
     while($a = $db->fetchByAssoc($r)) {
-        $ret[$a['id']] = unserialize(base64_decode($a['stored_options']));
+        $ret[$a['id']] = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($a['stored_options']));
     }
 	return $ret;
 }

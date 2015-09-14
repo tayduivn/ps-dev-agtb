@@ -1024,44 +1024,44 @@ AdamActivity.prototype.getContextMenu = function () {
         text: translate('LBL_PMSE_CONTEXT_MENU_UNASSIGNED'),
         cssStyle: 'adam-menu-script-none',
         handler: self._getScriptTypeActionHandler('NONE'),
-        disabled: (this.act_script_type === 'NONE')
+        selected: (this.act_script_type === 'NONE')
     });
 
     assignUserAction = new Action({
         text: translate('LBL_PMSE_CONTEXT_MENU_ASSIGN_USER'),
         cssStyle: 'adam-menu-script-assign_user',
         handler: self._getScriptTypeActionHandler('ASSIGN_USER'),
-        disabled: (this.act_script_type === 'ASSIGN_USER')
+        selected: (this.act_script_type === 'ASSIGN_USER')
     });
 
     assignTeamAction = new Action({
         text: translate('LBL_PMSE_CONTEXT_MENU_ASSIGN_TEAM'),
         cssStyle: 'adam-menu-script-assign_team',
         handler: self._getScriptTypeActionHandler('ASSIGN_TEAM'),
-        disabled: (this.act_script_type === 'ASSIGN_TEAM')
+        selected: (this.act_script_type === 'ASSIGN_TEAM')
     });
 
     changeFieldAction = new Action({
         text: translate('LBL_PMSE_CONTEXT_MENU_CHANGE_FIELD'),
         cssStyle: 'adam-menu-script-change_field',
         handler: self._getScriptTypeActionHandler('CHANGE_FIELD'),
-        disabled: (this.act_script_type === 'CHANGE_FIELD')
+        selected: (this.act_script_type === 'CHANGE_FIELD')
     });
 
     addRelatedRecordAction = new Action({
         text: translate('LBL_PMSE_CONTEXT_MENU_ADD_RELATED_RECORD'),
         cssStyle: 'adam-menu-script-add_related_record',
         toolTip: _.isEmpty(this.canvas.project.script_tasks.add_related_record) ? translate('LBL_PMSE_CANNOT_CONFIGURE_ADD_RELATED_RECORD') : null,
-        unavailable: _.isEmpty(this.canvas.project.script_tasks.add_related_record) ? true : false,
+        disabled: _.isEmpty(this.canvas.project.script_tasks.add_related_record) ? true : false,
         handler: self._getScriptTypeActionHandler('ADD_RELATED_RECORD'),
-        disabled: (this.act_script_type === 'ADD_RELATED_RECORD')
+        selected: (this.act_script_type === 'ADD_RELATED_RECORD')
     });
 
     businessRuleAction = new Action({
         text: translate('LBL_PMSE_CONTEXT_MENU_BUSINESS_RULE'),
         cssStyle: 'adam-menu-script-business_rule',
         handler: self._getScriptTypeActionHandler('BUSINESS_RULE'),
-        disabled: (this.act_script_type === 'BUSINESS_RULE')
+        selected: (this.act_script_type === 'BUSINESS_RULE')
     });
 
     if (this.act_task_type === 'USERTASK') {
@@ -1083,7 +1083,7 @@ AdamActivity.prototype.getContextMenu = function () {
             text: translate('LBL_PMSE_CONTEXT_MENU_NONE'),
             cssStyle : 'adam-menu-icon-none',
             handler: handle(""),
-            disabled: (self.act_default_flow !== 0) ? false : true
+            selected: (self.act_default_flow !== 0) ? false : true
         });
 
         defaultflowItems.push(defaultflownoneAction);
@@ -1110,7 +1110,7 @@ AdamActivity.prototype.getContextMenu = function () {
                         text: name,
                         cssStyle : self.getCanvas().getTreeItem(shape).icon,
                         handler: handle(connection.getID()),
-                        disabled: (self.act_default_flow === connection.getID()) ? true : false
+                        selected: (self.act_default_flow === connection.getID()) ? true : false
                     })
                 );
 
@@ -1120,7 +1120,7 @@ AdamActivity.prototype.getContextMenu = function () {
         defaultflowAction = {
             label: translate('LBL_PMSE_CONTEXT_MENU_DEFAULT_FLOW'),
             icon: 'adam-menu-icon-default-flow',
-            disabled: defaultflowActive,
+            selected: defaultflowActive,
             menu: {
                 items: defaultflowItems
             }

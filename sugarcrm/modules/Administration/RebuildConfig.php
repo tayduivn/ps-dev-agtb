@@ -48,7 +48,9 @@ if( !empty($_POST['perform_rebuild']) && $config_file_ready ){
     }
     require_once 'ModuleInstall/ModuleInstaller.php';
     ModuleInstaller::handleBaseConfig();
+//BEGIN SUGARCRM flav=ent ONLY
     ModuleInstaller::handlePortalConfig();
+//END SUGARCRM flav=ent ONLY
 }
 
 /////////////////////////////////////////////////////////////////////

@@ -14,13 +14,23 @@ require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSECrmDataWrapper.
 
 function getTargetsModules()
 {
-    $output = array();
+    // Prepare the result
+    $modules = array();
+
+    // Get the module list from the data wrapper
     $wrapper = new PMSECrmDataWrapper();
-    $temp = $wrapper->retrieveModules();
-    if (is_array($temp)){
-        foreach ($temp as $key => $value) {
-            $output[$value['value']] = $value['text'];
+    $list = $wrapper->retrieveModules();
+
+    // If there are results, use them to build the list
+    if (is_array($list)) {
+        foreach ($list as $module) {
+            $modules[$module['value']] = $module['text'];
         }
     }
-    return $output;
+
+    // Filter the module list through ACLs
+    $modules = SugarACL::filterModuleList($modules, 'access', true);
+
+    // Return the result
+    return $modules;
 }

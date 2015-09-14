@@ -24,7 +24,8 @@ Interface SessionStorageInterface extends \ArrayAccess, \Serializable {
      * Start a new session or resume the session with this id.
      *
      * @param bool $lock when true, addional session starts with this session id in other threads will be blocked
-     * until this thread ends or unlock is called
+     * until this thread ends or unlock is called. When lock is ommited or false, the session will still be written on
+     * close, but will not block other session starts.
      *
      * @return mixed
      */
