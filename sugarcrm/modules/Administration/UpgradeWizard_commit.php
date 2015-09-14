@@ -108,7 +108,7 @@ function UW_get_patch_for_file($install_file)
     $history = array_shift($matches);
 
     if ($history && $history->patch) {
-        return unserialize(base64_decode($history->patch));
+        return \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($history->patch));
     }
 
     return array();

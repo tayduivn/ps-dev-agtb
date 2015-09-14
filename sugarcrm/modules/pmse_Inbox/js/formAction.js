@@ -177,12 +177,12 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         value: casIndex
     });
     casFlowId = new HiddenField({
-        name: 'flow_id',
+        name: 'idFlow',
         value: flowId
     });
 
     casInboxId = new HiddenField({
-        name: 'inbox_id',
+        name: 'idInbox',
         value: pmseInboxId
     });
     combo_type = new ComboboxField({

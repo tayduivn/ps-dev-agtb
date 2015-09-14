@@ -463,7 +463,7 @@
             success: function() {
                 app.alert.dismiss('mail_call_status');
                 app.alert.show('mail_call_status', {autoClose: true, level: 'success', messages: successMessage});
-                app.drawer.close();
+                app.drawer.close(sendModel);
             },
             error: function(error) {
                 var msg = {level: 'error'};

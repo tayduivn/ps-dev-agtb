@@ -372,7 +372,7 @@
         app.alert.show('message-id', {
             level: 'info',
             title: app.lang.get('LBL_DESCRIPTION'),
-            messages: '<br/>' + model.get('description'),
+            messages: '<br/>' + Handlebars.Utils.escapeExpression(model.get('description')),
             autoClose: false
         });
     },

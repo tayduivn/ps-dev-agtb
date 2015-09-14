@@ -534,7 +534,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
             $processDefinitionData = array();
             if ($this->processDefinition->retrieve_by_string_fields(array('prj_id' => $this->project->id))) {
                 $processDefinitionData = $this->sanitizeKeyFields($this->processDefinition->fetched_row);
-                $lockedVariables = unserialize(html_entity_decode($processDefinitionData['pro_locked_variables'],
+                $lockedVariables = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(html_entity_decode($processDefinitionData['pro_locked_variables'],
                         ENT_QUOTES));
                 $processDefinitionData['pro_locked_variables'] = is_null($lockedVariables) || !$lockedVariables ? array() : $lockedVariables;
                 $processDefinitionData['pro_terminate_variables'] = trim($processDefinitionData['pro_terminate_variables']);
@@ -1176,10 +1176,11 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                 $primaryField = $this->getPrimaryFieldName($bean);
                 $elementID = $bean->fetched_row[$primaryField];
 
-                if ($id && $elementArray['act_script_type'] != $originalScriptType
-                 && $entityData['bean_object'] == 'pmse_BpmnActivity') {
-                    $relatedBean = $this->getBean('pmse_BpmActivityDefinition');
-                    $relatedBean->retrieve($id);
+                if ($id &&
+                    $entityData['bean_object'] == 'pmse_BpmnActivity' &&
+                    !empty($elementArray['act_script_type']) &&
+                    $elementArray['act_script_type'] != $originalScriptType) {
+                    $relatedBean = $this->getBean('pmse_BpmActivityDefinition', $id);
                     $this->update($relatedBean, array(
                         'act_fields' => '',
                         'act_field_module' => '',

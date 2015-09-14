@@ -46,7 +46,7 @@ while ($row = $db->fetchByAssoc($result)) {
         $prefs = array();
         $newprefs = array();
 	
-        $prefs = unserialize(base64_decode($row['user_preferences']));
+        $prefs = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($row['user_preferences']));
         $setTo = '';
         $alreadySet = '';
 		if(!empty($prefs)){
