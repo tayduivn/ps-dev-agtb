@@ -591,7 +591,7 @@ AdamEvent.prototype.getEventMessage = function () {
     return this.evn_message;
 };
 
-AdamEvent.prototype._isDisabledAction = function (definition) {
+AdamEvent.prototype._isSelectedAction = function (definition) {
     switch (definition.evn_type) {
         case 'START':
             return (this.evn_marker === definition.evn_marker) &&
@@ -607,7 +607,7 @@ AdamEvent.prototype._isDisabledAction = function (definition) {
                 (this.evn_behavior === definition.evn_behavior) &&
                 (this.evn_type === definition.evn_type);
         default:
-            throw new Error("_isDisabledAction(): Invalid definition evn_type.");
+            throw new Error("_isSelectedAction(): Invalid definition evn_type.");
     }
 };
 
@@ -647,7 +647,7 @@ AdamEvent.prototype._createAction = function (type) {
 
     actionCFG.text = translate(actionDefinition.text);
     actionCFG.cssStyle = actionDefinition.cssStyle;
-    actionCFG.disabled = this._isDisabledAction(actionDefinition);
+    actionCFG.selected = this._isSelectedAction(actionDefinition);
     actionCFG.handler = this._getActionHandler(actionDefinition);
 
     return new Action(actionCFG);
@@ -668,7 +668,7 @@ AdamEvent.prototype.getContextMenu = function () {
         handler: function () {
             self.updateEventType('START');
         },
-        disabled: (this.evn_type === 'START')
+        selected: (this.evn_type === 'START')
     });
 
     intermediateAction = new Action({
@@ -676,7 +676,7 @@ AdamEvent.prototype.getContextMenu = function () {
         handler: function () {
             self.updateEventType('INTERMEDIATE');
         },
-        disabled: (this.evn_type === 'INTERMEDIATE')
+        selected: (this.evn_type === 'INTERMEDIATE')
     });
 
     endAction = new Action({
@@ -684,7 +684,7 @@ AdamEvent.prototype.getContextMenu = function () {
         handler: function () {
             self.updateEventType('END');
         },
-        disabled: (this.evn_type === 'END')
+        selected: (this.evn_type === 'END')
     });
 
     typeMenu = {
@@ -1025,29 +1025,6 @@ AdamEvent.prototype.createConfigureAction = function () {
                 }
             }
         };
-        /*mp = new MessagePanel({
-            title: "Module change warning",
-            wtype: 'Confirm',
-            message: translate('LBL_PMSE_MESSAGE_REMOVEALLSTARTCRITERIA'),
-            buttons: [
-                {
-                    jtype: 'normal',
-                    caption: translate('LBL_PMSE_BUTTON_OK'),
-                    handler: function () {
-                        criteriaField.clear().setRelatedModulesDataURL("pmse_Project/CrmData/related/" + ddlModules.value); //criteriaField.clear().setBaseModule(ddlModules.value);
-                        mp.hide();
-                    }
-                },
-                {
-                    jtype: 'normal',
-                    caption: translate('LBL_PMSE_BUTTON_CANCEL'),
-                    handler: function () {
-                        ddlModules.setValue(criteriaField.base_module);
-                        mp.hide();
-                    }
-                }
-            ]
-        });*/
         break;
     case 'INTERMEDIATE':
         if (this.evn_marker === 'MESSAGE') {
@@ -1376,27 +1353,6 @@ AdamEvent.prototype.createConfigureAction = function () {
                 }
             );
 
-
-
-            //repeatEveryCombo = new ComboboxField(
-            //    {
-            //        //jtype: 'combobox',
-            //        name: 'evn_cyclic_repeat',
-            //        label: translate('LBL_PMSE_LABEL_REPEATS'),
-            //        options: [
-            //            { text: translate('Every Day'), value: 'Every Day'},
-            //            { text: translate('Every working days (Monday to Friday)'), value: 'Every working days (Monday to Friday)'},
-            //            { text: translate('Every Monday, Wednesday and Friday'), value: 'Every Monday, Wednesday and Friday'},
-            //            { text: translate('Every Tuesday and Thursday'), value: 'Every Tuesday and Thursday'},
-            //            { text: translate('Every week'), value: 'Every week'},
-            //            { text: translate('Every month'), value: 'Every month'},
-            //            { text: translate('Every year'), value: 'Every year'}
-            //        ],
-            //        initialValue: 'Every Day',
-            //        required: true
-            //        //readOnly: true
-            //    }
-            //);
             everyOptions = [];
             for (i = 1; i <= 30; i += 1) {
                 everyOptions.push({text: translate(i), value: i});
@@ -1457,77 +1413,11 @@ AdamEvent.prototype.createConfigureAction = function () {
                 labelAlign: 'right',
                 onClick: function (e, ui) {
                     actiontimerType.setValue('fixed date');
-
                     durationTextField.disable();
                     unitComboBox.disable();
-
                     datecriteria.enable();
-                    //fixedDate.enable();
-                    //incrementCkeck.enable();
-                    //if (!incrementWasClicked) {
-                    //    durationTextField2.disable();
-                    //    unitComboBox2.disable();
-                    //    operationCombo.disable();
-                    //} else {
-                    //    durationTextField2.enable();
-                    //    unitComboBox2.enable();
-                    //    operationCombo.enable();
-                    //}
-
-
-                    //repeatEveryCombo.disable();
-                    //repeatEveryNumberCombo.disable();
-                    //cyclicDate.disable();
-
                 }
             });
-            /*datecriteria = new CriteriaField({
-                name: 'evn_criteria',
-                label: translate('LBL_PMSE_FORM_LABEL_CRITERIA'),
-                required: false,
-                fieldWidth: 300,
-                fieldHeight: 80,
-                timerCriteria: true,
-                restClient: this.parent.project.restClient,
-                panels: {
-                    businessRulesEvaluation: {
-                        enabled: false
-                    },
-                    formResponseEvaluation: {
-                        enabled: false
-                    },
-                    logic: {
-                        enabled: false
-                    },
-                    group: {
-                        enabled: false
-                    },
-                    userEvaluation: {
-                        enabled: false
-                    },
-                    fieldEvaluation: {
-                        enabled: false
-                    }
-
-                },
-                decimalSeparator: PMSE_DECIMAL_SEPARATOR
-            });*/
-            /*datecriteria = new ExpressionField({
-                name: 'evn_criteria',
-                label: translate('LBL_PMSE_LABEL_CRITERIA'),
-                required: false,
-                fieldWidth: 300,
-                fieldHeight: 80,
-                dateFormat: project.getMetadata("datePickerFormat"),
-                variablesDataFormat: 'hierarchical',
-                variablesChildRoot: 'fields',
-                variablesGroupNameField: 'text',
-                variablesGroupValueField: 'value',
-                variableNameField: 'text',
-                variableValueField: 'value',
-                variableTypeField: "type",
-                variableTypeFilter: ["Date", "Datetime"]
-            });*/
 
             datecriteria = new CriteriaField({
                 name: 'evn_criteria',
@@ -1571,18 +1461,6 @@ AdamEvent.prototype.createConfigureAction = function () {
                     actiontimerType.setValue('cyclic');
                     durationTextField.disable();
                     unitComboBox.disable();
-
-                    //                    fixedDate.disable();
-                    //                    incrementCkeck.disable();
-                    //
-                    //                    durationTextField2.disable();
-                    //                    unitComboBox2.disable();
-                    //                    operationCombo.disable();
-
-                    //                    repeatEveryCombo.enable();
-                    //                    repeatEveryNumberCombo.enable();
-                    //                    cyclicDate.enable();
-
                 }
 
             });
@@ -1592,66 +1470,38 @@ AdamEvent.prototype.createConfigureAction = function () {
                 durationRadio,
                 durationTextField,
                 unitComboBox,
-
                 fixedRadio,
                 datecriteria
-                //                fixedDate,
-                //                incrementCkeck,
-                //                operationCombo,
-                //                durationTextField2,
-                //                unitComboBox2
-
-                //                cyclicRadio,
-                //                repeatEveryCombo,
-                //                repeatEveryNumberCombo,
-                //                cyclicDate
             ];
             wHeight = 450;
             wWidth = 690;
             callback = {
                 loaded: function (data) {
-
-                    /*project.addMetadata("fields", {
-                        dataURL: project.getMetadata("fieldsDataSource").url.replace("{MODULE}", project.process_definition.pro_module),
-                        dataRoot: project.getMetadata("fieldsDataSource").root,
-                        success: function (data) {
-                            //datecriteria.setVariablesData(data);
-                        }
-                    });*/
-
-                    //datecriteria.setBaseModule(PROJECT_MODULE);
                     root.canvas.emptyCurrentSelection();
                     switch (data.evn_params) {
                     case 'fixed date':
                         durationRadio.setValue(false);
                         fixedRadio.setValue(true);
                         actiontimerType.setValue('fixed date');
-
                         durationTextField.disable();
                         unitComboBox.disable();
-                        //  datecriteria.setBaseModule(PROJECT_MODULE);
                         datecriteria.enable();
 
                         break;
                     case 'cyclic':
                         actiontimerType.setValue('cyclic');
-
                         durationTextField.disable();
                         unitComboBox.disable();
-
-
                         break;
                     default:
                         actiontimerType.setValue('duration');
                         durationRadio.setValue(true);
                         fixedRadio.setValue(false);
                         durationTextField.enable();
-
                         durationTextField.setValue(data.evn_criteria || '');
                         unitComboBox.enable();
                         unitComboBox.setValue(data.evn_params || 'minute');
                         datecriteria.disable();
-
                         break;
                     }
                     App.alert.dismiss('upload');
@@ -1678,14 +1528,12 @@ AdamEvent.prototype.createConfigureAction = function () {
             ddlModules = new ComboboxField({
                 jtype: 'combobox',
                 required: true,
-                //related: 'beans',
                 name: 'evn_module',
                 initialValue: initialValue,
                 readOnly: true,
                 label: translate('LBL_PMSE_FORM_LABEL_MODULE'),
                 proxy: new SugarProxy({
                     url: 'pmse_Project/CrmData/modules',
-                    //restClient: this.canvas.project.restClient,
                     uid: "",
                     callback: null
                 }),
@@ -1700,8 +1548,6 @@ AdamEvent.prototype.createConfigureAction = function () {
                             ddlEmailTemplate.setOptions(aTemplate);
                         }
                     });
-
-                    //}
                 }
             });
             hiddenParams = new HiddenField({name: 'evn_params'});
@@ -1805,9 +1651,6 @@ AdamEvent.prototype.createConfigureAction = function () {
                                 success: function(params) {
                                     aTemplate = aTemplate.concat(params.result);
                                     ddlEmailTemplate.setOptions(aTemplate);
-            //if (params && params.result) {
-            //    ddlEmailTemplate.setValue(data.evn_criteria || ((params.result[0] && params.result[0].value) || null));
-            //}
                                     App.alert.dismiss('upload');
                                     w.html.style.display = 'inline';
                                 }
