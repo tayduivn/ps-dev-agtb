@@ -48,17 +48,31 @@ class TeamsViewTBA extends SugarView
     {
         global $mod_strings;
         global $app_strings;
-        global $current_user;
 
         $sugar_smarty = new Sugar_Smarty();
         $sugar_smarty->assign('APP', $app_strings);
         $sugar_smarty->assign('MOD', $mod_strings);
-        $sugar_smarty->assign('actionsList', ACLAction::getUserActions($current_user->id));
+        $sugar_smarty->assign('actionsList', $this->_getUserActionsList());
         $sugar_smarty->assign('moduleTitle', $this->getModuleTitle(false));
 
         $tbaConfigurator = new TeamBasedACLConfigurator();
         $sugar_smarty->assign('config', $tbaConfigurator->getConfig());
 
         echo $sugar_smarty->fetch(SugarAutoLoader::existingCustomOne('modules/Teams/tpls/TBAConfiguration.tpl'));
+    }
+
+    /**
+     * Get user actions list filtered by default TbACLs disabled_modules parameter.
+     */
+    private function _getUserActionsList()
+    {
+        global $current_user;
+
+        $actionsList = ACLAction::getUserActions($current_user->id);
+
+        $tbaConfigurator = new TeamBasedACLConfigurator();
+        $defaultTBAConfig = $tbaConfigurator->getDefaultConfig();
+
+        return array_diff(array_keys($actionsList), $defaultTBAConfig['disabled_modules']);
     }
 }
