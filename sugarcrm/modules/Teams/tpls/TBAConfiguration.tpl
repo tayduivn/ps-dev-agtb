@@ -67,12 +67,12 @@
                     {foreach from=$actionsList key=key item=value}
                         <tr>
                             <td width="300" class="title">
-                                {$key}
+                                {$value}
                             </td>
                             <td class="value">
                                 <input type="checkbox" name="team_based[disabled_modules][]"
-                                       data-group="tba_em" value="{$key}"
-                                       {if !$key|in_array:$config.disabled_modules}checked="checked"{/if}/>
+                                       data-group="tba_em" value="{$value}"
+                                       {if !$value|in_array:$config.disabled_modules}checked="checked"{/if}/>
                             </td>
                         </tr>
                     {/foreach}
