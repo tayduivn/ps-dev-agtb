@@ -148,9 +148,7 @@ class MysqliManager extends MysqlManager
         $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
 
         // slow query logging
-        if ($this->dump_slow_queries($sql)) {
-            $this->track_slow_queries($sql);
-        }
+        $this->dump_slow_queries($sql);
 
         // This is some heavy duty debugging, leave commented out unless you need this:
         /*
