@@ -171,7 +171,6 @@
             <exclude>./pmse/modules/pmse_Inbox/engine/PMSELoggerTest.php</exclude>
             <exclude>./pmse/modules/pmse_Inbox/engine/PMSEImporterTest.php</exclude>
             <exclude>./pmse/modules/pmse_Inbox/engine/PMSEProjectImporterTest.php</exclude>
-            <exclude>./pmse/modules/pmse_Project/clients/base/api/wrappers/PMSEDynaFormTest.php</exclude>
             <exclude>./pmse/modules/pmse_Inbox/engine/PMSEHandlers/PMSEUserAssignmentHandlerTest.php</exclude>
             <exclude>./pmse/modules/pmse_Inbox/engine/parser/PMSEDataParserGatewayTest.php</exclude>
             <exclude>./pmse/modules/pmse_Project/clients/base/api/wrappers/PMSEActivityDefinitionWrapperTest.php</exclude>

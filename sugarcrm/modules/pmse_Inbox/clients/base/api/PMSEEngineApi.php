@@ -1106,7 +1106,7 @@ class PMSEEngineApi extends SugarApi
         }
 
         if (!$reclaimCaseByUser && !empty($bpmFlow->cas_adhoc_actions)) {
-            $listButtons = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($bpmFlow->cas_adhoc_actions);
+            $listButtons = json_decode($bpmFlow->cas_adhoc_actions);
         }
         $continue = array_search('continue', $listButtons);
         if ($continue !== false) {

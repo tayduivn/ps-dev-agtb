@@ -1384,8 +1384,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                 }
 
                 if ($key == 'pro_locked_variables') {
-                    $tmpVariablesArray = json_decode(html_entity_decode($value, ENT_QUOTES));
-                    $processDefinitionBean->$key = htmlentities(serialize($tmpVariablesArray), ENT_QUOTES);
+                    $processDefinitionBean->$key = htmlentities($value, ENT_QUOTES);
                 } else {
                     $processDefinitionBean->$key = $value;
                     $projectBean->$key = $value;
