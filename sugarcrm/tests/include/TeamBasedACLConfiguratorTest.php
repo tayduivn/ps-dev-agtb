@@ -171,4 +171,28 @@ class TeamBasedACLSetupTest extends Sugar_PHPUnit_Framework_TestCase
         $fieldKeys = array_keys($actualAclFields);
         $this->assertEquals(ACL_ALLOW_DEFAULT, $actualAclFields[$fieldKeys[0]]['aclaccess']);
     }
+
+    /**
+     * Test that global enabling does not restore disabled modules.
+     */
+    public function testRestoreDisabledModules()
+    {
+        $this->tbaConfig = $this->getMock('TeamBasedACLConfigurator', array('applyTBA'));
+        $action = 'view';
+        $roleActions = $this->role->getRoleActions($this->role->id);
+        $fallbackModule = $this->tbaConfig->getModuleFallbackOption();
+
+        $actionId = $roleActions[$this->module]['module'][$action]['id'];
+        $this->role->setAction($this->role->id, $actionId, ACL_ALLOW_SELECTED_TEAMS);
+
+        // Fallback.
+        $this->tbaConfig->setForModule($this->module, false);
+
+        $this->tbaConfig->setGlobal(false);
+        $this->tbaConfig->setGlobal(true);
+
+        $actualActions = $this->role->getRoleActions($this->role->id);
+        $this->assertEquals(constant($fallbackModule), $actualActions[$this->module]['module'][$action]['aclaccess']);
+
+    }
 }

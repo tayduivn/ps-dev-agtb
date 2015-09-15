@@ -115,19 +115,20 @@ class TeamBasedACLConfigurator
 
         if ($enable) {
             $actualList = array_values(array_diff($actualList, array($module)));
-
-            $this->restoreTBA($module);
         } else {
             $actualList[] = $module;
-
-            $this->fallbackTBA($module);
         }
         // Configurator doesn't handle lists, to remove an element overriding needed.
         $cfg->config[self::CONFIG_KEY]['disabled_modules'] = false;
         $this->saveConfig($cfg);
-
         $cfg->config[self::CONFIG_KEY]['disabled_modules'] = $actualList;
         $this->saveConfig($cfg);
+
+        if ($enable) {
+            $this->restoreTBA($module);
+        } else {
+            $this->fallbackTBA($module);
+        }
         $this->applyTBA($module);
     }
 
@@ -159,16 +160,16 @@ class TeamBasedACLConfigurator
         if ($newList == $actualList) {
             return;
         }
+        $cfg->config[self::CONFIG_KEY]['disabled_modules'] = false;
+        $this->saveConfig($cfg);
+        $cfg->config[self::CONFIG_KEY]['disabled_modules'] = $newList;
+        $this->saveConfig($cfg);
+
         if ($enable) {
             $this->restoreTBA();
         } else {
             $this->fallbackTBA();
         }
-        $cfg->config[self::CONFIG_KEY]['disabled_modules'] = false;
-        $this->saveConfig($cfg);
-
-        $cfg->config[self::CONFIG_KEY]['disabled_modules'] = $newList;
-        $this->saveConfig($cfg);
         $this->applyTBA();
     }
 
@@ -196,14 +197,15 @@ class TeamBasedACLConfigurator
         if (($enable && $enabledGlobally) || (!$enable && !$enabledGlobally)) {
             return;
         }
+        $cfg = new Configurator();
+        $cfg->config[self::CONFIG_KEY]['enabled'] = $enable;
+        $this->saveConfig($cfg);
+
         if ($enable) {
             $this->restoreTBA();
         } else {
             $this->fallbackTBA();
         }
-        $cfg = new Configurator();
-        $cfg->config[self::CONFIG_KEY]['enabled'] = $enable;
-        $this->saveConfig($cfg);
         $this->applyTBA();
     }
 
@@ -284,6 +286,7 @@ class TeamBasedACLConfigurator
      */
     protected function restoreTBA($module = null)
     {
+        $config = $this->getConfig();
         $savedActions = $this->getSavedAffectedRows();
         if (($module && !isset($savedActions[$module])) ||
             (!$module && !$savedActions)
@@ -295,6 +298,9 @@ class TeamBasedACLConfigurator
         $actions = $module ? array($module => $savedActions[$module]) : $savedActions;
 
         foreach ($actions as $moduleName => $moduleActions) {
+            if (in_array($moduleName, $config['disabled_modules'])) {
+                continue;
+            }
             if (isset($moduleActions['module'])) {
                 foreach ($moduleActions['module'] as $moduleRow) {
                     $accessOverride = $aclRole->retrieve_relationships(
@@ -332,6 +338,8 @@ class TeamBasedACLConfigurator
         }
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting(self::CONFIG_KEY, 'fallback', json_encode($savedActions), 'base');
+        // Calls ACLAction::clearACLCache.
+        $aclField->clearACLCache();
     }
 
     /**
@@ -410,6 +418,8 @@ class TeamBasedACLConfigurator
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting(self::CONFIG_KEY, 'fallback', json_encode($this->affectedRows), 'base');
         $this->affectedRows = array();
+        // Calls ACLAction::clearACLCache.
+        $aclField->clearACLCache();
     }
 
     /**
