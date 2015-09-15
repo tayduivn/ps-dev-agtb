@@ -7813,15 +7813,6 @@ class SugarBean
     }
 
     /**
-     * Clears the status recursive resave
-     */
-    public static function clearRecursiveResave()
-    {
-        self::$recursivelyResavedLinks = array();
-        self::$recursivelyResavedManyBeans = false;
-    }
-
-    /**
      * Checks to see if a bean implements taggable
      *
      * @return boolean True if tags are enabled for this bean
@@ -7875,4 +7866,12 @@ class SugarBean
         return false;
     }
 
+    /**
+     * Clears the status recursive resave
+     */
+    public static function clearRecursiveResave()
+    {
+        self::$recursivelyResavedLinks = array();
+        self::$recursivelyResavedManyBeans = false;
+    }
 }
