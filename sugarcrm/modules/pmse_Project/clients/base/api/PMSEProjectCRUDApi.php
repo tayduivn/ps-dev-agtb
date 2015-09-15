@@ -12,8 +12,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-require_once 'data/BeanFactory.php';
 require_once 'clients/base/api/ModuleApi.php';
 
 require_once 'wrappers/PMSEDynaForm.php';
@@ -29,13 +27,6 @@ class PMSEProjectCRUDApi extends ModuleApi
                 'pathVars' => array('module'),
                 'method' => 'createRecord',
 //                'shortHelp' => 'This method create a new Process Definition record',
-            ),
-            'retrieve' => array(
-                'reqType' => 'GET',
-                'path' => array('pmse_Project','?'),
-                'pathVars' => array('module','record'),
-                'method' => 'retrieveRecord',
-//                'shortHelp' => 'This method retrieve a Process Definition record',
             ),
             'update' => array(
                 'reqType' => 'PUT',
@@ -86,16 +77,12 @@ class PMSEProjectCRUDApi extends ModuleApi
         return array('id'=>$bean->id);
     }
 
-    protected function updateBean(SugarBean $bean, ServiceBase $api, $args)
+    protected function saveBean(SugarBean $bean, ServiceBase $api, array $args)
     {
-        $id = parent::updateBean($bean, $api, $args);
+        parent::saveBean($bean, $api, $args);
 
-        //retrieve a Bean created
-        if (isset($args['record']) && !empty($args['record'])) {
-            $projectBean = BeanFactory::retrieveBean($args['module'],$args['record']);
-        } else {
-            $projectBean = $bean;
-        }
+        $projectBean = $bean;
+        $id = $projectBean->id;
 
         //Create a Diagram row
         $diagramBean =  BeanFactory::getBean('pmse_BpmnDiagram')->retrieve_by_string_fields(array('prj_id'=>$id));
@@ -143,7 +130,7 @@ class PMSEProjectCRUDApi extends ModuleApi
             $relatedDepBean->pro_status = $projectBean->prj_status;
             $relatedDepBean->save();
         }
-        
+
         $keysArray = array('prj_id' => $id, 'pro_id' => $pro_id);
         $dynaF = BeanFactory::getBean('pmse_BpmDynaForm')->retrieve_by_string_fields(array('prj_id'=>$id, 'pro_id'=>$pro_id, 'name'=>'Default'));
         if (empty($dynaF)) {
@@ -154,6 +141,5 @@ class PMSEProjectCRUDApi extends ModuleApi
         $dynaForm = new PMSEDynaForm();
         $dynaForm->generateDefaultDynaform($processDefinitionBean->pro_module, $keysArray, $editDyna);
 
-        return $id;
     }
 }
