@@ -343,6 +343,9 @@ abstract class UpgradeDriver
         if (isset($this->context['script_mask'])) {
             $this->script_mask &= $this->context['script_mask'];
         }
+        if (isset($this->state['extract_dir'])) {
+            $this->context['extract_dir'] = $this->state['extract_dir'];
+        }
         if (empty($this->context['health_check_path'])) {
             $this->context['health_check_path'] =
                 realpath($this->context['extract_dir']) . self::DEFAULT_HEALTHCHECK_PATH;
@@ -1788,10 +1791,12 @@ abstract class UpgradeDriver
                     break;
                 case "unpack":
                     // Verify package
+                    unset($this->state['extract_dir']);
                     if (!$this->verify($this->context['zip'], $this->context['extract_dir'])) {
                         $this->error("Package verificaition failed");
                         return false;
                     }
+                    $this->state['extract_dir'] = $this->context['extract_dir'];
                     break;
                 case "pre":
                     // Run pre-upgrade
