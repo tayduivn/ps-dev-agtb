@@ -250,7 +250,7 @@
     _loadTemplate: function() {
         this._super('_loadTemplate');
         if ((this.view.name === 'record' || this.view.name === 'create'
-            || this.view.name === 'create-nodupecheck') && (this.action === 'edit')) {
+            || this.view.name === 'create-nodupecheck' || this.view.name === 'preview') && (this.action === 'edit')) {
             this.template = app.template.getField('fieldset', 'record-detail', this.model.module);
         }
     },
@@ -262,5 +262,20 @@
     _dispose: function() {
         this.model.removeValidationTask('duration_date_range_' + this.cid);
         this._super('_dispose');
+    },
+
+    /**
+     * Special case for duration fields on preview view
+     *
+     * @inheritdoc
+     * @param name
+     */
+    setMode: function(name) {
+        //on preview view, we use the preview action instead of detail
+        if (this.view.name === 'preview' && name === 'detail') {
+            name = 'preview';
+        }
+
+        this._super('setMode', [name]);
     }
 })
