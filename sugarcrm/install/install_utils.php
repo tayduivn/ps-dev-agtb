@@ -951,7 +951,7 @@ AddType     application/javascript  .js
     RewriteBase {$basePath}
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
+    RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA,B]
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^cache/api/metadata/lang_(.._..)_(.*)_public(_ordered)?\.json$ rest/v10/lang/public/$1?platform=$2&ordered=$3 [N,QSA,DPI]
@@ -1115,7 +1115,7 @@ function handleWebConfig($iisCheck = true)
         ),
         array(
             '1' => 'rest/(.*)$',
-            '2' => 'api/rest.php?__sugar_url={R:1}',
+            '2' => 'api/rest.php?__sugar_url={UrlEncode:{R:1}}',
         ),
     );
 
