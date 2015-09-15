@@ -703,13 +703,17 @@
                             key === 32) {
                             event.stopImmediatePropagation();
                         }
-                        if (key === 13 && this.value.trim().length === 0) {
-                            app.alert.show('wrong_node_name', {
-                                level: 'error',
-                                messages: app.lang.get('LBL_EMPTY_NODE_NAME', 'Categories'),
-                                autoClose: true
-                            });
-                            return false;
+                        if (key === 13) {
+                            if (this.value.trim().length === 0) {
+                                app.alert.show('wrong_node_name', {
+                                    level: 'error',
+                                    messages: app.lang.get('LBL_EMPTY_NODE_NAME', 'Categories'),
+                                    autoClose: false
+                                });
+                                return false;
+                            } else {
+                                app.alert.dismiss('wrong_node_name');
+                            }
                         }
                         if (key === 27 || key === 13) {
                             self._toggleTooltip(obj, false);
