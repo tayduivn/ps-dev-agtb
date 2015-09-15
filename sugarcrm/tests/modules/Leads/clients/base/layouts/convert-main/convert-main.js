@@ -288,33 +288,36 @@ describe('Leads.Base.Layout.ConvertMain', function() {
                 app.metadata.getConfig().leadConvActivityOpt = leadConvActivityOptBefore;
             });
 
-            using('different transfer settings and modules', [
+            using('different transfer settings', [
                 {
-                    message: 'should pass correct transfer activity attributes',
-                    associatedModules: ['Foo', 'Bar', 'Baz'],
-                    transferModules: ['Foo', 'Baz'],
+                    message: 'should pass Contacts module if user opted in',
+                    transferActivities: true,
                     transferAction: 'move',
-                    expectedModules: ['Foo', 'Baz']
+                    expectedModules: ['Contacts']
                 },
                 {
-                    message: 'should not have non-associated module on list of transfer activities modules',
-                    associatedModules: ['Foo', 'Bar'],
-                    transferModules: ['Foo', 'Baz'],
-                    transferAction: 'copy',
-                    expectedModules: ['Foo']
+                    message: 'should not pass Contacts module if user opted out',
+                    transferActivities: false,
+                    transferAction: 'move',
+                    expectedModules: []
                 },
                 {
-                    message: 'should pass empty array for transfer activities modules when transfer action is donothing',
-                    associatedModules: ['Foo', 'Bar', 'Baz'],
-                    transferModules: ['Foo', 'Baz'],
+                    message: 'should not pass Contacts module if config is donothing',
+                    transferActivities: true,
                     transferAction: 'donothing',
+                    expectedModules: []
+                },
+                {
+                    message: 'should not pass Contacts module if config is anything other than move',
+                    transferActivities: true,
+                    transferAction: 'copy',
                     expectedModules: []
                 }
             ], function(data) {
                 it(data.message, function() {
-                    layout.model.set('transfer_activities_modules', data.transferModules);
+                    layout.model.set('transfer_activities', data.transferActivities);
                     app.metadata.getConfig().leadConvActivityOpt = data.transferAction;
-                    expect(layout.getTransferActivitiesAttributes(data.associatedModules)).toEqual({
+                    expect(layout.getTransferActivitiesAttributes()).toEqual({
                         transfer_activities_action: data.transferAction,
                         transfer_activities_modules: data.expectedModules
                     });
