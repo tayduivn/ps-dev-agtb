@@ -140,16 +140,9 @@ describe('View.Fields.Base.ParticipantsField', function() {
     });
 
     describe('when creating a new meeting', function() {
-        beforeEach(function() {
+        it('should create a new empty collection', function() {
             sandbox.stub(model, 'isNew').returns(true);
-        });
-
-        afterEach(function() {
-            app.user.attributes = {};
-        });
-
-        it('should add the current user to the collection', function() {
-            app.user.set({_module: 'Users', id: '1', name: 'Jim Brennan'});
+            sandbox.spy(model, 'set');
             field = SugarTest.createField(
                 'base',
                 fieldDef.name,
@@ -160,47 +153,16 @@ describe('View.Fields.Base.ParticipantsField', function() {
                 model,
                 context
             );
-
-            expect(field.getFieldValue().length).toBe(1);
-        });
-
-        it('should not include the current user in the link defaults', function() {
-            var links;
-
-            app.user.set({_module: 'Users', id: '1', name: 'Jim Brennan'});
-            field = SugarTest.createField(
-                'base',
-                fieldDef.name,
-                'participants',
-                'edit',
-                fieldDef,
-                module,
-                model,
-                context
-            );
-
-            links = field.getFieldValue().links;
-            expect(_.size(links)).toBe(3);
-            _.each(links, function(link) {
-                expect(link.defaults.length).toBe(0);
-            });
+            expect(model.set.withArgs(fieldDef.name, []).calledOnce).toBe(true);
+            expect(field.getFieldValue().length).toBe(0);
         });
     });
 
     describe('when copying a meeting', function() {
-        beforeEach(function() {
-            sandbox.stub(model, 'isNew').returns(true);
-        });
-
-        afterEach(function() {
-            app.user.attributes = {};
-        });
-
         it('should include the participants from the copied record', function() {
             var collection = app.data.createMixedBeanCollection();
-            app.user.set({_module: 'Users', id: '1', name: 'Jim Brennan'});
-            model.set(fieldDef.name, collection.add({_module: 'Users', id: '2', name: 'Foo Bar'}));
-
+            model.set(fieldDef.name, collection.add({_module: 'Contacts', id: '1', name: 'Foo Bar'}));
+            sandbox.stub(model, 'isNew').returns(true);
             field = SugarTest.createField(
                 'base',
                 fieldDef.name,
@@ -211,29 +173,6 @@ describe('View.Fields.Base.ParticipantsField', function() {
                 model,
                 context
             );
-
-            expect(field.getFieldValue().length).toBe(2);
-            expect(field.getFieldValue().at(0).id).toBe('2');
-        });
-
-        it('should include the current user', function() {
-            var user = {_module: 'Users', id: '1', name: 'Jim Brennan'},
-                collection = app.data.createMixedBeanCollection();
-
-            app.user.set(user);
-            model.set(fieldDef.name, collection);
-
-            field = SugarTest.createField(
-                'base',
-                fieldDef.name,
-                'participants',
-                'edit',
-                fieldDef,
-                module,
-                model,
-                context
-            );
-
             expect(field.getFieldValue().length).toBe(1);
             expect(field.getFieldValue().at(0).id).toBe('1');
         });
@@ -332,26 +271,10 @@ describe('View.Fields.Base.ParticipantsField', function() {
             expect(field.$('div.row.participant').length).toBe(participants.length - 1);
         });
 
-        it("should disable a participant's delete button on create when the participant is the current user and not the assigned user", function() {
-            var appUserId = app.user.id;
-            app.user.id = '1';
-            model.isNew.restore();
-            sandbox.stub(model, 'isNew').returns(true);
+        it("should not disable a participant's delete button when the participant is not the assigned user", function() {
+            field.model.set('assigned_user_id', '1');
             field.render();
-            expect(field.$('button[data-action=removeRow][data-id=1]').hasClass('disabled')).toBe(true);
-            if (appUserId) {
-                app.user.id = appUserId;
-            }
-        });
-
-        it("should not disable a participant's delete button on update when the participant is the current user and not the assigned user", function() {
-            var appUserId = app.user.id;
-            app.user.id = '1';
-            field.render();
-            expect(field.$('button[data-action=removeRow][data-id=1]').hasClass('disabled')).toBe(false);
-            if (appUserId) {
-                app.user.id = appUserId;
-            }
+            expect(field.$('button[data-action=removeRow][data-id=2]').hasClass('disabled')).toBe(false);
         });
 
         it("should disable a participant's delete button when the participant is the assigned user", function() {

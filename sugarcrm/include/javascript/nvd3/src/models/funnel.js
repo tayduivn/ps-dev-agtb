@@ -217,8 +217,7 @@ nv.models.funnel = function() {
             dispatch.elementMouseover(eo);
           })
           .on('mousemove', function(d, i) {
-            var eo = buildEventObject(d3.event, d, i);
-            dispatch.elementMousemove(eo);
+            dispatch.elementMousemove(d3.event);
           })
           .on('mouseout', function(d, i) {
             d3.select(this).classed('hover', false);
@@ -236,16 +235,11 @@ nv.models.funnel = function() {
           });
 
       function buildEventObject(e, d, i) {
-        var pos = [
-          e.offsetX == undefined ? e.layerX : e.offsetX,
-          e.offsetY == undefined ? e.layerY : e.offsetY
-        ];
         return {
             value: getV(d, i),
             point: d,
             id: id,
             series: data[d.series],
-            pos: pos,
             pointIndex: i,
             seriesIndex: d.series,
             e: e

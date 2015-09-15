@@ -96,6 +96,9 @@ class RelatedFieldExpression extends GenericExpression
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
+            if (this.context.model && this.context.model.isNew()) {
+                return;
+            }
 		    var params = this.getParameters(),
 			    linkField = params[0].evaluate(),
 			    relField = params[1].evaluate();

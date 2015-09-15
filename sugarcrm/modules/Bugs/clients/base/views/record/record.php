@@ -71,7 +71,7 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                     'type' => 'divider',
                 ),
                 array(
-                    'name' => 'create_kbdocument_button',
+                    'name' => 'create_button',
                     'type' => 'rowaction',
                     'event' => 'button:create_article_button:click',
                     'label' => 'LBL_CREATE_KB_DOCUMENT',

@@ -80,23 +80,20 @@ nv.models.paretoChart = function() {
             .align('right')
             .position('middle');
 
-    var showTooltip = function(e, offsetElement, dataGroup) {
-        var left = e.pos[0],
-            top = e.pos[1],
-            per = (e.point.y * 100 / dataGroup[e.pointIndex].t).toFixed(1),
-            amt = yAxis.tickFormat()(lines2.y()(e.point, e.pointIndex)),
-            content = (e.series.type === 'bar' ? tooltipBar(e.series.key, per, amt, e, chart) : tooltipLine(e.series.key, per, amt, e, chart));
+    var showTooltip = function(eo, offsetElement, dataGroup) {
+        var key = eo.series.key,
+            per = (eo.point.y * 100 / dataGroup[eo.pointIndex].t).toFixed(1),
+            amt = yAxis.tickFormat()(lines2.y()(eo.point, eo.pointIndex)),
+            content = eo.series.type === 'bar' ? tooltipBar(key, per, amt, eo, chart) : tooltipLine(key, per, amt, eo, chart);
 
-        tooltip = nv.tooltip.show([left, top], content, 's', null, offsetElement);
+        tooltip = nv.tooltip.show(eo.e, content, 's', null, offsetElement);
     };
 
-    var showQuotaTooltip = function(e, offsetElement) {
-        var left = e.pos[0],
-            top = e.pos[1],
-            amt = d3.format(',.2s')(e.val),
-            content = tooltipQuota(e.key, 0, amt, e, chart);
+    var showQuotaTooltip = function(eo, offsetElement) {
+        var amt = d3.format(',.2s')(eo.val),
+            content = tooltipQuota(eo.key, 0, amt, eo, chart);
 
-        tooltip = nv.tooltip.show([left, top], content, 's', null, offsetElement);
+        tooltip = nv.tooltip.show(eo.e, content, 's', null, offsetElement);
     };
 
     var barClick = function(data, eo, chart, container) {
@@ -630,9 +627,9 @@ nv.models.paretoChart = function() {
                 .on('mouseover', function(d) {
                     if (tooltips) {
                         var eo = {
-                            pos: [d3.event.offsetX, d3.event.offsetY],
                             val: d.val,
-                            key: d.key
+                            key: d.key,
+                            e: d3.event
                         };
                         showQuotaTooltip(eo, that.parentNode);
                     }
@@ -641,9 +638,7 @@ nv.models.paretoChart = function() {
                     dispatch.tooltipHide();
                 })
                 .on('mousemove', function() {
-                    dispatch.tooltipMove({
-                        pos: [d3.event.offsetX, d3.event.offsetY]
-                    });
+                    dispatch.tooltipMove(d3.event);
                 });
 
             barLegend.dispatch.on('legendClick', function(d, i) {
@@ -679,9 +674,9 @@ nv.models.paretoChart = function() {
                 }
             });
 
-            dispatch.on('tooltipMove', function(eo) {
+            dispatch.on('tooltipMove', function(e) {
                 if (tooltip) {
-                    nv.tooltip.position(that.parentNode, tooltip, eo.pos, 's');
+                    nv.tooltip.position(that.parentNode, tooltip, e, 's');
                 }
             });
 
@@ -718,8 +713,8 @@ nv.models.paretoChart = function() {
         dispatch.tooltipShow(eo);
     });
 
-    lines2.dispatch.on('elementMousemove', function(eo) {
-        dispatch.tooltipMove(eo);
+    lines2.dispatch.on('elementMousemove', function(e) {
+        dispatch.tooltipMove(e);
     });
 
     lines2.dispatch.on('elementMouseout.tooltip', function() {
@@ -730,8 +725,8 @@ nv.models.paretoChart = function() {
         dispatch.tooltipShow(eo);
     });
 
-    multibar.dispatch.on('elementMousemove', function(eo) {
-        dispatch.tooltipMove(eo);
+    multibar.dispatch.on('elementMousemove', function(e) {
+        dispatch.tooltipMove(e);
     });
 
     multibar.dispatch.on('elementMouseout.tooltip', function() {

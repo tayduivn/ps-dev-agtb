@@ -31,5 +31,14 @@
             return_id: this.model.id
         });
         app.router.navigate(route, {trigger: true});
+    },
+
+    /**
+     * {@inheritDoc}
+     * Check access for Campaigns Module.
+     */
+    hasAccess: function() {
+        var access = app.acl.hasAccess('view', 'Campaigns');
+        return access && this._super('hasAccess');
     }
 })

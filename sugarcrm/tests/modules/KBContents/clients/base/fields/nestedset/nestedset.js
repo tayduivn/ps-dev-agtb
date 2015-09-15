@@ -96,16 +96,21 @@ describe('modules.KBContents.clients.base.field.nestedset', function() {
         var aSel = '[data-action=create-new]',
             iSel = '[data-role=add-item]',
             dSel = '[data-role=treeinput]',
-            cSel = '[data-action=create-label-cover]';
+            oSel = '[data-place=bottom-options]',
+            cSel = '[data-place=bottom-create]',
+            escKey = $.ui.keyCode.ESCAPE;
         sinonSandbox.stub(field, '_renderTree', function() {});
         field.action = 'edit';
         field.render();
         field.$(dSel).click();
         field.$(aSel).click();
-        expect(field.$(iSel).length).not.toBe(0);
-        expect(field.$(cSel).css('display')).toBe('none');
+        expect(field.$(oSel).hasClass('hide')).toBeFalsy();
+        expect(field.$(cSel).hasClass('hide')).toBeTruthy();
         field.switchCreate();
-        expect(field.$(iSel).length).toBe(0);
+        expect(field.$(oSel).css('display')).not.toBe('none');
+        expect(field.$(cSel).css('display')).not.toBe('block');
+        field.$(iSel).trigger($.Event('keydown', {keyCode: escKey, which: escKey}));
+        expect(field.$(oSel).css('display')).not.toBe('block');
         expect(field.$(cSel).css('display')).not.toBe('none');
     });
 
