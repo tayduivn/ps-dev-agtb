@@ -25,7 +25,18 @@ class Factory
      */
     public function getAdapter($moduleName)
     {
-        return false;
+        $adapter = false;
+
+        if (!$adapter) {
+            $adapterClass = \SugarAutoLoader::customClass($this->getCustomClassPath($moduleName));
+            if (class_exists($adapterClass)) {
+                if ($this->isImplementsCalDavInterface($adapterClass)) {
+                    $adapter = new $adapterClass();
+                }
+            }
+        }
+
+        return $adapter;
     }
 
     /**
@@ -41,6 +52,17 @@ class Factory
             }
         }
         return $modules;
+    }
+
+
+    /**
+     * get Adapter path using namespaces
+     * @param $class
+     * @return string
+     */
+    protected function getCustomClassPath($class)
+    {
+        return '\Sugarcrm\\Sugarcrm\\Dav\\Cal\\Adapter\\' . $class;
     }
 
     /**

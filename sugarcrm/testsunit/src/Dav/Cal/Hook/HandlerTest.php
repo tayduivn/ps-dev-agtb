@@ -15,6 +15,8 @@ namespace Sugarcrm\SugarcrmTestsUnit\Dav\Cal\Hook;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as LogicHookHandler;
 
+require_once 'tests/SugarTestCalDavUtilites.php';
+
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler
  */
@@ -56,6 +58,14 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
         $handlerObject = new LogicHookHandler();
         $manager = TestReflection::callProtectedMethod($handlerObject, 'getAdapterFactory');
         $this->assertInstanceOf('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory', $manager);
+    }
+
+    public function testGetCurrentUserId()
+    {
+        \SugarTestHelper::setUp('current_user');
+        $handlerObject = new LogicHookHandler();
+        $idUser = TestReflection::callProtectedMethod($handlerObject, 'getCurrentUserId');
+        $this->assertEquals($GLOBALS['current_user']->id, $idUser);
     }
 
     /**

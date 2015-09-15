@@ -96,4 +96,34 @@ class DateTimeHelper
 
         return $dt;
     }
+
+    /**
+     * Return date in user set format
+     * @param string $dateTime
+     * @return string
+     */
+    public function sugarDateToUserDate($dateTime)
+    {
+        $formattedDate = false;
+        $sugarDate = \SugarDateTime::createFromFormat(\TimeDate::DB_DATETIME_FORMAT, $dateTime);
+        if ($sugarDate) {
+            $formattedDate = $sugarDate->format($GLOBALS['timedate']->get_date_format());
+        }
+        return $formattedDate;
+    }
+
+    /**
+     * Return date and time in user set format
+     * @param string $dateTime
+     * @return string
+     */
+    public function sugarDateToUserDateTime($dateTime)
+    {
+        $formattedDate = false;
+        $sugarDate = \SugarDateTime::createFromFormat(\TimeDate::DB_DATETIME_FORMAT, $dateTime);
+        if ($sugarDate) {
+            $formattedDate = $sugarDate->format($GLOBALS['timedate']->get_date_time_format());
+        }
+        return $formattedDate;
+    }
 }

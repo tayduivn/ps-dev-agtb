@@ -12,9 +12,14 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Cal;
 
-use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager;
-use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory;
+use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapaterFactory;
 
+/**
+ * Class Handler
+ * Export/import bean
+ * @package Sugarcrm\Sugarcrm\Dav\Cal
+ */
 class Handler
 {
     /**
@@ -23,14 +28,14 @@ class Handler
      */
     public function export(\SugarBean $bean)
     {
-        $adapter = $this->getAdapterFactory();
-        if (!($adapter->getAdapter($bean->module_name))) {
-            throw new \Exception('Can not find adapater for module ' . $bean->module_name);
+        /*
+        $adapterFactory = $this->getAdapterFactory();
+        if ($adapter = $adapterFactory->getAdapter($bean->module_name)) {
+            $calDavEvent = new \CalDavEvent();
+            $calDavBean = $calDavEvent->findByBean($bean);
+            $adapter->export($bean, $calDavBean);
         }
-        $manager = $this->getManager();
-        $manager->registerHandler('CalDavExport', 'Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue\Export');
-        $manager->CalDavExport($bean);
-        $manager->run();
+        */
     }
 
     /**
@@ -54,24 +59,30 @@ class Handler
 
     /**
      * Run import action
-     * @param \CalDavEvent $bean
+     * @param \CalDavEvent $calDavBean
      */
 
-    public function import(\CalDavEvent $bean)
+    public function import(\CalDavEvent $calDavBean)
     {
-        $manager = $this->getManager();
-        $manager->registerHandler('CalDavImport', 'Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue\Import');
-        $manager->CalDavImport($bean);
-        $manager->run();
+        $bean = $calDavBean->getBean();
+        $adapterFactory = $this->getAdapterFactory();
+        if ($adapter = $adapterFactory->getAdapter($bean->module_name)) {
+            $adapter->import($bean, $calDavBean);
+            $bean->save();
+            if (!$calDavBean->parent_id) {
+                $calDavBean->setBean($bean);
+                $calDavBean->save();
+            }
+        }
     }
 
     /**
      * function return manager object for handler processing
-     * @return Manager
+     * @return \Sugarcrm\Sugarcrm\JobQueue\Manager\Manager
      */
     protected function getManager()
     {
-        return new Manager();
+        return new JQManager();
     }
 
     /**
@@ -79,6 +90,6 @@ class Handler
      */
     protected function getAdapterFactory()
     {
-        return Factory::getInstance();
+        return CalDavAdapaterFactory::getInstance();
     }
 }

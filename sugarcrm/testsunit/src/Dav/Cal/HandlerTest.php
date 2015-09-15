@@ -23,43 +23,47 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testImport()
     {
-        $bean = new \CalDavEvent();
+        $bean = $this->getBeanMock('\Meeting');
+        $calDavBean = $this->getSugarBeanMock($bean);
+        $calDavBean->parent_id = true;
+        $this->assertInstanceOf('\SugarBean', $calDavBean->getBean());
 
-        $jobMock = $this->getJobMock('Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue\Import', array($bean), array('CalDavImport'));
-        $jobMock->expects($this->once())->method('run');
-
-        $handlerMock = $this->getHandlerMock($jobMock);
-
-        $handlerMock->import($bean);
-    }
-
-    /**
-     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Handler::export
-     */
-    public function testExport()
-    {
-        $bean = new \SugarBean();
-
-        $jobMock = $this->getJobMock('Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue\Export', array($bean), array('CalDavExport'));
-        $jobMock->expects($this->once())->method('run');
-
-        $handlerMock = $this->getHandlerMock($jobMock);
-
-        $handlerMock->export($bean);
-    }
-
-
-
-    /**
-     * Get Mock object for hook handler
-     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue\Import
-     */
-    protected function getJobMock($className, $constructorArgs, $methods)
-    {
-        return $this->getMockBuilder($className)
-            ->setConstructorArgs($constructorArgs)
-            ->setMethods(array_merge($methods, array('run', 'registerHandler')))
+        $factoryMock = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory')
+            ->setMethods(array('getAdapter', 'save', 'import'))
             ->getMock();
+
+        $adapterMock = $this->getMockBuilder('\stdClass')
+            ->setMethods(array('save', 'import'))
+            ->getMock();
+
+        $factoryMock->method('getAdapter')->willReturn($adapterMock);
+        $factoryMock->method('save')->willReturn(true);
+        $factoryMock->method('import')->willReturn(true);
+
+        $handler = $this->getHandlerMock($factoryMock);
+        $adapterMock->expects($this->once())->method('import');
+        $handler->import($calDavBean);
+    }
+
+    protected function getBeanMock()
+    {
+        $beanMock = $this->getMockBuilder('\CalDavEvent')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getBean', 'save'))
+            ->getMock();
+        return $beanMock;
+    }
+
+    protected function getSugarBeanMock($relatedBean)
+    {
+        $beanMock = $this->getMockBuilder('\CalDavEvent')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getBean'))
+            ->getMock();
+
+        $beanMock->method('getBean')->willReturn($relatedBean);
+
+        return $beanMock;
     }
 
     /**
@@ -67,20 +71,15 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
      * @param array $methods
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getHandlerMock($jobMock)
+    protected function getHandlerMock($factoryMock)
     {
         $handlerMock = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Handler')
             ->disableOriginalConstructor()
-            ->setMethods(array('getManager','getAdapterFactory'))
+            ->setMethods(array('getAdapterFactory'))
             ->getMock();
 
-        $factoryMock = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Handler')
-            ->setMethods(array('getAdapter'))
-            ->getMock();
-        $factoryMock->method('getAdapter')->willReturn(true);
-
-        $handlerMock->method('getManager')->willReturn($jobMock);
         $handlerMock->method('getAdapterFactory')->willReturn($factoryMock);
+        //$handlerMock->method('import')->willReturn(true);
 
         return $handlerMock;
     }

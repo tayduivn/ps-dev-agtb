@@ -17,7 +17,7 @@ class SugarTestMeetingUtilities
 
     private function __construct() {}
 
-    public static function createMeeting($id = '', User $user = null)
+    public static function createMeeting($id = '', User $user = null, array $meetingData = array())
     {
         global $current_user;
         $time = mt_rand();
@@ -37,6 +37,13 @@ class SugarTestMeetingUtilities
         } else {
             $meeting->assigned_user_id = $current_user->id;
         }
+        if ($meetingData) {
+            foreach ($meetingData as $property => $value) {
+                if (property_exists($meeting, $property)) {
+                    $meeting->$property = $value;
+                }
+            }
+        }
         $meeting->save();
         self::$_createdMeetings[] = $meeting;
         return $meeting;
@@ -46,6 +53,14 @@ class SugarTestMeetingUtilities
     {
         $meeting_ids = self::getCreatedMeetingIds();
         $GLOBALS['db']->query(sprintf("DELETE FROM meetings WHERE id IN ('%s')", implode("', '", $meeting_ids)));
+    }
+
+    public static function removeAllCreatedMeetingsWithRecuringById($meeting_ids)
+    {
+        if ($meeting_ids) {
+            $imploded_meeting_ids = implode("', '", $meeting_ids);
+            $GLOBALS['db']->query(sprintf("DELETE FROM meetings WHERE id IN ('%s') OR repeat_parent_id IN ('%s')", $imploded_meeting_ids, $imploded_meeting_ids));
+        }
     }
     
     public static function removeMeetingContacts()
