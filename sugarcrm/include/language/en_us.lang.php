@@ -1892,7 +1892,6 @@ $app_list_strings = array (
 
   'lead_conv_activity_opt' =>
   array(
-        'copy' => 'Copy',
         'move' => 'Move',
         'donothing' => 'Do Nothing'
   ),
