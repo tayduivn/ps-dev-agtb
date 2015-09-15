@@ -624,12 +624,12 @@ class StudioModule
     }
 
     /**
-     * Gets parent modules of a subpanel
+     * Gets modules and subpanels related the given one
      * 
-     * @param string $subpanel The name of the subpanel
+     * @param string $sourceModule The name of the module
      * @return array
      */
-    public function getParentModulesOfSubpanel($subpanel)
+    public function getModulesWithSubpanels($sourceModule)
     {
         global $moduleList, $beanFiles, $beanList, $module;
 
@@ -641,7 +641,6 @@ class StudioModule
         //change case to match subpanel processing later on
         $modules_to_check = array_change_key_case($modules_to_check);
 
-        $spd = '';
         $spd_arr = array();
         //iterate through modules and build subpanel array
         foreach ($modules_to_check as $mod_name) {
@@ -651,8 +650,9 @@ class StudioModule
             //create new subpanel definition instance and get list of tabs
             $spd = new SubPanelDefinitions($bean);
             if (isset($spd->layout_defs['subpanel_setup'])) {
-                if ($this->checkRelatedModule($spd->layout_defs['subpanel_setup'], $subpanel)) {
-                    $spd_arr[] = $mod_name;
+                $subpanels = $this->getModuleSubpanels($spd->layout_defs['subpanel_setup'], $sourceModule);
+                if (count($subpanels) > 0) {
+                    $spd_arr[$mod_name] = $subpanels;
                 }
             }
         }
@@ -661,23 +661,24 @@ class StudioModule
     }
 
     /**
-     * Check if the related module is matched.
+     * Returns array of subpanel names related to the given module
      * @param array $defs the definition of subpanel layout.
      * @param string $sourceModule the name of the source module in subpanel
-     * @return boolean
+     * @return array
      */
-    protected function checkRelatedModule(array $defs, $sourceModule)
+    protected function getModuleSubpanels(array $defs, $sourceModule)
     {
+        $subpanels = array();
         foreach ($defs as $name => $def) {
             //Example:
             //subpanel link name: accounts_meetings_1
             //related module: Meetings
             //source module: Accounts (should be equal to $sourceModule)
             if (isset($def['module']) && $def['module'] == $sourceModule) {
-                return true;
+                $subpanels[] = $name;
             }
         }
-        return false;
+        return $subpanels;
     }
 
     /**
@@ -711,10 +712,12 @@ class StudioModule
             }
         }
 
-        //Remove the fields in subpanel
-        $data = $this->getParentModulesOfSubpanel($this->module);
-        foreach ($data as $parentModule) {
-            $this->removeFieldFromLayout($parentModule, MB_LISTVIEW, $this->module, $fieldName);
+        //Remove the field from subpanels
+        $data = $this->getModulesWithSubpanels($this->module);
+        foreach ($data as $module => $subpanels) {
+            foreach ($subpanels as $subpanel) {
+                $this->removeFieldFromLayout($module, MB_LISTVIEW, $subpanel, $fieldName);
+            }
         }
     }
 
