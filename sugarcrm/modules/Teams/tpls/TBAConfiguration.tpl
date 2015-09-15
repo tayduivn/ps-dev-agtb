@@ -84,7 +84,8 @@
 
 <script type="text/javascript">
     var labelSaving = '{$APP.LBL_SAVING}',
-        labelDone = '{$APP.LBL_DONE_BUTTON_LABEL}';
+        labelDone = '{$APP.LBL_DONE_BUTTON_LABEL}',
+        disabledModules = app.config.teamBasedAcl.disabledModules;
     {literal}
     $(document).ready(function() {
         if ($('input#tba_set_enabled').attr('checked') === 'checked') {
@@ -95,11 +96,14 @@
 
         $('input#tba_set_enabled').on('click', function() {
             if ($(this).attr('checked') === 'checked') {
-                $('input[data-group=tba_em]').attr('checked', 'checked');
+                _.each($('input[data-group=tba_em]'), function(item) {
+                    if (_.indexOf(disabledModules, $(item).val()) === -1) {
+                        $(item).attr('checked', 'checked');
+                    }
+                });
                 $('#tba_em_block').show();
             } else {
                 $('#tba_em_block').hide();
-                $('input[data-group=tba_em]').attr('checked', '');
             }
         });
 
