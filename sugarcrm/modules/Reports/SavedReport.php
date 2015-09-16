@@ -439,7 +439,7 @@ class SavedReport extends SugarBean
 function getACLAllowedModules($ignoreSessionCache = false) {
 
 	if ($ignoreSessionCache === false && isset($_SESSION['reports_getACLAllowedModules'])) {
-        return $_SESSION['reports_getACLAllowedModules'];
+        return (array) $_SESSION['reports_getACLAllowedModules'];
     }
 
      require_once('modules/Reports/config.php');
