@@ -89,8 +89,8 @@ class SetOptionsAction extends AbstractAction{
 					    return _.contains(keys, key);
 					});
 
-					if (selected.length == 0 && field.model.fields[field.name].type != 'multienum') {
-					    selected = selected.concat(empty ? '' : keys[0]);
+					if ((selected.length == 0 || (selected.length == 1 && selected[0] == '')) && field.model.fields[field.name].type != 'multienum') {
+					    selected = [(empty ? '' : keys[0])];
 					}
 
                     context.setValue(this.target, selected);

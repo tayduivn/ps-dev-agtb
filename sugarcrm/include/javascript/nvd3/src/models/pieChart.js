@@ -33,14 +33,13 @@ nv.models.pieChart = function() {
       legend = nv.models.legend()
         .align('center');
 
-  var showTooltip = function(e, offsetElement, total) {
-    var left = e.pos[0],
-        top = e.pos[1],
-        x = (pie.y()(e.point) * 100 / total).toFixed(1),
-        y = pie.valueFormat()(pie.y()(e.point)),
-        content = tooltipContent(e.point.key, x, y, e, chart);
+  var showTooltip = function(eo, offsetElement, total) {
+    var key = eo.point.key,
+        x = (pie.y()(eo.point) * 100 / total).toFixed(1),
+        y = pie.valueFormat()(pie.y()(eo.point)),
+        content = tooltipContent(key, x, y, eo, chart);
 
-    tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
+    tooltip = nv.tooltip.show(eo.e, content, null, null, offsetElement);
   };
 
   var seriesClick = function(data, e, chart) {
@@ -279,9 +278,9 @@ nv.models.pieChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(eo) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
-          nv.tooltip.position(that.parentNode, tooltip, eo.pos);
+          nv.tooltip.position(that.parentNode, tooltip, e);
         }
       });
 
@@ -327,8 +326,8 @@ nv.models.pieChart = function() {
     dispatch.tooltipShow(eo);
   });
 
-  pie.dispatch.on('elementMousemove.tooltip', function(eo) {
-    dispatch.tooltipMove(eo);
+  pie.dispatch.on('elementMousemove.tooltip', function(e) {
+    dispatch.tooltipMove(e);
   });
 
   pie.dispatch.on('elementMouseout.tooltip', function() {

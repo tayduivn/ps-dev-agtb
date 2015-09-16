@@ -466,7 +466,7 @@ for($i=0; $i<count($notes_list); $i++) {
 }
 
 $xtpl->assign('DESCRIPTION', nl2br($focus->description));
-$xtpl->assign('DESCRIPTION_HTML', SugarCleaner::cleanHtml(from_html($focus->description_html), false));
+$xtpl->assign('DESCRIPTION_HTML', SugarCleaner::cleanHtml(from_html($focus->description_html, false), false));
 $xtpl->assign("ATTACHMENTS", $attachments);
 $xtpl->parse("main");
 $xtpl->out("main");

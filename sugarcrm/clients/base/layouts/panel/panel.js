@@ -65,9 +65,16 @@
 
     /**
      * @inheritDoc
+     *
+     * Decorate the subpanel based on if the collection is empty or not.
+     *
+     * When context is reloaded, we open the panel only if `skipFetch` is
+     * `false`.
+     *
+     * When the context's collapse attribute changes, we confirm that the
+     * panel's status is in sync with the flag (expanded/collapsed).
      */
     bindDataChange: function() {
-        // Decorate the subpanel based on if the collection is empty or not
         this.listenTo(this.collection, 'reset add remove', function() {
             this.$('.subpanel').toggleClass('empty', this.collection.length === 0);
         }, this);
@@ -76,17 +83,23 @@
             this.$('.subpanel').toggleClass('empty', !properties.length);
         }, this);
 
-        // FIXME this needs to be reviewed on 7.7.
         this.listenTo(this.context.parent, 'panel-top:refresh', function(link) {
+            app.logger.warn('`panel-top:refresh` is deprecated. Use `context.reloadData()` to reload and expand.');
             if (this.context.get('link') === link) {
                 this.context.resetLoadFlag();
                 this.toggle(true);
             }
         });
 
-        this.context.on('change:collapsed', function(context, collapsed) {
+        this.listenTo(this.context, 'reload', function() {
+            if (!this.context.get('skipFetch')) {
+                this.toggle(true);
+            }
+        });
+
+        this.listenTo(this.context, 'change:collapsed', function(context, collapsed) {
             this.toggle(!collapsed);
-        }, this);
+        });
     },
 
     /**

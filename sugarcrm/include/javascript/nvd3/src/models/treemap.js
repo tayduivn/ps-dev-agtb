@@ -152,21 +152,16 @@ nv.models.treemap = function() {
             dispatch.elementMouseover({
               point: d,
               pointIndex: i,
-              pos: [d3.event.offsetX, d3.event.offsetY],
-              id: id
+              id: id,
+              e: d3.event
             });
+          })
+          .on('mousemove', function(d, i) {
+            dispatch.elementMousemove(d3.event);
           })
           .on('mouseout', function(d, i) {
             d3.select(this).classed('hover', false);
             dispatch.elementMouseout();
-          })
-          .on('mousemove', function(d, i) {
-            dispatch.elementMousemove({
-              point: d,
-              pointIndex: i,
-              pos: [d3.event.offsetX, d3.event.offsetY],
-              id: id
-            });
           });
 
         var child_rects = g.selectAll('.nv-child').data(function(d) {
@@ -186,7 +181,7 @@ nv.models.treemap = function() {
                 value: getSize(d),
                 point: d,
                 pointIndex: i,
-                pos: [d3.event.offsetX, d3.event.offsetY],
+                e: d3.event,
                 id: id
             });
           })

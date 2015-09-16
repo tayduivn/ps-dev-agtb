@@ -5889,7 +5889,7 @@ eoq;
         if (empty($this->email->description_html)) {
             $description = nl2br($this->email->description);
         } else {
-            $description = SugarCleaner::cleanHtml(from_html($this->email->description_html), false);
+            $description = SugarCleaner::cleanHtml(from_html($this->email->description_html, false), false);
         }
 		$meta['email']['description'] = $description;
         $meta['email']['description_html'] = SugarCleaner::cleanHtml(from_html($this->email->description_html), false);

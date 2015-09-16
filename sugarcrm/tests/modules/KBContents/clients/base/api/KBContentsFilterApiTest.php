@@ -111,7 +111,7 @@ class KBContentsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         if ($expected) {
             $api->expects($this->once())->method('filterByContainingExcludingWords')->with(
                 $this->equalTo($this->service)
-            );
+            )->willReturn(array());
         } else {
             $api->expects($this->never())->method('filterByContainingExcludingWords')->with(
                 $this->equalTo($this->service)

@@ -272,19 +272,23 @@ function got_data(args, inline)
 	if (list_subpanel != null) {
 		var subpanel = document.getElementById('subpanel_'+request_map[args.request_id].toLowerCase());
 		var child_field = request_map[args.request_id].toLowerCase();
+        var bwcComponent = window.parent.SUGAR.App.controller.layout.getComponent('bwc');
 
         if(inline){
-            window.parent.SUGAR.App.controller.layout.getComponent('bwc').confirmMemLeak(list_subpanel);
-            $('a', list_subpanel).off('.bwc.sugarcrm');
+            if (bwcComponent) {
+                bwcComponent.confirmMemLeak(list_subpanel);
+                $('a', list_subpanel).off('.bwc.sugarcrm');
+            }
 
 			child_field_loaded[child_field] = 2;
 			list_subpanel.innerHTML='';
 			list_subpanel.innerHTML=args.responseText;
 
 		} else {
-
-            window.parent.SUGAR.App.controller.layout.getComponent('bwc').confirmMemLeak(subpanel);
-            $('a', subpanel).off('.bwc.sugarcrm');
+            if (bwcComponent) {
+                bwcComponent.confirmMemLeak(subpanel);
+                $('a', subpanel).off('.bwc.sugarcrm');
+            }
 
 			child_field_loaded[child_field] = 1;
 			subpanel.innerHTML='';
@@ -314,7 +318,9 @@ function got_data(args, inline)
 	  		$(node).sugarActionMenu();
 	  	});
 
-        window.parent.SUGAR.App.controller.layout.getComponent('bwc').rewriteLinks();
+       if (bwcComponent) {
+           bwcComponent.rewriteLinks();
+       }
 	}
 }
 

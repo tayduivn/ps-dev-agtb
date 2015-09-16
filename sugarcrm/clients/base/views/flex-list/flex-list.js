@@ -90,6 +90,7 @@
         this.on('list:toggle:column', this.saveCurrentState, this);
         this.on('list:save:laststate', this.saveCurrentState, this);
         this.on('list:column:resize:save', this.saveCurrentWidths, this);
+        this.on('list:scrollLock', this.scrollLock, this);
     },
 
     // fn to turn off event listeners and reenable tooltips
@@ -1018,6 +1019,19 @@
 
     bindResize: function() {
         $(window).on("resize.flexlist-" + this.cid, _.bind(this.resize, this));
+    },
+
+    /**
+     * Temporarily overwrites the css from the .scroll-width class so that
+     * row field dropdown menues aren't clipped by overflow-x property.
+     */
+    scrollLock: function(lock) {
+        var $content = this.$('.flex-list-view-content');
+        if (lock) {
+            $content.css({'overflow-x': 'visible', 'margin-left': -($content.scrollLeft()) + 'px'});
+        } else {
+            $content.removeAttr('style');
+        }
     },
 
     /**

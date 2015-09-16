@@ -344,14 +344,14 @@ d3.svg.axisStatic = function() {
 
   var nvtooltip = window.nv.tooltip = {};
 
-  nvtooltip.show = function(pos, content, gravity, dist, container, classes) {
+  nvtooltip.show = function(evt, content, gravity, dist, container, classes) {
 
     var tooltip = document.createElement('div'),
         inner = document.createElement('div'),
         arrow = document.createElement('div');
 
     gravity = gravity || 's';
-    dist = dist || 10;
+    dist = dist || 5;
 
     inner.className = 'tooltip-inner';
     arrow.className = 'tooltip-arrow';
@@ -365,7 +365,7 @@ d3.svg.axisStatic = function() {
     tooltip.appendChild(arrow);
     container.appendChild(tooltip);
 
-    nvtooltip.position(container, tooltip, pos, gravity, dist);
+    nvtooltip.position(container, tooltip, evt, gravity, dist);
     tooltip.style.opacity = 1;
 
     return tooltip;
@@ -398,9 +398,14 @@ d3.svg.axisStatic = function() {
       }, 500);
   };
 
-  nvtooltip.position = function(container, tooltip, pos, gravity, dist) {
+  nvtooltip.position = function(container, tooltip, evt, gravity, dist) {
+    var pos = [
+      typeof evt.layerX === 'undefined' ? evt.offsetX : evt.layerX,
+      typeof evt.layerY === 'undefined' ? evt.offsetY : evt.layerY
+    ];
+
     gravity = gravity || 's';
-    dist = dist || 10;
+    dist = dist || 5;
     var tooltipWidth = parseInt(tooltip.offsetWidth, 10),
         tooltipHeight = parseInt(tooltip.offsetHeight, 10),
         containerWidth = container.clientWidth,
@@ -3014,15 +3019,20 @@ nv.models.scatter = function() {
       padData = false, // If true, adds half a data points width to front and back, for lining up a line chart with a bar chart
       padDataOuter = 0.1, //outerPadding to imitate ordinal scale outer padding
       clipEdge = false, // if true, masks points within x and y scale
+      useVoronoi = true,
       clipVoronoi = true, // if true, masks each point with a circle... can turn off to slightly increase performance
-      clipRadius = function() { return 10; }, // function to get the radius for voronoi point clips
+      circleRadius = function(d, i) {
+        return Math.sqrt(z(getSize(d, i)) / Math.PI);
+      }, // function to get the radius for voronoi point clips
+      symbolSize = function(d, i) {
+        return z(getSize(d, i));
+      },
       xDomain = null, // Override x domain (skips the calculation from data)
       yDomain = null, // Override y domain
       sizeDomain = null, // Override point size domain
       sizeRange = [16, 256],
       singlePoint = false,
       dispatch = d3.dispatch('elementClick', 'elementMouseover', 'elementMouseout', 'elementMousemove'),
-      useVoronoi = true,
       nice = false;
 
   //============================================================
@@ -3205,16 +3215,11 @@ nv.models.scatter = function() {
         );
 
         function buildEventObject(e, d, i, j) {
-          var pos = [
-            e.offsetX == undefined ? e.layerX : e.offsetX,
-            e.offsetY == undefined ? e.layerY : e.offsetY
-          ];
           return {
               series: data[j],
               point: data[j].values[i],
               pointIndex: i,
               seriesIndex: j,
-              pos: pos,
               id: id,
               e: e
             };
@@ -3233,12 +3238,14 @@ nv.models.scatter = function() {
 
             var pointClips = wrap.select('#nv-points-clip-' + id).selectAll('circle')
                 .data(vertices);
-            pointClips.enter().append('circle')
-                .attr('r', clipRadius);
+            pointClips.enter().append('circle');
             pointClips.exit().remove();
             pointClips
                 .attr('cx', function(d) { return d[0] })
-                .attr('cy', function(d) { return d[1] });
+                .attr('cy', function(d) { return d[1] })
+                .attr('r', function(d, i) {
+                  return circleRadius(d[4], i);
+                });
 
             wrap.select('.nv-point-paths')
                 .attr('clip-path', 'url(#nv-points-clip-' + id + ')');
@@ -3285,12 +3292,12 @@ nv.models.scatter = function() {
                 if (needsUpdate) return 0;
                 dispatch.elementMouseover(buildEventObject(d3.event, d, d.point, d.series));
               })
+              .on('mousemove', function(d, i) {
+                dispatch.elementMousemove(d3.event);
+              })
               .on('mouseout', function(d, i) {
                 if (needsUpdate) return 0;
                 dispatch.elementMouseout(buildEventObject(d3.event, d, d.point, d.series));
-              })
-              .on('mousemove', function(d, i) {
-                dispatch.elementMousemove(buildEventObject(d3.event, d, d.point, d.series));
               });
         } else {
           // add event handlers to points instead voronoi paths
@@ -3306,12 +3313,12 @@ nv.models.scatter = function() {
                 if (needsUpdate || !data[d.series]) return 0; //check if this is a dummy point
                 dispatch.elementMouseover(buildEventObject(d3.event, d, i, d.series));
               })
+              .on('mousemove', function(d, i) {
+                dispatch.elementMousemove(d3.event);
+              })
               .on('mouseout', function(d, i) {
                 if (needsUpdate || !data[d.series]) return 0; //check if this is a dummy point
-                dispatch.elementMouseout(buildEventObject(d3.event, d, i, d.series));
-              })
-              .on('mousemove', function(d, i) {
-                dispatch.elementMousemove(buildEventObject(d3.event, d, i, d.series));
+                dispatch.elementMouseout(buildEventObject(d3.event, d, d.point, d.series));
               });
         }
 
@@ -3321,7 +3328,7 @@ nv.models.scatter = function() {
       needsUpdate = true;
 
       var groups = wrap.select('.nv-groups').selectAll('.nv-group')
-          .data(function(d) { return d }, function(d) { return d.key });
+          .data(function(d) { return d; }, function(d) { return d.key; });
       groups.enter().append('g')
           .style('stroke-opacity', 1e-6)
           .style('fill-opacity', 1e-6);
@@ -3336,32 +3343,32 @@ nv.models.scatter = function() {
           .classed('hover', function(d) { return d.hover; });
       d3.transition(groups)
           .style('stroke-opacity', 1)
-          .style('fill-opacity', .5);
+          .style('fill-opacity', 0.5);
 
 
       if (onlyCircles) {
 
         var points = groups.selectAll('circle.nv-point')
-            .data(function(d) { return d.values });
+            .data(function(d) { return d.values; });
         points.enter().append('circle')
-            .attr('cx', function(d, i) { return x0(getX(d, i)) })
-            .attr('cy', function(d, i) { return y0(getY(d, i)) })
-            .attr('r', function(d, i) { return Math.sqrt(z(getSize(d, i)) / Math.PI) });
+            .attr('cx', function(d, i) { return x0(getX(d, i)); })
+            .attr('cy', function(d, i) { return y0(getY(d, i)); })
+            .attr('r', circleRadius);
         points.exit().remove();
         d3.transition(groups.exit().selectAll('path.nv-point'))
-            .attr('cx', function(d, i) { return x(getX(d, i)) })
-            .attr('cy', function(d, i) { return y(getY(d, i)) })
+            .attr('cx', function(d, i) { return x(getX(d, i)); })
+            .attr('cy', function(d, i) { return y(getY(d, i)); })
             .remove();
-        points.attr('class', function(d, i) { return 'nv-point nv-point-' + i });
+        points.attr('class', function(d, i) { return 'nv-point nv-point-' + i; });
         d3.transition(points)
-            .attr('cx', function(d, i) { return x(getX(d, i)) })
-            .attr('cy', function(d, i) { return y(getY(d, i)) })
-            .attr('r', function(d, i) { return Math.sqrt(z(getSize(d, i)) / Math.PI) });
+            .attr('cx', function(d, i) { return x(getX(d, i)); })
+            .attr('cy', function(d, i) { return y(getY(d, i)); })
+            .attr('r', circleRadius);
 
       } else {
 
         var points = groups.selectAll('path.nv-point')
-            .data(function(d) { return d.values });
+            .data(function(d) { return d.values; });
         points.enter().append('path')
             .attr('transform', function(d, i) {
               return 'translate(' + x0(getX(d, i)) + ',' + y0(getY(d, i)) + ')';
@@ -3369,7 +3376,7 @@ nv.models.scatter = function() {
             .attr('d',
               d3.svg.symbol()
                 .type(getShape)
-                .size(function(d, i) { return z(getSize(d, i)) })
+                .size(symbolSize)
             );
         points.exit().remove();
         d3.transition(groups.exit().selectAll('path.nv-point'))
@@ -3377,16 +3384,15 @@ nv.models.scatter = function() {
               return 'translate(' + x(getX(d, i)) + ',' + y(getY(d, i)) + ')';
             })
             .remove();
-        points.attr('class', function(d, i) { return 'nv-point nv-point-' + i });
+        points.attr('class', function(d, i) { return 'nv-point nv-point-' + i; });
         d3.transition(points)
             .attr('transform', function(d, i) {
-              //nv.log(d,i,getX(d, i), x(getX(d, i)));
               return 'translate(' + x(getX(d, i)) + ',' + y(getY(d, i)) + ')';
             })
             .attr('d',
               d3.svg.symbol()
                 .type(getShape)
-                .size(function(d, i) { return z(getSize(d, i)) })
+                .size(symbolSize)
             );
       }
 
@@ -3597,9 +3603,9 @@ nv.models.scatter = function() {
     return chart;
   };
 
-  chart.clipRadius = function(_) {
-    if (!arguments.length) return clipRadius;
-    clipRadius = _;
+  chart.circleRadius = function(_) {
+    if (!arguments.length) return circleRadius;
+    circleRadius = _;
     return chart;
   };
 
@@ -3638,7 +3644,7 @@ nv.models.scatter = function() {
   //============================================================
 
   return chart;
-}
+};
 nv.models.bubbleChart = function() {
 
   //============================================================
@@ -3710,14 +3716,14 @@ nv.models.bubbleChart = function() {
         .align('center')
         .key(function(d) { return d.key + '%'; });
 
-  var showTooltip = function(e, offsetElement, properties) {
-    var left = e.pos[0],
-        top = e.pos[1],
-        x = e.point.x,
-        y = e.point.y,
-        content = tooltipContent(e.series.key, x, y, e, chart);
+  var showTooltip = function(eo, offsetElement, properties) {
+    var key = eo.series.key,
+        x = eo.point.x,
+        y = eo.point.y,
+        content = tooltipContent(key, x, y, eo, chart),
+        gravity = eo.value < 0 ? 'n' : 's';
 
-    tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
+    tooltip = nv.tooltip.show(eo.e, content, gravity, null, offsetElement);
   };
 
   //============================================================
@@ -4163,9 +4169,9 @@ nv.models.bubbleChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(eo) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
-          nv.tooltip.position(that.parentNode, tooltip, eo.pos, 's');
+          nv.tooltip.position(that.parentNode, tooltip, e, 's');
         }
       });
 
@@ -4212,8 +4218,8 @@ nv.models.bubbleChart = function() {
     dispatch.tooltipShow(eo);
   });
 
-  scatter.dispatch.on('elementMousemove.tooltip', function(eo) {
-    dispatch.tooltipMove(eo);
+  scatter.dispatch.on('elementMousemove.tooltip', function(e) {
+    dispatch.tooltipMove(e);
   });
 
   scatter.dispatch.on('elementMouseout.tooltip', function() {
@@ -4642,8 +4648,7 @@ nv.models.funnel = function() {
             dispatch.elementMouseover(eo);
           })
           .on('mousemove', function(d, i) {
-            var eo = buildEventObject(d3.event, d, i);
-            dispatch.elementMousemove(eo);
+            dispatch.elementMousemove(d3.event);
           })
           .on('mouseout', function(d, i) {
             d3.select(this).classed('hover', false);
@@ -4661,16 +4666,11 @@ nv.models.funnel = function() {
           });
 
       function buildEventObject(e, d, i) {
-        var pos = [
-          e.offsetX == undefined ? e.layerX : e.offsetX,
-          e.offsetY == undefined ? e.layerY : e.offsetY
-        ];
         return {
             value: getV(d, i),
             point: d,
             id: id,
             series: data[d.series],
-            pos: pos,
             pointIndex: i,
             seriesIndex: d.series,
             e: e
@@ -5335,18 +5335,18 @@ nv.models.funnelChart = function() {
         .align('center'),
       yScale = d3.scale.linear();
 
-  var showTooltip = function(e, offsetElement, properties) {
+  var showTooltip = function(eo, offsetElement, properties) {
     var xVal = 0;
     // defense against the dark divide-by-zero arts
     if (properties.total > 0) {
-      xVal = (e.point.value * 100 / properties.total).toFixed(1);
+      xVal = (eo.point.value * 100 / properties.total).toFixed(1);
     }
-    var left = e.pos[0],
-        top = e.pos[1],
+    var key = eo.series.key,
         x = xVal,
-        y = e.point.value,
-        content = tooltipContent(e.series.key, x, y, e, chart);
-    tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
+        y = eo.point.value,
+        content = tooltipContent(key, x, y, eo, chart),
+        gravity = eo.value < 0 ? 'n' : 's';
+    tooltip = nv.tooltip.show(eo.e, content, gravity, null, offsetElement);
   };
 
   var seriesClick = function(data, e, chart) {
@@ -5628,9 +5628,9 @@ nv.models.funnelChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(eo) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
-          nv.tooltip.position(that.parentNode, tooltip, eo.pos);
+          nv.tooltip.position(that.parentNode, tooltip, e);
         }
       });
 
@@ -5676,8 +5676,8 @@ nv.models.funnelChart = function() {
     dispatch.tooltipShow(eo);
   });
 
-  funnel.dispatch.on('elementMousemove.tooltip', function(eo) {
-    dispatch.tooltipMove(eo);
+  funnel.dispatch.on('elementMousemove.tooltip', function(e) {
+    dispatch.tooltipMove(e);
   });
 
   funnel.dispatch.on('elementMouseout.tooltip', function() {
@@ -5999,16 +5999,16 @@ nv.models.gauge = function() {
             .attr('stroke', '#ffffff')
             .attr('stroke-width', 3)
             .attr('d', arc)
-            .on('mouseover', function(d,i){
+            .on('mouseover', function(d, i) {
               d3.select(this).classed('hover', true);
               dispatch.elementMouseover({
                   point: d,
                   pointIndex: i,
-                  pos: [d3.event.offsetX, d3.event.offsetY],
+                  e: d3.event,
                   id: id
               });
             })
-            .on('mouseout', function(d,i){
+            .on('mouseout', function(d, i) {
               d3.select(this).classed('hover', false);
               dispatch.elementMouseout({
                   point: d,
@@ -6016,28 +6016,23 @@ nv.models.gauge = function() {
                   id: id
               });
             })
-            .on('mousemove', function(d,i){
-              dispatch.elementMousemove({
-                point: d,
-                pointIndex: i,
-                pos: [d3.event.offsetX, d3.event.offsetY],
-                id: id
-              });
+            .on('mousemove', function(d, i) {
+              dispatch.elementMousemove(d3.event);
             })
-            .on('click', function(d,i) {
+            .on('click', function(d, i) {
               dispatch.elementClick({
                   point: d,
                   index: i,
-                  pos: d3.event,
+                  e: d3.event,
                   id: id
               });
               d3.event.stopPropagation();
             })
-            .on('dblclick', function(d,i) {
+            .on('dblclick', function(d, i) {
               dispatch.elementDblClick({
                   point: d,
                   index: i,
-                  pos: d3.event,
+                  e: d3.event,
                   id: id
               });
               d3.event.stopPropagation();
@@ -6366,13 +6361,11 @@ nv.models.gaugeChart = function() {
       legend = nv.models.legend()
         .align('center');
 
-  var showTooltip = function(e, offsetElement) {
-    var left = e.pos[0],
-        top = e.pos[1],
-        y = gauge.valueFormat()((e.point.y1 - e.point.y0)),
-        content = tooltipContent(e.point.key, y, e, chart);
+  var showTooltip = function(eo, offsetElement) {
+    var y = gauge.valueFormat()((eo.point.y1 - eo.point.y0)),
+        content = tooltipContent(eo.point.key, y, eo, chart);
 
-    tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
+    tooltip = nv.tooltip.show(eo.e, content, null, null, offsetElement);
   };
 
   //============================================================
@@ -6535,9 +6528,9 @@ nv.models.gaugeChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(eo) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
-          nv.tooltip.position(that.parentNode, tooltip, eo.pos);
+          nv.tooltip.position(that.parentNode, tooltip, e);
         }
       });
 
@@ -6566,8 +6559,8 @@ nv.models.gaugeChart = function() {
     dispatch.tooltipShow(eo);
   });
 
-  gauge.dispatch.on('elementMousemove.tooltip', function(eo) {
-    dispatch.tooltipMove(eo);
+  gauge.dispatch.on('elementMousemove.tooltip', function(e) {
+    dispatch.tooltipMove(e);
   });
 
   gauge.dispatch.on('elementMouseout.tooltip', function() {
@@ -7082,14 +7075,13 @@ nv.models.lineChart = function() {
            '<p>' + y + ' on ' + x + '</p>';
   };
 
-  var showTooltip = function(e, offsetElement) {
-    var left = e.pos[0],
-        top = e.pos[1],
-        x = xAxis.tickFormat()(lines.x()(e.point, e.pointIndex)),
-        y = yAxis.tickFormat()(lines.y()(e.point, e.pointIndex)),
-        content = tooltipContent(e.series.key, x, y, e, chart);
+  var showTooltip = function(eo, offsetElement) {
+    var key = eo.series.key,
+        x = xAxis.tickFormat()(lines.x()(eo.point, eo.pointIndex)),
+        y = yAxis.tickFormat()(lines.y()(eo.point, eo.pointIndex)),
+        content = tooltipContent(key, x, y, eo, chart);
 
-    tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
+    tooltip = nv.tooltip.show(eo.e, content, null, null, offsetElement);
   };
 
   //============================================================
@@ -7525,9 +7517,9 @@ nv.models.lineChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(eo) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
-          nv.tooltip.position(that.parentNode, tooltip, eo.pos, 's');
+          nv.tooltip.position(that.parentNode, tooltip, e, 's');
         }
       });
 
@@ -7581,8 +7573,8 @@ nv.models.lineChart = function() {
     dispatch.tooltipShow(eo);
   });
 
-  lines.dispatch.on('elementMousemove.tooltip', function(eo) {
-    dispatch.tooltipMove(eo);
+  lines.dispatch.on('elementMousemove.tooltip', function(e) {
+    dispatch.tooltipMove(e);
   });
 
   lines.dispatch.on('elementMouseout.tooltip', function() {
@@ -7838,14 +7830,13 @@ nv.models.lineWithFocusChart = function() {
   // Private Variables
   //------------------------------------------------------------
 
-  var showTooltip = function(e, offsetElement) {
-    var left = e.pos[0] + ( offsetElement.offsetLeft || 0 ),
-        top = e.pos[1] + ( offsetElement.offsetTop || 0),
-        x = xAxis.tickFormat()(lines.x()(e.point, e.pointIndex)),
-        y = yAxis.tickFormat()(lines.y()(e.point, e.pointIndex)),
-        content = tooltip(e.series.key, x, y, e, chart);
+  var showTooltip = function(eo, offsetElement) {
+    var key = eo.series.key,
+        x = xAxis.tickFormat()(lines.x()(eo.point, eo.pointIndex)),
+        y = yAxis.tickFormat()(lines.y()(eo.point, eo.pointIndex)),
+        content = tooltip(key, x, y, eo, chart);
 
-    nv.tooltip.show([left, top], content, null, null, offsetElement);
+    nv.tooltip.show(eo.e, content, null, null, offsetElement);
   };
 
   //============================================================
@@ -8204,7 +8195,6 @@ nv.models.lineWithFocusChart = function() {
   //------------------------------------------------------------
 
   lines.dispatch.on('elementMouseover.tooltip', function(e) {
-    e.pos = [e.pos[0] +  margin.left, e.pos[1] + margin.top];
     dispatch.tooltipShow(e);
   });
 
@@ -8613,17 +8603,12 @@ nv.models.multiBar = function() {
         .attr(dimY, 0);
 
       function buildEventObject(e, d, i, j) {
-        var pos = [
-          e.offsetX == undefined ? e.layerX : e.offsetX,
-          e.offsetY == undefined ? e.layerY : e.offsetY
-        ];
         return {
             value: getY(d, i),
             point: d,
             series: data[j],
             pointIndex: i,
             seriesIndex: j,
-            pos: pos,
             id: id,
             e: e
           };
@@ -8636,8 +8621,7 @@ nv.models.multiBar = function() {
           dispatch.elementMouseover(eo);
         })
         .on('mousemove', function(d, i, j) {
-          var eo = buildEventObject(d3.event, d, i, j);
-          dispatch.elementMousemove(eo);
+          dispatch.elementMousemove(d3.event);
         })
         .on('mouseout', function(d, i, j) {
           d3.select(this).classed('hover', false);
@@ -9191,19 +9175,18 @@ nv.models.multiBarChart = function() {
            '<p>' + y + ' on ' + x + '</p>';
   };
 
-  var showTooltip = function(e, offsetElement, groupTotals) {
-    var left = e.pos[0],
-        top = e.pos[1],
+  var showTooltip = function(eo, offsetElement, groupTotals) {
+    var key = eo.series.key,
         x = (groupTotals) ?
-              (e.point.y * 100 / groupTotals[e.pointIndex].t).toFixed(1) :
-              xAxis.tickFormat()(multibar.x()(e.point, e.pointIndex)),
-        y = yAxis.tickFormat()(multibar.y()(e.point, e.pointIndex)),
-        content = tooltipContent(e.series.key, x, y, e, chart),
-        gravity = e.value < 0 ?
+              (eo.point.y * 100 / groupTotals[eo.pointIndex].t).toFixed(1) :
+              xAxis.tickFormat()(multibar.x()(eo.point, eo.pointIndex)),
+        y = yAxis.tickFormat()(multibar.y()(eo.point, eo.pointIndex)),
+        content = tooltipContent(key, x, y, eo, chart),
+        gravity = eo.value < 0 ?
           vertical ? 'n' : 'e' :
           vertical ? 's' : 'w';
 
-    tooltip = nv.tooltip.show([left, top], content, gravity, null, offsetElement);
+    tooltip = nv.tooltip.show(eo.e, content, gravity, null, offsetElement);
   };
 
   var seriesClick = function(data, e, chart) {
@@ -9831,9 +9814,9 @@ nv.models.multiBarChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(eo) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
-          nv.tooltip.position(that.parentNode, tooltip, eo.pos, vertical ? 's' : 'w');
+          nv.tooltip.position(that.parentNode, tooltip, e, vertical ? 's' : 'w');
         }
       });
 
@@ -9887,8 +9870,8 @@ nv.models.multiBarChart = function() {
     dispatch.tooltipShow(eo);
   });
 
-  multibar.dispatch.on('elementMousemove.tooltip', function(eo) {
-    dispatch.tooltipMove(eo);
+  multibar.dispatch.on('elementMousemove.tooltip', function(e) {
+    dispatch.tooltipMove(e);
   });
 
   multibar.dispatch.on('elementMouseout.tooltip', function() {
@@ -10198,23 +10181,20 @@ nv.models.paretoChart = function() {
             .align('right')
             .position('middle');
 
-    var showTooltip = function(e, offsetElement, dataGroup) {
-        var left = e.pos[0],
-            top = e.pos[1],
-            per = (e.point.y * 100 / dataGroup[e.pointIndex].t).toFixed(1),
-            amt = yAxis.tickFormat()(lines2.y()(e.point, e.pointIndex)),
-            content = (e.series.type === 'bar' ? tooltipBar(e.series.key, per, amt, e, chart) : tooltipLine(e.series.key, per, amt, e, chart));
+    var showTooltip = function(eo, offsetElement, dataGroup) {
+        var key = eo.series.key,
+            per = (eo.point.y * 100 / dataGroup[eo.pointIndex].t).toFixed(1),
+            amt = yAxis.tickFormat()(lines2.y()(eo.point, eo.pointIndex)),
+            content = eo.series.type === 'bar' ? tooltipBar(key, per, amt, eo, chart) : tooltipLine(key, per, amt, eo, chart);
 
-        tooltip = nv.tooltip.show([left, top], content, 's', null, offsetElement);
+        tooltip = nv.tooltip.show(eo.e, content, 's', null, offsetElement);
     };
 
-    var showQuotaTooltip = function(e, offsetElement) {
-        var left = e.pos[0],
-            top = e.pos[1],
-            amt = d3.format(',.2s')(e.val),
-            content = tooltipQuota(e.key, 0, amt, e, chart);
+    var showQuotaTooltip = function(eo, offsetElement) {
+        var amt = d3.format(',.2s')(eo.val),
+            content = tooltipQuota(eo.key, 0, amt, eo, chart);
 
-        tooltip = nv.tooltip.show([left, top], content, 's', null, offsetElement);
+        tooltip = nv.tooltip.show(eo.e, content, 's', null, offsetElement);
     };
 
     var barClick = function(data, eo, chart, container) {
@@ -10748,9 +10728,9 @@ nv.models.paretoChart = function() {
                 .on('mouseover', function(d) {
                     if (tooltips) {
                         var eo = {
-                            pos: [d3.event.offsetX, d3.event.offsetY],
                             val: d.val,
-                            key: d.key
+                            key: d.key,
+                            e: d3.event
                         };
                         showQuotaTooltip(eo, that.parentNode);
                     }
@@ -10759,9 +10739,7 @@ nv.models.paretoChart = function() {
                     dispatch.tooltipHide();
                 })
                 .on('mousemove', function() {
-                    dispatch.tooltipMove({
-                        pos: [d3.event.offsetX, d3.event.offsetY]
-                    });
+                    dispatch.tooltipMove(d3.event);
                 });
 
             barLegend.dispatch.on('legendClick', function(d, i) {
@@ -10797,9 +10775,9 @@ nv.models.paretoChart = function() {
                 }
             });
 
-            dispatch.on('tooltipMove', function(eo) {
+            dispatch.on('tooltipMove', function(e) {
                 if (tooltip) {
-                    nv.tooltip.position(that.parentNode, tooltip, eo.pos, 's');
+                    nv.tooltip.position(that.parentNode, tooltip, e, 's');
                 }
             });
 
@@ -10836,8 +10814,8 @@ nv.models.paretoChart = function() {
         dispatch.tooltipShow(eo);
     });
 
-    lines2.dispatch.on('elementMousemove', function(eo) {
-        dispatch.tooltipMove(eo);
+    lines2.dispatch.on('elementMousemove', function(e) {
+        dispatch.tooltipMove(e);
     });
 
     lines2.dispatch.on('elementMouseout.tooltip', function() {
@@ -10848,8 +10826,8 @@ nv.models.paretoChart = function() {
         dispatch.tooltipShow(eo);
     });
 
-    multibar.dispatch.on('elementMousemove', function(eo) {
-        dispatch.tooltipMove(eo);
+    multibar.dispatch.on('elementMousemove', function(e) {
+        dispatch.tooltipMove(e);
     });
 
     multibar.dispatch.on('elementMouseout.tooltip', function() {
@@ -11256,8 +11234,7 @@ nv.models.pie = function() {
               dispatch.elementMouseover(eo);
             })
             .on('mousemove', function(d, i) {
-              var eo = buildEventObject(d3.event, d, i);
-              dispatch.elementMousemove(eo);
+              dispatch.elementMousemove(d3.event);
             })
             .on('mouseout', function(d, i) {
               d3.select(this).classed('hover', false);
@@ -11502,16 +11479,11 @@ nv.models.pie = function() {
       //------------------------------------------------------------
 
       function buildEventObject(e, d, i) {
-        var pos = [
-          e.offsetX == undefined ? e.layerX : e.offsetX,
-          e.offsetY == undefined ? e.layerY : e.offsetY
-        ];
         return {
             label: getX(d.data),
             value: getY(d.data),
             point: d.data,
             pointIndex: i,
-            pos: pos,
             id: id,
             e: e
           };
@@ -11975,14 +11947,13 @@ nv.models.pieChart = function() {
       legend = nv.models.legend()
         .align('center');
 
-  var showTooltip = function(e, offsetElement, total) {
-    var left = e.pos[0],
-        top = e.pos[1],
-        x = (pie.y()(e.point) * 100 / total).toFixed(1),
-        y = pie.valueFormat()(pie.y()(e.point)),
-        content = tooltipContent(e.point.key, x, y, e, chart);
+  var showTooltip = function(eo, offsetElement, total) {
+    var key = eo.point.key,
+        x = (pie.y()(eo.point) * 100 / total).toFixed(1),
+        y = pie.valueFormat()(pie.y()(eo.point)),
+        content = tooltipContent(key, x, y, eo, chart);
 
-    tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
+    tooltip = nv.tooltip.show(eo.e, content, null, null, offsetElement);
   };
 
   var seriesClick = function(data, e, chart) {
@@ -12221,9 +12192,9 @@ nv.models.pieChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(eo) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
-          nv.tooltip.position(that.parentNode, tooltip, eo.pos);
+          nv.tooltip.position(that.parentNode, tooltip, e);
         }
       });
 
@@ -12269,8 +12240,8 @@ nv.models.pieChart = function() {
     dispatch.tooltipShow(eo);
   });
 
-  pie.dispatch.on('elementMousemove.tooltip', function(eo) {
-    dispatch.tooltipMove(eo);
+  pie.dispatch.on('elementMousemove.tooltip', function(e) {
+    dispatch.tooltipMove(e);
   });
 
   pie.dispatch.on('elementMouseout.tooltip', function() {
@@ -13349,12 +13320,10 @@ nv.models.stackedAreaChart = function() {
       return !!Math.round(stacked.y()(d) * 100);
     });
 
-  var showTooltip = function (e, offsetElement) {
-    var left = e.pos[0],
-        top = e.pos[1],
-        content = tooltipContent(e.series, e, chart);
+  var showTooltip = function(eo, offsetElement) {
+    var content = tooltipContent(eo.series, eo, chart);
 
-    tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
+    tooltip = nv.tooltip.show(eo.e, content, null, null, offsetElement);
   };
 
   //============================================================
@@ -13704,9 +13673,9 @@ nv.models.stackedAreaChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(eo) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
-          nv.tooltip.position(that.parentNode, tooltip, eo.pos, 's');
+          nv.tooltip.position(that.parentNode, tooltip, e, 's');
         }
       });
 
@@ -13755,20 +13724,20 @@ nv.models.stackedAreaChart = function() {
     dispatch.tooltipShow(eo);
   });
 
-  stacked.dispatch.on('areaMousemove.tooltip', function(eo) {
-    dispatch.tooltipMove(eo);
+  stacked.dispatch.on('areaMousemove.tooltip', function(e) {
+    dispatch.tooltipMove(e);
   });
 
   stacked.dispatch.on('areaMouseout.tooltip', function() {
     dispatch.tooltipHide();
   });
 
-  stacked.dispatch.on('tooltipShow', function(e) {
-    dispatch.tooltipShow(e);
+  stacked.dispatch.on('tooltipShow', function(eo) {
+    dispatch.tooltipShow(eo);
   });
 
   stacked.dispatch.on('tooltipHide', function(e) {
-    dispatch.tooltipHide(e);
+    dispatch.tooltipHide();
   });
 
 
@@ -14112,21 +14081,16 @@ nv.models.treemap = function() {
             dispatch.elementMouseover({
               point: d,
               pointIndex: i,
-              pos: [d3.event.offsetX, d3.event.offsetY],
-              id: id
+              id: id,
+              e: d3.event
             });
+          })
+          .on('mousemove', function(d, i) {
+            dispatch.elementMousemove(d3.event);
           })
           .on('mouseout', function(d, i) {
             d3.select(this).classed('hover', false);
             dispatch.elementMouseout();
-          })
-          .on('mousemove', function(d, i) {
-            dispatch.elementMousemove({
-              point: d,
-              pointIndex: i,
-              pos: [d3.event.offsetX, d3.event.offsetY],
-              id: id
-            });
           });
 
         var child_rects = g.selectAll('.nv-child').data(function(d) {
@@ -14146,7 +14110,7 @@ nv.models.treemap = function() {
                 value: getSize(d),
                 point: d,
                 pointIndex: i,
-                pos: [d3.event.offsetX, d3.event.offsetY],
+                e: d3.event,
                 id: id
             });
           })
@@ -14414,11 +14378,9 @@ nv.models.treemapChart = function() {
   // Private Variables
   //------------------------------------------------------------
 
-  var showTooltip = function(e, offsetElement) {
-    var left = e.pos[0],// + ( (offsetElement && offsetElement.offsetLeft) || 0 ),
-        top = e.pos[1],// + ( (offsetElement && offsetElement.offsetTop) || 0 ),
-        content = tooltipContent(e.point);
-    tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
+  var showTooltip = function(eo, offsetElement) {
+    var content = tooltipContent(eo.point);
+    tooltip = nv.tooltip.show(eo.e, content, null, null, offsetElement);
   };
 
   //============================================================
@@ -14594,9 +14556,9 @@ nv.models.treemapChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(eo) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
-          nv.tooltip.position(that.parentNode, tooltip, eo.pos);
+          nv.tooltip.position(that.parentNode, tooltip, e);
         }
       });
 
@@ -14632,12 +14594,11 @@ nv.models.treemapChart = function() {
   //------------------------------------------------------------
 
   treemap.dispatch.on('elementMouseover', function(eo) {
-    eo.pos = [eo.pos[0] + margin.left, eo.pos[1] + margin.top];
     dispatch.tooltipShow(eo);
   });
 
-  treemap.dispatch.on('elementMousemove', function(eo) {
-    dispatch.tooltipMove(eo);
+  treemap.dispatch.on('elementMousemove', function(e) {
+    dispatch.tooltipMove(e);
   });
 
   treemap.dispatch.on('elementMouseout', function() {

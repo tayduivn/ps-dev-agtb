@@ -33,13 +33,11 @@ nv.models.gaugeChart = function() {
       legend = nv.models.legend()
         .align('center');
 
-  var showTooltip = function(e, offsetElement) {
-    var left = e.pos[0],
-        top = e.pos[1],
-        y = gauge.valueFormat()((e.point.y1 - e.point.y0)),
-        content = tooltipContent(e.point.key, y, e, chart);
+  var showTooltip = function(eo, offsetElement) {
+    var y = gauge.valueFormat()((eo.point.y1 - eo.point.y0)),
+        content = tooltipContent(eo.point.key, y, eo, chart);
 
-    tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
+    tooltip = nv.tooltip.show(eo.e, content, null, null, offsetElement);
   };
 
   //============================================================
@@ -202,9 +200,9 @@ nv.models.gaugeChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(eo) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
-          nv.tooltip.position(that.parentNode, tooltip, eo.pos);
+          nv.tooltip.position(that.parentNode, tooltip, e);
         }
       });
 
@@ -233,8 +231,8 @@ nv.models.gaugeChart = function() {
     dispatch.tooltipShow(eo);
   });
 
-  gauge.dispatch.on('elementMousemove.tooltip', function(eo) {
-    dispatch.tooltipMove(eo);
+  gauge.dispatch.on('elementMousemove.tooltip', function(e) {
+    dispatch.tooltipMove(e);
   });
 
   gauge.dispatch.on('elementMouseout.tooltip', function() {
