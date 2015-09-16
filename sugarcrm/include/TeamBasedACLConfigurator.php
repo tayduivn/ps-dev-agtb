@@ -240,6 +240,7 @@ class TeamBasedACLConfigurator
      */
     protected function fallbackTBA($module = null)
     {
+        $config = $this->getConfig();
         $aclRole = new ACLRole();
         $aclField = new ACLField();
         $fieldOptions = $this->getFieldOptions();
@@ -250,7 +251,10 @@ class TeamBasedACLConfigurator
             $fields = $aclField->getACLFieldsByRole($role->id);
 
             foreach ($actions as $aclKey => $aclModule) {
-                if (($module && $aclKey != $module) || empty($aclModule['module'])) {
+                if (($module && $aclKey != $module) ||
+                    empty($aclModule['module']) ||
+                    !in_array($aclKey, $config['disabled_modules'])
+                ) {
                     continue;
                 }
                 foreach ($aclModule['module'] as $action) {

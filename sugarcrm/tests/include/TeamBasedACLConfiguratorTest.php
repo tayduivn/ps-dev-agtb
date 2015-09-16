@@ -195,4 +195,31 @@ class TeamBasedACLSetupTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(constant($fallbackModule), $actualActions[$this->module]['module'][$action]['aclaccess']);
 
     }
+
+    /**
+     * Test that mass disabling does not affect rest modules.
+     */
+    public function testFallbackDisabledModules()
+    {
+        $this->tbaConfig = $this->getMock('TeamBasedACLConfigurator', array('applyTBA'));
+        $action = 'view';
+        $extraModule = 'Bugs';
+        $roleActions = $this->role->getRoleActions($this->role->id);
+        $fallbackModule = $this->tbaConfig->getModuleFallbackOption();
+        $this->tbaConfig->setForModule($extraModule, true);
+
+        $actionId = $roleActions[$this->module]['module'][$action]['id'];
+        $this->role->setAction($this->role->id, $actionId, ACL_ALLOW_SELECTED_TEAMS);
+
+        $actionId = $roleActions[$extraModule]['module'][$action]['id'];
+        $this->role->setAction($this->role->id, $actionId, ACL_ALLOW_SELECTED_TEAMS);
+
+        // Fallback.
+        $this->tbaConfig->setForModulesList(array($extraModule), false);
+
+        $actualActions = $this->role->getRoleActions($this->role->id);
+
+        $this->assertEquals(constant($fallbackModule), $actualActions[$extraModule]['module'][$action]['aclaccess']);
+        $this->assertEquals(ACL_ALLOW_SELECTED_TEAMS, $actualActions[$this->module]['module'][$action]['aclaccess']);
+    }
 }
