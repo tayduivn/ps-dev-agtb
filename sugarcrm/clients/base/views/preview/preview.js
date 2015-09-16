@@ -11,9 +11,11 @@
 /**
  * @class View.Views.Base.PreviewView
  * @alias SUGAR.App.view.views.BasePreviewView
- * @extends View.View
+ * @extends View.Views.Base.RecordView
  */
 ({
+    extendsFrom: 'RecordView',
+
     plugins: ['ToggleMoreLess', 'Editable', 'ErrorDecoration'],
     fallbackFieldTemplate: 'detail',
     /**
@@ -78,47 +80,6 @@
             this.unsetContextAction();
             this.toggleFields(this.editableFields, false);
         }
-    },
-
-    /**
-     * Saves the model
-     *
-     * @private
-     */
-    _saveModel: function() {
-        var self = this;
-        this.turnOffEvents(this.fields);
-        this.model.save({}, {
-            showAlerts: true,
-            error: function(error) {
-                self.model.revertAttributes();
-            }
-        });
-    },
-
-    /**
-     * Unsets the `action` attribute from the current context.
-     *
-     * Once 'action' is unset, the action is 'detail' and the view will render
-     * next in detail mode.
-     */
-    unsetContextAction: function() {
-        this.context.unset('action');
-    },
-
-    /**
-     * Dismisses all {@link #_viewAlerts alerts} defined in this view.
-     *
-     * @protected
-     */
-    _dismissAllAlerts: function() {
-        if (_.isEmpty(this._viewAlerts)) {
-            return;
-        }
-        _.each(_.uniq(this._viewAlerts), function(alert) {
-            app.alert.dismiss(alert);
-        });
-        this._viewAlerts = [];
     },
 
     /**
@@ -398,47 +359,12 @@
     },
 
     /**
-     * Check if the model has any unsaved changes
-     *
-     * @return {boolean} `true` if current model contains unsaved changes,
-     *   `false` otherwise.
+     * @inheritdoc
      */
     hasUnsavedChanges: function() {
-        var changedAttributes,
-            editableFieldNames = [],
-            unsavedFields;
-
         if (_.isUndefined(this.model)) {
             return false;
         }
-
-        if (this.resavingAfterMetadataSync) {
-            return false;
-        }
-
-        changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
-
-        if (_.isEmpty(changedAttributes)) {
-            return false;
-        }
-
-        // get names of all editable fields on the page including fields in a fieldset and add fields that
-        // are not readonly and user has acl access
-        _.each(this.meta.panels, function(panel) {
-            _.each(panel.fields, function(field) {
-                if (field.type === 'fieldset' && !field.readonly && _.every(field.fields, function(field) {
-                        return app.acl.hasAccessToModel('edit', this.model, field.name);
-                    }, this)) {
-                    editableFieldNames.push(field.name)
-                } else if (!field.readonly && app.acl.hasAccessToModel('edit', this.model, field.name)) {
-                    editableFieldNames.push(field.name)
-                }
-            });
-        });
-
-        // check whether the changed attributes are among the editable fields
-        unsavedFields = _.intersection(_.keys(changedAttributes), editableFieldNames);
-
-        return !_.isEmpty(unsavedFields);
+        return this._super('hasUnsavedChanges');
     }
 })
