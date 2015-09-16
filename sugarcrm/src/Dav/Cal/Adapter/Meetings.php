@@ -13,6 +13,8 @@
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
 
 use Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper;
+use Sugarcrm\Sugarcrm\Dav\Base\Helper\UserHelper;
+use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException as AdapterInvalidArgumentException;
 
 /**
  * Class Meetings
@@ -27,8 +29,6 @@ class Meetings implements AdapterInterface
     protected $importBeanDataMap = array(
         'name' => 'getTitle',
         'description' => 'getDescription',
-        'date_start' => 'getStartDate',
-        'date_end' => 'getEndDate',
         'location' => 'getLocation',
         'duration_hours' => 'getDurationHours',
         'duration_minutes' => 'getDurationMinutes'
@@ -42,9 +42,73 @@ class Meetings implements AdapterInterface
         'duration_minutes' => 'getDurationMinutes'
     );
 
+    protected $exportBeanDataMap = array(
+        'setTitle' => 'name',
+        'setDescription' => 'description',
+        'setLocation' => 'location'
+    );
+
     public function export(\SugarBean $sugarBean, \CalDavEvent $calDavBean)
     {
+        if (!($sugarBean instanceof \Meeting)) {
+            throw new AdapterInvalidArgumentException('Bean must be an instance of SugarBean. Instance of '. get_class($sugarBean) .' given');
+        }
+        $dateTimeHelper = new DateTimeHelper();
+        $isEventChanged = false;
+        $dateStart = $dateEnd = '';
+        $sugarBean = $this->getNotCachedBean($sugarBean);
+        if (!$calDavBean->calendarid) {
+            $calendars = $this->getUserCalendars();
+            if ($calendars !== null) {
+                $calDavBean->setCalendarId(key($calendars));
+            } else {
+                return false;
+            }
+        }
 
+        $calendarEvent = $calDavBean->getVCalendarEvent();
+
+        $calendarComponent = $calDavBean->setComponent($calDavBean->getComponentTypeName());
+        foreach ($this->exportBeanDataMap as $functionName => $field) {
+            if ($calDavBean->$functionName($sugarBean->$field, $calendarComponent)) {
+                $isEventChanged = true;
+            }
+        }
+
+        if ($sugarBean->date_start) {
+            $dateStart = $dateTimeHelper->sugarDateToUTC($sugarBean->date_start)->format(\TimeDate::DB_DATETIME_FORMAT);
+        }
+        if (!$dateStart || $dateStart !== $calDavBean->getStartDate()) {
+            $calDavBean->setStartDate($dateStart, $calendarComponent);
+            $isEventChanged = true;
+        }
+
+        if ($sugarBean->date_end) {
+            $dateEnd = $dateTimeHelper->sugarDateToUTC($sugarBean->date_end)->format(\TimeDate::DB_DATETIME_FORMAT);
+        }
+        if (!$dateEnd || $dateEnd !== $calDavBean->getEndDate()) {
+            $calDavBean->setEndDate($dateEnd, $calendarComponent);
+            $isEventChanged = true;
+        }
+
+        if ($calDavBean->setDuration($sugarBean->duration_hours, $sugarBean->duration_minutes, $calendarComponent)) {
+            $isEventChanged = true;
+        }
+        if ($calDavBean->setOrganizer($calendarComponent)) {
+            $isEventChanged = true;
+        }
+        if ($this->setExportReminders($sugarBean, $calDavBean, $calendarComponent)) {
+            $isEventChanged = true;
+        }
+        if ($calDavBean->setParticipants($calendarComponent)) {
+            $isEventChanged = true;
+        }
+        if ($this->setRecurringRulesToCalDav($sugarBean, $calDavBean)) {
+            $isEventChanged = true;
+        }
+        $calDavBean->setCalendarEventData($calendarEvent->serialize());
+
+        return $isEventChanged;
     }
 
     /**
@@ -55,12 +119,17 @@ class Meetings implements AdapterInterface
      */
     public function import(\SugarBean $sugarBean, \CalDavEvent $calDavBean)
     {
+        if (!($sugarBean instanceof \Meeting)) {
+            throw new AdapterInvalidArgumentException('Bean must be an instance of SugarBean. Instance of '. get_class($sugarBean) .' given');
+        }
         $isBeanChanged = false;
         $oldAttributes = $this->getCurrentAttributes($sugarBean);
         /**@var \CalDavEvent $calDavBean */
-        $calDavBean = $this->getNotCachedCalDavEvent($calDavBean);
+        $calDavBean = $this->getNotCachedBean($calDavBean);
         /**@var \Meeting $sugarBean */
-        $this->setBeanProperties($sugarBean, $calDavBean, $this->importBeanDataMap);
+        if ($this->setBeanProperties($sugarBean, $calDavBean, $this->importBeanDataMap)) {
+            $isBeanChanged = true;
+        }
 
         $participants = $calDavBean->getParticipants();
 
@@ -91,16 +160,16 @@ class Meetings implements AdapterInterface
             }
         }
 
+        if (!$sugarBean->assigned_user_id && $sugarBean->assigned_user_id != $this->getCurrentUserId()) {
+            $sugarBean->assigned_user_id = $this->getCurrentUserId();
+            $isBeanChanged = true;
+        }
+
         $recurringRule = $calDavBean->getRRule();
         if ($recurringRule) {
             if ($this->setRecurring($recurringRule, $sugarBean, $calDavBean)) {
                 $isBeanChanged = true;
             }
-        }
-
-        if ($sugarBean->assigned_user_id != $this->getCurrentUserId()) {
-            $sugarBean->assigned_user_id = $this->getCurrentUserId();
-            $isBeanChanged = true;
         }
 
         if (!$isBeanChanged) {
@@ -168,7 +237,7 @@ class Meetings implements AdapterInterface
                 }
 
                 if ($event) {
-                    if ($this->setBeanProperties($event, $calDavBean, $this->importRecurringEventsDataMap)) {
+                    if ($this->setMappedBeanProperties($event, $calDavBean, $this->importRecurringEventsDataMap)) {
                         $isRecurringChanged = true;
                     }
                     if ($this->isRecurringRulesChangedForBean($event, $recurringRule)) {
@@ -190,6 +259,57 @@ class Meetings implements AdapterInterface
 
         } //if (!$calDavBean->parent_id)
         return $isRecurringChanged;
+    }
+
+    public function setRecurringRulesToCalDav(\Meeting $sugarBean, \CalDavEvent $calDavBean)
+    {
+        $dateTimeHelper = new DateTimeHelper();
+        $isChanged = false;
+        $recurringRule = $recurringRuleOriginal = $calDavBean->getRRule();
+        if ($recurringRule === null) {
+            $recurringRule = $recurringRuleOriginal = array();
+        }
+        if (!isset($recurringRuleOriginal['children'])) {
+            $recurringRuleOriginal['children'] = array();
+        }
+        if (!isset($recurringRule['type']) || $sugarBean->repeat_type != $recurringRule['type']) {
+            $recurringRule['type'] = $sugarBean->repeat_type;
+            $isChanged = true;
+        }
+        if (!isset($recurringRule['interval']) || $sugarBean->repeat_type != $recurringRule['interval']) {
+            $recurringRule['interval'] = $sugarBean->repeat_interval;
+            $isChanged = true;
+        }
+        if (!isset($recurringRule['count']) || $sugarBean->repeat_type != $recurringRule['count']) {
+            $recurringRule['count'] = $sugarBean->repeat_count;
+            $isChanged = true;
+        }
+        if (!isset($recurringRule['until']) || $sugarBean->repeat_until != $this->getUntilDate($recurringRule['until'])) {
+            $recurringRule['until'] = $dateTimeHelper->sugarDateToDav($sugarBean->repeat_until)->format(\TimeDate::DB_DATE_FORMAT);
+            $isChanged = true;
+        }
+        if (!isset($recurringRule['dow']) || $sugarBean->repeat_type != $recurringRule['dow']) {
+            $recurringRule['dow'] = $sugarBean->repeat_dow;
+            $isChanged = true;
+        }
+
+        $calendarEvents = new \CalendarEvents();
+        $childQuery = $calendarEvents->getChildrenQuery($sugarBean);
+        $childEvents = $sugarBean->fetchFromQuery($childQuery);
+        $recurringRule['children'] = array();
+        foreach ($childEvents as $event) {
+            $recurringRule['children'][$event->date_start] = $event;
+        }
+
+        if (!array_diff(array_keys($recurringRule['children']), array_keys($recurringRuleOriginal['children']))) {
+            $isChanged = true;
+        }
+        if (!isset($recurringRule['parent']) || $recurringRule['parent']->id != $sugarBean->id) {
+            $recurringRule['parent'] = $sugarBean;
+            $isChanged = true;
+        }
+        $calDavBean->setRRule($recurringRule);
+        return $isChanged;
     }
 
     /**
@@ -242,6 +362,39 @@ class Meetings implements AdapterInterface
      */
     protected function setBeanProperties($sugarBean, $sourceBean, $dataMap)
     {
+        $dateTimeHelper = new DateTimeHelper();
+        $dateStart = $dateEnd = '';
+        $isBeanChanged = false;
+        if ($this->setMappedBeanProperties($sugarBean, $sourceBean, $dataMap)) {
+            $isBeanChanged = true;
+        }
+
+        if ($sugarBean->date_start) {
+            $dateStart = $dateTimeHelper->sugarDateToUTC($sugarBean->date_start)->format(\TimeDate::DB_DATETIME_FORMAT);
+        }
+        if (!$dateStart || $dateStart !== $sourceBean->getStartDate()) {
+            $sugarBean->date_start = $sourceBean->getStartDate();
+            $isBeanChanged = true;
+        }
+
+        if ($sugarBean->date_end) {
+            $dateEnd = $dateTimeHelper->sugarDateToUTC($sugarBean->date_end)->format(\TimeDate::DB_DATETIME_FORMAT);
+        }
+        if (!$dateEnd || $dateEnd !== $sourceBean->getEndDate()) {
+            $sugarBean->date_end = $sourceBean->getEndDate();
+            $isBeanChanged = true;
+        }
+        return $isBeanChanged;
+    }
+
+    /**
+     * @param \SugarBean $sugarBean
+     * @param \SugarBean $sourceBean
+     * @param array $dataMap
+     * @return bool
+     */
+    protected function setMappedBeanProperties($sugarBean, $sourceBean, $dataMap)
+    {
         $isBeanChanged = false;
         foreach ($dataMap as $beanProperty => $calDavMethod) {
             if (method_exists($sourceBean, $calDavMethod)) {
@@ -293,6 +446,27 @@ class Meetings implements AdapterInterface
         return $isChanged;
     }
 
+    protected function setExportReminders($sugarBean, \CalDavEvent $calDavEvent, $sabreComponent)
+    {
+        $isReminderChange = false;
+        $calDavReminderValues = $calDavEvent->getReminders();
+        if ($sugarBean->reminder_checked === true
+            || (isset($calDavReminderValues['DISPLAY']) && $sugarBean->reminder_time != $calDavReminderValues['DISPLAY']['duration'])
+            ) {
+            $calDavEvent->setReminder($sugarBean->reminder_time, $sabreComponent, 'DISPLAY');
+            $isReminderChange = true;
+        }
+
+        if ($sugarBean->email_reminder_checked === true
+            || (isset($calDavReminderValues['EMAIL']) && $sugarBean->email_reminder_time != $calDavReminderValues['EMAIL']['duration'])
+            ) {
+            $calDavEvent->setReminder($sugarBean->email_reminder_time, $sabreComponent, 'EMAIL');
+            $isReminderChange = true;
+        }
+
+        return $isReminderChange;
+    }
+
     /**
      * Check if recurring rules was changed for bean
      * @param \SugarBean $sugarBean
@@ -307,7 +481,7 @@ class Meetings implements AdapterInterface
         if (isset($RecurringRule['interval']) && $sugarBean->repeat_interval != $RecurringRule['interval']) {
             return true;
         }
-        if (isset($RecurringRule['count']) && $sugarBean->repeat_count = $RecurringRule['count']) {
+        if (isset($RecurringRule['count']) && $sugarBean->repeat_count != $RecurringRule['count']) {
             return true;
         }
         if (isset($RecurringRule['until']) && $sugarBean->repeat_until != $this->getUntilDate($RecurringRule['until'])) {
@@ -321,11 +495,11 @@ class Meetings implements AdapterInterface
 
     /**
      * return bean without cache
-     * @param \CalDavEvent $calDavBean
+     * @param \SugarBean $calDavBean
      * @return null|\SugarBean
      */
 
-    protected function getNotCachedCalDavEvent(\CalDavEvent $calDavBean)
+    protected function getNotCachedBean(\SugarBean $calDavBean)
     {
         return $calDavBean = \BeanFactory::getBean($calDavBean->module_name, $calDavBean->id, array('use_cache' => false));
     }
@@ -382,8 +556,28 @@ class Meetings implements AdapterInterface
         return $reminderKeys;
     }
 
+    /**
+     * @return string
+     */
     protected function getCurrentUserId()
     {
         return $GLOBALS['current_user']->id;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getCurrentUserName()
+    {
+        return $GLOBALS['current_user']->user_name;
+    }
+
+    /**
+     * @return array|null
+     */
+    protected function getUserCalendars()
+    {
+        $userHelper = new UserHelper();
+        return $userHelper->getCalendars($this->getCurrentUserName());
     }
 }

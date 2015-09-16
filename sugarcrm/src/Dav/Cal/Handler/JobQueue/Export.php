@@ -26,11 +26,15 @@ use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException as JQInvalidAr
 class Export implements RunnableInterface
 {
     /**
-    * @param \SugarBean $sugarBean
-    */
-    public function __construct($sugarBean)
+     * @param string $moduleName
+     * @param string $beanId
+     * @param string $userId
+     */
+    public function __construct($moduleName, $beanId, $userId)
     {
-        $this->bean = $sugarBean;
+        $this->moduleName = $moduleName;
+        $this->beanId = $beanId;
+        $this->userId = $userId;
     }
 
     /**
@@ -41,16 +45,30 @@ class Export implements RunnableInterface
     */
     public function run()
     {
+        $currentUser = $this->getCurrentUser();
+        $GLOBALS['current_user'] = $this->getAssignedUser();
+
         $adapter = $this->getAdapterFactory();
-        if (!($this->bean instanceof \SugarBean)) {
-            throw new JQInvalidArgumentException('Bean must be an instance of SugarBean. Instance of '.get_class($this->bean).' given');
+        $bean = $this->getBean();
+        if (!($bean instanceof \SugarBean)) {
+            throw new JQInvalidArgumentException('Bean must be an instance of SugarBean. Instance of '. get_class($bean) .' given');
         }
-        if (!$adapter->getAdapter($this->bean->module_name)) {
-            throw new JQLogicException('Bean '.$this->bean->module_name.' does not have CalDav adapter');
+        if (!$adapter->getAdapter($bean->module_name)) {
+            throw new JQLogicException('Bean ' . $bean->module_name . ' does not have CalDav adapter');
         }
         $handler = $this->getHandler();
-        $handler->export($this->bean);
+        $handler->export($bean);
+        $GLOBALS['current_user'] = $currentUser;
         return \SchedulersJob::JOB_SUCCESS;
+    }
+
+    /**
+     * get bean for import process
+     * @return null|\SugarBean
+     */
+    protected function getBean()
+    {
+        return \BeanFactory::getBean($this->moduleName, $this->beanId);
     }
 
     /**
@@ -68,5 +86,22 @@ class Export implements RunnableInterface
     protected function getHandler()
     {
         return new CalDavHandler();
+    }
+
+    /**
+     * return user bean for assign user to bean
+     * @return \User
+     */
+    protected function getAssignedUser()
+    {
+        return \BeanFactory::getBean('Users', $this->userId);
+    }
+
+    /**
+     * @return \User
+     */
+    protected function getCurrentUser()
+    {
+        return $GLOBALS['current_user'];
     }
 }

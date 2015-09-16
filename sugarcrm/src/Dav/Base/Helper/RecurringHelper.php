@@ -170,6 +170,9 @@ class RecurringHelper
             }
 
             if (isset($currentRule['BYDAY'])) {
+                if (!is_array($currentRule['BYDAY'])) {
+                    $currentRule['BYDAY'] = array($currentRule['BYDAY']);
+                }
                 $result['type'] = 'Weekly';
                 $result['dow'] = implode('', array_intersect_key($this->dayMap, array_flip($currentRule['BYDAY'])));
             }

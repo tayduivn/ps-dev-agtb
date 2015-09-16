@@ -126,4 +126,19 @@ class DateTimeHelper
         }
         return $formattedDate;
     }
+
+    /**
+     * Create DateTime object with UTC timetone
+     * @param string $dateTime
+     * @return \DateTime
+     */
+    public function sugarDateToUTC($dateTime)
+    {
+        $userTimeZone = new \DateTimeZone($GLOBALS['current_user']->getPreference('timezone'));
+        $utcTimeZone = new \DateTimeZone('UTC');
+        $dt = new \DateTime($dateTime, $userTimeZone);
+        $dt->setTimeZone($utcTimeZone);
+
+        return $dt;
+    }
 }

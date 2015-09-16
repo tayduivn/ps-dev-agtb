@@ -13,6 +13,7 @@
 require_once 'tests/SugarTestCalDavUtilites.php';
 
 use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings as MeetingAdapater;
+use \Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper;
 
 /**
  * CalDav bean tests
@@ -201,6 +202,34 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(sort($participantsIDs), sort(array_intersect($meetingBean->users_arr, $participantsIDs)));
     }
 
+    /**
+     * @covers Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings::export
+     */
+    public function testExportMeeting()
+    {
+        $dateHelper = new DateTimeHelper();
+        $meetingAdapter = new MeetingAdapater();
+        /**@var Meeting $meetingBean*/
+        $meetingBean = SugarTestMeetingUtilities::createMeeting('', null, array(
+            'date_start' => '2015-08-06 10:00:00',
+            'date_end' => '2015-08-06 11:00:00',
+            'name' => 'Test meeting',
+            'description' => 'Test meeting description',
+            'duration_hours' => 1,
+            'duration_minutes' => 0
+        ));
+        /**@var \CalDavEvent $calDavEvent */
+        $calDavEvent = \BeanFactory::getBean('CalDavEvents');
+
+        $relatedCalDavBean = $calDavEvent->findByBean($meetingBean);
+        $calDavBean = $relatedCalDavBean !== null ? $relatedCalDavBean : $calDavEvent;
+        $meetingAdapter->export($meetingBean, $calDavBean);
+        $this->assertEquals($dateHelper->sugarDateToUTC($meetingBean->date_start)->format(\TimeDate::DB_DATETIME_FORMAT), $calDavBean->getStartDate());
+        $this->assertEquals($meetingBean->name, $calDavBean->getTitle());
+        $this->assertEquals($meetingBean->description, $calDavBean->getDescription());
+        $this->assertEquals($meetingBean->duration_hours, $calDavBean->getDurationHours());
+        $calDavBean->save();
+    }
 
     /**
      * Load template for event

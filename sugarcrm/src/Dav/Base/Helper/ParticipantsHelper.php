@@ -81,7 +81,7 @@ class ParticipantsHelper
                         'email' => $email,
                         'accept_status' => $status,
                         'cn' => $cn,
-                        'role' => $params['ROLE']->getValue(),
+                        'role' => isset($params['ROLE']) ? $params['ROLE']->getValue() : 'REQ-PARTICIPANT',
                     );
                 }
             }

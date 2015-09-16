@@ -90,19 +90,27 @@ class ExportTest extends \PHPUnit_Framework_TestCase
     protected function getExportHandlerMock($handlerMock, $bean, $checkAdapter = false)
     {
         $exportMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue\Export')
-            ->setConstructorArgs(array($bean))
-            ->setMethods(array('getAdapterFactory', 'getHandler'))
+            ->disableOriginalConstructor()
+            ->setMethods(array('getAdapterFactory', 'getHandler', 'getBean', 'getCurrentUser', 'getAssignedUser'))
             ->getMock();
 
         $adapterFactoryMock = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory')
             ->setMethods(array('getAdapter'))
             ->getMock();
+
         if (!$checkAdapter) {
             $adapterFactoryMock->method('getAdapter')->willReturn(true);
         }
 
+        $userMock = $this->getMockBuilder('\User')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $exportMock->method('getAdapterFactory')->willReturn($adapterFactoryMock);
         $exportMock->method('getHandler')->willReturn($handlerMock);
+        $exportMock->method('getBean')->willReturn($bean);
+        $exportMock->method('getCurrentUser')->willReturn($userMock);
+        $exportMock->method('getAssignedUser')->willReturn($userMock);
 
         return $exportMock;
     }
