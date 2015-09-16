@@ -16,30 +16,8 @@ if (!defined('sugarEntry')) {
 define('ENTRY_POINT_TYPE', 'api');
 require_once 'include/entryPoint.php';
 
-$authClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Base\\Auth\\SugarAuth');
-$principalClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Base\\Principal\\SugarPrincipal');
-$calendarClass = \SugarAutoLoader::customClass('\Sugarcrm\\Sugarcrm\\Dav\\Cal\\Backend\\CalendarData');
-
-$authBackend = new $authClass();
-$principalBackend = new $principalClass();
-$calendarBackend = new $calendarClass();
-
-$tree = array (
-    new Sabre\CalDAV\Principal\Collection($principalBackend),
-    new Sabre\CalDAV\CalendarRoot($principalBackend, $calendarBackend),
-);
-
-$server = new Sabre\DAV\Server($tree);
-$server->setBaseUri($server->getBaseUri());
-
-$authPlugin = new Sabre\DAV\Auth\Plugin($authBackend, 'SugarCRM DAV Server');
-$server->addPlugin($authPlugin);
-
-$aclPlugin = new Sabre\DAVACL\Plugin();
-$server->addPlugin($aclPlugin);
-
-$caldavPlugin = new Sabre\CalDAV\Plugin();
-$server->addPlugin($caldavPlugin);
+$serverHelper = new \Sugarcrm\Sugarcrm\Dav\Base\Helper\ServerHelper();
+$server = $serverHelper->setUp();
 
 //@todo Should be deleted in future. Using for browse server
 $browser = new Sabre\DAV\Browser\Plugin();

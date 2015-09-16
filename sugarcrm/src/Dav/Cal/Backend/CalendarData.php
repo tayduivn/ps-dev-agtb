@@ -18,9 +18,10 @@ use Sabre\CalDAV;
 
 use Sabre\CalDAV\Backend\AbstractBackend;
 use Sabre\VObject;
+use Sabre\CalDAV\Backend\SchedulingSupport;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper;
 
-class CalendarData extends AbstractBackend
+class CalendarData extends AbstractBackend implements SchedulingSupport
 {
     /**
      * Instance of UserHelper
@@ -101,6 +102,15 @@ class CalendarData extends AbstractBackend
     public function getEventsBean()
     {
         return \BeanFactory::getBean('CalDavEvents');
+    }
+
+    /**
+     * Get CalDavScheduling bean object
+     * @return null|\SugarBean
+     */
+    public function getSchedulingBean()
+    {
+        return \BeanFactory::getBean('CalDavSchedulings');
     }
 
     /**
@@ -229,8 +239,6 @@ class CalendarData extends AbstractBackend
         $event = $this->getEventsBean();
 
         if ($event && $event->setCalendarEventData($calendarData)) {
-
-
 
             $event->setCalendarEventURI($objectUri);
             $event->setCalendarId($calendarId);
@@ -391,5 +399,83 @@ class CalendarData extends AbstractBackend
         }
 
         return null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSchedulingObject($principalUri, $objectUri)
+    {
+        $userHelper = $this->getUserHelper();
+        $schedulingBean = $this->getSchedulingBean();
+        $user = $userHelper->getUserByPrincipalString($principalUri);
+        $result = array();
+
+        if (!$user) {
+            return $result;
+        }
+
+        $scheduling = $schedulingBean->getByUri($objectUri, $user->id);
+        if (!$scheduling) {
+            return null;
+        }
+
+        return $scheduling->toCalDavArray();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSchedulingObjects($principalUri)
+    {
+        $userHelper = $this->getUserHelper();
+        $schedulingBean = $this->getSchedulingBean();
+        $user = $userHelper->getUserByPrincipalString($principalUri);
+        $result = array();
+
+        if (!$user) {
+            return $result;
+        }
+
+        $schedulings = $schedulingBean->getByAssigned($user->id);
+        foreach ($schedulings as $scheduling) {
+            $result[] = $scheduling->toCalDavArray();
+        }
+
+        return $result;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function deleteSchedulingObject($principalUri, $objectUri)
+    {
+        $userHelper = $this->getUserHelper();
+        $schedulingBean = $this->getSchedulingBean();
+        $user = $userHelper->getUserByPrincipalString($principalUri);
+        $result = array();
+
+        if (!$user) {
+            return $result;
+        }
+        $scheduling = $schedulingBean->getByUri($objectUri, $user->id);
+
+        if ($scheduling) {
+            $scheduling->mark_deleted($scheduling->id);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function createSchedulingObject($principalUri, $objectUri, $objectData)
+    {
+        $userHelper = $this->getUserHelper();
+        $schedulingBean = $this->getSchedulingBean();
+
+        $user = $userHelper->getUserByPrincipalString($principalUri);
+        if ($user && $schedulingBean->setSchedulingEventData($user, $objectUri, $objectData)) {
+            $schedulingBean->save();
+        }
     }
 }

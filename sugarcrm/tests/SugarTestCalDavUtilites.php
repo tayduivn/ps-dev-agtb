@@ -17,6 +17,38 @@ class SugarTestCalDavUtilities
 {
     private static $_createdCalendars = array();
     private static $createdEvents = array();
+    private static $createdSchedulingObjects = array();
+
+    /**
+     * Create scheduling object
+     * @param User $user
+     * @param string $objectUri
+     * @param string $eventData
+     */
+    public static function createSchedulingObject(\User $user, $objectUri, $eventData)
+    {
+        $schedulingBean = BeanFactory::getBean('CalDavSchedulings');
+        $schedulingBean->assigned_user_id = $user->id;
+
+        $schedulingBean->setSchedulingEventData($user, $objectUri, $eventData);
+        $schedulingBean->save();
+        $schedulingBean->retrieve($schedulingBean->id);
+
+        self::$createdSchedulingObjects[] = $schedulingBean->id;
+
+        return $schedulingBean;
+    }
+
+    /**
+     * Delete all created schedulign objects
+     */
+    public static function deleteSchedulingObjects()
+    {
+        if (self::$createdSchedulingObjects) {
+            $GLOBALS['db']->query('DELETE FROM caldav_scheduling WHERE id IN (\'' .
+                implode("', '", self::$createdSchedulingObjects) . '\')');
+        }
+    }
 
     /**
      * Create CalDav calendar
@@ -29,6 +61,7 @@ class SugarTestCalDavUtilities
         $calendar = $calendarBean->createDefaultForUser($sugarUser);
         $calendar->retrieve($calendar->id);
         self::$_createdCalendars[] = $calendar->id;
+
         return $calendar->id;
     }
 

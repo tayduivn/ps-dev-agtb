@@ -160,7 +160,8 @@ class SugarPrincipal implements BackendInterface
      */
     public function findByUri($uri, $principalPrefix)
     {
-        if (substr($uri, 0, 7) !== 'mailto:') {
+        $uri = strtolower($uri);
+        if (strpos($uri, 'mailto:') !== 0) {
             return null;
         }
         $result = $this->searchPrincipals(

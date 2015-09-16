@@ -13,6 +13,7 @@
 use Sabre\DAV;
 use Sabre\CalDAV;
 use Sugarcrm\Sugarcrm\Dav\Base;
+use Sabre\VObject\Component as SabreComponent;
 
 /**
  * Class CalDavCalendar
@@ -201,8 +202,17 @@ class CalDavCalendar extends SugarBean
         $this->uri = translate('LBL_DAFAULT_CALDAV_URI');
         $this->name = translate('LBL_DAFAULT_CALDAV_NAME');
         $this->assigned_user_id = $user->id;
-        $this->timezone = $user->getPreference('timezone');
 
+        $vCalendarEvent = new SabreComponent\VCalendar();
+        $timezone = $vCalendarEvent->createComponent('VTIMEZONE');
+        $currentTimezone = $user->getPreference('timezone');
+        if (!$currentTimezone) {
+            $currentTimezone = date_default_timezone_get();
+        }
+        $timezone->TZID = $currentTimezone;
+        $vCalendarEvent->add($timezone);
+
+        $this->timezone = $vCalendarEvent->serialize();
         $this->save();
 
         return $this;

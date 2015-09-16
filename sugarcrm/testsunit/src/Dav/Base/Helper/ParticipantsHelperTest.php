@@ -125,6 +125,7 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                             'ROLE' => '',
                             'davLink' => null,
                             'X-SUGARUID' => '2a',
+                            'RSVP' => 'TRUE',
                         ),
                         'mailto:test1@test.com' => array(
                             'PARTSTAT' => 'DECLINED',
@@ -132,6 +133,7 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                             'ROLE' => '',
                             'davLink' => null,
                             'X-SUGARUID' => '3a',
+                            'RSVP' => 'TRUE',
                         ),
                     ),
                 ),
@@ -160,6 +162,7 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                             'ROLE' => '',
                             'davLink' => null,
                             'X-SUGARUID' => '2a',
+                            'RSVP' => 'TRUE',
                         ),
                         'mailto:test1@test.com' => array(
                             'PARTSTAT' => null,
@@ -167,6 +170,7 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                             'ROLE' => '',
                             'davLink' => null,
                             'X-SUGARUID' => '3a',
+                            'RSVP' => 'TRUE',
                         ),
                     ),
                 ),
@@ -245,6 +249,7 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                             'ROLE' => '',
                             'davLink' => null,
                             'X-SUGARUID' => '2a',
+                            'RSVP' => 'TRUE',
                         ),
                     ),
                     Dav\Base\Constants::PARTICIPIANT_MODIFIED => array(
@@ -254,6 +259,7 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                             'ROLE' => 'CHAIR',
                             'davLink' => 'mailto:test0@test.com',
                             'X-SUGARUID' => '1a',
+                            'RSVP' => 'TRUE',
                         ),
                         'mailto:test2@test.com' => array(
                             'PARTSTAT' => 'DECLINED',
@@ -261,6 +267,7 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                             'ROLE' => 'OPT-PARTICIPANT',
                             'davLink' => 'mailto:test1@test.com',
                             'X-SUGARUID' => '3a',
+                            'RSVP' => 'TRUE',
                         ),
                     ),
                     Dav\Base\Constants::PARTICIPIANT_ADDED => array(
@@ -270,6 +277,7 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                             'ROLE' => null,
                             'davLink' => null,
                             'X-SUGARUID' => '5a',
+                            'RSVP' => 'TRUE',
                         ),
                     ),
                 ),

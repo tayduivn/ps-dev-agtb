@@ -177,6 +177,11 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
     protected $statusMapper;
 
     /**
+     * @var Sugarcrm\Sugarcrm\Dav\Base\Helper\ServerHelper
+     */
+    protected $serverHelper;
+
+    /**
      * {@inheritDoc}
      */
     public function setBeanSyncCounter()
@@ -360,6 +365,15 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
     }
 
     /**
+     * Set calendar event object
+     * @param SabreComponent\VCalendar $vEvent
+     */
+    public function setVCalendarEvent(SabreComponent\VCalendar $vEvent)
+    {
+        $this->vCalendarEvent = $vEvent;
+    }
+
+    /**
      * Gets string property from event
      * @param string $propertyName
      * @return null|string
@@ -509,6 +523,7 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
         $this->recurringHelper = new DavHelper\RecurringHelper();
         $this->participantsHelper = new DavHelper\ParticipantsHelper();
         $this->statusMapper = new DavStatusMapper\EventMap();
+        $this->serverHelper = new DavHelper\ServerHelper();
         parent::__construct();
     }
 
@@ -536,11 +551,21 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
             return false;
         }
 
+        $vObject = VObject\Reader::read($data);
+
+        if ($vObject->{'X-PARENT-UID'}) {
+            $this->parent_type = $this->module_name;
+        }
+
         $this->calendardata = $data;
 
         $this->calculateTimeBoundaries($data);
         $this->calculateSize($data);
         $this->calculateETag($data);
+
+        if (empty($this->uri) && !empty($this->event_uid)) {
+            $this->uri = $this->event_uid . '.ics';
+        }
 
         return true;
     }
@@ -1157,9 +1182,39 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
             return $currentComponent;
         } else {
             $component = $event->createComponent($componentType);
-
+            $uid = $event->createProperty('UID', 'sugar-' . create_guid());
+            $component->add($uid);
             return $event->add($component);
         }
+    }
+
+    /**
+     * Handler for the 'schedule' event.
+     * This method should be called from adapter if any participant was changed.
+     * This method should be called before saving caldav event
+     *
+     * This handler attempts to look at local accounts to deliver the
+     * scheduling object from sugar to caldav.
+     * @return void
+     */
+    public function scheduleLocalDelivery()
+    {
+        $currentUser = $this->getCurrentUser();
+        $server = $this->serverHelper->setUp();
+
+        if (!$server || !$currentUser) {
+            return;
+        }
+
+        $calendarUri = DavConstants::DEFAULT_CALENDAR_URI;
+
+        $schedulePlugin = $server->getPlugin('caldav-schedule');
+        $caldavPlugin = $server->getPlugin('caldav');
+
+        $calendarPath =
+            $caldavPlugin::CALENDAR_ROOT . '/' . $currentUser->user_name . '/' . $calendarUri;
+
+        $schedulePlugin->calendarObjectSugarChange($this->getVCalendarEvent(), $calendarPath, $this->calendardata);
     }
 
     /**
