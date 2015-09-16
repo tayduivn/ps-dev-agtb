@@ -97,7 +97,7 @@
             useSugarEmailClient: function() {
                 var emailClientPreference = app.user.getPreference('email_client_preference');
 
-                return (emailClientPreference && emailClientPreference.type === 'sugar');
+                return (emailClientPreference && emailClientPreference.type === 'sugar' && app.acl.hasAccess('edit', 'Emails'));
             },
 
             /**
