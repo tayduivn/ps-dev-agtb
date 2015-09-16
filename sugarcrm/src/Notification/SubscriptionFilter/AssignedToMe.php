@@ -66,10 +66,12 @@ class AssignedToMe extends Bean implements SubscriptionFilterInterface
      */
     public function supports(EventInterface $event)
     {
+        if (!parent::supports($event)) {
+            return false;
+        }
         $objectName = $event->getBean()->object_name;
-        return parent::supports($event)
-            && array_key_exists('templates', $GLOBALS['dictionary'][$objectName])
-            && is_array($GLOBALS['dictionary'][$objectName]['templates'])
-            && in_array('assignable', $GLOBALS['dictionary'][$objectName]['templates']);
+        return array_key_exists('templates', $GLOBALS['dictionary'][$objectName])
+        && is_array($GLOBALS['dictionary'][$objectName]['templates'])
+        && in_array('assignable', $GLOBALS['dictionary'][$objectName]['templates']);
     }
 }

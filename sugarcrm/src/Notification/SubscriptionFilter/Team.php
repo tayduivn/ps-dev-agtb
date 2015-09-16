@@ -68,10 +68,12 @@ class Team extends Bean implements SubscriptionFilterInterface
      */
     public function supports(EventInterface $event)
     {
+        if (!parent::supports($event)) {
+            return false;
+        }
         $objectName = $event->getBean()->object_name;
-        return parent::supports($event)
-            && array_key_exists('templates', $GLOBALS['dictionary'][$objectName])
-            && is_array($GLOBALS['dictionary'][$objectName]['templates'])
-            && in_array('team_security', $GLOBALS['dictionary'][$objectName]['templates']);
+        return array_key_exists('templates', $GLOBALS['dictionary'][$objectName])
+        && is_array($GLOBALS['dictionary'][$objectName]['templates'])
+        && in_array('team_security', $GLOBALS['dictionary'][$objectName]['templates']);
     }
 }

@@ -78,16 +78,11 @@ $dictionary['NotificationCenterSubscription'] = array(
         ),
     ),
     'indices' => array(
-        array(
-            'name' => 'idx_notif_subscr',
-            'type' => 'unique',
+        'idx_user_id' => array(
+            'name' => 'idx_user_id',
+            'type' => 'index',
             'fields' => array(
                 'user_id',
-                'type',
-                'emitter_module_name',
-                'event_name',
-                'relation_name',
-                'carrier_name'
             )
         ),
     ),
@@ -100,6 +95,3 @@ $dictionary['NotificationCenterSubscription'] = array(
 
 require_once 'include/SugarObjects/VardefManager.php';
 VardefManager::createVardef('NotificationCenterSubscriptions', 'NotificationCenterSubscription', array('basic'));
-
-unset($dictionary['NotificationCenterSubscription']['fields']['name']);
-unset($dictionary['NotificationCenterSubscription']['fields']['description']);
