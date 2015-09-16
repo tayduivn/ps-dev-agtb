@@ -60,14 +60,6 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory', $manager);
     }
 
-    public function testGetCurrentUserId()
-    {
-        \SugarTestHelper::setUp('current_user');
-        $handlerObject = new LogicHookHandler();
-        $idUser = TestReflection::callProtectedMethod($handlerObject, 'getCurrentUserId');
-        $this->assertEquals($GLOBALS['current_user']->id, $idUser);
-    }
-
     /**
      * @param $managerMock
      * @return \PHPUnit_Framework_MockObject_MockObject
@@ -76,7 +68,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
     {
         $handler = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler')
             ->disableOriginalConstructor()
-            ->setMethods(array('getManager','getAdapterFactory'))
+            ->setMethods(array('getManager','getAdapterFactory', 'getCurrentUserId'))
             ->getMock();
 
         $adapterFactoryMock = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory')
@@ -84,9 +76,9 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $adapterFactoryMock->method('getAdapter')->willReturn(true);
 
-
         $handler->method('getManager')->willReturn($managerMock);
         $handler->method('getAdapterFactory')->willReturn($adapterFactoryMock);
+        $handler->method('getCurrentUserId')->willReturn(3);
         return $handler;
     }
 

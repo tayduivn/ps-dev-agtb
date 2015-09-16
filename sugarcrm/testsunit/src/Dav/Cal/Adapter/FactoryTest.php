@@ -33,12 +33,25 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterInterface', $adapter);
     }
 
+    /**
+     * @covers Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory::getSupportedModules
+     */
     public function testGetSupportedModules()
     {
-        $adapters = Factory::getInstance()->getSupportedModules();
-        $this->assertEquals(sort($this->getExistsAdapters()), sort($adapters));
+        $existsAdpaters = array('Meetings', 'Calls');
+        $factoryMock =  $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getModulesList'))
+            ->getMock();
+        $factoryMock->method('getModulesList')->willReturn($existsAdpaters);
+
+        $adapters = $factoryMock->getSupportedModules();
+        $this->assertEquals(sort($existsAdpaters), sort($adapters));
     }
 
+    /**
+     * @return array
+     */
     public function getExistsAdapters()
     {
         return array(
