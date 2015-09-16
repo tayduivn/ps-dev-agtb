@@ -80,11 +80,25 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->addCreatedMeetingId($meetingBean);
 
         $meetingUsersList  = $meetingBean->get_meeting_users();
+        $usersUniqueEmails = array();
+        foreach ($meetingUsersList as $user) {
+            $userPrimaryEmail = null;
+            $result = $user->getUsersNameAndEmail();
+            if (!empty($result['email'])) {
+                $userPrimaryEmail = $result['email'];
+            }
 
-        $this->assertCount(count($parcipiantsUser), $meetingUsersList);
+            if ($userPrimaryEmail && !in_array($userPrimaryEmail, $usersUniqueEmails)) {
+                $usersUniqueEmails[] = $userPrimaryEmail;
+            }
+        }
+
+        $this->assertCount(count($parcipiantsUser), $usersUniqueEmails);
 
         foreach ($meetingUsersList as $meetingUsers) {
-            $this->assertEquals($parcipiantsUser[$meetingUsers->id]['accept_status'], $meetingUsers->accept_status);
+            if (isset($parcipiantsUserEmail[$meetingUsers->id])) {
+                $this->assertEquals($parcipiantsUserEmail[$meetingUsers->id]['accept_status'], $meetingUsers->accept_status);
+            }
         }
 
         $this->assertEquals(strtotime($calDavBean->getStartDate()), strtotime($meetingBean->date_start));
@@ -140,9 +154,10 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         //check participients status
         $meetingUsersList  = $meetingBean->get_meeting_users();
         foreach ($meetingUsersList as $meetingUsers) {
-            $this->assertEquals($parcipiantsUser[$meetingUsers->id]['accept_status'], $meetingUsers->accept_status);
+            if (isset($parcipiantsUser[$meetingUsers->id])) {
+                $this->assertEquals($parcipiantsUser[$meetingUsers->id]['accept_status'], $meetingUsers->accept_status);
+            }
         }
-
     }
 
     /**
@@ -197,6 +212,10 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         return file_get_contents(dirname(__FILE__).'/../EventTemplates/'.$templateName.'.ics');
     }
 
+    /**
+     * Add bean id to log
+     * @param $meeting
+     */
     private function addCreatedMeetingId($meeting)
     {
         if (!in_array($meeting->id, $this->meetingIds)) {
@@ -204,6 +223,9 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * Create anonumouse users for test
+     */
     private function createAnonumouseUsers()
     {
         $idUser1 = create_guid();
