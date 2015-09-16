@@ -191,9 +191,7 @@ class OracleManager extends DBManager
 			$exec_result = $suppress?@oci_execute($stmt):oci_execute($stmt);
 	        $this->query_time = microtime(true) - $this->query_time;
 	        $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
-		    if($this->dump_slow_queries($sql)) {
-			    $this->track_slow_queries($sql);
-			}
+		    $this->dump_slow_queries($sql);
 			if($exec_result) {
 			    $result = $stmt;
 			}
