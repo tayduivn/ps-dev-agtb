@@ -76,19 +76,6 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings::getReminderTimeValues
-     */
-    public function testGetReminderTimeValues()
-    {
-        $expectedValues = array(
-            -1, 60, 300, 600, 900, 1800, 3600, 7200, 10800, 18000, 86400
-        );
-        $meetingAdapter = new MeetingAdapter;
-        $actualData = TestReflection::callProtectedMethod($meetingAdapter, 'getReminderTimeValues');
-        $this->assertEquals(sort($expectedValues), sort($actualData));
-    }
-
-    /**
      * return data for testArrayIndex fucntion
      * @return array
      */
@@ -127,9 +114,10 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
     {
         $adapterMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings')
             ->disableOriginalConstructor()
-            ->setMethods(array('getNotCachedCalDavEvent'))
+            ->setMethods(array('getNotCachedCalDavEvent', 'getCurrentUserId'))
             ->getMock();
         $adapterMock->method('getNotCachedCalDavEvent')->willReturn($bean);
+        $adapterMock->method('getCurrentUserId')->willReturn(0);
 
         return $adapterMock;
     }
@@ -151,7 +139,7 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
      */
     protected function getCalDavBeanMock()
     {
-        $calDavFunctions = array_merge(array_keys($this->calDavBeanProperties), array('getRRule'));
+        $calDavFunctions = array_merge(array_keys($this->calDavBeanProperties), array('getRRule', 'getParticipants', 'getReminders'));
         $beanMock = $this->getMockBuilder('\CalDavEvent')
             ->disableOriginalConstructor()
             ->setMethods($calDavFunctions)
@@ -160,6 +148,9 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
             $beanMock->method($methodName)->willReturn($returnedValue);
         }
         $beanMock->method('getRRule')->willReturn(array());
+        $beanMock->method('getParticipants')->willReturn(false);
+        $beanMock->method('getReminders')->willReturn(false);
+
         return $beanMock;
     }
 }

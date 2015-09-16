@@ -46,7 +46,8 @@ class Factory
     public function getSupportedModules()
     {
         $modules = array();
-        foreach ($GLOBALS['moduleList'] as $moduleName) {
+        $modulesList = $this->getModulesList();
+        foreach ($modulesList as $moduleName) {
             if ($this->getAdapter($moduleName)) {
                 $modules[] = $moduleName;
             }
@@ -84,4 +85,10 @@ class Factory
         $class = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Cal\\Adapter\\Factory');
         return new $class();
     }
+
+    protected function getModulesList()
+    {
+        return $GLOBALS['moduleList'];
+    }
+
 }
