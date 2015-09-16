@@ -104,7 +104,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     protected function createResultSet(ResultSet $resultSet)
     {
-        return new SugarSeachEngineElasticResultSet($resultSet->getResultSet());
+        $res = new SugarSeachEngineElasticResultSet($resultSet->getResultSet());
+        $res->setHighlighter($resultSet->getHighlighter());
+        return $res;
     }
 
     /**
