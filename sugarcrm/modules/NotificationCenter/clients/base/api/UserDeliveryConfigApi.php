@@ -11,34 +11,33 @@
  */
 
 use Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry;
-use Sugarcrm\Sugarcrm\Notification\EmitterRegistry;
 
 require_once('include/api/SugarApi.php');
 
 /**
  * API work with Subscription Registry get/put configuration.
  *
- * Class GlobalDeliveryConfigApi
+ * Class UserDeliveryConfigApi
  */
-class GlobalDeliveryConfigApi extends SugarApi
+class UserDeliveryConfigApi extends SugarApi
 {
     public function registerApiRest()
     {
         return array(
             'getConfig' => array(
                 'reqType' => 'GET',
-                'path' => array('NotificationCenter', 'global-delivery-config'),
+                'path' => array('NotificationCenter', 'delivery-config'),
                 'pathVars' => array(),
                 'method' => 'getConfig',
-                'shortHelp' => 'Return configuration of subscriptions.',
+                'shortHelp' => 'Return configuration of subscriptions for the user.',
                 'longHelp' => '',
             ),
             'putConfig' => array(
                 'reqType' => 'PUT',
-                'path' => array('NotificationCenter', 'global-delivery-config'),
+                'path' => array('NotificationCenter', 'delivery-config'),
                 'pathVars' => array(),
                 'method' => 'putConfig',
-                'shortHelp' => 'Save configuration of subscriptions.',
+                'shortHelp' => 'Save configuration of subscriptions for the user.',
                 'longHelp' => '',
             ),
         );
@@ -53,7 +52,7 @@ class GlobalDeliveryConfigApi extends SugarApi
     public function getConfig(ServiceBase $api, array $args)
     {
         $registry = $this->getSubscriptionsRegistry();
-        $res = $registry->getGlobalConfiguration();
+        $res = $registry->getUserConfiguration($api->user->id);
         return $res;
     }
 
@@ -67,8 +66,8 @@ class GlobalDeliveryConfigApi extends SugarApi
     {
         $this->requireArgs($args, array('config'));
         $registry = $this->getSubscriptionsRegistry();
-        $registry->setGlobalConfiguration($args['config']);
-        $res = $registry->getGlobalConfiguration();
+        $registry->setUserConfiguration($api->user->id, $args['config']);
+        $res = $registry->getUserConfiguration($api->user->id);
         return $res;
     }
 
