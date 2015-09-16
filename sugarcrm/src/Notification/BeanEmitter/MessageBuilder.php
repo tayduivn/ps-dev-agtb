@@ -48,7 +48,6 @@ class MessageBuilder implements MessageBuilderInterface
         if (array_key_exists('html', $messageSignature)) {
             $message['html'] = $this->generateHtml($module, $bean);
         }
-
         return $message;
     }
 
