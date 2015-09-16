@@ -46,7 +46,7 @@ class SugarUpgradePortalSettings extends UpgradeScript
         $fieldKey = 'logLevel';
         $fieldValue = 'ERROR';
         $admin = new Administration();
-        if (!$admin->saveSetting('portal', $fieldKey, json_encode($fieldValue), 'support')) {
+        if (!$admin->saveSetting('portal', $fieldKey, $fieldValue, 'support')) {
             $error = sprintf($this->mod_strings['ERROR_UW_PORTAL_CONFIG_DB'], 'portal', $fieldKey, $fieldValue);
             return $this->fail($error);
         }
@@ -86,7 +86,7 @@ class SugarUpgradePortalSettings extends UpgradeScript
             array_unshift($portalConfig['displayModules'], 'Home');
         }
 
-        if ($admin->saveSetting('MySettings', 'tab', json_encode($portalConfig['displayModules']), 'portal')) {
+        if ($admin->saveSetting('MySettings', 'tab', $portalConfig['displayModules'], 'portal')) {
             // Remove old config setting `displayModules`
             $query = "DELETE FROM config WHERE category='portal' AND platform='support' AND name='displayModules'";
             $this->db->query($query);
