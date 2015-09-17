@@ -73,6 +73,7 @@
         // example: ctx.trigger('subpanel:reload', {links: ['opportunities','revenuelineitems']});
         if (this.context.parent) {
             this.context.parent.on('subpanel:reload', function(args) {
+                app.logger.warn('`panel-top:refresh` is deprecated. Use `context.reloadData()` to reload and expand.');
                 if (!_.isUndefined(args) && _.isArray(args.links) && _.contains(args.links, this.context.get('link'))) {
                     this.context.reloadData({recursive: false});
                 }

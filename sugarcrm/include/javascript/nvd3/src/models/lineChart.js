@@ -55,14 +55,13 @@ nv.models.lineChart = function() {
            '<p>' + y + ' on ' + x + '</p>';
   };
 
-  var showTooltip = function(e, offsetElement) {
-    var left = e.pos[0],
-        top = e.pos[1],
-        x = xAxis.tickFormat()(lines.x()(e.point, e.pointIndex)),
-        y = yAxis.tickFormat()(lines.y()(e.point, e.pointIndex)),
-        content = tooltipContent(e.series.key, x, y, e, chart);
+  var showTooltip = function(eo, offsetElement) {
+    var key = eo.series.key,
+        x = xAxis.tickFormat()(lines.x()(eo.point, eo.pointIndex)),
+        y = yAxis.tickFormat()(lines.y()(eo.point, eo.pointIndex)),
+        content = tooltipContent(key, x, y, eo, chart);
 
-    tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
+    tooltip = nv.tooltip.show(eo.e, content, null, null, offsetElement);
   };
 
   //============================================================
@@ -498,9 +497,9 @@ nv.models.lineChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(eo) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
-          nv.tooltip.position(that.parentNode, tooltip, eo.pos, 's');
+          nv.tooltip.position(that.parentNode, tooltip, e, 's');
         }
       });
 
@@ -554,8 +553,8 @@ nv.models.lineChart = function() {
     dispatch.tooltipShow(eo);
   });
 
-  lines.dispatch.on('elementMousemove.tooltip', function(eo) {
-    dispatch.tooltipMove(eo);
+  lines.dispatch.on('elementMousemove.tooltip', function(e) {
+    dispatch.tooltipMove(e);
   });
 
   lines.dispatch.on('elementMouseout.tooltip', function() {

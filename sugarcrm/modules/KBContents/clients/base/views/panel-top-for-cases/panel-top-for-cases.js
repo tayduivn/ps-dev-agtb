@@ -17,11 +17,19 @@
 
 ({
     extendsFrom: 'PanelTopView',
-
+    plugins: ['KBContent'],
     /**
      * {@inheritDoc}
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-    }
+    },
+    /**
+     * Event handler for the create button.
+     *
+     * @param {Event} event The click event.
+     */
+    createRelatedClicked: function(event) {
+        this.createArticleSubpanel();
+    },
 })

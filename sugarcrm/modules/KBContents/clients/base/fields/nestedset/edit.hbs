@@ -21,21 +21,31 @@
     </div>
     {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
     <ul data-menu="dropdown" class="dropdown-menu" role="menu">
-    <li class="st">
-        <div class="input-append">
-            <input type="text" data-role="secondinput"/>
-            <span class="add-on fa" data-role="secondinputaddon">&nbsp;</span>
-        </div>
-    </li>
-    <li class="tree">
-        <div class="list" data-place="tree">
-        </div>
-    </li>
-     <li class="st">
-        <div data-place="bottom">
-            <div class="span4" data-action="create-label-cover">{{{str "LBL_CREATE_CATEGORY"}}}</div>
-            <div class="offset4 fa fa-expand pull-right" data-action="full-screen">&nbsp;</div>
-        </div>
-    </li>
+        <li class="st">
+            <div class="input-append">
+                <input type="text" data-role="secondinput"/>
+                <span class="add-on fa" data-role="secondinputaddon"></span>
+            </div>
+        </li>
+        <li class="tree">
+            <div class="list" data-place="tree">
+            </div>
+        </li>
+         <li class="st">
+            <div class="row-fluid" data-place="bottom-options">
+                <div class="span10" data-action="create-label-cover">{{{str "LBL_CREATE_CATEGORY"}}}</div>
+                <div class="span2">
+                    <button class="btn btn-invisible pull-right" data-action="full-screen"><i class="fa fa-expand"></i></button>
+                </div>
+            </div>
+            <div class="row-fluid hide" data-place="bottom-create">
+                <div class="span2">
+                    <button class="btn btn-invisible pull-left" data-role="pseudo"><i class="fa fa-folder-open"></i></button>
+                </div>
+                <div class="span10">
+                    <input data-role="add-item" type="text" placeholder="{{str 'LBL_CREATE_CATEGORY_PLACEHOLDER' this.module}}"/>
+                </div>
+            </div>
+        </li>
     </ul>
 <div>

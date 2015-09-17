@@ -59,19 +59,18 @@ nv.models.multiBarChart = function() {
            '<p>' + y + ' on ' + x + '</p>';
   };
 
-  var showTooltip = function(e, offsetElement, groupTotals) {
-    var left = e.pos[0],
-        top = e.pos[1],
+  var showTooltip = function(eo, offsetElement, groupTotals) {
+    var key = eo.series.key,
         x = (groupTotals) ?
-              (e.point.y * 100 / groupTotals[e.pointIndex].t).toFixed(1) :
-              xAxis.tickFormat()(multibar.x()(e.point, e.pointIndex)),
-        y = yAxis.tickFormat()(multibar.y()(e.point, e.pointIndex)),
-        content = tooltipContent(e.series.key, x, y, e, chart),
-        gravity = e.value < 0 ?
+              (eo.point.y * 100 / groupTotals[eo.pointIndex].t).toFixed(1) :
+              xAxis.tickFormat()(multibar.x()(eo.point, eo.pointIndex)),
+        y = yAxis.tickFormat()(multibar.y()(eo.point, eo.pointIndex)),
+        content = tooltipContent(key, x, y, eo, chart),
+        gravity = eo.value < 0 ?
           vertical ? 'n' : 'e' :
           vertical ? 's' : 'w';
 
-    tooltip = nv.tooltip.show([left, top], content, gravity, null, offsetElement);
+    tooltip = nv.tooltip.show(eo.e, content, gravity, null, offsetElement);
   };
 
   var seriesClick = function(data, e, chart) {
@@ -699,9 +698,9 @@ nv.models.multiBarChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(eo) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
-          nv.tooltip.position(that.parentNode, tooltip, eo.pos, vertical ? 's' : 'w');
+          nv.tooltip.position(that.parentNode, tooltip, e, vertical ? 's' : 'w');
         }
       });
 
@@ -755,8 +754,8 @@ nv.models.multiBarChart = function() {
     dispatch.tooltipShow(eo);
   });
 
-  multibar.dispatch.on('elementMousemove.tooltip', function(eo) {
-    dispatch.tooltipMove(eo);
+  multibar.dispatch.on('elementMousemove.tooltip', function(e) {
+    dispatch.tooltipMove(e);
   });
 
   multibar.dispatch.on('elementMouseout.tooltip', function() {

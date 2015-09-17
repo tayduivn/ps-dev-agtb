@@ -17,6 +17,7 @@
     extendsFrom: 'RelateField',
     fieldTag: 'input.select2[name=parent_name]',
     typeFieldTag: 'select.select2[name=parent_type]',
+    plugins: ['FieldDuplicate'],
 
     _render: function() {
         var result, self = this;
@@ -61,7 +62,7 @@
         } else if(this.tplName === 'disabled'){
             this.$(this.typeFieldTag).select2('disable');
         }
-        return result;
+        return this;
     },
     _getRelateId: function() {
         return this.model.get("parent_id");
@@ -186,6 +187,19 @@
                     this.$(this.typeFieldTag).select2('val', this.model.get('parent_type'));
                 }
             }, this);
+        }
+    },
+
+    /**
+     * Handler to refresh search collection when merging duplicates.
+     *
+     * Called from {@link app.plugins.FieldDuplicate#_onFieldDuplicate}
+     */
+    onFieldDuplicate: function() {
+        if (_.isUndefined(this.searchCollection) ||
+            this.searchCollection.module !== this.getSearchModule()
+        ) {
+            this._createSearchCollection();
         }
     }
 })

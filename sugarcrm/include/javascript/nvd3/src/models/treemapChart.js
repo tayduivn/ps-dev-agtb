@@ -41,11 +41,9 @@ nv.models.treemapChart = function() {
   // Private Variables
   //------------------------------------------------------------
 
-  var showTooltip = function(e, offsetElement) {
-    var left = e.pos[0],// + ( (offsetElement && offsetElement.offsetLeft) || 0 ),
-        top = e.pos[1],// + ( (offsetElement && offsetElement.offsetTop) || 0 ),
-        content = tooltipContent(e.point);
-    tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
+  var showTooltip = function(eo, offsetElement) {
+    var content = tooltipContent(eo.point);
+    tooltip = nv.tooltip.show(eo.e, content, null, null, offsetElement);
   };
 
   //============================================================
@@ -221,9 +219,9 @@ nv.models.treemapChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(eo) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
-          nv.tooltip.position(that.parentNode, tooltip, eo.pos);
+          nv.tooltip.position(that.parentNode, tooltip, e);
         }
       });
 
@@ -259,12 +257,11 @@ nv.models.treemapChart = function() {
   //------------------------------------------------------------
 
   treemap.dispatch.on('elementMouseover', function(eo) {
-    eo.pos = [eo.pos[0] + margin.left, eo.pos[1] + margin.top];
     dispatch.tooltipShow(eo);
   });
 
-  treemap.dispatch.on('elementMousemove', function(eo) {
-    dispatch.tooltipMove(eo);
+  treemap.dispatch.on('elementMousemove', function(e) {
+    dispatch.tooltipMove(e);
   });
 
   treemap.dispatch.on('elementMouseout', function() {
