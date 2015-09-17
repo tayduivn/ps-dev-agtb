@@ -259,6 +259,32 @@ class BeanFactory {
         return $objectList[$module];
     }
 
+    /**
+     * Returns the corresponding module name of the bean, given the object name of the bean or the bean.
+     * @static
+     * @param  string|SugarBean $objectNameOrBean the object name of SugarBean or the object of SugarBean
+     * @return false|string
+     */
+    public static function getModuleName($objectNameOrBean)
+    {
+        if (is_string($objectNameOrBean)) {
+            $objectName = $objectNameOrBean;
+        } else if ($objectNameOrBean instanceof \SugarBean) {
+            $objectName = $objectNameOrBean->object_name;
+        } else {
+            return false;
+        }
+
+        global $objectList;
+        global $beanList;
+
+        // Note that In $objectList, both key 'Groups' and 'Users' are mapped to the value 'User'.
+        // According to array_flip() definition, if a value has several occurrences, the latest key
+        // will be used as its value, and all others will be lost. So here the last key is 'Users'
+        // and it will be used, which is what we desire. Also added unit tests to verify this.
+        $list = array_flip($objectList + $beanList);
+        return isset($list[$objectName]) ? $list[$objectName] : false;
+    }
 
     /**
      * @static
