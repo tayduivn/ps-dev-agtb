@@ -104,11 +104,7 @@ class LeadConvertTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('getVarDefs')
             ->will($this->returnValue($this->modulesDef));
 
-        try {
-            $leadConvert->initialize($this->leadId);
-        } catch (Exception $e) {
-            $this->fail('Initialization Exception : ' . $e->getMessage());
-        }
+        $leadConvert->initialize($this->leadId);
 
         $lead = $leadConvert->getLead();
         $this->assertEquals($this->leadId, $lead->id);
