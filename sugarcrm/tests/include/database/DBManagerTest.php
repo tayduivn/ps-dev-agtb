@@ -3555,4 +3555,16 @@ SQL;
         $usql = $this->_db->updateSQL($acc);
         $this->assertContains($testString, $usql);
     }
+
+    public function testLimitSubQuery()
+    {
+        if (!$this->_db->supports('limit_subquery')) {
+            $this->markTestSkipped('Backend does not support LIMIT clauses in subqueries');
+        }
+
+        $subQuery = $this->_db->limitQuery('SELECT id FROM users WHERE 1=1 ORDER BY id', 0, 1, false, '', false);
+        $query = 'SELECT id FROM users WHERE id IN (' . $subQuery . ')';
+        $row = $this->_db->fetchOne($query);
+        $this->assertInternalType('array', $row);
+    }
 }
