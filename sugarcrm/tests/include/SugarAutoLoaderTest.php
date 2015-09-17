@@ -323,4 +323,71 @@ class SugarAutoLoaderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->asserTrue(SugarAutoLoader::fileExists("custom/testdir/testdir2/testfile.php"), "test file not in cache");
 
     }
+
+    /**
+     * @dataProvider providerPaths
+     */
+    public function testNormalizeFilePath($baseDir, $fileName, $ds, $expected)
+    {
+        $baseDirsOriginal = SugarAutoLoaderMock::getBaseDirs();
+        SugarAutoLoaderMock::setDs($ds);
+
+        SugarAutoLoaderMock::setBaseDirs(array($baseDir));
+        $path = SugarAutoLoaderMock::normalizeFilePath($fileName);
+
+        // Should convert absolute path to relative
+        $this->assertEquals($expected, $path);
+
+        SugarAutoLoaderMock::setBaseDirs($baseDirsOriginal);
+        SugarAutoLoaderMock::setDs(DIRECTORY_SEPARATOR);
+    }
+
+    public function providerPaths()
+    {
+        return array(
+            // Windows network path
+            array(
+                // All slashes are converted to forward slashes, due to entryPoint.php
+                "//VMSTACK127/WWWROOT/SugarPro-Full-7.6.1.0",
+                "\\\\VMSTACK127\\WWWROOT\\SugarPro-Full-7.6.1.0/include",
+                "\\",
+                "include"
+            ),
+            // Windows local path
+            array(
+                "C:/inetpub/wwwroot/SugarPro-Full-7.6.1.0",
+                "C:\\inetpub\\wwwroot/SugarPro-Full-7.6.1.0/include",
+                "\\",
+                "include"
+            ),
+            // Linux/UNIX path
+            array(
+                "/Users/boro/dev/www/sugar1.com",
+                "/Users/boro/dev/www/sugar1.com/include",
+                "/",
+                "include"
+            )
+        );
+    }
+}
+
+/**
+ * Mock class for SugarAutoLoader
+ */
+class SugarAutoLoaderMock extends SugarAutoLoader
+{
+    public static function getBaseDirs()
+    {
+        return self::$baseDirs;
+    }
+
+    public static function setBaseDirs($value)
+    {
+        self::$baseDirs = $value;
+    }
+
+    public static function setDs($value)
+    {
+        self::$ds = $value;
+    }
 }
