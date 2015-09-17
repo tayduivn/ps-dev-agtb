@@ -54,12 +54,10 @@ nv.models.stackedAreaChart = function() {
       return !!Math.round(stacked.y()(d) * 100);
     });
 
-  var showTooltip = function (e, offsetElement) {
-    var left = e.pos[0],
-        top = e.pos[1],
-        content = tooltipContent(e.series, e, chart);
+  var showTooltip = function(eo, offsetElement) {
+    var content = tooltipContent(eo.series, eo, chart);
 
-    tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
+    tooltip = nv.tooltip.show(eo.e, content, null, null, offsetElement);
   };
 
   //============================================================
@@ -409,9 +407,9 @@ nv.models.stackedAreaChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(eo) {
+      dispatch.on('tooltipMove', function(e) {
         if (tooltip) {
-          nv.tooltip.position(that.parentNode, tooltip, eo.pos, 's');
+          nv.tooltip.position(that.parentNode, tooltip, e, 's');
         }
       });
 
@@ -460,20 +458,20 @@ nv.models.stackedAreaChart = function() {
     dispatch.tooltipShow(eo);
   });
 
-  stacked.dispatch.on('areaMousemove.tooltip', function(eo) {
-    dispatch.tooltipMove(eo);
+  stacked.dispatch.on('areaMousemove.tooltip', function(e) {
+    dispatch.tooltipMove(e);
   });
 
   stacked.dispatch.on('areaMouseout.tooltip', function() {
     dispatch.tooltipHide();
   });
 
-  stacked.dispatch.on('tooltipShow', function(e) {
-    dispatch.tooltipShow(e);
+  stacked.dispatch.on('tooltipShow', function(eo) {
+    dispatch.tooltipShow(eo);
   });
 
   stacked.dispatch.on('tooltipHide', function(e) {
-    dispatch.tooltipHide(e);
+    dispatch.tooltipHide();
   });
 
 

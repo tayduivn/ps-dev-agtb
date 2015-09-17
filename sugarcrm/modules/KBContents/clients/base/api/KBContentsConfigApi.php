@@ -53,6 +53,7 @@ class KBContentsConfigApi extends ConfigModuleApi
      */
     protected function save(ServiceBase $api, $params, $module)
     {
+        /** @var Administration $admin */
         $admin = BeanFactory::getBean('Administration');
 
         $deletedLanguages = array();
@@ -64,7 +65,6 @@ class KBContentsConfigApi extends ConfigModuleApi
         $config = $admin->getConfigForModule($module);
 
         foreach ($params as $name => $value) {
-
             $configSaved = $admin->saveSetting(
                 $module,
                 $name,
@@ -144,8 +144,9 @@ class KBContentsConfigApi extends ConfigModuleApi
         $result = array();
         foreach ($list as $item) {
             unset($item['primary']);
-            if (2 == strlen(key($item))) {
-                $result[] = key($item);
+            $key = key($item);
+            if (2 == strlen($key) || 1 == strlen($key)) {
+                $result[] = $key;
             }
         }
         return $result;

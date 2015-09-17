@@ -271,17 +271,12 @@ nv.models.multiBar = function() {
         .attr(dimY, 0);
 
       function buildEventObject(e, d, i, j) {
-        var pos = [
-          e.offsetX == undefined ? e.layerX : e.offsetX,
-          e.offsetY == undefined ? e.layerY : e.offsetY
-        ];
         return {
             value: getY(d, i),
             point: d,
             series: data[j],
             pointIndex: i,
             seriesIndex: j,
-            pos: pos,
             id: id,
             e: e
           };
@@ -294,8 +289,7 @@ nv.models.multiBar = function() {
           dispatch.elementMouseover(eo);
         })
         .on('mousemove', function(d, i, j) {
-          var eo = buildEventObject(d3.event, d, i, j);
-          dispatch.elementMousemove(eo);
+          dispatch.elementMousemove(d3.event);
         })
         .on('mouseout', function(d, i, j) {
           d3.select(this).classed('hover', false);
