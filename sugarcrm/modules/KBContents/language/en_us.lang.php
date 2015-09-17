@@ -87,8 +87,6 @@ $mod_strings = array (
         ' Are you sure you want to use this template?',
     'LNK_IMPORT_KBCONTENTS' => 'Import Articles',
     'LBL_DELETE_CONFIRMATION_LANGUAGE' => 'All documents with this language will be deleted! Are you sure you want to delete this language?',
-    'LBL_ASSIGNED_TO_ID' => 'Author ID',
-    'LBL_ASSIGNED_TO' => 'Author',
     'LBL_CREATE_CATEGORY_PLACEHOLDER' => 'Press Enter to create or Esc to cancel',
     'LBL_KB_NOTIFICATION' => 'Document has been published.',
     'LBL_KB_PUBLISHED_REQUEST' => 'has assigned a Document to you for approval and publishing.',
