@@ -438,9 +438,9 @@ $(document).ready(function() {
 		if(key != '') {
 			$(".calendar_publish_ok").css('display', 'inline');
 			$(".calendar_publish_none").css('display', 'none');
-	        $('#cal_pub_key_span').html( key );
-	        $('#ical_pub_key_span').html( key );
-	        $('#search_pub_key_span').html( key );
+	        $('#cal_pub_key_span').text( key );
+	        $('#ical_pub_key_span').text( key );
+	        $('#search_pub_key_span').text( key );
 		} else {
 			$(".calendar_publish_ok").css('display', 'none');
 			$(".calendar_publish_none").css('display', 'inline');
