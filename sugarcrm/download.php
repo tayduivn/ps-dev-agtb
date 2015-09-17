@@ -22,12 +22,8 @@ else {
     require_once("data/BeanFactory.php");
     ini_set('zlib.output_compression','Off');//bug 27089, if use gzip here, the Content-Length in header may be incorrect.
     // cn: bug 8753: current_user's preferred export charset not being honored
-    if (isset($_SESSION['authenticated_user_id'])) {
-        $GLOBALS['current_user']->retrieve($_SESSION['authenticated_user_id']);
-    }
-    if (isset($_SESSION['authenticated_user_language'])) {
-        $GLOBALS['current_language'] = $_SESSION['authenticated_user_language'];
-    }
+    $GLOBALS['current_user']->retrieve($_SESSION['authenticated_user_id']);
+    $GLOBALS['current_language'] = $_SESSION['authenticated_user_language'];
     $app_strings = return_application_language($GLOBALS['current_language']);
     $mod_strings = return_module_language($GLOBALS['current_language'], 'ACL');
 	$file_type = strtolower($_REQUEST['type']);
