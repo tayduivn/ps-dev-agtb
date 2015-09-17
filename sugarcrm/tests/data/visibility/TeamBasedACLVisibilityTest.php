@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -134,6 +135,55 @@ class TeamBasedACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue($this->isBeanAvailableUsingFrom());
         $this->assertTrue($this->isBeanAvailableUsingWhere());
+    }
+
+    /**
+     * The ACL should not depend on other visibilities.
+     * @dataProvider teamVisibilityProvider
+     */
+    public function testIsolatedTeamSecurity($visibilities, $inTeam, $isVisible)
+    {
+        $this->bean = $this->getMockBuilder('Account')
+            ->setMethods(array('loadVisibility'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $beanVisibility = new BeanVisibility($this->bean, $visibilities);
+        $this->bean->expects($this->any())->method('loadVisibility')->will(
+            $this->returnValue($beanVisibility)
+        );
+        $this->bean->__construct();
+        $this->bean->team_id = $this->team->id;
+        $this->bean->team_set_id = $this->teamSet->id;
+        $this->bean->team_set_selected_id = $this->teamSet->id;
+        $this->bean->save();
+        SugarTestAccountUtilities::setCreatedAccount(array($this->bean->id));
+
+        if ($inTeam) {
+            $this->team->add_user_to_team($this->user->id);
+        } else {
+            $this->team->remove_user_from_team($this->user->id);
+        }
+        if ($isVisible) {
+            $this->assertTrue($this->isBeanAvailableUsingWhere());
+        } else {
+            $this->assertFalse($this->isBeanAvailableUsingWhere());
+        }
+    }
+
+    public function teamVisibilityProvider()
+    {
+        return array(
+            // List of Visibilities.
+            // Is a current user in bean's teams.
+            // Is a record visible.
+            array(array('TeamSecurity' => true), true, true),
+            array(array('TeamSecurity' => true), false, false),
+            array(array('TeamBasedACLVisibility' => true), true, true),
+            array(array('TeamBasedACLVisibility' => true), false, false),
+            array(array(), true, true),
+            array(array(), false, true),
+        );
     }
 
     /**
