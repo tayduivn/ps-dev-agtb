@@ -74,7 +74,6 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         // a layout is restored.
         $this->historyPathname = 'custom/history/modules/' . $this->_moduleName . '/clients/' . $this->getViewClient(
             ) . '/views/' . $this->sidecarSubpanelName. '/' . self::HISTORYFILENAME;
-        $this->_history = new History($this->historyPathname);
 
         if (file_exists($this->historyPathname)) {
             // load in the subpanelDefOverride from the history file
@@ -82,6 +81,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             require $this->historyPathname;
         }
 
+        $this->_history = new History($this->historyPathname);
         $this->_viewdefs = !empty($viewdefs) ? $this->getNewViewDefs($viewdefs) : array();
         $this->_fielddefs = $this->bean->field_defs;
         $this->_mergeFielddefs($this->_fielddefs, $this->_viewdefs);
