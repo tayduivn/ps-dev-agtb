@@ -382,55 +382,57 @@ abstract class DBManager
 		return $this->last_error;
 	}
 
-	/**
-	 * This method is called by every method that runs a query.
-	 * If slow query dumping is turned on and the query time is beyond
-	 * the time limit, we will log the query. This function may do
-	 * additional reporting or log in a different area in the future.
-	 *
-	 * @param  string  $query query to log
-	 * @return boolean true if the query was logged, false otherwise
-	 */
-	public function dump_slow_queries($query)
-	{
-		global $sugar_config;
+    /**
+     * This method is called by every method that runs a query.
+     * If slow query dumping is turned on and the query time is beyond
+     * the time limit, we will log the query. This function may do
+     * additional reporting or log in a different area in the future.
+     *
+     * @param  string  $query query to log
+     * @return boolean true if the query was logged, false otherwise
+     */
+    public function dump_slow_queries($query)
+    {
+        global $sugar_config;
 
-		$do_the_dump = isset($sugar_config['dump_slow_queries'])
-			? $sugar_config['dump_slow_queries'] : false;
-		$slow_query_time_msec = isset($sugar_config['slow_query_time_msec'])
-			? $sugar_config['slow_query_time_msec'] : 5000;
+        $do_the_dump = isset($sugar_config['dump_slow_queries'])
+            ? $sugar_config['dump_slow_queries'] : false;
+        $slow_query_time_msec = isset($sugar_config['slow_query_time_msec'])
+            ? $sugar_config['slow_query_time_msec'] : 5000;
 
-		if($do_the_dump) {
-			if($slow_query_time_msec < ($this->query_time * 1000)) {
-				// Then log both the query and the query time
-				$this->log->fatal('Slow Query (time:'.$this->query_time."\n".$query);
-				return true;
-			}
-		}
-		return false;
-	}
+        if ($do_the_dump) {
+            if ($slow_query_time_msec < ($this->query_time * 1000)) {
+                // Then log both the query and the query time
+                $this->log->fatal('Slow Query (time:'.$this->query_time."\n".$query);
+                $this->track_slow_queries($query);
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/**
-	 * Tracks slow queries in the tracker database table
-	 *
-	 * @param string $query  value of query to track
-	 */
+    /**
+     * Tracks slow queries in the tracker database table. This is implicitly
+     * called from DBManager::dump_slow_queries.
+     *
+     * @param string $query  value of query to track
+     */
     public function track_slow_queries($query)
-	{
-		$trackerManager = TrackerManager::getInstance();
-		if($trackerManager->isPaused()) {
-		    return;
-		}
+    {
+        $trackerManager = TrackerManager::getInstance();
+        if ($trackerManager->isPaused()) {
+            return;
+        }
 
-		if($monitor = $trackerManager->getMonitor('tracker_queries')){
-			$monitor->setValue('date_modified', $this->timedate->nowDb());
-			$monitor->setValue('text', $query);
-			$monitor->setValue('sec_total', $this->query_time);
+        if ($monitor = $trackerManager->getMonitor('tracker_queries')) {
+            $monitor->setValue('date_modified', $this->timedate->nowDb());
+            $monitor->setValue('text', $query);
+            $monitor->setValue('sec_total', $this->query_time);
 
-			//Save the monitor to cache (do not flush)
-			$trackerManager->saveMonitor($monitor, false);
-		}
-	}
+            //Save the monitor to cache (do not flush)
+            $trackerManager->saveMonitor($monitor, false);
+        }
+    }
 
 	/**
 	 * Service method for addDistinctClause, replaces subquery with JOIN
