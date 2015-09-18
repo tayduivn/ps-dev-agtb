@@ -57,6 +57,7 @@ class Bug52173Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user', array(true, 1));
         SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
         parent::setUp();
 
         $this->createCustomField();
