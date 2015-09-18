@@ -447,7 +447,10 @@ class MetaDataManager
 
         $this->db = DBManagerFactory::getInstance();
 
-        $this->cache = new MetaDataCache($this->db);
+        //Here $this->db may be FALSE due to $sugar_config['dbconfig'] unavailable
+        if ($this->db !== false) {
+            $this->cache = new MetaDataCache($this->db);
+        }
     }
 
     /**
@@ -459,9 +462,20 @@ class MetaDataManager
     protected function getCache() {
 
         if (self::$isCacheEnabled && !isset($this->cache)){
-            $this->cache = new MetaDataCache($this->db);
+            if ($this->db === false) {
+                $this->db = DBManagerFactory::getInstance();
+            }
+
+            if ($this->db !== false) {
+                $this->cache = new MetaDataCache($this->db);
+            }
         }
-        return $this->cache;
+
+        if (is_null($this->cache)) {
+            return false;
+        } else {
+            return $this->cache;
+        }
     }
 
     /**
@@ -3099,6 +3113,9 @@ class MetaDataManager
      */
     protected function getFromHashCache($key)
     {
+        if ($this->getCache() === false) {
+            return false;
+        }
         $hashes = self::$isCacheEnabled ? $this->getCache()->get('hashes') : array();
         return !empty($hashes[$key]) ? $hashes[$key] : false;
     }

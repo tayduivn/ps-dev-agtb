@@ -118,6 +118,88 @@ class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $unregistered = BeanFactoryTestMock::isRegistered($account);
         $this->assertFalse($unregistered, "New bean is still registered in the factory");
     }
+
+    /**
+     * Test BeanFactory::getModuleName().
+     * @dataProvider providerGetModuleNameByBean
+     */
+    public function testGetModuleNameByBean($bean, $expectedValue)
+    {
+        //Test when the function argument is a SugarBean
+        $moduleName = BeanFactory::getModuleName($bean);
+        $this->assertEquals($moduleName, $expectedValue);
+    }
+
+    public function providerGetModuleNameByBean()
+    {
+        // simulate issue with incorrect module_name property on Filters module
+        $filterBean = BeanFactory::newBean("Filters");
+        $filterBean->module_name = 'Accounts';
+
+        return array(
+            array(
+                BeanFactory::newBean("Accounts"),
+                "Accounts",
+            ),
+            array(
+                BeanFactory::newBean("Cases"),
+                "Cases",
+            ),
+            array(
+                BeanFactory::newBean("Users"),
+                "Users",
+            ),
+            array(
+                new StdClass(),
+                false,
+            ),
+            array(
+                $filterBean,
+                'Filters',
+            ),
+        );
+    }
+
+    /**
+     * Test BeanFactory::getModuleName().
+     * @dataProvider providerGetModuleNameByName
+     */
+    public function testGetModuleNameByName($name, $expectedValue)
+    {
+        //Test when the function argument is a string (object name)
+        $moduleName = BeanFactory::getModuleName($name);
+        $this->assertEquals($moduleName, $expectedValue);
+    }
+
+    public function providerGetModuleNameByName()
+    {
+        return array(
+            array(
+                "Account",
+                "Accounts",
+            ),
+            array(
+                "Case",
+                "Cases",
+            ),
+            array(
+                "User",
+                "Users",
+            ),
+            array(
+                "Group",
+                false,
+            ),
+            array(
+                "aCase",
+                false,
+            ),
+            array(
+                "Cases",
+                false,
+            ),
+        );
+    }
 }
 
 class BeanFactoryTestMock extends BeanFactory

@@ -208,10 +208,7 @@ class SqlsrvManager extends MssqlManager
         $this->query_time = microtime(true) - $this->query_time;
         $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
 
-
-        if($this->dump_slow_queries($sql)) {
-            $this->track_slow_queries($sql);
-        }
+        $this->dump_slow_queries($sql);
 
         $this->checkError($msg.' Query Failed:' . $sql . '::', $dieOnError);
 

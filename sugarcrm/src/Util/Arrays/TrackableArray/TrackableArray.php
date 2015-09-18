@@ -64,8 +64,17 @@ class TrackableArray extends \ArrayObject
         }
         //Multidimensional support
         if (is_array($value)) {
-            $value = new TrackableArray($value);
-            $value->enableTracking($this->track);
+            if (!$this->track) {
+                $value = new TrackableArray($value);
+            } else {
+                $tValue = new TrackableArray();
+                $tValue->enableTracking($this->track);
+                array_walk($value, function($val, $key) use ($tValue) {
+                    $tValue->offsetSet($key, $val);
+                });
+                $value = $tValue;
+            }
+
         }
         parent::offsetSet($offset, $value);
     }

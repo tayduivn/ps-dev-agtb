@@ -102,6 +102,7 @@ class KBContentsFilterApi extends FilterApi
         // 2. Filter without KBBody - just use standard Sugar filtering mechanism.
         if ($bodySearchFilter) {
             $ids = $this->filterByContainingExcludingWords($api, $args, $bodySearchFilter);
+            $ids = !empty($ids) ? $ids : array('');
             $args['filter'][] = array('id' => array('$in' => $ids));
         }
         return parent::filterList($api, $args, $acl);
