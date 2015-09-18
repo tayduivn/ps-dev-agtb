@@ -37,7 +37,7 @@
                 this.on('init', function() {
                     this._initKBListeners();
                     if (this.tplName === 'list' || this.tplName === 'panel-top' ||
-                        (!_.isUndefined(this.meta.type) && this.meta.type === 'subpanel-list')
+                        (!_.isUndefined(this.context) && this.context.get('isSubpanel') === true)
                     ) {
                         this.context.on('list:editrow:fire', _.bind(function(model, view) {
                             this._initValidationHandler(model);
@@ -344,10 +344,17 @@
              * @param {Object} model Bean model.
              */
             _initValidationHandler: function(model) {
+                // to prevent multiply event subscription
+                if (model._initValidationHandler === true) {
+                    return;
+                }
+                model._initValidationHandler = true;
+
                 // Copy model for list view records to not replace this.model.
                 var _doValidateExpDateFieldPartial = _.partial(this._doValidateExpDateField, model),
                     _doValidateActiveDateFieldPartial = _.partial(this._doValidateActiveDateField, model),
-                    _validationCompletePartial = _.partial(this._validationComplete, model);
+                    _validationCompletePartial = _.partial(this._validationComplete, model),
+                    _hideValidationAlert = _.partial(this._hideValidationAlert, model);
 
                 // TODO: This needs an API instead. Will be fixed by SC-3369.
                 app.error.errorName2Keys['expDateLow'] = 'ERROR_EXP_DATE_LOW';
@@ -357,6 +364,9 @@
                 model.addValidationTask('exp_date_publish', _.bind(_doValidateExpDateFieldPartial, this));
                 model.addValidationTask('active_date_approve', _.bind(_doValidateActiveDateFieldPartial, this));
                 model.on('validation:complete', _validationCompletePartial, this);
+                // this event is triggered by bean.revertAttributes method
+                // which is called when inline Cancel button is clicked
+                model.on('attributes:revert', _hideValidationAlert, this);
             },
 
             /**
@@ -397,7 +407,10 @@
                     errorKeys.push('expDateLow');
                 }
 
-                if (this.context.get('layout') !== 'record' && !_.isUndefined(errors[fieldName])) {
+                if (
+                    (this.context.get('layout') === 'records' || this.context.get('isSubpanel') === true)
+                    && !_.isUndefined(errors[fieldName])
+                ) {
                     this._alertError(errorKeys);
                 }
 
@@ -424,7 +437,10 @@
                         errors[fieldName] = errors[fieldName] || {};
                         errors[fieldName].activeDateLow = true;
                         errorKeys.push('activeDateLow');
-                        if (this.context.get('layout') !== 'record' && !_.isUndefined(errors[fieldName])) {
+                        if (
+                            (this.context.get('layout') === 'records' || this.context.get('isSubpanel') === true)
+                            && !_.isUndefined(errors[fieldName])
+                        ) {
                             this._alertError(errorKeys);
                         }
                         callback(null, fields, errors);
@@ -500,6 +516,7 @@
              */
             _validationComplete: function(model, isValid) {
                 if (isValid) {
+                    this._hideValidationAlert();
                     var changed = model.changedAttributes(model.getSyncedAttributes());
                     var current = model.get('status');
 
@@ -512,6 +529,15 @@
                         model.set('active_date', app.date().formatServer(true));
                     }
                 }
+            },
+
+            /**
+             * Hides validation error alert
+             *
+             * @private
+             */
+            _hideValidationAlert: function() {
+                app.alert.dismiss('kb-validation-error');
             },
 
             /**
@@ -528,10 +554,10 @@
                 });
 
                 if (messages.length > 0) {
-                    app.alert.show('validation-error', {
+                    app.alert.show('kb-validation-error', {
                         level: 'error',
                         messages: messages,
-                        autoClose: true
+                        autoClose: false
                     });
                 }
             },
