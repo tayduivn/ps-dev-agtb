@@ -1961,6 +1961,11 @@ class MetaDataManager
             $data['system_tweettocase_on'] = true;
         }
 
+        if (isset($system_config->settings['system_previewedit_on'])
+            && $system_config->settings['system_previewedit_on'] == 1) {
+            $data['system_previewedit_on'] = true;
+        }
+
         $fts_enabled = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         if (!empty($fts_enabled) && $fts_enabled != 'SugarSearchEngine') {
             $data['fts'] = array(

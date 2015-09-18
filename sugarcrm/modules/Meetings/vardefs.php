@@ -366,7 +366,8 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
 		'group'=>'parent_name',
 		'source'=>'non-db',
 		'options'=> 'parent_type_display',
-    'studio' => true,
+        'studio' => true,
+        'preview_edit' => false,
 		),
   'users' =>
   array (

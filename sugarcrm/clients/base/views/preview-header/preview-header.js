@@ -28,7 +28,10 @@
         app.view.View.prototype.initialize.call(this, options);
         this._delegateEvents();
         //only allow preview edit when on a recordlist and user has acl access
-        if (this.context.get('layout') === 'records' && app.acl.hasAccessToModel('edit', this.model)) {
+
+        if (this.context.get('layout') === 'records'
+            && app.acl.hasAccessToModel('edit', this.model)
+            && app.metadata.getServerInfo().system_previewedit_on) {
             this.previewEdit = true;
         }
     },
