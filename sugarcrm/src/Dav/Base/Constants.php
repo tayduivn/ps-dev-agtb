@@ -46,4 +46,6 @@ class Constants
     const PARTICIPIANT_ADDED = 'added';
 
     const PARTICIPIANT_DELETED = 'delete';
+
+    const DEFAULT_CALENDAR_URI = 'default';
 }

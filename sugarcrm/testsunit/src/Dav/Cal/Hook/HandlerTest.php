@@ -28,14 +28,19 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
      * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler::run
      * @param \SugarBean|\CalDavEvent $bean
      * @param string $managerHandlerName name of handler that should be processed during hook's runnig process
+     * @param int $managerHandlerNameCount Expected count of calls
+     * @param string $parentModuleName
      */
 
-    public function testRunHook($bean, $managerHandlerName)
+    public function testRunHook($bean, $managerHandlerName, $managerHandlerNameCount, $parentModuleName)
     {
         $managerMock = $this->getManagerMock(array($managerHandlerName));
         $hookHandlerMock = $this->getHandlerMock($managerMock);
 
-        $managerMock->expects($this->once())->method($managerHandlerName);
+        if ($parentModuleName) {
+            $bean->parent_type = $parentModuleName;
+        }
+        $managerMock->expects($this->exactly($managerHandlerNameCount))->method($managerHandlerName);
 
         $hookHandlerMock->run($bean, null, null);
     }
@@ -90,8 +95,9 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
     public function providerImportExportTest()
     {
         return array(
-            array($this->getBeanMock('SugarBean'), 'calDavExport'),
-            array($this->getBeanMock('CalDavEvent'), 'calDavImport')
+            array($this->getBeanMock('SugarBean'), 'calDavExport', 1 ,''),
+            array($this->getBeanMock('CalDavEvent'), 'calDavImport', 1, ''),
+            array($this->getBeanMock('CalDavEvent'), 'calDavImport', 0, 'CalDavEvents'),
         );
     }
 

@@ -196,6 +196,7 @@ class ParticipantsHelper
                     'ROLE' => $attendee['role'],
                     'davLink' => $davLink,
                     'X-SUGARUID' => $attendeeId,
+                    'RSVP' => 'TRUE',
                 );
             }
         }

@@ -71,12 +71,6 @@ class CalDavScheduling extends SugarBean
     public $deleted;
 
     /**
-     * Principal uri
-     * @var string
-     */
-    public $principaluri;
-
-    /**
      * Calendar event data in VOBJECT format
      * @var string
      */
@@ -89,12 +83,6 @@ class CalDavScheduling extends SugarBean
     public $uri;
 
     /**
-     * Object modification date. Used for CalDAV server purposes only
-     * @var string
-     */
-    public $lastmodified;
-
-    /**
      * Object ETag. MD5 hash from $calendardata
      * @var string
      */
@@ -104,5 +92,113 @@ class CalDavScheduling extends SugarBean
      * $calendardata size in bytes
      * @var string
      */
-    public $size;
+    public $data_size;
+
+    /**
+     * @var string
+     */
+    public $assigned_user_id;
+
+    /**
+     * Calculate and set the size of the event data in bytes
+     * @param string $data Calendar event text data
+     * @return string Size of $data
+     */
+    protected function calculateSize($data)
+    {
+        return strlen($data);
+    }
+
+    /**
+     * Calculate and set calendar event ETag hash
+     * @param string $data Calendar event text data
+     * @return string
+     */
+    protected function calculateETag($data)
+    {
+        return md5($data);
+    }
+
+    /**
+     * Set scheduling event info
+     * @param User $user
+     * @param string $objectUri
+     * @param string $eventData
+     *
+     * @return bool
+     */
+    public function setSchedulingEventData(\User $user, $objectUri, $eventData)
+    {
+        if (!$eventData) {
+            return false;
+        }
+
+        if (!$user) {
+            return false;
+        }
+        $this->assigned_user_id = $user->id;
+        $this->uri = $objectUri;
+
+        $this->calendardata = $eventData;
+
+        $this->data_size = $this->calculateSize($eventData);
+        $this->etag = $this->calculateETag($eventData);
+
+        return true;
+    }
+
+    /**
+     * @param $objectUri
+     * @param $userId
+     * @return array
+     * @throws SugarQueryException
+     */
+    public function getByUri($objectUri, $userId)
+    {
+        $query = new \SugarQuery();
+
+        $query->from($this);
+        $query->where()->equals('uri', $objectUri);
+        $query->where()->equals('assigned_user_id', $userId);
+        $query->limit(1);
+
+        $result = $this->fetchFromQuery($query);
+
+        if (!$result) {
+            return null;
+        }
+
+        return array_shift($result);
+    }
+
+    /**
+     * Retrieve all scheduling objects by user
+     * @param int $userId
+     * @return \SugarBean
+     * @throws SugarQueryException
+     */
+    public function getByAssigned($userId)
+    {
+        $query = new \SugarQuery();
+
+        $query->from($this);
+        $query->where()->equals('assigned_user_id', $userId);
+
+        return $this->fetchFromQuery($query);
+    }
+
+    /**
+     * Convert bean to array which used by CalDav backend
+     * @return array
+     */
+    public function toCalDavArray()
+    {
+        return array(
+            'uri' => $this->uri,
+            'calendardata' => $this->calendardata,
+            'lastmodified' => strtotime($this->date_modified),
+            'etag' => '"' . $this->etag . '"',
+            'size' => $this->data_size,
+        );
+    }
 }

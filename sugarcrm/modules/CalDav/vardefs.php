@@ -360,15 +360,6 @@ $dictionary['CalDavScheduling'] = array(
     'favorites' => false,
     'fields' =>
         array(
-            'principaluri' =>
-                array(
-                    'name' => 'principaluri',
-                    'vname' => 'LBL_SCHEDULING_PRINCIPALURI',
-                    'type' => 'varchar',
-                    'len' => '255',
-                    'isnull' => 'true',
-                    'comment' => 'Principal uri',
-                ),
             'calendardata' =>
                 array(
                     'name' => 'calendardata',
@@ -385,15 +376,6 @@ $dictionary['CalDavScheduling'] = array(
                     'len' => '200',
                     'isnull' => 'true',
                     'comment' => 'Event URI',
-                ),
-            'lastmodified' =>
-                array(
-                    'name' => 'lastmodified',
-                    'vname' => 'LBL_SCHEDULING_LASTMODIFIED',
-                    'type' => 'int',
-                    'len' => '11',
-                    'isnull' => 'true',
-                    'comment' => 'Modified time',
                 ),
             'etag' =>
                 array(
@@ -415,7 +397,17 @@ $dictionary['CalDavScheduling'] = array(
                     'comment' => 'Object size in bytes',
                 ),
         ),
-    'indices' => array(),
+    'uses' => array(
+        'default',
+        'assignable',
+    ),
+    'indices' => array(
+        array(
+            'name' => 'uri_assigned',
+            'type' => 'index',
+            'fields' => array('uri', 'assigned_user_id'),
+        ),
+    ),
     'ignore_templates' => array(
         'following',
         'favorite',

@@ -131,6 +131,16 @@ BEGIN:VEVENT
 DTSTART;VALUE=DATE:20160101
 END:VEVENT
 END:VCALENDAR',
+                'uri'=>'',
+            ),
+            array(
+                'content' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+UID:test
+DTSTART;VALUE=DATE:20160101
+END:VEVENT
+END:VCALENDAR',
+                'uri'=>'test.ics',
             ),
         );
     }
@@ -275,11 +285,20 @@ END:VCALENDAR',
     /**
      * Load template for event
      * @param string $templateName
-     * @return string;
+     * @param bool $isText
+     * @return string | Sabre\VObject\Component\VCalendar
      */
-    protected function getEventTemplate($templateName)
+    protected function getEventTemplate($templateName, $isText = true)
     {
-        return file_get_contents(dirname(__FILE__) . '/EventTemplates/' . $templateName . '.ics');
+        $calendarData = file_get_contents(dirname(__FILE__) . '/EventTemplates/' . $templateName . '.ics');
+
+        if ($isText) {
+            return $calendarData;
+        }
+
+        $vEvent = VObject\Reader::read($calendarData);
+
+        return $vEvent;
     }
 
     public function getVObjectProvider()
@@ -1115,6 +1134,7 @@ END:VCALENDAR',
                         'ROLE' => '',
                         'davLink' => '',
                         'X-SUGARUID' => $id1,
+                        'RSVP' => 'TRUE',
                     ),
                 ),
             ),
@@ -1145,6 +1165,7 @@ END:VCALENDAR',
                         'ROLE' => 'CHAIR',
                         'davLink' => 'mailto:test0@test.com',
                         'X-SUGARUID' => $id1,
+                        'RSVP' => 'TRUE',
                     ),
                 ),
             ),
@@ -1195,6 +1216,7 @@ END:VCALENDAR',
                         'ROLE' => '',
                         'davLink' => '',
                         'X-SUGARUID' => $id1,
+                        'RSVP' => 'TRUE',
                     ),
                     'mailto:test1@test.com' => array(
                         'PARTSTAT' => 'NEEDS-ACTION',
@@ -1202,6 +1224,7 @@ END:VCALENDAR',
                         'ROLE' => '',
                         'davLink' => '',
                         'X-SUGARUID' => $id2,
+                        'RSVP' => 'TRUE',
                     ),
                 ),
             ),
@@ -1221,6 +1244,7 @@ END:VCALENDAR',
                         'ROLE' => '',
                         'davLink' => '',
                         'X-SUGARUID' => $id1,
+                        'RSVP' => 'TRUE',
                     ),
                     'mailto:test1@test.com' => array(
                         'PARTSTAT' => '',
@@ -1228,6 +1252,7 @@ END:VCALENDAR',
                         'ROLE' => '',
                         'davLink' => '',
                         'X-SUGARUID' => $id2,
+                        'RSVP' => 'TRUE',
                     ),
                 ),
             ),
@@ -1280,6 +1305,7 @@ END:VCALENDAR',
                         'ROLE' => 'OPT-PARTICIPANT',
                         'davLink' => 'mailto:test2@test.com',
                         'X-SUGARUID' => 'baba4eca-59f2-f1ad-1f03-55d5d45e3f82',
+                        'RSVP' => 'TRUE',
                     ),
                     'mailto:test1@test.com' => array(
                         'PARTSTAT' => 'NEEDS-ACTION',
@@ -1287,10 +1313,29 @@ END:VCALENDAR',
                         'ROLE' => 'CHAIR',
                         'davLink' => 'mailto:test1@test.com',
                         'X-SUGARUID' => $id2,
+                        'RSVP' => 'TRUE',
                     ),
 
                 ),
             ),
+        );
+    }
+
+    public function scheduleLocalDeliveryProvider()
+    {
+        return array(
+            array(
+                'currentEvent' => '',
+                'updatedEvent' => $this->getEventTemplate('vevent-attendee-needaction', false),
+            ),
+        );
+    }
+
+    public function logicHooksFromModulesProvider()
+    {
+        return array(
+            array('Meeting'),
+            array('Call'),
         );
     }
 
@@ -1395,23 +1440,22 @@ END:VCALENDAR',
     /**
      * Checks that the necessary methods are invoked
      * @param string $data
+     * @param string $expectedUri
      * @covers       \CalDavEvent::setCalendarEventData
      *
      * @dataProvider calendarObjectProvider
      */
-    public function testSetCalendarObject($data)
+    public function testSetCalendarObject($data, $expectedUri)
     {
         $beanMock = $this->getMockBuilder('CalDavEvent')
                          ->disableOriginalConstructor()
                          ->setMethods(array(
                              'calculateSize',
                              'calculateETag',
-                             'calculateComponentType',
                              'calculateTimeBoundaries'
                          ))
                          ->getMock();
 
-        $beanMock->expects($this->once())->method('calculateComponentType')->with($data)->willReturn(true);
         $beanMock->expects($this->once())->method('calculateSize')->with($data);
         $beanMock->expects($this->once())->method('calculateETag')->with($data);
         $beanMock->expects($this->once())->method('calculateTimeBoundaries')->with($data);
@@ -1419,6 +1463,7 @@ END:VCALENDAR',
         $beanMock->setCalendarEventData($data);
 
         $this->assertEquals($data, $beanMock->calendardata);
+        $this->assertEquals($expectedUri, $beanMock->uri);
     }
 
     /**
@@ -2496,16 +2541,16 @@ END:VCALENDAR',
     /**
      * test the Bean Sync Counter
      *
-     * @group caldav
+     * @group  caldav
      * @covers CalDavEvent::setBeanSyncCounter
      * @covers CalDavEvent::getBeanSyncCounter
      */
     public function testBeanSyncCounter()
     {
         $beanMock = $this->getMockBuilder('CalDavEvent')
-            ->disableOriginalConstructor()
-            ->setMethods(null)
-            ->getMock();
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
 
         $rand = rand(0, 999);
 
@@ -2518,16 +2563,16 @@ END:VCALENDAR',
     /**
      * test the Dav Sync Counter
      *
-     * @group caldav
+     * @group  caldav
      * @covers CalDavEvent::setDavSyncCounter
      * @covers CalDavEvent::getDavSyncCounter
      */
     public function testDavSyncCounter()
     {
         $beanMock = $this->getMockBuilder('CalDavEvent')
-            ->disableOriginalConstructor()
-            ->setMethods(null)
-            ->getMock();
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
 
         $rand = rand(0, 999);
 
@@ -2535,5 +2580,98 @@ END:VCALENDAR',
 
         $this->assertEquals(++$rand, $beanMock->setDavSyncCounter());
         $this->assertEquals($rand, $beanMock->getDavSyncCounter());
+    }
+
+    /**
+     * @param string $currentEvent
+     * @param Sabre\VObject\Component\VCalendar $updatedEvent
+     *
+     * @covers       CalDavEvent::scheduleLocalDelivery
+     *
+     * @dataProvider scheduleLocalDeliveryProvider
+     */
+    public function testScheduleLocalDelivery($currentEvent, Sabre\VObject\Component\VCalendar $updatedEvent)
+    {
+        $this->getObjectForSetters($currentEvent, array('getRelatedCalendar'));
+
+        $this->beanMock->setVCalendarEvent($updatedEvent);
+
+        $userMock = $this->getMockBuilder('\User')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('getPreference'))
+                         ->getMock();
+        $userMock->user_name = 'test';
+
+        $GLOBALS['current_user'] = $userMock;
+
+        $this->beanMock->expects($this->any())->method('getCurrentUser')->wilLReturn($userMock);
+
+        $serverHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\ServerHelper')
+                             ->disableOriginalConstructor()
+                             ->setMethods(array('setUp'))
+                             ->getMock();
+
+        $serverMock = $this->getMockBuilder('Sabre\Dav\Server')
+                           ->disableOriginalConstructor()
+                           ->setMethods(array('getPlugin'))
+                           ->getMock();
+
+        TestReflection::setProtectedValue($this->beanMock, 'serverHelper', $serverHelper);
+
+        $serverHelper->expects($this->once())->method('setUp')->willReturn($serverMock);
+
+        $scheduleMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Schedule\Plugin')
+                             ->disableOriginalConstructor()
+                             ->setMethods(array('calendarObjectSugarChange'))
+                             ->getMock();
+
+        $caldavMock = $this->getMockBuilder('Sabre\CalDAV\Plugin')
+                           ->disableOriginalConstructor()
+                           ->setMethods(null)
+                           ->getMock();
+
+        $serverMock->expects($this->at(0))->method('getPlugin')->with('caldav-schedule')->willReturn($scheduleMock);
+        $serverMock->expects($this->at(1))->method('getPlugin')->with('caldav')->willReturn($caldavMock);
+
+        $userCalendar = 'calendars/test/default';
+
+        $scheduleMock->expects($this->once())
+                     ->method('calendarObjectSugarChange')
+                     ->with($updatedEvent, $userCalendar, $currentEvent);
+
+        $this->beanMock->scheduleLocalDelivery();
+    }
+
+    /**
+     * @param $beanName
+     *
+     * @covers       \Meeting::set_accept_status
+     * @covers       \Call::set_accept_status
+     *
+     * @dataProvider logicHooksFromModulesProvider
+     *
+     */
+    public function testLogicHooksFromModules($beanName)
+    {
+        $meetingsMock = $this->getMockBuilder($beanName)
+                             ->disableOriginalConstructor()
+                             ->setMethods(array('call_custom_logic', 'set_relationship'))
+                             ->getMock();
+
+        $meetingsMock->update_vcal = false;
+
+        $userMock = $this->getMockBuilder('\User')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('getPreference'))
+                         ->getMock();
+
+        $meetingsMock->expects($this->at(0))
+                     ->method('call_custom_logic')
+                     ->with('before_set_attendee', array('action' => 'attendee_updated'));
+        $meetingsMock->expects($this->at(2))
+                     ->method('call_custom_logic')
+                     ->with('after_set_attendee', array('action' => 'attendee_updated'));
+
+        $meetingsMock->set_accept_status($userMock, 'accept');
     }
 }

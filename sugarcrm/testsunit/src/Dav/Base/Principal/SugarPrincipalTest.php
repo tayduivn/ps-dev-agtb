@@ -17,7 +17,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * Class SugarPrincipalTest
- * @package Sugarcrm\SugarcrmTestsUnit\Dav\Base\Principal
+ * @package            Sugarcrm\SugarcrmTestsUnit\Dav\Base\Principal
  *
  * @coversDefaultClass Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal
  */
@@ -90,6 +90,31 @@ class SugarPrincipalTest extends \PHPUnit_Framework_TestCase
                 'uri' => 'mailto:test@test.com',
                 'search' => array('{http://sabredav.org/ns}email-address' => 'test@test.com'),
                 'principalPrefix' => 'principals',
+                'searchPrincipalsCallCount' => 1,
+            ),
+            array(
+                'uri' => 'MAILTO:test@test.com',
+                'search' => array('{http://sabredav.org/ns}email-address' => 'test@test.com'),
+                'principalPrefix' => 'principals',
+                'searchPrincipalsCallCount' => 1,
+            ),
+            array(
+                'uri' => 'test@test.com',
+                'search' => array('{http://sabredav.org/ns}email-address' => 'test@test.com'),
+                'principalPrefix' => 'principals',
+                'searchPrincipalsCallCount' => 0,
+            ),
+            array(
+                'uri' => 'aamailto:test@test.com',
+                'search' => array('{http://sabredav.org/ns}email-address' => 'test@test.com'),
+                'principalPrefix' => 'principals',
+                'searchPrincipalsCallCount' => 0,
+            ),
+            array(
+                'uri' => 'test',
+                'search' => array(),
+                'principalPrefix' => 'principals',
+                'searchPrincipalsCallCount' => 0,
             ),
         );
     }
@@ -211,7 +236,7 @@ class SugarPrincipalTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Setting up base mocks for tests
-     * @param array $principalMethods Array of methods to mock in Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal
+     * @param array $principalMethods  Array of methods to mock in Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal
      * @param array $userHelperMethods Array of methods to mock in Sugarcrm\Sugarcrm\Dav\Base\Helper\UserHelper
      */
     protected function setBaseMocks(array $principalMethods, array $userHelperMethods)
@@ -296,19 +321,22 @@ class SugarPrincipalTest extends \PHPUnit_Framework_TestCase
      * @param string $uri
      * @param array $searchPattern
      * @param string $principalPrefix
+     * @param int $searchPrincipalsCallCount
      *
      * @covers       Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal::findByUri
      *
      * @dataProvider findByUriProvider
      */
-    public function testFindByUri($uri, array $searchPattern, $principalPrefix)
+    public function testFindByUri($uri, array $searchPattern, $principalPrefix, $searchPrincipalsCallCount)
     {
         $sugarPrincipal = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal')
                                ->disableOriginalConstructor()
                                ->setMethods(array('searchPrincipals'))
                                ->getMock();
 
-        $sugarPrincipal->expects($this->once())->method('searchPrincipals')->with($principalPrefix, $searchPattern);
+        $sugarPrincipal->expects($this->exactly($searchPrincipalsCallCount))
+                       ->method('searchPrincipals')
+                       ->with($principalPrefix, $searchPattern);
 
         $sugarPrincipal->findByUri($uri, $principalPrefix);
     }
@@ -351,7 +379,7 @@ class SugarPrincipalTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $prefixPath
      * @param array $searchProperties
-     * @param array $methods rules for calling methods
+     * @param array $methods  rules for calling methods
      * @param string $test
      * @param array $expected found principals
      *
@@ -383,7 +411,7 @@ class SugarPrincipalTest extends \PHPUnit_Framework_TestCase
         $this->relationShipMock->expects($this->exactly($methods['buildJoinSugarQuery']['expects']))
                                ->method('buildJoinSugarQuery')
                                ->with($this->sugarQueryMock, $methods['buildJoinSugarQuery']['param']);
-        
+
         $this->userBeanMock->expects($this->exactly($methods['load_relationship']['expects']))
                            ->method('load_relationship')
                            ->with('email_addresses_primary')
