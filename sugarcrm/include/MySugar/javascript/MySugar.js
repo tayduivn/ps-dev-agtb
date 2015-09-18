@@ -581,7 +581,7 @@ SUGAR.mySugar = function() {
 			}
 
 		 	var fillInDashlet = function(data) {
-
+                var bwc;
 		 		ajaxStatus.hideStatus();
 				if(data) {
                     
@@ -598,6 +598,16 @@ SUGAR.mySugar = function() {
                         return false;
                     }
 					SUGAR.mySugar.currentDashlet.innerHTML = data.responseText;			
+
+                    try {
+                        bwc = parent.SUGAR.App.controller.layout.getComponent("bwc");
+                    } catch (e) {}
+
+                    if (bwc) {
+                        $("a", SUGAR.mySugar.currentDashlet).each(function() {
+                            bwc.convertToSidecarLink(this);
+                        });
+                    }
 				}
 
 				SUGAR.util.evalScript(data.responseText);
