@@ -353,7 +353,6 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRelateConditions()
     {
-        $this->_db->usePreparedStatements = false;
         $contact = BeanFactory::getBean("Contacts");
         // regular query
         $sq = new SugarQuery();

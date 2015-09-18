@@ -118,7 +118,7 @@ abstract class DBManager
      * default state for using Prepared Statements
 	 * @deprecated("Will be deprecated in 7.8 version and above")
      */
-    public $usePreparedStatements = false;
+    public $usePreparedStatements;
 
 	/**
 	 * TimeDate instance
@@ -412,6 +412,10 @@ abstract class DBManager
 		    $this->encode = false;
 		}
         $this->request = InputValidation::getService();
+
+        if ($this->usePreparedStatements === null) {
+            $this->usePreparedStatements = !empty($this->capabilities['prepared_statements']);
+        }
 	}
 
     /**
@@ -777,11 +781,15 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param array $data Key/value to insert
 	 * @param array $field_map Fields map from SugarBean
      * @param bool $execute Execute or return query? Deprecated, will be always considered TRUE
-	 * @param bool usePreparedStatements(will be deprecated in 7.8 version and above)
+	 * @param bool $usePreparedStatements (will be deprecated in 7.8 version and above)
      * @return bool query result
      */
-	public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePreparedStatements = false)
+    public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePreparedStatements = null)
 	{
+        if ($usePreparedStatements === null) {
+            $usePreparedStatements = $this->usePreparedStatements;
+        }
+
         $values = array();
         foreach ($field_defs as $fieldDef) {
             $field = $fieldDef['name'];
@@ -2514,9 +2522,13 @@ protected function checkQuery($sql, $object_name = false)
      *
      * @deprecated Use DBManager::insert() instead
 	 */
-	public function insertSQL(SugarBean $bean, $usePreparedStatements = false)
+    public function insertSQL(SugarBean $bean, $usePreparedStatements = null)
 	{
-		// get column names and values
+        if ($usePreparedStatements === null) {
+            $usePreparedStatements = $this->usePreparedStatements;
+        }
+
+        // get column names and values
         return $this->insertParams(
             $bean->getTableName(),
             $bean->getFieldDefinitions(),
@@ -2537,8 +2549,12 @@ protected function checkQuery($sql, $object_name = false)
      *
      * @deprecated Use DBManager::update() instead
 	 */
-	public function updateSQL(SugarBean $bean, array $where = array(), $usePreparedStatements = false)
+    public function updateSQL(SugarBean $bean, array $where = array(), $usePreparedStatements = null)
 	{
+        if ($usePreparedStatements === null) {
+            $usePreparedStatements = $this->usePreparedStatements;
+        }
+
         $dataFields = array();
         $dataValues = array();
         $primaryField = $bean->getPrimaryFieldDefinition();
@@ -2601,8 +2617,12 @@ protected function checkQuery($sql, $object_name = false)
      *
      * @return bool|string|array|PreparedStatement query result
      */
-    public function updateParams($table, $field_defs, $data, array $where = array(), $field_map = null, $execute = true, $usePreparedStatements = false)
+    public function updateParams($table, $field_defs, $data, array $where = array(), $field_map = null, $execute = true, $usePreparedStatements = null)
     {
+        if ($usePreparedStatements === null) {
+            $usePreparedStatements = $this->usePreparedStatements;
+        }
+
         $values = array();
         foreach ($field_defs as $field => $fieldDef) {
             if (!array_key_exists($field, $data)) {
@@ -2991,8 +3011,12 @@ protected function checkQuery($sql, $object_name = false)
      *
      * @deprecated Use SugarBean::mark_deleted() instead
      */
-    public function deleteSQL(SugarBean $bean, array $where, $usePreparedStatements = false)
+    public function deleteSQL(SugarBean $bean, array $where, $usePreparedStatements = null)
     {
+        if ($usePreparedStatements === null) {
+            $usePreparedStatements = $this->usePreparedStatements;
+        }
+
         $where_data = $this->updateWhereArray($bean, $where);
         $tname = $bean->getTableName();
         $where = $this->getWhereClause($bean, $where_data, $usePreparedStatements);
@@ -3013,8 +3037,12 @@ protected function checkQuery($sql, $object_name = false)
      *
      * @depreated Use SugarBean::retrieve() instead
      */
-    public function retrieveSQL(SugarBean $bean, array $where, $usePreparedStatements = false)
+    public function retrieveSQL(SugarBean $bean, array $where, $usePreparedStatements = null)
     {
+        if ($usePreparedStatements === null) {
+            $usePreparedStatements = $this->usePreparedStatements;
+        }
+
         $where_data = $this->updateWhereArray($bean, $where);
         $tname = $bean->getTableName();
         $where = $this->getWhereClause($bean, $where_data, $usePreparedStatements);

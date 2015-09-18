@@ -95,10 +95,10 @@ class MysqliManager extends MysqlManager
      */
 	public function __construct()
 	{
-        parent::__construct();
         $this->capabilities["recursive_query"] = true;
         $this->capabilities["prepared_statements"] = true;
         $this->capabilities["ssl"] = true;
+        parent::__construct();
 	}
 
 	/**

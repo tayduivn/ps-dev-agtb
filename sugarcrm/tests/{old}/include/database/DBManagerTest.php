@@ -3522,8 +3522,6 @@ SQL;
         $result = $this->_db->query("select deleted from contacts where id = '{$bean->id}'");
         $row = $this->_db->fetchByAssoc($result);
         $this->assertEquals(1, $row['deleted'], "Delete failed");
-
-        $this->_db->usePreparedStatements = false;
     }
 
     /**
@@ -3739,7 +3737,7 @@ SQL;
         if ($this->_db instanceof OracleManager) {
             $this->markTestSkipped('Description is lob field and oracle uses prepared statement for that in AltlobExecute method');
         }
-        $this->_db->usePreparedStatements = false;
+
         $acc = BeanFactory::getBean('Accounts');
         $this->_db->setEncode(true);
         $testString = 'Test <test> &gt;TEST&lt; <br><p>Test&more test';

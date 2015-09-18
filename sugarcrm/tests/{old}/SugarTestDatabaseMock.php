@@ -35,8 +35,6 @@ class SugarTestDatabaseMock extends DBManager
      * @var array
      */
     public $rows = array();
-    // not doing prepareds for now
-    public $usePreparedStatements = false;
 
     /**
      * Add a Query Spy

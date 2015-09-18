@@ -119,7 +119,7 @@ class SugarQuery
      * @var bool
      * @deprecated("Will be deprecated in 7.8 version and above")
      */
-    public $usePreparedStatements = false;
+    public $usePreparedStatements = true;
 
     /**
      * Prepared statement data
