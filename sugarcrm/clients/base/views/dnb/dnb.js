@@ -759,6 +759,14 @@
         } else {
             this.template = app.template.get('dnb.dnb-error');
         }
+
+        this.renderErrorMessage();
+    },
+
+    /**
+     * Renders the actual error message that has been set on the error template
+     */
+    renderErrorMessage: function() {
         this.render();
         this.$('div#error-display').show();
         this.$('.showLessData').hide();
