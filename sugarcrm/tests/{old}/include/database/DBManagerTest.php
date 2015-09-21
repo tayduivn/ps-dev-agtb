@@ -2182,6 +2182,10 @@ SQL;
     */
     public function testInsertSQL($name, $defs, $data, $result)
     {
+        if ($this->_db->usePreparedStatements) {
+            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
+        }
+
         $vardefs = array(
 			'table' => $name,
             'fields' => $defs,
@@ -2208,6 +2212,10 @@ SQL;
     */
     public function testUpdateSQL($name, $defs, $data, $_, $result = null)
     {
+        if ($this->_db->usePreparedStatements) {
+            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
+        }
+
         $name = "update$name";
         $vardefs = array(
 			'table' => $name,
@@ -2263,6 +2271,10 @@ SQL;
     */
     public function testUpdateSQLNoDeleted($name, $defs, $data, $_, $result = null)
     {
+        if ($this->_db->usePreparedStatements) {
+            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
+        }
+
         $name = "updatenodel$name";
         $vardefs = array(
 			'table' => $name,
@@ -3734,6 +3746,10 @@ SQL;
 
     public function testDecodeHTML()
     {
+        if ($this->_db->usePreparedStatements) {
+            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
+        }
+
         if ($this->_db instanceof OracleManager) {
             $this->markTestSkipped('Description is lob field and oracle uses prepared statement for that in AltlobExecute method');
         }
@@ -3844,6 +3860,10 @@ SQL;
 
     public function testDeleteSQL()
     {
+        if ($this->_db->usePreparedStatements) {
+            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
+        }
+
         $sql = $this->_db->deleteSQL(new Contact, array("id" => "1"));
 
         $this->assertRegExp('/update\s*contacts\s*set\s*deleted\s*=\s*1/i',$sql);
@@ -3852,6 +3872,10 @@ SQL;
 
     public function testRetrieveSQL()
     {
+        if ($this->_db->usePreparedStatements) {
+            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
+        }
+
         $sql = $this->_db->retrieveSQL(new Contact, array("id" => "1"));
 
         $this->assertRegExp('/select\s*\*\s*from\s*contacts/i',$sql);

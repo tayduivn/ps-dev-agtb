@@ -115,7 +115,7 @@ class SugarQueryTest extends Sugar_PHPUnit_Framework_TestCase
             ->getMock();
 
         // test SugarQuery default
-        $this->assertFalse($q->usePreparedStatements, 'SugarQuery should have prepared statements disabled by default');
+        $this->assertTrue($q->usePreparedStatements, 'SugarQuery should have prepared statements enabled by default');
 
         $q->usePreparedStatements = $qPrepStatements;
         $dbManager->usePreparedStatements = $dbPrepStatements;

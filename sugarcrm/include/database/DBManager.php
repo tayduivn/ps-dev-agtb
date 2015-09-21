@@ -837,11 +837,18 @@ protected function checkQuery($sql, $object_name = false)
         } else {  //Prepared Statement
             $query = "INSERT INTO $table (".implode(",", array_keys($values)).") VALUES (";
             $lobs = $types = $data_values = array();
+
+            // :TODO: make sure all field defs are indexed by name and get rid of this
+            $field_defs_indexed = array();
+            foreach ($field_defs as $field_def) {
+                $field_defs_indexed[$field_def['name']] = $field_def;
+            }
+
             foreach($values as $valueKey => $value) {
-                if (!empty($field_defs[$valueKey]) && !empty($field_defs[$valueKey]['auto_increment'])) {
+                if (!empty($field_defs_indexed[$valueKey]) && !empty($field_defs_indexed[$valueKey]['auto_increment'])) {
                     $types[] = $value;
                 } else {
-                    $type = $this->getFieldType($field_defs[$valueKey]);
+                    $type = $this->getFieldType($field_defs_indexed[$valueKey]);
                     $types[] = $this->convert("?$type", $type);
                     $data_values[] = $value;
                     if ($this->isTextType($type)) {

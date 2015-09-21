@@ -40,6 +40,10 @@ class DropDownUpdateSQLTest extends Sugar_PHPUnit_Framework_TestCase
         $dbManagerFactory = new DBManagerFactory();
         $dbManager = $dbManagerFactory->getInstance();
 
+        if ($dbManager->usePreparedStatements) {
+            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
+        }
+
         $bean = SugarTestLeadUtilities::createLead();
         $bean->field_defs = $fieldDefs;
         $bean->{$fieldDefs['status']['name']} = $value;

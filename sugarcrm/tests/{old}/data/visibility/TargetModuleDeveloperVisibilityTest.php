@@ -29,6 +29,11 @@ class TargetModuleDeveloperVisibilityTest extends Sugar_PHPUnit_Framework_TestCa
     public function testDevVisibilityNoModules($isAdmin, $adminModules, $queryFrag)
     {
         global $current_user;
+        global $db;
+
+        if ($db->usePreparedStatements) {
+            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
+        }
 
         $bean = new Call();
         $bean->parent_type = "Accounts";

@@ -139,6 +139,12 @@ class PipelineChartApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testBuildQueryContainsAllReportingUsers()
     {
+        global $db;
+
+        if ($db->usePreparedStatements) {
+            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
+        }
+
         $api = $this->getMockPipelineApi(array('getReportingUsers'));
         $api->expects($this->once())
             ->method('getReportingUsers')

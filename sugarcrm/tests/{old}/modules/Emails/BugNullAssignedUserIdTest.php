@@ -55,11 +55,19 @@ class BugNullAssignedUserIdTest extends Sugar_PHPUnit_Framework_TestCase
 	}
 
     public function testNullAssignedUserIdConvertedToEmptyInSave() {
+        if ($this->email->db->usePreparedStatements) {
+            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
+        }
+
         $query = $this->email->db->updateSQL($this->email);
         $this->assertContains("assigned_user_id=''", $query, 'Assigned user id set to empty string not found');
     }
 
     public function testNullAssignedUserIdInSave() {
+        if ($this->email->db->usePreparedStatements) {
+            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
+        }
+
         $this->email->setFieldNullable('assigned_user_id');
         $query = $this->email->db->updateSQL($this->email);
         $this->email->revertFieldNullable('assigned_user_id');

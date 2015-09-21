@@ -353,6 +353,10 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRelateConditions()
     {
+        if ($this->_db->usePreparedStatements) {
+            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
+        }
+
         $contact = BeanFactory::getBean("Contacts");
         // regular query
         $sq = new SugarQuery();
