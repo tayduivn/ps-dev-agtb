@@ -155,10 +155,17 @@ nv.models.line = function() {
 
       var linePaths = groups.selectAll('path.nv-line')
           .data(function(d) {
-            var values = d.values.length > 1 ? d.values :
-              // if there is only one single point in data array
-              // extend it horizontally in both directions
-              x.domain().map(function(x, i) {
+            // if there are no values, return null
+            if (!d.values || !d.values.length) {
+              return [null];
+            }
+            // if there is more than one point, return all values
+            if (d.values.length > 1) {
+              return [d.values];
+            }
+            // if there is only one single point in data array
+            // extend it horizontally in both directions
+            var values = x.domain().map(function(x, i) {
                 // if data point is array, then it should be returned as an array
                 // the getX and getY methods handle the internal mechanics of positioning
                 if (d.values[0] instanceof Array) {
@@ -166,7 +173,7 @@ nv.models.line = function() {
                 } else {
                   // sometimes the line data point is an object
                   // so the values should be returned as an array of objects
-                  var newValue = (JSON.parse(JSON.stringify(d.values[0])));
+                  var newValue = JSON.parse(JSON.stringify(d.values[0]));
                   newValue.x = x;
                   return newValue;
                 }

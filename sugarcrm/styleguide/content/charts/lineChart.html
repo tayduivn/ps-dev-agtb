@@ -199,7 +199,7 @@
               [];
 
         if (chartData.data.length) {
-          if (chartData.data[0].values[0] instanceof Array) {
+          if (chartData.data[0].values.length && chartData.data[0].values[0] instanceof Array) {
             chart
               .x(function(d) { return d[0]; })
               .y(function(d) { return d[1]; });

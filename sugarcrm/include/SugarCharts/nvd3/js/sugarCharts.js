@@ -279,7 +279,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     }
 
                     if (json.data.length) {
-                        if (json.data[0].values[0] instanceof Array) {
+                        if (json.data[0].values.length && json.data[0].values[0] instanceof Array) {
                             lineChart
                                 .x(function(d) { return d[0]; })
                                 .y(function(d) { return d[1]; });

@@ -183,7 +183,7 @@ nv.models.lineChart = function() {
           return d.values.length;
         }) === 1;
 
-      isTimeSeries = lineData[0].values[0] instanceof Array && nv.utils.isValidDate(lineData[0].values[0][0]);
+      isTimeSeries = lineData[0].values.length && lineData[0].values[0] instanceof Array && nv.utils.isValidDate(lineData[0].values[0][0]);
       // SAVE FOR LATER
       // isOrdinalSeries = !isTimeSeries && labels.length > 0 && d3.min(lineData, function(d) {
       //   return d3.min(d.values, function(d, i) {
