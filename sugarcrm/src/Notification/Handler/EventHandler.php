@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Notification\Handler;
 
 use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
 use Sugarcrm\Sugarcrm\Notification\EventInterface;
+use Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry;
 
 /**
  * Handler detects recipients for specified events, groups them by carrier
@@ -26,13 +27,18 @@ use Sugarcrm\Sugarcrm\Notification\EventInterface;
 class EventHandler implements RunnableInterface
 {
     /**
+     * @var EventInterface
+     */
+    protected $event;
+
+    /**
      * Receives event to process.
      *
      * @param EventInterface $event event for processing.
      */
     public function __construct(EventInterface $event)
     {
-        // TODO: Implement __construct() method.
+        $this->event = $event;
     }
 
     /**
@@ -42,6 +48,8 @@ class EventHandler implements RunnableInterface
      */
     public function run()
     {
-        // TODO: Implement run() method.
+        $subscriptionsRegistry = new SubscriptionsRegistry();
+        $userCarrierPreference = $subscriptionsRegistry->getUsers($this->event);
+
     }
 }

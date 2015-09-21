@@ -41,13 +41,8 @@ class Application implements SubscriptionFilterInterface
      */
     public function filterQuery(EventInterface $event, \SugarQuery $query)
     {
-        if ($query->getFromBean()) {
-            throw new \LogicException('Application Subscription Filter can filter ony Users', 1);
-        } elseif (!($query->getFromBean() instanceof \User)) {
-            $userBean = \BeanFactory::getBean('Users');
-            $query->from($userBean, array('team_security' => false));
-        }
-
+        $userBean = \BeanFactory::getBean('Users');
+        $query->from($userBean, array('team_security' => false));
         $query->where()->equals('is_admin', 1);
 
         return $query->getFromAlias();
