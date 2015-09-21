@@ -100,8 +100,21 @@ class Indexer
             return false;
         }
 
+        // In Elasticsearch code we rely on $bean->module_name so it is impossible of handling a SugarBean
+        // which has module_name overwritten/redefined. Add the conversion of object name to module name,
+        // instead of using $bean->module_name directly.
+        // Note that $bean->module_name is overridden/redefined for the class 'Filters' in its vardef file, which
+        // causes the SguarBeans of Filters may also be indexed. This conversion is added to handle such cases.
+
+        // Also a unit test data\DrPhilTest.php::testOverriddenSugarBeanFields() is added to verify if there're any
+        // overridden/redefined fields for SugarBean modules.
+        $moduleName = \BeanFactory::getModuleName($bean);
+        if ($moduleName === false) {
+            return false;
+        }
+
         // Skip bean if module not enabled
-        if (!$this->container->metaDataHelper->isModuleEnabled($bean->module_name)) {
+        if (!$this->container->metaDataHelper->isModuleEnabled($moduleName)) {
             return true;
         }
 

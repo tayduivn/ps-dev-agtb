@@ -45,6 +45,7 @@ class PMSEEngineUtils
         'contact',
         'following_link',
         'favorite_link',
+        'users',
         'user_sync',
         'relcases_kbcontents',
     );
