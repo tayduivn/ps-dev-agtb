@@ -327,6 +327,11 @@ class HealthCheckScannerMeta
             'report' => 'foundCustomElastic',
             'bucket' => self::CUSTOM,
         ),
+        434 => array(
+            'report' => 'arraySessionUsage',
+            'bucket' => self::CUSTOM,
+        ),
+
 
         // BUCKET F
         501 => array(

@@ -597,32 +597,7 @@ class HealthCheckScanner
         $this->listUpgrades();
         $this->checkPackages();
         $this->checkLanguageFiles();
-        $this->checkVendorAndRemovedFiles();
-        if (!empty($this->filesToFix)) {
-            $files_to_fix = '';
-            foreach ($this->filesToFix as $fileToFix) {
-                $files_to_fix .= "{$fileToFix['file']} has the following vendor inclusions: " . PHP_EOL;
-                foreach ($fileToFix['vendors'] as $vendor) {
-                    $files_to_fix .= " '{$vendor['directory']}' found in line {$vendor['line']}" . PHP_EOL;
-                }
-            }
-            $this->updateStatus("vendorFilesInclusion", $files_to_fix);
-        }
-
-        if (!empty($this->specificSugarFilesToFix)) {
-            $specificFiles = '';
-            foreach ($this->specificSugarFilesToFix as $fileToFix => $filesInfo) {
-                $specificFiles .= "'$fileToFix' in: " . PHP_EOL;
-                foreach ($filesInfo as $file => $info) {
-                    $specificFiles .= " '$file' file in line {$info['line']}" . PHP_EOL;
-                }
-            }
-            $this->updateStatus("sugarSpecificFilesInclusion", $specificFiles);
-        }
-
-        if (!empty($this->deletedFilesReferenced)) {
-            $this->updateStatus("deletedFilesReferenced", $this->deletedFilesReferenced);
-        }
+        $this->scanCustomDir();
 
         // check non-upgrade-safe customizations by verifying md5's
         /*
@@ -892,6 +867,8 @@ class HealthCheckScanner
 
     protected $specificSugarFilesToFix = array();
 
+    protected $sessionUsages = array();
+
     /**
      * Dump Scanner issues to log and optional stdout
      */
@@ -935,63 +912,72 @@ class HealthCheckScanner
     }
 
     /**
-     * This method checks for directories/files that have been moved/removed that are referenced
-     * in custom code
-     * @return bool
+     * Scans the custom directory for possible code level incompatability.
      */
-    protected function checkVendorAndRemovedFiles()
+    protected function scanCustomDir()
     {
-        $this->log("Checking for bad includes");
+        $this->log("Checking custom directory for no longer valid code");
         $files = $this->getPhpFiles("custom/");
         foreach ($files as $name => $file) {
             // check for any occurrence of the directories and flag them
             $fileContents = file_get_contents($file);
-            if (preg_match_all(
-                "#(\b(include|require|require_once|include_once)\b[\s('\"]*(.*?);)#",
-                $fileContents,
-                $m
-            )
-            ) {
-                $vendorFileFound = false;
-                $includedVendors = array();
-                foreach ($m[1] as $value) {
-                    foreach ($this->removed_directories as $directory) {
-                        if (preg_match(
-                                "#(include|require|require_once|include_once)[\s('\"]*({$directory})#",
-                                $value
-                            ) > 0
-                        ) {
-                            foreach ($this->specificSugarFiles as $specificSugarFile) {
-                                if (preg_match(
-                                        "#(include|require|require_once|include_once)[\s('\"]*(\b{$specificSugarFile}\b)#",
-                                        $value
-                                    ) > 0
-                                ) {
-                                    if (empty($this->specificSugarFilesToFix[$specificSugarFile][$file])) {
-                                        $fileInfo = $this->getLineNumberOfPattern($file, $value, $directory);
-                                        if ($fileInfo) {
-                                            $this->specificSugarFilesToFix[$specificSugarFile][$file] = $fileInfo;
-                                        }
-                                    }
-                                    break 2;
-                                }
-                            }
+            $this->scanFileForInvalidReferences($file, $fileContents);
+            $this->scanFileForSessionArrayReferences($file, $fileContents);
+        }
+        //Now that we have catalogued all the bad files in custom, log them by category.
+        $this->updateCustomDirScanStatus();
+    }
 
-                            $foundVendor = $this->getLineNumberOfPattern($file, $value, $directory);
-                            if (!empty($foundVendor)) {
-                                $vendorFileFound = true;
-                                $includedVendors[] = $foundVendor;
-                                break;
+    /**
+     * This method checks for directories/files that have been moved/removed that are referenced
+     * in custom code
+     */
+    protected function scanFileForInvalidReferences($file, $fileContents)
+    {
+        if (preg_match_all(
+            "#(\b(include|require|require_once|include_once)\b[\s('\"]*(.*?);)#",
+            $fileContents,
+            $m
+        )) {
+            $vendorFileFound = false;
+            $includedVendors = array();
+            foreach ($m[1] as $value) {
+                foreach ($this->removed_directories as $directory) {
+                    if (preg_match(
+                            "#(include|require|require_once|include_once)[\s('\"]*({$directory})#",
+                            $value
+                        ) > 0
+                    ) {
+                        foreach ($this->specificSugarFiles as $specificSugarFile) {
+                            if (preg_match(
+                                    "#(include|require|require_once|include_once)[\s('\"]*(\b{$specificSugarFile}\b)#",
+                                    $value
+                                ) > 0
+                            ) {
+                                if (empty($this->specificSugarFilesToFix[$specificSugarFile][$file])) {
+                                    $fileInfo = $this->getLineNumberOfPattern($file, $value, $directory);
+                                    if ($fileInfo) {
+                                        $this->specificSugarFilesToFix[$specificSugarFile][$file] = $fileInfo;
+                                    }
+                                }
+                                break 2;
                             }
+                        }
+
+                        $foundVendor = $this->getLineNumberOfPattern($file, $value, $directory);
+                        if (!empty($foundVendor)) {
+                            $vendorFileFound = true;
+                            $includedVendors[] = $foundVendor;
+                            break;
                         }
                     }
                 }
-                if ($vendorFileFound) {
-                    $this->filesToFix[] = array(
-                        'file' => $file,
-                        'vendors' => $includedVendors
-                    );
-                }
+            }
+            if ($vendorFileFound) {
+                $this->filesToFix[] = array(
+                    'file' => $file,
+                    'vendors' => $includedVendors
+                );
             }
             foreach ($this->removed_files AS $deletedFile) {
                 if (preg_match(
@@ -1005,6 +991,78 @@ class HealthCheckScanner
             }
         }
     }
+
+    /**
+     * This function checks for usage of $_SESSION with known bad array functions. $_SESSION will now be an instance
+     * of TrackableArray that will not be compatible. The ArrayFunctions class contains compatible
+     * versions of some of these functions.
+     *
+     * @param $file
+     * @param $fileContents
+     */
+    protected function scanFileForSessionArrayReferences($file, $fileContents)
+    {
+        $array_functions = array(
+            "array_change_key_case", "array_chunk", "array_column", "array_combine", "array_count_values",
+            "array_diff_assoc", "array_diff_key", "array_diff_uassoc", "array_diff_ukey", "array_diff",
+            "array_fill_keys", "array_fill", "array_filter", "array_flip", "array_intersect_assoc",
+            "array_intersect_key", "array_intersect_uassoc", "array_intersect_ukey", "array_intersect",
+            "array_key_exists", "array_keys", "array_map", "array_merge_recursive", "array_merge", "array_multisort",
+            "array_pad", "array_pop", "array_product", "array_push", "array_rand", "array_reduce",
+            "array_replace_recursive", "array_replace", "array_reverse", "array_search", "array_shift", "array_slice",
+            "array_splice", "array_sum", "array_udiff_assoc", "array_udiff_uassoc", "array_udiff",
+            "array_uintersect_assoc", "array_uintersect_uassoc", "array_uintersect", "array_unique", "array_unshift",
+            "array_values", "array_walk_recursive", "array_walk", "array", "arsort", "asort", "in_array", "is_array",
+            "key_exists", "krsort", "ksort", "natcasesort", "natsort", "rsort", "sort", "uasort", "uksort", "usort"
+        );
+        if (preg_match_all(
+            '/(\w*(array|sort)[\w\s]*)\([^)]*\$_SESSION/',
+            $fileContents,
+            $m
+        )) {
+            foreach ($m[1] as $func) {
+                if (in_array($func, $array_functions)) {
+                    $this->sessionUsages[$file][] = $func;
+                }
+            }
+        }
+    }
+
+
+    protected function updateCustomDirScanStatus() {
+        if (!empty($this->filesToFix)) {
+            $files_to_fix = '';
+            foreach ($this->filesToFix as $fileToFix) {
+                $files_to_fix .= "{$fileToFix['file']} has the following vendor inclusions: " . PHP_EOL;
+                foreach ($fileToFix['vendors'] as $vendor) {
+                    $files_to_fix .= " '{$vendor['directory']}' found in line {$vendor['line']}" . PHP_EOL;
+                }
+            }
+            $this->updateStatus("vendorFilesInclusion", $files_to_fix);
+        }
+        if (!empty($this->deletedFilesReferenced)) {
+            $this->updateStatus("deletedFilesReferenced", $this->deletedFilesReferenced);
+        }
+        if (!empty($this->specificSugarFilesToFix)) {
+            $specificFiles = '';
+            foreach ($this->specificSugarFilesToFix as $fileToFix => $filesInfo) {
+                $specificFiles .= "'$fileToFix' in: " . PHP_EOL;
+                foreach ($filesInfo as $file => $info) {
+                    $specificFiles .= " '$file' file in line {$info['line']}" . PHP_EOL;
+                }
+            }
+            $this->updateStatus("sugarSpecificFilesInclusion", $specificFiles);
+        }
+        if(!empty($this->sessionUsages)) {
+            $filesWithSession = '';
+            foreach ($this->sessionUsages as $file => $func) {
+                $filesWithSession .= "'$file' using \$_SESSION with array function '$func'. " . PHP_EOL;
+            }
+            $this->updateStatus("arraySessionUsage", $filesWithSession);
+        }
+    }
+
+
 
     /**
      * Scan individual module
