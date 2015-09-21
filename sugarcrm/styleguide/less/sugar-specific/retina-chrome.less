@@ -8,6 +8,10 @@ only screen and (min-device-pixel-ratio: 2) {
             &:not(:first-child):not(:last-child) > span {
                 position: static; /*SC-4546*/
             }
+
+            &[data-type="tag"] > span.edit {
+                position: relative;
+            }
         }
     }
 
