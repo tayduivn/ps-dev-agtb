@@ -34,6 +34,9 @@ class CalDavEventTest extends Sugar_PHPUnit_Framework_TestCase
     {
         parent::setUp();
         SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('moduleList');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
     }
 
     public function tearDown()
@@ -43,7 +46,10 @@ class CalDavEventTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
+        SugarTestMeetingUtilities::removeMeetingContacts();
         SugarTestMeetingUtilities::removeMeetingUsers();
+        SugarTestContactUtilities::removeCreatedContactsEmailAddresses();
+        SugarTestContactUtilities::removeAllCreatedContacts();
         parent::tearDown();
     }
 
@@ -519,11 +525,13 @@ END:VCALENDAR',
                     array('email1' => 'test0@test.com', 'new_with_id' => true, 'id' => $id1),
                 ),
                 'result' => array(
-                    $id1 => array(
-                        'email' => 'test0@test.com',
-                        'accept_status' => 'accept',
-                        'cn' => '',
-                        'role' => 'CHAIR',
+                    'Users' => array(
+                        $id1 => array(
+                            'email' => 'test0@test.com',
+                            'accept_status' => 'accept',
+                            'cn' => '',
+                            'role' => 'CHAIR',
+                        ),
                     ),
                 ),
             ),
@@ -550,31 +558,56 @@ END:VCALENDAR',
                 'vCalendar' => $this->getEventTemplate('vevent'),
                 'users' => array(
                     array('email1' => 'test@test.com', 'new_with_id' => true, 'id' => $id1),
-                    array('email1' => 'test2@test.com', 'new_with_id' => true, 'id' => $id2)
+                ),
+                'contacts' => array(
+                    array('email' => 'test2@test.com', 'new_with_id' => true, 'id' => $id2),
                 ),
                 'result' => array(
-                    $id1 => array(
-                        'email' => 'test@test.com',
-                        'accept_status' => 'none',
-                        'cn' => '',
-                        'role' => 'REQ-PARTICIPANT',
+                    'Users' => array(
+                        $id1 => array(
+                            'email' => 'test@test.com',
+                            'accept_status' => 'none',
+                            'cn' => '',
+                            'role' => 'REQ-PARTICIPANT',
+                        )
                     ),
-                    $id2 => array(
-                        'email' => 'test2@test.com',
-                        'accept_status' => 'decline',
-                        'cn' => '',
-                        'role' => 'OPT-PARTICIPANT',
-                    ),
+                    'Contacts' => array(
+                        $id2 => array(
+                            'email' => 'test2@test.com',
+                            'accept_status' => 'decline',
+                            'cn' => '',
+                            'role' => 'OPT-PARTICIPANT',
+                        ),
+                    )
+                ),
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'users' => array(),
+                'contacts' => array(
+                    array('email' => 'test2@test.com', 'new_with_id' => true, 'id' => $id2),
+                ),
+                'result' => array(
+                    'Contacts' => array(
+                        $id2 => array(
+                            'email' => 'test2@test.com',
+                            'accept_status' => 'decline',
+                            'cn' => '',
+                            'role' => 'OPT-PARTICIPANT',
+                        ),
+                    )
                 ),
             ),
             array(
                 'vCalendar' => $this->getEventTemplate('vtodo'),
                 'users' => array(),
+                'contacts' => array(),
                 'result' => array(),
             ),
             array(
                 'vCalendar' => null,
                 'users' => array(),
+                'contacts' => array(),
                 'result' => array(),
             ),
         );
@@ -613,11 +646,13 @@ END:VCALENDAR',
                         'duration' => 900,
                         'description' => 'alarm test',
                         'attendees' => array(
-                            $id1 => array(
-                                'email' => 'test@test.com',
-                                'accept_status' => 'none',
-                                'cn' => '',
-                                'role' => 'REQ-PARTICIPANT',
+                            'Users' => array(
+                                $id1 => array(
+                                    'email' => 'test@test.com',
+                                    'accept_status' => 'none',
+                                    'cn' => '',
+                                    'role' => 'REQ-PARTICIPANT',
+                                ),
                             ),
                         ),
                     ),
@@ -625,17 +660,19 @@ END:VCALENDAR',
                         'duration' => 1200,
                         'description' => 'alarm test',
                         'attendees' => array(
-                            $id1 => array(
-                                'email' => 'test@test.com',
-                                'accept_status' => 'none',
-                                'cn' => '',
-                                'role' => 'REQ-PARTICIPANT',
-                            ),
-                            $id2 => array(
-                                'email' => 'test1@test.com',
-                                'accept_status' => 'none',
-                                'cn' => '',
-                                'role' => 'REQ-PARTICIPANT',
+                            'Users' => array(
+                                $id1 => array(
+                                    'email' => 'test@test.com',
+                                    'accept_status' => 'none',
+                                    'cn' => '',
+                                    'role' => 'REQ-PARTICIPANT',
+                                ),
+                                $id2 => array(
+                                    'email' => 'test1@test.com',
+                                    'accept_status' => 'none',
+                                    'cn' => '',
+                                    'role' => 'REQ-PARTICIPANT',
+                                ),
                             ),
                         ),
                     ),
@@ -652,17 +689,19 @@ END:VCALENDAR',
                         'duration' => 1200,
                         'description' => 'alarm test',
                         'attendees' => array(
-                            $id1 => array(
-                                'email' => 'test@test.com',
-                                'accept_status' => 'none',
-                                'cn' => '',
-                                'role' => 'REQ-PARTICIPANT',
-                            ),
-                            $id2 => array(
-                                'email' => 'test1@test.com',
-                                'accept_status' => 'none',
-                                'cn' => '',
-                                'role' => 'REQ-PARTICIPANT',
+                            'Users' => array(
+                                $id1 => array(
+                                    'email' => 'test@test.com',
+                                    'accept_status' => 'none',
+                                    'cn' => '',
+                                    'role' => 'REQ-PARTICIPANT',
+                                ),
+                                $id2 => array(
+                                    'email' => 'test1@test.com',
+                                    'accept_status' => 'none',
+                                    'cn' => '',
+                                    'role' => 'REQ-PARTICIPANT',
+                                ),
                             ),
                         ),
                     ),
@@ -1133,8 +1172,8 @@ END:VCALENDAR',
                         'CN' => 'SugarUser 756101654',
                         'ROLE' => '',
                         'davLink' => '',
-                        'X-SUGARUID' => $id1,
                         'RSVP' => 'TRUE',
+                        'X-SUGARUID' => $id1,
                     ),
                 ),
             ),
@@ -1164,8 +1203,8 @@ END:VCALENDAR',
                         'CN' => 'SugarUser 756101654',
                         'ROLE' => 'CHAIR',
                         'davLink' => 'mailto:test0@test.com',
-                        'X-SUGARUID' => $id1,
                         'RSVP' => 'TRUE',
+                        'X-SUGARUID' => $id1,
                     ),
                 ),
             ),
@@ -1176,11 +1215,13 @@ END:VCALENDAR',
     {
         $id1 = create_guid();
         $id2 = create_guid();
+        $id3 = create_guid();
 
         return array(
             array(
                 'vCalendar' => $this->getEventTemplate('vempty'),
                 'users' => array(),
+                'contacts' => array(),
                 'davUsers' => array(),
                 'result' => false,
                 'expectedMethods' => null,
@@ -1206,31 +1247,35 @@ END:VCALENDAR',
                         'last_name' => '1735411632',
                     )
                 ),
+                'contacts' => array(),
                 'davUsers' => array(),
                 'result' => true,
                 'expectedMethods' => array('addParticipants'),
                 'expectedArguments' => array(
-                    'mailto:test@test.com' => array(
-                        'PARTSTAT' => 'NEEDS-ACTION',
-                        'CN' => 'SugarUser 756101654',
-                        'ROLE' => '',
-                        'davLink' => '',
-                        'X-SUGARUID' => $id1,
-                        'RSVP' => 'TRUE',
-                    ),
-                    'mailto:test1@test.com' => array(
-                        'PARTSTAT' => 'NEEDS-ACTION',
-                        'CN' => 'SugarUser 1735411632',
-                        'ROLE' => '',
-                        'davLink' => '',
-                        'X-SUGARUID' => $id2,
-                        'RSVP' => 'TRUE',
+                    'addParticipants' => array(
+                        'mailto:test@test.com' => array(
+                            'PARTSTAT' => 'NEEDS-ACTION',
+                            'CN' => 'SugarUser 756101654',
+                            'ROLE' => '',
+                            'davLink' => '',
+                            'RSVP' => 'TRUE',
+                            'X-SUGARUID' => $id1,
+                        ),
+                        'mailto:test1@test.com' => array(
+                            'PARTSTAT' => 'NEEDS-ACTION',
+                            'CN' => 'SugarUser 1735411632',
+                            'ROLE' => '',
+                            'davLink' => '',
+                            'RSVP' => 'TRUE',
+                            'X-SUGARUID' => $id2,
+                        )
                     ),
                 ),
             ),
             array(
-                'vCalendar' => $this->getEventTemplate('vevent'),
+                'vCalendar' => $this->getEventTemplate('vevent-participants'),
                 'users' => array(),
+                'contacts' => array(),
                 'davUsers' => array(
                     array('email1' => 'test2@test.com', 'new_with_id' => true, 'id' => $id1, 'addToMeeting' => false),
                     array('email1' => 'test1@test.com', 'new_with_id' => true, 'id' => $id2, 'addToMeeting' => false)
@@ -1238,21 +1283,23 @@ END:VCALENDAR',
                 'result' => true,
                 'expectedMethods' => array('deleteParticipants'),
                 'expectedArguments' => array(
-                    'mailto:test2@test.com' => array(
-                        'PARTSTAT' => '',
-                        'CN' => '',
-                        'ROLE' => '',
-                        'davLink' => '',
-                        'X-SUGARUID' => $id1,
-                        'RSVP' => 'TRUE',
-                    ),
-                    'mailto:test1@test.com' => array(
-                        'PARTSTAT' => '',
-                        'CN' => '',
-                        'ROLE' => '',
-                        'davLink' => '',
-                        'X-SUGARUID' => $id2,
-                        'RSVP' => 'TRUE',
+                    'deleteParticipants' => array(
+                        'mailto:test2@test.com' => array(
+                            'PARTSTAT' => '',
+                            'CN' => '',
+                            'ROLE' => '',
+                            'davLink' => '',
+                            'RSVP' => 'TRUE',
+                            'X-SUGARUID' => $id1,
+                        ),
+                        'mailto:test1@test.com' => array(
+                            'PARTSTAT' => '',
+                            'CN' => '',
+                            'ROLE' => '',
+                            'davLink' => '',
+                            'RSVP' => 'TRUE',
+                            'X-SUGARUID' => $id2,
+                        ),
                     ),
                 ),
             ),
@@ -1273,6 +1320,16 @@ END:VCALENDAR',
                         'id' => $id2,
                         'full_name' => 'SugarUser 1735411632',
                         'first_name' => 'SugarUser',
+                        'last_name' => '1735411632',
+                    ),
+                ),
+                'contacts' => array(
+                    array(
+                        'email' => 'test10@test.com',
+                        'new_with_id' => true,
+                        'id' => $id3,
+                        'full_name' => 'SugarContact 1735411632',
+                        'first_name' => 'SugarContact',
                         'last_name' => '1735411632',
                     ),
                 ),
@@ -1297,25 +1354,36 @@ END:VCALENDAR',
                     )
                 ),
                 'result' => true,
-                'expectedMethods' => array('modifyParticipants'),
+                'expectedMethods' => array('modifyParticipants', 'addParticipants'),
                 'expectedArguments' => array(
-                    'mailto:test12@test.com' => array(
-                        'PARTSTAT' => 'NEEDS-ACTION',
-                        'CN' => 'SugarUser 1735411632',
-                        'ROLE' => 'OPT-PARTICIPANT',
-                        'davLink' => 'mailto:test2@test.com',
-                        'X-SUGARUID' => 'baba4eca-59f2-f1ad-1f03-55d5d45e3f82',
-                        'RSVP' => 'TRUE',
+                    'modifyParticipants' => array(
+                        'mailto:test12@test.com' => array(
+                            'PARTSTAT' => 'NEEDS-ACTION',
+                            'CN' => 'SugarUser 1735411632',
+                            'ROLE' => 'OPT-PARTICIPANT',
+                            'davLink' => 'mailto:test2@test.com',
+                            'RSVP' => 'TRUE',
+                            'X-SUGARUID' => 'baba4eca-59f2-f1ad-1f03-55d5d45e3f82',
+                        ),
+                        'mailto:test1@test.com' => array(
+                            'PARTSTAT' => 'NEEDS-ACTION',
+                            'CN' => 'SugarUser 1735411632',
+                            'ROLE' => 'CHAIR',
+                            'davLink' => 'mailto:test1@test.com',
+                            'RSVP' => 'TRUE',
+                            'X-SUGARUID' => $id2,
+                        )
                     ),
-                    'mailto:test1@test.com' => array(
-                        'PARTSTAT' => 'NEEDS-ACTION',
-                        'CN' => 'SugarUser 1735411632',
-                        'ROLE' => 'CHAIR',
-                        'davLink' => 'mailto:test1@test.com',
-                        'X-SUGARUID' => $id2,
-                        'RSVP' => 'TRUE',
+                    'addParticipants' => array(
+                        'mailto:test10@test.com' => array(
+                            'PARTSTAT' => 'NEEDS-ACTION',
+                            'CN' => 'SugarContact 1735411632',
+                            'ROLE' => '',
+                            'davLink' => null,
+                            'RSVP' => 'TRUE',
+                            'X-SUGARUID' => $id3,
+                        ),
                     ),
-
                 ),
             ),
         );
@@ -1809,16 +1877,21 @@ END:VCALENDAR',
     /**
      * @param string $vCalendarEventText
      * @param array $users
+     * @param array $contacts
      * @param array|null $expectedResult
      *
      * @covers       \CalDavEvent::getParticipants
      *
      * @dataProvider getParticipantsProvider
      */
-    public function testGetParticipants($vCalendarEventText, array $users, $expectedResult)
+    public function testGetParticipants($vCalendarEventText, array $users, array $contacts, $expectedResult)
     {
         foreach ($users as $user) {
             SugarTestUserUtilities::createAnonymousUser(true, 0, $user);
+        }
+
+        foreach ($contacts as $contact) {
+            SugarTestContactUtilities::createContact($contact['id'], $contact);
         }
 
         $beanMock = $this->getObjectForGetters($vCalendarEventText);
@@ -1961,6 +2034,7 @@ END:VCALENDAR',
     {
         $event = SugarTestCalDavUtilities::createEvent();
         $meeting = SugarTestMeetingUtilities::createMeeting();
+        $meeting->retrieve($meeting->id);
 
         $event->setBean($meeting);
         $event->save();
@@ -2315,6 +2389,7 @@ END:VCALENDAR',
     /**
      * @param string $currentEvent
      * @param array $users
+     * @param array $contacts
      * @param array $davUsers
      * @param bool $expectedResult
      * @param array $expectedArguments
@@ -2327,6 +2402,7 @@ END:VCALENDAR',
     public function testSetParticipants(
         $currentEvent,
         array $users,
+        array $contacts,
         array $davUsers,
         $expectedResult,
         $expectedMethods,
@@ -2354,12 +2430,17 @@ END:VCALENDAR',
             }
         }
 
+        foreach ($contacts as $contact) {
+            $createdContact = SugarTestContactUtilities::createContact($contact['id'], $contact);
+            SugarTestMeetingUtilities::addMeetingContactRelation($meeting->id, $createdContact->id);
+        }
+
         $this->beanMock->parent_type = 'Meetings';
         $this->beanMock->parent_id = $meeting->id;
 
         if ($expectedMethods) {
             foreach ($expectedMethods as $method) {
-                $this->beanMock->expects($this->once())->method($method)->with($expectedArguments, $component);
+                $this->beanMock->expects($this->once())->method($method)->with($expectedArguments[$method], $component);
             }
         } else {
             $this->beanMock->expects($this->never())->method('addParticipants');
@@ -2467,7 +2548,13 @@ END:VCALENDAR',
                              ->setMethods(array('getMapping'))
                              ->getMock();
 
+        $searchFactoryMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Factory')
+                                  ->disableOriginalConstructor()
+                                  ->setMethods(null)
+                                  ->getMock();
+
         TestReflection::setProtectedValue($participantsHelper, 'statusMapper', $acceptedMapper);
+        TestReflection::setProtectedValue($participantsHelper, 'searchFactory', $searchFactoryMock);
 
         TestReflection::setProtectedValue($this->beanMock, 'dateTimeHelper', $dateTimeHelper);
         TestReflection::setProtectedValue($this->beanMock, 'recurringHelper', $recurringHelper);
@@ -2640,38 +2727,5 @@ END:VCALENDAR',
                      ->with($updatedEvent, $userCalendar, $currentEvent);
 
         $this->beanMock->scheduleLocalDelivery();
-    }
-
-    /**
-     * @param $beanName
-     *
-     * @covers       \Meeting::set_accept_status
-     * @covers       \Call::set_accept_status
-     *
-     * @dataProvider logicHooksFromModulesProvider
-     *
-     */
-    public function testLogicHooksFromModules($beanName)
-    {
-        $meetingsMock = $this->getMockBuilder($beanName)
-                             ->disableOriginalConstructor()
-                             ->setMethods(array('call_custom_logic', 'set_relationship'))
-                             ->getMock();
-
-        $meetingsMock->update_vcal = false;
-
-        $userMock = $this->getMockBuilder('\User')
-                         ->disableOriginalConstructor()
-                         ->setMethods(array('getPreference'))
-                         ->getMock();
-
-        $meetingsMock->expects($this->at(0))
-                     ->method('call_custom_logic')
-                     ->with('before_set_attendee', array('action' => 'attendee_updated'));
-        $meetingsMock->expects($this->at(2))
-                     ->method('call_custom_logic')
-                     ->with('after_set_attendee', array('action' => 'attendee_updated'));
-
-        $meetingsMock->set_accept_status($userMock, 'accept');
     }
 }

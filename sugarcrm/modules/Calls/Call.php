@@ -482,7 +482,6 @@ class Call extends SugarBean {
 
   function set_accept_status($user,$status)
   {
-	  $this->call_custom_logic('before_set_attendee', array('action' => 'attendee_updated'));
     if ( $user->object_name == 'User')
     {
       $relate_values = array('user_id'=>$user->id,'call_id'=>$this->id);
@@ -507,7 +506,6 @@ class Call extends SugarBean {
       $data_values = array('accept_status'=>$status);
       $this->set_relationship($this->rel_leads_table, $relate_values, true, true,$data_values);
     }
-	  $this->call_custom_logic('after_set_attendee', array('action' => 'attendee_updated'));
   }
 
 

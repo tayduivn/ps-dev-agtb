@@ -14,6 +14,8 @@
  * @var CalendarEvents
  */
 
+use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as CalDavHandler;
+
 class CalendarEvents
 {
     public static $old_assigned_user_id = '';
@@ -383,12 +385,26 @@ class CalendarEvents
             $this->repeatAction($query, $callback);
         }
 
-        if ($changeWasMade && $invitee instanceof User) {
-            $GLOBALS['log']->debug(sprintf('Update vCal cache for %s/%s', $invitee->module_name, $invitee->id));
-            vCal::cache_sugar_vcal($invitee);
+        if ($changeWasMade) {
+            $this->runCalDavUpdate($event);
+            if ($invitee instanceof User) {
+                $GLOBALS['log']->debug(sprintf('Update vCal cache for %s/%s', $invitee->module_name, $invitee->id));
+                vCal::cache_sugar_vcal($invitee);
+            }
         }
 
+
         return $changeWasMade;
+    }
+
+    /**
+     * Run caldav handler to process participants update
+     * @param SugarBean $event
+     */
+    protected function runCalDavUpdate(\SugarBean $event)
+    {
+        $caldavHandler = new CalDavHandler();
+        $caldavHandler->run($event, 'update_accept_status', array());
     }
 
     /**

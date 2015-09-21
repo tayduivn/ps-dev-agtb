@@ -10,10 +10,22 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$hook_array['before_relationship_update'][] = array(
-    1,
-    'CallsAcceptStatus',
-    'include/CalendarEvents/CalendarEventsHookManager.php',
-    'CalendarEventsHookManager',
-    'beforeRelationshipUpdate',
-);
+namespace Sugarcrm\Sugarcrm\Dav\Cal;
+
+use Sabre\CalDAV;
+
+class Plugin extends CalDAV\Plugin
+{
+    /**
+     * @inheritdoc
+     */
+    public function getCalendarHomeForPrincipal($principal)
+    {
+        $prLen = strlen('principal/');
+        if (!substr($principal, 0, $prLen !== 'principal/')) {
+            throw new \LogicException('Invalid principal');
+        }
+
+        return 'calendars/' . substr($principal, $prLen + 1);
+    }
+}

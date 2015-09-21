@@ -150,13 +150,17 @@ END:VCALENDAR',
                             ->setMethods(null)
                             ->getMock();
 
-        $result = $backendMock->getCalendarsForUser('principals/' . $sugarUser->user_name);
+        $result = $backendMock->getCalendarsForUser('principals/users/' . $sugarUser->user_name);
 
         $this->assertInternalType('array', $result);
         $this->assertEquals(1, count($result));
-        $this->assertEquals('principals/' . $sugarUser->user_name, $result[0]['principaluri']);
+        $this->assertEquals('principals/users/' . $sugarUser->user_name, $result[0]['principaluri']);
 
         SugarTestCalDavUtilities::addCalendarToCreated($result[0]['id']);
+
+        $result = $backendMock->getCalendarsForUser('principals/contacts/' . $sugarUser->id);
+
+        $this->assertEquals(array(), $result);
     }
 
     /**
@@ -189,7 +193,7 @@ END:VCALENDAR',
 
         $this->assertTrue($result);
 
-        $result = $backendMock->getCalendarsForUser('principals/' . $sugarUser->user_name);
+        $result = $backendMock->getCalendarsForUser('principals/users/' . $sugarUser->user_name);
 
         $this->assertEquals('myCalendar', $result[0]['{DAV:}displayname']);
         $this->assertEquals('opaque',
@@ -434,7 +438,7 @@ END:VCALENDAR',
 
         $this->assertNull($deletedEvent);
 
-        $result = $backendMock->getCalendarsForUser('principals/' . $sugarUser->user_name);
+        $result = $backendMock->getCalendarsForUser('principals/users/' . $sugarUser->user_name);
 
         $this->assertEquals(2, $result[0]['{http://sabredav.org/ns}sync-token']);
     }
@@ -448,7 +452,7 @@ END:VCALENDAR',
                             ->setMethods(null)
                             ->getMock();
 
-        $calendarInfo = $backendMock->getCalendarsForUser('principals/' . $sugarUser->user_name);
+        $calendarInfo = $backendMock->getCalendarsForUser('principals/users/' . $sugarUser->user_name);
 
         $event = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
@@ -464,7 +468,7 @@ END:VCALENDAR',
 
         SugarTestCalDavUtilities::addCalendarToCreated($calendarInfo[0]['id']);
 
-        $result = $backendMock->getCalendarObjectByUID('principals/' . $sugarUser->user_name, 'uidtest1');
+        $result = $backendMock->getCalendarObjectByUID('principals/users/' . $sugarUser->user_name, 'uidtest1');
 
         $this->assertEquals($calendarInfo[0]['uri'] . '/' . $event->uri, $result);
     }

@@ -34,7 +34,7 @@ class UserHelper
     public function setPrincipalPrefix($prefixPath)
     {
         if (!empty($prefixPath)) {
-            if (strpos($prefixPath, '/') === false) {
+            if (strrpos($prefixPath, '/') !== strlen($prefixPath) - 1) {
                 $prefixPath .= '/';
             }
             $this->prefixPath = $prefixPath;
@@ -94,35 +94,31 @@ class UserHelper
     }
 
     /**
-     * Converts SugarCRM user into DAV formatted array
-     * @param \User $user
-     * @return array
-     */
-    public function getPrincipalArrayByUser(\User $user)
-    {
-        return array(
-            'id' => $user->id,
-            'uri' => $this->getPrincipalStringByUser($user),
-            '{DAV:}displayname' => $user->full_name,
-            '{http://sabredav.org/ns}email-address' => $user->email1,
-        );
-    }
-
-    /**
      * Retrieve user from DAV principal string
-     * @param string $principal DAV principal path (principal/user)
+     * @param string $principal DAV principal path (principal/users/user)
      * @return \User | null
      */
     public function getUserByPrincipalString($principal)
     {
         $principalComponents = explode('/', $principal);
-        if (isset($principalComponents[1])) {
-            $userName = $principalComponents[1];
-            $this->setPrincipalPrefix($principalComponents[0]);
-        } else {
-            $userName = $principalComponents[0];
-            $this->setPrincipalPrefix('');
+        $iCount = count($principalComponents);
+        switch ($iCount) {
+            //only username passed in principal
+            case 1:
+                break;
+            //full principal string format (principal/users/username). We should check that it is "users" principal
+            case 3:
+                if ($principalComponents[1] != 'users') {
+                    return null;
+                }
+                break;
+            //not supported principal
+            default:
+                return null;
         }
+
+        $userName = array_pop($principalComponents);
+        $this->setPrincipalPrefix(implode('/', $principalComponents));
 
         $user = $this->getUserByUserName($userName);
 
@@ -152,7 +148,7 @@ class UserHelper
     public function getCalendars($principalUri)
     {
         $user = $this->getUserByPrincipalString($principalUri);
-        if ($user->load_relationship('caldav_calendars')) {
+        if ($user && $user->load_relationship('caldav_calendars')) {
 
             $calendarBeans = $user->caldav_calendars->getBeans();
             if ($calendarBeans) {

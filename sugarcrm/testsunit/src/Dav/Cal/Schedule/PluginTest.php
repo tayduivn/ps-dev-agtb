@@ -63,7 +63,7 @@ BEGIN:VEVENT
 UID:foo
 DTSTART:20140811T230000Z
 ORGANIZER:mailto:user1.sabredav@sabredav.org
-ATTENDEE;SCHEDULE-STATUS=1.2:mailto:user2.sabredav@sabredav.org
+ATTENDEE;SCHEDULE-STATUS=1.2;X-SUGAR-MODULE=Contacts:mailto:user2.sabredav@sabredav.org
 END:VEVENT
 END:VCALENDAR',
                 'expectedObjectForUser2' => 'BEGIN:VCALENDAR
@@ -110,7 +110,7 @@ END:VCALENDAR',
 BEGIN:VEVENT
 UID:foo
 DTSTART:20140811T230000Z
-ORGANIZER;SCHEDULE-STATUS=1.2:mailto:user2.sabredav@sabredav.org
+ORGANIZER;SCHEDULE-STATUS=1.2;X-SUGAR-MODULE=Contacts:mailto:user2.sabredav@sabredav.org
 ATTENDEE;PARTSTAT=ACCEPTED:mailto:user2.sabredav@sabredav.org
 ATTENDEE;PARTSTAT=ACCEPTED:mailto:user1.sabredav@sabredav.org
 ATTENDEE:mailto:user3.sabredav@sabredav.org

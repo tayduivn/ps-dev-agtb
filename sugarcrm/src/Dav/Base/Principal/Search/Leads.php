@@ -10,10 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$hook_array['before_relationship_update'][] = array(
-    1,
-    'CallsAcceptStatus',
-    'include/CalendarEvents/CalendarEventsHookManager.php',
-    'CalendarEventsHookManager',
-    'beforeRelationshipUpdate',
-);
+namespace Sugarcrm\Sugarcrm\Dav\Base\Principal\Search;
+
+
+class Leads extends Base
+{
+    protected $moduleName = 'Leads';
+}

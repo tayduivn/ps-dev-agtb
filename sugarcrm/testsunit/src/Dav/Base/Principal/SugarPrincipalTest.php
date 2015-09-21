@@ -23,62 +23,20 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  */
 class SugarPrincipalTest extends \PHPUnit_Framework_TestCase
 {
-    /** Mock object for Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal
-     * @var
-     */
-    protected $principalMock;
-
-    /**
-     * Mock object for Sugarcrm\Sugarcrm\Dav\Base\Helper\UserHelper
-     * @var
-     */
-    protected $userHelperMock;
-
-    /**
-     * Mock object for \SugarQuery
-     * @var
-     */
-    protected $sugarQueryMock;
-
-    /**
-     * Mock object for \User
-     * @var
-     */
-    protected $userBeanMock;
-
-    /**
-     * Mock object for \Link2
-     * @var
-     */
-    protected $relationShipMock;
-
     public function getPrincipalsByPrefixProvider()
     {
         return array(
             array(
-                'prefixPath' => 'principals',
-                'queryResult' => array(
-                    array(
-                        'id' => '1',
-                        'user_name' => 'user_name',
-                        'full_name' => 'first_name',
-                        'email_address' => 'test@test.com'
-                    ),
-                    array(
-                        'id' => '2',
-                        'user_name' => 'user_name1',
-                        'full_name' => 'first_name1',
-                        'email_address' => 'test@test1.com'
-                    ),
-                ),
-                'expectedResult' => array(
-                    array(
-                        'id' => '1',
-                        'uri' => 'principals/user_name',
-                        '{DAV:}displayname' => 'first_name last_name',
-                        '{http://sabredav.org/ns}email-address' => 'test@test.com',
-                    ),
-                ),
+                'prefixPath' => 'principals/users',
+                'searchObject' => 'Users',
+                'expectedMethod' => 'getPrincipalsByPrefix',
+                'expectedCount' => 1,
+            ),
+            array(
+                'prefixPath' => 'principals/contacts',
+                'searchObject' => 'Contacts',
+                'expectedMethod' => 'getPrincipalsByPrefix',
+                'expectedCount' => 1,
             ),
         );
     }
@@ -123,11 +81,12 @@ class SugarPrincipalTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                'path' => 'principals/user',
-                'user_name' => 'user',
-                'full_name' => 'first_name last_name',
-                'email' => 'test@test.com',
-                'principalPrefix' => 'principals',
+                'path' => 'principals/users/user1',
+                'prefixPath' => 'principals/users',
+                'identify' => 'user1',
+                'searchObject' => 'Users',
+                'expectedMethod' => 'getPrincipalByIdentify',
+                'expectedCount' => 1,
             ),
         );
     }
@@ -136,185 +95,47 @@ class SugarPrincipalTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                'prefixPath' => 'principals',
-                'searchProperties' => array(
-                    '{DAV:}displayname' => 'test',
-                ),
-                'methods' => array(
-                    'getNameFormatFields' => array('expects' => 1, 'return' => array('first_name', 'last_name')),
-                    'contains' => array('expects' => 2),
-                    'load_relationship' => array('expects' => 0),
-                    'buildJoinSugarQuery' => array('expects' => 0, 'param' => array()),
-                ),
-                'test' => 'allof',
-                'result' => array(
-                    'principals/test',
-                ),
+                'prefixPath' => 'principals/users',
+                'searchObject' => 'Users',
+                'expectedMethod' => 'searchPrincipals',
+                'expectedCount' => 1,
             ),
             array(
-                'prefixPath' => 'principals',
-                'searchProperties' => array(
-                    '{DAV:}displayname' => 'test1 test2',
-                ),
-                'methods' => array(
-                    'getNameFormatFields' => array('expects' => 1, 'return' => array('first_name', 'last_name')),
-                    'contains' => array('expects' => 4),
-                    'load_relationship' => array('expects' => 0),
-                    'buildJoinSugarQuery' => array('expects' => 0, 'param' => array()),
-                ),
-                'test' => 'allof',
-                'result' => array(
-                    'principals/test',
-                ),
-            ),
-            array(
-                'prefixPath' => 'principals',
-                'searchProperties' => array(
-                    '{DAV:}displayname' => 'test1 test2',
-                ),
-                'methods' => array(
-                    'getNameFormatFields' => array('expects' => 1, 'return' => array('first_name')),
-                    'contains' => array('expects' => 2),
-                    'load_relationship' => array('expects' => 0),
-                    'buildJoinSugarQuery' => array('expects' => 0, 'param' => array()),
-                ),
-                'test' => 'allof',
-                'result' => array(
-                    'principals/test',
-                ),
-            ),
-            array(
-                'prefixPath' => 'principals',
-                'searchProperties' => array(
-                    '{DAV:}displayname' => 'test1',
-                ),
-                'methods' => array(
-                    'getNameFormatFields' => array('expects' => 1, 'return' => array('first_name')),
-                    'contains' => array('expects' => 1),
-                    'load_relationship' => array('expects' => 0),
-                    'buildJoinSugarQuery' => array('expects' => 0, 'param' => array()),
-                ),
-                'test' => 'allof',
-                'result' => array(
-                    'principals/test',
-                ),
-            ),
-            array(
-                'prefixPath' => 'principals',
-                'searchProperties' => array(
-                    '{http://sabredav.org/ns}email-address' => 'test@test.com',
-                ),
-                'methods' => array(
-                    'getNameFormatFields' => array('expects' => 1, 'return' => array('first_name')),
-                    'contains' => array('expects' => 1),
-                    'load_relationship' => array('expects' => 1),
-                    'buildJoinSugarQuery' => array('expects' => 1, 'param' => array('joinType' => 'INNER')),
-                ),
-                'test' => 'allof',
-                'result' => array(
-                    'principals/test',
-                ),
-            ),
-            array(
-                'prefixPath' => 'principals',
-                'searchProperties' => array(
-                    '{http://sabredav.org/ns}email-address' => 'test@test.com',
-                ),
-                'methods' => array(
-                    'getNameFormatFields' => array('expects' => 1, 'return' => array('first_name')),
-                    'contains' => array('expects' => 1),
-                    'load_relationship' => array('expects' => 1),
-                    'buildJoinSugarQuery' => array('expects' => 1, 'param' => array('joinType' => 'LEFT')),
-                ),
-                'test' => 'allon',
-                'result' => array(
-                    'principals/test',
-                ),
+                'prefixPath' => 'principals/contacts',
+                'searchObject' => 'Contacts',
+                'expectedMethod' => 'searchPrincipals',
+                'expectedCount' => 1,
             ),
         );
     }
 
     /**
-     * Setting up base mocks for tests
-     * @param array $principalMethods  Array of methods to mock in Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal
-     * @param array $userHelperMethods Array of methods to mock in Sugarcrm\Sugarcrm\Dav\Base\Helper\UserHelper
-     */
-    protected function setBaseMocks(array $principalMethods, array $userHelperMethods)
-    {
-        $this->principalMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal')
-                                    ->setMethods($principalMethods)
-                                    ->getMock();
-
-        $this->userHelperMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\UserHelper')
-                                     ->disableOriginalConstructor()
-                                     ->setMethods($userHelperMethods)
-                                     ->getMock();
-
-        $this->userBeanMock = $this->getMockBuilder('User')
-                                   ->disableOriginalConstructor()
-                                   ->setMethods(array('load_relationship', 'fetchFromQuery'))
-                                   ->getMock();
-
-        $this->sugarQueryMock = $this->getMockBuilder('SugarQuery')
-                                     ->disableOriginalConstructor()
-                                     ->setMethods(array('select', 'from', 'execute', 'where'))
-                                     ->getMock();
-
-        $this->relationShipMock = $this->getMockBuilder('Link2')
-                                       ->disableOriginalConstructor()
-                                       ->setMethods(array('buildJoinSugarQuery'))
-                                       ->getMockForAbstractClass();
-
-        $this->userBeanMock->email_addresses_primary = $this->relationShipMock;
-
-        $this->principalMock->method('getUserHelper')->willReturn($this->userHelperMock);
-        $this->principalMock->method('getSugarQuery')->willReturn($this->sugarQueryMock);
-    }
-
-    /**
-     * @param string $prefixPath principal prefix
-     * @param array $queryResult The result of \SugarQuery::execute
+     * @param string $prefixPath
+     * @param string $searchObject
+     * @param string $expectedMethod
+     * @param string $expectedCount
      * @covers       Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal::getPrincipalsByPrefix
      *
      * @dataProvider getPrincipalsByPrefixProvider
      */
-    public function testGetPrincipalsByPrefix($prefixPath, array $queryResult)
+    public function testGetPrincipalsByPrefix($prefixPath, $searchObject, $expectedMethod, $expectedCount)
     {
-        $this->setBaseMocks(
-            array('getSugarQuery', 'getUserHelper'),
-            array('getUserBean', 'setPrincipalPrefix', 'getPrincipalArrayByUser', 'getUserByUserName'));
+        $principalMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal')
+                              ->setMethods(array('getSearchObject'))
+                              ->getMock();
+        $searchMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\\' . $searchObject)
+                           ->setConstructorArgs(array($prefixPath))
+                           ->setMethods(array('getPrincipalsByPrefix'))
+                           ->getMock();
 
-        $sugarQueryBuilderSelect = $this->getMockBuilder('SugarQuery_Builder_Select')
-                                        ->disableOriginalConstructor()
-                                        ->setMethods(array('addField'))
-                                        ->getMock();
+        $principalMock->expects($this->once())
+                      ->method('getSearchObject')
+                      ->with($prefixPath)
+                      ->willReturn($searchMock);
+        $searchMock->expects($this->exactly($expectedCount))->method($expectedMethod);
 
-        $beans = array();
+        $principalMock->getPrincipalsByPrefix($prefixPath);
 
-        foreach ($queryResult as $row) {
-            $beanMock = $this->getMockBuilder('User')
-                             ->disableOriginalConstructor()
-                             ->setMethods(null)
-                             ->getMock();
-
-            foreach ($row as $key => $value) {
-                $beanMock->$key = $value;
-            }
-
-            $beans[] = $beanMock;
-        }
-
-        $this->userHelperMock->expects($this->once())->method('getUserBean')->willReturn($this->userBeanMock);
-        $this->userHelperMock->expects($this->once())->method('setPrincipalPrefix')->with($prefixPath);
-        $this->userHelperMock->expects($this->exactly(count($beans)))->method('getPrincipalArrayByUser');
-
-        $this->userBeanMock->expects($this->once())->method('load_relationship')->willReturn(true);
-        $this->userBeanMock->expects($this->once())->method('fetchFromQuery')->willReturn($beans);
-
-        $this->sugarQueryMock->expects($this->once())->method('select')->willReturn($sugarQueryBuilderSelect);
-
-
-        $this->principalMock->getPrincipalsByPrefix($prefixPath);
     }
 
     /**
@@ -343,89 +164,68 @@ class SugarPrincipalTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $path
-     * @param string $username
-     * @param string $full_name
-     * @param string $email
-     * @param string $principalPrefix
+     * @param string $prefixPath
+     * @param string $identify
+     * @param string $searchObject
+     * @param string $expectedMethod
+     * @param string $expectedCount
      *
      * @covers       Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal::getPrincipalByPath
      *
      * @dataProvider getPrincipalByPathProvider
      */
-    public function testGetPrincipalByPath($path, $username, $full_name, $email, $principalPrefix)
-    {
-        $this->setBaseMocks(
-            array('getSugarQuery', 'getUserHelper'),
-            array('getUserBean', 'getUserByUserName'));
+    public function testGetPrincipalByPath(
+        $path,
+        $prefixPath,
+        $identify,
+        $searchObject,
+        $expectedMethod,
+        $expectedCount
+    ) {
+        $principalMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal')
+                              ->setMethods(array('getSearchObject'))
+                              ->getMock();
+        $searchMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\\' . $searchObject)
+                           ->setConstructorArgs(array($prefixPath))
+                           ->setMethods(array('getPrincipalByIdentify'))
+                           ->getMock();
 
-        $this->userHelperMock->expects($this->once())->method('getUserByUserName')->with($username)
-                             ->willReturn($this->userBeanMock);
+        $principalMock->expects($this->once())
+                      ->method('getSearchObject')
+                      ->with($prefixPath)
+                      ->willReturn($searchMock);
+        $searchMock->expects($this->exactly($expectedCount))->method($expectedMethod)->with($identify);
 
-        $this->userBeanMock->id = 1;
-        $this->userBeanMock->user_name = $username;
-        $this->userBeanMock->full_name = $full_name;
-        $this->userBeanMock->email1 = $email;
-
-        $result = $this->principalMock->getPrincipalByPath($path);
-
-        $this->assertEquals(array(
-            'id' => 1,
-            'uri' => $path,
-            '{DAV:}displayname' => $full_name,
-            '{http://sabredav.org/ns}email-address' => $email,
-        ), $result);
+        $principalMock->getPrincipalByPath($path);
     }
 
     /**
      * @param string $prefixPath
-     * @param array $searchProperties
-     * @param array $methods  rules for calling methods
-     * @param string $test
-     * @param array $expected found principals
+     * @param string $searchObject
+     * @param string $expectedMethod
+     * @param string $expectedCount
      *
      * @covers       Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal::searchPrincipals
      *
      * @dataProvider searchPrincipalsProvider
      */
-    public function testSearchPrincipals($prefixPath, array $searchProperties, array $methods, $test, $expected)
+    public function testSearchPrincipals($prefixPath, $searchObject, $expectedMethod, $expectedCount)
     {
-        $this->setBaseMocks(
-            array('getSugarQuery', 'getUserHelper'),
-            array('getUserBean', 'getUserByUserName', 'getNameFormatFields'));
+        $principalMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal')
+                              ->setMethods(array('getSearchObject'))
+                              ->getMock();
+        $searchMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\\' . $searchObject)
+                           ->setConstructorArgs(array($prefixPath))
+                           ->setMethods(array('searchPrincipals'))
+                           ->getMock();
 
-        $this->userBeanMock->user_name = 'test';
+        $principalMock->expects($this->once())
+                      ->method('getSearchObject')
+                      ->with($prefixPath)
+                      ->willReturn($searchMock);
+        $searchMock->expects($this->exactly($expectedCount))->method($expectedMethod);
 
-        $sugarQueryBuilder = $this->getMockBuilder('SugarQuery_Builder_Where')
-                                  ->disableOriginalConstructor()
-                                  ->setMethods(array('contains', 'queryOr', 'queryAnd'))
-                                  ->getMock();
-
-        $this->sugarQueryMock->expects($this->any())->method('where')->willReturn($sugarQueryBuilder);
-
-        $this->userHelperMock->expects($this->once())->method('getUserBean')->willReturn($this->userBeanMock);
-        $this->userHelperMock->expects($this->once())
-                             ->method('getNameFormatFields')
-                             ->with($this->userBeanMock)
-                             ->willReturn($methods['getNameFormatFields']['return']);
-
-        $this->relationShipMock->expects($this->exactly($methods['buildJoinSugarQuery']['expects']))
-                               ->method('buildJoinSugarQuery')
-                               ->with($this->sugarQueryMock, $methods['buildJoinSugarQuery']['param']);
-
-        $this->userBeanMock->expects($this->exactly($methods['load_relationship']['expects']))
-                           ->method('load_relationship')
-                           ->with('email_addresses_primary')
-                           ->willReturn(true);
-
-        $sugarQueryBuilder->expects($this->any())->method('queryOr')->willReturn($sugarQueryBuilder);
-        $sugarQueryBuilder->expects($this->any())->method('queryAnd')->willReturn($sugarQueryBuilder);
-        $sugarQueryBuilder->expects($this->exactly($methods['contains']['expects']))->method('contains');
-
-        $this->userBeanMock->expects($this->once())->method('fetchFromQuery')->willReturn(array($this->userBeanMock));
-
-        $result = $this->principalMock->searchPrincipals($prefixPath, $searchProperties, $test);
-
-        $this->assertEquals($expected, $result);
+        $principalMock->searchPrincipals($prefixPath, array());
     }
 
     /**

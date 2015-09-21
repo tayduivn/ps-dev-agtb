@@ -34,7 +34,7 @@ class UserHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $userHelper = new Helper\UserHelper();
 
-        $calendars = $userHelper->getCalendars('principals/' . $sugarUser->user_name);
+        $calendars = $userHelper->getCalendars('principals/users/' . $sugarUser->user_name);
 
         $this->assertArrayHasKey($calendarID, $calendars);
         $this->assertEquals($sugarUser->id, $calendars[$calendarID]->assigned_user_id);
@@ -50,7 +50,7 @@ class UserHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $sugarUser = SugarTestUserUtilities::createAnonymousUser();
         $userHelper = new Helper\UserHelper();
 
-        $calendars = $userHelper->getCalendars('principals/' . $sugarUser->user_name);
+        $calendars = $userHelper->getCalendars('principals/users/' . $sugarUser->user_name);
 
         $this->assertArrayHasKey(0, $calendars);
         $this->assertEquals($sugarUser->id, $calendars[0]->assigned_user_id);

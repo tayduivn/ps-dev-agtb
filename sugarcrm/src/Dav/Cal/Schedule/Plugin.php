@@ -19,6 +19,7 @@ use Sabre\VObject\Component\VCalendar;
 use Sabre\VObject\Reader;
 use Sabre\VObject\ITip;
 use Sabre\DAVACL;
+use Sabre\DAV;
 
 class Plugin extends DavSchedulePlugin
 {
@@ -40,6 +41,7 @@ class Plugin extends DavSchedulePlugin
 
         if (!$principalUri) {
             $iTipMessage->scheduleStatus = '3.7;Could not find principal.';
+
             return;
         }
 
@@ -53,21 +55,27 @@ class Plugin extends DavSchedulePlugin
                 $caldavNS . 'schedule-inbox-URL',
                 $caldavNS . 'schedule-default-calendar-URL',
                 '{http://sabredav.org/ns}email-address',
+                'x-sugar-module',
             )
         );
 
         $this->server->on('propFind', array($aclPlugin, 'propFind'), 20);
 
+        $iTipMessage->xSugarModule = isset($result['x-sugar-module']) ? $result['x-sugar-module'] : 'Users';
+
         if (!isset($result[$caldavNS . 'schedule-inbox-URL'])) {
             $iTipMessage->scheduleStatus = '5.2;Could not find local inbox';
+
             return;
         }
         if (!isset($result[$caldavNS . 'calendar-home-set'])) {
             $iTipMessage->scheduleStatus = '5.2;Could not locate a calendar-home-set';
+
             return;
         }
         if (!isset($result[$caldavNS . 'schedule-default-calendar-URL'])) {
             $iTipMessage->scheduleStatus = '5.2;Could not find a schedule-default-calendar-URL property';
+
             return;
         }
 
@@ -82,7 +90,9 @@ class Plugin extends DavSchedulePlugin
         }
 
         if (!$aclPlugin->checkPrivileges($inboxPath, $caldavNS . $privilege, DAVACL\Plugin::R_PARENT, false)) {
-            $iTipMessage->scheduleStatus = '3.8;organizer did not have the ' . $privilege . ' privilege on the attendees inbox';
+            $iTipMessage->scheduleStatus =
+                '3.8;organizer did not have the ' . $privilege . ' privilege on the attendees inbox';
+
             return;
         }
 
@@ -113,7 +123,9 @@ class Plugin extends DavSchedulePlugin
         $inbox->createFile($newFileName, $iTipMessage->message->serialize());
 
         if (!$newObject) {
-            $iTipMessage->scheduleStatus = '5.0;iTip message was not processed by the server, likely because we didn\'t understand it.';
+            $iTipMessage->scheduleStatus =
+                '5.0;iTip message was not processed by the server, likely because we didn\'t understand it.';
+
             return;
         }
 
@@ -142,7 +154,7 @@ class Plugin extends DavSchedulePlugin
      *
      * @param VCalendar $vCalendar Parsed iCalendar object
      * @param string $calendarPath Path to calendar collection
-     * @param string $currentData Current event data
+     * @param string $currentData  Current event data
      * @return bool A marker to indicate that the original object modified by this process.
      */
     public function calendarObjectSugarChange(VCalendar $vCalendar, $calendarPath, $currentData)
@@ -163,5 +175,89 @@ class Plugin extends DavSchedulePlugin
         $this->processICalendarChange($oldObj, $vCalendar, $addresses, [], $modified);
 
         return $modified;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function propFind(DAV\PropFind $propFind, DAV\INode $node)
+    {
+        if (!$node instanceof DAVACL\IPrincipal) {
+            return;
+        }
+
+        $propFind->handle('x-sugar-module', function () use ($node) {
+            $result = $node->getProperties(array('x-sugar-module'));
+            if (isset($result['x-sugar-module'])) {
+                return $result['x-sugar-module'];
+            } else {
+                return 'Users';
+            }
+
+        });
+
+        parent::propFind($propFind, $node);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function processICalendarChange(
+        $oldObject,
+        VCalendar $newObject,
+        array $addresses,
+        array $ignore = [],
+        &$modified = false
+    ) {
+
+        $broker = new ITip\Broker();
+        $messages = $broker->parseEvent($newObject, $addresses, $oldObject);
+
+        if ($messages) {
+            $modified = true;
+        }
+
+        foreach ($messages as $message) {
+
+            if (in_array($message->recipient, $ignore)) {
+                continue;
+            }
+
+            $this->deliver($message);
+
+            if (isset($newObject->VEVENT->ORGANIZER) &&
+                ($newObject->VEVENT->ORGANIZER->getNormalizedValue() === $message->recipient)
+            ) {
+                if ($message->scheduleStatus) {
+                    $newObject->VEVENT->ORGANIZER['SCHEDULE-STATUS'] = $message->getScheduleStatus();
+                }
+                if (isset($message->xSugarModule)) {
+                    $newObject->VEVENT->ORGANIZER['X-SUGAR-MODULE'] = $message->xSugarModule;
+                }
+                unset($newObject->VEVENT->ORGANIZER['SCHEDULE-FORCE-SEND']);
+
+            } else {
+
+                if (isset($newObject->VEVENT->ATTENDEE)) {
+                    foreach ($newObject->VEVENT->ATTENDEE as $attendee) {
+
+                        if ($attendee->getNormalizedValue() === $message->recipient) {
+                            if ($message->scheduleStatus) {
+                                $attendee['SCHEDULE-STATUS'] = $message->getScheduleStatus();
+                            }
+                            if (isset($message->xSugarModule)) {
+                                $attendee['X-SUGAR-MODULE'] = $message->xSugarModule;
+                            }
+                            unset($attendee['SCHEDULE-FORCE-SEND']);
+                            break;
+                        }
+
+                    }
+                }
+
+            }
+
+        }
+
     }
 }
