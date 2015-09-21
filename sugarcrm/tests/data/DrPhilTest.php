@@ -461,6 +461,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
             'loaded_relationships',
             'module_key',
             'name_format_map',
+
             'loadedDefs'
         );
     }
@@ -478,13 +479,31 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
             if (isset($GLOBALS['dictionary'][$objectName])) {
                 $vardefFields = $GLOBALS['dictionary'][$objectName]['fields'];
                 $this->assertFalse(empty($vardefFields), "Empty list of fields for module {$module}");
-                foreach ($vardefFields as $field) {
-                    $this->assertFalse(
-                        in_array($field, $mustNotOverriddenFields),
-                        "Field {$field} is overridden for module {$module}"
-                    );
+                foreach ($vardefFields as $field => $value) {
+                    if (!$this->isExistingException($module, $field)) {
+                        $this->assertFalse(
+                            in_array($field, $mustNotOverriddenFields),
+                            "Field {$field} is overridden for module {$module}"
+                        );
+                    }
                 }
             }
+        }
+    }
+
+    public function isExistingException($module, $field)
+    {
+        // When this test is added, there are 3 known exceptions already as follows:
+        // This test is to make sure that NO new exception would be added.
+        // module: EditCustomFields field: importable
+        // module: Trackers         field: module_name
+        // module: Filters          field: module_name
+        if (($module === 'EditCustomFields' && $field === 'importable') ||
+            ($module === 'Trackers' && $field === 'module_name') ||
+            ($module === 'Filters' && $field === 'module_name')) {
+            return true;
+        } else {
+            return false;
         }
     }
 

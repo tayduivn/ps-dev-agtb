@@ -157,7 +157,10 @@ class PMSEChangeField extends PMSEScriptTask
                                 }
                                 $newValue = $this->beanHandler->mergeBeanInTemplate($beanModule, $field->value);
                             }
-                            $bean->{$field->field} = $newValue; //$field->value;
+                            if (!empty($bean->field_defs[$field->field]['required']) && empty($newValue)) {
+                                throw new PMSEElementException('Cannot fill a required field ' . $field->field . ' with an empty value', $flowData, $this);
+                            }
+                            $bean->{$field->field} = $newValue;
                         }
                         $historyData->savePostdata($field->field, $field->value);
                         $ifields++;
