@@ -134,6 +134,11 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
                 if ($sessionObject instanceof SessionStorage && !$sessionObject->closed) {
                     $_SESSION = $sessionObject->getArrayCopy();
                 } else {
+                    //Supress any warning before we start the session. If there was any output, the cookie won't be sent
+                    //But that is OK here as we are only saving changes, not outputting anything to user. They should already
+                    //Have the session cookie.
+                    $errRep = error_reporting();
+                    error_reporting($errRep & ~E_WARNING);
                     session_start();
                     //First verify that the sessions still match and we didn't somehow switch users.
                     if ((!isset($_SESSION['user_id']) && $previousUserId) ||
@@ -151,6 +156,7 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
                             );
                         }
                     }
+                    error_reporting($errRep);
                 }
                 session_write_close();
             });
