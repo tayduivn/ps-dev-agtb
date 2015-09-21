@@ -17,7 +17,7 @@ class SugarQuery_Builder_Condition
      */
     public $operator;
     /**
-     * @var string
+     * @var SugarQuery_Builder_Field_Condition
      */
     public $field;
     /**
@@ -41,6 +41,11 @@ class SugarQuery_Builder_Condition
      * @var SugarQuery
      */
     public $query;
+
+    /**
+     * @var bool
+     */
+    protected $isAclIgnored;
 
     public function __construct(SugarQuery $query)
     {
@@ -116,4 +121,19 @@ class SugarQuery_Builder_Condition
         return $this->$name;
     }
 
+    /**
+     * Marks condition as ignoring ACL
+     */
+    public function ignoreAcl()
+    {
+        $this->isAclIgnored = true;
+    }
+
+    /**
+     * Checks
+     */
+    public function isAclIgnored()
+    {
+        return $this->isAclIgnored;
+    }
 }
