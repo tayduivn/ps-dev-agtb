@@ -12,8 +12,7 @@
     extendsFrom: 'RecordView',
 
     events: {
-        'click .record-edit-link-wrapper': 'handleEdit',
-        'click a[name=cancel_button]': 'cancelClicked'
+        'click .record-edit-link-wrapper': 'handleEdit'
     },
 
     initialize: function(options) {
@@ -35,7 +34,7 @@
         this.on('editable:keydown', this.handleKeyDown, this);
         this.on('editable:mousedown', this.handleMouseDown, this);
         this.on('field:error', this.handleFieldError, this);
-
+        this.context.on('button:cancel_button:click', this.cancelClicked, this);
         //event register for preventing actions
         // when user escapes the page without confirming deleting
         app.routing.before('route', this.beforeRouteDelete, this);
