@@ -80,7 +80,6 @@ class MssqlManager extends DBManager
         "affected_rows" => true,
         "select_rows" => true,
         'fulltext' => true,
-        'limit_subquery' => true,
         "fix:expandDatabase" => true, // Support expandDatabase fix
         "create_user" => true,
         "create_db" => true,

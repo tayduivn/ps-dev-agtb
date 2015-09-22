@@ -92,8 +92,8 @@
      * properly.
      */
     _renderData: function() {
-        var parentModel = this.context.parent.get('model');
-        var fields = parentModel.fields;
+        var parentModule = this.context.parent.get('module');
+        var fields = app.metadata.getModule(parentModule).fields;
 
         _.each(this.collection.models, function(model) {
             model.fields = app.utils.deepCopy(this.metaFields);
