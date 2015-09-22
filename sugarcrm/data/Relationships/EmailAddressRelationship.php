@@ -37,9 +37,7 @@ class EmailAddressRelationship extends M2MRelationship
 
         if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes"))
         {
-            if ($lhs->$lhsLinkName->beansAreLoaded())
-                $lhs->$lhsLinkName->addBean($rhs);
-
+            $lhs->$lhsLinkName->resetLoaded();
             $this->callBeforeAdd($lhs, $rhs, $lhsLinkName);
         }
 
@@ -59,9 +57,7 @@ class EmailAddressRelationship extends M2MRelationship
 
         if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes"))
         {
-            if ($lhs->$lhsLinkName->beansAreLoaded())
-                $lhs->$lhsLinkName->addBean($rhs);
-
+            $lhs->$lhsLinkName->resetLoaded();
             $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
         }
 
