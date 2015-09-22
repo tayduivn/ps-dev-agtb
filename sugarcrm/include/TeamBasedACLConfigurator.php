@@ -175,6 +175,7 @@ class TeamBasedACLConfigurator
 
     /**
      * Is Team Based ACL enabled for module, if not set - uses global value.
+     * Does not check implementation.
      * @param $module
      * @return bool
      */
@@ -252,12 +253,12 @@ class TeamBasedACLConfigurator
 
             foreach ($actions as $aclKey => $aclModule) {
                 if (($module && $aclKey != $module) ||
-                    empty($aclModule['module']) ||
                     !in_array($aclKey, $config['disabled_modules'])
                 ) {
                     continue;
                 }
-                foreach ($aclModule['module'] as $action) {
+                $aclType = BeanFactory::getBean($aclKey)->acltype;
+                foreach ($aclModule[$aclType] as $action) {
                     if (in_array($action['aclaccess'], $this->getModuleOptions())) {
                         $this->fallbackModule($aclKey, $role->id, $action['id'], $action['aclaccess']);
                     }
@@ -305,8 +306,9 @@ class TeamBasedACLConfigurator
             if (in_array($moduleName, $config['disabled_modules'])) {
                 continue;
             }
-            if (isset($moduleActions['module'])) {
-                foreach ($moduleActions['module'] as $moduleRow) {
+            $aclType = BeanFactory::getBean($moduleName)->acltype;
+            if (isset($moduleActions[$aclType])) {
+                foreach ($moduleActions[$aclType] as $moduleRow) {
                     $accessOverride = $aclRole->retrieve_relationships(
                         'acl_roles_actions',
                         array('role_id' => $moduleRow['role'], 'action_id' => $moduleRow['action']),
@@ -381,8 +383,9 @@ class TeamBasedACLConfigurator
      */
     protected function fallbackModule($module, $role, $action, $access)
     {
+        $aclType = BeanFactory::getBean($module)->acltype;
         $arrObj = new ArrayObject($this->affectedRows);
-        $arrObj[$module]['module'][] = array('role' => $role, 'action' => $action, 'access' => $access);
+        $arrObj[$module][$aclType][] = array('role' => $role, 'action' => $action, 'access' => $access);
         $this->affectedRows = $arrObj->getArrayCopy();
     }
 
@@ -395,8 +398,9 @@ class TeamBasedACLConfigurator
         $aclField = new ACLField();
 
         foreach ($this->affectedRows as $moduleName => $data) {
-            if (isset($data['module'])) {
-                foreach ($data['module'] as $moduleRow) {
+            $aclType = BeanFactory::getBean($moduleName)->acltype;
+            if (isset($data[$aclType])) {
+                foreach ($data[$aclType] as $moduleRow) {
                     $aclRole->setAction(
                         $moduleRow['role'],
                         $moduleRow['action'],

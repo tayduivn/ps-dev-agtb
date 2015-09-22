@@ -189,42 +189,22 @@ $GLOBALS['ACLActions'] = array(
                 'default' => ACL_ALLOW_NONE,
             ),
             'view' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_VIEW',
                 'default' => ACL_ALLOW_NONE,
             ),
             'list' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_LIST',
                 'default' => ACL_ALLOW_NONE,
             ),
             'edit' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_EDIT',
                 'default' => ACL_ALLOW_NONE,
             ),
             'delete' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_DELETE',
                 'default' => ACL_ALLOW_NONE,
             ),
@@ -238,12 +218,7 @@ $GLOBALS['ACLActions'] = array(
                 'default' => ACL_ALLOW_NONE,
             ),
             'export' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_EXPORT',
                 'default' => ACL_ALLOW_NONE,
             ),
@@ -279,42 +254,22 @@ $GLOBALS['ACLActions'] = array(
                 'default' => ACL_ALLOW_NONE,
             ),
             'view' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_VIEW',
                 'default' => ACL_ALLOW_NONE,
             ),
             'list' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_LIST',
                 'default' => ACL_ALLOW_NONE,
             ),
             'edit' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_EDIT',
                 'default' => ACL_ALLOW_NONE,
             ),
             'delete' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_DELETE',
                 'default' => ACL_ALLOW_NONE,
             ),
@@ -328,12 +283,7 @@ $GLOBALS['ACLActions'] = array(
                 'default' => ACL_ALLOW_NONE,
             ),
             'export' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_EXPORT',
                 'default' => ACL_ALLOW_NONE,
             ),
@@ -369,42 +319,22 @@ $GLOBALS['ACLActions'] = array(
                 'default' => ACL_ALLOW_NONE,
             ),
             'view' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_VIEW',
                 'default' => ACL_ALLOW_NONE,
             ),
             'list' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_LIST',
                 'default' => ACL_ALLOW_NONE,
             ),
             'edit' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_EDIT',
                 'default' => ACL_ALLOW_NONE,
             ),
             'delete' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_DELETE',
                 'default' => ACL_ALLOW_NONE,
             ),
@@ -418,12 +348,7 @@ $GLOBALS['ACLActions'] = array(
                 'default' => ACL_ALLOW_NONE,
             ),
             'export' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_EXPORT',
                 'default' => ACL_ALLOW_NONE,
             ),
@@ -459,42 +384,22 @@ $GLOBALS['ACLActions'] = array(
                 'default' => ACL_ALLOW_NONE,
             ),
             'view' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_VIEW',
                 'default' => ACL_ALLOW_NONE,
             ),
             'list' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_LIST',
                 'default' => ACL_ALLOW_NONE,
             ),
             'edit' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_EDIT',
                 'default' => ACL_ALLOW_NONE,
             ),
             'delete' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_DELETE',
                 'default' => ACL_ALLOW_NONE,
             ),
@@ -508,12 +413,7 @@ $GLOBALS['ACLActions'] = array(
                 'default' => ACL_ALLOW_NONE,
             ),
             'export' => array(
-                'aclaccess' => array(
-                    ACL_ALLOW_ALL,
-                    ACL_ALLOW_OWNER,
-                    ACL_ALLOW_DEFAULT,
-                    ACL_ALLOW_NONE,
-                ),
+                'aclaccess' => $actionsDropdown,
                 'label' => 'LBL_ACTION_EXPORT',
                 'default' => ACL_ALLOW_NONE,
             ),

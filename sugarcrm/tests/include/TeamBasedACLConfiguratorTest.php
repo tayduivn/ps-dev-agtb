@@ -117,59 +117,71 @@ class TeamBasedACLSetupTest extends Sugar_PHPUnit_Framework_TestCase
      * Fallback - should replace TBA options.
      * Restore - should restore the previous TBA options.
      * Restore changed ACL - should not restore changed ACL.
+     * @dataProvider moduleProvider
      */
-    public function testFallbackAndRestore()
+    public function testFallbackAndRestore($module, $field)
     {
         $this->tbaConfig = $this->getMock('TeamBasedACLConfigurator', array('applyTBA'));
+        $this->tbaConfig->setForModule($module, true);
         $action = 'view';
-        $field = 'name';
+        $aclType = BeanFactory::getBean($module)->acltype;
         $aclField = new ACLField();
         $roleActions = $this->role->getRoleActions($this->role->id);
         $fallbackField = $this->tbaConfig->getFieldFallbackOption();
         $fallbackModule = $this->tbaConfig->getModuleFallbackOption();
 
         // Set ACL for Module.
-        $actionId = $roleActions[$this->module]['module'][$action]['id'];
+        $actionId = $roleActions[$module][$aclType][$action]['id'];
         $this->role->setAction($this->role->id, $actionId, ACL_ALLOW_SELECTED_TEAMS);
 
         // Set ACL for Field.
-        $aclField->setAccessControl($this->module, $this->role->id, $field, ACL_SELECTED_TEAMS_READ_WRITE);
+        $aclField->setAccessControl($module, $this->role->id, $field, ACL_SELECTED_TEAMS_READ_WRITE);
 
         // Fallback.
-        $this->tbaConfig->setForModule($this->module, false);
+        $this->tbaConfig->setForModule($module, false);
 
         $actualActions = $this->role->getRoleActions($this->role->id);
-        $this->assertEquals(constant($fallbackModule), $actualActions[$this->module]['module'][$action]['aclaccess']);
+        $this->assertEquals(constant($fallbackModule), $actualActions[$module][$aclType][$action]['aclaccess']);
 
         $actualAclFields = $aclField->getACLFieldsByRole($this->role->id);
         $fieldKeys = array_keys($actualAclFields);
         $this->assertEquals(constant($fallbackField), $actualAclFields[$fieldKeys[0]]['aclaccess']);
 
         // Restore.
-        $this->tbaConfig->setForModule($this->module, true);
+        $this->tbaConfig->setForModule($module, true);
 
         $actualActions = $this->role->getRoleActions($this->role->id);
-        $this->assertEquals(ACL_ALLOW_SELECTED_TEAMS, $actualActions[$this->module]['module'][$action]['aclaccess']);
+        $this->assertEquals(ACL_ALLOW_SELECTED_TEAMS, $actualActions[$module][$aclType][$action]['aclaccess']);
 
         $actualAclFields = $aclField->getACLFieldsByRole($this->role->id);
         $fieldKeys = array_keys($actualAclFields);
         $this->assertEquals(ACL_SELECTED_TEAMS_READ_WRITE, $actualAclFields[$fieldKeys[0]]['aclaccess']);
 
         // Restore changed ACL
-        $this->tbaConfig->setForModule($this->module, false);
+        $this->tbaConfig->setForModule($module, false);
 
-        $actionId = $roleActions[$this->module]['module'][$action]['id'];
+        $actionId = $roleActions[$module][$aclType][$action]['id'];
         $this->role->setAction($this->role->id, $actionId, ACL_ALLOW_DEFAULT);
-        $aclField->setAccessControl($this->module, $this->role->id, $field, ACL_ALLOW_DEFAULT);
+        $aclField->setAccessControl($module, $this->role->id, $field, ACL_ALLOW_DEFAULT);
 
-        $this->tbaConfig->setForModule($this->module, true);
+        $this->tbaConfig->setForModule($module, true);
 
         $actualActions = $this->role->getRoleActions($this->role->id);
-        $this->assertEquals(ACL_ALLOW_DEFAULT, $actualActions[$this->module]['module'][$action]['aclaccess']);
+        $this->assertEquals(ACL_ALLOW_DEFAULT, $actualActions[$module][$aclType][$action]['aclaccess']);
 
         $actualAclFields = $aclField->getACLFieldsByRole($this->role->id);
         $fieldKeys = array_keys($actualAclFields);
         $this->assertEquals(ACL_ALLOW_DEFAULT, $actualAclFields[$fieldKeys[0]]['aclaccess']);
+    }
+
+    public function moduleProvider()
+    {
+        return array(
+            // Module, Field.
+            array($this->module, 'name'),
+            // Different ACL type.
+            array('Trackers', 'action'),
+        );
     }
 
     /**
