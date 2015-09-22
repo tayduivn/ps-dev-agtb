@@ -127,8 +127,7 @@ nv.models.pie = function() {
               dispatch.elementMouseover(eo);
             })
             .on('mousemove', function(d, i) {
-              var eo = buildEventObject(d3.event, d, i);
-              dispatch.elementMousemove(eo);
+              dispatch.elementMousemove(d3.event);
             })
             .on('mouseout', function(d, i) {
               d3.select(this).classed('hover', false);
@@ -373,16 +372,11 @@ nv.models.pie = function() {
       //------------------------------------------------------------
 
       function buildEventObject(e, d, i) {
-        var pos = [
-          e.offsetX == undefined ? e.layerX : e.offsetX,
-          e.offsetY == undefined ? e.layerY : e.offsetY
-        ];
         return {
             label: getX(d.data),
             value: getY(d.data),
             point: d.data,
             pointIndex: i,
-            pos: pos,
             id: id,
             e: e
           };

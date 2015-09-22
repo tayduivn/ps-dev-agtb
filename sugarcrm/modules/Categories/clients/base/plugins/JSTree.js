@@ -665,7 +665,7 @@
              */
             _showInputHandler: function(event, data) {
                 var self = this,
-                    el = data.obj.find('input'),
+                    el = data.obj.children('input'),
                     clonedElement = el.clone(),
                     obj = data.obj,
                     t = data.t,
@@ -703,13 +703,17 @@
                             key === 32) {
                             event.stopImmediatePropagation();
                         }
-                        if (key === 13 && this.value.trim().length === 0) {
-                            app.alert.show('wrong_node_name', {
-                                level: 'error',
-                                messages: app.lang.get('LBL_EMPTY_NODE_NAME', 'Categories'),
-                                autoClose: true
-                            });
-                            return false;
+                        if (key === 13) {
+                            if (this.value.trim().length === 0) {
+                                app.alert.show('wrong_node_name', {
+                                    level: 'error',
+                                    messages: app.lang.get('LBL_EMPTY_NODE_NAME', 'Categories'),
+                                    autoClose: false
+                                });
+                                return false;
+                            } else {
+                                app.alert.dismiss('wrong_node_name');
+                            }
                         }
                         if (key === 27 || key === 13) {
                             self._toggleTooltip(obj, false);
@@ -1110,7 +1114,7 @@
              * @private
              */
             _toggleTooltip: function(node, show) {
-                var input = node.find('input.jstree-rename-input');
+                var input = node.children('input.jstree-rename-input:visible');
                 if (show) {
                     input
                         .tooltip({
@@ -1121,6 +1125,13 @@
                         })
                         .tooltip('show');
                 } else {
+                    /*
+                     [RS-1063]
+                     This is the known bug of an old version of the Bootstrap Tooltip.
+                     (see https://github.com/twbs/bootstrap/issues/10740)
+                     Next line (in combination with .find('..:visible') above) is a fix for current version
+                     */
+                    input.data('bs.tooltip').$tip.remove();
                     input
                         .tooltip('destroy');
                 }

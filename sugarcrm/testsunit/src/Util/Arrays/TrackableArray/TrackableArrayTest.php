@@ -160,6 +160,7 @@ class TrackableArrayTest extends \PHPUnit_Framework_TestCase
         $tracked['deep']['a'] = 2;
         $tracked['new_deep']['a'] = 1;
         $tracked['tobeChanged'] = 'changed';
+        $tracked['nested'] = array("one" => 1, "some" => array("a", "b"));
         $arr = array(
             'toBeUnset' => true,
             'tobeChanged' => 1,
@@ -174,6 +175,7 @@ class TrackableArrayTest extends \PHPUnit_Framework_TestCase
             'new_deep' => array(
                 'a' => 1
             ),
+            'nested' => array('some' => array('a', 'b'), 'one' => 1),
             'tobeAdded' => true,
         ), $arr);
     }

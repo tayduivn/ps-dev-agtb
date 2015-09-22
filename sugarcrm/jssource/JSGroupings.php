@@ -355,7 +355,6 @@
             ),
 
             $sugar_grp_sugar7_portal2 = array(
-                'include/javascript/sugar7/bwc.js' => 'portal2/sugar_portal.min.js',
                 'include/javascript/sugar7/utils.js' => 'portal2/sugar_portal.min.js',
                 'include/javascript/sugar7/utils-filters.js' => 'portal2/sugar_portal.min.js',
                 'include/javascript/sugar7/field.js' => 'portal2/sugar_portal.min.js',

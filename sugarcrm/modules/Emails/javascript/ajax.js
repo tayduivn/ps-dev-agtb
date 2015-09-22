@@ -305,7 +305,8 @@ var AjaxObject = {
 		//history subpanel.  If it was initiated by quickcreate from shortcut bar, then
 		//close the shortcut bar menu
 		if ( (typeof(action_sugar_grp1) != 'undefined')) {
-			if(action_sugar_grp1 == 'DetailView') {
+		    //make sure if the history subpanel exists before showing it
+		    if(action_sugar_grp1 == 'DetailView' && document.getElementById("subpanel_history")) {
 				showSubPanel('history',null,true);
 		  	} else if(action_sugar_grp1 == 'quickcreate') {
 		  		closeEmailOverlay();
@@ -364,6 +365,8 @@ var AjaxObject = {
         // add CSRF form token
         if (args && args.length > 0) {
             args += '&';
+        } else {
+            args = '';
         }
         args += 'csrf_token=' + SUGAR.csrf.form_token;
 

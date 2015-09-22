@@ -453,6 +453,9 @@
 
         > span {
           width: 100%;
+          &.list {
+            padding: 0 4px;
+          }
         }
         > .edit .select2-container-multi {
           position: absolute;
@@ -628,40 +631,33 @@ FLEXLIST GENERIC */
         height: 28px;
         text-align: center;
         overflow-x: visible;
+        .dropdown,
+        > span {
+          position: absolute;
+          overflow: visible;
+          width: 54px;
+          height: 28px;
+          right: 1px;
+          background-color: inherit;
+          &.open {
+            z-index: 999;
+          }
+        }
       }
     }
     th:last-child {
       padding: 7px 8px;
       .dropdown,
       > span {
-        position: absolute;
-        overflow: visible;
-        width: 55px;
-        height: 28px;
         top: 0;
-        right: 0;
         padding: 7px 8px;
-        background-color: inherit;
-        &.open {
-          z-index: 999;
-        }
       }
     }
     td:last-child {
       > span {
-        position: absolute;
-        display: inline-block;
-        width: 55px;
-        height: 28px;
         margin-top: -18px;
-        right: 0;
         padding: 4px 8px;
         border-bottom: @tableBorder;
-        background-color: inherit;
-        overflow: visible;
-        &.open {
-          z-index: 999;
-        }
         .fieldset-field {
           display: inline-block;
           padding: 0;
@@ -733,14 +729,6 @@ FLEXLIST GENERIC */
         td:last-child {
           &:not(.alert) {
             height: auto;
-          }
-          > span {
-            position: static;
-            top: 0;
-            right: 0;
-            padding: 0;
-            margin: 0;
-            border-color: transparent;
           }
         }
       }
@@ -941,6 +929,15 @@ FLEXLIST GENERIC */
   }
 }
 
+.main-pane.span12 .flex-list-view.right-actions.scroll-width .dataTable {
+  td:last-child > span,
+  th:last-child .dropdown,
+  th:last-child > span {
+    width: 55px;
+    right: 0;
+  }
+}
+
 .touch .flex-list-view {
   &.no-touch-scrolling .flex-list-view-content {
     -webkit-overflow-scrolling: auto;
@@ -1058,18 +1055,12 @@ table th.nosort span:after {
   .btn {
     margin: 0;
   }
-  .dropdown {
-    width: 55px;
-    &.open {
-      position: absolute;
-      right: 0;
-      width: 71px;
-      .btn {
-        .box-shadow(none);
-        background-color: @gray;
-        > .fa {
-          color: @white;
-        }
+  .dropdown.open {
+    .btn {
+      .box-shadow(none);
+      background-color: @gray;
+      > .fa {
+        color: @white;
       }
     }
   }

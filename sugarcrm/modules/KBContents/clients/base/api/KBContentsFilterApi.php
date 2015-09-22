@@ -99,12 +99,10 @@ class KBContentsFilterApi extends FilterApi
 
         // We've got 3 cases:
         // 1. Composite filter with KBBody - retrieve all records found via Elastic & augment filter with their ids;
-        // 2. Filter with only KBBody - use only Elastic search with built-in pagination;
-        // 3. Filter without KBBody - just use standard Sugar filtering mechanism.
-        if ($bodySearchFilter && count($modifiedMainFilter) === 0) {
-            return $this->filterByContainingExcludingWords($api, $args, $bodySearchFilter, false);
-        } elseif ($bodySearchFilter) {
-            $ids = $this->filterByContainingExcludingWords($api, $args, $bodySearchFilter, true);
+        // 2. Filter without KBBody - just use standard Sugar filtering mechanism.
+        if ($bodySearchFilter) {
+            $ids = $this->filterByContainingExcludingWords($api, $args, $bodySearchFilter);
+            $ids = !empty($ids) ? $ids : array('');
             $args['filter'][] = array('id' => array('$in' => $ids));
         }
         return parent::filterList($api, $args, $acl);
@@ -115,13 +113,13 @@ class KBContentsFilterApi extends FilterApi
      * @param ServiceBase $api
      * @param array $args
      * @param array $filterArgs filter args that contain only 'containing/excluding these words' filter
-     * @param bool $idsOnly return only ids for further filtering or resulting records
      * @return array
      */
-    protected function filterByContainingExcludingWords($api, $args, $filterArgs, $idsOnly)
+    protected function filterByContainingExcludingWords($api, $args, $filterArgs)
     {
         $options = $this->parseArguments($api, $args);
         $bean = BeanFactory::newBean($args['module']);
+        //We don't use ordering because it will be done with database search.
         $orderBy = array();
 
         $operators = array();
@@ -130,31 +128,6 @@ class KBContentsFilterApi extends FilterApi
             $values = preg_split('/[\s[:punct:]]+/', $filterDef[$key]);
             $operators[$key] = !isset($operators[$key]) ? array() : $operators[$key];
             $operators[$key] = $operators[$key] + $values;
-        }
-
-        if (!empty($args['order_by'])) {
-            $orderBys = explode(',', $args['order_by']);
-
-            foreach ($orderBys as $sortBy) {
-                $column = $sortBy;
-                $direction = 'asc';
-
-                if (strpos($sortBy, ':')) {
-                    // it has a :, it's specifying ASC / DESC
-                    list($column, $direction) = explode(':', $sortBy);
-
-                    if (strtolower($direction) == 'desc') {
-                        $direction = 'desc';
-                    } else {
-                        $direction = 'asc';
-                    }
-                }
-
-                // only add column once to the order-by clause
-                if (empty($orderBy[$column])) {
-                    $orderBy[$column] = $direction;
-                }
-            }
         }
 
         $builder = $this->getElasticQueryBuilder($args, $options);
@@ -180,30 +153,12 @@ class KBContentsFilterApi extends FilterApi
 
         $resultSet = $builder->executeSearch();
 
-        // Return all ids for further filtering ... or records with pagination.
+        // Return all ids for further filtering.
         $data = array();
-        if ($idsOnly) {
-            foreach ($resultSet as $result) {
-                $data[] = $result->getId();
-            }
-            return $data;
-        } else {
-            foreach ($resultSet as $result) {
-                $record = BeanFactory::retrieveBean($result->getType(), $result->getId());
-                if (!$record) {
-                    continue;
-                }
-                $formattedRecord = $this->formatBean($api, $args, $record);
-                $formattedRecord['_module'] = $result->getType();
-                $data[] = $formattedRecord;
-            }
-            if ($resultSet->getTotalHits() > ($options['limit'] + $options['offset'])) {
-                $nextOffset = $options['offset'] + $options['limit'];
-            } else {
-                $nextOffset = -1;
-            }
-            return array('next_offset' => $nextOffset, 'records' => $data);
+        foreach ($resultSet as $result) {
+            $data[] = $result->getId();
         }
+        return $data;
     }
 
     /**

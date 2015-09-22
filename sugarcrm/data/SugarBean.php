@@ -4752,12 +4752,25 @@ class SugarBean
             }
         }
         $results = array();
-        foreach($queries as $query)
-        {
+        foreach ($queries as $module => $query) {
             $result = $this->db->query($query . ')');
             while($row = $this->db->fetchByAssoc($result))
             {
-                $results[$row['id']] = $row;
+                $id = $row['id'];
+
+                // trying to reconstruct parent bean from fetched data
+                $parent = BeanFactory::getBean($module);
+                $parent->id = $id;
+                if (isset($row['parent_name_owner'])) {
+                    $parent->assigned_user_id = $row['parent_name_owner'];
+                }
+
+                // remove parent ID from the result in case it's inaccessible to the user
+                if (!SugarACL::checkAccess($module, 'view', array('bean' => $parent))) {
+                    unset($row['id']);
+                }
+
+                $results[$id] = $row;
             }
         }
 
@@ -5645,6 +5658,17 @@ class SugarBean
             $custom_logic_arguments['id'] = $id;
             $this->call_custom_logic("before_delete", $custom_logic_arguments);
             $this->deleted = 1;
+
+            if (isset($this->field_defs['team_id'])) {
+                if (empty($this->teams)) {
+                    $this->load_relationship('teams');
+                }
+
+                if (!empty($this->teams)) {
+                    $this->teams->removeTeamSetModule();
+                }
+            }
+
             $this->mark_relationships_deleted($id);
             if (isset($this->field_defs['modified_user_id'])) {
                 if (!empty($current_user)) {
@@ -7782,15 +7806,6 @@ class SugarBean
     }
 
     /**
-     * Clears the status recursive resave
-     */
-    public static function clearRecursiveResave()
-    {
-        self::$recursivelyResavedLinks = array();
-        self::$recursivelyResavedManyBeans = false;
-    }
-
-    /**
      * Checks to see if a bean implements taggable
      *
      * @return boolean True if tags are enabled for this bean
@@ -7844,4 +7859,12 @@ class SugarBean
         return false;
     }
 
+    /**
+     * Clears the status recursive resave
+     */
+    public static function clearRecursiveResave()
+    {
+        self::$recursivelyResavedLinks = array();
+        self::$recursivelyResavedManyBeans = false;
+    }
 }

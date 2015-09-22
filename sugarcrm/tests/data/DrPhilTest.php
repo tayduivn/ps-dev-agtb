@@ -427,4 +427,93 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
 
         return $data;
     }
+
+    protected function getMustNotOverridenFields()
+    {
+        //here is the list of fields in SugarBean that must not be overridden or redefined
+        return array(
+            'db',
+            'table_name',
+            'object_name',
+            'module_dir',
+            'module_name',
+            'field_name_map',
+            'field_defs',
+            'custom_fields',
+            'list_fields',
+            'additional_column_fields',
+            'relationship_fields',
+            'fetched_row',
+            'disable_custom_fields',
+            'new_with_id',
+            'disable_row_level_security',
+            'visibility',
+            'max_logic_depth',
+            'disable_vardefs',
+            'save_from_post',
+            'duplicates_found',
+            'update_date_modified',
+            'update_modified_by',
+            'update_date_entered',
+            'importable',
+            'in_workflow',
+            'tracker_visibility',
+            'loaded_relationships',
+            'module_key',
+            'name_format_map',
+
+            'loadedDefs'
+        );
+    }
+
+    /**
+     * @dataProvider overriddenSugarBeanFieldsProvider
+     */
+    public function testOverriddenSugarBeanFields($module)
+    {
+        $mustNotOverriddenFields = $this->getMustNotOverridenFields();
+
+        $bean = self::getSeedBean($module);
+        if (isset($bean->object_name)) {
+            $objectName = $bean->object_name;
+            if (isset($GLOBALS['dictionary'][$objectName])) {
+                $vardefFields = $GLOBALS['dictionary'][$objectName]['fields'];
+                $this->assertFalse(empty($vardefFields), "Empty list of fields for module {$module}");
+                foreach ($vardefFields as $field => $value) {
+                    if (!$this->isExistingException($module, $field)) {
+                        $this->assertFalse(
+                            in_array($field, $mustNotOverriddenFields),
+                            "Field {$field} is overridden for module {$module}"
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    public function isExistingException($module, $field)
+    {
+        // When this test is added, there are 3 known exceptions already as follows:
+        // This test is to make sure that NO new exception would be added.
+        // module: EditCustomFields field: importable
+        // module: Trackers         field: module_name
+        // module: Filters          field: module_name
+        if (($module === 'EditCustomFields' && $field === 'importable') ||
+            ($module === 'Trackers' && $field === 'module_name') ||
+            ($module === 'Filters' && $field === 'module_name')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function overriddenSugarBeanFieldsProvider()
+    {
+        $modules = array();
+        $validModules = self::getValidModules();
+        foreach ($validModules as $module) {
+            $modules[] = array($module);
+        }
+        return $modules;
+    }
 }

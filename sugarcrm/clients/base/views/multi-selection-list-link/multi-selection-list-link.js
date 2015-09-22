@@ -90,6 +90,7 @@
             parentModel.setSyncedAttributes(data.record);
         }
 
-        context.set('collapsed', false);
+        context.set('skipFetch', false);
+        context.reloadData();
     }
 })

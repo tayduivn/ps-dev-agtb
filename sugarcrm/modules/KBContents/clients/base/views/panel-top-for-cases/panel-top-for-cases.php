@@ -12,6 +12,7 @@
 
 $viewdefs['KBContents']['base']['view']['panel-top-for-cases'] = array(
     'template' => 'panel-top',
+    'type' => 'panel-top-for-cases',
     'buttons' => array(
         array(
             'type' => 'actiondropdown',
@@ -19,10 +20,9 @@ $viewdefs['KBContents']['base']['view']['panel-top-for-cases'] = array(
             'css_class' => 'pull-right',
             'buttons' => array(
                 array(
-                    'name' => 'create_kbdocument_button',
+                    'name' => 'create_button',
                     'type' => 'sticky-rowaction',
                     'icon' => 'fa-plus',
-                    'event' => 'button:create_article_button_subpanel:click',
                     'label' => 'LNK_NEW_ARTICLE',
                     'acl_module' => 'KBContents',
                     'acl_action' => 'create',

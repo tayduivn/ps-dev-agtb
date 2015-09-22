@@ -724,10 +724,18 @@ class SubPanelDefinitions
         if ($this->platform == 'mobile') {
             return false;
         }
-		if (!is_dir('modules/' . $this->layout_defs [ 'subpanel_setup' ][ strtolower ( $name ) ] [ 'module' ]))
-		  return false;
 
-        $subpanel = new aSubPanel($name, $this->layout_defs['subpanel_setup'][strtolower($name)], $this->_focus, $reload, $original_only, $forApi);
+        $defs = $this->layout_defs['subpanel_setup'][strtolower($name)];
+
+        if(empty($defs)) {
+            $GLOBALS['log']->fatal("Subpanel " . $name . "does not exist!");
+            return false;
+        }
+        if (!is_dir('modules/' . $defs['module'])) {
+            return false;
+        }
+
+        $subpanel = new aSubPanel($name, $defs, $this->_focus, $reload, $original_only, $forApi);
 
         // only return the subpanel object if we can display it.
         if($subpanel->canDisplay == true) {
