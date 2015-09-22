@@ -15,6 +15,7 @@ class ACLFieldsEditView{
         $options = array();
         $tbaConfigurator = new TeamBasedACLConfigurator();
         $tbaEnabled = $tbaConfigurator->isEnabledForModule($module);
+        $tbaImplemented = $tbaConfigurator->isImplementTBA($module);
         $tbaFieldKeys = array_values($tbaConfigurator->getFieldOptions());
 		$fields = ACLField::getFields( $module, '', $role_id);
 		$sugar_smarty = new Sugar_Smarty();
@@ -27,7 +28,7 @@ class ACLFieldsEditView{
 		$sugar_smarty->assign('APP_LIST', $GLOBALS['app_list_strings']);
 		$sugar_smarty->assign('FIELDS', $fields);
         foreach ($GLOBALS['aclFieldOptions'] as $key => $option) {
-            if (!$tbaEnabled && in_array($key, $tbaFieldKeys)) {
+            if ((!$tbaEnabled || !$tbaImplemented) && in_array($key, $tbaFieldKeys)) {
                 continue;
             }
             $options[$key] = translate($option, 'ACLFields');
