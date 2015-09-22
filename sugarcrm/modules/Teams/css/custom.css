@@ -1,15 +1,50 @@
 table.edit.view th, table.edit.view td {
     padding: 10px !important;
 }
+
 table.edit.view .padding-0 {
     padding: 0 !important;
 }
+
 table.edit.view .left {
     text-align: left;
 }
-table.edit.view td.title {
-    background-color: #EEEEEE;
+
+table.edit.view .padding-bottom-20 {
+    padding-bottom: 20px;
 }
-table.edit.view td.value {
-    background-color: #F6F6F6;
+
+table.edit.view td.bg-white {
+    background-color: #FFFFFF;
+}
+
+table.edit.view td.title {
+    background-color: #EFEFEF;
+    color: #343434;
+}
+
+table.edit.view td.title.active {
+    background-color: #A0E8FB;
+    color: #1E5563;
+}
+
+table.edit.view td.title div {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+table.edit.view td.title input[type=checkbox] {
+    margin: 5px 5px 5px 0;
+    padding: 0;
+}
+
+table.edit.view td.title label {
+    padding: 0;
+    margin: 4px 0 0 0;
+    text-overflow: ellipsis;
+    width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
 }

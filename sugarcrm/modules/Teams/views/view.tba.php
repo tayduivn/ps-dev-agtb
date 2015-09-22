@@ -46,12 +46,10 @@ class TeamsViewTBA extends SugarView
      */
     public function display()
     {
-        global $mod_strings;
-        global $app_strings;
-
         $sugar_smarty = new Sugar_Smarty();
-        $sugar_smarty->assign('APP', $app_strings);
-        $sugar_smarty->assign('MOD', $mod_strings);
+        $sugar_smarty->assign('APP', $GLOBALS['app_strings']);
+        $sugar_smarty->assign('MOD', $GLOBALS['mod_strings']);
+        $sugar_smarty->assign('APP_LIST', $GLOBALS['app_list_strings']);
         $sugar_smarty->assign('actionsList', $this->_getUserActionsList());
         $sugar_smarty->assign('moduleTitle', $this->getModuleTitle(false));
 
@@ -66,12 +64,21 @@ class TeamsViewTBA extends SugarView
      */
     private function _getUserActionsList()
     {
-        global $current_user;
-
-        $actionsList = ACLAction::getUserActions($current_user->id);
-
         $tbaConfigurator = new TeamBasedACLConfigurator();
         $defaultTBAConfig = $tbaConfigurator->getDefaultConfig();
+
+        $actionsList = ACLAction::getUserActions($GLOBALS['current_user']->id);
+
+        // Skipping modules that have 'hidden_to_role_assignment' property or not implement TBA
+        foreach ($actionsList as $name => $category) {
+            if (
+                (!empty($GLOBALS['dictionary'][$name]['hidden_to_role_assignment']) &&
+                    $GLOBALS['dictionary'][$name]['hidden_to_role_assignment']) ||
+                !$tbaConfigurator->isImplementTBA($name)
+            ) {
+                unset($actionsList[$name]);
+            }
+        }
 
         return array_diff(array_keys($actionsList), $defaultTBAConfig['disabled_modules']);
     }

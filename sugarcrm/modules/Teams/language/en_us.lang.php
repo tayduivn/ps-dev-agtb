@@ -57,10 +57,12 @@ $mod_strings = array(
     'NTC_REMOVE_TEAM_MEMBER_CONFIRMATION' => 'Are you sure you want to remove this user\\\'s membership?',
     'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
 
-    // Team-Based Access Rights
-    'LBL_TBA_CONFIGURATION' => 'Team-based Access Rights',
+    // Team-Based Permissions
+    'LBL_TBA_CONFIGURATION' => 'Team-based Permissions',
     'LBL_TBA_CONFIGURATION_DESC' => 'Enable team access, and manage access by module.',
-    'LBL_TBA_CONFIGURATION_LABEL' => 'Enable team-based access rights',
-    'LBL_TBA_CONFIGURATION_MOD_LABEL' => 'Select enabled Modules',
-    'LBL_TBA_CONFIGURATION_TITLE' => 'Enabling team-based access rights will allow you to assign specific access and edit rights to teams and people for individual modules.',
+    'LBL_TBA_CONFIGURATION_LABEL' => 'Enable team-based permissions',
+    'LBL_TBA_CONFIGURATION_MOD_LABEL' => 'Select modules to enable',
+    'LBL_TBA_CONFIGURATION_TITLE' => 'Enabling team-based permissions will allow you to assign specific access rights to teams and users for individual modules, through Role Management.',
+    'LBL_TBA_CONFIGURATION_WARNING' => 'Disabling team-based permissions for a module will revert any data associated with team-based permissions for that module. See more information below.',
+    'LBL_TBA_CONFIGURATION_WARNING_DESC' => 'Warning: Disabling team-based permissions for a module will revert any data associated with team-based permissions for that module. This includes any Roles using the "Owner & Selected team" option for that module, and any team-based permissions data for records in that module. We also recommend that you use Quick Repair and rebuild tool to clear your system cache after disabling team-based permissions for any module.',
 );
