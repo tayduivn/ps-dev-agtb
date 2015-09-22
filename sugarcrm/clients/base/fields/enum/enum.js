@@ -249,6 +249,15 @@
      * @private
      */
     _checkForDefaultValue: function(currentValue, optionsKeys){
+
+        // Javascript keys function returns strings even if keys are numbers.  The parameter optionsKeys
+        // is obtained by _.keys() operation on an object. Even if the object keys were numeric originally,
+        // optionsKeys will be an array of strings. Hence we need to cast currentValue to a string
+        // for comparison sake.
+        if (typeof currentValue !== 'undefined') {
+            currentValue = currentValue.toString();
+        }
+
         var action = this.action || this.view.action;
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected
@@ -591,7 +600,7 @@
      */
     _getDefaultOption: function (optionsKeys) {
         //  Return the default if it's available in the definition.
-        if (this.def && !_.isEmpty(this.def.default)) {
+        if (this.def && (!_.isEmptyValue(this.def.default)) ) {
             return this.def.default;
         } else {
             this._setupKeysOrder();

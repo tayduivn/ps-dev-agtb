@@ -239,14 +239,16 @@ class SugarFieldParent extends SugarFieldRelate {
         if (!empty($child_info)) {
             $parent_beans = $seed->retrieve_parent_fields($child_info);
             foreach ($parent_beans as $id => $parent_data) {
-                unset($parent_data['id']);
+                if (!isset($parent_data['id'])) {
+                    $beans[$id]->parent_id = null;
+                } else {
+                    unset($parent_data['id']);
+                }
+
                 foreach ($parent_data as $field => $value) {
                     $beans[$id]->$field = $value;
                 }
             }
         }
-
-        return;
     }
-    
 }

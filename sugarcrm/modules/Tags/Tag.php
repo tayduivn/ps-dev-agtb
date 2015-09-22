@@ -68,7 +68,7 @@ class Tag extends Basic
         $this->verifyUniqueness($nameLower);
 
         // Handle setting the assigned user if not already set
-        if (empty($this->assigned_user_id)  && !$this->isUpdate()) {
+        if ($this->assigned_user_id === null  && !$this->isUpdate()) {
             $this->assigned_user_id = $current_user->id;
         }
 

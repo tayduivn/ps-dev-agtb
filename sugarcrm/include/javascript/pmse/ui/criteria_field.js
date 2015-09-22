@@ -253,7 +253,7 @@ CriteriaField.prototype.isValid = function () {
         $(this.errorTooltip.html).addClass('adam-tooltip-error-off');
         valid = valid && Field.prototype.isValid.call(this);
     } else {
-        this.errorTooltip.setMessage("Invalid epxression syntax.");
+        this.errorTooltip.setMessage(translate('LBL_PMSE_INVALID_EXPRESSION_SYNTAX', 'pmse_Project'));
         $(this.errorTooltip.html).removeClass('adam-tooltip-error-off');
         $(this.errorTooltip.html).addClass('adam-tooltip-error-on');
     }

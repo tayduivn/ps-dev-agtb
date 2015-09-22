@@ -163,9 +163,12 @@
         if (dnbMeterResponse.product) {
             var meterDetail = this.getJsonNode(dnbMeterResponse.product, this.meterConst.meterInfoPath);
             this.chartCollection = this.formatMeterInfo(meterDetail, this.meterDD);
-        }
-        if (!this.disposed) {
-            this.render();
+
+            if (!this.disposed) {
+                this.render();
+            }
+        } else if(dnbMeterResponse.errmsg) {
+            this.renderError(dnbMeterResponse.errmsg);
         }
     },
 
@@ -237,5 +240,15 @@
      */
     hasChartData: function() {
         return !(_.isUndefined(this.chartCollection) || _.isNull(this.chartCollection));
+    },
+
+    /**
+     * Renders an error from the D&B API
+     * @param {String} msg The error message from the api
+     */
+    renderError: function(msg) {
+        this.dnbError = {errMsg:  msg};
+        this.template = app.template.get('dnb.dnb-error');
+        this.renderErrorMessage();
     }
 })

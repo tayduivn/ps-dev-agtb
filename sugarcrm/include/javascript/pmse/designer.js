@@ -1340,7 +1340,7 @@ function renderProject (prjCode) {
         }
     };
     $('#txt-title').focusout(function (e) {
-        if($('#txt-title').val()!==''){
+        if ($.trim($('#txt-title').val()) !== '') {
             save_name();
         }
     }).keypress(function(e) {
