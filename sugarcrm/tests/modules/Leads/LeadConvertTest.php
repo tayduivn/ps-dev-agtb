@@ -105,6 +105,9 @@ class LeadConvertTest extends Sugar_PHPUnit_Framework_TestCase
             ->will($this->returnValue($this->modulesDef));
 
         $leadConvert->initialize($this->leadId);
+
+        $lead = $leadConvert->getLead();
+        $this->assertEquals($this->leadId, $lead->id);
     }
 
     public function testInitialize_InvalidLeadId_ThrowsException()
@@ -667,7 +670,7 @@ class LeadConvertTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($accountTasks), "Expected 1 Task to be linked to Account");
     }
 
-    public function testMoveActivities_CopyTaskToAccountAndContact_MovedSuccessFully()
+    public function testMoveActivitiesToContact_MovedSuccessFully()
     {
         $leadConvert = $this->getMock(
             'LeadConvert',
@@ -694,12 +697,8 @@ class LeadConvertTest extends Sugar_PHPUnit_Framework_TestCase
             "Tasks" => $task,
         );
 
-        $transferActivitiesModules = array(
-            'Contacts',
-            'Accounts'
-        );
-
         $leadConvert->setModules($modules);
+        $leadConvert->setContact($contact);
         $lead = $leadConvert->getLead();
         $leadConvert->setRelationshipForModulesToLeads($this->tasksDef);
         $linkedTasks = $lead->tasks->get();
@@ -707,8 +706,8 @@ class LeadConvertTest extends Sugar_PHPUnit_Framework_TestCase
         /*--- We Should Have the Task Linked to this Lead ---*/
         $this->assertEquals(1, count($linkedTasks), "Expected 1 Task to Be Linked to Lead");
 
-        /*--- Move Activities to Contact and Account ---*/
-        $leadConvert->performLeadActivitiesTransfer('move', $transferActivitiesModules);
+        /*--- Move the Activities to the Contact ---*/
+        $leadConvert->performLeadActivitiesTransfer('move', array());
 
         unset($lead->tasks);
         /*-- Verify Task Has been Unlinked from Lead --*/
@@ -720,11 +719,6 @@ class LeadConvertTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($contact->load_relationship("tasks"), "Failed Loading Task Relationship on Contact");
         $contactTasks = $contact->tasks->get();
         $this->assertEquals(1, count($contactTasks), "Expected 1 Task to be linked to Contact");
-
-        /*-- Verify move of Task has been linked to Account --*/
-        $this->assertTrue($account->load_relationship("tasks"), "Failed Loading Task Relationship on Account");
-        $accountTasks = $account->tasks->get();
-        $this->assertEquals(1, count($accountTasks), "Expected 1 Task to be linked to Account");
     }
 
     public function testHandleActivities_TransferAction_DoNothing_NoActivitiesTransferred()
@@ -744,7 +738,6 @@ class LeadConvertTest extends Sugar_PHPUnit_Framework_TestCase
             array(
                 'getVarDefs',
                 'copyActivities',
-                'removeActivitiesFromLead',
                 'getActivitySetting'
             ),
             array($this->lead->id),
@@ -757,9 +750,6 @@ class LeadConvertTest extends Sugar_PHPUnit_Framework_TestCase
 
         $leadConvert->expects($this->never())
             ->method('copyActivities');
-
-        $leadConvert->expects($this->never())
-            ->method('removeActivitiesFromLead');
 
         $leadConvert->expects($this->once())
             ->method('getActivitySetting')
