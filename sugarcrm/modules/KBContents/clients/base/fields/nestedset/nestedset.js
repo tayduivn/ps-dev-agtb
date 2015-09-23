@@ -127,6 +127,18 @@
     },
 
     /**
+     * Gets HTML placeholder for a field.
+     * @return {String} HTML placeholder for the field as Handlebars safe string.
+     */
+    getPlaceholder: function() {
+        // if this in the filter row, the placeholder must have some css rules
+        if (this.view && this.view.action === 'filter-rows') {
+            return new Handlebars.SafeString('<span sfuuid="' + this.sfId + '" class="nestedset-filter-container"></span>');
+        }
+        return this._super('getPlaceholder');
+    },
+
+    /**
      * Show dropdown.
      * @param {Event} evt Triggered mouse event.
      */
