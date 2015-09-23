@@ -292,6 +292,7 @@ class MetaDataManager
             'max_repeat_count' => true,
         ),
         'lead_conv_activity_opt' => true,
+        'preview_edit' => true,
     );
 
     /**
@@ -1959,11 +1960,6 @@ class MetaDataManager
 
         if(isset($system_config->settings['system_tweettocase_on']) && $system_config->settings['system_tweettocase_on'] == 1){
             $data['system_tweettocase_on'] = true;
-        }
-
-        if (isset($system_config->settings['system_previewedit_on'])
-            && $system_config->settings['system_previewedit_on'] == 1) {
-            $data['system_previewedit_on'] = true;
         }
 
         $fts_enabled = SugarSearchEngineFactory::getFTSEngineNameFromConfig();

@@ -66,9 +66,9 @@
                     // Solves issue when the model is on the page more than once, yet we are editing
                     // in only 1 view. Example Recordlist and Preview together
                     if (field.parent && field.parent.action === 'edit') {
-                        field.parent.setMode('edit')
+                        field.parent.render();
                     } else if (field.action === 'edit') {
-                        field.setMode('edit');
+                        field.render();
                     }
                     // As we're now "post form submission", if `no_required_placeholder`, we need to
                     // manually decorateRequired (as we only omit required on form's initial render)

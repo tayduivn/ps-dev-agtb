@@ -59,6 +59,7 @@ describe("Plugins.ErrorDecoration", function() {
             var descriptionField = _.find(view.fields, function(field){
                 return field.name === 'description';
             });
+            descriptionField.action = 'edit';
             var stub = sinon.stub(descriptionField, 'decorateError');
 
             //Simulate a 'required' error on description field

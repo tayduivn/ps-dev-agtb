@@ -12,10 +12,13 @@
 --}}
 <h1>{{str "LBL_PREVIEW"}} {{#if previewEdit}}<a class="preview-edit-link" data-action="edit"><i class="fa fa-pencil"></i></a>{{/if}}</h1>
 <div class="btn-toolbar pull-right">
+    {{#if previewEdit}}
     <div class="preview-headerpane" align="right">
-    <button class="btn-link cancel-btn hide" data-action="cancel">{{str "LBL_CANCEL_BUTTON_LABEL"}}</button>
-    <button class="btn btn-primary save-btn hide" data-action="save">{{str "LBL_SAVE_BUTTON_LABEL"}}</button>
-        </div>>
+        {{#each meta.buttons}}
+            {{field ../this}}
+        {{/each}}
+    </div>
+    {{/if}}
     <div class="btn-group">
         {{#unless layout.hideNextPrevious}}
         <a class="btn btn-invisible btn-left{{#unless layout.previous}} disabled{{/unless}}" data-direction="left"><i class="fa fa-chevron-left"></i></a>
@@ -23,6 +26,6 @@
         {{/unless}}
     </div>
     <div class="btn-group">
-        <a class="btn btn-invisible closeSubdetail" data-toggle="tab"><i class="fa fa-times"></i></a>
+        <a class="btn btn-invisible closeSubdetail" data-action="close" data-toggle="tab"><i class="fa fa-times"></i></a>
     </div>
 </div>

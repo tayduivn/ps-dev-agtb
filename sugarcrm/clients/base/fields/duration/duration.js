@@ -249,6 +249,8 @@
      */
     _loadTemplate: function() {
         this._super('_loadTemplate');
+        // FIXME: SC-3836 will replace special-casing view names/actions via
+        // action based templates.
         if ((this.view.name === 'record' || this.view.name === 'create'
             || this.view.name === 'create-nodupecheck' || this.view.name === 'preview') && (this.action === 'edit')) {
             this.template = app.template.getField('fieldset', 'record-detail', this.model.module);
@@ -268,7 +270,6 @@
      * Special case for duration fields on preview view
      *
      * @inheritdoc
-     * @param name
      */
     setMode: function(name) {
         //on preview view, we use the preview action instead of detail

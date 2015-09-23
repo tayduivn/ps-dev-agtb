@@ -117,7 +117,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
 		'source'=>'non-db',
 		'options'=> 'parent_type_display',
         'studio' => true,
-        'preview_edit' => false,
   ),
   'status' =>
   array (

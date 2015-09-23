@@ -18,22 +18,18 @@
 
     events: {
         'click [data-direction]': 'triggerPagination',
-        'click .preview-headerbar .closeSubdetail': 'triggerClose',
-        'click [data-action=edit]': 'triggerEdit',
-        'click [data-action=save]': 'triggerSave',
-        'click [data-action=cancel]': 'triggerCancel'
+        'click .preview-headerbar .closeSubdetail': 'triggerClose'
     },
 
     initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
-        this._delegateEvents();
-        //only allow preview edit when on a recordlist and user has acl access
+        this._super('initialize', [options]);
 
-        if (this.context.get('layout') === 'records'
-            && app.acl.hasAccessToModel('edit', this.model)
-            && app.metadata.getServerInfo().system_previewedit_on) {
+        if (app.config.previewEdit && this.layout.meta.editable === true &&
+            app.acl.hasAccessToModel('edit', this.model)) {
+            this.context.set({'previewEdit': true});
             this.previewEdit = true;
         }
+        this._delegateEvents();
     },
 
     /**
@@ -43,9 +39,12 @@
      */
     _delegateEvents: function() {
         if (this.layout) {
-            this.layout.off('preview:pagination:update', null, this);
             this.layout.on('preview:pagination:update', this.render, this);
-            this.layout.on('preview:save:complete', this.hideSaveAndCancel, this);
+        }
+
+        if (this.previewEdit) {
+            _.extend(this.events, {'click [data-action=edit]': 'triggerEdit'});
+            this.layout.on('preview:edit:complete', this.toggleSaveAndCancel, this);
         }
     },
 
@@ -63,42 +62,40 @@
      * Call preview view to turn on editing
      */
     triggerEdit: function() {
-        this.showSaveAndCancel();
+        this.toggleSaveAndCancel(true);
         this.layout.trigger('preview:edit');
     },
 
     /**
-     * Trigger preview view to do save actions
-     */
-    triggerSave: function() {
-        this.layout.trigger('button:save_button:click');
-    },
-
-    /**
-     * Trigger preview view to do cancel actions
-     */
-    triggerCancel: function() {
-        this.hideSaveAndCancel();
-        this.layout.trigger('button:cancel_button:click');
-    },
-
-    /**
-     * Show the save and cancel buttons in the preview-header and
-     * hide the left, right and x buttons if user has acl access
+     * Toggle save, cancel, left, right and x buttons
      *
+     * @param {boolean} edit `true` to show save and cancel and hide
+     * left, right and X icons
      */
-    showSaveAndCancel: function() {
-        this.$('.save-btn, .cancel-btn').show();
-        this.$('.btn-left, .btn-right, .closeSubdetail').hide();
+    toggleSaveAndCancel: function(edit) {
+        if (edit) {
+            this.getField('save_button').show();
+            this.getField('cancel_button').show();
+            this.$('[data-direction], [data-action=close]').hide();
+        } else {
+            this.getField('save_button').hide();
+            this.getField('cancel_button').hide();
+            this.$('[data-direction], [data-action=close]').show();
+        }
     },
 
     /**
-     * Hide the save and cancel buttons and show the left, right and
-     * x buttons
+     * @inheritdoc
      *
+     * @override Overriding to hide preview save/cancel buttons initially
+     * @private
      */
-    hideSaveAndCancel: function() {
-        this.$('.save-btn, .cancel-btn').hide();
-        this.$('.btn-left, .btn-right, .closeSubdetail').show();
+    _renderFields: function() {
+        this._super('_renderFields');
+
+        if (this.previewEdit) {
+            this.getField('save_button').hide();
+            this.getField('cancel_button').hide();
+        }
     }
 })

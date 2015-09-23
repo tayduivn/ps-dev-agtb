@@ -43,14 +43,13 @@ class Administration extends SugarBean {
         'notify_on',
         'tweettocase_on',
         'skypeout_on',
-        'previewedit_on',
         'system_mailmerge_on',
         'proxy_auth',
         'proxy_on',
         'system_ldap_enabled',
         'captcha_on',
         'honeypot_on',
-    );
+        );
     public $disable_row_level_security = true;
     public static $passwordPlaceholder = "::PASSWORD::";
 

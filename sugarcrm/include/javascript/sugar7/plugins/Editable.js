@@ -250,7 +250,7 @@
                     return false;
                 }
 
-                if (field.isDirty() && viewName === 'edit') {
+                if (field.hasChanged() && viewName === 'detail') {
                     return;
                 }
 
