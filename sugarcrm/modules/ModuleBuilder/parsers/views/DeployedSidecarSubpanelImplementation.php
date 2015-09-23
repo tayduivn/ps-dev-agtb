@@ -88,6 +88,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         }
         $this->_history = new History($this->historyPathname);
 
+        $this->_history = new History($this->historyPathname);
         $this->_viewdefs = !empty($viewdefs) ? $this->getNewViewDefs($viewdefs) : array();
         $this->_fielddefs = $this->bean->field_defs;
         $this->_mergeFielddefs($this->_fielddefs, $this->_viewdefs);

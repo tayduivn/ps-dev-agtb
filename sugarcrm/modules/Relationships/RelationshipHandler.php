@@ -272,8 +272,13 @@ function get_relationship_information(& $target_bean, $get_upstream_rel_field_na
 		}
 
 		if($rel_array['relationship_type']=="one-to-many"){
-            $rel_key = $flip_sides ? 'lhs_key' : 'rhs_key';
-			$target_bean->$rel_array[$rel_key] = $this->base_bean->id;
+			if (!empty($rel_array['join_key_rhs'])) {
+			    $target_bean->$rel_array['join_key_rhs'] = $this->base_bean->id;
+			}
+			else {
+                $rel_key = $flip_sides ? 'lhs_key' : 'rhs_key';
+                $target_bean->$rel_array[$rel_key] = $this->base_bean->id;
+			}
 			foreach ($this->getRoleColumns($rel_array) as $column => $value) {
 			    $target_bean->$column = $value;
 			}
