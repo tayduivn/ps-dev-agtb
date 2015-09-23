@@ -333,7 +333,8 @@
             }
             this.$('[data-role="treevalue"]','[name=' + this.def.name + ']').text(name);
             this.$('[name=' + this.def.id_name + ']').val(id);
-        } else {
+        }
+        if (!this.disposed) {
             this.render();
         }
     },
