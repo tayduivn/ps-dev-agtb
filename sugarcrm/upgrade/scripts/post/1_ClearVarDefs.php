@@ -71,7 +71,12 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
      */
     protected function getDefinition($seed)
     {
-        return new DefinitionObject($seed->getFieldDefinitions());
+        $defs = $seed->getFieldDefinitions();
+        if (empty($defs)) {
+            return null;
+        }
+
+        return new DefinitionObject($defs);
     }
 
     /**
