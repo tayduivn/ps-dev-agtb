@@ -36,7 +36,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
   $rules = new SugarRouting($ie, $current_user);
   //END SUGARCRM flav=pro ONLY
 
-  $showFolders = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+  $showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
 
  if (isset($_REQUEST['emailUIAction'])) {
   switch($_REQUEST['emailUIAction']) {
@@ -553,7 +553,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     case "checkEmail2":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: checkEmail2");
 
-        $showFolders = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+        $showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
 
         $ret = array();
         $ret['numberAccounts'] = count($showFolders);
@@ -589,7 +589,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             $ie->mailbox = (isset($_REQUEST['mbox']) && !empty($_REQUEST['mbox'])) ? $_REQUEST['mbox'] : "INBOX";
             $ie->checkEmail(false);
         } elseif(isset($_REQUEST['all']) && !empty($_REQUEST['all'])) {
-            $showFolders = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+            $showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
 
             $GLOBALS['log']->info("[EMAIL] - checkEmail found ".count($showFolders)." accounts to check for user [{$current_user->user_name}]");
 
@@ -908,7 +908,7 @@ eoq;
 			$direction = 'desc';
 			$sortSerial = $current_user->getPreference('folderSortOrder', 'Emails');
 			if(!empty($sortSerial) && !empty($_REQUEST['ieId']) && !empty($_REQUEST['mbox'])) {
-				$sortArray = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($sortSerial);
+				$sortArray = unserialize($sortSerial);
 				$GLOBALS['log']->debug("********** EMAIL 2.0********** ary=".print_r($sortArray,true).' id='.$_REQUEST['ieId'].'; box='.$_REQUEST['mbox']);
 				$sort = $sortArray[$_REQUEST['ieId']][$_REQUEST['mbox']]['current']['sort'];
 				$direction = $sortArray[$_REQUEST['ieId']][$_REQUEST['mbox']]['current']['direction'];
@@ -977,7 +977,7 @@ eoq;
         $rootNode = new ExtNode('','');
         $folderOpenState = $current_user->getPreference('folderOpenState', 'Emails');
         $folderOpenState = (empty($folderOpenState)) ? "" : $folderOpenState;
-        $ret = $email->et->folder->getUserFolders($rootNode, \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($folderOpenState), $current_user, true);
+        $ret = $email->et->folder->getUserFolders($rootNode, unserialize($folderOpenState), $current_user, true);
         $out = $json->encode($ret);
         echo $out;
         break;
@@ -1723,7 +1723,7 @@ eoq;
     case "test":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: checkEmail2");
 
-        $showFolders = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+        $showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
 
         $ret = array();
         $ret['numberAccounts'] = count($showFolders);
