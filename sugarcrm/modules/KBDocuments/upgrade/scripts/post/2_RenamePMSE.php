@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -15,7 +16,7 @@
  */
 class SugarUpgradeRenamePMSE extends UpgradeScript
 {
-    public $order = 2002;
+    public $order = 2200;
     public $type = self::UPGRADE_CUSTOM;
     public $version = '7.5';
 
@@ -48,7 +49,7 @@ class SugarUpgradeRenamePMSE extends UpgradeScript
         'pmse_business_rules' => array(
             'rst_module',
         ),
-        'pmse_Emails_Templates' => array(
+        'pmse_emails_templates' => array(
             'base_module',
         ),
         'pmse_inbox' => array(
@@ -61,7 +62,7 @@ class SugarUpgradeRenamePMSE extends UpgradeScript
      */
     public function run()
     {
-        if (version_compare($this->from_version, '7.7.0', '<')) {
+        if ((version_compare($this->from_version, '7.6.0', '>=') && version_compare($this->from_version, '7.7.0', '<')))  {
             foreach ($this->fields as $table => $fields) {
                 foreach ($fields as $field) {
                     $query = "UPDATE {$table} set {$field} = 'KBContents' where {$field} = 'KBDocuments'";
