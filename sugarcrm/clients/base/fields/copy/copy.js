@@ -15,7 +15,6 @@
  */
 ({
     'events': {
-        'click input[type=checkbox]': 'toggle',
         'click button': 'copyOnce'
     },
 
@@ -56,13 +55,9 @@
      * Otherwise, restore all the values of the modified fields by this copy
      * widget and enable target fields.
      *
-     * @param {Event} evt
-     *   The event (expecting a click event) that triggered the checkbox status
-     *   change.
      */
-    toggle: function(evt) {
-
-        this.sync($(evt.currentTarget).is(':checked'));
+    toggle: function() {
+        this.sync(this.$fieldTag.is(':checked'));
     },
 
     sync: function(enable) {
@@ -230,7 +225,19 @@
         }
         return value;
     },
+    /**
+     * Binds DOM changes to a model.
+     */
+    bindDomChange: function() {
 
+        if (!(this.model instanceof Backbone.Model)) return;
+
+        var self = this;
+        var el = this.$fieldTag = this.$el.find(this.fieldTag);
+        el.on("change", function() {
+          self.toggle();
+        });
+    },
     /**
      * @inheritDoc
      *

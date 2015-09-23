@@ -31,6 +31,8 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
 
     protected static $instance;
 
+    protected $closed = false;
+
     /**
      * {@inheritdoc} Checks for custom SessionStorage classes or alternate SessionStorage classes set in config.
      */
@@ -54,12 +56,16 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
     {
         session_start();
         $this->populateFromArray($_SESSION);
+        //keep session values
+        $previousUserId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : false;
+
         $_SESSION = $this;
+        $this->enableTracking();
 
         if (!$lock) {
             $this->unlock();
         }
-
+        $this->registerShutdownFunction($previousUserId);
     }
 
     /**
@@ -90,7 +96,6 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
         return session_id();
     }
 
-
     public function unlock()
     {
         if (!$this->getId()) {
@@ -99,15 +104,9 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
         if (function_exists('session_status') && session_status() != PHP_SESSION_ACTIVE) {
             return;
         }
-
-        //keep session values
-        $previousUserId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : false;
         session_write_close();
         $_SESSION = $this;
-        $this->enableTracking();
-        if (!static::$shutdownRegisterd) {
-            static::registerShutdownFunction($previousUserId);
-        }
+        $this->closed = true;
     }
 
     public function sessionHasId()
@@ -127,31 +126,35 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
 
     protected static function registerShutdownFunction($previousUserId)
     {
-        register_shutdown_function(function () use ($previousUserId) {
-            $logger = new LoggerTransition(\LoggerManager::getLogger());
-            //Now write out the session data again during shutdown
-            $sessionObject = $_SESSION;
-            session_start();
-            //First verify that the sessions still match and we didn't somehow switch users.
-            if ((!isset($_SESSION['user_id']) && $previousUserId) ||
-                ($previousUserId && isset($_SESSION['user_id'])
-                    && $previousUserId != $_SESSION['user_id']
-                )
-            ) {
-                $logger->warning(
-                    'Unexpected change in user or logout during session write at shutdown'
-                );
-            } else {
-                if ($sessionObject instanceof TrackableArray) {
-                    $sessionObject->applyTrackedChangesToArray($_SESSION);
-                    session_write_close();
+        if (!static::$shutdownRegisterd) {
+            register_shutdown_function(function () use ($previousUserId) {
+                $logger = new LoggerTransition(\LoggerManager::getLogger());
+                //Now write out the session data again during shutdown
+                $sessionObject = $_SESSION;
+                if ($sessionObject instanceof SessionStorage && !$sessionObject->closed) {
+                    $_SESSION = $sessionObject->getArrayCopy();
                 } else {
-                    $logger->alert(
-                        '$_SESSION changed from TrackableArray obect to ' . get_class($_SESSION)
-                    );
+                    session_start();
+                    //First verify that the sessions still match and we didn't somehow switch users.
+                    if ((!isset($_SESSION['user_id']) && $previousUserId) ||
+                        ($previousUserId && isset($_SESSION['user_id']) && $previousUserId != $_SESSION['user_id'])
+                    ) {
+                        $logger->warning(
+                            'Unexpected change in user or logout during session write at shutdown'
+                        );
+                    } else {
+                        if ($sessionObject instanceof TrackableArray) {
+                            $sessionObject->applyTrackedChangesToArray($_SESSION);
+                        } else {
+                            $logger->alert(
+                                '$_SESSION changed from TrackableArray obect to ' . get_class($_SESSION)
+                            );
+                        }
+                    }
                 }
-            }
-        });
-        static::$shutdownRegisterd = true;
+                session_write_close();
+            });
+            static::$shutdownRegisterd = true;
+        }
     }
 }

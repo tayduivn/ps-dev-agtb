@@ -14,7 +14,6 @@
 
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
-        'click a[name=cancel_button]': 'cancelClicked',
         'click [data-action=scroll]': 'paginateRecord',
         'click .record-panel-header': 'togglePanel',
         'click .tab a': 'setActiveTab'
@@ -30,7 +29,7 @@
         this.context.on('approve:case', this.approveCase, this);
         this.context.on('reject:case', this.rejectCase, this);
         this.context.on('cancel:case', this.cancelCase, this);
-
+        this.context.on('button:cancel_button:click', this.cancelClicked, this);
         //event register for preventing actions
         // when user escapes the page without confirming deleting
         // add a callback to close the alert if users navigate from the page

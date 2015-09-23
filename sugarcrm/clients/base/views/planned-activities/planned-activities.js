@@ -406,10 +406,12 @@
                     _.each(addedIds, function(id) {
                         var model = this.collection.get(id);
                         this._renderRow(model);
+                        this._renderAvatars();
                     }, this);
                     return;
                 }
                 this.render();
+                this._renderAvatars();
             }, this),
             complete: function() {
                 tab.invitations.dataFetched = true;

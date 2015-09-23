@@ -137,7 +137,11 @@ class ReportsDashletsApi extends SugarApi
 
             $chart = $chartDisplay->getSugarChart();
 
-            $json = json_decode($chart->buildJson($chart->generateXML()));
+            if (!isset($args['ignore_datacheck'])) {
+                $args['ignore_datacheck'] = false;
+            }
+
+            $json = json_decode($chart->buildJson($chart->generateXML(), $args['ignore_datacheck']));
 
             $returnData['chartData'] = $json;
 

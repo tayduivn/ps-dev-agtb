@@ -1,4 +1,4 @@
-{{!--
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,6 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
 
-<input type="hidden" name="{{name}}">
+
+if (is_array($_SESSION['foo'])) {
+    _ppl('session is an array, awesome!');
+}
