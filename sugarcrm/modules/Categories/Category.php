@@ -450,7 +450,7 @@ class Category extends SugarBean implements NestedBeanInterface
         if ($hasChild) {
             $descendants = $this->getChildren();
             while ($record = array_shift($descendants)) {
-                parent::mark_deleted($record['id']);
+                $this->mark_deleted($record['id']);
             }
         }
 
