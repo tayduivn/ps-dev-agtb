@@ -154,7 +154,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             }
             // TODO: category should be `support`, platform should be `portal`
             $admin = $this->getAdministrationBean();
-            if (!$admin->saveSetting('portal', $fieldKey, json_encode($fieldValue), 'support')) {
+            if (!$admin->saveSetting('portal', $fieldKey, $fieldValue, 'support')) {
                 $GLOBALS['log']->fatal("Error saving portal config var $fieldKey, orig: $fieldValue , json:".json_encode($fieldValue));
             }
         }
