@@ -112,7 +112,11 @@
         <td valign='top' align='center' class="teamset-row">
             <span id='{$displayParams.formName}_{$idname}_checkbox_div_0'>
             &nbsp;
-            <input id="selected_{$idname}_collection_0" name="selected_{$idname}_collection_0" type="checkbox" class="checkbox" {if $values.primary.selected}checked="checked" title="{sugar_translate label='LBL_TEAM_TBSELECTED_TITLE'}" {else} title="{sugar_translate label='LBL_TEAM_SELECT_AS_TBSELECTED_TITLE'}" {/if}/>
+            <input id="selected_{$idname}_collection_0" name="selected_{$idname}_collection_0" type="checkbox"
+                   class="checkbox" value="{$values.primary.id}"
+                   {if $values.primary.selected}checked="checked"
+                   title="{sugar_translate label='LBL_TEAM_TBSELECTED_TITLE'}" {else}
+                   title="{sugar_translate label='LBL_TEAM_SELECT_AS_TBSELECTED_TITLE'}" {/if}/>
             </span>
         </td>
         <td>

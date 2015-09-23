@@ -511,16 +511,15 @@ class SugarFieldTeamset extends SugarFieldBase {
      *
      * @param string $field     the name of the field on the UI
      * @param array $vars       array of REQUEST params to look at
-     * @param array $team_ids   array of team ids
      * @return array            array of Team-Based selected team ids or empty array
      */
-    public function getSelectedTeamIdsFromRequest($field, $vars, $team_ids)
+    public function getSelectedTeamIdsFromRequest($field, $vars)
     {
         $selectedTeamIds = array();
-        foreach ($team_ids as $num => $team_id) {
-            $key = "selected_" . $field . "_collection_" . $num;
-            if (isset($vars[$key])) {
-                $selectedTeamIds[] = $team_id;
+        foreach (array_keys($vars) as $key) {
+            if (strpos($key, "selected_" . $field . "_collection_") !== false) {
+                $num = substr($key, strrpos($key, '_') + 1);
+                $selectedTeamIds[] = $vars["selected_" . $field . "_collection_" . $num];
             }
         }
         return $selectedTeamIds;
@@ -550,7 +549,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 	    }
 
         if (!empty($team_ids)) {
-            $selectedTeamIds = $this->getSelectedTeamIdsFromRequest($field, $params, $team_ids);
+            $selectedTeamIds = $this->getSelectedTeamIdsFromRequest($field, $params);
             if (!empty($selectedTeamIds)) {
                 $teamSet = BeanFactory::getBean('TeamSets');
                 $bean->team_set_selected_id = $teamSet->addTeams($selectedTeamIds);
