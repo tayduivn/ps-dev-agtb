@@ -111,6 +111,9 @@ $app_list_strings = array (
     'Feedbacks' => 'Feedbacks',
     'Tags' => 'Tags',
     'Categories' => 'Categories',
+    'NotificationCenter' => 'Notification Center',
+    'CarrierEmail' => 'Email Carrier',
+    'CarrierSocket' => 'Socket Carrier',
   ),
 
     'moduleIconList' =>
@@ -226,6 +229,7 @@ $app_list_strings = array (
     'Feedbacks' => 'Feedback',
     'Tags' => 'Tag', 
     'Categories' => 'Category',
+    'NotificationCenter' => 'Notification Center',
   ),
 
 /*

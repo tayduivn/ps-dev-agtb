@@ -10,5 +10,6 @@
  */
 
 [
-    'include/javascript/sugar7/socket.js'
+    'include/javascript/sugar7/socket.js',
+    'modules/NotificationCenter/clients/**/*.js'
 ]

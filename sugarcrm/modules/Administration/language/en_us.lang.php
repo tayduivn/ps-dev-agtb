@@ -1182,6 +1182,10 @@ $mod_strings = array (
     'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL.',
     'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL.',
 
+    // Notification Center
+    'LBL_NOTIFICATIONS_CONFIGURATION' => 'Notification Settings',
+    'LBL_NOTIFICATIONS_CONFIGURATION_DESC' => 'Define how users get notifications delivered and choose the events to show notifications for.',
+
     //FTS
     'LBL_FTS_TYPE' => 'System Type',
     'LBL_FTS_HOST' => 'Host',
