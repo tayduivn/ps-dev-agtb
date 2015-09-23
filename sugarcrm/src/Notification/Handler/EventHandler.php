@@ -13,6 +13,8 @@
 namespace Sugarcrm\Sugarcrm\Notification\Handler;
 
 use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
+use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager;
+use Sugarcrm\Sugarcrm\Notification\CarrierRegistry;
 use Sugarcrm\Sugarcrm\Notification\EventInterface;
 use Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry;
 
@@ -48,8 +50,70 @@ class EventHandler implements RunnableInterface
      */
     public function run()
     {
-        $subscriptionsRegistry = new SubscriptionsRegistry();
-        $userCarrierPreference = $subscriptionsRegistry->getUsers($this->event);
+        $carrierRegistry = $this->getCarrierRegistry();
+        $userCarrierPreference = $this->getSubscriptionsRegistry()->getUsers($this->event);
+        $carriers = array();
 
+        foreach ($userCarrierPreference as $userId => $userRow) {
+            foreach ($userRow['config'] as $carrierConfig) {
+                $carrierName = $carrierConfig[0];
+                if (!array_key_exists($carrierName, $carriers)) {
+                    $carriers[$carrierName] = array(
+                        'carrier' => $carrierRegistry->getCarrier($carrierName),
+                        'data' => array()
+                    );
+                }
+                if (!array_key_exists($userId, $carriers[$carrierName]['data'])) {
+                    $carriers[$carrierName]['data'][$userId] = array(
+                        'filter' => $userRow['filter'],
+                        'options' => array()
+                    );
+                }
+                $carrier = $carriers[$carrierName]['carrier'];
+                $addressType = $carrier->getAddressType();
+                $user = \BeanFactory::getBean('Users', $userId);
+
+                $carriers[$carrierName]['data'][$userId]['options'][] =
+                    $addressType->getTransportValue($user, $carrierConfig[1]);
+                $carriers[$carrierName]['data'][$userId]['options']
+                    = array_values(array_unique($carriers[$carrierName]['data'][$userId]['options']));
+            }
+        }
+
+        $manager = $this->getJobQueueManager();
+        foreach ($carriers as $carrierRow) {
+            $manager->NotificationCarrierBulkMessage($this->event, $carrierRow['carrier'], $carrierRow['data']);
+        }
+        return \SchedulersJob::JOB_SUCCESS;
+    }
+
+    /**
+     * Return JobQueue Manager.
+     *
+     * @return Manager
+     */
+    protected function getJobQueueManager()
+    {
+        return new Manager();
+    }
+
+    /**
+     * Return Carrier Registry.
+     *
+     * @return CarrierRegistry
+     */
+    protected function getCarrierRegistry()
+    {
+        return CarrierRegistry::getInstance();
+    }
+
+    /**
+     * Return Subscriptions Registry.
+     *
+     * @return SubscriptionsRegistry
+     */
+    protected function getSubscriptionsRegistry()
+    {
+        return new SubscriptionsRegistry();
     }
 }
