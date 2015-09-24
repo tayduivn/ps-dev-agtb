@@ -265,24 +265,42 @@ class PMSEElementValidatorTest extends PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(NULL)
                 ->getMock();
+
+        $beanMock = $this->getMockBuilder('SugarBean')
+            ->disableOriginalConstructor()
+            ->setMethods(array())
+            ->getMock();
         
-        $dbHandlerMock = $this->getMockBuilder('DB')
+        $sugarQueryObjectMock = $this->getMockBuilder('SugarQuery')
                 ->disableOriginalConstructor()
-                ->setMethods(array('Query', 'fetchByAssoc'))
+                ->setMethods(array('from', 'distinct', 'where', 'equals', 'query', 'execute'))
                 ->getMock();
-        
+
+        $sugarQueryObjectMock->expects($this->atLeastOnce())
+            ->method('from')
+            ->will($this->returnValue($sugarQueryObjectMock));
+
+        $sugarQueryObjectMock->expects($this->atLeastOnce())
+            ->method('where')
+            ->will($this->returnValue($sugarQueryObjectMock));
+
+        $sugarQueryObjectMock->expects($this->any())
+            ->method('equals')
+            ->will($this->returnValue($sugarQueryObjectMock));
+
+        $arrayDupli = array('id' => '999000');
+
+        $sugarQueryObjectMock->expects($this->any())
+            ->method('execute')
+            ->will($this->returnValue($arrayDupli));
+
         $loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
                 ->setMethods(array('debug'))
                 ->getMock();
 
-        $arrayDupli = array('id' => '999000');
-        
-        $dbHandlerMock->expects($this->once())
-                ->method('fetchByAssoc')
-                ->will($this->returnValue($arrayDupli));
-        
-        $elementValidator->setDbHandler($dbHandlerMock);
+        $elementValidator->setBeanFlow($beanMock);
+        $elementValidator->setSugarQueryObject($sugarQueryObjectMock);
         $elementValidator->setLogger($loggerMock);
         
         $result = $elementValidator->isCaseDuplicated($beanMock, $flowData);
@@ -301,24 +319,42 @@ class PMSEElementValidatorTest extends PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(NULL)
                 ->getMock();
-        
-        $dbHandlerMock = $this->getMockBuilder('DB')
-                ->disableOriginalConstructor()
-                ->setMethods(array('Query', 'fetchByAssoc'))
-                ->getMock();
+
+        $beanMock = $this->getMockBuilder('SugarBean')
+            ->disableOriginalConstructor()
+            ->setMethods(array())
+            ->getMock();
+
+        $sugarQueryObjectMock = $this->getMockBuilder('SugarQuery')
+            ->disableOriginalConstructor()
+            ->setMethods(array('from', 'distinct', 'where', 'equals', 'query', 'execute'))
+            ->getMock();
+
+        $sugarQueryObjectMock->expects($this->atLeastOnce())
+            ->method('from')
+            ->will($this->returnValue($sugarQueryObjectMock));
+
+        $sugarQueryObjectMock->expects($this->atLeastOnce())
+            ->method('where')
+            ->will($this->returnValue($sugarQueryObjectMock));
+
+        $sugarQueryObjectMock->expects($this->any())
+            ->method('equals')
+            ->will($this->returnValue($sugarQueryObjectMock));
+
+        $arrayDupli = false;
+
+        $sugarQueryObjectMock->expects($this->any())
+            ->method('execute')
+            ->will($this->returnValue($arrayDupli));
         
         $loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
                 ->setMethods(array('debug'))
                 ->getMock();
 
-        $arrayDupli = false;
-        
-        $dbHandlerMock->expects($this->once())
-                ->method('fetchByAssoc')
-                ->will($this->returnValue($arrayDupli));
-        
-        $elementValidator->setDbHandler($dbHandlerMock);
+        $elementValidator->setBeanFlow($beanMock);
+        $elementValidator->setSugarQueryObject($sugarQueryObjectMock);
         $elementValidator->setLogger($loggerMock);
         
         $result = $elementValidator->isCaseDuplicated($beanMock, $flowData);

@@ -29,6 +29,16 @@ class PMSEElementValidator implements PMSEValidate
     protected $dbHandler;
 
     /**
+     * @var
+     */
+    protected $sugarQueryObject;
+
+    /**
+     * @var
+     */
+    protected $beanFlow;
+
+    /**
      *
      * @var type
      */
@@ -36,13 +46,12 @@ class PMSEElementValidator implements PMSEValidate
 
     /**
      *
-     * @global type $db
      * @codeCoverageIgnore
      */
     public function __construct()
     {
-        global $db;
-        $this->dbHandler = $db;
+        $this->sugarQueryObject = new SugarQuery();
+        $this->beanFlow = BeanFactory::getBean('pmse_BpmFlow');
         $this->logger = PMSELogger::getInstance();
     }
 
@@ -67,6 +76,22 @@ class PMSEElementValidator implements PMSEValidate
     }
 
     /**
+     * @return SugarQuery
+     */
+    public function getSugarQueryObject()
+    {
+        return $this->sugarQueryObject;
+    }
+
+    /**
+     * @return null|SugarBean
+     */
+    public function getBeanFlow()
+    {
+        return $this->beanFlow;
+    }
+
+    /**
      *
      * @param type $dbHandler
      * @codeCoverageIgnore
@@ -84,6 +109,19 @@ class PMSEElementValidator implements PMSEValidate
     public function setLogger($logger)
     {
         $this->logger = $logger;
+    }
+
+    public function setBeanFlow($beanFlow)
+    {
+        $this->beanFlow = $beanFlow;
+    }
+
+    /**
+     * @param $sugarQueryObject
+     */
+    public function setSugarQueryObject($sugarQueryObject)
+    {
+        $this->sugarQueryObject = $sugarQueryObject;
     }
 
     /**
@@ -196,19 +234,36 @@ class PMSEElementValidator implements PMSEValidate
      * @param type $flowData
      * @return boolean
      */
-    public function isCaseDuplicated($bean, $flowData)
+    public function isCaseDuplicated($bean, $flowData, $processFinished = false)
     {
-        $queryDupli = "select * from pmse_bpm_flow where " .
-            "cas_sugar_object_id = '" . $bean->id . "' " .
-            "and cas_sugar_module = '" . $bean->module_name . "' " .
-            "and cas_index = 1 " .
-            "and pro_id = '{$flowData['pro_id']}'";
+        $beanFlow = $this->getBeanFlow();
+        $fields = array(
+            'pro_id',
+        );
+        $q = $this->getSugarQueryObject();
+        $q->from($beanFlow, array('add_deleted' => true));
+        $q->distinct(true);
+        $q->where()
+            ->equals('cas_sugar_object_id', $bean->id)
+            ->equals('cas_sugar_module', $bean->module_name)
+            ->equals('pro_id', $flowData['pro_id']);
 
-        $resultDupli = $this->dbHandler->Query($queryDupli);
-        $rowDupli = $this->dbHandler->fetchByAssoc($resultDupli);
+        if ($processFinished) {
+            $q->where()
+                ->notEquals('cas_flow_status', 'CLOSED');
+        } else {
+            $q->where()
+                ->equals('cas_index', 1);
+        }
 
-        if (is_array($rowDupli)) {
-            $this->logger->debug("Start Event {$bean->id} already exists");
+        $q->select($fields);
+
+        $rows = $q->execute();
+
+        if (!empty($rows)) {
+            if (!$processFinished) {
+                $this->logger->debug("Start Event {$bean->id} already exists");
+            }
             return true;
         } else {
             return false;
@@ -238,7 +293,7 @@ class PMSEElementValidator implements PMSEValidate
     }
 
     /**
-     *
+     * @deprecated
      * @param type $bean
      * @return boolean
      */
@@ -257,6 +312,7 @@ class PMSEElementValidator implements PMSEValidate
         $_SESSION['triggeredFlows'][] = $triggeredFlow;
         return false;
     }
+
     /**
      *
      * @param type $bean
@@ -269,7 +325,7 @@ class PMSEElementValidator implements PMSEValidate
                 !$this->isNewRecord($bean) && $flowData['evn_params'] == 'updated')
                  && !$this->isCaseDuplicated($bean, $flowData)) ||
                     !$this->isNewRecord($bean) && $flowData['evn_params'] == 'allupdates'
-                &&  !$this->isPMSEEdit($bean) && !$this->already_triggered($bean, $flowData)
+                &&  !$this->isPMSEEdit($bean) && !$this->isCaseDuplicated($bean, $flowData, true)
         ) {
             $request->validate();
         } else {
