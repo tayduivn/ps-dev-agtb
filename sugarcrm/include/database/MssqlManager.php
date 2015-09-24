@@ -1553,38 +1553,88 @@ class MssqlManager extends DBManager
         return $result;
     }
 
-    /**
-     * @see DBManager::get_indices()
-     */
-    public function get_indices($tableName)
+    /** {@inheritDoc} */
+    protected function get_index_data($table_name = null, $index_name = null)
     {
-        //find all unique indexes and primary keys.
-        $query = <<<EOSQL
-SELECT sys.tables.object_id, sys.tables.name as table_name, sys.columns.name as column_name,
-                sys.indexes.name as index_name, sys.indexes.is_unique, sys.indexes.is_primary_key
-            FROM sys.tables, sys.indexes, sys.index_columns, sys.columns
-            WHERE (sys.tables.object_id = sys.indexes.object_id
-                    AND sys.tables.object_id = sys.index_columns.object_id
-                    AND sys.tables.object_id = sys.columns.object_id
-                    AND sys.indexes.index_id = sys.index_columns.index_id
-                    AND sys.index_columns.column_id = sys.columns.column_id)
-                AND sys.tables.name = '$tableName'
-EOSQL;
+        $filterByTable = $table_name !== null;
+        $filterByIndex = $index_name !== null;
+
+        $columns = array();
+        if (!$filterByTable) {
+            $columns[] = 't.name AS table_name';
+        }
+
+        if (!$filterByIndex) {
+            $columns[] = 'i.name AS index_name';
+        }
+
+        $columns[] = 'i.is_unique';
+        $columns[] = 'i.is_primary_key';
+        $columns[] = 'c.name AS column_name';
+
+        $query = 'SELECT ' . implode(', ', $columns) . '
+FROM sys.tables AS t
+INNER JOIN sys.indexes AS i
+    ON i.object_id = t.object_id
+INNER JOIN sys.index_columns AS ic
+    ON ic.object_id = t.object_id
+        AND ic.index_id = i.index_id
+INNER JOIN sys.columns c
+    ON c.object_id = t.object_id
+        AND c.column_id = ic.column_id';
+
+        $where = array();
+        if ($filterByTable) {
+            $where[] = 't.name = ' . $this->quoted($table_name);
+        }
+
+        if ($filterByIndex) {
+            $query_index_name = strtoupper($this->getValidDBName($index_name, true, 'index'));
+            $where[] = 'i.name = ' . $this->quoted($query_index_name);
+        }
+
+        if ($where) {
+            $query .= ' WHERE ' . implode(' AND ', $where);
+        }
+
+        $order = array();
+        if (!$filterByTable) {
+            $order[] = 't.name';
+        }
+
+        if (!$filterByIndex) {
+            $order[] = 'i.name';
+        }
+
+        $order[] = 'ic.key_ordinal';
+        $query .= ' ORDER BY ' . implode(', ', $order);
+
         $result = $this->query($query);
 
-        $indices = array();
-        while (($row=$this->fetchByAssoc($result)) != null) {
-            $index_type = 'index';
-            if ($row['is_primary_key'] == '1')
-                $index_type = 'primary';
-            elseif ($row['is_unique'] == 1 )
-                $index_type = 'unique';
-            $name = strtolower($row['index_name']);
-            $indices[$name]['name']     = $name;
-            $indices[$name]['type']     = $index_type;
-            $indices[$name]['fields'][] = strtolower($row['column_name']);
+        $data = array();
+        while ($row = $this->fetchByAssoc($result)) {
+            if (!$filterByTable) {
+                $table_name = $row['table_name'];
+            }
+
+            if (!$filterByIndex) {
+                $index_name = $row['index_name'];
+            }
+
+            if ($row['is_primary_key']) {
+                $type = 'primary';
+            } elseif ($row['is_unique']) {
+                $type = 'unique';
+            } else {
+                $type = 'index';
+            }
+
+            $data[$table_name][$index_name]['name'] = $index_name;
+            $data[$table_name][$index_name]['type'] = $type;
+            $data[$table_name][$index_name]['fields'][] = $row['column_name'];
         }
-        return $indices;
+
+        return $data;
     }
 
     /**

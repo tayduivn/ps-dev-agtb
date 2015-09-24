@@ -1267,48 +1267,85 @@ class OracleManager extends DBManager
         }
     }
 
-    /**
-     * @see DBManager::get_indices()
-     */
-    public function get_indices($tablename,$indexname = null)
+    /** {@inheritDoc} */
+    protected function get_index_data($table_name = null, $index_name = null)
     {
-		$tablename = strtoupper($tablename);
-		$indexname = strtoupper($this->getValidDBName($indexname, true, 'index'));
+        $filterByTable = $table_name !== null;
+        $filterByIndex = $index_name !== null;
 
-        //find all unique indexes and primary keys.
-		$query = <<<EOQ
-select a.index_name, c.column_name, b.constraint_type, c.column_position
-    from user_indexes a
-        inner join user_ind_columns c
-            on c.index_name = a.index_name
-        left join user_constraints b
-            on b.constraint_name = a.index_name
-                and b.table_name='$tablename'
-    where a.table_name='$tablename'
-        and a.index_type='NORMAL'
-EOQ;
-        if (!empty($indexname)) {
-            $query .= " and a.index_name='$indexname'";
+        $columns = array();
+        if (!$filterByTable) {
+            $columns[] = 'ui.table_name';
         }
-        $query .= " order by a.index_name,c.column_position";
+
+        if (!$filterByIndex) {
+            $columns[] = 'ui.index_name';
+        }
+
+        $columns[] = 'uc.constraint_type';
+        $columns[] = 'uic.column_name';
+
+        $query = 'SELECT ' . implode(', ', $columns) . '
+FROM user_indexes ui
+INNER JOIN user_ind_columns uic
+    ON uic.index_name = ui.index_name
+LEFT JOIN user_constraints uc
+    ON uc.index_name = ui.index_name
+        AND uc.table_name = ui.table_name';
+
+        $where = array();
+        if ($filterByTable) {
+            $query_table_name = strtoupper($table_name);
+            $where[] = 'ui.table_name = ' . $this->quoted($query_table_name);
+        }
+
+        if ($filterByIndex) {
+            $query_index_name = strtoupper($this->getValidDBName($index_name, true, 'index'));
+            $where[] = 'ui.index_name = ' . $this->quoted($query_index_name);
+        }
+
+        $where[] = 'ui.index_type = \'NORMAL\'';
+        $query .= ' WHERE ' . implode(' AND ', $where);
+
+        $order = array();
+        if (!$filterByTable) {
+            $order[] = 'ui.table_name';
+        }
+
+        if (!$filterByIndex) {
+            $order[] = 'ui.index_name';
+        }
+
+        $order[] = 'uic.column_position';
+        $query .= ' ORDER BY ' . implode(', ', $order);
+
         $result = $this->query($query);
 
-        $indices = array();
-		while (($row=$this->fetchByAssoc($result)) !=null) {
-            $index_type='index';
-            if ($row['constraint_type'] =='P')
-                $index_type='primary';
-            if ($row['constraint_type'] =='U')
-                $index_type='unique';
+        $data = array();
+        while ($row = $this->fetchByAssoc($result)) {
+            if (!$filterByTable) {
+                $table_name = strtolower($row['table_name']);
+            }
 
-            $name = strtolower($row['index_name']);
-            $indices[$name]['name']=$name;
-            $indices[$name]['type']=$index_type;
-            $indices[$name]['fields'][]=strtolower($row['column_name']);
+            if (!$filterByIndex) {
+                $index_name = strtolower($row['index_name']);
+            }
+
+            if ($row['constraint_type'] == 'P') {
+                $type = 'primary';
+            } elseif ($row['constraint_type'] == 'U') {
+                $type = 'unique';
+            } else {
+                $type = 'index';
+            }
+
+            $data[$table_name][$index_name]['name'] = $index_name;
+            $data[$table_name][$index_name]['type'] = $type;
+            $data[$table_name][$index_name]['fields'][] = strtolower($row['column_name']);
         }
 
-        return $indices;
-	}
+        return $data;
+    }
 
     /**
      * Get list of DB column definitions

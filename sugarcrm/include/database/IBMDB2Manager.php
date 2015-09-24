@@ -1008,56 +1008,161 @@ public function convert($string, $type, array $additional_parameters = array())
 		return !empty($row);
 	}
 
-	/**+
-	* @see DBManager::get_indices()
-	*
-	* NOTE normally the db2_statistics should produce the indices in an implementation independent manner.
-	* However it wasn't producing any results for the LUW Express-C edition running on Vista.
-	* Furthermore using a permanent connections resulted in unexplainable PHP errors.
-	* Falling back to system views to retrieve this data:
-	* http://publib.boulder.ibm.com/infocenter/db2luw/v9/topic/com.ibm.db2.udb.admin.doc/doc/r0001047.htm
-	*/
-	public function get_indices($tablename)
-	{
-		$tablename = strtoupper($tablename);
+    /**
+     * {@inheritDoc}
+     *
+     * NOTE normally the db2_statistics should produce the indices in an implementation independent manner.
+     * However it wasn't producing any results for the LUW Express-C edition running on Vista.
+     * Furthermore using a permanent connections resulted in unexplainable PHP errors.
+     * Falling back to system views to retrieve this data:
+     * http://publib.boulder.ibm.com/infocenter/db2luw/v9/topic/com.ibm.db2.udb.admin.doc/doc/r0001047.htm
+     */
+    protected function get_index_data($table_name = null, $index_name = null)
+    {
+        $data = array();
+        $this->populate_index_data($table_name, $index_name, $data);
+        $this->populate_fulltext_index_data($table_name, $index_name, $data);
 
-		$query = <<<EOQ
-				SELECT i.INDNAME, UNIQUERULE, COLNAME, COLSEQ FROM SYSCAT."INDEXES" i
-					INNER JOIN SYSCAT."INDEXCOLUSE" c
-						ON i.INDNAME = c.INDNAME
-				WHERE TABSCHEMA = '$this->schema' AND TABNAME = '$tablename'
-				ORDER BY i.INDNAME, COLSEQ
-EOQ;
+        return $data;
+    }
 
-		$result = $this->query($query);
+    /**
+     * Populates array with index data
+     *
+     * @param string $table_name Table name
+     * @param string $index_name Index name
+     * @param $data Array to be populated
+     */
+    protected function populate_index_data($table_name, $index_name, &$data)
+    {
+        $filterByTable = $table_name !== null;
+        $filterByIndex = $index_name !== null;
 
-		$indices = array();
-		while (($row=$this->fetchByAssoc($result)) !=null) {
-			$index_type = @self::$indexTypeMap[$row['uniquerule']] or $index_type='index'; // use 'index' as default if rule is not in indexTypeMap
-			$name = strtolower($row['indname']);
-			$indices[$name]['name']=$name;
-			$indices[$name]['type']=$index_type;
-			$indices[$name]['fields'][]=strtolower($row['colname']);
-		}
+        $columns = array();
+        if (!$filterByTable) {
+            $columns[] = 'i.TABNAME AS table_name';
+        }
 
+        if (!$filterByIndex) {
+            $columns[] = 'i.INDNAME AS index_name';
+        }
+
+        $columns[] = 'i.UNIQUERULE';
+        $columns[] = 'c.COLNAME AS column_name';
+
+        $query = 'SELECT ' . implode(', ', $columns) . '
+FROM SYSCAT."INDEXES" i
+INNER JOIN SYSCAT."INDEXCOLUSE" c
+    ON i.INDNAME = c.INDNAME';
+
+        $where = array('TABSCHEMA = ' . $this->quoted($this->schema));
+        if ($filterByTable) {
+            $query_table_name = strtoupper($table_name);
+            $where[] = 'i.TABNAME = ' . $this->quoted($query_table_name);
+        }
+
+        if ($filterByIndex) {
+            $query_index_name = strtoupper($this->getValidDBName($index_name, true, 'index'));
+            $where[] = 'i.INDNAME = ' . $this->quoted($query_index_name);
+        }
+
+        $query .= ' WHERE ' . implode(' AND ', $where);
+
+        $order = array();
+        if (!$filterByTable) {
+            $order[] = 'i.TABNAME';
+        }
+
+        if (!$filterByIndex) {
+            $order[] = 'i.INDNAME';
+        }
+
+        $order[] = 'c.COLSEQ';
+        $query .= ' ORDER BY ' . implode(', ', $order);
+
+        $result = $this->query($query);
+
+        while ($row = $this->fetchByAssoc($result)) {
+            if (!$filterByTable) {
+                $table_name = strtolower($row['table_name']);
+            }
+
+            if (!$filterByIndex) {
+                $index_name = strtolower($row['index_name']);
+            }
+
+            if ($row['uniquerule'] == 'P') {
+                $type = 'primary';
+            } elseif ($row['uniquerule'] == 'U') {
+                $type = 'unique';
+            } else {
+                $type = 'index';
+            }
+
+            $data[$table_name][$index_name]['name'] = $index_name;
+            $data[$table_name][$index_name]['type'] = $type;
+            $data[$table_name][$index_name]['fields'][] = strtolower($row['column_name']);
+        }
+    }
+
+    /**
+     * Populates array with fulltext index data
+     *
+     * @param string $table_name Table name
+     * @param string $index_name Index name
+     * @param $data Array to be populated
+     */
+    protected function populate_fulltext_index_data($table_name, $index_name, &$data)
+    {
         if ($this->tableExistsExtended('TSINDEXES', 'SYSIBMTS', 'VIEW')) {
-            $result = $this->query('SELECT indname, colname, language FROM SYSIBMTS.TSINDEXES WHERE TABSCHEMA = ' . $this->quoted($this->schema) . ' AND TABNAME=' . $this->quoted($tablename));
+            $filterByTable = $table_name !== null;
+            $filterByIndex = $index_name !== null;
+
+            $columns = array();
+            if (!$filterByTable) {
+                $columns[] = 'TABNAME AS table_name';
+            }
+
+            if (!$filterByIndex) {
+                $columns[] = 'INDNAME AS index_name';
+            }
+
+            $columns[] = 'COLNAME AS column_name';
+            $columns[] = 'language';
+
+            $query = 'SELECT ' . implode(', ', $columns) . '
+FROM SYSIBMTS.TSINDEXES';
+
+            $where = array('TABSCHEMA = ' . $this->quoted($this->schema));
+            if ($filterByTable) {
+                $query_table_name = strtoupper($table_name);
+                $where[] = 'TABNAME = ' . $this->quoted($query_table_name);
+            }
+
+            if ($filterByIndex) {
+                $query_index_name = strtoupper($this->getValidDBName($index_name, true, 'index'));
+                $where[] = 'INDNAME = ' . $this->quoted($query_index_name);
+            }
+
+            $result = $this->query($query);
             while ($row = $this->fetchByAssoc($result)) {
-                $index_type = 'fulltext';
-                $name = strtolower($row['indname']);
-                $indices[$name]['name'] = $name;
-                $indices[$name]['type'] = $index_type;
-                $indices[$name]['fields'] = explode(',', strtolower($row['colname']));
+                if (!$filterByTable) {
+                    $table_name = strtolower($row['table_name']);
+                }
+
+                if (!$filterByIndex) {
+                    $index_name = strtolower($row['index_name']);
+                }
+
+                $data[$table_name]['name'] = $index_name;
+                $data[$table_name]['type'] = 'fulltext';
+                $data[$table_name]['fields'] = explode(',', strtolower($row['colname']));
                 if (!empty($row['language'])) {
-                    $indices[$name]['message_locale'] = $row['language'];
+                    $data[$table_name]['message_locale'] = $row['language'];
                 }
             }
         }
-
-		return $indices;
-	}
-	private static $indexTypeMap = array('D' => 'index', 'P' => 'primary', 'U' => 'unique');
-
+    }
 
 	/**~
 	 * @see DBManager::add_drop_constraint()

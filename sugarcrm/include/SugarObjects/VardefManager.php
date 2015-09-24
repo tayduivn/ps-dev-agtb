@@ -352,10 +352,10 @@ class VardefManager{
         if(empty($module)) return;
         $guard_name = "$module:$object";
         if(isset(self::$inReload[$guard_name])) {
-            self::$inReload[$guard_name]++;
-            if(self::$inReload[$guard_name] > 2) {
+            if (self::$inReload[$guard_name] > 1) {
                 return;
             }
+            self::$inReload[$guard_name]++;
         } else {
             self::$inReload[$guard_name] = 1;
         }
