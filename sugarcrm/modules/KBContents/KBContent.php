@@ -164,7 +164,7 @@ class KBContent extends SugarBean {
         }
 
         $doc = $article = null;
-
+        $this->load_relationship('kbdocuments_kbcontents');
         if (empty($this->kbdocument_id)) {
             $doc = BeanFactory::getBean('KBDocuments');
             $doc->new_with_id = true;
@@ -173,8 +173,12 @@ class KBContent extends SugarBean {
             $doc->team_set_id = $this->team_set_id;
             $doc->team_id = $this->team_id;
             $doc->save();
-            $this->load_relationship('kbdocuments_kbcontents');
             $this->kbdocuments_kbcontents->add($doc);
+        } else {
+            $doc = $this->kbdocuments_kbcontents->getBeans();
+            if (is_array($doc)) {
+                $doc = array_shift($doc);
+            }
         }
 
         if (empty($this->kbarticle_id)) {
