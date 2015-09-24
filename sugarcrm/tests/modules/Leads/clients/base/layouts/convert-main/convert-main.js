@@ -231,8 +231,7 @@ describe('Leads.Base.Layout.ConvertMain', function() {
                 SugarTest.server.respond();
                 expectedRequest = JSON.stringify({
                     modules: layout.associatedModels,
-                    transfer_activities_action: undefined,
-                    transfer_activities_modules: []
+                    transfer_activities_action: 'donothing'
                 });
                 expect(ajaxSpy.lastCall.args[0].data).toEqual(expectedRequest);
                 getEditableFieldsStub.restore();
@@ -290,36 +289,41 @@ describe('Leads.Base.Layout.ConvertMain', function() {
 
             using('different transfer settings', [
                 {
-                    message: 'should pass Contacts module if user opted in',
+                    message: 'should pass "move" if setting is move and user opted in',
+                    actionSetting: 'move',
                     transferActivities: true,
-                    transferAction: 'move',
-                    expectedModules: ['Contacts']
+                    expectedAction: 'move'
                 },
                 {
-                    message: 'should not pass Contacts module if user opted out',
+                    message: 'should pass "donothing" if setting is move and user opted out',
+                    actionSetting: 'move',
                     transferActivities: false,
-                    transferAction: 'move',
-                    expectedModules: []
+                    expectedAction: 'donothing'
                 },
                 {
-                    message: 'should not pass Contacts module if config is donothing',
+                    message: 'should pass "donothing" if setting is donothing and user opted in',
+                    actionSetting: 'donothing',
                     transferActivities: true,
-                    transferAction: 'donothing',
-                    expectedModules: []
+                    expectedAction: 'donothing'
                 },
                 {
-                    message: 'should not pass Contacts module if config is anything other than move',
+                    message: 'should pass "donothing" if setting is donothing and user opted out',
+                    actionSetting: 'donothing',
                     transferActivities: true,
-                    transferAction: 'copy',
-                    expectedModules: []
+                    expectedAction: 'donothing'
+                },
+                {
+                    message: 'should pass "donothing" if setting is foo and user opted in',
+                    actionSetting: 'foo',
+                    transferActivities: false,
+                    expectedAction: 'donothing'
                 }
             ], function(data) {
                 it(data.message, function() {
                     layout.model.set('transfer_activities', data.transferActivities);
-                    app.metadata.getConfig().leadConvActivityOpt = data.transferAction;
+                    app.metadata.getConfig().leadConvActivityOpt = data.actionSetting;
                     expect(layout.getTransferActivitiesAttributes()).toEqual({
-                        transfer_activities_action: data.transferAction,
-                        transfer_activities_modules: data.expectedModules
+                        transfer_activities_action: data.expectedAction
                     });
                 });
             });
