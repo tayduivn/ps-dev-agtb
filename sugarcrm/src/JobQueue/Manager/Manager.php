@@ -68,6 +68,7 @@ class Manager implements ClientInterface, RunnerInterface
         'ExportToCSVDemo' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportToCSVDemo',
         'NotificationEvent' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\EventHandler',
         'NotificationCarrierBulkMessage' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\CarrierBulkMessageHandler',
+        'NotificationSend' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\SendHandler',
     );
 
     /**
