@@ -149,6 +149,7 @@ class PMSEChangeField extends PMSEScriptTask
                                     false
                                 );                                
                                 $newValue = $this->postProcessValue($newValue, $bean->field_name_map[$field->field]['type']);
+                                $newValue = $this->handleFieldTypeProcessing($newValue, $field, $bean);
                             } else {
                                 if ($field->field == 'assigned_user_id') {
                                     $field->value = $this->getCustomUser($field->value, $beanModule);
@@ -223,6 +224,34 @@ class PMSEChangeField extends PMSEScriptTask
                 break;
             case 'boolean':
                 $value = (boolean)$value;
+                break;
+        }
+        return $value;
+    }
+
+    /**
+     * handle certain types of field types where the bean may need to be modified as well
+     * @param type value
+     * @param type field
+     * @param type bean
+     * @return value
+     */
+    public function handleFieldTypeProcessing($value, $field, $bean)
+    {
+        $fieldType = '';
+
+        if (!empty($bean->field_name_map[$field->field]['type'])) {
+            $fieldType = $bean->field_name_map[$field->field]['type'];
+        }
+        switch (strtolower($fieldType)) {
+            case 'currency':
+                // For currency fields, the return value is a json encoded string. So need to json_decode.
+                $currencyFields = json_decode($value);
+                if (!empty($currencyFields) && (!empty($currencyFields->expField)) && (!empty($currencyFields->expValue))) {
+                    // we need to take into account the type of currency too
+                    $bean->currency_id = $currencyFields->expField;
+                    $value = $currencyFields->expValue;
+                }
                 break;
         }
         return $value;
