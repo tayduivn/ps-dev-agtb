@@ -39,6 +39,7 @@ abstract class Bean
         }
 
         $query->from($event->getBean(), array('team_security' => false));
+        $query->where()->equals('id', $event->getBean()->id, $event->getBean());
     }
 
     /**

@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Notification;
 
 use Sugarcrm\Sugarcrm\Notification\BeanEmitter\Event as BeanEvent;
+use Sugarcrm\Sugarcrm\Notification\ApplicationEmitter\Event as ApplicationEvent;
 use Sugarcrm\Sugarcrm\Notification\SubscriptionFilter\SubscriptionFilterInterface;
 use Sugarcrm\Sugarcrm\Notification\SubscriptionFilter\SubscriptionFilterRegistry;
 
@@ -523,5 +524,127 @@ class SubscriptionsRegistry
     public function setUserConfiguration($userId, $config)
     {
         $this->setConfiguration($userId, $config, false);
+    }
+
+    /**
+     * Returns array of suitable users with their carrier preference.
+     *
+     * @param EventInterface $event for filtering
+     * @return array of suitable users with their carrier preference
+     */
+    public function getUsers(EventInterface $event)
+    {
+        $globalConfig = $this->getGlobalEventConfig($event);
+        $sfList = $this->getSupportedFilters($event);
+        usort($sfList, function (SubscriptionFilterInterface $a, SubscriptionFilterInterface $b) {
+            $a = $a->getOrder();
+            $b = $b->getOrder();
+            if ($a == $b) {
+                return 0;
+            }
+            return ($a < $b) ? -1 : 1;
+        });
+        $sfList = array_reverse($sfList);
+
+        $result = array();
+        foreach ($sfList as $subscriptionFilter) {
+            $query = new \SugarQuery();
+            $userAlias = $subscriptionFilter->filterQuery($event, $query);
+
+            $joinOptions = array(
+                'team_security' => false,
+                'joinType' => 'LEFT'
+            );
+            $join = $query->joinTable('notification_subscription', $joinOptions);
+            $joinOn = $join->on()->equalsField('notification_subscription.user_id', "{$userAlias}.id")
+                ->equals('notification_subscription.deleted', '0');
+            $this->eventWhere($event, $joinOn, $subscriptionFilter);
+
+            $query->select(array(
+                array("{$userAlias}.id", 'user_id'),
+                'notification_subscription.carrier_name',
+                'notification_subscription.carrier_option',
+            ));
+            foreach ($query->execute() as $row) {
+                $userId = $row['user_id'];
+                if (is_null($row['carrier_name'])) {
+                    $row = $globalConfig[(string)$subscriptionFilter] + $row;
+                }
+                if (!array_key_exists($userId, $result) || $result[$userId]['filter'] != (string)$subscriptionFilter) {
+                    $result[$userId] = array(
+                        'filter' => (string)$subscriptionFilter,
+                        'config' => array(),
+                    );
+                }
+                $result[$userId]['config'][] = array($row['carrier_name'], $row['carrier_option']);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns array global of carrier preference for the event.
+     *
+     * @param EventInterface $event for filtering
+     * @return array global of carrier preference for the event
+     * @throws \SugarQueryException
+     */
+    protected function getGlobalEventConfig(EventInterface $event)
+    {
+        $bean = \BeanFactory::newBean('NotificationCenterSubscriptions');
+        $query = new \SugarQuery();
+        $query->from($bean);
+        $query->where()->isNull('user_id');
+        $this->eventWhere($event, $query->where());
+
+        $globalConfig = array();
+        foreach ($bean->fetchFromQuery($query) as $row) {
+            $globalConfig[$row->relation_name] = array(
+                'carrier_name' => $row->carrier_name,
+                'carrier_option' => $row->carrier_option
+            );
+        }
+        return $globalConfig;
+    }
+
+    /**
+     * Preparing where for filtering carrier preference for the event.
+     *
+     * @param EventInterface $event for filtering
+     * @param \SugarQuery_Builder_Where $where which will be prepared
+     * @param SubscriptionFilterInterface|null $subscriptionFilter subscription Filter if necessary the single
+     */
+    protected function eventWhere(
+        EventInterface $event,
+        \SugarQuery_Builder_Where $where,
+        SubscriptionFilterInterface $subscriptionFilter = null
+    ) {
+        $emitterType = $event instanceof ApplicationEvent ? 'application' : 'module';
+        $emitterModuleType = $event instanceof BeanEvent ? $event->getModuleName() : '';
+        $where->equals('notification_subscription.event_name', (string)$event)
+            ->equals('notification_subscription.type', $emitterType)
+            ->equals('notification_subscription.emitter_module_name', $emitterModuleType);
+        if (!is_null($subscriptionFilter)) {
+            $where->equals('notification_subscription.relation_name', (string)$subscriptionFilter);
+        }
+    }
+
+    /**
+     * Return list of Subscription Filter which support the event.
+     *
+     * @param EventInterface $event for checking
+     * @return SubscriptionFilterInterface[] list of Subscription Filter which support the event
+     */
+    private function getSupportedFilters(EventInterface $event)
+    {
+        $sfList = $this->getSubscriptionFilters();
+        $supported = array();
+        foreach ($sfList as $subscriptionFilter) {
+            if ($subscriptionFilter->supports($event)) {
+                $supported[] = $subscriptionFilter;
+            }
+        }
+        return $supported;
     }
 }
