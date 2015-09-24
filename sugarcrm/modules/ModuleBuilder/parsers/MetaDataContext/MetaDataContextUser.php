@@ -25,16 +25,21 @@ class MetaDataContextUser implements MetaDataContextInterface
      */
     protected $context;
 
+    protected $user;
+
     /**
      * Constructor
      *
      * @param User $user
      */
-    public function __construct(User $user)
+    public function __construct(User $user, $roleSet = null)
     {
+        $this->user = $user;
 // BEGIN SUGARCRM flav=ent ONLY
         if (!empty($GLOBALS['sugar_config']['roleBasedViews'])) {
-            $roleSet = $this->getRoleSet($user);
+            if (is_null($roleSet)) {
+                $roleSet = $this->getRoleSet($user);
+            }
             if ($roleSet) {
                 $this->context = new MetaDataContextRoleSet($roleSet);
                 return;
@@ -48,7 +53,13 @@ class MetaDataContextUser implements MetaDataContextInterface
     /** {@inheritDoc} */
     public function getHash()
     {
-        return $this->context->getHash();
+        $hash = $this->context->getHash();
+        //The admin state of a user can affect the metadata result regardless of roles
+        if ($this->user->isAdmin()) {
+            $hash = md5($hash . "admin");
+        }
+
+        return $hash;
     }
 
     /** {@inheritDoc} */

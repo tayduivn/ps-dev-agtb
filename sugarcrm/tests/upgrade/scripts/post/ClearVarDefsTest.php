@@ -31,7 +31,7 @@ class ClearVarDefsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user', array(false, true));
         $beanList = array(
             self::MODULE => 'PreScriptBean',
-            'Users' => 'stdClass'
+            'Users' => 'ClearVardefsMockUser'
         );
         $dictionary[self::MODULE] = array(
             'relationships' => array(
@@ -189,4 +189,12 @@ class PreScriptBean extends SugarBean
     public $object_name = ClearVarDefsTest::MODULE;
 
     public $module_name = ClearVarDefsTest::MODULE;
+}
+
+
+class ClearVardefsMockUser extends User
+{
+    public function getFieldDefinitions($property = '', $filter = array()) {
+        return array();
+    }
 }

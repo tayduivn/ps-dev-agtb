@@ -123,7 +123,6 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
     }
 
 
-
     protected static function registerShutdownFunction($previousUserId)
     {
         if (!static::$shutdownRegisterd) {
@@ -131,9 +130,14 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
                 $logger = new LoggerTransition(\LoggerManager::getLogger());
                 //Now write out the session data again during shutdown
                 $sessionObject = $_SESSION;
-                if ($sessionObject instanceof SessionStorage && !$sessionObject->closed) {
-                    $_SESSION = $sessionObject->getArrayCopy();
+                if ($sessionObject instanceof TrackableArray) {
+                    $sessionObject->applyTrackedChangesToArray($_SESSION);
                 } else {
+                    //Supress any warning before we start the session. If there was any output, the cookie won't be sent
+                    //But that is OK here as we are only saving changes, not outputting anything to user. They should already
+                    //Have the session cookie.
+                    $errRep = error_reporting();
+                    error_reporting($errRep & ~E_WARNING);
                     session_start();
                     //First verify that the sessions still match and we didn't somehow switch users.
                     if ((!isset($_SESSION['user_id']) && $previousUserId) ||
@@ -151,9 +155,11 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
                             );
                         }
                     }
+                    error_reporting($errRep);
                 }
                 session_write_close();
-            });
+            }
+            );
             static::$shutdownRegisterd = true;
         }
     }
