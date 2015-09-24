@@ -51,11 +51,12 @@ interface MessageBuilderInterface
     /**
      * Build a message depending on an event type, recipient and additional data.
      * @param EventInterface $event event to build a message from.
+     * @param string $filter subscription filter name by which this user rise up.
      * @param \User $user SugarCRM user who is addressed to receive a message.
      * @param array $messageSignature message signature.
      * @return array complete message pack.
      */
-    public function build(EventInterface $event, \User $user, array $messageSignature);
+    public function build(EventInterface $event, $filter, \User $user, array $messageSignature);
 
     /**
      * Get MessageBuilder level.
