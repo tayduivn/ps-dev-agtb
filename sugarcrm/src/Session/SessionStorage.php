@@ -130,8 +130,8 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
                 $logger = new LoggerTransition(\LoggerManager::getLogger());
                 //Now write out the session data again during shutdown
                 $sessionObject = $_SESSION;
-                if ($sessionObject instanceof TrackableArray) {
-                    $sessionObject->applyTrackedChangesToArray($_SESSION);
+                if ($sessionObject instanceof SessionStorage && !$sessionObject->closed) {
+                    $_SESSION = $sessionObject->getArrayCopy();
                 } else {
                     //Supress any warning before we start the session. If there was any output, the cookie won't be sent
                     //But that is OK here as we are only saving changes, not outputting anything to user. They should already
