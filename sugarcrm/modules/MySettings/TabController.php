@@ -121,7 +121,7 @@ class TabController
     public static function setPortalTabs($modules)
     {
         $administration = BeanFactory::getBean('Administration');
-        $administration->saveSetting('MySettings', 'tab', json_encode($modules), 'portal');
+        $administration->saveSetting('MySettings', 'tab', $modules, 'portal');
     }
 
 //END SUGARCRM flav=ent ONLY
