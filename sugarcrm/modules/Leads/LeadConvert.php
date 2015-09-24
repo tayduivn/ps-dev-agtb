@@ -141,14 +141,12 @@ class LeadConvert
         // Check to see if there is an action to take on the Transfer of Lead Activities
         $activitySetting = $this->getActivitySetting(); // From Configuration Setting
 
-        if (!empty($activitySetting) &&
-            !empty($transferActivitiesAction) &&
-            !empty($transferActivitiesModules)
+         if (!empty($activitySetting) &&
+            !empty($transferActivitiesAction)
         ) {
-            if (($activitySetting === static::TRANSFERACTION_COPY &&
-                    $transferActivitiesAction === static::TRANSFERACTION_COPY) ||
-                ($activitySetting === static::TRANSFERACTION_MOVE &&
-                    $transferActivitiesAction === static::TRANSFERACTION_MOVE)
+            if ($activitySetting === static::TRANSFERACTION_COPY &&
+                $transferActivitiesAction === static::TRANSFERACTION_COPY &&
+                !empty($transferActivitiesModules)
             ) {
                 Activity::disable();
                 $this->copyActivities(
@@ -156,9 +154,17 @@ class LeadConvert
                     $this->modules,
                     $transferActivitiesModules
                 );
-                if ($transferActivitiesAction === static::TRANSFERACTION_MOVE) {
-                    $this->removeActivitiesFromLead($this->lead, $transferActivitiesModules);
-                }
+                Activity::enable();
+            } elseif ($activitySetting === static::TRANSFERACTION_MOVE &&
+                $transferActivitiesAction === static::TRANSFERACTION_MOVE &&
+                !empty($this->contact)
+            ) {
+                Activity::disable();
+                // Activity Move is currently limited to the Contact that the Lead is being converted to.
+                $this->moveActivities(
+                    $this->lead,
+                    $this->contact
+                );
                 Activity::enable();
             }
         }
@@ -326,17 +332,37 @@ class LeadConvert
     }
 
     /**
-     * Remove activities from the Lead being transferred
-     * @param $lead Lead that was converted
+     * Move Lead's Related Activities to Target Bean
+     * @param $lead
+     * @param $bean  target Bean
      */
-    protected function removeActivitiesFromLead($lead)
+    public function moveActivities($lead, $bean)
     {
-        $activities = $this->getActivitiesFromLead($lead);
-        foreach ($activities as $activity) {
-            if ($rel = $this->findRelationship($activity, $lead)) {
-                $activity->load_relationship($rel);
-                if ($activity->parent_id && $activity->id) {
-                    $activity->$rel->delete($activity->id, $activity->parent_id);
+        if (!empty($bean)) {
+            $activities = $this->getActivitiesFromLead($lead);
+            foreach ($activities as $activity) {
+                if ($rel = $this->findRelationship($activity, $lead)) {
+                    $activity->load_relationship($rel);
+
+                    if ($activity->parent_id && $activity->id) {
+                        $activity->$rel->delete($activity->id, $activity->parent_id);
+                    }
+
+                    if ($rel = $this->findRelationship($activity, $bean)) {
+                        $activity->load_relationship($rel);
+                        $relObj = $activity->$rel->getRelationshipObject();
+                        if ($relObj->relationship_type == 'one-to-one' || $relObj->relationship_type == 'one-to-many') {
+                            $key = $relObj->rhs_key;
+                            $activity->$key = $bean->id;
+                        }
+                        $activity->$rel->add($bean);
+                    }
+
+                    // set the new parent id and type
+                    $activity->parent_id = $bean->id;
+                    $activity->parent_type = $bean->module_dir;
+
+                    $activity->save();
                 }
             }
         }

@@ -11,4 +11,6 @@
  */
 $viewdefs['Manufacturers']['base']['filter']['default'] = array(
     'default_filter' => 'all_records',
+    'quicksearch_field' => array('name'),
+    'quicksearch_priority' => 1
 );

@@ -26,6 +26,7 @@ $viewdefs['Opportunities']['base']['layout']['list-dashboard'] = array(
                                 'label' => 'LBL_DASHLET_PIPLINE_NAME',
                                 'visibility' => 'user',
                             ),
+                            'width' => 12,
                         ),
                     ),
                 ),
