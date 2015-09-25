@@ -743,7 +743,7 @@
                                                                         <td width='25%' scope="row" valign='middle'
                                                                             nowrap>{$MOD.LBL_LDAP_ADMIN_PASSWORD}</td>
                                                                         <td width='25%' align="left" valign='middle'>
-                                                                            <input name="ldap_admin_password" size='20'
+                                                                            <input name="ldap_admin_password" id="ldap_admin_password" size='20'
                                                                                    type="password"
                                                                                    value="{$settings.ldap_admin_password}">
                                                                         </td>
@@ -1106,7 +1106,7 @@ forgot_password_enable(document.getElementById('forgotpassword_checkbox'));
 enable_syst_generated_pwd(document.getElementById('SystemGeneratedPassword_checkbox'));
 if (document.getElementById('system_saml_enabled').checked)enableDisablePasswordTable('system_saml_enabled');
 if (document.getElementById('system_ldap_enabled').checked)enableDisablePasswordTable('system_ldap_enabled');
-
+clickToEditPassword('#ldap_admin_password', '::PASSWORD::');
 </script>
 
 {/literal}
