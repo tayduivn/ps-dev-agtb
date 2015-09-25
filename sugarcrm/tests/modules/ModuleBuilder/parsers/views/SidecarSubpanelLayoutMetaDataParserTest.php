@@ -44,12 +44,6 @@ class SidecarSubpanelLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_Te
                 false,
             ),
             array(
-                'Contacts',
-                'opportunities',
-                'contact_role',
-                true,
-            ),
-            array(
                 'Accounts',
                 'opportunities',
                 'contact_role',
