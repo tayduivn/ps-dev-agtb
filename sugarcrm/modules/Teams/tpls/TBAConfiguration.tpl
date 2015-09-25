@@ -13,6 +13,7 @@
 {$moduleTitle}
 <script type="text/javascript"
         src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_tba.js'}"></script>
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Teams/css/custom.css'}"/>
 
@@ -67,7 +68,7 @@
                     <tr>
                     {foreach from=$actionsList key=key item=value}
                         <td class="title {if !$value|in_array:$config.disabled_modules}active{/if}">
-                            <div>
+                            <div class="tba-container">
                                 <input type="checkbox" name="team_based[disabled_modules][]"
                                        data-group="tba_em" value="{$value}" id="tba_em_{$key}"
                                        {if !$value|in_array:$config.disabled_modules}checked="checked"{/if}/>
@@ -82,90 +83,3 @@
         </tr>
     </table>
 </form>
-
-<script type="text/javascript">
-    var labelSaving = '{$APP.LBL_SAVING}',
-        labelDone = '{$APP.LBL_DONE_BUTTON_LABEL}',
-        labelWarning = '{$MOD.LBL_TBA_CONFIGURATION_WARNING}',
-        disabledModules = app.config.teamBasedAcl.disabledModules;
-    {literal}
-    $(document).ready(function() {
-        var stateChanged = false;
-
-        $('input[data-group=tba_em]').on('click', function() {
-            var $td = $(this).closest('td.title');
-            stateChanged = true;
-            if ($td.hasClass('active')) {
-                $td.removeClass('active');
-            } else {
-                $td.addClass('active');
-            }
-        });
-
-        if ($('input#tba_set_enabled').attr('checked') === 'checked') {
-            $('#tba_em_block').show();
-        } else {
-            $('#tba_em_block').hide();
-        }
-
-        $('input#tba_set_enabled').on('click', function() {
-            stateChanged = true;
-            if ($(this).attr('checked') === 'checked') {
-                _.each($('input[data-group=tba_em]'), function(item) {
-                    if (_.indexOf(disabledModules, $(item).val()) === -1) {
-                        $(item).attr('checked', 'checked');
-                    }
-                });
-                $('#tba_em_block').show();
-            } else {
-                $('#tba_em_block').hide();
-            }
-        });
-
-        $('input[name=save]').on('click', function() {
-            var disabledModules = [],
-                isTBEnabled = $('input#tba_set_enabled').attr('checked') === 'checked';
-
-            if (stateChanged) {
-                app.alert.show('submit_tba_confirmation', {
-                    level: 'confirmation',
-                    messages: labelWarning,
-                    onConfirm: function() {
-                        if (isTBEnabled) {
-                            $.each($('input[data-group=tba_em]:not(:checked)'), function(index, item) {
-                                disabledModules.push($(item).val());
-                            });
-                        }
-
-                        ajaxStatus.showStatus(labelSaving);
-
-                        var queryString = SUGAR.util.paramsToUrl({
-                                    module: 'Teams',
-                                    action: 'savetbaconfiguration',
-                                    enabled: isTBEnabled,
-                                    disabled_modules: disabledModules,
-                                    csrf_token: SUGAR.csrf.form_token
-                                }) + 'to_pdf=1';
-
-                        $.ajax({
-                            url: 'index.php',
-                            data: queryString,
-                            type: 'POST',
-                            dataType: 'json',
-                            timeout: 300000,
-                            success: function(response) {
-                                ajaxStatus.flashStatus(labelDone);
-                                if (response['status'] === true) {
-                                    window.location.assign('index.php?module=Administration&action=index');
-                                }
-                            }
-                        });
-                    }
-                });
-            } else {
-                window.location.assign('index.php?module=Administration&action=index');
-            }
-        });
-    });
-{/literal}
-</script>

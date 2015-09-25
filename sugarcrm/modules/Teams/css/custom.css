@@ -21,6 +21,8 @@ table.edit.view td.bg-white {
 table.edit.view td.title {
     background-color: #EFEFEF;
     color: #343434;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
 table.edit.view td.title.active {
@@ -28,23 +30,22 @@ table.edit.view td.title.active {
     color: #1E5563;
 }
 
-table.edit.view td.title div {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
+table.edit.view td.title div.tba-container {
+    width: 100%;
+    position: relative;
 }
 
-table.edit.view td.title input[type=checkbox] {
-    margin: 5px 5px 5px 0;
-    padding: 0;
+table.edit.view td.title div.tba-container input[type=checkbox] {
+    position: absolute;
+    left: 10px;
+    top: 16px;
 }
 
-table.edit.view td.title label {
-    padding: 0;
-    margin: 4px 0 0 0;
+table.edit.view td.title div.tba-container label {
     text-overflow: ellipsis;
-    width: 150px;
+    min-width: 150px;
     white-space: nowrap;
     overflow: hidden;
+    display: block;
+    padding: 15px 30px;
 }
