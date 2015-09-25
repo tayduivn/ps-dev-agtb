@@ -4083,12 +4083,13 @@ function appendPortToHost($url, $port)
 /**
  * Singleton to return JSON object
  * @return	JSON object
+ * @deprecated JSON.php is composed of static methods only and can be called
+ * directly as `JSON::encode`, ... JSON class is autoloaded.
  */
 function getJSONobj()
 {
     static $json = null;
     if (!isset($json)) {
-        require_once 'include/JSON.php';
         $json = new JSON();
     }
 
