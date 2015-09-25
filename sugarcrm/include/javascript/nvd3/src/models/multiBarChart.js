@@ -600,9 +600,6 @@ nv.models.multiBarChart = function() {
         if (scrollEnabled) {
           var diff = (vertical ? innerWidth : innerHeight) - minDimension,
               panMultibar = function() {
-                // if (d3.event && d3.event.type === 'click') {
-                //   return;
-                // }
                 dispatch.tooltipHide(d3.event);
                 scrollOffset = scroll.pan(diff);
                 xAxisWrap.select('.nv-axislabel')

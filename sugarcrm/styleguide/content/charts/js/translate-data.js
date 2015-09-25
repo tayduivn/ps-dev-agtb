@@ -25,13 +25,13 @@ function translateDataToD3(json, chartType, barType) {
                             'key': pickLabel(d),
                             'type': 'bar',
                             'values': json.values.map(function(e, j) {
-                                return {
-                                  'series': i,
-                                  'x': j + 1,
-                                  'y': parseFloat(e.values[i]) || 0,
-                                  'y0': 0
-                                };
-                            })
+                                    return {
+                                      'series': i,
+                                      'x': j + 1,
+                                      'y': parseFloat(e.values[i]) || 0,
+                                      'y0': 0
+                                    };
+                                })
                         };
                     }) :
                     json.values.map(function(d, i) {
@@ -39,13 +39,13 @@ function translateDataToD3(json, chartType, barType) {
                             'key': d.values.length > 1 ? d.label : pickLabel(d.label),
                             'type': 'bar',
                             'values': json.values.map(function(e, j) {
-                                return {
-                                  'series': i,
-                                  'x': j + 1,
-                                  'y': i === j ? sumValues(e.values) : 0,
-                                  'y0': 0
-                                };
-                            })
+                                    return {
+                                      'series': i,
+                                      'x': j + 1,
+                                      'y': i === j ? sumValues(e.values) : 0,
+                                      'y0': 0
+                                    };
+                                })
                         };
                     });
                 break;
@@ -82,12 +82,19 @@ function translateDataToD3(json, chartType, barType) {
                 break;
 
             case 'lineChart':
+                var discreteValues = d3.max(json.values, function(d) {
+                          return d.values.length;
+                        }) === 1;
                 data = json.values.map(function(d, i) {
                     return {
                         'key': pickLabel(d.label),
-                        'values': d.values.map(function(e, j) {
-                            return [j, parseFloat(e)];
-                        })
+                        'values': discreteValues ?
+                            d.values.map(function(e, j) {
+                                return [i, parseFloat(e)];
+                            }) :
+                            d.values.map(function(e, j) {
+                                return [j, parseFloat(e)];
+                            })
                     };
                 });
                 break;

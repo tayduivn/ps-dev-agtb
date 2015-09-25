@@ -439,8 +439,16 @@ nv.utils.polarToCartesian = function(centerX, centerY, radius, angleInDegrees) {
 
 nv.utils.angleToRadians = function(angleInDegrees) {
   return angleInDegrees * Math.PI / 180.0;
-}
+};
 
 nv.utils.angleToDegrees = function(angleInRadians) {
   return angleInRadians * 180.0 / Math.PI;
-}
+};
+
+nv.utils.isValidDate = function(d) {
+  if (!d) {
+    return false;
+  }
+  var testDate = new Date(d);
+  return testDate instanceof Date && !isNaN(testDate.valueOf());
+};
