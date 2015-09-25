@@ -90,14 +90,17 @@ class SugarFieldTag extends SugarFieldRelatecollection
         // We'll need this no matter what
         $tagBean = BeanFactory::getBean('Tags');
 
-        if (!empty($record['id'])) {
-            if ($tagBean->retrieve($record['id'])) {
-                return $tagBean;
+        if (is_array($record)) {
+            if (!empty($record['id'])) {
+                if ($tagBean->retrieve($record['id'])) {
+                    return $tagBean;
+                }
             }
+            //Normalize the tag name
+            $tagName = trim($record['name']);
+        } else {
+            $tagName = trim($record);
         }
-
-        // Normalize the tag name
-        $tagName = trim($record['name']);
 
         // See if this tag exists already. If it does send back the bean for it
         $q = $this->getSugarQuery();
@@ -201,7 +204,14 @@ class SugarFieldTag extends SugarFieldRelatecollection
         if (!empty($params[$field])) {
             $submittedTags = $params[$field];
             foreach ($submittedTags as $submittedTag) {
-                $changedTags[strtolower(trim($submittedTag['name']))] = trim($submittedTag['name']);
+                if (is_array($submittedTag)) {
+                    $tagName = $submittedTag['name'];
+                } else {
+                    $tagName = $submittedTag;
+                }
+
+                $tagName = trim($tagName);
+                $changedTags[strtolower($tagName)] = $tagName;
             }
         }
         return $changedTags;
@@ -363,14 +373,16 @@ class SugarFieldTag extends SugarFieldRelatecollection
      */
     public function fixForFilter(&$value, $fieldName, SugarBean $bean, SugarQuery $q, SugarQuery_Builder_Where $where, $op)
     {
-        $originalValue = $value;
-        $value = array();
-        foreach ($originalValue as $tag) {
-            $tagName = $tag['name'];
-            if ($op === '$not_in') {
-                $value[] = $bean->db->quoted($tagName);
-            } else {
-                $value[] = $tagName;
+        // $value is empty if operator is $empty/$not_empty
+        if (!empty($value)) {
+            $originalValue = $value;
+            $value = array();
+            foreach ($originalValue as $tag) {
+                if ($op === '$not_in') {
+                    $value[] = $bean->db->quoted($tag);
+                } else {
+                    $value[] = $tag;
+                }
             }
         }
         switch($op) {
