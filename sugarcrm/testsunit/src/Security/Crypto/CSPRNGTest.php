@@ -53,7 +53,7 @@ class CSPRNGTest extends \PHPUnit_Framework_TestCase
     /**
      * Generator specific testing
      *
-     * @covers ::genUrandom
+     * @covers ::genCsprng
      * @covers ::genMcrypt
      * @covers ::genOpenssl
      *
@@ -76,11 +76,11 @@ class CSPRNGTest extends \PHPUnit_Framework_TestCase
     public function providerTestGenerators()
     {
         return array(
-            array('genUrandom', 8),
-            array('genUrandom', 16),
-            array('genUrandom', 22),
-            array('genUrandom', 32),
-            array('genUrandom', 64),
+            array('genCsprng', 8),
+            array('genCsprng', 16),
+            array('genCsprng', 22),
+            array('genCsprng', 32),
+            array('genCsprng', 64),
             array('genMcrypt', 8),
             array('genMcrypt', 16),
             array('genMcrypt', 22),
