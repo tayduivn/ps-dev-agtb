@@ -220,6 +220,42 @@ and (orientation: portrait) {
 
 }
 
+@media (max-width: 540px) {
+  .navbar {
+    .search {
+        min-width: 36px !important;
+        .navbar-search {
+          display: none;
+        }
+        .quicksearch-button-wrapper {
+          > .btn {
+            background-color: black;
+            border-radius: 3px;
+            .fa-search {
+              color: white;
+            }
+          }
+        }
+
+      &.expanded {
+        position: absolute;
+        left: 1px;
+        z-index: 2001;
+        background-color: black;
+        .navbar-search {
+          display: inherit;
+          width: inherit !important;
+        }
+        .quicksearch-button-wrapper {
+          > .btn {
+            background-color: transparent;
+          }
+        }
+      }
+    }
+  }
+}
+
 @media (max-width: 768px) {
   // GRID & CONTAINERS
   // -----------------

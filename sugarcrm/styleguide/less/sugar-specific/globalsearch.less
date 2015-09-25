@@ -1,106 +1,108 @@
 /* GLOBAL SEARCH
   ----------------*/
 
-.navbar.search {
-  padding: 7px 6px;
-  position: relative;
-  min-width: 170px !important;
-
-  // Outer wrapper around tag search results
-  .quicksearch-tags-wrapper {
+.navbar {
+  .search {
+    padding: 7px 6px;
     position: relative;
-  }
-  // Tags UL dropdown menu
-  .quicksearch-tags {
-    display: block;
-    width: 100%;
-    height: 29px;
-    top: 0;
-    right: 0;
-    left: 1px;
-    margin-top: 0;
-    font-size: 0;
-    background: #fff;
-    border: 1px solid darken(@grayLighter, 10%);
-    .border-radius(0 0 3px 3px);
-    .box-shadow(0 2px 1px rgba(0,0,0,0.1));
-    .box-sizing(border-box);
-    &.hide {
-      display: none;
-    }
-    .qs-tag-icon > .fa{
-      color: @grayDark;
-    }
-    .qs-tags-row {
-      font-size: 12px;
-      display: inline-block;
-      border-right: 2px solid @grayLighter;
+    min-width: 170px !important;
+
+    // Outer wrapper around tag search results
+    .quicksearch-tags-wrapper {
       position: relative;
-      padding: 5px 10px 4px 10px;
-      &.active {
-        background: @dropdownLinkBackgroundHover;
-      }
-      a {
-        color: #555;
-        padding: 0;
-        border-top: 0px;
-      }
     }
-  }
-
-  // Needed by firefox because of navbar table-layout
-  .typeahead-wrapper {
-    position: relative;
-  }
-  // Typeahead UL dropdown menu
-  .typeahead {
-    height: auto;
-    top: 0;
-    right: -1px;
-    left: 1px;
-    overflow: hidden;
-    max-height: 333px;
-    .border-radius(@baseBorderRadius);
-    li {
-      min-width: 120px;
-      padding: 0;
-    }
-    li > a {
-      padding: 6px 0 2px 7px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      min-height: 22px;
-    }
-    li.no-results,
-    li.view-all-results a {
-      padding: 8px 10px;
-    }
-  }
-
-  // Override the styling of the .navbar-search
-  // if tag results are shown
-  &.quicksearch-tags-open {
-    .navbar-search {
-      border-bottom: none;
-      .border-radius(5px 5px 0 0);
-      .search-query {
-        .border-radius(0 @baseBorderRadius 0 0);
-      }
-    }
-    .quicksearch-tags-wrapper:after {
-      content: "";
-      position: absolute;
-      z-index: 0;
+    // Tags UL dropdown menu
+    .quicksearch-tags {
+      display: block;
+      width: 100%;
+      height: 29px;
       top: 0;
-      left: 0;
       right: 0;
-      height: 34px;
-      background-color: transparent;
-      pointer-events: all;
+      left: 1px;
+      margin-top: 0;
+      font-size: 0;
+      background: #fff;
+      border: 1px solid darken(@grayLighter, 10%);
+      .border-radius(0 0 3px 3px);
+      .box-shadow(0 2px 1px rgba(0,0,0,0.1));
+      .box-sizing(border-box);
+      &.hide {
+        display: none;
+      }
+      .qs-tag-icon > .fa{
+        color: @grayDark;
+      }
+      .qs-tags-row {
+        font-size: 12px;
+        display: inline-block;
+        border-right: 2px solid @grayLighter;
+        position: relative;
+        padding: 5px 10px 4px 10px;
+        &.active {
+          background: @dropdownLinkBackgroundHover;
+        }
+        a {
+          color: #555;
+          padding: 0;
+          border-top: 0px;
+        }
+      }
     }
+
+    // Needed by firefox because of navbar table-layout
+    .typeahead-wrapper {
+      position: relative;
+    }
+    // Typeahead UL dropdown menu
     .typeahead {
-      top: 30px;
+      height: auto;
+      top: 0;
+      right: -1px;
+      left: 1px;
+      overflow: hidden;
+      max-height: 333px;
+      .border-radius(@baseBorderRadius);
+      li {
+        min-width: 120px;
+        padding: 0;
+      }
+      li > a {
+        padding: 6px 0 2px 7px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        min-height: 22px;
+      }
+      li.no-results,
+      li.view-all-results a {
+        padding: 8px 10px;
+      }
+    }
+
+    // Override the styling of the .navbar-search
+    // if tag results are shown
+    &.quicksearch-tags-open {
+      .navbar-search {
+        border-bottom: none;
+        .border-radius(5px 5px 0 0);
+        .search-query {
+          .border-radius(0 @baseBorderRadius 0 0);
+        }
+      }
+      .quicksearch-tags-wrapper:after {
+        content: "";
+        position: absolute;
+        z-index: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 34px;
+        background-color: transparent;
+        pointer-events: all;
+      }
+      .typeahead {
+        top: 30px;
+      }
     }
   }
 }
@@ -117,7 +119,7 @@
   .border-radius(5px);
   // Module type table cell
   .quicksearch-modulelist-wrapper {
-    padding: 4px 0 2px 4px;
+    padding: 4px 0 0px 4px;
     vertical-align: top;
     cursor: pointer;
     .module-dropdown {
@@ -259,7 +261,7 @@
     margin: 0;
     padding: 0 20px 0 6px;
     min-height: 28px;
-    min-width: 206px;
+    min-width: 140px;
     text-overflow: ellipsis;
     width: 100%;
     .border-radius(@baseBorderRadius);
@@ -273,7 +275,7 @@
 // Global search icon button
 .quicksearch-button-wrapper{
   position: absolute;
-  top: 2px;
+  top: 1px;
   right: 4px;
   .btn:focus{
     outline-offset: -2px;
