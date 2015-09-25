@@ -234,22 +234,19 @@ class PMSEEmailsTemplates extends vCardApi
             $first_key = key($_FILES);
             if (isset($_FILES[$first_key]['tmp_name'])
                 && $this->isUploadedFile($_FILES[$first_key]['tmp_name'])
-                && isset($_FILES[$first_key]['size'])
-                && isset($_FILES[$first_key]['size']) > 0
+                && !empty($_FILES[$first_key]['size'])
             ) {
-                try {
-                    $importerObject = new PMSEEmailTemplateImporter();
-                    $name = $_FILES[$first_key]['name'];
-                    $extension = pathinfo($name,  PATHINFO_EXTENSION);
-                    if ($extension == $importerObject->getExtension()) {
+                $importerObject = new PMSEEmailTemplateImporter();
+                $name = $_FILES[$first_key]['name'];
+                $extension = pathinfo($name,  PATHINFO_EXTENSION);
+                if ($extension == $importerObject->getExtension()) {
+                    try {
                         $data = $importerObject->importProject($_FILES[$first_key]['tmp_name']);
-                        $result = array('emailtemplates_import' => $data);
-                    } else  {
-                        throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
+                    } catch (SugarApiExceptionNotAuthorized $e) {
+                        throw new SugarApiExceptionNotAuthorized('ERROR_UPLOAD_ACCESS_ET');
                     }
-                } catch (SugarApiExceptionNotAuthorized $e) {
-                    throw new SugarApiExceptionNotAuthorized('ERROR_UPLOAD_ACCESS_ET');
-                } catch (Exception $e) {
+                    $result = array('emailtemplates_import' => $data);
+                } else  {
                     throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
                 }
                 return $result;

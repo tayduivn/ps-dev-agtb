@@ -136,22 +136,31 @@ class PMSEImporter
     public function importProject($file)
     {
         $_data = $this->getDataFile($file);
-
-        if (\Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($_data)) {
-            $project = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($_data);
-            if ($project['project']) {
-                if (in_array($project['project'][$this->module], PMSEEngineUtils::getSupportedModules())) {
-                    $result = $this->saveProjectData($project['project']);
-                } else {
-                    throw new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
-                }
+        if ($this->isPAOldVersionFile($_data)) {
+            LoggerManager::getLogger()->fatal('PA Unsupported file. The version of this file is not currently supported.');
+            throw new SugarApiExceptionRequestMethodFailure('ERROR_PA_UNSUPPORTED_FILE');
+        }
+        $project = json_decode($_data, true);
+        if (!empty($project) && isset($project['project'])) {
+            if (in_array($project['project'][$this->module], PMSEEngineUtils::getSupportedModules())) {
+                $result = $this->saveProjectData($project['project']);
             } else {
-                throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
+                throw new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
             }
         } else {
             throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
         }
         return $result;
+    }
+
+
+    /**
+     * Detects if the string start as a serialize php file
+     * @param $data
+     * @return bool
+     */
+    protected function isPAOldVersionFile($data) {
+        return (substr($data, 0, 4) == 'a:2:');
     }
 
     /**

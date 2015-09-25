@@ -448,8 +448,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
             $processDefinitionData = array();
             if ($this->processDefinition->retrieve_by_string_fields(array('prj_id' => $this->project->id))) {
                 $processDefinitionData = $this->sanitizeKeyFields($this->processDefinition->fetched_row);
-                $lockedVariables = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(html_entity_decode($processDefinitionData['pro_locked_variables'],
-                        ENT_QUOTES));
+                $lockedVariables = json_decode(html_entity_decode($processDefinitionData['pro_locked_variables'], ENT_QUOTES));
                 $processDefinitionData['pro_locked_variables'] = is_null($lockedVariables) || !$lockedVariables ? array() : $lockedVariables;
                 $processDefinitionData['pro_terminate_variables'] = trim($processDefinitionData['pro_terminate_variables']);
             }
@@ -687,7 +686,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
 //            $this->diagram->fetched_row['data'] = $retrievedData;
             array_push($diagramData, $this->diagram->fetched_row);
         } else {
-            $diagramData = array('aa' => 1, 'bb' => 2);
+            throw new SugarApiException('Invalid Process Definiton', 500);
         }
         return $diagramData;
     }

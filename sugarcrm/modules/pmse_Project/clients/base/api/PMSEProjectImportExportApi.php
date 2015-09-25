@@ -100,22 +100,19 @@ class PMSEProjectImportExportApi extends vCardApi
                 && isset($_FILES[$first_key]['size'])
                 && isset($_FILES[$first_key]['size']) > 0
             ) {
-                try {
-                    $importerObject = new PMSEProjectImporter();
-                    $name = $_FILES[$first_key]['name'];
-                    $extension = pathinfo($name,  PATHINFO_EXTENSION);
-                    if ($extension == $importerObject->getExtension()) {
+                $importerObject = new PMSEProjectImporter();
+                $name = $_FILES[$first_key]['name'];
+                $extension = pathinfo($name,  PATHINFO_EXTENSION);
+                if ($extension == $importerObject->getExtension()) {
+                    try {
                         $data = $importerObject->importProject($_FILES[$first_key]['tmp_name']);
-                        $results = array('project_import' => $data);
-                    } else  {
-                        throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
+                    } catch (SugarApiExceptionNotAuthorized $e) {
+                        throw new SugarApiExceptionNotAuthorized('ERROR_UPLOAD_ACCESS_PD');
                     }
-                } catch (SugarApiExceptionNotAuthorized $e) {
-                    throw new SugarApiExceptionNotAuthorized('ERROR_UPLOAD_ACCESS_PD');
-                } catch (Exception $e) {
+                    $results = array('project_import' => $data);
+                } else  {
                     throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
                 }
-
                 return $results;
             }
         } else {

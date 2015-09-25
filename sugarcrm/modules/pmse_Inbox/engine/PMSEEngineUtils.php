@@ -914,7 +914,14 @@ class PMSEEngineUtils
         return $replaced;
     }
 
-    public static function unsetCommonFields($projectData, $except = array())
+    /**
+     * Unset common fields for project data
+     * @param $projectData
+     * @param $except
+     * @param $showValue
+     * @return $projectData
+     */
+    public static function unsetCommonFields($projectData, $except = array(), $showValue = false)
     {
         $special_fields = array(
             'id',
@@ -958,16 +965,20 @@ class PMSEEngineUtils
             'created_by_name_mod',
             'rel_assigned_user_name_first_name',
             'rel_assigned_user_name_last_name',
+            'assigned_user_id',
             'assigned_user_name',
             'assigned_user_name_owner',
             'assigned_user_name_mod',
             'tags',
             'tag',
             'tag_lower',
+            'tn_name',
+            'tn_name_2',
         );
-        //UNSET comun fields
+        //UNSET common fields
         foreach ($projectData as $key => $value) {
-            if (in_array($key, $special_fields) && !in_array($key, $except)) {
+            $search = $showValue ? $value : $key;
+            if (in_array($search, $special_fields) && !in_array($search, $except)) {
                 unset($projectData[$key]);
             }
         }
