@@ -22,7 +22,6 @@ $viewdefs['base']['layout']['dnb-bal'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'dnb-bal-header',
@@ -36,7 +35,7 @@ $viewdefs['base']['layout']['dnb-bal'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.dashboard-pane',
+                            'name' => 'dashboard-pane',
                             'components' => array(
                                 array(
                                     'view' =>

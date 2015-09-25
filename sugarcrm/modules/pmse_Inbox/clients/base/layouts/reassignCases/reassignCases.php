@@ -23,7 +23,6 @@ $viewdefs[$module_name]['base']['layout']['reassignCases'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'reassignCases-headerpane',
@@ -41,8 +40,6 @@ $viewdefs[$module_name]['base']['layout']['reassignCases'] = array(
                                         'components' => array(
                                             array(
                                                 'view' => 'casesList-filter',
-                                                'targetEl' => '.filter',
-                                                'position' => 'prepend'
                                             ),
                                             array(
                                                 'layout' => 'reassignCases-list',
@@ -56,7 +53,7 @@ $viewdefs[$module_name]['base']['layout']['reassignCases'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

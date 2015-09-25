@@ -21,7 +21,6 @@ $viewdefs['KBContents']['portal']['layout']['prefiltered'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'prefiltered-headerpane',
@@ -44,10 +43,10 @@ $viewdefs['KBContents']['portal']['layout']['prefiltered'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.side-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
-                                    'layout' => 'selection-sidebar',
+                                    'layout' => 'preview',
                                 ),
                             ),
                         ),
@@ -55,10 +54,10 @@ $viewdefs['KBContents']['portal']['layout']['prefiltered'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'side-pane',
                             'components' => array(
                                 array(
-                                    'layout' => 'preview',
+                                    'layout' => 'selection-sidebar',
                                 ),
                             ),
                         ),

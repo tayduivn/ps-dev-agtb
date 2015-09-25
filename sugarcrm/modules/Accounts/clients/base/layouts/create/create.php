@@ -21,7 +21,6 @@ $viewdefs['Accounts']['base']['layout']['create'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'create',
@@ -32,7 +31,7 @@ $viewdefs['Accounts']['base']['layout']['create'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.dashboard-pane',
+                            'name' => 'dashboard-pane',
                             'components' => array(
                                 array(
                                     'view' => 'dnb-account-create',
@@ -43,7 +42,7 @@ $viewdefs['Accounts']['base']['layout']['create'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

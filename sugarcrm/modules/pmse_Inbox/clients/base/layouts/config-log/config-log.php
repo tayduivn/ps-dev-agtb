@@ -23,7 +23,6 @@ $viewdefs['pmse_Inbox']['base']['layout']['config-log'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'config-log-headerpane',
@@ -37,7 +36,7 @@ $viewdefs['pmse_Inbox']['base']['layout']['config-log'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

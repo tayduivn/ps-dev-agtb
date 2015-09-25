@@ -23,7 +23,6 @@ $viewdefs[$module_name]['base']['layout']['businessrules-import'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'businessrules-import-headerpane',
@@ -37,7 +36,7 @@ $viewdefs[$module_name]['base']['layout']['businessrules-import'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

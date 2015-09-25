@@ -21,7 +21,6 @@ $viewdefs['Categories']['base']['layout']['nested-set-list'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'nested-set-headerpane',
@@ -35,10 +34,10 @@ $viewdefs['Categories']['base']['layout']['nested-set-list'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.side-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
-                                    'layout' => 'selection-sidebar',
+                                    'layout' => 'preview',
                                 ),
                             ),
                         ),
@@ -46,10 +45,10 @@ $viewdefs['Categories']['base']['layout']['nested-set-list'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'side-pane',
                             'components' => array(
                                 array(
-                                    'layout' => 'preview',
+                                    'layout' => 'selection-sidebar',
                                 ),
                             ),
                         ),

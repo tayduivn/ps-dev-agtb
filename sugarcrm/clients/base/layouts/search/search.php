@@ -22,7 +22,6 @@ $viewdefs['base']['layout']['search'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'search-headerpane',
@@ -44,7 +43,7 @@ $viewdefs['base']['layout']['search'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.dashboard-pane',
+                            'name' => 'dashboard-pane',
                             'components' => array(
                                 array(
                                     'layout' => array(
@@ -64,7 +63,7 @@ $viewdefs['base']['layout']['search'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

@@ -16,11 +16,12 @@ $viewdefs['pmse_Inbox']['base']['layout']['casesList'] = array(
         array(
             'layout' => array(
                 'type' => 'default',
+                'type' => 'sidebar',
                 'components' => array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => 'main-pane',
+                            'name' => 'main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'casesList-headerpane',
@@ -40,7 +41,7 @@ $viewdefs['pmse_Inbox']['base']['layout']['casesList'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => 'preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',
