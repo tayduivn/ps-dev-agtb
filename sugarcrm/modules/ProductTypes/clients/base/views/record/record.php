@@ -113,8 +113,8 @@ $viewdefs['ProductTypes']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'name',
-                ),
-            ),
+                )
+            )
         ),
         array(
             'name' => 'panel_body',
@@ -124,7 +124,7 @@ $viewdefs['ProductTypes']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'description',
+	            'description',
                 'list_order',
             ),
         ),
