@@ -652,7 +652,6 @@ $bwcModules = array(
     'SavedSearch',
     'Schedulers',
     'SchedulersJobs',
-    'Shippers',
     'SNIP',
     'Studio',
     'SugarFavorites',
