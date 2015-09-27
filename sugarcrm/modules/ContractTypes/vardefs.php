@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $dictionary['ContractType'] = array(
+    'favorites' => false,
     'table' => 'contract_types',
     'comment' => 'Specifies the types of contracts available',
 
@@ -40,3 +41,5 @@ VardefManager::createVardef(
     'ContractTypes',
     'ContractType'
 );
+
+$dictionary['ContractType']['fields']['tag']['massupdate'] = false;

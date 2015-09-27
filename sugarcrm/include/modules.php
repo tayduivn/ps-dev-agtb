@@ -606,7 +606,6 @@ $bwcModules = array(
     'CampaignTrackers',
     'Charts',
     'Configurator',
-    'ContractTypes',
     'Connectors',
     'Currencies',
     //BEGIN SUGARCRM flav=ent ONLY
