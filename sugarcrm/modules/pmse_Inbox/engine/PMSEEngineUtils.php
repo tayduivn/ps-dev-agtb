@@ -46,6 +46,16 @@ class PMSEEngineUtils
             'duration_hours',
             'duration_minutes',
             'repeat_type',
+            'viewcount'
+        ),
+        'AC' => array(
+            'viewcount',
+        ),
+        'PD' => array(
+            'viewcount',
+        ),
+        'GT' => array(
+            'viewcount',
         ),
     );
 
