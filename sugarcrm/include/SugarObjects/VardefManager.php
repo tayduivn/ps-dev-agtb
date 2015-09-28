@@ -1043,7 +1043,7 @@ class VardefManager{
 
         $GLOBALS['log']->debug("VardefManager::loadVardef called for module: $module");
 
-        if (empty($params['ignore_rel_calc_fields']) &&
+        if (!$refresh && empty($params['ignore_rel_calc_fields']) &&
             !empty($GLOBALS['dictionary'][$object]) &&
             !isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
             $refresh = true;

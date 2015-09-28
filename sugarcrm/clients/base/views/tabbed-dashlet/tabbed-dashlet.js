@@ -572,6 +572,26 @@
     },
 
     /**
+     *  Handle Avatar display, in case image doesn't exist.
+     *
+     *  FIXME: render avatar should happen when rendering each row, after pagination.(SC-2605)
+     *  @private
+     */
+    _renderAvatars: function() {
+        this.$('img.avatar').load(function() {
+            $(this).removeClass('hide');
+        })
+            .error(function() {
+                $(this).parent().removeClass('avatar avatar-md').addClass('label label-module label-module-md label-Users');
+                $(this).parent().find('span').removeClass('hide');
+            });
+        this.$('img.avatar').each(function() {
+            var img = $(this);
+            img.attr('src', img.data('src'));
+        });
+    },
+
+    /**
      * {@inheritDoc}
      */
     _dispose: function() {

@@ -22,7 +22,6 @@ $viewdefs['base']['layout']['activities'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'list-headerpane',
@@ -32,7 +31,7 @@ $viewdefs['base']['layout']['activities'] = array(
                                         'type' => 'filterpanel',
                                         'availableToggles' => array(
                                             array(
-                                                'type' => 'activitystream',
+                                                'name' => 'activitystream',
                                                 'icon' => 'fa-clock-o',
                                                 'label' => 'LBL_ACTIVITY_STREAM',
                                             ),
@@ -40,16 +39,12 @@ $viewdefs['base']['layout']['activities'] = array(
                                         'components' => array(
                                             array(
                                                 'layout' => 'filter',
-                                                'targetEl' => '.filter',
-                                                'position' => 'prepend'
                                             ),
                                             array(
                                                 'view' => 'filter-rows',
-                                                "targetEl" => '.filter-options'
                                             ),
                                             array(
                                                 'view' => 'filter-actions',
-                                                "targetEl" => '.filter-options'
                                             ),
                                             array(
                                                 'layout' => 'activitystream',
@@ -66,7 +61,7 @@ $viewdefs['base']['layout']['activities'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.dashboard-pane',
+                            'name' => 'dashboard-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'dashboard',
@@ -81,7 +76,7 @@ $viewdefs['base']['layout']['activities'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

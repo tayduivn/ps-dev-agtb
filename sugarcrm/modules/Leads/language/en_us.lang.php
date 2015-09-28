@@ -67,6 +67,7 @@ $mod_strings = array (
     'LBL_CONVERT_RESET_PANEL' => 'Reset',
     'LBL_CONVERT_COPY_RELATED_ACTIVITIES' => 'Copy related activities to',
     'LBL_CONVERT_MOVE_RELATED_ACTIVITIES' => 'Move related activities to',
+    'LBL_CONVERT_MOVE_ACTIVITIES_TO_CONTACT' => 'Move related activities to the contact record',
     'LBL_CONVERTED_ACCOUNT'=>'Converted Account:',
     'LBL_CONVERTED_CONTACT' => 'Converted Contact:',
     'LBL_CONVERTED_OPP'=>'Converted Opportunity:',

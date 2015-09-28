@@ -23,7 +23,6 @@ $viewdefs[$module_name]['base']['layout']['config'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'config-headerpane',

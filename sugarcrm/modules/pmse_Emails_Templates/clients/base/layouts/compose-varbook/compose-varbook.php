@@ -22,7 +22,6 @@ $viewdefs['pmse_Emails_Templates']['base']['layout']['compose-varbook'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'compose-varbook-headerpane',
@@ -39,7 +38,7 @@ $viewdefs['pmse_Emails_Templates']['base']['layout']['compose-varbook'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

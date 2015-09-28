@@ -22,7 +22,6 @@ $viewdefs['base']['layout']['dashletconfiguration'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'dashletconfiguration-headerpane',

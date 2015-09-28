@@ -23,7 +23,6 @@ $viewdefs[$module_name]['base']['layout']['emailtemplates-import'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'emailtemplates-import-headerpane',
@@ -36,8 +35,8 @@ $viewdefs[$module_name]['base']['layout']['emailtemplates-import'] = array(
                     ),
                     array(
                         'layout' => array(
-                            'type' => 'simple',
-                            'targetEl' => '.preview-pane',
+                            'type' => 'base',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',
