@@ -70,19 +70,6 @@
                 messages: 'ERR_RESOLVE_ERRORS'
             });
         },
-        showServerError: function() {
-            if (!this instanceof app.view.View) {
-                app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
-                    'an instance of this view.');
-                return;
-            }
-            var name = 'server-error';
-            this._viewAlerts.push(name);
-            app.alert.show(name, {
-                level: 'error',
-                messages: 'ERR_GENERIC_SERVER_ERROR'
-            });
-        },
         showSuccessButDeniedAccess: function() {
             if (!this instanceof app.view.View) {
                 app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
@@ -423,7 +410,6 @@
                 if (e.status == 412 && !e.request.metadataRetry) {
                     this.handleMetadataSyncError(e);
                 } else {
-                    this.alerts.showServerError.call(this);
                     callback(true);
                 }
             }, this);
@@ -465,7 +451,6 @@
                 if (e.status == 412 && !e.request.metadataRetry) {
                     this.handleMetadataSyncError(e);
                 } else {
-                    this.alerts.showServerError.call(this);
                     callback(true);
                 }
             }, this);
