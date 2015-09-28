@@ -9,18 +9,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    //className: 'accordion-heading convert-options',
-
     /**
      * @inheritdoc
+     *
+     * Prevent render if transfer activities action is not move.
      */
     _render: function() {
         var transferActivitiesAction = app.metadata.getConfig().leadConvActivityOpt;
-        this.transferLabel = (transferActivitiesAction === 'move') ?
-            'LBL_CONVERT_MOVE_RELATED_ACTIVITIES' :
-            'LBL_CONVERT_COPY_RELATED_ACTIVITIES';
-
-        if (transferActivitiesAction !== 'donothing') {
+        if (transferActivitiesAction === 'move') {
+            this.model.setDefault('transfer_activities', true);
             this._super('_render');
         }
     }

@@ -21,7 +21,6 @@ $viewdefs['KBContents']['portal']['layout']['records'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'list',
@@ -32,18 +31,7 @@ $viewdefs['KBContents']['portal']['layout']['records'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.side-pane',
-                            'components' => array(
-                                array(
-                                    'layout' => 'list-sidebar',
-                                ),
-                            ),
-                        ),
-                    ),
-                    array(
-                        'layout' => array(
-                            'type' => 'base',
-                            'targetEl' => '.dashboard-pane',
+                            'name' => 'dashboard-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'list-dashboard',
@@ -54,10 +42,21 @@ $viewdefs['KBContents']['portal']['layout']['records'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',
+                                ),
+                            ),
+                        ),
+                    ),
+                    array(
+                        'layout' => array(
+                            'type' => 'base',
+                            'name' => 'side-pane',
+                            'components' => array(
+                                array(
+                                    'layout' => 'list-sidebar',
                                 ),
                             ),
                         ),

@@ -1892,7 +1892,6 @@ $app_list_strings = array (
 
   'lead_conv_activity_opt' =>
   array(
-        'copy' => 'Copy',
         'move' => 'Move',
         'donothing' => 'Do Nothing'
   ),
@@ -11681,6 +11680,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     // Javascript enable string
     'LBL_ENABLE_JAVASCRIPT' => 'Sugar 7 requires javascript. Please enable Javascript in your browser to use Sugar 7.',
 
+    'LBL_FIELD_TRIMMED' => 'Field was trimmed, due to exceeding the maximum character limit.',
     'LBL_DAFAULT_CALDAV_NAME' => 'Default',
     'LBL_DAFAULT_CALDAV_URI' => 'default',
 );

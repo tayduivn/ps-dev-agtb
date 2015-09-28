@@ -23,7 +23,6 @@ $viewdefs[$module_name]['base']['layout']['project-import'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'project-import-headerpane',
@@ -37,7 +36,7 @@ $viewdefs[$module_name]['base']['layout']['project-import'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

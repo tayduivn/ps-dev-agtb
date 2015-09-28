@@ -22,7 +22,6 @@ $viewdefs['base']['layout']['dashletselect'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'filtered-search',
@@ -40,7 +39,6 @@ $viewdefs['base']['layout']['dashletselect'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'preview-pane',
-                            'targetEl' => '.preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'dashlet-preview',

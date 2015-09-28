@@ -21,7 +21,6 @@ $viewdefs['base']['layout']['selection-list'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'selection-headerpane',
@@ -52,16 +51,12 @@ $viewdefs['base']['layout']['selection-list'] = array(
                                                         'layoutType' => 'records',
                                                     ),
                                                 ),
-                                                'targetEl' => '.filter',
-                                                'position' => 'prepend',
                                             ),
                                             array(
                                                 'view' => 'filter-rows',
-                                                "targetEl" => '.filter-options'
                                             ),
                                             array(
                                                 'view' => 'filter-actions',
-                                                "targetEl" => '.filter-options'
                                             ),
                                             array(
                                                 'view' => 'selection-list',
@@ -78,7 +73,7 @@ $viewdefs['base']['layout']['selection-list'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

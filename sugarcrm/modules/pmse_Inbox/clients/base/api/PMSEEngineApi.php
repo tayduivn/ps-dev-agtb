@@ -1151,6 +1151,9 @@ class PMSEEngineApi extends SugarApi
                 'label' => translate('LBL_CANCEL_BUTTON_LABEL', $module_name),
                 'css_class' => 'btn-invisible btn-link',
                 'showOn' => 'edit',
+                'events' => array(
+                    'click' => 'button:cancel_button:click',
+                ),
             ),
             'approve' => array(
                 'type' => 'rowaction',

@@ -18,16 +18,12 @@ $viewdefs['base']['layout']['dupecheck'] = array(
                 'components' => array(
                     array(
                         'layout' => 'dupecheck-filter',
-                        'targetEl' => '.filter',
-                        'position' => 'prepend',
                     ),
                     array(
                         'view' => 'filter-rows',
-                        'targetEl' => '.filter-options'
                     ),
                     array(
                         'view' => 'filter-actions',
-                        'targetEl' => '.filter-options'
                     ),
                 )
             ),

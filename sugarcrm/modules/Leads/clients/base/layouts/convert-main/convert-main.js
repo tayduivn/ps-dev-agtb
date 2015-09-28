@@ -274,7 +274,7 @@
 
         convertModel = new Backbone.Model(_.extend(
             {'modules' : this.parseEditableFields(this.associatedModels)},
-            this.getTransferActivitiesAttributes(_.keys(this.associatedModels))
+            this.getTransferActivitiesAttributes()
         ));
 
         myURL = app.api.buildURL('Leads', 'convert', {id: this.context.get('leadsModel').id});
@@ -293,24 +293,20 @@
     },
 
     /**
-     * Retrieve the attributes to be added to the convert module to support the
+     * Retrieve the attributes to be added to the convert model to support the
      * transfer activities functionality.
      *
-     * @param {Array} associatedModules
      * @return {Object}
      */
-    getTransferActivitiesAttributes: function(associatedModules) {
-        var actionsNeedingModules = ['move', 'copy'],
-            action = app.metadata.getConfig().leadConvActivityOpt,
-            selectedTransferModules = this.model.get('transfer_activities_modules'),
-            transferModules = [];
+    getTransferActivitiesAttributes: function() {
+        var action = app.metadata.getConfig().leadConvActivityOpt,
+            optedInToTransfer = this.model.get('transfer_activities');
 
-        if (_.contains(actionsNeedingModules, action)) {
-            transferModules = _.intersection(associatedModules, selectedTransferModules);
-        }
         return {
             transfer_activities_action: action,
-            transfer_activities_modules: transferModules
+            transfer_activities_modules: (action === 'move' && optedInToTransfer) ?
+                ['Contacts'] :
+                []
         };
     },
 

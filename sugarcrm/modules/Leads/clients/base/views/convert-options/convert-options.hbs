@@ -11,8 +11,8 @@
  */
 --}}
 <div class="accordion-heading convert-options">
-    <span class="transfer-activities-label">{{str transferLabel module}}:</span>
-        {{#each meta.fields}}
-            {{field ../this model=../this.model}}
-        {{/each}}
+    {{#each meta.fields}}
+        {{field ../this model=../this.model}}
+    {{/each}}
+    <span class="transfer-activities-label">{{str 'LBL_CONVERT_MOVE_ACTIVITIES_TO_CONTACT' module}}</span>
 </div>
