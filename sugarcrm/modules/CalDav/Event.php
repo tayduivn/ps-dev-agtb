@@ -434,8 +434,8 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
                 $key = key($participant);
                 $node->setValue($key);
 
-                if (isset($node->parameters['PARTSTAT'])) {
-                    $node->parameters['PARTSTAT'] = $participant[$key]['PARTSTAT'];
+                if (isset($node['PARTSTAT'])) {
+                    $node['PARTSTAT'] = $participant[$key]['PARTSTAT'];
                 }
             }
         }
