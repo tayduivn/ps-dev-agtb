@@ -357,22 +357,39 @@ nv.utils.dropShadow = function (id, defs, options) {
 //   fill="yellow" filter="url(#f1)" />
 // </svg>
 
-nv.utils.stringSetLengths = function (_data, _container, _format) {
+nv.utils.stringSetLengths = function(_data, _container, _format, classes, styles) {
   var lengths = [],
       txt = _container.select('.tmp-text-strings').select('text');
   if (txt.empty()) {
     txt = _container.append('g').attr('class', 'tmp-text-strings').append('text');
   }
+  txt.classed(classes, true);
   txt.style('display', 'inline');
   _data.forEach(function(d, i) {
-      txt.text(d, _format);
+      txt.text(_format(d, i));
       lengths.push(txt.node().getBBox().width);
     });
-  txt.text('').style('display', 'none');
+  txt.text('').attr('class', 'tmp-text-strings').style('display', 'none');
   return lengths;
 };
 
-nv.utils.maxStringSetLength = function (_data, _container, _format) {
+nv.utils.stringSetThickness = function(_data, _container, _format, classes, styles) {
+  var thicknesses = [],
+      txt = _container.select('.tmp-text-strings').select('text');
+  if (txt.empty()) {
+    txt = _container.append('g').attr('class', 'tmp-text-strings').append('text');
+  }
+  txt.classed(classes, true);
+  txt.style('display', 'inline');
+  _data.forEach(function(d, i) {
+      txt.text(_format(d, i));
+      thicknesses.push(txt.node().getBBox().height);
+    });
+  txt.text('').attr('class', 'tmp-text-strings').style('display', 'none');
+  return thicknesses;
+};
+
+nv.utils.maxStringSetLength = function(_data, _container, _format) {
   var lengths = nv.utils.stringSetLengths(_data, _container, _format);
   return d3.max(lengths);
 };

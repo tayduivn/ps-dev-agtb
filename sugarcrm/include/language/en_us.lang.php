@@ -225,7 +225,7 @@ $app_list_strings = array (
     'Subscriptions' => 'Subscription',
     'UserSignatures' => 'User Signature',
     'Feedbacks' => 'Feedback',
-    'Tags' => 'Tag', 
+    'Tags' => 'Tag',
     'Categories' => 'Category',
   ),
 
