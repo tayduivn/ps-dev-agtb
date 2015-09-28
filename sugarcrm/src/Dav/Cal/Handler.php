@@ -28,14 +28,24 @@ class Handler
      */
     public function export(\SugarBean $bean)
     {
-        /*
         $adapterFactory = $this->getAdapterFactory();
         if ($adapter = $adapterFactory->getAdapter($bean->module_name)) {
-            $calDavEvent = new \CalDavEvent();
-            $calDavBean = $calDavEvent->findByBean($bean);
-            $adapter->export($bean, $calDavBean);
+            $calDavEvent = $this->getCalDavEvent();
+            if ($this->isBeanChild($bean)) {
+                $bean = $this->getParentBean($bean);
+            }
+            $relatedCalDavBean = $calDavEvent->findByBean($bean);
+            if ($relatedCalDavBean !== null) {
+                $calDavBean = $relatedCalDavBean;
+            } else {
+                $calDavBean = $calDavEvent;
+                $calDavBean->setBean($bean);
+            }
+
+            if ($adapter->export($bean, $calDavBean)) {
+                $calDavBean->save();
+            }
         }
-        */
     }
 
     /**
@@ -67,8 +77,9 @@ class Handler
         $bean = $calDavBean->getBean();
         $adapterFactory = $this->getAdapterFactory();
         if ($adapter = $adapterFactory->getAdapter($bean->module_name)) {
-            $adapter->import($bean, $calDavBean);
-            $bean->save();
+            if ($adapter->import($bean, $calDavBean)) {
+                $bean->save();
+            }
             if (!$calDavBean->parent_id) {
                 $calDavBean->setBean($bean);
                 $calDavBean->save();
@@ -91,5 +102,33 @@ class Handler
     protected function getAdapterFactory()
     {
         return CalDavAdapaterFactory::getInstance();
+    }
+
+    /**
+     * @param \SugarBean $bean
+     * @return null|\SugarBean
+     */
+    protected function getParentBean($bean)
+    {
+        return \BeanFactory::getBean($bean->module_name, $bean->repeat_parent_id);
+    }
+
+    /**
+     * Check if bean is child using repeat_parent_id
+     * @param \SugarBean $bean
+     * @return bool
+     */
+    protected function isBeanChild($bean)
+    {
+        return $bean->repeat_parent_id ? true : false;
+    }
+
+    /**
+     * return CalDavEvent bean
+     * @return null|\SugarBean
+     */
+    protected function getCalDavEvent()
+    {
+        return \BeanFactory::getBean('CalDavEvents');
     }
 }

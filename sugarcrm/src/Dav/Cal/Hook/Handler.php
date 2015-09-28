@@ -35,15 +35,13 @@ class Handler
         $adapter = $this->getAdapterFactory();
         $manager = $this->getManager();
         if ($bean instanceof \CalDavEvent) {
-            if ($bean->parent_type != $bean->module_name &&
-                $adapter->getAdapter($bean->getBean()->module_name)
-            ) {
+            if ($adapter->getAdapter($bean->getBean()->module_name)) {
                 $manager->calDavImport($bean->module_name, $bean->id, $this->getCurrentUserId());
             }
         } elseif ($bean instanceof \SugarBean) {
             //@TODO check if bean is childred
             if ($adapter->getAdapter($bean->module_name)) {
-                $manager->calDavExport($bean);
+                $manager->calDavExport($bean->module_name, $bean->id, $this->getCurrentUserId());
             }
         }
     }
@@ -72,5 +70,10 @@ class Handler
     protected function getCurrentUserId()
     {
         return $GLOBALS['current_user']->id;
+    }
+
+    protected function getParentBean($bean)
+    {
+        return \BeanFactory::getBean($bean->module_name, $bean->repeat_parent_id);
     }
 }

@@ -65,6 +65,19 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings::export
+     */
+    public function testExport()
+    {
+        $meetingBean = $this->getBeanMock('\Meeting');
+        $calDavBean = $this->getCalDavBeanMock();
+        $meetings = $this->getMeetingAdapterMock($calDavBean);
+
+        $result = $meetings->export($meetingBean, $calDavBean);
+        $this->assertTrue($result);
+    }
+
+    /**
      * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings::arrayIndex
      * @dataProvider arrayIndexProvider
      */
@@ -114,10 +127,15 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
     {
         $adapterMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings')
             ->disableOriginalConstructor()
-            ->setMethods(array('getNotCachedCalDavEvent', 'getCurrentUserId'))
+            ->setMethods(array('getNotCachedCalDavEvent', 'getCurrentUserId', 'getUserCalendars'))
             ->getMock();
         $adapterMock->method('getNotCachedCalDavEvent')->willReturn($bean);
         $adapterMock->method('getCurrentUserId')->willReturn(0);
+        $calendars = array();
+        $defaultCalendar = new \stdClass();
+        $defaultCalendar->id = 1;
+        $calendars[] = $defaultCalendar;
+        $adapterMock->method('getUserCalendars')->willReturn($calendars);
 
         return $adapterMock;
     }
@@ -139,7 +157,13 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
      */
     protected function getCalDavBeanMock()
     {
-        $calDavFunctions = array_merge(array_keys($this->calDavBeanProperties), array('getRRule', 'getParticipants', 'getReminders'));
+        $defaultMethods = array(
+            'getRRule',
+            'getParticipants',
+            'getReminders',
+            'getCurrentUser',
+        );
+        $calDavFunctions = array_merge(array_keys($this->calDavBeanProperties), $defaultMethods);
         $beanMock = $this->getMockBuilder('\CalDavEvent')
             ->disableOriginalConstructor()
             ->setMethods($calDavFunctions)
@@ -147,10 +171,56 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
         foreach ($this->calDavBeanProperties as $methodName => $returnedValue) {
             $beanMock->method($methodName)->willReturn($returnedValue);
         }
+
+        $userBean = $this->getMockBuilder('\CalDavEvent')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getPreference'))
+            ->getMock();
+
         $beanMock->method('getRRule')->willReturn(array());
         $beanMock->method('getParticipants')->willReturn(false);
         $beanMock->method('getReminders')->willReturn(false);
+        $beanMock->method('getCurrentUser')->willReturn($userBean);
+        $beanMock->method('cleanBean')->willReturn(array());
+
+        $this->mockBeanHelpers($beanMock);
+
 
         return $beanMock;
+    }
+
+    public function mockBeanHelpers($bean)
+    {
+        $dateTimeHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $participantsHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper')
+            ->disableOriginalConstructor()
+            ->setMethods(array('prepareForDav'))
+            ->getMock();
+
+        $recurringHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\RecurringHelper')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $acceptedMapper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\AcceptedMap')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getMapping'))
+            ->getMock();
+
+        $statusMapper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\EventMap')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getMapping'))
+            ->getMock();
+
+        TestReflection::setProtectedValue($participantsHelper, 'statusMapper', $acceptedMapper);
+
+        TestReflection::setProtectedValue($bean, 'dateTimeHelper', $dateTimeHelper);
+        TestReflection::setProtectedValue($bean, 'recurringHelper', $recurringHelper);
+        TestReflection::setProtectedValue($bean, 'participantsHelper', $participantsHelper);
+        TestReflection::setProtectedValue($bean, 'statusMapper', $statusMapper);
     }
 }
