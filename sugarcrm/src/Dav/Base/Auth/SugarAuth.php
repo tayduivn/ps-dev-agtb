@@ -20,6 +20,8 @@ use Sabre\DAV\Auth\Backend;
  */
 class SugarAuth extends Backend\AbstractBasic
 {
+    protected $principalPrefix = 'principals/users/';
+
     /**
      * @inheritdoc
      */

@@ -45,6 +45,11 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestCalDavUtilities::deleteCreatedEvents();
         SugarTestMeetingUtilities::removeAllCreatedMeetingsWithRecuringById($this->meetingIds);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestContactUtilities::removeCreatedContactsEmailAddresses();
+        SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestLeadUtilities::removeCreatedLeadsEmailAddresses();
+        SugarTestLeadUtilities::removeCreatedLeadsUsersRelationships();
+        SugarTestLeadUtilities::removeAllCreatedLeads();
         parent::tearDown();
     }
 
@@ -60,7 +65,6 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         $parcipiantsUser = $calDavBean->getParticipants();
         /**@var Meeting $bean*/
         $bean = $calDavBean->getBean();
-
         $meetingAdapter = new MeetingAdapater();
         $result = $meetingAdapter->import($bean, $calDavBean);
 
@@ -74,32 +78,46 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
             $calDavBean->setBean($bean);
             $calDavBean->save();
         }
-
         /** @var \Meeting $meetingBean */
         $meetingBean = BeanFactory::getBean('Meetings', $bean->id);
-
         $this->addCreatedMeetingId($meetingBean);
 
-        $meetingUsersList  = $meetingBean->get_meeting_users();
-        $usersUniqueEmails = array();
-        foreach ($meetingUsersList as $user) {
-            $userPrimaryEmail = null;
-            $result = $user->getUsersNameAndEmail();
-            if (!empty($result['email'])) {
-                $userPrimaryEmail = $result['email'];
+        if ($parcipiantsUser['Users']) {
+            $meetingUsersList = $meetingBean->get_meeting_users();
+            $usersUniqueEmails = array();
+            foreach ($meetingUsersList as $user) {
+                $userPrimaryEmail = null;
+                $result = $user->getUsersNameAndEmail();
+                if (!empty($result['email'])) {
+                    $userPrimaryEmail = $result['email'];
+                }
+
+                if ($userPrimaryEmail && !in_array($userPrimaryEmail, $usersUniqueEmails)) {
+                    $usersUniqueEmails[] = $userPrimaryEmail;
+                }
             }
 
-            if ($userPrimaryEmail && !in_array($userPrimaryEmail, $usersUniqueEmails)) {
-                $usersUniqueEmails[] = $userPrimaryEmail;
+            $this->assertCount(count($parcipiantsUser['Users']), $usersUniqueEmails);
+
+            foreach ($meetingUsersList as $meetingUsers) {
+                if (isset($parcipiantsUserEmail[$meetingUsers->id])) {
+                    $this->assertEquals(
+                        $parcipiantsUserEmail[$meetingUsers->id]['accept_status'],
+                        $meetingUsers->accept_status
+                    );
+                }
             }
         }
+        if ($parcipiantsUser['Contacts']) {
+            $meetingBean->load_relationship('contacts');
+            $meetingContactsList = $meetingBean->contacts->get();
+            $this->assertEquals(array_keys($parcipiantsUser['Contacts']), $meetingContactsList);
+        }
 
-        $this->assertCount(count($parcipiantsUser), $usersUniqueEmails);
-
-        foreach ($meetingUsersList as $meetingUsers) {
-            if (isset($parcipiantsUserEmail[$meetingUsers->id])) {
-                $this->assertEquals($parcipiantsUserEmail[$meetingUsers->id]['accept_status'], $meetingUsers->accept_status);
-            }
+        if ($parcipiantsUser['Leads']) {
+            $meetingBean->load_relationship('leads');
+            $meetingLeadsList = $meetingBean->leads->get();
+            $this->assertEquals(array_keys($parcipiantsUser['Leads']), $meetingLeadsList);
         }
 
         $this->assertEquals(strtotime($calDavBean->getStartDate()), strtotime($meetingBean->date_start));
@@ -148,15 +166,14 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $meetingAdapter->import($meetingBean, $calDavBean);
         $this->assertTrue($result);
         $meetingBean->save();
-
         $childEvents = $meetingBean->fetchFromQuery($childQuery, array(), array('cache' => false));
         $this->assertEquals(7, count($childEvents));
 
         //check participients status
         $meetingUsersList  = $meetingBean->get_meeting_users();
         foreach ($meetingUsersList as $meetingUsers) {
-            if (isset($parcipiantsUser[$meetingUsers->id])) {
-                $this->assertEquals($parcipiantsUser[$meetingUsers->id]['accept_status'], $meetingUsers->accept_status);
+            if (isset($parcipiantsUser['Users'][$meetingUsers->id])) {
+                $this->assertEquals($parcipiantsUser['Users'][$meetingUsers->id]['accept_status'], $meetingUsers->accept_status);
             }
         }
     }
@@ -180,7 +197,8 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
                 'duration_minutes' => 0
         ));
 
-        $meetingBean->users_arr = array_keys($calDavBean->getParticipants());
+        $davParticipants = $calDavBean->getParticipants();
+        $meetingBean->users_arr = array_keys($davParticipants['Users']);
         $meetingBean->save();
         $calDavBean->setBean($meetingBean);
         $calDavBean->save();
@@ -196,10 +214,12 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
             $calDavBean->setBean($meetingBean);
             $calDavBean->save();
         }
+
         $this->assertEquals($meetingBean, $calDavBean->getBean());
 
-        $participantsIDs = array_keys($calDavBean->getParticipants());
-        $this->assertEquals(sort($participantsIDs), sort(array_intersect($meetingBean->users_arr, $participantsIDs)));
+        $participantsIDs = array_keys($davParticipants['Users']);
+        $participantsIDs[] = $GLOBALS['current_user']->id;
+        $this->assertEquals($participantsIDs, $meetingBean->users_arr);
     }
 
     /**
@@ -259,14 +279,30 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $idUser1 = create_guid();
         $idUser2 = create_guid();
+        $idUser3 = create_guid();
 
         $users = array(
             array('email1' => 'test@test.com', 'new_with_id' => true, 'id' => $idUser1),
-            array('email1' => 'test2@test.com', 'new_with_id' => true, 'id' => $idUser2)
+        );
+
+        $contacts = array(
+            array('email' => 'test2@test.com', 'new_with_id' => true, 'id' => $idUser2)
+        );
+
+        $leads = array(
+            array('email' => 'test1@test.com', 'new_with_id' => true, 'id' => $idUser3)
         );
         //print_r($users);
         foreach ($users as $user) {
             SugarTestUserUtilities::createAnonymousUser(true, 0, $user);
+        }
+
+        foreach ($contacts as $contact) {
+            SugarTestContactUtilities::createContact($contact['id'], $contact);
+        }
+
+        foreach ($leads as $lead) {
+            SugarTestLeadUtilities::createLead($lead['id'], $lead);
         }
     }
 }

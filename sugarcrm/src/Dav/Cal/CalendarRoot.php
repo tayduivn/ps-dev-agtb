@@ -10,10 +10,24 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$hook_array['before_relationship_update'][] = array(
-    1,
-    'CallsAcceptStatus',
-    'include/CalendarEvents/CalendarEventsHookManager.php',
-    'CalendarEventsHookManager',
-    'beforeRelationshipUpdate',
-);
+namespace Sugarcrm\Sugarcrm\Dav\Cal;
+
+use Sabre\CalDAV;
+
+/**
+ * Class CalendarRoot
+ * @package Sugarcrm\Sugarcrm\Dav\Cal
+ *
+ */
+class CalendarRoot extends CalDAV\CalendarRoot
+{
+    /**
+     * @inheritdoc
+     */
+    public function getName()
+    {
+        $parts = explode('/', $this->principalPrefix);
+
+        return $parts[1];
+    }
+}

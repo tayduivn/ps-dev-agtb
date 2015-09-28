@@ -30,6 +30,28 @@ class DAVServerMock extends DavServerTest
             $this->caldavSchedulePlugin = new SchedulePlugin();
             $this->server->addPlugin($this->caldavSchedulePlugin);
         }
+
+        $this->principalBackend->principals = array(
+            array(
+                'uri' => 'principals/user1',
+                '{DAV:}displayname' => 'User 1',
+                '{http://sabredav.org/ns}email-address' => 'user1.sabredav@sabredav.org',
+                '{http://sabredav.org/ns}vcard-url' => 'addressbooks/user1/book1/vcard1.vcf',
+                'x-sugar-module' => 'Users',
+                'x-sugar-id' => '1',
+            ),
+            array(
+                'uri' => 'principals/admin',
+                '{DAV:}displayname' => 'Admin',
+            ),
+            array(
+                'uri' => 'principals/user2',
+                '{DAV:}displayname' => 'User 2',
+                '{http://sabredav.org/ns}email-address' => 'user2.sabredav@sabredav.org',
+                'x-sugar-module' => 'Contacts',
+                'x-sugar-id' => '1',
+            ),
+        );
     }
 
     /**

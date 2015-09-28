@@ -16,35 +16,19 @@ use Sabre\DAVACL\PrincipalBackend\BackendInterface;
 use Sabre\DAV;
 
 use Sugarcrm\Sugarcrm\Dav\Base\Helper;
+use Sugarcrm\Sugarcrm\Dav\Base\Principal\Search;
 
 class SugarPrincipal implements BackendInterface
 {
     /**
-     * Instance of UserHelper
-     * @var Helper\UserHelper
+     * Get search class instance
+     * @param $prefixPath
+     * @return null | \Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Base
      */
-    protected static $userHelperInstance = null;
-
-    /**
-     * Get SugarQuery Instance
-     * @return \SugarQuery
-     */
-    public function getSugarQuery()
+    public function getSearchObject($prefixPath)
     {
-        return new \SugarQuery();
-    }
-
-    /**
-     * Get UserHelper
-     * @return Helper\UserHelper
-     */
-    public function getUserHelper()
-    {
-        if (is_null(self::$userHelperInstance)) {
-            self::$userHelperInstance = new Helper\UserHelper();
-        }
-
-        return self::$userHelperInstance;
+        $factory = new Search\Factory();
+        return $factory->getSearchClass($prefixPath);
     }
 
     /**
@@ -52,29 +36,14 @@ class SugarPrincipal implements BackendInterface
      * So return all users with $prefixPath
      * @inheritdoc
      */
-    public function getPrincipalsByPrefix($prefixPath = 'principals')
+    public function getPrincipalsByPrefix($prefixPath = 'principals/users')
     {
-        $userHelper = $this->getUserHelper();
-        $userBean = $userHelper->getUserBean();
-        $userHelper->setPrincipalPrefix($prefixPath);
-        $principals = array();
-
-        if ($userBean->load_relationship('email_addresses_primary')) {
-
-            $usersQuery = $this->getSugarQuery();
-            $usersQuery->from($userBean);
-
-            $userBean->email_addresses_primary->buildJoinSugarQuery($usersQuery, array('joinType' => 'LEFT'));
-            $usersQuery->select()->addField('email_addresses.email_address', array('alias'=>'email1'));
-
-            $beans = $userBean->fetchFromQuery($usersQuery);
-
-            foreach ($beans as $user) {
-                $principals[] = $userHelper->getPrincipalArrayByUser($user);
-            }
+        $searchObject = $this->getSearchObject($prefixPath);
+        if ($searchObject) {
+            return $searchObject->getPrincipalsByPrefix();
         }
 
-        return $principals;
+        return array();
     }
 
     /**
@@ -82,13 +51,18 @@ class SugarPrincipal implements BackendInterface
      */
     public function getPrincipalByPath($path)
     {
-        $principal = array();
-        $userHelper = $this->getUserHelper();
-        $user = $userHelper->getUserByPrincipalString($path);
-        if ($user) {
-            $principal = $userHelper->getPrincipalArrayByUser($user);
+        $principalComponents = explode('/', $path);
+        if (count($principalComponents) != 3) {
+            return array();
         }
-        return $principal;
+        $identify = array_pop($principalComponents);
+        $prefixPath = implode('/', $principalComponents);
+        $searchObject = $this->getSearchObject($prefixPath);
+        if ($searchObject) {
+            return $searchObject->getPrincipalByIdentify($identify);
+        }
+
+        return array();
     }
 
     /**
@@ -96,63 +70,12 @@ class SugarPrincipal implements BackendInterface
      */
     public function searchPrincipals($prefixPath, array $searchProperties, $test = 'allof')
     {
-        $userHelper = $this->getUserHelper();
-        $userHelper->setPrincipalPrefix($prefixPath);
-
-        $userBean = $userHelper->getUserBean();
-        $usersQuery = $this->getSugarQuery();
-
-        $searchFields = $userHelper->getNameFormatFields($userBean);
-
-        $usersQuery->from($userBean);
-
-        $mainOrQuery = $usersQuery->where()->queryOr();
-        $andQuery = $mainOrQuery->queryAnd();
-
-        foreach ($searchProperties as $property => $value) {
-            switch ($property) {
-                case '{DAV:}displayname':
-                    $explodeName = explode(' ', $value);
-
-                    foreach ($explodeName as $part) {
-                        if ($part) {
-                            $orQuery = $andQuery->queryOr();
-                            foreach ($searchFields as $filed) {
-                                $orQuery->contains($filed, $part);
-                            }
-                        }
-                    }
-                    break;
-                case '{http://sabredav.org/ns}email-address':
-                    if ($userBean->load_relationship('email_addresses_primary')) {
-
-                        $userBean->email_addresses_primary->buildJoinSugarQuery($usersQuery,
-                            array('joinType' => ($test == 'allof' ? 'INNER' : 'LEFT')));
-
-                        $usersQuery->select(array('email_addresses.email_address'));
-
-                        if ($test == 'allof') {
-                            $usersQuery->where()->contains('email_addresses.email_address', $value);
-                        } else {
-                            $mainOrQuery->contains('email_addresses.email_address', $value);
-                        }
-                    } else {
-                        return array();
-                    }
-                    break;
-                default:
-                    return array();
-            }
+        $searchObject = $this->getSearchObject($prefixPath);
+        if ($searchObject) {
+            return $searchObject->searchPrincipals($searchProperties, $test);
         }
 
-        $principals = array();
-        $beans = $userBean->fetchFromQuery($usersQuery);
-
-        foreach ($beans as $user) {
-            $principals[] = $userHelper->getPrincipalStringByUser($user);
-        }
-
-        return $principals;
+        return array();
     }
 
     /**

@@ -15,12 +15,17 @@ namespace Sugarcrm\Sugarcrm\Dav\Base\Helper;
 use Sabre\DAV;
 use Sabre\DAVACL;
 use Sabre\CalDAV;
+use Sugarcrm\Sugarcrm\Dav\Cal;
 use Sugarcrm\Sugarcrm\Dav\Cal\Schedule;
+use Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Factory as SearchFactory;
 
 class ServerHelper
 {
     public function setUp()
     {
+        $searchFactory = new SearchFactory();
+        $searchModules = $searchFactory->getModulesForSearch();
+
         $authClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Base\\Auth\\SugarAuth');
         $principalClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Base\\Principal\\SugarPrincipal');
         $calendarClass = \SugarAutoLoader::customClass('\Sugarcrm\\Sugarcrm\\Dav\\Cal\\Backend\\CalendarData');
@@ -29,9 +34,18 @@ class ServerHelper
         $principalBackend = new $principalClass();
         $calendarBackend = new $calendarClass();
 
-        $tree = array (
-            new CalDAV\Principal\Collection($principalBackend),
-            new CalDAV\CalendarRoot($principalBackend, $calendarBackend),
+        $searchSet = $calendarCollection = $principalCollection = array();
+
+        foreach ($searchModules as $module) {
+            $principalPath = 'principals/' . strtolower($module);
+            $principalCollection[] = new DAVACL\PrincipalCollection($principalBackend, $principalPath);
+            $calendarCollection[] = new Cal\CalendarRoot($principalBackend, $calendarBackend, $principalPath);
+            $searchSet[] = $principalPath;
+        }
+
+        $tree = array(
+            new DAV\SimpleCollection('principals', $principalCollection),
+            new DAV\SimpleCollection('calendars', $calendarCollection),
         );
 
         $server = new DAV\Server($tree);
@@ -41,9 +55,11 @@ class ServerHelper
         $server->addPlugin($authPlugin);
 
         $aclPlugin = new DAVACL\Plugin();
+        $aclPlugin->defaultUsernamePath = 'principals/users';
+        $aclPlugin->principalCollectionSet = $searchSet;
         $server->addPlugin($aclPlugin);
 
-        $caldavPlugin = new CalDAV\Plugin();
+        $caldavPlugin = new Cal\Plugin();
         $server->addPlugin($caldavPlugin);
 
         /* Calendar scheduling support */

@@ -130,7 +130,7 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
             ->setMethods(array('getNotCachedCalDavEvent', 'getCurrentUserId', 'getUserCalendars'))
             ->getMock();
         $adapterMock->method('getNotCachedCalDavEvent')->willReturn($bean);
-        $adapterMock->method('getCurrentUserId')->willReturn(0);
+        $adapterMock->method('getCurrentUserId')->willReturn(1);
         $calendars = array();
         $defaultCalendar = new \stdClass();
         $defaultCalendar->id = 1;

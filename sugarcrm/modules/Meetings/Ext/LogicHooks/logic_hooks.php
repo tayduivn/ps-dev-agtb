@@ -17,10 +17,3 @@ $hook_array['before_relationship_update'][] = array(
     'CalendarEventsHookManager',
     'beforeRelationshipUpdate',
 );
-$hook_array['after_set_attendee'][] = array(
-    1,
-    'caldav hook',
-    null,
-    '\\Sugarcrm\\Sugarcrm\\Dav\\Cal\\Hook\\Handler',
-    'run',
-);

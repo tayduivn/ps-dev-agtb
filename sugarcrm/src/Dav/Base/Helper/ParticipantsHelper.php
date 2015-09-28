@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Base\Helper;
 
 use Sugarcrm\Sugarcrm\Dav\Base\Constants as DavConstants;
 use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as DavStatusMapper;
+use Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Factory as SearchFactory;
 
 use Sabre\VObject\Property\ICalendar\CalAddress;
 
@@ -29,9 +30,15 @@ class ParticipantsHelper
      */
     protected $statusMapper;
 
+    /**
+     * @var \Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Factory;
+     */
+    protected $searchFactory;
+
     public function __construct()
     {
         $this->statusMapper = new DavStatusMapper\AcceptedMap();
+        $this->searchFactory = new SearchFactory();
     }
 
     /**
@@ -45,14 +52,35 @@ class ParticipantsHelper
 
     /**
      * Convert DAV ICalendar\CalAddress to array:
-     *  Key - SugarCRM user id
-     *  [1] => Array
-     *      (
-     *          [email] =>  sally@example.com - user email
-     *          [status] => NEEDS-ACTION - Event accept status
-     *          [cn] =>     user display name
-     *          [role] =>   REQ-PARTICIPANT - Participant event's role
+     *  result => array(
+     *      Participant module
+     *      [moduleName] => Array
+     *      Key - SugarCRM user id
+     *          [1] => (
+     *              [email] =>  sally@example.com - user email
+     *              [status] => NEEDS-ACTION - Event accept status
+     *              [cn] =>     user display name
+     *              [role] =>   REQ-PARTICIPANT - Participant event's role
+     *          )
+     *          [2] => Array
+     *          (
+     *              [email] =>  sally@example.com - user email
+     *              [status] => NEEDS-ACTION - Event accept status
+     *              [cn] =>     user display name
+     *              [role] =>   REQ-PARTICIPANT - Participant event's role
+     *          )
+     *      Participant module
+     *      [secondModuleName] => array(
+     *      Key - SugarCRM user id
+     *          [3] => Array
+     *          (
+     *              [email] =>  sally@example.com - user email
+     *              [status] => NEEDS-ACTION - Event accept status
+     *              [cn] =>     user display name
+     *              [role] =>   REQ-PARTICIPANT - Participant event's role
+     *          )
      *      )
+     * )
      * @param \CalDavEvent $event
      * @param \Sabre\VObject\Property\ICalendar\CalAddress $participants
      * @return array[] See above
@@ -63,12 +91,14 @@ class ParticipantsHelper
         $emailBean = $this->getEmailAddressBean();
         foreach ($participants as $participant) {
             $params = $participant->parameters();
-            $email = str_replace('mailto:', '', strtolower($participant->getValue()));
+            $participantModule = !empty($params['X-SUGAR-MODULE']) ? $params['X-SUGAR-MODULE']->getValue() : 'Users';
+            $email = str_replace('mailto:', '', strtolower($participant->getNormalizedValue()));
             if (!empty($params['X-SUGARUID']) && $params['X-SUGARUID']->getValue()) {
                 $userIds = array($params['X-SUGARUID']->getValue());
             } else {
-                $userIds = $emailBean->getRelatedId($email, 'Users');
+                $userIds = $emailBean->getRelatedId($email, $participantModule);
             }
+
             if ($userIds) {
                 foreach ($userIds as $userId) {
                     $statusMap = $this->statusMapper->getMapping($event);
@@ -76,12 +106,14 @@ class ParticipantsHelper
                         $statusMap[$params['PARTSTAT']->getValue()] : 'none';
 
                     $cn = isset($params['CN']) ? $params['CN']->getValue() : '';
-
-                    $result[$userId] = array(
+                    if (empty($result[$participantModule])) {
+                        $result[$participantModule] = array();
+                    }
+                    $result[$participantModule][$userId] = array(
                         'email' => $email,
                         'accept_status' => $status,
                         'cn' => $cn,
-                        'role' => isset($params['ROLE']) ? $params['ROLE']->getValue() : 'REQ-PARTICIPANT',
+                        'role' => isset($params['ROLE']) ? $params['ROLE']->getValue() : 'OPT-PARTICIPANT',
                     );
                 }
             }
@@ -111,17 +143,32 @@ class ParticipantsHelper
     {
         $bean = $event->getBean();
         $preResult = array();
-        if (!$bean->load_relationship('users')) {
-            return array();
-        }
 
+        $sugarParticipants = $davParticipants = array();
+        $acceptStatuses = array();
         switch ($componentType) {
             case 'ATTENDEE':
-                $davParticipants = $event->getParticipants();
-                $sugarParticipants = $bean->users->getBeans();
+                $allParticipants = $event->getParticipants();
+                foreach ($allParticipants as $moduleName => $participants) {
+                    if (!empty($participants)) {
+                        $davParticipants = array_merge($davParticipants, $participants);
+                    }
+                }
+
+                $searchModules = $this->searchFactory->getModulesForSearch();
+                foreach ($searchModules as $module) {
+                    $loadedParticipants = $this->loadParticipantsByRelationship(strtolower($module), $bean, $acceptStatuses);
+                    $sugarParticipants = array_merge($sugarParticipants, $loadedParticipants);
+                }
                 break;
             case 'ORGANIZER':
-                $davParticipants = $event->getOrganizer();
+                if (!$bean->load_relationship('users')) {
+                    return array();
+                }
+                $allParticipants = $event->getOrganizer();
+                if (!empty($allParticipants['Users'])) {
+                    $davParticipants = array_merge($davParticipants, $allParticipants['Users']);
+                }
                 $sugarParticipants = $bean->users->getBeans(array(
                     'where' => array(
                         'lhs_field' => 'id',
@@ -129,6 +176,9 @@ class ParticipantsHelper
                         'rhs_value' => $bean->assigned_user_id
                     )
                 ));
+                foreach ($sugarParticipants as $userId => $participant) {
+                    $acceptStatuses[$userId] = $bean->users->rows[$userId]['accept_status'];
+                }
                 break;
             default:
                 return array();
@@ -155,7 +205,7 @@ class ParticipantsHelper
 
                 $preResult[DavConstants::PARTICIPIANT_NOT_MODIFIED][$userId] = array(
                     'email' => $email,
-                    'accept_status' => $bean->users->rows[$userId]['accept_status'],
+                    'accept_status' => isset($acceptStatuses[$userId]) ? $acceptStatuses[$userId] : 'none',
                     'cn' => $displayName,
                     'role' => $role,
                 );
@@ -205,15 +255,36 @@ class ParticipantsHelper
     }
 
     /**
+     * Get all SugarCRM participants
+     * @param string $relationship
+     * @param \SugarBean $bean
+     * @param array $acceptStatuses
+     * @return array
+     */
+    protected function loadParticipantsByRelationship($relationship, \SugarBean $bean, array &$acceptStatuses)
+    {
+        $sugarParticipants = array();
+        if ($bean->load_relationship($relationship)) {
+            $sugarParticipants = $bean->$relationship->getBeans();
+            foreach ($sugarParticipants as $userId => $participant) {
+                $acceptStatuses[$userId] = $bean->$relationship->rows[$userId]['accept_status'];
+            }
+        }
+
+        return $sugarParticipants;
+    }
+
+    /**
      * Retrieve primary email from user bean
-     * @param \User $userBean
+     * @param \SugarBean $userBean
      * @return null | string
      */
-    protected function getUserPrimaryAddress(\User $userBean)
+    protected function getUserPrimaryAddress(\SugarBean $userBean)
     {
-        $result = $userBean->getUsersNameAndEmail();
-        if (!empty($result['email'])) {
-            return $result['email'];
+        $emailBean = $this->getEmailAddressBean();
+        $result = $emailBean->getPrimaryAddress($userBean);
+        if ($result) {
+            return $result;
         }
 
         return null;

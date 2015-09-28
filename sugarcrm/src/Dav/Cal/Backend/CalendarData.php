@@ -121,9 +121,10 @@ class CalendarData extends AbstractBackend implements SchedulingSupport
         $result = array();
         $userHelper = $this->getUserHelper();
         $calendars = $userHelper->getCalendars($principalUri);
-
-        foreach ($calendars as $calendar) {
-            $result[] = $calendar->toCalDavArray($this->propertyMap, $userHelper);
+        if ($calendars) {
+            foreach ($calendars as $calendar) {
+                $result[] = $calendar->toCalDavArray($this->propertyMap, $userHelper);
+            }
         }
 
         return $result;

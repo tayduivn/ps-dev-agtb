@@ -126,6 +126,12 @@ class Meetings implements AdapterInterface
         $oldAttributes = $this->getCurrentAttributes($sugarBean);
         /**@var \CalDavEvent $calDavBean */
         $calDavBean = $this->getNotCachedBean($calDavBean);
+
+        if (!$sugarBean->assigned_user_id) {
+            $sugarBean->assigned_user_id = $this->getCurrentUserId();
+            $isBeanChanged = true;
+        }
+
         /**@var \Meeting $sugarBean */
         if ($this->setBeanProperties($sugarBean, $calDavBean, $this->importBeanDataMap)) {
             $isBeanChanged = true;
@@ -134,21 +140,44 @@ class Meetings implements AdapterInterface
         $participants = $calDavBean->getParticipants();
 
         if ($participants) {
-            $sugarBean->users_arr = array_keys($participants);
-            if (!$sugarBean->id) {
-                $sugarBean->id = create_guid();
-                $sugarBean->new_with_id = true;
-                $isBeanChanged = true;
-            }
-            $meetingUsers = $this->arrayIndex('id', $sugarBean->get_meeting_users());
-            foreach ($participants as $userId => $partipientInfo) {
-                if ($partipientInfo['accept_status']) {
-                    if (!array_key_exists($userId, $meetingUsers) || $meetingUsers[$userId]->accept_status != $partipientInfo['accept_status']) {
-                        $user = \BeanFactory::getBean('Users', $userId);
-                        $sugarBean->set_accept_status($user, $partipientInfo['accept_status']);
-                        $isBeanChanged = true;
+            if (!empty($participants['Users'])) {
+                $usersParticipants = $participants['Users'];
+                $sugarBean->users_arr = array_keys($usersParticipants);
+                if (!$sugarBean->id) {
+                    $sugarBean->id = create_guid();
+                    $sugarBean->new_with_id = true;
+                    $isBeanChanged = true;
+                }
+                $meetingUsers = $this->arrayIndex('id', $sugarBean->get_meeting_users());
+                foreach ($usersParticipants as $userId => $partipientInfo) {
+                    if ($partipientInfo['accept_status']) {
+                        if (!array_key_exists($userId, $meetingUsers) ||
+                            $meetingUsers[$userId]->accept_status != $partipientInfo['accept_status']
+                        ) {
+                            $user = \BeanFactory::getBean('Users', $userId);
+                            $sugarBean->set_accept_status($user, $partipientInfo['accept_status']);
+                            $isBeanChanged = true;
+                        }
                     }
                 }
+            }
+
+            if (!empty($participants['Contacts'])) {
+                $isBeanChanged |= $this->addNonUsersParticipants(
+                    $participants['Contacts'],
+                    $sugarBean,
+                    'contacts',
+                    'setContactInvitees'
+                );
+            }
+
+            if (!empty($participants['Leads'])) {
+                $isBeanChanged |= $this->addNonUsersParticipants(
+                    $participants['Leads'],
+                    $sugarBean,
+                    'leads',
+                    'setLeadInvitees'
+                );
             }
         }
 
@@ -158,11 +187,6 @@ class Meetings implements AdapterInterface
             if ($this->setReminders($reminders, $sugarBean)) {
                 $isBeanChanged = true;
             }
-        }
-
-        if (!$sugarBean->assigned_user_id && $sugarBean->assigned_user_id != $this->getCurrentUserId()) {
-            $sugarBean->assigned_user_id = $this->getCurrentUserId();
-            $isBeanChanged = true;
         }
 
         $recurringRule = $calDavBean->getRRule();
@@ -179,6 +203,32 @@ class Meetings implements AdapterInterface
         }
 
         return $isBeanChanged;
+    }
+
+    /**
+     * Add Contacts or Leads participiants
+     * @param array $davParticipants
+     * @param \SugarBean $sugarBean
+     * @param string $bealRelation
+     * @param string $beanMethod
+     *
+     * @return bool
+     */
+    protected function addNonUsersParticipants($davParticipants, $sugarBean, $bealRelation, $beanMethod)
+    {
+        $davParticipants = array_keys($davParticipants);
+        sort($davParticipants);
+        if ($sugarBean->load_relationship($bealRelation)) {
+            $beanParticipants = $sugarBean->$bealRelation->get();
+            sort($beanParticipants);
+
+            if ($davParticipants != $beanParticipants && method_exists($sugarBean, $beanMethod)) {
+                $sugarBean->$beanMethod($davParticipants);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
