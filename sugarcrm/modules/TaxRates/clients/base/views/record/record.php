@@ -79,7 +79,7 @@ $viewdefs['TaxRates']['base']['view']['record'] = array(
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'acl_module' => 'Manufacturers',
+                    'acl_module' => 'Quotes',
                     'acl_action' => 'create',
                 ),
                 array(
