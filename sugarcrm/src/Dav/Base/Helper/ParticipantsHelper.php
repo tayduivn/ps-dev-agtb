@@ -102,8 +102,12 @@ class ParticipantsHelper
             if ($userIds) {
                 foreach ($userIds as $userId) {
                     $statusMap = $this->statusMapper->getMapping($event);
-                    $status = isset($statusMap[$params['PARTSTAT']->getValue()]) ?
-                        $statusMap[$params['PARTSTAT']->getValue()] : 'none';
+                    if (isset($params['PARTSTAT'])) {
+                        $status = isset($statusMap[$params['PARTSTAT']->getValue()]) ?
+                            $statusMap[$params['PARTSTAT']->getValue()] : 'none';
+                    } else {
+                        $status = 'none';
+                    }
 
                     $cn = isset($params['CN']) ? $params['CN']->getValue() : '';
                     if (empty($result[$participantModule])) {
@@ -267,7 +271,9 @@ class ParticipantsHelper
         if ($bean->load_relationship($relationship)) {
             $sugarParticipants = $bean->$relationship->getBeans();
             foreach ($sugarParticipants as $userId => $participant) {
-                $acceptStatuses[$userId] = $bean->$relationship->rows[$userId]['accept_status'];
+                if (isset($bean->$relationship->rows[$userId]['accept_status'])) {
+                    $acceptStatuses[$userId] = $bean->$relationship->rows[$userId]['accept_status'];
+                }
             }
         }
 
