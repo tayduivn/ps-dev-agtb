@@ -173,9 +173,14 @@ class Administration extends SugarBean {
         $row = $this->db->fetchByAssoc($result);
         $row_count = $row['the_count'];
 
+        if (is_array($value)) {
+            $value = json_encode($value);
+        }
+
         if($category."_".$key == 'ldap_admin_password' || $category."_".$key == 'proxy_password')
             $value = $this->encrpyt_before_save($value);
 
+        $value = $this->db->quote($value);
         if( $row_count == 0){
             $sql = "INSERT INTO config (value, category, name, platform) VALUES ('$value','$category', '$key', '$platform')";
         }
@@ -287,13 +292,11 @@ class Administration extends SugarBean {
      */
     protected function decodeConfigVar($var)
     {
-        $var = html_entity_decode(stripslashes($var));
+        $var = html_entity_decode($var);
         // make sure the value is not null and the length is greater than 0
         if (!is_null($var) && strlen($var) > 0) {
             // if it looks like a JSON string then lets run the json_decode on it
-            if ($var[0] == '{' 
-                || $var[0] == '['
-                || $var[0] == '"') {
+            if ($var[0] == '{' || $var[0] == '[') {
                 $decoded = json_decode($var, true);
                 // if we didn't get a json error, then put the decoded value as the value we want to return
                 if(json_last_error() == JSON_ERROR_NONE) {

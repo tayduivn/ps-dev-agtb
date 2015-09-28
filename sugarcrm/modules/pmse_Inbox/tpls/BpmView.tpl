@@ -300,6 +300,14 @@ if ($.browser.msie){{/literal}} {ldelim}
   {rdelim});
 {rdelim}
 </script>
+{{if $detailView == false}}
+<script>
+    {foreach from=$readOnlyFields item=fd}
+        if ((document.getElementById('{$fd}') != null) )
+            document.getElementById('{$fd}').disabled = 'true';
+    {/foreach}
+</script>
+{{/if}}
 {{if isset($footerTpl)}}
 {{include file=$footerTpl}}
 {{/if}}

@@ -896,59 +896,63 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                             $element['act_default_flow'] = null;
                         }
                     }
-                    if ($type == 'flows' && strtolower($element['action']) != 'remove' && strtolower($element['action']) != 'update') {
-                        $originBean = ucfirst($element['flo_element_origin_type']);
+                    if ($type == 'flows') {
 
-                        $originEntity = $this->getClassEntity($originBean);
-                        $originBean = $this->getBean($originEntity['bean']);
+                        // If process flow already exists then this is not a create operation.
+                        // It should be treated as an update.
+                        if (!empty($element['flo_uid']) && $this->doesProcessFlowExist($element['flo_uid']) &&
+                            !empty($element['action']) && (strtolower($element['action']) == 'create')) {
+                            $element['action'] = 'UPDATE';
+                        }
 
-                        $originBean->retrieve_by_string_fields(array($originEntity['uid_field'] => $element['flo_element_origin']));
-
-                        $element['flo_element_origin'] = $originBean->id;
-                        $destinationBean = ucfirst($element['flo_element_dest_type']);
-//                        $destinationBean = new $destinationBean();
-                        $destinationEntity = $this->getClassEntity($destinationBean);
-                        $destinationBean = $this->getBean($destinationEntity['bean']);
-
-                        //$tmp2 = $destinationBean->id;//getPrimaryFieldUid();
-                        $destinationBean->retrieve_by_string_fields(array($destinationEntity['uid_field'] => $element['flo_element_dest']));
-                        //$destinationPK = $destinationBean->getPrimaryFieldName();
-                        $element['flo_element_dest'] = $destinationBean->id;
-                        $tmpStateArray = array_values($element['flo_state']);
-                        $firstElement = array_shift($tmpStateArray);
-                        $tmpEndState = array_values($element['flo_state']);
-                        $lastElement = end($tmpEndState);
-                        $element['flo_x1'] = $firstElement['x'];
-                        $element['flo_y1'] = $firstElement['y'];
-                        $element['flo_x2'] = $lastElement['x'];
-                        $element['flo_y2'] = $lastElement['y'];
-                        $element['flo_state'] = json_encode($element['flo_state']);
-
-                    } elseif ($type == 'flows' && strtolower($element['action']) == 'update') {
-                        if (isset($element['flo_element_origin_type'])) {
+                        if (strtolower($element['action']) != 'remove' && strtolower($element['action']) != 'update') {
                             $originBean = ucfirst($element['flo_element_origin_type']);
                             $originEntity = $this->getClassEntity($originBean);
                             $originBean = $this->getBean($originEntity['bean']);
                             $originBean->retrieve_by_string_fields(array($originEntity['uid_field'] => $element['flo_element_origin']));
                             $element['flo_element_origin'] = $originBean->id;
-                        }
-                        if (isset($element['flo_element_dest_type'])) {
+
                             $destinationBean = ucfirst($element['flo_element_dest_type']);
                             $destinationEntity = $this->getClassEntity($destinationBean);
                             $destinationBean = $this->getBean($destinationEntity['bean']);
                             $destinationBean->retrieve_by_string_fields(array($destinationEntity['uid_field'] => $element['flo_element_dest']));
                             $element['flo_element_dest'] = $destinationBean->id;
-                        }
-                        if (isset($element['flo_state'])) {
-                            $tmpFirstElement = array_values($element['flo_state']);
-                            $firstElement = array_shift($tmpFirstElement);
-                            $tmpLastElement = array_values($element['flo_state']);
-                            $lastElement = end($tmpLastElement);
+
+                            $tmpState = array_values($element['flo_state']);
+                            $lastElement = array_pop($tmpState);
+                            $firstElement = array_shift($tmpState);
+
                             $element['flo_x1'] = $firstElement['x'];
                             $element['flo_y1'] = $firstElement['y'];
                             $element['flo_x2'] = $lastElement['x'];
                             $element['flo_y2'] = $lastElement['y'];
                             $element['flo_state'] = json_encode($element['flo_state']);
+
+                        } elseif ($type == 'flows' && strtolower($element['action']) == 'update') {
+                            if (isset($element['flo_element_origin_type'])) {
+                                $originBean = ucfirst($element['flo_element_origin_type']);
+                                $originEntity = $this->getClassEntity($originBean);
+                                $originBean = $this->getBean($originEntity['bean']);
+                                $originBean->retrieve_by_string_fields(array($originEntity['uid_field'] => $element['flo_element_origin']));
+                                $element['flo_element_origin'] = $originBean->id;
+                            }
+                            if (isset($element['flo_element_dest_type'])) {
+                                $destinationBean = ucfirst($element['flo_element_dest_type']);
+                                $destinationEntity = $this->getClassEntity($destinationBean);
+                                $destinationBean = $this->getBean($destinationEntity['bean']);
+                                $destinationBean->retrieve_by_string_fields(array($destinationEntity['uid_field'] => $element['flo_element_dest']));
+                                $element['flo_element_dest'] = $destinationBean->id;
+                            }
+                            if (isset($element['flo_state'])) {
+                                $tmpState = array_values($element['flo_state']);
+                                $lastElement = array_pop($tmpState);
+                                $firstElement = array_shift($tmpState);
+                                $element['flo_x1'] = $firstElement['x'];
+                                $element['flo_y1'] = $firstElement['y'];
+                                $element['flo_x2'] = $lastElement['x'];
+                                $element['flo_y2'] = $lastElement['y'];
+                                $element['flo_state'] = json_encode($element['flo_state']);
+                            }
                         }
                     }
 
@@ -1352,6 +1356,19 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
         foreach ($this->observers as $observer) {
             $observer->update($this);
         }
+    }
+
+    /**
+     * Checks if a process flow already exists
+     * @param $flo_uid
+     * @return boolean
+     */
+    public function doesProcessFlowExist($flo_uid)
+    {
+        $db = DBManagerFactory::getInstance();
+        $sql = 'select id from pmse_bpmn_flow where flo_uid = ' . $db->quoted($flo_uid) . ' AND deleted = 0 limit 1';
+        $result = $db->fetchOne($sql);
+        return !empty($result);
     }
 
 }

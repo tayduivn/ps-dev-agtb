@@ -99,7 +99,8 @@
         options = options || {};
         var length = this.collection.length;
         var fullyFetched = this.collection.next_offset <= 0;
-
+        // If total was fetched using fetchCount, use it
+        length = this.collection.total > 0 ? this.collection.total : length;
         // Override default properties with passed-in values.
         length = !_.isUndefined(options.length) ? options.length : length;
         fullyFetched = !_.isUndefined(options.hasMore) ? !options.hasMore : fullyFetched;

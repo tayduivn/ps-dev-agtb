@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,6 +9,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 $dictionary['KBDocument'] = array(
     'reassignable' => false,
     'table' => 'kbdocuments',
@@ -18,14 +18,6 @@ $dictionary['KBDocument'] = array(
     'full_text_search' => false,
     'comment' => 'Knowledge Base management',
     'fields' => array(
-        'status' => array(
-            'name' => 'status',
-            'vname' => 'LBL_STATUS',
-            'type' => 'enum',
-            'len' => 100,
-            'options' => 'kbdocument_status_dom',
-            'reportable' => false,
-        ),
     ),
     'uses' => array(
         'basic',

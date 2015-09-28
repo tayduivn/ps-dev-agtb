@@ -473,6 +473,7 @@ FLIST;
             $this->fieldDefs = $this->processRequiredFields($this->fieldDefs);
         }
         $this->th->ss->assign('fields', $this->fieldDefs);
+        $this->th->ss->assign('detailView', $readonly);
         $this->sectionPanels = $this->processSectionPanels($this->sectionPanels);
         $this->th->ss->assign('sectionPanels', $this->sectionPanels);
         $this->th->ss->assign('config', $sugar_config);
@@ -622,6 +623,22 @@ FLIST;
             $nameTemplateTmp = $this->dyn_uid;
         } else {
             $nameTemplateTmp = 'PMSEDetailView';
+        }
+
+        foreach ($this->fieldDefs as $field) {
+            if (isset($field['viewType']) && ($field['viewType'] == 'DetailView')) {
+                $arrReadOnlyFields[] = $field['name'];
+            }
+            if (!empty($field['required'])) {
+                $arrRequiredFields[] = $field['name'];
+            }
+        }
+
+        if (isset($arrReadOnlyFields)) {
+            $this->th->ss->assign('readOnlyFields', $arrReadOnlyFields);
+        }
+        if (isset($arrRequiredFields)) {
+            $this->th->ss->assign('requiredFields', $arrRequiredFields);
         }
         $this->th->buildTemplate($this->bean->module_name, $nameTemplateTmp, $this->tpl, $ajaxSave, $this->defs);
         $this->th->deleteTemplate($this->bean->module_name, $form_name);

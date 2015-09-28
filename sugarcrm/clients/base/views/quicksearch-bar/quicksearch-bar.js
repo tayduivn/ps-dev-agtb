@@ -190,20 +190,6 @@
     },
 
     /**
-     * Toggles the search icon between the magnifying glass and x, if available.
-     *
-     * @param {boolean} searchButtonIcon Indicates the state of the search button icon
-     * - `true` means set to magnifying glass.
-     * - `false` means set to X icon.
-     */
-    toggleSearchIcon: function(searchButtonIcon) {
-        if (this.context.get('search')) {
-            searchButtonIcon = !this.$input.val() && this.selectedTags.length === 0;
-        }
-        this.layout.trigger('quicksearch:button:toggle', searchButtonIcon);
-    },
-
-    /**
      * Handles the keydown event for up, down, and ignores tab.
      *
      * @param {Event} e The `keydown` event
@@ -252,6 +238,9 @@
             case 13: // enter
                 this.goToSearchPage();
                 break;
+            case 27: // esc
+                this.layout.trigger('quicksearch:close');
+                break;
             default:
                 this._validateAndSearch();
         }
@@ -288,7 +277,6 @@
     searchBarClickHandler: function() {
         this.requestFocus();
         _.defer(_.bind(this.layout.expand, this.layout));
-        this.toggleSearchIcon(this.$input.val() === '' && this.selectedTags.length === 0);
     },
 
     /**
@@ -357,8 +345,6 @@
             this.collection.abortFetchRequest();
             this.layout.trigger('quicksearch:results:close');
             this.collection.abortFetchRequest();
-            // If on the search page, reset the search button.
-            this.toggleSearchIcon(!term);
             return;
         }
 
@@ -369,7 +355,6 @@
             this.collection.dataFetched = false;
             this.layout.trigger('quicksearch:search:underway');
             this.layout.expand();
-            this.toggleSearchIcon(false);
             this._oldSearchTerm = term;
             this._debounceSearch();
         }
@@ -423,10 +408,6 @@
         this._currentQueryTerm = '';
         this.layout.trigger('quicksearch:tags:remove');
         this.disposeKeyEvents();
-
-        if (this.context.get('search')) {
-            this.toggleSearchIcon(true);
-        }
     },
 
     clearSearchTerm: function() {
