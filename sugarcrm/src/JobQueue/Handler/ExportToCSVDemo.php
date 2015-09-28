@@ -12,7 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Handler;
 
-
 use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException;
 
 require_once 'include/export_utils.php';

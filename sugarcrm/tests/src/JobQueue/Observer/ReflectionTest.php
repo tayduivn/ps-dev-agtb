@@ -38,6 +38,7 @@ class ReflectionTest extends \Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         \SugarTestSchedulersJobUtilities::removeAllCreatedJobs();
+        \SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         \SugarTestHelper::tearDown();
     }
 
@@ -70,5 +71,33 @@ class ReflectionTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(\SchedulersJob::JOB_STATUS_DONE, $job->status);
         $this->assertEquals(\SchedulersJob::JOB_SUCCESS, $job->resolution);
+    }
+
+    /**
+     * Should use a job's user on run and restore it on resolve.
+     */
+    public function testChangeCurrentUser()
+    {
+        $currentUser = $GLOBALS['current_user'];
+        $JobUser = \SugarTestUserUtilities::createAnonymousUser();
+
+        // The system user is the JobUser.
+        $this->observer = new Reflection($JobUser);
+        $this->observer->onAdd($this->workload);
+
+        $job = \BeanFactory::getBean('SchedulersJobs', $this->workload->getAttribute('dbId'));
+        \SugarTestSchedulersJobUtilities::setCreatedJob(array($job->id));
+
+        $this->assertEquals($JobUser->id, $job->assigned_user_id);
+
+        // The user is again admin.
+        $this->observer = new Reflection($currentUser);
+        $this->observer->onRun($this->workload);
+
+        $this->assertEquals($JobUser->id, $GLOBALS['current_user']->id);
+
+        $this->observer->onResolve($this->workload, \SchedulersJob::JOB_SUCCESS);
+
+        $this->assertEquals($currentUser->id, $GLOBALS['current_user']->id);
     }
 }

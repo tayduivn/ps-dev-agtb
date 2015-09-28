@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Client;
 
-use Sugarcrm\Sugarcrm\JobQueue\Observer\State;
+use Sugarcrm\Sugarcrm\JobQueue\Helper\Producer;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
 
 /**
@@ -42,7 +42,12 @@ class Immediate implements ClientInterface
      */
     public function addJob(WorkloadInterface $workload)
     {
-        $stateObserver = new State();
-        $stateObserver->onResolve($workload, call_user_func($this->function, $workload));
+        call_user_func($this->function, $workload);
+
+        $job = \BeanFactory::getBean('SchedulersJobs', $workload->getAttribute('dbId'));
+        if ($job->id && !$job->job_group) {
+            $parentHandler = new Producer($job);
+            $parentHandler->resolve();
+        }
     }
 }

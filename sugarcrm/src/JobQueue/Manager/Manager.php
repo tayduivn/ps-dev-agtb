@@ -12,7 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Manager;
 
-use Aws\Common\Exception\RuntimeException;
 use Sugarcrm\Sugarcrm\JobQueue\Client\ClientInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Client\Gearman as GearmanClient;
 use Sugarcrm\Sugarcrm\JobQueue\Client\MessageQueue as MessageQueueClient;
@@ -21,6 +20,7 @@ use Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue\AdapterInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Dispatcher\DispatcherInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Dispatcher\Handler;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException;
+use Sugarcrm\Sugarcrm\JobQueue\Exception\RuntimeException;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\UnexpectedResolutionException;
 use Sugarcrm\Sugarcrm\JobQueue\LockStrategy\CacheFile;
 use Sugarcrm\Sugarcrm\JobQueue\LockStrategy\LockStrategyInterface;
@@ -481,11 +481,9 @@ class Manager implements ClientInterface, RunnerInterface
         $attributes = array();
         $attributes['fallible'] = defined("{$class}::FALLIBLE") ? constant("{$class}::FALLIBLE") : false;
         $attributes['rerun'] = defined("{$class}::RERUN") ? constant("{$class}::RERUN") : false;
-        // To validate handler creating. Skip for subtasks.
-        if (!$this->context) {
-            $handlerObj = new \ReflectionClass($class);
-            $handlerObj->newInstanceArgs($arguments);
-        }
+        // To validate handler creating.
+        $handlerObj = new \ReflectionClass($class);
+        $handlerObj->newInstanceArgs($arguments);
         $workload = $this->createWorkload($handlerParams['name'], $arguments, $attributes);
         $this->addJob($workload);
 
@@ -498,7 +496,9 @@ class Manager implements ClientInterface, RunnerInterface
      */
     public function addJob(WorkloadInterface $workload)
     {
-        $workload->setAttribute('context', $this->context);
+        foreach ($this->context as $key => $val) {
+            $workload->setAttribute($key, $val);
+        }
         // To check client initializing.
         $client = $this->getClient();
         foreach ($this->getObserver() as $observer) {
@@ -565,6 +565,16 @@ class Manager implements ClientInterface, RunnerInterface
     public function setContext(array $context)
     {
         $this->context = $context;
+    }
+
+    /**
+     * Get manager's context.
+     *
+     * @return array
+     */
+    public function getContext()
+    {
+        return $this->context;
     }
 
     /**
