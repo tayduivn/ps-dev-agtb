@@ -1226,7 +1226,7 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
     public function getBean()
     {
         if ($this->parent_type) {
-            return BeanFactory::getBean($this->parent_type, $this->parent_id);
+            return BeanFactory::getBean($this->parent_type, $this->parent_id, array('use_cache' => false));
         }
 
         return BeanFactory::getBean('Meetings');
