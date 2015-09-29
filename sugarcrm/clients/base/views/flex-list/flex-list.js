@@ -77,7 +77,9 @@
         if (this.rightColumns.length) {
             rightColumnsEvents = {
                 'hidden.bs.dropdown .flex-list-view .actions': 'resetDropdownDelegate',
-                'shown.bs.dropdown .flex-list-view .actions': 'delegateDropdown'
+                'shown.bs.dropdown .flex-list-view .actions': 'delegateDropdown',
+                'shown.bs.dropdown .flex-list-view .morecol': '_toggleAria',
+                'hidden.bs.dropdown .flex-list-view .morecol': '_toggleAria'
             };
         }
 
@@ -126,6 +128,19 @@
                 // detect window bottom collision on scroll
                 $buttonGroup.toggleClass('dropup', needsDropupClass($buttonGroup));
             }, 30), this));
+    },
+
+    /**
+     * Sets a button accessibility class 'aria-expanded' to true or false
+     * depending on if the dropdown menu is open or closed.
+     *
+     * @param {Event} provides the needed currentTarget
+     * @private
+     */
+    _toggleAria: function(e) {
+        var $dropdown = this.$(e.currentTarget).find('.dropdown'),
+            $button = $dropdown.find('[data-toggle="dropdown"]');
+        $button.attr('aria-expanded', $dropdown.hasClass('open'));
     },
 
     addPreviewEvents: function () {

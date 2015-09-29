@@ -53,7 +53,7 @@
             {{#if isColumnDropdown}}
             <th class="nosort morecol">
                 <div class="dropdown">
-                    <button class="btn btn-invisible" data-toggle="dropdown" data-action="fields-toggle"><i class="fa fa-ellipsis-h"></i></button>
+                    <button class="btn btn-invisible" data-toggle="dropdown" data-action="fields-toggle" aria-label="{{str 'LBL_COLUMNS'}}" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>
                     <ul class="dropdown-menu left carettop">
                     {{#each ../../../_fields.all}}
                         <li>
