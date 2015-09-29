@@ -24,7 +24,7 @@ $viewdefs['KBContents']['base']['layout']['list-dashboard'] = array(
                             'view' =>
                             array(
                                 'type' => 'dashlet-nestedset-list',
-                                'label' => 'LBL_CATEGORIES',
+                                'label' => 'LBL_DASHLET_CATEGORIES_NAME',
                                 'data_provider' => 'Categories',
                                 'config_provider' => 'KBContents',
                                 'root_name' => 'category_root',
