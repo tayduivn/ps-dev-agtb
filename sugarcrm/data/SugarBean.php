@@ -339,6 +339,13 @@ class SugarBean
     );
 
     /**
+     * to display on acl-role edit panel
+     * default is false
+     * @deprecated Since 7.7
+     */
+    public $acl_display_only = false;
+
+    /**
      * Beans corresponding to various links on the bean
      * @var array
      */
@@ -1581,7 +1588,7 @@ class SugarBean
         {
             if(!$this->db->tableExists($this->table_name)) {
                 $this->db->createTable($this);
-                if ($this->bean_implements('ACL') && empty($this->acl_display_only)) {
+                if ($this->bean_implements('ACL') && $this->isACLRoleEditable()) {
                     $aclList = SugarACL::loadACLs($this->getACLCategory());
                     foreach($aclList as $acl) {
                         if($acl instanceof SugarACLStatic) {
@@ -7886,5 +7893,17 @@ class SugarBean
     {
         self::$recursivelyResavedLinks = array();
         self::$recursivelyResavedManyBeans = false;
+    }
+
+    /**
+     * Allow ACL Role edit
+     *
+     * @return bool
+     */
+    public function isACLRoleEditable(){
+        if (isset($this->acl_display_only)){
+            return !$this->acl_display_only;
+        }
+        return true;
     }
 }
