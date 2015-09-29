@@ -128,12 +128,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                     'dismiss_label' => true,
                     'readonly'      => true,
                 ),
-                array(
-                    'name' => 'name',
-                    'events' => array(
-                        'keyup' => 'update:account',
-                    ),
-                ),
+                'name',
                 array(
                     'name' => 'favorite',
                     'label' => 'LBL_FAVORITE',

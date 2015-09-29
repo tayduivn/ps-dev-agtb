@@ -78,7 +78,9 @@
         if (this.disposed) return;
         this.template = app.template.get(this.name + '.dnb-search-hint');
         this.render();
-        this.context.on('input:name:keyup', this.dnbSearch, this);
+
+        var $name = $('[data-fieldname=name].index').find('input');
+        $name.on('keyup', _.throttle(_.bind(this.dnbSearch, this), 1000, {leading: false}));
         this.errmsg = null;
     },
 
@@ -91,7 +93,8 @@
         this.errmsg = 'LBL_DNB_NOT_CONFIGURED';
         this.template = app.template.get(this.name + '.dnb-need-configure');
         this.render();
-        this.context.off('input:name:keyup', this.dnbSearch);
+        var $name = $('[data-fieldname=name].index').find('input');
+        $name.off('keyup', _.throttle(_.bind(this.dnbSearch, this), 1000, {leading: false}));
     },
 
     /**
@@ -164,12 +167,20 @@
     },
 
     /** event listener for keyup / autocomplete feature
-     * @param {String} searchString
      */
-    dnbSearch: function(searchString) {
+    dnbSearch: function() {
         if (this.disposed) {
             return;
         }
+
+        //Value of input in name field
+        var searchString = $('[data-fieldname=name].index').find('input').val();
+
+        //only search if the searchString is at least 3 characters
+        if (!searchString || searchString.length < 3) {
+            return;
+        }
+
         if (!this.keyword || (this.keyword && this.keyword !== searchString)) {
             this.keyword = searchString;
             this.template = this.resultTemplate;
