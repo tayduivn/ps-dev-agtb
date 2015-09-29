@@ -130,6 +130,10 @@ class TeamBasedACLSetupTest extends Sugar_PHPUnit_Framework_TestCase
         $fallbackField = $this->tbaConfig->getFieldFallbackOption();
         $fallbackModule = $this->tbaConfig->getModuleFallbackOption();
 
+        $availableFields = ACLField::getAvailableFields($module, false);
+        if (!isset($availableFields[$field])) {
+            $this->markTestSkipped('Passed field is not valid');
+        }
         // Set ACL for Module.
         $actionId = $roleActions[$module][$aclType][$action]['id'];
         $this->role->setAction($this->role->id, $actionId, ACL_ALLOW_SELECTED_TEAMS);
@@ -180,7 +184,7 @@ class TeamBasedACLSetupTest extends Sugar_PHPUnit_Framework_TestCase
             // Module, Field.
             array($this->module, 'name'),
             // Different ACL type.
-            array('Trackers', 'action'),
+            array('TrackerQueries', 'run_count'),
         );
     }
 
