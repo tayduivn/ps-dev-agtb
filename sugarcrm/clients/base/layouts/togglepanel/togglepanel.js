@@ -18,7 +18,7 @@
  */
 ({
     events: {
-        "click .toggle-actions a.btn": "toggleView"
+        "click .toggle-actions .btn": "toggleView"
     },
 
     plugins: ['Tooltip'],

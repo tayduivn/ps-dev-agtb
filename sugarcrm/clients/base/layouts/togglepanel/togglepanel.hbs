@@ -16,7 +16,7 @@
             <div class="toggle-actions actions">
                 <div class="btn-group" data-toggle="buttons-radio">
                     {{#each toggles}}
-                        <a type="button" class="btn {{#eq ../options.meta.default toggle}}active{{/eq}}" data-view="{{toggle}}" data-mode="view" rel="tooltip" title="{{str title}}"><i class="fa {{class}}"></i></a>
+                        <button type="button" class="btn {{#eq ../options.meta.default toggle}}active{{/eq}}" data-view="{{toggle}}" data-mode="view" rel="tooltip" title="{{str title}}" aria-label="{{str title}}"><i class="fa {{class}}"></i></button>
                     {{/each}}
                 </div>
             </div>
