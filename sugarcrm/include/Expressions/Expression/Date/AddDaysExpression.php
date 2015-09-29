@@ -28,7 +28,7 @@ class AddDaysExpression extends DateExpression
         if(!$date) {
             return false;
         }
-        $days = $params[1]->evaluate();
+        $days = (int) $params[1]->evaluate();
         
         if ($days < 0)
            return $date->modify("$days day");
