@@ -199,7 +199,7 @@ class CalDavCalendar extends SugarBean
      */
     public function createDefaultForUser(User $user)
     {
-        $this->uri = translate('LBL_DAFAULT_CALDAV_URI');
+        $this->uri = Base\Constants::DEFAULT_CALENDAR_URI;
         $this->name = translate('LBL_DAFAULT_CALDAV_NAME');
         $this->assigned_user_id = $user->id;
 
