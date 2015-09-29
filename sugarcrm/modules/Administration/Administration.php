@@ -41,6 +41,7 @@ class Administration extends SugarBean {
     //BEGIN SUGARCRM flav=pro ONLY
     public $disable_row_level_security = true;
     //END SUGARCRM flav=pro ONLY
+    public static $passwordPlaceholder = "::PASSWORD::";
 
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version

@@ -90,6 +90,10 @@ if (!empty($_POST['saveConfig'])) {
 		else
 		    $_POST['ldap_authentication'] = 0;
 
+        if (!empty($_POST['ldap_admin_password']) && $_POST['ldap_admin_password'] == Administration::$passwordPlaceholder) {
+            unset($_POST['ldap_admin_password']);
+        }
+
 		if( isset($_REQUEST['passwordsetting_lockoutexpirationtime']) && is_numeric($_REQUEST['passwordsetting_lockoutexpirationtime'])  )
 		    $_POST['passwordsetting_lockoutexpiration'] = 2;
 
@@ -139,6 +143,9 @@ if (!empty($_POST['saveConfig'])) {
 
 $focus->retrieveSettings();
 
+if (!empty($focus->settings['ldap_admin_password'])) {
+    $focus->settings['ldap_admin_password'] = Administration::$passwordPlaceholder;
+}
 
 require_once('include/SugarLogger/SugarLogger.php');
 $sugar_smarty = new Sugar_Smarty();

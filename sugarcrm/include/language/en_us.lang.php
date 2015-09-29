@@ -2623,6 +2623,7 @@ $app_strings = array (
     'LBL_CLEAR_BUTTON_LABEL' => 'Clear',
     'LBL_CLEAR_BUTTON_TITLE' => 'Clear',
     'LBL_CLEARALL' => 'Clear All',
+    'LBL_CLICK_TO_EDIT' => 'Click to Edit',
     'LBL_CLOSE_BUTTON_TITLE' =>'Close',
     'LBL_CLOSE_BUTTON_KEY'=>'Q',
     'LBL_CLOSE_WINDOW'=>'Close Window',

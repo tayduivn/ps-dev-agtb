@@ -5329,3 +5329,27 @@ function convertReportDateTimeToDB(dateValue, timeValue)
     }
     return '';
 }
+
+function clickToEditPassword(elId, passwordPlaceholder)
+{
+    var $el = $(elId);
+    if ($el && $el.val() == passwordPlaceholder) {
+        var instructions = $('<span class="button">'+SUGAR.language.get("app_strings", "LBL_CLICK_TO_EDIT")+'</span>');
+        instructions.click(function(e) {
+            e.preventDefault();
+            $el.val('');
+            instructions.hide();
+            $el.show();
+            $el.focus();
+        });
+        $el.parent().append(instructions);
+        $el.hide();
+        $el.focusout(function() {
+            if ($el.val() == '') {
+                $el.val(passwordPlaceholder);
+                instructions.show();
+                $el.hide();
+            }
+        });
+    }
+}
