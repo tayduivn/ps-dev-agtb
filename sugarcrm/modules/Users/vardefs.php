@@ -186,6 +186,14 @@ $dictionary['User'] = array(
             'type' => 'bool',
             'default' => '0',
             'studio' => array('listview' => false, 'searchview'=>false, 'related' => false),
+            // Remove from Process Author
+            // To add finer grain validation, you could do something like this
+            // 'processes' => array(
+            //    'isCurrentUserAdmin',
+            //),
+            // This would tell the field to be pushed through an additional validation
+            // step when being fetched for relationships
+            'processes' => false,
         ) ,
         'external_auth_only' => array(
             'name' => 'external_auth_only',

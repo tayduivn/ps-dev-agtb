@@ -23,6 +23,22 @@ class PMSEEngineUtils
     public static $uploadObject;
 
     /**
+     * List of fields across all modules that should always be blacklisted
+     * @var array
+     */
+    protected static $blacklistedFields = array(
+        'deleted',
+        'system_id',
+        'mkto_sync',
+        'mkto_id',
+        'mkto_lead_score',
+        'parent_type',
+        'user_name',
+        'user_hash',
+        'is_admin',
+    );
+
+    /**
      * PA target blacklisted modules
      * @var array
      */
@@ -993,11 +1009,41 @@ class PMSEEngineUtils
         }
     }
 
+    /**
+     * Checks to see if the currently logged in user is an admin or an admin of
+     * the users module. Originally added to handle the case of User module
+     * specific fields when used as a related module.
+     *
+     * @return boolean True if the current user is an admin
+     */
+    public static function isCurrentUserAdmin()
+    {
+        global $current_user;
+        return $current_user->isAdmin() || $current_user->isAdminForModule('Users');
+    }
+
     public static function isValidField($def, $type = '')
     {
-        // If a field is explicitly allowed it should automatically be valid
-        if (!empty($def['processes'])) {
-            return true;
+        if (isset($def['processes'])) {
+            // If a field is explicitly marked for processes, handle it
+            if (is_bool($def['processes'])) {
+                return $def['processes'];
+            }
+
+            // If the marker is a string or an array, it is mapped to a method
+            if (is_string($def['processes'])) {
+                $def['processes'] = array($def['processes']);
+            }
+
+            // For a field validation list, run through until you hit a false,
+            // otherwise let the rest of the validation processes run
+            foreach ($def['processes'] as $method) {
+                if (method_exists(__CLASS__, $method)) {
+                    if (self::$method() === false) {
+                        return false;
+                    }
+                }
+            }
         }
 
         $result = self::isValidStudioField($def);
@@ -1022,13 +1068,14 @@ class PMSEEngineUtils
         return $result;
     }
 
+    /**
+     * Validation method that checks if a field is blacklisted.
+     * @param array $def A vardef entry for a field
+     * @return boolean True if the field is not blacklisted, false if it is
+     */
     public static function blackListFields($def)
     {
-        $blackList = array('deleted', 'system_id', 'mkto_sync', 'mkto_id', 'mkto_lead_score', 'parent_type', 'user_name', 'user_hash');
-        if (in_array($def['name'], $blackList)) {
-            return false;
-        }
-        return true;
+        return !in_array($def['name'], self::$blacklistedFields);
     }
 
     public static function specialFields($def, $type= 'All')
@@ -1126,5 +1173,36 @@ class PMSEEngineUtils
             $out[] = $module->module;
         }
         return $out;
+    }
+
+    /**
+     * Santizies imported activity fields, since some fields may have been exported
+     * in a version when they were still acceptable valid fields
+     * @param array $element An activity element from an import
+     * @param string $module The module to get fields to validate from
+     * @return string
+     */
+    public static function sanitizeImportActivityFields(array $element, $module)
+    {
+        if (!empty($element['act_field_module'])) {
+            // We will need these for validations
+            $targetBean = BeanFactory::getBean($module);
+            if (isset($targetBean->field_defs[$element['act_field_module']]['module'])) {
+                // We need the related module bean to get field defs for validation
+                $relBean = BeanFactory::getBean($targetBean->field_defs[$element['act_field_module']]['module']);
+
+                $newData = array();
+                $fieldData = json_decode($element['act_fields']);
+                foreach ($fieldData as $fieldDef) {
+                    $field = $fieldDef['field'];
+                    if (isset($relBean->field_defs[$field]) && self::isValidField($relBean->field_defs[$field])) {
+                        $newData[] = $fieldDef;
+                    }
+                }
+                $element['act_fields'] = json_encode($newData);
+            }
+        }
+
+        return $element['act_fields'];
     }
 }
