@@ -206,9 +206,6 @@
         }
       }
     }
-    .fa-favorite {
-      vertical-align: middle;
-    }
     .list + .list .fa-favorite {
       margin: 0 8px;
     }
@@ -579,6 +576,7 @@ FLEXLIST GENERIC */
         overflow: visible;
         z-index: 10;
         padding: 4px 8px;
+        font-size: 0;
         .fieldset-field {
           display: inline-block;
           padding: 0;
@@ -588,9 +586,11 @@ FLEXLIST GENERIC */
         input[type=radio] {
           margin: 8px;
         }
-        .fa-favorite {
-          display: inline-block;
-          margin: 8px 6px;
+        .btn.btn-invisible {
+          margin: 0;
+          &.active {
+            background-color: transparent !important;
+          }
         }
         span.list,
         span.edit {

@@ -23,7 +23,7 @@
     showNoData: false,
 
     'events': {
-        'click .fa-favorite': 'toggle'
+        'click .btn': 'toggle'
     },
     plugins: ['Tooltip'],
     /**
