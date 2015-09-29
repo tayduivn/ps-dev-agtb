@@ -98,9 +98,6 @@
 	</table>
 </form>
 
-<tr>
-    <td colspan="100">{$MOD.LBL_UNIFIED_SEARCH_SETTINGS_LINK_DESC}</td>
-</tr>
 </table>
 
 <div id='selectFTSModules' class="yui-hidden">
