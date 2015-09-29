@@ -35,9 +35,12 @@ $viewdefs['Meetings']['base']['view']['subpanel-list'] = array(
         array(
           'name' => 'date_start',
           'label' => 'LBL_LIST_DATE',
+          'type' => 'datetimecombo-colorcoded',
+          'completed_status_value' => 'Held',
           'enabled' => true,
           'default' => true,
           'readonly' => true,
+          'related_fields' => array('status'),
         ),
         array(
           'name' => 'date_end',
