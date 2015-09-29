@@ -35,7 +35,8 @@ class Handler
         $adapter = $this->getAdapterFactory();
         $manager = $this->getManager();
         if ($bean instanceof \CalDavEvent) {
-            if ($adapter->getAdapter($bean->getBean()->module_name)) {
+            if ($bean->parent_type != $bean->module_name &&
+                $adapter->getAdapter($bean->getBean()->module_name)) {
                 $manager->calDavImport($bean->module_name, $bean->id, $this->getCurrentUserId());
             }
         } elseif ($bean instanceof \SugarBean) {

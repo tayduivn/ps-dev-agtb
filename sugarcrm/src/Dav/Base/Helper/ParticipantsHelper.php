@@ -155,14 +155,14 @@ class ParticipantsHelper
                 $allParticipants = $event->getParticipants();
                 foreach ($allParticipants as $moduleName => $participants) {
                     if (!empty($participants)) {
-                        $davParticipants = array_merge($davParticipants, $participants);
+                        $davParticipants += $participants;
                     }
                 }
 
                 $searchModules = $this->searchFactory->getModulesForSearch();
                 foreach ($searchModules as $module) {
                     $loadedParticipants = $this->loadParticipantsByRelationship(strtolower($module), $bean, $acceptStatuses);
-                    $sugarParticipants = array_merge($sugarParticipants, $loadedParticipants);
+                    $sugarParticipants += $loadedParticipants;
                 }
                 break;
             case 'ORGANIZER':
@@ -171,7 +171,7 @@ class ParticipantsHelper
                 }
                 $allParticipants = $event->getOrganizer();
                 if (!empty($allParticipants['Users'])) {
-                    $davParticipants = array_merge($davParticipants, $allParticipants['Users']);
+                    $davParticipants += $allParticipants['Users'];
                 }
                 $sugarParticipants = $bean->users->getBeans(array(
                     'where' => array(
@@ -276,7 +276,6 @@ class ParticipantsHelper
                 }
             }
         }
-
         return $sugarParticipants;
     }
 
