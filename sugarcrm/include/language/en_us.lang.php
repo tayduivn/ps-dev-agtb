@@ -8127,6 +8127,9 @@ $app_strings = array (
   'LBL_ADD' => 'Add' /*for 508 compliance fix*/,
   'LBL_COMPANY_LOGO' => 'Company logo' /*for 508 compliance fix*/,
   'LBL_JS_CALENDAR' => 'Calendar' /*for 508 compliance fix*/,
+  // ARIA label additions
+  'LBL_ARIA_MODULENAVIGATION' => 'main module navigation',
+
     'LBL_ADVANCED' => 'Advanced',
     'LBL_BASIC' => 'Basic',
     'LBL_MODULE_FILTER' => 'Filter by...',

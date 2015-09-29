@@ -130,6 +130,7 @@
             label = app.lang.get('LBL_BASIC_QUICK_SEARCH');
         }
         var input = this.$el.attr('placeholder', label);
+        this.$el.prop('aria-label', label);
         //Call placeholder() because IE9 does not support placeholders.
         if (_.isFunction(input.placeholder)) {
             input.placeholder();
