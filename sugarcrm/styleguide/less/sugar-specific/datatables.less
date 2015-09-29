@@ -1053,47 +1053,6 @@ table th.nosort span:after {
   max-width: @cell-xxlarge;
 }
 
-.morecol {
-  .btn {
-    margin: 0;
-  }
-  .dropdown.open {
-    .btn {
-      .box-shadow(none);
-      background-color: @gray;
-      > .fa {
-        color: @white;
-      }
-    }
-  }
-  .dropdown-menu {
-    .border-radius(2px);
-    margin-top: 7px;
-    right: 20px;
-    button {
-      background: none;
-      border: none;
-      padding-left: 30px;
-      width: 100%;
-      text-align: left;
-      margin-left: 0;
-      &.active {
-        font-weight: bold;
-      }
-      .fa {
-        margin-right: 5px;
-        margin-left: -22px;
-      }
-    }
-    li {
-      border-bottom: 1px solid @grayLighter;
-    }
-    li.divider + li {
-      border-top: 1px solid #ddd;
-    }
-  }
-}
-
 [data-type=phone] .gc-cs-link { /*UIUX-1270*/
   color: inherit;
 }
