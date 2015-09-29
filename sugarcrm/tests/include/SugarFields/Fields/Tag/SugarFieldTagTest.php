@@ -114,10 +114,7 @@ class SugarFieldTagTest extends Sugar_PHPUnit_Framework_TestCase
                 'name' => $this->tag2->name,
             ),
             // add new tag which does not exist in system
-            array(
-                'id' => $newTagName,
-                'name' => $newTagName,
-            ),
+            $newTagName,
         );
 
         $tags->apiSave($this->contact, $params, 'tag', array('link' => $relName));
