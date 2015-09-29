@@ -100,7 +100,7 @@
 
         this._super('_initEvents');
         this.on('planned-activities:close-record:fire', this.heldActivity, this);
-        this.on('linked-model:create', this._reloadData, this);
+        this.on('linked-model:create', this.loadData, this);
 
         this.before('render:rows', function(data) {
             this.updateInvitation(this.collection, data);
@@ -108,18 +108,6 @@
         }, this);
 
         return this;
-    },
-
-    /**
-     * Re-fetches the data for the context's collection.
-     *
-     * FIXME: This will be removed when SC-4775 is implemented.
-     *
-     * @private
-     */
-    _reloadData: function() {
-        this.context.set('skipFetch', false);
-        this.context.reloadData();
     },
 
     /**
