@@ -732,7 +732,7 @@ foreach ($sugar_demodata['kbcategories_array'] as $name => $v) {
 }
 
 $system_config = new Administration();
-$system_config->saveSetting('KBContents', 'languages', json_encode($sugar_demodata['kbdocuments_languages']), 'base');
+$system_config->saveSetting('KBContents', 'languages', $sugar_demodata['kbdocuments_languages'], 'base');
 
 echo '.';
 

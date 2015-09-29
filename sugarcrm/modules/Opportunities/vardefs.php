@@ -364,6 +364,7 @@ $dictionary['Opportunity'] = array(
         'contact_role' => array(
             'name' => 'contact_role',
             'type' => 'enum',
+            'studio' => 'false',
             'source' => 'non-db',
             'massupdate' => false,
             'vname' => 'LBL_OPPORTUNITY_ROLE',

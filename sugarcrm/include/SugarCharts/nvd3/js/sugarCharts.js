@@ -235,7 +235,10 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 if (SUGAR.charts.isDataEmpty(data)) {
 
                     var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
-                    var xLabels = json.properties.labels;
+
+                    var xTickLabels = json.properties.labels ?
+                          json.properties.labels.map(function(d) { return d.l || d; }) :
+                          [];
 
                     var lineChart = nv.models.lineChart()
                         .id(d3ChartId)
@@ -252,6 +255,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .showLegend(params.show_legend)
                         .showControls(params.show_controls)
                         .useVoronoi(true)
+                        .clipEdge(false)
                         .wrapTicks(params.wrapTicks)
                         .staggerTicks(params.staggerTicks)
                         .rotateTicks(params.rotateTicks)
@@ -274,53 +278,40 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             .axisLabel(params.y_axis_label);
                     }
 
-                    if (json.data && json.data.length) {
+                    if (json.data.length) {
+                        if (json.data[0].values.length && json.data[0].values[0] instanceof Array) {
+                            lineChart
+                                .x(function(d) { return d[0]; })
+                                .y(function(d) { return d[1]; });
 
-                        var firstSeries = json.data[0].values,
-                            firstValueAsDate = new Date(firstSeries[0][0]),
-                            isTimeSeries = firstSeries[0][0] !== 0 && firstValueAsDate instanceof Date && !isNaN(firstValueAsDate.valueOf()),
-                            singlePoint = firstSeries.length === 1;
+                            if (nv.utils.isValidDate(json.data[0].values[0][0])) {
+                                lineChart.xAxis
+                                    .tickFormat(function(d) {
+                                        return d3.time.format('%x')(new Date(d));
+                                    });
+                            } else if (xTickLabels.length > 0) {
+                                lineChart.xAxis
+                                    .tickFormat(function(d) {
+                                        return xTickLabels[d] || ' ';
+                                    });
+                            }
+                        } else {
+                            lineChart
+                                .x(function(d) { return d.x; })
+                                .y(function(d) { return d.y; });
 
-                        // set x-scale as time instead of linear
-                        var xScale = isTimeSeries ? d3.time.scale() : d3.scale.linear(),
-                            xDomain = null,
-                            yDomain = null;
-
-                        if (singlePoint) {
-                            var xValue = firstSeries[0][0],
-                                xStart = xValue - 1 * (isTimeSeries ? 86400000 : 1),
-                                xEnd = xValue + 1 * (isTimeSeries ? 86400000 : 1);
-                            var yValue = firstSeries[0][1],
-                                yStart = yValue - 2,
-                                yEnd = yValue + 2;
-                            xDomain = [xStart, xEnd];
-                            yDomain = [yStart, yEnd];
+                            if (xTickLabels.length > 0) {
+                                lineChart.xAxis
+                                    .tickFormat(function(d) {
+                                        return xTickLabels[d - 1] || ' ';
+                                    });
+                            }
                         }
-
-                        lineChart
-                            .xScale(xScale)
-                            .xDomain(xDomain)
-                            .yDomain(yDomain);
-                        lineChart.lines
-                            .padData(singlePoint ? false : true)
-                            .padDataOuter(-1)
-                            .clipEdge(false)
-                            .singlePoint(singlePoint);
-                        lineChart.xAxis
-                            .highlightZero(false)
-                            .reduceXTicks(false)
-                            .tickFormat(function(d, i) {
-                                return isTimeSeries ?
-                                    d3.time.format('%x')(new Date(d)) :
-                                    xLabels[d].l;
-                            })
-                            .tickValues(singlePoint ? [firstSeries[0][0]] : null)
-                            .ticks(singlePoint ? 1 : null)
-                            .showMaxMin(!singlePoint);
-                        lineChart.yAxis
-                            .ticks(singlePoint ? 5 : null)
-                            .showMaxMin(!singlePoint);
                     }
+
+                    lineChart.xAxis
+                        .highlightZero(false)
+                        .reduceXTicks(false);
 
                     that.chartObject = lineChart;
 
@@ -761,12 +752,20 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                         break;
 
                     case 'lineChart':
+                        var discreteValues = d3.max(json.values, function(d) {
+                                  return d.values.length;
+                                }) === 1;
+
                         data = json.values.map(function(d, i) {
                             return {
                                 'key': pickLabel(d.label),
-                                'values': d.values.map(function(e, j) {
-                                    return [j, parseFloat(e)];
-                                })
+                                'values': discreteValues ?
+                                    d.values.map(function(e, j) {
+                                        return [i, parseFloat(e)];
+                                    }) :
+                                    d.values.map(function(e, j) {
+                                        return [j, parseFloat(e)];
+                                    })
                             };
                         });
                         break;

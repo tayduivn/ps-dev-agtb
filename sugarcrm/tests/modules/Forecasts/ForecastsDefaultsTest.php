@@ -184,11 +184,7 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
     protected function saveConfig($cfg, $adminBean)
     {
         foreach ($cfg as $name => $value) {
-            if (is_array($value)) {
-                $adminBean->saveSetting('Forecasts', $name, json_encode($value), 'base');
-            } else {
-                $adminBean->saveSetting('Forecasts', $name, $value, 'base');
-            }
+            $adminBean->saveSetting('Forecasts', $name, $value, 'base');
         }
     }
 

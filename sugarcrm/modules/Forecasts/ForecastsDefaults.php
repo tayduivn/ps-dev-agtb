@@ -43,11 +43,7 @@ class ForecastsDefaults
         }
 
         foreach ($forecastConfig as $name => $value) {
-            if (is_array($value)) {
-                $admin->saveSetting('Forecasts', $name, json_encode($value), 'base');
-            } else {
-                $admin->saveSetting('Forecasts', $name, $value, 'base');
-            }
+            $admin->saveSetting('Forecasts', $name, $value, 'base');
         }
 
         return $forecastConfig;

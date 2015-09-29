@@ -443,7 +443,9 @@ class Link2 {
             //If there are any relationship fields, we need to figure out the mapping from the relationship fields to the
             //fields in the related module
             $relBean = BeanFactory::getBean($rel_module);
-            $relationshipFields = $this->getRelationshipFields($relBean);
+            if ($relBean) {
+                $relationshipFields = $this->getRelationshipFields($relBean);
+            }
 
             //now load from the rows
             foreach ($rows as $id => $vals)
@@ -458,7 +460,7 @@ class Link2 {
                     $result[$id] = $this->beans[$id];
                 }
 
-                if (!empty($result[$id])) {
+                if (!empty($result[$id]) && !empty($relationshipFields)) {
                     $this->populateRelationshipOnlyFields($relationshipFields, $vals, $result[$id]);
                 }
             }

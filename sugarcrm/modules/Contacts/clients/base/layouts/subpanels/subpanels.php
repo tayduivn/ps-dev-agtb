@@ -49,6 +49,7 @@ $viewdefs['Contacts']['base']['layout']['subpanels'] = array(
         array(
             'layout' => "subpanel",
             'label' => 'LBL_OPPORTUNITIES_SUBPANEL_TITLE',
+            'override_subpanel_list_view' => 'subpanel-for-contacts',
             'context' => array(
                 'link' => 'opportunities',
             ),
