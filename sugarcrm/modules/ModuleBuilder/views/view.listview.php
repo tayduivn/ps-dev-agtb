@@ -249,8 +249,13 @@ class ViewListView extends SugarView
         if ($this->subpanel)
             $restoreAction = "onclick='ModuleBuilder.history.revert(\"{$this->editModule}\", \"{$this->editLayout}\", \"{$history->getLast()}\", \"{$this->subpanel}\")'";
 
+        $smarty->assign(
+            'onsubmit',
+            'studiotabs.generateGroupForm("edittabs"); if (countListFields()==0)' .
+            '{ModuleBuilder.layoutValidation.popup();}else{ModuleBuilder.handleSave("edittabs");} return false;'
+        );
         $buttons = array ( ) ;
-        $buttons [] = array ( 'id' =>'savebtn', 'name' => 'savebtn' , 'image' => $imageSave , 'text' => (! $this->fromModuleBuilder)?$GLOBALS [ 'mod_strings' ] [ 'LBL_BTN_SAVEPUBLISH' ]: $GLOBALS [ 'mod_strings' ] [ 'LBL_BTN_SAVE' ], 'actionScript' => "onclick='studiotabs.generateGroupForm(\"edittabs\");if (countListFields()==0) ModuleBuilder.layoutValidation.popup() ; else ModuleBuilder.handleSave(\"edittabs\" )'" ) ;
+        $buttons [] = array ( 'id' =>'savebtn', 'name' => 'savebtn' , 'type' => 'submit', 'image' => $imageSave , 'text' => (! $this->fromModuleBuilder)?$GLOBALS [ 'mod_strings' ] [ 'LBL_BTN_SAVEPUBLISH' ]: $GLOBALS [ 'mod_strings' ] [ 'LBL_BTN_SAVE' ]);
         $buttons [] = array ( 'id' => 'spacer' , 'width' => '50px' ) ;
         $buttons [] = array ( 'id' =>'historyBtn',       'name' => 'historyBtn' , 'text' => translate ( 'LBL_HISTORY' ) , 'actionScript' => "onclick='$histaction'" ) ;
         $buttons [] = array ( 'id' => 'historyDefault' , 'name' => 'historyDefault',  'text' => translate ( 'LBL_RESTORE_DEFAULT' ) , 'actionScript' => $restoreAction ) ;
@@ -337,18 +342,24 @@ class ViewListView extends SugarView
                 continue;
             }
 
+            $type = isset($button['type']) ? $button['type'] : 'button';
             if (! empty ( $button [ 'plain' ] ))
             {
                 $text .= <<<EOQ
-	             <td><input name={$button['name']} id={$button['id']} class="button" type="button" valign='center' {$button['actionScript']}
+                 <td><input name={$button['name']} id={$button['id']} class="button" type="{$type}" valign='center'
 EOQ;
 
             } else
             {
                 $text .= <<<EOQ
-	          <td><input name={$button['name']} id={$button['id']} class="button" type="button" valign='center' style='cursor:default'  {$button['actionScript']}
+                <td><input name={$button['name']} id={$button['id']} class="button" type="{$type}" valign='center' style='cursor:default'
 EOQ;
             }
+
+            if (isset($button['actionScript'])) {
+                $text .= ' ' . $button['actionScript'];
+            }
+
             $text .= "value=\"{$button['text']}\"/></td>" ;
         }
         $text .= '</tr></table>' ;
