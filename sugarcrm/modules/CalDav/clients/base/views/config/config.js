@@ -8,8 +8,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-[
-    'include/javascript/sugar7/socket.js',
-    'modules/CalDav/clients/**/*.js'
-]
+({
+    extendsFrom: 'ConfigPanelView',
+    initialize: function(options) {
+        this._super('initialize', [options]);
+    },
+})

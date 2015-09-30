@@ -731,6 +731,8 @@ $beanFiles['CalDavScheduling'] = 'modules/CalDav/Scheduling.php';
 // this module doesn't need a Bean
 $modInvisList[] = 'Feedbacks';
 
+$modInvisList[] = 'CalDav';
+
 foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $modExtFile) {
     include $modExtFile;
 }

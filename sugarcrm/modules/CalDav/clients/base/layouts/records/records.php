@@ -1,3 +1,4 @@
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-[
-    'include/javascript/sugar7/socket.js',
-    'modules/CalDav/clients/**/*.js'
-]
+$viewdefs['CalDav']['base']['layout']['records'] = array(
+    'components' => array(),
+);
