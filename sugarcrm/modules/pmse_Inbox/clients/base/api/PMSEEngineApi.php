@@ -842,6 +842,7 @@ class PMSEEngineApi extends SugarApi
             'cas_flow_status',
             'cas_user_id',
             'cas_due_date',
+            'cas_sugar_module',
             'bpmn_id'
         );
 
@@ -860,7 +861,7 @@ class PMSEEngineApi extends SugarApi
                 ->equals('activity.deleted', 0);
         $fields[] = array("activity.name", 'act_name');
 
-        //INNSER JOIN BPMN ACTIVITY DEFINTION
+        //INNER JOIN BPMN ACTIVITY DEFINTION
         $q->joinTable('pmse_bpm_activity_definition',
             array('alias' => 'activity_definition', 'joinType' => 'INNER', 'linkingTable' => true))
             ->on()
@@ -888,9 +889,13 @@ class PMSEEngineApi extends SugarApi
             //User section
             $user = BeanFactory::getBean("Users", $row["cas_user_id"]);
             $rows[$key]['assigned_user'] = $user->full_name;
-            if (isset($args['unattended']) && !empty($args['unattended'])) {
-                if (!($user->status != 'Active' || $user->employee_status != 'Active')) {
-                    unset($rows[$key]);
+
+            // Remove form list all attended cases
+            if (!empty($args['unattended'])) {
+                if (ACLAction::userHasAccess($row["cas_user_id"],$row['cas_sugar_module'], 'access')) {
+                    if (!($user->status != 'Active' || $user->employee_status != 'Active')) {
+                        unset($rows[$key]);
+                    }
                 }
             }
         }
@@ -956,8 +961,11 @@ class PMSEEngineApi extends SugarApi
         $this->checkACL($api, $args);
 
         $queryOptions = array('add_deleted' => true);
-
+        // Get unatteneded cases based on user and employee statis
         $arrayUnattendedCases = $this->getUnattendedCasesByFlow();
+
+        // Get unauthorized cases based on module access
+        $arrayUnauthorizedCases = $this->getUnauthorizedCasesByFlow();
         //Get Cases IN TODO
         $beanInbox = BeanFactory::getBean('pmse_Inbox');
         $fields = array(
@@ -979,7 +987,6 @@ class PMSEEngineApi extends SugarApi
         $q->where()
                 ->equals('cas_status', 'IN PROGRESS');
 
-        $enabledQuery = true;
         $q->select($fields);
         if ($args['module_list'] == 'all' && !empty($args['q'])) {
             $q->where()->queryAnd()
@@ -1016,21 +1023,22 @@ class PMSEEngineApi extends SugarApi
 
         $result = array();
 
-        foreach ($arrayUnattendedCases as $key => $row) {
+        $arrayCases = array_merge($arrayUnattendedCases, $arrayUnauthorizedCases);
+        foreach ($arrayCases as $key => $row) {
             $result[] = $row['cas_id'];
         }
 
         foreach ($rows as $key => $row) {
             $arrayId = array_search($row['cas_id'], $result);
             if ($arrayId !== false ) {
-                $usersBean = BeanFactory::getBean('Users', $arrayUnattendedCases[$arrayId]['cas_user_id']);
+                $usersBean = BeanFactory::getBean('Users', $arrayCases[$arrayId]['cas_user_id']);
                 $row['cas_user_full_name'] = $usersBean->full_name;
                 $processBean = BeanFactory::getBean('pmse_BpmnProcess', $row['pro_id']);
                 $row['prj_id']=$processBean->prj_id;
                 $prjUsersBean = BeanFactory::getBean('Users', $processBean->created_by);
                 $row['prj_user_id_full_name'] = $prjUsersBean->full_name;
-                $row['cas_sugar_object_id']=$arrayUnattendedCases[$arrayId]['cas_sugar_object_id'];
-                $row['cas_sugar_module']=$arrayUnattendedCases[$arrayId]['cas_sugar_module'];
+                $row['cas_sugar_object_id']=$arrayCases[$arrayId]['cas_sugar_object_id'];
+                $row['cas_sugar_module']=$arrayCases[$arrayId]['cas_sugar_module'];
                 $assignedBean = BeanFactory::getBean($row['cas_sugar_module'], $row['cas_sugar_object_id']);
                 $assignedUsersBean = BeanFactory::getBean('Users', $assignedBean->assigned_user_id);
                 $row['assigned_user_name'] = $assignedUsersBean->full_name;
@@ -1073,6 +1081,40 @@ class PMSEEngineApi extends SugarApi
         $rows = $q->execute();
 
         return $rows;
+    }
+
+    /**
+     * Return all the processes that have activities associated with an unauthorized user
+     * @return array
+     * @throws SugarQueryException
+     */
+    private function getUnauthorizedCasesByFlow()
+    {
+        $queryOptions = array('add_deleted' => true);
+
+        $beanFlow = BeanFactory::getBean('pmse_BpmFlow');
+        $q = new SugarQuery();
+        $q->from($beanFlow, $queryOptions);
+        $q->distinct(true);
+        $fields = array('cas_id','cas_sugar_module','cas_sugar_object_id','cas_user_id');
+
+        $q->where()
+            ->equals('cas_flow_status', 'FORM')
+            ->in('cas_sugar_module', PMSEEngineUtils::getSupportedModules());
+
+        $q->select($fields);
+
+        $rows = $q->execute();
+
+        $return = array();
+
+        foreach ($rows as $row) {
+            if (!ACLAction::userHasAccess($row['cas_user_id'],$row['cas_sugar_module'],'access')) {
+                $return[$row['cas_id']] = $row;
+            }
+        }
+
+        return $return;
     }
 
     public function selectCase($api, $args)
