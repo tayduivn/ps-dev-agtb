@@ -48,6 +48,7 @@ class Producer
      */
     public function resolve()
     {
+        $this->bean->retrieve();
         if (!$this->hasChildren(array()) || $this->bean->status == \SchedulersJob::JOB_STATUS_DONE) {
             return;
         }
