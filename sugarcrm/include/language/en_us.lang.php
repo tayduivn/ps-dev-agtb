@@ -112,6 +112,7 @@ $app_list_strings = array (
     'Tags' => 'Tags',
     'Categories' => 'Categories',
     'NotificationCenter' => 'Notification Center',
+    'NotificationCenterSubscriptions' => 'Notification Center Subscriptions',
     'CarrierEmail' => 'Email Carrier',
     'CarrierSocket' => 'Socket Carrier',
   ),
@@ -220,9 +221,7 @@ $app_list_strings = array (
     'Filters' => 'Filter',
     'Comments' => 'Comment',
     'Currencies' => 'Currency',
-    'Project' => 'Project',
     'ProductTemplates' => 'Product Template',
-    'ProductCategories' => 'Product Category',
     'ProductTypes' => 'Product Type',
     'Shippers' => 'Shipping Provider',
     'Subscriptions' => 'Subscription',
@@ -231,6 +230,9 @@ $app_list_strings = array (
     'Tags' => 'Tag', 
     'Categories' => 'Category',
     'NotificationCenter' => 'Notification Center',
+    'NotificationCenterSubscriptions' => 'Notification Center Subscription',
+    'CarrierEmail' => 'Email Carrier',
+    'CarrierSocket' => 'Socket Carrier',
   ),
 
 /*
