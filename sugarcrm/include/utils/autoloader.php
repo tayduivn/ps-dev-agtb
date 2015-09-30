@@ -192,6 +192,8 @@ class SugarAutoLoader
         'autoload_classmap' => 'vendor/composer/autoload_classmap.php',
         'autoload_files' => 'vendor/composer/autoload_files.php',
     );
+    protected static $baseDirs;
+    protected static $ds = DIRECTORY_SEPARATOR;
 
     /**
      * Initialize the loader
@@ -1465,29 +1467,28 @@ class SugarAutoLoader
      */
     public static function normalizeFilePath($filename)
     {
-        static $baseDirs;
-        if (!isset($baseDirs)) {
-            $baseDirs = array(SUGAR_BASE_DIR);
+        if (!isset(self::$baseDirs)) {
+            self::$baseDirs = array(SUGAR_BASE_DIR);
             if (defined('SHADOW_INSTANCE_DIR')) {
-                $baseDirs[] = SHADOW_INSTANCE_DIR;
+                self::$baseDirs[] = SHADOW_INSTANCE_DIR;
             }
         }
 
         // Normalize directory separators
-        if(DIRECTORY_SEPARATOR != '/') {
-            $filename = str_replace(DIRECTORY_SEPARATOR, "/", $filename);
+        if (self::$ds != '/') {
+            $filename = str_replace(self::$ds, "/", $filename);
         }
 
-        // Remove repeated separators
-        $filename = preg_replace('#(/)(\1+)#', '/', $filename);
-
         // Remove base dir - Composer always has absolute paths.
-        foreach ($baseDirs as $baseDir) {
+        foreach (self::$baseDirs as $baseDir) {
             $filename = str_replace($baseDir . '/', '', $filename, $count);
             if ($count > 0) {
                 break;
             }
         }
+
+        // Remove repeated separators
+        $filename = preg_replace('#(/)(\1+)#', '/', $filename);
 
         return $filename;
     }

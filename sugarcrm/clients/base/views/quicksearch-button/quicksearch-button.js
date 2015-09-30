@@ -62,6 +62,9 @@
      * - `false` means X icon.
      */
     toggleSearchIcon: function(searchButtonIcon) {
+        if (this.searchButtonIcon === searchButtonIcon) {
+            return;
+        }
         var iconEl = this.$('[data-action=search_icon] .fa').first();
         this.searchButtonIcon = searchButtonIcon;
         if (searchButtonIcon) {
@@ -78,7 +81,11 @@
      */
     searchIconClickHandler: function() {
         if (this.searchButtonIcon) {
-            this.layout.trigger('quicksearch:bar:search');
+            if (this.layout.isResponsiveMode) {
+                this.layout.trigger('quicksearch:expand');
+            } else {
+                this.layout.trigger('quicksearch:bar:search');
+            }
         } else {
             this.layout.trigger('quicksearch:bar:clear');
             this.layout.trigger('quicksearch:close');

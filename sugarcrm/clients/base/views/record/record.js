@@ -1326,13 +1326,12 @@
     _setMaxWidthForEllipsifiedCell: function($ellipsisCell, width) {
         var ellipsifiedCell,
             fieldType = $ellipsisCell.data('type');
-
         if (fieldType === 'fullname' || fieldType === 'dashboardtitle') {
             ellipsifiedCell = this.getField($ellipsisCell.data('name'));
             width -= ellipsifiedCell.getCellPadding();
             ellipsifiedCell.setMaxWidth(width);
         } else {
-            $ellipsisCell.children().css({'max-width': width});
+            $ellipsisCell.css({'width': width}).children().css({'max-width': (width - 2) + 'px'});
         }
     },
 

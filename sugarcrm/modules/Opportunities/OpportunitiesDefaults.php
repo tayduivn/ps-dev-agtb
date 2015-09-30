@@ -23,11 +23,7 @@ class OpportunitiesDefaults
         $oppsConfig = self::getDefaults();
 
         foreach ($oppsConfig as $name => $value) {
-            if (is_array($value)) {
-                $admin->saveSetting('Opportunities', $name, json_encode($value), 'base');
-            } else {
-                $admin->saveSetting('Opportunities', $name, $value, 'base');
-            }
+            $admin->saveSetting('Opportunities', $name, $value, 'base');
         }
 
         return $oppsConfig;

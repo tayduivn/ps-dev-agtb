@@ -304,7 +304,7 @@ nv.models.axis = function() {
         tickText.each(function(d, i) {
           var textContent = fmt(d, i, true),
               textNode = d3.select(this),
-              textArray = textContent.replace('/', '/ ').split(' '),
+              textArray = textContent && textContent !== '' ? textContent.replace('/', '/ ').split(' ') : [],
               i = 0,
               l = textArray.length,
               dy = mirror === 1 ? 0.71 : -1;
@@ -534,6 +534,27 @@ nv.models.axis = function() {
               }
             }
           });
+
+      } else {
+
+        //highlight zero line ... Maybe should not be an option and should just be in CSS?
+        axisTicks.select('line')
+          .filter(function(d) {
+            //this is because sometimes the 0 tick is a very small fraction, TODO: think of cleaner technique
+            return !parseFloat(Math.round(d * 100000) / 1000000);
+          })
+          .classed('zero', highlightZero);
+
+        // hide zero line if same as domain line
+        axisTicks.select('line')
+          .style('opacity', function(d, i) {
+            if (axis.orient() === 'left' || axis.orient() === 'bottom') {
+              return scaleCalc(d) === extent[0] ? 0 : 1;
+            } else {
+              return scaleCalc(d) === extent[1] ? 0 : 1;
+            }
+          });
+
       }
 
       //------------------------------------------------------------
@@ -556,25 +577,18 @@ nv.models.axis = function() {
         thickness += labelThickness;
       }
 
-      //highlight zero line ... Maybe should not be an option and should just be in CSS?
-      if (highlightZero) {
-        g.selectAll('line.tick')
-            .filter(function(d) {
-              return !parseFloat(Math.round(d * 100000) / 1000000);
-            }) //this is because sometimes the 0 tick is a very small fraction, TODO: think of cleaner technique
-            .classed('zero', true);
-      }
+
 
       // set tick line position to half pixels to prevent anti-aliasing
-      g.selectAll('g.tick, g.nv-axisMaxMin')
-        .attr('transform', function(d) {
-          var components = d3.transform(d3.select(this).attr('transform')).translate;
-          var trans = [
-              vertical ? components[0] : (parseInt(components[0], 10) + 0.5),
-              vertical ? (parseInt(components[1], 10) + 0.5) : components[1]
-            ];
-          return 'translate(' + trans[0] + ',' + trans[1] + ')';
-        });
+      // g.selectAll('g.tick, g.nv-axisMaxMin')
+      //   .attr('transform', function(d) {
+      //     var components = d3.transform(d3.select(this).attr('transform')).translate;
+      //     var trans = [
+      //         vertical ? components[0] : (parseInt(components[0], 10) + 0.5),
+      //         vertical ? (parseInt(components[1], 10) + 0.5) : components[1]
+      //       ];
+      //     return 'translate(' + trans[0] + ',' + trans[1] + ')';
+      //   });
 
       //store old scales for use in transitions on update
       scale0 = scale.copy();

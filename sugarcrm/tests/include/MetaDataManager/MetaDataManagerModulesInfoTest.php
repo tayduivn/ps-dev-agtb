@@ -143,6 +143,10 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
         $modulesInfo = $mm->getModulesInfo();
 
         foreach ($fullModuleList as $module) {
+            //Do not check modules that are ignored via ACL's
+            if (!isset($modulesInfo[$module])) {
+                continue;
+            }
             // Test visible
             if (in_array($module, $moduleList)) {
                 $this->assertTrue($modulesInfo[$module]['visible'], $module . ' should be visible');

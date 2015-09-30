@@ -116,33 +116,35 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider testDecodeConfigValDataProvider
+     * @dataProvider configValueIntegrityProvider
      */
-    public function testDecodeConfigVal($val, $result)
+    public function testConfigValueIntegrity($value, $expected)
     {
         /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
-        $return = SugarTestReflection::callProtectedMethod($admin, 'decodeConfigVar', array($val));
-        $this->assertEquals($result, $return);
+        $admin->saveSetting('PHPUnit', 'Test', $value, 'base');
+        $config = $admin->getConfigForModule('PHPUnit', 'base', true);
+        $this->assertSame($expected, $config['Test']);
     }
 
     /**
      * @return array
      */
-    public function testDecodeConfigValDataProvider()
+    public function configValueIntegrityProvider()
     {
         return array(
             array('A', 'A'), // simple string
-            array('A\\B', 'AB'), // stripslashes
+            array('A\\B', 'A\\B'), // slashes
             array('&amp;', '&'), // html decode
+            array('Русский', 'Русский'), // unicode
             array('7.0', '7.0'), // simple number
             array('7.0.0', '7.0.0'),
-            array('7', 7),      // convert to integers
-            array('0', 0),      // convert to integers
-            array(null, null),  // null check
+            array(7, 7),      // integer
             array('', ''),      // empty string check
-            array('["portal"]', array('portal')), // json encoded string
-            array('{"foo":"bar"}',array('foo'=>'bar')),
+            array(array('portal'), array('portal')), // indexed array
+            array(array('foo' => 'bar'), array('foo' => 'bar')), // associative array
+            array('"value1"', '"value1"'), // quoted string
+            array(array(2 => '"val"ue2'), array(2 => '"val"ue2')), // array with quoted string
         );
     }
 }

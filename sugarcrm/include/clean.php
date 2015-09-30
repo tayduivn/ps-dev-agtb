@@ -200,7 +200,15 @@ class SugarCleaner
      */
     static public function cleanHtml($html, $encoded = false)
     {
+        static $processed = array();
+        $key = md5($html);
+
         if(empty($html)) return $html;
+
+        if (in_array($key, $processed)) {
+            // mail is already clean, do not process again
+            return $html;
+        }
 
         if($encoded) {
             // take care of multiple html encodings by repeatedly decoding till there is nothing to decode
@@ -220,6 +228,7 @@ class SugarCleaner
         if($encoded) {
             $cleanhtml = to_html($cleanhtml);
         }
+        $processed[] = md5($cleanhtml);
         return $cleanhtml;
     }
 

@@ -48,6 +48,10 @@ class PMSEEngineUtils
         'users',
         'user_sync',
         'relcases_kbcontents',
+        'localizations',
+        'revisions',
+        'attachments',
+        'usefulness'
     );
 
     /**
