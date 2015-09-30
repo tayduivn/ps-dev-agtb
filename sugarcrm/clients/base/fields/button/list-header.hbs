@@ -11,5 +11,13 @@
  */
 --}}
 <a href="{{#if fullRoute}}#{{fullRoute}}{{else}}{{#if def.route}}#{{buildRoute context=context model=model action=def.route.action}}{{else}}javascript:void(0);{{/if}}{{/if}}"
-   name="{{name}}">
+    {{#if def.tooltip}}
+        rel="tooltip"
+        data-placement="bottom"
+        title="{{str def.tooltip module}}"
+        {{#unless label}}aria-label="{{str def.tooltip module}}"{{/unless}}
+    {{else}}
+    {{#unless label}}{{#if iconLabel}}aria-label="{{iconLabel}}"{{/if}}{{/unless}}
+    {{/if}}
+    role="button" name="{{name}}">
 {{#if def.icon}}<i class="fa {{def.icon}}"></i> {{/if}}{{label}}</a>

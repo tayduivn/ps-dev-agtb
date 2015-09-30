@@ -45,6 +45,7 @@
     },
     _render:function(){
         this.fullRoute = _.isString(this.def.route) ? this.def.route : null;
+        this.iconLabel = _.isString(this.def.icon) ? this.def.icon.replace(/^fa-(.*)/, '$1').replace(/-o(-)|-o$/, ' outline$1').replace('-', ' ') : null;
 
         app.view.Field.prototype._render.call(this);
     },
