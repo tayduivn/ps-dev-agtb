@@ -44,7 +44,9 @@
     extendsFrom: 'FieldsetField',
 
     events: {
-        'click [data-toggle=dropdown]' : 'renderDropdown'
+        'click [data-toggle=dropdown]' : 'renderDropdown',
+        'shown.bs.dropdown': '_toggleAria',
+        'hidden.bs.dropdown': '_toggleAria'
     },
     plugins: ['Tooltip'],
 
@@ -216,6 +218,17 @@
     },
 
     /**
+     * Sets a button accessibility class 'aria-expanded' to true or false
+     * depending on if the dropdown menu is open or closed.
+     *
+     * @private
+     */
+    _toggleAria: function() {
+        var $button = this.$(this.actionDropDownTag);
+        $button.attr('aria-expanded', this.$el.hasClass('open'));
+    },
+
+    /**
      * Sets a button to {@link #defaultActionBtn} and to have default-button
      * properties. Unsets the previous {@link #defaultActionBtn}.
      *
@@ -343,7 +356,10 @@
             }
             return false;
         });
-        this.$('.' + this.caretIcon).closest('a').toggleClass('disabled', !caretEnabled);
+        this.$('.' + this.caretIcon)
+            .closest('a')
+                .toggleClass('disabled', !caretEnabled)
+                .attr('aria-haspopup', caretEnabled);
     },
 
     /**

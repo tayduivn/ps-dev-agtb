@@ -760,6 +760,7 @@
         // If there are drawers, make sure we're updating only list views on active drawer.
         if (_.isUndefined(app.drawer) || app.drawer.isActive(this.$el)) {
             this._previewed = model;
+            this.$('.btn.rowaction.active').removeClass('active').attr('aria-pressed', false);
             this.$("tr.highlighted").removeClass("highlighted current above below");
             if (model) {
                 var rowName = model.module + "_" + model.id;
@@ -767,6 +768,7 @@
                 curr.addClass("current highlighted");
                 curr.prev("tr").addClass("highlighted above");
                 curr.next("tr").addClass("highlighted below");
+                this.$('tr.current .btn.rowaction').addClass('active').attr('aria-pressed', true);
             }
         }
     },
