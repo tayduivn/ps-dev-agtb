@@ -157,8 +157,7 @@ class RecurringHelper
                 $result['interval'] = 1;
             }
             if (isset($currentRule['UNTIL'])) {
-                $dateTime =
-                    \SugarDateTime::createFromFormat('Ymd\THis\Z', $currentRule['UNTIL'], new \DateTimeZone('UTC'));
+                $dateTime = new \SugarDateTime($currentRule['UNTIL']);
                 $result['until'] = $dateTime->asDb();
             }
             if (isset($currentRule['COUNT'])) {
