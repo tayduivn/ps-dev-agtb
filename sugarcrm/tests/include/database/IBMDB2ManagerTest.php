@@ -88,7 +88,7 @@ class IBMDB2ManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $isFound = false;
         foreach ($queries as $query) {
-            if ($query == 'SELECT indname, colname, language FROM SYSIBMTS.TSINDEXES WHERE TABSCHEMA = \'\' AND TABNAME=\'MYTABLE\'') {
+            if (strpos($query, 'SYSIBMTS.TSINDEXES') !== false) {
                 $isFound = true;
             }
         }

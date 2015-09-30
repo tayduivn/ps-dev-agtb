@@ -109,7 +109,7 @@ class PMSEExporter
         $api->setHeader("Cache-Control", "max-age=0");
         $api->setHeader("Pragma", "public");
 
-        return serialize($projectContent);
+        return json_encode($projectContent);
     }
 
     /**
@@ -134,20 +134,17 @@ class PMSEExporter
      */
     public function getMetadata()
     {
-        global $sugar_flavor;
-        global $sugar_version;
-        global $sugar_config;
-        //$pmseSingleton = PMSE::getInstance();
-        $pmseName = 'ProcessAuthor'; //$pmseSingleton->getModuleName();
-        $pmseVersion = '1.0'; //$pmseSingleton->getVersion();
-        $metadataObject = new stdClass();
-        $metadataObject->SugarCRMFlavor = $sugar_flavor;
-        $metadataObject->SugarCRMVersion = $sugar_version;
-        $metadataObject->SugarCRMHost = $sugar_config['host_name'];
-        $metadataObject->SugarCRMUrl = $sugar_config['site_url'];
-        $metadataObject->PMSEName = $pmseName;
-        $metadataObject->PMSEVersion = $pmseVersion;
-        $metadataObject->ExportDate = date('Y-m-d H:i:s');
+        global $sugar_flavor, $sugar_version, $sugar_config;
+        $toolName = 'ProcessAuthor';
+        $toolVersion = '2.0';
+        $metadataObject = array();
+        $metadataObject['SugarCRMFlavor'] = $sugar_flavor;
+        $metadataObject['SugarCRMVersion'] = $sugar_version;
+        $metadataObject['SugarCRMHost'] = $sugar_config['host_name'];
+        $metadataObject['SugarCRMUrl'] = $sugar_config['site_url'];
+        $metadataObject['Name'] = $toolName;
+        $metadataObject['Version'] = $toolVersion;
+        $metadataObject['ExportDate'] = date('Y-m-d H:i:s');
         return $metadataObject;
     }
 }

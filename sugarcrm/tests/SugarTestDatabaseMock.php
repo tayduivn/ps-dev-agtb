@@ -263,4 +263,10 @@ class SugarTestDatabaseMock extends DBManager
     public function getFromDummyTable() {}
     public function getGuidSQL() {}
     public function prepareStatement($sql) { return null; }
+
+    /** {@inheritDoc} */
+    protected function get_index_data($table_name = null, $index_name = null)
+    {
+        return array();
+    }
 }
