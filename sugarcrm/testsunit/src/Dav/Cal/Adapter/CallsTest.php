@@ -22,7 +22,7 @@ use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings as MeetingAdapter;
  * @package Sugarcrm\SugarcrmTestsUnit\Dav\Cal\Adapter
  * @coversDefaultClass Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory\Meetings
  */
-class MeetingsTest extends \PHPUnit_Framework_TestCase
+class CallsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * data for CalDavEvent mock getters
@@ -38,42 +38,15 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
     );
 
     /**
-     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings::import
-     */
-    public function testImport()
-    {
-        /**@var \Meeting $meetingBean */
-        $meetingBean = $this->getBeanMock('\Meeting');
-        $caldavBean = $this->getCalDavBeanMock();
-        $meetings = $this->getMeetingAdapterMock($caldavBean);
-
-        $result = $meetings->import($meetingBean, $caldavBean);
-
-        $this->assertTrue($result);
-
-        $this->assertEquals($meetingBean->name, $this->calDavBeanProperties['getTitle']);
-        $this->assertEquals($meetingBean->description, $this->calDavBeanProperties['getDescription']);
-        $this->assertEquals($meetingBean->date_start, $this->calDavBeanProperties['getStartDate']);
-        $this->assertEquals($meetingBean->date_end, $this->calDavBeanProperties['getEndDate']);
-        $this->assertEquals($meetingBean->location, $this->calDavBeanProperties['getLocation']);
-        $this->assertEquals($meetingBean->duration_hours, round($this->calDavBeanProperties['getDuration'] / 60));
-        $this->assertEquals($meetingBean->duration_minutes, $this->calDavBeanProperties['getDuration'] % 60);
-
-        $result = $meetings->import($meetingBean, $caldavBean);
-        $this->assertFalse($result);
-
-    }
-
-    /**
      * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings::export
      */
     public function testExport()
     {
-        $meetingBean = $this->getBeanMock('\Meeting');
+        $callBean = $this->getBeanMock('\Call');
         $calDavBean = $this->getCalDavBeanMock();
-        $meetings = $this->getMeetingAdapterMock($meetingBean);
+        $callAdapater = $this->getCallsAdapterMock($callBean);
 
-        $result = $meetings->export($meetingBean, $calDavBean);
+        $result = $callAdapater->export($callBean, $calDavBean);
         $this->assertTrue($result);
     }
 
@@ -123,9 +96,9 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
      * @param $nonCachedBeanReturn
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    public function getMeetingAdapterMock($nonCachedBeanReturn)
+    public function getCallsAdapterMock($nonCachedBeanReturn)
     {
-        $adapterMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings')
+        $adapterMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Calls')
             ->disableOriginalConstructor()
             ->setMethods(array('getNotCachedBean', 'getCurrentUserId', 'getUserCalendars', 'getDateTimeHelper', 'getCalendarEvents'))
             ->getMock();
