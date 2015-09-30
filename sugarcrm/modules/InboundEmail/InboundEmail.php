@@ -5248,13 +5248,32 @@ eoq;
 					$GLOBALS['log']->debug("INBOUNDEMAIL: could not imap_mail_copy() [ {$uids} ] to folder [ {$toFolder} ] from folder [ {$fromFolder} ]");
 				}
 			} else {
-				if(imap_mail_move($this->conn, $uids, $toFolder, CP_UID)) {
+                $connectStringToFolder = $this->getConnectString('', $toFolder);
+                $imapStatus = imap_status($this->conn, $connectStringToFolder, SA_UIDNEXT);
+
+                if ($imapStatus && imap_mail_move($this->conn, $uids, $toFolder, CP_UID)) {
+                    $nextUid = $imapStatus->uidnext;
 					$GLOBALS['log']->info("INBOUNDEMAIL: imap_mail_move() [ {$uids} ] to folder [ {$toFolder} ] from folder [ {$fromFolder} ]");
 					imap_expunge($this->conn); // hard deletes moved messages
 
 					// update cache on fromFolder
                     $overviews = $this->getOverviewsFromCacheFile($exUids, $fromFolder, true);
 					$this->deleteCachedMessages($uids, $fromFolder);
+
+                    // Need to switch folder because imap_search doesn't accept folder as a parameter
+                    imap_reopen($this->conn, $connectStringToFolder);
+
+                    $newUids = array_filter(
+                        imap_search($this->conn, 'ALL UNDELETED', SE_UID),
+                        function ($x) use ($nextUid) {
+                            return $x >= $nextUid;
+                        }
+                    );
+
+                    foreach ($overviews as $overview) {
+                        // need to update UIDs to match the new target folder
+                        $overview->uid = array_shift($newUids);
+                    }
 
 					// update cache on toFolder
                     $this->setCacheValue($toFolder, $overviews, array(), array());

@@ -54,7 +54,13 @@ $viewdefs['Products']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_DISCOUNT_PRICE',
           'enabled' => true,
           'default' => true,
+          'convertToBase' => true,
+          'showTransactionalAmount' => true,
           'name' => 'discount_price',
+          'related_fields' => array(
+              'currency_id',
+              'base_rate'
+          ),
         ),
         array(
           'label' => 'LBL_LIST_SUPPORT_EXPIRES',

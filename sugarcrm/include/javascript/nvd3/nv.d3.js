@@ -933,11 +933,19 @@ nv.utils.polarToCartesian = function(centerX, centerY, radius, angleInDegrees) {
 
 nv.utils.angleToRadians = function(angleInDegrees) {
   return angleInDegrees * Math.PI / 180.0;
-}
+};
 
 nv.utils.angleToDegrees = function(angleInRadians) {
   return angleInRadians * 180.0 / Math.PI;
-}
+};
+
+nv.utils.isValidDate = function(d) {
+  if (!d) {
+    return false;
+  }
+  var testDate = new Date(d);
+  return testDate instanceof Date && !isNaN(testDate.valueOf());
+};
 nv.models.axis = function() {
 
   //============================================================
@@ -1244,7 +1252,7 @@ nv.models.axis = function() {
         tickText.each(function(d, i) {
           var textContent = fmt(d, i, true),
               textNode = d3.select(this),
-              textArray = textContent.replace('/', '/ ').split(' '),
+              textArray = textContent && textContent !== '' ? textContent.replace('/', '/ ').split(' ') : [],
               i = 0,
               l = textArray.length,
               dy = mirror === 1 ? 0.71 : -1;
@@ -1474,6 +1482,27 @@ nv.models.axis = function() {
               }
             }
           });
+
+      } else {
+
+        //highlight zero line ... Maybe should not be an option and should just be in CSS?
+        axisTicks.select('line')
+          .filter(function(d) {
+            //this is because sometimes the 0 tick is a very small fraction, TODO: think of cleaner technique
+            return !parseFloat(Math.round(d * 100000) / 1000000);
+          })
+          .classed('zero', highlightZero);
+
+        // hide zero line if same as domain line
+        axisTicks.select('line')
+          .style('opacity', function(d, i) {
+            if (axis.orient() === 'left' || axis.orient() === 'bottom') {
+              return scaleCalc(d) === extent[0] ? 0 : 1;
+            } else {
+              return scaleCalc(d) === extent[1] ? 0 : 1;
+            }
+          });
+
       }
 
       //------------------------------------------------------------
@@ -1496,25 +1525,18 @@ nv.models.axis = function() {
         thickness += labelThickness;
       }
 
-      //highlight zero line ... Maybe should not be an option and should just be in CSS?
-      if (highlightZero) {
-        g.selectAll('line.tick')
-            .filter(function(d) {
-              return !parseFloat(Math.round(d * 100000) / 1000000);
-            }) //this is because sometimes the 0 tick is a very small fraction, TODO: think of cleaner technique
-            .classed('zero', true);
-      }
+
 
       // set tick line position to half pixels to prevent anti-aliasing
-      g.selectAll('g.tick, g.nv-axisMaxMin')
-        .attr('transform', function(d) {
-          var components = d3.transform(d3.select(this).attr('transform')).translate;
-          var trans = [
-              vertical ? components[0] : (parseInt(components[0], 10) + 0.5),
-              vertical ? (parseInt(components[1], 10) + 0.5) : components[1]
-            ];
-          return 'translate(' + trans[0] + ',' + trans[1] + ')';
-        });
+      // g.selectAll('g.tick, g.nv-axisMaxMin')
+      //   .attr('transform', function(d) {
+      //     var components = d3.transform(d3.select(this).attr('transform')).translate;
+      //     var trans = [
+      //         vertical ? components[0] : (parseInt(components[0], 10) + 0.5),
+      //         vertical ? (parseInt(components[1], 10) + 0.5) : components[1]
+      //       ];
+      //     return 'translate(' + trans[0] + ',' + trans[1] + ')';
+      //   });
 
       //store old scales for use in transitions on update
       scale0 = scale.copy();
@@ -6879,9 +6901,29 @@ nv.models.line = function() {
 
       var linePaths = groups.selectAll('path.nv-line')
           .data(function(d) {
-            var values = scatter.singlePoint() ? x.domain().map(function(x, i) {
-              return [x, d.values[0][1]];
-            }) : d.values;
+            // if there are no values, return null
+            if (!d.values || !d.values.length) {
+              return [null];
+            }
+            // if there is more than one point, return all values
+            if (d.values.length > 1) {
+              return [d.values];
+            }
+            // if there is only one single point in data array
+            // extend it horizontally in both directions
+            var values = x.domain().map(function(x, i) {
+                // if data point is array, then it should be returned as an array
+                // the getX and getY methods handle the internal mechanics of positioning
+                if (d.values[0] instanceof Array) {
+                  return [x, d.values[0][1]];
+                } else {
+                  // sometimes the line data point is an object
+                  // so the values should be returned as an array of objects
+                  var newValue = JSON.parse(JSON.stringify(d.values[0]));
+                  newValue.x = x;
+                  return newValue;
+                }
+              });
             return [values];
           });
       linePaths.enter().append('path')
@@ -7094,10 +7136,14 @@ nv.models.lineChart = function() {
           container = d3.select(this);
 
       var properties = chartData ? chartData.properties : {},
-          data = chartData ? chartData.data : null;
+          data = chartData ? chartData.data : null,
+          labels = properties.labels ? properties.labels.map(function(d) { return d.l || d; }) : [];
 
       var lineData,
-          totalAmount = 0;
+          totalAmount = 0,
+          singlePoint = false,
+          isTimeSeries = false,
+          showMaxMin = false;
 
       chart.container = this;
 
@@ -7193,6 +7239,85 @@ nv.models.lineChart = function() {
 
       //------------------------------------------------------------
       // Setup Scales and Axes
+
+      // Are all data series single points
+      singlePoint = d3.max(lineData, function(d) {
+          return d.values.length;
+        }) === 1;
+
+      isTimeSeries = lineData[0].values.length && lineData[0].values[0] instanceof Array && nv.utils.isValidDate(lineData[0].values[0][0]);
+      // SAVE FOR LATER
+      // isOrdinalSeries = !isTimeSeries && labels.length > 0 && d3.min(lineData, function(d) {
+      //   return d3.min(d.values, function(d, i) {
+      //     return lines.x()(d, i);
+      //   });
+      // }) > 0;
+
+      showMaxMin = isTimeSeries || nv.utils.isValidDate(labels[0]) ? true : false;
+
+      lines
+        .padData(singlePoint ? false : true)
+        .padDataOuter(-1)
+        .singlePoint(singlePoint)
+        // set x-scale as time instead of linear
+        .xScale(isTimeSeries ? d3.time.scale() : d3.scale.linear());
+
+      if (singlePoint) {
+
+        var xValues = d3.merge(lineData.map(function(d) {
+                return d.values.map(function(d, i) {
+                  return lines.x()(d, i);
+                });
+              }))
+              .reduce(function(p, c) {
+                if (p.indexOf(c) < 0) p.push(c);
+                return p;
+              }, [])
+              .sort(),
+            xExtents = d3.extent(xValues),
+            xOffset = 1 * (isTimeSeries ? 86400000 : 1);
+
+        var yValues = d3.merge(lineData.map(function(d) {
+                return d.values.map(function(d, i) {
+                  return lines.y()(d, i);
+                });
+              })),
+            yExtents = d3.extent(yValues),
+            yOffset = lineData.length === 1 ? 2 : Math.min((yExtents[1] - yExtents[0]) / lineData.length, yExtents[0]);
+
+        lines
+          .xDomain([
+            xExtents[0] - xOffset,
+            xExtents[1] + xOffset
+          ])
+          .yDomain([
+            yExtents[0] - yOffset,
+            yExtents[1] + yOffset
+          ]);
+        xAxis
+          .ticks(xValues.length)
+          .tickValues(xValues)
+          .showMaxMin(false);
+        yAxis
+          .ticks(singlePoint ? 5 : null) //TODO: why 5?
+          .showMaxMin(false)
+          .highlightZero(false);
+
+      } else {
+
+        lines
+          .xDomain(null)
+          .yDomain(null);
+        xAxis
+          .ticks(null)
+          .tickValues(null)
+          .showMaxMin(showMaxMin);
+        yAxis
+          .ticks(null)
+          .showMaxMin(true)
+          .highlightZero(true);
+
+      }
 
       x = lines.xScale();
       y = lines.yScale();
@@ -7348,7 +7473,7 @@ nv.models.lineChart = function() {
         //------------------------------------------------------------
         // Main Chart Component(s)
 
-        var pointSize = Math.pow(pointRadius, 2) * Math.PI * (lines.singlePoint() ? 3 : 1);
+        var pointSize = Math.pow(pointRadius, 2) * Math.PI * (singlePoint ? 3 : 1);
 
         lines
           .width(innerWidth)
@@ -7421,7 +7546,7 @@ nv.models.lineChart = function() {
         // final call to lines based on new dimensions
         linesWrap
           .transition().duration(durationMs)
-            .call(lines)
+            .call(lines);
 
         //------------------------------------------------------------
         // Final repositioning
@@ -9716,9 +9841,6 @@ nv.models.multiBarChart = function() {
         if (scrollEnabled) {
           var diff = (vertical ? innerWidth : innerHeight) - minDimension,
               panMultibar = function() {
-                // if (d3.event && d3.event.type === 'click') {
-                //   return;
-                // }
                 dispatch.tooltipHide(d3.event);
                 scrollOffset = scroll.pan(diff);
                 xAxisWrap.select('.nv-axislabel')

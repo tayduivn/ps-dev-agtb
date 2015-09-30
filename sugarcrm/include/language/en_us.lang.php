@@ -118,9 +118,10 @@ $app_list_strings = array (
         'Calls' => 'Cl',
         'Cases' => 'Cs',
         'Campaigns' => 'Ca',
-        'Notes' => 'Nt',
         'KBLocalizations' => 'Lo',
         'KBRevisions' => 'Re',
+        'Notes' => 'Nt',
+        'ProductCategories' => 'PG',
         'Quotas' => 'Fo',
         'Tasks' => 'Ts'
     ),
