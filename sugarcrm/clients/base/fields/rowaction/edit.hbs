@@ -10,14 +10,18 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<a class="rowaction{{#if def.button}} btn{{/if}}{{#if def.primary}} btn-primary{{/if}}" href="{{#if fullRoute}}#{{fullRoute}}{{else}}{{#if def.route}}#{{buildRoute context=context model=model action=def.route.action}}{{else}}javascript:void(0);{{/if}}{{/if}}"
+<a href="{{#if fullRoute}}#{{fullRoute}}{{else}}{{#if def.route}}#{{buildRoute context=context model=model action=def.route.action}}{{else}}javascript:void(0);{{/if}}{{/if}}"
+    class="rowaction{{#if def.button}} btn{{/if}}{{#if def.primary}} btn-primary{{/if}}"
 {{#if def.event}}
-   data-event="{{def.event}}"
+    data-event="{{def.event}}"
 {{/if}}
 {{#if def.tooltip}}
-   rel="tooltip"
-   data-placement="bottom"
-   title="{{str def.tooltip module}}"
+    rel="tooltip"
+    data-placement="bottom"
+    title="{{str def.tooltip module}}"
+    {{#unless label}}aria-label="{{str def.tooltip module}}"{{/unless}}
+{{else}}
+    {{#unless label}}{{#if iconLabel}}aria-label="{{iconLabel}}"{{/if}}{{/unless}}
 {{/if}}
-   name="{{name}}" track="click:{{#if name}}{{name}}{{else}}{{label}}{{/if}}">
-{{#if def.icon}}<i class="fa {{def.icon}}"></i>{{/if}}{{str label}}</a>
+   role="button" name="{{name}}" track="click:{{#if name}}{{name}}{{else}}{{label}}{{/if}}">
+{{#if def.icon}}<i class="fa {{def.icon}}"></i> {{/if}}{{str label}}</a>
