@@ -268,14 +268,6 @@ class PMSEEngineFilterApi extends FilterApi
     {
         global $current_user;
 
-        // This kind of filter have conflicts with 'visibility' filter, so
-        // we need to handle its occurrences
-        if (self::$isVisibilityApplied) {
-            self::removeVisibilityFilter($where);
-        } else {
-            self::$isVisibilityApplied = true;
-        }
-
         $method = self::getRawExpression($expression);
         if ($method == 'static') {
             $where->queryAnd()
