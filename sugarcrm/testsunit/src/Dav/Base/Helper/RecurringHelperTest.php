@@ -146,6 +146,29 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
                 'deleted' => array(),
             ),
             array(
+                'vEvent' => $this->getEventTemplateObject('recurring-until-date'),
+                'result' => array(
+                    'type' => 'Daily',
+                    'interval' => 1,
+                    'until' => '2015-10-04 08:00:00'
+                ),
+                'children' => array(
+                    '2015-10-01 11:00:00' => array(
+                        'title' => 'Test001'
+                    ),
+                    '2015-10-02 11:00:00' => array(
+                        'title' => 'Test001'
+                    ),
+                    '2015-10-03 11:00:00' => array(
+                        'title' => 'Test001'
+                    ),
+                    '2015-10-04 11:00:00' => array(
+                        'title' => 'Test001'
+                    ),
+                ),
+                'deleted' => array(),
+            ),
+            array(
                 'vEvent' => $this->getEventTemplateObject('recurring-weekly'),
                 'result' => array(
                     'type' => 'Weekly',
