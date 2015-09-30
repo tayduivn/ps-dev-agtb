@@ -28,7 +28,7 @@ class Id implements AddressTypeInterface
      */
     public function getOptions(\User $user)
     {
-        return array('id');
+        return array('id' => $user->id);
     }
 
     /**
@@ -41,5 +41,13 @@ class Id implements AddressTypeInterface
     public function getTransportValue(\User $user, $option)
     {
         return $user->id;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isSelectable()
+    {
+        return false;
     }
 }

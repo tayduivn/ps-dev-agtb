@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Notification\Carrier\CarrierInterface;
+use Sugarcrm\Sugarcrm\Notification\Carrier\AddressType\Id as AddressTypeId;
 
 class CarrierSocketCarrier implements CarrierInterface
 {
@@ -37,10 +38,12 @@ class CarrierSocketCarrier implements CarrierInterface
     }
 
     /**
-     * @return \Sugarcrm\Sugarcrm\Notification\Carrier\AddressType\AddressTypeInterface
+     * Return carrier address type(AddressTypeId)
+     *
+     * @return AddressTypeId
      */
     public function getAddressType()
     {
-        // TODO: Implement getAddressType() method.
+        return new AddressTypeId();
     }
 }

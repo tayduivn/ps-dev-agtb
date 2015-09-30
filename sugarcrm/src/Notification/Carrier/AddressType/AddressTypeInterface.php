@@ -36,4 +36,11 @@ interface AddressTypeInterface
      * @return mixed delivery value
      */
     public function getTransportValue(\User $user, $option);
+
+    /**
+     * Is current address type can be selectable(for now selectable Email, and not selectable Id).
+     *
+     * @return boolean
+     */
+    public function isSelectable();
 }
