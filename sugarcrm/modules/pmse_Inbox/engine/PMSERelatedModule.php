@@ -95,6 +95,9 @@ class PMSERelatedModule {
                 if (in_array($link, PMSEEngineUtils::$relatedBlacklistedLinks)) {
                     continue;
                 }
+                if (!empty(PMSEEngineUtils::$relatedBlacklistedLinksByModule[$filter]) && in_array($link, PMSEEngineUtils::$relatedBlacklistedLinksByModule[$filter])) {
+                    continue;
+                }
                 $relType = $moduleBean->$link->getType(); //returns 'one' or 'many' for the cardinality of the link
                 $label = empty($def['vname']) ? $link : translate($def['vname'], $filter);
                 $moduleLabel = translate("LBL_MODULE_NAME", $relatedModule);

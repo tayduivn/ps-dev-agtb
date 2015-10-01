@@ -96,6 +96,14 @@ class PMSEEngineUtils
     );
 
     /**
+     * PA related blacklisted links by module
+     * @var array
+     */
+    public static $relatedBlacklistedLinksByModule = array(
+        'Accounts'=>array('revenuelineitems')
+    );
+
+    /**
      * PA special fields
      * @var array
      */
