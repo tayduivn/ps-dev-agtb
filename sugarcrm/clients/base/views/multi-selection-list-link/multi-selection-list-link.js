@@ -59,7 +59,7 @@
      */
     _selectMultipleAndClose: function() {
         var selections = this.context.get('mass_collection');
-        if (selections) {
+        if (selections && selections.length > 0) {
             this.layout.once('list:masslink:complete', this._closeDrawer, this);
             this.layout.trigger('list:masslink:fire');
         }
