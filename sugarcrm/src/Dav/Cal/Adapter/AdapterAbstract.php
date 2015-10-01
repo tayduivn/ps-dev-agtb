@@ -359,6 +359,7 @@ abstract class AdapterAbstract
         $isRecurringChanged = false;
         /**@var \CalendarEvents $calendarEvents */
         $calendarEvents = $this->getCalendarEvents();
+        $dateTimeHelper = $this->getDateTimeHelper();
         if (!$calDavBean->parent_id) {
             if (!$sugarBean->id) {
                 $sugarBean->id = create_guid();
@@ -388,7 +389,8 @@ abstract class AdapterAbstract
 
             foreach ($recurringRule['children'] as $calDavChild) {
                 $date_start = $this->getDateTimeStart($calDavChild->getStartDate());
-                if ($date_start == $this->getDateTimeStart($sugarBean->date_start)) {
+                $utcDateStart = $dateTimeHelper->sugarDateToUTC($sugarBean->date_start)->format(\TimeDate::DB_DATETIME_FORMAT);
+                if ($date_start == $this->getDateTimeStart($utcDateStart)) {
                     continue;
                 }
 
@@ -460,6 +462,7 @@ abstract class AdapterAbstract
             $recurringRule['until'] = $dateTimeHelper->sugarDateToDav($sugarBean->repeat_until)->format(\TimeDate::DB_DATE_FORMAT);
             $isChanged = true;
         }
+
         if (!isset($recurringRule['dow']) || $sugarBean->repeat_type != $recurringRule['dow']) {
             $recurringRule['dow'] = $sugarBean->repeat_dow;
             $isChanged = true;
