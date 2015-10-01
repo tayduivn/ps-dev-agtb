@@ -168,7 +168,8 @@ class CalendarActivity {
         $view_start_time,
         $view_end_time,
         $view,
-        $show_calls = true
+        $show_calls = true,
+		$get_parent_details = true
     ) {
 		global $current_user;
 		$act_list = array();
@@ -184,7 +185,7 @@ class CalendarActivity {
 			}
 
 			$where = CalendarActivity::get_occurs_within_where_clause($meeting->table_name, $meeting->rel_users_table, $view_start_time, $view_end_time, 'date_start', $view);
-			$focus_meetings_list = build_related_list_by_user_id($meeting,$user_id,$where);
+			$focus_meetings_list = build_related_list_by_user_id($meeting,$user_id,$where,$get_parent_details);
 			foreach($focus_meetings_list as $meeting) {
 				if(isset($seen_ids[$meeting->id])) {
 					continue;
@@ -209,7 +210,7 @@ class CalendarActivity {
 				}
 
 				$where = CalendarActivity::get_occurs_within_where_clause($call->table_name, $call->rel_users_table, $view_start_time, $view_end_time, 'date_start', $view);
-				$focus_calls_list = build_related_list_by_user_id($call,$user_id,$where);
+				$focus_calls_list = build_related_list_by_user_id($call,$user_id,$where,$get_parent_details);
 
 				foreach($focus_calls_list as $call) {
 					if(isset($seen_ids[$call->id])) {

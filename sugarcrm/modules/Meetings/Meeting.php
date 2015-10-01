@@ -276,9 +276,12 @@ class Meeting extends SugarBean {
 		return "$this->name";
 	}
 
-	function fill_in_additional_detail_fields() {
+	function fill_in_additional_detail_fields($get_parent_fields = true) {
 		global $locale;
-		parent::fill_in_additional_detail_fields();
+
+		if ($get_parent_fields) {
+			parent::fill_in_additional_detail_fields();
+		}
 
 		if (!empty($this->contact_id)) {
 			$query  = "SELECT first_name, last_name FROM contacts ";
