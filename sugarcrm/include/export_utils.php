@@ -1013,7 +1013,7 @@ function getSearchForm($bean, $module)
    * @param array reorderArr array containing desired order of field columns for export
    * @param boolean exclude whether or not to exclude defined fields from export, defaults to true
    * @param array passed_fields_to_exclude fields to be added to the default $fields_to_exclude array
-   * @return array of fields to be used for export
+   * @return array array of fields to be used for export, with all the keys in lowercase
  */
   function get_field_order_mapping($name='', $reorderArr = '', $exclude = true, $passed_fields_to_exclude = array()) {
 
@@ -1049,14 +1049,13 @@ function getSearchForm($bean, $module)
     }
       
     if(!empty($name) && !empty($reorderArr) && is_array($reorderArr)){
-
-        //make sure reorderArr has values as keys, if not then iterate through and assign the value as the key
+        // make sure reorderArr has values as keys, if not then iterate through and assign the value as the key
         $newReorder = array();
-        foreach($reorderArr as $rk=> $rv){
-            if(is_int($rk)){
-                $newReorder[$rv]=$rv;
-            }else{
-                $newReorder[$rk]=$rv;
+        foreach ($reorderArr as $rk => $rv) {
+            if (is_int($rk)) {
+                $newReorder[$rv] = $rv;
+            } else {
+                $newReorder[strtolower($rk)] = $rv;
             }
         }
 
