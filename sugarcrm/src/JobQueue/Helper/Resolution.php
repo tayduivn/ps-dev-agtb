@@ -34,8 +34,7 @@ class Resolution
         }
         switch ($to) {
             case \SchedulersJob::JOB_CANCELLED:
-                if (
-                    $from == \SchedulersJob::JOB_PENDING ||
+                if ($from == \SchedulersJob::JOB_PENDING ||
                     $from == \SchedulersJob::JOB_PARTIAL ||
                     $from == \SchedulersJob::JOB_RUNNING
                 ) {
@@ -57,8 +56,7 @@ class Resolution
                 }
                 break;
             case \SchedulersJob::JOB_RUNNING:
-                if (
-                    $from == \SchedulersJob::JOB_PENDING ||
+                if ($from == \SchedulersJob::JOB_PENDING ||
                     $from == \SchedulersJob::JOB_PARTIAL
                 ) {
                     return true;

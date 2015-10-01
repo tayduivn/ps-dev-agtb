@@ -128,7 +128,7 @@ abstract class AbstractRunner implements RunnerInterface
         $startTime = time();
 
         while (!$this->stopWork) {
-
+            gc_collect_cycles();
             if ($this->worker->work() ||
                 $this->worker->returnCode() === WorkerInterface::RETURN_CODE_IO_WAIT ||
                 $this->worker->returnCode() === WorkerInterface::RETURN_CODE_NO_JOBS

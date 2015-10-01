@@ -45,8 +45,7 @@ class State implements ObserverInterface
             return;
         }
 
-        if (
-            $job->resolution == \SchedulersJob::JOB_CANCELLED ||
+        if ($job->resolution == \SchedulersJob::JOB_CANCELLED ||
             $job->resolution == \SchedulersJob::JOB_PARTIAL
         ) {
             throw new UnexpectedResolutionException($job->resolution, "The job '{$job->id}' has been stopped.");
