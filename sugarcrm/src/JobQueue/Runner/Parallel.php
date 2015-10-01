@@ -184,7 +184,6 @@ class Parallel extends AbstractRunner
         $start = time();
 
         while (!$this->stopWork || count($this->children)) {
-
             $status = null;
 
             /**
@@ -262,6 +261,7 @@ class Parallel extends AbstractRunner
 
     /**
      * Registers the process signal listeners.
+     * @param bool $parent
      */
     protected function registerTicks($parent = true)
     {
@@ -283,6 +283,7 @@ class Parallel extends AbstractRunner
 
     /**
      * Handles signals.
+     * @param $signo
      */
     public function handleSignal($signo)
     {
@@ -291,7 +292,6 @@ class Parallel extends AbstractRunner
         if (!$this->isParent) {
             $this->stopWork = true;
         } else {
-
             switch ($signo) {
                 case SIGUSR1:
                     // No worker files could be found
