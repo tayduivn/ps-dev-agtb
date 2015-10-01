@@ -133,7 +133,7 @@ class PMSEDynaForm
         foreach ($params as $key => $value) {
             $this->dynaform->$key = $value;
             if ($key == 'dyn_view_defs') {
-                $this->dynaform->$key = base64_encode(serialize($value));
+                $this->dynaform->$key = json_encode($value);
             }
         }
         $this->dynaform->dyn_module = $this->baseModule;

@@ -30,7 +30,7 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      *
-     * 
+     *
      */
     public function testRetrieveFlowData()
     {
@@ -38,13 +38,13 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(array('retrieveSugarQueryObject'))
                 ->getMock();
-        
+
         $flowMock = $this->getMockBuilder('SugarBean')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
                 ->setMethods(array('save'))
                 ->getMock();
-        
+
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
                 ->disableOriginalConstructor()
                 ->setMethods(array('select', 'from', 'where', 'queryAnd', 'addRaw', 'execute'))
@@ -88,7 +88,7 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(array('retrieveSugarQueryObject'))
                 ->getMock();
-        
+
         $flowMock = $this->getMockBuilder('SugarBean')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
@@ -129,7 +129,7 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
             'cas_id' => 1,
             'cas_index' => 2
         );
-        
+
         $caseFlowHandlerMock->setBpmFlow($flowMock);
         $result = $caseFlowHandlerMock->retrieveMaxIndex($flowData);
         $this->assertEquals(6, $result);
@@ -141,7 +141,7 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(array('retrieveSugarQueryObject'))
                 ->getMock();
-        
+
         $flowMock = $this->getMockBuilder('SugarBean')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
@@ -251,13 +251,13 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(array('retrieveBean', 'retrieveSugarQueryObject'))
                 ->getMock();
-        
+
         $flowMock = $this->getMockBuilder('SugarBean')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
                 ->setMethods(array('save'))
                 ->getMock();
-        
+
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
                 ->disableOriginalConstructor()
                 ->setMethods(array('select', 'from', 'where', 'queryAnd', 'addRaw', 'execute', 'compileSql'))
@@ -458,7 +458,7 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('Query', 'fetchByAssoc'))
             ->getMock();
-        
+
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
                 ->setMethods(array('retrieveBean', 'retrieveSugarQueryObject'))
@@ -774,6 +774,10 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
                 ->method('retrieveBean')
                 ->will($this->returnValue($caseDataMock));
 
+        $caseDataMock->expects($this->atLeastOnce())
+            ->method('save')
+            ->will($this->returnValue($caseDataMock));
+
         $noteMock = $this->getMockBuilder('pmse_BpmNotes')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
@@ -820,8 +824,10 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $caseFlowHandlerMock->saveFormAction($params);
+        $this->assertAttributeContains(json_encode($params), "cas_data", $caseDataMock);
+        $this->assertAttributeContains(json_encode($params['log_data']), "cas_pre_data", $formActionMock);
     }
-    
+
     public function testSaveFormActionIfPreviousActionExists()
     {
         global $current_user;
@@ -855,6 +861,10 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
         $caseFlowHandlerMock->expects($this->at(1))
                 ->method('retrieveBean')
                 ->will($this->returnValue($caseDataMock));
+
+        $caseDataMock->expects($this->atLeastOnce())
+            ->method('save')
+            ->will($this->returnValue($caseDataMock));
 
         $noteMock = $this->getMockBuilder('pmse_BpmNotes')
                 ->disableAutoload()
@@ -904,6 +914,8 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $caseFlowHandlerMock->saveFormAction($params);
+        $this->assertAttributeContains(json_encode($params), "cas_data", $caseDataMock);
+        $this->assertAttributeContains(json_encode($params['log_data']), "cas_pre_data", $formActionMock);
     }
 
 }

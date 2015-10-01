@@ -494,14 +494,22 @@ class Email extends SugarBean {
 			            $object_arr[$bean->module_dir] = $bean->id;
 			        }
 			}
-			foreach($toAddresses as $addrMeta) {
-				$addr = $addrMeta['email'];
-				$beans = $sea->getBeansByEmailAddress($addr);
-				foreach($beans as $bean) {
-					if (!isset($object_arr[$bean->module_dir])) {
-						$object_arr[$bean->module_dir] = $bean->id;
-					}
-				}
+			foreach ($toAddresses as $addrMeta) {
+			    $addr = $addrMeta['email'];
+			    $beans = $sea->getBeansByEmailAddress($addr);
+			    if (count($beans) == 1) {
+			        if (!isset($object_arr[$beans[0]->module_dir])) {
+			            $object_arr[$beans[0]->module_dir] = $beans[0]->id;
+			        }
+			    } else {
+			        foreach ($beans as $bean) {
+			            if (!isset($object_arr[$bean->module_dir]) &&
+			                !empty($addrMeta['display']) && $addrMeta['display'] == $bean->name) {
+			                $object_arr[$bean->module_dir] = $bean->id;
+			                break;
+			            }
+			        }
+			    }
 			}
 
 	        /* template parsing */

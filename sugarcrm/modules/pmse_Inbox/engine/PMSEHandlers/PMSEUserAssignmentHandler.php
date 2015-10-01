@@ -225,7 +225,7 @@ class PMSEUserAssignmentHandler
             $newFlowRow->cas_adhoc_actions = $flowRow->cas_adhoc_actions;
         } else {
             if ($isFormRequest) {
-                $newFlowRow->cas_adhoc_actions = serialize(array('link_cancel', 'route', 'edit'));
+                $newFlowRow->cas_adhoc_actions = json_encode(array('link_cancel', 'route', 'edit'));
             } else {
                 $newFlowRow->cas_adhoc_actions = $caseData['cas_adhoc_actions'];
             }
