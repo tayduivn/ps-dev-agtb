@@ -2468,7 +2468,7 @@ ENDP;
 
                             $optionKeys = array_keys($GLOBALS['app_list_strings'][$value['options']]);
                             // Strip all valid characters in dropdown keys - a-zA-Z0-9. and spaces
-                            $result = preg_replace('/[\w\d\s\.]/', '', $optionKeys);
+                            $result = preg_replace('/[\w\d\s\.,\(\)]/', '', $optionKeys);
 
                             // Get unique chars
                             $result = count_chars(implode('', $result), 3);
