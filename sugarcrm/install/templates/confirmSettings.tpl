@@ -95,6 +95,13 @@
                             <td>{$smarty.session.websockets_server_url}</td>
                         </tr>
                     {/if}
+                    {if $smarty.session.trigger_server_url}
+                        <tr>
+                            <td></td>
+                            <td><strong>{$MOD.LBL_TRIGGER_SERVER_CONFIGURATION_URL}</strong></td>
+                            <td>{$smarty.session.trigger_server_url}</td>
+                        </tr>
+                    {/if}
                     {if $smarty.session.install_type && $smarty.session.install_type eq 'custom'}
                         <tr>
                             <td colspan="3" align="left"></td>

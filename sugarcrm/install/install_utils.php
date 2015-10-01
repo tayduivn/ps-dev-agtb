@@ -780,6 +780,14 @@ function handleSugarConfig() {
         unset($_SESSION['websockets_client_balancer']);
     }
 
+    // Setup Trigger server configuration
+    if (!empty($_SESSION['trigger_server_url'])) {
+        $sugar_config['trigger_server'] = array(
+            'url' => $_SESSION['trigger_server_url'],
+        );
+        unset($_SESSION['trigger_server_url']);
+    }
+
     /* nsingh(bug 22402): Consolidate logger settings under $config['logger'] as liked by the new logger! If log4pphp exists,
        these settings will be overwritten by those in log4php.properties when the user access admin->system settings. */
     $sugar_config['logger']	= array(
@@ -1748,6 +1756,10 @@ function pullSilentInstallVarsIntoSession() {
     }
     if (isset($sugar_config_si['websockets']['client']['balancer'])) {
         $derived['websockets_client_balancer'] = $sugar_config_si['websockets']['client']['balancer'];
+    }
+
+    if (isset($sugar_config_si['trigger_server']['url'])) {
+        $derived['trigger_server_url'] = $sugar_config_si['trigger_server']['url'];
     }
     
     $needles = array(
