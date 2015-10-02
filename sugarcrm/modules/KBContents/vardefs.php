@@ -37,7 +37,12 @@ $dictionary['KBContent'] = array(
         ),
         'language' => array(
             'name' => 'language',
-            'type' => 'varchar',
+            'type' => 'enum',
+            'function_bean' => 'KBContents',
+            'function' => array(
+                'returns' => 'array',
+                'name' => 'getLanguageOptions'
+            ),
             'len' => '2',
             'required' => true,
             'vname' => 'LBL_LANG',

@@ -70,23 +70,23 @@ class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
             'id' => 5,
             'cas_flow_status' => 'FORM',
             'assigned_user_id' => 2,
-            'cas_adhoc_actions' => serialize(array('link_cancel', 'route', 'edit', 'continue')),
+            'cas_adhoc_actions' => json_encode(array('link_cancel', 'route', 'edit', 'continue')),
             'bpmn_id' => 'c5189a2e-1cff-e214-3e86-55664fcc93e6',
             'cas_assignment_method' => 'static',
         );
-        
+
         $expectedResult = array(
             'route_action' => 'WAIT',
             'flow_action' => 'CREATE',
-            'flow_data' => array ( 
-                'cas_user_id' => 2,                
+            'flow_data' => array (
+                'cas_user_id' => 2,
                 'cas_index' => 1,
                 'id' => 5,
                 'cas_flow_status' => 'FORM',
             ),
             'flow_id' => $flowData['id']
         );
-        
+
         $this->userTask->expects($this->exactly(1))
             ->method('prepareResponse')
             ->with($expectedFlowData, 'WAIT', 'CREATE')
@@ -102,7 +102,78 @@ class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue($activityDefinition));
 
         $this->userTask->setUserAssignmentHandler($userAssignment);
-        
+
+        $result = $this->userTask->run($flowData, $bean, $externalAction);
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     *
+     */
+    public function testRunAssignmentForm()
+    {
+        $this->userTask = $this->getMockBuilder('PMSEUserTask')
+            ->setMethods(array('prepareResponse', 'retrieveBean'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $userAssignment = $this->getMockBuilder('PMSEUserAssignmentHandler')
+            ->disableOriginalConstructor()
+            ->setMethods(array('taskAssignment'))
+            ->getMock();
+
+        $activityDefinition = new stdClass();
+        $activityDefinition->act_response_buttons = 'FORM';
+        $activityDefinition->act_assignment_method = 'static';
+
+        $bean = new stdClass();
+        $externalAction = '';
+        $flowData = array(
+            'cas_user_id' => 1,
+            'cas_index' => 1,
+            'id' => 5,
+            'bpmn_id' => 'c5189a2e-1cff-e214-3e86-55664fcc93e6',
+        );
+
+        $expectedFlowData = array(
+            'cas_user_id' => 2,
+            'cas_index' => 1,
+            'id' => 5,
+            'cas_flow_status' => 'FORM',
+            'assigned_user_id' => 2,
+            'cas_adhoc_actions' => json_encode(array('link_cancel', 'approve', 'reject', 'edit')),
+            'bpmn_id' => 'c5189a2e-1cff-e214-3e86-55664fcc93e6',
+            'cas_assignment_method' => 'static',
+        );
+
+        $expectedResult = array(
+            'route_action' => 'WAIT',
+            'flow_action' => 'CREATE',
+            'flow_data' => array (
+                'cas_user_id' => 2,
+                'cas_index' => 1,
+                'id' => 5,
+                'cas_flow_status' => 'FORM',
+            ),
+            'flow_id' => $flowData['id']
+        );
+
+        $this->userTask->expects($this->exactly(1))
+            ->method('prepareResponse')
+            ->with($expectedFlowData, 'WAIT', 'CREATE')
+            ->will($this->returnValue($expectedResult));
+
+        $userAssignment->expects($this->exactly(1))
+            ->method('taskAssignment')
+            ->with($flowData)
+            ->will($this->returnValue(2));
+
+        $this->userTask->expects($this->atLeastOnce())
+            ->method('retrieveBean')
+            ->will($this->returnValue($activityDefinition));
+
+        $this->userTask->setUserAssignmentHandler($userAssignment);
+
         $result = $this->userTask->run($flowData, $bean, $externalAction);
         $this->assertEquals($expectedResult, $result);
     }

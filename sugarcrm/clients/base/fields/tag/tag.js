@@ -59,9 +59,18 @@
      * Set up tagList variable for use in the list view
      */
     setTagList: function() {
+        var self = this;
         this.value = this.getFormattedValue();
+        this.tagList = [];
         if (this.value) {
-            this.tagList = _.pluck(this.value, 'name').join(', ');
+            _.each(this.value, function(tag){
+                if (_.isString(tag)) {
+                    self.tagList.push(tag);
+                } else {
+                    self.tagList.push(tag.name);
+                }
+            })
+            this.tagList = this.tagList.join(', ');
         }
     },
 
@@ -280,8 +289,11 @@
             if (_.isFunction(record.toJSON)) {
                 record = record.toJSON();
             }
-
-            results.push({id: record.name, text: record.name});
+            if (_.isString(record)) {
+                results.push({id: record, text: record});
+            } else {
+                results.push({id: record.name, text: record.name});
+            }
         });
 
         return results;
@@ -307,12 +319,16 @@
             });
 
             if (!valFound) {
-                this.value.push({id: e.added.id, name: e.added.text});
+                this.value.push(e.added.text);
             }
         } else if (e.removed) {
             // Remove the tag
             this.value = _.reject(this.value, function(record) {
-                return record.name === e.removed.text;
+                if (_.isString(record)) {
+                    return record === e.removed.text;
+                } else {
+                    return record.name === e.removed.text;
+                }
             });
         }
         this.model.set('tag', this.value);
@@ -324,8 +340,14 @@
     setSelect2Records: function() {
         var escapeChars = '!\"#$%&\'()*+,./:;<=>?@[\\]^`{|}~';
         var records = _.map(this.value, function(record) {
-            // If a special character is the first character of a tag, it breaks select2 and jquery and everything
-            // So escape that character if it's the first char
+            if (_.isString(record)) {
+                // If a special character is the first character of a tag, it breaks select2 and jquery and everything
+                // So escape that character if it's the first char
+                if (escapeChars.indexOf(record.charAt(0)) >= 0) {
+                    return '\\\\' + record;
+                }
+                return record;
+            }
             if (escapeChars.indexOf(record.name.charAt(0)) >= 0) {
                 return '\\\\' + record.name;
             }

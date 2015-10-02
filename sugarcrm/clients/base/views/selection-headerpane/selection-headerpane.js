@@ -17,22 +17,24 @@
     extendsFrom: 'HeaderpaneView',
 
     initialize: function(options) {
+        this._super('initialize', [options]);
+
         var moduleMeta = app.metadata.getModule(options.module),
             isBwcEnabled = (moduleMeta && moduleMeta.isBwcEnabled),
             multiSelect = options.context.get('isMultiSelect'),
             buttonsToRemove = [],
             additionalEvents = {};
 
-        if (isBwcEnabled || multiSelect) {
+        this.isMultiLink = options.context.has('recLink');
+
+        if (isBwcEnabled || multiSelect || this.isMultiLink) {
             buttonsToRemove.push('create_button');
         } else {
             additionalEvents['click [name=create_button]'] = 'createAndSelect';
             this.events = _.extend({}, this.events, additionalEvents);
         }
 
-        this._super('initialize', [options]);
 
-        this.isMultiLink = options.context.has('recLink');
         if (this.isMultiLink) {
             //FIXME: This will be removed with SC-4073.
             var linkTitleLabel = _.find(this.meta.fields, function(field) {

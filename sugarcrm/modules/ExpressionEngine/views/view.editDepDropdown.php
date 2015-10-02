@@ -27,7 +27,11 @@ class ViewEditDepDropdown extends SugarView
         $smarty = new Sugar_Smarty();
         require_once('include/JSON.php');
         //Load the field list from the target module
-        $selected_lang = $_SESSION['authenticated_user_language'];
+        if (!empty($_SESSION["authenticated_user_language"])) {
+            $selected_lang = $_SESSION["authenticated_user_language"];
+        } else {
+            $selected_lang = $GLOBALS["sugar_config"]["default_language"];
+        }
         $vardef = array();
         //Copy app strings
         $my_list_strings = array_merge($app_list_strings);

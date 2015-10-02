@@ -39,8 +39,8 @@ if (isset($_SESSION['licenseKey_submitted']) && ($_SESSION['licenseKey_submitted
 }
 //BEGIN SUGARCRM lic=sub ONLY
 $dbCreate = "({$mod_strings['LBL_CONFIRM_WILL']} ";
-if (!$_SESSION['setup_db_create_database']) {
-    $dbCreate .= $mod_strings['LBL_CONFIRM_NOT'];
+if (empty($_SESSION['setup_db_create_database'])) {
+	$dbCreate .= $mod_strings['LBL_CONFIRM_NOT'];
 }
 $dbCreate .= " {$mod_strings['LBL_CONFIRM_BE_CREATED']})";
 
@@ -53,10 +53,10 @@ $yesNoDropCreate = $mod_strings['LBL_NO'];
 if ($_SESSION['setup_db_drop_tables'] === true || $_SESSION['setup_db_drop_tables'] == 'true') {
     $yesNoDropCreate = $mod_strings['LBL_YES'];
 }
-$yesNoSugarUpdates = ($_SESSION['setup_site_sugarbeet']) ? $mod_strings['LBL_YES'] : $mod_strings['LBL_NO'];
-$yesNoCustomSession = ($_SESSION['setup_site_custom_session_path']) ? $mod_strings['LBL_YES'] : $mod_strings['LBL_NO'];
-$yesNoCustomLog = ($_SESSION['setup_site_custom_log_dir']) ? $mod_strings['LBL_YES'] : $mod_strings['LBL_NO'];
-$yesNoCustomId = ($_SESSION['setup_site_specify_guid']) ? $mod_strings['LBL_YES'] : $mod_strings['LBL_NO'];
+$yesNoSugarUpdates = !empty($_SESSION['setup_site_sugarbeet']) ? $mod_strings['LBL_YES'] : $mod_strings['LBL_NO'];
+$yesNoCustomSession = !empty($_SESSION['setup_site_custom_session_path']) ? $mod_strings['LBL_YES'] : $mod_strings['LBL_NO'];
+$yesNoCustomLog = !empty($_SESSION['setup_site_custom_log_dir']) ? $mod_strings['LBL_YES'] : $mod_strings['LBL_NO'];
+$yesNoCustomId = !empty($_SESSION['setup_site_specify_guid']) ? $mod_strings['LBL_YES'] : $mod_strings['LBL_NO'];
 $demoData = ($sugar_config['default_language'] == 'en_us') ? ($mod_strings['LBL_YES']) : ($_SESSION['demoData']);
 
 // Populate the default date format, time format, and language for the system
@@ -372,11 +372,11 @@ $phpIniLocation = get_cfg_var("cfg_file_path");
 
 // CRON Settings
 if (!isset($sugar_config['default_language']))
-    $sugar_config['default_language'] = $_SESSION['default_language'];
+    $sugar_config['default_language'] = isset($_SESSION['default_language']) ? $_SESSION['default_language'] : '';
 if (!isset($sugar_config['cache_dir']))
     $sugar_config['cache_dir'] = $sugar_config_defaults['cache_dir'];
 if (!isset($sugar_config['site_url']))
-    $sugar_config['site_url'] = $_SESSION['setup_site_url'];
+    $sugar_config['site_url'] = isset($_SESSION['setup_site_url']) ? $_SESSION['setup_site_url'] : '';
 if (!isset($sugar_config['translation_string_prefix']))
     $sugar_config['translation_string_prefix'] = $sugar_config_defaults['translation_string_prefix'];
 $mod_strings_scheduler = return_module_language($GLOBALS['current_language'], 'Schedulers');

@@ -1165,6 +1165,116 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = $userMock;
         return $userMock;
     }
+
+    /**
+     * Test enum field with function in it's definition.
+     * @dataProvider enumWithOpts
+     */
+    public function testEnumWithFunc($key, $value, $error, $type)
+    {
+        BeanFactory::setBeanClass('ImportEnumOptions', 'ImportEnumOptions');
+        $def = array(
+            'name' => 'enumTest',
+            'type' => 'enum',
+            'function' => array(
+                'returns' => 'array',
+                'name' => 'getOpts'
+            ),
+            'function_bean' => 'ImportEnumOptions'
+        );
+        $this->assertEquals(
+            $key,
+            $this->_ifs->$type($value, $def),
+            $error
+        );
+    }
+
+    public function testWrongEnumFunc()
+    {
+        BeanFactory::setBeanClass('ImportEnumOptions', 'ImportEnumOptions');
+        $def = array(
+            'name' => 'enumTest',
+            'type' => 'enum',
+            'function' => array(
+                'returns' => 'html',
+                'name' => 'getOpts'
+            ),
+            'function_bean' => 'ImportEnumOptions'
+        );
+
+        $this->assertEquals(
+            false,
+            $this->_ifs->enum('First', $def),
+            'Should return no value with wrong function in definition'
+        );
+    }
+
+    /**
+     * Data provider for `testEnumWithFunc`.
+     * @return array
+     */
+    public function enumWithOpts()
+    {
+        return array(
+            array(
+                'frst',
+                'First',
+                'Should return key by value',
+                'enum',
+            ),
+            array(
+                'frst',
+                'FIRST',
+                'Should return key by value independently of value\'s case',
+                'enum',
+            ),
+            array(
+                'key',
+                'Key',
+                'Should return key with right case',
+                'enum',
+            ),
+            array(
+                false,
+                'NoValue',
+                'Should return no value',
+                'enum',
+            ),
+            array(
+                encodeMultienumValue(array('frst', 'key')),
+                'first,Value',
+                'Should return key by value without special symbols',
+                'multienum',
+            ),
+            array(
+                encodeMultienumValue(array('frst', 'key')),
+                '^first^,^Value^',
+                'Should return key by value with special symbols',
+                'multienum',
+            ),
+            array(
+                false,
+                '^NoValue^,^Value^',
+                'Should return no value if one element is missing',
+                'multienum',
+            ),
+        );
+    }
+}
+
+/**
+ * Mock class to test enum field.
+ * Class ImportEnumOptions
+ */
+class ImportEnumOptions
+{
+    public function getOpts()
+    {
+        return array(
+            'frst' => 'First',
+            'key' => 'Value',
+        );
+    }
 }
 
 class Import_Bug26897_Mock extends Account
