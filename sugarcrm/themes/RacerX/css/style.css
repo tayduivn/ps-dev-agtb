@@ -7214,6 +7214,7 @@ p.submsg a{
 .ui-dialog {
     padding: 0px;
     box-shadow: 0 5px 10px #999999;
+    z-index: 1;
 }
 
 .ui-dialog .ui-dialog-titlebar {
