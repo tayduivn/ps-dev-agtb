@@ -1,5 +1,5 @@
-<?php
- /*
+{{!--
+/*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
  * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
@@ -9,7 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-$mod_strings = array(
-    'LBL_TITLE' => 'On SugarCRM',
-);
+--}}
+<input type="checkbox"
+       data-type="{{def.type}}"
+       data-action="{{def.action}}"
+       data-carrier="{{def.carrier}}"
+       data-event="{{def.event}}"
+       data-emitter="{{def.emitter}}"
+       name="{{def.name}}"
+       {{#if def.value}}checked{{/if}}
+       {{#unless def.status}}disabled{{/unless}}>

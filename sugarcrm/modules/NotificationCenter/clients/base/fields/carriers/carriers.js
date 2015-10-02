@@ -58,9 +58,8 @@
         _.each(this.model.get('carriers'), function(value, key) {
            this.items.push({
                name: key,
-               label: app.lang.get('LBL_CONFIG_LABEL', key),
+               label: app.lang.get('LBL_TITLE', key),
                enabled: value.status
-               //configured: value.configured  // link to "Configure/Edit" will be implemented later.
            });
         }, this);
     },

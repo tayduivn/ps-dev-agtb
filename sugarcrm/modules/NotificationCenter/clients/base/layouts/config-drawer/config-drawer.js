@@ -17,16 +17,23 @@
     extendsFrom: 'ConfigDrawerLayout',
 
     /**
+     * What type of a config we are currently viewing.
+     * default - is admin only available. Allows to configure default system Notifications Center settings.
+     * user - is for any user. Allows to configure User Notification Center preferences.
+     */
+    section: 'user',
+
+    /**
+     * Grab the current config mode.
      * @inheritdoc
      */
     initialize: function(options) {
-        this._super('initialize', [options]);
         var section = options.context.get('section');
-        if (section && section === 'user') {
-            this.model.set('configMode', 'user');
-        } else {
-            this.model.set('configMode', 'admin');
+        if (section && section === 'default') {
+            this.section = 'global';
         }
+        this._super('initialize', [options]);
+        this.model.set('configMode', this.section);
     },
 
     /**
@@ -40,6 +47,25 @@
     },
 
     /**
+     * We load config data because of the extended model's URL, not 'ModuleName/config'.
+     * When we upgrade to backbone > 0.9.10 hard-code binding of the url to models methods in config-header-buttons
+     * will be eliminated and we api call to model.fetch/save etc.;
+     * @inheritdoc
+     */
+    loadConfig: function(options) {
+        var configSection = (this.section === 'global') ? '/global' : '';
+        var url = app.api.buildURL(this.module, 'config' + configSection);
+        var self = this;
+        app.api.call('read', url, null, {
+                success: function(data) {
+                    _.each(data, function(val, key) { self.model.set(key, val); }, self);
+                    self.render();
+                }
+            }
+        );
+    },
+
+    /**
      * This module has no Bean and thus no ACLs.
      * But it's allowed to be accessed by any user, with only one caveat:
      * only admin-user can obtain access to the global configuration of Notification Center.
@@ -48,7 +74,7 @@
      */
     _checkUserAccess: function() {
         var access = false;
-        if (this.model.get('configMode') === 'user') {
+        if (this.section === 'user') {
             access = true;
         } else {
             access = (app.user.get('type') === 'admin');

@@ -19,11 +19,10 @@
     /**
      * @inheritdoc
      */
-    _getPanelDescription: function() {
-        var description = (this.model.get('configMode') === 'admin') ?
-            'LBL_CARRIERS_CONFIG_ADMIN_DESC' :
-            'LBL_CARRIERS_CONFIG_USER_DESC';
-
-        return app.lang.get(description, this.module);
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        this.meta.description = (this.model.get('configMode') === 'user') ?
+            'LBL_CARRIER_DELIVERY_USER_DESC' :
+            'LBL_CARRIER_DELIVERY_ADMIN_DESC';
     }
 })
