@@ -556,6 +556,26 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Code run in daemon, should not use cache in memory.
+     */
+    public function testIsClearSettingsCache()
+    {
+        $config = array(
+            'socket_token' => 'sample-token',
+        );
+        $admin = $this->getMock('Administration', array('getConfigForModule', 'saveSetting'));
+        $admin->expects($this->atLeastOnce())->method('getConfigForModule')
+            ->with($this->equalTo('auth'), $this->equalTo('base'), $this->isTrue())
+            ->willReturn($config);
+
+        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getAdministrationBean'));
+
+        $client->expects($this->atLeastOnce())->method('getAdministrationBean')->willReturn($admin);
+
+        SugarTestReflection::callProtectedMethod($client, 'retrieveToken');
+    }
+
+    /**
      * Tests auth token retrieve (token is generated)
      *
      * @covers \Sugarcrm\Sugarcrm\Socket\Client::retrieveToken

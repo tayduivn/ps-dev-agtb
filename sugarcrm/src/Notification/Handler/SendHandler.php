@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Notification\Handler;
 
-use Sugarcrm\Sugarcrm\Notification\Carrier\CarrierInterface;
+use Sugarcrm\Sugarcrm\Notification\CarrierRegistry;
 use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Handler\SubtaskCapableInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager;
@@ -40,10 +40,10 @@ class SendHandler implements RunnableInterface, SubtaskCapableInterface
     protected $client;
 
     /**
-     * Carrier used by the job to send messages.
-     * @var CarrierInterface
+     * Carrier name used by the job to send messages.
+     * @var string
      */
-    protected $carrier;
+    protected $carrierName;
 
     /**
      * Indicates a recipient in various forms. @see AddressTypeInterface.
@@ -59,13 +59,13 @@ class SendHandler implements RunnableInterface, SubtaskCapableInterface
 
     /**
      * Create handler with specific carrier, recipients and message.
-     * @param CarrierInterface $carrier Carrier that job uses to send messages.
+     * @param string $carrier Carrier that job uses to send messages.
      * @param mixed $transportValue recipient data (normally here it is user ID).
      * @param array $message message pack.
      */
-    public function __construct(CarrierInterface $carrier, $transportValue, array $message)
+    public function __construct($carrier, $transportValue, array $message)
     {
-        $this->carrier = $carrier;
+        $this->carrierName = $carrier;
         $this->transportValue = $transportValue;
         $this->message = $message;
     }
@@ -76,12 +76,23 @@ class SendHandler implements RunnableInterface, SubtaskCapableInterface
      */
     public function run()
     {
-        $result = $this->carrier->getTransport()->send($this->transportValue, $this->message);
+        $carrier = $this->getCarrierRegistry()->getCarrier($this->carrierName);
+        $result = $carrier->getTransport()->send($this->transportValue, $this->message);
 
         if ($result === true) {
             return \SchedulersJob::JOB_SUCCESS;
         } else {
             return \SchedulersJob::JOB_FAILURE;
         }
+    }
+
+    /**
+     * Return Carrier Registry.
+     *
+     * @return CarrierRegistry
+     */
+    protected function getCarrierRegistry()
+    {
+        return CarrierRegistry::getInstance();
     }
 }

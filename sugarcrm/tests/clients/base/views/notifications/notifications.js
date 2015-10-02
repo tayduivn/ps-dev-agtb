@@ -10,6 +10,7 @@ describe('Notifications', function() {
     describe('Initialization with default values', function() {
         beforeEach(function() {
             view = SugarTest.createView('base', moduleName, viewName);
+
         });
 
         afterEach(function() {
@@ -66,6 +67,55 @@ describe('Notifications', function() {
                     skipMetadataHash: true
                 }
             });
+        });
+
+        describe('should bind listeners on app:socket events', function () {
+            beforeEach(function () {
+                app.events.on = sinon.spy();
+                view.socketOn = sinon.spy();
+                view.socketOff = sinon.spy();
+            });
+
+            it('should bind socketOn on app app:socket:connect', function () {
+
+                view.initialize({});
+
+                sinon.assert.called(app.events.on);
+                sinon.assert.calledWith(app.events.on, 'app:socket:connect');
+
+                for (var i = 0; i < app.events.on.callCount; i++) {
+                    var info = app.events.on.getCall(i);
+                    if (info.args[0] != 'app:socket:connect') {
+                        continue;
+                    }
+                    expect(info.args[1]).toBeDefined();
+                    sinon.assert.notCalled(view.socketOn);
+
+                    info.args[1]();
+                    sinon.assert.called(view.socketOn);
+                }
+            });
+
+            it('should bind socketOff on app app:socket:disconnect', function () {
+
+                view.initialize({});
+
+                sinon.assert.called(app.events.on);
+                sinon.assert.calledWith(app.events.on, 'app:socket:disconnect');
+
+                for (var i = 0; i < app.events.on.callCount; i++) {
+                    var info = app.events.on.getCall(i);
+                    if (info.args[0] != 'app:socket:disconnect') {
+                        continue;
+                    }
+                    expect(info.args[1]).toBeDefined();
+                    sinon.assert.notCalled(view.socketOff);
+
+                    info.args[1]();
+                    sinon.assert.called(view.socketOff);
+                }
+            });
+
         });
     });
 
@@ -212,9 +262,8 @@ describe('Notifications', function() {
 
             view.startPulling().stopPulling();
 
-            expect(clearTimeout).toHaveBeenCalledTwice();
+            expect(clearTimeout).toHaveBeenCalledOnce();
             expect(view._intervalId).toBeNull();
-            expect(view._remindersIntervalId).toBeNull();
         });
 
         it('should stop pulling on dispose', function() {
@@ -223,6 +272,16 @@ describe('Notifications', function() {
             view.dispose();
 
             expect(stopPulling).toHaveBeenCalledOnce();
+        });
+
+        it('should stop reminders on dispose', function () {
+            view._remindersIntervalId = 'SomeRemindersIntervalId';
+            clearTimeout = sinon.collection.stub(window, 'clearTimeout', $.noop()),
+
+                view.dispose();
+
+            expect(view._remindersIntervalId).toBeNull();
+            expect(clearTimeout).toHaveBeenCalledOnce();
         });
 
         it('should stop pulling if authentication expires', function() {
@@ -242,6 +301,147 @@ describe('Notifications', function() {
             expect(setTimeout).toHaveBeenCalledTwice();
             expect(isAuthenticated).toHaveBeenCalledTwice();
             expect(stopPulling).toHaveBeenCalledTwice();
+        });
+
+        it('should stop pulling if connected to socket', function () {
+            var isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function () {
+                    return true;
+            }),
+            pull = sinon.collection.stub(view, 'pull', $.noop()),
+            setTimeout = sinon.collection.stub(window, 'setTimeout', function (fn) {
+                    fn();
+            });
+
+            view.isSocketConnected = true;
+            view._pullAction();
+
+            expect(pull).not.toHaveBeenCalled();
+            expect(setTimeout).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('Socket mechanism', function () {
+        beforeEach(function () {
+            view = SugarTest.createView('base', moduleName, viewName);
+        });
+
+        afterEach(function () {
+            sinon.collection.restore();
+            SugarTest.app.view.reset();
+            view.dispose();
+            view = null;
+        });
+
+        it('socket off', function () {
+            view.isSocketConnected = true;
+            view.startPulling = sinon.collection.stub();
+            app.socket.off = sinon.collection.stub();
+            view.catchNotification = sinon.collection.stub();
+
+            view.socketOff();
+
+            expect(view.isSocketConnected).toBeFalsy();
+
+            sinon.assert.called(view.startPulling);
+            sinon.assert.called(app.socket.off);
+            sinon.assert.calledWith(app.socket.off, 'notification');
+
+            app.socket.off.getCall(0).args[1]();
+            sinon.assert.called(view.catchNotification);
+        });
+
+        it('socket on', function () {
+            view.isSocketConnected = false;
+            view.stopPulling = sinon.collection.stub();
+            view.catchNotification = sinon.collection.stub();
+            app.socket.on = sinon.collection.stub();
+
+            view.socketOn();
+
+            expect(view.isSocketConnected).toBeTruthy();
+
+            sinon.assert.called(view.stopPulling);
+            sinon.assert.called(app.socket.on);
+            sinon.assert.calledWith(app.socket.on, 'notification');
+
+            app.socket.on.getCall(0).args[1]();
+            sinon.assert.called(view.catchNotification);
+        });
+
+        it('catchNotification', function () {
+            var catchedNotif = 'catched Notif';
+            view.transferToCollection = sinon.collection.stub();
+            view._buffer = [];
+
+            view.catchNotification(catchedNotif);
+
+            expect(view._buffer[0]).toBe(catchedNotif);
+            sinon.assert.called(view.transferToCollection);
+        });
+
+        describe('transferToCollection', function () {
+            beforeEach(function () {
+                sinon.stub(view, 'reRender');
+                sinon.stub(app.data, 'createBean');
+            });
+
+            afterEach(function () {
+                view.reRender.restore();
+                app.data.createBean.restore();
+                view.collection = null;
+            });
+
+            it('check calling transferToCollection before bootstrap', function () {
+                view._buffer = [
+                    {data: 'someData1', _module: 'module'},
+                    {data: 'someData2', _module: 'module'}
+                ];
+
+                view.collection = null;
+
+                view.transferToCollection();
+
+                sinon.assert.notCalled(view.reRender);
+            });
+
+            it('check calling transferToCollection after bootstrap', function () {
+                var buffer = [{data: 'someData1', _module: 'module'}, {data: 'someData2', _module: 'module'}],
+                    models = ['Model1', 'Model2'];
+
+                view._buffer = buffer;
+
+                app.data.createBean
+                    .withArgs(buffer[0]['_module'], _.clone(buffer[0])).returns(models[0])
+                    .withArgs(buffer[1]['_module'], _.clone(buffer[1])).returns(models[1]);
+
+                view.collection = {
+                    add: sinon.spy()
+                };
+                view.transferToCollection();
+
+                sinon.assert.called(view.reRender);
+                sinon.assert.calledTwice(app.data.createBean);
+
+                sinon.assert.calledTwice(view.collection.add);
+                sinon.assert.calledWith(view.collection.add, models[0]);
+                sinon.assert.calledWith(view.collection.add, models[1]);
+            });
+
+            it('check calling transferToCollection after bootstrap if empty buffer', function () {
+                view._buffer = [];
+
+                app.data.createBean
+
+                view.collection = {
+                    add: sinon.spy()
+                };
+
+                view.transferToCollection();
+
+                sinon.assert.called(view.reRender);
+                sinon.assert.notCalled(app.data.createBean);
+                sinon.assert.notCalled(view.collection.add);
+            });
         });
     });
 

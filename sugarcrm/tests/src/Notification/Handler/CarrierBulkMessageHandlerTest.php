@@ -20,6 +20,7 @@ class CarrierBulkMessageHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
     const NS_MESSAGE_BUILDER_REGISTRY = 'Sugarcrm\Sugarcrm\Notification\MessageBuilder\MessageBuilderRegistry';
     const NS_MESSAGE_BUILDER = 'Sugarcrm\Sugarcrm\Notification\MessageBuilder\MessageBuilderInterface';
     const NS_CARRIER = 'Sugarcrm\\Sugarcrm\\Notification\\Carrier\\CarrierInterface';
+    const NS_CARRIER_REGISTRY = 'Sugarcrm\\Sugarcrm\\Notification\\CarrierRegistry';
     const NS_JOB_QUEUE_MANAGER = 'Sugarcrm\Sugarcrm\JobQueue\Manager\Manager';
 
     public function testRun()
@@ -31,6 +32,7 @@ class CarrierBulkMessageHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
         $message1 = array('message1' . microtime());
         $message2 = array('message2' . microtime());
 
+        $carrierName = 'carrierName1';
         $carrier = $this->getMock(self::NS_CARRIER, array('getMessageSignature', 'getTransport', 'getAddressType'));
         $carrier->expects($this->atLeastOnce())->method('getMessageSignature')
             ->willReturn($messageSignature);
@@ -65,7 +67,7 @@ class CarrierBulkMessageHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
         $jobQueueManager = $this->getMock(self::NS_JOB_QUEUE_MANAGER, array('NotificationSend'));
         $jobQueueManager->expects($this->exactly($totalOptionsCount))->method('NotificationSend')
             ->with(
-                $this->equalTo($carrier),
+                $this->equalTo($carrierName),
                 $this->logicalOr(
                     $this->equalTo($usersOptions[$user1->id]['options'][0]),
                     $this->equalTo($usersOptions[$user1->id]['options'][1]),
@@ -74,15 +76,24 @@ class CarrierBulkMessageHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
                 $this->logicalOr($this->equalTo($message1), $this->equalTo($message2))
             );
 
+        $carrierRegistry = $this->getMock(self::NS_CARRIER_REGISTRY, array('getCarrier'));
+        $carrierRegistry->expects($this->atLeastOnce())->method('getCarrier')
+            ->will($this->returnValueMap(array(
+                array($carrierName, $carrier),
+            )));
+
         $handler = $this->getMock(
             self::NS_HANDLER,
-            array('getMessageBuilderRegistry', 'getJobQueueManager'),
-            array($event, $carrier, $usersOptions)
+            array('getMessageBuilderRegistry', 'getJobQueueManager', 'getCarrierRegistry'),
+            array($event, $carrierName, $usersOptions)
         );
+
         $handler->expects($this->atLeastOnce())->method('getMessageBuilderRegistry')
             ->willReturn($messageBuilderRegistry);
         $handler->expects($this->atLeastOnce())->method('getJobQueueManager')
             ->willReturn($jobQueueManager);
+        $handler->expects($this->once())->method('getCarrierRegistry')
+            ->willReturn($carrierRegistry);
 
         $handler->run();
     }

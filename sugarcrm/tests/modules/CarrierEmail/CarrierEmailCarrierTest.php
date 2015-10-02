@@ -9,8 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-include 'modules/CarrierEmail/Carrier.php';
-include 'modules/CarrierEmail/Transport.php';
+require_once 'modules/CarrierEmail/Carrier.php';
+require_once 'modules/CarrierEmail/Transport.php';
 
 /**
  * Test cases for CarrierEmailCarrier.

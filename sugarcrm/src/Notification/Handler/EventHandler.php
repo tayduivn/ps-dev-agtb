@@ -81,8 +81,8 @@ class EventHandler implements RunnableInterface
         }
 
         $manager = $this->getJobQueueManager();
-        foreach ($carriers as $carrierRow) {
-            $manager->NotificationCarrierBulkMessage($this->event, $carrierRow['carrier'], $carrierRow['data']);
+        foreach ($carriers as $carrierName => $carrierRow) {
+            $manager->NotificationCarrierBulkMessage($this->event, $carrierName, $carrierRow['data']);
         }
         return \SchedulersJob::JOB_SUCCESS;
     }
