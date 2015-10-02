@@ -463,8 +463,14 @@ class UserViewHelper {
 
             $this->ss->assign('DEFAULT_TEAM_OPTIONS', $teamsWidget->get_code());
 
-            require_once('modules/Teams/TeamSetManager.php');
-            $default_teams = TeamSetManager::getCommaDelimitedTeams($this->bean->team_set_id, $this->bean->team_id, true);
+            $tbaConfigurator = new TeamBasedACLConfigurator();
+            $isTBAEnabled = $tbaConfigurator->isEnabledForModule($this->bean->module_name);
+            $default_teams = TeamSetManager::getCommaDelimitedTeams(
+                $this->bean->team_set_id,
+                $this->bean->team_id,
+                true,
+                $isTBAEnabled,
+                $this->bean->team_set_selected_id);
             $this->ss->assign("DEFAULT_TEAM_LIST", $default_teams);
         }
 

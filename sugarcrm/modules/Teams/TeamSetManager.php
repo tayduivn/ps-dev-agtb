@@ -354,28 +354,52 @@ class TeamSetManager {
 	 * @param boolean $for_display
 	 * @return string
 	 */
-	public static function getCommaDelimitedTeams($team_set_id, $primary_team_id = '', $for_display = false){
-        $team_set_id = $team_set_id?$team_set_id:$primary_team_id;
-		$teams = self::getTeamsFromSet($team_set_id);
-		$value = '';
-	    $primary = '';
-	   	foreach($teams as $row){
-	        if(!empty($primary_team_id) && $row['id'] == $primary_team_id){
-	        	  if($for_display){
-	        	  	 $primary = ", {$row['display_name']}";
-	        	  }else{
-	        	  	$primary = ", ".(!empty($row['name']) ? $row['name'] : $row['name_2']);
-	        	  }
-	        }else{
-	        	if($for_display){
-	        		$value .= ", {$row['display_name']}";
-	        	}else{
-	   				$value .= ", ".(!empty($row['name']) ? $row['name'] : $row['name_2']);
-	        	}
-	        }
-	   	}
-	   	$value = $primary.$value;
-	   	return substr($value, 2);
+    public static function getCommaDelimitedTeams($team_set_id, $primary_team_id = '', $for_display = false,
+                                                  $isTBAEnabled = false, $team_set_selected_id = '')
+    {
+        $team_set_id = $team_set_id ? $team_set_id : $primary_team_id;
+        $teams = self::getTeamsFromSet($team_set_id);
+        $value = '';
+        $primary = '';
+        $selectedTeamIds = array();
+        if ($isTBAEnabled && !empty($team_set_selected_id)) {
+            $selectedTeamIds = array_map(function ($el) {
+                return $el['id'];
+            }, TeamSetManager::getTeamsFromSet($team_set_selected_id));
+        }
+        foreach ($teams as $row) {
+            $primaryLabel = $valueLabel = array();
+            if (!empty($primary_team_id) && $row['id'] == $primary_team_id) {
+                if ($for_display) {
+                    $primary = ", {$row['display_name']}";
+                } else {
+                    $primary = ", " . (!empty($row['name']) ? $row['name'] : $row['name_2']);
+                }
+                if ($isTBAEnabled) {
+                    $primaryLabel[] = $GLOBALS['app_strings']['LBL_COLLECTION_PRIMARY'];
+                    if (in_array($row['id'], $selectedTeamIds)) {
+                        $primaryLabel[] = $GLOBALS['app_strings']['LBL_TEAM_SET_SELECTED'];
+                    }
+                    $primary .= ' (<em>' . implode(', ', $primaryLabel) . '</em>)';
+                }
+            } else {
+                if (in_array($row['id'], $selectedTeamIds)) {
+                    $valueLabel[] = $GLOBALS['app_strings']['LBL_TEAM_SET_SELECTED'];
+                }
+                if ($for_display) {
+                    $value .= ", {$row['display_name']}";
+                } else {
+                    $value .= ", " . (!empty($row['name']) ? $row['name'] : $row['name_2']);
+                }
+                if ($isTBAEnabled) {
+                    if (in_array($row['id'], $selectedTeamIds)) {
+                        $value .= ' (<em>' . $GLOBALS['app_strings']['LBL_TEAM_SET_SELECTED'] . '</em>)';
+                    }
+                }
+            }
+        }
+        $value = $primary . $value;
+        return substr($value, 2);
 	}
 
 	/**
