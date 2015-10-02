@@ -826,14 +826,10 @@ class FilterApi extends SugarApi
                                 $where->notNull($field);
                                 break;
                             case '$empty':
-                                $where->queryOr()
-                                    ->equals($field, '')
-                                    ->isNull($field);
+                                $where->isEmpty($field);
                                 break;
                             case '$not_empty':
-                                $where->queryAnd()
-                                    ->notEquals($field, '')
-                                    ->notNull($field);
+                                $where->isNotEmpty($field);
                                 break;
                             case '$lt':
                                 $where->lt($field, $value);
