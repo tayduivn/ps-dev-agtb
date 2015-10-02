@@ -273,7 +273,8 @@ function get_relationship_information(& $target_bean, $get_upstream_rel_field_na
 
 		if($rel_array['relationship_type']=="one-to-many"){
 			if (!empty($rel_array['join_key_rhs'])) {
-			    $target_bean->$rel_array['join_key_rhs'] = $this->base_bean->id;
+			    $join_key = $flip_sides ? 'join_key_rhs' : 'join_key_lhs';
+			    $target_bean->$rel_array[$join_key] = $this->base_bean->id;
 			}
 			else {
                 $rel_key = $flip_sides ? 'lhs_key' : 'rhs_key';
