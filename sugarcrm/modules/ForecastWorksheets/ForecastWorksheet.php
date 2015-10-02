@@ -192,7 +192,8 @@ class ForecastWorksheet extends SugarBean
             array(
                 'parent_type' => 'Opportunities',
                 'parent_id' => $opp->id,
-                'draft' => ($isCommit === false) ? 1 : 0
+                'draft' => ($isCommit === false) ? 1 : 0,
+                'deleted' => 0
             ),
             true,
             false
@@ -285,7 +286,8 @@ class ForecastWorksheet extends SugarBean
             array(
                 'parent_type' => 'RevenueLineItems',
                 'parent_id' => $rli->id,
-                'draft' => ($isCommit === false) ? 1 : 0
+                'draft' => ($isCommit === false) ? 1 : 0,
+                'deleted' => 0
             ),
             true,
             false
