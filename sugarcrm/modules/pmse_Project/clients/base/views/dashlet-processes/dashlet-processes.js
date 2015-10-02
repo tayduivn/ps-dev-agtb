@@ -52,7 +52,7 @@
         this.on('dashlet-processes:disable-record:fire', this.disableRecord, this);
         this.on('dashlet-processes:download:fire', this.showExportingWarning, this);
         this.on('dashlet-processes:description-record:fire', this.descriptionRecord, this);
-        this.on('linked-model:create', this._reloadData, this);
+        this.on('linked-model:create', this.loadData, this);
         return this;
     },
 
