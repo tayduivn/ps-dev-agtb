@@ -251,6 +251,36 @@ abstract class DBManager
     protected $defaultPerfProfile = array();
 
     /**
+     * Sets where properties for empty conditions on the SugarQuery object
+     * @param SugarQuery_Builder_Where $where SugarQuery where object
+     * @param string $field The field to compare
+     * @param SugarBean $bean SugarBean
+     * @return SugarQuery_Builder_Where
+     */
+    public function setEmptyWhere(SugarQuery_Builder_Where $where, $field, $bean = false)
+    {
+        $where->queryOr()
+              ->equals($field, '', $bean)
+              ->isNull($field, $bean);
+        return $where;
+    }
+
+    /**
+     * Sets where properties for not empty conditions on the SugarQuery object
+     * @param SugarQuery_Builder_Where $where SugarQuery where object
+     * @param string $field The field to compare
+     * @param SugarBean $bean SugarBean
+     * @return SugarQuery_Builder_Where
+     */
+    public function setNotEmptyWhere(SugarQuery_Builder_Where $where, $field, $bean = false)
+    {
+        $where->queryAnd()
+              ->notEquals($field, '', $bean)
+              ->notNull($field, $bean);
+        return $where;
+    }
+
+    /**
      * Getter default performance profile
      * @param string $name Profile name
      * @return array
