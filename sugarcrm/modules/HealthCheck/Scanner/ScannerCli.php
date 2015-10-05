@@ -117,11 +117,12 @@ class HealthCheckScannerCli extends HealthCheckScanner
         define('ENTRY_POINT_TYPE', 'api');
         global $beanFiles, $beanList, $objectList, $timedate, $moduleList, $modInvisList, $sugar_config, $locale,
                $sugar_version, $sugar_flavor, $sugar_build, $sugar_db_version, $sugar_timestamp, $db, $locale,
-               $installing, $bwcModules, $app_list_strings, $modules_exempt_from_availability_check;
+               $installing, $bwcModules, $app_list_strings, $modules_exempt_from_availability_check, $current_language;
         if (!defined('sugarEntry')) {
             define('sugarEntry', true);
         }
         require_once('include/entryPoint.php');
+        $app_list_strings = return_app_list_strings_language($current_language);
 
         $GLOBALS['current_user'] = new BlackHole(
             array('id' => null),

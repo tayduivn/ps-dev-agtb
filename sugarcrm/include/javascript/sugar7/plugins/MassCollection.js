@@ -29,7 +29,7 @@
         app.plugins.register('MassCollection', ['view'], {
             onAttach: function() {
                 this.on('init', this._initMassCollectionPlugin, this);
-                this.on('render', this._onMassCollectionRender, this);
+                this.on('render', this._onViewRender, this);
             },
 
             /**
@@ -50,11 +50,11 @@
              *
              * @private
              */
-            _onMassCollectionRender: function() {
+            _onViewRender: function() {
                 if (this.collection.length !== 0) {
-                    if (this._isAllChecked(this.massCollection)) {
-                        this.massCollection.trigger('all:checked');
-                    }
+                    var event = this._isAllChecked() ? 'all:checked' : 'not:all:checked';
+                    this.massCollection.trigger(event);
+                    this.toggleSelectAllAlert();
                 }
             },
 
@@ -118,7 +118,10 @@
                 // Resets the mass collection on collection reset for non
                 // independent mass collection.
                 this.collection.on('reset', function() {
-                    this.massCollection.trigger('mass_collection:remove:all');
+                    if (this.disposed || this.independentMassCollection) {
+                        return;
+                    }
+                    this.clearMassCollection();
                 }, this);
 
                 this.collection.on('add', function() {
@@ -137,7 +140,7 @@
             addModel: function(models) {
                 models = _.isArray(models) ? models : [models];
                 this.massCollection.add(models);
-                if (this._isAllChecked(this.massCollection)) {
+                if (this._isAllChecked()) {
                     this.massCollection.trigger('all:checked');
                 }
             },
@@ -163,7 +166,7 @@
             removeModel: function(models) {
                 models = _.isArray(models) ? models : [models];
                 this.massCollection.remove(models);
-                if (!this._isAllChecked(this.massCollection)) {
+                if (!this._isAllChecked()) {
                     this.massCollection.trigger('not:all:checked');
                 }
             },
@@ -174,7 +177,7 @@
              */
             removeAllModels: function() {
                 if (!this.independentMassCollection) {
-                    this.clearMassCollection(this.massCollection);
+                    this.clearMassCollection();
                 } else {
                     this.massCollection.remove(this.collection.models);
                     this.massCollection.trigger('not:all:checked');
@@ -254,7 +257,8 @@
                 var self = this;
                 var alert = $('<span></span>').append(this._selectedOffsetTpl({
                     offset: offset,
-                    num: this.massCollection.length
+                    num: this.massCollection.length,
+                    all_selected: this.massCollection.length === this.massCollection.maximum
                 }));
                 alert.find('[data-action=clear]').each(function() {
                     var $el = $(this);
@@ -314,7 +318,17 @@
                     limit: limit,
                     // use the last filterDef applied to the collection
                     filter: this.context.get('collection').filterDef,
-                    showAlerts: true
+                    showAlerts: true,
+                    success: _.bind(function(collection) {
+                        if (_.isEmpty(collection.filterDef)) {
+                            // This property represents the maximum number of
+                            // records that the user can select. We need it to
+                            // add or remove the `all` word in the `selectAll`
+                            // alert.
+                            this.massCollection.maximum = this.massCollection.length;
+                        }
+                        this.toggleSelectAllAlert();
+                    }, this)
                 };
 
                 this.massCollection.trigger('massupdate:estimate');

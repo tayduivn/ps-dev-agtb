@@ -303,10 +303,7 @@
             optedInToTransfer = this.model.get('transfer_activities');
 
         return {
-            transfer_activities_action: action,
-            transfer_activities_modules: (action === 'move' && optedInToTransfer) ?
-                ['Contacts'] :
-                []
+            transfer_activities_action: (action === 'move' && optedInToTransfer) ? 'move' : 'donothing'
         };
     },
 

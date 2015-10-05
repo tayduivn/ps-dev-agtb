@@ -2169,8 +2169,13 @@ function getSingleMessage($ie) {
 eoq;
 		}
 
-		 if(empty($out['meta']['email']['description']))
-                $out['meta']['email']['description'] = $mod_strings['LBL_EMPTY_EMAIL_BODY'];
+        if (!empty($out['meta']['email']['name'])) {
+            $out['meta']['email']['name'] = to_html($out['meta']['email']['name']);
+        }
+
+        if (empty($out['meta']['email']['description'])) {
+            $out['meta']['email']['description'] = $mod_strings['LBL_EMPTY_EMAIL_BODY'];
+        }
 
 		if($noCache) {
 			$GLOBALS['log']->debug("EMAILUI: getSingleMessage() NOT using cache file");

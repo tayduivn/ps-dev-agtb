@@ -81,6 +81,7 @@ $mod_strings = array (
     'LBL_ERROR_INVALID_CURRENCY' => 'Invalid currency value',
     'LBL_ERROR_INVALID_FLOAT' => 'Invalid floating point number',
     'LBL_ERROR_NOT_IN_ENUM' => 'Value not in dropDown list. Allowed values are: ',
+    'LBL_ERROR_ENUM_EMPTY' => 'Value not in dropDown list. dropDown list is empty',
     'LBL_NOT_MULTIENUM' => 'Not a MultiEnum',
     'LBL_IMPORT_MODULE_NO_TYPE' => 'Import is not set up for this module type',
     'LBL_IMPORT_MODULE_NO_USERS' => 'WARNING: You have no users defined on your system.    If you import without adding users first, all records will be owned by the Administrator.',

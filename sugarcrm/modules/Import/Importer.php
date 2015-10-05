@@ -627,8 +627,16 @@ class Importer
                 }
                 if ( $returnValue === FALSE )
                 {
-                    $this->importSource->writeError($mod_strings['LBL_ERROR_NOT_IN_ENUM'] . implode(",",$app_list_strings[$fieldDef['options']]), $fieldTranslated,$rowValue);
-                    return FALSE;
+                    $opts = $this->ifs->getOptions($fieldDef['type'], $fieldDef);
+                    $this->importSource->writeError(
+                        ($opts ?
+                            $mod_strings['LBL_ERROR_NOT_IN_ENUM'] . implode(",", $opts) :
+                            $mod_strings['LBL_ERROR_ENUM_EMPTY']
+                        ),
+                        $fieldTranslated,
+                        $rowValue
+                    );
+                    return false;
                 }
                 else
                     return $returnValue;
