@@ -125,6 +125,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         // BR-3387.  MSSQL caches the result, the second run will cost 'NO TIME'
         // using a random query.
+        $this->_db->checkConnection();
         $randVal= rand(0, 10000);
         $sql = "SELECT USERS.* FROM USERS WHERE DELETED = 0";
         $this->_db->limitQuery($sql,0,1+$randVal,true);
