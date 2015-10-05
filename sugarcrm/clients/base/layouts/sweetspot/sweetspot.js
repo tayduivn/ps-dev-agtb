@@ -256,9 +256,6 @@
      * Use {@link #triggerSystemAction} to trigger them.
      */
     _systemActions: {
-        toggleHelp: function() {
-            app.events.trigger('app:help');
-        },
         openConfig: function() {
             this.openConfigPanel();
         }
