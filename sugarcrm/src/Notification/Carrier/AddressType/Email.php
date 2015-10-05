@@ -55,4 +55,12 @@ class Email implements AddressTypeInterface
             return $list[0];
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isSelectable()
+    {
+        return true;
+    }
 }

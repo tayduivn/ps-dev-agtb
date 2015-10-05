@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Notification\Carrier\CarrierInterface;
+use Sugarcrm\Sugarcrm\Notification\Carrier\AddressType\Email as AddressTypeEmail;
 
 class CarrierEmailCarrier implements CarrierInterface
 {
@@ -38,10 +39,12 @@ class CarrierEmailCarrier implements CarrierInterface
     }
 
     /**
-     * @return \Sugarcrm\Sugarcrm\Notification\Carrier\AddressType\AddressTypeInterface
+     * Return carrier address type(AddressTypeEmail)
+     *
+     * @return AddressTypeEmail
      */
     public function getAddressType()
     {
-        // TODO: Implement getAddressType() method.
+        return new AddressTypeEmail();
     }
 }
