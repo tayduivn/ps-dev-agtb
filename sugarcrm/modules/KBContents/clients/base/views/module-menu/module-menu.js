@@ -80,7 +80,7 @@
             },
         // @TODO: Find out why params from context for drawer don't pass to our view tree::_initSettings
             context = _.extend({}, this.context, {treeoptions: treeOptions, treecallbacks: treeCallbacks});
-        if (app.drawer.getActiveDrawerLayout() === this.moduleRoot) {
+        if (app.drawer.getActiveDrawerLayout().module === this.moduleRoot) {
             app.drawer.closeImmediately();
         }
         app.drawer.open({

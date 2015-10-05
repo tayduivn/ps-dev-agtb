@@ -297,8 +297,9 @@ $mod_strings = array (
     'LBL_OPPORTUNITIES_DESC'=> 'Configure admin setting for the Opportunities module. The Opportunities Settings include viewing Opportunities by just the Opportunity, or by Opportunities plus the Revenue Line Items attached to it.',
     'LBL_GLOBAL_SEARCH_SETTINGS' => 'Search',
     'LBL_GLOBAL_SEARCH_SETTINGS_DESC' => 'Select modules for the Global Search and configure full-text searching.',
-    'LBL_FTS_SETTINGS' => 'Full Text Search',
+    'LBL_FTS_SETTINGS' => 'Full Text Search Configuration',
    	'LBL_FTS_SETTINGS_DESC' => 'Configure the full-text search system.',
+    'LBL_LEGACY_FTS_SETTINGS' => 'Legacy Global Search Configuration',
     'LBL_GLOBAL_TEAM_DESC' => 'Globally Visible',
     'LBL_GLOBAL_TEAM_SELECT' => 'A default global team was not found. Please select a team from this list.',
     'LBL_GLOBAL_TEAM' => 'Rebuild access to global team.',
@@ -630,8 +631,6 @@ $mod_strings = array (
 
     'LBL_REBUILD_JS_FILES_TITLE' => 'Rebuild JS Compressed Files',
     'LBL_REBUILD_JS_FILES_DESC_SHORT' => 'Copies original Full JS Source files and replaces existing compressed JS files',
-    'LBL_REBUILD_SIDECAR_FILES_TITLE' => 'Rebuild Sidecar Files',
-    'LBL_REBUILD_SIDECAR_FILES_DESC_SHORT' => 'Copies original Sidecar Full JS Source files and replaces existing compressed JS files',
     'LBL_REBUILD_CONCAT_JS_FILES_TITLE' => 'Rebuild JS Grouping Files',
     'LBL_REBUILD_CONCAT_JS_FILES_DESC_SHORT' => 'Re-concatenates and overwrites existing group files with latest versions of group files',
     'LBL_REBUILD_JS_MINI_FILES_TITLE' => 'Rebuild Minified JS Files',
@@ -1133,10 +1132,12 @@ $mod_strings = array (
     'LBL_SAML_LOGOUT_URL' => 'SLO URL',
     'LBL_SAML_SAME_WINDOW' => 'Load login screen in same <br>window to avoid pop-up blocking',
     'LBL_SAML_SAME_WINDOW_DESC' => 'This option will load SAML login screen in the same window',
-    'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search. Perform a full system index after enabling modules for the Global Search. To enable module fields for full text searching, use <a href="index.php?module=ModuleBuilder&action=index&type=studio">Studio</a>.',
-    'LBL_UNIFIED_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against.',
-    'LBL_UNIFIED_SEARCH_SETTINGS_LINK_DESC' => 'Click <a href="index.php?module=Administration&action=UnifiedSearchSettings">here</a> to configure the module settings for Unified Search.',
-    'LBL_GLOBAL_SEARCH_SETTINGS_LINK_DESC' => 'Click <a href="index.php?module=Administration&action=GlobalSearchSettings">here</a> to configure settings for Global Search.',
+    'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Full text search will be used to return results for a global search in the desktop application. In order for results to return for a particular module, it must be enabled below. Make sure to perform a full system index after enabling modules for full text search. Individual module fields can be enabled for full text search via <a href="index.php?module=ModuleBuilder&action=index&type=studio">Studio</a>.<br>
+To enable modules for global searches in SugarCRM Mobile and Sugar Portal, please use the <a href="index.php?module=Administration&action=UnifiedSearchSettings">Legacy Global Search Configuration</a>. <br>
+For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_doc.php?edition=ENT&version=7.7.0.0beta4&lang=en_us&module=FullTextSearch">Search</a> documentation.',
+    'LBL_UNIFIED_SEARCH_SETTINGS_TITLE' => 'Legacy global search will only be used to return results in SugarCRM Mobile or Sugar Portal global searches. In order for legacy global search to perform a search on a particular module, it must be enabled below. <br>
+To enable modules for global search in the desktop application, use the <a href="index.php?module=Administration&action=GlobalSearchSettings">Full Text Search Configuration</a>. <br>
+For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_doc.php?edition=ENT&version=7.7.0.0beta4&lang=en_us&module=LegacyGlobalSearch">Search</a> documentation.',
     'LBL_SELECT_MODULES' => 'Advanced',
     'LBL_SELECT_MODULES_TITLE' => 'Drag and drop to select modules and to change the display order. Perform a search to apply the changes.',
     'LBL_SELECT_FTS_MODULES_TITLE' => 'Drag and drop to select modules to be used in the Global Search. Click Save to apply the changes.',

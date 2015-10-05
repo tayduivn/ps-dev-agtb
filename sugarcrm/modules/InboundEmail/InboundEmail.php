@@ -588,6 +588,10 @@ class InboundEmail extends SugarBean {
 							$overview->date = $v;
 						break;
 
+                        case 'subject':
+                            $overview->subject = $v;
+                        break;
+
 						default:
 							$overview->$k = from_html($v);
 						break;
@@ -677,6 +681,10 @@ class InboundEmail extends SugarBean {
 					case "senddate":
 						$overview->date = $v;
 					break;
+
+                    case 'subject':
+                        $overview->subject = $v;
+                    break;
 
 					default:
 						$overview->$k = from_html($v);
@@ -821,6 +829,12 @@ class InboundEmail extends SugarBean {
 								$values .= "NULL";
 							}
 						break;
+
+                        case 'subject':
+                            $overview->subject = SugarCleaner::cleanHtml(htmlspecialchars_decode($overview->subject, ENT_QUOTES));
+                            $overview->subject = htmlspecialchars_decode($overview->subject, ENT_QUOTES);
+                            $values .= $this->db->quoted($overview->subject);
+                        break;
 
 						case "mbox":
 							$values .= "'{$mbox}'";
@@ -5931,7 +5945,7 @@ eoq;
 		}
 
 		$return = array();
-        $meta['email']['name'] = to_html($this->email->name);
+        $meta['email']['name'] = $this->email->name;
         $meta['email']['from_addr'] = ( !empty($this->email->from_addr_name) ) ? to_html($this->email->from_addr_name) : to_html($this->email->from_addr);
         $meta['email']['toaddrs'] = ( !empty($this->email->to_addrs_names) ) ? to_html($this->email->to_addrs_names) : to_html($this->email->to_addrs);
         $meta['email']['cc_addrs'] = to_html($this->email->cc_addrs_names);

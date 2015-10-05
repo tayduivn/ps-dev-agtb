@@ -13,7 +13,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td colspan="100">
-        <h2> {$moduleTitle}</h2>
+        <h2> {$MOD.LBL_LEGACY_FTS_SETTINGS}</h2>
     </td>
 </tr>
 <tr>
@@ -58,9 +58,6 @@
     </div>
 </form>
 
-<tr>
-    <td colspan="100">{$MOD.LBL_GLOBAL_SEARCH_SETTINGS_LINK_DESC}</td>
-</tr>
 </table>
 
 <div id='selectFTSModules' class="yui-hidden">

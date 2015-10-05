@@ -31,6 +31,10 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
 
     protected static $instance;
 
+    /**
+     * True if the php session has been closed for writing.
+     * @var bool
+     */
     protected $closed = false;
 
     /**
@@ -109,6 +113,10 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
         $this->closed = true;
     }
 
+    /**
+     * Returns true if the current session exists and has an ID.
+     * @return bool
+     */
     public function sessionHasId()
     {
         //Grab the PHP session name
@@ -122,6 +130,15 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
         return empty($session_id) ? true : false;
     }
 
+    /**
+     * Returns true if the current session is closed for writing.
+     * @return bool
+     */
+    public function isClosed()
+    {
+        return $this->closed;
+    }
+
 
     protected static function registerShutdownFunction($previousUserId)
     {
@@ -130,7 +147,7 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
                 $logger = new LoggerTransition(\LoggerManager::getLogger());
                 //Now write out the session data again during shutdown
                 $sessionObject = $_SESSION;
-                if ($sessionObject instanceof SessionStorage && !$sessionObject->closed) {
+                if ($sessionObject instanceof SessionStorage && !$sessionObject->isClosed()) {
                     $_SESSION = $sessionObject->getArrayCopy();
                 } else {
                     //Supress any warning before we start the session. If there was any output, the cookie won't be sent

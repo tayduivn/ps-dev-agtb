@@ -13,7 +13,7 @@
 
 <div class="label-selected-records">{{str 'LBL_SELECTED_RECORDS' module}} ({{massCollection.length}})</div>
 <div class="pull-right reset-block">
-    <a class="btn btn-link btn-invisible reset_button {{#unless pills.length }}disabled{{/unless}}">{{str "LBL_RESET"}}</a>
+    <a class="btn btn-link btn-invisible reset_button {{#unless massCollection.length }}disabled{{/unless}}">{{str "LBL_RESET"}}</a>
 </div>
 <div class="selected-records-container">
     <div class="selected-records same-size-pills select2-container select2-container-multi select2-choices-pills-close select2">
@@ -26,6 +26,7 @@
                     <a class="select2-search-choice-close" data-close-pill="true" tabindex="-1"></a>
                 </li>
             {{/each}}
+            {{#if moreRecords}}<li class="more-pills-label">{{../msgMoreRecords}}</li>{{/if}}
             {{#if tooManySelectedRecords}}<li class="max-pills-label">{{../msgMaxPillsDisplayed}}</li>{{/if}}
         </ul>
     </div>

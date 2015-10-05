@@ -800,7 +800,7 @@ class PMSECaseFlowHandler
 
         $caseBeanObject = $this->retrieveBean('pmse_BpmCaseData'); //new BpmCaseData();
         $caseBeanObject->retrieve_by_string_fields(array('cas_id' => (int)$cas_id));
-        $caseBeanObject->cas_data = serialize($params);
+        $caseBeanObject->cas_data = json_encode($params);
         $caseBeanObject->save();
 
         //ADD COMMENT IN BPM_NOTES
@@ -844,8 +844,7 @@ class PMSECaseFlowHandler
 
         $formActionBeanObject->cas_data = $caseBeanObject->cas_data;
         if (isset($params['log_data'])) {
-            //$this->bpmLog('INFO', "Saving changed data " . serialize($params['log_data']));
-            $formActionBeanObject->cas_pre_data = serialize($params['log_data']);
+            $formActionBeanObject->cas_pre_data = json_encode($params['log_data']);
         }
         if (isset($params['Type'])) {
             $frmAction = $params['Type'];
