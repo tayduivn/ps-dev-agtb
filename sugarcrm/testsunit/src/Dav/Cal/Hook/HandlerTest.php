@@ -66,6 +66,32 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param array $fetchedRow
+     * @param array $expectedMethod
+     *
+     * @covers       \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler::getBeanFetchedRow
+     * @dataProvider getBeanFetchedRowProvider
+     */
+    public function testGetBeanFetchedRow(array $fetchedRow, array $expectedMethod)
+    {
+        $handler = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler')
+                        ->disableOriginalConstructor()
+                        ->setMethods(null)
+                        ->getMock();
+        $bean = $this->getMockBuilder('\SugarBean')
+                     ->disableOriginalConstructor()
+                     ->setMethods(array('retrieve'))
+                     ->getMock();
+
+        $bean->fetched_row = $fetchedRow;
+        $bean->expects($this->exactly($expectedMethod['count']))->method($expectedMethod['name']);
+
+        $result = TestReflection::callProtectedMethod($handler, 'getBeanFetchedRow', array($bean));
+
+        $this->assertEquals($fetchedRow, $result);
+    }
+
+    /**
      * @param $managerMock
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
@@ -73,7 +99,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
     {
         $handler = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler')
             ->disableOriginalConstructor()
-            ->setMethods(array('getManager','getAdapterFactory', 'getCurrentUserId'))
+            ->setMethods(array('getManager','getAdapterFactory', 'getCurrentUserId', 'getBeanFetchedRow'))
             ->getMock();
 
         $adapterFactoryMock = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory')
@@ -81,6 +107,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $adapterFactoryMock->method('getAdapter')->willReturn(true);
 
+        $handler->method('getBeanFetchedRow')->willReturn(array('id' => 1));
         $handler->method('getManager')->willReturn($managerMock);
         $handler->method('getAdapterFactory')->willReturn($adapterFactoryMock);
         $handler->method('getCurrentUserId')->willReturn(3);
@@ -98,6 +125,20 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             array($this->getBeanMock('SugarBean'), 'calDavExport', 1 ,''),
             array($this->getBeanMock('CalDavEvent'), 'calDavImport', 1, ''),
             array($this->getBeanMock('CalDavEvent'), 'calDavImport', 0, 'CalDavEvents'),
+        );
+    }
+
+    public function getBeanFetchedRowProvider()
+    {
+        return array(
+            array(
+                'fetchedRow' => array(),
+                'method' => array('name' => 'retrieve', 'count' => 1),
+            ),
+            array(
+                'fetchedRow' => array('id' => 1),
+                'method' => array('name' => 'retrieve', 'count' => 0),
+            ),
         );
     }
 

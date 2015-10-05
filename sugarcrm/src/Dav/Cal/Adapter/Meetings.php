@@ -32,7 +32,8 @@ class Meetings extends CalDavAbstractAdapter implements AdapterInterface
         'description' => 'getDescription',
         'location' => 'getLocation',
         'duration_hours' => 'getDurationHours',
-        'duration_minutes' => 'getDurationMinutes'
+        'duration_minutes' => 'getDurationMinutes',
+        'status' => 'getStatus',
     );
 
     protected $importRecurringEventsDataMap = array(
@@ -46,18 +47,19 @@ class Meetings extends CalDavAbstractAdapter implements AdapterInterface
     protected $exportBeanDataMap = array(
         'setTitle' => 'name',
         'setDescription' => 'description',
-        'setLocation' => 'location'
+        'setLocation' => 'location',
+        'setStatus' => 'status'
     );
 
     public function export(\SugarBean $sugarBean, \CalDavEvent $calDavBean)
     {
         if (!($sugarBean instanceof \Meeting)) {
-            throw new AdapterInvalidArgumentException('Bean must be an instance of Meeting. Instance of '. get_class($sugarBean) .' given');
+            throw new AdapterInvalidArgumentException('Bean must be an instance of Meeting. Instance of ' .
+                get_class($sugarBean) . ' given');
         }
-        $dateTimeHelper = $this->getDateTimeHelper();
+
         $isEventChanged = false;
-        $dateStart = $dateEnd = '';
-        $sugarBean = $this->getNotCachedBean($sugarBean);
+
         if (!$calDavBean->calendarid) {
             $calendars = $this->getUserCalendars();
             if ($calendars !== null) {
@@ -76,19 +78,11 @@ class Meetings extends CalDavAbstractAdapter implements AdapterInterface
             }
         }
 
-        if ($sugarBean->date_start) {
-            $dateStart = $dateTimeHelper->sugarDateToUTC($sugarBean->date_start)->format(\TimeDate::DB_DATETIME_FORMAT);
-        }
-        if (!$dateStart || $dateStart !== $calDavBean->getStartDate()) {
-            $calDavBean->setStartDate($dateStart, $calendarComponent);
+        if ($calDavBean->setStartDate($sugarBean->date_start, $calendarComponent)) {
             $isEventChanged = true;
         }
 
-        if ($sugarBean->date_end) {
-            $dateEnd = $dateTimeHelper->sugarDateToUTC($sugarBean->date_end)->format(\TimeDate::DB_DATETIME_FORMAT);
-        }
-        if (!$dateEnd || $dateEnd !== $calDavBean->getEndDate()) {
-            $calDavBean->setEndDate($dateEnd, $calendarComponent);
+        if ($calDavBean->setEndDate($sugarBean->date_end, $calendarComponent)) {
             $isEventChanged = true;
         }
 
@@ -107,7 +101,10 @@ class Meetings extends CalDavAbstractAdapter implements AdapterInterface
         if ($this->setRecurringRulesToCalDav($sugarBean, $calDavBean)) {
             $isEventChanged = true;
         }
-        $calDavBean->setCalendarEventData($calendarEvent->serialize());
+
+        if ($isEventChanged) {
+            $calDavBean->setCalendarEventData($calendarEvent->serialize());
+        }
 
         return $isEventChanged;
     }
@@ -124,9 +121,10 @@ class Meetings extends CalDavAbstractAdapter implements AdapterInterface
             throw new AdapterInvalidArgumentException('Bean must be an instance of Meeting. Instance of '. get_class($sugarBean) .' given');
         }
         $isBeanChanged = false;
+
+        $calDavBean->clearVCalendarEvent();
+
         $oldAttributes = $this->getCurrentAttributes($sugarBean);
-        /**@var \CalDavEvent $calDavBean */
-        $calDavBean = $this->getNotCachedBean($calDavBean);
 
         if (!$sugarBean->assigned_user_id) {
             $sugarBean->assigned_user_id = $this->getCurrentUserId();

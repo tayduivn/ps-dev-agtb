@@ -851,6 +851,11 @@ END:VCALENDAR',
                 'newValue' => 'test',
                 'result' => true
             ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vevent'),
+                'newValue' => '',
+                'result' => true
+            ),
         );
     }
 
@@ -2133,7 +2138,6 @@ END:VCALENDAR',
         $result = $this->beanMock->setLocation($newValue, $component);
 
         $this->assertEquals($expectedResult, $result);
-        $this->assertEquals(1, count($component->select('LOCATION')));
         $this->assertEquals($newValue, $component->LOCATION);
 
     }

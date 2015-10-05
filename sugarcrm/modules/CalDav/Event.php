@@ -365,6 +365,14 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
     }
 
     /**
+     * Clearing current vCalendarEvent
+     */
+    public function clearVCalendarEvent()
+    {
+        $this->vCalendarEvent = null;
+    }
+
+    /**
      * Set calendar event object
      * @param SabreComponent\VCalendar $vEvent
      */
@@ -390,6 +398,22 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
     }
 
     /**
+     * Delete VObject property
+     * @param SabreComponent $parent
+     * @param string $propertyName
+     * @return bool
+     */
+    protected function deleteVObjectProperty(SabreComponent $parent, $propertyName)
+    {
+        if ($parent->$propertyName) {
+            $parent->remove($parent->$propertyName);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Set string property of event
      * Return true if property was changed or false otherwise
      * @param string $propertyName
@@ -399,6 +423,10 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
      */
     protected function setVObjectStringProperty($propertyName, $value, SabreComponent $parent)
     {
+        if (!$value) {
+            return $this->deleteVObjectProperty($parent, $propertyName);
+        }
+
         if (!$parent->$propertyName) {
             $prop = $parent->parent->createProperty($propertyName, $value);
             $parent->add($prop);
@@ -482,6 +510,11 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
      */
     protected function setVObjectDateTimeProperty($propertyName, $value, SabreComponent $parent)
     {
+        if (!$value) {
+            return $this->deleteVObjectProperty($parent, $propertyName);
+        }
+
+        $value = $this->dateTimeHelper->sugarDateToUTC($value)->format(\TimeDate::DB_DATETIME_FORMAT);
         if (!$parent->$propertyName) {
             $dateTimeElement = $parent->parent->createProperty($propertyName);
             $dateTimeElement->setDateTime($this->dateTimeHelper->sugarDateToDav($value));

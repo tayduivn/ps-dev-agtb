@@ -284,7 +284,7 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
             array(
                 'vEvent' => $this->getEventTemplateObject('vempty', true),
                 'recurringInfo' => array(
-                    'type' => 'Daily',
+                    'type' => 'Weekly',
                     'interval' => '2',
                     'count' => '1',
                     'until' => '2015-10-01',
@@ -380,6 +380,7 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
                 'sugarBean' => array(),
                 'childBeans' => array(),
                 'expectedEvents' => $this->getEventTemplateObject('recurring'),
+                'childrenCount' => 4,
                 'result' => false,
             ),
             array(
@@ -389,14 +390,19 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
                 ),
                 'childBeans' => array(
                     'a1' => array(
-                        'name' => 'Test Bean'
+                        'name' => 'Reccuring test 1',
+                        'date_start' => '2015-09-02 06:00:00',
+                        'date_end' => '2015-09-02 07:00:00',
                     ),
                     'a2' => array(
-                        'name' => 'Test Bean'
+                        'name' => 'Test Bean',
+                        'date_start' => '2015-09-03 06:00:00',
+                        'date_end' => '2015-09-03 07:00:00',
                     ),
                 ),
-                'expectedEvents' => $this->getEventTemplateObject('recurring'),
-                'result' => false,
+                'expectedEvents' => $this->getEventTemplateObject('recurring-cleaning'),
+                'childrenCount' => 4,
+                'result' => true,
             ),
             array(
                 'vEvent' => $this->getEventTemplateObject('recurring', true),
@@ -423,6 +429,7 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
                 'expectedEvents' => $this->getEventTemplateObject('recurring-children'),
+                'childrenCount' => 4,
                 'result' => true,
             ),
             array(
@@ -441,6 +448,26 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
                 'expectedEvents' => $this->getEventTemplateObject('recurring-children-2'),
+                'childrenCount' => 4,
+                'result' => true,
+            ),
+            array(
+                'vEvent' => $this->getEventTemplateObject('recurring-simple-day', true),
+                'sugarBean' => array(
+                    'name' => 'Test Bean',
+                    'description' => 'Test bean description',
+                    'date_start' => '2015-09-01 06:00:00',
+                ),
+                'childBeans' => array(
+                    'a3' => array(
+                        'name' => 'Test Bean',
+                        'description' => 'New event',
+                        'date_start' => '2015-09-04 06:00:00',
+                        'date_end' => '2015-09-04 06:00:00',
+                    ),
+                ),
+                'expectedEvents' => $this->getEventTemplateObject('recurring-simple-day-new'),
+                'childrenCount' => 3,
                 'result' => true,
             ),
 
@@ -674,14 +701,21 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
      * @param $sugarBean
      * @param $childBeans
      * @param $expectedEvents
+     * @param $childrenCount
      * @param $expectedResult
      *
      * @covers       Sugarcrm\Sugarcrm\Dav\Base\Helper\RecurringHelper::updateRecurringChildren
      *
      * @dataProvider updateRecurringChildrenProvider
      */
-    public function testUpdateRecurringChildren($currentEvent, $sugarBean, $childBeans, $expectedEvents, $expectedResult)
-    {
+    public function testUpdateRecurringChildren(
+        $currentEvent,
+        $sugarBean,
+        $childBeans,
+        $expectedEvents,
+        $childrenCount,
+        $expectedResult
+    ) {
         $recurringMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\RecurringHelper')
                               ->disableOriginalConstructor()
                               ->setMethods(array('getEventBean'))
@@ -693,7 +727,7 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
 
         $dateTimeHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
                                ->disableOriginalConstructor()
-                               ->setMethods(null)
+                               ->setMethods(array('getCurrentUser'))
                                ->getMock();
 
         $recurringEventMock = $this->getMockBuilder('\CalDavEvent')
@@ -701,10 +735,39 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
                                    ->setMethods(array('getBean', 'getCurrentUser'))
                                    ->getMock();
 
+        $intervalMapper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\IntervalMap')
+                               ->disableOriginalConstructor()
+                               ->setMethods(array('getMapping'))
+                               ->getMock();
+
+        $intervalMapper->expects($this->any())
+                       ->method('getMapping')
+                       ->willReturn(TestReflection::getProtectedValue($intervalMapper, 'statusMap'));
+
+        $userMock = $this->getMockBuilder('\User')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('getPreference'))
+                         ->getMock();
+
         $recurringEventMock->setCalendarEventData($currentEvent);
+
+        $dateTimeHelper->expects($this->any())->method('getCurrentUser')->willReturn($userMock);
 
         foreach ($sugarBean as $key => $value) {
             $meetingsMock->$key = $value;
+        }
+
+        for ($i = 0; $i < $childrenCount; $i ++) {
+            $bean = $this->getMockBuilder('\CalDavEvent')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('getCurrentUser'))
+                         ->getMock();
+
+            TestReflection::setProtectedValue($bean, 'dateTimeHelper', $dateTimeHelper);
+            TestReflection::setProtectedValue($bean, 'statusMapper', $intervalMapper);
+
+            $bean->expects($this->any())->method('getCurrentUser')->willReturn($userMock);
+            $recurringMock->expects($this->at($i))->method('getEventBean')->willReturn($bean);
         }
 
         $fetchedBeans = array();
@@ -724,6 +787,8 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
 
         TestReflection::setProtectedValue($recurringMock, 'dateTimeHelper', $dateTimeHelper);
         TestReflection::setProtectedValue($recurringEventMock, 'dateTimeHelper', $dateTimeHelper);
+        TestReflection::setProtectedValue($recurringEventMock, 'statusMapper', $intervalMapper);
+        TestReflection::setProtectedValue($recurringMock, 'intervalMapper', $intervalMapper);
 
         $result = TestReflection::callProtectedMethod(
             $recurringMock,

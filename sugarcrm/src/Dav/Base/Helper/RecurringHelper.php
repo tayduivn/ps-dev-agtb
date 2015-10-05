@@ -156,12 +156,11 @@ class RecurringHelper
             } else {
                 $result['interval'] = 1;
             }
-            if (isset($currentRule['UNTIL'])) {
-                $dateTime = new \SugarDateTime($currentRule['UNTIL']);
-                $result['until'] = $dateTime->asDb();
-            }
             if (isset($currentRule['COUNT'])) {
                 $result['count'] = $currentRule['COUNT'];
+            } elseif (isset($currentRule['UNTIL'])) {
+                $dateTime = new \SugarDateTime($currentRule['UNTIL']);
+                $result['until'] = $dateTime->asDb();
             }
 
             if ($result['type'] == 'Weekly') {
@@ -268,7 +267,11 @@ class RecurringHelper
         }
 
         if (!empty($recurringInfo['interval'])) {
-            $newRules['INTERVAL'] = (string)strtoupper($recurringInfo['interval']);
+            if ($recurringInfo['interval'] == 1) {
+                unset($recurringInfo['interval']);
+            } else {
+                $newRules['INTERVAL'] = (string)strtoupper($recurringInfo['interval']);
+            }
         }
 
         if (!empty($recurringInfo['count'])) {
@@ -284,11 +287,17 @@ class RecurringHelper
                 $newDate = $this->dateTimeHelper->sugarDateToDav($recurringInfo['until'] . ' 23:59:59');
             }
             $newRules['UNTIL'] = $newDate->format('Ymd\THis\Z');
+            if (isset($newRules['COUNT'])) {
+                unset($newRules['COUNT']);
+            }
         }
 
-        if (!empty($recurringInfo['dow'])) {
+        if (!empty($recurringInfo['dow']) && $recurringInfo['type'] == 'Weekly') {
             $newRules['BYDAY'] =
                 array_intersect_key(array_flip($this->dayMap), array_flip(str_split($recurringInfo['dow'])));
+            if (!is_array($currentRules['BYDAY'])) {
+                $newRules['BYDAY'] = implode(',', $newRules['BYDAY']);
+            }
         }
 
         $isChanged = false;
@@ -322,9 +331,11 @@ class RecurringHelper
         \CalDavEvent $recurringEvent,
         array $children
     ) {
+        $currentRecirrung = $this->getRecurringInfo($recurringEvent);
         $result = array();
         foreach ($children as $child) {
             $event = clone $recurringEvent;
+            $event->clearVCalendarEvent();
             $event->setBean($child);
             $component = $event->setComponent($event->getComponentTypeName());
             if ($component->RRULE) {
@@ -334,29 +345,23 @@ class RecurringHelper
                 $component->remove('EXDATE');
             }
             $isChanged = false;
-            if ($child->name != $recurringBean->name) {
-                $isChanged |= $event->setTitle($child->name, $component);
+            $startDate = $this->dateTimeHelper->sugarDateToUTC($child->date_start)->format(\TimeDate::DB_DATETIME_FORMAT);
+            if (isset($currentRecirrung['children'][$startDate])) {
+                $event = clone $currentRecirrung['children'][$startDate];
+                $event->clearVCalendarEvent();
+                $component = $event->setComponent($event->getComponentTypeName());
+                $result[$child->date_start] = $component;
             }
-            if ($child->description != $recurringBean->description) {
-                $isChanged |= $event->setDescription($child->description, $component);
-            }
-            if ($child->duration_minutes != $recurringBean->duration_minutes ||
-                $child->duration_hours != $recurringBean->duration_hours
-            ) {
-                $isChanged |= $event->setDuration($child->duration_hours, $child->duration_minutes, $component);
-            }
-
-            if ($child->location != $recurringBean->location) {
-                $isChanged |= $event->setLocation($child->location, $component);
-            }
-
-            if ($child->status != $recurringBean->status) {
-                $isChanged |= $event->setStatus($child->status, $component);
-            }
+            $isChanged |= $event->setTitle($child->name, $component);
+            $isChanged |= $event->setDescription($child->description, $component);
+            $isChanged |= $event->setDuration($child->duration_hours, $child->duration_minutes, $component);
+            $isChanged |= $event->setLocation($child->location, $component);
+            $isChanged |= $event->setStatus($child->status, $component);
+            $isChanged |= $event->setStartDate($child->date_start, $component);
+            $isChanged |= $event->setEndDate($child->date_end, $component);
 
             if ($isChanged) {
-                $event->setStartDate($child->date_start, $component);
-                $event->setEndDate($child->date_end, $component);
+                $component->isModifed = true;
                 $result[$child->date_start] = $component;
             }
         }
@@ -367,22 +372,31 @@ class RecurringHelper
             $currentEvent = $recurringEvent->getVCalendarEvent();
             $recurringComponent = array_shift($currentEvent->getBaseComponents('VEVENT'));
             $components = $currentEvent->getComponents();
+            $currentComponents = array();
             foreach ($components as $component) {
                 if (!empty($component->{'RECURRENCE-ID'})) {
-                    $componentStartDate = $this->dateTimeHelper->davDateToSugar($component->DTSTART);
-                    if (isset($result[$componentStartDate])) {
-                        $replacedComponent = $result[$componentStartDate];
-                        if ($replacedComponent->serialize() !== $component->serialize()) {
-                            $currentEvent->remove($component);
-                            $this->createRecurringChild($replacedComponent, $recurringComponent);
-                            $isUpdated = true;
-                        }
-                        unset($result[$componentStartDate]);
-                    } else {
+                    $startDate = $this->dateTimeHelper->davDateToSugar($component->DTSTART);
+                    if (!isset($result[$startDate])) {
                         $isUpdated = true;
                         $currentEvent->remove($component);
+                    } else {
+                        $currentComponents[$startDate] = $component;
                     }
                 }
+            }
+            foreach ($result as $startDate => $event) {
+                if (isset($currentComponents[$startDate])) {
+                    $replacedComponent = $currentComponents[$startDate];
+                    if ($replacedComponent->serialize() !== $event->serialize()) {
+                        $currentEvent->remove($replacedComponent);
+                        $this->createRecurringChild($event, $recurringComponent);
+                        $isUpdated = true;
+                    }
+                    unset($result[$startDate]);
+                } elseif (!$event->isModifed) {
+                    unset($result[$startDate]);
+                }
+                unset($event->isModifed);
             }
 
             foreach ($result as $component) {
