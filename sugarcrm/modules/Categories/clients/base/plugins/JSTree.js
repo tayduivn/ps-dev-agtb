@@ -479,8 +479,12 @@
                 var messages = {};
                 var name = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model)).trim();
                 var context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name;
-
-                messages.confirmation = app.utils.formatString(app.lang.get('NTC_DELETE_CONFIRMATION_FORMATTED'), [context]);
+                messages.confirmation = app.utils.formatString(
+                    model.children.length === 0 ?
+                        app.lang.get('NTC_DELETE_CONFIRMATION_FORMATTED', this.module) :
+                        app.lang.get('NTC_DELETE_CONFIRMATION_FORMATTED_PLURAL', this.module),
+                    [context]
+                );
                 messages.success = app.utils.formatString(app.lang.get('NTC_DELETE_SUCCESS'), [context]);
                 return messages;
             },
