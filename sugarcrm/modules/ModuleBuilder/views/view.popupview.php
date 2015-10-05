@@ -154,6 +154,12 @@ class ViewPopupview extends ViewListView
         if (isset($this->searchlayout))
             $histaction = "ModuleBuilder.history.browse(\"{$this->editModule}\", \"{$this->editLayout}\", \"{$this->searchlayout}\")" ;
 
+        $smarty->assign(
+            'onsubmit',
+            'studiotabs.generateGroupForm("edittabs");' .
+            'ModuleBuilder.state.markAsClean();ModuleBuilder.submitForm("edittabs"); return false;'
+        );
+
         $buttons = array ( ) ;
         if (! $this->fromModuleBuilder)
         {
@@ -161,16 +167,16 @@ class ViewPopupview extends ViewListView
                 'name' => 'savebtn',
                 'image' => $imageSave,
                 'text' => $GLOBALS['mod_strings']['LBL_BTN_SAVEPUBLISH'],
-                'actionScript' => "onclick='studiotabs.generateGroupForm(\"edittabs\");"
-                    . "ModuleBuilder.state.markAsClean();ModuleBuilder.submitForm(\"edittabs\")'");
+                'type' => 'submit',
+            );
         } else
         {
             $buttons[] = array(
                 'name' => 'mbsavebtn',
                 'image' => $imageSave,
                 'text' => $GLOBALS['mod_strings']['LBL_BTN_SAVE'],
-                'actionScript' => "onclick='studiotabs.generateGroupForm(\"edittabs\");"
-                    . "ModuleBuilder.state.markAsClean();ModuleBuilder.submitForm(\"edittabs\")'");
+                'type' => 'submit',
+            );
         }
         $buttons [] = array ( 'name' => 'historyBtn' , 'text' => translate ( 'LBL_HISTORY' ) , 'actionScript' => "onclick='$histaction'" ) ;
         $smarty->assign ( 'buttons', $this->_buildImageButtons ( $buttons ) ) ;
