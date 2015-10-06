@@ -139,13 +139,13 @@ class ParticipantsHelper
      *          )
      *      )
      *
+     * @param \SugarBean $bean
      * @param \CalDavEvent $event
      * @param string $componentType - DAV component to process
      * @return array See above
      */
-    public function prepareForDav(\CalDavEvent $event, $componentType = 'ATTENDEE')
+    public function prepareForDav(\SugarBean $bean, \CalDavEvent $event, $componentType = 'ATTENDEE')
     {
-        $bean = $event->getBean();
         $preResult = array();
 
         $sugarParticipants = $davParticipants = array();
@@ -181,7 +181,9 @@ class ParticipantsHelper
                     )
                 ));
                 foreach ($sugarParticipants as $userId => $participant) {
-                    $acceptStatuses[$userId] = $bean->users->rows[$userId]['accept_status'];
+                    if (isset($bean->users->rows[$userId]['accept_status'])) {
+                        $acceptStatuses[$userId] = $bean->users->rows[$userId]['accept_status'];
+                    }
                 }
                 break;
             default:
@@ -195,6 +197,7 @@ class ParticipantsHelper
                         'accept_status' => null,
                         'role' => null,
                         'cn' => null,
+                        'x-sugar-module' => null,
                     );
                 }
             }
@@ -205,13 +208,14 @@ class ParticipantsHelper
             if ($email) {
                 $displayName =
                     !empty($davParticipants[$userId]['cn']) ? $davParticipants[$userId]['cn'] : $userBean->full_name;
-                $role = !empty($davParticipants[$userId]['role']) ? $davParticipants[$userId]['role'] : null;
+                $role = !empty($davParticipants[$userId]['role']) ? $davParticipants[$userId]['role'] : 'REQ-PARTICIPANT';
 
                 $preResult[DavConstants::PARTICIPIANT_NOT_MODIFIED][$userId] = array(
                     'email' => $email,
                     'accept_status' => isset($acceptStatuses[$userId]) ? $acceptStatuses[$userId] : 'none',
                     'cn' => $displayName,
                     'role' => $role,
+                    'x-sugar-module' => $userBean->module_name,
                 );
             }
         }
@@ -243,6 +247,7 @@ class ParticipantsHelper
             foreach ($attendeesInfo as $attendeeId => $attendee) {
                 $status = isset($statusMap[$attendee['accept_status']]) ? $statusMap[$attendee['accept_status']] : null;
                 $davLink = isset($attendee['davLink']) ? $attendee['davLink'] : null;
+                $sugarModule = isset($attendee['x-sugar-module']) ? $attendee['x-sugar-module'] : 'Users';
 
                 $davAttendees[$internalStatus][strtolower('mailto:' . $attendee['email'])] = array(
                     'PARTSTAT' => $status,
@@ -251,6 +256,7 @@ class ParticipantsHelper
                     'davLink' => $davLink,
                     'X-SUGARUID' => $attendeeId,
                     'RSVP' => 'TRUE',
+                    'X-SUGAR-MODULE' => $sugarModule,
                 );
             }
         }
@@ -269,6 +275,7 @@ class ParticipantsHelper
     {
         $sugarParticipants = array();
         if ($bean->load_relationship($relationship)) {
+            $bean->$relationship->resetLoaded();
             $sugarParticipants = $bean->$relationship->getBeans();
             foreach ($sugarParticipants as $userId => $participant) {
                 if (isset($bean->$relationship->rows[$userId]['accept_status'])) {

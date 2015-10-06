@@ -13,6 +13,7 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Schedule;
 
+use Sugarcrm\Sugarcrm\Dav\Base\Constants as DavConstants;
 use Sabre\CalDAV\Schedule\Plugin as DavSchedulePlugin;
 use Sabre\VObject;
 use Sabre\VObject\Component\VCalendar;
@@ -47,6 +48,7 @@ class Plugin extends DavSchedulePlugin
 
         $this->server->removeListener('propFind', array($aclPlugin, 'propFind'));
 
+        $xSuagrModulePath = '{' . DavConstants::NS_SUGAR . '}x-sugar-module';
         $result = $this->server->getProperties(
             $principalUri,
             array(
@@ -55,13 +57,13 @@ class Plugin extends DavSchedulePlugin
                 $caldavNS . 'schedule-inbox-URL',
                 $caldavNS . 'schedule-default-calendar-URL',
                 '{http://sabredav.org/ns}email-address',
-                'x-sugar-module',
+                $xSuagrModulePath,
             )
         );
 
         $this->server->on('propFind', array($aclPlugin, 'propFind'), 20);
 
-        $iTipMessage->xSugarModule = isset($result['x-sugar-module']) ? $result['x-sugar-module'] : 'Users';
+        $iTipMessage->xSugarModule = isset($result[$xSuagrModulePath]) ? $result[$xSuagrModulePath] : 'Users';
 
         if (!isset($result[$caldavNS . 'schedule-inbox-URL'])) {
             $iTipMessage->scheduleStatus = '5.2;Could not find local inbox';
@@ -185,11 +187,11 @@ class Plugin extends DavSchedulePlugin
         if (!$node instanceof DAVACL\IPrincipal) {
             return;
         }
-
-        $propFind->handle('x-sugar-module', function () use ($node) {
-            $result = $node->getProperties(array('x-sugar-module'));
-            if (isset($result['x-sugar-module'])) {
-                return $result['x-sugar-module'];
+        $xSugarModulePath = '{' . DavConstants::NS_SUGAR . '}x-sugar-module';
+        $propFind->handle($xSugarModulePath, function () use ($node, $xSugarModulePath) {
+            $result = $node->getProperties(array($xSugarModulePath));
+            if (isset($result[$xSugarModulePath])) {
+                return $result[$xSugarModulePath];
             } else {
                 return 'Users';
             }

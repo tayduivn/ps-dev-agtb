@@ -137,6 +137,8 @@ class Meeting extends SugarBean {
     {
         global $timedate, $current_user;
 
+		$isUpdate = $this->isUpdate();
+
         if (isset($this->date_start)) {
             $td = $timedate->fromDb($this->date_start);
             if (!$td) {
@@ -239,7 +241,7 @@ class Meeting extends SugarBean {
         // CCL - Comment out call to set $current_user as invitee
         // set organizer to auto-accept
         // if there isn't a fetched row its new
-        if ($this->assigned_user_id == $GLOBALS['current_user']->id && empty($this->fetched_row)) {
+        if ($this->assigned_user_id == $GLOBALS['current_user']->id && !$isUpdate) {
             $this->set_accept_status($GLOBALS['current_user'], 'accept');
         }
 
@@ -551,10 +553,10 @@ class Meeting extends SugarBean {
 
 		$path = SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
 
-		require_once("modules/vCals/vCal.php");
-		$content = vCal::get_ical_event($this, $GLOBALS['current_user']);
+		$calDavEvent = \BeanFactory::getBean('CalDavEvents');
+		$content = $calDavEvent->prepareForInvite($this);
 
-		if (file_put_contents($path, $content)) {
+		if ($content && file_put_contents($path, $content)) {
             $attachment = new Attachment($path, "meeting.ics", Encoding::Base64, "text/calendar");
             $mailer->addAttachment($attachment);
 		}

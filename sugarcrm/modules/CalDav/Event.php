@@ -15,6 +15,7 @@ use Sugarcrm\Sugarcrm\Dav\Base\SugarDavSyncInterface;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper as DavHelper;
 use Sugarcrm\Sugarcrm\Dav\Base\Constants as DavConstants;
 use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as DavStatusMapper;
+use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
 
 
 /**
@@ -180,6 +181,12 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
      * @var Sugarcrm\Sugarcrm\Dav\Base\Helper\ServerHelper
      */
     protected $serverHelper;
+
+    /**
+     * Is mail template generating or not
+     * @var bool
+     */
+    protected $inMailGeneration;
 
     /**
      * {@inheritDoc}
@@ -956,12 +963,13 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
 
     /**
      * Set organizer of event
+     * @param \SugarBean $bean
      * @param Sabre\VObject\Component $parent
      * @return bool
      */
-    public function setOrganizer(SabreComponent $parent)
+    public function setOrganizer(\SugarBean $bean, SabreComponent $parent)
     {
-        $attendees = $this->participantsHelper->prepareForDav($this, 'ORGANIZER');
+        $attendees = $this->participantsHelper->prepareForDav($bean, $this, 'ORGANIZER');
 
         if (!$attendees) {
             return false;
@@ -1007,12 +1015,13 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
 
     /**
      * Set participants of event
+     * @param \SugarBean $bean
      * @param Sabre\VObject\Component $parent
      * @return bool
      */
-    public function setParticipants(SabreComponent $parent)
+    public function setParticipants(\SugarBean $bean, SabreComponent $parent)
     {
-        $attendees = $this->participantsHelper->prepareForDav($this, 'ATTENDEE');
+        $attendees = $this->participantsHelper->prepareForDav($bean, $this, 'ATTENDEE');
 
         if (!$attendees) {
             return false;
@@ -1232,6 +1241,10 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
      */
     public function scheduleLocalDelivery()
     {
+        if ($this->inMailGeneration) {
+            return;
+        }
+
         $currentUser = $this->getCurrentUser();
         $server = $this->serverHelper->setUp();
 
@@ -1245,7 +1258,7 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
         $caldavPlugin = $server->getPlugin('caldav');
 
         $calendarPath =
-            $caldavPlugin::CALENDAR_ROOT . '/' . $currentUser->user_name . '/' . $calendarUri;
+            $caldavPlugin::CALENDAR_ROOT . '/users/' . $currentUser->user_name . '/' . $calendarUri;
 
         $schedulePlugin->calendarObjectSugarChange($this->getVCalendarEvent(), $calendarPath, $this->calendardata);
     }
@@ -1300,5 +1313,42 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
         }
 
         return null;
+    }
+
+    /**
+     * Create text representation of event for email
+     * @param SugarBean $bean
+     * @return string
+     */
+    public function prepareForInvite(\SugarBean $bean)
+    {
+        $this->inMailGeneration = true;
+        $adapterFactory = $this->getAdapterFactory();
+        $adapter = $adapterFactory->getAdapter($bean->module_name);
+
+        $result = '';
+
+        if ($adapter) {
+            $this->calendarid = \create_guid();
+            $this->setBean($bean);
+
+            if ($adapter->export($bean, $this)) {
+                $vCalendarEvent = $this->getVCalendarEvent();
+                $method = $vCalendarEvent->createProperty('METHOD', 'REQUEST');
+                $vCalendarEvent->add($method);
+                $result = $this->getVCalendarEvent()->serialize();
+            }
+        }
+        $this->inMailGeneration = false;
+
+        return $result;
+    }
+
+    /**
+     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory
+     */
+    protected function getAdapterFactory()
+    {
+        return CalDavAdapterFactory::getInstance();
     }
 }

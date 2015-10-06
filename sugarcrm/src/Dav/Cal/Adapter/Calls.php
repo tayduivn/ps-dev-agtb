@@ -27,10 +27,9 @@ class Calls extends CalDavAbstractAdapter implements AdapterInterface
         if (!($sugarBean instanceof \Call)) {
             throw new AdapterInvalidArgumentException('Bean must be an instance of Call. Instance of '. get_class($sugarBean) .' given');
         }
-        $dateTimeHelper = $this->getDateTimeHelper();
+
         $isEventChanged = false;
-        $dateStart = $dateEnd = '';
-        $sugarBean = $this->getNotCachedBean($sugarBean);
+
         if (!$calDavBean->calendarid) {
             $calendars = $this->getUserCalendars();
             if ($calendars !== null) {
@@ -49,36 +48,39 @@ class Calls extends CalDavAbstractAdapter implements AdapterInterface
             }
         }
 
-        if ($sugarBean->date_start) {
-            $dateStart = $dateTimeHelper->sugarDateToUTC($sugarBean->date_start)->format(\TimeDate::DB_DATETIME_FORMAT);
-        }
-        if ($calDavBean->setStartDate($dateStart, $calendarComponent)) {
+        if ($calDavBean->setStartDate($sugarBean->date_start, $calendarComponent)) {
             $isEventChanged = true;
         }
 
-        if ($sugarBean->date_end) {
-            $dateEnd = $dateTimeHelper->sugarDateToUTC($sugarBean->date_end)->format(\TimeDate::DB_DATETIME_FORMAT);
-        }
-        if ($calDavBean->setEndDate($dateEnd, $calendarComponent)) {
+        if ($calDavBean->setEndDate($sugarBean->date_end, $calendarComponent)) {
             $isEventChanged = true;
         }
 
         if ($calDavBean->setDuration($sugarBean->duration_hours, $sugarBean->duration_minutes, $calendarComponent)) {
             $isEventChanged = true;
         }
-        if ($calDavBean->setOrganizer($calendarComponent)) {
+        if ($calDavBean->setOrganizer($sugarBean, $calendarComponent)) {
             $isEventChanged = true;
         }
         if ($this->setExportReminders($sugarBean, $calDavBean, $calendarComponent)) {
             $isEventChanged = true;
         }
-        if ($calDavBean->setParticipants($calendarComponent)) {
-            $isEventChanged = true;
+
+        $isParticipantsChanged = false;
+        if ($calDavBean->setParticipants($sugarBean, $calendarComponent)) {
+            $isParticipantsChanged = $isEventChanged = true;
         }
         if ($this->setRecurringRulesToCalDav($sugarBean, $calDavBean)) {
             $isEventChanged = true;
         }
-        $calDavBean->setCalendarEventData($calendarEvent->serialize());
+
+        if ($isParticipantsChanged) {
+            $calDavBean->scheduleLocalDelivery();
+        }
+
+        if ($isEventChanged) {
+            $calDavBean->setCalendarEventData($calendarEvent->serialize());
+        }
 
         return $isEventChanged;
     }
@@ -96,9 +98,14 @@ class Calls extends CalDavAbstractAdapter implements AdapterInterface
         }
 
         $isBeanChanged = false;
+
+        $calDavBean->clearVCalendarEvent();
+
+        if (!$sugarBean->id) {
+            $sugarBean->send_invites = true;
+        }
+
         $oldAttributes = $this->getCurrentAttributes($sugarBean);
-        /**@var \CalDavEvent $calDavBean */
-        $calDavBean = $this->getNotCachedBean($calDavBean);
 
         if (!$sugarBean->assigned_user_id) {
             $sugarBean->assigned_user_id = $this->getCurrentUserId();

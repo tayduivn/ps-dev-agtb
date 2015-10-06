@@ -74,7 +74,7 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
         $meetings = $this->getMeetingAdapterMock($meetingBean);
 
         $result = $meetings->export($meetingBean, $calDavBean);
-        $this->assertTrue($result);
+        $this->assertFalse($result);
     }
 
     /**
@@ -243,6 +243,8 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('getMapping'))
             ->getMock();
+
+        $statusMapper->method('getMapping')->willReturn(array());
 
         TestReflection::setProtectedValue($participantsHelper, 'statusMapper', $acceptedMapper);
 
