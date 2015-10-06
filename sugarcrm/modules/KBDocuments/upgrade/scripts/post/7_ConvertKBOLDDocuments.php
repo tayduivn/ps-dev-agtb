@@ -246,7 +246,7 @@ EOF;
     }
 
     /**
-     * Remove old KB from menu and add new one.
+     * Add new KB to menu if need.
      * Remove old KB from portal and add new one.
      */
     protected function checkMenu()
@@ -254,12 +254,11 @@ EOF;
         require_once('modules/MySettings/TabController.php');
         $tc = new TabController();
 
-        $tabs = $tc->get_system_tabs();
-        unset($tabs['KBDocuments']);
-        if (!isset($tabs['KBContents'])) {
+        if (!empty($this->upgrader->state['addKBToMenu'])) {
+            $tabs = $tc->get_system_tabs();
             $tabs['KBContents'] = 'KBContents';
+            $tc->set_system_tabs($tabs);
         }
-        $tc->set_system_tabs($tabs);
         //BEGIN SUGARCRM flav=ent ONLY
         $tabs = $tc->getPortalTabs();
         $tabs = array_diff(array_values($tabs), array('KBDocuments', 'KBContents'));
