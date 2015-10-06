@@ -99,7 +99,7 @@
             <span id='{$displayParams.formName}_{$vardef.name}_checkbox_div_0'>
             &nbsp;
             <input id="selected_{$vardef.name}_collection_0" name="selected_{$vardef.name}_collection_0"
-                   type="checkbox" class="checkbox"
+                   type="checkbox" class="checkbox" value="{$values.primary.id}"
                    {if $values.primary.selected}checked="checked"
                    title="{sugar_translate label='LBL_TEAM_TBSELECTED_TITLE'}"
                    {else}title="{sugar_translate label='LBL_TEAM_SELECT_AS_TBSELECTED_TITLE'}"{/if}/>
