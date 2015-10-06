@@ -365,6 +365,7 @@ class CalendarUtils
 			$clone->date_start = $date_start;
 			// TODO CHECK DATETIME VARIABLE
 			$date = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$date_start);
+            $bean->duration_minutes = $bean->duration_minutes ? : 0;
 			$date = $date->get("+{$bean->duration_hours} Hours")->get("+{$bean->duration_minutes} Minutes");
 			$date_end = $date->format($GLOBALS['timedate']->get_date_time_format());
 			$clone->date_end = $date_end;

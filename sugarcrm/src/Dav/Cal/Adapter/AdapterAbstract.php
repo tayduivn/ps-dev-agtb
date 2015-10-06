@@ -404,8 +404,7 @@ abstract class AdapterAbstract
                 } else {
                     $generatedId = \CalendarUtils::saveRecurring($sugarBean, array($date_start));
                     if (isset($generatedId[0]['id'])) {
-                        /** @var \Meeting $event */
-                        $event = \BeanFactory::getBean('Meetings', $generatedId[0]['id'], array('cache' => false));
+                        $event = \BeanFactory::getBean($sugarBean->module_name, $generatedId[0]['id'], array('cache' => false));
                         $event->repeat_parent_id = $sugarBean->id;
                     }
                 }
@@ -461,6 +460,32 @@ abstract class AdapterAbstract
 
         if ($calDavBean->setRRule($recurringRule)) {
             return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Add Contacts or Leads participiants
+     * @param array $davParticipants
+     * @param \SugarBean $sugarBean
+     * @param string $bealRelation
+     * @param string $beanMethod
+     *
+     * @return bool
+     */
+    protected function addNonUsersParticipants($davParticipants, $sugarBean, $bealRelation, $beanMethod)
+    {
+        $davParticipants = array_keys($davParticipants);
+        sort($davParticipants);
+        if ($sugarBean->load_relationship($bealRelation)) {
+            $beanParticipants = $sugarBean->$bealRelation->get();
+            sort($beanParticipants);
+
+            if ($davParticipants != $beanParticipants && method_exists($sugarBean, $beanMethod)) {
+                $sugarBean->$beanMethod($davParticipants);
+                return true;
+            }
         }
 
         return false;
