@@ -23,16 +23,17 @@ class SugarTestAccountUtilities
         $time = mt_rand();
         $account = BeanFactory::newBean('Accounts');
 
-        if (isset($accountValues['name'])) {
-            $account->name = $accountValues['name'];
-        } else {
-            $account->name = 'SugarAccount' . $time;
-        }
+        $accountValues = array_merge(array(
+            'name' => 'SugarAccount' . $time,
+            'email' => 'account@'. $time. 'sugar.com',
+        ), $accountValues);
 
-        if (isset($accountValues['email'])) {
-            $account->email1 = $accountValues['email'];
-        } else {
-            $account->email1 = 'account@'. $time. 'sugar.com';
+        // for backward compatibility with existing tests
+        $accountValues['email1'] = $accountValues['email'];
+        unset($accountValues['email']);
+
+        foreach ($accountValues as $property => $value) {
+            $account->$property = $value;
         }
 
         if(!empty($id))
