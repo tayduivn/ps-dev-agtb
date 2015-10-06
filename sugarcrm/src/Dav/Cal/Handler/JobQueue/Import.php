@@ -32,7 +32,7 @@ class Import implements RunnableInterface
     /**
      * @var string
      */
-    protected $beanId;
+    protected $fetchedRow;
 
     /**
      * @var string
@@ -40,14 +40,14 @@ class Import implements RunnableInterface
     protected $userId;
 
     /**
+     * @param array $fetchedRow
      * @param string $moduleName
-     * @param string $beanId
      * @param string $userId
      */
-    public function __construct($moduleName, $beanId, $userId)
+    public function __construct(array $fetchedRow, $moduleName, $userId)
     {
         $this->moduleName = $moduleName;
-        $this->beanId = $beanId;
+        $this->fetchedRow = $fetchedRow;
         $this->userId = $userId;
     }
 
@@ -83,7 +83,9 @@ class Import implements RunnableInterface
      */
     protected function getBean()
     {
-        return \BeanFactory::getBean($this->moduleName, $this->beanId);
+        $bean = \BeanFactory::getBean($this->moduleName);
+        $bean->populateFromRow($this->fetchedRow);
+        return $bean;
     }
 
     /**

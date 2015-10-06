@@ -110,7 +110,7 @@ class Handler
      */
     protected function getParentBean($bean)
     {
-        return \BeanFactory::getBean($bean->module_name, $bean->repeat_parent_id);
+        return \BeanFactory::getBean($bean->module_name, $bean->repeat_parent_id, array('use_cache' => false));
     }
 
     /**

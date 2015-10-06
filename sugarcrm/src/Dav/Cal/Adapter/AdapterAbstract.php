@@ -73,7 +73,9 @@ abstract class AdapterAbstract
         if (isset($RecurringRule['count']) && $sugarBean->repeat_count != $RecurringRule['count']) {
             return true;
         }
-        if (isset($RecurringRule['until']) && $sugarBean->repeat_until != $this->getUntilDate($RecurringRule['until'])) {
+        if (isset($RecurringRule['until']) &&
+            strtotime($sugarBean->repeat_until) != strtotime($this->getUntilDate($RecurringRule['until']))
+        ) {
             return true;
         }
         if (isset($RecurringRule['dow']) && $sugarBean->repeat_dow != $RecurringRule['dow']) {
@@ -225,17 +227,19 @@ abstract class AdapterAbstract
         $isReminderChange = false;
         $calDavReminderValues = $calDavEvent->getReminders();
         if ($sugarBean->reminder_checked === true
-            || (isset($calDavReminderValues['DISPLAY']) && $sugarBean->reminder_time != $calDavReminderValues['DISPLAY']['duration'])
+            || (isset($calDavReminderValues['DISPLAY']))
         ) {
-            $calDavEvent->setReminder($sugarBean->reminder_time, $sabreComponent, 'DISPLAY');
-            $isReminderChange = true;
+            if ($calDavEvent->setReminder($sugarBean->reminder_time, $sabreComponent, 'DISPLAY')) {
+                $isReminderChange = true;
+            }
         }
 
         if ($sugarBean->email_reminder_checked === true
-            || (isset($calDavReminderValues['EMAIL']) && $sugarBean->email_reminder_time != $calDavReminderValues['EMAIL']['duration'])
+            || (isset($calDavReminderValues['EMAIL']))
         ) {
-            $calDavEvent->setReminder($sugarBean->email_reminder_time, $sabreComponent, 'EMAIL');
-            $isReminderChange = true;
+            if ($calDavEvent->setReminder($sugarBean->email_reminder_time, $sabreComponent, 'EMAIL')) {
+                $isReminderChange = true;
+            }
         }
 
         return $isReminderChange;
@@ -324,11 +328,12 @@ abstract class AdapterAbstract
         if (isset($RecurringRule['interval'])) {
             $sugarBean->repeat_interval = $RecurringRule['interval'];
         }
-        if (isset($RecurringRule['count'])) {
+        if (!empty($RecurringRule['count'])) {
             $sugarBean->repeat_count = $RecurringRule['count'];
-        }
-        if (isset($RecurringRule['until'])) {
+            $sugarBean->repeat_until = null;
+        } elseif (!empty($RecurringRule['until'])) {
             $sugarBean->repeat_until = $this->getUntilDate($RecurringRule['until']);
+            $sugarBean->repeat_count = null;
         }
         if (isset($RecurringRule['dow'])) {
             $sugarBean->repeat_dow = $RecurringRule['dow'];
@@ -406,14 +411,16 @@ abstract class AdapterAbstract
                 }
 
                 if ($event) {
-                    if ($this->setMappedBeanProperties($event, $calDavBean, $this->importRecurringEventsDataMap)) {
+                    if ($this->setMappedBeanProperties($event, $calDavChild, $this->importRecurringEventsDataMap)) {
                         $isRecurringChanged = true;
                     }
                     if ($this->isRecurringRulesChangedForBean($event, $recurringRule)) {
                         $this->setRecurringRulesToBean($event, $recurringRule);
                         $isRecurringChanged = true;
                     }
-                    $event->save();
+                    if ($isRecurringChanged) {
+                        $event->save();
+                    }
                 }
             }
 
@@ -437,53 +444,25 @@ abstract class AdapterAbstract
      */
     public function setRecurringRulesToCalDav(\SugarBean $sugarBean, \CalDavEvent $calDavBean)
     {
-        $dateTimeHelper = $this->getDateTimeHelper();
-        $isChanged = false;
-        $recurringRule = $recurringRuleOriginal = $calDavBean->getRRule();
-        if ($recurringRule === null) {
-            $recurringRule = $recurringRuleOriginal = array();
-        }
-        if (!isset($recurringRuleOriginal['children'])) {
-            $recurringRuleOriginal['children'] = array();
-        }
-        if (!isset($recurringRule['type']) || $sugarBean->repeat_type != $recurringRule['type']) {
-            $recurringRule['type'] = $sugarBean->repeat_type;
-            $isChanged = true;
-        }
-        if (!isset($recurringRule['interval']) || $sugarBean->repeat_type != $recurringRule['interval']) {
-            $recurringRule['interval'] = $sugarBean->repeat_interval;
-            $isChanged = true;
-        }
-        if (!isset($recurringRule['count']) || $sugarBean->repeat_type != $recurringRule['count']) {
-            $recurringRule['count'] = $sugarBean->repeat_count;
-            $isChanged = true;
-        }
-        if (!isset($recurringRule['until']) || $sugarBean->repeat_until != $this->getUntilDate($recurringRule['until'])) {
-            $recurringRule['until'] = $dateTimeHelper->sugarDateToDav($sugarBean->repeat_until)->format(\TimeDate::DB_DATE_FORMAT);
-            $isChanged = true;
-        }
-
-        if (!isset($recurringRule['dow']) || $sugarBean->repeat_type != $recurringRule['dow']) {
-            $recurringRule['dow'] = $sugarBean->repeat_dow;
-            $isChanged = true;
-        }
+        $recurringRule['type'] = $sugarBean->repeat_type;
+        $recurringRule['interval'] = $sugarBean->repeat_interval;
+        $recurringRule['count'] = $sugarBean->repeat_count;
+        $recurringRule['until'] = $sugarBean->repeat_until;
+        $recurringRule['dow'] = $sugarBean->repeat_dow;
 
         $calendarEvents = $this->getCalendarEvents();
         $childQuery = $calendarEvents->getChildrenQuery($sugarBean);
         $childEvents = $sugarBean->fetchFromQuery($childQuery);
+        $recurringRule['parent'] = $sugarBean;
         $recurringRule['children'] = array();
         foreach ($childEvents as $event) {
-            $recurringRule['children'][$event->date_start] = $event;
+            $recurringRule['children'][] = $event;
         }
 
-        if (!array_diff(array_keys($recurringRule['children']), array_keys($recurringRuleOriginal['children']))) {
-            $isChanged = true;
+        if ($calDavBean->setRRule($recurringRule)) {
+            return true;
         }
-        if (!isset($recurringRule['parent']) || $recurringRule['parent']->id != $sugarBean->id) {
-            $recurringRule['parent'] = $sugarBean;
-            $isChanged = true;
-        }
-        $calDavBean->setRRule($recurringRule);
-        return $isChanged;
+
+        return false;
     }
 }

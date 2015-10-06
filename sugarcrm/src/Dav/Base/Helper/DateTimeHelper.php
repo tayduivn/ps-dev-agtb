@@ -37,10 +37,13 @@ class DateTimeHelper
      * Convert seconds to DURATION format
      * @see http://tools.ietf.org/html/rfc5545#page-34
      * @param int $seconds
-     * @return string
+     * @return string | null
      */
     public function secondsToDuration($seconds)
     {
+        if (!$seconds) {
+            return null;
+        }
         $parts = array(
             'date' => array('Y' => 'y', 'M' => 'm', 'D' => 'd'),
             'time' => array('H' => 'h', 'M' => 'i', 'S' => 's'),
@@ -134,11 +137,30 @@ class DateTimeHelper
      */
     public function sugarDateToUTC($dateTime)
     {
-        $userTimeZone = new \DateTimeZone($GLOBALS['current_user']->getPreference('timezone'));
+        $sugarTimeDate = new \TimeDate();
+        $dt = $sugarTimeDate->fromDb($dateTime);
+        if ($dt) {
+            return $dt;
+        }
+
+        $currentTimezone = $this->getCurrentUser()->getPreference('timezone');
+        if (!$currentTimezone) {
+            $currentTimezone = 'UTC';
+        }
+        $userTimeZone = new \DateTimeZone($currentTimezone);
         $utcTimeZone = new \DateTimeZone('UTC');
         $dt = new \DateTime($dateTime, $userTimeZone);
         $dt->setTimeZone($utcTimeZone);
 
         return $dt;
+    }
+
+    /**
+     * Get current user
+     * @return \User
+     */
+    protected function getCurrentUser()
+    {
+        return $GLOBALS['current_user'];
     }
 }

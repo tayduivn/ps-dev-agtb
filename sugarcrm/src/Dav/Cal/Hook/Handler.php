@@ -37,14 +37,31 @@ class Handler
         if ($bean instanceof \CalDavEvent) {
             if ($bean->parent_type != $bean->module_name &&
                 $adapter->getAdapter($bean->getBean()->module_name)) {
-                $manager->calDavImport($bean->module_name, $bean->id, $this->getCurrentUserId());
+                $fetchedRow = $this->getBeanFetchedRow($bean);
+                $bean->clearVCalendarEvent();
+                $manager->calDavImport($fetchedRow, $bean->module_name, $this->getCurrentUserId());
             }
         } elseif ($bean instanceof \SugarBean) {
             //@TODO check if bean is childred
             if ($adapter->getAdapter($bean->module_name)) {
-                $manager->calDavExport($bean->module_name, $bean->id, $this->getCurrentUserId());
+                $fetchedRow = $this->getBeanFetchedRow($bean);
+                $manager->calDavExport($fetchedRow, $bean->module_name, $this->getCurrentUserId());
             }
         }
+    }
+
+    /**
+     * Retrieve bean fetched row
+     * @param \SugarBean $bean
+     * @return array
+     */
+    protected function getBeanFetchedRow(\SugarBean $bean)
+    {
+        if (!$bean->fetched_row) {
+            $bean->retrieve($bean->id);
+        }
+
+        return $bean->fetched_row;
     }
 
     /**
