@@ -74,6 +74,7 @@ class Call extends SugarBean {
 	var $new_schema = true;
 	var $importable = true;
 	var $recurring_source;
+	var $fill_additional_column_fields = true;
 
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = array('assigned_user_name', 'assigned_user_id', 'contact_id', 'user_id', 'contact_name');
@@ -286,11 +287,11 @@ class Call extends SugarBean {
 		return $query;
 	}
 
-	function fill_in_additional_detail_fields($get_parent_fields = true)
+	function fill_in_additional_detail_fields()
 	{
 		global $locale;
 
-		if ($get_parent_fields) {
+		if ($this->fill_additional_column_fields) {
 			parent::fill_in_additional_detail_fields();
 		}
 
@@ -324,7 +325,7 @@ class Call extends SugarBean {
 		if (is_null($this->duration_minutes))
 			$this->duration_minutes = "1";
 
-		if ($get_parent_fields) {
+		if ($this->fill_additional_column_fields) {
 			$this->fill_in_additional_parent_fields();
 		}
 
@@ -842,4 +843,12 @@ class Call extends SugarBean {
 
         parent::loadFromRow($arr, $convert);
     }
+
+	/**
+	 * @param boolean $fill_additional_column_fields
+	 */
+	public function setFillAdditionalColumnFields($fill_additional_column_fields)
+	{
+		$this->fill_additional_column_fields = $fill_additional_column_fields;
+	}
 }

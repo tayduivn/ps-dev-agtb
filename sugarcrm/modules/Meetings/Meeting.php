@@ -76,6 +76,7 @@ class Meeting extends SugarBean {
 	var $object_name = "Meeting";
 
 	var $importable = true;
+	var $fill_additional_column_fields = true;
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = array('assigned_user_name', 'assigned_user_id', 'contact_id', 'user_id', 'contact_name', 'accept_status');
 	var $relationship_fields = array('account_id'=>'accounts','opportunity_id'=>'opportunity','case_id'=>'case',
@@ -276,10 +277,10 @@ class Meeting extends SugarBean {
 		return "$this->name";
 	}
 
-	function fill_in_additional_detail_fields($get_parent_fields = true) {
+	function fill_in_additional_detail_fields() {
 		global $locale;
 
-		if ($get_parent_fields) {
+		if ($this->fill_additional_column_fields) {
 			parent::fill_in_additional_detail_fields();
 		}
 
@@ -953,6 +954,15 @@ class Meeting extends SugarBean {
 
         parent::loadFromRow($arr, $convert);
     }
+
+	/**
+	 * @param boolean $fill_additional_column_fields
+	 */
+	public function setFillAdditionalColumnFields($fill_additional_column_fields)
+	{
+		$this->fill_additional_column_fields = $fill_additional_column_fields;
+	}
+
 } // end class def
 
 /**
