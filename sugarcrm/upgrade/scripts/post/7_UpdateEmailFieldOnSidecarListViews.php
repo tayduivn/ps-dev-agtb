@@ -189,16 +189,20 @@ class SugarUpgradeUpdateEmailFieldOnSidecarListViews extends UpgradeScript
                 $module = $m[1];
 
                 // We need the bean to get its parent types
-                $beanFile = "$prefix/$module/$module.php";
-                if (file_exists($beanFile)) {
-                    include_once $beanFile;
-                    $bean = new $module();
-
-                    // If the bean for this module is a Company type, snag it
-                    if ($bean instanceof Company) {
-                        $files[] = $path;
+                if (!class_exists($module)) {
+                    $beanFile = "$prefix/$module/$module.php";
+                    if (file_exists($beanFile)) {
+                        include_once $beanFile;
                     }
                 }
+
+                $bean = new $module();
+
+                // If the bean for this module is a Company type, snag it
+                if ($bean instanceof Company) {
+                    $files[] = $path;
+                }
+
             }
         }
 
