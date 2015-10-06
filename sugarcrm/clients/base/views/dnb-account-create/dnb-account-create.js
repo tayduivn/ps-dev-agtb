@@ -78,9 +78,9 @@
         if (this.disposed) return;
         this.template = app.template.get(this.name + '.dnb-search-hint');
         this.render();
-
-        var $name = $('[data-fieldname=name].index').find('input');
-        $name.on('keyup', _.throttle(_.bind(this.dnbSearch, this), 1000, {leading: false}));
+        // call .off first because loadDataWithValidConnector is called twice on account-create
+        // we don't want to set the event listener twice
+        this.context.off('update:account').on('update:account', this.dnbSearch, this);
         this.errmsg = null;
     },
 
@@ -93,8 +93,7 @@
         this.errmsg = 'LBL_DNB_NOT_CONFIGURED';
         this.template = app.template.get(this.name + '.dnb-need-configure');
         this.render();
-        var $name = $('[data-fieldname=name].index').find('input');
-        $name.off('keyup', _.throttle(_.bind(this.dnbSearch, this), 1000, {leading: false}));
+        this.context.off('update:account', this.dnbSearch);
     },
 
     /**
@@ -174,7 +173,7 @@
         }
 
         //Value of input in name field
-        var searchString = $('[data-fieldname=name].index').find('input').val();
+        var searchString = this.closestComponent('sidebar').getComponent('main-pane').$('[data-fieldname=name] input').val()
 
         //only search if the searchString is at least 3 characters
         if (!searchString || searchString.length < 3) {
