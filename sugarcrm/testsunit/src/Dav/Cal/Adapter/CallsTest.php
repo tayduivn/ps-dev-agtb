@@ -38,6 +38,34 @@ class CallsTest extends \PHPUnit_Framework_TestCase
     );
 
     /**
+     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings::import
+     */
+    public function testImport()
+    {
+        /**@var \Meeting $meetingBean */
+        $meetingBean = $this->getBeanMock('\Call');
+        $caldavBean = $this->getCalDavBeanMock();
+        $meetings = $this->getCallsAdapterMock($caldavBean);
+
+        $result = $meetings->import($meetingBean, $caldavBean);
+
+        $this->assertTrue($result);
+
+        $this->assertEquals($meetingBean->name, $this->calDavBeanProperties['getTitle']);
+        $this->assertEquals($meetingBean->description, $this->calDavBeanProperties['getDescription']);
+        $this->assertEquals($meetingBean->date_start, $this->calDavBeanProperties['getStartDate']);
+        $this->assertEquals($meetingBean->date_end, $this->calDavBeanProperties['getEndDate']);
+        $this->assertEquals($meetingBean->location, $this->calDavBeanProperties['getLocation']);
+        $this->assertEquals($meetingBean->duration_hours, round($this->calDavBeanProperties['getDuration'] / 60));
+        $this->assertEquals($meetingBean->duration_minutes, $this->calDavBeanProperties['getDuration'] % 60);
+
+        $result = $meetings->import($meetingBean, $caldavBean);
+        $this->assertFalse($result);
+    }
+
+
+
+    /**
      * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings::export
      */
     public function testExport()

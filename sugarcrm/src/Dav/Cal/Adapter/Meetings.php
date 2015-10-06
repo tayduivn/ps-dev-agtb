@@ -101,7 +101,7 @@ class Meetings extends CalDavAbstractAdapter implements AdapterInterface
         if ($this->setRecurringRulesToCalDav($sugarBean, $calDavBean)) {
             $isEventChanged = true;
         }
-
+        
         if ($isEventChanged) {
             $calDavBean->setCalendarEventData($calendarEvent->serialize());
         }
@@ -202,31 +202,5 @@ class Meetings extends CalDavAbstractAdapter implements AdapterInterface
         }
 
         return $isBeanChanged;
-    }
-
-    /**
-     * Add Contacts or Leads participiants
-     * @param array $davParticipants
-     * @param \SugarBean $sugarBean
-     * @param string $bealRelation
-     * @param string $beanMethod
-     *
-     * @return bool
-     */
-    protected function addNonUsersParticipants($davParticipants, $sugarBean, $bealRelation, $beanMethod)
-    {
-        $davParticipants = array_keys($davParticipants);
-        sort($davParticipants);
-        if ($sugarBean->load_relationship($bealRelation)) {
-            $beanParticipants = $sugarBean->$bealRelation->get();
-            sort($beanParticipants);
-
-            if ($davParticipants != $beanParticipants && method_exists($sugarBean, $beanMethod)) {
-                $sugarBean->$beanMethod($davParticipants);
-                return true;
-            }
-        }
-
-        return false;
     }
 }
