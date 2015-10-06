@@ -17,39 +17,81 @@
     extendsFrom: 'ConfigDrawerContentLayout',
 
     /**
-     * Get all config data as soon as possible, so that other views can obtain it right from the start.
      * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        var self = this;
-        this.model.fetch({
-            success: function(model) {
-                self.render();
-            }
-        });
+        this.before('render', this._createViews, this);
+    },
+
+    /**
+     * Notification Center config-panel views metadata can be an object.
+     * @inheritdoc
+     */
+    selectPanel: function(panelName) {
+        panelName = (_.isObject(panelName) && panelName.name) ? panelName.name : panelName;
+        this._super('selectPanel', [panelName]);
+    },
+
+    /**
+     * Dynamically sets config-panel views in metadata for carriers and each known emitter.
+     * Number of generated views depends on how many Notification Center emitters are returned are found in config.
+     * @private
+     */
+    _createViews: function() {
+        if (!this.model.get('config')) {
+            return;
+        }
+
+        // Get rid of a spare config-carriers view.
+        this._components[0].dispose();
+        this.removeComponent(0);
+
+        // Emitter views.
+        var emitters = this.model.get('config');
+        _.each(emitters, function(val, key) {
+            this.meta.components.push({
+                view: {
+                    name: 'config-' + key,
+                    type: 'config-emitter',
+                    emitter: key
+                }
+            });
+        }, this);
+
+        // Initialize and add component
+        _.each(this.meta.components, function(def) {
+            var view = this.createComponentFromDef(def);
+            this.addComponent(view, def);
+        }, this);
     },
 
     /**
      * @inheritdoc
      */
     _switchHowToData: function(helpId) {
-        var title, text,
-            module = this.module;
+        var title, text;
 
         switch(helpId) {
             case 'config-carriers':
-                title = 'LBL_CARRIERS_CONFIG_TITLE';
-                text = 'LBL_CARRIERS_CONFIG_HELP';
+                title = app.lang.get('LBL_CARRIER_DELIVERY_OPTION_TITLE', this.module);
+                text = app.lang.get('LBL_CARRIER_DELIVERY_OPTION_HELP', this.module);
                 break;
-
-            case 'config-module':
-                title = 'LBL_MODULE_CONFIG_TITLE';
-                text = 'LBL_MODULE_CONFIG_HELP';
+            case 'config-ApplicationEmitter':
+                title = app.lang.get('LBL_APPLICATION_EMITTER_TITLE', this.module);
+                text = app.lang.get('LBL_APPLICATION_EMITTER_HELP', this.module);
                 break;
+            case 'config-BeanEmitter':
+                title = 'LBL_GLOBAL_DELIVERY_CONFIG_TITLE';
+                text = 'LBL_GLOBAL_DELIVERY_CONFIG_HELP';
+                break;
+            default: // Module Emitter case
+                var module = helpId.substring(7);
+                title = app.lang.get('LBL_EMITTER_TITLE', module);
+                text = app.lang.get('LBL_EMITTER_HELP', module);
         }
 
-        this.currentHowToData.title = app.lang.get(title, module);
-        this.currentHowToData.text = app.lang.get(text, module);
+        this.currentHowToData.title = title;
+        this.currentHowToData.text = text;
     }
 })

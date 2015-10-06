@@ -22,18 +22,20 @@
      * @inheritdoc
      */
     _saveConfig: function() {
-        this.context.get('model').save({}, {
-            success: _.bind(function(model) {
-                if (app.drawer) {
-                    this.showSavedConfirmation();
-                    // close the drawer and return to Forecasts
-                    app.drawer.close(this.context, this.context.get('model'));
-                    app.router.goBack();
-                }
-            }, this),
-            error: _.bind(function() {
-                this.getField('save_button').setDisabled(false);
-            }, this)
-        });
+        var configSection = (this.model.get('configMode') === 'global') ? '/global' : '';
+        var url = app.api.buildURL(this.module, 'config' + configSection);
+        app.api.call('update', url, this.model.attributes, {
+                success: _.bind(function(data) {
+                    if (app.drawer) {
+                        this.showSavedConfirmation();
+                        app.drawer.close(this.context, this.context.get('model'));
+                        app.router.goBack();
+                    }
+                }, this),
+                error: _.bind(function() {
+                    this.getField('save_button').setDisabled(false);
+                }, this)
+            }
+        );
     }
 })

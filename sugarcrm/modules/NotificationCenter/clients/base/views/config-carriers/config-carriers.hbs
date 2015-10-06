@@ -16,16 +16,15 @@
 </div>
 <div id="{{name}}Collapse" class="accordion-body collapse">
     <div class="accordion-inner">
-        {{#each meta.panels}}
-            {{#each fields}}
-                <div class="row-fluid">
-                    <div class="span12 record-cell">
-                        <span class="normal">
-                            {{field ../../this model=../../model template=../../this.viewName}}
-                        </span>
-                    </div>
+        <p class="span12">{{str meta.description module}}</p>
+        {{#with meta.field}}
+            <div class="row-fluid">
+                <div class="span12 record-cell">
+                    <span class="normal">
+                        {{field ../this model=../model template="edit"}}
+                    </span>
                 </div>
-            {{/each}}
-        {{/each}}
+            </div>
+        {{/with}}
     </div>
 </div>

@@ -11,6 +11,5 @@
  */
 
 $mod_strings = array(
-    'LBL_TITLE' => 'Carrier Email',
-    'LBL_CONFIG_LABEL' => 'Email',
+    'LBL_TITLE' => 'Email',
 );

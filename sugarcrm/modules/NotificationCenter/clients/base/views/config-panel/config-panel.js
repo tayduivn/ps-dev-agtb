@@ -21,24 +21,8 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+        var templateName = (this.meta.template) ? this.meta.template : this.type;
+        this.template = app.template.getView(templateName, this.module);
         this.toggleTitleTpl = app.template.getView('config-panel.title', this.module);
-    },
-
-    /**
-     * Add default description.
-     * @inheritdoc
-     */
-    _updateTitleTemplateVars: function() {
-        this._super('_updateTitleTemplateVars');
-        this.titleTemplateVars.description = this._getPanelDescription();
-    },
-
-    /**
-     * Get panel description from panel's metadata.
-     * @returns {string} Panel description.
-     * @private
-     */
-    _getPanelDescription: function() {
-        return (this.meta.description) ? app.lang.get(this.meta.description, this.module) : '';
     }
 })
