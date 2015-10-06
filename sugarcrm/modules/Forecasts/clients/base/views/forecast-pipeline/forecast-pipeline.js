@@ -44,6 +44,14 @@
      * {@inheritDoc}
      */
     initDashlet: function(view) {
+        var userConversionRate = 1 / app.metadata.getCurrency(app.user.getPreference('currency_id')).conversion_rate;
+        var userCurrencyPreference = app.user.getPreference('currency_id');
+        var salesStageLabels = app.lang.getAppListStrings('sales_stage_dom');
+
+        function formatValue(d) {
+            return app.currency.formatAmountLocale(app.currency.convertWithRate(d, userConversionRate), userCurrencyPreference, 0);
+        }
+
         if (!this.isManager && this.meta.config) {
             // FIXME: Dashlet's config page is rendered from meta.panels directly.
             // See the "dashletconfiguration-edit.hbs" file.
@@ -73,16 +81,14 @@
             .margin({top: 0})
             .direction(app.lang.direction)
             .tooltipContent(function(key, x, y, e, graph) {
-                var val = app.currency.formatAmountLocale(y, app.currency.getBaseCurrencyId());
-                var salesStageLabels = app.lang.getAppListStrings('sales_stage_dom');
                 return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + ((salesStageLabels && salesStageLabels[key]) ? salesStageLabels[key] : key) + '</b></p>' +
-                    '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + val + '</b></p>' +
+                    '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + formatValue(y) + '</b></p>' +
                     '<p>' + SUGAR.App.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>';
             })
             .colorData('class', {step: 2})
             .fmtValueLabel(function(d) {
-                var y = d.label || d;
-                return app.currency.formatAmountLocale(y, app.currency.getBaseCurrencyId()).replace(/\,00$|\.00$/, '');
+                var y = d.value || (isNaN(d) ? 0 : d);
+                return formatValue(y);
             })
             .strings({
                 legend: {
