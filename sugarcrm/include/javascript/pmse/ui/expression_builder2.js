@@ -670,6 +670,7 @@ ExpressionControl.prototype.setModuleEvaluation = function (settings) {
         textField: "text",
         valueField: "value",
         fieldDataURL: null,
+        fieldDataURLAttr: null,
         fieldDataRoot: null,
         fieldTextField: "text",
         fieldValueField: "value",
@@ -697,6 +698,9 @@ ExpressionControl.prototype.setModuleEvaluation = function (settings) {
         }
         if (typeof defaults.fieldDataURL !== "string") {
             throw new Error("setModuleEvaluation(): The \"fieldDataURL\" property must be a string.");
+        }
+        if (defaults.fieldDataURLAttr !== null && typeof defaults.fieldDataURLAttr !== "object") {
+            throw new Error("setModuleEvaluation(): The \"fieldDataURLAttr\" property must be an object or null.");
         }
         if (!(typeof defaults.fieldDataRoot === "string" || defaults.fieldDataRoot === null)) {
             throw new Error("setModuleEvaluation(): The \"fieldDataRoot\" property must be a string.");
@@ -1411,10 +1415,15 @@ ExpressionControl.prototype._createModulePanel = function () {
                     dependantFields: ['value'],
                     dependencyHandler: function (dependantField, field, value) {
                         var settings = that._evaluationSettings.module,
-                            url = settings.fieldDataURL.replace("{{MODULE}}", value);
+                            url = settings.fieldDataURL.replace("{{MODULE}}", value),
+                            attributes = jQuery.extend(true, {
+                                base_module: PROJECT_MODULE,
+                                call_type: 'PD'
+                            }, settings.fieldDataURLAttr || {});
+
                         if (value) {
                             dependantField.setDataURL(url)
-                                .setAttributes({base_module: PROJECT_MODULE})
+                                .setAttributes(attributes)
                                 .setDataRoot(settings.fieldDataRoot)
                                 .setLabelField(settings.fieldTextField)
                                 .setValueField(function (field, data) {

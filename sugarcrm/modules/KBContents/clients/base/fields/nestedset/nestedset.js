@@ -117,7 +117,9 @@
                 {
                     'onSelect': _.bind(this.selectedNode, this),
                     'onLoad': function () {
-                        self.toggleSearchIcon(false);
+                        if (!self.disposed) {
+                            self.toggleSearchIcon(false);
+                        }
                     }
                 }
             );
