@@ -552,7 +552,8 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
         foreach ($tokens as $ind => $token) {
             if (is_array($token) && $token[0] == T_VARIABLE) {
                 $res = $token[1];
-                while ($tokens[$ind] != '=' && $ind < count($tokens)) {
+                //Added -1 to $ind's upper bound since $ind++ is used in the loop
+                while ($tokens[$ind] != '=' && $ind < count($tokens)-1) {
                     $ind++;
                     if (!is_array($tokens[$ind])) {
                         if ($tokens[$ind] == '=') {

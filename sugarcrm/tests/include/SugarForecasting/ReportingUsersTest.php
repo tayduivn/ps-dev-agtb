@@ -131,4 +131,13 @@ class SugarForecasting_ReportingUsersTest extends Sugar_PHPUnit_Framework_TestCa
     {
         $this->assertEquals(self::$users['mgr2']->full_name, $tree[1]['children'][0]['data']);
     }
+
+    public function testSubManagerParentCascadeStops()
+    {
+        $GLOBALS['current_user'] = self::$users['mgr2'];
+        self::$cls->setArg('user_id', self::$users['rep1']->id);
+        $tree = self::$cls->process();
+
+        $this->assertEquals(self::$users['mgr2']->full_name, $tree['data']);
+    }
 }

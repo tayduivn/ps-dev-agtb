@@ -3589,7 +3589,6 @@ SUGAR.util = function () {
 					.html(body)
 					.dialog({
 						autoOpen: false,
-						title: caption,
 						width: 300,
 						position: {
 						    my: 'right top',
@@ -3597,10 +3596,13 @@ SUGAR.util = function () {
 						    of: $(el)
 					  }
 					});
-				if(show_buttons) {
-					$(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
-					$(".ui-dialog").find('.ui-dialog-title').css("width","100%");
-				}
+
+                    $(".ui-dialog").find(".ui-dialog-title").html(caption);
+
+                    if(show_buttons) {
+                        $(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
+                        $(".ui-dialog").find('.ui-dialog-title').css("width","100%");
+                    }
 
 					var width = $dialog.dialog( "option", "width" );
 					var pos = $(el).offset();

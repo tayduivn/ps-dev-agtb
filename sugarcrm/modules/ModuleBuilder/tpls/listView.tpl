@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 *}
-<form name='edittabs' id='edittabs' method='POST' action='index.php'>
+<form name='edittabs' id='edittabs' method='POST' action='index.php'{if isset($onsubmit)} onsubmit="{$onsubmit|escape}"{/if}>
 {sugar_csrf_form_token}
 {literal}
 <script>
