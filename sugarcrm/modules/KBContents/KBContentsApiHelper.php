@@ -172,6 +172,7 @@ class KBContentsApiHelper extends SugarBeanApiHelper {
      */
     public function checkStatus($bean)
     {
+        require_once 'include/SugarFields/Fields/Enum/SugarFieldEnum.php';
         $field = new SugarFieldEnum('enum');
         $opts = $field->getOptions($bean->getFieldDefinition('status'));
         return isset($opts[$bean->status]);
