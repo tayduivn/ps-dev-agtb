@@ -196,13 +196,17 @@ class SugarUpgradeUpdateEmailFieldOnSidecarListViews extends UpgradeScript
                     }
                 }
 
-                $bean = new $module();
+                try {
+                    $bean = new $module();
 
-                // If the bean for this module is a Company type, snag it
-                if ($bean instanceof Company) {
-                    $files[] = $path;
+                    // If the bean for this module is a Company type, snag it
+                    if ($bean instanceof Company) {
+                        $files[] = $path;
+                    }
                 }
-
+                catch(Exception $e){
+                    // do nothing
+                }
             }
         }
 
