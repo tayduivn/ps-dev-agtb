@@ -113,7 +113,6 @@ $viewdefs[$module_name]['base']['view']['dashlet-inbox'] = array(
             'filter_applied_to' => 'in_time',
             'filters' => array(
                 'assignment_method' => 'selfservice',
-                'visibility' => 'regular_user',
             ),
             'label' => 'LBL_PMSE_SELF_SERVICE_PROCESSES',
             'link' => 'pmse_Inbox',

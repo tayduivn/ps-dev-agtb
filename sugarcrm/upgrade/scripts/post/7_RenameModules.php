@@ -65,11 +65,14 @@ class SugarUpgradeRenameModules extends UpgradeScript
                 $shouldUpdateSingular = false;
                 if (
                     empty($app_list_strings['moduleListSingular'][$moduleId])
+                    && isset($strings['moduleListSingular'][$moduleId])
+                    && isset($default['moduleListSingular'][$moduleId])
                     && $strings['moduleListSingular'][$moduleId] != $default['moduleListSingular'][$moduleId]
                 ) {
                     $shouldUpdateSingular = true;
                 } elseif (
                     !empty($app_list_strings['moduleListSingular'][$moduleId])
+                    && isset($strings['moduleListSingular'][$moduleId])
                     && $strings['moduleListSingular'][$moduleId] != $app_list_strings['moduleListSingular'][$moduleId]
                 ) {
                     $shouldUpdateSingular = true;

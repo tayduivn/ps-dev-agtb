@@ -1255,11 +1255,11 @@ FROM SYSIBMTS.TSINDEXES';
                     $index_name = strtolower($row['index_name']);
                 }
 
-                $data[$table_name]['name'] = $index_name;
-                $data[$table_name]['type'] = 'fulltext';
-                $data[$table_name]['fields'] = explode(',', strtolower($row['colname']));
+                $data[$table_name][$index_name]['name'] = $index_name;
+                $data[$table_name][$index_name]['type'] = 'fulltext';
+                $data[$table_name][$index_name]['fields'] = explode(',', strtolower($row['column_name']));
                 if (!empty($row['language'])) {
-                    $data[$table_name]['message_locale'] = $row['language'];
+                    $data[$table_name][$index_name]['message_locale'] = $row['language'];
                 }
             }
         }
