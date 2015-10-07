@@ -22,8 +22,10 @@ if (!$focus->ACLAccess('Save')) {
     ACLController::displayNoAccess(true);
     sugar_cleanup(true);
 }
-unset($_REQUEST['relate_id']);
-unset($_REQUEST['relate_to']);
+if (empty($_REQUEST['relate_id'])) {
+    unset($_REQUEST['relate_id']);
+    unset($_REQUEST['relate_to']);
+}
 //we have to commit the teams here in order to obtain the team_set_id for use with products and product bundles.
 if (empty($focus->teams)) {
     $focus->load_relationship('teams');
