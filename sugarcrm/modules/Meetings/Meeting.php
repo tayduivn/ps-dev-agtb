@@ -277,7 +277,7 @@ class Meeting extends SugarBean {
 		return "$this->name";
 	}
 
-	function fill_in_additional_detail_fields( ) {
+	function fill_in_additional_detail_fields() {
 		global $locale;
 
 		if ($this->fill_additional_column_fields) {
