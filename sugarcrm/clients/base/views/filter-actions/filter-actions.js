@@ -21,10 +21,10 @@
     events: {
         'change input': 'filterNameChanged',
         'keyup input': 'filterNameChanged',
-        'click a.reset_button': 'triggerReset',
-        'click a.filter-close': 'triggerClose',
-        'click a.save_button:not(.disabled)': 'triggerSave',
-        'click a.delete_button:not(.hide)': 'triggerDelete'
+        'click [data-action=filter-reset]': 'triggerReset',
+        'click [data-action=filter-close]': 'triggerClose',
+        'click [data-action=filter-delete]:not(.hide)': 'triggerDelete',
+        'click [data-action=filter-save]:not(.disabled)': 'triggerSave'
     },
 
     className: 'filter-header',
@@ -58,7 +58,7 @@
                 description: 'LBL_SHORTCUT_FILTER_CLOSE',
                 callOnFocus: true,
                 handler: function() {
-                    this.$('a.filter-close').click();
+                    this.$('[data-action=filter-close]').click();
                 }
             });
             app.shortcuts.register({
@@ -68,7 +68,7 @@
                 description: 'LBL_SHORTCUT_FILTER_SAVE',
                 callOnFocus: true,
                 handler: function() {
-                    this.$('a.save_button:not(.disabled)').click();
+                    this.$('[data-action=filter-save]:not(.disabled)').click();
                 }
             });
             app.shortcuts.register({
@@ -77,7 +77,7 @@
                 component: this,
                 description: 'LBL_SHORTCUT_FILTER_DELETE',
                 handler: function() {
-                    this.$('a.delete_button:not(.hide)').click();
+                    this.$('[data-action=filter-delete]:not(.hide)').click();
                 }
             });
             app.shortcuts.register({
@@ -86,7 +86,7 @@
                 component: this,
                 description: 'LBL_SHORTCUT_FILTER_RESET',
                 handler: function() {
-                    this.$('a.reset_button').click();
+                    this.$('[data-action=filter-reset]').click();
                 }
             });
         }, this);
@@ -171,7 +171,7 @@
      * @param {Boolean} enable `true` to enable the button, `false` otherwise.
      */
     toggleDelete: function(enable) {
-        this.$('.delete_button').toggleClass('hide', !enable);
+        this.$('[data-action=filter-delete]').toggleClass('hide', !enable);
     },
 
     /**
@@ -182,7 +182,7 @@
     toggleSave: function(enable) {
         this.saveState = _.isUndefined(enable) ? !this.saveState : !!enable;
         var isEnabled = this.getFilterName() && this.saveState;
-        this.$('.save_button').toggleClass('disabled', !isEnabled);
+        this.$('[data-action=filter-save]').toggleClass('disabled', !isEnabled);
     },
 
     /**

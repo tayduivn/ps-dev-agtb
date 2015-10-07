@@ -255,6 +255,18 @@
 
         //Escape string to prevent XSS injection
         safeString = Handlebars.Utils.escapeExpression(item.text);
+        if (item.id !== 'all_records') {
+            if (this.isFilterEditable(item.id)) {
+                a11yTabindex = 0;
+                a11yLabel = app.lang.get('LBL_FILTER_EDIT_FILTER') + ' ' + safeString;
+            } else {
+                a11yTabindex = -1;
+                a11yLabel = safeString + ' ' + app.lang.get('LBL_FILTER');
+            }
+        } else {
+            a11yTabindex = this.isFilterEditable(item.id) ? 0 : -1;
+        }
+
         // Update the text for the selected filter.
         this.$('.choice-filter-label').html(safeString);
 
@@ -322,9 +334,9 @@
      */
     toggleFilterCursor: function(editable) {
         if (editable) {
-            this.$('.choice-filter').css("cursor", "pointer").addClass('choice-filter-clickable');
+            this.$('.choice-filter').css("cursor", "pointer").addClass('choice-filter-clickable').attr('tabindex', 0);
         } else {
-            this.$('.choice-filter').css("cursor", "not-allowed").removeClass('choice-filter-clickable');
+            this.$('.choice-filter').css("cursor", "not-allowed").removeClass('choice-filter-clickable').attr('tabindex', -1);
         }
     },
 
@@ -358,19 +370,27 @@
      */
     handleEditFilter: function() {
         var filterId = this.filterNode.val(),
-            filterModel;
+            filterModel,
+            a11yTabindex = 0;
 
         if (filterId === 'all_records') {
             // Figure out if we have an edit state. This would mean user was editing the filter so we want him to retrieve
             // the filter form in the state he left it.
             this.layout.trigger("filter:select:filter", 'create');
+            a11yTabindex = 0;
         } else {
             filterModel = this.layout.filters.collection.get(filterId);
+            a11yTabindex = -1;
         }
 
         if (filterModel && filterModel.get("editable") !== false) {
             this.layout.trigger("filter:create:open", filterModel);
+            a11yTabindex = 0;
         }
+
+        this.$('.choice-filter')
+            .attr('aria-label', app.lang.get('LBL_FILTER_EDIT_FILTER'))
+            .attr('tabindex', a11yTabindex);
     },
 
     /**
