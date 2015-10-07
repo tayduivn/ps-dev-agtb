@@ -191,6 +191,7 @@ class PMSEImporter
     public function saveProjectData($projectData)
     {
         global $current_user;
+        $result = array('success' => false);
         //Unset common fields
         $projectData = PMSEEngineUtils::unsetCommonFields($projectData, array('name', 'description'));
         //unset($projectData['assigned_user_id']);
@@ -211,10 +212,10 @@ class PMSEImporter
         //$this->bean->validateUniqueUid();
         $new_id = $this->bean->save();
         if (!$this->bean->in_save) {
-            return $new_id;
-        } else {
-            return false;
+            $result['success'] = true;
+            $result['id'] = $new_id;
         }
+        return $result;
     }
 
     /**
