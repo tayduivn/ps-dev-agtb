@@ -21,8 +21,22 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+        if (this.meta.label) {
+            this.title = app.lang.get(this.meta.label, this.currentModule);
+        }
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _loadTemplate: function() {
         var templateName = (this.meta.template) ? this.meta.template : this.type;
         this.template = app.template.getView(templateName, this.module);
-        this.toggleTitleTpl = app.template.getView('config-panel.title', this.module);
+    },
+
+    /**
+     * This view uses embedded title.
+     */
+    updateTitle: function() {
     }
 })

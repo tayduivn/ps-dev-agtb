@@ -39,7 +39,15 @@
      * @private
      */
     _createViews: function() {
-        if (!this.model.get('config')) {
+        var emitters;
+
+        if (this.model.get('configMode') === 'user') {
+            emitters = this.model.get('personal') ? this.model.get('personal')['config'] : null;
+        } else {
+            emitters = this.model.get('config');
+        }
+
+        if (!emitters) {
             return;
         }
 
@@ -48,7 +56,10 @@
         this.removeComponent(0);
 
         // Emitter views.
-        var emitters = this.model.get('config');
+        emitters = this.model.get('configMode') === 'user' ?
+            this.model.get('personal')['config']:
+            this.model.get('config');
+
         _.each(emitters, function(val, key) {
             this.meta.components.push({
                 view: {

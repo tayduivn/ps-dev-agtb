@@ -1,5 +1,9 @@
-#config-accordion .accordion-heading.notification-center {
-  height: 100%;
+.accordion-heading.notification-center {
+  .buttons {
+    .btn {
+      display: inherit;
+    }
+  }
 }
 
 #carriers-list {
@@ -9,6 +13,17 @@
 
   label {
     color: @gray;
+  }
+
+  .ask-to-enable {
+    padding-left: 20px;
+    color: @grayLight;
+  }
+
+  .link-to-profile {
+    margin-left: 20px;
+    position: relative;
+    bottom: -5px;
   }
 }
 

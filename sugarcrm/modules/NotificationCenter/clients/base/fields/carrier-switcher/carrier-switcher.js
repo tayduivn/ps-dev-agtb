@@ -18,17 +18,29 @@
     fieldTag: 'input[data-type=carrier-switcher]',
 
     /**
-     * Denotes current config mode.
+     * Current config.
      */
-    section: undefined,
+    config: {},
 
     /**
      * @inheritDoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        this.section = (this.model.get('configMode') === 'user') ? 'personal' : 'config'
+        this.config = (this.model.get('configMode') === 'user') ?
+            this.model.get('personal')['config'] :
+            this.model.get('config');
         this.before('render', this.setFieldValue, this);
+
+        // Carrier events.
+        var onCarrierChangeEvent = (this.model.get('configMode') === 'user') ?
+            'change:personal:carrier:' + this.def.carrier :
+            'change:carrier:' + this.def.carrier;
+        this.model.on(onCarrierChangeEvent, this.render, this);
+
+        // Reset events.
+        this.model.on('reset:' + this.def.emitter, this.render, this);
+        this.model.on('reset:all', this.render, this);
     },
 
     /**
@@ -38,16 +50,30 @@
     setFieldValue: function() {
         var value = false,
             status = true,
-            config = this.model.get(this.section),
-            eventFilters = config[this.def.emitter][this.def.event];
+            eventFilters = this.config[this.def.emitter][this.def.event],
+            carriers = (this.model.get('configMode') === 'user') ?
+            this.model.get('personal')['carriers'] :
+            this.model.get('carriers');
 
         if (this.def.action === 'switch-delivery') {
             // For now we neglect event filters, so let's do flatten-unique all filters' carriers.
-            value = _.contains(_.uniq(_.flatten(_.map(eventFilters, _.values))), this.def.carrier);
+            var filtersData = _.uniq(_.flatten(eventFilters));
+            value = _.contains(filtersData, this.def.carrier);
+
+            // Set how field will be displayed.
+            status = carriers[this.def.carrier].status;
+
         } else if (this.def.action === 'switch-event') {
-            // ToDo: dependencies
-            //value = ( _.flatten(_.map(eventFilters, _.values)) === [] );
-            value = true;
+            var checkedCarriers = [];
+            _.each(eventFilters, function(filter) {
+                _.each(filter, function(carriersArray) {
+                    var carrierName = _.first(carriersArray)
+                    if (!_.contains(checkedCarriers, carrierName)) {
+                        checkedCarriers.push(carrierName);
+                    }
+                })
+            });
+            value = (!_.contains(checkedCarriers, '') && checkedCarriers.length > 0);
         }
 
         this.def.value = value;
@@ -63,14 +89,14 @@
         el.on('change', _.bind(function() {
             var checked = el.is(':checked'),
                 carrier = this.def.carrier,
-                config = _.clone(this.model.get(this.section)),
+                config = _.clone(this.config),
                 modelEvent = '';
 
             if (this.def.action === 'switch-delivery') {
-                _.each(config[this.def.emitter][this.def.event], function(filter) {
+                _.each(config[this.def.emitter][this.def.event], function(filter, key, filterList) {
                     if (checked) {
                         if (!_.chain(filter).flatten().uniq().contains(carrier).value()) {
-                            filter.push([carrier, '']);
+                            filterList[key].push([carrier, '']);
                         }
                     } else {
                         var carrierIdx = null;
@@ -81,7 +107,7 @@
                             }
                         });
                         if (carrierIdx !== null) {
-                            filter.splice(carrierIdx, 1);
+                            filterList[key].splice(carrierIdx, 1);
                         }
                     }
                 }, this);
@@ -89,8 +115,8 @@
                 // ToDo: dependencies
             }
 
-            this.model.set(this.section, config);
-            this.model.trigger(modelEvent);
+            this.model.trigger('change:personal:' + this.def.emitter);
+
         }, this));
     }
 })

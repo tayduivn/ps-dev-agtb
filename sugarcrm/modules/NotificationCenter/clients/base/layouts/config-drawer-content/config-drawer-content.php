@@ -18,10 +18,6 @@ $viewdefs['NotificationCenter']['base']['layout']['config-drawer-content'] = arr
                 'name' => 'config-carriers',
                 'type' => 'config-carriers',
                 'label' => 'LBL_CARRIER_DELIVERY_OPTION_TITLE',
-                'field' => array(
-                    'name' => 'carriers',
-                    'type' => 'carriers',
-                ),
             ),
         ),
     ),
