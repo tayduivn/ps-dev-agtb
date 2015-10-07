@@ -66,16 +66,9 @@ class MetaDataManagerPortal extends MetaDataManager
      * @return array
      */
     protected function getConfigs() {
-        $configs = array();
         $admin = new Administration();
-        $admin->retrieveSettings();
-        foreach($admin->settings AS $setting_name => $setting_value) {
-            if(stristr($setting_name, 'portal_')) {
-                $key = str_replace('portal_', '', $setting_name);
-                $configs[$key] = json_decode(html_entity_decode($setting_value),true);
-            }
-        }
-        
+        $configs = $admin->getConfigForModule('portal', 'support');
+
         return $configs;
     }
 

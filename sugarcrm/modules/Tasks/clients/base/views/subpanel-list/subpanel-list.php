@@ -47,6 +47,9 @@ $viewdefs['Tasks']['base']['view']['subpanel-list'] = array(
         array(
           'name' => 'date_due',
           'label' => 'LBL_LIST_DUE_DATE',
+          'type' => 'datetimecombo-colorcoded',
+          'completed_status_value' => 'Completed',
+          'link' => false,
           'enabled' => true,
           'default' => true,
         ),

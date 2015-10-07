@@ -149,6 +149,7 @@ describe('Plugins.JSTree', function() {
         var fakeModel = new Backbone.Model();
         var destroyStub = sinonSandbox.stub(fakeModel, 'destroy');
         fakeModel.module = module;
+        fakeModel.children = {};
 
         field.deleteModel({model: fakeModel});
         expect(destroyStub).toHaveBeenCalledOnce();

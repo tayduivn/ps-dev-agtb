@@ -417,7 +417,7 @@ class TeamSetManager {
 			$team_set_id = $row['id'];
 			$teamSetTeamIds = $teamSet->getTeams($team_set_id);
 
-			$teamSqlNoDelete = "SELECT team_id FROM team_sets_teams team_set_id = '$team_set_id'";
+			$teamSqlNoDelete = "SELECT team_id FROM team_sets_teams WHERE team_set_id = '$team_set_id'";
 			$resultNoDelete = $teamSet->db->query($teamSqlNoDelete);
 			$teamIdsNoDelete = array();
 			while($rowNoDelete = $teamSet->db->fetchByAssoc($resultNoDelete)){
