@@ -1084,7 +1084,12 @@ SUGAR.expressions.GridToolTip = {
     })
 
     //Allow the user to click out of the autocomplete
-    $("body").mousedown(function(){$( "#fb_ac_input" ).autocomplete("close");});
+    $("body").mousedown(function() {
+        var $input = $("#fb_ac_input");
+        if ($input.autocomplete("instance")) {
+            $input.autocomplete("close");
+        }
+    });
     //Need to prevent the body from seeing mousedown events to the AC widget
     $("#fb_ac_wrapper").mousedown(function(){return false});
 

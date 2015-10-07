@@ -674,6 +674,9 @@ AdamGateway.prototype.createConfigureAction = function () {
                                         dataURL: 'pmse_Project/CrmData/related/' + project.process_definition.pro_module,
                                         dataRoot: 'result',
                                         fieldDataURL: 'pmse_Project/CrmData/fields/{{MODULE}}',
+                                        fieldDataURLAttr: {
+                                            call_type: 'GT'
+                                        },
                                         fieldDataRoot: "result",
                                         fieldTypeField: "type"
                                     },
