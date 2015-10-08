@@ -24,6 +24,7 @@ use \Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper;
 class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $meetingIds = array();
+
     /**
      * set up new user
      */
@@ -59,25 +60,25 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSaveMeeting()
     {
         $vCalendarEventText = $this->getEventTemplate('vevent');
-
-        /**@var CalDavEvent $calDavBean*/
+        $dateTimeHelper = new DateTimeHelper();
+        /**@var CalDavEvent $calDavBean */
         $calDavBean = SugarTestCalDavUtilities::createEvent(array('calendardata' => $vCalendarEventText));
-        $calDavBean->parent_type = 'Meeting';
+        $calDavBean->parent_type = 'Meetings';
         $parcipiantsUser = $calDavBean->getParticipants();
-        /**@var Meeting $bean*/
+        /**@var \Meeting $bean */
         $bean = $calDavBean->getBean();
         $meetingAdapter = new MeetingAdapater();
         $result = $meetingAdapter->import($bean, $calDavBean);
 
         $this->assertTrue($result);
         $this->assertEquals($calDavBean->getTitle(), $bean->name);
-        $bean->save();
+        $this->saveBean($bean);
 
         $this->addCreatedMeetingId($bean);
 
         if (!$calDavBean->parent_id) {
             $calDavBean->setBean($bean);
-            $calDavBean->save();
+            $this->saveBean($calDavBean);
         }
         /** @var \Meeting $meetingBean */
         $meetingBean = BeanFactory::getBean('Meetings', $bean->id);
@@ -112,16 +113,18 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         if ($parcipiantsUser['Contacts']) {
             $meetingBean->load_relationship('contacts');
             $meetingContactsList = $meetingBean->contacts->get();
-            $this->assertEquals(array_keys($parcipiantsUser['Contacts']), $meetingContactsList);
+            $this->assertEquals(array(), array_diff(array_keys($parcipiantsUser['Contacts']), $meetingContactsList));
+            $this->assertEquals(array(), array_diff($meetingContactsList, array_keys($parcipiantsUser['Contacts'])));
         }
 
         if ($parcipiantsUser['Leads']) {
             $meetingBean->load_relationship('leads');
             $meetingLeadsList = $meetingBean->leads->get();
-            $this->assertEquals(array_keys($parcipiantsUser['Leads']), $meetingLeadsList);
+            $this->assertEquals(array(), array_diff(array_keys($parcipiantsUser['Leads']), $meetingLeadsList));
+            $this->assertEquals(array(), array_diff($meetingLeadsList, array_keys($parcipiantsUser['Leads'])));
         }
 
-        $this->assertEquals(strtotime($calDavBean->getStartDate()), strtotime($meetingBean->date_start));
+        $this->assertEquals($calDavBean->getStartDate(), $dateTimeHelper->sugarDateToUTC($meetingBean->date_start)->format(\TimeDate::DB_DATETIME_FORMAT));
         $this->assertEquals($calDavBean->getDurationHours(), $meetingBean->duration_hours);
         $this->assertEquals($calDavBean->getDurationMinutes(), $meetingBean->duration_minutes);
 
@@ -138,13 +141,13 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
 
 
         $calDavBean->setTitle('test new title', $calDavBean->setComponent('VEVENT'));
-        $calDavBean->save();
+        $this->saveBean($calDavBean);
         $calDavBean = BeanFactory::getBean($calDavBean->module_name, $calDavBean->id, array('use_cache' => false));
 
         $result = $meetingAdapter->import($meetingBean, $calDavBean);
-        $this->assertFalse($result);
+        $this->assertTrue((bool)$result);
         $this->assertEquals($calDavBean->getTitle(), $meetingBean->name);
-        $meetingBean->save();
+        $this->saveBean($meetingBean);
 
         $childEvents = $meetingBean->fetchFromQuery($childQuery);
         $this->assertEquals(7, count($childEvents));
@@ -155,7 +158,7 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         $meetingBean->repeat_until = "2015-08-19";
         $result = $meetingAdapter->import($meetingBean, $calDavBean);
         $this->assertTrue($result);
-        $meetingBean->save();
+        $this->saveBean($meetingBean);
         $childEvents = $meetingBean->fetchFromQuery($childQuery);
         $this->assertEquals(7, count($childEvents));
 
@@ -166,12 +169,12 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
 
         $result = $meetingAdapter->import($meetingBean, $calDavBean);
         $this->assertTrue($result);
-        $meetingBean->save();
+        $this->saveBean($meetingBean);
         $childEvents = $meetingBean->fetchFromQuery($childQuery, array(), array('cache' => false));
         $this->assertEquals(7, count($childEvents));
 
         //check participients status
-        $meetingUsersList  = $meetingBean->get_meeting_users();
+        $meetingUsersList = $meetingBean->get_meeting_users();
         foreach ($meetingUsersList as $meetingUsers) {
             if (isset($parcipiantsUser['Users'][$meetingUsers->id])) {
                 $this->assertEquals($parcipiantsUser['Users'][$meetingUsers->id]['accept_status'], $meetingUsers->accept_status);
@@ -185,41 +188,40 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
     public function testImportExistsMeeting()
     {
         $vCalendarEventText = $this->getEventTemplate('vevent');
-        /**@var CalDavEvent $calDavBean*/
+        /**@var CalDavEvent $calDavBean */
         $calDavBean = SugarTestCalDavUtilities::createEvent(array('calendardata' => $vCalendarEventText));
 
-        /**@var Meeting $meetingBean*/
+        /**@var Meeting $meetingBean */
         $meetingBean = SugarTestMeetingUtilities::createMeeting('', null, array(
-                'date_start' => '2015-08-06 10:00:00',
-                'date_end' => '2015-08-06 11:00:00',
-                'name' => 'Test meeting',
-                'description' => 'Test meeting description',
-                'duration_hours' => 1,
-                'duration_minutes' => 0
+            'date_start' => '2015-08-06 10:00:00',
+            'date_end' => '2015-08-06 11:00:00',
+            'name' => 'Test meeting',
+            'description' => 'Test meeting description',
+            'duration_hours' => 1,
+            'duration_minutes' => 0
         ));
 
         $davParticipants = $calDavBean->getParticipants();
         $meetingBean->users_arr = array_keys($davParticipants['Users']);
-        $meetingBean->save();
+        $this->saveBean($meetingBean);
         $calDavBean->setBean($meetingBean);
-        $calDavBean->save();
+        $this->saveBean($calDavBean);
         $this->addCreatedMeetingId($meetingBean);
         $meetingAdapter = new MeetingAdapater();
 
         $meetingAdapter->import($meetingBean, $calDavBean);
-        $meetingBean->save();
+        $this->saveBean($meetingBean);
 
         $meetingBean = \BeanFactory::getBean($meetingBean->module_name, $meetingBean->id, array('cache' => false));
 
         if (!$calDavBean->parent_id) {
             $calDavBean->setBean($meetingBean);
-            $calDavBean->save();
+            $this->saveBean($calDavBean);
         }
 
-        $this->assertEquals($meetingBean, $calDavBean->getBean());
+        $this->assertEquals($meetingBean->fetched_row, $calDavBean->getBean()->fetched_row);
 
         $participantsIDs = array_keys($davParticipants['Users']);
-        $participantsIDs[] = $GLOBALS['current_user']->id;
         $this->assertEquals($participantsIDs, $meetingBean->users_arr);
     }
 
@@ -230,7 +232,7 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $dateHelper = new DateTimeHelper();
         $meetingAdapter = new MeetingAdapater();
-        /**@var Meeting $meetingBean*/
+        /**@var Meeting $meetingBean */
         $meetingBean = SugarTestMeetingUtilities::createMeeting('', null, array(
             'date_start' => '2015-08-06 10:00:00',
             'date_end' => '2015-08-06 11:00:00',
@@ -249,7 +251,7 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($meetingBean->name, $calDavBean->getTitle());
         $this->assertEquals($meetingBean->description, $calDavBean->getDescription());
         $this->assertEquals($meetingBean->duration_hours, $calDavBean->getDurationHours());
-        $calDavBean->save();
+        $this->saveBean($calDavBean);
     }
 
     /**
@@ -259,7 +261,7 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
      */
     protected function getEventTemplate($templateName)
     {
-        return file_get_contents(dirname(__FILE__).'/../EventTemplates/'.$templateName.'.ics');
+        return file_get_contents(dirname(__FILE__) . '/../EventTemplates/' . $templateName . '.ics');
     }
 
     /**
@@ -305,5 +307,15 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         foreach ($leads as $lead) {
             SugarTestLeadUtilities::createLead($lead['id'], $lead);
         }
+    }
+
+    /**
+     * @param SugarBean $bean
+     * @return bool|string
+     */
+    protected function saveBean(\SugarBean $bean)
+    {
+        $bean->processed = true;
+        return $bean->save();
     }
 }

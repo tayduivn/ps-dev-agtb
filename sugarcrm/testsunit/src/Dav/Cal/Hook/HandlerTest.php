@@ -99,7 +99,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
     {
         $handler = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler')
             ->disableOriginalConstructor()
-            ->setMethods(array('getManager','getAdapterFactory', 'getCurrentUserId', 'getBeanFetchedRow'))
+            ->setMethods(array('getManager','getAdapterFactory', 'getBeanFetchedRow'))
             ->getMock();
 
         $adapterFactoryMock = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory')
@@ -110,7 +110,6 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
         $handler->method('getBeanFetchedRow')->willReturn(array('id' => 1));
         $handler->method('getManager')->willReturn($managerMock);
         $handler->method('getAdapterFactory')->willReturn($adapterFactoryMock);
-        $handler->method('getCurrentUserId')->willReturn(3);
         return $handler;
     }
 

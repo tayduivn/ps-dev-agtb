@@ -39,13 +39,13 @@ class Handler
                 $adapter->getAdapter($bean->getBean()->module_name)) {
                 $fetchedRow = $this->getBeanFetchedRow($bean);
                 $bean->clearVCalendarEvent();
-                $manager->calDavImport($fetchedRow, $bean->module_name, $this->getCurrentUserId());
+                $manager->calDavImport($fetchedRow, $bean->module_name);
             }
         } elseif ($bean instanceof \SugarBean) {
             //@TODO check if bean is childred
             if ($adapter->getAdapter($bean->module_name)) {
                 $fetchedRow = $this->getBeanFetchedRow($bean);
-                $manager->calDavExport($fetchedRow, $bean->module_name, $this->getCurrentUserId());
+                $manager->calDavExport($fetchedRow, $bean->module_name);
             }
         }
     }
@@ -81,15 +81,11 @@ class Handler
         return CalDavAdapterFactory::getInstance();
     }
 
-    /**
-     * return current user identifier
-     * @return string
-     */
-    protected function getCurrentUserId()
-    {
-        return $GLOBALS['current_user']->id;
-    }
 
+    /**
+     * @param \SugarBean $bean
+     * @return null|\SugarBean
+     */
     protected function getParentBean($bean)
     {
         return \BeanFactory::getBean($bean->module_name, $bean->repeat_parent_id);
