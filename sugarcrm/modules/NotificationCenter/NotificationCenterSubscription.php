@@ -55,7 +55,7 @@ class NotificationCenterSubscription extends Basic
      *
      * @var string
      */
-    public $relation_name;
+    public $filter_name;
 
     /**
      * Name of carrier.

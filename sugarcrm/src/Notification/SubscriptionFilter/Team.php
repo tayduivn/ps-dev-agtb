@@ -28,7 +28,7 @@ class Team extends Bean implements SubscriptionFilterInterface
      */
     public function __toString()
     {
-        return 'LBL_NOTIFICATION_FILTER_TEAM';
+        return 'Team';
     }
 
     /**

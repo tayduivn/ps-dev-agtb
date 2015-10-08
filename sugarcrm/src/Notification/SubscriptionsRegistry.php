@@ -48,7 +48,7 @@ class SubscriptionsRegistry
         foreach ($beans as $bean) {
             if ($this->isValidBeanForTree($res, $bean)) {
                 $emitter = (string)$this->getEmitter($bean);
-                $res[$emitter][$bean->event_name][$bean->relation_name][] = array(
+                $res[$emitter][$bean->event_name][$bean->filter_name][] = array(
                     $bean->carrier_name,
                     $bean->carrier_option
                 );
@@ -153,7 +153,7 @@ class SubscriptionsRegistry
                 'type',
                 'emitter_module_name',
                 'event_name',
-                'relation_name',
+                'filter_name',
                 'carrier_name',
                 'carrier_option'
             );
@@ -208,7 +208,7 @@ class SubscriptionsRegistry
         $emitter = (string)$this->getEmitter($bean);
         return array_key_exists($emitter, $tree)
         && array_key_exists($bean->event_name, $tree[$emitter])
-        && array_key_exists($bean->relation_name, $tree[$emitter][$bean->event_name]);
+        && array_key_exists($bean->filter_name, $tree[$emitter][$bean->event_name]);
     }
 
     /**
@@ -252,9 +252,9 @@ class SubscriptionsRegistry
             if ($this->isValidBeanForTree($res, $bean)) {
                 $emitter = (string)$this->getEmitter($bean);
                 if ($bean->carrier_name == self::CARRIER_VALUE_DISABLED) {
-                    $res[$emitter][$bean->event_name][$bean->relation_name] = self::CARRIER_VALUE_DISABLED;
+                    $res[$emitter][$bean->event_name][$bean->filter_name] = self::CARRIER_VALUE_DISABLED;
                 } else {
-                    $res[$emitter][$bean->event_name][$bean->relation_name][] = array(
+                    $res[$emitter][$bean->event_name][$bean->filter_name][] = array(
                         $bean->carrier_name,
                         $bean->carrier_option
                     );
@@ -276,9 +276,9 @@ class SubscriptionsRegistry
     {
         foreach ($configuration as $emitterName => $emitterConfig) {
             foreach ($emitterConfig as $eventName => $eventConfig) {
-                foreach ($eventConfig as $relationName => $relationConfig) {
-                    if (is_array($relationConfig) && empty($relationConfig)) {
-                        $configuration[$emitterName][$eventName][$relationName] = self::CARRIER_VALUE_DEFAULT;
+                foreach ($eventConfig as $filterName => $filterConfig) {
+                    if (is_array($filterConfig) && empty($filterConfig)) {
+                        $configuration[$emitterName][$eventName][$filterName] = self::CARRIER_VALUE_DEFAULT;
                     }
                 }
             }
@@ -309,11 +309,11 @@ class SubscriptionsRegistry
         $tree = $this->getTree();
         foreach ($tree as $emitter => $emitterConfig) {
             foreach ($emitterConfig as $event => $eventConfig) {
-                foreach (array_keys($eventConfig) as $relation) {
-                    if (!empty($config[$emitter][$event][$relation])) {
-                        $path = $this->pathToBranch($emitter, $event, $relation);
+                foreach (array_keys($eventConfig) as $filter) {
+                    if (!empty($config[$emitter][$event][$filter])) {
+                        $path = $this->pathToBranch($emitter, $event, $filter);
                         $branchBeans = $this->moveBeans($beans, $path);
-                        $carriers = $config[$emitter][$event][$relation];
+                        $carriers = $config[$emitter][$event][$filter];
                         if ($carriers == self::CARRIER_VALUE_DISABLED) {
                             $carriers = array(array(self::CARRIER_VALUE_DISABLED));
                         }
@@ -346,17 +346,17 @@ class SubscriptionsRegistry
      *
      * @param string $emitter emitter name
      * @param string $event event name
-     * @param string $relation relation name
+     * @param string $filter subscription filter name
      * @return array generated search option
      */
-    protected function pathToBranch($emitter, $event, $relation)
+    protected function pathToBranch($emitter, $event, $filter)
     {
         $emitterArr = $this->decodeEmitter($emitter);
         return array(
             'type' => $emitterArr['type'],
             'emitter_module_name' => $emitterArr['emitter_module_name'],
             'event_name' => $event,
-            'relation_name' => $relation
+            'filter_name' => $filter
         );
     }
 
@@ -600,7 +600,7 @@ class SubscriptionsRegistry
 
         $globalConfig = array();
         foreach ($bean->fetchFromQuery($query) as $row) {
-            $globalConfig[$row->relation_name] = array(
+            $globalConfig[$row->filter_name] = array(
                 'carrier_name' => $row->carrier_name,
                 'carrier_option' => $row->carrier_option
             );
@@ -626,7 +626,7 @@ class SubscriptionsRegistry
             ->equals('notification_subscription.type', $emitterType)
             ->equals('notification_subscription.emitter_module_name', $emitterModuleType);
         if (!is_null($subscriptionFilter)) {
-            $where->equals('notification_subscription.relation_name', (string)$subscriptionFilter);
+            $where->equals('notification_subscription.filter_name', (string)$subscriptionFilter);
         }
     }
 
