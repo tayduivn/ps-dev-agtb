@@ -175,7 +175,7 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
     'massupdate' => false,
     'duplicate_merge' => 'disabled',
     'hideacl' => true,
-    'width' => '15',
+    'studio' => false,
   ),
   'chart_type' =>
   array (
