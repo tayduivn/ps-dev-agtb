@@ -125,11 +125,12 @@ class TeamBasedACLConfigurator
         $this->saveConfig($cfg);
 
         if ($enable) {
-            $this->restoreTBA($module);
+            $this->restoreTBA(array($module));
         } else {
-            $this->fallbackTBA($module);
+            $this->fallbackTBA(array($module));
         }
         $this->applyTBA($module);
+        $cfg->clearCache();
     }
 
     /**
@@ -166,11 +167,12 @@ class TeamBasedACLConfigurator
         $this->saveConfig($cfg);
 
         if ($enable) {
-            $this->restoreTBA();
+            $this->restoreTBA($modules);
         } else {
-            $this->fallbackTBA();
+            $this->fallbackTBA($modules);
         }
         $this->applyTBA();
+        $cfg->clearCache();
     }
 
     /**
@@ -202,12 +204,15 @@ class TeamBasedACLConfigurator
         $cfg->config[self::CONFIG_KEY]['enabled'] = $enable;
         $this->saveConfig($cfg);
 
+        $actionsList = ACLAction::getUserActions($GLOBALS['current_user']->id);
+        $notDisabledModules = array_diff(array_keys($actionsList), $cfg->config[self::CONFIG_KEY]['disabled_modules']);
         if ($enable) {
-            $this->restoreTBA();
+            $this->restoreTBA($notDisabledModules);
         } else {
-            $this->fallbackTBA();
+            $this->fallbackTBA($notDisabledModules);
         }
         $this->applyTBA();
+        $cfg->clearCache();
     }
 
     /**
@@ -236,12 +241,10 @@ class TeamBasedACLConfigurator
 
     /**
      * Fallback all roles options in case of TBA disabling.
-     * Don't pass a module to affect all modules in all roles.
-     * @param string $module Module name.
+     * @param array $modules
      */
-    protected function fallbackTBA($module = null)
+    protected function fallbackTBA($modules)
     {
-        $config = $this->getConfig();
         $aclRole = new ACLRole();
         $aclField = new ACLField();
         $fieldOptions = $this->getFieldOptions();
@@ -252,9 +255,7 @@ class TeamBasedACLConfigurator
             $fields = $aclField->getACLFieldsByRole($role->id);
 
             foreach ($actions as $aclKey => $aclModule) {
-                if (($module && $aclKey != $module) ||
-                    !in_array($aclKey, $config['disabled_modules'])
-                ) {
+                if (!in_array($aclKey, $modules)) {
                     continue;
                 }
                 $aclType = BeanFactory::getBean($aclKey)->acltype;
@@ -265,8 +266,8 @@ class TeamBasedACLConfigurator
                 }
             }
             if ($fields) {
-                $tbaRecords = array_filter($fields, function ($val) use ($module, $fieldOptions) {
-                    if ($module && $val['category'] != $module) {
+                $tbaRecords = array_filter($fields, function ($val) use ($modules, $fieldOptions) {
+                    if (!in_array($val['category'], $modules)) {
                         return false;
                     }
                     return in_array($val['aclaccess'], $fieldOptions);
@@ -286,24 +287,19 @@ class TeamBasedACLConfigurator
 
     /**
      * Restore previously disabled TBA actions if they were not changed after fallback.
-     * Don't pass a module to affect all modules in all roles.
-     * @param string $module Module name.
+     * @param array $modules
      */
-    protected function restoreTBA($module = null)
+    protected function restoreTBA($modules)
     {
-        $config = $this->getConfig();
         $savedActions = $this->getSavedAffectedRows();
-        if (($module && !isset($savedActions[$module])) ||
-            (!$module && !$savedActions)
-        ) {
+        if (!$savedActions) {
             return;
         }
         $aclRole = new ACLRole();
         $aclField = new ACLField();
-        $actions = $module ? array($module => $savedActions[$module]) : $savedActions;
 
-        foreach ($actions as $moduleName => $moduleActions) {
-            if (in_array($moduleName, $config['disabled_modules'])) {
+        foreach ($savedActions as $moduleName => $moduleActions) {
+            if (!in_array($moduleName, $modules)) {
                 continue;
             }
             $aclType = BeanFactory::getBean($moduleName)->acltype;
@@ -466,7 +462,6 @@ class TeamBasedACLConfigurator
     protected function saveConfig(\Configurator $cfg)
     {
         $cfg->handleOverride();
-        $cfg->clearCache();
         SugarConfig::getInstance()->clearCache();
         // PHP 5.5+. Because of the default value for "opcache.revalidate_freq" is 2 seconds and for modules
         // the config_override.php is being overridden frequently.

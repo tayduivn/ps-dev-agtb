@@ -12,7 +12,7 @@
 
 require_once 'modules/ACLActions/actiondefs.php';
 
-class TeamBasedACLSetupTest extends Sugar_PHPUnit_Framework_TestCase
+class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var TeamBasedACLConfigurator
@@ -162,13 +162,21 @@ class TeamBasedACLSetupTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(ACL_SELECTED_TEAMS_READ_WRITE, $actualAclFields[$fieldKeys[0]]['aclaccess']);
 
         // Restore changed ACL
-        $this->tbaConfig->setForModule($module, false);
+        $this->tbaConfig->setGlobal(false);
 
+        $actualActions = $this->role->getRoleActions($this->role->id);
+        $this->assertEquals(constant($fallbackModule), $actualActions[$module][$aclType][$action]['aclaccess']);
+
+        $actualAclFields = $aclField->getACLFieldsByRole($this->role->id);
+        $fieldKeys = array_keys($actualAclFields);
+        $this->assertEquals(constant($fallbackField), $actualAclFields[$fieldKeys[0]]['aclaccess']);
+
+        // Change the options.
         $actionId = $roleActions[$module][$aclType][$action]['id'];
         $this->role->setAction($this->role->id, $actionId, ACL_ALLOW_DEFAULT);
         $aclField->setAccessControl($module, $this->role->id, $field, ACL_ALLOW_DEFAULT);
 
-        $this->tbaConfig->setForModule($module, true);
+        $this->tbaConfig->setGlobal(true);
 
         $actualActions = $this->role->getRoleActions($this->role->id);
         $this->assertEquals(ACL_ALLOW_DEFAULT, $actualActions[$module][$aclType][$action]['aclaccess']);
