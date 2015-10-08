@@ -9,7 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-//    extendsFrom: 'TabbedDashletView',
     extendsFrom: 'HistoryView',
 
     /**

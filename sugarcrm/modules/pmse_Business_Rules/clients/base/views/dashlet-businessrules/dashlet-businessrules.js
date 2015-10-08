@@ -46,14 +46,11 @@
      */
     _initEvents: function() {
         this._super('_initEvents');
-//        this.on('dashlet-processes:designer:fire', this.designer, this);
         this.on('dashlet-businessrules:businessRulesLayout:fire', this.businessRulesLayout, this);
         this.on('dashlet-businessrules:delete-record:fire', this.deleteRecord, this);
-//        this.on('dashlet-businessrules:disable-record:fire', this.disableRecord, this);
-//        this.on('dashlet-businessrules:enable-record:fire', this.enableRecord, this);
         this.on('dashlet-businessrules:download:fire', this.warnExportBusinessRules, this);
         this.on('dashlet-businessrules:description-record:fire', this.descriptionRecord, this);
-        this.on('linked-model:create', this._reloadData, this);
+        this.on('linked-model:create', this.loadData, this);
         return this;
     },
 
@@ -71,11 +68,7 @@
 
     /**
      * Fire dessigner
-//     */
-//    designer: function(model){
-//        var redirect = model.module+"/"+model.id+"/layout/designer";
-//        app.router.navigate(redirect , {trigger: true, replace: true });
-//    },
+     */
     businessRulesLayout: function (model) {
         var redirect = model.module+"/"+model.id+"/layout/businessrules";
         var verifyURL = app.api.buildURL(

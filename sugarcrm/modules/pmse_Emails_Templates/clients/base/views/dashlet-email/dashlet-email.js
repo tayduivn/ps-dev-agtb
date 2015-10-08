@@ -51,7 +51,7 @@
         this.on('dashlet-email:enable-record:fire', this.enableRecord, this);
         this.on('dashlet-email:download:fire', this.warnExportEmailsTemplates, this);
         this.on('dashlet-email:description-record:fire', this.descriptionRecord, this);
-        this.on('linked-model:create', this._reloadData, this);
+        this.on('linked-model:create', this.loadData, this);
         return this;
     },
 
