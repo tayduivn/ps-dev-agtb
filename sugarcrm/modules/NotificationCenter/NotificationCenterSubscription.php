@@ -119,7 +119,7 @@ class NotificationCenterSubscription extends Basic
     /**
      * {@inheritdoc}
      */
-    public $module_dir = 'NotificationCenterSubscriptions';
+    public $module_dir = 'NotificationCenter';
 
     /**
      * {@inheritdoc}
