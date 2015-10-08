@@ -12,6 +12,8 @@
  * @class View.Views.Base.HelpDashletView
  * @alias SUGAR.App.view.views.BaseHelpDashletView
  * @extends View.View
+ *
+ * @deprecated Since 7.7. Will be removed in 7.9.
  */
 ({
     plugins: ['Dashlet'],
@@ -34,6 +36,7 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+        app.logger.warn('View.Views.Base.HelpDashletView is deprecated since 7.7. Will be removed in 7.9.');
 
         this.getHelpObject();
     },

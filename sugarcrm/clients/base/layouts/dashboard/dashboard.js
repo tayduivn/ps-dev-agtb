@@ -117,8 +117,12 @@
         }, this);
 
         // help dashboard triggers
-        app.events.on('app:help:show', this.openHelpDashboard, this);
-        app.events.on('app:help:hide', this.closeHelpDashboard, this);
+        app.events.on('app:help:show', function() {
+            this.openHelpDashboard(true);
+        }, this);
+        app.events.on('app:help:hide', function() {
+            this.closeHelpDashboard(true);
+        }, this);
 
         var defaultLayout = this.closestComponent('sidebar');
         if (defaultLayout) {
@@ -206,52 +210,73 @@
     },
 
     /**
-     * Method to open the help dashboard if it's not already loaded
+     * Method to open the help dashboard if it's not already loaded. This will also toggle the sidebar to open if it's
+     * collapsed.
      *
-     * This will also toggle the sidebar to open if it's collapsed
+     * @param {boolean} fromEvent Flag to indicate if the fuction was called from an event. `true` if called from an
+     *   event and `false` if called directly. Added for deprecation logging purposes only.
+     *
+     * @deprecated Since 7.7. Will be removed in 7.9. Use the event {@link App#event-app:help:show} instead.
      */
-    openHelpDashboard: function() {
+    openHelpDashboard: function(fromEvent) {
+        if (!fromEvent) {
+            app.logger.warn('View.Layouts.Base.DashboardLayout#openHelpDashboard is deprecated since 7.7. Will be removed in 7.9. Use the event "app:help:show" instead.');
+        }
+
         if (this.dashboardVisibleState === 'close') {
             var defaultLayout = this.closestComponent('sidebar');
             if (defaultLayout) {
                 defaultLayout.toggleSidePane(true);
             }
         }
-        if (!this.isHelpDashboard()) {
+        if (!this.isHelpDashboard(fromEvent)) {
             if (this.isSearchContext()) {
                 var contextBro = this.getContextBro(this.context.get('module'));
                 // Index 1 is the help dashboard.
                 // See comments in `initialize` for more details.
                 contextBro.set('currentDashboardIndex', 1);
-                this.showHelpDashboard(contextBro.get('collection'));
+                this.showHelpDashboard(contextBro.get('collection'), fromEvent);
                 return;
             } else {
                 // if the help dashboard is already visible, just leave it
                 this.collection.fetch({
                     silent: true,
-                    success: _.bind(this.showHelpDashboard, this)
+                    success: _.bind(function(collection) {
+                        this.showHelpDashboard.apply(this, [collection, fromEvent]);
+                    }, this)
                 });
             }
         }
     },
 
     /**
-     * Method to close the help dashbaord, if the help dashboard is visible
+     * Method to close the help dashbaord, if the help dashboard is visible.
+     *
+     * @param {boolean} fromEvent Flag to indicate if the fuction was called from an event. `true` if called from an
+     *   event and `false` if called directly. Added for deprecation logging purposes only.
+     *
+     * @deprecated Since 7.7. Will be removed in 7.9. Use the event {@link App#event-app:help:hide} instead.
      */
-    closeHelpDashboard: function() {
-        if (this.isHelpDashboard()) {
+    closeHelpDashboard: function(fromEvent) {
+        if (!fromEvent) {
+            app.logger.warn('View.Layouts.Base.DashboardLayout#closeHelpDashboard is deprecated since 7.7. Will be removed in 7.9. Use the event "app:help:hide" instead.');
+        }
+
+        if (this.isHelpDashboard(fromEvent)) {
             if (this.isSearchContext()) {
                 var contextBro = this.getContextBro(this.context.get('module'));
                 // Index 2 is the facet dashboard.
                 // See comments in `initialize` for more details.
                 contextBro.set('currentDashboardIndex', 2);
-                this.hideHelpDashboard(contextBro.get('collection'));
+                this.hideHelpDashboard(contextBro.get('collection'), fromEvent);
                 return;
             }
             // the active one is not a help dashboard, don't bother refreshing the page
             this.collection.fetch({
                 silent: true,
-                success: _.bind(this.hideHelpDashboard, this)
+                success: _.bind(function(collection) {
+                    this.hideHelpDashboard.apply(this, [collection, fromEvent]);
+                }, this)
             });
         }
     },
@@ -260,9 +285,17 @@
      * Load the dashboards for the current module/view and then find the help dashboard and display it, it should always
      * exists but if it doesn't, just ignore it.
      *
-     * @param {Object} collection   The collection of dashboards returned from the fetch
+     * @param {Object} collection The collection of dashboards returned from the fetch.
+     * @param {boolean} fromEvent Flag to indicate if the fuction was called from an event. `true` if called from an
+     *   event and `false` if called directly. Added for deprecation logging purposes only.
+     *
+     * @deprecated Since 7.7. Will be removed in 7.9. Use the event {@link App#event-app:help:show} instead.
      */
-    showHelpDashboard: function(collection) {
+    showHelpDashboard: function(collection, fromEvent) {
+        if (!fromEvent) {
+            app.logger.warn('View.Layouts.Base.DashboardLayout#showHelpDashboard is deprecated since 7.7. Will be removed in 7.9. Use the event "app:help:show" instead to open the help dashboard.');
+        }
+
         var dashboard = _.find(collection.models, function(model) {
             return (model.get('dashboard_type') === 'help-dashboard');
         });
@@ -271,11 +304,19 @@
     },
 
     /**
-     * Load the dashboards for the current module/view and then find the first non-help dashboard and display it
+     * Load the dashboards for the current module/view and then find the first non-help dashboard and display it.
      *
-     * @param {Object} collection   The collection of dashboards returned from the fetch
+     * @param {Object} collection The collection of dashboards returned from the fetch.
+     * @param {boolean} fromEvent Flag to indicate if the fuction was called from an event. `true` if called from an
+     *   event and `false` if called directly. Added for deprecation logging purposes only.
+     *
+     * @deprecated Since 7.7. Will be removed in 7.9. Use the event {@link App#event-app:help:hide} instead.
      */
-    hideHelpDashboard: function(collection) {
+    hideHelpDashboard: function(collection, fromEvent) {
+        if (!fromEvent) {
+            app.logger.warn('View.Layouts.Base.DashboardLayout#hideHelpDashboard is deprecated since 7.7. Will be removed in 7.9. Use the event "app:help:hide" instead to close the help dashboard.');
+        }
+
         var dashboard = _.find(collection.models, function(model) {
             return (model.get('dashboard_type') != 'help-dashboard');
         });
@@ -288,9 +329,18 @@
     },
 
     /**
-     * Is the current open dashboad a help dashboard
+     * Is the current open dashboad a help dashboard.
+     *
+     * @param {boolean} fromEvent Flag to indicate if the fuction was called from an event. `true` if called from an
+     *   event and `false` if called directly. Added for deprecation logging purposes only.
+     *
+     * @deprecated Since 7.7. Will be removed in 7.9.
      */
-    isHelpDashboard: function() {
+    isHelpDashboard: function(fromEvent) {
+        if (!fromEvent) {
+            app.logger.warn('View.Layouts.Base.DashboardLayout#isHelpDashboard is deprecated since 7.7. Will be removed in 7.9.');
+        }
+
         return (this.model.get('dashboard_type') === 'help-dashboard');
     },
 
@@ -535,11 +585,15 @@
     },
 
     /**
-     * Adds the help-dashboard metadata to a metadata Object
+     * Adds the help-dashboard metadata to a metadata Object.
      *
-     * @param {Object} _initDashboard The default dashboard for a module
+     * @param {Object} _initDashboard The default dashboard for a module.
+     *
+     * @deprecated Since 7.7. Will be removed in 7.9.
      */
     addHelpDashboardMetadata: function(_initDashboard) {
+        app.logger.warn('View.Layouts.Base.DashboardLayout#addHelpDashboardMetadata is deprecated since 7.7. Will be removed in 7.9.');
+
         var _helpDB = app.metadata.getLayout(this.model.dashboardModule, 'help-dashboard');
         if (_.has(_initDashboard, 'metadata')) {
             _initDashboard = [_helpDB, _initDashboard];
