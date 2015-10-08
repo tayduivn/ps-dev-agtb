@@ -205,7 +205,7 @@ class SugarUpgradeUpdateEmailFieldOnSidecarListViews extends UpgradeScript
                     }
                 }
                 catch(Exception $e){
-                    $this->log("unexpected exception, it's OK to ingore it for now: " . $e->getMessage());
+                    $this->log("Unexpected error occurred while loading bean for MBModule {$prefix}-{$module}: " . $e->getMessage());
                 }
             }
         }
