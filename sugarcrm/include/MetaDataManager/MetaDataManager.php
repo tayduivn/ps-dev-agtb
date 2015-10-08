@@ -892,9 +892,6 @@ class MetaDataManager
             if (!isset($data['relationships'])) {
                 $data['relationships'] = array();
             }
-            if(!isset($data['fields'])) {
-                $data['fields'] = array();
-            }
         }
 
         // Bug 56505 - multiselect fields default value wrapped in '^' character
