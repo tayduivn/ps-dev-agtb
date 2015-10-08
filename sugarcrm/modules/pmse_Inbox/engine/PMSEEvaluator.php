@@ -156,7 +156,7 @@ class PMSEEvaluator
         } else {
             $result = array_pop($resultArray);
             if (strtolower($result->expSubtype) == 'currency') {
-                $result = serialize($result);
+                $result = json_encode($result);
             } else {
                 if (!$returnToken) {
                     $result = $result->expValue;
