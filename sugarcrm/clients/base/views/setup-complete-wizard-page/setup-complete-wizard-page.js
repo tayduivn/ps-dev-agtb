@@ -73,7 +73,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * When the setup complete page is disposed, we can update user object since
      * the user setup is complete, to prevent routing to the setup wizard.

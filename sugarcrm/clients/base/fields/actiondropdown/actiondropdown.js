@@ -49,7 +49,7 @@
     plugins: ['Tooltip'],
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         /**
@@ -90,7 +90,7 @@
         this.defaultActionBtn = {};
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          *
          * This field doesn't support `showNoData`.
          */
@@ -122,14 +122,14 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _getChildFieldsMeta: function() {
         return app.utils.deepCopy(this.def.buttons);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Calls {@link #_reorganizeButtons} if creating fields for the first time.
      * @return {Array} Array of accessible fields, a subset of {@link #fields}.
@@ -259,7 +259,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Rendering an `ActiondropdownField` will always force the dropdown to be
      * re-rendered.
@@ -341,7 +341,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     setDisabled: function(disable) {
         this._super('setDisabled', [disable]);
@@ -350,7 +350,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _dispose: function() {
         _.each(this.fields, function(field) {

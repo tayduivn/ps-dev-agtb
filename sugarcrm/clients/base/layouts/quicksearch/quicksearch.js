@@ -17,7 +17,7 @@
     className: 'search',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -184,7 +184,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _placeComponent: function(component) {
         if (component.name === 'quicksearch-modulelist' ||
@@ -364,7 +364,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     unbind: function() {
         app.router.off('route', null, this);

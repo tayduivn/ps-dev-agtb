@@ -66,7 +66,7 @@
     filterDropdownEnabled: true,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _renderHtml: function() {
         if (!this.layout.filters) {

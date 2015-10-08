@@ -122,7 +122,7 @@
     bindDataChange: function() {},
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _render: function() {
         this._super('_render');
@@ -426,7 +426,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Need additional check for tree leafs.
      *
@@ -474,7 +474,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _dispose: function() {
         var model;

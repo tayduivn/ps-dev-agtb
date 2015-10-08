@@ -17,7 +17,7 @@
 
         _.extend(window.Select2.class.abstract.prototype, {
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              *
              * Dispose safe select2 drop mask on destroy.
              */

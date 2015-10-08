@@ -45,7 +45,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Changes `this.$el` to point to the `<input>` element.
      */

@@ -12,7 +12,7 @@
     app.events.on('app:init', function() {
         app.plugins.register('Audit', ['view'], {
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              *
              * Bind the audit button handler.
              */
@@ -38,7 +38,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              *
              * Clean up associated event handlers.
              */

@@ -193,7 +193,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              * Unbind beforeHandlers.
              */
             onDetach: function() {

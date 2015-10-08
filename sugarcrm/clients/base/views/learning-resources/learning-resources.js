@@ -53,7 +53,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Define the {@link #resources} directly from the metadata.
      *

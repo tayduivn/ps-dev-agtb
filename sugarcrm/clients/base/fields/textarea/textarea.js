@@ -15,7 +15,7 @@
  */
 ({
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     fieldTag : 'textarea',
 
@@ -61,19 +61,19 @@
     _settings: {},
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     plugins: ['EllipsisInline'],
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     events: {
         'click [data-action=toggle]': 'toggleCollapsed'
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Initializes settings on the field by calling
      * {@link View.Fields.BaseTextareaField#_initSettings _initSettings}.
@@ -102,7 +102,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Prevents editing the textarea field in a list view.
      *
@@ -119,7 +119,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Formatter that always returns the value set on the textarea field. Sets
      * a `short` value for a truncated representation, if the lenght of the

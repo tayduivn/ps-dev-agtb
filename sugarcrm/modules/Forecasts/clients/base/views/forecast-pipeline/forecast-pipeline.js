@@ -29,7 +29,7 @@
     isManager: false,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this.isManager = app.user.get('is_manager');
@@ -41,7 +41,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initDashlet: function(view) {
         var userConversionRate = 1 / app.metadata.getCurrency(app.user.getPreference('currency_id')).conversion_rate;
@@ -117,7 +117,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     bindDataChange: function() {
         this.settings.on('change', function(model) {
@@ -153,7 +153,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     loadData: function(options) {
         var timeperiod = this.settings.get('selectedTimePeriod');
@@ -192,7 +192,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     unbind: function() {
         this.settings.off('change');

@@ -50,7 +50,7 @@
     //END SUGARCRM flav=ent ONLY
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         //BEGIN SUGARCRM flav=ent ONLY

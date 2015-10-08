@@ -15,14 +15,14 @@
             /**
              * TODO: Empty function shouldn't be needed when SC-1576 is fixed.
              *
-             * {@inheritDoc}
+             * @inheritdoc
              * @return {void}
              */
             bindKeyDown: function() {},
             /**
              * TODO: Empty function shouldn't be needed when SC-1576 is fixed.
              *
-             * {@inheritDoc}
+             * @inheritdoc
              * @return {void}
              */
             bindDocumentMouseDown: function() {}

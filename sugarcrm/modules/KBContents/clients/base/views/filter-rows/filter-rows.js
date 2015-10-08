@@ -12,7 +12,7 @@
     extendsFrom: 'FilterRowsView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Add 'kbdocument_body' filter field only on KBContents listView. This field is not present in filter's
      * metadata to avoid its appearance on KBContents subpanels - this is done due to technical inability to make

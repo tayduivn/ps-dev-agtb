@@ -392,7 +392,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     loadData: function(options) {
         var self = this;

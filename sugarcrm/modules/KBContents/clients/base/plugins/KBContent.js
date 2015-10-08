@@ -628,7 +628,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              * Remove validation on the model.
              */
             onDetach: function() {

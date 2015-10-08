@@ -65,7 +65,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Try to find the `massupdate` template
      * falls back to `edit` when it does not exist
@@ -73,7 +73,7 @@
     fallbackFieldTemplate: 'edit',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Retrieves metadata from sugarTemplate and then able to override it from
      * the core metadata. `panels` will only be supported on the core metadata.
      *
@@ -471,7 +471,7 @@
                 },
 
                 /**
-                 * {@inheritDoc}
+                 * @inheritdoc
                  * Instead of fetching entire set,
                  * split entire set into small chunks
                  * and repeat fetching until entire set is completed.

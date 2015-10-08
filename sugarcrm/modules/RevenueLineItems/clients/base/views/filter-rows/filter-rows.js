@@ -13,7 +13,7 @@
     extendsFrom: 'FilterRowsView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     getFilterableFields: function(moduleName) {
         var fields = this._super("getFilterableFields", [moduleName]);

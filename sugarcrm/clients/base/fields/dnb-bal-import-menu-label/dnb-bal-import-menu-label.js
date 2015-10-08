@@ -17,7 +17,7 @@
     extendsFrom: 'LabelField',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     format: function(value) {
         // Establish our current connector name, in this case, dnb

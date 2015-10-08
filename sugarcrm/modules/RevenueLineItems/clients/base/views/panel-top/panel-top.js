@@ -12,7 +12,7 @@
     extendsFrom: 'PanelTopView',
     
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initialize: function(options){
         this._super("initialize", [options]);
@@ -26,7 +26,7 @@
         }
     },
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     createRelatedClicked: function(event) {
         // close RLI warning alert

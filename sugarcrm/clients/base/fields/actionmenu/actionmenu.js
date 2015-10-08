@@ -254,7 +254,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _loadTemplate: function() {
         this._super('_loadTemplate');
@@ -264,7 +264,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _render: function() {
         if (!this.isCheckAllCheckbox) {
@@ -312,7 +312,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _getChildFieldsMeta: function() {
         // We only get the fields (the dropdown actions) metadata for the
@@ -325,7 +325,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     unbindData: function() {
         if (this.massCollection) {

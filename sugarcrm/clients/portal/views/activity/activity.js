@@ -121,7 +121,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _renderHtml: function() {
         if (this.hasLoadedActivities()) {

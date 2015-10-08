@@ -16,7 +16,7 @@
 ({
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * This field doesn't support `showNoData`.
      */
@@ -27,7 +27,7 @@
     },
     plugins: ['Tooltip'],
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * The favorite is always a readonly field.
      */
@@ -94,7 +94,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * @return {Boolean}
      */

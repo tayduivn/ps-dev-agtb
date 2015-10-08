@@ -58,7 +58,7 @@
                 dupeCheckModel: dupeCheckModel,
 
                 /**
-                 * {@inheritDoc}
+                 * @inheritdoc
                  *
                  * Override endpoint in order to fetch custom api.
                  *
@@ -84,7 +84,7 @@
                 },
 
                 /**
-                 * {@inheritDoc}
+                 * @inheritdoc
                  *
                  * Custom endpoint for duplicate check.
                  */
@@ -100,7 +100,7 @@
 
         app.plugins.register('FindDuplicates', ['view'], {
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              *
              * Bind the find duplicate button handler.
              */
@@ -149,7 +149,7 @@
             createDuplicateCollection: createDuplicateCollection,
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              *
              * Clean up associated event handlers.
              */

@@ -206,7 +206,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _render: function() {
         this._super('_render');
@@ -244,7 +244,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _dispose: function() {
         $('html').removeClass('print-drawer');

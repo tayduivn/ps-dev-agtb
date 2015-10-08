@@ -82,7 +82,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     show: function() {
         this.context.set('hidden', false);
@@ -90,7 +90,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     hide: function() {
         this.context.set('hidden', true);

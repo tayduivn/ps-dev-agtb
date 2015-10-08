@@ -18,7 +18,7 @@
     className: "dashlets row-fluid",
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     bindDataChange: function() {
         if(this.model) {
@@ -75,7 +75,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Resets the original css classes, and adds the dashboard classes if
      * defined.
@@ -244,7 +244,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _dispose: function() {
         var $dashlets = this.$('.dashlet');

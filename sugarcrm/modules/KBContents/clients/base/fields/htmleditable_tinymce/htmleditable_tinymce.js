@@ -19,7 +19,7 @@
     shouldDisable: null,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Additional override fieldSelector property from field's meta.
      */
     initialize: function(opts) {
@@ -40,7 +40,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Apply document css style to editor.
      */
@@ -62,7 +62,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Need to strip tags for list and activity stream.
      */
     format: function(value) {
@@ -115,7 +115,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     destroyTinyMCEEditor: function() {
         // Clean up existing TinyMCE editor

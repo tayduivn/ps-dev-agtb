@@ -50,7 +50,7 @@
     tooltipDir: 'right',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         if (app.lang.direction === 'rtl') {
@@ -90,7 +90,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Add a change event handler for initializing all the plugin tooltips again
      */
@@ -129,7 +129,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _render: function() {
         this._super("_render");
@@ -166,7 +166,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     getSelect2Options: function(optionsKeys) {
         var options = this._super("getSelect2Options", [optionsKeys]);
@@ -216,7 +216,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _dispose: function() {
         this._destroyTplCollection();
