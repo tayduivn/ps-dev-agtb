@@ -483,6 +483,8 @@ class SugarQuery_Compiler_SQL
      */
     public function compileCondition(SugarQuery_Builder_Condition $condition)
     {
+        global $current_user;
+
         $sql = '';
         $field = $this->compileField($condition->field);
 
@@ -591,6 +593,14 @@ class SugarQuery_Compiler_SQL
                     break;
             }
         }
+
+        if (!$condition->isAclIgnored()) {
+            $isFieldAccessible = ACLField::generateAclCondition($condition, $current_user);
+            if ($isFieldAccessible) {
+                $sql = '(' . $sql . ' AND (' . $this->compileWhere(array($isFieldAccessible)) . '))';
+            }
+        }
+
         return $sql;
     }
 

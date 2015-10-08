@@ -948,9 +948,7 @@
              * Load state of tree.
              */
             loadJSTreeState: function () {
-                _.defer(function(jstree) {
-                    jstree.jstree('load_state');
-                }, this.jsTree);
+                this.jsTree.jstree('load_state');
             },
 
             /**

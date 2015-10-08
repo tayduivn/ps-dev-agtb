@@ -93,7 +93,6 @@
         } else {
             this.on('stateLoaded', this.hideTree, this);
         }
-
         currentContext.on('subpanel:reload', function(args) {
             if (!_.isUndefined(args) &&
                 _.isArray(args.links) &&
@@ -102,6 +101,17 @@
                 this.layout.reloadDashlet({complete: function() {}, saveLeafs: false});
             }
         }, this);
+        if (currentContext.get('collection') !== undefined) {
+            this.listenTo(currentContext.get('collection'), 'data:sync:complete', function() {
+                _.defer(function(self) {
+                    if (self.layout.disposed === true) {
+                        return;
+                    }
+                    self.layout.reloadDashlet({complete: function() {}, saveLeafs: false});
+                }, this);
+            }, this);
+        }
+
     },
 
     /**
@@ -326,6 +336,8 @@
                             if (_.isFunction(callback)) {
                                 callback.call();
                                 return false;
+                            } else if (self.useStates) {
+                                self.saveJSTreeState();
                             }
                         }
                     );
@@ -336,7 +348,7 @@
             callback.call();
             return false;
         }
-        if (this.useStates) {
+        if (this.useStates && triggeredCallback === false) {
             this.saveJSTreeState();
         }
         return true;

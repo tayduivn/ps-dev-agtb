@@ -278,7 +278,8 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'parent_type' => 'Opportunities',
                     'parent_id' => 'test_opp_id',
-                    'draft' => ($isCommit === false) ? 1 : 0
+                    'draft' => ($isCommit === false) ? 1 : 0,
+                    'deleted' => 0
                 ),
                 true,
                 false
@@ -327,7 +328,8 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'parent_type' => 'RevenueLineItems',
                     'parent_id' => 'test_rli_id',
-                    'draft' => 1
+                    'draft' => 1,
+                    'deleted' => 0
                 ),
                 true,
                 false
@@ -381,7 +383,8 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'parent_type' => 'RevenueLineItems',
                     'parent_id' => 'test_rli_id',
-                    'draft' => 1
+                    'draft' => 1,
+                    'deleted' => 0
                 ),
                 true,
                 false
