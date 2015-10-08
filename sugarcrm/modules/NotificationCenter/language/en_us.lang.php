@@ -30,3 +30,11 @@ $mod_strings = array(
     'LBL_LINK_CARRIER_EDIT' => 'Edit',
     'LBL_SEND_NOTIFICATION_FOR' => 'Send Notification for:',
 );
+
+$mod_list_strings = array(
+    'emitter_types' => array(
+        'application' => 'Application',
+        'module'      => 'Module',
+        'bean'        => 'Bean',
+    )
+);

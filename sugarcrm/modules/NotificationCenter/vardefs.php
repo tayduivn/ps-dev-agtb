@@ -12,7 +12,7 @@
 
 $dictionary['NotificationCenterSubscription'] = array(
     'table' => 'notification_subscription',
-    'audited' => true,
+    'audited' => false,
     'fields' => array(
         'type' => array(
             'name' => 'type',
