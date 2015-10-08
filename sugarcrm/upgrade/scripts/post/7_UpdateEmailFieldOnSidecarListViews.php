@@ -205,7 +205,7 @@ class SugarUpgradeUpdateEmailFieldOnSidecarListViews extends UpgradeScript
                     }
                 }
                 catch(Exception $e){
-                    // do nothing
+                    $this->log("unexpected exception, it's OK to ingore it for now: " . $e->getMessage());
                 }
             }
         }
