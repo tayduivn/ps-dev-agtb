@@ -15,7 +15,7 @@
  */
 ({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -41,7 +41,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _render: function() {
         if (!this.isReady()) {
@@ -276,7 +276,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _dispose: function() {
         this._unbindEvents();

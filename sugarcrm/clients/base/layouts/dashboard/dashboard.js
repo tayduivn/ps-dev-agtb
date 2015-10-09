@@ -51,7 +51,7 @@
     dashboardVisibleState: 'open',
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         var context = options.context,
@@ -768,7 +768,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     unbindData: function() {
         var model, collection;
@@ -936,7 +936,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     _dispose: function() {
         // always trigger the help button off

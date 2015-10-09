@@ -12,7 +12,7 @@
     extendsFrom: 'HistoryView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * @property {Number} _defaultSettings.limit Maximum number of records to
      *   load per request, defaults to '10'.
@@ -29,7 +29,7 @@
     thresholdRelativeTime: 2, //Show relative time for 2 days and then date time after
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         options.meta = options.meta || {};
@@ -39,7 +39,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _initEvents: function() {
         this.events = _.extend(this.events, {
@@ -84,7 +84,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * On load of new data, make sure we reload invitations related data, if
      * it is defined for the current tab.
@@ -101,7 +101,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * FIXME: This should be removed when metadata supports date operators to
      * allow one to define relative dates for date filters.
@@ -119,7 +119,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _getFilters: function(index) {
           var  tab = this.tabs[index],
@@ -182,7 +182,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * New model related properties are injected into each model:
      *

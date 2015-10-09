@@ -63,7 +63,7 @@
     commitStagesInIncludedTotal: [],
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this.selectedUserId = app.user.get('id');
@@ -109,7 +109,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     renderSubDetails: function() {
         // clear the footer class
@@ -128,7 +128,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     bindDataChange: function() {
         if (this.meta.config || !this.isForecastSetup) {
@@ -249,7 +249,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * @override just calls calculateData on it's own instead of going back to the parent
      */
@@ -298,7 +298,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     unbindData: function() {
         if(this.context.parent) {

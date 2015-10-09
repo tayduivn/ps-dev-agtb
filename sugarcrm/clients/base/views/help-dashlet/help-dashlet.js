@@ -32,7 +32,7 @@
     helpObject: undefined,
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -61,7 +61,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initDashlet: function() {
         this.settings.set({
@@ -105,7 +105,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * Overriding to pass this.helpObject as the template model to use,
      * and this.options in case templateOptions get passed down

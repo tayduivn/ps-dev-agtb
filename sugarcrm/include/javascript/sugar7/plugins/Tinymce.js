@@ -28,7 +28,7 @@
             fileFieldName: null,
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              */
             onAttach: function(component) {
                 var self = this;
@@ -40,7 +40,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              */
             onDetach: function(component) {
                 this.$embeddedInput.remove();

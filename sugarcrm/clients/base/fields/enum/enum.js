@@ -96,7 +96,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Returns the direction of the field depending on the nature of the first
      * option when the language direction is `rtl`.
@@ -666,7 +666,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Avoid rendering process on select2 change in order to keep focus.
      */
     bindDataChange: function() {

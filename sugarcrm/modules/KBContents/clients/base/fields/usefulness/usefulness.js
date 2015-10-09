@@ -16,7 +16,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * This field doesn't support `showNoData`.
      */
@@ -32,7 +32,7 @@
     votedNotUseful: false,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -104,7 +104,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _render: function() {
         this.checkVotes();

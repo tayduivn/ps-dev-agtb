@@ -623,7 +623,7 @@
              * is in BWC or not. If not, this will fallback to default
              * {@link Core.Routing#buildRoute}.
              *
-             * {@inheritDoc}
+             * @inheritdoc
              * @param {Boolean} inBwc If `true` it will force bwc, if `false`
              * it will force sidecar, if not defined, will use metadata
              * information on module. This is a temporary param (hack) and will

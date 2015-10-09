@@ -20,7 +20,7 @@
     metricsCollection: null,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -111,7 +111,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     loadData: function(options) {
         var self = this,

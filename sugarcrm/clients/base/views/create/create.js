@@ -211,7 +211,7 @@
      * be `create` at all times but doing the proper fix may have bad impacts on
      * ACLs/non editable fields. Follow up in SC-4511.
      *
-     * @inheritDoc
+     * @inheritdoc
      */
     _renderFields: function() {
         var current = this.action;
@@ -221,7 +221,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     /**
      * Check unsaved changes.

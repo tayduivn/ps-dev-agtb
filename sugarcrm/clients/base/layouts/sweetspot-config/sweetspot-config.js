@@ -15,7 +15,7 @@
  */
 ({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -118,7 +118,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _dispose: function() {
         this.context.off('sweetspot:receive:configs');

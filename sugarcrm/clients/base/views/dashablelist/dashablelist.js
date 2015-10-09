@@ -128,7 +128,7 @@
     moduleIsAvailable: true,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Append lastStateID on metadata in order to active user cache.
      */
@@ -728,7 +728,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Calls {@link BaseDashablelistView#_stopAutoRefresh} so that the refresh will
      * not continue after the view is disposed.

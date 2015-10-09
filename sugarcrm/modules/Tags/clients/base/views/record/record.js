@@ -15,7 +15,7 @@
  */
 ({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         // Initialize collection
@@ -24,7 +24,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     saveClicked: function() {
         var options = {

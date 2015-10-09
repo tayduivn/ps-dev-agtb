@@ -35,7 +35,7 @@
     likelyField: null,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this.isManager = app.user.get('is_manager');
@@ -84,7 +84,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initDashlet: function(view) {
         var self = this;
@@ -251,7 +251,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     loadData: function(options) {
         var self = this,
@@ -320,7 +320,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _dispose: function() {
         this.off('data-changed');

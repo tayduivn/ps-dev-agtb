@@ -13,7 +13,7 @@
     extendsFrom: 'CreateView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Add KBContent plugin for view.
      */

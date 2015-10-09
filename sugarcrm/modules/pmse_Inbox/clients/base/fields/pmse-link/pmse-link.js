@@ -21,7 +21,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _render: function() {
         var action = 'view';

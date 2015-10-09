@@ -71,7 +71,7 @@
     _settings: {},
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Adds listener for bootstrap drop down show even (`shown.bs.dropdown`).
      * This will trigger menuOpen method.
@@ -122,7 +122,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Retrieves possible menus from the metadata already inSync.
      * Filters all menu actions based on ACLs to prevent user to click them and

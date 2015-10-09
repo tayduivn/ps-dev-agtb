@@ -59,7 +59,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
@@ -244,7 +244,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     unbind: function() {
         $('body').off('click.globalsearch.data-api');

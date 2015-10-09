@@ -17,7 +17,7 @@
  */
 ({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -175,7 +175,7 @@
      * method in the quicksearch bar.
      * Note that the `fields` param is not used anymore by the globalsearch API.
      *
-     * @inheritDoc
+     * @inheritdoc
      */
     loadData: function(options, setFields) {
         setFields = false;

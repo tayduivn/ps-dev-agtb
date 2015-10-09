@@ -21,7 +21,7 @@
     extendsFrom: 'TabbedDashletView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * @property {Object} _defaultSettings
      * @property {Number} _defaultSettings.limit Maximum number of records to
@@ -36,7 +36,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         options.meta = options.meta || {};
@@ -51,7 +51,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _initEvents: function() {
         this._super('_initEvents');

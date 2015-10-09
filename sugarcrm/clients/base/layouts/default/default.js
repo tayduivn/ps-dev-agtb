@@ -34,7 +34,7 @@
     className: 'row-fluid',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         /**
@@ -172,7 +172,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _placeComponent: function(component) {
         if (component.meta.name) {

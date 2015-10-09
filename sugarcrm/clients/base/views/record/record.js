@@ -64,12 +64,12 @@
     _containerWidth: 0,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         _.bindAll(this);
         /**
-         * @inheritDoc
+         * @inheritdoc
          * @property {Object} meta
          * @property {boolean} meta.hashSync Set to `true` to update URL
          *   consistently with the view state (`edit` or `detail`)

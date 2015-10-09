@@ -22,7 +22,7 @@
     originalModel: undefined,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     closePreview: function() {
         this.originalModel = undefined;

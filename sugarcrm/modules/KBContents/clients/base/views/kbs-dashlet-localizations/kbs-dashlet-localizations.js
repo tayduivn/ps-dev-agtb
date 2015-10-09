@@ -17,7 +17,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * @property {number} _defaultSettings.limit Maximum number of records to
      *   load per request, defaults to '5'.
@@ -34,7 +34,7 @@
     collection: null,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Init collection.
      */
@@ -70,7 +70,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Once collection has been changed, the view should be refreshed.
      */
@@ -95,7 +95,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     loadData: function (options) {
         if (this.collection.dataFetched) {

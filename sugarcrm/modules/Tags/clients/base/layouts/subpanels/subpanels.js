@@ -15,7 +15,7 @@
  */
 ({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         // Create dynamic subpanel metadata

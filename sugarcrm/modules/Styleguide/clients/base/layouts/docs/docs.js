@@ -32,7 +32,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initComponents: function(components, context, module) {
         var self = this,
