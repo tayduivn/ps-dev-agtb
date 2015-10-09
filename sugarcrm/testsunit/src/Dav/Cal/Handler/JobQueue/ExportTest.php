@@ -91,7 +91,7 @@ class ExportTest extends \PHPUnit_Framework_TestCase
     {
         $exportMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue\Export')
             ->disableOriginalConstructor()
-            ->setMethods(array('getAdapterFactory', 'getHandler', 'getBean', 'getCurrentUser', 'getAssignedUser'))
+            ->setMethods(array('getAdapterFactory', 'getHandler', 'getBean'))
             ->getMock();
 
         $adapterFactoryMock = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory')
@@ -102,15 +102,9 @@ class ExportTest extends \PHPUnit_Framework_TestCase
             $adapterFactoryMock->method('getAdapter')->willReturn(true);
         }
 
-        $userMock = $this->getMockBuilder('\User')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $exportMock->method('getAdapterFactory')->willReturn($adapterFactoryMock);
         $exportMock->method('getHandler')->willReturn($handlerMock);
         $exportMock->method('getBean')->willReturn($bean);
-        $exportMock->method('getCurrentUser')->willReturn($userMock);
-        $exportMock->method('getAssignedUser')->willReturn($userMock);
 
         return $exportMock;
     }

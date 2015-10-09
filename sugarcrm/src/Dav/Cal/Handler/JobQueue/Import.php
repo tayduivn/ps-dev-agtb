@@ -34,21 +34,15 @@ class Import implements RunnableInterface
      */
     protected $fetchedRow;
 
-    /**
-     * @var string
-     */
-    protected $userId;
 
     /**
      * @param array $fetchedRow
      * @param string $moduleName
-     * @param string $userId
      */
-    public function __construct(array $fetchedRow, $moduleName, $userId)
+    public function __construct(array $fetchedRow, $moduleName)
     {
         $this->moduleName = $moduleName;
         $this->fetchedRow = $fetchedRow;
-        $this->userId = $userId;
     }
 
     /**
@@ -60,8 +54,6 @@ class Import implements RunnableInterface
     public function run()
     {
         /** @var \CalDavEvent $bean */
-        $currentUser = $this->getCurrentUser();
-        $GLOBALS['current_user'] = $this->getAssignedUser();
         $bean = $this->getBean();
         $adapter = $this->getAdapterFactory();
         if (!($bean instanceof \CalDavEvent)) {
@@ -73,7 +65,6 @@ class Import implements RunnableInterface
 
         $handler = $this->getHandler();
         $handler->import($bean);
-        $GLOBALS['current_user'] = $currentUser;
         return \SchedulersJob::JOB_SUCCESS;
     }
 
@@ -103,22 +94,5 @@ class Import implements RunnableInterface
     protected function getHandler()
     {
         return new CalDavHandler();
-    }
-
-    /**
-     * return user bean for assign user to bean
-     * @return \User
-     */
-    protected function getAssignedUser()
-    {
-        return \BeanFactory::getBean('Users', $this->userId);
-    }
-
-    /**
-     * @return \User
-     */
-    protected function getCurrentUser()
-    {
-        return $GLOBALS['current_user'];
     }
 }
