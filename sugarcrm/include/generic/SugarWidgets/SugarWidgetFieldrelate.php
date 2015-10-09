@@ -115,25 +115,30 @@ class SugarWidgetFieldRelate extends SugarWidgetReportField
     public function queryFilterone_of($layout_def, $rename_columns = true)
     {
         $ids = array();
+        $relation = false;
         if (isset($layout_def['link'])) {
-            $relation = BeanFactory::getBean('Relationships');
-            $relation->retrieve_by_name($layout_def['link']);
+            $relation = SugarRelationshipFactory::getInstance()->getRelationship($layout_def['link']);
         }
         $module = isset($layout_def['custom_module']) ? $layout_def['custom_module'] : $layout_def['module'];
         $seed = BeanFactory::getBean($module);
 
         foreach($layout_def['input_name0'] as $beanId)
         {
-            if (!empty($relation->lhs_module) && !empty($relation->rhs_module)
-                && $relation->lhs_module == $relation->rhs_module) {
-                    $filter = array('id');
-            } else {
-                $filter = array('id', $layout_def['name']);
+            $sq = new SugarQuery();
+            $sq->select(array('id'));
+            $sq->from($seed);
+            if ($relation) {
+                if ($layout_def['module'] == $relation->getRHSModule()) {
+                    $sq->join($relation->getRHSLink());
+                } else {
+                    $sq->join($relation->getLHSLink());
+                }
             }
-            $where = $layout_def['id_name']."='$beanId' ";
-            $sql = $seed->create_new_list_query('', $where, $filter, array(), 0, '', false, $seed, true);
-            $result = $this->reporter->db->query($sql);
-            while ($row = $this->reporter->db->fetchByAssoc($result)) {
+            $sq->where()
+                ->equals($layout_def['id_name'], $beanId);
+
+            $rows = $sq->execute();
+            foreach($rows as $row) {
                 $ids[] = $row['id'];
             }
         }
