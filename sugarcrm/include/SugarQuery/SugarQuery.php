@@ -165,6 +165,15 @@ class SugarQuery
     }
 
     /**
+     * Get DBManager
+     * @return DBManager
+     */
+    public function getDBManager()
+    {
+        return $this->db;
+    }
+
+    /**
      * Build the select object
      *
      * @param array $fields
