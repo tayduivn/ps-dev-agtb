@@ -188,24 +188,21 @@ class SugarUpgradeUpdateEmailFieldOnSidecarListViews extends UpgradeScript
             if (!empty($m[1])) {
                 $module = $m[1];
 
-                try {
-                    // We need the bean to get its parent types
-                    if (!class_exists($module)) {
-                        $beanFile = "$prefix/$module/$module.php";
-                        if (file_exists($beanFile)) {
-                            include_once $beanFile;
-                        }
-                    }
-
-                    $bean = new $module();
-
-                    // If the bean for this module is a Company type, snag it
-                    if ($bean instanceof Company) {
-                        $files[] = $path;
+                // We need the bean to get its parent types
+                if (!class_exists($module)) {
+                    $beanFile = "$prefix/$module/$module.php";
+                    if (file_exists($beanFile)) {
+                        include_once $beanFile;
                     }
                 }
-                catch(Exception $e){
-                    $this->log("Unexpected error occurred while loading bean for MBModule {$prefix}-{$module}: " . $e->getMessage());
+
+                if (class_exists($module)) {
+                    // If the bean for this module is a Company type, snag it
+                    if (is_subclass_of($module, "Company")) {
+                        $files[] = $path;
+                    }
+                } else {
+                    $this->log("Unable to load class for $module");
                 }
             }
         }
