@@ -1533,13 +1533,11 @@ END:VCALENDAR',
                          ->disableOriginalConstructor()
                          ->setMethods(array(
                              'calculateSize',
-                             'calculateETag',
-                             'calculateTimeBoundaries'
+                             'calculateTimeBoundaries',
                          ))
                          ->getMock();
 
         $beanMock->expects($this->once())->method('calculateSize')->with($data);
-        $beanMock->expects($this->once())->method('calculateETag')->with($data);
         $beanMock->expects($this->once())->method('calculateTimeBoundaries')->with($data);
 
         $beanMock->setCalendarEventData($data);
@@ -2204,7 +2202,7 @@ END:VCALENDAR',
     {
         $beanMock = $this->getMockBuilder('CalDavEvent')
                          ->disableOriginalConstructor()
-                         ->setMethods(null)
+                         ->setMethods(array('getSynchronizationObject'))
                          ->getMock();
 
         $beanMock->setCalendarEventData($vCalendarEventText);
@@ -2639,50 +2637,6 @@ END:VCALENDAR',
     }
 
     /**
-     * test the Bean Sync Counter
-     *
-     * @group  caldav
-     * @covers CalDavEvent::setBeanSyncCounter
-     * @covers CalDavEvent::getBeanSyncCounter
-     */
-    public function testBeanSyncCounter()
-    {
-        $beanMock = $this->getMockBuilder('CalDavEvent')
-                         ->disableOriginalConstructor()
-                         ->setMethods(null)
-                         ->getMock();
-
-        $rand = rand(0, 999);
-
-        $beanMock->module_sync_counter = $rand;
-
-        $this->assertEquals(++$rand, $beanMock->setBeanSyncCounter());
-        $this->assertEquals($rand, $beanMock->getBeanSyncCounter());
-    }
-
-    /**
-     * test the Dav Sync Counter
-     *
-     * @group  caldav
-     * @covers CalDavEvent::setDavSyncCounter
-     * @covers CalDavEvent::getDavSyncCounter
-     */
-    public function testDavSyncCounter()
-    {
-        $beanMock = $this->getMockBuilder('CalDavEvent')
-                         ->disableOriginalConstructor()
-                         ->setMethods(null)
-                         ->getMock();
-
-        $rand = rand(0, 999);
-
-        $beanMock->sync_counter = $rand;
-
-        $this->assertEquals(++$rand, $beanMock->setDavSyncCounter());
-        $this->assertEquals($rand, $beanMock->getDavSyncCounter());
-    }
-
-    /**
      * @param string $currentEvent
      * @param Sabre\VObject\Component\VCalendar $updatedEvent
      *
@@ -2740,5 +2694,19 @@ END:VCALENDAR',
                      ->with($updatedEvent, $userCalendar, $currentEvent);
 
         $this->beanMock->scheduleLocalDelivery();
+    }
+
+    /**
+     * @covers CalDavEvent::getSynchronizationObject
+     */
+    public function testGetSynchronizationObject()
+    {
+        $event = SugarTestCalDavUtilities::createEvent();
+
+        $syncBean = $event->getSynchronizationObject();
+        $this->assertEquals($event->id, $syncBean->event_id);
+
+        $syncBean = $event->getSynchronizationObject();
+        $this->assertEquals($event->id, $syncBean->event_id);
     }
 }

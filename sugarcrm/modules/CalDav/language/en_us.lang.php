@@ -32,6 +32,7 @@ $mod_strings = array(
     'LBL_CALENDAR_SYNCTOKEN' => 'Calendar Sync token',
     'LBL_CALENDAR_COMPONENTS' => 'Supported calendar components',
     'LBL_CALENDAR_EVENTS' => 'Calendar events link',
+    'LBL_EVENT_SYNC' => 'Events synchronization link',
 
     'LBL_CHANGE_OPERATION' => 'Operation type with object',
     'LBL_CHANGE_EVENT_URI' => 'Event URI',
@@ -52,4 +53,7 @@ $mod_strings = array(
     'LBL_CALDAV_DEFAULT_MODULE_DESC' => 'Select the default module you would like events to be mapped to.',
     'LBL_CALDAV_DEFAULT_INTERVAL' => 'Sync',
     'LBL_CALDAV_DEFAULT_INTERVAL_DESC' => 'Select how far you want to sync back.',
+
+    'LBL_SYNC_SAVE_COUNTER' => 'Save event or module counter',
+    'LBL_SYNC_JOB_COUNTER' => 'Counts of ending jobs',
 );

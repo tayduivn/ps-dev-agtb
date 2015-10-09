@@ -164,7 +164,7 @@ class RecurringHelper
             }
 
             if ($result['type'] == 'Weekly') {
-                $result['dow'] = date('w', strtotime($component->DTSTART));
+                $result['dow'] = date('w', strtotime($this->dateTimeHelper->davDateToSugar($component->DTSTART)));
             }
 
             if (isset($currentRule['BYDAY'])) {
