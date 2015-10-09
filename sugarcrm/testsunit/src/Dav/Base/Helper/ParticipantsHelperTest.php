@@ -136,10 +136,11 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                         'mailto:test4@test.com' => array(
                             'PARTSTAT' => 'ACCEPTED',
                             'CN' => 'test4 test4',
-                            'ROLE' => '',
+                            'ROLE' => 'REQ-PARTICIPANT',
                             'davLink' => null,
                             'RSVP' => 'TRUE',
                             'X-SUGARUID' => '5a',
+                            'X-SUGAR-MODULE' => 'Leads',
                         ),
                     ),
                 ),
@@ -172,18 +173,21 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                         'mailto:test@test.com' => array(
                             'PARTSTAT' => 'ACCEPTED',
                             'CN' => 'Test Test',
-                            'ROLE' => '',
+                            'ROLE' => 'REQ-PARTICIPANT',
                             'davLink' => null,
                             'RSVP' => 'TRUE',
                             'X-SUGARUID' => '2a',
+                            'X-SUGAR-MODULE' => 'Users',
+
                         ),
                         'mailto:test1@test.com' => array(
                             'PARTSTAT' => 'DECLINED',
                             'CN' => 'Test1 Test1',
-                            'ROLE' => '',
+                            'ROLE' => 'REQ-PARTICIPANT',
                             'davLink' => null,
                             'RSVP' => 'TRUE',
                             'X-SUGARUID' => '3a',
+                            'X-SUGAR-MODULE' => 'Users',
                         ),
                     ),
                 ),
@@ -216,6 +220,7 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                             'davLink' => null,
                             'RSVP' => 'TRUE',
                             'X-SUGARUID' => '2a',
+                            'X-SUGAR-MODULE' => 'Users',
                         ),
                         'mailto:test1@test.com' => array(
                             'PARTSTAT' => null,
@@ -224,6 +229,7 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                             'davLink' => null,
                             'RSVP' => 'TRUE',
                             'X-SUGARUID' => '3a',
+                            'X-SUGAR-MODULE' => 'Users',
                         ),
                     ),
                 ),
@@ -304,8 +310,9 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                             'CN' => null,
                             'ROLE' => '',
                             'davLink' => null,
-                            'RSVP' => 'TRUE',
                             'X-SUGARUID' => '2a',
+                            'RSVP' => 'TRUE',
+                            'X-SUGAR-MODULE' => 'Users',
                         ),
                     ),
                     Dav\Base\Constants::PARTICIPIANT_MODIFIED => array(
@@ -314,26 +321,29 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                             'CN' => 'Test Test',
                             'ROLE' => 'CHAIR',
                             'davLink' => 'mailto:test0@test.com',
-                            'RSVP' => 'TRUE',
                             'X-SUGARUID' => '1a',
+                            'RSVP' => 'TRUE',
+                            'X-SUGAR-MODULE' => 'Users',
                         ),
                         'mailto:test2@test.com' => array(
                             'PARTSTAT' => 'DECLINED',
                             'CN' => 'Test1 Test1',
                             'ROLE' => 'OPT-PARTICIPANT',
                             'davLink' => 'mailto:test1@test.com',
-                            'RSVP' => 'TRUE',
                             'X-SUGARUID' => '3a',
+                            'RSVP' => 'TRUE',
+                            'X-SUGAR-MODULE' => 'Users',
                         ),
                     ),
                     Dav\Base\Constants::PARTICIPIANT_ADDED => array(
                         'mailto:test5@test.com' => array(
                             'PARTSTAT' => 'NEEDS-ACTION',
                             'CN' => 'Test5 Test5',
-                            'ROLE' => null,
+                            'ROLE' => 'REQ-PARTICIPANT',
                             'davLink' => null,
-                            'RSVP' => 'TRUE',
                             'X-SUGARUID' => '5a',
+                            'RSVP' => 'TRUE',
+                            'X-SUGAR-MODULE' => 'Leads',
                         ),
                     ),
                 ),
@@ -422,7 +432,7 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
 
         $eventMock = $this->getMockBuilder('\CalDavEvent')
                           ->disableOriginalConstructor()
-                          ->setMethods(array('getBean', 'getParticipants'))
+                          ->setMethods(array('getParticipants'))
                           ->getMock();
 
         $meetingsMock = $this->getMockBuilder('\Meeting')
@@ -464,6 +474,7 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
             $userMock->id = $userId;
             $userMock->email1 = $userInfo['email'];
             $userMock->full_name = $userInfo['cn'];
+            $userMock->module_name = 'Users';
             $userRelationShipMock->rows[$userId]['accept_status'] = $userInfo['accept_status'];
             $users[$userId] = $userMock;
         }
@@ -478,6 +489,7 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
             $leadMock->id = $userId;
             $leadMock->email1 = $leadInfo['email'];
             $leadMock->full_name = $leadInfo['cn'];
+            $leadMock->module_name = 'Leads';
             $leadsRelationShipMock->rows[$userId]['accept_status'] = $leadInfo['accept_status'];
             $leads[$userId] = $leadMock;
         }
@@ -508,9 +520,8 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                    ->willReturn(TestReflection::getProtectedValue($mapperMock, 'statusMap'));
 
         $eventMock->expects($this->once())->method('getParticipants')->willReturn($davResult);
-        $eventMock->expects($this->once())->method('getBean')->willReturn($meetingsMock);
 
-        $result = $participantsMock->prepareForDav($eventMock, 'ATTENDEE');
+        $result = $participantsMock->prepareForDav($meetingsMock, $eventMock, 'ATTENDEE');
 
         $this->assertEquals($expectedResult, $result);
     }

@@ -75,7 +75,7 @@ class CallsTest extends \PHPUnit_Framework_TestCase
         $callAdapater = $this->getCallsAdapterMock($callBean);
 
         $result = $callAdapater->export($callBean, $calDavBean);
-        $this->assertTrue($result);
+        $this->assertFalse($result);
     }
 
     /**
@@ -244,6 +244,8 @@ class CallsTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('getMapping'))
             ->getMock();
+
+        $statusMapper->method('getMapping')->willReturn(array());
 
         TestReflection::setProtectedValue($participantsHelper, 'statusMapper', $acceptedMapper);
 

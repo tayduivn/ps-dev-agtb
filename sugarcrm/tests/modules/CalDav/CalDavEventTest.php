@@ -1175,10 +1175,11 @@ END:VCALENDAR',
                     'mailto:test0@test.com' => array(
                         'PARTSTAT' => 'NEEDS-ACTION',
                         'CN' => 'SugarUser 756101654',
-                        'ROLE' => '',
+                        'ROLE' => 'REQ-PARTICIPANT',
                         'davLink' => '',
                         'RSVP' => 'TRUE',
                         'X-SUGARUID' => $id1,
+                        'X-SUGAR-MODULE' => 'Users',
                     ),
                 ),
             ),
@@ -1210,6 +1211,7 @@ END:VCALENDAR',
                         'davLink' => 'mailto:test0@test.com',
                         'RSVP' => 'TRUE',
                         'X-SUGARUID' => $id1,
+                        'X-SUGAR-MODULE' => 'Users',
                     ),
                 ),
             ),
@@ -1261,18 +1263,20 @@ END:VCALENDAR',
                         'mailto:test@test.com' => array(
                             'PARTSTAT' => 'NEEDS-ACTION',
                             'CN' => 'SugarUser 756101654',
-                            'ROLE' => '',
+                            'ROLE' => 'REQ-PARTICIPANT',
                             'davLink' => '',
                             'RSVP' => 'TRUE',
                             'X-SUGARUID' => $id1,
+                            'X-SUGAR-MODULE' => 'Users',
                         ),
                         'mailto:test1@test.com' => array(
                             'PARTSTAT' => 'NEEDS-ACTION',
                             'CN' => 'SugarUser 1735411632',
-                            'ROLE' => '',
+                            'ROLE' => 'REQ-PARTICIPANT',
                             'davLink' => '',
                             'RSVP' => 'TRUE',
                             'X-SUGARUID' => $id2,
+                            'X-SUGAR-MODULE' => 'Users',
                         )
                     ),
                 ),
@@ -1296,6 +1300,7 @@ END:VCALENDAR',
                             'davLink' => '',
                             'RSVP' => 'TRUE',
                             'X-SUGARUID' => $id1,
+                            'X-SUGAR-MODULE' => 'Users',
                         ),
                         'mailto:test1@test.com' => array(
                             'PARTSTAT' => '',
@@ -1304,6 +1309,7 @@ END:VCALENDAR',
                             'davLink' => '',
                             'RSVP' => 'TRUE',
                             'X-SUGARUID' => $id2,
+                            'X-SUGAR-MODULE' => 'Users',
                         ),
                     ),
                 ),
@@ -1369,6 +1375,7 @@ END:VCALENDAR',
                             'davLink' => 'mailto:test2@test.com',
                             'RSVP' => 'TRUE',
                             'X-SUGARUID' => 'baba4eca-59f2-f1ad-1f03-55d5d45e3f82',
+                            'X-SUGAR-MODULE' => 'Users',
                         ),
                         'mailto:test1@test.com' => array(
                             'PARTSTAT' => 'NEEDS-ACTION',
@@ -1377,16 +1384,18 @@ END:VCALENDAR',
                             'davLink' => 'mailto:test1@test.com',
                             'RSVP' => 'TRUE',
                             'X-SUGARUID' => $id2,
+                            'X-SUGAR-MODULE' => 'Users',
                         )
                     ),
                     'addParticipants' => array(
                         'mailto:test10@test.com' => array(
                             'PARTSTAT' => 'NEEDS-ACTION',
                             'CN' => 'SugarContact 1735411632',
-                            'ROLE' => '',
+                            'ROLE' => 'REQ-PARTICIPANT',
                             'davLink' => null,
                             'RSVP' => 'TRUE',
                             'X-SUGARUID' => $id3,
+                            'X-SUGAR-MODULE' => 'Contacts',
                         ),
                     ),
                 ),
@@ -2452,7 +2461,7 @@ END:VCALENDAR',
             $this->beanMock->expects($this->never())->method('modifyParticipants');
         }
 
-        $result = $this->beanMock->setParticipants($component);
+        $result = $this->beanMock->setParticipants($meeting, $component);
 
         $this->assertEquals($expectedResult, $result);
     }
@@ -2508,7 +2517,7 @@ END:VCALENDAR',
             $this->beanMock->expects($this->never())->method('modifyParticipants');
         }
 
-        $result = $this->beanMock->setOrganizer($component);
+        $result = $this->beanMock->setOrganizer($meeting, $component);
 
         $this->assertEquals($expectedResult, $result);
     }
@@ -2724,7 +2733,7 @@ END:VCALENDAR',
         $serverMock->expects($this->at(0))->method('getPlugin')->with('caldav-schedule')->willReturn($scheduleMock);
         $serverMock->expects($this->at(1))->method('getPlugin')->with('caldav')->willReturn($caldavMock);
 
-        $userCalendar = 'calendars/test/default';
+        $userCalendar = 'calendars/users/test/default';
 
         $scheduleMock->expects($this->once())
                      ->method('calendarObjectSugarChange')

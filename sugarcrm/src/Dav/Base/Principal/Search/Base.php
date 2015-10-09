@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Base\Principal\Search;
 
+use Sugarcrm\Sugarcrm\Dav\Base\Constants as DavConstants;
+
 abstract class Base implements SearchInterface
 {
     /**
@@ -191,7 +193,7 @@ abstract class Base implements SearchInterface
             'uri' => $this->formatPrincipalString($bean),
             '{DAV:}displayname' => $bean->full_name,
             '{http://sabredav.org/ns}email-address' => $bean->email1,
-            'x-sugar-module' => $bean->module_name,
+            '{' . DavConstants::NS_SUGAR . '}x-sugar-module' => $bean->module_name,
         );
     }
 

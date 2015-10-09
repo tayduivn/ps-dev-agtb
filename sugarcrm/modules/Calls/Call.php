@@ -132,6 +132,8 @@ class Call extends SugarBean {
     {
         global $timedate, $current_user;
 
+		$isUpdate = $this->isUpdate();
+
         if (isset($this->date_start)) {
             $td = $timedate->fromDb($this->date_start);
             if (!$td) {
@@ -189,7 +191,7 @@ class Call extends SugarBean {
         // CCL - Comment out call to set $current_user as invitee
         // set organizer to auto-accept
         // if there isn't a fetched row its new
-        if ($this->assigned_user_id == $GLOBALS['current_user']->id && empty($this->fetched_row)) {
+        if ($this->assigned_user_id == $GLOBALS['current_user']->id && !$isUpdate) {
             $this->set_accept_status($GLOBALS['current_user'], 'accept');
         }
 
@@ -831,4 +833,29 @@ class Call extends SugarBean {
 
         parent::loadFromRow($arr, $convert);
     }
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function create_notification_email($notify_user)
+	{
+		// reset acceptance status for non organizer if date is changed
+		if (($notify_user->id != $GLOBALS['current_user']->id) && $this->date_changed) {
+			$this->set_accept_status($notify_user, 'none');
+		}
+
+		$mailer = parent::create_notification_email($notify_user);
+
+		$path = SugarConfig::getInstance()->get('upload_dir', 'upload/') . $this->id;
+
+		$calDavEvent = \BeanFactory::getBean('CalDavEvents');
+		$content = $calDavEvent->prepareForInvite($this);
+
+		if ($content && file_put_contents($path, $content)) {
+			$attachment = new Attachment($path, "meeting.ics", Encoding::Base64, "text/calendar");
+			$mailer->addAttachment($attachment);
+		}
+
+		return $mailer;
+	}
 }

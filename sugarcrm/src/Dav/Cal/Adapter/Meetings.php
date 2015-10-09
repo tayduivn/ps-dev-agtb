@@ -89,17 +89,21 @@ class Meetings extends CalDavAbstractAdapter implements AdapterInterface
         if ($calDavBean->setDuration($sugarBean->duration_hours, $sugarBean->duration_minutes, $calendarComponent)) {
             $isEventChanged = true;
         }
-        if ($calDavBean->setOrganizer($calendarComponent)) {
+        if ($calDavBean->setOrganizer($sugarBean, $calendarComponent)) {
             $isEventChanged = true;
         }
         if ($this->setExportReminders($sugarBean, $calDavBean, $calendarComponent)) {
             $isEventChanged = true;
         }
-        if ($calDavBean->setParticipants($calendarComponent)) {
-            $isEventChanged = true;
+        $isParticipantsChanged = false;
+        if ($calDavBean->setParticipants($sugarBean, $calendarComponent)) {
+            $isParticipantsChanged = $isEventChanged = true;
         }
         if ($this->setRecurringRulesToCalDav($sugarBean, $calDavBean)) {
             $isEventChanged = true;
+        }
+        if ($isParticipantsChanged) {
+            $calDavBean->scheduleLocalDelivery();
         }
         
         if ($isEventChanged) {
@@ -123,6 +127,10 @@ class Meetings extends CalDavAbstractAdapter implements AdapterInterface
         $isBeanChanged = false;
 
         $calDavBean->clearVCalendarEvent();
+
+        if (!$sugarBean->id) {
+            $sugarBean->send_invites = true;
+        }
 
         $oldAttributes = $this->getCurrentAttributes($sugarBean);
 

@@ -48,4 +48,6 @@ class Constants
     const PARTICIPIANT_DELETED = 'delete';
 
     const DEFAULT_CALENDAR_URI = 'default';
+
+    const NS_SUGAR = 'http://sugarcrm.com/ns';
 }

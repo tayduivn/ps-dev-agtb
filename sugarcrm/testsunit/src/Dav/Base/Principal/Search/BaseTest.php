@@ -60,7 +60,7 @@ class BaseTest extends \PHPUnit_Framework_TestCase
             'uri' => 'principals/users/1',
             '{DAV:}displayname' => 'test',
             '{http://sabredav.org/ns}email-address' => 'test@test.com',
-            'x-sugar-module' => 'test',
+            '{http://sugarcrm.com/ns}x-sugar-module' => 'test',
         );
 
         $expectedUsers = array(
@@ -68,7 +68,7 @@ class BaseTest extends \PHPUnit_Framework_TestCase
             'uri' => 'principals/users/test',
             '{DAV:}displayname' => 'test',
             '{http://sabredav.org/ns}email-address' => 'test@test.com',
-            'x-sugar-module' => 'test',
+            '{http://sugarcrm.com/ns}x-sugar-module' => 'test',
         );
 
         $this->assertEquals($expectedBase, $resultBase);

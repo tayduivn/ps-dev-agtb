@@ -52,7 +52,8 @@ abstract class AdapterAbstract
     protected $exportBeanDataMap = array(
         'setTitle' => 'name',
         'setDescription' => 'description',
-        'setLocation' => 'location'
+        'setLocation' => 'location',
+        'setStatus' => 'status',
     );
 
 
