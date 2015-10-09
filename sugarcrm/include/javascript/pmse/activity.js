@@ -1846,10 +1846,7 @@ AdamActivity.prototype.createConfigurateAction = function () {
         text: actionName,
         cssStyle : actionCSS,
         handler: function () {
-            root.canvas.project.save();
-            w.show();
-            w.html.style.display = 'none';
-            App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+            root.saveProject(root, App, w);
         },
         disabled: disabled
     });
@@ -2097,10 +2094,7 @@ AdamActivity.prototype.createAssignUsersAction = function () {
         text: translate('LBL_PMSE_CONTEXT_MENU_USERS'),
         cssStyle : 'adam-menu-icon-user',
         handler: function () {
-            root.canvas.project.save();
-            w.show();
-            w.html.style.display = 'none';
-            App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+            root.saveProject(root, App, w);
         },
         disabled: false
     });
