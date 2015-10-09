@@ -70,7 +70,7 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $guid = $kls::subscribeUserToRecord($this->user, $this->record);
         $return = $kls::checkSubscription($this->user, $this->record);
-        $this->assertEquals($guid, $return);
+        $this->assertEquals($guid, $return['id']);
     }
 
     /**

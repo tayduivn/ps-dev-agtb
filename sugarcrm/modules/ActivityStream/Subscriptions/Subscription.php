@@ -80,12 +80,12 @@ class Subscription extends Basic
     public static function checkSubscription(User $user, SugarBean $record, $params = array())
     {
         $query = self::getQueryObject($params);
-        $query->select(array('id'));
+        $query->select(array('id', 'deleted'));
         $query->where()->equals('parent_id', $record->id);
         $query->where()->equals('created_by', $user->id);
         $result = $query->execute();
         if (count($result)) {
-            return $result[0]['id'];
+            return $result[0];
         }
         return null;
     }
@@ -138,9 +138,9 @@ class Subscription extends Basic
      */
     public static function getSubscription(User $user, SugarBean $record, $params = array())
     {
-        $guid = self::checkSubscription($user, $record, $params);
-        if (!empty($guid)) {
-            return BeanFactory::retrieveBean('Subscriptions', $guid);
+        $sub = self::checkSubscription($user, $record, $params);
+        if (!empty($sub['id'])) {
+            return BeanFactory::retrieveBean('Subscriptions', $sub['id']);
         }
         return null;
     }
@@ -155,13 +155,24 @@ class Subscription extends Basic
      */
     public static function subscribeUserToRecord(User $user, SugarBean $record, $params = array())
     {
-        if (!self::checkSubscription($user, $record, $params)) {
+        $params['add_deleted'] = false;
+        $sub = self::checkSubscription($user, $record, $params);
+        if (!$sub) {
             $seed = BeanFactory::getBean('Subscriptions');
             $seed->parent_type = $record->module_name;
             $seed->parent_id = $record->id;
             $seed->set_created_by = false;
             $seed->created_by = $user->id;
             return $seed->save();
+        }
+        else {
+            if (!empty($sub['deleted'])) {
+                $seed = BeanFactory::retrieveBean('Subscriptions', $sub['id'], array(), false);
+                if ($seed) {
+                    $seed->mark_undeleted($seed->id);
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -197,8 +208,10 @@ class Subscription extends Basic
             $subscription->disable_row_level_security = true;
         }
         $query = new SugarQuery();
-        $query->from($subscription);
-        $query->where()->equals('deleted', '0');
+        $query->from($subscription, !isset($params['add_deleted']) ? array() : array('add_deleted' => $params['add_deleted']));
+        if (!isset($params['add_deleted'])) {
+            $query->where()->equals('deleted', '0');
+        }
         if (!empty($params['limit'])) {
             $query->limit($params['limit'] + 1);
         }
