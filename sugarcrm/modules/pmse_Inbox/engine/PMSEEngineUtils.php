@@ -1268,7 +1268,7 @@ class PMSEEngineUtils
                 $relBean = BeanFactory::getBean($targetBean->field_defs[$element['act_field_module']]['module']);
 
                 $newData = array();
-                $fieldData = json_decode($element['act_fields']);
+                $fieldData = json_decode(html_entity_decode($element['act_fields']), true);
                 // In some cases $fieldData comes back null, so we need to check
                 // if it is actually an array before trying to use it as one
                 if (is_array($fieldData)) {
