@@ -78,17 +78,16 @@
      * and set general chart properties
      */
     evaluateResult: function(data) {
-        var total = 0;
-
+        var total = 0,
+            userConversionRate = 1 / app.metadata.getCurrency(app.user.getPreference('currency_id')).conversion_rate,
+            userCurrencyPreference = app.user.getPreference('currency_id');
         _.each(data, function(value, key) {
-            // parse currencies and attach the correct delimiters/symbols etc
-            data[key].formattedAmount = app.currency.formatAmountLocale(value.amount_usdollar, null, 0);
-
+            // parse currencies, format to user preference and attach the correct delimiters/symbols etc
+            data[key].formattedAmount = app.currency.formatAmountLocale(app.currency.convertWithRate(value.amount_usdollar, userConversionRate), userCurrencyPreference, 0);
             data[key].icon = key === 'won' ? 'caret-up' : (key === 'lost' ? 'caret-down' : 'minus');
             data[key].cssClass = key === 'won' ? 'won' : (key === 'lost' ? 'lost' : 'active');
             data[key].dealLabel = key;
             data[key].stageLabel = app.lang.getAppListStrings('opportunity_metrics_dom')[key];
-
             total += value.count;
         });
 

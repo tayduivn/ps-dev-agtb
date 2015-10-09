@@ -11,6 +11,7 @@ describe('modules.KBContents.clients.base.view.DashletNestesetList', function() 
 
         SugarTest.testMetadata.init();
         context.set('model', app.data.createBean(moduleName));
+        context.set('collection', app.data.createBeanCollection(moduleName));
         context.set('module', moduleName);
         context.set('action', 'detail');
         SugarTest.loadPlugin('Dashlet');
