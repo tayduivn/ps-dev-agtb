@@ -115,10 +115,6 @@ class SugarWidgetFieldRelate extends SugarWidgetReportField
     public function queryFilterone_of($layout_def, $rename_columns = true)
     {
         $ids = array();
-        $relation = false;
-        if (isset($layout_def['link'])) {
-            $relation = SugarRelationshipFactory::getInstance()->getRelationship($layout_def['link']);
-        }
         $module = isset($layout_def['custom_module']) ? $layout_def['custom_module'] : $layout_def['module'];
         $seed = BeanFactory::getBean($module);
 
@@ -127,11 +123,19 @@ class SugarWidgetFieldRelate extends SugarWidgetReportField
             $sq = new SugarQuery();
             $sq->select(array('id'));
             $sq->from($seed);
-            if ($relation) {
-                if ($layout_def['module'] == $relation->getRHSModule()) {
-                    $sq->join($relation->getRHSLink());
-                } else {
-                    $sq->join($relation->getLHSLink());
+            if (isset($layout_def['link'])) {
+                $linkName = $layout_def['link'];
+                $relation = SugarRelationshipFactory::getInstance()->getRelationship($linkName);
+                if (isset($seed->field_defs[$linkName]) && $seed->loadRelationship($linkName)) {
+                    //Then the name of a link field was passed through, no need to guess at the link name.
+                    $sq->join($linkName);
+                } else if ($relation) {
+                    //Valid relationship name passed through, time to guess on the side.
+                    if ($layout_def['module'] == $relation->getRHSModule()) {
+                        $sq->join($relation->getRHSLink());
+                    } else {
+                        $sq->join($relation->getLHSLink());
+                    }
                 }
             }
             $sq->where()
