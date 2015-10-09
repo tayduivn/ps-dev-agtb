@@ -594,10 +594,15 @@
 
     /**
      * Check to see if we should skip duplicate check.
+     *
+     * Duplicate check should be skipped if we are displaying duplicates or user
+     * has switched over to editing an existing duplicate record.
+     *
      * @return {boolean}
      */
     skipDupeCheck: function () {
-        return (this.getCurrentButtonState() === this.STATE.DUPLICATE);
+        var skipStates = [this.STATE.DUPLICATE, this.STATE.SELECT];
+        return (_.contains(skipStates, this.getCurrentButtonState()));
     },
 
     /**
