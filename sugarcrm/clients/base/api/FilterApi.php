@@ -382,6 +382,13 @@ class FilterApi extends SugarApi
         $q->distinct(false);
         $fields = array();
         foreach ($options['select'] as $field) {
+            // Skip the related bean options since related collections
+            // are expected to be handled later, e.g. FilterApi for Tags
+            if (isset($seed->field_defs[$field]['relate_collection']) &&
+                $seed->field_defs[$field]['relate_collection']) {
+                continue;
+            }
+
             // FIXME: convert this to vardefs too?
             if ($field == 'my_favorite') {
                 if (self::$isFavorite) {

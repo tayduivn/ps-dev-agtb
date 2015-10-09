@@ -62,7 +62,7 @@
                         app.alert.show('process-import-saved', {
                             level: 'error',
                             messages: error.error_message,
-                            autoClose: true
+                            autoClose: false
                         });
                     }
                 },

@@ -566,6 +566,16 @@ class SugarQuery
                             $this->groupBy($fieldToAdd);
                         }
                     } else {
+                        $type = $this->db->getFieldType($selectField->def);
+                        if ($type && $this->db->isTextType($type)) {
+                            $castedField = $this->db->convert(
+                                $selectField->table . '.' . $selectField->field,
+                                'text2char'
+                            );
+                            $this->groupByRaw($castedField);
+                            $selectField->addToSelectRaw($castedField, $selectFieldKey);
+                            continue;
+                        }
                         //Field class is not of type raw, add the table and field name from the selectField array
                         $this->groupBy($selectField->table . '.' . $selectField->field);
                     }
