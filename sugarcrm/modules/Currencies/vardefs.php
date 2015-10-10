@@ -29,6 +29,8 @@ $dictionary['Currency'] = array(
             'dbType' => 'varchar',
             'len' => '36',
             'required' => true,
+            'calculated' => true,
+            'formula' => 'getDropdownValue("iso_currency_name", $iso4217)',
             'comment' => 'Name of the currency',
             'importable' => 'required',
         ),
