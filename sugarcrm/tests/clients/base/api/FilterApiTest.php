@@ -364,14 +364,9 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $q = new SugarQuery();
         $q->from($bean);
 
-        /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $innerWhere */
-        $innerWhere = $this->getMock('SugarQuery_Builder_Where', array('equals', 'isNull'), array($q));
-        $innerWhere->expects($this->once())->method('equals')->with($field, '')->will($this->returnSelf());
-        $innerWhere->expects($this->once())->method('isNull')->with($field);
-
         /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
-        $where = $this->getMock('SugarQuery_Builder_Where', array('queryOr'), array($q));
-        $where->expects($this->once())->method('queryOr')->will($this->returnValue($innerWhere));
+        $where = $this->getMock('SugarQuery_Builder_Where', array('isEmpty'), array($q));
+        $where->expects($this->once())->method('isEmpty')->with($field)->will($this->returnSelf());
 
         FilterApiMock::addFilters(array(
             array(
@@ -388,14 +383,9 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $q = new SugarQuery();
         $q->from($bean);
 
-        /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $innerWhere */
-        $innerWhere = $this->getMock('SugarQuery_Builder_Where', array('notEquals', 'notNull'), array($q));
-        $innerWhere->expects($this->once())->method('notEquals')->with($field, '')->will($this->returnSelf());
-        $innerWhere->expects($this->once())->method('notNull')->with($field);
-
         /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
-        $where = $this->getMock('SugarQuery_Builder_Where', array('queryAnd'), array($q));
-        $where->expects($this->once())->method('queryAnd')->will($this->returnValue($innerWhere));
+        $where = $this->getMock('SugarQuery_Builder_Where', array('isNotEmpty'), array($q));
+        $where->expects($this->once())->method('isNotEmpty')->with($field)->will($this->returnSelf());
 
         FilterApiMock::addFilters(array(
             array(
