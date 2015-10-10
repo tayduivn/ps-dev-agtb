@@ -109,7 +109,7 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'acl_action' => 'studio',
         'module' => $moduleName,
         'icon' => 'fa-cogs',
-        'route' => '#bwc/index.php?module=Currencies&action=index',
+        'route' => '#Currencies',
     ),
     // Backups
     array(
@@ -375,7 +375,7 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'acl_action' => 'studio',
         'module' => $moduleName,
         'icon' => 'fa-cogs',
-        'route' => '#bwc/index.php?module=Manufacturers&action=index',
+        'route' => '#Manufacturers',
     ),
 
     // Product Categories
@@ -409,7 +409,7 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'acl_action' => 'studio',
         'module' => $moduleName,
         'icon' => 'fa-cogs',
-        'route' => '#bwc/index.php?module=TaxRates&action=index',
+        'route' => '#TaxRates',
     ),
 
     // Releases
@@ -427,7 +427,7 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'acl_action' => 'studio',
         'module' => $moduleName,
         'icon' => 'fa-cogs',
-        'route' => '#bwc/index.php?module=ContractTypes&action=index',
+        'route' => '#ContractTypes',
     ),
 
     //BEGIN SUGARCRM flav=ent ONLY
