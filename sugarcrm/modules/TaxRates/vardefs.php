@@ -21,6 +21,7 @@ $dictionary['TaxRate'] = array(
             'len' => '26,6',
             'importable' => 'required',
             'required' => true,
+            'massupdate' => true,
         ),
         'list_order' => array(
             'name' => 'list_order',
