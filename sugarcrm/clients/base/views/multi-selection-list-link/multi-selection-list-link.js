@@ -26,7 +26,6 @@
     },
 
     /**
-     * @inheritdoc
      * @override
      */
     initializeEvents: function() {
