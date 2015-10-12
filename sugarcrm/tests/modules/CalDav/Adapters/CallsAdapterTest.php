@@ -113,13 +113,19 @@ class CallsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         if ($parcipiantsUser['Contacts']) {
             $callBean->load_relationship('contacts');
             $meetingContactsList = $callBean->contacts->get();
-            $this->assertEquals(array_keys($parcipiantsUser['Contacts']), $meetingContactsList);
+            $expected = array_keys($parcipiantsUser['Contacts']);
+            sort($expected);
+            sort($meetingContactsList);
+            $this->assertEquals($expected, $meetingContactsList);
         }
 
         if ($parcipiantsUser['Leads']) {
             $callBean->load_relationship('leads');
             $meetingLeadsList = $callBean->leads->get();
-            $this->assertEquals(array_keys($parcipiantsUser['Leads']), $meetingLeadsList);
+            $expected = array_keys($parcipiantsUser['Leads']);
+            sort($expected);
+            sort($meetingLeadsList);
+            $this->assertEquals($expected, $meetingLeadsList);
         }
 
         $this->assertEquals($calDavBean->getStartDate(), $dateTimeHelper->sugarDateToUTC($callBean->date_start)->format(\TimeDate::DB_DATETIME_FORMAT));

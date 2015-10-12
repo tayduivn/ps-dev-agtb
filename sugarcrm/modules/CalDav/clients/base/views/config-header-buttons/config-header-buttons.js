@@ -28,15 +28,17 @@
      * @private
      */
     _save: function() {
-        var self=this;
         app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
         var value = {};
-        value.caldav_module = self.model.get('caldav_module');
-        value.caldav_interval = self.model.get('caldav_interval');
-        var section = self.context.get('section');
-        var url = app.api.buildURL('caldav', 'config/'+(section ? '/'+section : ''), null, null);
+        value.caldav_module = this.model.get('caldav_module');
+        value.caldav_interval = this.model.get('caldav_interval');
+        if (value.caldav_module == 'Calls') {
+            value.caldav_call_direction = this.model.get('caldav_call_direction');
+        }
+        var section = this.context.get('section');
+        var url = app.api.buildURL('caldav', 'config/' + (section ? '/' + section : ''), null, null);
         app.api.call('update', url, value,{
-            success: function (data){
+            success: function() {
                     app.alert.dismiss('upload');
                     app.router.goBack();
             },

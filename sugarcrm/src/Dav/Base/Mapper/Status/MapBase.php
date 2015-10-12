@@ -57,6 +57,10 @@ abstract class MapBase
     {
         $appStrings = $this->getAppListStrings();
         $relatedModule = $event->getBean();
+        if (empty($relatedModule)) {
+            $this->getLogger()->error('CalDavEvent does not have related bean');
+            return array();
+        }
         if (!isset($relatedModule->field_defs[$this->statusField]['options'])) {
             $this->getLogger()->error('CalDavEvent can\'t retrieve ' . $this->statusField . ' options for module ' .
                 $relatedModule->module_name);

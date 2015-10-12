@@ -26,7 +26,7 @@ use Sabre\VObject;
 class CalDavEventTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
-     * @var \CalDavEventMock
+     * @var \CalDavEvent
      */
     protected $beanMock;
 
@@ -2000,7 +2000,7 @@ END:VCALENDAR',
 
         $result = $beanMock->getBean();
 
-        $this->assertInstanceOf('Meeting', $result);
+        $this->assertNull($result);
 
         $callsMock = $this->getMockBuilder('Call')
                           ->disableOriginalConstructor()

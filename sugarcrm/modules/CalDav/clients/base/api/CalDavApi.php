@@ -21,6 +21,28 @@ use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as Adapters;
  */
 class CalDavApi extends SugarApi
 {
+    /**
+     * Value list
+     *
+     * @var array
+     */
+    protected $valuesList = array(
+        'module',
+        'interval',
+        'call_direction',
+    );
+
+    /**
+     * Value list
+     *
+     * @var array
+     */
+    protected $contentValuesList = array(
+        'module'=>'getSupportedCalDavModules',
+        'interval'=>'getOldestSyncDates',
+        'call_direction'=>'getCallDirections',
+    );
+
     public function registerApiRest()
     {
         return array(
@@ -73,6 +95,7 @@ class CalDavApi extends SugarApi
         $caldav_config = array(
             'modules' => $this->getSupportedCalDavModules(),
             'intervals' => $this->getOldestSyncDates(),
+            'call_directions' => $this->getCallDirections(),
             'values' => $this->getDefaultsValues()
         );
 
@@ -129,9 +152,11 @@ class CalDavApi extends SugarApi
         $caldav_config = array(
             'modules' => $this->getSupportedCalDavModules(),
             'intervals' => $this->getOldestSyncDates(),
+            'call_directions' => $this->getCallDirections(),
             'values' => array(
                 'caldav_module' => $current_user->getPreference('caldav_module'),
-                'caldav_interval' => $current_user->getPreference('caldav_interval')
+                'caldav_interval' => $current_user->getPreference('caldav_interval'),
+                'caldav_call_direction' => $current_user->getPreference('caldav_call_direction'),
             )
         );
 
@@ -198,7 +223,7 @@ class CalDavApi extends SugarApi
     {
         $adapters = new Adapters;
         $modules = $adapters->getSupportedModules();
-        return $modules;
+        return array_combine($modules, $modules);
     }
 
     /**
@@ -209,8 +234,18 @@ class CalDavApi extends SugarApi
     public function getOldestSyncDates()
     {
         global $app_list_strings;
-
         return $app_list_strings['caldav_oldest_sync_date'];
+    }
+
+    /**
+     * Return Call Directions array
+     *
+     * @return array
+     */
+    public function getCallDirections()
+    {
+        global $app_list_strings;
+        return $app_list_strings['call_direction_dom'];
     }
 
     /**
@@ -225,30 +260,19 @@ class CalDavApi extends SugarApi
         $out['update'] = array();
         $out['delete'] = array();
 
-        if (isset($args['caldav_module'])) {
-            $modules = $this->getSupportedCalDavModules();
-            if (in_array($args['caldav_module'], $modules)) {
-                if ($out['caldav_module'] != $args['caldav_module']) {
-                    $out['update'][] = 'caldav_module';
-                } else {
-                    $out['delete'][] = 'caldav_module';
+        foreach ($this->valuesList as $valueName) {
+            if (isset($args['caldav_' . $valueName])) {
+                $values = $this->{$this->contentValuesList[$valueName]}();
+                if (isset($values[$args['caldav_' . $valueName]])) {
+                    if ($out['caldav_' . $valueName] != $args['caldav_' . $valueName]) {
+                        $out['update'][] = 'caldav_' . $valueName;
+                    } else {
+                        $out['delete'][] = 'caldav_' . $valueName;
+                    }
+                    $out['caldav_' . $valueName] = $args['caldav_' . $valueName];
                 }
-                $out['caldav_module'] = $args['caldav_module'];
             }
         }
-
-        if (isset($args['caldav_interval'])) {
-            $intervals = $this->getOldestSyncDates();
-            if (isset($intervals[$args['caldav_interval']])) {
-                if ($out['caldav_interval'] != $args['caldav_interval']) {
-                    $out['update'][] = 'caldav_interval';
-                } else {
-                    $out['delete'][] = 'caldav_interval';
-                }
-                $out['caldav_interval'] = $args['caldav_interval'];
-            }
-        }
-
         return $out;
     }
 
@@ -263,7 +287,8 @@ class CalDavApi extends SugarApi
 
         return array(
             'caldav_module' => $cfg->config['default_caldav_module'],
-            'caldav_interval' => $cfg->config['default_caldav_interval']
+            'caldav_interval' => $cfg->config['default_caldav_interval'],
+            'caldav_call_direction' => $cfg->config['default_caldav_call_direction'],
         );
     }
 

@@ -18,18 +18,28 @@ $viewdefs[$module_name]['base']['view']['config'] = array(
             'fields' => array(
                 array(
                     'name' => 'caldav_module',
-                    'label'=>'LBL_CALDAV_DEFAULT_MODULE',
-                    'description'=>'LBL_CALDAV_DEFAULT_MODULE_DESC',
+                    'label' => 'LBL_CALDAV_DEFAULT_MODULE',
+                    'description' => 'LBL_CALDAV_DEFAULT_MODULE_DESC',
                     'type' => 'enum',
                     'width' => 15,
                     'options' => array('' => ''),
                     'view' => 'edit',
-                    'required'=>true,
+                    'required' => true,
+                ),
+                array(
+                    'name' => 'caldav_call_direction',
+                    'type' => 'CallsDirection',
+                    'label' => 'LBL_CALDAV_CALL_DIRECTION',
+                    'description' => 'LBL_CALDAV_CALL_DIRECTION_DESC',
+                    'view' => 'edit',
+                    'options' => array('' => ''),
+                    'default' => 'Outbound',
+                    'enabled' => true,
                 ),
                 array(
                     'name' => 'caldav_interval',
-                    'label'=>'LBL_CALDAV_DEFAULT_INTERVAL',
-                    'description'=>'LBL_CALDAV_DEFAULT_INTERVAL_DESC',
+                    'label' => 'LBL_CALDAV_DEFAULT_INTERVAL',
+                    'description' => 'LBL_CALDAV_DEFAULT_INTERVAL_DESC',
                     'type' => 'enum',
                     'width' => 15,
                     'options' => array('' => ''),
@@ -38,5 +48,5 @@ $viewdefs[$module_name]['base']['view']['config'] = array(
                 ),
             ),
         ),
-    )
+    ),
 );
