@@ -281,7 +281,6 @@
   TABLE ROW (specific) */
   tbody tr {
     border-top: @tableBorder;
-    border-bottom: @tableBorder;
     //for preview
     &.highlighted {
       &.current {
@@ -523,6 +522,7 @@ FLEXLIST GENERIC */
 .flex-list-view {
   position: relative;
   border-top: @borderWidget;
+  border-bottom: @tableBorder;
   .flex-list-view-content {
     overflow-x: auto;
   }
