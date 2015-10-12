@@ -25,21 +25,20 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        var self=this;
 
-        var section = self.context.get('section');
+        var section = this.context.get('section');
         var url = app.api.buildURL('caldav', 'config'+(section ? '/'+section : ''), null, options.params);
         app.api.call('READ', url, options.attributes, {
-            success: function (data) {
-                self.model.set('caldav_module_options', data.modules, {silent: true});
-                self.model.set('caldav_module', data.values.caldav_module, {silent: true});
-                self.model.set('caldav_interval_options', data.intervals, {silent: true});
-                self.model.set('caldav_interval', data.values.caldav_interval, {silent: true});
-                self.render();
-            }
+            success: _.bind(function (data) {
+                this.model.set('caldav_module_options', data.modules, {silent: true});
+                this.model.set('caldav_module', data.values.caldav_module, {silent: true});
+                this.model.set('caldav_interval_options', data.intervals, {silent: true});
+                this.model.set('caldav_interval', data.values.caldav_interval, {silent: true});
+                this.model.set('caldav_call_direction', data.values.caldav_call_direction, {silent: true});
+                this.model.set('caldav_call_direction_options', data.call_directions, {silent: true});
+                this.render();
+            }, this)
         });
-
-
     },
 
     /**

@@ -30,18 +30,10 @@ class Handler
     {
         $adapterFactory = $this->getAdapterFactory();
         if ($adapter = $adapterFactory->getAdapter($bean->module_name)) {
-            $calDavEvent = $this->getCalDavEvent();
+            $calDavBean = $this->getDavBean($bean);
             if ($this->isBeanChild($bean)) {
                 $bean = $this->getParentBean($bean);
             }
-            $relatedCalDavBean = $calDavEvent->findByBean($bean);
-            if ($relatedCalDavBean !== null) {
-                $calDavBean = $relatedCalDavBean;
-            } else {
-                $calDavBean = $calDavEvent;
-                $calDavBean->setBean($bean);
-            }
-
             if ($adapter->export($bean, $calDavBean)) {
                 $calDavBean->save();
             }
@@ -50,21 +42,45 @@ class Handler
 
     /**
      * Get CalDav bean object
+     * @param \SugarBean $bean
      * @return \CalDavEvent
      */
-
-    public function getDavBean()
+    public function getDavBean(\SugarBean $bean)
     {
+        /** @var \CalDavEvent $event */
+        $event = \BeanFactory::getBean('CalDavEvents');
+        $related = $event->findByBean($bean);
 
+        if ($related) {
+            return $related;
+        }
+
+        $event->setBean($bean);
+        return $event;
     }
 
     /**
      * Get Sugar Bean object, except CalDav
+     * @param \CalDavEvent $calDavBean
      * @return \SugarBean
      */
-    public function getSugarBean()
+    public function getSugarBean(\CalDavEvent $calDavBean)
     {
+        global $current_user;
 
+        $bean = $calDavBean->getBean();
+        if (is_null($bean)) {
+            $moduleName = $current_user->getPreference('caldav_module');
+            $bean = \BeanFactory::getBean($moduleName);
+            if ($moduleName == 'Calls') {
+                $bean->direction = $current_user->getPreference('caldav_call_direction');
+            }
+            $bean->id = create_guid();
+            $bean->new_with_id = true;
+            $calDavBean->setBean($bean);
+            $calDavBean->save();
+        }
+        return $bean;
     }
 
     /**
@@ -74,7 +90,7 @@ class Handler
 
     public function import(\CalDavEvent $calDavBean)
     {
-        $bean = $calDavBean->getBean();
+        $bean = $this->getSugarBean($calDavBean);
         $adapterFactory = $this->getAdapterFactory();
         if ($adapter = $adapterFactory->getAdapter($bean->module_name)) {
             if ($adapter->import($bean, $calDavBean)) {
@@ -124,8 +140,8 @@ class Handler
     }
 
     /**
-     * return CalDavEvent bean
-     * @return null|\SugarBean
+     * Return CalDavEvent bean
+     * @return \CalDavEvent
      */
     protected function getCalDavEvent()
     {

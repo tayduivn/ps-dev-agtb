@@ -497,6 +497,7 @@ function get_sugar_config_defaults()
         ),
         'default_caldav_module' => 'Meetings',
         'default_caldav_interval' => '6 month',
+        'default_caldav_call_direction' => 'Outbound',
     );
 
     if (empty($locale)) {

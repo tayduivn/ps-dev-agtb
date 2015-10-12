@@ -35,8 +35,7 @@ class Handler
         $adapter = $this->getAdapterFactory();
         $manager = $this->getManager();
         if ($bean instanceof \CalDavEvent) {
-            if ($bean->parent_type != $bean->module_name &&
-                $adapter->getAdapter($bean->getBean()->module_name)) {
+            if ($bean->parent_type != $bean->module_name) {
                 $fetchedRow = $this->getBeanFetchedRow($bean);
                 $bean->clearVCalendarEvent();
                 $manager->calDavImport($fetchedRow, $bean->module_name);

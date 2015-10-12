@@ -40,7 +40,33 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @var array
      */
-    protected $defaultModules = array('Calls','Meetings','Task');
+    protected $defaultModules = array(
+        'Calls' => 'Calls',
+        'Meetings' => 'Meetings',
+        'Task' => 'Task',
+    );
+
+    /**
+     * Value list
+     *
+     * @var array
+     */
+    protected $valuesList = array(
+        'module',
+        'interval',
+        'call_direction'
+    );
+
+    /**
+     * Value list
+     *
+     * @var array
+     */
+    protected $contentValuesList = array(
+        'module'=>'getSupportedCalDavModules',
+        'interval'=>'getOldestSyncDates',
+        'call_direction'=>'getCallDirections',
+    );
 
     public function setUp()
     {
@@ -48,15 +74,14 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->language = $sugar_config['default_language'];
         $app_list_strings = return_app_list_strings_language($this->language, false);
 
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user']->is_admin = 1;
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
 
         $cfg = new Configurator();
 
-        $this->defaultValues = array(
-            'caldav_module' => $cfg->config['default_caldav_module'],
-            'caldav_interval' => $cfg->config['default_caldav_interval']
-        );
+        $this->defaultValues = array();
+        foreach ($this->valuesList as $valueName) {
+            $this->defaultValues['caldav_' . $valueName] = $cfg->config['default_caldav_' . $valueName];
+        }
 
         $apiClass = new CalDavApi();
         $defaultModules = $apiClass->getSupportedCalDavModules();
@@ -107,27 +132,19 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $apiClass->method('getSupportedCalDavModules')->willReturn($this->defaultModules);
 
-        $result = $apiClass->caldavConfigGet($api, $args);
-
-
-        $this->assertArrayHasKey("modules", $result);
-        $this->assertNotEmpty($result['modules']);
-
-        $this->assertArrayHasKey("intervals", $result);
-        $this->assertNotEmpty($result['intervals']);
-
-        $this->assertArrayHasKey("values", $result);
+        $result = $apiClass->configGet($api, $args);
 
         $values = $result['values'];
 
         $this->assertNotEmpty($values);
 
-        $this->assertArrayHasKey("caldav_module", $values);
-        $this->assertArrayHasKey("caldav_interval", $values);
+        foreach ($this->valuesList as $valueName) {
+            $this->assertArrayHasKey($valueName . 's', $result);
+            $this->assertNotEmpty($result[$valueName . 's']);
 
-        $this->assertContains($values['caldav_module'], $result['modules']);
-        $this->assertArrayHasKey($values['caldav_interval'], $result['intervals']);
-
+            $this->assertArrayHasKey('caldav_' . $valueName, $values);
+            $this->assertArrayHasKey($values['caldav_' . $valueName], $result[$valueName . 's']);
+        }
     }
 
     /**
@@ -154,50 +171,36 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $apiClass->method('getSupportedCalDavModules')->willReturn($this->defaultModules);
 
-        $modules = $apiClass->getSupportedCalDavModules();
+        $values = array();
+        foreach ($this->valuesList as $valueName) {
+            $values[$valueName] = $apiClass->{$this->contentValuesList[$valueName]}();
 
-        $this->assertNotEmpty($modules);
-        $this->assertArrayHasKey("caldav_module", $this->defaultValues);
-        $this->assertContains($this->defaultValues['caldav_module'], $modules);
+            $this->assertNotEmpty($values[$valueName]);
+            $this->assertArrayHasKey("caldav_" . $valueName, $this->defaultValues);
 
-        $module=$this->defaultValues['caldav_module'];
-        if (count($modules)>1) {
-            $key = array_search($this->defaultValues['caldav_module'], $modules);
-            unset($modules[$key]);
-            $module=$modules[array_rand($modules)];
+            $this->assertArrayHasKey($this->defaultValues['caldav_' . $valueName], $values[$valueName]);
+
+            $value=$this->defaultValues['caldav_' . $valueName];
+            if (count($values[$valueName])>1) {
+                $key = array_search($this->defaultValues['caldav_' . $valueName], $values[$valueName]);
+                unset($values[$valueName][$key]);
+                $value=array_rand($values[$valueName]);
+            }
+
+            $args["caldav_" . $valueName] = $value;
         }
 
-        $intervals = $apiClass->getOldestSyncDates();
-
-        $this->assertNotEmpty($intervals);
-        $this->assertArrayHasKey("caldav_interval", $this->defaultValues);
-        $this->assertArrayHasKey($this->defaultValues['caldav_interval'], $intervals);
-
-        $interval=$this->defaultValues['caldav_interval'];
-        if (count($intervals)>1) {
-            unset($intervals[$this->defaultValues['caldav_interval']]);
-            $interval=array_rand($intervals);
-        }
-
-        $args["caldav_module"] = $module;
-        $args["caldav_interval"] = $interval;
-
-        $result = $apiClass->caldavConfigSave($api, $args);
+        $result = $apiClass->configSave($api, $args);
 
         $cfg = new Configurator();
 
-        $newValues = array(
-            'module' => $cfg->config['default_caldav_module'],
-            'interval' => $cfg->config['default_caldav_interval']
-        );
-
-        $this->assertEquals($module, $newValues['module']);
-        $this->assertEquals($interval, $newValues['interval']);
-
+        foreach ($this->valuesList as $valueName) {
+            $this->assertEquals($args["caldav_" . $valueName], $cfg->config['default_caldav_' . $valueName]);
+        }
     }
 
     /**
-     * test the get admin config
+     * test the get user config
      * @group caldav
      * @covers \CalDavApi::caldavUserConfigGet
      */
@@ -220,13 +223,7 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $apiClass->method('getSupportedCalDavModules')->willReturn($this->defaultModules);
 
-        $result = $apiClass->caldavUserConfigGet($api, $args);
-
-        $this->assertArrayHasKey("modules", $result);
-        $this->assertNotEmpty($result['modules']);
-
-        $this->assertArrayHasKey("intervals", $result);
-        $this->assertNotEmpty($result['intervals']);
+        $result = $apiClass->userConfigGet($api, $args);
 
         $this->assertArrayHasKey("values", $result);
 
@@ -234,16 +231,17 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertNotEmpty($values);
 
-        $this->assertArrayHasKey("caldav_module", $values);
-        $this->assertArrayHasKey("caldav_interval", $values);
+        foreach ($this->valuesList as $valueName) {
+            $this->assertArrayHasKey($valueName . 's', $result);
+            $this->assertNotEmpty($result[$valueName . 's']);
 
-        $this->assertContains($values['caldav_module'], $result['modules']);
-        $this->assertArrayHasKey($values['caldav_interval'], $result['intervals']);
-
+            $this->assertArrayHasKey('caldav_' . $valueName, $values);
+            $this->assertArrayHasKey($values['caldav_' . $valueName], $result[$valueName . 's']);
+        }
     }
 
     /**
-     * test the update admin config
+     * test the update user config
      * @group caldav
      * @covers \CalDavApi::caldavUserConfigSave
      */
@@ -268,37 +266,27 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $apiClass->method('getSupportedCalDavModules')->willReturn($this->defaultModules);
 
-        $modules = $apiClass->getSupportedCalDavModules();
+        $values = array();
+        foreach ($this->valuesList as $valueName) {
+            $values[$valueName] = $apiClass->{$this->contentValuesList[$valueName]}();
 
-        $this->assertNotEmpty($modules);
-        $this->assertContains($current_user->getPreference('caldav_module'), $modules);
+            $this->assertNotEmpty($values[$valueName]);
+            $this->assertArrayHasKey($current_user->getPreference('caldav_' . $valueName), $values[$valueName]);
 
-        $module=$current_user->getPreference('caldav_module');
-        if (count($modules)>1) {
-            $key = array_search($current_user->getPreference('caldav_module'), $modules);
-            unset($modules[$key]);
-            $module=$modules[array_rand($modules)];
+            $value=$this->defaultValues['caldav_' . $valueName];
+            if (count($values[$valueName]) > 1) {
+                $key = array_search($this->defaultValues['caldav_' . $valueName], $values[$valueName]);
+                unset($values[$valueName][$key]);
+                $value=array_rand($values[$valueName]);
+            }
+            $args["caldav_" . $valueName] = $value;
         }
 
-        $intervals = $apiClass->getOldestSyncDates();
+        $result = $apiClass->userConfigSave($api, $args);
 
-        $this->assertNotEmpty($intervals);
-        $this->assertArrayHasKey($current_user->getPreference('caldav_interval'), $intervals);
-
-        $interval=$current_user->getPreference('caldav_interval');
-        if (count($intervals)>1) {
-            unset($intervals[$current_user->getPreference('caldav_interval')]);
-            $interval=array_rand($intervals);
+        foreach ($this->valuesList as $valueName) {
+            $this->assertEquals($args["caldav_" . $valueName], $current_user->getPreference('caldav_' . $valueName));
         }
-
-        $args["caldav_module"] = $module;
-        $args["caldav_interval"] = $interval;
-
-        $result = $apiClass->caldavUserConfigSave($api, $args);
-
-        $this->assertEquals($module, $current_user->getPreference('caldav_module'));
-        $this->assertEquals($interval, $current_user->getPreference('caldav_interval'));
-
     }
 
     /**

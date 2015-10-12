@@ -1264,10 +1264,8 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
     }
 
     /**
-     * Retrive related bean
+     * Returns related bean
      * @return null|SugarBean
-     *
-     * @todo Default module name should be retrieved from config
      */
     public function getBean()
     {
@@ -1275,20 +1273,21 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
             return BeanFactory::getBean($this->parent_type, $this->parent_id, array('use_cache' => false));
         }
 
-        return BeanFactory::getBean('Meetings');
+        return null;
     }
 
     /**
      * Set related bean
      * Return false if any errors occurred
      * @param SugarBean $bean
-     * @return bool|String
+     * @return bool
      */
     public function setBean(\SugarBean $bean)
     {
         if ($bean->id) {
             $this->parent_type = $bean->module_name;
             $this->parent_id = $bean->id;
+            return true;
         }
 
         return false;
