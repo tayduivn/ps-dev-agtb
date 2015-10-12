@@ -22,6 +22,13 @@ abstract class OpportunitySetup
     protected $bean;
 
     /**
+     * A flag to indicate if it's from upgrade
+     *
+     * @var boolean
+     */
+    protected $isUpgrade = false;
+
+    /**
      * Field Vardef setup
      *
      * @var array
@@ -87,6 +94,15 @@ abstract class OpportunitySetup
     public function __construct()
     {
         $this->bean = BeanFactory::getBean('Opportunities');
+    }
+
+    /**
+     * Set the flag to indicate if it's in upgrade.
+     * @param boolean $isUpgrade the flag value
+     */
+    public function setIsUpgrade($isUpgrade = false)
+    {
+        $this->isUpgrade = $isUpgrade;
     }
 
     /**
@@ -338,7 +354,11 @@ abstract class OpportunitySetup
         $tabs = $newTB->get_system_tabs();
 
         if ($show) {
-            $tabs['RevenueLineItems'] = 'RevenueLineItems';
+            // if this is in the upgrade and RevenueLineItem is disabled in the tab before the upgrade,
+            // it should not be enabled in the tab.
+            if ( !$this->isUpgrade || isset($tabs['RevenueLineItems'])) {
+                $tabs['RevenueLineItems'] = 'RevenueLineItems';
+            }
         } else {
             unset($tabs['RevenueLineItems']);
         }
@@ -468,7 +488,10 @@ abstract class OpportunitySetup
 
         $hasRLI = isset($enModules['RevenueLineItems']);
         if ($enable === true && $hasRLI === false) {
-            $enModules['RevenueLineItems'] = count($enModules);
+            // if it's upgrade, RLI must be disabled and $hasRLI is false. Hence it won't be enabled.
+            if (!$this->isUpgrade) {
+                $enModules['RevenueLineItems'] = count($enModules);
+            }
         } elseif ($enable === false && $hasRLI === true) {
             unset($enModules['RevenueLineItems']);
         } else {

@@ -39,6 +39,7 @@ class SugarUpgradeOpportunityWithRevenueLineItems extends UpgradeScript
             StudioModuleFactory::clearModuleCache('Opportunities');
             // in the upgrade, we only want to do the metadata conversion
             $converter = new OpportunityWithRevenueLineItem();
+            $converter->setIsUpgrade(true);
             $converter->doMetadataConvert();
 
             // just on the off chance that the formula got put into a custom file, we need to make sure it contains

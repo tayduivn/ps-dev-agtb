@@ -261,9 +261,13 @@ EOF;
         }
         //BEGIN SUGARCRM flav=ent ONLY
         $tabs = $tc->getPortalTabs();
-        $tabs = array_diff(array_values($tabs), array('KBDocuments', 'KBContents'));
-        array_push($tabs, 'KBContents');
-        $tc->setPortalTabs(array_values($tabs));
+        //If KBDocuments is disabled in portal mega menu, KBContents should not be added.
+        $tabModules = array_values($tabs);
+        if (isset($tabModules['KBDocuments'])) {
+            $tabs = array_diff($tabModules, array('KBDocuments', 'KBContents'));
+            array_push($tabs, 'KBContents');
+            $tc->setPortalTabs(array_values($tabs));
+        }
         //END SUGARCRM flav=ent ONLY
     }
 
