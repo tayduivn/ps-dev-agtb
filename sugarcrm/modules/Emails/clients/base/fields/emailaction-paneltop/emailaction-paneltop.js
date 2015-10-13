@@ -18,7 +18,7 @@
     plugins: ['EmailClientLaunch'],
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Set type to emailaction to get the template
      */
     initialize: function(options) {

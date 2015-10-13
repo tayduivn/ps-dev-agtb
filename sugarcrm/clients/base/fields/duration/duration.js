@@ -53,7 +53,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     bindDataChange: function() {
         // Change the end date when start date changes.

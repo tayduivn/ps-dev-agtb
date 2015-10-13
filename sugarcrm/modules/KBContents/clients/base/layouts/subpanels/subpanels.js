@@ -13,7 +13,7 @@
     extendsFrom: 'SubpanelsLayout',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _pruneNoAccessComponents: function(components) {
         var prunedComponents = [];

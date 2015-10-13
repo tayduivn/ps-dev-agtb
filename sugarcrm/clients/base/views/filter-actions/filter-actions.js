@@ -40,7 +40,7 @@
     showActions: true,
 
     /**
-     * @{inheritDoc}
+     * @inheritdoc
      */
     initialize: function(opts) {
         this._super('initialize', [opts]);

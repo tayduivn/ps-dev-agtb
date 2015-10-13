@@ -62,7 +62,7 @@
     opportunitiesWithRevenueLineItems: false,
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this.isManager = app.user.get('is_manager');
@@ -253,7 +253,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Additional logic on switch visibility event.
      */
@@ -552,7 +552,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      * Clean up!
      */
     unbindData: function() {

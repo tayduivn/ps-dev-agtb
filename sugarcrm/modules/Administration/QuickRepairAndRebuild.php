@@ -230,7 +230,9 @@ class RepairAndClear
 					{
 						#30273
 						if(empty($focus->disable_vardefs)) {
-							include('modules/' . $focus->module_dir . '/vardefs.php');
+                            if (empty($dictionary[$focus->object_name])) {
+                                VarDefManager::loadVardef($bean_name, $focus->object_name);
+                            }
 							if($this->show_output)
 								print_r("<p>" .$mod_strings['LBL_REPAIR_DB_FOR'].' '. $bean_name . "</p>");
 							$sql .= $db->repairTable($focus, $this->execute);

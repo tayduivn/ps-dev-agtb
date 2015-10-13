@@ -105,7 +105,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _patchField: function(fieldMeta, i) {
         var isVisible = (fieldMeta.name !== 'date_modified');

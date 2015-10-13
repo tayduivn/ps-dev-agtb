@@ -15,7 +15,7 @@
  */
 ({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -48,7 +48,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _render: function() {
         if (!this.isReady()) {
@@ -270,9 +270,6 @@
      * Use {@link #triggerSystemAction} to trigger them.
      */
     _systemActions: {
-        toggleHelp: function() {
-            app.events.trigger('app:help');
-        },
         openConfig: function() {
             this.openConfigPanel();
         }
@@ -293,7 +290,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _dispose: function() {
         this._unbindEvents();

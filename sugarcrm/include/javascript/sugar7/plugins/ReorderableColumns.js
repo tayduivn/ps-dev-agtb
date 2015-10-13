@@ -174,7 +174,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              *
              * On render makes the list view columns reorderable.
              */

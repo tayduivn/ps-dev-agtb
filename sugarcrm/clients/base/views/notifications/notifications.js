@@ -85,7 +85,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         options.module = 'Notifications';
@@ -446,7 +446,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _renderHtml: function() {
         if (!app.api.isAuthenticated() || app.config.appStatus === 'offline') {
@@ -457,7 +457,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Stops pulling for new notifications and disposes all reminders.
      */

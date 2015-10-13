@@ -28,7 +28,7 @@
     plugins: ['File', 'FieldDuplicate', 'EllipsisInline'],
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -153,7 +153,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _dispose: function() {
         // Remove specific validation task from the model.
@@ -221,7 +221,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     setMode: function(name) {
         if (!_.isEmpty(this._errors)) {
@@ -236,7 +236,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Override field templates for merge-duplicate view.
      */
@@ -342,7 +342,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Overrides `change` event for file field.
      * We should call `render` method when change event is triggered if:
@@ -371,7 +371,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * Because input file uses full local path to file as value,
      * value can contains directory names.

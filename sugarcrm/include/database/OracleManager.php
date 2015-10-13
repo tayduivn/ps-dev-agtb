@@ -128,6 +128,36 @@ class OracleManager extends DBManager
      */
     protected $configOptions;
 
+    /**
+     * Sets where properties for empty conditions on the SugarQuery object. Since
+     * Oracle does things a little differently with empty strings we need to
+     * define this here to keep Oracle happy.
+     * @param SugarQuery_Builder_Where $where SugarQuery where object
+     * @param string $field The field to compare
+     * @param SugarBean $bean SugarBean
+     * @return SugarQuery_Builder_Where
+     */
+    public function setEmptyWhere(SugarQuery_Builder_Where $where, $field, $bean = false)
+    {
+        $where->isNull($field, $bean);
+        return $where;
+    }
+
+    /**
+     * Sets where properties for not empty conditions on the SugarQuery object. Since
+     * Oracle does things a little differently with empty strings we need to
+     * define this here to keep Oracle happy.
+     * @param SugarQuery_Builder_Where $where SugarQuery where object
+     * @param string $field The field to compare
+     * @param SugarBean $bean SugarBean
+     * @return SugarQuery_Builder_Where
+     */
+    public function setNotEmptyWhere(SugarQuery_Builder_Where $where, $field, $bean = false)
+    {
+        $where->notNull($field, $bean);
+        return $where;
+    }
+
     public function repairTableParams($tablename, $fielddefs, $indices, $execute = true, $engine = null)
     {
         //Modules with names close to 30 characters may have index names over 30 characters, we need to clean them

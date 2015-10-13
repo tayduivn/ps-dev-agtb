@@ -22,7 +22,7 @@
     plugins: ['Tooltip'],
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this.index = options.meta.index;
@@ -76,7 +76,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     _placeComponent: function(comp, def, prepend) {
         var $body = this.$el.children(".dashlet-row");
@@ -100,7 +100,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     addComponent: function(component, def) {
         if(this.prependComponent) {
@@ -208,7 +208,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     setMode: function(type) {
         if(type === 'edit' || (this.model._previousMode === 'edit' && type === 'drag')) {
@@ -285,7 +285,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     _dispose: function() {
         this.$el.children(".dashlet-row").sortable("destroy");

@@ -20,7 +20,7 @@
     _previewed: null,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this.plugins = _.union(this.plugins, ['Tooltip']);
@@ -757,7 +757,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _renderHtml: function() {
         this.colSpan = this._fields.visible.length || 0;
@@ -793,7 +793,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _render: function() {
         this._super('_render');
@@ -999,7 +999,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     unbind: function() {
         $('#content, .main-pane').off('scroll.' + this.cid);

@@ -764,7 +764,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Unsets `_bordersPosition` because the value changes on resize and will
      * have to be recalculated if the user toggles inline edit mode.

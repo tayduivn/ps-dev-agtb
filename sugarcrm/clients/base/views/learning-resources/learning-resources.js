@@ -33,6 +33,8 @@
  * @class View.Views.Base.LearningResourcesView
  * @alias SUGAR.App.view.views.BaseLearningResourcesView
  * @extends View.View
+ *
+ * @deprecated Since 7.7. Will be removed in 7.9.
  */
 ({
     tagName: 'ul',
@@ -45,8 +47,13 @@
      */
     resources: {},
 
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        app.logger.warn('View.Views.Base.LearningResourcesView is deprecated since 7.7. Will be removed in 7.9.');
+    },
+
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Define the {@link #resources} directly from the metadata.
      *

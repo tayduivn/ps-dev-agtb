@@ -25,7 +25,9 @@ class KBContent extends SugarBean {
     public $object_name = "KBContent";
     public $new_schema = true;
     public $module_dir = 'KBContents';
-    public $importable = true;
+
+    // Import should be disabled in 7.7
+    // public $importable = true;
 
     public $status;
     public $active_rev;

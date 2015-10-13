@@ -12,7 +12,7 @@
     extendsFrom: 'TabbedDashletView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * @property {Number} _defaultSettings.limit Maximum number of records to
      *   load per request, defaults to '10'.
@@ -26,7 +26,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         options.meta = options.meta || {};
@@ -36,7 +36,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * FIXME: This should be removed when metadata supports date operators to
      * allow one to define relative dates for date filters.

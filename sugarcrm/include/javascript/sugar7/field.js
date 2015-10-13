@@ -140,7 +140,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              * Checks fallback actions first and then follows ACLs checking
              * after that.
              *
@@ -186,7 +186,7 @@
             ],
 
             /**
-             * {@inheritdoc}
+             * @inheritdoc
              */
             _getFallbackTemplate: function(viewName) {
                 if (_.contains(this.fallbackActions, viewName)) {
@@ -353,7 +353,7 @@
             },
 
             /**
-             * {@inheritdoc}
+             * @inheritdoc
              *
              * Override setMode to remove any stale view action CSS classes.
              * @override
@@ -367,7 +367,7 @@
             },
 
             /**
-             * {@inheritdoc}
+             * @inheritdoc
              *
              * Override setMode to remove the stale disabled CSS class.
              * @override
@@ -502,7 +502,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              * Attach focus handler in order to pass the current element's location.
              */
             bindDomChange: function() {
@@ -514,7 +514,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              * Calculate current offset location and pass it to the parent's view.
              */
             handleFocus: function() {

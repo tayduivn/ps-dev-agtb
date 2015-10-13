@@ -130,7 +130,7 @@
             return;
         }
         /**
-         * {@inheritDoc}
+         * @inheritdoc
          * Deactivate tooltip plugin on touch devices.
          */
         $.fn.tooltip = function() {

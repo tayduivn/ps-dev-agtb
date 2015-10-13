@@ -16,7 +16,7 @@
             'FilterOptions': Backbone.Model.extend({
 
                 /**
-                 * @inheritDoc
+                 * @inheritdoc
                  */
                 initialize: function(options) {
                     this._filterPopulateNames = [];

@@ -15,7 +15,7 @@
  */
 ({
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * This field doesn't support `showNoData`.
      */
@@ -26,7 +26,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * The badge is always a readonly field.
      */

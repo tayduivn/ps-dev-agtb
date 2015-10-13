@@ -13,7 +13,7 @@
     extendsFrom: 'SubpanelListView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Check access to model.
      * Setup dataView to load correct viewdefs from subpanel-for-localizations
@@ -29,7 +29,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Removes 'status' field from options if there is no access to model.
      */

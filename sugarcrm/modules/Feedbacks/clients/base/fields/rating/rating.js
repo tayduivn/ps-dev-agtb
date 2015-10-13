@@ -33,7 +33,7 @@
 ({
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Initializes default rate and generates stars based on that rate for
      * template.
@@ -45,7 +45,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Fills all stars up to `this.value`. `true` means fill, `false` means not
      * filled.
@@ -58,7 +58,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     unformat: function(value) {
         return value + 1;

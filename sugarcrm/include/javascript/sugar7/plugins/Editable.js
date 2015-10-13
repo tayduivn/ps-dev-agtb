@@ -395,7 +395,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              * Unbind anonymous functions for key and mouse handlers.
              * Unbind beforeHandlers.
              */

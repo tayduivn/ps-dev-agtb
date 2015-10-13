@@ -56,7 +56,7 @@
     _$moreModulesDD: undefined,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Hooks to `app:sync:complete` to handle the refresh of the menu items
      * that are available after a complete sync.
@@ -99,7 +99,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * If it is a `module-menu` component, we wrap it with our `list` template
      * and place it before the `more-modules` drop down or inside the drop down

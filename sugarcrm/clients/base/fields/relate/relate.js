@@ -493,7 +493,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * When there is no value set and we are in a create view, we try to check
      * if the parent context module matches this relate field. If it matches,
@@ -748,7 +748,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * We need this empty so it won't affect refresh the select2 plugin
      */
@@ -903,7 +903,7 @@
     }, app.config.requiredElapsed || 500),
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Avoid rendering process on select2 change in order to keep focus.
      */
     bindDataChange: function() {

@@ -48,7 +48,7 @@
     ],
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * The direction for this field should always be `ltr`.
      */
@@ -60,7 +60,7 @@
     hasEditAccess: true,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -94,7 +94,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * Setup transactional amount if flag is present and transaction currency
      * is not base.
@@ -286,7 +286,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * Convert to base currency if flag is present.
      *
@@ -360,7 +360,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * @param {String} value The value to unformat.
      * @return {Number} Unformatted value.
@@ -431,7 +431,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     dispose: function() {
         if (this._currencyField) {

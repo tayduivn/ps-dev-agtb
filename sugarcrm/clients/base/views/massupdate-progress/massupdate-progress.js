@@ -75,7 +75,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Check if current process job is completed.
      *
      * @return {boolean} If this process job is not completed, it returns true.
@@ -117,7 +117,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     unbindData: function() {
         this.offBefore('start');
@@ -126,7 +126,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Bind the listeners for each massupdate status.
      */
     bindDataChange: function() {

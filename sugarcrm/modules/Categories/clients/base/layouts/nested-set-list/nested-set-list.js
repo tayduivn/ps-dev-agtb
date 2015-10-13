@@ -21,7 +21,7 @@
     ],
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     loadData: function(options) {
         var fields = _.union(this.getFieldNames(), (this.context.get('fields') || []));

@@ -15,7 +15,7 @@
  */
 ({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     className: 'subpanels-layout',
 
@@ -54,7 +54,7 @@
     _settings: {},
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -119,7 +119,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _render: function() {
         this._super('_render');
@@ -127,7 +127,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _dispose: function() {
         if (!_.isEmpty(this.$el.data('sortable'))) {
@@ -227,7 +227,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * We override this method which is called early in the Sidecar framework to
      * prune any hidden or acl prohibited components.
