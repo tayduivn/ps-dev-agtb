@@ -424,7 +424,7 @@
         if (!name) {
             app.alert.show('wrong_node_name', {
                 level: 'error',
-                messages: app.lang.get('LBL_EMPTY_NODE_NAME', 'Categories'),
+                messages: app.error.getErrorString('empty_node_name', this),
                 autoClose: true
             });
         } else {
