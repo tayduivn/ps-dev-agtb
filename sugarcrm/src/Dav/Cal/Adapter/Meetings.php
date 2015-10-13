@@ -128,7 +128,7 @@ class Meetings extends CalDavAbstractAdapter implements AdapterInterface
 
         $calDavBean->clearVCalendarEvent();
 
-        if (!$sugarBean->id) {
+        if (!$sugarBean->isUpdate()) {
             $sugarBean->send_invites = true;
         }
 
