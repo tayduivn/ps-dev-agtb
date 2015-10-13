@@ -32,6 +32,24 @@ class SugarUpgradePortalSettings extends UpgradeScript
         $query = "DELETE FROM config WHERE category='portal' AND name='on' AND (platform IS NULL OR platform='')";
         $this->db->query($query);
 
+        // Clean up quotes from older config values
+        if (version_compare($this->from_version, '7.7', '<')) {
+            $adminSettings = Administration::getSettings();
+            //FIXME: TY-839 category should be `support`, platform should be `portal`
+            $portalConfig = $adminSettings->getConfigForModule('portal', 'support', true);
+            foreach ($portalConfig as $name => $value) {
+                if (!is_string($value)) {
+                    continue;
+                }
+                // Using trim to only remove quotes at both ends of the string.
+                $cleanVal = trim($value, "\"'");
+                // Only save if the trimming did something.
+                if ($cleanVal !== $value) {
+                    $adminSettings->saveSetting('portal', $name, $cleanVal, 'support');
+                }
+            }
+        }
+
         // only run this when coming from a version lower than 7.1.5
         if (version_compare($this->from_version, '7.1.5', '>=')) {
             return;
@@ -56,7 +74,7 @@ class SugarUpgradePortalSettings extends UpgradeScript
         $this->db->query($query);
 
         // Enables portal if it is set to true.
-        // TODO: category should be `support`, platform should be `portal`
+        // FIXME: TY-839 category should be `support`, platform should be `portal`
         $admin->saveSetting('portal', 'on', $portalEnabled, 'support');
 
         // Sets up portal.
