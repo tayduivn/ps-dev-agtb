@@ -474,7 +474,6 @@ class Importer
             if (isset ($dbrow['id']) && $dbrow['id'] != -1)
             {
                 // if it exists but was deleted, just remove it
-                // BR-3118
                 // if you import a record, and specify the ID,
                 // and the record ID already exists and is deleted... the "old" deleted record
                 // should be removed and replaced with the new record you are importing.
