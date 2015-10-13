@@ -144,7 +144,21 @@ class SugarFieldEnum extends SugarFieldBase {
      */
     public function getOptions($vardef)
     {
-        return getOptionsFromVardef($vardef);
+        global $app_list_strings;
+        if (isset($vardef['function'])) {
+            if (isset($vardef['function']['returns']) && $vardef['function']['returns'] == 'html') {
+                return false;
+            }
+            $options = getFunctionValue(
+                isset($vardef['function_bean']) ? $vardef['function_bean'] : null,
+                $vardef['function']
+            );
+        } elseif (isset($vardef['options'])) {
+            $options = isset($app_list_strings[$vardef['options']]) ? $app_list_strings[$vardef['options']] : array();
+        } else {
+            return false;
+        }
+        return $options;
     }
     
 	public function formatField($rawField, $vardef){
