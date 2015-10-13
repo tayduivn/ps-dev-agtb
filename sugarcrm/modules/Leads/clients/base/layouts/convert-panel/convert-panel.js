@@ -397,7 +397,10 @@
         //ignore clicks if button is disabled
         if (!$(event.currentTarget).hasClass('disabled')) {
             if (this.currentToggle === this.TOGGLE_CREATE) {
-                this.runCreateValidation();
+                this.runCreateValidation({
+                    valid: _.bind(this.markPanelComplete, this),
+                    invalid: _.bind(this.resetPanel, this)
+                });
             } else {
                 this.markPanelComplete(this.duplicateView.context.get('selection_model'));
             }
@@ -406,17 +409,22 @@
     },
 
     /**
-     * Run validation, report errors, mark panel complete if valid.
-    */
-    runCreateValidation: function() {
+     * Run validation on the create model and perform specified callbacks based
+     * on the validity of the model.
+     *
+     * @param {Object} callbacks Callbacks to be run after validation is performed.
+     * @param {Function} callbacks.valid Run if model is valid.
+     * @param {Function} callbacks.invalid Run if model is invalid.
+     */
+    runCreateValidation: function(callbacks) {
         var view = this.createView,
             model = view.model;
 
         model.doValidate(view.getFields(view.module), _.bind(function(isValid) {
             if (isValid) {
-                this.markPanelComplete(model);
+                callbacks.valid(model);
             } else {
-                this.resetPanel();
+                callbacks.invalid(model);
             }
         }, this));
     },
@@ -437,7 +445,7 @@
 
         //re-run validation if create model changes after completion
         if (!model.id) {
-            model.on('change', this.runCreateValidation, this);
+            model.on('change', this.runPostCompletionValidation, this);
         }
 
         //if this panel was open, close & tell the next panel to open
@@ -445,6 +453,16 @@
             this.closePanel();
             this.requestNextPanelOpen();
         }
+    },
+
+    /**
+     * Re-run create model validation after a panel has been marked completed
+     */
+    runPostCompletionValidation: function() {
+        this.runCreateValidation({
+            valid: $.noop,
+            invalid: _.bind(this.resetPanel, this)
+        });
     },
 
     /**
@@ -468,7 +486,7 @@
      * Reset the panel back to a state the user can modify associated values
      */
     resetPanel: function() {
-        this.createView.model.off('change', this.runCreateValidation, this);
+        this.createView.model.off('change', this.runPostCompletionValidation, this);
         this.currentState.complete = false;
         this.context.trigger('lead:convert-panel:reset', this.meta.module);
         this.trigger('lead:convert-panel:reset');
