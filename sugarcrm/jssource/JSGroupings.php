@@ -505,6 +505,12 @@
             ),
 
             //END SUGARCRM flav=ent ONLY
+
+            //Grouping for TBA configuration.
+            $sugar_grp_tba = array(
+                'modules/Teams/javascript/TBAConfiguration.js' => 'include/javascript/sugar_grp_tba.js',
+            ),
+
         );
 
     /**
