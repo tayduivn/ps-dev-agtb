@@ -98,7 +98,7 @@ class pmse_InboxViewShowCase extends SugarView
                 $dynaformBean = BeanFactory::getBean('pmse_BpmDynaForm');//new BpmDynaForm();
                 $dynaformBean->retrieve_by_string_fields(array('dyn_uid' => $altViewMode['dyn_uid']));
                 $this->dyn_uid = $altViewMode['dyn_uid'];
-                $viewdefs = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($dynaformBean->dyn_view_defs));
+                $viewdefs = json_decode(html_entity_decode($dynaformBean->dyn_view_defs), true);
                 if ($readonly) {
                     $this->setHeaderFootersReadOnly($viewdefs);
                 }
@@ -342,7 +342,7 @@ FLIST;
 
                 $taskContinue = false;
                 if (!$reclaimCaseByUser && !empty($beanFlow->cas_adhoc_actions)) {
-                    $buttons = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($beanFlow->cas_adhoc_actions);
+                    $buttons = json_decode($beanFlow->cas_adhoc_actions);
                     unset($buttons['link_cancel']);
                     unset($buttons['edit']);
                     $continue = array_search('continue', $buttons);

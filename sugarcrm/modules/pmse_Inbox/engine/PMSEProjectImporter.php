@@ -273,7 +273,7 @@ class PMSEProjectImporter extends PMSEImporter
         $this->saveProjectGatewaysData($diagramData['gateways'], $keysArray);
         $this->saveProjectArtifactsData($diagramData['artifacts'], $keysArray);
         $this->saveProjectFlowsData($diagramData['flows'], $keysArray);
-        $this->saveProjectDynaFormsData($diagramData['flows'], $keysArray);
+        $this->saveProjectDynaFormsData($dynaFormData, $keysArray);
         $this->processDefaultFlows();
 
         $result['success'] = true;
