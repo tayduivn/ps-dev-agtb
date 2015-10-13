@@ -146,7 +146,7 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
   'last_run_date' => array(
     'name' => 'last_run_date',
     'rname' => 'date_modified',
-    'id_name' => 'last_run_date',
+    'id_name' => 'report_cache_id',
     'vname' => 'LBL_REPORT_LAST_RUN_DATE',
     'type' => 'relate',
     'dbType' => 'datetime',
