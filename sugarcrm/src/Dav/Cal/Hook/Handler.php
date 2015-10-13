@@ -40,9 +40,8 @@ class Handler
                 $bean->clearVCalendarEvent();
                 $manager->calDavImport($fetchedRow, $bean->module_name);
             }
-        } elseif ($bean instanceof \SugarBean) {
-            //@TODO check if bean is childred
-            if ($adapter->getAdapter($bean->module_name)) {
+        } elseif ($bean instanceof \SugarBean && $adapter->getAdapter($bean->module_name)) {
+            if (!$bean->repeat_parent_id || !empty($arguments['isUpdate'])) {
                 $fetchedRow = $this->getBeanFetchedRow($bean);
                 $manager->calDavExport($fetchedRow, $bean->module_name);
             }
