@@ -888,6 +888,23 @@ describe('Base.View.Create', function() {
         });
     });
 
+    describe('skipDupeCheck', function() {
+        it('should skip duplicate check when duplicates are already displayed', function() {
+            view.setButtonStates(view.STATE.DUPLICATE);
+            expect(view.skipDupeCheck()).toEqual(true);
+        });
+
+        it('should skip duplicate check when selecting a record for edit', function() {
+            view.setButtonStates(view.STATE.SELECT);
+            expect(view.skipDupeCheck()).toEqual(true);
+        });
+
+        it('should not skip duplicate check when creating a record', function() {
+            view.setButtonStates(view.STATE.CREATE);
+            expect(view.skipDupeCheck()).toEqual(false);
+        });
+    });
+
     describe('renderDupeCheckList', function() {
         it('should set dupelisttype to dupecheck-list-edit', function() {
             view.renderDupeCheckList();

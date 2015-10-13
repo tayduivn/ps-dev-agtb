@@ -24,7 +24,7 @@
     appendTagInput: 'input[name=append_tag]',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -43,7 +43,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _render: function() {
         this.setTagList();
@@ -75,7 +75,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     format: function(value) {
         return _.map(value, function(tag){
@@ -391,7 +391,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     unbindDom: function() {
         // This line is likewise borrowed from team set

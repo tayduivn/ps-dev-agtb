@@ -167,6 +167,7 @@ $dictionary['Lead'] = array(
                 'billing_address_country' => 'primary_address_country',
                 'phone_office' => 'phone_work',
             ),
+            'importable' => 'false',
         ),
         'accounts' => array(
             'name' => 'accounts',

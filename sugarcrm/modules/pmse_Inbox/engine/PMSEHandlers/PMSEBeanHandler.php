@@ -369,7 +369,7 @@ class PMSEBeanHandler
                             $dataEval[] = (float)$value->expValue;
                             break;
                         case 'CURRENCY':
-                            $dataEval[] = serialize($value);
+                            $dataEval[] = json_encode($value);
                             break;
                         case 'BOOL':
                             $dataEval[] = $value->expValue == 'TRUE' ? true : false;
@@ -387,7 +387,7 @@ class PMSEBeanHandler
                     $constantCurrency->expSubtype = 'currency';
                     $constantCurrency->expValue = $bean->$fields;
                     $constantCurrency->expField = $bean->currency_id;
-                    $dataEval[] = serialize($constantCurrency);
+                    $dataEval[] = json_encode($constantCurrency);
                 } else {
                     $dataEval[] = $bean->$fields;
                 }

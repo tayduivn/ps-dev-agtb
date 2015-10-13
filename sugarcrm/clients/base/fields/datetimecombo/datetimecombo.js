@@ -24,7 +24,7 @@
     secondaryFieldTag: 'input[data-type=time]',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Add `show-timepicker` on click listener.
      */
@@ -63,7 +63,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _initPlaceholderAttribute: function() {
         this._super('_initPlaceholderAttribute');
@@ -252,7 +252,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Bind time picker `changeTime` event expecting to set the default date if
      * not filled yet, see {@link #handleDateTimeChanges}.
@@ -295,7 +295,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Add extra logic to unbind secondary field tag.
      */
@@ -431,7 +431,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _render: function() {
         this._super('_render');
@@ -444,7 +444,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _dispose: function() {
         if (this.$(this.secondaryFieldTag).timepicker) {

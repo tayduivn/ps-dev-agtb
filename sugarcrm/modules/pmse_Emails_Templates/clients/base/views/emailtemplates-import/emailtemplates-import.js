@@ -16,7 +16,7 @@
     },
 
     /**
-     * {@inheritdocs}
+     * @inheritdoc
      *
      * Sets up the file field to edit mode
      *

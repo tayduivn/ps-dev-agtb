@@ -12,7 +12,7 @@
     extendsFrom: 'MassupdateView',
     
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this.plugins = _.union(this.plugins || [], ['DisableMassDelete', 'MassQuote', 'CommittedDeleteWarning']);

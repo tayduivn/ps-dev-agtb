@@ -22,7 +22,7 @@
     disableButton: true,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -30,7 +30,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     bindDataChange: function() {
         this.context.on('forecasts:worksheet:quota_changed', function() {

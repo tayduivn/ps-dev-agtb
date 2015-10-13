@@ -16,7 +16,7 @@
     extendsFrom: 'BaseKBContentsDashletNestedsetListView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     onNestedSetSyncComplete: function(collection) {
         if (this.disposed || this.collection.root !== collection.root) {

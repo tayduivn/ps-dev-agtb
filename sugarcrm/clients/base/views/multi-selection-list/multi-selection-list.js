@@ -30,7 +30,7 @@
     extendsFrom: 'SelectionListView',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this.plugins = _.union(this.plugins, ['MassCollection']);
@@ -58,7 +58,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      * FIXME: SC-4075 will remove this method.
      */
     setSelectionMeta: function(options) {

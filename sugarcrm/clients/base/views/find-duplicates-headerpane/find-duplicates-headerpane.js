@@ -33,7 +33,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Dispose safe for mass_collection
      */
     unbindData: function() {

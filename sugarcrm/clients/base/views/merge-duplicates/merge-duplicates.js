@@ -217,7 +217,7 @@
     generatedValues: null,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Initialize merge collection as collection of selected records and
      * initialise fields that can be used in merge.
@@ -443,7 +443,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Override fetching fields names. Use fields that are allowed to merge only.
      *
@@ -771,7 +771,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Add additional fields for specific types like 'parent' and 'relate'.
      * Setup primary model editable.
@@ -1437,7 +1437,7 @@
             attempt: 0,
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              *
              * Sync added set of records and clear collection.
              */
@@ -1465,7 +1465,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              *
              * Overrides default behaviour to use related API and send related
              * records into chunks.
@@ -1667,7 +1667,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Override 'reset' event for collection to setup first model ar primary.
      */
@@ -1690,7 +1690,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Off all events on primary model.
      */

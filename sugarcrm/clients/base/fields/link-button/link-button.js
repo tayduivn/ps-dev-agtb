@@ -19,7 +19,7 @@
     extendsFrom: 'RowactionField',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -39,7 +39,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _loadTemplate: function() {
         this.type = 'rowaction';
@@ -48,7 +48,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     unbind: function() {
         this.stopListening(this.massCollection);

@@ -111,6 +111,34 @@ abstract class SugarQuery_Builder_Where
     }
 
     /**
+     * Sets an empty where query portion onto the where object. Delegates this
+     * to the DBManagers since Oracle has to handle empty differently than all
+     * other DBs.
+     * @param mixed $field The field
+     * @param SugarBean $bean SugarBean
+     * @return SugarQuery_Builder_Where
+     */
+    public function isEmpty($field, $bean = false)
+    {
+        $this->query->getDBManager()->setEmptyWhere($this, $field, $bean);
+        return $this;
+    }
+
+    /**
+     * Sets a not empty where query portion onto the where object. Delegates this
+     * to the DBManagers since Oracle has to handle empty differently than all
+     * other DBs.
+     * @param mixed $field The field
+     * @param SugarBean $bean SugarBean
+     * @return SugarQuery_Builder_Where
+     */
+    public function isNotEmpty($field, $bean = false)
+    {
+        $this->query->getDBManager()->setNotEmptyWhere($this, $field, $bean);
+        return $this;
+    }
+
+    /**
      * @param $field
      * @param bool $bean
      *

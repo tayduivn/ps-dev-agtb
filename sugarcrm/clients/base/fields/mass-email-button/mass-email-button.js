@@ -26,7 +26,7 @@
     extendsFrom: 'ButtonField',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Add the `EmailClientLaunch` plugin and force use of `ButtonField`
      * templates.

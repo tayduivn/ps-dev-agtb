@@ -14,7 +14,7 @@
  */
 ({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     defaults: {
         editable: true

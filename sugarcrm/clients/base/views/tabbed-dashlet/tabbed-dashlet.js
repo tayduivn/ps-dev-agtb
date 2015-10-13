@@ -74,7 +74,7 @@
     _defaultSettings: {},
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Bind the separate context to avoid sharing context's handlers
      * between its extension dashlets.
@@ -544,7 +544,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * New model related properties are injected into each model:
      *
@@ -592,7 +592,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _dispose: function() {
         _.each(this.tabs, function(tab) {

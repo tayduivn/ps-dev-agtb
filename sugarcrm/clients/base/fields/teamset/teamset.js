@@ -39,7 +39,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Binds append team checkbox change for massupdate.
      */
@@ -55,7 +55,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     unbindDom: function() {
         this.$(this.appendTeamTag).off();
@@ -220,7 +220,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Add ability to edit and save an invalid team set.
      */
     _render: function () {
@@ -382,7 +382,7 @@
         this._updateAndTriggerChange(this.value);
     },
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Restore the select2 focus location after refresh the dom.
      */
     bindDataChange: function() {

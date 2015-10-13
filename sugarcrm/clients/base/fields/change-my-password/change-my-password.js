@@ -21,7 +21,7 @@
     extendsFrom: 'ChangePasswordField',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     fieldTag: 'input',
 

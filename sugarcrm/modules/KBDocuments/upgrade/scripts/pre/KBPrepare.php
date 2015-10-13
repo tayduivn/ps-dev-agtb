@@ -18,9 +18,13 @@ class SugarUpgradeKBPrepare extends UpgradeScript
     public $order = 2000;
     public $type = self::UPGRADE_CORE;
 
+    /**
+     * {@inheritDoc}
+     */
     public function run()
     {
         if (version_compare($this->from_version, '7.7.0', '<')) {
+            $this->preCheckMenu();
             $script = new PrepareKBDocument(
                 $this->context['source_dir'],
                 $this->context['extract_dir'] . '/' . $this->manifest['copy_files']['from_dir'],
@@ -31,6 +35,19 @@ class SugarUpgradeKBPrepare extends UpgradeScript
                 return true;
             }
             return false;
+        }
+    }
+
+    /**
+     * Check whether we need to add KB to menu after upgrade.
+     */
+    protected function preCheckMenu()
+    {
+        require_once('modules/MySettings/TabController.php');
+        $tc = new TabController();
+        $tabs = $tc->get_system_tabs();
+        if (isset($tabs['KBDocuments'])) {
+            $this->upgrader->state['addKBToMenu'] = true;
         }
     }
 }

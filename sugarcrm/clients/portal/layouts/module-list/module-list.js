@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @inheritDoc
+ * @inheritdoc
  *
  * @class View.Views.PortalModuleListLayout
  * @alias SUGAR.App.view.layouts.PortalModuleListLayout
@@ -18,7 +18,7 @@
     extendsFrom: 'moduleListLayout',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Overloading this because for portal we dont need to add or remove
      * unmapped modules.

@@ -30,7 +30,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      * Sort the dependant fields by the user locale format order.
      */
     initialize: function(options) {
@@ -70,7 +70,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _loadTemplate: function() {
         this._super('_loadTemplate');
@@ -90,7 +90,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      * Format name parts to current user locale.
      */
     format: function() {

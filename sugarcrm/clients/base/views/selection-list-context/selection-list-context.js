@@ -28,7 +28,7 @@
     plugins: ['EllipsisInline'],
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this.pills = [];
@@ -145,7 +145,7 @@
     }, 50),
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _render: function() {
         this.massCollection = this.context.get('mass_collection');
@@ -184,7 +184,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     bindDataChange: function() {
         this.collection.on('sync', function(collection, fetchedRecords) {
@@ -199,7 +199,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     unbind: function() {
         this.stopListening(this.massCollection);

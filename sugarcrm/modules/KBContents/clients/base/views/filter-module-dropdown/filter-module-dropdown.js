@@ -13,7 +13,7 @@
     extendsFrom: 'FilterModuleDropdownView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     getModuleListForSubpanels: function() {
         var filters = [];

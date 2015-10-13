@@ -17,7 +17,7 @@
     extendsFrom: 'HeaderpaneView',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         // FIXME: SC-3594 will address having child views extending metadata

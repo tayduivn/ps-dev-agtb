@@ -2483,7 +2483,9 @@ EOQ;
         $body = str_replace('$config_site_url', $sugar_config['site_url'], $body);
 
         $body = str_replace('$contact_user_user_name', $this->user_name, $body);
-        $body = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $body);
+        $usrTime = new TimeDate($this);
+        $body = str_replace('$contact_user_pwd_last_changed', $usrTime->getNow(true)->asDb(false), $body);
+
 
         return $body;
     }

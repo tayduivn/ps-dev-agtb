@@ -16,7 +16,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * @property {Object} _defaultSettings Default settings.
      * @property {number} _defaultSettings.limit Maximum number of records to
@@ -34,7 +34,7 @@
     collection: null,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Initialize settings and collection.
      */
@@ -103,7 +103,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Once collection has been changed, the view should be refreshed.
      */
@@ -123,7 +123,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Fetch collection if it was not fetched before.
      */

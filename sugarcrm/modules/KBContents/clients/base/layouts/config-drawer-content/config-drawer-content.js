@@ -17,7 +17,7 @@
     extendsFrom: 'ConfigDrawerContentLayout',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * @override
      */
     _switchHowToData: function(helpId) {

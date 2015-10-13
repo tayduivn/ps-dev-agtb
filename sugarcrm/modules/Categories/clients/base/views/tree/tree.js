@@ -43,7 +43,7 @@
     _callbacks: null,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Add listener for 'search:clear' and 'click:add_node_button' events.
      * Init settings.
@@ -63,7 +63,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * @example Call _renderTree function with the following parameters.
      * <pre><code>
@@ -158,7 +158,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _dispose: function() {
         this.off('search:clear');

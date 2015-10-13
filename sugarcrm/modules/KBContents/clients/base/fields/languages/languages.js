@@ -25,7 +25,7 @@
     plugins: ['Tooltip'],
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -34,7 +34,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     format: function(value) {
         var result = [],
@@ -76,7 +76,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     unformat: function(value) {
         var result = [];
@@ -102,7 +102,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     bindDomChange: function() {
         var self = this,
@@ -118,7 +118,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     bindDataChange: function() {
         if (this.model) {
@@ -256,7 +256,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _dispose: function() {
         this.$el.off();

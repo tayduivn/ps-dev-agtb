@@ -16,7 +16,7 @@
  */
 ({
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     fieldTag: 'div',
 
@@ -33,12 +33,12 @@
     moduleRoot: null,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     extendsFrom: 'BaseField',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     plugins: ['JSTree', 'NestedSetCollection'],
 
@@ -61,7 +61,7 @@
     dropdownCallback: null,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     events: {
         'click [data-role=treeinput]': 'openDropDown',
@@ -75,7 +75,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(opts) {
         this._super('initialize', [opts]);
@@ -92,7 +92,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _render: function() {
         var treeOptions = {},
@@ -308,7 +308,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * No data changes to bind.
      */
@@ -316,7 +316,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Set right value in DOM for the field.
      */
@@ -354,7 +354,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _dispose: function() {
         if (this._dropdownExists()) {
@@ -499,7 +499,7 @@
 
     /**
      * We don't need tooltip, because it breaks dropdown.
-     * {@inheritdoc}
+     * @inheritdoc
      */
     decorateError: function(errors) {
         var $tooltip = $(this.exclamationMarkTemplate()),
@@ -512,7 +512,7 @@
 
     /**
      * Need to remove own error decoration.
-     * {@inheritdoc}
+     * @inheritdoc
      */
     clearErrorDecoration: function() {
         this.$el.closest('.record-cell').removeClass('error');
@@ -525,7 +525,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     exclamationMarkTemplate: function() {
         var extraClass = this.view.tplName === 'record' ? 'top0' : 'top4';

@@ -19,7 +19,7 @@
     plugins: ['EllipsisInline', 'Tooltip', 'MetadataEventDriven'],
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Some plugins use events which prevents {@link View.Field#delegateEvents}
      * to fallback to metadata defined events.
@@ -45,7 +45,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _render: function() {
         var action = 'view';
@@ -76,7 +76,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Trim whitespace from value if it is a String.
      */

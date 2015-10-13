@@ -18,7 +18,7 @@
     extendsFrom: 'PreviewView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * @TODO: Need to be removed after BR-2704 fixed.
      */
     _previewifyMetadata: function(meta) {

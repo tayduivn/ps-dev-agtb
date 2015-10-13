@@ -28,7 +28,7 @@
     refresh: null,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function (options) {
         var self = this;
@@ -87,7 +87,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Once collection has been changed, the view should be refreshed.
      */
@@ -112,7 +112,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     loadData: function (options) {
         this.collection.resetPagination();
@@ -131,7 +131,7 @@
     },
 
     /**
-     * {@inheritDocs}
+     * @inheritdoc
      *
      * Dispose listeners for 'change:useful' and 'change:notuseful' events.
      */

@@ -1342,7 +1342,7 @@ SearchUpdaterItem.prototype.constructor = SearchUpdaterItem;
 SearchUpdaterItem.prototype.type = 'SearchUpdaterItem';
 
 /**
- * @inheritDoc
+ * @inheritdoc
  */
 SearchUpdaterItem.prototype.init = function(settings) {
     var defaults = {
@@ -1364,7 +1364,7 @@ SearchUpdaterItem.prototype.init = function(settings) {
 };
 
 /**
- * @inheritDoc
+ * @inheritdoc
  * @param {object} value
  */
 SearchUpdaterItem.prototype.setValue = function(value, label) {
@@ -1380,7 +1380,7 @@ SearchUpdaterItem.prototype.setValue = function(value, label) {
 };
 
 /**
- * @inheritDoc
+ * @inheritdoc
  * @returns {object}
  */
 SearchUpdaterItem.prototype.getData = function () {
@@ -1390,7 +1390,7 @@ SearchUpdaterItem.prototype.getData = function () {
 };
 
 /**
- * @inheritDoc
+ * @inheritdoc
  */
 SearchUpdaterItem.prototype.clear = function() {
     UpdaterItem.prototype.clear.call(this);
@@ -1408,7 +1408,7 @@ SearchUpdaterItem.prototype.getSelectedText = function() {
 
 /**
  * Create a select2, and bind a change event to it
- * @inheritDoc
+ * @inheritdoc
  */
 SearchUpdaterItem.prototype.createHTML = function() {
     var self = this;
@@ -1431,7 +1431,7 @@ SearchUpdaterItem.prototype.createHTML = function() {
 }
 
 /**
- * @inheritDoc
+ * @inheritdoc
  */
 SearchUpdaterItem.prototype._createControl = function() {
     var control = this.createHTMLElement('input');

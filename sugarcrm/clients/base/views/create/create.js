@@ -211,7 +211,7 @@
      * be `create` at all times but doing the proper fix may have bad impacts on
      * ACLs/non editable fields. Follow up in SC-4511.
      *
-     * @inheritDoc
+     * @inheritdoc
      */
     _renderFields: function() {
         var current = this.action;
@@ -221,7 +221,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     /**
      * Check unsaved changes.
@@ -603,10 +603,15 @@
 
     /**
      * Check to see if we should skip duplicate check.
+     *
+     * Duplicate check should be skipped if we are displaying duplicates or user
+     * has switched over to editing an existing duplicate record.
+     *
      * @return {boolean}
      */
     skipDupeCheck: function () {
-        return (this.getCurrentButtonState() === this.STATE.DUPLICATE);
+        var skipStates = [this.STATE.DUPLICATE, this.STATE.SELECT];
+        return (_.contains(skipStates, this.getCurrentButtonState()));
     },
 
     /**

@@ -49,7 +49,7 @@
             $treeContainer: null,
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              */
             onAttach: function(component, plugin) {
                 this.on('init', function() {

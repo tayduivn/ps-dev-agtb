@@ -17,19 +17,19 @@
  */
 ({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     className: 'subpanel-header',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     attributes: {
         'data-sortable-subpanel': 'true'
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     events: {
         'click': 'togglePanel',
@@ -39,7 +39,7 @@
     plugins: ['LinkedModel', 'Tooltip'],
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         // FIXME: SC-3594 will address having child views extending metadata
