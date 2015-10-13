@@ -151,14 +151,20 @@ function sendTestEmail()
     		overlay(SUGAR.language.get('app_strings',"LBL_EMAIL_TEST_OUTBOUND_SETTINGS"), SUGAR.language.get('app_strings',"LBL_EMAIL_TEST_NOTIFICATION_SENT"), 'alert');
     	}
     };
+
+    var smtpUser = document.getElementById('mail_smtpuser');
+    var smtpPass = document.getElementById('mail_smtppass');
     var smtpServer = document.getElementById('mail_smtpserver').value;
-    var smtppass = trim(document.getElementById('mail_smtppass').value);
-    if(document.getElementById('mail_smtpuser') && document.getElementById('mail_smtppass')){
-    var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&mail_smtpauth_req=true&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + encodeURIComponent(smtppass) + "&outboundtest_from_address=" + fromAddress + "&outboundtest_to_address=" + toAddress;
+    var postDataString;
+
+    if (smtpUser && smtpPass) {
+        smtpUser = trim(smtpUser.value);
+        smtpPass = trim(smtpPass.value);
+        postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&mail_smtpauth_req=true&mail_smtpuser=" + smtpUser + "&mail_smtppass=" + encodeURIComponent(smtpPass) + "&outboundtest_from_address=" + fromAddress + "&outboundtest_to_address=" + toAddress;
+    } else {
+        postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&outboundtest_from_address=" + fromAddress + "&outboundtest_to_address=" + toAddress;
     }
-    else{
-	var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&outboundtest_from_address=" + fromAddress + "&outboundtest_to_address=" + toAddress;
-    }
+
 	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=testOutboundEmail&mail_name=system&module=EmailMan&to_pdf=true&sugar_body_only=true", callbackOutboundTest, postDataString);
 }
 function testOutboundSettingsDialog() {
