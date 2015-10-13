@@ -33,10 +33,26 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
 
     const NS_SF_APPLICATION = 'Sugarcrm\\Sugarcrm\\Notification\\SubscriptionFilter\\Application';
 
+    const NS_BEAN_EMITTER = 'Sugarcrm\\Sugarcrm\\Notification\\BeanEmitter\\Emitter';
+
+    const NS_EMITTER_REGISTRY = 'Sugarcrm\\Sugarcrm\\Notification\\EmitterRegistry';
+
     private $ids = array();
 
     public function testGetTree()
     {
+        $beanEmitterName = 'BeanEmitterName';
+        $beanEmitterTree = array(
+            'account-event1' => array('AssignedToMe' => array()),
+        );
+        $tree = array(
+            'ApplicationEmitter' => array('application_event1' => array('Application' => array())),
+            'Accounts' => array('account-event1' => array('AssignedToMe' => array()))
+        );
+        $expectedTree = $tree;
+        $expectedTree[$beanEmitterName] = $beanEmitterTree;
+
+
         $appEmitter = $this->getMock(self::NS_APPLICATION_EMITTER, array(
             'getEventStrings', 'getEventPrototypeByString'));
         $appEmitterEvent = array(
@@ -64,7 +80,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         $emitters = array($appEmitter, 'Accounts' => $accountEmitter);
 
         $subscriptionsRegistry = $this->getMock(self::NS_SUBSCRIPTIONS_REGISTRY, array(
-            'getEmitters', 'getSubscriptionFilters'));
+            'getEmitters', 'getSubscriptionFilters', 'getBeanEmitterTree', 'getEmitterRegistry'));
         $subscriptionsRegistry->expects($this->once())->method('getEmitters')->willReturn($emitters);
 
 
@@ -91,13 +107,20 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         $subscriptionsRegistry->expects($this->once())->method('getSubscriptionFilters')
             ->willReturn(array($sfAssignedToMe, $sfApp));
 
+        $subscriptionsRegistry->expects($this->once())->method('getBeanEmitterTree')
+            ->with($this->equalTo($tree))
+            ->willReturn($beanEmitterTree);
+
+        $beanEmitter = $this->getMock(self::NS_BEAN_EMITTER, array('__toString'));
+        $beanEmitter->expects($this->once())->method('__toString')
+            ->willReturn($beanEmitterName);
+
+        $emitterRegistry = $this->getMock(self::NS_EMITTER_REGISTRY, array('getBeanEmitter'));
+        $emitterRegistry->expects($this->once())->method('getBeanEmitter')->willReturn($beanEmitter);
+
+        $subscriptionsRegistry->expects($this->once())->method('getEmitterRegistry')->willReturn($emitterRegistry);
 
         $resTree = \SugarTestReflection::callProtectedMethod($subscriptionsRegistry, 'getTree');
-
-        $expectedTree = array(
-            'ApplicationEmitter' => array('application_event1' => array('Application' => array())),
-            'Accounts' => array('account-event1' => array('AssignedToMe' => array()))
-        );
 
         $this->assertEquals($expectedTree, $resTree);
     }
@@ -183,7 +206,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $subscriptionsRegistry = new SubscriptionsRegistry();
 
-        \SugarTestReflection::callProtectedMethod($subscriptionsRegistry, 'mergeDiff', array(
+        \SugarTestReflection::callProtectedMethod($subscriptionsRegistry, 'processDiff', array(
             $path, $beansForDelete, $carriersForInsert));
 
         $checkInsertedBean = \BeanFactory::newBean('NotificationCenterSubscriptions');
@@ -276,6 +299,49 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $isNullable = \SugarTestReflection::callProtectedMethod($bean->db, 'isNullable', array($varDef));
         $this->assertTrue($isNullable);
+    }
+
+    /**
+     * @covers ::reduceBeans
+     * @covers ::isSuitable
+     */
+    public function testReduceBeans()
+    {
+        $beansData = array(
+            array('event_name' => 'event1', 'deleted' => '0', 'id' => '1'),
+            array('event_name' => 'event1', 'deleted' => '0', 'id' => '2'),
+            array('event_name' => 'event1', 'deleted' => '0', 'id' => '3'),
+            array('event_name' => 'event1', 'deleted' => '1', 'id' => '4'),
+            array('event_name' => 'event2', 'deleted' => '0', 'id' => '5'),
+        );
+        $limit = 2;
+        $searchOpts = array('event_name' => 'event1', 'deleted' => '0');
+
+        $beans = array();
+        foreach ($beansData as $row) {
+            $bean = \BeanFactory::newBean('NotificationCenterSubscriptions');
+            $bean->id = $row['id'];
+            $bean->event_name = $row['event_name'];
+            $bean->deleted = $row['deleted'];
+            $beans[] = $bean;
+        }
+        $registry = new SubscriptionsRegistry();
+
+        $res = \SugarTestReflection::callProtectedMethod(
+            $registry,
+            'reduceBeans',
+            array(&$beans, $searchOpts, $limit)
+        );
+
+        $this->assertCount($limit, $res);
+        $this->assertCount(count($beansData) - $limit, $beans);
+        list($foundId1, $foundId2) = array_keys($res);
+        $this->assertEquals($searchOpts['event_name'], $res[$foundId1]->event_name);
+        $this->assertEquals($searchOpts['event_name'], $res[$foundId2]->event_name);
+        $this->assertEquals($searchOpts['deleted'], $res[$foundId1]->deleted);
+        $this->assertEquals($searchOpts['deleted'], $res[$foundId2]->deleted);
+        $this->assertNotContains($res[$foundId1], $beans);
+        $this->assertNotContains($res[$foundId2], $beans);
     }
 
     protected function setUp()
