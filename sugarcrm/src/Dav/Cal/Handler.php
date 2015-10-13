@@ -96,10 +96,6 @@ class Handler
             if ($adapter->import($bean, $calDavBean)) {
                 $bean->save();
             }
-            if (!$calDavBean->parent_id) {
-                $calDavBean->setBean($bean);
-                $calDavBean->save();
-            }
         }
     }
 

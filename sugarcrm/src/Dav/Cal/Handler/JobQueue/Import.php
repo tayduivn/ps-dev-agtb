@@ -55,12 +55,8 @@ class Import implements RunnableInterface
     {
         /** @var \CalDavEvent $bean */
         $bean = $this->getBean();
-        $adapter = $this->getAdapterFactory();
         if (!($bean instanceof \CalDavEvent)) {
             throw new JQInvalidArgumentException('Bean must be an instance of CalDavEvent. Instance of ' . get_class($bean) . ' given');
-        }
-        if (!$adapter->getAdapter($bean->getBean()->module_name)) {
-            throw new JQLogicException('Bean ' . $bean->getBean()->module_name . ' does not have CalDav adapter');
         }
 
         $handler = $this->getHandler();
