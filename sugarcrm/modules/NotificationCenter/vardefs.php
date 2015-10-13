@@ -55,8 +55,8 @@ $dictionary['NotificationCenterSubscription'] = array(
             'required' => true,
             'comment' => 'Name of event from the emitter',
         ),
-        'relation_name' => array(
-            'name' => 'relation_name',
+        'filter_name' => array(
+            'name' => 'filter_name',
             'type' => 'varchar',
             'len' => 100,
             'required' => true,

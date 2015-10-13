@@ -167,7 +167,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
             'type' => 'appication',
             'emitter_module_name' => null,
             'event_name' => 'event1',
-            'relation_name' => 'sf1',
+            'filter_name' => 'sf1',
             'user_id' => $user->id,
         );
 

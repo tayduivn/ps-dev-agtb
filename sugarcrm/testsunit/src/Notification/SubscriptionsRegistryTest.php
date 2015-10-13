@@ -108,7 +108,7 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
                     'type' => 'application',
                     'emitter_module_name' => null,
                     'event_name' => 'event1',
-                    'relation_name' => 'sf1'
+                    'filter_name' => 'sf1'
                 )
             ),
             array(
@@ -118,7 +118,7 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
                     'type' => 'application',
                     'emitter_module_name' => null,
                     'event_name' => 'event1',
-                    'relation_name' => 'NotExists'
+                    'filter_name' => 'NotExists'
                 )
             ),
             array(
@@ -128,7 +128,7 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
                     'type' => 'application',
                     'emitter_module_name' => null,
                     'event_name' => 'NotExists',
-                    'relation_name' => 'NotExists'
+                    'filter_name' => 'NotExists'
                 )
             ),
             array(
@@ -138,7 +138,7 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
                     'type' => 'application',
                     'emitter_module_name' => null,
                     'event_name' => 'NotExists',
-                    'relation_name' => 'NotExists'
+                    'filter_name' => 'NotExists'
                 )
             ),
         );
@@ -185,7 +185,7 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
             'module3' => 'module3Emitter' . microtime(),
         );
         $emitterRegistry = $this->getMock(self::NS_EMITTER_REGISTRY, array(
-                'getApplicationEmitter', 'getModuleEmitters', 'getModuleEmitter'));
+            'getApplicationEmitter', 'getModuleEmitters', 'getModuleEmitter'));
         $emitterRegistry->expects($this->once())->method('getApplicationEmitter')->willReturn($appEmitter);
         $emitterRegistry->expects($this->once())->method('getModuleEmitters')->willReturn(array_keys($moduleEmitters));
 
@@ -343,28 +343,28 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
         $beanListArr = array(
             array(
                 'event_name' => 'event1',
-                'relation_name' => 'sf1',
+                'filter_name' => 'sf1',
                 'user_id' => $userId,
                 'carrier_name' => 'cn1',
                 'carrier_option' => 'co1'
             ),
             array(
                 'event_name' => 'event1',
-                'relation_name' => 'sf2',
+                'filter_name' => 'sf2',
                 'user_id' => $userId,
                 'carrier_name' => 'cn1',
                 'carrier_option' => 'co1'
             ),
             array(
                 'event_name' => 'event2',
-                'relation_name' => 'sf1',
+                'filter_name' => 'sf1',
                 'user_id' => $userId,
                 'carrier_name' => 'cn1',
                 'carrier_option' => 'co1'
             ),
             array(
                 'event_name' => 'event2',
-                'relation_name' => 'sf3',
+                'filter_name' => 'sf3',
                 'user_id' => $userId,
                 'carrier_name' => SubscriptionsRegistry::CARRIER_VALUE_DISABLED,
             )
@@ -404,7 +404,7 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
         $expectConfig[$emitterName]['event2']['sf3'] = SubscriptionsRegistry::CARRIER_VALUE_DISABLED;
 
         $subscriptionsRegistry = $this->getMock(self::NS_SUBSCRIPTIONS_REGISTRY, array(
-                'getEmitter', 'getTree', 'getSugarQuery', 'getBeans', 'isValidBeanForTree', 'fillDefaultConfig'));
+            'getEmitter', 'getTree', 'getSugarQuery', 'getBeans', 'isValidBeanForTree', 'fillDefaultConfig'));
 
         $subscriptionsRegistry->expects($this->exactly(count($beanListArr)))->method('getEmitter')
             ->willReturn($emitter);
@@ -438,19 +438,19 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
         $beanListArr = array(
             array(
                 'event_name' => 'event1',
-                'relation_name' => 'sf1',
+                'filter_name' => 'sf1',
                 'carrier_name' => 'cn1',
                 'carrier_option' => 'co1'
             ),
             array(
                 'event_name' => 'event1',
-                'relation_name' => 'sf2',
+                'filter_name' => 'sf2',
                 'carrier_name' => 'cn1',
                 'carrier_option' => 'co1'
             ),
             array(
                 'event_name' => 'event2',
-                'relation_name' => 'sf1',
+                'filter_name' => 'sf1',
                 'carrier_name' => 'cn1',
                 'carrier_option' => 'co1'
             )
@@ -488,7 +488,7 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
         $expectConfig[$emitterName]['event2']['sf1'] = array(array('cn1', 'co1'));
 
         $subscriptionsRegistry = $this->getMock(self::NS_SUBSCRIPTIONS_REGISTRY, array(
-                'getEmitter', 'getTree', 'getSugarQuery', 'getBeans', 'isValidBeanForTree'));
+            'getEmitter', 'getTree', 'getSugarQuery', 'getBeans', 'isValidBeanForTree'));
 
         $subscriptionsRegistry->expects($this->exactly(count($beanListArr)))->method('getEmitter')
             ->willReturn($emitter);
@@ -535,21 +535,21 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
             array(
                 'user_id' => $userId,
                 'event_name' => 'event1',
-                'relation_name' => 'sf1',
+                'filter_name' => 'sf1',
                 'carrier_name' => 'cn1',
                 'carrier_option' => 'co1'
             ),
             array(
                 'user_id' => $userId,
                 'event_name' => 'event1',
-                'relation_name' => 'sf2',
+                'filter_name' => 'sf2',
                 'carrier_name' => 'cn1',
                 'carrier_option' => 'co1'
             ),
             array(
                 'user_id' => $userId,
                 'event_name' => 'event2',
-                'relation_name' => 'sf1',
+                'filter_name' => 'sf1',
                 'carrier_name' => 'cn1',
                 'carrier_option' => 'co1'
             )
@@ -569,16 +569,16 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
 
         $tree = array(
             'emitter1' => array(
-                    'event1' => array(
-                        'sf1' => array(),
-                    ),
+                'event1' => array(
+                    'sf1' => array(),
                 ),
+            ),
             'emitter2' => array(
-                    'event2' => array(
-                        'sf2' => array(),
-                        'sf3' => array()
-                    ),
+                'event2' => array(
+                    'sf2' => array(),
+                    'sf3' => array()
                 ),
+            ),
         );
 
         $subscriptionsRegistry->expects($this->once())->method('getTree')->willReturn($tree);
@@ -650,13 +650,13 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
     {
         $emitter = 'EmitterName';
         $event = 'EventName';
-        $relationName = 'relationName';
+        $filterName = 'filterName';
         $emitterArr = array('type' => 'emitterType', 'emitter_module_name' => 'emitterModule');
 
         $expect = array(
             'type' => $emitterArr['type'],
             'emitter_module_name' => $emitterArr['emitter_module_name'],
-            'relation_name' => $relationName,
+            'filter_name' => $filterName,
             'event_name' => $event
         );
 
@@ -666,7 +666,7 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo($emitter))
             ->willReturn($emitterArr);
 
-        $path = \SugarTestReflection::callProtectedMethod($sr, 'pathToBranch', array($emitter, $event, $relationName));
+        $path = \SugarTestReflection::callProtectedMethod($sr, 'pathToBranch', array($emitter, $event, $filterName));
 
         $this->assertEquals($expect, $path);
     }
@@ -712,7 +712,7 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
             'type',
             'emitter_module_name',
             'event_name',
-            'relation_name',
+            'filter_name',
             'carrier_name',
             'carrier_option'
         );

@@ -30,7 +30,7 @@ class AssignedToMe extends Bean implements SubscriptionFilterInterface
      */
     public function __toString()
     {
-        return 'LBL_NOTIFICATION_FILTER_ASSIGNED_TO_ME';
+        return 'AssignedToMe';
     }
 
     /**

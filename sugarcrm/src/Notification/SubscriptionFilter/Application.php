@@ -29,7 +29,7 @@ class Application implements SubscriptionFilterInterface
      */
     public function __toString()
     {
-        return 'LBL_NOTIFICATION_FILTER_APPLICATION';
+        return 'Application';
     }
 
     /**
