@@ -175,6 +175,16 @@ $dictionary['Tracker'] = array(
                 'date_modified',
             ),
         ),
+        array(
+            'name' => 'idx_trckr_mod_uid_dtmod_item',
+            'type' => 'index',
+            'fields' => array(
+                'module_name',
+                'user_id',
+                'date_modified',
+                'item_id',
+            ),
+        ),
     ),
 
     //relationships

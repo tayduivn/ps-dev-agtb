@@ -120,7 +120,7 @@ $createSchema = array(
 				  'OPPORTUNITIES'		  =>array('dropTable'=>false,'columns' =>array('amount_backup')),
 				  'CASES'                 =>array('dropTable'=>false,'indices'=>array('idx_assigneduserid_status','idx_cases_teamid','IDX_ASS_STA_DEL')),
 				  'CALLS'                 =>array('dropTable'=>false,'indices'=>array('IDX_PAR_PAR_STA_DEL','IDX_CALLS_STATUS_D')),
-				  'TRACKER'               =>array('dropTable'=>false,'indices'=>array('idx_userid','idx_userid_itemid','idx_tracker_action')),
+				  'TRACKER'               =>array('dropTable'=>false,'indices'=>array('idx_userid','idx_userid_itemid','idx_tracker_action','idx_trckr_mod_uid_dtmod_item')),
 				  'EMAILS_ACCOUNTS'  	  =>array('dropTable'=>true),
 				  'EMAILS_BUGS'      	  =>array('dropTable'=>true),
 				  'EMAILS_CASES'     	  =>array('dropTable'=>true),
