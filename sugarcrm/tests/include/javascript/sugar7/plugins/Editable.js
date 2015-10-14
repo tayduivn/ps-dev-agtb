@@ -45,7 +45,7 @@ describe("Editable Plugin", function() {
             randomFieldIndex = parseInt(Math.random() * (keys.length - 1), 10),
             randomField = view.fields[keys[randomFieldIndex]];
 
-        var isChangedStub = sinon.stub(randomField, 'isChanged', function() {
+        var hasChangedStub = sinon.stub(randomField, 'hasChanged', function() {
             return false;
         });
 
@@ -54,7 +54,7 @@ describe("Editable Plugin", function() {
         expect(randomField.tplName).toBe('edit');
         view.toggleField(randomField);
         expect(randomField.tplName).toBe(view.action);
-        isChangedStub.restore();
+        hasChangedStub.restore();
     });
 
     it("Should switch back to the previous mode when it triggers editableHandleMouseDown", function() {
@@ -72,7 +72,7 @@ describe("Editable Plugin", function() {
             randomFieldIndex = parseInt(Math.random() * (keys.length - 1), 10),
             randomField = view.fields[keys[randomFieldIndex]];
 
-        var isChangedStub = sinon.stub(randomField, 'isChanged', function() {
+        var hasChangedStub = sinon.stub(randomField, 'hasChanged', function() {
             return false;
         });
 
@@ -80,7 +80,7 @@ describe("Editable Plugin", function() {
         expect(randomField.tplName).toBe('edit');
         view.editableHandleMouseDown({target: null}, randomField);
         expect(randomField.tplName).toBe(view.action);
-        isChangedStub.restore();
+        hasChangedStub.restore();
 
         delete app.drawer;
     });

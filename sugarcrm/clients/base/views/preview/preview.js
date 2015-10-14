@@ -360,7 +360,11 @@
     setEditableFields: function() {
         // we only want to edit non readonly fields
         this.editableFields = _.reject(this.fields, function(field) {
-            return field.def.readOnly || !app.acl.hasAccessToModel('edit', this.model, field.name);
+            return field.def.readOnly || field.def.calculated ||
+                //Added for SugarLogic fields since they are not supported
+                //Fixme: PAT-2241 will remove this
+                field.def.previewEdit === false ||
+                !app.acl.hasAccessToModel('edit', this.model, field.name);
         });
     },
 

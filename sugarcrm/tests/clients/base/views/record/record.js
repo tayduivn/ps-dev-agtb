@@ -808,7 +808,7 @@ describe("Record View", function () {
                 description: 'Description'
             });
             var field = view.getField('name');
-            sinon.collection.stub(field, 'isChanged', function() {
+            sinon.collection.stub(field, 'hasChanged', function() {
                 return false;
             });
 

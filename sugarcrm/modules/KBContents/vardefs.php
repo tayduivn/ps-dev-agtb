@@ -64,6 +64,11 @@ $dictionary['KBContent'] = array(
             'studio' => true,
             'duplicate_on_record_copy' => 'no',
             'massupdate' => false,
+            'validation' => array(
+                'type' => 'isbefore',
+                'compareto' => 'exp_date',
+                'blank' => false
+            ),
         ),
         'exp_date' => array(
             'name' => 'exp_date',
