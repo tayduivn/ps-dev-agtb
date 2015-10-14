@@ -19,7 +19,7 @@
     className: 'dashlet-cell rows row-fluid',
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     _placeComponent: function(comp, def) {
         var span = 'dashlet-container span' + (def.width || 12),

@@ -22,7 +22,7 @@
     refresh: null,
 
     /**
-     * {@inheritDocs}
+     * @inheritdoc
      */
     initialize: function(options) {
         this.chartData = new Backbone.Model();
@@ -33,7 +33,7 @@
     },
 
     /**
-     * {@inheritDocs}
+     * @inheritdoc
      */
     loadData: function(options) {
         var currModel = app.controller.context.get('model'),
@@ -108,7 +108,7 @@
     },
 
     /**
-     * {@inheritDocs}
+     * @inheritdoc
      *
      * Dispose listeners for 'change:useful' and 'change:notuseful' events.
      */

@@ -18,7 +18,7 @@
     extendsFrom: 'MultiSelectionListView',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -26,7 +26,6 @@
     },
 
     /**
-     * @inheritDoc
      * @override
      */
     initializeEvents: function() {

@@ -17,7 +17,7 @@
     extendsFrom: 'HeaderpaneView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _renderHtml: function() {
         var titleTemplate = Handlebars.compile(this.context.get('title') || app.lang.getAppString('LBL_SEARCH_AND_SELECT')),

@@ -20,7 +20,7 @@
     dashboard: undefined,
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this.index = options.meta.index;
@@ -51,7 +51,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      * Append dashlet toolbar view based on custom_toolbar definition
      *
      * @param {Array} list of component metadata
@@ -111,7 +111,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Set default skipFetch as false.
      * Able to get the custom title label from the dashlet component.
      */
@@ -162,7 +162,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      * Place the each component to the right location
      *
      * @param comp

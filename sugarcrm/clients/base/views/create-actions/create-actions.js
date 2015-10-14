@@ -20,7 +20,7 @@
     extendsFrom: 'CreateView',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         options.meta = _.extend({}, app.metadata.getView(null, 'create-actions'), options.meta);

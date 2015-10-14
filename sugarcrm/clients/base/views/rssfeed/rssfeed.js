@@ -40,7 +40,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         options.meta = options.meta || {};
@@ -149,7 +149,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * New model related properties are injected into each model:
      *

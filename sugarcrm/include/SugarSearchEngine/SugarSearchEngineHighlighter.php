@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+
 /**
  * Highlighter
  *
@@ -53,7 +54,6 @@ class SugarSearchEngineHighlighter
     {
         $ret = array();
         foreach ($results as $field => $fragments) {
-            $field = $this->normalizeFieldName($field);
             $ret[$field] = array(
                 'text' => '',
                 'module' => $this->module,
@@ -95,15 +95,6 @@ class SugarSearchEngineHighlighter
         }
     }
 
-    /**
-     * Normalize field name removing multi field notation
-     * @param string $field
-     * return string
-     */
-    public function normalizeFieldName($field)
-    {
-        return array_shift(explode('.', $field));
-    }
 
     /**
      * Return field defs for given module name

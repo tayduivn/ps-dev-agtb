@@ -34,7 +34,7 @@
     className: 'row-fluid',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         /**

@@ -28,7 +28,7 @@
      * Initializes the initialValues and fields properties.
      * Enables sync by default.
      *
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
 
@@ -214,7 +214,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * @return {Boolean}
      */
@@ -239,7 +239,7 @@
         });
     },
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * This will make the fields in sync if it is on by default.
      */

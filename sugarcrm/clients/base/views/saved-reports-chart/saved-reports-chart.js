@@ -21,7 +21,7 @@
     },
 
     /**
-     * {@inheritDocs}
+     * @inheritdoc
      */
     initDashlet: function(view) {
         // check if we're on the config screen
@@ -166,7 +166,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     loadData: function(options) {
         options = options || {};

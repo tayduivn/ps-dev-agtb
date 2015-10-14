@@ -93,7 +93,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * We need this empty so it won't affect refresh the select2 plugin
      */

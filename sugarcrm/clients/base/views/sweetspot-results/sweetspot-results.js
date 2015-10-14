@@ -23,7 +23,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * - Listens to `sweetspot:results` on the layout to update the results.
      * - Listens to `keydown` on `window` to highlight an item.
@@ -205,7 +205,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _render: function() {
         this._super('_render');
@@ -333,7 +333,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _dispose: function() {
         $(window).off('keydown.' + this.cid);

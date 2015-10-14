@@ -13,7 +13,7 @@
 
     /**
      * Override to load handlebar templates from `KBContents module
-     * {@inheritdoc}
+     * @inheritdoc
      */
     _loadTemplate: function() {
         var module = this.module;

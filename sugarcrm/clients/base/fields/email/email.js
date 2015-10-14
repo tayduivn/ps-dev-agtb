@@ -29,7 +29,7 @@
     plugins: ['Tooltip', 'ListEditable', 'EmailClientLaunch'],
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * The direction for this field should always be `ltr`.
      */
@@ -401,7 +401,7 @@
 
     /**
      * Need to call `decorateError` after all email fields are rendered.
-     * @inheritDoc
+     * @inheritdoc
      *
      * FIXME This is a temporary fix due to time constraints, a proper solution will be implemented in SC-4358
      */

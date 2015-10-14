@@ -21,7 +21,7 @@
     extendsFrom: 'TabbedDashletView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * @property {Object} _defaultSettings
      * @property {Number} _defaultSettings.filter Number of past days against
@@ -40,7 +40,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         options.meta = options.meta || {};
@@ -88,7 +88,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _dispose: function() {
         this.$('.select2').select2('destroy');

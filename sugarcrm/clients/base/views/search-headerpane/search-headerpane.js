@@ -20,7 +20,7 @@
     extendsFrom: 'HeaderpaneView',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -51,7 +51,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     unbind: function() {
         this._super('unbind');

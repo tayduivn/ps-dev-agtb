@@ -189,6 +189,22 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     barChart.yAxis
                         .tickSize(0);
 
+                    //check to see if thousands symbol is in use
+                    if(typeof data.properties[0] == 'object' &&
+                        (typeof data.properties[0].thousands != 'undefined'
+                        && parseInt (data.properties[0].thousands) ==  1)
+                    ) {
+                        //create formatter with thousands symbol
+                        var cFormat = (d3.format('s'));
+                        //the tick value comes in shortened from api,
+                        //multiply times 1k and apply formatting
+                        barChart.yAxis
+                            .tickFormat(function (d) {
+                                return cFormat(d * 1000);
+                            });
+
+                    }
+
                     if (params.show_x_label) {
                         barChart.xAxis
                             .axisLabel(params.x_axis_label);

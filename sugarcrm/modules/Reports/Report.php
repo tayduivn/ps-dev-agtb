@@ -2509,6 +2509,19 @@ class Report
         return $result;
     }
 
+    /**
+     * Delete files cached by cache_modules_js()
+     * @param $user all if null
+     */
+    public static function clearCaches($user = null)
+    {
+        $md5 = !empty($user) ? '_'.md5($user->id) : '';
+
+        foreach (glob(sugar_cached('modules').'/modules_def_*'.$md5.'.js') as $file) {
+            unlink($file);
+        }
+    }
+
     function cache_modules_def_js()
     {
         global $current_language, $current_user;
@@ -2524,7 +2537,7 @@ class Report
             $fileName = $file[0];
             $function = $file[1];
 
-            if (!isset($_SESSION['reports_cache']) || !file_exists($fileName)) {
+            if (!file_exists($fileName)) {
                 require_once('modules/Reports/templates/templates_modules_def_js.php');
 
                 ob_start();
@@ -2533,13 +2546,6 @@ class Report
 
                 if (is_writable(sugar_cached('modules/'))) {
                     file_put_contents($fileName, $data);
-                }
-
-                // Only set this if we're not being called from the home page.
-                // Charts on the home page go through this code as well and
-                // _SESSION hasn't been initialized completely and this causes errors with global vars.
-                if (!isset($_REQUEST['module']) || $_REQUEST['module'] != 'Home') {
-                    $_SESSION['reports_cache'] = true;
                 }
             }
         }

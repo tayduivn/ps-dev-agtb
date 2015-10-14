@@ -49,7 +49,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      * @param {function} onClose
      */
     showSavedConfirmation: function(onClose) {

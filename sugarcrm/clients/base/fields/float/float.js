@@ -15,14 +15,14 @@
  */
 ({
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * The direction for this field should always be `ltr`.
      */
     direction: 'ltr',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Unformats the float based on userPreferences (grouping/decimal separator).
      * If we weren't able to parse the value, the original value is returned.
@@ -44,7 +44,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Formats the float based on user preferences (grouping separator).
      * If the field definition has `disabled_num_format` as `true` the value

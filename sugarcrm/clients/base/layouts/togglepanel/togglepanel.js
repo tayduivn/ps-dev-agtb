@@ -35,7 +35,6 @@
     },
 
     /**
-     * Only load data for components that cannot be toggled.
      * @inheritdoc
      */
     loadData: function(options, setFields) {

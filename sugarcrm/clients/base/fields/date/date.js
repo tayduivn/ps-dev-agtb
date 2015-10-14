@@ -15,7 +15,7 @@
  */
 ({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     plugins: [
         'EllipsisInline',
@@ -23,26 +23,26 @@
     ],
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     fieldTag: 'input[data-type=date]',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     events: {
         'hide': 'handleHideDatePicker'
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * The direction for this field should always be `ltr`.
      */
     direction: 'ltr',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         // FIXME: Remove this when SIDECAR-517 gets in
@@ -267,7 +267,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     unbindDom: function() {
         this._super('unbindDom');
@@ -386,7 +386,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _render: function() {
         this._super('_render');

@@ -21,7 +21,7 @@
     /**
      * Always show the page at start.
      *
-     * @inheritDoc
+     * @inheritdoc
      */
     showPage: true,
 
@@ -45,7 +45,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     bindDataChange: function() {
         this._super('bindDataChange');
@@ -53,7 +53,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _render: function() {
         if (!this.model.dataFetched) {

@@ -45,7 +45,7 @@
     shareTplBodyHtml: null,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Adds the share options for use when launching the email client and
      * refreshes the share options if the model data changes. The contents

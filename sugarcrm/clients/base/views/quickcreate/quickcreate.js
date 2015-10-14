@@ -18,7 +18,7 @@
 
     /**
      * @param {Object} options
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
@@ -37,7 +37,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      * @private
      */
     _renderHtml: function() {
