@@ -17,7 +17,7 @@
     fieldTag: 'input[type=file]',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * This field doesn't support `showNoData`.
      */
@@ -31,7 +31,7 @@
     plugins: ['File', 'FieldDuplicate'],
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * The direction for this field should always be `ltr`.
      */

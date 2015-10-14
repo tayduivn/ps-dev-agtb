@@ -107,7 +107,7 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
                                     break;
                                 case 'Currency':
                                     $newValue = $this->beanHandler->processValueExpression($value->value, $bean);
-                                    $newValue = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($newValue);
+                                    $newValue = json_decode($newValue);
                                     $fields['currency_id'] = $newValue->expField;
                                     $newValue = $newValue->expValue;
                                     break;

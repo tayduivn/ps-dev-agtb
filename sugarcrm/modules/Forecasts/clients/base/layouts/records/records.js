@@ -110,7 +110,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     bindDataChange: function() {
         // we need this here to track when the selectedTimeperiod changes and then also move it up to the context

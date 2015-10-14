@@ -15,14 +15,14 @@
  */
 ({
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * The direction for this field should always be `ltr`.
      */
     direction: 'ltr',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _render: function() {
         this._super('_render');
@@ -32,7 +32,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     unformat: function(value) {
         value = (value !== '' && value != 'http://') ? value.trim() : '';
@@ -40,7 +40,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Formatter for the iframe field. If the iframe field definition is
      * configured with a generated url (`this.def.gen`) by another field, those

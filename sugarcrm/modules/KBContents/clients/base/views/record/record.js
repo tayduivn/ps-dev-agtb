@@ -13,7 +13,7 @@
     extendsFrom: 'RecordView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Add KBContent plugin for view.
      */

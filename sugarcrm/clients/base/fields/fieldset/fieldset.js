@@ -56,7 +56,7 @@
      *
      * Initializes the fields property.
      *
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -78,7 +78,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Looks for the fallback template as specified by the view. Returns the
      * `detail` template if it's not found.
@@ -95,7 +95,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Loads the `record-detail` template if the view is `record`.
      * FIXME: This is a quick hack and will be fixed by SC-3364.
@@ -112,7 +112,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * If current fieldset is not readonly, it always falls back to false
      * (nodata unsupportable).
@@ -134,7 +134,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * We set the result from `field.getPlaceholder()` into a property named
      * `placeholder` for each of the child fields. These placeholders help us
@@ -214,7 +214,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     clearErrorDecoration: function() {
         _.each(this.fields, function(field) {
@@ -261,7 +261,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     setDisabled: function(disable) {
         disable = _.isUndefined(disable) ? true : disable;
@@ -272,7 +272,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     setViewName: function(view) {
         this._super('setViewName', [view]);
@@ -282,7 +282,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Set action name of child fields of this field set.
      * Reset current focus index to the first item when it switches to different mode.
@@ -307,7 +307,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * We need this empty so it won't affect the nested fields that have the
      * same `fieldTag` of this fieldset due the usage of `find()` method.
@@ -316,7 +316,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Keep empty because you cannot set a value of a type `fieldset`.
      */
@@ -324,7 +324,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * We need this empty so it won't affect the nested fields that have the
      * same `fieldTag` of this fieldset due the usage of `find()` method.
@@ -333,7 +333,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _dispose: function() {
         //fields inside fieldset need to be disposed before the fielset itself is disposed.

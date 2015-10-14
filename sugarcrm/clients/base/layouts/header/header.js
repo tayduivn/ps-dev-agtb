@@ -89,7 +89,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _render: function() {
         this._super('_render');
@@ -103,7 +103,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     show: function() {
         this._super('show');

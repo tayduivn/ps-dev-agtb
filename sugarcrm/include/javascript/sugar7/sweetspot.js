@@ -23,12 +23,6 @@
         var getSystemActions = function() {
             var actions = [
                 {
-                    callback: 'toggleHelp',
-                    action: 'help',
-                    name: app.lang.get('LBL_HELP'),
-                    icon: 'fa-exclamation-circle'
-                },
-                {
                     callback: 'openConfig',
                     action: 'config',
                     name: app.lang.get('LBL_SWEETSPOT_CONFIG'),

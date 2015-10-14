@@ -78,7 +78,9 @@
         if (this.disposed) return;
         this.template = app.template.get(this.name + '.dnb-search-hint');
         this.render();
-        this.context.on('input:name:keyup', this.dnbSearch, this);
+        // call .off first because loadDataWithValidConnector is called twice on account-create
+        // we don't want to set the event listener twice
+        this.context.off('update:account').on('update:account', this.dnbSearch, this);
         this.errmsg = null;
     },
 
@@ -91,7 +93,7 @@
         this.errmsg = 'LBL_DNB_NOT_CONFIGURED';
         this.template = app.template.get(this.name + '.dnb-need-configure');
         this.render();
-        this.context.off('input:name:keyup', this.dnbSearch);
+        this.context.off('update:account', this.dnbSearch);
     },
 
     /**
@@ -164,12 +166,20 @@
     },
 
     /** event listener for keyup / autocomplete feature
-     * @param {String} searchString
      */
-    dnbSearch: function(searchString) {
+    dnbSearch: function() {
         if (this.disposed) {
             return;
         }
+
+        //Value of input in name field
+        var searchString = this.closestComponent('sidebar').getComponent('main-pane').$('[data-fieldname=name] input').val()
+
+        //only search if the searchString is at least 3 characters
+        if (!searchString || searchString.length < 3) {
+            return;
+        }
+
         if (!this.keyword || (this.keyword && this.keyword !== searchString)) {
             this.keyword = searchString;
             this.template = this.resultTemplate;

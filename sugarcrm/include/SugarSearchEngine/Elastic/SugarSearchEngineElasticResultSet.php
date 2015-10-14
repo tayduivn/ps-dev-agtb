@@ -13,6 +13,8 @@
 require_once("include/SugarSearchEngine/Interface.php");
 require_once('include/SugarSearchEngine/Elastic/SugarSeachEngineElasticResult.php');
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;
+
 /**
  * Adapter class to Elastica Result Set
  *
@@ -32,6 +34,11 @@ class SugarSeachEngineElasticResultSet implements SugarSearchEngineResultSet
      * @var \Elastica\ResultSet
      */
     private $elasticaResultSet;
+
+    /**
+     * @var HighlighterInterface
+     */
+    protected $highlighter;
 
     /**
      * @param \Elastica\ResultSet $rs
@@ -96,7 +103,9 @@ class SugarSeachEngineElasticResultSet implements SugarSearchEngineResultSet
 
     public function current()
     {
-        return new SugarSeachEngineElasticResult($this->elasticaResultSet->current());
+        $res = new SugarSeachEngineElasticResult($this->elasticaResultSet->current());
+        $res->setHighlighter($this->highlighter);
+        return $res;
     }
 
     public function key()
@@ -127,5 +136,14 @@ class SugarSeachEngineElasticResultSet implements SugarSearchEngineResultSet
     public function count()
     {
         return $this->elasticaResultSet->count();
+    }
+
+    /**
+     * Set highlighter
+     * @param HighlighterInterface $highlighter
+     */
+    public function setHighlighter(HighlighterInterface $highlighter)
+    {
+        $this->highlighter = $highlighter;
     }
 }

@@ -5791,6 +5791,27 @@ function getFunctionValue($bean, $function, $args = array())
 }
 
 /**
+ * Get options for a field, based on it's definition.
+ * @param array $vardef Field definition.
+ * @return array|false Options for the field, or false otherwise.
+ */
+function getOptionsFromVardef($vardef)
+{
+    if (!empty($vardef['function']['returns'])) {
+        if (!strcmp($vardef['function']['returns'], 'html')) {
+            return false;
+        }
+        return getFunctionValue(
+            isset($vardef['function_bean']) ? $vardef['function_bean'] : null,
+            $vardef['function']
+        );
+    } elseif (isset($vardef['options'])) {
+        return translate($vardef['options'], isset($vardef['module']) ? $vardef['module'] : '');
+    }
+    return false;
+}
+
+/**
  * Evaluates if a value is isTruthy
  * @param mixed $value
  * @return bool

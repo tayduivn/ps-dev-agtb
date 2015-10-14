@@ -17,17 +17,17 @@
  */
 ({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     plugins: ['ErrorDecoration'],
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     fallbackFieldTemplate: 'edit',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     events: {
         'click [name=login_button]': 'login',
@@ -105,7 +105,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         if (app.progress) {
@@ -138,7 +138,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _render: function() {
         this.logoUrl = app.metadata.getLogoUrl();

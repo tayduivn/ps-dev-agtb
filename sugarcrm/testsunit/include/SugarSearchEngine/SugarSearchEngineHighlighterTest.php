@@ -81,7 +81,7 @@ class SugarSearchEngineHighlighterTest extends \PHPUnit_Framework_TestCase
             array(
                 'Accounts',
                 array(
-                    'name.subfield' => array(
+                    'name' => array(
                         'SugarCRM <strong>Incorporated</strong>',
                         'And <strong>more</strong> hits',
                     ),

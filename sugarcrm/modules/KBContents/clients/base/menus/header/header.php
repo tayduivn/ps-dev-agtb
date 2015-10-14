@@ -49,6 +49,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'fa-reorder',
         'target' => 'view',
     ),
+/* Should be disabled in 7.7
     array(
         'route' => '#bwc/index.php?' . http_build_query(
                 array(
@@ -61,7 +62,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_action' => 'import',
         'acl_module' => $module_name,
         'icon' => 'fa-arrow-circle-o-up',
-    ),
+    ), */
     array(
         'route' => "#{$module_name}/config",
         'label' => 'LNK_KNOWLEDGE_BASE_ADMIN_MENU',

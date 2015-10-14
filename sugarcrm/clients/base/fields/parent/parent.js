@@ -174,7 +174,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Avoid rendering process on select2 change in order to keep focus.
      */
     bindDataChange: function() {

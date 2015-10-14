@@ -89,6 +89,7 @@ $viewdefs['KBContents']['base']['view']['recordlist'] = array(
                     'click' => 'list:massdelete:fire',
                 ),
             ),
+/* Should be disabled in 7.7
             array(
                 'name' => 'export_button',
                 'type' => 'button',
@@ -98,7 +99,7 @@ $viewdefs['KBContents']['base']['view']['recordlist'] = array(
                 'events' => array(
                     'click' => 'list:massexport:fire',
                 ),
-            ),
+            ), */
         ),
     ),
     'last_state' => array(

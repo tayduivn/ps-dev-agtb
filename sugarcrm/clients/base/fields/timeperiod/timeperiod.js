@@ -55,7 +55,7 @@
     tooltipKey: 'LBL_DROPDOWN_TOOLTIP',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         var tooltipCssClasses = '',
@@ -104,7 +104,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Add a change event handler for initializing all the plugin tooltips again
      */
@@ -141,7 +141,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _render: function() {
         this._super('_render');
@@ -189,7 +189,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     getSelect2Options: function(optionsKeys) {
         var options = this._super('getSelect2Options', [optionsKeys]);
@@ -240,7 +240,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _dispose: function() {
         this._destroyTpCollection();

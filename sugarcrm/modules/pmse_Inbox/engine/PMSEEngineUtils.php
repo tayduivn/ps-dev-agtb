@@ -44,17 +44,21 @@ class PMSEEngineUtils
         ),
         'BR' => array(
             'duration_hours',
+            'kbdocument_body',
             'duration_minutes',
             'repeat_type',
             'viewcount'
         ),
         'AC' => array(
+            'kbdocument_body',
             'viewcount',
         ),
         'PD' => array(
+            'kbdocument_body',
             'viewcount',
         ),
         'GT' => array(
+            'kbdocument_body',
             'viewcount',
         ),
     );

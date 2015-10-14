@@ -41,7 +41,7 @@
     throttledSetServerData: false,
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this.once('render', function() {
@@ -65,7 +65,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     bindDataChange: function() {
         app.events.on('preview:open', function() {
@@ -194,7 +194,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      * Clean up!
      */
     unbindData: function() {
@@ -657,7 +657,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _dispose: function() {
         this.handlePrinting('off');

@@ -11,7 +11,7 @@
 
 ({
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     events: {
         'click [data-action=download-all]': 'startDownloadArchive'
@@ -50,7 +50,7 @@
     download_label: '',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function (opts) {
         var evt = {},
@@ -89,7 +89,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     format: function (value) {
         return _.map(value, function (item) {
@@ -127,7 +127,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     _render: function () {
         if (this.action == 'noaccess') {
@@ -216,7 +216,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     bindDomChange: function () {
         this.setSelect2Node();
@@ -353,7 +353,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Disposes event listeners on `Select2` object.
      */

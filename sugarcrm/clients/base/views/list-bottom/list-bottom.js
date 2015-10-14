@@ -111,7 +111,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _renderHtml: function() {
         this.setShowMoreLabel();
@@ -119,7 +119,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Bind listeners for collection updates.
      * The pagination link synchronizes its visibility with the collection's
@@ -131,7 +131,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Add dashlet placeholder's class in order to handle the custom css style.
      */
@@ -144,7 +144,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Remove pagination custom CSS class on dashlet placeholder.
      */

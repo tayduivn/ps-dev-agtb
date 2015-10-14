@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * {@inheritdoc}
+ * @inheritdoc
  *
  * Planned Activities dashlet takes advantage of the tabbed dashlet abstraction
  * by using its metadata driven capabilities to configure its tabs in order to
@@ -32,7 +32,7 @@
     extendsFrom: 'HistoryView',
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * @property {Object} _defaultSettings
      * @property {String} _defaultSettings.date Date against which retrieved
@@ -51,7 +51,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this.plugins = _.union(this.plugins, [
@@ -61,7 +61,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * Store current date state in settings.
      */
@@ -88,7 +88,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * Once new records are received, prevent rendering new rows until we fetch
      * the invitation collection by calling {@link #updateInvitation}.
@@ -100,7 +100,7 @@
 
         this._super('_initEvents');
         this.on('planned-activities:close-record:fire', this.heldActivity, this);
-        this.on('linked-model:create', this._reloadData, this);
+        this.on('linked-model:create', this.loadData, this);
 
         this.before('render:rows', function(data) {
             this.updateInvitation(this.collection, data);
@@ -108,18 +108,6 @@
         }, this);
 
         return this;
-    },
-
-    /**
-     * Re-fetches the data for the context's collection.
-     *
-     * FIXME: This will be removed when SC-4775 is implemented.
-     *
-     * @private
-     */
-    _reloadData: function() {
-        this.context.set('skipFetch', false);
-        this.context.reloadData();
     },
 
     /**
@@ -234,7 +222,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      * @protected
      */
     _initTabs: function() {
@@ -269,7 +257,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     _getRecordsTemplate: function(module) {
         this._recordsTpl = this._recordsTpl || {};
@@ -288,7 +276,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     _getFilters: function(index) {
 
@@ -309,7 +297,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     tabSwitcher: function(event) {
         var tab = this.tabs[this.settings.get('activeTab')];
@@ -362,7 +350,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * On load of new data, make sure we reload invitations related data, if
      * it is defined for the current tab.
@@ -420,7 +408,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * New model related properties are injected into each model:
      *

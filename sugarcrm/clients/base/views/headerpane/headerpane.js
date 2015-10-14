@@ -15,7 +15,7 @@
  */
 ({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -89,7 +89,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _renderHtml: function() {
         /**
@@ -261,7 +261,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _renderFields: function() {
         this._super('_renderFields');
@@ -269,7 +269,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     unbind: function() {
         this._super('unbind');

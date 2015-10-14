@@ -38,7 +38,7 @@
     label: null,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Init additional properties and events.
      */
@@ -96,7 +96,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     populate: function(tplName, filter, limit) {
         if (limit <= 0) {

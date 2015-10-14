@@ -15,7 +15,7 @@
     plugins: ['KBContent'],
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     createRelatedClicked: function(event) {
         var parentModel = this.context.parent.get('model');

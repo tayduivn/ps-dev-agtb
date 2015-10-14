@@ -57,6 +57,16 @@ class ResultSet implements \Iterator, \Countable, ResultSetInterface
     }
 
     /**
+     * Get highlighter
+     * @return HighlighterInterface
+     */
+    public function getHighlighter()
+    {
+        return $this->highlighter;
+    }
+
+
+    /**
      * Set aggregation stack
      * @param AggregationStack $aggregations
      */

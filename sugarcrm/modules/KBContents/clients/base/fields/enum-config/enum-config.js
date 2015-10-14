@@ -13,7 +13,7 @@
     extendsFrom: 'EnumField',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(opts) {
         this._super('initialize', [opts]);
@@ -25,7 +25,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     loadEnumOptions: function(fetch, callback) {
         var module = this.def.module || this.module,
@@ -46,7 +46,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _loadTemplate: function() {
         this.type = 'enum';
@@ -81,7 +81,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Filters language items for different modes.
      * Disable edit mode for editing revision and for creating new revision.

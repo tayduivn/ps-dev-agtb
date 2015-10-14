@@ -22,7 +22,7 @@
     select2fieldTag: 'select',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Renders both checkbox and dropdown
      */
@@ -32,7 +32,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _getFallbackTemplate: function(viewName) {
         if (viewName === 'massupdate') {
@@ -42,7 +42,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     bindDomChange: function() {
         var $el = this.$(this.select2fieldTag);
@@ -56,7 +56,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Bypass `render` when action is `massupdate` or `edit`.
      */
@@ -77,7 +77,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     unbindDom: function() {
         this.$(this.select2fieldTag).off();
@@ -85,7 +85,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * @param {String/Boolean} value The value to unformat.
      * @return {Boolean} Unformatted value.
@@ -98,7 +98,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * @param {String/Boolean} value The value to format.
      * @return {Boolean} formatted value.

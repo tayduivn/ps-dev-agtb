@@ -53,7 +53,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _renderHtml: function() {
         this._super('_renderHtml');
@@ -71,7 +71,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _formatTitle: function(title) {
         var moduleName = app.lang.get('LBL_MODULE_NAME', this.module);

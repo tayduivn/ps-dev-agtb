@@ -18,7 +18,7 @@
 
     /**
      * Disable field if it has no access to edit.
-     * {@inheritDoc}
+     * @inheritdoc
      */
     isDisabled: function() {
         var parentLayout = this.context.parent.get('layout');

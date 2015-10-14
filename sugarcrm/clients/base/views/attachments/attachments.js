@@ -42,7 +42,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * @param {String} viewName view name.
      */
@@ -141,7 +141,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Once collection is reset, the view should be refreshed.
      */
@@ -245,7 +245,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Dispose the interval timer as well.
      */

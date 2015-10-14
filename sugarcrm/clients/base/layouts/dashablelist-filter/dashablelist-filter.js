@@ -17,7 +17,7 @@
     className: 'dashablelist-filter',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initComponents: function(components, context, module) {
         this._super('initComponents', [components, context, module]);

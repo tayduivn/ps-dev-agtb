@@ -146,7 +146,7 @@
     forecastsNotSetUpMsg: undefined,
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -212,7 +212,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initDashlet: function() {
         this.settings.module = 'Forecasts';
@@ -321,7 +321,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     bindDataChange: function() {
         if(this.meta.config) {
@@ -392,7 +392,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     unbindData: function() {
         var ctx;
@@ -523,7 +523,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     _render: function() {
         this._super('_render');

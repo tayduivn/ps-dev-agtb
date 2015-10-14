@@ -15,12 +15,12 @@
  */
 ({
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     className: 'filtered tabbable tabs-left',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     attributes: function() {
         return {
@@ -36,7 +36,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -64,7 +64,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Decorate the subpanel based on if the collection is empty or not.
      *
