@@ -30,10 +30,10 @@ class Handler
     {
         $adapterFactory = $this->getAdapterFactory();
         if ($adapter = $adapterFactory->getAdapter($bean->module_name)) {
-            $calDavBean = $this->getDavBean($bean);
             if ($this->isBeanChild($bean)) {
                 $bean = $this->getParentBean($bean);
             }
+            $calDavBean = $this->getDavBean($bean);
             if ($adapter->export($bean, $calDavBean)) {
                 $calDavBean->save();
             }
