@@ -2237,6 +2237,10 @@ class MetaDataManager
         if ($data['_hash'] != $oldHash) {
             $this->putMetadataCache($data, $context);
         }
+        //Ensure that the metadata hashes is up to date
+        else if ($this->getCachedMetadataHash($context) != $data['_hash']) {
+            $this->cacheMetadataHash($data['_hash'], $context);
+        }
 
         // We need to see if we need to send any warnings down to the user
         $systemStatus = apiCheckSystemStatus();
