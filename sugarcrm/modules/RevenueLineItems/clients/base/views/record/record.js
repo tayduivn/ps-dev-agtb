@@ -35,7 +35,7 @@
          * exact same thing, but that time, since the model was already set, it doesn't see anything in
          * this.model.changed, so it doesn't warn the user.
          */
-        var changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
+        var changedAttributes = this.model.changedAttributes(this.model.getSynced());
         this.model.set(changedAttributes, { revert: true });
         this._super('cancelClicked');
     },

@@ -105,7 +105,7 @@
         if (this.model.isNew()) {
             return this.model.hasChanged();
         }
-        return !_.isEmpty(this.model.changedAttributes(this.model.getSyncedAttributes()));
+        return !_.isEmpty(this.model.changedAttributes(this.model.getSynced()));
     },
 
     /**

@@ -176,7 +176,7 @@
             // "Are you sure" dialog.  By using the syncedAttributes, it won't take any unsaved values,
             // but on the off chance that the value doesn't exist in the synced attributes, it will fall back to the
             // parentModel
-            var syncedAttributes = parentModel.getSyncedAttributes();
+            var syncedAttributes = parentModel.getSynced();
             //Special case for Contacts->meetings. The parent should be the account rather than the contact
             if (parentModel.module == 'Contacts' &&
                     parentModel.has('account_id') &&

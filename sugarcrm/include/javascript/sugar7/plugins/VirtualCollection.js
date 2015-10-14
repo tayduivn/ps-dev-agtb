@@ -1088,7 +1088,7 @@
         };
 
         /**
-         * {@link Data.Bean#getSyncedAttributes}
+         * {@link Data.Bean#getSynced}
          *
          * Includes in the return value all collection fields and their
          * associated link attributes. When comparing objects, Backbone does
@@ -1099,7 +1099,7 @@
          * TODO: Don't assume the collection is synchronized when moving
          * collection field support to sidecar.
          */
-        BeanOverrides.prototype.getSyncedAttributes = function() {
+        BeanOverrides.prototype.getSynced = function() {
             var syncedAttributes = {};
 
             _.reduce(this.model.getCollectionFieldNames(), function(memo, attr) {
@@ -1129,7 +1129,7 @@
              * {@link Data.Bean#hasChanged}
              * {@link Data.Bean#changedAttributes}
              * {@link Data.Bean#revertAttributes}
-             * {@link Data.Bean#getSyncedAttributes}
+             * {@link Data.Bean#getSynced}
              *
              * @param {Data.Bean} model The model to which the plugin is
              * attached.
@@ -1269,11 +1269,11 @@
                 });
 
                 /**
-                 * See {@link Data.Bean#getSyncedAttributes} and
-                 * {@link BeanOverrides#getSyncedAttributes}.
+                 * See {@link Data.Bean#getSynced} and
+                 * {@link BeanOverrides#getSynced}.
                  */
-                this.getSyncedAttributes = _.wrap(this.getSyncedAttributes, function(_super) {
-                    return _.extend(app.utils.deepCopy(_super.call(this) || {}), overrides.getSyncedAttributes());
+                this.getSynced = _.wrap(this.getSynced, function(_super) {
+                    return _.extend(app.utils.deepCopy(_super.call(this) || {}), overrides.getSynced());
                 });
             },
 
