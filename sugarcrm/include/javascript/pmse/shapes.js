@@ -77,6 +77,18 @@ AdamShape.prototype.setName = function (value) {
     }
     return this;
 };
+
+AdamShape.prototype.saveProject = function (root, App, w) {
+    root.canvas.showModal();
+    App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoClose: false});
+    root.canvas.project.save({
+        success: function () {
+            root.canvas.hideModal();
+            w.show();
+            w.html.style.display = 'none';
+        }
+    });
+};
 /**
  * Returns the label text
  * @return {String}
