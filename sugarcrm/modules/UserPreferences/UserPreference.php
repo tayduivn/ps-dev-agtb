@@ -463,7 +463,7 @@ class UserPreference extends SugarBean
             $prefs = array();
             $newprefs = array();
 
-            $prefs = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($row['user_preferences']));
+            $prefs = unserialize(base64_decode($row['user_preferences']));
 
             if(!empty($sub_key)){
                 if($is_value_array ){
