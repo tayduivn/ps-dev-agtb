@@ -37,6 +37,12 @@
              * @return {String} message
              */
             _warnDelete: function() {
+                // get the mass_collection
+                var massCollection = this.context.get('mass_collection');
+                if (!massCollection) {
+                    return;
+                }
+
                 var config = app.metadata.getModule('Forecasts', 'config') || {},
                     sales_stage_won = config.sales_stage_won || ['Closed Won'],
                     sales_stage_lost = config.sales_stage_lost || ['Closed Lost'],
@@ -80,8 +86,6 @@
                     });
 
                 if (closedModels.length > 0) {
-                    // get the mass_collection from actionmenu.js
-                    var massCollection = this.context.get('mass_collection');
                     // remove the closed models from the massCollection
                     massCollection.remove(closedModels);
 
