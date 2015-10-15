@@ -36,9 +36,10 @@ $(document).ready(function() {
                 timeout: 300000,
                 success: function(response) {
                     ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'LBL_DONE_BUTTON_LABEL'));
-                    if (response['status'] === true) {
-                        window.location.assign('index.php?module=Administration&action=index');
+                    if (response['status'] === false) {
+                        ajaxStatus.showStatus(response.message);
                     }
+                    app.router.goBack();
                 },
                 error: function() {
                     ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'ERR_GENERIC_SERVER_ERROR'));
