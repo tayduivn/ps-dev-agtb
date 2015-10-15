@@ -85,11 +85,27 @@
     },
 
     /**
-     * Show the given component and hide the other toggle-able components
-     * @param name
+     * Show the given component and hide the other toggle-able components.
+     * Render the named component if it is in our list of components that have
+     * not yet been rendered and append it to the appropriate container.
+     *
+     * The firing of the 'append' event is done after showing the component to
+     * ensure that its DOM surroundings (ie. element width) are completely set
+     * up - allowing anything listening to adjust accordingly.
+     *
+     * @param {string} name Name of the component to show
      */
     showComponent: function(name) {
         var oldToggle = this.currentToggle;
+
+        _.each(this.toggleComponents, function(component) {
+            if (component.name === name) {
+                component.show();
+            } else {
+                component.hide();
+            }
+        }, this);
+
         if (this.componentsList[name]) {
             this.componentsList[name].render();
             this._components.push(this.componentsList[name]);
@@ -100,13 +116,6 @@
             this.componentsList[name] = null;
         }
 
-        _.each(this.toggleComponents, function(component) {
-            if (component.name === name) {
-                component.show();
-            } else {
-                component.hide();
-            }
-        }, this);
         this.currentToggle = name;
         this.trigger('toggle:change', name, oldToggle);
     },
