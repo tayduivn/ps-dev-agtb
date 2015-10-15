@@ -27,15 +27,6 @@
      */
     eventsList: [],
 
-    /**
-     * Prototype of a carrier-switcher field.
-     */
-    carrierSwitcherPrototype: {
-        name: 'carrier-switcher-prototype',
-        type: 'carrier-switcher',
-        view : 'default'
-    },
-
     events: {
         'click [name=reset_to_default_button]': 'handleResetToDefault'
     },
@@ -55,10 +46,14 @@
         }
 
         this.model.on('change:personal:' + this.meta.emitter, this.displayResetButton, this);
+        this.model.on('change:personal:emitter:' + this.meta.emitter, this.displayResetButton, this);
         this.model.on('reset:all', this.displayResetButton, this);
         this.model.on('reset:' + this.meta.emitter, this.displayResetButton, this);
     },
 
+    /**
+     * @inheritdoc
+     */
     render: function() {
         this.populateCarriersAndEventsLists();
         this._super('render');
@@ -89,25 +84,28 @@
         }
 
         if (existingEmitters) {
-            _.each(existingEmitters[this.meta.emitter], function(event, eventKey) {
-                var eventName = eventKey;
+            _.each(existingEmitters[this.meta.emitter], function(event, eventName) {
                 var fields = [];
-                _.each(this.carriersList, function(carrier, carrierKey) {
-                    var meta = {
-                        carrier: carrierKey,
-                        action: 'switch-delivery',
-                        event: eventName
-                    }
-                    fields.push(this._createCarrierSwitcherField(meta))
+                _.each(this.carriersList, function(carrier, carrierName) {
+                    fields.push({
+                        name: this.name + '-' + carrierName,
+                        type: 'carrier-switcher',
+                        carrier: carrierName,
+                        emitter: this.meta.emitter,
+                        event: eventName,
+                        view : 'default'
+                    });
                 }, this);
                 rows.push({
-                    rowSwitcher: this._createCarrierSwitcherField({
-                        carrier: 'all',
-                        action: 'switch-event',
-                        event: eventName
-                    }),
-                    name: eventKey,
-                    label: eventKey, //ToDo: app.list
+                    rowSwitcher: {
+                        name: this.name + '-' + eventName,
+                        type: 'event-switcher',
+                        emitter: this.meta.emitter,
+                        event: eventName,
+                        view : 'default'
+                    },
+                    name: eventName,
+                    label: eventName, //ToDo: app.list
                     fields: fields
                 });
             }, this);
@@ -140,10 +138,10 @@
 
         if (this.model.get('personal') && button) {
             _.each(this.model.get('personal')['config'][this.meta.emitter], function(event, eventName) {
-                return _.each(event, function(filter, filterName) {
+                _.each(event, function(filter, filterName) {
                     var filterGlobal = this.model.get('global')['config'][this.meta.emitter][eventName][filterName];
-                    if (JSON.stringify(_.chain(filter).map(_.first).uniq().compact().value()) !==
-                        JSON.stringify(_.chain(filterGlobal).map(_.first).uniq().compact().value())) {
+                    if (JSON.stringify(_.chain(filter).map(_.first).uniq().sort().value()) !==
+                        JSON.stringify(_.chain(filterGlobal).map(_.first).uniq().sort().value())) {
                         isAllDefault = false;
                     }
                 }, this);
@@ -185,31 +183,13 @@
     },
 
     /**
-     * Generates a carrier-switcher field object from its prototype and given definition.
-     * @param {Object} def Field definition.
-     * @returns {Object} Field object.
-     * @private
-     */
-    _createCarrierSwitcherField: function(def) {
-        var field = _.clone(this.carrierSwitcherPrototype);
-
-        field.name = this.name + '-' + def.carrier;
-        field.emitter = this.meta.emitter;
-
-        _.each(def, function(val, key) {
-            field[key] = val;
-        }, this);
-
-        return field;
-    },
-
-    /**
      * Reset all user settings to system defaults.
      * @returns {boolean} returns false to stop propagation.
      */
     handleResetToDefault: function() {
         var message = app.lang.get('LBL_RESET_SETTINGS_EMITTER_CONFIRMATION', this.module),
             successMessage = app.lang.get('LBL_RESET_SETTINGS_SUCCESS', this.module);
+
         message = message.replace('%', this.meta.label);
 
         app.alert.show('reset_all_confirmation', {
@@ -217,7 +197,7 @@
             messages: message,
             onConfirm: _.bind(function() {
                 if (this.model.resetToDefault(this.meta.emitter)) {
-                    app.alert.show('reset_all_success', {
+                    app.alert.show('reset_emitter_success', {
                         level: 'success',
                         autoClose: true,
                         messages: successMessage
