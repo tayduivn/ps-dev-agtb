@@ -109,11 +109,11 @@ class RenameModules
 
         $selected_dropdown = $my_list_strings['moduleList'];
         $selected_dropdown_singular = $my_list_strings['moduleListSingular'];
-
+        $authenticated_user_language = !empty($_SESSION['authenticated_user_language']) ? $_SESSION['authenticated_user_language'] : null;
 
         foreach ($selected_dropdown as $key=>$value) {
             $singularValue = isset($selected_dropdown_singular[$key]) ? $selected_dropdown_singular[$key] : $value;
-            if ($selected_lang != $_SESSION['authenticated_user_language'] && !empty($app_list_strings['moduleList']) && isset($app_list_strings['moduleList'][$key])) {
+            if ($selected_lang != $authenticated_user_language && !empty($app_list_strings['moduleList']) && isset($app_list_strings['moduleList'][$key])) {
                 $selected_dropdown[$key] = array(
                     'lang' => $value,
                     'user_lang' => '['.$app_list_strings['moduleList'][$key].']',
