@@ -109,21 +109,26 @@ class TeamsController extends SugarController {
      */
     public function action_saveTBAConfiguration()
     {
-        global $current_user;
+        if ($GLOBALS['current_user']->isAdminForModule('Users')) {
+            $enabled = !empty($_POST['enabled']) ? isTruthy($_POST['enabled']) : false;
+            $disabledModules = !empty($_POST['disabled_modules']) ? explode(',', $_POST['disabled_modules']) : array();
 
-        $enabled = !empty($_POST['enabled']) ? $_POST['enabled'] == 'true' : false;
-        $disabledModules = !empty($_POST['disabled_modules']) ? explode(',', $_POST['disabled_modules']) : array();
+            $tbaConfigurator = new TeamBasedACLConfigurator();
+            $tbaConfigurator->setGlobal($enabled);
 
-        $tbaConfigurator = new TeamBasedACLConfigurator();
-        $tbaConfigurator->setGlobal($enabled);
+            if ($enabled) {
+                $actionsList = array_keys(ACLAction::getUserActions($GLOBALS['current_user']->id));
+                $enabledModules = array_values(array_diff($actionsList, $disabledModules));
 
-        if ($enabled) {
-            $actionsList = array_keys(ACLAction::getUserActions($current_user->id));
-            $enabledModules = array_values(array_diff($actionsList, $disabledModules));
-
-            $tbaConfigurator->setForModulesList($disabledModules, false);
-            $tbaConfigurator->setForModulesList($enabledModules, true);
+                $tbaConfigurator->setForModulesList($disabledModules, false);
+                $tbaConfigurator->setForModulesList($enabledModules, true);
+            }
+            echo json_encode(array('status' => true));
+        } else {
+            echo json_encode(array(
+                'status' => false,
+                'message' => $GLOBALS['app_strings']['EXCEPTION_NOT_AUTHORIZED']
+            ));
         }
-        echo json_encode(array('status' => true));
     }
 }
