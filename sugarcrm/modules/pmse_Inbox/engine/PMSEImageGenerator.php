@@ -314,7 +314,7 @@ class PMSEImageGenerator
     private function diagram_to_png($diagram)
     {
         //$serialize_data = serialize($diagram);
-        //$data = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($serialize_data);
+        //$data = unserialize($serialize_data);
         $png_data = $this->convert_png_array($diagram);
         //TODO: avoid hardcoded
         $sprite_filename = $this->pmse->getModulePath() . '/img/pmse_sprite_with_zoom.gif';

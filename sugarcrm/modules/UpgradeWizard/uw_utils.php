@@ -3607,7 +3607,7 @@ function upgradeModulesForTeam() {
 		$query = "SELECT id, contents, assigned_user_id FROM user_preferences WHERE deleted = 0 AND category = 'Home'";
 		$result = $db->query($query, true, "Unable to update new default dashlets! ");
 		while ($row = $db->fetchByAssoc($result)) {
-			$content = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($row['contents']));
+			$content = unserialize(base64_decode($row['contents']));
 			$assigned_user_id = $row['assigned_user_id'];
 			$record_id = $row['id'];
 

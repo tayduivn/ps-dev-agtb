@@ -326,7 +326,7 @@ abstract class OpportunitySetup
         $results = $db->query($sql);
 
         while ($row = $db->fetchRow($results)) {
-            $tabArray = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($row['value']));
+            $tabArray = unserialize(base64_decode($row['value']));
             // find the key
             $key = array_search($value, $tabArray);
             if ($key === false && $show === true) {

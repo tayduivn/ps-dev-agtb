@@ -222,8 +222,8 @@ class UserPreference extends SugarBean
         $result = $GLOBALS['db']->query("SELECT contents FROM user_preferences WHERE assigned_user_id='$user->id' AND category = '" . $category . "' AND deleted = 0", false, 'Failed to load user preferences');
         $row = $GLOBALS['db']->fetchByAssoc($result);
         if ($row) {
-            $_SESSION[$user->user_name . '_PREFERENCES'][$category] = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($row['contents']));
-            $user->user_preferences[$category] = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($row['contents']));
+            $_SESSION[$user->user_name . '_PREFERENCES'][$category] = unserialize(base64_decode($row['contents']));
+            $user->user_preferences[$category] = unserialize(base64_decode($row['contents']));
             return true;
         } else {
             $_SESSION[$user->user_name . '_PREFERENCES'][$category] = array();
@@ -412,7 +412,7 @@ class UserPreference extends SugarBean
             $prefs = array();
             $newprefs = array();
 
-            $prefs = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($row['user_preferences']));
+            $prefs = unserialize(base64_decode($row['user_preferences']));
 
             if(!empty($sub_key)){
                 if($is_value_array ){

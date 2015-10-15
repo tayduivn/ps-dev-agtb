@@ -77,7 +77,7 @@ class TeamSetManager {
 					//we did find that this team_set was going to be removed from user_preferences
 					$userPrefResult = $GLOBALS['db']->query("SELECT contents FROM user_preferences WHERE category = '" . $tokens[1] . "' AND deleted = 0", false, 'Failed to load user preferences');
 					while ($userPrefRow = $teamSetModule->db->fetchByAssoc($userPrefResult)) {
-						$prefs = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($userPrefRow['contents']));
+						$prefs = unserialize(base64_decode($userPrefRow['contents']));
 						$team_set_id = SugarArray::staticGet($prefs, implode('.', array_slice($tokens, 2)));
 						if(!empty($team_set_id)){
 							//this is the team set id that is being used in user preferences we have to be sure to not remove it.
