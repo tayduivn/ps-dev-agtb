@@ -15,7 +15,7 @@
  * @extends View.Views.Base.ConfigHeaderButtonsView
  */
 ({
-    extendsFrom: "HeaderpaneView",
+    extendsFrom: "ConfigHeaderButtonsView",
 
     events: {
         "click [name=save_button]":   "_save",
