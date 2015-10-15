@@ -237,18 +237,6 @@ function verify_data(form)
     // handles any errors in the email widget
     var isError = !check_form("EditView");
 
-    if (trim(form.last_name.value) == "") {
-		add_error_style('EditView',form.last_name.name,
-                        SUGAR.language.get('app_strings','ERR_MISSING_REQUIRED_FIELDS') + SUGAR.language.get('Users','LBL_LIST_NAME') );
-        isError = true;
-	}
-
-	if (typeof(form.user_name) != 'undefined' && trim(form.user_name.value) == "") {
-		add_error_style('EditView',form.user_name.name,
-                        SUGAR.language.get('app_strings','ERR_MISSING_REQUIRED_FIELDS') + SUGAR.language.get('Users','LBL_USER_NAME') );
-        isError = true;
-	}
-	
     if (document.getElementById("required_password").value=='1' 
 	    && document.getElementById("new_password").value == "") {
 		add_error_style('EditView',form.new_password.name,
