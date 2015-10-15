@@ -49,6 +49,7 @@ $mod_strings = array (
   'LBL_CREATED_BY' => 'Created By',
   'LBL_EDIT_LAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
   'LBL_ADMIN_ONLY' => 'Administrators Only',
-  'LBL_DEFAULT' => 'Default',
+  'LBL_CURRENCY_DEFAULT' => 'US Dollars (Default)',
+
 );
 ?>
