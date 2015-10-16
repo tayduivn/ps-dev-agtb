@@ -259,9 +259,9 @@ class PMSEEngineFilterApi extends FilterApi
                 ->gte('cas_due_date', TimeDate::getInstance()->nowDb())
                 ->isNull('cas_due_date');
         } else if ($exp === 'false') {
-            $where->queryOr()
-                ->lte('cas_due_date', TimeDate::getInstance()->nowDb())
-                ->isNull('cas_due_date');
+            $where->queryAnd()
+                ->isNotEmpty('cas_due_date')
+                ->lte('cas_due_date', TimeDate::getInstance()->nowDb());
         }
     }
 
