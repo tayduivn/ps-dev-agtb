@@ -742,10 +742,12 @@ class HealthCheckScanner
             return;
         }
 
-        $opportunity_settings = Opportunity::getSettings();
+        if (method_exists('Opportunity', 'getSettings')) {
+            $opportunity_settings = Opportunity::getSettings();
 
-        if ($opportunity_settings['opps_view_by'] == 'Opportunities' && array_key_exists('RevenueLineItems', $strings['moduleList']) && is_null($strings['moduleList']['RevenueLineItems'])) {
-            unset($strings['moduleList']['RevenueLineItems']);
+            if ($opportunity_settings['opps_view_by'] == 'Opportunities' && array_key_exists('RevenueLineItems', $strings['moduleList']) && is_null($strings['moduleList']['RevenueLineItems'])) {
+                unset($strings['moduleList']['RevenueLineItems']);
+            }
         }
 
         //Checks moduleList NULL values
