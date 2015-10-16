@@ -85,12 +85,6 @@ $dictionary['Category'] = array(
     'ignore_templates' => array(
         'taggable',
     ),
-    'acls' => array(
-        'SugarACLStatic' => false,
-        'SugarACLCategories' => array(
-            'aclModule' => 'KBContents',
-        ),
-    ),
 );
 
 VardefManager::createVardef(

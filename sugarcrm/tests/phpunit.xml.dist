@@ -74,6 +74,7 @@
             <directory>./modules/Users/</directory>
             <directory>./modules/WebLogicHook/</directory>
             <directory>./modules/KBContents/</directory>
+            <directory>./modules/Categories/</directory>
             <!-- global failures, tests are excluded -->
             <exclude>./tests/metadata/Bug33522Test.php</exclude>
             <exclude>./tests/metadata/MetaDataLocationChangeTest.php</exclude>
