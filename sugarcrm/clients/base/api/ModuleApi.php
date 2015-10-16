@@ -378,6 +378,9 @@ class ModuleApi extends SugarApi {
             $filepath = $basepath . $args[$fieldName . '_guid'];
 
             if (!is_file($filepath)) {
+                if (isset($bean->$fieldName)) {
+                    $bean->$fieldName = null;
+                }
                 continue;
             }
 
