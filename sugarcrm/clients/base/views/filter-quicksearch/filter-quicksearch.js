@@ -55,6 +55,31 @@
     },
 
     /**
+     * For customers with large datasets, allow customization to disable
+     * the automatic filtering in the omnibar.
+     *
+     * @inheritdoc
+     */
+    delegateEvents: function(events) {
+        if (app.config.disableOmnibarTypeahead) {
+            // Remove the keyup and paste events from this.events.
+            // This is before the call to this._super('delegateEvents'),
+            // so they have not been registered.
+            delete this.events.keyup;
+            delete this.events.paste;
+
+            // On enter key press, apply the quicksearch.
+            this.events.keydown = _.bind(function(evt) {
+                // Enter key code is 13
+                if (evt.keyCode === 13) {
+                    this.applyQuickSearch();
+                }
+            }, this);
+        }
+        this._super('delegateEvents', [events]);
+    },
+
+    /**
      * Fires the quick search.
      * @param {Event} [event] A keyup event.
      */
