@@ -22,9 +22,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
   require_once("include/OutboundEmail/OutboundEmail.php");
   require_once("vendor/ytree/Tree.php");
   require_once("vendor/ytree/ExtNode.php");
-  global $mod_strings;
+  global $mod_strings, $current_user;
+
+
 
   $email = BeanFactory::getBean('Emails');
+  if (!$email->ACLAccess('view')) {
+      ACLController::displayNoAccess(true);
+      sugar_cleanup(true);
+  }
   $email->email2init();
   $ie = BeanFactory::getBean('InboundEmail');
   $ie->disable_row_level_security = true;
@@ -1165,6 +1171,11 @@ eoq;
 
     case "editOutbound":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: editOutbound");
+        if (SugarConfig::getInstance()->get("disable_user_email_config", false)
+            && !$current_user->isAdminForModule("Emails")
+        ) {
+            break;
+        }
         if(isset($_REQUEST['outbound_email']) && !empty($_REQUEST['outbound_email'])) {
             $oe = new OutboundEmail();
             $oe->retrieve($_REQUEST['outbound_email']);
@@ -1222,6 +1233,11 @@ eoq;
 
     case "saveOutbound":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: saveOutbound");
+        if (SugarConfig::getInstance()->get("disable_user_email_config", false)
+            && !$current_user->isAdminForModule("Emails")
+        ) {
+            break;
+        }
 
         $oe = new OutboundEmail();
         $oe->id = $_REQUEST['mail_id'];
@@ -1254,6 +1270,11 @@ eoq;
     	break;
     case "testOutbound":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: testOutbound");
+        if (SugarConfig::getInstance()->get("disable_user_email_config", false)
+            && !$current_user->isAdminForModule("Emails")
+        ) {
+            break;
+        }
 
         $pass = '';
         if(!empty($_REQUEST['mail_smtppass'])) {
@@ -1312,6 +1333,11 @@ eoq;
 
     case "saveIeAccount":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: saveIeAccount");
+        if (SugarConfig::getInstance()->get("disable_user_email_config", false)
+            && !$current_user->isAdminForModule("Emails")
+        ) {
+            break;
+        }
         if(isset($_REQUEST['server_url']) && !empty($_REQUEST['server_url'])) {
             if(false === $ie->savePersonalEmailAccount($current_user->id, $current_user->user_name, false)) {
                 $ret = array('error' => 'error');

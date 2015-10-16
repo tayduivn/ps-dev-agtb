@@ -36,6 +36,13 @@ global $app_list_strings;
 global $current_user;
 global $sugar_config;
 
+if (SugarConfig::getInstance()->get("disable_user_email_config", false)
+        && !$current_user->isAdminForModule("Emails")
+) {
+	ACLController::displayNoAccess(false);
+    sugar_cleanup(true);
+}
+
 $title				= '';
 $msg				= '';
 $tls				= '';

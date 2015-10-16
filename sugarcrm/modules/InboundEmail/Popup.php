@@ -22,6 +22,16 @@ if(ini_get('zlib.output_compression') == 1) { // ini_get() returns 1/0, not valu
 	}
 }
 
+global $current_user;
+
+if (SugarConfig::getInstance()->get("disable_user_email_config", false)
+        && !$current_user->isAdminForModule("Emails")
+) {
+    ACLController::displayNoAccess(false);
+    sugar_cleanup(true);
+}
+
+
 // hack to allow "&", "%" and "+" through a $_GET var
 // set by ie_test_open_popup() javascript call
 foreach($_REQUEST as $k => $v) {
