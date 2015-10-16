@@ -79,33 +79,36 @@
 <script src="../../../include/javascript/nvd3/src/models/funnelChart.js"></script>
 
 <script charset="utf-8">
+$(function() {
 
-    var jsonFile = window.location.href.match(/(\?|&)file=([a-z_]*)(&|$)/),
-        selectedFile = $('#chartData');
-    if (jsonFile) {
-      selectedFile.val([jsonFile[2]]);
+    var file = window.location.href.match(/(\?|&)file=([a-z_]*)(&|$)/),
+        $file = $('#chartData');
+    if (file) {
+      $file.val([file[2]]);
     }
+    file = $file.val();
+
     var color = window.location.href.match(/(\?|&)color=([a-z]+)(&|$)/),
-        selectedColor = $('input[type="radio"][name="color"]'),
+        $color = $('input[type="radio"][name="color"]'),
         colorLength = 0;
     if (color) {
-      selectedColor.val([color[2]]);
+      $color.val([color[2]]);
     }
-    var wrapLabels = window.location.href.match(/(\?|&)wrap_labels=([0-9a-z]+)(&|$)/),
-        selectedWrapLabels = $('#wrapLabels');
-    if (wrapLabels) {
-      selectedWrapLabels.val(wrapLabels[2]);
-    }
-    var direction = window.location.href.match(/(\?|&)direction=([0-9a-z]+)(&|$)/),
-        selectedDirection = $('input[type="radio"][name="direction"]');
-    if (direction) {
-      selectedDirection.val([direction[2]]);
-    }
+    color = $color.filter(':checked').val() || 'default';
 
-    jsonFile = selectedFile.val();
-    color = selectedColor.filter(':checked').val() || 'default',
-    wrapLabels = parseInt(selectedWrapLabels.val(), 10) ? true : false;
-    direction = selectedDirection.filter(':checked').val() || 'ltr';
+    var wrapLabels = window.location.href.match(/(\?|&)wrap_labels=([0-9a-z]+)(&|$)/),
+        $wrapLabels = $('#wrapLabels');
+    if (wrapLabels) {
+      $wrapLabels.val(wrapLabels[2]);
+    }
+    wrapLabels = parseInt($wrapLabels.val(), 10) ? true : false;
+
+    var direction = window.location.href.match(/(\?|&)direction=([0-9a-z]+)(&|$)/),
+        $direction = $('input[type="radio"][name="direction"]');
+    if (direction) {
+      $direction.val([direction[2]]);
+    }
+    direction = $direction.filter(':checked').val() || 'ltr';
     $('html').css('direction', direction);
 
     var chartData = [];
@@ -128,6 +131,7 @@
           });
 
     chart.legend.width();
+    chart.funnel.textureFill(true);
 
     d3.select('#chart1')
         .on('click', chart.dispatch.chartClick);
@@ -162,30 +166,32 @@
       });
     }
 
-    loadData(jsonFile);
+    loadData(file);
 
-    selectedFile.on('change', function(d) {
-      jsonFile = selectedFile.val();
-      loadData(jsonFile);
+    $file.on('change', function(d) {
+      file = $file.val();
+      loadData(file);
     });
-    selectedColor.on('click', function(d) {
-      color = selectedColor.filter(':checked').val();
+    $color.on('click', function(d) {
+      color = $color.filter(':checked').val();
       chart
         .colorData(color, {c1: '#e8e2ca', c2: '#3e6c0a', l: colorLength});
       chart.update();
     });
-    selectedWrapLabels.on('change', function(d) {
+    $wrapLabels.on('change', function(d) {
       chart
-        .wrapLabels(parseInt(selectedWrapLabels.val(), 10) ? true : false);
+        .wrapLabels(parseInt($wrapLabels.val(), 10) ? true : false);
       chart.update();
     });
-    selectedDirection.on('change', function(d) {
-      direction = selectedDirection.filter(':checked').val();
+    $direction.on('change', function(d) {
+      direction = $direction.filter(':checked').val();
       $('html').css('direction', direction);
       chart
         .direction(direction);
       chart.update();
     });
+
+});
 </script>
 </body>
 </html>

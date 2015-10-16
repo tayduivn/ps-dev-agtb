@@ -113,6 +113,8 @@
 <script src="../../../include/javascript/nvd3/src/models/multiBarChart.js"></script>
 
 <script>
+$(function() {
+
     var file = window.uQuery('file', /[a-z0-9_]+/i) || monster.get('file'),
         $file = $('#chartData');
     if (file) {
@@ -225,6 +227,9 @@
             b.scrollTop(b.scrollTop() + data);
           });
 
+    chart.multibar
+      .textureFill(true);
+
     chart.yAxis
       .axisLabel(showLabels === 'yes' ? yAxisLabel : '');
 
@@ -332,6 +337,8 @@
           .datum(chartData)
           .call(chart);
     });
+
+});
 </script>
 </body>
 </html>

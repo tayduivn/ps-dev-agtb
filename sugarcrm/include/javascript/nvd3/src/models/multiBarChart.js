@@ -647,6 +647,7 @@ nv.models.multiBarChart = function() {
 
       legend.dispatch.on('legendClick', function(d, i) {
         d.disabled = !d.disabled;
+        d.active = false;
 
         if (hideEmptyGroups) {
           data.map(function(m, j) {
@@ -658,10 +659,18 @@ nv.models.multiBarChart = function() {
           });
         }
 
+        // if there are no enabled data series, enable them all
         if (!data.filter(function(d) { return !d.disabled; }).length) {
           data.map(function(d) {
             d.disabled = false;
-            container.selectAll('.nv-series').classed('disabled', false);
+            return d;
+          });
+        }
+
+        // if there are no active data series, activate them all
+        if (!data.filter(function(d) { return d.active === 'active'; }).length) {
+          data.map(function(d) {
+            d.active = '';
             return d;
           });
         }

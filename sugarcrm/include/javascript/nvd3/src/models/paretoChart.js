@@ -165,6 +165,45 @@ nv.models.paretoChart = function() {
             //------------------------------------------------------------
             // Process data
 
+            chart.dataSeriesActivate = function(eo) {
+                var series = eo.series;
+
+                series.active = (!series.active || series.active === 'inactive') ? 'active' : 'inactive';
+                series.values.map(function(d) {
+                    d.active = series.active;
+                });
+
+                // if you have activated a data series, inactivate the rest
+                if (series.active === 'active') {
+                    data
+                        .filter(function(d) {
+                            return d.active !== 'active';
+                        })
+                        .map(function(d) {
+                            d.active = 'inactive';
+                            d.values.map(function(d) {
+                                d.active = 'inactive';
+                            });
+                            return d;
+                        });
+                }
+
+                // if there are no active data series, activate them all
+                if (!data.filter(function(d) { return d.active === 'active'; }).length) {
+                    data
+                        .map(function(d) {
+                            d.active = '';
+                            d.values.map(function(d) {
+                                d.active = '';
+                            });
+                            container.selectAll('.nv-series').classed('nv-inactive', false);
+                            return d;
+                        });
+                }
+
+                container.call(chart);
+            };
+
             var dataBars = data.filter(function(d) {
                     return !d.disabled && (!d.type || d.type === 'bar');
                 });

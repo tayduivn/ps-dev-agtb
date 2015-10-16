@@ -108,6 +108,10 @@ svg .title {
   font-size: @fontSizeMedium;
 }
 
+.nv-label-box {
+  fill: transparent;
+}
+
 .nvtooltip {
   pointer-events: none;
 }
@@ -188,6 +192,7 @@ svg .title {
   }
 }
 
+
 /**********
 *  Axes
 */
@@ -229,79 +234,45 @@ svg .title {
   font-style: italic;
 }
 
-/**********
-*  Bars
-*/
-
-// .nv-bars .negative rect {
-//   cursor: pointer;
-// }
-
-// .nv-bars rect {
-//   cursor: pointer;
-//   fill-opacity: .75;
-// }
-
-// .nv-bars rect:hover {
-//   fill-opacity: 1;
-// }
-
-// .nv-bars .hover rect {
-//   fill: lightblue;
-// }
-
-// .nv-bars text {
-//   fill: rgba(0,0,0,0);
-// }
-
-// .nv-bars .hover text {
-//   fill: rgba(0,0,0,1);
-// }
-
 
 /**********
 *  MultiBars
 */
 
-.nv-multibar .nv-groups {
-  rect {
+.nv-multibar {
+  .nv-group rect {
     stroke-opacity: 1;
     stroke-width: 2px;
     stroke: @white;
   }
-  .nv-group rect:hover {
+  .nv-group.hover rect {
     fill-opacity: .75;
   }
 }
+
+
+/**********
+*  Texture
+*/
 
 .nv-texture {
-  fill-opacity: 0;
+  fill-opacity: 0 !important;
   pointer-events: none;
 }
-.nv-texture:hover {
-  fill-opacity: 0;
-}
-.nv-active .nv-texture {
-  fill-opacity: 1;
-}
 .texture-line {
-  stroke-opacity: .5;
   stroke-width: 1px;
 }
-
-.nv-inactive {
-  polygon,
-  rect {
-    fill-opacity: 1;
-  }
-  polygon:hover,
-  rect:hover {
-    fill-opacity: .75;
-  }
+.nv-active {
   .nv-texture {
-    fill-opacity: .5;
-    mask: none !important;
-    fill: #fff !important;
+    fill-opacity: 1 !important;
+  }
+  .nv-label-box {
+    fill: inherit;
+  }
+}
+.nv-inactive {
+  .nv-texture {
+    fill-opacity: 0 !important;
   }
 }
 
@@ -317,19 +288,9 @@ svg .title {
 *  Pie Chart
 */
 
-.nv-pie .hover path {
-  fill-opacity: .7;
+.nv-pie .nv-slice.hover path {
+  fill-opacity: .75;
 }
-
-.nv-pie {
-  .nv-inactive path {
-    fill-opacity: 0.5;
-  }
-  .nv-inactive:hover path {
-    fill-opacity: 0.75;
-  }
-}
-
 .nv-holeWrap text{
   text-anchor: middle;
 }
@@ -340,6 +301,7 @@ text.nv-pie-hole-value {
 text.nv-pie-hole-label {
   font-size: 11px;
 }
+
 
 /**********
 * Lines
@@ -511,6 +473,9 @@ text.nv-pie-hole-label {
 */
 
 .nv-funnelChart {
+  .nv-slice.hover polygon {
+    fill-opacity: .75;
+  }
   .nv-y path {
     stroke: none;
   }
@@ -559,12 +524,6 @@ text.nv-pie-hole-label {
   .nv-y.nv-axis text.nv-targetQuotaValue {
     font-weight: bold;
   }
-  .nv-multibar .nv-groups rect {
-    stroke-opacity: 1;
-    stroke-width: 2px;
-    stroke: @white;
-    fill-opacity: 0.85;
-  }
   .nv-line .nv-groups path {
     stroke-width: 4px;
   }
@@ -575,6 +534,7 @@ text.nv-pie-hole-label {
     stroke: @white;
   }
 }
+
 
 /**********
 * Treemap
@@ -632,42 +592,6 @@ text.nv-pie-hole-label {
   }
 }
 
-//Opportunities Treemap
-.stage_closedwon {
-  fill: #2ca02c;
-}
-.stage_prospecting {
-  fill: darken(#ff7f0e, 35%);
-}
-.stage_closedlost {
-  fill: #d62728;
-}
-.stage_qualification {
-  fill: #ff7f0e;
-}
-.stage_thisopp {
-  fill: #1f77b4;
-}
-.stage_negotiationreview {
-  fill: darken(#2ca02c, 40%);
-}
-.stage_perceptionanalysis {
-  fill: darken(#2ca02c, 30%);
-}
-.stage_proposalpricequote {
-  fill: darken(#2ca02c, 45%);
-}
-.stage_valueproposition {
-  fill: #ff7f0e;
-}
-.stage_iddecisionmakers{
-  fill: #9467bd;
-}
-
-.stage_needsanalysis{
-  fill: darken(@yellow, 10%);
-}
-
 
 /**********
 * Dendrogram
@@ -694,6 +618,7 @@ text.nv-pie-hole-label {
     stroke-width: 1.5px;
   }
 }
+
 
 /**********
 * Globe
@@ -725,6 +650,7 @@ text.nv-pie-hole-label {
     stroke: @white;
   }
 }*/
+
 
 /***********
 * Colors
