@@ -262,5 +262,41 @@
         this.$el.off();
         this.model.off('change');
         this._super('_dispose');
+    },
+
+    /**
+     * Need own decoration for field error.
+     * @override
+     */
+    handleValidationError: function (errors) {
+        this.clearErrorDecoration();
+        var err = errors.errors || errors;
+        _.each(err, function(value) {
+            var inpName = value.type + '_' + this.name,
+                $inp = this.$('input[data-index=' + value.ind + '][name=' + inpName + ']');
+            $inp.wrap('<div class="input-append input error ' + this.name + '">');
+            errorMessages = [value.message];
+            $tooltip = $(this.exclamationMarkTemplate(errorMessages));
+            $inp.after($tooltip);
+            this.createErrorTooltips($tooltip);
+        }, this);
+    },
+
+    /**
+     * Need own method to clear error decoration.
+     * @override
+     */
+    clearErrorDecoration: function () {
+        this.destroyAllErrorTooltips();
+        this.$('.add-on.error-tooltip').remove();
+        _.each(this.$('input[type=text]'), function(inp) {
+            var $inp = this.$(inp);
+            if ($inp.parent().hasClass('input-append') && $inp.parent().hasClass('error')) {
+                $inp.unwrap();
+            }
+        });
+        if (this.view && this.view.trigger) {
+            this.view.trigger('field:error', this, false);
+        }
     }
 })
