@@ -85,6 +85,18 @@
     },
 
     /**
+     * List of array nofifications bending transfer to collection.
+     * @property {Array}
+     * @protected
+     */
+    _buffer: [],
+
+    /**
+     * @property {boolean} is connected to socket server.
+     */
+    isSocketConnected: false,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -92,6 +104,9 @@
 
         this._super('initialize', [options]);
         app.events.on('app:sync:complete', this._bootstrap, this);
+        app.events.on('app:socket:connect', this.socketOn, this);
+        app.events.on('app:socket:disconnect', this.socketOff, this);
+
         app.events.on('app:logout', this.stopPulling, this);
     },
 
@@ -244,7 +259,6 @@
             return this;
         }
         this._remindersIntervalStamp = new Date().getTime();
-
         this.pull();
         this._intervalId = window.setTimeout(_.bind(this._pullAction, this), this.delay);
         this._remindersIntervalId = window.setTimeout(_.bind(this.checkReminders, this), this.reminderDelay);
@@ -257,7 +271,7 @@
      * @protected
      */
     _pullAction: function() {
-        if (!app.api.isAuthenticated()) {
+        if (!app.api.isAuthenticated() || this.isSocketConnected) {
             this.stopPulling();
             return;
         }
@@ -277,10 +291,6 @@
             window.clearTimeout(this._intervalId);
             this._intervalId = null;
         }
-        if (!_.isNull(this._remindersIntervalId)) {
-            window.clearTimeout(this._remindersIntervalId);
-            this._remindersIntervalId = null;
-        }
         return this;
     },
 
@@ -295,17 +305,10 @@
             return this;
         }
 
-        var self = this,
-            bulkApiId = _.uniqueId();
+        var bulkApiId = _.uniqueId();
 
         this.collection.fetch({
-            success: function() {
-                if (self.disposed || self.isOpen()) {
-                    return this;
-                }
-
-                self.render();
-            },
+            success: _.bind(this.reRender, this),
             apiOptions: {
                 bulk: bulkApiId
             }
@@ -463,8 +466,70 @@
      */
     _dispose: function() {
         this.stopPulling();
+        app.socket.off('notification', this.catchNotification, this);
+        app.events.off('app:socket:connect', this.socketOn, this);
+        app.events.off('app:socket:disconnect', this.socketOff, this);
+
+        // stop reminders
+        if (!_.isNull(this._remindersIntervalId)) {
+            window.clearTimeout(this._remindersIntervalId);
+            this._remindersIntervalId = null;
+        }
         this._alertsCollections = {};
 
         this._super('_dispose');
-    }
+    },
+
+    /**
+     * Flush soket buffer to collection
+     */
+    transferToCollection: function () {
+        if (this.collection) {
+            while (this._buffer.length) {
+                var arr = this._buffer.shift();
+                this.collection.add(app.data.createBean(arr._module, arr));
+            }
+            this.reRender();
+        }
+    },
+
+    /**
+     * Catch notification forn socet server and show it.
+     *
+     * @param data notification forn socet server.
+     */
+    catchNotification: function (data) {
+        this._buffer.push(data);
+        this.transferToCollection();
+    },
+
+    /**
+     * On socket and Off pulling
+     */
+    socketOn: function () {
+        this.isSocketConnected = true;
+        app.socket.on('notification', this.catchNotification, this);
+        this.stopPulling();
+    },
+
+    /**
+     * Off socket and on pulling
+     */
+    socketOff: function () {
+        this.isSocketConnected = false;
+        app.socket.off('notification', this.catchNotification, this);
+        this.startPulling();
+    },
+
+    /**
+     * Render component if it not opened and not disposed.
+     * @returns {SUGAR.App.view.views.NotificationsView} Instance of this view.
+     */
+    reRender: function () {
+        if (this.disposed || this.isOpen()) {
+            return this;
+        }
+
+        return this.render();
+    },
 })

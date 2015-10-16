@@ -32,7 +32,7 @@ class MessageBuilder implements MessageBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function build(EventInterface $event, \User $user, array $messageSignature)
+    public function build(EventInterface $event, $filter, \User $user, array $messageSignature)
     {
         $message = array();
         $module = $event->getModuleName();

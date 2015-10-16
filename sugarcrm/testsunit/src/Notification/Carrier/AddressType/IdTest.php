@@ -33,7 +33,7 @@ class IdTest extends \PHPUnit_Framework_TestCase
 
         $addressTypeId = new Id();
 
-        $expects = array('id');
+        $expects = array('id' => $user->id);
 
         $this->assertEquals($expects, $addressTypeId->getOptions($user));
     }

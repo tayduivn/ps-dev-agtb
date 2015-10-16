@@ -179,6 +179,12 @@
             <exclude>./pmse/modules/pmse_Project/clients/base/api/wrappers/PMSECrmDataWrapperTest.php</exclude>
             <exclude>./pmse/modules/pmse_Project/clients/base/api/wrappers/PMSEProjectWrapperTest.php</exclude>
         </testsuite>
+        <testsuite name="Notification">
+            <directory>./src/Notification</directory>
+            <directory>./modules/NotificationCenter</directory>
+            <directory>./modules/CarrierSocket</directory>
+            <directory>./modules/CarrierEmail</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <blacklist>

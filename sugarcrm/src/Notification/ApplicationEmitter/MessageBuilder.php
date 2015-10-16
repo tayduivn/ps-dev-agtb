@@ -31,7 +31,7 @@ class MessageBuilder implements MessageBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function build(EventInterface $event, \User $user, array $messageSignature)
+    public function build(EventInterface $event, $filter, \User $user, array $messageSignature)
     {
         // ToDo: write actual logic.
         return array();

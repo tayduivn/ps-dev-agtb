@@ -13,11 +13,13 @@
 use Sugarcrm\Sugarcrm\Notification\Carrier\TransportInterface;
 use Sugarcrm\Sugarcrm\Socket\Client as SocketServerClient;
 
+require_once('include/api/SugarApi.php');
+
 /**
  * Class CarrierSocketTransport.
  * Is used to push messages to SocketServer.
  */
-class CarrierSocketTransport implements TransportInterface
+class CarrierSocketTransport extends SugarApi implements TransportInterface
 {
     /**
      * Send message to a specified user.
@@ -39,17 +41,42 @@ class CarrierSocketTransport implements TransportInterface
                 $notification->assigned_user_id = $recipient;
                 $notification->save();
 
+                //Need to setup $GLOBALS['current_user'] for the user who receives message notification
+                //for having access to notification as an owner.
+                $currentUserOld = array_key_exists('current_user', $GLOBALS)?$GLOBALS['current_user']:null;
+                $currentUser = BeanFactory::getBean('Users', $recipient);
+                $GLOBALS['current_user'] = $currentUser;
+
+                $optionsFields = array('fields' => array('name', 'description', 'assigned_user_id'));
+                $notificationArr = $this->formatBean(
+                    $this->getServiceBase($currentUser),
+                    $optionsFields,
+                    $notification
+                );
+
                 // Send it to SocketServer.
                 $isSent = $this->getSocketServerClient()
                     ->recipient(SocketServerClient::RECIPIENT_USER_ID, $recipient)
-                    ->send(
-                        $message['title'],
-                        array('module' => $notification->module_name, 'record' => $notification->id)
-                    );
+                    ->send('notification', $notificationArr);
+                $GLOBALS['current_user'] = $currentUserOld;
             }
         }
 
         return $isSent;
+    }
+
+    /**
+     * Return Service Base instance.
+     *
+     * @param User $apiUser
+     * @return ServiceBase
+     */
+    protected function getServiceBase(User $apiUser)
+    {
+        $restServiceClass = SugarAutoLoader::customClass('RestService');
+        $service = new $restServiceClass();
+        $service->user = $apiUser;
+        return $service;
     }
 
     /**

@@ -110,7 +110,7 @@ class EventHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
         $manager->expects($this->exactly(2))->method('NotificationCarrierBulkMessage')
             ->with(
                 $this->equalTo($event),
-                $this->logicalOr($this->equalTo($carrierName1), $this->equalTo($carrierName2)),
+                $this->logicalOr($this->equalTo('carrierName1'), $this->equalTo('carrierName2')),
                 $this->logicalOr(
                     $this->equalTo(
                         array(

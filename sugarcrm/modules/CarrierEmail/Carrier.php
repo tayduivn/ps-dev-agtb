@@ -13,6 +13,8 @@
 use Sugarcrm\Sugarcrm\Notification\Carrier\CarrierInterface;
 use Sugarcrm\Sugarcrm\Notification\Carrier\AddressType\Email as AddressTypeEmail;
 
+require_once 'modules/CarrierEmail/Transport.php';
+
 class CarrierEmailCarrier implements CarrierInterface
 {
     /**

@@ -125,7 +125,8 @@ class Client
     protected function retrieveToken()
     {
         $admin = $this->getAdministrationBean();
-        $config = $admin->getConfigForModule('auth');
+        // Should not use cache in memory because this code run in daemon.
+        $config = $admin->getConfigForModule('auth', 'base', true);
         if (empty($config['socket_token'])) {
             $token = create_guid();
             $admin->saveSetting('auth', 'socket_token', $token, 'base');

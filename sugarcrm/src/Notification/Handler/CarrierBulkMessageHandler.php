@@ -14,7 +14,7 @@ namespace Sugarcrm\Sugarcrm\Notification\Handler;
 
 use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager;
-use Sugarcrm\Sugarcrm\Notification\Carrier\CarrierInterface;
+use Sugarcrm\Sugarcrm\Notification\CarrierRegistry;
 use Sugarcrm\Sugarcrm\Notification\EventInterface;
 use Sugarcrm\Sugarcrm\Notification\MessageBuilder\MessageBuilderRegistry;
 
@@ -33,9 +33,9 @@ class CarrierBulkMessageHandler implements RunnableInterface
     protected $event;
 
     /**
-     * @var CarrierInterface
+     * @var string
      */
-    protected $carrier;
+    protected $carrierName;
 
     /**
      * @var array
@@ -44,13 +44,13 @@ class CarrierBulkMessageHandler implements RunnableInterface
 
     /**
      * @param EventInterface $event event for processing.
-     * @param CarrierInterface $carrier
+     * @param string $carrierName carrier name
      * @param array $usersOptions list of user options
      */
-    public function __construct(EventInterface $event, CarrierInterface $carrier, array $usersOptions)
+    public function __construct(EventInterface $event, $carrierName, array $usersOptions)
     {
         $this->event = $event;
-        $this->carrier = $carrier;
+        $this->carrierName =  $carrierName;
         $this->usersOptions = $usersOptions;
     }
 
@@ -63,14 +63,14 @@ class CarrierBulkMessageHandler implements RunnableInterface
     public function run()
     {
         $messageBuilder = $this->getMessageBuilderRegistry()->getBuilder($this->event);
-        $messageSignature = $this->carrier->getMessageSignature();
+        $messageSignature = $this->getCarrierRegistry()->getCarrier($this->carrierName)->getMessageSignature();
         $jobQueueManager = $this->getJobQueueManager();
 
         foreach ($this->usersOptions as $userId => $userData) {
             $user = \BeanFactory::getBean('Users', $userId);
             $message = $messageBuilder->build($this->event, $userData['filter'], $user, $messageSignature);
             foreach ($userData['options'] as $transportVal) {
-                $jobQueueManager->NotificationSend($this->carrier, $transportVal, $message);
+                $jobQueueManager->NotificationSend($this->carrierName, $transportVal, $message);
             }
         }
         return \SchedulersJob::JOB_SUCCESS;
@@ -92,5 +92,15 @@ class CarrierBulkMessageHandler implements RunnableInterface
     protected function getMessageBuilderRegistry()
     {
         return MessageBuilderRegistry::getInstance();
+    }
+
+    /**
+     * Return Carrier Registry.
+     *
+     * @return CarrierRegistry
+     */
+    protected function getCarrierRegistry()
+    {
+        return CarrierRegistry::getInstance();
     }
 }

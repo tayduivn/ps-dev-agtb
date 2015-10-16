@@ -271,6 +271,26 @@ describe('Sugar Socket Server Client', function() {
                     sinon.assert.calledOn(app.socket._message, app.socket);
                 }
             });
+            ['connect', 'disconnect'].forEach(function (event) {
+                it('is bound event ' + event, function () {
+                    app.socket._bind();
+                    sinon.assert.called(IOStub.on);
+                    sinon.assert.calledWith(IOStub.on, event);
+
+                    for (var i = 0; i < IOStub.on.callCount; i++) {
+                        var call = IOStub.on.getCall(i);
+                        if (call.args[0] != event) {
+                            continue;
+                        }
+                        call.args[1]();
+                    }
+
+
+                    sinon.assert.called(app.events.trigger);
+                    sinon.assert.calledOn(app.events.trigger, app.events);
+                    sinon.assert.calledWith(app.events.trigger, 'app:socket:' + event);
+                })
+            });
         });
         describe('_message', function() {
             var triggerStub, channel1Stub, channel2Stub, factoryChannelStub, message;
