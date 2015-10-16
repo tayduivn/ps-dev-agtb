@@ -244,6 +244,8 @@ eoq2;
         $this->context['sendlog'] = !empty($this->context['sendlog']);
         if ($this->context['zip_as_dir']) {
             $this->context['extract_dir'] = $this->context['zip'];
+            $this->context['health_check_path'] =
+                realpath($this->context['extract_dir']) . self::DEFAULT_HEALTHCHECK_PATH;
         }
     }
 
