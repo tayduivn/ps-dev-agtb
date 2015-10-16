@@ -727,15 +727,7 @@ AdamGateway.prototype.createConfigureAction = function () {
         text: translate('LBL_PMSE_CONTEXT_MENU_SETTINGS'),
         cssStyle: 'adam-menu-icon-configure',
         handler: function () {
-            root.canvas.showModal();
-            App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoClose: false});
-            root.canvas.project.save({
-                success: function () {
-                    root.canvas.hideModal();
-                    w.show();
-                    w.html.style.display = 'none';
-                }
-            });
+            root.saveProject(root, App, w);
         },
         disabled: disabled
     });

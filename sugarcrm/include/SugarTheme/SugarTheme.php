@@ -268,7 +268,7 @@ class SugarTheme
         }
         if ( !inDeveloperMode() ) {
             if ( sugar_is_file($cachedfile = sugar_cached($this->getFilePath().'/pathCache.php'))) {
-                $caches = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(file_get_contents($cachedfile));
+                $caches = unserialize(file_get_contents($cachedfile));
                 if ( isset($caches['jsCache']) )
                     $this->_jsCache       = $caches['jsCache'];
                 if ( isset($caches['cssCache']) )
@@ -280,7 +280,7 @@ class SugarTheme
             }
             $cachedfile = sugar_cached($this->getFilePath().'/spriteCache.php');
 			if(!empty($GLOBALS['sugar_config']['use_sprites']) && sugar_is_file($cachedfile)) {
-				$this->_spriteCache = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(sugar_file_get_contents($cachedfile));
+				$this->_spriteCache = unserialize(sugar_file_get_contents($cachedfile));
 			}
         }
         $this->_initialCacheSize = array(
