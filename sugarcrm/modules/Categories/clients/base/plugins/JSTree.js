@@ -519,29 +519,34 @@
              */
             _buildRootsSubmenu: function(settings) {
                 var self = this,
-                    subMenu = {};
+                    subMenu = {},
+                    selectedId = this.jsTree && this.jsTree.jstree('get_selected').data('id');
+
                 _.each(this.collection.models, function(entry, index) {
-                    subMenu['movetosubmenu' + index] = {
-                        id: entry.id,
-                        separator_before: false,
-                        icon: 'jstree-icon',
-                        separator_after: false,
-                        label: entry.escape('name'),
-                        action: function(obj) {
-                            self.moveNode(obj.data('id'), entry.id, 'last', function(data, response) {
-                                self.jsTree.jstree(
-                                    'move_node',
-                                    self.jsTree.jstree('get_instance')
-                                        .get_container_ul()
-                                        .find('li[data-id=' + obj.data('id') + ']'),
-                                    self.jsTree.jstree('get_instance')
-                                        .get_container_ul()
-                                        .find('li[data-id=' + entry.id + ']')
-                                );
-                            });
-                        }
-                    };
+                    if (selectedId !== entry.id) {
+                        subMenu['movetosubmenu' + index] = {
+                            id: entry.id,
+                            separator_before: false,
+                            icon: 'jstree-icon',
+                            separator_after: false,
+                            label: entry.escape('name'),
+                            action: function(obj) {
+                                self.moveNode(obj.data('id'), entry.id, 'last', function(data, response) {
+                                    self.jsTree.jstree(
+                                        'move_node',
+                                        self.jsTree.jstree('get_instance')
+                                            .get_container_ul()
+                                            .find('li[data-id=' + obj.data('id') + ']'),
+                                        self.jsTree.jstree('get_instance')
+                                            .get_container_ul()
+                                            .find('li[data-id=' + entry.id + ']')
+                                    );
+                                });
+                            }
+                        };
+                    }
                 });
+
                 return subMenu;
             },
 
