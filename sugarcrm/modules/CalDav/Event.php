@@ -990,6 +990,17 @@ class CalDavEvent extends SugarBean
             $result = $this->participantsHelper->prepareForSugar($this, $component->ATTENDEE);
         }
 
+        $org = $this->getOrganizer();
+
+        if (isset($org['Users'])) {
+            if (isset($result['Users'])) {
+                $result['Users'] += $org['Users'];
+            } else {
+                $result['Users'] = $org['Users'];
+            }
+
+        }
+
         return $result;
     }
 

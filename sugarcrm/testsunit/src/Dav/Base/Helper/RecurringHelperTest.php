@@ -25,6 +25,24 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  */
 class RecurringHelperTest extends \PHPUnit_Framework_TestCase
 {
+
+    private $defaultTimeZone;
+    /**
+     * set up timezone
+     */
+    public function setUp()
+    {
+        $this->defaultTimeZone = ini_get('date.timezone');
+    }
+
+    /**
+     * remove timezone
+     */
+    public function tearDown()
+    {
+        ini_set('date.timezone', $this->defaultTimeZone);
+    }
+
     protected function getEventTemplateObject($template, $isText = false)
     {
         $calendarData = file_get_contents(dirname(__FILE__) . '/EventsTemplates/' . $template . '.ics');
@@ -150,7 +168,7 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
                 'result' => array(
                     'type' => 'Daily',
                     'interval' => 1,
-                    'until' => '2015-10-04 08:00:00'
+                    'until' => '2015-10-04 18:00:00',
                 ),
                 'children' => array(
                     '2015-10-01 11:00:00' => array(
@@ -167,6 +185,31 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
                 'deleted' => array(),
+                'timeZone' => 'America/Los_Angeles',
+            ),
+            array(
+                'vEvent' => $this->getEventTemplateObject('recurring-until-date'),
+                'result' => array(
+                    'type' => 'Daily',
+                    'interval' => 1,
+                    'until' => '2015-10-04 09:00:00',
+                ),
+                'children' => array(
+                    '2015-10-01 11:00:00' => array(
+                        'title' => 'Test001'
+                    ),
+                    '2015-10-02 11:00:00' => array(
+                        'title' => 'Test001'
+                    ),
+                    '2015-10-03 11:00:00' => array(
+                        'title' => 'Test001'
+                    ),
+                    '2015-10-04 11:00:00' => array(
+                        'title' => 'Test001'
+                    ),
+                ),
+                'deleted' => array(),
+                'timeZone' => 'Europe/Madrid',
             ),
             array(
                 'vEvent' => $this->getEventTemplateObject('recurring-weekly'),
@@ -513,8 +556,13 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
         EventComponent $event,
         $expectedResult,
         array $expectedChildren,
-        array $expectedDeleted
+        array $expectedDeleted,
+        $timeZone = null
     ) {
+        if (!empty($timeZone)) {
+            ini_set('date.timezone', $timeZone);
+        }
+
         $recurringMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\RecurringHelper')
                               ->disableOriginalConstructor()
                               ->setMethods(array('getEventBean'))

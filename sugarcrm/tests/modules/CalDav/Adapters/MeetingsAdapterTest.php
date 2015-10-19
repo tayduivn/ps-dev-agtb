@@ -31,7 +31,8 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-        SugarTestHelper::setUp('current_user');
+        $user = array('email1' => 'test0@test.com', 'new_with_id' => true, 'id' => create_guid());
+        SugarTestHelper::setUp('current_user', array(true, false, $user));
         SugarTestHelper::setUp('app_list_strings');
         $GLOBALS['current_user']->setPreference('timezone', 'Europe/Moscow');
         $this->createAnonumouseUsers();
@@ -42,6 +43,7 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
+        SugarTestHelper::tearDown();
         SugarTestCalDavUtilities::deleteAllCreatedCalendars();
         SugarTestCalDavUtilities::deleteCreatedEvents();
         SugarTestMeetingUtilities::removeAllCreatedMeetingsWithRecuringById($this->meetingIds);
@@ -202,7 +204,6 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         ));
 
         $davParticipants = $calDavBean->getParticipants();
-        $meetingBean->users_arr = array_keys($davParticipants['Users']);
         $this->saveBean($meetingBean);
         $calDavBean->setBean($meetingBean);
         $this->saveBean($calDavBean);
@@ -222,6 +223,11 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($meetingBean->fetched_row, $calDavBean->getBean()->fetched_row);
 
         $participantsIDs = array_keys($davParticipants['Users']);
+        $meetingBean->load_relationship('users');
+        $meetingBean->users_arr = $meetingBean->users->get();
+
+        sort($participantsIDs);
+        sort($meetingBean->users_arr);
         $this->assertEquals($participantsIDs, $meetingBean->users_arr);
     }
 

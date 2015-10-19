@@ -171,7 +171,8 @@ class CalendarEvents
         // Load the user relationship so the child events that are created will
         // have the users added via bean->save (which has special auto-accept
         // logic)
-        if ($parentBean->load_relationship('users')) {
+        if (empty($parentBean->users_arr) && $parentBean->load_relationship('users')) {
+            $parentBean->users->load();
             $parentBean->users_arr = $parentBean->users->get();
         }
         return CalendarUtils::saveRecurring($parentBean, $repeatDateTimeArray);
