@@ -52,9 +52,10 @@
      * Augment to remove the fields that should not be displayed.
      */
     _createCatalog: function(fields) {
-        var forecastConfig = app.metadata.getModule('Forecasts', 'config');
+        var forecastConfig = app.metadata.getModule('Forecasts', 'config'),
+            isSetup = (forecastConfig && forecastConfig.is_setup);
 
-        if (forecastConfig.is_setup) {
+        if (isSetup) {
             fields = _.filter(fields, function(fieldMeta) {
                 if (fieldMeta.name.indexOf('_case') !== -1) {
                     var field = 'show_worksheet_' + fieldMeta.name.replace('_case', '');
