@@ -1203,19 +1203,20 @@ class SugarBean
      * 	@param string $key name of the object.
      * 	@param object $db database handle.
      *  @param string $tablename table, meta data is being populated for.
-     *  @param array dictionary vardef dictionary for the object.     *
-     *  @param string module_dir name of subdirectory where module is installed.
+     *  @param array $_ Unused argument
+     *  @param string $module_dir name of subdirectory where module is installed.
      *  @param boolean $iscustom Optional,set to true if module is installed in a custom directory. Default value is false.
      *  @static
      *
      *  Internal function, do not override.
      */
-    function createRelationshipMeta($key,$db,$tablename,$dictionary,$module_dir,$iscustom=false)
+    function createRelationshipMeta($key,$db,$tablename,$_,$module_dir,$iscustom=false)
     {
         global $beanList;
+        global $dictionary;
 
         //load the module dictionary if not supplied.
-        if (empty($dictionary) && !empty($module_dir)) {
+        if (!empty($module_dir)) {
             if ($iscustom) {
                 $filename='custom/modules/' . $module_dir . '/Ext/Vardefs/vardefs.ext.php';
             } else {
@@ -1231,17 +1232,13 @@ class SugarBean
 
             if (file_exists($filename)) {
                 include $filename;
-                // cn: bug 7679 - dictionary entries defined as $GLOBALS['name'] not found
-                if (empty($dictionary) || !empty($GLOBALS['dictionary'][$key])) {
-                    $dictionary = $GLOBALS['dictionary'];
-                }
             } else {
                 $GLOBALS['log']->debug("createRelationshipMeta: no metadata file found" . $filename);
                 return;
             }
         }
 
-        if (!is_array($dictionary) or !array_key_exists($key, $dictionary)) {
+        if (!array_key_exists($key, $dictionary)) {
             $GLOBALS['log']->fatal("createRelationshipMeta: Metadata for table ".$tablename. " does not exist");
             display_notice("meta data absent for table ".$tablename." keyed to $key ");
         } else {
