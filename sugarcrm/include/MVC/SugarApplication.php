@@ -332,6 +332,8 @@ EOF;
     function loadUser()
     {
         global $authController, $sugar_config;
+        $sess = SessionStorage::getInstance();
+
         // Double check the server's unique key is in the session.  Make sure this is not an attempt to hijack a session
         $user_unique_key = (isset($_SESSION['unique_key'])) ? $_SESSION['unique_key'] : '';
         $server_unique_key = (isset($sugar_config['unique_key'])) ? $sugar_config['unique_key'] : '';
@@ -344,7 +346,10 @@ EOF;
         if (($user_unique_key != $server_unique_key) && (!in_array($this->controller->action, $allowed_actions))
             && (!isset($_SESSION['login_error']))
         ) {
-            session_destroy();
+
+            if ($sess->getId()) {
+                $sess->destroy();
+            };
 
             if (!empty($this->controller->action)) {
                 if (strtolower($this->controller->action) == 'delete') {
@@ -372,7 +377,9 @@ EOF;
 			if(!$authController->sessionAuthenticate()){
 				 // if the object we get back is null for some reason, this will break - like user prefs are corrupted
 				$GLOBALS['log']->fatal('User retrieval for ID: ('.$_SESSION['authenticated_user_id'].') does not exist in database or retrieval failed catastrophically.  Calling session_destroy() and sending user to Login page.');
-				session_destroy();
+                if ($sess->getId()) {
+                    $sess->destroy();
+                };
 				SugarApplication::redirect($this->getUnauthenticatedHomeUrl());
 				die();
             } else {
@@ -868,7 +875,10 @@ EOF;
             $monitor->closeSession();
             $trackerManager->saveMonitor($monitor);
         }
-        session_destroy();
+        $sess = SessionStorage::getInstance();
+        if ($sess->getId()) {
+            $sess->destroy();
+        };
     }
 
     /**

@@ -968,6 +968,7 @@ class FilterApi extends SugarApi
             " WHERE t.module_name = '".$db->quote($q->from->module_name)."' ".
             " AND t.user_id = '".$db->quote($GLOBALS['current_user']->id)."' ".
             " AND t.date_modified >= ".$db->convert("'".$min_date."'", 'datetime')." ".
+            " AND t.deleted = 0 ".
             " GROUP BY t.item_id ".
             " ) tracker ON tracker.item_id = ".$q->from->getTableName().".id ",
             array('alias' => 'tracker')

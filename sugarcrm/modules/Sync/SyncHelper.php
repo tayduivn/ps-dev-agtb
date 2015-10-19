@@ -25,7 +25,7 @@ if(!function_exists("get_encoded")){
 			return  base64_encode(serialize($object));
 	}
 	function get_decoded($object){
-			return  \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($object));
+			return  unserialize(base64_decode($object));
 
 	}
 }

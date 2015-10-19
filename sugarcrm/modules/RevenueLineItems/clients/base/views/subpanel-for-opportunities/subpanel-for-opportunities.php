@@ -140,6 +140,7 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
                 'events' => array(
                     'click' => 'list:massdelete:fire',
                 ),
+                'related_fields' => array('sales_stage')
             ),
         ),
     ),

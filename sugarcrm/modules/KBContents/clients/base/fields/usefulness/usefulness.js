@@ -77,7 +77,8 @@
                 this.model.set({
                     'usefulness_user_vote': data.usefulness_user_vote,
                     'useful': data.useful,
-                    'notuseful': data.notuseful
+                    'notuseful': data.notuseful,
+                    'date_modified': data.date_modified
                 });
                 if (!this.disposed) {
                     this.render();
