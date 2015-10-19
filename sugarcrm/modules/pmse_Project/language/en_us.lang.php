@@ -346,6 +346,7 @@ $mod_strings = array (
     'LBL_PMSE_EMAILPICKER_USER_IS_ASIGNEE' => 'is assigned to the record',
 
     'LBL_PMSE_UPDATERFIELD_VARIABLES_LIST_TITLE' => '%MODULE% fields',
+    'LBL_PMSE_UPDATERFIELD_ADD_TEAM' => 'Add team...',
 
     //ERRORS ELEMENTS MESSAGE
     'LBL_PMSE_MESSAGE_ERROR_START_EVENT_OUTGOING' => 'Start Event must have an outgoing sequence flow',
