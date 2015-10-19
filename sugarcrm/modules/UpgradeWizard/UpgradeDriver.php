@@ -1218,6 +1218,26 @@ abstract class UpgradeDriver
                $sugar_version, $sugar_flavor, $sugar_build, $sugar_db_version, $sugar_timestamp, $db, $locale,
                $installing, $bwcModules, $app_list_strings, $modules_exempt_from_availability_check;
         $installing = true;
+
+        // CRYS-741 On windows $_SERVER['PHP_SELF'] is 'C:\i.....'; in console, not url like for web request.
+        // Because of that it's not valid for security check for SAFED_GET mask
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' && file_exists('include/utils.php')) {
+            list($from_version, $from_flavor) = $this->loadFromVersion();
+            if (version_compare($from_version, '7.2.0', '<')) {
+                $utils_fix = file_get_contents('include/utils.php');
+                if (preg_match('/(clean_special_arguments)(.+)(if\(isset\(\$_SERVER\[\'PHP_SELF\'\]\)\))/is', $utils_fix, $match_array)
+                    && isset($match_array[3]) && $match_array[3] == 'if(isset($_SERVER[\'PHP_SELF\']))'
+                ) {
+                    $utils_fix = preg_replace(
+                        '/(clean_special_arguments)(.+)(if\(isset\(\$_SERVER\[\'PHP_SELF\'\]\)\))/is',
+                        '$1$2if (isset($_SERVER[\'PHP_SELF\']) && \'cli\' !== PHP_SAPI)',
+                        $utils_fix
+                    );
+                    file_put_contents('include/utils.php', $utils_fix);
+                }
+            }
+        }
+
         include('include/entryPoint.php');
         $installing = false;
         $GLOBALS['current_language'] = $this->config['default_language'];
