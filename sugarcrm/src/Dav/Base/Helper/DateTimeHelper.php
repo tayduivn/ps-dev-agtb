@@ -26,7 +26,9 @@ class DateTimeHelper
     public function durationToSeconds($duration)
     {
         $durationInterval = VObject\DateTimeParser::parseDuration($duration, false);
-        $currentDateTime = new \DateTime();
+        // we need to calculate seconds of interval, right way to get difference of timestamp but we should
+        // use static date and timezone without daylight for proper calculation
+        $currentDateTime = new \DateTime('2015-06-01 00:00:00', new \DateTimeZone('UTC'));
         $durationDateTime = clone $currentDateTime;
         $durationDateTime->add($durationInterval);
 
@@ -48,7 +50,9 @@ class DateTimeHelper
             'date' => array('Y' => 'y', 'M' => 'm', 'D' => 'd'),
             'time' => array('H' => 'h', 'M' => 'i', 'S' => 's'),
         );
-        $currentDate = new \DateTime();
+        // we need to calculate seconds of interval, right way to get difference of timestamp but we should
+        // use static date and timezone without daylight for proper calculation
+        $currentDate = new \DateTime('2015-06-01 00:00:00', new \DateTimeZone('UTC'));
         $durationDate = clone $currentDate;
         $durationDate->modify($seconds . ' seconds');
         $dateInterval = $currentDate->diff($durationDate);
