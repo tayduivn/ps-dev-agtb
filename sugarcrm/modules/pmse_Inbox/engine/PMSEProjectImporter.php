@@ -60,6 +60,16 @@ class PMSEProjectImporter extends PMSEImporter
     protected $targetModule;
 
     /**
+     * @var
+     */
+    protected $warningBR = false;
+
+    /**
+     * @var
+     */
+    protected $warningET = false;
+
+    /**
      * The class constructor
      * @codeCoverageIgnore
      */
@@ -182,7 +192,7 @@ class PMSEProjectImporter extends PMSEImporter
         global $current_user;
         $projectBean = $this->getBean();
         $keysArray = array();
-
+        $result = array('success' => false);
         // This will be needed down the road
         $this->setTargetModule($projectData[$this->module]);
 
@@ -265,7 +275,12 @@ class PMSEProjectImporter extends PMSEImporter
         $this->saveProjectFlowsData($diagramData['flows'], $keysArray);
         $this->saveProjectDynaFormsData($diagramData['flows'], $keysArray);
         $this->processDefaultFlows();
-        return $keysArray['prj_id'];
+
+        $result['success'] = true;
+        $result['id'] = $keysArray['prj_id'];
+        $result['br_warning'] = $this->warningBR;
+        $result['et_warning'] = $this->warningET;
+        return $result;
     }
 
     /**
@@ -336,6 +351,7 @@ class PMSEProjectImporter extends PMSEImporter
                 $element['act_script_type'] == 'BUSINESS_RULE') {
                 //TODO implement automatic import for business rules
                 $definition['act_fields'] = '';
+                $this->warningBR = true;
             }
             foreach ($definition as $key => $value) {
                 if (isset($definitionBean->field_defs[$key])){
@@ -402,6 +418,7 @@ class PMSEProjectImporter extends PMSEImporter
                 $element['evn_behavior'] == 'THROW' ) {
                 //TODO implement automatic import for emails templates
                 $definition['evn_criteria'] = '';
+                $this->warningET = true;
             }
             foreach ($definition as $key => $value) {
                 if (isset($definitionBean->field_defs[$key])){

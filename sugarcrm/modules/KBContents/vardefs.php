@@ -50,6 +50,7 @@ $dictionary['KBContent'] = array(
             'audited' => false,
             'studio' => false,
             'duplicate_on_record_copy' => 'always',
+            'massupdate' => false,
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => false,

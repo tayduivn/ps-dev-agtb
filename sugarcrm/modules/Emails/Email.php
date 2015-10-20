@@ -890,9 +890,19 @@ class Email extends SugarBean {
 			$teamSet = BeanFactory::getBean('TeamSets');
 			$teamIdsArray = (isset($_REQUEST['teamIds']) ?  explode(",", $_REQUEST['teamIds']) : array($current_user->getPrivateTeamID()));
 			$this->team_set_id = $teamSet->addTeams($teamIdsArray);
-			$this->assigned_user_id = $current_user->id;
 
-			$this->date_sent = $timedate->now();
+            if ($archived && !empty($request['assignedUser'])) {
+                $this->assigned_user_id = $request['assignedUser'];
+            } else {
+                $this->assigned_user_id = $current_user->id;
+            }
+
+            if ($archived && !empty($request['dateSent'])) {
+                $this->date_sent = $request['dateSent'];
+            } else {
+                $this->date_sent = $timedate->now();
+            }
+
 			///////////////////////////////////////////////////////////////////
 			////	LINK EMAIL TO SUGARBEANS BASED ON EMAIL ADDY
 

@@ -263,7 +263,7 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
 
     it('should re-run validation when model changes after marking panel complete', function() {
         var createModel = layout.createView.model,
-            runValidationStub = sandbox.stub(layout, 'runCreateValidation');;
+            runValidationStub = sandbox.stub(layout, 'runCreateValidation');
 
         createModel.set({full_name: 'Foo Bar'});
         layout.$(layout.accordionHeading).addClass('enabled');
@@ -274,6 +274,38 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
         expect(runValidationStub.callCount).toEqual(0);
         createModel.set('full_name', 'Foo Bar 2');
         expect(runValidationStub.callCount).toEqual(1);
+    });
+
+    it('should not mark panel complete for valid model when re-running validation after marking panel complete', function() {
+        var createModel = layout.createView.model,
+            markPanelCompleteSpy = sandbox.spy(layout, 'markPanelComplete');
+
+        sandbox.stub(layout, 'runCreateValidation', function(callbacks) {
+            callbacks.valid();
+        });
+
+        createModel.set({full_name: 'Foo Bar'});
+        layout.markPanelComplete(createModel);
+
+        expect(markPanelCompleteSpy.callCount).toEqual(1);
+        createModel.set('full_name', 'Foo Bar 2');
+        expect(markPanelCompleteSpy.callCount).toEqual(1);
+    });
+
+    it('should reset panel complete for invalid model when re-running validation after marking panel complete', function() {
+        var createModel = layout.createView.model,
+            resetPanelSpy = sandbox.spy(layout, 'resetPanel');
+
+        sandbox.stub(layout, 'runCreateValidation', function(callbacks) {
+            callbacks.invalid();
+        });
+
+        createModel.set({full_name: 'Foo Bar'});
+        layout.markPanelComplete(createModel);
+
+        expect(resetPanelSpy.callCount).toEqual(0);
+        createModel.set('full_name', 'Foo Bar 2');
+        expect(resetPanelSpy.callCount).toEqual(1);
     });
 
     it('should not attempt to close panel and open next panel when marking complete and already closed', function() {
@@ -409,11 +441,12 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
         layout.meta.copyData = true;
 
         layout.createView.model = createModel;
+        layout.createView.meta = layout.createView.meta || {};
         layout.createView.meta.useTabsAndPanels = true;
 
         var createViewContextTriggerStub = sinon.stub(layout.createView.model, 'trigger');
 
-        sinon.collection.stub(app.metadata, 'getModule')
+        sandbox.stub(app.metadata, 'getModule')
             .withArgs('Leads', 'fields').returns(leadAttributes)
             .withArgs('Contacts', 'fields').returns(contactAttributes);
 
@@ -449,11 +482,12 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
         layout.meta.copyData = true;
 
         layout.createView.model = createModel;
+        layout.createView.meta = layout.createView.meta || {};
         layout.createView.meta.useTabsAndPanels = true;
 
         var createViewContextTriggerStub = sinon.stub(layout.createView.model, 'trigger');
 
-        sinon.collection.stub(app.metadata, 'getModule')
+        sandbox.stub(app.metadata, 'getModule')
             .withArgs('Leads', 'fields').returns(leadAttributes)
             .withArgs('Contacts', 'fields').returns(contactAttributes);
 

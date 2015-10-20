@@ -692,4 +692,17 @@ class Quote extends SugarBean
 
         return !$this->isClosed();
     }
+
+    /**
+     * @see parent::fetchFromQuery()
+     */
+    public function fetchFromQuery(SugarQuery $query, array $fields = array(), array $options = array())
+    {
+        //add distinct clause if this is a subpanel list query to avoid duplicate rows
+        if (isset($_REQUEST['view']) && (strpos($_REQUEST['view'],'subpanel') !== false)) {
+            $query->distinct = true;
+        }
+        return parent::fetchFromQuery($query, $fields, $options);
+    }
+    
 }
