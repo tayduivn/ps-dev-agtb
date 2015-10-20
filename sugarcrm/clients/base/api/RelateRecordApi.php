@@ -350,7 +350,9 @@ class RelateRecordApi extends SugarApi
         BeanFactory::registerBean($relatedBean);
 
         // updateBean may remove the relationship. see PAT-337 for details
-        $id = $this->updateBean($relatedBean, $api, $args);
+        $this->updateBean($relatedBean, $api, $args);
+        $relatedBean->retrieve($args['remote_id']);
+
         $relatedArray = array();
 
         // Make sure there is a related object
