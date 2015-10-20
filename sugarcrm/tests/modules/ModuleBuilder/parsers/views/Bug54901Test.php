@@ -11,14 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
+require_once 'modules/ModuleBuilder/parsers/views/SidecarPortalListLayoutMetaDataParser.php';
 require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php';
 
 /**
  * Accessor class, in the event the parsers public properties go protected, which
  * they are slated to do.
  */
-class Bug54901TestListParser extends SidecarListLayoutMetaDataParser {
+class Bug54901TestListParser extends SidecarPortalListLayoutMetaDataParser {
     public function changeFieldType($field, $type) {
         $this->_fielddefs[$field]['type'] = $type;
     }
