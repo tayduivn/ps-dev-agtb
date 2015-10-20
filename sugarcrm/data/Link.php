@@ -220,6 +220,23 @@ class Link {
 		return false;
 	}
 
+    /**
+     * Return "many" if multiple records can be related through this link
+     * or "one" if at most, one record can be related.
+     * @return string
+     */
+    public function getType()
+    {
+        if ($this->_relationship->relationship_type == 'one-to-one' ||
+            ($this->_relationship->relationship_type == 'many-to-one' && $this->_get_bean_position()) ||
+            ($this->_relationship->relationship_type == 'one-to-many' && !$this->_get_bean_position())) {
+            return REL_TYPE_ONE;
+        }
+        else {
+            return REL_TYPE_MANY;
+        }
+    }
+
 	function getJoin($params, $return_array =false)
 	{
 		$join_type= ' INNER JOIN ';
