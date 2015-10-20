@@ -48,18 +48,14 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         SugarTestHelper::setUp('current_user', array(true, true));
-        $root = new CategoryMock();
-        $root->name = 'SugarCategoryRoot' . mt_rand();
-        self::$beanIds[] = $root->saveAsRoot();
+        $root = SugarTestCategoryUtilities::createRootBean();
         self::$root = $root;
     }
 
     public function tearDown()
     {
-        $GLOBALS['db']->query('DELETE FROM categories WHERE id IN (\'' . implode("', '", self::$beanIds) . '\')');
-        self::$beanIds = array();
         self::$root = null;
-
+        SugarTestCategoryUtilities::removeAllCreatedBeans();
         SugarTestHelper::tearDown();
     }
 
@@ -110,7 +106,7 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $bean = new CategoryMock();
         $bean->name = 'SugarCategoryRoot' . mt_rand();
-        self::$beanIds[] = $bean->saveAsRoot();
+        SugarTestCategoryUtilities::addCreatedBean($bean->saveAsRoot());
 
         $this->assertTrue($bean->lft == 1);
         $this->assertTrue($bean->rgt == 2);
@@ -125,7 +121,8 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $bean = new CategoryMock();
         $bean->name = 'SugarCategoryRoot' . mt_rand();
-        self::$beanIds[] = $bean->saveAsRoot();
+        SugarTestCategoryUtilities::addCreatedBean($bean->saveAsRoot());
+
         $this->assertTrue($bean->isRoot());
     }
 
@@ -136,7 +133,8 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $bean = new CategoryMock();
         $bean->name = 'SugarCategoryRoot' . mt_rand();
-        self::$beanIds[] = $bean->saveAsRoot();
+        SugarTestCategoryUtilities::addCreatedBean($bean->saveAsRoot());
+
         $bean->shiftLeftRightMock(2, 2);
         $bean = BeanFactory::retrieveBean('Categories', $bean->id, array(
             'use_cache' => false,
@@ -153,7 +151,8 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     public function testAddNode()
     {
         $subnode = new CategoryMock();
-        self::$root->addNodeMock($subnode, 2, 1);
+        $subnode->name = 'SugarCategory' . mt_rand();
+        SugarTestCategoryUtilities::addCreatedBean(self::$root->addNodeMock($subnode, 2, 1));
 
         $this->assertTrue($subnode->lvl == 1);
         $this->assertTrue($subnode->lft == 2);
@@ -190,6 +189,8 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         self::$root->deleted = 1;
         $subnode = new CategoryMock();
+        $subnode->name = 'SugarCategory' . mt_rand();
+
         $this->setExpectedException('Exception');
         self::$root->addNodeMock($subnode, 2, 1);
     }
@@ -200,8 +201,9 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetTree()
     {
         $subnode = new CategoryMock();
-        self::$root->addNodeMock($subnode, 2, 1);
-        self::$beanIds[] = $subnode->save();
+        $subnode->name = 'SugarCategory' . mt_rand();
+        SugarTestCategoryUtilities::addCreatedBean(self::$root->addNodeMock($subnode, 2, 1));
+
         $tree = self::$root->getTree();
 
         $this->assertInternalType('array', $tree);
@@ -229,12 +231,12 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertInternalType('null', self::$root->getNextSibling());
 
         $subnode = new CategoryMock();
-        self::$root->addNodeMock($subnode, 2, 1);
-        self::$beanIds[] = $subnode->save();
+        $subnode->name = 'SugarCategory' . mt_rand();
+        SugarTestCategoryUtilities::addCreatedBean(self::$root->addNodeMock($subnode, 2, 1));
 
         $subnode2 = new CategoryMock();
-        self::$root->addNodeMock($subnode2, 2, 1);
-        self::$beanIds[] = $subnode2->save();
+        $subnode2->name = 'SugarCategory' . mt_rand();
+        SugarTestCategoryUtilities::addCreatedBean(self::$root->addNodeMock($subnode2, 2, 1));
 
         $subnode = BeanFactory::retrieveBean('Categories', $subnode->id, array(
             'use_cache' => false,
@@ -258,12 +260,12 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertInternalType('null', self::$root->getPrevSibling());
 
         $subnode = new CategoryMock();
-        self::$root->addNodeMock($subnode, 2, 1);
-        self::$beanIds[] = $subnode->save();
+        $subnode->name = 'SugarCategory' . mt_rand();
+        SugarTestCategoryUtilities::addCreatedBean(self::$root->addNodeMock($subnode, 2, 1));
 
         $subnode2 = new CategoryMock();
-        self::$root->addNodeMock($subnode2, 2, 1);
-        self::$beanIds[] = $subnode2->save();
+        $subnode2->name = 'SugarCategory' . mt_rand();
+        SugarTestCategoryUtilities::addCreatedBean(self::$root->addNodeMock($subnode2, 2, 1));
 
         $subnode = BeanFactory::retrieveBean('Categories', $subnode->id, array(
             'use_cache' => false,
@@ -294,8 +296,9 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     public function testIsDescendantOf()
     {
         $subnode = new CategoryMock();
-        self::$root->addNodeMock($subnode, 2, 1);
-        self::$beanIds[] = $subnode->save();
+        $subnode->name = 'SugarCategory' . mt_rand();
+        SugarTestCategoryUtilities::addCreatedBean(self::$root->addNodeMock($subnode, 2, 1));
+
         $root = BeanFactory::retrieveBean('Categories', self::$root->id, array(
             'use_cache' => false,
         ));
@@ -310,12 +313,14 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     public function testMoveNode()
     {
         $subnode = new CategoryMock();
-        self::$root->addNodeMock($subnode, 2, 1);
-        self::$beanIds[] = $subnode->save();
+        $subnode->name = 'SugarCategory' . mt_rand();
+        SugarTestCategoryUtilities::addCreatedBean(self::$root->addNodeMock($subnode, 2, 1));
+
         $subnode->moveNodeMock(self::$root, 2, 1);
         $root = BeanFactory::retrieveBean('Categories', self::$root->id, array(
             'use_cache' => false,
         ));
+
         $this->assertEquals($root->id, $subnode->root);
         $this->assertEquals($root->lft + 1, $subnode->lft);
         $this->assertEquals($root->rgt - 1, $subnode->rgt);

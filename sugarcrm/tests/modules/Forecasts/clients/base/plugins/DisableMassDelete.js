@@ -9,10 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 describe('Forecasts.Base.Plugins.DisableMassDelete', function() {
-
-    var app, view, layout, moduleName = 'Opportunities', context, options, model;
+    var app,
+        view,
+        layout,
+        moduleName = 'Opportunities',
+        context,
+        options;
 
     beforeEach(function() {
         app = SUGAR.App;
@@ -42,12 +45,22 @@ describe('Forecasts.Base.Plugins.DisableMassDelete', function() {
     });
 
     afterEach(function() {
+        sinon.collection.restore();
         delete app.plugins.plugins['field']['DisableMassDelete'];
         view = null;
         app = null;
         context = null;
         options = null;
         layout = null;
+    });
+
+    describe('when mass_collection does not exist', function() {
+        it('should return and not call warn delete', function() {
+            view.context.set('mass_collection', undefined);
+            sinon.collection.spy(app.metadata, 'getModule');
+            view._warnDelete();
+            expect(app.metadata.getModule).not.toHaveBeenCalled();
+        });
     });
 
     describe('when nothing is closed', function() {

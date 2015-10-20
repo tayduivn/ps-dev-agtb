@@ -109,9 +109,13 @@ class DynamicField {
     * @return unknown
     */
     function buildCache($module = false, $saveCache=true) {
-        //We can't build the cache while installing as the required database tables may not exist.
-        if (!empty($GLOBALS['installing']) && $GLOBALS['installing'] == true|| empty($GLOBALS['db']))
+        global $db;
+
+        // this method may be called before database connection established and `fields_meta_data` table created
+        if (!$db || !$db->tableExists('fields_meta_data')) {
             return false;
+        }
+
         if($module == '../data')return false;
 
         static $results = array ( ) ;

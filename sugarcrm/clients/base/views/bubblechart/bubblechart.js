@@ -303,7 +303,15 @@
             duration = mapping[this.settings.get('filter_duration')],
             startMonth = Math.floor(now.getMonth() / 3) * 3,
             startDate = new Date(now.getFullYear(), (duration === 12 ? 0 : startMonth + duration), 1),
-            endDate = new Date(now.getFullYear(), (duration === 12 ? 12 : startDate.getMonth() + 3), 0);
+            addYear = 0,
+            addMonth = duration === 12 ? 12 : 3,
+            endDate;
+
+        // if "Next Quarter" is selected and the current month is Oct/Nov/Dec, add 1 to the year
+        if(duration === 3 && now.getMonth() >= 9) {
+            addYear = 1;
+        }
+        endDate = new Date(now.getFullYear() + addYear, startDate.getMonth() + addMonth, 0);
 
         this.dateRange = {
             'begin': app.date.format(startDate, 'Y-m-d'),

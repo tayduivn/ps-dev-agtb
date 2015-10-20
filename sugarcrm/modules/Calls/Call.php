@@ -74,6 +74,7 @@ class Call extends SugarBean {
 	var $new_schema = true;
 	var $importable = true;
 	var $recurring_source;
+	var $fill_additional_column_fields = true;
 
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = array('assigned_user_name', 'assigned_user_id', 'contact_id', 'user_id', 'contact_name');
@@ -286,7 +287,11 @@ class Call extends SugarBean {
 	function fill_in_additional_detail_fields()
 	{
 		global $locale;
-		parent::fill_in_additional_detail_fields();
+
+		if ($this->fill_additional_column_fields) {
+			parent::fill_in_additional_detail_fields();
+		}
+
 		if (!empty($this->contact_id)) {
 			$query  = "SELECT first_name, last_name FROM contacts ";
 			$query .= "WHERE id='$this->contact_id' AND deleted=0";
@@ -317,7 +322,9 @@ class Call extends SugarBean {
 		if (is_null($this->duration_minutes))
 			$this->duration_minutes = "1";
 
-		$this->fill_in_additional_parent_fields();
+		if ($this->fill_additional_column_fields) {
+			$this->fill_in_additional_parent_fields();
+		}
 
 		global $app_list_strings;
 		if (empty($this->reminder_time)) {
@@ -857,5 +864,13 @@ class Call extends SugarBean {
 		}
 
 		return $mailer;
+	}
+
+	/**
+	 * @param boolean $fill_additional_column_fields
+	 */
+	public function setFillAdditionalColumnFields($fill_additional_column_fields)
+	{
+		$this->fill_additional_column_fields = $fill_additional_column_fields;
 	}
 }
