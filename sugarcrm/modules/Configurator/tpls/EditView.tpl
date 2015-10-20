@@ -97,7 +97,7 @@
         <td width="35%">
             <div class="company_logo_image_container">
                 <img id="company_logo_image" src="{$company_logo}"
-                     alt="{$mod_strings.LBL_LOGO}" onload="init_logo()">
+                     alt="{$mod_strings.LBL_LOGO}" />
             </div>
         </td>
         //BEGIN SUGARCRM flav!=com ONLY
@@ -385,7 +385,7 @@ function init_logo(){
     YAHOO.util.Dom.setX('upload_panel', YAHOO.util.Dom.getX('container_upload'));
     YAHOO.util.Dom.setY('upload_panel', YAHOO.util.Dom.getY('container_upload')-5);
 }
-YAHOO.util.Event.onDOMReady(function(){
+$(function() {
     init_logo();
 });
 function toggleDisplay_2(div_string){

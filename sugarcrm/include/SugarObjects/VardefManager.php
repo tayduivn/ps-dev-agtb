@@ -656,14 +656,10 @@ class VardefManager{
         // some tests do new SugarBean(), we can't do much with it here.
         if(empty($module)) return;
         $guard_name = "$module:$object";
-        if(isset(self::$inReload[$guard_name])) {
-            if (self::$inReload[$guard_name] > 1) {
-                return;
-            }
-            self::$inReload[$guard_name]++;
-        } else {
-            self::$inReload[$guard_name] = 1;
+        if (isset(self::$inReload[$guard_name])) {
+            return;
         }
+        self::$inReload[$guard_name] = true;
         //Do not force reloading from vardefs if we are only updating calc_fields
         if (empty($dictionary[$object]) || empty($params['related_calc_fields_only'])) {
             if ($includeExtension === true) {
@@ -755,13 +751,7 @@ class VardefManager{
             }
             SugarBean::clearLoadedDef($object);
         }
-        if(isset(self::$inReload[$guard_name])) {
-            if(self::$inReload[$guard_name] > 1) {
-                self::$inReload[$guard_name]--;
-            } else {
-                unset(self::$inReload[$guard_name]);
-            }
-        }
+        unset(self::$inReload[$guard_name]);
     }
 
     /**

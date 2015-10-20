@@ -46,7 +46,7 @@ if(isset($_REQUEST['file'])) {
   'timestamp' => 1181945134,
   'imapFetchOverview' => '
   */
-	$cache = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($cacheFile['imapFetchOverview']);
+	$cache = unserialize($cacheFile['imapFetchOverview']);
 
 	echo "<div>";
 	echo "timestamp: ".date('r',$cacheFile['timestamp']);

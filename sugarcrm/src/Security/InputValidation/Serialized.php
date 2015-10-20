@@ -22,7 +22,7 @@ class Serialized
      */
     public static function unserialize($value)
     {
-        preg_match('/o:\d+:/i', $value, $matches);
+        preg_match('/[oc]:\d+:/i', $value, $matches);
 
         if (count($matches)) {
             \LoggerManager::getLogger()->warning('Objects unserialization is not allowed');
