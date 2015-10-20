@@ -576,6 +576,26 @@ class PMSEProjectImporter extends PMSEImporter
                                 $flowBean->$key = $this->savedElements[$element['flo_element_dest_type']][$value];
                             }
                             break;
+                        case 'flo_condition':
+                            if (!empty($value)) {
+                                $currencyFields = json_decode($value);
+                                if (is_array($currencyFields) && !empty($currencyFields)) {
+                                    foreach ($currencyFields as $_key => $_value) {
+                                        switch ($_value->expType) {
+                                            case 'MODULE':
+                                                if (!empty($_value->expSubtype) &&
+                                                    (strtolower($_value->expSubtype) == 'currency') &&
+                                                    (empty($_value->expCurrency))
+                                                ) {
+                                                    PMSEEngineUtils::fixCurrencyType($currencyFields[$_key]);
+                                                    $flowBean->$key = json_encode($currencyFields);
+                                                }
+                                                break;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
                         default:
                             $flowBean->$key = $value;
                     }
