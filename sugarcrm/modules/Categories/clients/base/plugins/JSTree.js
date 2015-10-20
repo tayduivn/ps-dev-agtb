@@ -252,14 +252,14 @@
                 if ($.vakata.dnd.is_drag && $.vakata.dnd.user_data.jstree) {
                     if (!_.isUndefined(data.rslt.o) && !_.isUndefined(data.rslt.r)) {
                         this.moveNode(data.rslt.o.data('id'), data.rslt.r.data('id'), data.rslt.p, function(obj, response) {
-                            var levelDelta = parseInt(obj.level) - parseInt($(data.rslt.o).data('level'));
+                            var levelDelta = parseInt(obj.lvl) - parseInt($(data.rslt.o).data('level'));
                             //set new level for dragged node
-                            $(data.rslt.o).attr('data-level', obj.level);
-                            $(data.rslt.o).data('level', obj.level);
+                            $(data.rslt.o).attr('data-level', obj.lvl);
+                            $(data.rslt.o).data('level', obj.lvl);
                             //recalculate the level for all nodes within selected
                             _.each($(data.rslt.o).find('li'), function(item){
                                 var currentLevel = parseInt($(item).attr('data-level'));
-                                $(item).attr('data-level',  currentLevel + levelDelta);
+                                $(item).attr('data-level', currentLevel + levelDelta);
                                 $(item).data('level', currentLevel + levelDelta);
                             });
                         });
