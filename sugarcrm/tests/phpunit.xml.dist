@@ -183,7 +183,7 @@
         <testsuite name="Notification">
             <directory>./src/Notification</directory>
             <directory>./modules/NotificationCenter</directory>
-            <directory>./modules/CarrierSocket</directory>
+            <directory>./modules/CarrierSugar</directory>
             <directory>./modules/CarrierEmail</directory>
         </testsuite>
     </testsuites>

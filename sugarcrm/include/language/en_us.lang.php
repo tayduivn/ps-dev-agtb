@@ -114,7 +114,7 @@ $app_list_strings = array (
     'NotificationCenter' => 'Notification Center',
     'NotificationCenterSubscriptions' => 'Notification Center Subscriptions',
     'CarrierEmail' => 'Email Carrier',
-    'CarrierSocket' => 'Socket Carrier',
+    'CarrierSugar' => 'Sugar Carrier',
   ),
 
     'moduleIconList' =>
@@ -232,7 +232,7 @@ $app_list_strings = array (
     'NotificationCenter' => 'Notification Center',
     'NotificationCenterSubscriptions' => 'Notification Center Subscription',
     'CarrierEmail' => 'Email Carrier',
-    'CarrierSocket' => 'Socket Carrier',
+    'CarrierSugar' => 'Sugar Carrier',
   ),
 
 /*

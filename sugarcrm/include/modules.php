@@ -716,8 +716,8 @@ $beanList['EmbeddedFiles'] = 'EmbeddedFile';
 $beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';
 $modInvisList[] = 'EmbeddedFiles';
 
-$moduleList[] = 'CarrierSocket';
-$modInvisList[] = 'CarrierSocket';
+$moduleList[] = 'CarrierSugar';
+$modInvisList[] = 'CarrierSugar';
 $moduleList[] = 'CarrierEmail';
 $modInvisList[] = 'CarrierEmail';
 
