@@ -472,7 +472,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				if (saveBtn) {
 					//After the save call completes, load the next page
 					ModuleBuilder.state.saving = true;
-					eval(saveBtn.getAttributeNode('onclick').value);
+                    saveBtn.click();
 				}
 				ModuleBuilder.state.popup_window.hide();
 
