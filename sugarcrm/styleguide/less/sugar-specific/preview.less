@@ -50,7 +50,7 @@
 
     .field-label {
       text-align: right;
-      padding: 4px 6px 4px 0;
+      padding: 5px 6px 5px 0;
       font-size: 11px;
       color: @gray;
       order: 1;
@@ -73,6 +73,9 @@
     &.edit {
       .fieldset-field + .fieldset-field {
         margin-top: -1px;
+      }
+      .fieldset-field .record-label {
+        display: none;
       }
       label {
         color: @gray;
@@ -140,6 +143,38 @@
     &[data-name="date_entered_by"] {
       margin-bottom: 0;
     }
+    &[data-type="parent"] {
+      > .edit {
+        padding: 5px 7px;
+        display: block;
+      }
+    }
+    &[data-type="html"],
+    &[data-type="bool"],
+    &[data-type="text"],
+    &[data-type="int"] {
+      > .nodata {
+        padding: 5px 7px;
+        display: block;
+      }
+    }
+    &[data-type="status"] {
+      .detail {
+        padding: 3px 7px 0px;
+      }
+    }
+    &[data-type="attachments"] {
+      .detail {
+        padding: 0;
+      }
+      .select2-container {
+        float: none;
+        .select2-choices {
+          background-color: transparent;
+          border: none;
+        }
+      }
+    }
   }
 
   .dashlet {
@@ -156,5 +191,9 @@
         }
       }
     }
+  }
+
+  .more, .less {
+    padding-right: 0;
   }
 }

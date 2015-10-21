@@ -74,28 +74,10 @@ $viewdefs['Forecasts']['base']['layout']['records'] = array(
                     array(
                         'layout' =>
                         array(
-                            'components' => array(
+                            'components' =>
+                            array(
                                 array(
-                                    'layout' => array(
-                                        // FIXME MAR-2834 should fix inheriting components
-                                        'components' => array(
-                                            array(
-                                                'view' => 'preview-header',
-                                            ),
-                                            array(
-                                                'view' => 'preview',
-                                            ),
-                                            array(
-                                                'layout' => 'preview-activitystream',
-                                                'context' => array(
-                                                    'module' => 'Activities',
-                                                    'forceNew' => true,
-                                                ),
-                                            ),
-                                        ),
-                                        'type' => 'preview',
-                                        'editable' => true,
-                                    ),
+                                    'layout' => 'preview',
                                 ),
                             ),
                             'type' => 'simple',
