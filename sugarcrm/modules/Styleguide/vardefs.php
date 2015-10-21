@@ -86,7 +86,7 @@ $dictionary['Styleguide'] = array(
         ),
         'picture' => array (
             'name' => 'picture',
-            'vname' => 'LBL_PICTURE',
+            'vname' => 'LBL_PICTURE_FILE',
             'type' => 'varchar',
             'len' => 255,
             'comment' => 'Image to be used as an avatar',
