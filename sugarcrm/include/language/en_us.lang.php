@@ -9306,6 +9306,7 @@ Sincerely, SugarCRM',
     'LBL_VIEW_PDF_BUTTON_TITLE' => 'Print as PDF',
 
     'LBL_KBDOCUMENTS' => 'Knowledge Base',
+    'ERR_EMPTY_NODE_NAME' => 'You cannot add a category without title',
 
 
     'LNK_ABOUT' => 'About',
