@@ -38,7 +38,7 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', array(true, false));
         
         // Back up the build number from config to check changes in metadata in
         // refresh tests
@@ -137,8 +137,10 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
             $key .= "_base";
         }
 
+        $date = $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$key'");
+        $this->assertNotEmpty($date);
         $dateModified = TimeDate::getInstance()->fromDb(
-            $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$key'"), 'datetime')
+            $db->fromConvert($date, 'datetime')
         );
 
         //Wait to ensure timestamp inscreases
@@ -148,8 +150,10 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
         $mm->rebuildCache();
 
         // Test the file first
+        $date = $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$key'");
+        $this->assertNotEmpty($date);
         $newDateModified = TimeDate::getInstance()->fromDb(
-            $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$key'"), 'datetime')
+            $db->fromConvert($date, 'datetime')
         );
 
         // Test the time on the new file

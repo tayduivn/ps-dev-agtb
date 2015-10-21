@@ -2651,7 +2651,7 @@ class MetaDataManager
     {
         global $moduleList;
 
-        $fullModuleList = $this->getFullModuleList();
+        $fullModuleList = $this->getFullModuleList(true);
 
         $modulesInfo = array();
 
@@ -2677,11 +2677,16 @@ class MetaDataManager
      *
      * @return array An array of module names
      */
-    public function getFullModuleList()
+    public function getFullModuleList($filtered = false)
     {
         global $moduleList, $modInvisList;
 
         $fullModuleList = array_merge($moduleList, $modInvisList);
+
+        if ($filtered) {
+            $fullModuleList = array_keys($this->getFilteredModuleList(array_flip($fullModuleList)));
+        }
+
         return $fullModuleList;
     }
 
@@ -3832,15 +3837,19 @@ class MetaDataManager
     protected static function getAllMetadataContexts($public)
     {
         $contexts = array();
+        $adminUser = BeanFactory::newBean("Users");
+        $adminUser->is_admin = '1';
 // BEGIN SUGARCRM flav=ent ONLY
         if (!$public) {
             $roleSets = self::getAllRoleSets();
             foreach ($roleSets as $roleSet) {
                 $contexts[] = new MetaDataContextRoleSet($roleSet);
+                $contexts[] = new MetaDataContextUser($adminUser, $roleSet);
             }
         }
 // END SUGARCRM flav=ent ONLY
         $contexts[] = new MetaDataContextDefault();
+        $contexts[] = new MetaDataContextUser($adminUser);
 
         return $contexts;
     }
