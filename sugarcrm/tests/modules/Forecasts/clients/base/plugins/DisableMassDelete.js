@@ -74,9 +74,14 @@ describe('Forecasts.Base.Plugins.DisableMassDelete', function() {
             view.getMassUpdateModel.restore();
         });
 
-        it('should return null', function() {
+        it('_warnDelete message should return null', function() {
             var message = view._warnDelete();
             expect(message).toEqual(null);
+        });
+
+        it('checkMassUpdateClosedModels should return false', function() {
+            var hasClosedModels = view.checkMassUpdateClosedModels();
+            expect(hasClosedModels).toBeFalsy();
         });
     });
 
@@ -105,6 +110,11 @@ describe('Forecasts.Base.Plugins.DisableMassDelete', function() {
         it('should return WARNING_NO_DELETE_SELECTED_STATUS', function() {
             var message = view._warnDelete();
             expect(message).toEqual('WARNING_NO_DELETE_SELECTED_STATUS');
+        });
+
+        it('checkMassUpdateClosedModels should return true', function() {
+            var hasClosedModels = view.checkMassUpdateClosedModels();
+            expect(hasClosedModels).toBeTruthy();
         });
     });
 
