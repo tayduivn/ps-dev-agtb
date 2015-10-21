@@ -841,4 +841,5 @@ $mod_strings = array(
 // BEGIN SUGARCRM flav=ent ONLY
 'LBL_HEADER_COPY_FROM_LAYOUT' => 'Copy from layout',
 // END SUGARCRM flav=ent ONLY
+'LBL_DETAIL' => 'User Profile',
 );
