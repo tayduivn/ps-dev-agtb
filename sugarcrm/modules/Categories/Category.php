@@ -400,7 +400,6 @@ class Category extends SugarBean implements NestedBeanInterface
      */
     protected function shiftLeftRight($key, $delta)
     {
-        $db = DBManagerFactory::getInstance();
         foreach (array('lft', 'rgt') AS $attribute) {
             $this->update(array(
                 $attribute => $attribute . sprintf('%+d', $delta),
