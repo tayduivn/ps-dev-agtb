@@ -701,6 +701,18 @@ class MetaDataManager
     }
 
     /**
+     * This method collects all dependency data for a module (except view specific dependencies)
+     *
+     * @param string $moduleName The name of the sugar module to collect info about.
+     *
+     * @return Array A hash of all of the dependency data.
+     */
+    public function getModuleDependencies($moduleName)
+    {
+        return $this->getModuleClientData('dependency', $moduleName);
+    }
+
+    /**
      * This method collects all the collection controllers for a module
      *
      * @param string $moduleName The name of the sugar module to collect info about.
@@ -766,6 +778,11 @@ class MetaDataManager
         $data['menu'] = $this->getModuleMenu($moduleName);
         $data['config'] = $this->getModuleConfig($moduleName);
         $data['filters'] = $this->getModuleFilters($moduleName);
+        $deps = $this->getModuleDependencies($moduleName);
+        if (!empty($deps) && !empty($deps['dependencies'])) {
+            $data['dependencies'] = $deps['dependencies'];
+        }
+
 
         // Indicate whether Module Has duplicate checking enabled --- Rules must exist and Enabled flag must be set
         $data['dupCheckEnabled'] = isset($vardefs['duplicate_check']) && isset($vardefs['duplicate_check']['enabled']) && ($vardefs['duplicate_check']['enabled']===true);
