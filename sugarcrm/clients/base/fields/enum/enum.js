@@ -254,7 +254,7 @@
         // is obtained by _.keys() operation on an object. Even if the object keys were numeric originally,
         // optionsKeys will be an array of strings. Hence we need to cast currentValue to a string
         // for comparison sake.
-        if (typeof currentValue !== 'undefined') {
+        if ((typeof currentValue !== 'undefined') && (currentValue !== null)) {
             currentValue = currentValue.toString();
         }
 
