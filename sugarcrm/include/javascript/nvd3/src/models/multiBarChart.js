@@ -180,25 +180,6 @@ nv.models.multiBarChart = function() {
         container.call(chart);
       };
 
-      // set title display option
-      showTitle = showTitle && properties.title;
-
-      var controlsData = [
-        { key: 'Grouped', disabled: state.stacked },
-        { key: 'Stacked', disabled: !state.stacked }
-      ];
-
-      //make sure untrimmed values array exists
-      if (hideEmptyGroups) {
-        data
-          .map(function(d) {
-            if (!d._values) {
-              d._values = d.values;
-            }
-            return d;
-          });
-      }
-
       // add series index to each data point for reference
       // and disable data series if total is zero
       data
@@ -210,11 +191,24 @@ nv.models.multiBarChart = function() {
           if (!d.total) {
             d.disabled = true;
           }
+          //make sure untrimmed values array exists
+          if (hideEmptyGroups && !d._values) {
+            d._values = d.values;
+          }
+          d.values
+            .map(function(m, j) {
+              m.series = d.series;
+              if (d.color) {
+                m.color = d.color;
+              }
+              m.active = typeof d.active !== 'undefined' ? d.active : ''; // do not eval d.active because it can be false
+            });
         });
 
       // update groupTotal amounts based on enabled data series
       groupTotals = properties.values
         .map(function(d, i) {
+          d.h = 0;
           d.t = d3.sum(
             // only sum enabled series
             data
@@ -227,6 +221,7 @@ nv.models.multiBarChart = function() {
                     return multibar.x()(v, k) === d.group;
                   })
                   .map(function(v, k) {
+                    d.h += Math.abs(multibar.y()(v, k));
                     return multibar.y()(v, k);
                   });
               })
@@ -239,11 +234,13 @@ nv.models.multiBarChart = function() {
       // build a trimmed array for active group only labels
       groupLabels = properties.labels
         .filter(function(d, i) {
-          return hideEmptyGroups ? groupTotals[i].t !== 0 : true;
+          return hideEmptyGroups ? groupTotals[i].h !== 0 : true;
         })
         .map(function(d) {
-          return d.l;
+          return [].concat(d.l)[0];
         });
+
+      groupCount = groupLabels.length;
 
       dataBars = data
         .filter(function(d, i) {
@@ -259,11 +256,12 @@ nv.models.multiBarChart = function() {
             //groups that have a sum of zero
             d.values = d._values
               .filter(function(d, i) {
-                return groupTotals[i].t !== 0;
+                return groupTotals[i].h !== 0;
               })
               .map(function(m, j) {
                 return {
                   'series': d.series,
+                  'color': d.color,
                   'x': (j + 1),
                   'y': m.y,
                   'y0': m.y0,
@@ -273,6 +271,8 @@ nv.models.multiBarChart = function() {
             return d;
           });
       }
+
+      seriesCount = dataBars.length;
 
       //------------------------------------------------------------
       // Display No Data message if there's nothing to show.
@@ -291,8 +291,13 @@ nv.models.multiBarChart = function() {
       state.disabled = data.map(function(d) { return !!d.disabled; });
       state.stacked = multibar.stacked();
 
-      groupCount = groupLabels.length;
-      seriesCount = dataBars.length;
+      // set title display option
+      showTitle = showTitle && properties.title;
+
+      var controlsData = [
+        { key: 'Grouped', disabled: state.stacked },
+        { key: 'Stacked', disabled: !state.stacked }
+      ];
 
       //------------------------------------------------------------
       // Setup Scales and Axes
@@ -337,7 +342,7 @@ nv.models.multiBarChart = function() {
         // Scroll variables
         // for stacked, baseDimension is width of bar plus 1/4 of bar for gap
         // for grouped, baseDimension is width of bar plus width of one bar for gap
-        var baseDimension = multibar.stacked() ? vertical ? 60 : 30 : 20,
+        var baseDimension = multibar.stacked() ? vertical ? 72 : 32 : 32,
             boundsWidth = state.stacked ? baseDimension : baseDimension * seriesCount + baseDimension,
             gap = baseDimension * (state.stacked ? 0.25 : 1),
             minDimension = groupCount * boundsWidth + gap;
@@ -452,10 +457,10 @@ nv.models.multiBarChart = function() {
 
         if (showControls) {
           var xpos = direction === 'rtl' ? availableWidth - controls.width() : 0,
-              ypos = showTitle ? titleBBox.height : - legend.margin().top;
+              ypos = showTitle ? titleBBox.height : - controls.margin().top;
           controlsWrap
             .attr('transform', 'translate(' + xpos + ',' + ypos + ')');
-          controlsHeight = controls.height();
+          controlsHeight = controls.height() - (showTitle ? 0 : controls.margin().top);
         }
 
         if (showLegend) {
@@ -471,7 +476,7 @@ nv.models.multiBarChart = function() {
           }
           legendWrap
             .attr('transform', 'translate(' + xpos + ',' + ypos + ')');
-          legendHeight = legendTop ? 12 : legend.height();
+          legendHeight = legendTop ? 12 : legend.height() - (showTitle ? 0 : legend.margin().top);
         }
 
         // Recalc inner margins based on legend and control height
@@ -531,9 +536,16 @@ nv.models.multiBarChart = function() {
           .call(yAxis);
         // reset inner dimensions
         yAxisMargin = yAxis.margin();
+        // if label value outside bar, multibar will handle scaling dimensions
+        // if (multibar.showValues() === 'top' || multibar.showValues() === 'total') {
+        //   if (vertical) {
+        //     yAxisMargin.top = 0;
+        //   } else {
+        //     yAxisMargin.right = 0;
+        //   }
+        // }
         setInnerMargins();
         setInnerDimensions();
-
         // X-Axis
         xAxis
           .orient(vertical ? 'bottom' : 'left')
@@ -579,7 +591,7 @@ nv.models.multiBarChart = function() {
         innerMargin.top += headerHeight;
 
         trans = (vertical || xAxis.orient() === 'left' ? 0 : innerWidth) + ',';
-        trans += (vertical && xAxis.orient() === 'bottom' ? innerHeight : 0);
+        trans += (vertical && xAxis.orient() === 'bottom' ? innerHeight + 2 : -2);
         xAxisWrap
           .attr('transform', 'translate(' + trans + ')');
 
