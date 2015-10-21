@@ -24,7 +24,7 @@
         if (dSubpanels.components) {
             _.each(dSubpanels.components, function(sub) {
                 if (sub.layout) {
-                    sub.layout = 'subpanel-readonly';
+                    sub['override_paneltop_view'] = 'panel-top-readonly';
                 }
             }, this);
         }

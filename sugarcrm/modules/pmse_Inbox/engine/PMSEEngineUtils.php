@@ -96,6 +96,14 @@ class PMSEEngineUtils
     );
 
     /**
+     * PA related blacklisted links by module
+     * @var array
+     */
+    public static $relatedBlacklistedLinksByModule = array(
+        'Accounts'=>array('revenuelineitems')
+    );
+
+    /**
      * PA special fields
      * @var array
      */
@@ -1244,5 +1252,50 @@ class PMSEEngineUtils
         }
 
         return $element['act_fields'];
+    }
+
+    /**
+     * This method add information about PA used to discriminate beans when are
+     * launched hooks
+     * @param SugarBean $bean
+     * @return bool|String
+     */
+    public static function saveAssociatedBean(SugarBean $bean)
+    {
+        $bean->isPASaveRequest = true;
+        return $bean->save();
+    }
+
+    /**
+     * Method that fixes the Currency type. Starting 7.7 we changed the way we compare currency fields (ex. Likely)
+     * Now this evaluation takes into account currency values. In previous versions such as 7.6.0.0 we did this
+     * only using integer values. So at import time all previous currency values in 7.6.0.0 need to be fixed
+     * for currency type
+     * @param object $currencyObj
+     */
+    public static function fixCurrencyType($currencyObj)
+    {
+        global $sugar_config;
+        $defaultCurrencyLabel = '';
+        // set to default currency
+        $currencyObj->expCurrency = '-99';
+        if (isset($sugar_config['default_currency_symbol']) &&
+            isset($sugar_config['default_currency_iso4217'])
+        ) {
+            $defaultCurrencyLabel = $sugar_config['default_currency_symbol'] .
+                " (" . $sugar_config['default_currency_iso4217'] . ")";
+        }
+        if (!empty($currencyObj->expLabel)) {
+            // Labels in pre 7.7 versions were of the type
+            // Likely is less than "500"
+            // We need to remove "500" and replace with something like $ (USD) %VALUE%
+            // So the final label would be : Likely is less than $ (USD) %VALUE%
+            $truncatedLabel = rtrim(preg_replace('/\"|(\d+)/', '', $currencyObj->expLabel));
+            $currencyObj->expLabel = $truncatedLabel . ' ' . $defaultCurrencyLabel . ' %VALUE%';
+        }
+
+        if (!empty($currencyObj->expValue) && (is_string($currencyObj->expValue))) {
+            $currencyObj->expValue = (float) $currencyObj->expValue;
+        }
     }
 }

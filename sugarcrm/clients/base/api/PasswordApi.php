@@ -28,6 +28,7 @@ class PasswordApi extends SugarApi
                 'shortHelp' => 'This method sends email requests to reset passwords',
                 'longHelp' => 'include/api/help/password_request_get_help.html',
                 'noLoginRequired' => true,
+                'ignoreSystemStatusError' => true,
             ),
         );
     }
