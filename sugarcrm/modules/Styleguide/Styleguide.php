@@ -109,6 +109,7 @@ class Styleguide extends Person
     function save($check_notify = FALSE)
     {
         $this->assigned_user_id = $GLOBALS['current_user']->id;
+        $this->name = $this->full_name; // this field must be generated using NEW data
         return parent::save($check_notify);
     }
 }
