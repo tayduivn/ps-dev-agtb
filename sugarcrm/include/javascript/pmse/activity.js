@@ -1917,11 +1917,11 @@ AdamActivity.prototype.createAssignUsersAction = function () {
 
     hiddenFn = function () {
         if (combo_method.value === 'static') {
-            combo_users.enable();
-            combo_teams.setReadOnly(true);
+            combo_users.enable().setRequired(true);
+            combo_teams.disable();
         } else {
-            combo_users.disable().setValue("");
-            combo_teams.setReadOnly(false);
+            combo_users.disable().setValue("")
+            combo_teams.enable().setRequired(true);;
         }
     };
 
@@ -1952,8 +1952,14 @@ AdamActivity.prototype.createAssignUsersAction = function () {
         submit: false,
         change: hiddenUpdateFn,
         disabled: true,
+        required: true,
         searchURL: 'pmse_Project/CrmData/users?filter={TERM}',
         placeholder: translate('LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT'),
+        searchMore: {
+            module: "Users",
+            fields: ["id", "full_name"],
+            filterOptions: null
+        },
         options: [
             {'text': translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), 'value': 'currentuser'},
             {'text': translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), 'value': 'owner'},
@@ -1967,6 +1973,7 @@ AdamActivity.prototype.createAssignUsersAction = function () {
         name: 'combo_teams',
         submit: false,
         change: hiddenUpdateFn,
+        required: true,
         proxy: new SugarProxy({
             url: 'pmse_Project/CrmData/teams/public',
             uid: 'public',
@@ -2048,11 +2055,11 @@ AdamActivity.prototype.createAssignUsersAction = function () {
                         if (data.act_assignment_method === 'static') {
                             combo_users.setValue(data.act_assign_user);
                             combo_users.enable();
-                            combo_teams.setReadOnly(true);
+                            combo_teams.disable();
                         } else {
                             combo_teams.setValue(data.act_assign_team);
                             combo_users.disable();
-                            combo_teams.setReadOnly(false);
+                            combo_teams.enable();
                         }
                     }
                     f.proxy = null;
