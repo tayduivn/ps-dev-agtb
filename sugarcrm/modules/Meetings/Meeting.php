@@ -561,7 +561,7 @@ class Meeting extends SugarBean {
 		$content = $calDavEvent->prepareForInvite($this);
 
 		if ($content && file_put_contents($path, $content)) {
-            $attachment = new Attachment($path, "meeting.ics", Encoding::Base64, "text/calendar");
+            $attachment = new Attachment($path, "invite.ics", Encoding::Base64, "text/calendar");
             $mailer->addAttachment($attachment);
 		}
 

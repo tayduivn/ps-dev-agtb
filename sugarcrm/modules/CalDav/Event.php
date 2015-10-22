@@ -1294,7 +1294,40 @@ class CalDavEvent extends SugarBean
     }
 
     /**
-     * Create text representation of event for email
+     * Return bean object by name module.
+     * Need to mock result of BeanFactory in UTs.
+     *
+     * @param string $module
+     * @param string|null $id
+     * @return SugarBean|null
+     */
+    protected function getFactoryBean($module, $id = null)
+    {
+        return BeanFactory::getBean($module, $id);
+    }
+
+    /**
+     * Returns email address of caldav handle account.
+     *
+     * @return null|string
+     */
+    protected function getInboundCavDAVEmail()
+    {
+        /** @var InboundEmail $inboundEmail */
+        $inboundEmail = $this->getFactoryBean('InboundEmail')->getOneCalDAVInbound();
+        if ($inboundEmail) {
+            $inboundEmail = unserialize(base64_decode($inboundEmail->stored_options));
+            if (!empty($inboundEmail['from_addr'])) {
+                return $inboundEmail['from_addr'];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Create text representation of event for email.
+     *
      * @param SugarBean $bean
      * @return string
      */
@@ -1314,7 +1347,16 @@ class CalDavEvent extends SugarBean
                 $vCalendarEvent = $this->getVCalendarEvent();
                 $method = $vCalendarEvent->createProperty('METHOD', 'REQUEST');
                 $vCalendarEvent->add($method);
-                $result = $this->getVCalendarEvent()->serialize();
+
+                $fromEmail = $this->getInboundCavDAVEmail();
+                if ($fromEmail) {
+                    $event = $this->getComponent($vCalendarEvent);
+                    $event->ORGANIZER->setValue('mailto:' . $fromEmail);
+                    $event->{'X-SUGAR-ID'} = $bean->id;
+                    $event->{'X-SUGAR-NAME'} = $bean->module_name;
+                }
+
+                $result = $vCalendarEvent->serialize();
             }
         }
         $this->inMailGeneration = false;

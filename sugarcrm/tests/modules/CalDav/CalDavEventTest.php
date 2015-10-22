@@ -2788,4 +2788,98 @@ END:VCALENDAR',
         $syncBean = $event->getSynchronizationObject();
         $this->assertEquals($event->id, $syncBean->event_id);
     }
+
+    public function prepareForInviteProvider()
+    {
+        return array(
+            array(
+                'module' => 'Meeting',
+                'moduleName' => 'Meetings',
+                'changeEmail' => 'change.mail@test.com',
+                'resultEmail' => 'mailto:change.mail@test.com'
+            ),
+            array(
+                'module' => 'Call',
+                'moduleName' => 'Calls',
+                'changeEmail' => null,
+                'resultEmail' => 'mailto:test0@test.com'
+            )
+        );
+    }
+
+    /**
+     * @covers CalDavEvent::prepareForInvite
+     *
+     * @dataProvider prepareForInviteProvider
+     */
+    public function testPrepareForInvite($module, $moduleName, $changeEmail, $resultEmail)
+    {
+        $calDavEventMock = $this->getMockBuilder('\CalDavEvent')
+                                ->setMethods(array(
+                                    'getAdapterFactory',
+                                    'getVCalendarEvent',
+                                    'getComponent',
+                                    'getInboundCavDAVEmail'
+                                ))->getMock();
+
+        $sugarBeanMock = $this->getMockBuilder($module)->getMock();
+        $sugarBeanMock->id = 'module id';
+        $sugarBeanMock->module_name = $moduleName;
+
+        $getAdapterMock = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\\' . $module)
+                               ->setMethods(array('export'))
+                               ->getMock();
+        $getAdapterMock->method('export')->with($sugarBeanMock, $calDavEventMock)->willReturn(true);
+
+        $getAdapterFactoryMock = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory')
+                                      ->setMethods(array('getAdapter'))
+                                      ->getMock();
+        $getAdapterFactoryMock->method('getAdapter')->with($this->equalTo($moduleName))->willReturn($getAdapterMock);
+
+        $calDavEventMock->method('getAdapterFactory')->willReturn($getAdapterFactoryMock);
+
+
+        $vCalendarEventMock = $this->getMockBuilder('\Sabre\VObject\Component\VCalendar')
+                                      ->setMethods(array('createProperty', 'add', 'serialize'))
+                                      ->getMock();
+
+        $methodMock = $this->getMockBuilder('stdClass')->disableOriginalConstructor()->getMock();
+
+        $vCalendarEventMock->method('createProperty')
+                              ->with($this->equalTo('METHOD'), $this->equalTo('REQUEST'))
+                              ->willReturn($methodMock);
+        $vCalendarEventMock->method('add')->with($this->equalTo($methodMock));
+        $vCalendarEventMock->method('serialize')->willReturn($resultEmail);
+
+        $calDavEventMock->method('getVCalendarEvent')->willReturn($vCalendarEventMock);
+        $calDavEventMock->method('getInboundCavDAVEmail')->willReturn($changeEmail);
+
+        $organizerMock = $this->getMockBuilder('Sabre\VObject\Property\ICalendar\CalAddress')
+                              ->disableOriginalConstructor()
+                              ->setMethods(array('setValue'))
+                              ->getMock();
+
+        $eventMock = $this->getMockBuilder('Sabre\VObject\Component\VEvent')
+                                ->disableOriginalConstructor()
+                                ->setMethods(array('__set', '__get'))
+                                ->getMock();
+
+        if ($changeEmail) {
+            $calDavEventMock->expects($this->once())->method('getComponent')->with($this->equalTo($vCalendarEventMock))->willReturn($eventMock);
+
+            $eventMock->expects($this->once())->method('__get')->with($this->equalTo('ORGANIZER'))->willReturn($organizerMock);
+
+            $organizerMock->expects($this->once())->method('setValue')->with($this->equalTo('mailto:' . $changeEmail));
+
+            $eventMock->expects($this->at(1))->method('__set')->with($this->equalTo('X-SUGAR-ID'), $this->equalTo($sugarBeanMock->id));
+            $eventMock->expects($this->at(2))->method('__set')->with($this->equalTo('X-SUGAR-NAME'), $this->equalTo($sugarBeanMock->module_name));
+        } else {
+            $eventMock->expects($this->never())->method('__get');
+            $calDavEventMock->expects($this->never())->method('getComponent');
+            $organizerMock->expects($this->never())->method('setValue');
+            $eventMock->expects($this->never())->method('__set');
+        }
+
+        $calDavEventMock->prepareForInvite($sugarBeanMock);
+    }
 }
