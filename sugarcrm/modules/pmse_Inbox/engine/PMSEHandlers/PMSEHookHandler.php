@@ -12,6 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'include/SugarQuery/SugarQuery.php';
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEPreProcessor.php';
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSERequest.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
@@ -79,65 +80,77 @@ class PMSEHookHandler
     }
 
     /**
-     *
-     * @global type $db
-     * @param type $bean
-     * @param type $event
-     * @param type $arguments
-     * @param type $startEvents
-     * @param type $isNewRecord
+     * @param $bean
+     * @param bool|true $isNewRecord
+     * @return bool
      */
     public function runStartEventBeforeSave($bean, $event, $arguments, $startEvents, $isNewRecord = true)
     {
-        $this->logger->info("Executing Before save for bean module {$bean->module_name}");
-        $record['id'] = $bean->id;
-        $record['module_name'] = $bean->module_name;
-        $record['row'] = $bean->fetched_row;
-
-        if (!$isNewRecord) {
-            $queryDupli = "select * from pmse_bpm_flow where " .
-                "cas_sugar_object_id = '" . $record['id'] . "' " .
-                "and cas_sugar_module = '" . $record['module_name'] . "' " .
-                "and cas_index = 1 ";
-            $resultDupli = $this->dbHandler->Query($queryDupli);
-            $rowDupli = $this->dbHandler->fetchByAssoc($resultDupli);
-
-            if (is_array($rowDupli)) {
-                $cas_id = $rowDupli['cas_id'];
-                $cas_index = $rowDupli['cas_index'];
-                $pro_id = $rowDupli['pro_id'];
-                $this->logger->debug("[$cas_id][$cas_index] update in progress");
-                //$this->bpmLog('DEBUG', );
-                $pro_locked_variables = array();
-                $pro_terminate_variables = array();
-                //iterate over all rows in cas_flow, probably the same record has many open processes
-                while (is_array($rowDupli)) {
-                    $queryProcess = "select * from pmse_bpm_process_definition where id = '$pro_id' and pro_module = '" . $record['module_name'] . "' ";
-                    $resultProcess = $this->dbHandler->Query($queryProcess);
-                    $rowProcess = $this->dbHandler->fetchByAssoc($resultProcess);
-                    if (trim($rowProcess['pro_locked_variables']) != '') {
-                        $array1 = json_decode(trim(htmlspecialchars_decode($rowProcess['pro_locked_variables'])));
-                        $pro_locked_variables = array_merge($pro_locked_variables, $array1);
+        if (isset($bean->isPASaveRequest) && $bean->isPASaveRequest === true) {
+            $this->logger->info('Skipping locked fields checking because it\'s a PA Request');
+        } else if ($isNewRecord) {
+            $this->logger->info('Skipping locked fields checking because it\'s a new record');
+        } else {
+            $this->logger->info("Executing locked fields checking for bean module {$bean->module_name}");
+            $originalValues = $bean->fetched_row;
+            //Check if the record's module have active PD's
+            $q = new SugarQuery();
+            $q->select(array('id', 'pro_locked_variables'));
+            $q->from(BeanFactory::newBean('pmse_BpmProcessDefinition'), array('add_deleted' => true));
+            $q->where()
+                ->equals('pro_module', $bean->module_dir)
+                ->equals('pro_status', 'ACTIVE')
+                ->notEquals('pro_locked_variables', '');
+            $temp = $q->compileSql();
+            $proDefs = $q->execute();
+            if (!empty($proDefs)) {
+                //Check if module have locked fields defined
+                foreach($proDefs as $processDefinition) {
+                    $locked_fields = array();
+                    if (trim($processDefinition['pro_locked_variables']) !== '') {
+                        $locked_fields = json_decode(trim(htmlspecialchars_decode($processDefinition['pro_locked_variables'])));
                     }
-                    $rowDupli = $this->dbHandler->fetchByAssoc($resultDupli);
-                }
-
-                $redirect = 'none'; //possible values are 'none', 'partial', 'halt'
-
-                foreach ($pro_locked_variables as $field) {
-                    if (isset($bean->{$field}) || isset($fetched_row[$field])) {
-                        if (!isset($fetched_row[$field])) {
-                            $fetched_row[$field] = '';
+                    if (!empty($locked_fields)) {
+                        // Verify if the record is involved on a process
+                        $q = new SugarQuery();
+                        $q->select(array('cas_index'));
+                        $q->from(BeanFactory::newBean('pmse_BpmFlow'));
+                        $q->where()
+                            ->equals('cas_sugar_object_id',$bean->id)
+                            ->equals('cas_sugar_module',$bean->module_dir)
+                            ->equals('cas_index',1)
+                            ->equals('pro_id', $processDefinition['id']);
+                        $flows = $q->execute();
+                        if (!empty($flows)) { // Record associated with one or more processes
+                            $blocked_fields = array();
+                            foreach ($locked_fields as $field) {
+                                //Check if field is part of the current module
+                                if (isset($bean->{$field}) && isset($originalValues[$field])) {
+                                    if ($bean->{$field} != $originalValues[$field]) {
+                                        $blocked_fields[] = $field;
+                                        // Returning to original value before to save
+                                        $bean->{$field} = $originalValues[$field];
+                                        $this->logger->debug("Cannot update Field '$field' with value '{$bean->{$field}}' because is locked for a PD");
+                                    }
+                                } else {
+                                    $this->logger->warning("Cannot evaluate field '$field' because is not part of the current module: ". $bean->module_name);
+                                }
+                            }
+                            if (!empty($blocked_fields)) {
+                                // TODO: Here should be implemented a way to push to UI that some fields ($blocked_fields) there was not updated
+                            }
+                        } else {
+                            $this->logger->info('Record skipped because is not related to any process');
                         }
-                        if ($bean->{$field} != $fetched_row[$field]) {
-                            $redirect = 'partial';
-                            $bean->{$field} = $fetched_row[$field];
-                            $this->logger->debug("[$cas_id][$cas_index] locked field '$field' has value '{$bean->{$field}}'");
-                        }
+                    } else {
+                        $this->logger->info('Record skipped because there\'s not locked fields defined for this module');
                     }
                 }
-            } //there is a case for this record
+            } else {
+                $this->logger->info('Record skipped because there\'s not active PD\'s for record\'s module: '. $bean->module);
+            }
         }
+        return true;
     }
 
     /**
@@ -207,5 +220,4 @@ class PMSEHookHandler
         $fr = new PMSEExecuter();
         return $fr->runEngine($flowData, $createThread, $bean, $externalAction);
     }
-
 }

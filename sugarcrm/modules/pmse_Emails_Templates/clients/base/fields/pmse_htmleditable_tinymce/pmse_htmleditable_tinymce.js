@@ -128,6 +128,13 @@
                         self._showVariablesBook();
                     }
                 });
+                editor.addButton('sugarlinkbutton', {
+                    title: app.lang.get('LBL_SUGAR_LINK_SELECTOR', 'pmse_Emails_Templates'),
+                    class: 'mce_selectrecordlink',
+                    onclick: function() {
+                        self._showLinksDrawer();
+                    }
+                });
             };
             config.oninit = function(inst) {
                 self.context.trigger('tinymce:oninit', inst);
@@ -255,6 +262,45 @@
 //            result = newExpression;
 //        }
         return currentValue = this._htmleditor.getContent();
+    },
+
+    /**
+     * Open a drawer with a list of related fields that we want to link to in an email
+     * Create a variable like {::href_link::Accounts::contacts::name::} which is understood
+     * by the backend to replace the variable with the correct Sugar link
+     * 
+     * @private
+     */
+    _showLinksDrawer: function() {
+        var self = this;
+        var baseModule = this.model.get('base_module');
+        app.drawer.open({
+                layout:  "compose-sugarlinks",
+                context: {
+                    module: "pmse_Emails_Templates",
+                    mixed:  true,
+                    skipFetch: true,
+                    baseModule: baseModule
+                }
+            },
+            function(field) {
+                if (_.isUndefined(field)) {
+                    return;
+                }
+                var link = '{::href_link::' + baseModule;
+
+                //Target module doesn't need second part of variable
+                //The second part is for related modules
+                //Example {::href_link::Accounts::name::}} is for the target module Account's record
+                //{{::href_link::Accounts::contacts::name::}} is for the related contacts's record
+                if (baseModule !== field.get('value')) {
+                    link += '::' + field.get('value');
+                }
+                link += '::name::}';
+                self._htmleditor.selection.setContent(link);
+                self.model.set(self.name, self._htmleditor.getContent())
+            }
+        );
     }
 
 })

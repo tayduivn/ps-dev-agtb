@@ -1274,6 +1274,10 @@
   content: "\f013";
 }
 
+.sugar7Skin span.mce_selectrecordlink:before {
+  content: "\f0c1";
+}
+
 /* make toolbar buttons' position flexible */
 .sugar7Skin tr.mceFirst .mceToolbar tr td {
   float: left;

@@ -98,14 +98,18 @@ class TemplateHandler {
             $defs = $dictionary[$mod]['fields'];
             $defs2 = array();
             if (!empty($processAutorDefs)){
-                foreach ($this->ss->_tpl_vars['readOnlyFields'] as $readOnlyField) {
-                    if (!empty($defs[$readOnlyField])){
-                        $defs[$readOnlyField]['readonly'] = true;
+                if(!empty($this->ss->_tpl_vars['readOnlyFields'])){
+                    foreach ($this->ss->_tpl_vars['readOnlyFields'] as $readOnlyField) {
+                        if (!empty($defs[$readOnlyField])){
+                            $defs[$readOnlyField]['readonly'] = true;
+                        }
                     }
                 }
-                foreach ($this->ss->_tpl_vars['requiredFields'] as $requiredField) {
-                    if (!empty($defs[$requiredField])){
-                        $defs[$requiredField]['required'] = true;
+                if(!empty($this->ss->_tpl_vars['requiredFields'])){
+                    foreach ($this->ss->_tpl_vars['requiredFields'] as $requiredField) {
+                        if (!empty($defs[$requiredField])){
+                            $defs[$requiredField]['required'] = true;
+                        }
                     }
                 }
             }

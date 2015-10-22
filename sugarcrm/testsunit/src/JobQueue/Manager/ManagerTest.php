@@ -15,6 +15,8 @@ namespace Sugarcrm\SugarcrmTestsUnit\JobQueue\Manager;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 use Sugarcrm\Sugarcrm\JobQueue\Adapter\AdapterRegistry;
 use Sugarcrm\Sugarcrm\JobQueue\Handler\HandlerRegistry;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
+use Psr\Log\LogLevel;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\JobQueue\Manager\Manager
@@ -130,11 +132,11 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getObserver')
             ->will($this->returnValue(new \SplObjectStorage()));
 
-        $logger = $this->getMockBuilder('LoggerManager')
+        $logMan = $this->getMockBuilder('LoggerManager')
             ->disableOriginalConstructor()
+            ->setMethods(array(LogLevel::INFO))
             ->getMock();
-
-        TestReflection::setProtectedValue($manager, 'logger', $logger);
+        TestReflection::setProtectedValue($manager, 'logger', new LoggerTransition($logMan));
         TestReflection::setProtectedValue($manager, 'handlerRegistry', new HandlerRegistry());
         TestReflection::setProtectedValue($manager, 'adapterRegistry', new AdapterRegistry());
 
