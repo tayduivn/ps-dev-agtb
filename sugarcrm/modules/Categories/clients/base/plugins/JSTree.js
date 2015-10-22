@@ -58,6 +58,7 @@
                         this.onNestedSetSyncComplete,
                         this
                     );
+                    app.error.errorName2Keys['empty_node_name'] = 'ERR_EMPTY_NODE_NAME';
                 });
             },
 
@@ -709,7 +710,7 @@
                             if (this.value.trim().length === 0) {
                                 app.alert.show('wrong_node_name', {
                                     level: 'error',
-                                    messages: app.lang.get('LBL_EMPTY_NODE_NAME', 'Categories'),
+                                    messages: app.error.getErrorString('empty_node_name', self),
                                     autoClose: false
                                 });
                                 return false;

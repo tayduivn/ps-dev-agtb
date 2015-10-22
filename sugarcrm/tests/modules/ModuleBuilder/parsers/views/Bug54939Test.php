@@ -13,6 +13,7 @@
 
 require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
 require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php';
+require_once 'modules/ModuleBuilder/parsers/views/SidecarPortalListLayoutMetaDataParser.php';
 
 /**
  * Accessor class, in the event the parsers public properties go protected, which
@@ -23,6 +24,14 @@ class Bug54939TestListParser extends SidecarListLayoutMetaDataParser {
         $this->_fielddefs[$field]['type'] = $type;
     }
 }
+
+class Bug54939TestPortalListParser extends SidecarPortalListLayoutMetaDataParser {
+    public function changeFieldType($field, $type)
+    {
+        $this->_fielddefs[$field]['type'] = $type;
+    }
+}
+
 
 class Bug54939TestGridParser extends SidecarGridLayoutMetaDataParser {
     public function changeFieldType($field, $type) {
@@ -60,7 +69,7 @@ class Bug54939Test extends Sugar_PHPUnit_Framework_TestCase {
     
     //BEGIN SUGARCRM flav=ent ONLY
     public function testPortalLayoutDoesNotIncludeInvalidFields() {
-        $list = new Bug54939TestListParser(MB_PORTALLISTVIEW, 'Cases', '', MB_PORTAL);
+        $list = new Bug54939TestPortalListParser(MB_PORTALLISTVIEW, 'Cases', '', MB_PORTAL);
         $list->changeFieldType('resolution', 'iframe');
         // Relate SHOULD be clean on list
         $list->changeFieldType('system_id', 'relate');
