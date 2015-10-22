@@ -1233,8 +1233,8 @@ class SugarBean
      * 	@param string $key name of the object.
      * 	@param object $db database handle.
      *  @param string $tablename table, meta data is being populated for.
-     *  @param array dictionary vardef dictionary for the object.     *
-     *  @param string module_dir name of subdirectory where module is installed.
+     *  @param array $_ Unused argument
+     *  @param string $module_dir name of subdirectory where module is installed.
      *  @param boolean $iscustom Optional,set to true if module is installed in a custom directory. Default value is false.
      *  @static
      *
@@ -1243,7 +1243,7 @@ class SugarBean
      *
      *  Internal function, do not override.
      */
-    function createRelationshipMeta($key,$db,$tablename,$dictionary,$module_dir,$iscustom=false)
+    function createRelationshipMeta($key,$db,$tablename,$_,$module_dir,$iscustom=false)
     {
         $GLOBALS['log']->deprecated("Deprecated function createRelationshipMeta called");
     }
