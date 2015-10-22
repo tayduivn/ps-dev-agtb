@@ -42,6 +42,7 @@ use Sugarcrm\Sugarcrm\JobQueue\Adapter\AdapterRegistry;
 use Sugarcrm\Sugarcrm\JobQueue\Handler\HandlerRegistry;
 use Sugarcrm\Sugarcrm\JobQueue\Serializer\SerializerInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Serializer\Serializer;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition as Logger;
 
 /**
  * Class Manager
@@ -111,7 +112,7 @@ class Manager implements ClientInterface, RunnerInterface
     protected $runner;
 
     /**
-     * @var \SugarLogger
+     * @var Logger
      */
     protected $logger;
 
@@ -135,7 +136,7 @@ class Manager implements ClientInterface, RunnerInterface
      */
     public function __construct()
     {
-        $this->logger = \LoggerManager::getLogger();
+        $this->logger = new Logger(\LoggerManager::getLogger());
         $this->handlerRegistry = new HandlerRegistry();
         $this->adapterRegistry = new AdapterRegistry();
         $this->initHandlers();

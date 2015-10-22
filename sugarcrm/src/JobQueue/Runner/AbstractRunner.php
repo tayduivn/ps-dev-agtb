@@ -15,6 +15,7 @@ namespace Sugarcrm\Sugarcrm\JobQueue\Runner;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\RuntimeException;
 use Sugarcrm\Sugarcrm\JobQueue\LockStrategy\LockStrategyInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Worker\WorkerInterface;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition as Logger;
 
 /**
  * Class AbstractRunner
@@ -56,7 +57,7 @@ abstract class AbstractRunner implements RunnerInterface
     protected $noJobsTimeout = 5;
 
     /**
-     * @var \SugarLogger
+     * @var Logger
      */
     protected $logger;
 
@@ -81,7 +82,7 @@ abstract class AbstractRunner implements RunnerInterface
      */
     public function __construct(WorkerInterface $worker, LockStrategyInterface $lock)
     {
-        $this->logger = \LoggerManager::getLogger();
+        $this->logger = new Logger(\LoggerManager::getLogger());
         $this->worker = $worker;
         $this->lock = $lock;
         \TimeDate::getInstance()->allow_cache = false;
@@ -92,6 +93,7 @@ abstract class AbstractRunner implements RunnerInterface
      */
     public function shutdownHandler()
     {
+        $this->logger->debug('Shutdown runner.');
         if ($this->lock->hasLock()) {
             $lockTime = $this->lock->getLock();
             if ($lockTime != $this->lockValue) {
@@ -109,7 +111,7 @@ abstract class AbstractRunner implements RunnerInterface
     {
         if (!$this->isWorkProcessActual()) {
             $message = 'Another instance is already locked process.';
-            \LoggerManager::getLogger()->fatal($message);
+            $this->logger->critical($message);
             throw new RuntimeException($message);
         }
         $this->updateLock();
@@ -125,6 +127,7 @@ abstract class AbstractRunner implements RunnerInterface
      */
     public function startWorker()
     {
+        $this->logger->debug('Start worker.');
         $startTime = time();
 
         while (!$this->stopWork) {

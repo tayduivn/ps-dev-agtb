@@ -16,6 +16,7 @@ use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException;
 use Sugarcrm\Sugarcrm\JobQueue\Handler\SubtaskCapableInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition as Logger;
 
 /**
  * Class Handler
@@ -27,6 +28,11 @@ class Handler implements DispatcherInterface
      * @var string $class
      */
     protected $class;
+
+     /**
+     * @var Logger
+     */
+    protected $logger;
 
     /**
      * Should implement the Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface interface.
@@ -44,6 +50,7 @@ class Handler implements DispatcherInterface
             throw new InvalidArgumentException('Handler should be a class.');
         }
         $this->class = $className;
+        $this->logger = new Logger(\LoggerManager::getLogger());
     }
 
     /**
@@ -68,7 +75,9 @@ class Handler implements DispatcherInterface
             try {
                 return $handler->run();
             } catch (\Exception $ex) {
-                \LoggerManager::getLogger()->error($reflector->getName() . ' error: ' . $ex->getMessage());
+                $errorMessage = $reflector->getName() . ' error: ' . $ex->getMessage();
+                $this->logger->error($errorMessage);
+                $workload->setAttribute('errorMessage', $errorMessage);
                 return \SchedulersJob::JOB_FAILURE;
             }
         };
