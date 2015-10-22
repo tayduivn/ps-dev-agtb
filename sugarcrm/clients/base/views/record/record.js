@@ -243,12 +243,11 @@
         _.each(this.meta.panels, function(panel) {
             _.each(panel.fields, function(field) {
                 if (!field.readonly) {
+                    setAsEditable(field.name);
                     if (field.fields && _.isArray(field.fields)) {
                         _.each(field.fields, function(field) {
                             setAsEditable(field.name);
                         });
-                    } else {
-                        setAsEditable(field.name);
                     }
                 }
             });
