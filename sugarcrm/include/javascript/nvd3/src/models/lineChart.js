@@ -164,7 +164,7 @@ nv.models.lineChart = function() {
       // set state.disabled
       state.disabled = lineData.map(function(d) { return !!d.disabled; });
       state.interpolate = lines.interpolate();
-      state.isArea = !lines.isArea();
+      state.isArea = lines.isArea()();
 
       var controlsData = [
         { key: 'Linear', disabled: lines.interpolate() !== 'linear' },
