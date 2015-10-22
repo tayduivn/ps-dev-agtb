@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\JobQueue\Runner;
 
+use Psr\Log\LogLevel;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 use Sugarcrm\Sugarcrm\JobQueue\Worker\WorkerInterface;
 use Sugarcrm\Sugarcrm\JobQueue\LockStrategy\Stub;
@@ -91,8 +93,11 @@ class RunnerTest extends \PHPUnit_Framework_TestCase
             array($worker, $lock)
         );
 
-        $logger = $this->getMockBuilder('LoggerManager')->disableOriginalConstructor()->getMock();
-        TestReflection::setProtectedValue($runner, 'logger', $logger);
+        $logMan = $this->getMockBuilder('LoggerManager')
+            ->disableOriginalConstructor()
+            ->setMethods(array(LogLevel::INFO))
+            ->getMock();
+        TestReflection::setProtectedValue($runner, 'logger', new LoggerTransition($logMan));
 
         // To prevent infinite loop.
         $worker->expects($this->any())->method('wait')->will($this->returnValue(true));

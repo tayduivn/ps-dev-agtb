@@ -365,7 +365,7 @@ class Parallel extends AbstractRunner
                 $this->validateWorkers();
                 break;
             case -1:
-                $this->logger->fatal('Failed to fork validation process.');
+                $this->logger->critical('Failed to fork validation process.');
                 $this->stopWork = true;
                 break;
             default:
