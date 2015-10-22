@@ -119,9 +119,7 @@ class PMSEChangeField extends PMSEScriptTask
         $act_fields = htmlspecialchars_decode($bpmnElement['act_fields']);
         $fields = json_decode($act_fields);
         $ifields = 0;
-        
-        //$this->bpmLog('INFO', "[$cas_id][$cas_index] Getting**** ".print_r($bpmnElement,true));
-        //$related = $bean->get_linked_fields();
+
         $idMainModule = $bean->id;
         $moduleName = $bean->module_name;
 
@@ -169,10 +167,10 @@ class PMSEChangeField extends PMSEScriptTask
                         //$this->logger->warning("[{$flowData['cas_id']}][{$flowData['cas_index']}] $moduleClassName->" . $field->field . " not defined");
                     }
                 }
-                $bean->skipPartialUpdate = true;
+
                 $bean->new_with_id = false;
-                $res = $bean->save();
-                $scriptTaskExecuted = true;
+                PMSEEngineUtils::saveAssociatedBean($bean);
+
                 $params = array();
                 $params['cas_id'] = $flowData['cas_id'];
                 $params['cas_index'] = $flowData['cas_index'];

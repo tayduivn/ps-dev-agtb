@@ -63,7 +63,6 @@ class PMSEUserTask extends PMSEActivity
      */
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
-//        $redirectAction = empty($externalAction)? 'ASSIGN': $this->processUserAction($flowData);
         $redirectAction = $this->processAction($flowData, $externalAction, $arguments);
         $saveBeanData = !empty($arguments) ? true : false;
         switch ($redirectAction) {
@@ -270,7 +269,7 @@ class PMSEUserTask extends PMSEActivity
                 }
             }
 
-            $beanObject->save();
+            PMSEEngineUtils::saveAssociatedBean($beanObject);
         }
 
         $fields['log_data'] = $historyData->getLog();

@@ -118,10 +118,8 @@ class PMSEBusinessRule extends PMSEScriptTask
             }
 
             $rules = $this->getBusinessRuleReader($appData, $global);
-            //$res = $rules->parseRuleset($sugarModule, $rst_definition, $row['rst_type']);
 
             $rstSourceDefinition = $row['rst_source_definition'];
-            //$rstSourceDefinition = base64_decode($rstSourceDefinition);
             $rstSourceDefinition = htmlspecialchars_decode($rstSourceDefinition, ENT_QUOTES);
             $res = $rules->parseRuleSetJSON($sugarModule, $rstSourceDefinition, $row['rst_type']);
             $logBR .= $res['log'];
@@ -143,8 +141,7 @@ class PMSEBusinessRule extends PMSEScriptTask
                     $historyData->savePostData($key, $value);
                     //}
                 }
-                $bean->skipPartialUpdate = true;
-                $bean->save();
+                PMSEEngineUtils::saveAssociatedBean($bean);
             }
 
             //saving the return value in bpm_form_action table
@@ -159,11 +156,8 @@ class PMSEBusinessRule extends PMSEScriptTask
             $params['frm_comment'] = $logBR;
             $params['log_data'] = $historyData->getLog();
             $this->caseFlowHandler->saveFormAction($params);
-            //$scriptTaskExecuted = true;
-            //$this->bpmLog('DEBUG', "[$cas_id][$cas_index] script executed");
         } else {
             $this->logger->warning("$logBR");
-            //$this->bpmLog('ERROR', "[$cas_id][$cas_index] case halted!");
             $returnBR = null;
         }
         return $this->prepareResponse($flowData, 'ROUTE', $flowAction);

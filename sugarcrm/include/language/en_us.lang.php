@@ -225,7 +225,7 @@ $app_list_strings = array (
     'Subscriptions' => 'Subscription',
     'UserSignatures' => 'User Signature',
     'Feedbacks' => 'Feedback',
-    'Tags' => 'Tag', 
+    'Tags' => 'Tag',
     'Categories' => 'Category',
   ),
 
@@ -1744,6 +1744,7 @@ $app_list_strings = array (
         'middle'       => 'Middle',
         'end' => 'End',
         'top' => 'Top',
+        'total' => 'Total',
     ),
     'pipeline_chart_dom' => array (
         'fun'   => 'Funnel',
@@ -9307,6 +9308,7 @@ Sincerely, SugarCRM',
     'LBL_VIEW_PDF_BUTTON_TITLE' => 'Print as PDF',
 
     'LBL_KBDOCUMENTS' => 'Knowledge Base',
+    'ERR_EMPTY_NODE_NAME' => 'You cannot add a category without title',
 
 
     'LNK_ABOUT' => 'About',

@@ -192,30 +192,26 @@ svg .title {
 *  Axes
 */
 
-.nv-axis path {
-  fill: none;
-  stroke: @chartTickColor;
-  stroke-width: @chartTickWidth;
-  stroke-opacity: .75;
-  shape-rendering: crispEdges;
-}
-
-.nv-axis path.domain {
-  stroke-width: 2px;
-  stroke: #bbb;
-}
-
+.nv-axis path,
 .nv-axis line,
 .nv-axis polyline {
   fill: none;
   stroke: @chartTickColor;
   stroke-width: @chartTickWidth;
-  stroke-opacity: .3;
   shape-rendering: crispEdges;
+  pointer-events: none;
 }
-
+.nv-axis line,
+.nv-axis polyline {
+  stroke-opacity: .3;
+}
+.nv-axis path,
 .nv-axis line.zero {
   stroke-opacity: .75;
+}
+.nv-axis path.domain {
+  stroke-width: 2px;
+  stroke: #bbb;
 }
 
 .nv-axis .nv-axisMaxMin text {
@@ -237,69 +233,83 @@ svg .title {
 *  Bars
 */
 
-.nv-bars .negative rect {
-  fill: brown;
-  cursor: pointer;
-}
+// .nv-bars .negative rect {
+//   cursor: pointer;
+// }
 
-.nv-bars rect {
-  fill: steelblue;
-  cursor: pointer;
-  fill-opacity: .75;
-}
+// .nv-bars rect {
+//   cursor: pointer;
+//   fill-opacity: .75;
+// }
 
-.nv-bars rect:hover {
-  fill-opacity: 1;
-}
+// .nv-bars rect:hover {
+//   fill-opacity: 1;
+// }
 
-.nv-bars .hover rect {
-  fill: lightblue;
-}
+// .nv-bars .hover rect {
+//   fill: lightblue;
+// }
 
-.nv-bars text {
-  fill: rgba(0,0,0,0);
-}
+// .nv-bars text {
+//   fill: rgba(0,0,0,0);
+// }
 
-.nv-bars .hover text {
-  fill: rgba(0,0,0,1);
-}
+// .nv-bars .hover text {
+//   fill: rgba(0,0,0,1);
+// }
 
 
 /**********
 *  MultiBars
 */
 
-.nv-multibar .nv-groups,
-.nv-multibarHorizontal .nv-groups,
-.nv-discretebar .nv-groups {
+.nv-multibar .nv-groups {
   rect {
     stroke-opacity: 1;
     stroke-width: 2px;
     stroke: @white;
-    fill-opacity: 1;
-    fill: inherit;
   }
-  .nv-inactive rect {
-    fill-opacity: 0.5;
-  }
-  .nv-inactive:hover rect {
-    fill-opacity: 0.75;
+  .nv-group rect:hover {
+    fill-opacity: .75;
   }
 }
 
-.nv-multibar .nv-groups rect:hover,
-.nv-multibarHorizontal .nv-groups rect:hover,
-.nv-discretebar .nv-groups rect:hover {
+.nv-texture {
+  fill-opacity: 0;
+  pointer-events: none;
+}
+.nv-texture:hover {
+  fill-opacity: 0;
+}
+.nv-active .nv-texture {
   fill-opacity: 1;
+}
+.texture-line {
+  stroke-opacity: .5;
+  stroke-width: 1px;
+}
+
+.nv-inactive {
+  polygon,
+  rect {
+    fill-opacity: 1;
+  }
+  polygon:hover,
+  rect:hover {
+    fill-opacity: .75;
+  }
+  .nv-texture {
+    fill-opacity: .5;
+    mask: none !important;
+    fill: #fff !important;
+  }
 }
 
 .calc-text-strings,
-.nv-discretebar .nv-groups text,
-.nv-multibar .nv-groups text,
-.nv-multibarHorizontal .nv-groups text {
-  //font-weight: bold;
+.nv-multibar .nv-groups text {
   fill: rgba(0,0,0,1);
   stroke: rgba(0,0,0,0);
+  pointer-events: none;
 }
 
 
@@ -503,12 +513,6 @@ text.nv-pie-hole-label {
 .nv-funnelChart {
   .nv-y path {
     stroke: none;
-  }
-  .nv-inactive polygon {
-    fill-opacity: 0.5;
-  }
-  .nv-inactive:hover polygon {
-    fill-opacity: 0.75;
   }
 }
 

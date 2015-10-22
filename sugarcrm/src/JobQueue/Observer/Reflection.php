@@ -15,6 +15,7 @@ namespace Sugarcrm\Sugarcrm\JobQueue\Observer;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException;
 use Sugarcrm\Sugarcrm\JobQueue\Helper\Resolution;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition as Logger;
 
 /**
  * Class Reflection
@@ -33,6 +34,11 @@ class Reflection implements ObserverInterface
     protected $user;
 
     /**
+     * @var Logger
+     */
+    protected $logger;
+
+    /**
      * Setup resolution helper.
      * @param \User|null $user
      */
@@ -40,6 +46,7 @@ class Reflection implements ObserverInterface
     {
         $this->resolutionHelper = new Resolution();
         $this->user = $user ? $user : $GLOBALS['current_user'];
+        $this->logger = new Logger(\LoggerManager::getLogger());
     }
 
     /**
@@ -82,7 +89,7 @@ class Reflection implements ObserverInterface
     {
         $job = \BeanFactory::getBean('SchedulersJobs', $workload->getAttribute('dbId'));
         if (!$job->id) {
-            \LoggerManager::getLogger()->info('Cannot get bean by dbId.');
+            $this->logger->notice('Cannot get bean by dbId.');
             return;
         }
         $jobUser = \BeanFactory::getBean('Users', $job->assigned_user_id);
@@ -103,14 +110,17 @@ class Reflection implements ObserverInterface
     {
         $job = \BeanFactory::getBean('SchedulersJobs', $workload->getAttribute('dbId'));
         if (!$job->id) {
-            \LoggerManager::getLogger()->info('Cannot get bean by dbId.');
+            $this->logger->notice('Cannot get bean by dbId.');
             return;
         }
-        \LoggerManager::getLogger()->info("Resolving job {$job->id} as {$resolution}.");
+        $this->logger->info("Resolving job {$job->id} as {$resolution}.");
 
         $job->execute_time = \TimeDate::getInstance()->nowDb();
+        $job->message = $workload->getAttribute('errorMessage');
+
         $job->save();
         $this->resolutionHelper->setResolution($job, $resolution);
+        $this->clearSugarCache();
         // Should be the last action.
         $this->sudo($this->user);
     }
@@ -129,5 +139,16 @@ class Reflection implements ObserverInterface
             $_SESSION['user_id'] = $user->id;
             $_SESSION['authenticated_user_id'] = $user->id;
         }
+    }
+
+    /**
+     * Clear BeanFactory's and locals cache.
+     */
+    protected function clearSugarCache()
+    {
+        \BeanFactory::clearCache();
+        sugar_cache_reset();
+        // Start populating local cache again.
+        \SugarCache::$isCacheReset = false;
     }
 }

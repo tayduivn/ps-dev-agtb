@@ -30,5 +30,5 @@ $mod_strings = array(
     'NTC_DELETE_CONFIRMATION_FORMATTED_PLURAL' => 'Are you sure you want to delete the {0}?
 All nested categories will be removed as well',
     'LBL_WRONG_MOVE_PATH' => 'You cannot move a folder into itself.',
-    'LBL_EMPTY_NODE_NAME' => 'You cannot add a category without title',
+    'ERR_EMPTY_NODE_NAME' => 'You cannot add a category without title',
 );

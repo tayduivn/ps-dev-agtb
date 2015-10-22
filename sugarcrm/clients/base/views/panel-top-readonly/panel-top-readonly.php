@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -12,18 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['view']['panel-top'] = array(
+$viewdefs['base']['view']['panel-top-readonly'] = array(
     'buttons' => array(
-        array(
-            'type' => 'actiondropdown',
-            'name' => 'panel_dropdown',
-            'css_class' => 'pull-right',
-        ),
-    ),
-    'fields' => array(
-        array(
-            'name' => 'collection-count',
-            'type' => 'collection-count',
-        ),
     ),
 );
