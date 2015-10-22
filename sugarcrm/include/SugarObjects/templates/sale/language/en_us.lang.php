@@ -110,7 +110,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
   'LBL_CURRENCY_SYMBOL'=>'Currency Symbol',
   'LBL_EDIT_BUTTON' => 'Edit',
   'LBL_REMOVE' => 'Remove',
-  'LBL_CURRENCY_RATE' => 'Base rate',
+  'LBL_CURRENCY_RATE' => 'Currency Rate',
 
 );
 
