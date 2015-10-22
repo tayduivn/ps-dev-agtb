@@ -198,8 +198,14 @@
                     this._lastCurrencyId = currencyId;
                     return;
                 }
+
                 // update the base rate in the model, set it silently since we are already going to do a re-render
                 this.model.set(baseRateField, app.metadata.getCurrency(currencyId).conversion_rate, {silent: true});
+
+                if (!_.isUndefined(this.view.getField('base_rate'))) {
+                    this.view.getField('base_rate').render();
+                }
+
                 // convert the value to new currency on the model
                 if (model.has(this.name)) {
                     var val = model.get(this.name);
