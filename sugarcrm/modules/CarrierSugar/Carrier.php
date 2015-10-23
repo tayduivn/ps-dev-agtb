@@ -13,18 +13,18 @@
 use Sugarcrm\Sugarcrm\Notification\Carrier\CarrierInterface;
 use Sugarcrm\Sugarcrm\Notification\Carrier\AddressType\Id as AddressTypeId;
 
-require_once 'modules/CarrierSocket/Transport.php';
+require_once 'modules/CarrierSugar/Transport.php';
 
-class CarrierSocketCarrier implements CarrierInterface
+class CarrierSugarCarrier implements CarrierInterface
 {
 
     /**
      * Get Transport to deliver messages to SocketServer.
-     * @return \CarrierSocketTransport
+     * @return \CarrierSugarTransport
      */
     public function getTransport()
     {
-        return new CarrierSocketTransport();
+        return new CarrierSugarTransport();
     }
 
     /**
@@ -36,6 +36,7 @@ class CarrierSocketCarrier implements CarrierInterface
         return array(
             'title' => '',
             'text' => '',
+            'html' => '',
         );
     }
 
