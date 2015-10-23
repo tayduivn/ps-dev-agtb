@@ -679,7 +679,7 @@ $alert_file_contents = "";
                 $eval_dump .= "\t \$workflow_id = '" . $row['id'] . "'; \n\n";
 
 				$eval_dump .= 'if(!empty($_SESSION["workflow_cron"]) && $_SESSION["workflow_cron"]=="Yes" &&
-				!empty($_SESSION["workflow_id_cron"]) && in_array_access($workflow_id, $_SESSION["workflow_id_cron"])){
+				!empty($_SESSION["workflow_id_cron"]) && ArrayFunctions::in_array_access($workflow_id, $_SESSION["workflow_id_cron"])){
 				';
 			//end if type is time
 			}
