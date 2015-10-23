@@ -1315,6 +1315,25 @@ class MetaDataFiles
     }
 
     /**
+     * Loads a specific client router's contents
+     *
+     * @param string $module   The name of the module to get metadata for
+     * @param string $platform The platform to search for the client data (defaults to base)
+     *
+     * @return string          Contents of the metadata file
+     */
+    public static function loadRouterFile($module, $platform = 'base')
+    {
+        $routerFile = 'modules/' . $module . '/clients/' . $platform . '/routes/routes.js';
+        if (file_exists($routerFile)) {
+            return self::trimLicense(
+                file_get_contents($routerFile)
+            );
+        }
+        return '';
+    }
+
+    /**
      * Used to remove the sugarcrm license header from component files that are going to be rolled into a JSON response
      * @param string $text
      *

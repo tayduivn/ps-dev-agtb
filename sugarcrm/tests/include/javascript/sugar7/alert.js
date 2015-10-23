@@ -4,8 +4,8 @@ describe('Sugar7 sync alerts', function() {
         context,
         model,
         alertStubs = {},
-        originalBean, originalBeanCollection;
-
+        originalBean, originalBeanCollection,
+        sinonSandbox;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
@@ -23,7 +23,7 @@ describe('Sugar7 sync alerts', function() {
 
         app.Bean = Backbone.Model;
         app.BeanCollection = Backbone.Collection;
-
+        sinonSandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
@@ -35,6 +35,7 @@ describe('Sugar7 sync alerts', function() {
 
         app.Bean = originalBean;
         app.BeanCollection = originalBeanCollection;
+        sinonSandbox.restore();
     });
 
     describe('overriding primary context', function() {
@@ -80,15 +81,9 @@ describe('Sugar7 sync alerts', function() {
         });
 
         it('should hide the alert on app:sync:complete', function() {
-            //app.router is not defined so it will throw an error
-            var routerFake = app.router;
-            app.router = {
-                start: sinon.stub()
-            };
+            sinonSandbox.stub(app.router, 'start');
             app.events.trigger('app:sync:complete', 'read', model, {});
             expect(alertStubs.dismiss).toHaveBeenCalled();
-            //restore what was defined as app.router
-            app.router = routerFake;
         });
 
         it('should hide the alert on app:sync:error', function() {
