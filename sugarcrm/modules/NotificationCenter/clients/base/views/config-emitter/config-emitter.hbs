@@ -39,13 +39,13 @@
                 <tr>
                     <td>
                         {{#with rowSwitcher}}
-                            {{field ../../this model=../../this.model template=this.view}}
+                            {{field ../../this model=../../this.model template=this.viewName}}
                         {{/with}}
                     </td>
                     <td data-event="{{this.name}}" class="event-name">{{this.label}}</td>
                     {{#each this.fields}}
                         <td>
-                            {{field ../../this model=../../this.model template=this.view}}
+                            {{field ../../this model=../../this.model template=this.viewName}}
                         </td>
                     {{/each}}
                 </tr>

@@ -67,7 +67,6 @@
                 'change:personal:carrier:' + this.def.name :
                 'change:carrier:' + this.def.name;
             this.model.trigger(eventName);
-
         }, this));
     }
 })
