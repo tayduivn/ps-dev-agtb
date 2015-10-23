@@ -111,7 +111,7 @@ describe('Plugins.VirtualCollection', function() {
 
             expect(collection.length).toBe(6);
             expect(collection.links.contacts.length).toBe(4);
-            expect(collection.links.contacts.defaults.length).toBe(2);
+            expect(collection.links.contacts.synced.length).toBe(2);
         });
     });
 
@@ -140,10 +140,10 @@ describe('Plugins.VirtualCollection', function() {
             });
         });
 
-        it('should add synchronized models to their respective defaults list', function() {
+        it('should add synchronized models to their respective synced list', function() {
             model.trigger('sync');
 
-            expect(collection.links.contacts.defaults.length).toBe(5);
+            expect(collection.links.contacts.synced.length).toBe(5);
         });
     });
 
@@ -663,13 +663,13 @@ describe('Plugins.VirtualCollection', function() {
                 });
             });
 
-            it('should add the fetched records as defaults for their links', function() {
-                expect(collection.links.contacts.defaults.length).toBe(4);
+            it('should add the fetched records as synced for their links', function() {
+                expect(collection.links.contacts.synced.length).toBe(4);
 
                 records = _.last(contacts, 2);
                 collection.paginate();
 
-                expect(collection.links.contacts.defaults.length).toBe(4 + records.length);
+                expect(collection.links.contacts.synced.length).toBe(4 + records.length);
             });
 
             it('should update the offsets', function() {
@@ -817,12 +817,12 @@ describe('Plugins.VirtualCollection', function() {
                 expect(target.get(attribute).length).toBe(3);
             });
 
-            it('should not have any defaults set on the link', function() {
+            it('should not have any synced set on the link', function() {
                 target.copy(model);
                 collection = target.get(attribute);
 
                 _.each(collection.links, function(link) {
-                    expect(link.defaults.length).toBe(0);
+                    expect(link.synced.length).toBe(0);
                 });
             });
 
@@ -835,7 +835,7 @@ describe('Plugins.VirtualCollection', function() {
         });
 
         describe('setting a collection field', function() {
-            it('should set the collection as a default when created', function() {
+            it('should set the collection as the default when created', function() {
                 expect(model.getDefault(attribute)).toBe(collection);
             });
 
