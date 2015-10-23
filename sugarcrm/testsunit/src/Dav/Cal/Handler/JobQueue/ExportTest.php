@@ -12,26 +12,93 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Dav\Cal\Handler\JobQueue;
 
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue\Export
  */
 
 class ExportTest extends \PHPUnit_Framework_TestCase
 {
+    public function runProvider()
+    {
+        return array(
+            array(
+                'setJobToEnd' => false,
+                'exportCount' => 1,
+                'result' => 'success'
+            ),
+            array(
+                'setJobToEnd' => true,
+                'exportCount' => 0,
+                'result' => 'cancelled'
+            ),
+        );
+    }
+
     /**
+     * @param bool $setJobToEndResult
+     * @param int $exportCount
+     * @param string $jobExpectedResult
+     *
      * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue\Export::run
+     *
+     * @dataProvider runProvider
      */
-    public function testRun()
+    public function testRun($setJobToEndResult, $exportCount, $jobExpectedResult)
     {
         $bean = $this->getSugarBeanMock();
         $handlerMock = $this->getHandlerMock();
 
+        $calDavBean = $this->getMockBuilder('\CalDavEvent')
+                           ->disableOriginalConstructor()
+                           ->setMethods(array('getSynchronizationObject'))
+                           ->getMock();
+
+        $syncObject = $this->getMockBuilder('\CalDavSynchronization')
+                           ->disableOriginalConstructor()
+                           ->setMethods(array('setJobCounter'))
+                           ->getMock();
+
         $export = $this->getExportHandlerMock($handlerMock, $bean);
-        $handlerMock->expects($this->once())->method('export');
+        $handlerMock->expects($this->exactly($exportCount))->method('export')->willReturn(true);
+        $handlerMock->expects($this->once())->method('getDavBean')->willReturn($calDavBean);
+        $calDavBean->expects($this->exactly($exportCount))->method('getSynchronizationObject')->willReturn($syncObject);
+        $syncObject->expects($this->exactly($exportCount))->method('setJobCounter');
+
+        $export->expects($this->once())
+               ->method('setJobToEnd')
+               ->with($calDavBean)
+               ->willReturn($setJobToEndResult);
 
         $result = $export->run();
 
-        $this->assertEquals(\SchedulersJob::JOB_SUCCESS, $result);
+        $this->assertEquals($jobExpectedResult, $result);
+    }
+
+    /**
+     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue\Export::reschedule
+     */
+    public function testReschedule()
+    {
+        $exportMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue\Export')
+                           ->disableOriginalConstructor()
+                           ->setMethods(array('getManager'))
+                           ->getMock();
+
+        $managerMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\JobQueue\Manager\Manager')
+                            ->disableOriginalConstructor()
+                            ->setMethods(array('calDavExport'))
+                            ->getMock();
+
+        $exportMock->expects($this->once())->method('getManager')->willReturn($managerMock);
+        $managerMock->expects($this->once())->method('calDavExport')->with(array(1, 2), 'test', 3);
+
+        TestReflection::setProtectedValue($exportMock, 'moduleName', 'test');
+        TestReflection::setProtectedValue($exportMock, 'fetchedRow', array(1, 2));
+        TestReflection::setProtectedValue($exportMock, 'saveCounter', 3);
+
+        TestReflection::callProtectedMethod($exportMock, 'reschedule');
     }
 
     /**
@@ -76,7 +143,7 @@ class ExportTest extends \PHPUnit_Framework_TestCase
     protected function getHandlerMock()
     {
         return $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Handler')
-            ->setMethods(array('export'))
+            ->setMethods(array('export', 'getDavBean'))
             ->getMock();
     }
 
@@ -91,7 +158,7 @@ class ExportTest extends \PHPUnit_Framework_TestCase
     {
         $exportMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue\Export')
             ->disableOriginalConstructor()
-            ->setMethods(array('getAdapterFactory', 'getHandler', 'getBean'))
+            ->setMethods(array('getAdapterFactory', 'getHandler', 'getBean', 'setJobToEnd'))
             ->getMock();
 
         $adapterFactoryMock = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory')

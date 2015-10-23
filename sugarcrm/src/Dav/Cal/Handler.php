@@ -12,7 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Cal;
 
-use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
 use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapaterFactory;
 
 /**
@@ -34,6 +33,7 @@ class Handler
                 $bean = $this->getParentBean($bean);
             }
             $calDavBean = $this->getDavBean($bean);
+
             if ($adapter->export($bean, $calDavBean)) {
                 $calDavBean->save();
             }
@@ -56,6 +56,7 @@ class Handler
         }
 
         $event->setBean($bean);
+        $event->save();
         return $event;
     }
 
@@ -68,7 +69,14 @@ class Handler
     {
         global $current_user;
 
+        if (!$calDavBean->parent_id && $calDavBean->id) {
+            $dbBean = \BeanFactory::getBean($calDavBean->module_name, $calDavBean->id, array('use_cache' => false));
+            $calDavBean->parent_type = $dbBean->parent_type;
+            $calDavBean->parent_id = $dbBean->parent_id;
+        }
+
         $bean = $calDavBean->getBean();
+
         if (is_null($bean)) {
             $moduleName = $current_user->getPreference('caldav_module');
             $bean = \BeanFactory::getBean($moduleName);
@@ -86,6 +94,7 @@ class Handler
     /**
      * Run import action
      * @param \CalDavEvent $calDavBean
+     * @return bool
      */
 
     public function import(\CalDavEvent $calDavBean)
@@ -97,15 +106,8 @@ class Handler
                 $bean->save();
             }
         }
-    }
 
-    /**
-     * function return manager object for handler processing
-     * @return \Sugarcrm\Sugarcrm\JobQueue\Manager\Manager
-     */
-    protected function getManager()
-    {
-        return new JQManager();
+        return true;
     }
 
     /**

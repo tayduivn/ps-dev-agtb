@@ -12,9 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue;
 
-use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
-use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
-use Sugarcrm\Sugarcrm\Dav\Cal\Handler as CalDavHandler;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException as JQLogicException;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException as JQInvalidArgumentException;
 
@@ -23,27 +20,8 @@ use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException as JQInvalidAr
  * @package Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue
  * Class for export process initialization
  */
-class Export implements RunnableInterface
+class Export extends Base
 {
-    /**
-     * @var string
-     */
-    protected $moduleName;
-    /**
-     * @var string
-     */
-    protected $fetchedRow;
-
-    /**
-     * @param array $fetchedRow
-     * @param string $moduleName
-     */
-    public function __construct(array $fetchedRow, $moduleName)
-    {
-        $this->fetchedRow = $fetchedRow;
-        $this->moduleName = $moduleName;
-    }
-
     /**
     * start export process for current bean if it extends from SugarBean
     * @throws \Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException if bean not instance of SugarBean
@@ -55,42 +33,31 @@ class Export implements RunnableInterface
         $adapter = $this->getAdapterFactory();
         $bean = $this->getBean();
         if (!($bean instanceof \SugarBean)) {
-            throw new JQInvalidArgumentException('Bean must be an instance of SugarBean. Instance of '. get_class($bean) .' given');
+            throw new JQInvalidArgumentException('Bean must be an instance of SugarBean. Instance of ' .
+                get_class($bean) . ' given');
         }
         if (!$adapter->getAdapter($bean->module_name)) {
             throw new JQLogicException('Bean ' . $bean->module_name . ' does not have CalDav adapter');
         }
         $handler = $this->getHandler();
+        $calDavBean = $handler->getDavBean($bean);
+
+        if ($this->setJobToEnd($calDavBean)) {
+            return \SchedulersJob::JOB_CANCELLED;
+        }
+
         $handler->export($bean);
+        $calDavBean->getSynchronizationObject()->setJobCounter();
 
         return \SchedulersJob::JOB_SUCCESS;
     }
 
     /**
-     * get bean for import process
-     * @return null|\SugarBean
+     * @inheritdoc
      */
-    protected function getBean()
+    protected function reschedule()
     {
-        $bean = \BeanFactory::getBean($this->moduleName);
-        $bean->populateFromRow($this->fetchedRow);
-        return $bean;
-    }
-
-    /**
-     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory
-     */
-    protected function getAdapterFactory()
-    {
-        return CalDavAdapterFactory::getInstance();
-    }
-
-    /**
-     * return CalDav handler for export processing
-     * @return Handler
-     */
-    protected function getHandler()
-    {
-        return new CalDavHandler();
+        $jqManager = $this->getManager();
+        $jqManager->calDavExport($this->fetchedRow, $this->moduleName, $this->saveCounter);
     }
 }

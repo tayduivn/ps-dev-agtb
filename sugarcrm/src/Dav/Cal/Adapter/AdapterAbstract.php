@@ -82,6 +82,14 @@ abstract class AdapterAbstract
         if (isset($RecurringRule['dow']) && $sugarBean->repeat_dow != $RecurringRule['dow']) {
             return true;
         }
+
+        $datetimeHelper = $this->getDateTimeHelper();
+        $fetchedStart =  $datetimeHelper->sugarDateToUTC($sugarBean->fetched_row['date_start']);
+        $currentStart = $datetimeHelper->sugarDateToUTC($sugarBean->date_start);
+        if ($fetchedStart != $currentStart) {
+            return true;
+        }
+
         return false;
     }
 
@@ -390,20 +398,23 @@ abstract class AdapterAbstract
             $childEvents = $sugarBean->fetchFromQuery($childQuery);
             $childEventsDateMap = array();
             foreach ($childEvents as $event) {
-                $childEventsDateMap[$this->getDateTimeStart($event->date_start)] = $event;
+                $childEventsDateMap[$dateTimeHelper->sugarDateToUTC($event->date_start)
+                                                   ->format(\TimeDate::DB_DATETIME_FORMAT)] = $event;
             }
 
             foreach ($recurringRule['children'] as $calDavChild) {
-                $date_start = $this->getDateTimeStart($calDavChild->getStartDate());
-                $utcDateStart = $dateTimeHelper->sugarDateToUTC($sugarBean->date_start)->format(\TimeDate::DB_DATETIME_FORMAT);
-                if ($date_start == $this->getDateTimeStart($utcDateStart)) {
+                $date_start = $calDavChild->getStartDate();
+                $utcDateStart =
+                    $dateTimeHelper->sugarDateToUTC($sugarBean->date_start)->format(\TimeDate::DB_DATETIME_FORMAT);
+                if ($date_start == $utcDateStart) {
                     continue;
                 }
-
+                $event = null;
                 if (array_key_exists($date_start, $childEventsDateMap)) {
                     $event = $childEventsDateMap[$date_start];
                 } else {
-                    $generatedId = \CalendarUtils::saveRecurring($sugarBean, array($date_start));
+                    $generatedId =
+                        \CalendarUtils::saveRecurring($sugarBean, array($dateTimeHelper->sugarDateToUserDateTime($date_start)));
                     if (isset($generatedId[0]['id'])) {
                         $event = \BeanFactory::getBean($sugarBean->module_name, $generatedId[0]['id'], array('cache' => false));
                         $event->repeat_parent_id = $sugarBean->id;
@@ -411,14 +422,15 @@ abstract class AdapterAbstract
                 }
 
                 if ($event) {
+                    $isChildChanged = false;
                     if ($this->setMappedBeanProperties($event, $calDavChild, $this->importRecurringEventsDataMap)) {
-                        $isRecurringChanged = true;
+                        $isChildChanged = $isRecurringChanged = true;
                     }
                     if ($this->isRecurringRulesChangedForBean($event, $recurringRule)) {
                         $this->setRecurringRulesToBean($event, $recurringRule);
-                        $isRecurringChanged = true;
+                        $isChildChanged = $isRecurringChanged = true;
                     }
-                    if ($isRecurringChanged) {
+                    if ($isChildChanged) {
                         $event->save();
                     }
                 }

@@ -11,18 +11,16 @@
  */
 use Sabre\VObject;
 use Sabre\VObject\Component as SabreComponent;
-use Sugarcrm\Sugarcrm\Dav\Base\SugarDavSyncInterface;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper as DavHelper;
 use Sugarcrm\Sugarcrm\Dav\Base\Constants as DavConstants;
 use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as DavStatusMapper;
-use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
-
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
 
 /**
  * Class CalDav
  * Represents implementation of Sugar Bean for CalDAV backend operations with calendar events
  */
-class CalDavEvent extends SugarBean implements SugarDavSyncInterface
+class CalDavEvent extends SugarBean
 {
     public $new_schema = true;
     public $module_dir = 'CalDav';
@@ -145,18 +143,6 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
     public $parent_id;
 
     /**
-     * CalDAV server event synchronization counter
-     * @var integer
-     */
-    public $sync_counter = 0;
-
-    /**
-     * Related module record synchronization counter
-     * @var integer
-     */
-    public $module_sync_counter = 0;
-
-    /**
      * Calendar event is stored here
      * @var Sabre\VObject\Component\VCalendar
      */
@@ -187,38 +173,6 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
      * @var bool
      */
     protected $inMailGeneration;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setBeanSyncCounter()
-    {
-        return ++$this->module_sync_counter;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setDavSyncCounter()
-    {
-        return ++$this->sync_counter;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getBeanSyncCounter()
-    {
-        return $this->module_sync_counter;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDavSyncCounter()
-    {
-        return $this->sync_counter;
-    }
 
     /**
      * @var Sugarcrm\Sugarcrm\Dav\Base\Helper\RecurringHelper
@@ -1224,8 +1178,10 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
             return $currentComponent;
         } else {
             $component = $event->createComponent($componentType);
-            $uid = $event->createProperty('UID', 'sugar-' . create_guid());
-            $component->add($uid);
+            if (empty($component->UID)) {
+                $uid = $event->createProperty('UID', create_guid());
+                $component->add($uid);
+            }
             return $event->add($component);
         }
     }
@@ -1284,9 +1240,10 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
      */
     public function setBean(\SugarBean $bean)
     {
-        if ($bean->id) {
+        $id = $bean->repeat_parent_id ?: $bean->id;
+        if ($id) {
             $this->parent_type = $bean->module_name;
-            $this->parent_id = $bean->id;
+            $this->parent_id = $id;
             return true;
         }
 
@@ -1301,10 +1258,11 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
      */
     public function findByBean(\SugarBean $bean)
     {
+        $id = $bean->repeat_parent_id ?: $bean->id;
         $query = new \SugarQuery();
         $query->from($this);
         $query->where()->equals('parent_type', $bean->module_name);
-        $query->where()->equals('parent_id', $bean->id);
+        $query->where()->equals('parent_id', $id);
         $query->limit(1);
         $result = $this->fetchFromQuery($query);
         if ($result) {
@@ -1349,5 +1307,32 @@ class CalDavEvent extends SugarBean implements SugarDavSyncInterface
     protected function getAdapterFactory()
     {
         return CalDavAdapterFactory::getInstance();
+    }
+
+    /**
+     * Gets synchronization object for operation with counters
+     * @return null|CalDavSynchronization
+     */
+    public function getSynchronizationObject()
+    {
+        $this->load_relationship('synchronization');
+
+        BeanFactory::clearCache();
+        $this->synchronization->resetLoaded();
+        $result = $this->synchronization->getBeans();
+        if ($result) {
+            return array_shift($result);
+        } else {
+            if (!$this->id) {
+                $this->new_with_id = true;
+                $this->id = create_guid();
+            }
+
+            $syncBean = BeanFactory::getBean('CalDavSynchronizations');
+            $syncBean->event_id = $this->id;
+            $syncBean->save();
+
+            return $syncBean;
+        }
     }
 }

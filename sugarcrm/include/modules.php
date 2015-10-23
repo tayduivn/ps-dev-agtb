@@ -728,6 +728,9 @@ $beanFiles['CalDavChange'] = 'modules/CalDav/Change.php';
 $beanList['CalDavSchedulings'] = 'CalDavScheduling';
 $beanFiles['CalDavScheduling'] = 'modules/CalDav/Scheduling.php';
 
+$beanList['CalDavSynchronizations'] = 'CalDavSynchronization';
+$beanFiles['CalDavSynchronization'] = 'modules/CalDav/Synchronization.php';
+
 // this module doesn't need a Bean
 $modInvisList[] = 'Feedbacks';
 

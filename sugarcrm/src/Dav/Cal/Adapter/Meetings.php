@@ -105,7 +105,7 @@ class Meetings extends CalDavAbstractAdapter implements AdapterInterface
         if ($isParticipantsChanged) {
             $calDavBean->scheduleLocalDelivery();
         }
-        
+
         if ($isEventChanged) {
             $calDavBean->setCalendarEventData($calendarEvent->serialize());
         }

@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Hook;
 
 use \Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
 use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
+use \Sugarcrm\Sugarcrm\Dav\Cal\Handler as CalHandler;
 
 /**
  *
@@ -25,7 +26,7 @@ class Handler
     /**
      * To be used from logic hooks to index a bean.
      *
-     * @param \SugarDav $bean
+     * @param \SugarBean $bean
      * @param string $event Triggered event
      * @param array $arguments Optional arguments
      * @return void
@@ -35,17 +36,36 @@ class Handler
         $adapter = $this->getAdapterFactory();
         $manager = $this->getManager();
         if ($bean instanceof \CalDavEvent) {
+
+            if (empty($bean->calendardata)) {
+                return;
+            }
+
             if ($bean->parent_type != $bean->module_name) {
                 $fetchedRow = $this->getBeanFetchedRow($bean);
                 $bean->clearVCalendarEvent();
-                $manager->calDavImport($fetchedRow, $bean->module_name);
+                $saveCounter = $bean->getSynchronizationObject()->setSaveCounter();
+                $manager->calDavImport($fetchedRow, $bean->module_name, $saveCounter);
             }
         } elseif ($bean instanceof \SugarBean && $adapter->getAdapter($bean->module_name)) {
             if (!$bean->repeat_parent_id || !empty($arguments['isUpdate'])) {
                 $fetchedRow = $this->getBeanFetchedRow($bean);
-                $manager->calDavExport($fetchedRow, $bean->module_name);
+
+                $calHandler = $this->getHandler();
+                $caldavBean = $calHandler->getDavBean($bean);
+                $saveCounter = $caldavBean->getSynchronizationObject()->setSaveCounter();
+                $manager->calDavExport($fetchedRow, $bean->module_name, $saveCounter);
             }
         }
+    }
+
+    /**
+     * Get CalDav handler
+     * @return CalHandler
+     */
+    protected function getHandler()
+    {
+        return new CalHandler();
     }
 
     /**

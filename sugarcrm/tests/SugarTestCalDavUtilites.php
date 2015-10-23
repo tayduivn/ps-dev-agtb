@@ -135,6 +135,8 @@ class SugarTestCalDavUtilities
         $createdID = self::getCreatedEventsId();
         if ($createdID) {
             $GLOBALS['db']->query('DELETE FROM caldav_events WHERE id IN (\'' . implode("', '", $createdID) . '\')');
+            $GLOBALS['db']->query('DELETE FROM caldav_synchronization WHERE event_id IN (\'' .
+                implode("', '", $createdID) . '\')');
         }
     }
 }

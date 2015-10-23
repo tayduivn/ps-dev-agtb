@@ -202,7 +202,7 @@ END:VCALENDAR',
 
         $eventMock = $this->getMockBuilder('CalDavEvent')
                           ->disableOriginalConstructor()
-                          ->setMethods(array('save', 'setCalendarEventURI', 'setCalendarId'))
+                          ->setMethods(array('save', 'setCalendarEventURI', 'setCalendarId', 'getSynchronizationObject'))
                           ->getMock();
 
         $eventMock->expects($this->once())->method('setCalendarEventURI')->with($objectUri);
@@ -272,7 +272,7 @@ END:VCALENDAR',
 
         $eventMock = $this->getMockBuilder('CalDavEvent')
                           ->disableOriginalConstructor()
-                          ->setMethods(array('save', 'getByURI'))
+                          ->setMethods(array('save', 'getByURI', 'getSynchronizationObject'))
                           ->getMock();
 
         $eventMock->id = $calendarId;

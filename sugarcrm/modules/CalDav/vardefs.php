@@ -118,24 +118,6 @@ $dictionary['CalDavEvent'] = array(
                     'comment' => 'ID of item indicated by parent_type',
                     'studio' => array('searchview' => false),
                 ),
-            'sync_counter' =>
-                array(
-                    'name' => 'sync_counter',
-                    'vname' => 'LBL_EVENT_SYNC_COUNTER',
-                    'type' => 'int',
-                    'len' => '11',
-                    'default' => '0',
-                    'comment' => 'Event sync counter',
-                ),
-            'module_sync_counter' =>
-                array(
-                    'name' => 'module_sync_counter',
-                    'vname' => 'LBL_EVENT_MODULE_SYNC_COUNTER',
-                    'type' => 'int',
-                    'len' => '11',
-                    'default' => '0',
-                    'comment' => 'Related module object sync counter',
-                ),
             'events_calendar' =>
                 array(
                     'name' => 'events_calendar',
@@ -145,6 +127,14 @@ $dictionary['CalDavEvent'] = array(
                     'link_type' => 'one',
                     'vname' => 'LBL_CALENDAR_EVENTS',
                 ),
+            'synchronization' => array(
+                'name' => 'synchronization',
+                'type' => 'link',
+                'relationship' => 'event_synchronization',
+                'module' => 'CalDavSynchronizations',
+                'source' => 'non-db',
+                'vname' => 'LBL_EVENT_SYNC',
+            ),
         ),
     'relationships' => array(
         'events_calendar' => array(
@@ -155,6 +145,15 @@ $dictionary['CalDavEvent'] = array(
             'lhs_table' => 'caldav_calendars',
             'lhs_key' => 'id',
             'relationship_type' => 'one-to-many',
+        ),
+        'event_synchronization' => array(
+            'lhs_module' => 'CalDavEvents',
+            'lhs_table' => 'caldav_events',
+            'lhs_key' => 'id',
+            'rhs_module' => 'CalDavSynchronizations',
+            'rhs_table' => 'caldav_synchronization',
+            'rhs_key' => 'event_id',
+            'relationship_type' => 'one-to-one'
         ),
     ),
     'indices' => array(
@@ -415,6 +414,56 @@ $dictionary['CalDavScheduling'] = array(
     ),
 );
 
+$dictionary['CalDavSynchronization'] = array(
+    'table' => 'caldav_synchronization',
+    'comment' => 'Synchronization counters for caldav event and sugar bean',
+    'full_text_search' => false,
+    'audited' => false,
+    'activity_enabled' => false,
+    'favorites' => false,
+    'fields' =>
+        array(
+            'event_id' =>
+                array(
+                    'name' => 'event_id',
+                    'vname' => 'LBL_EVENT_ID',
+                    'type' => 'id',
+                    'isnull' => 'false',
+                    'comment' => 'Calendar event id',
+                ),
+            'save_counter' =>
+                array(
+                    'name' => 'save_counter',
+                    'vname' => 'LBL_SYNC_SAVE_COUNTER',
+                    'type' => 'int',
+                    'len' => '11',
+                    'default' => '0',
+                    'comment' => 'Save counter',
+                ),
+            'job_counter' =>
+                array(
+                    'name' => 'job_counter',
+                    'vname' => 'LBL_SYNC_JOB_COUNTER',
+                    'type' => 'int',
+                    'len' => '11',
+                    'default' => '0',
+                    'comment' => 'Ended jobs counter',
+                ),
+        ),
+    'indices' => array(
+        array(
+            'name' => 'idx_event_id',
+            'type' => 'unique',
+            'fields' => array('event_id'),
+        ),
+    ),
+    'ignore_templates' => array(
+        'following',
+        'favorite',
+        'taggable',
+    ),
+);
+
 VardefManager::createVardef(
     'CalDavEvents',
     'CalDavEvent'
@@ -433,4 +482,9 @@ VardefManager::createVardef(
 VardefManager::createVardef(
     'CalDavSchedulings',
     'CalDavScheduling'
+);
+
+VardefManager::createVardef(
+    'CalDavSynchronizations',
+    'CalDavSynchronization'
 );

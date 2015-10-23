@@ -40,7 +40,11 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
         if ($parentModuleName) {
             $bean->parent_type = $parentModuleName;
         }
-        $managerMock->expects($this->exactly($managerHandlerNameCount))->method($managerHandlerName);
+        $managerMock->expects($this->exactly($managerHandlerNameCount))
+                    ->method($managerHandlerName)
+                    ->with(array('id' => 1), $bean->module_name, 1);
+
+        $bean->calendardata = 'test';
 
         $hookHandlerMock->run($bean, null, null);
     }
@@ -99,17 +103,40 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
     {
         $handler = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler')
             ->disableOriginalConstructor()
-            ->setMethods(array('getManager','getAdapterFactory', 'getBeanFetchedRow'))
+            ->setMethods(array('getManager','getAdapterFactory', 'getBeanFetchedRow', 'getHandler'))
             ->getMock();
 
         $adapterFactoryMock = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory')
             ->setMethods(array('getAdapter'))
             ->getMock();
+
+        $caldavHandler = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Handler')
+                              ->setMethods(array('getDavBean'))
+                              ->getMock();
+
+        $caldavMock = $this->getMockBuilder('CalDavEvent')
+                           ->disableOriginalConstructor()
+                           ->setMethods(array('getSynchronizationObject'))
+                           ->getMock();
+
+        $syncMock = $this->getMockBuilder('CalDavSynchronization')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('setSaveCounter', 'getSaveCounter', 'getJobCounter'))
+                         ->getMock();
+
         $adapterFactoryMock->method('getAdapter')->willReturn(true);
 
         $handler->method('getBeanFetchedRow')->willReturn(array('id' => 1));
         $handler->method('getManager')->willReturn($managerMock);
         $handler->method('getAdapterFactory')->willReturn($adapterFactoryMock);
+        $handler->method('getHandler')->willReturn($caldavHandler);
+
+        $caldavHandler->method('getDavBean')->willReturn($caldavMock);
+        $caldavMock->method('getSynchronizationObject')->willReturn($syncMock);
+
+        $syncMock->method('setSaveCounter')->willReturn(1);
+        $syncMock->method('getJobCounter')->willReturn(0);
+
         return $handler;
     }
 
@@ -150,11 +177,23 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
     {
         $beanMock = $this->getMockBuilder($beanClass)
             ->disableOriginalConstructor()
-            ->setMethods(array('getBean'))
+            ->setMethods(array('getBean', 'getSynchronizationObject'))
             ->getMock();
+
+        $syncMock = $this->getMockBuilder('CalDavSynchronization')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('setSaveCounter', 'getSaveCounter', 'getJobCounter'))
+                         ->getMock();
+
+        $beanMock->fetched_row = array(1);
+        $beanMock->module_name = 'CalDavEvents';
         $relatedBean = new \stdClass();
         $relatedBean->module_name = '';
         $beanMock->method('getBean')->willReturn($relatedBean);
+        $beanMock->method('getSynchronizationObject')->willReturn($syncMock);
+
+        $syncMock->method('setSaveCounter')->willReturn(1);
+        $syncMock->method('getJobCounter')->willReturn(0);
         return $beanMock;
     }
 
