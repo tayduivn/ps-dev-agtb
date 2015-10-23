@@ -119,6 +119,67 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings::getUntilDate
+     * @dataProvider untilDateProvider
+     * @param $userDateFormat
+     * @param $date
+     * @param $expectedDate
+     */
+    public function testGetUntilDate($userDateFormat, $date)
+    {
+        $expectedDate = '2010-12-23';
+        $adapterMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getUserDateFormat'))
+            ->getMock();
+        $adapterMock->method('getUserDateFormat')->willReturn($userDateFormat);
+        $actualDate = TestReflection::callProtectedMethod($adapterMock, 'getUntilDate', array($date));
+        $this->assertEquals($expectedDate, $actualDate);
+    }
+
+    /**
+     * data provider for testGetUntilDate
+     */
+    public function untilDateProvider()
+    {
+        return array(
+            array('m/d/Y', '12/23/2010'),
+            array('d/m/Y', '23/12/2010'),
+            array('Y/m/d', '2010/12/23'),
+            array('m-d-Y', '12-23-2010'),
+            array('d-m-Y', '23-12-2010'),
+            array('Y-m-d', '2010-12-23'),
+            array('m.d.Y', '12.23.2010'),
+            array('d.m.Y', '23.12.2010'),
+            array('Y.m.d', '2010.12.23')
+        );
+    }
+
+    /**
+     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings::setRecurring
+     */
+    public function testSetRecurring()
+    {
+        $sugarBeanMock = $this->getBeanMock('\Meeting');
+        $calDavBeanMock = $this->getCalDavBeanMock();
+        $meetings = $this->getMeetingAdapterMock($calDavBeanMock);
+        $meetings->method('getUserDateFormat')->willReturn('m/d/Y');
+        $meetings->method('getUntilDate')->willReturn('2010-10-23');
+
+        $calDavBeanMock->parent_id = true;
+        $sugarBeanMock->repeat_until = '12/23/2010';
+        $recurringRule = array(
+            'children' => array(),
+            'deleted' => array()
+        );
+
+        $meetings->expects($this->once())->method('getUntilDate');
+
+        TestReflection::callProtectedMethod($meetings, 'setRecurring', array($recurringRule, $sugarBeanMock, $calDavBeanMock));
+        $this->assertEquals('2010-10-23', $sugarBeanMock->repeat_until);
+    }
+
+    /**
      * return adapter mock
      * @param $nonCachedBeanReturn
      * @return \PHPUnit_Framework_MockObject_MockObject
@@ -127,7 +188,15 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
     {
         $adapterMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings')
             ->disableOriginalConstructor()
-            ->setMethods(array('getNotCachedBean', 'getCurrentUserId', 'getUserCalendars', 'getDateTimeHelper', 'getCalendarEvents'))
+            ->setMethods(array(
+                'getNotCachedBean',
+                'getCurrentUserId',
+                'getUserCalendars',
+                'getDateTimeHelper',
+                'getCalendarEvents',
+                'getUserDateFormat',
+                'getUntilDate'
+            ))
             ->getMock();
         $dateTimeHelperMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
             ->setMethods(array('getCurrentUserTimeZone'))

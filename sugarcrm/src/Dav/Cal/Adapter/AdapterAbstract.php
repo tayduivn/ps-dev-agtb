@@ -120,7 +120,8 @@ abstract class AdapterAbstract
      */
     protected function getNotCachedBean(\SugarBean $calDavBean)
     {
-        return $calDavBean = \BeanFactory::getBean($calDavBean->module_name, $calDavBean->id, array('use_cache' => false));
+        return $calDavBean = \BeanFactory::getBean($calDavBean->module_name, $calDavBean->id,
+            array('use_cache' => false));
     }
 
     /**
@@ -211,8 +212,12 @@ abstract class AdapterAbstract
      */
     protected function getUntilDate($untilDate)
     {
-        $dateTimeHelper = $this->getDateTimeHelper();
-        return $dateTimeHelper->sugarDateToUserDate($untilDate);
+        $sugarDate = \SugarDateTime::createFromFormat(\TimeDate::DB_DATETIME_FORMAT, $untilDate);
+        if (!$sugarDate) {
+            $sugarDate = \SugarDateTime::createFromFormat($this->getUserDateFormat(), $untilDate);
+        }
+
+        return $sugarDate->format(\TimeDate::DB_DATE_FORMAT);
     }
 
     /**
@@ -387,6 +392,9 @@ abstract class AdapterAbstract
             /**
              * check if recurring rules have been changed
              */
+            if (!empty($sugarBean->repeat_until)) {
+                $sugarBean->repeat_until = $this->getUntilDate($sugarBean->repeat_until);
+            }
             if ($this->isRecurringRulesChangedForBean($sugarBean, $recurringRule)) {
                 \CalendarUtils::markRepeatDeleted($sugarBean);
                 $this->setRecurringRulesToBean($sugarBean, $recurringRule);
@@ -416,7 +424,8 @@ abstract class AdapterAbstract
                     $generatedId =
                         \CalendarUtils::saveRecurring($sugarBean, array($dateTimeHelper->sugarDateToUserDateTime($date_start)));
                     if (isset($generatedId[0]['id'])) {
-                        $event = \BeanFactory::getBean($sugarBean->module_name, $generatedId[0]['id'], array('cache' => false));
+                        $event = \BeanFactory::getBean($sugarBean->module_name, $generatedId[0]['id'],
+                            array('cache' => false));
                         $event->repeat_parent_id = $sugarBean->id;
                     }
                 }
@@ -503,4 +512,13 @@ abstract class AdapterAbstract
 
         return false;
     }
+
+    /**
+     * @return string
+     */
+    protected function getUserDateFormat()
+    {
+        return $GLOBALS['timedate']->get_date_format();
+    }
+
 }

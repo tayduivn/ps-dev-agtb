@@ -295,7 +295,7 @@ class RecurringHelper
         if (!empty($recurringInfo['dow']) && $recurringInfo['type'] == 'Weekly') {
             $newRules['BYDAY'] =
                 array_intersect_key(array_flip($this->dayMap), array_flip(str_split($recurringInfo['dow'])));
-            if (!is_array($currentRules['BYDAY'])) {
+            if (isset($currentRules['BYDAY']) && !is_array($currentRules['BYDAY'])) {
                 $newRules['BYDAY'] = implode(',', $newRules['BYDAY']);
             }
         }
