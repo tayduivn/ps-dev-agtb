@@ -17,12 +17,12 @@ if(isset($_REQUEST['root_directory'])){
 
     require_once('include/utils/sugar_file_utils.php');
 
-    //get the root directory to process
+    // get the root directory to process
     $from = $_REQUEST['root_directory'];
-    $forceReb = false;
-    //make sure that the rebuild option has been chosen
-    if(isset($_REQUEST['js_rebuild_concat'])){
-        if($_REQUEST['js_rebuild_concat'] == 'rebuild'){
+    $forceReb = !empty($_REQUEST['force_rebuild']);
+    // make sure that the rebuild option has been chosen
+    if (isset($_REQUEST['js_rebuild_concat'])) {
+        if (!$forceReb && $_REQUEST['js_rebuild_concat'] == 'rebuild') {
             //rebuild if files have changed
             $js_groupings = array();
             if(isset($_REQUEST['root_directory'])){
@@ -38,6 +38,7 @@ if(isset($_REQUEST['root_directory'])){
 
             //for each item in array, concatenate the source files
             foreach($grp_array as $grp){
+                // check if we have to do a rebuild by comparing JS file timestamps
                 foreach($grp as $original =>$concat){
 
                     // if the original file doesn't exist, skip it (so does the build util)
@@ -49,8 +50,8 @@ if(isset($_REQUEST['root_directory'])){
 
                     // make sure concatenated file is still valid
                     if (is_file($concat)) {
-                        //if individual file has been modifed date later than modified date of
-                        //concatenated file, then force a rebuild
+                        // if individual file has been modified date later than modified date of
+                        // concatenated file, then force a rebuild
                         if(filemtime($original) > filemtime($concat)){
                             $forceReb = true;
                             //no need to continue, we will rebuild
@@ -74,7 +75,6 @@ if(isset($_REQUEST['root_directory'])){
 
     }else{
         //We are only allowing rebuilding of concat files from browser.
-
     }
     return;
 }else{

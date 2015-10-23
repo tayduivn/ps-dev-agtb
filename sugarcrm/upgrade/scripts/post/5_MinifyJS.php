@@ -22,6 +22,11 @@ class SugarUpgradeMinifyJS extends UpgradeScript
     {
         $_REQUEST['root_directory'] = $this->context['source_dir'];
         $_REQUEST['js_rebuild_concat'] = 'rebuild';
+
+        // As part of the upgrade process, we always have to rebuild the cache
+        // see TY-826 for details
+        $_REQUEST['force_rebuild'] = true;
+
         require_once('jssource/minify.php');
     }
 }
