@@ -30,14 +30,14 @@
     /**
      * Prototype of a carrier-switcher field.
      */
-    carrierSwitcherPrototype : {
+    carrierSwitcherPrototype: {
         name: 'carrier-switcher-prototype',
         type: 'carrier-switcher',
         view : 'default'
     },
 
     events: {
-        'click input[data-action=switch-event]': 'handleRowSwitch'
+        'click [name=reset_to_default_button]': 'handleResetToDefault'
     },
 
     /**
@@ -47,28 +47,52 @@
         this._super('initialize', [options]);
         this._getLabelAndDescriptionMeta();
         if (this.meta.label) {
-            this.titleViewNameTitle = this.meta.label;
+            this.title = this.meta.label;
         }
-        this.before('render', this.populateCarriersAndEventsLists, this);
+
+        if (this.model.get('configMode') === 'user') {
+            this.createResetButton();
+        }
+
+        this.model.on('change:personal:' + this.meta.emitter, this.displayResetButton, this);
+        this.model.on('reset:all', this.displayResetButton, this);
+        this.model.on('reset:' + this.meta.emitter, this.displayResetButton, this);
+    },
+
+    render: function() {
+        this.populateCarriersAndEventsLists();
+        this._super('render');
+        this.displayResetButton();
     },
 
     /**
      * Populate carriersList and eventsList for template.
      */
     populateCarriersAndEventsLists: function() {
-        this.carriersList = this.model.get('carriers');
+        this.carriersList = (this.model.get('configMode') === 'user') ?
+            this.model.get('personal')['carriers'] :
+            this.model.get('carriers');
         this.eventsList = this.generateRowsAndColumns();
     },
 
+    /**
+     * Create data-table of events and carriers.
+     * @returns {Array}
+     */
     generateRowsAndColumns: function() {
-        var rows = [],
+        var rows = [], existingEmitters;
+
+        if (this.model.get('configMode') === 'user') {
+            existingEmitters = this.model.get('personal')['config'];
+        } else {
             existingEmitters = this.model.get('config');
+        }
 
         if (existingEmitters) {
             _.each(existingEmitters[this.meta.emitter], function(event, eventKey) {
                 var eventName = eventKey;
                 var fields = [];
-                _.each(this.model.get('carriers'), function(carrier, carrierKey) {
+                _.each(this.carriersList, function(carrier, carrierKey) {
                     var meta = {
                         carrier: carrierKey,
                         action: 'switch-delivery',
@@ -90,6 +114,47 @@
         }
 
         return rows;
+    },
+
+    /**
+     * Create Reset Button metadata.
+     */
+    createResetButton: function() {
+        this.meta['buttons'] = [
+            {
+                name: 'reset_to_default_button',
+                type: 'button',
+                label: 'LBL_RESET_TO_DEFAULT_BUTTON_LABEL',
+                css_class: 'btn btn-invisible btn-link'
+            }
+        ];
+    },
+
+    /**
+     * Check whether to display 'Reset to default' button or not.
+     * If all filters in all events of this emitter have "default" setting, hide the button, otherwise display it.
+     */
+    displayResetButton: function() {
+        var button = this.getField('reset_to_default_button'),
+            isAllDefault = true;
+
+        if (this.model.get('personal') && button) {
+            _.each(this.model.get('personal')['config'][this.meta.emitter], function(event, eventName) {
+                return _.each(event, function(filter, filterName) {
+                    var filterGlobal = this.model.get('global')['config'][this.meta.emitter][eventName][filterName];
+                    if (JSON.stringify(_.chain(filter).map(_.first).uniq().compact().value()) !==
+                        JSON.stringify(_.chain(filterGlobal).map(_.first).uniq().compact().value())) {
+                        isAllDefault = false;
+                    }
+                }, this);
+            }, this);
+
+            if (isAllDefault) {
+                button.hide();
+            } else {
+                button.show();
+            }
+        }
     },
 
     /**
@@ -122,7 +187,7 @@
     /**
      * Generates a carrier-switcher field object from its prototype and given definition.
      * @param {Object} def Field definition.
-     * @returns {Field}
+     * @returns {Object} Field object.
      * @private
      */
     _createCarrierSwitcherField: function(def) {
@@ -139,20 +204,27 @@
     },
 
     /**
-     * Handle delivery switching for the whole event.
-     * @param evt
+     * Reset all user settings to system defaults.
+     * @returns {boolean} returns false to stop propagation.
      */
-    handleRowSwitch: function(evt) {
-        var event = $(evt.currentTarget).data('event');
-        var selector =
-            'input[data-type=' +
-            this.carrierSwitcherPrototype.type + '][data-action=switch-delivery][data-event='
-            + event + ']';
+    handleResetToDefault: function() {
+        var message = app.lang.get('LBL_RESET_SETTINGS_EMITTER_CONFIRMATION', this.module),
+            successMessage = app.lang.get('LBL_RESET_SETTINGS_SUCCESS', this.module);
+        message = message.replace('%', this.meta.label);
 
-        if ($(evt.currentTarget).is(':checked')) {
-            this.$el.find(selector).removeAttr('disabled');
-        } else {
-            this.$el.find(selector).attr('disabled', true);
-        }
+        app.alert.show('reset_all_confirmation', {
+            level: 'confirmation',
+            messages: message,
+            onConfirm: _.bind(function() {
+                if (this.model.resetToDefault(this.meta.emitter)) {
+                    app.alert.show('reset_all_success', {
+                        level: 'success',
+                        autoClose: true,
+                        messages: successMessage
+                    });
+                }
+            }, this)
+        });
+        return false;
     }
 })

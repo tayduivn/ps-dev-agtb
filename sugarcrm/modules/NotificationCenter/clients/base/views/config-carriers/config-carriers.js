@@ -17,12 +17,55 @@
     extendsFrom: 'NotificationCenterConfigPanelView',
 
     /**
+     * Array of known system carriers.
+     */
+    carriers: [],
+
+    /**
+     * Populate carrier fields from the model before render.
      * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+
         this.meta.description = (this.model.get('configMode') === 'user') ?
             'LBL_CARRIER_DELIVERY_USER_DESC' :
             'LBL_CARRIER_DELIVERY_ADMIN_DESC';
+
+        this.before('render', this.populateCarriers, this);
+    },
+
+    /**
+     * Extracts all carriers from model and prepares them to be rendered by a field.
+     * @private
+     */
+    populateCarriers: function() {
+        var carriersData;
+
+        if (this.model.get('configMode') === 'user') {
+            carriersData = this.model.get('personal') ? this.model.get('personal')['carriers'] : null;
+        } else {
+            carriersData = this.model.get('carriers');
+        }
+
+        this.carriers = [];
+        _.each(carriersData, function(value, key) {
+            this.carriers.push({
+                name: key,
+                type: 'carrier',
+                label: app.lang.get('LBL_TITLE', key),
+                view: 'default'
+            });
+            if (value.selectable) {
+                this.carriers.push({
+                    name: key + '-address',
+                    type: 'address',
+                    view: 'edit',
+                    options: value.options,
+                    carrier: key,
+                    css_class: 'span12'
+                });
+            }
+        }, this);
     }
 })

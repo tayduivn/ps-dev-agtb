@@ -112,6 +112,7 @@ class NotificationCenterConfigApi extends GlobalConfigApi
     {
         $carriers = array();
         $carriersStatus = (array)$user->getPreference(self::CARRIER_STATUS_NAME, self::CARRIER_STATUS_CATEGORY);
+        $globalCarriers = $this->getCarriersConfig();
         foreach ($this->getCarrierRegistry()->getCarriers() as $module) {
             $carrier = $this->getCarrierRegistry()->getCarrier($module);
             $addressType = $carrier->getAddressType();
@@ -121,7 +122,11 @@ class NotificationCenterConfigApi extends GlobalConfigApi
             }
 
             $carriers[$module] = array(
-                'status' => array_key_exists($module, $carriersStatus) ? (!empty($carriersStatus[$module])) : true,
+                // If personal is not yet set up, take it from global config.
+                'status' => array_key_exists($module, $carriersStatus) ?
+                    (!empty($carriersStatus[$module])) :
+                    $globalCarriers[$module]['status'],
+
                 'selectable' => $addressType->isSelectable(),
                 'options' => (object)$options,
             );
