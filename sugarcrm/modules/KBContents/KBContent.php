@@ -46,6 +46,19 @@ class KBContent extends SugarBean {
     );
 
     /**
+     * List of fields that, in case of changing, will
+     * not affect on updating value of date_modified
+     *
+     * @var array
+     */
+    protected $ignoredByModificationMarkFields = array(
+        'useful',
+        'notuseful',
+        'date_entered',
+        'date_modified',
+    );
+
+    /**
      * Return root id for KB categories.
      * @return string for root node of KB categories.
      */
@@ -172,6 +185,18 @@ class KBContent extends SugarBean {
     }
 
     /**
+     * Overriding parent method just for turn off
+     */
+    public function check_date_relationships_load()
+    {
+        global $disable_date_format;
+        $old_disable_date_format  = $disable_date_format;
+        $disable_date_format = true;
+        parent::check_date_relationships_load();
+        $disable_date_format = $old_disable_date_format;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function save_relationship_changes($is_update, $exclude = array())
@@ -263,6 +288,11 @@ class KBContent extends SugarBean {
 
         $this->checkActiveRev();
 
+        if (!$this->checkNeedToUpdateDateModify($dataChanges)) {
+            $this->update_date_modified = false;
+            $this->update_modified_by = false;
+        }
+
         $beanId = parent::save($check_notify);
         if (!empty($this->category_id)) {
             $this->updateCategoryExternalVisibility($this->category_id);
@@ -273,6 +303,22 @@ class KBContent extends SugarBean {
             }
         }
         return $beanId;
+    }
+
+    /**
+     * Check on need to update record modification mark.
+     *
+     * @param array $dataChanges
+     * @return bool
+     */
+    protected function checkNeedToUpdateDateModify(array $dataChanges)
+    {
+        if (!$dataChanges) {
+            return false;
+        }
+        $changedFields = array_keys($dataChanges);
+        $realChanges = array_diff($changedFields, $this->ignoredByModificationMarkFields);
+        return !empty($realChanges);
     }
 
     /**

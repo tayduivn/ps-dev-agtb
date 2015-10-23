@@ -254,4 +254,36 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($bean->kbsapprover_id, $user->id);
     }
 
+    /**
+     * Test positive result of checkNeedToUpdateDateModify.
+     */
+    public function testCheckNeedToUpdateDateModifyWithNeedUpdateData()
+    {
+        $changedData = array('kbdocument_body' => 'test fat body');
+        $this->assertTrue(
+            SugarTestReflection::callProtectedMethod(
+                $this->bean,
+                'checkNeedToUpdateDateModify',
+                array($changedData))
+        );
+    }
+
+    /**
+     * Test negative result of checkNeedToUpdateDateModify.
+     */
+    public function testCheckNeedToUpdateDateModifyWithNoNeedUpdateData()
+    {
+        $changedData = array(
+            'useful' => 1,
+            'notuseful' => 0,
+            'date_entered' => '2015-10-23 11:03:00',
+            'date_modified' => '2015-10-23 11:03:00'
+        );
+        $this->assertFalse(
+            SugarTestReflection::callProtectedMethod(
+                $this->bean,
+                'checkNeedToUpdateDateModify',
+                array($changedData))
+        );
+    }
 }
