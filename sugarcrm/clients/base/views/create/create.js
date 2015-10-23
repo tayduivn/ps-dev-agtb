@@ -231,10 +231,19 @@
      *  `false` otherwise.
      */
     hasUnsavedChanges: function() {
+        var defaults,
+            nonDefaultedAttributesChanged,
+            defaultedAttributesChanged;
+
         if (this.resavingAfterMetadataSync) {
             return false;
         }
-        return this.model.isNew() && !_.isEqual(this.model.getDefault(), this.model.attributes);
+
+        defaults = this.model.getDefault() || {};
+        nonDefaultedAttributesChanged = !_.isEqual(_.keys(defaults), _.keys(this.model.attributes));
+        defaultedAttributesChanged = !_.isEmpty(this.model.changedAttributes(defaults));
+
+        return (this.model.isNew() && (nonDefaultedAttributesChanged || defaultedAttributesChanged));
     },
 
     handleSync: function () {
