@@ -392,7 +392,7 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'acl_action' => 'studio',
         'module' => $moduleName,
         'icon' => 'fa-cogs',
-        'route' => '#bwc/index.php?module=Shippers&action=index',
+        'route' => '#Shippers',
     ),
 
     // Product Types
