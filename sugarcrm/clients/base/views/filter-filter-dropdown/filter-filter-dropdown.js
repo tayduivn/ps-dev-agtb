@@ -58,6 +58,7 @@
         this.listenTo(this.layout, "filter:select:filter", this.handleSelect);
         this.listenTo(this.layout, "filter:change:module", this.handleModuleChange);
         this.listenTo(this.layout, "filter:render:filter", this._renderHtml);
+        this.listenTo(this.layout, 'filter:create:close', this.formatSelection);
     },
 
     /**
@@ -241,7 +242,10 @@
      * @return {string}
      */
     formatSelection: function(item) {
-        var ctx = {}, safeString;
+        var ctx = {},
+            safeString,
+            a11yLabel = app.lang.get('LBL_FILTER_CREATE_FILTER'),
+            a11yTabindex = 0;
 
         //Don't remove this line. We want to update the selected filter name but don't want to change to the filter
         //name displayed in the dropdown
@@ -269,6 +273,9 @@
 
         // Update the text for the selected filter.
         this.$('.choice-filter-label').html(safeString);
+        this.$('.choice-filter')
+            .attr('aria-label', a11yLabel)
+            .attr('tabindex', a11yTabindex);
 
         if (item.id !== 'all_records') {
             this.$('.choice-filter-close').show();
