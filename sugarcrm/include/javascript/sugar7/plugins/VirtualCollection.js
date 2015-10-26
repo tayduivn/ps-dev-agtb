@@ -32,6 +32,7 @@
                 }
 
                 this.synced = [];
+                this.defaults = [];
 
                 app.BeanCollection.prototype.initialize.call(this, models, options);
             },
@@ -45,6 +46,22 @@
              */
             isSynced: function(model) {
                 return _.contains(this.synced, model.id);
+            },
+
+            /**
+             * @deprecated since 7.7. Will be removed in 7.9.
+             *   Use {link Link#isSynced} instead.
+             *
+             * Returns `true` if the model has already been linked; `false` if
+             * not.
+             *
+             * @param {Data.Bean} model
+             * @return {boolean}
+             */
+            isDefault: function(model) {
+                app.logger.warn('Link.isDefault is deprecated. ' +
+                    'Please update your code to use Link.isSynced instead.');
+                return this.isSynced(model);
             },
 
             /**
@@ -132,17 +149,60 @@
             /**
              * Removes a model so that it is neither linked or unlinked.
              *
+             * If model was set as a default, it is also removed from the list
+             * of defaults.
+             *
              * @param {Data.Bean} model
              * @chainable
              */
             undo: function(model) {
+                this.removeDefault(model);
                 this.remove(model);
 
                 return this;
             },
 
             /**
-             * Stores the ID's of the models know to be related through this
+             * Appends the model's ID to the list of defaults so it will not be
+             * considered when checking for changes in the collection.
+             *
+             * Model is left in the collection as it still needs to be synced.
+             *
+             * @param {Data.Bean} model Model whose ID should be appended to the
+             *   list of defaults
+             * @chainable
+             */
+            appendDefault: function(model) {
+                this.defaults.push(model.id);
+
+                return this;
+            },
+
+            /**
+             * Remove the model's ID from list of defaults.
+             *
+             * @param {Data.Bean} model Model whose ID should be removed from
+             *   the list of defaults
+             * @chainable
+             */
+            removeDefault: function(model) {
+                this.defaults = _.without(this.defaults, model.id);
+
+                return this;
+            },
+
+            /**
+             * Returns `true` if the link's model collection has changed beyond
+             * the models marked as defaults; `false` if not.
+             *
+             * @return {boolean}
+             */
+            hasChanged: function() {
+                return _.difference(_.pluck(this.models, 'id'), this.defaults).length > 0;
+            },
+
+            /**
+             * Stores the ID's of the models known to be related through this
              * relationship.
              *
              * There may be more that can be found through pagination.
@@ -171,6 +231,28 @@
             },
 
             /**
+             * @deprecated since 7.7. Will be removed in 7.9.
+             *   Use {link Link#setSynced} instead.
+             *
+             * Stores the ID's of the models know to be related through this
+             * relationship.
+             *
+             * There may be more that can be found through pagination.
+             *
+             * Models that were set to be linked or unlinked are removed from
+             * the collection.
+             *
+             * @param {Array} [models] Array of model ID's. If empty, then the
+             * ID's of the models currently in the collection will be used.
+             * @chainable
+             */
+            setDefaults: function(models) {
+                app.logger.warn('Link.setDefaults is deprecated. ' +
+                    'Please update your code to use Link.setSynced instead.');
+                return this.setSynced(models);
+            },
+
+            /**
              * Clears the changes to the link.
              *
              * Models that were linked are added to the synced set. Models
@@ -190,6 +272,22 @@
             },
 
             /**
+             * @deprecated since 7.7. Will be removed in 7.9.
+             *   Use {link Link#clearAndUpdateSynced} instead.
+             *
+             * Clears the changes to the link.
+             *
+             * Models that were linked are added to the default set. Models
+             * that were unlinked are removed from the default set.
+             * @chainable
+             */
+            clearAndUpdateDefaults: function() {
+                app.logger.warn('Link.clearAndUpdateDefaults is deprecated. ' +
+                    'Please update your code to use Link.clearAndUpdateSynced instead.');
+                return this.clearAndUpdateSynced();
+            },
+
+            /**
              * Sets a model as synced.
              *
              * If the model was set to be linked or unlinked, then that change
@@ -203,6 +301,24 @@
                 this.undo(model);
 
                 return this;
+            },
+
+            /**
+             * @deprecated since 7.7. Will be removed in 7.9.
+             *   Use {link Link#addSynced} instead.
+             *
+             * Sets a model as a default.
+             *
+             * If the model was set to be linked or unlinked, then that change
+             * will be undone.
+             *
+             * @param {Data.Bean} model
+             * @chainable
+             */
+            addDefault: function(model) {
+                app.logger.warn('Link.addDefault is deprecated. ' +
+                    'Please update your code to use Link.addSynced instead.');
+                return this.addSynced(model);
             }
         }, false);
 
@@ -377,6 +493,10 @@
                         app.MixedBeanCollection.prototype.add.call(this, model, options);
                         added.push(this.get(model.id));
                     }
+
+                    if (options.default) {
+                        relationship.appendDefault(model);
+                    }
                 }, this);
 
                 if (!options.silent && added.length > 0) {
@@ -542,7 +662,7 @@
                 var changed = false;
 
                 _.each(this.links, function(link) {
-                    if (link.length > 0) {
+                    if (link.hasChanged()) {
                         changed = true;
                     }
                 }, this);

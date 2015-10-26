@@ -404,6 +404,27 @@ describe('Plugins.VirtualCollection', function() {
         it('should return false', function() {
             expect(collection.hasChanged()).toBe(false);
         });
+
+        it('should return false when only defaults exist on collection', function() {
+            collection.add(_.rest(contacts, 4), {default: true});
+
+            expect(collection.hasChanged()).toBe(false);
+        });
+
+        it('should return true when there are defaults, but also additional changes', function() {
+            collection.add(contacts[4], {default: true});
+            collection.add(contacts[5]);
+
+            expect(collection.hasChanged()).toBe(true);
+        });
+
+        it('should return true when model is added as default, but then removed and added as non-default', function() {
+            collection.add(contacts[4], {default: true});
+            collection.remove(contacts[4]);
+            collection.add(contacts[4]);
+
+            expect(collection.hasChanged()).toBe(true);
+        });
     });
 
     describe('supporting pagination', function() {
