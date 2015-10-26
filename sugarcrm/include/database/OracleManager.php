@@ -114,6 +114,92 @@ class OracleManager extends DBManager
      */
     protected $configOptions;
 
+    /**
+     * Gets a string comparison SQL snippet for use in hard coded queries. This
+     * is done this way because some DBs handle empty strings differently than
+     * others. In the case of Oracle, empty strings are converted to NULL for
+     * comparison, and when using string comparison operations on a NULL, Oracle
+     * throws a syntax error.
+     * @param string $field The full column name (and alias) to use in the comparison
+     * @return string
+     */
+    public function getEmptyStringSQL($field)
+    {
+        return $this->getIsNullSQL($field);
+    }
+
+    /**
+     * Gets a string comparison SQL snippet for use in hard coded queries. This
+     * is done this way because some DBs handle empty strings differently than
+     * others. In the case of Oracle, empty strings are converted to NULL for
+     * comparison, and when using string comparison operations on a NULL, Oracle
+     * throws a syntax error.
+     * @param string $field The full column name (and alias) to use in the comparison
+     * @return string
+     */
+    public function getNotEmptyStringSQL($field)
+    {
+        return $this->getIsNotNullSQL($field);
+    }
+
+    /**
+     * Gets a string comparison SQL snippet for use in hard coded queries. This
+     * is done this way because some DBs handle empty strings differently than
+     * others. In the case of Oracle, empty strings are converted to NULL for
+     * comparison, and when using string comparison operations on a NULL, Oracle
+     * throws a syntax error.
+     * @param string $field The full column name (and alias) to use in the comparison
+     * @return string
+     */
+    public function getEmptyFieldSQL($field)
+    {
+        return $this->getIsNullSQL($field);
+    }
+
+    /**
+     * Gets a string comparison SQL snippet for use in hard coded queries. This
+     * is done this way because some DBs handle empty strings differently than
+     * others. In the case of Oracle, empty strings are converted to NULL for
+     * comparison, and when using string comparison operations on a NULL, Oracle
+     * throws a syntax error.
+     * @param string $field The full column name (and alias) to use in the comparison
+     * @return string
+     */
+    public function getNotEmptyFieldSQL($field)
+    {
+        return $this->getIsNotNullSQL($field);
+    }
+
+    /**
+     * Sets where properties for empty conditions on the SugarQuery object. Since
+     * Oracle does things a little differently with empty strings we need to
+     * define this here to keep Oracle happy.
+     * @param SugarQuery_Builder_Where $where SugarQuery where object
+     * @param string $field The field to compare
+     * @param SugarBean $bean SugarBean
+     * @return SugarQuery_Builder_Where
+     */
+    public function setEmptyWhere(SugarQuery_Builder_Where $where, $field, $bean = false)
+    {
+        $where->isNull($field, $bean);
+        return $where;
+    }
+
+    /**
+     * Sets where properties for not empty conditions on the SugarQuery object. Since
+     * Oracle does things a little differently with empty strings we need to
+     * define this here to keep Oracle happy.
+     * @param SugarQuery_Builder_Where $where SugarQuery where object
+     * @param string $field The field to compare
+     * @param SugarBean $bean SugarBean
+     * @return SugarQuery_Builder_Where
+     */
+    public function setNotEmptyWhere(SugarQuery_Builder_Where $where, $field, $bean = false)
+    {
+        $where->notNull($field, $bean);
+        return $where;
+    }
+
     public function repairTableParams($tablename, $fielddefs, $indices, $execute = true, $engine = null)
     {
         //Modules with names close to 30 characters may have index names over 30 characters, we need to clean them

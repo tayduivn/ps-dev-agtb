@@ -251,6 +251,108 @@ abstract class DBManager
     protected $defaultPerfProfile = array();
 
     /**
+     * Gets a string comparison SQL snippet for use in hard coded queries. This
+     * is done this way because some DBs handle empty strings differently than
+     * others.
+     * @param string $field The full column name (and alias) to use in the comparison
+     * @return string
+     */
+    public function getEmptyStringSQL($field)
+    {
+        return " $field = '' ";
+    }
+
+    /**
+     * Gets a string comparison SQL snippet for use in hard coded queries. This
+     * is done this way because some DBs handle empty strings differently than
+     * others.
+     * @param string $field The full column name (and alias) to use in the comparison
+     * @return string
+     */
+    public function getNotEmptyStringSQL($field)
+    {
+        return " $field != '' ";
+    }
+
+    /**
+     * Gets a string comparison SQL snippet for use in hard coded queries. This
+     * is done this way because some DBs handle empty strings differently than
+     * others.
+     * @param string $field The full column name (and alias) to use in the comparison
+     * @return string
+     */
+    public function getIsNullSQL($field)
+    {
+        return " $field IS NULL ";
+    }
+
+    /**
+     * Gets a string comparison SQL snippet for use in hard coded queries. This
+     * is done this way because some DBs handle empty strings differently than
+     * others.
+     * @param string $field The full column name (and alias) to use in the comparison
+     * @return string
+     */
+    public function getIsNotNullSQL($field)
+    {
+        return " $field IS NOT NULL ";
+    }
+
+    /**
+     * Gets a string comparison SQL snippet for use in hard coded queries. This
+     * is done this way because some DBs handle empty strings differently than
+     * others.
+     * @param string $field The full column name (and alias) to use in the comparison
+     * @return string
+     */
+    public function getEmptyFieldSQL($field)
+    {
+        return '(' . $this->getEmptyStringSQL($field) . ' OR ' . $this->getIsNullSQL($field) . ')';
+    }
+
+    /**
+     * Gets a string comparison SQL snippet for use in hard coded queries. This
+     * is done this way because some DBs handle empty strings differently than
+     * others.
+     * @param string $field The full column name (and alias) to use in the comparison
+     * @return string
+     */
+    public function getNotEmptyFieldSQL($field)
+    {
+        return '(' . $this->getNotEmptyStringSQL($field) . ' AND ' . $this->getIsNotNullSQL($field) . ')';
+    }
+
+    /**
+     * Sets where properties for empty conditions on the SugarQuery object
+     * @param SugarQuery_Builder_Where $where SugarQuery where object
+     * @param string $field The field to compare
+     * @param SugarBean $bean SugarBean
+     * @return SugarQuery_Builder_Where
+     */
+    public function setEmptyWhere(SugarQuery_Builder_Where $where, $field, $bean = false)
+    {
+        $where->queryOr()
+              ->equals($field, '', $bean)
+              ->isNull($field, $bean);
+        return $where;
+    }
+
+    /**
+     * Sets where properties for not empty conditions on the SugarQuery object
+     * @param SugarQuery_Builder_Where $where SugarQuery where object
+     * @param string $field The field to compare
+     * @param SugarBean $bean SugarBean
+     * @return SugarQuery_Builder_Where
+     */
+    public function setNotEmptyWhere(SugarQuery_Builder_Where $where, $field, $bean = false)
+    {
+        $where->queryAnd()
+              ->notEquals($field, '', $bean)
+              ->notNull($field, $bean);
+        return $where;
+    }
+
+    /**
      * Getter default performance profile
      * @param string $name Profile name
      * @return array

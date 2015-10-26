@@ -31,6 +31,12 @@ class SugarUpgradeRemoveInvalidPMSEFields extends UpgradeScript
 
             // Remove fields in act_fields that are invalid
             $db = $this->db;
+
+            // Decorate our SQL so that each DB can parse this properly
+            $afmNotEmptyString = $db->getNotEmptyStringSQL('ad.act_field_module');
+            $afNotEmptyString = $db->getNotEmptyStringSQL('act_fields');
+
+            // build the SQL now
             $sql = "SELECT
                         ad.id, ad.act_fields, ad.act_field_module, pd.pro_module
                     FROM
@@ -38,8 +44,8 @@ class SugarUpgradeRemoveInvalidPMSEFields extends UpgradeScript
                         INNER JOIN 
                             pmse_bpm_process_definition pd ON pd.id = ad.pro_id
                     WHERE 
-                        ad.act_field_module <> ''
-                        AND ad.act_fields <> ''
+                        $afmNotEmptyString
+                        AND $afNotEmptyString
                         AND pd.deleted = 0
                         AND ad.deleted = 0";
             $result = $db->query($sql);
