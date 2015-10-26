@@ -196,8 +196,11 @@ function change_state(radiobutton) {
     	<td width="30%"  valign='top'>
     		<input type='hidden' name='notify_on' value='0'><input name="notify_on" tabindex='1' value="1" class="checkbox" type="checkbox" {$notify_on}>
     	</td>
-    	<td scope="row" width="17%"></td>
-        <td></td>
+        <td scope="row" width="17%">{$MOD.LBL_ALLOW_USER_EMAIL_ACCOUNT}:&nbsp;</td>
+        <td>
+            <input type='hidden' name='allow_user_email_accounts' value='0'>
+            <input name="allow_user_email_accounts" tabindex='1'  value='1' class="checkbox" type="checkbox" {$allow_user_email_accounts}>
+        </td>
     </tr>
      <tr>
     	<td width="20%" scope="row" valign='top'>
