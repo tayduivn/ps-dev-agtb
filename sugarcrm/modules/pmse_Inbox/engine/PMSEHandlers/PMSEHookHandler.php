@@ -100,7 +100,7 @@ class PMSEHookHandler
             $q->where()
                 ->equals('pro_module', $bean->module_dir)
                 ->equals('pro_status', 'ACTIVE')
-                ->notEquals('pro_locked_variables', '');
+                ->isNotEmpty('pro_locked_variables');
             $temp = $q->compileSql();
             $proDefs = $q->execute();
             if (!empty($proDefs)) {
