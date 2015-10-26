@@ -27,6 +27,7 @@ class Category extends SugarBean implements NestedBeanInterface
     public $rgt;
     public $lvl;
 
+
     /**
      * Save current node as new root.
      * @return String Id of new created bean.
@@ -449,5 +450,13 @@ class Category extends SugarBean implements NestedBeanInterface
 
         parent::mark_deleted($id);
         $this->shiftLeftRight($this->rgt + 1, ($this->lft - $this->rgt) - 1);
+    }
+    
+    /**
+     *  override default behavior
+     * {@inheritDoc}
+     */
+    public function isACLRoleEditable(){
+        return false;
     }
 }

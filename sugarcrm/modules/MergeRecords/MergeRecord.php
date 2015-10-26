@@ -14,8 +14,7 @@ if (!defined('sugarEntry') || !sugarEntry)
 class MergeRecord extends SugarBean {
     var $object_name = 'MergeRecord';
     var $module_dir = 'MergeRecords';
-	var $acl_display_only = true;
-    var $merge_module;
+	var $merge_module;
 
     var $merge_module2;
 
@@ -304,6 +303,14 @@ class MergeRecord extends SugarBean {
             $where .= $clause;
         }
         return $where;
+    }
+
+    /**
+     *  override default behavior
+     * {@inheritDoc}
+     */
+    public function isACLRoleEditable(){
+        return false;
     }
 }
 ?>
