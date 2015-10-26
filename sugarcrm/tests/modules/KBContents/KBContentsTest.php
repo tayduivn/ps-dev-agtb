@@ -255,35 +255,60 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test positive result of checkNeedToUpdateDateModify.
+     * Test save usefulness on empty bean.
+     *
+     * @expectedException SugarApiException
      */
-    public function testCheckNeedToUpdateDateModifyWithNeedUpdateData()
+    public function testSaveUsefulnessWithEmptyBean()
     {
-        $changedData = array('kbdocument_body' => 'test fat body');
-        $this->assertTrue(
-            SugarTestReflection::callProtectedMethod(
-                $this->bean,
-                'checkNeedToUpdateDateModify',
-                array($changedData))
-        );
+        $this->bean->id = false;
+        $this->bean->saveUsefulness();
     }
 
     /**
-     * Test negative result of checkNeedToUpdateDateModify.
+     * Test of saveUsefulness().
      */
-    public function testCheckNeedToUpdateDateModifyWithNoNeedUpdateData()
+    public function testSaveUsefulness() {
+
+        $beanDateModified = $this->bean->date_modified;
+        $beanModifiedBy = $this->bean->modified_by;
+
+        $this->bean->useful = 1;
+        $this->bean->notuseful = 0;
+
+        $this->assertTrue($this->bean->update_date_modified);
+        $this->assertTrue($this->bean->update_modified_by);
+
+        $this->bean->saveUsefulness();
+        $this->assertFalse($this->bean->update_date_modified);
+        $this->assertFalse($this->bean->update_modified_by);
+
+        $this->bean->retrieve();
+        $this->assertEquals('1', $this->bean->useful);
+        $this->assertEquals('0', $this->bean->notuseful);
+        $this->assertEquals($beanDateModified, $this->bean->date_modified);
+        $this->assertEquals($beanModifiedBy, $this->bean->modified_by);
+    }
+
+    /**
+     * Test that in saving of new kbcontent we omit usefulness.
+     */
+    public function testSavingNewBeanOmitUsefulness()
     {
-        $changedData = array(
-            'useful' => 1,
-            'notuseful' => 0,
-            'date_entered' => '2015-10-23 11:03:00',
-            'date_modified' => '2015-10-23 11:03:00'
-        );
-        $this->assertFalse(
-            SugarTestReflection::callProtectedMethod(
-                $this->bean,
-                'checkNeedToUpdateDateModify',
-                array($changedData))
-        );
+        $bean = SugarTestKBContentUtilities::createBean(array('useful' => 1), false);
+        $bean->new_with_id = true;
+        SugarTestKBContentUtilities::saveBean($bean);
+        $this->assertEquals('0', $bean->useful);
+    }
+
+    /**
+     * Test that in saving of new kbcontent we omit usefulness.
+     */
+    public function testSavingExistingBeanOmitUsefulness()
+    {
+        $this->bean->retrieve(); // to fill bean->fetched_row
+        $this->bean->useful = 1;
+        $this->bean->save();
+        $this->assertEquals('0', $this->bean->useful);
     }
 }

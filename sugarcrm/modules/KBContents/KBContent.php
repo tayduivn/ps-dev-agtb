@@ -46,19 +46,6 @@ class KBContent extends SugarBean {
     );
 
     /**
-     * List of fields that, in case of changing, will
-     * not affect on updating value of date_modified
-     *
-     * @var array
-     */
-    protected $ignoredByModificationMarkFields = array(
-        'useful',
-        'notuseful',
-        'date_entered',
-        'date_modified',
-    );
-
-    /**
      * Return root id for KB categories.
      * @return string for root node of KB categories.
      */
@@ -186,6 +173,8 @@ class KBContent extends SugarBean {
 
     /**
      * Overriding parent method just for turn off
+     * date formatting in loading because this leads
+     * to lost seconds in datetime fields.
      */
     public function check_date_relationships_load()
     {
@@ -276,6 +265,8 @@ class KBContent extends SugarBean {
             $this->active_rev = (int) empty($this->kbarticle_id);
         }
 
+        $this->skipUsefulnessChanges($dataChanges);
+
         if (isset($dataChanges['status'])) {
             switch ($dataChanges['status']['after']) {
                 // automatically set ApprovedBy if status was changed to Approved
@@ -287,11 +278,6 @@ class KBContent extends SugarBean {
         }
 
         $this->checkActiveRev();
-
-        if (!$this->checkNeedToUpdateDateModify($dataChanges)) {
-            $this->update_date_modified = false;
-            $this->update_modified_by = false;
-        }
 
         $beanId = parent::save($check_notify);
         if (!empty($this->category_id)) {
@@ -306,19 +292,39 @@ class KBContent extends SugarBean {
     }
 
     /**
-     * Check on need to update record modification mark.
+     * Mute changes in kb voting (need when
+     * save kb article).
      *
      * @param array $dataChanges
-     * @return bool
      */
-    protected function checkNeedToUpdateDateModify(array $dataChanges)
+    protected function skipUsefulnessChanges(array $dataChanges)
     {
-        if (!$dataChanges) {
-            return false;
+        if ($this->new_with_id) {
+            $this->useful = 0;
+            $this->notuseful = 0;
+            return;
         }
-        $changedFields = array_keys($dataChanges);
-        $realChanges = array_diff($changedFields, $this->ignoredByModificationMarkFields);
-        return !empty($realChanges);
+        if (array_key_exists('useful', $dataChanges)) {
+            $this->useful = $dataChanges['useful']['before'];
+        }
+        if (array_key_exists('notuseful', $dataChanges)) {
+            $this->notuseful = $dataChanges['notuseful']['before'];
+        }
+    }
+
+    /**
+     * Special save for users votes save.
+     * @throws SugarApiException
+     */
+    public function saveUsefulness()
+    {
+        if(empty($this->id)) {
+            throw new SugarApiException('Bean must be initialized');
+        }
+
+        $this->update_date_modified = false;
+        $this->update_modified_by = false;
+        parent::save();
     }
 
     /**
