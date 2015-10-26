@@ -44,7 +44,8 @@
      * @inheritdoc
      */
     initDashlet: function(view) {
-        var userConversionRate = 1 / app.metadata.getCurrency(app.user.getPreference('currency_id')).conversion_rate;
+        var userCurrency = app.metadata.getCurrency(app.user.getPreference('currency_id'));
+        var userConversionRate = (userCurrency ? (1 / userCurrency.conversion_rate) : 1);
         var userCurrencyPreference = app.user.getPreference('currency_id');
         var salesStageLabels = app.lang.getAppListStrings('sales_stage_dom');
 
