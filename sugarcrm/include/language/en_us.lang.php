@@ -8737,6 +8737,11 @@ $app_strings = array (
     'WARNING_NO_DELETE_CLOSED_SELECTED_STATUS' => 'One or more of the selected records has a Revenue Line Item with status of ' .
         'Closed Won or Closed Lost and cannot be deleted.',
 
+    'WARNING_NO_MASSUPDATE_SELECTED_STAGE' => 'One or more of the selected records has a sales stage of Closed Won or Closed Lost and cannot be mass updated.',
+    'WARNING_NO_MASSUPDATE_SELECTED_STATUS' => 'One or more of the selected records has a status of Closed Won or Closed Lost and cannot be mass updated.',
+    'WARNING_NO_MASSUPDATE_CLOSED_SELECTED_STATUS' => 'One or more of the selected records has a Revenue Line Item with status of ' .
+        'Closed Won or Closed Lost and cannot be mass updated.',
+
     'LBL_ACCOUNT'=>'Account',
     'LBL_OLD_ACCOUNT_LINK'=>'Old Account',
     'LBL_ACCOUNTS'=>'Accounts',

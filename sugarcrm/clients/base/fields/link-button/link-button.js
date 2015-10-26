@@ -11,8 +11,8 @@
 /**
  * "Link" button used in selection list for linking existing records.
  *
- * @class View.Fields.Base.RowactionField
- * @alias SUGAR.App.view.fields.BaseRowactionField
+ * @class View.Fields.Base.LinkButtonField
+ * @alias SUGAR.App.view.fields.BaseLinkButtonField
  * @extends View.Fields.Base.RowactionField
  */
 ({

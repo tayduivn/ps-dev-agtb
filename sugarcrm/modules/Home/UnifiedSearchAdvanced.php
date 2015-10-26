@@ -482,7 +482,9 @@ class UnifiedSearchAdvanced {
             }
             else
             {
-                $json_disabled[] = array("module" => $module, 'label' => $label);
+                if(!empty($data['disabled_module_visible']) && $data['disabled_module_visible'] !== true) {
+                    $json_disabled[] = array("module" => $module, 'label' => $label);
+                }
             }
         }
 

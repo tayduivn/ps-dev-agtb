@@ -25,6 +25,21 @@
             });
         }
     },
+
+    /**
+     * @inheritdoc
+     */
+    bindDataChange: function() {
+        this._super('bindDataChange');
+        this.context.parent.on('subpanel:reload', function(args) {
+            if (!_.isUndefined(args) && _.isArray(args.links) && _.contains(args.links, this.context.get('link'))) {
+                // have to set skipFetch to false so panel.js will toggle this panel open
+                this.context.set('skipFetch', false);
+                this.context.reloadData({recursive: false});
+            }
+        }, this);
+    },
+    
     /**
      * @inheritdoc
      */
