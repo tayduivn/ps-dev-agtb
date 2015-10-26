@@ -314,7 +314,7 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
         if (isset($_POST['calendar_publish_key'])) {
             $focus->setPreference(
                 'calendar_publish_key',
-                SugarCleaner::cleanHtml($_POST['calendar_publish_key'], true),
+                SugarCleaner::stripTags($_POST['calendar_publish_key'], false),
                 0,
                 'global'
             );
