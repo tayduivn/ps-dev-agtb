@@ -1,11 +1,12 @@
 describe('Base.Field.Duration', function() {
-    var app, field;
+    var app, field, data;
 
     beforeEach(function () {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         field = SugarTest.createField('base', 'duration', 'duration');
         SugarTest.testMetadata.set();
+        data = field.model.get(field.name);
 
         sinon.stub(app.user, 'getPreference')
             .withArgs('datepref')
@@ -32,13 +33,13 @@ describe('Base.Field.Duration', function() {
         Handlebars.templates = {};
     });
 
-    describe('getFormattedValue()', function() {
+    describe('format()', function() {
         it('should display start and end dates if they are more than a day apart', function() {
             field.model.set({
                 date_start: '2014-07-17T11:28',
                 date_end: '2014-07-18T12:28'
             });
-            expect(field.getFormattedValue()).toBe('07/17/2014 11:28am - 07/18/2014 12:28pm (1 day 1 hour)');
+            expect(field.format(data)).toBe('07/17/2014 11:28am - 07/18/2014 12:28pm (1 day 1 hour)');
         });
 
         it('should display start and end dates if they are different even if they are less than a day apart', function() {
@@ -46,7 +47,7 @@ describe('Base.Field.Duration', function() {
                 date_start: '2014-07-17T23:28',
                 date_end: '2014-07-18T02:28'
             });
-            expect(field.getFormattedValue()).toBe('07/17/2014 11:28pm - 07/18/2014 02:28am (3 hours)');
+            expect(field.format(data)).toBe('07/17/2014 11:28pm - 07/18/2014 02:28am (3 hours)');
         });
 
         it('should display date once if they are the same', function() {
@@ -55,7 +56,7 @@ describe('Base.Field.Duration', function() {
                 date_end: '2014-07-17T12:28'
             });
 
-            expect(field.getFormattedValue()).toBe('07/17/2014 11:28am - 12:28pm (1 hour)');
+            expect(field.format(data)).toBe('07/17/2014 11:28am - 12:28pm (1 hour)');
         });
 
         it('should display 0 duration if the start date is not before the end date', function() {
@@ -64,7 +65,7 @@ describe('Base.Field.Duration', function() {
                 date_end: '2014-07-17T10:28'
             });
 
-            expect(field.getFormattedValue()).toBe('07/17/2014 11:28am - 10:28am (0 minutes)');
+            expect(field.format(data)).toBe('07/17/2014 11:28am - 10:28am (0 minutes)');
         });
 
         it('should display 0 duration if the start and end dates are the same', function() {
@@ -73,7 +74,7 @@ describe('Base.Field.Duration', function() {
                 date_end: '2014-07-17T11:28'
             });
 
-            expect(field.getFormattedValue()).toBe('07/17/2014 11:28am - 11:28am (0 minutes)');
+            expect(field.format(data)).toBe('07/17/2014 11:28am - 11:28am (0 minutes)');
         });
     });
 
