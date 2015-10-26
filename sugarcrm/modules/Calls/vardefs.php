@@ -419,6 +419,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
         'vname' => 'LBL_CONTACT_ID',
         'link' => 'contacts',
 		'source' => 'non-db',
+        'studio' => false,
 	),
   'repeat_type' =>
   array(
