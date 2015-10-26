@@ -1012,19 +1012,22 @@ END:VCALENDAR',
             array(
                 'currentEvent' => $this->getEventTemplate('vevent'),
                 'sugarDateTime' => '2014-12-31 21:00:01',
-                'datetime' => '20141231T210001Z',
+                'datetime' => '20141231T220001',
+                'timezone' => 'Europe/Berlin',
                 'result' => true,
             ),
             array(
                 'currentEvent' => $this->getEventTemplate('vevent'),
                 'sugarDateTime' => '2015-08-06 08:00:00',
                 'datetime' => '20150806T100000',
+                'timezone' => 'Europe/Berlin',
                 'result' => false,
             ),
             array(
                 'currentEvent' => $this->getEventTemplate('vempty'),
                 'sugarDateTime' => '2014-12-31 21:00:01',
                 'datetime' => '20141231T210001Z',
+                'timezone' => 'UTC',
                 'result' => true,
             ),
         );
@@ -1036,20 +1039,50 @@ END:VCALENDAR',
             array(
                 'currentEvent' => $this->getEventTemplate('vevent'),
                 'sugarDateTime' => '2014-12-31 21:00:01',
-                'datetime' => '20141231T210001Z',
+                'datetime' => '20141231T220001',
+                'timezone' => 'Europe/Berlin',
                 'result' => true,
             ),
             array(
                 'currentEvent' => $this->getEventTemplate('vevent'),
                 'sugarDateTime' => '2015-08-06 09:00:00',
                 'datetime' => '20150806T110000',
+                'timezone' => 'Europe/Berlin',
                 'result' => false,
             ),
             array(
                 'currentEvent' => $this->getEventTemplate('vempty'),
                 'sugarDateTime' => '2014-12-31 21:00:01',
                 'datetime' => '20141231T210001Z',
+                'timezone' => 'UTC',
                 'result' => true,
+            ),
+        );
+    }
+
+    public function setEndOfEventProvider()
+    {
+        return array(
+            array(
+                'currentEvent' => $this->getEventTemplate('vevent'),
+                'endDate' => null,
+                'durationHours' => 1,
+                'durationMinutes' => 0,
+                'expectedMethods' => array('deleteVObjectProperty', 'setDuration'),
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vevent'),
+                'endDate' => '2015-01-01 00:00:00',
+                'durationHours' => 1,
+                'durationMinutes' => 0,
+                'expectedMethods' => array('setEndDate'),
+            ),
+            array(
+                'currentEvent' => $this->getEventTemplate('vempty'),
+                'endDate' => '2015-01-01 00:00:00',
+                'durationHours' => 1,
+                'durationMinutes' => 0,
+                'expectedMethods' => array('setDuration'),
             ),
         );
     }
@@ -1060,19 +1093,22 @@ END:VCALENDAR',
             array(
                 'currentEvent' => $this->getEventTemplate('vtodo'),
                 'sugarDateTime' => '2014-12-31 21:00:01',
-                'datetime' => '20141231T210001Z',
+                'datetime' => '20150101T000001',
+                'timezone' => 'Europe/Minsk',
                 'result' => true,
             ),
             array(
                 'currentEvent' => $this->getEventTemplate('vtodo'),
                 'sugarDateTime' => '2015-08-14 10:00:00',
                 'datetime' => '20150814T130000',
+                'timezone' => 'Europe/Minsk',
                 'result' => false,
             ),
             array(
                 'currentEvent' => $this->getEventTemplate('vempty'),
                 'sugarDateTime' => '2014-12-31 21:00:01',
                 'datetime' => '20141231T210001Z',
+                'timezone' => 'UTC',
                 'result' => true,
             ),
         );
@@ -2183,7 +2219,11 @@ END:VCALENDAR',
     {
         $component = $this->getObjectForSetters($currentEvent);
 
-        $result = $this->beanMock->setDuration($hours, $minutes, $component);
+        $result = SugarTestReflection::callProtectedMethod(
+            $this->beanMock,
+            'setDuration',
+            array($hours, $minutes, $component)
+        );
 
         $this->assertEquals($expectedResult, $result);
         $this->assertEquals($expectedDuration, $component->DURATION);
@@ -2250,13 +2290,14 @@ END:VCALENDAR',
      * @param string $currentEvent
      * @param string $dateTime
      * @param string $expectedDateTime
+     * @param string $expectedTimeZone
      * @param bool $expectedResult
      *
      * @covers       \CalDavEvent::setStartDate
      *
      * @dataProvider setStartDateProvider
      */
-    public function testSetStartDate($currentEvent, $dateTime, $expectedDateTime, $expectedResult)
+    public function testSetStartDate($currentEvent, $dateTime, $expectedDateTime, $expectedTimeZone, $expectedResult)
     {
         $component = $this->getObjectForSetters($currentEvent);
 
@@ -2264,39 +2305,67 @@ END:VCALENDAR',
 
         $this->assertEquals($expectedResult, $result);
         $this->assertEquals($expectedDateTime, $component->DTSTART->getValue());
+        $timezone = $component->DTSTART->getDateTime()->getTimezone()->getName();
+        $this->assertEquals($expectedTimeZone, $timezone);
     }
 
     /**
      * @param string $currentEvent
      * @param string $dateTime
      * @param string $expectedDateTime
+     * @param string $expectedTimeZone
      * @param bool $expectedResult
      *
      * @covers       \CalDavEvent::setEndDate
      *
      * @dataProvider setEndDateProvider
      */
-    public function testSetEndDate($currentEvent, $dateTime, $expectedDateTime, $expectedResult)
+    public function testSetEndDate($currentEvent, $dateTime, $expectedDateTime, $expectedTimeZone, $expectedResult)
     {
         $component = $this->getObjectForSetters($currentEvent);
 
-        $result = $this->beanMock->setEndDate($dateTime, $component);
+        $result = SugarTestReflection::callProtectedMethod($this->beanMock, 'setEndDate', array($dateTime, $component));
 
         $this->assertEquals($expectedResult, $result);
         $this->assertEquals($expectedDateTime, $component->DTEND->getValue());
+        $timezone = $component->DTEND->getDateTime()->getTimezone()->getName();
+        $this->assertEquals($expectedTimeZone, $timezone);
+    }
+
+    /**
+     * @param string $currentEvent
+     * @param string $dtEnd
+     * @param int $durationHours
+     * @param int $durationMinutes
+     * @param array $expectedMethods
+     *
+     * @dataProvider setEndOfEventProvider
+     *
+     * @covers       \CalDavEvent::setEndOfEvent
+     */
+    public function testSetEndOfEvent($currentEvent, $dtEnd, $durationHours, $durationMinutes, $expectedMethods)
+    {
+        $component = $this->getObjectForSetters($currentEvent, array('setEndDate', 'deleteVObjectProperty', 'setDuration'));
+
+        foreach ($expectedMethods as $method) {
+            $this->beanMock->expects($this->once())->method($method);
+        }
+
+        $this->beanMock->setEndOfEvent($dtEnd, $durationHours, $durationMinutes, $component);
     }
 
     /**
      * @param string $currentEvent
      * @param string $dateTime
      * @param string $expectedDateTime
+     * @param string $expectedTimeZone
      * @param bool $expectedResult
      *
      * @covers       \CalDavEvent::setDueDate
      *
      * @dataProvider setDueDateProvider
      */
-    public function testSetDueDate($currentEvent, $dateTime, $expectedDateTime, $expectedResult)
+    public function testSetDueDate($currentEvent, $dateTime, $expectedDateTime, $expectedTimeZone, $expectedResult)
     {
         $component = $this->getObjectForSetters($currentEvent, null, 'VTODO');
 
@@ -2304,6 +2373,8 @@ END:VCALENDAR',
 
         $this->assertEquals($expectedResult, $result);
         $this->assertEquals($expectedDateTime, $component->DUE->getValue());
+        $timezone = $component->DUE->getDateTime()->getTimezone()->getName();
+        $this->assertEquals($expectedTimeZone, $timezone);
     }
 
     /**

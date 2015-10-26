@@ -489,7 +489,11 @@ class CalDavEvent extends SugarBean
         $currentDateTime = new DateTime($value, $utcTZ);
 
         if ($currentDateTime != $checkDateTime) {
-            $parent->$propertyName->setDateTime($this->dateTimeHelper->sugarDateToDav($value));
+            $newDateTime = $this->dateTimeHelper->sugarDateToDav(
+                $value,
+                $parent->$propertyName->getDateTime()->getTimezone()
+            );
+            $parent->$propertyName->setDateTime($newDateTime);
 
             return true;
         }
@@ -775,13 +779,35 @@ class CalDavEvent extends SugarBean
      * @param Sabre\VObject\Component $parent
      * @return bool
      */
-    public function setEndDate($value, SabreComponent $parent)
+    protected function setEndDate($value, SabreComponent $parent)
     {
         if ($parent instanceof SabreComponent\VEvent) {
             return $this->setVObjectDateTimeProperty('DTEND', $value, $parent);
         }
 
         return false;
+    }
+
+    /**
+     * Set end of event based on DTEND or DURATION
+     * @param string $endDate
+     * @param int $durationHours
+     * @param int $durationMinutes
+     * @param SabreComponent $parent
+     *
+     * @return bool
+     */
+    public function setEndOfEvent($endDate, $durationHours, $durationMinutes, SabreComponent $parent)
+    {
+        if ($parent->DTEND) {
+            if (!empty($endDate)) {
+                return $this->setEndDate($endDate, $parent);
+            } else {
+                $this->deleteVObjectProperty($parent, 'DTEND');
+            }
+        }
+
+        return $this->setDuration($durationHours, $durationMinutes, $parent);
     }
 
     /**
@@ -864,7 +890,7 @@ class CalDavEvent extends SugarBean
      * @param Sabre\VObject\Component $parent
      * @return bool
      */
-    public function setDuration($hours, $minutes, SabreComponent $parent)
+    protected function setDuration($hours, $minutes, SabreComponent $parent)
     {
         $duration = $this->dateTimeHelper->secondsToDuration($hours * 3600 + $minutes * 60);
 

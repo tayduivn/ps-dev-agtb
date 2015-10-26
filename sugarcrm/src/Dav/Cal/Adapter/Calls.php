@@ -52,13 +52,15 @@ class Calls extends CalDavAbstractAdapter implements AdapterInterface
             $isEventChanged = true;
         }
 
-        if ($calDavBean->setEndDate($sugarBean->date_end, $calendarComponent)) {
+        if ($calDavBean->setEndOfEvent(
+            $sugarBean->date_end,
+            $sugarBean->duration_hours,
+            $sugarBean->duration_minutes,
+            $calendarComponent
+        )) {
             $isEventChanged = true;
         }
 
-        if ($calDavBean->setDuration($sugarBean->duration_hours, $sugarBean->duration_minutes, $calendarComponent)) {
-            $isEventChanged = true;
-        }
         if ($calDavBean->setOrganizer($sugarBean, $calendarComponent)) {
             $isEventChanged = true;
         }

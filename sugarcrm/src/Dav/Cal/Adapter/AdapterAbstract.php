@@ -297,6 +297,7 @@ abstract class AdapterAbstract
      * @param \SugarBean $sugarBean
      * @param \SugarBean $sourceBean
      * @param array $dataMap
+     * @return bool
      */
     protected function setBeanProperties($sugarBean, $sourceBean, $dataMap)
     {

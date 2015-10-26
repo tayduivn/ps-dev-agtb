@@ -91,14 +91,17 @@ class DateTimeHelper
     }
 
     /**
-     * Create DateTime object with UTC timetone
-     * @param $dateTime
+     * Create DateTime object with selected timezone based on UTC
+     * @param string $dateTime datetime string in UTC format
+     * @param \DateTimeZone $tz expected timezone in event
      * @return \DateTime
      */
-    public function sugarDateToDav($dateTime)
+    public function sugarDateToDav($dateTime, \DateTimeZone $tz = null)
     {
-        $tz = new \DateTimeZone('UTC');
-        $dt = new \DateTime($dateTime, $tz);
+        $dt = new \DateTime($dateTime, new \DateTimeZone('UTC'));
+        if (!$tz) {
+            $tz = new \DateTimeZone('UTC');
+        }
         $dt->setTimeZone($tz);
 
         return $dt;
