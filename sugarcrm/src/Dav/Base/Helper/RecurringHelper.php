@@ -354,11 +354,15 @@ class RecurringHelper
             }
             $isChanged |= $event->setTitle($child->name, $component);
             $isChanged |= $event->setDescription($child->description, $component);
-            $isChanged |= $event->setDuration($child->duration_hours, $child->duration_minutes, $component);
             $isChanged |= $event->setLocation($child->location, $component);
             $isChanged |= $event->setStatus($child->status, $component);
             $isChanged |= $event->setStartDate($child->date_start, $component);
-            $isChanged |= $event->setEndDate($child->date_end, $component);
+            $isChanged |= $event->setEndOfEvent(
+                $child->date_end,
+                $child->duration_hours,
+                $child->duration_minutes,
+                $component
+            );
 
             if ($isChanged) {
                 $component->isModifed = true;
@@ -415,14 +419,16 @@ class RecurringHelper
      */
     protected function createRecurringChild(DavComponent $component, DavComponent $recurringComponent)
     {
-        $componentDateTime = $component->DTSTART->getDateTime();
-        $recurringDateTimeString = $this->dateTimeHelper->davDateToSugar($recurringComponent->DTSTART);
-        $recurringDateTime = new \DateTime($recurringDateTimeString, new \DateTimeZone('UTC'));
-        $componentDate = $componentDateTime->format('Ymd') . 'T' . $recurringDateTime->format('His') . 'Z';
-        $component->add(
-            'RECURRENCE-ID',
-            $componentDate
-        );
+        if ($component->{'RECURRENCE-ID'}) {
+            $component->remove('RECURRENCE-ID');
+        }
+        $dtStart = $component->DTSTART->getDateTime();
+        $dateTimeString =
+            $dtStart->format('Ymd') . 'T' . $recurringComponent->DTSTART->getDateTime()->format('His');
+        $recurringDateTime = new \DateTime($dateTimeString, $dtStart->getTimezone());
+        $dateTimeElement = $component->parent->createProperty('RECURRENCE-ID', $recurringDateTime);
+        $component->add($dateTimeElement);
+
         if ($component->UID) {
             $component->remove('UID');
         }
