@@ -19,7 +19,7 @@
     extendsFrom: 'SubpanelListView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this.plugins = _.union(this.plugins || [], ['KBContent']);

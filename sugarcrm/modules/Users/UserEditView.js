@@ -151,14 +151,20 @@ function sendTestEmail()
     		overlay(SUGAR.language.get('app_strings',"LBL_EMAIL_TEST_OUTBOUND_SETTINGS"), SUGAR.language.get('app_strings',"LBL_EMAIL_TEST_NOTIFICATION_SENT"), 'alert');
     	}
     };
+
+    var smtpUser = document.getElementById('mail_smtpuser');
+    var smtpPass = document.getElementById('mail_smtppass');
     var smtpServer = document.getElementById('mail_smtpserver').value;
-    var smtppass = trim(document.getElementById('mail_smtppass').value);
-    if(document.getElementById('mail_smtpuser') && document.getElementById('mail_smtppass')){
-    var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&mail_smtpauth_req=true&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + encodeURIComponent(smtppass) + "&outboundtest_from_address=" + fromAddress + "&outboundtest_to_address=" + toAddress;
+    var postDataString;
+
+    if (smtpUser && smtpPass) {
+        smtpUser = trim(smtpUser.value);
+        smtpPass = trim(smtpPass.value);
+        postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&mail_smtpauth_req=true&mail_smtpuser=" + smtpUser + "&mail_smtppass=" + encodeURIComponent(smtpPass) + "&outboundtest_from_address=" + fromAddress + "&outboundtest_to_address=" + toAddress;
+    } else {
+        postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&outboundtest_from_address=" + fromAddress + "&outboundtest_to_address=" + toAddress;
     }
-    else{
-	var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&outboundtest_from_address=" + fromAddress + "&outboundtest_to_address=" + toAddress;
-    }
+
 	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=testOutboundEmail&mail_name=system&module=EmailMan&to_pdf=true&sugar_body_only=true", callbackOutboundTest, postDataString);
 }
 function testOutboundSettingsDialog() {
@@ -237,18 +243,6 @@ function verify_data(form)
     // handles any errors in the email widget
     var isError = !check_form("EditView");
 
-    if (trim(form.last_name.value) == "") {
-		add_error_style('EditView',form.last_name.name,
-                        SUGAR.language.get('app_strings','ERR_MISSING_REQUIRED_FIELDS') + SUGAR.language.get('Users','LBL_LIST_NAME') );
-        isError = true;
-	}
-
-	if (typeof(form.user_name) != 'undefined' && trim(form.user_name.value) == "") {
-		add_error_style('EditView',form.user_name.name,
-                        SUGAR.language.get('app_strings','ERR_MISSING_REQUIRED_FIELDS') + SUGAR.language.get('Users','LBL_USER_NAME') );
-        isError = true;
-	}
-	
     if (document.getElementById("required_password").value=='1' 
 	    && document.getElementById("new_password").value == "") {
 		add_error_style('EditView',form.new_password.name,

@@ -211,7 +211,7 @@
       color: @gray;
       white-space: nowrap;
       &.tree {
-        overflow-x: hidden;
+        overflow-x: auto;
         overflow-y: auto;
         max-height: 200px;
         padding:0px;
@@ -450,4 +450,11 @@ tr.tr-inline-edit [data-type="nestedset"] {
       display: none;
     }
   }
+}
+
+// make node be able to contain the jstree dropdown
+.filter-definition-container .nestedset-filter-container {
+  width: 100%;
+  position: relative;
+  display: block;
 }

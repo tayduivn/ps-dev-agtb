@@ -143,7 +143,7 @@ class ActivitiesApi extends FilterApi
         );
 
         foreach ($data as $row) {
-            $seed->populateFromRow($row);
+            $seed->populateFromRow($row, true);
             $record = $this->formatBean($api, $args, $seed, $options);
 
             if ($record['activity_type'] === 'update') {

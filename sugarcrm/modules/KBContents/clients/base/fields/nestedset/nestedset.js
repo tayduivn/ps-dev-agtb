@@ -16,7 +16,7 @@
  */
 ({
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     fieldTag: 'div',
 
@@ -33,12 +33,12 @@
     moduleRoot: null,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     extendsFrom: 'BaseField',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     plugins: ['JSTree', 'NestedSetCollection'],
 
@@ -61,7 +61,7 @@
     dropdownCallback: null,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     events: {
         'click [data-role=treeinput]': 'openDropDown',
@@ -75,7 +75,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(opts) {
         this._super('initialize', [opts]);
@@ -92,7 +92,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _render: function() {
         var treeOptions = {},
@@ -117,13 +117,27 @@
                 {
                     'onSelect': _.bind(this.selectedNode, this),
                     'onLoad': function () {
-                        self.toggleSearchIcon(false);
+                        if (!self.disposed) {
+                            self.toggleSearchIcon(false);
+                        }
                     }
                 }
             );
             this.toggleSearchIcon(true);
             this.toggleClearIcon();
         }
+    },
+
+    /**
+     * Gets HTML placeholder for a field.
+     * @return {String} HTML placeholder for the field as Handlebars safe string.
+     */
+    getPlaceholder: function() {
+        // if this in the filter row, the placeholder must have some css rules
+        if (this.view && this.view.action === 'filter-rows') {
+            return new Handlebars.SafeString('<span sfuuid="' + this.sfId + '" class="nestedset-filter-container"></span>');
+        }
+        return this._super('getPlaceholder');
     },
 
     /**
@@ -294,7 +308,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * No data changes to bind.
      */
@@ -302,7 +316,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Set right value in DOM for the field.
      */
@@ -333,13 +347,14 @@
             }
             this.$('[data-role="treevalue"]','[name=' + this.def.name + ']').text(name);
             this.$('[name=' + this.def.id_name + ']').val(id);
-        } else {
+        }
+        if (!this.disposed) {
             this.render();
         }
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _dispose: function() {
         if (this._dropdownExists()) {
@@ -409,7 +424,7 @@
         if (!name) {
             app.alert.show('wrong_node_name', {
                 level: 'error',
-                messages: app.lang.get('LBL_EMPTY_NODE_NAME', 'Categories'),
+                messages: app.error.getErrorString('empty_node_name', this),
                 autoClose: true
             });
         } else {
@@ -484,7 +499,7 @@
 
     /**
      * We don't need tooltip, because it breaks dropdown.
-     * {@inheritdoc}
+     * @inheritdoc
      */
     decorateError: function(errors) {
         var $tooltip = $(this.exclamationMarkTemplate()),
@@ -497,7 +512,7 @@
 
     /**
      * Need to remove own error decoration.
-     * {@inheritdoc}
+     * @inheritdoc
      */
     clearErrorDecoration: function() {
         this.$el.closest('.record-cell').removeClass('error');
@@ -510,7 +525,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     exclamationMarkTemplate: function() {
         var extraClass = this.view.tplName === 'record' ? 'top0' : 'top4';

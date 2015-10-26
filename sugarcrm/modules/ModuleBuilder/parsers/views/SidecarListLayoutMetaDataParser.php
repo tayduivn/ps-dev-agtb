@@ -25,9 +25,6 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
      */
     protected $invalidTypes = array(
         'base' => array('iframe', 'encrypt', 'html', 'currency_id'),
-        //BEGIN SUGARCRM flav=ent ONLY
-        'portal' => array('iframe', 'encrypt', 'html','currency', 'currency_id'),
-        //END SUGARCRM flav=ent ONLY
     );
 
     /**
@@ -43,9 +40,6 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         MB_SIDECARPOPUPVIEW,
         MB_SIDECARDUPECHECKVIEW,
         MB_WIRELESSLISTVIEW,
-        //BEGIN SUGARCRM flav=ent ONLY
-        MB_PORTALLISTVIEW,
-        //END SUGARCRM flav=ent ONLY
     );
 
     /*
@@ -715,6 +709,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
     /**
      * Sets the sortable property of the fielddef
+     * Also see SidecarPortalListLayoutMetaDataParser::setDefSortable() for special handling on portal list view.
      *
      * @param string $fieldName  The name of the field being worked on
      * @param array $fieldDef The current fielddef collection for a field

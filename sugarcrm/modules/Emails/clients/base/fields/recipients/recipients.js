@@ -262,7 +262,7 @@
         var format;
 
         if (recipient.name) {
-            format = '"' + recipient.name + '" &lt;' + recipient.email + '&gt;';
+            format = '"' + Handlebars.Utils.escapeExpression(recipient.name) + '" &lt;' + recipient.email + '&gt;';
         } else {
             format = recipient.email;
         }

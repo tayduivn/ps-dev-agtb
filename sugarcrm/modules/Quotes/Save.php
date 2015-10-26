@@ -22,12 +22,15 @@ if (!$focus->ACLAccess('Save')) {
     ACLController::displayNoAccess(true);
     sugar_cleanup(true);
 }
-unset($_REQUEST['relate_id']);
-unset($_REQUEST['relate_to']);
+if (empty($_REQUEST['relate_id'])) {
+    unset($_REQUEST['relate_id']);
+    unset($_REQUEST['relate_to']);
+}
 //we have to commit the teams here in order to obtain the team_set_id for use with products and product bundles.
 if (empty($focus->teams)) {
     $focus->load_relationship('teams');
 }
+$focus->in_save = true;
 $focus->teams->save();
 //bug: 35297 - set the teams to have not been saved, so workflow can update if necessary
 $focus->teams->setSaved(false);
@@ -115,6 +118,10 @@ for ($k = 0; $k < sizeof($total_keys); $k++) {
     $pb->taxrate_id = $focus->taxrate_id;
     $pb->bundle_stage = $_REQUEST['bundle_stage'][$total_keys[$k]];
     $pb->name = $_REQUEST['bundle_name'][$total_keys[$k]];
+
+    $pb->load_relationship('quotes');
+    $pb->quotes->getBeans();
+    $pb->quotes->__set("beans", array($focus->id => $focus));
 
     $product_bundels[$total_keys[$k]] = $pb->save();
     if (substr_count($total_keys[$k], 'group_') > 0) {

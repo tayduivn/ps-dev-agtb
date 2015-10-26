@@ -47,16 +47,20 @@ class ViewPortalListView extends ViewListView
 
         $smarty = $this->constructSmarty($parser);
         $smarty->assign('fromPortal',true); // flag for form submittal - when the layout is submitted the actions are the same for layouts and portal layouts, but the parsers must be different...
+        $smarty->assign(
+            'onsubmit',
+            'studiotabs.generateGroupForm("edittabs"); if (countListFields()==0)' .
+            '{ModuleBuilder.layoutValidation.popup();}else {ModuleBuilder.handleSave("edittabs");} return false;'
+        );
         //Override the list view buttons to remove references to the history feature as the portal editors do not support it.
         $buttons = array ( 
             array ( 
                 'id' =>'savebtn', 
                 'name' => 'savebtn', 
                 'text' => translate('LBL_BTN_SAVEPUBLISH'), 
-                'actionScript' => "onclick='studiotabs.generateGroupForm(\"edittabs\");" 
-                    . "if (countListFields()==0) ModuleBuilder.layoutValidation.popup() ; else ModuleBuilder.handleSave(\"edittabs\" )'" 
+                'type' => 'submit',
             )
-        ) ;
+        );
         $smarty->assign ( 'buttons', $this->_buildImageButtons ( $buttons ) ) ;
         
         

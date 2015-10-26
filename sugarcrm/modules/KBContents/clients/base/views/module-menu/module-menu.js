@@ -38,7 +38,7 @@
     label: null,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Init additional properties and events.
      */
@@ -80,7 +80,7 @@
             },
         // @TODO: Find out why params from context for drawer don't pass to our view tree::_initSettings
             context = _.extend({}, this.context, {treeoptions: treeOptions, treecallbacks: treeCallbacks});
-        if (app.drawer.getActiveDrawerLayout() === this.moduleRoot) {
+        if (app.drawer.getActiveDrawerLayout().module === this.moduleRoot) {
             app.drawer.closeImmediately();
         }
         app.drawer.open({
@@ -96,7 +96,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     populate: function(tplName, filter, limit) {
         if (limit <= 0) {

@@ -109,19 +109,13 @@ class ModuleApi extends SugarApi {
         $cache_age = 0;
 
         if(isset($vardef['function'])) {
-            if ( isset($vardef['function']['returns']) && $vardef['function']['returns'] == 'html' ) {
-                throw new SugarApiExceptionError('html dropdowns are not supported');
-            }
-
-            $value = getFunctionValue(isset($vardef['function_bean']) ? $vardef['function_bean'] : null, $vardef['function']);
             $cache_age = 60;
-        }
-        else {
-            if(!isset($GLOBALS['app_list_strings'][$vardef['options']])) {
-                throw new SugarApiExceptionNotFound('options not found');
-            }
-            $value =  $GLOBALS['app_list_strings'][$vardef['options']];
+        } else {
             $cache_age = 3600;
+        }
+        $value = getOptionsFromVardef($vardef);
+        if ($value === false) {
+            throw new SugarApiExceptionNotFound('options not found');
         }
         // If a particular field has an option list that is expensive to calculate and/or rarely changes,
         // set the cache_setting property on the vardef to the age in seconds you want browsers to wait before refreshing
@@ -384,6 +378,9 @@ class ModuleApi extends SugarApi {
             $filepath = $basepath . $args[$fieldName . '_guid'];
 
             if (!is_file($filepath)) {
+                if (isset($bean->$fieldName)) {
+                    $bean->$fieldName = null;
+                }
                 continue;
             }
 

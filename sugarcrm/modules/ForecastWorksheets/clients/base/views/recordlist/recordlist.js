@@ -418,7 +418,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     unbindData: function() {
         app.events.off(null, null, this);

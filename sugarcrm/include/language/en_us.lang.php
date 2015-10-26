@@ -118,9 +118,10 @@ $app_list_strings = array (
         'Calls' => 'Cl',
         'Cases' => 'Cs',
         'Campaigns' => 'Ca',
-        'Notes' => 'Nt',
         'KBLocalizations' => 'Lo',
         'KBRevisions' => 'Re',
+        'Notes' => 'Nt',
+        'ProductCategories' => 'PG',
         'Quotas' => 'Fo',
         'Tasks' => 'Ts'
     ),
@@ -224,7 +225,7 @@ $app_list_strings = array (
     'Subscriptions' => 'Subscription',
     'UserSignatures' => 'User Signature',
     'Feedbacks' => 'Feedback',
-    'Tags' => 'Tag', 
+    'Tags' => 'Tag',
     'Categories' => 'Category',
   ),
 
@@ -1743,6 +1744,7 @@ $app_list_strings = array (
         'middle'       => 'Middle',
         'end' => 'End',
         'top' => 'Top',
+        'total' => 'Total',
     ),
     'pipeline_chart_dom' => array (
         'fun'   => 'Funnel',
@@ -1892,7 +1894,6 @@ $app_list_strings = array (
 
   'lead_conv_activity_opt' =>
   array(
-        'copy' => 'Copy',
         'move' => 'Move',
         'donothing' => 'Do Nothing'
   ),
@@ -8792,6 +8793,7 @@ $app_strings = array (
     'LBL_CLEAR_BUTTON_LABEL' => 'Clear',
     'LBL_CLEAR_BUTTON_TITLE' => 'Clear',
     'LBL_CLEARALL' => 'Clear All',
+    'LBL_CLICK_TO_EDIT' => 'Click to Edit',
     'LBL_CLOSE_BUTTON_TITLE' =>'Close',
     'LBL_CLOSE_BUTTON_KEY'=>'Q',
     'LBL_CLOSE_WINDOW'=>'Close Window',
@@ -8894,7 +8896,9 @@ $app_strings = array (
     'LBL_MISSING_CUSTOM_DELIMITER' => 'Must specify a custom delimiter.',
     'LBL_LAST_VIEWED' => 'Recently Viewed',
     'LBL_SELECTED_RECORDS' => 'Selected: ',
-    'TPL_MAX_PILLS_DISPLAYED' => 'Only {{maxPillsDisplayed}} records are visualized.',
+    'TPL_MAX_PILLS_DISPLAYED' => 'Only {{maxPillsDisplayed}} records are shown.',
+    'TPL_MORE_RECORDS' => '{{recordsLeft}} more records selected.',
+    'TPL_RECORDS_SELECTED' => '{{recordsLeft}} records selected.',
     'LBL_SHOW_LESS' => 'Show less',
     'LBL_SHOW_MORE' => 'Show more',
     'LBL_SHOW_MORE_MODULE' => 'More {{{module}}}...',
@@ -8941,6 +8945,7 @@ $app_strings = array (
     'LBL_LISTVIEW_SELECTED_CLEAR' => 'Clear selections.',
     'LBL_LISTVIEW_SELECT_ALL_RECORDS' => 'Select all records',
     'TPL_LISTVIEW_SELECTED_FIRST_OFFSET' => 'There are more than {{num}} records in the result set. You have selected the first {{num}} records.',
+    'TPL_LISTVIEW_SELECTED' => 'You have selected {{num}} records in the result set.',
     'TPL_LISTVIEW_SELECTED_ALL' => 'You have selected all {{num}} records in the result set.',
     'TPL_LISTVIEW_SELECT_ALL_RECORDS' => 'You have selected all {{num}} records in this view. {{link}} in the result set.',
     'TPL_MASSUPDATE_PROGRESS_STATUS' => 'Updating {{num}} of {{total}}.',
@@ -9308,6 +9313,7 @@ Sincerely, SugarCRM',
     'LBL_VIEW_PDF_BUTTON_TITLE' => 'Print as PDF',
 
     'LBL_KBDOCUMENTS' => 'Knowledge Base',
+    'ERR_EMPTY_NODE_NAME' => 'You cannot add a category without title',
 
 
     'LNK_ABOUT' => 'About',
@@ -9409,9 +9415,10 @@ Sincerely, SugarCRM',
     'ERROR_PA_FILTER_UNSUPPORTED_OPERATOR' => 'Error. You entered an unsupported operator.',
     'ERROR_PA_FILTER_INVALID_OPERATOR' => 'Error. You entered an invalid operator.',
     'ERROR_PA_FILTER_UNSUPPORTED_FILTER' => 'Error. You entered an invalid filter.',
-    'ERROR_EXP_DATE_LOW' => 'Error. The expiration date can not be before date of publishing.',
+    'ERROR_PA_UNSUPPORTED_FILE' => 'Import failed. Please check your sugar log for more details.',
+    'ERROR_EXP_DATE_LOW' => 'Error. The Expiration Date must occur on a date after the Publish Date.',
     'ERROR_ACTIVE_DATE_APPROVE_REQUIRED' => 'Error. The Approved status requires publishing date.',
-    'ERROR_ACTIVE_DATE_LOW' => 'Error. The publish date should be more than current date.',
+    'ERROR_ACTIVE_DATE_LOW' => 'Error. The Publish Date must occur on a later date than today\'s date.',
     'LBL_DUP_MERGE'=>'Find Duplicates',
     'ERR_DUPLICATE_CHECK_IS_DISABLED' => 'Duplicate check is disabled for {{module}}.',
     'LBL_MANAGE_SUBSCRIPTIONS'=>'Manage Subscriptions',
@@ -10206,21 +10213,21 @@ Sincerely, SugarCRM',
 
     /* Knowledge base category tree dashlet */
     'LBL_DASHLET_CATEGORIES_NAME' => 'Knowledge Base Categories & Published Articles',
-    'LBL_DASHLET_CATEGORIES_DESCRIPTION' => 'A tree view of the Knowledge Base Categories & published articles',
+    'LBL_DASHLET_CATEGORIES_DESCRIPTION' => 'Displays a tree view of knowledge base categories & published articles',
 
     /* Knowledge base localizations dashlet */
     'LBL_DASHLET_LOCALIZATIONS_NAME' => 'Published Articles in Other Languages',
-    'LBL_DASHLET_LOCALIZATIONS_DESCRIPTION' => 'A list of published localized Knowledge Base Articles',
+    'LBL_DASHLET_LOCALIZATIONS_DESCRIPTION' => 'Displays a list of published, localized knowledge base articles',
 
     // Most Useful Knowledge Base Articles dashlet
     'LBL_DASHLET_MOST_USEFUL_NAME' => 'Most Useful Published Knowledge Base Articles',
-    'LBL_DASHLET_MOST_USEFUL_DESC' => 'A list of Knowledge Base Articles liked most by users',
+    'LBL_DASHLET_MOST_USEFUL_DESC' => 'Displays the most liked and viewed knowledge base articles',
 
     'LBL_FILTERED_LIST_BY_FIELD' => '{{module}} filtered by {{label}} "{{value}}"',
 
     // Usefulness for Articles dashlet
     'LBL_DASHLET_USEFULNESS_NAME' => 'Usefulness for Articles',
-    'LBL_DASHLET_USEFULNESS_DESC' => 'A chart showing how useful the Knowledge Base article is',
+    'LBL_DASHLET_USEFULNESS_DESC' => 'Displays a chart showing how useful the knowledge base article is',
 
     // MySugar Menu Options
     'LBL_ADD_PAGE' => 'Add Page',
@@ -11445,7 +11452,7 @@ Sincerely, SugarCRM',
     'LBL_QUESTION_MARK' => '?',
 
     'LBL_DASHLET_RELATED_DOCUMENTS' => 'Published Related Articles',
-    'LBL_DASHLET_RELATED_DOCUMENTS_DESC' => 'A list of published related Knowledge Base articles',
+    'LBL_DASHLET_RELATED_DOCUMENTS_DESC' => 'Displays a list of published, related knowledge base articles',
 
     // Historical Summary
     'LBL_HISTORICAL_SUMMARY' => 'Historical Summary',
@@ -11687,6 +11694,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     // Javascript enable string
     'LBL_ENABLE_JAVASCRIPT' => 'Sugar 7 requires javascript. Please enable Javascript in your browser to use Sugar 7.',
+
+    'LBL_FIELD_TRIMMED' => 'Field was trimmed, due to exceeding the maximum character limit.',
 );
 
 $app_list_strings['activity_user_options'] = array (

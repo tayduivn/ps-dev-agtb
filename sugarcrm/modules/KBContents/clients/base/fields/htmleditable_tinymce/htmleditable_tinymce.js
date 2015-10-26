@@ -19,7 +19,7 @@
     shouldDisable: null,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Additional override fieldSelector property from field's meta.
      */
     initialize: function(opts) {
@@ -40,7 +40,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Apply document css style to editor.
      */
@@ -62,7 +62,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Need to strip tags for list and activity stream.
      */
     format: function(value) {
@@ -115,15 +115,23 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    destroyTinyMCEEditor: function() {
-        // Clean up existing TinyMCE editor
-        if (!_.isNull(this._htmleditor)) {
-            this._saveEditor(this.options.viewName === 'edit');
-            this._htmleditor.remove();
-            this._htmleditor.destroy();
-            this._htmleditor = null;
+    getEditorContent: function() {
+        var text = this._htmleditor.getContent({format: 'html'});
+        //We don't need to get empty html, to prevent model changes.
+        if (text !== '') {
+            text = this._super('getEditorContent');
         }
+        return text;
+    },
+
+    /**
+     * @inheritdoc
+     */
+    setViewName: function ()
+    {
+        this.destroyTinyMCEEditor();
+        this._super('setViewName', arguments);
     }
 })

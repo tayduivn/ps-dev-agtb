@@ -78,6 +78,10 @@ $viewdefs['KBContents']['base']['view']['subpanel-for-localizations'] = array(
                     'enabled' => true,
                     'default' => true,
                     'type' => 'status',
+                    'related_fields' => array(
+                        'active_date',
+                        'exp_date',
+                    ),
                 ),
             ),
         ),

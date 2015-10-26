@@ -13,6 +13,7 @@
 <div class="search-filter">
     <div class="control-group">
         <div class="filter controls controls-two btn-group-fit">
+            {{component this 'filter'}}
             <div class="toggle-actions actions">
                 <div class="btn-group" data-toggle="buttons-radio">
                     {{#each toggles}}
@@ -22,6 +23,9 @@
             </div>
         </div>
     </div>
-    <div class="filter-options extend hide"></div>
+    <div class="filter-options extend hide">
+        {{component this 'filter-rows'}}
+        {{component this 'filter-actions'}}
+    </div>
 </div>
 <div class="main-content"></div>

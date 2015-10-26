@@ -15,7 +15,7 @@
  */
 ({
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Imports a vcf file and creates a record based on person type
      */
     initialize: function(options) {

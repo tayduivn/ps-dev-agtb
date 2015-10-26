@@ -15,7 +15,7 @@
  */
 ({
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Convert the raw field type name
      * into the label of the field of the parent model.
      */

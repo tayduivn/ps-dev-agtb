@@ -19,7 +19,7 @@
     extendsFrom: 'PanelTopView',
     plugins: ['KBContent'],
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);

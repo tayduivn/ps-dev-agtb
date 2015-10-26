@@ -21,7 +21,6 @@ $viewdefs['KBContents']['base']['layout']['prefiltered'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'prefiltered-headerpane',
@@ -29,7 +28,6 @@ $viewdefs['KBContents']['base']['layout']['prefiltered'] = array(
                                 array(
                                     'layout' => array(
                                         'type' => 'filterpanel',
-                                        'span' => 12,
                                         'availableToggles' => array(),
                                         'filter_options' => array(
                                             'stickiness' => false,
@@ -53,16 +51,12 @@ $viewdefs['KBContents']['base']['layout']['prefiltered'] = array(
                                                         'layoutType' => 'records',
                                                     ),
                                                 ),
-                                                'targetEl' => '.filter',
-                                                'position' => 'prepend',
                                             ),
                                             array(
                                                 'view' => 'filter-rows',
-                                                'targetEl' => '.filter-options'
                                             ),
                                             array(
                                                 'view' => 'filter-actions',
-                                                'targetEl' => '.filter-options'
                                             ),
                                             array(
                                                 'view' => 'prefilteredlist',
@@ -79,7 +73,7 @@ $viewdefs['KBContents']['base']['layout']['prefiltered'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

@@ -57,14 +57,23 @@ class SugarWidgetFieldRelate extends SugarWidgetReportField
     private function displayInputQuery($layout_def)
     {
         $title = $layout_def['rname'];
-        if (isset($layout_def['db_concat_fields'])) {
-            $title = $this->reporter->db->concat($layout_def['table'], $layout_def['db_concat_fields']);
+        $bean = isset($layout_def['module']) ? BeanFactory::getBean($layout_def['module']) : NULL;
+        $table = empty($bean) ? $layout_def['table'] : $bean->table_name;
+        $concat_fields = isset($layout_def['db_concat_fields']) ? $layout_def['db_concat_fields'] : '';
+
+        if (empty($concat_fields) && !empty($bean) && isset($bean->field_defs[$title]['db_concat_fields']))
+        {
+            $concat_fields = $bean->field_defs[$title]['db_concat_fields'];
+        }
+        if (!empty($concat_fields))
+        {
+            $title = $this->reporter->db->concat($table, $concat_fields);
         }
 
         $query = "SELECT
                 id,
                 $title title
-            FROM {$layout_def['table']}
+            FROM $table
             WHERE deleted = 0
             ORDER BY title ASC";
         return $query;
@@ -106,21 +115,34 @@ class SugarWidgetFieldRelate extends SugarWidgetReportField
     public function queryFilterone_of($layout_def, $rename_columns = true)
     {
         $ids = array();
-
-        $relation = BeanFactory::getBean('Relationships');
-        $relation->retrieve_by_name($layout_def['link']);
-
-        $seed = BeanFactory::getBean($relation->lhs_module);
+        $module = isset($layout_def['custom_module']) ? $layout_def['custom_module'] : $layout_def['module'];
+        $seed = BeanFactory::getBean($module);
 
         foreach($layout_def['input_name0'] as $beanId)
         {
-            $seed->retrieve($beanId);
+            $sq = new SugarQuery();
+            $sq->select(array('id'));
+            $sq->from($seed);
+            if (isset($layout_def['link'])) {
+                $linkName = $layout_def['link'];
+                $relation = SugarRelationshipFactory::getInstance()->getRelationship($linkName);
+                if (isset($seed->field_defs[$linkName]) && $seed->loadRelationship($linkName)) {
+                    //Then the name of a link field was passed through, no need to guess at the link name.
+                    $sq->join($linkName);
+                } else if ($relation) {
+                    //Valid relationship name passed through, time to guess on the side.
+                    if ($layout_def['module'] == $relation->getRHSModule()) {
+                        $sq->join($relation->getRHSLink());
+                    } else {
+                        $sq->join($relation->getLHSLink());
+                    }
+                }
+            }
+            $sq->where()
+                ->equals($layout_def['id_name'], $beanId);
 
-            $link = new Link2($layout_def['link'], $seed);
-            $sql = $link->getQuery();
-            $result = $this->reporter->db->query($sql);
-            while ($row = $this->reporter->db->fetchByAssoc($result))
-            {
+            $rows = $sq->execute();
+            foreach($rows as $row) {
                 $ids[] = $row['id'];
             }
         }

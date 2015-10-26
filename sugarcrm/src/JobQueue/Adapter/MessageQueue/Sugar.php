@@ -93,10 +93,9 @@ class Sugar implements AdapterInterface
         $attempts = 5;
         while ($attempts-- && $this->routes) {
             $query = "SELECT id FROM {$job->table_name} " .
-                "WHERE execute_time <= {$this->db->now()} " .
-                "AND target IN('" . implode("', '", $this->db->arrayQuote($this->routes)) . "') " .
+                "WHERE target IN('" . implode("', '", $this->db->arrayQuote($this->routes)) . "') " .
                 "AND status = {$this->db->quoted($queued)} AND interface = 0 AND deleted = 0 " .
-                "ORDER BY execute_time ASC";
+                "ORDER BY date_entered ASC";
 
             $id = $this->db->getOne($query);
 
@@ -107,8 +106,7 @@ class Sugar implements AdapterInterface
             // if count is 0 this means somebody changed the job status and we have to try again.
             $res = $this->db->query(
                 "UPDATE {$job->table_name} " .
-                "SET execute_time={$this->db->now()}, status = {$this->db->quoted($queued)}, " .
-                "date_modified={$this->db->now()} " .
+                "SET execute_time={$this->db->now()}, status = {$this->db->quoted($running)} " .
                 "WHERE id='{$id}'"
             );
 

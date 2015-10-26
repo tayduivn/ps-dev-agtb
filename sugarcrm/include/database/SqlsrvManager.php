@@ -74,7 +74,6 @@ class SqlsrvManager extends MssqlManager
     protected $capabilities = array(
         "affected_rows" => true,
         'fulltext' => true,
-        'limit_subquery' => true,
         'create_user' => true,
         "create_db" => true,
         "recursive_query" => true,

@@ -34,7 +34,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Listen to changes on `is_read` field only if view name matches
      * notifications.
@@ -48,7 +48,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Inject additional logic to load templates based on different view names
      * according to the following:
@@ -77,7 +77,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Defines `severityCss` property based on field value. If current severity
      * does not match a known value its value is used as label and default

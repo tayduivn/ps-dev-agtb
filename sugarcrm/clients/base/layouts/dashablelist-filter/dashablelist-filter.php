@@ -33,16 +33,12 @@ $viewdefs['base']['layout']['dashablelist-filter'] = array(
                                 ),
                                 'type' =>'filter',
                             ),
-                            'targetEl' => '.filter',
-                            'position' => 'prepend'
                         ),
                         array(
                             'view' => 'filter-rows',
-                            'targetEl' => '.filter-options'
                         ),
                         array(
                             'view' => 'filter-actions',
-                            'targetEl' => '.filter-options'
                         ),
                     ),
                     'filter_options' => array(

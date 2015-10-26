@@ -82,6 +82,7 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                 }
 
                 $KBContent->populateFromRow($data);
+                $this->checkImages($KBContent);
                 $KBContent->set_created_by = false;
                 $KBContent->update_modified_by = false;
                 $KBContent->save();
@@ -133,6 +134,48 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
             if ($this->db->tableExists($table)) {
                 $this->db->dropTableName($table);
             }
+        }
+    }
+
+    /**
+     * Check old embedded images in document's body and replace it with new embedded files.
+     * @param SugarBean $bean
+     */
+    protected function checkImages($bean)
+    {
+        $matches = array();
+        $host = $config = SugarConfig::getInstance()->get('site_url');
+        $body = html_entity_decode($bean->kbdocument_body);
+        if (preg_match_all(
+            '|<img.*src=[\'"]{1}index\.php\?entryPoint=download[^\'"]+id=([^&=]*)[^\'"]*[\'"]{1}.*alt=[\'"]{1}([^\'"]*)[\'"]{1}[^>]*>|miu',
+            $body,
+            $matches
+        )) {
+            foreach ($matches[0] as $key => $match) {
+                $file = 'upload://' . $matches[1][$key];
+                if (!file_exists($file)) {
+                    continue;
+                }
+                $ef = BeanFactory::getBean('EmbeddedFiles');
+                $ef->file_mime_type = get_file_mime_type($file);
+                $ef->id = create_guid();
+                $ef->new_with_id = true;
+                $ef->filename = $ef->name = $matches[1][$key];
+                $ef->set_created_by = false;
+                $ef->update_modified_by = false;
+                $ef->created_by = $bean->created_by;
+                $ef->modified_user_id = $bean->modified_user_id;
+                copy($file, 'upload://' . $ef->id);
+                $ef->description = $matches[2][$key];
+                $ef->save(false);
+                $newimg = <<<EOF
+<img alt="{$ef->description}" src="rest/v10/EmbeddedFiles/{$ef->id}/file/kbdocument_body_file?force_download=0&amp;platform=base"
+ data-mce-src="{$host}/rest/v10/EmbeddedFiles/{$ef->id}/file/kbdocument_body_file?force_download=0&amp;platform=base" />
+EOF;
+                $body = str_replace($match, $newimg, $body);
+                $this->log("Embedded file {$matches[1][$key]} replaced");
+            }
+            $bean->kbdocument_body = htmlentities($body);
         }
     }
 
@@ -203,7 +246,7 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
     }
 
     /**
-     * Remove old KB from menu and add new one.
+     * Add new KB to menu if need.
      * Remove old KB from portal and add new one.
      */
     protected function checkMenu()
@@ -211,17 +254,20 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
         require_once('modules/MySettings/TabController.php');
         $tc = new TabController();
 
-        $tabs = $tc->get_system_tabs();
-        unset($tabs['KBDocuments']);
-        if (!isset($tabs['KBContents'])) {
+        if (!empty($this->upgrader->state['addKBToMenu'])) {
+            $tabs = $tc->get_system_tabs();
             $tabs['KBContents'] = 'KBContents';
+            $tc->set_system_tabs($tabs);
         }
-        $tc->set_system_tabs($tabs);
         //BEGIN SUGARCRM flav=ent ONLY
         $tabs = $tc->getPortalTabs();
-        $tabs = array_diff(array_values($tabs), array('KBDocuments', 'KBContents'));
-        array_push($tabs, 'KBContents');
-        $tc->setPortalTabs(array_values($tabs));
+        //If KBDocuments is disabled in portal mega menu, KBContents should not be added.
+        $tabModules = array_values($tabs);
+        if (isset($tabModules['KBDocuments'])) {
+            $tabs = array_diff($tabModules, array('KBDocuments', 'KBContents'));
+            array_push($tabs, 'KBContents');
+            $tc->setPortalTabs(array_values($tabs));
+        }
         //END SUGARCRM flav=ent ONLY
     }
 

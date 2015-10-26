@@ -12,7 +12,7 @@
     extendsFrom: 'ListView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Add KBContent plugin for view.
      * Create filter defs for current collection.

@@ -180,7 +180,7 @@ class ForecastReset
 
         /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
-        $admin->saveSetting('Forecasts', 'worksheet_columns', json_encode($columns), 'base');
+        $admin->saveSetting('Forecasts', 'worksheet_columns', $columns, 'base');
 
         // BEGIN SUGARCRM flav=ent ONLY
         // update the metadata

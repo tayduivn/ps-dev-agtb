@@ -116,7 +116,7 @@ describe("tag field", function() {
             expect(field.model.get('tag').length).toEqual(initialTags.length + 1);
             //model's tag property should now include name2
             expect(_.find(field.model.get('tag'), function(tag) {
-                return tag.name === name2;
+                return tag === name2;
             })).toBeTruthy();
         });
 

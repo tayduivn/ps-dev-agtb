@@ -18,7 +18,7 @@
     extendsFrom: 'MultiSelectionListView',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -26,7 +26,6 @@
     },
 
     /**
-     * @inheritDoc
      * @override
      */
     initializeEvents: function() {
@@ -59,7 +58,7 @@
      */
     _selectMultipleAndClose: function() {
         var selections = this.context.get('mass_collection');
-        if (selections) {
+        if (selections && selections.length > 0) {
             this.layout.once('list:masslink:complete', this._closeDrawer, this);
             this.layout.trigger('list:masslink:fire');
         }

@@ -31,6 +31,8 @@ require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
 require_once 'modules/MySettings/TabController.php';
 
+use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+
 define('DISABLED_PATH', 'Disabled');
 
 class ModuleInstaller{
@@ -129,6 +131,7 @@ class ModuleInstaller{
             'post_execute',
             'reset_opcodes',
             'reset_file_cache',
+            'setup_elastic_mapping',
         );
 
         $total_steps += count($tasks);
@@ -3371,5 +3374,19 @@ class ModuleInstaller{
         }
 
         return $path;
+    }
+
+    /**
+     * Add Elasticsearch mapping so records sync with elastic
+     */
+    public function setup_elastic_mapping()
+    {
+        foreach ($this->installdefs['beans'] as $beanDefs) {
+            $modules[] = $beanDefs['module'];
+        }
+        $engine = SearchEngine::getInstance()->getEngine();
+        if (isset($engine) && isset($modules)) {
+            $engine->addMappings($modules);
+        }
     }
 }

@@ -382,6 +382,13 @@ class FilterApi extends SugarApi
         $q->distinct(false);
         $fields = array();
         foreach ($options['select'] as $field) {
+            // Skip the related bean options since related collections
+            // are expected to be handled later, e.g. FilterApi for Tags
+            if (isset($seed->field_defs[$field]['relate_collection']) &&
+                $seed->field_defs[$field]['relate_collection']) {
+                continue;
+            }
+
             // FIXME: convert this to vardefs too?
             if ($field == 'my_favorite') {
                 if (self::$isFavorite) {
@@ -826,14 +833,10 @@ class FilterApi extends SugarApi
                                 $where->notNull($field);
                                 break;
                             case '$empty':
-                                $where->queryOr()
-                                    ->equals($field, '')
-                                    ->isNull($field);
+                                $where->isEmpty($field);
                                 break;
                             case '$not_empty':
-                                $where->queryAnd()
-                                    ->notEquals($field, '')
-                                    ->notNull($field);
+                                $where->isNotEmpty($field);
                                 break;
                             case '$lt':
                                 $where->lt($field, $value);
@@ -965,6 +968,7 @@ class FilterApi extends SugarApi
             " WHERE t.module_name = '".$db->quote($q->from->module_name)."' ".
             " AND t.user_id = '".$db->quote($GLOBALS['current_user']->id)."' ".
             " AND t.date_modified >= ".$db->convert("'".$min_date."'", 'datetime')." ".
+            " AND t.deleted = 0 ".
             " GROUP BY t.item_id ".
             " ) tracker ON tracker.item_id = ".$q->from->getTableName().".id ",
             array('alias' => 'tracker')

@@ -66,7 +66,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Inspect changes on current HTML input elements with initial values.
      */
@@ -101,7 +101,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Override {@link View.View#_render} method to
      * extend ACL check for Administration module in BWC mode.
@@ -264,7 +264,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Opens the appropriate sidecar create layout in a drawer.
      *
@@ -589,7 +589,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _dispose: function() {
         app.events.off("api:refreshtoken:success", this._refreshSession, this);

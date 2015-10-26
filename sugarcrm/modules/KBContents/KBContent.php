@@ -25,7 +25,9 @@ class KBContent extends SugarBean {
     public $object_name = "KBContent";
     public $new_schema = true;
     public $module_dir = 'KBContents';
-    public $importable = true;
+
+    // Import should be disabled in 7.7
+    // public $importable = true;
 
     public $status;
     public $active_rev;
@@ -125,6 +127,23 @@ class KBContent extends SugarBean {
     }
 
     /**
+     * Return pairs `key` => `value` of available languages.
+     * @return array
+     */
+    public function getLanguageOptions()
+    {
+        $data = $this->getLanguages();
+        $result = array();
+        foreach ($data as $value) {
+            unset($value['primary']);
+            $key = reset(array_keys($value));
+            $val = reset(array_values($value));
+            $result[$key] = $val;
+        }
+        return $result;
+    }
+
+    /**
      * Setup Default Languages for KBContents.
      */
     public function setupPrimaryLanguage()
@@ -164,7 +183,7 @@ class KBContent extends SugarBean {
         }
 
         $doc = $article = null;
-
+        $this->load_relationship('kbdocuments_kbcontents');
         if (empty($this->kbdocument_id)) {
             $doc = BeanFactory::getBean('KBDocuments');
             $doc->new_with_id = true;
@@ -173,8 +192,12 @@ class KBContent extends SugarBean {
             $doc->team_set_id = $this->team_set_id;
             $doc->team_id = $this->team_id;
             $doc->save();
-            $this->load_relationship('kbdocuments_kbcontents');
             $this->kbdocuments_kbcontents->add($doc);
+        } else {
+            $doc = $this->kbdocuments_kbcontents->getBeans();
+            if (is_array($doc)) {
+                $doc = array_shift($doc);
+            }
         }
 
         if (empty($this->kbarticle_id)) {

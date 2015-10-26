@@ -474,7 +474,10 @@ class Importer
             if (isset ($dbrow['id']) && $dbrow['id'] != -1)
             {
                 // if it exists but was deleted, just remove it
-                if (isset ($dbrow['deleted']) && $dbrow['deleted'] == 1 && $this->isUpdateOnly ==false)
+                // if you import a record, and specify the ID,
+                // and the record ID already exists and is deleted... the "old" deleted record
+                // should be removed and replaced with the new record you are importing.
+                if (isset ($dbrow['deleted']) && $dbrow['deleted'] == 1)
                 {
                     $this->removeDeletedBean($focus);
                     $focus->new_with_id = true;
@@ -627,8 +630,16 @@ class Importer
                 }
                 if ( $returnValue === FALSE )
                 {
-                    $this->importSource->writeError($mod_strings['LBL_ERROR_NOT_IN_ENUM'] . implode(",",$app_list_strings[$fieldDef['options']]), $fieldTranslated,$rowValue);
-                    return FALSE;
+                    $opts = $this->ifs->getOptions($fieldDef['type'], $fieldDef);
+                    $this->importSource->writeError(
+                        ($opts ?
+                            $mod_strings['LBL_ERROR_NOT_IN_ENUM'] . implode(",", $opts) :
+                            $mod_strings['LBL_ERROR_ENUM_EMPTY']
+                        ),
+                        $fieldTranslated,
+                        $rowValue
+                    );
+                    return false;
                 }
                 else
                     return $returnValue;

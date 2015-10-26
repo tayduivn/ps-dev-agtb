@@ -21,7 +21,7 @@
     extendsFrom: 'TabbedDashletView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * @property {Object} _defaultSettings
      * @property {Number} _defaultSettings.limit Maximum number of records to
@@ -36,7 +36,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         options.meta = options.meta || {};
@@ -51,24 +51,12 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _initEvents: function() {
         this._super('_initEvents');
-        this.on('linked-model:create', this._reloadData, this);
+        this.on('linked-model:create', this.loadData, this);
         return this;
-    },
-
-    /**
-     * Re-fetches the data for the context's collection.
-     *
-     * FIXME: This will be removed when SC-4775 is implemented.
-     *
-     * @private
-     */
-    _reloadData: function() {
-        this.context.set('skipFetch', false);
-        this.context.reloadData();
     },
 
     /**

@@ -980,7 +980,7 @@ class ModuleBuilderController extends SugarController
         if (empty($packageName) && !empty($subpanelName)) {
             $rr = new RepairAndClear();
             $rr->show_output = false;
-            $rr->rebuildExtensions();
+            $rr->rebuildExtensions(array($_REQUEST['view_module']));
         }
         // clear the cache for the linked module and requested module
         MetaDataManager::refreshModulesCache($parser->getAffectedModules());

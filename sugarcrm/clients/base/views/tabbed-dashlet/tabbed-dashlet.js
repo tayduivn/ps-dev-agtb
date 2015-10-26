@@ -74,7 +74,7 @@
     _defaultSettings: {},
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Bind the separate context to avoid sharing context's handlers
      * between its extension dashlets.
@@ -544,7 +544,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * New model related properties are injected into each model:
      *
@@ -572,7 +572,27 @@
     },
 
     /**
-     * {@inheritDoc}
+     *  Handle Avatar display, in case image doesn't exist.
+     *
+     *  FIXME: render avatar should happen when rendering each row, after pagination.(SC-2605)
+     *  @private
+     */
+    _renderAvatars: function() {
+        this.$('img.avatar').load(function() {
+            $(this).removeClass('hide');
+        })
+            .error(function() {
+                $(this).parent().removeClass('avatar avatar-md').addClass('label label-module label-module-md label-Users');
+                $(this).parent().find('span').removeClass('hide');
+            });
+        this.$('img.avatar').each(function() {
+            var img = $(this);
+            img.attr('src', img.data('src'));
+        });
+    },
+
+    /**
+     * @inheritdoc
      */
     _dispose: function() {
         _.each(this.tabs, function(tab) {

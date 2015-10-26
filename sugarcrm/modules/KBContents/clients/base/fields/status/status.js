@@ -37,5 +37,18 @@
         };
 
         this.type = 'badge-select';
+    },
+
+    /**
+     * @inheritdoc
+     */
+    format: function(value) {
+        if (this.action === 'edit') {
+            var def = this.def.default ? this.def.default : value;
+            value = (this.items[value] ? value : false) ||
+            (this.items[def] ? def : false) ||
+            value;
+        }
+        return this._super('format', [value]);
     }
 })

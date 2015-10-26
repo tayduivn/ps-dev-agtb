@@ -30,6 +30,62 @@
     hasSubpanelModels: false,
 
     /**
+     * A collection of alert messages to be used in this view. The alert methods
+     * should be invoked by Function.prototype.call(), passing in an instance of
+     * a sidecar view. For example:
+     *
+     *     // ...
+     *     this.alerts.showInvalidModel.call(this);
+     *     // ...
+     *
+     * FIXME: SC-3451 will refactor this `alerts` structure.
+     * @property {Object}
+     */
+    alerts: {
+        showInvalidModel: function() {
+            if (!this instanceof app.view.View) {
+                app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
+                    'an instance of this view.');
+                return;
+            }
+            var name = 'invalid-data';
+            this._viewAlerts.push(name);
+            app.alert.show(name, {
+                level: 'error',
+                messages: 'ERR_RESOLVE_ERRORS'
+            });
+        },
+        showServerError: function() {
+            if (!this instanceof app.view.View) {
+                app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
+                    'an instance of this view.');
+                return;
+            }
+            var name = 'server-error';
+            this._viewAlerts.push(name);
+            app.alert.show(name, {
+                level: 'error',
+                messages: 'ERR_GENERIC_SERVER_ERROR'
+            });
+        },
+        showSuccessButDeniedAccess: function() {
+            if (!this instanceof app.view.View) {
+                app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
+                    'an instance of this view.');
+                return;
+            }
+            var name = 'invalid-data';
+            this._viewAlerts.push(name);
+            app.alert.show(name, {
+                level: 'warning',
+                messages: 'LBL_RECORD_SAVED_ACCESS_DENIED',
+                autoClose: true,
+                autoCloseDelay: 9000
+            });
+        }
+    },
+
+    /**
      * Initialize the view and prepare the model with default button metadata
      * for the current layout.
      */
@@ -155,7 +211,7 @@
      * be `create` at all times but doing the proper fix may have bad impacts on
      * ACLs/non editable fields. Follow up in SC-4511.
      *
-     * @inheritDoc
+     * @inheritdoc
      */
     _renderFields: function() {
         var current = this.action;
@@ -165,7 +221,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     /**
      * Check unsaved changes.
@@ -349,7 +405,6 @@
                 if (e.status == 412 && !e.request.metadataRetry) {
                     this.handleMetadataSyncError(e);
                 } else {
-                    this.alerts.showServerError.call(this);
                     callback(true);
                 }
             }, this);
@@ -548,10 +603,15 @@
 
     /**
      * Check to see if we should skip duplicate check.
+     *
+     * Duplicate check should be skipped if we are displaying duplicates or user
+     * has switched over to editing an existing duplicate record.
+     *
      * @return {boolean}
      */
     skipDupeCheck: function () {
-        return (this.getCurrentButtonState() === this.STATE.DUPLICATE);
+        var skipStates = [this.STATE.DUPLICATE, this.STATE.SELECT];
+        return (_.contains(skipStates, this.getCurrentButtonState()));
     },
 
     /**

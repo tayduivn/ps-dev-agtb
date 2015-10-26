@@ -228,7 +228,7 @@
     /**
      * @override
      *
-     * Binds events on the collection, and update the checkboxes
+     * Binds events on the collection, and updates the checkboxes
      * consequently.
      */
     bindDataChange: function() {
@@ -236,7 +236,6 @@
             // Listeners on the checkAll/uncheckAll checkbox.
             this._bindAllModelChangeEvents();
             this.action_enabled = this.massCollection.length > 0;
-            this.selected = this.massCollection.entire;
         } else {
             // Listeners for each record selection.
             this._bindModelChangeEvents();
@@ -267,7 +266,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _loadTemplate: function() {
         this._super('_loadTemplate');
@@ -277,13 +276,13 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _render: function() {
         if (!this.isCheckAllCheckbox) {
             // If the model is in the mass collection, make sure the checkbox
             // is checked.
-            if (this.massCollection.get(this.model) || this.massCollection.entire) {
+            if (this.massCollection.get(this.model.id)) {
                 this.selected = true;
             } else {
                 delete this.selected;
@@ -325,7 +324,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _getChildFieldsMeta: function() {
         // We only get the fields (the dropdown actions) metadata for the
@@ -338,7 +337,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     unbindData: function() {
         if (this.massCollection) {
@@ -351,10 +350,6 @@
             if (cid) {
                 this.massCollection.off(null, null, cid);
             }
-        }
-        if (this.collection) {
-            this.collection.off('reset', null, this);
-            this.collection.off('add', null, this);
         }
         this._super('unbindData');
     }

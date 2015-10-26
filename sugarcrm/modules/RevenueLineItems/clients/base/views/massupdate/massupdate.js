@@ -12,10 +12,32 @@
     extendsFrom: 'MassupdateView',
     
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this.plugins = _.union(this.plugins || [], ['DisableMassDelete', 'MassQuote', 'CommittedDeleteWarning']);
         this._super("initialize", [options]);
+    },
+
+    /**
+     *
+     * @inheritdoc
+     */
+    setMetadata: function(options) {
+        var config = app.metadata.getModule('Forecasts', 'config');
+
+        this._super("setMetadata", [options]);
+
+        if (!config || (config && !config.is_setup)) {
+            _.each(options.meta.panels, function(panel) {
+                _.every(panel.fields, function (item, index) {
+                    if (_.isEqual(item.name, "commit_stage")) {
+                        panel.fields.splice(index, 1);
+                        return false;
+                    }
+                    return true;
+                }, this);
+            }, this);
+        }
     }
 })

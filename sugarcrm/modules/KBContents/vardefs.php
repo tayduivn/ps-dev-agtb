@@ -37,7 +37,12 @@ $dictionary['KBContent'] = array(
         ),
         'language' => array(
             'name' => 'language',
-            'type' => 'varchar',
+            'type' => 'enum',
+            'function_bean' => 'KBContents',
+            'function' => array(
+                'returns' => 'array',
+                'name' => 'getLanguageOptions'
+            ),
             'len' => '2',
             'required' => true,
             'vname' => 'LBL_LANG',
@@ -45,6 +50,7 @@ $dictionary['KBContent'] = array(
             'audited' => false,
             'studio' => false,
             'duplicate_on_record_copy' => 'always',
+            'massupdate' => false,
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => false,

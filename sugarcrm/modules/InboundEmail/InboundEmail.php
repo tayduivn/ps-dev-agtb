@@ -588,6 +588,10 @@ class InboundEmail extends SugarBean {
 							$overview->date = $v;
 						break;
 
+                        case 'subject':
+                            $overview->subject = $v;
+                        break;
+
 						default:
 							$overview->$k = from_html($v);
 						break;
@@ -677,6 +681,10 @@ class InboundEmail extends SugarBean {
 					case "senddate":
 						$overview->date = $v;
 					break;
+
+                    case 'subject':
+                        $overview->subject = $v;
+                    break;
 
 					default:
 						$overview->$k = from_html($v);
@@ -821,6 +829,12 @@ class InboundEmail extends SugarBean {
 								$values .= "NULL";
 							}
 						break;
+
+                        case 'subject':
+                            $overview->subject = SugarCleaner::cleanHtml(htmlspecialchars_decode($overview->subject, ENT_QUOTES));
+                            $overview->subject = htmlspecialchars_decode($overview->subject, ENT_QUOTES);
+                            $values .= $this->db->quoted($overview->subject);
+                        break;
 
 						case "mbox":
 							$values .= "'{$mbox}'";
@@ -1651,7 +1665,7 @@ class InboundEmail extends SugarBean {
 		global $sugar_config;
 		global $current_user;
 
-		$showFolders = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+		$showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
 
 		if(empty($showFolders)) {
 			$showFolders = array();
@@ -2104,7 +2118,7 @@ class InboundEmail extends SugarBean {
 		$criteria .= (!empty($dateTo)) ? ' BEFORE "'.$timedate->fromString($dateTo)->format('d-M-Y').'"' : "";
 		//$criteria .= (!empty($from)) ? ' FROM "'.$from.'"' : "";
 
-		$showFolders = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+		$showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
 
 		$out = array();
 
@@ -5168,7 +5182,7 @@ eoq;
 		if(empty($user)) $user = $current_user;
 
 		$emailSettings = $current_user->getPreference('emailSettings', 'Emails');
-		$emailSettings = is_string($emailSettings) ? \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($emailSettings) : $emailSettings;
+		$emailSettings = is_string($emailSettings) ? unserialize($emailSettings) : $emailSettings;
 
 		$this->autoImport = (isset($emailSettings['autoImport']) && !empty($emailSettings['autoImport'])) ? true : false;
 		return $this->autoImport;
@@ -5248,13 +5262,32 @@ eoq;
 					$GLOBALS['log']->debug("INBOUNDEMAIL: could not imap_mail_copy() [ {$uids} ] to folder [ {$toFolder} ] from folder [ {$fromFolder} ]");
 				}
 			} else {
-				if(imap_mail_move($this->conn, $uids, $toFolder, CP_UID)) {
+                $connectStringToFolder = $this->getConnectString('', $toFolder);
+                $imapStatus = imap_status($this->conn, $connectStringToFolder, SA_UIDNEXT);
+
+                if ($imapStatus && imap_mail_move($this->conn, $uids, $toFolder, CP_UID)) {
+                    $nextUid = $imapStatus->uidnext;
 					$GLOBALS['log']->info("INBOUNDEMAIL: imap_mail_move() [ {$uids} ] to folder [ {$toFolder} ] from folder [ {$fromFolder} ]");
 					imap_expunge($this->conn); // hard deletes moved messages
 
 					// update cache on fromFolder
                     $overviews = $this->getOverviewsFromCacheFile($exUids, $fromFolder, true);
 					$this->deleteCachedMessages($uids, $fromFolder);
+
+                    // Need to switch folder because imap_search doesn't accept folder as a parameter
+                    imap_reopen($this->conn, $connectStringToFolder);
+
+                    $newUids = array_filter(
+                        imap_search($this->conn, 'ALL UNDELETED', SE_UID),
+                        function ($x) use ($nextUid) {
+                            return $x >= $nextUid;
+                        }
+                    );
+
+                    foreach ($overviews as $overview) {
+                        // need to update UIDs to match the new target folder
+                        $overview->uid = array_shift($newUids);
+                    }
 
 					// update cache on toFolder
                     $this->setCacheValue($toFolder, $overviews, array(), array());
@@ -5625,7 +5658,7 @@ eoq;
 			include($cache); // profides $cacheFile
             /** @var $cacheFile array */
 
-            $metaOut = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($cacheFile['out']);
+            $metaOut = unserialize($cacheFile['out']);
 			$meta = $metaOut['meta']['email'];
 			$email = BeanFactory::getBean('Emails');
 
@@ -5912,7 +5945,7 @@ eoq;
 		}
 
 		$return = array();
-        $meta['email']['name'] = to_html($this->email->name);
+        $meta['email']['name'] = $this->email->name;
         $meta['email']['from_addr'] = ( !empty($this->email->from_addr_name) ) ? to_html($this->email->from_addr_name) : to_html($this->email->from_addr);
         $meta['email']['toaddrs'] = ( !empty($this->email->to_addrs_names) ) ? to_html($this->email->to_addrs_names) : to_html($this->email->to_addrs);
         $meta['email']['cc_addrs'] = to_html($this->email->cc_addrs_names);
@@ -6096,7 +6129,7 @@ eoq;
 		$direction = 'desc';
 		$sortSerial = $current_user->getPreference('folderSortOrder', 'Emails');
 		if(!empty($sortSerial) && !empty($_REQUEST['ieId']) && !empty($_REQUEST['mbox'])) {
-			$sortArray = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($sortSerial);
+			$sortArray = unserialize($sortSerial);
 			$sort = $sortArray[$_REQUEST['ieId']][$_REQUEST['mbox']]['current']['sort'];
 			$direction = $sortArray[$_REQUEST['ieId']][$_REQUEST['mbox']]['current']['direction'];
 		}
@@ -6150,7 +6183,7 @@ eoq;
 	    $usersList = $team->get_team_members(true);
 	    foreach($usersList as $userObject)
 	    {
-	        $previousSubscriptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($userObject->getPreference('showFolders', 'Emails',$userObject)));
+	        $previousSubscriptions = unserialize(base64_decode($userObject->getPreference('showFolders', 'Emails',$userObject)));
 	        if($previousSubscriptions === FALSE)
 	            $previousSubscriptions = array();
 

@@ -14,10 +14,10 @@
  * @extends View.Layout
  */
 ({
-    className: 'navbar search',
+    className: 'search',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -45,6 +45,24 @@
          * @type {number}
          */
         this.compOnFocusIndex = 0;
+
+        /**
+         * Maximum viewport width of responsive mode. Under this width we should
+         * be in responsive mode, and above in desktop mode.
+         * @type {number}
+         */
+        this.maxResponsiveWidth = 540;
+
+        /**
+         * Tells if we're in responsive mode or not.
+         *
+         * In responsive mode, the search bar is hidden when collapsed and only
+         * the magnifying glass is shown. When it's expanded, it takes the full
+         * width of the screen.
+         *
+         * @type {boolean}
+         */
+        this.isResponsiveMode = false;
 
         /**
          * Indicates if the search bar is expanded
@@ -119,17 +137,19 @@
         }, this);
 
         // Reset navigation
-        this.on('quicksearch:close', function() {
+        this.on('quicksearch:close', function(keepExpanded) {
             this.removeFocus();
             if (!this.expanded) {
                 return;
             }
             this.collection.abortFetchRequest();
-            // Don't collapse on the search page
-            if (!this.context.get('search')) {
-                this.collapse();
+            if (keepExpanded) {
+                return;
             }
+            this.collapse();
         }, this);
+
+        this.on('quicksearch:expand', this.expand);
 
         // Listener for app:view:change to expand or collapse the search bar
         app.events.on('app:view:change', function() {
@@ -141,13 +161,14 @@
         }, this);
 
         this.$el.focusin(_.bind(function() {
+            this.$el.off('focusout');
             this.$el.focusout(_.bind(function() {
                 this.$el.off('focusout');
                 _.defer(_.bind(function() {
                     // We use `has(':focus')` instead of `is(':focus')` to check
                     // if the focused element is or is inside `this.$el`.
                     if (this.$el.has(':focus').length === 0) {
-                        this.trigger('quicksearch:close');
+                        this.trigger('quicksearch:close', this.context.get('search'));
                     }
                 }, this));
             }, this));
@@ -162,10 +183,15 @@
         this.on('quicksearch:tag:close', function() {
             this.$el.removeClass('quicksearch-tags-open');
         }, this);
+
+        // On window resize, if expanded, recalculate expansion
+        $(window)
+            .off('resize.quicksearch')
+            .on('resize.quicksearch', _.debounce(_.bind(this.resizeHandler, this), 10));
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _placeComponent: function(component) {
         if (component.name === 'quicksearch-modulelist' ||
@@ -209,6 +235,20 @@
         }
 
         this.expanded = true;
+        this.$el.addClass('expanded');
+
+        // On route, call the router handler.
+        app.router
+            .off('route', this.routerHandler)
+            .on('route', this.routerHandler, this);
+
+        this.trigger('quicksearch:expanded');
+        this.trigger('quicksearch:button:toggle', false);
+
+        if (this.isResponsiveMode) {
+            this.trigger('navigate:to:component', 'quicksearch-bar');
+            return;
+        }
 
         // Calculate the target searchbox width
         var newWidth = this._calculateExpansion();
@@ -221,6 +261,9 @@
 
         // For new expansions, we need to clear out the modules.
         var headerLayout = this.closestComponent('header');
+        if (_.isUndefined(headerLayout)) {
+            return;
+        }
         headerLayout.trigger('view:resize', headerLayout.getModuleListMinWidth());
 
         // Now that there is space for the search bar to expand, animate the
@@ -231,22 +274,8 @@
             this.$('[data-component=searchbar]').animate({width: newWidth}, {duration: 100});
         }
 
-        // On route, call the router handler.
-        app.router
-            .off('route', this.routerHandler)
-            .on('route', this.routerHandler, this);
-
         // Turn off the default header resize listener
         headerLayout.setModuleListResize(false);
-
-        // On window resize, if expanded, recalculate expansion
-        $(window)
-            .off('resize.quicksearch')
-            .on('resize.quicksearch', _.debounce(_.bind(this.resizeHandler, this), 10));
-
-
-        this.trigger('quicksearch:expand');
-
     },
 
     /**
@@ -254,9 +283,29 @@
      * @private
      */
     resizeHandler: function() {
-        if (this.expanded) {
+        this._toggleResponsiveMode();
+        if (this.expanded && !this.isResponsiveMode) {
             this.triggerExpand(true);
         }
+    },
+
+    /**
+     * Renders the layout and toggles the responsive class.
+     *
+     * @private
+     */
+    _render: function() {
+        this._super('_render');
+        this._toggleResponsiveMode();
+    },
+
+    /**
+     * Toggles the responsive mode according to the viewport width.
+     *
+     * @private
+     */
+    _toggleResponsiveMode: function() {
+        this.isResponsiveMode = $(window).width() < this.maxResponsiveWidth;
     },
 
     /**
@@ -268,7 +317,7 @@
      * properly dispose the event handler.
      */
     routerHandler: function() {
-        this.trigger('quicksearch:close');
+        this.trigger('quicksearch:close', this.context.get('search'));
     },
 
     /**
@@ -279,6 +328,9 @@
      */
     _calculateExpansion: function() {
         var headerLayout = this.closestComponent('header');
+        if (_.isUndefined(headerLayout)) {
+            return;
+        }
 
         // The starting width of the input box
         var searchbarStartingWidth = this.$('[data-component=searchbar]').outerWidth();
@@ -300,37 +352,39 @@
      * Collapses the quicksearch.
      */
     collapse: function() {
-        // if on the search page
-        if (this.context.get('search')) {
+        this.expanded = false;
+        this.$el.removeClass('expanded');
+
+        this.trigger('quicksearch:collapse');
+        app.router.off('route', this.routerHandler);
+        this.trigger('quicksearch:button:toggle', true);
+
+        if (this.isResponsiveMode) {
+            return;
+        }
+        var headerLayout = this.closestComponent('header');
+        if (_.isUndefined(headerLayout)) {
             return;
         }
 
-        this.expanded = false;
-
-        this.trigger('quicksearch:collapse');
-        // Turn off the quicksearch resize listener
-        $(window).off('resize.quicksearch');
-
         // Turn on the default header resize listener
-        this.closestComponent('header').setModuleListResize(true);
+        headerLayout.setModuleListResize(true);
 
         // jQuery `width` function with no arguments (or null arguments) only
         // returns the current width. Calling `width('')` with the empty string
         // sets the width to an empty value, which the browser ignores and
         // uses the css width.
         this.$('[data-component=searchbar]').width('');
-        var headerLayout = this.closestComponent('header');
         headerLayout.resize();
-
-        app.router.off('route', this.routerHandler);
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     unbind: function() {
         app.router.off('route', null, this);
         this.$el.off();
+        $(window).off('resize.quicksearch');
         this._super('unbind');
     }
 })

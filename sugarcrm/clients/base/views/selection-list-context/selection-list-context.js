@@ -28,7 +28,7 @@
     plugins: ['EllipsisInline'],
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this.pills = [];
@@ -44,24 +44,44 @@
     /**
      * Adds a pill in the template.
      *
-     * @param {Data.Bean} model The model corresponding to the pill to add.
+     * @param {Data.Bean|Object|Array} models The model, set of model attributes
+     * or array of those corresponding to the pills to add.
      */
-    addPill: function(model) {
-        var name = model.get('name') || model.get('full_name');
-        this.pills.push({id: model.id, name: name});
-        this.render();
+    addPill: function(models) {
+        var modelName;
+        var pillsAttrs = [];
+        var pillsIds = _.pluck(this.pills, 'id');
+        models = _.isArray(models) ? models : [models];
+
+        _.each(models, function(model) {
+            //FIXME : SC-4196 will remove this.
+            modelName = model.name || model.full_name || model.document_name ||
+                model.get('name') || model.get('full_name') || model.get('document_name');
+            if (modelName && !_.contains(pillsIds, model.id)) {
+                pillsAttrs.push({id: model.id, name: modelName});
+            }
+        });
+
+        this.pills.push.apply(this.pills, pillsAttrs);
+
+        this._debounceRender();
     },
 
     /**
      * Removes a pill from the template.
      *
-     * @param {Data.Bean} model The model corresponding to the pill to remove.
+     * @param {Data.Bean|Object|Array} models The model or array of models
+     * corresponding to the pills to remove. It can also be an object or array
+     * of objects containing the 'id' of the pills to remove.
+     *
      */
-    removePill: function(model) {
+    removePill: function(models) {
+        models = _.isArray(models) ? models : [models];
+        var ids = _.pluck(models, 'id');
         this.pills = _.reject(this.pills, function(pill) {
-            return pill.id === model.id;
+            return _.contains(ids, pill.id);
         });
-        this.render();
+        this._debounceRender();
     },
 
     /**
@@ -84,14 +104,10 @@
      * Resets the pills to match the mass collection. Useful to update pills
      * on mass collection reset.
      *
-     * @param {Object[]} models The models to add to pills.
-     *
-     * FIXME: SC-4092 : Here we should add `models` in `this.pills`. To do this,
-     * we need to get the `name` property in each model, we currently only
-     * get `id`.
+     * @param {Data.BeanCollection} collection The collection that has been reset.
      */
-    resetPills: function(models) {
-        if (!models.length) {
+    resetPills: function(collection) {
+        if (!collection.length) {
             this.pills = [];
         }
         this.render();
@@ -120,14 +136,27 @@
     },
 
     /**
-     * @inheritDoc
+     * Debounced version of render.
+     *
+     * @private
+     */
+    _debounceRender: _.debounce(function() {
+        this.render();
+    }, 50),
+
+    /**
+     * @inheritdoc
      */
     _render: function() {
+        this.massCollection = this.context.get('mass_collection');
+        if (!this.massCollection) {
+            return;
+        }
 
         if (this.pills.length > this.maxPillsDisplayed) {
             this.displayedPills = this.pills.slice(0, this.maxPillsDisplayed);
             this.tooManySelectedRecords = true;
-            this.msgMaxPillsDisplayed = app.lang.get('TBL_MAX_PILLS_DISPLAYED', this.module, {
+            this.msgMaxPillsDisplayed = app.lang.get('TPL_MAX_PILLS_DISPLAYED', this.module, {
                 maxPillsDisplayed: this.maxPillsDisplayed
             });
         } else {
@@ -135,10 +164,17 @@
             this.displayedPills = this.pills;
         }
 
-        this.massCollection = this.context.get('mass_collection');
-        if (!this.massCollection) {
-            return;
+        var recordsLeft = this.massCollection.length - this.displayedPills.length;
+        if (recordsLeft) {
+            this.moreRecords = true;
+            var label = this.displayedPills.length ? 'TPL_MORE_RECORDS' : 'TPL_RECORDS_SELECTED';
+            this.msgMoreRecords = app.lang.get(label, this.module, {
+                recordsLeft: recordsLeft
+            });
+        } else {
+            this.moreRecords = false;
         }
+
         this._super('_render');
         this.stopListening(this.massCollection);
 
@@ -148,7 +184,22 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
+     */
+    bindDataChange: function() {
+        this.collection.on('sync', function(collection, fetchedRecords) {
+            var recordsToAdd = _.filter(fetchedRecords, function(attrs) {
+                return this.massCollection.get(attrs.id);
+            }, this);
+            if (!recordsToAdd.length) {
+                return;
+            }
+            this.addPill(recordsToAdd);
+        }, this);
+    },
+
+    /**
+     * @inheritdoc
      */
     unbind: function() {
         this.stopListening(this.massCollection);

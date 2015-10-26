@@ -190,12 +190,17 @@ class PMSEBeanHandler
     {
         global $beanList;
         $replace_array = array();
-        $replace_type_array = array();
 
         foreach ($component_array as $module_name => $module_array) {
             foreach ($module_array as $field => $field_array) {
-                if (!isset($beanList[$field_array['filter']])) {
-                    $newBean = $this->pmseRelatedModule->getRelatedModule($bean, $field_array['filter']);
+                if (!isset($field_array['filter']) || !isset($beanList[$field_array['filter']])) {
+                    if (isset($field_array['type']) && $field_array['type'] === 'relate') {
+                        $newBean = $this->pmseRelatedModule->getRelatedModule($bean, $field_array['rel_module']);
+                    } else if (isset($field_array['filter'])) {
+                        $newBean = $this->pmseRelatedModule->getRelatedModule($bean, $field_array['filter']);
+                    } else {
+                        $newBean = $bean;
+                    }
                 } else {
                     $newBean = $bean;
                 }
@@ -212,7 +217,11 @@ class PMSEBeanHandler
                 } else {
                      $value = !empty($newBean)?array_pop($newBean)->$field_array['name']:null;
                 }
-                $replace_array[$field_array['original']]  = bpminbox_get_display_text($newBean, $field, $value);
+                if (($field_array['value_type']) === 'href_link') {
+                    $replace_array[$field_array['original']] = bpminbox_get_href($newBean, $field, $value);
+                } else {
+                    $replace_array[$field_array['original']] = bpminbox_get_display_text($newBean, $field, $value);
+                }
             }
         }
 
@@ -369,7 +378,7 @@ class PMSEBeanHandler
                             $dataEval[] = (float)$value->expValue;
                             break;
                         case 'CURRENCY':
-                            $dataEval[] = serialize($value);
+                            $dataEval[] = json_encode($value);
                             break;
                         case 'BOOL':
                             $dataEval[] = $value->expValue == 'TRUE' ? true : false;
@@ -387,7 +396,7 @@ class PMSEBeanHandler
                     $constantCurrency->expSubtype = 'currency';
                     $constantCurrency->expValue = $bean->$fields;
                     $constantCurrency->expField = $bean->currency_id;
-                    $dataEval[] = serialize($constantCurrency);
+                    $dataEval[] = json_encode($constantCurrency);
                 } else {
                     $dataEval[] = $bean->$fields;
                 }
@@ -428,6 +437,8 @@ class PMSEBeanHandler
                 $component_array[$split_array[2]][$split_array[3]]['name'] = $split_array[3];
                 $component_array[$split_array[2]][$split_array[3]]['value_type'] = $split_array[0];
                 $component_array[$split_array[2]][$split_array[3]]['original'] = $matched_component;
+                $component_array[$split_array[2]][$split_array[3]]['type'] = 'relate';
+                $component_array[$split_array[2]][$split_array[3]]['rel_module'] = $split_array[2];
             } else {
                 //base module
                 //0 - future/past/href_link 1 - base_module 2 - field

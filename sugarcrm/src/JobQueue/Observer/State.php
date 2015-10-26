@@ -16,6 +16,7 @@ use Sugarcrm\Sugarcrm\JobQueue\Exception\UnexpectedResolutionException;
 use Sugarcrm\Sugarcrm\JobQueue\Helper\Child;
 use Sugarcrm\Sugarcrm\JobQueue\Helper\Producer as ParentHelper;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition as Logger;
 
 /**
  * Class State
@@ -23,6 +24,14 @@ use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
  */
 class State implements ObserverInterface
 {
+    /**
+     * Setup logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new Logger(\LoggerManager::getLogger());
+    }
+
     /**
      * Stub.
      * {@inheritdoc}
@@ -41,12 +50,12 @@ class State implements ObserverInterface
     {
         $job = \BeanFactory::getBean('SchedulersJobs', $workload->getAttribute('dbId'));
         if (!$job->id) {
-            \LoggerManager::getLogger()->info('Cannot get bean by dbId.');
+            $this->logger->notice('Cannot get bean by dbId.');
             return;
         }
+        $this->logger->info('Check parent\child job actuality.');
 
-        if (
-            $job->resolution == \SchedulersJob::JOB_CANCELLED ||
+        if ($job->resolution == \SchedulersJob::JOB_CANCELLED ||
             $job->resolution == \SchedulersJob::JOB_PARTIAL
         ) {
             throw new UnexpectedResolutionException($job->resolution, "The job '{$job->id}' has been stopped.");
@@ -71,9 +80,10 @@ class State implements ObserverInterface
     {
         $job = \BeanFactory::getBean('SchedulersJobs', $workload->getAttribute('dbId'));
         if (!$job->id) {
-            \LoggerManager::getLogger()->info('Cannot get bean by dbId.');
+            $this->logger->notice('Cannot get bean by dbId.');
             return;
         }
+        $this->logger->info('Resolver parent-child relationships.');
         if ($job->job_group) {
             $parentHandler = new ParentHelper(\BeanFactory::getBean('SchedulersJobs', $job->job_group));
             $parentHandler->resolve();

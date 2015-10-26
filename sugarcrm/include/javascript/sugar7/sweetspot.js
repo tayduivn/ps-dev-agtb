@@ -23,12 +23,6 @@
         var getSystemActions = function() {
             var actions = [
                 {
-                    callback: 'toggleHelp',
-                    action: 'help',
-                    name: app.lang.get('LBL_HELP'),
-                    icon: 'fa-exclamation-circle'
-                },
-                {
                     callback: 'openConfig',
                     action: 'config',
                     name: app.lang.get('LBL_SWEETSPOT_CONFIG'),
@@ -74,7 +68,8 @@
          */
         var getModuleLinks = function() {
             var actions = [];
-            var moduleList = app.metadata.getModuleNames({filter: 'display_tab'});
+            // Send the access property to options to filter ACLs as well
+            var moduleList = app.metadata.getModuleNames({filter: 'display_tab', access: true});
             if (app.user.get('type') === 'admin' && app.metadata.getModule('Administration')) {
                 moduleList.push('Administration');
                 moduleList = _.uniq(moduleList);

@@ -86,11 +86,7 @@
                             tooltip = app.utils.tooltip.get(element);
 
                         if (tooltip && tooltip.options && tooltip.options.trigger.indexOf('click') === -1) {
-                            // Need to defer because if not, the drawer does not open. The drawer is sensitive to
-                            // DOM changes while it is being opened.  Revisit once the drawer is refactored.
-                            _.defer(function() {
-                                app.utils.tooltip.hide(element);
-                            });
+                            app.utils.tooltip.hide(element);
                         }
                     });
                     app.accessibility.run($tooltips, 'click');
@@ -134,7 +130,7 @@
             return;
         }
         /**
-         * {@inheritDoc}
+         * @inheritdoc
          * Deactivate tooltip plugin on touch devices.
          */
         $.fn.tooltip = function() {

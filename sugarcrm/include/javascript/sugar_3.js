@@ -3589,7 +3589,6 @@ SUGAR.util = function () {
 					.html(body)
 					.dialog({
 						autoOpen: false,
-						title: caption,
 						width: 300,
 						position: {
 						    my: 'right top',
@@ -3597,10 +3596,13 @@ SUGAR.util = function () {
 						    of: $(el)
 					  }
 					});
-				if(show_buttons) {
-					$(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
-					$(".ui-dialog").find('.ui-dialog-title').css("width","100%");
-				}
+
+                    $(".ui-dialog").find(".ui-dialog-title").html(caption);
+
+                    if(show_buttons) {
+                        $(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
+                        $(".ui-dialog").find('.ui-dialog-title').css("width","100%");
+                    }
 
 					var width = $dialog.dialog( "option", "width" );
 					var pos = $(el).offset();
@@ -5318,4 +5320,28 @@ function convertReportDateTimeToDB(dateValue, timeValue)
         return date_match[date_reg_positions['Y']] + "-"+date_match[date_reg_positions['m']] + "-"+date_match[date_reg_positions['d']] + ' '+ time_match[1] + ':' + time_match[2] + ':00';
     }
     return '';
+}
+
+function clickToEditPassword(elId, passwordPlaceholder)
+{
+    var $el = $(elId);
+    if ($el && $el.val() == passwordPlaceholder) {
+        var instructions = $('<span class="button">'+SUGAR.language.get("app_strings", "LBL_CLICK_TO_EDIT")+'</span>');
+        instructions.click(function(e) {
+            e.preventDefault();
+            $el.val('');
+            instructions.hide();
+            $el.show();
+            $el.focus();
+        });
+        $el.parent().append(instructions);
+        $el.hide();
+        $el.focusout(function() {
+            if ($el.val() == '') {
+                $el.val(passwordPlaceholder);
+                instructions.show();
+                $el.hide();
+            }
+        });
+    }
 }

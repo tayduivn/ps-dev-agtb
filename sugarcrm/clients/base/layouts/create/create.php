@@ -25,7 +25,6 @@ $viewdefs['base']['layout']['create'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'create',
@@ -36,7 +35,7 @@ $viewdefs['base']['layout']['create'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

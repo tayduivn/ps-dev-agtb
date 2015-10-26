@@ -72,7 +72,7 @@ describe('copy field', function() {
             _.each(field.def.mapping, function(target, source) {
                 expect(field.model.get(target)).toEqual(prev.get(target));
             });
-            field.$('input[type=checkbox]').attr('checked', true).trigger('click');
+            field.$('input[type=checkbox]').prop('checked', true).trigger('change');
             _.each(field.def.mapping, function(target, source) {
                 expect(field.model.get(target)).toEqual(prev.get(source));
             });
@@ -86,7 +86,7 @@ describe('copy field', function() {
 
             var disabled = sinon.spy(field, 'setDisabled');
 
-            field.$('input[type=checkbox]').attr('checked', true).trigger('click');
+            field.$('input[type=checkbox]').prop('checked', true).trigger('change');
             expect(disabled.calledOnce);
 
             stub.restore();
@@ -102,8 +102,8 @@ describe('copy field', function() {
             _.each(field.def.mapping, function(target, source) {
                 expect(field.model.get(target)).toEqual(prev.get(target));
             });
-            field.$('input[type=checkbox]').attr('checked', true).trigger('click');
-            field.$('input[type=checkbox]').attr('checked', false).trigger('click');
+            field.$('input[type=checkbox]').prop('checked', true).trigger('change');
+            field.$('input[type=checkbox]').prop('checked', false).trigger('change');
             _.each(field.def.mapping, function(target, source) {
                 expect(field.model.get(target)).toEqual(prev.get(target));
             });
@@ -123,8 +123,8 @@ describe('copy field', function() {
             field.model.set('name', name);
             expect(field.model.get('name')).toEqual(name);
 
-            field.$('input[type=checkbox]').attr('checked', true).trigger('click');
-            field.$('input[type=checkbox]').attr('checked', false).trigger('click');
+            field.$('input[type=checkbox]').prop('checked', true).trigger('change');
+            field.$('input[type=checkbox]').prop('checked', false).trigger('change');
 
             _.each(field.def.mapping, function(target, source) {
                 if (target === 'name') {
@@ -150,7 +150,7 @@ describe('copy field', function() {
                 expect(field.model.get(target)).toEqual(prev.get(target));
             });
 
-            field.$('input[type=checkbox]').attr('checked', true).trigger('click');
+            field.$('input[type=checkbox]').prop('checked', true).trigger('change');
 
             var value = 'Edited float value to sync with `address_street` and `name` fields';
             field.model.set('float', value);
@@ -218,7 +218,7 @@ describe('copy field', function() {
                 expect(field.model.get(target)).toEqual(prev.get(target));
             });
 
-            expect(field.$('input[type=checkbox]').attr('checked')).toBeFalsy();
+            expect(field.$('input[type=checkbox]').prop('checked')).toBeFalsy();
         });
 
         describe('hasAccess', function() {

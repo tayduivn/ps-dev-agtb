@@ -21,7 +21,7 @@
     },
 
     /**
-     * {@inheritDocs}
+     * @inheritdoc
      */
     initDashlet: function(view) {
         // check if we're on the config screen
@@ -166,7 +166,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     loadData: function(options) {
         options = options || {};
@@ -430,7 +430,7 @@
             this.$('[data-action=loading]').removeClass(dt.cssIconDefault).addClass(dt.cssIconRefresh);
         }
 
-        app.api.call('create', app.api.buildURL('Reports/chart/' + reportId), null, {
+        app.api.call('create', app.api.buildURL('Reports/chart/' + reportId), {'ignore_datacheck': true}, {
             success: _.bind(function(serverData) {
                 if (options && options.success) {
                     options.success.apply(this, arguments);

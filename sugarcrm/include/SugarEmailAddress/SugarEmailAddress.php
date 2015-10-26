@@ -1005,11 +1005,10 @@ class SugarEmailAddress extends SugarBean
         $required = false;
         $object_name = BeanFactory::getObjectName($passedModule);
         $vardefs = $dictionary[$object_name]['fields'];
-
-        if (!empty($vardefs['email1']) && isset($vardefs['email1']['required']) && $vardefs['email1']['required'])
+        if (!empty($vardefs['email']['required'])) {
             $required = true;
+        }
         $this->smarty->assign('required', $required);
-
         $this->smarty->assign('module', $saveModule);
         $this->smarty->assign('index', $this->index);
         $this->smarty->assign('app_strings', $app_strings);

@@ -22,7 +22,6 @@ $viewdefs['base']['layout']['resolve-conflicts'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'resolve-conflicts-headerpane',
@@ -36,7 +35,7 @@ $viewdefs['base']['layout']['resolve-conflicts'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

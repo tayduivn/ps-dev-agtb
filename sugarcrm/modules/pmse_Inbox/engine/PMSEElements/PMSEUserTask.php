@@ -63,7 +63,6 @@ class PMSEUserTask extends PMSEActivity
      */
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
-//        $redirectAction = empty($externalAction)? 'ASSIGN': $this->processUserAction($flowData);
         $redirectAction = $this->processAction($flowData, $externalAction, $arguments);
         $saveBeanData = !empty($arguments) ? true : false;
         switch ($redirectAction) {
@@ -71,9 +70,9 @@ class PMSEUserTask extends PMSEActivity
                 $userId = $this->userAssignmentHandler->taskAssignment($flowData);
                 $activityDefinitionBean = $this->retrieveBean('pmse_BpmActivityDefinition', $flowData['bpmn_id']);
                 if ($activityDefinitionBean->act_response_buttons == 'ROUTE') {
-                    $flowData['cas_adhoc_actions'] = serialize(array('link_cancel', 'route', 'edit', 'continue'));
+                    $flowData['cas_adhoc_actions'] = json_encode(array('link_cancel', 'route', 'edit', 'continue'));
                 } else {
-                    $flowData['cas_adhoc_actions'] = serialize(array('link_cancel', 'approve', 'reject', 'edit'));
+                    $flowData['cas_adhoc_actions'] = json_encode(array('link_cancel', 'approve', 'reject', 'edit'));
                 }
                 $flowData['cas_flow_status'] = 'FORM';
                 $flowData['cas_assignment_method'] = $activityDefinitionBean->act_assignment_method;
@@ -270,7 +269,7 @@ class PMSEUserTask extends PMSEActivity
                 }
             }
 
-            $beanObject->save();
+            PMSEEngineUtils::saveAssociatedBean($beanObject);
         }
 
         $fields['log_data'] = $historyData->getLog();

@@ -13,7 +13,7 @@
     // TODO: Remove this View completely, when it is possible to place a standard help-dashlet to the Create layout
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _renderHtml: function () {
         var helpUrl = {

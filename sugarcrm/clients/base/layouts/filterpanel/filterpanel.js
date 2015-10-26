@@ -17,7 +17,7 @@
     extendsFrom: 'TogglepanelLayout',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * Certain options can be set in the filterpanel metadata:
      *     - `auto_apply`: this will determine whether or not to apply the
@@ -160,7 +160,7 @@
     disableActivityStreamToggle: function(moduleName, moduleMeta, viewMeta) {
         if (moduleName !== 'Activities' && !moduleMeta.activityStreamEnabled) {
             _.each(viewMeta.availableToggles, function(toggle) {
-                if (toggle.type === 'activitystream') {
+                if (toggle.name === 'activitystream') {
                     toggle.disabled = true;
                     toggle.label = 'LBL_ACTIVITY_STREAM_DISABLED';
                 }

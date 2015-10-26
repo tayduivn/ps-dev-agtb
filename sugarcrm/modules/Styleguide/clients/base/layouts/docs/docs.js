@@ -32,7 +32,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initComponents: function(components, context, module) {
         var self = this,
@@ -81,7 +81,7 @@
         }
 
         // load up the page view into the component array
-        main = this.getComponent('sidebar');
+        main = this.getComponent('main-pane');
         main._addComponentsFromDef([{
             view: 'docs-' + request.file,
             context: {
@@ -92,11 +92,5 @@
         }]);
 
         this.render();
-    },
-
-    _placeComponent: function(component) {
-        if (component.meta.targetEl) {
-            this.$(component.meta.targetEl).append(component.$el);
-        }
     }
 })

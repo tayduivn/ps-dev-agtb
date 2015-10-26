@@ -73,7 +73,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * Override template for dashboard title on home page.
      * Need display it as label so use `f.base.detail` template.

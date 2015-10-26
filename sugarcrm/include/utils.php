@@ -1609,8 +1609,10 @@ function get_admin_modules_for_user($user)
 
  function get_workflow_admin_modules_for_user($user)
  {
+    global $moduleList;
+
     /* Workflow modules blacklist */
-    $workflowNotSupportedModules = array(
+    $blacklist = array(
         'iFrames',
         'Feeds',
         'Home',
@@ -1624,17 +1626,12 @@ function get_admin_modules_for_user($user)
         'pmse_Inbox', // Processes
     );
 
-    if (isset($_SESSION['get_workflow_admin_modules_for_user'])) {
-        return $_SESSION['get_workflow_admin_modules_for_user'];
-    }
-
-    global $moduleList;
     $workflow_mod_list = array();
     foreach ($moduleList as $module) {
         $workflow_mod_list[$module] = $module;
     }
 
-    // This list is taken from teh previous version of workflow_utils.php
+    // This list is taken from the previous version of workflow_utils.php
     $workflow_mod_list['Tasks'] = "Tasks";
     $workflow_mod_list['Calls'] = "Calls";
     $workflow_mod_list['Meetings'] = "Meetings";
@@ -1644,20 +1641,18 @@ function get_admin_modules_for_user($user)
     $workflow_mod_list['Opportunities'] = "Opportunities";
     // End of list
 
-    $workflow_admin_modules = array();
+    $wfModules = array();
     if (empty($user)) {
-        return $workflow_admin_modules;
+        return $wfModules;
     }
-    $actions = ACLAction::getUserActions($user->id);
-    foreach ($workflow_mod_list as $key=>$val) {
-        if (!in_array($val, $workflow_admin_modules) && !in_array($val, $workflowNotSupportedModules) &&
-           ($user->isDeveloperForModule($key))) {
-                $workflow_admin_modules[$key] = $val;
+
+    foreach ($workflow_mod_list as $key => $val) {
+        if (!in_array($val, $wfModules) && !in_array($val, $blacklist) && $user->isDeveloperForModule($key)) {
+            $wfModules[$key] = $val;
         }
     }
-    $_SESSION['get_workflow_admin_modules_for_user'] = $workflow_admin_modules;
 
-    return ($workflow_admin_modules);
+    return $wfModules;
 }
 
 // Check if user is admin for at least one module.
@@ -2074,7 +2069,7 @@ function clean_xss($str, $cleanImg=true)
     if(empty($sugar_config['email_xss']))
     $sugar_config['email_xss'] = getDefaultXssTags();
 
-    $xsstags = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($sugar_config['email_xss']));
+    $xsstags = unserialize(base64_decode($sugar_config['email_xss']));
 
     // cn: bug 13079 - "on\w" matched too many non-events (cONTact, strONG, etc.)
     $jsEvents  = "onblur|onfocus|oncontextmenu|onresize|onscroll|onunload|ondblclick|onclick|";
@@ -5793,6 +5788,27 @@ function getFunctionValue($bean, $function, $args = array())
     }
 
     return call_user_func_array($function, $args);
+}
+
+/**
+ * Get options for a field, based on it's definition.
+ * @param array $vardef Field definition.
+ * @return array|false Options for the field, or false otherwise.
+ */
+function getOptionsFromVardef($vardef)
+{
+    if (!empty($vardef['function'])) {
+        if (!empty($vardef['function']['returns']) && !strcmp($vardef['function']['returns'], 'html')) {
+            return false;
+        }
+        return getFunctionValue(
+            isset($vardef['function_bean']) ? $vardef['function_bean'] : null,
+            $vardef['function']
+        );
+    } elseif (isset($vardef['options'])) {
+        return translate($vardef['options'], isset($vardef['module']) ? $vardef['module'] : '');
+    }
+    return false;
 }
 
 /**

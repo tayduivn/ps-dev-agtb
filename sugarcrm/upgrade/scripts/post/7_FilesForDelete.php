@@ -308,9 +308,6 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/Bugs/clients/base/layouts/sidebar/sidebar.php';
             $files[] = 'modules/Cases/clients/base/layouts/new-sidebar/new-sidebar.php';
             $files[] = 'modules/Cases/clients/base/layouts/sidebar/sidebar.php';
-        }
-
-        if (version_compare($this->from_version, '7.7', '<')) {
             $files[] = 'include/SugarSearchEngine/Elastic/Facets/FacetAbstract.php';
             $files[] = 'include/SugarSearchEngine/Elastic/Facets/FacetFactory.php';
             $files[] = 'include/SugarSearchEngine/Elastic/Facets/FacetFilter.php';

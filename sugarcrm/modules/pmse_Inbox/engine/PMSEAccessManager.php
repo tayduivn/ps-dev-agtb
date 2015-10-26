@@ -266,7 +266,7 @@ class PMSEAccessManager
             $_SESSION['PMSE'] = blowfishEncode(blowfishGetKey('ProcessMaker'),
                 base64_encode(serialize($this->licensePermissions)));
         } else {
-            $this->licensePermissions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode(blowfishDecode(blowfishGetKey('ProcessMaker'),
+            $this->licensePermissions = unserialize(base64_decode(blowfishDecode(blowfishGetKey('ProcessMaker'),
                         $_SESSION['PMSE'])));
         }
         return $this->licensePermissions;
@@ -471,7 +471,7 @@ class PMSEAccessManager
         $result = new stdClass();
         $result->id = $id;
         $result->dashlets = array();
-        $dashletData = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($dashletData));
+        $dashletData = unserialize(base64_decode($dashletData));
         foreach ($dashletData['dashlets'] as $dashlet) {
             if ((in_array($dashlet['className'], $this->adminDashlets) || in_array($dashlet['className'],
                         $this->userDashlets)) && !in_array($dashlet['className'], $result->dashlets)

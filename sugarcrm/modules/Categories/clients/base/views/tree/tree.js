@@ -43,7 +43,7 @@
     _callbacks: null,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Add listener for 'search:clear' and 'click:add_node_button' events.
      * Init settings.
@@ -63,7 +63,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * @example Call _renderTree function with the following parameters.
      * <pre><code>
@@ -84,22 +84,11 @@
      * @private
      */
     _initSettings: function() {
-        // Follow context.parent ACL (KBContents in current case)
-        var moduleACL = this.context.parent.get('module');
-
         this._settings = {
             settings: _.extend({},
                 this._defaultSettings,
                 this.context.get('treeoptions') || {},
-                this.def && this.def.settings || {},
-                {
-                    'acl': {
-                        'edit': app.acl.hasAccess('edit', moduleACL),
-                        'list': app.acl.hasAccess('list', moduleACL),
-                        'view': app.acl.hasAccess('view', moduleACL),
-                        'delete': app.acl.hasAccess('delete', moduleACL)
-                    }
-                }
+                this.def && this.def.settings || {}
             )
         };
         return this;
@@ -158,7 +147,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _dispose: function() {
         this.off('search:clear');

@@ -49,7 +49,7 @@
             $treeContainer: null,
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              */
             onAttach: function(component, plugin) {
                 this.on('init', function() {
@@ -58,6 +58,7 @@
                         this.onNestedSetSyncComplete,
                         this
                     );
+                    app.error.errorName2Keys['empty_node_name'] = 'ERR_EMPTY_NODE_NAME';
                 });
             },
 
@@ -352,7 +353,6 @@
              * Load context menu.
              * @param {Object} settings
              * @param {Boolean} settings.showMenu Show menu ot not.
-             * @param {Boolean} settings.acl Simplified module acl.
              * @return {Object}
              * @private
              */
@@ -363,7 +363,7 @@
                         edit: {
                             separator_before: false,
                             separator_after: true,
-                            _disabled: !settings.acl.edit || false,
+                            _disabled: false,
                             label: app.lang.get('LBL_CONTEXTMENU_EDIT', self.module),
                             action: function(obj) {
                                 this.rename(obj);
@@ -372,49 +372,45 @@
                         moveup: {
                             separator_before: false,
                             separator_after: true,
-                            _disabled: !settings.acl.edit || false,
+                            _disabled: false,
                             label: app.lang.get('LBL_CONTEXTMENU_MOVEUP', self.module),
                             action: function(obj) {
-                                if (settings.acl.edit === true) {
-                                    var currentNode = this._get_node(obj),
-                                        prevNode = this._get_prev(obj, true);
-                                    if (currentNode && prevNode) {
-                                        self.moveNode(
-                                            currentNode.data('id'),
-                                            prevNode.data('id'),
-                                            'before',
-                                            function() {
-                                                $(currentNode).after($(prevNode));
-                                            });
-                                    }
+                                var currentNode = this._get_node(obj),
+                                    prevNode = this._get_prev(obj, true);
+                                if (currentNode && prevNode) {
+                                    self.moveNode(
+                                        currentNode.data('id'),
+                                        prevNode.data('id'),
+                                        'before',
+                                        function() {
+                                            $(currentNode).after($(prevNode));
+                                        });
                                 }
                             }
                         },
                         movedown: {
                             separator_before: false,
                             separator_after: true,
-                            _disabled: !settings.acl.edit || false,
+                            _disabled: false,
                             label: app.lang.get('LBL_CONTEXTMENU_MOVEDOWN', self.module),
                             action: function(obj) {
-                                if (settings.acl.edit === true) {
-                                    var currentNode = this._get_node(obj),
-                                        nextNode = this._get_next(obj, true);
-                                    if (currentNode && nextNode) {
-                                        self.moveNode(
-                                            currentNode.data('id'),
-                                            nextNode.data('id'),
-                                            'after',
-                                            function() {
-                                                $(nextNode).after($(currentNode));
-                                            });
-                                    }
+                                var currentNode = this._get_node(obj),
+                                    nextNode = this._get_next(obj, true);
+                                if (currentNode && nextNode) {
+                                    self.moveNode(
+                                        currentNode.data('id'),
+                                        nextNode.data('id'),
+                                        'after',
+                                        function() {
+                                            $(nextNode).after($(currentNode));
+                                        });
                                 }
                             }
                         },
                         moveto: {
                             separator_before: false,
                             separator_after: true,
-                            _disabled: !settings.acl.edit || false,
+                            _disabled: false,
                             label: app.lang.get('LBL_CONTEXTMENU_MOVETO', self.module),
                             action: false,
                             submenu: this._buildRootsSubmenu(settings)
@@ -422,7 +418,7 @@
                         delete: {
                             separator_before: false,
                             separator_after: true,
-                            _disabled: !settings.acl.delete || false,
+                            _disabled: false,
                             label: app.lang.get('LBL_CONTEXTMENU_DELETE', self.module),
                             action: function(obj) {
                                 var bean = self.collection.getChild(obj.data('id'));
@@ -479,8 +475,12 @@
                 var messages = {};
                 var name = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model)).trim();
                 var context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name;
-
-                messages.confirmation = app.utils.formatString(app.lang.get('NTC_DELETE_CONFIRMATION_FORMATTED'), [context]);
+                messages.confirmation = app.utils.formatString(
+                    model.children.length === 0 ?
+                        app.lang.get('NTC_DELETE_CONFIRMATION_FORMATTED', this.module) :
+                        app.lang.get('NTC_DELETE_CONFIRMATION_FORMATTED_PLURAL', this.module),
+                    [context]
+                );
                 messages.success = app.utils.formatString(app.lang.get('NTC_DELETE_SUCCESS'), [context]);
                 return messages;
             },
@@ -520,16 +520,18 @@
              */
             _buildRootsSubmenu: function(settings) {
                 var self = this,
-                    subMenu = {};
+                    subMenu = {},
+                    selectedId = this.jsTree && this.jsTree.jstree('get_selected').data('id');
+
                 _.each(this.collection.models, function(entry, index) {
-                    subMenu['movetosubmenu' + index] = {
-                        id: entry.id,
-                        separator_before: false,
-                        icon: 'jstree-icon',
-                        separator_after: false,
-                        label: entry.escape('name'),
-                        action: function(obj) {
-                            if (settings.acl.edit === true){
+                    if (selectedId !== entry.id) {
+                        subMenu['movetosubmenu' + index] = {
+                            id: entry.id,
+                            separator_before: false,
+                            icon: 'jstree-icon',
+                            separator_after: false,
+                            label: entry.escape('name'),
+                            action: function(obj) {
                                 self.moveNode(obj.data('id'), entry.id, 'last', function(data, response) {
                                     self.jsTree.jstree(
                                         'move_node',
@@ -542,9 +544,10 @@
                                     );
                                 });
                             }
-                        }
-                    };
+                        };
+                    }
                 });
+
                 return subMenu;
             },
 
@@ -707,7 +710,7 @@
                             if (this.value.trim().length === 0) {
                                 app.alert.show('wrong_node_name', {
                                     level: 'error',
-                                    messages: app.lang.get('LBL_EMPTY_NODE_NAME', 'Categories'),
+                                    messages: app.error.getErrorString('empty_node_name', self),
                                     autoClose: false
                                 });
                                 return false;
@@ -759,25 +762,12 @@
              * @private
              */
             _jstreeShowContextmenu: function(event, data) {
-                var treeInstance = $.jstree._focused(),
-                    container = data.inst._get_node().parent(),
+                var container = data.inst._get_node().parent(),
                     level = data.inst._get_node().attr('data-level'),
                     firstNodeId = $(container).find('li[data-level=' + level + ']').first().data('id'),
-                    lastNodeId = $(container).find('li[data-level=' + level + ']').last().data('id'),
-                    clickedNode,
-                    findNodeFunc = function(el) {
-                        if (el.id === data.rslt.obj.data('id')) {
-                            clickedNode = el;
-                            return;
-                        }
-                        if (!_.isEmpty(el.children)) {
-                            _.each(el.children, findNodeFunc);
-                        }
-                    };
+                    lastNodeId = $(container).find('li[data-level=' + level + ']').last().data('id');
 
-                _.each(treeInstance.get_settings().json_data.data, findNodeFunc);
-
-                if (!_.isUndefined(data.inst.get_settings().contextmenu.items) && this.jsTreeSettings.acl.edit) {
+                if (!_.isUndefined(data.inst.get_settings().contextmenu.items)) {
                     // Clear contextmenu.items.moveto.submenu property.
                     data.inst._set_settings({
                         contextmenu: {items: {moveto: {submenu: null}}}
@@ -800,31 +790,6 @@
                             }
                         }
                     });
-                }
-
-                if (!_.isUndefined(clickedNode)) {
-                    var editAccess = clickedNode._acl.edit === 'no',
-                        deleteAccess = clickedNode._acl.delete === 'no';
-
-                    data.inst._set_settings({
-                        contextmenu: {items: {edit: {_disabled: editAccess || !this.jsTreeSettings.acl.edit}}}
-                    });
-                    data.inst._set_settings({
-                        contextmenu: {items: {moveup: {_disabled: editAccess || !this.jsTreeSettings.acl.edit}}}
-                    });
-                    data.inst._set_settings({
-                        contextmenu: {items: {movedown: {_disabled: editAccess || !this.jsTreeSettings.acl.edit}}}
-                    });
-                    data.inst._set_settings({
-                        contextmenu: {items: {moveto: {_disabled: editAccess || !this.jsTreeSettings.acl.edit}}}
-                    });
-                    data.inst._set_settings({
-                        contextmenu: {items: {delete: {_disabled: deleteAccess || !this.jsTreeSettings.acl.delete}}}
-                    });
-
-                    if (editAccess) {
-                        data.inst._set_settings({contextmenu: {items: {moveto: {submenu: null}}}});
-                    }
                 }
 
                 if (!$(event.currentTarget).hasClass('jstree-loading')) {
@@ -944,9 +909,7 @@
              * Load state of tree.
              */
             loadJSTreeState: function () {
-                _.defer(function(jstree) {
-                    jstree.jstree('load_state');
-                }, this.jsTree);
+                this.jsTree.jstree('load_state');
             },
 
             /**

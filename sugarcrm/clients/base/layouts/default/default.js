@@ -34,7 +34,7 @@
     className: 'row-fluid',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         /**
@@ -169,15 +169,6 @@
         $(window).trigger('resize');
 
         this.trigger('sidebar:state:changed', visible ? 'open' : 'close');
-    },
-
-    /**
-     * @inheritDoc
-     */
-    _placeComponent: function(component) {
-        if (component.meta.targetEl) {
-            this.$(component.meta.targetEl).append(component.$el);
-        }
     },
 
     /**

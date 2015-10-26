@@ -13,7 +13,7 @@
     extendsFrom: 'SubpanelListView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Setup dataView to load correct viewdefs from subpanel-for-revisions
      */

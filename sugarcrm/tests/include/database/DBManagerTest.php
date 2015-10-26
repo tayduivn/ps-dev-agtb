@@ -110,20 +110,24 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCheckError()
     {
-        $this->assertFalse($this->_db->checkError());
+        $this->assertFalse($this->_db->checkError("testCheckError"));
         $this->assertFalse($this->_db->lastError());
     }
 
     public function testCheckErrorNoConnection()
     {
         $this->_db->disconnect();
-        $this->assertTrue($this->_db->checkError());
+        $this->assertTrue($this->_db->checkError("testCheckErrorNoConnection"));
         $this->_db = DBManagerFactory::getInstance();
     }
 
     public function testGetQueryTime()
     {
-        $this->_db->version();
+        // BR-3387.  MSSQL caches the result, the second run will cost 'NO TIME'
+        // using a random query.
+        $randVal= rand(0, 10000);
+        $sql = "SELECT accounts.* FROM accounts WHERE DELETED = 0";
+        $this->_db->limitQuery($sql,0,1+$randVal,true);
         $this->assertTrue($this->_db->getQueryTime() > 0);
     }
 
@@ -1572,7 +1576,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testDisconnectAll()
     {
         DBManagerFactory::disconnectAll();
-        $this->assertTrue($this->_db->checkError());
+        $this->assertTrue($this->_db->checkError("testDisconnectAll"));
         $this->_db = DBManagerFactory::getInstance();
     }
 
@@ -1690,7 +1694,7 @@ SQL;
     public function testDisconnect()
     {
         $this->_db->disconnect();
-        $this->assertTrue($this->_db->checkError());
+        $this->assertTrue($this->_db->checkError("testDisconnect"));
         $this->_db = DBManagerFactory::getInstance();
     }
 
@@ -4383,5 +4387,17 @@ SQL;
         return array(
             array('', array(), '', '')
         );
+    }
+
+    public function testLimitSubQuery()
+    {
+        if (!$this->_db->supports('limit_subquery')) {
+            $this->markTestSkipped('Backend does not support LIMIT clauses in subqueries');
+        }
+
+        $subQuery = $this->_db->limitQuery('SELECT id FROM users WHERE 1=1 ORDER BY id', 0, 1, false, '', false);
+        $query = 'SELECT id FROM users WHERE id IN (' . $subQuery . ')';
+        $row = $this->_db->fetchOne($query);
+        $this->assertInternalType('array', $row);
     }
 }

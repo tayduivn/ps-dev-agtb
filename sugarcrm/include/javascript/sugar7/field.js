@@ -140,7 +140,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              * Checks fallback actions first and then follows ACLs checking
              * after that.
              *
@@ -186,7 +186,7 @@
             ],
 
             /**
-             * {@inheritdoc}
+             * @inheritdoc
              */
             _getFallbackTemplate: function(viewName) {
                 if (_.contains(this.fallbackActions, viewName)) {
@@ -353,7 +353,7 @@
             },
 
             /**
-             * {@inheritdoc}
+             * @inheritdoc
              *
              * Override setMode to remove any stale view action CSS classes.
              * @override
@@ -367,7 +367,7 @@
             },
 
             /**
-             * {@inheritdoc}
+             * @inheritdoc
              *
              * Override setMode to remove the stale disabled CSS class.
              * @override
@@ -420,10 +420,10 @@
                 // used on non datetime fields
                 var isWrapped = $ftag.parent().hasClass('input-append');
                 if (!isWrapped) {
-                    $ftag.wrap('<div class="input-append error ' + ftag + '">');
-                } else {
-                    $ftag.parent().addClass('error');
+                    $ftag.wrap('<div class="input-append ' + ftag + '">');
                 }
+
+                $ftag.parent().addClass('error');
 
                 $tooltip = $(this.exclamationMarkTemplate(errorMessages));
                 $ftag.after($tooltip);
@@ -466,7 +466,7 @@
                 // Remove previous exclamation then add back.
                 this.destroyAllErrorTooltips();
                 this.$('.add-on.error-tooltip').remove();
-                var isWrapped = $ftag.parent().hasClass('input-append');
+                var isWrappedError = $ftag.parent().hasClass('input-append') && $ftag.parent().hasClass('error');
 
                 // FIXME: this check for datetime should be made generic (when
                 // SC-2568 gets in) based on use of normal addon
@@ -474,7 +474,7 @@
                     isCurrencyField = $ftag.parent().hasClass('currency');
                 if (isDateField || isCurrencyField) {
                     $ftag.parent().removeClass('error');
-                } else if (isWrapped) {
+                } else if (isWrappedError) {
                     $ftag.unwrap();
                 }
 
@@ -502,7 +502,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              * Attach focus handler in order to pass the current element's location.
              */
             bindDomChange: function() {
@@ -514,7 +514,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              * Calculate current offset location and pass it to the parent's view.
              */
             handleFocus: function() {

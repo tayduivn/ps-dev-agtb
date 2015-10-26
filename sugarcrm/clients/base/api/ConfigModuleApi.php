@@ -156,11 +156,7 @@ class ConfigModuleApi extends ModuleApi
         $platform = $this->getPlatform($api->platform);
 
         foreach ($params as $name => $value) {
-            if (is_array($value)) {
-                $admin->saveSetting($module, $name, json_encode($value), $platform);
-            } else {
-                $admin->saveSetting($module, $name, $value, $platform);
-            }
+            $admin->saveSetting($module, $name, $value, $platform);
         }
     }
 

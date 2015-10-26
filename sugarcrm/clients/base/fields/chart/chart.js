@@ -22,7 +22,7 @@
     chartType: '',
 
     /**
-     * @{inheritDoc}
+     * @inheritdoc
      */
     bindDataChange: function() {
         this.model.on('change:rawChartData', function(model, newChartData) {
@@ -287,7 +287,7 @@
 
     /**
      * Toggle display of dashlet content and NoData message
-     * @param {boolean} state The visibilty state of the dashlet content.
+     * @param {boolean} state The visibility state of the dashlet content.
      */
     displayNoData: function(state) {
         this.$('[data-content="chart"]').toggleClass('hide', state);
@@ -295,7 +295,7 @@
     },
 
     /**
-     * @{inheritDoc}
+     * @inheritdoc
      */
     _dispose: function() {
         if (this.view && this.view.layout) {

@@ -64,15 +64,20 @@ dl.list {
   }
 }
 
-.main-content .more.padded.btn-link {
-  display: inline-block;
-  width: 100%;
-  margin-left: 0;
-  padding-left: 15px;
-  text-align: left;
-  &:hover {
-    text-decoration: none;
-    background: @dropdownLinkBackgroundHover;
+.main-content {
+  > div > div > .block-footer {
+    border-top: none;
+  }
+  .more.padded.btn-link {
+    display: inline-block;
+    width: 100%;
+    margin-left: 0;
+    padding-left: 15px;
+    text-align: left;
+    &:hover {
+      text-decoration: none;
+      background: @dropdownLinkBackgroundHover;
+    }
   }
 }
 
@@ -548,16 +553,17 @@ hr.soften {
   unicode-bidi: bidi-override;
 }
 
-/* Retina */
-@media only screen and (min--moz-device-pixel-ratio: 2),
-only screen and (-o-min-device-pixel-ratio: 2/1),
-only screen and (-webkit-min-device-pixel-ratio: 2),
-only screen and (min-device-pixel-ratio: 2) {
-  .subpanel table {
-    th, td {
-      &:not(:first-child):not(:last-child) > span {
-        position: static;
-      }
+/*
+  Temporary hack for BWC SC-4732:
+    - first line targets webkit on windows;
+    - second line targets firefox on windows.
+*/
+@media only screen and (-webkit-min-device-pixel-ratio:0),
+only screen and (-moz-os-version:windows-win8) {
+  html.touch {
+    .bwc-frame,
+    .bwc.layout {
+      overflow: hidden;
     }
   }
 }

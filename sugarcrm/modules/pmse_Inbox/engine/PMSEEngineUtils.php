@@ -23,6 +23,47 @@ class PMSEEngineUtils
     public static $uploadObject;
 
     /**
+     * List of fields across all modules that should always be blacklisted
+     * @var array
+     */
+    protected static $blacklistedFields = array(
+        'ALL' => array(
+            'deleted',
+            'system_id',
+            'mkto_sync',
+            'mkto_id',
+            'mkto_lead_score',
+            'parent_type',
+            'user_name',
+            'user_hash',
+            'portal_app',
+            'portal_active',
+            'portal_name',
+            'password',
+            'is_admin',
+        ),
+        'BR' => array(
+            'duration_hours',
+            'kbdocument_body',
+            'duration_minutes',
+            'repeat_type',
+            'viewcount'
+        ),
+        'AC' => array(
+            'kbdocument_body',
+            'viewcount',
+        ),
+        'PD' => array(
+            'kbdocument_body',
+            'viewcount',
+        ),
+        'GT' => array(
+            'kbdocument_body',
+            'viewcount',
+        ),
+    );
+
+    /**
      * PA target blacklisted modules
      * @var array
      */
@@ -48,6 +89,18 @@ class PMSEEngineUtils
         'users',
         'user_sync',
         'relcases_kbcontents',
+        'localizations',
+        'revisions',
+        'attachments',
+        'usefulness'
+    );
+
+    /**
+     * PA related blacklisted links by module
+     * @var array
+     */
+    public static $relatedBlacklistedLinksByModule = array(
+        'Accounts'=>array('revenuelineitems')
     );
 
     /**
@@ -918,7 +971,14 @@ class PMSEEngineUtils
         return $replaced;
     }
 
-    public static function unsetCommonFields($projectData, $except = array())
+    /**
+     * Unset common fields for project data
+     * @param $projectData
+     * @param $except
+     * @param $showValue
+     * @return $projectData
+     */
+    public static function unsetCommonFields($projectData, $except = array(), $showValue = false)
     {
         $special_fields = array(
             'id',
@@ -962,6 +1022,7 @@ class PMSEEngineUtils
             'created_by_name_mod',
             'rel_assigned_user_name_first_name',
             'rel_assigned_user_name_last_name',
+            'assigned_user_id',
             'assigned_user_name',
             'assigned_user_name_owner',
             'assigned_user_name_mod',
@@ -969,10 +1030,13 @@ class PMSEEngineUtils
             'tag',
             'tag_lower',
             'tag_link',
+            'tn_name',
+            'tn_name_2',
         );
-        //UNSET comun fields
+        //UNSET common fields
         foreach ($projectData as $key => $value) {
-            if (in_array($key, $special_fields) && !in_array($key, $except)) {
+            $search = $showValue ? $value : $key;
+            if (in_array($search, $special_fields) && !in_array($search, $except)) {
                 unset($projectData[$key]);
             }
         }
@@ -987,12 +1051,41 @@ class PMSEEngineUtils
         }
     }
 
+    /**
+     * Checks to see if the currently logged in user is an admin or an admin of
+     * the users module. Originally added to handle the case of User module
+     * specific fields when used as a related module.
+     *
+     * @return boolean True if the current user is an admin
+     */
+    public static function isCurrentUserAdmin()
+    {
+        global $current_user;
+        return $current_user->isAdmin() || $current_user->isAdminForModule('Users');
+    }
+
     public static function isValidField($def, $type = '')
     {
-        // If a field is explicitly allowed it should automatically be valid
-        // unless it is blacklisted for a specific type (like business rules)
-        if (!empty($def['processes']) && self::blackListFields($def, $type)) {
-            return true;
+        if (isset($def['processes'])) {
+            // If a field is explicitly marked for processes, handle it
+            if (is_bool($def['processes'])) {
+                return $def['processes'];
+            }
+
+            // If the marker is a string or an array, it is mapped to a method
+            if (is_string($def['processes'])) {
+                $def['processes'] = array($def['processes']);
+            }
+
+            // For a field validation list, run through until you hit a false,
+            // otherwise let the rest of the validation processes run
+            foreach ($def['processes'] as $method) {
+                if (method_exists(__CLASS__, $method)) {
+                    if (self::$method() === false) {
+                        return false;
+                    }
+                }
+            }
         }
 
         $result = self::isValidStudioField($def);
@@ -1018,31 +1111,19 @@ class PMSEEngineUtils
         return $result;
     }
 
-    public static function blackListFields($def, $type)
+    /**
+     * Validation method that checks if a field is blacklisted.
+     * @param array $def A vardef entry for a field
+     * @param string $type The type of list to use
+     * @return boolean True if the field is not blacklisted, false if it is
+     */
+    public static function blackListFields($def, $type = '')
     {
-        //set up black list to be dependent on which view (type) we are looking at
-        $blackList = array(
-            'ALL' => array(
-                'deleted', 'system_id', 'mkto_sync', 'mkto_id', 'mkto_lead_score',
-                'parent_type', 'user_name', 'user_hash', 'portal_app', 'portal_active',
-                'portal_name', 'password',
-            ),
-            'BR' => array(
-                'duration_hours', 'duration_minutes', 'repeat_type',
-            ),
-        );
-
-        //merge global pmse blacklist with the view specific one if type is given
-        if (!empty($type) && isset($blackList[$type])) {
-            $blackList = array_merge($blackList['ALL'], $blackList[$type]);
-        } else {
-            $blackList = $blackList['ALL'];
+        $blacklist = self::$blacklistedFields['ALL'];
+        if (!empty($type) && isset(self::$blacklistedFields[$type])) {
+            $blacklist = array_merge($blacklist, self::$blacklistedFields[$type]);
         }
-
-        if (in_array($def['name'], $blackList)) {
-            return false;
-        }
-        return true;
+        return !in_array($def['name'], $blacklist);
     }
 
     public static function specialFields($def, $type= 'All')
@@ -1140,5 +1221,81 @@ class PMSEEngineUtils
             $out[] = $module->module;
         }
         return $out;
+    }
+
+    /**
+     * Santizies imported activity fields, since some fields may have been exported
+     * in a version when they were still acceptable valid fields
+     * @param array $element An activity element from an import
+     * @param string $module The module to get fields to validate from
+     * @return string
+     */
+    public static function sanitizeImportActivityFields(array $element, $module)
+    {
+        if (!empty($element['act_field_module'])) {
+            // We will need these for validations
+            $targetBean = BeanFactory::getBean($module);
+            if (isset($targetBean->field_defs[$element['act_field_module']]['module'])) {
+                // We need the related module bean to get field defs for validation
+                $relBean = BeanFactory::getBean($targetBean->field_defs[$element['act_field_module']]['module']);
+
+                $newData = array();
+                $fieldData = json_decode(html_entity_decode($element['act_fields']), true);
+                foreach ($fieldData as $fieldDef) {
+                    $field = $fieldDef['field'];
+                    if (isset($relBean->field_defs[$field]) && self::isValidField($relBean->field_defs[$field])) {
+                        $newData[] = $fieldDef;
+                    }
+                }
+                $element['act_fields'] = json_encode($newData);
+            }
+        }
+
+        return $element['act_fields'];
+    }
+
+    /**
+     * This method add information about PA used to discriminate beans when are
+     * launched hooks
+     * @param SugarBean $bean
+     * @return bool|String
+     */
+    public static function saveAssociatedBean(SugarBean $bean)
+    {
+        $bean->isPASaveRequest = true;
+        return $bean->save();
+    }
+
+    /**
+     * Method that fixes the Currency type. Starting 7.7 we changed the way we compare currency fields (ex. Likely)
+     * Now this evaluation takes into account currency values. In previous versions such as 7.6.0.0 we did this
+     * only using integer values. So at import time all previous currency values in 7.6.0.0 need to be fixed
+     * for currency type
+     * @param object $currencyObj
+     */
+    public static function fixCurrencyType($currencyObj)
+    {
+        global $sugar_config;
+        $defaultCurrencyLabel = '';
+        // set to default currency
+        $currencyObj->expCurrency = '-99';
+        if (isset($sugar_config['default_currency_symbol']) &&
+            isset($sugar_config['default_currency_iso4217'])
+        ) {
+            $defaultCurrencyLabel = $sugar_config['default_currency_symbol'] .
+                " (" . $sugar_config['default_currency_iso4217'] . ")";
+        }
+        if (!empty($currencyObj->expLabel)) {
+            // Labels in pre 7.7 versions were of the type
+            // Likely is less than "500"
+            // We need to remove "500" and replace with something like $ (USD) %VALUE%
+            // So the final label would be : Likely is less than $ (USD) %VALUE%
+            $truncatedLabel = rtrim(preg_replace('/\"|(\d+)/', '', $currencyObj->expLabel));
+            $currencyObj->expLabel = $truncatedLabel . ' ' . $defaultCurrencyLabel . ' %VALUE%';
+        }
+
+        if (!empty($currencyObj->expValue) && (is_string($currencyObj->expValue))) {
+            $currencyObj->expValue = (float) $currencyObj->expValue;
+        }
     }
 }

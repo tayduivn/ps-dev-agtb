@@ -128,14 +128,14 @@
         return !this.isHidden;
     },
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * No data changes to bind.
      */
     bindDomChange: function () {
     },
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * No need to bind DOM changes to a model.
      */

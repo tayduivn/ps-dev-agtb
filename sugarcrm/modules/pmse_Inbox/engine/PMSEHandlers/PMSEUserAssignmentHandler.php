@@ -225,7 +225,7 @@ class PMSEUserAssignmentHandler
             $newFlowRow->cas_adhoc_actions = $flowRow->cas_adhoc_actions;
         } else {
             if ($isFormRequest) {
-                $newFlowRow->cas_adhoc_actions = serialize(array('link_cancel', 'route', 'edit'));
+                $newFlowRow->cas_adhoc_actions = json_encode(array('link_cancel', 'route', 'edit'));
             } else {
                 $newFlowRow->cas_adhoc_actions = $caseData['cas_adhoc_actions'];
             }
@@ -445,7 +445,8 @@ class PMSEUserAssignmentHandler
             $caseBean->cas_sugar_object_id); //$this->beanFactory->getBean($caseBean->cas_sugar_module);
         //$beanObject->retrieve($caseBean->cas_sugar_object_id);
         $beanObject->assigned_user_id = $userId;
-        if ($beanObject->save()) {
+
+        if (PMSEEngineUtils::saveAssociatedBean($beanObject)) {
             return true;
         } else {
             return false;

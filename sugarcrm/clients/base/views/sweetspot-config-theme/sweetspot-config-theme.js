@@ -20,7 +20,7 @@
     plugins: ['Editable'],
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         options.meta = this._getMeta(options);
@@ -55,7 +55,7 @@
 
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _renderHtml: function() {
         this._super('_renderHtml');

@@ -55,7 +55,6 @@ class AdministrationViewUnifiedSearchSettings extends SugarView
         $sugar_smarty = new Sugar_Smarty();
         $sugar_smarty->assign('APP', $app_strings);
         $sugar_smarty->assign('MOD', $mod_strings);
-        $sugar_smarty->assign('moduleTitle', $this->getModuleTitle(false));
 
         // Enabled/disabled modules list
         $usa = new UnifiedSearchAdvanced();

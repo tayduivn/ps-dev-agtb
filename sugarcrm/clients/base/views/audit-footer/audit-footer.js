@@ -15,7 +15,7 @@
  */
 ({
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      * Initialize the audited fields on the parent model.
      */
     initialize: function(options) {

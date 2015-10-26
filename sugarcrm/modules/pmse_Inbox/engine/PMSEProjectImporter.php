@@ -54,6 +54,22 @@ class PMSEProjectImporter extends PMSEImporter
     protected $dependenciesWrapper;
 
     /**
+     * The target module from the import
+     * @var string
+     */
+    protected $targetModule;
+
+    /**
+     * @var
+     */
+    protected $warningBR = false;
+
+    /**
+     * @var
+     */
+    protected $warningET = false;
+
+    /**
      * The class constructor
      * @codeCoverageIgnore
      */
@@ -147,6 +163,23 @@ class PMSEProjectImporter extends PMSEImporter
         $this->changedUidElements = $changedUidElements;
     }
 
+    /**
+     * Sets the targetModule property
+     * @param string $targetModule The target module for this project
+     */
+    public function setTargetModule($targetModule)
+    {
+        $this->targetModule = $targetModule;
+    }
+
+    /**
+     * Gets the targetModule
+     * @return string
+     */
+    public function getTargetModule()
+    {
+        return $this->targetModule;
+    }
 
     /**
      * Save the project data into the bpm project, and process beans, validates the uniqueness of
@@ -157,12 +190,15 @@ class PMSEProjectImporter extends PMSEImporter
     public function saveProjectData($projectData)
     {
         global $current_user;
-        $projectObject = $this->getBean();
+        $projectBean = $this->getBean();
         $keysArray = array();
+        $result = array('success' => false);
+        // This will be needed down the road
+        $this->setTargetModule($projectData[$this->module]);
+
         unset($projectData[$this->id]);
         //Unset common fields
         $this->unsetCommonFields($projectData);
-        //unset($projectData['assigned_user_id']);
         if (!isset($projectData['assigned_user_id'])) {
             $projectData['assigned_user_id'] = $current_user->id;
         }
@@ -175,45 +211,56 @@ class PMSEProjectImporter extends PMSEImporter
 
         $projectData['name'] = $name;
         $projectData['process']['name'] = $name;
-        $projectData['diagram'][0]['name'] = $name;
+        $projectData['diagram']['name'] = $name;
 
-        foreach ($projectData as $processFieldKey => $processFieldContent) {
-            if ($processFieldKey != 'diagram') {
-                $projectObject->$processFieldKey = $processFieldContent;
+        $diagramData = (!empty($projectData['diagram'])) ? $projectData['diagram'] : array();
+        $processData = (!empty($projectData['process'])) ? $projectData['process'] : array();
+        $processDefinitionData = (!empty($projectData['definition'])) ? $projectData['definition'] : array();
+        $dynaFormData = (!empty($projectData['dynaforms'])) ? $projectData['dynaforms'] : array();
+
+        unset($projectData['diagram'], $projectData['process'], $projectData['definition'], $projectData['dynaforms']);
+
+        $projectData['prj_uid'] = PMSEEngineUtils::generateUniqueID();
+        $projectData['prj_status'] = 'INACTIVE';
+
+        foreach ($projectData as $key => $value) {
+            if (isset($projectBean->field_defs[$key])){
+                $projectBean->$key = $value;
             }
         }
-        $projectObject->prj_uid = PMSEEngineUtils::generateUniqueID();
-        // by default imported projects should be disabled
-        $projectObject->prj_status = 'INACTIVE';
-        $keysArray['prj_id'] = $projectObject->save();
+
+        $keysArray['prj_id'] = $projectBean->save();
 
         $diagramBean = BeanFactory::newBean('pmse_BpmnDiagram');
-        unset($projectData['diagram'][0]['dia_id']);
-        foreach ($projectData['diagram'][0] as $diaFieldKey => $diaFieldContent) {
-            $diagramBean->$diaFieldKey = $diaFieldContent;
+        unset($diagramData['dia_id']);
+        $diagramData['prj_id'] = $keysArray['prj_id'];
+        $diagramData['dia_uid'] = PMSEEngineUtils::generateUniqueID();
+        foreach ($diagramData as $key => $value) {
+            if (isset($diagramBean->field_defs[$key])){
+                $diagramBean->$key = $value;
+            }
         }
-        $diagramBean->prj_id = $keysArray['prj_id'];
-        $diagramBean->dia_uid = PMSEEngineUtils::generateUniqueID();
         $keysArray['dia_id'] = $diagramBean->save();
 
         $processBean = BeanFactory::newBean('pmse_BpmnProcess');
-        $processBean->prj_id = $keysArray['prj_id'];
-        $processBean->dia_id = $keysArray['dia_id'];
-        $processBean->pro_name = $projectObject->prj_name;
-        unset($projectData['process']['pro_id']);
-        foreach ($projectData['process'] as $key => $value) {
-            $processBean->$key = $value;
+        unset($processData['pro_id']);
+        $processData['prj_id'] = $keysArray['prj_id'];
+        $processData['dia_id'] = $keysArray['dia_id'];
+        $processData['pro_uid'] = PMSEEngineUtils::generateUniqueID();
+        foreach ($processData as $key => $value) {
+            if (isset($processBean->field_defs[$key])){
+                $processBean->$key = $value;
+            }
         }
-        $processBean->pro_uid = PMSEEngineUtils::generateUniqueID();
-        $projectData['diagram'][0]['documentation'] = isset($projectData['diagram'][0]['documentation']) ? $projectData['diagram'][0]['documentation'] : array();
-
         $keysArray['pro_id'] = $processBean->save();
 
         $processDefinitionBean = BeanFactory::newBean('pmse_BpmProcessDefinition');
-        $processDefinitionBean->prj_id = $keysArray['prj_id'];
         unset($projectData['definition']['pro_id']);
-        foreach ($projectData['definition'] as $key => $value) {
-            $processDefinitionBean->$key = $value;
+        $processDefinitionData['prj_id'] = $keysArray['prj_id'];
+        foreach ($processDefinitionData as $key => $value) {
+            if (isset($processDefinitionBean->field_defs[$key])){
+                $processDefinitionBean->$key = $value;
+            }
         }
         $processDefinitionBean->id = $keysArray['pro_id'];
         $processDefinitionBean->new_with_id = true;
@@ -221,22 +268,19 @@ class PMSEProjectImporter extends PMSEImporter
         $processDefinitionBean->pro_status = 'INACTIVE';
         $processDefinitionBean->save();
 
-        $this->saveProjectActivitiesData($projectData['diagram'][0]['activities'], $keysArray);
-        $this->saveProjectEventsData($projectData['diagram'][0]['events'], $keysArray);
-        $this->saveProjectGatewaysData($projectData['diagram'][0]['gateways'], $keysArray);
-        $this->saveProjectElementsData($projectData['diagram'][0]['documentation'], $keysArray,
-            'pmse_BpmnDocumentation', false, true);
-        $this->saveProjectElementsData($projectData['diagram'][0]['extension'], $keysArray, 'pmse_BpmnExtension', false,
-            true);
-        $this->saveProjectElementsData($projectData['diagram'][0]['pools'], $keysArray, 'pmse_BpmnLaneset', true);
-        $this->saveProjectElementsData($projectData['diagram'][0]['lanes'], $keysArray, 'pmse_BpmnLane', true);
-        $this->saveProjectElementsData($projectData['diagram'][0]['participants'], $keysArray, 'pmse_BpmnParticipant');
-        $this->saveProjectElementsData($projectData['diagram'][0]['artifacts'], $keysArray, 'pmse_BpmnArtifact', true);
-        $this->saveProjectElementsData($projectData['diagram'][0]['data'], $keysArray, 'pmse_BpmnData', false, true);
-        $this->saveProjectElementsData($projectData['dynaforms'], $keysArray, 'pmse_BpmDynaForm');
-        $this->saveProjectFlowsData($projectData['diagram'][0]['flows'], $keysArray);
+        $this->saveProjectActivitiesData($diagramData['activities'], $keysArray);
+        $this->saveProjectEventsData($diagramData['events'], $keysArray);
+        $this->saveProjectGatewaysData($diagramData['gateways'], $keysArray);
+        $this->saveProjectArtifactsData($diagramData['artifacts'], $keysArray);
+        $this->saveProjectFlowsData($diagramData['flows'], $keysArray);
+        $this->saveProjectDynaFormsData($dynaFormData, $keysArray);
         $this->processDefaultFlows();
-        return $keysArray['prj_id'];
+
+        $result['success'] = true;
+        $result['id'] = $keysArray['prj_id'];
+        $result['br_warning'] = $this->warningBR;
+        $result['et_warning'] = $this->warningET;
+        return $result;
     }
 
     /**
@@ -259,59 +303,64 @@ class PMSEProjectImporter extends PMSEImporter
             $activityBean = BeanFactory::getBean('pmse_BpmnActivity');
             $boundBean = BeanFactory::getBean('pmse_BpmnBound');
             $definitionBean = BeanFactory::getBean('pmse_BpmActivityDefinition');
+
+            list($element, $definition, $bound) = $this->getElementDefinition($element);
+
             $element['prj_id'] = $keysArray['prj_id'];
             $element['pro_id'] = $keysArray['pro_id'];
+            $previousId = $element['id'];
+            unset($element['id']);
+
+            $previousUid = $element['act_uid'];
+            $element['act_uid'] = PMSEEngineUtils::generateUniqueID();
+            $this->changedUidElements[$previousUid] = array('new_uid' => $element['act_uid'] );
             foreach ($element as $key => $value) {
-                switch ($key) {
-                    case 'act_name':
-                        $activityBean->name = $value;
-                        break;
-                    case 'act_type':
-                        $activityBean->$key = 'TASK';
-                        break;
-                    default:
-                        $activityBean->$key = $value;
-                        break;
+                // Handle sanitization of the JSON string for activity fields
+                // See MACAROON-867
+                if ($key === 'act_fields') {
+                    $value = PMSEEngineUtils::sanitizeImportActivityFields($element, $this->getTargetModule());
                 }
-                $boundBean->$key = $value;
-                $definitionBean->$key = $value;
-            }
 
-            if (isset($activityBean->act_default_flow) && !empty($activityBean->act_default_flow)) {
-                $this->defaultFlowList[$element['act_default_flow']] = array(
-                    'bean' => 'BpmnActivity',
-                    'search_field' => 'act_uid',
-                    'search_field_value' => $activityBean->act_uid,
-                    'default_flow' => $element['act_default_flow'],
-                    'default_flow_field' => 'act_default_flow'
-                );
+                if (isset($activityBean->field_defs[$key])){
+                    $activityBean->$key = $value;
+                }
             }
-            $previousUid = $activityBean->act_uid;
-            $activityBean->act_uid = PMSEEngineUtils::generateUniqueID();
-            $this->changedUidElements[$previousUid] = array('new_uid' => $activityBean->act_uid);
-
             $currentID = $activityBean->save();
+
             if (!isset($this->savedElements['bpmnActivity'])) {
                 $this->savedElements['bpmnActivity'] = array();
-                $this->savedElements['bpmnActivity'][$activityBean->act_uid] = $currentID;
+                $this->savedElements['bpmnActivity'][$previousId] = $currentID;
             } else {
-                $this->savedElements['bpmnActivity'][$activityBean->act_uid] = $currentID;
+                $this->savedElements['bpmnActivity'][$previousId] = $currentID;
             }
 
-            $boundBean->bou_uid = PMSEEngineUtils::generateUniqueID();
-            $boundBean->dia_id = $keysArray['dia_id'];
-            $boundBean->element_id = $keysArray['dia_id'];
-            $boundBean->bou_element_type = 'bpmnActivity';
-            $boundBean->bou_element = $currentID;
-            $boundBean->save();
-            $definitionBean->id = $currentID;
-            $definitionBean->pro_id = $keysArray['pro_id'];
-            $definitionBean->dia_id = $keysArray['dia_id'];
-            if ($element['act_task_type'] == 'SCRIPTTASK' && $element['act_script_type'] == 'BUSINESS_RULE') {
-                $definitionBean->act_fields = $element['act_fields'];
+            $bound['bou_uid'] = PMSEEngineUtils::generateUniqueID();
+            $bound['prj_id'] = $keysArray['prj_id'];
+            $bound['dia_id'] = $keysArray['dia_id'];
+            $bound['element_id'] = $keysArray['dia_id'];
+            $bound['bou_element'] = $currentID;
+            foreach ($bound as $key => $value) {
+                if (isset($boundBean->field_defs[$key])){
+                    $boundBean->$key = $value;
+                }
             }
+            $boundBean->save();
+
+            $definition['pro_id'] = $keysArray['pro_id'];
+            if ($element['act_task_type'] == 'SCRIPTTASK' &&
+                $element['act_script_type'] == 'BUSINESS_RULE') {
+                //TODO implement automatic import for business rules
+                $definition['act_fields'] = '';
+                $this->warningBR = true;
+            }
+            foreach ($definition as $key => $value) {
+                if (isset($definitionBean->field_defs[$key])){
+                    $definitionBean->$key = $value;
+                }
+            }
+            $definitionBean->id = $currentID;
             $definitionBean->new_with_id = true;
-            $defID = $definitionBean->save();
+            $definitionBean->save();
         }
     }
 
@@ -326,45 +375,60 @@ class PMSEProjectImporter extends PMSEImporter
             $eventBean = BeanFactory::getBean('pmse_BpmnEvent');
             $boundBean = BeanFactory::getBean('pmse_BpmnBound');
             $definitionBean = BeanFactory::getBean('pmse_BpmEventDefinition');
+
+            list($element, $definition, $bound) = $this->getElementDefinition($element);
+
             $element['prj_id'] = $keysArray['prj_id'];
             $element['pro_id'] = $keysArray['pro_id'];
+            $previousId = $element['id'];
+            unset($element['id']);
+
+            $previousUid = $element['evn_uid'];
+            $element['evn_uid'] = PMSEEngineUtils::generateUniqueID();
+            $this->changedUidElements[$previousUid] = array('new_uid' => $element['evn_uid'] );
             foreach ($element as $key => $value) {
-                switch ($key) {
-                    case 'evn_name':
-                        $eventBean->name = $value;
-                        break;
-                    case 'evn_message':
-                        $eventBean->$key = $this->changeEventMessage($value);
-                        break;
-                    default:
-                        $eventBean->$key = $value;
-                        break;
+                if (isset($eventBean->field_defs[$key])){
+                    $eventBean->$key = $value;
                 }
-                $boundBean->$key = $value;
-                $definitionBean->$key = $value;
             }
-            $previousUid = $eventBean->evn_uid;
-            $eventBean->evn_uid = PMSEEngineUtils::generateUniqueID();
-            $this->changedUidElements[$previousUid] = array('new_uid' => $eventBean->evn_uid);
             $currentID = $eventBean->save();
+
             if (!isset($this->savedElements['bpmnEvent'])) {
                 $this->savedElements['bpmnEvent'] = array();
-                $this->savedElements['bpmnEvent'][$eventBean->evn_uid] = $currentID;
+                $this->savedElements['bpmnEvent'][$previousId] = $currentID;
             } else {
-                $this->savedElements['bpmnEvent'][$eventBean->evn_uid] = $currentID;
+                $this->savedElements['bpmnEvent'][$previousId] = $currentID;
             }
 
-            $boundBean->bou_uid = PMSEEngineUtils::generateUniqueID();
-            $boundBean->dia_id = $keysArray['dia_id'];
-            $boundBean->element_id = $keysArray['dia_id'];
-            $boundBean->bou_element_type = 'bpmnEvent';
-            $boundBean->bou_element = $currentID;
+            $bound['bou_uid'] = PMSEEngineUtils::generateUniqueID();
+            $bound['prj_id'] = $keysArray['prj_id'];
+            $bound['dia_id'] = $keysArray['dia_id'];
+            $bound['element_id'] = $keysArray['dia_id'];
+            $bound['bou_element'] = $currentID;
+            foreach ($bound as $key => $value) {
+                if (isset($boundBean->field_defs[$key])){
+                    $boundBean->$key = $value;
+                }
+            }
             $boundBean->save();
+
+            $definition['pro_id'] = $keysArray['pro_id'];
+            if ($element['evn_type'] == 'INTERMEDIATE' &&
+                $element['evn_marker'] == 'MESSAGE' &&
+                $element['evn_behavior'] == 'THROW' ) {
+                //TODO implement automatic import for emails templates
+                $definition['evn_criteria'] = '';
+                $this->warningET = true;
+            }
+            foreach ($definition as $key => $value) {
+                if (isset($definitionBean->field_defs[$key])){
+                    $definitionBean->$key = $value;
+                }
+            }
             $definitionBean->id = $currentID;
-            $definitionBean->pro_id = $keysArray['pro_id'];
-            $definitionBean->dia_id = $keysArray['dia_id'];
             $definitionBean->new_with_id = true;
             $definitionBean->save();
+
             if (!empty($currentID)) {
                 $definitionBean->evn_id = $currentID;
                 $this->dependenciesWrapper->processRelatedDependencies($eventBean->toArray() + $definitionBean->toArray());
@@ -382,44 +446,105 @@ class PMSEProjectImporter extends PMSEImporter
         foreach ($gatewaysData as $element) {
             $gatewayBean = BeanFactory::getBean('pmse_BpmnGateway');
             $boundBean = BeanFactory::getBean('pmse_BpmnBound');
+            $definitionBean = BeanFactory::getBean('pmse_BpmGatewayDefinition');
+
+            list($element, $definition, $bound) = $this->getElementDefinition($element);
+
             $element['prj_id'] = $keysArray['prj_id'];
             $element['pro_id'] = $keysArray['pro_id'];
+            $previousId = $element['id'];
+            unset($element['id']);
+
+            $previousUid = $element['gat_uid'];
+            $element['gat_uid'] = PMSEEngineUtils::generateUniqueID();
+            $this->changedUidElements[$previousUid] = array('new_uid' => $element['gat_uid'] );
             foreach ($element as $key => $value) {
-                switch ($key) {
-                    case 'gat_name':
-                        $gatewayBean->name = $value;
-                        break;
-                    default:
-                        $gatewayBean->$key = $value;
-                        break;
+                if (isset($gatewayBean->field_defs[$key])){
+                    $gatewayBean->$key = $value;
                 }
-                $boundBean->$key = $value;
             }
-            if (isset($gatewayBean->gat_default_flow) && !empty($gatewayBean->gat_default_flow)) {
-                $this->defaultFlowList[$element['gat_default_flow']] = array(
-                    'bean' => 'BpmnGateway',
-                    'search_field' => 'gat_uid',
-                    'search_field_value' => $gatewayBean->gat_uid,
-                    'default_flow' => $element['gat_default_flow'],
-                    'default_flow_field' => 'gat_default_flow'
-                );
-            }
-            $previousUid = $gatewayBean->gat_uid;
-            $gatewayBean->gat_uid = PMSEEngineUtils::generateUniqueID();
-            $this->changedUidElements[$previousUid] = array('new_uid' => $gatewayBean->gat_uid);
             $currentID = $gatewayBean->save();
+
             if (!isset($this->savedElements['bpmnGateway'])) {
                 $this->savedElements['bpmnGateway'] = array();
-                $this->savedElements['bpmnGateway'][$gatewayBean->gat_uid] = $currentID;
+                $this->savedElements['bpmnGateway'][$previousId] = $currentID;
             } else {
-                $this->savedElements['bpmnGateway'][$gatewayBean->gat_uid] = $currentID;
+                $this->savedElements['bpmnGateway'][$previousId] = $currentID;
             }
 
-            $boundBean->bou_uid = PMSEEngineUtils::generateUniqueID();
-            $boundBean->dia_id = $keysArray['dia_id'];
-            $boundBean->element_id = $keysArray['dia_id'];
-            $boundBean->bou_element_type = 'bpmnGateway';
-            $boundBean->bou_element = $currentID;
+            $bound['bou_uid'] = PMSEEngineUtils::generateUniqueID();
+            $bound['prj_id'] = $keysArray['prj_id'];
+            $bound['dia_id'] = $keysArray['dia_id'];
+            $bound['element_id'] = $keysArray['dia_id'];
+            $bound['bou_element'] = $currentID;
+            foreach ($bound as $key => $value) {
+                if (isset($boundBean->field_defs[$key])){
+                    $boundBean->$key = $value;
+                }
+            }
+            $boundBean->save();
+
+            $definition['pro_id'] = $keysArray['pro_id'];
+            foreach ($definition as $key => $value) {
+                if (isset($definitionBean->field_defs[$key])){
+                    $definitionBean->$key = $value;
+                }
+            }
+            $definitionBean->id = $currentID;
+            $definitionBean->new_with_id = true;
+            $definitionBean->save();
+
+            if (!empty($gatewayBean->gat_default_flow)) {
+                $this->defaultFlowList[$element['gat_default_flow']] = array(
+                    'bean' => 'BpmnGateway',
+                    'id' => $currentID,
+                    'default_flow_field' => 'gat_default_flow',
+                    'default_flow_value' => $element['gat_default_flow'],
+                );
+            }
+        }
+    }
+
+    public function saveProjectArtifactsData($gatewaysData, $keysArray)
+    {
+        foreach ($gatewaysData as $element) {
+            $artifactBean = BeanFactory::getBean('pmse_BpmnArtifact');
+            $boundBean = BeanFactory::getBean('pmse_BpmnBound');
+
+            list($element, $definition, $bound) = $this->getElementDefinition($element);
+
+            $element['prj_id'] = $keysArray['prj_id'];
+            $element['pro_id'] = $keysArray['pro_id'];
+            $previousId = $element['id'];
+            unset($element['id']);
+
+            $previousUid = $element['art_uid'];
+            $element['art_uid'] = PMSEEngineUtils::generateUniqueID();
+            $this->changedUidElements[$previousUid] = array('new_uid' => $element['art_uid'] );
+            foreach ($element as $key => $value) {
+                if (isset($artifactBean->field_defs[$key])){
+                    $artifactBean->$key = $value;
+                }
+            }
+            $currentID = $artifactBean->save();
+
+            if (!isset($this->savedElements['bpmnArtifacts'])) {
+                $this->savedElements['bpmnArtifacts'] = array();
+                $this->savedElements['bpmnArtifacts'][$previousId] = $currentID;
+            } else {
+                $this->savedElements['bpmnArtifacts'][$previousId] = $currentID;
+            }
+
+            $bound['bou_uid'] = PMSEEngineUtils::generateUniqueID();
+            $bound['prj_id'] = $keysArray['prj_id'];
+            $bound['dia_id'] = $keysArray['dia_id'];
+            $bound['element_id'] = $keysArray['dia_id'];
+            $bound['bou_element'] = $currentID;
+            foreach ($bound as $key => $value) {
+                if (isset($boundBean->field_defs[$key])){
+                    $boundBean->$key = $value;
+                }
+            }
             $boundBean->save();
         }
     }
@@ -436,54 +561,88 @@ class PMSEProjectImporter extends PMSEImporter
             $element['prj_id'] = $keysArray['prj_id'];
             $element['pro_id'] = $keysArray['pro_id'];
             $element['dia_id'] = $keysArray['dia_id'];
+            $previousId = $element['id'];
+            unset($element['id']);
             foreach ($element as $key => $value) {
-                if ($key == 'flo_state') {
-                    $flowBean->$key = json_encode($value);
-                } else {
-                    if ($key == 'flo_element_origin') {
-                        if (isset($this->changedUidElements[$value])) {
-                            $flowBean->$key = $this->savedElements[$element['flo_element_origin_type']][$this->changedUidElements[$value]['new_uid']];
-                        } else {
-                            $flowBean->$key = $this->savedElements[$element['flo_element_origin_type']][$value];
-                        }
-                    } elseif ($key == 'flo_element_dest') {
-                        if (isset($this->changedUidElements[$value])) {
-                            $flowBean->$key = $this->savedElements[$element['flo_element_dest_type']][$this->changedUidElements[$value]['new_uid']];
-                        } else {
-                            $flowBean->$key = $this->savedElements[$element['flo_element_dest_type']][$value];
-                        }
-                    } elseif ($key == 'flo_condition') {
-                        if (!empty($value) && is_array($value)) {
-                            foreach ($value as $_key => $_value) {
-                                switch ($_value->expType){
-                                    case 'CONTROL':
-                                        if (isset($this->changedUidElements[$_value->expField])) {
-                                            $value[$_key]->expField = $this->changedUidElements[$_value->expField]['new_uid'];
+                if (isset($flowBean->field_defs[$key])){
+                    switch ($key) {
+                        case 'flo_element_origin':
+                            if (!empty($value)) {
+                                $flowBean->$key = $this->savedElements[$element['flo_element_origin_type']][$value];
+                            }
+                            break;
+                        case 'flo_element_dest':
+                            if (!empty($value)) {
+                                $flowBean->$key = $this->savedElements[$element['flo_element_dest_type']][$value];
+                            }
+                            break;
+                        case 'flo_condition':
+                            if (!empty($value)) {
+                                $currencyFields = json_decode($value);
+                                if (is_array($currencyFields) && !empty($currencyFields)) {
+                                    foreach ($currencyFields as $_key => $_value) {
+                                        switch ($_value->expType) {
+                                            case 'MODULE':
+                                                if (!empty($_value->expSubtype) &&
+                                                    (strtolower($_value->expSubtype) == 'currency') &&
+                                                    (empty($_value->expCurrency))
+                                                ) {
+                                                    PMSEEngineUtils::fixCurrencyType($currencyFields[$_key]);
+                                                    $flowBean->$key = json_encode($currencyFields);
+                                                }
+                                                break;
                                         }
-                                        break;
-                                    case 'BUSINESS_RULES':
-                                        break;
+                                    }
                                 }
                             }
-                            $flowBean->$key = json_encode($value);
-                        }
-                    } elseif ($key == 'flo_is_inmediate') {
-                        $flowBean->$key = (!empty($value)) ? $value : null;
-                    } else {
-                        $flowBean->$key = $value;
+                            break;
+                        default:
+                            $flowBean->$key = $value;
                     }
                 }
             }
 
             $previousUid = $flowBean->flo_uid;
             $flowBean->flo_uid = PMSEEngineUtils::generateUniqueID();
-            if (isset($this->defaultFlowList[$previousUid])
-            ) {
-                $this->defaultFlowList[$previousUid]['default_flow'] = $flowBean->flo_uid;
-                $this->defaultFlowList[$flowBean->flo_uid] = $this->defaultFlowList[$previousUid];
-                unset($this->defaultFlowList[$previousUid]);
+            $currentID = $flowBean->save();
+            if (!isset($this->savedElements['bpmnFlows'])) {
+                $this->savedElements['bpmnFlows'] = array();
+                $this->savedElements['bpmnFlows'][$previousId] = $currentID;
+            } else {
+                $this->savedElements['bpmnFlows'][$previousId] = $currentID;
             }
-            $flowBean->save();
+        }
+    }
+
+    /**
+     * Save the project dyna forms data.
+     * @param array $flowsData
+     * @param array $keysArray
+     */
+    public function saveProjectDynaFormsData($dynaFormsData, $keysArray)
+    {
+        foreach ($dynaFormsData as $element) {
+            $dynaFormsBean = BeanFactory::getBean('pmse_BpmDynaForm');
+            $element['prj_id'] = $keysArray['prj_id'];
+            $element['pro_id'] = $keysArray['pro_id'];
+            $element['dia_id'] = $keysArray['dia_id'];
+            $previousId = $element['id'];
+            unset($element['id']);
+            foreach ($element as $key => $value) {
+                if (isset($dynaFormsBean->field_defs[$key])){
+                    $dynaFormsBean->$key = $value;
+                }
+            }
+
+            $previousUid = $dynaFormsBean->flo_uid;
+            $dynaFormsBean->flo_uid = PMSEEngineUtils::generateUniqueID();
+            $currentID = $dynaFormsBean->save();
+            if (!isset($this->savedElements['bpmnArtifacts'])) {
+                $this->savedElements['bpmnArtifacts'] = array();
+                $this->savedElements['bpmnArtifacts'][$previousId] = $currentID;
+            } else {
+                $this->savedElements['bpmnArtifacts'][$previousId] = $currentID;
+            }
         }
     }
 
@@ -495,6 +654,7 @@ class PMSEProjectImporter extends PMSEImporter
      * @param bool $generateBound
      * @param bool $generateWithId
      * @param string $field_uid
+     * @deprecated
      */
     public function saveProjectElementsData(
         $elementsData,
@@ -565,12 +725,14 @@ class PMSEProjectImporter extends PMSEImporter
     public function processDefaultFlows()
     {
         foreach ($this->defaultFlowList as $defaultFlow) {
-            $elementBean = BeanFactory::getBean('pmse_' . $defaultFlow['bean']);
-            $elementBean->retrieve_by_string_fields(array($defaultFlow['search_field'] => $defaultFlow['search_field_value']));
-            $flowBean = BeanFactory::getBean('pmse_BpmnFlow');
-            $flowBean->retrieve_by_string_fields(array('flo_uid' => $defaultFlow['default_flow']));
-            $elementBean->$defaultFlow['default_flow_field'] = $flowBean->flo_id;
-            $elementBean->save();
+            $elementBean = BeanFactory::getBean('pmse_' . $defaultFlow['bean'], $defaultFlow['id']);
+            if (!empty($elementBean)) {
+                $flowBean = BeanFactory::getBean('pmse_BpmnFlow', $this->savedElements['bpmnFlows'][$defaultFlow['default_flow_value']]);
+                if (!empty($flowBean)){
+                    $elementBean->$defaultFlow['default_flow_field'] = $flowBean->id;
+                    $elementBean->save();
+                }
+            }
         }
     }
 
@@ -579,6 +741,7 @@ class PMSEProjectImporter extends PMSEImporter
      * @codeCoverageIgnore
      * @param $message
      * @return mixed
+     * @deprecated
      */
     private function changeEventMessage($message)
     {
@@ -592,6 +755,29 @@ class PMSEProjectImporter extends PMSEImporter
         } else {
             return $message;
         }
+    }
+
+    private function getElementDefinition($element)
+    {
+        $definition = array();
+        $bound = array();
+        if (!empty($element)) {
+            foreach ($element as $key => $value) {
+                $pos = strpos($key, 'bound_');
+                if ($pos !== false) {
+                    $bound[substr($key, strlen('bound_'))] = $value;
+                    unset($element[$key]);
+                }
+                $pos = strpos($key, 'def_');
+                if ($pos !== false) {
+                    $definition[substr($key, strlen('def_'))] = $value;
+                    unset($element[$key]);
+                }
+            }
+        } else {
+            $element = array();
+        }
+        return array($element, $definition, $bound);
     }
 
 }

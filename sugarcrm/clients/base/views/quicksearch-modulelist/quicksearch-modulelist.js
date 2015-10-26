@@ -30,7 +30,7 @@
     blacklistModules: ['Tags'],
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -104,7 +104,7 @@
         }, this);
 
         // On expansion of quicksearch, show the module dropdown & buttons.
-        this.layout.on('quicksearch:expand', this.show, this);
+        this.layout.on('quicksearch:expanded', this.show, this);
 
         // On collapse of quicksearch, hide the module dropdown & buttons.
         this.layout.on('quicksearch:collapse', this.hide, this);

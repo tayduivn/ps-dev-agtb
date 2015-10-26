@@ -74,10 +74,14 @@ nv.models.lineChart = function() {
           container = d3.select(this);
 
       var properties = chartData ? chartData.properties : {},
-          data = chartData ? chartData.data : null;
+          data = chartData ? chartData.data : null,
+          labels = properties.labels ? properties.labels.map(function(d) { return d.l || d; }) : [];
 
       var lineData,
-          totalAmount = 0;
+          totalAmount = 0,
+          singlePoint = false,
+          isTimeSeries = false,
+          showMaxMin = false;
 
       chart.container = this;
 
@@ -160,7 +164,7 @@ nv.models.lineChart = function() {
       // set state.disabled
       state.disabled = lineData.map(function(d) { return !!d.disabled; });
       state.interpolate = lines.interpolate();
-      state.isArea = !lines.isArea();
+      state.isArea = lines.isArea()();
 
       var controlsData = [
         { key: 'Linear', disabled: lines.interpolate() !== 'linear' },
@@ -173,6 +177,85 @@ nv.models.lineChart = function() {
 
       //------------------------------------------------------------
       // Setup Scales and Axes
+
+      // Are all data series single points
+      singlePoint = d3.max(lineData, function(d) {
+          return d.values.length;
+        }) === 1;
+
+      isTimeSeries = lineData[0].values.length && lineData[0].values[0] instanceof Array && nv.utils.isValidDate(lineData[0].values[0][0]);
+      // SAVE FOR LATER
+      // isOrdinalSeries = !isTimeSeries && labels.length > 0 && d3.min(lineData, function(d) {
+      //   return d3.min(d.values, function(d, i) {
+      //     return lines.x()(d, i);
+      //   });
+      // }) > 0;
+
+      showMaxMin = isTimeSeries || nv.utils.isValidDate(labels[0]) ? true : false;
+
+      lines
+        .padData(singlePoint ? false : true)
+        .padDataOuter(-1)
+        .singlePoint(singlePoint)
+        // set x-scale as time instead of linear
+        .xScale(isTimeSeries ? d3.time.scale() : d3.scale.linear());
+
+      if (singlePoint) {
+
+        var xValues = d3.merge(lineData.map(function(d) {
+                return d.values.map(function(d, i) {
+                  return lines.x()(d, i);
+                });
+              }))
+              .reduce(function(p, c) {
+                if (p.indexOf(c) < 0) p.push(c);
+                return p;
+              }, [])
+              .sort(),
+            xExtents = d3.extent(xValues),
+            xOffset = 1 * (isTimeSeries ? 86400000 : 1);
+
+        var yValues = d3.merge(lineData.map(function(d) {
+                return d.values.map(function(d, i) {
+                  return lines.y()(d, i);
+                });
+              })),
+            yExtents = d3.extent(yValues),
+            yOffset = lineData.length === 1 ? 2 : Math.min((yExtents[1] - yExtents[0]) / lineData.length, yExtents[0]);
+
+        lines
+          .xDomain([
+            xExtents[0] - xOffset,
+            xExtents[1] + xOffset
+          ])
+          .yDomain([
+            yExtents[0] - yOffset,
+            yExtents[1] + yOffset
+          ]);
+        xAxis
+          .ticks(xValues.length)
+          .tickValues(xValues)
+          .showMaxMin(false);
+        yAxis
+          .ticks(singlePoint ? 5 : null) //TODO: why 5?
+          .showMaxMin(false)
+          .highlightZero(false);
+
+      } else {
+
+        lines
+          .xDomain(null)
+          .yDomain(null);
+        xAxis
+          .ticks(null)
+          .tickValues(null)
+          .showMaxMin(showMaxMin);
+        yAxis
+          .ticks(null)
+          .showMaxMin(true)
+          .highlightZero(true);
+
+      }
 
       x = lines.xScale();
       y = lines.yScale();
@@ -328,7 +411,7 @@ nv.models.lineChart = function() {
         //------------------------------------------------------------
         // Main Chart Component(s)
 
-        var pointSize = Math.pow(pointRadius, 2) * Math.PI * (lines.singlePoint() ? 3 : 1);
+        var pointSize = Math.pow(pointRadius, 2) * Math.PI * (singlePoint ? 3 : 1);
 
         lines
           .width(innerWidth)
@@ -401,7 +484,7 @@ nv.models.lineChart = function() {
         // final call to lines based on new dimensions
         linesWrap
           .transition().duration(durationMs)
-            .call(lines)
+            .call(lines);
 
         //------------------------------------------------------------
         // Final repositioning

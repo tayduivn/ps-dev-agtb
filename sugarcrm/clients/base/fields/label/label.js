@@ -36,7 +36,7 @@
     unbindDom: $.noop,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     format: function(value) {
         if (this.def.formatted_value) {

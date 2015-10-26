@@ -55,23 +55,17 @@
      * @return {number}
      */
     getModuleListWidth: function() {
-        var totalWidth = 0,
-            modulelist, maxMenuWidth, componentElement,
-            container = this.$('.navbar-inner');
+        var maxMenuWidth = $(window).width();
+        var totalWidth = 0;
 
         _.each(this._components, function(component) {
-            componentElement = component.$el.children().first();
             if (component.name !== 'module-list') {
                 // only calculate width for visible components
-                if (componentElement.is(':visible')) {
+                if (component.$el.is(':visible')) {
                     totalWidth += component.$el.outerWidth(true);
                 }
-            } else {
-                modulelist = component.$el;
             }
         });
-
-        maxMenuWidth = container.parent('.navbar-fixed-top').width();
         return maxMenuWidth - totalWidth;
     },
 
@@ -95,7 +89,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     _render: function() {
         this._super('_render');
@@ -109,7 +103,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     show: function() {
         this._super('show');

@@ -6,10 +6,23 @@
   visibility: hidden;
 }
 
+// IPHONE PORTRAIT MODE
+// ---------------------
+@media only screen
+and (min-device-width: 320px)
+and (max-device-width: 568px)
+and (orientation: portrait) {
+  .nav {
+    > li.dropdown,
+    > li.dropdown > .open {
+      position: static;
+    }
+  }
+}
+
 // UP TO LANDSCAPE PHONE
 // ---------------------
 @media (max-width: 480px) {
-
 
   .welcome .modal-body.record {
     padding-left: 0;
@@ -29,11 +42,6 @@
 
   footer .pull-right.btn-toolbar .btn .action-label {
       display: none;
-  }
-
-  // Smooth out the collapsing/expanding nav
-  .nav-collapse {
-    .translate3d(0, 0, 0); // activate the GPU
   }
 
   // Block level the page header small tag for readability
@@ -205,6 +213,42 @@
     display: none;
   }
 
+}
+
+@media (max-width: 540px) {
+  .navbar {
+    .search {
+        min-width: 36px !important;
+        .navbar-search {
+          display: none;
+        }
+        .quicksearch-button-wrapper {
+          > .btn {
+            background-color: black;
+            border-radius: 3px;
+            .fa-search {
+              color: white;
+            }
+          }
+        }
+
+      &.expanded {
+        position: absolute;
+        left: 1px;
+        z-index: 2001;
+        background-color: black;
+        .navbar-search {
+          display: inherit;
+          width: inherit !important;
+        }
+        .quicksearch-button-wrapper {
+          > .btn {
+            background-color: transparent;
+          }
+        }
+      }
+    }
+  }
 }
 
 @media (max-width: 768px) {
@@ -465,20 +509,13 @@
 }
 
 @media (max-width: 700px) {
-  #searchForm,
-  #searchForm .typeahead-wrapper {
-    position: static;
-  }
   #searchForm .typeahead {
       width: 100%;
       .border-radius(0);
       border: 0;
   }
+
   .navbar-inner .nav-collapse ul.nav.megamenu {
-    position: static;
-  }
-  .notification-list,
-  .notification-list > div.open {
     position: static;
   }
   .navbar ul.nav.megamenu li.dropdown.notification-list div.btn-group.open .dropdown-menu { /* long selector to override similar long selector in notifications.less and avoid using !important*/

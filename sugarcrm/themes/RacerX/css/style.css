@@ -7214,6 +7214,7 @@ p.submsg a{
 .ui-dialog {
     padding: 0px;
     box-shadow: 0 5px 10px #999999;
+    z-index: 1;
 }
 
 .ui-dialog .ui-dialog-titlebar {
@@ -7250,15 +7251,12 @@ p.submsg a{
 }
 
 .ui-dialog .ui-dialog-titlebar-close {
-    margin-top: -10px;
-    width: 18px;
-    padding: 0px;
-}
-
-.ui-dialog .ui-dialog-titlebar-close span {
     background: url(../../../../index.php?entryPoint=getImage&imageName=close.png) no-repeat center !important;
+    margin-top: -10px;
+    padding: 0px;
     height: 18px;
     width: 18px;
+    border: none;
 }
 
 .ui-dialog .ui-dialog-titlebar-close.ui-state-hover {

@@ -80,7 +80,13 @@ class SAMLAuthenticate extends SugarAuthenticate implements SugarAuthenticateExt
         }
         $auth = new OneLogin_Saml2_Auth(SAMLAuthenticate::loadSettings());
         $req = new OneLogin_Saml2_LogoutRequest($auth->getSettings());
-        return $GLOBALS['sugar_config']['SAML_SLO'] . "?SAMLRequest=" . urlencode($req->getRequest());
+        $url = $GLOBALS['sugar_config']['SAML_SLO'];
+        if (strpos($url, '?') === false) {
+            $paramPrefix = '?';
+        } else {
+            $paramPrefix = '&';
+        }
+        return $url . $paramPrefix . 'SAMLRequest=' . urlencode($req->getRequest());
     }
 
     /**

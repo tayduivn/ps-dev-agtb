@@ -22,7 +22,6 @@ $viewdefs['Forecasts']['base']['layout']['records'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'list-headerpane',
@@ -49,7 +48,6 @@ $viewdefs['Forecasts']['base']['layout']['records'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'dashboard-pane',
-                            'targetEl' => '.dashboard-pane',
                             'components' => array(
                                 array(
                                     'layout' => array(
@@ -69,7 +67,7 @@ $viewdefs['Forecasts']['base']['layout']['records'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.preview-pane',
+                            'name' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

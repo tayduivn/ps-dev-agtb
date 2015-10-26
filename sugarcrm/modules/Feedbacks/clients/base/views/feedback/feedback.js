@@ -29,7 +29,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * During initialize we listen to model validation and if it is valid we
      * {@link #send} the Feedback.
@@ -145,7 +145,7 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      * During dispose destroy the popover.
      */
     _dispose: function() {

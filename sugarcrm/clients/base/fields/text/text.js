@@ -15,7 +15,7 @@
  */
 ({
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Format the value to a string.
      * Return an empty string for undefined, null and object types.
@@ -45,7 +45,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * Trim whitespace from value.
      */

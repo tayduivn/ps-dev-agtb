@@ -40,7 +40,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         options.meta = options.meta || {};
@@ -56,6 +56,7 @@
         if (!this.meta.config) {
             var options = {};
             var self = this;
+            var refreshRate;
 
             // Get and set values for limits and refresh
             options.limit = this.settings.get('limit') || this._defaultOptions.limit;
@@ -67,7 +68,13 @@
             // There is no default for this so there's no pointing in setting from it
             options.feed_url = this.settings.get('feed_url');
 
-            if (options.auto_refresh) {
+            // Set the refresh rate for setInterval so it can be checked ahead
+            // of time. 60000 is 1000 miliseconds times 60 seconds in a minute.
+            refreshRate = options.auto_refresh * 60000;
+
+            // Only set up the interval handler if there is a refreshRate higher
+            // than 0
+            if (refreshRate > 0) {
                 if (this.timerId) {
                     clearInterval(this.timerId);
                 }
@@ -76,7 +83,7 @@
                         self.context.resetLoadFlag();
                         self.loadData(options);
                     }
-                }, this), options.auto_refresh * 1000 * 60);
+                }, this), refreshRate);
             }
         }
 
@@ -142,7 +149,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * New model related properties are injected into each model:
      *

@@ -27,7 +27,7 @@
     extendsFrom: 'TabbedDashletView',
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * @property {Object} _defaultSettings
      * @property {Number} _defaultSettings.limit Maximum number of records to
@@ -42,7 +42,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         options.meta = options.meta || {};
@@ -58,26 +58,14 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _initEvents: function() {
         this._super('_initEvents');
         this.on('active-tasks:close-task:fire', this.closeTask, this);
-        this.on('linked-model:create', this._reloadData, this);
+        this.on('linked-model:create', this.loadData, this);
         this.on('render:rows', this._renderAvatars, this);
         return this;
-    },
-
-    /**
-     * Re-fetches the data for the context's collection.
-     *
-     * FIXME: This will be removed when SC-4775 is implemented.
-     *
-     * @private
-     */
-    _reloadData: function() {
-        this.context.set('skipFetch', false);
-        this.context.reloadData();
     },
 
     /**
@@ -104,7 +92,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * FIXME: This should be removed when metadata supports date operators to
      * allow one to define relative dates for date filters.
@@ -180,7 +168,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * New model related properties are injected into each model:
      *
@@ -201,25 +189,5 @@
         this._super('_renderHtml');
 
         this._renderAvatars();
-    },
-
-    /**
-     *  Handle Avatar display, in case image doesn't exist.
-     *
-     *  FIXME: render avatar should happen when rendering each row, after pagination.(SC-2605)
-     *  @private
-     */
-    _renderAvatars: function() {
-        this.$('img.avatar').load(function() {
-            $(this).removeClass('hide');
-        })
-        .error(function() {
-            $(this).parent().removeClass('avatar avatar-md').addClass('label label-module label-module-md label-Users');
-            $(this).parent().find('span').removeClass('hide');
-        });
-        this.$('img.avatar').each(function() {
-            var img = $(this);
-            img.attr('src', img.data('src'));
-        });
     }
 })

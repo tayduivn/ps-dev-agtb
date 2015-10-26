@@ -70,6 +70,11 @@ class KBContentsApiHelper extends SugarBeanApiHelper {
             unset($submittedData['attachment_list']);
         }
         $result = parent::populateFromApi($bean, $submittedData, $options);
+
+        if (!$this->checkStatus($bean)) {
+            throw new SugarApiExceptionInvalidParameter('Invalid status field value');
+        }
+
         if (!empty($attachment_list) && $result) {
             $bean->load_relationship('attachments');
             $attachments = array();
@@ -158,5 +163,18 @@ class KBContentsApiHelper extends SugarBeanApiHelper {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Check if status field has correct value.
+     * @param SugarBean $bean Bean to check.
+     * @return bool True if value is correct, false otherwise.
+     */
+    public function checkStatus($bean)
+    {
+        require_once 'include/SugarFields/Fields/Enum/SugarFieldEnum.php';
+        $field = new SugarFieldEnum('enum');
+        $opts = $field->getOptions($bean->getFieldDefinition('status'));
+        return isset($opts[$bean->status]);
     }
 }

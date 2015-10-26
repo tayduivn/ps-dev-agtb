@@ -57,12 +57,15 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     /**
      * {@inheritdoc}
-     * @return null|SugarSeachEngineElasticResultSet
+     *
+     * @return SugarSeachEngineElasticResultSet|null
      */
     public function search($query, $offset = 0, $limit = 20, $options = array())
     {
+        global $current_user;
+
         if (!$this->engine->isAvailable()) {
-            return;
+            return null;
         }
 
         $this->engine->term($query);
@@ -76,16 +79,30 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $this->engine->from($options['moduleFilter']);
         }
 
-        // TODO - my items
+        $filters = array();
+
         if (isset($options['my_items']) && $options['my_items'] !== false) {
+            if (empty($current_user->id)) {
+                return null;
+            }
+
+            $filters[] = new \Elastica\Filter\Term(array(
+                'owner_id' => $current_user->id,
+            ));
         }
 
         // TODO - range filter
         if (isset($options['filter']) && $options['filter']['type'] == 'range') {
         }
 
-        // TODO - favorites filter
         if (isset($options['favorites']) && $options['favorites'] == 2) {
+            if (empty($current_user->id)) {
+                return null;
+            }
+
+            $filters[] = new \Elastica\Filter\Term(array(
+                'user_favorites' => $current_user->id,
+            ));
         }
 
         // TODO - sort options
@@ -94,6 +111,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             }
         }
 
+        $this->engine->setFilters($filters);
         return $this->createResultSet($this->engine->search());
     }
 
@@ -104,7 +122,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     protected function createResultSet(ResultSet $resultSet)
     {
-        return new SugarSeachEngineElasticResultSet($resultSet->getResultSet());
+        $res = new SugarSeachEngineElasticResultSet($resultSet->getResultSet());
+        $res->setHighlighter($resultSet->getHighlighter());
+        return $res;
     }
 
     /**

@@ -67,7 +67,7 @@ class JsChart extends SugarChart {
 		$chartConfig = array();
         try {
 		    $xmlStr = $this->processXML($this->xmlFile);
-		    $json = $this->buildJson($xmlStr);
+		    $json = $this->buildJson($xmlStr, true);
         }
         catch(Exception $e) {
             $GLOBALS['log']->fatal("Unable to return chart data, invalid xml for file {$this->xmlFile}");

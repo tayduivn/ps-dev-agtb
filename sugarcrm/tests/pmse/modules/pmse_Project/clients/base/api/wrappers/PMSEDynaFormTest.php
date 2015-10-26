@@ -31,8 +31,9 @@ class PMSEDynaFormTest extends PHPUnit_Framework_TestCase
      */
     public function testGenerateDefaultDynaform()
     {
-        $mockDynaform = $this->getMock('PMSEDynaForm');
-
+        $mockDynaform = $this->getMockBuilder('PMSEDynaForm')
+            ->setMethods(array('save', 'saveDynaform'))
+            ->getMock();
         //todo: improve the mockobject BpmDynaForm
         $mockDynaform->dyn_id = 23;
         $mockDynaform->dyn_uid = 23;
@@ -43,7 +44,6 @@ class PMSEDynaFormTest extends PHPUnit_Framework_TestCase
         $mockDynaform->dyn_module = 'Opportunity';
         $mockDynaform->dyn_description = 'Form';
         $mockDynaform->dyn_view_defs = array("EditView"=>array());
-
         $mockDynaform->expects($this->exactly(1))
                 ->method('saveDynaform')
                 ->will($this->returnValue($mockDynaform));
@@ -70,6 +70,8 @@ class PMSEDynaFormTest extends PHPUnit_Framework_TestCase
         $this->assertObjectHasAttribute('pro_id', $generatedObject);
         $this->assertObjectHasAttribute('prj_id', $generatedObject);
         $this->assertObjectHasAttribute('dyn_view_defs', $generatedObject);
+        $expectedView = json_decode($generatedObject->dyn_view_defs);
+        $this->assertObjectHasAttribute("BpmView", $expectedView);
 
         $this->assertEquals($this->adamDynaform->getBaseModule(), $sampleBaseModule);
         $this->assertEquals($generatedObject->pro_id,  $keys['pro_id']);
@@ -79,7 +81,9 @@ class PMSEDynaFormTest extends PHPUnit_Framework_TestCase
 
     public function testSaveDynaform()
     {
-        $mockDynaform = $this->getMock('pmse_BpmnDynaform',array('save'));
+        $mockDynaform = $this->getMockBuilder('pmse_BpmnDynaform')
+            ->setMethods(array('save'))
+            ->getMock();
         //todo: improve the mockobject BpmDynaForm
         $mockDynaform->dyn_id = 23;
         $mockDynaform->dyn_uid = 23;

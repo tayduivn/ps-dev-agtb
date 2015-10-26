@@ -14,7 +14,7 @@
     <span data-label="module-icons">
         {{partial 'module-avatar' this this.moduleIcons}}
     </span>
-    <button class="module-dropdown-button btn btn-invisible" track="click:globalsearch-dropdown"><i class="fa fa-caret-down"></i></button>
+    <div class="module-dropdown-button btn btn-invisible" track="click:globalsearch-dropdown"><i class="fa fa-caret-down"></i></div>
 </div>
 <ul class="dropdown-menu module-dropdown-list">
     <li class="menu-item ellipsis_inline{{#if searchModuleFilter.allSelected}} selected{{/if}}" data-action="select-all" title="{{str 'LBL_SEARCH_ALL_MODULES'}}">

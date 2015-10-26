@@ -11,7 +11,7 @@
 
 describe("Base.Layout.Togglepanel", function () {
 
-    var app, layout;
+    var app, layout, getModuleStub;
 
     beforeEach(function () {
         app = SugarTest.app;
@@ -49,41 +49,27 @@ describe("Base.Layout.Togglepanel", function () {
             app.user.lastState = oLastState;
         });
         it("should initialize", function () {
-            var showSpy = sinon.stub(layout, 'showComponent', function () {
-            });
             var processToggleSpy = sinon.stub(layout, 'processToggles', function () {
             });
             layout.initialize(layout.options);
-            expect(layout.toggleComponents).toEqual([]);
             expect(layout.componentsList).toEqual({});
-            expect(showSpy).toHaveBeenCalled;
             expect(processToggleSpy).toHaveBeenCalled();
-        });
-        //SP-1766-Filter for sidecar modules causes two requests to list view
-        it("should showComponent respecting silent param preventing double render", function () {
-            var triggerStub = sinon.stub(layout, 'trigger');
-            layout.showComponent('foo', true);
-            expect(triggerStub).toHaveBeenCalled();
-            expect(triggerStub.calledWithExactly('filterpanel:change', 'foo', true)).toBeTruthy();
-            triggerStub.reset();
-            layout.showComponent('foo', undefined);
-            expect(triggerStub.calledWithExactly('filterpanel:change', 'foo', undefined)).toBeTruthy();
         });
         it("should process toggles", function () {
             var meta = {
                 'availableToggles': [
                     {
-                        'type': 'test1',
+                        'name': 'test1',
                         'label': 'test1',
                         'icon': 'icon1'
                     },
                     {
-                        'type': 'test2',
+                        'name': 'test2',
                         'label': 'test2',
                         'icon': 'icon2'
                     },
                     {
-                        'type': 'test3',
+                        'name': 'test3',
                         'label': 'test3',
                         'icon': 'icon3',
                         'disabled': true
@@ -126,22 +112,40 @@ describe("Base.Layout.Togglepanel", function () {
                 }
             ]);
         });
-        it('should place toggle components and add them to the togglable component lists', function () {
+        it('should add toggle components to the togglable component lists', function () {
             var mockComponent = new Backbone.View();
             mockComponent.name = mockComponent.type = 'test1';
             mockComponent.dispose = function () {
             };
             layout.options.meta.availableToggles = [
                 {
-                    'type': 'test1',
+                    'name': 'test1',
                     'label': 'test1',
                     'icon': 'icon1'
                 }
             ];
             layout._placeComponent(mockComponent);
 
-            expect(layout.toggleComponents).toEqual([mockComponent]);
             expect(layout.componentsList[mockComponent.type]).toEqual(mockComponent);
+        });
+
+        describe('getNonToggleComponents', function() {
+            it('should only return components that cannot be toggled', function() {
+                var actual,
+                    nonTogglable= new Backbone.View(),
+                    togglable = new Backbone.View();
+
+                nonTogglable.dispose = $.noop;
+                togglable.dispose = $.noop;
+
+                layout._components = [nonTogglable, togglable];
+                layout.componentsList = [togglable];
+
+                actual = layout.getNonToggleComponents();
+
+                expect(actual.length).toBe(1);
+                expect(actual[0].cid).toBe(nonTogglable.cid);
+            });
         });
     });
 });

@@ -37,7 +37,7 @@
                 this.on('init', function() {
                     this._initKBListeners();
                     if (this.tplName === 'list' || this.tplName === 'panel-top' ||
-                        (!_.isUndefined(this.meta.type) && this.meta.type === 'subpanel-list')
+                        (!_.isUndefined(this.context) && this.context.get('isSubpanel') === true)
                     ) {
                         this.context.on('list:editrow:fire', _.bind(function(model, view) {
                             this._initValidationHandler(model);
@@ -93,7 +93,8 @@
                     }),
                     bodyTmpl = app.template.getField('htmleditable_tinymce', 'create-article', module),
                     attrs = {name: model.get('name'), kbdocument_body: bodyTmpl({model: model})},
-                    link, prefill, relatedFields;
+                    link, prefill, relatedFields,
+                    self = this;
                 if (links.length === 0) {
                     prefill = app.data.createBean(module, attrs);
                 } else {
@@ -119,9 +120,9 @@
                     function(context, newModel) {
                         if (newModel !== undefined && links.length > 0) {
                             var viewContext = context.parent.parent || context.parent;
-                            var moduleContext = viewContext.getChildContext({module: module});
-                            moduleContext.set('skipFetch','false');
-                            viewContext.trigger('subpanel:reload', {links: _.union(links, [link])});
+                            // find&reload target subpanel
+                            var subPanel = self._findSubpanel(viewContext, link);
+                            self._reloadSubpanel(subPanel, link);
                         }
                     }
                 );
@@ -247,19 +248,73 @@
                 if (this.context.loadDrawer == true) {
                     app.drawer.load(layoutDef);
                 } else {
+                    var self = this;
                     app.drawer.open(layoutDef, function(context, newModel) {
-                        // Just parent - header's create, parent.parent - subpanel's create.
-                        var viewContext = context.parent.parent || context.parent;
-                        viewContext.resetLoadFlag();
-                        viewContext.set('skipFetch', false);
-                        viewContext.loadData();
-                        viewContext.trigger('subpanel:reload', {links: ['revisions', 'localizations']});
-                        context.createAction = null;
-                        context.loadDrawer = null;
+                        // it's necessary to find appropriate subpanel
+                        var link = self._getLinkNameByContextAction(context.get('createAction')),
+                            viewContext, subPanel;
+                        if (link) {
+                            // Just parent - header's create, parent.parent - subpanel's create.
+                            viewContext = context.parent.parent || context.parent;
+                            // reload model data to update at least related_languages
+                            viewContext.resetLoadFlag();
+                            viewContext.loadData();
+                            // find&reload target subpanel
+                            subPanel = self._findSubpanel(viewContext, link);
+                            self._reloadSubpanel(subPanel, link);
+                            context.set('createAction', null);
+                            context.loadDrawer = null;
+                        }
                     });
                 }
 
                 prefill.trigger('duplicate:field', parentModel);
+            },
+
+            /**
+             * Prepares and triggers subpanel reload.
+             *
+             * @param {Core.Context} subPanel Subpanel object to reload.
+             * @param {String} link Link name for the trigger.
+             * @private
+             */
+            _reloadSubpanel: function(subPanel, link) {
+                if (!subPanel) {
+                    return;
+                }
+                subPanel.set('skipFetch', false);
+                subPanel.set('collapsed', false);
+                subPanel.parent.trigger('subpanel:reload', {links: [link]});
+            },
+
+            /**
+             * Returns children subpanel.
+             *
+             * @param {Core.Context} context Context object that contains subpanels.
+             * @param {String} link Link name to found an appropriate subpanel.
+             * @returns {Core.Context|null}
+             * @private
+             */
+            _findSubpanel: function(context, link) {
+                var child = context.getChildContext({link: link});
+                return child.get('isSubpanel') === true ? child : null;
+            },
+
+            /**
+             * Returns Link Name by content constant.
+             *
+             * @param {Number} contextAction A Context Action constant value.
+             * @returns {String|boolean}
+             * @private
+             */
+            _getLinkNameByContextAction: function(contextAction) {
+                switch (contextAction) {
+                    case this.CONTENT_LOCALIZATION:
+                        return 'localizations';
+                    case this.CONTENT_REVISION:
+                        return 'revisions';
+                }
+                return false;
             },
 
             /**
@@ -344,10 +399,17 @@
              * @param {Object} model Bean model.
              */
             _initValidationHandler: function(model) {
+                // to prevent multiply event subscription
+                if (model._initValidationHandler === true) {
+                    return;
+                }
+                model._initValidationHandler = true;
+
                 // Copy model for list view records to not replace this.model.
                 var _doValidateExpDateFieldPartial = _.partial(this._doValidateExpDateField, model),
                     _doValidateActiveDateFieldPartial = _.partial(this._doValidateActiveDateField, model),
-                    _validationCompletePartial = _.partial(this._validationComplete, model);
+                    _validationCompletePartial = _.partial(this._validationComplete, model),
+                    _hideValidationAlert = _.partial(this._hideValidationAlert, model);
 
                 // TODO: This needs an API instead. Will be fixed by SC-3369.
                 app.error.errorName2Keys['expDateLow'] = 'ERROR_EXP_DATE_LOW';
@@ -357,6 +419,9 @@
                 model.addValidationTask('exp_date_publish', _.bind(_doValidateExpDateFieldPartial, this));
                 model.addValidationTask('active_date_approve', _.bind(_doValidateActiveDateFieldPartial, this));
                 model.on('validation:complete', _validationCompletePartial, this);
+                // this event is triggered by bean.revertAttributes method
+                // which is called when inline Cancel button is clicked
+                model.on('attributes:revert', _hideValidationAlert, this);
             },
 
             /**
@@ -397,7 +462,10 @@
                     errorKeys.push('expDateLow');
                 }
 
-                if (this.context.get('layout') !== 'record' && !_.isUndefined(errors[fieldName])) {
+                if (
+                    (this.context.get('layout') === 'records' || this.context.get('isSubpanel') === true)
+                    && !_.isUndefined(errors[fieldName])
+                ) {
                     this._alertError(errorKeys);
                 }
 
@@ -424,7 +492,10 @@
                         errors[fieldName] = errors[fieldName] || {};
                         errors[fieldName].activeDateLow = true;
                         errorKeys.push('activeDateLow');
-                        if (this.context.get('layout') !== 'record' && !_.isUndefined(errors[fieldName])) {
+                        if (
+                            (this.context.get('layout') === 'records' || this.context.get('isSubpanel') === true)
+                            && !_.isUndefined(errors[fieldName])
+                        ) {
                             this._alertError(errorKeys);
                         }
                         callback(null, fields, errors);
@@ -500,6 +571,7 @@
              */
             _validationComplete: function(model, isValid) {
                 if (isValid) {
+                    this._hideValidationAlert();
                     var changed = model.changedAttributes(model.getSyncedAttributes());
                     var current = model.get('status');
 
@@ -512,6 +584,15 @@
                         model.set('active_date', app.date().formatServer(true));
                     }
                 }
+            },
+
+            /**
+             * Hides validation error alert
+             *
+             * @private
+             */
+            _hideValidationAlert: function() {
+                app.alert.dismiss('kb-validation-error');
             },
 
             /**
@@ -528,10 +609,10 @@
                 });
 
                 if (messages.length > 0) {
-                    app.alert.show('validation-error', {
+                    app.alert.show('kb-validation-error', {
                         level: 'error',
                         messages: messages,
-                        autoClose: true
+                        autoClose: false
                     });
                 }
             },
@@ -547,7 +628,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              * Remove validation on the model.
              */
             onDetach: function() {

@@ -28,7 +28,7 @@ class AddDaysExpression extends DateExpression
         if(!$date) {
             return false;
         }
-        $days = $params[1]->evaluate();
+        $days = (int) $params[1]->evaluate();
         
         if ($days < 0)
            return $date->modify("$days day");
@@ -43,19 +43,19 @@ class AddDaysExpression extends DateExpression
 	static function getJSEvaluate() {
 		return <<<EOQ
 		    var params = this.getParameters();
-    		var fromDate = params[0].evalute();
-    		if (!fromDate) {
-    			return '';
-    		}
+            var fromDate = params[0].evaluate();
+            if (!fromDate) {
+                return '';
+            }
 			var days = parseInt(params[1].evaluate(), 10);
 			if (_.isNaN(days)) {
 				return '';
 			}
 			var date = SUGAR.util.DateUtils.parse(fromDate, 'user');
 
-    		//Clone the object to prevent possible issues with other operations on this variable.
-    		var d = new Date(date);
-    		d.setDate(d.getDate() + days);
+            //Clone the object to prevent possible issues with other operations on this variable.
+            var d = new Date(date);
+            d.setDate(d.getDate() + days);
 
             // if we're calling this from Sidecar, we need to pass back the date
             // as a string, not a Date object otherwise it won't validate properly
@@ -63,7 +63,7 @@ class AddDaysExpression extends DateExpression
                 d = App.date.format(d, 'Y-m-d');
             }
 
-  			return d;
+            return d;
 EOQ;
 	}
 

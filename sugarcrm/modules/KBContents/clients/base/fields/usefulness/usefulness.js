@@ -16,7 +16,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * This field doesn't support `showNoData`.
      */
@@ -32,7 +32,7 @@
     votedNotUseful: false,
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -77,7 +77,8 @@
                 this.model.set({
                     'usefulness_user_vote': data.usefulness_user_vote,
                     'useful': data.useful,
-                    'notuseful': data.notuseful
+                    'notuseful': data.notuseful,
+                    'date_modified': data.date_modified
                 });
                 if (!this.disposed) {
                     this.render();
@@ -104,7 +105,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     _render: function() {
         this.checkVotes();

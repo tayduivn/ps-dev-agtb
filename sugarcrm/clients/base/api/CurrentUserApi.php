@@ -169,7 +169,13 @@ class CurrentUserApi extends SugarApi
             }
         }
 
-        return $this->getUserData($api->platform, $args);
+        $data = $this->getUserData($api->platform, $args);
+
+        if (!empty($data['current_user']['preferences'])) {
+            $this->htmlDecodeReturn($data['current_user']['preferences']);
+        }
+
+        return $data;
     }
 
     /**
@@ -751,7 +757,9 @@ class CurrentUserApi extends SugarApi
                         array();
         
         // Handle filtration of requested preferences
-        return $this->filterResults($prefs, $pref_filter);
+        $data = $this->filterResults($prefs, $pref_filter);
+        $this->htmlDecodeReturn($data);
+        return $data;
     }
     
     /**
@@ -834,9 +842,10 @@ class CurrentUserApi extends SugarApi
         // back an array keyed on the pref. This turns prefs like "m/d/Y" or ""
         // into {"datef": "m/d/Y"} on the client.
         if (!is_array($data) || !isset($data[$pref])) {
-            return array($pref => $data);
+            $data = array($pref => $data);
         }
 
+        $this->htmlDecodeReturn($data);
         return $data;
     }
 

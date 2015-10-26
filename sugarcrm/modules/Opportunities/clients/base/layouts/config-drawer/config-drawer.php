@@ -20,7 +20,6 @@ $viewdefs['Opportunities']['base']['layout']['config-drawer'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
-                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'config-header-buttons',
@@ -34,7 +33,7 @@ $viewdefs['Opportunities']['base']['layout']['config-drawer'] = array(
                     array(
                         'layout' => array(
                             'type' => 'base',
-                            'targetEl' => '.side-pane',
+                            'name' => 'side-pane',
                             'components' => array(
                                 array(
                                     'view' => 'config-drawer-howto',

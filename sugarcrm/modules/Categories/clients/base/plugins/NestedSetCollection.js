@@ -31,7 +31,7 @@
             children: null,
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              */
             initialize: function(models, options) {
                 app.BeanCollection.prototype.initialize.call(this, models, options);
@@ -60,7 +60,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              */
             set: function(data, options) {
                 if (_.isObject(data) &&
@@ -283,7 +283,7 @@
         app.augment('NestedSetCollection', app.BeanCollection.extend({
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              */
             model: app.NestedSetBean,
 
@@ -298,7 +298,7 @@
             root: null,
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              */
             offset: -1,
 
@@ -335,7 +335,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              *
              * Override BeanCollection.parse method
              * and store collection JSON raw tree data.
@@ -346,7 +346,7 @@
             },
 
             /**
-             * {@inheritDoc}
+             * @inheritdoc
              */
             sync: function(method, model, options) {
                 var callbacks = app.data.getSyncCallbacks(method, model, options);
@@ -356,7 +356,7 @@
             /**
              * Reset _childsById property and remove models from root collection.
              *
-             * {@inheritDoc}
+             * @inheritdoc
              */
             _reset: function() {
                 if (this.length && !_.isEmpty(this.rootCollection)) {
@@ -378,7 +378,7 @@
             /**
              * Generate _childsById property for root collection.
              *
-             * {@inheritDoc}
+             * @inheritdoc
              */
             add: function(models, options) {
                 app.BeanCollection.prototype.add.apply(this, arguments);
@@ -394,7 +394,7 @@
             /**
              * Remove models from root collection.
              *
-             * {@inheritDoc}
+             * @inheritdoc
              */
             remove: function(models, options) {
                 var rootCollection = this.rootCollection || this,

@@ -15,7 +15,7 @@
  */
 ({
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     extendsFrom: 'RecordlistView'
 })

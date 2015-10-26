@@ -20,7 +20,7 @@
     fileCounter: 0,
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initialize: function(options) {
         this.events = _.extend({}, this.events, options.def.events, {
@@ -61,7 +61,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     _render: function() {
         var result = app.view.Field.prototype._render.call(this);
@@ -122,7 +122,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      * Update model if attachments are removed (select2-removing event fires when attachment removed)
      * Prevent dropdown from opening on this field (its a container only)
      */

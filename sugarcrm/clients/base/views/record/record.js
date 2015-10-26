@@ -64,12 +64,12 @@
     _containerWidth: 0,
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     initialize: function(options) {
         _.bindAll(this);
         /**
-         * @inheritDoc
+         * @inheritdoc
          * @property {Object} meta
          * @property {boolean} meta.hashSync Set to `true` to update URL
          *   consistently with the view state (`edit` or `detail`)
@@ -149,6 +149,7 @@
         this.on('editable:keydown', this.handleKeyDown, this);
         this.on('editable:mousedown', this.handleMouseDown, this);
         this.on('field:error', this.handleFieldError, this);
+        this.model.on('acl:change', this.handleAclChange, this);
 
         //event register for preventing actions
         // when user escapes the page without confirming deleting
@@ -177,6 +178,36 @@
         });
 
         this.on('render', this.registerShortcuts, this);
+    },
+
+    /**
+     * Handler for when the ACLs change on the model. Toggles the `hide` class
+     * on the pencil wrapper for each of the fields on this view that had ACL
+     * changes.
+     *
+     * @param {Object} diff The diff object of fields and whether or not they
+     *   had ACL changes.
+     */
+    handleAclChange: function(diff) {
+        var fields = _.keys(diff);
+
+        this._setNoEditFields();
+        this.setEditableFields();
+
+        var noEditFieldsMap = _.object(this.noEditFields, _.values(this.noEditFields));
+        var $pencils = this.$('[data-wrapper=edit]');
+
+        _.each($pencils, function(pencilEl) {
+            var $pencilEl = $(pencilEl);
+            var field = $pencilEl.data('name');
+
+            if (!diff[field]) {
+                return;
+            }
+
+            var hidePencil = !_.isUndefined(noEditFieldsMap[field]);
+            $pencilEl.toggleClass('hide', hidePencil);
+        }, this);
     },
 
     /**
@@ -422,6 +453,46 @@
         var panelKey = app.user.lastState.key(panelID+':tabState', this);
         app.user.lastState.set(panelKey, state);
     },
+
+    /**
+     * Parses through an array of panels metadata and sets some of them
+     * as no edit fields.
+     *
+     * FIXME: SC-3940, remove this call to _setNoEditFields when we merge
+     * master_platform into master, as this was fixed by SC-3908.
+     *
+     * @param {Array} [panels] The panels to parse. This default to
+     *   `this.meta.panels`.
+     * @private
+     */
+    _setNoEditFields: function(panels) {
+        panels = panels || this.meta.panels;
+
+        delete this.noEditFields;
+        this.noEditFields = [];
+
+        _.each(panels, function(panel) {
+            _.each(panel.fields, function(field, index) {
+                var keys = _.keys(field);
+                // Make filler fields readonly
+                if (keys.length === 1 && keys[0] === 'span') {
+                    field.readonly = true;
+                }
+
+                // disable the pencil icon if the user doesn't have ACLs
+                if (field.type === 'fieldset') {
+                    if (field.readonly || _.every(field.fields, function(f) {
+                        return !app.acl.hasAccessToModel('edit', this.model, f.name);
+                    }, this)) {
+                        this.noEditFields.push(field.name);
+                    }
+                } else if (field.readonly || !app.acl.hasAccessToModel('edit', this.model, field.name)) {
+                    this.noEditFields.push(field.name);
+                }
+            }, this);
+        }, this);
+    },
+
     /**
      * sets editable fields
      */
@@ -1326,13 +1397,12 @@
     _setMaxWidthForEllipsifiedCell: function($ellipsisCell, width) {
         var ellipsifiedCell,
             fieldType = $ellipsisCell.data('type');
-
         if (fieldType === 'fullname' || fieldType === 'dashboardtitle') {
             ellipsifiedCell = this.getField($ellipsisCell.data('name'));
             width -= ellipsifiedCell.getCellPadding();
             ellipsifiedCell.setMaxWidth(width);
         } else {
-            $ellipsisCell.children().css({'max-width': width});
+            $ellipsisCell.css({'width': width}).children().css({'max-width': (width - 2) + 'px'});
         }
     },
 

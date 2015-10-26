@@ -98,7 +98,7 @@ class pmse_InboxViewShowCase extends SugarView
                 $dynaformBean = BeanFactory::getBean('pmse_BpmDynaForm');//new BpmDynaForm();
                 $dynaformBean->retrieve_by_string_fields(array('dyn_uid' => $altViewMode['dyn_uid']));
                 $this->dyn_uid = $altViewMode['dyn_uid'];
-                $viewdefs = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($dynaformBean->dyn_view_defs));
+                $viewdefs = json_decode(html_entity_decode($dynaformBean->dyn_view_defs), true);
                 if ($readonly) {
                     $this->setHeaderFootersReadOnly($viewdefs);
                 }
@@ -342,7 +342,7 @@ FLIST;
 
                 $taskContinue = false;
                 if (!$reclaimCaseByUser && !empty($beanFlow->cas_adhoc_actions)) {
-                    $buttons = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($beanFlow->cas_adhoc_actions);
+                    $buttons = json_decode($beanFlow->cas_adhoc_actions);
                     unset($buttons['link_cancel']);
                     unset($buttons['edit']);
                     $continue = array_search('continue', $buttons);
@@ -473,6 +473,7 @@ FLIST;
             $this->fieldDefs = $this->processRequiredFields($this->fieldDefs);
         }
         $this->th->ss->assign('fields', $this->fieldDefs);
+        $this->th->ss->assign('detailView', $readonly);
         $this->sectionPanels = $this->processSectionPanels($this->sectionPanels);
         $this->th->ss->assign('sectionPanels', $this->sectionPanels);
         $this->th->ss->assign('config', $sugar_config);
@@ -622,6 +623,22 @@ FLIST;
             $nameTemplateTmp = $this->dyn_uid;
         } else {
             $nameTemplateTmp = 'PMSEDetailView';
+        }
+
+        foreach ($this->fieldDefs as $field) {
+            if (isset($field['viewType']) && ($field['viewType'] == 'DetailView')) {
+                $arrReadOnlyFields[] = $field['name'];
+            }
+            if (!empty($field['required'])) {
+                $arrRequiredFields[] = $field['name'];
+            }
+        }
+
+        if (isset($arrReadOnlyFields)) {
+            $this->th->ss->assign('readOnlyFields', $arrReadOnlyFields);
+        }
+        if (isset($arrRequiredFields)) {
+            $this->th->ss->assign('requiredFields', $arrRequiredFields);
         }
         $this->th->buildTemplate($this->bean->module_name, $nameTemplateTmp, $this->tpl, $ajaxSave, $this->defs);
         $this->th->deleteTemplate($this->bean->module_name, $form_name);
