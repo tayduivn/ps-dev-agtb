@@ -143,6 +143,12 @@ class EmailUI {
 		$e2UserPreferences = $this->getUserPrefsJS();
 		$emailSettings = $e2UserPreferences['emailSettings'];
 
+		$this->smarty->assign('disable_account_config',
+			SugarConfig::getInstance()->get("disable_user_email_config", false)
+			&& !$current_user->isAdminForModule("Emails") ? "true" : "false"
+		);
+
+
 		///////////////////////////////////////////////////////////////////////
 		////	USER SETTINGS
 		// settings: accounts
