@@ -458,3 +458,19 @@ tr.tr-inline-edit [data-type="nestedset"] {
   position: relative;
   display: block;
 }
+
+html.rtl {
+  .jstree {
+    ul li {
+      margin-left: 0px;
+      margin-right: 18px;
+    }
+    input {
+      &.jstree-rename-input {
+        left: 0px !important;
+        right: 34px !important;
+      }
+    }
+  }
+}
+
