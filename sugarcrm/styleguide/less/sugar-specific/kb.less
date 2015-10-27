@@ -305,6 +305,22 @@ html.rtl {
         left: 0px;
       }
     }
+    &.edit {
+      span[data-fieldname="attachment_list"] {
+        > span.edit {
+          .select2-container {
+            &.with-padding {
+              .select2-choices {
+                margin-left: 3px;
+              }
+            }
+          }
+          label.kb-attach-btn {
+            margin-left: -3px;
+          }
+        }
+      }
+    }
   }
 }
 
