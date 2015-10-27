@@ -477,12 +477,8 @@ class RestService extends ServiceBase
             $sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
         } elseif ( isset($_POST['oauth_token']) ) {
             $sessionId = $_POST['oauth_token'];
-        } elseif ( isset($_GET['oauth_token']) ) {
-            $sessionId = $_GET['oauth_token'];
         } elseif ( isset($_POST['OAuth-Token']) ) {
             $sessionId = $_POST['OAuth-Token'];
-        } elseif ( isset($_GET['OAuth-Token']) ) {
-            $sessionId = $_GET['OAuth-Token'];
         } elseif ( function_exists('apache_request_headers') ) {
             // Some PHP implementations don't populate custom headers by default
             // So we have to go for a hunt
