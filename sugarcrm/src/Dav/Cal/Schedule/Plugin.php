@@ -100,7 +100,7 @@ class Plugin extends DavSchedulePlugin
 
         $uid = $iTipMessage->uid;
 
-        $newFileName = 'sabredav-' . \Sabre\DAV\UUIDUtil::getUUID() . '.ics';
+        $newFileName = \Sabre\DAV\UUIDUtil::getUUID() . '.ics';
 
         $home = $this->server->tree->getNodeForPath($homePath);
         $inbox = $this->server->tree->getNodeForPath($inboxPath);

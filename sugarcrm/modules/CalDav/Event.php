@@ -1204,7 +1204,9 @@ class CalDavEvent extends SugarBean
             return $currentComponent;
         } else {
             $component = $event->createComponent($componentType);
-            if (empty($component->UID)) {
+            if (!empty($component->UID)) {
+                $component->UID->setValue(create_guid());
+            } else {
                 $uid = $event->createProperty('UID', create_guid());
                 $component->add($uid);
             }
