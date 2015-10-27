@@ -1488,17 +1488,13 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 mode:2,
                 mapping: Dom.get(targetId).value
             };
-            win.load("", "POST", function()
-            {
+            win.load(ModuleBuilder.paramsToUrl(win.params), "GET", function() {
                 SUGAR.util.evalScript(win.body.innerHTML);
                 //firefox will ignore the left panel size, so we need to manually force the windows height and width
                 win.body.style.height = "570px";
                 win.body.style.minWidth = "780px";
                 win.center();
-            },
-                //POST parameters
-                ModuleBuilder.paramsToUrl(win.params)
-            );
+            });
             win.show();
             win.center();
         },
