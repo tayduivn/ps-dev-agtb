@@ -299,7 +299,7 @@ class KBContent extends SugarBean {
      */
     protected function skipUsefulnessChanges(array $dataChanges)
     {
-        if ($this->new_with_id) {
+        if (empty($this->id) || $this->new_with_id) {
             $this->useful = 0;
             $this->notuseful = 0;
             return;
@@ -318,8 +318,8 @@ class KBContent extends SugarBean {
      */
     public function saveUsefulness()
     {
-        if(empty($this->id)) {
-            throw new SugarApiException('Bean must be initialized');
+        if(empty($this->id) || $this->new_with_id) {
+            throw new SugarApiException('Bean must be saved before vote');
         }
 
         $this->update_date_modified = false;
