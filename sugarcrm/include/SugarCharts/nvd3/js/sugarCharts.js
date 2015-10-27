@@ -258,8 +258,6 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
                     var lineChart = nv.models.lineChart()
                         .id(d3ChartId)
-                        .x(function(d) { return d[0]; })
-                        .y(function(d) { return d[1]; })
                         .margin(params.margin)
                         .tooltips(params.show_tooltips)
                         .tooltipContent(function(key, x, y, e, graph) {
@@ -294,38 +292,32 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             .axisLabel(params.y_axis_label);
                     }
 
+                    var tickFormat = function(d) { return d; };
+                    var getX = function(d) { return d[0]; };
+                    var getY = function(d) { return d[1]; };
+
                     if (json.data.length) {
                         if (json.data[0].values.length && json.data[0].values[0] instanceof Array) {
-                            lineChart
-                                .x(function(d) { return d[0]; })
-                                .y(function(d) { return d[1]; });
-
                             if (nv.utils.isValidDate(json.data[0].values[0][0])) {
-                                lineChart.xAxis
-                                    .tickFormat(function(d) {
-                                        return d3.time.format('%x')(new Date(d));
-                                    });
+                                tickFormat = function(d) { return d3.time.format('%x')(new Date(d)); };
                             } else if (xTickLabels.length > 0) {
-                                lineChart.xAxis
-                                    .tickFormat(function(d) {
-                                        return xTickLabels[d] || ' ';
-                                    });
+                                tickFormat = function(d) { return xTickLabels[d] || ' '; };
                             }
                         } else {
-                            lineChart
-                                .x(function(d) { return d.x; })
-                                .y(function(d) { return d.y; });
-
+                            getX = function(d) { return d.x; };
+                            getY = function(d) { return d.y; };
                             if (xTickLabels.length > 0) {
-                                lineChart.xAxis
-                                    .tickFormat(function(d) {
-                                        return xTickLabels[d - 1] || ' ';
-                                    });
+                                tickFormat = function(d) { return xTickLabels[d - 1] || ' '; };
                             }
                         }
                     }
 
+                    lineChart
+                        .x(getX)
+                        .y(getY);
+
                     lineChart.xAxis
+                        .tickFormat(tickFormat)
                         .highlightZero(false)
                         .reduceXTicks(false);
 
