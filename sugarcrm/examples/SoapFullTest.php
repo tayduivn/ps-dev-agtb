@@ -187,7 +187,7 @@ if(!$quick_test){
 	echo "<b>Time for retrieving the contacts added list is $diff </b> <br><br>";
 	print_result($result);
 	$result['entry_list'] = base64_decode($result['entry_list']);
-	$result['entry_list'] = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($result['entry_list']);
+	$result['entry_list'] = unserialize($result['entry_list']);
 	$synccontact_ids = array();
 
 
