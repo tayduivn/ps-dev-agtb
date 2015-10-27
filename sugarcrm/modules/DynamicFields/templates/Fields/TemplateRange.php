@@ -11,6 +11,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 class TemplateRange extends TemplateText
 {
 
@@ -28,26 +31,30 @@ class TemplateRange extends TemplateText
 
 
 	/**
-	 * populateFromPost
-	 *
-	 * @see parent::populateFromPost
 	 * This method checks to see if enable_range_search is set.  If so, ensure that the
 	 * searchdefs for the module include the additional range fields.
+     *
+     * {@inheritDoc}
 	 */
-	function populateFromPost() {
-		parent::populateFromPost();
+    public function populateFromPost(Request $request = null)
+    {
+        if (!$request) {
+            $request = InputValidation::getService();
+        }
+
+        parent::populateFromPost($request);
 		//If we are enabling range search, make sure we add the start and end range fields
 		if (!empty($this->enable_range_search))
 		{
 			//If range search is enabled, set the options attribute for the dropdown choice selections
 			$this->options = ($this->type == 'date' || $this->type == 'datetimecombo' || $this->type == 'datetime') ? 'date_range_search_dom' : 'numeric_range_search_dom';
 
-			if(isset($_REQUEST['view_module']))
-			{
-				$module = $_REQUEST['view_module'];
+            $module = $request->getValidInputRequest('view_module', 'Assert\ComponentName');
+            if ($module !== null) {
 				$searchFields = SugarAutoLoader::loadSearchFields($module);
 
-                $field_name = $this->get_field_name($module, $_REQUEST['name']);
+                $name = $request->getValidInputRequest('name');
+                $field_name = $this->get_field_name($module, $name);
 
                 if(isset($searchFields[$module]))
                 {
@@ -95,9 +102,8 @@ class TemplateRange extends TemplateText
 			}
 		} else {
 		//Otherwise, try to restore the searchFields to their state prior to being enabled
-			if(isset($_REQUEST['view_module']))
-			{
-				$module = $_REQUEST['view_module'];
+            $module = $request->getValidInputRequest('view_module', 'Assert\ComponentName');
+            if ($module !== null) {
                 if (file_exists('modules/'.$module.'/metadata/SearchFields.php')) {
                 	require('modules/'.$module.'/metadata/SearchFields.php');
                 }
@@ -107,7 +113,8 @@ class TemplateRange extends TemplateText
                     require('custom/modules/'.$module.'/metadata/SearchFields.php');
 			    }
 
-                $field_name = $this->get_field_name($module, $_REQUEST['name']);
+                $name = $request->getValidInputRequest('name');
+                $field_name = $this->get_field_name($module, $name);
 
                 if(isset($searchFields[$module]))
                 {
@@ -238,4 +245,3 @@ class TemplateRange extends TemplateText
 
 
 }
-?>

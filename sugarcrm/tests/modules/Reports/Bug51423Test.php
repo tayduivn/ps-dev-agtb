@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 require_once 'modules/Reports/Report.php';
 
 /**
@@ -76,9 +78,8 @@ class Bug51423Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = $this->_user;
 
         $this->_req['action'] = 'saveField';
-        $_REQUEST = $this->_req;
-        $_POST = $this->_req;
-        $mb = new ModuleBuilderController();
+        $request = InputValidation::create($this->_req, array());
+        $mb = new ModuleBuilderController($request);
         $mb->action_saveField();
 
         $this->_contact_1 = SugarTestContactUtilities::createContact();
@@ -111,15 +112,9 @@ class Bug51423Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_req['action'] = 'DeleteField';
         $this->_req['name'] = 'relate_contacts_c';
-        $_REQUEST = $this->_req;
-        $_POST = $this->_req;
-        $mb = new ModuleBuilderController();
+        $request = InputValidation::create($this->_req, array());
+        $mb = new ModuleBuilderController($request);
         $mb->action_DeleteField();
-
-        //$this->_account_1->mark_deleted($this->_account_1->id);
-        //$this->_account_2->mark_deleted($this->_account_2->id);
-        //$this->_contact_1->mark_deleted($this->_contact_1->id);
-        //$this->_contact_2->mark_deleted($this->_contact_2->id);
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarCache::$isCacheReset = $this->origin_isCacheReset;

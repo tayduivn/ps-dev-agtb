@@ -9,7 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 require_once('modules/DynamicFields/FieldCases.php');
 
 
@@ -20,10 +22,13 @@ class Bug39766Test extends Sugar_PHPUnit_Framework_TestCase
      */    
     public function testFloatPrecisionMapping()
     {
-        $_REQUEST = array('precision' => 2, 'type' => 'float');
+        $request = InputValidation::create(array(
+            'precision' => 2,
+        ), array());
+
         require_once ('modules/DynamicFields/FieldCases.php') ;
-        $field = get_widget ( $_REQUEST [ 'type' ] ) ;
-        $field->populateFromPost () ;
+        $field = get_widget('float') ;
+        $field->populateFromPost($request);
         
         $this->assertEquals($field->ext1, 2, 'Asserting that the ext1 value was set to the proper precision');
         $this->assertEquals($field->precision, 2, 'Asserting that the precision value was set to the proper precision');

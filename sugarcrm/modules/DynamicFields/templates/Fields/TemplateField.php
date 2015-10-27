@@ -10,6 +10,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 $GLOBALS['studioReadOnlyFields'] = array('date_entered'=>1, 'date_modified'=>1, 'created_by'=>1, 'id'=>1, 'modified_user_id'=>1);
 class TemplateField{
 	/*
@@ -502,27 +506,33 @@ class TemplateField{
         }
     }
 
-	function populateFromPost(){
-		foreach($this->vardef_map as $vardef=>$field){
+    /**
+     * Populates object from request
+     *
+     * @param Request $request
+     */
+    public function populateFromPost(Request $request = null)
+    {
+        if (!$request) {
+            $request = InputValidation::getService();
+        }
 
-			if(isset($_REQUEST[$vardef])){		    
-                $this->$vardef = $_REQUEST[$vardef];
-
-                //  Bug #48826. Some fields are allowed to have special characters and must be decoded from the request
+        foreach ($this->vardef_map as $vardef => $field) {
+            $value = $request->getValidInputRequest($vardef);
+            if ($value !== null) {
+                // Bug #48826. Some fields are allowed to have special characters and must be decoded from the request
                 // Bug 49774, 49775: Strip html tags from 'formula' and 'dependency'.
-                if (is_string($this->$vardef) && in_array($vardef, $this->decode_from_request_fields_map))
-                {
-                    $this->$vardef = html_entity_decode(strip_tags(from_html($this->$vardef)));
+                if (is_string($value) && in_array($vardef, $this->decode_from_request_fields_map)) {
+                    $this->$vardef = strip_tags($value);
+                } else {
+                    $this->$vardef = $value;
                 }
-
 
                 //Remove potential xss code from help field
                 if($field == 'help' && !empty($this->$vardef))
                 {
-                    $help = htmlspecialchars_decode($this->$vardef, ENT_QUOTES);
-                    $this->$vardef = htmlentities(remove_xss($help));
+                    $this->$vardef = htmlentities(remove_xss($this->$vardef));
                 }
-
 
 				if($vardef != $field){
 					$this->$field = $this->$vardef;
@@ -572,7 +582,7 @@ class TemplateField{
      *
      * @param String $module The name of the module
      * @param String $name The field name key
-     * @return The field name for the module
+     * @return string The field name for the module
      */
     protected function get_field_name($module, $name)
     {
@@ -630,6 +640,3 @@ class TemplateField{
     }
 
 }
-
-
-

@@ -12,6 +12,7 @@
 
 use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 require_once 'include/MVC/View/SugarView.php';
 
@@ -155,10 +156,12 @@ class SugarController
 
     /**
      * Ctor
+     *
+     * @param Request $request
      */
-    public function __construct()
+    public function __construct(Request $request = null)
     {
-        $this->request = InputValidation::getService();
+        $this->request = $request ?: InputValidation::getService();
     }
 
     /**

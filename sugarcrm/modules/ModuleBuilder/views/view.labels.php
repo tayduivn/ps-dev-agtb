@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 /*
  * Created on Jul 24, 2007
  *
@@ -40,7 +41,7 @@ class ViewLabels extends ViewModulefields
      {
         global $locale;
 
-        $editModule = $_REQUEST['view_module'];
+         $editModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
         $allLabels = (!empty($_REQUEST['labels']) && $_REQUEST['labels']== 'all');
 
          if (!isset($_REQUEST['MB'])) {
@@ -48,13 +49,11 @@ class ViewLabels extends ViewModulefields
             $moduleNames = array_change_key_case($app_list_strings['moduleList']);
             $translatedEditModule = $moduleNames[strtolower($editModule)];
         }
-        $selected_lang = null;
-
-        if (!empty($_REQUEST['selected_lang'])) {
-            $selected_lang = $_REQUEST['selected_lang'];
-        } else {
-            $selected_lang = $locale->getAuthenticatedUserLanguage();
-        }
+        $selected_lang = $this->request->getValidInputRequest(
+            'selected_lang',
+            'Assert\Language',
+            $locale->getAuthenticatedUserLanguage()
+        );
 
         $smarty = new Sugar_Smarty();
         global $mod_strings;
