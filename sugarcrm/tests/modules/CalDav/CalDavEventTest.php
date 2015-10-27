@@ -779,6 +779,11 @@ END:VCALENDAR',
     {
         return array(
             array(
+                'currentEvent' => $this->getEventTemplate('vempty'),
+                'component' => 'VEVENT',
+                'class' => 'Sabre\VObject\Component\VEvent'
+            ),
+            array(
                 'currentEvent' => $this->getEventTemplate('vevent'),
                 'component' => 'VEVENT',
                 'class' => 'Sabre\VObject\Component\VEvent'
@@ -2119,8 +2124,11 @@ END:VCALENDAR',
         $components = $vObject->getComponents();
 
         $this->assertEquals(2, count($components));
-        $component = $vObject->select($componentType);
-        $this->assertInstanceOf($expectedClass, array_shift($component));
+        $actualComponents = $vObject->select($componentType);
+        $component = array_shift($actualComponents);
+        $this->assertInstanceOf($expectedClass, $component);
+        $this->assertNotEmpty($component->UID);
+        $this->assertNotContains('sabre-vobject-', $component->UID->getValue());
     }
 
     /**
