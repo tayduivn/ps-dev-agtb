@@ -223,6 +223,10 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
             name: 'adhoc_user',
             submit: true,
             required: true,
+            searchMore: {
+                module: "Users",
+                fields: ["id"]
+            },
             searchURL: url+'/users/'+ flowId + '?filter={TERM}',
             placeholder: translate('LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT', 'pmse_Project'),
             helpTooltip: {
@@ -260,6 +264,10 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
             submit: true,
             searchURL: url+'/users/'+ flowId + '?filter={TERM}',
             required: true,
+            searchMore: {
+                module: "Users",
+                fields: ["id"]
+            },
             placeholder: translate('LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT', 'pmse_Project'),
             helpTooltip: {
                 message: translate('LBL_PMSE_FORM_TOOLTIP_CHANGE_USER', 'pmse_Inbox')

@@ -29,19 +29,23 @@
         app.plugins.register('MassCollection', ['view'], {
             onAttach: function() {
                 this.on('init', this._initMassCollectionPlugin, this);
-                this.on('render', this._onViewRender, this);
             },
 
             /**
-             * Initializes the plugin.
+             * Initializes the plugin if the view metadata has selection type
+             * set to `multi`.
              *
              * @private
              */
             _initMassCollectionPlugin: function() {
+                if (!this.meta || !this.meta.selection || this.meta.selection.type !== 'multi') {
+                    return;
+                }
                 this.createMassCollection();
                 this._preselectModels();
                 this._initTemplates();
                 this._bindMassCollectionEvents();
+                this.on('render', this._onViewRender, this);
             },
 
             /**

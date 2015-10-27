@@ -196,6 +196,7 @@ ExpressionControl.prototype.init = function (settings) {
         onOpen: null,
         onClose: null,
         className: "",
+        panelContext: document.body,
         currencies: []
     };
 
@@ -219,6 +220,7 @@ ExpressionControl.prototype.init = function (settings) {
         open: false,
         onItemValueAction: this._onPanelValueGeneration(),
         width: this.width,
+        context: defaults.panelContext,
         className: defaults.className || ""
     });
 
@@ -1488,6 +1490,11 @@ ExpressionControl.prototype._createModulePanel = function () {
                                     {'label': translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), 'value': 'owner'},
                                     {'label': translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'), 'value': 'supervisor'}
                                 ];
+                                newFieldSettings.searchMore = {
+                                    module: "Users",
+                                    fields: ["id", "full_name"],
+                                    filterOptions: null
+                                };
                                 newFieldSettings.searchURL = 'pmse_Project/CrmData/users?filter={TERM}';
                             }
                             operatorField = form.getItem("operator");
@@ -1752,11 +1759,11 @@ ExpressionControl.prototype._createUserPanel = function () {
                             case 'USER_IDENTITY':
                                 dependantField.clearOptions()
                                     .setSearchURL('pmse_Project/CrmData/users?filter={TERM}')
-                                    .enable();
-                                    var spans = document.getElementsByClassName('select2-chosen');
-                                    for (var i=0;i<spans.length;i++) {
-                                        spans[i].innerText = translate('LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT');
-                                    }
+                                    .enable()
+                                    .enableSearchMore({
+                                        module: "Users",
+                                        fields: ["id", "full_name"]
+                                    });
                         }
                     }
                 }
