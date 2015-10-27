@@ -17,7 +17,6 @@ $viewdefs['base']['view']['profileactions'] = array(
         'css_class' => 'profileactions-profile',
         'acl_action' => 'view',
         'icon' => 'fa-user',
-        'submenu' => '',
     ),
     array(
         'route'=> '#bwc/index.php?module=Employees&action=index&query=true',
@@ -25,7 +24,6 @@ $viewdefs['base']['view']['profileactions'] = array(
         'css_class' => 'profileactions-employees',
         'acl_action' => 'list',
         'icon' => 'fa-users',
-        'submenu' => '',
     ),
     array(
         'route' => '#bwc/index.php?module=Administration&action=index',
@@ -33,7 +31,6 @@ $viewdefs['base']['view']['profileactions'] = array(
         'css_class' => 'administration',
         'acl_action' => 'admin',
         'icon' => 'fa-cogs',
-        'submenu' => '',
     ),
     array(
         'route' => '#about',
@@ -41,13 +38,11 @@ $viewdefs['base']['view']['profileactions'] = array(
         'css_class' => 'profileactions-about',
         'acl_action' => 'view',
         'icon' => 'fa-info-circle',
-        'submenu' => '',
     ),
     array(
         'route' => '#logout/?clear=1',
         'label' => 'LBL_LOGOUT',
         'css_class' => 'profileactions-logout',
         'icon' => 'fa-sign-out',
-        'submenu' => '',
     ),
 );
