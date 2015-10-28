@@ -88,7 +88,7 @@ class KBContentsUsefulnessApi extends ModuleApi
                 $bean->notuseful++;
             }
         }
-        $bean->save();
+        $bean->saveUsefulness();
 
         $bean = BeanFactory::getBean($bean->module_dir, $bean->id, array('use_cache' => false));
         $api->action = 'view';
