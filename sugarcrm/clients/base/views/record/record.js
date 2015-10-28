@@ -338,7 +338,7 @@
         // initialize tab view only if the component is attached to DOM,
         // otherwise it's initialized partially and cannot be properly
         // re-initialized after the component is attached to DOM
-        if ($.contains(document, this.$el[0])) {
+        if ($.contains(document.documentElement, this.$el[0])) {
             this.handleActiveTab();
             this.overflowTabs();
         }

@@ -253,12 +253,49 @@ function process_action_new($focus, $action_array){
         }
     }
 
-	$target_module->save($check_notify);
+    // Not all beans should be saved, particularly when a workflow has already
+    // been triggered by a related save that has completed, but a related related
+    // save fires one again
+    $shouldSave = should_save_new_bean($focus, $action_array);
+    if ($shouldSave) {
+        $target_module->save($check_notify);
+        // Mark the focus bean so that it doesn't fire again downstream
+        mark_trigger_bean_with_trigger_id($focus, $action_array);
+    }
 
 //end function_action_new
 }
 
+/**
+ * Determines the save state of a bean created during a workflow process
+ * @param SugarBean $focus The primary bean
+ * @param Array $action_array The actions array that contains the meta for the workflow
+ * @return boolean
+ */
+function should_save_new_bean($focus, $action_array)
+{
+    if (!empty($action_array['trigger_id'])) {
+        if (isset($focus->workflow_trigger_guid) && $focus->workflow_trigger_guid == $action_array['trigger_id']) {
+            return false;
+        }
+    }
 
+    return true;
+}
+
+/**
+ * Marks a primary bean so that it doesn't save a second record in related realted
+ * workflows
+ * @param SugarBean $focus The primary bean
+ * @param Array $action_array The actions array that contains the meta for the workflow
+ * @return boolean
+ */
+function mark_trigger_bean_with_trigger_id($focus, $action_array)
+{
+    if (!empty($action_array['trigger_id'])) {
+        $focus->workflow_trigger_guid = $action_array['trigger_id'];
+    }
+}
 
 function process_action_new_rel($focus, $action_array){
 

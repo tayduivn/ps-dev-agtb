@@ -104,7 +104,9 @@ class SugarSeachEngineElasticResultSet implements SugarSearchEngineResultSet
     public function current()
     {
         $res = new SugarSeachEngineElasticResult($this->elasticaResultSet->current());
-        $res->setHighlighter($this->highlighter);
+        if (isset($this->highlighter)) {
+            $res->setHighlighter($this->highlighter);
+        }
         return $res;
     }
 

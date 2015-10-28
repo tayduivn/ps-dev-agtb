@@ -66,14 +66,6 @@ $GLOBALS['log'] = LoggerManager :: getLogger('SugarCRM');
 $error_notice = '';
 $use_current_user_login = false;
 
-// Allow for the session information to be passed via the URL for printing.
-if(isset($_GET['PHPSESSID'])){
-    if(!empty($_COOKIE['PHPSESSID']) && strcmp($_GET['PHPSESSID'],$_COOKIE['PHPSESSID']) == 0) {
-        session_id($_REQUEST['PHPSESSID']);
-    }else{
-        unset($_GET['PHPSESSID']);
-    }
-}
 if(!empty($sugar_config['session_dir'])) {
 	session_save_path($sugar_config['session_dir']);
 }
@@ -161,8 +153,8 @@ if(($user_unique_key != $server_unique_key) && (!in_array($action, $allowed_acti
 }
 
 
-if(isset($_REQUEST['PHPSESSID']))
-	$GLOBALS['log']->debug("****Starting Application for  session ".$_REQUEST['PHPSESSID']);
+if(isset($_POST['PHPSESSID']))
+	$GLOBALS['log']->debug("****Starting Application for  session ".$_POST['PHPSESSID']);
 else
 	$GLOBALS['log']->debug("****Starting Application for new session");
 

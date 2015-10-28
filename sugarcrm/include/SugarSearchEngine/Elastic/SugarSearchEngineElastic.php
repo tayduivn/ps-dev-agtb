@@ -123,7 +123,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     protected function createResultSet(ResultSet $resultSet)
     {
         $res = new SugarSeachEngineElasticResultSet($resultSet->getResultSet());
-        $res->setHighlighter($resultSet->getHighlighter());
+        $highlighter = $resultSet->getHighlighter();
+        if (isset($highlighter)) {
+            $res->setHighlighter($highlighter);
+        }
         return $res;
     }
 

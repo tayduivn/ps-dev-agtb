@@ -61,8 +61,6 @@ $dictionary['RevenueLineItem'] = array(
                 'base_rate' => 'base_rate',
                 'tax_class' => 'tax_class',
                 'weight' => 'weight',
-                'currency_id' => 'currency_id',
-                'base_rate' => 'base_rate',
                 'manufacturer_id' => 'manufacturer_id',
                 'manufacturer_name' => 'manufacturer_name',
             ),
@@ -1150,6 +1148,8 @@ VardefManager::createVardef(
         'currency'
     )
 );
+
+$dictionary['RevenueLineItem']['fields']['base_rate']['readonly'] = true;
 
 //boost value for full text search
 $dictionary['RevenueLineItem']['fields']['description']['full_text_search']['boost'] = 0.47;

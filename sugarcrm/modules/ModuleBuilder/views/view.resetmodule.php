@@ -234,20 +234,21 @@ class ViewResetmodule extends SugarView
     function removeCustomLabels()
     {
         $out = "";
-		$languageDir = "custom/modules/{$this->module}/language";
-        if (is_dir($languageDir)) {
-            $files = scandir($languageDir);
-            foreach ($files as $langFile) {
-                if (substr($langFile, 0 ,1) == '.') continue;
-				$language = substr($langFile, 0, strlen($langFile) - 9);
-                SugarAutoLoader::unlink($languageDir . "/" . $langFile, true);
+        $languageDirArray = array("custom/modules/{$this->module}/Ext/Language", "custom/Extension/modules/{$this->module}/Ext/Language");
+        foreach ($languageDirArray as $languageDir) {
+            if (is_dir($languageDir)) {
+                $files = scandir($languageDir);
+                foreach ($files as $langFile) {
+                    if (substr($langFile, 0 ,1) == '.') continue;
+                    $language = substr($langFile, 0, strlen($langFile) - 9);
+                    SugarAutoLoader::unlink($languageDir . "/" . $langFile, true);
 
-				LanguageManager::clearLanguageCache ( $this->module, $language ) ;
-				$out .= "Removed language file $langFile<br/>";
+                    LanguageManager::clearLanguageCache($this->module, $language);
+                    $out .= "Removed language file $langFile<br/>";
+                }
             }
         }
-
-		return $out;
+        return $out;
     }
 
 	function removeCustomExtensions()

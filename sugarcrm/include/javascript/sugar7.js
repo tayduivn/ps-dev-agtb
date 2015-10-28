@@ -656,20 +656,6 @@
 
                 return false;
             }
-
-            var subroute;
-            if (module) {
-                var qpos = module.indexOf('?');
-                subroute = qpos > -1 ? module.substring(0, module.indexOf('?')) : module;
-            }
-            var viewId = options.route + (subroute ? '/' + subroute : '');
-
-            // FIXME: Analytics should not be tracked in hasAccessToModule,
-            // will be moved into another function in SC-2761.
-            app.analytics.currentViewId = viewId;
-            app.analytics.trackPageView(app.analytics.currentViewId);
-
-            return true;
         }
     });
 

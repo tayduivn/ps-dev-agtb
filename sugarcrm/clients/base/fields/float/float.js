@@ -64,9 +64,9 @@
         var decimal_separator = app.user.getPreference('decimal_separator') || '.';
 
         if (_.isUndefined(this.def.precision) || !this.def.precision) {
-            return app.utils.addNumberSeperators(
-                value.toString(), 
-                number_grouping_separator, 
+            return app.utils.addNumberSeparators(
+                value.toString(),
+                number_grouping_separator,
                 decimal_separator
             );
         }

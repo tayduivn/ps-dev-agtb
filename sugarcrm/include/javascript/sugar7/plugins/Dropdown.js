@@ -70,21 +70,12 @@
                         $items.index($focusItem),
                         $items
                     );
-
-                    // expand/collapse submenu using the right or left arrow key
-                    if (event.keyCode === $.ui.keyCode.RIGHT ||
-                        event.keyCode === $.ui.keyCode.LEFT
-                    ) {
-                        this._toggleSubmenu($focusItem);
-                    }
                 }
 
                 keysCaptured = [
                     $.ui.keyCode.ESCAPE,
                     $.ui.keyCode.UP,
-                    $.ui.keyCode.DOWN,
-                    $.ui.keyCode.LEFT,
-                    $.ui.keyCode.RIGHT
+                    $.ui.keyCode.DOWN
                 ];
                 if (_.contains(keysCaptured, event.keyCode)) {
                     // prevent bootstrap dropdown from duplicating work we've

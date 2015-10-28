@@ -1,6 +1,6 @@
 describe('MassCollection plugin:', function() {
 
-    var app, layout, view, data, massCollection, collection;
+    var app, layout, view, data, massCollection, collection, context;
     var moduleName = 'Accounts',
         viewName = 'multi-selection-list',
         layoutName = 'multi-selection-list';
@@ -9,7 +9,7 @@ describe('MassCollection plugin:', function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', viewName);
-        var context = app.context.getContext();
+        context = app.context.getContext();
         context.set({
             module: moduleName,
             layout: layoutName
@@ -19,7 +19,13 @@ describe('MassCollection plugin:', function() {
             name: layoutName,
             context: context
         });
-        view = SugarTest.createView('base', moduleName, viewName, null, context, null, layout);
+        var meta = {
+            selection: {
+                type: 'multi'
+            }
+        };
+        // This initializes the MassCollection plugin thanks to the 'init' event.
+        view = SugarTest.createView('base', moduleName, viewName, meta, context, null, layout);
     });
 
     afterEach(function() {
@@ -35,20 +41,15 @@ describe('MassCollection plugin:', function() {
     });
 
     describe('Initialize:', function() {
-        beforeEach(function() {
-            sinon.collection.stub(view, 'createMassCollection');
-            sinon.collection.stub(view, '_preselectModels');
-        });
-
         it('should create the mass collection', function() {
-            view.trigger('init');
-            expect(view.createMassCollection).toHaveBeenCalled();
+            expect(view.massCollection).toBeDefined();
         });
 
-        it('should handle preselected models', function() {
-            view.trigger('init');
-            massCollection = view.context.get('mass_collection');
-            expect(view._preselectModels).toHaveBeenCalled();
+        it('should not initialize on non-multi selection views', function() {
+            view.dispose();
+            view = SugarTest.createView('base', moduleName, viewName, null, context, null, layout);
+
+            expect(view.massCollection).not.toBeDefined();
         });
     });
 

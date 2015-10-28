@@ -51,13 +51,19 @@ class PMSEEmailHandler
     private $pmseRelatedModule;
 
     /**
+     * @global beanList
+     */
+    protected $beanList;
+
+    /**
      *
      * @global type $locale
      * @codeCoverageIgnore
      */
     public function __construct()
     {
-        global $locale;
+        global $locale, $beanList;
+        $this->beanList = $beanList;
         $this->locale = $locale;
         $this->beanUtils = new PMSEBeanHandler();
         $this->logger = PMSELogger::getInstance();
@@ -243,6 +249,10 @@ class PMSEEmailHandler
     {
         $res = array();
         $users = array();
+
+        if (!isset($this->beanList[$entry->module])) {
+            $bean = $this->pmseRelatedModule->getRelatedModule($bean, $entry->module);
+        }
         switch ($entry->value) {
             case 'last_modifier':
                 $users[] = $this->getLastModifier($bean);
@@ -348,12 +358,11 @@ class PMSEEmailHandler
 
     public function processRecipientEmails($bean, $entry, $flowData)
     {
-        global $beanList;
         $res = array();
         $field = $entry->value;
         $module = $entry->module;
 
-        if (!isset($beanList[$module])) {
+        if (!isset($this->beanList[$module])) {
             $bean = $this->pmseRelatedModule->getRelatedModule($bean, $module);
         }
         if (!empty($bean) && is_object($bean)) {

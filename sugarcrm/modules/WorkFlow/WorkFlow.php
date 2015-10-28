@@ -679,7 +679,7 @@ $alert_file_contents = "";
                 $eval_dump .= "\t \$workflow_id = '" . $row['id'] . "'; \n\n";
 
 				$eval_dump .= 'if(!empty($_SESSION["workflow_cron"]) && $_SESSION["workflow_cron"]=="Yes" &&
-				!empty($_SESSION["workflow_id_cron"]) && in_array_access($workflow_id, $_SESSION["workflow_id_cron"])){
+				!empty($_SESSION["workflow_id_cron"]) && ArrayFunctions::in_array_access($workflow_id, $_SESSION["workflow_id_cron"])){
 				';
 			//end if type is time
 			}
@@ -705,11 +705,11 @@ $alert_file_contents = "";
 
 			if($row['fire_order']=='alerts_actions'){
 				$eval_dump .= "\t" . $this->get_alert_contents($row['id'], $trigger_count, $this->base_module);
-				$eval_dump .= "\t" . $this->get_action_contents($row['id'], $trigger_count, $this->base_module);
+				$eval_dump .= "\t" . $this->get_action_contents($row['id'], $trigger_count, $this->base_module, $randID);
 			}
 
 			if($row['fire_order']=='actions_alerts'){
-				$eval_dump .= "\t" . $this->get_action_contents($row['id'], $trigger_count, $this->base_module);
+				$eval_dump .= "\t" . $this->get_action_contents($row['id'], $trigger_count, $this->base_module, $randId);
 				$out_data = $this->get_alert_contents_for_file($row['id'], $trigger_count, $this->base_module);
                 $eval_dump .= "\t" . $out_data[0];
                 $alert_file_contents .= $out_data[1];
@@ -1106,7 +1106,7 @@ return array($eval_dump, $alert_string);
 }
 
 
-function get_action_contents($workflow_id, $trigger_count, $action_module_name){
+function get_action_contents($workflow_id, $trigger_count, $action_module_name, $workflow_trigger_id = ''){
 
 	$action_count = 0;
 
@@ -1176,6 +1176,12 @@ function get_action_contents($workflow_id, $trigger_count, $action_module_name){
 
 						$this->glue_object->build_trigger_actions($row['id'], $array_position_name, $row);
 
+						// Some processes need to keep track of workflows that have
+						// fired while away from the workflow engine. This allows
+						// for that.
+						if ($workflow_trigger_id) {
+							$action_string .= "\t \$action_meta_array['".$array_position_name."']['trigger_id'] = '$workflow_trigger_id'; \n ";
+						}
 						$action_string .= "\t process_workflow_actions(\$focus, \$action_meta_array['".$array_position_name."']); \n ";
 
 						++ $action_count;
