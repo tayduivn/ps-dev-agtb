@@ -26,11 +26,6 @@ use Sugarcrm\Sugarcrm\Notification\SubscriptionFilter\SubscriptionFilterRegistry
 class SubscriptionsRegistry
 {
     /**
-     * Flag disabled notification for specific emitter, event, role.
-     */
-    const CARRIER_VALUE_DISABLED = 'disabled';
-
-    /**
      * Flag use default configuration of notification for specific emitter, event, role.
      */
     const CARRIER_VALUE_DEFAULT = 'default';
@@ -89,6 +84,8 @@ class SubscriptionsRegistry
                 }
             }
         }
+        $beanEmitterName = (string)$this->getEmitterRegistry()->getBeanEmitter();
+        $tree[$beanEmitterName] = $this->getBeanEmitterTree($tree);
         return $tree;
     }
 
@@ -142,11 +139,39 @@ class SubscriptionsRegistry
     }
 
     /**
-     * Retrieve list of NotificationCenterSubscription beans from Sugar Query
+     * Create base bean emitter configuration tree.
      *
+     * @param array $tree base configuration tree
+     * @return array base configuration bean emitter tree
+     */
+    protected function getBeanEmitterTree(array $tree)
+    {
+        $emitterTree = array();
+        $emitterRegistry = $this->getEmitterRegistry();
+        foreach ($emitterRegistry->getModuleEmitters() as $emitterName) {
+            $emitter = $emitterRegistry->getModuleEmitter($emitterName);
+            foreach ($emitter->getEventStrings() as $eventName) {
+                $event = $emitter->getEventPrototypeByString($eventName);
+                if ($event instanceof BeanEvent) {
+                    if (!array_key_exists($eventName, $emitterTree)) {
+                        $emitterTree[$eventName] = array();
+                    }
+                    $emitterTree[$eventName] += $tree[$emitterName][$eventName];
+                }
+            }
+        }
+
+        return $emitterTree;
+    }
+
+    /**
+     * Gets an array of NotificationCenterSubscription beans from a SugarQuery
+     *
+     * @param \SugarQuery $query - Query object for fetching beans
+     * @param array $fields A list of fields to populate in the beans
      * @return \NotificationCenterSubscription[] list of beans
      */
-    protected function getBeans(\SugarQuery $query, $fields = null)
+    protected function getBeans(\SugarQuery $query, array $fields = null)
     {
         if (is_null($fields)) {
             $fields = array(
@@ -180,12 +205,13 @@ class SubscriptionsRegistry
     /**
      * Get pre-configured Sugar query for global config.
      *
+     * @param string|null $userId User id
      * @return \SugarQuery pre-configured Sugar query
      * @throws \SugarQueryException
      */
     protected function getSugarQuery($userId = null)
     {
-        $query = new \SugarQuery();
+        $query = $this->getBaseSugarQuery();
         $query->from($this->getNewBaseBean());
         if (is_null($userId)) {
             $query->where()->isNull('user_id');
@@ -240,7 +266,7 @@ class SubscriptionsRegistry
     /**
      * Return configuration.
      *
-     * @param GUID $userId user id
+     * @param string $userId user id
      * @return array configuration
      */
     public function getUserConfiguration($userId)
@@ -251,14 +277,10 @@ class SubscriptionsRegistry
         foreach ($beans as $bean) {
             if ($this->isValidBeanForTree($res, $bean)) {
                 $emitter = (string)$this->getEmitter($bean);
-                if ($bean->carrier_name == self::CARRIER_VALUE_DISABLED) {
-                    $res[$emitter][$bean->event_name][$bean->filter_name] = self::CARRIER_VALUE_DISABLED;
-                } else {
-                    $res[$emitter][$bean->event_name][$bean->filter_name][] = array(
-                        $bean->carrier_name,
-                        $bean->carrier_option
-                    );
-                }
+                $res[$emitter][$bean->event_name][$bean->filter_name][] = array(
+                    $bean->carrier_name,
+                    $bean->carrier_option
+                );
             }
         }
 
@@ -298,7 +320,7 @@ class SubscriptionsRegistry
     /**
      * Save configuration.
      *
-     * @param GUID|null $userId identifier for user or null for global configuration
+     * @param string|null $userId identifier for user or null for global configuration
      * @param array $config configuration for saving
      * @param bool $delCarrierOption is necessary delete carrier option(need in global config case)
      */
@@ -312,11 +334,8 @@ class SubscriptionsRegistry
                 foreach (array_keys($eventConfig) as $filter) {
                     if (!empty($config[$emitter][$event][$filter])) {
                         $path = $this->pathToBranch($emitter, $event, $filter);
-                        $branchBeans = $this->moveBeans($beans, $path);
+                        $reducesBeans = $this->reduceBeans($beans, $path);
                         $carriers = $config[$emitter][$event][$filter];
-                        if ($carriers == self::CARRIER_VALUE_DISABLED) {
-                            $carriers = array(array(self::CARRIER_VALUE_DISABLED));
-                        }
                         if ($carriers == self::CARRIER_VALUE_DEFAULT) {
                             $carriers = array();
                         }
@@ -327,12 +346,12 @@ class SubscriptionsRegistry
                             }
                         }
 
-                        $diff = $this->diffBranch($branchBeans, $carriers);
+                        $diff = $this->getDiff($reducesBeans, $carriers);
 
                         if ($userId) {
                             $path += array('user_id' => $userId);
                         }
-                        $this->mergeDiff($path, $diff['delete'], $diff['insert']);
+                        $this->processDiff($path, $diff['delete'], $diff['insert']);
                     }
                 }
             }
@@ -389,36 +408,24 @@ class SubscriptionsRegistry
      *
      * @param \NotificationCenterSubscription[] &$beans
      * @param array $searchOpts map field and value which should be equal as in bean
-     * @return \NotificationCenterSubscription[]
+     * @param integer $limit count of max count reduce beans
+     * @return \NotificationCenterSubscription[] reduced beans
      */
-    protected function moveBeans(array &$beans, array $searchOpts)
+    protected function reduceBeans(array &$beans, array $searchOpts, $limit = 0)
     {
         $out = array();
-        $ids = $this->search($beans, $searchOpts);
-        foreach ($ids as $id) {
-            $out[$id] = $beans[$id];
-            unset($beans[$id]);
-        }
-        return $out;
-    }
 
-    /**
-     * Searches the SugarBean list for a given search map and returns the corresponding ids if successful.
-     *
-     * @param \SugarBean[] $beans list of bean for
-     * @param array $opts map field and value which should be equal as in bean
-     * @return GUID[] list found bean ids
-     */
-    protected function search($beans, array $opts)
-    {
-        $ids = array();
-        foreach ($beans as $bean) {
-            if ($this->isApproach($bean, $opts)) {
-                $ids[] = $bean->id;
+        foreach ($beans as $key => $bean) {
+            if ($this->isSuitable($bean, $searchOpts)) {
+                $out[$bean->id] = $bean;
+                unset($beans[$key]);
+                if ($limit > 0 && $limit == count($out)) {
+                    break;
+                }
             }
         }
 
-        return $ids;
+        return $out;
     }
 
     /**
@@ -428,10 +435,10 @@ class SubscriptionsRegistry
      * @param array $searchOptions map field and value which should be equal as in bean
      * @return bool is approach
      */
-    protected function isApproach(\SugarBean $bean, array $searchOptions)
+    protected function isSuitable(\SugarBean $bean, array $searchOptions)
     {
         foreach ($searchOptions as $field => $value) {
-            if (!($value == $bean->getFieldValue($field))) {
+            if ($value != $bean->getFieldValue($field)) {
                 return false;
             }
         }
@@ -445,15 +452,16 @@ class SubscriptionsRegistry
      * @param array $carriers list of carriers from config
      * @return array diff with 2 lists, which beans should be deleted, carriers that and should inserted
      */
-    protected function diffBranch($beans, $carriers)
+    protected function getDiff($beans, $carriers)
     {
         foreach ($carriers as $key => $carrier) {
             $carrier[1] = array_key_exists(1, $carrier) ? $carrier[1] : '';
-            $carrierArr = array(
+            $carrierFilter = array(
                 'carrier_name' => $carrier[0],
                 'carrier_option' => $carrier[1]
             );
-            if ($this->moveBeans($beans, $carrierArr)) {
+            // Need to reduce out a list of only one bean, because the other is duplicates and go on deleting.
+            if ($this->reduceBeans($beans, $carrierFilter, 1)) {
                 unset($carriers[$key]);
             };
         }
@@ -468,7 +476,7 @@ class SubscriptionsRegistry
      * @param \NotificationCenterSubscription[] $beansForDelete list of beans which contain outdated data
      * @param array $carriersForInsert list of carriers which not stored
      */
-    protected function mergeDiff($path, $beansForDelete, $carriersForInsert)
+    protected function processDiff(array $path, array $beansForDelete, array $carriersForInsert)
     {
         foreach ($beansForDelete as $key => $bean) {
             if (!empty($carriersForInsert)) {
@@ -518,7 +526,7 @@ class SubscriptionsRegistry
     /**
      * Save configuration for user.
      *
-     * @param  $userId
+     * @param string $userId user id
      * @param array $config configuration for saving
      */
     public function setUserConfiguration($userId, $config)
@@ -535,48 +543,111 @@ class SubscriptionsRegistry
     public function getUsers(EventInterface $event)
     {
         $globalConfig = $this->getGlobalEventConfig($event);
-        $sfList = $this->getSupportedFilters($event);
-        usort($sfList, function (SubscriptionFilterInterface $a, SubscriptionFilterInterface $b) {
-            $a = $a->getOrder();
-            $b = $b->getOrder();
-            if ($a == $b) {
-                return 0;
-            }
-            return ($a < $b) ? -1 : 1;
-        });
-        $sfList = array_reverse($sfList);
-
-        $result = array();
+        $sfList = $this->getUsersFilters($event);
+        $config = array();
         foreach ($sfList as $subscriptionFilter) {
-            $query = new \SugarQuery();
-            $userAlias = $subscriptionFilter->filterQuery($event, $query);
-
-            $joinOptions = array(
-                'team_security' => false,
-                'joinType' => 'LEFT'
-            );
-            $join = $query->joinTable('notification_subscription', $joinOptions);
-            $joinOn = $join->on()->equalsField('notification_subscription.user_id', "{$userAlias}.id")
-                ->equals('notification_subscription.deleted', '0');
-            $this->eventWhere($event, $joinOn, $subscriptionFilter);
-
-            $query->select(array(
-                array("{$userAlias}.id", 'user_id'),
-                'notification_subscription.carrier_name',
-                'notification_subscription.carrier_option',
-            ));
-            foreach ($query->execute() as $row) {
-                $userId = $row['user_id'];
-                if (is_null($row['carrier_name'])) {
-                    $row = $globalConfig[(string)$subscriptionFilter] + $row;
-                }
-                if (!array_key_exists($userId, $result) || $result[$userId]['filter'] != (string)$subscriptionFilter) {
-                    $result[$userId] = array(
-                        'filter' => (string)$subscriptionFilter,
-                        'config' => array(),
+            $filterName = (string)$subscriptionFilter;
+            $data = $this->getUsersEventConfig($event, $subscriptionFilter);
+            foreach ($data as $userId => $userData) {
+                $userConfig = $this->calculateUserConfig(
+                    $userData[$filterName],
+                    array_key_exists($filterName, $globalConfig) ? $globalConfig[$filterName] : array()
+                );
+                if (!empty($userConfig)) {
+                    $config[$userId] = array(
+                        'filter' => $filterName,
+                        'config' => $userConfig
                     );
                 }
-                $result[$userId]['config'][] = array($row['carrier_name'], $row['carrier_option']);
+            }
+        }
+
+        return $config;
+    }
+
+    /**
+     * Returns tree of users config tree for the event.
+     *
+     * @param EventInterface $event for filtering users config
+     * @param SubscriptionFilterInterface $filter
+     * @return array users config tree
+     */
+    protected function getUsersEventConfig(EventInterface $event, SubscriptionFilterInterface $filter)
+    {
+        $list = $this->getUsersList($event, $filter);
+        $filterName = (string)$filter;
+        $config = array();
+        foreach ($list as $row) {
+            $userId = $row['user_id'];
+            $type = $this->normalizeType($row['type']);
+            $carrier = trim($row['carrier_name']);
+
+            if (!array_key_exists($userId, $config)) {
+                $config[$userId] = array($filterName => array());
+            }
+
+            // not found subscription trigger
+            if (empty($carrier) && empty($row['type'])) {
+                continue;
+            }
+
+            if (!array_key_exists($type, $config[$userId][$filterName])) {
+                $config[$userId][$filterName][$type] = array();
+            }
+
+            if (!array_key_exists($carrier, $config[$userId][$filterName][$type])) {
+                $config[$userId][$filterName][$type][$carrier] = array();
+            }
+
+            $config[$userId][$filterName][$type][$carrier][] = $row['carrier_option'];
+        }
+        return $config;
+    }
+
+    /**
+     * Calculation user configuration.
+     *
+     * @param array $userData user config data
+     * @param array $globalData global config data
+     * @return array calculated user configuration
+     */
+    public function calculateUserConfig(array $userData, array $globalData)
+    {
+        $config = array();
+        if (array_key_exists('main', $userData)) {
+            $config = $userData['main'];
+        } elseif (array_key_exists('bean', $userData)) {
+            $config = $userData['bean'];
+        }
+
+        if (empty($config)) {
+            if (array_key_exists('main', $globalData)) {
+                $config = $globalData['main'];
+            } elseif (array_key_exists('bean', $globalData)) {
+                $config = $globalData['bean'];
+            }
+        }
+
+        if (array_key_exists('', $config)) {
+            return array();
+        } else {
+            return $this->formatParsedUsersData($config);
+        }
+    }
+
+    /**
+     * Re-format array of suitable users with their carrier preference.
+     *
+     * @param array $userConfig pre ready user config
+     * @return array of suitable users with their carrier preference
+     */
+    protected function formatParsedUsersData(array $userConfig)
+    {
+        $result = array();
+        foreach ($userConfig as $carrierName => $carrierOptions) {
+            $carrierOptions = array_unique($carrierOptions);
+            foreach ($carrierOptions as $carrierOption) {
+                $result[] = array($carrierName, $carrierOption);
             }
         }
 
@@ -592,20 +663,58 @@ class SubscriptionsRegistry
      */
     protected function getGlobalEventConfig(EventInterface $event)
     {
-        $bean = \BeanFactory::newBean('NotificationCenterSubscriptions');
-        $query = new \SugarQuery();
-        $query->from($bean);
-        $query->where()->isNull('user_id');
-        $this->eventWhere($event, $query->where());
-
+        $list = $this->getGlobalEventList($event);
         $globalConfig = array();
-        foreach ($bean->fetchFromQuery($query) as $row) {
-            $globalConfig[$row->filter_name] = array(
-                'carrier_name' => $row->carrier_name,
-                'carrier_option' => $row->carrier_option
-            );
+
+        foreach ($list as $row) {
+            $filter = $row['filter_name'];
+            $type = $this->normalizeType($row['type']);
+            $carrier = trim($row['carrier_name']);
+
+            if (!array_key_exists($filter, $globalConfig)) {
+                $globalConfig[$filter] = array();
+            }
+            if (!array_key_exists($type, $globalConfig[$filter])) {
+                $globalConfig[$filter][$type] = array();
+            }
+
+            if (!array_key_exists($carrier, $globalConfig[$filter][$type])) {
+                $globalConfig[$filter][$type][$carrier] = array();
+            }
+
+            $globalConfig[$filter][$type][$carrier][] = $row['carrier_option'];
         }
+
         return $globalConfig;
+    }
+
+    /**
+     * Normalize type for ease use.
+     *
+     * @param string $type for normalization
+     * @return string normalized type
+     */
+    protected function normalizeType($type)
+    {
+        if ('bean' != $type) {
+            $type = 'main';
+        }
+        return $type;
+    }
+
+    /**
+     * Returns list of stored data for the event for next processing.
+     *
+     * @param EventInterface $event for filtering
+     * @return array list of raw data
+     * @throws \SugarQueryException
+     */
+    protected function getGlobalEventList(EventInterface $event)
+    {
+        $query = $this->getSugarQuery(null);
+        $this->eventWhere($event, $query->where());
+        $list = $query->execute();
+        return $list;
     }
 
     /**
@@ -620,14 +729,46 @@ class SubscriptionsRegistry
         \SugarQuery_Builder_Where $where,
         SubscriptionFilterInterface $subscriptionFilter = null
     ) {
-        $emitterType = $event instanceof ApplicationEvent ? 'application' : 'module';
-        $emitterModuleType = $event instanceof BeanEvent ? $event->getModuleName() : '';
-        $where->equals('notification_subscription.event_name', (string)$event)
-            ->equals('notification_subscription.type', $emitterType)
-            ->equals('notification_subscription.emitter_module_name', $emitterModuleType);
+        $where->equals('notification_subscription.event_name', (string)$event);
+        if ($event instanceof ApplicationEvent) {
+            $where->equals('notification_subscription.type', 'application')
+                ->equals('notification_subscription.emitter_module_name', '');
+        } elseif ($event instanceof ModuleEventInterface) {
+            if ($event instanceof BeanEvent) {
+                $emitterCondition = $where->queryOr();
+                $emitterCondition->queryAnd()->equals('notification_subscription.type', 'bean')
+                    ->equals('notification_subscription.emitter_module_name', '');
+                $emitterCondition->queryAnd()->equals('notification_subscription.type', 'module')
+                    ->equals('notification_subscription.emitter_module_name', $event->getModuleName());
+            } else {
+                $where->equals('notification_subscription.type', 'module')
+                    ->equals('notification_subscription.emitter_module_name', $event->getModuleName());
+            }
+        }
+
         if (!is_null($subscriptionFilter)) {
             $where->equals('notification_subscription.filter_name', (string)$subscriptionFilter);
         }
+    }
+
+    /**
+     * Return sorted list of subscription filters for event
+     *
+     * @param EventInterface $event for venerating list
+     * @return SubscriptionFilterInterface[] sorted list of subscription filters for event
+     */
+    protected function getUsersFilters(EventInterface $event)
+    {
+        $sfList = $this->getSupportedFilters($event);
+        usort($sfList, function (SubscriptionFilterInterface $a, SubscriptionFilterInterface $b) {
+            $a = $a->getOrder();
+            $b = $b->getOrder();
+            if ($a == $b) {
+                return 0;
+            }
+            return ($a < $b) ? 1 : -1;
+        });
+        return $sfList;
     }
 
     /**
@@ -636,7 +777,7 @@ class SubscriptionsRegistry
      * @param EventInterface $event for checking
      * @return SubscriptionFilterInterface[] list of Subscription Filter which support the event
      */
-    private function getSupportedFilters(EventInterface $event)
+    protected function getSupportedFilters(EventInterface $event)
     {
         $sfList = $this->getSubscriptionFilters();
         $supported = array();
@@ -646,5 +787,47 @@ class SubscriptionsRegistry
             }
         }
         return $supported;
+    }
+
+    /**
+     * Returns list of stored user config for the event for next processing.
+     *
+     * @param EventInterface $event for filtering users config
+     * @param SubscriptionFilterInterface $subscriptionFilter for filtering users config
+     * @return array list of raw data
+     */
+    protected function getUsersList(EventInterface $event, SubscriptionFilterInterface $subscriptionFilter)
+    {
+        $query = $this->getBaseSugarQuery();
+        $userAlias = $subscriptionFilter->filterQuery($event, $query);
+
+        $joinOptions = array(
+            'team_security' => false,
+            'joinType' => 'LEFT'
+        );
+        $join = $query->joinTable('notification_subscription', $joinOptions);
+        $joinOn = $join->on()->equalsField('notification_subscription.user_id', "{$userAlias}.id")
+            ->equals('notification_subscription.deleted', '0');
+        $this->eventWhere($event, $joinOn, $subscriptionFilter);
+
+        $query->select(array(
+            array("{$userAlias}.id", 'user_id'),
+            'notification_subscription.carrier_name',
+            'notification_subscription.carrier_option',
+            'notification_subscription.type',
+        ));
+
+        $list = $query->execute();
+        return $list;
+    }
+
+    /**
+     * Return base SugarQuery instance.
+     *
+     * @return \SugarQuery sugar query instance.
+     */
+    protected function getBaseSugarQuery()
+    {
+        return new \SugarQuery();
     }
 }

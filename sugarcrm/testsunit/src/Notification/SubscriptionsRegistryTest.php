@@ -13,9 +13,11 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Notification;
 
 use Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry;
+use Sugarcrm\Sugarcrm\Notification\ApplicationEmitter\Event as ApplicationEvent;
 
 require_once 'tests/SugarTestReflection.php';
 require_once 'modules/Users/User.php';
+require_once 'modules/Accounts/Emitter.php';
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry
@@ -27,6 +29,16 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
     const NS_EMITTER_REGISTRY = 'Sugarcrm\\Sugarcrm\\Notification\\EmitterRegistry';
 
     const NS_SF_REGISTRY = 'Sugarcrm\\Sugarcrm\\Notification\\SubscriptionFilter\\SubscriptionFilterRegistry';
+
+    const NS_SF_ASSIGNED_TO_ME = 'Sugarcrm\\Sugarcrm\\Notification\\SubscriptionFilter\\AssignedToMe';
+
+    const NS_SF_TEAM = 'Sugarcrm\\Sugarcrm\\Notification\\SubscriptionFilter\\Team';
+
+    const NS_EVENT_APPLICATION = 'Sugarcrm\\Sugarcrm\\Notification\\ApplicationEmitter\\Event';
+
+    const NS_EVENT_BEAN = 'Sugarcrm\\Sugarcrm\\Notification\\BeanEmitter\\Event';
+
+    const NS_EVENT_MODULE = 'Sugarcrm\\Sugarcrm\\Notification\\ModuleEventInterface';
 
     public function decoderEmitterVariants()
     {
@@ -252,7 +264,7 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::diffBranch
+     * @covers ::getDiff
      */
     public function testDiffBranch()
     {
@@ -283,7 +295,7 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
 
         $sr = new SubscriptionsRegistry();
 
-        $diff = \SugarTestReflection::callProtectedMethod($sr, 'diffBranch', array($beans, array_values($carriers)));
+        $diff = \SugarTestReflection::callProtectedMethod($sr, 'getDiff', array($beans, array_values($carriers)));
 
         $this->assertArrayHasKey('insert', $diff);
         $this->assertArrayHasKey('delete', $diff);
@@ -330,7 +342,7 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers getUserConfiguration
+     * @covers ::getUserConfiguration
      */
     public function testGetUserConfiguration()
     {
@@ -362,12 +374,6 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
                 'carrier_name' => 'cn1',
                 'carrier_option' => 'co1'
             ),
-            array(
-                'event_name' => 'event2',
-                'filter_name' => 'sf3',
-                'user_id' => $userId,
-                'carrier_name' => SubscriptionsRegistry::CARRIER_VALUE_DISABLED,
-            )
         );
 
         $beanList = array();
@@ -392,7 +398,6 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
                     ),
                     'event2' => array(
                         'sf1' => array(),
-                        'sf3' => array()
                     ),
                 )
         );
@@ -401,7 +406,6 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
         $expectConfig[$emitterName]['event1']['sf1'] = array(array('cn1', 'co1'));
         $expectConfig[$emitterName]['event1']['sf2'] = array(array('cn1', 'co1'));
         $expectConfig[$emitterName]['event2']['sf1'] = array(array('cn1', 'co1'));
-        $expectConfig[$emitterName]['event2']['sf3'] = SubscriptionsRegistry::CARRIER_VALUE_DISABLED;
 
         $subscriptionsRegistry = $this->getMock(self::NS_SUBSCRIPTIONS_REGISTRY, array(
             'getEmitter', 'getTree', 'getSugarQuery', 'getBeans', 'isValidBeanForTree', 'fillDefaultConfig'));
@@ -426,7 +430,7 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers getGlobalConfiguration
+     * @covers ::getGlobalConfiguration
      */
     public function testGetGlobalConfiguration()
     {
@@ -508,7 +512,8 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers setConfiguration
+     * @group ft1
+     * @covers ::setConfiguration
      */
     public function testSetConfiguration()
     {
@@ -522,9 +527,9 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
             'getSugarQuery',
             'getBeans',
             'pathToBranch',
-            'moveBeans',
-            'diffBranch',
-            'mergeDiff',
+            'reduceBeans',
+            'getDiff',
+            'processDiff',
             'deleteConfigBeans'
         ));
 
@@ -575,7 +580,6 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
             ),
             'emitter2' => array(
                 'event2' => array(
-                    'sf2' => array(),
                     'sf3' => array()
                 ),
             ),
@@ -585,53 +589,47 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
 
         $config = $tree;
         $config['emitter1']['event1']['sf1'] = array(array('cn1', 'co1'), array('cn2', 'co2'));
-        $config['emitter2']['event2']['sf2'] = SubscriptionsRegistry::CARRIER_VALUE_DISABLED;
         $config['emitter2']['event2']['sf3'] = SubscriptionsRegistry::CARRIER_VALUE_DEFAULT;
 
-        $subscriptionsRegistry->expects($this->exactly(3))->method('pathToBranch')
+        $subscriptionsRegistry->expects($this->exactly(2))->method('pathToBranch')
             ->with(
                 $this->logicalOr($this->equalTo('emitter1'), $this->equalTo('emitter2')),
                 $this->logicalOr($this->equalTo('event1'), $this->equalTo('event2')),
-                $this->logicalOr($this->equalTo('sf1'), $this->equalTo('sf2'), $this->equalTo('sf3'))
-            )->will($this->onConsecutiveCalls(array(0 => 'path1'), array(0 => 'path2'), array(0 => 'path3')));
+                $this->logicalOr($this->equalTo('sf1'), $this->equalTo('sf3'))
+            )->will($this->onConsecutiveCalls(array(0 => 'path1'), array(0 => 'path2')));
 
-        $subscriptionsRegistry->expects($this->exactly(3))->method('moveBeans')
+        $subscriptionsRegistry->expects($this->exactly(2))->method('reduceBeans')
             ->with(
                 $this->equalTo($beanList),
                 $this->logicalOr(
                     $this->equalTo(array(0 => 'path1')),
-                    $this->equalTo(array(0 => 'path2')),
-                    $this->equalTo(array(0 => 'path3'))
+                    $this->equalTo(array(0 => 'path2'))
                 )
-            )->will($this->onConsecutiveCalls('movedBeans1', 'movedBeans2', 'movedBeans3'));
+            )->will($this->onConsecutiveCalls('movedBeans1', 'movedBeans2'));
 
-        $subscriptionsRegistry->expects($this->exactly(3))->method('diffBranch')
+        $subscriptionsRegistry->expects($this->exactly(2))->method('getDiff')
             ->with(
                 $this->logicalOr(
                     $this->equalTo('movedBeans1'),
-                    $this->equalTo('movedBeans2'),
-                    $this->equalTo('movedBeans3')
+                    $this->equalTo('movedBeans2')
                 ),
                 $this->logicalOr(
                     $this->equalTo(array(array('cn1'), array('cn2'))),
-                    $this->equalTo(array()),
-                    $this->equalTo(array(array(SubscriptionsRegistry::CARRIER_VALUE_DISABLED)))
+                    $this->equalTo(array())
                 )
             )->will($this->onConsecutiveCalls(
-                array('delete' => 'delete1', 'insert' => 'insert1'),
-                array('delete' => 'delete2', 'insert' => 'insert2'),
-                array('delete' => 'delete3', 'insert' => 'insert3')
+                array('delete' => array('delete1'), 'insert' => array('insert1')),
+                array('delete' => array('delete2'), 'insert' => array('insert2'))
             ));
 
-        $subscriptionsRegistry->expects($this->exactly(3))->method('mergeDiff')
+        $subscriptionsRegistry->expects($this->exactly(2))->method('processDiff')
             ->with(
                 $this->logicalOr(
                     $this->equalTo(array(0 => 'path1', 'user_id' => $userId)),
-                    $this->equalTo(array(0 => 'path2', 'user_id' => $userId)),
-                    $this->equalTo(array(0 => 'path3', 'user_id' => $userId))
+                    $this->equalTo(array(0 => 'path2', 'user_id' => $userId))
                 ),
-                $this->logicalOr($this->equalTo('delete1'), $this->equalTo('delete2'), $this->equalTo('delete3')),
-                $this->logicalOr($this->equalTo('insert1'), $this->equalTo('insert2'), $this->equalTo('insert3'))
+                $this->logicalOr($this->equalTo(array('delete1')), $this->equalTo(array('delete2'))),
+                $this->logicalOr($this->equalTo(array('insert1')), $this->equalTo(array('insert2')))
             );
 
         $subscriptionsRegistry->expects($this->once())->method('deleteConfigBeans')->with($this->equalTo($beanList));
@@ -644,7 +642,7 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers pathToBranch
+     * @covers ::pathToBranch
      */
     public function testPathToBranch()
     {
@@ -765,4 +763,811 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
         $subscriptionsRegistry->setUserConfiguration($userId, $config);
     }
 
+    /**
+     * @covers ::getUsers
+     */
+    public function testGetUsers()
+    {
+        $event = new ApplicationEvent('ApplicationEvent');
+        $userConfig = array(
+            'Team-Name' => array(
+                'userId1' => array(
+                    'Team-Name' => array('userId1-Filter-Team')
+                ),
+                'userId2' => array(
+                    'Team-Name' => array('userId2-Filter-Team')
+                )
+            ),
+            'Assign' => array(
+                'userId2' => array(
+                    'Assign' => array('userId2-Filter-AssignedToMe-Name')
+                ),
+                'userId3' => array(
+                    'Assign' => array('userId3-Filter-AssignedToMe-Name')
+                ),
+            )
+        );
+
+        $globalConfig = array(
+            'Assign' => array('Global-Filter-AssignedToMe-Name'),
+        );
+
+        $expectConfig = array(
+            'userId1' => array(
+                'filter' => 'Team-Name',
+                'config' => 'User1ConfigTeam'
+            ),
+            'userId2' => array(
+                'filter' => 'Assign',
+                'config' => 'User2Assigned'
+            ),
+            'userId3' => array(
+                'filter' => 'Assign',
+                'config' => 'User2Assigned'
+            )
+        );
+
+        $sfAssignedToMe = $this->getMock(self::NS_SF_ASSIGNED_TO_ME, array('__toString'));
+        $sfAssignedToMe->expects($this->once())->method('__toString')
+            ->willReturn('Assign');
+        $sfTeam = $this->getMock(self::NS_SF_TEAM, array('__toString'));
+        $sfTeam->expects($this->atLeastOnce())->method('__toString')
+            ->willReturn('Team-Name');
+        $usersFilters = array($sfTeam, $sfAssignedToMe);
+
+        $subscriptionsRegistry = $this->getMock(
+            self::NS_SUBSCRIPTIONS_REGISTRY,
+            array('getGlobalEventConfig', 'getUsersFilters', 'getUsersEventConfig', 'calculateUserConfig')
+        );
+
+        $subscriptionsRegistry->expects($this->once())->method('getGlobalEventConfig')
+            ->with($this->equalTo($event))
+            ->willReturn($globalConfig);
+
+        $subscriptionsRegistry->expects($this->once())->method('getUsersFilters')
+            ->with($this->equalTo($event))
+            ->willReturn($usersFilters);
+
+        $subscriptionsRegistry->expects($this->exactly(count($usersFilters)))->method('getUsersEventConfig')
+            ->with(
+                $this->equalTo($event),
+                $this->logicalOr($this->equalTo($sfTeam), $this->equalTo($sfAssignedToMe))
+            )->will($this->returnValueMap(array(
+                array($event, $sfTeam, $userConfig['Team-Name']),
+                array($event, $sfAssignedToMe, $userConfig['Assign']),
+            )));
+
+        $totalFoundUsers = count($userConfig['Team-Name']) + count($userConfig['Assign']);
+        $subscriptionsRegistry->expects($this->exactly($totalFoundUsers))->method('calculateUserConfig')
+            ->with(
+                $this->logicalOr(
+                    $this->equalTo($userConfig['Team-Name']['userId1']['Team-Name']),
+                    $this->equalTo($userConfig['Team-Name']['userId2']['Team-Name']),
+                    $this->equalTo($userConfig['Assign']['userId2']['Assign']),
+                    $this->equalTo($userConfig['Assign']['userId3']['Assign'])
+                ),
+                $this->logicalOr(
+                    $this->equalTo(array()),
+                    $this->equalTo($globalConfig['Assign'])
+                )
+            )->will($this->returnValueMap(array(
+                array($userConfig['Team-Name']['userId1']['Team-Name'], array(), 'User1ConfigTeam'),
+                array($userConfig['Team-Name']['userId2']['Team-Name'], array(), 'User2ConfigTeam'),
+                array($userConfig['Assign']['userId2']['Assign'], $globalConfig['Assign'], 'User2Assigned'),
+                array($userConfig['Assign']['userId3']['Assign'], $globalConfig['Assign'], 'User2Assigned')
+            )));
+
+        $res = $subscriptionsRegistry->getUsers($event);
+
+        $this->assertEquals($expectConfig, $res);
+    }
+
+    /**
+     * @covers ::getGlobalEventList
+     */
+    public function testGetGlobalEventList()
+    {
+        $expectedList = array('row1', 'row2', 'row3', 'row4');
+        $event = new ApplicationEvent('ApplicationEvent');
+
+        $where = $this->getMockBuilder('SugarQuery_Builder_Where')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $sugarQuery = $this->getMockBuilder('SugarQuery')
+            ->setMethods(array('where', 'execute'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $sugarQuery->expects($this->once())->method('execute')
+            ->willReturn($expectedList);
+
+        $sugarQuery->expects($this->once())->method('where')
+            ->willReturn($where);
+
+        $subscriptionsRegistry = $this->getMock(self::NS_SUBSCRIPTIONS_REGISTRY, array('getSugarQuery', 'eventWhere'));
+        $subscriptionsRegistry->expects($this->once())->method('getSugarQuery')
+            ->with($this->isNull())
+            ->willReturn($sugarQuery);
+        $subscriptionsRegistry->expects($this->once())->method('eventWhere')
+            ->with($this->equalTo($event));
+
+        $res = \SugarTestReflection::callProtectedMethod($subscriptionsRegistry, 'getGlobalEventList', array($event));
+
+        $this->assertEquals($expectedList, $res);
+    }
+
+    public function calculationConfigVersions()
+    {
+        $userData1 = array(
+            'main' => array('CarrierUserMain' => array('Opt1')),
+            'bean' => array('CarrierUserBean' => array('Opt2')),
+        );
+        $globalData1 = array(
+            'main' => array('CarrierGlobalMain' => array('Opt1')),
+            'bean' => array('CarrierGlobalBean' => array('Opt2')),
+        );
+        $expects1 = $userData1['main'];
+
+        $userData2 = array(
+            'bean' => array('CarrierUserBean' => array('Opt2')),
+        );
+        $globalData2 = array(
+            'main' => array('CarrierGlobalMain' => array('Opt1')),
+            'bean' => array('CarrierGlobalBean' => array('Opt2')),
+        );
+        $expects2 = $userData2['bean'];
+
+        $userData3 = array();
+        $globalData3 = array(
+            'main' => array('CarrierGlobalMain' => array('Opt1')),
+            'bean' => array('CarrierGlobalBean' => array('Opt2')),
+        );
+        $expects3 = $globalData3['main'];
+
+        $userData4 = array();
+        $globalData4 = array(
+            'bean' => array('CarrierGlobalBean' => array('Opt2')),
+        );
+        $expects4 = $globalData4['bean'];
+
+        $userData5 = array();
+        $globalData5 = array();
+        $expects5 = array();
+
+        $userData6 = array(
+            'main' => array('CarrierUserMain' => array('Opt1'), '' => array()),
+            'bean' => array('CarrierUserBean' => array('Opt2')),
+        );
+        $globalData6 = array(
+            'main' => array('CarrierGlobalMain' => array('Opt1')),
+            'bean' => array('CarrierGlobalBean' => array('Opt2')),
+        );
+        $expects6 = array();
+
+        return array(
+            array($userData1, $globalData1, $expects1),
+            array($userData2, $globalData2, $expects2),
+            array($userData3, $globalData3, $expects3),
+            array($userData4, $globalData4, $expects4),
+            array($userData5, $globalData5, $expects5),
+            array($userData6, $globalData6, $expects6),
+        );
+    }
+
+    /**
+     * @dataProvider calculationConfigVersions
+     * @covers ::calculateUserConfig
+     */
+    public function testCalculateUserConfig($userData, $globalData, $expects)
+    {
+        $subscriptionsRegistry = $this->getMock(self::NS_SUBSCRIPTIONS_REGISTRY, array('formatParsedUsersData'));
+        $subscriptionsRegistry->expects($this->any())->method('formatParsedUsersData')
+            ->will($this->returnArgument(0));
+
+        $res = \SugarTestReflection::callProtectedMethod(
+            $subscriptionsRegistry,
+            'calculateUserConfig',
+            array($userData, $globalData)
+        );
+
+        $this->assertEquals($res, $expects);
+    }
+
+    public function typesForNormalize()
+    {
+        return array(
+            array('application', 'main'),
+            array('module', 'main'),
+            array('bean', 'bean'),
+        );
+    }
+
+    /**
+     * @dataProvider typesForNormalize
+     * @covers ::normalizeType
+     */
+    public function testNormalizeType($arg, $expect)
+    {
+        $subscriptionsRegistry = new SubscriptionsRegistry();
+
+        $res = \SugarTestReflection::callProtectedMethod($subscriptionsRegistry, 'normalizeType', array($arg));
+
+        $this->assertEquals($res, $expect);
+    }
+
+    /**
+     * @covers ::getGlobalEventConfig
+     */
+    public function testGetGlobalEventConfig()
+    {
+        $list = array(
+            array(
+                'type' => 'bean',
+                'filter_name' => 'Team',
+                'carrier_name' => 'carrier1',
+                'carrier_option' => '',
+            ),
+            array(
+                'type' => 'bean',
+                'filter_name' => 'Team',
+                'carrier_name' => 'carrier2',
+                'carrier_option' => '',
+            ),
+            array(
+                'type' => 'module',
+                'filter_name' => 'Team',
+                'carrier_name' => 'carrier1',
+                'carrier_option' => '',
+            ),
+        );
+        $expects = array(
+            'Team' => array(
+                'bean' => array(
+                    'carrier1' => array(''),
+                    'carrier2' => array(''),
+                ),
+                'main' => array(
+                    'carrier1' => array(''),
+                )
+            )
+        );
+
+        $typeMap = array(
+            array('bean', 'bean'),
+            array('module', 'main'),
+        );
+
+        $event = new ApplicationEvent('AppEvent');
+        $subscriptionReg = $this->getMock(
+            self::NS_SUBSCRIPTIONS_REGISTRY,
+            array('getGlobalEventList', 'normalizeType')
+        );
+        $subscriptionReg->expects($this->once())->method('getGlobalEventList')
+            ->with($this->equalTo($event))
+            ->willReturn($list);
+
+        $subscriptionReg->expects($this->any())->method('normalizeType')
+            ->with($this->logicalOr($this->equalTo('bean'), $this->equalTo('module')))
+            ->will($this->returnValueMap($typeMap));
+
+        $res = \SugarTestReflection::callProtectedMethod($subscriptionReg, 'getGlobalEventConfig', array($event));
+
+        $this->assertEquals($expects, $res);
+    }
+
+    /**
+     * @covers ::getUsersFilters
+     */
+    public function testGetUsersFilters()
+    {
+        $first = $this->getMock(self::NS_SF_ASSIGNED_TO_ME, array('getOrder'));
+        $first->expects($this->atLeastOnce())->method('getOrder')
+            ->willReturn(100);
+        $second = $this->getMock(self::NS_SF_ASSIGNED_TO_ME, array('getOrder'));
+        $second->expects($this->atLeastOnce())->method('getOrder')
+            ->willReturn(200);
+        $third = $this->getMock(self::NS_SF_ASSIGNED_TO_ME, array('getOrder'));
+        $third->expects($this->atLeastOnce())->method('getOrder')
+            ->willReturn(300);
+        $fourth = $this->getMock(self::NS_SF_ASSIGNED_TO_ME, array('getOrder'));
+        $fourth->expects($this->atLeastOnce())->method('getOrder')
+            ->willReturn(400);
+
+        $event = new ApplicationEvent('AppEvent');
+
+        $subscriptionReg = $this->getMock(self::NS_SUBSCRIPTIONS_REGISTRY, array('getSupportedFilters'));
+
+        $subscriptionReg->expects($this->atLeastOnce())->method('getSupportedFilters')
+            ->with($this->equalTo($event))
+            ->willReturn(array($fourth, $first, $third, $second));
+
+
+        $sortedList = \SugarTestReflection::callProtectedMethod($subscriptionReg, 'getUsersFilters', array($event));
+
+        $this->assertEquals(array($first, $second, $third, $fourth), $sortedList);
+    }
+
+    /**
+     * @covers ::getUsersEventConfig
+     */
+    public function testGetUsersEventConfig()
+    {
+        $filterName = 'AssignedToMe';
+        $list = array(
+            array(
+                'user_id' => 'userId1',
+                'type' => 'bean',
+                'filter_name' => $filterName,
+                'carrier_name' => 'carrier1',
+                'carrier_option' => 'u1c1k1',
+            ),
+            array(
+                'user_id' => 'userId1',
+                'type' => 'bean',
+                'filter_name' => $filterName,
+                'carrier_name' => 'carrier1',
+                'carrier_option' => 'u1c1k2',
+            ),
+            array(
+                'user_id' => 'userId1',
+                'type' => 'bean',
+                'filter_name' => $filterName,
+                'carrier_name' => 'carrier2',
+                'carrier_option' => 'u1c2k1',
+            ),
+            array(
+                'user_id' => 'userId1',
+                'type' => 'module',
+                'filter_name' => $filterName,
+                'carrier_name' => 'carrier1',
+                'carrier_option' => 'u1c1k1',
+            ),
+            array(
+                'user_id' => 'userId2',
+                'type' => 'bean',
+                'filter_name' => $filterName,
+                'carrier_name' => 'carrier1',
+                'carrier_option' => 'u2c1k1',
+            ),
+            array(
+                'user_id' => 'userId2',
+                'type' => 'bean',
+                'filter_name' => $filterName,
+                'carrier_name' => ' ',
+                'carrier_option' => 'empty',
+            ),
+        );
+
+        $expects = array(
+            'userId1' => array(
+                $filterName => array(
+                    'bean' => array(
+                        'carrier1' => array('u1c1k1', 'u1c1k2'),
+                        'carrier2' => array('u1c2k1')
+                    ),
+                    'main' => array(
+                        'carrier1' => array('u1c1k1')
+                    ),
+                ),
+            ),
+            'userId2' => array(
+                $filterName => array(
+                    'bean' => array(
+                        'carrier1' => array('u2c1k1'),
+                        '' => array('empty')
+                    ),
+                )
+            )
+        );
+
+        $typeMap = array(
+            array('bean', 'bean'),
+            array('module', 'main'),
+        );
+
+        $event = new ApplicationEvent('AppEvent');
+
+        $sf = $this->getMock(self::NS_SF_ASSIGNED_TO_ME, array('__toString'));
+        $sf->expects($this->atLeastOnce())->method('__toString')
+            ->willReturn($filterName);
+
+        $subscriptionReg = $this->getMock(
+            self::NS_SUBSCRIPTIONS_REGISTRY,
+            array('getUsersList', 'normalizeType')
+        );
+        $subscriptionReg->expects($this->once())->method('getUsersList')
+            ->with($this->equalTo($event))
+            ->willReturn($list);
+
+        $subscriptionReg->expects($this->any())->method('normalizeType')
+            ->with($this->logicalOr($this->equalTo('bean'), $this->equalTo('module')))
+            ->will($this->returnValueMap($typeMap));
+
+        $res = \SugarTestReflection::callProtectedMethod($subscriptionReg, 'getUsersEventConfig', array($event, $sf));
+
+        $this->assertEquals($expects, $res);
+    }
+
+    /**
+     * @covers ::eventWhere
+     */
+    public function testEventWhere4ApplicationEvent()
+    {
+        $eventName = 'EventName1';
+
+        $event = $this->getMock(self::NS_EVENT_APPLICATION, array('__toString'), array($eventName));
+        $event->expects($this->atLeastOnce())->method('__toString')
+            ->willReturn($eventName);
+
+        $where = $this->getMockBuilder('SugarQuery_Builder_Where')
+            ->setMethods(array('equals'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $where->expects($this->exactly(3))->method('equals')
+            ->with(
+                $this->logicalOr(
+                    $this->equalTo('notification_subscription.type'),
+                    $this->equalTo('notification_subscription.emitter_module_name'),
+                    $this->equalTo('notification_subscription.event_name')
+                ),
+                $this->logicalOr(
+                    $this->equalTo('application'),
+                    $this->equalTo(''),
+                    $this->equalTo($eventName)
+                )
+            )
+            ->will($this->returnSelf());
+
+        $subscriptionReg = new SubscriptionsRegistry;
+        \SugarTestReflection::callProtectedMethod($subscriptionReg, 'eventWhere', array($event, $where));
+
+    }
+
+    /**
+     * @covers ::eventWhere
+     */
+    public function testEventWhere4ModuleEvent()
+    {
+        $eventName = 'EventName2';
+        $moduleName = 'Module1';
+
+        $event = $this->getMock(self::NS_EVENT_MODULE, array('__toString', 'getModuleName'), array($eventName));
+        $event->expects($this->atLeastOnce())->method('__toString')
+            ->willReturn($eventName);
+        $event->expects($this->atLeastOnce())->method('getModuleName')
+            ->willReturn($moduleName);
+
+        $where = $this->getMockBuilder('SugarQuery_Builder_Where')
+            ->setMethods(array('equals'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $where->expects($this->exactly(3))->method('equals')
+            ->with(
+                $this->logicalOr(
+                    $this->equalTo('notification_subscription.type'),
+                    $this->equalTo('notification_subscription.emitter_module_name'),
+                    $this->equalTo('notification_subscription.event_name')
+                ),
+                $this->logicalOr(
+                    $this->equalTo('module'),
+                    $this->equalTo($moduleName),
+                    $this->equalTo($eventName)
+                )
+            )
+            ->will($this->returnSelf());
+
+        $subscriptionReg = new SubscriptionsRegistry;
+        \SugarTestReflection::callProtectedMethod($subscriptionReg, 'eventWhere', array($event, $where));
+    }
+
+    /**
+     * @covers ::eventWhere
+     */
+    public function testEventWhere4BeanEvent()
+    {
+        $eventName = 'EventName2';
+        $moduleName = 'Module1';
+
+        $event = $this->getMock(self::NS_EVENT_BEAN, array('__toString', 'getModuleName'), array($eventName));
+        $event->expects($this->atLeastOnce())->method('__toString')
+            ->willReturn($eventName);
+        $event->expects($this->atLeastOnce())->method('getModuleName')
+            ->willReturn($moduleName);
+
+        $whereAnd = $this->getMockBuilder('SugarQuery_Builder_Andwhere')
+            ->setMethods(array('equals'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $whereAnd->expects($this->exactly(4))->method('equals')
+            ->with(
+                $this->logicalOr(
+                    $this->equalTo('notification_subscription.type'),
+                    $this->equalTo('notification_subscription.emitter_module_name')
+                ),
+                $this->logicalOr(
+                    $this->equalTo('module'),
+                    $this->equalTo($moduleName),
+                    $this->equalTo('bean'),
+                    $this->equalTo('')
+                )
+            )
+            ->will($this->returnSelf());
+
+        $whereOr = $this->getMockBuilder('SugarQuery_Builder_Orwhere')
+            ->setMethods(array('queryAnd'))
+            ->disableOriginalConstructor()
+            ->getMock();
+        $whereOr->expects($this->exactly(2))->method('queryAnd')->willReturn($whereAnd);
+
+        $where = $this->getMockBuilder('SugarQuery_Builder_Where')
+            ->setMethods(array('queryOr', 'equals'))
+            ->disableOriginalConstructor()
+            ->getMock();
+        $where->expects($this->once())->method('equals')
+            ->with($this->equalTo('notification_subscription.event_name'), $this->equalTo($eventName));
+
+        $where->expects($this->once())->method('queryOr')->willReturn($whereOr);
+
+        $subscriptionReg = new SubscriptionsRegistry;
+        \SugarTestReflection::callProtectedMethod($subscriptionReg, 'eventWhere', array($event, $where));
+    }
+
+    /**
+     * @covers ::getSupportedFilters
+     */
+    public function testGetSupportedFilters()
+    {
+        $event = new ApplicationEvent('AppEvent');
+
+        $sfSupport1 = $this->getMock(self::NS_SF_ASSIGNED_TO_ME, array('supports'));
+        $sfSupport1->expects($this->once())->method('supports')
+            ->with($this->equalTo($event))
+            ->willReturn(true);
+
+        $sfSupport2 = $this->getMock(self::NS_SF_ASSIGNED_TO_ME, array('supports'));
+        $sfSupport2->expects($this->once())->method('supports')
+            ->with($this->equalTo($event))
+            ->willReturn(true);
+
+        $sfUnSupport1 = $this->getMock(self::NS_SF_ASSIGNED_TO_ME, array('supports'));
+        $sfUnSupport1->expects($this->once())->method('supports')
+            ->with($this->equalTo($event))
+            ->willReturn(false);
+
+        $sfUnSupport2 = $this->getMock(self::NS_SF_ASSIGNED_TO_ME, array('supports'));
+        $sfUnSupport2->expects($this->once())->method('supports')
+            ->with($this->equalTo($event))
+            ->willReturn(false);
+
+        $subscriptionReg = $this->getMock(
+            self::NS_SUBSCRIPTIONS_REGISTRY,
+            array('getSubscriptionFilters')
+        );
+        $subscriptionReg->expects($this->once())->method('getSubscriptionFilters')
+            ->willReturn(array($sfSupport1, $sfUnSupport1, $sfSupport2, $sfUnSupport2));
+
+        $res = \SugarTestReflection::callProtectedMethod($subscriptionReg, 'getSupportedFilters', array($event));
+
+        $this->assertContains($sfSupport1, $res);
+        $this->assertContains($sfSupport2, $res);
+        $this->assertNotContains($sfUnSupport1, $res);
+        $this->assertNotContains($sfUnSupport2, $res);
+    }
+
+    /**
+     * @covers ::formatParsedUsersData
+     */
+    public function testFormatParsedUsersData()
+    {
+        $userConfig = array(
+            'carrier1' => array('option1', 'option1', 'option2'),
+            'carrier2' => array('option3')
+        );
+
+        $expects = array(
+            array('carrier2', 'option3'),
+            array('carrier1', 'option2'),
+            array('carrier1', 'option1'),
+        );
+
+        $subscriptionReg = new SubscriptionsRegistry();
+        $res = \SugarTestReflection::callProtectedMethod($subscriptionReg, 'formatParsedUsersData', array($userConfig));
+
+        $this->assertContains($expects[0], $res);
+        $this->assertContains($expects[1], $res);
+        $this->assertContains($expects[2], $res);
+    }
+
+    /**
+     * @covers ::getUsersList
+     */
+    public function testGetUsersList()
+    {
+        $userAlias = 'UserJoinAlias';
+
+        $event = new ApplicationEvent('someApplicationEvent');
+
+        $queryResult = array('expected', 'query', 'result');
+
+        $subscriptionFilter = $this->getMock(self::NS_SF_ASSIGNED_TO_ME);
+
+        $subscriptionReg = $this->getMock(self::NS_SUBSCRIPTIONS_REGISTRY, array('getBaseSugarQuery', 'eventWhere'));
+
+        $sugarQuery = $this->getMockBuilder('SugarQuery')
+            ->setMethods(array('joinTable', 'select', 'execute'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $joinWhere = $this->getMockBuilder('SugarQuery_Builder_Andwhere')
+            ->setMethods(array('equalsField', 'equals'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $join = $this->getMockBuilder('SugarQuery_Builder_Join')
+            ->setMethods(array('on'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $subscriptionReg->expects($this->atLeastOnce())->method('getBaseSugarQuery')
+            ->willReturn($sugarQuery);
+
+        $subscriptionReg->expects($this->atLeastOnce())->method('getBaseSugarQuery')
+            ->willReturn($sugarQuery);
+
+        $subscriptionReg->expects($this->once())->method('eventWhere')
+            ->with(
+                $this->equalTo($event),
+                $this->equalTo($joinWhere),
+                $this->equalTo($subscriptionFilter)
+            );
+
+        $subscriptionFilter->expects($this->once())->method('filterQuery')
+            ->with($this->equalTo($event), $this->equalTo($sugarQuery))
+            ->willReturn($userAlias);
+
+        $sugarQuery->expects($this->once())->method('joinTable')
+            ->with(
+                $this->equalTo('notification_subscription'),
+                $this->equalTo(array('team_security' => false, 'joinType' => 'LEFT'))
+            )->willReturn($join);
+        $sugarQuery->expects($this->once())->method('select')
+            ->with(
+                $this->logicalAnd(
+                    $this->contains(array("{$userAlias}.id", 'user_id')),
+                    $this->contains('notification_subscription.carrier_name'),
+                    $this->contains('notification_subscription.carrier_option'),
+                    $this->contains('notification_subscription.type')
+                )
+            );
+
+        $sugarQuery->expects($this->once())->method('execute')
+            ->willReturn($queryResult);
+
+        $join->expects($this->once())->method('on')
+            ->willReturn($joinWhere);
+
+        $joinWhere->expects($this->once())->method('equalsField')
+            ->with(
+                $this->equalTo('notification_subscription.user_id'),
+                $this->equalTo("{$userAlias}.id")
+            )->will($this->returnSelf());
+
+        $joinWhere->expects($this->once())->method('equals')
+            ->with(
+                $this->equalTo('notification_subscription.deleted'),
+                $this->equalTo('0')
+            )->will($this->returnSelf());
+
+        $listRes = \SugarTestReflection::callProtectedMethod(
+            $subscriptionReg,
+            'getUsersList',
+            array($event, $subscriptionFilter)
+        );
+
+        $this->assertEquals($queryResult, $listRes);
+    }
+
+    /**
+     * @covers ::getBeanEmitterTree
+     */
+    public function testGetBeanEmitterTree()
+    {
+        $tree = array(
+            'Accounts' => array(
+                'event1' => array(
+                    'Team' => array(),
+                    'AccountsLocalFilter' => array(),
+                ),
+                'event2' => array(
+                    'Team' => array(),
+                ),
+            ),
+            'Contacts' => array(
+                'event3' => array(
+                    'Team' => array(),
+                ),
+                'event2' => array(
+                    'AssignedToMe' => array(),
+                ),
+            ),
+        );
+
+        $expectEmitterTree = array(
+            'event2' => array(
+                'Team' => array(),
+                'AssignedToMe' => array(),
+            ),
+            'event3' => array(
+                'Team' => array(),
+            ),
+        );
+
+        $beanEvent = $this->getMock(self::NS_EVENT_BEAN, array('__toString', 'getModuleName'), array('beanEv'));
+
+        $moduleEvent = $this->getMock(
+            self::NS_EVENT_MODULE,
+            array('__toString', 'getModuleName'),
+            array('moduleEvent')
+        );
+
+        $contactEmitter = $this->getMock(
+            'AccountEmitter',
+            array('getEventStrings', 'getEventPrototypeByString'),
+            array(),
+            '',
+            false
+        );
+        $contactEmitter->expects($this->atLeastOnce())->method('getEventStrings')
+            ->willReturn(array('event2', 'event3'));
+
+        $mapContact = array(
+            array('event2', $beanEvent),
+            array('event3', $beanEvent),
+        );
+        $contactEmitter->expects($this->exactly(2))->method('getEventPrototypeByString')
+            ->will($this->returnValueMap($mapContact));
+
+        $accountEmitter = $this->getMock(
+            'AccountEmitter',
+            array('getEventStrings', 'getEventPrototypeByString'),
+            array(),
+            '',
+            false
+        );
+        $accountEmitter->expects($this->atLeastOnce())->method('getEventStrings')
+            ->willReturn(array('event1', 'event2'));
+        $mapAccount = array(
+            array('event1', $moduleEvent),
+            array('event2', $beanEvent),
+        );
+        $accountEmitter->expects($this->exactly(2))->method('getEventPrototypeByString')
+            ->will($this->returnValueMap($mapAccount));
+
+        $emitterRegistry = $this->getMock(self::NS_EMITTER_REGISTRY, array('getModuleEmitter', 'getModuleEmitters'));
+        $mapEmitters = array(
+            array('Accounts', $accountEmitter),
+            array('Contacts', $contactEmitter),
+        );
+        $emitterRegistry->expects($this->exactly(2))->method('getModuleEmitter')
+            ->will($this->returnValueMap($mapEmitters));
+        $emitterRegistry->expects($this->atLeastOnce())->method('getModuleEmitters')
+            ->willReturn(array('Accounts', 'Contacts'));
+
+        $subscriptionsRegistry = $this->getMock(self::NS_SUBSCRIPTIONS_REGISTRY, array('getEmitterRegistry'));
+
+        $subscriptionsRegistry->expects($this->atLeastOnce())->method('getEmitterRegistry')
+            ->willReturn($emitterRegistry);
+
+        $emitterTree = \SugarTestReflection::callProtectedMethod(
+            $subscriptionsRegistry,
+            'getBeanEmitterTree',
+            array($tree)
+        );
+
+        $this->assertEquals($expectEmitterTree, $emitterTree);
+    }
 }
