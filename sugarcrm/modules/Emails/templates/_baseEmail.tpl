@@ -29,6 +29,8 @@
 
     SUGAR.email2.detailView.qcmodules = {$qcModules};
 
+    SUGAR.email2.disableAccountEdit = {$disable_account_config};
+
     //SUGAR.email2.composeLayout.teamsSettingsFolder = {$teamsSettingsFolder};
 
     var isAdmin = {$is_admin};

@@ -85,6 +85,9 @@ class EmailManController extends SugarController
 
         $configurator->config['email_xss'] = base64_encode(serialize($security));
 
+        $configurator->config['disable_user_email_config'] = isset($_REQUEST['allow_user_email_accounts'])
+            && !$_REQUEST['allow_user_email_accounts'];
+
         ////	SECURITY
         ///////////////////////////////////////////////////////////////////////////////
 

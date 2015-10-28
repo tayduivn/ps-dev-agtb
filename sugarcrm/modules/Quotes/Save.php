@@ -22,10 +22,7 @@ if (!$focus->ACLAccess('Save')) {
     ACLController::displayNoAccess(true);
     sugar_cleanup(true);
 }
-if (empty($_REQUEST['relate_id'])) {
-    unset($_REQUEST['relate_id']);
-    unset($_REQUEST['relate_to']);
-}
+
 //we have to commit the teams here in order to obtain the team_set_id for use with products and product bundles.
 if (empty($focus->teams)) {
     $focus->load_relationship('teams');
@@ -102,6 +99,13 @@ if (isset($_REQUEST['total'])) {
 } else {
     $total_keys = array();
 }
+
+//unset relate fields for product bundles
+$tmpRelate_id = $_REQUEST['relate_id'];
+$tmpRelate_to = $_REQUEST['relate_to'];
+unset($_REQUEST['relate_id']);
+unset($_REQUEST['relate_to']);
+
 $product_bundels = array();
 for ($k = 0; $k < sizeof($total_keys); $k++) {
     $pb = BeanFactory::getBean('ProductBundles');
@@ -258,6 +262,10 @@ foreach ($product_bundels as $bundle_key) {
     }
     $pb->save();
 }
+
+//reset relate fields
+$_REQUEST['relate_id'] = $tmpRelate_id;
+$_REQUEST['relate_to'] = $tmpRelate_to;
 
 $focus->save($check_notify);
 

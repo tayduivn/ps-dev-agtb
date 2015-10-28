@@ -19,7 +19,7 @@ class SugarTestKBContentUtilities
 
     private function __construct() {}
 
-    public static function createBean($values = array())
+    public static function createBean($values = array(), $save = true)
     {
         $defaults = array(
             'name' => 'SugarKBContent' . time(),
@@ -28,10 +28,22 @@ class SugarTestKBContentUtilities
         $values = array_merge($defaults, $values);
         $bean = new KBContentMock();
         $bean->populateFromRow($values);
+        if ($save) {
+            self::saveBean($bean);
+        }
+        return $bean;
+    }
+
+    /**
+     * Separate save method.
+     *
+     * @param KBContentMock $bean
+     */
+    public static function saveBean(KBContentMock $bean)
+    {
         $bean->save();
         DBManagerFactory::getInstance()->commit();
         self::$_createdBeans[] = $bean;
-        return $bean;
     }
 
     public static function removeAllCreatedBeans()
@@ -42,8 +54,8 @@ class SugarTestKBContentUtilities
 
         foreach ($beans as $bean) {
         	$ids[] = $bean->id;
-        	$db->query('DELETE FROM kbdocuments WHERE id = ' . $db->quoted($bean->kbdocument_id));	
-        	$db->query('DELETE FROM kbarticles WHERE id = ' . $db->quoted($bean->kbarticle_id));	
+        	$db->query('DELETE FROM kbdocuments WHERE id = ' . $db->quoted($bean->kbdocument_id));
+        	$db->query('DELETE FROM kbarticles WHERE id = ' . $db->quoted($bean->kbarticle_id));
         }
 
         $conditions = implode(',', array_map(array($db, 'quoted'), $ids));

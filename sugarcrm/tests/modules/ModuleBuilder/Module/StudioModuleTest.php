@@ -9,7 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+/**
+ * @coversDefaultClass StudioModule
+ */
 require_once("modules/ModuleBuilder/Module/StudioModule.php");
 
 class StudioModuleTest extends Sugar_PHPUnit_Framework_TestCase
