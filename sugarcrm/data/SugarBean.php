@@ -7270,7 +7270,20 @@ class SugarBean
             if ($this->is_relate_field($field)) {
 
                 //check to see if the related field name is part of the passed in 'where' statement
-                if (!empty($where) && strpos($where,"$field ") !== false) {
+                $inWhere = (!empty($where) && strpos($where,"$field ") !== false);
+
+                //in some cases, the field is composed of table'.'field rname, check to see if this is one of those cases
+                if(!$inWhere &&
+                    !empty($fields[$field]) &&
+                    !empty($fields[$field]['table']) &&
+                    !empty($fields[$field]['rname']) &&
+                    strpos($where, $fields[$field]['table'].'.'.$fields[$field]['rname'])
+                ) {
+                    $inWhere = true;
+                }
+
+                //process if the field was found in the 'where' statement
+                if ($inWhere) {
 
                     //initialize fields to exclude array element if not set
                     $module_name_lower = strtolower($this->module_dir);
