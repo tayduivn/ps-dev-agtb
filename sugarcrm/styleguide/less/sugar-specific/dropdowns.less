@@ -225,6 +225,15 @@
   .dropdown {
     width: 123px;
     padding-left: 4px;
+    &.open {
+      .btn {
+        .box-shadow(none);
+        background-color: @gray;
+        > .fa {
+          color: @white;
+        }
+      }
+    }
   }
   .btn {
     margin: 0;
