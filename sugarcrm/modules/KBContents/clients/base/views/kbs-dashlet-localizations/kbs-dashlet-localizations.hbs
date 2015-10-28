@@ -19,7 +19,10 @@
                     <span class="pull-right label">{{getFieldValue this "language"}}</span>
                 </h4>
                 <div class="details">
-                    {{str "LBL_CREATED" this.module}} {{getFieldValue this "created_by_name"}} {{relativeTime attributes.date_entered class='date'}}
+                    {{str "LBL_CREATED" this.module}}
+                    <a href="#{{buildRoute module="Employees" id=(getFieldValue this "created_by")}}">
+                        {{getFieldValue this "created_by_name"}}</a>
+                    {{relativeTime attributes.date_entered class='date'}}
                 </div>
             </li>
         {{/each}}
