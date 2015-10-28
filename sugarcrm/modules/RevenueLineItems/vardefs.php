@@ -696,6 +696,7 @@ $dictionary['RevenueLineItem'] = array(
             'default' => 'exclude',
             'formula' => 'forecastCommitStage($probability)',
             'calculated' => true,
+            'duplicate_merge' => 'enabled',
             'related_fields' => array(
                 'probability'
             )

@@ -80,7 +80,11 @@ class OAuth2Api extends SugarApi
         if ( !$validVersion ) {
             throw new SugarApiExceptionClientOutdated();
         }
-
+        $platform = empty($args['platform']) ? 'base' : $args['platform'];
+        $allowedPlatforms = MetaDataManager::getPlatformList();
+        if (SugarConfig::getInstance()->get('disable_unknown_platforms') && !in_array($platform, $allowedPlatforms)) {
+            throw new SugarApiExceptionInvalidParameter("EXCEPTION_INVALID_PLATFORM");
+        }
         $oauth2Server = $this->getOAuth2Server($args);
         try {
             $GLOBALS['logic_hook']->call_custom_logic('Users', 'before_login');
@@ -122,11 +126,6 @@ class OAuth2Api extends SugarApi
                 $api->needLogin($e);
                 return;
             }
-        }
-
-        $platform = 'base';
-        if (!empty($args['platform'])) {
-            $platform = $args['platform'];
         }
 
         // Adding the setcookie() here instead of calling $api->setHeader() because

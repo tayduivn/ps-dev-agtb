@@ -86,7 +86,7 @@ SE.accounts = {
    					var is_group = oRecord.getData("is_group");
    					if(!is_group)
    					{
-    		  			if(oColumn.key == 'edit')
+    		  			if(oColumn.key == 'edit' && !SUGAR.email2.disableAccountEdit)
     		  			{
     		  				clckEvent = "SUGAR.email2.accounts.getIeAccount('"+ oRecord.getData('id') +"')";
     		  				imgSrc = 'index.php?entryPoint=getImage&amp;themeName=Sugar&amp;imageName='+oColumn.key+'_inline.gif';
@@ -191,7 +191,7 @@ SE.accounts = {
    					var type = oRecord.getData("type");
    					if(isEditable)
    					{
-    		  			if(oColumn.key == 'edit')
+    		  			if(oColumn.key == 'edit' && !SUGAR.email2.disableAccountEdit)
     		  			{
     		  				clckEvent = "SUGAR.email2.accounts.editOutbound('"+ oRecord.getData('id') +"')";
     		  				imgSrc = 'index.php?entryPoint=getImage&amp;themeName=Sugar&amp;imageName='+oColumn.key+'_inline.gif';

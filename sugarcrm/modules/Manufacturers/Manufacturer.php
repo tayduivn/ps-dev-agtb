@@ -168,6 +168,13 @@ class Manufacturer extends SugarBean {
         return false;
     }
 
+	/**
+	 *  override default behavior
+	 * {@inheritDoc}
+	 */
+	public function isACLRoleEditable(){
+		return false;
+	}
 }
 
 ?>

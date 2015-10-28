@@ -218,6 +218,7 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
             array(array("bool" => true), array("bool" => true), "True came out wrong"),
             array(array("bool" => false), array("bool" => false), "False came out wrong"),
             array(array("string" => 'Test'), array("string" => 'Test'), "String came out wrong"),
+            array(array("number" => 12345), array("number" => 12345), "Number came out wrong"),
             array(
                 array("html" => htmlentities("I'll \"walk\" the <b>dog</b> now")),
                 array("html" => "I'll \"walk\" the <b>dog</b> now"),

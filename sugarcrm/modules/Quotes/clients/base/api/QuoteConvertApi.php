@@ -103,7 +103,6 @@ class QuoteConvertApi extends SugarApi
         $opp->date_closed = $quote->date_quote_expected_closed;
         $opp->name = $quote->name;
         $opp->assigned_user_name = $quote->assigned_user_name;
-        $opp->lead_source = isset($app_list_strings['lead_source_dom']['Self Generated']) ? 'Self Generated' : null;
         $opp->opportunity_type = isset($app_list_strings['opportunity_type_dom']['New Business']) ?
             $app_list_strings['opportunity_type_dom']['New Business'] : null;
         $opp->team_id = $quote->team_id;

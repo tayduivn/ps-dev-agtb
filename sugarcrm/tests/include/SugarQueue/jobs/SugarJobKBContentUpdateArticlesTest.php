@@ -100,8 +100,8 @@ class SugarJobKBContentUpdateArticlesTest extends Sugar_PHPUnit_Framework_TestCa
 
         $this->approvedArticle->retrieve();
         $this->assertEquals(KBContent::ST_EXPIRED, $this->approvedArticle->status);
-        $this->assertEquals($td->nowDate(), $this->approvedArticle->exp_date);
-        $this->assertEquals($td->nowDate(), $this->approvedArticle->active_date);
+        $this->assertEquals($td->nowDbDate(), $this->approvedArticle->exp_date);
+        $this->assertEquals($td->nowDbDate(), $this->approvedArticle->active_date);
     }
 
     /**
