@@ -56,7 +56,6 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $GLOBALS['current_user']->setPreference('timef', 'H:i:s');
         $GLOBALS['current_user']->setPreference('timezone', 'America/Denver');
         $GLOBALS['timedate']->allow_cache = false;
-        sugar_cache_clear($GLOBALS['timedate']->get_date_time_format_cache_key(null));
     }
 
     public function tearDown()
