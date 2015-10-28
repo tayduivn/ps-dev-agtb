@@ -2420,13 +2420,13 @@ class Report
 
         $row['cells'] = $cells;
 
-        // calculate summary rows count as the product of all count fields in summary
+        // calculate summary rows count by returning the highest number of 'count' fields for the given db row
         $count = 1;
         $count_exists = false;
         foreach ($db_row as $count_column => $count_value)
         {
             if (substr($count_column, -10) == "__allcount" || $count_column == 'count') {
-                $count *= max($count_value, 1);
+                $count = max(array($count,$count_value, 1));
                 $count_exists = true;
             }
         }
