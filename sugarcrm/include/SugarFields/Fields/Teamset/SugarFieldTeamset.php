@@ -13,6 +13,9 @@
 
 require_once 'include/SugarFields/Fields/Base/SugarFieldBase.php';
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 /**
  * SugarFieldTeamset.php
  *
@@ -52,6 +55,11 @@ class SugarFieldTeamset extends SugarFieldBase {
 
 	var $add_user_private_team = true;
 
+    /**
+     * @var Request
+     */
+    protected $request;
+
 	/*
 	 * render
 	 *
@@ -70,7 +78,8 @@ class SugarFieldTeamset extends SugarFieldBase {
 
 
     function initialize() {
-    	$this->fields = $this->smarty->get_template_vars('fields');
+        $this->request = InputValidation::getService();
+        $this->fields = $this->smarty->get_template_vars('fields');
     	$team_name_vardef = $this->fields["{$this->field_name}"];
 		require_once('include/SugarFields/Fields/Teamset/ViewSugarFieldTeamsetCollection.php');
 		$this->view = new ViewSugarFieldTeamsetCollection();
@@ -84,12 +93,12 @@ class SugarFieldTeamset extends SugarFieldBase {
 		   $this->view->action_type = strtolower($formName);
 		}
 
-    	$this->view->module_dir = $_REQUEST['module'];
+        $this->view->module_dir = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
 
 		if($this->view->module_dir == 'Import'){
-		   $this->view->module_dir = $_REQUEST['import_module'];
+            $this->view->module_dir = $this->request->getValidInputRequest('import_module', 'Assert\Mvc\ModuleName');
 		} else if($this->view->action_type == 'quickcreate') {
-	       $this->view->module_dir = isset($_REQUEST['target_module']) ? $_REQUEST['target_module'] : $this->view->module_dir;
+            $this->view->module_dir = isset($_REQUEST['target_module']) ? $this->request->getValidInputRequest('target_module', 'Assert\Mvc\ModuleName') : $this->view->module_dir;
 		}
 
 		$this->view->form_name = $formName;
@@ -202,10 +211,10 @@ class SugarFieldTeamset extends SugarFieldBase {
 		$this->view = new ViewSugarFieldTeamsetCollection();
 		$this->view->displayParams = $this->params;
 		$this->view->vardef = $team_name_vardef;
-		$this->view->module_dir = $_REQUEST['module'];
+        $this->view->module_dir = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
 
 		if($this->view->module_dir == 'Import'){
-			$this->view->module_dir = $_REQUEST['import_module'];
+            $this->view->module_dir = $this->request->getValidInputRequest('import_module', 'Assert\Mvc\ModuleName');
 		}
 
 		$formName = $this->params['formName'];
@@ -268,7 +277,8 @@ class SugarFieldTeamset extends SugarFieldBase {
 		$displayParams['primaryChecked'] = true;
 		$this->view->displayParams = $displayParams;
 		$this->view->vardef = $fields['team_name'];
-		$this->view->module_dir = $_REQUEST['module'];
+        $this->request = InputValidation::getService();
+        $this->view->module_dir = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
         $this->view->action_type = strtolower($formName);
         $this->view->populate();
 		$this->view->setup();
@@ -331,7 +341,8 @@ class SugarFieldTeamset extends SugarFieldBase {
 		$displayParams['formName'] = 'MassUpdate';
 		$this->view->displayParams = $displayParams;
 		$this->view->vardef = $vardef;
-		$this->view->module_dir = $_REQUEST['module'];
+        $this->request = InputValidation::getService();
+        $this->view->module_dir = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
 
 		$this->view->team_set_id = !empty($GLOBALS['current_user']->team_set_id) ? $GLOBALS['current_user']->team_set_id : '';
 		$this->view->team_id =  !empty($GLOBALS['current_user']->team_id) ? $GLOBALS['current_user']->team_id : '';
