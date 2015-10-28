@@ -329,6 +329,23 @@
 
     /**
      * @inheritdoc
+     *
+     * Additional logic on switch visibility event.
+     */
+    visibilitySwitcher: function() {
+        var activeVisibility;
+        if (!this.isManager) {
+            return;
+        }
+        activeVisibility = this.getVisibility();
+        this.$el.find('[data-action=visibility-switcher]')
+            .attr('aria-pressed', function() {
+                return $(this).val() === activeVisibility;
+            });
+    },
+
+    /**
+     * @inheritdoc
      */
     _dispose: function() {
         this.off('data-changed');

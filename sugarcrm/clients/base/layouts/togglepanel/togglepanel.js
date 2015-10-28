@@ -72,7 +72,9 @@
         if (lastViewed) {
             this.showComponent(lastViewed, true);//SP-1766-don't double render!
             // Toggle the appropriate button and layout for initial render
-            this.$('[data-view="' + lastViewed + '"]').button('toggle');
+            this.$('[data-view="' + lastViewed + '"]')
+                .button('toggle')
+                .attr('aria-pressed', true);
         }
     },
 
@@ -160,20 +162,24 @@
      */
     toggleView: function (e) {
         var $el = this.$(e.currentTarget);
-        // Hack: With a real <button> with attribute disabled="disabled", events won't fire on the button. However,
-        // since we're using <a> anchor to allow tooltips even if btn disabled, we have to "fudge" disabled behavior
-        // See SP-1055, http://jsfiddle.net/hMQYZ/17/, https://github.com/twitter/bootstrap/issues/2373
-        if ($el.attr('disabled') === 'disabled') {
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-        }
         // Only toggle if we click on an inactive button
         if (!$el.hasClass("active")) {
             var data = $el.data();
             app.user.lastState.set(this.toggleViewLastStateKey, data.view);
             this.showComponent(data.view);
+            this._toggleAria($el);
         }
+    },
+
+    /**
+     * Sets all button accessibility 'aria-pressed' attributes to false
+     * then sets the active button 'aria-pressed' attribute to true.
+     *
+     * @private
+     */
+    _toggleAria: function(btn) {
+        this.$el.find('.btn').attr('aria-pressed', false);
+        btn.attr('aria-pressed', true);
     },
 
     /**

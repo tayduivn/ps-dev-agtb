@@ -22,13 +22,13 @@
             <button class="btn{{#eq settings.attributes.visibility "user"}} active{{/eq}}"
                     data-action="visibility-switcher" rel="tooltip" data-placement="bottom" value="user"
                     title="{{{str "LBL_DASHLET_MY_PIPELINE" 'Forecasts' this.context}}}"
-                    track="click:viewMyUserPipeline">
+                    track="click:viewMyUserPipeline" aria-label="{{{str "LBL_DASHLET_MY_PIPELINE" 'Forecasts' this.context}}}" aria-pressed="{{#eq settings.attributes.visibility "user"}}true{{else}}false{{/eq}}">
                 <i class="fa fa-user"></i>
             </button>
             <button class="btn{{#eq settings.attributes.visibility "group"}} active{{/eq}}"
                     data-action="visibility-switcher" rel="tooltip" data-placement="bottom"
                     value="group" title="{{{str "LBL_DASHLET_MY_TEAMS_PIPELINE" 'Forecasts' this.context}}}"
-                    track="click:viewMyTeamsPipeline">
+                    track="click:viewMyTeamsPipeline" aria-label="{{{str "LBL_DASHLET_MY_TEAMS_PIPELINE" 'Forecasts' this.context}}}" aria-pressed="{{#eq settings.attributes.visibility "group"}}true{{else}}false{{/eq}}">
                 <i class="fa fa-users"></i>
             </button>
         </div>

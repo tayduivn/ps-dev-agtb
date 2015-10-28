@@ -143,6 +143,23 @@
         this.displayNoData(!this.chart_loaded);
     },
 
+    /**
+     * @inheritdoc
+     *
+     * Additional logic on switch visibility event.
+     */
+    visibilitySwitcher: function() {
+        var activeVisibility;
+        if (!this.isManager) {
+            return;
+        }
+        activeVisibility = this.getVisibility();
+        this.$el.find('[data-action=visibility-switcher]')
+            .attr('aria-pressed', function() {
+                return $(this).val() === activeVisibility;
+            });
+    },
+
     hasChartData: function() {
         return !_.isEmpty(this.results) && this.results.data && this.results.data.length > 0;
     },

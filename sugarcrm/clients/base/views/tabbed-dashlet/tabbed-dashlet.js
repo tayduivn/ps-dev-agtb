@@ -375,7 +375,7 @@
                        {"users.id":app.user.id}]
             });
         }
-        
+
         return filters;
     },
 
@@ -517,6 +517,23 @@
         this.collection = this.tabs[index].collection;
         this.context.set('collection', this.collection);
         this.render();
+    },
+
+    /**
+     * @inheritdoc
+     *
+     * Additional logic on switch visibility event.
+     */
+    visibilitySwitcher: function() {
+        var activeVisibility;
+        if (!this.isManager) {
+            return;
+        }
+        activeVisibility = this.getVisibility();
+        this.$el.find('[data-action=visibility-switcher]')
+            .attr('aria-pressed', function() {
+                return $(this).val() === activeVisibility;
+            });
     },
 
     /**

@@ -85,11 +85,13 @@
             return;
         }
         if (this.model.isFavorite()) {
-            star.addClass('active');
+            star.addClass('active')
+                .attr('aria-pressed', true);
             this.model.trigger("favorite:active");
         }
         else {
-            star.removeClass('active');
+            star.removeClass('active')
+                .attr('aria-pressed', false);
         }
     },
 
