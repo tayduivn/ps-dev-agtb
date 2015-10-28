@@ -32,7 +32,7 @@
             'LBL_CARRIER_DELIVERY_USER_DESC' :
             'LBL_CARRIER_DELIVERY_ADMIN_DESC';
 
-        this.before('render', this.populateCarriers, this);
+        this.before('render', function() { this.populateCarriers(); }, this);
     },
 
     /**

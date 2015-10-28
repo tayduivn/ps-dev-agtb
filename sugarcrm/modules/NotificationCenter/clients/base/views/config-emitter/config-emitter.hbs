@@ -43,7 +43,7 @@
                         {{/with}}
                     </td>
                     <td data-event="{{this.name}}" class="event-name">{{this.label}}</td>
-                    {{#each this.fields}}
+                    {{#each this.columns}}
                         <td>
                             {{field ../../this model=../../this.model template=this.viewName}}
                         </td>

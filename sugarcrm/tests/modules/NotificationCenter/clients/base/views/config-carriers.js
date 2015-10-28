@@ -1,0 +1,87 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+describe('NotificationCenter.View.ConfigCarriers', function() {
+    var app, layout, view, context, sandbox, module = 'NotificationCenter';
+
+    beforeEach(function() {
+        app = SugarTest.app;
+        layout = SugarTest.createLayout('base', module, 'config-drawer', null, null, true);
+        context = app.context.getContext({model: layout.model});
+        view = SugarTest.createView('base', module, 'config-carriers', {}, context, true, layout);
+        sandbox = sinon.sandbox.create();
+    });
+
+    afterEach(function() {
+        view = null;
+        sandbox.restore();
+    });
+
+    it('should call populateCarriers() before it is rendered', function() {
+        var method = sandbox.spy(view, 'populateCarriers');
+        view.triggerBefore('render');
+        expect(method).toHaveBeenCalled();
+    });
+
+    describe('populateCarriers()', function() {
+        beforeEach(function() {
+            view.model.set('configMode', 'default')
+        });
+
+        it('should not populate carriers if model is empty', function() {
+            view.populateCarriers();
+            expect(view.carriers.length).toBe(0);
+        });
+
+        it('should populate carriers with data for each of carrier found in model', function() {
+            view.model.set('carriers', {
+                foo: {},
+                bar: {}
+            });
+            view.populateCarriers();
+            expect(view.carriers.length).toBe(2);
+        });
+
+        it('should populate carriers with correct metadata', function() {
+            view.model.set('carriers', {
+                foo: {}
+            });
+            view.populateCarriers();
+            expect(view.carriers[0].type).toBe('carrier');
+            expect(view.carriers[0].name).toBe('foo');
+        });
+
+        it('should add an address field to carriers array if carrier is selectable', function() {
+            view.model.set('carriers', {
+                foo: {selectable: true},
+                bar: {selectable: false}
+            });
+            view.populateCarriers();
+            expect(view.carriers.length).toBe(3);
+        });
+
+        it('should add an address field with correct metadata', function() {
+            var options = {
+                'one': 1
+            };
+            view.model.set('carriers', {
+                foo: {
+                    selectable: true,
+                    options: options
+                }
+            });
+            view.populateCarriers();
+            expect(view.carriers[1].type).toBe('address');
+            expect(view.carriers[1].name).toBe('foo-address');
+            expect(view.carriers[1].carrier).toBe('foo');
+            expect(view.carriers[1].options).toBe(options);
+        });
+    });
+});

@@ -21,7 +21,7 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        this.before('render', this._createViews, this);
+        this.before('render', function() { this._createViews(); }, this);
     },
 
     /**
@@ -56,10 +56,6 @@
         this.removeComponent(0);
 
         // Emitter views.
-        emitters = this.model.get('configMode') === 'user' ?
-            this.model.get('personal')['config']:
-            this.model.get('config');
-
         _.each(emitters, function(val, key) {
             this.meta.components.push({
                 view: {
@@ -93,8 +89,8 @@
                 text = app.lang.get('LBL_APPLICATION_EMITTER_HELP', this.module);
                 break;
             case 'config-BeanEmitter':
-                title = 'LBL_GLOBAL_DELIVERY_CONFIG_TITLE';
-                text = 'LBL_GLOBAL_DELIVERY_CONFIG_HELP';
+                title = app.lang.get('LBL_APPLICATION_EMITTER_TITLE', this.module);
+                text = app.lang.get('LBL_BEAN_EMITTER_HELP', this.module);
                 break;
             default: // Module Emitter case
                 var module = helpId.substring(7);

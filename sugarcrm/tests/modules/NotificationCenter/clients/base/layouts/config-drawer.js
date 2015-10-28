@@ -9,16 +9,88 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe('NotificationCenter.Layout.ConfigDrawer', function() {
-    var app,
-        layout;
+    var app, layout, sandbox, module;
 
     beforeEach(function() {
         app = SugarTest.app;
-        layout = SugarTest.createLayout('base', 'NotificationCenter', 'config-drawer', null, null, true);
+        module = 'NotificationCenter';
+        layout = SugarTest.createLayout('base', module, 'config-drawer', null, null, true);
+        sandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
         layout = null;
+        sandbox.restore();
+    });
+
+    describe('initialize()', function() {
+        var options = {};
+
+        beforeEach(function() {
+            options.context = app.context.getContext();
+            options.context.set('model', new Backbone.Model());
+        });
+
+        it('should set up class property "section" to "global" if config section is "default"', function() {
+            options.context.set('section', 'default');
+            layout.initialize(options);
+            expect(layout.section).toBe('global');
+        });
+
+        it('should leave class property "section" as "user" if config section is not defined', function() {
+            layout.initialize(options);
+            expect(layout.section).toBe('user');
+        });
+
+        it('should set up model attribute "configMode" to "global" if config section is "default"', function() {
+            options.context.set('section', 'default');
+            layout.initialize(options);
+            expect(layout.model.get('configMode')).toBe('global');
+        });
+
+        it('should set up model attribute "configMode" to "user" if config section is not defined', function() {
+            layout.initialize(options);
+            expect(layout.model.get('configMode')).toBe('user');
+        });
+
+        it('should call prepareModel() method', function() {
+            var prepareModel = sandbox.spy(layout, 'prepareModel');
+            layout.initialize(options);
+            expect(prepareModel).toHaveBeenCalled();
+        });
+    });
+
+    describe('prepareModel()', function() {
+        using('additional methods',
+            ['_copyFiltersFromDefault', '_copyCarriersStatusFromDefault', 'replaceDefaultToActualValues',
+                'resetToDefault', 'setSelectedAddresses', 'updateCarriersAddresses'],
+            function(method) {
+                it('should create method in Model', function() {
+                    layout.prepareModel();
+                    expect(layout.model).not.toBeUndefined(method);
+                });
+            });
+    });
+
+    describe('loadConfig()', function() {
+        var server, urlRegExp;
+
+        beforeEach(function() {
+            urlRegExp = new RegExp('.*rest/v10/' + module + '/config.*');
+            server = sandbox.useFakeServer();
+            server.respondWith("GET", urlRegExp, [200, {  "Content-Type": "application/json"}, JSON.stringify({})]);
+        });
+
+        using('methods',
+            ['replaceDefaultToActualValues', 'setSelectedAddresses'],
+            function(method) {
+                it('should call model\'s method on a successful get of the config-model from server', function() {
+                    var spiedMethod = sandbox.spy(layout.model, method);
+                    layout.loadConfig();
+                    server.respond();
+                    expect(spiedMethod).toHaveBeenCalled();
+                });
+            });
     });
 
     describe('_checkConfigMetadata()', function() {
@@ -28,47 +100,28 @@ describe('NotificationCenter.Layout.ConfigDrawer', function() {
     });
 
     describe('_checkUserAccess()', function() {
-        var sandbox;
-
-        beforeEach(function() {
-            sandbox = sinon.sandbox.create();
-        });
-
-        afterEach(function() {
-            sandbox.restore();
-        });
-
         it('should restrict regular user to access global configuration', function() {
-            sandbox.stub(app.user, 'get', function() {
-                return 'user';
-            });
-            layout.model.set('configMode', 'admin');
+            sandbox.stub(app.user, 'get').returns('user');
+            layout.section = 'global';
             expect(layout._checkUserAccess()).toBeFalsy();
         });
 
         it('should allow regular user to access his configuration', function() {
-            sandbox.stub(app.user, 'get', function() {
-                return 'user';
-            });
-            layout.model.set('configMode', 'user');
+            sandbox.stub(app.user, 'get').returns('user');
+            layout.section = 'user';
             expect(layout._checkUserAccess()).toBeTruthy();
         });
 
         it('should allow admin to access global configuration', function() {
-            sandbox.stub(app.user, 'get', function() {
-                return 'admin';
-            });
-            layout.model.set('configMode', 'admin');
+            sandbox.stub(app.user, 'get').returns('admin');
+            layout.section = 'global';
             expect(layout._checkUserAccess()).toBeTruthy();
         });
 
         it('should allow admin to access his configuration', function() {
-            sandbox.stub(app.user, 'get', function() {
-                return 'admin';
-            });
-            layout.model.set('configMode', 'user');
+            sandbox.stub(app.user, 'get').returns('admin');
+            layout.section = 'user';
             expect(layout._checkUserAccess()).toBeTruthy();
         });
     });
-
 });

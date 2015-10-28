@@ -23,6 +23,11 @@
     config: {},
 
     /**
+     * Current carriers.
+     */
+    carriers: {},
+
+    /**
      * @inheritDoc
      */
     initialize: function(options) {
@@ -31,6 +36,10 @@
         this.config = (this.model.get('configMode') === 'user') ?
             this.model.get('personal')['config'] :
             this.model.get('config');
+
+        this.carriers = (this.model.get('configMode') === 'user') ?
+            this.model.get('personal')['carriers'] :
+            this.model.get('carriers');
 
         // When model resets itself to default.
         this.model.on('reset:' + this.def.emitter, this.render, this);
@@ -54,24 +63,20 @@
     format: function(value) {
         var eventFilters = this.config[this.def.emitter][this.def.event];
 
+        // 'disabled' sets how field will be displayed.
         value = {status: false, disabled: false};
 
         // For now we neglect event filters, so let's do flatten-unique all filters' carriers.
         var filtersData = _.uniq(_.flatten(eventFilters));
         value.status = _.contains(filtersData, this.def.carrier);
 
-        // Set how field will be displayed.
-        var carriers = (this.model.get('configMode') === 'user') ?
-            this.model.get('personal')['carriers'] :
-            this.model.get('carriers');
-
-        // The first filter will be enought to make a decision.
+        // The first filter will be enough to make a decision.
         var sampleFilter = _.chain(eventFilters).values().first().value();
 
         // If carrier or the entire event is disabled - disable this delivery-carrier.
         if (_.some(sampleFilter, function(a) { return _.uniq(a).join() === ''; }) || sampleFilter.length === 0) {
             value.disabled = true;
-        } else if (carriers[this.def.carrier].status === false) {
+        } else if (this.carriers[this.def.carrier].status === false) {
             value.disabled = true;
         } else {
             value.disabled = false;
@@ -88,29 +93,26 @@
 
         $el.on('change', _.bind(function() {
             var checked = $el.prop('checked'),
-                carrier = this.def.carrier,
-                config = _.clone(this.config);
+                carrier = this.def.carrier;
 
-            _.each(config[this.def.emitter][this.def.event], function(filter, key, filterList) {
-                _.each(config[this.def.emitter][this.def.event], function(filter, key, filterList) {
-                    if (checked) {
-                        if (!_.chain(filter).flatten().uniq().contains(carrier).value()) {
-                            filterList[key].push([carrier, '']);
-                        }
-                    } else {
-                        var carrierIdx = null;
-                        _.each(filter, function(carrierData, idx) {
-                            if (_.contains(carrierData, carrier)) {
-                                carrierIdx = idx;
-                                return;
-                            }
-                        });
-                        if (carrierIdx !== null) {
-                            filterList[key].splice(carrierIdx, 1);
-                        }
+            _.each(this.config[this.def.emitter][this.def.event], function(filter, key, filterList) {
+                if (checked) {
+                    if (!_.chain(filter).flatten().uniq().contains(carrier).value()) {
+                        filterList[key].push([carrier, '']);
                     }
-                });
-            }, this);
+                } else {
+                    var carrierIdx = null;
+                    _.each(filter, function(carrierData, idx) {
+                        if (_.contains(carrierData, carrier)) {
+                            carrierIdx = idx;
+                            return;
+                        }
+                    });
+                    if (carrierIdx !== null) {
+                        filterList[key].splice(carrierIdx, 1);
+                    }
+                }
+            });
 
             this.model.trigger('change:personal:' + this.def.emitter, this.def.event);
 
@@ -123,18 +125,17 @@
      */
     handleEventSwitcherChange: function(mode) {
         if (mode) {
-            var carriers = (this.model.get('configMode') === 'user') ?
-                this.model.get('personal')['carriers'] :
-                this.model.get('carriers');
+            var self = this,
+                $allEventFields,
+                allEventFieldsSelector = this.fieldTag +
+                    '[data-emitter=' + this.def.emitter + ']' +
+                    '[data-event=' + this.def.event + ']';
 
-            var allEventFieldsSelector = this.fieldTag +
-                '[data-emitter=' + this.def.emitter + ']' +
-                '[data-event=' + this.def.event + ']';
-
-            if (_.every($(allEventFieldsSelector), function(el) { return $(el).prop('checked') === false })) {
-                $(allEventFieldsSelector).each(function() {
+            $allEventFields = this.view.$el.find(allEventFieldsSelector);
+            if (_.every($allEventFields, function(el) { return $(el).prop('checked') === false })) {
+                $allEventFields.each(function() {
                     var carrier = $(this).data('carrier');
-                    if (carriers[carrier].status) {
+                    if (self.carriers[carrier].status) {
                         $(this).prop('checked', true).trigger('change');
                     }
                 });

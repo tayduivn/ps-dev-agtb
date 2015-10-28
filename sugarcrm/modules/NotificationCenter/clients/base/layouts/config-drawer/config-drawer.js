@@ -54,9 +54,9 @@
      * @inheritdoc
      */
     loadConfig: function(options) {
-        var configSection = (this.section === 'global') ? '/global' : '';
-        var url = app.api.buildURL(this.module, 'config' + configSection);
-        var self = this;
+        var configSection = (this.section === 'global') ? '/global' : '',
+            url = app.api.buildURL(this.module, 'config' + configSection),
+            self = this;
         app.api.call('read', url, null, {
                 success: function(data) {
                     _.each(data, function(val, key) { self.model.set(key, val); }, self);
@@ -129,6 +129,25 @@
             _.each(emittersWithDefaultSetting, function(emitter) {
                 this._copyFiltersFromDefault(emitter);
             }, this)
+        };
+
+        // Answers if given emitter has all settings by default.
+        this.model.isEmitterDefaultConfigured = function(emitterName) {
+            if (!this.get('personal')) {
+                return true;
+            }
+            var isDefault = true;
+            _.each(this.get('personal')['config'][emitterName], function(event, eventName) {
+                _.each(event, function(filter, filterName) {
+                    var filterGlobal = this.get('global')['config'][emitterName][eventName][filterName];
+                    if (JSON.stringify(_.chain(filter).map(_.first).uniq().sort().value()) !==
+                        JSON.stringify(_.chain(filterGlobal).map(_.first).uniq().sort().value())) {
+                        isDefault = false;
+                    }
+                }, this);
+            }, this);
+
+            return isDefault;
         };
 
         // Resets all user preferences to system defaults.
