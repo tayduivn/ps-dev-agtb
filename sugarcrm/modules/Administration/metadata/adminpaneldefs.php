@@ -284,6 +284,14 @@ foreach ($admin_group_header as $key=>$values) {
                     unset($admin_group_header[$key][3][$mod_val]);
                 }
 
+                // Unless a user is a system admin, or module admin, they cannot see TBACLs config links
+                if ($mod_val == 'Users'
+                    && !$current_user->isAdminForModule('Users')
+                    && isset($values[3]['Users']['tba_management'])
+                ) {
+                    unset($admin_group_header[$key][3][$mod_val]['tba_management']);
+                }
+
                 //BEGIN SUGARCRM flav=ent ONLY
                 // Maintain same access for Opps as we have for Forecasts
                 // Unless a user is a system admin, or module admin, they cannot see Forecasts config links
