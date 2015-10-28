@@ -113,10 +113,14 @@
     },
 
     /**
+     * @override
+     *
      * Return the display string for the start and date, along with the duration.
+     *
+     * @param {Array/Object/string/number/boolean} value The value to format.
      * @return {string} The duration string
      */
-    getFormattedValue: function() {
+    format: function(value) {
         var displayString = '',
             startDateString = this.model.get('date_start'),
             endDateString = this.model.get('date_end'),

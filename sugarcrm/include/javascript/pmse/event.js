@@ -832,7 +832,7 @@ AdamEvent.prototype.updateEventMarker = function (options) {
 
 AdamEvent.prototype.createConfigureAction = function () {
     var action, w, f, proxy, items, wWidth, wHeight, changeModule, initialValue = null, disabled = false,
-        startCriteria = null, oldModule, newModule, mp, cancelInformation, actiontimerType, durationRadio, i,
+        oldModule, mp, cancelInformation, actiontimerType, durationRadio, i,
         repeatEveryCombo, everyOptions, repeatEveryNumberCombo, cyclicDate, fixedRadio, cyclicRadio, incrementWasClicked = false,
         durationTextField, unitComboBox, fixedDate, incrementCkeck, durationTextField2, unitComboBox2, operationCombo, criteria,
         root = this, hiddenParams, hiddenFn, callback = {}, ddlModules, ddlEmailTemplate, aTemplate, criteriaField, emailTemplates, datecriteria;
@@ -867,6 +867,7 @@ AdamEvent.prototype.createConfigureAction = function () {
             fieldHeight: 80,
             dateFormat: App.date.getUserDateFormat(),
             timeFormat: App.user.getPreference("timepref"),
+            panelContext: '#container',
             decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
             numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
             currencies: project.getMetadata("currencies"),

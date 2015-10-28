@@ -158,61 +158,66 @@ UpdaterField.prototype.setOptions = function (settings) {
         currentSetting.allowDisabling = this.hasCheckbox;
         currentSetting.disabled = this.hasCheckbox;
         switch (currentSetting.fieldType) {
-        case 'TextField':
-            newOption =  new TextUpdaterItem(currentSetting);
-            break;
-        case 'TextArea':
-            newOption =  new TextAreaUpdaterItem(currentSetting);
-            break;
-        case 'Date':
-        case 'Datetime':
-            newOption =  new DateUpdaterItem(currentSetting);
-            break;
-        case 'DropDown':
-            aUsers = [];
-            if (currentSetting.options instanceof Array) {
-                if (currentSetting.value === 'assigned_user_id') {
-                    aUsers = [
-                        {'text': translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), 'value': 'currentuser'},
-                        {'text': translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), 'value': 'owner'},
-                        {'text': translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'), 'value': 'supervisor'}
-                    ];
-                    customUsers = aUsers.concat(currentSetting.options);
-                    currentSetting.options = customUsers;
-                }
-            } else {
-                if (currentSetting.options) {
-                    $.each(currentSetting.options, function (key, value) {
-                        aUsers.push({value: key, text: value});
-                    });
-                }
-                currentSetting.options = aUsers;
+            case 'TextField':
+                newOption =  new TextUpdaterItem(currentSetting);
+                break;
+            case 'TextArea':
+                newOption =  new TextAreaUpdaterItem(currentSetting);
+                break;
+            case 'Date':
+            case 'Datetime':
+                newOption =  new DateUpdaterItem(currentSetting);
+                break;
+            case 'DropDown':
+                aUsers = [];
+                if (currentSetting.options instanceof Array) {
+                    if (currentSetting.value === 'assigned_user_id') {
+                        aUsers = [
+                            {'text': translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), 'value': 'currentuser'},
+                            {'text': translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), 'value': 'owner'},
+                            {'text': translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'), 'value': 'supervisor'}
+                        ];
+                        customUsers = aUsers.concat(currentSetting.options);
+                        currentSetting.options = customUsers;
+                    }
+                } else {
+                    if (currentSetting.options) {
+                        $.each(currentSetting.options, function (key, value) {
+                            aUsers.push({value: key, text: value});
+                        });
+                    }
+                    currentSetting.options = aUsers;
 
-            }
-            newOption =  new DropdownUpdaterItem(currentSetting);
-            break;
-        case 'Checkbox':
-            newOption =  new CheckboxUpdaterItem(currentSetting);
-            break;
-        case 'Currency':
-            currentSetting.currency = true;
-        case 'Integer':
-        case 'Decimal':
-        case 'Float':
-            newOption =  new NumberUpdaterItem(currentSetting);
-            break;
-        case 'user':
-            currentSetting.searchUrl = 'pmse_Project/CrmData/users?filter={TERM}';
-            currentSetting.defaultSearchOptions = [
-                {text: translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), value: 'currentuser'},
-                {text: translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), value: 'owner'},
-                {text: translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'), value: 'supervisor'}
-            ];
-            newOption =  new SearchUpdaterItem(currentSetting);
-            break;
-        default:
-            newOption =  new TextUpdaterItem(currentSetting);
-            break;
+                }
+                newOption =  new DropdownUpdaterItem(currentSetting);
+                break;
+            case 'Checkbox':
+                newOption =  new CheckboxUpdaterItem(currentSetting);
+                break;
+            case 'Currency':
+                currentSetting.currency = true;
+            case 'Integer':
+            case 'Decimal':
+            case 'Float':
+                newOption =  new NumberUpdaterItem(currentSetting);
+                break;
+            case 'user':
+                currentSetting.searchUrl = 'pmse_Project/CrmData/users?filter={TERM}';
+                currentSetting.defaultSearchOptions = [
+                    {text: translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), value: 'currentuser'},
+                    {text: translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), value: 'owner'},
+                    {text: translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'), value: 'supervisor'}
+                ];
+                currentSetting.searchMore = {
+                    module: "Users",
+                    fields: ["id", "full_name"],
+                    filterOptions: null
+                };
+                newOption =  new SearchUpdaterItem(currentSetting);
+                break;
+            default:
+                newOption =  new TextUpdaterItem(currentSetting);
+                break;
         }
 
         options.push(newOption);
@@ -363,18 +368,18 @@ UpdaterField.prototype.isValid = function () {
         field = this.options[i];
         if (field.isRequired()) {
             switch (field.type) {
-            case 'CheckboxUpdaterItem':
-                valid = field.getValue();
-                break;
-            case 'DateUpdaterItem':
-            case 'NumberUpdaterItem':
-                valid = !!field.getValue().length;
-                break;
-            default:
-                if (field.getValue() === '') {
-                    valid = false;
-                }
-                break;
+                case 'CheckboxUpdaterItem':
+                    valid = field.getValue();
+                    break;
+                case 'DateUpdaterItem':
+                case 'NumberUpdaterItem':
+                    valid = !!field.getValue().length;
+                    break;
+                default:
+                    if (field.getValue() === '') {
+                        valid = false;
+                    }
+                    break;
             }
 
         }
@@ -589,748 +594,748 @@ UpdaterField.prototype.setVariables = function (variables) {
 };
 
 //UpdaterItem
-    var UpdaterItem = function (settings) {
-        Element.call(this, settings);
-        this._parent = null;
-        this._name = null;
-        this._label = null;
-        this._required = null;
-        this._dom = {};
-        this._activationControl = null;
-        this._control = null;
-        this._disabled = null;
-        this._value = null;
-        this._fieldType = null;
-        this._configButton = null;
-        this._attachedListeners = false;
-        this._dirty = false;
-        this._allowDisabling = true;
-        UpdaterItem.prototype.init.call(this, settings);
+var UpdaterItem = function (settings) {
+    Element.call(this, settings);
+    this._parent = null;
+    this._name = null;
+    this._label = null;
+    this._required = null;
+    this._dom = {};
+    this._activationControl = null;
+    this._control = null;
+    this._disabled = null;
+    this._value = null;
+    this._fieldType = null;
+    this._configButton = null;
+    this._attachedListeners = false;
+    this._dirty = false;
+    this._allowDisabling = true;
+    UpdaterItem.prototype.init.call(this, settings);
+};
+
+UpdaterItem.prototype = new Element();
+UpdaterItem.prototype.constructor = UpdaterItem;
+UpdaterItem.prototype.type = "UpdaterItem";
+
+UpdaterItem.prototype.init = function(settings) {
+    var defaults = {
+        parent: null,
+        name: this.id,
+        label: "[updater item]",
+        required: false,
+        disabled: true,
+        allowDisabling: true,
+        value: "",
+        fieldType: null
     };
 
-    UpdaterItem.prototype = new Element();
-    UpdaterItem.prototype.constructor = UpdaterItem;
-    UpdaterItem.prototype.type = "UpdaterItem";
+    jQuery.extend(true, defaults, settings);
 
-    UpdaterItem.prototype.init = function(settings) {
-        var defaults = {
-            parent: null,
-            name: this.id,
-            label: "[updater item]",
-            required: false,
-            disabled: true,
-            allowDisabling: true,
-            value: "",
-            fieldType: null
-        };
+    this.setParent(defaults.parent)
+        .setName(defaults.name)
+        .setLabel(defaults.label)
+        .setRequired(defaults.required)
+        .setValue(defaults.value)
+        .setFieldType(defaults.fieldType);
 
-        jQuery.extend(true, defaults, settings);
+    if (defaults.disabled) {
+        this.disable();
+    } else {
+        this.enable();
+    }
+    if (defaults.allowDisabling) {
+        this.allowDisabling();
+    } else {
+        this.disallowDisabling();
+    }
+};
 
-        this.setParent(defaults.parent)
-            .setName(defaults.name)
-            .setLabel(defaults.label)
-            .setRequired(defaults.required)
-            .setValue(defaults.value)
-            .setFieldType(defaults.fieldType);
+UpdaterItem.prototype.allowDisabling = function () {
+    this._allowDisabling = true;
+    if (this._activationControl) {
+        this._activationControl.style.display = "";
+    }
+    return this;
+};
 
-        if (defaults.disabled) {
+UpdaterItem.prototype.disallowDisabling = function () {
+    this._allowDisabling = false;
+    if (this._activationControl) {
+        this._activationControl.style.display = "none";
+    }
+};
+
+UpdaterItem.prototype.setParent = function (parent) {
+    if (!(parent === null || parent instanceof UpdaterField)) {
+        throw new Error("setParent(): The parameter must be an instance of UpdaterField or null.");
+    }
+    this._parent = parent;
+    return this;
+};
+
+UpdaterItem.prototype.setName = function (name) {
+    if (!(typeof name === 'string' && name)) {
+        throw new Error("setName(): The parameter must be a non empty string.");
+    }
+    this._name = name;
+    return this;
+};
+
+UpdaterItem.prototype.getName = function () {
+    return this._name;
+};
+
+UpdaterItem.prototype.setLabel = function (label) {
+    if (typeof label !== 'string') {
+        throw new Error("setLabel(): The parameter must be a string.");
+    }
+    this._label = label;
+    if (this._dom.labelText) {
+        this._dom.labelText.textContent = label;
+    }
+    return this;
+};
+
+UpdaterItem.prototype.setRequired = function (required) {
+    var requireContent = "*";
+    this._required = !!required;
+    if (this._dom.requiredContainer) {
+        if (!this._required) {
+            requireContent = "";
+        }
+        this._dom.requiredContainer.textContent = requireContent;
+    }
+    return this;
+};
+
+UpdaterItem.prototype.isRequired = function () {
+    return this._required;
+};
+
+UpdaterItem.prototype.isValid = function () {
+    return !!(this._required && this._value);
+};
+
+UpdaterItem.prototype.clear = function () {
+    if (this._control) {
+        this._control.value = "";
+    }
+    this._value = "";
+    return this;
+};
+
+UpdaterItem.prototype.disable = function () {
+    if (this._activationControl) {
+        this._activationControl.checked = false;
+        this._disableControl();
+    }
+    this.clear();
+    this._disabled = true;
+    return this;
+};
+
+UpdaterItem.prototype.enable = function () {
+    if (this._activationControl) {
+        this._activationControl.checked = true;
+        this._enableControl();
+    }
+    this._disabled = false;
+    return this;
+};
+
+UpdaterItem.prototype.isDisabled = function () {
+    return this._disabled;
+};
+
+UpdaterItem.prototype._setValueToControl = function (value) {
+    this._control.value = value;
+    return this;
+};
+
+UpdaterItem.prototype._getValueFromControl = function () {
+    return this._control.value;
+};
+
+UpdaterItem.prototype.setValue = function (value) {
+    if (typeof value !== 'string') {
+        throw new Error("setValue(): The parameter must be a string.");
+    }
+    if (this._control) {
+        this._setValueToControl(value);
+        this._value = this._getValueFromControl();
+    } else {
+        this._value = value;
+    }
+    return this;
+};
+
+UpdaterItem.prototype.getValue = function () {
+    return this._value;
+};
+
+UpdaterItem.prototype.setFieldType = function (fieldType) {
+    if (!(fieldType === null || typeof fieldType === "string")) {
+        throw new Error("setFieldType(): The parameter must be a string or null.");
+    }
+    this._fieldType = fieldType;
+    return this;
+};
+
+UpdaterItem.prototype.getFieldType = function () {
+    return this._fieldType;
+};
+
+UpdaterItem.prototype._createControl = function () {
+    if (!this._control) {
+        throw new Error("_createControl(): This method must be called from an UpdaterItem's subclass.");
+    }
+    jQuery(this._control).addClass("updateritem-control");
+    return this._control;
+};
+
+UpdaterItem.prototype._createConfigButton = function () {
+    var button = this.createHTMLElement("a");
+    button.href = "#";
+    button.className = "adam-itemupdater-cfg fa fa-cog";
+    this._configButton = button;
+    return this._configButton;
+};
+
+UpdaterItem.prototype._disableControl = function () {
+    this._control.disabled = true;
+    return this;
+};
+
+UpdaterItem.prototype._enableControl = function () {
+    this._control.disabled = false;
+    return this;
+};
+
+UpdaterField.prototype.isDirty = function () {
+    return this._dirty;
+};
+
+UpdaterItem.prototype._onChange = function () {
+    var that = this;
+    return function (e) {
+        var currValue = that._value;
+        that._value = that._getValueFromControl();
+        if (that._value !== currValue) {
+            that._dirty = true;
+        }
+    };
+};
+
+UpdaterItem.prototype.getData = function () {
+    return {
+        name: this._label,
+        field: this._name,
+        value: this._value,
+        type: this._fieldType
+    };
+};
+
+UpdaterItem.prototype.attachListeners = function () {
+    var that = this;
+    if (this.html && !this._attachedListeners) {
+        jQuery(this._activationControl).on("change", function (e) {
+            if (e.target.checked) {
+                that.enable();
+            } else {
+                that.disable();
+            }
+        });
+        jQuery(this._configButton).on("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (that._parent && !that._disabled) {
+                that._parent.openPanelOnItem(that);
+            }
+        });
+        jQuery(this._control).on("change", this._onChange());
+    }
+    return this;
+};
+
+UpdaterItem.prototype.createHTML = function () {
+    var label,
+        controlContainer,
+        activationControl,
+        labelContent,
+        labelText,
+        requiredContainer,
+        messageContainer,
+        configButton,
+        messageContainer;
+
+    if (!this.html) {
+        Element.prototype.createHTML.call(this);
+        jQuery(this.html).addClass("updaterfield-item");
+        this.style.removeProperties(['width', 'height', 'position', 'top', 'left', 'z-index']);
+
+        label = this.createHTMLElement('label');
+        label.className = 'adam-itemupdater-label';
+
+        controlContainer = this.createHTMLElement("div");
+        controlContainer.className = "adam-itemupdater-controlcontainer";
+
+        activationControl = this.createHTMLElement("input");
+        activationControl.type = "checkbox";
+        activationControl.className = "adam-itemupdater-activation";
+
+        labelContent = this.createHTMLElement("span");
+        labelContent.className = "adam-itemupdater-labelcontent";
+
+        labelText = this.createHTMLElement("span");
+        labelText.className = "adam-itemupdater-labeltext";
+
+        requiredContainer = this.createHTMLElement("span");
+        requiredContainer.className = "adam-itemupdater-required required noshadow";
+
+        messageContainer = this.createHTMLElement("div");
+        messageContainer.className = "adam-itemupdater-message";
+
+        labelContent.appendChild(labelText);
+        labelContent.appendChild(requiredContainer);
+
+        label.appendChild(activationControl);
+        label.appendChild(labelContent);
+
+        controlContainer.appendChild(this._createControl());
+        this._createConfigButton();
+        if (this._configButton) {
+            controlContainer.appendChild(this._configButton);
+        }
+
+        this._dom.labelText = labelText;
+        this._dom.requiredContainer = requiredContainer;
+
+        this._activationControl = activationControl;
+        this.html.appendChild(label);
+        this.html.appendChild(controlContainer);
+        this.html.appendChild(messageContainer);
+
+        this.setLabel(this._label)
+            .setRequired(this._required);
+        if (this._disabled) {
             this.disable();
         } else {
             this.enable();
         }
-        if (defaults.allowDisabling) {
+        if (this._allowDisabling) {
             this.allowDisabling();
         } else {
             this.disallowDisabling();
         }
-    };
-
-    UpdaterItem.prototype.allowDisabling = function () {
-        this._allowDisabling = true;
-        if (this._activationControl) {
-            this._activationControl.style.display = "";
-        }
-        return this;
-    };
-
-    UpdaterItem.prototype.disallowDisabling = function () {
-        this._allowDisabling = false;
-        if (this._activationControl) {
-            this._activationControl.style.display = "none";
-        }
-    };
-
-    UpdaterItem.prototype.setParent = function (parent) {
-        if (!(parent === null || parent instanceof UpdaterField)) {
-            throw new Error("setParent(): The parameter must be an instance of UpdaterField or null.");
-        }
-        this._parent = parent;
-        return this;
-    };
-
-    UpdaterItem.prototype.setName = function (name) {
-        if (!(typeof name === 'string' && name)) {
-            throw new Error("setName(): The parameter must be a non empty string.");
-        }
-        this._name = name;
-        return this;
-    };
-
-    UpdaterItem.prototype.getName = function () {
-        return this._name;
-    };
-
-    UpdaterItem.prototype.setLabel = function (label) {
-        if (typeof label !== 'string') {
-            throw new Error("setLabel(): The parameter must be a string.");
-        }
-        this._label = label;
-        if (this._dom.labelText) {
-            this._dom.labelText.textContent = label;
-        }
-        return this;
-    };
-
-    UpdaterItem.prototype.setRequired = function (required) {
-        var requireContent = "*";
-        this._required = !!required;
-        if (this._dom.requiredContainer) {
-            if (!this._required) {
-                requireContent = "";
-            }
-            this._dom.requiredContainer.textContent = requireContent;
-        }
-        return this;
-    };
-
-    UpdaterItem.prototype.isRequired = function () {
-        return this._required;
-    };
-
-    UpdaterItem.prototype.isValid = function () {
-        return !!(this._required && this._value);
-    };
-
-    UpdaterItem.prototype.clear = function () {
-        if (this._control) {
-            this._control.value = "";
-        }
-        this._value = "";
-        return this;
-    };
-
-    UpdaterItem.prototype.disable = function () {
-        if (this._activationControl) {
-            this._activationControl.checked = false;
-            this._disableControl();
-        }
-        this.clear();
-        this._disabled = true;
-        return this;
-    };
-
-    UpdaterItem.prototype.enable = function () {
-        if (this._activationControl) {
-            this._activationControl.checked = true;
-            this._enableControl();
-        }
-        this._disabled = false;
-        return this;
-    };
-
-    UpdaterItem.prototype.isDisabled = function () {
-        return this._disabled;
-    };
-
-    UpdaterItem.prototype._setValueToControl = function (value) {
-        this._control.value = value;
-        return this;
-    };
-
-    UpdaterItem.prototype._getValueFromControl = function () {
-        return this._control.value;
-    };
-
-    UpdaterItem.prototype.setValue = function (value) {
-        if (typeof value !== 'string') {
-            throw new Error("setValue(): The parameter must be a string.");
-        }
-        if (this._control) {
-            this._setValueToControl(value);
-            this._value = this._getValueFromControl();
-        } else {
-            this._value = value;
-        }
-        return this;
-    };
-
-    UpdaterItem.prototype.getValue = function () {
-        return this._value;
-    };
-
-    UpdaterItem.prototype.setFieldType = function (fieldType) {
-        if (!(fieldType === null || typeof fieldType === "string")) {
-            throw new Error("setFieldType(): The parameter must be a string or null.");
-        }
-        this._fieldType = fieldType;
-        return this;
-    };
-
-    UpdaterItem.prototype.getFieldType = function () {
-        return this._fieldType;
-    };
-
-    UpdaterItem.prototype._createControl = function () {
-        if (!this._control) {
-            throw new Error("_createControl(): This method must be called from an UpdaterItem's subclass.");
-        }
-        jQuery(this._control).addClass("updateritem-control");
-        return this._control;
-    };
-
-    UpdaterItem.prototype._createConfigButton = function () {
-        var button = this.createHTMLElement("a");
-        button.href = "#";
-        button.className = "adam-itemupdater-cfg fa fa-cog";
-        this._configButton = button;
-        return this._configButton;
-    };
-
-    UpdaterItem.prototype._disableControl = function () {
-        this._control.disabled = true;
-        return this;
-    };
-
-    UpdaterItem.prototype._enableControl = function () {
-        this._control.disabled = false;
-        return this;
-    };
-
-    UpdaterField.prototype.isDirty = function () {
-        return this._dirty;
-    };
-
-    UpdaterItem.prototype._onChange = function () {
-        var that = this;
-        return function (e) {
-            var currValue = that._value;
-            that._value = that._getValueFromControl();
-            if (that._value !== currValue) {
-                that._dirty = true;
-            }
-        };
-    };
-
-    UpdaterItem.prototype.getData = function () {
-        return {
-            name: this._label,
-            field: this._name,
-            value: this._value,
-            type: this._fieldType
-        };
-    };
-
-    UpdaterItem.prototype.attachListeners = function () {
-        var that = this;
-        if (this.html && !this._attachedListeners) {
-            jQuery(this._activationControl).on("change", function (e) {
-                if (e.target.checked) {
-                    that.enable();
-                } else {
-                    that.disable();
-                }
-            });
-            jQuery(this._configButton).on("click", function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                if (that._parent && !that._disabled) {
-                    that._parent.openPanelOnItem(that);
-                }
-            });
-            jQuery(this._control).on("change", this._onChange());
-        }
-        return this;
-    };
-
-    UpdaterItem.prototype.createHTML = function () {
-        var label,
-            controlContainer,
-            activationControl,
-            labelContent,
-            labelText,
-            requiredContainer,
-            messageContainer,
-            configButton,
-            messageContainer;
-
-        if (!this.html) {
-            Element.prototype.createHTML.call(this);
-            jQuery(this.html).addClass("updaterfield-item");
-            this.style.removeProperties(['width', 'height', 'position', 'top', 'left', 'z-index']);
-
-            label = this.createHTMLElement('label');
-            label.className = 'adam-itemupdater-label';
-
-            controlContainer = this.createHTMLElement("div");
-            controlContainer.className = "adam-itemupdater-controlcontainer";
-
-            activationControl = this.createHTMLElement("input");
-            activationControl.type = "checkbox";
-            activationControl.className = "adam-itemupdater-activation";
-
-            labelContent = this.createHTMLElement("span");
-            labelContent.className = "adam-itemupdater-labelcontent";
-
-            labelText = this.createHTMLElement("span");
-            labelText.className = "adam-itemupdater-labeltext";
-
-            requiredContainer = this.createHTMLElement("span");
-            requiredContainer.className = "adam-itemupdater-required required noshadow";
-
-            messageContainer = this.createHTMLElement("div");
-            messageContainer.className = "adam-itemupdater-message";
-
-            labelContent.appendChild(labelText);
-            labelContent.appendChild(requiredContainer);
-
-            label.appendChild(activationControl);
-            label.appendChild(labelContent);
-
-            controlContainer.appendChild(this._createControl());
-            this._createConfigButton();
-            if (this._configButton) {
-                controlContainer.appendChild(this._configButton);
-            }
-
-            this._dom.labelText = labelText;
-            this._dom.requiredContainer = requiredContainer;
-
-            this._activationControl = activationControl;
-            this.html.appendChild(label);
-            this.html.appendChild(controlContainer);
-            this.html.appendChild(messageContainer);
-
-            this.setLabel(this._label)
-                .setRequired(this._required);
-            if (this._disabled) {
-                this.disable();
-            } else {
-                this.enable();
-            }
-            if (this._allowDisabling) {
-                this.allowDisabling();
-            } else {
-                this.disallowDisabling();
-            }
-            this.attachListeners();
-            this.setValue(this._value);
-        }
-        return this.html;
-    };
+        this.attachListeners();
+        this.setValue(this._value);
+    }
+    return this.html;
+};
 //TextUpdaterItem
-    var TextUpdaterItem = function (settings) {
-        UpdaterItem.call(this, settings);
-        this._maxLength = null;
-        TextUpdaterItem.prototype.init.call(this, settings);
+var TextUpdaterItem = function (settings) {
+    UpdaterItem.call(this, settings);
+    this._maxLength = null;
+    TextUpdaterItem.prototype.init.call(this, settings);
+};
+
+TextUpdaterItem.prototype = new UpdaterItem();
+TextUpdaterItem.prototype.constructor = TextUpdaterItem;
+TextUpdaterItem.prototype.type = "TextUpdaterItem";
+
+TextUpdaterItem.prototype.init = function (settings) {
+    var defaults = {
+        maxLength: 0
     };
 
-    TextUpdaterItem.prototype = new UpdaterItem();
-    TextUpdaterItem.prototype.constructor = TextUpdaterItem;
-    TextUpdaterItem.prototype.type = "TextUpdaterItem";
+    jQuery.extend(true, defaults, settings);
 
-    TextUpdaterItem.prototype.init = function (settings) {
-        var defaults = {
-            maxLength: 0
-        };
+    this.setMaxLength(defaults.maxLength);
+};
 
-        jQuery.extend(true, defaults, settings);
-
-        this.setMaxLength(defaults.maxLength);
-    };
-
-    TextUpdaterItem.prototype.setMaxLength = function (maxLength) {
-        if (typeof maxLength === 'string' && /\d+/.test(maxLength)) {
-            maxLength = parseInt(maxLength, 10);
-        }
-        if (typeof maxLength !== 'number') {
-            throw new Error("setMaxLength(): The parameter must be a number.");
-        }
-        this._maxLength = maxLength;
-        if (this._control) {
-            if (maxLength) {
-                this._control.maxLength = maxLength;
-            } else {
-                this._control.removeAttribute("maxlength");
-            }
-
-        }
-        return this;
-    };
-
-    TextUpdaterItem.prototype._createControl = function () {
-        var control = this.createHTMLElement("input");
-        control.type = "text";
-        this._control = control;
-        this.setMaxLength(this._maxLength);
-        return UpdaterItem.prototype._createControl.call(this);
-    };
-//DateUpdaterItem
-    var DateUpdaterItem = function (settings) {
-        UpdaterItem.call(this, settings);
-        DateUpdaterItem.prototype.init.call(this, settings);
-    };
-
-    DateUpdaterItem.prototype = new UpdaterItem();
-    DateUpdaterItem.prototype.constructor = DateUpdaterItem;
-    DateUpdaterItem.prototype.type = "DateUpdaterItem";
-
-    DateUpdaterItem.prototype.init = function (settings) {
-        var defaults = {
-            value: "[]"
-        };
-
-        jQuery.extend(true, defaults, settings);
-
-        this.setValue(defaults.value);
-    };
-
-    DateUpdaterItem.prototype._setValueToControl = function (value) {
-        var friendlyValue = "", i, dateFormat, timeFormat;
-        value.forEach(function(value, index, arr) {
-            if (value && value.expType === 'CONSTANT') {
-                if (!dateFormat) {
-                    dateFormat = SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("datepref"));
-                }
-                if (value.expSubtype === "datetime") {
-                    if (!timeFormat) {
-                        timeFormat = SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("timepref"));
-                    }
-                    aux = App.date(value.expValue);
-                    value.expLabel = aux.format(dateFormat + " " + timeFormat);
-                } else if (value.expSubtype === "date") {
-                    aux = App.date(value.expValue);
-                    value.expLabel = aux.format(dateFormat);
-                }
-            }
-            friendlyValue += " " + value.expLabel;
-        });
-        this._control.value = friendlyValue;
-        return this;
-    };
-
-    DateUpdaterItem.prototype.setValue = function (value) {
-        if (typeof value === 'string') {
-            value = value || "[]";
-            value = JSON.parse(value);
-        }
-        if (this._control) {
-            this._setValueToControl(value);
-        }
-        this._value = value;
-        return this;
-    };
-
-    DateUpdaterItem.prototype.clear = function () {
-        UpdaterItem.prototype.clear.call(this);
-        this._value = "[]";
-        return this;
-    };
-
-    DateUpdaterItem.prototype._createControl = function () {
-        var control = this.createHTMLElement("input");
-        control.type = "text";
-        control.readOnly = true;
-        this._control = control;
-        return UpdaterItem.prototype._createControl.call(this);
-    };
-
-    DateUpdaterItem.prototype._createConfigButton = function () {
-        return null;
-    };
-
-    DateUpdaterItem.prototype.attachListeners = function () {
-        var that = this;
-        if (this.html && !this._attachedListeners) {
-            UpdaterItem.prototype.attachListeners.call(this);
-            jQuery(this._control).on("focus", function () {
-                if (that._parent && !this._disabled) {
-                    that._parent.openPanelOnItem(that);
-                }
-            });
-            this._attachedListeners = true;
-        }
-    };
-//CheckboxUpdaterItem
-    var CheckboxUpdaterItem = function (settings) {
-        UpdaterItem.call(this, settings);
-    };
-
-    CheckboxUpdaterItem.prototype = new UpdaterItem();
-    CheckboxUpdaterItem.prototype.constructor = CheckboxUpdaterItem;
-    CheckboxUpdaterItem.prototype.type = "CheckboxUpdaterItem";
-
-    CheckboxUpdaterItem.prototype.setValue = function (value) {
-        if (this._control) {
-            this._setValueToControl(value);
-            this._value = this._getValueFromControl();
+TextUpdaterItem.prototype.setMaxLength = function (maxLength) {
+    if (typeof maxLength === 'string' && /\d+/.test(maxLength)) {
+        maxLength = parseInt(maxLength, 10);
+    }
+    if (typeof maxLength !== 'number') {
+        throw new Error("setMaxLength(): The parameter must be a number.");
+    }
+    this._maxLength = maxLength;
+    if (this._control) {
+        if (maxLength) {
+            this._control.maxLength = maxLength;
         } else {
-            this._value = !!value;
+            this._control.removeAttribute("maxlength");
         }
-        return this;
+
+    }
+    return this;
+};
+
+TextUpdaterItem.prototype._createControl = function () {
+    var control = this.createHTMLElement("input");
+    control.type = "text";
+    this._control = control;
+    this.setMaxLength(this._maxLength);
+    return UpdaterItem.prototype._createControl.call(this);
+};
+//DateUpdaterItem
+var DateUpdaterItem = function (settings) {
+    UpdaterItem.call(this, settings);
+    DateUpdaterItem.prototype.init.call(this, settings);
+};
+
+DateUpdaterItem.prototype = new UpdaterItem();
+DateUpdaterItem.prototype.constructor = DateUpdaterItem;
+DateUpdaterItem.prototype.type = "DateUpdaterItem";
+
+DateUpdaterItem.prototype.init = function (settings) {
+    var defaults = {
+        value: "[]"
     };
 
-    CheckboxUpdaterItem.prototype._createControl = function () {
-        var control = this.createHTMLElement('input');
-        control.type = "checkbox";
-        this._control = control;
-        return UpdaterItem.prototype._createControl.call(this);
-    };
+    jQuery.extend(true, defaults, settings);
 
-    CheckboxUpdaterItem.prototype._createConfigButton = function () {
-        return null;
-    };
+    this.setValue(defaults.value);
+};
 
-    CheckboxUpdaterItem.prototype.clear = function () {
-        if (this._control) {
-            this._control.checked = false;
-        }
-        this._value = false;
-        return this;
-    };
-
-    CheckboxUpdaterItem.prototype._setValueToControl = function (value) {
-        this._control.checked = !!value;
-        return this;
-    };
-
-    CheckboxUpdaterItem.prototype._getValueFromControl = function () {
-        return this._control.checked;
-    };
-
-    CheckboxUpdaterItem.prototype._onChange = function () {
-        var that = this;
-        return function (e) {
-            var currValue = that._value;
-            that._value = that._getValueFromControl();
-            if (that._value !== currValue) {
-                that._dirty = true;
+DateUpdaterItem.prototype._setValueToControl = function (value) {
+    var friendlyValue = "", i, dateFormat, timeFormat;
+    value.forEach(function(value, index, arr) {
+        if (value && value.expType === 'CONSTANT') {
+            if (!dateFormat) {
+                dateFormat = SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("datepref"));
             }
-        };
-    };
-//TextAreaUpdaterItem
-    var TextAreaUpdaterItem = function (settings) {
-        TextUpdaterItem.call(this, settings);
-    };
+            if (value.expSubtype === "datetime") {
+                if (!timeFormat) {
+                    timeFormat = SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("timepref"));
+                }
+                aux = App.date(value.expValue);
+                value.expLabel = aux.format(dateFormat + " " + timeFormat);
+            } else if (value.expSubtype === "date") {
+                aux = App.date(value.expValue);
+                value.expLabel = aux.format(dateFormat);
+            }
+        }
+        friendlyValue += " " + value.expLabel;
+    });
+    this._control.value = friendlyValue;
+    return this;
+};
 
-    TextAreaUpdaterItem.prototype = new TextUpdaterItem();
-    TextAreaUpdaterItem.prototype.constructor = TextAreaUpdaterItem;
-    TextAreaUpdaterItem.prototype.type = "TextAreaUpdaterItem";
+DateUpdaterItem.prototype.setValue = function (value) {
+    if (typeof value === 'string') {
+        value = value || "[]";
+        value = JSON.parse(value);
+    }
+    if (this._control) {
+        this._setValueToControl(value);
+    }
+    this._value = value;
+    return this;
+};
 
-    TextAreaUpdaterItem.prototype._createControl = function () {
-        var control = this.createHTMLElement('textarea');
-        this._control = control;
-        return UpdaterItem.prototype._createControl.call(this);
-    };
-//NumberUpdaterItem
-    var NumberUpdaterItem = function (settings) {
-        UpdaterItem.call(this, settings);
-        this._currency = null;
-        NumberUpdaterItem.prototype.init.call(this, settings);
-    };
+DateUpdaterItem.prototype.clear = function () {
+    UpdaterItem.prototype.clear.call(this);
+    this._value = "[]";
+    return this;
+};
 
-    NumberUpdaterItem.prototype = new UpdaterItem();
-    NumberUpdaterItem.prototype.constructor = NumberUpdaterItem;
-    NumberUpdaterItem.prototype.type = "NumberUpdaterItem";
+DateUpdaterItem.prototype._createControl = function () {
+    var control = this.createHTMLElement("input");
+    control.type = "text";
+    control.readOnly = true;
+    this._control = control;
+    return UpdaterItem.prototype._createControl.call(this);
+};
 
-    NumberUpdaterItem.prototype.init = function (settings) {
-        var defaults = {
-            value: "[]",
-            currency: false
-        };
-        jQuery.extend(true, defaults, settings);
-        this._currency = !!defaults.currency;
-        this.setValue(defaults.value);
-    };
+DateUpdaterItem.prototype._createConfigButton = function () {
+    return null;
+};
 
-    NumberUpdaterItem.prototype.isCurrency = function() {
-        return this._currency;
-    };
-
-    NumberUpdaterItem.prototype._setValueToControl = function (value) {
-        var friendlyValue = "", i;
-        value.forEach(function(value, index, arr) {
-            friendlyValue += " " + value.expLabel;
+DateUpdaterItem.prototype.attachListeners = function () {
+    var that = this;
+    if (this.html && !this._attachedListeners) {
+        UpdaterItem.prototype.attachListeners.call(this);
+        jQuery(this._control).on("focus", function () {
+            if (that._parent && !this._disabled) {
+                that._parent.openPanelOnItem(that);
+            }
         });
-        this._control.value = friendlyValue;
-        return this;
-    };
+        this._attachedListeners = true;
+    }
+};
+//CheckboxUpdaterItem
+var CheckboxUpdaterItem = function (settings) {
+    UpdaterItem.call(this, settings);
+};
 
+CheckboxUpdaterItem.prototype = new UpdaterItem();
+CheckboxUpdaterItem.prototype.constructor = CheckboxUpdaterItem;
+CheckboxUpdaterItem.prototype.type = "CheckboxUpdaterItem";
 
-    NumberUpdaterItem.prototype.setValue = function (value) {
-        if (typeof value === 'string') {
-            value = value || "[]";
-            value = JSON.parse(value);
+CheckboxUpdaterItem.prototype.setValue = function (value) {
+    if (this._control) {
+        this._setValueToControl(value);
+        this._value = this._getValueFromControl();
+    } else {
+        this._value = !!value;
+    }
+    return this;
+};
+
+CheckboxUpdaterItem.prototype._createControl = function () {
+    var control = this.createHTMLElement('input');
+    control.type = "checkbox";
+    this._control = control;
+    return UpdaterItem.prototype._createControl.call(this);
+};
+
+CheckboxUpdaterItem.prototype._createConfigButton = function () {
+    return null;
+};
+
+CheckboxUpdaterItem.prototype.clear = function () {
+    if (this._control) {
+        this._control.checked = false;
+    }
+    this._value = false;
+    return this;
+};
+
+CheckboxUpdaterItem.prototype._setValueToControl = function (value) {
+    this._control.checked = !!value;
+    return this;
+};
+
+CheckboxUpdaterItem.prototype._getValueFromControl = function () {
+    return this._control.checked;
+};
+
+CheckboxUpdaterItem.prototype._onChange = function () {
+    var that = this;
+    return function (e) {
+        var currValue = that._value;
+        that._value = that._getValueFromControl();
+        if (that._value !== currValue) {
+            that._dirty = true;
         }
-        if (this._control) {
-            this._setValueToControl(value);
-        }
-        this._value = value;
-        return this;
     };
+};
+//TextAreaUpdaterItem
+var TextAreaUpdaterItem = function (settings) {
+    TextUpdaterItem.call(this, settings);
+};
 
-    NumberUpdaterItem.prototype._createControl = function () {
-        var control = this.createHTMLElement("input");
-        control.type = "text";
-        control.readOnly = true;
-        this._control = control;
-        return UpdaterItem.prototype._createControl.call(this);
+TextAreaUpdaterItem.prototype = new TextUpdaterItem();
+TextAreaUpdaterItem.prototype.constructor = TextAreaUpdaterItem;
+TextAreaUpdaterItem.prototype.type = "TextAreaUpdaterItem";
+
+TextAreaUpdaterItem.prototype._createControl = function () {
+    var control = this.createHTMLElement('textarea');
+    this._control = control;
+    return UpdaterItem.prototype._createControl.call(this);
+};
+//NumberUpdaterItem
+var NumberUpdaterItem = function (settings) {
+    UpdaterItem.call(this, settings);
+    this._currency = null;
+    NumberUpdaterItem.prototype.init.call(this, settings);
+};
+
+NumberUpdaterItem.prototype = new UpdaterItem();
+NumberUpdaterItem.prototype.constructor = NumberUpdaterItem;
+NumberUpdaterItem.prototype.type = "NumberUpdaterItem";
+
+NumberUpdaterItem.prototype.init = function (settings) {
+    var defaults = {
+        value: "[]",
+        currency: false
     };
+    jQuery.extend(true, defaults, settings);
+    this._currency = !!defaults.currency;
+    this.setValue(defaults.value);
+};
+
+NumberUpdaterItem.prototype.isCurrency = function() {
+    return this._currency;
+};
+
+NumberUpdaterItem.prototype._setValueToControl = function (value) {
+    var friendlyValue = "", i;
+    value.forEach(function(value, index, arr) {
+        friendlyValue += " " + value.expLabel;
+    });
+    this._control.value = friendlyValue;
+    return this;
+};
+
+
+NumberUpdaterItem.prototype.setValue = function (value) {
+    if (typeof value === 'string') {
+        value = value || "[]";
+        value = JSON.parse(value);
+    }
+    if (this._control) {
+        this._setValueToControl(value);
+    }
+    this._value = value;
+    return this;
+};
+
+NumberUpdaterItem.prototype._createControl = function () {
+    var control = this.createHTMLElement("input");
+    control.type = "text";
+    control.readOnly = true;
+    this._control = control;
+    return UpdaterItem.prototype._createControl.call(this);
+};
 
 //DropdownUpdaterItem
-    var DropdownUpdaterItem = function (settings) {
-        UpdaterItem.call(this, settings);
-        this._options = [];
-        this._massiveAction = false;
-        this._initialized = false;
-        DropdownUpdaterItem.prototype.init.call(this, settings);
+var DropdownUpdaterItem = function (settings) {
+    UpdaterItem.call(this, settings);
+    this._options = [];
+    this._massiveAction = false;
+    this._initialized = false;
+    DropdownUpdaterItem.prototype.init.call(this, settings);
+};
+
+DropdownUpdaterItem.prototype = new UpdaterItem();
+DropdownUpdaterItem.prototype.constructor = DropdownUpdaterItem;
+DropdownUpdaterItem.prototype.type = "DropdownUpdaterItem";
+
+DropdownUpdaterItem.prototype.init = function (settings) {
+    var defaults = {
+        options: [],
+        value: ""
     };
 
-    DropdownUpdaterItem.prototype = new UpdaterItem();
-    DropdownUpdaterItem.prototype.constructor = DropdownUpdaterItem;
-    DropdownUpdaterItem.prototype.type = "DropdownUpdaterItem";
+    jQuery.extend(true, defaults, settings);
 
-    DropdownUpdaterItem.prototype.init = function (settings) {
-        var defaults = {
-            options: [],
-            value: ""
-        };
+    this.setOptions(defaults.options)
+        .setValue(defaults.value);
 
-        jQuery.extend(true, defaults, settings);
+    this._initialized = true;
+};
 
-        this.setOptions(defaults.options)
-            .setValue(defaults.value);
-
-        this._initialized = true;
-    };
-
-    DropdownUpdaterItem.prototype._existsValueInOptions = function (value) {
-        var i;
-        for (i = 0; i < this._options.length; i += 1) {
-            if (this._options[i].value === value) {
-                return true;
-            }
+DropdownUpdaterItem.prototype._existsValueInOptions = function (value) {
+    var i;
+    for (i = 0; i < this._options.length; i += 1) {
+        if (this._options[i].value === value) {
+            return true;
         }
-        return false;
-    };
+    }
+    return false;
+};
 
-    DropdownUpdaterItem.prototype._getFirstAvailabelValue = function () {
-        return (this._options[0] && this._options[0].value) || "";
-    };
+DropdownUpdaterItem.prototype._getFirstAvailabelValue = function () {
+    return (this._options[0] && this._options[0].value) || "";
+};
 
-    DropdownUpdaterItem.prototype.setValue = function (value) {
-        if (this._options) {
-            if (!(typeof value === 'string' || typeof value === 'number')) {
-                throw new Error("setValue(): The parameter must be a string.");
-            }
-            if (isInDOM(this._control)) {
-                this._setValueToControl(value);
-                this._value = this._getValueFromControl();
-            } else {
-                if (this._existsValueInOptions(value)) {
-                    this._value = value;
-                } else {
-                    this._value = this._getFirstAvailabelValue();
-                }
-            }
+DropdownUpdaterItem.prototype.setValue = function (value) {
+    if (this._options) {
+        if (!(typeof value === 'string' || typeof value === 'number')) {
+            throw new Error("setValue(): The parameter must be a string.");
         }
-        return this;
-    };
-
-    DropdownUpdaterItem.prototype._paintItem = function (option) {
-        var optionHTML;
-        optionHTML = this.createHTMLElement('option');
-        optionHTML.textContent = optionHTML.label = option.text;
-        optionHTML.value = option.value;
-        this._control.appendChild(optionHTML);
-        return this;
-    };
-
-    DropdownUpdaterItem.prototype._paintItems = function () {
-        var i;
-        if (this._control) {
-            jQuery(this._control).empty();
-            for (i = 0; i < this._options.length; i += 1) {
-                this._paintItem(this._options[i]);
-            }
-        }
-        return this;
-    };
-
-    DropdownUpdaterItem.prototype.addOption = function (option) {
-        var newOption;
-        if (typeof option === 'string' || typeof option === 'number') {
-            newOption = {
-                text: option,
-                value: option
-            };
+        if (isInDOM(this._control)) {
+            this._setValueToControl(value);
+            this._value = this._getValueFromControl();
         } else {
-            newOption = {
-                text: option.text || option.value,
-                value: option.value || option.text
-            };
+            if (this._existsValueInOptions(value)) {
+                this._value = value;
+            } else {
+                this._value = this._getFirstAvailabelValue();
+            }
         }
-        this._options.push(newOption);
-        if (!this._massiveAction && this.html) {
-            this._paintItem(newOption);
-        }
-        return this;
-    };
+    }
+    return this;
+};
 
-    DropdownUpdaterItem.prototype.clearOptions = function () {
-        this._options = [];
-        if (this._control) {
-            jQuery(this._control).empty();
-        }
-        return this;
-    };
+DropdownUpdaterItem.prototype._paintItem = function (option) {
+    var optionHTML;
+    optionHTML = this.createHTMLElement('option');
+    optionHTML.textContent = optionHTML.label = option.text;
+    optionHTML.value = option.value;
+    this._control.appendChild(optionHTML);
+    return this;
+};
 
-    DropdownUpdaterItem.prototype.setOptions = function (options) {
-        var i;
-        if (!jQuery.isArray(options)) {
-            throw new Error("setOptions(): The parameter must be an array.");
+DropdownUpdaterItem.prototype._paintItems = function () {
+    var i;
+    if (this._control) {
+        jQuery(this._control).empty();
+        for (i = 0; i < this._options.length; i += 1) {
+            this._paintItem(this._options[i]);
         }
-        this._massiveAction = true;
-        this.clearOptions();
-        for (i = 0; i < options.length; i += 1) {
-            this.addOption(options[i]);
-        }
-        this._massiveAction = false;
+    }
+    return this;
+};
+
+DropdownUpdaterItem.prototype.addOption = function (option) {
+    var newOption;
+    if (typeof option === 'string' || typeof option === 'number') {
+        newOption = {
+            text: option,
+            value: option
+        };
+    } else {
+        newOption = {
+            text: option.text || option.value,
+            value: option.value || option.text
+        };
+    }
+    this._options.push(newOption);
+    if (!this._massiveAction && this.html) {
+        this._paintItem(newOption);
+    }
+    return this;
+};
+
+DropdownUpdaterItem.prototype.clearOptions = function () {
+    this._options = [];
+    if (this._control) {
+        jQuery(this._control).empty();
+    }
+    return this;
+};
+
+DropdownUpdaterItem.prototype.setOptions = function (options) {
+    var i;
+    if (!jQuery.isArray(options)) {
+        throw new Error("setOptions(): The parameter must be an array.");
+    }
+    this._massiveAction = true;
+    this.clearOptions();
+    for (i = 0; i < options.length; i += 1) {
+        this.addOption(options[i]);
+    }
+    this._massiveAction = false;
+    this._paintItems();
+    if (this._initialized) {
+        this.setValue(this._value);
+    }
+    return this;
+};
+
+DropdownUpdaterItem.prototype._createConfigButton = function () {
+    return null;
+};
+
+DropdownUpdaterItem.prototype._createControl = function () {
+    if (!this._control) {
+        this._control = this.createHTMLElement('select');
+    }
+    return UpdaterItem.prototype._createControl.call(this);
+};
+
+DropdownUpdaterItem.prototype.createHTML = function () {
+    if (!this.html) {
+        UpdaterItem.prototype.createHTML.call(this);
         this._paintItems();
-        if (this._initialized) {
-            this.setValue(this._value);
-        }
-        return this;
-    };
-
-    DropdownUpdaterItem.prototype._createConfigButton = function () {
-        return null;
-    };
-
-    DropdownUpdaterItem.prototype._createControl = function () {
-        if (!this._control) {
-            this._control = this.createHTMLElement('select');
-        }
-        return UpdaterItem.prototype._createControl.call(this);
-    };
-
-    DropdownUpdaterItem.prototype.createHTML = function () {
-        if (!this.html) {
-            UpdaterItem.prototype.createHTML.call(this);
-            this._paintItems();
-            this.setValue(this._value);
-        }
-        return this.html;
-    };
+        this.setValue(this._value);
+    }
+    return this.html;
+};
 //SearchUpdaterItem
 var SearchUpdaterItem = function (settings) {
     UpdaterItem.call(this, settings);
@@ -1347,6 +1352,7 @@ SearchUpdaterItem.prototype.type = 'SearchUpdaterItem';
 SearchUpdaterItem.prototype.init = function(settings) {
     var defaults = {
         value: '',
+        searchMore: false,
         searchUrl: null,
         defaultSearchOptions: [],
         select2Translations: {
@@ -1361,18 +1367,107 @@ SearchUpdaterItem.prototype.init = function(settings) {
     this._defaultSearchOptions = defaults.defaultSearchOptions;
     this._select2Translations = defaults.select2Translations;
     this.setValue(defaults.value);
+
+    if (defaults.searchMore) {
+        this.enableSearchMore(defaults.searchMore);
+    } else {
+        this.disableSearchMore();
+    }
+};
+
+SearchUpdaterItem.prototype._createSearchMoreOption = function () {
+    var dropdownHTML, additionalList, listItem, tpl;
+    if (this._control && !this._searchMoreList) {
+        dropdownHTML = $(this._control).data("select2").dropdown;
+        additionalList = this.createHTMLElement('ul');
+        additionalList.className = 'select2-results adam-searchmore-list';
+        listItem = this.createHTMLElement('li');
+        tpl = this.createHTMLElement('div');
+        tpl.className = 'select2-result-label';
+        tpl.appendChild(document.createTextNode(translate('LBL_SEARCH_AND_SELECT_ELLIPSIS')));
+        listItem.appendChild(tpl);
+        additionalList.appendChild(listItem);
+        dropdownHTML.append(additionalList);
+        this._searchMoreList = additionalList;
+    }
+    return this;
+};
+
+/**
+ * Enables the Search More functionality
+ * @param {Object} settings
+ */
+SearchUpdaterItem.prototype.enableSearchMore = function (settings) {
+
+    if (typeof settings !== 'object') {
+        throw new Error("enableSearchMore(): The parameter must be an object.");
+    }
+    this._searchMore = settings;
+    if (this._control) {
+        this._createSearchMoreOption();
+        this._searchMoreList.style.display = '';
+    }
+    return this;
+};
+
+/**
+ * Disables the field
+ * @inheritdoc
+ **/
+SearchUpdaterItem.prototype._disableControl = function () {
+    if (this.select2Control) {
+        this.select2Control.select2("disable");
+    }
+    return this;
+};
+
+SearchUpdaterItem.prototype._enableControl = function () {
+    if (this.select2Control) {
+        this.select2Control.select2("enable");
+    }
+    return this;
+};
+
+/**
+ * Disables the Search More functionality
+ */
+SearchUpdaterItem.prototype.disableSearchMore = function () {
+    this._searchMore = false;
+    if (this._control) {
+        this._createSearchMoreOption();
+        this._searchMoreList.style.display = 'none';
+    }
+    return this;
 };
 
 /**
  * @inheritdoc
- * @param {object} value
+ * @param {String} value
+ */
+SearchUpdaterItem.prototype._setValueToControl = function (value) {
+    if (this.html && this.select2Control) {
+        this.select2Control.select2("val", value);
+    }
+    return this;
+};
+
+SearchUpdaterItem.prototype._getValueFromControl = function () {
+    if (this.select2Control) {
+        return this.select2Control.select2("val");
+    }
+};
+
+/**
+ * @inheritdoc
+ * @param {String} value
+ * @param {String} label
  */
 SearchUpdaterItem.prototype.setValue = function(value, label) {
     if (value && this.select2Control) {
         if (label) {
             this.select2Control.select2('data', {value: value, text: label});
         } else {
-            this.select2Control.select2('val', value);
+            return UpdaterItem.prototype.setValue.call(this, value);
         }
     }
     this._value = value || '';
@@ -1393,8 +1488,10 @@ SearchUpdaterItem.prototype.getData = function () {
  * @inheritdoc
  */
 SearchUpdaterItem.prototype.clear = function() {
-    UpdaterItem.prototype.clear.call(this);
-    this._value = {};
+    if (this._control) {
+        this.select2Control.select2("val", "");
+    }
+    this._value = "";
     return this;
 };
 
@@ -1407,6 +1504,43 @@ SearchUpdaterItem.prototype.getSelectedText = function() {
 }
 
 /**
+ * Opens the related drawer
+ * @private
+ */
+SearchUpdaterItem.prototype._openSearchMore = function () {
+    var that = this, zIndex;
+    return function () {
+        zIndex = $(that.html).closest(".adam-modal").zIndex();
+        that.select2Control.select2("close");
+        $(that.html).closest(".adam-modal").zIndex(-1);
+        App.drawer.open({
+                layout: "selection-list",
+                context: that._searchMore
+            },
+            _.bind(function (drawerValues) {
+                $(that.html).closest(".adam-modal").zIndex(zIndex);
+                if (!_.isUndefined(drawerValues)) {
+                    that.setValue(drawerValues.id, drawerValues.name);
+                    that._onChange();
+                }
+            }, this)
+        );
+    };
+};
+
+/**
+ * Attach event listeners to the component's HTML.
+ * @inheritdoc
+ */
+SearchUpdaterItem.prototype.attachListeners = function () {
+    if (this.html && !this._attachedListeners) {
+        UpdaterItem.prototype.attachListeners.call(this);
+        $(this._searchMoreList).find('li').on('mousedown', this._openSearchMore());
+    }
+    return this;
+};
+
+/**
  * Create a select2, and bind a change event to it
  * @inheritdoc
  */
@@ -1414,18 +1548,6 @@ SearchUpdaterItem.prototype.createHTML = function() {
     var self = this;
     if (!this.html) {
         UpdaterItem.prototype.createHTML.call(this);
-
-        this.select2Control = $(this._control);
-        this.select2Control.select2({
-            query: _.bind(this._queryFunction, this),
-            initSelection: _.bind(this._initSelection, this),
-            width: this.fieldWidth || '220px'
-        });
-        this.select2Control.on('change', function() {
-            var s2obj = self.select2Control.select2('data');
-            self.select2Control.data('text', s2obj.text);
-            self.setValue(s2obj.id);
-        });
     }
     return this.html;
 }
@@ -1436,7 +1558,26 @@ SearchUpdaterItem.prototype.createHTML = function() {
 SearchUpdaterItem.prototype._createControl = function() {
     var control = this.createHTMLElement('input');
     control.type = 'text';
-    this._control = control;
+
+    this.select2Control = $(control);
+    this.select2Control.select2({
+        query: _.bind(this._queryFunction, this),
+        initSelection: _.bind(this._initSelection, this),
+        width: this.fieldWidth || '220px'
+    });
+    /*this.select2Control.on('change', function() {
+     var s2obj = self.select2Control.select2('data');
+     self.select2Control.data('text', s2obj.text);
+     self.setValue(s2obj.id);
+     });*/
+
+    this._control = this.select2Control.data("select2").container.get(0);
+
+    if (this._searchMore) {
+        this.enableSearchMore(this._searchMore);
+    } else {
+        this.disableSearchMore();
+    }
 
     return UpdaterItem.prototype._createControl.call(this);
 };

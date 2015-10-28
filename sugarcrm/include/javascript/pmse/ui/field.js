@@ -156,7 +156,22 @@ Field.prototype.initObject = function (options, parent) {
  * @return {*}
  */
 Field.prototype.setRequired = function (value) {
-    this.required = value;
+    var requiredMark;
+    this.required = !!value;
+    if (this.labelObject) {
+        requiredMark = $(this.labelObject).find('i');
+        if (value) {
+            if (!requiredMark.get(0)) {
+                requiredMark = this.createHTMLElement('i');
+                requiredMark.appendChild(document.createTextNode('*'));
+                this.labelObject.appendChild(requiredMark);
+            } else {
+                requiredMark.show();
+            }
+        } else {
+            requiredMark.hide();
+        }
+    }
     return this;
 };
 /**

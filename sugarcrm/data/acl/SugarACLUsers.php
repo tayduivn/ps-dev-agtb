@@ -236,6 +236,12 @@ class SugarACLUsers extends SugarACLStrategy
                     $result[$key] = SugarACL::ACL_READ_WRITE;
                 }
             }
+
+            if ($myself == true) {
+                if ($field == 'pwd_last_changed' || $field == 'last_login') {
+                    $result[$key] = SugarACL::ACL_READ_ONLY;
+                }
+            }
         }
         return $result;
     }

@@ -91,9 +91,7 @@ describe('Plugins.Dropdown', function() {
             var keys = [
                 $.ui.keyCode.ESCAPE,
                 $.ui.keyCode.UP,
-                $.ui.keyCode.DOWN,
-                $.ui.keyCode.LEFT,
-                $.ui.keyCode.RIGHT
+                $.ui.keyCode.DOWN
             ];
             using('captured keys', keys, function(key) {
                 var noop = function() {
