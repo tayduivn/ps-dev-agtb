@@ -236,7 +236,7 @@ class UserPreference extends SugarBean
 
         $value = array();
         if ($row) {
-            $value = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($row['contents']));
+            $value = unserialize(base64_decode($row['contents']));
         }
 
         $this->storeToCache($value, $category);
