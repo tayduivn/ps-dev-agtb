@@ -28,6 +28,7 @@
 					<td><div id="inboundAccountsTable" class="yui-skin-sam"></div></td>
 			</tr>
 			<tr><td>&nbsp;</td></tr>
+			{if empty($disable_account_config) || $disable_account_config == "false"}
 			<tr>
 				<td> <input title="{$mod_strings.LBL_ADD_INBOUND_ACCOUNT}"
 	                        type='button' 
@@ -36,6 +37,7 @@
 	                        name="button" id="addButton" value="{$mod_strings.LBL_ADD_INBOUND_ACCOUNT}">
 				</td>
 			</tr>
+			{/if}
 			<tr>
 				<td>&nbsp;</td>
 			</tr>
@@ -61,13 +63,14 @@
                 				    <td><div id="outboundAccountsTable" class="yui-skin-sam"></div></td>
                 				</tr>
                 				<tr><td>&nbsp;</td></tr>
-                			    <tr>
+								{if empty($disable_account_config) || $disable_account_config == "false"}
+								<tr>
                 				    <td style="padding-bottom: 5px">
                 					   <input id="outbound_email_add_button" title="{$app_strings.LBL_EMAIL_FOLDERS_ADD}" type='button' 
                 					   	class="button" onClick='SUGAR.email2.accounts.showAddSmtp();' name="button" value="{$mod_strings.LBL_ADD_OUTBOUND_ACCOUNT}">
                 					</td>
                 				</tr>
-                				
+								{/if}
                             </table>
                        </div>     
 					</td>

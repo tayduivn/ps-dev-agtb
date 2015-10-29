@@ -123,7 +123,6 @@ if ($quote->getRelatedOpportunityCount() > 0) {
     $opp->date_closed = $quote->date_quote_expected_closed;
     $opp->name = $_REQUEST['opportunity_subject'];
     $opp->assigned_user_name = $quote->assigned_user_name;
-    $opp->lead_source = isset($app_list_strings['lead_source_dom']['Self Generated']) ? 'Self Generated' : null; //'Self Generated';
     $opp->opportunity_type = isset($app_list_strings['opportunity_type_dom']['New Business']) ? $app_list_strings['opportunity_type_dom']['New Business'] : null; //'New Business';
     $opp->team_id = $quote->team_id;
     $opp->quote_id = $quote->id;

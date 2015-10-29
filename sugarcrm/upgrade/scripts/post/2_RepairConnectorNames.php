@@ -46,7 +46,7 @@ class SugarUpgradeRepairConnectorNames extends UpgradeScript
     /**
      * Looks for and sets the list of files that may need repair
      */
-    public function setConfigsToRepair()
+    protected function setConfigsToRepair()
     {
         // Look for custom configs to update, for example:
         // custom/modules/Connectors/connectors/sources/ext/rest/twitter/config.php
@@ -56,7 +56,7 @@ class SugarUpgradeRepairConnectorNames extends UpgradeScript
     /**
      * Handles the actual repairing of the files
      */
-    public function repairConfigs()
+    protected function repairConfigs()
     {
         $this->removeCopyrightsFromConfigs();
         $this->removeCopyrightsFromMetadata();
@@ -66,17 +66,13 @@ class SugarUpgradeRepairConnectorNames extends UpgradeScript
      * Runs through the list of configs and sanitizes each file, saving the file
      * after it is cleansed.
      */
-    public function removeCopyrightsFromConfigs()
+    protected function removeCopyrightsFromConfigs()
     {
         foreach ($this->configsToRepair as $path) {
-            // Get the data in the file
-            require $path;
+            // This method does all the heavy lifting
+            $config = $this->getSanitizedConfigFromFile($path);
 
-            // Handle cleansing of the name property
-            if (isset($config) && is_array($config) && isset($config['name'])) {
-                $config['name'] = str_replace('&#169;', '', $config['name']);
-            }
-
+            // Save the new config
             if (!$this->saveUpdatedConfigFile($config, $path)) {
                 $this->log("CONNECTOR CONFIG UPGRADE: Could not save $path");
             }
@@ -86,16 +82,13 @@ class SugarUpgradeRepairConnectorNames extends UpgradeScript
     /**
      * Handles sanitization of the name elements in the metadata
      */
-    public function removeCopyrightsFromMetadata()
+    protected function removeCopyrightsFromMetadata()
     {
         if (file_exists($this->metadataFile)) {
             require $this->metadataFile;
             if (isset($connectors) && is_array($connectors)) {
                 foreach ($connectors as $name => $data) {
-                    if (isset($data['name'])) {
-                        $data['name'] = str_replace('&#169;', '', $data['name']);
-                    }
-                    $connectors[$name] = $data;
+                    $connectors[$name] = $this->getSanitizedConfig($data);
                 }
 
                 if (!write_array_to_file('connectors', $connectors, $this->metadataFile)) {
@@ -106,13 +99,105 @@ class SugarUpgradeRepairConnectorNames extends UpgradeScript
     }
 
     /**
+     * Handles the actual removal of the copyright symbol from the name element
+     * of the configuration data array
+     * @param array $data Configuration data
+     * @return array
+     */
+    public function getSanitizedConfig($data)
+    {
+        if (is_array($data) && isset($data['name'])) {
+            $data['name'] = str_replace('&#169;', '', $data['name']);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Gets the current custom configuration from the the file. Sanitizes the
+     * config array to ensure it matches what is in the OOTB config structure.
+     * In upgrades to 7.6.1, connector metadata became mixed in certain
+     * circumstances. This fixes that issue in addition to fixing the copyright
+     * symbol in the config
+     * @param string $path The custom config file path
+     * @return array
+     */
+    protected function getSanitizedConfigFromFile($path)
+    {
+        // Gets the config array from the file path
+        $custom = $this->getConfigFromFile($path);
+
+        // Get the base path for use in comparisons
+        $basepath = substr($path, 7);
+
+        // If the path to the base file doesn't exist, send back the custom array
+        // This will likely never happen, but better safe than sorry
+        if (!file_exists($basepath)) {
+            return $custom;
+        }
+
+        // Get the config from the base file
+        $base = $this->getConfigFromFile($basepath);
+
+        // Handle cleansing of the custom array by comparing against the base
+        $config = $this->getSanitizedConfigParams($custom, $base);
+
+        // Handle the cleansing of the name now and send it back
+        return $this->getSanitizedConfig($config);
+    }
+
+    /**
+     * Gets the config array from the file at $file
+     * @param string $file Full path to a file
+     * @return array
+     */
+    public function getConfigFromFile($file)
+    {
+        // Initialize the return
+        $config = array();
+
+        // Get the data in the file
+        @require $file;
+
+        // Send back the cleaned up config
+        return $config;
+    }
+
+    /**
+     * Recursively gets a cleansed config by comparing current to the base
+     *
+     * @param array $config Current config array
+     * @param array $base Base config array
+     * @return array
+     */
+    public function getSanitizedConfigParams(array $config, array $base)
+    {
+        $return = array();
+
+        foreach ($config as $key => $val) {
+            // Only work on saving data if the key is in the base array
+            if (array_key_exists($key, $base)) {
+                // If we are dealing with arrays on both, handle that now
+                if (is_array($val) && is_array($base[$key])) {
+                    $return[$key] = $this->getSanitizedConfigParams($val, $base[$key]);
+                } else {
+                    // Otherwise take the entry as is
+                    $return[$key] = $val;
+                }
+            }
+        }
+
+        return $return;
+    }
+
+    /**
      * Writes the config data to the custom file from whence it came
      *
      * @param array $config The config data to save
      * @param string $file The file name to save
      * @return int The amount of data saved to the file
      */
-    public function saveUpdatedConfigFile($config, $file)
+    protected function saveUpdatedConfigFile($config, $file)
     {
         $write = "<?php\n/***CONNECTOR SOURCE***/\n";
         foreach ($config as $key => $val) {

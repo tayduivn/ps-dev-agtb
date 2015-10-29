@@ -100,8 +100,7 @@ class PMSEHookHandler
             $q->where()
                 ->equals('pro_module', $bean->module_dir)
                 ->equals('pro_status', 'ACTIVE')
-                ->notEquals('pro_locked_variables', '');
-            $temp = $q->compileSql();
+                ->isNotEmpty('pro_locked_variables');
             $proDefs = $q->execute();
             if (!empty($proDefs)) {
                 //Check if module have locked fields defined
@@ -125,7 +124,7 @@ class PMSEHookHandler
                             $blocked_fields = array();
                             foreach ($locked_fields as $field) {
                                 //Check if field is part of the current module
-                                if (isset($bean->{$field}) && isset($originalValues[$field])) {
+                                if (isset($bean->{$field}) && array_key_exists($field, $originalValues)) {
                                     if ($bean->{$field} != $originalValues[$field]) {
                                         $blocked_fields[] = $field;
                                         // Returning to original value before to save
