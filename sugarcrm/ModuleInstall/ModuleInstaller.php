@@ -2833,6 +2833,10 @@ class ModuleInstaller{
             'serverTimeout' => self::getPortalTimeoutValue(),
             'maxSearchQueryResult'=>'5'
         );
+
+        $jsConfig = $config->get('additional_js_config', array());
+        $portalConfig = array_merge($portalConfig, $jsConfig);
+
         return $portalConfig;
     }
 //END SUGARCRM flav=ent ONLY

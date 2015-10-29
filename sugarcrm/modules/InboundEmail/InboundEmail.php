@@ -2266,6 +2266,14 @@ class InboundEmail extends SugarBean {
 	 * @return boolean true on success, false on fail
 	 */
 	function savePersonalEmailAccount($userId = '', $userName = '', $forceSave=true) {
+		global $current_user;
+
+		if (SugarConfig::getInstance()->get("disable_user_email_config", false)
+			&& !$current_user->isAdminForModule("Emails")
+		) {
+			ACLController::displayNoAccess(false);
+			return false;
+		}
 		$groupId = $userId;
 		$accountExists = false;
 		if(isset($_REQUEST['ie_id']) && !empty($_REQUEST['ie_id'])) {

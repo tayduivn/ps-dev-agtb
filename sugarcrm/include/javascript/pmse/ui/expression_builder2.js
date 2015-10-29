@@ -1049,15 +1049,22 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     label = subpanel.getItem("field").getSelectedText() + " " +
                             subpanel.getItem("operator").getSelectedText() + " ";
 
-                    if (aux[1] === "Date" || aux[1] === 'Datetime') {
-                        label += '%VALUE%';
-                    } else if (aux[1] === 'user') {
-                        label += valueField.getSelectedText();
-                    } else if (aux[1] === 'Currency') {
-                        label += valueField.getCurrencyText() + ' %VALUE%';
-                    } else {
-                        label += (valueType === "string" ? "\"" + value + "\"" : data.value);
+                    switch (aux[1]) {
+                        case 'Date':
+                        case 'Datetime':
+                            label += '%VALUE%';
+                            break;
+                        case 'user':
+                        case 'DropDown':
+                            label += valueField.getSelectedText();
+                            break;
+                        case 'Currency':
+                            label += valueField.getCurrencyText() + ' %VALUE%';
+                            break;
+                        default:
+                            label += (valueType === "string" ? "\"" + value + "\"" : data.value);
                     }
+                    
                     itemData = {
                         expType: "MODULE",
                         expSubtype: aux[1],

@@ -172,6 +172,20 @@ class KBContent extends SugarBean {
     }
 
     /**
+     * Overriding parent method just for turn off
+     * date formatting in loading because this leads
+     * to lost seconds in datetime fields.
+     */
+    public function check_date_relationships_load()
+    {
+        global $disable_date_format;
+        $old_disable_date_format  = $disable_date_format;
+        $disable_date_format = true;
+        parent::check_date_relationships_load();
+        $disable_date_format = $old_disable_date_format;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function save_relationship_changes($is_update, $exclude = array())
@@ -251,6 +265,8 @@ class KBContent extends SugarBean {
             $this->active_rev = (int) empty($this->kbarticle_id);
         }
 
+        $this->skipUsefulnessChanges($dataChanges);
+
         if (isset($dataChanges['status'])) {
             switch ($dataChanges['status']['after']) {
                 // automatically set ApprovedBy if status was changed to Approved
@@ -273,6 +289,42 @@ class KBContent extends SugarBean {
             }
         }
         return $beanId;
+    }
+
+    /**
+     * Mute changes in kb voting (need when
+     * save kb article).
+     *
+     * @param array $dataChanges
+     */
+    protected function skipUsefulnessChanges(array $dataChanges)
+    {
+        if (empty($this->id) || $this->new_with_id) {
+            $this->useful = 0;
+            $this->notuseful = 0;
+            return;
+        }
+        if (array_key_exists('useful', $dataChanges)) {
+            $this->useful = $dataChanges['useful']['before'];
+        }
+        if (array_key_exists('notuseful', $dataChanges)) {
+            $this->notuseful = $dataChanges['notuseful']['before'];
+        }
+    }
+
+    /**
+     * Special save for users votes save.
+     * @throws SugarApiException
+     */
+    public function saveUsefulness()
+    {
+        if(empty($this->id) || $this->new_with_id) {
+            throw new SugarApiException('Bean must be saved before vote');
+        }
+
+        $this->update_date_modified = false;
+        $this->update_modified_by = false;
+        parent::save();
     }
 
     /**

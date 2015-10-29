@@ -254,4 +254,72 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($bean->kbsapprover_id, $user->id);
     }
 
+    /**
+     * Test save usefulness on empty bean.
+     *
+     * @expectedException SugarApiException
+     */
+    public function testSaveUsefulnessWithEmptyBean()
+    {
+        $this->bean->id = false;
+        $this->bean->saveUsefulness();
+    }
+
+    /**
+     * Test save usefulness on empty bean.
+     *
+     * @expectedException SugarApiException
+     */
+    public function testSaveUsefulnessWithNewWithId()
+    {
+        $this->bean->new_with_id = true;
+        $this->bean->saveUsefulness();
+    }
+
+    /**
+     * Test of saveUsefulness().
+     */
+    public function testSaveUsefulness() {
+
+        $beanDateModified = $this->bean->date_modified;
+        $beanModifiedBy = $this->bean->modified_by;
+
+        $this->bean->useful = 1;
+        $this->bean->notuseful = 0;
+
+        $this->assertTrue($this->bean->update_date_modified);
+        $this->assertTrue($this->bean->update_modified_by);
+
+        $this->bean->saveUsefulness();
+        $this->assertFalse($this->bean->update_date_modified);
+        $this->assertFalse($this->bean->update_modified_by);
+
+        $this->bean->retrieve();
+        $this->assertEquals('1', $this->bean->useful);
+        $this->assertEquals('0', $this->bean->notuseful);
+        $this->assertEquals($beanDateModified, $this->bean->date_modified);
+        $this->assertEquals($beanModifiedBy, $this->bean->modified_by);
+    }
+
+    /**
+     * Test that in saving of new kbcontent we omit usefulness.
+     */
+    public function testSavingNewBeanOmitUsefulness()
+    {
+        $bean = SugarTestKBContentUtilities::createBean(array('useful' => 1), false);
+        $bean->new_with_id = true;
+        SugarTestKBContentUtilities::saveBean($bean);
+        $this->assertEquals('0', $bean->useful);
+    }
+
+    /**
+     * Test that in saving of new kbcontent we omit usefulness.
+     */
+    public function testSavingExistingBeanOmitUsefulness()
+    {
+        $this->bean->retrieve(); // to fill bean->fetched_row
+        $this->bean->useful = 1;
+        $this->bean->save();
+        $this->assertEquals('0', $this->bean->useful);
+    }
 }

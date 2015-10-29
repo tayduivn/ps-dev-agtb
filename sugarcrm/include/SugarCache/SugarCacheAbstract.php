@@ -136,7 +136,7 @@ abstract class SugarCacheAbstract
 
     /**
      *  Set a value for a key in the cache, optionally specify a ttl. A ttl value of zero
-     * will indicate that a value should only be stored per the request.
+     * will indicate that a value should never expire.
      *
      * @param $key
      * @param $value
