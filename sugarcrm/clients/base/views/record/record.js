@@ -722,7 +722,19 @@
     saveClicked: function() {
         // Disable the action buttons.
         this.toggleButtons(false);
-        this.model.doValidate(this.getFields(this.module), _.bind(this.validationComplete, this));
+
+        var diff = _.changed(this.model.attributes, this.model._syncedAttributes);
+        var changedFields = [];
+
+        // Only validate fields that have changed.
+        _.each(diff, function(changed, field) {
+            if (changed) {
+                changedFields.push(field);
+            }
+        });
+
+        var fieldsToValidate = _.pick(this.getFields(this.module, this.model), changedFields);
+        this.model.doValidate(fieldsToValidate, _.bind(this.validationComplete, this));
     },
 
     cancelClicked: function() {
