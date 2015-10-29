@@ -196,6 +196,7 @@ ExpressionControl.prototype.init = function (settings) {
         onOpen: null,
         onClose: null,
         className: "",
+        panelContext: document.body,
         currencies: []
     };
 
@@ -219,6 +220,7 @@ ExpressionControl.prototype.init = function (settings) {
         open: false,
         onItemValueAction: this._onPanelValueGeneration(),
         width: this.width,
+        context: defaults.panelContext,
         className: defaults.className || ""
     });
 
@@ -1047,15 +1049,22 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     label = subpanel.getItem("field").getSelectedText() + " " +
                             subpanel.getItem("operator").getSelectedText() + " ";
 
-                    if (aux[1] === "Date" || aux[1] === 'Datetime') {
-                        label += '%VALUE%';
-                    } else if (aux[1] === 'user') {
-                        label += valueField.getSelectedText();
-                    } else if (aux[1] === 'Currency') {
-                        label += valueField.getCurrencyText() + ' %VALUE%';
-                    } else {
-                        label += (valueType === "string" ? "\"" + value + "\"" : data.value);
+                    switch (aux[1]) {
+                        case 'Date':
+                        case 'Datetime':
+                            label += '%VALUE%';
+                            break;
+                        case 'user':
+                        case 'DropDown':
+                            label += valueField.getSelectedText();
+                            break;
+                        case 'Currency':
+                            label += valueField.getCurrencyText() + ' %VALUE%';
+                            break;
+                        default:
+                            label += (valueType === "string" ? "\"" + value + "\"" : data.value);
                     }
+                    
                     itemData = {
                         expType: "MODULE",
                         expSubtype: aux[1],
@@ -1488,6 +1497,11 @@ ExpressionControl.prototype._createModulePanel = function () {
                                     {'label': translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), 'value': 'owner'},
                                     {'label': translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'), 'value': 'supervisor'}
                                 ];
+                                newFieldSettings.searchMore = {
+                                    module: "Users",
+                                    fields: ["id", "full_name"],
+                                    filterOptions: null
+                                };
                                 newFieldSettings.searchURL = 'pmse_Project/CrmData/users?filter={TERM}';
                             }
                             operatorField = form.getItem("operator");
@@ -1752,11 +1766,11 @@ ExpressionControl.prototype._createUserPanel = function () {
                             case 'USER_IDENTITY':
                                 dependantField.clearOptions()
                                     .setSearchURL('pmse_Project/CrmData/users?filter={TERM}')
-                                    .enable();
-                                    var spans = document.getElementsByClassName('select2-chosen');
-                                    for (var i=0;i<spans.length;i++) {
-                                        spans[i].innerText = translate('LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT');
-                                    }
+                                    .enable()
+                                    .enableSearchMore({
+                                        module: "Users",
+                                        fields: ["id", "full_name"]
+                                    });
                         }
                     }
                 }

@@ -33,7 +33,7 @@ if(is_admin($current_user)){
             } else {
                 $mod = BeanFactory::newBeanByName($class);
                 $GLOBALS['log']->debug("DOING: $class");
-                if($mod instanceof SugarBean && $mod->bean_implements('ACL') && empty($mod->acl_display_only)){
+                if($mod instanceof SugarBean && $mod->bean_implements('ACL') && $mod->isACLRoleEditable()){
                     // BUG 10339: do not display messages for upgrade wizard
                     if(!isset($_REQUEST['upgradeWizard'])){
                         echo translate('LBL_ADDING','ACL','') . $mod->module_dir . '<br>';

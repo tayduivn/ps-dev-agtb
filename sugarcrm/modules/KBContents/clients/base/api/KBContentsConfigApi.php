@@ -67,7 +67,7 @@ class KBContentsConfigApi extends ConfigModuleApi
         foreach ($params as $name => $value) {
             $configSaved = $admin->saveSetting($module, $name, $value, $api->platform);
 
-            if ((1 == $configSaved && 'languages' == $name) && (isset($config['languages']))) {
+            if ((false !== $configSaved && 'languages' == $name) && (isset($config['languages']))) {
                 $initialLanguageList = $this->_getLanguagesAbbreviations($config['languages']);
 
                 foreach ($value as $key => $language) {

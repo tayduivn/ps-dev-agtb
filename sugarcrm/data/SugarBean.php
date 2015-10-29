@@ -339,6 +339,13 @@ class SugarBean
     );
 
     /**
+     * to display on acl-role edit panel
+     * default is false
+     * @deprecated Since 7.7
+     */
+    public $acl_display_only = false;
+
+    /**
      * Beans corresponding to various links on the bean
      * @var array
      */
@@ -1233,8 +1240,8 @@ class SugarBean
      * 	@param string $key name of the object.
      * 	@param object $db database handle.
      *  @param string $tablename table, meta data is being populated for.
-     *  @param array dictionary vardef dictionary for the object.     *
-     *  @param string module_dir name of subdirectory where module is installed.
+     *  @param array $_ Unused argument
+     *  @param string $module_dir name of subdirectory where module is installed.
      *  @param boolean $iscustom Optional,set to true if module is installed in a custom directory. Default value is false.
      *  @static
      *
@@ -1243,7 +1250,7 @@ class SugarBean
      *
      *  Internal function, do not override.
      */
-    function createRelationshipMeta($key,$db,$tablename,$dictionary,$module_dir,$iscustom=false)
+    function createRelationshipMeta($key,$db,$tablename,$_,$module_dir,$iscustom=false)
     {
         $GLOBALS['log']->deprecated("Deprecated function createRelationshipMeta called");
     }
@@ -1581,7 +1588,7 @@ class SugarBean
         {
             if(!$this->db->tableExists($this->table_name)) {
                 $this->db->createTable($this);
-                if ($this->bean_implements('ACL') && empty($this->acl_display_only)) {
+                if ($this->bean_implements('ACL') && $this->isACLRoleEditable()) {
                     $aclList = SugarACL::loadACLs($this->getACLCategory());
                     foreach($aclList as $acl) {
                         if($acl instanceof SugarACLStatic) {
@@ -7270,7 +7277,20 @@ class SugarBean
             if ($this->is_relate_field($field)) {
 
                 //check to see if the related field name is part of the passed in 'where' statement
-                if (!empty($where) && strpos($where,"$field ") !== false) {
+                $inWhere = (!empty($where) && strpos($where,"$field ") !== false);
+
+                //in some cases, the field is composed of table'.'field rname, check to see if this is one of those cases
+                if(!$inWhere &&
+                    !empty($fields[$field]) &&
+                    !empty($fields[$field]['table']) &&
+                    !empty($fields[$field]['rname']) &&
+                    strpos($where, $fields[$field]['table'].'.'.$fields[$field]['rname'])
+                ) {
+                    $inWhere = true;
+                }
+
+                //process if the field was found in the 'where' statement
+                if ($inWhere) {
 
                     //initialize fields to exclude array element if not set
                     $module_name_lower = strtolower($this->module_dir);
@@ -7448,8 +7468,6 @@ class SugarBean
      */
     protected function get_fields_influencing_linked_bean_calc_fields($linkName)
     {
-        global $dictionary;
-
         $result = array();
 
         if (!$this->load_relationship($linkName)) {
@@ -7458,17 +7476,23 @@ class SugarBean
 
         /** @var Link2 $link */
         $link = $this->$linkName;
-        $relatedModuleName = $link->getRelatedModuleName();
-        $relatedBeanName   = BeanFactory::getObjectName($relatedModuleName);
-        $relatedLinkName   = $link->getRelatedModuleLinkName();
+        $relatedLinkName = $link->getRelatedModuleLinkName();
 
-        if (empty($relatedBeanName) || empty($dictionary[$relatedBeanName])) {
-            $GLOBALS['log']->fatal("Cannot load field defs for $relatedBeanName");
+        $relatedModuleName = $link->getRelatedModuleName();
+        if (!$relatedModuleName) {
+            $GLOBALS['log']->fatal("Cannot find related module name for $linkName");
             return $result;
         }
+
+        $relatedBean = BeanFactory::getBean($relatedModuleName);
+        if (!$relatedBean) {
+            $GLOBALS['log']->fatal("Cannot create instance of $relatedModuleName");
+            return $result;
+        }
+
         // iterate over related bean fields
-        SugarAutoLoader::load('include/Expressions/Expression/Parser/Parser.php');
-        foreach ($dictionary[$relatedBeanName]['fields'] as $def) {
+        $fieldDefs = $relatedBean->getFieldDefinitions();
+        foreach ($fieldDefs as $def) {
             if (!empty($def['formula'])) {
                 $expr = Parser::evaluate($def['formula'], $this);
                 $fields = Parser::getFormulaRelateFields($expr, $relatedLinkName);
@@ -7866,5 +7890,17 @@ class SugarBean
     {
         self::$recursivelyResavedLinks = array();
         self::$recursivelyResavedManyBeans = false;
+    }
+
+    /**
+     * Allow ACL Role edit
+     *
+     * @return bool
+     */
+    public function isACLRoleEditable(){
+        if (isset($this->acl_display_only)){
+            return !$this->acl_display_only;
+        }
+        return true;
     }
 }

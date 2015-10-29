@@ -16,19 +16,6 @@
 ({
     plugins: ['Dropdown', 'Tooltip'],
 
-    events: {
-        'click [data-action=link]': 'linkClicked',
-        'click #userTab' : 'hideSubmenuItems',
-        'click #userActions' : 'closeSubmenu'
-    },
-
-    /**
-     * Visibility property for available submenu.
-     *
-     * @property
-     */
-    displaySubmenu: false,
-
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         app.events.on("app:sync:complete", this.render, this);
@@ -50,38 +37,6 @@
             this.menulist = this.filterAvailableMenu(app.utils.deepCopy(this.meta));
         }
         this._super('_renderHtml');
-    },
-    /**
-     * Handle the button click event.
-     * Stop event propagation in order to keep the dropdown box.
-     *
-     * @param {Event} evt Mouse event.
-     */
-    linkClicked: function(evt) {
-        evt.preventDefault();
-        evt.stopPropagation();
-        var $menuItem = this.$(evt.currentTarget),
-            $submenu = $menuItem.closest('li').find('.dropdown-inset');
-        $submenu.toggle();
-        // Handles the highlight of the dropdown arrow
-        $menuItem.toggleClass("open");
-
-        // Handles css properties when height exceed 330, the scrollbar appears
-        var maxHeight = 330,
-            currentHeight = this.$("#fullmenu").outerHeight();
-        this.$('.dropdown-submenu').toggleClass('with-scroll', currentHeight >= maxHeight);
-    },
-    /**
-     * Closes the submenu
-     */
-    closeSubmenu: function(){
-        this.$('.dropdown-submenu').removeClass("open");
-    },
-    /**
-     * Hides the submenu items
-     */
-    hideSubmenuItems: function() {
-        this.$('.dropdown-inset').hide();
     },
 
     /**

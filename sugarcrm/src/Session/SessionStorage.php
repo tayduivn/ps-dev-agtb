@@ -123,12 +123,6 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
      */
     public function sessionHasId()
     {
-        //Grab the PHP session name
-        $session_name = session_name();
-        if (!empty($_GET[$session_name])) {
-            return true;
-        }
-
         $session_id = $this->getId();
 
         return empty($session_id) ? true : false;
