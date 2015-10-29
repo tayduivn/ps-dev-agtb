@@ -257,25 +257,20 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Test save usefulness on empty bean.
      *
+     * @expectedException SugarApiException
      */
-    public function testSaveUsefulnessWithEmptyBean()
+    public function testSaveUsefulnessWithBeanWithoutId()
     {
         $this->bean->id = false;
-        $exceptionRaised = false;
-        try {
-            $this->bean->saveUsefulness();
-        } catch(SugarApiException $e) {
-            $exceptionRaised = true;
-        }
-        $this->assertTrue($exceptionRaised);
+        $this->bean->saveUsefulness();
     }
 
     /**
-     * Test save usefulness on empty bean.
+     * Test save usefulness on new bean.
      *
      * @expectedException SugarApiException
      */
-    public function testSaveUsefulnessWithNewWithId()
+    public function testSaveUsefulnessWithNewBean()
     {
         $this->bean->new_with_id = true;
         $this->bean->saveUsefulness();
