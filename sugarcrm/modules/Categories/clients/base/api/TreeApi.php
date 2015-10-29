@@ -58,6 +58,7 @@ class TreeApi extends FilterApi
                 'path' => array('<module>', '?', 'tree'),
                 'pathVars' => array('module', 'root', ''),
                 'method' => 'tree',
+                'noEtag' => true,
                 'shortHelp' => 'This method returns formatted tree for selected root',
                 'longHelp' => 'modules/Categories/clients/base/api/help/tree_get_tree_help.html',
             ),
