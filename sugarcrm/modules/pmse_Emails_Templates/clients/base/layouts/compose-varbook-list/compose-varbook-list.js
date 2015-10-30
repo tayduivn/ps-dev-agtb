@@ -14,5 +14,5 @@
  * @extends View.ListLayout
  */
 ({
-    extendsFrom: 'ListLayout'
+    extendsFrom: 'MultiSelectionListLayout'
 })

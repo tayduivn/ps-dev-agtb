@@ -14,7 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $viewdefs['pmse_Emails_Templates']['base']['view']['compose-varbook-headerpane'] = array(
     'template' => 'headerpane',
-    'title'    => 'Fields selector',
+    'title'    => 'LBL_SUGAR_FIELD_SELECTOR',
     'buttons'  => array(
         array(
             'name'      => 'cancel_button',
