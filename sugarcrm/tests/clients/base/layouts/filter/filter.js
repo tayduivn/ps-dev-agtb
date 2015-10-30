@@ -422,7 +422,7 @@ describe('Base.Layout.Filter', function() {
                 });
 
                 model = new Backbone.Model({id: '123', filter_definition: 'test'});
-                model.getSyncedAttributes = $.noop;
+                model.getSynced = $.noop;
                 layout.filters = app.data.createBeanCollection('Filters');
                 layout.filters.setModuleName(moduleName);
                 layout.filters.load();

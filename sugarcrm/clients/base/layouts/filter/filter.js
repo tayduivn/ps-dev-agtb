@@ -379,7 +379,7 @@
         // actual search.
         var isTemplateFilter = filter.get('is_template');
 
-        var modelHasChanged = !_.isEmpty(filter.changedAttributes(filter.getSyncedAttributes()));
+        var modelHasChanged = !_.isEmpty(filter.changedAttributes(filter.getSynced()));
 
         if (editable &&
             (isIncompleteFilter || isTemplateFilter || editState || id === 'create' || modelHasChanged)

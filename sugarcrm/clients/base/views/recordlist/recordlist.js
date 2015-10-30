@@ -550,7 +550,7 @@
             }
         }, this);
         return _.some(_.values(this.toggledModels), function(model) {
-            var changedAttributes = model.changedAttributes(model.getSyncedAttributes());
+            var changedAttributes = model.changedAttributes(model.getSynced());
 
             if (_.isEmpty(changedAttributes)) {
                 return false;

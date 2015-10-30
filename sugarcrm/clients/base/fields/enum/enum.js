@@ -454,7 +454,7 @@
             return options;
         }
         //Force the current value(s) into the availible options
-        syncedVal = this.model.getSyncedAttributes();
+        syncedVal = this.model.getSynced();
         currentValue = _.isUndefined(syncedVal[this.name]) ? this.model.get(this.name) : syncedVal[this.name];
         if (_.isString(currentValue)) {
             currentValue = [currentValue];

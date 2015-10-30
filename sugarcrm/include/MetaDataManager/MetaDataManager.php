@@ -292,6 +292,7 @@ class MetaDataManager
             'max_repeat_count' => true,
         ),
         'lead_conv_activity_opt' => true,
+        'preview_edit' => true,
     );
 
     /**

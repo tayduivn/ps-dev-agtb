@@ -22,10 +22,29 @@
     },
 
     initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
+
+        if (app.config.previewEdit && this.layout.meta.editable === true &&
+            app.acl.hasAccessToModel('edit', this.model)) {
+            this.context.set({'previewEdit': true});
+            this.previewEdit = true;
+        }
+        this._delegateEvents();
+    },
+
+    /**
+     * Set up event listeners
+     *
+     * @private
+     */
+    _delegateEvents: function() {
         if (this.layout) {
-            this.layout.off("preview:pagination:update", null, this);
-            this.layout.on("preview:pagination:update", this.render, this);
+            this.layout.on('preview:pagination:update', this.render, this);
+        }
+
+        if (this.previewEdit) {
+            _.extend(this.events, {'click [data-action=edit]': 'triggerEdit'});
+            this.layout.on('preview:edit:complete', this.toggleSaveAndCancel, this);
         }
     },
 
@@ -37,5 +56,46 @@
     triggerClose: function() {
         app.events.trigger("list:preview:decorate", null, this);
         app.events.trigger("preview:close");
+    },
+
+    /**
+     * Call preview view to turn on editing
+     */
+    triggerEdit: function() {
+        this.toggleSaveAndCancel(true);
+        this.layout.trigger('preview:edit');
+    },
+
+    /**
+     * Toggle save, cancel, left, right and x buttons
+     *
+     * @param {boolean} edit `true` to show save and cancel and hide
+     * left, right and X icons
+     */
+    toggleSaveAndCancel: function(edit) {
+        if (edit) {
+            this.getField('save_button').show();
+            this.getField('cancel_button').show();
+            this.$('[data-direction], [data-action=close]').hide();
+        } else {
+            this.getField('save_button').hide();
+            this.getField('cancel_button').hide();
+            this.$('[data-direction], [data-action=close]').show();
+        }
+    },
+
+    /**
+     * @inheritdoc
+     *
+     * @override Overriding to hide preview save/cancel buttons initially
+     * @private
+     */
+    _renderFields: function() {
+        this._super('_renderFields');
+
+        if (this.previewEdit) {
+            this.getField('save_button').hide();
+            this.getField('cancel_button').hide();
+        }
     }
 })

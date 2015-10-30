@@ -54,6 +54,7 @@ $dictionary['ProspectList'] = array(
                     ),
                 ),
             ),
+            'readonly' => true,
         ),
         'date_modified'    => array(
             'name'  => 'date_modified',
@@ -68,6 +69,7 @@ $dictionary['ProspectList'] = array(
                     ),
                 ),
             ),
+            'readonly' => true,
         ),
         'modified_user_id' => array(
             'name'       => 'modified_user_id',
@@ -90,6 +92,7 @@ $dictionary['ProspectList'] = array(
                     ),
                 ),
             ),
+            'readonly' => true,
         ),
         'modified_by_name' => array(
             'name'            => 'modified_by_name',
@@ -102,6 +105,7 @@ $dictionary['ProspectList'] = array(
             'id_name'         => 'modified_user_id',
             'module'          => 'Users',
             'duplicate_merge' => 'disabled',
+            'readonly'        => true,
         ),
         'created_by'       => array(
             'name'    => 'created_by',
@@ -123,6 +127,7 @@ $dictionary['ProspectList'] = array(
                     ),
                 ),
             ),
+            'readonly' => true,
         ),
         'created_by_name'  => array(
             'name'            => 'created_by_name',
@@ -135,6 +140,7 @@ $dictionary['ProspectList'] = array(
             'id_name'         => 'created_by',
             'module'          => 'Users',
             'duplicate_merge' => 'disabled',
+            'readonly'        => true,
         ),
         'deleted'          => array(
             'name'       => 'deleted',
