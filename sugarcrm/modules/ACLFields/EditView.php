@@ -34,7 +34,7 @@ class ACLFieldsEditView{
             $options[$key] = translate($option, 'ACLFields');
         }
         $sugar_smarty->assign('OPTIONS', $options);
-		$req_options = $GLOBALS['aclFieldOptions'];
+        $req_options = $options;
 		unset($req_options[-99]);
 		$sugar_smarty->assign('OPTIONS_REQUIRED', $req_options);
 		return  $sugar_smarty->fetch('modules/ACLFields/EditView.tpl');
