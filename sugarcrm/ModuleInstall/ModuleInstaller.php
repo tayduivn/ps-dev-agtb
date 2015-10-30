@@ -31,6 +31,8 @@ require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
 require_once 'modules/MySettings/TabController.php';
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 define('DISABLED_PATH', 'Disabled');
 
 class ModuleInstaller{
@@ -307,7 +309,8 @@ class ModuleInstaller{
     function install_copy(){
         if(isset($this->installdefs['copy'])){
             /* BEGIN - RESTORE POINT - by MR. MILK August 31, 2005 02:22:11 PM */
-            $backup_path = clean_path( remove_file_extension(urldecode($_REQUEST['install_file']))."-restore" );
+
+            $backup_path = clean_path( remove_file_extension(urldecode($this->sanitizeInstallFile())) . "-restore" );
             /* END - RESTORE POINT - by MR. MILK August 31, 2005 02:22:18 PM */
             foreach($this->installdefs['copy'] as $cp){
                 $GLOBALS['log']->debug("Copying ..." . $cp['from'].  " to " .$cp['to'] );
@@ -321,6 +324,7 @@ class ModuleInstaller{
         }
     }
     function uninstall_copy(){
+
         if(!empty($this->installdefs['copy'])){
             foreach($this->installdefs['copy'] as $cp){
                 $cp['to'] = clean_path(str_replace('<basepath>', $this->base_dir, $cp['to']));
@@ -329,12 +333,12 @@ class ModuleInstaller{
                 /* BEGIN - RESTORE POINT - by MR. MILK August 31, 2005 02:22:11 PM */
                 //rmdir_recursive($cp['to']);
 
-                $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($_REQUEST['install_file'])))."-restore/".$cp['to'] );
+                $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($this->sanitizeInstallFile())))."-restore/".$cp['to'] );
                 $this->uninstall_new_files($cp, $backup_path);
                 $this->copy_path($backup_path, $cp['to'], $backup_path, true);
                 /* END - RESTORE POINT - by MR. MILK August 31, 2005 02:22:18 PM */
             }
-            $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($_REQUEST['install_file'])))."-restore");
+            $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($this->sanitizeInstallFile())))."-restore");
             if(file_exists($backup_path))
                 rmdir_recursive($backup_path);
         }
@@ -2695,7 +2699,7 @@ class ModuleInstaller{
                 foreach($this->installdefs['copy'] as $cp){
                     $cp['to'] = clean_path(str_replace('<basepath>', $this->base_dir, $cp['to']));
                     if (file_exists($cp['to'])) {
-                        $backup_path = clean_path(remove_file_extension(urldecode(hashToFile($_REQUEST['install_file'])))."-restore/".$cp['to']);
+                        $backup_path = clean_path(remove_file_extension(urldecode(hashToFile($this->sanitizeInstallFile())))."-restore/".$cp['to']);
 
                         $GLOBALS['log']->debug('ENABLE COPY:: CREATING BACKUP OF: ' . $cp['to']);
                         $this->copy_path($cp['to'], $backup_path);
@@ -2726,7 +2730,7 @@ class ModuleInstaller{
                         $GLOBALS['log']->debug('DISABLE COPY:: REMOVING: ' . $cp['to']);
                         rmdir_recursive($cp['to']);
                     }
-                    $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($_REQUEST['install_file'])))."-restore/".$cp['to'] ); // bug 16966 tyoung - replaced missing assignment to $backup_path
+                    $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($this->sanitizeInstallFile())))."-restore/".$cp['to'] ); // bug 16966 tyoung - replaced missing assignment to $backup_path
                     //check if this file exists in the -restore directory
 //					$GLOBALS['log']->debug("ModuleInstaller.php->disable_copy(): backup_path=".$backup_path);
                     if(file_exists($backup_path)){
@@ -3378,5 +3382,18 @@ class ModuleInstaller{
         }
 
         return $path;
+    }
+
+    /**
+     * Returns a valid input for the install_file
+     * paramete in the $_REQUEST sugperglobal
+     *
+     * @return mixed
+     */
+    protected function sanitizeInstallFile()
+    {
+        $request = InputValidation::getService();
+        $installFile = $request->getValidInputRequest('install_file', 'Assert\File');
+        return $installFile;
     }
 }
