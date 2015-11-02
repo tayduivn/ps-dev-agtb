@@ -323,7 +323,7 @@ $dictionary['Quote'] = array(
         ),
         'new_sub_usdollar' => array(
             'name' => 'new_sub_usdollar',
-            'vname' => 'LBL_NEW_SUB',
+            'vname' => 'LBL_NEW_SUB_USDOLLAR',
             'dbType' => 'decimal',
             'type' => 'currency',
             'currency_id'=> '-99',
