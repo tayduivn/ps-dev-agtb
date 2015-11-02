@@ -433,9 +433,8 @@ class VardefManager{
         }
 
         // Put ACLStatic into vardefs for beans supporting ACLs
-        if(!empty($bean) && ($bean instanceof SugarBean) && !empty($dictionary[$object]) && !isset($dictionary[$object]['acls']['SugarACLStatic'])
-            && $bean->bean_implements('ACL')) {
-            $dictionary[$object]['acls']['SugarACLStatic'] = true;
+        if(!empty($bean) && ($bean instanceof SugarBean)) {
+            self::addSugarACLStatic($bean, $object);
         }
 
         //great! now that we have loaded all of our vardefs.
@@ -450,6 +449,20 @@ class VardefManager{
             } else {
                 unset(self::$inReload[$guard_name]);
             }
+        }
+    }
+
+    /**
+     * Add default SugarACLStatic
+     * @param $bean
+     * @param $object
+     */
+    protected static function addSugarACLStatic($bean, $object){
+        global $dictionary;
+        // Put ACLStatic into vardefs for beans supporting ACLs
+        if(!empty($bean) && ($bean instanceof SugarBean) && !empty($dictionary[$object]) && !isset($dictionary[$object]['acls']['SugarACLStatic'])
+            && $bean->bean_implements('ACL')) {
+            $dictionary[$object]['acls']['SugarACLStatic'] = true;
         }
     }
 
@@ -755,6 +768,11 @@ class VardefManager{
                     $GLOBALS['dictionary'][$object] = self::applyGlobalAccountRequirements($GLOBALS['dictionary'][$object]);
                 }
             }
+        }
+
+        // Put ACLStatic into vardefs for beans supporting ACLs
+        if (isset($params['bean'])) {
+            self::addSugarACLStatic($params['bean'], $object);
         }
     }
 

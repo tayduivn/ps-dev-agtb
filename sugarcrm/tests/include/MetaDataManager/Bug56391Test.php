@@ -19,7 +19,6 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        VardefManager::clearVardef();
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
         $this->accounts = array();
