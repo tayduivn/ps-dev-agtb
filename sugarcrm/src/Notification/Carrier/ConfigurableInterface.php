@@ -16,7 +16,7 @@ namespace Sugarcrm\Sugarcrm\Notification\Carrier;
  * Implementation of interface provide configuration for carrier.
  *
  * Interface Carrier\ConfigurableInterface
- * @package Sugarcrm\Sugarcrm\Notification\
+ * @package Sugarcrm\Sugarcrm\Notification
  */
 interface ConfigurableInterface
 {

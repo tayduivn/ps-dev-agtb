@@ -25,7 +25,7 @@
     {{/eq}}
         {{#eq model.attributes.configMode 'global'}}
             {{#if  def.config.configurable}}  
-            <a href="javascript:void(0);" class="configure"
+            <a href="#{{def.name}}/layout/{{def.config.configLayout}}" class="configure"
                 >{{#if def.config.isConfigured }}{{str 'LBL_LINK_CARRIER_EDIT' module}} {{else}} {{str 'LBL_LINK_CARRIER_CONFIGURE' module}} {{/if}} </a> 
          {{/if}}
         {{/eq}}

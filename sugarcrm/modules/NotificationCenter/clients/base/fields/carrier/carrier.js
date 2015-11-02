@@ -40,37 +40,6 @@
         }
 
         this.model.on('reset:all', this.render, this);
-        this.events = this.events || {};
-        _.extend(this.events, {
-            'click .configure': 'showConfiguration'
-        });
-
-    },
-
-    /**
-     * Open configuration for carrier in drawer.
-     */
-    showConfiguration: function () {
-        var self = this;
-        app.drawer.open({
-            layout: this.def.config.configLayout,
-            context: {
-                create: true,
-                module: this.name,
-            }
-        }, _.bind(this.onConfigClosed, this));
-    },
-
-    /**
-     * Handle cloging carrier configuration.
-     *
-     * @param (boolean) isSaved is saved carrier configuration
-     */
-    onConfigClosed: function (isSaved) {
-        var carriers = this.model.get('carriers');
-        carriers[this.name].isConfigured = carriers[this.name].isConfigured || isSaved;
-        this.model.set('carriers', carriers);
-        this.render();
     },
 
     /**
