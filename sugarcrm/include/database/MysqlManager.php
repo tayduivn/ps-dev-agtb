@@ -311,6 +311,12 @@ class MysqlManager extends DBManager
 	 */
 	public function get_columns($tablename)
 	{
+        // Sanity check for getting columns
+        if (empty($tablename)) {
+            $this->log->error(__METHOD__ . ' called with an empty tablename argument');
+            return array();
+        }        
+
 		//find all unique indexes and primary keys.
 		$result = $this->query("DESCRIBE $tablename");
 

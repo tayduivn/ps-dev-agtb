@@ -299,6 +299,7 @@ class MetaDataManager
             ),
         ),
         'lead_conv_activity_opt' => true,
+        'preview_edit' => true,
     );
 
     /**
@@ -898,9 +899,6 @@ class MetaDataManager
             }
             if (!isset($data['relationships'])) {
                 $data['relationships'] = array();
-            }
-            if(!isset($data['fields'])) {
-                $data['fields'] = array();
             }
         }
 

@@ -30,6 +30,7 @@ class ConfiguratorController extends SugarController
         'lead_conv_activity_opt',
         'enable_action_menu',
         'lock_subpanels',
+        'preview_edit',
         'verify_client_ip',
         'log_memory_usage',
         'dump_slow_queries',

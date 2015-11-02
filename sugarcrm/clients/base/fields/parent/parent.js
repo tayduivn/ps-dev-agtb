@@ -201,5 +201,17 @@
         ) {
             this._createSearchCollection();
         }
+    },
+
+    /**
+     * We do not support this field for preview edit
+     * @inheritdoc
+     */
+    _loadTemplate: function() {
+        this._super('_loadTemplate');
+
+        if (this.view.name === 'preview') {
+            this.template = app.template.getField('parent', 'detail', this.model.module);
+        }
     }
 })

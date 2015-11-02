@@ -110,6 +110,15 @@ class ViewHistory extends SugarView
             );
             $ts = $this->history->getNext () ;
         }
+
+        //BEGIN SUGARCRM flav=ent ONLY
+        // If we're viewing history for the Opportunities module, we remove the
+        // first revision to remove the result of the Opps/RLI mode-switch.
+        if ($this->module == 'Opportunities') {
+            array_pop($snapshots);
+        }
+        //END SUGARCRM flav=ent ONLY
+
         if (count ( $snapshots ) > $this->pageSize)
         {
             $smarty->assign ( 'nextPage', true ) ;
