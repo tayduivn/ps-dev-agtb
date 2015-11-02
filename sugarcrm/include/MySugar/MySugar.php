@@ -295,21 +295,10 @@ class MySugar{
 		$sugar_smarty->assign('charts', $chartsList);
 
 		$html = $sugar_smarty->fetch('include/MySugar/tpls/addDashletsDialog.tpl');
-		// Bug 34451 - Added hack to make the "Add Dashlet" dialog window not look weird in IE6.
-		$script = <<<EOJS
-if (YAHOO.env.ua.ie > 5 && YAHOO.env.ua.ie < 7) {
-    document.getElementById('dashletsList').style.width = '430px';
-    document.getElementById('dashletsList').style.overflow = 'hidden';
-}
-EOJS;
-        //BEGIN SUGARCRM flav=pro ONLY
-		if ($this->type != 'Home'){
-			$script .= 'SUGAR.mySugar.populateReportCharts();';
-		}
-		//END SUGARCRM flav=pro ONLY
 
+        $populateCharts = $this->type != 'Home';
 		$json = getJSONobj();
-        echo $json->encode(array('html' => $html, 'script' => $script));
+		echo $json->encode(array('html' => $html, 'populateCharts' => $populateCharts));
 	}
 
 	//BEGIN SUGARCRM flav=pro ONLY
@@ -457,8 +446,8 @@ EOJS;
 		    }
 		    else { // display options
 		        $json = getJSONobj();
-                return $json->encode((array('header' => $dashlet->title . ' : ' . $app_strings['LBL_OPTIONS'],
-		                                                 'body'  => $dashlet->displayOptions())));
+		        return $json->encode(array('header' => $dashlet->title . ' : ' . $app_strings['LBL_OPTIONS'],
+		                                                 'body'  => $dashlet->displayOptions()));
 		    }
 		}
 		else {
@@ -503,7 +492,8 @@ EOJS;
 		$pageName = js_escape(filter_input(INPUT_POST, 'pageName', FILTER_SANITIZE_STRIPPED, FILTER_FLAG_ENCODE_AMP));
 
 		$json = getJSONobj();
-        echo $json->encode(array('pageName' => $pageName, 'numCols' => $numCols));
+		header("Content-Type: application/json");
+		echo $json->encode(array('pageName' => $pageName, 'numCols' => $numCols));
 	}
 	//END SUGARCRM flav=pro ONLY
 

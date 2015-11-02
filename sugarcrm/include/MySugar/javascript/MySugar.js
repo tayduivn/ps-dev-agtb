@@ -516,8 +516,13 @@ SUGAR.mySugar = function() {
 			fillInConfigureDiv = function(data){
 				ajaxStatus.hideStatus();
 				// uncomment the line below to debug w/ FireBug
-				// console.log(data.responseText);
-                result = JSON.parse(data.responseText);
+				// console.log(data.responseText); 
+				var result = JSON.parse(data.responseText);
+				if (typeof result == 'undefined' || typeof result['header'] == 'undefined') {
+					result = new Array();
+					result['header'] = 'error';
+					result['body'] = 'There was an error handling this request.';
+				}
 				configureDlg.setHeader(result['header']);
 				configureDlg.setBody(result['body']);
 				var listeners = new YAHOO.util.KeyListener(document, { keys : 27 }, {fn: function() {this.hide();}, scope: configureDlg, correctScope:true} );
@@ -805,15 +810,25 @@ SUGAR.mySugar = function() {
 			}
 			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
 			
-			var success = function(data) {
-                var response = JSON.parse(data.responseText);
+			var success = function(data) {		
+				var response = JSON.parse(data.responseText);
 				dashletsListDiv = document.getElementById('dashletsList');
 				dashletsListDiv.innerHTML = response['html'];
 				
 				document.getElementById('dashletsDialog_c').style.display = '';
                 SUGAR.mySugar.dashletsDialog.show();
 
-				eval(response['script']);
+                if (YAHOO.env.ua.ie > 5 && YAHOO.env.ua.ie < 7) {
+                    document.getElementById('dashletsList').style.width = '430px';
+                    document.getElementById('dashletsList').style.overflow = 'hidden';
+                }
+                
+                //BEGIN SUGARCRM flav=pro ONLY
+                if (response['populateCharts'] == true) {
+                    SUGAR.mySugar.populateReportCharts();
+                }
+                //END SUGARCRM flav=pro ONLY
+
 				ajaxStatus.hideStatus();
 			}
 			
@@ -957,13 +972,13 @@ SUGAR.mySugar = function() {
 			var mySavedObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?to_pdf=true&module='+module+'&action=DynamicAction&DynamicAction=getReportCharts&category=mySaved', {success: getMySaved, failure: getMySaved});
 
 			var getMyTeams = function(data) {
-                var response = JSON.parse(data.responseText);
+				var response = JSON.parse(data.responseText);
 				myTeamsList.innerHTML = response['html'];
 			}
 			var myTeamsObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?to_pdf=true&module='+module+'&action=DynamicAction&DynamicAction=getReportCharts&category=myTeams', {success: getMyTeams, failure: getMyTeams});
 			
 			var getGlobal = function(data) {
-                var response = JSON.parse(data.responseText);
+				var response = JSON.parse(data.responseText);
 				globalList.innerHTML = response['html'];
 			}
 			var globalObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?to_pdf=true&module='+module+'&action=DynamicAction&DynamicAction=getReportCharts&category=global', {success: getGlobal, failure: getGlobal});		
@@ -1100,8 +1115,8 @@ SUGAR.mySugar = function() {
 		//BEGIN SUGARCRM flav=pro ONLY
 		renderAddPageDialog: function() {
 			var handleSuccess = function(o){
-                var result = JSON.parse(o.responseText);
-
+				var result = JSON.parse(o.responseText);
+   
 			    var pageName = result['pageName'];
 			    var numCols = result['numCols'];
 			    
@@ -1150,20 +1165,6 @@ SUGAR.mySugar = function() {
 					return false;
 				}
 
-				/*var success = function(data) {
-					eval(data.responseText);
-					
-					if (duplicateName){
-						alert("Please enter another page name - there is already a page with that name.");
-						return false;
-					}
-					else{
-						return true;
-					}
-				}
-			
-				var cObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?to_pdf=true&module='+module+'&action=DynamicAction&DynamicAction=pageNameCheck&pageName='+postData.pageName, {success: success, failure: success});
-				*/
 				return true;
 			}
 

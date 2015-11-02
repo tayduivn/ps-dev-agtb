@@ -277,12 +277,8 @@ $.saveImageFile = function (id,jsonfilename,imageExt,saveTo) {
 };
 
 $.saveImageTest = function (id,jsonfilename,imageExt,saveTo) {
-		if(typeof FlashCanvas != "undefined") {
-			setTimeout(function(){$.saveImageFile(id,jsonfilename,imageExt,saveTo)},10000);
-		} else {
-			$.saveImageFile(id,jsonfilename,imageExt,saveTo);
-		}
-	};
+	$.saveImageFile(id,jsonfilename,imageExt,saveTo);
+};
 /*
   Method: extend
   
@@ -3307,13 +3303,6 @@ var Canvas;
       canvas.height = height;
       styles.width = width + "px";
       styles.height = height + "px";
-      //small ExCanvas fix
-      if (!supportsCanvas) {
-        // for some unknown reason _resize() method is not being called in some
-        // IE browser instances, so call it manually
-        // in obfuscated version of flashcanvas.js the method is renamed to I()
-        this.getCtx().I(width, height);
-      }
       this.translateToCenter();
       this.translateOffsetX =
         this.translateOffsetY = 0;
@@ -10650,11 +10639,7 @@ $jit.LineChart = new Class({
             orgHeight = size.height;
 
         canvas.resize(width,orgHeight);
-  	if(typeof FlashCanvas == "undefined") {
-		canvas.clear();
-  	} else {
-  		this.clear();// hack for flashcanvas bug not properly clearing rectangle
-  	}
+	canvas.clear();
   	this.loadJSON(json);
 
   	},
@@ -13307,9 +13292,6 @@ $jit.BarChart = new Class({
         fixedDim = (size[horz? 'height':'width'] - (horz? marginHeight:marginWidth) - (ticks.enable? config.Label.size + config.labelOffset : 0) - (l -1) * config.barsOffset) / l,
         fixedDim = (fixedDim > 40) ? 40 : fixedDim,
         whiteSpace = size.width - (marginWidth + (fixedDim * l));
-        //bug in IE7 when vertical bar charts load in dashlets where number of bars exceed a certain width, canvas renders with an incorrect width, a hard refresh fixes the problem
-        if(!horz && typeof FlashCanvas != "undefined" && size.width < 250)
-        location.reload();
         //if not a grouped chart and is a vertical chart, adjust bar spacing to fix canvas width.
         if(!grouped && !horz) {
         	st.config.siblingOffset = whiteSpace/(l+1);
@@ -13596,11 +13578,7 @@ $jit.BarChart = new Class({
         horz = config.orientation == 'horizontal';
         
         canvas.resize(width,orgHeight);
-  	if(typeof FlashCanvas == "undefined") {
-		canvas.clear();
-  	} else {
-  		this.clear();// hack for flashcanvas bug not properly clearing rectangle
-  	}
+	canvas.clear();
   	if(horz) {
   		st.config.offsetX = size.width/2 - margin.left - (grouped && config.Label ? config.labelOffset + config.Label.size : 0);
   	}
@@ -14681,12 +14659,7 @@ $jit.FunnelChart = new Class({
         
 
         canvas.resize(width,orgHeight);
-
-  	if(typeof FlashCanvas == "undefined") {
-		canvas.clear();
-  	} else {
-  		this.clear();// hack for flashcanvas bug not properly clearing rectangle
-  	}
+	canvas.clear();
   	this.loadJSON(json);
 
   	},
@@ -14759,7 +14732,7 @@ $jit.FunnelChart = new Class({
           '$valuelabelArray': valuelabelArray,
           '$colorArray': color,
           '$colorMono': $.splat(color[i % colorLength]),
-          '$stringArray': (typeof FlashCanvas == "undefined") ? nameArray: name.reverse(),
+          '$stringArray': nameArray,
           '$gradient': gradient,
           '$config': config,
           '$percentageArray' : percentageArray,
@@ -14792,9 +14765,7 @@ $jit.FunnelChart = new Class({
 	if(!animate && subtitle.text) {
 		this.renderSubtitle();
 	}
-	if(typeof FlashCanvas == "undefined") {
-		this.renderDropShadow();
-	}
+	this.renderDropShadow();
     st.compute();
     st.select(st.root);
     if(animate) {
@@ -16180,38 +16151,7 @@ $jit.Sunburst.Plot.NodeTypes.implement({
 
       var xpos = config.sliceOffset * Math.cos((begin + end) /2);
       var ypos = config.sliceOffset * Math.sin((begin + end) /2);
-      //background rendering for IE
-		if(iteration == 0 && typeof FlashCanvas != "undefined" && renderBackground) {
-			backgroundColor = config.backgroundColor,
-		  	size = canvas.getSize();
-		  	ctx.save();
-		    ctx.fillStyle = backgroundColor;
-	   	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);
-	   	    
-	   	    //subtitle
 
-			var margin = config.Margin,
-			title = config.Title,
-			subtitle = config.Subtitle;
-			ctx.fillStyle = title.color;
-			ctx.textAlign = 'left';
-			
-			if(title.text != "") {
-				ctx.font = label.style + ' bold ' +' ' + title.size + 'px ' + label.family;
-				ctx.moveTo(0,0);
-				if(label.type == 'Native') {
-					ctx.fillText(title.text, -size.width/2 + margin.left, -size.height/2 + margin.top); 
-				}
-			} 	
-	
-			if(subtitle.text != "") {
-				ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
-				if(label.type == 'Native') {
-					ctx.fillText(subtitle.text, -size.width/2 + margin.left, size.height/2 - margin.bottom); 
-				} 
-			}
-			ctx.restore();  	
-		}
       if (colorArray && dimArray && stringArray) {
         for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
           var dimi = dimArray[i], colori = colorArray[i % colorLength];
@@ -16228,28 +16168,26 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           polar.theta = begin;
           var p4coord = polar.getc(true);
           
-          if(typeof FlashCanvas == "undefined") {
-	          //drop shadow
-	          ctx.beginPath();
-	          ctx.fillStyle = "rgba(0,0,0,.2)";
-	          ctx.arc(xpos, ypos, acum + .01, begin, end, false);
-	          ctx.arc(xpos, ypos, acum + dimi+4 + .01, end, begin, true);    
-	          ctx.fill();
+          //drop shadow
+          ctx.beginPath();
+          ctx.fillStyle = "rgba(0,0,0,.2)";
+          ctx.arc(xpos, ypos, acum + .01, begin, end, false);
+          ctx.arc(xpos, ypos, acum + dimi+4 + .01, end, begin, true);    
+          ctx.fill();
                   ctx.fillStyle = ctx.strokeStyle = colori;
-	          
-	          if(gradient && dimi) {
-	            var radialGradient = ctx.createRadialGradient(xpos, ypos, acum + config.sliceOffset,
-	                xpos, ypos, acum + dimi + config.sliceOffset);
-	            var colorRgb = $.hexToRgb(colori), 
-	                endColor = $.map(colorRgb, function(i) { return (i * 0.85) >> 0; }),
-	                endColor2 = $.map(colorRgb, function(i) { return (i * 0.7) >> 0; });
-	
-	            radialGradient.addColorStop(0, 'rgba('+colorRgb+',1)');
-	            radialGradient.addColorStop(.7, 'rgba('+colorRgb+',1)');
-				radialGradient.addColorStop(.98, 'rgba('+endColor+',1)');
-	            radialGradient.addColorStop(1, 'rgba('+endColor2+',1)');
-	            ctx.fillStyle = radialGradient;
-	          }
+          
+          if(gradient && dimi) {
+            var radialGradient = ctx.createRadialGradient(xpos, ypos, acum + config.sliceOffset,
+                xpos, ypos, acum + dimi + config.sliceOffset);
+            var colorRgb = $.hexToRgb(colori), 
+                endColor = $.map(colorRgb, function(i) { return (i * 0.85) >> 0; }),
+                endColor2 = $.map(colorRgb, function(i) { return (i * 0.7) >> 0; });
+
+            radialGradient.addColorStop(0, 'rgba('+colorRgb+',1)');
+            radialGradient.addColorStop(.7, 'rgba('+colorRgb+',1)');
+            radialGradient.addColorStop(.98, 'rgba('+endColor+',1)');
+            radialGradient.addColorStop(1, 'rgba('+endColor2+',1)');
+            ctx.fillStyle = radialGradient;
           }
 
           
@@ -16545,11 +16483,7 @@ $jit.PieChart = new Class({
         orgHeight = size.height;
         
         canvas.resize(width,orgHeight);
-  	if(typeof FlashCanvas == "undefined") {
-		canvas.clear();
-  	} else {
-  		this.clear();// hack for flashcanvas bug not properly clearing rectangle
-  	}
+	canvas.clear();
   	this.loadJSON(json);
 
   	},
@@ -16644,7 +16578,7 @@ $jit.PieChart = new Class({
     if(subtitle.text != "") {
     	this.renderSubtitle();
     }
-     if(renderBackground && typeof FlashCanvas == "undefined") {
+     if(renderBackground) {
     	this.renderBackground();	
     }
     
@@ -17437,11 +17371,7 @@ $jit.GaugeChart = new Class({
             orgHeight = size.height;
         
         canvas.resize(width,orgHeight);
-  	if(typeof FlashCanvas == "undefined") {
-		canvas.clear();
-  	} else {
-  		this.clear();// hack for flashcanvas bug not properly clearing rectangle
-  	}
+	canvas.clear();
   	this.loadJSON(json);
 
   	},

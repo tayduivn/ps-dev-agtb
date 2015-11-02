@@ -33,7 +33,7 @@
                 $node_id = nl2br($_REQUEST['node_id']);
             }
             $xml = PackageManager::getPackages($node_id);
-            echo 'result = ' . $json->encode(array('packages' => $xml));
+            $this->sendJsonOutput(array('packages' => $xml));
         }
 
         /**
@@ -52,7 +52,7 @@
                 $category_id = nl2br($_REQUEST['category_id']);
             }
             $xml = PackageManager::getPackages($category_id);
-            echo 'result = ' . $json->encode(array('package_output' => $xml));
+            $this->sendJsonOutput(array('package_output' => $xml));
         }
 
         /**
@@ -97,7 +97,7 @@
         		$release_map[$release['id']] = array('package_id' => $release['package_id'], 'category_id' => $release['category_id']);
         	}
         	$_SESSION['ML_PATCHES'] = $release_map;
-            echo 'result = ' . $json->encode(array('releases' => $nodes));
+            $this->sendJsonOutput(array('releases' => $nodes));
         }
 
         /**
@@ -108,7 +108,7 @@
 
             $header = PackageManager::getPromotion();
 
-            echo 'result = ' . $json->encode(array('promotion' => $header));
+            $this->sendJsonOutput(array('promotion' => $header));
         }
 
         /**
@@ -146,7 +146,7 @@
                 $GLOBALS['log']->debug("Complete Setup");
                 $success = 'true';
             }
-            echo 'result = ' . $json->encode(array('success' => $success));
+            $this->sendJsonOutput(array('success' => $success));
         }
 
          /**
@@ -163,7 +163,7 @@
             }
             $GLOBALS['log']->debug("NODE ID: ".$node_id);
             $nodes = PackageManager::getCategories($node_id);
-            echo 'result = ' . $json->encode(array('nodes' => $nodes));
+            $this->sendJsonOutput(array('nodes' => $nodes));
         }
 
          function getNodes(){
@@ -175,7 +175,7 @@
             $GLOBALS['log']->debug("CATEGORY ID: ".$category_id);
             $nodes = PackageManager::getModuleLoaderCategoryPackages($category_id);
             $GLOBALS['log']->debug(var_export($nodes, true));
-            echo 'result = ' . $json->encode(array('nodes' => $nodes));
+            $this->sendJsonOutput(array('nodes' => $nodes));
         }
 
         /**
@@ -211,7 +211,7 @@
 	            }
             }
 			$_SESSION['ML_PATCHES'] = $release_map;
-            echo 'result = ' . $json->encode(array('updates' => $nodes));
+            $this->sendJsonOutput(array('updates' => $nodes));
         }
 
         function getLicenseText(){
@@ -221,7 +221,7 @@
                 $file = hashToFile($_REQUEST['file']);
             }
             $GLOBALS['log']->debug("FILE : ".$file);
-            echo 'result = ' . $json->encode(array('license_display' => PackageManagerDisplay::buildLicenseOutput($file)));
+            $this->sendJsonOutput(array('license_display' => PackageManagerDisplay::buildLicenseOutput($file)));
         }
 
         /**
@@ -231,7 +231,7 @@
             $packages = $this->_pm->getPackagesInStaging('module');
             $json = getJSONobj();
 
-            echo 'result = ' . $json->encode(array('packages' => $packages));
+            $this->sendJsonOutput(array('packages' => $packages));
         }
 
         /**
@@ -247,7 +247,7 @@
 			}
             $json = getJSONobj();
 
-            echo 'result = ' . $json->encode(array('result' => 'success'));
+            $this->sendJsonOutput(array('result' => 'success'));
         }
 
         function authenticate(){
@@ -282,7 +282,7 @@
                 $status  = 'failed';
             }
 
-            echo 'result = ' . $json->encode(array('status' => $status));
+            $this->sendJsonOutput(array('status' => $status));
         }
 
         function getDocumentation(){
@@ -299,7 +299,7 @@
 
             $documents = PackageManager::getDocumentation($package_id, $release_id);
             $GLOBALS['log']->debug("DOCUMENTS: ".var_export($documents, true));
-            echo 'result = ' . $json->encode(array('documents' => $documents));
+            $this->sendJsonOutput(array('documents' => $documents));
         }
 
         function downloadedDocumentation(){
@@ -311,7 +311,7 @@
             }
              $GLOBALS['log']->debug("Downloading Document: ".$document_id);
             PackageManagerComm::downloadedDocumentation($document_id);
-            echo 'result = ' . $json->encode(array('result' => 'true'));
+            $this->sendJsonOutput(array('result' => 'true'));
         }
 
         /**
@@ -342,7 +342,17 @@
             	    $this->rmMetaFile($file, $meta);
             	}
             }
-            echo 'result = ' . $json->encode(array('result' => 'true'));
+            $this->sendJsonOutput(array('result' => 'true'));
+        }
+        
+        /**
+        * Sends output in a JSON format
+        * 
+        * @param mixed $output
+        */
+        protected function sendJsonOutput($output) {
+            header("Content-Type: application/json");
+            echo $json->encode($output);
         }
  }
 ?>

@@ -164,7 +164,8 @@ class TrackerDashlet extends Dashlet {
 			}
 		}
 		$sortType = !empty($this->tReporter->sort_types[$method]) ? $this->tReporter->sort_types[$method] : array();
-		echo 'result = ' . $json->encode(array('col_labels' => $column_labels, 'col_headers' => $col_headers, 'col_widths' => $col_widths, 'data' => $result, 'sort_types'=>$sortType));
+		header("Content-Type: application/json");
+		echo $json->encode(array('col_labels' => $column_labels, 'col_headers' => $col_headers, 'col_widths' => $col_widths, 'data' => $result, 'sort_types'=>$sortType));
 	}
 }
 

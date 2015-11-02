@@ -2528,7 +2528,7 @@ SUGAR.reports = function() {
 
 			var callback = {
 				success:function(o){
-					eval(o.responseText);
+					var sqs_objects = JSON.parse(o.responseText);
 					var populate_list = new Array();
 					populate_list.push(field_name_name);
 					populate_list.push(field_id_name);

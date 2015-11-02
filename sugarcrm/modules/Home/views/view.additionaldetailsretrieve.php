@@ -85,6 +85,7 @@ EOC;
             }
             $retArray['caption'] .= "";
             $retArray['width'] = (empty($results['width']) ? '300' : $results['width']);
+            header("Content-Type: application/json");
             echo $json->encode($retArray);
         }
     }

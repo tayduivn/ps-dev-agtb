@@ -25,9 +25,6 @@ class Jit extends JsChart {
 	
 	function getChartResources() {
 		return '
-		<!--[if lt IE 9]>
-		<script type="text/javascript" src="'.getJSPath('include/SugarCharts/Jit/FlashCanvas/flashcanvas.js').'"></script>
-		<![endif]-->
 		<script language="javascript" type="text/javascript" src="'.getJSPath('include/SugarCharts/Jit/js/Jit/jit.js').'"></script>
 		<script language="javascript" type="text/javascript" src="'.getJSPath('include/SugarCharts/Jit/js/sugarCharts.js').'"></script>
 		';

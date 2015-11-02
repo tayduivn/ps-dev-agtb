@@ -795,7 +795,7 @@ class SugarController
 		    }
 		    else { // display options
 		        $json = getJSONobj();
-		        return 'result = ' . $json->encode((array('header' => $dashlet->title . ' : ' . $mod_strings['LBL_OPTIONS'],
+		        return $json->encode((array('header' => $dashlet->title . ' : ' . $mod_strings['LBL_OPTIONS'],
 		                                                 'body'  => $dashlet->displayOptions())));
 
 		    }

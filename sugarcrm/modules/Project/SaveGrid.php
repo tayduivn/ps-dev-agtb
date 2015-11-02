@@ -98,5 +98,6 @@ if ($deletedRows != "") {
 }
 
 $json = getJSONobj();
+header("Content-Type: application/json");
 echo $json->encode($newIds);
 
