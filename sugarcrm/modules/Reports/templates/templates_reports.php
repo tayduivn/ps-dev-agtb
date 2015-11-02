@@ -167,8 +167,6 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	$smarty->assign('isSaveResults', $isSaveResults);
 	$smarty->assign('report_type', $report_type);
 	$smarty->assign('reportDetailView', getReportDetailViewString($reporter,$args));
-	$smarty->assign('reporter', $reporter);
-	$smarty->assign('reporterArgs', $args);
 	$form_header = get_form_header( $mod_strings['LBL_TITLE'].": ".$args['reporter']->saved_report->name, "", false);
 	$smarty->assign('form_header', $form_header);
 	$smarty->assign('report_offset', $reporter->report_offset);

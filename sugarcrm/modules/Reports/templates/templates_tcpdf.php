@@ -40,7 +40,7 @@ function process($pdf, $reportname, $stream){
         $pdf->Output($filename,'D');
     }else{
         // try to create the dir in case it doesn't exist for some reason
-        $cachefile = sugar_cached('pdf/').$filename;
+        $cachefile = sugar_cached('pdf/').basename($filename);
         $fp = sugar_fopen($cachefile, 'w');
         fwrite($fp, $pdf->Output('','S'));
         fclose($fp);
