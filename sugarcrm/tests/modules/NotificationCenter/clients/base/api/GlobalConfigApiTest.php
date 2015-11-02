@@ -15,17 +15,10 @@ require_once 'modules/NotificationCenter/clients/base/api/GlobalConfigApi.php';
 
 class GlobalConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $api;
-
     const NS_REGISTRY = 'Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry';
     const NS_CARRIER_REGISTRY = 'Sugarcrm\\Sugarcrm\\Notification\\CarrierRegistry';
     const NS_STATUS = 'Sugarcrm\\Sugarcrm\\Notification\\Config\\Status';
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->api = SugarTestRestUtilities::getRestServiceMock();
-    }
+    private $api;
 
     public function testGetConfig()
     {
@@ -117,12 +110,12 @@ class GlobalConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $carriers = array(
             'carrierModule1' => array('status' => 1),
-            'carrierNotExists1' => array('status' =>  false),
-            'carrierModule2' =>  array('status' => null),
-            'carrierNotExists2' =>  array('status' => true),
-            'carrierModule3'=>  array('status' => 0),
-            'carrierModule4'=>  array('status' => true),
-            'carrierModule5'=>  array('status' => false),
+            'carrierNotExists1' => array('status' => false),
+            'carrierModule2' => array('status' => null),
+            'carrierNotExists2' => array('status' => true),
+            'carrierModule3' => array('status' => 0),
+            'carrierModule4' => array('status' => true),
+            'carrierModule5' => array('status' => false),
         );
 
         $registry = $this->getMock(self::NS_CARRIER_REGISTRY, array('getCarriers'));
@@ -148,21 +141,70 @@ class GlobalConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetCarriersConfig()
     {
-        $carrierModules = array('carrierModule1', 'carrierModule2', 'carrierModule3', 'carrierModule4');
-        $expect = array();
+        $expect = array(
+            'carrierModule1' => array(
+                'status' => true,
+                'configurable' => true,
+                'isConfigured' => true,
+                'configLayout' => 'carrierModule1ConfigLayout'
+            ),
+            'carrierModule2' => array(
+                'status' => false,
+                'configurable' => true,
+                'isConfigured' => true,
+                'configLayout' => 'carrierModule2ConfigLayout'
+            ),
+            'carrierModule3' => array(
+                'status' => true,
+                'configurable' => true,
+                'isConfigured' => false,
+                'configLayout' => 'carrierModule3ConfigLayout'
+            ),
+            'carrierModule4' => array(
+                'status' => true,
+                'configurable' => false,
+                'isConfigured' => true,
+                'configLayout' => null
+            ),
+            'carrierModule5' => array(
+                'status' => false,
+                'configurable' => false,
+                'isConfigured' => true,
+                'configLayout' => null
+            )
+        );
 
-        $registry = $this->getMock(self::NS_CARRIER_REGISTRY, array('getCarriers'));
-        $registry->expects($this->atLeastOnce())->method('getCarriers')->willReturn($carrierModules);
+        $registry = $this->getMock(self::NS_CARRIER_REGISTRY, array('getCarriers', 'getCarrier'));
+        $registry->expects($this->atLeastOnce())->method('getCarriers')->willReturn(array_keys($expect));
 
         $status = $this->getMock(self::NS_STATUS, array('getCarrierStatus'));
 
         $statusMap = array();
-        foreach ($carrierModules as $key => $module) {
-            $statusVal = (bool)($key % 2);
-            $statusMap[] = array($module, $statusVal);
-            $expect[$module] = array('status' => $statusVal);
+        $carrierMap = array();
+        foreach ($expect as $module => $moduleConfig) {
+            $statusMap[] = array($module, $moduleConfig['status']);
+
+            if ($moduleConfig['configurable']) {
+                $carrier = $this->getMock(self::NS_CARRIER_CONFIGURABLE, array('getConfigLayout', 'isConfigured'));
+                $carrier->expects($this->once())->method('getConfigLayout')
+                    ->willReturn($moduleConfig['configLayout']);
+                $carrier->expects($this->once())->method('isConfigured')
+                    ->willReturn($moduleConfig['isConfigured']);
+            } else {
+                $carrier = $this->getMock(
+                    self::NS_CARRIER_BASE,
+                    array('getConfigLayout', 'isConfigured', 'getTransport', 'getMessageSignature', 'getAddressType')
+                );
+                $carrier->expects($this->never())->method('getConfigLayout');
+                $carrier->expects($this->never())->method('isConfigured');
+            }
+
+            $carrierMap[] = array($module, $carrier);
         }
-        $status->expects($this->exactly(count($carrierModules)))
+        $registry->expects($this->exactly(count($expect)))->method('getCarrier')
+            ->will($this->returnValueMap($carrierMap));
+
+        $status->expects($this->exactly(count($expect)))
             ->method('getCarrierStatus')
             ->will($this->returnValueMap($statusMap));
 
@@ -172,5 +214,11 @@ class GlobalConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $resConfig = SugarTestReflection::callProtectedMethod($configApi, 'getCarriersConfig', array());
         $this->assertEquals($expect, $resConfig);
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->api = SugarTestRestUtilities::getRestServiceMock();
     }
 }

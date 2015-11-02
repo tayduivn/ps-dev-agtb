@@ -24,7 +24,8 @@ describe('NotificationCenter.Field.Carrier', function() {
         sandbox = sinon.sandbox.create();
         carriers = {
             foo: {
-                status: false
+                status: false,
+                isConfigured:false
             }
         };
         layout = SugarTest.createLayout('base', module, 'config-drawer', null, null, true);
@@ -96,7 +97,7 @@ describe('NotificationCenter.Field.Carrier', function() {
 
         it('should set isGloballyEnabled to true if carrier is globally enabled', function() {
             field.carriersGlobal = {
-                foo: {status: true}
+                foo: {status: true, configurable: false}
             };
             field.format();
             expect(field.def.isGloballyEnabled).toBeTruthy();
@@ -104,10 +105,24 @@ describe('NotificationCenter.Field.Carrier', function() {
 
         it('should set isGloballyEnabled to false if carrier is globally disabled', function() {
             field.carriersGlobal = {
-                foo: {status: false}
+                foo: {status: false, configurable: true, isConfigured: true}
             };
             field.format();
             expect(field.def.isGloballyEnabled).toBeFalsy();
+        });
+        it('should set isGloballyEnabled to false if carrier is not configured', function () {
+            field.carriersGlobal = {
+                foo: {status: true, configurable: true, isConfigured: false}
+            };
+            field.format();
+            expect(field.def.isGloballyEnabled).toBeFalsy();
+        });
+        it('should set isGloballyEnabled to true if carrier is configured', function () {
+            field.carriersGlobal = {
+                foo: {status: true, configurable: true, isConfigured: true}
+            };
+            field.format();
+            expect(field.def.isGloballyEnabled).toBeTruthy();
         });
     });
 
@@ -133,5 +148,54 @@ describe('NotificationCenter.Field.Carrier', function() {
                     expect(modelEvent).toHaveBeenCalledWith(event);
                 });
             });
+    });
+
+    describe('onConfigClosed()', function () {
+        it('should re-render filed', function () {
+            var render = sandbox.spy(field, 'render');
+            var carriers = {};
+            carriers[field.name] = {
+                isConfigured: false
+            };
+            model.set('carriers', carriers);
+
+            field.onConfigClosed(true);
+
+            expect(render).toHaveBeenCalled();
+        });
+        it('is updated isConfigured on config closed', function () {
+            var carriers = {};
+            carriers[field.name] = {
+                isConfigured: false
+            };
+            model.set('carriers', carriers);
+
+            field.onConfigClosed(true);
+            expect(model.get('carriers')[field.name].isConfigured).toEqual(true);
+        });
+    });
+
+    describe('showConfiguration();', function () {
+        afterEach(function () {
+            app.drawer = null;
+        });
+        it('should open drawer with correct arguments', function () {
+            var openingDrawer;
+            app.drawer = {open: sandbox.spy()};
+            var onConfigClosed = sandbox.spy(field, 'onConfigClosed');
+            field.def.config = {configLayout: 'someConfigLayout'};
+
+            field.showConfiguration(true);
+
+            expect(app.drawer.open).toHaveBeenCalled();
+            openingDrawer = app.drawer.open.getCall(0);
+
+            expect(openingDrawer.args[0].layout).toEqual('someConfigLayout');
+            expect(openingDrawer.args[0].context.module).toEqual(field.name);
+
+            openingDrawer.args[1](true);
+            expect(onConfigClosed).toHaveBeenCalled();
+            sinon.assert.calledOn(onConfigClosed, field);
+        });
     });
 });
