@@ -186,7 +186,9 @@ class PMSEUserTask extends PMSEActivity
      */
     public function saveBeanData($beanData)
     {
+        global $current_user;
         $fields = $beanData;
+        $sfh = new SugarFieldHandler();
 
         $bpmInboxId = $fields['idInbox'];
         $moduleName = $fields['moduleName'];
@@ -210,19 +212,20 @@ class PMSEUserTask extends PMSEActivity
 
         $beanObject = BeanFactory::getBean($moduleName, $moduleId);
         $historyData = new PMSEHistoryData($moduleName);
-        foreach ($fields as $key => $value) {
-            $historyData->lock(!array_key_exists($key, $beanObject->fetched_row));
-            if (isset($beanObject->$key)) {
-                $historyData->verifyRepeated($beanObject->$key, $value);
-                $historyData->savePredata($key, $beanObject->$key);
-                $beanObject->$key = $value;
-                $historyData->savePostdata($key, $value);
-            }
-        }
+
         //If a module includes custom save/editview logic in Save.php, use that instead of a direct save.
         if (isModuleBWC($beanObject->module_dir) &&
             SugarAutoLoader::fileExists("modules/{$beanObject->module_dir}/Save.php")
         ) {
+            foreach ($fields as $key => $value) {
+                $historyData->lock(!array_key_exists($key, $beanObject->fetched_row));
+                if (isset($beanObject->$key)) {
+                    $historyData->verifyRepeated($beanObject->$key, $value);
+                    $historyData->savePredata($key, $beanObject->$key);
+                    $beanObject->$key = $value;
+                    $historyData->savePostdata($key, $value);
+                }
+            }
             global $disable_redirects;
             $disable_redirects = true;
 
@@ -231,6 +234,42 @@ class PMSEUserTask extends PMSEActivity
 
             $disable_redirects = false;
         } else {
+            try {
+                $api = new RestService();
+                $api->user = $current_user;
+                $api->getRequest();
+                $beanPopulate = ApiHelper::getHelper($api, $beanObject)
+                    ->populateFromApi($beanObject, $beanData);
+            } catch (SugarApiExceptionRequestMethodFailure $conflict) {
+                $conflict->setExtraData("record", $beanObject);
+                throw $conflict;
+            }
+            if ($beanPopulate !== true){
+                foreach ($beanObject->field_defs as $fieldName => $properties) {
+                    if ( !isset($fields[$fieldName])) {
+                        // They aren't trying to modify this field
+                        continue;
+                    }
+
+                    $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
+                    $field = $sfh->getSugarField($type);
+                    $field->setOptions("");
+
+                    if ($field != null) {
+                        // validate submitted data
+                        if (!$field->apiValidate($beanObject, $fields, $fieldName, $properties)) {
+                            throw new SugarApiExceptionInvalidParameter(
+                                'Invalid field value: ' . $fieldName . ' in module: ' . $beanObject->module_name
+                            );
+                        }
+                        $historyData->verifyRepeated($beanObject->$fieldName, $fields[$fieldName]);
+                        $historyData->savePredata($fieldName, $beanObject->$fieldName);
+                        $field->apiSave($beanObject, $fields, $fieldName, $properties);
+                        $historyData->savePostdata($fieldName, $fields[$fieldName]);
+                    }
+                }
+            }
+
             $beanObject->save();
         }
 
