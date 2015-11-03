@@ -12,6 +12,11 @@
 
 namespace Sugarcrm\Sugarcrm\Security\InputValidation;
 
+/**
+ *
+ * @deprecated Will be removed in favor of new InputValidation framework
+ *
+ */
 class Serialized
 {
     /**
