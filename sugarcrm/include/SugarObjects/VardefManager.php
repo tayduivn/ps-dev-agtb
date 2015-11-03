@@ -378,6 +378,13 @@ class VardefManager{
                 require($path);
                 $found = true;
             }
+
+            if ($found){
+                // Put ACLStatic into vardefs for beans supporting ACLs
+                self::addSugarACLStatic($object);
+
+            }
+
             if(!empty($params['bean'])) {
                 $bean = $params['bean'];
             } else {
@@ -432,11 +439,6 @@ class VardefManager{
             self::updateRelCFModules($module, $object);
         }
 
-        // Put ACLStatic into vardefs for beans supporting ACLs
-        if(!empty($bean) && ($bean instanceof SugarBean)) {
-            self::addSugarACLStatic($bean, $object);
-        }
-
         //great! now that we have loaded all of our vardefs.
         //let's go save them to the cache file
         if(!empty($dictionary[$object])) {
@@ -454,15 +456,16 @@ class VardefManager{
 
     /**
      * Add default SugarACLStatic
-     * @param $bean
      * @param $object
      */
-    protected static function addSugarACLStatic($bean, $object){
+    protected static function addSugarACLStatic($object){
         global $dictionary;
         // Put ACLStatic into vardefs for beans supporting ACLs
-        if(!empty($bean) && ($bean instanceof SugarBean) && !empty($dictionary[$object]) && !isset($dictionary[$object]['acls']['SugarACLStatic'])
-            && $bean->bean_implements('ACL')) {
-            $dictionary[$object]['acls']['SugarACLStatic'] = true;
+        if(!empty($dictionary[$object]) && !isset($dictionary[$object]['acls']['SugarACLStatic'])){
+            if (is_subclass_of($object, 'SugarBean') &&
+               call_user_func("$object::bean_implements_static", 'ACL')){
+               $dictionary[$object]['acls']['SugarACLStatic'] = true;
+            }
         }
     }
 
@@ -770,10 +773,6 @@ class VardefManager{
             }
         }
 
-        // Put ACLStatic into vardefs for beans supporting ACLs
-        if (isset($params['bean'])) {
-            self::addSugarACLStatic($params['bean'], $object);
-        }
     }
 
 
