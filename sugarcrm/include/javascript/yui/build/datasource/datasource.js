@@ -1045,27 +1045,7 @@ handleResponse : function(oRequest, oRawResponse, oCallback, oCaller, tId) {
                     else if(oFullResponse.parseJSON) {
                         oFullResponse = oFullResponse.parseJSON.apply(oFullResponse,parseArgs.slice(1));
                     }
-                    // No JSON lib found so parse the string
-                    else {
-                        // Trim leading spaces
-                        while (oFullResponse.length > 0 &&
-                                (oFullResponse.charAt(0) != "{") &&
-                                (oFullResponse.charAt(0) != "[")) {
-                            oFullResponse = oFullResponse.substring(1, oFullResponse.length);
-                        }
-
-                        if(oFullResponse.length > 0) {
-                            // Strip extraneous stuff at the end
-                            var arrayEnd =
-Math.max(oFullResponse.lastIndexOf("]"),oFullResponse.lastIndexOf("}"));
-                            oFullResponse = oFullResponse.substring(0,arrayEnd+1);
-
-                            // Turn the string into an object literal...
-                            // ...eval is necessary here
-                            oFullResponse = eval("(" + oFullResponse + ")");
-
-                        }
-                    }
+                    // No eval fallback here because all supported browsers have JSON lib
                 }
             }
             catch(e1) {
@@ -1093,26 +1073,7 @@ Math.max(oFullResponse.lastIndexOf("]"),oFullResponse.lastIndexOf("}"));
                     else if(oFullResponse.parseJSON) {
                         oFullResponse = oFullResponse.parseJSON.apply(oFullResponse,parseArgs.slice(1));
                     }
-                    // No JSON lib found so parse the string
-                    else {
-                        // Trim leading spaces
-                        while (oFullResponse.length > 0 &&
-                                (oFullResponse.charAt(0) != "{") &&
-                                (oFullResponse.charAt(0) != "[")) {
-                            oFullResponse = oFullResponse.substring(1, oFullResponse.length);
-                        }
-    
-                        if(oFullResponse.length > 0) {
-                            // Strip extraneous stuff at the end
-                            var objEnd = Math.max(oFullResponse.lastIndexOf("]"),oFullResponse.lastIndexOf("}"));
-                            oFullResponse = oFullResponse.substring(0,objEnd+1);
-    
-                            // Turn the string into an object literal...
-                            // ...eval is necessary here
-                            oFullResponse = eval("(" + oFullResponse + ")");
-    
-                        }
-                    }
+                    // No eval fallback here because all supported browsers have JSON lib
                 }
             }
             catch(e) {
