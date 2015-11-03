@@ -11,6 +11,8 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 /**
  * Base Sugar view
@@ -77,6 +79,11 @@ class SugarView
     protected $browserTitle;
 
     /**
+     * @var Request 
+     */
+    protected $request;
+
+    /**
      * Constructor which will peform the setup.
      */
     public function SugarView(
@@ -85,6 +92,7 @@ class SugarView
         )
     {
         $this->base_menu = SugarAutoLoader::loadExtension("menus", "application");
+        $this->request = InputValidation::getService();
     }
 
     public function init(

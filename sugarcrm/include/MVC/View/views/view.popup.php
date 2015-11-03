@@ -11,6 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\Validator\Constraints as Assert;
+
 class ViewPopup extends SugarView{
     protected $override_popup = array();
 
@@ -66,20 +68,28 @@ class ViewPopup extends SugarView{
 
 		//if you click the pagination button, it will populate the search criteria here
         if(!empty($this->bean) && isset($_REQUEST[$this->module.'2_'.strtoupper($this->bean->object_name).'_offset'])) {
-            if(!empty($_REQUEST['current_query_by_page'])) {
+
+            // Safe $_REQUEST['current_query_by_page']
+            $current_query_by_page = $this->request->getValidInputRequest(
+                'current_query_by_page',
+                new Assert\PhpSerialized()
+            );
+
+            if (!empty($current_query_by_page)) {
                 $blockVariables = array('mass', 'uid', 'massupdate', 'delete', 'merge', 'selectCount',
                     'sortOrder', 'orderBy', 'request_data', 'current_query_by_page');
-                $current_query_by_page = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($_REQUEST['current_query_by_page']));
                 foreach($current_query_by_page as $search_key=>$search_value) {
                     if($search_key != $this->module.'2_'.strtoupper($this->bean->object_name).'_offset'
                     	&& !in_array($search_key, $blockVariables)) {
                         if (!is_array($search_value)) {
+                            // FIXME: setting $_REQUEST parameters ourselves ...
                             $_REQUEST[$search_key] = securexss($search_value);
                         }
                         else {
                             foreach ($search_value as $key=>&$val) {
                                 $val = securexss($val);
                             }
+                            // FIXME: setting $_REQUEST parameters ourselves ...
                             $_REQUEST[$search_key] = $search_value;
                         }
                     }
