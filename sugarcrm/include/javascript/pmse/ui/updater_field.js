@@ -1565,11 +1565,12 @@ SearchUpdaterItem.prototype._createControl = function() {
         initSelection: _.bind(this._initSelection, this),
         width: this.fieldWidth || '220px'
     });
-    /*this.select2Control.on('change', function() {
-     var s2obj = self.select2Control.select2('data');
-     self.select2Control.data('text', s2obj.text);
-     self.setValue(s2obj.id);
-     });*/
+    var self = this;
+    this.select2Control.on('change', function () {
+        var s2obj = self.select2Control.select2('data');
+        self.select2Control.data('text', s2obj.text);
+        self.setValue(s2obj.id);
+    });
 
     this._control = this.select2Control.data("select2").container.get(0);
 
