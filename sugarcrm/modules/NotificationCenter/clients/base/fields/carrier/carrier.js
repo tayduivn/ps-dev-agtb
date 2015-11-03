@@ -56,7 +56,7 @@
      * @inheritDoc
      */
     bindDomChange: function() {
-        var $el = $(this.fieldTag + '[name=' + this.def.name + ']');
+        var $el = this.$(this.fieldTag + '[name=' + this.def.name + ']');
         $el.on('change', _.bind(function() {
             var modifiedCarriers = _.clone(this.carriers);
             modifiedCarriers[this.def.name].status = $el.prop('checked');

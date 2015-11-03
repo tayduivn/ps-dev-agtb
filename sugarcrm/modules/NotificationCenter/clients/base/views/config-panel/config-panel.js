@@ -22,7 +22,7 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         if (this.meta.label) {
-            this.title = app.lang.get(this.meta.label, this.currentModule);
+            this.title = app.lang.get(this.meta.label, this.module);
         }
     },
 

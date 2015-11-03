@@ -9,9 +9,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Base.NotificationCenter.ConfigHeaderButtonsView
+ * @class View.Views.Base.NotificationCenter.NotificationCenterConfigHeaderButtonsView
  * @alias SUGAR.App.view.views.BaseNotificationCenterConfigHeaderButtonsView
- * @extends  View.View
+ * @extends View.Views.Base.ConfigHeaderButtonsView
  */
 ({
     extendsFrom: 'ConfigHeaderButtonsView',

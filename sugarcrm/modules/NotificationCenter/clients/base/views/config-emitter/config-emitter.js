@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Base.NotificationCenterConfigGlobalDeliveryView
- * @alias SUGAR.App.view.layouts.BaseNotificationCenterConfigGlobalDeliveryView
+ * @class View.Views.Base.NotificationCenterConfigEmitterView
+ * @alias SUGAR.App.view.layouts.BaseNotificationCenterConfigEmitterView
  * @extends View.Views.Base.NotificationCenterConfigPanelView
  */
 ({
@@ -85,9 +85,9 @@
 
         if (existingEmitters) {
             _.each(existingEmitters[this.meta.emitter], function(event, eventName) {
-                var fields = [];
+                var columns = [];
                 _.each(this.carriersList, function(carrier, carrierName) {
-                    fields.push({
+                    columns.push({
                         name: this.name + '-' + carrierName,
                         type: 'carrier-switcher',
                         carrier: carrierName,
@@ -106,7 +106,7 @@
                     },
                     name: eventName,
                     label: eventName, //ToDo: app.list
-                    fields: fields
+                    columns: columns
                 });
             }, this);
         }
@@ -133,21 +133,9 @@
      * If all filters in all events of this emitter have "default" setting, hide the button, otherwise display it.
      */
     displayResetButton: function() {
-        var button = this.getField('reset_to_default_button'),
-            isAllDefault = true;
-
-        if (this.model.get('personal') && button) {
-            _.each(this.model.get('personal')['config'][this.meta.emitter], function(event, eventName) {
-                _.each(event, function(filter, filterName) {
-                    var filterGlobal = this.model.get('global')['config'][this.meta.emitter][eventName][filterName];
-                    if (JSON.stringify(_.chain(filter).map(_.first).uniq().sort().value()) !==
-                        JSON.stringify(_.chain(filterGlobal).map(_.first).uniq().sort().value())) {
-                        isAllDefault = false;
-                    }
-                }, this);
-            }, this);
-
-            if (isAllDefault) {
+        var button = this.getField('reset_to_default_button');
+        if (button) {
+            if (this.model.isEmitterDefaultConfigured(this.meta.emitter)) {
                 button.hide();
             } else {
                 button.show();
@@ -192,7 +180,7 @@
 
         message = message.replace('%', this.meta.label);
 
-        app.alert.show('reset_all_confirmation', {
+        app.alert.show('reset_emitter_confirmation', {
             level: 'confirmation',
             messages: message,
             onConfirm: _.bind(function() {

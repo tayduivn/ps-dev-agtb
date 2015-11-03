@@ -46,11 +46,7 @@
         if (sampleFilter.length === 0) {
             value = false;
         } else {
-            var checkedCarriers = [],
-                carriers = (this.model.get('configMode') === 'user') ?
-                this.model.get('personal')['carriers'] :
-                this.model.get('carriers');
-
+            var checkedCarriers = [];
             _.each(this.config[this.def.emitter][this.def.event], function(filter) {
                 _.each(filter, function(carriersArray) {
                     var carrierName = _.first(carriersArray);
@@ -89,9 +85,7 @@
                         filterList[key].splice(carrierIdx, 1);
                     }
                 } else {
-                    if (!_.chain(filter).flatten().uniq().some(
-                            function(a) { return _.uniq(a).length === 1 && _.uniq(a).join() === ''; }
-                        ).value()) {
+                    if (!_.some(filter, function(data) {return _.uniq(data).join() == ''})) {
                         filterList[key].push(['', '']);
                     }
                 }
@@ -113,22 +107,30 @@
             return;
         }
 
-        var allEventFieldsSelector = 'input[data-type=carrier-switcher]' +
-            '[data-emitter=' + this.def.emitter + ']' +
-            '[data-event=' + this.def.event + ']';
-
-        var allCarriersUnchecked = true;
-
-        $(allEventFieldsSelector).each(function() {
-            if ($(this).prop('checked') === true) {
-                allCarriersUnchecked = false;
-            }
-        });
-
-        if (allCarriersUnchecked) {
-            var $el = $(this.fieldTag + '[data-emitter=' + this.def.emitter + ']' + '[data-event=' + this.def.event + ']');
+        if (this.allCarrierSwitchersUnchecked()) {
+            var $el = this.$(this.fieldTag + '[data-emitter=' + this.def.emitter + ']' +
+                '[data-event=' + this.def.event + ']');
             $el.prop('checked', false).trigger('change');
             this.render();
         }
+    },
+
+    /**
+     * Answer if all of carrier-switcher fields are unchecked.
+     * @returns {boolean} true if all are unchecked.
+     */
+    allCarrierSwitchersUnchecked: function() {
+        var result = true,
+            allEventFieldsSelector = 'input[data-type=carrier-switcher]' +
+                '[data-emitter=' + this.def.emitter + ']' +
+                '[data-event=' + this.def.event + ']';
+
+        $(allEventFieldsSelector).each(function() {
+            if ($(this).prop('checked') === true) {
+                result = false;
+            }
+        });
+
+        return result;
     }
 })
