@@ -14,6 +14,25 @@ require_once('modules/Opportunities/OpportunityHooks.php');
 
 class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    public static function setUpBeforeClass()
+    {
+        SugarTestForecastUtilities::setUpForecastConfig(array(
+            'sales_stage_won' => array('Closed Won'),
+            'sales_stage_lost' => array('Closed Lost')
+        ));
+    }
+
+    public function tearDown()
+    {
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+    }
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestForecastUtilities::tearDownForecastConfig();
+        SugarTestHelper::tearDown();
+    }
+
     public function dataProviderSetOpportunitySalesStatus()
     {
         // utility method to to return an array
@@ -166,6 +185,29 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
         // assert the status is what it should be
         $this->assertEquals('testing1', $oppMock->sales_status);
+    }
+
+    /**
+     * @dataProvider beforeSaveIncludedCheckProvider
+     */
+    public function testBeforeSaveIncludedCheck($sales_stage, $commit_stage, $probability, $expected)
+    {
+        $hookMock = new MockOpportunityHooks();
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+
+        $opp->probability = $probability;
+        $opp->sales_stage = $sales_stage;
+        $opp->commit_stage = $commit_stage;
+
+        $hookMock->beforeSaveIncludedCheck($opp, 'before_save', null);
+        $this->assertEquals($opp->commit_stage, $expected);
+    }
+
+    public function beforeSaveIncludedCheckProvider(){
+        return array(
+            array('Closed Won', 'exclude', 100, 'include'),
+            array('Closed Lost', 'include', 0, 'exclude')
+        );
     }
 }
 
