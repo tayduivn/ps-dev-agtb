@@ -19,9 +19,15 @@ use Sabre\CalDAV;
 use Sabre\CalDAV\Backend\AbstractBackend;
 use Sabre\VObject;
 use Sabre\CalDAV\Backend\SchedulingSupport;
+use Sabre\CalDAV\Backend\SyncSupport;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper;
 
-class CalendarData extends AbstractBackend implements SchedulingSupport
+/**
+ * Class CalendarData
+ * @package Sugarcrm\Sugarcrm\Dav\Cal\Backend
+ *
+ */
+class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSupport
 {
     /**
      * Instance of UserHelper
@@ -105,6 +111,15 @@ class CalendarData extends AbstractBackend implements SchedulingSupport
     }
 
     /**
+     * Get CalDavChanges bean object
+     * @return null|\SugarBean
+     */
+    public function getChangesBean()
+    {
+        return \BeanFactory::getBean('CalDavChanges');
+    }
+
+    /**
      * Get CalDavScheduling bean object
      * @return null|\SugarBean
      */
@@ -185,10 +200,25 @@ class CalendarData extends AbstractBackend implements SchedulingSupport
      */
     public function getCalendarObjects($calendarId)
     {
+        global $current_user;
+
         $events = array();
         $calendar = $this->getCalendarBean($calendarId);
         if ($calendar->load_relationship('calendar_events')) {
-            $result = $calendar->calendar_events->getBeans();
+            $eventBean = $this->getEventsBean();
+            $query = new \SugarQuery();
+            $query->from($eventBean);
+            $query->where()->equals('calendarid', $calendarId);
+
+            $interval = $current_user->getPreference('caldav_interval');
+            if ($interval != 0) {
+                $date = new \DateTime('NOW', new \DateTimeZone('UTC'));
+                $date = $date->modify("-" . $interval)->format('U');
+                
+                $query->where()->gte('lastoccurence', $date);
+            }
+
+            $result = $eventBean->fetchFromQuery($query);
 
             foreach ($result as $bean) {
                 $events[] = $bean->toCalDavArray();
@@ -479,4 +509,67 @@ class CalendarData extends AbstractBackend implements SchedulingSupport
             $schedulingBean->save();
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getChangesForCalendar($calendarId, $syncToken = 0, $syncLevel = 1, $limit = null)
+    {
+        if (is_null($syncToken)) {
+            $syncToken = 0;
+        }
+
+        $changeBean = $this->getChangesBean();
+        $query = new \SugarQuery();
+
+        $query->from($changeBean, array('alias' => 'changes'));
+        $query->joinTable("caldav_events", array('alias' => "events", 'joinType' => "INNER", "linkingTable" => true))
+            ->on()->equalsField('changes.uri', 'events.uri');
+
+        $query->select(array('changes.uri', 'events.deleted'))
+            ->fieldRaw('MIN(changes.operation)', 'operation')
+            ->fieldRaw('MAX(changes.synctoken)', 'synctoken');
+
+        $query->where()->equals('changes.calendarid', $calendarId);
+        $query->where()->gt('changes.synctoken', $syncToken);
+        $query->orderBy('changes.synctoken', 'ASC');
+        $query->groupBy('changes.uri');
+
+        if (!empty($limit)) {
+            $query->limit($limit);
+        }
+
+        $result = $query->execute();
+
+        $out = array(
+            'syncToken' => $syncToken,
+            'added' => array(),
+            'modified' => array(),
+            'deleted' => array(),
+        );
+
+        foreach ($result as $vals) {
+            if ($vals['synctoken'] > $out['syncToken']) {
+                $out['syncToken'] = $vals['synctoken'];
+            }
+            if ($vals['deleted'] != 1) {
+                if ($vals['operation'] != 1) {
+                    //modified
+                    $out['modified'][] = $vals['uri'];
+                } else {
+                    //add
+                    $out['added'][] = $vals['uri'];
+                }
+            } else {
+                //deleted events
+                //create and del event, Not send
+                if ($vals['operation'] != 1) {
+                    $out['deleted'][] = $vals['uri'];
+                }
+            }
+        }
+
+        return $out;
+    }
+
 }

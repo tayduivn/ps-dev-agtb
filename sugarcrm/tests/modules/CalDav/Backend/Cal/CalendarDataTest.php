@@ -20,11 +20,21 @@ use Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData;
 
 class CalendarDataTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        SugarTestHelper::setUp('current_user', array(true, 1));
+
+        global $current_user;
+        $current_user->setPreference('caldav_interval', '6 month');
+    }
+
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestCalDavUtilities::deleteAllCreatedCalendars();
         SugarTestCalDavUtilities::deleteCreatedEvents();
+
+        SugarTestHelper::tearDown();
         parent::tearDown();
     }
 
@@ -223,10 +233,11 @@ END:VCALENDAR',
     {
         $sugarUser = SugarTestUserUtilities::createAnonymousUser();
         $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+
         $event1 = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
-DTSTART;VALUE=DATE:20160101
+DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-3 month'))).'
 DURATION:P2D
 END:VEVENT
 END:VCALENDAR',
@@ -237,7 +248,7 @@ END:VCALENDAR',
         $event2 = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
-DTSTART;VALUE=DATE:20160101
+DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-5 month'))).'
 DURATION:P2D
 END:VEVENT
 END:VCALENDAR',
@@ -245,10 +256,21 @@ END:VCALENDAR',
             'eventURI' => 'test1'
         ));
 
+        $event3 = SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-10 month'))).'
+DURATION:P2D
+END:VEVENT
+END:VCALENDAR',
+            'calendarid' => $calendarID,
+            'eventURI' => 'test2'
+        ));
+
         $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-                            ->disableOriginalConstructor()
-                            ->setMethods(null)
-                            ->getMock();
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
 
         $result = $backendMock->getCalendarObjects($calendarID);
 
@@ -261,6 +283,7 @@ END:VCALENDAR',
         $this->assertEquals(2, count($idData));
         $this->assertContains($event1->id, $idData);
         $this->assertContains($event2->id, $idData);
+        $this->assertNotContains($event3->id, $idData);
     }
 
     /**
@@ -471,5 +494,77 @@ END:VCALENDAR',
         $result = $backendMock->getCalendarObjectByUID('principals/users/' . $sugarUser->user_name, 'uidtest1');
 
         $this->assertEquals($calendarInfo[0]['uri'] . '/' . $event->uri, $result);
+    }
+
+    /**
+     * @covers Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::getChangesForCalendar
+     */
+    public function testGetChangesForCalendar()
+    {
+        $sugarUser = SugarTestUserUtilities::createAnonymousUser();
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+
+        $syncToken = 1;
+        $syncLevel = 1;
+        $limit = null;
+
+        $event1 = SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-3 month'))).'
+DURATION:P2D
+SUMMARY:Test event title
+END:VEVENT
+END:VCALENDAR',
+            'calendarid' => $calendarID,
+            'eventURI' => create_guid()
+        ));
+
+        $event2 = SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-5 month'))).'
+DURATION:P2D
+END:VEVENT
+END:VCALENDAR',
+            'calendarid' => $calendarID,
+            'eventURI' => create_guid()
+        ));
+
+        $event3 = SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-10 month'))).'
+DURATION:P2D
+END:VEVENT
+END:VCALENDAR',
+            'calendarid' => $calendarID,
+            'eventURI' => create_guid()
+        ));
+
+        $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        //update event1
+        $event1->calendardata = str_replace('Test event title', 'Test event title!', $event1->calendardata);
+        $event1->processed = true;
+        $event1->save();
+        $event1->retrieve($event1->id);
+
+        //mark deleted even2
+        $event2->deleted = 1;
+        $event2->processed = true;
+        $event2->save();
+        $event2->retrieve($event2->id);
+
+        $result = $backendMock->getChangesForCalendar($calendarID, $syncToken, $syncLevel, $limit);
+
+        $this->assertEquals($result['syncToken'], 4);
+        $this->assertEquals($result['added'][0], $event3->uri);
+        $this->assertEquals($result['modified'][0], $event1->uri);
+        $this->assertEquals($result['deleted'][0], $event2->uri);
+
     }
 }
