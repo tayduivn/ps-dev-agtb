@@ -153,6 +153,10 @@ class TeamSet extends SugarBean{
                     // Reset new_with_id so we overwrite this wrong set
                     $this->new_with_id = false;
                 }
+            } else {
+                // this is a new team set. so need to get a new id.
+                $this->new_with_id = true;
+                $this->id = create_guid();
             }
             $this->team_md5 = $team_md5;
             $this->primary_team_id = $this->getPrimaryTeamId();

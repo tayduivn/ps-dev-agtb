@@ -111,7 +111,7 @@ class PMSEEngineUtils
         'All' => array('created_by', 'modified_user_id'),
         'BR' => array('assigned_user_id', 'email1', 'outlook_id'),
         'ET' => array('email1'),
-        'AC' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case'),
+        'AC' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
         'RR' => array(),
     );
 
@@ -1374,5 +1374,35 @@ class PMSEEngineUtils
             return null;
         }
         return current($parentBean);
+    }
+
+    /*
+     * Adds or Replaces teams in a Bean
+     * @param $bean
+     * @param $field containing the new teams information
+     */
+    public static function changeTeams($bean, $field)
+    {
+        $bean->load_relationship('teams');
+
+        // The TeamSetLink could have the _saved property set to true indicating previous data has been saved.
+        // So we need to Explicitly set _saved of TeamSetLink class to false so that the new teams
+        // get saved
+        if (!empty($bean->teams) && !empty($field->value) && is_array($field->value)) {
+            $bean->teams->setSaved(false);
+
+            // Set primary team if a primary team has been set
+            if (!empty($field->primary)) {
+                $bean->team_id = $field->primary;
+            }
+
+            // Determines if teams have to be added to existing teams or
+            // if existing teams need to be replaced by this new set
+            if ($field->append === true) {
+                $bean->teams->add($field->value, array(), true);
+            } else {
+                $bean->teams->replace($field->value, array(), true);
+            }
+        }
     }
 }
