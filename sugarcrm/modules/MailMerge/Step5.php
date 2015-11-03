@@ -10,19 +10,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*
- * Created on Oct 4, 2005
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
 
-
-
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 if(!empty($_REQUEST['mtime']))
 {
-	$mTime = $_REQUEST['mtime'];
+    $request = InputValidation::getService();
+    $mTime = $request->getValidInputRequest('mtime', array('Assert\Type' => array('type' => 'numeric')));
 	$file = $_SESSION['MAILMERGE_TEMP_FILE_'.$mTime];
 	$rtfFile = 'sugartokendoc'.$mTime.'.doc';
 	unlink($file);
@@ -32,4 +26,3 @@ if(!empty($_REQUEST['mtime']))
 }
 
 header("Location: index.php?module=MailMerge");
-?>

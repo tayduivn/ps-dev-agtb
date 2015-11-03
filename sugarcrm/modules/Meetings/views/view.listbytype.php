@@ -68,7 +68,6 @@ class MeetingsViewListbytype extends ViewList {
             $name_basic = $this->request->getValidInputRequest('name_basic');
             $this->lv->ss->assign('DCSEARCH', $name_basic);
 			$this->lv->setup($this->seed, 'include/ListView/ListViewDCMenu.tpl', $this->where, $this->params);
-			$savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
 			echo $this->lv->display();
 		}
  	}

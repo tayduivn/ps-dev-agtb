@@ -98,6 +98,5 @@ if ($deletedRows != "") {
 }
 
 $json = getJSONobj();
-echo 'result = '. $json->encode($newIds);
+echo $json->encode($newIds);
 
-?>

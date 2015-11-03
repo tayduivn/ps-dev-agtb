@@ -19,7 +19,7 @@
 {sugar_csrf_form_token}
 				<input type="hidden" name="module" value="Project" />
 				<input type="hidden" name="sugar_body_only" id="sugar_body_only" value="1">
-				<input type="hidden" name="record" id="record" value="{$ID}">
+                <input type="hidden" name="record" id="record" value="{$ID|escape:'html':'UTF-8'}" />
 				<input type="hidden" name="action" id="action" value="ResourceReport" />
 		</td>
 	</tr>
@@ -40,14 +40,14 @@
 	<tr>
 		<td>{$MOD.LBL_FILTER_DATE_RANGE_START}:<span class="required">*</span></td>
         <td>
-            <input name='date_start' id='date_start' tabindex='2' size='11' maxlength='10' type="text" value="{$DATE_START}">
+            <input name="date_start" id="date_start" tabindex="2" size="11" maxlength="10" type="text" value="{$DATE_START|escape:'html':'UTF-8'}" />
             {sugar_getimage name="jscalendar" ext=".gif" alt="$USER_DATEFORMAT" other_attributes='align="absmiddle" id="date_start_trigger" onclick="parseDate(document.getElementById(\'date_start\'), \'$CALENDAR_DATEFORMAT\');" '}&nbsp;</td>
         </td>
 	</tr>
 	<tr>
 		<td>{$MOD.LBL_FILTER_DATE_RANGE_FINISH}:<span class="required">*</span></td>
         <td>
-            <input name="date_finish" id="date_finish" type="input" tabindex='2' size='11' maxlength='10' value='{$DATE_FINISH}' />
+            <input name="date_finish" id="date_finish" type="input" tabindex="2" size="11" maxlength="10" value="{$DATE_FINISH|escape:'html':'UTF-8'}" />
             {sugar_getimage name="jscalendar" ext=".gif" alt="$USER_DATEFORMAT" other_attributes='align="absmiddle" id="date_finish_trigger" onclick="parseDate(document.getElementById(\'date_finish\'), \'$CALENDAR_DATEFORMAT\');" '}&nbsp;
         </td>
     </tr>
