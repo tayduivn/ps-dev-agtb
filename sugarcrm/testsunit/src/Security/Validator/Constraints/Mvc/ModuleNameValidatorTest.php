@@ -1,0 +1,87 @@
+<?php
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\Mvc;
+
+use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Mvc\ModuleName;
+use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Mvc\ModuleNameValidator;
+use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
+
+/**
+ *
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\Validator\Constraints\Mvc\ModuleNameValidator
+ *
+ */
+class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
+{
+    /**
+     * {@inheritdoc}
+     */
+    protected function createValidator()
+    {
+        return new ModuleNameValidator();
+    }
+
+    /**
+     * @covers ::validate
+     * @covers ::isValidModule
+     * @dataProvider providerTestValidValues
+     */
+    public function testValidValues($value)
+    {
+        $constraint = new ModuleName();
+        $this->validator->validate($value, $constraint);
+        $this->assertNoViolation();
+    }
+
+    public function providerTestValidValues()
+    {
+        return array(
+            array('Accounts'),
+            array('Contacts'),
+
+            // non-bean existing module
+            array('MailMerge'),
+
+            // url rewrite for cache/jsLanguage uses app_strings
+            array('app_strings'),
+        );
+    }
+
+    /**
+     * @covers ::validate
+     * @covers ::isValidModule
+     * @dataProvider providerTestInvalidValues
+     */
+    public function testInvalidValues($value, $violation, $code)
+    {
+        $constraint = new ModuleName(array(
+            'message' => 'testMessage',
+        ));
+
+        $this->validator->validate($value, $constraint);
+
+        $this->buildViolation('testMessage')
+            ->setInvalidValue($value)
+            ->setParameter('%module%', $violation)
+            ->setCode($code)
+            ->assertRaised();
+    }
+
+    public function providerTestInvalidValues()
+    {
+        return array(
+            array('FooBar', 'FooBar',  ModuleName::ERROR_UNKNOWN_MODULE),
+            array(array(), 'string violation',  ModuleName::ERROR_STRING),
+        );
+    }
+}
