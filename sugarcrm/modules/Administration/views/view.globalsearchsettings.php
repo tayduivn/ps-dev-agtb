@@ -22,6 +22,16 @@ require_once 'modules/Administration/Administration.php';
  */
 class AdministrationViewGlobalsearchsettings extends SugarView
 {
+    /**
+     * These modules are blacklisted by default. In the case of the Tags module,
+     * Elastic fails to search if it is disabled so Tags is always enabled and
+     * thus should never be allowed on the admin screen.
+     * @var array
+     */
+    protected $blackListedModules= array(
+        'Tags' => 1,
+    );
+
      /**
      * @see SugarView::_getModuleTitleParams()
      */
@@ -44,6 +54,38 @@ class AdministrationViewGlobalsearchsettings extends SugarView
     }
 
     /**
+     * Cleanses the existing modules lists, both enabled and disabled, to ensure
+     * that modules that should not be included are not included.
+     * @param array $modules The full collection of modules for display
+     * @return array
+     */
+    protected function cleanseModuleLists($modules)
+    {
+        $return = array();
+
+        // In this case, $type will be enabled|disabled_modules
+        foreach ($modules as $type => $data) {
+            // Setup the variable that will return $type data
+            $typeData = array();
+
+            // $data is the collection of modules for each type
+            foreach ($data as $k => $v) {
+                if (isset($this->blackListedModules[$v['module']])) {
+                    continue;
+                }
+
+                // Set the updated data
+                $typeData[] = $v;
+            }
+
+            // Read the type data back into the type
+            $return[$type] = $typeData;
+        }
+
+        return $return;
+    }
+
+    /**
      * @see SugarView::display()
      */
     public function display()
@@ -59,6 +101,10 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         // Enabled/disabled modules list
         $ftsAdmin = new AdminSettings();
         $modules = $ftsAdmin->getModuleList();
+
+        // Handle cleansing of blacklisted modules
+        $modules = $this->cleanseModuleLists($modules);
+
         $sugar_smarty->assign('enabled_modules', json_encode($modules['enabled_modules']));
         $sugar_smarty->assign('disabled_modules', json_encode($modules['disabled_modules']));
 

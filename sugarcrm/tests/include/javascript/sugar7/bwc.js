@@ -68,7 +68,7 @@ describe("sugar7.extensions.bwc", function() {
                 full_name: 'John Smith'
             });
             parentModel._syncedAttributes = {};
-            parentModel.getSyncedAttributes = function() {
+            parentModel.getSynced = function() {
                 return parentModel._syncedAttributes;
             };
             parentModel.module = 'Contacts';
@@ -152,7 +152,7 @@ describe("sugar7.extensions.bwc", function() {
                 assigned_user_name: 'admin'
             });
             parentModel._syncedAttributes = {};
-            parentModel.getSyncedAttributes = function() {
+            parentModel.getSynced = function() {
                 return parentModel._syncedAttributes;
             };
             relateFieldStub = sinonSandbox.stub(app.data, 'getRelateFields', function() {

@@ -1475,6 +1475,12 @@ LEFT JOIN user_constraints uc
      */
     public function get_columns($tablename)
     {
+        // Sanity check for getting columns
+        if (empty($tablename)) {
+            $this->log->error(__METHOD__ . ' called with an empty tablename argument');
+            return array();
+        }        
+
         $columns = array(
             'column_name',
             'data_type',

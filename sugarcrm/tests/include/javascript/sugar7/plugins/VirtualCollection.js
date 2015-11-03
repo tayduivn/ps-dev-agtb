@@ -955,7 +955,7 @@ describe('Plugins.VirtualCollection', function() {
         });
 
         it('should include any collection fields in the return value for synchronized attributes', function() {
-            expect(model.getSyncedAttributes()[attribute]).not.toBeUndefined();
+            expect(model.getSynced()[attribute]).not.toBeUndefined();
         });
 
         it('should revert changes to any collection fields', function() {
@@ -970,7 +970,7 @@ describe('Plugins.VirtualCollection', function() {
 
         describe('getting changed attributes', function() {
             it('should not include `invitees` in the return value', function() {
-                var changed = model.changedAttributes(model.getSyncedAttributes());
+                var changed = model.changedAttributes(model.getSynced());
 
                 expect(changed[attribute]).toBeUndefined();
             });
@@ -979,7 +979,7 @@ describe('Plugins.VirtualCollection', function() {
                 var changed;
 
                 model.get(attribute).remove([2]);
-                changed = model.changedAttributes(model.getSyncedAttributes());
+                changed = model.changedAttributes(model.getSynced());
 
                 expect(changed[attribute]).not.toBeUndefined();
             });

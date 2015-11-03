@@ -10,13 +10,15 @@
  */
 ({
     extendsFrom: 'PanelTopView',
-    
+
     /**
      * @inheritdoc
      */
     initialize: function(options){
         this._super("initialize", [options]);
+
         if (this.parentModule == "Accounts") {
+            this.context.parent.on('editablelist:save', this._reloadOpportunities, this);
             this.meta.buttons = _.filter(this.meta.buttons, function(item){
                 if (item.type != "actiondropdown") {
                     return true;
@@ -25,6 +27,25 @@
             });
         }
     },
+
+    /**
+     * Refreshes the RevenueLineItems subpanel when a new Opportunity is added
+     * @private
+     */
+     _reloadOpportunities: function() {
+         var $oppsSubpanel = $('div[data-subpanel-link="opportunities"]');
+         // only reload Opportunities if it is closed & no data exists
+         if ($('li.subpanel', $oppsSubpanel).hasClass('closed')) {
+             if ($('table.dataTable', $oppsSubpanel).length) {
+                 this.context.parent.trigger('subpanel:reload', {links: ['opportunities']});
+             } else {
+                 this.context.parent.trigger('subpanel:reload');
+             }
+         }
+         else {
+             this.context.parent.trigger('subpanel:reload', {links: ['opportunities']});
+         }
+     },
 
     /**
      * @inheritdoc
@@ -39,7 +60,7 @@
             }
         }, this);
     },
-    
+
     /**
      * @inheritdoc
      */

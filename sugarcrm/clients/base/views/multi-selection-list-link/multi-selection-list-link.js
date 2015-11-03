@@ -77,7 +77,7 @@
 
         if (context.has('parentModel')) {
             var parentModel = context.get('parentModel');
-            var syncedAttributes = parentModel.getSyncedAttributes();
+            var syncedAttributes = parentModel.getSynced();
             var updatedAttributes = _.reduce(data.record, function(memo, val, key) {
                     if (!_.isEqual(syncedAttributes[key], val)) {
                         memo[key] = val;

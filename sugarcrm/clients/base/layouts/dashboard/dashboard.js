@@ -128,7 +128,7 @@
         if (defaultLayout) {
             this.listenTo(defaultLayout, 'sidebar:state:changed', function(state) {
                 this.dashboardVisibleState = state;
-                if (state === 'open' && this.isHelpDashboard()) {
+                if (state === 'open' && this.isHelpDashboard(true)) {
                     app.events.trigger('app:help:shown');
                 } else {
                     app.events.trigger('app:help:hidden');
@@ -146,7 +146,7 @@
 
         // listen to the model sync event to figure out if we need to highlight the help button in the footer
         this.model.on('sync', function() {
-            if (this.dashboardVisibleState === 'open' && this.isHelpDashboard()) {
+            if (this.dashboardVisibleState === 'open' && this.isHelpDashboard(true)) {
                 // when on the home page and the dashboard is a help dashboard, we need to hide the edit button
                 // which means we need to re-render the dashboard-headerpane to contain the meta from
                 // the help-dashboard-headerpane view
@@ -210,13 +210,15 @@
     },
 
     /**
-     * Method to open the help dashboard if it's not already loaded. This will also toggle the sidebar to open if it's
-     * collapsed.
+     * Method to open the help dashboard if it's not already loaded. This will
+     * also toggle the sidebar to open if it's collapsed.
      *
-     * @param {boolean} fromEvent Flag to indicate if the fuction was called from an event. `true` if called from an
-     *   event and `false` if called directly. Added for deprecation logging purposes only.
+     * @param {boolean} [fromEvent] Flag to indicate if the fuction was called
+     *   from an event. `true` if called from an event and `false` if called
+     *   directly. Added for deprecation logging purposes only.
      *
-     * @deprecated Since 7.7. Will be removed in 7.9. Use the event {@link App#event-app:help:show} instead.
+     * @deprecated Since 7.7. Will be removed in 7.9. Use the event
+     *   {@link App#event-app:help:show} instead.
      */
     openHelpDashboard: function(fromEvent) {
         if (!fromEvent) {
@@ -252,10 +254,12 @@
     /**
      * Method to close the help dashbaord, if the help dashboard is visible.
      *
-     * @param {boolean} fromEvent Flag to indicate if the fuction was called from an event. `true` if called from an
-     *   event and `false` if called directly. Added for deprecation logging purposes only.
+     * @param {boolean} [fromEvent] Flag to indicate if the fuction was called
+     *   from an event. `true` if called from an event and `false` if called
+     *   directly. Added for deprecation logging purposes only.
      *
-     * @deprecated Since 7.7. Will be removed in 7.9. Use the event {@link App#event-app:help:hide} instead.
+     * @deprecated Since 7.7. Will be removed in 7.9. Use the event
+     *   {@link App#event-app:help:hide} instead.
      */
     closeHelpDashboard: function(fromEvent) {
         if (!fromEvent) {
@@ -282,14 +286,18 @@
     },
 
     /**
-     * Load the dashboards for the current module/view and then find the help dashboard and display it, it should always
-     * exists but if it doesn't, just ignore it.
+     * Load the dashboards for the current module/view and then find the help
+     * dashboard and display it, it should always exists but if it doesn't,
+     * just ignore it.
      *
-     * @param {Object} collection The collection of dashboards returned from the fetch.
-     * @param {boolean} fromEvent Flag to indicate if the fuction was called from an event. `true` if called from an
-     *   event and `false` if called directly. Added for deprecation logging purposes only.
+     * @param {Object} collection The collection of dashboards returned from the
+     *   fetch.
+     * @param {boolean} [fromEvent] Flag to indicate if the fuction was called
+     *   from an event. `true` if called from an event and `false` if called
+     *   directly. Added for deprecation logging purposes only.
      *
-     * @deprecated Since 7.7. Will be removed in 7.9. Use the event {@link App#event-app:help:show} instead.
+     * @deprecated Since 7.7. Will be removed in 7.9. Use the event
+     *   {@link App#event-app:help:show} instead.
      */
     showHelpDashboard: function(collection, fromEvent) {
         if (!fromEvent) {
@@ -304,13 +312,17 @@
     },
 
     /**
-     * Load the dashboards for the current module/view and then find the first non-help dashboard and display it.
+     * Load the dashboards for the current module/view and then find the first
+     * non-help dashboard and display it.
      *
-     * @param {Object} collection The collection of dashboards returned from the fetch.
-     * @param {boolean} fromEvent Flag to indicate if the fuction was called from an event. `true` if called from an
-     *   event and `false` if called directly. Added for deprecation logging purposes only.
+     * @param {Object} collection The collection of dashboards returned from the
+     *   fetch.
+     * @param {boolean} [fromEvent] Flag to indicate if the fuction was called
+     *   from an event. `true` if called from an event and `false` if called
+     *   directly. Added for deprecation logging purposes only.
      *
-     * @deprecated Since 7.7. Will be removed in 7.9. Use the event {@link App#event-app:help:hide} instead.
+     * @deprecated Since 7.7. Will be removed in 7.9. Use the event
+     *   {@link App#event-app:help:hide} instead.
      */
     hideHelpDashboard: function(collection, fromEvent) {
         if (!fromEvent) {
@@ -331,8 +343,9 @@
     /**
      * Is the current open dashboad a help dashboard.
      *
-     * @param {boolean} fromEvent Flag to indicate if the fuction was called from an event. `true` if called from an
-     *   event and `false` if called directly. Added for deprecation logging purposes only.
+     * @param {boolean} [fromEvent] Flag to indicate if the fuction was called
+     *   from an event. `true` if called from an event and `false` if called
+     *   directly. Added for deprecation logging purposes only.
      *
      * @deprecated Since 7.7. Will be removed in 7.9.
      */
@@ -581,18 +594,24 @@
             initDash.dashboard_type = initDash.dashboard_type || 'dashboard';
         }
 
-        return this.addHelpDashboardMetadata(initDash);
+        return this.addHelpDashboardMetadata(initDash, true);
     },
 
     /**
      * Adds the help-dashboard metadata to a metadata Object.
      *
      * @param {Object} _initDashboard The default dashboard for a module.
+     * @param {boolean} [suppressWarning] Flag to suppress the deprecation
+     *   warning. `true` if this method was called within
+     *   {@link View.Layouts.Base.DashboardLayout} and `false` if called
+     *   directly. Added for deprecation logging purposes only.
      *
      * @deprecated Since 7.7. Will be removed in 7.9.
      */
-    addHelpDashboardMetadata: function(_initDashboard) {
-        app.logger.warn('View.Layouts.Base.DashboardLayout#addHelpDashboardMetadata is deprecated since 7.7. Will be removed in 7.9.');
+    addHelpDashboardMetadata: function(_initDashboard, suppressWarning) {
+        if (!suppressWarning) {
+            app.logger.warn('View.Layouts.Base.DashboardLayout#addHelpDashboardMetadata is deprecated since 7.7. Will be removed in 7.9.');
+        }
 
         var _helpDB = app.metadata.getLayout(this.model.dashboardModule, 'help-dashboard');
         if (_.has(_initDashboard, 'metadata')) {

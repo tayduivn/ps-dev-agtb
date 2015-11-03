@@ -862,7 +862,7 @@
 
         if (self.primaryRecord && self.primaryRecord.id !== droppedTo.data('record-id')) {
             var changedAttributes = self.primaryRecord.changedAttributes(
-                self.primaryRecord.getSyncedAttributes()
+                self.primaryRecord.getSynced()
             );
             if (!_.isEmpty(changedAttributes)) {
                 app.alert.show('change_primary_confirmation', {
@@ -1107,7 +1107,7 @@
      * @param {String} fieldName Name of field to revert.
      */
     revert: function(fieldName) {
-        var syncedAttributes = this.primaryRecord.getSyncedAttributes();
+        var syncedAttributes = this.primaryRecord.getSynced();
 
         this._setRelatedFields(fieldName, this.primaryRecord, true);
         this.primaryRecord.set(
@@ -1213,7 +1213,7 @@
 
         var fieldDefs = app.metadata.getModule(this.module).fields;
             defs = fieldDefs[fieldName],
-            syncedAttributes = synced ? model.getSyncedAttributes() : {},
+            syncedAttributes = synced ? model.getSynced() : {},
             fields = _.union(defs.populate_list, defs.related_fields);
 
         _.each(this.relatedFieldsMap, function(field) {

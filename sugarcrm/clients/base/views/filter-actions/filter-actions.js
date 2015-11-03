@@ -204,7 +204,7 @@
         var filter = this.context.editingFilter,
             filterLayout = this.layout.getComponent('filter'),
             id = filter.get('id'),
-            changedAttributes = filter.changedAttributes(filter.getSyncedAttributes());
+            changedAttributes = filter.changedAttributes(filter.getSynced());
             filter.revertAttributes();
 
         filterLayout.clearFilterEditState();
