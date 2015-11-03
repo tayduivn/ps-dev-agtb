@@ -401,6 +401,12 @@
         }, this);
 
         callbacks = app.data.getSyncCallbacks(method, model, options);
+
+        // if there's a 412 error dismiss the custom loading alert
+        this.collection.once('data:sync:error', function() {
+            app.alert.dismiss('worksheet_loading');
+        }, this);
+
         this.collection.trigger("data:sync:start", method, model, options);
 
         url = app.api.buildURL("Forecasts/filter", null, null, options.params);

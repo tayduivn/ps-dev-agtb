@@ -521,11 +521,11 @@
      * Set the loading message and have a way to hide it
      */
     displayLoadingMessage: function() {
-        app.alert.show('workshet_loading',
+        app.alert.show('worksheet_loading',
             {level: 'process', title: app.lang.get('LBL_LOADING')}
         );
         this.collection.once('reset', function() {
-            app.alert.dismiss('workshet_loading');
+            app.alert.dismiss('worksheet_loading');
         }, this);
     },
 
