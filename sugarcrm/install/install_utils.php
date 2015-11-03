@@ -1373,7 +1373,7 @@ function insert_default_settings(){
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'system', 'system_id', '" . $system_id . "')" );
 
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'system', 'skypeout_on', '1')" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'system', 'tweettocase_on', '0')" );
+    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'system', 'tweettocase_on', '0' )");
 
 }
 

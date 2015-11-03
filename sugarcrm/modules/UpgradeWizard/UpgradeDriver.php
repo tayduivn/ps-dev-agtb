@@ -1244,7 +1244,7 @@ abstract class UpgradeDriver
         // CRYS-741 On windows $_SERVER['PHP_SELF'] is 'C:\i.....'; in console, not url like for web request.
         // Because of that it's not valid for security check for SAFED_GET mask
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' && file_exists('include/utils.php')) {
-            list($from_version, $from_flavor) = $this->loadVersion();
+            list($from_version, $from_flavor) = $this->loadFromVersion();
             if (version_compare($from_version, '7.2.0', '<')) {
                 $utils_fix = file_get_contents('include/utils.php');
                 if (preg_match('/(clean_special_arguments)(.+)(if\(isset\(\$_SERVER\[\'PHP_SELF\'\]\)\))/is', $utils_fix, $match_array)

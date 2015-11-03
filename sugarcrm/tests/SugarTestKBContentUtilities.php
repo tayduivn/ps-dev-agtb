@@ -15,7 +15,9 @@ require_once 'modules/KBContents/KBContent.php';
 class SugarTestKBContentUtilities
 {
 
-    protected static $_createdBeans = array();
+    protected static $_createdKbContentIds = array();
+    protected static $_createdKbDocumentIds = array();
+    protected static $_createdKbArticleIds = array();
 
     private function __construct() {}
 
@@ -43,25 +45,38 @@ class SugarTestKBContentUtilities
     {
         $bean->save();
         DBManagerFactory::getInstance()->commit();
-        self::$_createdBeans[] = $bean;
+        self::$_createdKbContentIds[] = $bean->id;
+        self::$_createdKbArticleIds[] = $bean->kbarticle_id;
+        self::$_createdKbDocumentIds[] = $bean->kbdocument_id;
     }
 
     public static function removeAllCreatedBeans()
     {
         $db = DBManagerFactory::getInstance();
-        $beans = self::$_createdBeans;
-        $ids = array();
 
-        foreach ($beans as $bean) {
-        	$ids[] = $bean->id;
-        	$db->query('DELETE FROM kbdocuments WHERE id = ' . $db->quoted($bean->kbdocument_id));
-        	$db->query('DELETE FROM kbarticles WHERE id = ' . $db->quoted($bean->kbarticle_id));
-        }
+        $db->query('DELETE FROM kbdocuments WHERE id IN (' . static::getPreparedIdsString(self::$_createdKbDocumentIds) . ')');
+        $db->query('DELETE FROM kbarticles WHERE id IN (' . static::getPreparedIdsString(self::$_createdKbArticleIds) . ')');
 
-        $conditions = implode(',', array_map(array($db, 'quoted'), $ids));
+        $conditions = static::getPreparedIdsString(self::$_createdKbContentIds);
         $db->query('DELETE FROM kbcontents WHERE id IN (' . $conditions . ')');
-        $db->query('DELETE FROM kbcontents_audit WHERE id IN (' . $conditions . ')');
-        self::$_createdBeans = array();
+        $db->query('DELETE FROM kbcontents_audit WHERE parent_id IN (' . $conditions . ')');
+
+        self::$_createdKbDocumentIds = array();
+        self::$_createdKbArticleIds = array();
+        self::$_createdKbContentIds = array();
+    }
+
+    /**
+     * Prepare special string of quoted unique ids
+     * to use in 'IN' part of db request.
+     *
+     * @param array $ids
+     * @return string
+     */
+    protected static function getPreparedIdsString(array $ids)
+    {
+        $db = DBManagerFactory::getInstance();
+        return implode(',', array_map(array($db, 'quoted'), array_unique($ids)));
     }
 }
 

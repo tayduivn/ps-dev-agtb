@@ -439,9 +439,11 @@
 
     /**
      * Callback when select2 plugin opens.
+     * @private
+     * @param {Event} e The `click` event.
      */
-    _onSelect2Open: function() {
-        var plugin = $(this.$(this.fieldTag)).data('select2');
+    _onSelect2Open: function(e) {
+        var plugin = this.$(e.currentTarget).data('select2');
         if (plugin.searchmore) {
             return;
         }

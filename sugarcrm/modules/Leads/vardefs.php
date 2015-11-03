@@ -65,6 +65,8 @@ $dictionary['Lead'] = array(
             'audited' => true,
             'comment' => 'Status of the lead',
             'merge_filter' => 'enabled',
+            //Fixme PAT-2241 will remove this when SugarLogic is supported in preview
+            'previewEdit' => false,
         ),
         'status_description' => array(
             'name' => 'status_description',

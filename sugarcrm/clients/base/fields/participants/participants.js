@@ -965,5 +965,17 @@
     _dispose: function() {
         $(window).off('resize.' + this.cid);
         this._super('_dispose');
+    },
+
+    /**
+     * We do not support this field for preview edit
+     * @inheritdoc
+     */
+    _loadTemplate: function() {
+        this._super('_loadTemplate');
+
+        if (this.view.name === 'preview') {
+            this.template = app.template.getField('participants', 'preview', this.model.module);
+        }
     }
 })
