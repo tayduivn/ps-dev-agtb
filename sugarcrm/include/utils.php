@@ -2159,6 +2159,9 @@ function xss_check_pattern($pattern, $str)
  * 		"AUTO_INCREMENT"
  * 		"ALPHANUM"
  * @param boolean $dieOnBadData true (default) if you want to die if bad data if found, false if not
+ *
+ * @deprecated This is now an integral part of the new Validator service and is implemented
+ * in \Sugarcrm\Sugarcrm\Security\Validator\Constraints\LegacyCleanStringValidator. 
  */
 function clean_string($value, $filter = "STANDARD", $dieOnBadData = true)
 {
@@ -2203,6 +2206,10 @@ function clean_string($value, $filter = "STANDARD", $dieOnBadData = true)
     }
 }
 
+/**
+ * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
+ * framework in combination with Validator constraints for input validation.
+ */
 function clean_special_arguments()
 {
     if (isset($_SERVER['PHP_SELF']) && 'cli' !== PHP_SAPI) {
@@ -2233,6 +2240,8 @@ function clean_special_arguments()
 
 /**
  * cleans the given key in superglobals $_GET, $_POST, $_REQUEST
+ * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
+ * framework in combination with Validator constraints for input validation. 
  */
 function clean_superglobals($key, $filter = 'STANDARD')
 {
@@ -2241,6 +2250,10 @@ function clean_superglobals($key, $filter = 'STANDARD')
     if(isset($_REQUEST[$key])) clean_string($_REQUEST[$key], $filter);
 }
 
+/**
+ * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
+ * framework in combination with Validator constraints for input validation.
+ */
 function set_superglobals($key, $val)
 {
     $_GET[$key] = $val;
@@ -2248,7 +2261,11 @@ function set_superglobals($key, $val)
     $_REQUEST[$key] = $val;
 }
 
-// Works in conjunction with clean_string() to defeat SQL injection, file inclusion attacks, and XSS
+/**
+ * Works in conjunction with clean_string() to defeat SQL injection, file inclusion attacks, and XSS
+ * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
+ * framework in combination with Validator constraints for input validation.
+ */
 function clean_incoming_data()
 {
     global $sugar_config;
@@ -2331,6 +2348,11 @@ function str_end($str, $end)
     return (substr($str, strlen($str) - strlen($end)) == $end);
 }
 
+/**
+ * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
+ * framework in combination with Validator constraints for input validation. XSS prevention needs
+ * to be performed on the output layer in the form of escaping.
+ */
 function securexss($value)
 {
     if (defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
@@ -2350,6 +2372,11 @@ function securexss($value)
     return htmlspecialchars($value, ENT_QUOTES, "UTF-8");
 }
 
+/**
+ * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
+ * framework in combination with Validator constraints for input validation. XSS prevention needs
+ * to be performed on the output layer in the form of escaping.
+ */
 function securexsskey($value, $die=true)
 {
     global $sugar_config;
@@ -2366,6 +2393,11 @@ function securexsskey($value, $die=true)
     }
 }
 
+/**
+ * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
+ * framework in combination with Validator constraints for input validation. XSS prevention needs
+ * to be performed on the output layer in the form of escaping.
+ */
 function preprocess_param($value)
 {
     if (is_string($value)) {
@@ -2379,6 +2411,11 @@ function preprocess_param($value)
     return $value;
 }
 
+/**
+ * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
+ * framework in combination with Validator constraints for input validation. XSS prevention needs
+ * to be performed on the output layer in the form of escaping.
+ */
 function cleanup_slashes($value)
 {
     if(is_string($value)) return stripslashes($value);
