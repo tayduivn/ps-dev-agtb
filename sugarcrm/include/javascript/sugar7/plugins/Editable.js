@@ -250,6 +250,10 @@
                     return false;
                 }
 
+                if (field.hasChanged() && viewName === 'detail') {
+                    return;
+                }
+
                 field.setMode(viewName);
 
                 if (viewName === 'edit') {

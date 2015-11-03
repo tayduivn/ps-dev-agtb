@@ -440,7 +440,7 @@
                     expDate = model.get(fieldName),
                     publishingDate = model.get(actFName),
                     status = model.get('status'),
-                    changed = model.changedAttributes(model.getSyncedAttributes()),
+                    changed = model.changedAttributes(model.getSynced()),
                     errorKeys = [];
 
                 if (
@@ -572,7 +572,7 @@
             _validationComplete: function(model, isValid) {
                 if (isValid) {
                     this._hideValidationAlert();
-                    var changed = model.changedAttributes(model.getSyncedAttributes());
+                    var changed = model.changedAttributes(model.getSynced());
                     var current = model.get('status');
 
                     if (current == 'expired') {

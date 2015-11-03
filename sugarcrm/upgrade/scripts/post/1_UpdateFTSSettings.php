@@ -64,7 +64,11 @@ class SugarUpgradeUpdateFTSSettings extends UpgradeScript
     public function updateModuleList()
     {
         try {
-             list($enabled, $disabled) = $this->mergeModuleList();
+            // This should bring the newest moduleList into the global app list
+            // strings array
+            $this->ensureNewestModuleList();
+
+            list($enabled, $disabled) = $this->mergeModuleList();
 
             //save the settings to ext files, but do not rebuild cache
             if (isset($this->ftsAdmin)) {
@@ -351,4 +355,23 @@ class SugarUpgradeUpdateFTSSettings extends UpgradeScript
         return in_array($type, $handler->getSupportedTypes());
     }
 
+    /**
+     * Loads up the module list into the GLOBAL app_list_strings array, because
+     * down the line MetaDataManager uses the GLOBAL app_list_string array to
+     * build the module list that the FTS objects use to determine enabled and
+     * disabled state.
+     * @return boolean
+     */
+    protected function ensureNewestModuleList()
+    {
+        // Realistically we only need english since that holds the module list
+        // by name of the module. We also pass the false flag to force a new load
+        // of the app_list_strings so that we have the latest and greatest data.
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us', false);
+        if (!isset($GLOBALS['app_list_strings']['moduleList']['Tags'])) {
+            throw new \Exception("Tags module not brought into new module list for setting FTS settings");
+        }
+
+        return true;
+    }
 }
