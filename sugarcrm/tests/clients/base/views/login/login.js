@@ -125,23 +125,23 @@ describe("Login View", function() {
         //Chrome
         it("should deem Chrome 26 as an unsupported browser", function() {
             $.browser = {
-                'version': '537.31',
+                'version': '26',
                 'chrome': true,
                 'webkit': true
             };
             expect(view._isSupportedBrowser()).toBeFalsy();
         });
-        it("should deem Chrome 27 as a supported browser", function() {
+        it("should deem Chrome 27 as an unsupported browser", function() {
             $.browser = {
-                'version': '537.36',
+                'version': '27',
                 'chrome': true,
                 'webkit': true
             };
-            expect(view._isSupportedBrowser()).toBeTruthy();
+            expect(view._isSupportedBrowser()).toBeFalsy();
         });
         it("should deem Chrome 43 as a supported browser", function() {
             $.browser = {
-                'version': '537.36',
+                'version': '43',
                 'chrome': true,
                 'webkit': true
             };
