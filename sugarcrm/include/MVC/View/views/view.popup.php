@@ -11,8 +11,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Security\Validator\Constraints as Assert;
-
 class ViewPopup extends SugarView{
     protected $override_popup = array();
 
@@ -70,10 +68,7 @@ class ViewPopup extends SugarView{
         if(!empty($this->bean) && isset($_REQUEST[$this->module.'2_'.strtoupper($this->bean->object_name).'_offset'])) {
 
             // Safe $_REQUEST['current_query_by_page']
-            $current_query_by_page = $this->request->getValidInputRequest(
-                'current_query_by_page',
-                new Assert\PhpSerialized()
-            );
+            $current_query_by_page = $this->request->getValidInputRequest('current_query_by_page', 'Assert\PhpSerialized');
 
             if (!empty($current_query_by_page)) {
                 $blockVariables = array('mass', 'uid', 'massupdate', 'delete', 'merge', 'selectCount',

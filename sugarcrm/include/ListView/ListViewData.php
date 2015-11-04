@@ -12,8 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-use Sugarcrm\Sugarcrm\Security\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Constraints as AssertBasic;
 
 require_once 'include/EditView/SugarVCR.php';
 
@@ -58,7 +56,7 @@ class ListViewData {
      */
     function getOrderBy($orderBy = '', $direction = '') {
         // Safe $_REQUEST[$this->var_order_by']
-        $reqOrderBy = $this->request->getValidInputRequest($this->var_order_by, new Assert\Sql\OrderBy());
+        $reqOrderBy = $this->request->getValidInputRequest($this->var_order_by, 'Assert\Sql\OrderBy');
 
         if (!empty($orderBy) || !empty($reqOrderBy)) {
 
@@ -67,7 +65,7 @@ class ListViewData {
                 $orderBy = $reqOrderBy;
 
                 // Safe $_REQUEST['lvso']
-                $reqLvso = $this->request->getValidInputRequest('lvso', new Assert\Sql\OrderDirection());
+                $reqLvso = $this->request->getValidInputRequest('lvso', 'Assert\Sql\OrderDirection');
 
                 if (!empty($reqLvso) && (empty($_SESSION['lvd']['last_ob']) ||
                     strcmp($orderBy, $_SESSION['lvd']['last_ob']) == 0))
@@ -129,7 +127,7 @@ class ListViewData {
 	 */
 	function getOffset() {
         // Safe $_REQUEST[$this->var_offset]
-        return $this->request->getValidInputRequest($this->var_offset, new AssertBasic\Type(array('type' => 'numeric')), 0);
+        return $this->request->getValidInputRequest($this->var_offset, array('Assert\Type' => array('type' => 'numeric')), 0);
 	}
 
     /**
@@ -165,7 +163,7 @@ class ListViewData {
         global $timedate;
 
         // Safe $_REQUEST['module']
-        $reqModule = $this->request->getValidInputRequest('module', new Assert\Mvc\ModuleName());
+        $reqModule = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
 
         $module = (!empty($listviewName)) ? $listviewName: $reqModule;
         $this->var_name = $module .'2_'. strtoupper($baseName);

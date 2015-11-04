@@ -17,8 +17,6 @@ use Sugarcrm\Sugarcrm\Session\SessionStorage;
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-use Sugarcrm\Sugarcrm\Security\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Constraints as AssertBasic;
 
 /**
  * SugarCRM application
@@ -60,8 +58,8 @@ class SugarApplication
 
         // Safe $_GET['bwcFrame']
         $bwcFrame = array(
-            new AssertBasic\Type(array('type' => 'numeric')),
-            new AssertBasic\Range(array('min' => 0, 'max' => 1)),
+            'Assert\Type' => array('type' => 'numeric'),
+            'Assert\Range' => array('min' => 0, 'max' => 1),
         );
         $this->inBwc = (bool) $this->request->getValidInputGet('bwcFrame', $bwcFrame, false);
     }
@@ -77,7 +75,7 @@ class SugarApplication
         }
 
         // Safe $_REQUEST['module']
-        $module = $this->request->getValidInputRequest('module', new Assert\Mvc\ModuleName(), $this->default_module);
+        $module = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName', $this->default_module);
 
         insert_charset_header();
         $this->setupPrint();
@@ -88,10 +86,7 @@ class SugarApplication
         // TODO the rest of the code will be removed as soon as we migrate all modules to sidecar
 
         // Safe $_REQUEST['MSID']
-        $msidAssert = new AssertBasic\Type(array(
-            'type' => 'string',
-        ));
-        $msid = $this->request->getValidInputRequest('MSID', $msidAssert);
+        $msid = $this->request->getValidInputRequest('MSID', array('Assert\Type' => array('type' => 'string')));
 
         // Safe $_REQUEST['entryPoint']
         // add entry point validator
