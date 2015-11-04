@@ -13,11 +13,10 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Security\InputValidation;
 
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
+use Sugarcrm\Sugarcrm\Security\Validator\ConstraintBuilder;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Superglobals;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Validator\Tests\Fixtures\ConstraintA;
-use Symfony\Component\Validator\Tests\Fixtures\FailingConstraint;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -38,12 +37,23 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     protected $logger;
 
     /**
+     * @var ConstraintBuilder
+     */
+    protected $constraintBuilder;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         $this->validator = Validator::create();
         $this->logger = $this->getMock('Psr\Log\LoggerInterface');
+
+        // setup ConstraintBuilder with additional fixture namespaces
+        $this->constraintBuilder = $builder = new ConstraintBuilder();
+        $builder->setNamespaces(array_merge(
+            $builder->getNamespaces(), array('Symfony\Component\Validator\Tests\Fixtures')
+        ));
     }
 
     /**
@@ -56,8 +66,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     public function testGetValidInput(array $get, array $post, $key, $call, $constraint, $default, $expected)
     {
         $superglobals = new Superglobals($get, $post);
-        $request = new Request($superglobals, $this->validator, $this->logger);
-        $this->assertSame($expected, $request->$call($key, $constraint, $default));
+        $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
+        $this->assertEquals($expected, $request->$call($key, $constraint, $default));
     }
 
     public function providerTestGetValidInput()
@@ -69,7 +79,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 array(),
                 'foo',
                 'getValidInputGet',
-                new ConstraintA(),
+                'Assert\ConstraintA',
                 null,
                 'VALID',
             ),
@@ -79,7 +89,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 array('foo' => 'VALID'),
                 'foo',
                 'getValidInputPost',
-                new ConstraintA(),
+                'Assert\ConstraintA',
                 null,
                 'VALID',
             ),
@@ -89,7 +99,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 array('foo' => 'VALID'),
                 'foo',
                 'getValidInputRequest',
-                new ConstraintA(),
+                'Assert\ConstraintA',
                 null,
                 'VALID',
             ),
@@ -109,9 +119,70 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 array(),
                 'foo',
                 'getValidInputGet',
-                new ConstraintA(),
+                'Assert\ConstraintA',
                 'default',
                 'default',
+            ),
+            // Some actual tests
+            array(
+                array('bwcFrame' => '1'),
+                array(),
+                'bwcFrame',
+                'getValidInputGet',
+                array(
+                    'Assert\Type' => array('type' => 'numeric'),
+                    'Assert\Range' => array('min' => 0, 'max' => 1),
+                ),
+                null,
+                '1',
+            ),
+            array(
+                array('bwcFrame' => '0'),
+                array(),
+                'bwcFrame',
+                'getValidInputGet',
+                array(
+                    'Assert\Type' => array('type' => 'numeric'),
+                    'Assert\Range' => array('min' => 0, 'max' => 1),
+                ),
+                null,
+                '0',
+            ),
+            array(
+                array('module' => 'Accounts'),
+                array(),
+                'module',
+                'getValidInputRequest',
+                'Assert\Mvc\ModuleName',
+                null,
+                'Accounts',
+            ),
+            /*array(
+                array('current_page_by_query' => 'a:1:{s:3:"foo";s:3:"bar";}'),
+                array(),
+                'current_page_by_query',
+                'getValidInputRequest',
+                'Assert\PhpSerialized',
+                null,
+                array('foo' => 'bar'),
+            ),*/
+            array(
+                array('lvso' => 'DESC'),
+                array(),
+                'lvso',
+                'getValidInputRequest',
+                'Assert\Sql\OrderDirection',
+                null,
+                'DESC',
+            ),
+            array(
+                array('lvso' => 'ASC'),
+                array(),
+                'lvso',
+                'getValidInputRequest',
+                'Assert\Sql\OrderDirection',
+                null,
+                'ASC',
             ),
         );
     }
@@ -123,8 +194,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     public function testGetValidInputViolationException()
     {
         $superglobals = new Superglobals(array('foo' => 'bar'), array());
-        $request = new Request($superglobals, $this->validator, $this->logger);
-        $request->getValidInput(Superglobals::GET, 'foo', new FailingConstraint());
+        $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
+        $request->getValidInput(Superglobals::GET, 'foo', 'Assert\FailingConstraint');
     }
 
     /**
@@ -134,7 +205,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     public function testGetValidInputSuperglobalException()
     {
         $superglobals = new Superglobals(array(), array());
-        $request = new Request($superglobals, $this->validator, $this->logger);
+        $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
         $request->getValidInput('foo', 'bar');
     }
 
@@ -144,12 +215,12 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     public function testSoftFailNoException()
     {
         $superglobals = new Superglobals(array('foo' => 'VALID'), array());
-        $request = new Request($superglobals, $this->validator, $this->logger);
+        $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
         $request->setSoftFail(true);
         $request->getValidInput(Superglobals::GET, 'foo', array(
-            new FailingConstraint(),
-            new ConstraintA(),
-            new FailingConstraint(),
+            'Assert\FailingConstraint',
+            'Assert\ConstraintA',
+            'Assert\FailingConstraint',
         ));
         $this->assertEquals(2, count($request->getViolations()));
     }
