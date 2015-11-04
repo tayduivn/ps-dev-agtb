@@ -1,19 +1,15 @@
 //FILE SUGARCRM flav=ent ONLY
 describe("ContactsBean", function() {
-    var app, bean, _oRouter;
+    var app, bean;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
         app = SugarTest.app;
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
-        _oRouter = app.router;
-        app.router = {};
-        app.router.start = function(){};
     });
 
     afterEach(function() {
-        app.router = _oRouter;
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
     });

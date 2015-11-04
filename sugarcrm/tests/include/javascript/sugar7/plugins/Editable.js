@@ -136,12 +136,6 @@ describe("Editable Plugin", function() {
     describe("Warning unsaved changes", function() {
         var alertShowStub;
         beforeEach(function() {
-            app.router = {
-                navigate: $.noop,
-                refresh: $.noop,
-                hasAccessToModule: $.noop,
-                bwcRedirect: $.noop
-            };
             alertShowStub = sinonSandbox.stub(app.alert, "show");
             sinonSandbox.stub(Backbone.history, "getFragment");
         });
