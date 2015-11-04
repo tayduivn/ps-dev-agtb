@@ -32,19 +32,9 @@ class PhpSerializedValidatorTest extends AbstractConstraintValidatorTest
     }
 
     /**
-     * @covers ::getFormattedReturnValue
-     * @expectedException \Sugarcrm\Sugarcrm\Security\Validator\Exception\ConstraintReturnValueException
-     */
-    public function testInvalidReturnValue()
-    {
-        $constraint = new PhpSerialized();
-        $this->validator->validate('bogus', $constraint);
-        $this->validator->getFormattedReturnValue();
-    }
-
-    /**
      * @covers ::validate
-     * @covers ::getFormattedReturnValue
+     * @covers \Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValue::getFormattedReturnValue
+     * @covers \Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValue::setFormattedReturnValue
      * @dataProvider providerTestValidValues
      */
     public function testValidValues($value, $unserialized)
@@ -52,7 +42,7 @@ class PhpSerializedValidatorTest extends AbstractConstraintValidatorTest
         $constraint = new PhpSerialized();
         $this->validator->validate($value, $constraint);
         $this->assertNoViolation();
-        $this->assertSame($unserialized, $this->validator->getFormattedReturnValue());
+        $this->assertSame($unserialized, $constraint->getFormattedReturnValue());
     }
 
     public function providerTestValidValues()

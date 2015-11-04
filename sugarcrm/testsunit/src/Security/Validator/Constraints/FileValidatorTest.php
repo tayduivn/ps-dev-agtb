@@ -42,7 +42,7 @@ class FileValidatorTest extends AbstractConstraintValidatorTest
         ));
         $this->validator->validate($value, $constraint);
         $this->assertNoViolation();
-        $this->assertSame($expected, $this->validator->getFormattedReturnValue());
+        $this->assertSame($expected, $constraint->getFormattedReturnValue());
     }
 
     public function providerTestValidValues()

@@ -157,7 +157,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 null,
                 'Accounts',
             ),
-            /*array(
+            array(
                 array('current_page_by_query' => 'a:1:{s:3:"foo";s:3:"bar";}'),
                 array(),
                 'current_page_by_query',
@@ -165,7 +165,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'Assert\PhpSerialized',
                 null,
                 array('foo' => 'bar'),
-            ),*/
+            ),
             array(
                 array('lvso' => 'DESC'),
                 array(),
