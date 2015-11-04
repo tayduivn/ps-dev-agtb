@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Security\InputValidation;
 
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
+use Sugarcrm\Sugarcrm\Security\Validator\ConstraintBuilder;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Sanitizer\Sanitizer;
 
 /**
@@ -62,9 +63,10 @@ class InputValidation
      */
     public static function create(array $get, array $post)
     {
-        $superglobals = new Superglobals($get, $post);
         $validator = Validator::getService();
-        $request = new Request($superglobals, $validator);
+        $superglobals = new Superglobals($get, $post);
+        $constraintBuilder = new ConstraintBuilder();
+        $request = new Request($superglobals, $validator, $constraintBuilder);
 
         // attach sanitizer (may disappear)
         $request->setSanitizer(new Sanitizer());
