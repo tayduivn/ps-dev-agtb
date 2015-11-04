@@ -184,6 +184,24 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 null,
                 'ASC',
             ),
+            array(
+                array('record' => '40a30045-2ab7-9c96-766d-563a3bb0d7ef'),
+                array(),
+                'record',
+                'getValidInputRequest',
+                'Assert\Guid',
+                null,
+                '40a30045-2ab7-9c96-766d-563a3bb0d7ef',
+            ),
+            array(
+                array('column' => 'foobar'),
+                array(),
+                'column',
+                'getValidInputRequest',
+                'Assert\ComponentName',
+                null,
+                'foobar',
+            ),
         );
     }
 
