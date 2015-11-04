@@ -21,9 +21,12 @@ use Sugarcrm\Sugarcrm\Security\Validator\Exception\ConstraintBuilderException;
  * This constraint builder hides the details of instantiating the different
  * asserts/constraints with the optional configuration parameters. The goal
  * is to be able to use a declarative form of constraint chains which can
- * be interpretted by this ConstraintBuilder inside the business logic. The
- * validator uses ConstraintBuilder to transform the definition into the
- * actual constraints before executing the validation context.
+ * be interpretted by this ConstraintBuilder inside the business logic.
+ *
+ * Use `ConstraintBuilder::build($definition)` to transform your definition
+ * into the actual constraint objects which are valid to be passed into the
+ * validator context. See `InputValidation\Request::getValidInput` how
+ * ConstraintBuilder is being used.
  *
  */
 class ConstraintBuilder

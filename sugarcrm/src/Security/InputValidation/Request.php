@@ -235,7 +235,7 @@ class Request
             if ($constraint instanceof ConstraintReturnValueInterface) {
 
                 // if any violations exist we cannot continue
-                if (count($this->context->getViolations() !== 0)) {
+                if (count($this->context->getViolations()) !== 0) {
                     break;
                 }
 

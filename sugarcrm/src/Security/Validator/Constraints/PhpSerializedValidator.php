@@ -12,12 +12,9 @@
 
 namespace Sugarcrm\Sugarcrm\Security\Validator\Constraints;
 
-use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValueInterface;
-use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValueTrait;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
-use Sugarcrm\Sugarcrm\Security\Validator\Exception\ConstraintReturnValueException;
 
 /**
  *
@@ -25,36 +22,12 @@ use Sugarcrm\Sugarcrm\Security\Validator\Exception\ConstraintReturnValueExceptio
  *
  * Validate PHP serialized data. This validator will report a violation when
  * objects are detected inside a PHP serialized string. Additionally the
- * unserialize operation is validate as well.
+ * unserialize operation is validate as well and the unserialized form is
+ * set on the constraint as formatted value.
  *
  */
-class PhpSerializedValidator extends ConstraintValidator implements ConstraintReturnValueInterface
+class PhpSerializedValidator extends ConstraintValidator
 {
-    // use ConstraintReturnValueTrait;
-
-    /* START TRAIT - remove when on +5.4 */
-
-    /**
-     * @var mixed
-     */
-    protected $formattedReturnValue;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormattedReturnValue()
-    {
-        if (count($this->context->getViolations()) !== 0) {
-            throw new ConstraintReturnValueException(
-                'Cannot get formatted value when violations are present',
-                $this->context->getViolations()
-            );
-        }
-        return $this->formattedReturnValue;
-    }
-
-    /* END TRAIT */
-
     /**
      * {@inheritdoc}
      */
@@ -96,6 +69,6 @@ class PhpSerializedValidator extends ConstraintValidator implements ConstraintRe
             return;
         }
 
-        $this->formattedReturnValue = $unserialized;
+        $constraint->setFormattedReturnValue($unserialized);
     }
 }

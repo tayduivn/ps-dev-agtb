@@ -12,8 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\Security\Validator\Constraints;
 
-use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValueInterface;
-use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValueTrait;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -22,35 +20,11 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  *
  * File validator
  *
+ * The normalized filename is returned as formatted value.
  *
  */
-class FileValidator extends ConstraintValidator implements ConstraintReturnValueInterface
+class FileValidator extends ConstraintValidator
 {
-    // use ConstraintReturnValueTrait;
-
-    /* START TRAIT - remove when on +5.4 */
-
-    /**
-     * @var mixed
-     */
-    protected $formattedReturnValue;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormattedReturnValue()
-    {
-        if (count($this->context->getViolations()) !== 0) {
-            throw new ConstraintReturnValueException(
-                'Cannot get formatted value when violations are present',
-                $this->context->getViolations()
-            );
-        }
-        return $this->formattedReturnValue;
-    }
-
-    /* END TRAIT */
-
     /**
      * Ctor
      */
@@ -121,6 +95,6 @@ class FileValidator extends ConstraintValidator implements ConstraintReturnValue
             return;
         }
 
-        $this->formattedReturnValue = $normalized;
+        $constraint->setFormattedReturnValue($normalized);
     }
 }
