@@ -18,9 +18,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-
-
-
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 
 global $timedate;
@@ -110,7 +108,9 @@ if ($marketing->all_prospect_lists==1) {
 	}
 }
 if($_REQUEST['action'] != 'WizardMarketingSave'){
-    $header_URL = "Location: index.php?action=DetailView&module=Campaigns&record={$_REQUEST['campaign_id']}";
+    $request = InputValidation::getService();
+    $campaignId =  $request->getValidInputRequest('campaign_id', 'Assert\Guid');
+    $header_URL = "Location: index.php?action=DetailView&module=Campaigns&record={$campaignId}";
     $GLOBALS['log']->debug("about to post header URL of: $header_URL");
     header($header_URL);
 }
