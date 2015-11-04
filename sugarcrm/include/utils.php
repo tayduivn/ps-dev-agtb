@@ -23,6 +23,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 require_once 'include/SugarObjects/SugarConfig.php';
 require_once 'include/utils/security_utils.php';
 
+
 function make_sugar_config(&$sugar_config)
 {
     /* used to convert non-array config.php file to array format */
@@ -5747,15 +5748,21 @@ function ensureJSCacheFilesExist($files = array(), $root = '.', $addPath = true)
 
     // If even one of the files doesn't exist, rebuild
     if (!$cacheExists) {
-        // Maintain state as well as possible
-        $rd = isset($_REQUEST['root_directory']) ? $_REQUEST['root_directory'] : null;
 
+        // Safe $_REQUEST['root_directory']
+        $inputValidation = InputValidation::getService();
+
+        // Maintain state as well as possible
+        $rd = $inputValidation->getValidInputRequest('root_directory', 'Assert\File');
+
+        // FIXME: setting $_REQUEST parameters ourselves ...
         // Build the concatenated files
         $_REQUEST['root_directory'] = $root;
         require_once("jssource/minify_utils.php");
         $minifyUtils = new SugarMinifyUtils();
         $minifyUtils->ConcatenateFiles($root);
 
+        // FIXME: setting $_REQUEST parameters ourselves ...
         // Cleanup the root directory request var if it was found. If it was null
         // this will in effect unset it
         $_REQUEST['root_directory'] = $rd;

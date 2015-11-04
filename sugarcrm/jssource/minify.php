@@ -1,6 +1,9 @@
 <?php
 if(!defined('sugarEntry'))define('sugarEntry', true);
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
+
 $minifyUtils = null;
 
 //assumes jsmin.php is in same directory
@@ -18,7 +21,9 @@ if(isset($_REQUEST['root_directory'])){
     require_once('include/utils/sugar_file_utils.php');
 
     //get the root directory to process
-    $from = $_REQUEST['root_directory'];
+    // Safe $_REQUEST['root_directory']
+    $inputValidation = InputValidation::getService();
+    $from = $inputValidation->getValidInputRequest('root_directory', 'Assert\File');
     $forceReb = false;
     //make sure that the rebuild option has been chosen
     if(isset($_REQUEST['js_rebuild_concat'])){

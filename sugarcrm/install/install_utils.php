@@ -13,6 +13,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/utils/zip_utils.php');
 require_once('include/upload_file.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
+
 ////////////////
 ////  GLOBAL utility
 /**
@@ -377,8 +380,14 @@ function removeLanguagePack() {
     global $sugar_config;
 
     $errors = array();
-    $manifest = urldecode($_REQUEST['manifest']);
-    $zipFile = urldecode($_REQUEST['zipFile']);
+    installLog("remove language pack being called......");
+    // Safe $_REQUEST['manifest'] and $_REQUEST['zipFile']
+    $inputValidation = InputValidation::getService();
+    $manifestURL = $inputValidation->getValidInputRequest('manifest');
+    $zipFileURL = $inputValidation->getValidInputRequest('zipFile');
+
+    $manifest = urldecode($manifestURL);
+    $zipFile = urldecode($zipFileURL);
 
     if(isset($manifest) && !empty($manifest)) {
         if(is_file($manifest)) {
