@@ -232,7 +232,11 @@ class ListViewData {
         $this->seed = $seed;
         $totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']);
         $_SESSION['MAILMERGE_MODULE_FROM_LISTVIEW'] = $seed->module_dir;
-        if(empty($_REQUEST['action']) || $_REQUEST['action'] != 'Popup'){
+
+        // Safe $_REQUEST['action'] - may need a constraint
+        $reqAction = $this->request->getValidInputRequest('action');
+
+        if(empty($reqAction) || $reqAction != 'Popup'){
             $_SESSION['MAILMERGE_MODULE'] = $seed->module_dir;
         }
 
