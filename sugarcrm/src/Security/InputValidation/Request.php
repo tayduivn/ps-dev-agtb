@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Security\InputValidation;
 
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints as Assert;
 use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValueInterface;
+use Sugarcrm\Sugarcrm\Security\Validator\ConstraintBuilder;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\ViolationException;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\SuperglobalException;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Sanitizer\SanitizerInterface;
@@ -49,6 +50,11 @@ class Request
     protected $validator;
 
     /**
+     * @var ConstraintBuilder
+     */
+    protected $constraintBuilder;
+
+    /**
      * @var LoggerInterface
      */
     protected $logger;
@@ -79,14 +85,18 @@ class Request
      * Ctor
      * @param Superglobals $superglobals
      * @param ValidatorInterface $validator
+     * @param ConstraintBuilder $constraintBuilder
+     * @param LoggerInterface $logger
      */
     public function __construct(
         Superglobals $superglobals,
         ValidatorInterface $validator,
+        ConstraintBuilder $constraintBuilder,
         LoggerInterface $logger = null
     ) {
         $this->superglobals = $superglobals;
         $this->validator = $validator;
+        $this->constraintBuilder = $constraintBuilder;
         $this->logger = $logger ?: new LoggerTransition(\LoggerManager::getLogger());
     }
 
@@ -120,7 +130,7 @@ class Request
     /**
      * Get validated input from $_GET
      * @param string $key
-     * @param Constraint|Constraint[] $constraints The constrait definition(s)
+     * @param string|array $constraints ConstraintBuilder compat constraints
      * @param mixed $default Return value if input param does not exist
      * @return mixed
      */
@@ -132,7 +142,7 @@ class Request
     /**
      * Get validated input from $_POST
      * @param string $key
-     * @param Constraint|Constraint[] $constraints The constrait definition(s)
+     * @param string|array $constraints ConstraintBuilder compat constraints
      * @param mixed $default Return value if input param does not exist
      * @return mixed
      */
@@ -144,7 +154,7 @@ class Request
     /**
      * Get validated input from $_REQUEST
      * @param string $key
-     * @param Constraint|Constraint[] $constraints The constrait definition(s)
+     * @param string|array $constraints ConstraintBuilder compat constraints
      * @param mixed $default Return value if input param does not exist
      * @return mixed
      */
@@ -158,15 +168,19 @@ class Request
      *
      * @param string $type GET|POST|REQUEST
      * @param string $key The input parameter you are looking for
-     * @param Constraint|Constraint[] $constraints The constrait definition(s)
+     * @param string|array $constraints ConstraintBuilder compat constraints
      * @param mixed $default Return value if input param does not exist
      * @return mixed
      */
     public function getValidInput($type, $key, $constraints = null, $default = null)
     {
-        $this->verifySuperglobalsType($type);
+        // Build actual constraints
+        $constraints = $this->constraintBuilder->build($constraints);
 
-        // Return default if input parameter is not set, default is not validated
+        // Validate superglobals type
+        $this->validateSuperglobalsType($type);
+
+        // Return default if input parameter is not set, the default is not validated
         $has = $this->inputTypes[$type]['has'];
         if (!$this->superglobals->$has($key)) {
             return $default;
@@ -199,7 +213,7 @@ class Request
     }
 
     /**
-     *
+     * Validate constraints against given value
      * @param string $type GET|POST|REQUEST
      * @param mixed $value The value to be validated
      * @param Constraint|Constraint[] $constraints The constrait definition(s)
@@ -226,6 +240,7 @@ class Request
                 }
 
                 $value = $constraint->getFormattedReturnValue();
+
             }
         }
         return $value;
@@ -236,7 +251,7 @@ class Request
      * @param string $type
      * @throws SuperglobalException
      */
-    protected function verifySuperglobalsType($type)
+    protected function validateSuperglobalsType($type)
     {
         if (!array_key_exists($type, $this->inputTypes)) {
             throw new SuperglobalException("Invalid superglobal [$type] requested");
