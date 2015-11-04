@@ -14,6 +14,7 @@
 use Sugarcrm\Sugarcrm\Notification\CarrierRegistry;
 use Sugarcrm\Sugarcrm\Notification\Config\Status;
 use Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry;
+use Sugarcrm\Sugarcrm\Notification\Carrier\ConfigurableInterface;
 
 require_once('include/api/SugarApi.php');
 
@@ -147,8 +148,20 @@ class GlobalConfigApi extends SugarApi
         $registry = $this->getCarrierRegistry();
         $carriers = array();
         foreach ($registry->getCarriers() as $module) {
+            $carrier = $registry->getCarrier($module);
+            $configurable = $carrier instanceof ConfigurableInterface;
+            $isConfigured = true;
+            $configLayout = null;
+            if ($configurable) {
+                $isConfigured = $carrier->isConfigured();
+                $configLayout = $carrier->getConfigLayout();
+            }
+
             $carriers[$module] = array(
                 'status' => $status->getCarrierStatus($module),
+                'configurable' => $configurable,
+                'isConfigured' => $isConfigured,
+                'configLayout' => $configLayout,
             );
         }
 
