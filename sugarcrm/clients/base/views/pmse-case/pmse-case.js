@@ -107,125 +107,117 @@
     },
 
     caseApprove: function () {
-        var value = this;
-        app.alert.show( 'confirm_approve', {
-            level: 'confirmation',
-            messages: app.lang.get('LBL_PA_PROCESS_APPROVE_QUESTION', 'pmse_Inbox'),
-            onConfirm: function() {
-                value.model.doValidate(value.getFields(value.module), _.bind(value.validationCompleteApprove, value));
-            },
-            onCancel: function() {
-            }
-        });
+        this.model.doValidate(this.getFields(this.module), _.bind(this.validationCompleteApprove, this));
     },
 
-    validationCompleteApprove: function(isValid) {
+    validationCompleteApprove: function (isValid) {
         if (isValid) {
-            app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
-            var value = this.model.attributes;
-            value.frm_action = 'Approve';
-            value.idFlow = this.case.flowId;
-            value.idInbox = this.case.inboxId;
-            value.cas_id = this.case.flow.cas_id;
-            value.cas_index = this.case.flow.cas_index;
-            value.moduleName = this.case.flow.cas_sugar_module;
-            value.beanId = this.case.flow.cas_sugar_object_id;
-            value.taskName = this.case.title.activity;
-            var self = this;
-            var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route','',{},{});
-            app.api.call('update', pmseInboxUrl, value,{
-                success: function (){
-                    app.alert.show('success_approve', {
-                        level: 'success',
-                        messages: app.lang.get('LBL_PA_PROCESS_APPROVED_SUCCESS', 'pmse_Inbox'),
-                        autoClose: true
+            app.alert.show('confirm_approve', {
+                level: 'confirmation',
+                messages: app.lang.get('LBL_PA_PROCESS_APPROVE_QUESTION', 'pmse_Inbox'),
+                onConfirm: _.bind(function () {
+                    app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+                    var value = this.model.attributes;
+                    value.frm_action = 'Approve';
+                    value.idFlow = this.case.flowId;
+                    value.idInbox = this.case.inboxId;
+                    value.cas_id = this.case.flow.cas_id;
+                    value.cas_index = this.case.flow.cas_index;
+                    value.moduleName = this.case.flow.cas_sugar_module;
+                    value.beanId = this.case.flow.cas_sugar_object_id;
+                    value.taskName = this.case.title.activity;
+                    var self = this;
+                    var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route', '', {}, {});
+                    app.api.call('update', pmseInboxUrl, value, {
+                        success: function () {
+                            app.alert.show('success_approve', {
+                                level: 'success',
+                                messages: app.lang.get('LBL_PA_PROCESS_APPROVED_SUCCESS', 'pmse_Inbox'),
+                                autoClose: true
+                            });
+                            self.redirectCase();
+                        }
                     });
-                    self.redirectCase();
-                }
+                }, this),
+                onCancel: $.noop
             });
         }
     },
 
     caseReject: function () {
-        var value = this;
-        app.alert.show( 'confirm_reject', {
-            level: 'confirmation',
-            messages: app.lang.get('LBL_PA_PROCESS_REJECT_QUESTION', 'pmse_Inbox'),
-            onConfirm: function() {
-                app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
-                value.model.doValidate(value.getFields(value.module), _.bind(value.validationCompleteReject, value));
-            },
-            onCancel: function() {
-            }
-        });
+        this.model.doValidate(this.getFields(this.module), _.bind(this.validationCompleteReject, this));
     },
 
-    validationCompleteReject: function(isValid) {
+    validationCompleteReject: function (isValid) {
         if (isValid) {
-            var value = this.model.attributes;
-            value.frm_action = 'Reject';
-            value.idFlow = this.case.flowId;
-            value.idInbox = this.case.inboxId;
-            value.cas_id = this.case.flow.cas_id;
-            value.cas_index = this.case.flow.cas_index;
-            value.moduleName = this.case.flow.cas_sugar_module;
-            value.beanId = this.case.flow.cas_sugar_object_id;
-            value.taskName = this.case.title.activity;
-            var self = this;
-            var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route','',{},{});
-            app.api.call('update', pmseInboxUrl, value,{
-                success: function (){
-                    app.alert.show('success_reject', {
-                        level: 'success',
-                        messages: app.lang.get('LBL_PA_PROCESS_REJECTED_SUCCESS', 'pmse_Inbox'),
-                        autoClose: true
+            app.alert.show('confirm_reject', {
+                level: 'confirmation',
+                messages: app.lang.get('LBL_PA_PROCESS_REJECT_QUESTION', 'pmse_Inbox'),
+                onConfirm: _.bind(function () {
+                    app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+                    var value = this.model.attributes;
+                    value.frm_action = 'Reject';
+                    value.idFlow = this.case.flowId;
+                    value.idInbox = this.case.inboxId;
+                    value.cas_id = this.case.flow.cas_id;
+                    value.cas_index = this.case.flow.cas_index;
+                    value.moduleName = this.case.flow.cas_sugar_module;
+                    value.beanId = this.case.flow.cas_sugar_object_id;
+                    value.taskName = this.case.title.activity;
+                    var self = this;
+                    var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route', '', {}, {});
+                    app.api.call('update', pmseInboxUrl, value, {
+                        success: function () {
+                            app.alert.show('success_reject', {
+                                level: 'success',
+                                messages: app.lang.get('LBL_PA_PROCESS_REJECTED_SUCCESS', 'pmse_Inbox'),
+                                autoClose: true
+                            });
+                            self.redirectCase();
+                        }
                     });
-                    self.redirectCase();
-                }
+                }, this),
+                onCancel: $.noop
             });
         }
     },
 
     caseRoute: function () {
-        var value = this;
-        app.alert.show( 'confirm_route', {
-            level: 'confirmation',
-            messages: app.lang.get('LBL_PA_PROCESS_ROUTE_QUESTION', 'pmse_Inbox'),
-            onConfirm: function() {
-                value.model.doValidate(value.getFields(value.module), _.bind(value.validationCompleteRoute, value));
-            },
-            onCancel: function() {
-            }
-        });
-
-
+        this.model.doValidate(this.getFields(this.module), _.bind(this.validationCompleteRoute, this));
     },
 
-    validationCompleteRoute: function(isValid) {
+    validationCompleteRoute: function (isValid) {
         if (isValid) {
-            var value = this.model.attributes;
-            value.frm_action = 'Route';
-            value.idFlow = this.case.flowId;
-            value.idInbox = this.case.inboxId;
-            value.cas_id = this.case.flow.cas_id;
-            value.cas_index = this.case.flow.cas_index;
-            value.moduleName = this.case.flow.cas_sugar_module;
-            value.beanId = this.case.flow.cas_sugar_object_id;
-            value.taskName = this.case.title.activity;
-            if (this.case.taskContinue){
-                value.taskContinue = true;
-            }
-            var self = this;
-            var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route','',{},{});
-            app.api.call('update', pmseInboxUrl, value,{
-                success: function () {
-                    app.alert.show('success_route', {
-                        level: 'success',
-                        messages: app.lang.get('LBL_PA_PROCESS_ROUTED_SUCCESS', 'pmse_Inbox'),
-                        autoClose: true
+            app.alert.show('confirm_route', {
+                level: 'confirmation',
+                messages: app.lang.get('LBL_PA_PROCESS_ROUTE_QUESTION', 'pmse_Inbox'),
+                onConfirm: _.bind(function () {
+                    var value = this.model.attributes;
+                    value.frm_action = 'Route';
+                    value.idFlow = this.case.flowId;
+                    value.idInbox = this.case.inboxId;
+                    value.cas_id = this.case.flow.cas_id;
+                    value.cas_index = this.case.flow.cas_index;
+                    value.moduleName = this.case.flow.cas_sugar_module;
+                    value.beanId = this.case.flow.cas_sugar_object_id;
+                    value.taskName = this.case.title.activity;
+                    if (this.case.taskContinue) {
+                        value.taskContinue = true;
+                    }
+                    var self = this;
+                    var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route', '', {}, {});
+                    app.api.call('update', pmseInboxUrl, value, {
+                        success: function () {
+                            app.alert.show('success_route', {
+                                level: 'success',
+                                messages: app.lang.get('LBL_PA_PROCESS_ROUTED_SUCCESS', 'pmse_Inbox'),
+                                autoClose: true
+                            });
+                            self.redirectCase();
+                        }
                     });
-                    self.redirectCase();
-                }
+                }, this),
+                onCancel: $.noop
             });
         }
     },
@@ -279,10 +271,21 @@
             }
             if (field.fields && _.isArray(field.fields)) {
                 var that = this;
-                _.each(field.fields, function(field) {
-                    if(that.checkReadonly(field)){
+                var basefield = field;
+                _.each(field.fields, function (field) {
+                    if (that.checkReadonly(field)) {
                         field.action = "disabled";
+                        // Some fields use shouldDisable to enable readonly property,
+                        // like 'body' in KBContents
+                        if (!_.isUndefined(field.shouldDisable)) {
+                            field.setDisabled(true);
+                            basefield.def.readonly = true;
+                        }
                         return;
+                    }
+                    // If the field is not readonly, verify if it's required
+                    if (that.checkRequired(field)) {
+                        field.def.required = true;
                     }
                 });
             }
