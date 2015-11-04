@@ -6533,6 +6533,15 @@ class SugarBean
     }
 
     /**
+     * static method for checking if bean implements $interface
+     * @param $interface
+     * @return bool
+     */
+    static function bean_implements_static($interface) {
+        return static::bean_implements($interface);
+    }
+
+    /**
      * Default ACL implementations for a bean
      * @return array
      */
