@@ -30,6 +30,7 @@ class Audit extends SugarBean
 
     public $genericAssocFieldsArray = array();
     public $moduleAssocFieldsArray = array();
+
     private $fieldDefs;
 
     // This is used to retrieve related fields from form posts.
@@ -150,6 +151,11 @@ class Audit extends SugarBean
                 continue;
             }
 
+            if ($this->handleRelateField($bean, $row)) {
+                $return[] = $row;
+                continue;
+            }
+
             // look for opportunities to relate ids to name values.
             if (!empty($this->genericAssocFieldsArray[$row['field_name']]) ||
                 !empty($this->moduleAssocFieldsArray[$bean->object_name][$row['field_name']])
@@ -161,7 +167,7 @@ class Audit extends SugarBean
                     }
                 }
             }
-            
+
             $row = $this->formatRowForApi($row);
 
             $fieldName = $row['field_name'];
@@ -199,6 +205,41 @@ class Audit extends SugarBean
         }
 
         return $return;
+    }
+
+    /**
+     * Handles relate field.
+     *
+     * @param SugarBean $bean
+     * @param array $row A row of database-queried audit table results.
+     * @return boolean
+     */
+    protected function handleRelateField($bean, &$row)
+    {
+        $fields = $bean->getAuditEnabledFieldDefinitions(true);
+
+        if (isset($fields[$row['field_name']]) && $fields[$row['field_name']]['type'] === 'relate') {
+            $field = $fields[$row['field_name']];
+            $row['field_name'] = $field['name'];
+
+            if (!empty($row['before_value_string'])) {
+                $beforeBean = BeanFactory::getBean($field['module'], $row['before_value_string']);
+                if (!empty($beforeBean)) {
+                    $row['before_value_string'] = $beforeBean->get_summary_text();
+                }
+            }
+
+            if (!empty($row['after_value_string'])) {
+                $afterBean = BeanFactory::getBean($field['module'], $row['after_value_string']);
+                if (!empty($afterBean)) {
+                    $row['after_value_string'] = $afterBean->get_summary_text();
+                }
+            }
+
+            $row = $this->formatRowForApi($row);
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -144,4 +144,58 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $data, "Expected Result was incorrect");
     }
+
+    public function testHandleRelateField()
+    {
+        self::$db->addQuerySpy(
+            'translateQuery',
+            '/jim_id/',
+            array(
+                array(
+                    'first_name' => 'Jim',
+                    'last_name' => 'Brennan',
+                    'date_modified' => ''
+                ),
+            )
+        );
+        self::$db->addQuerySpy(
+            'translateQuery2',
+            '/sally_id/',
+            array(
+                array(
+                    'first_name' => 'Sally',
+                    'last_name' => 'Bronsen',
+                    'date_modified' => ''
+                ),
+            )
+        );
+        $row = array(
+            'field_name' => 'user_id_c',
+            'before_value_string' => 'jim_id',
+            'after_value_string' => 'sally_id',
+        );
+        $expected = array(
+            'field_name' => 'user_c',
+            'after' => 'Sally Bronsen',
+            'before' => 'Jim Brennan'
+        );
+        $bean = new SugarBean();
+        $bean->audit_enabled_fields = array(
+            'user_c' => array(
+                'name' => 'user_c',
+                'type' => 'relate',
+                'id_name' => 'user_id_c',
+                'module' => 'Users')
+        );
+        $bean->auditEnabledRelateFields = array(
+            'user_id_c' => array(
+                'name' => 'user_c',
+                'type' => 'relate',
+                'id_name' => 'user_id_c',
+                'module' => 'Users')
+        );
+        $audit = BeanFactory::getBean('Audit');
+        SugarTestReflection::callProtectedMethod($audit, 'handleRelateField', array($bean, &$row));
+        $this->assertEquals($expected, $row, "Expected Result was incorrect for relate field");
+    }
 }

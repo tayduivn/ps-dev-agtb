@@ -749,32 +749,33 @@ class SugarBean
      * Before calling this function, check whether audit has been enabled for the table/module or not.
      * You would set the audit flag in the implemting module's vardef file.
      *
+     * @param bool $includeRelateIdFields true if we also want return the id fields for relate fields
      * @return array
      * @see is_AuditEnabled
      *
      * Internal function, do not override.
      */
-    function getAuditEnabledFieldDefinitions()
+    function getAuditEnabledFieldDefinitions($includeRelateIdFields = false)
     {
-        if (!isset($this->audit_enabled_fields))
-        {
-            $this->audit_enabled_fields=array();
-            foreach ($this->field_defs as $field => $properties)
-            {
-                if (
-                (
-                $field == 'team_id' or
-                !empty($properties['Audited']) || !empty($properties['audited']))
-                && SugarACL::checkField($this->module_dir, $field, "access", array("bean" => $this))
-                )
-                {
-
-                    $this->audit_enabled_fields[$field]=$properties;
+        if (!isset($this->audit_enabled_fields) || !isset($this->auditEnabledRelateFields)) {
+            $this->audit_enabled_fields = array();
+            $this->auditEnabledRelateFields = array();
+            foreach ($this->field_defs as $field => $properties) {
+                if (($field === 'team_id' || !empty($properties['Audited']) || !empty($properties['audited']))
+                    && SugarACL::checkField($this->module_dir, $field, 'access', array('bean' => $this))) {
+                    $this->audit_enabled_fields[$field] = $properties;
+                    if ($properties['type'] === 'relate' && !empty($properties['id_name'])) {
+                        // we need this id_field => relate_field mapping for 'view change log'
+                        $this->auditEnabledRelateFields[$properties['id_name']] = $properties;
+                    }
                 }
             }
-
         }
-        return $this->audit_enabled_fields;
+        if ($includeRelateIdFields) {
+            return array_merge($this->audit_enabled_fields, $this->auditEnabledRelateFields);
+        } else {
+            return $this->audit_enabled_fields;
+        }
     }
 
     /**
@@ -1902,7 +1903,7 @@ class SugarBean
             if ($isUpdate && !isset($this->fetched_row)) {
                 $GLOBALS['log']->debug('Auditing: Retrieve was not called, audit record will not be created.');
             } else {
-                $auditFields = $this->getAuditEnabledFieldDefinitions();
+                $auditFields = $this->getAuditEnabledFieldDefinitions(true);
                 $auditDataChanges = array_intersect_key($this->dataChanges, $auditFields);
             }
         }
