@@ -35,6 +35,7 @@ class SugarView
      */
     var $action = '';
     /**
+     * @var SugarBean
      */
     var $bean = null;
     /**
