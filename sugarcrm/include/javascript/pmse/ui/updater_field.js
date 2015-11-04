@@ -524,7 +524,8 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                 }).setConstantPanel(constantPanelCfg);
             } else {
                 this._datePanel.setOperators({
-                    arithmetic: true
+                    arithmetic: true,
+                    group: true
                 }).setConstantPanel({
                     basic: {
                         number: true

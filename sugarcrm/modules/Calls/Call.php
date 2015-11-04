@@ -157,15 +157,15 @@ class Call extends SugarBean {
 
         $check_notify = $this->send_invites;
         if ($this->send_invites == false) {
-            if (empty(CalendarEvents::$old_assigned_user_id)) {
+            if (!empty($_SESSION['workflow_cron']) && empty(CalendarEvents::$old_assigned_user_id)) {
                 $ce = new CalendarEvents();
                 $ce->setOldAssignedUser($this->module_dir, $this->id);
             }
             $old_assigned_user_id = CalendarEvents::$old_assigned_user_id;
             if ((empty($GLOBALS['installing']) || $GLOBALS['installing'] != true) &&
                 (!empty($this->assigned_user_id) &&
-                    $this->assigned_user_id != $GLOBALS['current_user']->id &&
-                    $this->assigned_user_id != $old_assigned_user_id)
+                    $this->assigned_user_id != $old_assigned_user_id &&
+                    ($this->fetched_row !== false || $this->assigned_user_id != $GLOBALS['current_user']->id))
             ) {
                 $this->special_notification = true;
                 $check_notify = true;
@@ -184,11 +184,6 @@ class Call extends SugarBean {
 		if (empty($this->id) && !empty($_REQUEST['module']) && $_REQUEST['module'] == "Calendar" && !empty($_REQUEST['repeat_type']) && !empty($this->repeat_parent_id)) {
 			$check_notify = false;
 		}
-		/*nsingh 7/3/08  commenting out as bug #20814 is invalid
-		if($current_user->getPreference('reminder_time')!= -1 &&  isset($_POST['reminder_checked']) && isset($_POST['reminder_time']) && $_POST['reminder_checked']==0  && $_POST['reminder_time']==-1){
-			$this->reminder_checked = '1';
-			$this->reminder_time = $current_user->getPreference('reminder_time');
-		}*/
 
         $return_id = parent::save($check_notify);
 
