@@ -34,6 +34,11 @@ class ListViewData {
      */
     var $count_query = '';
 
+    /**
+     * @var Request
+     */
+    protected $request;
+
 	/**
 	 * Constructor sets the limitName to look up the limit in $sugar_config
 	 *
@@ -42,6 +47,7 @@ class ListViewData {
 	function ListViewData() {
 		$this->limitName = 'list_max_entries_per_page';
 		$this->db = &DBManagerFactory::getInstance('listviews');
+        $this->request = InputValidation::getService();
 	}
 
     /**
