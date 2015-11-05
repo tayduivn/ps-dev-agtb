@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraint;
 
 /**
  *
- * @see PhpSerializedValidator
+ * @see FileValidator
  *
  */
 class File extends Constraint
