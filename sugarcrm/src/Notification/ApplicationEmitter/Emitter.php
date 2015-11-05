@@ -36,8 +36,7 @@ class Emitter implements EmitterInterface
      */
     public function getEventStrings()
     {
-        // ToDo: change to an actual logic.
-        return array('event1', 'event2');
+        return array();
     }
 
     /**
