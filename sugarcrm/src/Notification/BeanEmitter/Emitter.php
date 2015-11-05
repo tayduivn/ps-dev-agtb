@@ -63,6 +63,6 @@ class Emitter implements EmitterInterface
      */
     public function getEventStrings()
     {
-        return array('update');
+        return array();
     }
 }
