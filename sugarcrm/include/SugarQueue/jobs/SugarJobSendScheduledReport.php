@@ -105,8 +105,6 @@ class SugarJobSendScheduledReport implements RunnableSchedulerJob
             // get the recipient name that accompanies the email address
             $recipientName = $locale->formatName($current_user);
 
-            $result = false;
-
             try {
                 $GLOBALS["log"]->debug("-----> Generating Mailer");
                 $mailer = MailerFactory::getSystemDefaultMailer();
@@ -153,8 +151,6 @@ class SugarJobSendScheduledReport implements RunnableSchedulerJob
                 $GLOBALS["log"]->debug("-----> Sending PDF via Email to [ {$recipientEmailAddress} ]");
                 $mailer->send();
 
-                $result = true;
-
                 $GLOBALS["log"]->debug("-----> Send successful");
                 $reportSchedule->update_next_run_time(
                     $report_schedule_id,
@@ -175,11 +171,9 @@ class SugarJobSendScheduledReport implements RunnableSchedulerJob
             $GLOBALS["log"]->debug("-----> Removing temporary PDF file");
             unlink($reportFilename);
 
-            if ($result) {
-                $this->job->succeedJob();
-            }
+            $this->job->succeedJob();
 
-            return $result;
+            return true;
         }
     }
 }

@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 (function(app) {
-    app.events.on("app:init", function() {
+    app.events.on('router:init', function() {
         var routes,
             homeOptions = {
                 dashboard: 'dashboard',
@@ -37,7 +37,7 @@
             {
                 name: "forgotpassword",
                 route: "forgotpassword",
-                callback: function(){
+                callback: function() {
                     app.controller.loadView({
                         module: "Forgotpassword",
                         layout: "forgotpassword",
@@ -132,47 +132,6 @@
                 }
             },
             {
-                name: "sg_index",
-                route: "Styleguide",
-                callback: function() {
-                    app.controller.loadView({
-                        module: "Styleguide",
-                        layout: "styleguide",
-                        page_name: "home"
-                    });
-                }
-            },
-            {
-                name: "sg_module",
-                route: "Styleguide/:layout/:resource",
-                callback: function(layout, resource) {
-                    var page = '',
-                        field = '';
-                    if (layout === 'field') {
-                        //route: "Styleguide/field/text"
-                        page = 'field';
-                        field = resource;
-                    } else if (layout === 'view') {
-                        //route: "Styleguide/view/list"
-                        page = 'layouts_' + resource;
-                    } else if (layout === 'docs') {
-                        //route: "Styleguide/docs/base_grid"
-                        page = resource;
-                    } else if (layout === 'layout') {
-                        //route: "Styleguide/layout/records"
-                        layout = resource;
-                        page = 'module';
-                    }
-                    app.controller.loadView({
-                        module: "Styleguide",
-                        layout: layout,
-                        page_name: page,
-                        field_type: field,
-                        skipFetch: true
-                    });
-                }
-            },
-            {
                 name: 'search',
                 route: 'search(/)(:searchTermAndParams)',
                 callback: function(searchTermAndParams) {
@@ -201,7 +160,7 @@
                     var termHasChanged = appContext.get('searchTerm') !== searchTerm;
                     var modulesHaveChanged = !_.isEqual(appContext.get('module_list'), params.modules);
 
-                    params.tags = _.map(params.tags, function(tag){
+                    params.tags = _.map(params.tags, function(tag) {
                         return decodeURIComponent(tag);
                     });
                     var tagsHaveChanged = !_.isEqual(appContext.get('tagParams'), params.tags);
@@ -403,7 +362,7 @@
                         return;
                     }
                     app.router.record(module, id, null, view);
-               }
+                }
             },
             {
                 name: "record_layout_action",
@@ -416,18 +375,13 @@
                     }
                     app.router.record(module, id, action, layout);
                 }
-            },
-            {
-                name: "not_found",
-                route: /^.*$/,
-                callback: function() {
-                    app.error.handleHttpError({status: 404});
-                }
             }
         ];
 
-        app.routing.setRoutes(routes);
+        app.router.addRoutes(routes);
+    });
 
+    app.events.on('app:init', function() {
         // allow subscription to successful token refresh
         app.api.setRefreshTokenSuccessCallback(function(callback) {
             callback();

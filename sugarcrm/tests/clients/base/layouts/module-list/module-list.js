@@ -119,7 +119,7 @@ describe('Base.Layout.ModuleList', function() {
 
                 layout.handleViewChange();
 
-                expect((layout.$('[data-module=' + value.module + ']')).length > 0).toBe(value.tabExists);
+                expect((layout.$('[data-module="' + value.module + '"]')).length > 0).toBe(value.tabExists);
                 expect(toggleModuleStub.called).toBe(value.toggleModuleCalled);
             });
         });

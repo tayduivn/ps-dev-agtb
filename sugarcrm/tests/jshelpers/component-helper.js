@@ -361,10 +361,4 @@
         }
     };
 
-    /*
-     Initialize the router. It can be initialized several times with different
-     custom routes.
-     */
-    app.routing.start();
-
 }(SugarTest));
