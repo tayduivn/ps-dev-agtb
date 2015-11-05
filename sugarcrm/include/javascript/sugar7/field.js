@@ -444,6 +444,9 @@
              * Destroy all error tooltips.
              */
             destroyAllErrorTooltips: function() {
+                if (!this._errorTooltips) {
+                    return;
+                }
                 app.utils.tooltip.destroy(this._errorTooltips);
                 this._errorTooltips = null;
             },

@@ -154,6 +154,7 @@
         this._enableDuration(options);
 
         this.$(this.secondaryFieldTag).timepicker(options);
+        this._hasTimePicker = true;
     },
 
     /**
@@ -452,7 +453,7 @@
      * @inheritdoc
      */
     _dispose: function() {
-        if (this.$(this.secondaryFieldTag).timepicker) {
+        if (this._hasTimePicker) {
             this.$(this.secondaryFieldTag).timepicker('remove');
         }
 
