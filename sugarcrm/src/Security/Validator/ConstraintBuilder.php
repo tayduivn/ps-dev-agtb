@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Security\Validator;
 
 use Sugarcrm\Sugarcrm\Security\Validator\Exception\ConstraintBuilderException;
+use Symfony\Component\Validator\Constraint;
 
 /**
  *
@@ -62,7 +63,7 @@ class ConstraintBuilder
     /**
      * Build constraints based on given definition
      * @param array|string $constraints Constraint definition
-     * @return array
+     * @return Constraint[]
      */
     public function build($constraints)
     {
@@ -75,6 +76,7 @@ class ConstraintBuilder
             $constraints = array($constraints);
         }
 
+        $result = array();
         foreach ($constraints as $assert => $options) {
 
             if (is_numeric($assert)) {
