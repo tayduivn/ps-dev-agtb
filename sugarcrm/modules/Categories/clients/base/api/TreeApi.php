@@ -424,9 +424,6 @@ class TreeApi extends FilterApi
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
         }
         $seed = $this->retrieveBean($args['module'], $args['root']);
-        if ($this->_isForOwnerOnly()) {
-            $seed->addVisibilityStrategy('OwnerVisibility');
-        }
         return $this->formatTree($api, $args, $seed->getTree());
     }
 
@@ -712,20 +709,5 @@ class TreeApi extends FilterApi
         self::addFilters($args['filter'], $q->where(), $q);
 
         return $this->runQuery($api, $args, $q, $options, $seed);
-    }
-
-    /**
-     * Checks if action is allowed only for owner.
-     *
-     * @param string $module
-     * @param string $type
-     * @param string $action
-     * @return bool
-     */
-    private function _isForOwnerOnly($module = 'KBContents', $type = 'module', $action = 'list')
-    {
-        $currentUserId = $GLOBALS['current_user']->id;
-        $moduleACLs = ACLAction::getUserActions($currentUserId, false);
-        return ($moduleACLs[$module][$type][$action]['aclaccess'] == ACL_ALLOW_OWNER);
     }
 }
