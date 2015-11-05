@@ -78,6 +78,11 @@ class SugarController
 	public $view_object_map = array();
 
 	/**
+	 * @var array additional paramters that will be passed through to the view if a SugarView is displayed
+	 */
+	protected $viewParams = array();
+
+	/**
 	 * This array holds the methods that handleAction() will invoke, in sequence.
 	 */
 	protected $tasks = array(
@@ -345,7 +350,7 @@ class SugarController
 		if(isset($this->errors)){
 		  $view->errors = $this->errors;
 		}
-		$view->process();
+		$view->process($this->viewParams);
 	}
 
 	/**

@@ -50,7 +50,7 @@ class ViewSearchView extends ViewListView
  	    $preview = false
  	    )
  	{
- 		$packageName = (isset ( $_REQUEST [ 'view_package' ] )) ? $_REQUEST [ 'view_package' ] : '' ;
+ 		$packageName = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
  		require_once 'modules/ModuleBuilder/parsers/ParserFactory.php' ;
  		$parser = ParserFactory::getParser ( $this->editLayout , $this->editModule, $packageName ) ;
 

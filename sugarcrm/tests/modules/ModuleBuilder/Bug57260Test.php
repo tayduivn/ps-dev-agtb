@@ -11,8 +11,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 require_once 'modules/ModuleBuilder/controller.php';
 require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
+require_once 'modules/ModuleBuilder/views/view.layoutview.php';
 
 /**
  * Bug 57260 - Panel label of mobile layout in module builder is wrong
@@ -82,16 +85,18 @@ class Bug57260Test extends Sugar_PHPUnit_Framework_TestCase {
 	 */
     public function testUndeployedModuleHasDefaultLabelInStudioLayoutEditor() {
         // Mock the request
-        $_REQUEST['module'] = 'ModuleBuilder';
-        $_REQUEST['MB'] = true;
-        $_REQUEST['action'] = 'editLayout';
-        $_REQUEST['view'] = 'wirelessdetailview';
-        $_REQUEST['view_module'] = 'test';
-        $_REQUEST['view_package']= 'test';
+        $req = array(
+            'module' => 'ModuleBuilder',
+            'MB' => '1',
+            'action' => 'editLayout',
+            'view' => 'wirelessdetailview',
+            'view_module' => 'test',
+            'view_package' => 'test',
+        );
         
         // Get the view we need
-        require_once 'modules/ModuleBuilder/views/view.layoutview.php';
-        $view = new ViewLayoutView();
+
+        $view = new ViewLayoutView(null, null, InputValidation::create($req, $req));
         
         // Get the output
         ob_start();

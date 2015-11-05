@@ -38,15 +38,16 @@ class ViewModulefield extends SugarView
         )
     {
         $fv = new FieldViewer();
-        if (empty($_REQUEST['field']) && !empty($_REQUEST['name'])) {
-            $_REQUEST['field'] = $_REQUEST['name'];
-        }
 
         $field_name = '';
         if (!empty($this->view_object_map['field_name'])) {
             $field_name = $this->view_object_map['field_name'];
         } elseif (!empty($_REQUEST['field'])) {
-            $field_name = $_REQUEST['field'];
+            $field_name = trim($this->request->getValidInputRequest(
+                'field',
+                'Assert\ComponentName',
+                $this->request->getValidInputRequest('name', 'Assert\ComponentName')
+            ));
         }
         
         // If this is a new field mark it as such
@@ -87,7 +88,7 @@ class ViewModulefield extends SugarView
         }
 
         if(empty($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio') {
-            $moduleName = $_REQUEST['view_module'];
+            $moduleName = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
             $objectName = BeanFactory::getObjectName($moduleName);
             $module = BeanFactory::getBean($moduleName);
 
@@ -113,7 +114,7 @@ class ViewModulefield extends SugarView
             // continue like normal
             if (empty($vardef['name']) || $isNew) {
                 if (!empty($_REQUEST['type'])) {
-                    $vardef['type'] = $_REQUEST['type'];
+                    $vardef['type'] = $this->request->getValidInputRequest('type', 'Assert\ComponentName');
                 }
                 $fv->ss->assign('hideLevel', 0);
             } elseif (isset($vardef['custom_module'])) {
@@ -168,9 +169,10 @@ class ViewModulefield extends SugarView
         {
             require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
             $mb = new ModuleBuilder();
-            $moduleName = $_REQUEST['view_module'];
-            $module =& $mb->getPackageModule($_REQUEST['view_package'], $moduleName);
-            $package =& $mb->packages[$_REQUEST['view_package']];
+            $moduleName = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+            $packageName = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
+            $module =& $mb->getPackageModule($packageName, $moduleName);
+            $package =& $mb->packages[$packageName];
             $module->getVardefs();
             if(!$ac){
                 $ac = new AjaxCompose();
@@ -182,9 +184,11 @@ class ViewModulefield extends SugarView
             }
 
             if(empty($vardef['name'])){
-                if(!empty($_REQUEST['type']))$vardef['type'] = $_REQUEST['type'];
-                    $fv->ss->assign('hideLevel', 0);
-            }else{
+                if(!empty($_REQUEST['type'])) {
+                    $vardef['type'] = $this->request->getValidInputRequest('type', 'Assert\ComponentName');
+                }
+                $fv->ss->assign('hideLevel', 0);
+            } else {
                 if(!empty($module->mbvardefs->vardef['fields'][$vardef['name']])){
                     $fv->ss->assign('hideLevel', 1);
                 }elseif(isset($vardef['custom_module'])){
@@ -234,8 +238,9 @@ class ViewModulefield extends SugarView
             $field = get_widget($_POST['type']);
             $field->populateFromPost();
             $vardef = $field->get_field_def();
-            $vardef['options'] = $_REQUEST['new_dropdown'];
-            $fv->ss->assign('lbl_value', htmlentities($_REQUEST['labelValue'], ENT_QUOTES, 'UTF-8'));
+            $vardef['options'] = $this->request->getValidInputRequest('new_dropdown');
+            $labelValue = $this->request->getValidInputRequest('labelValue');
+            $fv->ss->assign('lbl_value', htmlentities($labelValue, ENT_QUOTES, 'UTF-8'));
         }
 
         foreach(array("formula", "default", "comments", "help", "visiblityGrid") as $toEscape)

@@ -18,13 +18,14 @@ require_once('modules/ModuleBuilder/views/view.layoutview.php');
 require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
 require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 
-class ViewPortalLayoutView extends ViewLayoutView 
+class ViewPortalLayoutView extends ViewLayoutView
 {
 	function ViewPortalLayoutView()
 	{
-	    $GLOBALS['log']->debug('in ViewPortalLayoutView');
-		$this->editModule = $_REQUEST['view_module'];
-		$this->editLayout = $_REQUEST['view'];
+		$this->request = InputValidation::getService();
+		$GLOBALS['log']->debug('in ViewPortalLayoutView');
+		$this->editModule = $this->request->getValidInputRequest('view_module', 'Assert\Mvc\ModuleName');
+		$this->editLayout = $this->request->getValidInputRequest('view', 'Assert\ComponentName');
 	}
 
 	/**
