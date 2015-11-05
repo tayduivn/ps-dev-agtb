@@ -449,7 +449,7 @@ class TeamBasedACLConfigurator
      * @param string $module Module name.
      * @return bool
      */
-    public function isImplementTBA($module)
+    public function implementsTBA($module)
     {
         $bean = BeanFactory::getBean($module);
         return (bool)$bean->getFieldDefinition('team_set_selected_id');

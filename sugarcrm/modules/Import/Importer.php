@@ -660,8 +660,8 @@ class Importer
                 if (Team::$nameTeamsetMapping[$fieldDef['name']]) {
                     $this->importColumns[] = Team::$nameTeamsetMapping[$fieldDef['name']];
                 }
-                if (Team::$namePrimaryIdMapping[$fieldDef['name']]) {
-                    $this->importColumns[] = Team::$namePrimaryIdMapping[$fieldDef['name']];
+                if (!empty($fieldDefs['id_name'])) {
+                    $this->importColumns[] = $fieldDefs['id_name'];
                 }
                 return $rowValue;
                 break;

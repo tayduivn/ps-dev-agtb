@@ -15,7 +15,7 @@ class ACLFieldsEditView{
         $options = array();
         $tbaConfigurator = new TeamBasedACLConfigurator();
         $tbaEnabled = $tbaConfigurator->isEnabledForModule($module);
-        $tbaImplemented = $tbaConfigurator->isImplementTBA($module);
+        $tbaImplemented = $tbaConfigurator->implementsTBA($module);
         $tbaFieldKeys = array_values($tbaConfigurator->getFieldOptions());
 		$fields = ACLField::getFields( $module, '', $role_id);
 		$sugar_smarty = new Sugar_Smarty();

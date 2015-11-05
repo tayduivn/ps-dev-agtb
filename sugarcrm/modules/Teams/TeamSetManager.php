@@ -354,9 +354,13 @@ class TeamSetManager {
 	 * @param boolean $for_display
 	 * @return string
 	 */
-    public static function getCommaDelimitedTeams($team_set_id, $primary_team_id = '', $for_display = false,
-                                                  $isTBAEnabled = false, $team_set_selected_id = '')
-    {
+    public static function getCommaDelimitedTeams(
+        $team_set_id,
+        $primary_team_id = '',
+        $for_display = false,
+        $isTBAEnabled = false,
+        $team_set_selected_id = ''
+    ) {
         $team_set_id = $team_set_id ? $team_set_id : $primary_team_id;
         $teams = self::getTeamsFromSet($team_set_id);
         $value = '';
