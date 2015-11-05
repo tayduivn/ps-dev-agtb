@@ -21,6 +21,7 @@ describe('Home Menu', function() {
         view.dispose();
         Handlebars.templates = {};
         SugarTest.testMetadata.dispose();
+        $('body').empty();
     });
 
     it('should populate recently viewed on menu open', function() {
@@ -125,7 +126,7 @@ describe('Home Menu', function() {
             beforeEach(function() {
                 onFocus = sinon.spy();
                 sinon.collection.stub(view, '_renderPartial', function() {
-                    view.$el.append('<a href="javascript:void(0);" data-toggle="recently-viewed" tabindex="-1">foo</a>');
+                    $('body').append(view.$el.append('<a href="javascript:void(0);" data-toggle="recently-viewed" tabindex="-1">foo</a>'));
                     view.$('[data-toggle="recently-viewed"]').on('focus', onFocus);
                 }).withArgs('recently-viewed');
             });

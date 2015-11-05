@@ -28,7 +28,6 @@ var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments)
     _setWidth = function(_usePixels, node, width) {
         if (_usePixels) {
             width = width.toFixed(2);
-            $(node).children().width(width);
             width = width + 'px';
             node.style.minWidth = width;
             node.style.width = width;

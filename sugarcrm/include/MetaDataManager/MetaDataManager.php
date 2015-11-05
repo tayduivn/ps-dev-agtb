@@ -2449,6 +2449,7 @@ class MetaDataManager
 
         $js = "(function(app) {\n SUGAR.jssource = {";
 
+        $routesJs = '';
 
         $compJS = $this->buildJavascriptComponentSection($data);
         if (!$onlyReturnModuleComponents) {
@@ -2469,13 +2470,15 @@ class MetaDataManager
                 if (!empty($moduleJS)) {
                     $allModuleJS .= ",\n\t\t\"$module\":{{$moduleJS}}";
                 }
+                $routesJs .= MetaDataFiles::loadRouterFile($module);
             }
             //Chop off the first comma in $allModuleJS
             $js .= substr($allModuleJS, 1);
             $js .= "\n\t}";
         }
 
-        $js .= "}})(SUGAR.App);";
+        $js .= "}})(SUGAR.App);\n";
+        $js .= $routesJs;
         $hash = md5($js);
         //If we are going to be using uglify to minify our JS, we should minify the entire file rather than each component separately.
         if (shouldResourcesBeMinified() && SugarMin::isMinifyFast()) {
