@@ -10,26 +10,24 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Security\Validator\Constraints;
+namespace Sugarcrm\Sugarcrm\Security\Validator\Constraints\Sql;
 
-use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValue;
+use Symfony\Component\Validator\Constraint;
 
 /**
  *
- * @see PhpSerializedValidator
+ * @see OrderByValidator
  *
  */
-class PhpSerialized extends ConstraintReturnValue
+class OrderBy extends Constraint
 {
     const ERROR_STRING_REQUIRED = 1;
-    const ERROR_OBJECT_NOT_ALLOWED = 2;
-    const ERROR_UNSERIALIZE = 3;
+    const ERROR_ILLEGAL_FORMAT = 2;
 
     protected static $errorNames = array(
         self::ERROR_STRING_REQUIRED => 'ERROR_STRING_REQUIRED',
-        self::ERROR_OBJECT_NOT_ALLOWED => 'ERROR_OBJECT_NOT_ALLOWED',
-        self::ERROR_UNSERIALIZE => 'ERROR_UNSERIALIZE',
+        self::ERROR_ILLEGAL_FORMAT => 'ERROR_ILLEGAL_FORMAT',
     );
 
-    public $message = 'PHP serialized data violation: %msg%';
+    public $message = 'Order by violation: %msg%';
 }

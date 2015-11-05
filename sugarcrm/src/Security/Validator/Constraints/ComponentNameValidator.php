@@ -18,23 +18,32 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
  *
- * PHP Serialized validator
- *
- * Validate PHP serialized data. This validator will report a violation when
- * objects are detected inside a PHP serialized string. Additionally the
- * unserialize operation is validate as well and the unserialized form is
- * set on the constraint as formatted value.
+ * Component name validator
  *
  */
-class PhpSerializedValidator extends ConstraintValidator
+class ComponentNameValidator extends ConstraintValidator
 {
+    /**
+     * List of reseverd SQL keywords
+     * @var array
+     */
+    protected $sqlKeywords = array();
+
+    /**
+     * Ctor
+     */
+    public function __construct()
+    {
+        $this->sqlKeywords = \DBManager::$reserved_words;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!$constraint instanceof PhpSerialized) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\PhpSerialized');
+        if (!$constraint instanceof ComponentName) {
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\ComponentName');
         }
 
         // check for string
@@ -42,33 +51,32 @@ class PhpSerializedValidator extends ConstraintValidator
             $this->context->buildViolation($constraint->message)
                 ->setParameter('%msg%', 'string expected')
                 ->setInvalidValue($value)
-                ->setCode(PhpSerialized::ERROR_STRING_REQUIRED)
+                ->setCode(ComponentName::ERROR_STRING_REQUIRED)
                 ->addViolation();
             return;
         }
 
-        // detect any objects
-        preg_match('/[oc]:\d+:/i', $value, $matches);
-        if (count($matches)) {
+        // check for invalid characters
+        if (!preg_match('/^[a-z][a-z0-9_]*$/i', $value)) {
             $this->context->buildViolation($constraint->message)
-                ->setParameter('%msg%', 'object(s) not allowed')
+                ->setParameter(
+                    '%msg%',
+                    'must start with a letter and may only consist of letters, numbers, and underscores.'
+                )
                 ->setInvalidValue($value)
-                ->setCode(PhpSerialized::ERROR_OBJECT_NOT_ALLOWED)
+                ->setCode(ComponentName::ERROR_INVALID_COMPONENT_NAME)
                 ->addViolation();
             return;
         }
 
-        // validate unserialize operation
-        $unserialized = @unserialize($value);
-        if ($unserialized === false && $value !== 'b:0;') {
+        // check for reserved SQL keyword
+        if (isset($this->sqlKeywords[strtoupper($value)])) {
             $this->context->buildViolation($constraint->message)
-                ->setParameter('%msg%', 'unserialize error')
+                ->setParameter('%msg%', 'reserved SQL keyword not allowed')
                 ->setInvalidValue($value)
-                ->setCode(PhpSerialized::ERROR_UNSERIALIZE)
+                ->setCode(ComponentName::ERROR_RESERVED_KEYWORD)
                 ->addViolation();
             return;
         }
-
-        $constraint->setFormattedReturnValue($unserialized);
     }
 }

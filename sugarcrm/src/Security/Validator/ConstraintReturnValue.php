@@ -13,17 +13,19 @@
 namespace Sugarcrm\Sugarcrm\Security\Validator;
 
 use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValueInterface;
-use Sugarcrm\Sugarcrm\Security\Validator\Exception\ConstraintReturnValueException;
+use Symfony\Component\Validator\Constraint;
 
 /**
- * !!! Do not use yet until we have PHP 5.4+ support !!!
  *
- * Constraint return value trait
+ * Abstract constraint object supporting formatted return values which can be
+ * used by contraint validators to set altered validated valutes.
  *
- * @see ConstraintReturnValueInterface
+ * From ConstraintValidator set the formatted value when validation passess:
+ *
+ *      `$constraint->setFormattedReturnValue($value)`
  *
  */
-trait ConstraintReturnValueTrait
+abstract class ConstraintReturnValue extends Constraint implements ConstraintReturnValueInterface
 {
     /**
      * @var mixed
@@ -35,12 +37,14 @@ trait ConstraintReturnValueTrait
      */
     public function getFormattedReturnValue()
     {
-        if (count($this->context->getViolations()) !== 0) {
-            throw new ConstraintReturnValueException(
-                'Cannot get formatted value when violations are present',
-                $this->context->getViolations()
-            );
-        }
         return $this->formattedReturnValue;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFormattedReturnValue($value)
+    {
+        $this->formattedReturnValue = $value;
     }
 }

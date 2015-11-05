@@ -12,14 +12,14 @@
 
 namespace Sugarcrm\Sugarcrm\Security\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
+use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValue;
 
 /**
  *
  * @see PhpSerializedValidator
  *
  */
-class File extends Constraint
+class File extends ConstraintReturnValue
 {
     const ERROR_STRING_REQUIRED = 1;
     const ERROR_NULL_BYTES = 2;

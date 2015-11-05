@@ -12,24 +12,24 @@
 
 namespace Sugarcrm\Sugarcrm\Security\Validator\Constraints;
 
-use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValue;
+use Symfony\Component\Validator\Constraint;
 
 /**
  *
- * @see PhpSerializedValidator
+ * @see ComponentNameValidator
  *
  */
-class PhpSerialized extends ConstraintReturnValue
+class ComponentName extends Constraint
 {
     const ERROR_STRING_REQUIRED = 1;
-    const ERROR_OBJECT_NOT_ALLOWED = 2;
-    const ERROR_UNSERIALIZE = 3;
+    const ERROR_INVALID_COMPONENT_NAME = 2;
+    const ERROR_RESERVED_KEYWORD = 3;
 
     protected static $errorNames = array(
         self::ERROR_STRING_REQUIRED => 'ERROR_STRING_REQUIRED',
-        self::ERROR_OBJECT_NOT_ALLOWED => 'ERROR_OBJECT_NOT_ALLOWED',
-        self::ERROR_UNSERIALIZE => 'ERROR_UNSERIALIZE',
+        self::ERROR_INVALID_COMPONENT_NAME => 'ERROR_INVALID_COMPONENT_NAME',
+        self::ERROR_RESERVED_KEYWORD => 'ERROR_RESERVED_KEYWORD',
     );
 
-    public $message = 'PHP serialized data violation: %msg%';
+    public $message = 'Component name violation: %msg%';
 }

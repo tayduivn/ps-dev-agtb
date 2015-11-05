@@ -14,12 +14,14 @@ namespace Sugarcrm\Sugarcrm\Security\InputValidation;
 
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints as Assert;
 use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValueInterface;
+use Sugarcrm\Sugarcrm\Security\Validator\ConstraintBuilder;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\ViolationException;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\SuperglobalException;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Sanitizer\SanitizerInterface;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Sanitizer\ConstraintSanitizerInterface;
 use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints as AssertBasic;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -47,6 +49,11 @@ class Request
      * @var ValidatorInterface
      */
     protected $validator;
+
+    /**
+     * @var ConstraintBuilder
+     */
+    protected $constraintBuilder;
 
     /**
      * @var LoggerInterface
@@ -79,14 +86,18 @@ class Request
      * Ctor
      * @param Superglobals $superglobals
      * @param ValidatorInterface $validator
+     * @param ConstraintBuilder $constraintBuilder
+     * @param LoggerInterface $logger
      */
     public function __construct(
         Superglobals $superglobals,
         ValidatorInterface $validator,
+        ConstraintBuilder $constraintBuilder,
         LoggerInterface $logger = null
     ) {
         $this->superglobals = $superglobals;
         $this->validator = $validator;
+        $this->constraintBuilder = $constraintBuilder;
         $this->logger = $logger ?: new LoggerTransition(\LoggerManager::getLogger());
     }
 
@@ -120,7 +131,7 @@ class Request
     /**
      * Get validated input from $_GET
      * @param string $key
-     * @param Constraint|Constraint[] $constraints The constrait definition(s)
+     * @param string|array $constraints ConstraintBuilder compat constraints
      * @param mixed $default Return value if input param does not exist
      * @return mixed
      */
@@ -132,7 +143,7 @@ class Request
     /**
      * Get validated input from $_POST
      * @param string $key
-     * @param Constraint|Constraint[] $constraints The constrait definition(s)
+     * @param string|array $constraints ConstraintBuilder compat constraints
      * @param mixed $default Return value if input param does not exist
      * @return mixed
      */
@@ -144,7 +155,7 @@ class Request
     /**
      * Get validated input from $_REQUEST
      * @param string $key
-     * @param Constraint|Constraint[] $constraints The constrait definition(s)
+     * @param string|array $constraints ConstraintBuilder compat constraints
      * @param mixed $default Return value if input param does not exist
      * @return mixed
      */
@@ -158,15 +169,35 @@ class Request
      *
      * @param string $type GET|POST|REQUEST
      * @param string $key The input parameter you are looking for
-     * @param Constraint|Constraint[] $constraints The constrait definition(s)
+     * @param string|array $constraints ConstraintBuilder compat constraints
      * @param mixed $default Return value if input param does not exist
      * @return mixed
      */
     public function getValidInput($type, $key, $constraints = null, $default = null)
     {
-        $this->verifySuperglobalsType($type);
+        // Validate superglobals type
+        $this->validateSuperglobalsType($type);
 
-        // Return default if input parameter is not set, default is not validated
+        // Build actual constraints
+        $constraints = $this->constraintBuilder->build($constraints);
+
+        if (count($constraints) > 0) {
+            // Attach generic input validation
+            $inputConstraint = new Assert\InputParameters(array(
+                'inputType' => $type,
+            ));
+
+            array_unshift($constraints, $inputConstraint);
+        } else {
+            // If no constraint explicitly specified, make sure that the value is a string
+            $constraints = array(
+                new AssertBasic\Type(array(
+                    'type' => 'string',
+                )),
+            );
+        }
+
+        // Return default if input parameter is not set, the default is not validated
         $has = $this->inputTypes[$type]['has'];
         if (!$this->superglobals->$has($key)) {
             return $default;
@@ -183,7 +214,7 @@ class Request
         // Start new validator context
         $this->context = $this->validator->startContext();
 
-        $value = $this->validateConstraints($type, $value, $constraints);
+        $value = $this->validateConstraints($value, $constraints);
         $this->handleViolations($type, $key);
 
         return $value;
@@ -199,16 +230,13 @@ class Request
     }
 
     /**
-     *
-     * @param string $type GET|POST|REQUEST
+     * Validate constraints against given value
      * @param mixed $value The value to be validated
-     * @param Constraint|Constraint[] $constraints The constrait definition(s)
+     * @param Constraint[] $constraints The constrait definition(s)
      * @return mixed
      */
-    protected function validateConstraints($type, $value, $constraints)
+    protected function validateConstraints($value, array $constraints)
     {
-        $constraints = $this->normalizeConstraints($type, $constraints);
-
         foreach ($constraints as $constraint) {
 
             // update value using constraint sanitizer
@@ -221,11 +249,12 @@ class Request
             if ($constraint instanceof ConstraintReturnValueInterface) {
 
                 // if any violations exist we cannot continue
-                if (count($this->context->getViolations() !== 0)) {
+                if (count($this->context->getViolations()) !== 0) {
                     break;
                 }
 
                 $value = $constraint->getFormattedReturnValue();
+
             }
         }
         return $value;
@@ -236,7 +265,7 @@ class Request
      * @param string $type
      * @throws SuperglobalException
      */
-    protected function verifySuperglobalsType($type)
+    protected function validateSuperglobalsType($type)
     {
         if (!array_key_exists($type, $this->inputTypes)) {
             throw new SuperglobalException("Invalid superglobal [$type] requested");
@@ -245,7 +274,7 @@ class Request
 
     /**
      * Handle violations on current context
-     * @param GET|POST|REQUEST $type
+     * @param string $type GET|POST|REQUEST
      * @param string $key
      * @throws ViolationException
      */
@@ -263,35 +292,6 @@ class Request
                 );
             }
         }
-    }
-
-    /**
-     * Normalize list of constraints"
-     *  - We need to have an array
-     *  - Attach generic validator
-     *
-     * @param string $type
-     * @param Constraint|Constraint[] $constraints
-     */
-    protected function normalizeConstraints($type, $constraints)
-    {
-        // One or more constraints can be set, make sure we have an array here
-        if (!is_array($constraints)) {
-            if ($constraints instanceof Constraint) {
-                $constraints = array($constraints);
-            } else {
-                $constraints = array();
-            }
-        }
-
-        // Attach generic input validation
-        $inputConstraint = new Assert\InputParameters(array(
-            'inputType' => $type,
-        ));
-
-        array_unshift($constraints, $inputConstraint);
-
-        return $constraints;
     }
 
     /**

@@ -15,8 +15,6 @@ require_once 'include/MVC/View/ViewFactory.php';
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-use Sugarcrm\Sugarcrm\Security\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Constraints as AssertBasic;
 
 /**
  * SugarCRM application
@@ -58,8 +56,8 @@ class SugarApplication
 
         // Safe $_GET['bwcFrame']
         $bwcFrame = array(
-            new AssertBasic\Type(array('type' => 'numeric')),
-            new AssertBasic\Range(array('min' => 0, 'max' => 1)),
+            'Assert\Type' => array('type' => 'numeric'),
+            'Assert\Range' => array('min' => 0, 'max' => 1),
         );
         $this->inBwc = (bool) $this->request->getValidInputGet('bwcFrame', $bwcFrame, false);
     }
@@ -75,7 +73,7 @@ class SugarApplication
         }
 
         // Safe $_REQUEST['module']
-        $module = $this->request->getValidInputRequest('module', new Assert\Mvc\ModuleName(), $this->default_module);
+        $module = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName', $this->default_module);
 
         insert_charset_header();
         $this->setupPrint();

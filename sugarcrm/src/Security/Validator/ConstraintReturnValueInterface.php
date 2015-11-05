@@ -12,13 +12,15 @@
 
 namespace Sugarcrm\Sugarcrm\Security\Validator;
 
-use Sugarcrm\Sugarcrm\Security\Validator\Exception\ConstraintReturnValueException;
-
 /**
  *
- * Validator constraints are use to only validate given values. In some cases
- * it makes sense to format the given data and return that instead to avoid
- * any duplicate operations.
+ * Validator constraints are used to only validate given values and are reused
+ * during the validation process. In some cases it makes sense that a validator
+ * returns a formatted value to avoid any duplicate operations further down
+ * the logic chain.
+ *
+ * With this interface it is possible to set such value from the validator
+ * back to the constraint.
  *
  */
 interface ConstraintReturnValueInterface
@@ -26,7 +28,12 @@ interface ConstraintReturnValueInterface
     /**
      * Get formatted validated return value
      * @return mixed Formatted return value
-     * @throws ConstraintReturnValueException
      */
     public function getFormattedReturnValue();
+
+    /**
+     * Set formatted validated return value
+     * @param mixed $value Formatted return value
+     */
+    public function setFormattedReturnValue($value);
 }
