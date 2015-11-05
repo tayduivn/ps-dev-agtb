@@ -16,7 +16,7 @@ use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValue;
 
 /**
  *
- * @see PhpSerializedValidator
+ * @see FileValidator
  *
  */
 class File extends ConstraintReturnValue
