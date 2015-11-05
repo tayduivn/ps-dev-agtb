@@ -43,9 +43,16 @@
             }
         });
     },
-    _render:function(){
+    _render:function() {
         this.fullRoute = _.isString(this.def.route) ? this.def.route : null;
-        this.iconLabel = _.isString(this.def.icon) ? this.def.icon.replace(/^fa-(.*)/, '$1').replace(/-o(-)|-o$/, ' outline$1').replace('-', ' ') : null;
+        this.ariaLabel = null;
+        if (!this.label || this.label.trim() === '') {
+            if (this.def.tooltip) {
+                this.ariaLabel = app.lang.get(this.def.tooltip, this.module);
+            } else {
+                this.ariaLabel = _.isString(this.def.icon) ? this.def.icon.replace(/^fa-(.*)/, '$1').replace(/-o(-)|-o$/, ' outline$1').replace('-', ' ') : null;
+            }
+        }
 
         app.view.Field.prototype._render.call(this);
     },

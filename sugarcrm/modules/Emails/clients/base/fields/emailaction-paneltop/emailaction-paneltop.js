@@ -15,7 +15,6 @@
  */
 ({
     extendsFrom: 'EmailactionField',
-    plugins: ['EmailClientLaunch'],
 
     /**
      * @inheritdoc

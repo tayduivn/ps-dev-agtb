@@ -226,6 +226,31 @@ describe("Base.Field.Button", function() {
         expect(field.fullRoute).toEqual('custom/route');
     });
 
+    it("should create accessibility label from icon class name", function() {
+        var icons = [
+            {
+                'icon' : 'cog',
+                'expectedLabel' : 'cog'
+            }, {
+                'icon' : 'fa-cog',
+                'expectedLabel' : 'cog'
+            }, {
+                'icon' : 'fa-cog-o',
+                'expectedLabel' : 'cog outline'
+            }, {
+                'icon' : 'fa-cog-o-modify',
+                'expectedLabel' : 'cog outline modify'
+            }
+        ];
+
+        _.each(icons, function(data) {
+            field = SugarTest.createField("base", null, "button", "edit", data);
+            field.render();
+
+            expect(field.ariaLabel).toEqual(data.expectedLabel);
+        });
+    });
+
     it("should test hasAccess control before it is rendered", function() {
         field = SugarTest.createField("base","button", "button", "edit");
         var hasAccessStub = sinon.stub(field, 'hasAccess');

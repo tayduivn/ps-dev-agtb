@@ -27,7 +27,7 @@
         title="{{str label module}}"
         aria-label="{{str label module}}"
     {{else}}
-        {{#if iconLabel}}aria-label="{{iconLabel}}"{{/if}}
+        {{#if ariaLabel}}aria-label="{{ariaLabel}}"{{/if}}
     {{/if}}
 {{/if}}
     role="button" name="{{name}}" track="click:{{#if name}}{{name}}{{else}}{{label}}{{/if}}"><i class="fa {{def.icon}}"></i></a>

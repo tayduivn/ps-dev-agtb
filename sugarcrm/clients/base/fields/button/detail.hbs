@@ -16,8 +16,8 @@
     rel="tooltip"
     data-placement="bottom"
     title="{{str def.tooltip module}}"
-    {{#unless label}}aria-label="{{str def.tooltip module}}"{{/unless}}
+    {{#if ariaLabel}}aria-label="{{ariaLabel}}"{{/if}}
 {{else}}
-    {{#unless label}}{{#if iconLabel}}aria-label="{{iconLabel}}"{{/if}}{{/unless}}
+    {{#if ariaLabel}}aria-label="{{ariaLabel}}"{{/if}}
 {{/if}}
     role="button" name="{{name}}" track="click:{{name}}">{{#if def.icon}}<i class="fa {{def.icon}}"></i> {{/if}}{{label}}</a>
