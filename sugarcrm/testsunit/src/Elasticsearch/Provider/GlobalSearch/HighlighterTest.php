@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch;
 
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
@@ -57,48 +58,7 @@ class HighlighterTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @covers ::getSubFieldName
-     * @dataProvider providerTestGetSubFieldName
-     */
-    public function testGetSubFieldName($field, $expected)
-    {
-        $highlighter = $this->getHighlighterMock();
 
-        $res = $highlighter->getSubFieldName($field);
-        $this->assertEquals($expected, $res);
-    }
-
-    public function providerTestGetSubFieldName()
-    {
-        return array(
-            array(
-                'Accounts__email_search.primary.gs_email_wildcard',
-                'primary',
-            ),
-            array(
-                'Accounts__email_search.secondary.gs_email_wildcard',
-                'secondary',
-            ),
-            array(
-                'Contacts__first_name.gs_string_wildcard',
-                '',
-            ),
-            array(
-                'Contacts__phone_home',
-                '',
-            ),
-            array(
-                '',
-                '',
-            ),
-            array(
-                null,
-                '',
-            ),
-        );
-    }
-    
     /**
      * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Highlighter
      */

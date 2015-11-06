@@ -226,24 +226,10 @@ abstract class AbstractHighlighter implements HighlighterInterface
                 $value = $this->wrapValueWithTags($value);
             }
 
-            // Get the sub-field if exists
-            $subField = $this->getSubFieldName($field);
-            if (!empty($subField)) {
-                // Compose the sub-field's name and value as an array
-                $value = array($subField => $value);
-            }
-
             // Multiple highlights can be returned for the same field, if so we
             // add them and filter out any duplicates.
-
-            // If the field has sub-fields, it will return an array in the following format:
-            // "field" => array("sub-field1" => value1, "sub-field2" => value2)
-
-            // Otherwise, it will return an array in the following format:
-            // "field" => array (value1, value2)
-
             if (isset($parsed[$normField])) {
-                $parsed[$normField] = $parsed[$normField] + $value;
+                $parsed[$normField] = array_unique(array_merge($parsed[$normField], $value), SORT_STRING);
             } else {
                 $parsed[$normField] = $value;
             }
@@ -270,15 +256,5 @@ abstract class AbstractHighlighter implements HighlighterInterface
     protected function wrapValueWithTags($value)
     {
         return $value;
-    }
-
-    /**
-     * Get the secondary field if available.
-     * @param string $field the name of the field
-     * @return bool
-     */
-    public function getSubFieldName($field)
-    {
-        return false;
     }
 }
