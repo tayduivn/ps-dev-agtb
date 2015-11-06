@@ -32,15 +32,15 @@ class OrderByValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\OrderBy');
         }
 
-        // check for string
-        if (!is_string($value)) {
-            $this->context->buildViolation($constraint->message)
-                ->setInvalidValue($value)
-                ->setCode(OrderBy::ERROR_STRING_REQUIRED)
-                ->setParameter('%msg%', 'string expected')
-                ->addViolation();
+        if (null === $value || '' === $value) {
             return;
         }
+
+        if (!is_scalar($value) && !(is_object($value) && method_exists($value, '__toString'))) {
+            throw new UnexpectedTypeException($value, 'string');
+        }
+
+        $value = (string) $value;
 
         // validate using regex
         $regex = '/^[A-Z0-9_.]+$/i';

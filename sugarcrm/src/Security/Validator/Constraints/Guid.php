@@ -21,11 +21,9 @@ use Symfony\Component\Validator\Constraint;
  */
 class Guid extends Constraint
 {
-    const ERROR_STRING_REQUIRED = 1;
-    const ERROR_INVALID_FORMAT = 2;
+    const ERROR_INVALID_FORMAT = 1;
 
     protected static $errorNames = array(
-        self::ERROR_STRING_REQUIRED => 'ERROR_STRING_REQUIRED',
         self::ERROR_INVALID_FORMAT => 'ERROR_INVALID_FORMAT',
     );
 

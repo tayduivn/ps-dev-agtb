@@ -21,11 +21,9 @@ use Symfony\Component\Validator\Constraint;
  */
 class OrderBy extends Constraint
 {
-    const ERROR_STRING_REQUIRED = 1;
-    const ERROR_ILLEGAL_FORMAT = 2;
+    const ERROR_ILLEGAL_FORMAT = 1;
 
     protected static $errorNames = array(
-        self::ERROR_STRING_REQUIRED => 'ERROR_STRING_REQUIRED',
         self::ERROR_ILLEGAL_FORMAT => 'ERROR_ILLEGAL_FORMAT',
     );
 

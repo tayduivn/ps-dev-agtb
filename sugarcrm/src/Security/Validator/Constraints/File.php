@@ -21,13 +21,11 @@ use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValue;
  */
 class File extends ConstraintReturnValue
 {
-    const ERROR_STRING_REQUIRED = 1;
-    const ERROR_NULL_BYTES = 2;
-    const ERROR_FILE_NOT_FOUND = 3;
-    const ERROR_OUTSIDE_BASEDIR = 4;
+    const ERROR_NULL_BYTES = 1;
+    const ERROR_FILE_NOT_FOUND = 2;
+    const ERROR_OUTSIDE_BASEDIR = 3;
 
     protected static $errorNames = array(
-        self::ERROR_STRING_REQUIRED => 'ERROR_STRING_REQUIRED',
         self::ERROR_NULL_BYTES => 'ERROR_NULL_BYTES',
         self::ERROR_FILE_NOT_FOUND => 'ERROR_FILE_NOT_FOUND',
         self::ERROR_OUTSIDE_BASEDIR => 'ERROR_OUTSIDE_BASEDIR',
