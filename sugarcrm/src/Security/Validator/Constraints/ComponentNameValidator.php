@@ -32,9 +32,13 @@ class ComponentNameValidator extends ConstraintValidator
     /**
      * Ctor
      */
-    public function __construct()
+    public function __construct(array $sqlKeywords = null)
     {
-        $this->sqlKeywords = \DBManager::$reserved_words;
+        if ($sqlKeywords !== null) {
+            $this->sqlKeywords = $sqlKeywords;
+        } elseif ($db = \DBManagerFactory::getInstance()) {
+            $this->sqlKeywords = $db->getReservedWords();
+        }
     }
 
     /**
