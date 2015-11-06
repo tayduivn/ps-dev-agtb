@@ -47,6 +47,18 @@ class PhpSerializedValidator extends ConstraintValidator
 
         $value = (string) $value;
 
+        if ($constraint->base64Encoded) {
+            $value = base64_decode($value, true);
+            if ($value === false) {
+                $this->context->buildViolation($constraint->message)
+                    ->setParameter('%msg%', 'invalid base64 encoding')
+                    ->setInvalidValue($value)
+                    ->setCode(PhpSerialized::ERROR_BASE64_DECODE)
+                    ->addViolation();
+                return;
+            }
+        }
+
         // detect any objects
         preg_match('/[oc]:\d+:/i', $value, $matches);
         if (count($matches)) {
