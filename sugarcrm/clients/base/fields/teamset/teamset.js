@@ -15,8 +15,7 @@
  */
 ({
     extendsFrom: 'RelateField',
-    _minChars: 1,
-    _allow_single_deselect: false,
+
     events: {
         'click .btn[name=add]': 'addItem',
         'click .btn[name=remove]': 'removeItem',
@@ -33,7 +32,17 @@
     appendTeamTag: 'input[name=append_team]',
 
     initialize: function (options) {
-        this._super("initialize", [options]);
+        this._super('initialize', [options]);
+        /**
+         * @inheritdoc
+         */
+        this._allow_single_deselect = false;
+
+        /**
+         * @inheritdoc
+         */
+        this._minChars = 1;
+
         this._currentIndex = 0;
         this.model.on("change:team_name_type", this.appendTeam, this);
     },
