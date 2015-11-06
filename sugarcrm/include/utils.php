@@ -17,6 +17,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 require_once 'include/SugarObjects/SugarConfig.php';
 require_once 'include/utils/security_utils.php';
 
@@ -2040,9 +2043,8 @@ function translate($string, $mod='', $selectedValue='')
     if (!empty($mod)) {
         global $current_language;
         //Bug 31275
-        if (isset($_REQUEST['login_language'])) {
-            $current_language = ($_REQUEST['login_language'] == $current_language)? $current_language : $_REQUEST['login_language'];
-        }
+        $request = InputValidation::getService();
+        $current_language = $request->getValidInputRequest('login_language', 'Assert\Language', $current_language);
         $lang = return_module_language($current_language, $mod);
 
         // Bug 60664 - If module language isn't found, just use mod_strings
