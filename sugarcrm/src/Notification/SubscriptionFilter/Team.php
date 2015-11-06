@@ -42,8 +42,15 @@ class Team extends Bean implements SubscriptionFilterInterface
     {
         parent::filterQuery($event, $query);
         $teams = $query->join('teams', array('team_security' => false));
-        $users = $query->join('users', array('relatedJoin' => $teams->joinName(), 'team_security' => false));
-        return $users->joinName();
+        $query->joinTable('team_memberships', array('alias' => 'jt3_team_memberships', 'joinType' => 'INNER'))
+            ->on()
+            ->equalsField('jt3_team_memberships.team_id', "{$teams->joinName()}.id")
+            ->equals('jt3_team_memberships.deleted', 0);
+        $query->joinTable('users', array('alias' => 'jt4_users', 'joinType' => 'INNER'))
+            ->on()
+            ->equalsField('jt4_users.id', 'jt3_team_memberships.user_id')
+            ->equals('jt4_users.deleted', 0);
+        return 'jt4_users';
     }
 
     /**

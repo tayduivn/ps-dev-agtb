@@ -19,17 +19,16 @@ class CarrierEmailTransport implements TransportInterface
 {
     /**
      * Send message to a specified user by the means of Sugar System Mailer.
-     * @param string $recipient Sugar User id.
+     * @param string $recipient Sugar User email address.
      * @param array $message message pack for delivery.
      * @return bool true if message was sent, otherwise false.
      */
     public function send($recipient, $message)
     {
         if ($this->test() && (!empty($message['title']) || !empty($message['text']) || !empty($message['html']))) {
-            $user = BeanFactory::getBean('Users', $recipient);
             try {
                 $mailer = $this->getMailer();
-                $mailer->addRecipientsTo(new EmailIdentity($user->email1, $user->full_name));
+                $mailer->addRecipientsTo(new EmailIdentity($recipient));
                 if (!empty($message['title'])) {
                     $mailer->setSubject($message['title']);
                 }

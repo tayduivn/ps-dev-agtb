@@ -42,7 +42,6 @@ class CarrierEmailTransportTest extends \Sugar_PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
-        \SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         parent::tearDown();
     }
 
@@ -73,10 +72,7 @@ class CarrierEmailTransportTest extends \Sugar_PHPUnit_Framework_TestCase
      */
     public function testSendMail()
     {
-        $user = \SugarTestUserUtilities::createAnonymousUser();
-        $user->email1 = "test@example.com";
-
-        $mailIdentity = new \EmailIdentity($user->email1, $user->full_name);
+        $mailIdentity = new \EmailIdentity("test@example.com");
 
         $mailer = $this->getMockBuilder('SmtpMailer')
             ->disableOriginalConstructor()
@@ -93,7 +89,7 @@ class CarrierEmailTransportTest extends \Sugar_PHPUnit_Framework_TestCase
         $transport->expects($this->once())->method('test')->willReturn(true);
         $transport->expects($this->once())->method('getMailer')->willReturn($mailer);
 
-        $isSent = $transport->send($user->id, $this->someMessage);
+        $isSent = $transport->send("test@example.com", $this->someMessage);
         $this->assertTrue($isSent);
     }
 }
