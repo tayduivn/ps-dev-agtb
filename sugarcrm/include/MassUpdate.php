@@ -40,12 +40,15 @@ class MassUpdate
 
     /**
      * Constructor for Mass Update
+     *
+     * @param Request $request
      */
-    public function __construct() {
+    public function __construct(Request $request = null)
+    {
         //TODO: Creation of Activities are turned off for mass update.
         //TODO: It will be turned on when job queue, asynchronous processing, activity Stream performance has been handled after 7.0
         Activity::disable();
-        $this->request = InputValidation::getService();
+        $this->request = $request ?: InputValidation::getService();
     }
 
 	/**

@@ -42,12 +42,14 @@ class ListViewData {
 	/**
 	 * Constructor sets the limitName to look up the limit in $sugar_config
 	 *
+     * @param Request $request
 	 * @return ListViewData
 	 */
-	function ListViewData() {
+    public function ListViewData(Request $request = null)
+    {
 		$this->limitName = 'list_max_entries_per_page';
 		$this->db = &DBManagerFactory::getInstance('listviews');
-        $this->request = InputValidation::getService();
+        $this->request = $request ?: InputValidation::getService();
 	}
 
     /**

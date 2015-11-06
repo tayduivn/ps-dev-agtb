@@ -47,12 +47,14 @@ class ListViewDisplay {
 
 	/**
 	 * Constructor
-	 * @return null
+     *
+     * @param Request $request
 	 */
-	function ListViewDisplay() {
-		$this->lvd = new ListViewData();
+    public function ListViewDisplay(Request $request = null)
+    {
+        $this->request = $request ?: InputValidation::getService();
+        $this->lvd = new ListViewData($this->request);
 		$this->searchColumns = array () ;
-        $this->request = InputValidation::getService();
 	}
 
 	function shouldProcess($moduleDir){
@@ -428,9 +430,16 @@ class ListViewDisplay {
                 $return_string = '';
             }
 
+            $onclick = 'if (sugarListView.get_checks_count() > 1) {'
+                . 'sListView.send_form(true, "MergeRecords", "index.php", "' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '", "' . $this->seed->module_dir . '", ' . json_encode($return_string) . ');'
+            . '} else {'
+                . 'alert("' . $app_strings['LBL_LISTVIEW_TWO_REQUIRED'] . '");'
+                . 'return false;'
+            . '}';
+
             return "<a href='javascript:void(0)' ".
                             "id='mergeduplicates_listview_". $loc ."'".
-                            "onclick='if (sugarListView.get_checks_count()> 1) {sListView.send_form(true, \"MergeRecords\", \"index.php\", \"{$app_strings['LBL_LISTVIEW_NO_SELECTED']}\", \"{$this->seed->module_dir}\", " . htmlspecialchars(json_encode($return_string), ENT_QUOTES, 'UTF-8') . ");} else {alert(\"{$app_strings['LBL_LISTVIEW_TWO_REQUIRED']}\");return false;}'>".
+                            'onclick="' . htmlspecialchars($onclick, ENT_QUOTES, 'UTF-8') . '">'.
                             $app_strings['LBL_MERGE_DUPLICATES'].'</a>';
         }
 
@@ -582,7 +591,7 @@ EOF;
      */
     protected function getMassUpdate()
     {
-        return new MassUpdate();
+        return new MassUpdate($this->request);
     }
 
     /**
