@@ -44,6 +44,3 @@ $autoLoaderHelper->setBaseDir(SUGAR_BASE_DIR);
 $autoLoaderHelper->setClassMapDirs($classMapDirs);
 
 SugarAutoLoader::$classMap = $autoLoaderHelper->mergeClassMap(SugarAutoLoader::$classMap);
-
-// populate BeanFactory map
-Sugarcrm\SugarcrmTestsUnit\BeanFactoryHelper::getInstance()->reload();

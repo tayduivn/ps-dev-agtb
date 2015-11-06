@@ -13,7 +13,6 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\Bean;
 
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Bean\ModuleName;
-use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Bean\ModuleNameValidator;
 use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 
 /**
@@ -28,7 +27,9 @@ class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
      */
     protected function createValidator()
     {
-        return new ModuleNameValidator();
+        return $this->getMockBuilder('\Sugarcrm\Sugarcrm\Security\Validator\Constraints\Bean\ModuleNameValidator')
+            ->setMethods(array('isValidModule'))
+            ->getMock();
     }
 
     /**
@@ -60,49 +61,38 @@ class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
 
     /**
      * @covers ::validate
-     * @covers ::isValidModule
-     * @dataProvider providerTestValidValues
      */
-    public function testValidValues($value)
+    public function testValidValues()
     {
         $constraint = new ModuleName();
-        $this->validator->validate($value, $constraint);
-        $this->assertNoViolation();
-    }
 
-    public function providerTestValidValues()
-    {
-        return array(
-            array('Accounts'),
-            array('Contacts'),
-        );
+        // Validation fully relies on BeanFactory so we just stub its result
+        $this->validator->method('isValidModule')
+            ->willReturn(true);
+
+        $this->validator->validate('Accounts', $constraint);
+        $this->assertNoViolation();
     }
 
     /**
      * @covers ::validate
-     * @covers ::isValidModule
-     * @dataProvider providerTestInvalidValues
      */
-    public function testInvalidValues($value, $violation, $code)
+    public function testInvalidValues()
     {
         $constraint = new ModuleName(array(
             'message' => 'testMessage',
         ));
 
-        $this->validator->validate($value, $constraint);
+        // Validation fully relies on BeanFactory so we just stub its result
+        $this->validator->method('isValidModule')
+            ->willReturn(false);
+
+        $this->validator->validate('Foobar', $constraint);
 
         $this->buildViolation('testMessage')
-            ->setInvalidValue($value)
-            ->setParameter('%module%', $violation)
-            ->setCode($code)
+            ->setInvalidValue('Foobar')
+            ->setParameter('%module%', 'Foobar')
+            ->setCode(ModuleName::ERROR_UNKNOWN_MODULE)
             ->assertRaised();
-    }
-
-    public function providerTestInvalidValues()
-    {
-        return array(
-            array('FooBar', 'FooBar',  ModuleName::ERROR_UNKNOWN_MODULE),
-            array('MailMerge', 'MailMerge',  ModuleName::ERROR_UNKNOWN_MODULE),
-        );
     }
 }

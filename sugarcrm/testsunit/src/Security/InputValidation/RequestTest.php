@@ -57,13 +57,15 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * TODO: needs refactor as we are doing some more functional testing here
+     * instead of pure wire frame testing.
      * @covers ::getValidInput
      * @covers ::getValidInputGet
      * @covers ::getValidInputPost
      * @covers ::getValidInputRequest
      * @dataProvider providerTestGetValidInput
      */
-    public function testGetValidInput(array $get, array $post, $key, $call, $constraint, $default, $expected)
+    /*public function testGetValidInput(array $get, array $post, $key, $call, $constraint, $default, $expected)
     {
         $superglobals = new Superglobals($get, $post);
         $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
@@ -203,7 +205,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'foobar',
             ),
         );
-    }
+    }*/
 
     /**
      * @covers ::getValidInput

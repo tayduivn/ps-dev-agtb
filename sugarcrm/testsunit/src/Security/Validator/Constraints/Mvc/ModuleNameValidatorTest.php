@@ -13,7 +13,6 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints\Mvc;
 
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Mvc\ModuleName;
-use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Mvc\ModuleNameValidator;
 use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 
 /**
@@ -24,11 +23,25 @@ use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintVali
 class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
 {
     /**
+     * List of modules as reported by globals
+     * @var unknown
+     */
+    protected $moduleList = array(
+        'Accounts',
+        'Contacts',
+        'Leads',
+        'MailMerge',
+    );
+
+    /**
      * {@inheritdoc}
      */
     protected function createValidator()
     {
-        return new ModuleNameValidator();
+        return $this->getMockBuilder('\Sugarcrm\Sugarcrm\Security\Validator\Constraints\Mvc\ModuleNameValidator')
+            ->setConstructorArgs(array($this->moduleList))
+            ->setMethods(array('isValidBeanModule'))
+            ->getMock();
     }
 
     /**
@@ -63,9 +76,13 @@ class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
      * @covers ::isValidModule
      * @dataProvider providerTestValidValues
      */
-    public function testValidValues($value)
+    public function testValidValues($value, $isBean)
     {
         $constraint = new ModuleName();
+
+        $this->validator->method('isValidBeanModule')
+            ->willReturn($isBean);
+
         $this->validator->validate($value, $constraint);
         $this->assertNoViolation();
     }
@@ -73,14 +90,15 @@ class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
     public function providerTestValidValues()
     {
         return array(
-            array('Accounts'),
-            array('Contacts'),
 
-            // non-bean existing module
-            array('MailMerge'),
+            // use bean validation
+            array('Accounts', true),
+
+            // module list validation
+            array('MailMerge', false),
 
             // url rewrite for cache/jsLanguage uses app_strings
-            array('app_strings'),
+            array('app_strings', false),
         );
     }
 
@@ -89,17 +107,20 @@ class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
      * @covers ::isValidModule
      * @dataProvider providerTestInvalidValues
      */
-    public function testInvalidValues($value, $violation, $code)
+    public function testInvalidValues($value, $isBean, $code)
     {
         $constraint = new ModuleName(array(
             'message' => 'testMessage',
         ));
 
+        $this->validator->method('isValidBeanModule')
+            ->willReturn($isBean);
+
         $this->validator->validate($value, $constraint);
 
         $this->buildViolation('testMessage')
             ->setInvalidValue($value)
-            ->setParameter('%module%', $violation)
+            ->setParameter('%module%', $value)
             ->setCode($code)
             ->assertRaised();
     }
@@ -107,7 +128,11 @@ class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
     public function providerTestInvalidValues()
     {
         return array(
-            array('FooBar', 'FooBar',  ModuleName::ERROR_UNKNOWN_MODULE),
+            array(
+                'FooBar',
+                false,
+                ModuleName::ERROR_UNKNOWN_MODULE
+            ),
         );
     }
 }

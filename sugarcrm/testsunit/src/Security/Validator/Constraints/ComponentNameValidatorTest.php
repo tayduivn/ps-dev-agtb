@@ -28,7 +28,11 @@ class ComponentNameValidatorTest extends AbstractConstraintValidatorTest
      */
     protected function createValidator()
     {
-        return new ComponentNameValidator();
+        return new ComponentNameValidator(array(
+            'SELECT' => true,
+            'UPDATE' => true,
+            'DELETE' => true,
+        ));
     }
 
     /**
@@ -103,7 +107,7 @@ class ComponentNameValidatorTest extends AbstractConstraintValidatorTest
                 'must start with a letter and may only consist of letters, numbers, and underscores.',
             ),
             array(
-                'ACCESS',
+                'SELECT',
                 ComponentName::ERROR_RESERVED_KEYWORD,
                 'reserved SQL keyword not allowed',
             ),
