@@ -64,9 +64,10 @@ class PhpSerializedValidatorTest extends AbstractConstraintValidatorTest
      * @covers \Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValue::setFormattedReturnValue
      * @dataProvider providerTestValidValues
      */
-    public function testValidValues($value, $unserialized)
+    public function testValidValues($value, $base64Encoded, $unserialized)
     {
         $constraint = new PhpSerialized();
+        $constraint->base64Encoded = $base64Encoded;
         $this->validator->validate($value, $constraint);
         $this->assertNoViolation();
         $this->assertSame($unserialized, $constraint->getFormattedReturnValue());
@@ -75,13 +76,52 @@ class PhpSerializedValidatorTest extends AbstractConstraintValidatorTest
     public function providerTestValidValues()
     {
         return array(
-            array('N;', null),
-            array('b:0;', false),
-            array('b:1;', true),
-            array('i:10;', 10),
-            array('d:12.199999999999999;', 12.2),
-            array('s:6:"String";', 'String'),
-            array('a:1:{s:3:"foo";s:3:"bar";}', array('foo' => 'bar')),
+
+            // plain serialized strings
+            array('N;', false, null),
+            array('b:0;', false, false),
+            array('b:1;', false, true),
+            array('i:10;', false, 10),
+            array('d:12.199999999999999;', false, 12.2),
+            array('s:6:"String";', false, 'String'),
+            array('a:1:{s:3:"foo";s:3:"bar";}', false, array('foo' => 'bar')),
+
+            // base64 encoded tests
+            array(
+                'Tjs=',
+                true,
+                null,
+            ),
+            array(
+                'YjowOw==',
+                true,
+                false,
+            ),
+            array(
+                'YjoxOw==',
+                true,
+                true,
+            ),
+            array(
+                'aToxMDs=',
+                true,
+                10,
+            ),
+            array(
+                'ZDoxMi4xOTk5OTk5OTk5OTk5OTk7',
+                true,
+                12.2,
+            ),
+            array(
+                'czo2OiJTdHJpbmciOw==',
+                true,
+                'String',
+            ),
+            array(
+                'YToxOntzOjM6ImZvbyI7czozOiJiYXIiO30=',
+                true,
+                array('foo' => 'bar'),
+            ),
         );
     }
 
