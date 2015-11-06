@@ -21,7 +21,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 // increase the cuttoff time to 1 hour
 ini_set("max_execution_time", "3600");
 $request = InputValidation::getService();
-$view = $request->getValidInputRequest('view', array('Assert\Type' => (array('type' => 'string'))), '');
+$view = $request->getValidInputRequest('view', null, '');
 if ($view !== '') {
     if( $view != "default" && $view != "module" ){
         throw new Exception($mod_strings['ERR_UW_INVALID_VIEW']);
