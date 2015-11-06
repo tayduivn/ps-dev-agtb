@@ -94,9 +94,9 @@ class SugarACL
                 VardefManager::loadVardef($module, $name);
             }
             $acl_list = isset($GLOBALS['dictionary'][$name]['acls'])?$GLOBALS['dictionary'][$name]['acls']:array();
-            $acl_list = array_merge($acl_list, SugarBean::getDefaultACL());
+            $acl_list = array_merge($acl_list, SugarBean::getDefaultACL($name));
 
-             $GLOBALS['log']->debug("ACLS for $module: ".var_export($acl_list, true));
+            $GLOBALS['log']->debug("ACLS for $module: ".var_export($acl_list, true));
 
             foreach($acl_list as $klass => $args) {
                 if($args === false) continue;
