@@ -33,6 +33,33 @@ class FileValidatorTest extends AbstractConstraintValidatorTest
 
     /**
      * @covers ::validate
+     */
+    public function testNullIsValid()
+    {
+        $this->validator->validate(null, new File());
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @covers ::validate
+     */
+    public function testEmptyStringIsValid()
+    {
+        $this->validator->validate('', new File());
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @covers ::validate
+     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
+     */
+    public function testExpectsStringCompatibleType()
+    {
+        $this->validator->validate(new \stdClass(), new File());
+    }
+
+    /**
+     * @covers ::validate
      * @dataProvider providerTestValidValues
      */
     public function testValidValues($value, array $baseDirs, $expected)
@@ -89,12 +116,6 @@ class FileValidatorTest extends AbstractConstraintValidatorTest
     public function providerTestInvalidValues()
     {
         return array(
-            array(
-                array('blah'),
-                array(SUGAR_BASE_DIR),
-                File::ERROR_STRING_REQUIRED,
-                'string expected',
-            ),
             array(
                 'modules/Foobar/vardefs.php',
                 array(SUGAR_BASE_DIR),

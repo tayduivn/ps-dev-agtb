@@ -33,6 +33,33 @@ class PhpSerializedValidatorTest extends AbstractConstraintValidatorTest
 
     /**
      * @covers ::validate
+     */
+    public function testNullIsValid()
+    {
+        $this->validator->validate(null, new PhpSerialized());
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @covers ::validate
+     */
+    public function testEmptyStringIsValid()
+    {
+        $this->validator->validate('', new PhpSerialized());
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @covers ::validate
+     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
+     */
+    public function testExpectsStringCompatibleType()
+    {
+        $this->validator->validate(new \stdClass(), new PhpSerialized());
+    }
+
+    /**
+     * @covers ::validate
      * @covers \Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValue::getFormattedReturnValue
      * @covers \Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValue::setFormattedReturnValue
      * @dataProvider providerTestValidValues
@@ -80,11 +107,6 @@ class PhpSerializedValidatorTest extends AbstractConstraintValidatorTest
     public function providerTestInvalidValues()
     {
         return array(
-            array(
-                array('foo' => 'bar'),
-                PhpSerialized::ERROR_STRING_REQUIRED,
-                'string expected',
-            ),
             array(
                 'O:8:"stdClass":1:{s:3:"foo";s:3:"bar";}',
                 PhpSerialized::ERROR_OBJECT_NOT_ALLOWED,

@@ -33,6 +33,33 @@ class ComponentNameValidatorTest extends AbstractConstraintValidatorTest
 
     /**
      * @covers ::validate
+     */
+    public function testNullIsValid()
+    {
+        $this->validator->validate(null, new ComponentName());
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @covers ::validate
+     */
+    public function testEmptyStringIsValid()
+    {
+        $this->validator->validate('', new ComponentName());
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @covers ::validate
+     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
+     */
+    public function testExpectsStringCompatibleType()
+    {
+        $this->validator->validate(new \stdClass(), new ComponentName());
+    }
+
+    /**
+     * @covers ::validate
      * @dataProvider providerTestValidValues
      */
     public function testValidValues($value)
@@ -70,11 +97,6 @@ class ComponentNameValidatorTest extends AbstractConstraintValidatorTest
     public function providerTestInvalidValues()
     {
         return array(
-            array(
-                array('blah'),
-                ComponentName::ERROR_STRING_REQUIRED,
-                'string expected',
-            ),
             array(
                 'invalid+chars',
                 ComponentName::ERROR_INVALID_COMPONENT_NAME,

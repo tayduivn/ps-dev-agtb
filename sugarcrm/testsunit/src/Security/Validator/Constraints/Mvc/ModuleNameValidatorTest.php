@@ -33,6 +33,33 @@ class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
 
     /**
      * @covers ::validate
+     */
+    public function testNullIsValid()
+    {
+        $this->validator->validate(null, new ModuleName());
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @covers ::validate
+     */
+    public function testEmptyStringIsValid()
+    {
+        $this->validator->validate('', new ModuleName());
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @covers ::validate
+     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
+     */
+    public function testExpectsStringCompatibleType()
+    {
+        $this->validator->validate(new \stdClass(), new ModuleName());
+    }
+
+    /**
+     * @covers ::validate
      * @covers ::isValidModule
      * @dataProvider providerTestValidValues
      */
@@ -81,7 +108,6 @@ class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
     {
         return array(
             array('FooBar', 'FooBar',  ModuleName::ERROR_UNKNOWN_MODULE),
-            array(array(), 'string violation',  ModuleName::ERROR_STRING),
         );
     }
 }

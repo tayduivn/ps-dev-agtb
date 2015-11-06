@@ -14,7 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Security\Validator\Constraints;
 
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Language;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\LanguageValidator;
-use Symfony\Component\Validator\Tests\Constraints\AbstractConstraintValidatorTest;
+use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintValidatorTest;
 
 /**
  *
@@ -32,6 +32,33 @@ class LanguageValidatorTest extends AbstractConstraintValidatorTest
             'en_US' => 'English (US)',
             'cs_CZ' => ' Czech language',
         ));
+    }
+
+    /**
+     * @covers ::validate
+     */
+    public function testNullIsValid()
+    {
+        $this->validator->validate(null, new Language());
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @covers ::validate
+     */
+    public function testEmptyStringIsValid()
+    {
+        $this->validator->validate('', new Language());
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @covers ::validate
+     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
+     */
+    public function testExpectsStringCompatibleType()
+    {
+        $this->validator->validate(new \stdClass(), new Language());
     }
 
     /**
@@ -79,11 +106,6 @@ class LanguageValidatorTest extends AbstractConstraintValidatorTest
     public function providerTestInvalidValues()
     {
         return array(
-            array(
-                array('blah'),
-                Language::ERROR_STRING_REQUIRED,
-                'string expected',
-            ),
             array(
                 'en-US',
                 Language::ERROR_LANGUAGE_NOT_FOUND,

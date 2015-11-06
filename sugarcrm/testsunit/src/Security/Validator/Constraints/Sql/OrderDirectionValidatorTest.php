@@ -33,6 +33,33 @@ class OrderDirectionValidatorTest extends AbstractConstraintValidatorTest
 
     /**
      * @covers ::validate
+     */
+    public function testNullIsValid()
+    {
+        $this->validator->validate(null, new OrderDirection());
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @covers ::validate
+     */
+    public function testEmptyStringIsValid()
+    {
+        $this->validator->validate('', new OrderDirection());
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @covers ::validate
+     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
+     */
+    public function testExpectsStringCompatibleType()
+    {
+        $this->validator->validate(new \stdClass(), new OrderDirection());
+    }
+
+    /**
+     * @covers ::validate
      * @dataProvider providerTestValidValues
      */
     public function testValidValues($value)
@@ -75,10 +102,6 @@ class OrderDirectionValidatorTest extends AbstractConstraintValidatorTest
     public function providerTestInvalidValues()
     {
         return array(
-            array(
-                null,
-                OrderDirection::ERROR_STRING_REQUIRED,
-            ),
             array(
                 'foobar',
                 OrderDirection::ERROR_ILLEGAL_FORMAT,
