@@ -32,15 +32,15 @@ class GuidValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Guid');
         }
 
-        // check for string
-        if (!is_string($value)) {
-            $this->context->buildViolation($constraint->message)
-                ->setParameter('%msg%', 'string expected')
-                ->setInvalidValue($value)
-                ->setCode(Guid::ERROR_STRING_REQUIRED)
-                ->addViolation();
+        if (null === $value || '' === $value) {
             return;
         }
+
+        if (!is_scalar($value) && !(is_object($value) && method_exists($value, '__toString'))) {
+            throw new UnexpectedTypeException($value, 'string');
+        }
+
+        $value = (string) $value;
 
         // check for allowed characters
         if (!preg_match('/^[a-z0-9\-]*$/i', $value)) {

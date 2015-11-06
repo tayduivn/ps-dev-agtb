@@ -45,15 +45,15 @@ class FileValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\File');
         }
 
-        // check for string
-        if (!is_string($value)) {
-            $this->context->buildViolation($constraint->message)
-                ->setInvalidValue($value)
-                ->setCode(File::ERROR_STRING_REQUIRED)
-                ->setParameter('%msg%', 'string expected')
-                ->addViolation();
+        if (null === $value || '' === $value) {
             return;
         }
+
+        if (!is_scalar($value) && !(is_object($value) && method_exists($value, '__toString'))) {
+            throw new UnexpectedTypeException($value, 'string');
+        }
+
+        $value = (string) $value;
 
         // check for null bytes
         if (strpos($value, chr(0)) !== false) {
