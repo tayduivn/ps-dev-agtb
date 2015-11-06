@@ -1228,4 +1228,58 @@ class PMSEEngineUtils
 
         return $element['act_fields'];
     }
+
+    /**
+     * Get LinkName from a bean using module name and relationship name
+     * @param $flowData
+     * @return mixed
+     * @throws Exception
+     */
+    public static function getRelatedLinkName($flowData)
+    {
+        $bean = BeanFactory::getBean($flowData['rel_process_module']);
+        $relName = $flowData['rel_element_relationship'];
+        $bean->load_relationship($relName);
+        if ($bean->$relName) {
+            return $bean->$relName->getRelatedModuleLinkName();
+        }
+
+        throw new \Exception("Related module link name not found for {$flowData['evn_module']}->{$relName}");
+    }
+
+    /**
+     * @param $flowData
+     * @return bool
+     */
+    public static function isTargetModuleNotProcessModule($flowData)
+    {
+        return isset($flowData['rel_process_module'], $flowData['rel_element_relationship'], $flowData['rel_element_module'])
+        && $flowData['rel_element_module'] !== $flowData['rel_process_module'];
+    }
+
+    /**
+     * @param $flowData
+     * @param $bean
+     * @return bool
+     */
+    public static function isTargetModule($flowData, $bean)
+    {
+        return !(self::isTargetModuleNotProcessModule($flowData) && $bean->module_dir !== $flowData['rel_process_module']);
+    }
+
+    /**
+     * @param $flowData
+     * @param $bean
+     * @return mixed|null
+     * @throws Exception
+     */
+    public static function getParentBean($flowData, $bean) {
+        $linkName = self::getRelatedLinkName($flowData);
+        $parentBean = $bean->$linkName->getBeans(array('limit' => 1));
+        if (empty($parentBean)) {
+            //Parent Bean not found
+            return null;
+        }
+        return current($parentBean);
+    }
 }
