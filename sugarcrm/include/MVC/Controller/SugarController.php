@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once 'include/MVC/View/SugarView.php';
 
@@ -138,6 +139,11 @@ class SugarController
 									  );
 
     /**
+     * @var Request
+     */
+    protected $request;
+
+    /**
      * Constructor. This is meant to load up the module, action, record as well
      * as the mapping arrays.
      * @deprecated
@@ -152,6 +158,7 @@ class SugarController
      */
     public function __construct()
     {
+        $this->request = InputValidation::getService();
     }
 
     /**

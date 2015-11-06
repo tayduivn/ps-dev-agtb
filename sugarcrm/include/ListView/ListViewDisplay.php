@@ -11,7 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: ListViewDisplay.php 56945 2010-06-14 19:51:27Z jmertic $
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 require_once('include/ListView/ListViewData.php');
 require_once('include/MassUpdate.php');
@@ -39,6 +40,11 @@ class ListViewDisplay {
 	var $mergeDisplayColumns = false;
     public $actionsMenuExtraItems = array();
 
+    /**
+     * @var Request
+     */
+    protected $request;
+
 	/**
 	 * Constructor
 	 * @return null
@@ -46,7 +52,9 @@ class ListViewDisplay {
 	function ListViewDisplay() {
 		$this->lvd = new ListViewData();
 		$this->searchColumns = array () ;
+        $this->request = InputValidation::getService();
 	}
+
 	function shouldProcess($moduleDir){
 		$searching = false;
 		$sessionSearchQuery = "{$moduleDir}2_QUERY_QUERY";
@@ -401,19 +409,28 @@ class ListViewDisplay {
 	{
         global $app_strings, $dictionary;
 
-        $return_string='';
-        $return_string.= isset($_REQUEST['module']) ? "&return_module={$_REQUEST['module']}" : "";
-        $return_string.= isset($_REQUEST['action']) ? "&return_action={$_REQUEST['action']}" : "";
-        $return_string.= isset($_REQUEST['record']) ? "&return_id={$_REQUEST['record']}" : "";
         //need delete and edit access.
 		if (!(ACLController::checkAccess($this->seed->module_dir, 'edit', true)) or !(ACLController::checkAccess($this->seed->module_dir, 'delete', true))) {
 			return "";
 		}
 
         if (isset($dictionary[$this->seed->object_name]['duplicate_merge']) && $dictionary[$this->seed->object_name]['duplicate_merge']==true ) {
+            $params = array(
+                'return_module' => $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName'),
+                'return_action' => $this->request->getValidInputRequest('action'),
+                'return_id' => $this->request->getValidInputRequest('record', 'Assert\Guid'),
+            );
+            $params = array_filter($params);
+
+            if (count($params) > 0) {
+                $return_string = '&' . http_build_query($params);
+            } else {
+                $return_string = '';
+            }
+
             return "<a href='javascript:void(0)' ".
                             "id='mergeduplicates_listview_". $loc ."'".
-                            "onclick='if (sugarListView.get_checks_count()> 1) {sListView.send_form(true, \"MergeRecords\", \"index.php\", \"{$app_strings['LBL_LISTVIEW_NO_SELECTED']}\", \"{$this->seed->module_dir}\",\"$return_string\");} else {alert(\"{$app_strings['LBL_LISTVIEW_TWO_REQUIRED']}\");return false;}'>".
+                            "onclick='if (sugarListView.get_checks_count()> 1) {sListView.send_form(true, \"MergeRecords\", \"index.php\", \"{$app_strings['LBL_LISTVIEW_NO_SELECTED']}\", \"{$this->seed->module_dir}\", " . htmlspecialchars(json_encode($return_string), ENT_QUOTES, 'UTF-8') . ");} else {alert(\"{$app_strings['LBL_LISTVIEW_TWO_REQUIRED']}\");return false;}'>".
                             $app_strings['LBL_MERGE_DUPLICATES'].'</a>';
         }
 

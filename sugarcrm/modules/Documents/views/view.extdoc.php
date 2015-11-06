@@ -27,11 +27,7 @@ class DocumentsViewExtdoc extends SugarView
 
         global $mod_strings;
 
-        if ( isset($_REQUEST['name_basic']) ) {
-            $file_search = trim($_REQUEST['name_basic']);
-        } else {
-            $file_search = '';
-        }
+        $file_search = $this->request->getValidInputRequest('name_basic');
 
         if ( !isset($_REQUEST['apiName']) ) {
             $apiName = 'IBMSmartCloud';

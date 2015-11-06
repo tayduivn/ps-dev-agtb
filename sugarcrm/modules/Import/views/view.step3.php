@@ -164,6 +164,8 @@ class ImportViewStep3 extends ImportView
             $column_sel_from_req = true;
         }
 
+        $import_module = $this->request->getValidInputRequest('import_module', 'Assert\Mvc\ModuleName');
+
         for($field_count = 0; $field_count < $ret_field_count; $field_count++) {
             // See if we have any field map matches
             $defaultValue = "";
@@ -251,7 +253,7 @@ class ImportViewStep3 extends ImportView
             $defaultFieldHTML = '';
             if ( !empty($defaultField) ) {
                 $defaultFieldHTML = getControl(
-                    $_REQUEST['import_module'],
+                    $import_module,
                     $defaultField,
                     $fields[$defaultField],
                     ( isset($default_values[$defaultField]) ? $default_values[$defaultField] : '' )
@@ -326,7 +328,7 @@ class ImportViewStep3 extends ImportView
                 $defaultFieldHTML = '';
                 if ( !empty($defaultField) ) {
                     $defaultFieldHTML = getControl(
-                        $_REQUEST['import_module'],
+                        $import_module,
                         $defaultField,
                         $fields[$defaultField],
                         $default_value

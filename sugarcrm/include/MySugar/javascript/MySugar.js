@@ -732,7 +732,10 @@ SUGAR.mySugar = function() {
 				newDashlet.id = 'dashlet_' + data.responseText;
 				newDashlet.className = 'noBullet active';
 				// hide it first, but append to getRegion
-				newDashlet.innerHTML = '<div style="position: absolute; top: -1000px; overflow: hidden;" id="dashlet_entire_' + data.responseText + '"></div>';
+                var div = document.createElement("div");
+                div.style = "position: absolute; top: -1000px; overflow: hidden";
+                div.id = "dashlet_entire_" + data.responseText;
+                newDashlet.appendChild(div);
 
 				colZero.insertBefore(newDashlet, colZero.firstChild); // insert it into the first column
 				
