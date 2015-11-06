@@ -41,9 +41,9 @@ class ModuleNameValidator extends BeanModuleNameValidator
     /**
      * Ctor
      */
-    public function __construct()
+    public function __construct(array $moduleList = null)
     {
-        $this->moduleList = $this->getModulesFromGlobals();
+        $this->moduleList = $moduleList ?: $this->getModulesFromGlobals();
     }
 
     /**
@@ -52,7 +52,8 @@ class ModuleNameValidator extends BeanModuleNameValidator
      */
     protected function getModulesFromGlobals()
     {
-        global $moduleList, $modInvisList;
+        $moduleList = isset($GLOBALS['moduleList']) ? $GLOBALS['moduleList'] : array();
+        $modInvisList = isset($GLOBALS['modInvisList']) ? $GLOBALS['modInvisList'] : array();
         return array_merge($moduleList, $modInvisList);
     }
 
@@ -64,7 +65,7 @@ class ModuleNameValidator extends BeanModuleNameValidator
     protected function isValidModule($module)
     {
         // try beans first
-        if (parent::isValidModule($module)) {
+        if ($this->isValidBeanModule($module)) {
             return true;
         }
 
@@ -79,5 +80,15 @@ class ModuleNameValidator extends BeanModuleNameValidator
         }
 
         return false;
+    }
+
+    /**
+     * Check if bean module exists
+     * @param string $value
+     * @return boolean
+     */
+    protected function isValidBeanModule($module)
+    {
+        return \BeanFactory::getBeanName($module) ? true : false;
     }
 }

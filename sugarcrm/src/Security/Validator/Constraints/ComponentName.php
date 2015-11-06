@@ -21,12 +21,10 @@ use Symfony\Component\Validator\Constraint;
  */
 class ComponentName extends Constraint
 {
-    const ERROR_STRING_REQUIRED = 1;
-    const ERROR_INVALID_COMPONENT_NAME = 2;
-    const ERROR_RESERVED_KEYWORD = 3;
+    const ERROR_INVALID_COMPONENT_NAME = 1;
+    const ERROR_RESERVED_KEYWORD = 2;
 
     protected static $errorNames = array(
-        self::ERROR_STRING_REQUIRED => 'ERROR_STRING_REQUIRED',
         self::ERROR_INVALID_COMPONENT_NAME => 'ERROR_INVALID_COMPONENT_NAME',
         self::ERROR_RESERVED_KEYWORD => 'ERROR_RESERVED_KEYWORD',
     );

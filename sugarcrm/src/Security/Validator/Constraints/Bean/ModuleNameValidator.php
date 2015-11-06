@@ -32,17 +32,16 @@ class ModuleNameValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\ModuleName');
         }
 
-        // check for string first
-        if (!is_string($value)) {
-            $this->context->buildViolation($constraint->message)
-                ->setParameter('%module%', 'string violation')
-                ->setInvalidValue($value)
-                ->setCode(ModuleName::ERROR_STRING)
-                ->addViolation();
+        if (null === $value || '' === $value) {
             return;
         }
 
-        // validate module name
+        if (!is_scalar($value) && !(is_object($value) && method_exists($value, '__toString'))) {
+            throw new UnexpectedTypeException($value, 'string');
+        }
+
+        $value = (string) $value;
+
         if (!$this->isValidModule($value)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('%module%', $value)
@@ -50,7 +49,6 @@ class ModuleNameValidator extends ConstraintValidator
                 ->setCode(ModuleName::ERROR_UNKNOWN_MODULE)
                 ->addViolation();
         }
-
     }
 
     /**

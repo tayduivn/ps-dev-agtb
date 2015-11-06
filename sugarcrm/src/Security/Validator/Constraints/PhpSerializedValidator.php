@@ -37,15 +37,15 @@ class PhpSerializedValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\PhpSerialized');
         }
 
-        // check for string
-        if (!is_string($value)) {
-            $this->context->buildViolation($constraint->message)
-                ->setParameter('%msg%', 'string expected')
-                ->setInvalidValue($value)
-                ->setCode(PhpSerialized::ERROR_STRING_REQUIRED)
-                ->addViolation();
+        if (null === $value || '' === $value) {
             return;
         }
+
+        if (!is_scalar($value) && !(is_object($value) && method_exists($value, '__toString'))) {
+            throw new UnexpectedTypeException($value, 'string');
+        }
+
+        $value = (string) $value;
 
         // detect any objects
         preg_match('/[oc]:\d+:/i', $value, $matches);

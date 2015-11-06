@@ -32,9 +32,13 @@ class ComponentNameValidator extends ConstraintValidator
     /**
      * Ctor
      */
-    public function __construct()
+    public function __construct(array $sqlKeywords = null)
     {
-        $this->sqlKeywords = \DBManager::$reserved_words;
+        if ($sqlKeywords !== null) {
+            $this->sqlKeywords = $sqlKeywords;
+        } elseif ($db = \DBManagerFactory::getInstance()) {
+            $this->sqlKeywords = $db->getReservedWords();
+        }
     }
 
     /**
@@ -46,15 +50,15 @@ class ComponentNameValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\ComponentName');
         }
 
-        // check for string
-        if (!is_string($value)) {
-            $this->context->buildViolation($constraint->message)
-                ->setParameter('%msg%', 'string expected')
-                ->setInvalidValue($value)
-                ->setCode(ComponentName::ERROR_STRING_REQUIRED)
-                ->addViolation();
+        if (null === $value || '' === $value) {
             return;
         }
+
+        if (!is_scalar($value) && !(is_object($value) && method_exists($value, '__toString'))) {
+            throw new UnexpectedTypeException($value, 'string');
+        }
+
+        $value = (string) $value;
 
         // check for invalid characters
         if (!preg_match('/^[a-z][a-z0-9_]*$/i', $value)) {

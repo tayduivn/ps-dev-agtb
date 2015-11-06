@@ -21,12 +21,10 @@ use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValue;
  */
 class PhpSerialized extends ConstraintReturnValue
 {
-    const ERROR_STRING_REQUIRED = 1;
-    const ERROR_OBJECT_NOT_ALLOWED = 2;
-    const ERROR_UNSERIALIZE = 3;
+    const ERROR_OBJECT_NOT_ALLOWED = 1;
+    const ERROR_UNSERIALIZE = 2;
 
     protected static $errorNames = array(
-        self::ERROR_STRING_REQUIRED => 'ERROR_STRING_REQUIRED',
         self::ERROR_OBJECT_NOT_ALLOWED => 'ERROR_OBJECT_NOT_ALLOWED',
         self::ERROR_UNSERIALIZE => 'ERROR_UNSERIALIZE',
     );
