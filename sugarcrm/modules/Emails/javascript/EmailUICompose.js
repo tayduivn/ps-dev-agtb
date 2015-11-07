@@ -2459,6 +2459,17 @@ SE.composeLayout = {
 ////    SE.util
 SE.util = {
     /**
+     * nl2br implementation on client-side
+     * @param string
+     * @param bool
+     * @return string
+     */
+    nl2br : function(str, is_xhtml) {
+        var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+        return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+    },
+
+    /**
      * Cleans serialized UID lists of duplicates
      * @param string
      * @return string
