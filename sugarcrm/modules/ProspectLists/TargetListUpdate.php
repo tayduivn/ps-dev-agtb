@@ -20,6 +20,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 require_once 'include/formbase.php';
 
 $focus = BeanFactory::getBean($_REQUEST['module']);
@@ -27,8 +29,13 @@ $focus = BeanFactory::getBean($_REQUEST['module']);
 $uids = array();
 if($_REQUEST['select_entire_list'] == '1'){
 	require_once('include/MassUpdate.php');
+    $module = InputValidation::getService()->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
+    $current_query_by_page = InputValidation::getService()->request->getValidInputRequest(
+        'current_query_by_page',
+        array('Assert\PhpSerialized' => array('base64Encoded' => true))
+    );
 	$mass = new MassUpdate();
-	$mass->generateSearchWhere($_REQUEST['module'], $_REQUEST['current_query_by_page']);
+	$mass->generateSearchWhere($module, $current_query_by_page);
     $query = $focus->create_new_list_query('', $mass->where_clauses, $mass->searchFields);
 	$result = $GLOBALS['db']->query($query,true);
 	$uids = array();

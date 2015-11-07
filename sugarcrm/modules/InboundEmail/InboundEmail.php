@@ -11,6 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Serialized;
+
 require_once('include/OutboundEmail/OutboundEmail.php');
 
 function this_callback($str) {
@@ -1061,7 +1063,7 @@ class InboundEmail extends SugarBean {
 	    			flush();
 				} // while
 				fclose($fh);
-				$diff = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($data);
+				$diff = Serialized::unserialize($data);
 				if (!empty($diff)) {
 					if (count($diff)> 50) {
 	                	$newDiff = array_slice($diff, 50, count($diff), true);
@@ -1516,7 +1518,7 @@ class InboundEmail extends SugarBean {
                     flush();
                 } // while
                 fclose($fh);
-                $results = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($data);
+                $results = Serialized::unserialize($data);
             } // if
         } // if
         if (!$cacheDataExists) {
@@ -2723,10 +2725,7 @@ class InboundEmail extends SugarBean {
 			if($this->getAutoreplyStatus($contactAddr)
 			&& $this->checkOutOfOffice($email->name)
 			&& $this->checkFilterDomain($email)) { // if we haven't sent this guy 10 replies in 24hours
-
-				if(!empty($this->stored_options)) {
-					$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($this->stored_options));
-				}
+				$storedOptions = Serialized::unserialize($this->stored_options, array(), true);
 				// get FROM NAME
 				if(!empty($storedOptions['from_name'])) {
 					$from_name = $storedOptions['from_name'];
@@ -2940,9 +2939,7 @@ class InboundEmail extends SugarBean {
 			$email->save();
 			$GLOBALS['log']->debug('InboundEmail created one case with number: '.$c->case_number);
 			$createCaseTemplateId = $this->get_stored_options('create_case_email_template', "");
-			if(!empty($this->stored_options)) {
-				$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($this->stored_options));
-			}
+			$storedOptions = Serialized::unserialize($this->stored_options, array(), true);
 			if(!empty($createCaseTemplateId)) {
 				$fromName = "";
 				$fromAddress = "";
@@ -4707,7 +4704,7 @@ eoq;
 			$stored_options=$this->stored_options;
 		}
 		if(!empty($stored_options)) {
-			$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($stored_options));
+			$storedOptions = Serialized::unserialize($this->stored_options, array(), true);
 			if (isset($storedOptions[$option_name])) {
 				$default_value=$storedOptions[$option_name];
 			}
@@ -4762,7 +4759,7 @@ eoq;
 	 * @return array Array of messageNumbers (mail server's internal keys)
 	 */
 	function getNewMessageIds() {
-		$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($this->stored_options));
+		$storedOptions = Serialized::unserialize($this->stored_options, array(), true);
 
 		//TODO figure out if the since date is UDT
 		if($storedOptions['only_since']) {// POP3 does not support Unseen flags
@@ -6365,7 +6362,7 @@ eoq;
 				$delimiter = $mbox->delimiter;
 			}
 		}
-		$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($this->stored_options));
+		$storedOptions = Serialized::unserialize($this->stored_options, array(), true);
 		$storedOptions['folderDelimiter'] = $delimiter;
 		$this->stored_options = base64_encode(serialize($storedOptions));
         $this->save();
