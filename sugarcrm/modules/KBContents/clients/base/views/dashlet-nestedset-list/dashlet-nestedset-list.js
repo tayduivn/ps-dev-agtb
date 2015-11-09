@@ -107,7 +107,9 @@
                     if (self.layout.disposed === true) {
                         return;
                     }
-                    self.layout.reloadDashlet({complete: function() {}, saveLeafs: false});
+                    if (!_.isUndefined(self.layout.reloadDashlet)) {
+                        self.layout.reloadDashlet({complete: function() {}, saveLeafs: false});
+                    }
                 }, this);
             }, this);
         }

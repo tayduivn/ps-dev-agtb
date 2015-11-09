@@ -226,6 +226,15 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     }
 
     /**
+     * Set the highlighter to add tags in value.
+     * @param array $setting the value of the field setting
+     */
+    public function setWrapValueWithTags(array $setting)
+    {
+        $this->highlighter->setWrapValueWithTags($setting);
+    }
+
+    /**
      * Add weighted definition for booster
      * @param array $weighted
      */

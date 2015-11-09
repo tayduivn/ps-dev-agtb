@@ -79,6 +79,11 @@ abstract class AbstractHighlighter implements HighlighterInterface
     protected $fieldRemap = array();
 
     /**
+     * @var array fields to wrap the value with tags or not
+     */
+    protected $wrapValueWithTags = array();
+
+    /**
      * Set fields
      * @param array $fields
      * @return AbstractHighlighter
@@ -167,6 +172,17 @@ abstract class AbstractHighlighter implements HighlighterInterface
     }
 
     /**
+     * Set to enable/disable wrapping the value with tags.
+     * @param array $setting the value of the setting
+     * @return AbstractHighlighter
+     */
+    public function setWrapValueWithTags(array $setting)
+    {
+        $this->wrapValueWithTags = array_merge($this->wrapValueWithTags, $setting);
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function build()
@@ -205,6 +221,11 @@ abstract class AbstractHighlighter implements HighlighterInterface
             // Normalize the field name
             $normField = $this->normalizeFieldName($field);
 
+            // Wrap the highlight value with tags if needed
+            if (isset($this->wrapValueWithTags[$normField])) {
+                $value = $this->wrapValueWithTags($value);
+            }
+
             // Multiple highlights can be returned for the same field, if so we
             // add them and filter out any duplicates.
             if (isset($parsed[$normField])) {
@@ -224,5 +245,16 @@ abstract class AbstractHighlighter implements HighlighterInterface
     public function normalizeFieldName($field)
     {
         return isset($this->fieldRemap[$field]) ? $this->fieldRemap[$field] : $field;
+    }
+
+    /**
+     * Wrap the value with tags so that the whole value will be highlighted.
+     *
+     * @param $value array the array of the highlighted values
+     * @return array the array of the new highlighted values
+     */
+    protected function wrapValueWithTags($value)
+    {
+        return $value;
     }
 }

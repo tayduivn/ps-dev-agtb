@@ -2953,8 +2953,11 @@ sugarListView.prototype.send_mass_update = function(mode, no_record_txt, del) {
 							ar.push(document.MassUpdate.elements[wp].value);
 				}
 			}
-			if(document.MassUpdate.uid.value != '') document.MassUpdate.uid.value += ',';
-			document.MassUpdate.uid.value += ar.join(',');
+            var uidAdd = ar.join(',');
+            if (uidAdd != '' && document.MassUpdate.uid.value != '') {
+                document.MassUpdate.uid.value += ',';
+            }
+            document.MassUpdate.uid.value += uidAdd;
 			if(document.MassUpdate.uid.value == '') {
 				alert(no_record_txt);
 				return false;

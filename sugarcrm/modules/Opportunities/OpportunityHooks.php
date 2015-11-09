@@ -119,4 +119,32 @@ class OpportunityHooks extends AbstractForecastHooks
             }
         }
     }
+
+    /**
+     * Before we save, we need to check to see if this opp is in a closed state. If so,
+     * set it to the proper included/excluded state in case mass_update tried to set it to something wonky
+     * @param RevenueLineItem $bean
+     * @param string $event
+     * @param array $args
+     */
+    public static function beforeSaveIncludedCheck($bean, $event, $args)
+    {
+        $settings = Forecast::getSettings(true);
+
+        if ($settings['is_setup'] && $event == 'before_save') {
+            $forecast_ranges = $settings['forecast_ranges'];
+            $ranges = $settings[$forecast_ranges . '_ranges'];
+            $commit_stage = "";
+
+            //find the proper include stage for the percentage
+            foreach ($ranges as $key => $value) {
+                if ($bean->probability >= $value['min'] && $bean->probability <= $value['max']) {
+                    $commit_stage = $key;
+                    break;
+                }
+            }
+
+            $bean->commit_stage = $commit_stage;
+        }
+    }
 }
