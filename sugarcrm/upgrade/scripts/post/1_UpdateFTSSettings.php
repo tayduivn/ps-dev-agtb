@@ -270,16 +270,10 @@ class SugarUpgradeUpdateFTSSettings extends UpgradeScript
                 unset($dictionary[$moduleName]['fields'][$fieldName]['full_text_search']);
             }
         }
-        $defs = $dictionary[$moduleName]['fields'][$fieldName];
 
         $out =  "<?php\n // created: " . date('Y-m-d H:i:s') . "\n";
-        foreach ($defs as $name => $data) {
-            $out .= override_value_to_string_recursive(
-                array($moduleName, "fields", $fieldName, $name),
-                "dictionary",
-                $data
-            );
-            $out .= "\n";
+        foreach (array_keys($dictionary) as $key) {
+            $out .= override_value_to_string_recursive2('dictionary', $key, $dictionary[$key]);
         }
         $out .= "\n";
 
