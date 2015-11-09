@@ -300,11 +300,12 @@ class Audit extends SugarBean
                     if(!ACLField::hasAccess($row['field_name'], $focus->module_dir, $GLOBALS['current_user']->id, $focus->isOwner($GLOBALS['current_user']->id))) continue;
 
                     //If the team_set_id field has a log entry, we retrieve the list of teams to display
-                    if ($row['field_name'] == 'team_set_id') {
-                       $row['field_name'] = 'team_name';
-                       require_once 'modules/Teams/TeamSetManager.php';
-                       $row['before_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['before_value_string']);
-                       $row['after_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['after_value_string']);
+                    $viewName = array_search($row['field_name'], Team::$nameTeamsetMapping);
+                    if ($viewName) {
+                        $row['field_name'] = $viewName;
+                        require_once 'modules/Teams/TeamSetManager.php';
+                        $row['before_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['before_value_string']);
+                        $row['after_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['after_value_string']);
                     }
                     $temp_list = array();
 
