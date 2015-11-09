@@ -54,6 +54,7 @@ if(!empty($_REQUEST['name'])){
     }
     //Need to nuke the ACl cache when ACL roles change.
     $role->clearCaches();
+    $role->updateUsersACLInfo();
 
     echo "result = {role_id:'$role->id', module:'$flc_module'}";
     sugar_cleanup(true);

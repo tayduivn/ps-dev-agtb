@@ -89,6 +89,12 @@
             this.module,
             {module: app.lang.get(this.def.label, this.module)}
         );
+        this.before('render', function() {
+            if (this.$(this.ddEl).length !== 0 && this._dropdownExists()) {
+                this.closeDropDown();
+            }
+            return true;
+        });
     },
 
     /**
