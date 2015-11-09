@@ -366,23 +366,27 @@ UpdaterField.prototype.isValid = function () {
     var i, valid = true, current, field;
     for (i = 0; i < this.options.length; i += 1) {
         field = this.options[i];
-        if (field.isRequired()) {
-            switch (field.type) {
-                case 'CheckboxUpdaterItem':
-                    valid = field.getValue();
-                    break;
-                case 'DateUpdaterItem':
-                case 'NumberUpdaterItem':
-                    valid = !!field.getValue().length;
-                    break;
-                default:
-                    if (field.getValue() === '') {
-                        valid = false;
-                    }
-                    break;
+        if (field.isValid()) {
+            if (field.isRequired()) {
+                switch (field.type) {
+                    case 'CheckboxUpdaterItem':
+                        valid = field.getValue();
+                        break;
+                    case 'DateUpdaterItem':
+                    case 'NumberUpdaterItem':
+                        valid = !!field.getValue().length;
+                        break;
+                    default:
+                        if (field.getValue() === '') {
+                            valid = false;
+                        }
+                        break;
+                }
             }
-
+        } else {
+            valid = false;
         }
+
         //TODO: create validation for expressions built with expressionControl.
         if (field._parent.hasCheckbox && field.isDisabled()) {
             valid = true;
@@ -406,6 +410,36 @@ UpdaterField.prototype.isValid = function () {
     return valid;
 };
 
+UpdaterField.prototype._updateCurrencyFields = function (currency, ignore) {
+    var i, j;
+    var field;
+    var value;
+    var targetCurrency = App.metadata.getCurrencies()[currency];
+    var originalCurrency;
+
+    for (i = 0; i < this.options.length; i += 1) {
+        field = this.options[i];
+        if (field !== ignore && field instanceof NumberUpdaterItem && field.isCurrency()) {
+            value = field.getValue();
+            for (j = 0; j < value.length; j += 1) {
+                if (value[j].expType === 'CONSTANT' && value[j].expSubtype === 'currency' && value[j].expField !== currency) {
+                    originalCurrency = App.metadata.getCurrencies()[value[j].expField];
+                    value[j].expValue = FormPanelCurrency.convertCurrency(value[j].expValue, parseFloat(originalCurrency.conversion_rate), parseFloat(targetCurrency.conversion_rate));
+                    value[j].expField = currency;
+                    value[j].expLabel = targetCurrency.symbol + "(" + targetCurrency.iso4217 + ") "
+                        + FormPanelNumber.format(value[j].expValue, {
+                            precision: 2,
+                            groupingSeparator: this._numberGroupingSeparator,
+                            decimalSeparator: this._decimalSeparator
+                        });
+                }
+            }
+            field.setValue(value);
+        }
+    }
+    return this;
+};
+
 /**
  * Obtains and creates the variable string according to the format established
  * for handling variables in sugar
@@ -414,8 +448,15 @@ UpdaterField.prototype.isValid = function () {
 UpdaterField.prototype._onValueGenerationHandler = function (module) {
     var  that = this;
     return function () {
-        var newExpression, field = that.currentField, control, i, currentValue = field.getValue(), aux, aux2,
-            panel, list;
+        var newExpression;
+        var field = that.currentField;
+        var control;
+        var i, aux2;
+        var currentValue = field.getValue()
+        var panel;
+        var list;
+        var usedCurrency = null;
+        var aux = true;
 
         control = field._control;
         if (this instanceof ExpressionControl) {
@@ -432,7 +473,33 @@ UpdaterField.prototype._onValueGenerationHandler = function (module) {
             newExpression = aux + newExpression + aux2;
         }
 
-        field.setValue(newExpression);
+        if (field instanceof NumberUpdaterItem && field.isCurrency()) {
+            for (i = 0; i < newExpression.length; i += 1) {
+                if (newExpression[i].expType === 'CONSTANT' && newExpression[i].expSubtype === 'currency') {
+                    if (usedCurrency !== null && usedCurrency !== newExpression[i].expField) {
+                        App.alert.show('br-save-error', {
+                            level: 'error',
+                            messages: translate('LBL_PMSE_MESSAGE_ERROR_CURRENCIES_MIX'),
+                            autoClose: true
+                        });
+                        aux = false;
+                        break;
+                    }
+                    usedCurrency = newExpression[i].expField;
+                }
+            }
+            if (aux) {
+                field.setValue(newExpression);
+                if (usedCurrency !== null) {
+                    that._updateCurrencyFields(usedCurrency, field);
+                }
+            } else {
+                panel.setValue(field.getValue(), true);
+            }
+        } else {
+            field.setValue(newExpression);
+        }
+
         if (!(panel instanceof ExpressionControl)) {
             panel.close();
         }
@@ -566,7 +633,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
         }
         this.currentField = field;
         //We can't send an empty string since JSON can't parse it
-        this._datePanel.setValue(field.getValue() || []);
+        this._datePanel.setValue(field.getValue() || [], true);
         if (this._variablesList && this._variablesList.isOpen()) {
             this._variablesList.close();
         }
@@ -713,7 +780,7 @@ UpdaterItem.prototype.isRequired = function () {
 };
 
 UpdaterItem.prototype.isValid = function () {
-    return !!(this._required && this._value);
+    return this._required ? !!this._value : true;
 };
 
 UpdaterItem.prototype.clear = function () {
@@ -1183,6 +1250,45 @@ NumberUpdaterItem.prototype.setValue = function (value) {
     return this;
 };
 
+NumberUpdaterItem.prototype.isValid = function () {
+    var isValid = true;
+    var value = this.getValue().slice(0);
+    var i;
+    var prev = null;
+    var currType;
+    var currValue;
+
+    // TODO: the next validation must be implemented in ExpressionControl based on the kind of result it expects to return.
+
+    // We need to validate that a valid expression is inserted in the control
+    // First, check the syntax
+    for (i = 0; i < value.length; i += 1) {
+        currType = value[i].expType;
+        currValue = value[i].expValue;
+        if (prev === null) {
+            if (currType === 'ARITMETIC' && currValue !== '(') {
+                return false;
+            }
+        } else {
+            if ((currType === 'CONSTANT' || currType === 'VARIABLE' || (currType === 'ARITMETIC' && currValue === '(')) && (prev.expType === 'CONSTANT' || prev.expType === 'VARIABLE' || (prev.expType === 'ARITMETIC' && prev.expValue === ')'))) {
+                return false;
+            } else if ((currType === 'ARITMETIC' && currValue !== '(') && (prev.expType === 'ARITMETIC' && prev.expValue !== '(')) {
+                return false;
+            }
+        }
+        prev = value[i];
+    }
+
+    if (currType === 'ARITMETIC' && currValue !== ')') {
+        return false;
+    }
+
+    if (!isValid) {
+        return isValid;
+    }
+    return UpdaterItem.prototype.isValid.call(this);
+};
+
 NumberUpdaterItem.prototype._createControl = function () {
     var control = this.createHTMLElement("input");
     control.type = "text";
@@ -1565,11 +1671,12 @@ SearchUpdaterItem.prototype._createControl = function() {
         initSelection: _.bind(this._initSelection, this),
         width: this.fieldWidth || '220px'
     });
-    /*this.select2Control.on('change', function() {
-     var s2obj = self.select2Control.select2('data');
-     self.select2Control.data('text', s2obj.text);
-     self.setValue(s2obj.id);
-     });*/
+    var self = this;
+    this.select2Control.on('change', function () {
+        var s2obj = self.select2Control.select2('data');
+        self.select2Control.data('text', s2obj.text);
+        self.setValue(s2obj.id);
+    });
 
     this._control = this.select2Control.data("select2").container.get(0);
 

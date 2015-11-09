@@ -209,10 +209,11 @@ class Administration extends SugarBean {
         sugar_cache_clear('admin_settings_cache');
 
         // check to see if category is a module
-        if(!empty($platform)) {
+        if (!empty($platform)) {
             // we have an api call so lets clear out the cache for the module + platform
             global $moduleList;
-            if(in_array($category, $moduleList)) {
+            // FIXME TY-839 'portal' should be the platform, not category
+            if (in_array($category, $moduleList) || $category == 'portal') {
                 $cache_key = "ModuleConfig-" . $category;
                 if($platform != "base")  {
                     $cache_key .= $platform;

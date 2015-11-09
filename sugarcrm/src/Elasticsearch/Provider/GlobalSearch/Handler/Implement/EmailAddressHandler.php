@@ -76,10 +76,10 @@ class EmailAddressHandler extends AbstractHandler implements
      */
     protected $highlighterFields = array(
         '*.gs_email' => array(
-            'number_of_frags' => 0,
+            'number_of_fragments' => 0,
         ),
         '*.gs_email_wildcard' => array(
-            'number_of_frags' => 0,
+            'number_of_fragments' => 0,
         ),
     );
 
@@ -103,6 +103,9 @@ class EmailAddressHandler extends AbstractHandler implements
         // As we are searching against email_search field, we want to remap the
         // highlights from that field back to the original email field.
         $provider->addFieldRemap(array($this->searchField => 'email'));
+
+        // enable adding tags in the response's highlight values
+        $provider->setWrapValueWithTags(array('email' => true));
 
         // We don't want to add the email field to the queuemanager query
         // because we will populate the emails seperately.

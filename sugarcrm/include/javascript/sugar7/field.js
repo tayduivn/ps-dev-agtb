@@ -49,16 +49,11 @@
             /**
              * Handle validation errors.
              *
-             * Errors are being handled only when the view has the `ErrorDecoration` plugin.
-             * Sets the field to `edit` mode and decorates the field.
+             * Set to edit mode and decorates the field
              *
              * @param {Object} errors The validation error(s) affecting this field.
              */
             handleValidationError: function (errors) {
-                if (this.view && !_.contains(this.view.plugins, 'ErrorDecoration')) {
-                    return;
-                }
-
                 this.clearErrorDecoration();
                 _.defer(function (field) {
                     field._errors = errors;

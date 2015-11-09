@@ -921,6 +921,22 @@ describe("Record View", function () {
 
             expect(view.hasUnsavedChanges()).toBe(true);
         });
+        it('should warn unsaved changes when field that contains other fields changes', function() {
+            view.meta.panels[0].fields.push({
+                name: 'foo',
+                fields: [{
+                    name: 'bar'
+                }]
+            });
+            view.model.setSyncedAttributes({
+                foo: 'test1'
+            });
+            view.model.set({
+                foo: 'test2'
+            });
+
+            expect(view.hasUnsavedChanges()).toBe(true);
+        });
         it('should not warn unsaved changes when the value changed is marked as non-editable.', function() {
             view.noEditFields = ['case_number'];
             view.model.setSyncedAttributes({
