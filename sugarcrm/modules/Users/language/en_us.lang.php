@@ -625,7 +625,7 @@ $mod_strings = array (
 
     'LBL_FILTER_USERS_REPORTS' => 'Users\' reports',
     'LBL_CONTACTS_SYNC' => 'Contacts',
-
+    'LBL_DETAIL' => 'User Profile',
 ); // END STRINGS DEFS
 
 ?>

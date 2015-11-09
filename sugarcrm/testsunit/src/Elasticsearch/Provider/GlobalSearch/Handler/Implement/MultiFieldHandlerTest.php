@@ -93,13 +93,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 'highlighterFields',
                 array(
                     '*.field_default' => array(
-                        'number_of_frags' => 0,
+                        'number_of_fragments' => 0,
                     ),
                 ),
                 'addHighlighterFields',
                 array(
                     '*.field_default' => array(
-                        'number_of_frags' => 0,
+                        'number_of_fragments' => 0,
                     ),
                 ),
             ),

@@ -1365,7 +1365,12 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     public function doesProcessFlowExist($flo_uid)
     {
         $db = DBManagerFactory::getInstance();
-        $sql = 'select id from pmse_bpmn_flow where flo_uid = ' . $db->quoted($flo_uid) . ' AND deleted = 0 limit 1';
+        $flow_uid = $db->quoted($flo_uid);
+        $sql = "SELECT id
+                FROM pmse_bpmn_flow
+                WHERE
+                    flo_uid = $flow_uid AND
+                    deleted = 0";
         $result = $db->fetchOne($sql);
         return !empty($result);
     }

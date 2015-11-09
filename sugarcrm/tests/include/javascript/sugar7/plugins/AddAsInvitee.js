@@ -126,6 +126,25 @@ describe('Plugins.AddAsInvitee', function() {
         expect(view.model.get('invitees').get('123')).not.toBeUndefined();
     });
 
+    it('should add person as a merged and default invitee if default flag is set', function() {
+        var inviteeCollection,
+            inviteeAddSpy,
+            person = {
+                id: '123',
+                module: 'Contacts'
+            };
+
+        inviteeCollection = new Backbone.Collection();
+        view.model.set('invitees', inviteeCollection);
+        inviteeAddSpy = sandbox.spy(inviteeCollection, 'add');
+
+        expect(view.model.get('invitees').get('123')).toBeUndefined();
+        view.addAsInvitee(person, {default: true});
+        expect(view.model.get('invitees').get('123')).not.toBeUndefined();
+        expect(inviteeAddSpy.lastCall.args[1].merge).toEqual(true);
+        expect(inviteeAddSpy.lastCall.args[1].default).toEqual(true);
+    });
+
     it('should invite the assigned user', function() {
         var user;
 

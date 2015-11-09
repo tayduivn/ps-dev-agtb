@@ -263,7 +263,7 @@ EOF;
         $tabs = $tc->getPortalTabs();
         //If KBDocuments is disabled in portal mega menu, KBContents should not be added.
         $tabModules = array_values($tabs);
-        if (isset($tabModules['KBDocuments'])) {
+        if (in_array('KBDocuments', $tabModules)) {
             $tabs = array_diff($tabModules, array('KBDocuments', 'KBContents'));
             array_push($tabs, 'KBContents');
             $tc->setPortalTabs(array_values($tabs));

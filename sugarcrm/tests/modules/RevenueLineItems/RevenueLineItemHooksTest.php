@@ -19,6 +19,14 @@ class RevenueLineItemHooksTest extends Sugar_PHPUnit_Framework_TestCase
      */
     protected $rli;
 
+    public static function setUpBeforeClass()
+    {
+        SugarTestForecastUtilities::setUpForecastConfig(array(
+            'sales_stage_won' => array('Closed Won'),
+            'sales_stage_lost' => array('Closed Lost')
+        ));
+    }
+
     public function setUp()
     {
         parent::setUp();
@@ -32,7 +40,13 @@ class RevenueLineItemHooksTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->rli = null;
         SugarTestHelper::tearDown();
+        SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
         parent::tearDown();
+    }
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestForecastUtilities::tearDownForecastConfig();
     }
 
     /**
@@ -61,6 +75,29 @@ class RevenueLineItemHooksTest extends Sugar_PHPUnit_Framework_TestCase
             array('after_relationship_delete', array('link' => 'foo'), false, 1, 0),
             array('foo', array('link' => 'account_link'), false, 0, 0),
             array('foo', array('link' => 'foo'), false, 0, 0 ),
+        );
+    }
+
+    /**
+     * @dataProvider beforeSaveIncludedCheckProvider
+     */
+    public function testBeforeSaveIncludedCheck($sales_stage, $commit_stage, $probability, $expected)
+    {
+        $hookMock = new RevenueLineItemHooks();
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+
+        $rli->probability = $probability;
+        $rli->sales_stage = $sales_stage;
+        $rli->commit_stage = $commit_stage;
+
+        $hookMock->beforeSaveIncludedCheck($rli, 'before_save', null);
+        $this->assertEquals($rli->commit_stage, $expected);
+    }
+
+    public function beforeSaveIncludedCheckProvider(){
+        return array(
+            array('Closed Won', 'exclude', 100, 'include'),
+            array('Closed Lost', 'include', 0, 'exclude')
         );
     }
 }
