@@ -1078,12 +1078,35 @@ class PMSEEngineUtils
         return !in_array($def['name'], self::$blacklistedFields);
     }
 
+    /**
+     * Checks to see if a field name is deemed special based on the PMSE module
+     * type
+     * @param array $def The field def to check
+     * @param string $type The PMSE module type to check this field for
+     * @return boolean
+     */
     public static function specialFields($def, $type= 'All')
     {
+        // Without a name there is nothing to do
+        if (!isset($def['name'])) {
+            return false;
+        }
+
+        // Default the type if it was empty
         if (empty($type)) {
             $type = 'All';
         }
-        return isset($def['name'], self::$specialFields[$type]) && in_array($def['name'], self::$specialFields[$type]);
+
+        // Get the special fields list for this type if it exists
+        $sf = empty(self::$specialFields[$type]) ? array() : self::$specialFields[$type];
+
+        // Now merge the type special fields with special fields for all types
+        if ($type !== 'All') {
+            $sf = array_merge($sf, self::$specialFields['All']);
+        }
+
+        // Now check to see if the field is in this type
+        return in_array($def['name'], $sf);
     }
 
     /**
