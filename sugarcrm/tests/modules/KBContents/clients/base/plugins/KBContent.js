@@ -225,7 +225,7 @@ describe('Plugins.KBContents', function() {
         fakeModel.set('active_date', '');
         fakeModel.set('status', 'published');
         var errors = {};
-        sandbox.stub(fakeModel, 'getSyncedAttributes');
+        sandbox.stub(fakeModel, 'getSynced');
         sandbox.stub(fakeModel, 'changedAttributes', function() {
             return [];
         });
@@ -246,7 +246,7 @@ describe('Plugins.KBContents', function() {
         var expectedDate = '2010-10-10';
         fakeModel.set('active_date', '');
         fakeModel.set('exp_date', '');
-        sandbox.stub(fakeModel, 'getSyncedAttributes');
+        sandbox.stub(fakeModel, 'getSynced');
         sandbox.stub(fakeModel, 'changedAttributes', function() {
             return [];
         });

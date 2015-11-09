@@ -361,5 +361,17 @@
         this.$node.off('select2-removed');
         this.$node.off('select2-opening');
         this._super('dispose');
+    },
+
+    /**
+     * We do not support this field for preview edit
+     * @inheritdoc
+     */
+    _loadTemplate: function() {
+        this._super('_loadTemplate');
+
+        if (this.view.name === 'preview') {
+            this.template = app.template.getField('attachments', 'detail', this.model.module);
+        }
     }
 })

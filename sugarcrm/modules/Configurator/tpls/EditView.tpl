@@ -236,6 +236,24 @@
 </table>
 
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
+    <tr>
+        <th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_PREVIEW_SETTINGS}</h4></th>
+    </tr>
+    <tr>
+        <td width="25%" scope="row" valign='middle'>{$MOD.LBL_PREVIEW_EDIT}&nbsp{sugar_help text=$MOD.LBL_PREVIEW_EDIT_HELP WIDTH=400}</td>
+        {if !empty($config.preview_edit)}
+            {assign var='preview_edit_checked' value='CHECKED'}
+        {else}
+            {assign var='preview_edit_checked' value=''}
+        {/if}
+        <td width="75%" align="left"  valign='middle'>
+            <input type='hidden' name='preview_edit' value='false'>
+            <input name="preview_edit" value="true" class="checkbox" tabindex='1' type="checkbox" {$preview_edit_checked}>
+        </td>
+    </tr>
+</table>
+
+<table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>
 	<th align="left" scope="row" colspan="4"><h4>{$MOD.ADVANCED}</h4></th>
 	</tr>

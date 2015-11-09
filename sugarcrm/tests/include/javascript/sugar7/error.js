@@ -150,6 +150,7 @@ describe('Sugar7 error handler', function() {
             ], function(options) {
                 it('should only sync when we have a new metadata hash and a new user hash', function() {
                     sinon.collection.stub(app.metadata, 'getHash').returns(options.oldMetaHash);
+                    sinon.collection.stub(app.router, 'refresh');
                     sinon.collection.stub(app.user, 'get').withArgs('_hash').returns(options.oldUserHash);
 
                     var error = {

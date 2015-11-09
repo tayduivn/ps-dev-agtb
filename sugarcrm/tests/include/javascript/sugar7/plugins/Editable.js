@@ -45,11 +45,16 @@ describe("Editable Plugin", function() {
             randomFieldIndex = parseInt(Math.random() * (keys.length - 1), 10),
             randomField = view.fields[keys[randomFieldIndex]];
 
+        var hasChangedStub = sinon.stub(randomField, 'hasChanged', function() {
+            return false;
+        });
+
         expect(randomField.tplName).toBe(view.action);
         view.toggleField(randomField, true);
         expect(randomField.tplName).toBe('edit');
         view.toggleField(randomField);
         expect(randomField.tplName).toBe(view.action);
+        hasChangedStub.restore();
     });
 
     it("Should switch back to the previous mode when it triggers editableHandleMouseDown", function() {
@@ -67,10 +72,15 @@ describe("Editable Plugin", function() {
             randomFieldIndex = parseInt(Math.random() * (keys.length - 1), 10),
             randomField = view.fields[keys[randomFieldIndex]];
 
+        var hasChangedStub = sinon.stub(randomField, 'hasChanged', function() {
+            return false;
+        });
+
         view.toggleField(randomField, true);
         expect(randomField.tplName).toBe('edit');
         view.editableHandleMouseDown({target: null}, randomField);
         expect(randomField.tplName).toBe(view.action);
+        hasChangedStub.restore();
 
         delete app.drawer;
     });
@@ -126,12 +136,6 @@ describe("Editable Plugin", function() {
     describe("Warning unsaved changes", function() {
         var alertShowStub;
         beforeEach(function() {
-            app.router = {
-                navigate: $.noop,
-                refresh: $.noop,
-                hasAccessToModule: $.noop,
-                bwcRedirect: $.noop
-            };
             alertShowStub = sinonSandbox.stub(app.alert, "show");
             sinonSandbox.stub(Backbone.history, "getFragment");
         });

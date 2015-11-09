@@ -12,9 +12,9 @@ describe('Sugar7.Routes', function() {
         setStub = sinon.collection.stub(app.user.lastState, 'set');
 
         SugarTest.loadFile('../include/javascript', 'sugar7', 'js', function(d) {
-            app.events.off('app:init');
+            app.events.off('router:init');
             eval(d);
-            app.events.trigger('app:init');
+            app.events.trigger('router:init');
         });
         app.routing.start();
     });

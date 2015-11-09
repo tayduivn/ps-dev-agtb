@@ -1,8 +1,9 @@
 describe('Base.Layout.Default', function() {
-    var layout, app, def;
+    var layout, app, def, moduleName;
 
     beforeEach(function() {
         app = SugarTest.app;
+        moduleName = 'Accounts';
         def = {
             'components': [
                 {'layout': {'span': 4}},
@@ -13,7 +14,7 @@ describe('Base.Layout.Default', function() {
         SugarTest.loadComponent('base', 'layout', 'default');
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
-        layout = SugarTest.createLayout('base', null, 'default', def, null);
+        layout = SugarTest.createLayout('base', moduleName, 'default', def, null);
     });
 
     afterEach(function() {
@@ -92,7 +93,7 @@ describe('Base.Layout.Default', function() {
             });
             lastStateSetStub = sinon.collection.stub(app.user.lastState, 'set');
             _toggleVisibilityStub = sinon.collection.stub(layout, '_toggleVisibility');
-            validHideLastStateKey = 'default:hide';
+            validHideLastStateKey = moduleName + ':default:hide';
         });
 
         describe('when "true" is passed', function() {
@@ -145,9 +146,9 @@ describe('Base.Layout.Default', function() {
 
         describe('when the last state key is manually defined', function(){
             beforeEach(function () {
-                validHideLastStateKey = 'default:hide-test';
+                validHideLastStateKey = moduleName + ':default:hide-test';
                 def['hide_key'] = 'hide-test';
-                layout.initialize({ meta: def });
+                layout.initialize({meta: def, module: moduleName});
             });
             it('should use the defined last state key', function () {
                 isSidePaneVisible = undefined;

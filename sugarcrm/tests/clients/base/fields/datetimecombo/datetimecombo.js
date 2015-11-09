@@ -23,6 +23,7 @@ describe('Base.Field.DateTimeCombo', function() {
 
         app.cache.cutAll();
         app.view.reset();
+        $('body').empty();
     });
 
     describe('verify options from field definitions are recognized and passed into timepicker', function() {
@@ -291,9 +292,11 @@ describe('Base.Field.DateTimeCombo', function() {
 
                 field.render();
 
-                $timepickerList = field.$(field.secondaryFieldTag)
-                    .focus()
-                    .data('timepickerList');
+                $('body').append(field.$el);
+
+                $timepickerList = field.$(field.secondaryFieldTag);
+                $timepickerList.focus();
+                $timepickerList = $timepickerList.data('timepickerList');
 
                 expect($timepickerList.find('li').length).toBe(96);
                 expect($timepickerList.find('li:contains("24:00")').length).toBe(0);
@@ -311,9 +314,11 @@ describe('Base.Field.DateTimeCombo', function() {
 
                 field.render();
 
-                $timepickerList = field.$(field.secondaryFieldTag)
-                    .focus()
-                    .data('timepickerList');
+                $('body').append(field.$el);
+
+                $timepickerList = field.$(field.secondaryFieldTag);
+                $timepickerList.focus();
+                $timepickerList = $timepickerList.data('timepickerList');
 
                 expect($timepickerList.find('li').length).toBe(96);
                 expect($timepickerList.find('li:contains("24.00")').length).toBe(0);
@@ -339,6 +344,9 @@ describe('Base.Field.DateTimeCombo', function() {
                 });
 
                 field.render();
+
+                $('body').append(field.$el);
+
                 field.$(field.secondaryFieldTag).focus();
 
                 $durationDropdown = field.$(field.secondaryFieldTag).data().timepickerList;
@@ -362,6 +370,9 @@ describe('Base.Field.DateTimeCombo', function() {
                 });
 
                 field.render();
+
+                $('body').append(field.$el);
+
                 field.$(field.secondaryFieldTag).focus();
 
                 $durationDropdown = field.$(field.secondaryFieldTag).data().timepickerList;
@@ -380,6 +391,9 @@ describe('Base.Field.DateTimeCombo', function() {
                 });
 
                 field.render();
+
+                $('body').append(field.$el);
+
                 field.$(field.secondaryFieldTag).focus();
 
                 $durationDropdown = field.$(field.secondaryFieldTag).data().timepickerList;
@@ -397,6 +411,9 @@ describe('Base.Field.DateTimeCombo', function() {
                 });
 
                 field.render();
+
+                $('body').append(field.$el);
+
                 field.$(field.secondaryFieldTag).focus();
 
                 $durationDropdown = field.$(field.secondaryFieldTag).data().timepickerList;

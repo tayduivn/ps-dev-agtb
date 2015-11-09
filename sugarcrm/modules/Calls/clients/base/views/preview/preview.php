@@ -41,7 +41,7 @@ $viewdefs['Calls']['base']['view']['preview'] = array(
                     'type' => 'duration',
                     'label' => 'LBL_START_AND_END_DATE_DETAIL_VIEW',
                     'dismiss_label' => true,
-                    'inline' => true,
+                    'inline' => false,
                     'show_child_labels' => true,
                     'fields' => array(
                         array(

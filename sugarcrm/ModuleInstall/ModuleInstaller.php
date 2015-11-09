@@ -2886,6 +2886,7 @@ class ModuleInstaller{
             'themeName' => 'default',
             'clientID' => 'sugar',
             'collapseSubpanels' => $config->get('collapse_subpanels', false),
+            'previewEdit' => $config->get('preview_edit', false),
             'serverTimeout' => self::getBaseTimeoutValue(),
             'metadataTypes' => array(
                 "currencies",

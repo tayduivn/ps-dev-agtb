@@ -1,11 +1,16 @@
 describe("Preview Header View", function() {
 
-    var app, view;
+    var app, view, layout;
 
     beforeEach(function() {
         app = SugarTest.app;
         var context = app.context.getContext();
-        view = SugarTest.createView("base","Accounts", "preview-header", null, context);
+        layout = app.view.createLayout({
+            name: 'records',
+            context: context
+        });
+
+        view = SugarTest.createView("base","Accounts", "preview-header", null, context, null, layout);
         view.model = new Backbone.Model();
         app.drawer = {
                 isActive:function() {
@@ -20,6 +25,7 @@ describe("Preview Header View", function() {
         Handlebars.templates = {};
         view.model = null;
         view = null;
+        layout = null;
         delete app.drawer;
     });
 

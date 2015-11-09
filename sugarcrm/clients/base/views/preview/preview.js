@@ -11,10 +11,12 @@
 /**
  * @class View.Views.Base.PreviewView
  * @alias SUGAR.App.view.views.BasePreviewView
- * @extends View.View
+ * @extends View.Views.Base.RecordView
  */
 ({
-    plugins: ['ToggleMoreLess'],
+    extendsFrom: 'RecordView',
+
+    plugins: ['ToggleMoreLess', 'Editable', 'ErrorDecoration'],
     fallbackFieldTemplate: 'detail',
     /**
      * Events related to the preview view:
@@ -37,7 +39,53 @@
         app.view.View.prototype.initialize.call(this, options);
         this.action = 'detail';
         this._delegateEvents();
+        this.delegateButtonEvents();
         this.collection = app.data.createBeanCollection(this.module);
+    },
+
+    /**
+     * @inheritdoc
+     *
+     * @override Overriding to get preview specific buttons
+     */
+    toggleButtons: function(enable) {
+        if (this.previewEdit) {
+            var previewLayout = this.layout.getComponent('preview-header');
+            previewLayout.getField('save_button').setDisabled(!enable);
+            previewLayout.getField('cancel_button').setDisabled(!enable);
+        }
+    },
+
+    /**
+     * Runs when validation is successful
+     * Returns the preview to detail view
+     *
+     * @override Overriding because we need to trigger 'preview:edit:complete'
+     * and not do record view specific actions like: this.inlineEditMode = false;
+     */
+    handleSave: function() {
+        if (this.disposed) {
+            return;
+        }
+        this._saveModel();
+        this.layout.trigger('preview:edit:complete');
+        this.unsetContextAction();
+        this.toggleFields(this.editableFields, false);
+    },
+
+    /**
+     * When clicking cancel, return the preview view to detail state
+     * and revert the model
+     *
+     * @override Overriding in order to trigger 'preview:edit:complete'
+     */
+    cancelClicked: function() {
+        this.model.revertAttributes();
+        this.toggleFields(this.editableFields, false);
+        this._dismissAllAlerts();
+        this.clearValidationErrors(this.editableFields);
+        this.unsetContextAction();
+        this.layout.trigger('preview:edit:complete');
     },
 
     /**
@@ -55,6 +103,20 @@
 
         if (this.layout) {
             this.layout.on('preview:pagination:fire', this.switchPreview, this);
+        }
+    },
+
+    /**
+     * Setup event listeners for buttons
+     *
+     * @override Override because we only want to set events if
+     * previewEdit is enabled
+     */
+    delegateButtonEvents: function() {
+        if (this.context.get('previewEdit')) {
+            this.context.on('button:save_button:click', this.saveClicked, this);
+            this.context.on('button:cancel_button:click', this.cancelClicked, this);
+            this.layout.on('preview:edit', this.handleEdit, this);
         }
     },
 
@@ -116,7 +178,7 @@
      * but the model id is the same, preview should still render the same model.
      * @private
      */
-    _renderPreview: function(model, collection, fetch, previewId){
+    _renderPreview: function(model, collection, fetch, previewId) {
         var self = this;
 
         // If there are drawers there could be multiple previews, make sure we are only rendering preview for active drawer
@@ -261,7 +323,6 @@
             this.switching = false;
             delete this.model;
             this.collection.reset();
-            this.$el.empty();
         }
     },
 
@@ -278,5 +339,42 @@
                 }
             }, this);
         }
+    },
+
+    /**
+     * When clicking on the pencil icon, toggle all editable fields
+     * to edit mode
+     */
+    handleEdit: function() {
+        this.setEditableFields();
+        this.toggleFields(this.editableFields, true);
+        this.toggleButtons(true);
+    },
+
+    /**
+     * Set a list of editable fields
+     *
+     * @override Overriding to checking field def if preview edit
+     * is allowed
+     */
+    setEditableFields: function() {
+        // we only want to edit non readonly fields
+        this.editableFields = _.reject(this.fields, function(field) {
+            return field.def.readOnly || field.def.calculated ||
+                //Added for SugarLogic fields since they are not supported
+                //Fixme: PAT-2241 will remove this
+                field.def.previewEdit === false ||
+                !app.acl.hasAccessToModel('edit', this.model, field.name);
+        });
+    },
+
+    /**
+     * @inheritdoc
+     */
+    hasUnsavedChanges: function() {
+        if (_.isUndefined(this.model)) {
+            return false;
+        }
+        return this._super('hasUnsavedChanges');
     }
 })

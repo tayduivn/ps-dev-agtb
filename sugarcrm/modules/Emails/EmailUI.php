@@ -3232,8 +3232,9 @@ eoq;
 		else
 			$cached = ($fromCache) ? 1 : 0;
 
-		if($data['mbox'] == 'undefined' || empty($data['mbox']))
-			$data['mbox'] = $app_strings['LBL_NONE'];
+        if (empty($data['mbox']) || $data['mbox'] == 'undefined') {
+            $data['mbox'] = $app_strings['LBL_NONE'];
+        }
 
 		$jsonOut = array('TotalCount' => $count, 'FromCache' => $cached, 'UnreadCount' => $unread, $resultsParam => $data['out']);
 
