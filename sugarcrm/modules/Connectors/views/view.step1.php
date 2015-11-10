@@ -144,7 +144,7 @@ class ViewStep1 extends ViewList
 	 */
 	public function display()
     {
- 		$this->ss->assign('RECORD', $_REQUEST['record']);
+ 		$this->ss->assign('RECORD', $this->request->getValidInputRequest('record', 'Assert\Guid'));
         $this->ss->assign('module', $this->_merge_module);
         $this->ss->assign('mod', $GLOBALS['mod_strings']);
 
