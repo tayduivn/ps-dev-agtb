@@ -57,17 +57,15 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * TODO: needs refactor as we are doing some more functional testing here
-     * instead of pure wire frame testing.
      * @covers ::getValidInput
      * @covers ::getValidInputGet
      * @covers ::getValidInputPost
      * @covers ::getValidInputRequest
      * @dataProvider providerTestGetValidInput
      */
-    /*public function testGetValidInput(array $get, array $post, $key, $call, $constraint, $default, $expected)
+    public function testGetValidInput(array $get, array $post, $key, $call, $constraint, $default, $expected)
     {
-        $superglobals = new Superglobals($get, $post);
+        $superglobals = new Superglobals($get, $post, $this->logger);
         $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
         $this->assertEquals($expected, $request->$call($key, $constraint, $default));
     }
@@ -121,7 +119,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 array(),
                 'foo',
                 'getValidInputGet',
-                'Assert\ConstraintA',
+                null,
                 'default',
                 'default',
             ),
@@ -150,6 +148,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 null,
                 '0',
             ),
+            /* Test relies on global state - skipping for now
             array(
                 array('module' => 'Accounts'),
                 array(),
@@ -158,13 +157,22 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'Assert\Mvc\ModuleName',
                 null,
                 'Accounts',
-            ),
+            ),*/
             array(
                 array('current_page_by_query' => 'a:1:{s:3:"foo";s:3:"bar";}'),
                 array(),
                 'current_page_by_query',
                 'getValidInputRequest',
                 'Assert\PhpSerialized',
+                null,
+                array('foo' => 'bar'),
+            ),
+            array(
+                array('current_page_by_query' => 'YToxOntzOjM6ImZvbyI7czozOiJiYXIiO30='),
+                array(),
+                'current_page_by_query',
+                'getValidInputRequest',
+                array('Assert\PhpSerialized' => array('base64Encoded' => true)),
                 null,
                 array('foo' => 'bar'),
             ),
@@ -205,7 +213,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'foobar',
             ),
         );
-    }*/
+    }
 
     /**
      * @covers ::getValidInput
@@ -213,7 +221,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetValidInputViolationException()
     {
-        $superglobals = new Superglobals(array('foo' => 'bar'), array());
+        $superglobals = new Superglobals(array('foo' => 'bar'), array(), $this->logger);
         $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
         $request->getValidInput(Superglobals::GET, 'foo', 'Assert\FailingConstraint');
     }
@@ -224,7 +232,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetValidInputSuperglobalException()
     {
-        $superglobals = new Superglobals(array(), array());
+        $superglobals = new Superglobals(array(), array(), $this->logger);
         $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
         $request->getValidInput('foo', 'bar');
     }
@@ -234,7 +242,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testSoftFailNoException()
     {
-        $superglobals = new Superglobals(array('foo' => 'VALID'), array());
+        $superglobals = new Superglobals(array('foo' => 'VALID'), array(), $this->logger);
         $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
         $request->setSoftFail(true);
         $request->getValidInput(Superglobals::GET, 'foo', array(

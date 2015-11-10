@@ -33,6 +33,24 @@ class InputParameterValidatorTest extends AbstractConstraintValidatorTest
     }
 
     /**
+     * @covers ::validate
+     */
+    public function testNullIsValid()
+    {
+        $this->validator->validate(null, new InputParameters());
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @covers ::validate
+     */
+    public function testEmptyStringIsValid()
+    {
+        $this->validator->validate('', new InputParameters());
+        $this->assertNoViolation();
+    }
+
+    /**
      * @coversNothing
      * @expectedException \Symfony\Component\Validator\Exception\ConstraintDefinitionException
      */
@@ -106,61 +124,26 @@ class InputParameterValidatorTest extends AbstractConstraintValidatorTest
     {
         return array(
 
-            // generic non-string tests
+            // generic non-scalar tests
             array(
                 Superglobals::GET,
                 InputParameters::ERROR_GET,
-                15,
+                new \StdClass(),
                 'msgGeneric',
-                array(15),
-            ),
-            array(
-                Superglobals::POST,
-                InputParameters::ERROR_POST,
-                true,
-                'msgGeneric',
-                array(true),
-            ),
-            array(
-                Superglobals::REQUEST,
-                InputParameters::ERROR_REQUEST,
-                null,
-                'msgGeneric',
-                array(null),
-            ),
-            array(
-                Superglobals::GET,
-                InputParameters::ERROR_GET,
-                array('good1', 15, true, null, 'good2'),
-                'msgGeneric',
-                array(15, true, null),
-            ),
-            array(
-                Superglobals::POST,
-                InputParameters::ERROR_POST,
-                array('good1', 15, true, null, 'good2'),
-                'msgGeneric',
-                array(15, true, null),
-            ),
-            array(
-                Superglobals::REQUEST,
-                InputParameters::ERROR_REQUEST,
-                array('good1', 15, true, null, 'good2'),
-                'msgGeneric',
-                array(15, true, null),
+                array(new \StdClass()),
             ),
 
             // null byte tests
             array(
-                Superglobals::REQUEST,
-                InputParameters::ERROR_REQUEST,
+                Superglobals::GET,
+                InputParameters::ERROR_GET,
                 'test.php' . chr(0) . '.gif',
                 'msgNullBytes',
                 array('test.php' . chr(0) . '.gif'),
             ),
             array(
-                Superglobals::REQUEST,
-                InputParameters::ERROR_REQUEST,
+                Superglobals::POST,
+                InputParameters::ERROR_POST,
                 chr(0) . '.gif',
                 'msgNullBytes',
                 array(chr(0) . '.gif'),
