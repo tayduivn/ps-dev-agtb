@@ -37,6 +37,14 @@ $viewdefs['base']['view']['attachments'] = array(
                 ),
                 'view' => 'record',
             ),
+            'fields' => array(
+                'name',
+                'date_entered',
+                'filename',
+                'file_mime_type',
+                'assigned_user_id',
+                'assigned_user_name',
+            ),
         ),
  	),
     'custom_toolbar' => array(
