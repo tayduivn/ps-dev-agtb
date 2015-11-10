@@ -19,7 +19,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\ViolationException;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\SuperglobalException;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Sanitizer\SanitizerInterface;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Sanitizer\ConstraintSanitizerInterface;
-use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\RequestException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as AssertBasic;
 use Symfony\Component\Validator\ConstraintViolationInterface;
@@ -31,6 +31,9 @@ use Psr\Log\LoggerInterface;
 /**
  *
  * Request validator
+ *
+ * The request service object is available by using the InputValidation
+ * service factory `InputValidation::getService()`.
  *
  */
 class Request
@@ -77,9 +80,9 @@ class Request
      * @var array
      */
     protected $inputTypes = array(
-        Superglobals::GET => array('get' => 'getRawGet', 'has' => 'hasRawGet'),
-        Superglobals::POST => array('get' => 'getRawPost', 'has' => 'hasRawPost'),
-        Superglobals::REQUEST => array('get' => 'getRawRequest', 'has' => 'hasRawRequest'),
+        Superglobals::GET => array('get' => 'getGet', 'has' => 'hasGet'),
+        Superglobals::POST => array('get' => 'getPost', 'has' => 'hasPost'),
+        Superglobals::REQUEST => array('get' => 'getRequest', 'has' => 'hasRequest'),
     );
 
     /**
@@ -93,12 +96,12 @@ class Request
         Superglobals $superglobals,
         ValidatorInterface $validator,
         ConstraintBuilder $constraintBuilder,
-        LoggerInterface $logger = null
+        LoggerInterface $logger
     ) {
         $this->superglobals = $superglobals;
         $this->validator = $validator;
         $this->constraintBuilder = $constraintBuilder;
-        $this->logger = $logger ?: new LoggerTransition(\LoggerManager::getLogger());
+        $this->logger = $logger;
     }
 
     /**
@@ -111,12 +114,15 @@ class Request
     }
 
     /**
-     * Get sanitizer
-     * @return SanitizerInterface|null
+     * Enable superglobal compatibility mode
+     * @throws RequestException
      */
-    public function getSanitizer()
+    public function enableCompatMode()
     {
-        return $this->sanitizer;
+        if ($this->superglobals->getCompatMode()) {
+            throw new RequestException('Compatibility mode already enabled');
+        }
+        $this->superglobals->enableCompatMode();
     }
 
     /**
@@ -192,19 +198,13 @@ class Request
             // If no constraint explicitly specified, make sure that the value is a string
             $constraints = array(
                 new AssertBasic\Type(array(
-                    'type' => 'string',
+                    'type' => 'scalar',
                 )),
             );
         }
 
-        // Return default if input parameter is not set, the default is not validated
-        $has = $this->inputTypes[$type]['has'];
-        if (!$this->superglobals->$has($key)) {
-            return $default;
-        }
-
         // Get raw value from superglobals
-        $value = $this->getRawValue($type, $key);
+        $value = $this->getSuperglobalValue($type, $key, $default);
 
         // Generic sanitizing
         if ($this->sanitizer) {
@@ -312,13 +312,14 @@ class Request
      * Get raw value from superglobals
      * @param string $type
      * @param string $key
+     * @param mixed $default
      * @return mixed
      *
      */
-    protected function getRawValue($type, $key)
+    protected function getSuperglobalValue($type, $key, $default = null)
     {
         $get = $this->inputTypes[$type]['get'];
-        return $this->superglobals->$get($key);
+        return $this->superglobals->$get($key, $default);
     }
 
     /**

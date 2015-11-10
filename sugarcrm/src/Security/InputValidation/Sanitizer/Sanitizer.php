@@ -16,13 +16,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\SanitizerException;
 
 /**
  *
- * Input sanitizer class containing generic sanitizing which is applied on
- * every superglobal value before constraint specific sanitizing and validation
- * occurs.
- *
- * Note that sanitizing is a bad habit. It is better to teach your users how to
- * properly format input data by having full whitelist validation reject badly
- * crafted values.
+ * Generic input sanitizer
  *
  */
 class Sanitizer implements SanitizerInterface
@@ -37,36 +31,6 @@ class Sanitizer implements SanitizerInterface
         if ($this->hasMagicQuotesEnabled()) {
             throw new SanitizerException('magic_quotes_gpc needs to be disabled');
         }
-    }
-
-    /**
-     * Sanitize super globals
-     *
-     * Calling this method should happen *after* the Superglobals class
-     * received the $_POST and $_GET parameters as we want to have the raw
-     * unaltered values in there.
-     *
-     * In general sanitizing user input is not the correct way. We should
-     * reject the request through the validator/constraints framework instead
-     * of trying to clean it up. Sanitizing confuses the two distinct steps
-     * of input validation and output escaping.
-     *
-     * If sanitizing is still required this should happen only when requesting
-     * a specific superglobal parameter which is possible in a generic way
-     * using `Santizer::sanitize` and on a per contraint base by implementing
-     * `ConstraintSanitizerInterface` on the constraint checks.
-     *
-     * @return Sanitizer
-     *
-     * @deprecated This will be removed and is solely present for the migration
-     * process to the new InputValidation framework.
-     */
-    public function sanitizeSuperglobals()
-    {
-        clean_special_arguments();
-        clean_incoming_data();
-
-        return $this;
     }
 
     /**
