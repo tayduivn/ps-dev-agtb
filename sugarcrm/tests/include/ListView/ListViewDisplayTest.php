@@ -439,7 +439,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
 
         $output = $this->_lvd->buildMergeDuplicatesLink();
 
-        $this->assertContains("\"foobarfoobar\",\"\");}",$output);
+        $this->assertContains("\"foobarfoobar\", &quot;&quot;);}",$output);
     }
 
     public function testBuildMergeDuplicatesLinkBuildsReturnString()
@@ -455,7 +455,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
 
         $output = $this->_lvd->buildMergeDuplicatesLink();
 
-        $this->assertContains("\"foobarfoobar\",\"&return_module=foo&return_action=bar&return_id=1\");}",$output);
+        $this->assertContains("\"foobarfoobar\", &quot;&amp;return_module=foo&amp;return_action=bar&amp;return_id=1&quot;);}",$output);
     }
     public function testBuildMergeLinkWhenUserDisabledMailMerge()
     {
