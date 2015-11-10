@@ -91,30 +91,30 @@ class RelatedFieldExpression extends GenericExpression
         return "";
 	}
 
-    /**
-     * Returns the JS Equivalent of the evaluate function.
-     */
-    static function getJSEvaluate() {
-        return <<<EOQ
-            var params = this.getParameters(),
-                linkField = params[0].evaluate(),
-                relField = params[1].evaluate(),
-                retVal = "";
-            if (typeof(linkField) == "string" && linkField != "") {
-                value = this.context.getRelatedField(linkField, 'related', relField);
-                if (!_.isEmpty(value) && this.context.model && !this.context.model.isNew()) {
-                    retVal = value;
-                } else {
-                    retVal = null;
-                }
-            } else if (typeof(rel) == "object") {
-                //Assume we have a Link object that we can delve into.
-                //This is mostly used for n level dives through relationships.
-                //This should probably be avoided on edit views due to performance issues.
+	/**
+	 * Returns the JS Equivalent of the evaluate function.
+	 */
+	static function getJSEvaluate() {
+		return <<<EOQ
+            if (this.context.model && this.context.model.isNew()) {
+                return;
             }
-            return retVal;
+		    var params = this.getParameters(),
+			    linkField = params[0].evaluate(),
+			    relField = params[1].evaluate();
+
+			if (typeof(linkField) == "string" && linkField != "")
+			{
+                return this.context.getRelatedField(linkField, 'related', relField);
+			} else if (typeof(rel) == "object") {
+			    //Assume we have a Link object that we can delve into.
+			    //This is mostly used for n level dives through relationships.
+			    //This should probably be avoided on edit views due to performance issues.
+			}
+
+			return "";
 EOQ;
-    }
+	}
 
 	/**
 	 * Returns the opreation name that this Expression should be
