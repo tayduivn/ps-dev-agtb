@@ -11,11 +11,11 @@
  */
 namespace Sugarcrm\SugarcrmTests\Notification\BeanEmitter;
 
-use Sugarcrm\Sugarcrm\Notification\BeanEmitter\Emitter;
-use Sugarcrm\Sugarcrm\Notification\BeanEmitter\Event;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Emitter;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event;
 
 /**
- * @covers Sugarcrm\Sugarcrm\Notification\BeanEmitter\Emitter
+ * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Emitter
  */
 class EmitterTest extends \Sugar_PHPUnit_Framework_TestCase
 {
@@ -29,7 +29,7 @@ class EmitterTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         $beanEmitter = new Emitter();
         $eventPrototype = $beanEmitter->getEventPrototypeByString('foo');
-        $this->assertInstanceOf('Sugarcrm\Sugarcrm\Notification\BeanEmitter\Event', $eventPrototype);
+        $this->assertInstanceOf('Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event', $eventPrototype);
         $this->assertEquals('foo', "$eventPrototype");
     }
 
@@ -41,7 +41,7 @@ class EmitterTest extends \Sugar_PHPUnit_Framework_TestCase
         $dispatcher->expects($this->once())->method('dispatch')->with($event);
 
         $emitter = $this->getMock(
-            'Sugarcrm\Sugarcrm\Notification\BeanEmitter\Emitter',
+            'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\Emitter',
             array('getEventPrototypeByString', 'getDispatcher')
         );
         $emitter->expects($this->once())->method('getDispatcher')->will($this->returnValue($dispatcher));
@@ -56,14 +56,14 @@ class EmitterTest extends \Sugar_PHPUnit_Framework_TestCase
         $bean = \BeanFactory::getBean('Accounts');
         $dispatcher = $this->getMock('Sugarcrm\Sugarcrm\Notification\Dispatcher', array('dispatch'));
 
-        $event = $this->getMockBuilder('Sugarcrm\Sugarcrm\Notification\BeanEmitter\Event')
+        $event = $this->getMockBuilder('Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\Event')
             ->disableOriginalConstructor()
             ->getMock();
         $event->method('setBean')->will($this->returnSelf());
         $event->expects($this->once())->method('setBean')->with($bean);
 
         $emitter = $this->getMock(
-            'Sugarcrm\Sugarcrm\Notification\BeanEmitter\Emitter',
+            'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\Emitter',
             array('getEventPrototypeByString', 'getDispatcher')
         );
         $emitter->method('getDispatcher')->will($this->returnValue($dispatcher));

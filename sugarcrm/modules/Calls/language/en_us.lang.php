@@ -178,4 +178,13 @@ To create a {{calls_singular_module}}:
     - Click "Select an Attendee" to add an existing user, contact, or lead to the {{calls_singular_module}}.
     - Click the plus icon to the right of "Select an Attendee" to create a {{calls_singular_module}} attendee as a new Sugar record.
 3. Click "Save" to finalize the new record and return to the previous page.',
+
+    // Notification Center Strings
+    'LBL_EMITTER_TITLE' => 'Notifications for Calls',
+    'LBL_EMITTER_HELP' => 'ToDo: Help text of Notifications for Calls settings',
+    'LBL_EMITTER_DESC_ADMIN' => 'Chose what types of notifications your users receive. You can also change the delivery methods for each notification. Notifications apply to the users that are assigned to a record, on a team with belonging to a record, or invited to a call or meeting.',
+    'LBL_EMITTER_DESC_USER' => 'Chose what types of notifications your receive. You can also change the delivery methods for each notification. Notifications apply to the users that are assigned to a record, on a team with belonging to a record, or invited to a call or meeting.',
+    // Event remind
+    'LBL_EVENT_REMINDER_ABOUT' => 'Reminder about call',
+    'LBL_EVENT_REMINDER_MORE_INFO' => 'If you want to change reminder time please update your profile settings',
 );

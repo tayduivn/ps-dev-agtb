@@ -70,7 +70,7 @@ class EventHandler extends BaseHandler
                 }
                 $carrier = $carriers[$carrierName]['carrier'];
                 $addressType = $carrier->getAddressType();
-                $user = \BeanFactory::getBean('Users', $userId);
+                $user = $this->getUser($userId);
 
                 $carriers[$carrierName]['data'][$userId]['options'][] =
                     $addressType->getTransportValue($user, $carrierConfig[1]);
@@ -84,6 +84,17 @@ class EventHandler extends BaseHandler
             $manager->NotificationCarrierBulkMessage($this->event, $carrierName, $carrierRow['data']);
         }
         return \SchedulersJob::JOB_SUCCESS;
+    }
+
+    /**
+     * Get user.
+     *
+     * @param string $userId user id
+     * @return \User user instance
+     */
+    protected function getUser($userId)
+    {
+        return \BeanFactory::getBean('Users', $userId);
     }
 
     /**

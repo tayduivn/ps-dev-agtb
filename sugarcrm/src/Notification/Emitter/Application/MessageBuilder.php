@@ -10,7 +10,7 @@
 * Copyright (C) SugarCRM Inc. All rights reserved.
 */
 
-namespace Sugarcrm\Sugarcrm\Notification\ApplicationEmitter;
+namespace Sugarcrm\Sugarcrm\Notification\Emitter\Application;
 
 use Sugarcrm\Sugarcrm\Notification\EventInterface;
 use Sugarcrm\Sugarcrm\Notification\MessageBuilder\MessageBuilderInterface;
@@ -18,7 +18,7 @@ use Sugarcrm\Sugarcrm\Notification\MessageBuilder\MessageBuilderInterface;
 /**
  * Class MessageBuilder.
  * Basic application-wide MessageBuilder implementation.
- * @package Sugarcrm\Sugarcrm\Notification\ApplicationEmitter
+ * @package Sugarcrm\Sugarcrm\Notification\Emitter\Application
  */
 class MessageBuilder implements MessageBuilderInterface
 {

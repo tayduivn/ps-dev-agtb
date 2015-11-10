@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Notification\BeanEmitter;
+namespace Sugarcrm\Sugarcrm\Notification\Emitter\Bean;
 
 use Sugarcrm\Sugarcrm\Notification\EmitterInterface;
 

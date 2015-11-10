@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Notification;
 
+use Sugarcrm\Sugarcrm\Notification\EmitterRegistry;
+
 require_once 'tests/SugarTestReflection.php';
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Notification\EmitterRegistry
@@ -78,6 +80,31 @@ class EmitterRegistryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @covers ::getModuleEmitter
+     */
+    public function testInitBeanEmitter()
+    {
+        $name = 'emitterName';
+
+        $dictionary = array(
+            $name => array(
+                'path' => 'somePath',
+                'class' => 'Sugarcrm\SugarcrmTestsUnit\Notification\BeanEmitterMock'
+            )
+        );
+
+        $emittersRegistry = $this->getMock(self::NS_PATH_REGISTRY, array('getDictionary'));
+        $emittersRegistry->expects($this->once())->method('getDictionary')->willReturn($dictionary);
+
+        $emitter = $emittersRegistry->getModuleEmitter($name);
+
+        $this->assertInstanceOf(
+            'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\Emitter',
+            $emitter->beanEmitter
+        );
+    }
+
     public function existsDictionaries()
     {
         return array(
@@ -124,5 +151,46 @@ class EmitterRegistryTest extends \PHPUnit_Framework_TestCase
 
         $res = \SugarTestReflection::callProtectedMethod($carrierRegistry, 'getDictionary');
         $this->assertEquals($dir, $res);
+    }
+
+    public function emitterClassList()
+    {
+        return array(
+            array(
+                'notExistingClassName' . time(),
+                false
+            ),
+            array(
+                '\stdClass',
+                false
+            ),
+            array(
+                $this->getMockClass(
+                    EmitterRegistry::EMITTER_INTERFACE,
+                    array('getEventPrototypeByString', 'getEventStrings', '__toString')
+                ),
+                true
+            ),
+            array(
+                $this->getMockClass(
+                    'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\BeanEmitterInterface',
+                    array('getEventPrototypeByString', 'getEventStrings', '__toString', '__construct', 'exec')
+                ),
+                true
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider emitterClassList
+     * @covers ::isEmitterClass
+     */
+    public function testIsEmitterClass($class, $expected)
+    {
+        $emitterRegistry = new EmitterRegistry();
+
+        $isEmitterClass = \SugarTestReflection::callProtectedMethod($emitterRegistry, 'isEmitterClass', array($class));
+
+        $this->assertEquals($expected, $isEmitterClass);
     }
 }

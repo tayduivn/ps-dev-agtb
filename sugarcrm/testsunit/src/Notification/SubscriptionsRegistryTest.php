@@ -13,7 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Notification;
 
 use Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry;
-use Sugarcrm\Sugarcrm\Notification\ApplicationEmitter\Event as ApplicationEvent;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event as ApplicationEvent;
 
 require_once 'tests/SugarTestReflection.php';
 require_once 'modules/Users/User.php';
@@ -33,9 +33,9 @@ class SubscriptionsRegistryTest extends \PHPUnit_Framework_TestCase
 
     const NS_SF_TEAM = 'Sugarcrm\\Sugarcrm\\Notification\\SubscriptionFilter\\Team';
 
-    const NS_EVENT_APPLICATION = 'Sugarcrm\\Sugarcrm\\Notification\\ApplicationEmitter\\Event';
+    const NS_EVENT_APPLICATION = 'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Application\\Event';
 
-    const NS_EVENT_BEAN = 'Sugarcrm\\Sugarcrm\\Notification\\BeanEmitter\\Event';
+    const NS_EVENT_BEAN = 'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\Event';
 
     const NS_EVENT_MODULE = 'Sugarcrm\\Sugarcrm\\Notification\\ModuleEventInterface';
 

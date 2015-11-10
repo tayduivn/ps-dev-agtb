@@ -42,7 +42,9 @@
                             {{field ../../this model=../../this.model template=this.viewName}}
                         {{/with}}
                     </td>
-                    <td data-event="{{this.name}}" class="event-name">{{this.label}}</td>
+                    <td data-event="{{this.name}}" class="event-name">
+                        <span rel="tooltip" title="{{this.info}}" data-placement="top">{{this.label}}</span>
+                    </td>
                     {{#each this.columns}}
                         <td>
                             {{field ../../this model=../../this.model template=this.viewName}}

@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\Notification\Handler;
 
-use Sugarcrm\Sugarcrm\Notification\ApplicationEmitter\Event as ApplicationEvent;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event as ApplicationEvent;
 
 class CarrierBulkMessageHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
 {
@@ -86,7 +86,7 @@ class CarrierBulkMessageHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
             self::NS_HANDLER,
             array('getMessageBuilderRegistry', 'getJobQueueManager', 'getCarrierRegistry'),
             array(
-                array('src/Notification/ApplicationEmitter/Event.php', serialize($event)),
+                array('src/Notification/Emitter/Application/Event.php', serialize($event)),
                 array('', serialize($carrierName)),
                 array('', serialize($usersOptions))
             )

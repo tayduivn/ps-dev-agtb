@@ -9,13 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTests\Notification\BeanEmitter;
+namespace Sugarcrm\SugarcrmTests\Notification\Emitter\Bean;
 
-use Sugarcrm\Sugarcrm\Notification\BeanEmitter\MessageBuilder;
-use Sugarcrm\Sugarcrm\Notification\BeanEmitter\Event;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event;
 
 /**
- * @covers Sugarcrm\Sugarcrm\Notification\BeanEmitter\MessageBuilder
+ * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder
  */
 class MessageBuilderTest extends \Sugar_PHPUnit_Framework_TestCase
 {
@@ -25,7 +25,7 @@ class MessageBuilderTest extends \Sugar_PHPUnit_Framework_TestCase
     protected $builder;
 
     /**
-     * @var Sugarcrm\Sugarcrm\Notification\BeanEmitter\Event
+     * @var \Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event
      */
     protected $event;
 
@@ -65,7 +65,7 @@ class MessageBuilderTest extends \Sugar_PHPUnit_Framework_TestCase
      * Test build() with different message signatures.
      * @param array $messageSignature Message signature to test.
      * @param array $message Expected output message.
-     * @covers Sugarcrm\Sugarcrm\Notification\BeanEmitter\MessageBuilder::build
+     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder::build
      * @dataProvider messageSignatureProvider
      */
     public function testBuildWithDifferentMessageSignatures($messageSignature, $message)
@@ -76,7 +76,7 @@ class MessageBuilderTest extends \Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test that MessageBuilder has Base level.
-     * @covers Sugarcrm\Sugarcrm\Notification\BeanEmitter\MessageBuilder::getLevel
+     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder::getLevel
      */
     public function testGetLevelReturnsBase()
     {
@@ -88,15 +88,15 @@ class MessageBuilderTest extends \Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test that BeanEmitter Event is supported, any other Event isn't.
-     * @covers Sugarcrm\Sugarcrm\Notification\BeanEmitter\MessageBuilder::supports
+     * @covers \Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder::supports
      */
     public function testSupports()
     {
         $this->assertTrue(
-            $this->builder->supports(new Sugarcrm\Sugarcrm\Notification\BeanEmitter\Event('event1'))
+            $this->builder->supports(new Event('event1'))
         );
         $this->assertFalse(
-            $this->builder->supports(new Sugarcrm\Sugarcrm\Notification\ApplicationEmitter\Event('event2'))
+            $this->builder->supports(new \Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event('event2'))
         );
     }
 

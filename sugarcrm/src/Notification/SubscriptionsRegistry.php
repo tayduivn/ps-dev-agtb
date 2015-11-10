@@ -12,8 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Notification;
 
-use Sugarcrm\Sugarcrm\Notification\BeanEmitter\Event as BeanEvent;
-use Sugarcrm\Sugarcrm\Notification\ApplicationEmitter\Event as ApplicationEvent;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event as BeanEvent;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event as ApplicationEvent;
 use Sugarcrm\Sugarcrm\Notification\SubscriptionFilter\SubscriptionFilterInterface;
 use Sugarcrm\Sugarcrm\Notification\SubscriptionFilter\SubscriptionFilterRegistry;
 

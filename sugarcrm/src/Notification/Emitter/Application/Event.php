@@ -10,14 +10,14 @@
 * Copyright (C) SugarCRM Inc. All rights reserved.
 */
 
-namespace Sugarcrm\Sugarcrm\Notification\ApplicationEmitter;
+namespace Sugarcrm\Sugarcrm\Notification\Emitter\Application;
 
 use Sugarcrm\Sugarcrm\Notification\EventInterface;
 
 /**
  * Class Event.
  * Should be used, when something happens on an application level.
- * @package Sugarcrm\Sugarcrm\Notification\ApplicationEmitter
+ * @package Sugarcrm\Sugarcrm\Notification\Emitter\Application
  */
 class Event implements EventInterface
 {

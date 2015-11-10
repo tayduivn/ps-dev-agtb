@@ -10,7 +10,7 @@
 * Copyright (C) SugarCRM Inc. All rights reserved.
 */
 
-namespace Sugarcrm\Sugarcrm\Notification\BeanEmitter;
+namespace Sugarcrm\Sugarcrm\Notification\Emitter\Bean;
 
 use Sugarcrm\Sugarcrm\Notification\EventInterface;
 use Sugarcrm\Sugarcrm\Notification\MessageBuilder\MessageBuilderInterface;
@@ -19,7 +19,7 @@ use Sugarcrm\Sugarcrm\Notification\MessageBuilder\MessageBuilderInterface;
  * Class MessageBuilder.
  * Application's bean entity MessageBuilder implementation.
  * Is used to build messages for notifications of the bean-level events.
- * @package Sugarcrm\Sugarcrm\Notification\BeanEmitter
+ * @package Sugarcrm\Sugarcrm\Notification\Emitter\Bean
  */
 class MessageBuilder implements MessageBuilderInterface
 {

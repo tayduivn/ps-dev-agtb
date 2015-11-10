@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Notification;
 
-use Sugarcrm\Sugarcrm\Notification\ApplicationEmitter\Event;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event;
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Notification\Dispatcher

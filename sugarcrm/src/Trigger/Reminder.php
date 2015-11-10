@@ -12,12 +12,19 @@
 
 namespace Sugarcrm\Sugarcrm\Trigger;
 
+use Sugarcrm\Sugarcrm\Notification\EmitterRegistry;
+
 /**
  * Class Reminder is entry point to notify user about call or meeting.
  * @package Sugarcrm\Sugarcrm\Trigger
  */
 class Reminder
 {
+
+    /**
+     * Maximum offset from the specified time
+     */
+    const MAX_TIME_DIFF = 900;
 
     /**
      * Do remind.
@@ -32,14 +39,9 @@ class Reminder
         $user = $this->getBean('Users', $userId);
 
         if ($this->validate($bean, $user)) {
-            \LoggerManager::getLogger()
-                ->fatal('reminder: bean - '
-                    . $bean->name
-                    . '(' . $bean->id . '), user - '
-                    . $user->name
-                    . '(' . $user->id . ')'
-                );
-            // @TODO implement me
+            $this->getEmitterRegistry()
+                ->getModuleEmitter($module)
+                ->reminder($bean, $user);
         }
     }
 
@@ -52,8 +54,20 @@ class Reminder
      */
     protected function validate(\SugarBean $bean, \User $user)
     {
-        // @TODO implement me
-        return true;
+        if ($bean->assigned_user_id == $user->id) {
+            $reminderTime = $bean->reminder_time;
+        } else {
+            $reminderTime = $user->getPreference('reminder_time');
+        }
+
+
+        $reminderDateTime = new \DateTime($bean->date_start, new \DateTimeZone('UTC'));
+        $reminderDateTime->modify('- ' . $reminderTime . ' seconds');
+
+        $now = new \DateTime();
+        $diff = abs($reminderDateTime->getTimestamp() - $now->getTimestamp());
+
+        return $diff <= self::MAX_TIME_DIFF;
     }
 
     /**
@@ -61,7 +75,7 @@ class Reminder
      *
      * @param string $module
      * @param string $id
-     * @return \Call|\Meeting|\User|\SugarBean
+     * @return \Call|\Meeting|\User
      * @codeCoverageIgnore
      */
     protected function getBean($module, $id)
@@ -71,5 +85,16 @@ class Reminder
             $id,
             array('strict_retrieve' => true, 'disable_row_level_security' => true)
         );
+    }
+
+    /**
+     * Return emitter registry.
+     *
+     * @return EmitterRegistry emitter registry
+     * @codeCoverageIgnore
+     */
+    protected function getEmitterRegistry()
+    {
+        return EmitterRegistry::getInstance();
     }
 }

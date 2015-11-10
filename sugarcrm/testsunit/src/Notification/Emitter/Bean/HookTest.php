@@ -9,15 +9,19 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-namespace Sugarcrm\SugarcrmTests\Notification\BeanEmitter;
+namespace Sugarcrm\SugarcrmTestsUnit\Notification\Emitter\Bean;
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\Notification\BeanEmitter\Hook
+ * @coversDefaultClass Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Hook
  */
 class HookTest extends \PHPUnit_Framework_TestCase
 {
+    const NS_BEAN_EMITTER_INTERFACE = 'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\BeanEmitterInterface';
+
+
     /**
      * Test how hook calls ModuleEmitter's exec.
+     * @group ft1
      * @covers ::hook
      * @dataProvider execCasesProvider
      * @param mixed $moduleEmitter Emitter we get from Emitter Registry.
@@ -34,7 +38,7 @@ class HookTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo('Accounts'))
             ->willReturn($moduleEmitter);
 
-        $hook = $this->getMock('Sugarcrm\Sugarcrm\Notification\BeanEmitter\Hook', array('getEmitterRegistry'));
+        $hook = $this->getMock('Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\Hook', array('getEmitterRegistry'));
         $hook->expects($this->once())
             ->method('getEmitterRegistry')
             ->willReturn($registry);
@@ -52,37 +56,19 @@ class HookTest extends \PHPUnit_Framework_TestCase
         $event = 'foo';
         $args = array('bar', 'baz');
 
-        $moduleEmitter = $this->getMockBuilder('AccountEmitter')
+        $moduleEmitter = $this->getMockBuilder(self::NS_BEAN_EMITTER_INTERFACE)
             ->disableOriginalConstructor()
-            ->setMethods(array('exec'))
+            ->setMethods(array('exec', '__construct', 'getEventStrings', 'getEventPrototypeByString', '__toString'))
             ->getMock();
         $moduleEmitter->expects($this->once())->method('exec')->with($bean, $event, $args);
 
-        $registry = $this->getMock('Sugarcrm\Sugarcrm\Notification\EmitterRegistry', array('getModuleEmitter'));
+        $registry = $this->getMock('Sugarcrm\\Sugarcrm\\Notification\\EmitterRegistry', array('getModuleEmitter'));
         $registry->expects($this->once())->method('getModuleEmitter')->willReturn($moduleEmitter);
 
-        $hook = $this->getMock('Sugarcrm\Sugarcrm\Notification\BeanEmitter\Hook', array('getEmitterRegistry'));
+        $hook = $this->getMock('Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\Hook', array('getEmitterRegistry'));
         $hook->expects($this->once())->method('getEmitterRegistry')->willReturn($registry);
 
         $hook->hook($bean, $event, $args);
-    }
-
-    /**
-     * Helper method to get ModuleEmitter mock.
-     * Exec method is mocked to return bool true.
-     * AccountEmitter is used as an implementation.
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getModuleEmitterMock()
-    {
-        $moduleEmitter = $this->getMockBuilder('AccountEmitter')
-            ->disableOriginalConstructor()
-            ->setMethods(array('exec'))
-            ->getMock();
-        $moduleEmitter->expects($this->once())
-            ->method('exec')
-            ->willReturn(true);
-        return $moduleEmitter;
     }
 
     /**
@@ -95,5 +81,24 @@ class HookTest extends \PHPUnit_Framework_TestCase
             array($this->getModuleEmitterMock(), true),
             array(null, false),
         );
+    }
+
+    /**
+     * Helper method to get ModuleEmitter mock.
+     * Exec method is mocked to return bool true.
+     * AccountEmitter is used as an implementation.
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getModuleEmitterMock()
+    {
+        $moduleEmitter = $this->getMockBuilder(self::NS_BEAN_EMITTER_INTERFACE)
+            ->disableOriginalConstructor()
+            ->setMethods(array('exec', '__construct', 'getEventStrings', 'getEventPrototypeByString', '__toString'))
+            ->getMock();
+
+        $moduleEmitter->expects($this->once())
+            ->method('exec')
+            ->willReturn(true);
+        return $moduleEmitter;
     }
 }

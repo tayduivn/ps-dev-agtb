@@ -16,6 +16,6 @@ $hook_array['after_save'][] = array(
     1,
     'Notifications Bean Emitter hook',
     null,
-    '\\Sugarcrm\\Sugarcrm\\Notification\\BeanEmitter\\Hook',
+    '\\Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\Hook',
     'hook',
 );
