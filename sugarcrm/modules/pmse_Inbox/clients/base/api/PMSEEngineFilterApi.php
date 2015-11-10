@@ -236,7 +236,7 @@ class PMSEEngineFilterApi extends FilterApi
             if ($access == 'regular_user') {
                 global $current_user;
                 $where->queryAnd()->equals('cas_user_id', $current_user->id);
-                $where->queryAnd()->notEquals('cas_assignment_method', 'selfservice');
+                $where->queryOr()->notEquals('cas_assignment_method', 'selfservice')->isNull('cas_assignment_method');
             } else {
                 $supportedModules = PMSEEngineUtils::getSupportedModules();
                 if (!empty($supportedModules)) {
