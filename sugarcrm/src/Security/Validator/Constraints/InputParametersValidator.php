@@ -52,6 +52,10 @@ class InputParametersValidator extends ConstraintValidator
             throw new ConstraintDefinitionException("Unkown input type {$constraint->inputType}");
         }
 
+        if (null === $value) {
+            return;
+        }
+
         $this->validateRecursive($constraint, $value);
     }
 
@@ -68,13 +72,14 @@ class InputParametersValidator extends ConstraintValidator
             return;
         }
 
-        // generic string check
-        if (!is_string($value)) {
+        // generic scalar check
+        if (!is_scalar($value)) {
             $this->context->buildViolation($constraint->msgGeneric)
                 ->setParameter('%type%', $constraint->inputType)
                 ->setInvalidValue($value)
                 ->setCode($this->getErrorCode($constraint))
                 ->addViolation();
+            return;
         }
 
         // null bytes are never allowed

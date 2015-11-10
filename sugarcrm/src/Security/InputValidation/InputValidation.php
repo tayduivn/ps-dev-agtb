@@ -15,6 +15,8 @@ namespace Sugarcrm\Sugarcrm\Security\InputValidation;
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 use Sugarcrm\Sugarcrm\Security\Validator\ConstraintBuilder;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Sanitizer\Sanitizer;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\InputValidationException;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  *
@@ -36,19 +38,41 @@ class InputValidation
     }
 
     /**
+     * Initialize the service, should only be called once from entrypoint
+     * @return Request
+     */
+    public static function initService()
+    {
+        if (self::$service) {
+            throw new InputValidationException('Service already initialized');
+        }
+
+        // Create instance using raw request parameters. Make sure the service
+        // is initialized before any other logic alters the superglobals.
+        self::$service = $request = self::create($_GET, $_POST);
+
+        $sugarConfig = \SugarConfig::getInstance();
+
+        // Configure softFail mode - enabled by default
+        $softFail = $sugarConfig->get('validation.soft_fail', true);
+        $request->setSoftFail($softFail);
+
+        // Enable compatibility mode - enabled by default
+        if ($sugarConfig->get('validation.compat_mode', true)) {
+            $request->enableCompatMode();
+        }
+
+        return self::$service;
+    }
+
+    /**
      * Get service
      * @return Request
      */
     public static function getService()
     {
         if (empty(self::$service)) {
-
-            // create instance using raw request parameters
-            self::$service = $request = self::create($_GET, $_POST);
-
-            // configure softFail mode - enabled by default
-            $softFail = \SugarConfig::getInstance()->get('validation.soft_fail', true);
-            $request->setSoftFail($softFail);
+            self::init();
         }
         return self::$service;
     }
@@ -63,10 +87,11 @@ class InputValidation
      */
     public static function create(array $get, array $post)
     {
+        $logger = new LoggerTransition(\LoggerManager::getLogger());
         $validator = Validator::getService();
-        $superglobals = new Superglobals($get, $post);
+        $superglobals = new Superglobals($get, $post, $logger);
         $constraintBuilder = new ConstraintBuilder();
-        $request = new Request($superglobals, $validator, $constraintBuilder);
+        $request = new Request($superglobals, $validator, $constraintBuilder, $logger);
 
         // attach sanitizer (may disappear)
         $request->setSanitizer(new Sanitizer());
