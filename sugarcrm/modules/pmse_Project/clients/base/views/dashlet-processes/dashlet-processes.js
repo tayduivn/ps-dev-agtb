@@ -434,6 +434,7 @@
      *
      * - {Boolean} overdue True if record is prior to now.
      * - {String} picture_url Picture url for model's assigned user.
+     * - {String} prj_module_name Name of the triggering module.
      */
     _renderHtml: function() {
         if (this.meta.config) {
@@ -455,6 +456,13 @@
             });
             model.set('picture_url', pictureUrl);
             model.useRelativeTime = this._setRelativeTimeAvailable(model.attributes.date_entered);
+            // Update the triggering module names.
+            var module = model.get('prj_module');
+            var label = app.lang.getModString('LBL_MODULE_NAME', module);
+            if (_.isUndefined(label)) {
+                label = module;
+            }
+            model.set('prj_module_name', label);
         }, this);
 
         this._super('_renderHtml');
