@@ -24,7 +24,7 @@ require_once('modules/Reports/schedule/ReportSchedule.php');
 global $global_json;
 $global_json = getJSONobj();
 
-
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 //////////////////////////////////////////////
 // TEMPLATE:
@@ -74,9 +74,13 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 
 	$issetSaveResults = false;
 	$isSaveResults = false;
+
+	$request = InputValidation::getService();
+	$saveReportAs = $request->getValidInputRequest('save_report_as');
+
 	if (isset($args['save_result'])) {
 		$issetSaveResults = true;
-		$smarty->assign('save_report_as_str', $_REQUEST['save_report_as']);
+		$smarty->assign('save_report_as_str', $saveReportAs);
 		if($args['save_result']) {
 			$isSaveResults = true;
 		} // if
@@ -173,12 +177,14 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	$smarty->assign('summary_sort_by', $summary_sort_by);
 	$smarty->assign('summary_sort_dir', $summary_sort_dir);
 
-	if (isset($_REQUEST['save_as']) &&  $_REQUEST['save_as'] == 'true') {
+	$saveAs = $request->getValidInputRequest('save_as');
+	$record = $request->getValidInputRequest('record', 'Assert\Guid');
+	if ($saveAs !== null &&  $saveAs == 'true') {
 	    $report_id = '';
 	} else if (isset($reporter->saved_report->id) ) {
 	    $report_id = $reporter->saved_report->id;
-	} elseif(!empty($_REQUEST['record'])) {
-	    $report_id = $_REQUEST['record'];
+	} elseif (!empty($record)) {
+	    $report_id = $record;
 	} else {
 	    $report_id = '';
 	} // else
@@ -233,7 +239,8 @@ function reportCriteriaWithResult(&$reporter,&$args) {
     $isExportAccess = hasExportAccess($args);
 
 	$smarty->assign('report_export_as_csv_access', $isExportAccess);
-	$smarty->assign('form_submit', empty($_REQUEST['form_submit']) ? false : $_REQUEST['form_submit']);
+	$formSubmit = $request->getValidInputRequest('form_submit', null, false);
+	$smarty->assign('form_submit', $formSubmit);
 
 	$global_json = getJSONobj();
 	global $ACLAllowedModules;
@@ -690,9 +697,11 @@ function template_reports_report(&$reporter,&$args) {
 
 	$issetSaveResults = false;
 	$isSaveResults = false;
+	$request = InputValidation::getService();
+	$saveReportAs = $request->getValidInputRequest('save_report_as');
 	if (isset($args['save_result'])) {
 		$issetSaveResults = true;
-		$smarty->assign('save_report_as_str', $_REQUEST['save_report_as']);
+		$smarty->assign('save_report_as_str', $saveReportAs);
 		if($args['save_result']) {
 			$isSaveResults = true;
 		} // if
@@ -715,12 +724,15 @@ function template_reports_report(&$reporter,&$args) {
 	$smarty->assign('summary_sort_by', $summary_sort_by);
 	$smarty->assign('summary_sort_dir', $summary_sort_dir);
 
-	if (isset($_REQUEST['save_as']) &&  $_REQUEST['save_as'] == 'true') {
+	$saveAs = $request->getValidInputRequest('save_as');
+	$record = $request->getValidInputRequest('record','Assert\Guid');
+
+	if ($saveAs !== null &&  $saveAs == 'true') {
 	    $report_id = '';
 	} else if (isset($reporter->saved_report->id) ) {
 	    $report_id = $reporter->saved_report->id;
-	} elseif(!empty($_REQUEST['record'])) {
-	    $report_id = $_REQUEST['record'];
+	} elseif (!empty($record)) {
+	    $report_id = $record;
 	} else {
 	    $report_id = '';
 	} // else
