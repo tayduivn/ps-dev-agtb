@@ -19,6 +19,9 @@ use Symfony\Component\Validator\Validation;
  *
  * Validation service
  *
+ * The validator service object is available by using the Validator
+ * service factory `Validator::getService()`.
+ *
  */
 class Validator
 {

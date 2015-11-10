@@ -137,8 +137,8 @@ require_once('include/utils/autoloader.php');
 SugarAutoLoader::init();
 
 // Initialize InputValdation service as soon as possible. Up to this point
-// it is expected that no code has altered any input superglobal.
-InputValidation::getService()->getSanitizer()->sanitizeSuperglobals();
+// it is expected that no code has altered any input superglobals.
+InputValidation::initService();
 
 // Check to see if custom utils exist and load them too
 // not doing it in utils since autoloader is not loaded there yet
