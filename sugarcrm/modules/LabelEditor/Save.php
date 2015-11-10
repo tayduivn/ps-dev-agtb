@@ -10,6 +10,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 global $current_language;
@@ -47,6 +48,3 @@ if(isset($_REQUEST['multi_edit'])){
 	}
 	header("Location:$location" );
 }
-
-
-?>

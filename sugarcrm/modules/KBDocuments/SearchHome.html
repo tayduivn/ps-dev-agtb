@@ -138,7 +138,7 @@
 
 				//on succesful retrieval of preview data
 				success = function(data) {
-					eval(data.responseText);
+					var result = JSON.parse(data.responseText);
 					//populate detailscache array from data
 					document_additionalDetailsCache[spanId] = new Array();
 					document_additionalDetailsCache[spanId]['body'] = result['body'];

@@ -85,7 +85,7 @@ EOC;
             }
             $retArray['caption'] .= "";
             $retArray['width'] = (empty($results['width']) ? '300' : $results['width']);
-            echo 'result = ' . $json->encode($retArray);
+            echo $json->encode($retArray);
         }
     }
 
