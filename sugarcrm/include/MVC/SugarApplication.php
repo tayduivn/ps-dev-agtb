@@ -59,7 +59,7 @@ class SugarApplication
             'Assert\Type' => array('type' => 'numeric'),
             'Assert\Range' => array('min' => 0, 'max' => 1),
         );
-        $this->inBwc = (bool) $this->request->getValidInputGet('bwcFrame', $bwcFrame, false);
+        $this->inBwc = (bool) $this->request->getValidInputGet('bwcFrame', $bwcFrame, 0);
     }
 
     /**
