@@ -15,12 +15,12 @@ namespace Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status;
 
 class IntervalMap extends MapBase
 {
-    protected $statusMap = array(
-        'DAILY' => 'Daily',
-        'WEEKLY' => 'Weekly',
-        'MONTHLY' => 'Monthly',
-        'YEARLY' => 'Yearly',
+    protected $map = array(
+        'DAILY'   => array('Daily'),
+        'WEEKLY'  => array('Weekly'),
+        'MONTHLY' => array('Monthly'),
+        'YEARLY'  => array('Yearly'),
     );
 
-    protected $statusField = 'repeat_type';
+    protected $defaultSugarValue = '';
 }

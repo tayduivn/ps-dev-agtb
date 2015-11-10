@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
 
 use Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper\UserHelper;
+use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\EventMap;
 
 /**
  * Abstract class for iCal adapters common functionality
@@ -31,7 +32,7 @@ abstract class AdapterAbstract
         'description' => 'getDescription',
         'location' => 'getLocation',
         'duration_hours' => 'getDurationHours',
-        'duration_minutes' => 'getDurationMinutes'
+        'duration_minutes' => 'getDurationMinutes',
     );
 
     /**
@@ -43,7 +44,7 @@ abstract class AdapterAbstract
         'description' => 'getDescription',
         'location' => 'getLocation',
         'duration_hours' => 'getDurationHours',
-        'duration_minutes' => 'getDurationMinutes'
+        'duration_minutes' => 'getDurationMinutes',
     );
 
     /** map for association beetwen CalDavEvent objects and Suagr bean. Uses in export
@@ -53,9 +54,12 @@ abstract class AdapterAbstract
         'setTitle' => 'name',
         'setDescription' => 'description',
         'setLocation' => 'location',
-        'setStatus' => 'status',
     );
 
+    /**
+     * @var EventMap
+     */
+    protected $eventMap;
 
     /**
      * Check if recurring rules was changed for bean
@@ -125,7 +129,7 @@ abstract class AdapterAbstract
 
     /**
      * Indexes an array according to a specified key
-     * @param midex $indexKey
+     * @param string $indexKey
      * @param array $object
      * @return array
      */
@@ -521,4 +525,16 @@ abstract class AdapterAbstract
         return $GLOBALS['timedate']->get_date_format();
     }
 
+    /**
+     * Get EventMap object.
+     *
+     * @return EventMap
+     */
+    protected function getEventMap()
+    {
+        if (!$this->eventMap) {
+            $this->eventMap = new EventMap();
+        }
+        return $this->eventMap;
+    }
 }

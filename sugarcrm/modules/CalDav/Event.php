@@ -13,7 +13,6 @@ use Sabre\VObject;
 use Sabre\VObject\Component as SabreComponent;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper as DavHelper;
 use Sugarcrm\Sugarcrm\Dav\Base\Constants as DavConstants;
-use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as DavStatusMapper;
 use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
 
 /**
@@ -158,10 +157,6 @@ class CalDavEvent extends SugarBean
      */
     protected $participantsHelper;
 
-    /**
-     * @var Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\EventMap
-     */
-    protected $statusMapper;
 
     /**
      * @var Sugarcrm\Sugarcrm\Dav\Base\Helper\ServerHelper
@@ -520,7 +515,6 @@ class CalDavEvent extends SugarBean
         $this->dateTimeHelper = new DavHelper\DateTimeHelper();
         $this->recurringHelper = new DavHelper\RecurringHelper();
         $this->participantsHelper = new DavHelper\ParticipantsHelper();
-        $this->statusMapper = new DavStatusMapper\EventMap();
         $this->serverHelper = new DavHelper\ServerHelper();
         parent::__construct();
     }
@@ -1164,13 +1158,7 @@ class CalDavEvent extends SugarBean
      */
     public function getStatus()
     {
-        $status = $this->getVObjectStringProperty('STATUS');
-        $statusMap = $this->statusMapper->getMapping($this);
-        if (isset($statusMap[$status])) {
-            return $statusMap[$status];
-        }
-
-        return null;
+        return $this->getVObjectStringProperty('STATUS');
     }
 
     /**
@@ -1183,13 +1171,7 @@ class CalDavEvent extends SugarBean
      */
     public function setStatus($value, SabreComponent $parent)
     {
-        $statusMap = array_flip($this->statusMapper->getMapping($this));
-
-        if (!isset($statusMap[$value])) {
-            return false;
-        }
-
-        return $this->setVObjectStringProperty('STATUS', $statusMap[$value], $parent);
+        return $this->setVObjectStringProperty('STATUS', $value, $parent);
     }
 
     public function vObjectToString()
