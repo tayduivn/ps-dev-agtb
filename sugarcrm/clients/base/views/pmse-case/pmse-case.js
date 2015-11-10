@@ -18,7 +18,7 @@
     initialize: function(options) {
 
         this.case = this.options.context.get('case');
-        _.bindAll(this);
+
         options.meta = _.extend({}, app.metadata.getView(this.options.module, 'record'), options.meta);
         options.meta.hashSync = _.isUndefined(options.meta.hashSync) ? true : options.meta.hashSync;
         options.meta.buttons = this.case.buttons;
@@ -50,13 +50,13 @@
         this.adjustHeaderpane = _.bind(_.debounce(this.adjustHeaderpane, 50), this);
         $(window).on('resize.' + this.cid, this.adjustHeaderpane);
 
-        $(window).on('resize.' + this.cid, this.overflowTabs);
+        $(window).on('resize.' + this.cid, _.bind(this.overflowTabs, this));
 
         // initialize tab view after the component is attached to DOM
         this.on('append', function() {
             this.overflowTabs();
             this.handleActiveTab();
-                        });
+        }, this);
 
     },
 

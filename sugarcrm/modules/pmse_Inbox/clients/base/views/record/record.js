@@ -20,10 +20,8 @@
     },
 
     initialize: function(options) {
-        _.bindAll(this);
         options.meta = _.extend({}, app.metadata.getView(null, 'record'), options.meta);
         options.meta.hashSync = _.isUndefined(options.meta.hashSync) ? true : options.meta.hashSync;
-//        app.view.View.prototype.initialize.call(this, options);
         this._super('initialize', [options]);
 
         this.context.on('approve:case', this.approveCase, this);
