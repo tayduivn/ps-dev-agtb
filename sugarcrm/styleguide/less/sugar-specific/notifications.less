@@ -65,9 +65,6 @@
             text-indent: 0;
           }
           a[data-action="config"] {
-            position: absolute;
-            top: 0;
-            right: 0;
             text-decoration: none;
             color: @linkColor
           }
@@ -78,6 +75,11 @@
 		}
         li.list-and-config {
           position: relative;
+          span.config {
+            position: absolute;
+            top: 0;
+            right: 0;
+          }
         }
 	  }
 	}
