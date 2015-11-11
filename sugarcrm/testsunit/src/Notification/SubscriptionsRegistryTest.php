@@ -17,7 +17,6 @@ use Sugarcrm\Sugarcrm\Notification\ApplicationEmitter\Event as ApplicationEvent;
 
 require_once 'tests/SugarTestReflection.php';
 require_once 'modules/Users/User.php';
-require_once 'modules/Accounts/Emitter.php';
 
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry

@@ -99,7 +99,7 @@ class EventHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
         $eventHandler = $this->getMock(
             self::NS_EVENT_HANDLER,
             array('getSubscriptionsRegistry', 'getCarrierRegistry', 'getJobQueueManager'),
-            array($event)
+            array(array('src/Notification/ApplicationEmitter/Event.php', serialize($event)))
         );
         $eventHandler->expects($this->once())->method('getSubscriptionsRegistry')
             ->willReturn($subscriptionsRegistry);

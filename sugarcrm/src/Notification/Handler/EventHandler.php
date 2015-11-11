@@ -12,8 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Notification\Handler;
 
-use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
-use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager;
+use Sugarcrm\Sugarcrm\Notification\JobQueue\BaseHandler;
 use Sugarcrm\Sugarcrm\Notification\CarrierRegistry;
 use Sugarcrm\Sugarcrm\Notification\EventInterface;
 use Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry;
@@ -26,7 +25,7 @@ use Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry;
  * Class EventHandler
  * @package Notification
  */
-class EventHandler implements RunnableInterface
+class EventHandler extends BaseHandler
 {
     /**
      * @var EventInterface
@@ -38,7 +37,7 @@ class EventHandler implements RunnableInterface
      *
      * @param EventInterface $event event for processing.
      */
-    public function __construct(EventInterface $event)
+    public function initialize(EventInterface $event)
     {
         $this->event = $event;
     }
@@ -85,16 +84,6 @@ class EventHandler implements RunnableInterface
             $manager->NotificationCarrierBulkMessage($this->event, $carrierName, $carrierRow['data']);
         }
         return \SchedulersJob::JOB_SUCCESS;
-    }
-
-    /**
-     * Return JobQueue Manager.
-     *
-     * @return Manager
-     */
-    protected function getJobQueueManager()
-    {
-        return new Manager();
     }
 
     /**

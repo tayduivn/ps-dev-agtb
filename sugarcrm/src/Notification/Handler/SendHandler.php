@@ -13,16 +13,16 @@
 namespace Sugarcrm\Sugarcrm\Notification\Handler;
 
 use Sugarcrm\Sugarcrm\Notification\CarrierRegistry;
-use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Handler\SubtaskCapableInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager;
+use Sugarcrm\Sugarcrm\Notification\JobQueue\BaseHandler;
 
 /**
  * Class SendHandler.
  * Is used to send messages to a user via various carriers.
  * @package Sugarcrm\Sugarcrm\Notification
  */
-class SendHandler implements RunnableInterface, SubtaskCapableInterface
+class SendHandler extends BaseHandler implements SubtaskCapableInterface
 {
     /**
      * Fail the task if a single child ends as failed.
@@ -63,7 +63,7 @@ class SendHandler implements RunnableInterface, SubtaskCapableInterface
      * @param mixed $transportValue recipient data (normally here it is user ID).
      * @param array $message message pack.
      */
-    public function __construct($carrier, $transportValue, array $message)
+    public function initialize($carrier, $transportValue, array $message)
     {
         $this->carrierName = $carrier;
         $this->transportValue = $transportValue;
