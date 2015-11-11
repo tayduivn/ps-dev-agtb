@@ -18,6 +18,8 @@ class GlobalConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
     const NS_REGISTRY = 'Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry';
     const NS_CARRIER_REGISTRY = 'Sugarcrm\\Sugarcrm\\Notification\\CarrierRegistry';
     const NS_STATUS = 'Sugarcrm\\Sugarcrm\\Notification\\Config\\Status';
+    const NS_CARRIER_CONFIGURABLE = 'Sugarcrm\\Sugarcrm\\Notification\\Carrier\\ConfigurableInterface';
+    const NS_CARRIER_BASE = 'Sugarcrm\\Sugarcrm\\Notification\\Carrier\\CarrierInterface';
     private $api;
 
     public function testGetConfig()

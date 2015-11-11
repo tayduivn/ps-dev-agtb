@@ -86,6 +86,12 @@ class SubscriptionsRegistry
         }
         $beanEmitterName = (string)$this->getEmitterRegistry()->getBeanEmitter();
         $tree[$beanEmitterName] = $this->getBeanEmitterTree($tree);
+
+        foreach ($tree as $emitter => $config) {
+            if (empty($config)) {
+                unset($tree[$emitter]);
+            }
+        }
         return $tree;
     }
 

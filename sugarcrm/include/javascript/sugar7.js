@@ -298,8 +298,8 @@
             },
             {
                 name: 'config',
-                route: ':module/config(/:section)',
-                callback: function(module, section) {
+                route: ':module/config',
+                callback: function (module) {
                     // FIXME: We shouldn't be calling private methods like this.
                     // Will be addressed in SC-2761.
                     if (!app.router._moduleExists(module)) {
@@ -311,7 +311,6 @@
                     if (!(previousModule === module && previousLayout === "records")) {
                         app.controller.loadView({
                             module: module,
-                            section: section,
                             layout: 'records'
                         });
                     }
@@ -320,7 +319,6 @@
                         layout: 'config-drawer',
                         context: {
                             module: module,
-                            section: section,
                             create: true
                         }
                     }, _.bind(function(context, model) {
