@@ -3035,7 +3035,10 @@ class SugarBean
         }
 
         $query = "SELECT $query_select FROM $query_from ";
-        $options = array('where_condition' => true);
+        $options = array(
+            'action' => 'view',
+            'where_condition' => true,
+        );
         if(!$this->disable_row_level_security)
         {
             //$this->table_name != 'users' && $this->table_name != 'teams' && $this->table_name != 'team_memberships' && $this->table_name != 'currencies')
@@ -4177,7 +4180,10 @@ class SugarBean
         $secondarySelectedFields = array();
         $ret_array = array();
         $distinct = '';
-        $options = array('where_condition' => true);
+        $options = array(
+            'action' => 'list',
+            'where_condition' => true,
+        );
         $this->addVisibilityWhere($where, $options);
 
         if(!empty($params['distinct']))

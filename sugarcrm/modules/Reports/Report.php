@@ -1216,6 +1216,7 @@ class Report
         // Bug63958 Go back to using where clause team restrictions instead of INNER JOINS for performance reasons on SugarInternal
         $options = $this->visibilityOpts;
         $options['where_condition'] = true;
+        $options['action'] = 'list';
         $where_clause = $this->focus->addVisibilityWhere($where_clause, $options);
         $this->where = $where_clause;
     }

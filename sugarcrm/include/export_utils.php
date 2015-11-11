@@ -98,7 +98,9 @@ function export($type, $records = null, $members = false, $sample = false)
             ACLController::displayNoAccess();
             sugar_die('');
         }
-        $focus->addVisibilityWhere($where);
+        $focus->addVisibilityWhere($where, array(
+            'action' => 'list',
+        ));
     }
 
     // Export entire list was broken because the where clause already has "where" in it
@@ -214,7 +216,9 @@ function exportFromApi($args, $sample = false)
 
 
     if ($focus->bean_implements('ACL')) {
-        $focus->addVisibilityWhere($where);
+        $focus->addVisibilityWhere($where, array(
+            'action' => 'list',
+        ));
     }
 
     // Export entire list was broken because the where clause already has "where" in it

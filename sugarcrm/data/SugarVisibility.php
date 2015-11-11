@@ -102,6 +102,11 @@ abstract class SugarVisibility
         if (isset($this->options[$name])) {
             return $this->options[$name];
         }
+
+        if ($name === 'action' && $default !== null) {
+            $GLOBALS['log']->warn('Relying on the default action in SugarVisibility is discouraged');
+        }
+
         return $default;
     }
 
