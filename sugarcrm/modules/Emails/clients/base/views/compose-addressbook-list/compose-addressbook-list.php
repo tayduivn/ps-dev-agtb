@@ -36,6 +36,7 @@ $viewdefs['Emails']['base']['view']['compose-addressbook-list'] = array(
                 array(
                     'name' => '_module',
                     'label' => 'LBL_MODULE',
+                    'type' => 'module',
                     'sortable' => false,
                     'enabled' => true,
                     'default' => true,
