@@ -11,9 +11,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 require_once('include/ListView/ListViewDisplay.php');
-
-
 require_once('include/contextMenus/contextMenu.php');
 
 class ListViewSmarty extends ListViewDisplay{
@@ -37,12 +37,15 @@ class ListViewSmarty extends ListViewDisplay{
     var $contextMenus = true;
     var $showMassupdateFields = true;
     var $menu_location = 'top';
+
     /**
      * Constructor, Smarty object immediately available after
      *
+     * @param Request $request
      */
-	function ListViewSmarty() {
-		parent::ListViewDisplay();
+    public function ListViewSmarty(Request $request = null)
+    {
+        parent::ListViewDisplay($request);
 		$this->ss = new Sugar_Smarty();
 	}
 
