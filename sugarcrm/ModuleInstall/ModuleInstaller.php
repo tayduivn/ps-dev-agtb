@@ -333,12 +333,12 @@ class ModuleInstaller{
                 /* BEGIN - RESTORE POINT - by MR. MILK August 31, 2005 02:22:11 PM */
                 //rmdir_recursive($cp['to']);
 
-                $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($this->sanitizeInstallFile())))."-restore/".$cp['to'] );
+                $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($this->validateInstallFile())))."-restore/".$cp['to'] );
                 $this->uninstall_new_files($cp, $backup_path);
                 $this->copy_path($backup_path, $cp['to'], $backup_path, true);
                 /* END - RESTORE POINT - by MR. MILK August 31, 2005 02:22:18 PM */
             }
-            $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($this->sanitizeInstallFile())))."-restore");
+            $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($this->validateInstallFile())))."-restore");
             if(file_exists($backup_path))
                 rmdir_recursive($backup_path);
         }
@@ -2699,7 +2699,7 @@ class ModuleInstaller{
                 foreach($this->installdefs['copy'] as $cp){
                     $cp['to'] = clean_path(str_replace('<basepath>', $this->base_dir, $cp['to']));
                     if (file_exists($cp['to'])) {
-                        $backup_path = clean_path(remove_file_extension(urldecode(hashToFile($this->sanitizeInstallFile())))."-restore/".$cp['to']);
+                        $backup_path = clean_path(remove_file_extension(urldecode(hashToFile($this->validateInstallFile())))."-restore/".$cp['to']);
 
                         $GLOBALS['log']->debug('ENABLE COPY:: CREATING BACKUP OF: ' . $cp['to']);
                         $this->copy_path($cp['to'], $backup_path);
@@ -2730,7 +2730,7 @@ class ModuleInstaller{
                         $GLOBALS['log']->debug('DISABLE COPY:: REMOVING: ' . $cp['to']);
                         rmdir_recursive($cp['to']);
                     }
-                    $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($this->sanitizeInstallFile())))."-restore/".$cp['to'] ); // bug 16966 tyoung - replaced missing assignment to $backup_path
+                    $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($this->validateInstallFile())))."-restore/".$cp['to'] ); // bug 16966 tyoung - replaced missing assignment to $backup_path
                     //check if this file exists in the -restore directory
 //					$GLOBALS['log']->debug("ModuleInstaller.php->disable_copy(): backup_path=".$backup_path);
                     if(file_exists($backup_path)){
@@ -3390,7 +3390,7 @@ class ModuleInstaller{
      *
      * @return mixed
      */
-    protected function sanitizeInstallFile()
+    protected function validateInstallFile()
     {
         $request = InputValidation::getService();
         $installFile = $request->getValidInputRequest('install_file', 'Assert\File');
