@@ -240,7 +240,7 @@ describe('Base.Fields.Currency', function() {
         });
 
         using('valid values',
-            [['5,000.23', '5000.23'], ['1,345,567.235', '1345567.235'], ['.33', '.33']],
+            [['5,000.23', '5000.230000'], ['1,345,567.235', '1345567.235000'], ['.33', '0.330000']],
             function(value, result) {
                 it('should unformat valid value', function() {
                     expect(field.unformat(value)).toEqual(result);
@@ -256,7 +256,7 @@ describe('Base.Fields.Currency', function() {
             });
 
         using('valid values',
-            [['5.000,23', '5000.23'], ['1.345.567,235', '1345567.235'], [',33', '.33']],
+            [['5.000,23', '5000.230000'], ['1.345.567,235', '1345567.235000'], [',33', '0.330000']],
             function(value, result) {
                 it('should unformat valid value with ., swapped', function() {
                     app.user.setPreference('decimal_separator', ',');
