@@ -310,7 +310,7 @@ class ModuleInstaller{
         if(isset($this->installdefs['copy'])){
             /* BEGIN - RESTORE POINT - by MR. MILK August 31, 2005 02:22:11 PM */
 
-            $backup_path = clean_path( remove_file_extension(urldecode($this->sanitizeInstallFile())) . "-restore" );
+            $backup_path = clean_path( remove_file_extension(urldecode($this->validateInstallFile())) . "-restore" );
             /* END - RESTORE POINT - by MR. MILK August 31, 2005 02:22:18 PM */
             foreach($this->installdefs['copy'] as $cp){
                 $GLOBALS['log']->debug("Copying ..." . $cp['from'].  " to " .$cp['to'] );
