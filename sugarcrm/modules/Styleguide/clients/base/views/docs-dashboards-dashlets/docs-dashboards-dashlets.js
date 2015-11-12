@@ -9,28 +9,31 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    className: 'container-fluid',
-
     // dashboard dashlets
-    _renderHtml: function () {
+    _renderHtml: function() {
         var self = this;
 
         this._super('_renderHtml');
 
         // define event listeners
         app.events.on('preview:close', function() {
-            self.hideDashletPreview();
+            console.log('previewClose');
+            self.toggleSidebar(false);
         });
         app.events.on('app:dashletPreview:close', function() {
-            self.hideDashletPreview();
+            self.toggleSidebar(false);
         });
         app.events.on('app:dashletPreview:open', function() {
-            self.showDashletPreview();
+            self.toggleSidebar(true);
         });
 
-        app.events.trigger('app:dashletPreview:close');
+        // app.events.trigger('app:dashletPreview:close');
 
-        this.$('.dashlet-example').on('click.styleguide', function(){
+        this.$('.dashlet-example').on('click.styleguide', function() {
+            if ($(this).hasClass('active')) {
+                self.toggleSidebar(false);
+                return;
+            }
             self.$('.dashlet-example').removeClass('active');
             $(this).addClass('active');
             app.events.trigger('app:dashletPreview:open');
@@ -45,20 +48,18 @@
 
     _dispose: function() {
         this.$('.dashlet-example').off('click.styleguide');
-        app.events.trigger('app:dashletPreview:close');
+        // app.events.trigger('app:dashletPreview:close');
         this._super('_dispose');
     },
 
-    showDashletPreview: function(event) {
-        $('.main-pane').addClass('span8').removeClass('span12');
-        $('.preview-pane').addClass('active');
-        $('.side').css({visibility: 'visible'});
-    },
-
-    hideDashletPreview: function(event) {
-        $('.dashlet-example').removeClass('active');
-        $('.main-pane').addClass('span12').removeClass('span8');
-        $('.side').css({visibility: 'hidden'});
+    toggleSidebar: function(state) {
+        var defaultLayout = this.layout.getComponent('sidebar');
+        if (defaultLayout) {
+            defaultLayout.trigger('sidebar:toggle', state);
+        }
+        if (!state) {
+            self.$('.dashlet-example').removeClass('active');
+        }
     },
 
     /**
@@ -116,18 +117,16 @@
                 component.context = contextDef;
             }
 
-            previewLayout.initComponents([
-                {
-                    layout: {
-                        type: 'dashlet',
-                        label: app.lang.get(metadata.preview.label || metadata.label, metadata.preview.module),
-                        preview: true,
-                        components: [
-                            component
-                        ]
-                    }
+            previewLayout.initComponents([{
+                layout: {
+                    type: 'dashlet',
+                    label: app.lang.get(metadata.preview.label || metadata.label, metadata.preview.module),
+                    preview: true,
+                    components: [
+                        component
+                    ]
                 }
-            ], this.context.parent);
+            }], this.context.parent);
 
             previewLayout.loadData();
             previewLayout.render();

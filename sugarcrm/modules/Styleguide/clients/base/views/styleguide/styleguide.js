@@ -11,9 +11,9 @@
 ({
     className: 'container-fluid',
 
-    _render: function() {
-        var self = this;
-
-        this._super('_render');
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        var request = this.context.get('request');
+        this.page = request.page_details;
     }
 })

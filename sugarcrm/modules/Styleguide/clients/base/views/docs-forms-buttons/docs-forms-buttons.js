@@ -9,7 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    className: 'container-fluid',
     _render: function() {
         this._super('_render');
         // button state demo

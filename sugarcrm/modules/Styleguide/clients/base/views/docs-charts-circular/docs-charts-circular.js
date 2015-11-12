@@ -9,8 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-  className: 'container-fluid',
-
   // charts circular
   _renderHtml: function() {
     this._super('_renderHtml');

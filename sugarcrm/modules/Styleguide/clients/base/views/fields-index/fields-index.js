@@ -15,22 +15,27 @@
     parent_link: '',
     tempfields: [],
 
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        var request = this.context.get('request');
+        this.keys = request.keys;
+        this.page = request.page_details;
+    },
+
     _render: function() {
         var self = this,
-            fieldTypeReq = this.context.get('field_type'),
-            fieldTypes = (fieldTypeReq === 'all' ? ['text','bool','date','datetimecombo','currency','email'] : [fieldTypeReq]),
+            fieldTypeReq = this.context.get('content_name'),
+            fieldTypes = fieldTypeReq === 'index' ? ['text', 'bool', 'date', 'datetimecombo', 'currency', 'email'] : [fieldTypeReq],
                 //'textarea','url','phone','password','full_name'
-            fieldStates = ['detail','edit','error','disabled'],
-            fieldLayouts = ['base','record','list'],
+            fieldStates = ['detail', 'edit', 'error', 'disabled'],
+            fieldLayouts = ['base', 'record', 'list'],
             fieldMeta = {};
 
-        this.section.title = 'Form Elements';
-        this.section.description = 'Basic fields that support detail, record, and edit modes with error addons.';
-        this.useTable = (fieldTypeReq === 'all' ? true : false);
-        this.parent_link = (fieldTypeReq === 'all' ? 'docs/index-forms' : 'field/all');
+        this.useTable = fieldTypeReq === 'index' ? true : false;
+        this.parent_link = fieldTypeReq === 'index' ? 'docs/forms-index' : 'fields/index';
         this.tempfields = [];
 
-        _.each(fieldTypes, function(fieldType){
+        _.each(fieldTypes, function(fieldType) {
 
             //build meta data for field examples from model fields
             fieldMeta = _.find(self.model.fields, function(field) {
@@ -56,11 +61,21 @@
             }
         });
 
+        if (fieldTypeReq !== 'index') {
+            self.title = fieldTypeReq + ' field';
+            var descTpl = app.template.getView('fields-index.' + fieldTypeReq, self.module);
+            if (descTpl) {
+                this.documentation = descTpl();
+            } else {
+                this.page.description = 'Sugar7 ' + fieldTypeReq + ' field';
+            }
+        }
+
         this._super('_render');
 
         //render example fields into accordion grids
         //e.g., ['text','bool','date','datetimecombo','currency','email']
-        _.each(fieldTypes, function(fieldType){
+        _.each(fieldTypes, function(fieldType) {
 
             var fieldMeta = _.find(self.tempfields, function(field) {
                     return field.type === fieldType;
@@ -105,7 +120,7 @@
 
                     //pre render field setup
                     if (fieldState !== 'detail') {
-                        if (!fieldObject.plugins || !_.contains(fieldObject.plugins, "ListEditable") || fieldLayout !== 'list') {
+                        if (!fieldObject.plugins || !_.contains(fieldObject.plugins, 'ListEditable') || fieldLayout !== 'list') {
                             fieldObject.setMode('edit');
                         } else {
                             fieldObject.setMode('list-edit');
@@ -136,13 +151,6 @@
 
             });
 
-            if (fieldTypeReq !== 'all') {
-                self.title = fieldTypeReq + ' field';
-                var descTpl = app.template.getView('styleguide.' + fieldTypeReq, self.module);
-                if (descTpl) {
-                    self.description = descTpl();
-                }
-            }
         });
     }
 })

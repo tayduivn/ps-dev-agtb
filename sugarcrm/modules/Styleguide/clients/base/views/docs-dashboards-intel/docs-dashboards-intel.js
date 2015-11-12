@@ -9,8 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    className: 'container-fluid',
-
     // dashboard intel
     _renderHtml: function () {
         var self = this;

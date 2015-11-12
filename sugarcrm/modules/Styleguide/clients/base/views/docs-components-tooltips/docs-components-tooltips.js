@@ -9,8 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    className: 'container-fluid',
-
     //components tooltips
     _renderHtml: function () {
         this._super('_renderHtml');

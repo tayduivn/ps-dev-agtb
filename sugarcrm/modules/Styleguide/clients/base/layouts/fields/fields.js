@@ -1,4 +1,3 @@
-{{!--
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,10 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-<div class="page-header">
-    <h1>Date Field <small>driven by jQuery datetime picker plugin</small></h1>
-</div>
-<div class="description">
-    <p>See the <a href="#Styleguide/docs/forms-datetime">documentation page</a> for implementation details for the date and datetimecombo fields.</p>
-</div>
+({
+    plugins: ['Prettify'],
+    extendsFrom: 'StyleguideStyleguideLayout'
+})
