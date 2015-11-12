@@ -246,10 +246,6 @@
         return (this.model.isNew() && (nonDefaultedAttributesChanged || defaultedAttributesChanged));
     },
 
-    handleSync: function () {
-        //override handleSync since there is no need to save the previous model state
-    },
-
     /**
      * @inheritdoc
      *
