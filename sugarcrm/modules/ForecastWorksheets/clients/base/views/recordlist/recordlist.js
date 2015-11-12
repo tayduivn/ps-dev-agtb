@@ -153,13 +153,18 @@
      * Current URL of the module
      */
     currentURL: '',
-    
+
+    /**
+     * Takes the values calculated in `this.totals` and condenses them for the totals.hbs subtemplate
+     */
+    totalsTemplateObj: undefined,
+
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
         this.plugins = _.without(this.plugins, 'ReorderableColumns');
         this.plugins.push('CteTabbing', 'DirtyCollection');
-        this._super("initialize", [options]);
+        this._super('initialize', [options]);
         // we need to get the flex-list template from the ForecastWorksheets module so it can use the filteredCollection
         // for display
         this.template = app.template.getView('flex-list', this.module);
@@ -180,8 +185,8 @@
             }
         }
         app.routing.offBefore('route', this.beforeRouteHandler, this);
-        $(window).off("beforeunload." + this.worksheetType);
-        this._super("_dispose");
+        $(window).off('beforeunload.' + this.worksheetType);
+        this._super('_dispose');
     },
 
     bindDataChange: function() {
@@ -210,18 +215,49 @@
 
                 this.context.parent.on('forecasts:worksheet:totals', function(totals, type) {
                     if (type == this.worksheetType && this.layout.isVisible()) {
-                        var tpl = app.template.getView('recordlist.totals', this.module);
-                        this.$el.find('tfoot').remove();
-                        this.$el.find('tbody').after(tpl(this));
+                        this.totalsTemplateObj = {
+                            orderedFields: []
+                        };
+                        var tpl = app.template.getView('recordlist.totals', this.module),
+                            filteredKey,
+                            totalValues;
+
+                        // loop through visible fields in metadata order
+                        _.each(this._fields.visible, function(field) {
+                            if(_.contains(['likely_case', 'best_case', 'worst_case'], field.name)) {
+                                totalValues = {};
+                                totalValues.fieldName = field.name;
+
+                                switch(field.name) {
+                                    case 'worst_case':
+                                    case 'best_case':
+                                        filteredKey = field.name.split('_')[0];
+                                        break;
+                                    case 'likely_case':
+                                        filteredKey = 'amount';
+                                        break;
+                                }
+
+                                totalValues.display = this.totals[field.name + '_display'];
+                                totalValues.access = this.totals[field.name + '_access'];
+                                totalValues.filtered = this.totals['filtered_' + filteredKey];
+                                totalValues.overall = this.totals['overall_' + filteredKey];
+
+                                this.totalsTemplateObj.orderedFields.push(totalValues);
+                            }
+                        }, this);
+
+                        this.$('tfoot').remove();
+                        this.$('tbody').after(tpl(this));
                     }
                 }, this);
-                
+
                 /**
                  * trigger an event if dirty
                  */
-                this.dirtyModels.on("add change reset", function(){
+                this.dirtyModels.on('add change reset', function(){
                     if(this.layout.isVisible()){
-                        this.context.parent.trigger("forecasts:worksheet:dirty", this.worksheetType, this.dirtyModels.length > 0);
+                        this.context.parent.trigger('forecasts:worksheet:dirty', this.worksheetType, this.dirtyModels.length > 0);
                     }
                 }, this);
                 
@@ -305,7 +341,7 @@
                     } else {
                         var commitStage = model.get('commit_stage'),
                             includedCommitStages = app.metadata.getModule('Forecasts', 'config').commit_stages_included,
-                            el = this.$el.find('tr[name=' + model.module + '_' + model.id + ']'),
+                            el = this.$('tr[name=' + model.module + '_' + model.id + ']'),
                             isIncluded = _.include(includedCommitStages, commitStage);
 
                         if (el) {
@@ -358,7 +394,7 @@
 
                 app.routing.before('route', this.beforeRouteHandler, {}, this);
 
-                $(window).bind("beforeunload." + this.worksheetType, _.bind(function() {
+                $(window).bind('beforeunload.' + this.worksheetType, _.bind(function() {
                     var ret = this.showNavigationMessage('window');
                     if (_.isString(ret)) {
                         return ret;
@@ -400,7 +436,7 @@
         }, this);
 
         // call the parent
-        this._super("bindDataChange");
+        this._super('bindDataChange');
     },
 
     beforeRouteHandler: function() {
@@ -420,7 +456,7 @@
      */
     unbindData: function() {
         app.events.off(null, null, this);
-        this._super("unbindData");
+        this._super('unbindData');
     },
 
     /**
@@ -472,7 +508,7 @@
         this.displayNavigationMessage = display;
         this.navigationMessage = reload_label;
         this.routeNavigationMessage = route_label;
-        this.context.parent.trigger("forecasts:worksheet:navigationMessage", this.navigationMessage);
+        this.context.parent.trigger('forecasts:worksheet:navigationMessage', this.navigationMessage);
     },
 
     /**
@@ -548,19 +584,19 @@
 
             if (this.filteredCollection.length == 0) {
                 var tpl = app.template.getView('recordlist.noresults', this.module);
-                this.$el.find('tbody').html(tpl(this));
+                this.$('tbody').html(tpl(this));
             }
 
             // insert the footer
             if (!_.isEmpty(this.totals) && this.layout.isVisible()) {
                 var tpl = app.template.getView('recordlist.totals', this.module);
-                this.$el.find('tbody').after(tpl(this));
+                this.$('tbody').after(tpl(this));
             }
             //adjust width of sales stage column to longest value so cells don't shift when using CTE
-            var sales_stage_width = this.$el.find('td[data-field-name="sales_stage"] span.isEditable').width();
-            var sales_stage_outerwidth = this.$el.find('td[data-field-name="sales_stage"] span.isEditable').outerWidth();
-            this.$el.find('td[data-field-name="sales_stage"] span.isEditable').width(sales_stage_width + 20);
-            this.$el.find('td[data-field-name="sales_stage"] span.isEditable').parent("td").css("min-width", sales_stage_outerwidth + 26 + "px");
+            var sales_stage_width = this.$('td[data-field-name="sales_stage"] span.isEditable').width();
+            var sales_stage_outerwidth = this.$('td[data-field-name="sales_stage"] span.isEditable').outerWidth();
+            this.$('td[data-field-name="sales_stage"] span.isEditable').width(sales_stage_width + 20);
+            this.$('td[data-field-name="sales_stage"] span.isEditable').parent('td').css('min-width', sales_stage_outerwidth + 26 + 'px');
 
             // figure out if any of the row actions need to be disabled
             this.setRowActionButtonStates();
@@ -667,7 +703,7 @@
         _.each(this.fields, function(field) {
             if (field.def.event === 'list:preview:fire') {
                 // we have a field that needs to be disabled, so disable it!
-                field.setDisabled((field.model.get('parent_deleted') == "1"));
+                field.setDisabled((field.model.get('parent_deleted') == '1'));
                 field.render();
             }
         });
@@ -707,9 +743,9 @@
                 this.dirtyModels.each(function(model) {
                     //set properties on model to aid in save
                     model.set({
-                        "draft": (isDraft && isDraft == true) ? 1 : 0,
-                        "timeperiod_id": this.dirtyTimeperiod || this.selectedTimeperiod,
-                        "current_user": this.dirtyUser.id || this.selectedUser.id
+                        draft: (isDraft && isDraft == true) ? 1 : 0,
+                        timeperiod_id: this.dirtyTimeperiod || this.selectedTimeperiod,
+                        current_user: this.dirtyUser.id || this.selectedUser.id
                     }, {silent: true});
 
                     // set the correct module on the model since sidecar doesn't support sub-beans yet
@@ -722,12 +758,12 @@
                             if (model.get('parent_id') == previewId) {
                                 var previewCollection = new Backbone.Collection();
                                 this.filteredCollection.each(function(model) {
-                                    if (model.get('parent_deleted') !== "1") {
+                                    if (model.get('parent_deleted') !== '1') {
                                         previewCollection.add(model);
                                     }
                                 }, this);
 
-                                app.events.trigger("preview:render", model, previewCollection, true, model.get('id'), true);
+                                app.events.trigger('preview:render', model, previewCollection, true, model.get('id'), true);
                             }
                         }
 
@@ -739,8 +775,8 @@
                                     level: 'success',
                                     autoClose: true,
                                     autoCloseDelay: 10000,
-                                    title: app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
-                                    messages: [app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
+                                    title: app.lang.get('LBL_FORECASTS_WIZARD_SUCCESS_TITLE', 'Forecasts') + ':',
+                                    messages: [app.lang.get('LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS', 'Forecasts')]
                                 });
                             }
                             ctx.trigger('forecasts:worksheet:saved', totalToSave, this.worksheetType, isDraft);
@@ -756,8 +792,8 @@
                         level: 'success',
                         autoClose: true,
                         autoCloseDelay: 10000,
-                        title: app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
-                        messages: [app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
+                        title: app.lang.get('LBL_FORECASTS_WIZARD_SUCCESS_TITLE', 'Forecasts') + ':',
+                        messages: [app.lang.get('LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS', 'Forecasts')]
                     });
                 }
                 ctx.trigger('forecasts:worksheet:saved', totalToSave, this.worksheetType, isDraft);
@@ -859,10 +895,10 @@
         }, this);
 
         callbacks = app.data.getSyncCallbacks(method, model, options);
-        this.collection.trigger("data:sync:start", method, model, options);
+        this.collection.trigger('data:sync:start', method, model, options);
 
-        url = app.api.buildURL("ForecastWorksheets", null, null, options.params);
-        app.api.call("read", url, null, callbacks);
+        url = app.api.buildURL('ForecastWorksheets', null, null, options.params);
+        app.api.call('read', url, null, callbacks);
     },
 
     /**
@@ -991,17 +1027,17 @@
      */
     addPreviewEvents: function() {
         //When clicking on eye icon, we need to trigger preview:render with model&collection
-        this.context.on("list:preview:fire", function(model) {
+        this.context.on('list:preview:fire', function(model) {
             var previewCollection = new Backbone.Collection();
             this.filteredCollection.each(function(model) {
-                if (model.get('parent_deleted') !== "1") {
+                if (model.get('parent_deleted') !== '1') {
                     previewCollection.add(model);
                 }
             }, this);
 
             if (_.isUndefined(this.previewModel) || model.get('id') != this.previewModel.get('id')) {
                 this.previewModel = model;
-                app.events.trigger("preview:render", model, previewCollection, true);
+                app.events.trigger('preview:render', model, previewCollection, true);
             } else {
                 // user already has the preview panel open and has clicked the preview icon again
                 // remove row decoration
@@ -1012,11 +1048,11 @@
         }, this);
 
         //When switching to next/previous record from the preview panel, we need to update the highlighted row
-        app.events.on("list:preview:decorate", this.decorateRow, this);
+        app.events.on('list:preview:decorate', this.decorateRow, this);
         if (this.layout) {
-            this.layout.on("list:sort:fire", function() {
+            this.layout.on('list:sort:fire', function() {
                 //When sorting the list view, we need to close the preview panel
-                app.events.trigger("preview:close");
+                app.events.trigger('preview:close');
             }, this);
         }
 

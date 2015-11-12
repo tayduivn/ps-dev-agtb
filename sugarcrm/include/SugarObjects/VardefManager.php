@@ -463,6 +463,7 @@ class VardefManager{
         // Put ACLStatic into vardefs for beans supporting ACLs
         if(!empty($dictionary[$object]) && !isset($dictionary[$object]['acls']['SugarACLStatic'])){
             if (is_subclass_of($object, 'SugarBean') &&
+                is_callable("$object::bean_implements_static") &&
                call_user_func("$object::bean_implements_static", 'ACL')){
                $dictionary[$object]['acls']['SugarACLStatic'] = true;
             }
