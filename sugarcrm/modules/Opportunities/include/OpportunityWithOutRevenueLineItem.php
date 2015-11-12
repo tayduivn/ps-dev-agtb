@@ -420,8 +420,16 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
 
         $stage_cases = implode(',', $stage_cases);
 
+        $lost_stages = array();
+        foreach($fcsettings['sales_stage_lost'] as $row) {
+            $lost_stages[] = $db->quoted($row);
+        }
+
+        $lost_stages = implode(',', $lost_stages);
+
         $sq = new SugarQuery();
         $sq->select(array('opportunity_id'))
+            ->fieldRaw('COUNT(opportunity_id)', 'rli_count')
             ->fieldRaw($sqlCase, 'sales_stage')
             ->fieldRaw($this->dateClosedMigration . '(CASE when sales_stage IN (' . $stage_cases . ') THEN date_closed END)', 'dc_closed')
             ->fieldRaw($this->dateClosedMigration . '(CASE when sales_stage NOT IN (' . $stage_cases . ') THEN date_closed END)', 'dc_open')
@@ -431,14 +439,36 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         $sq->groupBy('opportunity_id');
 
         $results = $sq->execute();
+
+        $opportunity_ids = array();
+        foreach ($results as $result) {
+            $opportunity_ids[] = $db->quoted($result['opportunity_id']);
+        }
+        $opportunity_ids = implode(',', $opportunity_ids);
+
+        $closed_rli_sql = 'SELECT opportunity_id, COUNT(id) AS rli_count, SUM(best_case) AS best, SUM(likely_case) AS likely, SUM(worst_case) AS worst FROM revenue_line_items WHERE opportunity_id IN (' . $opportunity_ids . ') AND sales_stage IN (' . $lost_stages . ') GROUP BY opportunity_id';
+        $closed_rli_result = $db->query($closed_rli_sql);
+
+        $closed_rlis = array();
+        while ($row = $db->fetchByAssoc($closed_rli_result)) {
+            $closed_rlis[$row['opportunity_id']] = $row;
+        }
+
         foreach ($results as $result) {
             $sql = 'UPDATE opportunities SET date_closed = ' . $db->quoted((!empty($result['dc_open']) ? $result['dc_open'] : $result['dc_closed'])) . ',
                 date_closed_timestamp = ' . $db->quoted((!empty($result['dct_open']) ? $result['dct_open'] : $result['dct_closed'])) . ',
                 sales_stage = ' . $db->quoted($list_value[$result['sales_stage']]) . ',
                 included_revenue_line_items = 0, total_revenue_line_items = 0, closed_revenue_line_items = 0,
                 probability = ' . $db->quoted($app_list_strings['sales_probability_dom'][$list_value[$result['sales_stage']]]) . ',
-                sales_status = ' . $db->quoted('') . ', commit_stage = ' . $db->quoted('') . '
-                WHERE id = ' . $db->quoted($result['opportunity_id']);
+                sales_status = ' . $db->quoted('') . ', commit_stage = ' . $db->quoted('') . ',';
+
+            if ($result['rli_count'] == $closed_rlis[$result['opportunity_id']]['rli_count']) {
+                $sql .= 'amount = ' . $db->quoted($closed_rlis[$result['opportunity_id']]['likely']) . ',
+                    best_case = ' . $db->quoted($closed_rlis[$result['opportunity_id']]['best']) . ',
+                    worst_case = ' . $db->quoted($closed_rlis[$result['opportunity_id']]['worst']);
+            }
+
+            $sql .= ' WHERE id = ' . $db->quoted($result['opportunity_id']);
 
             $db->query($sql);
         }

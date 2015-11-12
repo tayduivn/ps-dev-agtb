@@ -598,7 +598,8 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                 }).setConstantPanel(constantPanelCfg);
             } else {
                 this._datePanel.setOperators({
-                    arithmetic: true
+                    arithmetic: true,
+                    group: true
                 });
                 if (field.isCurrency()) {
                     this._datePanel.setConstantPanel({
