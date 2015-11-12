@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['RevenueLineItems']['base']['view']['recordlist'] = array(
+$viewdefs['Opportunities']['base']['view']['recordlist'] = array(
     'selection' => array(
         'type' => 'multi',
         'actions' => array(
