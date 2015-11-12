@@ -30,12 +30,9 @@ class TeamsViewTBA extends SugarView
      */
     public function preDisplay()
     {
-        global $current_user;
-
-        if (!$GLOBALS['current_user']->isAdminForModule('Users') &&
-            !$GLOBALS['current_user']->isDeveloperForModule('Users')
-        ) {
-            sugar_die("Unauthorized access to administration.");
+        if (!$GLOBALS['current_user']->isAdminForModule('Users')) {
+            ACLController::displayNoAccess(true);
+            sugar_cleanup(true);
         }
 
         parent::preDisplay();
