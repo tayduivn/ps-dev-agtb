@@ -66,6 +66,10 @@ class ServerHelper
         $schedulePlugin = new Schedule\Plugin();
         $server->addPlugin($schedulePlugin);
 
+        /* WebDAV Sync support */
+        $syncPlugin = new DAV\Sync\Plugin();
+        $server->addPlugin($syncPlugin);
+
         return $server;
     }
 }
