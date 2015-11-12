@@ -617,7 +617,6 @@ $bwcModules = array(
     'EmailAddresses',
     'EmailMarketing',
     'EmailMan',
-    'Emails',
     'EmailTemplates',
     'Employees',
     'Exports',

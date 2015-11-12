@@ -12,8 +12,8 @@
 $module_name = 'Emails';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route'=>'#'.$module_name,
-        'label' =>'LNK_VIEW_MY_INBOX',
+        'route'=>'#bwc/index.php?module=Emails&action=index',
+        'label' =>'Personal Inboxes',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
         'icon' => 'fa-bars',

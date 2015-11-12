@@ -169,7 +169,7 @@ $dictionary['Email'] = array(
         'from_addr_name' => array(
             'name' => 'from_addr_name',
             'type' => 'varchar',
-            'vname' => 'from_addr_name',
+            'vname' => 'LBL_FROM',
             'source' => 'non-db',
         ),
         'reply_to_addr' => array(
@@ -181,19 +181,19 @@ $dictionary['Email'] = array(
         'to_addrs_names' => array(
             'name' => 'to_addrs_names',
             'type' => 'varchar',
-            'vname' => 'to_addrs_names',
+            'vname' => 'LBL_TO_ADDRS',
             'source' => 'non-db',
         ),
         'cc_addrs_names' => array(
             'name' => 'cc_addrs_names',
             'type' => 'varchar',
-            'vname' => 'cc_addrs_names',
+            'vname' => 'LBL_CC',
             'source' => 'non-db',
         ),
         'bcc_addrs_names' => array(
             'name' => 'bcc_addrs_names',
             'type' => 'varchar',
-            'vname' => 'bcc_addrs_names',
+            'vname' => 'LBL_BCC',
             'source' => 'non-db',
         ),
         'raw_source' => array(
@@ -211,14 +211,13 @@ $dictionary['Email'] = array(
         'description' => array(
             'name' => 'description',
             'type' => 'varchar',
-            'vname' => 'description',
+            'vname' => 'LBL_TEXT_BODY',
             'source' => 'non-db',
             'full_text_search' => array('enabled' => true, 'searchable' => true, 'type' => 'text'),
         ),
         'date_sent' => array(
             'name' => 'date_sent',
             'vname' => 'LBL_DATE_SENT',
-            'type' => 'datetime',
             'type' => 'datetime',
         ),
         'message_id' => array(
