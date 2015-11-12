@@ -16,9 +16,54 @@
 </span>
 
 <h2>Request Arguments</h2>
-<span class="lead">
-    This endpoint does not accept any request arguments.
-</span>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Required</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            original
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            Original trigger token was sent to trigger server
+        </td>
+        <td>
+            True
+        </td>
+    </tr>
+    <tr>
+        <td>
+            verified
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            New trigger token needed to store and to use in next requests
+        </td>
+        <td>
+            True
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>Request for Socket token verification</h3>
+<pre class="pre-scrollable">
+{
+   "original":"964db99c9884ea5fa77bc60fcb6e0d75",
+   "verified":"c96eb75d-c2b0-4f71-90de-9a01457880eb"
+}
+</pre>
 
 <h2>Response Arguments</h2>
 <table class="table table-hover">
@@ -32,13 +77,30 @@
     <tbody>
     <tr>
         <td>
-            &nbsp;
+            original
         </td>
         <td>
-            &nbsp;
+            String
         </td>
         <td>
-            &nbsp;
+            Original trigger token
+        </td>
+        <td>
+            True
+        </td>
+    </tr>
+    <tr>
+        <td>
+            verified
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            New trigger token
+        </td>
+        <td>
+            True
         </td>
     </tr>
     </tbody>
@@ -47,7 +109,8 @@
 <h3>Response</h3>
 <pre class="pre-scrollable">
 {
-
+   "original":"964db99c9884ea5fa77bc60fcb6e0d75",
+   "verified":"c96eb75d-c2b0-4f71-90de-9a01457880eb"
 }
 </pre>
 
@@ -62,7 +125,7 @@
             v10
         </td>
         <td>
-            Added <code>/vt</code> GET endpoint.
+            Added <code>/verifySocketToken</code> GET endpoint.
         </td>
     </tr>
 </table>

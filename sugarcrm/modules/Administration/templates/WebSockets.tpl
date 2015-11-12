@@ -17,7 +17,7 @@
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
 
 <form name="WebSocketConfiguration" method="POST">
-
+    {sugar_csrf_form_token}
     <input type="hidden" name="module" value="Administration">
     <input type="hidden" name="action" value="saveWebSocketsConfiguration">
 
@@ -101,7 +101,8 @@
                             module: "Administration",
                             action: "savewebsocketsconfiguration",
                             websocket_client_url: websocket_client_url,
-                            websocket_server_url: websocket_server_url
+                            websocket_server_url: websocket_server_url,
+                            csrf_token: SUGAR.csrf.form_token
                         }) + "to_pdf=1"
                 );
 

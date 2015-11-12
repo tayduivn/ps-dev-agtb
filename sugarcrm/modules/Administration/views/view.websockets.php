@@ -45,7 +45,7 @@ class ViewWebSockets extends SugarView
         global $mod_strings;
         global $app_strings;
 
-        $config = $GLOBALS['sugar_config']['websockets'];
+        $config = isset($GLOBALS['sugar_config']['websockets'])?$GLOBALS['sugar_config']['websockets']:null;
 
         $sugar_smarty = new Sugar_Smarty();
         $sugar_smarty->assign('APP', $app_strings);

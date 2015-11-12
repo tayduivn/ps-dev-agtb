@@ -218,7 +218,7 @@ class AbstractRelationship
             $labelDefinitions [] = array (
                 'module' => $this->lhs_module ,
                 'system_label' => isset($rightSysLabel)?$rightSysLabel : 'LBL_' . strtoupper ( $this->relationship_name . '_FROM_' . $this->getLeftModuleSystemLabel() ) . '_TITLE' ,
-                'display_label' => ($update && !empty($_REQUEST [ 'lhs_label' ] ))?$_REQUEST [ 'lhs_label' ] :(empty($this->lhs_label) ? translate ( $this->lhs_module ) : $this->lhs_label),
+                'display_label' => ($update && !empty($_REQUEST [ 'rhs_label' ] ))?$_REQUEST [ 'rhs_label' ] :(empty($this->rhs_label) ? translate ( $this->rhs_module ) : $this->rhs_label),
             ) ;
             $labelDefinitions [] = array (
             	'module' => $this->lhs_module ,

@@ -1,4 +1,5 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,6 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * Class SocketTokenAuthApi
+ */
 class SocketTokenAuthApi extends SugarApi
 {
     public function registerApiRest()
@@ -41,11 +45,10 @@ class SocketTokenAuthApi extends SugarApi
      */
     public function verifySocketToken(ServiceBase $api, array $args)
     {
-        if (empty($args['original']) || empty($args['verified'])) {
-            throw new SugarApiExceptionMissingParameter();
-        }
+        $this->requireArgs($args, array('original', 'verified'));
 
         $admin = BeanFactory::getBean('Administration');
+        /* @var $config Administration */
         $config = $admin->getConfigForModule('auth');
 
         if ($config['socket_token'] != $args['original']) {

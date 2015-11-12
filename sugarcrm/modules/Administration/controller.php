@@ -210,22 +210,25 @@ class AdministrationController extends SugarController
         $websocket_server_url = !empty($_REQUEST['websocket_server_url']) ? urldecode($_REQUEST['websocket_server_url']) : '';
 
         $errors = array();
+        $clientSettings = array('isBalancer' => false);
 
-        if (!empty($websocket_client_url) && !empty($websocket_server_url)) {
-            $clientSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_client_url);
-            if (!$clientSettings['available'] || $clientSettings['type'] != 'client') {
-                $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_CLIENT_ERROR'];
-            }
-            $serverSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_server_url);
-            if (!$serverSettings['available'] || $serverSettings['type'] != 'server') {
-                $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SERVER_ERROR'];
-            }
-        } else {
+        if (!empty($websocket_client_url) || !empty($websocket_server_url)) {
             if (empty($websocket_client_url)) {
                 $errors['ERR_WEB_SOCKET_CLIENT_URL'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_CLIENT_URL'];
+            } else {
+                $clientSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_client_url);
+                if (!$clientSettings['available'] || $clientSettings['type'] != 'client') {
+                    $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_CLIENT_ERROR'];
+                }
             }
+
             if (empty($websocket_server_url)) {
                 $errors['ERR_WEB_SOCKET_SERVER_URL'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SERVER_URL'];
+            } else {
+                $serverSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_server_url);
+                if (!$serverSettings['available'] || $serverSettings['type'] != 'server') {
+                    $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SERVER_ERROR'];
+                }
             }
         }
 
