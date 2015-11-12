@@ -11,7 +11,7 @@
  */
 
 /**
- * Update metadata of dashable lists with kbdocuments
+ * Update metadata of dashable lists with kbdocuments.
  */
 class SugarUpgradeMigrateDashableListsWithKBDocuments extends UpgradeScript
 {
@@ -26,7 +26,12 @@ class SugarUpgradeMigrateDashableListsWithKBDocuments extends UpgradeScript
         'kbdocument_name' => 'name',
         'views_number' => 'viewcount',
         'kbdoc_approver_name' => 'kbsapprover_name',
-        'kbdocument_revision_number' => 'revision'
+        'kbdocument_revision_number' => 'revision',
+        'is_external_article' => 'is_external',
+        'status_id' => 'status',
+        'assigned_user_name' => 'assigned_user_name',
+        'body' => 'kbdocument_body',
+        'case_name' => 'kbscase_name',
     );
 
     /**
@@ -34,8 +39,7 @@ class SugarUpgradeMigrateDashableListsWithKBDocuments extends UpgradeScript
      */
     public function run()
     {
-        if (version_compare($this->from_version, '7.0', '>=')
-        ) {
+        if (version_compare($this->from_version, '7.0', '>=')) {
             $this->migrateDashableLists();
         }
     }
@@ -58,13 +62,11 @@ class SugarUpgradeMigrateDashableListsWithKBDocuments extends UpgradeScript
             }
 
             $this->db->query(
-                sprintf(
-                    "UPDATE dashboards SET metadata='%s' WHERE id='%s'",
-                    $metadata,
-                    $this->db->quote($dashboard['id'])
-                )
+                "UPDATE dashboards SET metadata={$this->db->quoted($metadata)} WHERE id="
+                . $this->db->quoted($dashboard['id'])
             );
         }
+
     }
 
     /**
@@ -74,13 +76,13 @@ class SugarUpgradeMigrateDashableListsWithKBDocuments extends UpgradeScript
      */
     private function updateMetadata($metadata)
     {
-        if (!property_exists($metadata, 'components')) {
+        if (empty($metadata->components)) {
             return;
         }
 
         foreach ($metadata->components as $component) {
 
-            if (!property_exists($component, 'rows')) {
+            if (empty($component->rows)) {
                 continue;
             }
 
@@ -91,8 +93,8 @@ class SugarUpgradeMigrateDashableListsWithKBDocuments extends UpgradeScript
                     }
 
                     $view = $row->view;
-                    $hasTypeDashableList = property_exists($view, 'type') && $view->type === 'dashablelist';
-                    $hasNameDashableList = property_exists($view, 'name') && $view->name === 'dashablelist';
+                    $hasTypeDashableList = !empty($view->type) && $view->type == 'dashablelist';
+                    $hasNameDashableList = !empty($view->name) && $view->name == 'dashablelist';
 
                     if ($hasNameDashableList) {
                         unset($view->name);
@@ -118,13 +120,10 @@ class SugarUpgradeMigrateDashableListsWithKBDocuments extends UpgradeScript
      */
     private function checkOnKbDocument($metadataRow)
     {
-        return property_exists($metadataRow, 'context') &&
-            property_exists($metadataRow->context, 'module') &&
-            $metadataRow->context->module == self::OLD_MODULE_NAME &&
-            property_exists($metadataRow, 'view') &&
-            property_exists($metadataRow->view, 'module') &&
-            $metadataRow->view->module == self::OLD_MODULE_NAME
-            ;
+        return !empty($metadataRow->context->module) &&
+        $metadataRow->context->module == self::OLD_MODULE_NAME &&
+        !empty($metadataRow->view->module) &&
+        $metadataRow->view->module == self::OLD_MODULE_NAME;
     }
 
     /**
@@ -135,13 +134,19 @@ class SugarUpgradeMigrateDashableListsWithKBDocuments extends UpgradeScript
     private function updateView($view)
     {
         $view->module = self::NEW_MODULE_NAME;
-        if (property_exists($view, 'display_columns')) {
-            $view->display_columns = array_map(
-                function($column) {
-                    return array_key_exists($column, $this->displayColumnsMap) ? $this->displayColumnsMap[$column] : $column;
-                },
-                $view->display_columns
-            );
+        if (!empty($view->display_columns)) {
+            $view->display_columns = array_map(array($this, 'columnsMapper'), $view->display_columns);
         }
+    }
+
+    /**
+     * Convert old column name to new.
+     *
+     * @param string $column
+     * @return string
+     */
+    private function columnsMapper($column)
+    {
+        return array_key_exists($column, $this->displayColumnsMap) ? $this->displayColumnsMap[$column] : $column;
     }
 }
