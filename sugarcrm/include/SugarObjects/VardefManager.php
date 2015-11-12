@@ -683,6 +683,13 @@ class VardefManager{
                 require($path);
                 $found = true;
             }
+
+            if ($found){
+                // Put ACLStatic into vardefs for beans supporting ACLs
+                self::addSugarACLStatic($object);
+
+            }
+
             if(!empty($params['bean'])) {
                 $bean = $params['bean'];
         } else { // to avoid extra refresh - we'll fill it in later
@@ -733,12 +740,6 @@ class VardefManager{
             self::updateRelCFModules($module, $object);
         }
 
-        // Put ACLStatic into vardefs for beans supporting ACLs
-        if(!empty($bean) && ($bean instanceof SugarBean) && !empty($dictionary[$object]) && !isset($dictionary[$object]['acls']['SugarACLStatic'])
-            && $bean->bean_implements('ACL')) {
-            $dictionary[$object]['acls']['SugarACLStatic'] = true;
-        }
-
         //great! now that we have loaded all of our vardefs.
         //let's go save them to the cache file
         //note that we don't write to cache when $includeExtension = false,
@@ -752,6 +753,22 @@ class VardefManager{
             SugarBean::clearLoadedDef($object);
         }
         unset(self::$inReload[$guard_name]);
+    }
+
+    /**
+     * Add default SugarACLStatic
+     * @param $object
+     */
+    protected static function addSugarACLStatic($object){
+        global $dictionary;
+        // Put ACLStatic into vardefs for beans supporting ACLs
+        if(!empty($dictionary[$object]) && !isset($dictionary[$object]['acls']['SugarACLStatic'])){
+            if (is_subclass_of($object, 'SugarBean') &&
+                is_callable("$object::bean_implements_static") &&
+               call_user_func("$object::bean_implements_static", 'ACL')){
+               $dictionary[$object]['acls']['SugarACLStatic'] = true;
+            }
+        }
     }
 
     /**
@@ -1058,6 +1075,7 @@ class VardefManager{
                 }
             }
         }
+
     }
 
 
