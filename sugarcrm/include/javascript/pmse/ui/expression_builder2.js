@@ -100,14 +100,6 @@ ExpressionControl.prototype.OPERATORS  = {
         {
             text: "/",
             value: "division"
-        },
-        {
-            text: "(",
-            value: "openparen"
-        },
-        {
-            text: ")",
-            value: "closeparen"
         }
     ],
     "logic": [
