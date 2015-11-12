@@ -15,4 +15,5 @@
        data-emitter="{{def.emitter}}"
        data-event="{{def.event}}"
        name="{{def.name}}"
-       {{#if value}} checked{{/if}}>
+    {{#if value.status}} checked{{/if}}
+    {{#if value.disabled}} disabled{{/if}}>

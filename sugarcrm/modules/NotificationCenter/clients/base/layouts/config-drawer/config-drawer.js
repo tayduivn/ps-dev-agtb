@@ -72,9 +72,8 @@
      * Create model's additional methods.
      */
     prepareModel: function() {
-
         // Copies filter values from 'global' config.
-        this.model._copyFiltersFromDefault = function(emitter) {
+        this.model._copyFiltersFromDefault = function(emitter, event) {
             if (!this.get('personal')) {
                 return;
             }
@@ -88,14 +87,17 @@
                         });
                     });
                 });
-            } else {
+            } else if (event === undefined) {
                 _.each(this.get('personal')['config'][emitter], function(event, eventName) {
                     _.each(event, function(filter, filterName, event) {
                         event[filterName] = _.clone(globalConfig[emitter][eventName][filterName]);
                     });
                 });
+            } else {
+                _.each(this.get('personal')['config'][emitter][event], function(filter, filterName, eventObj) {
+                    eventObj[filterName] = _.clone(globalConfig[emitter][event][filterName]);
+                });
             }
-
         };
 
         // Copies carriers status from 'global' config.
@@ -114,21 +116,13 @@
             if (!this.get('personal')) {
                 return;
             }
-
-            var emittersWithDefaultSetting = [];
-
             _.each(this.get('personal')['config'], function(emitter, emitterName) {
-                var firstEvent = emitter[_.first(_.keys(emitter))],
-                    firstFilter = firstEvent[_.first(_.keys(firstEvent))];
-
-                if (firstFilter === 'default') {
-                    emittersWithDefaultSetting.push(emitterName);
-                }
-            });
-
-            _.each(emittersWithDefaultSetting, function(emitter) {
-                this._copyFiltersFromDefault(emitter);
-            }, this)
+                _.each(emitter, function(event, eventName) {
+                    if (_.some(event, function(filter) {return _.isString(filter) && filter === 'default'})) {
+                        this._copyFiltersFromDefault(emitterName, eventName);
+                    }
+                }, this);
+            }, this);
         };
 
         // Answers if given emitter has all settings by default.
