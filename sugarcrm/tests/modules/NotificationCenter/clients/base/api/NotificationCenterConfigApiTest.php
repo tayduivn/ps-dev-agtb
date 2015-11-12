@@ -235,7 +235,12 @@ class NotificationCenterConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
         $registry->expects($this->exactly(count($expectedCarriers)))->method('getCarrier')
             ->will($this->returnValueMap($carriersMap));
 
-        $configApi = $this->getMock('NotificationCenterConfigApi', array('getCarrierRegistry'));
+        $configApi = $this->getMock('NotificationCenterConfigApi', array('getCarrierRegistry', 'getCarriersConfig'));
+        $configApi->expects($this->once())->method('getCarriersConfig')->willReturn(array(
+            'CarrierExists1' => array('status' => $expectedCarriers['CarrierExists1']['status']),
+            'CarrierExists2' => array('status' => $expectedCarriers['CarrierExists2']['status']),
+            'CarrierNotExists1' => array('status' => false),
+        ));
         $configApi->expects($this->atLeastOnce())->method('getCarrierRegistry')->willReturn($registry);
 
         $res = SugarTestReflection::callProtectedMethod($configApi, 'getPersonalCarriers', array($user));

@@ -47,11 +47,12 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         );
         $tree = array(
             'ApplicationEmitter' => array('application_event1' => array('Application' => array())),
-            'Accounts' => array('account-event1' => array('AssignedToMe' => array()))
+            'Accounts' => array('account-event1' => array('AssignedToMe' => array())),
+            'EmptyEmitter' => array(),
         );
         $expectedTree = $tree;
         $expectedTree[$beanEmitterName] = $beanEmitterTree;
-
+        unset($expectedTree['EmptyEmitter']);
 
         $appEmitter = $this->getMock(self::NS_APPLICATION_EMITTER, array(
             'getEventStrings', 'getEventPrototypeByString'));
@@ -66,6 +67,12 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         $accountEmitter = $this->getMock('\\AccountEmitter', array(
             'getEventStrings', 'getEventPrototypeByString'), array(), '', false);
 
+        $emptyEmitter = $this->getMock(self::NS_SF_APPLICATION, array(
+            'getEventStrings', 'getEventPrototypeByString', '__toString'));
+        $emptyEmitter->expects($this->any())->method('__toString')->willReturn('EmptyEmitter');
+        $emptyEmitter->expects($this->once())->method('getEventStrings')->willReturn(array());
+        $emptyEmitter->expects($this->never())->method('getEventPrototypeByString');
+
         $accountEvent = $this->getMock(self::NS_BEAN_EVENT, array('setBean'), array('account-event1'));
         $accountEvent->expects($this->once())->method('setBean')->with($this->isInstanceOf('\\Account'));
 
@@ -77,7 +84,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         $accountEmitter->expects($this->exactly(1))->method('getEventPrototypeByString')
             ->will($this->returnValueMap(array(array('account-event1', $accountEvent))));
 
-        $emitters = array($appEmitter, 'Accounts' => $accountEmitter);
+        $emitters = array($appEmitter, 'Accounts' => $accountEmitter, 'EmptyEmitter' => $emptyEmitter);
 
         $subscriptionsRegistry = $this->getMock(self::NS_SUBSCRIPTIONS_REGISTRY, array(
             'getEmitters', 'getSubscriptionFilters', 'getBeanEmitterTree', 'getEmitterRegistry'));
