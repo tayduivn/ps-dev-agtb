@@ -73,10 +73,9 @@
 
             this.model.set('carriers', modifiedCarriers);
 
-            var eventName = (this.model.get('configMode') === 'user') ?
-                'change:personal:carrier:' + this.def.name :
-                'change:carrier:' + this.def.name;
+            var eventName = (this.model.get('configMode') === 'user') ? 'change:personal:carrier' : 'change:carrier';
             this.model.trigger(eventName);
+            this.model.trigger(eventName + ':' + this.def.name);
         }, this));
     }
 })

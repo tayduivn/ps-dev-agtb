@@ -79,7 +79,24 @@ describe('NotificationCenter.Field.EventSwitcher', function() {
                     model.set('config', {emitter1: {event1: {filter1: filterData}}});
                     field = SugarTest.createField('base', 'dummy', fieldType, 'default',
                         fieldDef, module, model, null, true);
-                    expect(field.format()).toBe(status);
+                    expect(field.format().status).toBe(status);
+                });
+            });
+
+        using('carriers data',
+            [
+                [true, {foo: {status: false}}],
+                [true, {foo: {status: false}, bar: {status: false}}],
+                [false, {foo: {status: true}}],
+                [false, {foo: {status: true}, bar: {status: false}}],
+                [true, {}]
+            ],
+            function(status, carriersData) {
+                it('should set field "disabled" meta-property in accordance with carriers status data', function() {
+                    model.set('carriers', carriersData);
+                    field = SugarTest.createField('base', 'dummy', fieldType, 'default',
+                        fieldDef, module, model, null, true);
+                    expect(field.format().disabled).toBe(status);
                 });
             });
     });

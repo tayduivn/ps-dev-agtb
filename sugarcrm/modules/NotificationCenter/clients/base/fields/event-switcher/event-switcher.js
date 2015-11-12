@@ -34,17 +34,25 @@
 
         // To watch carrier-switcher modifications.
         this.model.on('change:personal:' + this.def.emitter,  this.handleCarrierSwitcherChange, this);
+
+        // Carrier's events.
+        var onCarrierChangeEvent = (this.model.get('configMode') === 'user') ?
+            'change:personal:carrier' :
+            'change:carrier';
+        this.model.on(onCarrierChangeEvent, this.render, this);
     },
 
     /**
      * @inheritdoc
      */
     format: function(value) {
+        value = {status: false, disabled: false};
+
         // The first filter will be enough to make a decision.
         var sampleFilter = _.chain(this.config[this.def.emitter][this.def.event]).values().first().value();
 
         if (sampleFilter.length === 0) {
-            value = false;
+            value.status = false;
         } else {
             var checkedCarriers = [];
             _.each(this.config[this.def.emitter][this.def.event], function(filter) {
@@ -56,7 +64,15 @@
                 })
             });
 
-            value = (!_.contains(checkedCarriers, '') && checkedCarriers.length > 0);
+            value.status = (!_.contains(checkedCarriers, '') && checkedCarriers.length > 0);
+        }
+
+        var carriers = (this.model.get('configMode') === 'user') ?
+            this.model.get('personal')['carriers'] :
+            this.model.get('carriers');
+
+        if (_.every(carriers, function(carrier) {return carrier.status === false})) {
+            value.disabled = true;
         }
 
         return value;

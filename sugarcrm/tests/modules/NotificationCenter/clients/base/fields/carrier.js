@@ -138,7 +138,12 @@ describe('NotificationCenter.Field.Carrier', function() {
             });
 
         using('mode-events list',
-            [['user', 'change:personal:carrier:foo'], ['global', 'change:carrier:foo']],
+            [
+                ['user', 'change:personal:carrier:foo'],
+                ['global', 'change:carrier:foo'],
+                ['user', 'change:personal:carrier'],
+                ['global', 'change:carrier']
+            ],
             function(mode, event) {
                 it('should cause model to trigger event', function() {
                     field.model.set('configMode', mode);
