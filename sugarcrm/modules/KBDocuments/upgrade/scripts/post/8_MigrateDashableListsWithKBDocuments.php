@@ -20,7 +20,7 @@ class SugarUpgradeMigrateDashableListsWithKBDocuments extends UpgradeScript
 
     public $order = 8100;
     public $type = self::UPGRADE_CUSTOM;
-    public $version = '7.5';
+    public $version = '7.7';
 
     private $displayColumnsMap = array(
         'kbdocument_name' => 'name',
@@ -39,7 +39,7 @@ class SugarUpgradeMigrateDashableListsWithKBDocuments extends UpgradeScript
      */
     public function run()
     {
-        if (version_compare($this->from_version, '7.0', '>=')) {
+        if (version_compare($this->from_version, '7.7.0', '<')) {
             $this->migrateDashableLists();
         }
     }
