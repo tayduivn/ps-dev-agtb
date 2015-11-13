@@ -546,10 +546,11 @@ nv.models.multiBarChart = function() {
         // }
         setInnerMargins();
         setInnerDimensions();
+
         // X-Axis
         xAxis
-          .orient(vertical ? 'bottom' : 'left')
           .margin(innerMargin)
+          .orient(vertical ? 'bottom' : 'left')
           .tickFormat(function(d, i, noEllipsis) {
             // Set xAxis to use trimmed array rather than data
             var label = groupLabels[i] || 'undefined';
@@ -558,6 +559,10 @@ nv.models.multiBarChart = function() {
             }
             return label;
           });
+        trans = innerMargin.left + ',';
+        trans += innerMargin.top + (xAxis.orient() === 'bottom' ? innerHeight : 0);
+        xAxisWrap
+          .attr('transform', 'translate(' + trans + ')');
         xAxisWrap
           .call(xAxis);
         // reset inner dimensions
@@ -583,8 +588,6 @@ nv.models.multiBarChart = function() {
           .transition()
             .call(multibar);
 
-        useScroll = minDimension > (vertical ? innerWidth : innerHeight);
-
         //------------------------------------------------------------
         // Final repositioning
 
@@ -603,13 +606,16 @@ nv.models.multiBarChart = function() {
         scrollWrap
           .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')');
 
-        xAxisWrap.select('.nv-axislabel')
-          .attr('x', (vertical ? innerWidth : -innerHeight) / 2);
-
         //------------------------------------------------------------
         // Enable scrolling
 
         if (scrollEnabled) {
+
+          useScroll = minDimension > (vertical ? innerWidth : innerHeight);
+
+          xAxisWrap.select('.nv-axislabel')
+            .attr('x', (vertical ? innerWidth : -innerHeight) / 2);
+
           var diff = (vertical ? innerWidth : innerHeight) - minDimension,
               panMultibar = function() {
                 dispatch.tooltipHide(d3.event);

@@ -210,11 +210,12 @@ nv.models.scatter = function() {
         var eventElements;
 
         function buildEventObject(e, d, i, j) {
+          var seriesData = data[j];
           return {
-              series: data[j],
-              point: data[j].values[i],
+              series: seriesData,
+              point: seriesData.values[i],
               pointIndex: i,
-              seriesIndex: j,
+              seriesIndex: seriesData.series,
               id: id,
               e: e
             };

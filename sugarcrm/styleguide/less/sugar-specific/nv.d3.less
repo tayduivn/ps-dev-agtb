@@ -38,7 +38,17 @@ svg .title {
 /* Chart colors defined in colors.less */
 
 .nv-background {
-  fill: #FFF;
+  fill: @white;
+}
+
+.nv-chart-background {
+  fill: transparent;
+  stroke-width: 0.5px;
+  stroke: @grayLight;
+}
+
+.nv-chart-texture {
+  background: url(@textureTertiary);
 }
 
 .nv-image-canvas {
@@ -68,26 +78,6 @@ svg .title {
   }
 }
 
-.nv-chart-background {
-  fill: transparent;
-  stroke-width: 0.5px;
-  stroke: @grayLight;
-}
-
-.nv-noData {
-  font-size: @fontSizeLarge;
-  font-weight: bold;
-}
-
-.nv-title {
-  font-size: @fontSizeMedium;
-}
-
-.nv-labels text {
-  font-weight: bold;
-  fill: #666;
-}
-
 .nv-chart {
   height: 400px;
   min-width: 300px;
@@ -104,7 +94,22 @@ svg .title {
   }
 }
 
-.nv-label-value {
+.nv-noData {
+  font-size: @fontSizeLarge;
+  font-weight: bold;
+}
+
+.nv-title {
+  font-size: @fontSizeMedium;
+}
+
+.nv-labels text {
+  font-weight: bold;
+  fill: #666;
+}
+
+.nv-label-value text,
+text.nv-label-value {
   font-size: @fontSizeMedium;
 }
 
@@ -118,10 +123,6 @@ svg .title {
 .nvtooltip-pending-removal {
   position: absolute;
   pointer-events: none;
-}
-
-.nv-chart-texture {
-  background: url(@textureTertiary);
 }
 
 
@@ -478,6 +479,14 @@ text.nv-pie-hole-label {
   }
   .nv-y path {
     stroke: none;
+  }
+  .nv-label-value {
+    text.nv-label {
+      font-size: @fontSizeSmall;
+    }
+    text.nv-value {
+      font-size: @fontSizeMedium;
+    }
   }
 }
 
