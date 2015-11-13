@@ -522,18 +522,17 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
         $changeBean = $this->getChangesBean();
         $query = new \SugarQuery();
 
-        $query->from($changeBean, array('alias' => 'changes'));
-        $query->joinTable("caldav_events", array('alias' => "events", 'joinType' => "INNER", "linkingTable" => true))
-            ->on()->equalsField('changes.uri', 'events.uri');
+        $query->from($changeBean);
 
-        $query->select(array('changes.uri', 'events.deleted'))
-            ->fieldRaw('MIN(changes.operation)', 'operation')
-            ->fieldRaw('MAX(changes.synctoken)', 'synctoken');
+        $query->select(array('uri'))
+            ->fieldRaw('Min(operation)', 'operation')
+            ->fieldRaw('Max(operation)', 'deleted')
+            ->fieldRaw('Max(synctoken)', 'synctokens');
 
-        $query->where()->equals('changes.calendarid', $calendarId);
-        $query->where()->gt('changes.synctoken', $syncToken);
-        $query->orderBy('changes.synctoken', 'ASC');
-        $query->groupBy('changes.uri');
+        $query->where()->equals('calendarid', $calendarId);
+        $query->where()->gt('synctoken', $syncToken);
+        $query->orderBy('synctoken', 'ASC');
+        $query->groupBy('uri');
 
         if (!empty($limit)) {
             $query->limit($limit);
@@ -549,10 +548,10 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
         );
 
         foreach ($result as $vals) {
-            if ($vals['synctoken'] > $out['syncToken']) {
-                $out['syncToken'] = $vals['synctoken'];
+            if ($vals['synctokens'] > $out['syncToken']) {
+                $out['syncToken'] = $vals['synctokens'];
             }
-            if ($vals['deleted'] != 1) {
+            if ($vals['deleted'] != 3) {
                 if ($vals['operation'] != 1) {
                     //modified
                     $out['modified'][] = $vals['uri'];
