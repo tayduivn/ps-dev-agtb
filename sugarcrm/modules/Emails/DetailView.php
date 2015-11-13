@@ -433,15 +433,7 @@ $detailView->processListNavigation($xtpl, "EMAIL", $offset, false);
 require_once('modules/DynamicFields/templates/Files/DetailView.php');
 $do_open = true;
 require_once('modules/Teams/TeamSetManager.php');
-$tbaConfigurator = new TeamBasedACLConfigurator();
-$isTBAEnabled = $tbaConfigurator->isEnabledForModule($focus->module_dir);
-$xtpl->assign('TEAM', TeamSetManager::getCommaDelimitedTeams(
-    $focus->team_set_id,
-    $focus->team_id,
-    true,
-    $isTBAEnabled,
-    $focus->team_set_selected_id
-));
+$xtpl->assign("TEAM", TeamSetManager::getFormattedTeamsFromSet($focus, true));
 $xtpl->parse("main.pro");
 $do_open = false;
 if ($do_open) {

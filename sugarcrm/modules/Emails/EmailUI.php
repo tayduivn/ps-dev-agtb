@@ -1687,15 +1687,7 @@ EOQ;
 		$smarty->assign("JS_CUSTOM_VERSION", $GLOBALS['sugar_config']['js_custom_version']);
 
 		require_once('modules/Teams/TeamSetManager.php');
-        $tbaConfigurator = new TeamBasedACLConfigurator();
-        $isTBAEnabled = $tbaConfigurator->isEnabledForModule($focus->module_dir);
-        $smarty->assign('TEAM', TeamSetManager::getCommaDelimitedTeams(
-            $focus->team_set_id,
-            $focus->team_id,
-            true,
-            $isTBAEnabled,
-            $focus->team_set_selected_id
-        ));
+        $smarty->assign("TEAM", TeamSetManager::getFormattedTeamsFromSet($focus, true));
 		if(!empty($focus->reply_to_email)) {
 			$replyTo = "
 				<tr>

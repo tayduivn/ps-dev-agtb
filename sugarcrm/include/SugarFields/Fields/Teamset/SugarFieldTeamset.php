@@ -176,15 +176,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 	function renderDetailView(){
 		$this->initialize();
 		$this->process();
-        $tbaConfigurator = new TeamBasedACLConfigurator();
-        $isTBAEnabled = $tbaConfigurator->isEnabledForModule($this->view->module_dir);
-        return TeamSetManager::getCommaDelimitedTeams(
-            $this->fields['team_set_id']['value'],
-            $this->fields['team_id']['value'],
-            true,
-            $isTBAEnabled,
-            $this->fields['team_set_selected_id']['value']
-        );
+        return TeamSetManager::getFormattedTeamsFromSet($this->view, true);
 	}
 
 	/**
