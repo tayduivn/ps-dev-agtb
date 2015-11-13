@@ -52,7 +52,7 @@ function getControl(
         }
 
         // if this is the id relation field, then don't have a pop-up selector.
-        if( $vardef['type'] == 'relate' && $vardef['id_name'] == $vardef['name']) {
+        if ($vardef['type'] == 'relate' && isset($vardef['id_name']) && $vardef['id_name'] == $vardef['name']) {
             $vardef['type'] = 'varchar';
         }
 

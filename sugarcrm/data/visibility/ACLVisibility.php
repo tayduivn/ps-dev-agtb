@@ -100,7 +100,7 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
         $ownerField = $provider->getFilter('Owner')->getOwnerField($this->bean);
         $mapping->addNotAnalyzedField($ownerField);
 
-        if ($this->tbaConfig->isImplementTBA($this->bean->module_dir)) {
+        if ($this->tbaConfig->implementsTBA($this->bean->module_dir)) {
             $tbaVisibility = new TeamBasedACLVisibility($this->bean);
             $tbaVisibility->elasticBuildMapping($mapping, $provider);
         }
@@ -124,7 +124,7 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
         $ownerField = $provider->getFilter('Owner')->getOwnerField($this->bean);
         $result[$ownerField] = 'id';
 
-        if ($this->tbaConfig->isImplementTBA($this->bean->module_dir)) {
+        if ($this->tbaConfig->implementsTBA($this->bean->module_dir)) {
             $tbaVisibility = new TeamBasedACLVisibility($this->bean);
             $result = array_merge($result, $tbaVisibility->elasticGetBeanIndexFields($module, $provider));
         }

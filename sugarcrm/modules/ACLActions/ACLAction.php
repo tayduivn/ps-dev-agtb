@@ -468,7 +468,7 @@ class ACLAction  extends SugarBean
                     else{
                     $categories[$cat_name][$type_name][$act_name]['accessOptions'] =  ACLAction::getAccessOptions($act_name, $type_name);
                         if (!$tbaConfigurator->isEnabledForModule($cat_name) ||
-                            !$tbaConfigurator->isImplementTBA($cat_name)
+                            !$tbaConfigurator->implementsTBA($cat_name)
                         ) {
                             $tbaModuleKeys = array_values($tbaConfigurator->getModuleOptions());
                             foreach ($categories[$cat_name][$type_name][$act_name]['accessOptions'] as $key => $label) {

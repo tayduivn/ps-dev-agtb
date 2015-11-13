@@ -445,8 +445,6 @@ $dictionary['User'] = array(
 			),
         'team_set_selected_id' => array(
             'name' => 'team_set_selected_id',
-            'rname' => 'id',
-            'id_name' => 'team_set_selected_id',
             'vname' => 'LBL_TEAM_SET_SELECTED_ID',
             'type' => 'id',
             'audited' => true,

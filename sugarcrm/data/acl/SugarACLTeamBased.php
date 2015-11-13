@@ -171,7 +171,7 @@ class SugarACLTeamBased extends SugarACLStrategy
     protected function isUserInSelectedTeams($user, $bean)
     {
         $tbaConfigurator = new TeamBasedACLConfigurator();
-        if (!$tbaConfigurator->isImplementTBA($bean->module_dir)) {
+        if (!$tbaConfigurator->implementsTBA($bean->module_dir)) {
             // Does not implement TBA. Has access.
             return true;
         }

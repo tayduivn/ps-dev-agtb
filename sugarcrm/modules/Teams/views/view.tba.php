@@ -71,7 +71,7 @@ class TeamsViewTBA extends SugarView
             if (
                 (!empty($GLOBALS['dictionary'][$name]['hidden_to_role_assignment']) &&
                     $GLOBALS['dictionary'][$name]['hidden_to_role_assignment']) ||
-                !$tbaConfigurator->isImplementTBA($name)
+                !$tbaConfigurator->implementsTBA($name)
             ) {
                 unset($actionsList[$name]);
             }
