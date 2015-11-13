@@ -17,7 +17,7 @@ require_once("clients/base/api/FilterApi.php");
  */
 class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public static $notes, $opps, $accounts, $meetings, $oldLimit;
+    public static $notes, $opps, $accounts, $meetings, $oldLimit, $predefinedFilter;
 
     /** @var FilterApi */
     private $filterApi;
@@ -69,6 +69,13 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             $meeting->save();
             self::$meetings[] = $meeting;
         }
+
+        // create a simple predefined filter
+        self::$predefinedFilter = SugarTestFilterUtilities::createUserFilter(
+            'admin',
+            'TestFilter',
+            json_encode(array(array("name" => "TEST 5 Account")))
+        );
 
         // Clean up any hanging related records
         SugarRelationship::resaveRelatedBeans();
@@ -133,6 +140,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
             $GLOBALS['db']->query("DELETE FROM meetings WHERE id IN {$meetingIds}");
         }
+
         SugarTestFilterUtilities::removeAllCreatedFilters();
         SugarTestHelper::tearDown();
     }
@@ -150,6 +158,46 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('TEST 7 Account', $reply['records'][0]['name'], 'Simple: The name is not set correctly');
         $this->assertEquals(-1, $reply['next_offset'], 'Simple: Next offset is not set correctly');
         $this->assertEquals(1, count($reply['records']), 'Simple: Returned too many results');
+    }
+
+    public function testFilterId()
+    {
+        $reply = $this->filterApi->filterList(
+            $this->serviceMock,
+            array(
+                'module' => 'Accounts',
+                'filter_id' => self::$predefinedFilter->id,
+                'fields' => 'id,name'
+            )
+        );
+        $this->assertEquals('TEST 5 Account', $reply['records'][0]['name'], 'FilterID: The name is not set correctly');
+        $this->assertEquals(1, count($reply['records']), 'FilterID: Returned the wrong number of results');
+    }
+
+    public function testFilterNotFound()
+    {
+        $filterId = 'iDefinitelyDoNotExist';
+        $this->setExpectedException('SugarApiExceptionNotFound');
+        $this->filterApi->filterList(
+            $this->serviceMock,
+            array(
+                'module' => 'Accounts',
+                'filter_id' => $filterId,
+            )
+        );
+    }
+
+    public function testFilterIdQMutuallyExclusive()
+    {
+        $this->setExpectedException('SugarApiExceptionInvalidParameter');
+        $this->filterApi->filterList(
+            $this->serviceMock,
+            array(
+                'module' => 'Accounts',
+                'filter_id' => self::$predefinedFilter->id,
+                'q' => "some query we don't care about"
+            )
+        );
     }
 
     public function testSimpleJoinFilter()

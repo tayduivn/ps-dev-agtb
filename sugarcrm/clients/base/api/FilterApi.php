@@ -26,10 +26,13 @@ class FilterApi extends SugarApi
                 'path' => array('<module>', 'filter'),
                 'pathVars' => array('module', ''),
                 'method' => 'filterList',
-                'jsonParams' => array('filter'),
+                'jsonParams' => array('filter', 'filter_id'),
                 'shortHelp' => 'Lists filtered records.',
                 'longHelp' => 'include/api/help/module_filter_get_help.html',
                 'exceptions' => array(
+                    // Thrown in filterListSetup
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionError',
                     // Thrown in filterList
                     'SugarApiExceptionInvalidParameter',
                     // Thrown in filterListSetup and parseArguments
@@ -41,10 +44,13 @@ class FilterApi extends SugarApi
                 'path' => array('<module>'),
                 'pathVars' => array('module'),
                 'method' => 'filterList',
-                'jsonParams' => array('filter'),
+                'jsonParams' => array('filter', 'filter_id'),
                 'shortHelp' => 'List of all records in this module',
                 'longHelp' => 'include/api/help/module_filter_get_help.html',
                 'exceptions' => array(
+                    // Thrown in getPredefinedFilterById
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionError',
                     // Thrown in filterList
                     'SugarApiExceptionInvalidParameter',
                     // Thrown in filterListSetup and parseArguments
@@ -55,11 +61,14 @@ class FilterApi extends SugarApi
                 'reqType' => 'GET',
                 'path' => array('<module>', 'count'),
                 'pathVars' => array('module', ''),
-                'jsonParams' => array('filter'),
+                'jsonParams' => array('filter', 'filter_id'),
                 'method' => 'getFilterListCount',
                 'shortHelp' => 'List of all records in this module',
                 'longHelp' => 'include/api/help/module_filter_get_help.html',
                 'exceptions' => array(
+                    // Thrown in getPredefinedFilterById
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionError',
                     // Thrown in filterListSetup
                     'SugarApiExceptionNotAuthorized',
                 ),
@@ -72,6 +81,9 @@ class FilterApi extends SugarApi
                 'shortHelp' => 'Lists filtered records.',
                 'longHelp' => 'include/api/help/module_filter_post_help.html',
                 'exceptions' => array(
+                    // Thrown in getPredefinedFilterById
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionError',
                     // Thrown in filterList
                     'SugarApiExceptionInvalidParameter',
                     // Thrown in filterListSetup and parseArguments
@@ -86,6 +98,9 @@ class FilterApi extends SugarApi
                 'shortHelp' => 'Lists filtered records.',
                 'longHelp' => 'include/api/help/module_filter_post_help.html',
                 'exceptions' => array(
+                    // Thrown in getPredefinedFilterById
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionError',
                     // Thrown in filterListSetup
                     'SugarApiExceptionNotAuthorized',
                 ),
@@ -98,10 +113,14 @@ class FilterApi extends SugarApi
                 'shortHelp' => 'Lists filtered records.',
                 'longHelp' => 'include/api/help/module_filter_post_help.html',
                 'exceptions' => array(
+                    // Thrown in getPredefinedFilterById
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionError',
                     // Thrown in filterListSetup
                     'SugarApiExceptionNotAuthorized',
                 ),
             ),
+            // FIXME TY-927: Deprecate me
             'filterModuleById' => array(
                 'reqType' => 'GET',
                 'path' => array('<module>', 'filter', '?'),
@@ -116,6 +135,8 @@ class FilterApi extends SugarApi
                     'SugarApiExceptionInvalidParameter',
                     // Thrown in filterListSetup and parseArguments
                     'SugarApiExceptionNotAuthorized',
+                    // Thrown in getPredefinedFilterById
+                    'SugarApiExceptionError'
                 ),
             ),
         );
@@ -145,6 +166,7 @@ class FilterApi extends SugarApi
         self::$current_user = $current_user;
     }
 
+    // FIXME TY-927: deprecate me
     public function filterById(ServiceBase $api, array $args)
     {
         $filter = BeanFactory::getBean('Filters', $args['record']);
@@ -264,6 +286,42 @@ class FilterApi extends SugarApi
         return $converted;
     }
 
+    /**
+     * Retrieve a predefined filter by the given ID
+     * @param ServiceBase $api The API class of the request
+     * @param string $filterId ID of the filter to retrieve
+     * @return array The (possibly empty) filter as an associative array
+     * @throws SugarApiExceptionError if JSON decoding failed or json_decode
+     *   returned something other than an array
+     * @throws SugarApiExceptionNotFound if we cannot find the filter
+     */
+    private function getPredefinedFilterById(ServiceBase $api, $filterId)
+    {
+        $predefinedFilter = $this->loadBean(
+            $api,
+            array(
+                'module' => 'Filters',
+                'record' => $filterId,
+            )
+        );
+
+        if (empty($predefinedFilter->filter_definition)) {
+            LoggerManager::getLogger()->warn('Filter ' . $predefinedFilter->id . ' has no definition');
+            return array();
+        }
+
+        // Try to decode the filter. Note that the expectation is that
+        // json_decode returns an array based on the assumption that filters are
+        // encoded in the database as objects.
+        $decodedFilter = json_decode($predefinedFilter->filter_definition, true);
+        if (is_array($decodedFilter)) {
+            return $decodedFilter;
+        }
+        $jsonErrorMessage = 'Decoding definition for filter ' . $predefinedFilter->id . ' failed';
+        LoggerManager::getLogger()->error($jsonErrorMessage);
+        throw new SugarApiExceptionError($jsonErrorMessage);
+    }
+
     public function filterListSetup(ServiceBase $api, array $args, $acl = 'list')
     {
         $seed = BeanFactory::newBean($args['module']);
@@ -290,10 +348,18 @@ class FilterApi extends SugarApi
             $options = $this->removeRelateCollectionsFromSelect($options);
         }
 
-        // return $args['filter'];
-        if (!isset($args['filter']) || !is_array($args['filter'])) {
-            $args['filter'] = array();
+        if (empty($args['filter_id'])) {
+            $predefinedFilter = array();
+        } else {
+            $predefinedFilter = self::getPredefinedFilterById($api, $args['filter_id']);
+            unset($args['filter_id']);
         }
+
+        if (!isset($args['filter']) || !is_array($args['filter'])) {
+            // FIXME TY-933: we need to handle merging filters specified by both a definition and an id
+            $args['filter'] = $predefinedFilter;
+        }
+
         static::addFilters($args['filter'], $q->where(), $q);
 
         if (!empty($args['my_items'])) {
@@ -305,14 +371,13 @@ class FilterApi extends SugarApi
             static::addFavoriteFilter($q, $q->where(), '_this', 'INNER');
         }
 
-
         return array($args, $q, $options, $seed);
     }
 
     public function filterList(ServiceBase $api, array $args, $acl = 'list')
     {
         if (!empty($args['q'])) {
-            if (!empty($args['filter'])||!empty($args['deleted'])) {
+            if (!empty($args['filter']) || !empty($args['filter_id']) || !empty($args['deleted'])) {
                 // These flags can be used with the filter API, but not with the search API
                 throw new SugarApiExceptionInvalidParameter();
             }
