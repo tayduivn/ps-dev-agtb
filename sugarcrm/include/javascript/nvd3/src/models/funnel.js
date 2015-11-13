@@ -567,7 +567,7 @@ nv.models.funnel = function() {
       }
 
       function calcLabelBBox(lbl) {
-        return d3.select(lbl).node().getBBox();
+        return d3.select(lbl).node().getBoundingClientRect();
       }
 
       function calcFunnelLabelDimensions(lbl) {
