@@ -554,10 +554,7 @@ END:VCALENDAR',
         $event1->retrieve($event1->id);
 
         //mark deleted even2
-        $event2->deleted = 1;
-        $event2->processed = true;
-        $event2->save();
-        $event2->retrieve($event2->id);
+        $event2->mark_deleted($event2->id);
 
         $result = $backendMock->getChangesForCalendar($calendarID, $syncToken, $syncLevel, $limit);
 
