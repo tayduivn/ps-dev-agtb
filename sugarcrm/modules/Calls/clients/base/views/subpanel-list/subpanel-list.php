@@ -37,6 +37,7 @@ $viewdefs['Calls']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'date_start',
+          'css_class' => 'overflow-visible',
           'readonly' => true,
         ),
         array(
@@ -44,6 +45,7 @@ $viewdefs['Calls']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'date_end',
+          'css_class' => 'overflow-visible',
         ),
         array(
           'name' => 'assigned_user_name',
