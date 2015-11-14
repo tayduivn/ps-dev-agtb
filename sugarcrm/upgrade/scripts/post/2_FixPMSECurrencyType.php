@@ -22,12 +22,22 @@ class SugarUpgradeFixPMSECurrencyType extends UpgradeScript
     public $order = 2010;
     public $type = self::UPGRADE_CUSTOM;
 
+    /**
+     * Determines whether this upgrader should run
+     * @return boolean
+     */
+    protected function shouldRun()
+    {
+        // The supported upgrade for this is to 7.7, provided the from version is
+        // less than 7.7 but at least 7.6.0
+        $from = version_compare($this->from_version, '7.7', '<') && version_compare($this->from_version, '7.6', '>=');
+        $to = version_compare($this->to_version, '7.7', '>=');
+        return $from && $to;
+    }
+
     public function run()
     {
-        // The supported upgrade for this is to 7.7
-        if ((version_compare($this->from_version, '7.7', '<')) &&
-            (version_compare($this->to_version, '7.7', '>='))) {
-
+        if ($this->shouldRun()) {
             $result = $GLOBALS['db']->query("select id, flo_condition from pmse_bpmn_flow where flo_condition is NOT NULL and deleted=0");
             while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
                 $floCondition = $row['flo_condition'];
