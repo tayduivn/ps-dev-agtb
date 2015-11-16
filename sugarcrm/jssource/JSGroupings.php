@@ -320,8 +320,8 @@
                     'include/javascript/sugar7/plugins/DragdropSelect2.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ReminderTimeDefaults.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/fuse/fuse.js' => 'include/javascript/sugar_sidecar.min.js',
-
                     'include/javascript/tinymce4/jquery.tinymce.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/mousetrap/mousetrap.min.js' => 'include/javascript/sugar_sidecar.min.js',
                 )
            ),
 
@@ -344,6 +344,7 @@
                 'include/javascript/sugar7/sweetspot.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/import-export-warnings.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/browser-notification.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/shortcuts.js' => 'include/javascript/sugar_grp7.min.js',
             ),
 
             //BEGIN SUGARCRM flav=ent ONLY
