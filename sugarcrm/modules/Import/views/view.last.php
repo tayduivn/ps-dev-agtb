@@ -22,7 +22,6 @@ require_once('modules/Import/sources/ImportFile.php');
 require_once('modules/Import/views/ImportListView.php');
 require_once('include/ListView/ListViewFacade.php');
 
-
 class ImportViewLast extends ImportView
 {
     protected $pageTitleKey = 'LBL_STEP_5_TITLE';
@@ -38,8 +37,8 @@ class ImportViewLast extends ImportView
 
 
 
-        $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
-        $this->ss->assign("TYPE", $_REQUEST['type']);
+        $this->ss->assign("IMPORT_MODULE", $this->request->getValidInputRequest('import_module', 'Assert\Mvc\ModuleName', ''));
+        $this->ss->assign("TYPE", $this->request->getValidInputRequest('type', array('Assert\Choice' => array('choices' => array('import', 'update', ''))), ''));
         $this->ss->assign("HEADER", $app_strings['LBL_IMPORT']." ". $mod_strings['LBL_MODULE_NAME']);
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
         // lookup this module's $mod_strings to get the correct module name

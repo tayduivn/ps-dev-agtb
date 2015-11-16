@@ -17,6 +17,9 @@ require_once 'modules/Import/ImportFieldSanitize.php';
 require_once 'modules/Import/ImportDuplicateCheck.php';
 require_once 'include/SugarFields/SugarFieldHandler.php';
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 class Importer
 {
     /**
@@ -67,9 +70,16 @@ class Importer
      */
     protected $currencyFieldPosition = false;
 
+    /**
+     * @var Request
+     */
+    protected $request;
+
     public function __construct($importSource, $bean)
     {
         global $mod_strings, $sugar_config;
+
+        $this->request = InputValidation::getService();
 
         $this->importSource = $importSource;
 
@@ -706,8 +716,10 @@ class Importer
         $focus->afterImportSave();
 
         // Add ID to User's Last Import records
-        if ( $newRecord )
-            $this->importSource->writeRowToLastImport( $_REQUEST['import_module'],($focus->object_name == 'Case' ? 'aCase' : $focus->object_name),$focus->id);
+        if ( $newRecord ) {
+            $importModule = $this->request->getValidInputRequest('import_module', 'Assert\Mvc\ModuleName', '');
+            $this->importSource->writeRowToLastImport($importModule, ($focus->object_name == 'Case' ? 'aCase' : $focus->object_name), $focus->id);
+        }
 
     }
 

@@ -12,6 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 require_once('include/MVC/View/SugarView.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 class ImportView extends SugarView
 {
@@ -19,9 +21,16 @@ class ImportView extends SugarView
     protected $pageTitleKey;
     protected $instruction;
 
+    /**
+     * @var Request
+     */
+    protected $request;
+
     public function __construct($bean = null, $view_object_map = array())
     {
         global $mod_strings;
+
+        $this->request = InputValidation::getService();
 
         parent::__construct($bean, $view_object_map);
 
@@ -136,9 +145,7 @@ class ImportView extends SugarView
         $ss->assign("ACTION",$action);
         $ss->assign("IMPORT_MODULE",$module);
         $ss->assign("MOD", $GLOBALS['mod_strings']);
-        $ss->assign("SOURCE","");
-        if ( isset($_REQUEST['source']) )
-            $ss->assign("SOURCE", $_REQUEST['source']);
+        $ss->assign("SOURCE", $this->request->getValidInputRequest('source', array('Assert\Choice' => array('choices' => array('csv', 'external',''))), ''));
 
         echo $ss->fetch('modules/Import/tpls/error.tpl');
     }
