@@ -18,6 +18,7 @@ use Sugarcrm\SugarcrmTests\Security\Validator\Constraints\AbstractConstraintVali
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Validator\Constraints\Type;
 
 /**
  *
@@ -120,6 +121,14 @@ class DelimitedValidatorTest extends AbstractConstraintValidatorTest
             array(
                 'test1;test2',
                 ';',
+                array(
+                    'test1',
+                    'test2',
+                ),
+            ),
+            array(
+                'test1::test2',
+                '::',
                 array(
                     'test1',
                     'test2',

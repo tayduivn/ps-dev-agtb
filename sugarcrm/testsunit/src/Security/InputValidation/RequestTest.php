@@ -214,6 +214,20 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'foobar',
             ),
             array(
+                array('ids' => '12345,67890'),
+                array(),
+                'ids',
+                'getValidInputRequest',
+                array(
+                    'Assert\Delimited',
+                ),
+                null,
+                array(
+                    '12345',
+                    '67890',
+                ),
+            ),
+            array(
                 array('records' => '40a30045-2ab7,9c96-766d-563a3bb0d7ef'),
                 array(),
                 'records',

@@ -37,11 +37,11 @@ class DelimitedTest extends \PHPUnit_Framework_TestCase
      * @expectedException \Symfony\Component\Validator\Exception\ConstraintDefinitionException
      * @covers ::__construct
      */
-    public function testRejectMultiCharStringDelimiter()
+    public function testRejectEmptyStringDelimiter()
     {
         new Delimited(array(
             'constraints' => array(),
-            'delimiter' => 'xx',
+            'delimiter' => '',
         ));
     }
 }
