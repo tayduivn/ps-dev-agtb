@@ -15,6 +15,7 @@ namespace Sugarcrm\Sugarcrm\Security\Validator\Constraints;
 use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValueInterface;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  *
@@ -30,10 +31,16 @@ class Delimited extends All implements ConstraintReturnValueInterface
      */
     public function __construct($options = null)
     {
+        // If no constraints are explicitly defined we assume string constraint
+        if (is_array($options) && empty($options['constraints'])) {
+            $options['constraints'] = new Assert\Type(array('type' => 'scalar'));
+        }
+
         parent::__construct($options);
 
-        if (!is_string($this->delimiter) || strlen($this->delimiter) !== 1) {
-            throw new ConstraintDefinitionException('Delimiter is expected to be a string of one character');
+        // Validate delimiter format
+        if (!is_string($this->delimiter) || empty($this->delimiter)) {
+            throw new ConstraintDefinitionException('Delimiter is expected to be a string');
         }
     }
 

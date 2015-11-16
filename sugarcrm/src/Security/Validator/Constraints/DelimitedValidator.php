@@ -42,8 +42,10 @@ class DelimitedValidator extends AllValidator
             throw new UnexpectedTypeException($value, 'string');
         }
 
+        $value = (string) $value;
+
         // parse string into array
-        $array = str_getcsv($value, $constraint->delimiter);
+        $array = explode($constraint->delimiter, $value);
 
         $context = $this->context;
         $validator = $context->getValidator()->inContext($context);
