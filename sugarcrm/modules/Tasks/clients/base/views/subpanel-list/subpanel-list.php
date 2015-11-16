@@ -41,6 +41,7 @@ $viewdefs['Tasks']['base']['view']['subpanel-list'] = array(
         array(
           'name' => 'date_start',
           'label' => 'LBL_LIST_START_DATE',
+          'css_class' => 'overflow-visible',
           'enabled' => true,
           'default' => true,
         ),
@@ -50,6 +51,7 @@ $viewdefs['Tasks']['base']['view']['subpanel-list'] = array(
           'type' => 'datetimecombo-colorcoded',
           'completed_status_value' => 'Completed',
           'link' => false,
+          'css_class' => 'overflow-visible',
           'enabled' => true,
           'default' => true,
         ),

@@ -37,6 +37,7 @@ $viewdefs['Meetings']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_DATE',
           'type' => 'datetimecombo-colorcoded',
           'completed_status_value' => 'Held',
+          'css_class' => 'overflow-visible',
           'enabled' => true,
           'default' => true,
           'readonly' => true,
@@ -45,6 +46,7 @@ $viewdefs['Meetings']['base']['view']['subpanel-list'] = array(
         array(
           'name' => 'date_end',
           'label' => 'LBL_DATE_END',
+          'css_class' => 'overflow-visible',
           'enabled' => true,
           'default' => true,
         ),
