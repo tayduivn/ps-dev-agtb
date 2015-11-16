@@ -66,6 +66,7 @@ class SugarAutoLoader
         'Zend_' => 'vendor/',
         'SugarJob' => 'include/SugarQueue/jobs/',
         'MetaDataContext' => 'modules/ModuleBuilder/parsers/MetaDataContext/',
+        'MetaDataManager' => 'include/MetaDataManager/',
     );
 
     /**
