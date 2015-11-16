@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Notification\BeanEmitter;
 
 use Sugarcrm\Sugarcrm\Notification\EmitterInterface;
+use Sugarcrm\Sugarcrm\Notification\Dispatcher;
 
 /**
  * Bean emitter provides possibility to detect event which has happened on bean.
@@ -41,12 +42,12 @@ class Emitter implements EmitterInterface
 
     /**
      * @see BeanEmitterInterface::exec()
-     *
      */
     public function exec(\SugarBean $bean, $event, $arguments)
     {
         $event = $this->getEventPrototypeByString('update')->setBean($bean);
-
+        $dispatcher = $this->getDispatcher();
+        $dispatcher->dispatch($event);
     }
 
     /**
@@ -64,5 +65,10 @@ class Emitter implements EmitterInterface
     public function getEventStrings()
     {
         return array();
+    }
+
+    protected function getDispatcher()
+    {
+        return new Dispatcher();
     }
 }
