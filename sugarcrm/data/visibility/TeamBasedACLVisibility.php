@@ -31,15 +31,7 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
         if ($this->getOption('where_condition') || !$this->isApplicable()) {
             return $query;
         }
-        list($teamTableAlias, $tableAlias) = $this->getAliases();
-        // Inner join is not used because owner visibility implements a where part only.
-        $where = $this->getWhereClause();
-        $query .= " INNER JOIN (
-                SELECT {$tableAlias}.id
-                FROM {$tableAlias}
-                WHERE deleted = 0 AND {$where}
-            ) {$tableAlias}_agr ON {$tableAlias}_agr.id = {$tableAlias}.id";
-
+        $query .= $this->getWhereClause();
         return $query;
     }
 
@@ -51,7 +43,8 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
         $join = '';
         $this->addVisibilityFrom($join);
         if (!empty($join)) {
-            $query->joinRaw($join);
+            // The "addVisibilityFrom()" is just a cover for the WHERE part.
+            $query->whereRaw($join);
         }
         return $query;
     }
@@ -96,17 +89,17 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
         global $current_user;
 
         list($teamTableAlias, $tableAlias) = $this->getAliases();
-        $inClause = "SELECT tst.team_set_id
+        $inClause = "SELECT tst.team_id
             FROM team_sets_teams tst
-            INNER JOIN team_memberships {$teamTableAlias} ON tst.team_id = {$teamTableAlias}.team_id
-                AND {$teamTableAlias}.user_id = '{$current_user->id}'
-                AND {$teamTableAlias}.deleted = 0";
+            INNER JOIN team_memberships {$teamTableAlias} ON {$teamTableAlias}.team_id = tst.team_id
+                AND {$teamTableAlias}.user_id = '{$current_user->id}' AND {$teamTableAlias}.deleted = 0
+            WHERE tst.team_set_id = {$tableAlias}.team_set_selected_id AND tst.deleted = 0";
 
         $ow = new OwnerVisibility($this->bean, $this->params);
         $ownerVisibilityRaw = '';
         $ow->addVisibilityWhere($ownerVisibilityRaw);
 
-        return "({$ownerVisibilityRaw} OR {$tableAlias}.team_set_selected_id IN ({$inClause})) ";
+        return "({$ownerVisibilityRaw} OR EXISTS ({$inClause})) ";
     }
 
     /**

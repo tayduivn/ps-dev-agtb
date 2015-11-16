@@ -177,18 +177,15 @@ class SugarACLTeamBased extends SugarACLStrategy
         }
         $sq = new SugarQuery();
         $sq->select()->setCountQuery();
-        $sq->from(BeanFactory::getBean('Teams'), array('alias' => 'teams', 'team_security' => false));
+        $sq->from($bean, array('alias' => 'bean', 'team_security' => false));
         $sq->joinRaw(
-            "INNER JOIN team_memberships tm ON tm.team_id = teams.id AND tm.user_id = '{$user->id}' AND tm.deleted = 0"
+            "INNER JOIN team_sets_teams tst ON tst.team_set_id = bean.team_set_selected_id AND tst.deleted = 0"
         );
         $sq->joinRaw(
-            "INNER JOIN (
-                SELECT tst.team_id
-                FROM team_sets_teams tst
-		        INNER JOIN {$bean->table_name} bean ON tst.team_set_id = bean.team_set_selected_id
-                    AND bean.id = '{$bean->id}' AND tst.deleted = 0
-            ) teams_selected ON teams_selected.team_id = teams.id"
+            'INNER JOIN team_memberships tm ON tm.team_id = tst.team_id ' .
+            "AND tm.user_id = '{$user->id}' AND tm.deleted = 0"
         );
+        $sq->where()->equals('id', $bean->id);
         $result = $sq->execute();
 
         return (bool)$result[0]['record_count'];
