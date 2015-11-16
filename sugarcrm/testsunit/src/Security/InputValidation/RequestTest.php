@@ -18,6 +18,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Superglobals;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  *
@@ -211,6 +212,23 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'Assert\ComponentName',
                 null,
                 'foobar',
+            ),
+            array(
+                array('records' => '40a30045-2ab7,9c96-766d-563a3bb0d7ef'),
+                array(),
+                'records',
+                'getValidInputRequest',
+                array(
+                    'Assert\Delimited' => array(
+                        'Assert\NotBlank',
+                        'Assert\Guid',
+                    ),
+                ),
+                null,
+                array(
+                    '40a30045-2ab7',
+                    '9c96-766d-563a3bb0d7ef',
+                ),
             ),
         );
     }
