@@ -302,7 +302,7 @@ class LanguageManager
      */
     public static function invalidateJsLanguageCache()
     {
-        global $sugar_config;
+        global $sugar_config, $sugar_version;
 
         if (empty($sugar_config['js_lang_version'])) {
             $sugar_config['js_lang_version'] = 1;
@@ -310,7 +310,7 @@ class LanguageManager
             $sugar_config['js_lang_version']++;
         }
 
-        write_array_to_file('sugar_config', $sugar_config, 'config.php');
+        rebuildConfigFile($sugar_config, $sugar_version);
     }
 
 	/**

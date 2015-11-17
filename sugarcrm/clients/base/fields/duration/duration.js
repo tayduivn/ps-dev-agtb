@@ -22,6 +22,8 @@
 
     plugins: ['EllipsisInline'],
 
+    detailViewNames: ['record', 'create', 'create-nodupecheck', 'preview', 'pmse-case'],
+
     /**
      * Set default start date time if date_start has not been set. Add custom validation
      * to make sure that the date range is valid before saving.
@@ -251,8 +253,8 @@
         this._super('_loadTemplate');
         // FIXME: SC-3836 will replace special-casing view names/actions via
         // action based templates.
-        if ((this.view.name === 'record' || this.view.name === 'create'
-            || this.view.name === 'create-nodupecheck' || this.view.name === 'preview') && (this.action === 'edit')) {
+        // Use detail view if the view.name is in list of views defined in detailViewNames
+        if ((_.indexOf(this.detailViewNames, this.view.name) > -1) && (this.action === 'edit')) {
             this.template = app.template.getField('fieldset', 'record-detail', this.model.module);
         }
     },

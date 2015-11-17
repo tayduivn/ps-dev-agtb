@@ -52,6 +52,7 @@ $viewdefs[$module_name]['base']['view']['reassignCases-list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'type' => 'datetimecombo-colorcoded',
+                    'css_class' => 'overflow-visible',
                 ),
                 array(
                     'name' => 'assigned_user',

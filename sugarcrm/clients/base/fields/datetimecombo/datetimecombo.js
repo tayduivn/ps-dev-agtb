@@ -265,7 +265,8 @@
         }
 
         var $dateField = this.$(this.fieldTag),
-            $timeField = this.$(this.secondaryFieldTag);
+            $timeField = this.$(this.secondaryFieldTag),
+            selfView = this.view;
 
         $timeField.timepicker().on({
             showTimepicker: function() {
@@ -273,6 +274,10 @@
                 // Timepicker plugin specifically added 24:00 since it can be used by itself without a date and
                 // that is what the standard calls for. (https://github.com/jonthornton/jquery-timepicker/issues/149)
                 $(this).data('timepickerList').find('li:contains("24:00"), li:contains("24.00")').remove();
+                selfView.trigger('list:scrollLock', true);
+            },
+            hideTimepicker: function() {
+                selfView.trigger('list:scrollLock', false);
             },
             change: _.bind(function() {
                 var t = $timeField.val().trim(),
