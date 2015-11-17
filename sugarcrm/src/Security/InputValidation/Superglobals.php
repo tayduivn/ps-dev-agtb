@@ -356,7 +356,6 @@ class Superglobals
                 $type,
                 $key
             ));
-            $this->logger->critical(var_export($sanitized, true));
             return $superglobal[$key];
         }
 
