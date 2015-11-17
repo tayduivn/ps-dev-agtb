@@ -296,7 +296,7 @@ nv.models.pie = function() {
                 return;
               }
               var slice = d3.select(this),
-                  textBox = slice.select('text').node().getBoundingClientRect();
+                  textBox = slice.select('text').node().getBBox();
               slice.select('rect')
                 .attr('rx', 3)
                 .attr('ry', 3)

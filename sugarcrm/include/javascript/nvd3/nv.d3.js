@@ -807,7 +807,7 @@ nv.utils.stringSetLengths = function (_data, _container, _format) {
         .text(_format);
   calcContainers
     .each(function (d,i) {
-      lengths.push(this.getBoundingClientRect().width);
+      lengths.push(this.getBBox().width);
     });
   _container.select('.tmp-text-strings').remove();
   return lengths;
@@ -822,7 +822,7 @@ nv.utils.maxStringSetLength = function (_data, _container, _format) {
         .text(_format);
   calcContainers
     .each(function (d,i) {
-      maxLength = Math.max(this.getBoundingClientRect().width, maxLength);
+      maxLength = Math.max(this.getBBox().width, maxLength);
     });
   _container.select('.tmp-text-strings').remove();
   return maxLength;
@@ -1777,7 +1777,7 @@ nv.models.legend = function() {
         g.style('display', 'inline');
 
         series.select('text').each(function(d, i) {
-          var textWidth = d3.select(this).node().getBoundingClientRect().width;
+          var textWidth = d3.select(this).node().getBBox().width;
           keyWidths.push(Math.max(Math.floor(textWidth) + padding, 50));
         });
 
@@ -1788,7 +1788,7 @@ nv.models.legend = function() {
 
       legend.getLineHeight = function() {
         g.style('display', 'inline');
-        var lineHeightBB = Math.floor(series.select('text').node().getBoundingClientRect().height);
+        var lineHeightBB = Math.floor(series.select('text').node().getBBox().height);
         return lineHeightBB;
       };
 
@@ -3627,7 +3627,7 @@ nv.models.bubbleChart = function () {
               .attr('stroke', 'none')
               .attr('fill', 'black');
 
-          innerMargin.top += parseInt(g.select('.nv-title').node().getBoundingClientRect().height / 1.15, 10) +
+          innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
             parseInt(g.select('.nv-title').style('margin-top'), 10) +
             parseInt(g.select('.nv-title').style('margin-bottom'), 10);
         }
@@ -4583,7 +4583,7 @@ nv.models.funnel = function() {
       }
 
       function calcLabelBBox(lbl) {
-        return d3.select(lbl).node().getBoundingClientRect();
+        return d3.select(lbl).node().getBBox();
       }
 
       function calcFunnelLabelDimensions(lbl) {
@@ -5062,7 +5062,7 @@ nv.models.funnelChart = function() {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().getBoundingClientRect().height / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
 
@@ -5660,7 +5660,7 @@ nv.models.gauge = function() {
               .style('font-size', prop(0.7)+'em')
             ;
 
-          var bbox = g.select('.nv-odomText').node().getBoundingClientRect();
+          var bbox = g.select('.nv-odomText').node().getBBox();
 
           g.select('.nv-odometer')
             .insert('path','.nv-odomText')
@@ -6014,7 +6014,7 @@ nv.models.gaugeChart = function() {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().getBoundingClientRect().height / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
       }
@@ -6761,7 +6761,7 @@ nv.models.lineChart = function() {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().getBoundingClientRect().height / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
       }
@@ -8175,7 +8175,7 @@ nv.models.multiBar = function() {
 
       if (showValues) {
 
-        var valueBox = barText[0][0].getBoundingClientRect(),
+        var valueBox = barText[0][0].getBBox(),
             valueDim = vertical ? valueBox.height : valueBox.width;
 
         // KEEP: to be used in case you want rect behind text
@@ -8313,7 +8313,7 @@ nv.models.multiBar = function() {
 
         // KEEP: to be used in case you want rect behind text
         // bars.selectAll('text').each(function(d, i) {
-        //       var width = this.getBoundingClientRect().width + 20;
+        //       var width = this.getBBox().width + 20;
         //       if (width > labelBoxWidth) {
         //         labelBoxWidth = width;
         //       }
@@ -8944,7 +8944,7 @@ nv.models.multiBarChart = function() {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().getBoundingClientRect().height / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
       }
@@ -10796,7 +10796,7 @@ nv.models.pie = function() {
                 return;
               }
               var slice = d3.select(this),
-                  textBox = slice.select('text').node().getBoundingClientRect();
+                  textBox = slice.select('text').node().getBBox();
               slice.select('rect')
                 .attr('rx', 3)
                 .attr('ry', 3)
@@ -10812,9 +10812,9 @@ nv.models.pie = function() {
           slices.select('.nv-label-leader')
             .attr('points', function(d) {
               if (!labelOpacity(d)) {
-                // canvg needs at least 2 points because the lib doesnt have
-                // any defensive code around an array with 1 element, it expects 2+ els
-                return '0,0 0,0';
+                  // canvg needs at least 2 points because the lib doesnt have
+                  // any defensive code around an array with 1 element, it expects 2+ els
+                  return '0,0 0,0';
               }
               var leadOffset = showLeaders ? leaderLength * alignedRight(d) : 0,
                   outerArcPoints = d3.svg.arc()
@@ -11258,7 +11258,7 @@ nv.models.pieChart = function() {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().getBoundingClientRect().height / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
       }
@@ -12631,7 +12631,7 @@ nv.models.stackedAreaChart = function() {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().getBoundingClientRect().height / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
       }
@@ -14116,7 +14116,7 @@ nv.models.tree = function() {
 
             prevScale = zoom.scale(),
             prevTrans = zoom.translate(),
-            treeBBox = backg.node().getBoundingClientRect(),
+            treeBBox = backg.node().getBBox(),
 
             size = [
               treeBBox.width,

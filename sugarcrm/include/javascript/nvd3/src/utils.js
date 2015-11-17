@@ -330,7 +330,7 @@ nv.utils.stringSetLengths = function (_data, _container, _format) {
         .text(_format);
   calcContainers
     .each(function (d,i) {
-      lengths.push(this.getBoundingClientRect().width);
+      lengths.push(this.getBBox().width);
     });
   _container.select('.tmp-text-strings').remove();
   return lengths;
@@ -345,7 +345,7 @@ nv.utils.maxStringSetLength = function (_data, _container, _format) {
         .text(_format);
   calcContainers
     .each(function (d,i) {
-      maxLength = Math.max(this.getBoundingClientRect().width, maxLength);
+      maxLength = Math.max(this.getBBox().width, maxLength);
     });
   _container.select('.tmp-text-strings').remove();
   return maxLength;

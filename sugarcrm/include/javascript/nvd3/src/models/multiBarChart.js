@@ -364,7 +364,7 @@ nv.models.multiBarChart = function() {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().getBoundingClientRect().height / 1.15, 10) +
+        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
       }
