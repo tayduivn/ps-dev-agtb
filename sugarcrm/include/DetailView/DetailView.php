@@ -11,6 +11,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 /**
  * DetailView - display single record
  * @api
@@ -22,8 +25,15 @@ class DetailView extends ListView {
 	var $offset_key_mismatch=false;
 	var $no_record_found=false;
 
+    /**
+     * @var Request
+     */
+    protected $request;
+
 	function DetailView(){
 		parent::ListView();
+
+        $this->request = InputValidation::getService();
 
 		global $theme, $app_strings, $currentModule;
 		$this->local_theme = $theme;
@@ -65,7 +75,11 @@ class DetailView extends ListView {
 		//from tracker 								offset is not there but $bNavHistorySet may or may not exist.
 		if (isset($_REQUEST['offset']) && !empty($_REQUEST['offset'])) {
 			//get offset values.
-			$offset = $_REQUEST['offset'];
+            $offsetConstraint = array(
+                'Assert\Type' => array('type' => 'numeric'),
+                'Assert\Range' => array('min' => 0),
+            );
+            $offset = $this->request->getValidInputGet('offset', $offsetConstraint, 0);
 			if($offset < 0){
 				$offset = 0;
 			}
