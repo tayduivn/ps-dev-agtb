@@ -2809,14 +2809,10 @@ class MetaDataManager
      */
     protected function getModules($filtered = true)
     {
-        // Loading a standard module list. If the module list isn't set into the
-        // globals, load them up. This happens on installation.
-        if (empty($GLOBALS['app_list_strings']['moduleList'])) {
-            $als = return_app_list_strings_language($GLOBALS['current_language']);
-            $list = $als['moduleList'];
-        } else {
-            $list = $GLOBALS['app_list_strings']['moduleList'];
-        }
+
+	// Loading a standard module list. Always force a fresh load to prevent inconsistent values based on bad customizations.
+	$als = return_app_list_strings_language($GLOBALS['current_language'], false);
+	$list = $als['moduleList'];
 
         // Handle filtration if we are supposed to
         if ($filtered) {

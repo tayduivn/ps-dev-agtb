@@ -188,6 +188,17 @@ class PMSEExpressionValidator implements PMSEValidate
             }
         }
 
+        if ($request->getExternalAction() == 'NEW') {
+            if (!PMSEEngineUtils::isTargetModule($flowData, $bean)
+            ) {
+                $paramsRelated = array(
+                    'replace_fields' => array(
+                        $flowData['rel_element_relationship'] => $flowData['rel_element_module']
+                    )
+                );
+            }
+        }
+
         $this->logger->debug("Parameters related returned :" . print_r($paramsRelated, true));
         return $paramsRelated;
     }
@@ -199,17 +210,9 @@ class PMSEExpressionValidator implements PMSEValidate
      * @param $flowData
      * @return bool
      */
-    public function hasValidRelationship($bean, $flowData) {
+    public function hasValidRelationship($bean, $flowData)
+    {
         $seedBean = BeanFactory::getBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
-        $seedBean->load_relationship($flowData['rel_element_relationship']);
-        $relationship = $seedBean->$flowData['rel_element_relationship'];
-        if (!empty($relationship)) {
-            $relObj = $relationship->getRelationshipObject();
-            if ($relObj->relationship_exists($seedBean, $bean)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $seedBean->load_relationship($flowData['rel_element_relationship']);
     }
 }
