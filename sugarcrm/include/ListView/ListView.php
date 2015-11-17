@@ -10,6 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 require_once 'include/EditView/SugarVCR.php';
 require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
 
@@ -19,6 +22,11 @@ require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
  */
 class ListView
 {
+    /**
+     * @var Request
+     */
+    protected $request;
+
     var $local_theme= null;
     var $local_app_strings= null;
     var $local_image_path = null;
@@ -84,14 +92,17 @@ function processListView($seed, $xTemplateSection, $html_varName)
     global $sugar_config;
 
     $populateOnly = $this->ignorePopulateOnly ? FALSE : (!empty($sugar_config['save_query']) && $sugar_config['save_query'] == 'populate_only');
+
     if(isset($seed->module_dir) && $populateOnly) {
+
         if(empty($GLOBALS['displayListView']) && strcmp(strtolower($_REQUEST['action']), 'popup') != 0 && (!empty($_REQUEST['clear_query']) || $_REQUEST['module'] == $seed->module_dir && ((empty($_REQUEST['query']) || $_REQUEST['query'] == 'MSI')&& (empty($_SESSION['last_search_mod']) || $_SESSION['last_search_mod'] != $seed->module_dir)))) {
-            $_SESSION['last_search_mod'] = $_REQUEST['module'] ;
+            $_SESSION['last_search_mod'] = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
             return;
         }
     }
+
     if(strcmp(strtolower($_REQUEST['action']), 'popup') != 0){
-        $_SESSION['last_search_mod'] = $_REQUEST['module'] ;
+        $_SESSION['last_search_mod'] = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
     }
     //following session variable will track the detail view navigation history.
     //needs to the reset after each search.
@@ -567,6 +578,7 @@ function setDisplayHeaderAndFooter($bool) {
 */
  function ListView() {
 
+    $this->request = InputValidation::getService();
 
     if(!$this->initialized) {
         global $sugar_config;
@@ -644,15 +656,7 @@ function getOrderBy($varName, $defaultOrderBy='', $force_sortorder='') {
             $desc = $defaultOrder;
         }
         $defaultOrder = $desc ? 'desc' : 'asc';
-        $orderByValue = $defaultOrder;
-        if (isset($_REQUEST[$orderByDirection]))
-        {
-            $possibleRequestOrderBy = $_REQUEST[$orderByDirection];
-            if ($possibleRequestOrderBy == 'asc' || $possibleRequestOrderBy == 'desc')
-            {
-                $orderByValue = $possibleRequestOrderBy;
-            }
-        }
+        $orderByValue = $this->request->getValidInputRequest($orderByDirection, 'Assert\Sql\OrderDirection', $defaultOrder); 
 
         if (isset($_REQUEST[$orderByColumn]))
         {
@@ -894,11 +898,12 @@ function setUserVariable($localVarName,$varName, $value) {
 */
  function getSessionVariable($localVarName,$varName) {
     //Set any variables pass in through request first
-    if(isset($_REQUEST[$this->getSessionVariableName($localVarName, $varName)])) {
-        $this->setSessionVariable($localVarName,$varName,$_REQUEST[$this->getSessionVariableName($localVarName, $varName)]);
+    if (isset($_REQUEST[$this->getSessionVariableName($localVarName, $varName)])) {
+        $var = $this->request->getValidInputRequest($this->getSessionVariableName($localVarName, $varName));
+        $this->setSessionVariable($localVarName,$varName, $var);
     }
 
-    if(isset($_SESSION[$this->getSessionVariableName($localVarName, $varName)])) {
+    if (isset($_SESSION[$this->getSessionVariableName($localVarName, $varName)])) {
         return $_SESSION[$this->getSessionVariableName($localVarName, $varName)];
     }
     return "";
@@ -906,10 +911,12 @@ function setUserVariable($localVarName,$varName, $value) {
 
 function getUserVariable($localVarName, $varName) {
     global $current_user;
-    if($this->is_dynamic ||  $localVarName == 'CELL')return;
-    if(isset($_REQUEST[$this->getSessionVariableName($localVarName, $varName)])) {
-
-            $this->setUserVariable($localVarName,$varName,$_REQUEST[$this->getSessionVariableName($localVarName, $varName)]);
+    if ($this->is_dynamic ||  $localVarName == 'CELL') {
+        return;
+    }
+    if (isset($_REQUEST[$this->getSessionVariableName($localVarName, $varName)])) {
+        $var = $this->request->getValidInputRequest($this->getSessionVariableName($localVarName, $varName));
+        $this->setUserVariable($localVarName, $varName, $var);
     }
     return $current_user->getPreference($this->getSessionVariableName($localVarName, $varName));
 }

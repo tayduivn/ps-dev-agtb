@@ -16,6 +16,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
 /**
  * Retrieves the requested js language file, building it if it doesn't exist.
  */
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 function getJSLanguage()
 {
 
@@ -29,7 +32,7 @@ function getJSLanguage()
         return;
     }
 
-    $lang = clean_path($_REQUEST['lang']);
+    $lang = clean_path(InputValidation::getService()->getValidInputRequest('lang', 'Assert\Language'));
     $languages = get_languages();
 
     if (!preg_match("/^\w\w_\w\w$/", $lang) || !isset($languages[$lang])) {
@@ -42,13 +45,15 @@ function getJSLanguage()
 
         return;
     }
-    if (empty($_REQUEST['module']) || $_REQUEST['module'] === 'app_strings') {
+
+    $reqModule = InputValidation::getService()->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
+    if (empty($reqModule) || $reqModule === 'app_strings') {
         $file = sugar_cached('jsLanguage/') . $lang . '.js';
         if (!sugar_is_file($file)) {
             jsLanguage::createAppStringsCache($lang);
         }
     } else {
-        $module = clean_path($_REQUEST['module']);
+        $module = clean_path($reqModule);
         $fullModuleList = array_merge($GLOBALS['moduleList'], $GLOBALS['modInvisList']);
         if (!isset($app_list_strings['moduleList'][$module]) && !in_array($module, $fullModuleList)) {
             echo "Invalid module specified";

@@ -56,7 +56,7 @@ class ViewSpot extends ViewAjax
 
         $searchEngine = SugarSearchEngineFactory::getInstance('', array(), true);
 
-        $trimmed_query = trim($_REQUEST['q']);
+        $trimmed_query = trim($this->request->getValidInputRequest('q'));
         $rs = $searchEngine->search($trimmed_query, $offset, $limit, $options);
         $formattedResults = $this->formatSearchResultsToDisplay($rs, $offset,$trimmed_query);
 

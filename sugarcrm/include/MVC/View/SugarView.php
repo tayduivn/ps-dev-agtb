@@ -309,7 +309,7 @@ class SugarView
         $ss->assign('use_table_container', (isset($this->options['use_table_container']) ? $this->options['use_table_container'] : false));
 
         // set ab testing if exists
-        $testing = (isset($_REQUEST["testing"]) ? $_REQUEST['testing'] : "a");
+        $testing = $this->request->getValidInputRequest('testing', null, 'a');
         $ss->assign("ABTESTING", $testing);
 
         // get browser title
@@ -436,7 +436,7 @@ class SugarView
         }
         $ss->assign("GCLS",$gcls);
 
-        $ss->assign("SEARCH", isset($_REQUEST['query_string']) ? $_REQUEST['query_string'] : '');
+        $ss->assign("SEARCH", $this->request->getValidInputRequest('query_string', null, ''));
 
         if ($this->action == "EditView" || $this->action == "Login")
             $ss->assign("ONLOAD", 'onload="set_focus()"');
