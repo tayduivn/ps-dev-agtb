@@ -617,12 +617,8 @@ class SugarBean
      * Get default ACL settings
      * @return array
      */
-    public static function getDefaultACL($object = null)
+    public static function getDefaultACL()
     {
-        if (!empty($object) && is_callable("$object::bean_implements_static") && call_user_func("$object::bean_implements_static", 'ACL')){
-            return array('SugarACLStatic' => true);
-        }
-
         return self::$default_acls;
     }
 
