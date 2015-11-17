@@ -154,7 +154,6 @@ class FilterApi extends SugarApi
             throw new SugarApiExceptionNotFound("Could not find filter: {$args['record']}");
         }
 
-        // Rather than using a retardly long ternary...
         if (empty($filter->filter_definition)) {
             $filter_definition = array();
         } else {

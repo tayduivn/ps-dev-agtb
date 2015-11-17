@@ -1028,7 +1028,7 @@
     scrollLock: function(lock) {
         var $content = this.$('.flex-list-view-content');
         if (lock) {
-            $content.css({'overflow-x': 'visible', 'margin-left': -($content.scrollLeft()) + 'px'});
+            $content.css({'overflow-y': 'visible', 'overflow-x': 'hidden'});
         } else {
             $content.removeAttr('style');
         }
