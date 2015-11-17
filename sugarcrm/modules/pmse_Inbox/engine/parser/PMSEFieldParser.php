@@ -246,12 +246,15 @@ class PMSEFieldParser implements PMSEDataParserInterface
         } else {
             $criteriaToken->currentValue = $tokenValue;
         }
-        if ($this->evaluatedBean->field_name_map[$criteriaToken->expValue]['type']=='date') {
-            $criteriaToken->expSubtype = 'date';
-        } elseif ($this->evaluatedBean->field_name_map[$criteriaToken->expValue]['type']=='datetime'
-                || $this->evaluatedBean->field_name_map[$criteriaToken->expValue]['type']=='datetimecombo') {
-            $criteriaToken->expSubtype = 'date';
-        }
+        if (isset($this->evaluatedBean->field_name_map[$criteriaToken->expField])) {
+            if ($this->evaluatedBean->field_name_map[$criteriaToken->expField]['type'] == 'date') {
+                $criteriaToken->expSubtype = 'date';
+            } elseif ($this->evaluatedBean->field_name_map[$criteriaToken->expField]['type'] == 'datetime'
+                || $this->evaluatedBean->field_name_map[$criteriaToken->expField]['type'] == 'datetimecombo'
+               ) {
+                $criteriaToken->expSubtype = 'date';
+              }
+         }
         $criteriaToken->expValue = $criteriaToken->currentValue;
         return $criteriaToken;
     }
