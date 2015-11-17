@@ -371,7 +371,7 @@ nv.models.multiBar = function() {
 
       if (showValues) {
 
-        var valueBox = barText[0][0].getBBox(),
+        var valueBox = barText[0][0].getBoundingClientRect(),
             valueDim = vertical ? valueBox.height : valueBox.width;
 
         // KEEP: to be used in case you want rect behind text
@@ -509,7 +509,7 @@ nv.models.multiBar = function() {
 
         // KEEP: to be used in case you want rect behind text
         // bars.selectAll('text').each(function(d, i) {
-        //       var width = this.getBBox().width + 20;
+        //       var width = this.getBoundingClientRect().width + 20;
         //       if (width > labelBoxWidth) {
         //         labelBoxWidth = width;
         //       }

@@ -210,7 +210,7 @@ nv.models.tree = function() {
 
             prevScale = zoom.scale(),
             prevTrans = zoom.translate(),
-            treeBBox = backg.node().getBBox(),
+            treeBBox = backg.node().getBoundingClientRect(),
 
             size = [
               treeBBox.width,

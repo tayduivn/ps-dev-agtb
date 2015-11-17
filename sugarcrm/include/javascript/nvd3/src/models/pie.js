@@ -189,7 +189,7 @@ nv.models.pie = function() {
       holeWrap.call(holeFormat, hole ? [hole] : []);
 
       if (hole) {
-        var heightHoleHalf = holeWrap.node().getBBox().height * 0.30,
+        var heightHoleHalf = holeWrap.node().getBoundingClientRect().height * 0.30,
             heightPieHalf = Math.abs(maxHeightRadius * d3.min(extHeights)),
             holeOffset = Math.round(heightHoleHalf - heightPieHalf);
 
@@ -327,7 +327,7 @@ nv.models.pie = function() {
                 return;
               }
               var slice = d3.select(this),
-                  textBox = slice.select('text').node().getBBox();
+                  textBox = slice.select('text').node().getBoundingClientRect();
               slice.select('rect')
                 .attr('rx', 3)
                 .attr('ry', 3)
