@@ -131,7 +131,7 @@ class ViewList extends SugarView{
         }
         $this->params = array('massupdate' => true);
         if(!empty($_REQUEST['orderBy'])) {
-            $this->params['orderBy'] = $_REQUEST['orderBy'];
+            $this->params['orderBy'] = $this->request->getValidInputRequest('orderBy', 'Assert\Sql\OrderBy');
             $this->params['overrideOrder'] = true;
             if(!empty($_REQUEST['sortOrder'])) $this->params['sortOrder'] = $_REQUEST['sortOrder'];
         }

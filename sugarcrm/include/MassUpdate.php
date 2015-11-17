@@ -200,21 +200,25 @@ class MassUpdate
 		$old_value = $disable_date_format;
 		$disable_date_format = true;
 
-		if(!empty($_REQUEST['uid']) && !isset($_REQUEST['entire'])) $_POST['mass'] = explode(',', $_REQUEST['uid']); // coming from listview
-		elseif(isset($_REQUEST['entire']) && empty($_POST['mass'])) {
-			if(empty($order_by))$order_by = '';
+        if (!empty($_REQUEST['uid']) && !isset($_REQUEST['entire'])) {
+            $_POST['mass'] = $this->request->getValidInputRequest(
+                'uid',
+                array('Assert\Delimited' => array('constraints' => 'Assert\Guid')),
+                array()
+            );
+        } elseif(isset($_REQUEST['entire']) && empty($_POST['mass'])) {
+            if(empty($order_by))$order_by = '';
 
             // TODO: define filter array here to optimize the query
             // by not joining the unneeded tables
             $query = $this->sugarbean->create_new_list_query($order_by, $this->where_clauses, array(), array(), 0, '', false, $this, true, true);
-			$result = $db->query($query,true);
-			$new_arr = array();
-			while($val = $db->fetchByAssoc($result,false))
-			{
-				array_push($new_arr, $val['id']);
-			}
-			$_POST['mass'] = $new_arr;
-		}
+            $result = $db->query($query,true);
+            $new_arr = array();
+            while ($val = $db->fetchByAssoc($result,false)) {
+                array_push($new_arr, $val['id']);
+            }
+            $_POST['mass'] = $new_arr;
+        }
 
                 if ($fetch_only) {
                     return;
