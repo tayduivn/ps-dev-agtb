@@ -363,6 +363,7 @@
                 'include/javascript/sugar7/hbs-helpers.js' => 'portal2/sugar_portal.min.js',
                 'include/javascript/sugar7/language.js' => 'portal2/sugar_portal.min.js',
                 'custom/include/javascript/voodoo.js' => 'portal2/sugar_portal.min.js',
+                'include/javascript/sugar7/shortcuts.js' => 'portal2/sugar_portal.min.js',
             ),
 
             $pmse_br = array(
