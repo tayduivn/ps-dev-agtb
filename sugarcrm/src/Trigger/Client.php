@@ -107,11 +107,11 @@ class Client
         // we can't use the config with the cache,
         // because the trigger's token may be changed at any moment.
         $config = $admin->getConfigForModule('auth', 'base', true);
-        if (empty($config['trigger_server_token'])) {
+        if (empty($config['external_token_trigger'])) {
             $token = $this->createGuid();
-            $admin->saveSetting('auth', 'trigger_server_token', $token, 'base');
+            $admin->saveSetting('auth', 'external_token_trigger', $token, 'base');
         } else {
-            $token = $config['trigger_server_token'];
+            $token = $config['external_token_trigger'];
         }
         return $token;
     }

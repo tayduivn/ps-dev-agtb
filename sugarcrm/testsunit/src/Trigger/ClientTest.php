@@ -114,11 +114,11 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $adminBean->method('getConfigForModule')
             ->with('auth')
-            ->willReturn(array('trigger_server_token' => $storedToken));
+            ->willReturn(array('external_token_trigger' => $storedToken));
 
         $adminBean->expects($this->exactly($count))
             ->method('saveSetting')
-            ->with('auth', 'trigger_server_token', $newToken, 'base')
+            ->with('auth', 'external_token_trigger', $newToken, 'base')
             ->willReturn(1);
 
         $client = $this->getClientMock(array('getAdministrationBean', 'createGuid'));
@@ -214,15 +214,69 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         );
 
         return array(
-            'method GET without args' => array($params, 'get', null, null, $this->getEncodedMessageToPush($params, 'get', null)),
-            'method GET with args' => array($params, 'get', $args, null, $this->getEncodedMessageToPush($params, 'get', $args)),
-            'method POST without args' => array($params, 'post', null, null, $this->getEncodedMessageToPush($params, 'post', null)),
-            'method POST with args' => array($params, 'post', $args, null, $this->getEncodedMessageToPush($params, 'post', $args)),
-            'method PUT without args' => array($params, 'put', null, null, $this->getEncodedMessageToPush($params, 'put', null)),
-            'method PUT with args' => array($params, 'put', $args, null, $this->getEncodedMessageToPush($params, 'put', $args)),
-            'method DELETE without args' => array($params, 'delete', null, null, $this->getEncodedMessageToPush($params, 'delete', null)),
-            'method DELETE with args' => array($params, 'delete', $args, null, $this->getEncodedMessageToPush($params, 'delete', $args)),
-            'any method with tags' => array($params, 'get', $args, $tags, $this->getEncodedMessageToPush($params, 'get', $args, $tags)),
+            'method GET without args' => array(
+                $params,
+                'get',
+                null,
+                null,
+                $this->getEncodedMessageToPush($params, 'get', null)
+            ),
+            'method GET with args' => array(
+                $params,
+                'get',
+                $args,
+                null,
+                $this->getEncodedMessageToPush($params, 'get', $args)
+            ),
+            'method POST without args' => array(
+                $params,
+                'post',
+                null,
+                null,
+                $this->getEncodedMessageToPush($params, 'post', null)
+            ),
+            'method POST with args' => array(
+                $params,
+                'post',
+                $args,
+                null,
+                $this->getEncodedMessageToPush($params, 'post', $args)
+            ),
+            'method PUT without args' => array(
+                $params,
+                'put',
+                null,
+                null,
+                $this->getEncodedMessageToPush($params, 'put', null)
+            ),
+            'method PUT with args' => array(
+                $params,
+                'put',
+                $args,
+                null,
+                $this->getEncodedMessageToPush($params, 'put', $args)
+            ),
+            'method DELETE without args' => array(
+                $params,
+                'delete',
+                null,
+                null,
+                $this->getEncodedMessageToPush($params, 'delete', null)
+            ),
+            'method DELETE with args' => array(
+                $params,
+                'delete',
+                $args,
+                null,
+                $this->getEncodedMessageToPush($params, 'delete', $args)
+            ),
+            'any method with tags' => array(
+                $params,
+                'get',
+                $args,
+                $tags,
+                $this->getEncodedMessageToPush($params, 'get', $args, $tags)
+            ),
         );
     }
 
@@ -340,7 +394,11 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $httpHelper = $this->getHttpClientMock(array('send'));
         $httpHelper->expects($this->exactly($sendCallsCount))
             ->method('send')
-            ->with(Client::DELETE_BY_TAGS_METHOD, $triggerServerDeleteByTagsUrl, $this->getEncodedMessageToDeleteByTags($tags))
+            ->with(
+                Client::DELETE_BY_TAGS_METHOD,
+                $triggerServerDeleteByTagsUrl,
+                $this->getEncodedMessageToDeleteByTags($tags)
+            )
             ->willReturn(true);
 
         $client = $this->getClientMock(array('retrieveToken', 'getSugarConfig', 'getHttpHelper'));
