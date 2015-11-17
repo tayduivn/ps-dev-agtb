@@ -12,10 +12,10 @@
 --}}
 {{#each value}}
     <div class="control-group">
-        <div class="controls controls-four btn-fit">
+        <div class="controls controls-{{../fitGroupClass}} btn-fit">
             <input type="hidden" name="{{../name}}" class="select2 inherit-width" value="{{id}}" data-rname="{{name}} {{name_2}}" data-index="{{@index}}">
             <button type="button"{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}
-                    class="btn fourth {{#if primary}}active{{/if}}" name="primary" data-index="{{@index}}"
+                    class="btn {{../fitButtonClass}} {{#if primary}}active{{/if}}" name="primary" data-index="{{@index}}"
                     rel="tooltip" title="{{str "LBL_TEAM_PRIMARY"}}"><i class="fa fa-star"></i>
             </button>
             {{partial 'button-selected' ../this this index=@index}}

@@ -32,6 +32,20 @@
      */
     appendTeamTag: 'input[name=append_team]',
 
+    /**
+     * Group fit class.
+     *
+     * @property {String}
+     */
+    fitGroupClass: 'three',
+
+    /**
+     * Button fit class.
+     *
+     * @property {String}
+     */
+    fitButtonClass: 'third',
+
     initialize: function (options) {
         this._super("initialize", [options]);
         this._currentIndex = 0;
@@ -193,6 +207,11 @@
      */
     _loadTemplate: function() {
         this._super("_loadTemplate");
+
+        if (!_.isUndefined(this.isTBAEnabled) && this.isTBAEnabled) {
+            this.fitGroupClass = 'four';
+            this.fitButtonClass = 'fourth';
+        }
 
         var template = app.template.getField(
             this.type,
