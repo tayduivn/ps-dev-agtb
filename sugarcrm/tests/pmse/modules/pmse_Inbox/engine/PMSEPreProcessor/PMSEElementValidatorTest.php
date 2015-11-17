@@ -156,6 +156,8 @@ class PMSEElementValidatorTest extends PHPUnit_Framework_TestCase
 
     public function testIdentifyEventActionIfNotRelated()
     {
+        $bean = new stdClass();
+        $bean->module_dir = 'Leads';
         $mockData = array('rel_process_module' => 'Leads',
             'rel_element_relationship' => 'Leads',
             'rel_element_module' => 'Leads',
@@ -172,6 +174,8 @@ class PMSEElementValidatorTest extends PHPUnit_Framework_TestCase
     
     public function testIdentifyEventActionIfRelated()
     {
+        $bean = new stdClass();
+        $bean->module_dir = 'Notes';
         $mockData = array('rel_process_module' => 'Leads',
             'rel_element_relationship' => 'leads_notes',
             'rel_element_module' => 'Notes',
@@ -188,6 +192,7 @@ class PMSEElementValidatorTest extends PHPUnit_Framework_TestCase
 
     public function testProcessExternalActionIfRunning()
     {
+        $bean = new stdClass();
         $elementValidatorMock = $this->getMockBuilder('PMSEElementValidator')
                 ->disableOriginalConstructor()
                 ->setMethods(array('identifyElementStatus', 'identifyEventAction'))
@@ -208,14 +213,15 @@ class PMSEElementValidatorTest extends PHPUnit_Framework_TestCase
     
     public function testProcessExternalActionIfNotRunning()
     {
+        $bean = new stdClass();
         $elementValidatorMock = $this->getMockBuilder('PMSEElementValidator')
                 ->disableOriginalConstructor()
                 ->setMethods(array('identifyElementStatus', 'identifyEventAction'))
                 ->getMock();
 
-        $elementValidatorMock->expects($this->once())
+        $elementValidatorMock->expects($this->any())
                 ->method('identifyElementStatus')
-                ->will($this->returnValue('NONE'));
+                ->will($this->returnValue(false));
 
         $mockData = array('evn_type' => 'START');
         $result = $elementValidatorMock->processExternalAction($mockData);
