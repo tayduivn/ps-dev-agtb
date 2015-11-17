@@ -32,10 +32,19 @@ class ModuleNameValidator extends BeanModuleNameValidator
     /**
      * List of explicit module name we allow which cannot
      * be resolved otherwise.
+     *
+     * TODO: Because of the lack of validation in the past we relied heavily
+     * on directory and file exist checks. As we do have some registry of
+     * modules (although the definition is currently a bit loose) we should
+     * fix the root cause of not having all our modules in there instead of
+     * relying on this explicit list.
+     *
      * @var array
      */
     protected $explicitModules = array(
         'app_strings',
+        'Charts', // @see BR-3616
+        'ExpressionEngine', // @see BR-3617
     );
 
     /**
