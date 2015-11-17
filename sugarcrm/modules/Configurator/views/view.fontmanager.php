@@ -44,7 +44,7 @@ class ConfiguratorViewFontManager extends SugarView {
                 )
             );
         if(!empty($_REQUEST['error'])){
-            $error .= "<br>".$_REQUEST['error'];
+            $error .= "<br>". htmlspecialchars($_REQUEST['error'], ENT_QUOTES, 'UTF-8');
         }
         $this->ss->assign("error", $error);
         $this->ss->assign("MOD", $mod_strings);
