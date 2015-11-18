@@ -223,7 +223,7 @@ END:VCALENDAR',
 
         $event = $backendMock->getEventsBean();
 
-        $this->assertInstanceOf('\CalDavEvent', $event);
+        $this->assertInstanceOf('\CalDavEventCollection', $event);
     }
 
     /**
@@ -548,7 +548,7 @@ END:VCALENDAR',
             ->getMock();
 
         //update event1
-        $event1->calendardata = str_replace('Test event title', 'Test event title!', $event1->calendardata);
+        $event1->calendar_data = str_replace('Test event title', 'Test event title!', $event1->calendar_data);
         $event1->processed = true;
         $event1->save();
         $event1->retrieve($event1->id);

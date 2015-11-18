@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$dictionary['CalDavEvent'] = array(
+$dictionary['CalDavEventCollection'] = array(
     'table' => 'caldav_events',
     'comment' => 'This table used for store calendar objects',
     'full_text_search' => false,
@@ -19,9 +19,9 @@ $dictionary['CalDavEvent'] = array(
     'favorites' => false,
     'fields' =>
         array(
-            'calendardata' =>
+            'calendar_data' =>
                 array(
-                    'name' => 'calendardata',
+                    'name' => 'calendar_data',
                     'vname' => 'LBL_EVENT_DATA',
                     'type' => 'longblob',
                     'isnull' => 'true',
@@ -36,10 +36,10 @@ $dictionary['CalDavEvent'] = array(
                     'isnull' => 'true',
                     'comment' => 'Event URI',
                 ),
-            'calendarid' =>
+            'calendar_id' =>
                 array(
                     'required' => true,
-                    'name' => 'calendarid',
+                    'name' => 'calendar_id',
                     'vname' => 'LBL_EVENT_CALENDAR_ID',
                     'type' => 'id',
                     'comment' => 'Calendar ID',
@@ -62,27 +62,27 @@ $dictionary['CalDavEvent'] = array(
                     'len' => '11',
                     'comment' => 'Event size in bytes',
                 ),
-            'componenttype' =>
+            'component_type' =>
                 array(
-                    'name' => 'componenttype',
+                    'name' => 'component_type',
                     'vname' => 'LBL_EVENT_COMPONENTTYPE',
                     'type' => 'varchar',
                     'len' => '8',
                     'isnull' => 'true',
                     'comment' => 'Event component type',
                 ),
-            'firstoccurence' =>
+            'first_occurence' =>
                 array(
-                    'name' => 'firstoccurence',
+                    'name' => 'first_occurence',
                     'vname' => 'LBL_EVENT_FIRSTOCCURENCE',
                     'type' => 'int',
                     'len' => '11',
                     'isnull' => 'true',
                     'comment' => 'Recurring event first occurrence',
                 ),
-            'lastoccurence' =>
+            'last_occurence' =>
                 array(
-                    'name' => 'lastoccurence',
+                    'name' => 'last_occurence',
                     'vname' => 'LBL_EVENT_LASTOCCURENCE',
                     'type' => 'int',
                     'len' => '11',
@@ -140,7 +140,7 @@ $dictionary['CalDavEvent'] = array(
         'events_calendar' => array(
             'rhs_module' => 'CalDavEvents',
             'rhs_table' => 'caldav_events',
-            'rhs_key' => 'calendarid',
+            'rhs_key' => 'calendar_id',
             'lhs_module' => 'CalDavCalendars',
             'lhs_table' => 'caldav_calendars',
             'lhs_key' => 'id',
@@ -160,12 +160,12 @@ $dictionary['CalDavEvent'] = array(
         array(
             'name' => 'idx_calendarid',
             'type' => 'index',
-            'fields' => array('calendarid', 'uri'),
+            'fields' => array('calendar_id', 'uri'),
         ),
         array(
             'name' => 'idx_timerange',
             'type' => 'index',
-            'fields' => array('firstoccurence', 'lastoccurence'),
+            'fields' => array('first_occurence', 'last_occurence'),
         ),
     ),
     'ignore_templates' => array(
@@ -263,7 +263,7 @@ $dictionary['CalDavCalendar'] = array(
         'calendar_events' => array(
             'rhs_module' => 'CalDavEvents',
             'rhs_table' => 'caldav_events',
-            'rhs_key' => 'calendarid',
+            'rhs_key' => 'calendar_id',
             'lhs_module' => 'CalDavCalendars',
             'lhs_table' => 'caldav_calendars',
             'lhs_key' => 'id',
@@ -466,7 +466,7 @@ $dictionary['CalDavSynchronization'] = array(
 
 VardefManager::createVardef(
     'CalDavEvents',
-    'CalDavEvent'
+    'CalDavEventCollection'
 );
 
 VardefManager::createVardef(

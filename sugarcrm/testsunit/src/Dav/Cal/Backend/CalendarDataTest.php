@@ -200,7 +200,7 @@ END:VCALENDAR',
                              ->setMethods(array('getEventsBean'))
                              ->getMock();
 
-        $eventMock = $this->getMockBuilder('CalDavEvent')
+        $eventMock = $this->getMockBuilder('CalDavEventCollection')
                           ->disableOriginalConstructor()
                           ->setMethods(array('save', 'setCalendarEventURI', 'setCalendarId', 'getSynchronizationObject'))
                           ->getMock();
@@ -270,7 +270,7 @@ END:VCALENDAR',
                               ->setMethods(array('getEventsBean'))
                               ->getMock();
 
-        $eventMock = $this->getMockBuilder('CalDavEvent')
+        $eventMock = $this->getMockBuilder('CalDavEventCollection')
                           ->disableOriginalConstructor()
                           ->setMethods(array('save', 'getByURI', 'getSynchronizationObject'))
                           ->getMock();

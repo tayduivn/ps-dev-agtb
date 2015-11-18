@@ -69,22 +69,22 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
         return self::$userHelperInstance;
     }
 
-    /**
-     * Get recurring helper
-     * @return Helper\RecurringHelper
-     */
-    public function getRecurringHelper()
-    {
-        return new Helper\RecurringHelper();
-    }
-
     protected function isUnsupported($calendarData)
     {
-        $recurringHelper = $this->getRecurringHelper();
         $vObject = VObject\Reader::read($calendarData);
         $mainComponent = $vObject->getBaseComponent();
         if ($mainComponent->RRULE) {
-            return $recurringHelper->isUnsupported($mainComponent->RRULE->getParts());
+            $rRule = $mainComponent->RRULE->getParts();
+            return
+                !empty($rRule['BYMONTH']) ||
+                !empty($rRule['WKST']) ||
+                !empty($rRule['BYMONTHDAY']) ||
+                !empty($rRule['BYYEARDAY']) ||
+                !empty($rRule['BYWEEKNO']) ||
+                !empty($rRule['BYSETPOS']) ||
+                !empty($rRule['BYHOUR']) ||
+                $rRule['FREQ'] == 'MINUTELY' ||
+                $rRule['FREQ'] == 'HOURLY';
         }
 
         return false;
@@ -103,7 +103,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
     /**
      * Get CalDavEvent bean object
      *
-     * @return null|\CalDavEvent
+     * @return null|\CalDavEventCollection
      */
     public function getEventsBean()
     {
@@ -208,14 +208,14 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
             $eventBean = $this->getEventsBean();
             $query = new \SugarQuery();
             $query->from($eventBean);
-            $query->where()->equals('calendarid', $calendarId);
+            $query->where()->equals('calendar_id', $calendarId);
 
             $interval = $current_user->getPreference('caldav_interval');
             if ($interval != 0) {
                 $date = new \DateTime('NOW', new \DateTimeZone('UTC'));
                 $date = $date->modify("-" . $interval)->format('U');
                 
-                $query->where()->gte('lastoccurence', $date);
+                $query->where()->gte('last_occurence', $date);
             }
 
             $result = $eventBean->fetchFromQuery($query);
@@ -234,8 +234,8 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
     public function getCalendarObject($calendarId, $objectUri)
     {
         $eventBean = $this->getEventsBean();
-        $event = $eventBean->getByURI($calendarId, array($objectUri), true);
-
+        $events = $eventBean->getByURI($calendarId, array($objectUri), 1);
+        $event = array_shift($events);
         if ($event && $event->id) {
             return $event->toCalDavArray();
         }
@@ -269,7 +269,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
         }
         $event = $this->getEventsBean();
 
-        if ($event && $event->setCalendarEventData($calendarData)) {
+        if ($event && $event->setData($calendarData)) {
 
             $event->setCalendarEventURI($objectUri);
             $event->setCalendarId($calendarId);
@@ -290,8 +290,9 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
             throw new DAV\Exception\NotImplemented('RRULE format not supported');
         }
         $eventBean = $this->getEventsBean();
-        $event = $eventBean->getByURI($calendarId, array($objectUri), true);
-        if ($event && $event->id && $event->setCalendarEventData($calendarData)) {
+        $events = $eventBean->getByURI($calendarId, array($objectUri), 1);
+        $event = array_shift($events);
+        if ($event && $event->id && $event->setData($calendarData)) {
             $event->save();
 
             return '"' . $event->etag . '"';
@@ -306,7 +307,8 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
     public function deleteCalendarObject($calendarId, $objectUri)
     {
         $eventBean = $this->getEventsBean();
-        $event = $eventBean->getByURI($calendarId, array($objectUri), true);
+        $events = $eventBean->getByURI($calendarId, array($objectUri), 1);
+        $event = array_shift($events);
         if ($event && $event->id) {
             $event->mark_deleted($event->id);
         }
@@ -366,20 +368,20 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
         $eventQuery = $this->getSugarQuery();
 
         $eventQuery->from($eventBean);
-        $eventQuery->where()->equals('calendarid', $calendarId);
+        $eventQuery->where()->equals('calendar_id', $calendarId);
 
         if ($componentType) {
-            $eventQuery->where()->equals('componenttype', $componentType);
+            $eventQuery->where()->equals('component_type', $componentType);
         }
 
         if ($timeRange) {
 
             if (isset($timeRange['start'])) {
-                $eventQuery->where()->gte('lastoccurence', $timeRange['start']->getTimeStamp());
+                $eventQuery->where()->gte('last_occurence', $timeRange['start']->getTimeStamp());
             }
 
             if (isset($timeRange['end'])) {
-                $eventQuery->where()->lte('firstoccurence', $timeRange['end']->getTimeStamp());
+                $eventQuery->where()->lte('first_occurence', $timeRange['end']->getTimeStamp());
             }
 
         }
@@ -417,7 +419,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
             $eventQuery = $this->getSugarQuery();
 
             $eventQuery->from($eventBean);
-            $eventQuery->where()->in('calendarid', $calendarIDS);
+            $eventQuery->where()->in('calendar_id', $calendarIDS);
             $eventQuery->where()->equals('event_uid', $uid);
 
             $events = $eventBean->fetchFromQuery($eventQuery);
@@ -425,7 +427,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
             if ($events) {
                 $event = array_shift($events);
 
-                return $calendarURIS[$event->calendarid] . '/' . $event->uri;
+                return $calendarURIS[$event->calendar_id] . '/' . $event->uri;
             }
         }
 

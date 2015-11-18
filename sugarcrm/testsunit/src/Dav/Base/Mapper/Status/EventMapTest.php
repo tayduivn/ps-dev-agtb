@@ -128,7 +128,7 @@ class EventMapTest extends \PHPUnit_Framework_TestCase
                            ->setMethods(array('getAppListStrings', 'getLogger', 'getBean'))
                            ->getMock();
 
-        $eventMock = $this->getMockBuilder('\CalDavEvent')
+        $eventMock = $this->getMockBuilder('\CalDavEventCollection')
                           ->disableOriginalConstructor()
                           ->setMethods(array('getBean'))
                           ->getMock();

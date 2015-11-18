@@ -1,0 +1,246 @@
+<?php
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+namespace Sugarcrm\Sugarcrm\Dav\Cal\Structures;
+
+use Sabre\VObject\Property\ICalendar\CalAddress;
+use Sabre\VObject\Component\VCalendar;
+
+/**
+ * Class Participant
+ * @package Sugarcrm\Sugarcrm\Dav\Cal\Structures
+ */
+class Participant
+{
+    /**
+     * @var CalAddress
+     */
+    protected $participant;
+
+    /**
+     * Participant bean name
+     * @var string
+     */
+    protected $beanName;
+
+    /**
+     * Participant bean id
+     * @var string
+     */
+    protected $beanId;
+
+    /**
+     * @param CalAddress|null $participant
+     */
+    public function __construct(CalAddress $participant = null)
+    {
+        if ($participant) {
+            $this->participant = $participant;
+        } else {
+            $this->participant = new CalAddress(new VCalendar(), 'ATTENDEE');
+        }
+    }
+
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    protected function getParameter($name)
+    {
+        $params = $this->participant->parameters();
+
+        return isset($params[$name]) ? $params[$name]->getValue() : null;
+    }
+
+    /**
+     * Set participant parameter
+     * @param string $name
+     * @param string $value
+     * @return bool
+     */
+    protected function setParameter($name, $value)
+    {
+        if ($this->getParameter($name) == $value) {
+            return false;
+        }
+
+        $this->participant[$name] = $value;
+
+        return true;
+    }
+
+    /**
+     * Get status action for participant:
+     *      "NEEDS-ACTION"        ; Event needs action
+     *      "ACCEPTED"            ; Event accepted
+     *      "DECLINED"            ; Event declined
+     *      "TENTATIVE"           ; Event tentatively
+     * @return mixed
+     */
+    public function getStatus()
+    {
+        return $this->getParameter('PARTSTAT');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOrganizer()
+    {
+        return $this->getType() == 'ORGANIZER';
+    }
+
+    /**
+     * Get display name of participant
+     * @return string
+     */
+    public function getDisplayName()
+    {
+        return $this->getParameter('CN');
+    }
+
+    /**
+     * Get role of participant
+     * List of roles:
+     *      REQ-PARTICIPANT, OPT-PARTICIPANT, CHAIR
+     * @return string
+     */
+    public function getRole()
+    {
+        return $this->getParameter('ROLE');
+    }
+
+    /**
+     * Get email of participant
+     * @return string
+     */
+    public function getEmail()
+    {
+        return str_replace('mailto:', '', strtolower($this->participant->getNormalizedValue()));
+    }
+
+    /**
+     * Get Sugar CRM module name
+     * @return string
+     */
+    public function getBeanName()
+    {
+        return $this->beanName;
+    }
+
+    /**
+     * Get Sugar user id from participant
+     * @return string
+     */
+    public function getBeanId()
+    {
+        return $this->beanId;
+    }
+
+    /**
+     * Get node type (ATTENDEE or ORGANIZER)
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->participant->name;
+    }
+
+    /**
+     * Set status of participant
+     * @see Participant::getStatus for availiable statuses
+     * @param string $value
+     * @return bool
+     */
+    public function setStatus($value)
+    {
+        return $this->setParameter('PARTSTAT', $value);
+    }
+
+    /**
+     * Set display name of participant
+     * @param string $value
+     * @return bool
+     */
+    public function setDisplayName($value)
+    {
+        return $this->setParameter('CN', $value);
+    }
+
+    /**
+     * Set role of participant
+     * @see Participant::getRole for availiable roles
+     * @param string $value
+     * @return bool
+     */
+    public function setRole($value)
+    {
+        return $this->setParameter('ROLE', $value);
+    }
+
+    /**
+     * Set uri of participant
+     * @param string $value
+     * @return bool
+     */
+    public function setEmail($value)
+    {
+        if ($this->getEmail() == $value) {
+            return false;
+        }
+        $this->participant->setValue('mailto:' . $value);
+
+        return true;
+    }
+
+    /**
+     * Set module of participant
+     * @param string $value
+     */
+    public function setBeanName($value)
+    {
+        $this->beanName = $value;
+    }
+
+    /**
+     * Set Sugar user id to participant
+     * @param string $value
+     */
+    public function setBeanId($value)
+    {
+        $this->beanId = $value;
+    }
+
+    /**
+     * Set node type (ATTENDEE or ORGANIZER)
+     * @param string $value
+     * @return bool
+     */
+    public function setType($value)
+    {
+        if ($this->getType() == $value) {
+            return false;
+        }
+        $this->participant->name = $value;
+
+        return true;
+    }
+
+    /**
+     * Get current CalAddress object
+     * @return CalAddress
+     */
+    public function getObject()
+    {
+        return $this->participant;
+    }
+}

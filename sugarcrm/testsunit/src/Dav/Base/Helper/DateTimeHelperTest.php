@@ -72,22 +72,22 @@ class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
             array(
                 'vEvent' => $this->getEventTemplateObject('datetime'),
                 'select' => 'DTSTART',
-                'sugarDateTime' => '2015-08-06 08:00:00',
+                'sugarDateTime' => new \SugarDateTime('2015-08-06 10:00:00', new \DateTimeZone('Europe/Berlin')),
             ),
             array(
                 'vEvent' => $this->getEventTemplateObject('datetime1'),
                 'select' => 'DTSTART',
-                'sugarDateTime' => '2015-08-06 10:00:00',
+                'sugarDateTime' => new \SugarDateTime('2015-08-06 10:00:00', new \DateTimeZone('UTC')),
             ),
             array(
                 'vEvent' => $this->getEventTemplateObject('datetime2'),
                 'select' => 'DTSTART',
-                'sugarDateTime' => '2015-08-06 10:00:00',
+                'sugarDateTime' => new \SugarDateTime('2015-08-06 10:00:00', new \DateTimeZone('UTC')),
             ),
             array(
                 'vEvent' => $this->getEventTemplateObject('datetime3'),
                 'select' => 'DTSTART',
-                'sugarDateTime' => '2015-08-06 00:00:00',
+                'sugarDateTime' => new \SugarDateTime('2015-08-06 00:00:00', new \DateTimeZone('UTC')),
             ),
         );
     }
