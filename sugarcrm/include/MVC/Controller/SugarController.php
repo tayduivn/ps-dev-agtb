@@ -12,6 +12,7 @@
 
 use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 require_once 'include/MVC/View/SugarView.php';
 
@@ -155,10 +156,12 @@ class SugarController
 
     /**
      * Ctor
+     *
+     * @param Request $request
      */
-    public function __construct()
+    public function __construct(Request $request = null)
     {
-        $this->request = InputValidation::getService();
+        $this->request = $request ?: InputValidation::getService();
     }
 
     /**
@@ -659,7 +662,11 @@ class SugarController
             }
             $arr = $mass->handleMassUpdate();
             $storeQuery = new StoreQuery();//restore the current search. to solve bug 24722 for multi tabs massupdate.
-            $temp_req = array('current_query_by_page' => $_REQUEST['current_query_by_page'], 'return_module' => $_REQUEST['return_module'], 'return_action' => $_REQUEST['return_action']);
+            $temp_req = array(
+                'current_query_by_page' => $this->request->getValidInputRequest('current_query_by_page'),
+                'return_module' => $this->request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName'),
+                'return_action' => $this->request->getValidInputRequest('return_action'),
+            );
             if (!empty($_POST['mass'])) {
                 $total_records = count($_POST['mass']);
                 $failed_update = count($arr);

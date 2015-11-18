@@ -69,7 +69,8 @@ class ListViewDisplay {
 		                || $_REQUEST['module'] == $moduleDir 
 		                    && ((empty($_REQUEST['query']) || $_REQUEST['query'] == 'MSI' )
 		                        && (!$searching)))) {
-				$_SESSION['last_search_mod'] = $_REQUEST['module'] ;
+
+				$_SESSION['last_search_mod'] = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
 				$this->should_process = false;
 				return false;
 			}

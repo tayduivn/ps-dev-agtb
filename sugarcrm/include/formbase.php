@@ -162,13 +162,19 @@ function getPostToForm($ignore='', $isRegularExpression=false)
 	if(!empty($ignore) && $isRegularExpression) {
 		foreach ($_POST as $key=>$value){
 			if(!preg_match($ignore, $key)) {
-                                $fields .= add_hidden_elements($key, $value);
+                $fields .= add_hidden_elements(
+                    htmlspecialchars($key, ENT_QUOTES, 'UTF-8'),
+                    htmlspecialchars($value, ENT_QUOTES, 'UTF-8')
+                );
 			}
 		}
 	} else {
 		foreach ($_POST as $key=>$value){
 			if($key != $ignore) {
-                                $fields .= add_hidden_elements($key, $value);
+                $fields .= add_hidden_elements(
+                    htmlspecialchars($key, ENT_QUOTES, 'UTF-8'),
+                    htmlspecialchars($value, ENT_QUOTES, 'UTF-8')
+                );
 			}
 		}
 	}
@@ -405,7 +411,8 @@ function get_teams_hidden_inputs($module='') {
 	   }
 
 	   if(isset($_REQUEST['primary_team_name_collection'])) {
-	      $input .= "<input type='hidden' name='primary_team_name_collection' value='" . $_REQUEST['primary_team_name_collection'] . "'>\n";
+            $escaped = htmlspecialchars($_REQUEST['primary_team_name_collection'], ENT_QUOTES, 'UTF-8');
+            $input .= "<input type='hidden' name='primary_team_name_collection' value='" . $escaped . "'>\n";
 	   }
 	}
 	return $input;

@@ -11,6 +11,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 require_once('include/utils/array_utils.php');
 class TemplateEnum extends TemplateText{
     var $max_size = 100;
@@ -33,9 +36,13 @@ class TemplateEnum extends TemplateText{
     	$this->vardef_map = array_merge ( $this->vardef_map , $this->localVardefMap ) ;
     }
 
-    function populateFromPost ()
+    public function populateFromPost(Request $request = null)
     {
-    	parent::populateFromPost();
+        if (!$request) {
+            $request = InputValidation::getService();
+        }
+
+        parent::populateFromPost($request);
         // Handle empty massupdate checkboxes
         $this->massupdate = !empty($_REQUEST['massupdate']);
         if (!empty($this->visibility_grid) && is_string($this->visibility_grid))
@@ -211,6 +218,3 @@ class TemplateEnum extends TemplateText{
         parent::delete($df);
     }
 }
-
-
-?>

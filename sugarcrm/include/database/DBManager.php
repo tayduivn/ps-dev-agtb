@@ -63,6 +63,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * All Rights Reserved.
 ********************************************************************************/
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 /**
  * Base database driver implementation
  * @api
@@ -131,6 +134,11 @@ abstract class DBManager
 	 * @var Logger
 	 */
 	protected $log;
+
+    /**
+     * @var Request
+     */
+    protected $request;
 
 	/**
 	 * Table descriptions
@@ -395,6 +403,7 @@ abstract class DBManager
 		if(defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
 		    $this->encode = false;
 		}
+        $this->request = InputValidation::getService();
 	}
 
     /**

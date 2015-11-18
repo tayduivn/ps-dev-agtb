@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 class Bug61736Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -99,57 +100,60 @@ class Bug61736Test extends Sugar_PHPUnit_Framework_TestCase
     
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
+
         // Basic setup of the environment
         SugarTestHelper::setUp('current_user', array(true, true));
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
-        
-        // Back up and reset the REQUEST to create the package
-        self::$_request = $_REQUEST;
-        $_REQUEST = self::$_createPackageRequestVars;
-        
-        // Build up the controller to save the new field
-        self::$_mb = new ModuleBuilderController();
-        self::$_mb->action_SavePackage();
-        
+
+        // Create the package
+        $request = InputValidation::create(self::$_createPackageRequestVars, array());
+        $mbc = new ModuleBuilderController($request);
+        $mbc->action_SavePackage();
+
         // Now create the module
-        $_REQUEST = self::$_createModuleRequestVars;
-        self::$_mb->action_SaveModule();
-        
+        $request = InputValidation::create(self::$_createModuleRequestVars, array());
+        $mbc = new ModuleBuilderController($request);
+        $mbc->action_SaveModule();
+
         // Now create the address field
-        $_REQUEST = self::$_createFieldRequestVars;
-        self::$_mb->action_SaveField();
+        $request = InputValidation::create(self::$_createFieldRequestVars, array());
+        $mbc = new ModuleBuilderController($request);
+        $mbc->action_SaveField();
     }
-    
+
     public static function tearDownAfterClass()
     {
         // Set the request to delete the test field
-        $_REQUEST = self::$_deleteFieldRequestVars;
-        
+        $vars = self::$_deleteFieldRequestVars;
+
         // Loop through the created fields and wipe them out
         $suffixes = array('street', 'city', 'state', 'postalcode', 'country');
         foreach ($suffixes as $suffix) {
-            $_REQUEST['name'] = self::_getFieldName($suffix);
-            self::$_mb->action_DeleteField();
+            $vars['name'] = self::_getFieldName($suffix);
+            $request = InputValidation::create($vars, array());
+            $mbc = new ModuleBuilderController($request);
+            $mbc->action_DeleteField();
         }
-        
+
         // Delete the custom module
-        $_REQUEST = self::$_createModuleRequestVars;
-        $_REQUEST['view_module'] = 'bbb';
-        self::$_mb->action_DeleteModule();
-        
+        $vars = self::$_createModuleRequestVars;
+        $vars['view_module'] = 'bbb';
+        $request = InputValidation::create($vars, array());
+        $mbc = new ModuleBuilderController($request);
+        $mbc->action_DeleteModule();
+
         // Delete the custom package
-        $_REQUEST = self::$_createPackageRequestVars;
-        $_REQUEST['package'] = $_REQUEST['name'];
-        self::$_mb->action_DeletePackage();
-        
-        // Clean up the environment
-        SugarTestHelper::tearDown();
-        
-        // Reset the request
-        $_REQUEST = self::$_request;
+        $vars = self::$_createPackageRequestVars;
+        $vars['package'] = $vars['name'];
+        $request = InputValidation::create($vars, array());
+        $mbc = new ModuleBuilderController($request);
+        $mbc->action_DeletePackage();
+
+        parent::tearDownAfterClass();
     }
     
     public function testCustomAddressFieldVardefFileCreated()

@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 require_once 'modules/DynamicFields/FieldCases.php';
 
 /**
@@ -34,13 +36,15 @@ class Bug59155Test extends Sugar_PHPUnit_Framework_TestCase
             self::markTestSkipped('Does not work on Shadow Enabled System');
         }
 
+        parent::setUpBeforeClass();
+
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user', array(true, 1));
 
-        $mbc = new ModuleBuilderController();
-        $_REQUEST = self::$custom_field_def;
+        $request = InputValidation::create(self::$custom_field_def, array());
+        $mbc = new ModuleBuilderController($request);
         $mbc->action_SaveField();
 
         VardefManager::refreshVardefs('Cases', 'Case');
@@ -48,11 +52,11 @@ class Bug59155Test extends Sugar_PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
-        $mbc = new ModuleBuilderController();
-
         $custom_field_def = self::$custom_field_def;
         $custom_field_def['name'] .= '_c';
-        $_REQUEST = $custom_field_def;
+
+        $request = InputValidation::create($custom_field_def, array());
+        $mbc = new ModuleBuilderController($request);
         $mbc->action_DeleteField();
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
@@ -60,21 +64,17 @@ class Bug59155Test extends Sugar_PHPUnit_Framework_TestCase
         $_REQUEST = array();
         SugarCache::$isCacheReset = false;
 
-        SugarTestHelper::tearDown();
+        parent::tearDownAfterClass();
     }
 
     public function testCaseCalcFieldIsConsidered()
     {
-        $account = new Bug59155Test_Account();
-        $fields = $account->get_fields_influencing_linked_bean_calc_fields('cases');
+        $account = BeanFactory::getBean('Accounts');
+        $fields = SugarTestReflection::callProtectedMethod(
+            $account,
+            'get_fields_influencing_linked_bean_calc_fields',
+            array('cases')
+        );
         $this->assertContains('name', $fields);
-    }
-}
-
-class Bug59155Test_Account extends Account
-{
-    public function get_fields_influencing_linked_bean_calc_fields($linkName)
-    {
-        return parent::get_fields_influencing_linked_bean_calc_fields($linkName);
     }
 }

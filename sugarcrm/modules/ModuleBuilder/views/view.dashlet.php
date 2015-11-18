@@ -12,9 +12,6 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: EditView.php 18703 2006-12-15 09:42:43Z majed $
-
-
 require_once ('modules/ModuleBuilder/views/view.listview.php') ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
@@ -22,12 +19,10 @@ class ViewDashlet extends ViewListView
 {
     public function __construct()
     {
-        $this->editModule = $_REQUEST [ 'view_module' ] ;
-        $this->editLayout = $_REQUEST [ 'view' ] ;
-        if(isset ( $_REQUEST [ 'view_package' ] ) && ! empty ( $_REQUEST [ 'view_package' ] ))
-            $this->editPackage = $_REQUEST [ 'view_package' ];
-        else
-            $this->editPackage = null;
+        parent::__construct();
+        $this->editModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+        $this->editLayout = $this->request->getValidInputRequest('view', 'Assert\ComponentName');
+        $this->editPackage = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
 
         $this->fromModuleBuilder = isset ( $_REQUEST [ 'MB' ] ) || (isset($_REQUEST['view_package']) && $_REQUEST['view_package'] && $_REQUEST['view_package'] != 'studio') ;
 

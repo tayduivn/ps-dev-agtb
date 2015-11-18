@@ -7055,7 +7055,8 @@ class SugarBean
                     $saveform = "<form name='save' id='save' method='POST'>";
                     foreach($_POST as $key=>$arg)
                     {
-                        $saveform .= "<input type='hidden' name='". addslashes($key) ."' value='". addslashes($arg) ."'>";
+                        $saveform .= "<input type='hidden' name='". htmlspecialchars($key, ENT_QUOTES, 'UTF-8')
+                            ."' value='". htmlspecialchars($arg, ENT_QUOTES, 'UTF-8') ."'>";
                     }
                     $saveform .= "</form><script>document.getElementById('save').submit();</script>";
                     $_SESSION['o_lock_save'] = $saveform;
