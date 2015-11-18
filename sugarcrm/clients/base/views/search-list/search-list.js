@@ -114,7 +114,7 @@
      */
     _rejectEmptyFields: function(model, viewDefs) {
         _.each(viewDefs, function(field) {
-            if (field.type === 'avatar') {
+            if (field.type === 'avatar' || field.highlighted) {
                 return;
             }
             var fieldValue = model.get(field.name);
