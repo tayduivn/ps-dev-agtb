@@ -91,7 +91,7 @@ if ($title) $display_title = $title;
 
 
 
-	$where = "workflow.base_module=".$GLOBALS['db']->quote($target_base_module);
+	$where = "workflow.base_module=".$GLOBALS['db']->quoted($target_base_module);
 	
 	$ListView = new ListView();
 
