@@ -23,7 +23,12 @@
             {{#each carriers}}
                 <div class="row-fluid">
                     <div class="span12 record-cell">
-                        {{field ../this model=../model template=../this.viewName}}
+                        {{field ../this model=../model template=this.viewName}}
+                        {{#if this.address}}
+                            {{#with this.address}}
+                                {{field ../../../this model=../../../model template=this.viewName}}
+                            {{/with}}
+                        {{/if}}
                     </div>
                 </div>
             {{/each}}

@@ -58,16 +58,23 @@ describe('NotificationCenter.View.ConfigCarriers', function() {
             expect(view.carriers[0].name).toBe('foo');
         });
 
-        it('should add an address field to carriers array if carrier is selectable', function() {
+        it('should add an address field metadata to corresponding carrier if carrier is selectable', function() {
             view.model.set('carriers', {
-                foo: {selectable: true},
-                bar: {selectable: false}
+                foo: {selectable: true}
             });
             view.populateCarriers();
-            expect(view.carriers.length).toBe(3);
+            expect(view.carriers[0].address).not.toBeNull();
         });
 
-        it('should add an address field with correct metadata', function() {
+        it('should not add an address field metadata to carrier if carrier is not selectable', function() {
+            view.model.set('carriers', {
+                foo: {selectable: false}
+            });
+            view.populateCarriers();
+            expect(view.carriers[0].address).toBeNull();
+        });
+
+        it('should add an address field definition with correct metadata', function() {
             var options = {
                 'one': 1
             };
@@ -78,10 +85,10 @@ describe('NotificationCenter.View.ConfigCarriers', function() {
                 }
             });
             view.populateCarriers();
-            expect(view.carriers[1].type).toBe('address');
-            expect(view.carriers[1].name).toBe('foo-address');
-            expect(view.carriers[1].carrier).toBe('foo');
-            expect(view.carriers[1].options).toBe(options);
+            expect(view.carriers[0].address.type).toBe('address');
+            expect(view.carriers[0].address.name).toBe('foo-address');
+            expect(view.carriers[0].address.carrier).toBe('foo');
+            expect(view.carriers[0].address.options).toBe(options);
         });
     });
 });
