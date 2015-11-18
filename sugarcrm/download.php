@@ -96,12 +96,12 @@ else {
         $tempName = $request->getValidInputRequest('tempName', 'Assert\Guid');
         $local_location = "upload://import/{$tempName}";
     } else {
-        $id = $request->getValidInputRequest('id', 'Assert\File');
+        $id = $request->getValidInputRequest('id', 'Assert\Guid');
         $local_location = "upload://{$id}";
     }
 
 	if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
-        $id = $request->getValidInputRequest('id', 'Assert\File');
+        $id = $request->getValidInputRequest('id', 'Assert\Guid');
         $local_location =  "upload://{$id}";
     }
 
@@ -169,7 +169,7 @@ else {
 				die($app_strings['ERROR_NO_RECORD']);
 			}
 			$name = $row['name'];
-            $id = $request->getValidInputRequest('id', 'Assert\File');
+            $id = $request->getValidInputRequest('id', 'Assert\Guid');
             $download_location = "upload://{$id}";
 		} else if(isset(  $_REQUEST['tempName'] ) && isset($_REQUEST['isTempFile']) ){
 			// downloading a temp file (email 2.0)
