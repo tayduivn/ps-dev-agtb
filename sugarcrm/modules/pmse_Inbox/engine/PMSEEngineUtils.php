@@ -1126,12 +1126,35 @@ class PMSEEngineUtils
         return !in_array($def['name'], $blacklist);
     }
 
+    /**
+     * Checks to see if a field name is deemed special based on the PMSE module
+     * type
+     * @param array $def The field def to check
+     * @param string $type The PMSE module type to check this field for
+     * @return boolean
+     */
     public static function specialFields($def, $type= 'All')
     {
+        // Without a name there is nothing to do
+        if (!isset($def['name'])) {
+            return false;
+        }
+
+        // Default the type if it was empty
         if (empty($type)) {
             $type = 'All';
         }
-        return isset($def['name'], self::$specialFields[$type]) && in_array($def['name'], self::$specialFields[$type]);
+
+        // Get the special fields list for this type if it exists
+        $sf = empty(self::$specialFields[$type]) ? array() : self::$specialFields[$type];
+
+        // Now merge the type special fields with special fields for all types
+        if ($type !== 'All') {
+            $sf = array_merge($sf, self::$specialFields['All']);
+        }
+
+        // Now check to see if the field is in this type
+        return in_array($def['name'], $sf);
     }
 
     /**
@@ -1297,5 +1320,59 @@ class PMSEEngineUtils
         if (!empty($currencyObj->expValue) && (is_string($currencyObj->expValue))) {
             $currencyObj->expValue = (float) $currencyObj->expValue;
         }
+    }
+
+    /**
+     * Get LinkName from a bean using module name and relationship name
+     * @param $flowData
+     * @return mixed
+     * @throws Exception
+     */
+    public static function getRelatedLinkName($flowData)
+    {
+        $bean = BeanFactory::getBean($flowData['rel_process_module']);
+        $relName = $flowData['rel_element_relationship'];
+        $bean->load_relationship($relName);
+        if ($bean->$relName) {
+            return $bean->$relName->getRelatedModuleLinkName();
+        }
+
+        throw new \Exception("Related module link name not found for {$flowData['evn_module']}->{$relName}");
+    }
+
+    /**
+     * @param $flowData
+     * @return bool
+     */
+    public static function isTargetModuleNotProcessModule($flowData)
+    {
+        return isset($flowData['rel_process_module'], $flowData['rel_element_relationship'], $flowData['rel_element_module'])
+        && $flowData['rel_element_module'] !== $flowData['rel_process_module'];
+    }
+
+    /**
+     * @param $flowData
+     * @param $bean
+     * @return bool
+     */
+    public static function isTargetModule($flowData, $bean)
+    {
+        return !(self::isTargetModuleNotProcessModule($flowData) && $bean->module_dir !== $flowData['rel_process_module']);
+    }
+
+    /**
+     * @param $flowData
+     * @param $bean
+     * @return mixed|null
+     * @throws Exception
+     */
+    public static function getParentBean($flowData, $bean) {
+        $linkName = self::getRelatedLinkName($flowData);
+        $parentBean = $bean->$linkName->getBeans(array('limit' => 1));
+        if (empty($parentBean)) {
+            //Parent Bean not found
+            return null;
+        }
+        return current($parentBean);
     }
 }

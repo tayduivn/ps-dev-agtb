@@ -860,8 +860,8 @@ nv.utils.stringSetLengths = function(_data, _container, _format, classes, styles
   txt.classed(classes, true);
   txt.style('display', 'inline');
   _data.forEach(function(d, i) {
-      txt.text(_format(d, i));
-      lengths.push(txt.node().getBBox().width);
+      txt.text(d, _format);
+      lengths.push(txt.node().getBoundingClientRect().width);
     });
   txt.text('').attr('class', 'tmp-text-strings').style('display', 'none');
   return lengths;
@@ -898,21 +898,21 @@ nv.utils.stringEllipsify = function(_string, _container, _length) {
   }
   txt.style('display', 'inline');
   txt.text('...');
-  ell = txt.node().getBBox().width;
+  ell = txt.node().getBoundingClientRect().width;
   txt.text(str);
-  len = txt.node().getBBox().width;
+  len = txt.node().getBoundingClientRect().width;
   strLen = len;
   while (len > _length && len > 30) {
     str = str.slice(0, -1);
     txt.text(str);
-    len = txt.node().getBBox().width + ell;
+    len = txt.node().getBoundingClientRect().width + ell;
   }
   txt.text('').style('display', 'none');
   return str + (strLen > _length ? '...' : '');
 };
 
 nv.utils.getTextBBox = function(text, floats) {
-  var bbox = text.node().getBBox(),
+  var bbox = text.node().getBoundingClientRect(),
       size = {
         width: floats ? bbox.width : parseInt(bbox.width, 10),
         height: floats ? bbox.height : parseInt(bbox.height, 10)
@@ -1957,7 +1957,7 @@ nv.models.legend = function() {
         g.style('display', 'inline');
 
         series.select('text').each(function(d, i) {
-          var textWidth = d3.select(this).node().getBBox().width;
+          var textWidth = d3.select(this).node().getBoundingClientRect().width;
           keyWidths.push(Math.max(Math.floor(textWidth), (type === 'line' ? 50 : 20)));
         });
 
@@ -1968,7 +1968,7 @@ nv.models.legend = function() {
 
       legend.getLineHeight = function() {
         g.style('display', 'inline');
-        var lineHeightBB = Math.floor(series.select('text').node().getBBox().height);
+        var lineHeightBB = Math.floor(series.select('text').node().getBoundingClientRect().height);
         return lineHeightBB;
       };
 
@@ -5057,7 +5057,7 @@ nv.models.funnel = function() {
       }
 
       function calcLabelBBox(lbl) {
-        return d3.select(lbl).node().getBBox();
+        return d3.select(lbl).node().getBoundingClientRect();
       }
 
       function calcFunnelLabelDimensions(lbls) {
@@ -6147,7 +6147,7 @@ nv.models.gauge = function() {
               .style('font-size', prop(0.7)+'em')
             ;
 
-          var bbox = g.select('.nv-odomText').node().getBBox();
+          var bbox = g.select('.nv-odomText').node().getBoundingClientRect();
 
           g.select('.nv-odometer')
             .insert('path','.nv-odomText')
@@ -8945,9 +8945,31 @@ nv.models.multiBar = function() {
       //------------------------------------------------------------
       // Bar text: begin, middle, end, top
       var barText = bars.select('.nv-label-value');
+      barText
+        .text(function(d, i) {
+          return showValues ? valueFormat(getY(d, i)) : '';
+        })
+        .attr('fill-opacity', 0)
+        .attr('stroke-opacity-opacity', 0);
 
       if (showValues) {
 
+        var valueBox = barText[0][0].getBoundingClientRect(),
+            valueDim = vertical ? valueBox.height : valueBox.width;
+
+        // KEEP: to be used in case you want rect behind text
+        //var labelBoxWidth = x.rangeBand() - 8;
+        // barsEnter.append('rect')
+        //   .attr('class', 'nv-label-box')
+        //   .attr('x', 4)
+        //   .attr('y', 1)
+        //   .attr('width', labelBoxWidth)
+        //   .attr('height', 14)
+        //   .attr('rx', 2)
+        //   .attr('ry', 2)
+        //   .style('fill', '#FFF')
+        //   .style('stroke-width', 0)
+        //   .style('fill-opacity', 0.3);
           barText
             .text(function(d, i) {
               var val = labelPosition === 'total' && stacked ?
@@ -9139,6 +9161,18 @@ nv.models.multiBar = function() {
               return labelPosition !== 'top' && (lengthOverlaps || thicknessOverlaps) ? 0 : 1;
             });
 
+        // KEEP: to be used in case you want rect behind text
+        // bars.selectAll('text').each(function(d, i) {
+        //       var width = this.getBoundingClientRect().width + 20;
+        //       if (width > labelBoxWidth) {
+        //         labelBoxWidth = width;
+        //       }
+        //     });
+        // bars.selectAll('rect').each(function(d, i) {
+        //       d3.select(this)
+        //         .attr('width', labelBoxWidth)
+        //         .attr('x', -labelBoxWidth / 2);
+        //     });
       } else {
         barText
           .text('')
@@ -11601,7 +11635,7 @@ nv.models.pie = function() {
       holeWrap.call(holeFormat, hole ? [hole] : []);
 
       if (hole) {
-        var heightHoleHalf = holeWrap.node().getBBox().height * 0.30,
+        var heightHoleHalf = holeWrap.node().getBoundingClientRect().height * 0.30,
             heightPieHalf = Math.abs(maxHeightRadius * d3.min(extHeights)),
             holeOffset = Math.round(heightHoleHalf - heightPieHalf);
 
@@ -11739,7 +11773,7 @@ nv.models.pie = function() {
                 return;
               }
               var slice = d3.select(this),
-                  textBox = slice.select('text').node().getBBox();
+                  textBox = slice.select('text').node().getBoundingClientRect();
               slice.select('rect')
                 .attr('rx', 3)
                 .attr('ry', 3)
@@ -15262,7 +15296,7 @@ nv.models.tree = function() {
 
             prevScale = zoom.scale(),
             prevTrans = zoom.translate(),
-            treeBBox = backg.node().getBBox(),
+            treeBBox = backg.node().getBoundingClientRect(),
 
             size = [
               treeBBox.width,

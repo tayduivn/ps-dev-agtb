@@ -366,8 +366,8 @@ nv.utils.stringSetLengths = function(_data, _container, _format, classes, styles
   txt.classed(classes, true);
   txt.style('display', 'inline');
   _data.forEach(function(d, i) {
-      txt.text(_format(d, i));
-      lengths.push(txt.node().getBBox().width);
+      txt.text(d, _format);
+      lengths.push(txt.node().getBoundingClientRect().width);
     });
   txt.text('').attr('class', 'tmp-text-strings').style('display', 'none');
   return lengths;
@@ -404,21 +404,21 @@ nv.utils.stringEllipsify = function(_string, _container, _length) {
   }
   txt.style('display', 'inline');
   txt.text('...');
-  ell = txt.node().getBBox().width;
+  ell = txt.node().getBoundingClientRect().width;
   txt.text(str);
-  len = txt.node().getBBox().width;
+  len = txt.node().getBoundingClientRect().width;
   strLen = len;
   while (len > _length && len > 30) {
     str = str.slice(0, -1);
     txt.text(str);
-    len = txt.node().getBBox().width + ell;
+    len = txt.node().getBoundingClientRect().width + ell;
   }
   txt.text('').style('display', 'none');
   return str + (strLen > _length ? '...' : '');
 };
 
 nv.utils.getTextBBox = function(text, floats) {
-  var bbox = text.node().getBBox(),
+  var bbox = text.node().getBoundingClientRect(),
       size = {
         width: floats ? bbox.width : parseInt(bbox.width, 10),
         height: floats ? bbox.height : parseInt(bbox.height, 10)

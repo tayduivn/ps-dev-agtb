@@ -471,9 +471,31 @@ nv.models.multiBar = function() {
       //------------------------------------------------------------
       // Bar text: begin, middle, end, top
       var barText = bars.select('.nv-label-value');
+      barText
+        .text(function(d, i) {
+          return showValues ? valueFormat(getY(d, i)) : '';
+        })
+        .attr('fill-opacity', 0)
+        .attr('stroke-opacity-opacity', 0);
 
       if (showValues) {
 
+        var valueBox = barText[0][0].getBoundingClientRect(),
+            valueDim = vertical ? valueBox.height : valueBox.width;
+
+        // KEEP: to be used in case you want rect behind text
+        //var labelBoxWidth = x.rangeBand() - 8;
+        // barsEnter.append('rect')
+        //   .attr('class', 'nv-label-box')
+        //   .attr('x', 4)
+        //   .attr('y', 1)
+        //   .attr('width', labelBoxWidth)
+        //   .attr('height', 14)
+        //   .attr('rx', 2)
+        //   .attr('ry', 2)
+        //   .style('fill', '#FFF')
+        //   .style('stroke-width', 0)
+        //   .style('fill-opacity', 0.3);
           barText
             .text(function(d, i) {
               var val = labelPosition === 'total' && stacked ?
@@ -665,6 +687,18 @@ nv.models.multiBar = function() {
               return labelPosition !== 'top' && (lengthOverlaps || thicknessOverlaps) ? 0 : 1;
             });
 
+        // KEEP: to be used in case you want rect behind text
+        // bars.selectAll('text').each(function(d, i) {
+        //       var width = this.getBoundingClientRect().width + 20;
+        //       if (width > labelBoxWidth) {
+        //         labelBoxWidth = width;
+        //       }
+        //     });
+        // bars.selectAll('rect').each(function(d, i) {
+        //       d3.select(this)
+        //         .attr('width', labelBoxWidth)
+        //         .attr('x', -labelBoxWidth / 2);
+        //     });
       } else {
         barText
           .text('')
