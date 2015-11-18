@@ -420,6 +420,10 @@ $out4 .= <<<WSTEST
     postData += "&websockets_server_url=" + $('#websockets_server_url').val();
 WSTEST;
 
+$out4 .= <<<TSTEST
+    postData += "&trigger_server_url=" + $('#trigger_server_url').val();
+TSTEST;
+
 $out_dd = 'postData += "&demoData="+document.setConfig.demoData.value;';
 $out5 =<<<EOQ5
                 postData += "&to_pdf=1&sugar_body_only=1";
@@ -511,6 +515,7 @@ if(!isset($_SESSION['oc_install']) || $_SESSION['oc_install'] == false){
     echo $outFTS;
 }
 $sugar_smarty->display("install/templates/websocketConfig.tpl");
+$sugar_smarty->display("install/templates/triggerServerConfig.tpl");
 echo $out4;
 
 if(!isset($_SESSION['oc_install']) || $_SESSION['oc_install'] == false){

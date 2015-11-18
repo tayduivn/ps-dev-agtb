@@ -186,6 +186,8 @@ $mod_strings = array(
     'ERR_WEB_SOCKET_SERVER_URL_INVALID' => 'Please provide correct WebSocket Server URL',
 	'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL.',
 	'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL.',
+	'ERR_TRIGGER_SERVER_URL_INVALID'    => 'Please provide correct Trigger Server URL',
+	'ERR_TRIGGER_SERVER_ERROR'          => 'Unable to connect to Trigger Server',
 
 	'LBL_BACK'							=> 'Back',
     'LBL_CANCEL'                        => 'Cancel',
@@ -306,6 +308,8 @@ $mod_strings = array(
     'LBL_WEB_SOCKET_CONFIGURATION_URL'      => 'URL',
     'LBL_WEB_SOCKET_CONFIGURATION_SECURED'  => 'Secure connection',
     'LBL_WEB_SOCKET_CHECK_HEADER'           => 'Verifying WebSocket configuration.',
+	'LBL_TRIGGER_SERVER_CONFIGURATION_DESC' => 'Here you can specify Trigger Server URL.',
+	'LBL_TRIGGER_SERVER_CONFIGURATION_URL'  => 'Trigger Server URL',
 	'LBL_LANG_1'						=> 'To use a language in Sugar other than the default language (US-English), you can upload and install the language pack at this time. You will be able to upload and install language packs from within the Sugar application as well.  If you would like to skip this step, click Next.',
 	'LBL_LANG_BUTTON_COMMIT'			=> 'Install',
 	'LBL_LANG_BUTTON_REMOVE'			=> 'Remove',

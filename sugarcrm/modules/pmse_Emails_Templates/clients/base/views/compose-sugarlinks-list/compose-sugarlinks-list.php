@@ -13,7 +13,7 @@
 
 
 $viewdefs['pmse_Emails_Templates']['base']['view']['compose-sugarlinks-list'] = array(
-    'template' => 'list',
+    'template' => 'flex-list',
     'selection' => array(
         'type' => 'single',
         'actions' => array(),
