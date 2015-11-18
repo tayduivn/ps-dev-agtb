@@ -22,11 +22,6 @@ use Sugarcrm\Sugarcrm\Trigger\ReminderManager\Scheduler;
 class SchedulerTest extends \Sugar_PHPUnit_Framework_TestCase
 {
     /**
-     * @var \DateTime
-     */
-    protected $dateStart;
-
-    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|Scheduler
      */
     protected $schedulerManager;
@@ -41,346 +36,142 @@ class SchedulerTest extends \Sugar_PHPUnit_Framework_TestCase
      */
     protected $user;
 
-    public function setUp()
-    {
-        parent::setUp();
-        $this->dateStart = new \DateTime();
-    }
-
-    /**
-     * @param boolean $isUpdate
-     * @param boolean $isDeleteRemindersCalled
-     * @dataProvider providerSetRemindersDeletesSchedulersJobsWhenIsUpdateIsTrue
-     * @covers ::setReminders
-     */
-    public function testSetRemindersDeletesSchedulersJobsWhenIsUpdateIsTrue($isUpdate, $isDeleteRemindersCalled)
-    {
-        $this->mockBean('SugarBean');
-        $this->mockUser();
-        $this->mockSchedulerManager(array('deleteReminders', 'addReminders'));
-
-        $this->schedulerManager->expects($this->exactly($isDeleteRemindersCalled ? 1 : 0))
-            ->method('deleteReminders')
-            ->with($this->bean);
-
-        $this->schedulerManager->setReminders($this->bean, $isUpdate);
-    }
-
-    /**
-     * @return array
-     */
-    public function providerSetRemindersDeletesSchedulersJobsWhenIsUpdateIsTrue()
-    {
-        return array(
-            '$isUpdate is false' => array(false, false),
-            '$isUpdate is true' => array(true, true)
-        );
-    }
-
-    /**
-     * @param boolean $isAuthor
-     * @param int $userReminderTime
-     * @param int $beanReminderTime
-     * @param int $expected
-     * @dataProvider providerSetRemindersUsesProperReminderTime
-     * @covers ::setReminders
-     */
-    public function testSetRemindersUsesProperReminderTime($isAuthor, $userReminderTime, $beanReminderTime, $expected)
-    {
-        $this->mockBean('SugarBean');
-        $this->mockUser($userReminderTime);
-
-        $this->bean->users_arr = array($this->user->id);
-        $this->bean->reminder_time = $beanReminderTime;
-        $this->bean->assigned_user_id = $isAuthor ? $this->user->id : 'dummy-other-user-id';
-
-        $current = $this->dateStart->getTimestamp();
-
-        $jobQueue = $this->getMock('SugarJobQueue', array('submitJob'));
-        $jobQueue->expects($this->any())
-            ->method('submitJob')
-            ->will($this->returnCallback(function (\SchedulersJob $job) use ($expected, $current) {
-                $reminderTime = $current - strtotime($job->execute_time);
-                \PHPUnit_Framework_Assert::assertEquals($expected, $reminderTime);
-            }));
-
-        $this->mockSchedulerManager(array(
-            'loadUsers',
-            'getSugarJobQueue'
-        ));
-
-        $this->schedulerManager->method('loadUsers')->willReturn(array($this->user));
-        $this->schedulerManager->method('getSugarJobQueue')->willReturn($jobQueue);
-
-        $this->schedulerManager->setReminders($this->bean, false);
-    }
-
-    /**
-     * @return array
-     */
-    public function providerSetRemindersUsesProperReminderTime()
-    {
-        return array(
-            'returns bean reminder time when user is author' => array(true, 60, 300, 300),
-            'returns user reminder time when user isn\'t author' => array(false, 60, 300, 60),
-        );
-    }
-
-    /**
-     * @param int $reminderTime
-     * @param boolean $isSubmitJobCalled
-     * @dataProvider providerSetRemindersAddsSchedulersJobsWhenReminderTimeIsGreatThanZero
-     * @covers ::setReminders
-     */
-    public function testSetRemindersAddsSchedulersJobsWhenReminderTimeIsGreatThanZero($reminderTime, $isSubmitJobCalled)
-    {
-        $this->mockBean('SugarBean');
-        $this->mockUser();
-
-        $this->bean->users_arr = array($this->user->id);
-
-        $jobQueue = $this->getMock('SugarJobQueue', array('submitJob'));
-        $jobQueue->expects($this->exactly($isSubmitJobCalled ? 1 : 0))->method('submitJob');
-
-        $this->mockSchedulerManager(array(
-            'loadUsers',
-            'getSugarJobQueue',
-            'getReminderTime'
-        ));
-
-        $this->schedulerManager->method('loadUsers')->willReturn(array($this->user));
-        $this->schedulerManager->method('getSugarJobQueue')->willReturn($jobQueue);
-        $this->schedulerManager->method('getReminderTime')->willReturn($reminderTime);
-
-        $this->schedulerManager->setReminders($this->bean, false);
-    }
-
-    /**
-     * @return array
-     */
-    public function providerSetRemindersAddsSchedulersJobsWhenReminderTimeIsGreatThanZero()
-    {
-        return array(
-            'doesn\'t submit job when reminder time is less than zero' => array(-1, false),
-            'doesn\'t submit job when reminder time equals zero' => array(0, false),
-            'submits job when reminder time is great than zero' => array(60, true),
-        );
-    }
-
-    /**
-     * @covers ::setReminders
-     */
-    public function testSetRemindersCreatesCorrectSchedulerJob()
-    {
-        $this->mockBean('SugarBean');
-        $this->mockUser();
-
-        $reminderTime = 60;
-
-        $this->bean->users_arr = array($this->user->id);
-        $this->bean->object_name = 'bean';
-
-        $current = $this->dateStart->getTimestamp();
-        $data = json_encode(array(
-            'module' => $this->bean->module_name,
-            'beanId' => $this->bean->id,
-            'userId' => $this->user->id
-        ));
-        $jobGroup = md5('bean-' . $this->bean->id) . ':' . md5('user-' . $this->user->id);
-
-        $jobQueue = $this->getMock('SugarJobQueue', array('submitJob'));
-        $jobQueue->expects($this->any())
-            ->method('submitJob')
-            ->will($this->returnCallback(function (\SchedulersJob $job) use (
-                $current,
-                $reminderTime,
-                $data,
-                $jobGroup
-            ) {
-                $actualReminderTime = $current - strtotime($job->execute_time);
-
-                \PHPUnit_Framework_Assert::assertEquals('Reminder Job dummy bean name', $job->name);
-                \PHPUnit_Framework_Assert::assertEquals($jobGroup, $job->job_group);
-                \PHPUnit_Framework_Assert::assertJson($job->data);
-                \PHPUnit_Framework_Assert::assertJsonStringEqualsJsonString($data, $job->data);
-                \PHPUnit_Framework_Assert::assertEquals(Scheduler::CALLBACK_CLASS, $job->target);
-                \PHPUnit_Framework_Assert::assertEquals($reminderTime, $actualReminderTime);
-                \PHPUnit_Framework_Assert::assertTrue($job->requeue);
-            }));
-
-        $this->mockSchedulerManager(array(
-            'loadUsers',
-            'getSugarJobQueue',
-            'getReminderTime'
-        ));
-
-        $this->schedulerManager->method('loadUsers')->willReturn(array($this->user));
-        $this->schedulerManager->method('getSugarJobQueue')->willReturn($jobQueue);
-        $this->schedulerManager->method('getReminderTime')->willReturn($reminderTime);
-
-        $this->schedulerManager->setReminders($this->bean, false);
-    }
-
-    /**
-     * @param int $usersCount
-     * @param int $submitJobCallsCount
-     * @dataProvider providerSetRemindersAddsSchedulersJobsToJobQueueDependsOnUsersCount
-     * @covers ::setReminders
-     */
-    public function testSetRemindersAddsSchedulersJobsToJobQueueDependsOnUsersCount($usersCount, $submitJobCallsCount)
-    {
-        $this->mockBean('SugarBean');
-
-        $reminderTime = 60;
-
-        $users = array();
-        $this->bean->users_arr = array();
-        for ($i = 0; $i < $usersCount; $i++) {
-            /* @var $item \PHPUnit_Framework_MockObject_MockObject|\Call|\Meeting|\SugarBean */
-            $item = $this->getMock('User', array('getPreference'));
-            $item->id = 'dummy-user-id-' . $i;
-            $item->method('getPreference')->willReturn($reminderTime);
-            $this->bean->users_arr[] = $item->id;
-            $users[$i] = $item;
-        }
-
-        $jobQueue = $this->getMock('SugarJobQueue', array('submitJob'));
-        $jobQueue->expects($this->exactly($submitJobCallsCount))
-            ->method('submitJob');
-
-        $this->mockSchedulerManager(array(
-            'loadUsers',
-            'getSugarJobQueue'
-        ));
-
-        $this->schedulerManager->method('loadUsers')->willReturn($users);
-        $this->schedulerManager->method('getSugarJobQueue')->willReturn($jobQueue);
-
-        $this->schedulerManager->setReminders($this->bean, false);
-    }
-
-    /**
-     * @return array
-     */
-    public function providerSetRemindersAddsSchedulersJobsToJobQueueDependsOnUsersCount()
-    {
-        return array(
-            'users count is zero' => array(0, 0),
-            'users count is 1' => array(1, 1),
-            'users count is 3' => array(3, 3)
-        );
-    }
-
     /**
      * @covers ::deleteReminders
      */
-    public function testDeleteRemindersGenerateProperSugarQueryToFindSchedulersJobs()
+    public function testDeleteReminders()
     {
-        $this->mockBean('SugarBean');
-        $this->bean->object_name = 'bean';
-
-        $group = md5('bean-dummy-bean-id');
-
-        $job = $this->getMock('SchedulersJob', array('fetchFromQuery', 'mark_deleted'));
-        $job->method('fetchFromQuery')
-            ->will($this->returnCallback(function (\SugarQuery $query) use ($job, $group) {
-                $sql = $query->compileSql();
-
-                $where = "WHERE job_queue.deleted = 0 " .
-                    "AND job_queue.job_group LIKE '%$group%'";
-
-                \PHPUnit_Framework_Assert::assertContains('FROM job_queue', $sql);
-                \PHPUnit_Framework_Assert::assertContains($where, $sql);
-                return array($job);
-            }));
-
-
-        $this->mockSchedulerManager(array(
-            'getBean'
-        ));
-
-        $this->schedulerManager->method('getBean')->willReturn($job);
-
-        $this->schedulerManager->deleteReminders($this->bean);
-    }
-
-    /**
-     * @param int $jobsCount
-     * @param int $markDeletedCallsCount
-     * @dataProvider providerDeleteRemindersDeletesSchedulersJobsDependsOnJobsCount
-     * @covers ::deleteReminders
-     */
-    public function testDeleteRemindersDeletesSchedulersJobsDependsOnJobsCount($jobsCount, $markDeletedCallsCount)
-    {
-        $this->mockBean('SugarBean');
-
-        $job = $this->getMock('SchedulersJob', array('fetchFromQuery', 'mark_deleted'));
-
-        $objects = array();
-        for ($i = 0; $i < $jobsCount; $i++) {
-            $objects[] = $job;
+        $eventBeanTag = 'SomeDummyBeanTag';
+        $jobList = array();
+        for ($i = 0; $i < 3; $i++) {
+            $job = $this->getMockBean('SchedulersJobs', 'SchedulersJobs', array('mark_deleted'));
+            $job->expects($this->once())->method('mark_deleted')
+                ->with($this->equalTo($job->id));
+            $jobList[] = $job;
         }
 
-        $job->method('fetchFromQuery')->willReturn($objects);
-        $job->expects($this->exactly($markDeletedCallsCount))->method('mark_deleted');
+        $eventBean = $this->getMockBean('Calls', 'Call');
 
-        $this->mockSchedulerManager(array(
-            'getBean'
-        ));
+        $jobBean = $this->getMockBean('SchedulersJobs', 'SchedulersJobs', array('fetchFromQuery'));
 
-        $this->schedulerManager->method('getBean')->willReturn($job);
+        $sugarQueryWhere = $this->getMock('SugarQuery_Builder_Andwhere', array('contains'), array(), '', false);
+        $sugarQueryWhere->expects($this->once())->method('contains')
+            ->with($this->equalTo('job_group'), $this->equalTo($eventBeanTag));
 
-        $this->schedulerManager->deleteReminders($this->bean);
-    }
+        $sugarQuery = $this->getMock('getSugarQuery', array('from', 'where'));
+        $sugarQuery->expects($this->once())->method('from')
+            ->with($this->equalTo($jobBean));
+        $sugarQuery->expects($this->once())->method('where')
+            ->willReturn($sugarQueryWhere);
 
-    /**
-     * @return array
-     */
-    public function providerDeleteRemindersDeletesSchedulersJobsDependsOnJobsCount()
-    {
-        return array(
-            'schedulers jobs count is zero' => array(0, 0),
-            'schedulers jobs count is 1' => array(1, 1),
-            'schedulers jobs count is 3' => array(3, 3)
-        );
+        $jobBean->expects($this->once())->method('fetchFromQuery')
+            ->with($this->equalTo($sugarQuery))
+            ->willReturn($jobList);
+
+        $this->mockSchedulerManager(array('makeTag', 'getSchedulersJob', 'getSugarQuery'));
+        $this->schedulerManager->expects($this->atLeastOnce())->method('makeTag')
+            ->with($this->equalTo($eventBean))
+            ->willReturn($eventBeanTag);
+
+        $this->schedulerManager->expects($this->once())->method('getSchedulersJob')
+            ->willReturn($jobBean);
+        $this->schedulerManager->expects($this->once())->method('getSugarQuery')
+            ->willReturn($sugarQuery);
+
+        $this->schedulerManager->deleteReminders($eventBean);
     }
 
     /**
      * @covers ::addReminderForUser
      */
-    public function testAddReminderForUserAddsSchedulersJobToJobQueueForSpecifiedUserOfBean()
+    public function testAddReminderForUser()
     {
-        $reminderTime = 60;
+        $reminderTime = new \DateTime();
+        $reminderTimeFormatted = $reminderTime->format('Y-m-d\TH:i:s');
+        $eventBean = $this->getMockBean('Calls', 'Call');
+        $userBean = $this->getMockBean('Users', 'User');
+        $tags = array(
+            'bean' => 'bean-tag',
+            'user' => 'user-tag',
+        );
+        $triggerArgs = array(
+            'module' => $eventBean->module_name,
+            'beanId' => $eventBean->id,
+            'userId' => $userBean->id
+        );
 
-        $this->mockBean('SugarBean');
-        $this->mockUser($reminderTime);
+        $catchedJob = null;
 
-        $this->bean->users_arr = array($this->user->id);
+        $timeDateHandler = $this->getMock('TimeDate', array('asDb'));
+        $timeDateHandler->expects($this->atLeastOnce())->method('asDb')
+            ->with($this->equalTo($reminderTime), $this->equalTo(false))
+            ->willReturn($reminderTimeFormatted);
 
-        $jobQueue = $this->getMock('SugarJobQueue', array('submitJob'));
+        $sugarJobQueue = $this->getMock('SugarJobQueue', array('submitJob'));
+        $sugarJobQueue->expects($this->atLeastOnce())->method('submitJob')
+            ->with($this->callback(function ($job) use (&$catchedJob) {
+                $catchedJob = $job;
+                return true;
+            }));
 
-        $this->mockSchedulerManager(array(
-            'getSugarJobQueue',
-            'createSchedulersJob'
-        ));
-
-        $this->schedulerManager->method('getSugarJobQueue')->willReturn($jobQueue);
+        $this->mockSchedulerManager(array('getSugarJobQueue', 'makeTag', 'getTimeDate', 'prepareTriggerArgs'));
         $this->schedulerManager->expects($this->once())
-            ->method('createSchedulersJob')
-            ->with($this->bean, $this->user, $reminderTime);
+            ->method('prepareTriggerArgs')
+            ->with($this->equalTo($eventBean), $this->equalTo($userBean))
+            ->willReturn($triggerArgs);
 
-        $this->schedulerManager->addReminderForUser($this->bean, $this->user);
+        $this->schedulerManager->expects($this->atLeastOnce())->method('getTimeDate')
+            ->willReturn($timeDateHandler);
+        $this->schedulerManager->expects($this->atLeastOnce())->method('getSugarJobQueue')
+            ->willReturn($sugarJobQueue);
+        $this->schedulerManager->expects($this->any())
+            ->method('makeTag')
+            ->with($this->logicalOr($this->equalTo($eventBean), $this->equalTo($userBean)))
+            ->will($this->returnValueMap(array(
+                array($eventBean, $tags['bean']),
+                array($userBean, $tags['user']),
+            )));
+
+        $this->schedulerManager->addReminderForUser($eventBean, $userBean, $reminderTime);
+
+        $this->assertContains($eventBean->name, (string)$catchedJob->name);
+        $this->assertEquals(Scheduler::CALLBACK_CLASS, $catchedJob->target);
+        $this->assertTrue($catchedJob->requeue);
+        $this->assertContains($tags['bean'], explode(':', $catchedJob->job_group));
+        $this->assertContains($tags['user'], explode(':', $catchedJob->job_group));
+        $this->assertEquals($reminderTimeFormatted, $catchedJob->execute_time);
+        $this->assertEquals($triggerArgs, (array)json_decode($catchedJob->data));
     }
 
     /**
-     * @param string $module
+     * @covers ::addReminderForUser
      */
-    protected function mockBean($module)
+    public function testMakeTag()
     {
-        $this->bean = $this->getMock($module);
-        $this->bean->id = 'dummy-bean-id';
-        $this->bean->name = 'dummy bean name';
-        $this->bean->date_start = $this->dateStart->format('Y-m-d H:i:s');
+        $schedulerManager = new Scheduler();
+        $bean = $this->getMockBean('Calls', 'Call');
+        $this->assertEquals(
+            md5(strtolower($bean->object_name) . '-' . $bean->id),
+            \SugarTestReflection::callProtectedMethod($schedulerManager, 'makeTag', array($bean))
+        );
+    }
+
+    /**
+     * @param $module
+     * @param $originalClassName
+     * @param array $methods
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getMockBean($module, $originalClassName, $methods = array())
+    {
+        static $idNum = 0;
+        $idNum++;
+        $bean = $this->getMock($originalClassName, $methods);
+        $bean->id = 'dummy-bean-id' . $idNum;
+        $bean->module_name = $module;
+        $bean->object_name = $originalClassName;
+        $bean->name = 'dummy bean name';
+        return $bean;
     }
 
     protected function mockUser($reminderTime = 60)

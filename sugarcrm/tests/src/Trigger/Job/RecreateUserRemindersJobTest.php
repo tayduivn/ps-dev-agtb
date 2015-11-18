@@ -53,11 +53,20 @@ class RecreateUserRemindersJobTest extends \Sugar_PHPUnit_Framework_TestCase
         $this->userId = create_guid();
         $this->call = $this->getMock('Call', array('fetchFromQuery'));
         $this->meeting = $this->getMock('Meeting', array('fetchFromQuery'));
-        $this->user = $this->getMock('User');
+        $tomorrow = new \DateTime('tomorrow');
+        $this->call->date_start = $tomorrow->format('Y-m-d\TH:i:s');
+        $this->call->reminder_time = 10;
+        $this->meeting->date_start = $tomorrow->format('Y-m-d\TH:i:s');
+        $this->meeting->reminder_time = 10;
+        $this->user = $this->getMock('User', array('getPreference'));
+        $this->user->method('getPreference')
+            ->will($this->returnValueMap(array(
+                array('reminder_time', '10')
+            )));
     }
 
     /**
-     * @covers :: run
+     * @covers ::run
      */
     public function testRunReturnsJobSuccess()
     {
@@ -256,9 +265,13 @@ class RecreateUserRemindersJobTest extends \Sugar_PHPUnit_Framework_TestCase
     public function testRunCallsAddReminderForUserDependsOnBeansCount($beansCount, $addReminderForUserCallsCount)
     {
         $beans = array();
+        $tomorrow = new \DateTime('tomorrow');
 
         for ($i = 0; $i < $beansCount; $i++) {
-            $beans[] = $this->getMock('Call', array('fetchFromQuery'));
+            $call = $this->getMock('Call', array('fetchFromQuery'));
+            $call->reminder_time = 10;
+            $call->date_start = $tomorrow->format('Y-m-d\TH:i:s');
+            $beans[] = $call;
         }
 
         $this->call->method('fetchFromQuery')->willReturn($beans);

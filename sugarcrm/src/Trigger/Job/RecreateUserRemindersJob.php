@@ -16,6 +16,7 @@ use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
 use Sugarcrm\Sugarcrm\Trigger\Client;
 use Sugarcrm\Sugarcrm\Trigger\ReminderManager\Scheduler;
 use Sugarcrm\Sugarcrm\Trigger\ReminderManager\TriggerServer;
+use Sugarcrm\Sugarcrm\Trigger\ReminderManager\Helper;
 
 /**
  * Class RecreateUserRemindersJob deletes all reminders by specified user
@@ -64,7 +65,10 @@ class RecreateUserRemindersJob implements RunnableInterface
         $manager = $this->getReminderManager();
         $manager->deleteReminders($user);
         foreach ($beans as $item) {
-            $manager->addReminderForUser($item, $user);
+            $reminderTime = Helper::calculateReminderDateTime($item, $user);
+            if (Helper::isInFuture($reminderTime)) {
+                $manager->addReminderForUser($item, $user, $reminderTime);
+            }
         }
     }
 
@@ -122,6 +126,7 @@ class RecreateUserRemindersJob implements RunnableInterface
      * Factory method for Client class.
      *
      * @return Client
+     * @codeCoverageIgnore
      */
     protected function getTriggerClient()
     {

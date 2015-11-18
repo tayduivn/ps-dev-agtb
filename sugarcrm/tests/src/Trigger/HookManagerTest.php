@@ -75,9 +75,9 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
         $isUpdate = true;
 
         $this->mockReminderManager();
-        $this->mockHookManager(array('getReminderManager'));
+        $this->mockHookManager(array('getReminderManager', 'setReminders'));
 
-        $this->reminderManager->expects($this->exactly($isSetRemindersCalled ? 1 : 0))
+        $this->hookManager->expects($this->exactly($isSetRemindersCalled ? 1 : 0))
             ->method('setReminders')
             ->with($bean, $isUpdate);
 
@@ -110,8 +110,17 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
         $isTsManagerUsed,
         $isSchedulerManagerUsed
     ) {
+        $tomorrow = new \DateTime('tomorrow');
+        $user = $this->getMock('User');
+        $user->method('getPreference')
+            ->will($this->returnValueMap(array(
+                array('reminder_time', '10')
+            )));
+
         /* @var $bean \PHPUnit_Framework_MockObject_MockObject|\Call|\SugarBean */
         $bean = $this->getMock('Call');
+        $bean->date_start = $tomorrow->format('Y-m-d\TH:i:s');
+        $bean->reminder_time = 10;
 
         $this->mockTriggerClient();
         $this->mockTriggerServerManager();
@@ -119,18 +128,20 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
         $this->mockHookManager(array(
             'getTriggerClient',
             'getTriggerServerManager',
-            'getSchedulerManager'
+            'getSchedulerManager',
+            'loadUsers'
         ));
 
         $this->triggerClient->method('isConfigured')->willReturn($isTsConfigured);
 
         $this->triggerServerManager->expects($this->exactly($isTsManagerUsed ? 1 : 0))
-            ->method('setReminders');
+            ->method('addReminderForUser');
 
         $this->schedulerManager->expects($this->exactly($isSchedulerManagerUsed ? 1 : 0))
-            ->method('setReminders');
+            ->method('addReminderForUser');
 
         $this->hookManager->method('getTriggerClient')->willReturn($this->triggerClient);
+        $this->hookManager->method('loadUsers')->willReturn(array($user));
         $this->hookManager->method('getTriggerServerManager')->willReturn($this->triggerServerManager);
         $this->hookManager->method('getSchedulerManager')->willReturn($this->schedulerManager);
 
@@ -247,9 +258,9 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
         $bean = $this->getMock($module);
 
         $this->mockReminderManager();
-        $this->mockHookManager(array('getReminderManager'));
+        $this->mockHookManager(array('getReminderManager', 'setReminders'));
 
-        $this->reminderManager->expects($this->exactly($isSetRemindersCalled ? 1 : 0))
+        $this->hookManager->expects($this->exactly($isSetRemindersCalled ? 1 : 0))
             ->method('setReminders')
             ->with($bean, false);
 
@@ -282,8 +293,17 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
         $isTsManagerUsed,
         $isSchedulerManagerUsed
     ) {
+        $tomorrow = new \DateTime('tomorrow');
+        $user = $this->getMock('User');
+        $user->method('getPreference')
+            ->will($this->returnValueMap(array(
+                array('reminder_time', '10')
+            )));
+
         /* @var $bean \PHPUnit_Framework_MockObject_MockObject|\Call|\SugarBean */
         $bean = $this->getMock('Call');
+        $bean->date_start = $tomorrow->format('Y-m-d\TH:i:s');
+        $bean->reminder_time = 10;
 
         $this->mockTriggerClient();
         $this->mockTriggerServerManager();
@@ -291,18 +311,20 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
         $this->mockHookManager(array(
             'getTriggerClient',
             'getTriggerServerManager',
-            'getSchedulerManager'
+            'getSchedulerManager',
+            'loadUsers'
         ));
 
         $this->triggerClient->method('isConfigured')->willReturn($isTsConfigured);
 
         $this->triggerServerManager->expects($this->exactly($isTsManagerUsed ? 1 : 0))
-            ->method('setReminders');
+            ->method('addReminderForUser');
 
         $this->schedulerManager->expects($this->exactly($isSchedulerManagerUsed ? 1 : 0))
-            ->method('setReminders');
+            ->method('addReminderForUser');
 
         $this->hookManager->method('getTriggerClient')->willReturn($this->triggerClient);
+        $this->hookManager->method('loadUsers')->willReturn(array($user));
         $this->hookManager->method('getTriggerServerManager')->willReturn($this->triggerServerManager);
         $this->hookManager->method('getSchedulerManager')->willReturn($this->schedulerManager);
 
@@ -425,6 +447,109 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::loadUsers
+     */
+    public function testLoadUsers()
+    {
+        $userIds = array(microtime(), microtime(), microtime());
+        $userListBean = $this->getMock('User', array('fetchFromQuery'));
+        $userListBean->id = microtime();
+
+        $expectedUsers = array($this->getMock('User'), $this->getMock('User'), $this->getMock('User'));
+        $expectedUsers[0]->id = $userIds[0];
+        $expectedUsers[1]->id = $userIds[1];
+        $expectedUsers[2]->id = $userIds[2];
+
+        $where = $this->getMock('SugarQuery_Builder_Andwhere', array('in'), array(), '', false);
+        $where->expects($this->once())
+            ->method('in')
+            ->with($this->equalTo('id'), $this->equalTo($userIds));
+
+        $sugarQuery = $this->getMock('SugarQuery', array('from', 'where'));
+        $sugarQuery->expects($this->once())
+            ->method('from')
+            ->with($this->equalTo($userListBean));
+        $sugarQuery->expects($this->once())
+            ->method('where')
+            ->willReturn($where);
+
+        $this->mockHookManager(array('getSugarQuery', 'getUserBean'));
+        $this->hookManager->method('getSugarQuery')->willReturn($sugarQuery);
+        $this->hookManager->method('getUserBean')->willReturn($userListBean);
+
+        $userListBean->expects($this->once())->method('fetchFromQuery')
+            ->willReturn($expectedUsers);
+
+        $loadedUsers = \SugarTestReflection::callProtectedMethod($this->hookManager, 'loadUsers', array($userIds));
+
+        $this->assertEquals($expectedUsers, $loadedUsers);
+    }
+
+    /**
+     * @covers ::setReminders
+     * @dataProvider providerUpdateVariants
+     * @param int $delCountCall
+     * @param bool $isUpdate
+     */
+    public function testSetRemindersCheckDelete($delCountCall, $isUpdate)
+    {
+        $call = $this->getMock('Call');
+        $call->id = microtime();
+
+        $this->mockTriggerServerManager();
+        $this->triggerServerManager->expects($this->exactly($delCountCall))
+            ->method('deleteReminders')
+            ->with($this->equalTo($call));
+
+        $this->mockHookManager(array('loadUsers', 'getReminderManager'));
+        $this->hookManager->method('loadUsers')->willReturn(array());
+        $this->hookManager->method('getReminderManager')->willReturn($this->triggerServerManager);
+
+        \SugarTestReflection::callProtectedMethod($this->hookManager, 'setReminders', array($call, $isUpdate));
+    }
+
+    public function providerUpdateVariants()
+    {
+        return array(
+            'called' => array(1, true),
+            'not called' => array(0, false),
+        );
+    }
+
+    /**
+     * @covers ::setReminders
+     */
+    public function testSetRemindersAddingReminder()
+    {
+        $tomorrow = new \DateTime('tomorrow');
+
+        /* @var $bean \PHPUnit_Framework_MockObject_MockObject|\Call|\SugarBean */
+        $call = $this->getMock('Call');
+        $call->id = microtime();
+        $call->users_arr = array(microtime(), microtime());
+        $call->date_start = $tomorrow->format('Y-m-d\TH:i:s');
+        $call->reminder_time = 10;
+
+        $userFuture = $this->getMock('User', array('getPreference'));
+        $userFuture->id = microtime() . 'Future';
+        $userFuture->method('getPreference')->willReturn(10);
+
+        $userPast = $this->getMock('User', array('getPreference'));
+        $userPast->id = microtime() . 'past';
+        $userPast->method('getPreference')->willReturn(3600 * 24 * 2);
+
+        $this->mockTriggerServerManager();
+        $this->triggerServerManager->expects($this->once())->method('addReminderForUser')
+            ->with($this->equalTo($call), $this->equalTo($userFuture));
+
+        $this->mockHookManager(array('loadUsers', 'getReminderManager'));
+        $this->hookManager->method('loadUsers')->willReturn(array($userFuture, $userPast));
+        $this->hookManager->method('getReminderManager')->willReturn($this->triggerServerManager);
+
+        \SugarTestReflection::callProtectedMethod($this->hookManager, 'setReminders', array($call, false));
+    }
+
+    /**
      * @param array $methods
      */
     public function mockHookManager($methods = array())
@@ -464,7 +589,7 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         $this->triggerServerManager = $this->getMock(
             'Sugarcrm\\Sugarcrm\\Trigger\\ReminderManager\\TriggerServer',
-            array('setReminders', 'deleteReminders')
+            array('addReminderForUser', 'deleteReminders')
         );
     }
 
@@ -475,7 +600,7 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         $this->schedulerManager = $this->getMock(
             'Sugarcrm\\Sugarcrm\\Trigger\\ReminderManager\\Scheduler',
-            array('setReminders', 'deleteReminders')
+            array('addReminderForUser', 'deleteReminders')
         );
     }
 
