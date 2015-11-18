@@ -79,6 +79,16 @@
     },
 
     /**
+     * Get the list of field names to render the dashlet correctly
+     * @return {string[]} The list of fields we need to fetch
+     * @override
+     */
+    getFieldNames: function() {
+        // FIXME TY-920: we shouldn't have to override this per-dashlet
+        return this.dashletConfig.dashlets[0].fields || [];
+    },
+
+    /**
      * Disable activated refresh interval
      * @protected
      */
@@ -161,7 +171,7 @@
      * @private
      */
     _reloadData: function() {
-        this.context.set('skipFetch', false);
+        this._prepContextForLoad();
         this.context.reloadData();
     },
 
@@ -185,12 +195,12 @@
             }
             var relatedModel = app.data.createRelatedBean(parentModel, model.id, link),
                 options = {
-                    //Show alerts for this request
+                    // Show alerts for this request
                     showAlerts: true,
                     relate: true,
                     success: function(model) {
                         self.context.resetLoadFlag();
-                        self.context.set('skipFetch', false);
+                        self._prepContextForLoad();
                         self.context.loadData();
                     },
                     error: function(error) {
@@ -211,6 +221,16 @@
         var link =  this.context.get('link'),
             parentModel = this.context.get('parentModel');
         this.createRelatedRecord(app.data.getRelatedModule(parentModel.module, link), link);
+    },
+
+    /**
+     * Fix the fields on the context to prevent conflict with list-bottom
+     * Also set `skipFetch` on the context since it is needed before most loads
+     * @private
+     */
+    _prepContextForLoad: function() {
+        this.context.set('fields', this.getFieldNames());
+        this.context.set('skipFetch', false);
     },
 
     /**
