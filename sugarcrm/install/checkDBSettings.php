@@ -13,6 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\Socket\Client as SugarSocketClient;
+use Sugarcrm\Sugarcrm\Trigger\Client as TriggerServerClient;
 
 function checkFTSSettings()
 {
@@ -71,6 +72,42 @@ function checkWSConfiguration($silent = false)
     }
 
     installLog("End WebSocket Configuration Check Process *************");
+
+    if ($silent) {
+        return $errors;
+    } else {
+        printErrors($errors);
+    }
+}
+
+/**
+ * Check TriggerServer configuration.
+ * @param bool $silent
+ * @return array
+ */
+function checkTriggerServerConfiguration($silent = false)
+{
+    installLog("Begin TriggerServer Configuration Check Process *************");
+
+    global $mod_strings;
+    $errors = array();
+
+    $triggerServerUrl = (isset($_SESSION['trigger_server_url'])) ? trim($_SESSION['trigger_server_url']) : '';
+
+    if(!empty($triggerServerUrl)) {
+        if (!filter_var($triggerServerUrl, FILTER_VALIDATE_URL)) {
+            $errors['ERR_TRIGGER_SERVER_URL_INVALID'] = $mod_strings['ERR_TRIGGER_SERVER_URL_INVALID'];
+            installLog("ERROR::  {$errors['ERR_TRIGGER_SERVER_URL_INVALID']}");
+        } else {
+            $isTriggerServerSettingsValid = TriggerServerClient::getInstance()->checkTriggerServerSettings($triggerServerUrl);
+            if (!$isTriggerServerSettingsValid) {
+                $errors['ERR_TRIGGER_SERVER_ERROR'] = $mod_strings['ERR_TRIGGER_SERVER_ERROR'];
+                installLog("ERROR::  {$errors['ERR_TRIGGER_SERVER_ERROR']}");
+            }
+        }
+    }
+
+    installLog("End TriggerServer Configuration Check Process *************");
 
     if ($silent) {
         return $errors;
@@ -252,6 +289,10 @@ function checkDBSettings($silent=false) {
     $WSErrors = checkWSConfiguration(true);
     $errors = array_merge($errors, $WSErrors);
 
+    //Test trigger server settings
+    $TriggerServerErrors = checkTriggerServerConfiguration(true);
+    $errors = array_merge($errors, $TriggerServerErrors);
+
     installLog("End DB Check Process *************");
 
     if ($silent) {
@@ -311,6 +352,11 @@ function copyInputsIntoSession(){
             }
             if (isset($_REQUEST['websockets_server_url'])) {
                 $_SESSION['websockets_server_url'] = $_REQUEST['websockets_server_url'];
+            }
+
+            //Trigger server config
+            if (isset($_REQUEST['trigger_server_url'])) {
+                $_SESSION['trigger_server_url'] = $_REQUEST['trigger_server_url'];
             }
 
             //FTS Support

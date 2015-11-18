@@ -12,6 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 use Sugarcrm\Sugarcrm\Socket\Client as SugarSocketClient;
+use Sugarcrm\Sugarcrm\Trigger\Client as TriggerServerClient;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\AdminSettings;
 
@@ -244,6 +245,50 @@ class AdministrationController extends SugarController
                     'url' => $websocket_client_url,
                     'balancer' => $clientSettings['isBalancer']
                 ),
+            );
+            $this->cfg->handleOverride();
+        } else {
+            $result['status'] = false;
+            $validationErr = array();
+            foreach ($errors as $key => $erMsg) {
+                array_push($validationErr, $erMsg);
+            }
+            $result = array(
+                'status' => false,
+                'errMsg' => implode(PHP_EOL, $validationErr)
+            );
+        }
+
+        echo json_encode($result);
+    }
+
+    /**
+     * This method handles the saving trigger server configuration.
+     */
+    public function action_saveTriggerServerConfiguration()
+    {
+        $triggerServerUrl = !empty($_REQUEST['trigger_server_url']) ? urldecode($_REQUEST['trigger_server_url']) : '';
+
+        $errors = array();
+
+        if(!empty($triggerServerUrl)) {
+            if (!filter_var($triggerServerUrl, FILTER_VALIDATE_URL)) {
+                $errors['ERR_TRIGGER_SERVER_URL_INVALID'] = $GLOBALS['mod_strings']['ERR_TRIGGER_SERVER_URL_INVALID'];
+            } else {
+                $isTriggerServerSettingsValid = TriggerServerClient::getInstance()->checkTriggerServerSettings($triggerServerUrl);
+                if (!$isTriggerServerSettingsValid) {
+                    $errors['ERR_TRIGGER_SERVER_ERROR'] = $GLOBALS['mod_strings']['ERR_TRIGGER_SERVER_ERROR'];
+
+                }
+            }
+        }
+
+        if (count($errors) == 0) {
+            $result['status'] = true;
+
+            $this->cfg = new Configurator();
+            $this->cfg->config['trigger_server'] = array(
+                'url' => $triggerServerUrl
             );
             $this->cfg->handleOverride();
         } else {
