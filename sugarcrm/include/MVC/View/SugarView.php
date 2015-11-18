@@ -89,11 +89,17 @@ class SugarView
      */
     public function SugarView(
         $bean = null,
-        $view_object_map = array()
+        $view_object_map = array(),
+        $request = null
         )
     {
         $this->base_menu = SugarAutoLoader::loadExtension("menus", "application");
-        $this->request = InputValidation::getService();
+        //Check if a child constructor already initialized the request.
+        if ($request !== null) {
+            $this->request = $request;
+        } else {
+            $this->request = InputValidation::getService();
+        }
     }
 
     public function init(
@@ -118,7 +124,7 @@ class SugarView
     /**
      * This method will be called from the controller and is not meant to be overridden.
      */
-    public function process()
+    public function process($params = array())
     {
         LogicHook::initialize();
         $this->_checkModule();
@@ -146,9 +152,9 @@ class SugarView
         }
 
         $this->_buildModuleList();
-        $this->preDisplay();
-        $this->displayErrors();
-        $this->display();
+        $this->preDisplay($params);
+        $this->displayErrors($params);
+        $this->display($params);
         if ( !empty($this->module) ) {
             $GLOBALS['logic_hook']->call_custom_logic($this->module, 'after_ui_frame');
         } else {
@@ -199,8 +205,10 @@ class SugarView
 
     /**
      * This method will display the errors on the page.
+     *
+     * @param array $params additional view paramters passed through from the controller
      */
-    public function displayErrors()
+    public function displayErrors($params = array())
     {
         $errors = '';
 
@@ -224,16 +232,20 @@ class SugarView
      * view can do the setup in preDisplay() that is common to itself and any subviews
      * and then the subview can just override display(). If it so desires, can also override
      * preDisplay().
+     *
+     * @param array $params additional view paramters passed through from the controller
      */
-    public function preDisplay()
+    public function preDisplay($params = array())
     {
     }
 
     /**
      * [OVERRIDE] - This method is meant to overidden in a subclass. This method
      * will handle the actual display logic of the view.
+     *
+     * @param array $params additional view paramters passed through from the controller
      */
-    public function display()
+    public function display($params = array())
     {
     }
 
