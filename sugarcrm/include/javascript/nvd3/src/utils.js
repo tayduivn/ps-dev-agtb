@@ -367,7 +367,7 @@ nv.utils.stringSetLengths = function(_data, _container, _format, classes, styles
   txt.style('display', 'inline');
   _data.forEach(function(d, i) {
       txt.text(_format(d, i));
-      lengths.push(txt.node().getBBox().width);
+      lengths.push(txt.node().getBoundingClientRect().width);
     });
   txt.text('').attr('class', 'tmp-text-strings').style('display', 'none');
   return lengths;
@@ -383,7 +383,7 @@ nv.utils.stringSetThickness = function(_data, _container, _format, classes, styl
   txt.style('display', 'inline');
   _data.forEach(function(d, i) {
       txt.text(_format(d, i));
-      thicknesses.push(txt.node().getBBox().height);
+      thicknesses.push(txt.node().getBoundingClientRect().height);
     });
   txt.text('').attr('class', 'tmp-text-strings').style('display', 'none');
   return thicknesses;
