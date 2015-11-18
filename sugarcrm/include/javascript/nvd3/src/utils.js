@@ -366,8 +366,8 @@ nv.utils.stringSetLengths = function(_data, _container, _format, classes, styles
   txt.classed(classes, true);
   txt.style('display', 'inline');
   _data.forEach(function(d, i) {
-      txt.text(d, _format);
-      lengths.push(txt.node().getBoundingClientRect().width);
+      txt.text(_format(d, i));
+      lengths.push(txt.node().getBBox().width);
     });
   txt.text('').attr('class', 'tmp-text-strings').style('display', 'none');
   return lengths;
