@@ -12,18 +12,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
-use Symfony\Component\Validator\Constraints as Assert;
-use Sugarcrm\Sugarcrm\Security\Validator\Constraints as AssertSugar;
-
 class EAPMViewEdit extends ViewEdit {
 
     private $_returnId;
 
     public function __construct()
     {
-        $this->setReturnId();
         parent::__construct();
+        $this->setReturnId();
     }
 
     protected function setReturnId()
@@ -126,4 +122,3 @@ class EAPMViewEdit extends ViewEdit {
  	}
 }
 
-?>

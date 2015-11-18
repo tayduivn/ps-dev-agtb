@@ -85,21 +85,24 @@ class SugarView
     protected $request;
 
     /**
-     * Constructor which will peform the setup.
+     * @see __construct
+     * @deprecated
      */
-    public function SugarView(
-        $bean = null,
-        $view_object_map = array(),
-        $request = null
-        )
+    protected function SugarView($bean = null, $view_object_map = array(), Request $request = null)
+    {
+        self::__construct($bean, $view_object_map, $request);
+    }
+
+    /**
+     * Ctor
+     * @param SugarBean $bean
+     * @param array $view_object_map
+     * @param Request $request
+     */
+    public function __construct($bean = null, $view_object_map = array(), Request $request = null)
     {
         $this->base_menu = SugarAutoLoader::loadExtension("menus", "application");
-        //Check if a child constructor already initialized the request.
-        if ($request !== null) {
-            $this->request = $request;
-        } else {
-            $this->request = InputValidation::getService();
-        }
+        $this->request = $request ?: InputValidation::getService();
     }
 
     public function init(
