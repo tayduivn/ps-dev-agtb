@@ -103,6 +103,15 @@ class TemplateField{
         'dependency' => 'dependency',
         'related_fields' => 'related_fields',
 	);
+
+    /**
+     * Optional custom validation for fields
+     * @var array
+     */
+    protected $vardefMapValidation = array(
+        'full_text_search' => array('Assert\Type' => array('type' => 'array'))
+    );
+
     // Bug #48826
     // fields to decode from post request
     var $decode_from_request_fields_map = array('formula', 'dependency');
@@ -518,7 +527,10 @@ class TemplateField{
         }
 
         foreach ($this->vardef_map as $vardef => $field) {
-            $value = $request->getValidInputRequest($vardef);
+            $constraints = isset($this->vardefMapValidation[$field]) ?
+                $this->vardefMapValidation[$field]
+                : null;
+            $value = $request->getValidInputRequest($vardef, $constraints);
             if ($value !== null) {
                 // Bug #48826. Some fields are allowed to have special characters and must be decoded from the request
                 // Bug 49774, 49775: Strip html tags from 'formula' and 'dependency'.
