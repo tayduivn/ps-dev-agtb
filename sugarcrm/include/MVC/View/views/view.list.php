@@ -63,7 +63,7 @@ class ViewList extends SugarView{
 
                 $current_query_by_page = $this->request->getValidInputRequest(
                     'current_query_by_page',
-                    'Assert\PhpSerialized'
+                    array('Assert\PhpSerialized' => array('base64Encoded' => true))
                 );
 
                 foreach($current_query_by_page as $search_key=>$search_value) {

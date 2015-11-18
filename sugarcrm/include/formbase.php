@@ -158,13 +158,19 @@ function add_hidden_elements($key, $value) {
 
 function getPostToForm($ignore='', $isRegularExpression=false)
 {
+    $htmlspecialchars = function ($value) {
+        return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+    };
+
 	$fields = '';
 	if(!empty($ignore) && $isRegularExpression) {
 		foreach ($_POST as $key=>$value){
 			if(!preg_match($ignore, $key)) {
                 $fields .= add_hidden_elements(
                     htmlspecialchars($key, ENT_QUOTES, 'UTF-8'),
-                    htmlspecialchars($value, ENT_QUOTES, 'UTF-8')
+                    is_array($value)
+                        ? array_map($htmlspecialchars, $value)
+                        : htmlspecialchars($value, ENT_QUOTES, 'UTF-8')
                 );
 			}
 		}
@@ -173,8 +179,10 @@ function getPostToForm($ignore='', $isRegularExpression=false)
 			if($key != $ignore) {
                 $fields .= add_hidden_elements(
                     htmlspecialchars($key, ENT_QUOTES, 'UTF-8'),
-                    htmlspecialchars($value, ENT_QUOTES, 'UTF-8')
-                );
+                    is_array($value)
+                        ? array_map($htmlspecialchars, $value)
+                        : htmlspecialchars($value, ENT_QUOTES, 'UTF-8')
+                    );
 			}
 		}
 	}
