@@ -72,17 +72,22 @@ describe('NotificationCenter.Field.Address', function() {
             personal = {foo: {status: null}};
         });
 
-        using('statues and action',
+        using('statues, isConfigured and action',
             [
-                [true, true, 'show'],
-                [true, false, 'hide'],
-                [false, true, 'hide'],
-                [false, false, 'hide']
+                [true, true, true, 'show'],
+                [false, false, false, 'hide'],
+                [true, true, false, 'hide'],
+                [false, true, true, 'hide'],
+                [true, false, true, 'hide'],
+                [true, false, false, 'hide'],
+                [false, false, true, 'hide'],
+                [false, true, false, 'hide']
             ],
-            function(globalStatus, personalStatus, action) {
-                it('should show or hide field according to both global & personal carrier status', function() {
+            function(globalStatus, personalStatus, isConfigured, action) {
+                it('should show or hide field according to global/personal carrier status & configuration state', function() {
                     var method = sandbox.stub(field, action);
                     global['foo']['status'] = globalStatus;
+                    global['foo']['isConfigured'] = isConfigured;
                     personal['foo']['status'] = personalStatus;
                     model.set('global', {carriers: global});
                     model.set('personal', {carriers: personal});

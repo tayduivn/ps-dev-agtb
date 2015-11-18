@@ -58,7 +58,9 @@
         var personal = this.model.get('personal')['carriers'],
             global = this.model.get('global')['carriers'];
 
-        if (personal[this.carrier].status === true && global[this.carrier].status === true) {
+        if (personal[this.carrier].status === true &&
+            global[this.carrier].status === true &&
+            global[this.carrier].isConfigured === true) {
             this.show();
         } else {
             this.hide();

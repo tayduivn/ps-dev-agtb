@@ -40,7 +40,7 @@
      * @private
      */
     populateCarriers: function() {
-        var carriersData;
+        var carriersData, address;
 
         if (this.model.get('configMode') === 'user') {
             carriersData = this.model.get('personal') ? this.model.get('personal')['carriers'] : null;
@@ -50,22 +50,22 @@
 
         this.carriers = [];
         _.each(carriersData, function(value, key) {
+            address = (!value.selectable) ? null :
+            {
+                name: key + '-address',
+                type: 'address',
+                view: 'edit',
+                options: value.options,
+                carrier: key,
+                css_class: 'span12'
+            };
             this.carriers.push({
                 name: key,
                 type: 'carrier',
                 label: app.lang.get('LBL_TITLE', key),
+                address: address,
                 view: 'default'
             });
-            if (value.selectable) {
-                this.carriers.push({
-                    name: key + '-address',
-                    type: 'address',
-                    view: 'edit',
-                    options: value.options,
-                    carrier: key,
-                    css_class: 'span12'
-                });
-            }
         }, this);
     }
 })
