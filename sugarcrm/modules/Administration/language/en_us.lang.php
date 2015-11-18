@@ -1183,6 +1183,13 @@ For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_
     'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL.',
     'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL.',
 
+    //Trigger Server
+    'LBL_TRIGGER_SERVER_CONFIGURATION'      => 'Trigger Server Configuration',
+    'LBL_TRIGGER_SERVER_CONFIGURATION_URL'  => 'Trigger Server URL',
+    'LBL_TRIGGER_SERVER_CONFIGURATION_DESC' => 'Here you can specify URL to trigger server.',
+    'ERR_TRIGGER_SERVER_URL_INVALID'        => 'Please provide correct Trigger Server URL',
+    'ERR_TRIGGER_SERVER_ERROR'              => 'Unable to connect to Trigger Server',
+
     // Notification Center
     'LBL_NOTIFICATIONS_CONFIGURATION' => 'Notification Settings',
     'LBL_NOTIFICATIONS_CONFIGURATION_DESC' => 'Define how users get notifications delivered and choose the events to show notifications for.',

@@ -15,146 +15,20 @@
     /**
      * @inheritdoc
      */
-    addCustomButtons: function(editor) {
-        editor.addButton('mybutton', {
-            title : 'Fields Selector',
+    addCustomButtons: function (editor) {
+        editor.addButton('sugarfieldbutton', {
+            title: app.lang.get('LBL_SUGAR_FIELD_SELECTOR', 'pmse_Emails_Templates'),
             class: 'mce_selectfield',
-            onclick : _.bind(this._showVariablesBook, this)
+            icon: 'fullpage',
+
+            onclick: _.bind(this._showVariablesBook, this)
         });
-    },
-
-    /**
-     * Render read-only view for other views
-     *
-     * @private
-     */
-    _renderView: function() {
-        this.setViewContent(this.value);
-    },
-
-    /**
-     * Is this an edit view?  If the field contains a textarea, it will assume that it's in an edit view.
-     *
-     * @return {Boolean}
-     * @private
-     */
-    _isEditView: function() {
-        return (this._getHtmlEditableField().prop('tagName') === 'TEXTAREA');
-    },
-
-    /**
-     * Returns a default TinyMCE init configuration for the htmleditable widget.
-     * This function can be overridden to provide a custom TinyMCE configuration.
-     *
-     * @see <a href="http://www.tinymce.com/wiki.php/Configuration">TinyMCE Configuration Documentation</a> for details
-     *
-     * @return {Object} TinyMCE configuration to use with this widget
-     */
-    getTinyMCEConfig: function(){
-        return {
-            // Location of TinyMCE script
-            script_url: 'include/javascript/tiny_mce/tiny_mce.js',
-
-            // General options
-            theme: "advanced",
-            skin: "sugar7",
-            plugins: "style,table,advhr,advimage,advlink,iespell,inlinepopups,media,searchreplace,print,contextmenu,paste,noneditable,visualchars,nonbreaking,xhtmlxtras",
-            entity_encoding: "raw",
-
-            // Theme options
-            theme_advanced_buttons1: "code,|,bold,italic,underline,|,justifyleft,justifycenter,justifyright,justifyfull,fontsizeselect,|,insertlayer,moveforward,movebackward,absolute,|,styleprops,|,cite,abbr,acronym,del,ins,attribs,|,iespell,media,advhr,|,print,|",
-            theme_advanced_buttons2: "cut,copy,paste,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,|,forecolor,backcolor,tablecontrols,|,",
-            theme_advanced_toolbar_location: "top",
-            theme_advanced_toolbar_align: "left",
-            theme_advanced_statusbar_location: "none",
-            theme_advanced_resizing: true,
-            schema: "html5",
-
-            // Drop lists for link/image/media/template dialogs
-            template_external_list_url: "lists/template_list.js",
-            external_link_list_url: "lists/link_list.js",
-            external_image_list_url: "lists/image_list.js",
-            media_external_list_url: "lists/media_list.js",
-
-            //plugin theme settings
-            theme_advanced_path: false,
-            theme_advanced_source_editor_width: 500,
-            theme_advanced_source_editor_height: 400,
-            inlinepopups_skin: "sugar7modal",
-            relative_urls: false,
-            remove_script_host: false
-        };
-    },
-
-    /**
-     * Initializes the TinyMCE editor.
-     *
-     * @param {Object} optConfig Optional TinyMCE config to use when initializing editor.  If none provided, will load config provided from {@link getTinyMCEConfig}.
-     */
-    initTinyMCEEditor: function(optConfig) {
-        var self = this;
-        if(_.isEmpty(this._htmleditor)){
-            var config = optConfig || this.getTinyMCEConfig();
-            var __superSetup__ = config.setup;
-            // Preserve custom setup if it exists, add setup function needed for widget to work properly
-            config.setup = function(editor){
-                if(_.isFunction(__superSetup__)){
-                    __superSetup__.call(this, editor);
-                }
-                self._htmleditor = editor;
-                self._htmleditor.onInit.add(function(ed) {
-                    self.setEditorContent(self.getFormattedValue());
-                    $(ed.getWin()).blur(function(e){ // Editor window lost focus, update model immediately
-                        self._saveEditor();
-                    });
-                });
-                self._htmleditor.onDeactivate.add(function(ed){
-                    self._saveEditor();
-                });
-                self._htmleditor.onSetContent.add(function(ed) {
-                    if (self._saveOnSetContent) {
-                        self._saveEditor(true);
-                    }
-                    self._saveOnSetContent = true; // flip it back so that we're sure we save the next time
-                });
-                self._htmleditor.onChange.add(function(ed, l) {
-                    // Changes have been made, mark widget as dirty so we don't lose them
-                    self._isDirty = true;
-                });
-                editor.addButton('mybutton', {
-                    title : 'Fields Selector',
-                    image : 'modules/pmse_Project/img/icon_processmaker_32.gif',
-                    onclick : function() {
-                        self._showVariablesBook();
-                    }
-                });
-                editor.addButton('sugarlinkbutton', {
-                    title: app.lang.get('LBL_SUGAR_LINK_SELECTOR', 'pmse_Emails_Templates'),
-                    class: 'mce_selectrecordlink',
-                    onclick: function() {
-                        self._showLinksDrawer();
-                    }
-                });
-            };
-            config.oninit = function(inst) {
-                self.context.trigger('tinymce:oninit', inst);
-            };
-
-            $('.htmleditable').tinymce(config);
-        }
-    },
-
-    /**
-     * Destroy TinyMCE Editor instance
-     */
-    destroyTinyMCEEditor: function() {
-        // Clean up existing TinyMCE editor
-        if(!_.isNull(this._htmleditor)){
-            this._saveEditor(true);
-            this._htmleditor.remove();
-            this._htmleditor.destroy();
-            this._htmleditor = null;
-        }
+        editor.addButton('sugarlinkbutton', {
+            title: app.lang.get('LBL_SUGAR_LINK_SELECTOR', 'pmse_Emails_Templates'),
+            class: 'mce_selectfield',
+            icon: 'link',
+            onclick: _.bind(this._showLinksDrawer, this)
+        });
     },
 
     /**
@@ -247,20 +121,11 @@
         _.each(recipients.models, function(model) {
             newExpression += '{::'+ model.attributes.rhs_module+'::'+model.attributes.id+'::}'
         });
-        //new
+
         var bm = this._htmleditor.selection.getBookmark();
         this._htmleditor.selection.moveToBookmark(bm);
         this._htmleditor.selection.setContent(newExpression);
 
-//        currentValue = this._htmleditor.getWin().getSelection().extentNode.nodeValue;
-//        currentValue = this._htmleditor.getContent();
-////        i = this._htmleditor.getWin().getSelection().anchorOffset;
-//        i = this._htmleditor.getContent().selectionStart;//.anchorOffset;
-//        if (currentValue) {
-//            result = currentValue.substr(0, i) + newExpression + currentValue.substr(this._htmleditor.getContent().selectionEnd, this._htmleditor.getContent().length);
-//        } else {
-//            result = newExpression;
-//        }
         return currentValue = this._htmleditor.getContent();
     },
 
@@ -268,7 +133,7 @@
      * Open a drawer with a list of related fields that we want to link to in an email
      * Create a variable like {::href_link::Accounts::contacts::name::} which is understood
      * by the backend to replace the variable with the correct Sugar link
-     * 
+     *
      * @private
      */
     _showLinksDrawer: function() {
