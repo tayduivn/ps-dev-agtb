@@ -58,6 +58,7 @@ $viewdefs['KBContents']['base']['view']['list'] = array(
                     'label' => 'LBL_CATEGORY_NAME',
                     'enabled' => true,
                     'default' => true,
+                    'css_class' => 'overflow-visible',
                     'initial_filter' => 'by_category',
                     'initial_filter_label' => 'LBL_FILTER_CREATE_NEW',
                     'filter_relate' => array(

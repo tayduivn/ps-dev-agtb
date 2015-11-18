@@ -100,14 +100,6 @@ ExpressionControl.prototype.OPERATORS  = {
         {
             text: "/",
             value: "division"
-        },
-        {
-            text: "(",
-            value: "openparen"
-        },
-        {
-            text: ")",
-            value: "closeparen"
         }
     ],
     "logic": [
@@ -502,7 +494,13 @@ ExpressionControl.prototype.getValue = function () {
     return this._value;
 };
 
-ExpressionControl.prototype.setValue = function (value) {
+/**
+ * Set the value of the field
+ * @param value
+ * @param skipChangeHandler Set this to true to skip do the change in other fields
+ * @returns {ExpressionControl}
+ */
+ExpressionControl.prototype.setValue = function (value, skipChangeHandler) {
     var i;
     if (typeof value === "string") {
         value = JSON.parse(value);
@@ -512,7 +510,7 @@ ExpressionControl.prototype.setValue = function (value) {
 
     this._itemContainer.clearItems();
     for (i = 0; i < value.length; i += 1) {
-        this._itemContainer.addItem(this._createItem(value[i]));
+        this._itemContainer.addItem(this._createItem(value[i]), undefined, undefined, skipChangeHandler);
     }
     return this;
 };

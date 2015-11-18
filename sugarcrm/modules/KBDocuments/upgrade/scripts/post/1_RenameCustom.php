@@ -127,6 +127,10 @@ class SugarUpgradeRenameCustom extends UpgradeScript
             foreach (glob('custom/Extension/modules/KBDocuments/Ext/Vardefs/*.php') as $file) {
                 $this->copyDefs($file, str_replace('/KBDocuments/', '/KBContents/', $file));
             }
+
+            foreach (glob('custom/include/language/*.php') as $file) {
+                $this->updateLanguageFile($file);
+            }
             $query = "UPDATE fields_meta_data set custom_module = 'KBContents' where custom_module = 'KBDocuments'";
             $this->db->query($query);
         }
@@ -236,5 +240,43 @@ class SugarUpgradeRenameCustom extends UpgradeScript
             $result[$key] = $def;
         }
         return $result;
+    }
+
+    /**
+     * Move `app_list_strings` for KB in custom language file.
+     * @param $file
+     */
+    protected function updateLanguageFile($file)
+    {
+        $this->upgrader->backupFile($file);
+        $app_list_strings = array();
+        include $file;
+
+        $app_list_strings = $this->moveRecursive($app_list_strings);
+        $this->log("Updating language file {$file} with new KB module");
+        $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n";
+        foreach (array_keys($app_list_strings) as $key) {
+            $out .= override_value_to_string_recursive2('app_list_strings', $key, $app_list_strings[$key]);
+        }
+        file_put_contents($file, $out);
+    }
+
+    /**
+     * Recursive move `app_list_strings` to new KB.
+     * @param mixed $array Array to work with.
+     * @return array Updated array.
+     */
+    protected function moveRecursive($array)
+    {
+        if (is_array($array)) {
+            foreach ($array as $key => $value) {
+                $array[$key] = $this->moveRecursive($value);
+                if ($key === 'KBDocuments') {
+                    $array['KBContents'] = $array['KBDocuments'];
+                    unset($array['KBDocuments']);
+                }
+            }
+        }
+        return $array;
     }
 }

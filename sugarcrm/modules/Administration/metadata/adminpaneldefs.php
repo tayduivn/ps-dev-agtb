@@ -108,6 +108,7 @@ if(SugarOAuthServer::enabled()) {
 }
 
 $admin_option_defs['Administration']['websockets'] = array('Administration', 'LBL_WEB_SOCKET_CONFIGURATION', 'LBL_WEB_SOCKET_CONFIGURATION_DESC', './index.php?module=Administration&action=websockets');
+$admin_option_defs['Administration']['trigger_server'] = array('Administration', 'LBL_TRIGGER_SERVER_CONFIGURATION', 'LBL_TRIGGER_SERVER_CONFIGURATION_DESC', './index.php?module=Administration&action=TriggerServer');
 
 $admin_group_header[]= array('LBL_ADMINISTRATION_HOME_TITLE','',false,$admin_option_defs, 'LBL_ADMINISTRATION_HOME_DESC');
 

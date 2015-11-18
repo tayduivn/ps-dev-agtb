@@ -1,3 +1,5 @@
+<?php
+ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -8,11 +10,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 /**
- * @class View.Layouts.pmse_Emails_Templates.ComposeAddressbookListLayout
- * @alias SUGAR.App.view.layouts.pmse_Emails_TemplatesComposeAddressbookListLayout
- * @extends View.ListLayout
+ * Before we save an opp, check if we need to set the commit stage
  */
-({
-    extendsFrom: 'ListLayout'
-})
+$hook_array['before_save'][] = array(
+    10,
+    'beforeSaveIncludedCheck',
+    'modules/Opportunities/OpportunityHooks.php',
+    'OpportunityHooks',
+    'beforeSaveIncludedCheck',
+);

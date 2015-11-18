@@ -436,7 +436,7 @@ class MultiFieldHandler extends AbstractHandler implements
                 $path = array($field);
                 $weightId = $field;
                 // add explicit field to highlighter
-                $this->addHighlighterField($module, $field, array('number_of_frags' => 0));
+                $this->addHighlighterField($module, $field, array('number_of_fragments' => 0));
             } else {
                 $path = array($field, $searchField);
                 $weightId = $searchField;

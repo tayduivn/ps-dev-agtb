@@ -89,6 +89,12 @@
             this.module,
             {module: app.lang.get(this.def.label, this.module)}
         );
+        this.before('render', function() {
+            if (this.$(this.ddEl).length !== 0 && this._dropdownExists()) {
+                this.closeDropDown();
+            }
+            return true;
+        });
     },
 
     /**
@@ -156,11 +162,14 @@
         $('body').on('click.bs.dropdown.data-api', this.dropdownCallback);
         evt.stopPropagation();
         evt.preventDefault();
-        _.defer(function (dropdown, self) {
+        _.defer(function(dropdown, self) {
+            var treePosition, $input;
             if (self.disposed) {
                 return;
             }
-            var $input = self.$('[data-role=secondinput]');
+            treePosition = self.$el.find('[data-role=treeinput]').position();
+            $input = self.$('[data-role=secondinput]');
+            self.$(self.ddEl).css({'left': treePosition.left - 1 + 'px', 'top': treePosition.top + 27 + 'px'});
             self.$(self.ddEl).dropdown('toggle');
             $input.val('');
             dropdown.opened = true;

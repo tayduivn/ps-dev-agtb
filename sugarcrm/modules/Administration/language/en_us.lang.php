@@ -1187,6 +1187,13 @@ For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_
     'LBL_TBA_CONFIGURATION' => 'Team-based Permissions',
     'LBL_TBA_CONFIGURATION_DESC' => 'Enable team access, and manage access by module.',
 
+    //Trigger Server
+    'LBL_TRIGGER_SERVER_CONFIGURATION'      => 'Trigger Server Configuration',
+    'LBL_TRIGGER_SERVER_CONFIGURATION_URL'  => 'Trigger Server URL',
+    'LBL_TRIGGER_SERVER_CONFIGURATION_DESC' => 'Here you can specify URL to trigger server.',
+    'ERR_TRIGGER_SERVER_URL_INVALID'        => 'Please provide correct Trigger Server URL',
+    'ERR_TRIGGER_SERVER_ERROR'              => 'Unable to connect to Trigger Server',
+
     //FTS
     'LBL_FTS_TYPE' => 'System Type',
     'LBL_FTS_HOST' => 'Host',

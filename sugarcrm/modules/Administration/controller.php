@@ -12,6 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 use Sugarcrm\Sugarcrm\Socket\Client as SugarSocketClient;
+use Sugarcrm\Sugarcrm\Trigger\Client as TriggerServerClient;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\AdminSettings;
 
@@ -210,22 +211,25 @@ class AdministrationController extends SugarController
         $websocket_server_url = !empty($_REQUEST['websocket_server_url']) ? urldecode($_REQUEST['websocket_server_url']) : '';
 
         $errors = array();
+        $clientSettings = array('isBalancer' => false);
 
-        if (!empty($websocket_client_url) && !empty($websocket_server_url)) {
-            $clientSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_client_url);
-            if (!$clientSettings['available'] || $clientSettings['type'] != 'client') {
-                $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_CLIENT_ERROR'];
-            }
-            $serverSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_server_url);
-            if (!$serverSettings['available'] || $serverSettings['type'] != 'server') {
-                $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SERVER_ERROR'];
-            }
-        } else {
+        if (!empty($websocket_client_url) || !empty($websocket_server_url)) {
             if (empty($websocket_client_url)) {
                 $errors['ERR_WEB_SOCKET_CLIENT_URL'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_CLIENT_URL'];
+            } else {
+                $clientSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_client_url);
+                if (!$clientSettings['available'] || $clientSettings['type'] != 'client') {
+                    $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_CLIENT_ERROR'];
+                }
             }
+
             if (empty($websocket_server_url)) {
                 $errors['ERR_WEB_SOCKET_SERVER_URL'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SERVER_URL'];
+            } else {
+                $serverSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_server_url);
+                if (!$serverSettings['available'] || $serverSettings['type'] != 'server') {
+                    $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SERVER_ERROR'];
+                }
             }
         }
 
@@ -241,6 +245,50 @@ class AdministrationController extends SugarController
                     'url' => $websocket_client_url,
                     'balancer' => $clientSettings['isBalancer']
                 ),
+            );
+            $this->cfg->handleOverride();
+        } else {
+            $result['status'] = false;
+            $validationErr = array();
+            foreach ($errors as $key => $erMsg) {
+                array_push($validationErr, $erMsg);
+            }
+            $result = array(
+                'status' => false,
+                'errMsg' => implode(PHP_EOL, $validationErr)
+            );
+        }
+
+        echo json_encode($result);
+    }
+
+    /**
+     * This method handles the saving trigger server configuration.
+     */
+    public function action_saveTriggerServerConfiguration()
+    {
+        $triggerServerUrl = !empty($_REQUEST['trigger_server_url']) ? urldecode($_REQUEST['trigger_server_url']) : '';
+
+        $errors = array();
+
+        if(!empty($triggerServerUrl)) {
+            if (!filter_var($triggerServerUrl, FILTER_VALIDATE_URL)) {
+                $errors['ERR_TRIGGER_SERVER_URL_INVALID'] = $GLOBALS['mod_strings']['ERR_TRIGGER_SERVER_URL_INVALID'];
+            } else {
+                $isTriggerServerSettingsValid = TriggerServerClient::getInstance()->checkTriggerServerSettings($triggerServerUrl);
+                if (!$isTriggerServerSettingsValid) {
+                    $errors['ERR_TRIGGER_SERVER_ERROR'] = $GLOBALS['mod_strings']['ERR_TRIGGER_SERVER_ERROR'];
+
+                }
+            }
+        }
+
+        if (count($errors) == 0) {
+            $result['status'] = true;
+
+            $this->cfg = new Configurator();
+            $this->cfg->config['trigger_server'] = array(
+                'url' => $triggerServerUrl
             );
             $this->cfg->handleOverride();
         } else {

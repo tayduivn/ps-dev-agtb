@@ -39,6 +39,7 @@ $viewdefs['Calls']['base']['view']['subpanel-list'] = array(
           'completed_status_value' => 'Held',
           'enabled' => true,
           'default' => true,
+          'css_class' => 'overflow-visible',
           'readonly' => true,
           'related_fields' => array('status'),
         ),
@@ -47,6 +48,7 @@ $viewdefs['Calls']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'date_end',
+          'css_class' => 'overflow-visible',
         ),
         array(
           'name' => 'assigned_user_name',

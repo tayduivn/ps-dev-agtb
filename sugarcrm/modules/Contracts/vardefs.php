@@ -222,6 +222,7 @@ $dictionary['Contract'] = array(
             'type' => 'int',
             'len' => 5,
             'source' => 'non-db',
+            'sortable' => false,
         ),
         'type_name' => array(
             'name' => 'type_name',

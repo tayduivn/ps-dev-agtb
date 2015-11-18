@@ -14,7 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 $viewdefs['pmse_Emails_Templates']['base']['view']['compose-varbook-list'] = array(
-    'template'   => 'list',
+    'template'   => 'flex-list',
     'selection'  => array(
         'type'                     => 'multi',
         'actions'                  => array(),

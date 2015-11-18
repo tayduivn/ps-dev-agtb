@@ -11,9 +11,10 @@
  */
 require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php' ;
 
-function cmp($a,$b)
+function cmp($a, $b)
 {
-	return strcasecmp($a,$b);
+	// sort them by display names
+	return strcasecmp($a['name'], $b['name']);
 }
 
 class StudioBrowser{
@@ -49,9 +50,9 @@ class StudioBrowser{
 		$this->loadModules();
 	    $nodes = array();
 		foreach($this->modules as $module){
-			$nodes[$module->name] = $module->getNodes();
+		    $nodes[$module->module] = $module->getNodes();
 		}
-		uksort($nodes,'cmp'); // bug 15103 - order is important - this array is later looped over by foreach to generate the module list
+		usort($nodes,'cmp'); // bug 15103 - order is important - this array is later looped over by foreach to generate the module list
 		return $nodes;
 	}
 
