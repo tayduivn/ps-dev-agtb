@@ -14,6 +14,23 @@
     /**
      * @inheritdoc
      */
+
+    _initSettings: function() {
+        this._super('_initSettings');
+
+        var config = app.metadata.getModule('Forecasts', 'config');
+        if(!config || !config.is_setup) {
+            if(!_.contains(this.fieldNameBlacklist, 'commit_stage')) {
+                this.fieldNameBlacklist.push('commit_stage');
+            }
+        } else if(_.contains(this.fieldNameBlacklist, 'commit_stage')) {
+            this.fieldNameBlacklist.splice(_.indexOf(this.fieldNameBlacklist, 'commit_stage'), 1);
+        }
+    },
+
+    /**
+     * @inheritdoc
+     */
     bindDataChange: function() {
         this._super('bindDataChange');
 

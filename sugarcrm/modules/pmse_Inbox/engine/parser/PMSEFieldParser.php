@@ -246,12 +246,15 @@ class PMSEFieldParser implements PMSEDataParserInterface
         } else {
             $criteriaToken->currentValue = $tokenValue;
         }
-        if ($this->evaluatedBean->field_name_map[$criteriaToken->expValue]['type']=='date') {
-            $criteriaToken->expSubtype = 'date';
-        } elseif ($this->evaluatedBean->field_name_map[$criteriaToken->expValue]['type']=='datetime'
-                || $this->evaluatedBean->field_name_map[$criteriaToken->expValue]['type']=='datetimecombo') {
-            $criteriaToken->expSubtype = 'date';
-        }
+        if (isset($this->evaluatedBean->field_name_map[$criteriaToken->expField])) {
+            if ($this->evaluatedBean->field_name_map[$criteriaToken->expField]['type'] == 'date') {
+                $criteriaToken->expSubtype = 'date';
+            } elseif ($this->evaluatedBean->field_name_map[$criteriaToken->expField]['type'] == 'datetime'
+                || $this->evaluatedBean->field_name_map[$criteriaToken->expField]['type'] == 'datetimecombo'
+               ) {
+                $criteriaToken->expSubtype = 'date';
+              }
+         }
         $criteriaToken->expValue = $criteriaToken->currentValue;
         return $criteriaToken;
     }
@@ -266,15 +269,8 @@ class PMSEFieldParser implements PMSEDataParserInterface
     {
         $this->pmseRelatedModule = new PMSERelatedModule();
         $tokenArray = $this->decomposeToken($token);
-        $all = array();
 
-        if ($this->evaluatedBean->parent_type == $tokenArray[1]) {
-            $bean = BeanFactory::retrieveBean($this->evaluatedBean->parent_type, $this->evaluatedBean->parent_id);
-            $all[] = $this->evaluatedBean;
-        } else {
-            $bean = $this->evaluatedBean;
-        }
-
+        $bean = $this->evaluatedBean;
         $value = '';
         if (!empty($tokenArray)) {
             if (!isset($this->beanList[$tokenArray[1]])) {
@@ -283,8 +279,6 @@ class PMSEFieldParser implements PMSEDataParserInterface
             $field = $tokenArray[2];
             if (!empty($bean) && is_object($bean)) {
                 $value = $this->pmseRelatedModule->getFieldValue($bean, $field);
-            } else {
-                $value = !empty($bean)?array_pop($bean)->$tokenArray[2]:null;
             }
         }
 
