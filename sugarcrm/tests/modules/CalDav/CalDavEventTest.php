@@ -1494,7 +1494,7 @@ END:VCALENDAR',
             'eventURI' => 'test'
         ));
 
-        $saved = BeanFactory::getBean('CalDavEvents', $event->id, array('use_cache' => false, 'encode' => false));
+        $saved = BeanFactory::getBean('CalDavEvents', $event->id, array('encode' => false));
 
         $this->assertEquals($expectedSize, $saved->data_size);
         $this->assertEquals($expectedETag, $saved->etag);
@@ -1511,7 +1511,7 @@ END:VCALENDAR',
         ));
 
         $calendar =
-            BeanFactory::getBean('CalDavCalendars', $calendarID, array('use_cache' => false, 'encode' => false));
+            BeanFactory::getBean('CalDavCalendars', $calendarID, array('encode' => false));
 
         $this->assertEquals(2, $calendar->synctoken);
     }

@@ -120,8 +120,7 @@ abstract class AdapterAbstract
      */
     protected function getNotCachedBean(\SugarBean $calDavBean)
     {
-        return $calDavBean = \BeanFactory::getBean($calDavBean->module_name, $calDavBean->id,
-            array('use_cache' => false));
+        return $calDavBean = \BeanFactory::getBean($calDavBean->module_name, $calDavBean->id);
     }
 
     /**
