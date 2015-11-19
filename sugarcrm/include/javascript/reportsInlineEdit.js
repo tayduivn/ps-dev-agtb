@@ -94,7 +94,7 @@ SUGAR.reportsInlineEdit = function() {
 			}
 			var callback = {
 					success:function(o){
-						eval(o.responseText);
+						var result = JSON.parse(o.responseText);
 						if (field_name == 'name')
 							var saved_value = document.getElementById('input_'+div).value;
 						else if (field_type == 'enum') {

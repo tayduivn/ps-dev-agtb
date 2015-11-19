@@ -201,7 +201,7 @@ SUGAR.mySugar = function() {
                         console.log(e);
                 }
                 var htmlRepsonse = response['html'];
-                eval(response['script']);
+                var scriptResponse = JSON.parse(response.script);
                 
                 var pageDivElem = document.getElementById('pageNum_'+pageNum+'_div');
 
@@ -517,10 +517,8 @@ SUGAR.mySugar = function() {
 				ajaxStatus.hideStatus();
 				// uncomment the line below to debug w/ FireBug
 				// console.log(data.responseText); 
-				try {
-					eval(data.responseText);
-				}
-				catch(e) {
+				var result = JSON.parse(data.responseText);
+				if (typeof result == 'undefined' || typeof result['header'] == 'undefined') {
 					result = new Array();
 					result['header'] = 'error';
 					result['body'] = 'There was an error handling this request.';
@@ -813,14 +811,24 @@ SUGAR.mySugar = function() {
 			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
 			
 			var success = function(data) {		
-				eval(data.responseText);
+				var response = JSON.parse(data.responseText);
 				dashletsListDiv = document.getElementById('dashletsList');
 				dashletsListDiv.innerHTML = response['html'];
 				
 				document.getElementById('dashletsDialog_c').style.display = '';
                 SUGAR.mySugar.dashletsDialog.show();
 
-				eval(response['script']);
+                if (YAHOO.env.ua.ie > 5 && YAHOO.env.ua.ie < 7) {
+                    document.getElementById('dashletsList').style.width = '430px';
+                    document.getElementById('dashletsList').style.overflow = 'hidden';
+                }
+                
+                //BEGIN SUGARCRM flav=pro ONLY
+                if (response['populateCharts'] == true) {
+                    SUGAR.mySugar.populateReportCharts();
+                }
+                //END SUGARCRM flav=pro ONLY
+
 				ajaxStatus.hideStatus();
 			}
 			
@@ -952,25 +960,25 @@ SUGAR.mySugar = function() {
 			var myFavoritesList = document.getElementById('myFavoriteReportsChartDashletsList');
 
 			var getMyFavorites = function(data){
-				eval(data.responseText);
+                var response = JSON.parse(data.responseText);
 				myFavoritesList.innerHTML = response['html'];
 			}
 			var mySavedObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?to_pdf=true&module='+module+'&action=DynamicAction&DynamicAction=getReportCharts&category=myFavorites', {success: getMyFavorites, failure: getMyFavorites});
 			
 			var getMySaved = function(data) {
-				eval(data.responseText);
+                var response = JSON.parse(data.responseText);
 				mySavedList.innerHTML = response['html'];
 			}
 			var mySavedObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?to_pdf=true&module='+module+'&action=DynamicAction&DynamicAction=getReportCharts&category=mySaved', {success: getMySaved, failure: getMySaved});
 
 			var getMyTeams = function(data) {
-				eval(data.responseText);
+				var response = JSON.parse(data.responseText);
 				myTeamsList.innerHTML = response['html'];
 			}
 			var myTeamsObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?to_pdf=true&module='+module+'&action=DynamicAction&DynamicAction=getReportCharts&category=myTeams', {success: getMyTeams, failure: getMyTeams});
 			
 			var getGlobal = function(data) {
-				eval(data.responseText);
+				var response = JSON.parse(data.responseText);
 				globalList.innerHTML = response['html'];
 			}
 			var globalObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?to_pdf=true&module='+module+'&action=DynamicAction&DynamicAction=getReportCharts&category=global', {success: getGlobal, failure: getGlobal});		
@@ -1007,7 +1015,7 @@ SUGAR.mySugar = function() {
 			searchResultsDiv.style.display = '';
 	
 			var success = function(data) {
-				eval(data.responseText);
+                var response = JSON.parse(data.responseText);
 
 				searchResultsDiv.innerHTML = response['html'];
 			}
@@ -1107,8 +1115,7 @@ SUGAR.mySugar = function() {
 		//BEGIN SUGARCRM flav=pro ONLY
 		renderAddPageDialog: function() {
 			var handleSuccess = function(o){
-				var response = o.responseText;
-                eval(o.responseText);
+				var result = JSON.parse(o.responseText);
    
 			    var pageName = result['pageName'];
 			    var numCols = result['numCols'];
@@ -1158,20 +1165,6 @@ SUGAR.mySugar = function() {
 					return false;
 				}
 
-				/*var success = function(data) {
-					eval(data.responseText);
-					
-					if (duplicateName){
-						alert("Please enter another page name - there is already a page with that name.");
-						return false;
-					}
-					else{
-						return true;
-					}
-				}
-			
-				var cObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?to_pdf=true&module='+module+'&action=DynamicAction&DynamicAction=pageNameCheck&pageName='+postData.pageName, {success: success, failure: success});
-				*/
 				return true;
 			}
 

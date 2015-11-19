@@ -10,6 +10,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 /**
  * Homepage dashlet manager
@@ -18,8 +20,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class MySugar{
 	var $type;
 
-	function MySugar($type){
+    /**
+     * @var Request
+     */
+    protected $request;
+
+    public function __construct($type)
+    {
 		$this->type = $type;
+        $this->request = InputValidation::getService();
 	}
 
     function checkDashletDisplay () {
@@ -286,21 +295,10 @@ class MySugar{
 		$sugar_smarty->assign('charts', $chartsList);
 
 		$html = $sugar_smarty->fetch('include/MySugar/tpls/addDashletsDialog.tpl');
-		// Bug 34451 - Added hack to make the "Add Dashlet" dialog window not look weird in IE6.
-		$script = <<<EOJS
-if (YAHOO.env.ua.ie > 5 && YAHOO.env.ua.ie < 7) {
-    document.getElementById('dashletsList').style.width = '430px';
-    document.getElementById('dashletsList').style.overflow = 'hidden';
-}
-EOJS;
-        //BEGIN SUGARCRM flav=pro ONLY
-		if ($this->type != 'Home'){
-			$script .= 'SUGAR.mySugar.populateReportCharts();';
-		}
-		//END SUGARCRM flav=pro ONLY
 
+        $populateCharts = $this->type != 'Home';
 		$json = getJSONobj();
-		echo 'response = ' . $json->encode(array('html' => $html, 'script' => $script));
+		echo $json->encode(array('html' => $html, 'populateCharts' => $populateCharts));
 	}
 
 	//BEGIN SUGARCRM flav=pro ONLY
@@ -323,7 +321,7 @@ EOJS;
 		$html = $sugar_smarty->fetch('include/MySugar/tpls/retrieveReportCharts.tpl');
 		$json = getJSONobj();
 
-		echo 'response = ' . $json->encode(array('html' => $html));
+        echo $json->encode(array('html' => $html));
 	}
 	//END SUGARCRM flav=pro ONLY
 
@@ -413,19 +411,22 @@ EOJS;
 		return $sugar_smarty->fetch('include/MySugar/tpls/chartDashletsSearchResults.tpl');
 	}
 
-	function searchDashlets(){
-		$searchStr = $_REQUEST['search'];
-		$category = $_REQUEST['category'];
+    public function searchDashlets()
+    {
+        $searchStr = $_REQUEST['search'];
+        $category = $this->request->getValidInputRequest('category', array('Assert\Choice' => array('choices' => array('module', 'tools', 'chart'))));
 
 		if ($category == 'module' || $category == 'tools'){
 			$html = $this->searchModuleToolsDashlets($searchStr, $category);
 		}
 		else if ($category == 'chart'){
 			$html = $this->searchChartsDashlets($searchStr);
-		}
+        } else {
+            $html = '';
+        }
 
 		$json = getJSONobj();
-		echo 'response = ' . $json->encode(array('html' => $html, 'script' => ''));
+        echo $json->encode(array('html' => $html, 'script' => ''));
 	}
 
 	function configureDashlet(){
@@ -445,8 +446,8 @@ EOJS;
 		    }
 		    else { // display options
 		        $json = getJSONobj();
-		        return 'result = ' . $json->encode((array('header' => $dashlet->title . ' : ' . $app_strings['LBL_OPTIONS'],
-		                                                 'body'  => $dashlet->displayOptions())));
+		        return $json->encode(array('header' => $dashlet->title . ' : ' . $app_strings['LBL_OPTIONS'],
+		                                                 'body'  => $dashlet->displayOptions()));
 		    }
 		}
 		else {
@@ -491,7 +492,8 @@ EOJS;
 		$pageName = js_escape(filter_input(INPUT_POST, 'pageName', FILTER_SANITIZE_STRIPPED, FILTER_FLAG_ENCODE_AMP));
 
 		$json = getJSONobj();
-		echo 'result = ' . $json->encode(array('pageName' => $pageName, 'numCols' => $numCols));
+		header("Content-Type: application/json");
+		echo $json->encode(array('pageName' => $pageName, 'numCols' => $numCols));
 	}
 	//END SUGARCRM flav=pro ONLY
 
@@ -677,7 +679,7 @@ EOJS;
             $sugarChart->generateChartStrings($chartStringsXML);
 		}
 
-		$selectedPage = $_REQUEST['pageId'];
+        $selectedPage = $this->request->getValidInputRequest('pageId', array('Assert\Type' => array('type' => 'int')));
 
 		$numCols = $pages[$selectedPage]['numColumns'];
 		$trackerScript = '';
@@ -797,7 +799,7 @@ EOJS;
 		$scriptResponse['trackerScript'] = $trackerScript . (strpos($trackerScriptArray,',') ? (substr($trackerScriptArray, 0, strlen($trackerScriptArray)-1) . ']; </script>') : $trackerScriptArray . ']; </script>');
 		$scriptResponse['toggleHeaderToolsetScript'] = "<script>".$toggleHeaderToolsetScript."</script>";
 
-		$scriptOutput = 'var scriptResponse = '.$json->encode($scriptResponse);
+        $scriptOutput = $json->encode($scriptResponse);
 
 		return $json->encode(array('html' => $htmlOutput, 'script' => $scriptOutput));
 	}

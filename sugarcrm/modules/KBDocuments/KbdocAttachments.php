@@ -38,7 +38,7 @@ $upload = new UploadFile($element_name);
 if(!$upload->confirm_upload()) {
     $not_a_file = 1;
 } else {
-    $currGuid .= preg_replace('/[^-a-z0-9_]/i', '_', $_FILES[$element_name]['name']);
+    $currGuid .= md5($_FILES[$element_name]['name']);
     $file_name = "upload://$currGuid";
     if(!$upload->final_move($file_name)) {
         $not_a_file = 1;

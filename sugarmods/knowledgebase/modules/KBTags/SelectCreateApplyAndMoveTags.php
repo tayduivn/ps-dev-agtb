@@ -203,7 +203,8 @@ require_once('modules/KBDocuments/KBDocument.php');
 if (!empty($response)) {	
 	//echo $response;
 	//echo 'result = ' . $json->encode($response);
-	 echo 'result = ' . $json->encode((array('body' => $response)));                                            
+    header("Content-Type: application/json");
+	 echo $json->encode(array('body' => $response));                                            
 }
 sugar_cleanup();
 exit();

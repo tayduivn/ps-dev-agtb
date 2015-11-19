@@ -64,12 +64,12 @@
 </table>
 <input type='hidden' name='schedule_id' value='{$SCHEDULE_ID}'>
 <input type='hidden' name='save_schedule_msi' value='true'>
-<input type='hidden' name='schedule_type' value='{$SCHEDULE_TYPE}'>
-<input type='hidden' name='refreshPage' value='{$REFRESH_PAGE}'>
+<input type='hidden' name='schedule_type' value='{$SCHEDULE_TYPE|escape:'html':'UTF-8'}'>
+<input type='hidden' name='refreshPage' value='{$REFRESH_PAGE|escape:'html':'UTF-8'}'>
 <input type='hidden' name='module' value='Reports'>
 <input type='hidden' name='action' value='add_schedule'>
 <input type='hidden' name='to_pdf' value='true'>
-<input type='hidden' name='id' value='{$RECORD}'>
+<input type='hidden' name='id' value='{$RECORD|escape:'html':'UTF-8'}'>
 
 
 </form>

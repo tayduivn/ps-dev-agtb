@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 require_once ('modules/ModuleBuilder/MB/AjaxCompose.php');
 require_once ('include/MVC/View/SugarView.php');
 require_once ('modules/ModuleBuilder/parsers/ParserFactory.php');
@@ -18,6 +19,7 @@ class ViewProperty extends SugarView
 {
     public function ViewProperty()
     {
+        parent::__construct();
         $this->init();
     }
 
@@ -37,19 +39,22 @@ class ViewProperty extends SugarView
 
     public function init () // pseduo-constuctor - given a well-known name to allow subclasses to call this classes constructor
     {
-        $this->editModule = (! empty($_REQUEST['view_module'])) ? $_REQUEST['view_module'] : null;
-        $this->editPackage = (! empty($_REQUEST['view_package'])) ? $_REQUEST['view_package'] : null;
-        $this->id = (! empty($_REQUEST['id'])) ? $_REQUEST['id'] : null;
-        $this->subpanel = (! empty($_REQUEST['subpanel'])) ? $_REQUEST['subpanel'] : "";
+        $this->editModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+        $this->editPackage = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
+        $this->id = $this->request->getValidInputRequest('id', 'Assert\ComponentName');
+        $this->subpanel = $this->request->getValidInputRequest('subpanel', 'Assert\ComponentName', '');
         $this->properties = array();
         foreach ($_REQUEST as $key=>$value) {
             if (substr($key,0,4) == 'name') {
+                $value = $this->request->getValidInputRequest($key, 'Assert\ComponentName');
                 $this->properties[substr($key,5)]['name'] = $value;
             }
             if (substr($key,0,2) == 'id') {
+                $value = $this->request->getValidInputRequest($key, 'Assert\ComponentName');
                 $this->properties[substr($key,3)]['id'] = $value;
             }
             if (substr($key,0,5) == 'value') {
+                $value = $this->request->getValidInputRequest($key);
                 $this->properties[substr($key,6)]['value'] = $value;
                 // tyoung - now a nasty hack to disable editing of labels which contain Smarty functions - this is envisaged to be a temporary fix to prevent admins modifying these functions then being unable to restore the original complicated value if they regret it
                 if (substr($key,6) == 'label') {
@@ -60,7 +65,7 @@ class ViewProperty extends SugarView
                 }
             }
             if (substr($key,0,5) == 'title') {
-                $this->properties[substr($key,6)]['title'] = $value;
+                $this->properties[substr($key,6)]['title'] = $this->request->getValidInputRequest($key);
             }
         }
      }
@@ -70,17 +75,15 @@ class ViewProperty extends SugarView
         global $mod_strings, $locale;
         $ajax = new AjaxCompose();
         $smarty = new Sugar_Smarty();
-        if (isset($_REQUEST['MB']) && $_REQUEST['MB'] == "1") {
-            $smarty->assign("MB", $_REQUEST['MB']);
-            $smarty->assign("view_package", $_REQUEST['view_package']);
+        if (!empty($_REQUEST['MB'])) {
+            $smarty->assign("MB", '1');
+            $smarty->assign("view_package", $this->editPackage);
         }
 
-        if (!empty($_REQUEST['selected_lang'])) {
-            $selected_lang = $_REQUEST['selected_lang'];
-        } else {
+        $selected_lang = $this->request->getValidInputRequest('selected_lang', 'Assert\Language');
+        if (empty($selected_lang)) {
             $selected_lang = $locale->getAuthenticatedUserLanguage();
         }
-
         if(empty($selected_lang)){
             $selected_lang = $GLOBALS['sugar_config']['default_language'];
         }

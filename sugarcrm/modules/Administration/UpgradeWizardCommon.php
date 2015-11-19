@@ -16,11 +16,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/utils/db_utils.php');
 require_once('include/utils/zip_utils.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 // increase the cuttoff time to 1 hour
 ini_set("max_execution_time", "3600");
-
-if( isset( $_REQUEST['view'] ) && ($_REQUEST['view'] != "") ){
-    $view = $_REQUEST['view'];
+$request = InputValidation::getService();
+$view = $request->getValidInputRequest('view', null, '');
+if ($view !== '') {
     if( $view != "default" && $view != "module" ){
         throw new Exception($mod_strings['ERR_UW_INVALID_VIEW']);
     }

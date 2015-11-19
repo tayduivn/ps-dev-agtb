@@ -42,6 +42,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Custom class has to extend from SugarXHprof
  * If custom class doesn't exist or doesn't extend from SugarXHprof then SugarXHprof be used
  */
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 class SugarXHprof
 {
     /**
@@ -158,14 +160,15 @@ class SugarXHprof
     {
         $action = '';
 
+        $request = InputValidation::getService();
         // index.php
         if (!empty($GLOBALS['app']) && $GLOBALS['app'] instanceof SugarApplication && $GLOBALS['app']->controller instanceof SugarController)
         {
-            if (!empty($_REQUEST['entryPoint']))
-            {
-                if (!empty($GLOBALS['app']->controller->entry_point_registry) && !empty($GLOBALS['app']->controller->entry_point_registry[$_REQUEST['entryPoint']]))
-                {
-                    $action .= '.entryPoint.' . $_REQUEST['entryPoint'];
+            // we validate entry point name against controller registry
+            $entryPoint = $request->getValidInputRequest('entryPoint');
+            if (!empty($entryPoint)) {
+                if (!empty($GLOBALS['app']->controller->entry_point_registry) && !empty($GLOBALS['app']->controller->entry_point_registry[$entryPoint])) {
+                    $action .= ".entryPoint.$entryPoint";
                 }
                 else
                 {
@@ -213,12 +216,10 @@ class SugarXHprof
         elseif (!empty($GLOBALS['service_object']) && $GLOBALS['service_object'] instanceof SugarRestService)
         {
             $action .= '.rest.' . $GLOBALS['service_object']->getRegisteredImplClass();
-            if (!empty($_REQUEST['method']) && method_exists($GLOBALS['service_object']->implementation, $_REQUEST['method']))
-            {
-                $action .= '.' . $_REQUEST['method'];
-            }
-            elseif (empty($_REQUEST['method']))
-            {
+            $method = $request->getValidInputRequest('method');
+            if (!empty($method) && method_exists($GLOBALS['service_object']->implementation, $method)) {
+                $action .= '.' . $method;
+            } elseif (empty($method)) {
                 $action .= '.index';
             }
             else

@@ -1166,10 +1166,10 @@ class ModuleBuilderController extends SugarController
         if (strcmp(strtolower($_FILES ['filename'] ['type']), 'text/css') == 0) {
             mkdir_recursive('custom/portal/custom');
             move_uploaded_file($_FILES ['filename'] ['tmp_name'], 'custom/portal/custom/style.css');
-            $_REQUEST ['label'] = 'LBL_SP_UPLOADED';
+            $this->viewParams['label'] = 'LBL_SP_UPLOADED';
             $GLOBALS ['log']->debug('action_portalstylesave(): saving file ' . $_FILES ['filename'] ['name']);
         } else {
-            $_REQUEST ['label'] = 'ERROR_SP_UPLOADED';
+            $this->viewParams['label'] = 'ERROR_SP_UPLOADED';
             $GLOBALS ['log']->error('action_portalstylesave(): error uploading ' . $_FILES ['filename'] ['tmp_name']);
         }
 

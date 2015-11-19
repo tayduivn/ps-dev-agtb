@@ -269,7 +269,7 @@ function toggleMore(spanId, img_id, module, action, params){
 				}
 				
 		success = function(data) {
-					eval(data.responseText);
+					var result = JSON.parse(data.responseText);
 
 					SUGAR.util.additionalDetailsCache[spanId] = new Array();
 					SUGAR.util.additionalDetailsCache[spanId]['body'] = result['body'];

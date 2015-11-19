@@ -13,6 +13,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
  // $Id: EditView.php 22072 2007-04-20 09:09:25Z clee $
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
+$request = InputValidation::getService();
+
 global $app_list_strings, $app_strings, $mod_strings, $locale;
 
 require_once('modules/Studio/DropDowns/DropDownHelper.php');
@@ -24,7 +28,7 @@ $smarty->assign('MOD', $GLOBALS['mod_strings']);
 $title=getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_RENAME_TABS']), false);
 $smarty->assign('title', $title);
 if (!empty($_REQUEST['dropdown_lang'])) {
-    $selected_lang = $_REQUEST['dropdown_lang'];
+    $selected_lang = $request->getValidInputRequest('dropdown_lang', 'Assert\Language');
 } else {
     $selected_lang = $locale->getAuthenticatedUserLanguage();
 }
@@ -49,7 +53,8 @@ foreach ($modules as $module) {
 }
 $smarty->assign('dropdown_modules',$dropdown_modules);
 if (!empty($_REQUEST['dropdown_module']) && !empty($dropdown_modules[$_REQUEST['dropdown_module']])) {
-    $smarty->assign('dropdown_module',$_REQUEST['dropdown_module']);
+    $moduleName = $request->getValidInputRequest('dropdown_module', 'Assert\Mvc\ModuleName');
+    $smarty->assign('dropdown_module', $moduleName);
     $dropdowns = (!empty($dh->modules[$_REQUEST['dropdown_module']]))?$dh->modules[$_REQUEST['dropdown_module']]: array();
     foreach ($dropdowns as $ok=>$dk) {
         if (!isset($my_list_strings[$dk]) || !is_array($my_list_strings[$dk])) {
@@ -89,7 +94,8 @@ if (!empty($_REQUEST['newDropdown'])) {
     $selected_dropdown = $dh->filterDropDown($_REQUEST['dropdown_name'], $selected_dropdown);
 
     $smarty->assign('dropdown', $selected_dropdown);
-    $smarty->assign('dropdown_name',$_REQUEST['dropdown_name']);
+    $dropdownName =  $request->getValidInputRequest('dropdown_name', 'Assert\ComponentName');
+    $smarty->assign('dropdown_name', $dropdownName);
 }
 
 $smarty->assign('dropdown_languages', get_languages());

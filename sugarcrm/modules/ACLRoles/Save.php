@@ -62,7 +62,7 @@ if(!empty($_REQUEST['name'])){
     //Need to nuke the ACl cache when ACL roles change.
     $role->clearCaches();
 
-    echo "result = {role_id:'$role->id', module:'$flc_module'}";
+    echo json_encode(array('role_id' => $role->id, 'module' => $flc_module));
     sugar_cleanup(true);
 }
 

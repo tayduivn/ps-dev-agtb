@@ -18,9 +18,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-
-
-
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once('include/DetailView/DetailView.php');
 require_once('modules/Campaigns/Charts.php');
@@ -114,8 +112,13 @@ if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
 
     }
     global $current_user;
-    if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){
-    	$smarty->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action=".$_REQUEST['action'] ."&from_module=".$_REQUEST['module'] ."&record=".$_REQUEST['record']. "'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDIT_LAYOUT'])."</a>");
+
+    $request = InputValidation::getService();
+    $request_module = $request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
+    if (is_admin($current_user) && $request_module != 'DynamicLayout' && !empty($_SESSION['editinplace'])) {
+        $request_action = $request->getValidInputRequest('action');
+        $request_record = $request->getValidInputRequest('record', 'Assert\Guid');
+        $smarty->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action=". urlencode($request_action) ."&from_module=". urlencode($request_module) ."&record=". urlencode($request_record) . "'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDIT_LAYOUT'])."</a>");
     }
 
     global $xtpl;

@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
 class Viewpackage extends SugarView
@@ -31,8 +32,16 @@ class Viewpackage extends SugarView
  		global $mod_strings;
  		$smarty = new Sugar_Smarty();
  		$mb = new ModuleBuilder();
- 		//if (!empty($_REQUEST['package'])) {
- 		if (empty($_REQUEST['package']) && empty($_REQUEST['new'])) {
+
+		//Order of priority is original_name > name > package
+		$package = $this->request->getValidInputRequest('package', 'Assert\ComponentName');
+		$name = $this->request->getValidInputRequest('name', 'Assert\ComponentName', $package);
+		//Check if a rename occured and failed. In that case, load from 'original_name' rather than 'name'
+		if (isset($_REQUEST['name']) && isset($_REQUEST['original_name']) && $_REQUEST['name'] == $_REQUEST['original_name']) {
+			$name = $this->request->getValidInputRequest('original_name', 'Assert\ComponentName');
+		}
+
+		if (empty($name) && empty($_REQUEST['new'])) {
  			$this->generatePackageButtons($mb->getPackageList());
 
  			$smarty->assign('buttons', $this->buttons);
@@ -48,8 +57,10 @@ class Viewpackage extends SugarView
  		}
  		else {
  			
- 			$name = (!empty($_REQUEST['package']))?$_REQUEST['package']:'';
-			$mb->getPackage($name);
+ 			if (!$mb->getPackage($name)) {
+				$mb->getPackage($original_name);
+				$name = $original_name;
+			}
 			
             require_once ('modules/ModuleBuilder/MB/MBPackageTree.php') ;
             $mbt = new MBPackageTree();

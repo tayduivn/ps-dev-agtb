@@ -35,7 +35,7 @@ class ViewDisplayProperties extends ViewList
 	public function display()
 	{
     	require_once('include/connectors/utils/ConnectorUtils.php');
-    	$source = $_REQUEST['source_id'];
+    	$source = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName');
         $sources = ConnectorUtils::getConnectors();
         $modules_sources = ConnectorUtils::getDisplayConfig();
 

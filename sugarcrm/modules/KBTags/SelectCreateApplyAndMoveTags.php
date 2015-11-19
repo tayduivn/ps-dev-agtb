@@ -121,7 +121,8 @@ if ($tagsMode == 'Search Tags') {
 if (!empty($response)) {
     //echo $response;
     //echo 'result = ' . $json->encode($response);
-    echo 'result = ' . $json->encode((array('body' => $response)));
+    header("Content-Type: application/json");
+    echo $json->encode(array('body' => $response));
 }
 sugar_cleanup();
 exit();

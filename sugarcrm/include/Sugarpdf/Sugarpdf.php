@@ -15,6 +15,8 @@ SugarAutoLoader::requireWithCustom('include/Sugarpdf/sugarpdf_config.php');
 require_once('vendor/tcpdf/tcpdf.php');
 require_once('include/Sugarpdf/SugarpdfHelper.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 class Sugarpdf extends TCPDF
 {
     /**
@@ -71,7 +73,8 @@ class Sugarpdf extends TCPDF
         $this->bean = $bean;
         $this->sugarpdf_object_map = $sugarpdf_object_map;
         if(!empty($_REQUEST["sugarpdf"])){
-            $this->action = $_REQUEST["sugarpdf"];
+            $request = InputValidation::getService();
+            $this->action = $request->getValidInputRequest('sugarpdf', array('Assert\Regex' => array('pattern' => '/^[a-z0-9_-]+$/i')));
         }
     }
 

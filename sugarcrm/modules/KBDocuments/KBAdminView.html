@@ -297,7 +297,7 @@
 				}
 
 				success = function(data) {
-					eval(data.responseText);
+					var result = JSON.parse(data.responseText);
 
 					document_additionalDetailsCache[spanId] = new Array();
 					document_additionalDetailsCache[spanId]['body'] = result['body'];

@@ -44,6 +44,10 @@ class TemplateRange extends TemplateText
 
         parent::populateFromPost($request);
 		//If we are enabling range search, make sure we add the start and end range fields
+		$request = InputValidation::getService();
+		$viewModule = $request->getValidInputRequest('view_module', 'Assert\Mvc\ModuleName');
+		$name = $request->getValidInputRequest('name', 'Assert\ComponentName');
+
 		if (!empty($this->enable_range_search))
 		{
 			//If range search is enabled, set the options attribute for the dropdown choice selections

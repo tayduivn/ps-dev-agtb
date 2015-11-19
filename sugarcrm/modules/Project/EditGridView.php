@@ -11,6 +11,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 /**
  * EditView for Project
  */
@@ -23,6 +26,8 @@ global $current_user;
 global $hilite_bg;
 global $sugar_version, $sugar_config;
 $focus = BeanFactory::getBean('Project');
+
+$request = InputValidation::getService();
 
 if(!empty($_REQUEST['record']))
 {
@@ -119,14 +124,13 @@ $today = $timedate->nowDbDate();
 $nextWeek = $timedate->asDbDate( $timedate->getNow()->get('+1 week'));
 
 
-
 if (isset($_REQUEST["selected_view"]))
-    $sugar_smarty->assign("SELECTED_VIEW", $_REQUEST["selected_view"]);
+    $sugar_smarty->assign('SELECTED_VIEW', $request->getValidInputRequest('selected_view', array('Assert\Type' => array('type' => 'int'))));
 else
     $sugar_smarty->assign("SELECTED_VIEW", 0);
 
 if (isset($_REQUEST["view_filter_resource"]))
-    $sugar_smarty->assign("VIEW_FILTER_RESOURCE", $_REQUEST["view_filter_resource"]);
+    $sugar_smarty->assign('VIEW_FILTER_RESOURCE', $request->getValidInputRequest('view_filter_resource'));
 
 
 
@@ -182,8 +186,8 @@ elseif (isset($_REQUEST["selected_view"]) && $_REQUEST["selected_view"] == 6) {
         $timedate->to_db_date($_REQUEST['view_filter_date_start'], false) ."' AND '" . $timedate->to_db_date($_REQUEST['view_filter_date_finish'], false).
         "') AND project_task.deleted=0 order by project_task.project_task_id";
     $result = $projectTaskBean->db->query($query, true, "");
-    $sugar_smarty->assign("VIEW_FILTER_DATE_START", $_REQUEST["view_filter_date_start"]);
-    $sugar_smarty->assign("VIEW_FILTER_DATE_FINISH", $_REQUEST["view_filter_date_finish"]);
+    $sugar_smarty->assign('VIEW_FILTER_DATE_START', $request->getValidInputRequest('view_filter_date_start'));
+    $sugar_smarty->assign('VIEW_FILTER_DATE_FINISH', $request->getValidInputRequest('view_filter_date_finish'));
 }
 
 // Overdue Tasks
@@ -299,15 +303,13 @@ if(is_admin($current_user)
 	&& $_REQUEST['module'] != 'DynamicLayout'
 	&& !empty($_SESSION['editinplace']))
 {
-	$record = '';
-	if(!empty($_REQUEST['record']))
-	{
-		$record = 	$_REQUEST['record'];
-	}
+    $record = $request->getValidInputRequest('record', 'Assert\Guid');
+    $action = $request->getValidInputRequest('action', 'Assert\ComponentName');
+    $module = $request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
 
 	$sugar_smarty->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action="
-		.$_REQUEST['action'] ."&from_module=".$_REQUEST['module']
-		."&record=".$record. "'>"
+        . $action . '&from_module=' . $module
+		."&record=" .$record. "'>"
 		.SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>");
 }
 $sugar_smarty->assign("DATE_FORMAT", $current_user->getPreference('datef'));

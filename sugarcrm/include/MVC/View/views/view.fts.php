@@ -77,7 +77,7 @@ class ViewFts extends SugarView
         }
 
         $searchEngine = SugarSearchEngineFactory::getInstance();
-        $queryString = $this->request->getValidInputRequest('q', null, '');
+        $queryString = $this->request->getValidInputRequest('q');
         $trimmed_query = trim($queryString);
         $rs = $searchEngine->search($trimmed_query, $offset, $limit, $options);
         if($rs == null)

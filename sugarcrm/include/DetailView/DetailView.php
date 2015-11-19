@@ -67,7 +67,7 @@ class DetailView extends ListView {
 			$nav_history_array=explode(":",$nav_history);
 			$nav_stamp=$nav_history_array[0];
 			$nav_offset=$nav_history_array[1];
-			eval("\$nav_ids_visited= ".$nav_history_array[2].";");
+			$nav_ids_visited = explode(',', $nav_history_array[2]);
 		}
 
 		//from list				 					offset is there but $bNavHistorySet is false.
@@ -198,7 +198,7 @@ class DetailView extends ListView {
 			unset($nav_ids_visited[key($nav_ids_visited)]);
 		}
 		$nav_ids_visited[$offset]=$object->id;
-		$nav_history=sprintf("%s:%s:%s",$nav_stamp,$nav_offset,var_export($nav_ids_visited,true));
+		$nav_history=sprintf("%s:%s:%s",$nav_stamp,$nav_offset,implode(',', $nav_ids_visited));
         $this->setLocalSessionVariable($html_varName, "DETAIL_NAV_HISTORY",$nav_history);
 
 		return $object;

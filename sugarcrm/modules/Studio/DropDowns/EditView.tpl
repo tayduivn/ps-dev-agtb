@@ -59,7 +59,7 @@
 <input type='hidden' name='wizard' value='EditDropDownWizard'>
 <input type='hidden' name='option' value='EditDropdown'>
 <input type='hidden' name='module' value='Studio'>
-<input type='hidden' name='dropdown_name' value='{$dropdown_name}'>
+<input type='hidden' name='dropdown_name' value='{$dropdown_name|escape:'html':'UTF-8'}'>
 
 {html_options name='dropdown_lang' options=$dropdown_languages selected=$dropdown_lang onchange="document.dropdownsform.submit();"}
 </form>
@@ -74,13 +74,13 @@
 <input type='hidden' name='wizard' value='EditDropDownWizard'>
 <input type='hidden' name='option' value='SaveDropDown'>
 <input type='hidden' name='module' value='Studio'>
-<input type='hidden' name='dropdown_lang' value='{$dropdown_lang}'>
+<input type='hidden' name='dropdown_lang' value='{$dropdown_lang|escape:'html':'UTF-8'}'>
 {if empty($newDropDown)}
 <input type='hidden' name='dropdown_name' value='moduleList'>
 {else}
 <table><tr><td>
 {$MOD.LBL_DROPDOWN_NAME}
-</td><td>{$MOD.COLUMN_TITLE_NAME}<input type='text' name='dropdown_name' value='{$dropdown_name}'>
+</td><td>{$MOD.COLUMN_TITLE_NAME}<input type='text' name='dropdown_name' value='{$dropdown_name|escape:'html':'UTF-8'}'>
 </td></tr><tr><td>
 {$MOD.LBL_DROPDOWN_LANGUAGE}</td><td>{html_options name='dropdown_lang' options=$dropdown_languages selected=$dropdown_lang}
 </td></tr></table>
