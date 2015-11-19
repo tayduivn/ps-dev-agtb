@@ -52,7 +52,6 @@ $sugar_smarty = new Sugar_Smarty();
 $sugar_smarty->assign('MOD', $mod_strings);
 $sugar_smarty->assign('APP', $app_strings);
 $sugar_smarty->assign('name', $focus->name);
-$sugar_smarty->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $sugar_smarty->assign("ID", $focus->id);
 $sugar_smarty->assign("NAME", $focus->name);
 $sugar_smarty->assign("IS_TEMPLATE", $focus->is_template);

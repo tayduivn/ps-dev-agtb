@@ -1672,7 +1672,6 @@ EOQ;
 		$smarty->assign('MOD', $mod_strings);
 		$smarty->assign('APP', $app_strings);
 		$smarty->assign('GRIDLINE', $gridline);
-		$smarty->assign('PRINT_URL', 'index.php?'.$GLOBALS['request_string']);
 		$smarty->assign('ID', $focus->id);
 		$smarty->assign('TYPE', $focus->type);
 		$smarty->assign('PARENT_NAME', $focus->parent_name);

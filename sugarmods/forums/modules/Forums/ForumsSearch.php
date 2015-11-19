@@ -42,7 +42,7 @@ $xtpl=new XTemplate ('modules/Forums/ForumsSearch.html');
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
 $xtpl->assign("THEME", $theme);
-$xtpl->assign("IMAGE_PATH", $image_path); $xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
+$xtpl->assign("IMAGE_PATH", $image_path);
 
 if(isset($_REQUEST['query_string_title'])) $xtpl->assign("QUERY_STRING_TITLE", $_REQUEST['query_string_title']);
 if(isset($_REQUEST['query_string_body'])) $xtpl->assign("QUERY_STRING_BODY", $_REQUEST['query_string_body']);

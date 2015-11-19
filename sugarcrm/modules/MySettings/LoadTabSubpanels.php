@@ -15,6 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Created on Jul 17, 2006
  * Ajax Procedure for loading all subpanels for a certain subpanel tab.
  */
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once('include/DetailView/DetailView.php');
 $detailView = new DetailView();
@@ -23,7 +24,8 @@ $focus = BeanFactory::getBean($_REQUEST['loadModule']);
 $focus->id = $_REQUEST['record'];
 
 require_once('include/SubPanel/SubPanelTiles.php');
-$subpanel = new SubPanelTiles($focus, $_REQUEST['loadModule']);
+$loadModule = InputValidation::getService()->getValidInputRequest('loadModule', 'Assert\Mvc\ModuleName');
+$subpanel = new SubPanelTiles($focus, $loadModule);
 
 if(!function_exists('get_form_header')) {
     global $theme;
