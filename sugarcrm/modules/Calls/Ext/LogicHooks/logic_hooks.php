@@ -17,3 +17,24 @@ $hook_array['before_relationship_update'][] = array(
     'CalendarEventsHookManager',
     'beforeRelationshipUpdate',
 );
+$hook_array['after_save'][] = array(
+    1,
+    'afterCallOrMeetingSave',
+    'sugarcrm/src/Trigger/HookManager.php',
+    '\Sugarcrm\Sugarcrm\Trigger\HookManager',
+    'afterCallOrMeetingSave',
+);
+$hook_array['after_delete'][] = array(
+    1,
+    'afterCallOrMeetingDelete',
+    'sugarcrm/src/Trigger/HookManager.php',
+    '\Sugarcrm\Sugarcrm\Trigger\HookManager',
+    'afterCallOrMeetingDelete',
+);
+$hook_array['after_restore'][] = array(
+    1,
+    'afterCallOrMeetingRestore',
+    'sugarcrm/src/Trigger/HookManager.php',
+    '\Sugarcrm\Sugarcrm\Trigger\HookManager',
+    'afterCallOrMeetingRestore',
+);
