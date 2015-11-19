@@ -154,6 +154,7 @@ $mod_strings = array(
     'LBL_SALES_STAGE' => 'Sales Stage',
     'LBL_SALES_STATUS' => 'Revenue Line Status',
     'LBL_PIPELINE_TOTAL_IS' => 'Pipeline Total is ',
+    'LBL_CONVERT_RLI_TO_QUOTE' => 'Generate Quote from Revenue Line Item',
     'LBL_CONVERT_TO_QUOTE' => 'Generate Quote',
     'LBL_CONVERT_TO_QUOTE_INFO' => 'Please Wait',
     'LBL_CONVERT_TO_QUOTE_INFO_MESSAGE' => 'Generating Quote From Revenue Line Item',

@@ -517,10 +517,13 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                 array(
                     'type' => 'badge',
                     'name' => 'badge',
+                    'event' => 'button:convert_to_quote:click',
                     'readonly' => true,
                     'related_fields' => array(
                         'quote_id',
                     ),
+                    'tooltip' => 'LBL_CONVERT_RLI_TO_QUOTE',
+                    'acl_module' => 'RevenueLineItems',
                 ),
             ),
         ),
