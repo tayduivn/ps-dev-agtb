@@ -49,7 +49,6 @@ $xtpl=new XTemplate ('modules/Holidays/DetailView.html');
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
 $xtpl->assign("GRIDLINE", $gridline);
-$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("ID", $focus->id);
 $xtpl->assign("RETURN_MODULE", "Holidays");
 $xtpl->assign("RETURN_ACTION", "DetailView");

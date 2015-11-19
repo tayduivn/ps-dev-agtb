@@ -25,7 +25,6 @@ class ViewSchedule extends SugarView
         $smarty->assign('STYLESHEET',SugarThemeRegistry::current()->getCSS());
         $smarty->assign("CALENDAR_LANG", substr($GLOBALS['current_language'], 0, 2) ) ;
         $smarty->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());
-        $smarty->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
         $smarty->assign("RECORD", $_REQUEST['id']);
 
         $cache_dir = !empty($GLOBALS['sugar_config']['cache_dir']) ? rtrim($GLOBALS['sugar_config']['cache_dir'], '/\\') : 'cache';
