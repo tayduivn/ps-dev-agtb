@@ -253,6 +253,7 @@ class PMSEProjectImporter extends PMSEImporter
             }
         }
         $processDefinitionBean->id = $keysArray['pro_id'];
+        $processDefinitionBean->pro_status = 'INACTIVE';
         $processDefinitionBean->new_with_id = true;
         $processDefinitionBean->save();
 
