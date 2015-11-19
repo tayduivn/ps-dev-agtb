@@ -61,31 +61,32 @@ class TabController
         // if the value is not already cached, then retrieve it.
         if (empty($system_tabs_result) || !self::$isCacheValid) {
 
-            $administration = Administration::getSettings('MySettings');
-            if (isset($administration->settings) && isset($administration->settings['MySettings_tab'])) {
-                $tabs = $administration->settings['MySettings_tab'];
-                $trimmed_tabs = trim($tabs);
-                //make sure serialized string is not empty
-                if (!empty($trimmed_tabs)) {
-                    // TODO: decode JSON rather than base64
-                    $tabs = base64_decode($tabs);
-                    $tabs = unserialize($tabs);
-                    //Ensure modules saved in the prefences exist.
-                    foreach ($tabs as $id => $tab) {
-                        if (!in_array($tab, $moduleList)) {
-                            unset($tabs[$id]);
-                        }
-                    }
-                    $tabs = $this->get_key_array($tabs);
-                    $system_tabs_result = $tabs;
-                } else {
-                    $system_tabs_result = $this->get_key_array($moduleList);
-                }
-            } else {
-                $system_tabs_result = $this->get_key_array($moduleList);
-            }
-            self::$isCacheValid = true;
-        }
+		$administration = Administration::getSettings('MySettings', true);
+		if(isset($administration->settings) && isset($administration->settings['MySettings_tab'])){
+			$tabs= $administration->settings['MySettings_tab'];
+			$trimmed_tabs = trim($tabs);
+			//make sure serialized string is not empty
+			if (!empty($trimmed_tabs)){
+                // TODO: decode JSON rather than base64
+				$tabs = base64_decode($tabs);
+				$tabs = unserialize($tabs);
+				//Ensure modules saved in the prefences exist.
+				foreach($tabs as $id => $tab) {
+					if (!in_array($tab, $moduleList))
+						unset($tabs[$id]);
+				}
+				$tabs = $this->get_key_array(SugarACL::filterModuleList($tabs, 'access', true));
+				$system_tabs_result = $tabs;
+			}else{
+				$system_tabs_result = $this->get_key_array($moduleList);
+			}
+		}
+		else
+		{
+			$system_tabs_result = $this->get_key_array($moduleList);
+		}
+        self::$isCacheValid = true;
+	}
 
         return $system_tabs_result;
     }
