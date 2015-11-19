@@ -2329,7 +2329,8 @@ AdamActivity.prototype.actionFactory = function (type) {
                 App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
 
                 updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/'+ combo_modules.value;
-                data = updater_field.proxy.getData({call_type:'AC', base_module: PROJECT_MODULE}, {
+                // Call type set to CF to distinguish from Add Related Record
+                data = updater_field.proxy.getData({call_type:'CF', base_module: PROJECT_MODULE}, {
                     success: function(data) {
                         App.alert.dismiss('upload');
                         if (data) {
@@ -2400,7 +2401,8 @@ AdamActivity.prototype.actionFactory = function (type) {
                                 });
                                 updater_field.proxy.uid = PROJECT_MODULE;
                                 updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/' + initialModule;
-                                updater_field.proxy.getData({call_type:'AC', base_module: PROJECT_MODULE}, {
+                                // Call type set to CF to distinguish from Add Related Record
+                                updater_field.proxy.getData({call_type:'CF', base_module: PROJECT_MODULE}, {
                                     success: function(fields) {
                                         if (fields) {
                                             updater_field.setOptions(fields.result, true);
