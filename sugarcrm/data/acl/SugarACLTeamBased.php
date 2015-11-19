@@ -22,6 +22,11 @@
 class SugarACLTeamBased extends SugarACLStrategy
 {
     /**
+     * @var array $cacheAccess Internal cache of team intersection.
+     */
+    public static $cacheAccess = array();
+
+    /**
      * {@inheritDoc}
      */
     public function checkAccess($module, $action, $context)
@@ -164,19 +169,24 @@ class SugarACLTeamBased extends SugarACLStrategy
 
     /**
      * Check if a user presents in bean's selected teams.
+     * Uses static cache.
      * @param User $user
      * @param SugarBean $bean
      * @return bool
      */
     protected function isUserInSelectedTeams($user, $bean)
     {
-        $tbaConfigurator = new TeamBasedACLConfigurator();
-        if (!$tbaConfigurator->implementsTBA($bean->module_dir)) {
+        $cacheAccessKey = $user->id . $bean->id;
+        if (array_key_exists($cacheAccessKey, self::$cacheAccess)) {
+            return self::$cacheAccess[$cacheAccessKey];
+        }
+
+        if (!TeamBasedACLConfigurator::implementsTBA($bean->module_dir)) {
             // Does not implement TBA. Has access.
-            return true;
+            return self::$cacheAccess[$cacheAccessKey] = true;
         }
         $sq = new SugarQuery();
-        $sq->select()->setCountQuery();
+        $sq->select('id');
         $sq->from($bean, array('alias' => 'bean', 'team_security' => false));
         $sq->joinRaw(
             "INNER JOIN team_sets_teams tst ON tst.team_set_id = bean.team_set_selected_id AND tst.deleted = 0"
@@ -186,8 +196,8 @@ class SugarACLTeamBased extends SugarACLStrategy
             "AND tm.user_id = '{$user->id}' AND tm.deleted = 0"
         );
         $sq->where()->equals('id', $bean->id);
-        $result = $sq->execute();
+        $result = (bool)$sq->getOne();
 
-        return (bool)$result[0]['record_count'];
+        return self::$cacheAccess[$cacheAccessKey] = $result;
     }
 }

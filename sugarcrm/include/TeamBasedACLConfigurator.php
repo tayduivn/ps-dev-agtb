@@ -16,9 +16,24 @@ class TeamBasedACLConfigurator
     const CONFIG_KEY = 'team_based_acl';
 
     /**
+     * @var boolean $stateCache TBA availability.
+     */
+    protected static $stateCache;
+
+    /**
+     * @var array $stateCache Module state..
+     */
+    protected static $moduleCache = array();
+
+    /**
+     * @var array $implementationCache Implementation state of modules.
+     */
+    protected static $implementationCache = array();
+
+    /**
      * @var array
      */
-    protected $defaultConfig = array(
+    protected static $defaultConfig = array(
         'enabled' => false,
         'disabled_modules' => array(),
     );
@@ -106,7 +121,7 @@ class TeamBasedACLConfigurator
      */
     public function setForModule($module, $enable)
     {
-        $enabledGlobally = $this->isEnabledForModule($module);
+        $enabledGlobally = self::isEnabledForModule($module);
         if (($enable && $enabledGlobally) || (!$enable && !$enabledGlobally)) {
             return;
         }
@@ -129,6 +144,7 @@ class TeamBasedACLConfigurator
         } else {
             $this->fallbackTBA(array($module));
         }
+        self::$moduleCache[$module] = $enable;
         $this->applyTBA($module);
         $cfg->clearCache();
     }
@@ -148,7 +164,7 @@ class TeamBasedACLConfigurator
         $newList = $actualList;
 
         foreach ($modules as $module) {
-            $enabledGlobally = $this->isEnabledForModule($module);
+            $enabledGlobally = self::isEnabledForModule($module);
             if (($enable && $enabledGlobally) || (!$enable && !$enabledGlobally)) {
                 continue;
             }
@@ -157,6 +173,7 @@ class TeamBasedACLConfigurator
             } else {
                 $newList[] = $module;
             }
+            self::$moduleCache[$module] = $enable;
         }
         if ($newList == $actualList) {
             return;
@@ -181,13 +198,16 @@ class TeamBasedACLConfigurator
      * @param $module
      * @return bool
      */
-    public function isEnabledForModule($module)
+    public static function isEnabledForModule($module)
     {
-        if (!$this->isEnabledGlobally()) {
+        if (!self::isEnabledGlobally()) {
             return false;
         }
-        $config = $this->getConfig();
-        return !in_array($module, $config['disabled_modules']);
+        if (!isset(self::$moduleCache[$module])) {
+            $config = self::getConfig();
+            self::$moduleCache[$module] = !in_array($module, $config['disabled_modules']);
+        }
+        return self::$moduleCache[$module];
     }
 
     /**
@@ -196,7 +216,7 @@ class TeamBasedACLConfigurator
      */
     public function setGlobal($enable)
     {
-        $enabledGlobally = $this->isEnabledGlobally();
+        $enabledGlobally = self::isEnabledGlobally();
         if (($enable && $enabledGlobally) || (!$enable && !$enabledGlobally)) {
             return;
         }
@@ -211,6 +231,7 @@ class TeamBasedACLConfigurator
         } else {
             $this->fallbackTBA($notDisabledModules);
         }
+        self::$stateCache = $enable;
         $this->applyTBA();
         $cfg->clearCache();
     }
@@ -219,10 +240,13 @@ class TeamBasedACLConfigurator
      * Global state of the Team Based ACL.
      * @return boolean
      */
-    public function isEnabledGlobally()
+    public static function isEnabledGlobally()
     {
-        $config = $this->getConfig();
-        return $config['enabled'];
+        if (self::$stateCache === null) {
+            $config = self::getConfig();
+            self::$stateCache = $config['enabled'];
+        }
+        return self::$stateCache;
     }
 
     /**
@@ -430,18 +454,18 @@ class TeamBasedACLConfigurator
      * Return default config.
      * @return array
      */
-    public function getDefaultConfig()
+    public static function getDefaultConfig()
     {
-        return $this->defaultConfig;
+        return self::$defaultConfig;
     }
 
     /**
      * Return config.
      * @return array
      */
-    public function getConfig()
+    public static function getConfig()
     {
-        return SugarConfig::getInstance()->get(self::CONFIG_KEY, $this->getDefaultConfig());
+        return SugarConfig::getInstance()->get(self::CONFIG_KEY, self::getDefaultConfig());
     }
 
     /**
@@ -449,10 +473,13 @@ class TeamBasedACLConfigurator
      * @param string $module Module name.
      * @return bool
      */
-    public function implementsTBA($module)
+    public static function implementsTBA($module)
     {
-        $bean = BeanFactory::getBean($module);
-        return (bool)$bean->getFieldDefinition('team_set_selected_id');
+        if (!isset(self::$implementationCache[$module])) {
+            $bean = BeanFactory::getBean($module);
+            self::$implementationCache[$module] = (bool)$bean->getFieldDefinition('team_set_selected_id');
+        }
+        return self::$implementationCache[$module];
     }
 
     /**

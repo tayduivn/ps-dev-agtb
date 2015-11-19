@@ -18,6 +18,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 
 /**
  * Class TeamBasedACLVisibility
+ * For internal use, should not be used explicitly in vardefs.php.
  * Grant access to users who belong to one of the Selected Teams.
  */
 class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterface
