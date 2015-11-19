@@ -90,7 +90,9 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                 $KBContent->load_relationship('tag_link');
                 foreach ($this->getOldDocTagIDs($row['id']) as $tag) {
                     $tagBean = $this->convertTagToTag(array('id' => $tag));
-                    $KBContent->tag_link->add($tagBean);
+                    if ($tagBean) {
+                        $KBContent->tag_link->add($tagBean);
+                    }
                 }
 
                 foreach ($KBContent->kbarticles_kbcontents->getBeans() as $bean) {
@@ -221,6 +223,9 @@ EOF;
         }
         $tagBean = BeanFactory::getBean('Tags');
         $tagName = trim($tag['tag_name']);
+        if (empty($tagName)) {
+            return null;
+        }
 
         // See if this tag exists already. If it does send back the bean for it
         $q = new SugarQuery();
@@ -369,14 +374,20 @@ EOF;
         if (isset($this->convertedTagsCategories[$tag['id']])) {
             return $this->convertedTagsCategories[$tag['id']];
         }
+        $name = trim($tag['tag_name']);
+        if (empty($name)) {
+            return null;
+        }
         $category = BeanFactory::newBean('Categories');
-        $category->name = $tag['tag_name'];
+        $category->name = $name;
 
         if ($tag['parent_tag_id']) {
             $parentTag = $this->getOldTag($tag['parent_tag_id']);
             $parentCategoryId = $this->convertTagsToCategoriesRecursive($parentTag);
-            $parentCategory = BeanFactory::getBean('Categories', $parentCategoryId, array('use_cache' => false));
-            $parentCategory->append($category);
+            if ($parentCategoryId) {
+                $parentCategory = BeanFactory::getBean('Categories', $parentCategoryId, array('use_cache' => false));
+                $parentCategory->append($category);
+            }
         } else {
             $KBContent = BeanFactory::getBean('KBContents');
             $rootCategory = BeanFactory::getBean(

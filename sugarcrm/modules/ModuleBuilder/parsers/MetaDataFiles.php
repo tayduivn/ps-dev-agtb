@@ -857,16 +857,23 @@ class MetaDataFiles
                         continue;
                     }
                     $meta = !empty($defs['meta']) ? $defs['meta'] : array();
-                    $deps = array_merge(
-                        DependencyManager::getDependenciesForFields($seed->field_defs, ucfirst($view) . "View"),
-                        DependencyManager::getDependenciesForView($meta, ucfirst($view) . "View", $module)
-                        );
+                    $deps = DependencyManager::getDependenciesForView($meta, ucfirst($view) . "View", $module);
                     if (!empty($deps)) {
                         if (!isset($meta['dependencies']) || !is_array($meta['dependencies'])) {
                             $moduleResults[$view]['meta']['dependencies'] = array();
                         }
                         foreach ($deps as $dep) {
                             $moduleResults[$view]['meta']['dependencies'][] = $dep->getDefinition();
+                        }
+                    }
+                }
+            } elseif ($type == 'dependency') {
+                if (!empty($seed) && !empty($seed->field_defs)) {
+                    $modDeps = DependencyManager::getDependenciesForFields($seed->field_defs);
+                    if (!empty($modDeps)) {
+                        $moduleResults['dependencies'] = array();
+                        foreach ($modDeps as $dep) {
+                            $moduleResults['dependencies'][] = $dep->getDefinition();
                         }
                     }
                 }

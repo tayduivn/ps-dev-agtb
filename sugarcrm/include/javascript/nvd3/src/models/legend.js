@@ -226,7 +226,7 @@ nv.models.legend = function() {
         g.style('display', 'inline');
 
         series.select('text').each(function(d, i) {
-          var textWidth = d3.select(this).node().getBBox().width;
+          var textWidth = d3.select(this).node().getBoundingClientRect().width;
           keyWidths.push(Math.max(Math.floor(textWidth), (type === 'line' ? 50 : 20)));
         });
 
@@ -237,7 +237,7 @@ nv.models.legend = function() {
 
       legend.getLineHeight = function() {
         g.style('display', 'inline');
-        var lineHeightBB = Math.floor(series.select('text').node().getBBox().height);
+        var lineHeightBB = Math.floor(series.select('text').node().getBoundingClientRect().height);
         return lineHeightBB;
       };
 
