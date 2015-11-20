@@ -90,7 +90,7 @@ describe("Base.Layout.Togglepanel", function () {
                 }
             }
             layout.options.meta = meta;
-            layout.processToggles();
+            layout.initialize(layout.options);
             expect(layout.toggles).toEqual([
                 {
                     class: 'icon1',

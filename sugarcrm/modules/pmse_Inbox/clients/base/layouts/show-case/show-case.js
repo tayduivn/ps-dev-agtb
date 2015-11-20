@@ -38,7 +38,7 @@
     loadData: function(options, setFields) {
         var self = this,
             sep = '/',
-            pmseInboxUrl = app.api.buildURL(this.options.module + '/case/' + this.inboxId + sep + this.flowId, '', {}, {});
+            pmseInboxUrl = app.api.buildURL(this.module + '/case/' + this.inboxId + sep + this.flowId, '', {}, {});
 
         app.api.call('READ', pmseInboxUrl, {}, {
             success: function (data) {

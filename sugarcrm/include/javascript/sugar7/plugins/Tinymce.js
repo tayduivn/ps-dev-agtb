@@ -32,8 +32,10 @@
              */
             onAttach: function(component) {
                 var self = this;
-                this.fileFieldName = component.options.def.name + '_file';
-                this.$embeddedInput = $('<input />', {name: this.fileFieldName, type: 'file'}).hide();
+                component.on('init', function() {
+                    this.fileFieldName = component.options.def.name + '_file';
+                    this.$embeddedInput = $('<input />', {name: this.fileFieldName, type: 'file'}).hide();
+                }, this);
                 component.on('render', function() {
                     component.$el.append(self.$embeddedInput);
                 }, this);

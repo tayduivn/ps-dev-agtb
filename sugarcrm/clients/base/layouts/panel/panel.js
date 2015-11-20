@@ -19,15 +19,6 @@
      */
     className: 'filtered tabbable tabs-left',
 
-    /**
-     * @inheritdoc
-     */
-    attributes: function() {
-        return {
-            'data-subpanel-link': this.options.context.get('link')
-        };
-    },
-
     // "Hide/Show" state per panel
     HIDE_SHOW_KEY: 'hide-show',
     HIDE_SHOW: {
@@ -134,6 +125,9 @@
             this._super('_render');
         }
 
+        this.$el.attr({
+            'data-subpanel-link': this.options.context.get('link')
+        });
         this.$('.subpanel').toggleClass('closed', collapsed);
     },
 

@@ -29,7 +29,7 @@ describe("Subpanel List View", function() {
             sinonSandbox.stub(view.options.context, "get").returns("Accounts");
             var expected = {a:1};
             var getViewStub = sinonSandbox.stub(app.metadata, 'getView').returns(expected);
-            var actual = view._initializeMetadata();
+            var actual = view._initializeMetadata(view.options);
             expect(actual).toEqual(expected);
             expect(getViewStub).toHaveBeenCalledThrice();
         });

@@ -30,7 +30,7 @@
     initialize: function (opts) {
         this.componentsList = {}; //components that can be toggled
         this.toggles = []; //toggle buttons to display to user
-        this.processToggles();
+        this.processToggles(opts);
         this._super('initialize', [opts]);
     },
 
@@ -109,11 +109,11 @@
     /**
      * Get components from the metadata and declare toggles
      */
-    processToggles: function () {
+    processToggles: function(options) {
         var temp = {};
 
         //Go through components and figure out which toggles we should add
-        _.each(this.options.meta.components, function (component) {
+        _.each(options.meta.components, function (component) {
             var toggle;
             if (component.view) {
                 toggle = component.view;
@@ -121,7 +121,7 @@
                 toggle = (_.isString(component.layout)) ? component.layout : component.layout.type;
             }
 
-            var availableToggle = _.find(this.options.meta.availableToggles, function (curr) {
+            var availableToggle = _.find(options.meta.availableToggles, function (curr) {
                 return curr.name === toggle;
             }, this);
             if (toggle && availableToggle) {
@@ -131,7 +131,7 @@
         }, this);
 
         // Sort the toggles by the order in the availableToggles list
-        _.each(this.options.meta.availableToggles, function(toggle) {
+        _.each(options.meta.availableToggles, function(toggle) {
             if (temp[toggle.name]) {
                 this.toggles.push(temp[toggle.name]);
             }

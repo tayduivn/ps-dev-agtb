@@ -35,8 +35,8 @@
     initialize: function(options) {
         this.toggleComponents = [];
         this.componentsList = {};
-        this.availableToggles = this.options.meta.available_toggles || this.availableToggles;
-        this.defaultToggle = this.options.meta.default_toggle || this.defaultToggle;
+        this.availableToggles = options.meta.available_toggles || this.availableToggles;
+        this.defaultToggle = options.meta.default_toggle || this.defaultToggle;
 
         this._super('initialize', [options]);
     },

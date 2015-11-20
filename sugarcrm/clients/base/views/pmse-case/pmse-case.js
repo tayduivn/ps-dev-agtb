@@ -21,9 +21,9 @@
      */
     initialize: function(options) {
         app.logger.warn('View.Views.Base.PmseCaseView is deprecated and will be removed in 7.10');
-        this.case = this.options.context.get('case');
+        this.case = options.context.get('case');
         this.plugins = _.union(this.plugins || [], ['ProcessActions']);
-        options.meta = _.extend({}, app.metadata.getView(this.options.module, 'record'), options.meta);
+        options.meta = _.extend({}, app.metadata.getView(options.module, 'record'), options.meta);
         options.meta.hashSync = _.isUndefined(options.meta.hashSync) ? true : options.meta.hashSync;
         options.meta.buttons = this.case.buttons;
         this._super('initialize', [options]);
