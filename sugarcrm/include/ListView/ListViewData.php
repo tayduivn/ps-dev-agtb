@@ -127,7 +127,13 @@ class ListViewData {
 	 */
 	function getOffset() {
         // Safe $_REQUEST[$this->var_offset]
-        return $this->request->getValidInputRequest($this->var_offset, array('Assert\Type' => array('type' => 'numeric')), 0);
+        return (isset($_REQUEST[$this->var_offset]) && ($_REQUEST[$this->var_offset] === 'end'))
+            ? $_REQUEST[$this->var_offset]
+            : $this->request->getValidInputRequest(
+                $this->var_offset,
+                array('Assert\Type' => array('type' => 'numeric')),
+                0
+            );
 	}
 
     /**
