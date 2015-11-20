@@ -72,6 +72,7 @@ class GuidValidatorTest extends AbstractConstraintValidatorTest
     {
         return array(
             array('40a30045-2ab7-9c96-766d-563a3bb0d7ef'),
+            array('seed_will_id'),
         );
     }
 
