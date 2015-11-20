@@ -60,12 +60,12 @@ class ViewBackups extends SugarView
         global $mod_strings;
         $errors = array();
         $request = InputValidation::getService();
-        $runReq = $request->getValidInputRequest('run', array('Assert\Type' => array('type' => 'string')), "");
+        $runReq = $request->getValidInputRequest('run');
         // process "run" commands
-        if ($runReq != "") {
+        if ($runReq) {
             $run = $runReq;
-            $backup_dir = $request->getValidInputRequest('backup_dir', array('Assert\Type' => array('type' => 'string')), "");
-            $backup_zip = $request->getValidInputRequest('backup_zip', array('Assert\Type' => array('type' => 'string')), "");
+            $backup_dir = $request->getValidInputRequest('backup_dir');
+            $backup_zip = $request->getValidInputRequest('backup_zip');
 
             if( $run == "confirm" ){
                 if( $backup_dir == "" ){
