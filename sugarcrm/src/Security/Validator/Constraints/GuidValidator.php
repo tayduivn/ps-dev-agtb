@@ -43,7 +43,7 @@ class GuidValidator extends ConstraintValidator
         $value = (string) $value;
 
         // check for allowed characters
-        if (!preg_match('/^[a-z0-9\-]*$/i', $value)) {
+        if (!preg_match('/^[a-z0-9\-_]*$/i', $value)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('%msg%', 'invalid format')
                 ->setInvalidValue($value)
