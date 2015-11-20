@@ -462,66 +462,6 @@ EOQ;
 	}
 
 	/**
-	 * Yahoo Drag & Drop Support
-	 */
-	////<script type="text/javascript" src="modules/Studio/studio.js" ></script>
-	function yahooJS() {
-		$custom_module = $_SESSION['studio']['module'];
-		$custom_type = $this->curType;
-		$v = getVersionedPath('');
-		return<<<EOQ
-		<style type='text/css'>
-		.slot {
-		border-width:1px;border-color:#999999;border-style:solid;padding:0px 1px 0px 1px;margin:2px;cursor:move;
-
-	}
-
-	.slotB {
-	border-width:0;cursor:move;
-
-	}
-	</style>
-
-	<!-- Namespace source file -->
-
-	<script type="text/javascript" src="modules/Studio/JSTransaction.js?v=$v" ></script>
-	<script>
-	var jstransaction = new JSTransaction();
-	</script>
-
-	<!-- Drag and Drop source file -->
-	<script type="text/javascript" src="include/javascript/yui/build/dragdrop/dragdrop.js?v=$v" ></script>
-	<script type="text/javascript" src="modules/Studio/studiodd.js?v=$v" ></script>
-	<script type="text/javascript" src="modules/Studio/studio.js?v=$v" ></script>
-	<script>
-
-	var yahooSlots = [];
-
-	function dragDropInit(){
-
-	YAHOO.util.DDM.mode = YAHOO.util.DDM.POINT;
-
-	for(mj = 0; mj <= $this->yahooSlotCount; mj++){
-	yahooSlots["slot" + mj] = new ygDDSlot("slot" + mj, "studio");
-	}
-	for(mj = 0; mj < dyn_field_count; mj++){
-	yahooSlots["dyn_field_" + mj] = new ygDDSlot("dyn_field_" + mj, "studio");
-	}
-	// initPointMode();
-	yahooSlots['s_field_delete'] =  new YAHOO.util.DDTarget("s_field_delete", 'studio');
-	}
-
-	YAHOO.util.Event.addListener(window, "load", dragDropInit);
-	var custom_module = '$custom_module';
-	var custom_view = '$custom_type';
-
-			</script>
-
-EOQ;
-
-	}
-
-	/**
 	 * delete:-1
 	 * add:2000
 	 * swap: 0 - 1999
