@@ -594,7 +594,7 @@ SUGAR.kb = function() {
             var applyTags = 'Apply Tags';
             fillInTags = function(data) {
                 var result = JSON.parse(data.responseText);
-                if (typeof result == 'undefined' || typeof result['header'] == 'undefined') {
+                if (typeof result == 'undefined') {
                     result = new Array();
                     result['body'] = 'There was an error handling this request.';
                 }
@@ -1107,7 +1107,7 @@ SUGAR.kb = function() {
             var selectCreateTags = 'Select Create Tags';
             fillInTags = function(data) {
                 var result = JSON.parse(data.responseText);
-                if (typeof result == 'undefined' || typeof result['header'] == 'undefined') {
+                if (typeof result == 'undefined') {
                     result = new Array();
                     result['body'] = 'There was an error handling this request.';
                 }
