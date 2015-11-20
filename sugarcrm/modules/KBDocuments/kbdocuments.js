@@ -519,7 +519,7 @@ SUGAR.kb = function() {
             var moveTags = 'Move Tags';
             fillInTags = function(data) {
                 var result = JSON.parse(data.responseText);
-                if (typeof result == 'undefined' || typeof result['header'] == 'undefined') {
+                if (typeof result == 'undefined') {
                     result = new Array();
                     result['body'] = SUGAR.kb.getLocalizedLabels('KBDocuments', 'LBL_THERE_WAS_AN_ERROR_HANDLING_TAGS');
                 }
