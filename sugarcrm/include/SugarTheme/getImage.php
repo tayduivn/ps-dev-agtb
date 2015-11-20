@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$spriteNamespace = basename($_REQUEST['spriteNamespace']);
+$spriteNamespace = isset($_REQUEST['spriteNamespace']) ? basename($_REQUEST['spriteNamespace']) : '';
 $imageName = basename($_REQUEST['imageName']);
 
 // try to use the user's theme if we can figure it out
