@@ -59,7 +59,7 @@ $tdwidth = 10;
 
 $returnModule = $request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
 $returnId = $request->getValidInputRequest('return_id', 'Assert\Guid');
-$returnAction = $request->getValidInputRequest('return_action', 'Assert\ComponentName');
+$returnAction = $request->getValidInputRequest('return_action');
 $returnRecord = $request->getValidInputRequest('return_record', 'Assert\Guid');
 
 if ($returnModule !== null) {

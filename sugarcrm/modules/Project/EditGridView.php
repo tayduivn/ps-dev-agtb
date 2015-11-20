@@ -304,7 +304,7 @@ if(is_admin($current_user)
 	&& !empty($_SESSION['editinplace']))
 {
     $record = $request->getValidInputRequest('record', 'Assert\Guid');
-    $action = $request->getValidInputRequest('action', 'Assert\ComponentName');
+    $action = $request->getValidInputRequest('action');
     $module = $request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
 
 	$sugar_smarty->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action="

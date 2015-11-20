@@ -51,7 +51,7 @@ class EAPMViewEdit extends ViewEdit {
         $returnName = $GLOBALS['current_user']->full_name;
 
         $returnModuleFromRequest = $this->request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
-        $returnActionFromRequest = $this->request->getValidInputRequest('return_action', 'Assert\ComponentName');
+        $returnActionFromRequest = $this->request->getValidInputRequest('return_action');
         $returnNameFromRequest = $this->request->getValidInputRequest('return_name');
         $returnIdFromRequest = $this->request->getValidInputRequest('user_id', 'Assert\Guid');
 
@@ -95,7 +95,7 @@ class EAPMViewEdit extends ViewEdit {
 
  	function display() {
         $returnModuleFromRequest = $this->request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
-        $returnActionFromRequest = $this->request->getValidInputRequest('return_action', 'Assert\ComponentName');
+        $returnActionFromRequest = $this->request->getValidInputRequest('return_action');
         $applicationFromRequest = $this->request->getValidInputRequest('application');
 
         $this->bean->password = empty($this->bean->password) ? '' : EAPM::$passwordPlaceholder;

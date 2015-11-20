@@ -125,11 +125,10 @@ if ($marketing->all_prospect_lists==1) {
 	}
 }
 
-$action = $request->getValidInputRequest('action', 'Assert\ComponentName');
+$action = $request->getValidInputRequest('action');
 
 if($action != 'WizardMarketingSave'){
     $header_URL = "Location: index.php?action=DetailView&module=Campaigns&record={$campaignId}";
     $GLOBALS['log']->debug("about to post header URL of: $header_URL");
     header($header_URL);
 }
-?>
