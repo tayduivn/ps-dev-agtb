@@ -12,6 +12,11 @@ describe('Sugar7 sync alerts', function() {
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
         app = SugarTest.app;
+        app.drawer = {
+            open: $.noop,
+            close: $.noop,
+            reset: $.noop
+        };
         alertStubs.show = sinon.stub(app.alert, 'show');
         alertStubs.dismiss = sinon.stub(app.alert, 'dismiss');
 
@@ -30,6 +35,7 @@ describe('Sugar7 sync alerts', function() {
         context.clear({silent: true});
         SugarTest.testMetadata.dispose();
         SugarTest.app.view.reset();
+        delete app.drawer;
         alertStubs.show.restore();
         alertStubs.dismiss.restore();
 
