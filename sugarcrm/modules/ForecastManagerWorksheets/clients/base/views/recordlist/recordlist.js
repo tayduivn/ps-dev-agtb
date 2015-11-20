@@ -147,7 +147,7 @@
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
         this.plugins = _.without(this.plugins, 'ReorderableColumns', 'MassCollection');
-        this.plugins.push('CteTabbing');
+        this.plugins.push('ClickToEdit');
         this.plugins.push('DirtyCollection');
         this._super("initialize", [options]);
         this.template = app.template.getView('flex-list', this.module);

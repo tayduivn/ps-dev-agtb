@@ -163,7 +163,7 @@
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
         this.plugins = _.without(this.plugins, 'ReorderableColumns', 'MassCollection');
-        this.plugins.push('CteTabbing', 'DirtyCollection');
+        this.plugins.push('ClickToEdit', 'DirtyCollection');
         this._super('initialize', [options]);
         // we need to get the flex-list template from the ForecastWorksheets module so it can use the filteredCollection
         // for display
