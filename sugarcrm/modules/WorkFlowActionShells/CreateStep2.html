@@ -20,8 +20,17 @@ function updateiframe(){
 	var workflow_id = document.getElementById('workflow_id').value;
 	var action_type = document.getElementById('action_type').value;
 	var action_module = document.getElementById('action_module').value;
-	var rel_module = document.getElementById('rel_module').value;		
-	document.getElementById('selectiframe').src = 'index.php?module=WorkFlowActions&action=SelectFields&sugar_body_only=true&action_type=' + action_type + '&rel_module=' + rel_module + '&action_module=' + action_module + '&record=' + record + '&workflow_id=' + workflow_id;	
+	var rel_module = document.getElementById('rel_module').value;
+    document.getElementById("selectiframe").src = "index.php?" + SUGAR.util.paramsToUrl({
+        "module": "WorkFlowActions",
+        "action": "SelectFields",
+        "sugar_body_only": "true",
+        "action_type": action_type,
+        "rel_module": rel_module,
+        "action_module": action_module,
+        "record": record,
+        "workflow_id": workflow_id
+    });
 }	
 
 function togglefield_select(field_num, setting){
