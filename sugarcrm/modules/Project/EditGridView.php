@@ -125,7 +125,7 @@ $nextWeek = $timedate->asDbDate( $timedate->getNow()->get('+1 week'));
 
 
 if (isset($_REQUEST["selected_view"]))
-    $sugar_smarty->assign('SELECTED_VIEW', $request->getValidInputRequest('selected_view', array('Assert\Type' => array('type' => 'int'))));
+    $sugar_smarty->assign('SELECTED_VIEW', $request->getValidInputRequest('selected_view', array('Assert\Type' => array('type' => 'numeric'))));
 else
     $sugar_smarty->assign("SELECTED_VIEW", 0);
 
