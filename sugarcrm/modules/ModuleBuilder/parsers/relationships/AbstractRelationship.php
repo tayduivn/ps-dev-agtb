@@ -11,10 +11,17 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-/*
+/**
  * A mechanism to dynamically define new Relationships between modules
  * This differs from the classes in modules/Relationships and data/Link in that they contain the implementation for pre-defined Relationships
  * Those classes use the metadata in the dictionary and layout definitions to implement the relationships; this class allows you to manage and manipulate that metadata
+ * @property bool $relationship_only
+ * @property string $rhs_module
+ * @property string $lhs_module
+ * @property string $relationship_name
+ * @property string $is_custom
+ * @property bool $from_studio
+ * @property string $relationship_type
  */
 class AbstractRelationship
 {
@@ -208,38 +215,104 @@ class AbstractRelationship
         		if(isset($layout_defs[$this->lhs_module]['subpanel_setup'][strtolower($this->rhs_module)]['title_key'])){
         			$leftSysLabel = $layout_defs[$this->lhs_module]['subpanel_setup'][strtolower($this->rhs_module)]['title_key'];
         		}
-        		$layout_defs = array();
         	}
-        	$labelDefinitions [] = array (
-        		'module' => $this->rhs_module ,
-        		'system_label' => isset($rightSysLabel)?$rightSysLabel : 'LBL_' . strtoupper ( $this->relationship_name . '_FROM_' . $this->getLeftModuleSystemLabel() ) . '_TITLE' ,
-        		'display_label' => ($update && !empty($_REQUEST [ 'lhs_label' ] ))?$_REQUEST [ 'lhs_label' ] :(empty($this->lhs_label) ? translate ( $this->lhs_module ) : $this->lhs_label),
-        	) ;
-            $labelDefinitions [] = array (
-                'module' => $this->lhs_module ,
-                'system_label' => isset($rightSysLabel)?$rightSysLabel : 'LBL_' . strtoupper ( $this->relationship_name . '_FROM_' . $this->getLeftModuleSystemLabel() ) . '_TITLE' ,
-                'display_label' => ($update && !empty($_REQUEST [ 'rhs_label' ] ))?$_REQUEST [ 'rhs_label' ] :(empty($this->rhs_label) ? translate ( $this->rhs_module ) : $this->rhs_label),
-            ) ;
-            $labelDefinitions [] = array (
-            	'module' => $this->lhs_module ,
-            	'system_label' =>  isset($leftSysLabel)?$leftSysLabel :'LBL_' . strtoupper ( $this->relationship_name . '_FROM_' . $this->getRightModuleSystemLabel() ) . '_TITLE' ,
-            	'display_label' => ($update && !empty($_REQUEST [ 'rhs_label' ] ))?$_REQUEST [ 'rhs_label' ] :(empty($this->rhs_label) ? translate ( $this->rhs_module ) : $this->rhs_label),
-            ) ;
 
-            $labelDefinitions[] = array(
-                'module' => $this->rhs_module ,
-                'system_label' => isset($leftSysLabel) ? $leftSysLabel : 'LBL_' . strtoupper($this->relationship_name . '_FROM_' . $this->getRightModuleSystemLabel()) . '_TITLE_ID' ,
-                'display_label' => ($update && !empty($_REQUEST['lhs_label'])) ? $_REQUEST['lhs_label'] . " ID" : (empty($this->lhs_label) ? translate($this->lhs_module . " ID") : $this->lhs_label . " ID"),
-            ) ;
+            $lhs_label = $this->getLHSLabel($update);
+            $lhs_label_id = $this->getLHSLabelId($update);
+            $rhs_label = $this->getRHSLabel($update);
 
-            $labelDefinitions[] = array(
-                'module' => $this->rhs_module ,
-                'system_label' => isset($leftSysLabel) ? $leftSysLabel : 'LBL_' . strtoupper($this->relationship_name . '_FROM_' . $this->getRightModuleSystemLabel()) . '_TITLE' ,
-                'display_label' => ($update && !empty($_REQUEST['lhs_label'])) ? $_REQUEST['lhs_label']  : (empty($this->lhs_label) ? translate($this->lhs_module ) : $this->lhs_label),
-            ) ;
+            if (isset($rightSysLabel)) {
+                $from_left_title_system_label = $rightSysLabel;
+            } else {
+                $from_left_title_system_label = 'LBL_' .
+                    strtoupper($this->relationship_name . '_FROM_' . $this->getLeftModuleSystemLabel()) . '_TITLE';
+            }
+
+            if (isset($leftSysLabel)) {
+                $from_left_title_id_system_label = $leftSysLabel;
+                $from_right_title_system_label = $leftSysLabel;
+            } else {
+                $from_left_title_id_system_label = 'LBL_' .
+                    strtoupper($this->relationship_name . '_FROM_' . $this->getRightModuleSystemLabel()) . '_TITLE_ID';
+                $from_right_title_system_label = 'LBL_' .
+                    strtoupper($this->relationship_name . '_FROM_' . $this->getRightModuleSystemLabel()) . '_TITLE';
+            }
+
+            $labelDefinitions [] = array(
+                'module' => $this->lhs_module,
+                'system_label' => $from_right_title_system_label,
+                'display_label' => $rhs_label,
+            );
+
+            // if all labels are equal we should get the right module name
+            // (it's one-to-many scenario for the same module)
+            if ($from_right_title_system_label != $from_left_title_system_label) {
+                $labelDefinitions [] = array(
+                    'module' => $this->rhs_module,
+                    'system_label' => $from_left_title_system_label,
+                    'display_label' => $lhs_label,
+                );
+            } elseif ($from_right_title_system_label != $from_left_title_id_system_label) {
+                $labelDefinitions[] = array(
+                    'module' => $this->rhs_module ,
+                    'system_label' => $from_left_title_id_system_label,
+                    'display_label' => $lhs_label_id,
+                );
+            }
+
+            // ltr and rtl directions are the same for equal modules
+            if ($this->rhs_module != $this->lhs_module) {
+                $labelDefinitions [] = array(
+                    'module' => $this->lhs_module,
+                    'system_label' => $from_left_title_system_label,
+                    'display_label' => $rhs_label,
+                );
+
+                $labelDefinitions[] = array(
+                    'module' => $this->rhs_module,
+                    'system_label' => $from_right_title_system_label,
+                    'display_label' => $lhs_label,
+                );
+            }
 
         }
         return $labelDefinitions ;
+    }
+
+    protected function getRHSLabel($update)
+    {
+        if ($update && !empty($_REQUEST['rhs_label'])) {
+            $rhs_label = $_REQUEST['rhs_label'];
+        } elseif (empty($this->rhs_label)) {
+            $rhs_label = translate($this->rhs_module);
+        } else {
+            $rhs_label = $this->rhs_label;
+        }
+        return $rhs_label;
+    }
+
+    protected function getLHSLabel($update)
+    {
+        if ($update && !empty($_REQUEST['lhs_label'])) {
+            $lhs_label = $_REQUEST['lhs_label'];
+        } elseif (empty($this->lhs_label)) {
+            $lhs_label = translate($this->lhs_module);
+        } else {
+            $lhs_label = $this->lhs_label;
+        }
+        return $lhs_label;
+    }
+
+    protected function getLHSLabelId($update)
+    {
+        if ($update && !empty($_REQUEST['lhs_label'])) {
+            $lhs_label_id = $_REQUEST['lhs_label'] . ' ID';
+        } elseif (empty($this->lhs_label)) {
+            $lhs_label_id = translate($this->lhs_module . ' ID');
+        } else {
+            $lhs_label_id = $this->lhs_label . ' ID';
+        }
+        return $lhs_label_id;
     }
 
 	function getLeftModuleSystemLabel()
