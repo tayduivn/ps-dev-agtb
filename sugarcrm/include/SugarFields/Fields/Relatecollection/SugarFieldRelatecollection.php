@@ -250,4 +250,14 @@ class SugarFieldRelatecollection extends SugarFieldBase
     {
         return $this->apiSave($bean, $params, $fieldName, $properties);
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * We don't need to add relate collections to listview queries since we will grab those
+     * records later on
+     */
+    public function addFieldToQuery($field, array &$fields)
+    {
+    }
 }
