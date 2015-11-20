@@ -13,6 +13,9 @@ describe('NotificationCenter.View.ConfigHeaderButtons', function() {
 
     beforeEach(function() {
         app = SugarTest.app;
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.set();
+        SugarTest.declareData('base', module, true, false);
         layout = SugarTest.createLayout('base', module, 'config-drawer', null, null, true);
         context = app.context.getContext({model: layout.model});
         SugarTest.loadComponent('base', 'view', 'config-header-buttons');
@@ -21,6 +24,7 @@ describe('NotificationCenter.View.ConfigHeaderButtons', function() {
     });
 
     afterEach(function() {
+        SugarTest.testMetadata.dispose();
         view.dispose();
         view = null;
         sandbox.restore();

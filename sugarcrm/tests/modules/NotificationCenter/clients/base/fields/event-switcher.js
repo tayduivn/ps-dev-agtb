@@ -24,6 +24,8 @@ describe('NotificationCenter.Field.EventSwitcher', function() {
         sandbox = sinon.sandbox.create();
         carriers = {foo: {status: false}};
         config = {emitter1: {event1: {filter1: []}}};
+        SugarTest.testMetadata.init();
+        SugarTest.declareData('base', module, true, false);
         layout = SugarTest.createLayout('base', module, 'config-drawer', null, null, true);
         model = layout.model;
         model.set('configMode', 'global');
@@ -36,7 +38,6 @@ describe('NotificationCenter.Field.EventSwitcher', function() {
             event: 'event1',
             view: 'default'
         };
-        SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate(fieldType, 'field', 'base', 'default', module);
         SugarTest.testMetadata.set();
         field = SugarTest.createField('base', 'dummy', fieldType, 'default', fieldDef, module, model, null, true);
@@ -46,6 +47,7 @@ describe('NotificationCenter.Field.EventSwitcher', function() {
         if (field) {
             field.dispose();
         }
+        SugarTest.testMetadata.dispose();
         Handlebars.templates = {};
         sandbox.restore();
         app.cache.cutAll();

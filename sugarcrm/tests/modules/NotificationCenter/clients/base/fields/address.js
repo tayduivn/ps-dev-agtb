@@ -23,6 +23,8 @@ describe('NotificationCenter.Field.Address', function() {
         app = SugarTest.app;
         sandbox = sinon.sandbox.create();
         carriers = {foo: {status: false}};
+        SugarTest.testMetadata.init();
+        SugarTest.declareData('base', module, true, false);
         layout = SugarTest.createLayout('base', module, 'config-drawer', null, null, true);
         model = layout.model;
         model.set('configMode', 'user');
@@ -35,7 +37,6 @@ describe('NotificationCenter.Field.Address', function() {
             options: options,
             carrier: 'foo'
         };
-        SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate(fieldType, 'field', 'base', 'edit', module);
         SugarTest.testMetadata.set();
         field = SugarTest.createField('base', 'dummy', fieldType, 'edit', fieldDef, module, model, null, true);
@@ -46,6 +47,7 @@ describe('NotificationCenter.Field.Address', function() {
         if (field) {
             field.dispose();
         }
+        SugarTest.testMetadata.dispose();
         Handlebars.templates = {};
         sandbox.restore();
         app.cache.cutAll();

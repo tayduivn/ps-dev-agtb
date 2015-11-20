@@ -14,6 +14,9 @@ describe('NotificationCenter.View.ConfigEmitter', function() {
 
     beforeEach(function() {
         app = SugarTest.app;
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.set();
+        SugarTest.declareData('base', module, true, false);
         layout = SugarTest.createLayout('base', module, 'config-drawer', null, null, true);
         context = app.context.getContext({model: layout.model});
         meta = {
@@ -24,6 +27,7 @@ describe('NotificationCenter.View.ConfigEmitter', function() {
     });
 
     afterEach(function() {
+        SugarTest.testMetadata.dispose();
         view.dispose();
         view = null;
         layout = null;
@@ -230,16 +234,13 @@ describe('NotificationCenter.View.ConfigEmitter', function() {
         });
 
         it('should replace wildcard in popup message to this view\'s label', function() {
-            var calledWithMessage = null;
-            sandbox.stub(app.alert, 'show', function(msg, param) {
-                calledWithMessage = param.messages;
-            });
+            var alertShow = sandbox.stub(app.alert, 'show');
             view.meta.label = 'Bar';
             sandbox.stub(app.lang, 'get', function() {
                 return 'Foo % Baz';
             });
             view.handleResetToDefault();
-            expect(calledWithMessage).toBe('Foo Bar Baz');
+            expect(alertShow.getCall(0).args[1].messages).toBe('Foo Bar Baz');
         });
     });
 });

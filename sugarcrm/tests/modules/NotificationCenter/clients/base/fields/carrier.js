@@ -28,6 +28,8 @@ describe('NotificationCenter.Field.Carrier', function() {
                 isConfigured:false
             }
         };
+        SugarTest.testMetadata.init();
+        SugarTest.declareData('base', module, true, false);
         layout = SugarTest.createLayout('base', module, 'config-drawer', null, null, true);
         model = layout.model;
         model.set('configMode', 'global');
@@ -37,7 +39,6 @@ describe('NotificationCenter.Field.Carrier', function() {
             type: 'carrier',
             view: 'default'
         };
-        SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate(fieldType, 'field', 'base', 'default', module);
         SugarTest.testMetadata.set();
         field = SugarTest.createField('base', fieldName, fieldType, 'default', fieldDef, module, model, null, true);
