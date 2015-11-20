@@ -76,6 +76,9 @@ class ComponentNameValidatorTest extends AbstractConstraintValidatorTest
     {
         return array(
             array('id'),
+            array('known_module'),
+            array('this-is-it'),
+            array('view8'),
         );
     }
 
@@ -104,7 +107,7 @@ class ComponentNameValidatorTest extends AbstractConstraintValidatorTest
             array(
                 'invalid+chars',
                 ComponentName::ERROR_INVALID_COMPONENT_NAME,
-                'must start with a letter and may only consist of letters, numbers, and underscores.',
+                'must start with a letter and may only consist of letters, numbers, hyphens and underscores.',
             ),
             array(
                 'SELECT',
