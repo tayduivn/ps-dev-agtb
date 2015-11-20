@@ -293,7 +293,7 @@
 	<tr>
 		<td  scope="row">{$MOD.UPLOAD_MAX_SIZE}: </td>
 		<td  >
-			<input type='text' size='8' name='upload_maxsize' value='{$config.upload_maxsize}'>
+			<input type='text' size='8' name='upload_maxsize' value='{$config.upload_maxsize}'>&nbsp;{$MOD.UPLOAD_MAXSIZE_UNITS}
 		</td>
 		<td  scope="row">{$MOD.STACK_TRACE_ERRORS}: </td>
 		{if !empty($config.stack_trace_errors)}
