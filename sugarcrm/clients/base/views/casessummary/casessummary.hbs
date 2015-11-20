@@ -27,7 +27,7 @@
             <div class="tab-pane fade" id="tab-{{index}}">
                 <ul class="listed">
                 {{#each models}}
-                    <li><span data-model-id="{{fieldValue this "id"}}" class="favTarget"></span>&nbsp;<a href="#{{buildRoute model=this}}">{{attributes.name}}</a></li>
+                    <li><span data-model-id="{{fieldValue this "id"}}"></span>&nbsp;<a href="#{{buildRoute model=this}}">{{attributes.name}}</a></li>
                 {{/each}}
                 </ul>
             </div>
