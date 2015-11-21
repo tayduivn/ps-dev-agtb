@@ -126,7 +126,9 @@ $mode = $request->getValidInputRequest('mode');
 $version = $request->getValidInputRequest('version');
 $copyCount = $request->getValidInputRequest('copy_count');
 $unzipDir = $request->getValidInputRequest('unzip_dir');
-$installFile = $request->getValidInputRequest('install_file', 'Assert\File');
+
+// $_REQUEST['install_file'] is a hash as per fileToHash/hashToFile
+$installFile = $request->getValidInputRequest('install_file');
 
 // process commands
 if ($mode === null) {
