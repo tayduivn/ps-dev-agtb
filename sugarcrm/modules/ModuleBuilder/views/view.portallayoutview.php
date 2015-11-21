@@ -13,6 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 //FILE SUGARCRM flav=ent ONLY
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once('modules/ModuleBuilder/views/view.layoutview.php');
 require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
