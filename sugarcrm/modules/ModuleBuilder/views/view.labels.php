@@ -39,21 +39,22 @@ class ViewLabels extends ViewModulefields
      //TODO Bundle Studio and ModuleBuilder label handling to increase maintainability.
      function display()
      {
-        global $locale;
+         global $locale;
 
          $editModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
-        $allLabels = (!empty($_REQUEST['labels']) && $_REQUEST['labels']== 'all');
+         $labels = $this->request->getValidInputRequest('labels');
+         $allLabels = ($labels == 'all');
 
          if (!isset($_REQUEST['MB'])) {
-            global $app_list_strings;
-            $moduleNames = array_change_key_case($app_list_strings['moduleList']);
-            $translatedEditModule = $moduleNames[strtolower($editModule)];
-        }
-        $selected_lang = $this->request->getValidInputRequest(
-            'selected_lang',
-            'Assert\Language',
-            $locale->getAuthenticatedUserLanguage()
-        );
+             global $app_list_strings;
+             $moduleNames = array_change_key_case($app_list_strings['moduleList']);
+             $translatedEditModule = $moduleNames[strtolower($editModule)];
+         }
+         $selected_lang = $this->request->getValidInputRequest(
+             'selected_lang',
+             'Assert\Language',
+             $locale->getAuthenticatedUserLanguage()
+         );
 
         $smarty = new Sugar_Smarty();
         global $mod_strings;
