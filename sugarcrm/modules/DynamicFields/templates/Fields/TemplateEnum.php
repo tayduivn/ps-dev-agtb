@@ -25,15 +25,25 @@ class TemplateEnum extends TemplateText{
     var $supports_unified_search = true;
     var $massupdate = 1;
 
-    function __construct ()
+    /**
+     * Ctor
+     */
+    public function __construct()
     {
-    	// ensure that the field dependency information is read in from any _REQUEST
-    	$this->localVardefMap = array (
-    		'trigger' => 'trigger',
-    		'action' => 'action' ,
+        // ensure that the field dependency information is read in from any _REQUEST
+        $this->localVardefMap = array(
+            'trigger' => 'trigger',
+            'action' => 'action' ,
             'visibility_grid' => 'visibility_grid',
-        ) ;
-    	$this->vardef_map = array_merge ( $this->vardef_map , $this->localVardefMap ) ;
+        );
+        $this->vardef_map = array_merge($this->vardef_map, $this->localVardefMap);
+
+        // default_value field is an array of strings
+        $this->vardefMapValidation['default_value'] = array(
+            'Assert\All' => array(
+                'constraints' => array('Assert\Type' => array('type' => 'string')),
+            ),
+        );
     }
 
     public function populateFromPost(Request $request = null)
