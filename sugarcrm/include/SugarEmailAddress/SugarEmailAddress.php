@@ -1160,7 +1160,7 @@ class SugarEmailAddress extends SugarBean
         $invalid = array();
         $mod = isset($focus) ? $focus->module_dir : "";
 
-        $widget_id = $this->request->getValidInputPost($mod . '_email_widget_id', array('Assert\Type' => array('type' => 'int')));
+        $widget_id = $this->request->getValidInputPost($mod . '_email_widget_id', array('Assert\Type' => array('type' => 'numeric')));
         $this->smarty->assign('email_widget_id', $widget_id);
         $this->smarty->assign('emailAddressWidget', $this->request->getValidInputPost('emailAddressWidget'));
 

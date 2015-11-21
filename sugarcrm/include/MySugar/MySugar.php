@@ -679,7 +679,7 @@ class MySugar{
             $sugarChart->generateChartStrings($chartStringsXML);
 		}
 
-        $selectedPage = $this->request->getValidInputRequest('pageId', array('Assert\Type' => array('type' => 'int')));
+        $selectedPage = $this->request->getValidInputRequest('pageId', array('Assert\Type' => array('type' => 'numeric')));
 
 		$numCols = $pages[$selectedPage]['numColumns'];
 		$trackerScript = '';
