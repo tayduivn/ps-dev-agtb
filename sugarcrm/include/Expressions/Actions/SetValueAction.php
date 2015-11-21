@@ -48,7 +48,7 @@ class SetValueAction extends AbstractAction
     public function __construct($params)
     {
         $this->targetField = $params['target'];
-        $this->expression = str_replace('\n', '', $params['value']);
+        $this->expression = str_replace("\n", '', $params['value']);
         $this->errorValue = array_key_exists('errorValue', $params) ? $params['errorValue'] : null;
     }
 
@@ -119,7 +119,7 @@ JS;
      */
     public function getJavascriptFire()
     {
-        return 'new SUGAR.forms.SetValueAction("{$this->targetField}","' . addslashes($this->expression) . '")';
+        return "new SUGAR.forms.SetValueAction('{$this->targetField}','" . addslashes($this->expression) . "')";
     }
 
     /**
@@ -134,7 +134,7 @@ JS;
             $result = Parser::evaluate($this->expression, $target)->evaluate();
         } catch (Exception $e) {
             $GLOBALS['log']->fatal(
-                'Exception evaluating expression in SetValueAction, {$this->expression} : {$e->getMessage()}\n{$e->getTraceAsString()}'
+                "Exception evaluating expression in SetValueAction, {$this->expression} : {$e->getMessage()}\n{$e->getTraceAsString()}"
             );
             $result = '';
         }
