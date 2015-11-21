@@ -60,6 +60,16 @@ class SugarFieldTeamset extends SugarFieldBase {
      */
     protected $request;
 
+	/**
+	 * SugarFieldTeamset constructor.
+	 * @param $type
+	 */
+	public function __construct($type)
+	{
+		$this->request = InputValidation::getService();
+		return parent::__construct($type);
+	}
+
 	/*
 	 * render
 	 *
@@ -78,7 +88,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 
 
     function initialize() {
-        $this->request = InputValidation::getService();
+
         $this->fields = $this->smarty->get_template_vars('fields');
     	$team_name_vardef = $this->fields["{$this->field_name}"];
 		require_once('include/SugarFields/Fields/Teamset/ViewSugarFieldTeamsetCollection.php');
