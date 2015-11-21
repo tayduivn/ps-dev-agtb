@@ -4,10 +4,10 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
 $minifyUtils = null;
 
 //assumes jsmin.php is in same directory
-if(isset($_REQUEST['root_directory'])){
-    require_once('jssource/minify_utils.php');
-}else{
-    require_once('minify_utils.php');
+if (isset($_REQUEST['root_directory'])) {
+    require_once 'jssource/minify_utils.php';
+} else {
+    require_once 'minify_utils.php';
 }
 
 //if we are coming from browser
@@ -25,12 +25,10 @@ if(isset($_REQUEST['root_directory'])){
         if (!$forceReb && $_REQUEST['js_rebuild_concat'] == 'rebuild') {
             //rebuild if files have changed
             $js_groupings = array();
-            if(isset($_REQUEST['root_directory'])){
-                require('jssource/JSGroupings.php');
-                require_once('jssource/minify_utils.php');
-            }else{
-                require('JSGroupings.php');
-                require_once('minify_utils.php');
+            if (isset($_REQUEST['root_directory'])) {
+                require 'jssource/JSGroupings.php';
+            } else {
+                require 'JSGroupings.php';
             }
 
             //iterate through array of grouped files
@@ -68,7 +66,7 @@ if(isset($_REQUEST['root_directory'])){
 
         }
         //if boolean has been set, concatenate files
-        if($forceReb){
+        if ($forceReb) {
             $minifyUtils = new SugarMinifyUtils();
             $minifyUtils->ConcatenateFiles("$from");
         }
@@ -178,4 +176,3 @@ if(isset($_REQUEST['root_directory'])){
         unlink($fileMap);
 }
 
-?>
