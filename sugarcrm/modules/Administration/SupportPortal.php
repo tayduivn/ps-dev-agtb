@@ -50,7 +50,7 @@ switch ($view) {
 		$send_edition = $request->getValidInputRequest('edition', null, '');
 		$send_lang = $request->getValidInputRequest('lang', 'Assert\Language', '');
 		$send_module = $request->getValidInputRequest('help_module', 'Assert\Mvc\ModuleName', '');
-		$send_action = $request->getValidInputRequest('help_action', 'Assert\ComponentName', '');
+        $send_action = $request->getValidInputRequest('help_action', null, '');
 		$send_key = $request->getValidInputRequest('key', null, '');
 		$send_anchor = '';
 		// awu: Fixes the ProjectTasks pluralization issue -- must fix in later versions.
