@@ -180,8 +180,8 @@ class ModuleBuilderViewWizard extends SugarView
             sugar_die ( "no ModuleBuilder package set" ) ;
         }
 
-        $this->editModule = $_REQUEST [ 'view_module' ] ;
-        $this->package = $_REQUEST [ 'view_package' ] ;
+        $this->editModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+        $this->package = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
 
         $ajax->addCrumb ( translate ( 'LBL_MODULEBUILDER', 'ModuleBuilder' ), 'ModuleBuilder.main("mb")' ) ;
         $ajax->addCrumb ( $this->package, 'ModuleBuilder.getContent("module=ModuleBuilder&action=package&view_package=' . $this->package . '")' ) ;

@@ -61,11 +61,11 @@ class ComponentNameValidator extends ConstraintValidator
         $value = (string) $value;
 
         // check for invalid characters
-        if (!preg_match('/^[a-z][a-z0-9_]*$/i', $value)) {
+        if (!preg_match('/^[a-z][a-z0-9_\-]*$/i', $value)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter(
                     '%msg%',
-                    'must start with a letter and may only consist of letters, numbers, and underscores.'
+                    'must start with a letter and may only consist of letters, numbers, hyphens and underscores.'
                 )
                 ->setInvalidValue($value)
                 ->setCode(ComponentName::ERROR_INVALID_COMPONENT_NAME)

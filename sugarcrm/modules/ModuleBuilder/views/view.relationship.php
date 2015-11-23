@@ -73,7 +73,7 @@ class ViewRelationship extends SugarView
             $mb = new ModuleBuilder();
             $mb->getPackages();
             //display the latest module name rather than what is in or not in the loaded app_list_strings.
-            $mb->getPackage($_REQUEST['view_package'])->loadModuleTitles();
+            $mb->getPackage($viewPackage)->loadModuleTitles();
             $module = $mb->getPackageModule($viewPackage, $viewModule);
             $moduleName = empty($module->key_name) ? $module->getModuleName() : $module->key_name;
             $this->smarty->assign('view_package', $viewPackage);

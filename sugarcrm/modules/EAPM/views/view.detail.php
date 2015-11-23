@@ -36,7 +36,7 @@ class EAPMViewDetail extends ViewDetail {
         $returnName = $GLOBALS['current_user']->full_name;
 
         $returnModuleFromRequest = $this->request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
-        $returnActionFromRequest = $this->request->getValidInputRequest('return_action', 'Assert\ComponentName');
+        $returnActionFromRequest = $this->request->getValidInputRequest('return_action');
         $returnNameFromRequest = $this->request->getValidInputRequest('return_name');
         $returnIdFromRequest = $this->request->getValidInputRequest('user_id', 'Assert\Guid');
 

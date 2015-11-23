@@ -105,11 +105,20 @@ class TemplateField{
 	);
 
     /**
-     * Optional custom validation for fields
+     * Optional custom validation for fields being used by
+     * `TemplateField::populateFromPost`. By default no explicit constraint is
+     * used which implies scalar values for every post field. Every template
+     * can attach their own validators for fields which require more specific
+     * validation or where the default validation does not apply.
+     *
      * @var array
      */
     protected $vardefMapValidation = array(
-        'full_text_search' => array('Assert\Type' => array('type' => 'array'))
+        'full_text_search' => array(
+            'Assert\All' => array(
+                'constraints' => array('Assert\Type' => array('type' => 'string')),
+            ),
+        ),
     );
 
     // Bug #48826

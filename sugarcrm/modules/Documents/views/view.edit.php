@@ -32,7 +32,7 @@ class DocumentsViewEdit extends ViewEdit
 
 		$loadSignedId = $this->request->getValidInputRequest('load_signed_id');
 		$record = $this->request->getValidInputRequest('record', 'Assert\Guid');
-		$action = $this->request->getValidInputRequest('action', 'Assert\ComponentName');
+        $action = $this->request->getValidInputRequest('action');
 		$selectedRevisionId = $this->request->getValidInputRequest('selected_revision_id', 'Assert\Guid');
 
 		$load_signed=false;

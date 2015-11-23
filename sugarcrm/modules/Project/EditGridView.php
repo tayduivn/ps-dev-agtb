@@ -125,7 +125,7 @@ $nextWeek = $timedate->asDbDate( $timedate->getNow()->get('+1 week'));
 
 
 if (isset($_REQUEST["selected_view"]))
-    $sugar_smarty->assign('SELECTED_VIEW', $request->getValidInputRequest('selected_view', array('Assert\Type' => array('type' => 'int'))));
+    $sugar_smarty->assign('SELECTED_VIEW', $request->getValidInputRequest('selected_view', array('Assert\Type' => array('type' => 'numeric'))));
 else
     $sugar_smarty->assign("SELECTED_VIEW", 0);
 
@@ -304,7 +304,7 @@ if(is_admin($current_user)
 	&& !empty($_SESSION['editinplace']))
 {
     $record = $request->getValidInputRequest('record', 'Assert\Guid');
-    $action = $request->getValidInputRequest('action', 'Assert\ComponentName');
+    $action = $request->getValidInputRequest('action');
     $module = $request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
 
 	$sugar_smarty->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action="

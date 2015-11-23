@@ -71,7 +71,7 @@ $sugar_smarty->assign('ROLE', $role->toArray());
 $tdwidth = 10;
 
 $returnModule = $request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
-$returnAction = $request->getValidInputRequest('return_action', 'Assert\ComponentName');
+$returnAction = $request->getValidInputRequest('return_action');
 $returnRecord = $request->getValidInputRequest('return_record', 'Assert\Guid');
 if ($returnModule !== null) {
 	$return['module'] = $returnModule;
