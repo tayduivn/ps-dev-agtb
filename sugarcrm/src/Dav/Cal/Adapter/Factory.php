@@ -21,7 +21,7 @@ class Factory
     /**
      * returns adapter for specified module
      * @param string $moduleName
-     * @return mixed
+     * @return bool|AdapterInterface
      */
     public function getAdapter($moduleName)
     {

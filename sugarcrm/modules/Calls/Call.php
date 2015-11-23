@@ -11,6 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once("modules/Calendar/CalendarUtils.php");
+
 class Call extends SugarBean {
 	var $field_name_map;
 	// Stored fields
@@ -134,6 +136,7 @@ class Call extends SugarBean {
         global $timedate, $current_user;
 
 		$isUpdate = $this->isUpdate();
+        $invitesBefore = CalendarUtils::getInvites($this);
 
         if (isset($this->date_start)) {
             $td = $timedate->fromDb($this->date_start);
@@ -195,6 +198,13 @@ class Call extends SugarBean {
         if ($this->assigned_user_id == $GLOBALS['current_user']->id && !$isUpdate) {
             $this->set_accept_status($GLOBALS['current_user'], 'accept');
         }
+
+        $this->getCalDavHandler()->export(
+            $this,
+            $this->dataChanges,
+            $invitesBefore,
+            CalendarUtils::getInvites($this)
+        );
 
         return $return_id;
 	}
@@ -661,12 +671,55 @@ class Call extends SugarBean {
         return '';
     }
 
+    /**
+     * @inheritdoc
+     */
     public function mark_deleted($id)
     {
-        require_once("modules/Calendar/CalendarUtils.php");
+        if ($this->id != $id) {
+            if ($id) {
+                BeanFactory::getBean($this->module_name, $id)->mark_deleted($id);
+            }
+            return;
+        }
         CalendarUtils::correctRecurrences($this, $id);
-
+        $deletedStatus = $this->deleted;
         parent::mark_deleted($id);
+        if ($deletedStatus != $this->deleted) {
+            $dataChanges = array(
+                'deleted' => array(
+                    'after' => $this->deleted,
+                    'before' => $deletedStatus
+                ),
+            );
+            $this->getCalDavHandler()->export($this, $dataChanges);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function mark_undeleted($id)
+    {
+        if ($this->id != $id) {
+            if ($id) {
+                BeanFactory::getBean($this->module_name, $id)->mark_undeleted($id);
+            }
+            return;
+        }
+
+        $deletedStatus = $this->deleted;
+        parent::mark_undeleted($id);
+
+        if ($deletedStatus != $this->deleted) {
+            $dataChanges = array(
+                'deleted' => array(
+                    'after' => $this->deleted,
+                    'before' => $deletedStatus
+                ),
+            );
+            $this->getCalDavHandler()->export($this, $dataChanges);
+        }
     }
 
     /**
@@ -873,4 +926,12 @@ class Call extends SugarBean {
 	{
 		$this->fill_additional_column_fields = $fill_additional_column_fields;
 	}
+
+    /**
+     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler
+     */
+    public function getCalDavHandler()
+    {
+        return new \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler();
+    }
 }

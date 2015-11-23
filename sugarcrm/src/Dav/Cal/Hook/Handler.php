@@ -14,7 +14,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Hook;
 
 use \Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
 use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
-use \Sugarcrm\Sugarcrm\Dav\Cal\Handler as CalHandler;
+
 
 /**
  *
@@ -24,62 +24,40 @@ use \Sugarcrm\Sugarcrm\Dav\Cal\Handler as CalHandler;
 class Handler
 {
     /**
-     * To be used from logic hooks to index a bean.
-     *
-     * @param \SugarBean $bean
-     * @param string $event Triggered event
-     * @param array $arguments Optional arguments
-     * @return void
+     * @param \CalDavEvent $bean
+     * @param $changedFields
+     * @param $invites
      */
-    public function run($bean, $event, $arguments)
+    public function import(\CalDavEvent $bean, $changedFields, $invites)
     {
-        $adapter = $this->getAdapterFactory();
-        $manager = $this->getManager();
-        if ($bean instanceof \CalDavEvent) {
 
-            if (empty($bean->calendardata)) {
-                return;
-            }
-
-            if ($bean->parent_type != $bean->module_name) {
-                $fetchedRow = $this->getBeanFetchedRow($bean);
-                $bean->clearVCalendarEvent();
-                $saveCounter = $bean->getSynchronizationObject()->setSaveCounter();
-                $manager->calDavImport($fetchedRow, $bean->module_name, $saveCounter);
-            }
-        } elseif ($bean instanceof \SugarBean && $adapter->getAdapter($bean->module_name)) {
-            if (!$bean->repeat_parent_id || !empty($arguments['isUpdate'])) {
-                $fetchedRow = $this->getBeanFetchedRow($bean);
-
-                $calHandler = $this->getHandler();
-                $caldavBean = $calHandler->getDavBean($bean);
-                $saveCounter = $caldavBean->getSynchronizationObject()->setSaveCounter();
-                $manager->calDavExport($fetchedRow, $bean->module_name, $saveCounter);
-            }
-        }
     }
 
     /**
-     * Get CalDav handler
-     * @return CalHandler
-     */
-    protected function getHandler()
-    {
-        return new CalHandler();
-    }
-
-    /**
-     * Retrieve bean fetched row
      * @param \SugarBean $bean
-     * @return array
+     * @param array $changedFields
+     * @param array $invitesBefore
+     * @param array $invitesAfter
+     * @param bool|false $forceInsert
      */
-    protected function getBeanFetchedRow(\SugarBean $bean)
-    {
-        if (!$bean->fetched_row) {
-            $bean->retrieve($bean->id);
+    public function export(
+        \SugarBean $bean,
+        $changedFields = array(),
+        $invitesBefore = array(),
+        $invitesAfter = array(),
+        $forceInsert = false
+    ) {
+        $adapter = $this->getAdapterFactory()->getAdapter($bean->module_name);
+        if ($adapter) {
+            $preparedData = $adapter->prepareForExport(
+                $bean,
+                $changedFields,
+                $invitesBefore,
+                $invitesAfter,
+                $forceInsert
+            );
+            $this->getManager()->calDavExport($preparedData);
         }
-
-        return $bean->fetched_row;
     }
 
     /**
@@ -97,15 +75,5 @@ class Handler
     protected function getAdapterFactory()
     {
         return CalDavAdapterFactory::getInstance();
-    }
-
-
-    /**
-     * @param \SugarBean $bean
-     * @return null|\SugarBean
-     */
-    protected function getParentBean($bean)
-    {
-        return \BeanFactory::getBean($bean->module_name, $bean->repeat_parent_id);
     }
 }

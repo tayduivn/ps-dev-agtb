@@ -260,6 +260,35 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->saveBean($calDavBean);
     }
 
+    public function testImportCountRepeating()
+    {
+        global $app_list_strings;
+        $vCalendarEventText = $this->getEventTemplate('recurring_count');
+        /**@var CalDavEvent $calDavBean */
+        $calDavBean = SugarTestCalDavUtilities::createEvent(array('calendardata' => $vCalendarEventText));
+        $calDavBean->parent_type = 'Meetings';
+
+        /**@var \Meeting $bean */
+        $meetingBean = $calDavBean->getBean();
+        if (!$meetingBean->parent_type) {
+            $meetingBean->parent_type = $app_list_strings['record_type_default_key'];
+        }
+
+        $meetingAdapter = new MeetingAdapater();
+        $result = $meetingAdapter->import($meetingBean, $calDavBean);
+        if ($result) {
+            $this->saveBean($meetingBean);
+        }
+        $meetingBean = \BeanFactory::getBean($meetingBean->module_name, $meetingBean->id, array('cache' => false));
+        $this->assertEquals(3, $meetingBean->repeat_dow);
+        $childBean = $this->getBeanChilds($meetingBean);
+        $this->assertCount(4, $childBean);
+        foreach ($childBean as $singleBean) {
+            $this->assertEquals(3, $singleBean->repeat_dow);
+            $this->assertNotEmpty($singleBean->parent_type);
+        }
+    }
+
     /**
      * Load template for event
      * @param string $templateName
@@ -323,5 +352,17 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $bean->processed = true;
         return $bean->save();
+    }
+
+    /**
+     * @param $bean
+     * @return mixed
+     */
+    protected function getBeanChilds($bean)
+    {
+        $calendarEvents = new CalendarEvents();
+        $childQuery = $calendarEvents->getChildrenQuery($bean);
+        $childEvents = $bean->fetchFromQuery($childQuery);
+        return $childEvents;
     }
 }

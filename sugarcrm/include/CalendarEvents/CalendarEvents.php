@@ -324,7 +324,7 @@ class CalendarEvents
         $options = array()
     ) {
         $changeWasMade = false;
-
+        $invitesBefore = CalendarUtils::getInvites($event);
         if (in_array($event->status, array('Held', 'Not Held'))) {
             $GLOBALS['log']->debug(
                 sprintf(
@@ -387,7 +387,9 @@ class CalendarEvents
         }
 
         if ($changeWasMade) {
-            $this->runCalDavUpdate($event);
+            $invitesAfter = CalendarUtils::getInvites($event);
+            $caldavHandler = new CalDavHandler();
+            $caldavHandler->export($event, array(), $invitesBefore, $invitesAfter);
             if ($invitee instanceof User) {
                 $GLOBALS['log']->debug(sprintf('Update vCal cache for %s/%s', $invitee->module_name, $invitee->id));
                 vCal::cache_sugar_vcal($invitee);
@@ -396,16 +398,6 @@ class CalendarEvents
 
 
         return $changeWasMade;
-    }
-
-    /**
-     * Run caldav handler to process participants update
-     * @param SugarBean $event
-     */
-    protected function runCalDavUpdate(\SugarBean $event)
-    {
-        $caldavHandler = new CalDavHandler();
-        $caldavHandler->run($event, 'update_accept_status', array());
     }
 
     /**
@@ -426,6 +418,7 @@ class CalendarEvents
         $query->select(array('id'));
         $query->from($parent);
         $query->where()->equals('repeat_parent_id', $parent->id);
+        $query->orderBy('date_start', 'ASC');
         return $query;
     }
 

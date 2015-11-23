@@ -11,6 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once("modules/Calendar/CalendarUtils.php");
+
 class Meeting extends SugarBean {
 	// Stored fields
 	var $id;
@@ -140,6 +142,8 @@ class Meeting extends SugarBean {
 
 		$isUpdate = $this->isUpdate();
 
+        $invitesBefore = CalendarUtils::getInvites($this);
+
         if (isset($this->date_start)) {
             $td = $timedate->fromDb($this->date_start);
             if (!$td) {
@@ -246,24 +250,76 @@ class Meeting extends SugarBean {
             $this->set_accept_status($GLOBALS['current_user'], 'accept');
         }
 
+        $this->getCalDavHandler()->export(
+            $this,
+            $this->dataChanges,
+            $invitesBefore,
+            CalendarUtils::getInvites($this)
+        );
 		return $return_id;
-
 	}
+
+    /**
+     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler
+     */
+    public function getCalDavHandler()
+    {
+        return new \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler();
+    }
 
 	// this is for calendar
 	function mark_deleted($id) {
-
-		require_once("modules/Calendar/CalendarUtils.php");
+        if ($this->id != $id) {
+            if ($id) {
+                BeanFactory::getBean($this->module_name, $id)->mark_deleted($id);
+            }
+            return;
+        }
 		CalendarUtils::correctRecurrences($this, $id);
 
 		global $current_user;
-
+        $deletedStatus = $this->deleted;
 		parent::mark_deleted($id);
+        if ($deletedStatus != $this->deleted) {
+            $dataChanges = array(
+                'deleted' => array(
+                    'after' => $this->deleted,
+                    'before' => $deletedStatus
+                ),
+            );
+            $this->getCalDavHandler()->export($this, $dataChanges);
+        }
 
 		if($this->update_vcal) {
 			vCal::cache_sugar_vcal($current_user);
 		}
-	}
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function mark_undeleted($id)
+    {
+        if ($this->id != $id) {
+            if ($id) {
+                BeanFactory::getBean($this->module_name, $id)->mark_undeleted($id);
+            }
+            return;
+        }
+
+        $deletedStatus = $this->deleted;
+        parent::mark_undeleted($id);
+
+        if ($deletedStatus != $this->deleted) {
+            $dataChanges = array(
+                'deleted' => array(
+                    'after' => $this->deleted,
+                    'before' => $deletedStatus
+                ),
+            );
+            $this->getCalDavHandler()->export($this, $dataChanges);
+        }
+    }
 
 	function get_summary_text() {
 		return "$this->name";
