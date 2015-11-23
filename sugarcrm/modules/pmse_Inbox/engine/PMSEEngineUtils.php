@@ -42,17 +42,24 @@ class PMSEEngineUtils
             'password',
             'is_admin',
         ),
+        // Business Rules
         'BR' => array(
             'duration_hours',
             'kbdocument_body',
             'duration_minutes',
             'repeat_type',
-            'viewcount'
+            'viewcount',
+            'created_by',
+            'modified_user_id',
+            'date_entered',
+            'date_modified',
         ),
+        // Add related record Activity item in Process Definitions
         'AC' => array(
             'kbdocument_body',
             'viewcount',
         ),
+        // Process Definitions
         'PD' => array(
             'kbdocument_body',
             'viewcount',
@@ -60,6 +67,16 @@ class PMSEEngineUtils
         'GT' => array(
             'kbdocument_body',
             'viewcount',
+        ),
+        // Change field action... this used to be the same as Add Related Record
+        // but we needed different things from this
+        'CF' => array(
+            'kbdocument_body',
+            'viewcount',
+            'created_by',
+            'modified_user_id',
+            'date_entered',
+            'date_modified',
         ),
     );
 
@@ -1064,8 +1081,17 @@ class PMSEEngineUtils
         return $current_user->isAdmin() || $current_user->isAdminForModule('Users');
     }
 
+    /**
+     * Determines the validity of a field used in a process definition, business
+     * rule, action element, etc.
+     * @param array $def The field def
+     * @param string $type The action type
+     * @return boolean
+     */
     public static function isValidField($def, $type = '')
     {
+        // First things first... if we are explicitly directed to do something
+        // based on the vardefs, do that thing first
         if (isset($def['processes'])) {
             // If a field is explicitly marked for processes, handle it
             if (is_bool($def['processes'])) {
@@ -1088,27 +1114,37 @@ class PMSEEngineUtils
             }
         }
 
-        $result = self::isValidStudioField($def);
-        if (isset($def['source']) && $def['source'] == 'non-db') {
-            $result = false;
+        // If the field is to blacklisted, handle that now
+        if (!self::blackListFields($def, $type)) {
+            return false;
         }
+
+        // If the field is whitelisted, handle THAT now
+        if (self::specialFields($def, $type)) {
+            return true;
+        }
+
+        // Now carry on the rest of the special case madness until we need to
+        // check studio validity
+        if (isset($def['source']) && $def['source'] == 'non-db') {
+            return false;
+        }
+
         // Process Author does not handle some field types like image, password, file, etc currently
         if (isset($def['type']) && in_array($def['type'], self::$blacklistedFieldTypes)) {
-            $result = false;
+            return false;
         }
-        if ($type == 'AC') {
-            if (isset($def['formula'])) {
-                $result = false;
-            }
+
+        if ($type == 'AC' && isset($def['formula'])) {
+            return false;
         }
-        if ($type == 'RR' || $type == 'AC') {
-            if (isset($def['readonly']) && $def['readonly']) {
-                $result = false;
-            }
+
+        if (($type == 'RR' || $type == 'AC') && !empty($def['readonly'])) {
+            return false;
         }
-        $result = (self::specialFields($def, $type)) ? true : $result;
-        $result = $result && self::blackListFields($def, $type);
-        return $result;
+
+        // At this point all we are left with is checking if it is studio valid
+        return self::isValidStudioField($def);
     }
 
     /**
