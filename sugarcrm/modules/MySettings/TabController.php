@@ -57,7 +57,7 @@ function get_system_tabs(){
     if (empty($system_tabs_result) || !self::$isCacheValid)
 	{
 
-		$administration = Administration::getSettings('MySettings');
+		$administration = Administration::getSettings('MySettings', true);
 		if(isset($administration->settings) && isset($administration->settings['MySettings_tab'])){
 			$tabs= $administration->settings['MySettings_tab'];
 			$trimmed_tabs = trim($tabs);

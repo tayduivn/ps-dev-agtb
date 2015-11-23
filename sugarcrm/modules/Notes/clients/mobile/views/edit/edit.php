@@ -29,11 +29,7 @@ $viewdefs['Notes']['mobile']['view']['edit'] = array(
         array(
             'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
-                array(
-                    'name' => 'name',
-                    'displayParams' => array(
-                        'required' => true,
-                        'wireless_edit_only' => true,)),
+                'name',
                 'description',
                 'contact_name',
                 'parent_name',

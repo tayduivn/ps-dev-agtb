@@ -27,15 +27,40 @@ class PMSEEngineUtils
      * @var array
      */
     protected static $blacklistedFields = array(
-        'deleted',
-        'system_id',
-        'mkto_sync',
-        'mkto_id',
-        'mkto_lead_score',
-        'parent_type',
-        'user_name',
-        'user_hash',
-        'is_admin',
+        'ALL' => array(
+            'deleted',
+            'system_id',
+            'mkto_sync',
+            'mkto_id',
+            'mkto_lead_score',
+            'parent_type',
+            'user_name',
+            'user_hash',
+            'portal_app',
+            'portal_active',
+            'portal_name',
+            'password',
+            'is_admin',
+        ),
+        'BR' => array(
+            'duration_hours',
+            'duration_minutes',
+            'repeat_type',
+            'created_by',
+            'modified_user_id',
+            'date_entered',
+            'date_modified',
+        ),
+        // Add related record activity panel
+        'AC' => array(),
+        // Change field action... this used to be the same as Add Related Record
+        // but we needed different things from this
+        'CF' => array(
+            'created_by',
+            'modified_user_id',
+            'date_entered',
+            'date_modified',
+        ),
     );
 
     /**
@@ -75,6 +100,13 @@ class PMSEEngineUtils
         'AC' => array('assigned_user_id'),
         'RR' => array(),
     );
+
+    /**
+     * Process Author does not handle the below field types currently. So skip
+     * displaying them.
+     * @var array
+     */
+    public static $blacklistedFieldTypes = array('image','password','file');
 
     /**
      * Method get key fields
@@ -1024,6 +1056,8 @@ class PMSEEngineUtils
 
     public static function isValidField($def, $type = '')
     {
+        // First things first... if we are explicitly directed to do something
+        // based on the vardefs, do that thing first
         if (isset($def['processes'])) {
             // If a field is explicitly marked for processes, handle it
             if (is_bool($def['processes'])) {
@@ -1046,44 +1080,86 @@ class PMSEEngineUtils
             }
         }
 
-        $result = self::isValidStudioField($def);
+        // If the field is to blacklisted, handle that now
+        if (!self::blackListFields($def, $type)) {
+            return false;
+        }
+
+        // If the field is whitelisted, handle THAT now
+        if (self::specialFields($def, $type)) {
+            return true;
+        }
+
+        // Now carry on the rest of the special case madness until we need to
+        // check studio validity
         if (isset($def['source']) && $def['source'] == 'non-db') {
-            $result = false;
+            return false;
         }
-        if (isset($def['type']) && ($def['type'] == 'image' || $def['type'] == 'password')) {
-            $result = false;
+
+        // Process Author does not handle some field types like image, password, file, etc currently
+        if (isset($def['type']) && in_array($def['type'], self::$blacklistedFieldTypes)) {
+            return false;
         }
-        if ($type == 'AC') {
-            if (isset($def['formula'])) {
-                $result = false;
-            }
+
+        // For action type, do not allow formula fields
+        if ($type == 'AC' && isset($def['formula'])) {
+            return false;
         }
-        if ($type == 'RR' || $type == 'AC') {
-            if (isset($def['readonly']) && $def['readonly']) {
-                $result = false;
-            }
+
+        // For action types or relate record types, if the field is readonly,
+        // don't allow it
+        if (($type == 'RR' || $type == 'AC') && !empty($def['readonly'])) {
+            return false;
         }
-        $result = (self::specialFields($def, $type)) ? true : $result;
-        $result = $result && self::blackListFields($def);
-        return $result;
+
+        // At this point all we are left with is checking if it is studio valid
+        return self::isValidStudioField($def);
     }
 
     /**
      * Validation method that checks if a field is blacklisted.
      * @param array $def A vardef entry for a field
+     * @param string $type The type of list to use
      * @return boolean True if the field is not blacklisted, false if it is
      */
-    public static function blackListFields($def)
+    public static function blackListFields($def, $type = '')
     {
-        return !in_array($def['name'], self::$blacklistedFields);
+        $blacklist = self::$blacklistedFields['ALL'];
+        if (!empty($type) && $type !== 'ALL' && isset(self::$blacklistedFields[$type])) {
+            $blacklist = array_merge($blacklist, self::$blacklistedFields[$type]);
+        }
+        return !in_array($def['name'], $blacklist);
     }
 
+    /**
+     * Checks to see if a field name is deemed special based on the PMSE module
+     * type
+     * @param array $def The field def to check
+     * @param string $type The PMSE module type to check this field for
+     * @return boolean
+     */
     public static function specialFields($def, $type= 'All')
     {
+        // Without a name there is nothing to do
+        if (!isset($def['name'])) {
+            return false;
+        }
+
+        // Default the type if it was empty
         if (empty($type)) {
             $type = 'All';
         }
-        return isset($def['name'], self::$specialFields[$type]) && in_array($def['name'], self::$specialFields[$type]);
+
+        // Get the special fields list for this type if it exists
+        $sf = empty(self::$specialFields[$type]) ? array() : self::$specialFields[$type];
+
+        // Now merge the type special fields with special fields for all types
+        if ($type !== 'All') {
+            $sf = array_merge($sf, self::$specialFields['All']);
+        }
+
+        // Now check to see if the field is in this type
+        return in_array($def['name'], $sf);
     }
 
     /**
@@ -1204,5 +1280,59 @@ class PMSEEngineUtils
         }
 
         return $element['act_fields'];
+    }
+
+    /**
+     * Get LinkName from a bean using module name and relationship name
+     * @param $flowData
+     * @return mixed
+     * @throws Exception
+     */
+    public static function getRelatedLinkName($flowData)
+    {
+        $bean = BeanFactory::getBean($flowData['rel_process_module']);
+        $relName = $flowData['rel_element_relationship'];
+        $bean->load_relationship($relName);
+        if ($bean->$relName) {
+            return $bean->$relName->getRelatedModuleLinkName();
+        }
+
+        throw new \Exception("Related module link name not found for {$flowData['evn_module']}->{$relName}");
+    }
+
+    /**
+     * @param $flowData
+     * @return bool
+     */
+    public static function isTargetModuleNotProcessModule($flowData)
+    {
+        return isset($flowData['rel_process_module'], $flowData['rel_element_relationship'], $flowData['rel_element_module'])
+        && $flowData['rel_element_module'] !== $flowData['rel_process_module'];
+    }
+
+    /**
+     * @param $flowData
+     * @param $bean
+     * @return bool
+     */
+    public static function isTargetModule($flowData, $bean)
+    {
+        return !(self::isTargetModuleNotProcessModule($flowData) && $bean->module_dir !== $flowData['rel_process_module']);
+    }
+
+    /**
+     * @param $flowData
+     * @param $bean
+     * @return mixed|null
+     * @throws Exception
+     */
+    public static function getParentBean($flowData, $bean) {
+        $linkName = self::getRelatedLinkName($flowData);
+        $parentBean = $bean->$linkName->getBeans(array('limit' => 1));
+        if (empty($parentBean)) {
+            //Parent Bean not found
+            return null;
+        }
+        return current($parentBean);
     }
 }

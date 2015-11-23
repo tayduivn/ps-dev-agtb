@@ -159,7 +159,7 @@ class PMSETerminateValidator implements PMSEValidate
     public function validateParamsRelated($bean, $flowData)
     {
         $paramsRelated = array();
-        if ($bean->parent_type == $flowData['rel_process_module']) {
+        if (!PMSEEngineUtils::isTargetModule($flowData, $bean)) {
             $paramsRelated = array(
                 'replace_fields' => array(
                     $flowData['rel_element_relationship'] => $flowData['rel_element_module']
