@@ -336,7 +336,7 @@ class PMSEPreProcessor
                 "(evn_type = 'START' AND evn_module = '$bean->module_name')".
                 " OR ".
                 // Where for Terminate Process
-                "(evn_type = 'GLOBAL_TERMINATE' AND flow.cas_flow_status != 'WAITING' ".
+                "(evn_type = 'GLOBAL_TERMINATE' AND (flow.cas_flow_status IS NULL OR flow.cas_flow_status != 'WAITING') ".
                 " AND  rel_element_module='$bean->module_name')".
                 " OR ".
                 // Where for Receive Message
