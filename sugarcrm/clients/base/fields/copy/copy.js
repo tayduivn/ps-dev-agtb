@@ -253,8 +253,8 @@
                 return;
             }
 
-            var inSync = _.all(this.def.mapping, function(target, source) {
-                return this.model.get(source) === this.model.get(target);
+            var inSync = this.model.isNew() || _.all(this.def.mapping, function(target, source) {
+                return this.model.has(source) && this.model.get(source) === this.model.get(target);
             }, this);
             this.sync(inSync);
         }

@@ -54,6 +54,7 @@ class SugarUpgradeUpgradeCustomViews extends UpgradeScript
             $this->addStickyResizableColumnsFlag('history-summary');
 
             $this->fixRecordListIcons();
+            $this->fixQuickCreateIcons();
         }
     }
 
@@ -124,6 +125,44 @@ class SugarUpgradeUpgradeCustomViews extends UpgradeScript
 
             write_array_to_file(
                 "viewdefs['$module']['base']['view']['recordlist']",
+                $defs,
+                $customQuickCreateFile
+            );
+        }
+    }
+
+    /**
+     * Fix icons for quick create menu, because 7.6 changed the icon names
+     */
+    private function fixQuickCreateIcons()
+    {
+        global $moduleList;
+
+        $iconMap = array(
+            'icon-plus' => 'fa-plus',
+            'icon-phone' => 'fa-phone',
+            'icon-calendar' => 'fa-calendar',
+        );
+
+        foreach ($moduleList as $module) {
+            $customQuickCreateFile = "custom/modules/$module/clients/base/menus/quickcreate/quickcreate.php";
+
+            if (!file_exists($customQuickCreateFile)) {
+                continue;
+            }
+
+            require $customQuickCreateFile;
+
+            $defs = $viewdefs[$module]['base']['menu']['quickcreate'];
+
+            if (!empty($defs['icon'])) {
+                if (in_array($defs['icon'], array_keys($iconMap))) {
+                    $defs['icon'] = $iconMap[$defs['icon']];
+                }
+            }
+
+            write_array_to_file(
+                "viewdefs['$module']['base']['menu']['quickcreate']",
                 $defs,
                 $customQuickCreateFile
             );

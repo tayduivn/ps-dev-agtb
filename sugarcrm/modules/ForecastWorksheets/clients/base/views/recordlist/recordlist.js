@@ -43,6 +43,16 @@
  *  by: forecasts:worksheet:saved event
  *  when: only when the commit button is pressed
  *
+ * forecasts:sync:start
+ *  on: this.context.parent
+ *  by: data:sync:start handler
+ *  when: this.collection starts syncing
+ *
+ * forecasts:sync:complete
+ *  on: this.context.parent
+ *  by: data:sync:complete handler
+ *  when: this.collection completes syncing
+ *
  */
 ({
     /**
@@ -313,10 +323,14 @@
 
                 this.collection.on('data:sync:start', function() {
                     this.isCollectionSyncing = true;
+                    // Begin sync start for buttons
+                    this.context.parent.trigger('forecasts:sync:start');
                 }, this);
 
                 this.collection.on('data:sync:complete', function() {
                     this.isCollectionSyncing = false;
+                    // End sync start for buttons
+                    this.context.parent.trigger('forecasts:sync:complete');
                 }, this);
 
                 this.collection.on('reset', function() {
