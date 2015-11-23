@@ -10,6 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * Class TriggerTokenAuthApi provides functionality to set up trigger server token for
+ * @see \Sugarcrm\Sugarcrm\Trigger\Client class.
+ */
 class TriggerTokenAuthApi extends SugarApi
 {
     public function registerApiRest()
@@ -37,15 +41,13 @@ class TriggerTokenAuthApi extends SugarApi
      * @param array $args
      * @return string
      * @throws SugarApiExceptionEditConflict when tokens are not the same
-     * @throws SugarApiExceptionMissingParameter when args does not contain all required data
      */
     public function verifyTriggerToken(ServiceBase $api, array $args)
     {
-        if (empty($args['original']) || empty($args['verified'])) {
-            throw new SugarApiExceptionMissingParameter();
-        }
+        $this->requireArgs($args, array('original', 'verified'));
 
         $admin = BeanFactory::getBean('Administration');
+        /* @var $admin Administration */
         $config = $admin->getConfigForModule('auth');
 
         if ($config['trigger_server_token'] != $args['original']) {
@@ -53,7 +55,5 @@ class TriggerTokenAuthApi extends SugarApi
         }
 
         $admin->saveSetting('auth', 'trigger_server_token', $args['verified'], 'base');
-
-        return;
     }
 }

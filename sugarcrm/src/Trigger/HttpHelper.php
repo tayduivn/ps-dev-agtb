@@ -2,11 +2,39 @@
 
 namespace Sugarcrm\Sugarcrm\Trigger;
 
+/**
+ * Class HttpHelper wraps curl functions and provides
+ * methods to set up and delete triggers on trigger server.
+ *
+ * For checking trigger server availability use @see HttpHelper::ping()
+ *
+ * For sending request to trigger server use @see HttpHelper::send()
+ *
+ * Examples:
+ *
+ * <code>
+ * // instantiate helper
+ * $httpHelper = new HttpHelper();
+ *
+ * // checks trigger server availability by url
+ * $httpHelper->ping('http://trigger_server.site');
+ *
+ * // sends HTTP request to trigger server
+ * $httpHelper->send(
+ *      'delete',
+ *      'http://trigger_server.site/',
+ *      '{"url":"http://sugar_host.site","token": "20db6fcd-0ce9-4da4-87d1-fae1d563b5a2","id":"c92af13d"}'
+ * );
+ *
+ * </code>
+ *
+ * @package Sugarcrm\Sugarcrm\Trigger
+ */
 class HttpHelper extends \SugarHttpClient
 {
 
     /**
-     * This function checks site availability.
+     * Checks trigger server availability.
      *
      * @param string $url
      * @return bool
@@ -26,7 +54,7 @@ class HttpHelper extends \SugarHttpClient
     }
 
     /**
-     * Performs socket server request
+     * Performs trigger server request
      *
      * @param string $method (post or delete)
      * @param string $url

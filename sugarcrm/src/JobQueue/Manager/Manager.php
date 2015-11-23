@@ -70,6 +70,7 @@ class Manager implements ClientInterface, RunnerInterface
         'NotificationEvent' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\EventHandler',
         'NotificationCarrierBulkMessage' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\CarrierBulkMessageHandler',
         'NotificationSend' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\SendHandler',
+        'RecreateUserRemindersJob' => 'Sugarcrm\\Sugarcrm\\Trigger\Job\\RecreateUserRemindersJob',
     );
 
     /**
