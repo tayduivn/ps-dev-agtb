@@ -77,15 +77,22 @@ describe('htmleditable_tinymce', function() {
         });
 
         it('should not initialize TinyMCE editor if it already exists', function() {
-            var tinymceSpy = sandbox.spy($.fn, 'tinymce'),
-                config = field.getTinyMCEConfig();
-            config.setup = $.noop();
-
+            var tinymceSpy = sinon.spy($.fn, 'tinymce');
+            var configSpy = sinon.spy(field, 'getTinyMCEConfig');
+            var config = field.getTinyMCEConfig();
+            var called = 0;
+            config.setup = function(){
+                if(called < 1){
+                    field.initTinyMCEEditor(config);
+                    called++;
+                } else {
+                    expect(tinymceSpy.calledOnce).toBeTruthy();
+                    expect(configSpy.calledOnce).toBeTruthy();
+                    tinymceSpy.restore();
+                    configSpy.restore();
+                }
+            };
             field.initTinyMCEEditor(config);
-            expect(tinymceSpy.calledOnce).toBeTruthy();
-
-            field.render();
-            expect(tinymceSpy.calledOnce).toBeTruthy();
         });
 
         it('setting a value to the model should also set the editor with that value', function() {
