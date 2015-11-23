@@ -518,10 +518,13 @@ SUGAR.kb = function() {
             clickedNodeMove = '';
             var moveTags = 'Move Tags';
             fillInTags = function(data) {
-                var result = JSON.parse(data.responseText);
-                if (typeof result == 'undefined' || typeof result['header'] == 'undefined') {
-                    result = new Array();
-                    result['body'] = SUGAR.kb.getLocalizedLabels('KBDocuments', 'LBL_THERE_WAS_AN_ERROR_HANDLING_TAGS');
+                var result;
+                try {
+                    result = JSON.parse(data.responseText);
+                } catch(e) {
+                    result = {
+                        body: SUGAR.kb.getLocalizedLabels('KBDocuments', 'LBL_THERE_WAS_AN_ERROR_HANDLING_TAGS')
+                    };
                 }
                 //applyTagsToDocs.setHeader(result['header']);
                 tagsTreeModalMoveDocs.setBody(result['body']);
@@ -593,10 +596,13 @@ SUGAR.kb = function() {
             });
             var applyTags = 'Apply Tags';
             fillInTags = function(data) {
-                var result = JSON.parse(data.responseText);
-                if (typeof result == 'undefined' || typeof result['header'] == 'undefined') {
-                    result = new Array();
-                    result['body'] = 'There was an error handling this request.';
+                var result;
+                try {
+                    result = JSON.parse(data.responseText);
+                } catch(e) {
+                    result = {
+                        body: "There was an error handling this request."
+                    };
                 }
                 //applyTagsToDocs.setHeader(result['header']);
                 applyTagsToDocs.setBody(result['body']);
@@ -1106,10 +1112,13 @@ SUGAR.kb = function() {
             previousNodesCount = 0;
             var selectCreateTags = 'Select Create Tags';
             fillInTags = function(data) {
-                var result = JSON.parse(data.responseText);
-                if (typeof result == 'undefined' || typeof result['header'] == 'undefined') {
-                    result = new Array();
-                    result['body'] = 'There was an error handling this request.';
+                var result;
+                try {
+                    result = JSON.parse(data.responseText);
+                } catch(e) {
+                    result = {
+                        body: "There was an error handling this request."
+                    };
                 }
                 //applyTagsToDocs.setHeader(result['header']);
                 myDialog.setHeader('Tags');
