@@ -1112,6 +1112,7 @@ SUGAR.kb = function() {
             previousNodesCount = 0;
             var selectCreateTags = 'Select Create Tags';
             fillInTags = function(data) {
+<<<<<<< HEAD
                 var result;
                 try {
                     result = JSON.parse(data.responseText);
@@ -1119,6 +1120,12 @@ SUGAR.kb = function() {
                     result = {
                         body: "There was an error handling this request."
                     };
+=======
+                var result = JSON.parse(data.responseText);
+                if (typeof result == 'undefined') {
+                    result = new Array();
+                    result['body'] = 'There was an error handling this request.';
+>>>>>>> yellowandy/BR-3642
                 }
                 //applyTagsToDocs.setHeader(result['header']);
                 myDialog.setHeader('Tags');
