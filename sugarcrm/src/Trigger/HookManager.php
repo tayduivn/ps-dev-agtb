@@ -12,9 +12,12 @@
 
 namespace Sugarcrm\Sugarcrm\Trigger;
 
+use Sugarcrm\Sugarcrm\Trigger\ReminderManager\Helper;
 use Sugarcrm\Sugarcrm\Trigger\ReminderManager\Scheduler;
 use Sugarcrm\Sugarcrm\Trigger\ReminderManager\TriggerServer;
 use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager;
+
+require_once 'src/Trigger/ReminderManager/Helper.php';
 
 /**
  * Class HookManager handles "after_save", "after_delete" and "after_restore"
@@ -36,7 +39,7 @@ class HookManager
     public function afterCallOrMeetingSave(\SugarBean $bean, $event, array $arguments)
     {
         if ($bean instanceof \Call || $bean instanceof \Meeting) {
-            $this->getReminderManager()->setReminders($bean, $arguments['isUpdate']);
+            $this->setReminders($bean, $arguments['isUpdate']);
         }
     }
 
@@ -66,7 +69,7 @@ class HookManager
     public function afterCallOrMeetingRestore(\SugarBean $bean, $event, array $arguments)
     {
         if ($bean instanceof \Call || $bean instanceof \Meeting) {
-            $this->getReminderManager()->setReminders($bean, false);
+            $this->setReminders($bean, false);
         }
     }
 
@@ -156,6 +159,41 @@ class HookManager
         } else {
             return $this->getSchedulerManager();
         }
+    }
+
+    /**
+     * Sets reminders for event(call or meeting).
+     *
+     * @param \Call|\Meeting $bean event for which will be set reminders.
+     * @param boolean $isUpdate If event was added the $isUpdate is false. Otherwise is true.
+     */
+    public function setReminders(\SugarBean $bean, $isUpdate)
+    {
+        $reminderManager = $this->getReminderManager();
+        if ($isUpdate) {
+            $reminderManager->deleteReminders($bean);
+        }
+        foreach ($this->loadUsers($bean->users_arr) as $user) {
+            $reminderTime = Helper::calculateReminderDateTime($bean, $user);
+            if (Helper::isInFuture($reminderTime)) {
+                $reminderManager->addReminderForUser($bean, $user, $reminderTime);
+            }
+        }
+    }
+
+    /**
+     * Loads users beans by array of id.
+     *
+     * @param string[] $usersIds
+     * @return \User[]
+     */
+    protected function loadUsers(array $usersIds)
+    {
+        $bean = \BeanFactory::getBean('Users');
+        $query = new \SugarQuery();
+        $query->from($bean);
+        $query->where()->in('id', $usersIds);
+        return $bean->fetchFromQuery($query);
     }
 
     /**
