@@ -203,7 +203,6 @@ $vardefs = array(
 	)
 );
 
-$tbaConfig = new TeamBasedACLConfigurator();
-if ($tbaConfig->isEnabledForModule($module)) {
+if (TeamBasedACLConfigurator::isEnabledForModule($module)) {
     $vardefs['acls']['SugarACLTeamBased'] = true;
 }

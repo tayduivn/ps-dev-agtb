@@ -506,8 +506,7 @@ function get_sugar_config_defaults()
 
     $sugar_config_defaults = sugarArrayMerge($locale->getLocaleConfigDefaults(), $sugar_config_defaults);
 
-    $tbaConfigurator = new TeamBasedACLConfigurator();
-    $sugar_config_defaults[$tbaConfigurator::CONFIG_KEY] = $tbaConfigurator->getDefaultConfig();
+    $sugar_config_defaults[TeamBasedACLConfigurator::CONFIG_KEY] = TeamBasedACLConfigurator::getDefaultConfig();
 
     return( $sugar_config_defaults );
 }

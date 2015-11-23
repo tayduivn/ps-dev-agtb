@@ -61,8 +61,7 @@ class TeamsViewTBA extends SugarView
      */
     private function _getUserActionsList()
     {
-        $tbaConfigurator = new TeamBasedACLConfigurator();
-        $defaultTBAConfig = $tbaConfigurator->getDefaultConfig();
+        $defaultTBAConfig = TeamBasedACLConfigurator::getDefaultConfig();
 
         $actionsList = ACLAction::getUserActions($GLOBALS['current_user']->id);
 
@@ -71,7 +70,7 @@ class TeamsViewTBA extends SugarView
             if (
                 (!empty($GLOBALS['dictionary'][$name]['hidden_to_role_assignment']) &&
                     $GLOBALS['dictionary'][$name]['hidden_to_role_assignment']) ||
-                !$tbaConfigurator->implementsTBA($name)
+                !TeamBasedACLConfigurator::implementsTBA($name)
             ) {
                 unset($actionsList[$name]);
             }

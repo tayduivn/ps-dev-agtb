@@ -356,9 +356,7 @@ class TeamSetManager {
     public static function getFormattedTeamsFromSet($focus, $forDisplay = false)
     {
         $result = array();
-
-        $tbaConfigurator = new TeamBasedACLConfigurator();
-        $isTBAEnabled = $tbaConfigurator->isEnabledForModule($focus->module_name);
+        $isTBAEnabled = TeamBasedACLConfigurator::isEnabledForModule($focus->module_name);
 
         $team_set_id = $focus->team_set_id ? $focus->team_set_id : $focus->team_id;
         $teams = self::getTeamsFromSet($team_set_id);
