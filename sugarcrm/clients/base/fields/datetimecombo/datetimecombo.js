@@ -23,6 +23,18 @@
      */
     secondaryFieldTag: 'input[data-type=time]',
 
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        /**
+         * If a time picker has been initialized on the field or not.
+         *
+         * @type {boolean}
+         * @private
+         */
+        this._hasTimePicker = false;
+    },
+
     /**
      * @inheritdoc
      *

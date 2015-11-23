@@ -447,7 +447,7 @@
                 if (!this._errorTooltips) {
                     return;
                 }
-                app.utils.tooltip.destroy(this._errorTooltips);
+                app.utils.tooltip.destroy($(this._errorTooltips));
                 this._errorTooltips = null;
             },
 

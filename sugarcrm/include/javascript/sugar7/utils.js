@@ -48,7 +48,7 @@
                  * @param {jQuery} $tooltips
                  */
                 destroy: function($tooltips) {
-                    $($tooltips).tooltip('destroy');
+                    $tooltips.tooltip('destroy');
                 },
 
                 /**
