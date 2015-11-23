@@ -21,6 +21,7 @@
 
     initialize: function(options) {
         var self = this;
+        this.tabIndex = options.def.tabindex || 0;
 
         this.events = _.extend({}, {
             'click *' : 'preventClick'
@@ -68,6 +69,7 @@
         } else {
             css_class = _.without(css_class, 'disabled');
         }
+        this.tabIndex = disable ? -1 : 0;
         this.def.css_class = _.unique(_.compact(css_class)).join(' ');
         app.view.Field.prototype.setDisabled.call(this, disable);
     },

@@ -12,11 +12,10 @@
 --}}
 <a href="{{#if fullRoute}}#{{fullRoute}}{{else}}{{#if def.route}}#{{buildRoute context=context model=model action=def.route.action}}{{else}}javascript:void(0);{{/if}}{{/if}}"
     class="btn{{#if def.primary}} btn-primary{{/if}}"
-    {{#if def.tooltip}}
-        rel="tooltip"
-        data-placement="bottom"
-        title="{{str def.tooltip module}}"
-    {{/if}}
+{{#if def.tooltip}}
+    rel="tooltip"
+    data-placement="bottom"
+    title="{{str def.tooltip module}}"
+{{/if}}
     {{#if ariaLabel}}aria-label="{{ariaLabel}}"{{/if}}
-    {{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}
-    role="button" name="{{name}}">{{#if def.icon}}<i class="fa {{def.icon}}"></i> {{/if}}{{label}}</a>
+    role="button" tabindex="{{tabIndex}}" name="{{name}}">{{#if def.icon}}<i class="fa {{def.icon}}"></i> {{/if}}{{label}}</a>

@@ -21,7 +21,7 @@
     title="{{str def.tooltip module}}"
 {{/if}}
     {{#if ariaLabel}}aria-label="{{ariaLabel}}"{{/if}}
-   role="button" name="{{name}}" track="click:{{#if name}}{{name}}{{else}}{{label}}{{/if}}">
+    role="button" tabindex="{{tabIndex}}" name="{{name}}" track="click:{{#if name}}{{name}}{{else}}{{label}}{{/if}}">
     {{#if def.tooltip}}
         {{#if def.icon}}
             <i class="fa {{def.icon}}"></i>
