@@ -158,7 +158,7 @@
                 storage: this._getStorage()
             };
         }
-        this._renderTree($('[data-place=dashlet-tree]'), treeOptions, callbacks);
+        this._renderTree(this.$('[data-place=dashlet-tree]'), treeOptions, callbacks);
     },
 
     /**
