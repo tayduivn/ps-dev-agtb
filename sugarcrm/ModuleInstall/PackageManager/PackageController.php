@@ -23,7 +23,6 @@
         }
 
         function performBasicSearch(){
-            $json = getJSONobj();
             $search_term = '';
             $node_id = '';
              if(isset($_REQUEST['search_term'])) {
@@ -45,7 +44,6 @@
          *                      the category
          */
         function getPackages(){
-            $json = getJSONobj();
             $category_id = '';
 
              if(isset($_REQUEST['category_id'])) {
@@ -60,7 +58,6 @@
          * as well as during installation
          */
         function getReleases(){
-            $json = getJSONobj();
             $category_id = '';
        		$package_id = '';
        		$types = '';
@@ -104,7 +101,6 @@
          * Obtain a promotion from the depot
          */
         function getPromotion(){
-            $json = getJSONobj();
 
             $header = PackageManager::getPromotion();
 
@@ -121,7 +117,6 @@
          */
         function download(){
             global $sugar_config;
-            $json = getJSONobj();
             $package_id = '';
             $category_id  = '';
             $release_id = '';
@@ -156,7 +151,6 @@
          * @return array - a list of categories/nodes which are underneath this node
          */
         function getCategories(){
-            $json = getJSONobj();
             $node_id = '';
              if(isset($_REQUEST['category_id'])) {
                 $node_id = nl2br($_REQUEST['category_id']);
@@ -167,7 +161,6 @@
         }
 
          function getNodes(){
-            $json = getJSONobj();
             $category_id = '';
              if(isset($_REQUEST['category_id'])) {
                 $category_id = nl2br($_REQUEST['category_id']);
@@ -184,7 +177,6 @@
          * @return array    return an array of releases for each given installed object if an update is found
          */
         function checkForUpdates(){
-            $json = getJSONobj();
             $type = '';
              if(isset($_REQUEST['type'])) {
                 $type = nl2br($_REQUEST['type']);
@@ -215,7 +207,6 @@
         }
 
         function getLicenseText(){
-            $json = getJSONobj();
             $file = '';
             if(isset($_REQUEST['file'])) {
                 $file = hashToFile($_REQUEST['file']);
@@ -229,7 +220,6 @@
          */
         function getPackagesInStaging(){
             $packages = $this->_pm->getPackagesInStaging('module');
-            $json = getJSONobj();
 
             $this->sendJsonOutput(array('packages' => $packages));
         }
@@ -245,13 +235,11 @@
           	if(!empty($file)){
 	            $this->_pm->performInstall($file);
 			}
-            $json = getJSONobj();
 
             $this->sendJsonOutput(array('result' => 'success'));
         }
 
         function authenticate(){
-            $json = getJSONobj();
             $username = '';
             $password = '';
             $servername = '';
@@ -286,7 +274,6 @@
         }
 
         function getDocumentation(){
-        	$json = getJSONobj();
             $package_id = '';
             $release_id = '';
 
@@ -303,7 +290,6 @@
         }
 
         function downloadedDocumentation(){
-        	$json = getJSONobj();
             $document_id = '';
 
             if(isset($_REQUEST['document_id'])) {
@@ -329,7 +315,6 @@
         }
 
  		function remove(){
-        	$json = getJSONobj();
             $file = '';
 
             if(isset($_REQUEST['file'])) {
@@ -344,15 +329,17 @@
             }
             $this->sendJsonOutput(array('result' => 'true'));
         }
-        
-        /**
-        * Sends output in a JSON format
-        * 
-        * @param mixed $output
-        */
-        protected function sendJsonOutput($output) {
-            header("Content-Type: application/json");
-            echo $json->encode($output);
-        }
- }
-?>
+
+    /**
+    * Sends output in a JSON format
+    * 
+    * @param mixed $output
+    */
+    protected function sendJsonOutput($output)
+    {
+        $json = getJSONobj();
+        header('Content-Type: application/json');
+        echo $json->encode($output);
+    }
+}
+
