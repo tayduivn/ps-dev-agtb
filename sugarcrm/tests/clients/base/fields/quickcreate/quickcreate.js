@@ -69,7 +69,6 @@ describe("Base.Field.QuickCreate", function() {
         field._handleActionLink(event);
 
         expect(alertShowStub.callCount).toBe(0);
-        expect(app.drawer.reset.callCount).toBe(1);
         expect(app.drawer.open.callCount).toBe(1);
     });
 

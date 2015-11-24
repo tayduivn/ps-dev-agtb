@@ -252,13 +252,13 @@
                 route: ":module"
             },
             {
-                name: "create",
-                route: ":module/create",
+                name: 'create',
+                route: ':module/create',
                 callback: function(module) {
-                    if (module === "Home") {
+                    if (module === 'Home') {
                         app.controller.loadView({
                             module: module,
-                            layout: "record"
+                            layout: 'record'
                         });
 
                         return;
@@ -270,26 +270,21 @@
                         return;
                     }
 
-                    var previousModule = app.controller.context.get("module"),
-                        previousLayout = app.controller.context.get("layout");
-                    if (!(previousModule === module && previousLayout === "records")) {
-                        app.controller.loadView({
-                            module: module,
-                            layout: "records"
+                    var prevLayout = app.controller.context.get('layout');
+                    // FIXME we shouldn't rely on the layout type
+                    if (prevLayout && prevLayout !== 'login') {
+                        app.drawer.open({
+                            layout: 'create',
+                            context: {
+                                module: module,
+                                create: true,
+                                fromRouter: true
+                            }
                         });
+                        return;
                     }
 
-                    app.drawer.open({
-                        layout: 'create',
-                        context: {
-                            create: true
-                        }
-                    }, _.bind(function(context, model) {
-                        var module = context.get("module") || model.module,
-                            route = app.router.buildRoute(module);
-
-                        app.router.navigate(route, {trigger: (model instanceof Backbone.Model)});
-                    }, this));
+                    app.router.record(module, 'create');
                 }
             },
             {

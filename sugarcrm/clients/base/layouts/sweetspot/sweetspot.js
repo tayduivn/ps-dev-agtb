@@ -224,8 +224,8 @@
     openConfigPanel: function() {
         // TODO: This is bad and there should be an option in drawer.js to
         // prevent opening an already-open drawer of the same type.
-        var activeDrawerLayout = app.drawer.getActiveDrawerLayout();
-        if (activeDrawerLayout.type === 'sweetspot-config') {
+        var activeDrawerLayout = app.drawer.getActive();
+        if (activeDrawerLayout && activeDrawerLayout.type === 'sweetspot-config') {
             return;
         }
 
