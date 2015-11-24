@@ -119,7 +119,7 @@ studiotabs.reset();
 studiotabs.tabLabelToValue['{$value.label|escape:'javascript':'UTF-8'}|{$key|escape:'javascript':'UTF-8'}'] = '{$key|escape:'javascript':'UTF-8'}';
 if(typeof(studiotabs.subtabModules['subslot{$modCounter}']) == 'undefined') {ldelim}
     studiotabs.subtabModules['subslot{$modCounter}'] =
-            '{$value.label|escape:'javascript':'UTF-8'}|{$key|escape:'javascript':'UTF-8'};
+            '{$value.label|escape:'javascript':'UTF-8'}|{$key|escape:'javascript':'UTF-8'}';
 {rdelim}
 </script>
 
