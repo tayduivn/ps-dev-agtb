@@ -23,7 +23,7 @@ class ViewDepDropdown extends SugarView
         $editModule = $this->request->getValidInputRequest('editModule', 'Assert\ComponentName');
         $this->ss->assign('editModule', $editModule);
 
-        $field = $this->request->getValidInputRequest('field', 'Assert\ComponentName');
+        $field = $this->request->getValidInputRequest('field');
         $this->ss->assign('field', $field);
 
         $parentList = $this->request->getValidInputRequest('parentList');

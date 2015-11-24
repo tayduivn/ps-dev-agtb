@@ -45,7 +45,7 @@ class ViewModulefield extends SugarView
         } elseif (!empty($_REQUEST['field'])) {
             $field_name = trim($this->request->getValidInputRequest(
                 'field',
-                'Assert\ComponentName',
+                null,
                 $this->request->getValidInputRequest('name', 'Assert\ComponentName')
             ));
         }
