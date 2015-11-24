@@ -381,8 +381,7 @@ class VardefManager{
 
             if ($found){
                 // Put ACLStatic into vardefs for beans supporting ACLs
-                self::addSugarACLStatic($object);
-
+                self::addSugarACLStatic($object, $module);
             }
 
             if(!empty($params['bean'])) {
@@ -456,16 +455,24 @@ class VardefManager{
 
     /**
      * Add default SugarACLStatic
-     * @param $object
+     *
+     * @param string $object Object name
+     * @param string $module Module name
      */
-    protected static function addSugarACLStatic($object){
+    protected static function addSugarACLStatic($object, $module)
+    {
         global $dictionary;
         // Put ACLStatic into vardefs for beans supporting ACLs
         if(!empty($dictionary[$object]) && !isset($dictionary[$object]['acls']['SugarACLStatic'])){
-            if (is_subclass_of($object, 'SugarBean') &&
-                is_callable("$object::bean_implements_static") &&
-               call_user_func("$object::bean_implements_static", 'ACL')){
-               $dictionary[$object]['acls']['SugarACLStatic'] = true;
+            // $beanList is a mess. most of its keys are module names (Cases, etc.),
+            // but some are object names (ForecastOpportunities), so we check both
+            $class = BeanFactory::getBeanName($object);
+            if (!$class) {
+                $class = BeanFactory::getBeanName($module);
+            }
+            if ($class && is_subclass_of($class, 'SugarBean')
+                && call_user_func(array($class, 'bean_implements_static'), 'ACL')) {
+                $dictionary[$object]['acls']['SugarACLStatic'] = true;
             }
         }
     }
