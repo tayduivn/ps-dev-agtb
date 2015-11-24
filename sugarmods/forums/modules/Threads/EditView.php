@@ -120,7 +120,6 @@ else
 }  
 $xtpl->assign("JAVASCRIPT", get_set_focus_js() . get_validate_record_js());
 $xtpl->assign("IMAGE_PATH", $image_path);
-$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 
 $xtpl->assign("ID", $focus->id);
 $xtpl->assign("TITLE", $focus->title);

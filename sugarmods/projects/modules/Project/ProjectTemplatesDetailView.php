@@ -91,7 +91,6 @@ if(isset($_REQUEST['return_id']))
 	$xtpl->assign("RETURN_ID", $_REQUEST['return_id']);
 }
 
-$xtpl->assign('PRINT_URL', "index.php?".$GLOBALS['request_string']);
 $xtpl->assign('THEME', $theme);
 $xtpl->assign('GRIDLINE', $gridline);
 $xtpl->assign('IMAGE_PATH', $image_path);

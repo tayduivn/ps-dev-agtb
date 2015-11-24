@@ -57,7 +57,6 @@ if (isset($_REQUEST['return_id'])) $ss->assign("RETURN_ID", $_REQUEST['return_id
 if (empty($_REQUEST['return_id'])) {
     $ss->assign("RETURN_ACTION", 'index');
 }
-$ss->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 
 require_once('include/QuickSearchDefaults.php');
 $qsd = QuickSearchDefaults::getQuickSearchDefaults();

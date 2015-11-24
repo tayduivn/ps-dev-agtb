@@ -76,8 +76,6 @@ else {
 }
 $xtpl->assign("CAMPAIGN_ID", $campaign_id);
 
-
-$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("JAVASCRIPT", get_set_focus_js());
 $xtpl->assign("DATE_ENTERED", $focus->date_entered);
 $xtpl->assign("DATE_MODIFIED", $focus->date_modified);

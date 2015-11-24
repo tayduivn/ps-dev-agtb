@@ -14,6 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
  * Description:  
  ********************************************************************************/
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
 
@@ -55,6 +56,7 @@ $GLOBALS['log']->info("TaxRate list view");
 global $theme;
 
 $ListView = new ListView();
+$module = InputValidation::getService()->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
 
 $button  = "<form border='0' action='index.php' method='post' name='form'>\n";
 $button .= smarty_function_sugar_csrf_form_token(array(), $ListView);
@@ -66,8 +68,8 @@ $button .= "<input type='hidden' name='return_action' value='".$action."'>\n";
 $button .= "<input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."' accessyKey='".$app_strings['LBL_NEW_BUTTON_KEY']."' id='btn_create' class='button' type='submit' name='New' value='".$app_strings['LBL_NEW_BUTTON_LABEL']."'>\n";
 $button .= "</form>\n";
 
-if((is_admin($current_user) || is_admin_for_module($GLOBALS['current_user'],'Quotes')) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
-		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&from_action=ListView&from_module=".$_REQUEST['module'] ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>";
+if((is_admin($current_user) || is_admin_for_module($GLOBALS['current_user'],'Quotes')) && $module != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
+		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&from_action=ListView&from_module=".htmlspecialchars($module, ENT_QUOTES, 'UTF-8') ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>";
 }
 $ListView->initNewXTemplate( 'modules/TaxRates/ListView.html',$mod_strings);
 $ListView->xTemplateAssign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_DELETE']));
@@ -95,8 +97,8 @@ if ($is_edit) {
 		$edit_button .="<input type='hidden' name='return_id' value=''>\n";
 		$edit_button .='<input title="'.$app_strings['LBL_SAVE_BUTTON_TITLE'].'" accessKey="'.$app_strings['LBL_SAVE_BUTTON_KEY'].'" class="button" id="btn_save" onclick="this.form.action.value=\'Save\'; return check_form(\'EditView\');" type="submit" name="button" value="'.$app_strings['LBL_SAVE_BUTTON_LABEL'].'" >';
 		$edit_button .=' <input title="'.$app_strings['LBL_SAVE_NEW_BUTTON_TITLE'].'" class="button" id="btn_save_and_create" onclick="this.form.action.value=\'Save\'; this.form.isDuplicate.value=\'true\'; this.form.edit.value=\'true\'; this.form.return_action.value=\'EditView\'; return check_form(\'EditView\')" type="submit" name="button" value="'.$app_strings['LBL_SAVE_NEW_BUTTON_LABEL'].'" >';
-		if((is_admin($current_user) || is_admin_for_module($GLOBALS['current_user'],'Quotes')) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
-		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&edit=true&from_action=EditView&from_module=".$_REQUEST['module'] ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0'  align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>";
+		if((is_admin($current_user) || is_admin_for_module($GLOBALS['current_user'],'Quotes')) && $module != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
+		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&edit=true&from_action=EditView&from_module=".htmlspecialchars($module, ENT_QUOTES, 'UTF-8') ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0'  align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>";
 		}
 echo get_form_header($mod_strings['LBL_TAXRATE']." ".$focus->name. '&nbsp;'. $header_text,$edit_button , false); 
 
@@ -105,11 +107,18 @@ echo get_form_header($mod_strings['LBL_TAXRATE']." ".$focus->name. '&nbsp;'. $he
 	$xtpl=new XTemplate ('modules/TaxRates/EditView.html');
 	$xtpl->assign("MOD", $mod_strings);
 	$xtpl->assign("APP", $app_strings);
-	
-	if (isset($_REQUEST['return_module'])) $xtpl->assign("RETURN_MODULE", $_REQUEST['return_module']);
-	if (isset($_REQUEST['return_action'])) $xtpl->assign("RETURN_ACTION", $_REQUEST['return_action']);
-	if (isset($_REQUEST['return_id'])) $xtpl->assign("RETURN_ID", $_REQUEST['return_id']);
-	$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
+	$returnModule = InputValidation::getService()->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
+	$returnAction = InputValidation::getService()->getValidInputRequest('return_action');
+	$returnId = InputValidation::getService()->getValidInputRequest('return_id', 'Assert\Guid');
+	if (!empty($returnModule)) {
+		$xtpl->assign("RETURN_MODULE", htmlspecialchars($returnModule, ENT_QUOTES, 'UTF-8'));
+	}
+	if (!empty($returnAction)) {
+		$xtpl->assign("RETURN_ACTION", htmlspecialchars($returnAction, ENT_QUOTES, 'UTF-8'));
+	}
+	if (!empty($returnId)) {
+		$xtpl->assign("RETURN_ID", htmlspecialchars($returnId, ENT_QUOTES, 'UTF-8'));
+	}
 	$xtpl->assign("JAVASCRIPT", get_set_focus_js());
 	$xtpl->assign("ID", $focus->id);
 	$xtpl->assign('NAME', $focus->name);
