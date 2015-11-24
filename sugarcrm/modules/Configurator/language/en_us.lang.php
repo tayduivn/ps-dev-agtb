@@ -139,6 +139,7 @@ $mod_strings = array (
     'LBL_OC_STATUS_DESC' => 'Check here if you would like any user to have access to Offline Client.  Otherwise you can configure access at the user level.',
     'SESSION_TIMEOUT' => 'Portal Session Timeout',
     'LBL_SESSION_TIMEOUT_TOOLTIP' => 'The Portal Session Timeout is for legacy versions of Sugar Portal available in 6.5 and older.',
+    'UPLOAD_MAXSIZE_UNITS' => 'bytes',
     'SESSION_TIMEOUT_UNITS' => 'seconds',
     'LBL_LDAP_TITLE'=>'LDAP Authentication Support',
     'LBL_LDAP_ENABLE'=>'Enable LDAP',

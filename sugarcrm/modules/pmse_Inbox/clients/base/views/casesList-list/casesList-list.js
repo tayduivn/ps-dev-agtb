@@ -9,8 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    extendsFrom: 'FlexListView',
-    plugins: ['ListColumnEllipsis', 'Pagination', 'MassCollection'],
+    extendsFrom: 'RecordlistView',
 
     /**
      * Removes the event listeners that were added to the mass collection.
@@ -22,16 +21,7 @@
         }
         this._super("unbindData");
     },
-    /**
-     * Override to inject field names into the request when fetching data for the list.
-     *
-     * @param module
-     * @returns {Array}
-     */
-    getFieldNames: function(module) {
-        // id and module always get returned, so name and email just need to be added
-        return ['name', 'email'];
-    },
+
     /**
      * Override to hook in additional triggers as the mass collection is updated (rows are checked on/off in
      * the actionmenu field). Also attempts to pre-check any rows when the list is refreshed and selected recipients
@@ -48,20 +38,5 @@
                 layout: 'access-denied'
             });
         }
-    },
-    /**
-     * Override to force translation of the module names as columns are added to the list.
-     *
-     * @param field
-     * @private
-     */
-    _renderField: function(field) {
-            this._super("_renderField", [field]);
-    },
-
-    _dispose: function() {
-        jQuery('.adam-modal').remove();
-        this._super("_dispose", arguments);
     }
-
 })

@@ -639,6 +639,10 @@
         this.model.clear();
         this.model.set(this.extendModel(model, origAttributes));
 
+        if (this.model.link) {
+            this.model.link.isNew = false;
+        }
+
         this.createMode = false;
         if (!this.disposed) {
             this.render();

@@ -50,8 +50,8 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
     protected function fixLockedVariables()
     {
         $lockedFieldsQuery = "SELECT id, pro_locked_variables FROM pmse_bpm_process_definition";
-        $targetRows = $this->db->query($lockedFieldsQuery);
-        foreach ($targetRows as $row) {
+        $result = $this->db->query($lockedFieldsQuery);
+        while ($row = $this->db->fetchByAssoc($result)) {
             $bean = BeanFactory::getBean('pmse_BpmProcessDefinition', $row['id']);
             $bean->pro_locked_variables = $this->convertSerializedData($row['pro_locked_variables'], true);
             $bean->save();
@@ -64,8 +64,8 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
     protected function fixCasDataVariables()
     {
         $query = "SELECT id, cas_data FROM pmse_bpm_case_data";
-        $targetRows = $this->db->query($query);
-        foreach ($targetRows as $row) {
+        $result = $this->db->query($query);
+        while ($row = $this->db->fetchByAssoc($result)) {
             $bean = BeanFactory::getBean('pmse_BpmCaseData', $row['id']);
             $bean->cas_data = $this->convertSerializedData($row['cas_data']);
             $bean->save();
@@ -78,8 +78,8 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
     protected function fixBpm_form_actionTable()
     {
         $query = "SELECT id, cas_data, cas_pre_data FROM pmse_bpm_form_action";
-        $targetRows = $this->db->query($query);
-        foreach ($targetRows as $row) {
+        $result = $this->db->query($query);
+        while ($row = $this->db->fetchByAssoc($result)) {
             $bean = BeanFactory::getBean('pmse_BpmFormAction', $row['id']);
             $bean->cas_data = $this->convertSerializedData($row['cas_data']);
             $bean->cas_pre_data = $this->convertSerializedData($row['cas_pre_data']);
@@ -94,8 +94,8 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
     protected function fixPADynamicFormTable()
     {
         $query = "SELECT id, dyn_view_defs FROM pmse_bpm_dynamic_forms";
-        $targetRows = $this->db->query($query);
-        foreach ($targetRows as $row) {
+        $result = $this->db->query($query);
+        while ($row = $this->db->fetchByAssoc($result)) {
             $bean = BeanFactory::getBean('pmse_BpmDynaForm', $row['id']);
             $bean->dyn_view_defs = $this->convertSerializedData(base64_decode($row['dyn_view_defs']));
             $bean->save();
@@ -108,8 +108,8 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
     protected function fixPABpmFlowTable()
     {
         $query = "SELECT id, cas_adhoc_actions FROM pmse_bpm_flow";
-        $targetRows = $this->db->query($query);
-        foreach ($targetRows as $row) {
+        $result = $this->db->query($query);
+        while ($row = $this->db->fetchByAssoc($result)) {
             $bean = BeanFactory::getBean('pmse_BpmFlow', $row['id']);
             $bean->cas_adhoc_actions = $this->convertSerializedData($row['cas_adhoc_actions']);
             $bean->save();
