@@ -343,6 +343,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'include/javascript/sugar7/plugins/QuickSearchFilter.js';
             $files[] = 'styleguide/assets/css/sugar.css';
             $files[] = 'styleguide/assets/css/bootstrap.css';
+            //MACAROON-1005 remove casesList-list.js
+            $files[] = 'modules/pmse_Inbox/clients/base/layouts/casesList-list/casesList-list.js';
         }
 
         $this->fileToDelete($files);

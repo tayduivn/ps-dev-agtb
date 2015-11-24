@@ -58,6 +58,8 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
         $KBContent->setupPrimaryLanguage();
         $this->convertTags();
 
+        $app_list_strings = return_app_list_strings_language('en_us');
+
         while ($documents = $this->getOldDocuments()) {
             foreach ($documents as $row) {
                 $this->log("Convert the KBOLDDocument {$row['id']} to a KBContent.");
@@ -72,7 +74,6 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                 $data['is_external'] = empty($data['is_external_article']) ? false : true;
                 $data['viewcount'] = $data['views_number'];
 
-                $app_list_strings = return_app_list_strings_language('en_us');
                 // Yes, the status_id is a lable.
                 if ($data['status_id'] == 'Published') {
                     $data['status'] = KBContent::ST_PUBLISHED;
@@ -86,6 +87,10 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                 $KBContent->set_created_by = false;
                 $KBContent->update_modified_by = false;
                 $KBContent->save();
+
+                //BEGIN SUGARCRM flav=ent ONLY
+                $this->updatePmseKbIds($row, $KBContent->id);
+                //END SUGARCRM flav=ent ONLY
 
                 $KBContent->load_relationship('tag_link');
                 foreach ($this->getOldDocTagIDs($row['id']) as $tag) {
@@ -403,4 +408,24 @@ EOF;
 
         return $categoryID;
     }
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Update pmse_bpm_flow with the new KB ids
+     *
+     * @param $document the pre-update KBDocument values
+     * @param $newId the post-update new KBContents id
+     */
+    protected function updatePmseKbIds($document, $newId)
+    {
+        if (empty($document['id']) || empty($newId)) {
+            $this->log("Error: {$document['kbdocument_name']} doesn't have an ID. Any relevant KB processes will not be updated");
+            return;
+        }
+
+        $sql = "UPDATE pmse_bpm_flow";
+        $sql .= " SET cas_sugar_object_id = " . $this->db->quoted($newId);
+        $sql .= " WHERE cas_sugar_object_id = " . $this->db->quoted($document['id']);
+        $this->db->query($sql);
+    }
+    //END SUGARCRM flav=ent ONLY
 }

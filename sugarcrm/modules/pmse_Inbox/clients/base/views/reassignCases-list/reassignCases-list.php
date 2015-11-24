@@ -16,7 +16,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $module_name = 'pmse_Inbox';
 $viewdefs[$module_name]['base']['view']['reassignCases-list'] = array(
-    'template'   => 'list',
+    'template'   => 'flex-list',
     'selection' => array(
     ),
     'rowactions' => array(

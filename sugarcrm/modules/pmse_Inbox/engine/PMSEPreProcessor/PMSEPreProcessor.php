@@ -321,7 +321,8 @@ class PMSEPreProcessor
             'pro_module',
             'pro_status',
             'pro_locked_variables',
-            'pro_terminate_variables'
+            'pro_terminate_variables',
+            'date_entered',
         );
 
         $relatedDependency = $this->retrieveBean('pmse_BpmRelatedDependency');
@@ -455,6 +456,31 @@ class PMSEPreProcessor
                 $flows = $this->getFlowsByCasId($args['cas_id']);
                 break;
         }
+
+//      Sort flows
+        usort($flows, function ($a, $b) {
+            $valueA = $a["evn_params"] == 'new' ? 1 : ($a["evn_params"] == 'updated' ? 2 : 3);
+            $valueB = $b["evn_params"] == 'new' ? 1 : ($b["evn_params"] == 'updated' ? 2 : 3);
+            if ($valueA == $valueB) {
+                if (!empty($a["date_entered"]) && !empty($b["date_entered"])) {
+                    $timedate = TimeDate::getInstance();
+                    $date_a = $timedate->fromString($a["date_entered"]);
+                    $date_b = $timedate->fromString($b["date_entered"]);
+                    if ($date_a < $date_b) {
+                        return -1;
+                    } else if ($date_a > $date_b) {
+                        return 1;
+                    }
+                }
+                return 0;
+            }
+            if ($valueA < $valueB) {
+                return -1;
+            } else {
+                return 1;
+            }
+        });
+
         return $flows;
     }
 

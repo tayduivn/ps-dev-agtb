@@ -101,10 +101,6 @@ class OpportunityViews
      */
     public function processListViews(array $fieldMap)
     {
-        // get the views for the module
-        $mm = MetadataManager::getManager();
-        $views = $mm->getModuleViews('Opportunities');
-
         // fix the selected-list view
         $this->processSelectedListView($fieldMap);
 

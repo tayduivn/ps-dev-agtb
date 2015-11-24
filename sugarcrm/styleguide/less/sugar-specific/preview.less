@@ -40,8 +40,10 @@
   margin: 0 7px;
 
   .field-row {
-    display: flex;
+    .displayFlex();
+    -webkit-flex-direction: row;
     flex-direction: row;
+    -webkit-flex-wrap: nowrap;
     flex-wrap: nowrap;
     justify-content: flex-start;
     align-items: stretch;
@@ -55,12 +57,17 @@
       padding: 5px 6px 5px 0;
       font-size: 11px;
       color: @gray;
+      -webkit-order: 1;
       order: 1;
+      -webkit-flex-basis: 40%;
+      width: 37%;
       flex-basis: 40%;
     }
 
     .field-value {
+      -webkit-order: 2;
       order: 2;
+      -webkit-flex-grow: 1;
       flex-grow: 1;
       position: relative;
       width: 100%;
