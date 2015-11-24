@@ -27,40 +27,15 @@ class PMSEEngineUtils
      * @var array
      */
     protected static $blacklistedFields = array(
-        'ALL' => array(
-            'deleted',
-            'system_id',
-            'mkto_sync',
-            'mkto_id',
-            'mkto_lead_score',
-            'parent_type',
-            'user_name',
-            'user_hash',
-            'portal_app',
-            'portal_active',
-            'portal_name',
-            'password',
-            'is_admin',
-        ),
-        'BR' => array(
-            'duration_hours',
-            'duration_minutes',
-            'repeat_type',
-            'created_by',
-            'modified_user_id',
-            'date_entered',
-            'date_modified',
-        ),
-        // Add related record activity panel
-        'AC' => array(),
-        // Change field action... this used to be the same as Add Related Record
-        // but we needed different things from this
-        'CF' => array(
-            'created_by',
-            'modified_user_id',
-            'date_entered',
-            'date_modified',
-        ),
+        'deleted',
+        'system_id',
+        'mkto_sync',
+        'mkto_id',
+        'mkto_lead_score',
+        'parent_type',
+        'user_name',
+        'user_hash',
+        'is_admin',
     );
 
     /**
@@ -100,13 +75,6 @@ class PMSEEngineUtils
         'AC' => array('assigned_user_id'),
         'RR' => array(),
     );
-
-    /**
-     * Process Author does not handle the below field types currently. So skip
-     * displaying them.
-     * @var array
-     */
-    public static $blacklistedFieldTypes = array('image','password','file');
 
     /**
      * Method get key fields
@@ -1056,8 +1024,6 @@ class PMSEEngineUtils
 
     public static function isValidField($def, $type = '')
     {
-        // First things first... if we are explicitly directed to do something
-        // based on the vardefs, do that thing first
         if (isset($def['processes'])) {
             // If a field is explicitly marked for processes, handle it
             if (is_bool($def['processes'])) {
@@ -1080,55 +1046,36 @@ class PMSEEngineUtils
             }
         }
 
-        // If the field is to blacklisted, handle that now
-        if (!self::blackListFields($def, $type)) {
-            return false;
-        }
-
-        // If the field is whitelisted, handle THAT now
-        if (self::specialFields($def, $type)) {
-            return true;
-        }
-
-        // Now carry on the rest of the special case madness until we need to
-        // check studio validity
+        $result = self::isValidStudioField($def);
         if (isset($def['source']) && $def['source'] == 'non-db') {
-            return false;
+            $result = false;
         }
-
-        // Process Author does not handle some field types like image, password, file, etc currently
-        if (isset($def['type']) && in_array($def['type'], self::$blacklistedFieldTypes)) {
-            return false;
+        if (isset($def['type']) && ($def['type'] == 'image' || $def['type'] == 'password')) {
+            $result = false;
         }
-
-        // For action type, do not allow formula fields
-        if ($type == 'AC' && isset($def['formula'])) {
-            return false;
+        if ($type == 'AC') {
+            if (isset($def['formula'])) {
+                $result = false;
+            }
         }
-
-        // For action types or relate record types, if the field is readonly,
-        // don't allow it
-        if (($type == 'RR' || $type == 'AC') && !empty($def['readonly'])) {
-            return false;
+        if ($type == 'RR' || $type == 'AC') {
+            if (isset($def['readonly']) && $def['readonly']) {
+                $result = false;
+            }
         }
-
-        // At this point all we are left with is checking if it is studio valid
-        return self::isValidStudioField($def);
+        $result = (self::specialFields($def, $type)) ? true : $result;
+        $result = $result && self::blackListFields($def);
+        return $result;
     }
 
     /**
      * Validation method that checks if a field is blacklisted.
      * @param array $def A vardef entry for a field
-     * @param string $type The type of list to use
      * @return boolean True if the field is not blacklisted, false if it is
      */
-    public static function blackListFields($def, $type = '')
+    public static function blackListFields($def)
     {
-        $blacklist = self::$blacklistedFields['ALL'];
-        if (!empty($type) && $type !== 'ALL' && isset(self::$blacklistedFields[$type])) {
-            $blacklist = array_merge($blacklist, self::$blacklistedFields[$type]);
-        }
-        return !in_array($def['name'], $blacklist);
+        return !in_array($def['name'], self::$blacklistedFields);
     }
 
     /**

@@ -1426,9 +1426,6 @@
         this.onChangeValue = null;
 
         this.language = {};
-
-        // Dirty? Yes. Necessary? Yes. DON'T DELETE THIS COMMENT WOMBAT.
-        this.base_module = options.parent.base_module || decision_table.base_module || "";
         DecisionTableVariable.prototype.initObject.call(this, options);
     };
 
