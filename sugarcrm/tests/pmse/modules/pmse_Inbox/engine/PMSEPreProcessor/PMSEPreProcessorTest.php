@@ -52,11 +52,11 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
         
         $preProcessorMock->expects($this->once())
                 ->method('getFlowById')
-                ->will($this->returnValue('SUCCESS_RESPONSE'));
+                ->will($this->returnValue(array(true)));
         
         $result = $preProcessorMock->getFlowDataList($request);
         
-        $this->assertEquals('SUCCESS_RESPONSE', $result);
+        $this->assertEquals(array(true), $result);
     }
     
     public function testGetFlowDataListHook()
@@ -70,14 +70,22 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(array('getAllEvents'))
                 ->getMock();
-        
+
+//      Flows to sort
+        $first = array("evn_params" => 'new', "date_entered" => '2015-11-13 16:35:15');
+        $second = array("evn_params" => 'updated', "date_entered" => '2015-11-13 16:35:16');
+        $third = array("evn_params" => 'allupdates', "date_entered" => '2015-11-13 16:35:17');
+        $fourth = array("evn_params" => 'new', "date_entered" => '2015-11-13 16:35:18');
+        $fifth = array("evn_params" => 'updated', "date_entered" => '2015-11-13 16:35:12');
+        $sixth = array("evn_params" => 'allupdates', "date_entered" => '2015-11-13 16:35:19');
+
         $preProcessorMock->expects($this->once())
                 ->method('getAllEvents')
-                ->will($this->returnValue('SUCCESS_RESPONSE'));
+                ->will($this->returnValue(array($second, $third, $first, $fourth, $fifth, $sixth)));
         
         $result = $preProcessorMock->getFlowDataList($request);
-        
-        $this->assertEquals('SUCCESS_RESPONSE', $result);
+
+        $this->assertEquals(array($first,$fourth,$fifth,$second,$third,$sixth), $result);
     }
     
     public function testGetFlowDataListQueue()
@@ -94,11 +102,11 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
         
         $preProcessorMock->expects($this->once())
                 ->method('getFlowById')
-                ->will($this->returnValue('SUCCESS_RESPONSE'));
+                ->will($this->returnValue(array(true)));
         
         $result = $preProcessorMock->getFlowDataList($request);
         
-        $this->assertEquals('SUCCESS_RESPONSE', $result);
+        $this->assertEquals(array(true), $result);
     }
     
     public function testGetFlowDataListEngine()
@@ -115,11 +123,11 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
         
         $preProcessorMock->expects($this->once())
                 ->method('getFlowsByCasId')
-                ->will($this->returnValue('SUCCESS_RESPONSE'));
+                ->will($this->returnValue(array(true)));
         
         $result = $preProcessorMock->getFlowDataList($request);
         
-        $this->assertEquals('SUCCESS_RESPONSE', $result);
+        $this->assertEquals(array(true), $result);
     }
     
     public function testGetFlowDataListInvalid()

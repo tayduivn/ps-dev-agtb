@@ -10,6 +10,7 @@ describe('copy field', function() {
             app = SugarTest.app;
 
             model = new Backbone.Model({
+                id: 'not-new',
                 int: 1234567890,
                 float: 1234567.89,
                 name: 'Lórem ipsum dolor sit àmêt, ut úsu ómnés tatión imperdiet.',

@@ -93,7 +93,14 @@ class MetaDataHelper
      */
     public function updateHash()
     {
-        $this->mdmHash = $this->mdm->getCachedMetadataHash(new \MetaDataContextDefault());
+        $defaultContext = new \MetaDataContextDefault();
+        $this->mdmHash = $this->mdm->getCachedMetadataHash($defaultContext);
+
+        // If the metadata manager cache is enabled but hash is not calculated, force the hash to be calculated
+        if ($this->mdm->cacheEnabled() && empty($this->mdmHash)) {
+            $this->mdm->getMetadata(array(), $defaultContext);
+            $this->mdmHash = $this->mdm->getCachedMetadataHash($defaultContext);
+        }
 
         // Make sure we have a hash available, if not lets temporarily disable
         // our cache backend.

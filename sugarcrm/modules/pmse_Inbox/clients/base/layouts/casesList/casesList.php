@@ -16,7 +16,7 @@ $viewdefs['pmse_Inbox']['base']['layout']['casesList'] = array(
         array(
             'layout' => array(
                 'type' => 'default',
-                'type' => 'sidebar',
+                'name' => 'sidebar',
                 'components' => array(
                     array(
                         'layout' => array(

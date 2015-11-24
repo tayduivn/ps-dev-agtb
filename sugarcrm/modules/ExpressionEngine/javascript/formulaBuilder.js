@@ -997,6 +997,13 @@ SUGAR.expressions.GridToolTip = {
             fb_ac_open = true;
             //Set the content of the spacer to the same as the formula input to offset the autocomplete location by that amount
             updateACSpacer();
+
+            $('#fb_ac_wrapper ul.ui-autocomplete').addClass('fb_ac_menu');
+            $('.fb_ac_menu').css('z-index', maxZ + 3);
+            var liDiff = $('.fb_ac_menu li').outerWidth() - $('.fb_ac_menu li').width();
+            var ulDiff = parseInt($('.fb_ac_menu').css("border-left-width")) + parseInt($('.fb_ac_menu').css("border-right-width"));
+            $('.fb_ac_menu li').width($('.fb_ac_menu li').width() - ulDiff - liDiff);
+
             hideACHelp();
         },
         close: function(){

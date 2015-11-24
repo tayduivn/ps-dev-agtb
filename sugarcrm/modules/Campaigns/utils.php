@@ -221,6 +221,16 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
                     $data['related_id']="'".$clicked_url_key."'";
                     $data['related_type']="'".'CampaignTrackers'."'";
                 }
+
+                //populate the primary email address into the more_info field
+                if (!empty($row['target_id']) && !empty($row['target_type'])) {
+                    $sugarEmailAddress = BeanFactory::getBean('EmailAddresses');
+                    $primeEmail = $sugarEmailAddress->getPrimaryAddress($this, $row['target_id'], $row['target_type']);
+                    if (!empty($primeEmail)) {
+                        $data['more_information'] =  "'" . $primeEmail . "'";
+                    }
+                }
+
                 //values for return array..
                 $return_array['target_id']=$row['target_id'];
                 $return_array['target_type']=$row['target_type'];
