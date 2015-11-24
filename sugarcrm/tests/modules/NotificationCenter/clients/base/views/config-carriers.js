@@ -13,6 +13,9 @@ describe('NotificationCenter.View.ConfigCarriers', function() {
 
     beforeEach(function() {
         app = SugarTest.app;
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.set();
+        SugarTest.declareData('base', module, true, false);
         layout = SugarTest.createLayout('base', module, 'config-drawer', null, null, true);
         context = app.context.getContext({model: layout.model});
         view = SugarTest.createView('base', module, 'config-carriers', {}, context, true, layout);
@@ -20,6 +23,7 @@ describe('NotificationCenter.View.ConfigCarriers', function() {
     });
 
     afterEach(function() {
+        SugarTest.testMetadata.dispose();
         view = null;
         sandbox.restore();
     });

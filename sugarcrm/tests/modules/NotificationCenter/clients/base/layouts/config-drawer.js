@@ -14,11 +14,15 @@ describe('NotificationCenter.Layout.ConfigDrawer', function() {
     beforeEach(function() {
         app = SugarTest.app;
         module = 'NotificationCenter';
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.set();
+        SugarTest.declareData('base', module, true, false);
         layout = SugarTest.createLayout('base', module, 'config-drawer', null, null, true);
         sandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
+        SugarTest.testMetadata.dispose();
         layout = null;
         sandbox.restore();
     });
@@ -52,24 +56,6 @@ describe('NotificationCenter.Layout.ConfigDrawer', function() {
             layout.initialize(options);
             expect(layout.model.get('configMode')).toBe('user');
         });
-
-        it('should call prepareModel() method', function() {
-            var prepareModel = sandbox.spy(layout, 'prepareModel');
-            layout.initialize(options);
-            expect(prepareModel).toHaveBeenCalled();
-        });
-    });
-
-    describe('prepareModel()', function() {
-        using('additional methods',
-            ['_copyFiltersFromDefault', '_copyCarriersStatusFromDefault', 'replaceDefaultToActualValues',
-                'resetToDefault', 'setSelectedAddresses', 'updateCarriersAddresses'],
-            function(method) {
-                it('should create method in Model', function() {
-                    layout.prepareModel();
-                    expect(layout.model).not.toBeUndefined(method);
-                });
-            });
     });
 
     describe('loadConfig()', function() {
