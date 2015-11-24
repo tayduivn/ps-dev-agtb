@@ -279,12 +279,16 @@
                     _.each(data.rslt, function(val, ind) {
                         _.each(val, function(v, i) {
                             var id = v,
-                                node = this.jsTree.find('[data-id=' + id +']'),
-                                selectedNode = {
-                                    id: id,
-                                    name: node.find('a:first').text().trim(),
-                                    type: node.data('type') || 'folder'
-                                };
+                                selectedNode,
+                                node = this.jsTree.find('[data-id=' + id +']');
+                            if (node.length === 0) {
+                                return;
+                            }
+                            selectedNode = {
+                                id: id,
+                                name: node.find('a:first').text().trim(),
+                                type: node.data('type') || 'folder'
+                            };
                             val[i] = selectedNode;
                         }, this);
                         data.rslt[ind] = val;
