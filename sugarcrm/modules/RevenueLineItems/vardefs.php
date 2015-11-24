@@ -599,7 +599,7 @@ $dictionary['RevenueLineItem'] = array(
             //END SUGARCRM flav!=ent ONLY
         ),
         'likely_case' => array(
-            'formula' => 'string($total_amount)',
+            'formula' => 'ifElse(equal($likely_case,""),string($total_amount),$likely_case)',
             'calculated' => true,
             'name' => 'likely_case',
             'vname' => 'LBL_LIKELY',
