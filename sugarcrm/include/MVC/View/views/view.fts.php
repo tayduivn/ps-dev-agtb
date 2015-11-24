@@ -59,8 +59,7 @@ class ViewFts extends SugarView
 
         $disabledModules = $this->request->getValidInputRequest(
             'disabled_modules', 
-            array('Assert\Delimited' => array('constraints' => 'Assert\Mvc\ModuleName')),
-            array()
+            array('Assert\Delimited' => array('constraints' => 'Assert\Mvc\ModuleName'))
         );
 
         //If no modules have been passed in then lets check user preferences.

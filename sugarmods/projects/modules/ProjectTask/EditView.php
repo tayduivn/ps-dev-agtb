@@ -192,7 +192,6 @@ $quicksearch_js .= '<script type="text/javascript" language="javascript">sqs_obj
 
 $xtpl->assign("JAVASCRIPT", get_set_focus_js().get_validate_record_js() . $quicksearch_js);
 $xtpl->assign("IMAGE_PATH", $image_path);
-$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("id", $focus->id);
 
 if (isset($_REQUEST['fromGrid'])){

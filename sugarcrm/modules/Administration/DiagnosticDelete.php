@@ -31,7 +31,7 @@ echo getClassicModuleTitle(
         );
 
 $request = InputValidation::getService();
-$file = $request->getValidInputRequest('file', 'Assert\File');
+$file = $request->getValidInputRequest('file');
 $guid = $request->getValidInputRequest('guid', 'Assert\Guid');
 
 if(empty($file) || empty($guid))

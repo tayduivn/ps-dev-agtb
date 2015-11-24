@@ -183,7 +183,7 @@ if(typeof PackageManager == 'undefined') {
 	        downloadComplete : function(data){
 
 	        PackageManager.hideWaiting();
-	        	eval(data.responseText);
+                var result = JSON.parse(data.responseText);
 	        	if(typeof result != 'undefined') {
 	        		_numDownloadsComplete++;
 					_loadingBar.setHeader("{/literal}{$MOD.DL_PACKAGES_DOWNLOADING}{literal} "+_numDownloadsComplete+" {/literal}{$MOD.DL_PACKAGES_OF}{literal} "+_numPackagesToDownload+ " {/literal}{$MOD.DL_PACKAGES_PACKAGES}{literal}");
@@ -229,7 +229,7 @@ if(typeof PackageManager == 'undefined') {
 	        		ajaxStatus.flashStatus(message, 5000);
 	        },
 	        populateGrid : function(data){
-	            eval(data.responseText);
+                var result = JSON.parse(data.responseText);
 	            if(typeof result != 'undefined') {
 	        		//uncheck all treenodes
 	        		var tree = YAHOO.widget.TreeView.getTree('treeview');
@@ -252,8 +252,7 @@ if(typeof PackageManager == 'undefined') {
         		}
 	        },
 	        completeSearch: function(data){
-
-	        	eval(data.responseText);
+                var result = JSON.parse(data.responseText);
 
 	        	if(typeof result != 'undefined') {
 	        		PackageManager.populateGrid(result);
@@ -334,7 +333,7 @@ if(typeof PackageManager == 'undefined') {
             	var id= node.data.id;
  				var callback =	{
 		  			success: function(data) {
-			    		eval(data.responseText);
+                        var result = JSON.parse(data.responseText);
 			    		if(typeof result != 'undefined') {
 							var tmpNode = node;
 							for ( key in result['nodes'] ) {
@@ -417,15 +416,11 @@ if(typeof PackageManager == 'undefined') {
 				//get the list of packages that belong to this node
 				var callback =	{
 		  			success: function(data) {
-			    		eval(data.responseText);
+                    var result = JSON.parse(data.responseText);
 			    		if(typeof result != 'undefined') {
-				    		eval(data.responseText);
-
-	        				if(typeof result != 'undefined') {
-								var licenseDiv = document.getElementById('licenseDiv');
-								licenseDiv.style.display = 'block';
-								licenseDiv.innerHTML = result['license_display'];
-							}
+							var licenseDiv = document.getElementById('licenseDiv');
+							licenseDiv.style.display = 'block';
+							licenseDiv.innerHTML = result['license_display'];
 	   					}//fi
 	   				PackageManager.hideWaiting();
 	   				if (typeof onCompleteCallback == 'function') onCompleteCallback();
@@ -456,14 +451,6 @@ if(typeof PackageManager == 'undefined') {
 				//get the list of packages that belong to this node
 				var callback =	{
 		  			success: function(data) {
-			    		eval(data.responseText);
-			    		if(typeof result != 'undefined') {
-				    		eval(data.responseText);
-
-	        				if(typeof result != 'undefined') {
-
-							}
-	   					}//fi
 	   				PackageManager.hideWaiting();
 	   				if (typeof onCompleteCallback == 'function') onCompleteCallback();
 		  			},
@@ -483,7 +470,7 @@ if(typeof PackageManager == 'undefined') {
 				var callback =	{
 		  			success: function(data) {
 
-			    		eval(data.responseText);
+                        var result = JSON.parse(data.responseText);
 			    		if(typeof result != 'undefined') {
 			    		var screenshot_count = 0;
 			    			var screenshot_html = "<table><tr>";
@@ -617,7 +604,7 @@ if(typeof PackageManager == 'undefined') {
 				PackageManager.showWaiting();
 				var callback =	{
 		  			success: function(data) {
-			    		eval(data.responseText);
+                        var result = JSON.parse(data.responseText);
 	        				if(typeof result != 'undefined') {
 	        					var tree = YAHOO.widget.TreeView.getTree('treeview');
 								var root = tree.getRoot();
@@ -680,7 +667,7 @@ if(typeof PackageManager == 'undefined') {
  				var callback =	{
 		  			success: function(data) {
 						_loadingBar.hide();
-			    		eval(data.responseText);
+                        var result = JSON.parse(data.responseText);
 			    		if(typeof result != 'undefined') {
 			    			var tree = new YAHOO.widget.TreeView('treeview');
 
@@ -712,7 +699,7 @@ if(typeof PackageManager == 'undefined') {
  				var callback =	{
 		  			success: function(data) {
 		  			_loadingBar.hide();
-			    		eval(data.responseText);
+                        var result = JSON.parse(data.responseText);
 			    		if(typeof result != 'undefined') {
 			    			_pmg.clearGrid();
 
@@ -741,7 +728,7 @@ if(typeof PackageManager == 'undefined') {
 				PackageManager.showWaiting();
  				var callback =	{
 		  			success: function(data) {
-			    		eval(data.responseText);
+                        var result = JSON.parse(data.responseText);
 			    		if(typeof result != 'undefined') {
 			    			var header_div = document.getElementById('span_display_html');
 			    			header_div.innerHTML = result['promotion'];
@@ -770,7 +757,7 @@ if(typeof PackageManager == 'undefined') {
 				//PackageManager.showWaiting();
 				var callback =	{
 		  			success: function(data) {
-			    		eval(data.responseText);
+                        var result = JSON.parse(data.responseText);
 	        				if(typeof result != 'undefined') {
 								PackageManager.getPackagesInStaging();
 							}
@@ -812,7 +799,7 @@ if(typeof PackageManager == 'undefined') {
 		  			success: function(data) {
 						btn.value = 'Login';
 						btn.disabled = false;
-			    		eval(data.responseText);
+                        var result = JSON.parse(data.responseText);
 	        				if(typeof result != 'undefined') {
 								if(result['status'] == 'success'){
 									PackageManager.showLoginDialog(false);

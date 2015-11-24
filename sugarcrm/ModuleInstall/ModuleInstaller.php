@@ -3393,7 +3393,8 @@ class ModuleInstaller{
     protected function validateInstallFile()
     {
         $request = InputValidation::getService();
-        $installFile = $request->getValidInputRequest('install_file', 'Assert\File');
+        // $_REQUEST['install_file'] is a hash as per fileToHash/hashToFile
+        $installFile = $request->getValidInputRequest('install_file');
         return $installFile;
     }
 }

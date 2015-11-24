@@ -203,8 +203,7 @@ class MassUpdate
         if (!empty($_REQUEST['uid']) && !isset($_REQUEST['entire'])) {
             $_POST['mass'] = $this->request->getValidInputRequest(
                 'uid',
-                array('Assert\Delimited' => array('constraints' => 'Assert\Guid')),
-                array()
+                array('Assert\Delimited' => array('constraints' => 'Assert\Guid'))
             );
         } elseif(isset($_REQUEST['entire']) && empty($_POST['mass'])) {
             if(empty($order_by))$order_by = '';

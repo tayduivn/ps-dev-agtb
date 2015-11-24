@@ -36,7 +36,6 @@ $sugar_smarty = new Sugar_Smarty();
 ///
 $sugar_smarty->assign('MOD', $mod_strings);
 $sugar_smarty->assign('APP', $app_strings);
-$sugar_smarty->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $sugar_smarty->assign("BG_COLOR", $hilite_bg);
 $sugar_smarty->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());
 $sugar_smarty->assign("DATE_FORMAT", $timedate->get_date_format());

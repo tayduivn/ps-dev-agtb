@@ -493,8 +493,6 @@ function perform_advanced_search($focus,$default=false){
         $json = getJSONobj();
         $ss_adv->assign('encoded_team_popup_request_data', $json->encode($popup_request_data));
 
-
-        $ss_adv->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
         $ss_adv->assign("ID", $focus->id);
         $ss_adv->assign("DOCUMENT_NAME",$focus->kbdocument_name);
         $ss_adv->assign("DESCRIPTION",$focus->description);

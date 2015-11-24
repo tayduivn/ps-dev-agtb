@@ -962,12 +962,11 @@ function reportResults(&$reporter, &$args) {
 	} // else
 } </script>";
 
-if (isset($reporter->saved_report->id) )
-    $report_id = $reporter->saved_report->id;
-elseif(!empty($_REQUEST['record']))
-    $report_id = $_REQUEST['record'];
-else
-    $report_id = 'unsavedReport';
+if (isset($reporter->saved_report->id) ) {
+	$report_id = $reporter->saved_report->id;
+} else {
+	$report_id = InputValidation::getService()->getValidInputRequest('record', 'Assert\Guid', 'unsavedReport');
+}
 
 	echo "<div class='reportChartContainer' id='{$report_id}_div' style='{$reportChartDivStyle}'>";
      require_once("include/SugarCharts/ChartDisplay.php");

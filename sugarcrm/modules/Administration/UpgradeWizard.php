@@ -80,7 +80,7 @@ $run = $request->getValidInputRequest('run', null, "");
 $releaseId = $request->getValidInputRequest('release_id', null, "");
 $loadModuleFromDir = $request->getValidInputRequest('load_module_from_dir', null, null);
 $upgradeZipEscaped = $request->getValidInputRequest('upgrade_zip_escaped', null, "");
-$installFile = $request->getValidInputRequest('install_file', 'Assert\File');
+$installFile = $request->getValidInputRequest('install_file');
 $reloadMetadata = $request->getValidInputRequest('reloadMetadata');
 
 if ($run !== "") {

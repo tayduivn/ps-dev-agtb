@@ -367,7 +367,6 @@ if(empty($_REQUEST['return_id']) && !isset($_REQUEST['type'])) {
 	$xtpl->assign('RETURN_ACTION', 'index');
 }
 
-$xtpl->assign('PRINT_URL', 'index.php?'.$GLOBALS['request_string']);
 
 
 	///////////////////////////////////////////////////////////////////////////////

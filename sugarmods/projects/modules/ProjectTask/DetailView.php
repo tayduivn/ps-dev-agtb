@@ -76,7 +76,6 @@ $xtpl->assign('APP', $app_strings);
 $xtpl->assign('THEME', $theme);
 $xtpl->assign('GRIDLINE', $gridline);
 $xtpl->assign('IMAGE_PATH', $image_path);
-$xtpl->assign('PRINT_URL', "index.php?".$GLOBALS['request_string']);
 $xtpl->assign('id', $focus->id);
 $xtpl->assign('name', $focus->name);
 $xtpl->assign('assigned_user_name', $focus->assigned_user_name);

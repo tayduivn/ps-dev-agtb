@@ -26,8 +26,7 @@ $request = InputValidation::getService();
 $timeRequest = $request->getValidInputRequest('time');
 $guidRequest = $request->getValidInputRequest('guid', 'Assert\Guid');
 
-if($guidRequest !== null || $timeRequest !== null)
-{
+if ($guidRequest === null || $timeRequest === null) {
 	die('Did not receive a filename to download');
 }
 
@@ -48,6 +47,3 @@ header("Content-Transfer-Encoding: binary");
 header("Content-Length: $filesize");
 readfile($path);
 
-
-
-?>

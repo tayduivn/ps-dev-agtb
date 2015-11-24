@@ -70,7 +70,7 @@ if (empty($_REQUEST['return_id'])) {
 	$xtpl->assign("RETURN_ACTION", 'index');
 }
 $xtpl->assign("THEME", $theme);
-$xtpl->assign("IMAGE_PATH", $image_path);$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
+$xtpl->assign("IMAGE_PATH", $image_path);
 $xtpl->assign("JAVASCRIPT", get_set_focus_js() . get_chooser_js() . get_validate_record_js());
 $xtpl->assign("ID", $focus->id);
 $xtpl->assign("DATE", $focus->holiday_date);

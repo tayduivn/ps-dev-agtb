@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 
 
@@ -26,7 +26,6 @@ $allow_modules = explode(':::', $tabs_def);
 $disallow_modules = explode(':::', $tabs_hide);
 
 $focus->retrieve($_POST['record']);
-print_r($_POST);
 unset($_POST['id']);
 
 
@@ -51,15 +50,12 @@ $focus->set_module_relationship($return_id, $allow_modules, 1);
 $focus->set_module_relationship($return_id, $disallow_modules, 0);
 
 
-
-if(isset($_POST['return_module']) && $_POST['return_module'] != "") $return_module = $_POST['return_module'];
-else $return_module = "Roles";
-if(isset($_POST['return_action']) && $_POST['return_action'] != "") $return_action = $_POST['return_action'];
-else $return_action = "DetailView";
-if(isset($_POST['return_id']) && $_POST['return_id'] != "") $return_id = $_POST['return_id'];
+$return_module = InputValidation::getService()->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName', 'Roles');
+$return_action = InputValidation::getService()->getValidInputRequest('return_action', null, 'DetailView');
+$return_id = InputValidation::getService()->getValidInputRequest('return_id', 'Assert\Guid');
 
 	$GLOBALS['log']->debug("Saved record with id of ".$return_id);
-	header("Location: index.php?action=$return_action&module=$return_module&record=$return_id");
+	header("Location: index.php?action=".htmlspecialchars($return_action, ENT_QUOTES, 'UTF-8')."&module=".htmlspecialchars($return_module, ENT_QUOTES, 'UTF-8')."&record=".htmlspecialchars($return_id, ENT_QUOTES, 'UTF-8'));
 
 
 ?>

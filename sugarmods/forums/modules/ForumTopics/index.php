@@ -121,7 +121,6 @@ if ($is_edit) {
 	if (isset($_REQUEST['return_id'])) $xtpl->assign("RETURN_ID", $_REQUEST['return_id']);
 	$xtpl->assign("THEME", $theme);
 	$xtpl->assign("IMAGE_PATH", $image_path);
-	$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 	$xtpl->assign("JAVASCRIPT", get_set_focus_js());
 	$xtpl->assign("ID", $focus->id);
 	$xtpl->assign('NAME', $focus->name);

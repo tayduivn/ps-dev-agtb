@@ -516,7 +516,7 @@ function perform_advanced_search($focus,$default=false){
         
         
         $ss_adv->assign("THEME", $theme);
-        $ss_adv->assign("IMAGE_PATH", $image_path);$ss_adv->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
+        $ss_adv->assign("IMAGE_PATH", $image_path);
         $ss_adv->assign("ID", $focus->id);
         $ss_adv->assign("DOCUMENT_NAME",$focus->kbdocument_name);
         $ss_adv->assign("DESCRIPTION",$focus->description);
