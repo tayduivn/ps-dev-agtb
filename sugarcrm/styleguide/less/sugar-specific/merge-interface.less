@@ -277,20 +277,21 @@ h4.merge-interface-header {
         height: 75px;
         overflow: visible;
         .calcWidth(~"100% - 20px") !important;
-        input.datepicker {
-          .calcWidth(~"55% - 21px");
+        input.datepicker,
+        input.ui-timepicker-input {
+          .calcWidth(~"50% - 18px");
         }
         input.ui-timepicker-input {
-          .calcWidth(~"45% - 21px");
-          margin-left: 12px;
+          margin-left: 2px;
         }
       }
       .input-append {
         white-space: normal;
         padding-top: 4px;
         .add-on {
-          left: 0;
-          margin-left: -24px;
+          left: inherit;
+          right: 1px;
+          margin-left: -26px;
         }
       }
     }

@@ -327,6 +327,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'silentFTSIndex.php';
             $files[] = 'upgrade/scripts/post/5_FTSHook.php';
             $files[] = 'modules/pmse_Business_Rules/clients/base/views/preview/preview.js';
+            $files[] = 'modules/pmse_Inbox/clients/base/fields/relate/relate.js';
         }
 
         // MACAROON-901... remove quickcreate files for PMSE modules
@@ -342,6 +343,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'include/javascript/sugar7/plugins/QuickSearchFilter.js';
             $files[] = 'styleguide/assets/css/sugar.css';
             $files[] = 'styleguide/assets/css/bootstrap.css';
+            //MACAROON-1005 remove casesList-list.js
+            $files[] = 'modules/pmse_Inbox/clients/base/layouts/casesList-list/casesList-list.js';
         }
 
         $this->fileToDelete($files);

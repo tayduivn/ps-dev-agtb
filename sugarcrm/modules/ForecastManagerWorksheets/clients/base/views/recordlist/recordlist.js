@@ -43,6 +43,16 @@
  *  by: forecasts:worksheet:saved event
  *  when: only when the Assign Quota button is pressed
  *
+ * forecasts:sync:start
+ *  on: this.context.parent
+ *  by: data:sync:start handler
+ *  when: this.collection starts syncing
+ *
+ * forecasts:sync:complete
+ *  on: this.context.parent
+ *  by: data:sync:complete handler
+ *  when: this.collection completes syncing
+ *
  * @class View.Views.Base.ForecastsManagerWorksheets.RecordListView
  * @alias SUGAR.App.view.views.BaseForecastsManagerWorksheetsRecordListView
  * @extends View.Views.Base.RecordListView
@@ -147,7 +157,7 @@
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
         this.plugins = _.without(this.plugins, 'ReorderableColumns', 'MassCollection');
-        this.plugins.push('CteTabbing');
+        this.plugins.push('ClickToEdit');
         this.plugins.push('DirtyCollection');
         this._super("initialize", [options]);
         this.template = app.template.getView('flex-list', this.module);
@@ -279,10 +289,14 @@
 
                 this.collection.on('data:sync:start', function() {
                     this.isCollectionSyncing = true;
+                    // Begin sync start for buttons
+                    this.context.parent.trigger('forecasts:sync:start');
                 }, this);
 
                 this.collection.on('data:sync:complete', function() {
                     this.isCollectionSyncing = false;
+                    // End sync start for buttons
+                    this.context.parent.trigger('forecasts:sync:complete');
                 }, this);
 
                 /**

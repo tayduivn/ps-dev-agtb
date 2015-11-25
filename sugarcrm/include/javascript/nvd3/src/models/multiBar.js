@@ -484,7 +484,7 @@ nv.models.multiBar = function() {
               return valueFormat(val);
             })
             .each(function(d, i) {
-              var bbox = this.getBBox();
+              var bbox = this.getBoundingClientRect();
               d.labelWidth = Math.floor(bbox.width) + 4;
               d.labelHeight = Math.floor(bbox.height);
               d.barLength = barLength(d, i);

@@ -269,6 +269,7 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
    'rhs_module'=> 'Cases', 'rhs_table'=> 'cases', 'rhs_key' => 'created_by',
    'relationship_type'=>'one-to-many')
     ),
+    'acls' => array('SugarACLStatic' => true),
 
     'duplicate_check' => array(
         'enabled' => true,

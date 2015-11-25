@@ -163,6 +163,38 @@ class MetadataApi extends SugarApi
 
 
     /**
+     * To massage metadata for backward compatibility.
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     * @param array $data
+     * @return array
+     */
+    protected function massageMetaData(ServiceBase $api, array $args, array $data)
+    {
+        if (empty($args['module_dependencies']) && $api->getRequest()->getVersion() < 11) {
+            foreach ($data['modules'] as $module => &$modMeta) {
+                // move module level dependencies $modMeta['dependencies'] to each view
+                if (!empty($modMeta['dependencies']) && !empty($modMeta['views'])) {
+                    foreach ($modMeta['views'] as $view => &$viewMeta) {
+                        if (is_array($viewMeta) && !empty($viewMeta['meta'])) {
+                            if (!isset($viewMeta['meta']['dependencies']) ||
+                                !is_array($viewMeta['meta']['dependencies'])) {
+                                $viewMeta['meta']['dependencies'] = array();
+                            }
+                            foreach ($modMeta['dependencies'] as $dep) {
+                                $viewMeta['meta']['dependencies'][] = $dep;
+                            }
+                        }
+                    }
+                    unset($modMeta['dependencies']);
+                }
+            }
+        }
+        return $data;
+    }
+
+    /**
      * Authenticated metadata request endpoint
      * 
      * @param ServiceBase $api
@@ -184,6 +216,9 @@ class MetadataApi extends SugarApi
 
         // Get our metadata now
         $data = $mm->getMetadata($args);
+
+        // handle dependency backward compatiblity
+        $data = $this->massageMetaData($api, $args, $data);
 
         // These are the base metadata sections in private metadata
         $sections = $mm->getSections();

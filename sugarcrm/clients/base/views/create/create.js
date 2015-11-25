@@ -246,10 +246,6 @@
         return (this.model.isNew() && (nonDefaultedAttributesChanged || defaultedAttributesChanged));
     },
 
-    handleSync: function () {
-        //override handleSync since there is no need to save the previous model state
-    },
-
     /**
      * @inheritdoc
      *
@@ -642,6 +638,10 @@
 
         this.model.clear();
         this.model.set(this.extendModel(model, origAttributes));
+
+        if (this.model.link) {
+            this.model.link.isNew = false;
+        }
 
         this.createMode = false;
         if (!this.disposed) {

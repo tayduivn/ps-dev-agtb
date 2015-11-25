@@ -140,6 +140,15 @@ class PMSEElementValidator implements PMSEValidate
         $request->setExternalAction($this->processExternalAction($flowData));
         $request->setCreateThread($this->processCreateThread($flowData));
 
+        //Evaluate parent bean
+        if (!PMSEEngineUtils::isTargetModule($flowData, $bean)) {
+            $parentBean = PMSEEngineUtils::getParentBean($flowData, $bean);
+            if (empty($parentBean) || !is_object($parentBean)) {
+                $request->invalidate();
+                return $request;
+            }
+        }
+
         switch ($flowData['evn_type']) {
             case 'START':
                 $this->logger->info("Validate Start Event.");
@@ -172,21 +181,14 @@ class PMSEElementValidator implements PMSEValidate
     }
 
     /**
-     *
-     * @param type $flowData
+     * @param $flowData
      * @return string
      */
     public function identifyEventAction($flowData)
     {
-        if (isset($flowData['rel_process_module'])
-            && isset($flowData['rel_element_relationship'])
-            && isset($flowData['rel_element_module'])
-            && $flowData['rel_element_module'] !== $flowData['rel_process_module']
-        ) {
-            return 'EVALUATE_RELATED_MODULE';
-        } else {
-            return 'EVALUATE_MAIN_MODULE';
-        }
+        $str = 'EVALUATE_%s_MODULE';
+        $type = PMSEEngineUtils::isTargetModuleNotProcessModule($flowData) ? 'RELATED' : 'MAIN';
+        return sprintf($str, $type);
     }
 
     /**
@@ -199,7 +201,7 @@ class PMSEElementValidator implements PMSEValidate
         if ($this->identifyElementStatus($flowData) == 'RUNNING' && $flowData['evn_type'] == 'INTERMEDIATE') {
             return $this->identifyEventAction($flowData);
         } else {
-            return false;
+            return $this->identifyElementStatus($flowData);
         }
     }
 
@@ -250,7 +252,7 @@ class PMSEElementValidator implements PMSEValidate
 
         if ($processFinished) {
             $q->where()
-                ->notEquals('cas_flow_status', 'CLOSED');
+                ->notIn('cas_flow_status', array('CLOSED', 'TERMINATED'));
         } else {
             $q->where()
                 ->equals('cas_index', 1);
@@ -322,13 +324,34 @@ class PMSEElementValidator implements PMSEValidate
      */
     public function validateStartEvent($bean, $flowData, $request)
     {
-        if ((($this->isNewRecord($bean) && $flowData['evn_params'] == 'new' ||
-                !$this->isNewRecord($bean) && $flowData['evn_params'] == 'updated')
-                 && !$this->isCaseDuplicated($bean, $flowData)) ||
-                    !$this->isNewRecord($bean) && $flowData['evn_params'] == 'allupdates'
-                &&  !$this->isPMSEEdit($bean) && !$this->isCaseDuplicated($bean, $flowData, true)
-        ) {
-            $request->validate();
+        if (!$this->isPMSEEdit($bean)) {
+            $isNewRecord = $this->isNewRecord($bean);
+            switch ($flowData['evn_params']) {
+                case 'new':
+                    if ($isNewRecord && !$this->isCaseDuplicated($bean, $flowData)) {
+                        $request->validate();
+                    } else {
+                        $request->invalidate();
+                    }
+                    break;
+                case 'updated':
+                    if (!$isNewRecord && !$this->isCaseDuplicated($bean, $flowData)) {
+                        $request->validate();
+                    } else {
+                        $request->invalidate();
+                    }
+                    break;
+                case 'allupdates':
+                    if (!$isNewRecord && !$this->isCaseDuplicated($bean, $flowData, true)) {
+                        $request->validate();
+                    } else {
+                        $request->invalidate();
+                    }
+                    break;
+                default:
+                    $request->invalidate();
+                    break;
+            }
         } else {
             $request->invalidate();
         }

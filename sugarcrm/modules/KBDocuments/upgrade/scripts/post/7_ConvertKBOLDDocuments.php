@@ -58,6 +58,8 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
         $KBContent->setupPrimaryLanguage();
         $this->convertTags();
 
+        $app_list_strings = return_app_list_strings_language('en_us');
+
         while ($documents = $this->getOldDocuments()) {
             foreach ($documents as $row) {
                 $this->log("Convert the KBOLDDocument {$row['id']} to a KBContent.");
@@ -72,7 +74,6 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                 $data['is_external'] = empty($data['is_external_article']) ? false : true;
                 $data['viewcount'] = $data['views_number'];
 
-                $app_list_strings = return_app_list_strings_language('en_us');
                 // Yes, the status_id is a lable.
                 if ($data['status_id'] == 'Published') {
                     $data['status'] = KBContent::ST_PUBLISHED;
@@ -87,10 +88,16 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                 $KBContent->update_modified_by = false;
                 $KBContent->save();
 
+                //BEGIN SUGARCRM flav=ent ONLY
+                $this->updatePmseKbIds($row, $KBContent->id);
+                //END SUGARCRM flav=ent ONLY
+
                 $KBContent->load_relationship('tag_link');
                 foreach ($this->getOldDocTagIDs($row['id']) as $tag) {
                     $tagBean = $this->convertTagToTag(array('id' => $tag));
-                    $KBContent->tag_link->add($tagBean);
+                    if ($tagBean) {
+                        $KBContent->tag_link->add($tagBean);
+                    }
                 }
 
                 foreach ($KBContent->kbarticles_kbcontents->getBeans() as $bean) {
@@ -221,6 +228,9 @@ EOF;
         }
         $tagBean = BeanFactory::getBean('Tags');
         $tagName = trim($tag['tag_name']);
+        if (empty($tagName)) {
+            return null;
+        }
 
         // See if this tag exists already. If it does send back the bean for it
         $q = new SugarQuery();
@@ -369,14 +379,20 @@ EOF;
         if (isset($this->convertedTagsCategories[$tag['id']])) {
             return $this->convertedTagsCategories[$tag['id']];
         }
+        $name = trim($tag['tag_name']);
+        if (empty($name)) {
+            return null;
+        }
         $category = BeanFactory::newBean('Categories');
-        $category->name = $tag['tag_name'];
+        $category->name = $name;
 
         if ($tag['parent_tag_id']) {
             $parentTag = $this->getOldTag($tag['parent_tag_id']);
             $parentCategoryId = $this->convertTagsToCategoriesRecursive($parentTag);
-            $parentCategory = BeanFactory::getBean('Categories', $parentCategoryId, array('use_cache' => false));
-            $parentCategory->append($category);
+            if ($parentCategoryId) {
+                $parentCategory = BeanFactory::getBean('Categories', $parentCategoryId, array('use_cache' => false));
+                $parentCategory->append($category);
+            }
         } else {
             $KBContent = BeanFactory::getBean('KBContents');
             $rootCategory = BeanFactory::getBean(
@@ -392,4 +408,24 @@ EOF;
 
         return $categoryID;
     }
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Update pmse_bpm_flow with the new KB ids
+     *
+     * @param $document the pre-update KBDocument values
+     * @param $newId the post-update new KBContents id
+     */
+    protected function updatePmseKbIds($document, $newId)
+    {
+        if (empty($document['id']) || empty($newId)) {
+            $this->log("Error: {$document['kbdocument_name']} doesn't have an ID. Any relevant KB processes will not be updated");
+            return;
+        }
+
+        $sql = "UPDATE pmse_bpm_flow";
+        $sql .= " SET cas_sugar_object_id = " . $this->db->quoted($newId);
+        $sql .= " WHERE cas_sugar_object_id = " . $this->db->quoted($document['id']);
+        $this->db->query($sql);
+    }
+    //END SUGARCRM flav=ent ONLY
 }

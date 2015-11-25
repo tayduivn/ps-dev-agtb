@@ -37,9 +37,12 @@ class SugarUpgradeRunFTSIndex extends UpgradeScript
     public function runFTSIndex()
     {
         try {
-            SearchEngine::getInstance()->runFullReindex(true);
+            // Since the full reindex may take a long time, only schedule the indexing for upgrade.
+            // Note: After the upgrade, the cron job needs to be run before the global search
+            // can be used. It includes indexing the data from database to Elastic search server.
+            SearchEngine::getInstance()->scheduleIndexing(array(), true);
         } catch (Exception $e) {
-            $this->log("SugarUpgradeRunFTSIndex: running full reindex got exceptions!");
+            $this->log("SugarUpgradeRunFTSIndex: scheduling FTS reindex got exceptions!");
         }
 
     }

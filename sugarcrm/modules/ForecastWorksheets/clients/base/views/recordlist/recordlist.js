@@ -43,6 +43,16 @@
  *  by: forecasts:worksheet:saved event
  *  when: only when the commit button is pressed
  *
+ * forecasts:sync:start
+ *  on: this.context.parent
+ *  by: data:sync:start handler
+ *  when: this.collection starts syncing
+ *
+ * forecasts:sync:complete
+ *  on: this.context.parent
+ *  by: data:sync:complete handler
+ *  when: this.collection completes syncing
+ *
  */
 ({
     /**
@@ -163,7 +173,7 @@
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
         this.plugins = _.without(this.plugins, 'ReorderableColumns', 'MassCollection');
-        this.plugins.push('CteTabbing', 'DirtyCollection');
+        this.plugins.push('ClickToEdit', 'DirtyCollection');
         this._super('initialize', [options]);
         // we need to get the flex-list template from the ForecastWorksheets module so it can use the filteredCollection
         // for display
@@ -313,10 +323,14 @@
 
                 this.collection.on('data:sync:start', function() {
                     this.isCollectionSyncing = true;
+                    // Begin sync start for buttons
+                    this.context.parent.trigger('forecasts:sync:start');
                 }, this);
 
                 this.collection.on('data:sync:complete', function() {
                     this.isCollectionSyncing = false;
+                    // End sync start for buttons
+                    this.context.parent.trigger('forecasts:sync:complete');
                 }, this);
 
                 this.collection.on('reset', function() {
