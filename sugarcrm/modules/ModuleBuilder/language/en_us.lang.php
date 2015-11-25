@@ -687,7 +687,7 @@ $mod_strings = array(
 'LBL_TYPE_FILE'=>'file',
 'LBL_RSUB'=>'This is the subpanel that will be displayed in your module',
 'LBL_MSUB'=>'This is the subpanel that your module provides to the related module for display',
-'LBL_MB_IMPORTABLE'=>'Importing',
+'LBL_MB_IMPORTABLE'=>'Allow Imports',
 
 // VISIBILITY EDITOR
 'LBL_VE_VISIBLE'=>'visible',
