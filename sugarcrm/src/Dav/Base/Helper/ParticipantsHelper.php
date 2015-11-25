@@ -101,14 +101,11 @@ class ParticipantsHelper
 
             if ($userIds) {
                 foreach ($userIds as $userId) {
-                    $statusMap = $this->statusMapper->getMapping($event);
                     if (isset($params['PARTSTAT'])) {
-                        $status = isset($statusMap[$params['PARTSTAT']->getValue()]) ?
-                            $statusMap[$params['PARTSTAT']->getValue()] : 'none';
+                        $status = $this->statusMapper->getSugarValue($params['PARTSTAT']->getValue());
                     } else {
                         $status = 'none';
                     }
-
                     $cn = isset($params['CN']) ? $params['CN']->getValue() : '';
                     if (empty($result[$participantModule])) {
                         $result[$participantModule] = array();
@@ -239,13 +236,11 @@ class ParticipantsHelper
             return array();
         }
 
-        $statusMap = array_flip($this->statusMapper->getMapping($event));
-
         $davAttendees = array();
 
         foreach ($preResult as $internalStatus => $attendeesInfo) {
             foreach ($attendeesInfo as $attendeeId => $attendee) {
-                $status = isset($statusMap[$attendee['accept_status']]) ? $statusMap[$attendee['accept_status']] : null;
+                $status = $this->statusMapper->getCalDavValue($attendee['accept_status']);
                 $davLink = isset($attendee['davLink']) ? $attendee['davLink'] : null;
                 $sugarModule = isset($attendee['x-sugar-module']) ? $attendee['x-sugar-module'] : 'Users';
 

@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
 
 use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException as AdapterInvalidArgumentException;
 use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterAbstract as CalDavAbstractAdapter;
+use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\EventMap;
 
 /**
  * Class for processing Meetings by iCal protocol
@@ -23,34 +24,6 @@ use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterAbstract as CalDavAbstractAdapter;
  */
 class Meetings extends CalDavAbstractAdapter implements AdapterInterface
 {
-    /**
-     * map for associations beetwen Meeting bean and CalDavEvent objects
-     * @var array 'Meeting bean property name' => 'function that return data for property'
-     */
-    protected $importBeanDataMap = array(
-        'name' => 'getTitle',
-        'description' => 'getDescription',
-        'location' => 'getLocation',
-        'duration_hours' => 'getDurationHours',
-        'duration_minutes' => 'getDurationMinutes',
-        'status' => 'getStatus',
-    );
-
-    protected $importRecurringEventsDataMap = array(
-        'name' => 'getTitle',
-        'description' => 'getDescription',
-        'location' => 'getLocation',
-        'duration_hours' => 'getDurationHours',
-        'duration_minutes' => 'getDurationMinutes'
-    );
-
-    protected $exportBeanDataMap = array(
-        'setTitle' => 'name',
-        'setDescription' => 'description',
-        'setLocation' => 'location',
-        'setStatus' => 'status'
-    );
-
     public function export(\SugarBean $sugarBean, \CalDavEvent $calDavBean)
     {
         if (!($sugarBean instanceof \Meeting)) {
@@ -77,6 +50,8 @@ class Meetings extends CalDavAbstractAdapter implements AdapterInterface
                 $isEventChanged = true;
             }
         }
+
+        $calDavBean->setStatus($this->getEventMap()->getCalDavValue($sugarBean->status, $calDavBean->getStatus()), $calendarComponent);
 
         if ($calDavBean->setStartDate($sugarBean->date_start, $calendarComponent)) {
             $isEventChanged = true;
@@ -143,6 +118,12 @@ class Meetings extends CalDavAbstractAdapter implements AdapterInterface
 
         /**@var \Meeting $sugarBean */
         if ($this->setBeanProperties($sugarBean, $calDavBean, $this->importBeanDataMap)) {
+            $isBeanChanged = true;
+        }
+
+        $status = $this->getEventMap()->getSugarValue($calDavBean->getStatus(), $sugarBean->status);
+        if ($sugarBean->status !== $status) {
+            $sugarBean->status = $status;
             $isBeanChanged = true;
         }
 
