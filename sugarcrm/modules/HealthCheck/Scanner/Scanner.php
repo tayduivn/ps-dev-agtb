@@ -924,6 +924,7 @@ class HealthCheckScanner
      */
     protected function scanCustomDir()
     {
+        $this->checkCreateActions();
         $this->log("Checking custom directory for no longer valid code");
         $files = $this->getPhpFiles("custom/");
         foreach ($files as $name => $file) {
@@ -1096,13 +1097,20 @@ class HealthCheckScanner
             $this->checkTableName($module);
         }
 
+        $isNewModule = false;
         if ($this->isNewModule($module)) {
             $this->updateStatus("notStockModule", $module);
             // not a stock module, check if it's working at least with BWC
             $this->checkMBModule($module);
+            $isNewModule = true;
         } else {
             $this->checkStockModule($module);
         }
+        $options = array(
+            'module' => $module,
+            'isNewModule' => $isNewModule,
+        );
+        $this->checkCreateActions($options);
     }
 
     /**
@@ -1119,6 +1127,66 @@ class HealthCheckScanner
             return $this->beanList[$module];
         }
         return null;
+    }
+
+    /**
+     * Check if there is a create-actions customization on this instance. By
+     * default, checks the clients/ folder for these customizations.
+     *
+     * @param array $options {
+     *     Optional hash that defines which module folders should be scanned for
+     *     create-actions components. If passed, the clients/ folder will not
+     *     be scanned.
+     *
+     *     @type string $module The module to scan the custom/$module/clients/*
+     *       directory with.
+     *     @type boolean $isNewModule `true` to scan both the
+     *       custom/$module/clients/* and modules/$module/clients/* directories.
+     *       If `false` or no value passed, only the custom/$module/clients/*
+     *       directory will be scanned.
+     * }
+     */
+    protected function checkCreateActions($options = array()) {
+        $files = array();
+        $createActionsPath = 'clients' . DIRECTORY_SEPARATOR .
+            '*' . DIRECTORY_SEPARATOR .
+            '{layouts,views}' . DIRECTORY_SEPARATOR .
+            'create-actions' . DIRECTORY_SEPARATOR .
+            'create-actions.*';
+
+        if (!empty($options['module'])) {
+            $this->log("Checking for customized create-actions components in custom/modules/{$options['module']}");
+            $files = glob(
+                'custom' . DIRECTORY_SEPARATOR .
+                'modules' . DIRECTORY_SEPARATOR .
+                $options['module'] . DIRECTORY_SEPARATOR .
+                $createActionsPath,
+                GLOB_BRACE
+            );
+
+            if (!empty($options['isNewModule'])) {
+                $this->log("Checking for customized create-actions components in modules/{$options['module']}");
+                $files = array_merge($files, glob(
+                    'modules' . DIRECTORY_SEPARATOR .
+                    $options['module'] . DIRECTORY_SEPARATOR .
+                    $createActionsPath,
+                    GLOB_BRACE
+                ));
+            }
+        } else {
+            $this->log("Checking for customized create-actions components in custom/clients");
+            $files = glob(
+                'custom' . DIRECTORY_SEPARATOR .
+                $createActionsPath,
+                GLOB_BRACE
+            );
+        }
+
+        if (!empty($files)) {
+            $formatted = implode(', ', $files);
+            $this->log('Found custom create-actions components');
+            $this->updateStatus('hasCustomCreateActions', $formatted);
+        }
     }
 
     /**
