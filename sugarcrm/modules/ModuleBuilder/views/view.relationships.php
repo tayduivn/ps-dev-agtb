@@ -46,7 +46,7 @@ class ViewRelationships extends SugarView
 
         $ajax = new AjaxCompose ( ) ;
         $json = getJSONobj () ;
-        $this->fromModuleBuilder = !empty($_REQUEST['MB']) || ($packageName != 'studio');
+        $this->fromModuleBuilder = !empty($_REQUEST['MB']) || (!empty($packageName) && ($packageName != 'studio'));
         $smarty->assign('fromModuleBuilder', $this->fromModuleBuilder);
         if (!$this->fromModuleBuilder)
         {

@@ -138,6 +138,7 @@ class ImportViewConfirm extends ImportView
             $encodeOutput = FALSE;
             $importFileMap = $this->overloadImportFileMapFromRequest($importFileMap);
 
+            $singleCharConstraints = array('Assert\Type' => array('type' => 'string'), 'Assert\Length' => array('min' => 1));
             $previousCustomDelimiter = $this->request->getValidInputRequest('custom_delimiter', $singleCharConstraints, '');
 
             $delimeter = !empty($previousCustomDelimiter) ? $previousCustomDelimiter : $delimeter;
