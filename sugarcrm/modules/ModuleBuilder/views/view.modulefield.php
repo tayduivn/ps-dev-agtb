@@ -114,7 +114,9 @@ class ViewModulefield extends SugarView
             // continue like normal
             if (empty($vardef['name']) || $isNew) {
                 if (!empty($_REQUEST['type'])) {
-                    $vardef['type'] = $this->request->getValidInputRequest('type', array('Assert\Choice' => array('choices' => array_keys($field_types))), '');
+                    // Until BR-3708 has been solved we cannot use Assert\Choice based on $field_types.
+                    //$vardef['type'] = $this->request->getValidInputRequest('type', array('Assert\Choice' => array('choices' => array_keys($field_types))), '');
+                    $vardef['type'] = $this->request->getValidInputRequest('type', 'Assert\ComponentName');
                 }
                 $fv->ss->assign('hideLevel', 0);
             } elseif (isset($vardef['custom_module'])) {
