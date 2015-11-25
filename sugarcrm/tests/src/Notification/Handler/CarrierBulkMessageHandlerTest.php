@@ -85,7 +85,11 @@ class CarrierBulkMessageHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
         $handler = $this->getMock(
             self::NS_HANDLER,
             array('getMessageBuilderRegistry', 'getJobQueueManager', 'getCarrierRegistry'),
-            array($event, $carrierName, $usersOptions)
+            array(
+                array('src/Notification/ApplicationEmitter/Event.php', serialize($event)),
+                array('', serialize($carrierName)),
+                array('', serialize($usersOptions))
+            )
         );
 
         $handler->expects($this->atLeastOnce())->method('getMessageBuilderRegistry')

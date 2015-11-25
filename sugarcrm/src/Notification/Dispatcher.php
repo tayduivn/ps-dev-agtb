@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Notification;
 
-use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager;
+use Sugarcrm\Sugarcrm\Notification\JobQueue\Manager;
 
 /**
  * When event has been triggered it should be dispatched to Job Queue.
@@ -35,7 +35,9 @@ class Dispatcher
     }
 
     /**
-     * Return JobQueue Manager.
+     * Return Customized JobQueue Manager.
+     * Manager helps unserialize classes in unsupported file paths.
+     *
      * @return Manager
      */
     protected function getJobQueueManager()
