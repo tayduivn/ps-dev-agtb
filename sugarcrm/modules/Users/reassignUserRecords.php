@@ -353,7 +353,7 @@ else if(!isset($_GET['execute'])){
 
                 $metaName = $meta['name'];
 
-				$filter = InputValidation::getService()->getValidInputRequest($metaName);
+				$filter = InputValidation::getService()->getValidInputRequest($metaName, 'Assert\InputParameters');
 				if(!empty($filter)) {
 					$_SESSION['reassignRecords']['filters'][$metaName] = $filter;
                 }
