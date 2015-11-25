@@ -128,6 +128,7 @@ class Scheduler extends Base
         $objects = $bean->fetchFromQuery($query);
 
         foreach ($objects as $job) {
+            /* @var $job \SchedulersJob */
             $job->mark_deleted($job->id);
         }
     }
