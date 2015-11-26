@@ -52,7 +52,7 @@ class ViewFts extends SugarView
         $indexOffset = $offset / $limit;
         $moduleFilter = false;
 
-        if (isset($_REQUEST['m'])) {
+        if (!empty($_REQUEST['m'])) {
             $assert = is_array($_REQUEST['m']) ? 'Assert\All' : 'Assert\Delimited';
             $moduleFilter = $this->request->getValidInputRequest('m', array($assert => array('constraints' => 'Assert\Mvc\ModuleName')));
         }
