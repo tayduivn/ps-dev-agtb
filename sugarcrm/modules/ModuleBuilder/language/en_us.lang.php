@@ -854,7 +854,6 @@ $mod_strings = array(
                 //END SUGARCRM flav!=com ONLY
                 'datetimecombo' =>'Datetime',
                 'decimal'=>'Decimal',
-                'email' => 'Email',
 ),
 'labelTypes' => array(
     "" => "Frequently used labels",
