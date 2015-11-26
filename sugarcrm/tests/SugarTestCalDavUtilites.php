@@ -57,12 +57,12 @@ class SugarTestCalDavUtilities
      */
     public static function createCalendar(User $sugarUser)
     {
+        /** @var \CalDavCalendar $calendarBean */
         $calendarBean = BeanFactory::getBean('CalDavCalendars');
         $calendar = $calendarBean->createDefaultForUser($sugarUser);
-        $calendar->retrieve($calendar->id);
-        self::$_createdCalendars[] = $calendar->id;
-
-        return $calendar->id;
+        $calendarBean->retrieve($calendar['id']);
+        self::$_createdCalendars[] = $calendar['id'];
+        return $calendar['id'];
     }
 
     public static function deleteAllCreatedCalendars()

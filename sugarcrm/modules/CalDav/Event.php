@@ -587,24 +587,6 @@ class CalDavEvent extends SugarBean
     }
 
     /**
-     * Convert bean to array which used by CalDav backend
-     * @return array
-     */
-    public function toCalDavArray()
-    {
-        return array(
-            'id' => $this->id,
-            'uri' => $this->uri,
-            'lastmodified' => strtotime($this->date_modified),
-            'etag' => '"' . $this->etag . '"',
-            'calendarid' => $this->calendarid,
-            'size' => $this->data_size,
-            'calendardata' => $this->calendardata,
-            'component' => strtolower($this->componenttype),
-        );
-    }
-
-    /**
      * Get instance of CalDavChange
      * @return null|CalDavChange
      */

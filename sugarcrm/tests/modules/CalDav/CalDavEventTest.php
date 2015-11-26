@@ -242,34 +242,6 @@ END:VCALENDAR',
         );
     }
 
-    public function toCalDavArrayProvider()
-    {
-        return array(
-            array(
-                'beanData' => array(
-                    'id' => '1',
-                    'uri' => 'test',
-                    'date_modified' => '2015-07-28 13:41:29',
-                    'etag' => 'test',
-                    'calendarid' => '2',
-                    'data_size' => '2',
-                    'calendardata' => '22',
-                    'componenttype' => 'VEVENT',
-                ),
-                'expectedArray' => array(
-                    'id' => '1',
-                    'uri' => 'test',
-                    'lastmodified' => strtotime('2015-07-28 13:41:29'),
-                    'etag' => '"test"',
-                    'calendarid' => '2',
-                    'size' => '2',
-                    'calendardata' => '22',
-                    'component' => 'vevent',
-                ),
-            )
-        );
-    }
-
     public function addChangeProvider()
     {
         return array(
@@ -1636,30 +1608,6 @@ END:VCALENDAR',
                          ->getMock();
         $beanMock->setCalendarEventURI('test');
         $this->assertEquals('test', $beanMock->uri);
-    }
-
-    /**
-     * @param array $beanData
-     * @param array $expectedArray
-     *
-     * @covers       \CalDavEvent::toCalDavArray
-     *
-     * @dataProvider toCalDavArrayProvider
-     */
-    public function testToCalDavArray($beanData, $expectedArray)
-    {
-        $beanMock = $this->getMockBuilder('CalDavEvent')
-                         ->disableOriginalConstructor()
-                         ->setMethods(null)
-                         ->getMock();
-
-        foreach ($beanData as $key => $value) {
-            $beanMock->$key = $value;
-        }
-
-        $result = $beanMock->toCalDavArray();
-
-        $this->assertEquals($expectedArray, $result);
     }
 
     /**
