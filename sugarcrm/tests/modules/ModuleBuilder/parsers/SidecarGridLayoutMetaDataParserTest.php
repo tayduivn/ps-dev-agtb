@@ -241,6 +241,55 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
             ),
         );
 
+        // PAT-2410: field with base def is single unit on end column
+        $tests[] = array(
+            array(
+                array(
+                    'name' => 'PANEL_BODY',
+                    'label' => 'PANEL_BODY',
+                    'columns' => 2,
+                    'labelsOnTop' => 1,
+                    'placeholders' => 1,
+                    'fields' => array(
+                        '',
+                        array(
+                            'name' => 'description',
+                        ),
+                    ),
+                ),
+            ),
+            array(
+                'panel_body' => array(
+                    array(
+                        '',
+                        'description',
+                    ),
+                ),
+            ),
+            array(
+                'description',
+            ),
+            array(
+                'panels' => array(
+                    array(
+                        'name' => 'panel_body',
+                        'fields' => array(
+                            array(
+                                'name' => 'description',
+                                'span' => 12,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            array(
+                'description' => array(
+                    'name' => 'description',
+                    'span' => 12,
+                ),
+            ),
+        );
+
         return $tests;
     }
 
