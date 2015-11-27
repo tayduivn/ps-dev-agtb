@@ -1,0 +1,1246 @@
+<?php
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+require_once 'tests/SugarTestCalDavUtilites.php';
+require_once 'modules/CalDav/EventCollection.php';
+
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+
+use Sabre\VObject;
+
+/**
+ * CalDav bean tests
+ * Class CalDavTest
+ *
+ *
+ * @coversDefaultClass \CalDavEventCollection
+ */
+class CalDavEventCollectionTest extends Sugar_PHPUnit_Framework_TestCase
+{
+    /**
+     * @var \CalDavEventCollection
+     */
+    protected $beanMock;
+
+    public function setUp()
+    {
+        parent::setUp();
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('moduleList');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+    }
+
+    public function tearDown()
+    {
+        SugarTestCalDavUtilities::deleteAllCreatedCalendars();
+        SugarTestCalDavUtilities::deleteCreatedEvents();
+        SugarTestMeetingUtilities::removeAllCreatedMeetings();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestMeetingUtilities::removeAllCreatedMeetings();
+        SugarTestMeetingUtilities::removeMeetingContacts();
+        SugarTestMeetingUtilities::removeMeetingUsers();
+        parent::tearDown();
+    }
+
+    public function saveBeanDataProvider()
+    {
+        return array(
+            array(
+                'content' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+uid:test
+DTSTART;VALUE=DATE:20160101
+END:VEVENT
+END:VCALENDAR',
+                'size' => 90,
+                'ETag' => 'c3d48c3c99615a99a764be4fc95c9ca9',
+                'type' => 'VEVENT',
+                'firstoccurence' => strtotime('20160101Z'),
+                'lastoccurence' => strtotime('20160101Z') + 86400,
+                'uid' => 'test',
+            ),
+        );
+    }
+
+    public function sizeAndETagDataProvider()
+    {
+        return array(
+            array(
+                'content' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+END:VEVENT
+END:VCALENDAR',
+                'size' => 81,
+                'ETag' => '852ca4ec17e847ca5190754e21d53c54',
+            ),
+        );
+    }
+
+    public function componentTypeProvider()
+    {
+        return array(
+            array(
+                'content' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+END:VEVENT
+END:VCALENDAR',
+                'component' => 'VEVENT',
+            ),
+            array(
+                'content' => 'BEGIN:VCALENDAR
+BEGIN:VTIMEZONE
+END:VTIMEZONE
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+END:VEVENT
+END:VCALENDAR',
+                'component' => 'VEVENT',
+            ),
+            array(
+                'content' => 'BEGIN:VCALENDAR
+BEGIN:VTIMEZONE
+END:VTIMEZONE
+END:VCALENDAR',
+                'component' => null,
+            ),
+            array(
+                'content' => 'BEGIN:VCALENDAR
+BEGIN:VTODO
+DTSTART:20110101T120000Z
+DURATION:PT1H
+END:VTODO
+END:VCALENDAR',
+                'component' => 'VTODO',
+            ),
+        );
+    }
+
+    public function calendarObjectProvider()
+    {
+        return array(
+            array(
+                'content' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+UID:test1
+DTSTART;VALUE=DATE:20160101
+END:VEVENT
+END:VCALENDAR',
+            ),
+            array(
+                'content' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+UID:test
+DTSTART;VALUE=DATE:20160101
+END:VEVENT
+END:VCALENDAR',
+            ),
+        );
+    }
+
+    public function calendarObjectBoundariesProvider()
+    {
+        return array(
+            //DTSTART type DATE-TIME ISO format UTC. Lastoccurence should be calculated
+            array(
+                'content' => 'BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+UID:foobar
+DTSTART;VALUE=DATE-TIME:20160101T100000Z
+END:VEVENT
+END:VCALENDAR',
+                'firstoccurence' => strtotime('20160101T100000Z'),
+                'lastoccurence' => strtotime('20160101T100000Z'),
+            ),
+            //DTSTART type DATE-TIME with custom timezone set. Lastoccurence should be calculated
+            array(
+                'content' => 'BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+UID:foobar
+DTSTART;TZID=UTC:20160101T100000
+END:VEVENT
+END:VCALENDAR',
+                'firstoccurence' => strtotime('20160101T100000Z'),
+                'lastoccurence' => strtotime('20160101T100000Z'),
+            ),
+            //DTSTART type DATE. Lastoccurence should be calculated
+            array(
+                'content' => 'BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+UID:foobar
+DTSTART;VALUE=DATE:20160101
+END:VEVENT
+END:VCALENDAR',
+                'firstoccurence' => strtotime('20160101Z'),
+                'lastoccurence' => strtotime('20160101Z') + 86400,
+            ),
+            //DTSTART and DTEND are set
+            array(
+                'content' => 'BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+UID:foobar
+DTSTART;VALUE=DATE-TIME:20160101T100000Z
+DTEND:20160201T110000Z
+END:VEVENT
+END:VCALENDAR',
+                'firstoccurence' => strtotime('20160101T100000Z'),
+                'lastoccurence' => strtotime('20160201T110000Z'),
+            ),
+            //DTSTART and DURATION are set. Lastoccurence should be calculated
+            array(
+                'content' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20160101
+DURATION:P2D
+END:VEVENT
+END:VCALENDAR',
+                'firstoccurence' => strtotime('20160101Z'),
+                'lastoccurence' => strtotime('20160101Z') + 86400 * 2,
+            ),
+            //Ending recurrence. Lastoccurence should be calculated
+            array(
+                'content' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE-TIME:20160101T100000Z
+DTEND;VALUE=DATE-TIME:20160101T110000Z
+UID:foo
+RRULE:FREQ=DAILY;COUNT=500
+END:VEVENT
+END:VCALENDAR',
+                'firstoccurence' => strtotime('20160101T100000Z'),
+                'lastoccurence' => strtotime('20160101T110000Z') + 86400 * 499,
+            ),
+            //Infinite recurrence. Lastoccurence should be calculated.
+            array(
+                'content' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE-TIME:20160101T100000Z
+RRULE:FREQ=DAILY
+UID:foo
+END:VEVENT
+END:VCALENDAR',
+                'firstoccurence' => strtotime('20160101T100000Z'),
+                'lastoccurence' => strtotime('20160101T100000Z') + 86400 * 1000,
+            ),
+        );
+    }
+
+    public function toCalDavArrayProvider()
+    {
+        return array(
+            array(
+                'beanData' => array(
+                    'id' => '1',
+                    'uri' => 'test',
+                    'date_modified' => '2015-07-28 13:41:29',
+                    'etag' => 'test',
+                    'calendar_id' => '2',
+                    'data_size' => '2',
+                    'calendar_data' => '22',
+                    'component_type' => 'VEVENT',
+                ),
+                'expectedArray' => array(
+                    'id' => '1',
+                    'uri' => 'test',
+                    'lastmodified' => strtotime('2015-07-28 13:41:29'),
+                    'etag' => '"test"',
+                    'calendarid' => '2',
+                    'size' => '2',
+                    'calendardata' => '22',
+                    'component' => 'vevent',
+                ),
+            )
+        );
+    }
+
+    public function addChangeProvider()
+    {
+        return array(
+            array(
+                'beanData' => array('id' => 1, 'calendar_id' => 1, 'deleted' => 0, 'uri' => 'uri'),
+                'expectedChange' => array('calendar_id' => 1, 'operation' => 2, 'uri' => 'uri'),
+            ),
+            array(
+                'beanData' => array('id' => null, 'calendar_id' => 1, 'deleted' => 0, 'uri' => 'uri'),
+                'expectedChange' => array('calendar_id' => 1, 'operation' => 1, 'uri' => 'uri')
+            ),
+            array(
+                'beanData' => array('id' => 1, 'calendar_id' => 1, 'deleted' => 1, 'uri' => 'uri'),
+                'expectedChange' => array('calendar_id' => 1, 'operation' => 3, 'uri' => 'uri')
+            ),
+        );
+    }
+
+    /**
+     * Load template for event
+     * @param string $templateName
+     * @param bool $isText
+     * @return string | Sabre\VObject\Component\VCalendar
+     */
+    protected function getEventTemplate($templateName, $isText = true)
+    {
+        $calendarData = file_get_contents(dirname(__FILE__) . '/EventTemplates/' . $templateName . '.ics');
+
+        if ($isText) {
+            return $calendarData;
+        }
+
+        $vEvent = VObject\Reader::read($calendarData);
+
+        return $vEvent;
+    }
+
+    public function getVObjectProvider()
+    {
+        return array(
+            array('vCalendar' => $this->getEventTemplate('vevent')),
+            array('vCalnedar' => $this->getEventTemplate('vtodo')),
+            array('vCalendar' => null),
+        );
+    }
+
+    public function getTimeZoneProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent'),
+                'result' => 'Europe/Berlin',
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vtodo'),
+                'result' => 'Europe/Minsk',
+            ),
+            array(
+                'vCalendar' => null,
+                'result' => 'Europe/Berlin',
+            ),
+        );
+    }
+
+    public function getRRuleProvider()
+    {
+        return array(
+            array(
+                'vEvent' => $this->getEventTemplate('vevent'),
+                'instance' => 'Sugarcrm\Sugarcrm\Dav\Cal\Structures\RRule',
+                'result' => array(
+                    'getFrequency' => 'DAILY',
+                    'getInterval' => 1,
+                    'getCount' => null,
+                    'getUntil' => new \SugarDateTime('20150813T080000Z', new \DateTimeZone('UTC')),
+                    'getByDay' => array(),
+                )
+            ),
+            array(
+                'vEvent' => $this->getEventTemplate('recurring-byday-cnt2'),
+                'instance' => 'Sugarcrm\Sugarcrm\Dav\Cal\Structures\RRule',
+                'result' => array(
+                    'getFrequency' => 'WEEKLY',
+                    'getInterval' => 2,
+                    'getCount' => 5,
+                    'getUntil' => null,
+                    'getByDay' => array('WE', 'TH'),
+                )
+            ),
+            array(
+                'vEvent' => $this->getEventTemplate('vemptyevent'),
+                'instance' => null,
+                'result' => array(),
+            ),
+        );
+    }
+
+    public function setRRuleProvider()
+    {
+        return array(
+            array(
+                'vEvent' => $this->getEventTemplate('vemptyevent'),
+                'recurringParams' => array(
+                    'setFrequency' => 'DAILY',
+                    'setInterval' => 1,
+                    'setCount' => null,
+                    'setByDay' => array(),
+                ),
+                'result' => true,
+                'newParams' => array(
+                    'getFrequency' => 'DAILY',
+                    'getInterval' => 1,
+                    'getCount' => null,
+                    'getUntil' => null,
+                    'getByDay' => array(),
+                ),
+            ),
+            array(
+                'vEvent' => $this->getEventTemplate('vevent'),
+                'recurringParams' => array(
+                    'setFrequency' => 'DAILY',
+                    'setInterval' => 2,
+                    'setCount' => null,
+                    'setByDay' => array(),
+                ),
+                'result' => true,
+                'newParams' => array(
+                    'getFrequency' => 'DAILY',
+                    'getInterval' => 2,
+                    'getCount' => null,
+                    'getUntil' => null,
+                    'getByDay' => array(),
+                ),
+            ),
+            array(
+                'vEvent' => $this->getEventTemplate('vevent'),
+                'recurringParams' => array(
+                    'setFrequency' => 'DAILY',
+                    'setUntil' => new \SugarDateTime('20150813T080000Z', new \DateTimeZone('UTC')),
+                    'setByDay' => array(),
+                ),
+                'result' => false,
+                'newParams' => array(
+                    'getFrequency' => 'DAILY',
+                    'getInterval' => 1,
+                    'getCount' => null,
+                    'getUntil' => new \SugarDateTime('20150813T080000Z', new \DateTimeZone('UTC')),
+                    'getByDay' => array(),
+                ),
+            ),
+        );
+    }
+
+    public function scheduleLocalDeliveryProvider()
+    {
+        return array(
+            array(
+                'currentEvent' => '',
+                'updatedEvent' => $this->getEventTemplate('vevent-attendee-needaction', false),
+            ),
+        );
+    }
+
+    public function getAllChildrenProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('recurring'),
+                'childrenCount' => 3,
+                'children' => array(
+                    array(
+                        'getRecurrenceID' => new \SugarDateTime('20150902T090000', new DateTimeZone('Europe/Minsk'))
+                    ),
+                    array(
+                        'getRecurrenceID' => new \SugarDateTime('20150903T090000', new DateTimeZone('Europe/Minsk'))
+                    ),
+                    array(
+                        'getRecurrenceID' => new \SugarDateTime('20150904T090000', new DateTimeZone('Europe/Minsk'))
+                    ),
+                )
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('recurring-deleted'),
+                'childrenCount' => 3,
+                'children' => array(
+                    array(
+                        'getRecurrenceID' => new \SugarDateTime('20151110T090000', new DateTimeZone('Europe/Minsk'))
+                    ),
+                    array(
+                        'getRecurrenceID' => new \SugarDateTime('20151111T090000', new DateTimeZone('Europe/Minsk'))
+                    ),
+                    array(
+                        'getRecurrenceID' => new \SugarDateTime('20151112T090000', new DateTimeZone('Europe/Minsk'))
+                    ),
+                )
+            ),
+            array(
+                'vCalendar' => null,
+                'childrenCount' => 0,
+                'children' => array(),
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent-not-recurring'),
+                'childrenCount' => 0,
+                'children' => array(),
+            ),
+        );
+    }
+
+    public function getDeletedChildrenRecurrenceIdsProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('recurring-deleted'),
+                'childrenCount' => 2,
+                'children' => array(
+                    new \SugarDateTime('20151111T090000', new DateTimeZone('Europe/Minsk')),
+                    new \SugarDateTime('20151110T090000', new DateTimeZone('Europe/Minsk'))
+                ),
+            ),
+        );
+    }
+
+    public function addChildProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('recurring-deleted'),
+                'recurringId' => new \SugarDateTime('20151113T090000', new DateTimeZone('Europe/Minsk')),
+                'restoreDeleted' => false,
+                'eventState' => 1,
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('recurring-deleted'),
+                'recurringId' => new \SugarDateTime('20151111T090000', new DateTimeZone('Europe/Minsk')),
+                'restoreDeleted' => false,
+                'eventState' => 1,
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('recurring-deleted'),
+                'recurringId' => new \SugarDateTime('20151211T090000', new DateTimeZone('Europe/Minsk')),
+                'restoreDeleted' => false,
+                'eventState' => 1,
+            ),
+        );
+    }
+
+    public function getAllChildrenRecurrenceIdsProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('recurring'),
+                'childrenCount' => 3,
+                'children' => array(
+                    new \SugarDateTime('20150902T090000', new DateTimeZone('Europe/Minsk')),
+                    new \SugarDateTime('20150903T090000', new DateTimeZone('Europe/Minsk')),
+                    new \SugarDateTime('20150904T090000', new DateTimeZone('Europe/Minsk'))
+                ),
+            ),
+            array(
+                'vCalendar' => null,
+                'childrenCount' => 0,
+                'children' => array(),
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent-not-recurring'),
+                'childrenCount' => 0,
+                'children' => array(),
+            ),
+        );
+    }
+
+    public function getCustomizedChildrenRecurrenceIdsProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('recurring'),
+                'childrenCount' => 1,
+                'children' => array(
+                    new \SugarDateTime('20150904T090000', new DateTimeZone('Europe/Minsk'))
+                ),
+            ),
+            array(
+                'vCalendar' => null,
+                'childrenCount' => 0,
+                'children' => array(),
+            ),
+            array(
+                'vCalendar' => $this->getEventTemplate('vevent-not-recurring'),
+                'childrenCount' => 0,
+                'children' => array(),
+            ),
+        );
+    }
+
+    public function getParentProvider()
+    {
+        return array(
+            array(
+                'vCalendar' => $this->getEventTemplate('recurring'),
+            ),
+            array(
+                'vCalendar' => null,
+            ),
+        );
+    }
+
+    public function removeDeletedProvider()
+    {
+        return array(
+            array(
+                'vEvent' => $this->getEventTemplate('recurring-deleted'),
+            ),
+        );
+    }
+
+    /**
+     * Checking the calculation of params while bean saving
+     * @param string $data
+     * @param integer $expectedSize
+     * @param string $expectedETag
+     * @param string $expectedType
+     * @param int $expectedFirstOccurrence
+     * @param int $expectedLastOccurrence
+     * @param string $expectedUID
+     *
+     * @covers       \CalDavEventCollection::save
+     * @covers       \CalDavEventCollection::setCalendarEventData
+     *
+     * @dataProvider saveBeanDataProvider
+     */
+    public function testSaveBean(
+        $data,
+        $expectedSize,
+        $expectedETag,
+        $expectedType,
+        $expectedFirstOccurrence,
+        $expectedLastOccurrence,
+        $expectedUID
+    ) {
+        $sugarUser = SugarTestUserUtilities::createAnonymousUser();
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+        $event = SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => $data,
+            'calendarid' => $calendarID,
+            'eventURI' => 'test'
+        ));
+
+        $saved = BeanFactory::getBean('CalDavEvents', $event->id, array('use_cache' => false, 'encode' => false));
+
+        $this->assertEquals($expectedSize, $saved->data_size);
+        $this->assertEquals($expectedETag, $saved->etag);
+        $this->assertEquals($expectedType, $saved->component_type);
+        $this->assertEquals($expectedFirstOccurrence, $saved->first_occurence);
+        $this->assertEquals($expectedLastOccurrence, $saved->last_occurence);
+        $this->assertEquals($expectedUID, $saved->event_uid);
+        $this->assertEquals($data, $saved->calendar_data);
+
+        SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => $data,
+            'calendarid' => $calendarID,
+            'eventURI' => 'test1'
+        ));
+
+        $calendar =
+            BeanFactory::getBean('CalDavCalendars', $calendarID, array('use_cache' => false, 'encode' => false));
+
+        $this->assertEquals(2, $calendar->synctoken);
+    }
+
+    /**
+     * Checking the calculation of the size and ETag
+     * @param string $data
+     * @param integer $expectedSize
+     * @param string $expectedETag
+     *
+     * @covers       \CalDavEventCollection::calculateSize
+     * @covers       \CalDavEventCollection::calculateETag
+     *
+     * @dataProvider sizeAndETagDataProvider
+     */
+    public function testSizeAndETag($data, $expectedSize, $expectedETag)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEventCollection')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
+
+        $beanMock->setData($data);
+
+        TestReflection::callProtectedMethod($beanMock, 'calculateSize');
+        TestReflection::callProtectedMethod($beanMock, 'calculateETag');
+
+        $this->assertEquals($expectedSize, $beanMock->data_size);
+        $this->assertEquals($expectedETag, $beanMock->etag);
+    }
+
+    /**
+     * Checks algorithm for determining the type of component
+     * @param string $data
+     * @param string $expectedComponent
+     * @covers       \CalDavEventCollection::calculateComponentType
+     *
+     * @dataProvider componentTypeProvider
+     */
+    public function testComponentType($data, $expectedComponent)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEventCollection')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
+        TestReflection::callProtectedMethod($beanMock, 'calculateComponentType', array($data));
+
+        $this->assertEquals($expectedComponent, $beanMock->component_type);
+    }
+
+    /**
+     * Checks that the necessary methods are invoked
+     * @param string $data
+     * @covers       \CalDavEventCollection::setCalendarEventData
+     *
+     * @dataProvider calendarObjectProvider
+     */
+    public function testSetCalendarObject($data)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEventCollection')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
+
+
+        $beanMock->setData($data);
+
+        $this->assertEquals($data, $beanMock->calendar_data);
+    }
+
+    /**
+     * Check calculation firstoccurence and lastoccurence
+     * @param string $data
+     * @param $expectedFirstOccurrence
+     * @param $expectedLastOccurrence
+     *
+     * @covers       \CalDavEventCollection::calculateTimeBoundaries
+     *
+     * @dataProvider calendarObjectBoundariesProvider
+     */
+    public function testCalculateTimeBoundaries($data, $expectedFirstOccurrence, $expectedLastOccurrence)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEventCollection')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
+
+        $beanMock->setData($data);
+
+        TestReflection::callProtectedMethod($beanMock, 'calculateTimeBoundaries');
+
+        $this->assertEquals($expectedFirstOccurrence, $beanMock->first_occurence);
+        $this->assertEquals($expectedLastOccurrence, $beanMock->last_occurence);
+    }
+
+    /**
+     * Test for set calendarid bean property
+     * @covers \CalDavEventCollection::setCalendarId
+     */
+    public function testSetCalendarId()
+    {
+        $beanMock = $this->getMockBuilder('CalDavEventCollection')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
+        $beanMock->setCalendarId('test');
+        $this->assertEquals('test', $beanMock->calendar_id);
+    }
+
+    /**
+     * Test for set uri bean property
+     * @covers \CalDavEventCollection::setCalendarEventURI
+     */
+    public function testSetCalendarObjectURI()
+    {
+        $beanMock = $this->getMockBuilder('CalDavEventCollection')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
+        $beanMock->setCalendarEventURI('test');
+        $this->assertEquals('test', $beanMock->uri);
+    }
+
+    /**
+     * @param array $beanData
+     * @param array $expectedArray
+     *
+     * @covers       \CalDavEventCollection::toCalDavArray
+     *
+     * @dataProvider toCalDavArrayProvider
+     */
+    public function testToCalDavArray($beanData, $expectedArray)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEventCollection')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
+
+        foreach ($beanData as $key => $value) {
+            $beanMock->$key = $value;
+        }
+
+        $result = $beanMock->toCalDavArray();
+
+        $this->assertEquals($expectedArray, $result);
+    }
+
+    /**
+     * @param array $beanData
+     * @param array $expectedChange
+     *
+     * @covers       \CalDavEventCollection::addChange
+     *
+     * @dataProvider addChangeProvider
+     */
+    public function testAddChange(array $beanData, array $expectedChange)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEventCollection')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('getChangesBean', 'getRelatedCalendar'))
+                         ->getMock();
+
+        foreach ($beanData as $key => $value) {
+            $beanMock->$key = $value;
+        }
+
+        $changesMock = $this->getMockBuilder('CalDavChange')
+                            ->disableOriginalConstructor()
+                            ->setMethods(array('add'))
+                            ->getMock();
+
+        $calendarMock = $this->getMockBuilder('CalDavCalendar')
+                             ->disableOriginalConstructor()
+                             ->setMethods(array('save'))
+                             ->getMock();
+
+        $beanMock->expects($this->once())->method('getChangesBean')->willReturn($changesMock);
+        $beanMock->expects($this->once())->method('getRelatedCalendar')->willReturn($calendarMock);
+
+        $changesMock->expects($this->once())->method('add')
+                    ->with($calendarMock, $expectedChange['uri'], $expectedChange['operation']);
+
+        TestReflection::callProtectedMethod($beanMock, 'addChange', array($expectedChange['operation']));
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     *
+     * @covers       \CalDavEventCollection::getVCalendar
+     *
+     * @dataProvider getVObjectProvider
+     */
+    public function testGetVCalendar($vCalendarEventText)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEventCollection')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
+
+        $beanMock->calendar_data = $vCalendarEventText;
+
+        $result = TestReflection::callProtectedMethod($beanMock, 'getVCalendar');
+
+        $this->assertInstanceOf('Sabre\VObject\Component\VCalendar', $result);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param string $expectedResult
+     *
+     * @covers       \CalDavEventCollection::getTimeZone
+     *
+     * @dataProvider getTimeZoneProvider
+     */
+    public function testGetTimeZone($vCalendarEventText, $expectedResult)
+    {
+        $GLOBALS['current_user']->setPreference('timezone', 'Europe/Berlin');
+
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = $beanMock->getTimeZone();
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param string $expectedInstance
+     * @param array $expectedRules
+     *
+     * @covers       \CalDavEventCollection::getRRule
+     *
+     * @dataProvider getRRuleProvider
+     */
+    public function testGetRRule($vCalendarEventText, $expectedInstance, array $expectedRules)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = $beanMock->getRRule();
+
+        if ($expectedInstance) {
+            $this->assertInstanceOf($expectedInstance, $result);
+        } else {
+            $this->assertNull($result);
+        }
+
+        foreach ($expectedRules as $method => $value) {
+            $this->assertEquals($value, $result->$method());
+        }
+    }
+
+    /**
+     * @covers \CalDavEventCollection::getBean
+     */
+    public function testGetBean()
+    {
+        $beanMock = $this->getMockBuilder('CalDavEventCollection')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('save'))
+                         ->getMock();
+
+        $result = $beanMock->getBean();
+
+        $this->assertNull($result);
+
+        $callsMock = $this->getMockBuilder('Call')
+                          ->disableOriginalConstructor()
+                          ->setMethods(null)
+                          ->getMock();
+
+        $callsMock->module_name = 'Calls';
+        $callsMock->id = '1';
+
+        $beanMock->setBean($callsMock);
+
+        $result = $beanMock->getBean();
+
+        $this->assertInstanceOf('Call', $result);
+    }
+
+    /**
+     * @covers \CalDavEventCollection::setBean
+     */
+    public function testSetBean()
+    {
+        $beanMock = $this->getMockBuilder('CalDavEventCollection')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('save'))
+                         ->getMock();
+
+        $meetingsMock = $this->getMockBuilder('Meeting')
+                             ->disableOriginalConstructor()
+                             ->setMethods(null)
+                             ->getMock();
+
+        $meetingsMock->module_name = 'Meetings';
+        $meetingsMock->id = '1';
+
+        $beanMock->setBean($meetingsMock);
+
+        $this->assertEquals($meetingsMock->module_name, $beanMock->parent_type);
+        $this->assertEquals($meetingsMock->id, $beanMock->parent_id);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param array $recurringParams
+     * @param bool $expectedResult
+     * @param array $expectedParams
+     *
+     * @covers       \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event::setRRule
+     *
+     * @dataProvider setRRuleProvider
+     */
+    public function testSetRRule($vCalendarEventText, array $recurringParams, $expectedResult, $expectedParams)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+        $rRule = new \Sugarcrm\Sugarcrm\Dav\Cal\Structures\RRule();
+
+        foreach ($recurringParams as $method => $value) {
+            $rRule->$method($value);
+        }
+
+        $result = $beanMock->setRRule($rRule);
+
+        $this->assertEquals($expectedResult, $result);
+
+        $rRule = $beanMock->getRRule();
+
+        foreach ($expectedParams as $method => $value) {
+            $this->assertEquals($value, $rRule->$method());
+        }
+    }
+
+    /**
+     * @covers       \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event::setRRule
+     */
+    public function testDeletedRRule()
+    {
+        $beanMock = $this->getObjectForGetters($this->getEventTemplate('recurring-byday-cnt2'));
+
+        $result = $beanMock->setRRule(null);
+
+        $this->assertTrue($result);
+
+        $rRule = $beanMock->getRRule();
+        $children = $beanMock->getAllChildrenRecurrenceIds();
+        $this->assertNull($rRule);
+        $this->assertEmpty($children);
+    }
+
+    /**
+     * @param $vCalendarEventText
+     *
+     * @covers       \CalDavEventCollection::getParent
+     *
+     * @dataProvider getParentProvider
+     */
+    public function testGetParent($vCalendarEventText)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = $beanMock->getParent();
+
+        $this->assertInstanceOf('Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event', $result);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param int $childrenCount
+     * @param array $expectedChildren
+     *
+     * @covers       \CalDavEventCollection::getAllChildren
+     *
+     * @dataProvider getAllChildrenProvider
+     */
+    public function testGetAllChildren($vCalendarEventText, $childrenCount, array $expectedChildren)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $children = TestReflection::callProtectedMethod($beanMock, 'getAllChildren');
+
+        $this->assertEquals($childrenCount, count($children));
+
+        $children = array_values($children);
+        foreach ($expectedChildren as $index => $child) {
+            foreach ($child as $method => $value) {
+                $this->assertEquals($value, $children[$index]->$method());
+            }
+        }
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param int $childrenCount
+     * @param array $expectedChildren
+     *
+     * @covers       \CalDavEventCollection::getDeletedChildrenRecurrenceIds
+     *
+     * @dataProvider getDeletedChildrenRecurrenceIdsProvider
+     */
+    public function testGetDeletedChildrenRecurrenceIds($vCalendarEventText, $childrenCount, array $expectedChildren)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+        $children = $beanMock->getDeletedChildrenRecurrenceIds();
+        $this->assertEquals($childrenCount, count($children));
+        foreach ($expectedChildren as $child) {
+            $this->assertEquals($child, $children[$child->getTimestamp()]);
+        }
+
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param int $childrenCount
+     * @param array $expectedChildren
+     *
+     * @covers       \CalDavEventCollection::getAllChildrenRecurrenceIds
+     *
+     * @dataProvider getAllChildrenRecurrenceIdsProvider
+     */
+    public function testGetAllChildrenRecurrenceIds($vCalendarEventText, $childrenCount, array $expectedChildren)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $children = $beanMock->getAllChildrenRecurrenceIds();
+
+        $this->assertEquals($childrenCount, count($children));
+
+        foreach ($expectedChildren as $child) {
+            $this->assertEquals($child, $children[$child->getTimestamp()]);
+        }
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param int $childrenCount
+     * @param array $expectedChildren
+     *
+     * @covers       \CalDavEventCollection::getCustomizedChildrenRecurrenceIds
+     *
+     * @dataProvider getCustomizedChildrenRecurrenceIdsProvider
+     */
+    public function testGetCustomizedChildrenRecurrenceIds($vCalendarEventText, $childrenCount, array $expectedChildren)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $children = $beanMock->getCustomizedChildrenRecurrenceIds();
+
+        $this->assertEquals($childrenCount, count($children));
+
+        foreach ($expectedChildren as $child) {
+            $this->assertEquals($child, $children[$child->getTimestamp()]);
+        }
+    }
+
+    /**
+     * @covers \CalDavEventCollection::getChild
+     */
+    public function testEditExistingNotCustomChild()
+    {
+        $event = $this->getEventTemplate('recurring');
+
+        $beanMock = $this->getObjectForGetters($event);
+        $recurrenceId = new \SugarDateTime('20150902T090000', new DateTimeZone('Europe/Minsk'));
+        $child = $beanMock->getChild($recurrenceId);
+
+        $this->assertEquals(true, $child->isVirtual());
+        $child->setTitle('test');
+        $this->assertEquals(true, $child->isCustomized());
+    }
+
+    /**
+     * @covers \CalDavEventCollection::getChild
+     */
+    public function testEditExistingCustomChild()
+    {
+        $event = $this->getEventTemplate('recurring');
+
+        $beanMock = $this->getObjectForGetters($event);
+        $recurrenceId = new \SugarDateTime('20150904T090000', new DateTimeZone('Europe/Minsk'));
+        $child = $beanMock->getChild($recurrenceId);
+
+        $this->assertEquals(true, $child->isCustomized());
+        $child->setTitle('test');
+        $this->assertEquals(true, $child->isCustomized());
+    }
+
+    /**
+     * @covers \CalDavEventCollection::getChild
+     * @covers \CalDavEventCollection::addChild
+     */
+    public function testEditNotExistingChild()
+    {
+        $event = $this->getEventTemplate('recurring');
+
+        $beanMock = $this->getObjectForGetters($event);
+        $recurrenceId = new \SugarDateTime('20150908T090000', new DateTimeZone('Europe/Minsk'));
+        $child = $beanMock->getChild($recurrenceId);
+
+        $this->assertNull($child);
+    }
+
+    /**
+     * @covers \CalDavEventCollection::getChild
+     */
+    public function testEditDeletedChild()
+    {
+        $event = $this->getEventTemplate('recurring-deleted');
+
+        $beanMock = $this->getObjectForGetters($event);
+        $recurrenceId = new \SugarDateTime('20151110T090000', new DateTimeZone('Europe/Minsk'));
+        $child = $beanMock->getChild($recurrenceId);
+
+        $this->assertNull($child);
+    }
+
+    /**
+     * @covers \CalDavEventCollection::getChild
+     */
+    public function testEditDeletedChildWithRestore()
+    {
+        $event = $this->getEventTemplate('recurring-deleted');
+
+        $beanMock = $this->getObjectForGetters($event);
+        $recurrenceId = new \SugarDateTime('20151110T090000', new DateTimeZone('Europe/Minsk'));
+        $child = $beanMock->getChild($recurrenceId, true);
+
+        $this->assertEquals(true, $child->isCustomized());
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @param \SugarDateTime $recurringId
+     * @param bool $restoreDeleted
+     * @param int $eventState
+     *
+     * @covers       \CalDavEventCollection::addChild
+     *
+     * @dataProvider addChildProvider
+     */
+    public function testAddChild($vCalendarEventText, $recurringId, $restoreDeleted, $eventState)
+    {
+        $beanMock = $this->getObjectForGetters($vCalendarEventText);
+
+        $result = TestReflection::callProtectedMethod($beanMock, 'addChild', array($recurringId, $restoreDeleted));
+
+        $this->assertInstanceOf('Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event', $result);
+
+        $state = TestReflection::getProtectedValue($result, 'state');
+
+        $this->assertEquals($eventState, $state);
+    }
+
+    /**
+     * @param string $vCalendarEventText
+     * @covers       \CalDavEventCollection::removeFromDeleted
+     *
+     * @dataProvider removeDeletedProvider
+     */
+    public function testRemoveDeleted($vCalendarEventText)
+    {
+        $eventMock = $this->getObjectForGetters($vCalendarEventText);
+        $result = TestReflection::callProtectedMethod(
+            $eventMock,
+            'removeFromDeleted',
+            array(new \SugarDateTime('20151110T090000', new \DateTimeZone('Europe/Minsk')))
+        );
+        $this->assertTrue($result);
+    }
+
+    /**
+     * Configure mocks for get data tests
+     * @param string $currentEvent
+     * @param array $mockMethods
+     * @return \CalDavEvent_Mock
+     */
+    protected function getObjectForGetters($currentEvent, $mockMethods = null)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEventCollection')
+                         ->disableOriginalConstructor()
+                         ->setMethods($mockMethods)
+                         ->getMock();
+
+        $dateTimeHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
+                               ->disableOriginalConstructor()
+                               ->setMethods(null)
+                               ->getMock();
+
+        TestReflection::setProtectedValue($beanMock, 'dateTimeHelper', $dateTimeHelper);
+
+        $beanMock->calendar_data = $currentEvent;
+
+        return $beanMock;
+    }
+
+    /**
+     * @covers CalDavEventCollection::getSynchronizationObject
+     */
+    public function testGetSynchronizationObject()
+    {
+        $event = SugarTestCalDavUtilities::createEvent();
+
+        $syncBean = $event->getSynchronizationObject();
+        $this->assertEquals($event->id, $syncBean->event_id);
+
+        $syncBean = $event->getSynchronizationObject();
+        $this->assertEquals($event->id, $syncBean->event_id);
+    }
+}

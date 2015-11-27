@@ -74,20 +74,12 @@ class DateTimeHelper
     /**
      * Convert DAV Datetime format to SugarCRM DB format
      * @param VObject\Property\ICalendar\DateTime $vDateTime
-     * @return string
+     * @return \SugarDateTime
      */
     public function davDateToSugar(VObject\Property\ICalendar\DateTime $vDateTime)
     {
         $dt = $vDateTime->getDateTime();
-        if ($vDateTime->getValueType() == 'DATE-TIME') {
-            $date = $dt->format('Ymd\THis');
-        } else {
-            $date = $dt->format('Ymd') . 'T000000';
-        }
-
-        $dateTime = \SugarDateTime::createFromFormat('Ymd\THis', $date, $dt->getTimezone());
-
-        return $dateTime->asDb();
+        return new \SugarDateTime($dt->format('Ymd\THis'), $dt->getTimezone());
     }
 
     /**
@@ -96,7 +88,7 @@ class DateTimeHelper
      * @param \DateTimeZone $tz expected timezone in event
      * @return \DateTime
      */
-    public function sugarDateToDav($dateTime, \DateTimeZone $tz = null)
+    public function sugarDateToDav(\SugarDateTime $dateTime, \DateTimeZone $tz = null)
     {
         $dt = new \DateTime($dateTime, new \DateTimeZone('UTC'));
         if (!$tz) {

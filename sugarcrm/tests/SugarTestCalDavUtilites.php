@@ -93,7 +93,7 @@ class SugarTestCalDavUtilities
         $event = BeanFactory::getBean('CalDavEvents');
 
         if (isset($eventData['calendardata'])) {
-            $event->setCalendarEventData($eventData['calendardata']);
+            $event->setData($eventData['calendardata']);
         }
 
         if (isset($eventData['calendarid'])) {
