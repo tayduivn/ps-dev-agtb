@@ -14,7 +14,8 @@
  * Registry of Out of the Box SubscriptionFilters.
  */
 $sfr = array(
-    'Application'   => 'Sugarcrm\Sugarcrm\Notification\SubscriptionFilter\Application',
-    'AssignedToMe'  => 'Sugarcrm\Sugarcrm\Notification\SubscriptionFilter\AssignedToMe',
-    'Team'          => 'Sugarcrm\Sugarcrm\Notification\SubscriptionFilter\Team'
+    'Application' => 'Sugarcrm\\Sugarcrm\\Notification\\SubscriptionFilter\\Application',
+    'AssignedToMe' => 'Sugarcrm\\Sugarcrm\\Notification\\SubscriptionFilter\\AssignedToMe',
+    'Team' => 'Sugarcrm\\Sugarcrm\\Notification\\SubscriptionFilter\\Team',
+    'Reminder' => 'Sugarcrm\\Sugarcrm\\Notification\\SubscriptionFilter\\Reminder',
 );

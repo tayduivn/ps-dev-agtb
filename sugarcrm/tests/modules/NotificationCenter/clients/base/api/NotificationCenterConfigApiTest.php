@@ -21,7 +21,7 @@ require_once 'modules/CarrierEmail/Carrier.php';
  */
 class NotificationCenterConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    const NS_REGISTRY = 'Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry';
+    const NS_REGISTRY = 'Sugarcrm\\Sugarcrm\\Notification\\SubscriptionsRegistry';
     const NS_CARRIER_REGISTRY = 'Sugarcrm\\Sugarcrm\\Notification\\CarrierRegistry';
     const NS_ADDRESS_TYPE = 'Sugarcrm\\Sugarcrm\\Notification\\Carrier\\AddressType\\Email';
 

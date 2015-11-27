@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Notification;
 
-use Sugarcrm\Sugarcrm\Notification\BeanEmitter\BeanEmitterInterface;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\BeanEmitterInterface;
 
 /**
  * Class EmitterRegistry.
@@ -36,7 +36,12 @@ class EmitterRegistry
     /**
      * Full path to BeanEmitterInterface with nameSpace
      */
-    const BEAN_EMITTER_INTERFACE = 'Sugarcrm\\Sugarcrm\\Notification\\BeanEmitter\\BeanEmitterInterface';
+    const BEAN_EMITTER_INTERFACE = 'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\BeanEmitterInterface';
+
+    /**
+     * Full path to EmitterInterface with nameSpace
+     */
+    const EMITTER_INTERFACE = 'Sugarcrm\\Sugarcrm\\Notification\\EmitterInterface';
 
     /**
      * Get object of EmitterRegistry, customized if it's present.
@@ -54,7 +59,7 @@ class EmitterRegistry
      */
     public function getApplicationEmitter()
     {
-        $class = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Notification\\ApplicationEmitter\\Emitter');
+        $class = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Application\\Emitter');
         return new $class();
     }
 
@@ -64,7 +69,7 @@ class EmitterRegistry
      */
     public function getBeanEmitter()
     {
-        $class = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Notification\BeanEmitter\\Emitter');
+        $class = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\Emitter');
         return new $class();
     }
 
@@ -81,7 +86,12 @@ class EmitterRegistry
             \SugarAutoLoader::load($emitters[$moduleName]['path']);
             $class = $emitters[$moduleName]['class'];
 
-            return new $class($this->getBeanEmitter());
+            if (in_array(static::BEAN_EMITTER_INTERFACE, class_implements($class))) {
+                return new $class($this->getBeanEmitter());
+            } else {
+                return new $class();
+            }
+
         } else {
             return null;
         }
@@ -156,7 +166,7 @@ class EmitterRegistry
      */
     protected function isEmitterClass($class)
     {
-        return class_exists($class) && in_array(static::BEAN_EMITTER_INTERFACE, class_implements($class));
+        return class_exists($class) && in_array(static::EMITTER_INTERFACE, class_implements($class));
     }
 
     /**

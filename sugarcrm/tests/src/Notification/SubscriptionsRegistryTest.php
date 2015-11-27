@@ -14,8 +14,6 @@ namespace Sugarcrm\SugarcrmTests\Notification;
 
 use Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry;
 
-require_once 'modules/Accounts/Emitter.php';
-
 /**
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry
  */
@@ -23,17 +21,17 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
 {
     const NS_SUBSCRIPTIONS_REGISTRY = 'Sugarcrm\\Sugarcrm\\Notification\\SubscriptionsRegistry';
 
-    const NS_APPLICATION_EMITTER = 'Sugarcrm\\Sugarcrm\\Notification\\ApplicationEmitter\\Emitter';
+    const NS_APPLICATION_EMITTER = 'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Application\\Emitter';
 
-    const NS_APPLICATION_EVENT = 'Sugarcrm\\Sugarcrm\\Notification\\ApplicationEmitter\\Event';
+    const NS_APPLICATION_EVENT = 'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Application\\Event';
 
-    const NS_BEAN_EVENT = 'Sugarcrm\\Sugarcrm\\Notification\\BeanEmitter\\Event';
+    const NS_BEAN_EVENT = 'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\Event';
 
     const NS_SF_ASSIGNED_TO_ME = 'Sugarcrm\\Sugarcrm\\Notification\\SubscriptionFilter\\AssignedToMe';
 
     const NS_SF_APPLICATION = 'Sugarcrm\\Sugarcrm\\Notification\\SubscriptionFilter\\Application';
 
-    const NS_BEAN_EMITTER = 'Sugarcrm\\Sugarcrm\\Notification\\BeanEmitter\\Emitter';
+    const NS_BEAN_EMITTER = 'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\Emitter';
 
     const NS_EMITTER_REGISTRY = 'Sugarcrm\\Sugarcrm\\Notification\\EmitterRegistry';
 
@@ -64,8 +62,14 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         $appEmitter->expects($this->exactly(1))->method('getEventPrototypeByString')
             ->will($this->returnValueMap(array(array('application_event1', $appEmitterEvent['application_event1']))));
 
-        $accountEmitter = $this->getMock('\\AccountEmitter', array(
-            'getEventStrings', 'getEventPrototypeByString'), array(), '', false);
+        $accountEmitter = $this->getMock(
+            '\\AccountEmitter',
+            array('getEventStrings', 'getEventPrototypeByString', '__toString'),
+            array(),
+            '',
+            false
+        );
+        $accountEmitter->method('__toString')->willReturn('Accounts');
 
         $emptyEmitter = $this->getMock(self::NS_SF_APPLICATION, array(
             'getEventStrings', 'getEventPrototypeByString', '__toString'));

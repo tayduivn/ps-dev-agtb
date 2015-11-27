@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Notification\SubscriptionFilter;
 
-use Sugarcrm\Sugarcrm\Notification\ApplicationEmitter\Event as ApplicationEvent;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event as ApplicationEvent;
 use Sugarcrm\Sugarcrm\Notification\EventInterface;
 
 /**

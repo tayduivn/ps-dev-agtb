@@ -105,7 +105,8 @@
                         view : 'default'
                     },
                     name: eventName,
-                    label: eventName, //ToDo: app.list
+                    label: app.lang.get('LBL_EVENT_' + eventName.toUpperCase() + '_ABOUT', this.meta.emitter),
+                    info: app.lang.get('LBL_EVENT_' + eventName.toUpperCase() + '_MORE_INFO', this.meta.emitter),
                     columns: columns
                 });
             }, this);

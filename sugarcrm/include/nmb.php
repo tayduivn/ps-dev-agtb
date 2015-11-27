@@ -13,6 +13,7 @@
  * List of Out of the Box MessageBuilders.
  */
 $nmb = array(
-    'Sugarcrm\Sugarcrm\Notification\ApplicationEmitter\MessageBuilder',
-    'Sugarcrm\Sugarcrm\Notification\BeanEmitter\MessageBuilder',
+    'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Application\\MessageBuilder',
+    'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\MessageBuilder',
+    'Sugarcrm\\Sugarcrm\\Notification\\Emitter\Reminder\\MessageBuilder',
 );

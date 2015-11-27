@@ -191,10 +191,4 @@ To create an {{module_name}}:
 2. Click "Save" to finalize the new record and return to the previous page.',
 
     'LBL_FILTER_ACCOUNTS_REPORTS' => 'Accounts\' reports',
-
-    // Notification Center Strings
-    'LBL_EMITTER_TITLE' => 'Notifications for Accounts',
-    'LBL_EMITTER_HELP' => 'ToDo: Help text of Notifications for Accounts settings',
-    'LBL_EMITTER_DESC_ADMIN' => 'Chose what types of notifications your users receive. You can also change the delivery methods for each notification. Notifications apply to the users that are assigned to a record, on a team with belonging to a record, or invited to a call or meeting.',
-    'LBL_EMITTER_DESC_USER' => 'Chose what types of notifications your receive. You can also change the delivery methods for each notification. Notifications apply to the users that are assigned to a record, on a team with belonging to a record, or invited to a call or meeting.',
 );

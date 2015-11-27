@@ -12,7 +12,7 @@
 namespace Sugarcrm\SugarcrmTests\Notification\MessageBuilder;
 
 use Sugarcrm\Sugarcrm\Notification\MessageBuilder\MessageBuilderRegistry;
-use Sugarcrm\Sugarcrm\Notification\ApplicationEmitter\Event as ApplicationEvent;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event as ApplicationEvent;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\Notification\MessageBuilder\MessageBuilderRegistry
@@ -37,7 +37,7 @@ class MessageBuilderRegistryTest extends \PHPUnit_Framework_TestCase
     public function testCacheIsCreated()
     {
         $buildersList = array(
-            'Sugarcrm\Sugarcrm\Notification\ApplicationEmitter\MessageBuilder',
+            'Sugarcrm\Sugarcrm\Notification\Emitter\Application\MessageBuilder',
         );
 
         $registry = $this->getMock(
@@ -64,11 +64,11 @@ class MessageBuilderRegistryTest extends \PHPUnit_Framework_TestCase
         );
 
         $registry->expects($this->once())->method('getDictionary')
-            ->willReturn(array('Sugarcrm\Sugarcrm\Notification\ApplicationEmitter\MessageBuilder'));
+            ->willReturn(array('Sugarcrm\Sugarcrm\Notification\Emitter\Application\MessageBuilder'));
 
         $event = new ApplicationEvent('event1');
         $this->assertInstanceOf(
-            'Sugarcrm\Sugarcrm\Notification\ApplicationEmitter\MessageBuilder',
+            'Sugarcrm\Sugarcrm\Notification\Emitter\Application\MessageBuilder',
             $registry->getBuilder($event)
         );
     }
@@ -84,7 +84,7 @@ class MessageBuilderRegistryTest extends \PHPUnit_Framework_TestCase
         );
 
         $registry->expects($this->once())->method('getDictionary')
-            ->willReturn(array('Sugarcrm\Sugarcrm\Notification\BeanEmitter\MessageBuilder'));
+            ->willReturn(array('Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\MessageBuilder'));
 
         $event = new ApplicationEvent('event1');
         $this->assertNull($registry->getBuilder($event));

@@ -185,6 +185,8 @@
             <directory>./modules/NotificationCenter</directory>
             <directory>./modules/CarrierSugar</directory>
             <directory>./modules/CarrierEmail</directory>
+            <file>./modules/Calls/CallEmitterTest.php</file>
+            <file>./modules/Meetings/MeetingEmitterTest.php</file>
         </testsuite>
     </testsuites>
     <filter>

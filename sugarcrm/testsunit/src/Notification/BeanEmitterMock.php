@@ -10,40 +10,37 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Notification\ApplicationEmitter;
+namespace Sugarcrm\SugarcrmTestsUnit\Notification;
 
-use Sugarcrm\Sugarcrm\Notification\EmitterInterface;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\BeanEmitterInterface;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Emitter as BeanEmitter;
 
-/**
- * Class Emitter.
- * Emitter that emits application-level Events.
- * @package Sugarcrm\Sugarcrm\Notification\ApplicationEmitter
- */
-class Emitter implements EmitterInterface
+class BeanEmitterMock implements BeanEmitterInterface
 {
+    public $beanEmitter;
+
     /**
-     * Get an Event by a given string.
-     * @param string $string Event identifier.
-     * @return Event application-level Event.
+     * @param BeanEmitter $beanEmitter
      */
+    public function __construct(BeanEmitter $beanEmitter)
+    {
+        $this->beanEmitter = $beanEmitter;
+    }
+
+    public function exec(\SugarBean $bean, $event, $arguments)
+    {
+    }
+
     public function getEventPrototypeByString($string)
     {
-        return new Event($string);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getEventStrings()
     {
-        return array();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString()
     {
-        return 'ApplicationEmitter';
+        return 'TestToString';
     }
 }
