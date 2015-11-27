@@ -15,22 +15,14 @@ namespace Sugarcrm\Sugarcrm\Trigger\ReminderManager;
 /**
  * Class Base contains common methods for
  * reminder manager implementations. For using you needed to
- * implement Base::setReminders and
+ * implement Base::addReminderForUser and
  * Base::deleteReminders methods.
  * @package Sugarcrm\Sugarcrm\Trigger\ReminderManager
  */
 abstract class Base
 {
     /**
-     * Sets reminders.
-     *
-     * @param \Call|\Meeting|\SugarBean $bean
-     * @param boolean $isUpdate If call or meeting was added the $isUpdate is false. Otherwise is true.
-     */
-    abstract public function setReminders(\SugarBean $bean, $isUpdate);
-
-    /**
-     * Deletes reminders.
+     * Deletes reminders for event(call or meeting) or for user.
      *
      * @param \Call|\Meeting|\User|\SugarBean $bean
      */
@@ -39,16 +31,17 @@ abstract class Base
     /**
      * Adds reminder for certain user.
      *
-     * @param \Call|\Meeting|\SugarBean $bean
-     * @param \User $user
+     * @param \Call|\Meeting|\SugarBean $bean event for which will be set reminder.
+     * @param \User $user user for which will be set reminder.
+     * @param \DateTime $reminderTime on which time reminder will be set.
      */
-    abstract public function addReminderForUser(\SugarBean $bean, \User $user);
+    abstract public function addReminderForUser(\SugarBean $bean, \User $user, \DateTime $reminderTime);
 
     /**
      * Creates tag by bean class and id.
      *
      * @param \SugarBean $bean
-     * @return string
+     * @return string generated tag.
      */
     protected function makeTag(\SugarBean $bean)
     {
@@ -56,45 +49,11 @@ abstract class Base
     }
 
     /**
-     * Gets reminder time.
-     * If user is calls or meetings author
-     * the Call::reminder_time or Meeting::reminder_time
-     * value will be used. Otherwise the value from
-     * User::getPreference('reminder_time') will be used.
-     *
-     * @param \Call|\Meeting|\SugarBean $bean
-     * @param \User $user
-     * @return int
-     */
-    protected function getReminderTime(\SugarBean $bean, \User $user)
-    {
-        if ($bean->assigned_user_id == $user->id) {
-            return (int)$bean->reminder_time;
-        }
-        return (int)$user->getPreference('reminder_time');
-    }
-
-    /**
-     * Calculates reminder date and time for trigger server.
-     * It converts result to specified timezone.
-     *
-     * @param string $dateStart Call or Meeting start datetime
-     * @param int $reminderTime Reminder time in seconds
-     * @return \DateTime
-     */
-    protected function prepareReminderDateTime($dateStart, $reminderTime)
-    {
-        $reminderDateTime = new \DateTime($dateStart, new \DateTimeZone('UTC'));
-        $reminderDateTime->modify('- ' . $reminderTime . ' seconds');
-        return $reminderDateTime;
-    }
-
-    /**
      * Prepares args.
      *
      * @param \Call|\Meeting|\SugarBean $bean
      * @param \User $user
-     * @return array
+     * @return array prepared arguments.
      */
     protected function prepareTriggerArgs(\SugarBean $bean, \User $user)
     {
@@ -103,57 +62,5 @@ abstract class Base
             'beanId' => $bean->id,
             'userId' => $user->id
         );
-    }
-
-    /**
-     * Loads users beans by array of id.
-     *
-     * @param string[] $usersIds
-     * @return \User[]
-     */
-    protected function loadUsers(array $usersIds)
-    {
-        $bean = $this->getBean('Users');
-        $query = $this->makeLoadUsersSugarQuery($bean, $usersIds);
-        return $bean->fetchFromQuery($query);
-    }
-
-    /**
-     * Makes SugarQuery for loading users by array of id.
-     *
-     * @param \User $bean
-     * @param string[] $usersIds
-     * @return \SugarQuery
-     */
-    protected function makeLoadUsersSugarQuery(\User $bean, array $usersIds)
-    {
-        $query = $this->getSugarQuery();
-        $query->from($bean);
-        $query->where()->in('id', $usersIds);
-        return $query;
-    }
-
-    /**
-     * Factory method for \SugarBean class.
-     *
-     * @param string $module
-     * @param string $beanId
-     * @return \Call|\Meeting|\User|\SchedulersJob|\SugarBean
-     * @codeCoverageIgnore
-     */
-    protected function getBean($module, $beanId = null)
-    {
-        return \BeanFactory::getBean($module, $beanId);
-    }
-
-    /**
-     * Factory method for \SugarQuery class.
-     *
-     * @return \SugarQuery
-     * @codeCoverageIgnore
-     */
-    protected function getSugarQuery()
-    {
-        return new \SugarQuery();
     }
 }

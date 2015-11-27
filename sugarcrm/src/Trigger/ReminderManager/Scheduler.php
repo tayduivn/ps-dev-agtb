@@ -14,29 +14,11 @@ namespace Sugarcrm\Sugarcrm\Trigger\ReminderManager;
 
 /**
  * Class Scheduler manages reminders by scheduler jobs.
- * It sets SchedulersJob for every user from Call or Meeting.
- * Method uses @see \Call::users_arr or @see \Meeting::users_arr as source of users.
+ * It sets SchedulersJob for user from Call or Meeting.
  * When time comes the @see \Sugarcrm\Sugarcrm\Trigger\Job\ReminderJob::run() will be called.
  *
- * For setting up reminders use @see Scheduler::setReminders()
- *
+ * For setting up reminders use @see Scheduler::addReminderForUser()
  * For deleting reminders use @see Scheduler::deleteReminders()
- *
- * Examples:
- * <code>
- * // instantiate manager
- * $manager = new Scheduler();
- *
- * // set new reminders from Call
- * $manager->setReminders($call, false);
- *
- * // delete old reminders and set new reminders from Call
- * $manager->setReminders($call, true);
- *
- * // delete reminders from Call
- * $manager->deleteReminders($call);
- *
- * </code>
  *
  * @package Sugarcrm\Sugarcrm\Trigger\ReminderManager
  */
@@ -52,100 +34,38 @@ class Scheduler extends Base
     /**
      * @inheritdoc
      */
-    public function setReminders(\SugarBean $bean, $isUpdate)
+    public function deleteReminders(\SugarBean $eventBean)
     {
-        if ($isUpdate) {
-            $this->deleteReminders($bean);
-        }
-        $this->addReminders($bean);
-    }
+        $tag = $this->makeTag($eventBean);
+        $jobBean = $this->getSchedulersJob();
+        $query = $this->getSugarQuery();
 
-    /**
-     * @inheritdoc
-     */
-    public function deleteReminders(\SugarBean $bean)
-    {
-        $this->deleteByJobGroup($this->makeTag($bean));
-    }
+        $query->from($jobBean);
+        $query->where()->contains('job_group', $tag);
+        $beans = $jobBean->fetchFromQuery($query);
 
-    /**
-     * @inheritdoc
-     */
-    public function addReminderForUser(\SugarBean $bean, \User $user)
-    {
-        $jobQueue = $this->getSugarJobQueue();
-        $reminderTime = $this->getReminderTime($bean, $user);
-
-        if ($reminderTime > 0) {
-            $job = $this->createSchedulersJob($bean, $user, $reminderTime);
-            $jobQueue->submitJob($job);
-        }
-    }
-
-    /**
-     * Adds triggers to scheduler. Method adds one job for every user.
-     *
-     * @param \Call|\Meeting|\SugarBean $bean
-     */
-    protected function addReminders(\SugarBean $bean)
-    {
-        foreach ($this->loadUsers($bean->users_arr) as $user) {
-            $this->addReminderForUser($bean, $user);
-        }
-    }
-
-    /**
-     * Creates \SchedulersJob and sets it properties.
-     *
-     * @param \Call|\Meeting|\SugarBean $bean
-     * @param \User $user
-     * @param int $reminderTime
-     * @return \SchedulersJob
-     */
-    protected function createSchedulersJob(\SugarBean $bean, \User $user, $reminderTime)
-    {
-        $job = $this->getSchedulersJob();
-        $job->name = 'Reminder Job ' . $bean->name;
-        $job->job_group = $this->makeTag($bean) . ':' . $this->makeTag($user);
-        $job->data = json_encode($this->prepareTriggerArgs($bean, $user));
-        $job->target = static::CALLBACK_CLASS;
-        $job->execute_time = $this->getTimeDate()
-            ->asDb($this->prepareReminderDateTime($bean->date_start, $reminderTime), false);
-        $job->requeue = true;
-
-        return $job;
-    }
-
-    /**
-     * Removes job from scheduler by job group.
-     *
-     * @param string $group
-     */
-    protected function deleteByJobGroup($group)
-    {
-        $bean = $this->getBean('SchedulersJobs');
-        $query = $this->makeLoadRemindersByJobGroupSugarQuery($bean, $group);
-        $objects = $bean->fetchFromQuery($query);
-
-        foreach ($objects as $job) {
-            /* @var $job \SchedulersJob */
+        foreach ($beans as $job) {
+            /* @var $job \Call|\Meeting */
             $job->mark_deleted($job->id);
         }
     }
 
     /**
-     * Makes SugarQuery for loading scheduler's jobs by group.
-     *
-     * @param \SchedulersJob $bean
-     * @param string $group
-     * @return \SugarQuery
+     * @inheritdoc
      */
-    protected function makeLoadRemindersByJobGroupSugarQuery(\SchedulersJob $bean, $group)
+    public function addReminderForUser(\SugarBean $bean, \User $user, \DateTime $reminderTime)
     {
-        $query = $this->getSugarQuery();
-        $query->from($bean);
-        $query->where()->contains('job_group', $group);
-        return $query;
+        /* @var $job \SchedulersJob */
+        $job = \BeanFactory::newBean('SchedulersJobs');
+        /* @var $bean \Call|\Meeting */
+        $job->name = 'Reminder Job ' . $bean->name;
+        $job->job_group = $this->makeTag($bean) . ':' . $this->makeTag($user);
+        $job->data = json_encode($this->prepareTriggerArgs($bean, $user));
+        $job->target = static::CALLBACK_CLASS;
+
+        $job->execute_time = $this->getTimeDate()->asDb($reminderTime, false);
+        $job->requeue = true;
+        $this->getSugarJobQueue()->submitJob($job);
     }
 
     /**
@@ -153,32 +73,7 @@ class Scheduler extends Base
      */
     protected function makeTag($bean)
     {
-        return $this->hashTag($this->parentMakeTag($bean));
-    }
-
-    /**
-     * Creates MD5 hash from tag. It needs to prevent
-     * problems with storing and searching jobs in db.
-     *
-     * @param string $tag
-     * @return string
-     * @codeCoverageIgnore
-     */
-    protected function hashTag($tag)
-    {
-        return md5($tag);
-    }
-
-    /**
-     * Access method to parent::makeTag()
-     *
-     * @param \Call|\Meeting|\User|\SugarBean $bean
-     * @return string
-     * @codeCoverageIgnore
-     */
-    protected function parentMakeTag(\SugarBean $bean)
-    {
-        return parent::makeTag($bean);
+        return md5(parent::makeTag($bean));
     }
 
     /**
@@ -189,7 +84,7 @@ class Scheduler extends Base
      */
     protected function getSchedulersJob()
     {
-        return new \SchedulersJob();
+        return \BeanFactory::getBean('SchedulersJobs');
     }
 
     /**
@@ -215,5 +110,16 @@ class Scheduler extends Base
     protected function getTimeDate()
     {
         return \TimeDate::getInstance();
+    }
+
+    /**
+     * Factory method for \SugarQuery class.
+     *
+     * @return \SugarQuery
+     * @codeCoverageIgnore
+     */
+    protected function getSugarQuery()
+    {
+        return new \SugarQuery();
     }
 }
