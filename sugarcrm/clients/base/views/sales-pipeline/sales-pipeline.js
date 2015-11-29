@@ -158,7 +158,7 @@
                 url_base = oppsViewBy + '/chart/pipeline/' + timeperiod + '/';
 
             if (this.isManager) {
-                url_base += '/' + this.getVisibility();
+                url_base += this.getVisibility() + '/';
             }
             var url = app.api.buildURL(url_base);
             app.api.call('GET', url, null, {
