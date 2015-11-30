@@ -346,6 +346,9 @@
                 'include/javascript/sugar7/import-export-warnings.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/browser-notification.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/shortcuts.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/accessibility/accessibility.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/accessibility/click.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/accessibility/label.js' => 'include/javascript/sugar_grp7.min.js',
             ),
 
             //BEGIN SUGARCRM flav=ent ONLY
@@ -363,6 +366,9 @@
                 'include/javascript/sugar7/alert.js' => 'portal2/sugar_portal.min.js',
                 'include/javascript/sugar7/hbs-helpers.js' => 'portal2/sugar_portal.min.js',
                 'include/javascript/sugar7/language.js' => 'portal2/sugar_portal.min.js',
+                'include/javascript/sugar7/accessibility/accessibility.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/accessibility/click.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/accessibility/label.js' => 'include/javascript/sugar_grp7.min.js',
                 'custom/include/javascript/voodoo.js' => 'portal2/sugar_portal.min.js',
                 'include/javascript/sugar7/shortcuts.js' => 'portal2/sugar_portal.min.js',
             ),

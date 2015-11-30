@@ -39,6 +39,9 @@
     'include/javascript/sugar7/error.js',
     'include/javascript/sugar7.js',
     'include/javascript/sugar7/browser-notification.js',
+    'include/javascript/sugar7/accessibility/accessibility.js',
+    'include/javascript/sugar7/accessibility/click.js',
+    'include/javascript/sugar7/accessibility/label.js',
 
     // TODO: decide if we're going to only serve or if we should have
     // them all by default
