@@ -12,9 +12,13 @@
 --}}
 {{#each value}}
     <div class="control-group">
-        <div class="controls controls-three btn-fit">
+        <div class="controls controls-{{../fitGroupClass}} btn-fit">
             <input type="hidden" name="{{../name}}" class="select2 inherit-width" value="{{id}}" data-rname="{{name}} {{name_2}}" data-index="{{@index}}">
-            <button type="button"{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}} class="btn third {{#if primary}}active{{/if}}" name="primary" data-index="{{@index}}" rel="tooltip" title="{{str "LBL_TEAM_PRIMARY"}}"><i class="fa fa-star"></i></button>
+            <button type="button"{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}
+                    class="btn {{../fitButtonClass}} {{#if primary}}active{{/if}}" name="primary" data-index="{{@index}}"
+                    rel="tooltip" title="{{str "LBL_TEAM_PRIMARY"}}"><i class="fa fa-star"></i>
+            </button>
+            {{partial 'button-selected' ../this this index=@index}}
         {{#if remove_button}}
             <button type="button" class="btn second" name="remove" data-index="{{@index}}" rel="tooltip" title="{{str "LBL_TEAM_REMOVE"}}"><i class="fa fa-minus"></i></button>
         {{/if}}

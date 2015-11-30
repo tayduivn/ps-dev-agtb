@@ -44,8 +44,8 @@
         var userCurrencyPreference = app.user.getPreference('currency_id');
         var salesStageLabels = app.lang.getAppListStrings('sales_stage_dom');
 
-        function formatValue(d) {
-            return app.currency.formatAmountLocale(app.currency.convertWithRate(d, userConversionRate), userCurrencyPreference, 0);
+        function formatValue(d, precision) {
+            return app.currency.formatAmountLocale(app.currency.convertWithRate(d, userConversionRate), userCurrencyPreference, precision);
         }
         if (!this.isManager && this.meta.config) {
             // FIXME: Dashlet's config page is rendered from meta.panels directly.
@@ -83,7 +83,7 @@
             .colorData('class', {step: 2})
             .fmtValueLabel(function(d) {
                 var y = d.value || (isNaN(d) ? 0 : d);
-                return formatValue(y);
+                return formatValue(y, 0);
             })
             .strings({
                 legend: {

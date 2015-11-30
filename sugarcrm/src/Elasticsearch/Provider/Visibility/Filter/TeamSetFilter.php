@@ -32,6 +32,11 @@ class TeamSetFilter implements FilterInterface
     protected $provider;
 
     /**
+     * @var string
+     */
+    protected $defaultField = 'team_set_id';
+
+    /**
      * {@inheritdoc}
      */
     public function setProvider(Visibility $provider)
@@ -47,7 +52,8 @@ class TeamSetFilter implements FilterInterface
     public function buildFilter(array $options = array())
     {
         $teamSetIds = $this->getTeamSetIds($options['user']);
-        return new \Elastica\Filter\Terms('team_set_id', $teamSetIds);
+        $field = !empty($options['field']) ? $options['field'] : $this->defaultField;
+        return new \Elastica\Filter\Terms($field, $teamSetIds);
     }
 
     /**

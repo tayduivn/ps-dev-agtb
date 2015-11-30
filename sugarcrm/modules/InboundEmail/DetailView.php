@@ -263,7 +263,7 @@ if(!empty($focus->port)) {
 }
 if(!empty($focus->team_id)) {
 	require_once('modules/Teams/TeamSetManager.php');
-	$team_name = TeamSetManager::getCommaDelimitedTeams($focus->team_set_id, $focus->team_id, true);
+    $team_name = TeamSetManager::getFormattedTeamsFromSet($focus, true);
 
 	if(!isset($team_name) || empty($team_name)) {
 		$team_name = $app_strings['NTC_NO_ITEMS_DISPLAY'];

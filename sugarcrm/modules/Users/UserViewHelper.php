@@ -456,9 +456,7 @@ class UserViewHelper {
 
             $this->ss->assign('DEFAULT_TEAM_OPTIONS', $teamsWidget->get_code());
 
-            require_once('modules/Teams/TeamSetManager.php');
-            $default_teams = TeamSetManager::getCommaDelimitedTeams($this->bean->team_set_id, $this->bean->team_id, true);
-            $this->ss->assign("DEFAULT_TEAM_LIST", $default_teams);
+            $this->ss->assign("DEFAULT_TEAM_LIST", TeamSetManager::getFormattedTeamsFromSet($this->bean, true));
         }
 
         $this->ss->assign('SHOW_TEAM_SELECTION', !empty($this->bean->id));
