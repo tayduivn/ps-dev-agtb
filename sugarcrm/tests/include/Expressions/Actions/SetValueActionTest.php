@@ -28,6 +28,27 @@ class SetValueActionTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user']->setPreference('timef', "H:i:s");
 	}
 
+    public function testSetValueRemoveNewLinesFromExpression()
+    {
+        $target = "name";
+        $expr = 'concat("Hello",
+" ",
+"World")';
+        $action = ActionFactory::getNewAction("SetValue", array("target" => $target,"value" => $expr));
+
+        $value = SugarTestReflection::getProtectedValue($action, 'expression');
+        $this->assertNotContains("\n", $value);
+    }
+
+    public function testGetJavascriptFireReturnsTheCorrectMethod()
+    {
+        $target = "name";
+        $expr = 'concat("Hello", " ", "World")';
+        $action = ActionFactory::getNewAction("SetValue", array("target" => $target, "value" => $expr));
+        $expected = 'new SUGAR.forms.SetValueAction(\'name\',\'concat(\"Hello\", \" \", \"World\")\')';
+        $this->assertEquals($expected, $action->getJavascriptFire());
+    }
+
 	public function testSetValues()
 	{
 	    $task = new Task();

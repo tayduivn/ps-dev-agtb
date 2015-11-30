@@ -169,10 +169,24 @@
                 if (evt.which === 9) { // tab
                     evt.preventDefault();
                     var $elem = $(evt.target),
-                        isValid;
+                        isValid,
+                        field = this.fields[$(this._viewCurrentCTEList[this._viewCurrentIndex]).attr('sfuuid')],
+                        val;
+
+                    // find the value for the element we are on.
+                    if (field && field.type === 'enum') {
+                        // since the enum fields use select2, we have to use it to get the value
+                        val = field.$(field.fieldTag).select2('val');
+                    } else {
+                        // just pull from the target otherwise
+                        val = $elem.val();
+                    }
+
                     if (!evt.shiftKey) {
-                        if (this._viewCurrentIndex + 1 < this._viewCurrentCTEList.length) {
-                            isValid = this._fieldDoValidate($elem, $elem.val());
+                        if (this._viewCurrentIndex !== -1 &&
+                            this._viewCurrentIndex + 1 < this._viewCurrentCTEList.length) {
+                            // get the field
+                            isValid = this._fieldDoValidate($elem, val);
                             if (isValid) {
                                 $elem.parents('.isEditable').removeClass('error');
                                 this._viewCurrentIndex++;
@@ -184,7 +198,7 @@
                         }
                     } else {
                         if (this._viewCurrentIndex - 1 >= 0) {
-                            isValid = this._fieldDoValidate($elem, $elem.val());
+                            isValid = this._fieldDoValidate($elem, val);
                             if (isValid) {
                                 $elem.parents('.isEditable').removeClass('error');
                                 this._viewCurrentIndex--;
@@ -195,7 +209,7 @@
                             this._viewCurrentIndex = this._viewCurrentCTEList.length - 1;
                         }
                     }
-                    $(this._viewCurrentCTEList[this._viewCurrentIndex]).find('div.clickToEdit').click();
+                    this.$(this._viewCurrentCTEList[this._viewCurrentIndex]).find('div.clickToEdit').click();
                 }
             },
 
@@ -469,7 +483,7 @@
                         if (_.isFunction(this.bindKeyDown)) {
                             this.bindKeyDown(_.bind(this._fieldOnKeyDown, this));
                         } else {
-                            $field.on('keydown.record' + this.cid, {field: this}, _.bind(this._fieldOnKeyDown, this));
+                            this.on('keydown.record' + this.cid, {field: this}, _.bind(this._fieldOnKeyDown, this));
                         }
 
                         $(document).on('mousedown.record' + this.cid, {field: this}, _.bind(this._fieldMouseClicked, this));

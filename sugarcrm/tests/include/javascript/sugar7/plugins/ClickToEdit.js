@@ -92,7 +92,8 @@ describe('Plugins.ClickToEdit', function() {
     });
 
     describe('_viewHandleKeyDown', function() {
-        var keyDownEvent;
+        var keyDownEvent,
+            clickObj;
         beforeEach(function() {
             keyDownEvent = {
                 which: -1,
@@ -101,6 +102,19 @@ describe('Plugins.ClickToEdit', function() {
                 target: '<input />'
             };
             sinon.collection.stub(keyDownEvent, 'preventDefault', function() {});
+            plugin.$ = function() {};
+            plugin._viewCurrentCTEList = [];
+            clickObj = {
+                click: function() {}
+            };
+
+            sinon.collection.stub(plugin, '$', function() {
+                return {
+                    find: function() {
+                        return clickObj;
+                    }
+                };
+            });
         });
 
         it('should do nothing if the key is not Tab', function() {
@@ -111,9 +125,98 @@ describe('Plugins.ClickToEdit', function() {
 
         it('should prevent default tabbing if the key is Tab', function() {
             keyDownEvent.which = 9;
+            plugin.fields = [];
             plugin._viewHandleKeyDown(keyDownEvent);
 
             expect(keyDownEvent.preventDefault).toHaveBeenCalled();
+        });
+
+        it('will tab to the first record', function() {
+            sinon.collection.stub(clickObj, 'click');
+            plugin.fields = [];
+            plugin._viewCurrentCTEList = ['<input />'];
+            keyDownEvent.which = 9;
+            plugin._viewHandleKeyDown(keyDownEvent);
+
+            expect(clickObj.click).toHaveBeenCalled();
+        });
+
+        it('move to the second record', function() {
+            sinon.collection.stub(clickObj, 'click');
+            plugin.fields = [];
+            plugin._viewCurrentCTEList = ['<input />', '<input />'];
+            plugin._viewCurrentIndex = 0;
+            keyDownEvent.which = 9;
+            sinon.collection.stub(plugin, '_fieldDoValidate', function() {
+                return true;
+            });
+            plugin._viewHandleKeyDown(keyDownEvent);
+
+            expect(plugin._viewCurrentIndex).toEqual(1);
+        });
+
+        it('it will cycle to back to the start', function() {
+            sinon.collection.stub(clickObj, 'click');
+            plugin.fields = [];
+            plugin._viewCurrentCTEList = ['<input />', '<input />'];
+            plugin._viewCurrentIndex = 1;
+            keyDownEvent.which = 9;
+            sinon.collection.stub(plugin, '_fieldDoValidate', function() {
+                return true;
+            });
+            plugin._viewHandleKeyDown(keyDownEvent);
+
+            expect(plugin._viewCurrentIndex).toEqual(0);
+        });
+
+        it('it will cycle to back to the end when shift is pressed', function() {
+            sinon.collection.stub(clickObj, 'click');
+            plugin.fields = [];
+            plugin._viewCurrentCTEList = ['<input />', '<input />'];
+            plugin._viewCurrentIndex = 0;
+            keyDownEvent.which = 9;
+            keyDownEvent.shiftKey = true;
+            sinon.collection.stub(plugin, '_fieldDoValidate', function() {
+                return true;
+            });
+            plugin._viewHandleKeyDown(keyDownEvent);
+
+            expect(plugin._viewCurrentIndex).toEqual(1);
+        });
+
+        it('it will move backwards from 1 to 0 when shift key is pressed', function() {
+            sinon.collection.stub(clickObj, 'click');
+            plugin.fields = [];
+            plugin._viewCurrentCTEList = ['<input />', '<input />'];
+            plugin._viewCurrentIndex = 1;
+            keyDownEvent.which = 9;
+            keyDownEvent.shiftKey = true;
+            sinon.collection.stub(plugin, '_fieldDoValidate', function() {
+                return true;
+            });
+            plugin._viewHandleKeyDown(keyDownEvent);
+
+            expect(plugin._viewCurrentIndex).toEqual(0);
+        });
+
+        it('will find the select2 value when field type is enum', function() {
+            var select2Obj = {
+                    select2: function() {}
+                },
+                field = {
+                    type: 'enum',
+                    fieldTag: '.select2',
+                    $: function() {
+                        return select2Obj;
+                    }
+                };
+            sinon.collection.stub(select2Obj, 'select2');
+            plugin._viewCurrentIndex = 0;
+            plugin.fields = [field];
+            plugin._viewCurrentCTEList = ['<input sfuuid="0" />'];
+            keyDownEvent.which = 9;
+            plugin._viewHandleKeyDown(keyDownEvent);
+            expect(select2Obj.select2).toHaveBeenCalled();
         });
     });
 
