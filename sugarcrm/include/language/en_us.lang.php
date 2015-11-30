@@ -1027,6 +1027,7 @@ $app_list_strings = array (
                                      'pick'     => '--None--',
                                      'createcase'  => 'Create Case',
                                      'bounce'   => 'Bounce Handling',
+                                     'caldav'   => 'CalDAV Handling',
     ),
     'dom_email_distribution'=> array(''             => '--None--',
                                      'direct'       => 'Direct Assign',

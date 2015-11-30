@@ -27,6 +27,13 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'fa-plus',
     ),
     array(
+        'route' => '#bwc/index.php?module=InboundEmail&action=EditView&mailbox_type=caldav',
+        'label' => 'LNK_LIST_CREATE_NEW_CALDAV',
+        'acl_action' => 'create',
+        'acl_module' => $module_name,
+        'icon' => 'fa-plus',
+    ),
+    array(
         'route'=>'#bwc/index.php?module=InboundEmail&action=index',
         'label' =>'LNK_LIST_MAILBOXES',
         'acl_action'=>'list',
