@@ -134,7 +134,7 @@
 
     filterCollection: function() {
         this.collection.remove(_.filter(this.collection.models, function(model){
-            return !app.acl.hasAccessToModel("view", model);
+            return !app.acl.hasAccessToModel('view', model);
         }, this), { silent: true });
     },
 
@@ -166,7 +166,7 @@
         this.layout.hideNextPrevious = _.isUndefined(this.layout.previous) && _.isUndefined(this.layout.next);
 
         // Need to rerender the preview header
-        this.layout.trigger("preview:pagination:update");
+        this.layout.trigger('preview:pagination:update');
     },
 
     /**
@@ -187,9 +187,9 @@
         }
 
         // Close preview if we are already displaying this model
-        if(this.model && model && (this.model.get("id") == model.get("id") && previewId == this.previewId)) {
+        if (this.model && model && (this.model.get('id') == model.get('id') && previewId == this.previewId)) {
             // Remove the decoration of the highlighted row
-            app.events.trigger("list:preview:decorate", false);
+            app.events.trigger('list:preview:decorate', false);
             // Close the preview panel
             app.events.trigger('preview:close');
             return;
@@ -247,17 +247,20 @@
 
         if (model) {
             this.switchModel(model);
+            if (this.layout) {
+                this.layout.trigger('previewheader:ACLCheck', model);
+            }
             this.render();
 
             // TODO: Remove when pagination on activity streams is fixed.
-            if (this.previewModule && this.previewModule === "Activities") {
+            if (this.previewModule && this.previewModule === 'Activities') {
                 this.layout.hideNextPrevious = true;
-                this.layout.trigger("preview:pagination:update");
+                this.layout.trigger('preview:pagination:update');
             }
             // Open the preview panel
             app.events.trigger('preview:open', this);
             // Highlight the row
-            app.events.trigger("list:preview:decorate", this.model, this);
+            app.events.trigger('list:preview:decorate', this.model, this);
         }
     },
 
@@ -304,13 +307,13 @@
         }
         this.switching = true;
 
-        if( data.direction === "left" && (currID === _.first(this.collection.models).get("id")) ||
-            data.direction === "right" && (currID === _.last(this.collection.models).get("id")) ) {
+        if (data.direction === 'left' && (currID === _.first(this.collection.models).get('id')) ||
+            data.direction === 'right' && (currID === _.last(this.collection.models).get('id'))) {
             this.switching = false;
             return;
         } else {
             // We can increment/decrement
-            data.direction === "left" ? currIndex -= 1 : currIndex += 1;
+            data.direction === 'left' ? currIndex -= 1 : currIndex += 1;
 
             //Reset the preview
             app.events.trigger('preview:render', this.collection.models[currIndex], null, true);
@@ -328,12 +331,12 @@
 
     bindDataChange: function() {
         if(this.collection) {
-            this.collection.on("reset", this.filterCollection, this);
+            this.collection.on('reset', this.filterCollection, this);
             // when remove active model from collection then close preview
-            this.collection.on("remove", function(model) {
-                if (model && this.model && (this.model.get("id") == model.get("id"))) {
+            this.collection.on('remove', function(model) {
+                if (model && this.model && (this.model.get('id') == model.get('id'))) {
                     // Remove the decoration of the highlighted row
-                    app.events.trigger("list:preview:decorate", false);
+                    app.events.trigger('list:preview:decorate', false);
                     // Close the preview panel
                     app.events.trigger('preview:close');
                 }

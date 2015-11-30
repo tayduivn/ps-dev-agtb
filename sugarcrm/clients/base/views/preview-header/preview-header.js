@@ -23,12 +23,8 @@
 
     initialize: function(options) {
         this._super('initialize', [options]);
+        this.checkACL(this.model);
 
-        if (app.config.previewEdit && this.layout.meta.editable === true &&
-            app.acl.hasAccessToModel('edit', this.model)) {
-            this.context.set({'previewEdit': true});
-            this.previewEdit = true;
-        }
         this._delegateEvents();
     },
 
@@ -50,12 +46,12 @@
 
     triggerPagination: function(e) {
         var direction = this.$(e.currentTarget).data();
-        this.layout.trigger("preview:pagination:fire", direction);
+        this.layout.trigger('preview:pagination:fire', direction);
     },
 
     triggerClose: function() {
-        app.events.trigger("list:preview:decorate", null, this);
-        app.events.trigger("preview:close");
+        app.events.trigger('list:preview:decorate', null, this);
+        app.events.trigger('preview:close');
     },
 
     /**
@@ -96,6 +92,32 @@
         if (this.previewEdit) {
             this.getField('save_button').hide();
             this.getField('cancel_button').hide();
+        }
+    },
+
+    /**
+     *  @inheritdoc
+     *
+     *  @override Overiding render
+     */
+    _render: function() {
+        this.layout.on('previewheader:ACLCheck', this.checkACL, this)
+        this._super('_render');
+    },
+
+    /**
+     * Check if the user has permission to edit the current record
+     *
+     * @param model Model for preview
+     */
+    checkACL: function(model) {
+        if (app.config.previewEdit && this.layout.meta.editable === true &&
+            app.acl.hasAccessToModel('edit', model)) {
+            this.context.set({'previewEdit': true});
+            this.previewEdit = true;
+        } else {
+            this.context.set({'previewEdit': false});
+            this.previewEdit = false;
         }
     }
 })
