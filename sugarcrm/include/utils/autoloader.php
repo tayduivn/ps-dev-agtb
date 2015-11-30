@@ -1284,7 +1284,8 @@ class SugarAutoLoader
             }
             $filename = $item->getFilename();
             if ($item->isDir()) {
-                $data[$filename] = self::scanDir($path . '/' . $filename);
+                $filepath = ($path === "") ? $filename : $path . '/' . $filename;
+                $data[$filename] = self::scanDir($filepath);
             } else {
                 if (!in_array(pathinfo($filename, PATHINFO_EXTENSION), self::$exts)) {
                     continue;
