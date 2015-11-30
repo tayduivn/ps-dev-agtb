@@ -249,9 +249,8 @@ class Importer
             }
 
             // If there is an default value then use it instead
-            if ( !empty($_REQUEST[$field]) )
-            {
-                $defaultRowValue = $this->populateDefaultMapValue($field, $_REQUEST[$field], $fieldDef);
+            if (!empty($_REQUEST["default_value_$field"])) {
+                $defaultRowValue = $this->populateDefaultMapValue($field, $_REQUEST["default_value_$field"], $fieldDef);
 
                 //BEGIN SUGARCRM flav=pro ONLY
                 if(!empty($fieldDef['custom_type']) && $fieldDef['custom_type'] == 'teamset' && empty($rowValue))

@@ -259,8 +259,9 @@ class ImportViewStep3 extends ImportView
                     $import_module,
                     $defaultField,
                     $fields[$defaultField],
-                    ( isset($default_values[$defaultField]) ? $default_values[$defaultField] : '' )
-                    );
+                    ( isset($default_values[$defaultField]) ? $default_values[$defaultField] : '' ),
+                    array('idName' => "default_value_$defaultField")
+                );
             }
 
             if ( isset($default_values[$defaultField]) )
