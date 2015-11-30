@@ -15,5 +15,5 @@
 $nmb = array(
     'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Application\\MessageBuilder',
     'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\MessageBuilder',
-    'Sugarcrm\\Sugarcrm\\Notification\\Emitter\Reminder\\MessageBuilder',
+    'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Reminder\\MessageBuilder',
 );
