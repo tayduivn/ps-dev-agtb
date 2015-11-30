@@ -238,7 +238,7 @@ class ImportController extends SugarController
     function action_GetControl()
     {
         $module = $this->request->getValidInputRequest('import_module', 'Assert\Mvc\ModuleName');
-        $fieldName = $this->request->getValidInputRequest('field_name', 'Assert\ComponentName');
+        $fieldName = $this->request->getValidInputRequest('field_name');
         echo getControl($module, $fieldName);
         exit;
     }
