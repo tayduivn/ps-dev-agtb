@@ -24,7 +24,14 @@ describe('Base.Layout.ModuleList', function() {
 
     describe('Render', function() {
 
+        var drawer;
+
         beforeEach(function() {
+
+            drawer = app.drawer;
+            app.drawer = {
+                getActive: $.noop
+            };
 
             sinon.collection.stub(app.metadata, 'getModuleNames', function() {
                 return {
@@ -57,7 +64,9 @@ describe('Base.Layout.ModuleList', function() {
         });
 
         afterEach(function() {
-            layout.dispose();
+
+            app.drawer = drawer;
+
             sinon.collection.restore();
         });
 
@@ -75,10 +84,6 @@ describe('Base.Layout.ModuleList', function() {
             };
             var triggerStub = sinon.collection.stub(layout.layout, 'trigger');
 
-            app.drawer = {
-                getActive: $.noop
-            };
-
             layout.handleViewChange();
 
             expect(layout.$('[data-container=module-list]').children('.active').data('module')).toBe(moduleName);
@@ -88,28 +93,26 @@ describe('Base.Layout.ModuleList', function() {
         });
 
         it('should select the drawer module if there is one open from the router', function() {
-            var $drawers = $('<div id="drawers"></div>');
-            var drawer = SugarTest.createLayout('base', 'Contacts', 'drawer', {}, undefined, false, {
-                el: $drawers
-            });
-            var expectedActiveModule = 'Accounts';
-            sinon.collection.stub(drawer, '_animateOpenDrawer');
             layout.layout = {
                 trigger: $.noop,
                 off: $.noop
             };
+            var module = 'Accounts';
+            var ctx = new app.Context({
+                module: module,
+                fromRouter: true
+            });
 
-            app.drawer.open({
-                layout: 'base',
-                context: {
-                    module: expectedActiveModule,
-                    fromRouter: true
-                }
+            var drawerLayout = SugarTest.createLayout('base', module, layoutName, null, ctx);
+
+            sinon.collection.stub(app.drawer, 'getActive', function() {
+                return drawerLayout;
             });
 
             layout.handleViewChange();
 
-            expect(layout.$('[data-container=module-list]').children('.active').data('module')).toBe(expectedActiveModule);
+            expect(layout.isActiveModule(module)).toBeTruthy();
+            drawerLayout.dispose();
         });
 
         using('mappedModule values', [

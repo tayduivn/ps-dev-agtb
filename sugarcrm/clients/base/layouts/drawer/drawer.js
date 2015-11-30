@@ -64,8 +64,8 @@
         });
 
         app.before('app:view:load', function() {
-           return app.drawer.reset();
-        });
+            return this.reset();
+        }, this);
     },
 
     /**
@@ -856,8 +856,8 @@
     },
 
     _dispose: function() {
-        app.routing.offBefore("route", this.reset, this);
         this.reset();
+        app.offBefore(null, null, this);
         $(window).off('resize.drawer');
         $(window).off('scroll.prevent');
         app.$contentEl.on('scroll.prevent');
