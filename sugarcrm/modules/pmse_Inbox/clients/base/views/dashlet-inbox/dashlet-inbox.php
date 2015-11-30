@@ -126,6 +126,7 @@ $viewdefs[$module_name]['base']['view']['dashlet-inbox'] = array(
                 'assigned_user_id',
                 'date_entered',
                 'cas_due_date',
+                'cas_assignment_method',
             ),
         ),
     ),
