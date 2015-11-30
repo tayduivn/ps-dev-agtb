@@ -10,8 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/FilterApi.php';
-require_once 'include/SugarFields/SugarFieldHandler.php';
+require_once('clients/base/api/FilterApi.php');
+require_once('include/SugarFields/SugarFieldHandler.php');
+require_once 'modules/Teams/TeamSetManager.php';
 
 /**
  * gets the system default delimiter or an user-preference based override
@@ -204,11 +205,15 @@ function exportFromApi($args, $sample = false)
     }
 
     if ($focus->bean_implements('ACL')) {
+        $tba = new TeamBasedACLConfigurator();
+        $access = ACLAction::getUserAccessLevel($current_user->id, $focus->module_dir, 'export');
         if (ACLController::requireOwner($focus->module_dir, 'export')) {
             if (!empty($where)) {
                 $where .= ' AND ';
             }
             $where .= $focus->getOwnerWhere($current_user->id);
+        } elseif ($tba->isValidAccess($access)) {
+            $focus->addVisibilityStrategy('TeamBasedACLVisibility');
         }
     }
 
@@ -500,12 +505,18 @@ function getExportContentFromResult(
                 }
 
                 if (isset($focus->field_name_map[$fields_array[$key]]['custom_type']) &&
-                    $focus->field_name_map[$fields_array[$key]]['custom_type'] == 'teamset'
+                    $focus->field_name_map[$fields_array[$key]]['custom_type'] == 'teamset' &&
+                    isset(Team::$nameTeamsetMapping[$fields_array[$key]])
                 ) {
-                    require_once('modules/Teams/TeamSetManager.php');
+                    $primaryTeamId = '';
+                    $fieldDefs = $focus->getFieldDefinition($fields_array[$key]);
+
+                    if (!empty($fieldDefs['id_name']) && !empty($val[$fieldDefs['id_name']])) {
+                        $primaryTeamId = $val[$fieldDefs['id_name']];
+                    }
                     $value = TeamSetManager::getCommaDelimitedTeams(
-                        $val['team_set_id'],
-                        !empty($val['team_id']) ? $val['team_id'] : ''
+                        $val[Team::$nameTeamsetMapping[$fields_array[$key]]],
+                        $primaryTeamId
                     );
                 }
 

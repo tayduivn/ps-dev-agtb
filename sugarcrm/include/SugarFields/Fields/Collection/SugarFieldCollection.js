@@ -206,7 +206,6 @@ if(typeof(SUGAR.collection) == "undefined") {
          * Create the new row from a cloned row. 
          */
         init_clone: function(values){
-        	
         	//Safety check, this means that the clone field was not created yet
         	if(typeof this.cloneField[0] == 'undefined') {
         	   return;
@@ -216,6 +215,7 @@ if(typeof(SUGAR.collection) == "undefined") {
                 values = new Array();
                 values['name'] = "";
                 values['id'] = "";
+                values['selected'] = '';
             }
             
             var count = this.fields_count;
@@ -254,7 +254,15 @@ if(typeof(SUGAR.collection) == "undefined") {
                 parentNode.innerHTML = parentNode.innerHTML.replace(re, this.field + "_collection_extra_" + this.fields_count);
             } else if (currentNode.tagName && currentNode.tagName == 'SPAN') { 
                 //If it is our div element, recursively find all input elements to process
-                currentNode.id = /_input/.test(currentNode.id) ? this.field_element_name + '_input_div_' + this.fields_count :  this.field_element_name + '_radio_div_' + this.fields_count;         	
+                if (/_input/.test(currentNode.id)) {
+                    currentNode.id = this.field_element_name + '_input_div_' + this.fields_count;
+                } else {
+                    if (/_radio_div_/.test(currentNode.id)) {
+                        currentNode.id = this.field_element_name + '_radio_div_' + this.fields_count;
+                    } else {
+                        currentNode.id = this.field_element_name + '_checkbox_div_' + this.fields_count;
+                    }
+                }
 				if (/_input/.test(currentNode.id)) {
 					currentNode.name = 'teamset_div';
 				}
@@ -330,6 +338,16 @@ if(typeof(SUGAR.collection) == "undefined") {
                         currentNode.value = this.fields_count;
                         currentNode.checked = false; //Firefox
                         currentNode.setAttribute('defaultChecked', '');
+                        break;
+                    case "selected_" + toreplace:
+                        currentNode.name = new_name.replace(RegExp('_0', 'g'), "_" + this.fields_count);
+                        currentNode.id = new_id.replace(RegExp('_0', 'g'), "_" + this.fields_count);
+                        currentNode.value = values['id'];
+                        if (values.selected) {
+                            currentNode.setAttribute('checked', 'checked');
+                        } else {
+                            currentNode.removeAttribute('checked');
+                        }
                         break;
                     default:
                         alert(toreplace + '|' + currentNode.name + '|' + name + '|' + new_name);

@@ -1687,7 +1687,7 @@ EOQ;
 		$smarty->assign("JS_CUSTOM_VERSION", $GLOBALS['sugar_config']['js_custom_version']);
 
 		require_once('modules/Teams/TeamSetManager.php');
-		$smarty->assign("TEAM",  TeamSetManager::getCommaDelimitedTeams($focus->team_set_id, $focus->team_id, true));
+        $smarty->assign("TEAM", TeamSetManager::getFormattedTeamsFromSet($focus, true));
 		if(!empty($focus->reply_to_email)) {
 			$replyTo = "
 				<tr>

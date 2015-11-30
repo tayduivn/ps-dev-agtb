@@ -12,6 +12,7 @@
  */
 
 require_once 'include/SugarFields/Fields/Base/SugarFieldBase.php';
+require_once 'modules/Teams/TeamSetManager.php';
 
 /**
  * SugarFieldTeamset.php
@@ -102,6 +103,13 @@ class SugarFieldTeamset extends SugarFieldBase {
 				$this->view->team_set_id = $GLOBALS['current_user']->team_set_id;
 			}
 		}
+        if (!empty($this->fields['team_set_selected_id'])) {
+            if (!empty($this->fields['team_set_selected_id']['value'])) {
+                $this->view->team_set_selected_id = $this->fields['team_set_selected_id']['value'];
+            } else {
+                $this->view->team_set_selected_id = $GLOBALS['current_user']->team_set_selected_id;
+            }
+        }
     	if(!empty($this->fields['team_id']) && !empty($this->fields['team_id']['value'])){
 			$this->view->team_id = $this->fields['team_id']['value'];
 			$this->view->add_user_private_team = false;
@@ -168,8 +176,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 	function renderDetailView(){
 		$this->initialize();
 		$this->process();
-    	require_once('modules/Teams/TeamSetManager.php');
-    	return TeamSetManager::getCommaDelimitedTeams($this->fields['team_set_id']['value'], $this->fields['team_id']['value'], true);
+        return TeamSetManager::getFormattedTeamsFromSet($this->view, true);
 	}
 
 	/**
@@ -258,6 +265,8 @@ class SugarFieldTeamset extends SugarFieldBase {
                 $teams = $this->getTeamsFromRequest($this->field_name, $_POST);
                 if (empty($teams))
                 {
+                    $this->view->team_set_selected_id = !empty($GLOBALS['current_user']->team_set_selected_id) ?
+                        $GLOBALS['current_user']->team_set_selected_id : '';
                     $this->view->team_set_id = !empty($GLOBALS['current_user']->team_set_id) ? $GLOBALS['current_user']->team_set_id : '';
                     $this->view->team_id =  !empty($GLOBALS['current_user']->team_id) ? $GLOBALS['current_user']->team_id : '';
                 }
@@ -333,6 +342,8 @@ class SugarFieldTeamset extends SugarFieldBase {
 		$this->view->vardef = $vardef;
 		$this->view->module_dir = $_REQUEST['module'];
 
+        $this->view->team_set_selected_id = !empty($GLOBALS['current_user']->team_set_selected_id) ?
+            $GLOBALS['current_user']->team_set_selected_id : '';
 		$this->view->team_set_id = !empty($GLOBALS['current_user']->team_set_id) ? $GLOBALS['current_user']->team_set_id : '';
 		$this->view->team_id =  !empty($GLOBALS['current_user']->team_id) ? $GLOBALS['current_user']->team_id : '';
 
@@ -495,6 +506,25 @@ class SugarFieldTeamset extends SugarFieldBase {
         return '';
 	}
 
+    /**
+     * Given the REQUEST, return the Team-Based selected team ids, if none found, then return array()
+     *
+     * @param string $field     the name of the field on the UI
+     * @param array $vars       array of REQUEST params to look at
+     * @return array            array of Team-Based selected team ids or empty array
+     */
+    public function getSelectedTeamIdsFromRequest($field, $vars)
+    {
+        $selectedTeamIds = array();
+        foreach (array_keys($vars) as $key) {
+            if (strpos($key, "selected_" . $field . "_collection_") !== false) {
+                $num = substr($key, strrpos($key, '_') + 1);
+                $selectedTeamIds[] = $vars["selected_" . $field . "_collection_" . $num];
+            }
+        }
+        return $selectedTeamIds;
+    }
+
 	/**
 	 * Given the bean and the REQUEST attempt to save the selected team ids to the bean
 	 *
@@ -517,6 +547,16 @@ class SugarFieldTeamset extends SugarFieldBase {
 	    if(!empty($primaryTeamId)){
         	$bean->team_id = $primaryTeamId;
 	    }
+
+        if (!empty($team_ids)) {
+            $selectedTeamIds = $this->getSelectedTeamIdsFromRequest($field, $params);
+            if (!empty($selectedTeamIds)) {
+                $teamSet = BeanFactory::getBean('TeamSets');
+                $bean->team_set_selected_id = $teamSet->addTeams($selectedTeamIds);
+            } else {
+                $bean->team_set_selected_id = '';
+            }
+        }
 
 		if(!empty($team_ids)){
 	        $bean->load_relationship('teams');
@@ -593,9 +633,15 @@ class SugarFieldTeamset extends SugarFieldBase {
 		}
 
 		if(!empty($team_ids)){
-			$focus->load_relationship('teams');
-			$focus->teams->replace($team_ids, array(), true);
-			$focus->team_id = $team_ids[0];
+            if ($vardef['name'] == $this->field_name) {
+                $focus->load_relationship('teams');
+                $focus->teams->replace($team_ids, array(), true);
+                $focus->team_id = $team_ids[0];
+            } else {
+                $teamSet = BeanFactory::getBean('TeamSets');
+                $selectedTeamSet = Team::$nameTeamsetMapping[$vardef['name']];
+                $focus->$selectedTeamSet = $teamSet->addTeams($team_ids);
+            }
 		} else {
             $focus->setDefaultTeam();
         }
@@ -626,8 +672,15 @@ class SugarFieldTeamset extends SugarFieldBase {
     ) {
         $this->ensureApiFormatFieldArguments($fieldList, $service);
 
+        if ($fieldName !== $this->field_name) {
+            return;
+        }
+
+        $selectedTeamIds = array_map(function ($el) {
+            return $el['id'];
+        }, TeamSetManager::getTeamsFromSet($bean->team_set_selected_id));
+
         if (empty($bean->teamList)) {
-            require_once('modules/Teams/TeamSetManager.php');
             $teamList = TeamSetManager::getUnformattedTeamsFromSet($bean->team_set_id);
             if ( ! is_array($teamList) ) {
                 // No teams on this bean yet.
@@ -636,7 +689,7 @@ class SugarFieldTeamset extends SugarFieldBase {
         } else {
             $teamList = $bean->teamList;
         }
-        
+
         foreach ( $teamList as $idx => $team ) {
             // Check team name as well for cases in which team_name is selected
             // but team_id is not
@@ -645,10 +698,12 @@ class SugarFieldTeamset extends SugarFieldBase {
             } else {
                 $teamList[$idx]['primary'] = false;
             }
+            $teamList[$idx]['selected'] = in_array($team['id'], $selectedTeamIds) ? true : false;
         }
         $data[$fieldName] = $teamList;
 
         // These are just confusing to people on the other side of the API
+        unset($data['team_set_selected_id']);
         unset($data['team_set_id']);
         unset($data['team_id']);
     }
@@ -665,6 +720,7 @@ class SugarFieldTeamset extends SugarFieldBase {
         $teamList = $params[$fieldName];
         $ret = $this->fixupTeamList($teamList);
         $teamIds = $ret['teamIds'];
+        $selectedTeamIds = $ret['selectedTeamIds'];
         $primaryTeamId = $ret['primaryTeamId'];
 
         if ( count($teamIds) == 0 ) {
@@ -682,7 +738,14 @@ class SugarFieldTeamset extends SugarFieldBase {
 
         if ($bean->load_relationship('teams')) {
             $bean->teams->replace($teamIds, array(), false);
-        };
+        }
+
+        if (!empty($selectedTeamIds)) {
+            $teamSet = BeanFactory::getBean('TeamSets');
+            $bean->team_set_selected_id = $teamSet->addTeams($selectedTeamIds);
+        } else {
+            $bean->team_set_selected_id = '';
+        }
     }
 
     public function apiMassUpdate(SugarBean $bean, array $params, $fieldName, $properties) {
@@ -695,12 +758,20 @@ class SugarFieldTeamset extends SugarFieldBase {
         $ret = $this->fixupTeamList($teamList);
         $teamIds = $ret['teamIds'];
         $primaryTeamId = $ret['primaryTeamId'];
+        $selectedTeamIds = $ret['selectedTeamIds'];
 
         if (isset($primaryTeamId)) {
             $bean->team_id = $primaryTeamId;
         }
         $bean->load_relationship('teams');
         $bean->teams->add($teamIds, array(), false);
+
+        if (!empty($selectedTeamIds)) {
+            $teamSet = BeanFactory::getBean('TeamSets');
+            $bean->team_set_selected_id = $teamSet->addTeams($selectedTeamIds);
+        } else {
+            $bean->team_set_selected_id = '';
+        }
     }
 
     protected function fixupTeamList($teamList)
@@ -710,16 +781,24 @@ class SugarFieldTeamset extends SugarFieldBase {
             $teamList = array();
         }
         $teamIds = array();
+        $selectedTeamIds = array();
         foreach ( $teamList as $idx => $team ) {
             //For empty array
             if (!isset($team['id'])) { continue; }
             if (isset($team['primary']) && $team['primary'] == true) {
                 $primaryTeamId = $team['id'];
             }
+            if (!empty($team['selected'])) {
+                $selectedTeamIds[] = $team['id'];
+            }
             $teamIds[] = $team['id'];
         }
 
-        return array('teamIds'=>$teamIds,'primaryTeamId'=>$primaryTeamId);
+        return array(
+            'teamIds' => $teamIds,
+            'selectedTeamIds' => $selectedTeamIds,
+            'primaryTeamId' => $primaryTeamId,
+        );
     }
 
     /**

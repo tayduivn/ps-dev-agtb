@@ -76,7 +76,7 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
     });
 
     it("should have additional plugins defined", function() {
-        expect(_.indexOf(view.plugins, 'CteTabbing')).not.toEqual(-1);
+        expect(_.indexOf(view.plugins, 'ClickToEdit')).not.toEqual(-1);
         expect(_.indexOf(view.plugins, 'DirtyCollection')).not.toEqual(-1);
     });
 

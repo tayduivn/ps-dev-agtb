@@ -657,8 +657,12 @@ class Importer
                 break;
             case 'teamset':
                 $this->ifs->teamset($rowValue,$fieldDef,$focus);
-                $this->importColumns[] = 'team_set_id';
-                $this->importColumns[] = 'team_id';
+                if (Team::$nameTeamsetMapping[$fieldDef['name']]) {
+                    $this->importColumns[] = Team::$nameTeamsetMapping[$fieldDef['name']];
+                }
+                if (!empty($fieldDefs['id_name'])) {
+                    $this->importColumns[] = $fieldDefs['id_name'];
+                }
                 return $rowValue;
                 break;
             case 'fullname':

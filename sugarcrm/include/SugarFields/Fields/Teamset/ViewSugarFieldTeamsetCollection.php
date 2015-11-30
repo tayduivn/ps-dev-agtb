@@ -11,11 +11,12 @@
  */
 require_once('include/SugarFields/Fields/Collection/SugarFieldCollection.php');
 require_once('include/SugarFields/Fields/Collection/ViewSugarFieldCollection.php');
-
+require_once 'modules/Teams/TeamSetManager.php';
 
 class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 
 	var $add_user_private_team = true;
+    public $team_set_selected_id;
 	var $team_set_id = null;
 	var $team_id = null;
 	var $type = 'TeamsetCollection';
@@ -65,6 +66,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
         }
         $this->ss->assign('showSelectButton',$this->showSelectButton);
         $this->ss->assign('APP',$GLOBALS['app_strings']);
+        $this->ss->assign('isTBAEnabled', TeamBasedACLConfigurator::isEnabledForModule($this->module_dir));
     }
 
 
@@ -103,21 +105,42 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 			        	if(!empty($this->team_set_id)){
 			        		$this->bean->team_set_id = $this->team_set_id;
 			        	}
+                        if(!empty($this->team_set_selected_id)){
+                            $this->bean->team_set_selected_id = $this->team_set_selected_id;
+                        }
 			        }else if(!empty($_REQUEST['record'])){
 		            	$this->bean->retrieve($_REQUEST['record']);
 			        }
 
-			        if(!empty($this->bean->team_set_id)) {
-			        	require_once('modules/Teams/TeamSetManager.php');
-			        	$teams = TeamSetManager::getTeamsFromSet($this->bean->team_set_id);
-			        	foreach($teams as $row){
-			        		if(empty($primary) && $this->bean->team_id == $row['id']){
-								$this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, array('primary'=>array('id'=>$row['id'], 'name'=>$row['display_name'])));
-			        			$primary = true;
-			        		}else{
-			        			$secondaries['secondaries'][]=array('id'=>$row['id'], 'name'=>$row['display_name']);
-			        		}
-			        	} //foreach
+                    if (!empty($this->bean->team_set_id)) {
+                        $selectedTeamIds = array();
+                        if (!empty($this->bean->team_set_selected_id)) {
+                            $selectedTeamIds = array_map(function ($el) {
+                                return $el['id'];
+                            }, TeamSetManager::getTeamsFromSet($this->bean->team_set_selected_id));
+                        }
+                        $teams = TeamSetManager::getTeamsFromSet($this->bean->team_set_id);
+                        foreach ($teams as $row) {
+                            if (empty($primary) && $this->bean->team_id == $row['id']) {
+                                $this->bean->{$this->value_name} = array_merge(
+                                    $this->bean->{$this->value_name},
+                                    array(
+                                        'primary' => array(
+                                            'id' => $row['id'],
+                                            'name' => $row['display_name'],
+                                            'selected' => in_array($row['id'], $selectedTeamIds)
+                                        )
+                                    )
+                                );
+                                $primary = true;
+                            } else {
+                                $secondaries['secondaries'][] = array(
+                                    'id' => $row['id'],
+                                    'name' => $row['display_name'],
+                                    'selected' => in_array($row['id'], $selectedTeamIds)
+                                );
+                            }
+                        } //foreach
 			        }elseif(!empty($this->bean->team_id)){
 			        	//since the team_set_id is not set, but the team_id is.
 			        	$focus = BeanFactory::getBean('Teams', $this->bean->team_id);
@@ -245,7 +268,6 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 		        $full_form_values = array();
 		        $full_form_values['primary'] = array('id'=>$dupBean->team_id, 'name'=>$dupBean->team_name);
 		        $teams = array();
-				require_once('modules/Teams/TeamSetManager.php');
 				$team_ids = TeamSetManager::getTeamsFromSet($dupBean->team_set_id);
 		        foreach($team_ids as $row){
 		        		if($dupBean->team_id != $row['id']) {
@@ -279,7 +301,6 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
                 // check if array consists of subarray 'secondaries' that means we don't need to remerge it again
                 if (!array_key_exists('secondaries', $this->bean->{$this->value_name}))
                 {
-                    require_once('modules/Teams/TeamSetManager.php');
                     $teams = TeamSetManager::getTeamsFromSet($GLOBALS['current_user']->team_set_id);
                     $primary = false;
                     $secondaries = array();

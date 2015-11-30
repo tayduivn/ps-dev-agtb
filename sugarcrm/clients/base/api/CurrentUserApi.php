@@ -631,11 +631,16 @@ class CurrentUserApi extends SugarApi
         $user_data['my_teams'] = $my_teams;
 
         $defaultTeams = TeamSetManager::getTeamsFromSet($current_user->team_set_id);
+        $defaultSelectedTeamIds = array();
+        foreach (TeamSetManager::getTeamsFromSet($current_user->team_set_selected_id) as $selectedTeam) {
+            $defaultSelectedTeamIds[] = $selectedTeam['id'];
+        }
         foreach ($defaultTeams as $id => $team) {
             $defaultTeams[$id]['primary'] = false;
             if ($team['id'] == $current_user->team_id) {
                 $defaultTeams[$id]['primary'] = true;
             }
+            $defaultTeams[$id]['selected'] = in_array($team['id'], $defaultSelectedTeamIds);
         }
         $user_data['preferences']['default_teams'] = $defaultTeams;
 

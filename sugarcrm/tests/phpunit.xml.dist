@@ -188,6 +188,15 @@
             <file>./modules/Calls/CallEmitterTest.php</file>
             <file>./modules/Meetings/MeetingEmitterTest.php</file>
         </testsuite>
+        <testsuite name="TbACL">
+            <file>./clients/base/api/TeamBasedACLExportApiTest.php</file>
+            <file>./data/visibility/ACLVisibilityTest.php</file>
+            <file>./data/visibility/TeamBasedACLVisibilityTest.php</file>
+            <file>./include/TeamBasedACLConfiguratorTest.php</file>
+            <file>./modules/Import/TeamBasedACLImportTest.php</file>
+            <file>./modules/ACL/TeamBasedACLModuleTest.php</file>
+            <file>./modules/ACL/TeamBasedACLFieldTest.php</file>
+        </testsuite>
     </testsuites>
     <filter>
         <blacklist>

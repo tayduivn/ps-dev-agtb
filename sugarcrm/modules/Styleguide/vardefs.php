@@ -215,4 +215,4 @@ $dictionary['Styleguide'] = array(
 if (!class_exists('VardefManager')){
     require_once('include/SugarObjects/VardefManager.php');
 }
-VardefManager::createVardef('Styleguide','Styleguide', array('person', 'default', 'assignable'));
+VardefManager::createVardef('Styleguide', 'Styleguide', array('default', 'person', 'assignable'));
