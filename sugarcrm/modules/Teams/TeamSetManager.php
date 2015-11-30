@@ -346,6 +346,54 @@ class TeamSetManager {
 		return self::getFormattedTeamNames(self::getUnformattedTeamsFromSet($team_set_id));
 	}
 
+    /**
+     * Return a formatted list of teams with badges.
+     *
+     * @param $focus
+     * @param bool|false $forDisplay
+     * @return mixed|string|void
+     */
+    public static function getFormattedTeamsFromSet($focus, $forDisplay = false)
+    {
+        $result = array();
+        $isTBAEnabled = TeamBasedACLConfigurator::isEnabledForModule($focus->module_name);
+
+        $team_set_id = $focus->team_set_id ? $focus->team_set_id : $focus->team_id;
+        $teams = self::getTeamsFromSet($team_set_id);
+
+        $selectedTeamIds = array();
+        if ($isTBAEnabled && !empty($focus->team_set_selected_id)) {
+            $selectedTeamIds = array_map(function ($el) {
+                return $el['id'];
+            }, TeamSetManager::getTeamsFromSet($focus->team_set_selected_id));
+        }
+
+        foreach ($teams as $key => $row) {
+            $isPrimaryTeam = false;
+            $row['title'] = $forDisplay ?
+                $row['display_name'] :
+                (!empty($row['name']) ? $row['name'] : $row['name_2']);
+
+            if (!empty($focus->team_id) && $row['id'] == $focus->team_id) {
+                $row['badges']['primary'] = $isPrimaryTeam = true;
+            }
+
+            if ($isTBAEnabled && in_array($row['id'], $selectedTeamIds)) {
+                $row['badges']['selected'] = $hasBadge = true;
+            }
+
+            if ($isPrimaryTeam) {
+                array_unshift($result, $row);
+            } else {
+                array_push($result, $row);
+            }
+        }
+
+        $detailView = new Sugar_Smarty();
+        $detailView->assign('teams', $result);
+        return $detailView->fetch('modules/Teams/tpls/DetailView.tpl');
+    }
+
 	/**
 	 * Return a comma delimited list of teams for display purposes
 	 *

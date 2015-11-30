@@ -20,6 +20,7 @@ $mod_strings = array (
 'LBL_ACCESS_DISABLED'=>'Disabled',
 'LBL_ACCESS_DEV'=>'Developer',
 'LBL_ACCESS_ADMIN_DEV'=>'Admin & Developer',
+'LBL_ACCESS_SELECTED_TEAMS' => 'Owner & Selected Teams',
 'LBL_NAME'=>'Name',
 'LBL_DESCRIPTION'=>'Description',
 'LIST_ROLES'=>'List Roles',

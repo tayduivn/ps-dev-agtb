@@ -49,6 +49,8 @@ class ReportsSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection
         $this->ss->assign('hideShowHideButton', true);
         $this->ss->assign('showSelectButton',$this->showSelectButton);
         $this->ss->assign('APP',$GLOBALS['app_strings']);
+
+        $this->ss->assign('isTBAEnabled', TeamBasedACLConfigurator::isEnabledForModule($this->module_dir));
     }        
     
     function process() {

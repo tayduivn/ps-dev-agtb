@@ -22,7 +22,7 @@
         'click .btn[name=primary]': 'setPrimaryItem',
         'change input.select2': 'inputChanged'
     },
-    plugins: ['EllipsisInline', 'Tooltip', 'FieldDuplicate'],
+    plugins: ['EllipsisInline', 'Tooltip', 'FieldDuplicate', 'TbACLs'],
 
     /**
      * HTML tag of the append team checkbox.
@@ -30,6 +30,20 @@
      * @property {String}
      */
     appendTeamTag: 'input[name=append_team]',
+
+    /**
+     * Group fit class.
+     *
+     * @property {String}
+     */
+    fitGroupClass: 'three',
+
+    /**
+     * Button fit class.
+     *
+     * @property {String}
+     */
+    fitButtonClass: 'third',
 
     initialize: function (options) {
         this._super('initialize', [options]);
@@ -202,6 +216,11 @@
      */
     _loadTemplate: function() {
         this._super("_loadTemplate");
+
+        if (!_.isUndefined(this.isTBAEnabled) && this.isTBAEnabled) {
+            this.fitGroupClass = 'four';
+            this.fitButtonClass = 'fourth';
+        }
 
         var template = app.template.getField(
             this.type,

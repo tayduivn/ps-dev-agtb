@@ -8,29 +8,30 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-describe("ForecastWorksheets.Base.Field.Int", function () {
-
-    var app, field, moduleName = 'ForecastWorksheets';
+describe('ForecastWorksheets.Base.Field.Int', function () {
+    var app,
+        field,
+        moduleName = 'ForecastWorksheets';
 
     beforeEach(function() {
         app = SugarTest.app;
 
-        SugarTest.loadPlugin('ClickToEdit')
+        SugarTest.loadPlugin('ClickToEdit');
         SugarTest.loadComponent('base', 'field', 'int');
 
         var fieldDef = {
-            "name": "test_field",
-            "type": "int",
-            "len": 4
+            name: 'test_field',
+            type: 'int',
+            len: 4
         };
 
-        field = SugarTest.createField("base", "int", 'int', 'record', fieldDef, moduleName, null, null, true);
+        field = SugarTest.createField('base', 'int', 'int', 'record', fieldDef, moduleName, null, null, true);
     });
 
     afterEach(function() {
         delete app.plugins.plugins['field']['ClickToEdit'];
-        delete app.plugins.plugins['view']['CteTabbing'];
+        delete app.plugins.plugins['view']['ClickToEdit'];
+        sinon.collection.restore();
         field = null;
         app = null;
     });
@@ -39,69 +40,67 @@ describe("ForecastWorksheets.Base.Field.Int", function () {
         expect(field.plugins).toContain('ClickToEdit');
     });
 
-    describe('ClickToEdit fieldValueChanged', function() {
-        var sandbox = sinon.sandbox.create();
+    describe('ClickToEdit _fieldValueChanged', function() {
         beforeEach(function() {
             field.value = '1';
         });
         afterEach(function() {
             field.value = undefined;
-            sandbox.restore();
         });
 
         it('should return true when adding 1', function() {
-            sandbox.stub(field.$el, 'find', function() {
+            sinon.collection.stub(field.$el, 'find', function() {
                 return {
                     val: function() {
                         return '+1';
                     }
                 }
             });
-            expect(field.fieldValueChanged(field)).toBeTruthy();
+            expect(field._fieldValueChanged(field)).toBeTruthy();
         });
 
         it('should return true when subtracting 1', function() {
-            sandbox.stub(field.$el, 'find', function() {
+            sinon.collection.stub(field.$el, 'find', function() {
                 return {
                     val: function() {
                         return '-1';
                     }
                 }
             });
-            expect(field.fieldValueChanged(field)).toBeTruthy();
+            expect(field._fieldValueChanged(field)).toBeTruthy();
         });
 
         it('should return true when adding a percent', function() {
-            sandbox.stub(field.$el, 'find', function() {
+            sinon.collection.stub(field.$el, 'find', function() {
                 return {
                     val: function() {
                         return '+1%';
                     }
                 }
             });
-            expect(field.fieldValueChanged(field)).toBeTruthy();
+            expect(field._fieldValueChanged(field)).toBeTruthy();
         });
 
         it('should return true when subtracting a percent', function() {
-            sandbox.stub(field.$el, 'find', function() {
+            sinon.collection.stub(field.$el, 'find', function() {
                 return {
                     val: function() {
                         return '-1%';
                     }
                 }
             });
-            expect(field.fieldValueChanged(field)).toBeTruthy();
+            expect(field._fieldValueChanged(field)).toBeTruthy();
         });
 
         it('should return false when values are the same', function() {
-            sandbox.stub(field.$el, 'find', function() {
+            sinon.collection.stub(field.$el, 'find', function() {
                 return {
                     val: function() {
                         return '1';
                     }
                 }
             });
-            expect(field.fieldValueChanged(field)).toBeFalsy();
+            expect(field._fieldValueChanged(field)).toBeFalsy();
         });
     });
 });
