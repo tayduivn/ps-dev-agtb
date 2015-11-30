@@ -53,6 +53,17 @@
         <th scope='col' align='center' id="lineLabel_{$idname}_primary" rowspan='1' scope='row' style='white-space: nowrap; word-wrap:normal;'>
             {sugar_translate label='LBL_COLLECTION_PRIMARY'}
         </th>
+        {if $isTBAEnabled}
+        <td>
+            &nbsp;
+        </td>
+        <th scope='col' align='center' id="lineLabel_{$idname}_selected" rowspan='1' scope='row' style='white-space: nowrap; word-wrap:normal;'>
+            {sugar_translate label='LBL_TEAM_SET_SELECTED'}
+        </th>
+        <td>
+            &nbsp;
+        </td>
+        {/if}
 <!-- BEGIN Add and collapse -->
         <td rowspan='1' scope='row' style='white-space:nowrap; word-wrap:normal;' valign='top'>
             &nbsp;
@@ -95,10 +106,28 @@
             </span>
         </td>
         <td>
-        &nbsp;
+            &nbsp;
+        </td>
+        {if $isTBAEnabled}
+        <td valign='top' align='center' class="teamset-row">
+            <span id='{$displayParams.formName}_{$idname}_checkbox_div_0'>
+            &nbsp;
+            <input id="selected_{$idname}_collection_0" name="selected_{$idname}_collection_0" type="checkbox"
+                   class="checkbox" value="{$values.primary.id}"
+                   {if $values.primary.selected}checked="checked"
+                   title="{sugar_translate label='LBL_TEAM_TBSELECTED_TITLE'}" {else}
+                   title="{sugar_translate label='LBL_TEAM_SELECT_AS_TBSELECTED_TITLE'}" {/if}/>
+            </span>
         </td>
         <td>
         &nbsp;
+        </td>
+        {/if}
+        <td>
+            &nbsp;
+        </td>
+        <td>
+            &nbsp;
         </td>
 <!-- END Remove and Radio -->
     </tr>
@@ -122,10 +151,9 @@ and push it outside the screen.
                 {foreach from=$values.secondaries item=secondary_field}
                 var temp_array = new Array();
                 temp_array['name'] = '{$secondary_field.name}';
-
-   			 	temp_array['name'] = replaceHTMLChars(temp_array['name']);
-   			 	
+                temp_array['name'] = replaceHTMLChars(temp_array['name']);
                 temp_array['id'] = '{$secondary_field.id}';
+                {if $isTBAEnabled}temp_array['selected'] = '{$secondary_field.selected}';{/if}
                 collection[field_id].secondaries_values.push(temp_array);
                 {/foreach}
             {/if}

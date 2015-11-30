@@ -103,5 +103,32 @@ class TeamsController extends SugarController {
 	    $retArray['theme'] = $theme;
 	    echo 'result = ' . $json->encode($retArray);
 	}
+
+    /**
+     * This method handles the saving team-based access configuration.
+     */
+    public function action_saveTBAConfiguration()
+    {
+        if ($GLOBALS['current_user']->isAdminForModule('Users')) {
+            $enabled = !empty($_POST['enabled']) ? isTruthy($_POST['enabled']) : false;
+            $disabledModules = !empty($_POST['disabled_modules']) ? explode(',', $_POST['disabled_modules']) : array();
+
+            $tbaConfigurator = new TeamBasedACLConfigurator();
+            $tbaConfigurator->setGlobal($enabled);
+
+            if ($enabled) {
+                $actionsList = array_keys(ACLAction::getUserActions($GLOBALS['current_user']->id));
+                $enabledModules = array_values(array_diff($actionsList, $disabledModules));
+
+                $tbaConfigurator->setForModulesList($disabledModules, false);
+                $tbaConfigurator->setForModulesList($enabledModules, true);
+            }
+            echo json_encode(array('status' => true));
+        } else {
+            echo json_encode(array(
+                'status' => false,
+                'message' => $GLOBALS['app_strings']['EXCEPTION_NOT_AUTHORIZED']
+            ));
+        }
+    }
 }
-?>

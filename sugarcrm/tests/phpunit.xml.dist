@@ -180,6 +180,15 @@
             <exclude>./pmse/modules/pmse_Project/clients/base/api/wrappers/PMSECrmDataWrapperTest.php</exclude>
             <exclude>./pmse/modules/pmse_Project/clients/base/api/wrappers/PMSEProjectWrapperTest.php</exclude>
         </testsuite>
+        <testsuite name="TbACL">
+            <file>./clients/base/api/TeamBasedACLExportApiTest.php</file>
+            <file>./data/visibility/ACLVisibilityTest.php</file>
+            <file>./data/visibility/TeamBasedACLVisibilityTest.php</file>
+            <file>./include/TeamBasedACLConfiguratorTest.php</file>
+            <file>./modules/Import/TeamBasedACLImportTest.php</file>
+            <file>./modules/ACL/TeamBasedACLModuleTest.php</file>
+            <file>./modules/ACL/TeamBasedACLFieldTest.php</file>
+        </testsuite>
     </testsuites>
     <filter>
         <blacklist>

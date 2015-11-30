@@ -40,6 +40,15 @@ $vardefs = array(
 			'dbType' => 'id',
             'duplicate_on_record_copy' => 'always',
         ),
+        'team_set_selected_id' => array(
+            'name' => 'team_set_selected_id',
+            'vname' => 'LBL_TEAM_SET_SELECTED_ID',
+            'type' => 'id',
+            'audited' => true,
+            'studio' => false,
+            'isnull' => true,
+            'duplicate_on_record_copy' => 'always',
+        ),
 		'team_count' =>
 		array (
 			'name' => 'team_count',
@@ -91,7 +100,29 @@ $vardefs = array(
                ), // don't show in studio fields list
             'duplicate_on_record_copy' => 'always',
             'exportable'=>true,
+			// Until the same control is used for selecting.
+			'fields' => array('team_set_selected_id'),
         ),
+	  // handled by SugarFieldTeamset
+      'team_selected_name' => array(
+          'name' => 'team_selected_name',
+          // Prevent a notice during import.
+          'table' => 'teams',
+          'vname' => 'LBL_TEAM_SET_SELECTED_TEAMS',
+          // Or db_concat_fields.
+          'rname' => 'name',
+          'source' => 'non-db',
+          // Relate is the only way to export non-db field, link value is replaced in getExportContentFromResult()
+          // value doesn't matter but "many" type is filtered by create_export_query().
+          'link' => 'team_link',
+          // On client equals "teamset", see "hacks.js".
+          'type' => 'relate',
+          // To replace an exported value in getExportContentFromResult()
+          'custom_type' => 'teamset',
+          'exportable' => true,
+          'studio' => false,
+          'massupdate' => false,
+      ),
 		'team_link' =>
 	    array (
 	      'name' => 'team_link',
@@ -171,4 +202,7 @@ $vardefs = array(
 		),
 	)
 );
-?>
+
+if (TeamBasedACLConfigurator::isEnabledForModule($module)) {
+    $vardefs['acls']['SugarACLTeamBased'] = true;
+}

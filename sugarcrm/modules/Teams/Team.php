@@ -47,6 +47,14 @@ class Team extends SugarBean
 	var $new_schema = true;
 
     /**
+     * @var array Contains view names and their teamset representations.
+     */
+    public static $nameTeamsetMapping = array(
+        'team_name' => 'team_set_id',
+        'team_selected_name' => 'team_set_selected_id',
+    );
+
+    /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
      *
      * @see __construct

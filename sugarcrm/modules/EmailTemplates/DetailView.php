@@ -130,7 +130,7 @@ if($focus->ACLAccess('EditView')) {
 }
 
 require_once('modules/Teams/TeamSetManager.php');
-$xtpl->assign('TEAM', TeamSetManager::getCommaDelimitedTeams($focus->team_set_id, $focus->team_id, true));
+$xtpl->assign('TEAM', TeamSetManager::getFormattedTeamsFromSet($focus, true));
 if(!empty($focus->body)) {
 	$xtpl->assign('ALT_CHECKED', 'CHECKED');
 }

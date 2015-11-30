@@ -215,8 +215,9 @@ function create_campaign_summary  ($focus){
                 if(!empty($focus->$key) && !empty($mod_strings[$focus->field_name_map[$key]['vname']])){
                     $cmpgn_tbl .= "<tr><td scope='row' width='15%'>".$mod_strings[$focus->field_name_map[$key]['vname']]."</td>\n";
                     if($key == 'team_name') {
-					   require_once('modules/Teams/TeamSetManager.php');
-					   $cmpgn_tbl .= "<td scope='row'>".TeamSetManager::getCommaDelimitedTeams($focus->team_set_id, $focus->team_id, true)."</td></tr>\n";
+                        require_once 'modules/Teams/TeamSetManager.php';
+                        $cmpgn_tbl .= "<td scope='row'>" .
+                            TeamSetManager::getFormattedTeamsFromSet($focus, true) . "</td></tr>\n";
 		            } else {
                        $cmpgn_tbl .= "<td scope='row'>".$focus->$key."</td></tr>\n";
                     }

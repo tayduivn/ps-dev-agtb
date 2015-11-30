@@ -1183,6 +1183,10 @@ For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_
     'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL.',
     'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL.',
 
+    // Team-Based Permissions
+    'LBL_TBA_CONFIGURATION' => 'Team-based Permissions',
+    'LBL_TBA_CONFIGURATION_DESC' => 'Enable team access, and manage access by module.',
+
     //Trigger Server
     'LBL_TRIGGER_SERVER_CONFIGURATION'      => 'Trigger Server Configuration',
     'LBL_TRIGGER_SERVER_CONFIGURATION_URL'  => 'Trigger Server URL',

@@ -342,6 +342,11 @@ class ACLAction  extends SugarBean
     * @return true or false
     */
     static function hasAccess($is_owner=false, $access = 0){
+        $tbaConfigurator = new TeamBasedACLConfigurator();
+        if ($tbaConfigurator->isEnabledGlobally() && $tbaConfigurator->isValidAccess($access)) {
+            // Handled by SugarACLTeamBased.
+            return true;
+        }
 
         if($access != 0 && $access == ACL_ALLOW_ALL || ($is_owner && $access == ACL_ALLOW_OWNER))return true;
        //if this exists, then this function is not static, so check the aclaccess parameter
@@ -436,6 +441,7 @@ class ACLAction  extends SugarBean
         global $ACLActions, $current_user;
         $names = array();
         $disabled = array();
+        $tbaConfigurator = new TeamBasedACLConfigurator();
         foreach($categories as $cat_name=>$category){
             foreach($category as $type_name=>$type){
                 foreach($type as $act_name=>$action){
@@ -461,6 +467,16 @@ class ACLAction  extends SugarBean
                     }
                     else{
                     $categories[$cat_name][$type_name][$act_name]['accessOptions'] =  ACLAction::getAccessOptions($act_name, $type_name);
+                        if (!$tbaConfigurator->isEnabledForModule($cat_name) ||
+                            !$tbaConfigurator->implementsTBA($cat_name)
+                        ) {
+                            $tbaModuleKeys = array_values($tbaConfigurator->getModuleOptions());
+                            foreach ($categories[$cat_name][$type_name][$act_name]['accessOptions'] as $key => $label) {
+                                if (in_array($key, $tbaModuleKeys)) {
+                                    unset($categories[$cat_name][$type_name][$act_name]['accessOptions'][$key]);
+                                }
+                            }
+                        }
                     }
                 }
             }
