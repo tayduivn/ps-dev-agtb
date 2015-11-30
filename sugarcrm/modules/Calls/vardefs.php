@@ -72,7 +72,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'enable_range_search' => true,
     'options' => 'date_range_search_dom',
     'validation' => array('type' => 'isbefore', 'compareto' => 'date_end', 'blank' => false),
-    'studio' => array('recordview' => false),
+    'studio' => array('recordview' => false, 'wirelesseditview'=>false),
     'full_text_search' => array('enabled' => true, 'searchable' => false),
   ),
 

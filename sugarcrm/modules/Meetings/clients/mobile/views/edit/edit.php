@@ -29,31 +29,24 @@ $viewdefs['Meetings']['mobile']['view']['edit'] = array(
         array(
             'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
+                'name',
                 array(
-                    'name' => 'name',
-                    'displayParams' => array(
-                        'required' => true,
-                        'wireless_edit_only' => true,)),
-                'date_start',
-                'status',
-                array(
-                    'name' => 'duration',
+                    'name' => 'date',
                     'type' => 'fieldset',
-                    'related_fields' => array('duration_hours', 'duration_minutes'),
-                    'label' => "LBL_DURATION",
+                    'related_fields' => array('date_start', 'date_end'),
+                    'label' => "LBL_START_AND_END_DATE_DETAIL_VIEW",
                     'fields' => array(
                         array(
-                            'name' => 'duration_hours',
-                            'displayParams' => array('required' => true),
+                            'name' => 'date_start',
                         ),
                         array(
-                            'name' => 'duration_minutes',
-                            'type' => 'enum',
-                            'options' => 'duration_intervals',
-                            'displayParams' => array('required' => true),  
+                            'name' => 'date_end',
+                            'required' => true,
+                            'readonly' => false,  
                         ),
                     ),
                 ),
+                'status',
                 array(
                     'name' => 'reminder',
                     'type' => 'fieldset',
