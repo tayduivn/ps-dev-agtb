@@ -164,13 +164,18 @@ class CurrentUserApi extends SugarApi
         $current_user = $this->getUserBean();
         //If the users password is expired, don't generate an etag.
         if (!hasPasswordExpired($current_user)) {
-            $hash = $current_user->getUserMDHash();
+            $hash = $this->getUserHash($current_user);
             if ($api->generateETagHeader($hash, 3)) {
                 return;
             }
         }
 
         return $this->getUserData($api->platform, $args);
+    }
+
+    protected function getUserHash($user)
+    {
+        return $user->getUserMDHash();
     }
 
     /**
