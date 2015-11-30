@@ -2192,6 +2192,9 @@ class PMSECrmDataWrapper implements PMSEObservable
             case 'modified_user_id':
                 $field['type'] = 'user';
                 break;
+            case 'teams':
+                $field['type'] = 'team_list';
+                break;
             default:
                 $result = $field;
         }
