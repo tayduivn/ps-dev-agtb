@@ -43,64 +43,6 @@ describe('Sugar7.Routes', function() {
             Backbone.history.stop();
         });
 
-        describe('Activities', function() {
-            it('should set last visited Home to activity stream when routing to activity stream', function() {
-                app.router.navigate('activities', {trigger: true});
-
-                expect(setStub).toHaveBeenCalledWith(mockKey, 'activities');
-                expect(loadViewStub).toHaveBeenCalledWith({
-                    layout: 'activities',
-                    module: 'Activities'
-                });
-            });
-        });
-
-        describe('homeRecord', function() {
-            var recordStub;
-
-            beforeEach(function() {
-                recordStub = sinon.collection.stub(app.router, 'record');
-            });
-
-            it('should set last visited Home to dashboard when routing to a dashboard', function() {
-                app.router.navigate('Home/test_ID', {trigger: true});
-
-                expect(setStub).toHaveBeenCalledWith(mockKey, 'dashboard');
-                expect(recordStub).toHaveBeenCalledWith('Home', 'test_ID');
-            });
-        });
-
-        describe('Home', function() {
-            var redirectStub,
-                listStub;
-
-            beforeEach(function () {
-                redirectStub = sinon.collection.stub(app.router, 'redirect');
-                listStub = sinon.collection.stub(app.router, 'list');
-            });
-
-            using('homeOptions', [
-                {
-                    value: 'dashboard',
-                    redirectCalled: false,
-                    listRouteCalled: true
-                },
-                {
-                    value: 'activities',
-                    redirectCalled: true,
-                    listRouteCalled: false
-                }
-            ], function(option) {
-                it('should navigate to the appropriate route according to the lastState', function() {
-                    getStub.returns(option.value);
-                    app.router.navigate('Home', {trigger: true});
-
-                    expect(redirectStub.calledWith('#activities')).toBe(option.redirectCalled);
-                    expect(listStub.called).toBe(option.listRouteCalled);
-                });
-            });
-        });
-
         describe('404', function() {
             var errorStub, appMetaStub;
 

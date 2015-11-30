@@ -10,18 +10,9 @@
  */
 (function(app) {
     app.events.on('router:init', function() {
-        var routes,
-            homeOptions = {
-                dashboard: 'dashboard',
-                activities: 'activities'
-            },
-            getLastHomeKey = function() {
-                return app.user.lastState.buildKey('last-home', 'app-header');
-            };
-
         // FIXME: Routes should be an extension of router.js, and not in a
         // privately-scoped variable; will be addressed in SC-2761.
-        routes = [
+        var routes = [
             {
                 name: "index",
                 route: ""
@@ -46,19 +37,6 @@
                 }
             },
             {
-                name: "home",
-                route: "Home",
-                callback: function() {
-                    var lastHomeKey = getLastHomeKey(),
-                        lastHome = app.user.lastState.get(lastHomeKey);
-                    if (lastHome === homeOptions.dashboard) {
-                        app.router.list("Home");
-                    } else if (lastHome === homeOptions.activities) {
-                        app.router.redirect('#activities');
-                    }
-                }
-            },
-            {
                 name: 'about',
                 route: 'about',
                 callback: function() {
@@ -66,21 +44,6 @@
                         layout: 'about',
                         module: 'Home',
                         skipFetch: true
-                    });
-                }
-            },
-            {
-                name: 'activities',
-                route: 'activities',
-                callback: function() {
-                    //when visiting activity stream, save last state of activities
-                    //so future Home routes go back to activities
-                    var lastHomeKey = getLastHomeKey();
-                    app.user.lastState.set(lastHomeKey, homeOptions.activities);
-
-                    app.controller.loadView({
-                        layout: 'activities',
-                        module: 'Activities'
                     });
                 }
             },
@@ -214,15 +177,6 @@
                 name: 'create',
                 route: ':module/create',
                 callback: function(module) {
-                    if (module === 'Home') {
-                        app.controller.loadView({
-                            module: module,
-                            layout: 'record'
-                        });
-
-                        return;
-                    }
-
                     // FIXME: We shouldn't be calling private methods like this.
                     // Will be addressed in SC-2761.
                     if (!app.router._moduleExists(module)) {
@@ -326,19 +280,6 @@
 
                         app.router.navigate(route, {trigger: (model instanceof Backbone.Model)});
                     }, this));
-                }
-            },
-            {
-                name: "homeRecord",
-                route: "Home/:id",
-                callback: function(id) {
-                    //when visiting a dashboard, save last state of dashboard
-                    //so future Home routes go back to dashboard
-                    var lastHomeKey = getLastHomeKey();
-                    app.user.lastState.set(lastHomeKey, homeOptions.dashboard);
-
-                    //then continue on with default record routing
-                    app.router.record("Home", id);
                 }
             },
             {
