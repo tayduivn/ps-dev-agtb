@@ -64,7 +64,7 @@ $dictionary['SchedulersJob'] = array(
             'name' => 'execute_time',
             'vname' => 'LBL_EXECUTE_TIME',
             'type' => 'datetime',
-            'required' => true,
+            'required' => false,
         ),
         'status' => array(
             'name' => 'status',
