@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Base\Principal\Search;
 
-use Sugarcrm\Sugarcrm\Dav\Base\Constants as DavConstants;
+use Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Format;
 
 abstract class Base implements SearchInterface
 {
@@ -23,20 +23,36 @@ abstract class Base implements SearchInterface
     protected $moduleName;
 
     /**
-     * Principal prefix path
-     * @var string
+     * Strategy for format results
+     * @var Format\StrategyInterface
      */
-    protected $prefixPath;
+    protected $formatStrategy;
 
     /**
      * @param string $prefixPath
+     * @param Format\StrategyInterface|null $formatStrategy
      */
-    public function __construct($prefixPath)
+    public function __construct($prefixPath = '', Format\StrategyInterface $formatStrategy = null)
     {
-        if (strrpos($prefixPath, '/') !== strlen($prefixPath) - 1) {
-            $prefixPath .= '/';
-        }
-        $this->prefixPath = $prefixPath;
+        $this->formatStrategy = $formatStrategy ? $formatStrategy : new Format\PrincipalStrategy($prefixPath);
+    }
+
+    /**
+     * Get priority of module for search
+     * @return int
+     */
+    public static function getOrder()
+    {
+        return 10000;
+    }
+
+    /**
+     * Set format strategy for current search
+     * @param Format\StrategyInterface $formatStrategy
+     */
+    public function setFormat(Format\StrategyInterface $formatStrategy)
+    {
+        $this->formatStrategy = $formatStrategy;
     }
 
     /**
@@ -58,7 +74,7 @@ abstract class Base implements SearchInterface
             $beans = $focus->fetchFromQuery($usersQuery);
 
             foreach ($beans as $bean) {
-                $principals[] = $this->getPrincipalArray($bean);
+                $principals[] = $this->formatStrategy->formatBody($bean);
             }
         }
 
@@ -80,7 +96,7 @@ abstract class Base implements SearchInterface
             return array();
         }
 
-        return $this->getPrincipalArray($bean);
+        return $this->formatStrategy->formatBody($bean);
     }
 
     /**
@@ -141,7 +157,7 @@ abstract class Base implements SearchInterface
         $beans = $focus->fetchFromQuery($query);
 
         foreach ($beans as $bean) {
-            $principals[] = $this->formatPrincipalString($bean);
+            $principals[] = $this->formatStrategy->formatUri($bean);
         }
 
         return $principals;
@@ -179,31 +195,5 @@ abstract class Base implements SearchInterface
         $localization = new \Localization();
 
         return $localization->getNameFormatFields($bean);
-    }
-
-    /**
-     * Convert SugarBean to DAV principal array
-     * @param \SugarBean $bean
-     * @return array
-     */
-    protected function getPrincipalArray(\SugarBean $bean)
-    {
-        return array(
-            'id' => $bean->id,
-            'uri' => $this->formatPrincipalString($bean),
-            '{DAV:}displayname' => $bean->full_name,
-            '{http://sabredav.org/ns}email-address' => $bean->email1,
-            '{' . DavConstants::NS_SUGAR . '}x-sugar-module' => $bean->module_name,
-        );
-    }
-
-    /**
-     * Return principal string depending on bean
-     * @param \SugarBean $bean
-     * @return string
-     */
-    protected function formatPrincipalString(\SugarBean $bean)
-    {
-        return $this->prefixPath . $bean->id;
     }
 }

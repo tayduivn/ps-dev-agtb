@@ -18,9 +18,9 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  * Class FactoryTest
  * @package            Sugarcrm\SugarcrmTestsUnit\Dav\Base\Principal\Search
  *
- * @coversDefaultClass Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Factory
+ * @coversDefaultClass Sugarcrm\Sugarcrm\Dav\Base\Principal\Manager
  */
-class FactoryTest extends \PHPUnit_Framework_TestCase
+class ManagerTest extends \PHPUnit_Framework_TestCase
 {
     public function getSearchClassNameProvider()
     {
@@ -30,8 +30,12 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
                 'class' => '',
             ),
             array(
+                'prefixPath' => 'Users',
+                'class' => 'Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Users',
+            ),
+            array(
                 'prefixPath' => 'principals/users',
-                'class' => 'Users',
+                'class' => 'Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Users',
             ),
             array(
                 'prefixPath' => 'principals',
@@ -39,11 +43,11 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
             ),
             array(
                 'prefixPath' => 'principals/contacts',
-                'class' => 'Contacts',
+                'class' => 'Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Contacts',
             ),
             array(
                 'prefixPath' => 'principals/leads',
-                'class' => 'Leads',
+                'class' => 'Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Leads',
             ),
         );
     }
@@ -74,13 +78,13 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
      * @param $prefixPath
      * @param $expectedClass
      *
-     * @covers       Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Factory::getSearchClassName
+     * @covers       Sugarcrm\Sugarcrm\Dav\Base\Principal\Manager::getSearchClassName
      *
      * @dataProvider getSearchClassNameProvider
      */
     public function testGetSearchClassName($prefixPath, $expectedClass)
     {
-        $factoryMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Factory')
+        $factoryMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Manager')
                             ->disableOriginalConstructor()
                             ->setMethods(null)
                             ->getMock();
@@ -94,18 +98,18 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
      * @param string $prefixPath
      * @param string $expectedClass
      *
-     * @covers       Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Factory::getSearchClass
+     * @covers       Sugarcrm\Sugarcrm\Dav\Base\Principal\Manager::getSearchObject
      *
      * @dataProvider getSearchClassProvider
      */
     public function testGetSearchClass($prefixPath, $expectedClass)
     {
-        $factoryMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Factory')
+        $factoryMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Manager')
                             ->disableOriginalConstructor()
                             ->setMethods(null)
                             ->getMock();
 
-        $result = $factoryMock->getSearchClass($prefixPath);
+        $result = TestReflection::callProtectedMethod($factoryMock, 'getSearchObject', array($prefixPath));
 
         if (is_null($expectedClass)) {
             $this->assertNull($result);

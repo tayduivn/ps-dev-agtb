@@ -40,14 +40,19 @@ class Participant
 
     /**
      * @param CalAddress|null $participant
+     * @param string $beanName
+     * @param string $beanId
      */
-    public function __construct(CalAddress $participant = null)
+    public function __construct(CalAddress $participant = null, $beanName = null, $beanId = null)
     {
         if ($participant) {
             $this->participant = $participant;
         } else {
             $this->participant = new CalAddress(new VCalendar(), 'ATTENDEE');
         }
+
+        $this->beanName = $beanName;
+        $this->beanId = $beanId;
     }
 
     /**

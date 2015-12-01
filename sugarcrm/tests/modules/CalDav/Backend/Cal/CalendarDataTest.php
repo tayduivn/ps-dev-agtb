@@ -44,6 +44,7 @@ class CalendarDataTest extends Sugar_PHPUnit_Framework_TestCase
             array(
                 'calendarData' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
+UID:test
 DTSTART;VALUE=DATE:20160101
 DURATION:P2D
 END:VEVENT
@@ -67,30 +68,8 @@ END:VCALENDAR',
             ),
             array(
                 'calendarData' => 'BEGIN:VCALENDAR
-BEGIN:VTODO
-uid:test1
-END:VTODO
-END:VCALENDAR',
-                'filter' => array(
-                    'name' => 'VCALENDAR',
-                    'comp-filters' => array(
-                        array(
-                            'name' => 'VEVENT',
-                            'comp-filters' => array(),
-                            'prop-filters' => array(),
-                            'is-not-defined' => false,
-                            'time-range' => null,
-                        ),
-                    ),
-                    'prop-filters' => array(),
-                    'is-not-defined' => false,
-                    'time-range' => null,
-                ),
-                'found' => false,
-            ),
-            array(
-                'calendarData' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
+UID:test
 DTSTART;VALUE=DATE:20160101
 DTSTART;VALUE=DATE:20170101
 DURATION:P2D
@@ -118,6 +97,7 @@ END:VCALENDAR',
             array(
                 'calendarData' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
+UID:test
 DTSTART;VALUE=DATE:20160101
 DTSTART;VALUE=DATE:20170101
 DURATION:P2D
@@ -237,6 +217,7 @@ END:VCALENDAR',
         $event1 = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
+UID:test
 DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-3 month'))).'
 DURATION:P2D
 END:VEVENT
@@ -248,6 +229,7 @@ END:VCALENDAR',
         $event2 = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
+UID:test1
 DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-5 month'))).'
 DURATION:P2D
 END:VEVENT
@@ -259,6 +241,7 @@ END:VCALENDAR',
         $event3 = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
+UID:test2
 DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-10 month'))).'
 DURATION:P2D
 END:VEVENT
@@ -329,6 +312,7 @@ END:VCALENDAR',
         SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
+UID:test
 DTSTART;VALUE=DATE:20160101
 DURATION:P2D
 END:VEVENT
@@ -340,6 +324,7 @@ END:VCALENDAR',
         SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
+UID:test2
 DTSTART;VALUE=DATE:20160101
 DURATION:P2D
 END:VEVENT
@@ -371,6 +356,7 @@ END:VCALENDAR',
         SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
+UID:test1
 DTSTART;VALUE=DATE:20160101
 DURATION:P2D
 END:VEVENT
@@ -382,6 +368,7 @@ END:VCALENDAR',
         SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
+UID:test2
 DTSTART;VALUE=DATE:20160101
 DURATION:P2D
 END:VEVENT
@@ -393,6 +380,7 @@ END:VCALENDAR',
         SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
+UID:test3
 DTSTART;VALUE=DATE:20160101
 DURATION:P2D
 END:VEVENT
@@ -403,6 +391,7 @@ END:VCALENDAR',
         SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
+UID:test4
 DTSTART;VALUE=DATE:20160101
 DURATION:P2D
 END:VEVENT
@@ -442,6 +431,7 @@ END:VCALENDAR',
         $event = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
+UID:test1
 DTSTART;VALUE=DATE:20160101
 DURATION:P2D
 END:VEVENT
@@ -507,39 +497,44 @@ END:VCALENDAR',
         $syncToken = 1;
         $syncLevel = 1;
         $limit = null;
-
+        $uid1 = create_guid();
         $event1 = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
+UID:'.$uid1.'
 DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-3 month'))).'
 DURATION:P2D
 SUMMARY:Test event title
 END:VEVENT
 END:VCALENDAR',
             'calendarid' => $calendarID,
-            'eventURI' => create_guid()
+            'eventURI' => $uid1,
         ));
 
+        $uid1 = create_guid();
         $event2 = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
+UID:'.$uid1.'
 DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-5 month'))).'
 DURATION:P2D
 END:VEVENT
 END:VCALENDAR',
             'calendarid' => $calendarID,
-            'eventURI' => create_guid()
+            'eventURI' => $uid1,
         ));
 
+        $uid1 = create_guid();
         $event3 = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
+UID:'.$uid1.'
 DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-10 month'))).'
 DURATION:P2D
 END:VEVENT
 END:VCALENDAR',
             'calendarid' => $calendarID,
-            'eventURI' => create_guid()
+            'eventURI' => $uid1,
         ));
 
         $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')

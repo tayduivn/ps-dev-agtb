@@ -48,7 +48,6 @@ class Plugin extends DavSchedulePlugin
 
         $this->server->removeListener('propFind', array($aclPlugin, 'propFind'));
 
-        $xSuagrModulePath = '{' . DavConstants::NS_SUGAR . '}x-sugar-module';
         $result = $this->server->getProperties(
             $principalUri,
             array(
@@ -57,13 +56,10 @@ class Plugin extends DavSchedulePlugin
                 $caldavNS . 'schedule-inbox-URL',
                 $caldavNS . 'schedule-default-calendar-URL',
                 '{http://sabredav.org/ns}email-address',
-                $xSuagrModulePath,
             )
         );
 
         $this->server->on('propFind', array($aclPlugin, 'propFind'), 20);
-
-        $iTipMessage->xSugarModule = isset($result[$xSuagrModulePath]) ? $result[$xSuagrModulePath] : 'Users';
 
         if (!isset($result[$caldavNS . 'schedule-inbox-URL'])) {
             $iTipMessage->scheduleStatus = '5.2;Could not find local inbox';
@@ -177,89 +173,5 @@ class Plugin extends DavSchedulePlugin
         $this->processICalendarChange($oldObj, $vCalendar, $addresses, [], $modified);
 
         return $modified;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function propFind(DAV\PropFind $propFind, DAV\INode $node)
-    {
-        if (!$node instanceof DAVACL\IPrincipal) {
-            return;
-        }
-        $xSugarModulePath = '{' . DavConstants::NS_SUGAR . '}x-sugar-module';
-        $propFind->handle($xSugarModulePath, function () use ($node, $xSugarModulePath) {
-            $result = $node->getProperties(array($xSugarModulePath));
-            if (isset($result[$xSugarModulePath])) {
-                return $result[$xSugarModulePath];
-            } else {
-                return 'Users';
-            }
-
-        });
-
-        parent::propFind($propFind, $node);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function processICalendarChange(
-        $oldObject,
-        VCalendar $newObject,
-        array $addresses,
-        array $ignore = [],
-        &$modified = false
-    ) {
-
-        $broker = new ITip\Broker();
-        $messages = $broker->parseEvent($newObject, $addresses, $oldObject);
-
-        if ($messages) {
-            $modified = true;
-        }
-
-        foreach ($messages as $message) {
-
-            if (in_array($message->recipient, $ignore)) {
-                continue;
-            }
-
-            $this->deliver($message);
-
-            if (isset($newObject->VEVENT->ORGANIZER) &&
-                ($newObject->VEVENT->ORGANIZER->getNormalizedValue() === $message->recipient)
-            ) {
-                if ($message->scheduleStatus) {
-                    $newObject->VEVENT->ORGANIZER['SCHEDULE-STATUS'] = $message->getScheduleStatus();
-                }
-                if (isset($message->xSugarModule)) {
-                    $newObject->VEVENT->ORGANIZER['X-SUGAR-MODULE'] = $message->xSugarModule;
-                }
-                unset($newObject->VEVENT->ORGANIZER['SCHEDULE-FORCE-SEND']);
-
-            } else {
-
-                if (isset($newObject->VEVENT->ATTENDEE)) {
-                    foreach ($newObject->VEVENT->ATTENDEE as $attendee) {
-
-                        if ($attendee->getNormalizedValue() === $message->recipient) {
-                            if ($message->scheduleStatus) {
-                                $attendee['SCHEDULE-STATUS'] = $message->getScheduleStatus();
-                            }
-                            if (isset($message->xSugarModule)) {
-                                $attendee['X-SUGAR-MODULE'] = $message->xSugarModule;
-                            }
-                            unset($attendee['SCHEDULE-FORCE-SEND']);
-                            break;
-                        }
-
-                    }
-                }
-
-            }
-
-        }
-
     }
 }

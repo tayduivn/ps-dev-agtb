@@ -17,6 +17,7 @@ use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as DavStatusMapper;
 use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
 use Sugarcrm\Sugarcrm\Dav\Cal\Structures;
 use Sabre\VObject\Recur\EventIterator;
+use Sugarcrm\Sugarcrm\Dav\Base\Principal;
 
 /**
  * Class CalDavEventCollection
@@ -145,6 +146,18 @@ class CalDavEventCollection extends SugarBean
     public $parent_id;
 
     /**
+     * Json with participants link Dav to Sugar
+     * @var string
+     */
+    public $participants_links;
+
+    /**
+     * Array of links email => [beanName, beanId]
+     * @var string
+     */
+    protected $participantLinks = array();
+
+    /**
      * Calendar event is stored here
      * @var Sabre\VObject\Component\VCalendar
      */
@@ -262,7 +275,7 @@ class CalDavEventCollection extends SugarBean
                     if ($child == $it->currentOverriddenEvent) {
                         $state = $eventClass::STATE_CUSTOM;
                     }
-                    $event = new $eventClass($child, $state);
+                    $event = new $eventClass($child, $state, $this->participantLinks);
                     $this->childEvents[$event->getRecurrenceID()->getTimestamp()] = $event;
                 }
                 $end = $it->getDtEnd();
@@ -349,7 +362,7 @@ class CalDavEventCollection extends SugarBean
         $vCalendar = $this->getVCalendar();
         $parent = $vCalendar->getBaseComponent();
         $eventClass = $this->getEventClass();
-        $this->parentEvent = new $eventClass($parent, $eventClass::STATE_PARENT);
+        $this->parentEvent = new $eventClass($parent, $eventClass::STATE_PARENT, $this->participantLinks);
 
         return $this->parentEvent;
     }
@@ -427,6 +440,7 @@ class CalDavEventCollection extends SugarBean
             $event->remove('RRULE');
             $this->childEvents = array();
             $this->rRule = null;
+
             return true;
         }
 
@@ -727,6 +741,46 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
+     * Get search manager
+     * @return \Sugarcrm\Sugarcrm\Dav\Base\Principal\Manager
+     */
+    protected function getPrincipalManager()
+    {
+        return new Principal\Manager();
+    }
+
+    /**
+     * Links all dav participants to sugar beans and return array with links
+     * @return array
+     */
+    protected function mapParticipantsToBeans()
+    {
+        $participantsList = $this->getParent()->getParticipants();
+        $customChildrenId = $this->getCustomizedChildrenRecurrenceIds();
+        foreach ($customChildrenId as $recurrenceId) {
+            $participantsList = array_merge($participantsList, $this->getChild($recurrenceId)->getParticipants());
+        }
+
+        foreach ($participantsList as $participant) {
+            $email = $participant->getEmail();
+            if (!isset($this->participantLinks[$email])) {
+                if ($participant->getBeanName() && $participant->getBeanId()) {
+                    $link = array('beanName' => $participant->getBeanName(), 'beanId' => $participant->getBeanId());
+                } else {
+                    $link = $this->getPrincipalManager()
+                                 ->setOutputFormat(new Principal\Search\Format\ArrayStrategy())
+                                 ->findSugarLinkByEmail($email);
+                }
+                if ($link) {
+                    $this->participantLinks[$email] = $link;
+                }
+            }
+        }
+
+        return $this->participantLinks;
+    }
+
+    /**
      * @inheritdoc
      */
     public function save($check_notify = false)
@@ -744,6 +798,8 @@ class CalDavEventCollection extends SugarBean
         if (empty($this->uri) && !empty($this->event_uid)) {
             $this->uri = $this->event_uid . '.ics';
         }
+
+        $this->participants_links = json_encode($this->mapParticipantsToBeans());
 
         $result = parent::save($check_notify);
 
@@ -776,6 +832,19 @@ class CalDavEventCollection extends SugarBean
         }
 
         parent::mark_undeleted($id);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function retrieve($id = '-1', $encode = true, $deleted = true)
+    {
+        $bean = parent::retrieve($id, $encode, $deleted);
+        if ($bean && $bean->participants_links) {
+            $bean->participantLinks = json_decode($bean->participants_links, true);
+        }
+
+        return $bean;
     }
 
     /**

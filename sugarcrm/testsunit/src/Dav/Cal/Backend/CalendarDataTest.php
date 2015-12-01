@@ -207,13 +207,11 @@ END:VCALENDAR',
 
         $eventMock->expects($this->once())->method('setCalendarEventURI')->with($objectUri);
         $eventMock->expects($this->once())->method('setCalendarId')->with($calendarId);
+        $eventMock->expects($this->once())->method('save');
 
         $calendarMock->expects($this->once())->method('getEventsBean')->willReturn($eventMock);
 
-        $result = $calendarMock->createCalendarObject($calendarId, $objectUri, $calendarData);
-
-        $this->assertEquals($expectedETag, $result);
-        $this->assertEquals($expectedParentModule, $eventMock->parent_type);
+        $calendarMock->createCalendarObject($calendarId, $objectUri, $calendarData);
     }
 
     /**
@@ -280,7 +278,7 @@ END:VCALENDAR',
         $calendarMock->expects($this->once())->method('getEventsBean')->willReturn($eventMock);
 
         $eventMock->expects($this->once())->method('save');
-        $eventMock->expects($this->once())->method('getByURI')->willReturn($eventMock);
+        $eventMock->expects($this->once())->method('getByURI')->willReturn(array($eventMock));
 
         $calendarMock->updateCalendarObject($calendarId, $objectUri, $calendarData);
     }

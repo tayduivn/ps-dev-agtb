@@ -118,6 +118,16 @@ $dictionary['CalDavEventCollection'] = array(
                     'comment' => 'ID of item indicated by parent_type',
                     'studio' => array('searchview' => false),
                 ),
+            'participants_links' =>
+                array(
+                    'name' => 'participants_links',
+                    'vname' => 'LBL_PARTICIPANTS_LINKS',
+                    'type' => 'json',
+                    'dbType' => 'longtext',
+                    'reportable' => false,
+                    'comment' => 'Email to bean links',
+                    'studio' => array('searchview' => false),
+                ),
             'events_calendar' =>
                 array(
                     'name' => 'events_calendar',

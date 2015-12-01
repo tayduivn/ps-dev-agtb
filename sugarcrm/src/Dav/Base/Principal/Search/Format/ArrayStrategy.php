@@ -10,18 +10,22 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Dav\Base\Principal\Search;
+namespace Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Format;
 
-
-class Leads extends Base
+/**
+ * Format sugar bean to array
+ * Class ArrayStrategy
+ * @package Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Format
+ */
+class ArrayStrategy extends PrincipalStrategy
 {
-    protected $moduleName = 'Leads';
-
     /**
-     * @inheritdoc
+     * Format SugarBean info in needed format
+     * @param \SugarBean $bean
+     * @return array
      */
-    public static function getOrder()
+    public function formatUri(\SugarBean $bean)
     {
-        return 200;
+        return array('beanName' => $bean->module_name, 'beanId' => $bean->id);
     }
 }
