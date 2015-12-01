@@ -43,7 +43,7 @@ class ParticipantsHelper
 
     /**
      * Retrieve EmailAddresses bean object
-     * @return null|\SugarBean
+     * @return null|\EmailAddress
      */
     protected function getEmailAddressBean()
     {
@@ -300,5 +300,72 @@ class ParticipantsHelper
         }
 
         return null;
+    }
+
+    /**
+     * @param array $invitesBefore
+     * @param array $invitesAfter
+     * @return array
+     */
+    public function getInvitesDiff(array $invitesBefore, array $invitesAfter)
+    {
+        $invitesDiff = array(
+            'added' => array(),
+            'deleted' => array(),
+            'changed' => array()
+        );
+
+        foreach ($invitesBefore as $relationType => $relationsList) {
+            foreach ($relationsList as $idBean => $relationInfo) {
+                if (isset($invitesAfter[$relationType][$idBean])) {
+                    /**@var \SugarBean $userBean*/
+                    $userBean = $invitesAfter[$relationType][$idBean]['bean'];
+                    $status = $invitesAfter[$relationType][$idBean]['status'];
+                    $beanBefore = $relationInfo['bean'];
+                    if ($status != $relationInfo['status'] || $userBean->emailAdresses != $beanBefore->emailAdresses) {
+                        $invitesDiff['changed'][] = $this->addDiff($userBean, $status);;
+                    }
+                } else {
+                    $userBean = $relationInfo['bean'];
+                    $status = $relationInfo['status'];
+                    $invitesDiff['deleted'][] = $this->addDiff($userBean, $status);
+                }
+            }
+        }
+
+        foreach ($invitesAfter as $relationType => $relationsList) {
+            foreach ($relationsList as $idBean => $relationInfo) {
+                if (!isset($invitesBefore[$relationType][$idBean])) {
+                    /**@var \SugarBean $userBean*/
+                    $userBean = $invitesAfter[$relationType][$idBean]['bean'];
+                    $status = $invitesAfter[$relationType][$idBean]['status'];
+                    $invitesDiff['added'][] = $this->addDiff($userBean, $status);
+                }
+            }
+        }
+
+        return $invitesDiff;
+    }
+
+    /**
+     * @param \SugarBean $userBean
+     * @param $status
+     * @return array
+     */
+    protected function addDiff(\SugarBean $userBean, $status)
+    {
+        $fullName = '';
+        if (isset($userBean->full_name)) {
+            $fullName = $userBean->full_name;
+        } elseif (isset($userBean->name)) {
+            $fullName = $userBean->name;
+        }
+        return array(
+            $userBean->module_name,
+            $userBean->id,
+            $status,
+            $userBean->emailAdresses,
+            $fullName
+        );
     }
 }

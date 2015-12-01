@@ -498,6 +498,7 @@ class CalendarUtils
 		$date_modified = $GLOBALS['timedate']->nowDb();
 
 		$i = 0;
+		$new_parent_id = false;
 		while ($ro = $db->fetchByAssoc($re)) {
 			$id = $ro['id'];
 			if($i == 0){
@@ -509,6 +510,38 @@ class CalendarUtils
 			$db->query($qu);
       		$i++;
 		}
+        if ($new_parent_id) {
+            $bean = BeanFactory::getBean($bean->module_name, $new_parent_id);
+            $hook = new \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler();
+            $hook->export($bean, array(), array(), static::getInvites($bean), true);
+        }
 	}
+
+    /**
+     * get all invites for bean, such as  contacts, leads and users
+     * @param SugarBean $bean
+     * @return array
+     */
+    public static function getInvites(\SugarBean $bean)
+    {
+        $requiredRelations = array('contacts', 'leads', 'users');
+        $invitesList = array();
+        foreach ($requiredRelations as $relationship) {
+            if ($bean->load_relationship($relationship)) {
+                $bean->$relationship->resetLoaded();
+                $beans = $bean->$relationship->getBeans();
+                $invites = array();
+                foreach ($beans as $beanId => $relationBean) {
+                    $invites[$beanId]['status'] = null;
+                    if (isset($bean->$relationship->rows[$beanId])) {
+                        $invites[$beanId]['status'] = $bean->$relationship->rows[$beanId]['accept_status'];
+                    }
+                    $invites[$beanId]['bean'] = $relationBean;
+                }
+                $invitesList[$relationship] = $invites;
+            }
+        }
+        return $invitesList;
+    }
 
 }

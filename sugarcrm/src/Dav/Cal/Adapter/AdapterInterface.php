@@ -33,4 +33,14 @@ interface AdapterInterface
      * @return bool
      */
     public function import(\SugarBean $sugarBean, \CalDavEvent $calDavBean);
+
+    /**
+     * @param \SugarBean $bean
+     * @param array $changedFields
+     * @param array $invitesBefore
+     * @param array $invitesAfter
+     * @param bool $forceInsert
+     * @return mixed
+     */
+    public function prepareForExport(\SugarBean $bean, $changedFields, $invitesBefore, $invitesAfter, $forceInsert);
 }
