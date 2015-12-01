@@ -175,7 +175,7 @@ class HookManager
         }
         foreach ($this->loadUsers($bean->users_arr) as $user) {
             $reminderTime = Helper::calculateReminderDateTime($bean, $user);
-            if (Helper::isInFuture($reminderTime)) {
+            if ($reminderTime && Helper::isInFuture($reminderTime)) {
                 $reminderManager->addReminderForUser($bean, $user, $reminderTime);
             }
         }

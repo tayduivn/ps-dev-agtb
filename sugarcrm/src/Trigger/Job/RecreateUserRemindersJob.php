@@ -66,7 +66,7 @@ class RecreateUserRemindersJob implements RunnableInterface
         $manager->deleteReminders($user);
         foreach ($beans as $item) {
             $reminderTime = Helper::calculateReminderDateTime($item, $user);
-            if (Helper::isInFuture($reminderTime)) {
+            if ($reminderTime && Helper::isInFuture($reminderTime)) {
                 $manager->addReminderForUser($item, $user, $reminderTime);
             }
         }

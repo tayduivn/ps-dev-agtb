@@ -36,7 +36,7 @@ class Helper
      *
      * @param \Call|\Meeting|\SugarBean $bean event for which calculate reminder time.
      * @param \User $user user for which calculate reminder time.
-     * @return \DateTime calculated reminder time.
+     * @return \DateTime|null calculated reminder time.
      */
     public static function calculateReminderDateTime(\SugarBean $bean, \User $user)
     {
@@ -44,6 +44,9 @@ class Helper
             $reminderTime = (int)$bean->reminder_time;
         } else {
             $reminderTime = (int)$user->getPreference('reminder_time');
+        }
+        if ($reminderDateTime < 0) {
+            return null;
         }
 
         $reminderDateTime = new \DateTime($bean->date_start, new \DateTimeZone('UTC'));
