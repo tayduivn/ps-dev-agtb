@@ -1177,10 +1177,11 @@ a.adam-tooltip-error-off {
     position: relative;
     white-space: nowrap;
     text-overflow: ellipsis;
+    vertical-align: top;
 }
 
 .adam-itemupdater-controlcontainer {
-  width: 68%;
+  width: 70%;
 }
 
 .adam-itemupdater-labelcontent {
@@ -1213,4 +1214,13 @@ a.adam-tooltip-error-off {
 .adam-itemupdater-required {
     position: absolute;
     right: 5px;
+}
+
+.adam-team-updater-line {
+  margin-bottom: 8px;
+}
+
+input.adam-team-append {
+  display: inline;
+  margin-right: 9px;
 }

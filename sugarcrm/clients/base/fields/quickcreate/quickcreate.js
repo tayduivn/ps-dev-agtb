@@ -70,12 +70,9 @@
                     this.createRelatedRecord(module);
                 }, this)
             });
-        } else if (moduleMeta && moduleMeta.isBwcEnabled) {
+        } else {
             // TODO: SP-1568 - We don't yet deal with bwc model changed attributes so
             // this will navigate to new create page WITHOUT alert for unsaved changes
-            this.createRelatedRecord(module);
-        } else {
-            app.drawer.reset();
             this.createRelatedRecord(module);
         }
     },

@@ -204,7 +204,21 @@ class PMSERelatedModule {
 
         foreach ($fields as $key => $value) {
             if (isset($relatedModuleBean->field_defs[$key])) {
-                $relatedModuleBean->$key = $value;
+                // check if is of type link
+                if ((isset($relatedModuleBean->field_defs[$key]['type'])) &&
+                    ($relatedModuleBean->field_defs[$key]['type'] == 'link') &&
+                    !(empty($relatedModuleBean->field_defs[$key]['name']))) {
+
+                    // if its a link then go through cases on basis of "name" here.
+                    // Currently only supporting teams
+                    switch ($relatedModuleBean->field_defs[$key]['name']) {
+                        case 'teams':
+                            PMSEEngineUtils::changeTeams($relatedModuleBean, $value);
+                            break;
+                    }
+                } else {
+                    $relatedModuleBean->$key = $value;
+                }
             }
         }
 

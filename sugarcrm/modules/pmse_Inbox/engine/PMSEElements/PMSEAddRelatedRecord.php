@@ -118,7 +118,11 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
                                     $newValue = $newValue->expValue;
                                     break;
                                 default:
-                                    $newValue = $this->beanHandler->mergeBeanInTemplate($bean, $value->value);
+                                    if ($value->field == 'teams') {
+                                        $newValue = $value;
+                                    } else {
+                                        $newValue = $this->beanHandler->mergeBeanInTemplate($bean, $value->value);
+                                    }
                             }
 
                             if ($key == 'assigned_user_id') {
@@ -126,7 +130,12 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
                                     $this->getCustomUser($value->value, $bean));
                             }
                             $fields[$key] = $newValue;
-                            $this->logger->info("Data generated $newValue for $key");
+                            if (is_string($newValue)) {
+                                $loggerNewValue = $newValue;
+                            } else {
+                                $loggerNewValue = json_encode($newValue);
+                            }
+                            $this->logger->info("Data generated $loggerNewValue for $key");
                         }
                     }
 
