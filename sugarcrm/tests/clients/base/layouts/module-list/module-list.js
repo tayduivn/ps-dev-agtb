@@ -24,7 +24,14 @@ describe('Base.Layout.ModuleList', function() {
 
     describe('Render', function() {
 
+        var drawer;
+
         beforeEach(function() {
+
+            drawer = app.drawer;
+            app.drawer = {
+                getActive: $.noop
+            };
 
             sinon.collection.stub(app.metadata, 'getModuleNames', function() {
                 return {
@@ -57,7 +64,9 @@ describe('Base.Layout.ModuleList', function() {
         });
 
         afterEach(function() {
-            layout.dispose();
+
+            app.drawer = drawer;
+
             sinon.collection.restore();
         });
 
@@ -81,6 +90,29 @@ describe('Base.Layout.ModuleList', function() {
             expect(triggerStub).toHaveBeenCalledWith('header:update:route');
 
             expect(layout.isActiveModule(moduleName)).toBeTruthy();
+        });
+
+        it('should select the drawer module if there is one open from the router', function() {
+            layout.layout = {
+                trigger: $.noop,
+                off: $.noop
+            };
+            var module = 'Accounts';
+            var ctx = new app.Context({
+                module: module,
+                fromRouter: true
+            });
+
+            var drawerLayout = SugarTest.createLayout('base', module, layoutName, null, ctx);
+
+            sinon.collection.stub(app.drawer, 'getActive', function() {
+                return drawerLayout;
+            });
+
+            layout.handleViewChange();
+
+            expect(layout.isActiveModule(module)).toBeTruthy();
+            drawerLayout.dispose();
         });
 
         using('mappedModule values', [

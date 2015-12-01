@@ -176,6 +176,40 @@ describe("Drawer Layout", function() {
             expect(drawer._enterState.getCall(1).args[0]).toEqual('idle');
             expect(drawer.isIdle()).toBe(true);
         });
+
+        it('should store the backbone fragment when a drawer is open by the router.', function() {
+            var expectedPrevFragment = 'prevFragment';
+            var expectedCurrentFragment = 'curFragment';
+            sinonSandbox.stub(app.router, 'getPreviousFragment').returns(expectedPrevFragment);
+            sinonSandbox.stub(app.router, 'getFragment').returns(expectedCurrentFragment);
+            sinonSandbox.stub(drawer, '_animateOpenDrawer');
+
+            drawer.open({
+                layout: {
+                    name: 'foo',
+                    'components': [{view: 'record'}]
+                },
+                context: {
+                    create: true,
+                    fromRouter: true
+                }
+            });
+
+            expect(drawer._fragments).toEqual([expectedPrevFragment, expectedCurrentFragment]);
+
+            drawer.open({
+                layout: {
+                    name: 'bar',
+                    components: [{view: 'record'}]
+                },
+                context: {
+                    create: true,
+                    fromRouter: true
+                }
+            });
+
+            expect(drawer._fragments).toEqual([expectedPrevFragment, expectedCurrentFragment, expectedCurrentFragment]);
+        });
     });
 
     describe('Close', function() {
@@ -237,9 +271,18 @@ describe("Drawer Layout", function() {
         });
 
         it('Should call closeImmediately if browser does not support css transitions', function() {
-            var stub = sinonSandbox.stub(drawer, 'closeImmediately'),
-                cssTransitions = Modernizr.csstransitions,
-                animateCloseStub = sinonSandbox.stub(drawer, '_animateCloseDrawer');
+            var stub = sinonSandbox.stub(drawer, 'closeImmediately');
+            var cssTransitions = Modernizr.csstransitions;
+            var animateCloseStub = sinonSandbox.stub(drawer, '_animateCloseDrawer');
+            sinonSandbox.stub(drawer, '_animateOpenDrawer');
+
+            drawer.open({
+                layout: {
+                    'name': 'foo',
+                    'components': [{'view': 'record'}]
+                },
+                context: {create: true}
+            });
 
             Modernizr.csstransitions = false;
             drawer.close('foo');
@@ -248,6 +291,30 @@ describe("Drawer Layout", function() {
             Modernizr.csstransitions = cssTransitions;
             stub.restore();
             animateCloseStub.restore();
+        });
+
+        it('should navigate back to the last fragment when closing a drawer opened by the router.', function() {
+            var expectedPrevFragment = 'prevFragment';
+            var expectedCurrentFragment = 'curFragment';
+            sinonSandbox.stub(app.router, 'getPreviousFragment').returns(expectedPrevFragment);
+            sinonSandbox.stub(app.router, 'getFragment').returns(expectedCurrentFragment);
+            sinonSandbox.stub(app.router, 'navigate');
+
+            sinonSandbox.stub(drawer, '_animateOpenDrawer');
+            drawer.open({
+                layout: {
+                    name: 'foo',
+                    components: [{view: 'record'}]
+                },
+                context: {
+                    create: true,
+                    fromRouter: true
+                }
+            });
+            drawer.close();
+
+            expect(app.router.navigate).toHaveBeenCalledWith(expectedPrevFragment);
+            expect(drawer._fragments).toEqual([]);
         });
 
         it('should trigger an app:view:change event', function(){

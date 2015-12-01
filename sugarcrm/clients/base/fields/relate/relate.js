@@ -248,6 +248,10 @@
         switch(this.tplName) {
             case 'edit':
             case 'massupdate':
+                if (!app.acl.hasAccess('list', this.getSearchModule())) {
+                    this._renderDisabledDropdown();
+                    break;
+                }
                 if (_.isUndefined(this.filters)) {
                     this._createFiltersCollection({
                         success: _.bind(function() {

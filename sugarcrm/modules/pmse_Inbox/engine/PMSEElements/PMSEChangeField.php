@@ -138,29 +138,47 @@ class PMSEChangeField extends PMSEScriptTask
             if ($act_field_module == $moduleName || $isRelated) {
                 foreach ($fields as $field) {
                     if (isset($bean->field_defs[$field->field])) {
-                        if (!$this->emailHandler->doesPrimaryEmailExists($field, $bean, $historyData)) {
-                            $historyData->savePredata($field->field, $bean->{$field->field});
-                            $newValue = '';
-                            if (is_array($field->value)) {
-                                $newValue = $this->evaluator->evaluateExpression(
-                                    json_encode($field->value),
-                                    $beanModule,
-                                    array(),
-                                    false
-                                );                                
-                                $newValue = $this->postProcessValue($newValue, $bean->field_name_map[$field->field]['type']);
-                                $newValue = $this->handleFieldTypeProcessing($newValue, $field, $bean);
-                            } else {
-                                if ($field->field == 'assigned_user_id') {
-                                    $field->value = $this->getCustomUser($field->value, $beanModule);
+                        // check if of type link
+                        if ((isset($bean->field_defs[$field->field]['type'])) &&
+                            ($bean->field_defs[$field->field]['type'] == 'link') &&
+                            !(empty($bean->field_defs[$field->field]['name']))) {
+
+                            // if its a link then go through cases on basis of "name" here.
+                            // Currently only supporting teams
+                            switch ($bean->field_defs[$field->field]['name']) {
+                                case 'teams':
+                                    PMSEEngineUtils::changeTeams($bean, $field);
+                                    break;
+                            }
+
+                        } else {
+
+                            if (!$this->emailHandler->doesPrimaryEmailExists($field, $bean, $historyData)) {
+                                $historyData->savePredata($field->field, $bean->{$field->field});
+                                $newValue = '';
+                                if (is_array($field->value)) {
+                                    $newValue = $this->evaluator->evaluateExpression(
+                                        json_encode($field->value),
+                                        $beanModule,
+                                        array(),
+                                        false
+                                    );
+                                    $newValue = $this->postProcessValue($newValue,
+                                        $bean->field_name_map[$field->field]['type']);
+                                } else {
+                                    if ($field->field == 'assigned_user_id') {
+                                        $field->value = $this->getCustomUser($field->value, $beanModule);
+                                    }
+                                    $newValue = $this->beanHandler->mergeBeanInTemplate($beanModule, $field->value);
                                 }
-                                $newValue = $this->beanHandler->mergeBeanInTemplate($beanModule, $field->value);
+                                if (!empty($bean->field_defs[$field->field]['required']) && empty($newValue)) {
+                                    throw new PMSEElementException('Cannot fill a required field ' . $field->field . ' with an empty value',
+                                        $flowData, $this);
+                                }
+                                $bean->{$field->field} = $newValue;
                             }
-                            if (!empty($bean->field_defs[$field->field]['required']) && empty($newValue)) {
-                                throw new PMSEElementException('Cannot fill a required field ' . $field->field . ' with an empty value', $flowData, $this);
-                            }
-                            $bean->{$field->field} = $newValue;
                         }
+
                         $historyData->savePostdata($field->field, $field->value);
                         $ifields++;
                     } else {

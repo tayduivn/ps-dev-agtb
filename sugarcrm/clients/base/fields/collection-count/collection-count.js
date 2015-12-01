@@ -103,7 +103,7 @@
         length = !_.isUndefined(options.length) ? options.length : length;
         fullyFetched = !_.isUndefined(options.hasMore) ? !options.hasMore : fullyFetched;
 
-        if (!length) {
+        if (!length && !this.collection.dataFetched) {
             return this.countLabel = '';
         }
 
@@ -144,7 +144,7 @@
             return;
         }
 
-        this.listenTo(this.collection, 'reset', function() {
+        this.listenTo(this.collection, 'remove reset', function() {
             if (!this.disposed) {
                 this.updateCount();
             }
