@@ -243,17 +243,17 @@ describe('Sugar Socket Server Client', function() {
                 app.socket._bind();
                 sinon.assert.called(IOStub.on);
                 sinon.assert.calledWith(IOStub.on, 'connect');
+                sinon.assert.notCalled(app.socket.authorize);
                 for (var i = 0; i < IOStub.on.callCount; i ++) {
                     var info = IOStub.on.getCall(i);
                     if (info.args[0] != 'connect') {
                         continue;
                     }
                     expect(info.args[1]).toBeDefined();
-                    sinon.assert.notCalled(app.socket.authorize);
                     info.args[1]();
-                    sinon.assert.called(app.socket.authorize);
-                    sinon.assert.calledOn(app.socket.authorize, app.socket);
                 }
+                sinon.assert.called(app.socket.authorize);
+                sinon.assert.calledOn(app.socket.authorize, app.socket);
             });
             it('subscribes to message event of socket with _message method', function() {
                 app.socket._bind();

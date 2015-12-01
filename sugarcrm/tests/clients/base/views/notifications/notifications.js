@@ -71,9 +71,14 @@ describe('Notifications', function() {
 
         describe('should bind listeners on app:socket events', function () {
             beforeEach(function () {
-                app.events.on = sinon.spy();
-                view.socketOn = sinon.spy();
-                view.socketOff = sinon.spy();
+                sinon.stub(app.events, 'on');
+                sinon.stub(view, 'socketOn');
+                sinon.stub(view, 'socketOff');
+            });
+            afterEach(function () {
+                app.events.on.restore();
+                view.socketOn.restore();
+                view.socketOff.restore();
             });
 
             it('should bind socketOn on app app:socket:connect', function () {
@@ -83,17 +88,17 @@ describe('Notifications', function() {
                 sinon.assert.called(app.events.on);
                 sinon.assert.calledWith(app.events.on, 'app:socket:connect');
 
+                sinon.assert.notCalled(view.socketOn);
                 for (var i = 0; i < app.events.on.callCount; i++) {
                     var info = app.events.on.getCall(i);
                     if (info.args[0] != 'app:socket:connect') {
                         continue;
                     }
-                    expect(info.args[1]).toBeDefined();
-                    sinon.assert.notCalled(view.socketOn);
-
-                    info.args[1]();
-                    sinon.assert.called(view.socketOn);
+                    if (!_.isUndefined(info.args[1]) && _.isFunction(info.args[1])) {
+                        info.args[1]();
+                    }
                 }
+                sinon.assert.called(view.socketOn);
             });
 
             it('should bind socketOff on app app:socket:disconnect', function () {
@@ -103,17 +108,17 @@ describe('Notifications', function() {
                 sinon.assert.called(app.events.on);
                 sinon.assert.calledWith(app.events.on, 'app:socket:disconnect');
 
+                sinon.assert.notCalled(view.socketOff);
                 for (var i = 0; i < app.events.on.callCount; i++) {
                     var info = app.events.on.getCall(i);
                     if (info.args[0] != 'app:socket:disconnect') {
                         continue;
                     }
-                    expect(info.args[1]).toBeDefined();
-                    sinon.assert.notCalled(view.socketOff);
-
-                    info.args[1]();
-                    sinon.assert.called(view.socketOff);
+                    if (!_.isUndefined(info.args[1]) && _.isFunction(info.args[1])) {
+                        info.args[1]();
+                    }
                 }
+                sinon.assert.called(view.socketOff);
             });
 
         });
