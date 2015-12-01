@@ -172,11 +172,8 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'span' => 12,
                 ),
                 array(
-                    'label'   => 'LBL_LIST_RELATED_TO',
-                    'type'    => 'parent',
-                    'name'    => 'parent_name',
-                    'options' => 'parent_type_display',
-                    'span'    => 12,
+                    'name' => 'parent_name',
+                    'span' => 12,
                 ),
             ),
         ),

@@ -94,7 +94,13 @@
      * `header:update:route` event to it's parent layout.
      */
     handleViewChange: function() {
-        this._setActiveModule(app.controller.context.get('module'));
+        var module = app.controller.context.get('module');
+        var component = app.drawer.getActive();
+        if (component && component.context.get('fromRouter')) {
+            module = component.context.get('module');
+        }
+
+        this._setActiveModule(module);
         this.layout.trigger('header:update:route');
     },
 

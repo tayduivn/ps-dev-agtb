@@ -286,8 +286,10 @@
      */
     saveAndClose: function () {
         this.initiateSave(_.bind(function () {
-            if(app.drawer){
+            if (this.closestComponent('drawer')) {
                 app.drawer.close(this.context, this.model);
+            } else {
+                app.navigate(this.context, this.model);
             }
         }, this));
     },
@@ -299,9 +301,11 @@
         //Clear unsaved changes on cancel.
         app.events.trigger('create:model:changed', false);
         this.$el.off();
-        if(app.drawer){
+        if (app.drawer.count()) {
             app.drawer.close(this.context);
             this._dismissAllAlerts();
+        } else {
+            app.router.navigate(this.module, {trigger: true});
         }
     },
 

@@ -263,6 +263,7 @@ class PMSEProjectImporter extends PMSEImporter
             }
         }
         $processDefinitionBean->id = $keysArray['pro_id'];
+        $processDefinitionBean->pro_status = 'INACTIVE';
         $processDefinitionBean->new_with_id = true;
         // by default an imported project should be disabled
         $processDefinitionBean->pro_status = 'INACTIVE';
