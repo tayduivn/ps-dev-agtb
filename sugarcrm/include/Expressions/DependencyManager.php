@@ -36,9 +36,10 @@ class DependencyManager
      * @param Array<String=>Array> $fields, list of fields to get dependencies for.
      * @param Boolean $includeReadOnly include the read-only actions to ensure calculated fields are not modified by the user in edit views. These are not required on detail/list views
      * @param Boolean $orderMatters Order matters on views with multiple calculated fields that rely on each-other. If all the values are currently up to date, order doesn't matter.
+     * @param String $view view type
      * @return array<Dependency>
      */
-    public static function getCalculatedFieldDependencies($fields, $includeReadOnly = true, $orderMatters = false)
+    public static function getCalculatedFieldDependencies($fields, $includeReadOnly = true, $orderMatters = false, $view = null)
     {
 
         $deps = array();
@@ -64,6 +65,9 @@ class DependencyManager
                 $dep->addAction(ActionFactory::getNewAction('SetValue', array('target' => $field,
                                                                               'value' => $def['formula'],
                                                                               'errorValue' => $errorValue)));
+                if ($view == 'CreateView') {
+                    $dep->setFireOnLoad(true);
+                }
                 if (isset($def['enforced']) && $def['enforced'] &&
                     //Check for the string "false"
                     (!is_string($def['enforced']) || strtolower($def['enforced']) !== "false")
@@ -456,7 +460,7 @@ class DependencyManager
         } else
         {
             return array_merge(
-                self::getCalculatedFieldDependencies($fields),
+                self::getCalculatedFieldDependencies($fields, true, false, $view),
                 self::getDependentFieldDependencies($fields),
                 self::getDropDownDependencies($fields));
         }

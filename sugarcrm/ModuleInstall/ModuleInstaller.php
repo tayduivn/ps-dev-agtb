@@ -1120,7 +1120,17 @@ class ModuleInstaller{
                 if(!file_exists($path)){
                     mkdir_recursive($path, true);
                 }
-                copy_recursive($packs['from'] , $path.'/'.$packs['language'].'.'. $this->id_name . '.php');
+                $lang_file = $path.'/'.$packs['language'].'.'. $this->id_name . '.php';
+                if (!file_exists($lang_file)) {
+                    copy_recursive($packs['from'], $lang_file);
+                }
+                else {
+                    $temp_lang_file = $path.'/'.'temp.php';
+                    copy_recursive($packs['from'], $temp_lang_file);
+                    $contents = $this->getExtensionFileContents(array($lang_file, $temp_lang_file));
+                    file_put_contents($lang_file, $contents);
+                    unlink($temp_lang_file);
+                }
             }
             $this->rebuild_languages($languages, array_keys($modules));
         }

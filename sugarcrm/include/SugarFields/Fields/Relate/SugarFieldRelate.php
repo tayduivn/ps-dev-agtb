@@ -134,10 +134,6 @@ class SugarFieldRelate extends SugarFieldBase {
         return $this->fetch($this->findTemplate('EditView'));
     }
 
-    function getPopupViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex){
-    	return $this->getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
-    }
-
     function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
         $call_back_function = 'set_return';
         if(isset($displayParams['call_back_function'])) {

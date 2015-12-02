@@ -34,7 +34,8 @@ $viewdefs['ProspectLists']['base']['view']['list'] = array(
                     'name' => 'description',
                     'label' => 'LBL_LIST_DESCRIPTION',
                     'enabled' => true,
-                    'default' => true
+                    'default' => true,
+                    'sortable' => false
                 ),
                 array (
                     'name' => 'assigned_user_name',

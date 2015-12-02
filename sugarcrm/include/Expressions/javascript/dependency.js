@@ -680,8 +680,8 @@ AH.setRelatedFields = function(fields){
 AH.getRelatedFieldValues = function(fields, module, record)
 {
     if (fields.length > 0){
-        module = module || SUGAR.forms.AssignmentHandler.getValue("module") || DCMenu.module;
-        record = record || SUGAR.forms.AssignmentHandler.getValue("record") || DCMenu.record;
+        module = module || SUGAR.forms.AssignmentHandler.getValue("module");
+        record = record || SUGAR.forms.AssignmentHandler.getValue("record");
 
         // Go from the back, because of the possible deletion of related type fields
         for (var i = fields.length - 1; i >= 0; i--)

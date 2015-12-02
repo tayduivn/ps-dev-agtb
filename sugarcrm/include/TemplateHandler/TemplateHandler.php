@@ -576,9 +576,14 @@ class TemplateHandler {
         }
         $js .= DependencyManager::getLinkFields($fieldDefs, $view);
 
+        $createView = false;
+        if (!empty($_REQUEST['bwcFrame']) && ($view = 'EditView') && empty($_REQUEST['record'])) {
+            $createView = true;
+        }
+
         $dependencies = array_merge(
-           DependencyManager::getDependenciesForFields($fieldDefs, $view),
-           DependencyManager::getDependenciesForView($viewDefs, $view, $module)
+            DependencyManager::getDependenciesForFields($fieldDefs, $createView ? 'CreateView' : $view),
+            DependencyManager::getDependenciesForView($viewDefs, $view, $module)
         );
 
 
