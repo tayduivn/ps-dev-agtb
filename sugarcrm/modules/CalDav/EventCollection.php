@@ -152,6 +152,12 @@ class CalDavEventCollection extends SugarBean
     public $participants_links;
 
     /**
+     * Json with bean children ids
+     * @var string
+     */
+    public $children_order_ids;
+
+    /**
      * Array of links email => [beanName, beanId]
      * @var string
      */
@@ -294,6 +300,38 @@ class CalDavEventCollection extends SugarBean
         ksort($this->childEvents);
 
         return $this->childEvents;
+    }
+
+    /**
+     * Get sugar bean children ids
+     * @return array
+     */
+    public function getSugarChildrenOrder()
+    {
+        if ($this->children_order_ids) {
+            return json_decode($this->children_order_ids, true);
+        }
+
+        return array();
+    }
+
+    /**
+     * Set sugar bean children ids
+     * @param array $ids Array with bean ids
+     * @return bool
+     */
+    public function setSugarChildrenOrder(array $ids)
+    {
+        $valid = array_filter($ids, function ($id) {
+            return \is_guid($id);
+        });
+        if ($valid == $ids) {
+            $this->children_order_ids = json_encode($ids);
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
