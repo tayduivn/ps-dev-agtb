@@ -663,7 +663,10 @@ $mod_strings = array (
     'LBL_REBUILD_WORKFLOW_COMPILING' => 'Compiling Plugins... <BR>',
     'LBL_REBUILD' => 'Rebuild',
     'LBL_REGEX_HELP_TITLE'		=>'Regex Description',
-    'LBL_REGEX_HELP_TEXT'		=>'<b>Regular Expressions </b> provide a concise and flexible means for identifying strings of the password, such as particular characters or patterns of characters. You can create custom password rules by providing a regex that will be used in a NOT MATCH condition; the password must not contain a match to any expressions in the regex.',
+    'LBL_REGEX_HELP_TEXT'		=>'<b>Regular Expressions </b> provide a concise and flexible means for identifying
+strings of the password, such as particular characters or patterns of characters. You can create custom password rules
+by providing a regex that will be used in a NOT MATCH condition; the password must not contain a match to any
+expressions in the regex. Regular expressions should not include any delimiters.',
     'LBL_REGEX_DESC_HELP_TEXT'	=>'This description should explain the Regex Requirement and will be displayed in the list of requirements for users when they provide new passwords.',
 	'LBL_RELEASE' => 'Manage releases and versions',
     'LBL_RENAME_TABS'=>'Rename Modules',

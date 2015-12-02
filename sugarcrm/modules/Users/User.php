@@ -1053,17 +1053,11 @@ EOQ;
 	        return false;
 	    }
 
-	    // Custom regex
-        if (!empty($GLOBALS["sugar_config"]["passwordsetting"]["customregex"])) {
-            $customRegExpTemp = $GLOBALS["sugar_config"]["passwordsetting"]["customregex"];
-            if (strpos($customRegExpTemp, '/') !== 0) {
-                $customRegExpTemp = '/'.$customRegExpTemp.'/';
-            }
-            if (preg_match($customRegExpTemp, $password)) {
-                return false;
-            }
+        // Custom regex
+        if (!empty($GLOBALS["sugar_config"]["passwordsetting"]["customregex"]) &&
+            preg_match($GLOBALS["sugar_config"]["passwordsetting"]["customregex"], $password)) {
+            return false;
         }
-
 	    return true;
 	}
 
