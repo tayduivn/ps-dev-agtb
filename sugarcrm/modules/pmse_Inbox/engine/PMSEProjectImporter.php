@@ -269,6 +269,11 @@ class PMSEProjectImporter extends PMSEImporter
         $processDefinitionBean->pro_status = 'INACTIVE';
         $processDefinitionBean->save();
 
+        // terminate fields
+        if (!empty($processDefinitionBean->pro_terminate_variables) && $processDefinitionBean->pro_terminate_variables != '[]'){
+            $this->createRelatedDependencyTerminateProcess($processDefinitionBean->id, $processDefinitionBean->pro_terminate_variables);
+        }
+
         $this->saveProjectActivitiesData($diagramData['activities'], $keysArray);
         $this->saveProjectEventsData($diagramData['events'], $keysArray);
         $this->saveProjectGatewaysData($diagramData['gateways'], $keysArray);
@@ -789,4 +794,15 @@ class PMSEProjectImporter extends PMSEImporter
         return array($element, $definition, $bound);
     }
 
+    private function createRelatedDependencyTerminateProcess($pro_id, $pro_terminate_variables)
+    {
+        $fakeEventData = array(
+            'id' => 'TERMINATE',
+            'evn_type' => 'GLOBAL_TERMINATE',
+            'evn_criteria' => $pro_terminate_variables,
+            'evn_behavior' => 'CATCH',
+            'pro_id' => $pro_id
+        );
+        $this->dependenciesWrapper->processRelatedDependencies($fakeEventData);
+    }
 }
