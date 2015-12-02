@@ -11,6 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 require_once 'include/SugarFields/SugarFieldHandler.php';
 require_once 'include/MetaDataManager/MetaDataManager.php';
 
@@ -24,7 +26,7 @@ class SugarBeanApiHelper
      */
     protected $api;
 
-    public function __construct(ServiceBase $api)
+    public function __construct(\ServiceBase $api)
     {
         $this->api = $api;
     }
@@ -38,9 +40,9 @@ class SugarBeanApiHelper
      * @param $options array Currently no options are supported
      * @return array The bean in array format, ready for passing out the API to clients.
      */
-    public function formatForApi(SugarBean $bean, array $fieldList = array(), array $options = array())
+    public function formatForApi(\SugarBean $bean, array $fieldList = array(), array $options = array())
     {
-        $sfh = new SugarFieldHandler();
+        $sfh = new \SugarFieldHandler();
 
         // if you are listing something the action is list
         // if any other format is called its a view
@@ -126,11 +128,11 @@ class SugarBeanApiHelper
      * @param  array     $fieldList
      * @return array
      */
-    public function getBeanAcl(SugarBean $bean, array $fieldList)
+    public function getBeanAcl(\SugarBean $bean, array $fieldList)
     {
         $acl = array('fields' => (object) array());
-        if (SugarACL::moduleSupportsACL($bean->module_dir)) {
-            $mm = MetaDataManager::getManager($this->api->platform);
+        if (\SugarACL::moduleSupportsACL($bean->module_dir)) {
+            $mm = \MetaDataManager::getManager($this->api->platform);
             $moduleAcl = $mm->getAclForModule($bean->module_dir, $this->api->user, false, true);
 
             $beanAcl = $mm->getAclForModule($bean->module_dir, $this->api->user, $bean, true);
@@ -216,15 +218,20 @@ class SugarBeanApiHelper
      *                       for more information
      * @return array An array of validation errors, or true if the submitted data appeared to be correct
      */
-    public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array() )
+    public function populateFromApi(\SugarBean $bean, array $submittedData, array $options = array())
     {
         if(!empty($bean->id) && !empty($options['optimistic_lock'])) {
             $this->checkOptimisticLocking($bean, $options['optimistic_lock']);
         }
 
         if (isset($submittedData['id']) && !empty($bean->id) && $submittedData['id'] != $bean->id) {
-            throw new SugarApiExceptionInvalidParameter('Not allowed to change record id: '.$bean->id. ' in module: '.$submittedData['module']);
+            $msg = "Not allowed to change record id '{$bean->id}' in the {$submittedData['module']} module";
+            throw new \SugarApiExceptionInvalidParameter($msg);
         }
+
+        // Ensure that the client isn't trying to edit fields that are locked by
+        // a process
+        $this->handleLockedFieldEdits($bean, $submittedData);
 
         // Some of the SugarFields require ID's, so lets set it up
         if (empty($bean->id)) {
@@ -232,7 +239,7 @@ class SugarBeanApiHelper
             $bean->new_with_id = true;
         }
 
-        $sfh = new SugarFieldHandler();
+        $sfh = new \SugarFieldHandler();
 
         $context = array();
         /**
@@ -255,7 +262,7 @@ class SugarBeanApiHelper
             }
             if ( !$bean->ACLFieldAccess($fieldName, $acl, $context) ) {
                 // No write access to this field, but they tried to edit it
-                throw new SugarApiExceptionNotAuthorized(
+                throw new \SugarApiExceptionNotAuthorized(
                     'Not allowed to edit field ' . $fieldName . ' in module: ' . $bean->module_name
                 );
             }
@@ -275,7 +282,7 @@ class SugarBeanApiHelper
             if ($field != null) {
                 // validate submitted data
                 if (!$field->apiValidate($bean, $submittedData, $fieldName, $properties)) {
-                    throw new SugarApiExceptionInvalidParameter(
+                    throw new \SugarApiExceptionInvalidParameter(
                         'Invalid field value: ' . $fieldName . ' in module: ' . $bean->module_name
                     );
                 }
@@ -329,7 +336,7 @@ class SugarBeanApiHelper
     protected function checkOptimisticLocking($bean, $timestamp)
     {
         // only perform optimistic locking when the module vardef attribute has been set to true
-        $objectName = BeanFactory::getObjectName($bean->module_name);
+        $objectName = \BeanFactory::getObjectName($bean->module_name);
         if (!isset($GLOBALS['dictionary'][$objectName]['optimistic_locking'])
             || ($GLOBALS['dictionary'][$objectName]['optimistic_locking'] !== true)
         ) {
@@ -347,10 +354,10 @@ class SugarBeanApiHelper
 
         $dateToCheck = (!empty($bean->fetched_row['date_modified'])) ? $bean->fetched_row['date_modified'] : $bean->date_modified;
 
-        $timedate = TimeDate::getInstance();
+        $timedate = \TimeDate::getInstance();
         $ts_client = $timedate->fromIso($timestamp);
         if(empty($ts_client)) {
-            throw new SugarApiExceptionInvalidParameter("Bad timestamp $timestamp");
+            throw new \SugarApiExceptionInvalidParameter("Bad timestamp $timestamp");
         }
         $ts_server = $timedate->fromDb($dateToCheck);
         if(empty($ts_server)) {
@@ -362,7 +369,58 @@ class SugarBeanApiHelper
         }
         if($ts_server->ts != $ts_client->ts) {
             // OOPS, edited after client TS, conflict!
-            throw new SugarApiExceptionEditConflict("Edit conflict - client TS is {$timedate->asIso($ts_client)}, server TS is {$timedate->asIso($ts_server)}");
+            $cts = "client TS is {$timedate->asIso($ts_client)}";
+            $sts = "server TS is {$timedate->asIso($ts_server)}";
+            throw new \SugarApiExceptionEditConflict("Edit conflict - $cts, $sts");
         }
+    }
+
+    /**
+     * Handles checking locked fields for editing
+     * @param SugarBean $bean The bean being edited
+     * @param array $data Submitted data
+     * @return null
+     * @throws SugarApiExceptionFieldEditDisabled
+     */
+    public function handleLockedFieldEdits(\SugarBean $bean, array $data)
+    {
+        //BEGIN SUGARCRM flav=ent ONLY
+        // Only validate this for existing records
+        if ($bean->id && !$bean->new_with_id) {
+            // Get our locked field array
+            $lockedFields = \PMSEEngineUtils::getLockedFields($bean);
+
+            // Flip the values into keys for use in checking
+            $lockedFields = array_flip($lockedFields);
+
+            // Loop and check if the field is locked for editing
+            foreach (array_keys($data) as $field) {
+                // And if it is, and was changed, throw an exception
+                if (array_key_exists($field, $lockedFields) && $this->lockedFieldHasChanged($field, $bean, $data)) {
+                    $msg = "$field is currently locked for editing by Process Management.";
+                    throw new \SugarApiExceptionFieldEditDisabled($msg);
+                }
+            }
+        }
+        //END SUGARCRM flav=ent ONLY
+    }
+
+    /**
+     * Checks to see if a locked field has changed value
+     * @param string $field The field name to check
+     * @param SugarBean $bean The bean this field is on
+     * @param array $data The submitted data array
+     * @return boolean
+     */
+    protected function lockedFieldHasChanged($field, $bean, $data)
+    {
+        if (isset($bean->field_defs[$field])) {
+            $def = $bean->field_defs[$field];
+            $eval = ProcessManager\Factory::getFieldEvaluator($def);
+            $eval->init($bean, $field, $data);
+            return $eval->hasChanged();
+        }
+
+        return false;
     }
 }
