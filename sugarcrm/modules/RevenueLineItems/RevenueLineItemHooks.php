@@ -43,19 +43,18 @@ class RevenueLineItemHooks
         $settings = Forecast::getSettings(true);
 
         if ($settings['is_setup'] && $event == 'before_save') {
-            $forecast_ranges = $settings['forecast_ranges'];
-            $ranges = $settings[$forecast_ranges . '_ranges'];
-            $commit_stage = "";
+            $won = $settings['sales_stage_won'];
+            $lost = $settings['sales_stage_lost'];
 
-            //find the proper include stage for the percentage
-            foreach ($ranges as $key => $value) {
-                if ($bean->probability >= $value['min'] && $bean->probability <= $value['max']) {
-                    $commit_stage = $key;
-                    break;
-                }
+            //Check to see if we are in a won state. if so, set the probability to 100 and commit_stage to include.
+            //if not, set the probability to 0 and commit_stage to exclude
+            if (in_array($bean->sales_stage, $won)) {
+                $bean->probability = 100;
+                $bean->commit_stage = 'include';
+            } else if (in_array($bean->sales_stage, $lost)) {
+                $bean->probability = 0;
+                $bean->commit_stage = 'exclude';
             }
-
-            $bean->commit_stage = $commit_stage;
         }
     }
 }
