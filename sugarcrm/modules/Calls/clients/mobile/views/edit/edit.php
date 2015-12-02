@@ -11,12 +11,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['Calls']['mobile']['view']['edit'] = array(
-	'templateMeta' => array(
-                            'maxColumns' => '1', 
-                            'widths' => array(
-								array('label' => '10', 'field' => '30'), 
-                            ),                                  
-                           ),
+    'templateMeta' => array(
+        'maxColumns' => '1', 
+        'widths' => array(
+            array(
+                'label' => '10',
+                'field' => '30',
+            ),
+        ),
+    ),
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_DEFAULT',
@@ -80,5 +83,5 @@ $viewdefs['Calls']['mobile']['view']['edit'] = array(
                 'team_name',
             ),
         ),
-	),
+    ),
 );
