@@ -519,8 +519,10 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
         });
 
         it('should not have worst_case_display', function() {
-            delete view._fields.visible[6];
-            delete view._fields.visible[7];
+            view._fields.visible = _.reject(view._fields.visible, function(field) {
+                return field.name === 'worst_case' ||
+                       field.name === 'worst_case_adjusted';
+            });
             view.calculateTotals();
             expect(view.totals.worst_case_display).not.toBeDefined();
         });
