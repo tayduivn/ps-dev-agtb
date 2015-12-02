@@ -45,7 +45,7 @@ class Helper
         } else {
             $reminderTime = (int)$user->getPreference('reminder_time');
         }
-        if ($reminderDateTime < 0) {
+        if ($reminderTime < 0) {
             return null;
         }
 

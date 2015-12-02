@@ -13,12 +13,16 @@ namespace Sugarcrm\SugarcrmTests\Notification\Emitter\Bean;
 
 use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder;
 use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event;
+use Sugarcrm\Sugarcrm\Notification\MessageBuilder\MessageBuilderInterface;
 
 /**
  * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder
  */
 class MessageBuilderTest extends \Sugar_PHPUnit_Framework_TestCase
 {
+    const accountName = 'TestAccount';
+    const eventName = 'event1';
+
     /**
      * @var MessageBuilder
      */
@@ -45,19 +49,20 @@ class MessageBuilderTest extends \Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
+        $this->user = \SugarTestHelper::setUp('current_user');
+
         $this->builder = new MessageBuilder();
 
-        $this->bean = \BeanFactory::getBean('Accounts');
-        $this->bean->name = 'TestAccount';
-        $this->user = \SugarTestUserUtilities::createAnonymousUser();
+        $this->bean = new \Account();
+        $this->bean->name = static::accountName;
 
-        $this->event = new Event('event1');
+        $this->event = new Event(static::eventName);
         $this->event->setBean($this->bean);
     }
 
     public function tearDown()
     {
-        \SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        \SugarTestHelper::tearDown();
         parent::tearDown();
     }
 
@@ -70,7 +75,7 @@ class MessageBuilderTest extends \Sugar_PHPUnit_Framework_TestCase
      */
     public function testBuildWithDifferentMessageSignatures($messageSignature, $message)
     {
-        $result = $this->builder->build($this->event, $this->user, $messageSignature);
+        $result = $this->builder->build($this->event, '', $this->user, $messageSignature);
         $this->assertEquals($message, $result);
     }
 
@@ -104,27 +109,38 @@ class MessageBuilderTest extends \Sugar_PHPUnit_Framework_TestCase
      * Data provider for testBuildWithDifferentMessageSignatures().
      * @return array
      */
-    public function messageSignatureProvider()
+    public static function messageSignatureProvider()
     {
         return array(
             array(
                 array(),
-                array()
+                array(),
             ),
             array(
-                array('title'),
-                array('title' => "{$this->event} triggered")
-            ),
-            array(
-                array('text'),
-                array('text' => "Triggered in {$this->bean->module_name}:'{$this->bean->name}")
-            ),
-            array(
-                array('title', 'text'),
                 array(
-                    'title' => "{$this->event} triggered",
-                    'text' => "Triggered in {$this->bean->module_name}:'{$this->bean->name}",
-                )
+                    'title' => '',
+                ),
+                array(
+                    'title' => static::eventName . " triggered",
+                ),
+            ),
+            array(
+                array(
+                    'text' => '',
+                ),
+                array(
+                    'text' => "Triggered in Accounts:'" . static::accountName . "'",
+                ),
+            ),
+            array(
+                array(
+                    'title' => '',
+                    'text' => '',
+                ),
+                array(
+                    'title' => static::eventName . " triggered",
+                    'text' => "Triggered in Accounts:'" . static::accountName . "'",
+                ),
             ),
         );
     }
