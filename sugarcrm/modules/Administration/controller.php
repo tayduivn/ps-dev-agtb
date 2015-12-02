@@ -209,7 +209,10 @@ class AdministrationController extends SugarController
     {
         $websocket_client_url = !empty($_REQUEST['websocket_client_url']) ? urldecode($_REQUEST['websocket_client_url']) : '';
         $websocket_server_url = !empty($_REQUEST['websocket_server_url']) ? urldecode($_REQUEST['websocket_server_url']) : '';
+        $siteUrl = $GLOBALS['sugar_config']['site_url'];
 
+        $result = array();
+        $warnings = array();
         $errors = array();
         $clientSettings = array('isBalancer' => false);
 
@@ -220,6 +223,11 @@ class AdministrationController extends SugarController
                 $clientSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_client_url);
                 if (!$clientSettings['available'] || $clientSettings['type'] != 'client') {
                     $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_CLIENT_ERROR'];
+                } else {
+                    if (in_array(parse_url($websocket_client_url, PHP_URL_HOST), array('localhost', '127.0.0.1'))
+                    ) {
+                        $warnings[] = translate('ERR_WEB_SOCKET_CLIENT_LOCALHOST');
+                    }
                 }
             }
 
@@ -229,10 +237,20 @@ class AdministrationController extends SugarController
                 $serverSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_server_url);
                 if (!$serverSettings['available'] || $serverSettings['type'] != 'server') {
                     $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SERVER_ERROR'];
+                } else {
+                    if (in_array(parse_url($siteUrl, PHP_URL_HOST), array('localhost', '127.0.0.1'))
+                        && !in_array(parse_url($websocket_server_url, PHP_URL_HOST), array('localhost', '127.0.0.1'))
+                    ) {
+                        $warnings['ERR_WEB_SOCKET_SERVER_LOCALHOST'] = translate('ERR_WEB_SOCKET_SERVER_LOCALHOST');
+                    }
+
                 }
             }
         }
 
+        if (count($warnings) > 0) {
+            $result['warnMsg'] = implode('<br />', array_values($warnings));
+        }
         if (count($errors) == 0) {
             $result['status'] = true;
 
@@ -268,7 +286,10 @@ class AdministrationController extends SugarController
     public function action_saveTriggerServerConfiguration()
     {
         $triggerServerUrl = !empty($_REQUEST['trigger_server_url']) ? urldecode($_REQUEST['trigger_server_url']) : '';
+        $siteUrl = $GLOBALS['sugar_config']['site_url'];
 
+        $result = array();
+        $warnings = array();
         $errors = array();
 
         if(!empty($triggerServerUrl)) {
@@ -279,10 +300,19 @@ class AdministrationController extends SugarController
                 if (!$isTriggerServerSettingsValid) {
                     $errors['ERR_TRIGGER_SERVER_ERROR'] = $GLOBALS['mod_strings']['ERR_TRIGGER_SERVER_ERROR'];
 
+                } else {
+                    if (in_array(parse_url($siteUrl, PHP_URL_HOST), array('localhost', '127.0.0.1'))
+                        && !in_array(parse_url($triggerServerUrl, PHP_URL_HOST), array('localhost', '127.0.0.1'))
+                    ) {
+                        $warnings['ERR_TRIGGER_SERVER_LOCALHOST'] = translate('ERR_TRIGGER_SERVER_LOCALHOST');
+                    }
                 }
             }
         }
 
+        if (count($warnings) > 0) {
+            $result['warnMsg'] = implode('<br />', array_values($warnings));
+        }
         if (count($errors) == 0) {
             $result['status'] = true;
 

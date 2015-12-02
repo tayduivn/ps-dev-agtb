@@ -188,6 +188,9 @@ $mod_strings = array(
 	'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL.',
 	'ERR_TRIGGER_SERVER_URL_INVALID'    => 'Please provide correct Trigger Server URL',
 	'ERR_TRIGGER_SERVER_ERROR'          => 'Unable to connect to Trigger Server',
+    'ERR_TRIGGER_SERVER_LOCALHOST'      => 'URL of the instance points to local host but Trigger Server is located remotely and can\'t reach the instance.',
+    'ERR_WEB_SOCKET_SERVER_LOCALHOST'   => 'URL of the instance points to local host but Socket Server is located remotely and can\'t reach the instance.',
+    'ERR_WEB_SOCKET_CLIENT_LOCALHOST'   => 'Client URL of Socket Server points to local host. It will work only on local machine.',
 
 	'LBL_BACK'							=> 'Back',
     'LBL_CANCEL'                        => 'Cancel',
