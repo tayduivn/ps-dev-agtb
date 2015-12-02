@@ -41,21 +41,6 @@
     collection: null,
 
     /**
-     * Collections for additional modules.
-     */
-    _alertsCollections: {},
-
-    /**
-     * @property {Number} Interval ID for checking reminders.
-     */
-    _remindersIntervalId: null,
-
-    /**
-     * @property {Number} Timestamp of last time when we checked reminders.
-     */
-    _remindersIntervalStamp: 0,
-
-    /**
      * Interval ID defined when the pulling mechanism is running.
      *
      * @property {Number}
@@ -85,7 +70,7 @@
     },
 
     /**
-     * List of array nofifications bending transfer to collection.
+     * List of array notifications pending transfer to collection.
      * @property {Array}
      * @protected
      */
@@ -119,7 +104,6 @@
     _bootstrap: function() {
         this._initOptions();
         this._initCollection();
-        this._initReminders();
         this._initFavicon();
 
         //Start pulling data after 1 second so that other more important calls to
@@ -181,43 +165,6 @@
     },
 
     /**
-     * Initialize reminders for Calls and Meetings.
-     *
-     * Setup the reminderMaxTime that is based on maximum reminder time option
-     * added to the pulls delay to get a big interval to grab for possible
-     * reminders.
-     * Setup collections for each module that we support with reminders.
-     *
-     * FIXME this will be removed when we integrate reminders with
-     * Notifications on server side. This is why we have modules hardcoded.
-     * We also don't check for meta as optional because it is required.
-     * We will keep all this code private because we don't want to support it
-     *
-     * @return {View.Views.BaseNotificationsView} Instance of this view.
-     * @private
-     */
-    _initReminders: function() {
-
-        var timeOptions = _.keys(app.lang.getAppListStrings('reminder_time_options')),
-            max = _.max(timeOptions, function(key) {
-            return parseInt(key, 10);
-        });
-
-        this.reminderMaxTime = parseInt(max, 10) + this.delay / 1000;
-        this.reminderDelay = 30 * 1000;
-
-        _.each(['Calls', 'Meetings'], function(module) {
-            this._alertsCollections[module] = app.data.createBeanCollection(module);
-            this._alertsCollections[module].options = {
-                limit: this.meta && parseInt(this.meta.remindersLimit, 10) || 100,
-                fields: ['date_start', 'id', 'name', 'reminder_time', 'location', 'parent_name']
-            };
-        }, this);
-
-        return this;
-    },
-
-    /**
      * Initializes the favicon using the Favico library.
      *
      * This will listen to the collection reset and update the favicon badge to
@@ -258,10 +205,8 @@
         if (!_.isNull(this._intervalId)) {
             return this;
         }
-        this._remindersIntervalStamp = new Date().getTime();
         this.pull();
         this._intervalId = window.setTimeout(_.bind(this._pullAction, this), this.delay);
-        this._remindersIntervalId = window.setTimeout(_.bind(this.checkReminders, this), this.reminderDelay);
         return this;
     },
 
@@ -295,7 +240,7 @@
     },
 
     /**
-     * Pull notifications and reminders via bulk API. Render notifications
+     * Pull notifications via bulk API. Render notifications
      * if view isn't disposed or dropdown isn't open.
      *
      * @return {View.Views.BaseNotificationsView} Instance of this view.
@@ -314,106 +259,9 @@
             }
         });
 
-        this._pullReminders(bulkApiId);
-
         app.api.triggerBulkCall(bulkApiId);
 
         return this;
-    },
-
-    /**
-     * Pull next reminders from now to the next remindersMaxTime.
-     *
-     * This will give us all the reminders that should be triggered during the
-     * next maximum reminders time (with pull delay).
-     *
-     * @param {string} bulkApiId Bulk ID that the reminders should be a part of
-     */
-    _pullReminders: function(bulkApiId) {
-
-        if (this.disposed || !_.isFinite(this.reminderMaxTime)) {
-            return this;
-        }
-
-        var date = new Date(),
-            startDate = date.toISOString(),
-            endDate;
-
-        date.setTime(date.getTime() + this.reminderMaxTime * 1000);
-        endDate = date.toISOString();
-
-        _.each(['Calls', 'Meetings'], function(module) {
-
-            this._alertsCollections[module].filterDef = _.extend({},
-                this.meta.remindersFilterDef || {},
-                {
-                    'date_start': {'$dateBetween': [startDate, endDate]},
-                    'users.id': {'$equals': app.user.get('id')}
-                }
-            );
-            this._alertsCollections[module].fetch({
-                silent: true,
-                merge: true,
-                //Notifications should never trigger a metadata refresh
-                apiOptions: {
-                    skipMetadataHash: true,
-                    bulk: bulkApiId
-                }
-            });
-        }, this);
-
-        return this;
-    },
-
-    /**
-     * Check if there is a reminder we should show in the near future.
-     *
-     * If the reminder exists we immediately show it.
-     *
-     * @return {View.Views.BaseNotificationsView} Instance of this view.
-     */
-    checkReminders: function() {
-        if (!app.api.isAuthenticated()) {
-            this.stopPulling();
-            return this;
-        }
-        var date = (new Date()).getTime(),
-            diff = this.reminderDelay - (date - this._remindersIntervalStamp) % this.reminderDelay;
-        this._remindersIntervalId = window.setTimeout(_.bind(this.checkReminders, this), diff);
-        _.each(this._alertsCollections, function(collection) {
-            _.chain(collection.models)
-                .filter(function(model) {
-                    var needDate = (new Date(model.get('date_start'))).getTime() - parseInt(model.get('reminder_time'), 10) * 1000;
-                    return needDate > this._remindersIntervalStamp && needDate - this._remindersIntervalStamp <= diff;
-                }, this)
-                .each(this._showReminderAlert, this);
-        }, this);
-        this._remindersIntervalStamp = date + diff;
-        return this;
-    },
-
-    /**
-     * Show reminder alert based on given model.
-     *
-     * @param {Backbone.Model} model Model that is triggering a reminder.
-     *
-     * @private
-     */
-    _showReminderAlert: function(model) {
-        var url = app.router.buildRoute(model.module, model.id),
-            startTime = app.date(model.get('date_start')).format(app.date.getUserTimeFormat()),
-            data = {
-                moduleName: app.lang.getModuleName(model.module),
-                startTime: startTime
-            },
-            title = app.lang.get('TPL_NOTIFICATION_TITLE', model.module, data);
-
-        app.browserNotification.show(title, {
-            body: new Handlebars.SafeString(model.get('name')),
-            onclick: function() {
-                app.router.navigate(url, {trigger: true});
-            }
-        });
     },
 
     /**
@@ -462,7 +310,7 @@
     /**
      * @inheritdoc
      *
-     * Stops pulling for new notifications and disposes all reminders.
+     * Stops pulling for new notifications and disposes the rest.
      */
     _dispose: function() {
         this.stopPulling();
@@ -470,18 +318,11 @@
         app.events.off('app:socket:connect', this.socketOn, this);
         app.events.off('app:socket:disconnect', this.socketOff, this);
 
-        // stop reminders
-        if (!_.isNull(this._remindersIntervalId)) {
-            window.clearTimeout(this._remindersIntervalId);
-            this._remindersIntervalId = null;
-        }
-        this._alertsCollections = {};
-
         this._super('_dispose');
     },
 
     /**
-     * Flush soket buffer to collection
+     * Flush socket buffer to collection
      */
     transferToCollection: function () {
         if (this.collection) {
@@ -494,9 +335,9 @@
     },
 
     /**
-     * Catch notification forn socet server and show it.
+     * Catch notification from socket server and show it.
      *
-     * @param data notification forn socet server.
+     * @param data notification from socket server.
      */
     catchNotification: function (data) {
         this._buffer.push(data);
@@ -531,5 +372,5 @@
         }
 
         return this.render();
-    },
+    }
 })

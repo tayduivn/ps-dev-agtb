@@ -22,14 +22,12 @@ describe('Notifications', function() {
 
         it('should bootstrap', function() {
             var _initOptions = sinon.collection.stub(view, '_initOptions', $.noop()),
-                _initCollection = sinon.collection.stub(view, '_initCollection', $.noop()),
-                _initReminders = sinon.collection.stub(view, '_initReminders', $.noop());
+                _initCollection = sinon.collection.stub(view, '_initCollection', $.noop());
 
             view._bootstrap();
 
             expect(_initOptions).toHaveBeenCalledOnce();
             expect(_initCollection).toHaveBeenCalledOnce();
-            expect(_initReminders).toHaveBeenCalledOnce();
         });
 
         it('should initialize options with default values', function() {
@@ -246,19 +244,18 @@ describe('Notifications', function() {
             expect(view.render).not.toHaveBeenCalled();
         });
 
-        it('should set timeout twice once on multiple start pulling calls', function() {
+        it('should set timeout and call pull once on multiple start pulling calls', function() {
             var pull = sinon.collection.stub(view, 'pull', $.noop()),
                 setTimeout = sinon.collection.stub(window, 'setTimeout', $.noop());
 
             view.startPulling().startPulling();
 
             expect(pull).toHaveBeenCalledOnce();
-            expect(setTimeout).toHaveBeenCalledTwice();
+            expect(setTimeout).toHaveBeenCalledOnce();
         });
 
         it('should clear intervals on stop pulling', function() {
             var pull = sinon.collection.stub(view, 'pull', $.noop()),
-                _pullReminders = sinon.collection.stub(view, '_pullReminders', $.noop()),
                 setTimeout = sinon.collection.stub(window, 'setTimeout', function() {
                     return intervalId;
                 }),
@@ -279,22 +276,11 @@ describe('Notifications', function() {
             expect(stopPulling).toHaveBeenCalledOnce();
         });
 
-        it('should stop reminders on dispose', function () {
-            view._remindersIntervalId = 'SomeRemindersIntervalId';
-            clearTimeout = sinon.collection.stub(window, 'clearTimeout', $.noop()),
-
-                view.dispose();
-
-            expect(view._remindersIntervalId).toBeNull();
-            expect(clearTimeout).toHaveBeenCalledOnce();
-        });
-
         it('should stop pulling if authentication expires', function() {
             var isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function() {
                     return false;
                 }),
                 pull = sinon.collection.stub(view, 'pull', $.noop()),
-                _pullReminders = sinon.collection.stub(view, '_pullReminders', $.noop()),
                 setTimeout = sinon.collection.stub(window, 'setTimeout', function(fn) {
                     fn();
                 }),
@@ -303,9 +289,9 @@ describe('Notifications', function() {
             view.startPulling();
 
             expect(pull).toHaveBeenCalledOnce();
-            expect(setTimeout).toHaveBeenCalledTwice();
-            expect(isAuthenticated).toHaveBeenCalledTwice();
-            expect(stopPulling).toHaveBeenCalledTwice();
+            expect(setTimeout).toHaveBeenCalledOnce();
+            expect(isAuthenticated).toHaveBeenCalledOnce();
+            expect(stopPulling).toHaveBeenCalledOnce();
         });
 
         it('should stop pulling if connected to socket', function () {
@@ -435,8 +421,6 @@ describe('Notifications', function() {
             it('check calling transferToCollection after bootstrap if empty buffer', function () {
                 view._buffer = [];
 
-                app.data.createBean
-
                 view.collection = {
                     add: sinon.spy()
                 };
@@ -446,129 +430,6 @@ describe('Notifications', function() {
                 sinon.assert.called(view.reRender);
                 sinon.assert.notCalled(app.data.createBean);
                 sinon.assert.notCalled(view.collection.add);
-            });
-        });
-    });
-
-    describe('Reminders', function() {
-        beforeEach(function() {
-            var meta = {
-                remindersFilterDef: {
-                    reminder_time: { $gte: 0},
-                    status: {$equals: 'Planned'}
-                },
-                remindersLimit: 100
-            };
-
-            view = SugarTest.createView('base', moduleName, viewName, meta);
-        });
-
-        afterEach(function() {
-            sinon.collection.restore();
-            SugarTest.app.view.reset();
-            view.dispose();
-            view = null;
-        });
-
-        it('should initialize collections for Meetings and Calls', function() {
-
-            sinon.collection.stub(app.data, 'createBeanCollection', function() {
-                return {
-                    options: {},
-                    off: function() {
-                    }
-                };
-            });
-            sinon.collection.stub(app.lang, 'getAppListStrings', function() {
-                return {
-                    '60': '1 minute prior',
-                    '300': '5 minutes prior',
-                    '600': '10 minutes prior',
-                    '900': '15 minutes prior',
-                    '1800': '30 minutes prior',
-                    '3600': '1 hour prior',
-                    '7200': '2 hours prior',
-                    '10800': '3 hours prior',
-                    '18000': '5 hours prior',
-                    '86400': '1 day prior'
-                };
-            });
-
-            view.delay = 300000; // 5 minutes for each pull;
-            view._initReminders();
-
-            _.each(['Calls', 'Meetings'], function(module) {
-                expect(view._alertsCollections[module].options).toEqual({
-                    limit: 100,
-                    fields: ['date_start', 'id', 'name', 'reminder_time', 'location', 'parent_name']
-                });
-            });
-
-            expect(view.reminderMaxTime).toBe(86700); // 1 day + 5 minutes
-        });
-
-
-        describe('Check reminders', function() {
-
-            var reminderModule = 'Meetings';
-
-            beforeEach(function() {
-
-                var meta = {
-                    fields: [],
-                    views: [],
-                    layouts: []
-                };
-                app.data.declareModel(reminderModule, meta);
-
-            });
-
-            afterEach(function() {
-                app.data.reset(reminderModule);
-            });
-
-            it('Shouldn\'t check reminders if authentication expires', function() {
-                var isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function() {
-                        return false;
-                    }),
-                    setTimeout = sinon.collection.stub(window, 'setTimeout', $.noop()),
-                    stopPulling = sinon.collection.stub(view, 'stopPulling', $.noop());
-
-                view.checkReminders();
-
-                expect(setTimeout).not.toHaveBeenCalled();
-                expect(isAuthenticated).toHaveBeenCalledOnce();
-                expect(stopPulling).toHaveBeenCalledOnce();
-            });
-
-            it('Should show reminder if need', function() {
-
-                var now = new Date('2013-09-04T22:45:56+02:00'),
-                    dateStart = new Date('2013-09-04T23:15:16+02:00'),
-                    clock = sinon.useFakeTimers(now.getTime(), 'Date'),
-                    setTimeout = sinon.collection.stub(window, 'setTimeout', $.noop()),
-                    _showReminderAlert = sinon.collection.stub(view, '_showReminderAlert'),
-                    isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function() {
-                        return true;
-                    }),
-                    model = new app.data.createBean(reminderModule, {
-                        'id': '105b0b4a-1337-e0db-b448-522784b92270',
-                        'name': 'Discuss pricing',
-                        'date_modified': '2013-09-05T00:59:00+02:00',
-                        'description': 'Meeting',
-                        'date_start': dateStart.toISOString(),
-                        'reminder_time': '1800'
-                    });
-
-                view._initReminders();
-                view._alertsCollections[reminderModule].add(model);
-                view.dateStarted = now.getTime();
-                view._remindersIntervalStamp = view.dateStarted - 60000;
-                view.checkReminders();
-
-                expect(_showReminderAlert).toHaveBeenCalledWith(model);
-
-                clock.restore();
             });
         });
     });
