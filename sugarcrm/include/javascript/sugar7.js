@@ -280,6 +280,10 @@
                                 create: true,
                                 fromRouter: true
                             }
+                        }, function(context, model) {
+                            if (model.module === app.controller.context.get('module')) {
+                                app.controller.context.reloadData();
+                            }
                         });
                         return;
                     }
