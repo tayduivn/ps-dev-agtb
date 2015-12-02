@@ -591,7 +591,7 @@ END:VCALENDAR',
     public function mapParticipantsToBeansProvider()
     {
         $ids = array();
-        for ($i=0; $i<12; $i++) {
+        for ($i = 0; $i < 12; $i ++) {
             $ids[] = \create_guid();
         }
 
@@ -632,7 +632,6 @@ END:VCALENDAR',
                     'test0@test.com' => array('beanName' => 'Leads', 'beanId' => $ids[9]),
                 ),
             ),
-
             array(
                 'vEvent' => $this->getEventTemplate('recurring'),
                 'sugarUsers' => array(
@@ -652,12 +651,32 @@ END:VCALENDAR',
         );
     }
 
+    public function sugarChildrenOrderProvider()
+    {
+        $id1 = create_guid();
+        $id2 = create_guid();
+        $id3 = create_guid();
+
+        return array(
+            array(
+                'ids' => array($id1, $id2, $id3),
+                'result' => true,
+                'getResult' => array($id1, $id2, $id3),
+            ),
+            array(
+                'ids' => array($id1, $id2, 4, $id3),
+                'result' => false,
+                'getResult' => array(),
+            ),
+        );
+    }
+
     /**
      * @param string $vEventText
      * @param array $beansToCreate
      * @param array $expectedLink
      *
-     * @covers \CalDavEventCollection::mapParticipantsToBeans
+     * @covers       \CalDavEventCollection::mapParticipantsToBeans
      *
      * @dataProvider mapParticipantsToBeansProvider
      */
@@ -1307,6 +1326,32 @@ END:VCALENDAR',
             array(new \SugarDateTime('20151110T090000', new \DateTimeZone('Europe/Minsk')))
         );
         $this->assertTrue($result);
+    }
+
+    /**
+     * @param array $ids
+     * @param bool $expectedResult
+     * @param array $expectedGet
+     *
+     * @covers \CalDavEventCollection::setSugarChildrenOrder
+     * @covers \CalDavEventCollection::getSugarChildrenOrder
+     *
+     * @dataProvider sugarChildrenOrderProvider
+     */
+    public function testSugarChildrenOrder(array $ids, $expectedResult, array $expectedGet)
+    {
+        $beanMock = $this->getMockBuilder('CalDavEventCollection')
+                         ->disableOriginalConstructor()
+                         ->setMethods(null)
+                         ->getMock();
+
+        $result = $beanMock->setSugarChildrenOrder($ids);
+
+        $this->assertEquals($expectedResult, $result);
+
+        $result = $beanMock->getSugarChildrenOrder();
+
+        $this->assertEquals($expectedGet, $result);
     }
 
     /**

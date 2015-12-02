@@ -128,6 +128,16 @@ $dictionary['CalDavEventCollection'] = array(
                     'comment' => 'Email to bean links',
                     'studio' => array('searchview' => false),
                 ),
+            'children_order_ids' =>
+                array(
+                    'name' => 'children_order_ids',
+                    'vname' => 'LBL_CHILDREN_ORDER_IDS',
+                    'type' => 'json',
+                    'dbType' => 'longtext',
+                    'reportable' => false,
+                    'comment' => 'Ids of sugar bean children in a given order',
+                    'studio' => array('searchview' => false),
+                ),
             'events_calendar' =>
                 array(
                     'name' => 'events_calendar',

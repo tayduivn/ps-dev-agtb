@@ -14,7 +14,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Base\Helper;
 
 use Sugarcrm\Sugarcrm\Dav\Base\Constants as DavConstants;
 use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as DavStatusMapper;
-use Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Factory as SearchFactory;
+use Sugarcrm\Sugarcrm\Dav\Base\Principal\Manager;
 
 use Sabre\VObject\Property\ICalendar\CalAddress;
 
@@ -31,14 +31,14 @@ class ParticipantsHelper
     protected $statusMapper;
 
     /**
-     * @var \Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Factory;
+     * @var \Sugarcrm\Sugarcrm\Dav\Base\Principal\Manager;
      */
-    protected $searchFactory;
+    protected $principalManager;
 
     public function __construct()
     {
         $this->statusMapper = new DavStatusMapper\AcceptedMap();
-        $this->searchFactory = new SearchFactory();
+        $this->principalManager = new Manager();
     }
 
     /**
@@ -159,7 +159,7 @@ class ParticipantsHelper
                     }
                 }
 
-                $searchModules = $this->searchFactory->getModulesForSearch();
+                $searchModules = $this->principalManager->getModulesForSearch();
                 foreach ($searchModules as $module) {
                     $loadedParticipants = $this->loadParticipantsByRelationship(strtolower($module), $bean, $acceptStatuses);
                     $sugarParticipants += $loadedParticipants;
