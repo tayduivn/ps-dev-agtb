@@ -259,6 +259,11 @@ class ViewModulefield extends SugarView
             $fv->ss->assign('no_duplicate', true);
         }
 
+        // Do not allow cloning of non-supported field types
+        if (isset($vardef['type']) && !array_key_exists($vardef['type'], $field_types)) {
+            $fv->ss->assign('no_duplicate', true);
+        }
+
         $fv->ss->assign('action',$action);
         $fv->ss->assign('isClone', ($isClone ? 1 : 0));
         $fv->ss->assign('isNew', $isNew);
