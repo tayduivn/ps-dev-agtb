@@ -31,10 +31,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   array (
     'name' => 'duration_hours',
     'vname' => 'LBL_DURATION_HOURS',
-    'type' => 'enum',
-    'dbType' => 'int',
-    'options' => 'duration_hours_intervals',
-    'len' => '2',
+    'type' => 'int',
     'comment' => 'Call duration, hours portion',
     'required' => true,
     'massupdate' => false,
