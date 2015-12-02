@@ -22,6 +22,11 @@
                     {{value}}
                 </div>
             {{/eq}}
+            {{#eq this.value.id ../value}}
+                <div class="ellipsis_inline" data-placement="bottom" title="{{this.value.text}}">
+                    {{this.value.text}}
+                </div>
+            {{/eq}}
         {{/eachOptions}}
     {{/if}}
 {{/if}}

@@ -425,7 +425,15 @@
         if (this.def.isMultiSelect) {
             values = values.split(this.def.separator || ',');
         }
-        _.each(_.pick(options, values), function(value, key){
+        var picked = _.pick(options, values);
+        if (_.isEmpty(picked)) {
+            _.each(options, function(option, id) {
+                if ((_.isArray(values) && values.indexOf(option['id'])) || option['id'] == values) {
+                    picked[option['id']] = option['text'];
+                }
+            });
+        }
+        _.each(picked, function(value, key){
             data.push({id: key, text: value});
         }, this);
         if(data.length === 1){
@@ -510,7 +518,12 @@
         };
         if (_.isObject(options)) {
             _.each(options, function(element, index) {
-                var text = "" + element;
+                var text = element;
+                if (_.isObject(element)) {
+                    index = element['id'];
+                    text = element['text'];
+                }
+                text = "" + text;
                 //additionally filter results based on query term
                 if(query.matcher(query.term, text)){
                     data.results.push({id: index, text: text});
