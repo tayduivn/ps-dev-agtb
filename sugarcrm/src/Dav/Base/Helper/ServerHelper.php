@@ -15,16 +15,16 @@ namespace Sugarcrm\Sugarcrm\Dav\Base\Helper;
 use Sabre\DAV;
 use Sabre\DAVACL;
 use Sabre\CalDAV;
+use Sugarcrm\Sugarcrm\Dav\Base\Principal;
 use Sugarcrm\Sugarcrm\Dav\Cal;
 use Sugarcrm\Sugarcrm\Dav\Cal\Schedule;
-use Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Factory as SearchFactory;
 
 class ServerHelper
 {
     public function setUp()
     {
-        $searchFactory = new SearchFactory();
-        $searchModules = $searchFactory->getModulesForSearch();
+        $principalManager = new Principal\Manager();
+        $searchModules = $principalManager->getModulesForSearch();
 
         $authClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Base\\Auth\\SugarAuth');
         $principalClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Base\\Principal\\SugarPrincipal');

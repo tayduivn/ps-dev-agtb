@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,17 +11,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestsUnit\Dav\Base\Principal\Search;
-
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+namespace Sugarcrm\SugarcrmTestsUnit\Dav\Base\Principal\Search\Format;
 
 /**
- * Class BaseTest
- * @package            Sugarcrm\SugarcrmTestsUnit\Dav\Base\Principal\Search
+ * Class PrincipalStrategyTest
+ * @package Sugarcrm\SugarcrmTestsUnit\Dav\Base\Principal\Search\Format
  *
- * @coversDefaultClass Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Base
+ * @coversDefaultClass Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Format\PrincipalStrategy
  */
-class BaseTest extends \PHPUnit_Framework_TestCase
+class PrincipalStrategyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Base::getPrincipalArray
@@ -28,7 +27,7 @@ class BaseTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetPrincipalArray()
     {
-        $beanMock = $this->getMockBuilder('\SugarBean')
+        $beanMock = $this->getMockBuilder('\User')
                          ->disableOriginalConstructor()
                          ->setMethods(null)
                          ->getMock();
@@ -39,28 +38,26 @@ class BaseTest extends \PHPUnit_Framework_TestCase
         $beanMock->email1 = 'test@test.com';
         $beanMock->module_name = 'test';
 
-        $searchBaseMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Base')
-                               ->disableOriginalConstructor()
-                               ->setMethods(null)
-                               ->getMockForAbstractClass();
+        $strategyBaseMock =
+            $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Format\PrincipalStrategy')
+                 ->setConstructorArgs(array('principals/users/'))
+                 ->setMethods(null)
+                 ->getMockForAbstractClass();
 
-        $searchUsersMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Users')
-                                ->disableOriginalConstructor()
-                                ->setMethods(null)
-                                ->getMockForAbstractClass();
+        $strategyUsersMock =
+            $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Format\UserPrincipalStrategy')
+                 ->setConstructorArgs(array('principals/users/'))
+                 ->setMethods(null)
+                 ->getMockForAbstractClass();
 
-        TestReflection::setProtectedValue($searchBaseMock, 'prefixPath', 'principals/users/');
-        TestReflection::setProtectedValue($searchUsersMock, 'prefixPath', 'principals/users/');
-
-        $resultBase = TestReflection::callProtectedMethod($searchBaseMock, 'getPrincipalArray', array($beanMock));
-        $resultUsers = TestReflection::callProtectedMethod($searchUsersMock, 'getPrincipalArray', array($beanMock));
+        $resultBase = $strategyBaseMock->formatBody($beanMock);
+        $resultUsers = $strategyUsersMock->formatBody($beanMock);
 
         $expectedBase = array(
             'id' => 1,
             'uri' => 'principals/users/1',
             '{DAV:}displayname' => 'test',
             '{http://sabredav.org/ns}email-address' => 'test@test.com',
-            '{http://sugarcrm.com/ns}x-sugar-module' => 'test',
         );
 
         $expectedUsers = array(
@@ -68,7 +65,6 @@ class BaseTest extends \PHPUnit_Framework_TestCase
             'uri' => 'principals/users/test',
             '{DAV:}displayname' => 'test',
             '{http://sabredav.org/ns}email-address' => 'test@test.com',
-            '{http://sugarcrm.com/ns}x-sugar-module' => 'test',
         );
 
         $this->assertEquals($expectedBase, $resultBase);

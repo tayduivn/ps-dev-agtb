@@ -16,19 +16,16 @@ use Sabre\DAVACL\PrincipalBackend\BackendInterface;
 use Sabre\DAV;
 
 use Sugarcrm\Sugarcrm\Dav\Base\Helper;
-use Sugarcrm\Sugarcrm\Dav\Base\Principal\Search;
 
 class SugarPrincipal implements BackendInterface
 {
     /**
-     * Get search class instance
-     * @param $prefixPath
-     * @return null | \Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Base
+     * Get search manager instance
+     * @return null | \Sugarcrm\Sugarcrm\Dav\Base\Principal\Manager
      */
-    public function getSearchObject($prefixPath)
+    public function getManager()
     {
-        $factory = new Search\Factory();
-        return $factory->getSearchClass($prefixPath);
+        return new Manager();
     }
 
     /**
@@ -38,12 +35,7 @@ class SugarPrincipal implements BackendInterface
      */
     public function getPrincipalsByPrefix($prefixPath = 'principals/users')
     {
-        $searchObject = $this->getSearchObject($prefixPath);
-        if ($searchObject) {
-            return $searchObject->getPrincipalsByPrefix();
-        }
-
-        return array();
+        return $this->getManager()->getPrincipalsByPrefix($prefixPath);
     }
 
     /**
@@ -51,18 +43,7 @@ class SugarPrincipal implements BackendInterface
      */
     public function getPrincipalByPath($path)
     {
-        $principalComponents = explode('/', $path);
-        if (count($principalComponents) != 3) {
-            return array();
-        }
-        $identify = array_pop($principalComponents);
-        $prefixPath = implode('/', $principalComponents);
-        $searchObject = $this->getSearchObject($prefixPath);
-        if ($searchObject) {
-            return $searchObject->getPrincipalByIdentify($identify);
-        }
-
-        return array();
+        return $this->getManager()->getPrincipalByIdentify($path);
     }
 
     /**
@@ -70,12 +51,7 @@ class SugarPrincipal implements BackendInterface
      */
     public function searchPrincipals($prefixPath, array $searchProperties, $test = 'allof')
     {
-        $searchObject = $this->getSearchObject($prefixPath);
-        if ($searchObject) {
-            return $searchObject->searchPrincipals($searchProperties, $test);
-        }
-
-        return array();
+        return $this->getManager()->searchPrincipals($prefixPath, $searchProperties, $test);
     }
 
     /**
@@ -83,20 +59,7 @@ class SugarPrincipal implements BackendInterface
      */
     public function findByUri($uri, $principalPrefix)
     {
-        $uri = strtolower($uri);
-        if (strpos($uri, 'mailto:') !== 0) {
-            return null;
-        }
-        $result = $this->searchPrincipals(
-            $principalPrefix,
-            array('{http://sabredav.org/ns}email-address' => substr($uri, 7))
-        );
-
-        if ($result) {
-            return $result[0];
-        }
-
-        return null;
+        return $this->getManager()->findByUri($uri, $principalPrefix);
     }
 
     /**

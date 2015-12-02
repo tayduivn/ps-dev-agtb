@@ -16,4 +16,12 @@ namespace Sugarcrm\Sugarcrm\Dav\Base\Principal\Search;
 class Contacts extends Base
 {
     protected $moduleName = 'Contacts';
+
+    /**
+     * @inheritdoc
+     */
+    public static function getOrder()
+    {
+        return 100;
+    }
 }

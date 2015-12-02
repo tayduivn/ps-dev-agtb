@@ -12,17 +12,22 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Base\Principal\Search;
 
+use Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Format;
 
 class Users extends Base
 {
     protected $moduleName = 'Users';
 
     /**
-     * @inheritdoc
+     * @param string $prefixPath
+     * @param Format\StrategyInterface|null $formatStrategy
      */
-    protected function formatPrincipalString(\SugarBean $bean)
+    public function __construct($prefixPath = '', Format\StrategyInterface $formatStrategy = null)
     {
-        return $this->prefixPath . $bean->user_name;
+        parent::__construct(
+            $prefixPath,
+            $formatStrategy ? $formatStrategy : new Format\UserPrincipalStrategy($prefixPath)
+        );
     }
 
     /**
@@ -37,5 +42,13 @@ class Users extends Base
         }
 
         return parent::getPrincipalByIdentify($userID);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getOrder()
+    {
+        return 300;
     }
 }

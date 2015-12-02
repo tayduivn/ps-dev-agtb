@@ -13,8 +13,6 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Dav\Base\Principal;
 
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
-
 /**
  * Class SugarPrincipalTest
  * @package            Sugarcrm\SugarcrmTestsUnit\Dav\Base\Principal
@@ -28,13 +26,11 @@ class SugarPrincipalTest extends \PHPUnit_Framework_TestCase
         return array(
             array(
                 'prefixPath' => 'principals/users',
-                'searchObject' => 'Users',
                 'expectedMethod' => 'getPrincipalsByPrefix',
                 'expectedCount' => 1,
             ),
             array(
                 'prefixPath' => 'principals/contacts',
-                'searchObject' => 'Contacts',
                 'expectedMethod' => 'getPrincipalsByPrefix',
                 'expectedCount' => 1,
             ),
@@ -96,13 +92,11 @@ class SugarPrincipalTest extends \PHPUnit_Framework_TestCase
         return array(
             array(
                 'prefixPath' => 'principals/users',
-                'searchObject' => 'Users',
                 'expectedMethod' => 'searchPrincipals',
                 'expectedCount' => 1,
             ),
             array(
                 'prefixPath' => 'principals/contacts',
-                'searchObject' => 'Contacts',
                 'expectedMethod' => 'searchPrincipals',
                 'expectedCount' => 1,
             ),
@@ -111,28 +105,24 @@ class SugarPrincipalTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $prefixPath
-     * @param string $searchObject
      * @param string $expectedMethod
      * @param string $expectedCount
      * @covers       Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal::getPrincipalsByPrefix
      *
      * @dataProvider getPrincipalsByPrefixProvider
      */
-    public function testGetPrincipalsByPrefix($prefixPath, $searchObject, $expectedMethod, $expectedCount)
+    public function testGetPrincipalsByPrefix($prefixPath, $expectedMethod, $expectedCount)
     {
         $principalMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal')
-                              ->setMethods(array('getSearchObject'))
+                              ->setMethods(array('getManager'))
                               ->getMock();
-        $searchMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\\' . $searchObject)
-                           ->setConstructorArgs(array($prefixPath))
-                           ->setMethods(array('getPrincipalsByPrefix'))
-                           ->getMock();
+        $managerMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Manager')
+                            ->setMethods(array('getPrincipalsByPrefix'))
+                            ->getMock();
 
-        $principalMock->expects($this->once())
-                      ->method('getSearchObject')
-                      ->with($prefixPath)
-                      ->willReturn($searchMock);
-        $searchMock->expects($this->exactly($expectedCount))->method($expectedMethod);
+        $principalMock->expects($this->once())->method('getManager')->willReturn($managerMock);
+
+        $managerMock->expects($this->exactly($expectedCount))->method($expectedMethod);
 
         $principalMock->getPrincipalsByPrefix($prefixPath);
 
@@ -152,12 +142,18 @@ class SugarPrincipalTest extends \PHPUnit_Framework_TestCase
     {
         $sugarPrincipal = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal')
                                ->disableOriginalConstructor()
-                               ->setMethods(array('searchPrincipals'))
+                               ->setMethods(array('getManager'))
                                ->getMock();
 
-        $sugarPrincipal->expects($this->exactly($searchPrincipalsCallCount))
-                       ->method('searchPrincipals')
-                       ->with($principalPrefix, $searchPattern);
+        $managerMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Manager')
+                            ->setMethods(array('searchPrincipals'))
+                            ->getMock();
+
+        $sugarPrincipal->expects($this->once())->method('getManager')->willReturn($managerMock);
+
+        $managerMock->expects($this->exactly($searchPrincipalsCallCount))
+                    ->method('searchPrincipals')
+                    ->with($principalPrefix, $searchPattern);
 
         $sugarPrincipal->findByUri($uri, $principalPrefix);
     }
@@ -183,17 +179,22 @@ class SugarPrincipalTest extends \PHPUnit_Framework_TestCase
         $expectedCount
     ) {
         $principalMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal')
-                              ->setMethods(array('getSearchObject'))
+                              ->setMethods(array('getManager'))
                               ->getMock();
+
+        $managerMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Manager')
+                            ->setMethods(array('getSearchObject'))
+                            ->getMock();
+
         $searchMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\\' . $searchObject)
                            ->setConstructorArgs(array($prefixPath))
                            ->setMethods(array('getPrincipalByIdentify'))
                            ->getMock();
 
-        $principalMock->expects($this->once())
-                      ->method('getSearchObject')
-                      ->with($prefixPath)
-                      ->willReturn($searchMock);
+        $principalMock->expects($this->once())->method('getManager')->willReturn($managerMock);
+        $managerMock->expects($this->once())->method('getSearchObject')->willReturn($searchMock);
+
+
         $searchMock->expects($this->exactly($expectedCount))->method($expectedMethod)->with($identify);
 
         $principalMock->getPrincipalByPath($path);
@@ -201,7 +202,6 @@ class SugarPrincipalTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $prefixPath
-     * @param string $searchObject
      * @param string $expectedMethod
      * @param string $expectedCount
      *
@@ -209,21 +209,19 @@ class SugarPrincipalTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider searchPrincipalsProvider
      */
-    public function testSearchPrincipals($prefixPath, $searchObject, $expectedMethod, $expectedCount)
+    public function testSearchPrincipals($prefixPath, $expectedMethod, $expectedCount)
     {
         $principalMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\SugarPrincipal')
-                              ->setMethods(array('getSearchObject'))
+                              ->setMethods(array('getManager'))
                               ->getMock();
-        $searchMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\\' . $searchObject)
-                           ->setConstructorArgs(array($prefixPath))
-                           ->setMethods(array('searchPrincipals'))
-                           ->getMock();
 
-        $principalMock->expects($this->once())
-                      ->method('getSearchObject')
-                      ->with($prefixPath)
-                      ->willReturn($searchMock);
-        $searchMock->expects($this->exactly($expectedCount))->method($expectedMethod);
+        $managerMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Principal\Manager')
+                            ->setMethods(array('searchPrincipals'))
+                            ->getMock();
+
+        $principalMock->expects($this->once())->method('getManager')->willReturn($managerMock);
+
+        $managerMock->expects($this->exactly($expectedCount))->method($expectedMethod);
 
         $principalMock->searchPrincipals($prefixPath, array());
     }

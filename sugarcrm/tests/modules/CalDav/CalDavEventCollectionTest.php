@@ -44,11 +44,15 @@ class CalDavEventCollectionTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestCalDavUtilities::deleteAllCreatedCalendars();
         SugarTestCalDavUtilities::deleteCreatedEvents();
-        SugarTestMeetingUtilities::removeAllCreatedMeetings();
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestMeetingUtilities::removeMeetingContacts();
         SugarTestMeetingUtilities::removeMeetingUsers();
+        SugarTestMeetingUtilities::removeAllCreatedMeetings();
+
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestLeadUtilities::removeAllCreatedLeads();
         parent::tearDown();
     }
 
@@ -582,6 +586,106 @@ END:VCALENDAR',
                 'vEvent' => $this->getEventTemplate('recurring-deleted'),
             ),
         );
+    }
+
+    public function mapParticipantsToBeansProvider()
+    {
+        $ids = array();
+        for ($i=0; $i<12; $i++) {
+            $ids[] = \create_guid();
+        }
+
+        return array(
+            array(
+                'vEvent' => $this->getEventTemplate('vevent'),
+                'sugarUsers' => array(
+                    'Contacts' => array(
+                        $ids[0] => array('email' => 'test0@test.com')
+                    ),
+                    'Users' => array(),
+                    'Leads' => array(
+                        $ids[1] => array('email' => 'test0@test.com'),
+                        $ids[2] => array('email' => 'test2@test.com')
+                    ),
+                ),
+                'links' => array(
+                    'test0@test.com' => array('beanName' => 'Contacts', 'beanId' => $ids[0]),
+                    'test2@test.com' => array('beanName' => 'Leads', 'beanId' => $ids[2]),
+                ),
+            ),
+            array(
+                'vEvent' => $this->getEventTemplate('vevent'),
+                'sugarUsers' => array(
+                    'Contacts' => array(),
+                    'Users' => array(
+                        $ids[6] => array('email1' => 'test@test.com', 'id' => $ids[6], 'new_with_id' => true),
+                        $ids[7] => array('email1' => 'test1@test.com', 'id' => $ids[7], 'new_with_id' => true)
+                    ),
+                    'Leads' => array(
+                        $ids[8] => array('email' => 'test1@test.com'),
+                        $ids[9] => array('email' => 'test0@test.com')
+                    ),
+                ),
+                'links' => array(
+                    'test@test.com' => array('beanName' => 'Users', 'beanId' => $ids[6]),
+                    'test1@test.com' => array('beanName' => 'Leads', 'beanId' => $ids[8]),
+                    'test0@test.com' => array('beanName' => 'Leads', 'beanId' => $ids[9]),
+                ),
+            ),
+
+            array(
+                'vEvent' => $this->getEventTemplate('recurring'),
+                'sugarUsers' => array(
+                    'Contacts' => array(),
+                    'Users' => array(
+                        $ids[10] => array('email1' => 'test@test.com', 'id' => $ids[10], 'new_with_id' => true),
+                    ),
+                    'Leads' => array(
+                        $ids[11] => array('email' => 'test3@test.com'),
+                    ),
+                ),
+                'links' => array(
+                    'test@test.com' => array('beanName' => 'Users', 'beanId' => $ids[10]),
+                    'test3@test.com' => array('beanName' => 'Leads', 'beanId' => $ids[11]),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @param string $vEventText
+     * @param array $beansToCreate
+     * @param array $expectedLink
+     *
+     * @covers \CalDavEventCollection::mapParticipantsToBeans
+     *
+     * @dataProvider mapParticipantsToBeansProvider
+     */
+    public function testMapParticipantsToBeans($vEventText, $beansToCreate, $expectedLink)
+    {
+        $sugarUser = SugarTestUserUtilities::createAnonymousUser();
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+        $event = SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => $vEventText,
+            'calendarid' => $calendarID,
+            'eventURI' => 'test'
+        ));
+
+        foreach ($beansToCreate['Contacts'] as $id => $params) {
+            SugarTestContactUtilities::createContact($id, $params);
+        }
+
+        foreach ($beansToCreate['Leads'] as $id => $params) {
+            SugarTestLeadUtilities::createLead($id, $params);
+        }
+
+        foreach ($beansToCreate['Users'] as $id => $params) {
+            SugarTestUserUtilities::createAnonymousUser(true, 0, $params);
+        }
+
+        $result = TestReflection::callProtectedMethod($event, 'mapParticipantsToBeans');
+
+        $this->assertEquals($expectedLink, $result);
     }
 
     /**
