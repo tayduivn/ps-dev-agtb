@@ -113,6 +113,12 @@ class OraclePreparedStatement extends PreparedStatement
             'bool'             => SQLT_INT,
     );
 
+    public function __destruct() {
+        if(is_resource($this->stmt)){
+            oci_free_statement($this->stmt);
+        }
+    }
+
     public function preparePreparedStatement( $msg = '' )
     {
         if(empty($this->parsedSQL)) {
