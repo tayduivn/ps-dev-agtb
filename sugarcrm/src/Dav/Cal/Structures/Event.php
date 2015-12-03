@@ -295,8 +295,9 @@ class Event
             $found->setType($type);
             if ($isChanged) {
                 $this->setCustomized();
+                return true;
             }
-            return boolval($isChanged);
+            return false;
         }
 
         $participant->setType($type);

@@ -616,12 +616,12 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
         return array(
             'id' => $event['id'],
             'uri' => $event['uri'],
-            'lastmodified' => strtotime($event['date_modified']),
+            'lastmodified' => strtotime($event['date_modified'] . ' UTC'),
             'etag' => '"' . $event['etag'] . '"',
-            'calendarid' => $event['calendarid'],
+            'calendarid' => $event['calendar_id'],
             'size' => $event['data_size'],
-            'calendardata' => $event['calendardata'],
-            'component' => strtolower($event['componenttype']),
+            'calendardata' => $event['calendar_data'],
+            'component' => strtolower($event['component_type']),
         );
     }
 
@@ -685,8 +685,8 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
     {
         return array(
             'uri' => $scheduling['uri'],
-            'calendardata' => $scheduling['calendardata'],
-            'lastmodified' => strtotime($scheduling['date_modified']),
+            'calendardata' => $scheduling['calendar_data'],
+            'lastmodified' => strtotime($scheduling['date_modified'] . ' UTC'),
             'etag' => '"' . $scheduling['etag'] . '"',
             'size' => $scheduling['data_size'],
         );

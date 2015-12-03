@@ -47,17 +47,17 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
                         'uri' => '_uri_',
                         'date_modified' => '2015-11-30',
                         'etag' => '??',
-                        'calendarid' => 'cal_id',
+                        'calendar_id' => 'cal_id',
                         'data_size' => '8bit',
-                        'calendardata' => 'CalendarData',
-                        'componenttype' => 'ComponentType',
+                        'calendar_data' => 'CalendarData',
+                        'component_type' => 'ComponentType',
                     )
                 ),
                 'expected' => array(
                     array(
                         'id' => '1',
                         'uri' => '_uri_',
-                        'lastmodified' => 1448830800,
+                        'lastmodified' => 1448841600,
                         'etag' => '"??"',
                         'calendarid' => 'cal_id',
                         'size' => '8bit',
@@ -101,8 +101,8 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
         $calendarDataMock->expects($this->once())->method('getCurrentUser')->willReturn($currentUserMock);
 
         $this->assertEquals($expected, $calendarDataMock->getCalendarObjects($calendarId));
-        $this->assertContains('caldav_events.calendarid = \'' . $calendarId, $query);
-        $this->assertNotContains('caldav_events.lastoccurence >= ' . strtotime($date), $query);
+        $this->assertContains('caldav_events.calendar_id = \'' . $calendarId, $query);
+        $this->assertNotContains('caldav_events.last_occurence >= ' . strtotime($date), $query);
     }
 
     /**
@@ -123,17 +123,17 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
                         'uri' => 'test',
                         'date_modified' => '2015-11-26 14:05:06',
                         'etag' => '6745fe5be1f72508792e1e09dd13b18b',
-                        'calendarid' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
+                        'calendar_id' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
                         'data_size' => '94',
-                        'calendardata' => "BEGIN:VCALENDAR\nBEGIN:VEVENT\nDTSTART;VALUE=DATE:20150826\nDURATION:P2D\nEND:VEVENT\nEND:VCALENDAR",
-                        'componenttype' => 'VEVENT',
+                        'calendar_data' => "BEGIN:VCALENDAR\nBEGIN:VEVENT\nDTSTART;VALUE=DATE:20150826\nDURATION:P2D\nEND:VEVENT\nEND:VCALENDAR",
+                        'component_type' => 'VEVENT',
                     ),
                 ),
                 'expected' => array(
                     array(
                         'id' => '11556963-7d57-dad2-9d40-56571157b76f',
                         'uri' => 'test',
-                        'lastmodified' => 1448535906,
+                        'lastmodified' => 1448546706,
                         'etag' => '"6745fe5be1f72508792e1e09dd13b18b"',
                         'calendarid' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
                         'size' => '94',
@@ -190,8 +190,8 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
         $calendarDataMock->expects($this->once())->method('getCurrentUser')->willReturn($currentUserMock);
 
         $this->assertEquals($expected, $calendarDataMock->getCalendarObjects($calendarId));
-        $this->assertContains('caldav_events.calendarid = \'' . $calendarId, $query);
-        $this->assertContains('caldav_events.lastoccurence >= ' . $expectedDate, $query);
+        $this->assertContains('caldav_events.calendar_id = \'' . $calendarId, $query);
+        $this->assertContains('caldav_events.last_occurence >= ' . $expectedDate, $query);
     }
 
     /**
@@ -217,27 +217,27 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
                         'uri' => '__URI_1__',
                         'date_modified' => '2015-11-26 14:05:06',
                         'etag' => '6745fe5be1f72508792e1e09dd13b18b',
-                        'calendarid' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
+                        'calendar_id' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
                         'data_size' => '94',
-                        'calendardata' => "BEGIN:VCALENDAR\nBEGIN:VEVENT\nDTSTART;VALUE=DATE:20150826\nDURATION:P2D\nEND:VEVENT\nEND:VCALENDAR",
-                        'componenttype' => 'VEVENT',
+                        'calendar_data' => "BEGIN:VCALENDAR\nBEGIN:VEVENT\nDTSTART;VALUE=DATE:20150826\nDURATION:P2D\nEND:VEVENT\nEND:VCALENDAR",
+                        'component_type' => 'VEVENT',
                     ),
                     array(
                         'id' => '69edda45-54cc-463a-19b7-56571a8eecdb',
                         'uri' => '__URI_1__',
                         'date_modified' => '2015-11-26 14:44:30',
                         'etag' => 'ecc90eda365fea22a8743b854514f537',
-                        'calendarid' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
+                        'calendar_id' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
                         'data_size' => '94',
-                        'calendardata' => "BEGIN:VCALENDAR\nBEGIN:VEVENT\nDTSTART;VALUE=DATE:20150626\nDURATION:P2D\nEND:VEVENT\nEND:VCALENDAR",
-                        'componenttype' => 'VEVENT',
+                        'calendar_data' => "BEGIN:VCALENDAR\nBEGIN:VEVENT\nDTSTART;VALUE=DATE:20150626\nDURATION:P2D\nEND:VEVENT\nEND:VCALENDAR",
+                        'component_type' => 'VEVENT',
                     ),
                 ),
                 'expected' => array(
                     array(
                         'id' => '11556963-7d57-dad2-9d40-56571157b76f',
                         'uri' => '__URI_1__',
-                        'lastmodified' => 1448535906,
+                        'lastmodified' => 1448546706,
                         'etag' => '"6745fe5be1f72508792e1e09dd13b18b"',
                         'calendarid' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
                         'size' => '94',
@@ -250,7 +250,7 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
                         'etag' => '"ecc90eda365fea22a8743b854514f537"',
                         'calendarid' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
                         'calendardata' => "BEGIN:VCALENDAR\nBEGIN:VEVENT\nDTSTART;VALUE=DATE:20150626\nDURATION:P2D\nEND:VEVENT\nEND:VCALENDAR",
-                        'lastmodified' => 1448538270,
+                        'lastmodified' => 1448549070,
                         'size' => '94',
                         'component' => 'vevent',
                     ),
@@ -259,7 +259,7 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
                 'expectedObject' => array(
                     'id' => '11556963-7d57-dad2-9d40-56571157b76f',
                     'uri' => '__URI_1__',
-                    'lastmodified' => 1448535906,
+                    'lastmodified' => 1448546706,
                     'etag' => '"6745fe5be1f72508792e1e09dd13b18b"',
                     'calendarid' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
                     'size' => '94',
@@ -275,17 +275,17 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
                         'uri' => 'test',
                         'date_modified' => '2015-11-26 14:05:06',
                         'etag' => '6745fe5be1f72508792e1e09dd13b18b',
-                        'calendarid' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
+                        'calendar_id' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
                         'data_size' => '94',
-                        'calendardata' => "BEGIN:VCALENDAR\nBEGIN:VEVENT\nDTSTART;VALUE=DATE:20150826\nDURATION:P2D\nEND:VEVENT\nEND:VCALENDAR",
-                        'componenttype' => 'VEVENT',
+                        'calendar_data' => "BEGIN:VCALENDAR\nBEGIN:VEVENT\nDTSTART;VALUE=DATE:20150826\nDURATION:P2D\nEND:VEVENT\nEND:VCALENDAR",
+                        'component_type' => 'VEVENT',
                     ),
                 ),
                 'expected' => array(
                     array(
                         'id' => '11556963-7d57-dad2-9d40-56571157b76f',
                         'uri' => 'test',
-                        'lastmodified' => 1448535906,
+                        'lastmodified' => 1448546706,
                         'etag' => '"6745fe5be1f72508792e1e09dd13b18b"',
                         'calendarid' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
                         'size' => '94',
@@ -297,7 +297,7 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
                 'expectedObject' => array(
                     'id' => '11556963-7d57-dad2-9d40-56571157b76f',
                     'uri' => 'test',
-                    'lastmodified' => 1448535906,
+                    'lastmodified' => 1448546706,
                     'etag' => '"6745fe5be1f72508792e1e09dd13b18b"',
                     'calendarid' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
                     'size' => '94',
@@ -343,7 +343,7 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $calendarDataMock->getMultipleCalendarObjects($calendarId, $uris));
 
-        $this->assertContains('caldav_events.calendarid = \'' . $calendarId, $query);
+        $this->assertContains('caldav_events.calendar_id = \'' . $calendarId, $query);
         $this->assertContains($expectedSqlPart, $query);
 
         $this->assertEquals($expectedObject, $calendarDataMock->getCalendarObject($calendarId, array_shift($uris)));
