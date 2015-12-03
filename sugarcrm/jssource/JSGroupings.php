@@ -321,8 +321,8 @@
                     'include/javascript/sugar7/plugins/DragdropSelect2.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ReminderTimeDefaults.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/fuse/fuse.js' => 'include/javascript/sugar_sidecar.min.js',
-
                     'include/javascript/tinymce4/jquery.tinymce.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/mousetrap/mousetrap.min.js' => 'include/javascript/sugar_sidecar.min.js',
                 )
            ),
 
@@ -345,6 +345,7 @@
                 'include/javascript/sugar7/sweetspot.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/import-export-warnings.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/browser-notification.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/shortcuts.js' => 'include/javascript/sugar_grp7.min.js',
             ),
 
             //BEGIN SUGARCRM flav=ent ONLY
@@ -363,6 +364,7 @@
                 'include/javascript/sugar7/hbs-helpers.js' => 'portal2/sugar_portal.min.js',
                 'include/javascript/sugar7/language.js' => 'portal2/sugar_portal.min.js',
                 'custom/include/javascript/voodoo.js' => 'portal2/sugar_portal.min.js',
+                'include/javascript/sugar7/shortcuts.js' => 'portal2/sugar_portal.min.js',
             ),
 
             $pmse_br = array(
