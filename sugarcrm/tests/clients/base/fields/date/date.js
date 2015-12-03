@@ -104,7 +104,7 @@ describe('Base.Field.Date', function() {
 
         it('should use default value if model has none', function() {
             var fieldDef = {display_default: '+1 day'},
-                field = SugarTest.createField('base', 'date', 'date', 'edit', fieldDef);
+                field = SugarTest.createField('base', 'date', 'date', 'detail', fieldDef);
 
             field.render();
 
@@ -117,7 +117,7 @@ describe('Base.Field.Date', function() {
 
         it('should not use default value if default value is invalid', function() {
             var fieldDef = {display_default: 'every other week'},
-                field = SugarTest.createField('base', 'date', 'date', 'edit', fieldDef);
+                field = SugarTest.createField('base', 'date', 'date', 'detail', fieldDef);
 
             field.render();
 
@@ -130,7 +130,7 @@ describe('Base.Field.Date', function() {
         it('should not use default value if model has a value', function() {
             var model = new app.data.createBean('Accounts', {date: '1985-01-26'}),
                 fieldDef = {display_default: '+1 day'},
-                field = SugarTest.createField('base', 'date', 'date', 'edit', fieldDef, 'Accounts', model);
+                field = SugarTest.createField('base', 'date', 'date', 'detail', fieldDef, 'Accounts', model);
 
             field.render();
 

@@ -140,6 +140,10 @@ describe('Base.Field.DateTimeCombo', function() {
 
     describe('defaults', function() {
         beforeEach(function() {
+            SugarTest.testMetadata.init();
+            SugarTest.loadHandlebarsTemplate('datetimecombo', 'field', 'base', 'edit');
+            SugarTest.testMetadata.set();
+
             var tomorrow = new Date('Sun Jan 15 1984 19:20:42');
 
             sinon.collection.stub(app.date, 'parseDisplayDefault')
@@ -151,6 +155,11 @@ describe('Base.Field.DateTimeCombo', function() {
                 .withArgs('timepref').returns('h:ia');
         });
 
+        afterEach(function() {
+            SugarTest.testMetadata.dispose();
+            Handlebars.templates = {};
+        });
+        
         it('should use default value if model has none', function() {
             var expectedDate = app.date('1984-01-15 19:20').format(),
                 fieldDef = {display_default: '+1 day'},

@@ -48,16 +48,7 @@
                  * @param {jQuery} $tooltips
                  */
                 destroy: function($tooltips) {
-                    if ($tooltips) {
-                        _.each($tooltips, function(tooltip) {
-                            var plugin;
-                            if (this.has(tooltip)) {
-                                plugin = this.get(tooltip);
-                                plugin.leave(plugin); //need to call leave() first because of a bug in tooltip v3
-                                plugin.destroy();
-                            }
-                        }, this);
-                    }
+                    $tooltips.tooltip('destroy');
                 },
 
                 /**

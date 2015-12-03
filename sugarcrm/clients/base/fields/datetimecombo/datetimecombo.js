@@ -23,6 +23,18 @@
      */
     secondaryFieldTag: 'input[data-type=time]',
 
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        /**
+         * If a time picker has been initialized on the field or not.
+         *
+         * @type {boolean}
+         * @private
+         */
+        this._hasTimePicker = false;
+    },
+
     /**
      * @inheritdoc
      *
@@ -154,6 +166,7 @@
         this._enableDuration(options);
 
         this.$(this.secondaryFieldTag).timepicker(options);
+        this._hasTimePicker = true;
     },
 
     /**
@@ -452,7 +465,7 @@
      * @inheritdoc
      */
     _dispose: function() {
-        if (this.$(this.secondaryFieldTag).timepicker) {
+        if (this._hasTimePicker) {
             this.$(this.secondaryFieldTag).timepicker('remove');
         }
 
