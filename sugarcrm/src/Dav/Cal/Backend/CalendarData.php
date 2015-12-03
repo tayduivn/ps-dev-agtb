@@ -134,11 +134,25 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
     public function getCalendarsForUser($principalUri)
     {
         $result = array();
+
         $userHelper = $this->getUserHelper();
-        $calendars = $userHelper->getCalendars($principalUri);
-        if ($calendars) {
+        $user = $userHelper->getUserByPrincipalString($principalUri);
+
+        if ($user) {
+            $calendarBean = $this->getCalendarBean();
+            $query = $this->getSugarQuery();
+            $query->from($calendarBean);
+            $query->where()->equals('assigned_user_id', $user->id);
+            $calendars = $query->execute();
+
+            if (empty($calendars)) {
+                $calendars = array(
+                    $calendarBean->createDefaultForUser($user)
+                );
+            }
+
             foreach ($calendars as $calendar) {
-                $result[] = $calendar->toCalDavArray($this->propertyMap, $userHelper);
+                $result[] = $this->calendarSQLRowToCalDavArray($calendar, $principalUri);
             }
         }
 
@@ -164,7 +178,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
 
         $propPatch->handle($supportedProperties, function ($mutations) use ($calendarId) {
             $calendar = $this->getCalendarBean($calendarId);
-            if ($calendar) {
+            if ($calendar->id) {
 
                 foreach ($mutations as $propertyName => $propertyValue) {
 
@@ -200,28 +214,23 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function getCalendarObjects($calendarId)
     {
-        global $current_user;
-
         $events = array();
         $calendar = $this->getCalendarBean($calendarId);
-        if ($calendar->load_relationship('calendar_events')) {
+        if ($calendar->id) {
             $eventBean = $this->getEventsBean();
-            $query = new \SugarQuery();
+            $query = $this->getSugarQuery();
             $query->from($eventBean);
-            $query->where()->equals('calendar_id', $calendarId);
+            $query->where()->equals('calendar_id', $calendar->id);
 
-            $interval = $current_user->getPreference('caldav_interval');
+            $interval = $this->getCurrentUser()->getPreference('caldav_interval');
             if ($interval != 0) {
-                $date = new \DateTime('NOW', new \DateTimeZone('UTC'));
-                $date = $date->modify("-" . $interval)->format('U');
-                
+                $date = $this->getDateTime()->modify("-" . $interval)->format('U');
                 $query->where()->gte('last_occurence', $date);
             }
 
-            $result = $eventBean->fetchFromQuery($query);
-
-            foreach ($result as $bean) {
-                $events[] = $bean->toCalDavArray();
+            $result = $query->execute();
+            foreach ($result as $event) {
+                $events[] = $this->eventSQLRowToCalDavArray($event);
             }
         }
 
@@ -229,15 +238,36 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
     }
 
     /**
+     * Return current user.
+     * Need to mock result of User in UTs.
+     *
+     * @return \User
+     */
+    protected function getCurrentUser()
+    {
+        global $current_user;
+        return $current_user;
+    }
+
+    /**
+     * Get DateTime object with current time
+     * Need to mock result of DateTime in UTs.
+     *
+     * @return \DateTime
+     */
+    protected function getDateTime()
+    {
+        return new \DateTime('NOW', new \DateTimeZone('UTC'));
+    }
+
+    /**
      * @inheritdoc
      */
     public function getCalendarObject($calendarId, $objectUri)
     {
-        $eventBean = $this->getEventsBean();
-        $events = $eventBean->getByURI($calendarId, array($objectUri), 1);
-        $event = array_shift($events);
-        if ($event && $event->id) {
-            return $event->toCalDavArray();
+        $event = $this->getMultipleCalendarObjects($calendarId, array($objectUri));
+        if (isset($event[0])) {
+            return $event[0];
         }
 
         return array();
@@ -249,11 +279,27 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
     public function getMultipleCalendarObjects($calendarId, array $uris)
     {
         $events = array();
+        $calendar = $this->getCalendarBean($calendarId);
+        if ($calendar->id) {
+            $eventBean = $this->getEventsBean();
+            $query = $this->getSugarQuery();
+            $query->from($eventBean);
+            $query->where()->equals('calendar_id', $calendarId);
 
-        $eventBean = $this->getEventsBean();
-        $result = $eventBean->getByURI($calendarId, $uris);
-        foreach ($result as $bean) {
-            $events[] = $bean->toCalDavArray();
+            if (count($uris) == 1) {
+                $query->where()->equals('caldav_events.uri', reset($uris));
+                $query->limit(1);
+            } else {
+                $query->where()->in('caldav_events.uri', $uris);
+            }
+
+            $result = $query->execute();
+
+            if (!empty($result)) {
+                foreach ($result as $event) {
+                    $events[] = $this->eventSQLRowToCalDavArray($event);
+                }
+            }
         }
 
         return $events;
@@ -440,20 +486,13 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
     public function getSchedulingObject($principalUri, $objectUri)
     {
         $userHelper = $this->getUserHelper();
-        $schedulingBean = $this->getSchedulingBean();
         $user = $userHelper->getUserByPrincipalString($principalUri);
-        $result = array();
 
         if (!$user) {
-            return $result;
+            return array();
         }
 
-        $scheduling = $schedulingBean->getByUri($objectUri, $user->id);
-        if (!$scheduling) {
-            return null;
-        }
-
-        return $scheduling->toCalDavArray();
+        return $this->getSchedulingByUri($objectUri, $user->id);
     }
 
     /**
@@ -462,7 +501,6 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
     public function getSchedulingObjects($principalUri)
     {
         $userHelper = $this->getUserHelper();
-        $schedulingBean = $this->getSchedulingBean();
         $user = $userHelper->getUserByPrincipalString($principalUri);
         $result = array();
 
@@ -470,12 +508,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
             return $result;
         }
 
-        $schedulings = $schedulingBean->getByAssigned($user->id);
-        foreach ($schedulings as $scheduling) {
-            $result[] = $scheduling->toCalDavArray();
-        }
-
-        return $result;
+        return $this->getSchedulingByAssigned($user->id);
     }
 
     /**
@@ -522,7 +555,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
         }
 
         $changeBean = $this->getChangesBean();
-        $query = new \SugarQuery();
+        $query = $this->getSugarQuery();
 
         $query->from($changeBean);
 
@@ -573,4 +606,122 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
         return $out;
     }
 
+    /**
+     * Convert sql row to array
+     * @param array $event
+     * @return array
+     */
+    protected function eventSQLRowToCalDavArray($event)
+    {
+        return array(
+            'id' => $event['id'],
+            'uri' => $event['uri'],
+            'lastmodified' => strtotime($event['date_modified'] . ' UTC'),
+            'etag' => '"' . $event['etag'] . '"',
+            'calendarid' => $event['calendar_id'],
+            'size' => $event['data_size'],
+            'calendardata' => $event['calendar_data'],
+            'component' => strtolower($event['component_type']),
+        );
+    }
+
+    /**
+     * Retrieve all scheduling objects by user
+     * @param string $userId
+     * @return array
+     */
+    public function getSchedulingByAssigned($userId)
+    {
+        $schedulingBean = $this->getSchedulingBean();
+
+        $query = $this->getSugarQuery();
+
+        $query->from($schedulingBean);
+        $query->where()->equals('assigned_user_id', $userId);
+
+        $schedulings = array();
+        $result = $query->execute();
+        if (!empty($result)) {
+            foreach ($result as $scheduling) {
+                $schedulings[] = $this->schedulingSQLRowToCalDavArray($scheduling);
+            }
+        }
+
+        return $schedulings;
+    }
+
+    /**
+     * @param $objectUri
+     * @param string $userId
+     * @return array
+     */
+    protected function getSchedulingByUri($objectUri, $userId)
+    {
+        $schedulingBean = $this->getSchedulingBean();
+
+        $query = $this->getSugarQuery();
+
+        $query->from($schedulingBean);
+        $query->where()->equals('uri', $objectUri);
+        $query->where()->equals('assigned_user_id', $userId);
+        $query->limit(1);
+
+        $result = $query->execute();
+
+        if (empty($result)) {
+            return null;
+        }
+
+        return $this->schedulingSQLRowToCalDavArray($result[0]);
+    }
+
+    /**
+     * Convert sql row to array
+     *
+     * @param array $scheduling
+     * @return array
+     */
+    protected function schedulingSQLRowToCalDavArray($scheduling)
+    {
+        return array(
+            'uri' => $scheduling['uri'],
+            'calendardata' => $scheduling['calendar_data'],
+            'lastmodified' => strtotime($scheduling['date_modified'] . ' UTC'),
+            'etag' => '"' . $scheduling['etag'] . '"',
+            'size' => $scheduling['data_size'],
+        );
+    }
+
+    /**
+     * Convert bean to CalDav calendar array format
+     *
+     * @param array  $calendar
+     * @param string $principalUri
+     *
+     * @return array
+     */
+    protected function calendarSQLRowToCalDavArray($calendar, $principalUri)
+    {
+        $result = array();
+
+        $result['id'] = $calendar['id'];
+        $result['uri'] = $calendar['uri'];
+
+        foreach ($this->propertyMap as $davProperty => $calendarProperty) {
+            $result[$davProperty] = $calendar[$calendarProperty];
+        }
+
+        $result['{' . CalDAV\Plugin::NS_CALDAV . '}supported-calendar-component-set'] =
+            new CalDAV\Xml\Property\SupportedCalendarComponentSet(explode(',', $calendar['components']));
+
+        $result['{' . CalDAV\Plugin::NS_CALENDARSERVER . '}getctag'] = 'http://sabre.io/ns/sync/' . $calendar['synctoken'];
+        $result['{http://sabredav.org/ns}sync-token'] = $calendar['synctoken'];
+
+        $result['{' . CalDAV\Plugin::NS_CALDAV . '}schedule-calendar-transp'] =
+            new CalDAV\Xml\Property\ScheduleCalendarTransp($calendar['transparent'] ? 'transparent' : 'opaque');
+
+        $result['principaluri'] = $principalUri;
+
+        return $result;
+    }
 }

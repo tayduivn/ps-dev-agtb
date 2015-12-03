@@ -370,21 +370,12 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                                  ->setMethods(array('getEmailAddressBean'))
                                  ->getMock();
 
-        $mapperMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\AcceptedMap')
-                           ->disableOriginalConstructor()
-                           ->setMethods(array('getMapping'))
-                           ->getMock();
-
         $eventMock = $this->getMockBuilder('\CalDavEvent')
                           ->disableOriginalConstructor()
                           ->setMethods(null)
                           ->getMock();
 
-        TestReflection::setProtectedValue($participantsMock, 'statusMapper', $mapperMock);
-
-        $mapperMock->expects($this->any())
-                   ->method('getMapping')
-                   ->willReturn(TestReflection::getProtectedValue($mapperMock, 'statusMap'));
+        TestReflection::setProtectedValue($participantsMock, 'statusMapper', new Dav\Base\Mapper\Status\AcceptedMap());
 
         $emailAddressMock = $this->getMockBuilder('\SugarEmailAddress')
                                  ->disableOriginalConstructor()
@@ -413,8 +404,12 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider prepareForDavProvider
      */
-    public function testPrepareForDav(array $davResult, array $usersResult, array $leadsResult, array $expectedResult)
-    {
+    public function testPrepareForDav(
+        array $davResult,
+        array $usersResult,
+        array $leadsResult,
+        array $expectedResult
+    ) {
         $participantsMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper')
                                  ->disableOriginalConstructor()
                                  ->setMethods(array('getUserPrimaryAddress'))
@@ -424,11 +419,6 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
                                   ->disableOriginalConstructor()
                                   ->setMethods(array('getModulesForSearch'))
                                   ->getMock();
-
-        $mapperMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\AcceptedMap')
-                           ->disableOriginalConstructor()
-                           ->setMethods(array('getMapping'))
-                           ->getMock();
 
         $eventMock = $this->getMockBuilder('\CalDavEvent')
                           ->disableOriginalConstructor()
@@ -512,12 +502,8 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
             'Prospect'
         ));
 
-        TestReflection::setProtectedValue($participantsMock, 'statusMapper', $mapperMock);
+        TestReflection::setProtectedValue($participantsMock, 'statusMapper', new Dav\Base\Mapper\Status\AcceptedMap());
         TestReflection::setProtectedValue($participantsMock, 'searchFactory', $searchFactoryMock);
-
-        $mapperMock->expects($this->any())
-                   ->method('getMapping')
-                   ->willReturn(TestReflection::getProtectedValue($mapperMock, 'statusMap'));
 
         $eventMock->expects($this->once())->method('getParticipants')->willReturn($davResult);
 

@@ -127,15 +127,21 @@ END:VCALENDAR',
         return array(
             array(
                 'principal' => 'principals/user',
-                'found' => array(
-                    'a1' => array('id' => 'a1'),
-                    'a2' => array('id' => 'a2'),
-                )
             ),
         );
     }
 
     public function getSchedulingObjectProvider()
+    {
+        return array(
+            array(
+                'principal' => 'principals/user',
+                'uri' => 'test.ics',
+            )
+        );
+    }
+
+    public function getDeleteSchedulingObjectProvider()
     {
         return array(
             array(
@@ -304,60 +310,75 @@ END:VCALENDAR',
 
     /**
      * @param string $principalUri
-     * @param array $foundBeans
      *
      * @covers       Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::getSchedulingObjects
      *
      * @dataProvider getSchedulingObjectsProvider
      */
-    public function testGetSchedulingObjects($principalUri, array $foundBeans)
+    public function testGetSchedulingObjects($principalUri)
     {
-        $calendarMock = $this->setUpSchedulingMocks($principalUri);
+        $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getUserHelper', 'getSchedulingByAssigned', 'schedulingSQLRowToCalDavArray'))
+            ->getMock();
 
-        $beans = array();
-        foreach ($foundBeans as $key => $value) {
-            $tmpMock = $this->getMockBuilder('\CalDavScheduling')
-                            ->disableOriginalConstructor()
-                            ->setMethods(array('toCalDavArray'))
-                            ->getMock();
-            $tmpMock->id = $value['id'];
-            $tmpMock->expects($this->once())->method('toCalDavArray');
-            $beans[$key] = $tmpMock;
+        $userHelperMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\UserHelper')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getUserByPrincipalString'))
+            ->getMock();
 
-        }
+        $this->userMock = $this->getMockBuilder('\User')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
 
-        $this->schedulingMock->expects($this->once())->method('getByAssigned')->with($this->userMock->id)
-                             ->willReturn($beans);
+        $userHelperMock->expects($this->once())
+            ->method('getUserByPrincipalString')
+            ->with($principalUri)
+            ->willReturn($this->userMock);
 
-        $calendarMock->getSchedulingObjects($principalUri);
+        $backendMock->expects($this->once())->method('getUserHelper')->willReturn($userHelperMock);
+
+        $backendMock->expects($this->any())->method('getSchedulingByAssigned');
+
+        $backendMock->getSchedulingObjects($principalUri);
     }
 
     /**
      * @param string $principalUri
      * @param string $objectUri
-     * @param array $foundBean
      *
      * @covers       Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::getSchedulingObject
      *
      * @dataProvider getSchedulingObjectProvider
      */
-    public function testGetSchedulingObject($principalUri, $objectUri, array $foundBean)
+    public function testGetSchedulingObject($principalUri, $objectUri)
     {
-        $calendarMock = $this->setUpSchedulingMocks($principalUri);
+        $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getUserHelper', 'getSchedulingByUri', 'schedulingSQLRowToCalDavArray'))
+            ->getMock();
 
-        $tmpMock = $this->getMockBuilder('\CalDavScheduling')
-                        ->disableOriginalConstructor()
-                        ->setMethods(array('toCalDavArray'))
-                        ->getMock();
-        $tmpMock->id = $foundBean['id'];
-        $tmpMock->expects($this->once())->method('toCalDavArray');
+        $userHelperMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\UserHelper')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getUserByPrincipalString'))
+            ->getMock();
 
-        $this->schedulingMock->expects($this->once())
-                             ->method('getByUri')
-                             ->with($objectUri, $this->userMock->id)
-                             ->willReturn($tmpMock);
+        $this->userMock = $this->getMockBuilder('\User')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
 
-        $calendarMock->getSchedulingObject($principalUri, $objectUri);
+        $userHelperMock->expects($this->once())
+            ->method('getUserByPrincipalString')
+            ->with($principalUri)
+            ->willReturn($this->userMock);
+
+        $backendMock->expects($this->once())->method('getUserHelper')->willReturn($userHelperMock);
+
+        $backendMock->expects($this->once())->method('getSchedulingByUri');
+
+        $backendMock->getSchedulingObject($principalUri, $objectUri);
     }
 
     /**
@@ -367,7 +388,7 @@ END:VCALENDAR',
      *
      * @covers       Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::deleteSchedulingObject
      *
-     * @dataProvider getSchedulingObjectProvider
+     * @dataProvider getDeleteSchedulingObjectProvider
      */
     public function testDeleteSchedulingObject($principalUri, $objectUri, array $foundBean)
     {
@@ -375,7 +396,7 @@ END:VCALENDAR',
 
         $tmpMock = $this->getMockBuilder('\CalDavScheduling')
                         ->disableOriginalConstructor()
-                        ->setMethods(array('toCalDavArray', 'mark_deleted'))
+                        ->setMethods(array('mark_deleted'))
                         ->getMock();
         $tmpMock->id = $foundBean['id'];
         $tmpMock->expects($this->once())->method('mark_deleted')->with($tmpMock->id);

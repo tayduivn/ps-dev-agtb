@@ -162,12 +162,7 @@ END:VCALENDAR',
     {
         $sugarUser = SugarTestUserUtilities::createAnonymousUser();
 
-        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser,
-            array(
-                '{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set' => new CalDAV\Xml\Property\SupportedCalendarComponentSet(array('VEVENT')),
-                '{DAV:}displayname' => 'Default calendar',
-                '{urn:ietf:params:xml:ns:caldav}schedule-calendar-transp' => new CalDAV\Xml\Property\ScheduleCalendarTransp('transparent'),
-            ));
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser);
         $propPatch = new PropPatch(array(
             '{DAV:}displayname' => 'myCalendar',
             '{urn:ietf:params:xml:ns:caldav}schedule-calendar-transp' => new CalDAV\Xml\Property\ScheduleCalendarTransp('opaque'),
@@ -212,7 +207,7 @@ END:VCALENDAR',
     public function testGetCalendarObjects()
     {
         $sugarUser = SugarTestUserUtilities::createAnonymousUser();
-        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser);
 
         $event1 = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
@@ -281,7 +276,7 @@ END:VCALENDAR',
     public function testCalendarQuery($calendarData, array $filters, $found)
     {
         $sugarUser = SugarTestUserUtilities::createAnonymousUser();
-        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser);
         $event = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => $calendarData,
             'calendarid' => $calendarID,
@@ -308,7 +303,7 @@ END:VCALENDAR',
     public function testGetCalendarObject()
     {
         $sugarUser = SugarTestUserUtilities::createAnonymousUser();
-        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser);
         SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -350,8 +345,8 @@ END:VCALENDAR',
     {
         $sugarUser = SugarTestUserUtilities::createAnonymousUser();
         $sugarUser1 = SugarTestUserUtilities::createAnonymousUser();
-        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
-        $calendarID1 = SugarTestCalDavUtilities::createCalendar($sugarUser1, array());
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser);
+        $calendarID1 = SugarTestCalDavUtilities::createCalendar($sugarUser1);
 
         SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
@@ -426,7 +421,7 @@ END:VCALENDAR',
     public function testDeleteCalendarObject()
     {
         $sugarUser = SugarTestUserUtilities::createAnonymousUser();
-        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser);
 
         $event = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
@@ -492,7 +487,7 @@ END:VCALENDAR',
     public function testGetChangesForCalendar()
     {
         $sugarUser = SugarTestUserUtilities::createAnonymousUser();
-        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser);
 
         $syncToken = 1;
         $syncLevel = 1;

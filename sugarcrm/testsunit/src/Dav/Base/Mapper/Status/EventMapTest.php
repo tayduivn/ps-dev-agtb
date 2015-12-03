@@ -12,8 +12,6 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Dav\Base\Helper;
 
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
-
 /**
  * Class EventMapTest
  * @package Sugarcrm\SugarcrmTestsUnit\Dav\Base\Helper
@@ -22,142 +20,87 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  */
 class EventMapTest extends \PHPUnit_Framework_TestCase
 {
-    public function getStatusMapProvider()
+    /**
+     * Provider for testGetCalDavValue.
+     *
+     * @return array
+     */
+    public function fromBeanProvider()
     {
         return array(
             array(
-                'appListString' => array(
-                    'meeting_status_dom' => array(
-                        'Planned' => 'Scheduled',
-                        'Held' => 'Held',
-                        'Not Held' => 'Canceled',
-                    ),
-                ),
-                'moduleDefs' => array(
-                    'status' =>
-                        array(
-                            'options' => 'meeting_status_dom',
-                        ),
-                ),
-                'moduleKey' => 'status',
-                'mapping' => array(
-                    'CANCELLED' => 'Not Held',
-                    'CONFIRMED' => 'Planned',
-                ),
-                'result' => array(
-                    'CANCELLED' => 'Not Held',
-                    'CONFIRMED' => 'Planned',
-                ),
+                'beanStatus' => 'Held',
+                'calDavStatus' => 'CANCELLED',
+                'expectedStatus' => 'CONFIRMED',
             ),
             array(
-                'appListString' => array(),
-                'moduleDefs' => array(
-                    'status' =>
-                        array(
-                            'options' => 'meeting_status_dom',
-                        ),
-                ),
-                'moduleKey' => 'status',
-                'mapping' => array(
-                    'CANCELLED' => 'Not Held',
-                    'CONFIRMED' => 'Planned',
-                ),
-                'result' => array(),
+                'beanStatus' => 'Planned',
+                'calDavStatus' => null,
+                'expectedStatus' => 'CONFIRMED',
             ),
             array(
-                'appListString' => array(
-                    'meeting_status_dom' => array(
-                        'Planned' => 'Scheduled',
-                        'Held' => 'Held',
-                        'Not Held' => 'Canceled',
-                    ),
-                ),
-                'moduleDefs' => array(),
-                'moduleKey' => 'status',
-                'mapping' => array(
-                    'CANCELLED' => 'Not Held',
-                    'CONFIRMED' => 'Planned',
-                ),
-                'result' => array(),
-            ),
-            array(
-                'appListString' => array(
-                    'meeting_status_dom' => array(
-                        'Planned' => 'Scheduled',
-                        'Held' => 'Held',
-                    ),
-                ),
-                'moduleDefs' => array(
-                    'status' =>
-                        array(
-                            'options' => 'meeting_status_dom',
-                        ),
-                ),
-                'moduleKey' => 'status',
-                'mapping' => array(
-                    'CANCELLED' => 'Not Held',
-                    'CONFIRMED' => 'Planned',
-                ),
-                'result' => array(
-                    'CONFIRMED' => 'Planned',
-                ),
+                'beanStatus' => 'Not Held',
+                'calDavStatus' => 'CONFIRMED',
+                'expectedStatus' => 'CANCELLED',
             ),
         );
     }
 
     /**
-     * @param array $appListStrings
-     * @param array $moduleDefs
-     * @param string $moduleKey
-     * @param array $mapping
-     * @param array $expectedMapping
+     * Provider for testGetSugarValue.
      *
-     * @covers       \Sugarcrm\Sugarcrm\Dav\Base\Helper\StatusMapHelper::getStatusMap
-     *
-     * @dataProvider getStatusMapProvider
+     * @return array
      */
-    public function testGetStatusMap(
-        array $appListStrings,
-        array $moduleDefs,
-        $moduleKey,
-        array $mapping,
-        array $expectedMapping
-    ) {
-        $mapperMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\EventMap')
-                           ->disableOriginalConstructor()
-                           ->setMethods(array('getAppListStrings', 'getLogger', 'getBean'))
-                           ->getMock();
+    public function fromCalDavProvider()
+    {
+        return array(
+            array(
+                'calDavStatus' => 'CONFIRMED',
+                'beanStatus' => 'Not Held',
+                'expectedStatus' => 'Planned',
+            ),
+            array(
+                'calDavStatus' => 'CONFIRMED',
+                'beanStatus' => 'Held',
+                'expectedStatus' => 'Held',
+            ),
+            array(
+                'calDavStatus' => 'CANCELLED',
+                'beanStatus' => null,
+                'expectedStatus' => 'Not Held',
+            ),
+        );
+    }
 
-        $eventMock = $this->getMockBuilder('\CalDavEventCollection')
-                          ->disableOriginalConstructor()
-                          ->setMethods(array('getBean'))
-                          ->getMock();
+    /**
+     * Test convert event status from Bean to CalDav.
+     *
+     * @param string $beanStatus
+     * @param string|null $calDavStatus
+     * @param string $expectedStatus
+     *
+     * @covers Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\EventMap::getCalDavValue
+     * @dataProvider fromBeanProvider
+     */
+    public function testGetCalDavValue($beanStatus, $calDavStatus, $expectedStatus)
+    {
+        $mapMock = $this->getMock('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\EventMap', null);
+        $this->assertEquals($expectedStatus, $mapMock->getCalDavValue($beanStatus, $calDavStatus));
+    }
 
-
-        $meetingsMock = $this->getMockBuilder('Meetings')
-                             ->disableOriginalConstructor()
-                             ->setMethods(null)
-                             ->getMock();
-
-        $meetingsMock->module_name = 'Meetings';
-
-        $loggerMock = $this->getMockBuilder('LoggerManager')
-                           ->disableOriginalConstructor()
-                           ->setMethods(array('error'))
-                           ->getMock();
-
-        $meetingsMock->field_defs = $moduleDefs;
-
-        $mapperMock->expects($this->once())->method('getAppListStrings')->willReturn($appListStrings);
-        $mapperMock->expects($this->any())->method('getLogger')->willReturn($loggerMock);
-
-        $eventMock->expects($this->once())->method('getBean')->willReturn($meetingsMock);
-
-        TestReflection::setProtectedValue($mapperMock, 'statusMap', $mapping);
-        TestReflection::setProtectedValue($mapperMock, 'statusField', $moduleKey);
-
-        $result = $mapperMock->getMapping($eventMock);
-
-        $this->assertEquals($expectedMapping, $result);
+    /**
+     * Test convert event status from CalDav to Bean.
+     *
+     * @param string $calDavStatus
+     * @param string|null $beanStatus
+     * @param string $expectedStatus
+     *
+     * @covers Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\EventMap::getSugarValue
+     * @dataProvider fromCalDavProvider
+     */
+    public function testGetSugarValue($calDavStatus, $beanStatus, $expectedStatus)
+    {
+        $mapMock = $this->getMock('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\EventMap', null);
+        $this->assertEquals($expectedStatus, $mapMock->getSugarValue($calDavStatus, $beanStatus));
     }
 }

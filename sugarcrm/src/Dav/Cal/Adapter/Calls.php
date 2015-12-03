@@ -48,6 +48,8 @@ class Calls extends CalDavAbstractAdapter implements AdapterInterface
             }
         }
 
+        $calDavBean->setStatus($this->getEventMap()->getCalDavValue($sugarBean->status, $calDavBean->getStatus()), $calendarComponent);
+
         if ($calDavBean->setStartDate($sugarBean->date_start, $calendarComponent)) {
             $isEventChanged = true;
         }
@@ -116,6 +118,12 @@ class Calls extends CalDavAbstractAdapter implements AdapterInterface
 
         /**@var \Call $sugarBean */
         if ($this->setBeanProperties($sugarBean, $calDavBean, $this->importBeanDataMap)) {
+            $isBeanChanged = true;
+        }
+
+        $status = $this->getEventMap()->getSugarValue($calDavBean->getStatus(), $sugarBean->status);
+        if ($sugarBean->status !== $status) {
+            $sugarBean->status = $status;
             $isBeanChanged = true;
         }
 

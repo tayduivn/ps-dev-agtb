@@ -177,7 +177,8 @@ class RRule
     {
         $value = (string)$value;
 
-        return boolval($this->setParameter('COUNT', $value) | $this->deleteParameter('UNTIL'));
+        $this->deleteParameter('UNTIL');
+        return $this->setParameter('COUNT', $value);
     }
 
     /**
@@ -190,7 +191,8 @@ class RRule
         if ($value != $this->getUntil()) {
             $until = $value->format('Ymd\THis\Z');
 
-            return boolval($this->setParameter('UNTIL', $until) | $this->deleteParameter('COUNT'));
+            $this->deleteParameter('COUNT');
+            return $this->setParameter('UNTIL', $until);
         }
 
         return false;
