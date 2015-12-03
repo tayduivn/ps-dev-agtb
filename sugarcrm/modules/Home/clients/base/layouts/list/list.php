@@ -13,6 +13,7 @@
 
 $viewdefs['Home']['base']['layout']['list'] = array(
     'name' => 'dashboard',
+    'type' => 'dashboard',
     'components' => array(
         array(
             'view' => 'dashboard-headerpane',
