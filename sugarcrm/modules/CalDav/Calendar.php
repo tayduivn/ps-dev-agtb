@@ -137,40 +137,6 @@ class CalDavCalendar extends SugarBean
     );
 
     /**
-     * Convert bean to CalDav calendar array format
-     *
-     * @param Base\Helper\UserHelper $userHelper Instance of userHelper
-     * @param array $propertyMap Mapping CalDav properties -> Calendar bean fields
-     *
-     * @return array
-     */
-    public function toCalDavArray(array $propertyMap, Base\Helper\UserHelper $userHelper)
-    {
-        $result = array();
-
-        $result['id'] = $this->id;
-        $result['uri'] = $this->uri;
-
-        foreach ($propertyMap as $davProperty => $calendarProperty) {
-            $result[$davProperty] = $this->$calendarProperty;
-        }
-
-        $result['{' . CalDAV\Plugin::NS_CALDAV . '}supported-calendar-component-set'] =
-            new CalDAV\Xml\Property\SupportedCalendarComponentSet($this->getComponents());
-
-        $result['{' . CalDAV\Plugin::NS_CALENDARSERVER . '}getctag'] = 'http://sabre.io/ns/sync/' . $this->synctoken;
-        $result['{http://sabredav.org/ns}sync-token'] = $this->synctoken;
-
-        $result['{' . CalDAV\Plugin::NS_CALDAV . '}schedule-calendar-transp'] =
-            new CalDAV\Xml\Property\ScheduleCalendarTransp($this->getTransparent());
-
-        $user = BeanFactory::getBean('Users', $this->assigned_user_id);
-        $result['principaluri'] = $userHelper->getPrincipalStringByUser($user);
-
-        return $result;
-    }
-
-    /**
      * Get calendar componets array
      * @return array | null
      */
@@ -214,8 +180,10 @@ class CalDavCalendar extends SugarBean
 
         $this->timezone = $vCalendarEvent->serialize();
         $this->save();
+        // TODO: Remove when after insert fetched_row will be present
+        $this->retrieve();
 
-        return $this;
+        return $this->fetched_row;
     }
 
     /**

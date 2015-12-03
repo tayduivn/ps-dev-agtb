@@ -146,7 +146,7 @@ class CallsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
 
         $calDavBean->setTitle('test new title', $calDavBean->setComponent('VEVENT'));
         $this->saveBean($calDavBean);
-        $calDavBean = BeanFactory::getBean($calDavBean->module_name, $calDavBean->id, array('use_cache' => false));
+        $calDavBean = BeanFactory::getBean($calDavBean->module_name, $calDavBean->id);
 
         $result = $callAdapter->import($callBean, $calDavBean);
         $this->assertTrue($result);

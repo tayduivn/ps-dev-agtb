@@ -19,71 +19,60 @@ abstract class MapBase
      * Status map
      * @var array
      */
-    protected $statusMap = array();
+    protected $map = array();
 
     /**
-     * Field name from module defs
-     * @var string
+     * Default sugar value
+     *
+     * @var mixed
      */
-    protected $statusField = 'status';
+    protected $defaultSugarValue = 'none';
 
     /**
-     * Retrieve logger instance
-     * @return \LoggerManager
+     * Default CalDav value
+     *
+     * @var mixed
      */
-    protected function getLogger()
+    protected $defaultCalDavValue = null;
+
+    /**
+     * Return Bean status by CalDav.
+     *
+     * @param string $calDavStatus
+     * @param string|null $beanStatus
+     * @return mixed
+     */
+    public function getSugarValue($calDavStatus, $beanStatus = null)
     {
-        return $GLOBALS['log'];
-    }
-
-    /**
-     * Get global application strings
-     * @return array
-     */
-    protected function getAppListStrings()
-    {
-        global $app_list_strings;
-
-        return $app_list_strings;
-    }
-
-    /**
-     * Filter statusMaps for valid mappings key and return it
-     * If mapping not found empty array should be returned to allow CalDav or SugarCRM module select the default value
-     * @param \CalDavEvent $event
-     * @return array
-     */
-    public function getMapping(\CalDavEvent $event)
-    {
-        $appStrings = $this->getAppListStrings();
-        $relatedModule = $event->getBean();
-        if (empty($relatedModule)) {
-            $this->getLogger()->error('CalDavEvent does not have related bean');
-            return array();
-        }
-        if (!isset($relatedModule->field_defs[$this->statusField]['options'])) {
-            $this->getLogger()->error('CalDavEvent can\'t retrieve ' . $this->statusField . ' options for module ' .
-                $relatedModule->module_name);
-
-            return array();
-        }
-
-        $optionsKey = $relatedModule->field_defs[$this->statusField]['options'];
-
-        if (!isset($appStrings[$optionsKey])) {
-            $this->getLogger()->error('CalDavEvent can\'t retrieve ' . $this->statusField . ' options for module ' .
-                $relatedModule->module_name);
-
-            return array();
-        }
-
-        $result = array();
-        foreach ($this->statusMap as $davKey => $sugarKey) {
-            if (isset($appStrings[$optionsKey][$sugarKey])) {
-                $result[$davKey] = $sugarKey;
+        $find = array();
+        if (isset($this->map[$calDavStatus])) {
+            if ($beanStatus !== null && in_array($beanStatus, $this->map[$calDavStatus])) {
+                return $beanStatus;
+            } else {
+                $find = $this->map[$calDavStatus];
             }
         }
+        return !empty($find) ? array_shift($find) : $this->defaultSugarValue;
+    }
 
-        return $result;
+    /**
+     * Return CalDav status by Bean.
+     *
+     * @param string $beanStatus
+     * @param string|null $calDavStatus
+     * @return mixed
+     */
+    public function getCalDavValue($beanStatus, $calDavStatus = null)
+    {
+        $find = array();
+        foreach ($this->map as $key => $value) {
+            if (in_array($beanStatus, $value)) {
+                if ($calDavStatus !== null && $key === $calDavStatus) {
+                    return $key;
+                }
+                $find[] = $key;
+            }
+        }
+        return !empty($find) ? array_shift($find) : $this->defaultCalDavValue;
     }
 }

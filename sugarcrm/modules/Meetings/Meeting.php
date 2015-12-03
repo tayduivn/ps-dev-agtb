@@ -188,10 +188,10 @@ class Meeting extends SugarBean {
         // Do any external API saving
         // Clear out the old external API stuff if we have changed types
         if (isset($this->fetched_row) && $this->fetched_row['type'] != $this->type ) {
-            $this->join_url = '';
-            $this->host_url = '';
-            $this->external_id = '';
-            $this->creator = '';
+            $this->join_url = null;
+            $this->host_url = null;
+            $this->external_id = null;
+            $this->creator = null;
         }
 
         if (!empty($this->type) && $this->type != 'Sugar' ) {
@@ -617,7 +617,7 @@ class Meeting extends SugarBean {
 		$content = $calDavEvent->prepareForInvite($this);
 
 		if ($content && file_put_contents($path, $content)) {
-            $attachment = new Attachment($path, "meeting.ics", Encoding::Base64, "text/calendar");
+            $attachment = new Attachment($path, "invite.ics", Encoding::Base64, "text/calendar");
             $mailer->addAttachment($attachment);
 		}
 

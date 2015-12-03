@@ -14,7 +14,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Dav\Base\Helper;
 
 use Sabre\VObject;
 use Sabre\VObject\Component\VCalendar as EventComponent;
-
+use Sugarcrm\Sugarcrm\Dav;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
@@ -578,22 +578,8 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
                          ->setMethods(array('getPreference'))
                          ->getMock();
 
-        $dateTimeHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
-                               ->disableOriginalConstructor()
-                               ->setMethods(null)
-                               ->getMock();
-
-        $intervalMapper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\IntervalMap')
-                               ->disableOriginalConstructor()
-                               ->setMethods(array('getMapping'))
-                               ->getMock();
-
-        $intervalMapper->expects($this->any())
-                       ->method('getMapping')
-                       ->willReturn(TestReflection::getProtectedValue($intervalMapper, 'statusMap'));
-
-        TestReflection::setProtectedValue($recurringMock, 'intervalMapper', $intervalMapper);
-        TestReflection::setProtectedValue($recurringMock, 'dateTimeHelper', $dateTimeHelper);
+        TestReflection::setProtectedValue($recurringMock, 'intervalMapper', new Dav\Base\Mapper\Status\IntervalMap);
+        TestReflection::setProtectedValue($recurringMock, 'dateTimeHelper', new Dav\Base\Helper\DateTimeHelper);
 
         $eventMock->expects($this->any())->method('getCurrentUser')->willReturn($userMock);
         $userMock->expects($this->any())->method('getPreference')->with('timezone')->willReturn('UTC');
@@ -608,7 +594,7 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
                          ->setMethods(array('getCurrentUser'))
                          ->getMock();
 
-            TestReflection::setProtectedValue($bean, 'dateTimeHelper', $dateTimeHelper);
+            TestReflection::setProtectedValue($bean, 'dateTimeHelper', new Dav\Base\Helper\DateTimeHelper);
 
             $bean->expects($this->any())->method('getCurrentUser')->willReturn($userMock);
             $recurringMock->expects($this->at($currentStep))->method('getEventBean')->willReturn($bean);
@@ -660,12 +646,6 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
         $eventResult,
         array $expectedMethods
     ) {
-
-        $dateTimeHelper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
-                               ->disableOriginalConstructor()
-                               ->setMethods(null)
-                               ->getMock();
-
         $recurringMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\RecurringHelper')
                               ->disableOriginalConstructor()
                               ->setMethods(array('getCalendarEventsObject', 'updateRecurringChildren'))
@@ -681,16 +661,7 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
                          ->setMethods(array('getPreference'))
                          ->getMock();
 
-        $intervalMapper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\IntervalMap')
-                               ->disableOriginalConstructor()
-                               ->setMethods(array('getMapping'))
-                               ->getMock();
-
-        $intervalMapper->expects($this->any())
-                       ->method('getMapping')
-                       ->willReturn(TestReflection::getProtectedValue($intervalMapper, 'statusMap'));
-
-        TestReflection::setProtectedValue($recurringMock, 'intervalMapper', $intervalMapper);
+        TestReflection::setProtectedValue($recurringMock, 'intervalMapper', new Dav\Base\Mapper\Status\IntervalMap);
 
         $eventMock->setCalendarEventData($currentEvent);
 
@@ -730,7 +701,7 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
                            ->method('isEventRecurring')
                            ->willReturn($isRecurring);
 
-        TestReflection::setProtectedValue($recurringMock, 'dateTimeHelper', $dateTimeHelper);
+        TestReflection::setProtectedValue($recurringMock, 'dateTimeHelper', new Dav\Base\Helper\DateTimeHelper);
 
         $result = $recurringMock->setRecurringInfo($eventMock, $recurringInfo);
 
@@ -768,6 +739,7 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
                               ->disableOriginalConstructor()
                               ->setMethods(array('getEventBean'))
                               ->getMock();
+
         $meetingsMock = $this->getMockBuilder('\Meeting')
                              ->disableOriginalConstructor()
                              ->setMethods(array('fetchFromQuery'))
@@ -782,15 +754,6 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
                                    ->disableOriginalConstructor()
                                    ->setMethods(array('getBean', 'getCurrentUser'))
                                    ->getMock();
-
-        $intervalMapper = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\IntervalMap')
-                               ->disableOriginalConstructor()
-                               ->setMethods(array('getMapping'))
-                               ->getMock();
-
-        $intervalMapper->expects($this->any())
-                       ->method('getMapping')
-                       ->willReturn(TestReflection::getProtectedValue($intervalMapper, 'statusMap'));
 
         $userMock = $this->getMockBuilder('\User')
                          ->disableOriginalConstructor()
@@ -812,7 +775,6 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
                          ->getMock();
 
             TestReflection::setProtectedValue($bean, 'dateTimeHelper', $dateTimeHelper);
-            TestReflection::setProtectedValue($bean, 'statusMapper', $intervalMapper);
 
             $bean->expects($this->any())->method('getCurrentUser')->willReturn($userMock);
             $recurringMock->expects($this->at($i))->method('getEventBean')->willReturn($bean);
@@ -835,8 +797,8 @@ class RecurringHelperTest extends \PHPUnit_Framework_TestCase
 
         TestReflection::setProtectedValue($recurringMock, 'dateTimeHelper', $dateTimeHelper);
         TestReflection::setProtectedValue($recurringEventMock, 'dateTimeHelper', $dateTimeHelper);
-        TestReflection::setProtectedValue($recurringEventMock, 'statusMapper', $intervalMapper);
-        TestReflection::setProtectedValue($recurringMock, 'intervalMapper', $intervalMapper);
+        TestReflection::setProtectedValue($recurringMock, 'intervalMapper', new Dav\Base\Mapper\Status\IntervalMap);
+        TestReflection::setProtectedValue($recurringMock, 'eventMapper', new Dav\Base\Mapper\Status\EventMap);
 
         $result = TestReflection::callProtectedMethod(
             $recurringMock,

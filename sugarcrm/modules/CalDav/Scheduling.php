@@ -151,7 +151,6 @@ class CalDavScheduling extends SugarBean
      * @param $objectUri
      * @param $userId
      * @return array
-     * @throws SugarQueryException
      */
     public function getByUri($objectUri, $userId)
     {
@@ -173,9 +172,8 @@ class CalDavScheduling extends SugarBean
 
     /**
      * Retrieve all scheduling objects by user
-     * @param int $userId
+     * @param string $userId
      * @return \SugarBean
-     * @throws SugarQueryException
      */
     public function getByAssigned($userId)
     {
@@ -187,18 +185,4 @@ class CalDavScheduling extends SugarBean
         return $this->fetchFromQuery($query);
     }
 
-    /**
-     * Convert bean to array which used by CalDav backend
-     * @return array
-     */
-    public function toCalDavArray()
-    {
-        return array(
-            'uri' => $this->uri,
-            'calendardata' => $this->calendardata,
-            'lastmodified' => strtotime($this->date_modified),
-            'etag' => '"' . $this->etag . '"',
-            'size' => $this->data_size,
-        );
-    }
 }

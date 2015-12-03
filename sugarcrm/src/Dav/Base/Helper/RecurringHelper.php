@@ -51,10 +51,16 @@ class RecurringHelper
      */
     protected $intervalMapper;
 
+    /**
+     * @var \Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\EventMap
+     */
+    protected $eventMapper;
+
     public function __construct()
     {
         $this->dateTimeHelper = new DateTimeHelper();
         $this->intervalMapper = new StatusMapper\IntervalMap();
+        $this->eventMapper = new StatusMapper\EventMap();
     }
 
     /**
@@ -143,11 +149,9 @@ class RecurringHelper
                 return null;
             }
 
-            $intervalMap = $this->intervalMapper->getMapping($event);
-
             $result = array();
-            if (isset($currentRule['FREQ']) && isset($intervalMap[$currentRule['FREQ']])) {
-                $result['type'] = $intervalMap[$currentRule['FREQ']];
+            if (isset($currentRule['FREQ'])) {
+                $result['type'] = $this->intervalMapper->getSugarValue($currentRule['FREQ']);
             } else {
                 $result['type'] = '';
             }
@@ -259,11 +263,11 @@ class RecurringHelper
         if ($currentRules && $this->isUnsupported($currentRules)) {
             return false;
         }
-        $intervalMap = array_flip($this->intervalMapper->getMapping($event));
+
         $newRules = array();
 
-        if (!empty($recurringInfo['type']) && isset($intervalMap[$recurringInfo['type']])) {
-            $newRules['FREQ'] = $intervalMap[$recurringInfo['type']];
+        if (!empty($recurringInfo['type'])) {
+            $newRules['FREQ'] = $this->intervalMapper->getCalDavValue($recurringInfo['type']);
         }
 
         if (!empty($recurringInfo['interval'])) {
@@ -355,7 +359,7 @@ class RecurringHelper
             $isChanged |= $event->setTitle($child->name, $component);
             $isChanged |= $event->setDescription($child->description, $component);
             $isChanged |= $event->setLocation($child->location, $component);
-            $isChanged |= $event->setStatus($child->status, $component);
+            $isChanged |= $event->setStatus($this->eventMapper->getCalDavValue($child->status), $component);
             $isChanged |= $event->setStartDate($child->date_start, $component);
             $isChanged |= $event->setEndOfEvent(
                 $child->date_end,

@@ -15,12 +15,10 @@ namespace Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status;
 
 class AcceptedMap extends MapBase
 {
-    protected $statusMap = array(
-        'NEEDS-ACTION' => 'none',
-        'ACCEPTED' => 'accept',
-        'DECLINED' => 'decline',
-        'TENTATIVE' => 'Tentative',
+    protected $map = array(
+        'NEEDS-ACTION' => array('none'),
+        'ACCEPTED'     => array('accept'),
+        'DECLINED'     => array('decline'),
+        'TENTATIVE'    => array('tentative'),
     );
-
-    protected $statusField = 'accept_status_users';
 }

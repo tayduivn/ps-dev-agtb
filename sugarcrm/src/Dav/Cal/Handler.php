@@ -70,7 +70,7 @@ class Handler
         global $current_user;
 
         if (!$calDavBean->parent_id && $calDavBean->id) {
-            $dbBean = \BeanFactory::getBean($calDavBean->module_name, $calDavBean->id, array('use_cache' => false));
+            $dbBean = \BeanFactory::getBean($calDavBean->module_name, $calDavBean->id);
             $calDavBean->parent_type = $dbBean->parent_type;
             $calDavBean->parent_id = $dbBean->parent_id;
         }
@@ -124,7 +124,7 @@ class Handler
      */
     protected function getParentBean($bean)
     {
-        return \BeanFactory::getBean($bean->module_name, $bean->repeat_parent_id, array('use_cache' => false));
+        return \BeanFactory::getBean($bean->module_name, $bean->repeat_parent_id);
     }
 
     /**
