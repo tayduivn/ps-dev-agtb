@@ -578,7 +578,7 @@ $dictionary['RevenueLineItem'] = array(
             'source' => 'non-db',
         ),
         'best_case' => array(
-            'formula' => 'string($total_amount)',
+            'formula' => 'ifElse(equal($best_case, ""), string($total_amount), $best_case)',
             'calculated' => true,
             'name' => 'best_case',
             'vname' => 'LBL_BEST',
@@ -599,7 +599,7 @@ $dictionary['RevenueLineItem'] = array(
             //END SUGARCRM flav!=ent ONLY
         ),
         'likely_case' => array(
-            'formula' => 'string($total_amount)',
+            'formula' => 'ifElse(equal($likely_case,""),string($total_amount),$likely_case)',
             'calculated' => true,
             'name' => 'likely_case',
             'vname' => 'LBL_LIKELY',
@@ -621,7 +621,7 @@ $dictionary['RevenueLineItem'] = array(
             //END SUGARCRM flav!=ent ONLY
         ),
         'worst_case' => array(
-            'formula' => 'string($total_amount)',
+            'formula' => 'ifElse(equal($worst_case, ""), string($total_amount), $worst_case)',
             'calculated' => true,
             'name' => 'worst_case',
             'vname' => 'LBL_WORST',
