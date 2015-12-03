@@ -98,6 +98,10 @@
                         this._buildGridsFromPanelsMetadata();
                     }
                 });
+
+                this.once('render', function() {
+                    app.analytics.trackPageView('/dashlet/' + this.name);
+                });
             },
             /**
              * Build grid panel metadata based on panel span size

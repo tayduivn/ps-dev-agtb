@@ -23,7 +23,7 @@
 {/if}
 {$SUGAR_JS}
 
-{sugar_getscript file="sidecar/lib/mousetrap/mousetrap.js"}
+{sugar_getscript file="include/javascript/mousetrap/mousetrap.min.js"}
 
 {literal}
 <script type="text/javascript">

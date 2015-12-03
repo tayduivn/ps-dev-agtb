@@ -100,21 +100,27 @@ class MetaDataManagerMobile extends MetaDataManager
      */
     public function getTabList()
     {
-        // replicate the essential part of the behavior of the private loadMapping() method in SugarController
-        foreach (SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
-            require $file;
+        $cache = SugarCache::instance();
+        $wireless_module_registry_keys = $cache->wireless_module_registry_keys;
+
+        if (empty($wireless_module_registry_keys)) {
+            // replicate the essential part of the behavior of the private loadMapping() method in SugarController
+            foreach (SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
+                require $file;
+            }
+
+            if (isset($wireless_module_registry) && is_array($wireless_module_registry)) {
+                $wireless_module_registry_keys = array_keys($wireless_module_registry);
+                $cache->set('wireless_module_registry_keys', $wireless_module_registry_keys);
+            } else {
+                $wireless_module_registry_keys = array();
+            }
         }
 
         // Forcibly remove the Users module
-        // So if they have added it, remove it here
-        if (isset($wireless_module_registry['Users'])) {
-            unset($wireless_module_registry['Users']);
-        }
+        $wireless_module_registry_keys = array_diff($wireless_module_registry_keys, array('Users'));
 
-        // $wireless_module_registry is defined in the file loaded above
-        return isset($wireless_module_registry) && is_array($wireless_module_registry) ?
-            array_keys($wireless_module_registry) :
-            array();
+        return $wireless_module_registry_keys;
     }
 
     public function getQuickcreateList() {

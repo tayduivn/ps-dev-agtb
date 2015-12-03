@@ -33,6 +33,7 @@ describe('Opportunities.Base.View.MergeDuplicates', function() {
         collection = new Backbone.Collection([modelPrimary, modelSecondary]);
         view = SugarTest.createView('base', module, 'merge-duplicates', null, null, true);
         view.collection = collection;
+        view.fields = {commit_stage: SugarTest.createField('base', 'commit_stage', 'enum', 'edit', {options: 'commit_stage_dom'}, null, null, view.context)};
     });
 
     afterEach(function() {
@@ -86,6 +87,7 @@ describe('Opportunities.Base.View.MergeDuplicates', function() {
             view.collection.trigger('change:sales_stage', testModel);
 
             expect(testModel.get('commit_stage')).toBe('include');
+            expect(view.fields.commit_stage.action).toBe('disabled');
         });
 
         it('should not touch commit_stage if not in closed won or closed lost', function(){
@@ -100,8 +102,8 @@ describe('Opportunities.Base.View.MergeDuplicates', function() {
                 sales_stage: 'badSalesStage'
             });
             view.collection.trigger('change:sales_stage', testModel);
-
             expect(testModel.get('commit_stage')).toBeUndefined();
+            expect(view.fields.commit_stage.action).toBeUndefined();
         });
 
         it('should set commit_stage to excluded', function(){
@@ -118,6 +120,7 @@ describe('Opportunities.Base.View.MergeDuplicates', function() {
             view.collection.trigger('change:sales_stage', testModel);
 
             expect(testModel.get('commit_stage')).toBe('exclude');
+            expect(view.fields.commit_stage.action).toBe('disabled');
         });
     });
 })

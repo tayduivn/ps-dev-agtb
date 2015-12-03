@@ -63,6 +63,8 @@
     'include/javascript/nvd3/lib/d3.min.js',
     'include/javascript/nvd3/nv.d3.min.js',
     'include/javascript/tiny_mce/tiny_mce.js',
+    'include/javascript/mousetrap/mousetrap.js',
+    'include/javascript/sugar7/shortcuts.js',
 
     // jasmine and sinon core files
     'sidecar/lib/sinon/sinon.js',
