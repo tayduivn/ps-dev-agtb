@@ -453,9 +453,21 @@ describe('Sugar Socket Server Client', function() {
             });
             it('subscribes on leave event of channel with _destroyChannel method', function() {
                 app.socket.channel(channelStub.name);
-                sinon.assert.calledOnce(channelStub.systemEvents.on);
+                sinon.assert.called(channelStub.systemEvents.on);
                 sinon.assert.calledOn(channelStub.systemEvents.on, channelStub.systemEvents);
                 sinon.assert.calledWith(channelStub.systemEvents.on, 'leave', app.socket._destroyChannel, app.socket);
+            });
+            it('subscribes on leave event of channel with _leaveChannel method', function () {
+                app.socket.channel(channelStub.name);
+                sinon.assert.called(channelStub.systemEvents.on);
+                sinon.assert.calledOn(channelStub.systemEvents.on, channelStub.systemEvents);
+                sinon.assert.calledWith(channelStub.systemEvents.on, 'leave', app.socket._leaveChannel, app.socket);
+            });
+            it('subscribes on join event of channel with _joinChannel method', function () {
+                app.socket.channel(channelStub.name);
+                sinon.assert.called(channelStub.systemEvents.on);
+                sinon.assert.calledOn(channelStub.systemEvents.on, channelStub.systemEvents);
+                sinon.assert.calledWith(channelStub.systemEvents.on, 'join', app.socket._joinChannel, app.socket);
             });
             it('returns already registered channel without usage of factory', function() {
                 app.socket.channel(channelStub.name);
@@ -504,6 +516,61 @@ describe('Sugar Socket Server Client', function() {
                 expect(actual).toEqual([channel1Stub.name]);
             });
         });
+
+        describe('join/leave Channel', function () {
+            var channelName = 'SomeChannel' + Math.random();
+            beforeEach(function () {
+                scope.stub(app.socket, '_forward');
+            });
+
+            it('_joinChannel', function () {
+
+                app.socket._joinChannel(channelName);
+
+                sinon.assert.calledOnce(app.socket._forward);
+                sinon.assert.calledOn(app.socket._forward, app.socket);
+                sinon.assert.calledWith(app.socket._forward, 'join', channelName);
+            });
+
+            it('_leaveChannel', function () {
+
+                app.socket._leaveChannel(channelName);
+
+                sinon.assert.calledOnce(app.socket._forward);
+                sinon.assert.calledOn(app.socket._forward, app.socket);
+                sinon.assert.calledWith(app.socket._forward, 'leave', channelName);
+            });
+        });
+
+        describe('forwarding message', function () {
+            var channelName = 'SomeChannel' + Math.random(), action = 'someAction' + Math.random(),
+                socket = {emit: function () { }}, spyForward;
+            beforeEach(function () {
+                spyForward = sinon.spy(app.socket, '_forward');
+                scope.stub(app.socket, 'socket');
+                scope.stub(socket, 'emit');
+            });
+            it('test if socket not initialized', function () {
+                app.socket.socket.returns(null);
+
+                try {
+                    app.socket._forward(action, channelName);
+                } catch (e) {
+                }
+
+                expect(spyForward.exceptions[0]).toBeUndefined('Not triggered error on execution');
+                sinon.assert.notCalled(socket.emit);
+            });
+            it('test if socket initialized', function () {
+                app.socket.socket.returns(socket);
+
+                app.socket._forward(action, channelName);
+
+                sinon.assert.calledOnce(socket.emit);
+                sinon.assert.calledOn(socket.emit, socket);
+                sinon.assert.calledWith(socket.emit, action, channelName);
+            });
+        });
     });
     describe('Channel', function() {
         var channel, channelName, IOStub;
@@ -531,73 +598,55 @@ describe('Sugar Socket Server Client', function() {
         describe('on', function() {
             beforeEach(function() {
                 scope.stub(channel, 'isEmpty');
-                scope.stub(channel, '_join');
+                scope.stub(channel, 'name');
+                scope.stub(channel.systemEvents, 'trigger');
             });
 
-            it('calls _join method if channel was empty', function() {
+            it('emit event join if channel was empty', function () {
+                var name = 'someChannelName' + Math.random();
                 channel.isEmpty.returns(true);
+                channel.name.returns(name);
+
                 channel.on('test');
-                sinon.assert.calledOnce(channel._join);
+
+                sinon.assert.calledOnce(channel.systemEvents.trigger);
+                sinon.assert.calledOn(channel.systemEvents.trigger, channel.systemEvents);
+                sinon.assert.calledWith(channel.systemEvents.trigger, 'join', name);
             });
-            it('does not call _join method if channel is not empty', function() {
+            it('does not emit event join if channel is not empty', function () {
                 channel.isEmpty.returns(false);
                 channel.on('test');
-                sinon.assert.notCalled(channel._join);
+                sinon.assert.notCalled(channel.systemEvents.trigger);
             });
         });
         describe('off', function() {
             beforeEach(function() {
                 scope.stub(channel, 'isEmpty');
-                scope.stub(channel, '_leave');
+                scope.stub(channel, 'name');
+                scope.stub(channel.systemEvents, 'trigger');
             });
 
-            it('calls _leave method if channel is empty', function() {
+            it('emit event leave if channel was empty', function () {
+                var name = 'someChannelName' + Math.random();
                 channel.isEmpty.returns(true);
+                channel.name.returns(name);
+
                 channel.off('test');
-                sinon.assert.calledOnce(channel._leave);
+
+                sinon.assert.calledOnce(channel.systemEvents.trigger);
+                sinon.assert.calledOn(channel.systemEvents.trigger, channel.systemEvents);
+                sinon.assert.calledWith(channel.systemEvents.trigger, 'leave', name);
             });
-            it('does not call _leave method if channel is not empty', function() {
+
+            it('does not emit event leave if channel is not empty', function () {
                 channel.isEmpty.returns(false);
+
                 channel.off('test');
-                sinon.assert.notCalled(channel._leave);
-            });
-        });
-        describe('_join', function() {
-            beforeEach(function() {
-                scope.stub(channel.systemEvents, 'trigger');
-            });
 
-            it('emits join message to socket with own name', function() {
-                channel._join();
-                sinon.assert.calledOnce(IOStub.emit);
-                sinon.assert.calledOn(IOStub.emit, IOStub);
-                sinon.assert.calledWith(IOStub.emit, 'join', channelName);
-            });
-            it('triggers join message to own system property with own name', function() {
-                channel._join();
-                sinon.assert.calledOnce(channel.systemEvents.trigger);
-                sinon.assert.calledOn(channel.systemEvents.trigger, channel.systemEvents);
-                sinon.assert.calledWith(channel.systemEvents.trigger, 'join', channelName);
+                sinon.assert.notCalled(channel.systemEvents.trigger);
             });
         });
-        describe('_leave', function() {
-            beforeEach(function() {
-                scope.stub(channel.systemEvents, 'trigger');
-            });
 
-            it('emits leave message to socket with own name', function() {
-                channel._leave();
-                sinon.assert.calledOnce(IOStub.emit);
-                sinon.assert.calledOn(IOStub.emit, IOStub);
-                sinon.assert.calledWith(IOStub.emit, 'leave', channelName);
-            });
-            it('triggers leave message to own system property with own name', function() {
-                channel._leave();
-                sinon.assert.calledOnce(channel.systemEvents.trigger);
-                sinon.assert.calledOn(channel.systemEvents.trigger, channel.systemEvents);
-                sinon.assert.calledWith(channel.systemEvents.trigger, 'leave', channelName);
-            });
-        });
         describe('isEmpty', function() {
             var callback = function() {
                 return Math.random;
