@@ -166,7 +166,9 @@
             case 'massupdate':
                 this._createFiltersCollection({
                     success: _.bind(function() {
-                        this._renderEditableDropdown();
+                        if (!this.disposed) {
+                            this._renderEditableDropdown();
+                        }
                     }, this)
                 });
                 break;
@@ -190,8 +192,6 @@
     _renderEditableDropdown: function() {
         var self = this;
         var $dropdown = this.$(this.fieldTag);
-
-        this._createFiltersCollection();
 
         var inList = (this.view.name === 'recordlist'),
             cssClasses = (inList ? 'select2-narrow' : '') + (this.type === 'parent' ? ' select2-parent' : ''),
