@@ -86,9 +86,18 @@ class MetaDataCache
         $result = null;
         //During install/setup, this function might get called before the DB is setup.
         if (!empty($this->db)) {
-            $cacheResult = $this->db->getOne(
-                "SELECT data FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key)
-            );
+            $sqlResult = $this->db->query("SELECT data FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key));
+
+            //If we have more than one entry for the same key, we need to remove the duplicate entries and bust the cache
+            if ($this->db->getAffectedRowCount($sqlResult) > 1) {
+                $this->removeFromCacheTable($key);
+
+                return null;
+            }
+            if (($row = $this->db->fetchByAssoc($sqlResult))) {
+                $cacheResult = $row['data'];
+            }
+
             if (!empty($cacheResult)) {
                 try {
                     $result = unserialize(gzinflate(base64_decode($cacheResult)));
@@ -120,8 +129,20 @@ class MetaDataCache
                 return false;
             }
 
+            $id = null;
+            $result = $this->db->query("SELECT id FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key));
+
+            //If we have more than one entry for the same key, we need to remove the duplicate entries
+            if ($this->db->getAffectedRowCount($result) > 1) {
+                $this->removeFromCacheTable($key);
+            }
+            else if (($row = $this->db->fetchByAssoc($result)) && !empty($row['id'])) {
+                $id = $row['id'];
+            }
+
+
             $values = array(
-                'id' => $this->db->getOne("SELECT id FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key)),
+                'id' => $id,
                 'type' => $key,
                 'data' => $encoded,
                 'date_modified' => TimeDate::getInstance()->nowDb(),

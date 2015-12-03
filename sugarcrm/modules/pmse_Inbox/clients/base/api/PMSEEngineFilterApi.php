@@ -118,8 +118,20 @@ class PMSEEngineFilterApi extends FilterApi
      */
     public function filterListAllPA(ServiceBase $api, array $args, $acl = 'list')
     {
-        // This send by default 'regular_user' to the custom filter 'visibility'
-        $args['filter'][] = array('visibility' => 'regular_user');
+        // Set the default visibility to a regular user
+        $visibility = 'regular_user';
+
+        // Self-service processes need their own visibility since 'regular_user'
+        // visibility excludes all self-service processes
+        foreach ($args['filter'] as $filter) {
+            if ($filter['assignment_method'] === 'selfservice') {
+                $visibility = 'self_service';
+            }
+        }
+
+        // Force the visibility filter no matter what
+        $args['filter'][] = array('visibility' => $visibility);
+
         return parent::filterList($api, $args, $acl);
     }
 
@@ -237,6 +249,10 @@ class PMSEEngineFilterApi extends FilterApi
                 global $current_user;
                 $where->queryAnd()->equals('cas_user_id', $current_user->id);
                 $where->queryOr()->notEquals('cas_assignment_method', 'selfservice')->isNull('cas_assignment_method');
+            } else if ($access === 'self_service') {
+                global $current_user;
+                // Get the processes that are assigned to the current user's teams
+                $where->queryAnd()->in('assigned_user_id', array_keys($current_user->get_my_teams()));
             } else {
                 $supportedModules = PMSEEngineUtils::getSupportedModules();
                 if (!empty($supportedModules)) {
