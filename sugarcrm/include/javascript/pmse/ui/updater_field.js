@@ -203,7 +203,8 @@ UpdaterField.prototype.setOptions = function (settings) {
                 newOption =  new NumberUpdaterItem(currentSetting);
                 break;
             case 'user':
-                currentSetting.searchUrl = 'pmse_Project/CrmData/users?filter={TERM}';
+                currentSetting.searchUrl = PMSE_USER_SEARCH.url;
+                currentSetting.searchLabel = PMSE_USER_SEARCH.text;
                 currentSetting.defaultSearchOptions = [
                     {text: translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), value: 'currentuser'},
                     {text: translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), value: 'owner'},
@@ -1974,6 +1975,9 @@ DropdownUpdaterItem.prototype.createHTML = function () {
 //SearchUpdaterItem
 var SearchUpdaterItem = function (settings) {
     UpdaterItem.call(this, settings);
+    this._pageSize = null;
+    this._searchLabel = null;
+    this._searchValue = null;
     SearchUpdaterItem.prototype.init.call(this, settings);
 };
 
@@ -1987,20 +1991,22 @@ SearchUpdaterItem.prototype.type = 'SearchUpdaterItem';
 SearchUpdaterItem.prototype.init = function(settings) {
     var defaults = {
         value: '',
+        pageSize: 5,
+        searchValue: 'id',
+        searchLabel: 'text',
         searchMore: false,
         searchUrl: null,
-        defaultSearchOptions: [],
-        select2Translations: {
-            id: 'value',
-            text: 'text'
-        }
+        defaultSearchOptions: []
     };
 
     jQuery.extend(true, defaults, settings);
 
+    this._pageSize = typeof defaults.pageSize === 'number' && defaults.pageSize >= 1 ? Math.floor(defaults.pageSize) : 0;
+
     this._searchUrl = defaults.searchUrl;
     this._defaultSearchOptions = defaults.defaultSearchOptions;
-    this._select2Translations = defaults.select2Translations;
+    this._searchLabel = defaults.searchLabel;
+    this._searchValue = defaults.searchValue;
     this.setValue(defaults.value);
 
     if (defaults.searchMore) {
@@ -2227,30 +2233,47 @@ SearchUpdaterItem.prototype._createConfigButton = function() {
     return null;
 };
 
+SearchUpdaterItem.prototype._resizeListSize = function () {
+    var list = this.select2Control.data("select2").dropdown,
+        listItemHeight;
+    list = $(list).find('ul[role=listbox]');
+    listItemHeight = list.find('li').eq(0).outerHeight();
+    list.get(0).style.maxHeight = (listItemHeight * this._pageSize) + 'px';
+    return this;
+};
+
 /**
  * select2 internal query function. See select2 documentation for further info
  * @param options
  */
 SearchUpdaterItem.prototype._queryFunction = function(options) {
     var self = this;
-    var finalData = this._filterSelections(options, this._defaultSearchOptions);
+    var finalData = options.page > 1 ? [] : this._filterSelections(options, this._defaultSearchOptions);
     var callbackOptions = {more: false};
-    var term = $.trim(options.term) || '';
+    var term = $.trim(options.term);
+    var that = this;
 
     if (term) {
         var proxy = new SugarProxy();
-        proxy.url = this._searchUrl.replace(/\{TERM\}/g, term);
+        proxy.url = this._searchUrl.replace(/\{%TERM%\}/g, term)
+            .replace(/\{%OFFSET%\}/g, (options.page - 1) * this._pageSize);
+
+        if (this._pageSize > 0) {
+            proxy.url = proxy.url.replace(/\{%PAGESIZE%\}/g, this._pageSize);
+        }
+
         proxy.getData(null, {
             success: function(data) {
-                var finalData = [];
-                _.each(data.result, function(result) {
+                callbackOptions.more = data.next_offset >= 0 ? true : false;
+                _.each(data.records, function(result) {
                     finalData.push({
-                        id: result[self._select2Translations.id],
-                        text: result[self._select2Translations.text]
+                        id: result[self._searchValue],
+                        text: result[self._searchLabel]
                     });
                 });
                 callbackOptions.results = finalData;
                 options.callback(callbackOptions);
+                that._resizeListSize();
             },
             error: function() {
                 console.log('failure', arguments);
@@ -2288,10 +2311,10 @@ SearchUpdaterItem.prototype._filterSelections = function(searchOptions, results)
     var finalData = [];
     var term = $.trim(searchOptions.term);
     _.each(results, function(result) {
-        if (!term || searchOptions.matcher(term, result[this._select2Translations.text])) {
+        if (!term || searchOptions.matcher(term, result.text)) {
             finalData.push({
-                id: result[this._select2Translations.id],
-                text: result[this._select2Translations.text]
+                id: result.value,
+                text: result.text
             });
         }
     }, this);

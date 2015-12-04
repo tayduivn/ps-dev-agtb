@@ -409,7 +409,6 @@ class PMSEEngineApi extends SugarApi
         $flowBeanObject = BeanFactory::getBean('pmse_BpmFlow', $args['flowId']);
         $args['cas_id'] = $flowBeanObject->cas_id;
         $args['cas_index'] = $flowBeanObject->cas_index;
-        $filter = isset($args['filter']) ? $args['filter'] : '';
         $result = array();
         $result['success'] = false;
         if (empty($args['cas_id']) && empty($args['cas_index'])) {
@@ -417,7 +416,7 @@ class PMSEEngineApi extends SugarApi
         }
         switch ($args['data']) {
             case 'users':
-                $result['result'] = $this->getUsersListReassign($flowBeanObject, $filter);
+                $result = $this->getUsersListReassign($flowBeanObject, $args);
                 $result['success'] = true;
                 break;
             default:
@@ -437,13 +436,24 @@ class PMSEEngineApi extends SugarApi
     public function getUsersListReassign($beanFlow, $filter = null)
     {
         $resultArray = array();
+        $records = array();
+        $resultArray['next_offset'] = -1;
         $userList = $this->userAssignmentHandler->getReassignableUserList($beanFlow, true, $filter);
+        $i = 0;
         foreach ($userList as $user) {
+            if ($i == (int)$filter['max_num']) {
+                if (count($userList) > $filter['max_num']) {
+                    array_pop($userList);               }
+                $resultArray['next_offset'] = (int) ($filter['max_num'] + $filter['offset']);
+                continue;
+            }
             $tmpArray = array();
-            $tmpArray['value'] = $user->id;
-            $tmpArray['text'] = $user->full_name;
-            $resultArray[] = $tmpArray;
+            $tmpArray['id'] = $user->id;
+            $tmpArray['full_name'] = $user->full_name;
+            $records[] = $tmpArray;
+            $i++;
         }
+        $resultArray['records'] = $records;
         return $resultArray;
     }
 
@@ -495,7 +505,6 @@ class PMSEEngineApi extends SugarApi
         $flowBeanObject = BeanFactory::getBean('pmse_BpmFlow', $args['flowId']);
         $args['cas_id'] = $flowBeanObject->cas_id;
         $args['cas_index'] = $flowBeanObject->cas_index;
-        $filter = isset($args['filter']) ? $args['filter'] : '';
         $result = array();
         $result['success'] = false;
         if (empty($args['cas_id']) && empty($args['cas_index'])) {
@@ -503,7 +512,7 @@ class PMSEEngineApi extends SugarApi
         }
         switch ($args['data']) {
             case 'users':
-                $result['result'] = $this->getUsersListAdhoc($flowBeanObject, $filter);
+                $result = $this->getUsersListAdhoc($flowBeanObject, $args);
                 $result['success'] = true;
                 break;
             default:
@@ -523,13 +532,24 @@ class PMSEEngineApi extends SugarApi
     public function getUsersListAdhoc($beanFlow, $filter = null)
     {
         $resultArray = array();
+        $records = array();
+        $resultArray['next_offset'] = -1;
         $userList = $this->userAssignmentHandler->getAdhocAssignableUserList($beanFlow, false, $filter);
+        $i = 0;
         foreach ($userList as $user) {
+            if ($i == (int)$filter['max_num']) {
+                if (count($userList) > $filter['max_num']) {
+                    array_pop($userList);               }
+                $resultArray['next_offset'] = (int) ($filter['max_num'] + $filter['offset']);
+                continue;
+            }
             $tmpArray = array();
-            $tmpArray['value'] = $user->id;
-            $tmpArray['text'] = $user->full_name;
-            $resultArray[] = $tmpArray;
+            $tmpArray['id'] = $user->id;
+            $tmpArray['full_name'] = $user->full_name;
+            $records[] = $tmpArray;
+            $i++;
         }
+        $resultArray['records'] = $records;
         return $resultArray;
     }
 

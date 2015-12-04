@@ -120,6 +120,11 @@ var claim_case = function(cas_id, cas_index, full_name, idInbox){
         }
     });
 };
+
+var getUserSearchURL = function (url, flowId) {
+    return url+'/users/'+ flowId + '?filter={%TERM%}&max_num={%PAGESIZE%}&offset={%OFFSET%}';
+};
+
 var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,taskName,values) {
     var f,
         w,
@@ -227,7 +232,9 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                 module: "Users",
                 fields: ["id"]
             },
-            searchURL: url+'/users/'+ flowId + '?filter={TERM}',
+            searchURL: getUserSearchURL(url, flowId),
+            searchValue: 'id',
+            searchLabel: 'full_name',
             placeholder: translate('LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT', 'pmse_Project'),
             helpTooltip: {
                 message: translate('LBL_PMSE_FORM_TOOLTIP_SELECT_USER', 'pmse_Inbox')
@@ -262,12 +269,14 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
             label: translate('LBL_PMSE_FORM_LABEL_USER', 'pmse_Inbox'),
             name: 'adhoc_user',
             submit: true,
-            searchURL: url+'/users/'+ flowId + '?filter={TERM}',
             required: true,
             searchMore: {
                 module: "Users",
                 fields: ["id"]
             },
+            searchURL: getUserSearchURL(url, flowId),
+            searchValue: 'id',
+            searchLabel: 'full_name',
             placeholder: translate('LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT', 'pmse_Project'),
             helpTooltip: {
                 message: translate('LBL_PMSE_FORM_TOOLTIP_CHANGE_USER', 'pmse_Inbox')
