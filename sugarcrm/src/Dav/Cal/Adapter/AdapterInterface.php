@@ -21,11 +21,11 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
 interface AdapterInterface
 {
     /**
-     * @param \SugarBean $sugarBean
-     * @param \CalDavEvent $calDavBean
+     * @param array $exportData
+     * @param \CalDavEventCollection $eventCollection
      * @return bool
      */
-    public function export(\SugarBean $sugarBean, \CalDavEvent $calDavBean);
+    public function export(array $exportData, \CalDavEventCollection $eventCollection);
 
     /**
      * @param \SugarBean $sugarBean

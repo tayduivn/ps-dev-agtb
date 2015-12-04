@@ -23,18 +23,17 @@ class Handler
 {
     /**
      * Run export action
-     * @param \SugarBean $bean
+     * @param array $exportData
      */
-    public function export(\SugarBean $bean)
+    public function export($exportData)
     {
+        list($beanData, $changedFields, $invites) = $exportData;
+        list($beanModuleName, $beanId, $repeatParentId, $childEventsId, $isUpdated) = $beanData;
         $adapterFactory = $this->getAdapterFactory();
-        if ($adapter = $adapterFactory->getAdapter($bean->module_name)) {
-            if ($this->isBeanChild($bean)) {
-                $bean = $this->getParentBean($bean);
-            }
+        if ($adapter = $adapterFactory->getAdapter($beanModuleName)) {
+            $bean = \BeanFactory::getBean($beanModuleName, $beanId);
             $calDavBean = $this->getDavBean($bean);
-
-            if ($adapter->export($bean, $calDavBean)) {
+            if ($adapter->export($exportData, $calDavBean)) {
                 $calDavBean->save();
             }
         }

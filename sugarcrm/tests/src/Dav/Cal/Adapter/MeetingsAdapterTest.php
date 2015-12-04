@@ -10,19 +10,30 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\Dav\Base\Helper;
+require_once 'tests/SugarTestCalDavUtilites.php';
 
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings as MeetingAdapter;
 
 /**
- * Class ParticipantsHelperTest
- * @package            Sugarcrm\SugarcrmTestsUnit\Dav\Base\Helper
+ * MeetingsAdapterTest tests
+ * Class MeetingsAdapterTest
  *
- * @coversDefaultClass Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper
+ * @coversDefaultClass \Dav\Cal\Adapter\Meetings
  */
-class MeetingsTest extends \PHPUnit_Framework_TestCase
+class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * set up new user
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('app_list_strings');
+        $GLOBALS['current_user']->setPreference('timezone', 'Europe/Moscow');
+    }
+
     /**
      * @dataProvider prepareExportProvider
      * @param array $changedFields
@@ -127,6 +138,93 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedRow, $result);
     }
 
+    /**
+     * @param array $changedFields
+     * @param array $invites
+     * @param array $expectedCalendarStrings
+     * @dataProvider meetingProvider
+     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings::export
+     */
+    public function testExport($changedFields, $invites, $expectedCalendarStrings)
+    {
+        /**@var \CalDavEventCollection $eventCollection*/
+        $eventCollection = $this->getMockBuilder('\CalDavEventCollection')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $adapter = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $meetingBean = $this->getMockBuilder('\Meeting')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+        $meetingBean->id = 1;
+        $meetingBean->module_name = 'Meetings';
+
+        $exportData = array(
+            array(
+                $meetingBean->module_name,
+                $meetingBean->id,
+                '',
+                array(),
+                false
+            ),
+            $changedFields,
+            $invites,
+        );
+
+        $exportResult = $adapter->export($exportData, $eventCollection);
+        $this->assertTrue($exportResult);
+        $vCalendar = TestReflection::callProtectedMethod($eventCollection, 'getVCalendar', array());
+        $calendarText = $vCalendar->serialize();
+        foreach ($expectedCalendarStrings as $str) {
+            $this->assertContains($str, $calendarText);
+        }
+    }
+
+    /**
+     * @expectedException \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException
+     */
+    public function testExportException()
+    {
+        $changedFields = array(
+            'name' => array('New Name', 'Old Name'),
+        );
+        $eventCollection = $this->getMockBuilder('\CalDavEventCollection')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $adapter = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $meetingBean = $this->getMockBuilder('\Meeting')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+        $meetingBean->id = 1;
+        $meetingBean->module_name = 'Meetings';
+
+        $exportData = array(
+            array(
+                $meetingBean->module_name,
+                $meetingBean->id,
+                '',
+                array(),
+                false
+            ),
+            $changedFields,
+            array(),
+        );
+        $eventCollection->getParent()->setTitle('Fake Title');
+        $adapter->export($exportData, $eventCollection);
+    }
 
     /**
      * @return array
@@ -256,8 +354,8 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
                     'date_end' => array(
                         'field_name' => 'date_end',
                         'data_type' => 'datetimecombo',
-                        'before' => '2015-11-18 18:00:00',
-                        'after' => '2015-11-18 18:30:00',
+                        'before' => '2015-11-18 19:00:00',
+                        'after' => '2015-11-18 19:30:00',
                     ),
                     'description' => array(
                         'field_name' => 'description',
@@ -277,8 +375,8 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
 
                     ),
                     'date_end' => array(
-                        '2015-11-18 18:30:00', //after
-                        '2015-11-18 18:00:00',
+                        '2015-11-18 19:30:00', //after
+                        '2015-11-18 19:00:00',
                     ),
                     'description' => array(
                         'new Description'
@@ -303,6 +401,49 @@ class MeetingsTest extends \PHPUnit_Framework_TestCase
                 'fetchedRow' => array('id' => 1, 'title' => 'Test title'),
                 'method' => array('name' => 'retrieve', 'count' => 0),
                 'expectedRow' => array('id' => array(1), 'title' => array('Test title')),
+            ),
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function meetingProvider()
+    {
+        return array(
+            array(
+                'meetingData' => array(
+                    'name' => array(
+                        'Test Meeting',//after
+                    ),
+                    'date_start' => array(
+                        '2015-11-18 18:30:00',//after
+                    ),
+                    'date_end' => array(
+                        '2015-11-18 19:30:00', //after
+                    ),
+                    'description' => array(
+                        'new Description'
+                    )
+                ),
+                'invites' => array(
+                    'added' => array(
+                        array('Contacts', 10, 'accept', 'test10@test.loc', 'Lead One'),
+                        array('Leads', 20, 'accept', 'test20@test.loc', 'Lead One'),
+                        array('Users', 30, 'accept', 'test30@test.loc', 'User Foo')
+                    ),//added
+                    'deleted' => array(),
+                    'changed' => array(),
+                ),//invites
+                'vCalendar' => array(
+                    'SUMMARY:Test Meeting',
+                    'DESCRIPTION:new Description',
+                    'DTSTART:20151118T183000Z',
+                    'DURATION:PT1H',
+                    'ATTENDEE;PARTSTAT=accept;CN=Lead One:mailto:test10@test.loc',
+                    'ATTENDEE;PARTSTAT=accept;CN=Lead One:mailto:test20@test.loc',
+                    'ATTENDEE;PARTSTAT=accept;CN=User Foo:mailto:test30@test.loc'
+                ),
             ),
         );
     }

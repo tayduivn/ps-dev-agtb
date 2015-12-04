@@ -15,6 +15,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Base\Helper;
 use Sugarcrm\Sugarcrm\Dav\Base\Constants as DavConstants;
 use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as DavStatusMapper;
 use Sugarcrm\Sugarcrm\Dav\Base\Principal\Manager;
+use Sugarcrm\Sugarcrm\Dav\Cal\Structures\Participant;
 
 use Sabre\VObject\Property\ICalendar\CalAddress;
 
@@ -362,5 +363,21 @@ class ParticipantsHelper
             $userBean->emailAdresses,
             $fullName
         );
+    }
+
+    /**
+     * @param array $invite
+     * @return Participant
+     */
+    public function inviteToParticipant($invite)
+    {
+        $participant = new Participant();
+        list($beanName, $beanId, $invStatus, $invEmail, $displayName) = $invite;
+        $participant->setStatus($invStatus);
+        $participant->setEmail($invEmail);
+        $participant->setBeanName($beanName);
+        $participant->setBeanId($beanId);
+        $participant->setDisplayName($displayName);
+        return $participant;
     }
 }
