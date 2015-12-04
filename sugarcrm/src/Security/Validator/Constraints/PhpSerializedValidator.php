@@ -59,6 +59,10 @@ class PhpSerializedValidator extends ConstraintValidator
             }
         }
 
+        if ($constraint->htmlEncoded) {
+            $value = htmlspecialchars_decode($value, ENT_QUOTES);
+        }
+
         // detect any objects
         preg_match('/[oc]:\d+:/i', $value, $matches);
         if (count($matches)) {
