@@ -53,7 +53,7 @@ class ViewHistory extends SugarView
         }
         
         $packageName = (isset ( $_REQUEST [ 'view_package' ] ) && (strtolower ( $_REQUEST [ 'view_package' ] ) != 'studio')) ? $_REQUEST [ 'view_package' ] : null ;
-        $this->module = $_REQUEST [ 'view_module' ] ;
+        $this->module = $this->request->getValidInputRequest('view_module', 'Assert\Mvc\ModuleName');
 
         $params = array();
 // BEGIN SUGARCRM flav=ent ONLY
