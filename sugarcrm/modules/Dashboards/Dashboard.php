@@ -31,9 +31,9 @@ class Dashboard extends Basic
     /**
      * This overrides the default retrieve function setting the default to encode to false
      */
-    function retrieve($id='-1', $encode=false,$deleted=true)
+    function retrieve($id='-1', $encode=false, $deleted=true)
     {
-        $dashboard = parent::retrieve($id, false, $deleted);
+        $dashboard = parent::retrieve($id, $encode, $deleted);
 
         // Expand the metadata for processing.
         $metadata = json_decode($dashboard->metadata);
