@@ -12,7 +12,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-//increate timeout for phpo script execution
+use Sugarcrm\Sugarcrm\Util\Serialized;
+
+//increase timeout for php script execution
   if (ini_get('max_execution_time') > 0 && ini_get('max_execution_time') < 300) {
       ini_set('max_execution_time', 300);
   }
@@ -1332,7 +1334,7 @@ eoq;
                 		continue;
                 	}
                     if($k == 'stored_options') {
-                        $ie->$k = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($ie->$k));
+                        $ie->$k = Serialized::unserialize($ie->$k, array(), true);
 	                    if (isset($ie->stored_options['from_name'])) {
 	                    	$ie->stored_options['from_name'] = from_html($ie->stored_options['from_name']);
 	                    }
@@ -1384,7 +1386,7 @@ eoq;
 
             foreach($ie->field_defs as $k => $v) {
                 if($k == 'stored_options') {
-                    $ie->$k = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($ie->$k));
+                    $ie->$k = Serialized::unserialize($ie->$k, array(), true);
                     if (isset($ie->stored_options['from_name'])) {
                     	$ie->stored_options['from_name'] = from_html($ie->stored_options['from_name']);
                     }

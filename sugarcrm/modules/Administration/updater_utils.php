@@ -16,6 +16,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'include/utils/encryption_utils.php';
 require_once 'include/SugarSystemInfo/SugarSystemInfo.php';
 
+use Sugarcrm\Sugarcrm\Util\Serialized;
+
 /**
  * Proxy to SugarSystemInfo::getInstance()->getInfo()
  * Exists for BWC
@@ -388,7 +390,8 @@ function authenticateDownloadKey()
     }
 
     // Decode the received validation key and compare with current settings
-    $og = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(sugarDecode('validation', $licenseSettings['license_validation_key']));
+    $og = Serialized::unserialize($licenseSettings['license_validation_key'], array(), true);
+
     foreach ($og as $name => $value) {
         if (!isset($data[$name]) || $data[$name] != $value) {
             return false;

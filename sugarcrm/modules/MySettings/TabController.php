@@ -14,6 +14,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Serialized;
+
 class TabController
 {
 
@@ -68,8 +70,7 @@ class TabController
                 //make sure serialized string is not empty
                 if (!empty($trimmed_tabs)) {
                     // TODO: decode JSON rather than base64
-                    $tabs = base64_decode($tabs);
-                    $tabs = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($tabs);
+                    $tabs = Serialized::unserialize($tabs, null, true);
                     //Ensure modules saved in the prefences exist.
                     foreach ($tabs as $id => $tab) {
                         if (!in_array($tab, $moduleList)) {

@@ -16,6 +16,8 @@ require_once("vendor/ytree/Tree.php");
 require_once("vendor/ytree/ExtNode.php");
 require_once("include/SugarFolders/SugarFolders.php");
 
+use Sugarcrm\Sugarcrm\Util\Serialized;
+
 /**
  * Email GUI class
  */
@@ -2838,7 +2840,7 @@ eoq;
 			$toArray = $ie->email->email2ParseAddressesForAddressesOnly($ret['to']);
 		} // else
         foreach($ieAccountsFull as $k => $v) {
-        	$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($v->stored_options));
+            $storedOptions = Serialized::unserialize($v->stored_options, array(), true);
 			if (  array_search_insensitive($storedOptions['from_addr'], $toArray)) {
         		if ($v->is_personal) {
 					$foundInPersonalAccounts = true;
@@ -2885,7 +2887,7 @@ eoq;
 
         $ieAccountsFrom= array();
         foreach($ieAccountsFull as $k => $v) {
-        	$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($v->stored_options));
+            $storedOptions = Serialized::unserialize($v->stored_options, array(), true);
         	$storedOptionsName = from_html($storedOptions['from_name']);
 
         	$selected = false;
