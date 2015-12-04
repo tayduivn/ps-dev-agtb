@@ -143,6 +143,12 @@ class Configurator {
                 }
             }
 
+            // Validate logger file name
+            if ($key === "logger_file_name" && empty($value)) {
+                $GLOBALS['log']->error("Invalid log file name: Log file name should not blank.");
+                continue;
+            }
+
             // We can set the value directly if key exists or if allowed as undefined
             if (isset($this->config[$key]) || in_array($key, $this->allowUndefined)) {
 
