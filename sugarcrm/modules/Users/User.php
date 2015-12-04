@@ -1055,7 +1055,7 @@ EOQ;
 
         // Custom regex
         if (!empty($GLOBALS["sugar_config"]["passwordsetting"]["customregex"]) &&
-            preg_match($GLOBALS["sugar_config"]["passwordsetting"]["customregex"], $password)) {
+            preg_match('/'.$GLOBALS["sugar_config"]["passwordsetting"]["customregex"].'/', $password)) {
             return false;
         }
 	    return true;
