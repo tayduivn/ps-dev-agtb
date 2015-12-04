@@ -276,8 +276,8 @@ class OracleManager extends DBManager
 		if(!$this->checkError("$msg Parse Failed: $sql", $dieOnError)) {
 
             $freeStmt = false;
-            if (oci_statement_type($stmt) != 'SELECT'){
-                // free statement if not SELECT
+            if (oci_statement_type($stmt) != 'SELECT' && oci_statement_type($stmt) != 'UPDATE'){ // getAffectedRowCount using UPDATE returned cursor
+                // free statement if not SELECT or UPDATE
                 $freeStmt = true;
             }
 			$exec_result = $suppress?@oci_execute($stmt):oci_execute($stmt);
