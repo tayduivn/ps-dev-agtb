@@ -64,10 +64,11 @@ class PhpSerializedValidatorTest extends AbstractConstraintValidatorTest
      * @covers \Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValue::setFormattedReturnValue
      * @dataProvider providerTestValidValues
      */
-    public function testValidValues($value, $base64Encoded, $unserialized)
+    public function testValidValues($value, $base64Encoded, $htmlEncoded, $unserialized)
     {
         $constraint = new PhpSerialized();
         $constraint->base64Encoded = $base64Encoded;
+        $constraint->htmlEncoded = $htmlEncoded;
         $this->validator->validate($value, $constraint);
         $this->assertNoViolation();
         $this->assertSame($unserialized, $constraint->getFormattedReturnValue());
@@ -90,37 +91,56 @@ class PhpSerializedValidatorTest extends AbstractConstraintValidatorTest
             array(
                 'Tjs=',
                 true,
+                false,
                 null,
             ),
             array(
                 'YjowOw==',
                 true,
                 false,
+                false,
             ),
             array(
                 'YjoxOw==',
                 true,
+                false,
                 true,
             ),
             array(
                 'aToxMDs=',
                 true,
+                false,
                 10,
             ),
             array(
                 'ZDoxMi4xOTk5OTk5OTk5OTk5OTk7',
                 true,
+                false,
                 12.2,
             ),
             array(
                 'czo2OiJTdHJpbmciOw==',
                 true,
+                false,
                 'String',
             ),
             array(
                 'YToxOntzOjM6ImZvbyI7czozOiJiYXIiO30=',
                 true,
+                false,
                 array('foo' => 'bar'),
+            ),
+            array(
+                's:28:&quot;&lt;div class=&quot;link&quot;&gt;Link&lt;/div&gt;&quot;;',
+                false,
+                true,
+                '<div class="link">Link</div>',
+            ),
+            array(
+                'czoyODomcXVvdDsmbHQ7ZGl2IGNsYXNzPSZxdW90O2xpbmsmcXVvdDsmZ3Q7TGluayZsdDsvZGl2Jmd0OyZxdW90Ozs=',
+                true,
+                true,
+                '<div class="link">Link</div>',
             ),
         );
     }
