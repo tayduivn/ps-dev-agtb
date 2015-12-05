@@ -276,7 +276,7 @@
      * before it gets added to the collection
      *
      * @param {Data.Bean} bean The bean to add new properties to
-     * @returns {Data.Bean}
+     * @return {Data.Bean}
      * @private
      */
     _addCustomFieldsToBean: function(bean) {

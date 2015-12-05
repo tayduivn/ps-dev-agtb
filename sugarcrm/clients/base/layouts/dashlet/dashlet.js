@@ -44,7 +44,7 @@
      *
      * @param {String} name the name of the layout you're looking for
      * @param {Object} layout the layout object to look through
-     * @returns {*}
+     * @return {Mixed}
      */
     findLayout: function(name, layout) {
         return (layout.name == name || layout.type == name) ? layout : this.findLayout(name, layout.layout);

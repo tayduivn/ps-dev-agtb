@@ -158,7 +158,7 @@
      * We can advance the page once we know it is complete. Wizard page's
      * should override this function to provide custom validation logic.
      *
-     * @returns {boolean} TRUE if this page is complete
+     * @return {boolean} `true` if this page is complete
      * @override
      */
     isPageComplete: function(){
@@ -228,7 +228,7 @@
      * Do any actions like http requests, etc., before allowing user to proceed to next
      * page. Implementers should override this.
      * @param {Function} callback The callback to call once actions are completed
-     * @returns {Boolean} Whether action was performed successfully or not
+     * @return {boolean} Whether action was performed successfully or not
      */
     beforeNext: function(callback) {
         app.logger.debug("wizard's beforeNext called directly. Derived controllers should have overridden this!");
@@ -238,7 +238,7 @@
      * Do any actions like http requests, etc., before allowing user to proceed to finish
      * the wizard. Implementers should override this.
      * @param {Function} callback The callback to call once actions are completed
-     * @returns {Boolean} Whether action was performed successfully or not
+     * @return {boolean} Whether action was performed successfully or not
      */
     beforeFinish: function(callback){
         app.logger.debug("wizard's beforeFinish called directly. Derived controller should have overridden this!");
