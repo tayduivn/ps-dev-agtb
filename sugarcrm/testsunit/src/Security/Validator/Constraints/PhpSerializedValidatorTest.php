@@ -79,13 +79,13 @@ class PhpSerializedValidatorTest extends AbstractConstraintValidatorTest
         return array(
 
             // plain serialized strings
-            array('N;', false, null),
-            array('b:0;', false, false),
-            array('b:1;', false, true),
-            array('i:10;', false, 10),
-            array('d:12.199999999999999;', false, 12.2),
-            array('s:6:"String";', false, 'String'),
-            array('a:1:{s:3:"foo";s:3:"bar";}', false, array('foo' => 'bar')),
+            array('N;', false, false, null),
+            array('b:0;', false, false, false),
+            array('b:1;', false, false, true),
+            array('i:10;', false, false, 10),
+            array('d:12.199999999999999;', false, false, 12.2),
+            array('s:6:"String";', false, false, 'String'),
+            array('a:1:{s:3:"foo";s:3:"bar";}', false, false, array('foo' => 'bar')),
 
             // base64 encoded tests
             array(

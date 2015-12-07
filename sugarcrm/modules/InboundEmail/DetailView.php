@@ -15,6 +15,7 @@ require_once('include/DetailView/DetailView.php');
 
 require_once('include/SugarFolders/SugarFolders.php');
 
+use Sugarcrm\Sugarcrm\Util\Serialized;
 
 global $mod_strings;
 global $app_strings;
@@ -108,7 +109,7 @@ $onlySince = $mod_strings['LBL_ONLY_SINCE_NO'];
 
 if(!empty($focus->stored_options)) {
 	// FROM NAME and Address
-	$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($focus->stored_options));
+	$storedOptions = Serialized::unserialize($focus->stored_options, array(), true);
 
 	$from_name = (isset($storedOptions['from_name']) ? $storedOptions['from_name'] : "");
 	$from_addr = (isset($storedOptions['from_addr']) ? $storedOptions['from_addr'] : "");

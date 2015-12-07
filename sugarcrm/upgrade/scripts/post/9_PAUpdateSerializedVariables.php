@@ -13,6 +13,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Serialized;
+
 class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
 {
     /**
@@ -36,7 +38,7 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
     protected function convertSerializedData($input, $encode = false)
     {
         try {
-            $decoded = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(html_entity_decode($input));
+            $decoded = Serialized::unserialize($input, null, false, true);
         } catch (Exception $e) {
             $this->log('Cannot unserialize value: \'' . $input . '\'. Error thrown: ' . $e->getMessage());
         }
