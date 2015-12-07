@@ -44,7 +44,7 @@ class SugarUpgradeFixModuleNameMismatch extends UpgradeScript
             foreach ($appStrings['moduleList'] as $moduleId => $moduleName) {
                 $langFiles = array('custom/modules/'.$moduleId.'/language/'.$langKey.'.lang.php',
                     'custom/Extension/modules/'.$moduleId.'/Ext/Language/'.$langKey.'.lang.php',
-                    'custom/modules/'.$moduleId.'/Ext/Language/'.langKey.'.lang.ext.php');
+                    'custom/modules/'.$moduleId.'/Ext/Language/'.$langKey.'.lang.ext.php');
 
                 foreach ($langFiles as $langFile) {
                     if (file_exists($langFile)) {
