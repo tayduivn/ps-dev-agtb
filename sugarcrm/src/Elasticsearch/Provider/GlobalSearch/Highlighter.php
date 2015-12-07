@@ -75,4 +75,25 @@ class Highlighter extends AbstractHighlighter
 
         return $value;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubFieldName($field)
+    {
+        // Example field name with sub-field:
+        // input: Accounts__email_search.secondary.gs_email_wildcard
+        // output: secondary
+
+        // Example field name without sub-field:
+        // input: Contacts__first_name.gs_string_wildcard
+        // output: empty string
+
+        $subField = '';
+        $sep = '\\' . QueryBuilder::FIELD_SEP;
+        if (preg_match('/^.*' . $sep . '(.*)' . $sep . '.*$/', $field, $matches)) {
+            $subField = $matches[1];
+        }
+        return $subField;
+    }
 }

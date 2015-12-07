@@ -44,24 +44,63 @@
                             model.set('name', name);
                         }
 
-                        var highlights = _.map(model.get('_highlights'), function(val, key) {
-                            val = new Handlebars.SafeString(_.first(val));
+                        var highlights = model.get('_highlights');
+                        var formattedHighlights = _.map(highlights, function(val, key) {
+
+                            // The `email` highlight contains an array following this
+                            // format: {primary: {...}, secondary: {...}}.
+                            // Here we'll keep the value of the primary and will
+                            // skip the secondary. The secondary will be added
+                            // as a new field in the highlights.
+                            if (key === 'email') {
+                                if (val.primary) {
+                                    val = new Handlebars.SafeString(_.first(val.primary));
+                                    var label = 'LBL_PRIMARY_EMAIL';
+                                } else {
+                                    return false;
+                                }
+                            } else {
+                                val = new Handlebars.SafeString(_.first(val));
+                            }
                             attrs[key] = val;
                             return {
                                 name: key,
                                 value: val,
-                                label: module.fields[key].vname,
+                                label: label || module.fields[key].vname,
                                 link: linkableHighlights,
                                 highlighted: true
                             };
                         });
+
+                        // Since the _.map returns false for secondary email
+                        // address we need to clean the array.
+                        formattedHighlights = _.reject(formattedHighlights, function(highlight) {
+                            return highlight === false;
+                        });
+
+                        var highlightedSecondaryEmail = highlights.email ?
+                            highlights.email.secondary : null;
+
+                        // Push a the secondary email field in the
+                        // formattedHighlights, if any.
+                        if (highlightedSecondaryEmail) {
+                            formattedHighlights.push({
+                                name: 'secondaryEmail',
+                                type: 'email',
+                                value: new Handlebars.SafeString(highlightedSecondaryEmail.join(', ')),
+                                label: module.fields['email'].vname,
+                                link: linkableHighlights,
+                                highlighted: true
+                            });
+                        }
+
                         // For Person module type we build the name and push
                         // it in the highlights.
                         if (personModuleType) {
                             var personName = new Handlebars.SafeString(
                                     app.utils.formatNameModel(model.get('_module'), attrs));
 
-                            highlights.push({
+                            formattedHighlights.push({
                                 name: 'name',
                                 value: personName,
                                 label: module.fields.name.vname,
@@ -70,7 +109,7 @@
                             });
                         }
 
-                        model.set('_highlights', highlights);
+                        model.set('_highlights', formattedHighlights);
 
                         // We add a flag here so that when the user clicks on
                         // `More results...` we won't reformat the existing ones.

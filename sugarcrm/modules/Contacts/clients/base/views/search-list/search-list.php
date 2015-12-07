@@ -34,7 +34,7 @@ $viewdefs['Contacts']['base']['view']['search-list'] = array(
             'fields' => array(
                 array(
                     'name' => 'email',
-                    'label' => 'LBL_EMAIL_ADDRESS',
+                    'label' => 'LBL_PRIMARY_EMAIL',
                 ),
             ),
         ),

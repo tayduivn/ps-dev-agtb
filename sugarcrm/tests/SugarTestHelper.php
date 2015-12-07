@@ -280,12 +280,20 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 
     public function runBare()
     {
+
         // Prevent the activity stream from creating messages.
         Activity::disable();
         if (SHADOW_CHECK && empty($this->file_map)) {
             $this->file_map = static::getFiles();
         }
+        //track the original max execution time limit
+        $originalMaxTime = ini_get('max_execution_time');
+
         parent::runBare();
+
+        //sometimes individual tests change the max time execution limit, reset back to original
+        set_time_limit($originalMaxTime);
+
         if (SHADOW_CHECK) {
             $oldfiles = $this->file_map;
             $this->file_map = static::getFiles();
