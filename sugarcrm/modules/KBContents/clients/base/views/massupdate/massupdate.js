@@ -103,6 +103,10 @@
                 }
             });
             if (!_.isEmpty(errorFields)) {
+                if (!_.isUndefined(errors.active_date) && errors.active_date.activeDateLow) {
+                    callback(fields, errors);
+                    return;
+                }
                 errorFields.push(checkField);
                 app.alert.show('save_without_publish_date_confirmation', {
                     level: 'confirmation',
