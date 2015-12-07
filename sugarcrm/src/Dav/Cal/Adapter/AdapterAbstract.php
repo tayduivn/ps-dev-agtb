@@ -13,6 +13,8 @@
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
 
 use \Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper as ParticipantsHelper;
+use \Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper as DateTimeHelper;
+use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException;
 
 /**
  * Abstract class for iCal adapters common functionality
@@ -107,7 +109,7 @@ abstract class AdapterAbstract
     {
         $dataDiff = array();
         foreach ($changedFields as $field => $fieldValues) {
-            $dataDiff[$field] = array (
+            $dataDiff[$field] = array(
                 0 => $fieldValues['after'],
             );
             if ($fieldValues['before']) {
@@ -138,6 +140,99 @@ abstract class AdapterAbstract
     }
 
     /**
+     * set CalDav title
+     * @param array $fieldValues
+     * @param \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent
+     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException
+     */
+    protected function setCalDavTitle(array $fieldValues, \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent)
+    {
+        if (isset($fieldValues[1]) && $fieldValues[1] != $calDavEvent->getTitle()) {
+            throw new ExportException("Name value conflict with CalDav title: " .
+                "'{$fieldValues[1]}' isn't equal '{$calDavEvent->getTitle()}'");
+        }
+        $calDavEvent->setTitle($fieldValues[0]);
+    }
+
+    /**
+     * @param array $fieldValues
+     * @param \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent
+     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException
+     */
+    protected function setCalDavDescription(
+        array $fieldValues,
+        \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent
+    ) {
+        if (isset($fieldValues[1]) && $fieldValues[1] != $calDavEvent->getDescription()) {
+            throw new ExportException("Description value conflict with CalDav: ".
+                "'{$fieldValues[1]}' isn't equal '{$calDavEvent->getDescription()}'");
+        }
+        $calDavEvent->setDescription($fieldValues[0]);
+    }
+
+    /**
+     * @param array $fieldValues
+     * @param \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent
+     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException
+     */
+    protected function setCalDavLocation(array $fieldValues, \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent)
+    {
+        if (isset($fieldValues[1]) && $fieldValues[1] != $calDavEvent->getLocation()) {
+            throw new ExportException("Location value conflict with CalDav: " .
+                "'{$fieldValues[1]}' isn't equal '{$calDavEvent->getLocation()}'");
+        }
+        $calDavEvent->setLocation($fieldValues[0]);
+    }
+
+    /**
+     * @param array $fieldValues
+     * @param \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent
+     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException
+     */
+    protected function setCalDavStatus(array $fieldValues, \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent)
+    {
+        if (isset($fieldValues[1]) && $fieldValues[1] != $calDavEvent->getStatus()) {
+            throw new ExportException("Status value conflict with CalDav: " .
+                "'{$fieldValues[1]}' isn't equal '{$calDavEvent->getStatus()}'");
+        }
+        $calDavEvent->setStatus($fieldValues[0]);
+    }
+
+    /**
+     * @param array $fieldValues
+     * @param \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent
+     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException
+     */
+    protected function setCalDavStartDate(array $fieldValues, \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent)
+    {
+        if (isset($fieldValues[1])) {
+            $dateBefore = new \SugarDateTime($fieldValues[1], new \DateTimeZone('UTC'));
+            if ($dateBefore != $calDavEvent->getStartDate()) {
+                throw new ExportException("Start date value conflict with CalDav: " .
+                    "'{$dateBefore->asDb()}' isn't equal '{$calDavEvent->getStartDate()->asDb()}'");
+            }
+        }
+        $calDavEvent->setStartDate(new \SugarDateTime($fieldValues[0], new \DateTimeZone('UTC')));
+    }
+
+    /**
+     * @param array $fieldValues
+     * @param \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent
+     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException
+     */
+    protected function setCalDavEndDate(array $fieldValues, \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent)
+    {
+        if (isset($fieldValues[1])) {
+            $dateBefore = new \SugarDateTime($fieldValues[1], new \DateTimeZone('UTC'));
+            if ($dateBefore != $calDavEvent->getEndDate()) {
+                throw new ExportException("Start date value conflict with CalDav: " .
+                    "'{$dateBefore->asDb()}' isn't equal '{$calDavEvent->getEndDate()->asDb()}'");
+            }
+        }
+        $calDavEvent->setEndDate(new \SugarDateTime($fieldValues[0], new \DateTimeZone('UTC')));
+    }
+
+    /**
      * @return \Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper
      */
     protected function getParticipantHelper()
@@ -151,5 +246,13 @@ abstract class AdapterAbstract
     protected function getCalendarEvents()
     {
         return new \CalendarEvents();
+    }
+
+    /**
+     * @return DateTimeHelper
+     */
+    protected function getDateTimeHelper()
+    {
+        return new DateTimeHelper();
     }
 }

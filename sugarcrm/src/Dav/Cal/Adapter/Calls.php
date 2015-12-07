@@ -22,177 +22,81 @@ use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException as AdapterInva
  */
 class Calls extends CalDavAbstractAdapter implements AdapterInterface
 {
-    public function export(\SugarBean $sugarBean, \CalDavEvent $calDavBean)
+    /**
+     * @param array $exportData
+     * @param \CalDavEventCollection $eventCollection
+     * @return bool
+     */
+    public function export(array $exportData, \CalDavEventCollection $eventCollection)
     {
-        if (!($sugarBean instanceof \Call)) {
-            throw new AdapterInvalidArgumentException('Bean must be an instance of Call. Instance of '. get_class($sugarBean) .' given');
+        $isCalDavChanged = false;
+        $parentEvent = $eventCollection->getParent();
+        $participantHelper = $this->getParticipantHelper();
+        list($beanData, $changedFields, $invites) = $exportData;
+        list($beanModuleName, $beanId, $repeatParentId, $childEventsId, $isUpdated) = $beanData;
+
+        if (isset($changedFields['name'])) {
+            $this->setCalDavTitle($changedFields['name'], $parentEvent);
+            $isCalDavChanged = true;
+        }
+        if (isset($changedFields['description'])) {
+            $this->setCalDavDescription($changedFields['description'], $parentEvent);
+            $isCalDavChanged = true;
+        }
+        if (isset($changedFields['location'])) {
+            $this->setCalDavLocation($changedFields['location'], $parentEvent);
+            $isCalDavChanged = true;
+        }
+        if (isset($changedFields['status'])) {
+            $this->setCalDavStatus($changedFields['status'], $parentEvent);
+            $isCalDavChanged = true;
+        }
+        if (isset($changedFields['date_start'])) {
+            $this->setCalDavStartDate($changedFields['date_start'], $parentEvent);
+            $isCalDavChanged = true;
+        }
+        if (isset($changedFields['date_end'])) {
+            $this->setCalDavEndDate($changedFields['date_end'], $parentEvent);
+            $isCalDavChanged = true;
         }
 
-        $isEventChanged = false;
-
-        if (!$calDavBean->calendarid) {
-            $calendars = $this->getUserCalendars();
-            if ($calendars !== null) {
-                $calDavBean->setCalendarId(key($calendars));
-            } else {
-                return false;
+        if (isset($invites['deleted'])) {
+            foreach ($invites['deleted'] as $invite) {
+                if (!$parentEvent->deleteParticipant($invite[3])) {
+                    new ExportException("Email {$invite[3]} hasn't found on invite deleting in Call bean");
+                }
             }
+            $isCalDavChanged = true;
         }
 
-        $calendarEvent = $calDavBean->getVCalendarEvent();
-
-        $calendarComponent = $calDavBean->setComponent($calDavBean->getComponentTypeName());
-        foreach ($this->exportBeanDataMap as $functionName => $field) {
-            if ($calDavBean->$functionName($sugarBean->$field, $calendarComponent)) {
-                $isEventChanged = true;
+        if (isset($invites['changed'])) {
+            foreach ($invites['changed'] as $invite) {
+                if ($parentEvent->findParticipantsByEmail($invite[3]) == - 1) {
+                    new ExportException("Email {$invite[3]} hasn't found on invite updating in Call bean");
+                }
+                $parentEvent->setParticipant($participantHelper->inviteToParticipant($invite));
             }
+            $isCalDavChanged = true;
         }
 
-        $calDavBean->setStatus($this->getEventMap()->getCalDavValue($sugarBean->status, $calDavBean->getStatus()), $calendarComponent);
-
-        if ($calDavBean->setStartDate($sugarBean->date_start, $calendarComponent)) {
-            $isEventChanged = true;
+        if (isset($invites['added'])) {
+            foreach ($invites['added'] as $invite) {
+                $parentEvent->setParticipant($participantHelper->inviteToParticipant($invite));
+            }
+            $isCalDavChanged = true;
         }
 
-        if ($calDavBean->setEndOfEvent(
-            $sugarBean->date_end,
-            $sugarBean->duration_hours,
-            $sugarBean->duration_minutes,
-            $calendarComponent
-        )) {
-            $isEventChanged = true;
-        }
-
-        if ($calDavBean->setOrganizer($sugarBean, $calendarComponent)) {
-            $isEventChanged = true;
-        }
-        if ($this->setExportReminders($sugarBean, $calDavBean, $calendarComponent)) {
-            $isEventChanged = true;
-        }
-
-        $isParticipantsChanged = false;
-        if ($calDavBean->setParticipants($sugarBean, $calendarComponent)) {
-            $isParticipantsChanged = $isEventChanged = true;
-        }
-        if ($this->setRecurringRulesToCalDav($sugarBean, $calDavBean)) {
-            $isEventChanged = true;
-        }
-
-        if ($isParticipantsChanged) {
-            $calDavBean->scheduleLocalDelivery();
-        }
-
-        if ($isEventChanged) {
-            $calDavBean->setCalendarEventData($calendarEvent->serialize());
-        }
-
-        return $isEventChanged;
+        return $isCalDavChanged;
     }
 
     /**
      * set meeting bean property
-     * @param \Call $sugarBean
+     * @param \SugarBean $sugarBean
      * @param \CalDavEvent $calDavBean
      * @return bool
      */
     public function import(\SugarBean $sugarBean, \CalDavEvent $calDavBean)
     {
-        if (!($sugarBean instanceof \Call)) {
-            throw new AdapterInvalidArgumentException('Bean must be an instance of Call. Instance of '. get_class($sugarBean) .' given');
-        }
-
-        $isBeanChanged = false;
-
-        $calDavBean->clearVCalendarEvent();
-
-        if (!$sugarBean->isUpdate()) {
-            $sugarBean->send_invites = true;
-        }
-
-        $oldAttributes = $this->getCurrentAttributes($sugarBean);
-
-        if (!$sugarBean->assigned_user_id) {
-            $sugarBean->assigned_user_id = $this->getCurrentUserId();
-            $isBeanChanged = true;
-        }
-
-        /**@var \Call $sugarBean */
-        if ($this->setBeanProperties($sugarBean, $calDavBean, $this->importBeanDataMap)) {
-            $isBeanChanged = true;
-        }
-
-        $status = $this->getEventMap()->getSugarValue($calDavBean->getStatus(), $sugarBean->status);
-        if ($sugarBean->status !== $status) {
-            $sugarBean->status = $status;
-            $isBeanChanged = true;
-        }
-
-        $participants = $calDavBean->getParticipants();
-
-        if ($participants) {
-            if (!empty($participants['Users'])) {
-                $usersParticipants = $participants['Users'];
-                $sugarBean->users_arr = array_keys($usersParticipants);
-                if (!$sugarBean->id) {
-                    $sugarBean->id = create_guid();
-                    $sugarBean->new_with_id = true;
-                    $isBeanChanged = true;
-                }
-                $meetingUsers = $this->arrayIndex('id', $sugarBean->get_call_users());
-                foreach ($usersParticipants as $userId => $partipientInfo) {
-                    if ($partipientInfo['accept_status']) {
-                        if (!array_key_exists($userId, $meetingUsers) ||
-                            $meetingUsers[$userId]->accept_status != $partipientInfo['accept_status']
-                        ) {
-                            $user = \BeanFactory::getBean('Users', $userId);
-                            $sugarBean->set_accept_status($user, $partipientInfo['accept_status']);
-                            $isBeanChanged = true;
-                        }
-                    }
-                }
-            }
-
-            if (!empty($participants['Contacts'])) {
-                $isBeanChanged |= $this->addNonUsersParticipants(
-                    $participants['Contacts'],
-                    $sugarBean,
-                    'contacts',
-                    'setContactInvitees'
-                );
-            }
-
-            if (!empty($participants['Leads'])) {
-                $isBeanChanged |= $this->addNonUsersParticipants(
-                    $participants['Leads'],
-                    $sugarBean,
-                    'leads',
-                    'setLeadInvitees'
-                );
-            }
-        }
-
-        $reminders = $calDavBean->getReminders();
-
-        if ($reminders) {
-            if ($this->setReminders($reminders, $sugarBean)) {
-                $isBeanChanged = true;
-            }
-        }
-
-        $recurringRule = $calDavBean->getRRule();
-        if ($recurringRule) {
-            if ($this->setRecurring($recurringRule, $sugarBean, $calDavBean)) {
-                $isBeanChanged = true;
-            }
-        }
-
-        if (!$isBeanChanged) {
-            if (array_diff_assoc($oldAttributes, $this->getCurrentAttributes($sugarBean))) {
-                $isBeanChanged = true;
-            }
-        }
-
-        return $isBeanChanged;
 
     }
 }
