@@ -306,8 +306,6 @@ function mark_relationships_deleted($id){
         $query = sprintf("UPDATE users
             SET date_modified = %s
             WHERE id IN (
-                SELECT *
-                FROM (
                     SELECT u.id
                     FROM users u
                     INNER JOIN acl_roles_users aru
@@ -315,8 +313,7 @@ function mark_relationships_deleted($id){
                         AND aru.deleted = 0
                     WHERE u.deleted = 0
                         AND aru.role_id = %s
-                ) AS temp_table
-            )", $this->db->now(), $this->db->quoted($this->id));
+                )", $this->db->now(), $this->db->quoted($this->id));
         $this->db->query($query);
     }
 }
