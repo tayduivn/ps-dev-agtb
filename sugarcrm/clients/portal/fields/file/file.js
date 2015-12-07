@@ -18,7 +18,7 @@
     /**
      * This is overriden by portal in order to prepend site url
      * @param {String} uri
-     * @returns {String} formatted uri
+     * @return {string} formatted uri
      */
     formatUri: function(uri) {
         return app.config.siteUrl + '/' + uri;

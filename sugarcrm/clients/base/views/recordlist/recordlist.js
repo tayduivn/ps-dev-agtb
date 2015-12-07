@@ -151,7 +151,7 @@
     /**
      * Retrieve the metadata of the recordlist view
      *
-     * @returns {Object}
+     * @return {Object}
      * @private
      */
     _initializeMetadata: function() {

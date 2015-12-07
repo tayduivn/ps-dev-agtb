@@ -88,7 +88,7 @@
      *
      * @param term
      * @param results
-     * @returns {*}
+     * @return {Mixed}
      * @private
      */
     _createSearchChoice: function(term, results) {
@@ -130,7 +130,7 @@
     /**
      * Check tag select2's currently selected tags for term to see if it already exists (case insensitive)
      * @param term term to be checked
-     * @return boolean - true if tag exists already
+     * @return {boolean} `true` if tag exists already, `false` otherwise
      */
     checkExistingTags: function(term) {
         if (this.$select2 && _.isFunction(this.$select2.val)) {

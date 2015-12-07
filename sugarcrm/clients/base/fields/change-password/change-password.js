@@ -145,7 +145,7 @@
      * Sets an arbitrary value just to display stars on detail view
      * @override
      * @param {Boolean} value
-     * @returns {String} value
+     * @return {string} value
      */
     format: function(value) {
         if (value === true) return 'value_setvalue_set';
@@ -156,7 +156,7 @@
      * Reset the arbitrary value
      * @override
      * @param {String} value
-     * @returns {*} value boolean is the value is not set
+     * @return {Mixed} value boolean is the value is not set
      */
     unformat: function(value) {
         if (value === 'value_setvalue_set') return true;

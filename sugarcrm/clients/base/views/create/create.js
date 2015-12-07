@@ -379,7 +379,7 @@
      * And trigger an event to tell the subpanel to validate itself
      *
      * @param callback
-     * @returns {*}
+     * @return {Mixed}
      */
     validateSubpanelModelsWaterfall: function(callback) {
         this.hasSubpanelModels = false;
@@ -581,7 +581,7 @@
     /**
      * Using the model returned from the API call, build the success message
      * @param model
-     * @returns {*}
+     * @return {*}
      */
     buildSuccessMessage: function(model) {
         var modelAttributes,

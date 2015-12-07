@@ -121,7 +121,7 @@
     /**
      * Get field view definition from the record view, given field names.
      * @param fieldNames
-     * @returns {Array}
+     * @return {Array}
      * @private
      */
     _getFieldViewDefinition: function(fieldNames) {

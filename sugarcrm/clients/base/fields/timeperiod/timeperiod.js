@@ -191,7 +191,7 @@
      * that gets output
      *
      * @param {Object} object
-     * @returns {string}
+     * @return {string}
      */
     formatOption: function(object) {
         // check once if the tpTooltipMap has been built yet

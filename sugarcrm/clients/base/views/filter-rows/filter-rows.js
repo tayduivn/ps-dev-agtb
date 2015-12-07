@@ -209,7 +209,7 @@
     /**
      * Get filterable fields from the module metadata
      * @param {String} moduleName
-     * @returns {Object}
+     * @return {Object}
      */
     getFilterableFields: function(moduleName) {
         var moduleMeta = app.metadata.getModule(moduleName),

@@ -61,7 +61,7 @@
      * Map mass collection models to the appropriate format
      * required to prepopulate the to_addresses on email compose
      *
-     * @returns {Object} options to prepopulate on the email compose
+     * @return {Object} options to prepopulate on the email compose
      * @private
      */
     _retrieveEmailOptionsFromLink: function() {

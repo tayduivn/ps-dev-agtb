@@ -119,7 +119,7 @@
 
     /**
      * Prepares Signup API request payload based on form's model and language preferences
-     * @returns {{first_name: *, last_name: *, email: *, phone_work: *, primary_address_country: *, title: *, account_name: *}}
+     * @return {{first_name: *, last_name: *, email: *, phone_work: *, primary_address_country: *, title: *, account_name: *}}
      * @private
      */
     _prepareRequestPayload: function() {

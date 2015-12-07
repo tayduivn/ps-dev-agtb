@@ -154,7 +154,7 @@
      *
      * Concats {@link #internalLibrary} and {@link #temporaryLibrary}.
      *
-     * @returns {Array} The list of items to perform the search.
+     * @return {Array} The list of items to perform the search.
      */
     getLibrary: function() {
         return this.internalLibrary.concat(this.getTemporaryLibrary());
