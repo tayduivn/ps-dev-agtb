@@ -294,17 +294,23 @@ class OracleManager extends DBManager
                     $result = true;
                 }
             }
+
+            $this->lastQuery = $sql;
+            if($keepResult) {
+                if (!$freeStmt) {
+                    $this->lastResult = $result;
+                }else{
+                    $this->lastResult = null;
+                }
+            }
+
+            if($this->checkError($msg.' Query Failed: ' . $sql, $dieOnError, $stmt)) {
+                // free statement
+                $this->freeDbResult($stmt);
+                return false;
+            }
 		}
 
-		$this->lastQuery = $sql;
-		if($keepResult)
-		    $this->lastResult = $result;
-
-		if($this->checkError($msg.' Query Failed: ' . $sql, $dieOnError, $stmt)) {
-            // free statement
-            $this->freeDbResult($stmt);
-		    return false;
-		}
         return $result;
     }
 
