@@ -34,17 +34,16 @@ class ServerHelper
         $principalBackend = new $principalClass();
         $calendarBackend = new $calendarClass();
 
-        $searchSet = $calendarCollection = $principalCollection = array();
+        $calendarCollection = $principalCollection = array();
 
         foreach ($searchModules as $module) {
             $principalPath = 'principals/' . strtolower($module);
             $principalCollection[] = new DAVACL\PrincipalCollection($principalBackend, $principalPath);
             $calendarCollection[] = new Cal\CalendarRoot($principalBackend, $calendarBackend, $principalPath);
-            $searchSet[] = $principalPath;
         }
 
         $tree = array(
-            new DAV\SimpleCollection('principals', $principalCollection),
+            new Principal\Collection('principals', $principalCollection),
             new DAV\SimpleCollection('calendars', $calendarCollection),
         );
 
@@ -54,9 +53,8 @@ class ServerHelper
         $authPlugin = new DAV\Auth\Plugin($authBackend, 'SugarCRM DAV Server');
         $server->addPlugin($authPlugin);
 
-        $aclPlugin = new DAVACL\Plugin();
+        $aclPlugin = new Principal\Acl\Plugin();
         $aclPlugin->defaultUsernamePath = 'principals/users';
-        $aclPlugin->principalCollectionSet = $searchSet;
         $server->addPlugin($aclPlugin);
 
         $caldavPlugin = new Cal\Plugin();

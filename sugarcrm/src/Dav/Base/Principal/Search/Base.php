@@ -124,7 +124,7 @@ abstract class Base implements SearchInterface
                             $conditionExists = true;
                             $orQuery = $andQuery->queryOr();
                             foreach ($searchFields as $filed) {
-                                $orQuery->contains($filed, $part);
+                                $orQuery->starts($filed, $part);
                             }
                         }
                     }
@@ -140,9 +140,9 @@ abstract class Base implements SearchInterface
                         $query->select(array('email_addresses.email_address'));
 
                         if ($test == 'allof') {
-                            $query->where()->contains('email_addresses.email_address', $value);
+                            $query->where()->starts('email_addresses.email_address', $value);
                         } else {
-                            $mainOrQuery->contains('email_addresses.email_address', $value);
+                            $mainOrQuery->starts('email_addresses.email_address', $value);
                         }
                     } else {
                         return array();
