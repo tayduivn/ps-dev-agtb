@@ -351,7 +351,7 @@
      * Utility Method to find the proper model to use, if this.model.module is forecasts, go up to the parent context
      * and use the model that's attached to it otherwise return this.model
      *
-     * @return {*}
+     * @return {Mixed}
      * @private
      */
     _getNonForecastModel: function() {
