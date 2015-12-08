@@ -48,7 +48,13 @@ function is_system_tabs_in_db(){
         return "";
     }
 
-function get_system_tabs(){
+	/**
+	 * Return the list of enabled tabs
+	 * @param bool|true $filter when true, the tabs are filtered by the current user's ACLs
+	 *
+	 * @return array
+	 */
+function get_system_tabs($filter = true){
 	global $moduleList;
 
 	static $system_tabs_result = null;
@@ -59,7 +65,7 @@ function get_system_tabs(){
 
 		$administration = Administration::getSettings('MySettings', true);
 		if(isset($administration->settings) && isset($administration->settings['MySettings_tab'])){
-			$tabs= $administration->settings['MySettings_tab'];
+			$tabs = $administration->settings['MySettings_tab'];
 			$trimmed_tabs = trim($tabs);
 			//make sure serialized string is not empty
 			if (!empty($trimmed_tabs)){
@@ -71,8 +77,10 @@ function get_system_tabs(){
 					if (!in_array($tab, $moduleList))
 						unset($tabs[$id]);
 				}
-				$tabs = $this->get_key_array(SugarACL::filterModuleList($tabs, 'access', true));
-				$system_tabs_result = $tabs;
+				if ($filter) {
+					$tabs = SugarACL::filterModuleList($tabs, 'access', true);
+				}
+				$system_tabs_result = $this->get_key_array($tabs);
 			}else{
 				$system_tabs_result = $this->get_key_array($moduleList);
 			}
