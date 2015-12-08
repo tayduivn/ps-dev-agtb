@@ -17,11 +17,10 @@
     extendsFrom: 'ConfigHeaderButtonsView',
 
     initialize: function(options) {
-        this._super('initialize', [options]);
-
         this.events = _.extend({}, this.events, {
-            'click .btn[name=reset_all_button]': 'handleReset'
+            'click a[name=reset_all_button]': 'resetConfig'
         });
+        this._super('initialize', [options]);
     },
 
     /**
@@ -36,8 +35,7 @@
     },
 
     /**
-     * This method does the same thing as parent's one, but additionally on success redirects browser back,
-     * thus preventing user to stay on Notification Center List View.
+     * Because we're not drawer we simply need to go back after save.
      * @inheritdoc
      */
     _saveConfig: function() {
@@ -45,12 +43,9 @@
         var url = app.api.buildURL(this.module, 'config' + configSection);
         this.model.updateCarriersAddresses();
         app.api.call('update', url, this.model.attributes, {
-                success: _.bind(function(data) {
-                    if (app.drawer) {
-                        this.showSavedConfirmation();
-                        app.drawer.close(this.context, this.context.get('model'));
-                        app.router.goBack();
-                    }
+                success: _.bind(function() {
+                    this.showSavedConfirmation();
+                    app.router.goBack();
                 }, this),
                 error: _.bind(function() {
                     this.getField('save_button').setDisabled(false);
@@ -59,7 +54,10 @@
         );
     },
 
-    handleReset: function() {
+    /**
+     * Resetting model do default application state.
+     */
+    resetConfig: function() {
         var successMsg = app.lang.get('LBL_RESET_SETTINGS_SUCCESS', this.module);
         app.alert.show('reset_all_confirmation', {
             level: 'confirmation',
@@ -74,5 +72,15 @@
                 }
             }, this)
         });
+    },
+
+    /**
+     * Because we're not drawer we simply need to go back.
+     * @inheritdoc
+     */
+    cancelConfig: function() {
+        if (this.triggerBefore('cancel')) {
+            this._handleCancelRedirect();
+        }
     }
 })
