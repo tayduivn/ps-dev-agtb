@@ -9,7 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
+/*
+ * @coversDefaultClass SugarUpgradeUpdateFTSSettings
+ */
 require_once 'modules/UpgradeWizard/UpgradeDriver.php';
 require_once 'upgrade/scripts/post/1_UpdateFTSSettings.php';
 

@@ -11,7 +11,7 @@
 (function(app) {
 
     // Add custom events here for now
-    app.events.on("app:init", function() {
+    app.events.on('router:init', function() {
 
 
         var routes;
@@ -119,8 +119,7 @@
                 route: ":module/:id"
             }
         ];
-
-        app.routing.setRoutes(routes);
+        app.router.addRoutes(routes);
     });
 
     // bug57318: Mulitple alert warning when multiple views get render denied on same page.

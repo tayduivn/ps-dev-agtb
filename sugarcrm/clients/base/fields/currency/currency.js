@@ -196,7 +196,9 @@
                 var newValue = app.math.round(baseRate, 6, true),
                     previousValue = app.math.round(model.previous(baseRateField), 6, true);
                 if (!_.isEqual(newValue, previousValue)) {
-                    this._deferModelChange();
+                    if (options && _.isUndefined(options.revert)) {
+                        this._deferModelChange();
+                    }
                 }
             }, this);
             this.model.on('change:' + currencyField, function(model, currencyId, options) {

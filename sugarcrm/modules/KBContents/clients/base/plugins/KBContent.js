@@ -415,6 +415,7 @@
                 app.error.errorName2Keys['expDateLow'] = 'ERROR_EXP_DATE_LOW';
                 app.error.errorName2Keys['activeDateApproveRequired'] = 'ERROR_ACTIVE_DATE_APPROVE_REQUIRED';
                 app.error.errorName2Keys['activeDateLow'] = 'ERROR_ACTIVE_DATE_LOW';
+                app.error.errorName2Keys['activeDateEmpty'] = 'ERROR_ACTIVE_DATE_EMPTY';
 
                 model.addValidationTask('exp_date_publish', _.bind(_doValidateExpDateFieldPartial, this));
                 model.addValidationTask('active_date_approve', _.bind(_doValidateActiveDateFieldPartial, this));
@@ -493,8 +494,8 @@
                         errors[fieldName].activeDateLow = true;
                         errorKeys.push('activeDateLow');
                         if (
-                            (this.context.get('layout') === 'records' || this.context.get('isSubpanel') === true)
-                            && !_.isUndefined(errors[fieldName])
+                            (this.context.get('layout') === 'records' || this.context.get('isSubpanel') === true) &&
+                                !_.isEmpty(errors[fieldName]) && !this._massupdateStatusValidation('approved')
                         ) {
                             this._alertError(errorKeys);
                         }
@@ -545,6 +546,10 @@
                                 }
                             }, this)
                         });
+                    } else if (!publishingDate) {
+                        errors[fieldName] = errors[fieldName] || {};
+                        errors[fieldName].activeDateEmpty = true;
+                        callback(null, fields, errors);
                     } else {
                         callback(null, fields, errors);
                     }
