@@ -162,6 +162,14 @@ $viewdefs['Styleguide']['base']['layout']['styleguide'] = array(
                             "basic" => array("title"=>"Basic List", "description"=>"Simple table layouts with striping."),
                         )
                     ),
+                    "dashlet" => array (
+                        "title" => "Dashlet Views",
+                        "description" => "Component views combined to form a dashlet.",
+                        "index" => true,
+                        "pages" => array (
+                            "toolbar" => array("title"=>"Toolbar", "description"=>"Dashlet header bar for interacting with dashlet."),
+                        )
+                    ),
                 ),
             ),
         ),
