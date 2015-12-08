@@ -18,11 +18,10 @@
      * @param {io} socket Web socket client library of current Socket object.
      * @constructor
      */
-    var Channel = function(name, socket) {
+    var Channel = function (name) {
         this.systemEvents = _.extend({}, Backbone.Events);
         this._super = Backbone.Events;
         this._name = name;
-        this._socket = socket;
     };
     _.extend(Channel.prototype, Backbone.Events, {
 
@@ -42,7 +41,7 @@
          */
         on: function() {
             if (this.isEmpty()) {
-                this._join();
+                this.systemEvents.trigger('join', this.name());
             }
             return this._super.on.apply(this, arguments);
         },
@@ -55,33 +54,9 @@
         off: function() {
             var result = this._super.off.apply(this, arguments);
             if (this.isEmpty()) {
-                this._leave();
+                this.systemEvents.trigger('leave', this.name());
             }
             return result;
-        },
-
-        /**
-         * Method is called when we subscribe to an event of the channel first time.
-         * It sends message to socket server to join required rooms.
-         * Also it triggers own 'join' system event.
-         *
-         * @private
-         */
-        _join: function() {
-            this._socket.emit('join', this.name());
-            this.systemEvents.trigger('join', this.name());
-        },
-
-        /**
-         * Method is called when last subscriber left the channel.
-         * It sends message to socket server to leave required rooms.
-         * Also it triggers own 'leave' system event.
-         *
-         * @private
-         */
-        _leave: function() {
-            this._socket.emit('leave', this.name());
-            this.systemEvents.trigger('leave', this.name());
         },
 
         /**
@@ -252,8 +227,43 @@
             if(_.isUndefined(this._channels[name])) {
                 this._channels[name] = this._FactoryChannel(name);
                 this._channels[name].systemEvents.on('leave', this._destroyChannel, this);
+                this._channels[name].systemEvents.on('leave', this._leaveChannel, this);
+                this._channels[name].systemEvents.on('join', this._joinChannel, this);
             }
             return this._channels[name];
+        },
+
+        /**
+         * Join Channels.
+         *
+         * @param {string} channel name
+         * @private
+         */
+        _joinChannel: function (channel) {
+            this._forward('join', channel);
+        },
+
+        /**
+         * Join Channels.
+         *
+         * @param {string} channel name
+         * @private
+         */
+        _leaveChannel: function (channel) {
+            this._forward('leave', channel);
+        },
+
+        /**
+         * Forward message.
+         *
+         * @param {string} action name
+         * @param {string} channel name
+         */
+        _forward: function (action, channel) {
+            var socket = this.socket();
+            if (socket) {
+                socket.emit(action, channel);
+            }
         },
 
         /**
@@ -286,7 +296,7 @@
          * @private
          */
         _FactoryChannel: function(name) {
-            return new Channel(name, this.socket());
+            return new Channel(name);
         },
 
         /**

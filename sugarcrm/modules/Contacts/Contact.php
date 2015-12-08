@@ -137,15 +137,16 @@ class Contact extends Person {
     );
 
     /**
-     * This is a deprecated method, please start using __construct() as this
-     * method will be removed in a future version.
-     *
-     * @deprecated since 7.0.0. Use __construct() instead.
+     * This is deprecated since 7.0.0 and will be removed in 7.9.0.
+     * Please use __construct() instead.
+     * @deprecated 7.0.0
+     * @see __construct
      */
     public function Contact()
     {
-        $GLOBALS['log']->deprecated('Calls to Contact::Contact() are deprecated.');
         self::__construct();
+        $GLOBALS['log']->deprecated('Contact::Contact() is deprecated since 7.0.0. and will be removed in 7.9.0. ' .
+            'Please use Contact::__construct() instead.');
     }
 
 	public function __construct() {

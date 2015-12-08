@@ -31,10 +31,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   array (
     'name' => 'duration_hours',
     'vname' => 'LBL_DURATION_HOURS',
-    'type' => 'enum',
-    'dbType' => 'int',
-    'options' => 'duration_hours_intervals',
-    'len' => '2',
+    'type' => 'int',
     'comment' => 'Call duration, hours portion',
     'required' => true,
     'massupdate' => false,
@@ -72,7 +69,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'enable_range_search' => true,
     'options' => 'date_range_search_dom',
     'validation' => array('type' => 'isbefore', 'compareto' => 'date_end', 'blank' => false),
-    'studio' => array('recordview' => false),
+    'studio' => array('recordview' => false, 'wirelesseditview'=>false),
     'full_text_search' => array('enabled' => true, 'searchable' => false),
   ),
 
