@@ -73,20 +73,14 @@ class SetOptionsAction extends AbstractAction{
 
 					if (_.isString(labels)) {
 					    field.items = _.pick(App.lang.getAppListStrings(labels), keys);
-					    var numericKey = false;
-					    numericKey = _.any(keys, function(key){
-					        return !isNaN(key) && key !== '';
-					    });
-					    if (numericKey) {
-					        var items = {};
-					        _.each (_.values(keys), function(value) {
-					            if (value in field.items) {
-					                items[_.indexOf(keys, value)] = {id: value, text: field.items[value]};
-					            }
-					        });
-					        if (!_.isEmpty(items)) {
-					            field.items = items;
+					    var items = {};
+					    _.each (_.values(keys), function(value) {
+					        if (value in field.items) {
+					            items[_.indexOf(keys, value)] = {id: value, text: field.items[value]};
 					        }
+					    });
+					    if (!_.isEmpty(items)) {
+					        field.items = items;
 					    }
 					}
 					else
