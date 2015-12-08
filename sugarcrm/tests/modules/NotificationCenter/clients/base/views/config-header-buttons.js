@@ -62,10 +62,10 @@ describe('NotificationCenter.View.ConfigHeaderButtons', function() {
         });
     });
 
-    describe('handleReset()', function() {
+    describe('resetConfig()', function() {
         it('should show confirmation alert popup', function() {
             var alertOpen = sandbox.stub(app.alert, 'show');
-            view.handleReset();
+            view.resetConfig();
             expect(alertOpen).toHaveBeenCalled();
         });
 
@@ -74,7 +74,7 @@ describe('NotificationCenter.View.ConfigHeaderButtons', function() {
                 param.onConfirm();
             });
             var reset = sandbox.spy(view.model, 'resetToDefault');
-            view.handleReset();
+            view.resetConfig();
             expect(reset).toHaveBeenCalledWith('all');
         });
     });
@@ -89,10 +89,6 @@ describe('NotificationCenter.View.ConfigHeaderButtons', function() {
             updateAddresses = sandbox.stub(view.model, 'updateCarriersAddresses');
         });
 
-        afterEach(function() {
-            app.drawer = null;
-        });
-
         it('should ask model to update carriers\' addresses', function() {
             view._saveConfig();
             server.respond();
@@ -100,13 +96,19 @@ describe('NotificationCenter.View.ConfigHeaderButtons', function() {
         });
 
         it('should navigate browser back on successful model save', function() {
-            app.drawer = {close: function(){}};
             var goBack = sandbox.spy(app.router, 'goBack');
-            sandbox.stub(app.drawer, 'close');
             sandbox.stub(view, 'showSavedConfirmation');
 
             view._saveConfig();
             server.respond();
+            expect(goBack).toHaveBeenCalled();
+        });
+    });
+
+    describe('cancelConfig()', function() {
+        it ('should navigate browser back', function() {
+            var goBack = sandbox.spy(app.router, 'goBack');
+            view.cancelConfig();
             expect(goBack).toHaveBeenCalled();
         });
     });
