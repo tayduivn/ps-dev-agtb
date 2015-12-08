@@ -159,7 +159,7 @@
      * sets fields on model according to acls
      * @param model
      * @param fields
-     * @returns {*}
+     * @return {Mixed}
      */
     setCreateModelFields: function(model, fields) {
         var action = 'edit', module = 'Cases', ownerId = app.user.get('id');
@@ -185,7 +185,7 @@
 
     /**
      * Gets twitter name from one of various fields depending on context
-     * @returns {string} twitter name
+     * @return {string} twitter name
      */
     getTwitterName: function() {
         var mapping = this.getConnectorModuleFieldMapping('ext_rest_twitter', this.moduleType);
@@ -212,7 +212,7 @@
      * Load twitter data
      *
      * @param {object} options
-     * @returns {boolean} Returns false if twitter name could not be established
+     * @return {boolean} `false` if twitter name could not be established
      */
     loadData: function(options) {
         if (this.disposed || this.meta.config) {
