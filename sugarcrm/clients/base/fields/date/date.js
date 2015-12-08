@@ -61,6 +61,14 @@
          * @property {boolean}
          */
         this.ellipsis = _.isUndefined(this.def.ellipsis) || this.def.ellipsis;
+
+        /**
+         * If a date picker has been initialized on the field or not.
+         *
+         * @type {boolean}
+         * @private
+         */
+        this._hasDatePicker = false;
     },
 
     /**
@@ -184,6 +192,7 @@
         }
 
         $field.datepicker(options);
+        this._hasDatePicker = true;
     },
 
     /**
@@ -412,9 +421,8 @@
         // FIXME: new date picker versions have support for plugin removal/destroy
         // we should do the upgrade in order to prevent memory leaks
 
-        var $field = this.$(this.fieldTag);
-        if ($field.data('datepicker')) {
-            $(window).off('resize', $field.data('datepicker').place);
+        if (this._hasDatePicker) {
+            $(window).off('resize', this.$(this.fieldTag).data('datepicker').place);
         }
 
         this._super('_dispose');

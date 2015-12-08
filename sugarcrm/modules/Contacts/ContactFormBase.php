@@ -402,15 +402,12 @@ return $the_form;
 
 }
 
-/**
- * @deprecated
- */
+// FIXME TY-986: decide if/how we're going to deprecate this
 function handleSave($prefix, $redirect=true, $useRequired=false){
     global $log;
-    $log->deprecated('This function handleSave() is no longer supported.');
+    $log->deprecated('ContactFormBase::handleSave() is deprecated since 7.0.0.');
 
     global $theme, $current_user;
-
 
 	require_once('include/formbase.php');
 

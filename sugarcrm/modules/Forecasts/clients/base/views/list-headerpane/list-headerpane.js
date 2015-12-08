@@ -179,5 +179,16 @@
         }
 
         this._super('_renderHtml');
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        if(this.layout.context) {
+            this.layout.context.off('forecasts:sync:start', null, this);
+            this.layout.context.off('forecasts:sync:complete', null, this);
+        }
+        this._super('_dispose');
     }
 })

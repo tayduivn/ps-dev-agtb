@@ -78,14 +78,6 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             }
         }
 
-        // Check if this is the first commit, then save has_commits true to the config table
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
-        if (!isset($settings['has_commits']) || !$settings['has_commits']) {
-            $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
-            MetaDataManager::refreshModulesCache(array('Forecasts'));
-        }
-
         $seed->setWorksheetArgs($this->args);
         // we need to set the parent_type and parent_id so it finds it when we try and retrieve the old records
         $seed->parent_type = $this->getArg('parent_type');

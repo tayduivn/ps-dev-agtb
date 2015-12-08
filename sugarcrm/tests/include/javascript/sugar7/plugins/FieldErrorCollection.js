@@ -9,14 +9,21 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe('Plugins.FieldErrorCollection', function() {
-    var view, layout, getFieldStub, renderStub, field;
+    var view,
+        layout,
+        field;
+
     beforeEach(function() {
         SugarTest.loadPlugin('FieldErrorCollection');
-        layout = SugarTest.createLayout('base', 'ForecastWorksheets', 'list', null, null);
+        layout = SugarTest.createLayout('base', 'ForecastWorksheets', 'list', {}, null);
         view = SugarTest.createView('base', 'Forecasts', 'list-headerpane', null, null, true, layout, true);
+        view.layout.context = {
+            on: function() {},
+            off: function() {}
+        };
 
-        renderStub = sinon.stub(view, 'on', function() {});
-        getFieldStub = sinon.stub(view, 'getField', function() {
+        sinon.collection.stub(view, 'on', function() {});
+        sinon.collection.stub(view, 'getField', function() {
             return {
                 setDisabled: function() {}
             }
@@ -30,21 +37,17 @@ describe('Plugins.FieldErrorCollection', function() {
     });
 
     afterEach(function() {
-        renderStub.restore();
-        getFieldStub.restore();
+        layout.dispose();
+        view.dispose();
+        sinon.collection.restore();
         layout = null;
         view = null;
         field = null;
     });
 
     describe('handleErrorEvent', function() {
-        var triggerSpy;
         beforeEach(function() {
-            triggerSpy = sinon.spy(view.context, 'trigger');
-        });
-
-        afterEach(function() {
-            triggerSpy.restore();
+            sinon.collection.spy(view.context, 'trigger');
         });
 
         it('should add field model on field error', function() {
@@ -60,7 +63,7 @@ describe('Plugins.FieldErrorCollection', function() {
 
         it('should trigger its own event on the context', function() {
             view.context.trigger('field:error', field, true);
-            expect(triggerSpy).toHaveBeenCalledWith('plugin:fieldErrorCollection:hasFieldErrors');
+            expect(view.context.trigger).toHaveBeenCalledWith('plugin:fieldErrorCollection:hasFieldErrors');
         });
     });
 

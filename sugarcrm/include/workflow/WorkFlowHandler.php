@@ -64,15 +64,6 @@ class WorkFlowHandler {
             $target_class = $focus->module_dir."_workflow";
             $workflow_class = new $target_class();
 
-            if(!empty($focus->emailAddress) && isset($focus->emailAddress->addresses)) {//addresses maybe cleared
-                    $old_addresses = $focus->emailAddress->addresses;
-            }
-            $focus->retrieve($focus->id);//This will lose all changes to emailaddress
-            if(!empty($focus->emailAddress) && isset($old_addresses)) {
-                $focus->emailAddress->addresses = $old_addresses;
-                $focus->emailAddress->populateLegacyFields($focus);
-            }
-
             // Bug 45142 - dates need to be converted to DB format for
             // workflow alerts to work properly in Alerts then Actions
             // situations - rgonzalez
