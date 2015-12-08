@@ -33,7 +33,7 @@
      */
     initialize: function(options) {
         // `dataViewName` corresponds to the list of fields the API should retrieve.
-        this.dataViewName = options.type || 'subpanel-list';
+        this.dataViewName = options.name || 'subpanel-list';
 
         this._super("initialize", [options]);
 
