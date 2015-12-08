@@ -520,6 +520,9 @@
             options = null;
         }
         query.callback(data);
+
+        // Special hack for Firefox bug http://stackoverflow.com/questions/13040897/firefox-scrollbar-resets-incorrectly
+        $(this.$(this.fieldTag).data('select2').results[0]).scrollTop(1).scrollTop(0);
     },
 
     /**
