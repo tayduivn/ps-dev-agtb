@@ -1711,6 +1711,91 @@ class SugarBean
     }
 
     /**
+     * Sets the date_modified field. Expects that the $date argument is in DB
+     * format when passed in.
+     * @param string $date DB formatted date string
+     */
+    public function setModifiedDate($date = '')
+    {
+        global $timedate;
+
+        // If the directive to update date_modified is true, or the date_modified
+        // field is empty, set it
+        if ($this->update_date_modified || empty($this->date_modified)) {
+            // This only needs to be calculated if it is going to be used
+            if (empty($date)) {
+                $date = $timedate->nowDb();
+            }
+
+            $this->date_modified = $date;
+        }
+    }
+
+    /**
+     * Sets the modified user on the bean.
+     * @param User|null $user [description]
+     */
+    public function setModifiedUser(User $user = null)
+    {
+        global $current_user;
+
+        // Note: old_modified_by_name is not used in SugarBean anywhere, but it
+        // could be used elsewhere so this is in place for backward compatibility
+        if (!empty($this->modified_by_name)) {
+            $this->old_modified_by_name = $this->modified_by_name;
+        }
+
+        // If the update date modified by flag is set then carry out this directive
+        if ($this->update_modified_by) {
+            // Default the modified user id to the default
+            $this->modified_user_id = 1;
+
+            // If a user was not presented, default to the current user
+            if (empty($user)) {
+                $user = $current_user;
+            }
+
+            // If the user is set, use it
+            if (!empty($user)) {
+                $this->modified_user_id = $user->id;
+                $this->modified_by_name = $user->user_name;
+            }
+        }
+
+    }
+
+    /**
+     * Sets create user id and create date, as well as id, where needed
+     * @param boolean $isUpdate Flag that determines edit/create state
+     * @param User|null $user User bean
+     */
+    public function setCreateData($isUpdate, User $user = null)
+    {
+        global $current_user;
+
+        // Only set this if this is a create process
+        if (!$isUpdate) {
+            if (empty($this->date_entered)) {
+                $this->date_entered = $this->date_modified;
+            }
+
+            if ($this->set_created_by == true) {
+                // created by should always be this user
+                // unless it was set outside of the bean
+                if ($user) {
+                    $this->created_by = $user->id;
+                } else {
+                    $this->created_by = isset($current_user) ? $current_user->id : "";
+                }
+            }
+
+            if ($this->new_with_id == false) {
+                $this->id = create_guid();
+            }
+        }
+    }
+
+    /**
     * Implements a generic insert and update logic for any SugarBean
     * This method only works for subclasses that implement the same variable names.
     * This method uses the presence of an id field that is not null to signify and update.
@@ -1730,43 +1815,13 @@ class SugarBean
         global $current_user, $action;
 
         $isUpdate = $this->isUpdate();
-
-		if(empty($this->date_modified) || $this->update_date_modified)
-		{
-			$this->date_modified = $GLOBALS['timedate']->nowDb();
-		}
-
+        $this->setModifiedDate();
         $this->_checkOptimisticLocking($action, $isUpdate);
-
-        if(!empty($this->modified_by_name)) $this->old_modified_by_name = $this->modified_by_name;
-        if($this->update_modified_by)
-        {
-            $this->modified_user_id = 1;
-
-            if (!empty($current_user))
-            {
-                $this->modified_user_id = $current_user->id;
-                $this->modified_by_name = $current_user->user_name;
-            }
-        }
-        if ($this->deleted != 1)
+        $this->setModifiedUser();
+        if ($this->deleted != 1) {
             $this->deleted = 0;
-        if(!$isUpdate)
-        {
-            if (empty($this->date_entered))
-            {
-                $this->date_entered = $this->date_modified;
-            }
-            if($this->set_created_by == true)
-            {
-                // created by should always be this user
-                $this->created_by = (isset($current_user)) ? $current_user->id : "";
-            }
-            if( $this->new_with_id == false)
-            {
-                $this->id = create_guid();
-            }
         }
+        $this->setCreateData($isUpdate);
 
 
         // if the module has a team_id field and no team_id is specified, set team_id as the current_user's default team
