@@ -37,7 +37,6 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             'readonly' => false,
             'massupdate' => true,
             'importable' => 'required',
-            'convertToBase' => false,
         ),
         'best_case' => array(
             'calculated' => false,
@@ -46,7 +45,6 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             'audited' => true,
             'readonly' => false,
             'massupdate' => true,
-            'convertToBase' => false,
         ),
         'worst_case' => array(
             'calculated' => false,
@@ -55,7 +53,6 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             'audited' => true,
             'readonly' => false,
             'massupdate' => true,
-            'convertToBase' => false,
         ),
         'date_closed' => array(
             'calculated' => false,
