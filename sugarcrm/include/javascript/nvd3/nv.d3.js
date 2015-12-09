@@ -999,6 +999,18 @@ nv.utils.createTexture = function(defs, id, x, y) {
 
   return mask;
 };
+
+nv.utils.numberFormatSI = function(d, p) {
+  if (p === 0) {
+    return d;
+  }
+  p = p || 2;
+  if (d < 1 && d > -1) {
+      return d3.round(d, p);
+  }
+  var si = d3.formatPrefix(d, p);
+  return d3.round(si.scale(d), p) + si.symbol;
+};
 nv.models.axis = function() {
 
   //============================================================
@@ -7215,10 +7227,7 @@ nv.models.lineChart = function() {
       yAxis = nv.models.axis()
         .orient('left')
         .tickPadding(4)
-        .tickFormat(function(d) {
-          var si = d3.formatPrefix(d, 1);
-          return d3.round(si.scale(d), 1) + si.symbol;
-        }),
+        .tickFormat(nv.utils.numberFormatSI),
       legend = nv.models.legend()
         .align('right'),
       controls = nv.models.legend()
@@ -7233,7 +7242,7 @@ nv.models.lineChart = function() {
   var showTooltip = function(eo, offsetElement) {
     var key = eo.series.key,
         x = xAxis.tickFormat()(lines.x()(eo.point, eo.pointIndex)),
-        y = yAxis.tickFormat()(lines.y()(eo.point, eo.pointIndex)),
+        y = lines.y()(eo.point, eo.pointIndex),
         content = tooltipContent(key, x, y, eo, chart);
 
     tooltip = nv.tooltip.show(eo.e, content, null, null, offsetElement);
@@ -8591,7 +8600,7 @@ nv.models.multiBar = function() {
       disabled, // used in conjunction with barColor to communicate to multiBarChart what series are disabled
       clipEdge = true,
       showValues = false,
-      valueFormat = d3.format(',.2s'),
+      valueFormat = nv.utils.numberFormatSI,
       withLine = false,
       vertical = true,
       baseDimension = 60,
@@ -9539,10 +9548,7 @@ nv.models.multiBarChart = function() {
         .tickFormat(function(d) { return d; }),
       yAxis = nv.models.axis()
         .tickPadding(4)
-        .tickFormat(function(d) {
-          var si = d3.formatPrefix(d, 1);
-          return d3.round(si.scale(d), 1) + si.symbol;
-        }),
+        .tickFormat(multibar.valueFormat()),
       legend = nv.models.legend(),
       controls = nv.models.legend()
         .color(['#444']),
@@ -9558,7 +9564,7 @@ nv.models.multiBarChart = function() {
         x = (groupTotals) ?
               (eo.point.y * 100 / groupTotals[eo.pointIndex].t).toFixed(1) :
               xAxis.tickFormat()(multibar.x()(eo.point, eo.pointIndex)),
-        y = yAxis.tickFormat()(multibar.y()(eo.point, eo.pointIndex)),
+        y = multibar.y()(eo.point, eo.pointIndex),
         content = tooltipContent(key, x, y, eo, chart),
         gravity = eo.value < 0 ?
           vertical ? 'n' : 'e' :
@@ -10528,14 +10534,8 @@ nv.models.paretoChart = function() {
         tooltipQuota = function(key, x, y, e, graph) {
             return '<p>' + e.key + ': <b>' + y + '</b></p>';
         },
-        yAxisTickFormat = function(d) {
-            var si = d3.formatPrefix(d, 2);
-            return d3.round(si.scale(d), 2) + si.symbol;
-        },
-        quotaTickFormat = function(d) {
-            var si = d3.formatPrefix(d, 2);
-            return d3.round(si.scale(d), 2) + si.symbol;
-        },
+        yAxisTickFormat = nv.utils.numberFormatSI,
+        quotaTickFormat = nv.utils.numberFormatSI,
         x,
         y,
         strings = {
@@ -11560,7 +11560,7 @@ nv.models.pie = function() {
       getY = function(d) { return d.value; },
       getDescription = function(d) { return d.description; },
       id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one
-      valueFormat = d3.format(',.2f'),
+      valueFormat = nv.utils.numberFormatSI,
       showLabels = true,
       showLeaders = true,
       pieLabelsOutside = true,
@@ -13766,7 +13766,7 @@ nv.models.stackedAreaChart = function() {
       },
       x,
       y,
-      yAxisTickFormat = d3.format(',.2f'),
+      yAxisTickFormat = nv.utils.numberFormatSI,
       state = {},
       strings = {
         legend: {close: 'Hide legend', open: 'Show legend'},
@@ -14833,7 +14833,7 @@ nv.models.treemapChart = function() {
       tooltip = null,
       tooltips = true,
       tooltipContent = function(point) {
-        var tt = '<p>Value: <b>' + d3.format(',.2s')(point.value) + '</b></p>' +
+        var tt = '<p>Value: <b>' + nv.utils.numberFormatSI(point.value) + '</b></p>' +
           '<p>Name: <b>' + point.name + '</b></p>';
         return tt;
       },
@@ -15279,7 +15279,7 @@ nv.models.tree = function() {
         return nv.utils.colorRadialGradient(d, i, 0, 0, '35%', '35%', color(d, i), wrap.select('defs'));
     },
     useClass = false,
-    valueFormat = d3.format(',.2f'),
+    valueFormat = nv.utils.numberFormatSI,
     showLabels = true,
     dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout');
 

@@ -18,7 +18,7 @@ nv.models.stackedAreaChart = function() {
       },
       x,
       y,
-      yAxisTickFormat = d3.format(',.2f'),
+      yAxisTickFormat = nv.utils.numberFormatSI,
       state = {},
       strings = {
         legend: {close: 'Hide legend', open: 'Show legend'},

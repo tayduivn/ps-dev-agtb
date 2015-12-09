@@ -504,3 +504,15 @@ nv.utils.createTexture = function(defs, id, x, y) {
 
   return mask;
 };
+
+nv.utils.numberFormatSI = function(d, p) {
+  if (p === 0) {
+    return d;
+  }
+  p = p || 2;
+  if (d < 1 && d > -1) {
+      return d3.round(d, p);
+  }
+  var si = d3.formatPrefix(d, p);
+  return d3.round(si.scale(d), p) + si.symbol;
+};

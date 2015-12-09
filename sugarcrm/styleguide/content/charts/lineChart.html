@@ -167,14 +167,19 @@
           //.forceY([0,400])
           //.forceX([0,6]);
           .tooltipContent(function(key, x, y, e, graph) {
-            var content = '<p>Category: <b>' + key + '</b></p>' +
-                   '<p>Amount: <b>$' + parseInt(y) + 'M</b></p>',
+            var val = d3.format('$,.2f')(y),
+                content = '<p>Category: <b>' + key + '</b></p>' +
+                   '<p>Amount: <b>' + val + '</b></p>',
                 dateCheck = new Date(x);
             if (dateCheck instanceof Date && !isNaN(dateCheck.valueOf())) {
               content += '<p>Date: <b>' + x + '</b></p>';
             }
             return content;
           });
+
+    chart.yAxis.tickFormat(function(d) {
+        return '$' + nv.utils.numberFormatSI(d, 2);
+      });
 
     d3.select('#chart1')
         .on('click', chart.dispatch.chartClick);

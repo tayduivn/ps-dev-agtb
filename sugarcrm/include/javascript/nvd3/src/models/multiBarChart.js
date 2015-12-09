@@ -45,10 +45,7 @@ nv.models.multiBarChart = function() {
         .tickFormat(function(d) { return d; }),
       yAxis = nv.models.axis()
         .tickPadding(4)
-        .tickFormat(function(d) {
-          var si = d3.formatPrefix(d, 1);
-          return d3.round(si.scale(d), 1) + si.symbol;
-        }),
+        .tickFormat(multibar.valueFormat()),
       legend = nv.models.legend(),
       controls = nv.models.legend()
         .color(['#444']),
@@ -64,7 +61,7 @@ nv.models.multiBarChart = function() {
         x = (groupTotals) ?
               (eo.point.y * 100 / groupTotals[eo.pointIndex].t).toFixed(1) :
               xAxis.tickFormat()(multibar.x()(eo.point, eo.pointIndex)),
-        y = yAxis.tickFormat()(multibar.y()(eo.point, eo.pointIndex)),
+        y = multibar.y()(eo.point, eo.pointIndex),
         content = tooltipContent(key, x, y, eo, chart),
         gravity = eo.value < 0 ?
           vertical ? 'n' : 'e' :
