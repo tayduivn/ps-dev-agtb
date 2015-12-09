@@ -62,8 +62,9 @@ function UWrebuild() {
 		</script>";
 
 	$log->info('Rebuilding everything.');
-	require_once('ModuleInstall/ModuleInstaller.php');
-	$mi = new ModuleInstaller();
+    SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
+    $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+    $mi = new $moduleInstallerClass();
 	$mi->rebuild_all();
 	$query = "DELETE FROM versions WHERE name='Rebuild Extensions'";
 	$log->info($query);
@@ -358,8 +359,9 @@ switch( $install_type ){
         }
         break;
     case "module":
-        require_once( "ModuleInstall/ModuleInstaller.php" );
-        $mi = new ModuleInstaller();
+        SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
+        $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+        $mi = new $moduleInstallerClass();
         switch( $mode ){
             case "Install":
                 $patch = UW_get_patch_from_request($_REQUEST);

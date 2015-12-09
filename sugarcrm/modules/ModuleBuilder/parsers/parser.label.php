@@ -286,7 +286,9 @@ class ParserLabel extends ModuleBuilderParser
     protected static function rebuildLanguageExtensions($language, $moduleName)
     {
         if (empty(self::$moduleInstaller)) {
-            self::$moduleInstaller = new ModuleInstaller();
+            SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
+            $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+            self::$moduleInstaller = new $moduleInstallerClass();
             self::$moduleInstaller->silent = true;
         }
 

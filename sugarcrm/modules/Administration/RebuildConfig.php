@@ -46,10 +46,11 @@ if( !empty($_POST['perform_rebuild']) && $config_file_ready ){
     else {
         $config_check = $mod_strings['MSG_CONFIG_FILE_REBUILD_FAILED'];
     }
-    require_once 'ModuleInstall/ModuleInstaller.php';
-    ModuleInstaller::handleBaseConfig();
+    SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
+    $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+    $moduleInstallerClass::handleBaseConfig();
 //BEGIN SUGARCRM flav=ent ONLY
-    ModuleInstaller::handlePortalConfig();
+    $moduleInstallerClass::handlePortalConfig();
 //END SUGARCRM flav=ent ONLY
 }
 

@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 //Used in rebuildExtensions
-require_once 'ModuleInstall/ModuleInstaller.php';
+SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
 
 // Used in clearExternalAPICache
 require_once 'include/externalAPI/ExternalAPIFactory.php';
@@ -184,8 +184,8 @@ class RepairAndClear
      */
     public function repairBaseConfig()
     {
-        require_once 'ModuleInstall/ModuleInstaller.php';
-        ModuleInstaller::handleBaseConfig();
+        $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+        $moduleInstallerClass::handleBaseConfig();
     }
 
     //BEGIN SUGARCRM flav=ent ONLY
@@ -194,8 +194,8 @@ class RepairAndClear
      */
     public function repairPortalConfig()
     {
-        require_once 'ModuleInstall/ModuleInstaller.php';
-        ModuleInstaller::handlePortalConfig();
+        $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+        $moduleInstallerClass::handlePortalConfig();
     }
     //END SUGARCRM flav=ent ONLY
 
@@ -294,7 +294,8 @@ class RepairAndClear
 		global $mod_strings;
 		if($this->show_output) echo $mod_strings['LBL_QR_REBUILDEXT'];
 
-		$mi = new ModuleInstaller();
+        $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+        $mi = new $moduleInstallerClass();
 		$mi->rebuild_all(!$this->show_output, $modules);
 
 		// Remove the "Rebuild Extensions" red text message on admin logins

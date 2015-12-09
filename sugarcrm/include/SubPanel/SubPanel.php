@@ -292,8 +292,9 @@ class SubPanel
         $fp = sugar_fopen("{$layoutPath}/{$extname}.php", 'w');
         fwrite($fp, "<?php\n//auto-generated file DO NOT EDIT\n$newValue\n?>");
         fclose($fp);
-        require_once('ModuleInstall/ModuleInstaller.php');
-        $moduleInstaller = new ModuleInstaller();
+        SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
+        $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+        $moduleInstaller = new $moduleInstallerClass();
         $moduleInstaller->silent = true; // make sure that the ModuleInstaller->log() function doesn't echo while rebuilding the layoutdefs
         $moduleInstaller->$moduleInstallerMethod();
         SugarAutoLoader::buildCache();
