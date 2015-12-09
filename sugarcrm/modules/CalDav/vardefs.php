@@ -187,6 +187,11 @@ $dictionary['CalDavEventCollection'] = array(
             'type' => 'index',
             'fields' => array('first_occurence', 'last_occurence'),
         ),
+        array(
+            'name' => 'idx_parent',
+            'type' => 'index',
+            'fields' => array('parent_type', 'parent_id'),
+        ),
     ),
     'ignore_templates' => array(
         'following',
@@ -379,9 +384,9 @@ $dictionary['CalDavScheduling'] = array(
     'favorites' => false,
     'fields' =>
         array(
-            'calendardata' =>
+            'calendar_data' =>
                 array(
-                    'name' => 'calendardata',
+                    'name' => 'calendar_data',
                     'vname' => 'LBL_EVENT_DATA',
                     'type' => 'longblob',
                     'isnull' => 'true',

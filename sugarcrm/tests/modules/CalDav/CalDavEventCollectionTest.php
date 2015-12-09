@@ -762,6 +762,40 @@ END:VCALENDAR',
     }
 
     /**
+     * @covers \CalDavEventCollection::setCalDavParent
+     * @covers \CalDavEventCollection::isImportable
+     */
+    public function testSetCalDavParent()
+    {
+        $eventData = $this->getEventTemplate('vevent');
+
+        $sugarUser = SugarTestUserUtilities::createAnonymousUser();
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+        $event = SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => $eventData,
+            'calendarid' => $calendarID,
+            'eventURI' => 'test'
+        ));
+
+        $schedulingUser = SugarTestUserUtilities::createAnonymousUser();
+        $schedulingCalendarID = SugarTestCalDavUtilities::createCalendar($schedulingUser, array());
+
+        SugarTestCalDavUtilities::createSchedulingObject($schedulingUser, 'test1', $eventData);
+
+        $event1 = \BeanFactory::getBean('CalDavEvents');
+        $event1->uri = 'test1';
+        $event1->setData($eventData);
+        $event1->calendar_id = $schedulingCalendarID;
+
+        $result = TestReflection::callProtectedMethod($event1, 'setCalDavParent');
+
+        $this->assertTrue($result);
+        $this->assertEquals('CalDavEvents', $event1->parent_type);
+        $this->assertTrue($event->isImportable());
+        $this->assertFalse($event1->isImportable());
+    }
+
+    /**
      * Checking the calculation of the size and ETag
      * @param string $data
      * @param integer $expectedSize

@@ -743,6 +743,15 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
+     * Get scheduling bean
+     * @return \CalDavScheduling
+     */
+    protected function getSchedulingBean()
+    {
+        return \BeanFactory::getBean('CalDavSchedulings');
+    }
+
+    /**
      * Retrieve Calendar for event
      * @return null|SugarBean
      */
@@ -753,6 +762,37 @@ class CalDavEventCollection extends SugarBean
         }
 
         return null;
+    }
+
+    /**
+     * Find scheduling object by uri and set parent_type of event if object found
+     * @return bool
+     */
+    protected function setCalDavParent()
+    {
+        if (!$this->uri) {
+            return false;
+        }
+
+        $calendar = $this->getRelatedCalendar();
+        if ($calendar) {
+            $scheduling = $this->getSchedulingBean()->getByUri($this->uri, $calendar->assigned_user_id);
+            if ($scheduling) {
+                $this->parent_type = $this->module_name;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Event can be imported to sugar module or not
+     * @return bool
+     */
+    public function isImportable()
+    {
+        return $this->parent_type !== $this->module_name;
     }
 
     /**
@@ -838,6 +878,10 @@ class CalDavEventCollection extends SugarBean
         }
 
         $this->participants_links = json_encode($this->mapParticipantsToBeans());
+
+        if (!$isUpdate) {
+            $this->setCalDavParent();
+        }
 
         $result = parent::save($check_notify);
 

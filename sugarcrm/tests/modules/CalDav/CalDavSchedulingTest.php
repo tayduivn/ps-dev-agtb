@@ -50,7 +50,7 @@ END:VCALENDAR',
                 'expectedObject' => array(
                     'assigned_user_id' => 'test_user',
                     'uri' => 'uri.isc',
-                    'calendardata' => 'BEGIN:VCALENDAR
+                    'calendar_data' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
 uid:test
 DTSTART;VALUE=DATE:20160101
