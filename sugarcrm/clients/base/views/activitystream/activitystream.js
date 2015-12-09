@@ -405,7 +405,7 @@
      * Searches the post to identify links and make them as actual links
      *
      * @param {String} post
-     * @returns {String}
+     * @return {string}
      */
     formatLinks: function(post) {
         var formattedPost = '';
@@ -483,7 +483,7 @@
      * Builds and returns the url for the user's profile picture based on fetching from cache
      * @param model
      * @param activityType
-     * @returns string
+     * @return {string}
      */
     getAvatarUrlForUser: function (model, activityType){
         var createdBy = model.get('created_by'),
@@ -497,7 +497,7 @@
      *
      * @param model The User
      * @param activityType
-     * @returns {boolean} whether user has a picture
+     * @return {boolean} whether user has a picture
      */
     checkUserHasPicture: function (model, activityType) {
         var createdBy = model.get('created_by'),
@@ -557,7 +557,7 @@
      * Respects cache TTL, returns undefined if expired
      *
      * @param userId
-     * @returns {boolean|undefined} whether user has picture or undefined if cache not set or expired
+     * @return {boolean|undefined} whether user has picture or `undefined` if cache not set or expired
      * @private
      */
     getUserPictureStatus: function(userId) {
@@ -583,7 +583,7 @@
      * Build the file url for the given user's avatar
      *
      * @param userId
-     * @returns {String} The avatar url
+     * @return {string} The avatar url
      * @private
      */
     buildAvatarUrl: function(userId) {
@@ -603,7 +603,7 @@
      * Retrieve comment entered inside content editable and translate any tags into text format
      * so that it can be saved in the database as JSON string.
      *
-     * @returns {String}
+     * @return {string}
      */
     getComment: function() {
         return this.unformatTags(this.$('div.reply'));
@@ -669,7 +669,7 @@
      *
      * @param layoutName to look for up the context hierarchy
      * @param context start of context hierarchy
-     * @returns {*}
+     * @return {Mixed}
      * @private
      */
     _getParentModel: function(layoutName, context) {

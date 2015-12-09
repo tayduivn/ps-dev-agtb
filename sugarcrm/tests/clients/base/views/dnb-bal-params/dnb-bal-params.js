@@ -79,9 +79,7 @@ describe("Dnb-bal-params View", function() {
             'added': {
                 'id': 'IN'
             },
-            'target': {
-                'name': 'dnb_bal_ctry'
-            }
+            'target': $('<div/>', {name: 'dnb_bal_ctry'})
         };
         view.loadData();
         view.mapSelect2Params(event);
@@ -95,9 +93,7 @@ describe("Dnb-bal-params View", function() {
             'added': {
                 'id': '10925'
             },
-            'target': {
-                'name': 'dnb_bal_prescreen_score'
-            }
+            'target': $('<div/>', {name: 'dnb_bal_prescreen_score'})
         };
         view.loadData();
         view.mapSelect2Params(event);
@@ -109,9 +105,7 @@ describe("Dnb-bal-params View", function() {
             'added': {
                 'id': 'all'
             },
-            'target': {
-                'name': 'dnb_bal_cntct_filter'
-            }
+            'target': $('<div/>', {name: 'dnb_bal_cntct_filter'})
         };
         view.loadData();
         view.setBalFilter(event);
@@ -121,9 +115,7 @@ describe("Dnb-bal-params View", function() {
             'added': {
                 'id': 'prem'
             },
-            'target': {
-                'name': 'dnb_bal_cntct_filter'
-            }
+            'target': $('<div/>', {name: 'dnb_bal_cntct_filter'})
         };
         view.setBalFilter(event);
         expect(view.model.get('balFilter')).toEqual({'InclusionDataDescription-1': 'IncludeContactsOnlyWithDirectEmailOrDirectPhone'});

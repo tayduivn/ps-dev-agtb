@@ -640,7 +640,7 @@
      *
      * @param {Backbone.Model} model the model with values to add to server data
      * @param {Object} data values being returned from the server endpoint with totals
-     * @returns {Object} returns the data Object back with updated totals
+     * @return {Object} returns the data Object back with updated totals
      */
     addModelTotalsToServerData: function(model, data) {
         // if these totals haven't already been added into the data from the server
@@ -661,7 +661,7 @@
      *
      * @param {Backbone.Model} model the model with values to remove from server data
      * @param {Object} data values being returned from the server endpoint with totals
-     * @returns {Object} returns the data Object back with updated totals
+     * @return {Object} returns the data Object back with updated totals
      */
     removeModelTotalsFromServerData: function(model, data) {
         data.amount = app.math.sub(data.amount, model.get('likely_case'));
@@ -728,7 +728,7 @@
      *
      * @param {string} date the date we're checking to see if it falls inside the timePeriod
      * @param {Object} timePeriod this is the timeperiod Object to check against
-     * @returns {boolean} true if a new timeperiod should be fetched from server
+     * @return {boolean} true if a new timeperiod should be fetched from server
      */
     isDateInTimePeriod: function(date, timePeriod) {
         var inTimePeriod = false;

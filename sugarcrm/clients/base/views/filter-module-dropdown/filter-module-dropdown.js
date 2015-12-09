@@ -98,7 +98,7 @@
 
     /**
      * Get the list for filter module dropdown.
-     * @returns {Object}
+     * @return {Object}
      */
     getFilterList: function() {
         var filterList;
@@ -114,7 +114,7 @@
 
     /**
      * Should the filter be disabled?
-     * @returns {boolean}
+     * @return {boolean}
      */
     shouldDisableFilter: function() {
         return (this.layout.layoutType !== "record" || this.layout.showingActivities);
@@ -186,7 +186,7 @@
 
     /**
      * Pull the list of related modules from the subpanel metadata
-     * @returns {Object}
+     * @return {Object}
      */
     pullSubpanelRelationships: function() {
         // Subpanels are retrieved from the global module and not the
@@ -254,7 +254,7 @@
      * Update the text for the selected module and returns template
      *
      * @param {Object} item
-     * @returns {string}
+     * @return {string}
      */
     formatSelection: function(item) {
         var safeString;
@@ -270,7 +270,7 @@
     /**
      * Returns template
      * @param {Object} option
-     * @returns {string}
+     * @return {string}
      */
     formatResult: function(option) {
         // TODO: Determine whether active filters should be highlighted in bold in this menu.

@@ -94,7 +94,7 @@
 
     /**
      * Check to see if there are any errors on the field. Returns undefined if it is valid.
-     * @returns {Object} Errors
+     * @return {Object} Errors
      */
     validate: function() {
         var errors,

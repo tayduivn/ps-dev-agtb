@@ -111,7 +111,7 @@
     /**
      * Get HTML for email input field.
      * @param {Object} email
-     * @returns {Object}
+     * @return {Object}
      * @private
      */
     _buildEmailFieldHtml: function(email) {
@@ -286,7 +286,7 @@
     /**
      * Add the new email address to the model.
      * @param {String} email
-     * @returns {Boolean} Returns true when a new email is added.  Returns false if duplicate is found,
+     * @return {boolean} Returns true when a new email is added.  Returns false if duplicate is found,
      *          and was not added to the model.
      * @private
      */
@@ -358,7 +358,7 @@
     /**
      * Remove email address from the model.
      * @param {Number} index
-     * @returns {Boolean} Returns true if the removed address was the primary address.
+     * @return {boolean} Returns true if the removed address was the primary address.
      * @private
      */
     _removeExistingAddressInModel: function(index) {
@@ -392,7 +392,7 @@
 
     /**
      * Get the new email address input field.
-     * @returns {jQuery}
+     * @return {jQuery}
      * @private
      */
     _getNewEmailField: function() {
@@ -497,7 +497,7 @@
     /**
      * Build label that gets displayed in tooltips.
      * @param {Object} value
-     * @returns {Object}
+     * @return {Object}
      */
     addFlagLabels: function(value) {
         var flagStr = "", flagArray;

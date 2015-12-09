@@ -122,7 +122,7 @@
      * It should check the visivility by isHidden instead of DOM visibility testing
      * since actiondropdown renders its dropdown lazy
      *
-     * @returns {boolean}
+     * @return {boolean}
      */
     isVisible: function() {
         return !this.isHidden;

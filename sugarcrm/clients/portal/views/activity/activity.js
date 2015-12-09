@@ -140,10 +140,10 @@
 
     /**
      * Test if activities collection has been fetched yet
-     * @returns boolean TRUE if activities have been fetched
+     * @return {boolean} `true` if activities have been fetched
      */
     hasLoadedActivities: function(){
-        //page has a value once fetch is complete
+        // page has a value once fetch is complete
         return _.isNumber(this.collection.page);
     },
 

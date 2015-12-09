@@ -36,31 +36,30 @@ class Bug52173Test extends Sugar_PHPUnit_Framework_TestCase
     /** @var SugarWidgetFieldrelate */
     protected $sugarWidget = null;
 
-    /** @var DynamicField */
-    protected $df = null;
-
-    /** @var RepairAndClear */
-    protected $rc = null;
-
     /** @var TemplateRelatedTextField */
-    protected $relateField = null;
+    protected static $relateField;
 
-    /** @var string name */
-    protected $field_name_c = 'Bug58931_relateField';
-
-    /** @var LayoutManager */
-    protected $layoutManager = null;
-
-    public function setup()
+    public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
+
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user', array(true, 1));
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
+
+        self::$relateField = SugarTestHelper::setUp('custom_field', array('Contacts', array(
+            'name' => 'Bug58931_relateField',
+            'type' => 'relate',
+            'ext2' => 'Accounts',
+        )));
+    }
+
+    public function setUp()
+    {
         parent::setUp();
 
-        $this->createCustomField();
         $this->getSugarWidgetFieldRelate();
 
         $this->account = SugarTestAccountUtilities::createAccount();
@@ -70,35 +69,10 @@ class Bug52173Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        $this->relateField->delete($this->df);
-        $this->rc->repairAndClearAll(array("rebuildExtensions", "clearVardefs"), array("Contact"),  false, false);
-
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
-        SugarTestHelper::tearDown();
-    }
 
-    /**
-     * Create the custom field with type 'relate'
-     */
-    protected function createCustomField()
-    {
-        $field = get_widget('relate');
-        $field->id = 'Contacts'. $this->field_name_c;
-        $field->name = $this->field_name_c;
-        $field->type = 'relate';
-        $field->label = 'LBL_' . strtoupper($this->field_name_c);
-        $field->ext2 = 'Accounts';
-        $field->view_module = 'Contacts';
-        $this->relateField = $field;
-
-        $this->bean =BeanFactory::getBean('Contacts');
-        $this->df = new DynamicField($this->bean->module_name);
-        $this->df->setup($this->bean);
-        $field->save($this->df);
-
-        $this->rc = new RepairAndClear();
-        $this->rc->repairAndClearAll(array("rebuildExtensions", "clearVardefs"), array('Contact'),  false, false);
+        parent::tearDown();
     }
 
     /**
@@ -112,7 +86,7 @@ class Bug52173Test extends Sugar_PHPUnit_Framework_TestCase
         $db->db = $GLOBALS['db'];
         $db->report_def_str = '';
         $layoutManager->setAttributePtr('reporter', $db);
-        $this->sugarWidget = new SugarWidgetFieldrelate($layoutManager);
+        $this->sugarWidget = new SugarWidgetFieldRelate($layoutManager);
     }
 
     /*
@@ -164,11 +138,11 @@ class Bug52173Test extends Sugar_PHPUnit_Framework_TestCase
     */
     public function testCustomRelateFieldInDashlet()
     {
-        $id = $this->relateField->ext3;
+        $id = self::$relateField->ext3;
         $this->contact2->$id = $this->account->id;
         $this->contact2->save();
-        $layoutDef = array( 'name'          => $this->relateField->name,
-                            'id_name'       => $this->relateField->ext3,
+        $layoutDef = array( 'name'          => self::$relateField->name,
+                            'id_name'       => self::$relateField->ext3,
                             'type'          => 'relate',
                             'ext2'          => 'Accounts',
                             'custom_module' => 'Contacts',

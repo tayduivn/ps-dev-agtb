@@ -151,9 +151,9 @@
     },
 
     /**
-     * @returns {Field} this
      * @override
-     * @private
+     * @protected
+     * @chainable
      */
     _render: function() {
         var self = this;
@@ -348,7 +348,7 @@
     /**
      * Helper function for generating Select2 options for this enum
      * @param {Array} optionsKeys Set of option keys that will be loaded into Select2 widget
-     * @returns {{}} Select2 options, refer to Select2 documentation for what each option means
+     * @return {Object} Select2 options, refer to Select2 documentation for what each option means
      */
     getSelect2Options: function(optionsKeys){
         var select2Options = {};
@@ -439,7 +439,7 @@
      * Returns dropdown list options which can be used for editing 
      *
      * @param {Object} Dropdown list options
-     * @returns {Object}
+     * @return {Object}
      * @private
      */
     _filterOptions: function (options) {
@@ -596,7 +596,7 @@
     /**
      * Helper function for retrieving the default value for the selection
      * @param {Array} optionsKeys Set of option keys that will be loaded into Select2 widget
-     * @returns {String} The default value
+     * @return {string} The default value
      */
     _getDefaultOption: function (optionsKeys) {
         //  Return the default if it's available in the definition.

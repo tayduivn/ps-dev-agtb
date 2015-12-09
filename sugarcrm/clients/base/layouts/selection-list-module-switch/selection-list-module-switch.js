@@ -35,7 +35,7 @@
      * Given a list of modules, it checks to see if the user has access to those modules
      * and returns a list in a form that Select2 dropdown accepts.
      * @param {Array} modules - List of modules to be displayed in the dropdown.
-     * @returns {Array}
+     * @return {Array}
      * @private
      */
     _buildModuleSwitchList: function(modules) {
