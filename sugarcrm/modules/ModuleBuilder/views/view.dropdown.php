@@ -49,7 +49,7 @@ class ViewDropdown extends SugarView
 
         $args = array(
             'view_package' => $this->request->getValidInputRequest('view_package', 'Assert\ComponentName'),
-            'view_module' => $this->request->getValidInputRequest('view_module', 'Assert\Mvc\ModuleName'),
+            'view_module' => $this->request->getValidInputRequest('view_module', 'Assert\ComponentName'),
             'dropdown_lang' => $this->request->getValidInputRequest('dropdown_lang', 'Assert\Language'),
             'dropdown_name' => $this->request->getValidInputRequest('dropdown_name', 'Assert\ComponentName'),
             'dropdown_role' => $this->request->getValidInputRequest('dropdown_role', 'Assert\Guid'),
