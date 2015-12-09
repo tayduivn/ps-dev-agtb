@@ -23,6 +23,7 @@ class ViewDropdown extends SugarView
         'view_module' => '',
         'dropdown_lang' => '',
         'dropdown_name' => '',
+        'dropdown_role' => '',
         'field' => '',
         'new' => false
     );
@@ -51,6 +52,7 @@ class ViewDropdown extends SugarView
             'view_module' => $this->request->getValidInputRequest('view_module', 'Assert\Mvc\ModuleName'),
             'dropdown_lang' => $this->request->getValidInputRequest('dropdown_lang', 'Assert\Language'),
             'dropdown_name' => $this->request->getValidInputRequest('dropdown_name', 'Assert\ComponentName'),
+            'dropdown_role' => $this->request->getValidInputRequest('dropdown_role', 'Assert\Guid'),
             'field' => $this->request->getValidInputRequest('field'),
             'new' => $this->request->getValidInputRequest('new'),
         );
