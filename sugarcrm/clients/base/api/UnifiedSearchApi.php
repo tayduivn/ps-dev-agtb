@@ -440,7 +440,7 @@ class UnifiedSearchApi extends SugarListApi {
                             $prefix = $customTable;
                         }
                         if (!isset($seed->field_defs[$field]['source']) || $seed->field_defs[$field]['source'] != 'non-db') {
-                            $customWhere[$module][] = "{$prefix}.{$field} LIKE '{$options['query']}%'";
+                            $customWhere[$module][] = "{$prefix}.{$field} LIKE '". $seed->db->quote($options['query']) . "%'";
                         }
                     }
                     if (isset($customWhere[$module])) {
