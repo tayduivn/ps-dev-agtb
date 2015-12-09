@@ -133,6 +133,7 @@ class PMSEEngineUtils
         'AC' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
         'CF' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
         'RR' => array(),
+        'CF' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
     );
 
     /**
@@ -1424,10 +1425,16 @@ class PMSEEngineUtils
     {
         $bean->load_relationship('teams');
 
+        $tbaConfig = new TeamBasedACLConfigurator();
+
+        // Find Out If Table Based ACLs are enabled for this module
+        $tbaModuleEnabled = $tbaConfig->isEnabledForModule($bean->module_dir);
+
         // The TeamSetLink could have the _saved property set to true indicating previous data has been saved.
         // So we need to Explicitly set _saved of TeamSetLink class to false so that the new teams
         // get saved
         if (!empty($bean->teams) && !empty($field->value) && is_array($field->value)) {
+            $teamParams = array();
             $bean->teams->setSaved(false);
 
             // Set primary team if a primary team has been set
@@ -1435,12 +1442,17 @@ class PMSEEngineUtils
                 $bean->team_id = $field->primary;
             }
 
+            // If Team based ACLs are enabled on any team then include them in the parameter list
+            if (!empty($field->selected_teams) && $tbaModuleEnabled) {
+                $teamParams = array('selected_teams' => $field->selected_teams);
+            }
+
             // Determines if teams have to be added to existing teams or
             // if existing teams need to be replaced by this new set
             if ($field->append === true) {
-                $bean->teams->add($field->value, array(), true);
+                $bean->teams->add($field->value, $teamParams, true);
             } else {
-                $bean->teams->replace($field->value, array(), true);
+                $bean->teams->replace($field->value, $teamParams, true);
             }
         }
     }
