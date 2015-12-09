@@ -27,7 +27,7 @@ $viewdefs[$module_name]['base']['view']['recordlist'] = array(
                 'related_fields' => array('name', 'email'),
             ),
             array(
-                'name' => 'edit_button',
+                'name' => 'massupdate_button',
                 'type' => 'button',
                 'label' => 'LBL_MASS_UPDATE',
                 'primary' => true,
@@ -56,7 +56,7 @@ $viewdefs[$module_name]['base']['view']['recordlist'] = array(
                 'acl_action' => 'edit',
             ),
             array(
-                'name' => 'delete_button',
+                'name' => 'massdelete_button',
                 'type' => 'button',
                 'label' => 'LBL_DELETE',
                 'acl_action' => 'delete',

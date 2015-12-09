@@ -14,7 +14,7 @@ $viewdefs['Calls']['base']['view']['recordlist'] = array(
         'type' => 'multi',
         'actions' => array(
             array(
-                'name' => 'edit_button',
+                'name' => 'massupdate_button',
                 'type' => 'button',
                 'label' => 'LBL_MASS_UPDATE',
                 'primary' => true,
@@ -33,7 +33,7 @@ $viewdefs['Calls']['base']['view']['recordlist'] = array(
                 'acl_action' => 'massupdate',
             ),
             array(
-                'name' => 'delete_button',
+                'name' => 'massdelete_button',
                 'type' => 'button',
                 'label' => 'LBL_DELETE',
                 'acl_action' => 'delete',
