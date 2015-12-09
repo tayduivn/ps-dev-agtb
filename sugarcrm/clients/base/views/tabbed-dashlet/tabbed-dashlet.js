@@ -85,7 +85,7 @@
             return;
         }
 
-        this.collection = new Backbone.Collection();
+        this.collection = app.data.createBeanCollection(this.module);
         this.context = this.context.getChildContext({
             forceNew: true,
             model: this.context.parent && this.context.parent.get('model'),
