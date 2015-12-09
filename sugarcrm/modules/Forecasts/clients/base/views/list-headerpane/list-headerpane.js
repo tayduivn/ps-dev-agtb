@@ -141,21 +141,20 @@
     setButtonStates: function() {
         // make sure all data sync has finished before updating button states
         if(this.forecastSyncComplete) {
-            var $commitBtnEl = this.commitBtnField.$('.commit-button');
             // fieldHasErrorState trumps the disabled flags, but when it's cleared
             // revert back to whatever states the buttons were in
             if (this.fieldHasErrorState) {
                 this.saveDraftBtnField.setDisabled(true);
                 this.commitBtnField.setDisabled(true);
-                $commitBtnEl.tooltip();
+                this.commitBtnField.$('.commit-button').tooltip();
             } else {
                 this.saveDraftBtnField.setDisabled(this.saveBtnDisabled);
                 this.commitBtnField.setDisabled(this.commitBtnDisabled);
 
                 if (!this.commitBtnDisabled) {
-                    $commitBtnEl.tooltip('destroy');
+                    this.commitBtnField.$('.commit-button').tooltip('destroy');
                 } else {
-                    $commitBtnEl.tooltip();
+                    this.commitBtnField.$('.commit-button').tooltip();
                 }
             }
         } else {
