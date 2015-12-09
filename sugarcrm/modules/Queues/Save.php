@@ -13,19 +13,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //FILE SUGARCRM flav=int ONLY
 require_once('modules/Queues/Queue.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 $focus = new Queue();
 $focus->retrieve($_REQUEST['record']);
 
 foreach($focus->column_fields as $field) {
 	if(isset($_REQUEST[$field])) {
-		$focus->$field = $_REQUEST[$field];
+		$focus->$field = InputValidation::getService()->getValidInputRequest($field);
 		_pp($field);
 	}
 }
 foreach($focus->additional_column_fields as $field) {
 	if(isset($_REQUEST[$field])) {
-		$value = $_REQUEST[$field];
-		$focus->$field = $value;
+		$focus->$field = InputValidation::getService()->getValidInputRequest($field);
 	}
 }
 
