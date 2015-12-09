@@ -821,6 +821,7 @@ class SugarTestHelper
      * @static
      * @param array $params Array containing module name and field vardefs
      *
+     * @return TemplateField
      * @throws SugarTestHelperException
      */
     protected static function setUp_custom_field(array $params)
@@ -856,7 +857,7 @@ class SugarTestHelper
 
         $dynamicField = new DynamicField($module);
         $dynamicField->setup($bean);
-        $dynamicField->addFieldObject($field);
+        $field->save($dynamicField);
 
         $mi = new ModuleInstaller();
         $mi->silent = true;
@@ -875,6 +876,8 @@ class SugarTestHelper
                 };
             }
         }
+
+        return $field;
     }
 
     /**
@@ -890,7 +893,7 @@ class SugarTestHelper
         foreach (self::$customFields as $data) {
             list($dynamicField, $field) = $data;
             $vardefs = $field->get_field_def();
-            $dynamicField->deleteField($field);
+            $field->delete($dynamicField);
             $mi->rebuild_vardefs();
             if (!empty($vardefs['formula'])) {
                 $bean = $dynamicField->bean;
