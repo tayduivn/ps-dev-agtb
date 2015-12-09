@@ -116,7 +116,7 @@ class MetaDataHelper
      * Return system wide enabled FTS modules.
      * @return array
      */
-    public function getAllEnabledModules()
+    public function getAllEnabledModules($filtered = true)
     {
         $cacheKey = 'enabled_modules';
         if ($list = $this->getCache($cacheKey)) {
@@ -124,7 +124,7 @@ class MetaDataHelper
         }
 
         $list = array();
-        $modules = $this->mdm->getModuleList();
+        $modules = $this->mdm->getModuleList($filtered);
         foreach ($modules as $module) {
             $vardefs = $this->getModuleVardefs($module);
             if (!empty($vardefs['full_text_search'])) {
@@ -220,9 +220,13 @@ class MetaDataHelper
         }
 
         $list = array();
-        foreach ($this->getAllEnabledModules() as $module) {
+
+        // Not filtering the module list here because we are able to add our own
+        // checks inside the loop
+        foreach ($this->getAllEnabledModules(false) as $module) {
             $seed = \BeanFactory::getBean($module);
-            if ($seed->ACLAccess('ListView', array('user' => $user))) {
+            if ($seed->ACLAccess('ListView', array('user' => $user, 'source' =>
+                'search_engine'))) {
                 $list[] = $module;
             }
         }
