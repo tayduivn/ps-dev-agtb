@@ -5400,6 +5400,10 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     // Javascript enable string
     'LBL_ENABLE_JAVASCRIPT' => 'Sugar 7 requires javascript. Please enable Javascript in your browser to use Sugar 7.',
+
+    // Failure handling in Process Author upgraders
+    'LBL_PA_UNSERIALIZE_DATA_FAILURE' => 'Serialized data could not be unserialized',
+    'LBL_PA_UNSERIALIZE_OBJECT_FAILURE' => 'Serialized data could not be unserialized because it contains references to objects or classes',
 );
 
 $app_list_strings['interactions_options'] = array (
