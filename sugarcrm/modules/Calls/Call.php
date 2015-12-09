@@ -64,6 +64,7 @@ class Call extends SugarBean {
 	var $contacts_arr = array();
 	var $users_arr = array();
 	var $leads_arr = array();
+	public $addresses_arr = array();
 	var $default_call_name_values = array('Assemble catalogs', 'Make travel arrangements', 'Send a letter', 'Send contract', 'Send fax', 'Send a follow-up letter', 'Send literature', 'Send proposal', 'Send quote');
 	var $minutes_value_default = 15;
 	var $minutes_values = array('0'=>'00','15'=>'15','30'=>'30','45'=>'45');
@@ -71,6 +72,7 @@ class Call extends SugarBean {
 	var $rel_users_table = "calls_users";
 	var $rel_contacts_table = "calls_contacts";
     var $rel_leads_table = "calls_leads";
+	public $rel_addresses_table = "calls_addresses";
 	var $module_dir = 'Calls';
 	var $object_name = "Call";
 	var $new_schema = true;
@@ -88,6 +90,7 @@ class Call extends SugarBean {
 										'assigned_user_id'	=> 'users',
 										'note_id'			=> 'notes',
                                         'lead_id'			=> 'leads',
+                                        'addressee_id'      => 'addresses',
 								);
 
 	public $send_invites = false;
@@ -560,6 +563,14 @@ class Call extends SugarBean {
             $this->leads_arr = $this->leads->get();
         }
 
+        if (!is_array($this->addresses_arr)) {
+            $this->addresses_arr = array();
+        }
+
+        if (empty($this->addresses_arr) && $this->load_relationship('addresses')) {
+            $this->addresses_arr = $this->addresses->get();
+        }
+
 		foreach($this->users_arr as $user_id) {
 			$notify_user = BeanFactory::getBean('Users', $user_id);
 			if(!empty($notify_user->id)) {
@@ -586,6 +597,15 @@ class Call extends SugarBean {
 				$list[$notify_user->id] = $notify_user;
 			}
 		}
+
+        foreach ($this->addresses_arr as $addressee_id) {
+            $notify_user = BeanFactory::getBean('Addressee', $addressee_id);
+            if (!empty($notify_user->id)) {
+                $notify_user->new_assigned_user_name = $notify_user->full_name;
+                $GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
+                $list[$notify_user->id] = $notify_user;
+            }
+        }
 //		$GLOBALS['log']->debug('Call.php->get_notification_recipients():'.print_r($list,true));
 		return $list;
 	}
@@ -871,6 +891,60 @@ class Call extends SugarBean {
                 $qU .= 'WHERE call_id = \''.$this->id.'\' ';
                 $qU .= 'AND lead_id = \''.$leadId.'\'';
                 $this->db->query($qU);
+            }
+        }
+    }
+
+    /**
+     * Stores addressee invitees
+     *
+     * @param array $addresseeInvitees Array of addressee invitees ids
+     * @param array $existingAddresses
+     */
+    public function setAddresseeInvitees($addresseeInvitees, $existingAddresses = array())
+    {
+        $this->addresses_arr = $addresseeInvitees;
+
+        $deleteAddresses = array();
+        $this->load_relationship('addresses');
+
+        $sql = 'SELECT mu.addressee_id, mu.accept_status FROM calls_addresses mu';
+        $sql .= ' WHERE mu.call_id = ' . $this->db->quoted($this->id);
+        $result = $this->db->query($sql);
+
+        $acceptStatusAddresses = array();
+        while ($a = $this->db->fetchByAssoc($result)) {
+            if (!in_array($a['addressee_id'], $addresseeInvitees)) {
+                $deleteAddresses[$a['addressee_id']] = $a['addressee_id'];
+            } else {
+                $acceptStatusAddresses[$a['addressee_id']] = $a['accept_status'];
+            }
+        }
+
+        if (count($deleteAddresses) > 0) {
+            $ids = array();
+            foreach ($deleteAddresses as $u) {
+                $ids = $this->db->quoted($u);
+            }
+
+            $sql = 'UPDATE calls_addresses SET deleted = 1';
+            $sql .= ' WHERE addressee_id IN (' . implode(',', $ids) . ') AND call_id = ' . $this->db->quoted($this->id);
+            $this->db->query($sql);
+        }
+
+        foreach ($addresseeInvitees as $addresseeId) {
+            if (empty($addresseeId) || isset($existingAddresses[$addresseeId]) || isset($deleteAddresses[$addresseeId])) {
+                continue;
+            }
+
+            if (!isset($acceptStatusAddresses[$addresseeId])) {
+                $this->leads->add($addresseeId);
+            } else {
+                // update query to preserve accept_status
+                $sql = 'UPDATE calls_addresses SET deleted = 0, accept_status = '. $this->db->quoted($acceptStatusAddresses[$addresseeId]);
+                $sql .= ' WHERE call_id = ' . $this->db->quoted($this->id);
+                $sql .= ' AND addressee_id = ' . $this->db->quoted($addresseeId);
+                $this->db->query($sql);
             }
         }
     }
