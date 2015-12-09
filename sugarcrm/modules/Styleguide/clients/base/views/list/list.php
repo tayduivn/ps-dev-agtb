@@ -17,7 +17,6 @@ $viewdefs['Styleguide']['base']['view']['list'] = array(
             'fields' => array(
                 array(
                     'name' => 'full_name',
-                    'type' => 'fullname',
                     'fields' => array(
                         'salutation',
                         'first_name',
@@ -27,18 +26,16 @@ $viewdefs['Styleguide']['base']['view']['list'] = array(
                     'label' => 'fullname',
                     'enabled' => true,
                     'default' => true,
+                    'sortable' => false,
                 ),
                 array(
                     'name' => 'title',
-                    'label' => 'base',
+                    'label' => 'text',
+                    'sortable' => false,
                 ),
                 array(
                     'name' => 'do_not_call',
                     'label' => 'bool',
-                ),
-                array(
-                    'name' => 'parent_name',
-                    'label' => 'parent',
                     'sortable' => false,
                 ),
                 array(
@@ -54,15 +51,16 @@ $viewdefs['Styleguide']['base']['view']['list'] = array(
                     'sortable' => false,
                 ),
                 array(
-                    'name' => 'filename',
-                    'label' => 'file',
-                ),
-                array(
                     'name' => 'list_price',
                     'label' => 'currency',
                 ),
                 array(
-                    'name' => 'date_entered',
+                    'name' => 'birthdate',
+                    'label' => 'date',
+                    'sortable' => false,
+                ),
+                array(
+                    'name' => 'date_end',
                     'label' => 'datetimecombo',
                     'sortable' => false,
                 ),
