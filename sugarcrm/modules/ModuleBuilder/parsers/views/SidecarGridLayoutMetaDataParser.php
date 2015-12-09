@@ -504,7 +504,9 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 if (is_array($field)) {
                     if (isset($field['name'])) {
                         $fieldName = $field['name'];
-                        if (!isset($field['span']) && isset($this->baseSpans[$fieldName])) {
+                        if (!isset($field['span']) && isset($this->baseSpans[$fieldName])
+                            && ($this->getMaxSpan() != $this->baseSpans[$fieldName]['span']
+                            || ($i + 1) % $this->defaultColumns == 1)) {
                             $fields[$i]['span'] = $this->baseSpans[$fieldName]['span'];
                         }
                     }
