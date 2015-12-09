@@ -2727,7 +2727,6 @@ protected function checkQuery($sql, $object_name = false)
 			// handle some known types
 			switch($this->type_class[$type]) {
 				case 'bool':
-				case 'int':
 					if (!empty($fieldDef['required']) && $val == ''){
 						if (isset($fieldDef['default'])){
 							return $fieldDef['default'];
@@ -2735,20 +2734,31 @@ protected function checkQuery($sql, $object_name = false)
 						return 0;
 					}
 					return intval($val);
-                case 'bigint' :
-                    $val = (float)$val;
-					if (!empty($fieldDef['required']) && $val == false){
-						if (isset($fieldDef['default'])){
+				case 'int':
+					if (!empty($fieldDef['required']) && $val == ''){
+						if (isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
 							return $fieldDef['default'];
 						}
 						return 0;
 					}
-                    return $val;
-				case 'float':
-					if (!empty($fieldDef['required'])  && $val == ''){
-						if (isset($fieldDef['default'])){
+					return intval($val);
+				case 'bigint' :
+					$val = (float)$val;
+					if (!empty($fieldDef['required']) && $val == false){
+						if (isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
 							return $fieldDef['default'];
 						}
+						return 0;
+					}
+					return $val;
+				case 'float':
+					if (!empty($fieldDef['required'])  && $val == ''){
+						if (isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
+							return $fieldDef['default'];
+						}
+						return 0;
+					}
+					if (empty($val)){
 						return 0;
 					}
 					return floatval($val);
