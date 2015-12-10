@@ -7919,4 +7919,12 @@ class SugarBean
         }
         return true;
     }
+
+    /**
+     * @return string
+     */
+    public function getModuleName()
+    {
+        return $this->module_name;
+    }
 }

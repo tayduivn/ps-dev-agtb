@@ -62,4 +62,12 @@ class Filters extends Basic
         }
         return $filtersMetadata['operators']['meta'];
     }
+
+    /**
+     * @return string
+     */
+    public function getModuleName()
+    {
+        return get_class($this);
+    }
 }
