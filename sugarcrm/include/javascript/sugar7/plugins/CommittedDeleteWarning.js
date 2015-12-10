@@ -99,7 +99,7 @@
             },
 
             /**
-             * @inheridoc
+             * @inheritdoc
              *
              * Clean up associated event handlers.
              */
