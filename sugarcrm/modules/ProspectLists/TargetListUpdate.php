@@ -19,16 +19,22 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  $_REQUEST['uids'] : the ids of the records to be added to the prospect list, separated by ','
 
  */
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once 'include/formbase.php';
 
-$focus = BeanFactory::getBean($_REQUEST['module']);
+$module = InputValidation::getService()->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
+$focus = BeanFactory::getBean($module);
 
 $uids = array();
 if($_REQUEST['select_entire_list'] == '1'){
 	require_once('include/MassUpdate.php');
+    $query = InputValidation::getService()->getValidInputRequest(
+        'current_query_by_page',
+        array('Assert\PhpSerialized' => array('base64Encoded' => true))
+    );
 	$mass = new MassUpdate();
-	$mass->generateSearchWhere($_REQUEST['module'], $_REQUEST['current_query_by_page']);
+	$mass->generateSearchWhere($module, $query);
     $query = $focus->create_new_list_query('', $mass->where_clauses, $mass->searchFields);
 	$result = $GLOBALS['db']->query($query,true);
 	$uids = array();

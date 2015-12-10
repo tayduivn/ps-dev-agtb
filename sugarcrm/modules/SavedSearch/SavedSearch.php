@@ -215,7 +215,7 @@ class SavedSearch extends SugarBean {
 	        $header .= $row['search_module'];
             if(empty($_SESSION['LastSavedView'])) $_SESSION['LastSavedView'] = array();
             $_SESSION['LastSavedView'][$row['search_module']] = $row['id'];
-			$contents = Serialized::unserialize($row['contents'], array(), true);
+            $contents = Serialized::unserialize($row['contents'], array(), true);
 	        $saved_search_id = $row['id'];
             $saved_search_name = $row['name'];
 	    }
@@ -333,7 +333,7 @@ class SavedSearch extends SugarBean {
 
     function retrieveSavedSearch($id) {
         parent::retrieve($id);
-		$this->contents = Serialized::unserialize($this->contents, array(), true);
+        $this->contents = Serialized::unserialize($this->contents, array(), true);
     }
 
     function populateRequest(){

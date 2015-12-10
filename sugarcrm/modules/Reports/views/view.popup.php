@@ -48,10 +48,10 @@ class ReportsViewPopup extends ViewPopup
         if(!empty($this->bean) && isset($_REQUEST[$this->module.'2_'.strtoupper($this->bean->object_name).'_offset'])) {//if you click the pagination button, it will populate the search criteria here
             if(!empty($_REQUEST['current_query_by_page'])) {
                 $blockVariables = array('mass', 'uid', 'massupdate', 'delete', 'merge', 'selectCount', 'lvso', 'sortOrder', 'orderBy', 'request_data', 'current_query_by_page');
-				$current_query_by_page = $this->request->getValidInputRequest(
-						'current_query_by_page',
-						array('Assert\PhpSerialized' => array('base64Encoded' => true))
-				);
+                $current_query_by_page = $this->request->getValidInputRequest(
+                    'current_query_by_page',
+                    array('Assert\PhpSerialized' => array('base64Encoded' => true))
+                );
                 foreach($current_query_by_page as $search_key=>$search_value) {
                     if($search_key != $this->module.'2_'.strtoupper($this->bean->object_name).'_offset' && !in_array($search_key, $blockVariables)) {
 						$_REQUEST[$search_key] = $GLOBALS['db']->quote($search_value);
