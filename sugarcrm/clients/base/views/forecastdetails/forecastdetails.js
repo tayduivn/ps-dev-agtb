@@ -146,6 +146,11 @@
     forecastsNotSetUpMsg: undefined,
 
     /**
+     * Flag for if loadData is currently running
+     */
+    loading: false,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -426,7 +431,7 @@
     loadData: function(options) {
         // if in dashlet config, or if Forecasts is not configured properly,
         // do not load data
-        if(this.meta.config || !this.forecastsConfigOK || !this.isForecastSetup) {
+        if(this.meta.config || !this.forecastsConfigOK || !this.isForecastSetup || this.loading) {
             return;
         }
 
@@ -435,6 +440,7 @@
         }
 
         if(!_.isEmpty(this.model.get('selectedTimePeriod'))) {
+            this.loading = true;
             var url = this.getProjectedURL(),
                 cb = {
                     context: this,
@@ -443,10 +449,14 @@
                             data = options.beforeParseData(data);
                             data.parsedData = true;
                         }
-
                         this.handleNewDataFromServer(data)
                     }, this, options),
-                    complete: options ? options.complete : null
+                    complete: _.bind(function(){
+                        this.loading = false;
+                        if (options && options.complete && _.isFunction(options.complete)) {
+                            options.complete();
+                        }
+                    }, this)
                 };
 
             app.api.call('read', url, null, null, cb);

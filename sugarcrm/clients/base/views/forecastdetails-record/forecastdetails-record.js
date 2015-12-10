@@ -678,6 +678,12 @@
      * @param options
      */
     getInitData: function(options) {
+        // This needs to be set going into the function. loadData() checks to see if the init data is loaded and
+        // makes an async call to load it, causing this function to be called multiple times until something
+        // returns and sets initDataLoaded to be false.  Since everything is async, we are safe to set this on function
+        // call to indicate that it HAS been called, eliminating extra api calls.
+        this.initDataLoaded = true;
+
         var ctx = this.context.parent || this.context,
             ctxModel = ctx.get('model'),
             date = ctxModel.get('date_closed');
@@ -697,9 +703,6 @@
             app.api.call('GET', app.api.buildURL('TimePeriods/' + date), null, {
                 success: _.bind(function(data) {
                     if(this.model) {
-                        // Make sure the model is here when we get back and this isn't mid-pageload or anything
-                        this.initDataLoaded = true;
-
                         // update the initial timeperiod
                         this.modelTP.set(_.clone(data));
 
@@ -716,8 +719,6 @@
                 month = (d.getUTCMonth().toString().length == 1) ? '0' + d.getUTCMonth() : d.getUTCMonth(),
                 day = (d.getUTCDate().toString().length == 1) ? '0' + d.getUTCDate() : d.getUTCDate()
             date = d.getFullYear() + '-' + month + '-' + day;
-            // set initDataLoaded to true so we don't infiniteloop
-            this.initDataLoaded = true;
             this.fetchNewTPByDate(date);
         }
     },
