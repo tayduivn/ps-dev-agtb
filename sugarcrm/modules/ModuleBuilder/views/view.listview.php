@@ -39,7 +39,7 @@ class ViewListView extends SugarView
         parent::__construct($bean, $view_object_map, $request);
         $this->editModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
         $this->editLayout = $this->request->getValidInputRequest('view', 'Assert\ComponentName');
-        $this->subpanel = $this->request->getValidInputRequest('subpanel', 'Assert\ComponentName', '');
+        $this->subpanel = $this->request->getValidInputRequest('subpanel');
         $this->subpanelLabel = $this->request->getValidInputRequest('subpanelLabel', null, false);
         $this->package = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
         $this->fromModuleBuilder = !empty($this->package);
