@@ -1513,7 +1513,7 @@ class InboundEmail extends SugarBean {
                     flush();
                 } // while
                 fclose($fh);
-				$results = Serialized::unserialize($data);
+                $results = Serialized::unserialize($data);
             } // if
         } // if
         if (!$cacheDataExists) {

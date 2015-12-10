@@ -36,7 +36,7 @@ class ProjectTaskViewList extends ViewList
 		        	$blockVariables[] = 'lvso';
 		        }
 
-				$current_query_by_page = $this->request->getValidInputRequest(
+                $current_query_by_page = $this->request->getValidInputRequest(
                     'current_query_by_page',
                     array('Assert\PhpSerialized' => array('base64Encoded' => true))
                 );
