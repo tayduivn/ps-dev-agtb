@@ -104,10 +104,16 @@
                 var response = YAHOO.lang.JSON.parse(o.responseText);
 
                 if (response['status'] === true) {
+                    if (response.warnMsg) {
+                        app.alert.show('web_socket_confirmation', {
+                            level: 'warning',
+                            autoClose: false,
+                            messages: response.warnMsg
+                        });
+                    }
                     window.location.assign('index.php?module=Administration&action=index');
                 } else {
-                    var errMsg = response.errMsg;
-                    YAHOO.SUGAR.MessageBox.show({msg: errMsg});
+                    app.alert.show('WebSocketsErr', {level: 'error', messages: response.errMsg});
                 }
             };
         })();
