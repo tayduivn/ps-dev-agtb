@@ -32,28 +32,19 @@ class MessageBuilder implements MessageBuilderInterface
         $module = $event->getModuleName();
         $bean = $event->getBean();
 
-        // ToDo: build a correct message.
+        $time = $this->generateTime($bean, $user);
+        $url = $this->generateUrl($module, $bean);
+
         if (array_key_exists('title', $messageSignature)) {
-            $message['title'] = translate('LBL_EVENT_REMINDER_ABOUT', $module) . $bean->name;
+            $message['title'] = translate('LBL_EVENT_REMINDER_ABOUT', $module);
         }
         if (array_key_exists('text', $messageSignature)) {
-            $message['text'] = translate('LBL_EVENT_REMINDER_ABOUT', $module) . $this->generateUrl($module, $bean);
+            $message['text'] = sprintf(translate('LBL_EVENT_REMINDER_TEXT', $module), $bean->name, $time, $url);
         }
         if (array_key_exists('html', $messageSignature)) {
-            $message['html'] = $this->generateHtml($module, $bean);
+            $message['text'] = sprintf(translate('LBL_EVENT_REMINDER_HTML', $module), $bean->name, $time, $url);
         }
         return $message;
-    }
-
-    /**
-     * Generate url for bean
-     * @param $module
-     * @param $bean
-     * @return string generated url
-     */
-    protected function generateUrl($module, $bean)
-    {
-        return $GLOBALS['sugar_config']['site_url'] . '#' . buildSidecarRoute($module, $bean->id);
     }
 
     /**
@@ -73,29 +64,28 @@ class MessageBuilder implements MessageBuilderInterface
     }
 
     /**
-     * ToDo: We should generate HTML from some EmailTemplate or something like that.
-     * Generates HTML part of the message, based on the information contained in the given event.
-     * @param string $module Name of the module where event occurred.
-     * @param \SugarBean $bean Bean where event occurred.
-     * @return string HTML text with information about the event.
+     * Generate url for bean
+     *
+     * @param string $module Module name
+     * @param \SugarBean $bean Bean for which we generate url link.
+     * @return string generated url
      */
-    protected function generateHtml($module, $bean)
+    protected function generateUrl($module, $bean)
     {
-        $url = $this->generateUrl($module, $bean);
-        $msg = "Data of $module: <a href=\"{$url}\">{$bean->name}</a></br>";
-        $msg .= "<table>";
+        return $GLOBALS['sugar_config']['site_url'] . '#' . buildSidecarRoute($module, $bean->id);
+    }
 
-        foreach ($bean->field_defs as $field => $fieldDef) {
-            if ($fieldDef['type'] == 'link' || (isset($fieldDef['source']) && $fieldDef['source'] == 'non-db')) {
-                continue;
-            }
-            $fieldName = $fieldDef['name'];
-            $data = htmlspecialchars($bean->$field);
-            $msg .= "<tr><td>$fieldName</td><td>$data</td></tr>";
-        }
-
-        $msg .= '</table>';
-
-        return $msg;
+    /**
+     * Get time event takes place at.
+     *
+     * @param \SugarBean $bean Bean, causer of event.
+     * @param \User $user recipient user.
+     * @return string dat and time event takes place at.
+     */
+    protected function generateTime($bean, $user)
+    {
+        $timeDate = new \TimeDate();
+        $start = $timeDate->fromDb($bean->date_start);
+        return $timeDate->asUser($start, $user);
     }
 }
