@@ -19,6 +19,15 @@ class ModuleApi extends SugarApi {
     /** @var RelateRecordApi */
     protected $relateRecordApi;
 
+    /**
+     * A list of fields for which we disallow update through updateRecord
+     *
+     * @var array
+     */
+    protected $disabledUpdateFields = array(
+        'deleted',
+    );
+
     public function registerApiRest() {
         return array(
             'create' => array(
@@ -231,6 +240,12 @@ class ModuleApi extends SugarApi {
     }
 
     public function updateRecord($api, $args) {
+        foreach ($this->disabledUpdateFields as $field) {
+            if (isset($args[$field])) {
+                unset($args[$field]);
+            }
+        }
+
         $api->action = 'view';
         $this->requireArgs($args,array('module','record'));
 
