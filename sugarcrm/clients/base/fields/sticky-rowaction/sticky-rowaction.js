@@ -54,7 +54,7 @@
     },
     /**
      * Forces StickyRowaction to be rendered and visible in Actiondropdowns.
-     * @returns {boolean} TRUE always
+     * @return {boolean} `true` always
      */
     hasAccess: function(){
         return true;

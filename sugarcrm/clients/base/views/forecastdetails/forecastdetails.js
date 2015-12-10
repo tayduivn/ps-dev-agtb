@@ -303,7 +303,7 @@
     /**
      * Builds dashlet url
      *
-     * @return {*} url to call
+     * @return {Mixed} url to call
      */
     getProjectedURL: function() {
         var method = this.shouldRollup ? 'progressManager' : 'progressRep',
@@ -505,7 +505,7 @@
      * Gets an object from the oldTotals Model
      *
      * @param id the model ID for the Object
-     * @returns {Object}
+     * @return {Object}
      */
     getOldTotalFromCollectionById: function(id) {
         return this.oldTotals.models.get(id);
@@ -516,7 +516,7 @@
      *
      * @param id model id
      * @param totals object to set
-     * @returns {*}
+     * @return {Mixed}
      */
     setOldTotalFromCollectionById: function(id, totals) {
         this.oldTotals.models.set(id, totals);
@@ -810,7 +810,7 @@
      * @param {Number} caseValue the value to check
      * @param {Number} stageValue the value to check against
      * @param {String} type the property to get
-     * @returns {string}
+     * @return {string}
      */
     getClassBasedOnAmount: function (caseValue, stageValue, type) {
         var cssClass = '';
@@ -948,7 +948,7 @@
     },
 
     /**
-     * Handle the click event for the optins menu
+     * Handle the click event for the options menu
      *
      * @param {jQuery.Event} evt click event
      */
