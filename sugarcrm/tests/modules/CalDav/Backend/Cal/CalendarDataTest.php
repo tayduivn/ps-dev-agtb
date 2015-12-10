@@ -496,8 +496,8 @@ END:VCALENDAR',
         $event1 = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
-UID:'.$uid1.'
-DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-3 month'))).'
+UID:' . $uid1 . '
+DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-3 month'))) . '
 DURATION:P2D
 SUMMARY:Test event title
 END:VEVENT
@@ -510,8 +510,8 @@ END:VCALENDAR',
         $event2 = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
-UID:'.$uid1.'
-DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-5 month'))).'
+UID:' . $uid1 . '
+DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-5 month'))) . '
 DURATION:P2D
 END:VEVENT
 END:VCALENDAR',
@@ -523,8 +523,8 @@ END:VCALENDAR',
         $event3 = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => 'BEGIN:VCALENDAR
 BEGIN:VEVENT
-UID:'.$uid1.'
-DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-10 month'))).'
+UID:' . $uid1 . '
+DTSTART;VALUE=DATE:' . (date('Ymd', strtotime('-10 month'))) . '
 DURATION:P2D
 END:VEVENT
 END:VCALENDAR',
@@ -533,9 +533,9 @@ END:VCALENDAR',
         ));
 
         $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-            ->disableOriginalConstructor()
-            ->setMethods(null)
-            ->getMock();
+                            ->disableOriginalConstructor()
+                            ->setMethods(null)
+                            ->getMock();
 
         //update event1
         $event1->calendar_data = str_replace('Test event title', 'Test event title!', $event1->calendar_data);
@@ -546,12 +546,15 @@ END:VCALENDAR',
         //mark deleted even2
         $event2->mark_deleted($event2->id);
 
-        $result = $backendMock->getChangesForCalendar($calendarID, $syncToken, $syncLevel, $limit);
+        $result = $backendMock->getChangesForCalendar($calendarID, 0, $syncLevel, $limit);
 
-        $this->assertEquals($result['syncToken'], 4);
-        $this->assertEquals($result['added'][0], $event3->uri);
-        $this->assertEquals($result['modified'][0], $event1->uri);
-        $this->assertEquals($result['deleted'][0], $event2->uri);
+        $this->assertEquals(5, $result['syncToken']);
+        $this->assertEquals($event3->uri, $result['added'][0]);
+        $this->assertEquals($event1->uri, $result['modified'][0]);
+        $this->assertEquals($event2->uri, $result['deleted'][0]);
+
+        $result = $backendMock->getChangesForCalendar($calendarID, 4, $syncLevel, $limit);
+        $this->assertEquals($event2->uri, $result['deleted'][0]);
 
     }
 }

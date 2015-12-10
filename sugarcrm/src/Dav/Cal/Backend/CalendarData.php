@@ -20,6 +20,7 @@ use Sabre\CalDAV\Backend\AbstractBackend;
 use Sabre\VObject;
 use Sabre\CalDAV\Backend\SchedulingSupport;
 use Sabre\CalDAV\Backend\SyncSupport;
+use Sugarcrm\Sugarcrm\Dav\Base\Constants;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper;
 
 /**
@@ -551,56 +552,50 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function getChangesForCalendar($calendarId, $syncToken = 0, $syncLevel = 1, $limit = null)
     {
-        if (is_null($syncToken)) {
-            $syncToken = 0;
+        $calendar = $this->getCalendarBean($calendarId);
+
+        if (!$calendar->synctoken || $calendar->synctoken < $syncToken) {
+            return null;
         }
-
-        $changeBean = $this->getChangesBean();
-        $query = $this->getSugarQuery();
-
-        $query->from($changeBean);
-
-        $query->select(array('uri'))
-            ->fieldRaw('Min(operation)', 'operation')
-            ->fieldRaw('Max(operation)', 'deleted')
-            ->fieldRaw('Max(synctoken)', 'synctokens');
-
-        $query->where()->equals('calendarid', $calendarId);
-        $query->where()->gt('synctoken', $syncToken);
-        $query->orderBy('synctoken', 'ASC');
-        $query->groupBy('uri');
-
-        if (!empty($limit)) {
-            $query->limit($limit);
-        }
-
-        $result = $query->execute();
 
         $out = array(
-            'syncToken' => $syncToken,
+            'syncToken' => $calendar->synctoken,
             'added' => array(),
             'modified' => array(),
             'deleted' => array(),
         );
 
-        foreach ($result as $vals) {
-            if ($vals['synctokens'] > $out['syncToken']) {
-                $out['syncToken'] = $vals['synctokens'];
+        $changesBean = $this->getChangesBean();
+        $query = $this->getSugarQuery();
+        $query->from($changesBean);
+        $query->select(array('uri', 'operation'));
+        $query->where()->equals('calendarid', $calendarId);
+        $query->where()->gte('synctoken', $syncToken);
+        $query->where()->lt('synctoken', $calendar->synctoken);
+        $query->orderBy('synctoken', 'DESC');
+        if (!empty($limit)) {
+            $query->limit($limit);
+        }
+        $result = $query->execute();
+
+        $changes = array();
+        foreach ($result as $row) {
+            if (!empty($row['uri']) && !isset($changes[$row['uri']])) {
+                $changes[$row['uri']] = $row['operation'];
             }
-            if ($vals['deleted'] != 3) {
-                if ($vals['operation'] != 1) {
-                    //modified
-                    $out['modified'][] = $vals['uri'];
-                } else {
-                    //add
-                    $out['added'][] = $vals['uri'];
-                }
-            } else {
-                //deleted events
-                //create and del event, Not send
-                if ($vals['operation'] != 1) {
-                    $out['deleted'][] = $vals['uri'];
-                }
+        }
+        foreach ($changes as $uri => $operation) {
+
+            switch ($operation) {
+                case Constants::OPERATION_ADD:
+                    $out['added'][] = $uri;
+                    break;
+                case Constants::OPERATION_MODIFY:
+                    $out['modified'][] = $uri;
+                    break;
+                case Constants::OPERATION_DELETE:
+                    $out['deleted'][] = $uri;
+                    break;
             }
         }
 
