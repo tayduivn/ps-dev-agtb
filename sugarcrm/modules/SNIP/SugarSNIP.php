@@ -25,7 +25,7 @@ class SugarSNIP
     // Username for SNIP system user
     const SNIP_USER = 'SNIPuser';
     const OAUTH_KEY = 'SNIPOAuthKey';
-    const DEFAULT_URL = 'http://ease.sugarcrm.com:20010/';
+    const DEFAULT_URL = 'https://ease.sugarcrm.com/';
 
     /**
      * Singleton instance
