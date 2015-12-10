@@ -282,6 +282,13 @@ class FilterApi extends SugarApi
 
         $q = self::getQueryObject($seed, $options);
 
+        // Relate collections should not be in the select clause of the query
+        // since we have trouble doing group bys on certain databases. We should
+        // be getting the relate collection values later anyways.
+        if (isset($options['relate_collections'])) {
+            $options = $this->removeRelateCollectionsFromSelect($options);
+        }
+
         // return $args['filter'];
         if (!isset($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
@@ -385,6 +392,8 @@ class FilterApi extends SugarApi
             // are expected to be handled later, e.g. FilterApi for Tags
             if (isset($seed->field_defs[$field]['relate_collection']) &&
                 $seed->field_defs[$field]['relate_collection']) {
+                //we need to use a group by if the field is a relate collection
+                $options['group_by'] = true;
                 continue;
             }
 
@@ -405,11 +414,6 @@ class FilterApi extends SugarApi
             if (isset($seed->field_defs[$field]['type'])) {
                 $sf = SugarFieldHandler::getSugarField($seed->field_defs[$field]['type']);
                 $sf->addFieldToQuery($field, $fields);
-
-                //we need to use a group by if the field is a relate collection
-                if (isset($seed->field_defs[$field]['relate_collection'])) {
-                    $options['group_by'] = true;
-                }
             }
         }
 
@@ -521,7 +525,7 @@ class FilterApi extends SugarApi
 
     protected function runQuery(ServiceBase $api, array $args, SugarQuery $q, array $options, SugarBean $seed) {
         $seed->call_custom_logic("before_filter", array($q, $options));
-        
+
         if (empty($args['fields'])) {
             $fields = array();
         } else {
@@ -1026,6 +1030,26 @@ class FilterApi extends SugarApi
             }
         }
 
+        return $options;
+    }
+
+    /**
+     * Relate collections should be gathered separately from the main filter
+     * query. There are multiple records for each row of data and cannot be
+     * shown in the select as such.
+     *
+     * @param $options array of options to use
+     * @return mixed the options without any relate collections
+     */
+    protected function removeRelateCollectionsFromSelect($options)
+    {
+        if (isset($options['select'])) {
+            foreach ($options['select'] as $index => $field) {
+                if (isset($options['relate_collections'][$field])) {
+                    unset($options['select'][$index]);
+                }
+            }
+        }
         return $options;
     }
 }
