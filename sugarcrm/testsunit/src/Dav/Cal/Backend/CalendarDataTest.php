@@ -55,7 +55,6 @@ END:VCALENDAR',
                 'calendarUri' => 'uri.isc',
                 'calendarID' => 1,
                 'content' => 'BEGIN:VCALENDAR
-X-PARENT-UID:asdf
 BEGIN:VEVENT
 uid:test
 DTSTART;VALUE=DATE:20160101

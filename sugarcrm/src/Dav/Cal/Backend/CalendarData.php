@@ -436,6 +436,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
 
         foreach ($result as $key => $row) {
 
+            $row = $this->eventSQLRowToCalDavArray($row);
             if ($requirePostFilter && !$this->validateFilterForObject($row, $filters)) {
                 continue;
             }

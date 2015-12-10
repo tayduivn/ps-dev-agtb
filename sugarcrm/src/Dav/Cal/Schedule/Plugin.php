@@ -25,7 +25,6 @@ use Sabre\DAV;
 class Plugin extends DavSchedulePlugin
 {
     /**
-     * For SugarCRM purposes "X-PARENT-UID" needs to be set
      * @inheritdoc
      */
     public function scheduleLocalDelivery(ITip\Message $iTipMessage)
@@ -129,8 +128,6 @@ class Plugin extends DavSchedulePlugin
 
         if ($isNewNode) {
             $calendar = $this->server->tree->getNodeForPath($calendarPath);
-            $xParent = $newObject->createProperty('X-PARENT-UID', $iTipMessage->uid, null, 'TEXT');
-            $newObject->add($xParent);
             $calendar->createFile($newFileName, $newObject->serialize());
         } else {
             if ($iTipMessage->method === 'REPLY') {

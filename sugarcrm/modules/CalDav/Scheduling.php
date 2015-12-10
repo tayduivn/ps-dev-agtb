@@ -74,7 +74,7 @@ class CalDavScheduling extends SugarBean
      * Calendar event data in VOBJECT format
      * @var string
      */
-    public $calendardata;
+    public $calendar_data;
 
     /**
      * Scheduling object uri
@@ -139,7 +139,7 @@ class CalDavScheduling extends SugarBean
         $this->assigned_user_id = $user->id;
         $this->uri = $objectUri;
 
-        $this->calendardata = $eventData;
+        $this->calendar_data = $eventData;
 
         $this->data_size = $this->calculateSize($eventData);
         $this->etag = $this->calculateETag($eventData);
