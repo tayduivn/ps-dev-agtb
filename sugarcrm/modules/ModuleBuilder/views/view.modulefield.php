@@ -67,6 +67,12 @@ class ViewModulefield extends SugarView
 				'relate' => 'Relate', 'address' => 'Address', 'text' => 'TextArea', 'url' => 'Link');
 		*/
 		$field_types = $GLOBALS['mod_strings']['fieldTypes'];
+
+        //For input validation we want to ensure we validate against all possible field types.  The parent field type
+        //is added to the field_type array dynamically throughout this flow and therefore is not in the filed_types array
+        //durng certain validation attempts.
+        $allValidFieldTypes = array_merge($field_types, array('parent' => $GLOBALS['mod_strings']['parent']));
+
 		//BEGIN SUGARCRM flav=com ONLY
 		if (isset($field_types['encrypt']))
 		  unset($field_types['encrypt']);
@@ -114,7 +120,7 @@ class ViewModulefield extends SugarView
             // continue like normal
             if (empty($vardef['name']) || $isNew) {
                 if (!empty($_REQUEST['type'])) {
-                    $vardef['type'] = $this->request->getValidInputRequest('type', array('Assert\Choice' => array('choices' => array_keys($field_types))), '');
+                    $vardef['type'] = $this->request->getValidInputRequest('type', array('Assert\Choice' => array('choices' => array_keys($allValidFieldTypes))), '');
                 }
                 $fv->ss->assign('hideLevel', 0);
             } elseif (isset($vardef['custom_module'])) {
@@ -185,7 +191,7 @@ class ViewModulefield extends SugarView
 
             if(empty($vardef['name'])){
                 if(!empty($_REQUEST['type'])) {
-                    $vardef['type'] = $this->request->getValidInputRequest('type', array('Assert\Choice' => array('choices' => array_keys($field_types))), '');
+                    $vardef['type'] = $this->request->getValidInputRequest('type', array('Assert\Choice' => array('choices' => array_keys($allValidFieldTypes))), '');
                 }
                 $fv->ss->assign('hideLevel', 0);
             } else {
