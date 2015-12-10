@@ -186,7 +186,7 @@ class DetailView extends ListView {
 
   		//set nav_history.
 		if (empty($nav_stamp)) {
-			$nav_stamp=$_GET['stamp'];
+			$nav_stamp = InputValidation::getService()->getValidInputGet('stamp');
 		}
 		if (empty($nav_offset)) {
 			$nav_offset=$offset;

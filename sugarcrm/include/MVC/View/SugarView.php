@@ -483,46 +483,6 @@ class SugarView
 		$ss->assign("homeImage",$homeImage);
         global $mod_strings;
         $mod_strings = $bakModStrings;
-        //BEGIN SUGARCRM flav=pro ONLY
-		/******************DC MENU*********************/
-        // DEPRECATED since 7.0, will be removed from 7.2
-//		if(!empty($current_user->id) && !$this->_getOption('view_print')){
-//			require_once('include/DashletContainer/DCFactory.php');
-//            require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
-//			$dcm = DCFactory::getContainer(null, 'DCMenu');
-//			$notifData = $dcm->getNotifications();
-//			$dcjs = getVersionedScript('include/DashletContainer/Containers/DCMenu.js');
-//			$ss->assign('NOTIFCLASS', $notifData['class']);
-//			$ss->assign('NOTIFCODE', $notifData['code']);
-//			$ss->assign('NOTIFICON', $notifData['icon']);
-//			$ss->assign('DCSCRIPT', $dcm->getScript());
-//			$ss->assign('ICONSEARCH', $dcm->getSearchIcon());
-//			$ss->assign('DCACTIONS',$dcm->getMenus());
-//			$ss->assign('PICTURE', $current_user->picture);
-//            $ftsAutocompleteEnable = TRUE;
-//            $searchEngine = SugarSearchEngineFactory::getInstance();
-//            if( ($searchEngine instanceOf SugarSearchEngine) || (isset($GLOBALS['sugar_config']['full_text_engine'])
-//                && isset($GLOBALS['sugar_config']['full_text_engine']['disable_autocomplete']) && $GLOBALS['sugar_config']['full_text_engine']['disable_autocomplete'] )
-//                )
-//                    $ftsAutocompleteEnable = FALSE;
-//
-//            if (SugarSearchEngineAbstractBase::isSearchEngineDown()) {
-//                $ftsAutocompleteEnable = false;
-//            }
-//            $ss->assign('FTS_AUTOCOMPLETE_ENABLE', $ftsAutocompleteEnable);
-//			$ss->assign('AJAX', isset($_REQUEST['ajax_load'])?$_REQUEST['ajax_load']:"0");
-//			$ss->assign('ACTION', isset($_REQUEST['action'])?$_REQUEST['action']:"");
-//			$ss->assign('FULL', isset($_REQUEST['full'])?$_REQUEST['full']:"false");
-//			if(is_admin($GLOBALS['current_user'])){
-//				$ss->assign('ISADMIN', true);
-//			} else {
-//				$ss->assign('ISADMIN', false);
-//			}
-//			$ss->assign('SUGAR_DCJS', $dcjs);
-//			//$ss->assign('SUGAR_DCMENU', $data['html']);
-//		}
-		/******************END DC MENU*********************/
-        //END SUGARCRM flav=pro ONLY
         $headerTpl = $themeObject->getTemplate('header.tpl');
         if (inDeveloperMode() )
             $ss->clear_compiled_tpl($headerTpl);
