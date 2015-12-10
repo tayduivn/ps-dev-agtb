@@ -240,6 +240,7 @@ class FilterApi extends SugarApi
             }
         }
 
+        $options['action'] = $api->action;
 
         return $options;
     }
