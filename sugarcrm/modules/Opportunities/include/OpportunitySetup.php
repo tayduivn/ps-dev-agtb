@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Util\Serialized;
-
 /**
  * Class OpportunitySetup
  */
@@ -384,7 +382,8 @@ abstract class OpportunitySetup
         $results = $db->query($sql);
 
         while ($row = $db->fetchRow($results)) {
-            $tabArray = Serialized::unserialize($row['value'], array(), true);
+            $tabArray = unserialize(base64_decode($row['value']));
+
             // in the setup, this might not be set yet.
             if (is_array($tabArray)) {
                 // find the key
