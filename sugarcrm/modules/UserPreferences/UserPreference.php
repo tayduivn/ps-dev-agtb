@@ -20,8 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/SugarQuery/SugarQuery.php');
 
-use Sugarcrm\Sugarcrm\Util\Serialized;
-
 class UserPreference extends SugarBean
 {
     public $db;
@@ -238,7 +236,7 @@ class UserPreference extends SugarBean
 
         $value = array();
         if ($row) {
-            $value = Serialized::unserialize($row['contents'], null, true);
+            $value = unserialize(base64_decode($row['contents']));
         }
 
         $this->storeToCache($value, $category);
