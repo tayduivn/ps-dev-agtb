@@ -111,6 +111,7 @@ $app_list_strings = array (
     'Feedbacks' => 'Feedbacks',
     'Tags' => 'Tags',
     'Categories' => 'Categories',
+      'Addresses' => 'Addresses',
   ),
 
     'moduleIconList' =>
@@ -227,6 +228,7 @@ $app_list_strings = array (
     'Feedbacks' => 'Feedback',
     'Tags' => 'Tag',
     'Categories' => 'Category',
+      'Addresses' => 'Addressee',
   ),
 
 /*

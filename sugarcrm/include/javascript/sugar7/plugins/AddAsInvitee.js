@@ -178,7 +178,7 @@
              * @return {Boolean}
              */
             isPossibleInvitee: function(person) {
-                var inviteeModuleList = ['Leads', 'Contacts', 'Users'],
+                var inviteeModuleList = ['Leads', 'Contacts', 'Users', 'Addresses'],
                     invitees = this.model.get('invitees');
 
                 return (!_.isEmpty(person.id) &&

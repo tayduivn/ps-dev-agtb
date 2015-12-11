@@ -731,10 +731,15 @@ $beanFiles['CalDavScheduling'] = 'modules/CalDav/Scheduling.php';
 $beanList['CalDavSynchronizations'] = 'CalDavSynchronization';
 $beanFiles['CalDavSynchronization'] = 'modules/CalDav/Synchronization.php';
 
+$beanList['Addresses'] = 'Addressee';
+$beanFiles['Addressee'] = 'modules/Addresses/Addressee.php';
+
 // this module doesn't need a Bean
 $modInvisList[] = 'Feedbacks';
 
 $modInvisList[] = 'CalDav';
+$modInvisList[] = 'Addresses';
+
 
 foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $modExtFile) {
     include $modExtFile;
