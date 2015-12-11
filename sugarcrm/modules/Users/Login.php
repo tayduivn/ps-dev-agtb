@@ -21,7 +21,6 @@ global $current_language, $mod_strings, $app_strings;
 $request = InputValidation::getService();
 $lang = $request->getValidInputRequest('login_language', 'Assert\Language');
 if ($lang) {
-    $_REQUEST['ck_login_language_20'] = $lang;
 	$current_language = $lang;
     $_SESSION['authenticated_user_language'] = $lang;
     $mod_strings = return_module_language($lang, "Users");
@@ -171,11 +170,8 @@ if(isset($_SESSION["waiting_error"])) {
     $sugar_smarty->assign('WAITING_ERROR', $_SESSION['waiting_error']);
 }
 
-if (isset($_REQUEST['ck_login_language_20'])) {
-	$display_language = $_REQUEST['ck_login_language_20'];
-} else {
-	$display_language = $sugar_config['default_language'];
-}
+$display_language = $sugar_config['default_language'];
+
 
 if (empty($GLOBALS['sugar_config']['passwordsetting']['forgotpasswordON']))
 	$sugar_smarty->assign('DISPLAY_FORGOT_PASSWORD_FEATURE','none');
