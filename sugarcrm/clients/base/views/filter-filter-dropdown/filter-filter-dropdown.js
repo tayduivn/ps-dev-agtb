@@ -274,7 +274,8 @@
         // Update the text for the selected filter.
         this.$('.choice-filter-label').html(safeString);
         this.$('.choice-filter')
-            .attr('aria-label', a11yLabel)
+            .attr('aria-label', a11yLabel);
+        this.$('.choice-filter')
             .attr('tabindex', a11yTabindex);
 
         if (item.id !== 'all_records') {

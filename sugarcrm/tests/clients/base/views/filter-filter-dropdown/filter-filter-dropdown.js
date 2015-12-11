@@ -176,11 +176,12 @@ describe('Base.View.FilterFilterDropdown', function() {
             var jQueryStubs, toggleFilterCursorStub;
             beforeEach(function() {
                 jQueryStubs = {
+                    attr: sinon.stub().returns(jQueryStubs),
                     html: sinon.stub().returns(jQueryStubs),
                     show: sinon.stub().returns(jQueryStubs),
                     hide: sinon.stub().returns(jQueryStubs)
                 };
-               toggleFilterCursorStub = sinonSandbox.stub(view, 'toggleFilterCursor');
+                toggleFilterCursorStub = sinonSandbox.stub(view, 'toggleFilterCursor');
                 sinonSandbox.stub(view, '$', function() {
                     return jQueryStubs;
                 });
