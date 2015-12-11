@@ -242,6 +242,9 @@ class SugarQuery
             if (!empty($alias)) {
                 $options['table_alias'] = $alias;
             }
+            if (!isset($options['action'])) {
+                $options['action'] = 'list';
+            }
             $bean->addVisibilityQuery($this, $options);
         }
 
@@ -373,6 +376,10 @@ class SugarQuery
         $relatedJoin = empty($options['relatedJoin']) ? false : $options['relatedJoin'];
         if (!isset($options['alias'])) {
             $options['alias'] = $this->getJoinTableAlias($link_name, $relatedJoin);
+        }
+
+        if (!isset($options['action'])) {
+            $options['action'] = 'list';
         }
 
         if (!empty($this->links[$options['alias']])) {
@@ -1037,12 +1044,10 @@ class SugarQuery
         );
         $joined = BeanFactory::newBean($bean->$join->getRelatedModuleName());
         if ($team_security === true) {
-            $joined->addVisibilityQuery(
-                $this,
-                array("table_alias" => $alias, 'as_condition' => true)
-            );
+            $options['table_alias'] = $alias;
+            $options['as_condition'] = true;
+            $joined->addVisibilityQuery($this, $options);
         }
-
 
         if ($joined->hasCustomFields()) {
             $table_cstm = $joined->get_custom_table_name();

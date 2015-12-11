@@ -2573,9 +2573,10 @@ EOQ;
         }
 
         $user = BeanFactory::getBean('Users');
-        $user->addVisibilityFrom($query);
+        $options = array('action' => 'list');
+        $user->addVisibilityFrom($query, $options);
         $query .= " WHERE $where ";
-        $user->addVisibilityWhere($query);
+        $user->addVisibilityWhere($query, $options);
 
         if (!empty($user_name_filter)) {
             $user_name_filter = $db->quote($user_name_filter);

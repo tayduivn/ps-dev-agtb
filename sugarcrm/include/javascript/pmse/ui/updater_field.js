@@ -150,6 +150,7 @@ UpdaterField.prototype.setOptions = function (settings) {
         aUsers = [],
         customUsers = {},
         currentSetting;
+
     this.list = settings;
     for (i = 0; i < settings.length; i += 1) {
         /*CREATE INPUT FIELD*/
@@ -208,12 +209,11 @@ UpdaterField.prototype.setOptions = function (settings) {
                     {text: translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), value: 'owner'},
                     {text: translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'), value: 'supervisor'}
                 ];
-                currentSetting.searchMore = {
-                    module: "Users",
-                    fields: ["id", "full_name"],
-                    filterOptions: null
-                };
                 newOption =  new SearchUpdaterItem(currentSetting);
+                break;
+            case 'team_list':
+                currentSetting.disabledAppendOption = !this.hasCheckbox;
+                newOption = new TeamUpdaterItem(currentSetting);
                 break;
             default:
                 newOption =  new TextUpdaterItem(currentSetting);
@@ -308,7 +308,6 @@ UpdaterField.prototype.createHTML = function () {
 
     for (i = 0; i < this.options.length; i += 1) {
         insert = this.options[i].getHTML();
-        //console.log( i % 2, 'aa');
         if (i % 2 === 0) {
             insert.className = insert.className + ' updater-inverse';
         }
@@ -347,6 +346,10 @@ UpdaterField.prototype.setValue = function (value) {
                         if (fields[i].field === this.options[j].getName()) {
                             this.options[j].enable();
                             this.options[j].setValue(fields[i].value, fields[i].label);
+                            if (fields[i].type === 'team_list') {
+                                this.options[j].setPrimaryTeam(fields[i].primary);
+                                this.options[j].setAppendTeams(fields[i].append);
+                            }
                             break;
                         }
                     }
@@ -366,26 +369,12 @@ UpdaterField.prototype.isValid = function () {
     var i, valid = true, current, field;
     for (i = 0; i < this.options.length; i += 1) {
         field = this.options[i];
-        if (field.isRequired()) {
-            switch (field.type) {
-                case 'CheckboxUpdaterItem':
-                    valid = field.getValue();
-                    break;
-                case 'DateUpdaterItem':
-                case 'NumberUpdaterItem':
-                    valid = !!field.getValue().length;
-                    break;
-                default:
-                    if (field.getValue() === '') {
-                        valid = false;
-                    }
-                    break;
-            }
 
-        }
         //TODO: create validation for expressions built with expressionControl.
         if (field._parent.hasCheckbox && field.isDisabled()) {
             valid = true;
+        } else {
+            valid = field.isValid();
         }
 
         if (!valid) {
@@ -406,6 +395,36 @@ UpdaterField.prototype.isValid = function () {
     return valid;
 };
 
+UpdaterField.prototype._updateCurrencyFields = function (currency, ignore) {
+    var i, j;
+    var field;
+    var value;
+    var targetCurrency = App.metadata.getCurrencies()[currency];
+    var originalCurrency;
+
+    for (i = 0; i < this.options.length; i += 1) {
+        field = this.options[i];
+        if (field !== ignore && field instanceof NumberUpdaterItem && field.isCurrency()) {
+            value = field.getValue();
+            for (j = 0; j < value.length; j += 1) {
+                if (value[j].expType === 'CONSTANT' && value[j].expSubtype === 'currency' && value[j].expField !== currency) {
+                    originalCurrency = App.metadata.getCurrencies()[value[j].expField];
+                    value[j].expValue = FormPanelCurrency.convertCurrency(value[j].expValue, parseFloat(originalCurrency.conversion_rate), parseFloat(targetCurrency.conversion_rate));
+                    value[j].expField = currency;
+                    value[j].expLabel = targetCurrency.symbol + "(" + targetCurrency.iso4217 + ") "
+                        + FormPanelNumber.format(value[j].expValue, {
+                            precision: 2,
+                            groupingSeparator: this._numberGroupingSeparator,
+                            decimalSeparator: this._decimalSeparator
+                        });
+                }
+            }
+            field.setValue(value);
+        }
+    }
+    return this;
+};
+
 /**
  * Obtains and creates the variable string according to the format established
  * for handling variables in sugar
@@ -414,8 +433,15 @@ UpdaterField.prototype.isValid = function () {
 UpdaterField.prototype._onValueGenerationHandler = function (module) {
     var  that = this;
     return function () {
-        var newExpression, field = that.currentField, control, i, currentValue = field.getValue(), aux, aux2,
-            panel, list;
+        var newExpression;
+        var field = that.currentField;
+        var control;
+        var i, aux2;
+        var currentValue = field.getValue()
+        var panel;
+        var list;
+        var usedCurrency = null;
+        var aux = true;
 
         control = field._control;
         if (this instanceof ExpressionControl) {
@@ -432,7 +458,33 @@ UpdaterField.prototype._onValueGenerationHandler = function (module) {
             newExpression = aux + newExpression + aux2;
         }
 
-        field.setValue(newExpression);
+        if (field instanceof NumberUpdaterItem && field.isCurrency()) {
+            for (i = 0; i < newExpression.length; i += 1) {
+                if (newExpression[i].expType === 'CONSTANT' && newExpression[i].expSubtype === 'currency') {
+                    if (usedCurrency !== null && usedCurrency !== newExpression[i].expField) {
+                        App.alert.show('br-save-error', {
+                            level: 'error',
+                            messages: translate('LBL_PMSE_MESSAGE_ERROR_CURRENCIES_MIX'),
+                            autoClose: true
+                        });
+                        aux = false;
+                        break;
+                    }
+                    usedCurrency = newExpression[i].expField;
+                }
+            }
+            if (aux) {
+                field.setValue(newExpression);
+                if (usedCurrency !== null) {
+                    that._updateCurrencyFields(usedCurrency, field);
+                }
+            } else {
+                panel.setValue(field.getValue(), true);
+            }
+        } else {
+            field.setValue(newExpression);
+        }
+
         if (!(panel instanceof ExpressionControl)) {
             panel.close();
         }
@@ -531,7 +583,8 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                 }).setConstantPanel(constantPanelCfg);
             } else {
                 this._datePanel.setOperators({
-                    arithmetic: true
+                    arithmetic: true,
+                    group: true
                 });
                 if (field.isCurrency()) {
                     this._datePanel.setConstantPanel({
@@ -566,7 +619,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
         }
         this.currentField = field;
         //We can't send an empty string since JSON can't parse it
-        this._datePanel.setValue(field.getValue() || []);
+        this._datePanel.setValue(field.getValue() || [], true);
         if (this._variablesList && this._variablesList.isOpen()) {
             this._variablesList.close();
         }
@@ -606,10 +659,12 @@ var UpdaterItem = function (settings) {
     this._disabled = null;
     this._value = null;
     this._fieldType = null;
+    this._showConfigButton = null;
     this._configButton = null;
     this._attachedListeners = false;
     this._dirty = false;
     this._allowDisabling = true;
+    this._controlContainer = null;
     UpdaterItem.prototype.init.call(this, settings);
 };
 
@@ -638,6 +693,8 @@ UpdaterItem.prototype.init = function(settings) {
         .setValue(defaults.value)
         .setFieldType(defaults.fieldType);
 
+    this._showConfigButton = false;
+
     if (defaults.disabled) {
         this.disable();
     } else {
@@ -663,6 +720,8 @@ UpdaterItem.prototype.disallowDisabling = function () {
     if (this._activationControl) {
         this._activationControl.style.display = "none";
     }
+
+    return this;
 };
 
 UpdaterItem.prototype.setParent = function (parent) {
@@ -712,8 +771,9 @@ UpdaterItem.prototype.isRequired = function () {
     return this._required;
 };
 
+
 UpdaterItem.prototype.isValid = function () {
-    return !!(this._required && this._value);
+    return this._required ? this._value !== '' : true;
 };
 
 UpdaterItem.prototype.clear = function () {
@@ -729,8 +789,8 @@ UpdaterItem.prototype.disable = function () {
         this._activationControl.checked = false;
         this._disableControl();
     }
-    this.clear();
     this._disabled = true;
+    this.clear();
     return this;
 };
 
@@ -794,6 +854,9 @@ UpdaterItem.prototype._createControl = function () {
 };
 
 UpdaterItem.prototype._createConfigButton = function () {
+    if (!this._showConfigButton) {
+        return null;
+    }
     var button = this.createHTMLElement("a");
     button.href = "#";
     button.className = "adam-itemupdater-cfg fa fa-cog";
@@ -911,6 +974,7 @@ UpdaterItem.prototype.createHTML = function () {
         this._dom.requiredContainer = requiredContainer;
 
         this._activationControl = activationControl;
+        this._controlContainer = controlContainer;
         this.html.appendChild(label);
         this.html.appendChild(controlContainer);
         this.html.appendChild(messageContainer);
@@ -932,6 +996,525 @@ UpdaterItem.prototype.createHTML = function () {
     }
     return this.html;
 };
+
+// TeamUpdaterItem
+var TeamUpdaterItem = function (settings) {
+    UpdaterItem.call(this, settings);
+    this._primaryTeam = null;
+    this._disabledAppendOption = null;
+    this._appendTeamsCheckbox = null;
+    this._appendTeamsLabel = null;
+    this._appendTeams = null;
+    this._addButton = null;
+    TeamUpdaterItem.prototype.init.call(this, settings);
+};
+
+TeamUpdaterItem.prototype = new UpdaterItem();
+TeamUpdaterItem.prototype.constructor = TeamUpdaterItem;
+TeamUpdaterItem.prototype.type = 'TeamUpdaterItem';
+
+TeamUpdaterItem.TEAM_ACTION = {
+    PRIMARY: 0,
+    ADD: 1,
+    REMOVE: 2
+};
+
+TeamUpdaterItem.prototype.init = function (settings) {
+    var defaults = {
+        primaryTeam: null,
+        appendTeams: false,
+        disabledAppendOption: false
+    };
+
+    jQuery.extend(true, defaults, settings);
+
+    this.setPrimaryTeam(defaults.primaryTeam)
+        .setAppendTeams(defaults.appendTeams);
+
+    if (defaults.disabledAppendOption) {
+        this.disableAppendOption();
+    } else {
+        this.enableAppendOption();
+    }
+};
+
+TeamUpdaterItem.prototype.disableAppendOption = function () {
+    this._disabledAppendOption = true;
+    if (this._appendTeamsLabel) {
+        jQuery(this._appendTeamsLabel).hide();
+    }
+    return  this;
+};
+
+TeamUpdaterItem.prototype.enableAppendOption = function () {
+    this._disabledAppendOption = false;
+    if (this._appendTeamsLabel) {
+        jQuery(this._appendTeamsLabel).show();
+    }
+    return  this;
+};
+
+TeamUpdaterItem.prototype.isValid = function () {
+    return this._required ? !!this._value.length : true;
+};
+
+TeamUpdaterItem.prototype.setAppendTeams = function (bln) {
+    var lines, $line, that = this;
+    bln = !!bln;
+    this._appendTeams = bln;
+    if (this._appendTeamsCheckbox) {
+        this._appendTeamsCheckbox.checked = bln;
+    }
+    if (!bln && this._primaryTeam === null) {
+        lines = jQuery(this._control).find('.adam-team-updater-line').toArray();
+        _.find(lines, function (el) {
+            var data = that._getLineData(el);
+            if (data !== null) {
+                jQuery(el).find('.adam-team-action[name=primary]').addClass('active')
+                    .trigger('change', [TeamUpdaterItem.TEAM_ACTION.PRIMARY]);
+                return true;
+            }
+        });
+    }
+    return this;
+};
+
+TeamUpdaterItem.prototype.setPrimaryTeam = function (team) {
+    var lines, i, data;
+    this._primaryTeam = team;
+    if (this._control) {
+        lines = jQuery(this._control).find('.adam-team-updater-line').find('.adam-team-action')
+            .removeClass('active').end().toArray();
+        for (i = 0; i < lines.length; i += 1) {
+            data = this._getLineData(lines[i]);
+            if (data.id === this._primaryTeam) {
+                jQuery(lines[i]).find('.adam-team-action[name=primary]').addClass('active');
+                return this;
+            }
+        }
+    }
+    return this;
+};
+
+TeamUpdaterItem.prototype.clear = function () {
+    this._primaryTeam = null;
+    this.setValue([]);
+    return this;
+};
+
+TeamUpdaterItem.prototype._setValueToControl = function (value) {
+    var that = this, count = 0;
+    if (!this._control) {
+        return this;
+    }
+    jQuery(this._control).empty();
+    value.forEach(function (item, index, arr) {
+        that._addNewInputLine(item);
+        count ++;
+    });
+    this.setPrimaryTeam(this._primaryTeam);
+    if (!count) {
+        this._addNewInputLine();
+    }
+    return this;
+};
+
+TeamUpdaterItem.prototype._getValueFromControl = function () {
+    var value = [], that = this;
+    this._primaryTeam = null;
+    jQuery(this._control).find('.adam-team-updater-line').each(function () {
+        var input = jQuery(this).find('input'),
+            data = input.select2('data');
+        if (data !== null && value.indexOf(data.id) < 0) {
+            value.push(data.id);
+            if (jQuery(this).find('.adam-team-action.active[name=primary]').length) {
+                that._primaryTeam = data.id;
+            }
+        }
+    });
+
+    return value;
+};
+
+TeamUpdaterItem.prototype._getTeamName = function (value) {
+    var teams = (project && project.getMetadata("teams_details")) || [],
+        i;
+
+    for(i = 0; i < teams.length; i += 1) {
+        if (teams[i].id === value) {
+            return jQuery.trim(teams[i].name + " " + teams[i].name_2);
+        }
+    }
+    return value;
+};
+
+TeamUpdaterItem.prototype._initSelection = function () {
+    var that = this;
+    return function (element, callback) {
+        var value = element.val();
+        callback({
+            id: value,
+            text: that._getTeamName(value)
+        });
+    };
+};
+
+TeamUpdaterItem.prototype._getSearchFunction = function () {
+    return _.debounce(function (queryObject) {
+        var proxy = new SugarProxy(), term = queryObject.term,
+            resultsPerPage = 5;
+
+        proxy.url = "Teams?filter[0][name][$starts]=%TERM%&fields=id,name&max_num=%NUM%&offset=%OFFSET%"
+            .replace(/%TERM%/g, term).replace(/%NUM%/, resultsPerPage).replace(/%OFFSET%/, (queryObject.page - 1) * resultsPerPage);
+        proxy.getData(null, {
+            success: function (data) {
+                var finalData = [];
+
+                data.records.forEach(function (item, index, arr) {
+                    finalData.push({
+                        id: item.id,
+                        text: item.name
+                    });
+                });
+
+                queryObject.callback({
+                    more: data.nextOffset >= 0,
+                    results: finalData
+                });
+            },
+            error: function () {
+                // TODO: show error message
+            }
+        });
+
+    }, 1500);
+};
+
+TeamUpdaterItem.prototype._queryFunction = function () {
+    var that = this;
+
+    return function (queryObject) {
+        var term = jQuery.trim(queryObject.term);
+
+        if (term) {
+            (that._getSearchFunction())(queryObject);
+        } else {
+            queryObject.callback({
+                results: []
+            });
+        }
+    };
+};
+
+TeamUpdaterItem.prototype._openSearchMore = function (select) {
+    var that = this, zIndex, $select = jQuery(select);
+    return function () {
+        zIndex = $(that.html).closest(".adam-modal").zIndex();
+        $select.select2("close");
+        $(that.html).closest(".adam-modal").zIndex(-1);
+        App.drawer.open({
+                layout: "selection-list",
+                context: {module: "Teams"}
+            },
+            _.bind(function (drawerValues) {
+                $(that.html).closest(".adam-modal").zIndex(zIndex);
+                if (!_.isUndefined(drawerValues)) {
+                    $select.select2("val", drawerValues.id, true);
+                }
+            }, this)
+        );
+    };
+};
+
+TeamUpdaterItem.prototype._addNewInputLine = function (value) {
+    var select, div, dropdownHTML, additionalList, listItem, tpl, $select;
+
+    if (!this._control) {
+        return this;
+    }
+    div = this.createHTMLElement("div");
+    div.className = 'adam-team-updater-line';
+    select = this.createHTMLElement("input");
+    div.appendChild(select);
+    this._control.appendChild(div);
+    $select = jQuery(select).select2({
+        minimumInputLength: 1,
+        formatInputTooShort: '',
+        allowClear: true,
+        query: this._queryFunction(),
+        width: this.fieldWidth || '220px',
+        placeholder: translate('LBL_PMSE_UPDATERFIELD_ADD_TEAM'),
+        initSelection: this._initSelection()
+    });
+
+    if (value) {
+        $select.select2("val", value, false);
+    }
+
+    this._addButtonsToLine(div);
+
+    if (this._disabled) {
+        $select.select2("disable");
+    }
+
+    dropdownHTML = $select.data("select2").dropdown;
+    additionalList = this.createHTMLElement('ul');
+    additionalList.className = 'select2-results adam-searchmore-list';
+    listItem = this.createHTMLElement('li');
+    tpl = this.createHTMLElement('div');
+    tpl.className = 'select2-result-label';
+    tpl.appendChild(document.createTextNode(translate('LBL_SEARCH_AND_SELECT_ELLIPSIS')));
+    listItem.appendChild(tpl);
+    additionalList.appendChild(listItem);
+    dropdownHTML.append(additionalList);
+    $(additionalList).find('li').on('mousedown', this._openSearchMore(select));
+
+    return this;
+};
+
+TeamUpdaterItem.prototype._createControl = function () {
+    this._control = this.createHTMLElement("div");
+    this._setValueToControl(this._value);
+
+    return UpdaterItem.prototype._createControl.call(this);
+};
+
+TeamUpdaterItem.prototype._getAddButton = function () {
+    var addButton;
+
+    if (this._addButton) {
+        return this._addButton;
+    }
+
+    addButton = this.createHTMLElement('button')
+    addButton.className = 'btn adam-team-action';
+    i = this.createHTMLElement('i');
+    i.className = 'fa fa-plus';
+    addButton.appendChild(i);
+    addButton.name = 'add';
+    this._addButton = addButton;
+
+    return addButton;
+};
+
+TeamUpdaterItem.prototype._addButtonsToLine = function (line) {
+    var primaryButton = this.createHTMLElement('button'),
+        addButton, removeButton,
+        i = this.createHTMLElement('i');
+
+    if ($(line).hasClass('adam-line-filled')) {
+        return this;
+    }
+
+    i.className = 'fa fa-star';
+    primaryButton.appendChild(i);
+    primaryButton.className = 'btn adam-team-action ';
+    primaryButton.name = 'primary';
+
+    removeButton = primaryButton.cloneNode(false);
+    removeButton.className = 'btn adam-team-action';
+    i = i.cloneNode(false);
+    i.className = 'fa fa-minus';
+    removeButton.appendChild(i);
+    removeButton.name = 'remove';
+
+    if ($(this._control).find('*').index(line) === 0) {
+        removeButton.style.visibility = 'hidden';
+    }
+
+    addButton = this._getAddButton();
+
+    primaryButton.disabled = removeButton.disabled = addButton.disabled = this._disabled;
+
+    line.appendChild(primaryButton);
+    line.appendChild(removeButton);
+    line.appendChild(addButton);
+    $(line).addClass('adam-line-filled');
+};
+
+TeamUpdaterItem.prototype.setValue = function (value) {
+    if (value === "") {
+        value = [];
+    }
+    if (!jQuery.isArray(value)) {
+        throw new Error("setValue(): The parameter must be an array.");
+    }
+    if (this._control) {
+        this._setValueToControl(value);
+        this._value = this._getValueFromControl();
+    } else {
+        this._value = value;
+    }
+    return this;
+};
+
+TeamUpdaterItem.prototype._updateTeamActionsVisibility = function () {
+    if (this._value.length > 1) {
+        $(this._control).find('.adam-team-action[name=remove]').css('visibility', '');
+    } else {
+        $(this._control).find('.adam-team-action[name=remove]').first().css('visibility', 'hidden');
+    }
+    $(this._control).find('.adam-team-updater-line').last().append(this._addButton);
+    return this;
+};
+
+TeamUpdaterItem.prototype._onChange = function () {
+    var that = this;
+    return function (e, type) {
+        var parentListener = UpdaterItem.prototype._onChange.call(that), $target = jQuery(e.target),
+            $line = $target.closest('.adam-team-updater-line'), wasEmpty = $line.find('.adam-team-action').length === 0;
+
+        switch (type) {
+            case undefined:
+                if (wasEmpty) {
+                    that._addButtonsToLine($line.get(0));
+                }
+                if (!that._getValueFromControl().length) {
+                    $line.find('.adam-team-action[name=primary]').removeClass('active');
+                } else if (!that.isAppendMode() && that._primaryTeam === null) {
+                    $line.find('.adam-team-action[name=primary]').addClass('active');
+                }
+                break;
+            case TeamUpdaterItem.TEAM_ACTION.REMOVE:
+                if (that._primaryTeam === null && !that.isAppendMode()) {
+                    $(that._control).find('.adam-team-action[name=primary]').first().addClass('active');
+                }
+                break;
+        }
+
+        parentListener(e);
+        that._updateTeamActionsVisibility();
+
+        if (wasEmpty && type !== TeamUpdaterItem.TEAM_ACTION.REMOVE) {
+            that._addNewInputLine();
+        }
+    };
+};
+
+TeamUpdaterItem.prototype._disableControl = function () {
+    $(this._control).find('.adam-line-filled').remove().end()
+        .find('input').select2('disable');
+    if (this._appendTeamsCheckbox) {
+        this._appendTeamsCheckbox.disabled = true;
+    }
+    this._value = [];
+    this._primaryTeam = null;
+    return UpdaterItem.prototype._disableControl.call(this);
+};
+
+TeamUpdaterItem.prototype._enableControl = function () {
+    $(this._control).find('input').select2('enable').end()
+        .find('button').attr("disabled", false);
+    if (this._appendTeamsCheckbox) {
+        this._appendTeamsCheckbox.disabled = false;
+    }
+    return UpdaterItem.prototype._enableControl.call(this);
+};
+
+TeamUpdaterItem.prototype.isAppendMode = function () {
+    return this._appendTeams && !this._disabledAppendOption;
+};
+
+TeamUpdaterItem.prototype.getData = function () {
+    return {
+        name: this._label,
+        field: this._name,
+        value: this._value,
+        primary: this._primaryTeam,
+        append: this.isAppendMode(),
+        type: this._fieldType
+    };
+};
+
+TeamUpdaterItem.prototype._getLineData = function (line) {
+    line = jQuery(line);
+    return line.find("input").select2('data');
+};
+
+TeamUpdaterItem.prototype._performTeamAction = function () {
+    var that = this;
+
+    return function () {
+        var $button = jQuery(this), changed = false,
+            $line = jQuery(this).closest('.adam-team-updater-line'),
+            lineData = that._getLineData($line),
+            actionID;
+        switch (this.name) {
+            case 'primary':
+                if (lineData !== null) {
+                    if (that.isAppendMode() || !$button.hasClass('active')) {
+                        $(that._control).find('.adam-team-action.active').not($button).removeClass('active');
+                        $button.toggleClass('active');
+                        changed = $button;
+                        actionID = TeamUpdaterItem.TEAM_ACTION.PRIMARY;
+                    }
+                }
+                break;
+            case 'add':
+                if (lineData !== null) {
+                    that._addNewInputLine();
+                }
+                break;
+            case 'remove':
+                actionID = TeamUpdaterItem.TEAM_ACTION.REMOVE;
+                if ($line.find('.adam-team-action.active[name=primary]').length > 0) {
+                    that._primaryTeam = null;
+                }
+                $line.remove();
+                changed = jQuery(that._control);
+                break;
+        }
+        if (changed) {
+            changed.trigger('change', [actionID]);
+        }
+    };
+};
+
+TeamUpdaterItem.prototype.attachListeners = function () {
+    var that = this;
+    if (this.html && !this._attachedListeners && this._appendTeamsCheckbox) {
+        UpdaterItem.prototype.attachListeners.call(this);
+        jQuery(this._control).on('click', '.adam-team-action', this._performTeamAction());
+        jQuery(this._appendTeamsCheckbox).on('change', function() {
+            that.setAppendTeams(this.checked);
+        });
+    }
+    return this;
+};
+
+TeamUpdaterItem.prototype.createHTML = function () {
+    var label, checkbox;
+    if (!this.html) {
+        UpdaterItem.prototype.createHTML.call(this);
+        label = this.createHTMLElement('label');
+        checkbox = this.createHTMLElement('input');
+        checkbox.className = 'adam-team-append';
+        checkbox.type = 'checkbox';
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(translate('LBL_SELECT_APPEND_TEAMS')));
+        this._appendTeamsLabel = label;
+        this._controlContainer.appendChild(label);
+        this._appendTeamsCheckbox = checkbox;
+
+        this.setAppendTeams(this._appendTeams);
+
+        if (this._disabledAppendOption) {
+            this.disableAppendOption();
+        } else {
+            this.enableAppendOption();
+        }
+
+        if (this._disabled) {
+            this.disable();
+        } else {
+            this.enable();
+        }
+
+        this.attachListeners();
+    }
+    return this;
+};
+
 //TextUpdaterItem
 var TextUpdaterItem = function (settings) {
     UpdaterItem.call(this, settings);
@@ -949,7 +1532,7 @@ TextUpdaterItem.prototype.init = function (settings) {
     };
 
     jQuery.extend(true, defaults, settings);
-
+    this._showConfigButton = true;
     this.setMaxLength(defaults.maxLength);
 };
 
@@ -997,6 +1580,10 @@ DateUpdaterItem.prototype.init = function (settings) {
     jQuery.extend(true, defaults, settings);
 
     this.setValue(defaults.value);
+};
+
+DateUpdaterItem.prototype.isValid = function () {
+    return this._required ? !!this._value.length : true;
 };
 
 DateUpdaterItem.prototype._setValueToControl = function (value) {
@@ -1073,6 +1660,10 @@ var CheckboxUpdaterItem = function (settings) {
 CheckboxUpdaterItem.prototype = new UpdaterItem();
 CheckboxUpdaterItem.prototype.constructor = CheckboxUpdaterItem;
 CheckboxUpdaterItem.prototype.type = "CheckboxUpdaterItem";
+
+CheckboxUpdaterItem.prototype.isValid = function () {
+    return this._required ? !!field.getValue() : true;
+};
 
 CheckboxUpdaterItem.prototype.setValue = function (value) {
     if (this._control) {
@@ -1153,8 +1744,13 @@ NumberUpdaterItem.prototype.init = function (settings) {
         currency: false
     };
     jQuery.extend(true, defaults, settings);
+    this._showConfigButton = true;
     this._currency = !!defaults.currency;
     this.setValue(defaults.value);
+};
+
+NumberUpdaterItem.prototype.isValid = function () {
+    return this._required ? !!this._value.length : true;
 };
 
 NumberUpdaterItem.prototype.isCurrency = function() {
@@ -1181,6 +1777,45 @@ NumberUpdaterItem.prototype.setValue = function (value) {
     }
     this._value = value;
     return this;
+};
+
+NumberUpdaterItem.prototype.isValid = function () {
+    var isValid = true;
+    var value = this.getValue().slice(0);
+    var i;
+    var prev = null;
+    var currType;
+    var currValue;
+
+    // TODO: the next validation must be implemented in ExpressionControl based on the kind of result it expects to return.
+
+    // We need to validate that a valid expression is inserted in the control
+    // First, check the syntax
+    for (i = 0; i < value.length; i += 1) {
+        currType = value[i].expType;
+        currValue = value[i].expValue;
+        if (prev === null) {
+            if (currType === 'ARITMETIC' && currValue !== '(') {
+                return false;
+            }
+        } else {
+            if ((currType === 'CONSTANT' || currType === 'VARIABLE' || (currType === 'ARITMETIC' && currValue === '(')) && (prev.expType === 'CONSTANT' || prev.expType === 'VARIABLE' || (prev.expType === 'ARITMETIC' && prev.expValue === ')'))) {
+                return false;
+            } else if ((currType === 'ARITMETIC' && currValue !== '(') && (prev.expType === 'ARITMETIC' && prev.expValue !== '(')) {
+                return false;
+            }
+        }
+        prev = value[i];
+    }
+
+    if (currType === 'ARITMETIC' && currValue !== ')') {
+        return false;
+    }
+
+    if (!isValid) {
+        return isValid;
+    }
+    return UpdaterItem.prototype.isValid.call(this);
 };
 
 NumberUpdaterItem.prototype._createControl = function () {
@@ -1535,6 +2170,7 @@ SearchUpdaterItem.prototype._openSearchMore = function () {
 SearchUpdaterItem.prototype.attachListeners = function () {
     if (this.html && !this._attachedListeners) {
         UpdaterItem.prototype.attachListeners.call(this);
+        this.select2Control.on("change", this._onChange());
         $(this._searchMoreList).find('li').on('mousedown', this._openSearchMore());
     }
     return this;
@@ -1565,11 +2201,12 @@ SearchUpdaterItem.prototype._createControl = function() {
         initSelection: _.bind(this._initSelection, this),
         width: this.fieldWidth || '220px'
     });
-    /*this.select2Control.on('change', function() {
-     var s2obj = self.select2Control.select2('data');
-     self.select2Control.data('text', s2obj.text);
-     self.setValue(s2obj.id);
-     });*/
+    var self = this;
+    this.select2Control.on('change', function () {
+        var s2obj = self.select2Control.select2('data');
+        self.select2Control.data('text', s2obj.text);
+        self.setValue(s2obj.id);
+    });
 
     this._control = this.select2Control.data("select2").container.get(0);
 
@@ -1623,7 +2260,7 @@ SearchUpdaterItem.prototype._queryFunction = function(options) {
         callbackOptions.results = finalData;
         options.callback(callbackOptions);
     }
-}
+};
 
 /**
  * Initialization function to be used internally by select2. Check select2's documentation for further info
@@ -1639,7 +2276,7 @@ SearchUpdaterItem.prototype._initSelection = function(element, callback) {
             text: text
         });
     }
-}
+};
 
 /**
  * Formats search results into a format that select2 can understand
@@ -1660,4 +2297,4 @@ SearchUpdaterItem.prototype._filterSelections = function(searchOptions, results)
     }, this);
 
     return finalData;
-}
+};

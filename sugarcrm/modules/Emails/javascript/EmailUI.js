@@ -86,7 +86,7 @@ SE.accounts = {
    					var is_group = oRecord.getData("is_group");
    					if(!is_group)
    					{
-    		  			if(oColumn.key == 'edit')
+    		  			if(oColumn.key == 'edit' && !SUGAR.email2.disableAccountEdit)
     		  			{
     		  				clckEvent = "SUGAR.email2.accounts.getIeAccount('"+ oRecord.getData('id') +"')";
     		  				imgSrc = 'index.php?entryPoint=getImage&amp;themeName=Sugar&amp;imageName='+oColumn.key+'_inline.gif';
@@ -191,7 +191,7 @@ SE.accounts = {
    					var type = oRecord.getData("type");
    					if(isEditable)
    					{
-    		  			if(oColumn.key == 'edit')
+    		  			if(oColumn.key == 'edit' && !SUGAR.email2.disableAccountEdit)
     		  			{
     		  				clckEvent = "SUGAR.email2.accounts.editOutbound('"+ oRecord.getData('id') +"')";
     		  				imgSrc = 'index.php?entryPoint=getImage&amp;themeName=Sugar&amp;imageName='+oColumn.key+'_inline.gif';
@@ -1497,7 +1497,7 @@ SE.detailView = {
         }
 
         var displayFrame = document.getElementById('displayEmailFrame' + targetDiv.id);
-        description = email.description_html || nl2br(email.description);
+        description = email.description_html || SE.util.nl2br(email.description);
         displayFrame.contentWindow.document.write(description);
         displayFrame.contentWindow.document.close();
 
@@ -1566,7 +1566,7 @@ SE.detailView = {
         });
 
         var displayFrame = document.getElementById('displayEmailFramePreview');
-        description = email.description_html || nl2br(email.description);
+        description = email.description_html || SE.util.nl2br(email.description);
         displayFrame.contentWindow.document.write(description);
         displayFrame.contentWindow.document.close();
 
@@ -3516,11 +3516,6 @@ function removeHiddenNodes(nodes, grid) {
     		nodes.splice(i,1);
        }
     }
-}
-
-function nl2br(str, is_xhtml) {
-    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
-    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
 }
 
 function strpad(val) {

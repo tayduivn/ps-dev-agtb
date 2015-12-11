@@ -235,7 +235,7 @@ nv.models.gauge = function() {
               .style('font-size', prop(0.7)+'em')
             ;
 
-          var bbox = g.select('.nv-odomText').node().getBBox();
+          var bbox = g.select('.nv-odomText').node().getBoundingClientRect();
 
           g.select('.nv-odometer')
             .insert('path','.nv-odomText')

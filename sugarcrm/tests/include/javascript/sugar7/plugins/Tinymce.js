@@ -46,9 +46,14 @@ describe('Plugins.Tinymce', function() {
         var fakeFileObj = {name: 'filename.txt', type: 'text/plain'};
         var clearFileSpy = sinonSandbox.spy(field, 'clearFileInput');
 
+        sinonSandbox.stub(field, 'initTinyMCEEditor', $.noop());
         field.render();
-        field.$embeddedInput[0].files[0] = fakeFileObj;
+
         // The fake file is text, image required.
+        // Need to replace `input` with `p`, because `FileList` attribute of `HTMLInputElement` is read-only.
+        field.$embeddedInput = $('<p/>');
+        field.$embeddedInput[0].files = [fakeFileObj];
+
         field.tinyMCEFileBrowseCallback('fakeName', 'fakeUrl', 'image', winObj);
         field.$embeddedInput.change();
 

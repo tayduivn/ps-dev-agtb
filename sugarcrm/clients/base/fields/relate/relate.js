@@ -248,6 +248,10 @@
         switch(this.tplName) {
             case 'edit':
             case 'massupdate':
+                if (!app.acl.hasAccess('list', this.getSearchModule())) {
+                    this._renderDisabledDropdown();
+                    break;
+                }
                 if (_.isUndefined(this.filters)) {
                     this._createFiltersCollection({
                         success: _.bind(function() {
@@ -410,7 +414,7 @@
         var $el = $(el),
             id = $el.val(),
             text = $el.data('rname');
-
+        
         if (!this.def.isMultiSelect) {
             return callback({id: id, text: text});
         }
@@ -439,9 +443,11 @@
 
     /**
      * Callback when select2 plugin opens.
+     * @private
+     * @param {Event} e The `click` event.
      */
-    _onSelect2Open: function() {
-        var plugin = $(this.$(this.fieldTag)).data('select2');
+    _onSelect2Open: function(e) {
+        var plugin = this.$(e.currentTarget).data('select2');
         if (plugin.searchmore) {
             return;
         }
@@ -543,14 +549,6 @@
         }
         if (!this.def.isMultiSelect) {
             this._buildRoute();
-        }
-
-        if (_.isArray(value)) {
-            this.formattedRname = value.join(this._separator);
-            this.formattedIds = this.model.get(this.def.id_name).join(this._separator);
-        } else {
-            this.formattedRname = value;
-            this.formattedIds = this.model.get(this.def.id_name);
         }
         return value;
     },

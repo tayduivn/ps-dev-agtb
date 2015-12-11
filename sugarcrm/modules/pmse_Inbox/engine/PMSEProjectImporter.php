@@ -263,6 +263,7 @@ class PMSEProjectImporter extends PMSEImporter
             }
         }
         $processDefinitionBean->id = $keysArray['pro_id'];
+        $processDefinitionBean->pro_status = 'INACTIVE';
         $processDefinitionBean->new_with_id = true;
         // by default an imported project should be disabled
         $processDefinitionBean->pro_status = 'INACTIVE';
@@ -578,19 +579,27 @@ class PMSEProjectImporter extends PMSEImporter
                             break;
                         case 'flo_condition':
                             if (!empty($value)) {
-                                $currencyFields = json_decode($value);
-                                if (is_array($currencyFields) && !empty($currencyFields)) {
-                                    foreach ($currencyFields as $_key => $_value) {
+                                $tokenExpression = json_decode($value);
+                                if (is_array($tokenExpression) && !empty($tokenExpression)) {
+                                    foreach ($tokenExpression as $_key => $_value) {
                                         switch ($_value->expType) {
                                             case 'MODULE':
                                                 if (!empty($_value->expSubtype) &&
                                                     (strtolower($_value->expSubtype) == 'currency') &&
                                                     (empty($_value->expCurrency))
                                                 ) {
-                                                    PMSEEngineUtils::fixCurrencyType($currencyFields[$_key]);
-                                                    $flowBean->$key = json_encode($currencyFields);
+                                                    PMSEEngineUtils::fixCurrencyType($tokenExpression[$_key]);
+                                                    $flowBean->$key = json_encode($tokenExpression);
+                                                } else {
+                                                    $flowBean->$key = $value;
                                                 }
                                                 break;
+                                            case 'CONTROL':
+                                                $tokenExpression[$_key]->expField = $this->changedUidElements[$_value->expField]['new_uid'];
+                                                $flowBean->$key = json_encode($tokenExpression);
+                                                break;
+                                            default:
+                                                $flowBean->$key = $value;
                                         }
                                     }
                                 }

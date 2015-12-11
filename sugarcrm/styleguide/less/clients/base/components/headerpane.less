@@ -128,6 +128,10 @@
     }
   }
 
+  span[data-type="label"] .ellipsis_inline {
+    padding: 0;
+  }
+
   span[data-type="image"],
   span[data-type="avatar"] {
     padding: 9px 0 0 20px;
@@ -157,33 +161,6 @@
   }
   span[data-type="name"] .table-cell-wrapper {
     width: 100%;
-  }
-  span[data-type="fullname"] {
-    .index {
-      display: table;
-      > .detail,
-      > .edit {
-        display: table-row;
-        .record-cell {
-          display: table-cell;
-        }
-      }
-    }
-    span[data-type="enum"] {
-      width: 20%;
-    }
-    span[data-type="text"] {
-      width: 40%;
-      .record-label {
-        left: 7px;
-      }
-      input[type="text"] {
-        margin: 0px 0 0;
-      }
-    }
-    &.edit {
-      padding-left: 5px;
-    }
   }
 
   span[data-type="enum"],

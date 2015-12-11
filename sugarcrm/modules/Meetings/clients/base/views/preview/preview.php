@@ -40,7 +40,7 @@ $viewdefs['Meetings']['base']['view']['preview'] = array(
                     'type' => 'duration',
                     'label' => 'LBL_START_AND_END_DATE_DETAIL_VIEW',
                     'dismiss_label' => false,
-                    'inline' => true,
+                    'inline' => false,
                     'show_child_labels' => true,
                     'fields' => array(
                         array(
@@ -88,7 +88,6 @@ $viewdefs['Meetings']['base']['view']['preview'] = array(
                 ),
                 array(
                     'name' => 'type',
-                    'type' => 'type',
                 ),
                 'parent_name',
                 array(

@@ -33,7 +33,7 @@
     /**
      * Updates and sets metadata based on the meta param
      * @param {Object} meta
-     * @returns {Object} meta
+     * @return {Object} meta
      */
     setMetadata: function(meta) {
         meta.components = meta.components || [];

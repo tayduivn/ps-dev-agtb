@@ -30,6 +30,51 @@ class KBContentsApi extends SugarListApi
                 'shortHelp' => 'Get related documents for current record.',
                 'longHelp' => '',
             ),
+            //disable KBDocuments, KBArticles through API
+            'disableKBDocuments1' => array(
+                'reqType' => '?',
+                'path' => array('KBDocuments'),
+                'pathVars' => array('module'),
+                'method' => 'disableApi',
+                'extraScore' => 1,
+                'shortHelp' => 'Disable KBDocuments',
+                'exceptions' => array(
+                    'SugarApiExceptionNotFound',
+                ),
+            ),
+            'disableKBDocuments2' => array(
+                'reqType' => '?',
+                'path' => array('KBDocuments', '?'),
+                'pathVars' => array('module', ''),
+                'extraScore' => 1,
+                'method' => 'disableApi',
+                'shortHelp' => 'Disable KBDocuments',
+                'exceptions' => array(
+                    'SugarApiExceptionNotFound',
+                ),
+            ),
+            'disableKBArticles1' => array(
+                'reqType' => '?',
+                'path' => array('KBArticles'),
+                'pathVars' => array('module'),
+                'method' => 'disableApi',
+                'extraScore' => 1,
+                'shortHelp' => 'Disable KBArticles',
+                'exceptions' => array(
+                    'SugarApiExceptionNotFound',
+                ),
+            ),
+            'disableKBArticles2' => array(
+                'reqType' => '?',
+                'path' => array('KBArticles', '?'),
+                'pathVars' => array('module', ''),
+                'extraScore' => 1,
+                'method' => 'disableApi',
+                'shortHelp' => 'Disable KBArticles',
+                'exceptions' => array(
+                    'SugarApiExceptionNotFound',
+                ),
+            ),
         );
     }
 
@@ -104,5 +149,16 @@ class KBContentsApi extends SugarListApi
             ->setLimit($options['limit']);
 
         return $builder;
+    }
+
+    /**
+     * Disable modules through RestService.
+     * @param RestService $api Service to work with.
+     * @param mixed $args Parameters came from Service.
+     * @throws SugarApiExceptionNotFound Thrown always.
+     */
+    public function disableApi($api, $args)
+    {
+        throw new SugarApiExceptionNotFound("The requested module is disabled in API.");
     }
 }

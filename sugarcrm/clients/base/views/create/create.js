@@ -231,10 +231,19 @@
      *  `false` otherwise.
      */
     hasUnsavedChanges: function() {
+        var defaults,
+            nonDefaultedAttributesChanged,
+            defaultedAttributesChanged;
+
         if (this.resavingAfterMetadataSync) {
             return false;
         }
-        return this.model.isNew() && !_.isEqual(this.model.getDefault(), this.model.attributes);
+
+        defaults = this.model.getDefault() || {};
+        nonDefaultedAttributesChanged = !_.isEqual(_.keys(defaults), _.keys(this.model.attributes));
+        defaultedAttributesChanged = !_.isEmpty(this.model.changedAttributes(defaults));
+
+        return (this.model.isNew() && (nonDefaultedAttributesChanged || defaultedAttributesChanged));
     },
 
     handleSync: function () {
@@ -281,8 +290,10 @@
      */
     saveAndClose: function () {
         this.initiateSave(_.bind(function () {
-            if(app.drawer){
+            if (this.closestComponent('drawer')) {
                 app.drawer.close(this.context, this.model);
+            } else {
+                app.navigate(this.context, this.model);
             }
         }, this));
     },
@@ -294,9 +305,11 @@
         //Clear unsaved changes on cancel.
         app.events.trigger('create:model:changed', false);
         this.$el.off();
-        if(app.drawer){
+        if (app.drawer.count()) {
             app.drawer.close(this.context);
             this._dismissAllAlerts();
+        } else {
+            app.router.navigate(this.module, {trigger: true});
         }
     },
 
@@ -366,7 +379,7 @@
      * And trigger an event to tell the subpanel to validate itself
      *
      * @param callback
-     * @returns {*}
+     * @return {Mixed}
      */
     validateSubpanelModelsWaterfall: function(callback) {
         this.hasSubpanelModels = false;
@@ -568,7 +581,7 @@
     /**
      * Using the model returned from the API call, build the success message
      * @param model
-     * @returns {*}
+     * @return {*}
      */
     buildSuccessMessage: function(model) {
         var modelAttributes,
@@ -624,6 +637,10 @@
 
         this.model.clear();
         this.model.set(this.extendModel(model, origAttributes));
+
+        if (this.model.link) {
+            this.model.link.isNew = false;
+        }
 
         this.createMode = false;
         if (!this.disposed) {

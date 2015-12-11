@@ -291,21 +291,12 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
         SugarAutoLoader::autoload('ACLAction');
 
         return array(
-            // lack of list permission should cause SugarApiExceptionNotFound
+            // not having permission to view the parent record should cause SugarApiExceptionNotFound
             array(
                 array(
-                    'list' => array('aclaccess' => ACL_ALLOW_OWNER),
-                    'view' => array('aclaccess' => ACL_ALLOW_ALL),
-                ),
-                'SugarApiExceptionNotFound',
-            ),
-            // lack of view permission should cause SugarApiExceptionNotAuthorized
-            array(
-                array(
-                    'list' => array('aclaccess' => ACL_ALLOW_ALL),
                     'view' => array('aclaccess' => ACL_ALLOW_OWNER),
                 ),
-                'SugarApiExceptionNotAuthorized',
+                'SugarApiExceptionNotFound',
             ),
         );
     }

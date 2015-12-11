@@ -99,13 +99,11 @@
         options = options || {};
         var length = this.collection.length;
         var fullyFetched = this.collection.next_offset <= 0;
-        // If total was fetched using fetchCount, use it
-        length = this.collection.total > 0 ? this.collection.total : length;
         // Override default properties with passed-in values.
         length = !_.isUndefined(options.length) ? options.length : length;
         fullyFetched = !_.isUndefined(options.hasMore) ? !options.hasMore : fullyFetched;
 
-        if (!length) {
+        if (!length && !this.collection.dataFetched) {
             return this.countLabel = '';
         }
 
@@ -146,7 +144,7 @@
             return;
         }
 
-        this.listenTo(this.collection, 'reset', function() {
+        this.listenTo(this.collection, 'remove reset', function() {
             if (!this.disposed) {
                 this.updateCount();
             }

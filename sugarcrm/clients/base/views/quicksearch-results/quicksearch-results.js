@@ -230,7 +230,7 @@
     /**
      * Retrieve the count of record elements. This can be either the number of records or the number of records plus
      * a 'view all results' element.
-     * @returns {number}
+     * @return {number}
      * @private
      */
     countRecordElements: function() {

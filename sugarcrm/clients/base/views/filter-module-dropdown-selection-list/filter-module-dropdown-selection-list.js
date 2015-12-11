@@ -30,7 +30,7 @@
 
     /**
      * @inheritdoc
-     * @returns {Object}
+     * @return {Object}
      */
     getFilterList: function() {
         var filterList = this.context.get('filterList');
@@ -44,7 +44,7 @@
 
     /**
      * @inheritdoc
-     * @returns {boolean}
+     * @return {boolean}
      */
     shouldDisableFilter: function() {
         return false;

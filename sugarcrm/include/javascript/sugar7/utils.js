@@ -48,16 +48,7 @@
                  * @param {jQuery} $tooltips
                  */
                 destroy: function($tooltips) {
-                    if ($tooltips) {
-                        _.each($tooltips, function(tooltip) {
-                            var plugin;
-                            if (this.has(tooltip)) {
-                                plugin = this.get(tooltip);
-                                plugin.leave(plugin); //need to call leave() first because of a bug in tooltip v3
-                                plugin.destroy();
-                            }
-                        }, this);
-                    }
+                    $tooltips.tooltip('destroy');
                 },
 
                 /**
@@ -415,33 +406,39 @@
             /**
              * Gets the label for the Subpanel from the module or related module
              *
-             * @param {[string]} module The parent module
-             * @param {[string]} relModule The relate module
-             * @return {[type]} The label for the subpanel
+             * @param {string} module The parent module
+             * @param {string} relModule The relate module
+             * @return {string} The label for the subpanel
              */
             getDynamicSubpanelLabel: function(module, relModule) {
-                // Start with the parent module first
-                var lIndex = 'LBL_' + relModule.toUpperCase() + '_SUBPANEL_TITLE',
-                    label = app.lang.getModString(lIndex, module);
+                // Define the label index we need to check for a named module
+                var lIndex = 'LBL_' + relModule.toUpperCase() + '_SUBPANEL_TITLE';
+                // Definitions to apply in order to find the label
+                var stackDef = [
+                    // Start with the default subpanel title for the related module first to pick
+                    // up renamed module names
+                    {key: 'LBL_DEFAULT_SUBPANEL_TITLE', mod: relModule},
 
-                // If the parent label check worked, send that back
-                if (label) {
-                    return label;
+                    // Try the parent module to see any hardcoded subpanel titles
+                    {key: lIndex, mod: module},
+
+                    // Try getting the label from the related module
+                    {key: lIndex, mod: relModule},
+
+                    // Lastly, try getting the label from the related module name
+                    {key: 'LBL_MODULE_NAME', mod: relModule}
+                ];
+                // The label to return
+                var label;
+
+                // Loop through stackDef and break if we find a label
+                for (var i in stackDef) {
+                    if (label = app.lang.getModString(stackDef[i].key, stackDef[i].mod)) {
+                        return label;
+                    }
                 }
 
-                // Try getting the label from the related module
-                label = app.lang.getModString(lIndex, relModule);
-                if (label) {
-                    return label;
-                }
-
-                // Lastly, try getting the label from the related module name
-                label = app.lang.getModString('LBL_MODULE_NAME', relModule);
-                if (label) {
-                    return label;
-                }
-
-                // If all else fails, send back the related module value
+                // If we couldn't find a label, return the related module
                 return relModule;
             },
 

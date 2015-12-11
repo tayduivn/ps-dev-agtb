@@ -127,7 +127,7 @@
      * Retrieve the post entered inside content editable and translate any tags into text format
      * so that it can be saved in the database as JSON string.
      *
-     * @returns {String}
+     * @return {string}
      */
     getPost: function() {
         var post = this.unformatTags(this.$('div.sayit'));

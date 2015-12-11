@@ -171,11 +171,11 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'readonly' => true,
                 ),
                 array(
-                    'name' => 'badge',
+                    'name' => 'converted',
                     'type' => 'badge',
+                    'dismiss_label' => true,
                     'readonly' => true,
                     'related_fields' => array(
-                        'converted',
                         'account_id',
                         'account_name',
                         'contact_id',

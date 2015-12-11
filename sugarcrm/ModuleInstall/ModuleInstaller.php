@@ -2831,8 +2831,13 @@ class ModuleInstaller{
             'themeName' => 'default',
             'clientID' => 'support_portal',
             'serverTimeout' => self::getPortalTimeoutValue(),
-            'maxSearchQueryResult'=>'5'
+            'maxSearchQueryResult'=>'5',
+            'analytics' => $config->get('analytics_portal', array('enabled' => false)),
         );
+
+        $jsConfig = $config->get('additional_js_config', array());
+        $portalConfig = array_merge($portalConfig, $jsConfig);
+
         return $portalConfig;
     }
 //END SUGARCRM flav=ent ONLY
@@ -2882,6 +2887,7 @@ class ModuleInstaller{
             'themeName' => 'default',
             'clientID' => 'sugar',
             'collapseSubpanels' => $config->get('collapse_subpanels', false),
+            'previewEdit' => $config->get('preview_edit', false),
             'serverTimeout' => self::getBaseTimeoutValue(),
             'metadataTypes' => array(
                 "currencies",

@@ -252,13 +252,13 @@
                 route: ":module"
             },
             {
-                name: "create",
-                route: ":module/create",
+                name: 'create',
+                route: ':module/create',
                 callback: function(module) {
-                    if (module === "Home") {
+                    if (module === 'Home') {
                         app.controller.loadView({
                             module: module,
-                            layout: "record"
+                            layout: 'record'
                         });
 
                         return;
@@ -270,26 +270,25 @@
                         return;
                     }
 
-                    var previousModule = app.controller.context.get("module"),
-                        previousLayout = app.controller.context.get("layout");
-                    if (!(previousModule === module && previousLayout === "records")) {
-                        app.controller.loadView({
-                            module: module,
-                            layout: "records"
+                    var prevLayout = app.controller.context.get('layout');
+                    // FIXME we shouldn't rely on the layout type
+                    if (prevLayout && prevLayout !== 'login') {
+                        app.drawer.open({
+                            layout: 'create',
+                            context: {
+                                module: module,
+                                create: true,
+                                fromRouter: true
+                            }
+                        }, function(context, model) {
+                            if (model && model.module === app.controller.context.get('module')) {
+                                app.controller.context.reloadData();
+                            }
                         });
+                        return;
                     }
 
-                    app.drawer.open({
-                        layout: 'create',
-                        context: {
-                            create: true
-                        }
-                    }, _.bind(function(context, model) {
-                        var module = context.get("module") || model.module,
-                            route = app.router.buildRoute(module);
-
-                        app.router.navigate(route, {trigger: (model instanceof Backbone.Model)});
-                    }, this));
+                    app.router.record(module, 'create');
                 }
             },
             {
@@ -654,20 +653,6 @@
 
                 return false;
             }
-
-            var subroute;
-            if (module) {
-                var qpos = module.indexOf('?');
-                subroute = qpos > -1 ? module.substring(0, module.indexOf('?')) : module;
-            }
-            var viewId = options.route + (subroute ? '/' + subroute : '');
-
-            // FIXME: Analytics should not be tracked in hasAccessToModule,
-            // will be moved into another function in SC-2761.
-            app.analytics.currentViewId = viewId;
-            app.analytics.trackPageView(app.analytics.currentViewId);
-
-            return true;
         }
     });
 

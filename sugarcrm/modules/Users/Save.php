@@ -402,7 +402,7 @@ if (!$focus->is_group && !$focus->portal_only) {
     if (isset($_POST['calendar_publish_key'])) {
         $focus->setPreference(
             'calendar_publish_key',
-            SugarCleaner::cleanHtml($_POST['calendar_publish_key'], true),
+            SugarCleaner::stripTags($_POST['calendar_publish_key'], false),
             0,
             'global'
         );

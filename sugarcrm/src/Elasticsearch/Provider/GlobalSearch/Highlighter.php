@@ -53,4 +53,47 @@ class Highlighter extends AbstractHighlighter
         }
         return parent::normalizeFieldName($field);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function wrapValueWithTags($value)
+    {
+        // Sometimes the Elastic search response does not include highlight tags in value.
+        // To amend this issue, this function adds the tags to the front and the back of the value,
+        // so that the whole field will be highlighted, instead of only the matching part.
+
+        if (isset($this->preTags[0]) && isset($this->postTags[0])) {
+            $newValue = array();
+            // 1. remove the tags in the value if Elastic search's response contains them
+            // 2. add the tags in the front and the back to highlight the whole value
+            foreach ($value as $v) {
+                $newValue[] = $this->preTags[0] . strip_tags($v) . $this->postTags[0];
+            }
+            $value = $newValue;
+        }
+
+        return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubFieldName($field)
+    {
+        // Example field name with sub-field:
+        // input: Accounts__email_search.secondary.gs_email_wildcard
+        // output: secondary
+
+        // Example field name without sub-field:
+        // input: Contacts__first_name.gs_string_wildcard
+        // output: empty string
+
+        $subField = '';
+        $sep = '\\' . QueryBuilder::FIELD_SEP;
+        if (preg_match('/^.*' . $sep . '(.*)' . $sep . '.*$/', $field, $matches)) {
+            $subField = $matches[1];
+        }
+        return $subField;
+    }
 }

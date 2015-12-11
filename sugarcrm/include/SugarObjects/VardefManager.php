@@ -683,6 +683,12 @@ class VardefManager{
                 require($path);
                 $found = true;
             }
+
+            if ($found){
+                // Put ACLStatic into vardefs for beans supporting ACLs
+                self::addSugarACLStatic($object, $module);
+            }
+
             if(!empty($params['bean'])) {
                 $bean = $params['bean'];
         } else { // to avoid extra refresh - we'll fill it in later
@@ -733,12 +739,6 @@ class VardefManager{
             self::updateRelCFModules($module, $object);
         }
 
-        // Put ACLStatic into vardefs for beans supporting ACLs
-        if(!empty($bean) && ($bean instanceof SugarBean) && !empty($dictionary[$object]) && !isset($dictionary[$object]['acls']['SugarACLStatic'])
-            && $bean->bean_implements('ACL')) {
-            $dictionary[$object]['acls']['SugarACLStatic'] = true;
-        }
-
         //great! now that we have loaded all of our vardefs.
         //let's go save them to the cache file
         //note that we don't write to cache when $includeExtension = false,
@@ -752,6 +752,30 @@ class VardefManager{
             SugarBean::clearLoadedDef($object);
         }
         unset(self::$inReload[$guard_name]);
+    }
+
+    /**
+     * Add default SugarACLStatic
+     *
+     * @param string $object Object name
+     * @param string $module Module name
+     */
+    protected static function addSugarACLStatic($object, $module)
+    {
+        global $dictionary;
+        // Put ACLStatic into vardefs for beans supporting ACLs
+        if(!empty($dictionary[$object]) && !isset($dictionary[$object]['acls']['SugarACLStatic'])){
+            // $beanList is a mess. most of its keys are module names (Cases, etc.),
+            // but some are object names (ForecastOpportunities), so we check both
+            $class = BeanFactory::getBeanName($object);
+            if (!$class) {
+                $class = BeanFactory::getBeanName($module);
+            }
+            if ($class && is_subclass_of($class, 'SugarBean')
+                && call_user_func(array($class, 'bean_implements_static'), 'ACL')) {
+                $dictionary[$object]['acls']['SugarACLStatic'] = true;
+            }
+        }
     }
 
     /**
@@ -1058,6 +1082,7 @@ class VardefManager{
                 }
             }
         }
+
     }
 
 

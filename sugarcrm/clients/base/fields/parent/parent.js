@@ -19,8 +19,46 @@
     typeFieldTag: 'select.select2[name=parent_type]',
     plugins: ['FieldDuplicate'],
 
+    /**
+     * @inheritDoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        /**
+         * A hash of available modules in the parent type dropdown matching
+         * the modules names with their label.
+         *
+         * @property {Object}
+         * @private
+         */
+        this._modules = app.lang.getAppListStrings(this.def.options);
+
+        /**
+         * The hash of available modules in the parent type dropdown, filtered
+         * according to list acls.
+         *
+         * @property {Object}
+         */
+        this.moduleList = {};
+
+        this._filterModuleList(this._modules);
+    },
+
+    /**
+     * Calls {@link View.Fields.Base.RelateField#_render} and renders the select2
+     * module dropdown.
+     *
+     * @inheritDoc
+     */
     _render: function() {
-        var result, self = this;
+        var self = this;
+        var moduleName = this.getSearchModule();
+        var module = _.pick(this._modules, moduleName);
+        if (module && !app.acl.hasAccess('list', moduleName)) {
+            this.noAccessModule = {key: moduleName, value: module[moduleName]};
+        }
+
         this._super("_render");
 
         /**
@@ -28,8 +66,6 @@
          */
         var allowedTpls = ['edit', 'massupdate'];
         if (_.contains(allowedTpls, this.tplName)) {
-            this.checkAcl('access', this.model.get('parent_type'));
-
             var inList = (this.view.name === 'recordlist') ? true : false;
 
             this.$(this.typeFieldTag).select2({
@@ -39,7 +75,9 @@
                 minimumResultsForSearch: 5
             }).on('change', function(e) {
                 var module = e.val;
-                self.checkAcl.call(self, 'edit', module);
+                if (self.noAccessModule && module !== self.noAccessModule) {
+                    delete self.noAccessModule;
+                }
                 self.setValue({
                     id: '',
                     value: '',
@@ -108,12 +146,34 @@
         return this._super('format', [value]);
 
     },
+
+    /**
+     * Enables or disables the module dropdown according to acls.
+     *
+     * @deprecated Since 7.7. Will be removed in 7.8.
+     * @param {string} action The acl action.
+     * @param {string} module the module to check access.
+     */
     checkAcl: function(action, module) {
+        app.logger.warn('checkAcl is deprecated, it will be removed in 7.8');
         if(app.acl.hasAccess(action, module) === false) {
             this.$(this.typeFieldTag).select2("disable");
         } else {
             this.$(this.typeFieldTag).select2("enable");
         }
+    },
+
+    /**
+     * Filters the module list according to list acls.
+     *
+     * @param {Object} A hash of module names matching with their label.
+     * @private
+     */
+    _filterModuleList: function(modules) {
+        var filteredModules = _.filter(_.keys(modules), function(module) {
+            return app.acl.hasAccess('list', module);
+        });
+        this.moduleList = _.pick(modules, filteredModules);
     },
 
     /**
@@ -154,7 +214,7 @@
     /**
      * Is this module available as an option to be set as parent type?
      * @param module {string}
-     * @returns {boolean}
+     * @return {boolean}
      */
     isAvailableParentType: function(module) {
         var moduleFound = _.find(this.$(this.typeFieldTag).find('option'), function(dom) {
@@ -181,7 +241,8 @@
         this._super('bindDataChange');
         if (this.model) {
             this.model.on('change:parent_type', function() {
-                if (_.isEmpty(this.$(this.typeFieldTag).data('select2'))) {
+                var plugin = this.$(this.typeFieldTag).data('select2');
+                if (_.isEmpty(plugin) || !plugin.searchmore) {
                     this.render();
                 } else {
                     this.$(this.typeFieldTag).select2('val', this.model.get('parent_type'));
@@ -196,10 +257,22 @@
      * Called from {@link app.plugins.FieldDuplicate#_onFieldDuplicate}
      */
     onFieldDuplicate: function() {
-        if (_.isUndefined(this.searchCollection) ||
+        if (_.isEmpty(this.searchCollection) ||
             this.searchCollection.module !== this.getSearchModule()
         ) {
             this._createSearchCollection();
+        }
+    },
+
+    /**
+     * We do not support this field for preview edit
+     * @inheritdoc
+     */
+    _loadTemplate: function() {
+        this._super('_loadTemplate');
+
+        if (this.view.name === 'preview') {
+            this.template = app.template.getField('parent', 'detail', this.model.module);
         }
     }
 })

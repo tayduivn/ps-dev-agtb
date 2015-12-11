@@ -8,7 +8,7 @@ describe('Base.Field.CollectionCount', function() {
         SugarTest.testMetadata.init();
         template = SugarTest.loadHandlebarsTemplate('collection-count', 'field', 'base', 'detail');
         SugarTest.testMetadata.set();
-        fieldDef = {};
+        var fieldDef = {};
         field = SugarTest.createField('base', fieldName, 'collection-count', 'detail', fieldDef, module);
     });
 
@@ -33,17 +33,32 @@ describe('Base.Field.CollectionCount', function() {
             {
                 length: 0,
                 next_offset: -1,
-                expected: ''
+                expected: '',
+                dataFetched: false
+            },
+            {
+                length: 20,
+                next_offset: -1,
+                expected: 'TPL_LIST_HEADER_COUNT',
+                dataFetched: false
+            },
+            {
+                length: 0,
+                next_offset: -1,
+                expected: 'TPL_LIST_HEADER_COUNT',
+                dataFetched: true
             },
             {
                 length: 5,
                 next_offset: -1,
-                expected: 'TPL_LIST_HEADER_COUNT'
+                expected: 'TPL_LIST_HEADER_COUNT',
+                dataFetched: true
             },
             {
                 length: 20,
                 next_offset: 20,
-                expected: 'TPL_LIST_HEADER_COUNT_TOTAL'
+                expected: 'TPL_LIST_HEADER_COUNT_TOTAL',
+                dataFetched: true
             },
             // If options are passed to updateCount, they will take precedence
             // over the collection's properties.
@@ -54,7 +69,8 @@ describe('Base.Field.CollectionCount', function() {
                 options: {
                     length: 50,
                     hasMore: true
-                }
+                },
+                dataFetched: true
             },
             {
                 length: 20,
@@ -63,14 +79,15 @@ describe('Base.Field.CollectionCount', function() {
                 options: {
                     length: 50,
                     hasMore: false
-                }
+                },
+                dataFetched: true
             }
         ], function(provider) {
             it('should display a proper count representation', function() {
                 provider = provider || {};
                 field.collection.length = provider.length;
                 field.collection.next_offset = provider.next_offset;
-                field.collection.dataFetched = true;
+                field.collection.dataFetched = provider.dataFetched;
 
                 field.updateCount(provider.options);
                 expect(field.countLabel.toString()).toBe(provider.expected);

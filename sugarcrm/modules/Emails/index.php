@@ -13,6 +13,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 $focus = BeanFactory::getBean('Emails');
+if (!$focus->ACLAccess('view')) {
+      ACLController::displayNoAccess(true);
+      sugar_cleanup(true);
+  }
 $focus->email2init();
 $focus->et->preflightUser($current_user);
 $out = $focus->et->displayEmailFrame();

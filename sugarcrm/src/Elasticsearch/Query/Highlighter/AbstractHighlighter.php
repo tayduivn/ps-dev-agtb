@@ -79,6 +79,11 @@ abstract class AbstractHighlighter implements HighlighterInterface
     protected $fieldRemap = array();
 
     /**
+     * @var array fields to wrap the value with tags or not
+     */
+    protected $wrapValueWithTags = array();
+
+    /**
      * Set fields
      * @param array $fields
      * @return AbstractHighlighter
@@ -167,6 +172,17 @@ abstract class AbstractHighlighter implements HighlighterInterface
     }
 
     /**
+     * Set to enable/disable wrapping the value with tags.
+     * @param array $setting the value of the setting
+     * @return AbstractHighlighter
+     */
+    public function setWrapValueWithTags(array $setting)
+    {
+        $this->wrapValueWithTags = array_merge($this->wrapValueWithTags, $setting);
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function build()
@@ -205,10 +221,29 @@ abstract class AbstractHighlighter implements HighlighterInterface
             // Normalize the field name
             $normField = $this->normalizeFieldName($field);
 
+            // Wrap the highlight value with tags if needed
+            if (isset($this->wrapValueWithTags[$normField])) {
+                $value = $this->wrapValueWithTags($value);
+            }
+
+            // Get the sub-field if exists
+            $subField = $this->getSubFieldName($field);
+            if (!empty($subField)) {
+                // Compose the sub-field's name and value as an array
+                $value = array($subField => $value);
+            }
+
             // Multiple highlights can be returned for the same field, if so we
             // add them and filter out any duplicates.
+
+            // If the field has sub-fields, it will return an array in the following format:
+            // "field" => array("sub-field1" => value1, "sub-field2" => value2)
+
+            // Otherwise, it will return an array in the following format:
+            // "field" => array (value1, value2)
+
             if (isset($parsed[$normField])) {
-                $parsed[$normField] = array_unique(array_merge($parsed[$normField], $value), SORT_STRING);
+                $parsed[$normField] = $parsed[$normField] + $value;
             } else {
                 $parsed[$normField] = $value;
             }
@@ -224,5 +259,26 @@ abstract class AbstractHighlighter implements HighlighterInterface
     public function normalizeFieldName($field)
     {
         return isset($this->fieldRemap[$field]) ? $this->fieldRemap[$field] : $field;
+    }
+
+    /**
+     * Wrap the value with tags so that the whole value will be highlighted.
+     *
+     * @param $value array the array of the highlighted values
+     * @return array the array of the new highlighted values
+     */
+    protected function wrapValueWithTags($value)
+    {
+        return $value;
+    }
+
+    /**
+     * Get the secondary field if available.
+     * @param string $field the name of the field
+     * @return string
+     */
+    public function getSubFieldName($field)
+    {
+        return '';
     }
 }

@@ -10,18 +10,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/**
- * Rebuild minified JS files
- */
-class SugarUpgradeMinifyJS extends UpgradeScript
-{
-    public $order = 5000;
-    public $type = self::UPGRADE_CUSTOM;
 
-    public function run()
-    {
-        $_REQUEST['root_directory'] = $this->context['source_dir'];
-        $_REQUEST['js_rebuild_concat'] = 'rebuild';
-        require_once('jssource/minify.php');
-    }
-}
+/**
+ * Before we save an rli, check if we need to set the commit stage
+ */
+$hook_array['before_save'][] = array(
+    10,
+    'beforeSaveIncludedCheck',
+    'modules/RevenueLineItems/RevenueLineItemHooks.php',
+    'RevenueLineItemHooks',
+    'beforeSaveIncludedCheck',
+);

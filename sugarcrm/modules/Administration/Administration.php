@@ -37,7 +37,19 @@ class Administration extends SugarBean {
             //END SUGARCRM lic=sub ONLY
     );
     var $disable_custom_fields = true;
-    var $checkbox_fields = Array("notify_send_by_default", "mail_smtpauth_req", "notify_on", 'tweettocase_on', 'skypeout_on', 'system_mailmerge_on', 'proxy_auth', 'proxy_on', 'system_ldap_enabled','captcha_on', 'honeypot_on');
+    public $checkbox_fields = array(
+        'notify_send_by_default',
+        'mail_smtpauth_req',
+        'notify_on',
+        'tweettocase_on',
+        'skypeout_on',
+        'system_mailmerge_on',
+        'proxy_auth',
+        'proxy_on',
+        'system_ldap_enabled',
+        'captcha_on',
+        'honeypot_on',
+        );
     public $disable_row_level_security = true;
     public static $passwordPlaceholder = "::PASSWORD::";
 
@@ -197,10 +209,11 @@ class Administration extends SugarBean {
         sugar_cache_clear('admin_settings_cache');
 
         // check to see if category is a module
-        if(!empty($platform)) {
+        if (!empty($platform)) {
             // we have an api call so lets clear out the cache for the module + platform
             global $moduleList;
-            if(in_array($category, $moduleList)) {
+            // FIXME TY-839 'portal' should be the platform, not category
+            if (in_array($category, $moduleList) || $category == 'portal') {
                 $cache_key = "ModuleConfig-" . $category;
                 if($platform != "base")  {
                     $cache_key .= $platform;

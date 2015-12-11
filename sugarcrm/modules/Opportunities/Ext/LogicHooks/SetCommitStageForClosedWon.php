@@ -1,3 +1,5 @@
+<?php
+ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -8,18 +10,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-({
-    extendsFrom: 'PreviewView',
 
-    /**
-     * Track the original model passed in from the worksheet, this is needed becuase of how the base preview works
-     */
-    originalModel: undefined,
-
-    _renderField: function(field, $fieldEl) {
-        if (field.type === 'hidden') {
-            $fieldEl.parents('.row-fluid').eq(0).hide();
-        }
-        this._super("_renderField", arguments);
-    }
-})
+/**
+ * Before we save an opp, check if we need to set the commit stage
+ */
+$hook_array['before_save'][] = array(
+    10,
+    'beforeSaveIncludedCheck',
+    'modules/Opportunities/OpportunityHooks.php',
+    'OpportunityHooks',
+    'beforeSaveIncludedCheck',
+);

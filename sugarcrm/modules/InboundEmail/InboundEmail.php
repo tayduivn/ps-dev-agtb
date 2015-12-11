@@ -2268,6 +2268,14 @@ class InboundEmail extends SugarBean {
 	 * @return boolean true on success, false on fail
 	 */
 	function savePersonalEmailAccount($userId = '', $userName = '', $forceSave=true) {
+		global $current_user;
+
+		if (SugarConfig::getInstance()->get("disable_user_email_config", false)
+			&& !$current_user->isAdminForModule("Emails")
+		) {
+			ACLController::displayNoAccess(false);
+			return false;
+		}
 		$groupId = $userId;
 		$accountExists = false;
 		if(isset($_REQUEST['ie_id']) && !empty($_REQUEST['ie_id'])) {
@@ -5919,11 +5927,13 @@ eoq;
 		// body
         if (empty($this->email->description_html)) {
             $description = nl2br($this->email->description);
+            $description_html = '';
         } else {
             $description = SugarCleaner::cleanHtml(from_html($this->email->description_html, false), false);
+            $description_html  = $this->getHTMLDisplay($description);
         }
 		$meta['email']['description'] = $description;
-        $meta['email']['description_html'] = SugarCleaner::cleanHtml(from_html($this->email->description_html), false);
+        $meta['email']['description_html'] = $description_html;
 
 		// meta-metadata
 		$meta['is_sugarEmail'] = ($exMbox[0] == 'sugar') ? true : false;
@@ -6614,6 +6624,40 @@ eoq;
         }
         $GLOBALS['log']->debug('-----> getNewEmailsForSyncedMailbox() got '.count($result).' unsynced messages');
         return $result;
+    }
+
+    /**
+     * Perform specialized Windows Outlook fixup to remove unnwanted blank lines caused from empty paragraphs
+     * left behind by HTML Purifier when MSOffice namespaces and Embedded styles are removed.
+     *
+     * Issue reported: https://sugarcrm.atlassian.net/browse/MAR-2297  (SI Bug number: 66022)
+     *
+     * Note: this fixup is enabled when the 'mso_fixup_paragraph_tags' config option has been added and is set to true.
+     *
+     * @param string $html
+     * @return string $html
+     */
+    public function getHTMLDisplay($html)
+    {
+        if (!empty($GLOBALS['sugar_config']['mso_fixup_paragraph_tags'])
+            && $GLOBALS['sugar_config']['mso_fixup_paragraph_tags'] === true
+            && (strpos($html, 'class="MsoNormal"') !== false ||
+                strpos($html, "<o:p>") !== false)
+        ) {
+                $replaceStrings = array(
+                    '<p></p>' => '',
+                    '<p> </p>' => '<br/>',
+                    '<p>&nbsp;</p>' => '<br/>',
+                    '<p>' . chr(0xC2) . chr(0xA0) . '</p>' => '<br/>',
+                    '<p class="MsoNormal"></p>' => '',
+                    '<p class="MsoNormal"> </p>' => '',
+                    '<p class="MsoNormal">&nbsp;</p>' => '',
+                    '<p class="MsoNormal">' . chr(0xC2) . chr(0xA0) . '</p>' => '',
+                );
+                $html = str_replace(array_keys($replaceStrings), array_values($replaceStrings), $html);
+                $html = "<style>p.MsoNormal {margin: 0;}</style>\n" . $html;
+        }
+        return $html;
     }
 
 } // end class definition

@@ -87,6 +87,7 @@ $mod_strings = array (
 	'LBL_NOTIFY_FROMADDRESS' 					=> '"From" Address:',
 	'LBL_NOTIFY_FROMNAME' 						=> '"From" Name:',
 	'LBL_NOTIFY_ON'								=> 'Assignment Notifications',
+	'LBL_ALLOW_USER_EMAIL_ACCOUNT'				=> 'Allow users to configure email accounts',
 	'LBL_NOTIFY_SEND_BY_DEFAULT'				=> 'Send notifications to new users',
 	'LBL_NOTIFY_TITLE'							=> 'Email Options',
 	'LBL_OLD_ID'								=> 'Old Id',

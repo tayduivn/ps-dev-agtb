@@ -233,7 +233,7 @@
         if (this.resavingAfterMetadataSync)
             return false;
 
-        changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
+        changedAttributes = this.model.changedAttributes(this.model.getSynced());
 
         if (_.isEmpty(changedAttributes)) {
             return false;
@@ -243,12 +243,11 @@
         _.each(this.meta.panels, function(panel) {
             _.each(panel.fields, function(field) {
                 if (!field.readonly) {
+                    setAsEditable(field.name);
                     if (field.fields && _.isArray(field.fields)) {
                         _.each(field.fields, function(field) {
                             setAsEditable(field.name);
                         });
-                    } else {
-                        setAsEditable(field.name);
                     }
                 }
             });
@@ -722,7 +721,19 @@
     saveClicked: function() {
         // Disable the action buttons.
         this.toggleButtons(false);
-        this.model.doValidate(this.getFields(this.module), _.bind(this.validationComplete, this));
+
+        var diff = _.changed(this.model.attributes, this.model._syncedAttributes);
+        var changedFields = [];
+
+        // Only validate fields that have changed.
+        _.each(diff, function(changed, field) {
+            if (changed) {
+                changedFields.push(field);
+            }
+        });
+
+        var fieldsToValidate = _.pick(this.getFields(this.module, this.model), changedFields);
+        this.model.doValidate(fieldsToValidate, _.bind(this.validationComplete, this));
     },
 
     cancelClicked: function() {

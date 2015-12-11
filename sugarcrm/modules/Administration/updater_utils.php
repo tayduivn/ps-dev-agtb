@@ -322,13 +322,12 @@ function authenticateDownloadKey()
     $licenseSettings = isset($GLOBALS['license']->settings) ? $GLOBALS['license']->settings : '';
 
     // Retrieve license if required
-    if (((isset($licenseSettings['license_validation_key']) &&
-         !is_array($licenseSettings['license_validation_key'])) ||
-         empty($licenseSettings['license_validation_key'])) &&
-         shouldCheckSugar()) {
-        check_now(get_sugarbeat());
-    }
-
+	if ((!is_array($licenseSettings) ||
+			empty($licenseSettings['license_validation_key'])) &&
+		shouldCheckSugar()) {
+		check_now(get_sugarbeat());
+	}
+	
     // Validation key is required
     if (!is_array($licenseSettings) ||
         empty($licenseSettings['license_validation_key'])) {

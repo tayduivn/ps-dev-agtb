@@ -278,8 +278,8 @@ describe("enum field", function() {
 
                 it('should not sort the results', function() {
                     _order = false;
+
                     results = field._sortResults(results);
-                    _expectOrder(results, values);
                     expect(_sortBySpy).not.toHaveBeenCalled();
 
                     results = field._sortResults(results);

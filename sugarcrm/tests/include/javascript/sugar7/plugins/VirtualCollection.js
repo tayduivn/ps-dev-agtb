@@ -111,7 +111,7 @@ describe('Plugins.VirtualCollection', function() {
 
             expect(collection.length).toBe(6);
             expect(collection.links.contacts.length).toBe(4);
-            expect(collection.links.contacts.defaults.length).toBe(2);
+            expect(collection.links.contacts.synced.length).toBe(2);
         });
     });
 
@@ -140,10 +140,10 @@ describe('Plugins.VirtualCollection', function() {
             });
         });
 
-        it('should add synchronized models to their respective defaults list', function() {
+        it('should add synchronized models to their respective synced list', function() {
             model.trigger('sync');
 
-            expect(collection.links.contacts.defaults.length).toBe(5);
+            expect(collection.links.contacts.synced.length).toBe(5);
         });
     });
 
@@ -404,6 +404,27 @@ describe('Plugins.VirtualCollection', function() {
         it('should return false', function() {
             expect(collection.hasChanged()).toBe(false);
         });
+
+        it('should return false when only defaults exist on collection', function() {
+            collection.add(_.rest(contacts, 4), {default: true});
+
+            expect(collection.hasChanged()).toBe(false);
+        });
+
+        it('should return true when there are defaults, but also additional changes', function() {
+            collection.add(contacts[4], {default: true});
+            collection.add(contacts[5]);
+
+            expect(collection.hasChanged()).toBe(true);
+        });
+
+        it('should return true when model is added as default, but then removed and added as non-default', function() {
+            collection.add(contacts[4], {default: true});
+            collection.remove(contacts[4]);
+            collection.add(contacts[4]);
+
+            expect(collection.hasChanged()).toBe(true);
+        });
     });
 
     describe('supporting pagination', function() {
@@ -663,13 +684,13 @@ describe('Plugins.VirtualCollection', function() {
                 });
             });
 
-            it('should add the fetched records as defaults for their links', function() {
-                expect(collection.links.contacts.defaults.length).toBe(4);
+            it('should add the fetched records as synced for their links', function() {
+                expect(collection.links.contacts.synced.length).toBe(4);
 
                 records = _.last(contacts, 2);
                 collection.paginate();
 
-                expect(collection.links.contacts.defaults.length).toBe(4 + records.length);
+                expect(collection.links.contacts.synced.length).toBe(4 + records.length);
             });
 
             it('should update the offsets', function() {
@@ -817,12 +838,12 @@ describe('Plugins.VirtualCollection', function() {
                 expect(target.get(attribute).length).toBe(3);
             });
 
-            it('should not have any defaults set on the link', function() {
+            it('should not have any synced set on the link', function() {
                 target.copy(model);
                 collection = target.get(attribute);
 
                 _.each(collection.links, function(link) {
-                    expect(link.defaults.length).toBe(0);
+                    expect(link.synced.length).toBe(0);
                 });
             });
 
@@ -835,7 +856,7 @@ describe('Plugins.VirtualCollection', function() {
         });
 
         describe('setting a collection field', function() {
-            it('should set the collection as a default when created', function() {
+            it('should set the collection as the default when created', function() {
                 expect(model.getDefault(attribute)).toBe(collection);
             });
 
@@ -955,7 +976,7 @@ describe('Plugins.VirtualCollection', function() {
         });
 
         it('should include any collection fields in the return value for synchronized attributes', function() {
-            expect(model.getSyncedAttributes()[attribute]).not.toBeUndefined();
+            expect(model.getSynced()[attribute]).not.toBeUndefined();
         });
 
         it('should revert changes to any collection fields', function() {
@@ -970,7 +991,7 @@ describe('Plugins.VirtualCollection', function() {
 
         describe('getting changed attributes', function() {
             it('should not include `invitees` in the return value', function() {
-                var changed = model.changedAttributes(model.getSyncedAttributes());
+                var changed = model.changedAttributes(model.getSynced());
 
                 expect(changed[attribute]).toBeUndefined();
             });
@@ -979,7 +1000,7 @@ describe('Plugins.VirtualCollection', function() {
                 var changed;
 
                 model.get(attribute).remove([2]);
-                changed = model.changedAttributes(model.getSyncedAttributes());
+                changed = model.changedAttributes(model.getSynced());
 
                 expect(changed[attribute]).not.toBeUndefined();
             });

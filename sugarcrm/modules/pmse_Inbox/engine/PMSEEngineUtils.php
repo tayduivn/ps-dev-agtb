@@ -42,17 +42,24 @@ class PMSEEngineUtils
             'password',
             'is_admin',
         ),
+        // Business Rules
         'BR' => array(
             'duration_hours',
             'kbdocument_body',
             'duration_minutes',
             'repeat_type',
-            'viewcount'
+            'viewcount',
+            'created_by',
+            'modified_user_id',
+            'date_entered',
+            'date_modified',
         ),
+        // Add related record Activity item in Process Definitions
         'AC' => array(
             'kbdocument_body',
             'viewcount',
         ),
+        // Process Definitions
         'PD' => array(
             'kbdocument_body',
             'viewcount',
@@ -60,6 +67,17 @@ class PMSEEngineUtils
         'GT' => array(
             'kbdocument_body',
             'viewcount',
+        ),
+        // Change field action... this used to be the same as Add Related Record
+        // but we needed different things from this
+        'CF' => array(
+            'duns_num',
+            'kbdocument_body',
+            'viewcount',
+            'created_by',
+            'modified_user_id',
+            'date_entered',
+            'date_modified',
         ),
     );
 
@@ -111,7 +129,7 @@ class PMSEEngineUtils
         'All' => array('created_by', 'modified_user_id'),
         'BR' => array('assigned_user_id', 'email1', 'outlook_id'),
         'ET' => array('email1'),
-        'AC' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case'),
+        'AC' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
         'RR' => array(),
     );
 
@@ -1064,8 +1082,17 @@ class PMSEEngineUtils
         return $current_user->isAdmin() || $current_user->isAdminForModule('Users');
     }
 
+    /**
+     * Determines the validity of a field used in a process definition, business
+     * rule, action element, etc.
+     * @param array $def The field def
+     * @param string $type The action type
+     * @return boolean
+     */
     public static function isValidField($def, $type = '')
     {
+        // First things first... if we are explicitly directed to do something
+        // based on the vardefs, do that thing first
         if (isset($def['processes'])) {
             // If a field is explicitly marked for processes, handle it
             if (is_bool($def['processes'])) {
@@ -1088,27 +1115,37 @@ class PMSEEngineUtils
             }
         }
 
-        $result = self::isValidStudioField($def);
-        if (isset($def['source']) && $def['source'] == 'non-db') {
-            $result = false;
+        // If the field is to blacklisted, handle that now
+        if (!self::blackListFields($def, $type)) {
+            return false;
         }
+
+        // If the field is whitelisted, handle THAT now
+        if (self::specialFields($def, $type)) {
+            return true;
+        }
+
+        // Now carry on the rest of the special case madness until we need to
+        // check studio validity
+        if (isset($def['source']) && $def['source'] == 'non-db') {
+            return false;
+        }
+
         // Process Author does not handle some field types like image, password, file, etc currently
         if (isset($def['type']) && in_array($def['type'], self::$blacklistedFieldTypes)) {
-            $result = false;
+            return false;
         }
-        if ($type == 'AC') {
-            if (isset($def['formula'])) {
-                $result = false;
-            }
+
+        if ($type == 'AC' && isset($def['formula'])) {
+            return false;
         }
-        if ($type == 'RR' || $type == 'AC') {
-            if (isset($def['readonly']) && $def['readonly']) {
-                $result = false;
-            }
+
+        if (($type == 'RR' || $type == 'AC') && !empty($def['readonly'])) {
+            return false;
         }
-        $result = (self::specialFields($def, $type)) ? true : $result;
-        $result = $result && self::blackListFields($def, $type);
-        return $result;
+
+        // At this point all we are left with is checking if it is studio valid
+        return self::isValidStudioField($def);
     }
 
     /**
@@ -1126,12 +1163,35 @@ class PMSEEngineUtils
         return !in_array($def['name'], $blacklist);
     }
 
+    /**
+     * Checks to see if a field name is deemed special based on the PMSE module
+     * type
+     * @param array $def The field def to check
+     * @param string $type The PMSE module type to check this field for
+     * @return boolean
+     */
     public static function specialFields($def, $type= 'All')
     {
+        // Without a name there is nothing to do
+        if (!isset($def['name'])) {
+            return false;
+        }
+
+        // Default the type if it was empty
         if (empty($type)) {
             $type = 'All';
         }
-        return isset($def['name'], self::$specialFields[$type]) && in_array($def['name'], self::$specialFields[$type]);
+
+        // Get the special fields list for this type if it exists
+        $sf = empty(self::$specialFields[$type]) ? array() : self::$specialFields[$type];
+
+        // Now merge the type special fields with special fields for all types
+        if ($type !== 'All') {
+            $sf = array_merge($sf, self::$specialFields['All']);
+        }
+
+        // Now check to see if the field is in this type
+        return in_array($def['name'], $sf);
     }
 
     /**
@@ -1296,6 +1356,90 @@ class PMSEEngineUtils
 
         if (!empty($currencyObj->expValue) && (is_string($currencyObj->expValue))) {
             $currencyObj->expValue = (float) $currencyObj->expValue;
+        }
+    }
+
+    /**
+     * Get LinkName from a bean using module name and relationship name
+     * @param $flowData
+     * @return mixed
+     * @throws Exception
+     */
+    public static function getRelatedLinkName($flowData)
+    {
+        $bean = BeanFactory::getBean($flowData['rel_process_module']);
+        $relName = $flowData['rel_element_relationship'];
+        $bean->load_relationship($relName);
+        if ($bean->$relName) {
+            return $bean->$relName->getRelatedModuleLinkName();
+        }
+
+        throw new \Exception("Related module link name not found for {$flowData['evn_module']}->{$relName}");
+    }
+
+    /**
+     * @param $flowData
+     * @return bool
+     */
+    public static function isTargetModuleNotProcessModule($flowData)
+    {
+        return isset($flowData['rel_process_module'], $flowData['rel_element_relationship'], $flowData['rel_element_module'])
+        && $flowData['rel_element_module'] !== $flowData['rel_process_module'];
+    }
+
+    /**
+     * @param $flowData
+     * @param $bean
+     * @return bool
+     */
+    public static function isTargetModule($flowData, $bean)
+    {
+        return !(self::isTargetModuleNotProcessModule($flowData) && $bean->module_dir !== $flowData['rel_process_module']);
+    }
+
+    /**
+     * @param $flowData
+     * @param $bean
+     * @return mixed|null
+     * @throws Exception
+     */
+    public static function getParentBean($flowData, $bean) {
+        $linkName = self::getRelatedLinkName($flowData);
+        $parentBean = $bean->$linkName->getBeans(array('limit' => 1));
+        if (empty($parentBean)) {
+            //Parent Bean not found
+            return null;
+        }
+        return current($parentBean);
+    }
+
+    /*
+     * Adds or Replaces teams in a Bean
+     * @param $bean
+     * @param $field containing the new teams information
+     */
+    public static function changeTeams($bean, $field)
+    {
+        $bean->load_relationship('teams');
+
+        // The TeamSetLink could have the _saved property set to true indicating previous data has been saved.
+        // So we need to Explicitly set _saved of TeamSetLink class to false so that the new teams
+        // get saved
+        if (!empty($bean->teams) && !empty($field->value) && is_array($field->value)) {
+            $bean->teams->setSaved(false);
+
+            // Set primary team if a primary team has been set
+            if (!empty($field->primary)) {
+                $bean->team_id = $field->primary;
+            }
+
+            // Determines if teams have to be added to existing teams or
+            // if existing teams need to be replaced by this new set
+            if ($field->append === true) {
+                $bean->teams->add($field->value, array(), true);
+            } else {
+                $bean->teams->replace($field->value, array(), true);
+            }
         }
     }
 }

@@ -10,10 +10,19 @@ $settings->idpSingleLogOutUrl       = isset($GLOBALS['sugar_config']['SAML_SLO']
 // the certificate for the users account in the IdP
 $settings->idpPublicCertificate          = isset($GLOBALS['sugar_config']['SAML_X509Cert']) ? $GLOBALS['sugar_config']['SAML_X509Cert'] : '';
 
+// no dataOnly when showing the login page in the main window (no popup)
+// $returnQueryVars is set by the caller
+if (!empty($returnQueryVars) && !empty($returnQueryVars['platform']) && $returnQueryVars['platform'] == 'base'
+        && !empty($GLOBALS['sugar_config']['SAML_SAME_WINDOW'])) {
+        $returnPath = '/index.php?module=Users&action=Authenticate';
+} else {
+        $returnPath = '/index.php?module=Users&action=Authenticate&dataOnly=1';
+}
+
 // The URL where to the SAML Response/SAML Assertion will be posted
 $settings->spReturnUrl = htmlspecialchars(
     rtrim($GLOBALS['sugar_config']['site_url'], '/')
-    . '/index.php?module=Users&action=Authenticate&dataOnly=1'
+    . $returnPath
 );
 
 // Name of this application

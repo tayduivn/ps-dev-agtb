@@ -41,12 +41,14 @@ $viewdefs['Tasks']['base']['view']['subpanel-list'] = array(
         array(
           'name' => 'date_start',
           'label' => 'LBL_LIST_START_DATE',
+          'css_class' => 'overflow-visible',
           'enabled' => true,
           'default' => true,
         ),
         array(
           'name' => 'date_due',
           'label' => 'LBL_LIST_DUE_DATE',
+          'css_class' => 'overflow-visible',
           'enabled' => true,
           'default' => true,
         ),

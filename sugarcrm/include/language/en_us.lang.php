@@ -8690,6 +8690,7 @@ $app_strings = array (
     'EXCEPTION_SERVICE_UNAVAILABLE'     => 'The server cannot process your request because it is busy or unavailable at this time.',
     'EXCEPTION_SEARCH_UNAVAILABLE'      => 'Search engine is temporarily unavailable.',
     'EXCEPTION_SEARCH_RUNTIME'          => 'A search engine runtime error occurred. Please contact your System Administrator.',
+    'EXCEPTION_INVALID_PLATFORM'        => 'Invalid platform specified.',
 
     // Default SugarApiException descriptions, used in the exceptions help endpoint
     'EXCEPTION_UNKNOWN_EXCEPTION_DESC'     => 'A condition was encountered because of a general failure or error. The reasons for this exception range but generally fall outside the scope of a more specific API exception.',
@@ -8715,6 +8716,8 @@ $app_strings = array (
     'EXCEPTION_SEARCH_UNAVAILABLE_DESC'    => 'The search engine backend is currently unavailable due to a connection issue. Verify connectivity and configuration in Admin->search->test.',
     'EXCEPTION_SEARCH_RUNTIME_DESC'        => 'A runtime exception occured in SearchEngine. See sugarcrm.log for more details.',
 
+    'EXCEPTION_INVALID_PLATFORM_DESC'   => 'Indicates the platform specified during authenication is unknown. Custom platforms must be added to custom/client/platforms.php',   
+    
     //Lotus Live specific error messages
     'ERR_EXTERNAL_API_LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system.',
 
@@ -9379,7 +9382,6 @@ Sincerely, SugarCRM',
     'ERROR_LICENSE_VALIDATION'=> "Your company's license for SugarCRM needs to be validated. Only admins may login.",
     'WARN_LICENSE_VALIDATION'=> "Your company's license for SugarCRM needs to be validated soon.",
     'ERROR_EXCEEDING_OC_LICENSES' =>"The number of enabled Offline Clients currently exceeds the number specified in your license.",
-    'WARN_BROWSER_VERSION_WARNING' => "<b>Warning:</b> Your browser version is no longer supported or you are using an unsupported browser.<p></p>The following browser versions are recommended:<p></p><ul><li>Internet Explorer 11 (compatibility view not supported)<li>Firefox 39<li>Safari 7.1<li>Chrome 43</ul>",
     'WARN_BROWSER_IE_COMPATIBILITY_MODE_WARNING' => "<b>Warning:</b> Your browser is in IE compatibility view which is not supported.",
     'WARN_LICENSE_SEATS'=>  "Warning: The number of active users is already the maximum number of licenses allowed.",
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users exceeds the maximum number of licenses allowed.",
@@ -9416,6 +9418,7 @@ Sincerely, SugarCRM',
     'ERROR_PA_UNSUPPORTED_FILE' => 'Import failed. Please check your sugar log for more details.',
     'ERROR_EXP_DATE_LOW' => 'Error. The Expiration Date must occur on a date after the Publish Date.',
     'ERROR_ACTIVE_DATE_APPROVE_REQUIRED' => 'Error. The Approved status requires publishing date.',
+    'ERROR_ACTIVE_DATE_EMPTY' => 'The Publish Date is empty.',
     'ERROR_ACTIVE_DATE_LOW' => 'Error. The Publish Date must occur on a later date than today\'s date.',
     'LBL_DUP_MERGE'=>'Find Duplicates',
     'ERR_DUPLICATE_CHECK_IS_DISABLED' => 'Duplicate check is disabled for {{module}}.',
@@ -11652,7 +11655,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     'LBL_PRO_ENABLE' => 'Updating',
     'LBL_PRO_DISABLE' => 'Updating',
-    'LBL_PA_PRODEF_HAS_PENDING_PROCESSES' => 'You cannot delete this Process Definition because have pending processes running.',
+    'LBL_PA_PRODEF_HAS_PENDING_PROCESSES' => 'This Process Definition cannot be deleted because it has pending processes running.',
 //END SUGARCRM flav=ent ONLY
 
     //Tag Strings

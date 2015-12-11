@@ -302,12 +302,16 @@ describe("Record View", function () {
                 case_number: 123,
                 description: 'Description'
             });
+            var field = view.getField('name');
+            sinon.collection.stub(field, 'hasChanged', function() {
+                return false;
+            });
 
-            expect(view.getField('name').options.viewName).toBe(view.action);
+            expect(field.options.viewName).toBe(view.action);
 
-            view.getField('name').$el.closest('.record-cell').find('a.record-edit-link').click();
+            field.$el.closest('.record-cell').find('a.record-edit-link').click();
 
-            expect(view.getField('name').options.viewName).toBe('edit');
+            expect(field.options.viewName).toBe('edit');
         });
 
         it("Should toggle all editable fields to edit modes when a user clicks on the edit button", function () {
@@ -803,8 +807,12 @@ describe("Record View", function () {
                 case_number: 123,
                 description: 'Description'
             });
+            var field = view.getField('name');
+            sinon.collection.stub(field, 'hasChanged', function() {
+                return false;
+            });
 
-            view.getField('name').$el.closest('.record-cell').find('a.record-edit-link').click();
+            field.$el.closest('.record-cell').find('a.record-edit-link').click();
 
             expect(view.$('.record-label[data-name=name]').closest('.record-cell').hasClass('edit')).toBe(true);
         });
@@ -909,6 +917,22 @@ describe("Record View", function () {
             });
             view.model.set({
                 bar: 'test2'
+            });
+
+            expect(view.hasUnsavedChanges()).toBe(true);
+        });
+        it('should warn unsaved changes when field that contains other fields changes', function() {
+            view.meta.panels[0].fields.push({
+                name: 'foo',
+                fields: [{
+                    name: 'bar'
+                }]
+            });
+            view.model.setSyncedAttributes({
+                foo: 'test1'
+            });
+            view.model.set({
+                foo: 'test2'
             });
 
             expect(view.hasUnsavedChanges()).toBe(true);

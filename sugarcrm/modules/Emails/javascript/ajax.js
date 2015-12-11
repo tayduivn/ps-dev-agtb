@@ -1559,7 +1559,7 @@ var callbackReplyForward = {
             if(!isReOrFwDraft){
                 html += "<div><hr></div>";
             }
-            html +=  a.description;
+            html += SE.util.nl2br(a.description);
 
 			t.setContent(html);//
 

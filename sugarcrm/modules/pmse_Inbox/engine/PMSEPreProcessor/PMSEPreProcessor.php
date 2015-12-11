@@ -204,7 +204,15 @@ class PMSEPreProcessor
 
                 if ($validatedRequest->isValid()) {
                     $data = $validatedRequest->getFlowData();
+
                     if (!(isset($data['evn_type']) && $data['evn_type'] == 'GLOBAL_TERMINATE')) {
+                        if (!PMSEEngineUtils::isTargetModule($flowData, $validatedRequest->getBean())) {
+                            $parentBean = PMSEEngineUtils::getParentBean($flowData, $validatedRequest->getBean());
+                            // Only when start bean is different of target module in PD
+                            // should override original bean
+                            $request->setBean($parentBean);
+                        }
+
                         $this->logger->info('Request validated for element: ' . $data['bpmn_type'] . ' with id: ' . $data['bpmn_id']);
                         $_SESSION['pmse_start_time'] = microtime(true);
 
@@ -215,6 +223,7 @@ class PMSEPreProcessor
                         );
                         $this->logger->info('Execution of case: #' . $data['cas_id'] . ' completed');
                     }
+
                 } else {
                     $data = $request->getFlowData();
                     $this->logger->info('Request not validated for element: ' . $data['bpmn_type'] . ' with id: ' . $data['bpmn_id']);
@@ -243,12 +252,12 @@ class PMSEPreProcessor
         return $flows;
     }
 
-    public function retrieveProcessBean($bean, $data = array())
+    public function retrieveProcessBean($bean, $flowData = array())
     {
-        if (isset($data['pro_module']) && $bean->parent_type == $data['pro_module']) {
-            $bean = BeanFactory::retrieveBean($bean->parent_type, $bean->parent_id);
+        if (!PMSEEngineUtils::isTargetModule($flowData, $bean)) {
+            $parentBean = PMSEEngineUtils::getParentBean($flowData, $bean);
         }
-        return $bean;
+        return (!empty($parentBean) && is_object($parentBean)) ? $parentBean: $bean;
     }
 
     public function terminateCaseByBeanAndProcess($bean, $data = array())
@@ -276,7 +285,6 @@ class PMSEPreProcessor
      */
     public function getAllEvents($bean = '')
     {
-        $db = DBManagerFactory::getInstance();
         $fields = array(
             'evn_id',
             'evn_uid',
@@ -313,7 +321,8 @@ class PMSEPreProcessor
             'pro_module',
             'pro_status',
             'pro_locked_variables',
-            'pro_terminate_variables'
+            'pro_terminate_variables',
+            'date_entered',
         );
 
         $relatedDependency = $this->retrieveBean('pmse_BpmRelatedDependency');
@@ -323,18 +332,22 @@ class PMSEPreProcessor
         $q->joinRaw("LEFT JOIN pmse_bpm_flow flow ON rel_element_id = flow.bpmn_id AND (cas_flow_status IS NULL OR cas_flow_status='WAITING')",
             array('alias' => 'flow'));
         $q->where()->queryAnd()
-            ->addRaw("(((evn_type = 'START' OR evn_type = 'GLOBAL_TERMINATE')" .
-                " AND (hp.deleted IS NULL OR hp.deleted=0)" .
-                " AND (flow.cas_flow_status IS NULL OR flow.cas_flow_status<>'WAITING')" .
-                " AND ((evn_module = '$bean->module_name' AND COALESCE({$db->convert('rel_element_module', 'length')}, 0) = 0)" .
-                " OR rel_element_module='$bean->module_name'))" . // " AND evn_module = '$bean->module_name')".
-                " OR (evn_type = 'INTERMEDIATE'" .
+            ->addRaw("(".
+                // Where for Start Events
+                "(evn_type = 'START' AND evn_module = '$bean->module_name')".
+                " OR ".
+                // Where for Terminate Process
+                "(evn_type = 'GLOBAL_TERMINATE' AND (flow.cas_flow_status IS NULL OR flow.cas_flow_status != 'WAITING') ".
+                " AND  rel_element_module='$bean->module_name')".
+                " OR ".
+                // Where for Receive Message
+                "(evn_type = 'INTERMEDIATE'" .
                 " AND evn_marker = 'MESSAGE'" .
                 " AND evn_behavior = 'CATCH'" .
-                " AND hp.deleted = 0" .
                 " AND flow.cas_flow_status = 'WAITING'" .
-                " AND rel_element_module = '$bean->module_name'))" .
-                " AND pro_status <> 'INACTIVE'");
+                " AND rel_element_module = '$bean->module_name')".
+                ") " .
+                "AND pro_status != 'INACTIVE' AND (hp.deleted IS NULL OR hp.deleted=0)");
 
         $q->select->fieldRaw('flow.id, flow.cas_id, flow.cas_index, flow.bpmn_id, flow.bpmn_type, flow.cas_user_id, flow.cas_thread, flow.cas_sugar_module, flow.cas_sugar_object_id');
         $query = $q->compileSql();
@@ -443,6 +456,31 @@ class PMSEPreProcessor
                 $flows = $this->getFlowsByCasId($args['cas_id']);
                 break;
         }
+
+//      Sort flows
+        usort($flows, function ($a, $b) {
+            $valueA = $a["evn_params"] == 'new' ? 1 : ($a["evn_params"] == 'updated' ? 2 : 3);
+            $valueB = $b["evn_params"] == 'new' ? 1 : ($b["evn_params"] == 'updated' ? 2 : 3);
+            if ($valueA == $valueB) {
+                if (!empty($a["date_entered"]) && !empty($b["date_entered"])) {
+                    $timedate = TimeDate::getInstance();
+                    $date_a = $timedate->fromString($a["date_entered"]);
+                    $date_b = $timedate->fromString($b["date_entered"]);
+                    if ($date_a < $date_b) {
+                        return -1;
+                    } else if ($date_a > $date_b) {
+                        return 1;
+                    }
+                }
+                return 0;
+            }
+            if ($valueA < $valueB) {
+                return -1;
+            } else {
+                return 1;
+            }
+        });
+
         return $flows;
     }
 

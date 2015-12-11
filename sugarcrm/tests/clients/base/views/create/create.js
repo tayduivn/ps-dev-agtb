@@ -148,7 +148,8 @@ describe('Base.View.Create', function() {
 
         drawer = app.drawer;
         app.drawer = {
-            close: function(){}
+            close: $.noop,
+            reset: $.noop
         };
 
         context = app.context.getContext();
@@ -923,7 +924,7 @@ describe('Base.View.Create', function() {
 
     describe('hasUnsavedChanges', function() {
 
-        it('should return true if model has changed', function() {
+        it('should return true if attribute on model which has no default has changed', function() {
             expect(view.model.get('foo')).toBeUndefined();
             expect(view.hasUnsavedChanges()).toBeFalsy();
 
@@ -941,6 +942,24 @@ describe('Base.View.Create', function() {
 
             view.model.setDefault('foo', true);
             expect(view.hasUnsavedChanges()).toBeFalsy();
+        });
+
+        it('should return true if attribute on model which has a default has changed', function() {
+            view.model.set('foo', 'a');
+            view.model.setDefault('foo', 'a');
+            expect(view.hasUnsavedChanges()).toBeFalsy();
+
+            view.model.set('foo', 'b');
+            expect(view.hasUnsavedChanges()).toBeTruthy();
+
+            view.model.set('foo', 'c');
+            expect(view.hasUnsavedChanges()).toBeTruthy();
+        });
+
+        it('should return true if getDefault returns undefined', function() {
+            sinonSandbox.stub(view.model, 'getDefault').returns(undefined);
+            view.model.set('foo', 'a');
+            expect(view.hasUnsavedChanges()).toBeTruthy();
         });
 
         it('should return false if "resavingAfterMetadataSync" is true', function() {

@@ -25,7 +25,7 @@
   }
 }
 
-.record .record-cell {
+.record-cell {
   .record-label {
     &[data-name="attachment_list"] {
     }
@@ -142,6 +142,7 @@ div.kb-attachmentlist-details-view {
     }
   }
 }
+
 
 [data-type="usefulness"] {
   .btn {
@@ -281,6 +282,19 @@ body.kbdocument-body {
       }
     }
   }
+  ul.select2-choices {
+    li.select2-search-choice {
+      span.select2-choice-type {
+        a.kb-attachment-link, a.kb-attachment-link-type {
+          margin-top: 1px !important;
+          float: left;
+          display: inline-block !important;
+          line-height: 6px;
+          top: 0px;
+        }
+      }
+    }
+  }
 }
 
 [data-name="languages_languages"] {
@@ -290,3 +304,37 @@ body.kbdocument-body {
     }
   }
 }
+
+html.rtl {
+  .record .record-cell {
+    .record-label {
+      &[data-name="kbdocument_body_set"] {
+        margin-top: 12px;
+        margin-bottom: 6px;
+      }
+    }
+    [data-type="template-button"] {
+      .btn {
+        right: auto;
+        left: 0px;
+      }
+    }
+    &.edit {
+      span[data-fieldname="attachment_list"] {
+        > span.edit {
+          .select2-container {
+            &.with-padding {
+              .select2-choices {
+                margin-left: 3px;
+              }
+            }
+          }
+          label.kb-attach-btn {
+            margin-left: -3px;
+          }
+        }
+      }
+    }
+  }
+}
+

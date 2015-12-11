@@ -107,7 +107,9 @@
                     if (self.layout.disposed === true) {
                         return;
                     }
-                    self.layout.reloadDashlet({complete: function() {}, saveLeafs: false});
+                    if (!_.isUndefined(self.layout.reloadDashlet)) {
+                        self.layout.reloadDashlet({complete: function() {}, saveLeafs: false});
+                    }
                 }, this);
             }, this);
         }
@@ -156,7 +158,7 @@
                 storage: this._getStorage()
             };
         }
-        this._renderTree($('[data-place=dashlet-tree]'), treeOptions, callbacks);
+        this._renderTree(this.$('[data-place=dashlet-tree]'), treeOptions, callbacks);
     },
 
     /**

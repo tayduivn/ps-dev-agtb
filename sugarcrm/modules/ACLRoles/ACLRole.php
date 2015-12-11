@@ -297,4 +297,23 @@ function mark_relationships_deleted($id){
             $this->$name = $value;
         }
     }
+
+    /**
+     * Updates users date_modified to make sure clients use latest version of ACLs
+     */
+    public function updateUsersACLInfo()
+    {
+        $query = sprintf("UPDATE users
+            SET date_modified = %s
+            WHERE id IN (
+                    SELECT u.id
+                    FROM users u
+                    INNER JOIN acl_roles_users aru
+                    ON aru.user_id = u.id
+                        AND aru.deleted = 0
+                    WHERE u.deleted = 0
+                        AND aru.role_id = %s
+                )", $this->db->now(), $this->db->quoted($this->id));
+        $this->db->query($query);
+    }
 }

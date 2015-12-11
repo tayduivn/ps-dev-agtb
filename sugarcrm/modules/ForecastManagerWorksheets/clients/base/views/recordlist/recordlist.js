@@ -43,6 +43,16 @@
  *  by: forecasts:worksheet:saved event
  *  when: only when the Assign Quota button is pressed
  *
+ * forecasts:sync:start
+ *  on: this.context.parent
+ *  by: data:sync:start handler
+ *  when: this.collection starts syncing
+ *
+ * forecasts:sync:complete
+ *  on: this.context.parent
+ *  by: data:sync:complete handler
+ *  when: this.collection completes syncing
+ *
  * @class View.Views.Base.ForecastsManagerWorksheets.RecordListView
  * @alias SUGAR.App.view.views.BaseForecastsManagerWorksheetsRecordListView
  * @extends View.Views.Base.RecordListView
@@ -279,10 +289,14 @@
 
                 this.collection.on('data:sync:start', function() {
                     this.isCollectionSyncing = true;
+                    // Begin sync start for buttons
+                    this.context.parent.trigger('forecasts:sync:start');
                 }, this);
 
                 this.collection.on('data:sync:complete', function() {
                     this.isCollectionSyncing = false;
+                    // End sync start for buttons
+                    this.context.parent.trigger('forecasts:sync:complete');
                 }, this);
 
                 /**
@@ -521,11 +535,11 @@
      * Set the loading message and have a way to hide it
      */
     displayLoadingMessage: function() {
-        app.alert.show('workshet_loading',
+        app.alert.show('worksheet_loading',
             {level: 'process', title: app.lang.get('LBL_LOADING')}
         );
         this.collection.once('reset', function() {
-            app.alert.dismiss('workshet_loading');
+            app.alert.dismiss('worksheet_loading');
         }, this);
     },
 

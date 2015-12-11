@@ -315,6 +315,116 @@ class Merge7TestPost extends UpgradeTestCase
         $this->assertEquals($needSave, $script->needSave, "Unexpected needSave result");
     }
 
+    /**
+     * Tests sanitization of viewdefs at the top level after merge.
+     *
+     * @see SC-5024
+     * @param array $input
+     * @param array $expect
+     * @dataProvider getSantizeDataProvider
+     */
+    public function testSanitizeTopLevelDefElements($input, $expect)
+    {
+        $script = $this->upgrader->getScript("post", "7_Merge7Templates");
+        $actual = $script->sanitizeTopLevelDefElements($input);
+        $this->assertEquals($actual, $expect);
+    }
+
+    public function getSantizeDataProvider()
+    {
+        return array(
+            // Test empty top level viewdefs element is removed
+            array(
+                'input' => array(
+                    'buttons' => array(),
+                    'panels' => array(
+                        array(
+                            'name' => 'panel1',
+                            'fields' => array(
+                                'test1',
+                                'test2',
+                            ),
+                        ),
+                    ),
+                    'templateMeta' => array(
+                        'maxColumns' => '1',
+                        'widths' => array(
+                            array(
+                                'label' => '10',
+                                'field' => '30',
+                            ),
+                        ),
+                    ),
+                ),
+                'expect' => array(
+                    'panels' => array(
+                        array(
+                            'name' => 'panel1',
+                            'fields' => array(
+                                'test1',
+                                'test2',
+                            ),
+                        ),
+                    ),
+                    'templateMeta' => array(
+                        'maxColumns' => '1',
+                        'widths' => array(
+                            array(
+                                'label' => '10',
+                                'field' => '30',
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            // Test not empty top level viewdefs element not changed
+            array(
+                'input' => array(
+                    'buttons' => array('Test not empty'),
+                    'panels' => array(
+                        array(
+                            'name' => 'panel1',
+                            'fields' => array(
+                                'test1',
+                                'test2',
+                            ),
+                        ),
+                    ),
+                    'templateMeta' => array(
+                        'maxColumns' => '1',
+                        'widths' => array(
+                            array(
+                                'label' => '10',
+                                'field' => '30',
+                            ),
+                        ),
+                    ),
+                ),
+                'expect' => array(
+                    'buttons' => array('Test not empty'),
+                    'panels' => array(
+                        array(
+                            'name' => 'panel1',
+                            'fields' => array(
+                                'test1',
+                                'test2',
+                            ),
+                        ),
+                    ),
+                    'templateMeta' => array(
+                        'maxColumns' => '1',
+                        'widths' => array(
+                            array(
+                                'label' => '10',
+                                'field' => '30',
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
+
     public function getMergeTestData()
     {
         return array(

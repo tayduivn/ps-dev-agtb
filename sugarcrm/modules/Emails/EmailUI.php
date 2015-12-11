@@ -145,6 +145,12 @@ class EmailUI {
 		$e2UserPreferences = $this->getUserPrefsJS();
 		$emailSettings = $e2UserPreferences['emailSettings'];
 
+		$this->smarty->assign('disable_account_config',
+			SugarConfig::getInstance()->get("disable_user_email_config", false)
+			&& !$current_user->isAdminForModule("Emails") ? "true" : "false"
+		);
+
+
 		///////////////////////////////////////////////////////////////////////
 		////	USER SETTINGS
 		// settings: accounts
@@ -1448,7 +1454,7 @@ eoq;
 			$focus->name = trim($email->name);
 		}
 
-		$focus->description = trim(strip_tags($email->description));
+		$focus->description = trim(strip_tags(br2nl($email->description)));
 		$focus->assigned_user_id = $current_user->id;
 
 		$focus->team_id = $current_user->default_team;

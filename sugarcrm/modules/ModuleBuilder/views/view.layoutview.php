@@ -321,11 +321,32 @@ class ViewLayoutView extends SugarView
         }
 // END SUGARCRM flav=ent ONLY
 
+        $restoreDefaultDisabled = $disableLayout;
+
+// BEGIN SUGARCRM flav=ent ONLY
+        // Handle Opps+RLI mode switch creating one history item on install.
+        if ($this->editModule == 'Opportunities') {
+            if ($history->getCount() == 1) {
+                $restoreDefaultDisabled = true;
+            } else if ($history->getCount() > 1) {
+                $historyList = $history->getList();
+                $historyItem = $historyList[1];
+
+                $action = 'ModuleBuilder.history.revert('
+                    . '"' . $this->editModule . '",'
+                    . '"' . $this->editLayout . '",'
+                    . '"' . $historyItem . '",'
+                    . '""'
+                    . ')';
+            }
+        }
+// END SUGARCRM flav=ent ONLY
+
         $buttons [] = array(
             'id' => 'historyDefault',
             'text' => translate('LBL_RESTORE_DEFAULT_LAYOUT'),
             'actionScript' => "onclick='$action'",
-            'disabled' => $disableLayout,
+            'disabled' => $restoreDefaultDisabled,
         );
         $implementation = $this->parser->getImplementation();
         if ($this->editLayout == MB_DETAILVIEW || $this->editLayout == MB_QUICKCREATE) {

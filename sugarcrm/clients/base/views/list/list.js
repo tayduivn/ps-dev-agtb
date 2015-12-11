@@ -293,7 +293,7 @@
     /**
      * Gets options for fetch call for list sorting
      * @param collection
-     * @returns {Object}
+     * @return {Object}
      */
     getSortOptions: function(collection) {
         var self = this, options = {};

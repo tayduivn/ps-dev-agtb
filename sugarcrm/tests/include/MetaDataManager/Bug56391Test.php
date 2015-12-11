@@ -22,7 +22,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
         $this->accounts = array();
-        SugarACL::$acls = array();
+        SugarACL::resetACLs();
         SugarTestHelper::setUp('ACLStatic');
     }
 
@@ -187,7 +187,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
             unset($acls['_hash']);
             // not checking fields right now
             unset($acls['fields']);
-            $this->assertEquals($expected_result, $acls);
+            $this->assertEquals($expected_result, $acls, "failed at module:$module");
         }
     }
 

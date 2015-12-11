@@ -152,7 +152,7 @@ class Call extends SugarBean {
 
         $check_notify = $this->send_invites;
         if ($this->send_invites == false) {
-            if (!empty($_SESSION['workflow_cron']) && empty(CalendarEvents::$old_assigned_user_id)) {
+            if ((!empty($_SESSION['workflow_cron']) || !empty($_SESSION['process_author_cron'])) && empty(CalendarEvents::$old_assigned_user_id)) {
                 $ce = new CalendarEvents();
                 $ce->setOldAssignedUser($this->module_dir, $this->id);
             }

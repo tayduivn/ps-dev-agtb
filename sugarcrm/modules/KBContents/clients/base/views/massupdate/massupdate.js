@@ -66,33 +66,66 @@
      */
     _doValidateMassUpdate: function(models, fields, callback) {
         var self = this,
-            value = this.model.get(fields[0].name),
+            value = '',
+            checkField = 'status',
+            errorFields = [],
+            messages = [],
+            checkFieldIndex = _.find(fields, function(field) {
+                return field.name === checkField;
+            }),
             errors = {};
-
-        if (fields[0].name === 'status') {
+        if (undefined !== checkFieldIndex) {
+            value = this.model.get(checkField);
             _.each(models, function(model) {
                 switch (value) {
                     case 'published':
                         self._doValidateExpDateField(model, fields, errors, function(model, fields, errors){
                             var fieldName = 'exp_date';
-                            if (!_.isUndefined(errors[fieldName])){
-                                errors[fields[0].name] = {'expDateLow': true};
+                            if (!_.isEmpty(errors[fieldName])) {
+                                errors[checkField] = errors[fieldName];
+                                errorFields.push(fieldName);
+                                messages.push(app.lang.get('LBL_MODIFY_EXP_DATE_LOW', 'KBContents'));
                             }
+
                         });
                         break;
                     case 'approved':
                         self._doValidateActiveDateField(model, fields, errors, function(model, fields, errors){
                             var fieldName = 'active_date';
-                            if (!_.isUndefined(errors[fieldName])){
-                                errors[fields[0].name] = {'activeDateLow': true};
+                            if (!_.isEmpty(errors[fieldName])) {
+                                errors[checkField] = errors[fieldName];
+                                errorFields.push(fieldName);
+                                messages.push(app.lang.get('LBL_SPECIFY_PUBLISH_DATE', 'KBContents'));
                             }
                         });
                         break;
+
                 }
             });
+            if (!_.isEmpty(errorFields)) {
+                errorFields.push(checkField);
+                app.alert.show('save_without_publish_date_confirmation', {
+                    level: 'confirmation',
+                    messages: _.uniq(messages),
+                    confirm: {
+                        label: app.lang.get('LBL_YES')
+                    },
+                    cancel: {
+                        label: app.lang.get('LBL_NO')
+                    },
+                    onConfirm: function() {
+                        errors = _.filter(errors, function(error, key) {
+                            _.indexOf(errorFields, key) === -1;
+                        });
+                        callback(fields, errors);
+                    }
+                });
+            } else {
+                callback(fields, errors);
+            }
+        } else {
+            callback(fields, errors);
         }
-
-        callback(fields, errors);
     },
 
     /**

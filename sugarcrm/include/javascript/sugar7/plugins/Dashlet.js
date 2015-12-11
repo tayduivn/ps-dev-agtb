@@ -98,6 +98,10 @@
                         this._buildGridsFromPanelsMetadata();
                     }
                 });
+
+                this.once('render', function() {
+                    app.analytics.trackPageView('/dashlet/' + this.name);
+                });
             },
             /**
              * Build grid panel metadata based on panel span size
@@ -135,7 +139,7 @@
             /**
              * Default max-height is 466 and placed in css.
              *
-             * @returns {Number/False/Undefined}
+             * @return {number|boolean|undefined}
              */
             calculateMaxHeight: function() {
                 if (!this.triggerBefore('calculateMaxHeight')) {

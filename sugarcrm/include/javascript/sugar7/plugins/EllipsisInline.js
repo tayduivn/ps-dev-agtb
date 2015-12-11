@@ -61,7 +61,9 @@
              * Destroy all tooltips that have been created.
              */
             destroyEllipsisTooltips: function() {
-                app.utils.tooltip.destroy(this._$ellipsisTooltips);
+                if (this._$ellipsisTooltips) {
+                    app.utils.tooltip.destroy(this._$ellipsisTooltips);
+                }
                 this._$ellipsisTooltips = null;
             },
 

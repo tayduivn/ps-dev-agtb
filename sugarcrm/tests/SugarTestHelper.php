@@ -280,12 +280,20 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 
     public function runBare()
     {
+
         // Prevent the activity stream from creating messages.
         Activity::disable();
         if (SHADOW_CHECK && empty($this->file_map)) {
             $this->file_map = static::getFiles();
         }
+        //track the original max execution time limit
+        $originalMaxTime = ini_get('max_execution_time');
+
         parent::runBare();
+
+        //sometimes individual tests change the max time execution limit, reset back to original
+        set_time_limit($originalMaxTime);
+
         if (SHADOW_CHECK) {
             $oldfiles = $this->file_map;
             $this->file_map = static::getFiles();
@@ -813,6 +821,7 @@ class SugarTestHelper
      * @static
      * @param array $params Array containing module name and field vardefs
      *
+     * @return TemplateField
      * @throws SugarTestHelperException
      */
     protected static function setUp_custom_field(array $params)
@@ -848,7 +857,7 @@ class SugarTestHelper
 
         $dynamicField = new DynamicField($module);
         $dynamicField->setup($bean);
-        $dynamicField->addFieldObject($field);
+        $field->save($dynamicField);
 
         $mi = new ModuleInstaller();
         $mi->silent = true;
@@ -867,6 +876,8 @@ class SugarTestHelper
                 };
             }
         }
+
+        return $field;
     }
 
     /**
@@ -882,7 +893,7 @@ class SugarTestHelper
         foreach (self::$customFields as $data) {
             list($dynamicField, $field) = $data;
             $vardefs = $field->get_field_def();
-            $dynamicField->deleteField($field);
+            $field->delete($dynamicField);
             $mi->rebuild_vardefs();
             if (!empty($vardefs['formula'])) {
                 $bean = $dynamicField->bean;

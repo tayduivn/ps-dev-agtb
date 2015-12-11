@@ -114,7 +114,7 @@ abstract class SugarApi {
                 }
             }
             // htmldecode screws up bools..returns '1' for true
-            elseif(!is_bool($value) && (!empty($data) && !empty($value))) {
+            elseif (is_string($value) && !empty($data) && !empty($value)) {
                 // USE ENT_QUOTES TO REMOVE BOTH SINGLE AND DOUBLE QUOTES, WITHOUT THIS IT WILL NOT CONVERT THEM
                 $data[$key] = html_entity_decode($value, ENT_COMPAT|ENT_QUOTES, 'UTF-8');
             }
