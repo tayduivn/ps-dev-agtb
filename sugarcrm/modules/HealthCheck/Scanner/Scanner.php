@@ -1064,7 +1064,8 @@ class HealthCheckScanner
         if(!empty($this->sessionUsages)) {
             $filesWithSession = '';
             foreach ($this->sessionUsages as $file => $func) {
-                $filesWithSession .= "'$file' using \$_SESSION with array function '$func'. " . PHP_EOL;
+                $arrayFunctions = implode(', ', $func);
+                $filesWithSession .= "'$file' using \$_SESSION with array function '$arrayFunctions'. " . PHP_EOL;
             }
             $this->updateStatus("arraySessionUsage", $filesWithSession);
         }
