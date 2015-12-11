@@ -274,6 +274,12 @@ class OracleManager extends DBManager
 
         $stmt = $suppress?@oci_parse($db, $sql):oci_parse($db, $sql);
 		if(!$this->checkError("$msg Parse Failed: $sql", $dieOnError)) {
+
+            $freeStmt = false;
+            if (oci_statement_type($stmt) != 'SELECT' && oci_statement_type($stmt) != 'UPDATE'){ // getAffectedRowCount using UPDATE returned cursor
+                // free statement if not SELECT or UPDATE
+                $freeStmt = true;
+            }
 			$exec_result = $suppress?@oci_execute($stmt):oci_execute($stmt);
 	        $this->query_time = microtime(true) - $this->query_time;
 	        $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
@@ -281,15 +287,30 @@ class OracleManager extends DBManager
 			if($exec_result) {
 			    $result = $stmt;
 			}
+
+            if ($freeStmt){
+                $this->freeDbResult($stmt);
+                if($exec_result) {
+                    $result = true;
+                }
+            }
+
+            $this->lastQuery = $sql;
+            if($keepResult) {
+                if (!$freeStmt) {
+                    $this->lastResult = $result;
+                }else{
+                    $this->lastResult = null;
+                }
+            }
+
+            if($this->checkError($msg.' Query Failed: ' . $sql, $dieOnError, $stmt)) {
+                // free statement
+                $this->freeDbResult($stmt);
+                return false;
+            }
 		}
 
-		$this->lastQuery = $sql;
-		if($keepResult)
-		    $this->lastResult = $result;
-
-		if($this->checkError($msg.' Query Failed: ' . $sql, $dieOnError, $stmt)) {
-		    return false;
-		}
         return $result;
     }
 
@@ -440,14 +461,19 @@ class OracleManager extends DBManager
     protected function ociFetchRow($result)
     {
         $row = oci_fetch_array($result, OCI_ASSOC|OCI_RETURN_NULLS|OCI_RETURN_LOBS);
-        if ( !$row )
+        if (!$row) {
+            // end of cursor, free this cursor
+            $this->freeDbResult($result);
             return false;
+        }
         if (!$this->checkError("Fetch error", false, $result)) {
             // make the column keys as lower case
             $row = array_change_key_case($row, CASE_LOWER);
         }
-        else
+        else {
+            $this->freeDbResult($result);
             return false;
+        }
 
         return $row;
     }
@@ -684,7 +710,7 @@ class OracleManager extends DBManager
         foreach ($lobs as $lob){
             $lob->free();
         }
-        oci_free_statement($stmt);
+        $this->freeDbResult($stmt);
 
         return $result;
     }
@@ -801,8 +827,9 @@ class OracleManager extends DBManager
      */
     protected function freeDbResult($dbResult)
     {
-        if(!empty($dbResult))
+        if(is_resource($dbResult)) {
             oci_free_statement($dbResult);
+        }
     }
 
 	protected $date_formats = array(
@@ -1297,6 +1324,7 @@ class OracleManager extends DBManager
                 WHERE INDEX_NAME = '$name'
                     OR INDEX_NAME = '".strtoupper($name)."'");
 		$row = $this->fetchByAssoc($result);
+        $this->freeDbResult($result);
 		return ($row['cnt'] > 1) ? $name . (intval($row['cnt']) + 1) : $name;
     }
 
@@ -1365,6 +1393,8 @@ class OracleManager extends DBManager
     	$sequence_name = $this->_getSequenceName($table, $field_name, true);
     	$result = $this->query("SELECT {$sequence_name}.NEXTVAL currval FROM DUAL");
     	$row = $this->fetchByAssoc($result);
+        // free statement
+        $this->freeDbResult($result);
     	$current = $row['currval'];
     	$change = $start_value - $current - 1;
     	$this->query("ALTER SEQUENCE {$sequence_name} INCREMENT BY $change");
@@ -1769,6 +1799,8 @@ LEFT JOIN user_constraints uc
             return false;
         }
         if(@oci_statement_type($stmt) != "SELECT") {
+            // free statement
+            $this->freeDbResult($stmt);
             return false;
         }
         $valid = false;
@@ -1781,6 +1813,9 @@ LEFT JOIN user_constraints uc
                 $valid = true;
             }
         }
+
+        // free stmt
+        $this->freeDbResult($stmt);
         // just in case, rollback all changes
         @oci_rollback($this->database);
         return $valid;
@@ -1850,12 +1885,18 @@ LEFT JOIN user_constraints uc
             return 'Cannot parse statement';
         }
         if(oci_statement_type($stmt) != "SELECT") {
+            // free statement
+            $this->freeDbResult($stmt);
             return 'Wrong statement type';
         }
         // try query, but don't generate result set and do not commit
         $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_DEFAULT);
         // just in case, rollback all changes
         $error = $this->lastError();
+
+        // free the statement
+        $this->freeDbResult($stmt);
+
         oci_rollback($this->database);
         if(empty($res)) {
             return 'Query failed to execute';

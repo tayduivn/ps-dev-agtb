@@ -1791,6 +1791,9 @@ protected function checkQuery($sql, $object_name = false)
 			// We have a count query.  Run it and get the results.
 			$result = $this->query($count_query, true, "Error running count query for $this->object_name List: ");
 			$assoc = $this->fetchByAssoc($result);
+
+			// free resource
+			$this->freeDbResult($result);
 			if(!empty($assoc['c']))
 			{
 				$rows_found = $assoc['c'];
@@ -2151,6 +2154,8 @@ protected function checkQuery($sql, $object_name = false)
 		$this->checkError($msg.' Get One Failed:' . $sql, $dieOnError);
 		if (!$queryresult) return false;
 		$row = $this->fetchByAssoc($queryresult);
+
+		$this->freeDbResult($queryresult);
 		if(!empty($row)) {
 			return array_shift($row);
 		}
