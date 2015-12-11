@@ -29,7 +29,6 @@
                 <input title="{$APP.LBL_SAVE_BUTTON_TITLE}"
                        accessKey="{$APP.LBL_SAVE_BUTTON_KEY}"
                        class="button primary"
-                       onclick="SUGAR.saveWebSocketsConfiguration(event);"
                        type="submit"
                        name="save"
                        value="{$APP.LBL_SAVE_BUTTON_LABEL}"/>
@@ -67,7 +66,6 @@
                 <input title="{$APP.LBL_SAVE_BUTTON_TITLE}"
                        accessKey="{$APP.LBL_SAVE_BUTTON_KEY}"
                        class="button primary"
-                       onclick="SUGAR.saveWebSocketsConfiguration(event);"
                        type="submit"
                        name="save"
                        value="{$APP.LBL_SAVE_BUTTON_LABEL}"/>
