@@ -92,16 +92,18 @@ class Handler
 
     /**
      * Run import action
-     * @param \CalDavEvent $calDavBean
+     * @param array $importData
      * @return bool
      */
 
-    public function import(\CalDavEvent $calDavBean)
+    public function import($importData)
     {
+        list($beanData, $changedFields, $invites) = $importData;
+        $calDavBean = \BeanFactory::getBean('CalDavEvents', $beanData[0]);
         $bean = $this->getSugarBean($calDavBean);
         $adapterFactory = $this->getAdapterFactory();
         if ($adapter = $adapterFactory->getAdapter($bean->module_name)) {
-            if ($adapter->import($bean, $calDavBean)) {
+            if ($adapter->import($importData, $calDavBean)) {
                 $bean->save();
             }
         }

@@ -24,13 +24,13 @@ use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
 class Handler
 {
     /**
-     * @param \CalDavEvent $bean
-     * @param $changedFields
-     * @param $invites
+     * @param \CalDavEventCollection $bean
+     * @param string $calDavData
      */
-    public function import(\CalDavEvent $bean, $changedFields, $invites)
+    public function import(\CalDavEventCollection $bean, $calDavData)
     {
-
+        $diff = $bean->getDiffStructure($calDavData);
+        $this->getManager()->calDavImport($diff);
     }
 
     /**

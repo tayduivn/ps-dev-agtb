@@ -39,15 +39,12 @@ abstract class Base implements RunnableInterface
     protected $saveCounter;
 
     /**
-     * @param array $fetchedRow
-     * @param string $moduleName
-     * @param int $saveCounter
+     * @param array $processedData
      */
-    public function __construct(array $fetchedRow, $moduleName, $saveCounter)
+    public function __construct(array $processedData)
     {
-        $this->fetchedRow = $fetchedRow;
-        $this->moduleName = $moduleName;
-        $this->saveCounter = $saveCounter;
+        list($beanData, $changedFields, $imvites) = $processedData;
+        $this->moduleName = $beanData[0];
     }
 
     /**

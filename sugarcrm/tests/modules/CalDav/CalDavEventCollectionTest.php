@@ -1497,4 +1497,125 @@ END:VCALENDAR',
         $syncBean = $event->getSynchronizationObject();
         $this->assertEquals($event->id, $syncBean->event_id);
     }
+
+    /**
+     * @dataProvider prepareForImportProvider
+     * @covers \CalDavEventCollection::getDiffStructure
+     * @param string $data
+     */
+    public function testGetDiffStructure($data, $changedFieldsExpected, $expectedEmails, $calDavDataBefore)
+    {
+        $sugarUser = SugarTestUserUtilities::createAnonymousUser();
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+        $event = SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => $data,
+            'calendarid' => $calendarID,
+            'eventURI' => 'test'
+        ));
+        $participants = $event->getParent()->getParticipants();
+        $participants[0]->setBeanName('Contacts');
+        $participants[1]->setBeanName('Contacts');
+        $participants[2]->setBeanName('Leads');
+
+        $importData = $event->getDiffStructure('');
+        list($beanData, $changeFields, $invites) = $importData;
+        $this->assertEquals($changedFieldsExpected, $changeFields);
+        $this->assertCount(2, $invites['added']['Contacts']);
+        $this->assertCount(1, $invites['added']['Leads']);
+        foreach ($invites['added']['Contacts'] as $invite) {
+            /**$var Participant $invite*/
+            $this->assertContains($invite[3], $expectedEmails);
+        }
+        foreach ($invites['added']['Leads'] as $invite) {
+            /**$var Participant $invite*/
+            $this->assertContains($invite[3], $expectedEmails);
+        }
+
+        $event->dataChanges = array(
+            'title' => array(
+                'before' => $changedFieldsExpected['title'][0],
+                'after' => 'New title'
+            ),
+            'description' => array(
+                'before' => $changedFieldsExpected['description'][0],
+                'after' => 'Description updated'
+            )
+        );
+        $event->getParent()->setTitle('New title');
+        $event->getParent()->setDescription('Description updated');
+        $event->getParent()->deleteParticipant('test20@test.loc');
+        $event->calendar_data = $calDavDataBefore;
+        $importData = $event->getDiffStructure($data);
+        list($beanData, $changeFields, $invites) = $importData;
+        $expectedChanged = array(
+            'title' => array($event->dataChanges['title']['after'], $event->dataChanges['title']['before']),
+            'description' => array(
+                $event->dataChanges['description']['after'],
+                $event->dataChanges['description']['before']
+            )
+        );
+        $this->assertEquals($expectedChanged, $changeFields);
+        $this->assertCount(1, $invites['deleted']);
+        $this->assertFalse(isset($invites['changed']));
+    }
+
+    /**
+     * @return array
+     */
+    public function prepareForImportProvider()
+    {
+        return array(
+            array('BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Sabre//Sabre VObject 3.4.7//EN
+CALSCALE:GREGORIAN
+BEGIN:VTIMEZONE
+TZID:Europe/Moscow
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:8cd87d37-af6c-c5cd-6494-5666b2b0f22d
+DTSTAMP:20151208T133351Z
+SUMMARY:Test Meeting
+DESCRIPTION:Meeting description
+DTSTART:20151118T183000Z
+DURATION:PT1H
+ATTENDEE;PARTSTAT=ACCEPTED;CN=Lead One:mailto:test10@test.loc
+ATTENDEE;PARTSTAT=ACCEPTED;CN=Lead One:mailto:test20@test.loc
+ATTENDEE;PARTSTAT=ACCEPTED;CN=User Foo:mailto:test30@test.loc
+END:VEVENT
+END:VCALENDAR',
+                    'changedFields' => array(
+                        'title' => array('Test Meeting'),
+                        'description' => array('Meeting description'),
+                        'location' => array(''),
+                        'status' => array(''),
+                        'date_start' => array(new SugarDateTime('2015-11-18 18:30:00', new DateTimeZone('UTC'))),
+                        'date_end' => array(new SugarDateTime('2015-11-18 19:30:00', new DateTimeZone('UTC'))),
+                    ),
+                    'expectedEmails' => array(
+                        'test10@test.loc', 'test20@test.loc', 'test30@test.loc'
+                    ),
+                    'changedCalendarData' => 'BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Sabre//Sabre VObject 3.4.7//EN
+CALSCALE:GREGORIAN
+BEGIN:VTIMEZONE
+TZID:Europe/Moscow
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:8cd87d37-af6c-c5cd-6494-5666b2b0f22d
+DTSTAMP:20151208T133351Z
+SUMMARY:New title
+DESCRIPTION:Description updated
+DTSTART:20151118T183000Z
+DURATION:PT1H
+ATTENDEE;PARTSTAT=accept;CN=Lead One:mailto:test10@test.loc
+ATTENDEE;PARTSTAT=accept;CN=Lead One:mailto:test40@test.loc
+ATTENDEE;PARTSTAT=accept;CN=User Foo:mailto:test30@test.loc
+END:VEVENT
+END:VCALENDAR',
+            ),
+        );
+
+    }
 }

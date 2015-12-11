@@ -18,6 +18,7 @@ use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
 use Sugarcrm\Sugarcrm\Dav\Cal\Structures;
 use Sabre\VObject\Recur\EventIterator;
 use Sugarcrm\Sugarcrm\Dav\Base\Principal;
+use Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper;
 
 /**
  * Class CalDavEventCollection
@@ -1099,5 +1100,102 @@ class CalDavEventCollection extends SugarBean
 
             return $syncBean;
         }
+    }
+
+    /**
+     * @param string $data
+     * @return array
+     */
+    public function getDiffStructure($data)
+    {
+        $changedFields = array();
+        $invites = array();
+        $parentEvent = $this->getParent();
+        $participantHelper = new ParticipantsHelper();
+        if ($data) {
+            $oldCalendar = new static();
+            $oldCalendar->setData($data);
+            $oldCalendar->participantLinks = $this->participantLinks;
+            $oldCalendar->sync();
+            $oldParent = $oldCalendar->getParent();
+            if ($parentEvent->getTitle() != $oldParent->getTitle()) {
+                $changedFields['title'] = array($parentEvent->getTitle(), $oldParent->getTitle());
+            }
+            if ($parentEvent->getDescription() != $oldParent->getDescription()) {
+                $changedFields['description'] = array($parentEvent->getDescription(), $oldParent->getDescription());
+            }
+            if ($parentEvent->getLocation() != $oldParent->getLocation()) {
+                $changedFields['location'] = array($parentEvent->getLocation(), $oldParent->getLocation());
+            }
+            if ($parentEvent->getStatus() != $oldParent->getStatus()) {
+                $changedFields['status'] = array($parentEvent->getStatus(), $oldParent->getStatus());
+            }
+            if ($parentEvent->getStartDate() != $oldParent->getStartDate()) {
+                $changedFields['date_start'] = array($parentEvent->getStartDate(), $oldParent->getStartDate());
+            }
+            if ($parentEvent->getEndDate() != $oldParent->getEndDate()) {
+                $changedFields['date_end'] = array($parentEvent->getEndDate(), $oldParent->getEndDate());
+            }
+            $currentParticipants = $parentEvent->getParticipants();
+            $participantsBefore = $oldParent->getParticipants();
+            foreach ($currentParticipants as $participant) {
+                /**@var Structures\Participant $participant*/
+                $fountIndex = $oldParent->findParticipantsByEmail($participant->getEmail());
+                $participantType = $participant->getBeanName();
+                if ($fountIndex != -1) {
+                    $participantBefore = $participantsBefore[$fountIndex];
+                    if ($participantBefore->getEmail() != $participant->getEmail() ||
+                        $participantBefore->getStatus() != $participant->getStatus() ||
+                        $participantBefore->getDisplayName() != $participant->getDisplayName()
+                    ) {
+                        $participant->getType();
+                        $participant->getBeanName();
+                        if (!isset($invites['changed'][$participantType])) {
+                            $invites['changed'][$participantType] = array();
+                        }
+                        $invites['changed'][$participantType][] = $participantHelper->participantToInvite($participant);
+                    }
+                } else {
+                    if (!isset($invites['added'][$participantType])) {
+                        $invites['added'][$participantType] = array();
+                    }
+                    $invites['added'][$participantType][] = $participantHelper->participantToInvite($participant);
+                }
+            }
+            foreach ($participantsBefore as $participant) {
+                /**@var Structures\Participant $participant*/
+                if ($parentEvent->findParticipantsByEmail($participant->getEmail()) == -1) {
+                    $participantType = $participant->getBeanName();
+                    if (!isset($invites['deleted'][$participantType])) {
+                        $invites['deleted'][$participantType] = array();
+                    }
+                    $invites['deleted'][$participantType][] = $participant;
+                }
+            }
+        } else {
+            $changedFields['title'] = array($parentEvent->getTitle());
+            $changedFields['description'] = array($parentEvent->getDescription());
+            $changedFields['location'] = array($parentEvent->getLocation());
+            $changedFields['status'] = array($parentEvent->getStatus());
+            $changedFields['date_start'] = array($parentEvent->getStartDate());
+            $changedFields['date_end'] = array($parentEvent->getEndDate());
+            $participants = $parentEvent->getParticipants();
+            foreach ($participants as $participant) {
+                $participantType = $participant->getBeanName();
+                if (!isset($invites['added'][$participantType])) {
+                    $invites['added'][$participantType] = array();
+                }
+                $invites['added'][$participantType][] = $participantHelper->participantToInvite($participant);
+            }
+        }
+
+        $beanData = array(
+            $this->id,
+            $this->getAllChildrenRecurrenceIds(),
+            $this->isUpdate(),
+        );
+
+        $importData = array($beanData, $changedFields, $invites);
+        return $importData;
     }
 }

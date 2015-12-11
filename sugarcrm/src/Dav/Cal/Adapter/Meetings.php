@@ -92,12 +92,72 @@ class Meetings extends CalDavAbstractAdapter implements AdapterInterface
 
     /**
      * set meeting bean property
-     * @param \SugarBean $sugarBean
-     * @param \CalDavEvent $calDavBean
+     * @param array $importData
+     * @param \SugarBean $meetingBean
      * @return bool
      */
-    public function import(\SugarBean $sugarBean, \CalDavEvent $calDavBean)
+    public function import(array $importData, \SugarBean $meetingBean)
     {
+        /**@var \Meeting $meetingBean*/
+        $isBeanChanged = false;
+        list($beanData, $changedFields, $invites) = $importData;
+        if (isset($changedFields['title'])) {
+            $this->setBeanName($changedFields['title'], $meetingBean);
+            $isBeanChanged = true;
+        }
+        if (isset($changedFields['description'])) {
+            $this->setBeanDescription($changedFields['description'], $meetingBean);
+            $isBeanChanged = true;
+        }
+        if (isset($changedFields['location'])) {
+            $this->setBeanLocation($changedFields['location'], $meetingBean);
+            $isBeanChanged = true;
+        }
+        if (isset($changedFields['status'])) {
+            $this->setBeanStatus($changedFields['status'], $meetingBean);
+            $isBeanChanged = true;
+        }
+        if (isset($changedFields['date_start'])) {
+            $this->setBeanStartDate($changedFields['date_start'], $meetingBean);
+            $isBeanChanged = true;
+        }
+        if (isset($changedFields['date_end'])) {
+            $this->setBeanEndDate($changedFields['date_end'], $meetingBean);
+            $isBeanChanged = true;
+        }
 
+        if (isset($invites['added'])) {
+            if (!$meetingBean->id) {
+                $meetingBean->id = create_guid();
+                $meetingBean->new_with_id = true;
+            }
+            $isBeanChanged = true;
+        }
+        $contactsInvites = $this->getChangedInviteesByModule($invites, 'Contacts');
+        if ($contactsInvites) {
+            $this->setContactsToBean($contactsInvites, $meetingBean);
+            $isBeanChanged = true;
+        }
+
+        $leadsInvites = $this->getChangedInviteesByModule($invites, 'Leads');
+        if ($leadsInvites) {
+            $this->setLeadsToBean($leadsInvites, $meetingBean);
+            $isBeanChanged = true;
+        }
+
+        $usersInvites = $this->getChangedInviteesByModule($invites, 'Users');
+        if ($usersInvites) {
+            $this->setUsersToBean($usersInvites, $meetingBean);
+            $isBeanChanged = true;
+        }
+
+        $addressesInvites = $this->getChangedInviteesByModule($invites, 'Addresses');
+        if ($addressesInvites) {
+            $this->setAddressesToBean($addressesInvites, $meetingBean);
+            $isBeanChanged = true;
+        }
+
+        $this->setInvitesStatuses($invites, $meetingBean);
+        return $isBeanChanged;
     }
 }
