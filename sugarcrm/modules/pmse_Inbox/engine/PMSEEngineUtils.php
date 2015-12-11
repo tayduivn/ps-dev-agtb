@@ -71,6 +71,7 @@ class PMSEEngineUtils
         // Change field action... this used to be the same as Add Related Record
         // but we needed different things from this
         'CF' => array(
+            'dnb_principal_id',
             'duns_num',
             'kbdocument_body',
             'viewcount',
