@@ -195,14 +195,15 @@ class SugarController
 	 *
 	 */
 	public function setup($module = ''){
-		if(empty($module) && !empty($_REQUEST['module']))
-			$module = $_REQUEST['module'];
-		//set the module
+		if (empty($module)) {
+			$module = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
+		}
 		if(!empty($module))
 			$this->setModule($module);
 
-		if(!empty($_REQUEST['target_module']) && $_REQUEST['target_module'] != 'undefined') {
-			$this->target_module = $_REQUEST['target_module'];
+		$target_module = $this->request->getValidInputRequest('target_module', 'Assert\Mvc\ModuleName');
+		if(!empty($target_module) && $target_module != 'undefined') {
+			$this->target_module = $target_module;
 		}
 		//set properties on the controller from the $_REQUEST
 		$this->loadPropertiesFromRequest();
