@@ -859,16 +859,15 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
-     * @inheritdoc
+     * Populate bean fields according calendar_data or vCalendar
      */
-    public function save($check_notify = false)
+    public function sync()
     {
-        $result = null;
         $isUpdate = $this->isUpdate();
         if ($this->vCalendar) {
             $this->calendar_data = $this->getVCalendar()->serialize();
         }
-        $currentETag = isset($this->fetched_row['etag']) ? $this->fetched_row['etag'] : null;
+
         $this->calculateTimeBoundaries();
         $this->calculateSize();
         $this->calculateETag();
@@ -882,6 +881,16 @@ class CalDavEventCollection extends SugarBean
         if (!$isUpdate) {
             $this->setCalDavParent();
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function save($check_notify = false)
+    {
+        $isUpdate = $this->isUpdate();
+        $currentETag = isset($this->fetched_row['etag']) ? $this->fetched_row['etag'] : null;
+        $this->sync();
 
         $result = parent::save($check_notify);
 

@@ -76,6 +76,35 @@ END:VCALENDAR',
         );
     }
 
+    public function syncDataProvider()
+    {
+        return array(
+            array(
+                'content' => 'BEGIN:VCALENDAR
+BEGIN:VEVENT
+uid:test
+DTSTART;VALUE=DATE:20160101
+END:VEVENT
+END:VCALENDAR',
+                'size' => 90,
+                'ETag' => 'c3d48c3c99615a99a764be4fc95c9ca9',
+                'type' => 'VEVENT',
+                'firstoccurence' => strtotime('20160101Z'),
+                'lastoccurence' => strtotime('20160101Z') + 86400,
+                'uid' => 'test',
+            ),
+            array(
+                'content' => '',
+                'size' => 0,
+                'ETag' => 'd41d8cd98f00b204e9800998ecf8427e',
+                'type' => null,
+                'firstoccurence' => null,
+                'lastoccurence' => null,
+                'uid' => null,
+            ),
+        );
+    }
+
     public function sizeAndETagDataProvider()
     {
         return array(
@@ -759,6 +788,48 @@ END:VCALENDAR',
             BeanFactory::getBean('CalDavCalendars', $calendarID, array('use_cache' => false, 'encode' => false));
 
         $this->assertEquals(2, $calendar->synctoken);
+    }
+
+    /**
+     * Checking the calculation of params while bean saving
+     * @param string $data
+     * @param integer $expectedSize
+     * @param string $expectedETag
+     * @param string $expectedType
+     * @param int $expectedFirstOccurrence
+     * @param int $expectedLastOccurrence
+     * @param string $expectedUID
+     *
+     * @covers       \CalDavEventCollection::sync
+     *
+     * @dataProvider syncDataProvider
+     */
+    public function testSync(
+        $data,
+        $expectedSize,
+        $expectedETag,
+        $expectedType,
+        $expectedFirstOccurrence,
+        $expectedLastOccurrence,
+        $expectedUID
+    ) {
+        $beanMock = $this->getMockBuilder('CalDavEventCollection')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('setCalDavParent'))
+                         ->getMock();
+
+        $beanMock->expects($this->once())->method('setCalDavParent');
+
+        $beanMock->setData($data);
+        $beanMock->sync();
+
+        $this->assertEquals($expectedSize, $beanMock->data_size);
+        $this->assertEquals($expectedETag, $beanMock->etag);
+        $this->assertEquals($expectedType, $beanMock->component_type);
+        $this->assertEquals($expectedFirstOccurrence, $beanMock->first_occurence);
+        $this->assertEquals($expectedLastOccurrence, $beanMock->last_occurence);
+        $this->assertEquals($expectedUID, $beanMock->event_uid);
+        $this->assertEquals($data, $beanMock->calendar_data);
     }
 
     /**
