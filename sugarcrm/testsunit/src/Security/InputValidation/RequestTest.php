@@ -17,8 +17,8 @@ use Sugarcrm\Sugarcrm\Security\Validator\ConstraintBuilder;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Superglobals;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Psr\Log\LoggerInterface;
 
 /**
  *
@@ -243,6 +243,32 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                     '40a30045-2ab7',
                     '9c96-766d-563a3bb0d7ef',
                 ),
+            ),
+        );
+    }
+
+    /**
+     * @covers ::getValidInput
+     * @dataProvider providerTestGetInvalidInput
+     * @expectedException \Sugarcrm\Sugarcrm\Security\InputValidation\Exception\ViolationException
+     */
+    public function testGetInvalidInput($data, $constraint)
+    {
+        $superglobals = new Superglobals(array('data' => $data), array(), $this->logger);
+        $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
+        $request->getValidInput(Superglobals::GET, 'data', $constraint);
+    }
+
+    public function providerTestGetInvalidInput()
+    {
+        return array(
+            array(
+                'xxx' . chr(0),
+                null
+            ),
+            array(
+                array('xxx' . chr(0)),
+                null
             ),
         );
     }
