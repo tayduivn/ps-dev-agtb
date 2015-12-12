@@ -85,26 +85,9 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
                             $newValue = '';
                             switch ($value->type) {
                                 case 'Date':
-                                    $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
-                                    $date = $timedate->fromIsoDate($finishDate);
-                                    if (empty($date)) {
-                                        $date = TimeDate::getInstance()->fromIso($finishDate);
-                                    }
-                                    if (!($date instanceof SugarDateTime)) {
-                                        throw new Exception("AddRelatedRecord: Cannot convert '{$finishDate}' to SugarDateTime.", 1);
-                                    }
-                                    $newValue = $date->asDbDate();
-                                    break;
                                 case 'Datetime':
                                     $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
-                                    $date = $timedate->fromIso($finishDate);
-                                    if (empty($date)) {
-                                        $date = TimeDate::getInstance()->fromString($finishDate);
-                                    }
-                                    if (!($date instanceof SugarDateTime)) {
-                                        throw new Exception("AddRelatedRecord: Cannot convert '{$finishDate}' to SugarDateTime.", 1);
-                                    }
-                                    $newValue = $date->asDb();
+                                    $newValue = $this->getDBDate($value, $finishDate);
                                     break;
                                 case 'Integer':
                                 case 'Float':
