@@ -11,6 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 /**
  * This file is used to control the authentication process.
  * It will call on the user authenticate and controll redirection
@@ -196,7 +198,7 @@ class SugarAuthenticate{
 		if (isset ($reset_language_on_default_user) && $reset_language_on_default_user && $GLOBALS['current_user']->user_name == $sugar_config['default_user_name']) {
 			$authenticated_user_language = $sugar_config['default_language'];
 		} else {
-			$authenticated_user_language = isset($_REQUEST['login_language']) ? $_REQUEST['login_language'] : (isset ($_REQUEST['ck_login_language_20']) ? $_REQUEST['ck_login_language_20'] : $sugar_config['default_language']);
+			$authenticated_user_language = InputValidation::getService()->getValidInputRequest('login_language', 'Assert\Language', $sugar_config['default_language']);
 		}
 
 		$_SESSION['authenticated_user_language'] = $authenticated_user_language;
