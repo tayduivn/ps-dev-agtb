@@ -60,10 +60,26 @@ class FileValidatorTest extends AbstractConstraintValidatorTest
 
     /**
      * @covers ::validate
+     * @expectedException \Symfony\Component\Validator\Exception\ConstraintDefinitionException
+     */
+    public function testExpectsBaseDirsToBeSet()
+    {
+        $constraint = new File();
+        $constraint->baseDirs = array();
+        $this->validator->validate('xxx', $constraint);
+    }
+
+    /**
+     * @covers ::validate
      * @dataProvider providerTestValidValues
      */
     public function testValidValues($value, array $baseDirs, $expected)
     {
+        // skip test if given file does not exist
+        if (!file_exists($value)) {
+            $this->markTestSkipped("File $value does not exist on this system");
+        }
+
         $constraint = new File(array(
             'baseDirs' => $baseDirs,
         ));
@@ -76,12 +92,7 @@ class FileValidatorTest extends AbstractConstraintValidatorTest
     {
         return array(
             array(
-                dirname(__FILE__) . '/../../../../../modules/Accounts/vardefs.php',
-                array(SUGAR_BASE_DIR),
                 SUGAR_BASE_DIR . '/modules/Accounts/vardefs.php',
-            ),
-            array(
-                dirname(__FILE__) . '/../../../../../modules/../modules/Accounts/vardefs.php',
                 array(SUGAR_BASE_DIR),
                 SUGAR_BASE_DIR . '/modules/Accounts/vardefs.php',
             ),
