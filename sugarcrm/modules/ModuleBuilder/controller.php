@@ -287,7 +287,11 @@ class ModuleBuilderController extends SugarController
             mkdir_recursive($uploadDir);
             rename($info ['zip'], $uploadDir . $info ['name'] . '.zip');
             copy($info ['manifest'], $uploadDir . $info ['name'] . '-manifest.php');
-            $_REQUEST ['install_file'] = $uploadDir . $info ['name'] . '.zip';
+            $installFile = $uploadDir . $info ['name'] . '.zip';
+
+            // FIXME: This *may* be needed somewhere else, leaving it for now
+            $_REQUEST ['install_file'] = $installFile;
+
             $GLOBALS ['mi_remove_tables'] = false;
             $pm->performUninstall($load);
             //#23177 , js cache clear
@@ -297,7 +301,7 @@ class ModuleBuilderController extends SugarController
             sugar_cache_clear($cache_key);
             sugar_cache_reset();
             //clear end
-            $pm->performInstall($this->request->getValidInputRequest('install_file'), true);
+            $pm->performInstall($installFile, true);
 
             //clear the unified_search_module.php file
             UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
@@ -1065,7 +1069,7 @@ class ModuleBuilderController extends SugarController
 
     public function action_searchViewSave()
     {
-        $packageName = (isset ($_REQUEST ['view_package'])) ? $_REQUEST ['view_package'] : null;
+        $packageName = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
 
         // Bug 56789 - Set the client from the view to ensure the proper viewdef file
         $client = MetaDataFiles::getClientByView($_REQUEST['view']);

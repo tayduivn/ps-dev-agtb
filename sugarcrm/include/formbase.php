@@ -474,7 +474,7 @@ function add_to_prospect_list($query_panel,$parent_module,$parent_type,$parent_i
 
 
     if (!class_exists($parent_type)) {
-        require_once('modules/'.cleanDirName($parent_module).'/'.cleanDirName($parent_type).'.php');
+        SugarAutoLoader::requireFileOnce('modules/'.$parent_module.'/'.$parent_type.'.php');
     }
     $focus = new $parent_type();
     $focus->retrieve($parent_id);
