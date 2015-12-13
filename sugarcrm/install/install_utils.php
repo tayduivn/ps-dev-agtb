@@ -87,9 +87,11 @@ function commitLanguagePack($uninstall=false) {
     global $base_upgrade_dir;
     global $base_tmp_upgrade_dir;
 
+    $request = InputValidation::getService();
+
     $errors         = array();
-    $manifest       = urldecode($_REQUEST['manifest']);
-    $zipFile        = urldecode($_REQUEST['zipFile']);
+    $manifest       = urldecode($request->getValidInputRequest('manifest'));
+    $zipFile        = urldecode($request->getValidInputRequest('zipFile'));
     $version        = "";
     $show_files     = true;
     $unzip_dir      = mk_temp_dir( $base_tmp_upgrade_dir );

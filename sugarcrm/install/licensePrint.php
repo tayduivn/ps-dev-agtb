@@ -15,10 +15,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Description:  printable license page.
  ********************************************************************************/
 
-clean_incoming_data();
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-require_once("install/language/{$_GET['language']}.lang.php");
-require_once("install/install_utils.php");
+$language = InputValidation::getService()->getValidInputGet('language', 'Assert\Language');
+
+require_once "install/language/{$language}.lang.php";
+require_once "install/install_utils.php";
 
 $license_file = getLicenseContents("LICENSE");
 $langHeader = get_language_header();
@@ -61,4 +63,3 @@ $out =<<<EOQ
 </html>
 EOQ;
 echo $out;
-?>
