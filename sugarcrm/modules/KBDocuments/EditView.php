@@ -11,6 +11,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 require_once('vendor/ytree/Tree.php');
 require_once('vendor/ytree/Node.php');
 require_once('modules/KBTags/TreeData.php');
@@ -31,45 +34,56 @@ global $sugar_version, $sugar_config;
 $focus = BeanFactory::getBean('KBDocuments');
 $load_signed=false;
 
-if ((isset($_REQUEST['load_signed_id']) and !empty($_REQUEST['load_signed_id']))) {
-	$load_signed=true;
-	if (isset($_REQUEST['record'])) {
-		$focus->related_doc_id=$_REQUEST['record'];
-	}
-	if (isset($_REQUEST['selected_revision_id'])) {
-		$focus->related_doc_rev_id=$_REQUEST['selected_revision_id'];
-	}
+$request = InputValidation::getService();
+
+$record = $request->getValidInputRequest('record', 'Assert\Guid');
+$caseId = $request->getValidInputRequest('case_id', 'Assert\Guid');
+$acaseId = $request->getValidInputRequest('acase_id', 'Assert\Guid');
+$parentId = $request->getValidInputRequest('parent_id', 'Assert\Guid');
+$acaseName = $request->getValidInputRequest('acase_name');
+$emailId = $request->getValidInputRequest('email_id', 'Assert\Guid');
+$returnModule = $request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
+$returnAction = $request->getValidInputRequest('return_action');
+$returnId = $request->getValidInputRequest('return_id', 'Assert\Guid');
+
+if ((isset($_REQUEST['load_signed_id']) && !empty($_REQUEST['load_signed_id']))) {
+    $load_signed=true;
+    if (!empty($record)) {
+        $focus->related_doc_id = $record;
+    }
+    if (isset($_REQUEST['selected_revision_id'])) {
+        $focus->related_doc_rev_id = $request->getValidInputRequest('selected_revision_id', 'Assert\Guid');
+    }
 }
 
-if(!$load_signed and isset($_REQUEST['record'])) {
-   	$focus->retrieve($_REQUEST['record']);
+if (!$load_signed && !empty($record)) {
+    $focus->retrieve($record);
 }
 
 $old_id = '';
-if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true')
-{
+if (isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
     $old_id = $focus->id;
-	$focus->id = "";
-	$focus->status_id = 'Draft';
+    $focus->id = "";
+    $focus->status_id = 'Draft';
 }
 
 $xtpl=new XTemplate ('modules/KBDocuments/EditView.html');
 
 $from_case = '';
 
-if (isset($_REQUEST['acase_id']) && isset($_REQUEST['acase_name'])) {
-    $_REQUEST['case_id'] = $_REQUEST['acase_id'];
-    $_REQUEST['case_name'] = $_REQUEST['acase_name'];
+if (!empty($acaseId) && !empty($acaseName)) {
+	$_REQUEST['case_name'] = $acaseName;
+    $caseId = $acaseId;
 }
 
 if (isset($_REQUEST['parent_type']) && $_REQUEST['parent_type'] == "Cases") {
-    $_REQUEST['case_id'] = $_REQUEST['parent_id'];
+    $caseId = $parentId;
 }
 
-if(isset($_REQUEST['case_id']) && !empty($_REQUEST['case_id'])){
-	$from_case = BeanFactory::getBean('Cases', $_REQUEST['case_id']);
-	$xtpl->assign('PARENT_ID',$_REQUEST['case_id']);
-	$xtpl->assign('PARENT_TYPE','Cases');
+if (!empty($caseId)) {
+    $from_case = BeanFactory::getBean('Cases', $caseId);
+    $xtpl->assign('PARENT_ID', $caseId);
+    $xtpl->assign('PARENT_TYPE','Cases');
     $xtpl->assign("CASE_ID", $from_case->id);
     $xtpl->assign("CASE_NAME", $from_case->name);
 } elseif (!empty($focus->parent_id) && !empty($focus->case_name)) {
@@ -77,17 +91,18 @@ if(isset($_REQUEST['case_id']) && !empty($_REQUEST['case_id'])){
     $xtpl->assign("CASE_NAME", $focus->case_name);
 }
 
-if(isset($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'Cases'){
-  if(isset($_REQUEST['record']) && !empty($_REQUEST['record'])){
-	$from_case = BeanFactory::getBean('Cases', $_REQUEST['record']);
-	$xtpl->assign('PARENT_ID',$_REQUEST['record']);
-	$xtpl->assign('PARENT_TYPE','Cases');
-  }
+if ($returnModule == 'Cases') {
+    if (!empty($record)) {
+        $from_case = BeanFactory::getBean('Cases', $record);
+        $xtpl->assign('PARENT_ID', $record);
+        $xtpl->assign('PARENT_TYPE', 'Cases');
+    }
 }
-if(isset($_REQUEST['email_id']) && !empty($_REQUEST['email_id'])){
-	$from_email = BeanFactory::getBean('Emails', $_REQUEST['email_id']);
-	$xtpl->assign('PARENT_ID',$_REQUEST['email_id']);
-	$xtpl->assign('PARENT_TYPE','Emails');
+
+if (!empty($emailId)) {
+    $from_email = BeanFactory::getBean('Emails', $emailId);
+    $xtpl->assign('PARENT_ID', $emailId);
+    $xtpl->assign('PARENT_TYPE', 'Emails');
 }
 
 $params = array();
@@ -149,12 +164,18 @@ $popup_request_data_cases = array(
 );
 $xtpl->assign('encoded_case_popup_request_data', $json->encode($popup_request_data_cases));
 
-if (isset($_REQUEST['return_module'])) $xtpl->assign("RETURN_MODULE", $_REQUEST['return_module']);
-if (isset($_REQUEST['return_action'])) $xtpl->assign("RETURN_ACTION", $_REQUEST['return_action']);
-if (isset($_REQUEST['return_id'])) $xtpl->assign("RETURN_ID", $_REQUEST['return_id']);
+if (!empty($returnModule)) {
+    $xtpl->assign("RETURN_MODULE", htmlspecialchars($returnModule, ENT_QUOTES, "UTF-8"));
+}
+if (!empty($returnAction)) {
+    $xtpl->assign("RETURN_ACTION", htmlspecialchars($returnAction, ENT_QUOTES, "UTF-8"));
+}
+if (!empty($returnId)) {
+    $xtpl->assign("RETURN_ID", htmlspecialchars($returnId, ENT_QUOTES, "UTF-8"));
+}
 // handle Create $module then Cancel
-if (empty($_REQUEST['return_id'])) {
-	$xtpl->assign("RETURN_ACTION", 'index');
+if (empty($returnId)) {
+    $xtpl->assign("RETURN_ACTION", 'index');
 }
 $xtpl->assign("THEME", SugarThemeRegistry::current()->__toString());
 

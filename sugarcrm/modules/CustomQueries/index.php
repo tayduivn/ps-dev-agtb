@@ -34,21 +34,7 @@ if(!empty($_REQUEST['record'])) {
 }
 
 if(!empty($_REQUEST['repair']) && $_REQUEST['repair']=="repair"){
-	
-	if(isset($_SESSION['temp_custom_array'])){
-		
-		foreach($_SESSION['temp_custom_array'] as $field => $value){
-				
-			$focus->$field = $value;
-		}	
-	
-		unset($_SESSION['temp_custom_array']);
-	
-	//end if the session temp_custom_array is set
-	}	
-		
 	$is_edit=true;
-	
 //end if coming here from a repair
 }	
 

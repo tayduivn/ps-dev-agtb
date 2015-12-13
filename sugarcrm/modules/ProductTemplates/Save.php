@@ -15,6 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Description:  
  ********************************************************************************/
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once('modules/ProductTemplates/Formulas.php');
 refresh_price_formulas();
@@ -24,14 +25,13 @@ $focus = BeanFactory::getBean('ProductTemplates', $_REQUEST['record']);
 
 foreach($focus->column_fields as $field) {
 	if(isset($_REQUEST[$field])) {
-		$focus->$field = $_REQUEST[$field];
+		$focus->$field = InputValidation::getService()->getValidInputRequest($field);
 	}
 }
 
 foreach($focus->additional_column_fields as $field) {
 	if(isset($_REQUEST[$field])) {
-		$value = $_REQUEST[$field];
-		$focus->$field = $value;
+		$focus->$field = InputValidation::getService()->getValidInputRequest($field);
 	}
 }
 $focus = populateFromPost('', $focus);

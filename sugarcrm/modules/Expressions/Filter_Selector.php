@@ -16,7 +16,7 @@ global $dictionary;
 
 global $theme;
 
-
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once('include/utils/expression_utils.php');
 
@@ -43,7 +43,7 @@ global $selector_meta_array;
 
 	foreach($exp_object->selector_popup_fields as $field){
 		if(isset($_REQUEST[$field])){
-			$exp_object->$field = $_REQUEST[$field];
+			$exp_object->$field = InputValidation::getService()->getValidInputRequest($field);
 		}
 	}
 
