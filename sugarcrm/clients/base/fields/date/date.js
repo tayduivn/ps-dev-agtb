@@ -397,6 +397,7 @@
         this._super('_render');
 
         if (this.tplName !== 'edit' && this.tplName !== 'massupdate') {
+            this._hasDatePicker = false;
             return;
         }
 

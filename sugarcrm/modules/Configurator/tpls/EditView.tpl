@@ -34,7 +34,10 @@
 		<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" id="ConfigureSettings_save_button" type="submit"  name="save" value="  {$APP.LBL_SAVE_BUTTON_LABEL}  " >
 		<!-- &nbsp;<input title="{$MOD.LBL_SAVE_BUTTON_TITLE}"  id="ConfigureSettings_restore_button"  class="button"  type="submit" name="restore" value="  {$MOD.LBL_RESTORE_BUTTON_LABEL}  " > -->
 		&nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}" id="ConfigureSettings_cancel_button"   onclick="document.location.href='index.php?module=Administration&action=index'" class="button"  type="button" name="cancel" value="  {$APP.LBL_CANCEL_BUTTON_LABEL}  " > </td>
-	</tr>
+	<td align="right" nowrap>
+		<span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span> {$APP.NTC_REQUIRED}
+	</td>
+</tr>
 </table>
 
 
@@ -354,15 +357,15 @@
 <th align="left" scope="row" colspan="6"><h4>{$MOD.LBL_LOGGER}</h4></th>
 </tr>
 	<tr>
-		<td  scope="row" valign='middle'>{$MOD.LBL_LOGGER_FILENAME}</td>
+		<td  scope="row" valign='middle'>{$MOD.LBL_LOGGER_FILENAME} <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
 		<td   valign='middle' ><input type='text' name = 'logger_file_name'  value="{$config.logger.file.name}"></td>
-		<td  scope="row">{$MOD.LBL_LOGGER_FILE_EXTENSION}</td>
+		<td  scope="row">{$MOD.LBL_LOGGER_FILE_EXTENSION} <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
 		<td ><input name ="logger_file_ext" type="text" size="5" value="{$config.logger.file.ext}"></td>
 		<td scope="row">{$MOD.LBL_LOGGER_FILENAME_SUFFIX}</td>
 		<td ><select name = "logger_file_suffix" selected='{$config.logger.file.suffix}'>{$filename_suffix}</select></td>
 	</tr>
 	<tr>
-		<td scope="row">{$MOD.LBL_LOGGER_MAX_LOG_SIZE} </td>
+		<td scope="row">{$MOD.LBL_LOGGER_MAX_LOG_SIZE}  <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
 		<td > <input name="logger_file_maxSize" size="4" value="{$config.logger.file.maxSize}"></td>
 		<td scope="row">{$MOD.LBL_LOGGER_DEFAULT_DATE_FORMAT}</td>
 		<td  ><input name ="logger_file_dateFormat" type="text" value="{$config.logger.file.dateFormat}"></td>
@@ -370,7 +373,7 @@
 	<tr>
 		<td scope="row">{$MOD.LBL_LOGGER_LOG_LEVEL} </td>
 		<td > <select name="logger_level">{$log_levels}</select></td>
-		<td scope="row">{$MOD.LBL_LOGGER_MAX_LOGS} </td>
+		<td scope="row">{$MOD.LBL_LOGGER_MAX_LOGS}  <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
 		<td > <input name="logger_file_maxLogs" value="{$config.logger.file.maxLogs}"></td>
 	</tr>
 {/if}
