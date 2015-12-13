@@ -12,6 +12,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
+$request = InputValidation::getService();
+
 //increate timeout for phpo script execution
   if (ini_get('max_execution_time') > 0 && ini_get('max_execution_time') < 300) {
       ini_set('max_execution_time', 300);
@@ -71,8 +75,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         // this is used in forward/reply
     case "composeEmail":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: composeEmail");
-        if(isset($_REQUEST['sugarEmail']) && $_REQUEST['sugarEmail'] == 'true' && isset($_REQUEST['uid']) && !empty($_REQUEST['uid'])) {
-            $ie->email->retrieve($_REQUEST['uid']);
+
+        $uid = $request->getValidInputRequest('uid', 'Assert\Guid');
+        $ieId = $request->getValidInputRequest('ieId', 'Assert\Guid');
+        $mbox = $request->getValidInputRequest('mbox', 'Assert\Guid');
+
+        if (isset($_REQUEST['sugarEmail']) && $_REQUEST['sugarEmail'] == 'true' && !empty($uid)) {
+            $ie->email->retrieve($uid);
             $ie->email->from_addr = $ie->email->from_addr_name;
             $ie->email->to_addrs = to_html($ie->email->to_addrs_names);
             $ie->email->cc_addrs = to_html($ie->email->cc_addrs_names);
@@ -93,24 +102,24 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             $ret['name'] = from_html($ret['name']);
             $out = $json->encode($ret, true);
             echo $out;
-        } elseif(isset($_REQUEST['uid']) && !empty($_REQUEST['uid']) && isset($_REQUEST['ieId']) && !empty($_REQUEST['ieId'])) {
-            $ie->retrieve($_REQUEST['ieId']);
-            $ie->mailbox = $_REQUEST['mbox'];
+        } elseif (!empty($uid) && !empty($ieId)) {
+            $ie->retrieve($ieId);
+            $ie->mailbox = $mbox;
 			global $timedate;
-            $ie->setEmailForDisplay($_REQUEST['uid']);
+            $ie->setEmailForDisplay($uid);
 			$ie->email->date_start = $timedate->to_display_date($ie->email->date_sent);
 			$ie->email->time_start = $timedate->to_display_time($ie->email->date_sent);
             $ie->email->date_sent = $timedate->to_display_date_time($ie->email->date_sent);
             $email = $ie->email->et->handleReplyType($ie->email, $_REQUEST['composeType']);
             $ret = $ie->email->et->displayComposeEmail($email);
             if ($_REQUEST['composeType'] == 'forward') {
-            	$ret = $ie->email->et->createCopyOfInboundAttachment($ie, $ret, $_REQUEST['uid']);
+                $ret = $ie->email->et->createCopyOfInboundAttachment($ie, $ret, $uid);
             }
             $ret = $ie->email->et->getFromAllAccountsArray($ie, $ret);
             $ret['from'] = from_html($ret['from']);
             $ret['name'] = from_html($ret['name']);
-            $ret['ieId'] = $_REQUEST['ieId'];
-            $ret['mbox'] = $_REQUEST['mbox'];
+            $ret['ieId'] = $ieId;
+            $ret['mbox'] = $mbox;
             $out = $json->encode($ret, true);
             echo $out;
         }
