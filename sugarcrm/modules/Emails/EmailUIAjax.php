@@ -338,8 +338,14 @@ $request = InputValidation::getService();
 
     case "getQuickCreateForm":
     	$GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: getQuickCreateForm");
-        if(isset($_REQUEST['qc_module']) && !empty($_REQUEST['qc_module'])) {
-        	if (!ACLController::checkAccess($_REQUEST['qc_module'],'edit', true)) {
+
+        $uid = $request->getValidInputRequest('uid', 'Assert\Guid');
+        $ieId = $request->getValidInputRequest('ieId', 'Assert\Guid');
+        $mailbox = $request->getValidInputRequest('mailbox', 'Assert\Guid');
+        $qcModule = $request->getValidInputRequest('qc_module', 'Assert\Mvc\ModuleName');
+
+        if(!empty($qcModule)) {
+        	if (!ACLController::checkAccess($qcModule,'edit', true)) {
         		echo trim($json->encode(array('html' => translate('LBL_NO_ACCESS', 'ACL')), true));
         		break;
         	}
@@ -347,17 +353,17 @@ $request = InputValidation::getService();
             $showSaveToAddressBookButton = false;//(in_array($_REQUEST['qc_module'], $people)) ? true : false;
 
             if(isset($_REQUEST['sugarEmail']) && !empty($_REQUEST['sugarEmail'])) {
-                $ie->email->retrieve($_REQUEST['uid']); // uid is a sugar GUID in this case
+                $ie->email->retrieve($uid); // uid is a sugar GUID in this case
             } else {
-                $ie->retrieve($_REQUEST['ieId']);
-                $ie->mailbox = $_REQUEST['mailbox'];
-                $ie->setEmailForDisplay($_REQUEST['uid']);
+                $ie->retrieve($ieId);
+                $ie->mailbox = $mailbox;
+                $ie->setEmailForDisplay($uid);
             }
             $ret = $email->et->getQuickCreateForm($_REQUEST, $ie->email, $showSaveToAddressBookButton);
-            $ret['ieId'] = $_REQUEST['ieId'];
-            $ret['mbox'] = $_REQUEST['mailbox'];
-            $ret['uid'] = $_REQUEST['uid'];
-            $ret['module'] = $_REQUEST['qc_module'];
+            $ret['ieId'] = $ieId;
+            $ret['mbox'] = $mailbox;
+            $ret['uid'] = $uid;
+            $ret['module'] = $qcModule;
             if (!isset($_REQUEST['iframe'])) {
                 $out = trim($json->encode($ret, false));
             } else {
@@ -437,9 +443,13 @@ $request = InputValidation::getService();
         break;
 
     case "getImportForm":
-        $ie->retrieve($_REQUEST['ieId']);
+
+        $uid = $request->getValidInputRequest('uid', 'Assert\Guid');
+        $ieId = $request->getValidInputRequest('ieId', 'Assert\Guid');
+
+        $ie->retrieve($ieId);
         //            $ie->mailbox = $_REQUEST['mailbox'];
-        $ie->setEmailForDisplay($_REQUEST['uid']);
+        $ie->setEmailForDisplay($uid);
         $ret = $email->et->getImportForm($_REQUEST, $ie->email);
         $out = trim($json->encode($ret, false));
         echo $out;
@@ -817,19 +827,23 @@ eoq;
 
     case "getMultipleMessages":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: getMultipleMessages");
-        if(isset($_REQUEST['uid']) && !empty($_REQUEST['uid']) && isset($_REQUEST['ieId']) && !empty($_REQUEST['ieId'])) {
-            $exUids = explode(",", $_REQUEST['uid']);
+
+        $exUids = $request->getValidInputRequest('uid', array('Assert\Delimited' => array('constraints' => 'Assert\Guid')));
+        $ieId = $request->getValidInputRequest('ieId', 'Assert\Guid');
+        $mbox = $request->getValidInputRequest('mbox', 'Assert\Guid');
+
+        if(!empty($uid) && !empty($ieId)) {
 
             $out = array();
             foreach($exUids as $k => $uid) {
-                if($email->et->validCacheFileExists($_REQUEST['ieId'], 'messages', $_REQUEST['mbox'].$uid.".php")) {
-                    $msg = $email->et->getCacheValue($_REQUEST['ieId'], 'messages', $_REQUEST['mbox'].$uid.".php", 'out');
+                if($email->et->validCacheFileExists($ieId, 'messages', $mbox.$uid.".php")) {
+                    $msg = $email->et->getCacheValue($ieId, 'messages', $mbox.$uid.".php", 'out');
                 } else {
-                    $ie->retrieve($_REQUEST['ieId']);
-                    $ie->mailbox = $_REQUEST['mbox'];
+                    $ie->retrieve($ieId);
+                    $ie->mailbox = $mbox;
                     $ie->setEmailForDisplay($uid, false, true);
-                    $msg = $ie->displayOneEmail($uid, $_REQUEST['mbox']);
-                    $email->et->writeCacheFile('out', $msg, $_REQUEST['ieId'], 'messages', "{$_REQUEST['mbox']}{$uid}.php");
+                    $msg = $ie->displayOneEmail($uid, $mbox);
+                    $email->et->writeCacheFile('out', $msg, $ieId, 'messages', "{$mbox}{$uid}.php");
                 }
 
                 $out[] = $msg;
