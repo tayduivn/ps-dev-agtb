@@ -219,24 +219,31 @@ class SugarController
 		$this->module = $module;
 	}
 
-	/**
-	 * Set properties on the Controller from the $_REQUEST
-	 *
-	 */
-	private function loadPropertiesFromRequest(){
-		if(!empty($_REQUEST['action']))
-			$this->action = $_REQUEST['action'];
-		if(!empty($_REQUEST['record']))
-			$this->record = $_REQUEST['record'];
-		if(!empty($_REQUEST['view']))
-			$this->view = $_REQUEST['view'];
-		if(!empty($_REQUEST['return_module']))
-			$this->return_module = $_REQUEST['return_module'];
-		if(!empty($_REQUEST['return_action']))
-			$this->return_action = $_REQUEST['return_action'];
-		if(!empty($_REQUEST['return_id']))
-			$this->return_id = $_REQUEST['return_id'];
-	}
+    /**
+    * Set properties on the Controller from the $_REQUEST
+    *
+    */
+    private function loadPropertiesFromRequest()
+    {
+        if (!empty($_REQUEST['action'])) {
+            $this->action = $this->request->getValidInputRequest('action');
+        }
+        if (!empty($_REQUEST['record'])) {
+            $this->record = $this->request->getValidInputRequest('record', 'Assert\Guid');
+        }
+        if (!empty($_REQUEST['view'])) {
+            $this->view = $this->request->getValidInputRequest('view', 'Assert\ComponentName');
+        }
+        if (!empty($_REQUEST['return_module'])) {
+            $this->return_module = $this->request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
+        }
+        if (!empty($_REQUEST['return_action'])) {
+            $this->return_action = $this->request->getValidInputRequest('return_action');
+        }
+        if (!empty($_REQUEST['return_id'])) {
+            $this->return_id = $this->request->getValidInputRequest('return_id', 'Assert\Guid');
+        }
+    }
 
 	/**
 	 * Load map files for use within the Controller

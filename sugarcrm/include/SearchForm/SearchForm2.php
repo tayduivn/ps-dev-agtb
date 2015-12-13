@@ -134,8 +134,8 @@ require_once('include/EditView/EditView2.php');
  		$header_txt = '';
  		$footer_txt = '';
  		$return_txt = '';
-		$this->th->ss->assign('module', $this->module);
-		$this->th->ss->assign('action', $this->action);
+		$this->th->ss->assign('module', htmlspecialchars($this->module, ENT_QUOTES, "UTF-8"));
+		$this->th->ss->assign('action', htmlspecialchars($this->action, ENT_QUOTES, "UTF-8"));
 		//BEGIN SUGARCRM flav=pro ONLY
 		SugarACL::listFilter($this->module, $this->fieldDefs, array("owner_override" => true),
 		    array("use_value" => true, "suffix" => '_'.$this->parsedView, "add_acl" => true));
