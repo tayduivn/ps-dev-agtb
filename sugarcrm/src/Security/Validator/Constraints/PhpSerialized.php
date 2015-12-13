@@ -33,4 +33,5 @@ class PhpSerialized extends ConstraintReturnValue
 
     public $message = 'PHP serialized data violation: %msg%';
     public $base64Encoded = false;
+    public $htmlEncoded = false;
 }

@@ -443,6 +443,14 @@
                     messages: [msg]
                 });
             }
-        }, this), silent: true, alerts: { 'success': false }});
+        }, this),
+            error: _.bind(function(error){
+                //if the metadata error comes back, we saved successfully, so we need to clear the is_dirty flag so the
+                //page can reload
+                if (error.status === 412) {
+                    this.context.trigger('forecasts:worksheet:is_dirty', worksheet_type, false);
+                }
+            }, this),
+            silent: true, alerts: { 'success': false }});
     }
 })

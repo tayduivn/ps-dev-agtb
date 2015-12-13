@@ -219,24 +219,31 @@ class SugarController
 		$this->module = $module;
 	}
 
-	/**
-	 * Set properties on the Controller from the $_REQUEST
-	 *
-	 */
-	private function loadPropertiesFromRequest(){
-		if(!empty($_REQUEST['action']))
-			$this->action = $_REQUEST['action'];
-		if(!empty($_REQUEST['record']))
-			$this->record = $_REQUEST['record'];
-		if(!empty($_REQUEST['view']))
-			$this->view = $_REQUEST['view'];
-		if(!empty($_REQUEST['return_module']))
-			$this->return_module = $_REQUEST['return_module'];
-		if(!empty($_REQUEST['return_action']))
-			$this->return_action = $_REQUEST['return_action'];
-		if(!empty($_REQUEST['return_id']))
-			$this->return_id = $_REQUEST['return_id'];
-	}
+    /**
+    * Set properties on the Controller from the $_REQUEST
+    *
+    */
+    private function loadPropertiesFromRequest()
+    {
+        if (!empty($_REQUEST['action'])) {
+            $this->action = $this->request->getValidInputRequest('action');
+        }
+        if (!empty($_REQUEST['record'])) {
+            $this->record = $this->request->getValidInputRequest('record', 'Assert\Guid');
+        }
+        if (!empty($_REQUEST['view'])) {
+            $this->view = $this->request->getValidInputRequest('view', 'Assert\ComponentName');
+        }
+        if (!empty($_REQUEST['return_module'])) {
+            $this->return_module = $this->request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
+        }
+        if (!empty($_REQUEST['return_action'])) {
+            $this->return_action = $this->request->getValidInputRequest('return_action');
+        }
+        if (!empty($_REQUEST['return_id'])) {
+            $this->return_id = $this->request->getValidInputRequest('return_id', 'Assert\Guid');
+        }
+    }
 
 	/**
 	 * Load map files for use within the Controller
@@ -663,8 +670,13 @@ class SugarController
             $massUpdateClass = SugarAutoLoader::customClass('MassUpdate');
             $mass = new $massUpdateClass();
             $mass->setSugarBean($seed);
+			$module = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
+			$query = $this->request->getValidInputRequest(
+				'current_query_by_page',
+				array('Assert\PhpSerialized' => array('base64Encoded' => true))
+			);
             if(isset($_REQUEST['entire']) && empty($_POST['mass'])) {
-                $mass->generateSearchWhere($_REQUEST['module'], $_REQUEST['current_query_by_page']);
+                $mass->generateSearchWhere($module, $query);
             }
             $arr = $mass->handleMassUpdate();
             $storeQuery = new StoreQuery();//restore the current search. to solve bug 24722 for multi tabs massupdate.
@@ -705,9 +717,9 @@ class SugarController
                 }
             }
             $_REQUEST = array();
-            $_REQUEST = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($temp_req['current_query_by_page']));
+            $_REQUEST = $query;
             unset($_REQUEST[$seed->module_dir.'2_'.strtoupper($seed->object_name).'_offset']);//after massupdate, the page should redirect to no offset page
-            $storeQuery->saveFromRequest($_REQUEST['module']);
+            $storeQuery->saveFromRequest($module);
             $_REQUEST = array(
                 'return_module' => $temp_req['return_module'],
                 'return_action' => $temp_req['return_action'],

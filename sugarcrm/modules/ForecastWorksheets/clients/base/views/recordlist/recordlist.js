@@ -184,6 +184,8 @@
                 this.context.parent.get('collection').off(null, null, this);
             }
         }
+        // make sure this alert is hidden if the the view is disposed
+        app.alert.dismiss('workshet_loading');
         app.routing.offBefore('route', this.beforeRouteHandler, this);
         $(window).off('beforeunload.' + this.worksheetType);
         this._super('_dispose');

@@ -18,6 +18,8 @@ $_REQUEST['edit']='true';
 require_once('include/SugarFolders/SugarFolders.php');
 require_once('include/templates/TemplateGroupChooser.php');
 
+use Sugarcrm\Sugarcrm\Util\Serialized;
+
 // GLOBALS
 global $mod_strings;
 global $app_strings;
@@ -123,7 +125,7 @@ $mailbox_type = get_select_options_with_id($domMailBoxType, $focus->mailbox_type
 $email_templates_arr = get_bean_select_array(true, 'EmailTemplate','name', '','name',true);
 
 if(!empty($focus->stored_options)) {
-	$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($focus->stored_options));
+	$storedOptions = Serialized::unserialize($focus->stored_options, array(), true);
 	$from_name = $storedOptions['from_name'];
 	$from_addr = $storedOptions['from_addr'];
 

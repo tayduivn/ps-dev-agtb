@@ -67,9 +67,6 @@ class Bug48484Test extends Sugar_PHPUnit_Framework_TestCase
             'range_' . $this->customFieldName . '_basic'   => '[' . $this->range . ']',
         );
 
-        // encode the query as the MassUpdate::generateSearchWhere requires
-        $query = base64_encode(serialize($query));
-
         // generate SQL where clause
         $this->massUpdate->generateSearchWhere($this->moduleName, $query);
 

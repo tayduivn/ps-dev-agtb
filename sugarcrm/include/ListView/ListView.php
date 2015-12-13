@@ -733,9 +733,6 @@ function getOrderBy($varName, $defaultOrderBy='', $force_sortorder='') {
     $this->getOrderBy($varName, $orderBy);
 
     $this->setLocalSessionVariable($varName, "QUERY_WHERE", $where);
-
-    //SETTING ORDER_BY FOR USE IN DETAILVIEW
-    $this->setLocalSessionVariable($varName, "ORDER_BY_DETAIL", $this->query_orderby);
 }
 
 function displayArrow() {

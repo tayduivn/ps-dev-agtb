@@ -413,7 +413,7 @@ class MySugar{
 
     public function searchDashlets()
     {
-        $searchStr = $_REQUEST['search'];
+        $searchStr = $this->request->getValidInputRequest('search');
         $category = $this->request->getValidInputRequest('category', array('Assert\Choice' => array('choices' => array('module', 'tools', 'chart'))));
 
 		if ($category == 'module' || $category == 'tools'){

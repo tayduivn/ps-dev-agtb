@@ -297,7 +297,7 @@ class ModuleBuilderController extends SugarController
             sugar_cache_clear($cache_key);
             sugar_cache_reset();
             //clear end
-            $pm->performInstall($_REQUEST ['install_file'], true);
+            $pm->performInstall($this->request->getValidInputRequest('install_file'), true);
 
             //clear the unified_search_module.php file
             UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();

@@ -76,7 +76,7 @@ if(isset($_POST['clear_loaded'])){
 
 }else{
     foreach($_POST as $_key => $_val){
-        $ss->assign($_key, $_val);
+        $ss->assign($_key, htmlspecialchars($_val, ENT_QUOTES, "UTF-8"));
     }
 }
 
