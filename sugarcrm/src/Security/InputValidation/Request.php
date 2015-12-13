@@ -184,24 +184,8 @@ class Request
         // Validate superglobals type
         $this->validateSuperglobalsType($type);
 
-        // Build actual constraints
-        $constraints = $this->constraintBuilder->build($constraints);
-
-        if (count($constraints) > 0) {
-            // Attach generic input validation
-            $inputConstraint = new Assert\InputParameters(array(
-                'inputType' => $type,
-            ));
-
-            array_unshift($constraints, $inputConstraint);
-        } else {
-            // If no constraint explicitly specified, make sure that the value is a string
-            $constraints = array(
-                new AssertBasic\Type(array(
-                    'type' => 'scalar',
-                )),
-            );
-        }
+        // Build constraints
+        $constraints = $this->buildConstraints($type, $constraints);
 
         // Get raw value from superglobals
         $value = $this->getSuperglobalValue($type, $key, $default);
@@ -211,9 +195,8 @@ class Request
             $value = $this->sanitizer->sanitize($value);
         }
 
-        // Start new validator context
+        // Validate in a new context
         $this->context = $this->validator->startContext();
-
         $value = $this->validateConstraints($value, $constraints);
         $this->handleViolations($type, $key);
 
@@ -346,5 +329,35 @@ class Request
                 $this->logger->critical($message);
             }
         }
+    }
+
+    /**
+     * Build constraints based on passed in definition
+     * @param string $type GET|POST|REQUEST
+     * @param string|array $constraints ConstraintBuilder compat constraints
+     * @return Constraint[]
+     */
+    protected function buildConstraints($type, $constraints)
+    {
+        // Build actual constraints
+        $constraints = $this->constraintBuilder->build($constraints);
+
+        // If no constraint explicitly specified, make sure that the value is a string
+        if (empty($constraints)) {
+            $constraints = array(
+                new AssertBasic\Type(array(
+                    'type' => 'scalar',
+                )),
+            );
+        }
+
+        // Attach generic input validation
+        $inputConstraint = new Assert\InputParameters(array(
+            'inputType' => $type,
+        ));
+
+        array_unshift($constraints, $inputConstraint);
+
+        return $constraints;
     }
 }

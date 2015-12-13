@@ -15,27 +15,27 @@ namespace Sugarcrm\Sugarcrm\Security\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 
 /**
  *
  * File validator
  *
- * The normalized filename is returned as formatted value.
+ * The normalized filename is returned as formatted value. This constraint
+ * is primarily used using the SugarAutoLoader file include helper functions
+ * to securely include files.
  *
+ * By default the SUGAR_BASE_DIR (and SHADOW_INSTANCE_DIR if applicable) are
+ * set as base directories for validation. This can be overriden if needed
+ * on the File constraint.
+ *
+ * @see \SugarAutoLoader::includeFile
+ * @see \SugarAutoLoader::includeFileOnce
+ * @see \SugarAutoLoader::requireFile
+ * @see \SugarAutoLoader::requireFileOnce
  */
 class FileValidator extends ConstraintValidator
 {
-    /**
-     * Ctor
-     */
-    public function __construct()
-    {
-        // Add shadow directory when in use
-        if (defined('SHADOW_INSTANCE_DIR')) {
-            $this->baseDirs[] = SHADOW_INSTANCE_DIR;
-        }
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -53,6 +53,10 @@ class FileValidator extends ConstraintValidator
             throw new UnexpectedTypeException($value, 'string');
         }
 
+        if (empty($constraint->baseDirs) || !is_array($constraint->baseDirs)) {
+            throw new ConstraintDefinitionException('No basedirs defined');
+        }
+
         $value = (string) $value;
 
         // check for null bytes
@@ -61,6 +65,16 @@ class FileValidator extends ConstraintValidator
                 ->setInvalidValue($value)
                 ->setCode(File::ERROR_NULL_BYTES)
                 ->setParameter('%msg%', 'null bytes detected')
+                ->addViolation();
+            return;
+        }
+
+        // check for directory traversal attempt
+        if (strpos($value, '..') !== false) {
+            $this->context->buildViolation($constraint->message)
+                ->setInvalidValue($value)
+                ->setCode(File::ERROR_DIR_TRAVERSAL)
+                ->setParameter('%msg%', 'directory traversal detected')
                 ->addViolation();
             return;
         }

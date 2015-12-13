@@ -11,6 +11,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\Validator\Validator;
+use Sugarcrm\Sugarcrm\Security\Validator\Constraints\File;
+
 require_once 'include/utils/file_utils.php';
 
 /**
@@ -194,6 +197,16 @@ class SugarAutoLoader
         'autoload_psr4' => 'vendor/composer/autoload_psr4.php',
         'autoload_classmap' => 'vendor/composer/autoload_classmap.php',
     );
+
+    /**
+     * @var array Base directories
+     */
+    protected static $baseDirs = array();
+
+    /**
+     * @var string Directory separator
+     */
+    protected static $ds = DIRECTORY_SEPARATOR;
 
     /**
      * Initialize the loader
@@ -1452,8 +1465,16 @@ class SugarAutoLoader
     public static function normalizeFilePath($filename)
     {
         // Normalize directory separators
-        if(DIRECTORY_SEPARATOR != '/') {
-            $filename = str_replace(DIRECTORY_SEPARATOR, "/", $filename);
+        if (self::$ds != '/') {
+            $filename = str_replace(self::$ds, "/", $filename);
+        }
+
+        // Remove base dir - Composer always has absolute paths.
+        foreach (self::getBaseDirs() as $baseDir) {
+            $filename = str_replace($baseDir . '/', '', $filename, $count);
+            if ($count > 0) {
+                break;
+            }
         }
 
         // Remove repeated separators
@@ -1463,5 +1484,72 @@ class SugarAutoLoader
         $filename = str_replace(SUGAR_BASE_DIR . "/", "", $filename);
 
         return $filename;
+    }
+
+    /**
+     * Validate given file name
+     * @param string $file File name
+     * @return string File name
+     * @throws Exception
+     * @see \Sugarcrm\Sugarcrm\Security\Validator\Constraints\FileValidator
+     */
+    public static function validateFilePath($file)
+    {
+        $constraint = new File(array('baseDirs' => self::getBaseDirs()));
+        $violations = Validator::getService()->validate($file, $constraint);
+        if (count($violations) > 0) {
+            $msg = array_reduce(iterator_to_array($violations), function ($msg, $violation) {
+                return empty($msg) ? $violation->getMessage() : $msg . ' - ' . $violation->getMessage();
+            });
+            throw new Exception($msg);
+        }
+        return $constraint->getFormattedReturnValue();
+    }
+
+    /**
+     * Secure wrapper for `include`
+     */
+    public static function includeFile($file)
+    {
+        include self::validateFilePath($file);
+    }
+
+    /**
+     * Secure wrapper for `include_once`
+     */
+    public static function includeFileOnce($file)
+    {
+        include_once self::validateFilePath($file);
+    }
+
+    /**
+     * Secure wrapper for `require`
+     */
+    public static function requireFile($file)
+    {
+        require self::validateFilePath($file);
+    }
+
+    /**
+     * Secure wrapper for `require_once`
+     */
+    public static function requireFileOnce($file)
+    {
+        require_once self::validateFilePath($file);
+    }
+
+    /**
+     * Get base directories
+     * @return array
+     */
+    public static function getBaseDirs()
+    {
+        if (empty(self::$baseDirs)) {
+            self::$baseDirs = array(SUGAR_BASE_DIR);
+            if (defined('SHADOW_INSTANCE_DIR')) {
+                self::$baseDirs[] = SHADOW_INSTANCE_DIR;
+            }
+        }
+        return self::$baseDirs;
     }
 }
