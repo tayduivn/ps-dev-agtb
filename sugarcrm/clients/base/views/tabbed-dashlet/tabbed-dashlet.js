@@ -91,7 +91,8 @@
             model: this.context.parent && this.context.parent.get('model'),
             collection: this.collection,
             //FIXME: name is temporary - special case for LinkedModel - SC-2550
-            name: 'tabbed-dashlet'
+            name: 'tabbed-dashlet',
+            skipFetch: true
         });
 
         this.context.set('parentModule', this.module);
