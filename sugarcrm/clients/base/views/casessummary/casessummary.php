@@ -22,7 +22,14 @@ $viewdefs['base']['view']['casessummary'] = array(
                     'Accounts',
                 ),
                 'view' => 'record',
-            )
+            ),
+            'fields' => array(
+                'name',
+                'account_id',
+                'id',
+                'status',
+                'my_favorite',
+            ),
         ),
     ),
 );
