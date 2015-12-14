@@ -12,10 +12,10 @@
 
 if(!defined('sugarEntry')) define('sugarEntry', true);
 
-if (basename(getcwd()) == 'tests' || !is_file('include/entryPoint.php')) {
-    $path = str_replace('\\', '/', realpath(dirname(__FILE__) . '/..')) . DIRECTORY_SEPARATOR;
+if (basename(getcwd()) === 'testsunit' || !is_file('include/entryPoint.php')) {
+    $path = str_replace('\\', '/', realpath(dirname(__FILE__) . '/..'));
 } else {
-    $path = str_replace('\\', '/', realpath(dirname(__FILE__))) . DIRECTORY_SEPARATOR;
+    $path = str_replace('\\', '/', realpath(dirname(__FILE__)));
 }
 
 define('SUGAR_BASE_DIR', $path);
@@ -27,6 +27,7 @@ set_include_path(
 );
 
 require_once 'include/utils/autoloader.php';
+
 // we need to pass in false since we don't have have an installed instance
 SugarAutoLoader::init(false);
 

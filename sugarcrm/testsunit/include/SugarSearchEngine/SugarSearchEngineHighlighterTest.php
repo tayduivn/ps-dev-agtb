@@ -22,7 +22,6 @@ class SugarSearchEngineHighlighterTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::processHighlightText
      * @covers ::getLabel
-     * @covers ::normalizeFieldName
      * @covers ::setModule
      * @dataProvider providerTestProcessHighlightText
      */

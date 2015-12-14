@@ -23,6 +23,7 @@ ARGS:
 //$_REQUEST['return_type']; : when set the results of a report will be linked with the parent.
 */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once('include/formbase.php');
 
@@ -74,8 +75,10 @@ else {
  	// based on the query they used on that popup to relate them to the parent record
  	if(!empty($_REQUEST['select_entire_list']) &&  $_REQUEST['select_entire_list'] != 'undefined' && isset($_REQUEST['current_query_by_page'])){
 		$order_by = '';
-		$current_query_by_page = $_REQUEST['current_query_by_page'];
- 		$current_query_by_page_array = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($current_query_by_page));
+		$current_query_by_page_array = InputValidation::getService()->getValidInputRequest(
+			'current_query_by_page',
+			array('Assert\PhpSerialized' => array('base64Encoded' => true))
+		);
 
         $module = $current_query_by_page_array['module'];
         $seed = BeanFactory::getBean($module);

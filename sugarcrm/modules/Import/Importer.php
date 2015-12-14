@@ -17,6 +17,8 @@ require_once 'modules/Import/ImportFieldSanitize.php';
 require_once 'modules/Import/ImportDuplicateCheck.php';
 require_once 'include/SugarFields/SugarFieldHandler.php';
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 class Importer
 {
     /**
@@ -808,7 +810,10 @@ class Importer
     {
         global $current_user;
 
-        $firstrow    = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($_REQUEST['firstrow']));
+        $firstrow = InputValidation::getService()->getValidInputRequest(
+            'firstrow',
+            array('Assert\PhpSerialized' => array('base64Encoded' => true))
+        );
         $mappingValsArr = $this->importColumns;
         $mapping_file = BeanFactory::getBean('Import_1');
         $mapping_file->delimiter = $_REQUEST['custom_delimiter'];

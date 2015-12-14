@@ -366,8 +366,8 @@ class LogicHookTest extends \PHPUnit_Framework_TestCase
     {
         // since we don't set the main dir, this needs to be changed to the base sugar dir so the
         // name spaces will work
-        file_put_contents(SUGAR_BASE_DIR . $file, $contents);
+        file_put_contents(SUGAR_BASE_DIR . '/' .$file, $contents);
         \SugarAutoLoader::addToMap($file, false);
-        $this->toDelete[] = SUGAR_BASE_DIR . $file;
+        $this->toDelete[] = SUGAR_BASE_DIR . '/' . $file;
     }
 }

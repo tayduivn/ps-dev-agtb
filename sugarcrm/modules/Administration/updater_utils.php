@@ -388,6 +388,7 @@ function authenticateDownloadKey()
 
     // Decode the received validation key and compare with current settings
     $og = unserialize(sugarDecode('validation', $licenseSettings['license_validation_key']));
+
     foreach ($og as $name => $value) {
         if (!isset($data[$name]) || $data[$name] != $value) {
             return false;

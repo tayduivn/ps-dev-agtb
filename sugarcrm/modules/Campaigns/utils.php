@@ -18,6 +18,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+use Sugarcrm\Sugarcrm\Util\Serialized;
+
 /*
  *returns a list of objects a message can be scoped by, the list contacts the current campaign
  *name and list of all prospects associated with this campaign..
@@ -98,7 +100,10 @@ function get_campaign_mailboxes_with_stored_options() {
     $r = $db->query($q);
 
     while($a = $db->fetchByAssoc($r)) {
-        $ret[$a['id']] = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($a['stored_options']));
+        $stored_options = Serialized::unserialize($a['stored_options'], null, true);
+        if (!empty($stored_options)) {
+            $ret[$a['id']] = $stored_options;
+        }
     }
 	return $ret;
 }

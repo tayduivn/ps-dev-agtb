@@ -155,8 +155,6 @@ class Bug51596Test extends Sugar_PHPUnit_Framework_TestCase
             $this->field_name . '_basic' => 'Bug51596Test_Account1',
         );
 
-        // perform mass update
-        $current_query_by_page = base64_encode(serialize($current_query_by_page));
         $mass_update->generateSearchWhere('Contacts', $current_query_by_page);
         $mass_update->handleMassUpdate();
 
