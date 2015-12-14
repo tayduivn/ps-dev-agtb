@@ -849,9 +849,33 @@ class CalDavEventCollection extends SugarBean
                                  ->setOutputFormat(new Principal\Search\Format\ArrayStrategy())
                                  ->findSugarLinkByEmail($email);
                 }
-                if ($link) {
-                    $this->participantLinks[$email] = $link;
+                if (!$link) {
+                    global $locale;
+
+                    $focus = \BeanFactory::getBean('Addresses');
+                    if ($participant->getDisplayName()) {
+                        $parseName = $locale->getLocaleUnFormattedName($participant->getDisplayName());
+                        $focus->first_name = !empty($parseName['f']) ? $parseName['f'] : '';
+                        if (empty($parseName['f']) && empty($parseName['l'])) {
+                            $focus->last_name = $email;
+                        } else {
+                            $focus->last_name = !empty($parseName['l']) ? $parseName['l'] : '';
+                        }
+                        $focus->salutation = isset($parseName['s']) ? $parseName['s'] : '';
+                    } else {
+                        $focus->last_name = $email;
+                    }
+
+                    $focus->emailAddress->addAddress($email, true);
+                    $focus->save();
+
+                    $link = array(
+                        'beanName' => $focus->module_name,
+                        'beanId' => $focus->id,
+                    );
                 }
+
+                $this->participantLinks[$email] = $link;
             }
         }
 

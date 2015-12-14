@@ -63,6 +63,7 @@ class SugarTestLeadUtilities
     {
         $lead_ids = self::getCreatedLeadIds();
         $GLOBALS['db']->query('DELETE FROM leads WHERE id IN (\'' . implode("', '", $lead_ids) . '\')');
+        static::removeCreatedLeadsEmailAddresses();
     }
 
     /**

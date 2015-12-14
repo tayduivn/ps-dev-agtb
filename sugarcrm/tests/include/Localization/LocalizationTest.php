@@ -422,4 +422,150 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
             $_SESSION['authenticated_user_language'] = $oSESSION;
         }
     }
+
+    /**
+     * Provider for testGetLocaleUnFormattedName.
+     *
+     * @return array
+     */
+    public function getLocaleUnFormattedNameProvider()
+    {
+        return array(
+            array(
+                'name' => 'TestMan Tester',
+                'format' => 'f l',
+                'expected' => array(
+                    'f' => 'TestMan',
+                    'l' => 'Tester',
+                ),
+            ),
+            array(
+                'name' => 'Mr. TestMan Tester',
+                'format' => 's f l',
+                'expected' => array(
+                    's' => 'Mr.',
+                    'f' => 'TestMan',
+                    'l' => 'Tester',
+                ),
+            ),
+            array(
+                'name' => 'Tester, Mr. TestMan Jr.',
+                'format' => 'l, s f p',
+                'expected' => array(
+                    'l' => 'Tester',
+                    's' => 'Mr.',
+                    'f' => 'TestMan',
+                    'p' => 'Jr.'
+                ),
+            ),
+            array(
+                'name' => 'Tester, Mr. TestMan Jr.',
+                'format' => 'l, s f, p',
+                'expected' => array(
+                    'l' => 'Tester',
+                    's' => 'Mr.',
+                    'f' => 'TestMan Jr.',
+                    'p' => '',
+                ),
+            ),
+            array(
+                'name' => 'Tester, Mr. TestMan Jr., III',
+                'format' => 'l, s f, p',
+                'expected' => array(
+                    'l' => 'Tester',
+                    's' => 'Mr.',
+                    'f' => 'TestMan Jr.',
+                    'p' => 'III',
+                ),
+            ),
+            array(
+                'name' => 'TestMan Mr.TestMan Mr. Mr.Tester Tester',
+                'format' => 'f s l',
+                'expected' => array(
+                    'f' => 'TestMan Mr.TestMan',
+                    's' => 'Mr.',
+                    'l' => 'Mr.Tester Tester',
+                ),
+            ),
+            array(
+                'name' => 'TestMan TestMan Tester Tester',
+                'format' => 'f s l',
+                'expected' => array(
+                    'f' => 'TestMan',
+                    's' => '',
+                    'l' => 'TestMan Tester Tester',
+                ),
+            ),
+            array(
+                'name' => 'TestMan Mr. TestMan, Tester Mr. Tester',
+                'format' => 'f, s l',
+                'expected' => array(
+                    'f' => 'TestMan Mr. TestMan',
+                    's' => 'Mr.',
+                    'l' => 'Tester',
+                ),
+            ),
+            array(
+                'name' => 'TestMan Mr. TestMan, Tester Mr., Tester',
+                'format' => 'f, s, l',
+                'expected' => array(
+                    'f' => 'TestMan Mr. TestMan',
+                    's' => 'Mr.',
+                    'l' => 'Tester',
+                ),
+            ),
+            array(
+                'name' => 'Mr. TestMan Tester',
+                'format' => 's f, l',
+                'expected' => array(
+                    's' => 'Mr.',
+                    'f' => 'TestMan Tester',
+                    'l' => '',
+                ),
+            ),
+            array(
+                'name' => 'Robert John Downey Jr.',
+                'format' => 'f t l p',
+                'expected' => array(
+                    'f' => 'Robert',
+                    't' => 'John',
+                    'l' => 'Downey',
+                    'p' => 'Jr.',
+                ),
+            ),
+            array(
+                'name' => 'Robert John Downey Jr.',
+                'format' => 'f s l',
+                'expected' => array(
+                    'f' => 'Robert',
+                    's' => '',
+                    'l' => 'John Downey Jr.',
+                ),
+            ),
+            array(
+                'name' => 'Robert John Downey Jr.',
+                'format' => 's l',
+                'expected' => array(
+                    's' => '',
+                    'l' => 'Robert John Downey Jr.',
+                ),
+            ),
+        );
+    }
+
+    /**
+     * Test parse fullname
+     *
+     * @param $name
+     * @param $format
+     * @param $expected
+     *
+     * @covers Localization::getLocaleUnFormattedName
+     * @dataProvider getLocaleUnFormattedNameProvider
+     */
+    public function testGetLocaleUnFormattedName($name, $format, $expected)
+    {
+        $result = $this->_locale->getLocaleUnFormattedName($name, $format);
+        $this->assertEquals($expected, $result);
+    }
 }
