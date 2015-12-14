@@ -68,6 +68,11 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
      */
     public function upgradeCheck()
     {
+        $module = $this->getNormalizedModuleName();
+        if (!isset($GLOBALS['beanList'][$module])) {
+            // don't upgrade non-deployed search defs
+            return false;
+        }
         $target = $this->getNewFileName($this->viewtype);
         if(file_exists($target)) {
             // if we already have the target, skip the upgrade
