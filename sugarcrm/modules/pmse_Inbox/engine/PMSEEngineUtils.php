@@ -130,6 +130,7 @@ class PMSEEngineUtils
         'BR' => array('assigned_user_id', 'email1', 'outlook_id'),
         'ET' => array('email1'),
         'AC' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
+        'CF' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
         'RR' => array(),
     );
 
