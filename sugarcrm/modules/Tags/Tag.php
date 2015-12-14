@@ -199,4 +199,20 @@ class Tag extends Basic
 
         parent::mark_deleted($id);
     }
+
+    /**
+    * @inheritDoc
+    */
+    public function ACLAccess($view, $context = null)
+    {
+        if ($view === 'ListView') {
+            // ListView is the view used in global search, so if we are hitting
+            // a global search request, we need to allow this no matter what or
+            // global search will break
+            if (is_array($context) && isset($context['source']) && $context['source'] === 'search_engine') {
+                return true;
+            }
+        }
+        return parent::ACLAccess($view, $context);
+    }
 }

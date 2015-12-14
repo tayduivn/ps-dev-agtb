@@ -34,6 +34,7 @@ $viewdefs['Opportunities']['base']['view']['subpanel-for-contacts'] = array(
                     'enabled' => true,
                     'default' => true,
                     'name' => 'account_name',
+                    'sortable' => true,
                 ),
                 array(
                     'name' => 'contact_role',

@@ -38,7 +38,7 @@
             this.layout.on('preview:pagination:update', this.render, this);
         }
 
-        if (this.previewEdit) {
+        if (this.layout.previewEdit) {
             _.extend(this.events, {'click [data-action=edit]': 'triggerEdit'});
             this.layout.on('preview:edit:complete', this.toggleSaveAndCancel, this);
         }
@@ -89,7 +89,7 @@
     _renderFields: function() {
         this._super('_renderFields');
 
-        if (this.previewEdit) {
+        if (this.layout.previewEdit) {
             this.getField('save_button').hide();
             this.getField('cancel_button').hide();
         }
@@ -113,11 +113,9 @@
     checkACL: function(model) {
         if (app.config.previewEdit && this.layout.meta.editable === true &&
             app.acl.hasAccessToModel('edit', model)) {
-            this.context.set({'previewEdit': true});
-            this.previewEdit = true;
+            this.layout.previewEdit = true;
         } else {
-            this.context.set({'previewEdit': false});
-            this.previewEdit = false;
+            this.layout.previewEdit = false;
         }
     }
 })

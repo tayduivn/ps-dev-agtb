@@ -60,9 +60,13 @@
 
         app.events.on("api:refreshtoken:success", this._refreshSession, this);
 
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
         this.bwcModel = app.data.createBean('bwc');
-        app.routing.before('route', this.beforeRoute, this);
+
+        // because loadView disposes the old layout when the bwc iFrame is no
+        // longer in the DOM, it causes a memory leak unless we unbind it
+        // before the new layout is loaded.
+        app.before('app:view:load', this.unbindDom, this);
     },
 
     /**
@@ -552,7 +556,7 @@
                 return memo + _.where(_.flatten(events), {namespace: 'bwc.sugarcrm'}).length;
             }, 0);
 
-            return 'Clear ' + registered + ' event(s) in `bwc.sugarcrm`.'
+            return 'Clear ' + registered + ' event(s) in `bwc.sugarcrm`.';
         });
     },
 
@@ -574,10 +578,15 @@
      * The custom route `route: "bwc/*url"` is ignoring the reload of the view
      * based on the same logic used here.
      *
+     * @deprecated since 7.7, will be removed in 7.8.
+     *
      * @param {Object} route Route object being passed from
      *   {@link Core.Routing#beforeRoute}.
      */
     beforeRoute: function(route) {
+
+        app.log.warn('`app.bwc.beforeRoute()` is deprecated since 7.7. This method will be removed in 7.8.');
+
         var bwcUrl = route && route.args && route.args[0];
 
         if (bwcUrl && this._currentUrl.replace('#bwc/', '') === bwcUrl) {
@@ -594,12 +603,13 @@
     _dispose: function() {
         app.events.off("api:refreshtoken:success", this._refreshSession, this);
 
-        app.routing.offBefore('route', this.beforeRoute, this);
+        this.unbindDom();
+        app.offBefore(null, null, this);
         if (this.bwcModel) {
             this.bwcModel.off();
             this.bwcModel = null;
         }
-        app.view.View.prototype._dispose.call(this);
+        this._super('_dispose');
     },
 
     /**

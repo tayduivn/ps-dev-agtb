@@ -4128,6 +4128,9 @@ function sugarArrayIntersectMerge($gimp, $dom)
  */
 function sugarLangArrayMerge($gimp, $dom)
 {
+    if (empty($gimp) && is_array($dom))
+        return $dom;
+
     if (is_array($gimp) && is_array($dom)) {
         foreach ($dom as $domKey => $domVal) {
             if (isset($gimp[$domKey])) {

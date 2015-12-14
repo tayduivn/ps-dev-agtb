@@ -49,7 +49,7 @@
      * @override Overriding to get preview specific buttons
      */
     toggleButtons: function(enable) {
-        if (this.previewEdit) {
+        if (this.layout.previewEdit) {
             var previewLayout = this.layout.getComponent('preview-header');
             previewLayout.getField('save_button').setDisabled(!enable);
             previewLayout.getField('cancel_button').setDisabled(!enable);
@@ -113,7 +113,7 @@
      * previewEdit is enabled
      */
     delegateButtonEvents: function() {
-        if (this.context.get('previewEdit')) {
+        if (this.layout && this.layout.previewEdit) {
             this.context.on('button:save_button:click', this.saveClicked, this);
             this.context.on('button:cancel_button:click', this.cancelClicked, this);
             this.layout.on('preview:edit', this.handleEdit, this);
@@ -250,12 +250,18 @@
             if (this.layout) {
                 this.layout.trigger('previewheader:ACLCheck', model);
             }
-            this.render();
 
             // TODO: Remove when pagination on activity streams is fixed.
             if (this.previewModule && this.previewModule === 'Activities') {
+                // We need to set previewEdit to false before render but set
+                // hideNextPreview and trigger 'preview:pagination:update' after
+                this.layout.previewEdit = false;
+                this.render();
                 this.layout.hideNextPrevious = true;
                 this.layout.trigger('preview:pagination:update');
+            } else {
+                // If we aren't on activitystream, then just render
+                this.render();
             }
             // Open the preview panel
             app.events.trigger('preview:open', this);
