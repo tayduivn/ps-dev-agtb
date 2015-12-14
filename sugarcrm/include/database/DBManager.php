@@ -2549,13 +2549,9 @@ protected function checkQuery($sql, $object_name = false)
                 $val = $data[$field];
             }
 
-
-            if (strlen($val) == 0) {
-                if (!empty($fieldDef['required']) && isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
-                    $val = $fieldDef['default'];
-                } else {
-                    $val = null;
-                }
+            //Required fields should never be null (but they can be empty values)
+            if (strlen($val) == 0 && empty($fieldDef['required'])) {
+                $val = null;
             }
 
             if ($fieldType == 'bool') {
@@ -2566,7 +2562,7 @@ protected function checkQuery($sql, $object_name = false)
             if (!empty($fieldDef['auto_increment'])) {
                 continue;
             } elseif (!is_null($val) || !empty($fieldDef['required'])) {
-                $values[$field] = $this->massageValue($val, $fieldDef, $usePreparedStatements);
+                $values[$field] = $this->massageValue($val, $fieldDef, $usePreparedStatements, true);
             } elseif ($this->isNullable($fieldDef)) {
                 $values[$field] = $usePreparedStatements ? null : 'NULL';
             } else {
@@ -2717,14 +2713,17 @@ protected function checkQuery($sql, $object_name = false)
 	    return " WHERE $where";
 	}
 
-	/**
-	 * Outputs a correct string for the sql statement according to value
-	 *
-	 * @param  mixed $val
-	 * @param  array $fieldDef field definition
-	 * @return mixed
-	 */
-	public function massageValue($val, $fieldDef, $forPrepared = false)
+    /**
+     * Outputs a correct string for the sql statement according to value
+     *
+     * @param mixed $val
+     * @param array $fieldDef field definition
+     * @param bool  $forPrepared
+     * @param bool  $ignoreDefault when true, the default value is not used for required fields. This should be true on most updates
+     *
+     * @return mixed
+     */
+	public function massageValue($val, $fieldDef, $forPrepared = false, $ignoreDefault = false)
 	{
 		$type = $this->getFieldType($fieldDef);
 
@@ -2733,7 +2732,7 @@ protected function checkQuery($sql, $object_name = false)
 			switch($this->type_class[$type]) {
 				case 'bool':
 					if (!empty($fieldDef['required']) && $val == ''){
-						if (isset($fieldDef['default'])){
+						if (!$ignoreDefault && isset($fieldDef['default'])){
 							return $fieldDef['default'];
 						}
 						return 0;
@@ -2741,7 +2740,7 @@ protected function checkQuery($sql, $object_name = false)
 					return intval($val);
 				case 'int':
 					if (!empty($fieldDef['required']) && $val == ''){
-						if (isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
+						if (!$ignoreDefault && isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
 							return $fieldDef['default'];
 						}
 						return 0;
@@ -2750,7 +2749,7 @@ protected function checkQuery($sql, $object_name = false)
 				case 'bigint' :
 					$val = (float)$val;
 					if (!empty($fieldDef['required']) && $val == false){
-						if (isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
+						if (!$ignoreDefault && isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
 							return $fieldDef['default'];
 						}
 						return 0;
@@ -2758,7 +2757,7 @@ protected function checkQuery($sql, $object_name = false)
 					return $val;
 				case 'float':
 					if (!empty($fieldDef['required'])  && $val == ''){
-						if (isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
+						if (!$ignoreDefault && isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
 							return $fieldDef['default'];
 						}
 						return 0;
@@ -2772,7 +2771,7 @@ protected function checkQuery($sql, $object_name = false)
 					// empty date can't be '', so convert it to either NULL or empty date value
 					if($val == '') {
 						if (!empty($fieldDef['required'])) {
-							if (isset($fieldDef['default'])) {
+							if (!$ignoreDefault && isset($fieldDef['default'])) {
 								return $fieldDef['default'];
 							}
 							return $this->emptyValue($type, $forPrepared);
@@ -2789,7 +2788,7 @@ protected function checkQuery($sql, $object_name = false)
 
 		if ( is_null($val) ) {
 			if(!empty($fieldDef['required'])) {
-				if (isset($fieldDef['default']) && !empty($fieldDef['default'])){
+				if (!$ignoreDefault && !empty($fieldDef['default'])){
 					return $fieldDef['default'];
 				}
 				return $this->emptyValue($type, $forPrepared);

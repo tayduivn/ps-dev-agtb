@@ -66,7 +66,7 @@ class DropDownUpdateSQLTest extends Sugar_PHPUnit_Framework_TestCase
                     ),
                 ),
                 '',
-                "status='In Process'",
+                "status=''",
             ),
             array(
                 array(
