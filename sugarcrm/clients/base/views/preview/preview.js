@@ -16,7 +16,7 @@
 ({
     extendsFrom: 'RecordView',
 
-    plugins: ['ToggleMoreLess', 'Editable', 'ErrorDecoration'],
+    plugins: ['ToggleMoreLess', 'Editable', 'ErrorDecoration', 'SugarLogic'],
     fallbackFieldTemplate: 'detail',
     /**
      * Events related to the preview view:
