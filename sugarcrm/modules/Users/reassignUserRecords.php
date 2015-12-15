@@ -15,6 +15,8 @@ require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 require_once('modules/Teams/TeamSet.php');
 require_once('modules/Teams/TeamSetManager.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 global $mod_strings, $app_strings;
 $mod_strings_users = $mod_strings;
 
@@ -27,9 +29,11 @@ global $locale, $dictionary;
 
 $db = DBManagerFactory::getInstance();
 
-$return_module = isset($_REQUEST['return_module']) ? $_REQUEST['return_module'] : '';
-$return_action = isset($_REQUEST['return_action']) ? $_REQUEST['return_action'] : '';
-$return_id = isset($_REQUEST['return_id']) ? $_REQUEST['return_id'] : '';
+$return_module = InputValidation::getService()->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName', '');
+$return_action = InputValidation::getService()->getValidInputRequest('return_action', '');
+$return_id = InputValidation::getService()->getValidInputRequest('return_id', 'Assert\Guid', '');
+$fromuser = InputValidation::getService()->getValidInputRequest('fromuser', 'Assert\Guid');
+$touser = InputValidation::getService()->getValidInputRequest('touser', 'Assert\Guid');
 
 if(!empty($return_module)) {
     $cancel_location = "index.php?module={$return_module}&action={$return_action}&record={$return_id}";
@@ -44,12 +48,13 @@ foreach(SugarAutoLoader::existingCustom('modules/Users/metadata/reassignScriptMe
     include $file;
 }
 
-if(!empty($_GET['record'])){
+$record = InputValidation::getService()->getValidInputRequest('record', 'Assert\Guid');
+if(!empty($record)){
 	unset($_SESSION['reassignRecords']);
-	$_SESSION['reassignRecords']['fromuser'] = $_GET['record'];
+	$_SESSION['reassignRecords']['fromuser'] = $record;
 }
 
-if(!isset($_POST['fromuser']) && !isset($_GET['execute'])){
+if(empty($fromuser) && !isset($_GET['execute'])){
 ///////////////////// BEGIN STEP 1 - Select users/modules /////////////////////////
 	$exclude_modules = array(
 		"ImportMap",
@@ -250,26 +255,24 @@ foreach($moduleFilters as $modFilter => $fieldArray){
 }
 else if(!isset($_GET['execute'])){
 ///////////////////// BEGIN STEP 2 - Confirm Selections /////////////////////////
-	if(empty($_POST['modules'])){
+	$modules = InputValidation::getService()->getValidInputRequest('modules', array('Assert\All' => array('constraints' => 'Assert\Mvc\ModuleName')));
+	if(empty($modules)){
 		sugar_die($mod_strings_users['ERR_REASS_SELECT_MODULE']);
 	}
 
-    if($_POST['fromuser'] == $_POST['touser']){
+    if($fromuser == $touser){
 		sugar_die($mod_strings_users['ERR_REASS_DIFF_USERS']);
 	}
 
 	global $current_user;
 	// Set the from and to user names so that we can display them in the results
-	$fromusername = $_POST['fromuser'];
-	$tousername = $_POST['touser'];
-
-	$query = "select user_name, id from users where id in ('{$_POST['fromuser']}', '{$_POST['touser']}')";
+	$query = "select user_name, id from users where id in (".$db->quoted($fromuser).", ".$db->quoted($touser).")";
 
 	$res = $db->query($query);
 	while($row = $db->fetchByAssoc($res)){
-		if($row['id'] == $_POST['fromuser'])
+		if($row['id'] == $fromuser)
 			$fromusername = $row['user_name'];
-		if($row['id'] == $_POST['touser'])
+		if($row['id'] == $touser)
 			$tousername = $row['user_name'];
 	}
 	//rrs bug: 31056 - instead of setting the team_id let's set the team_set_id and set the team_id as the primary
@@ -297,7 +300,7 @@ else if(!isset($_GET['execute'])){
 	unset($_SESSION['reassignRecords']['modules']);
 	$beanListFlip = $_SESSION['reassignRecords']['assignedModuleListCache'];
 
-    foreach($_POST['modules'] as $module){
+    foreach($modules as $module) {
 		if(!array_key_exists($module, $beanListFlip)){
 			continue;
 		}
@@ -317,7 +320,7 @@ else if(!isset($_GET['execute'])){
 
 		$q_select = "select id";
 		$q_update = "update ";
-		$q_set = " set assigned_user_id = '{$_POST['touser']}', ".
+		$q_set = " set assigned_user_id = ".$db->quoted($touser).", ".
 			      "date_modified = '". TimeDate::getInstance()->nowDb() . "'";
 
         //Add modified_user_id clause if it exists in the table
@@ -331,7 +334,7 @@ else if(!isset($_GET['execute'])){
 			$q_set .= ", team_id = '{$team_id}', team_set_id = '{$team_set_id}' ";
 		}
 		$q_tables   = " {$object->table_name} ";
-		$q_where  = "where {$object->table_name}.deleted=0 and {$object->table_name}.assigned_user_id = '{$_POST['fromuser']}' ";
+		$q_where  = "where {$object->table_name}.deleted=0 and {$object->table_name}.assigned_user_id = ".$db->quoted($fromuser);
 
 		// Process conditions based on metadata
 		if(isset($moduleFilters[$module]['fields']) && is_array($moduleFilters[$module]['fields'])){
@@ -340,8 +343,9 @@ else if(!isset($_GET['execute'])){
 
                 $metaName = $meta['name'];
 
-				if(!empty($_POST[$metaName])) {
-					$_SESSION['reassignRecords']['filters'][$metaName] = $_POST[$metaName];
+				$filter = InputValidation::getService()->getValidInputRequest($metaName, 'Assert\InputParameters');
+				if(!empty($filter)) {
+					$_SESSION['reassignRecords']['filters'][$metaName] = $filter;
                 }
 
 				$is_custom = isset($meta['custom_table']) && $meta['custom_table'] == true;
@@ -394,8 +398,8 @@ else if(!isset($_GET['execute'])){
 		$_SESSION['reassignRecords']['toteam'] = $team_id;
 		$_SESSION['reassignRecords']['toteamsetid'] = $team_set_id;
 		$_SESSION['reassignRecords']['toteamname'] = $toteamname;
-		$_SESSION['reassignRecords']['fromuser'] = $_POST['fromuser'];
-		$_SESSION['reassignRecords']['touser'] = $_POST['touser'];
+		$_SESSION['reassignRecords']['fromuser'] = $fromuser;
+		$_SESSION['reassignRecords']['touser'] = $touser;
 		$_SESSION['reassignRecords']['fromusername'] = $fromusername;
 		$_SESSION['reassignRecords']['tousername'] = $tousername;
 		$_SESSION['reassignRecords']['modules'][$module]['query'] = $query;
@@ -571,7 +575,7 @@ function updateDivDisplay(multiSelectObj){
     }
 }
 <?php
-if(!isset($_POST['fromuser']) && !isset($_GET['execute'])){
+if(empty($fromuser) && !isset($_GET['execute'])){
 ?>
 updateDivDisplay(document.getElementById('modulemultiselect'));
 <?php

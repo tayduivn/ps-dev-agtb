@@ -96,14 +96,15 @@ class ReportsController extends SugarController
 		$qsd = QuickSearchDefaults::getQuickSearchDefaults();
 		if (!empty($_REQUEST['parent_form']))
 			$qsd->form_name = $_REQUEST['parent_form'];
-		$quicksearch_js = '';
+		$quicksearch_js = array();
 		if (isset($_REQUEST['parent_module']) && isset($_REQUEST['parent_field'])) {
 			$sqs_objects = array($_REQUEST['parent_field'] => $qsd->getQSParent($_REQUEST['parent_module'])); 
-    		foreach($sqs_objects as $sqsfield=>$sqsfieldArray){
-        	    $quicksearch_js .= "sqs_objects['$sqsfield']={$global_json->encode($sqsfieldArray)};";
-    		}
+    		foreach($sqs_objects as $sqsfield => $sqsfieldArray) {
+                $quicksearch_js[$sqsfield] = $global_json->encode($sqsfieldArray);
+            }
 		}
-		echo $quicksearch_js;
+            
+        echo json_encode($quicksearch_js);
 	}
 
     protected function action_massupdate(){

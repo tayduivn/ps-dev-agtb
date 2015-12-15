@@ -105,7 +105,7 @@ form
 			<input type="hidden" name="user_name" value="{$USER_NAME}" />
 			<input type='hidden' name='saveConfig' value='0' />
 		<tr>
-			<td  colspan='2'><span id='post_error' class="error">{$EXPIRATION_TYPE}&nbsp;</span></td>
+			<td  colspan='2'><span id='post_error' class="error">{$EXPIRATION_TYPE|escape:'html':'UTF-8'}&nbsp;</span></td>
 		</tr>
 		
 		<tr>

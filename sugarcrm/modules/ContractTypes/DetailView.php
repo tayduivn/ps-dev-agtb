@@ -62,7 +62,6 @@ if (isset($_REQUEST['return_id'])) {
 }
  
 $xtpl->assign("GRIDLINE", $gridline);
-$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("ID", $focus->id);
 
 $xtpl->assign("NAME", $focus->name);

@@ -112,7 +112,7 @@ function create_field_label($module, $language, $key, $value, $overwrite=false)
    else
    {
       $mod_strings = array_merge($mod_strings, array($key => $value));
-      $dirname = "custom/modules/$module/language";
+      $dirname = "custom/modules/" . basename($module) . "/language";
 
       if(SugarAutoLoader::ensureDir($dirname))
       {

@@ -34,16 +34,17 @@ class ViewListView extends SugarView
     /*
      * Pseudo-constructor to enable subclasses to call a parent's constructor without knowing the parent in PHP4
      */
-    function __construct()
+    function __construct($bean = null, $view_object_map = array(), $request = null)
     {
-        $this->editModule = $_REQUEST [ 'view_module' ] ;
-        $this->editLayout = $_REQUEST [ 'view' ] ;
-        $this->subpanel = (! empty ( $_REQUEST [ 'subpanel' ] )) ? $_REQUEST [ 'subpanel' ] : false ;
-        $this->subpanelLabel = (! empty ( $_REQUEST [ 'subpanelLabel' ] )) ? $_REQUEST [ 'subpanelLabel' ] : false ;
+        parent::__construct($bean, $view_object_map, $request);
+        $this->editModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+        $this->editLayout = $this->request->getValidInputRequest('view', 'Assert\ComponentName');
+        $this->subpanel = $this->request->getValidInputRequest('subpanel');
+        $this->subpanelLabel = $this->request->getValidInputRequest('subpanelLabel', null, false);
+        $this->package = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
+        $this->fromModuleBuilder = !empty($this->package);
 
-        $this->fromModuleBuilder = ! empty ( $_REQUEST [ 'view_package' ] ) ;
-        if (! $this->fromModuleBuilder)
-        {
+        if (!$this->fromModuleBuilder) {
             $moduleNames = array_change_key_case ( $GLOBALS['app_list_strings'] [ 'moduleList' ] ) ;
             $this->translatedEditModule = $moduleNames [ strtolower ( $this->editModule ) ] ;
         }
@@ -56,11 +57,9 @@ class ViewListView extends SugarView
 
     function display ($preview = false)
     {
-
-        $packageName = (! empty ( $_REQUEST [ 'view_package' ] )) ? $_REQUEST [ 'view_package' ] : null ;
-        $subpanelName = (! empty ( $_REQUEST [ 'subpanel' ] )) ? $_REQUEST [ 'subpanel' ] : null ;
+        $subpanelName = (!empty($this->subpanel)) ? $this->subpanel : null;
         require_once 'modules/ModuleBuilder/parsers/ParserFactory.php' ;
-        $parser = ParserFactory::getParser (  $this->editLayout , $this->editModule , $packageName, $subpanelName ) ;
+        $parser = ParserFactory::getParser($this->editLayout, $this->editModule, $this->package, $subpanelName);
         $smarty = $this->constructSmarty ( $parser ) ;
 
         if ($preview)
@@ -98,20 +97,28 @@ class ViewListView extends SugarView
 			$translatedViewType = translate ( $labels [ strtolower( $this->editLayout ) ] , 'ModuleBuilder' ) ;
 		$this->translatedViewType = $translatedViewType;
 
+        $subpanelTitle = $this->request->getValidInputRequest('subpanel_title');
+
         if ($this->fromModuleBuilder)
         {
-            $ajax->addCrumb ( translate ( 'LBL_MODULEBUILDER', 'ModuleBuilder' ), 'ModuleBuilder.main("mb")' ) ;
-            $ajax->addCrumb ( $_REQUEST [ 'view_package' ], 'ModuleBuilder.getContent("module=ModuleBuilder&action=package&package=' . $_REQUEST [ 'view_package' ] . '")' ) ;
-            $ajax->addCrumb ( $this->editModule, 'ModuleBuilder.getContent("module=ModuleBuilder&action=module&view_package=' . $_REQUEST [ 'view_package' ] . '&view_module=' . $_REQUEST [ 'view_module' ] . '")' ) ;
-            if ($this->subpanel != "")
-            {
+            $ajax->addCrumb(translate('LBL_MODULEBUILDER', 'ModuleBuilder'), 'ModuleBuilder.main("mb")');
+            $ajax->addCrumb(
+                $this->package,
+                'ModuleBuilder.getContent("module=ModuleBuilder&action=package&package=' . $this->package . '")'
+            );
+            $ajax->addCrumb(
+                $this->editModule,
+                'ModuleBuilder.getContent("module=ModuleBuilder&action=module&view_package='
+                . $this->package . '&view_module=' . $this->editModule . '")'
+            );
+            if ($this->subpanel != "") {
                 $ajax->addCrumb ( translate ( 'LBL_AVAILABLE_SUBPANELS', 'ModuleBuilder' ), '' ) ;
-                if ($this->subpanelLabel)
-                {
+                if ($this->subpanelLabel) {
                     $subpanelLabel = $this->subpanelLabel;
                     // If the subpanel title has changed, use that for the label instead
-                    if( !empty($_REQUEST['subpanel_title'] ) && $_REQUEST['subpanelLabel'] != $_REQUEST['subpanel_title'] )
-                        $subpanelLabel = $_REQUEST['subpanel_title'];
+                    if (!empty($subpanelTitle) && $this->subpanelLabel != $subpanelTitle) {
+                        $subpanelLabel = $subpanelTitle;
+                    }
 
                     $ajax->addCrumb( $subpanelLabel, '' );
                     $this->translatedViewType = $subpanelLabel . "&nbsp;" . translate("LBL_SUBPANEL", "ModuleBuilder");
@@ -122,7 +129,7 @@ class ViewListView extends SugarView
                 }
             } else
             {
-                $ajax->addCrumb ( translate ( $layoutLabel, 'ModuleBuilder' ), 'ModuleBuilder.getContent("module=ModuleBuilder&MB=true&action=wizard&view_module=' . $_REQUEST [ 'view_module' ] . '&view_package=' . $_REQUEST [ 'view_package' ] . '")' ) ;
+                $ajax->addCrumb ( translate ( $layoutLabel, 'ModuleBuilder' ), 'ModuleBuilder.getContent("module=ModuleBuilder&MB=true&action=wizard&view_module=' . $this->editModule . '&view_package=' . $this->package . '")' ) ;
                 $ajax->addCrumb ( $translatedViewType, '' ) ;
             }
         } else
@@ -137,8 +144,8 @@ class ViewListView extends SugarView
                 {
                     $subpanelLabel = $this->subpanelLabel;
                     // If the subpanel title has changed, use that for the label instead
-                    if( !empty($_REQUEST['subpanel_title'] ) && $_REQUEST['subpanelLabel'] != $_REQUEST['subpanel_title'] )
-                        $subpanelLabel = $_REQUEST['subpanel_title'];
+                    if(!empty($subpanelTitle) && $this->subpanelLabel != $subpanelTitle)
+                        $subpanelLabel = $subpanelTitle;
 
                     $ajax->addCrumb( $subpanelLabel, '' );
                     $this->translatedViewType = $subpanelLabel . "&nbsp;" . translate("LBL_SUBPANEL", "ModuleBuilder");
@@ -265,18 +272,18 @@ class ViewListView extends SugarView
 
         $smarty->assign ( 'deleteImage', $deleteImage ) ;
         $smarty->assign ( 'MOD', $GLOBALS [ 'mod_strings' ] ) ;
+        $local = $this->request->getValidInputRequest('local');
 
         if ($this->fromModuleBuilder)
         {
             $smarty->assign ( 'MB', true ) ;
-            $smarty->assign ( 'view_package', $_REQUEST [ 'view_package' ] ) ;
+            $smarty->assign ( 'view_package', $this->package ) ;
             $mb = new ModuleBuilder ( ) ;
-            $module = & $mb->getPackageModule ( $_REQUEST [ 'view_package' ], $this->editModule ) ;
+            $module = & $mb->getPackageModule ( $this->package, $this->editModule ) ;
             $smarty->assign('current_mod_strings', $module->getModStrings());
             if ($this->subpanel)
             {
-                if (isset ( $_REQUEST [ 'local' ] ))
-                {
+                if ($local !== null) {
                     $smarty->assign ( 'local', '1' ) ;
                 }
                 $smarty->assign ( "subpanel", $this->subpanel ) ;

@@ -41,12 +41,14 @@ class ListViewData {
 	/**
 	 * Constructor sets the limitName to look up the limit in $sugar_config
 	 *
+     * @param Request $request
 	 * @return ListViewData
 	 */
-	function ListViewData() {
+    public function ListViewData(Request $request = null)
+    {
 		$this->limitName = 'list_max_entries_per_page';
 		$this->db = &DBManagerFactory::getInstance('listviews');
-        $this->request = InputValidation::getService();
+        $this->request = $request ?: InputValidation::getService();
 	}
 
     /**
@@ -127,7 +129,13 @@ class ListViewData {
 	 */
 	function getOffset() {
         // Safe $_REQUEST[$this->var_offset]
-        return $this->request->getValidInputRequest($this->var_offset, array('Assert\Type' => array('type' => 'numeric')), 0);
+        return (isset($_REQUEST[$this->var_offset]) && ($_REQUEST[$this->var_offset] === 'end'))
+            ? $_REQUEST[$this->var_offset]
+            : $this->request->getValidInputRequest(
+                $this->var_offset,
+                array('Assert\Type' => array('type' => 'numeric')),
+                0
+            );
 	}
 
     /**

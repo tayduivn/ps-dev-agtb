@@ -18,37 +18,49 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-
-
-
-
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 global $timedate;
 global $current_user;
-if(!empty($_POST['meridiem'])){
-	$_POST['time_start'] = $timedate->merge_time_meridiem($_POST['time_start'],$timedate->get_time_format(), $_POST['meridiem']);
+
+$request = InputValidation::getService();
+$meridiem = $request->getValidInputPost('meridiem');
+$timeStartPost = $request->getValidInputPost('time_start');
+if(!empty($meridiem)){
+	$timeStartPost = $_POST['time_start'] = $timedate->merge_time_meridiem(
+		$timeStartPost,
+		$timedate->get_time_format(),
+		$meridiem
+	);
 }
 
-if(empty($_REQUEST['time_start'])) {
-  $time_to_fix = date($timedate->get_date_time_format(), strtotime($_POST['date_start']));
-    
-  $_REQUEST['date_start'] = $time_to_fix;
-  $_POST['date_start'] = $time_to_fix;
+$timeStartRequest = $request->getValidInputRequest('time_start');
+$dateStartRequest = $request->getValidInputRequest('date_start');
+$dateStartPost = $request->getValidInputPost('date_start');
+
+if (empty($timeStartRequest)) {
+    $timeToFix = date($timedate->get_date_time_format(), strtotime($dateStartPost));
+	$dateStartRequest = $_REQUEST['date_start'] = $timeToFix;
+	$dateStartPost = $_POST['date_start'] = $timeToFix;
 } else {
-  $_REQUEST['date_start'] = $_REQUEST['date_start'] . ' ' . $_REQUEST['time_start'];
-  $_POST['date_start'] = $_POST['date_start'] . ' ' . $_POST['time_start'];
+	$dateStartRequest = $_REQUEST['date_start'] = $dateStartRequest . ' ' . $timeStartRequest;
+	$dateStartPost = $_POST['date_start'] = $dateStartPost . ' ' . $timeStartPost;
 }
+
+$record = $request->getValidInputPost('record', 'Assert\Guid');
 
 $marketing = BeanFactory::getBean('EmailMarketing');
-if (isset($_POST['record']) && !empty($_POST['record'])) {
-	$marketing->retrieve($_POST['record']);
+if (!empty($record)) {
+	$marketing->retrieve($record);
 }
 if(!$marketing->ACLAccess('Save')){
 		ACLController::displayNoAccess(true);
 		sugar_cleanup(true);
 }
 
-if (!empty($_POST['assigned_user_id']) && ($marketing->assigned_user_id != $_POST['assigned_user_id']) && ($_POST['assigned_user_id'] != $current_user->id)) {
+$assignedUserId = $request->getValidInputPost('assigned_user_id', 'Assert\Guid');
+
+if (!empty($assignedUserId) && ($marketing->assigned_user_id != $assignedUserId) && ($assignedUserId != $current_user->id)) {
 	$check_notify = TRUE;
 }
 else {
@@ -81,8 +93,10 @@ foreach($marketing->additional_column_fields as $field)
 
 	}
 }
+$campaignId = $request->getValidInputRequest('campaign_id', 'Assert\Guid');
 
-$marketing->campaign_id = $_REQUEST['campaign_id'];
+
+$marketing->campaign_id = $campaignId;
 $marketing->save($check_notify);
 
 //add prospect lists to campaign.
@@ -111,9 +125,11 @@ if ($marketing->all_prospect_lists==1) {
 		}
 	}
 }
-if($_REQUEST['action'] != 'WizardMarketingSave'){
-    $header_URL = "Location: index.php?action=DetailView&module=Campaigns&record={$_REQUEST['campaign_id']}";
+
+$action = $request->getValidInputRequest('action');
+
+if($action != 'WizardMarketingSave'){
+    $header_URL = "Location: index.php?action=DetailView&module=Campaigns&record={$campaignId}";
     $GLOBALS['log']->debug("about to post header URL of: $header_URL");
     header($header_URL);
 }
-?>

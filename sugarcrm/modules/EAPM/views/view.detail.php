@@ -34,16 +34,22 @@ class EAPMViewDetail extends ViewDetail {
         $returnModule = 'Users';
         $returnId = $GLOBALS['current_user']->id;
         $returnName = $GLOBALS['current_user']->full_name;
-        if(!empty($_REQUEST['return_action']) && !empty($_REQUEST['return_module'])){
-            if('Users' == $_REQUEST['return_module']){
-                if('EditView' == $_REQUEST['return_action']){
+
+        $returnModuleFromRequest = $this->request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
+        $returnActionFromRequest = $this->request->getValidInputRequest('return_action');
+        $returnNameFromRequest = $this->request->getValidInputRequest('return_name');
+        $returnIdFromRequest = $this->request->getValidInputRequest('user_id', 'Assert\Guid');
+
+        if(!empty($returnActionFromRequest) && !empty($returnModuleFromRequest)){
+            if('Users' == $returnModuleFromRequest){
+                if('EditView' == $returnActionFromRequest){
                     $returnAction = 'EditView';
                 }
-                if(!empty($_REQUEST['return_name'])){
-                    $returnName = $_REQUEST['return_name'];
+                if(!empty($returnNameFromRequest)){
+                    $returnName = $returnNameFromRequest;
                 }
-                if(!empty($_REQUEST['user_id'])){
-                    $returnId = $_REQUEST['user_id'];
+                if(!empty($returnIdFromRequest)){
+                    $returnId = $returnIdFromRequest;
                 }
             }
         }

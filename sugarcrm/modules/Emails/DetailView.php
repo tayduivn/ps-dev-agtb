@@ -247,7 +247,6 @@ $bcc_addr = !empty($focus->bcc_addrs_names) ? htmlspecialchars($focus->bcc_addrs
 $xtpl->assign('MOD', $mod_strings);
 $xtpl->assign('APP', $app_strings);
 $xtpl->assign('GRIDLINE', $gridline);
-$xtpl->assign('PRINT_URL', 'index.php?'.$GLOBALS['request_string']);
 $xtpl->assign('ID', $focus->id);
 $xtpl->assign('TYPE', $email_type);
 $xtpl->assign('PARENT_NAME', $focus->parent_name);

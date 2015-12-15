@@ -119,7 +119,7 @@ SUGAR.dependentDropdown.generateElement = function(focusElement, elementRow, ind
 				 * focusElement.values can be lazy-loaded via JS call
 				 */
 				if(typeof(focusElement.values) == 'string') {
-					focusElement.values = eval(focusElement.values);
+					focusElement.values = JSON.parse(focusElement.values);
 				}
 				
 				/* Define the key-value that is to be used to pre-select a value in the dropdown */	

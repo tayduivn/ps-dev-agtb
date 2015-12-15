@@ -669,7 +669,7 @@ function loadUsers() {
 			for (var i=0;i<acc.length;i++)
 			{
 				val = getNodeValue(acc[i],'datavalue');
-				users_array[users_array.length] = eval("("+val+")");
+				users_array[users_array.length] = JSON.parse(val);
 			}
 		}
 	}

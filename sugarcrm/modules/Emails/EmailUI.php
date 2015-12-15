@@ -1,6 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,6 +9,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 require_once("vendor/ytree/Tree.php");
 require_once("vendor/ytree/ExtNode.php");
@@ -39,6 +40,10 @@ class EmailUI {
 								   JOIN emails_text on emails.id = emails_text.email_id
                                    WHERE (type = '::TYPE::' OR status = '::STATUS::') AND assigned_user_id = '::USER_ID::' AND emails.deleted = '0'";
 
+    /**
+     * @var Request
+     */
+    protected $request;
 
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
@@ -65,6 +70,7 @@ class EmailUI {
 		$this->folder = new SugarFolder();
 		$this->userCacheDir = sugar_cached("modules/Emails/{$current_user->id}");
 		$this->db = DBManagerFactory::getInstance();
+        $this->request = InputValidation::getService();
 	}
 
 
@@ -1665,7 +1671,6 @@ EOQ;
 		$smarty->assign('MOD', $mod_strings);
 		$smarty->assign('APP', $app_strings);
 		$smarty->assign('GRIDLINE', $gridline);
-		$smarty->assign('PRINT_URL', 'index.php?'.$GLOBALS['request_string']);
 		$smarty->assign('ID', $focus->id);
 		$smarty->assign('TYPE', $focus->type);
 		$smarty->assign('PARENT_NAME', $focus->parent_name);
@@ -2113,19 +2118,24 @@ function getSingleMessage($ie) {
 
 		global $timedate;
 		global $app_strings,$mod_strings;
-		$ie->retrieve($_REQUEST['ieId']);
+
+        $ieId = $this->request->getValidInputRequest('ieId', 'Assert\Guid');
+        $mbox = $this->request->getValidInputRequest('mbox', 'Assert\Guid');
+        $uid = $this->request->getValidInputRequest('uid', 'Assert\Guid');
+
+		$ie->retrieve($ieId);
 		$noCache = true;
 
-		$ie->mailbox = $_REQUEST['mbox'];
-		$filename = $_REQUEST['mbox'].$_REQUEST['uid'].".php";
+		$ie->mailbox = $mbox;
+		$filename = $mbox.$uid.".php";
 		$md5uidl = "";
 		if ($ie->isPop3Protocol()) {
-			$md5uidl = md5($_REQUEST['uid']);
-			$filename = $_REQUEST['mbox'].$md5uidl.".php";
+			$md5uidl = md5($uid);
+			$filename = $mbox.$md5uidl.".php";
 		} // if
 
-		if($this->validCacheFileExists($_REQUEST['ieId'], 'messages', $filename)) {
-			$out = $this->getCacheValue($_REQUEST['ieId'], 'messages', $filename, 'out');
+		if($this->validCacheFileExists($ieId, 'messages', $filename)) {
+			$out = $this->getCacheValue($ieId, 'messages', $filename, 'out');
 			$noCache = false;
 
 			// something fubar'd the cache?
@@ -2141,11 +2151,11 @@ function getSingleMessage($ie) {
 		if($noCache) {
 			$writeToCacheFile = true;
 			if ($ie->isPop3Protocol()) {
-				$status = $ie->setEmailForDisplay($_REQUEST['uid'], true, true, true);
+				$status = $ie->setEmailForDisplay($uid, true, true, true);
 			} else {
-				$status = $ie->setEmailForDisplay($_REQUEST['uid'], false, true, true);
+				$status = $ie->setEmailForDisplay($uid, false, true, true);
 			}
-			$out = $ie->displayOneEmail($_REQUEST['uid'], $_REQUEST['mbox']);
+			$out = $ie->displayOneEmail($uid, $mbox);
 			// modify the out object to store date in GMT format on the local cache file
 			$dateTimeInUserFormat = $out['meta']['email']['date_start'];
 			$out['meta']['email']['date_start'] = $timedate->to_db($dateTimeInUserFormat);
@@ -2154,9 +2164,9 @@ function getSingleMessage($ie) {
 			}
 			if ($writeToCacheFile) {
 				if ($ie->isPop3Protocol()) {
-					$this->writeCacheFile('out', $out, $_REQUEST['ieId'], 'messages', "{$_REQUEST['mbox']}{$md5uidl}.php");
+					$this->writeCacheFile('out', $out, $ieId, 'messages', "{$mbox}{$md5uidl}.php");
 				} else {
-					$this->writeCacheFile('out', $out, $_REQUEST['ieId'], 'messages', "{$_REQUEST['mbox']}{$_REQUEST['uid']}.php");
+					$this->writeCacheFile('out', $out, $ieId, 'messages', "{$mbox}{$uid}.php");
 				} // else
 			// restore date in the users preferred format to be send on to UI for diaply
 			$out['meta']['email']['date_start'] = $dateTimeInUserFormat;
@@ -2188,10 +2198,10 @@ eoq;
 		if($noCache) {
 			$GLOBALS['log']->debug("EMAILUI: getSingleMessage() NOT using cache file");
 		} else {
-			$GLOBALS['log']->debug("EMAILUI: getSingleMessage() using cache file [ ".$_REQUEST['mbox'].$_REQUEST['uid'].".php ]");
+			$GLOBALS['log']->debug("EMAILUI: getSingleMessage() using cache file [ ".$mbox.$uid.".php ]");
 		}
 
-		$this->setReadFlag($_REQUEST['ieId'], $_REQUEST['mbox'], $_REQUEST['uid']);
+		$this->setReadFlag($ieId, $mbox, $uid);
 		return $out;
 	}
 

@@ -478,10 +478,7 @@ SUGAR.subpanelUtils = function() {
                 var module = get_module_name();
                 var id = get_record_id();
                 var layout_def_key = get_layout_def_key();
-                try {
-                    eval('result = ' + data.responseText);
-                } catch (err) {
-                }
+                var result = data.responseText;
                 if (typeof(result) != 'undefined' && result != null && result['status'] == 'dupe') {
                     document.location.href = "index.php?" + result['get'].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"').replace(/\r\n/gi,'\n');
                     return;

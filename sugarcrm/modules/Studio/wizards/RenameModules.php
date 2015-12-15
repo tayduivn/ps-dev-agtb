@@ -10,6 +10,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 require_once 'modules/Studio/DropDowns/DropDownHelper.php';
 require_once 'modules/ModuleBuilder/parsers/parser.label.php';
 require_once 'modules/Administration/Common.php';
@@ -17,6 +20,11 @@ require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class RenameModules
 {
+    /**
+     * @var Request
+     */
+    protected $request;
+
     /**
      * Selected language user is renaming for (eg. en_us).
      *
@@ -65,6 +73,14 @@ class RenameModules
     protected $requestModules = array();
 
     /**
+     * constructor
+     */
+    public function __construct()
+    {
+        $this->request = InputValidation::getService();
+    }
+
+    /**
      *
      * @param string $options
      * @return void
@@ -96,7 +112,7 @@ class RenameModules
         $smarty->assign('title', $title);
 
         if (!empty($_REQUEST['dropdown_lang'])) {
-            $selected_lang = $_REQUEST['dropdown_lang'];
+            $selected_lang = $this->request->getValidInputRequest('dropdown_lang', 'Assert\Language');
         } else {
             $selected_lang = $locale->getAuthenticatedUserLanguage();
         }
@@ -167,7 +183,7 @@ class RenameModules
     {
         global $locale;
         if (!empty($_REQUEST['dropdown_lang'])) {
-            $this->selectedLanguage = $_REQUEST['dropdown_lang'];
+            $this->selectedLanguage = $this->request->getValidInputRequest('dropdown_lang', 'Assert\Language');
         } else {
             $this->selectedLanguage = $locale->getAuthenticatedUserLanguage();
         }
@@ -990,7 +1006,7 @@ class RenameModules
         $params = $_REQUEST;
 
         if (!empty($_REQUEST['dropdown_lang'])) {
-            $selected_lang = $_REQUEST['dropdown_lang'];
+            $selected_lang = $this->request->getValidInputRequest('dropdown_lang', 'Assert\Language');
         } else {
             $selected_lang = $locale->getAuthenticatedUserLanguage();
         }

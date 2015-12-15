@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 class ViewBackups extends SugarView
 {
@@ -58,14 +59,14 @@ class ViewBackups extends SugarView
         $input_disabled = "";
         global $mod_strings;
         $errors = array();
-        
+        $request = InputValidation::getService();
+        $runReq = $request->getValidInputRequest('run');
         // process "run" commands
-        if( isset( $_REQUEST['run'] ) && ($_REQUEST['run'] != "") ){
-            $run = $_REQUEST['run'];
-        
-            $backup_dir = $_REQUEST['backup_dir'];
-            $backup_zip = $_REQUEST['backup_zip'];
-        
+        if ($runReq) {
+            $run = $runReq;
+            $backup_dir = $request->getValidInputRequest('backup_dir');
+            $backup_zip = $request->getValidInputRequest('backup_zip');
+
             if( $run == "confirm" ){
                 if( $backup_dir == "" ){
                     $errors[] = $mod_strings['LBL_BACKUP_DIRECTORY_ERROR'];

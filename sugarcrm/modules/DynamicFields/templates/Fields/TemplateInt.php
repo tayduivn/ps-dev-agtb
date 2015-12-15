@@ -10,6 +10,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
 
 class TemplateInt extends TemplateRange
@@ -33,8 +37,13 @@ class TemplateInt extends TemplateRange
 		return "<input type='text' name='". $this->name. "' id='".$this->name."' title='{" . strtoupper($this->name) ."_HELP}' size='".$this->size."' maxlength='".$this->len."' value='{". strtoupper($this->name). "}'>";
 	}
 
-	function populateFromPost(){
-		parent::populateFromPost();
+    public function populateFromPost(Request $request = null)
+    {
+        if (!$request) {
+            $request = InputValidation::getService();
+        }
+
+        parent::populateFromPost($request);
 		if (isset($this->auto_increment))
 		{
 		    $this->auto_increment = $this->auto_increment == "true" || $this->auto_increment === true;
@@ -96,6 +105,3 @@ class TemplateInt extends TemplateRange
 		  $this->autoinc_next = $next;
     }
 }
-
-
-?>

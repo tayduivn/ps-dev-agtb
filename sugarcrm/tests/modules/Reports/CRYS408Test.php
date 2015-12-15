@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 require_once 'modules/Reports/Report.php';
 
 /**
@@ -62,10 +64,9 @@ class CRYS408Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = $this->user;
 
         $this->request['action'] = 'saveField';
-        $_REQUEST = $this->request;
-        $_POST = $this->request;
-        $mb = new ModuleBuilderController();
-        $mb->action_saveField();
+        $request = InputValidation::create($this->request, array());
+        $mb = new ModuleBuilderController($request);
+        $mb->action_SaveField();
 
         $this->account = SugarTestAccountUtilities::createAccount();
         $this->account->name = 'CRYS408Account';
@@ -77,9 +78,8 @@ class CRYS408Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->request['action'] = 'DeleteField';
         $this->request['name'] = 'cur_crys408_c';
-        $_REQUEST = $this->request;
-        $_POST = $this->request;
-        $mb = new ModuleBuilderController();
+        $request = InputValidation::create($this->request, array());
+        $mb = new ModuleBuilderController($request);
         $mb->action_DeleteField();
 
         SugarTestAccountUtilities::removeAllCreatedAccounts();

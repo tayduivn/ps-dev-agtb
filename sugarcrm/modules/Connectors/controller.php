@@ -52,7 +52,7 @@ class ConnectorsController extends SugarController {
 		unset($_SESSION['searchDefs'][$merge_module][$record_id]);
 		$sMap = array();
 
-		$search_source = $_REQUEST['source_id'];
+		$search_source = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName');
 		$source_instance = ConnectorFactory::getInstance($search_source);
 		$source_map = $source_instance->getModuleMapping($merge_module);
 		$module_fields = array();
@@ -83,8 +83,8 @@ class ConnectorsController extends SugarController {
 	 */
 	function action_RetrieveSourceDetails() {
 		$this->view = 'ajax';
-		$source_id = $_REQUEST['source_id'];
-        $record_id = $_REQUEST['record_id'];
+		$source_id = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName');
+        $record_id = $this->request->getValidInputRequest('record_id', 'Assert\Guid');
 
         if(empty($source_id) || empty($record_id)) {
            //display error here
@@ -124,7 +124,8 @@ class ConnectorsController extends SugarController {
 		$retArray['caption'] = "<div style='float:left'>{$GLOBALS['app_strings']['LBL_ADDITIONAL_DETAILS']}</div>";
 	    $retArray['width'] = (empty($results['width']) ? '300' : $results['width']);
 	    $retArray['theme'] = $theme;
-	    echo 'result = ' . $json->encode($retArray);
+	    header("Content-Type: application/json");
+	    echo $json->encode($retArray);
 	}
 
 
@@ -136,14 +137,14 @@ class ConnectorsController extends SugarController {
 			$ss = new Sugar_Smarty();
 		    require_once('include/connectors/utils/ConnectorUtils.php');
             $searchdefs = ConnectorUtils::getSearchDefs();
-			$merge_module = $_REQUEST['merge_module'];
+			$merge_module = $this->request->getValidInputRequest('merge_module', 'Assert\Mvc\ModuleName', '');
 			$seed = BeanFactory::getBean($merge_module);
 			$_searchDefs = isset($searchdefs) ? $searchdefs : array();
 			$_trueFields = array();
-			$source = $_REQUEST['source_id'];
+			$source = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName');
 
 			$searchLabels = ConnectorUtils::getConnectorStrings($source);
-			$record = $_REQUEST['record'];
+			$record =  $this->request->getValidInputRequest('record', 'Assert\Guid');
 			$sourceObj = SourceFactory::getSource($source);
 			$field_defs = $sourceObj->getFieldDefs();
 
@@ -218,7 +219,7 @@ class ConnectorsController extends SugarController {
 
         if(!empty($_REQUEST['source_id']))
         {
-            $source_id = $_REQUEST['source_id'];
+            $source_id = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName');
             require_once('include/connectors/sources/SourceFactory.php');
             $source = SourceFactory::getSource($source_id);
 
@@ -238,7 +239,11 @@ class ConnectorsController extends SugarController {
 	function action_CallRest() {
 		$this->view = 'ajax';
 
-		if(false === ($result=@file_get_contents($_REQUEST['url']))) {
+        $remoteUrl = $this->request->getValidInputRequest('url', array('Assert\Url' => array(
+            'protocols' => array('http', 'https'),
+        )));
+
+		if(false === ($result=@file_get_contents($remoteUrl))) {
            echo '';
 		} else if(!empty($_REQUEST['xml'])){
 		   $values = array();
@@ -254,8 +259,8 @@ class ConnectorsController extends SugarController {
 
 	function action_CallSoap() {
 	    $this->view = 'ajax';
-	    $source_id = $_REQUEST['source_id'];
-	    $module = $_REQUEST['module_id'];
+	    $source_id = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName');
+	    $module = $this->request->getValidInputRequest('module_id', 'Assert\Mvc\ModuleName');
 	    $return_params = explode(',', $_REQUEST['fields']);
 	    require_once('include/connectors/ConnectorFactory.php');
 	    $component = ConnectorFactory::getInstance($source_id);
@@ -279,9 +284,9 @@ class ConnectorsController extends SugarController {
 
 	function action_DefaultSoapPopup() {
 		$this->view = 'ajax';
-	    $source_id = $_REQUEST['source_id'];
-	    $module = $_REQUEST['module_id'];
-	    $id = $_REQUEST['record_id'];
+	    $source_id = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName'); 
+	    $module = $this->request->getValidInputRequest('module_id', 'Assert\Mvc\ModuleName');
+	    $id = $this->request->getValidInputRequest('record_id', 'Assert\Guid'); 
 	    $mapping = $_REQUEST['mapping'];
 
 	    $mapping = explode(',', $mapping);
@@ -748,8 +753,19 @@ class ConnectorsController extends SugarController {
 	}
 
 
-    function action_RunTest() {
+	function action_RunTest() {
         global $mod_strings;
+	    $this->view = 'ajax';
+	    $source_id = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName');
+	    $source = SourceFactory::getSource($source_id);
+	    $properties = array();
+	    foreach($_REQUEST as $name=>$value) {
+	    	    if(preg_match("/^{$source_id}_(.*?)$/", $name, $matches)) {
+	    	       $properties[$matches[1]] = $value;
+	    	    }
+	    }
+	    $source->setProperties($properties);
+	    $source->saveConfig();
 
         $this->view = 'ajax';
 

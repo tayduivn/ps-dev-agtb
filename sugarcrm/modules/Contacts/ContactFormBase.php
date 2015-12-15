@@ -20,6 +20,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/SugarObjects/forms/PersonFormBase.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 class ContactFormBase extends PersonFormBase {
 
 var $moduleName = 'Contacts';
@@ -465,23 +467,28 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 		$check_notify = false;
 	}
 
+	$post = InputValidation::getService();
+	$record = $post->getValidInputPost('record', 'Assert\Guid');
+	$dupCheck = $post->getValidInputPost('dup_checked');
+	$inboundEmailId = $post->getValidInputPost('inbound_email_id', 'Assert\Guid');
+	$relateTo = $post->getValidInputPost('relate_to', 'Assert\ComponentName');
+	$relateId = $post->getValidInputPost('relate_id', 'Assert\Guid');
 
-	if (empty($_POST['record']) && empty($_POST['dup_checked'])) {
+	if (!empty($record) && !empty($dupCheck)) {
 
 		$duplicateContacts = $this->checkForDuplicates($prefix);
 		if(isset($duplicateContacts)){
 			$location='module=Contacts&action=ShowDuplicates';
 			$get = '';
-			if(isset($_POST['inbound_email_id']) && !empty($_POST['inbound_email_id'])) {
-				$get .= '&inbound_email_id='.$_POST['inbound_email_id'];
+			if(!empty($inboundEmailId)) {
+				$get .= '&inbound_email_id=' . $inboundEmailId;
 			}
-
 			// Bug 25311 - Add special handling for when the form specifies many-to-many relationships
-			if(isset($_POST['relate_to']) && !empty($_POST['relate_to'])) {
-				$get .= '&Contactsrelate_to='.$_POST['relate_to'];
+			if(!empty($relateTo)) {
+				$get .= '&Contactsrelate_to=' . $relateTo;
 			}
-			if(isset($_POST['relate_id']) && !empty($_POST['relate_id'])) {
-				$get .= '&Contactsrelate_id='.$_POST['relate_id'];
+			if(!empty($relateId)) {
+				$get .= '&Contactsrelate_id='. $relateId;
 			}
 
 			//add all of the post fields to redirect get string

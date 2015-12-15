@@ -790,11 +790,11 @@ EOF;
                 if ($authFailure) {
                     $ss->assign('csrfAuthFailure', true);
                     $ss->assign('module', $this->controller->module);
-                    $ss->assign('action', $this->controller->action);
+                    $ss->assign('action', htmlspecialchars($this->controller->action, ENT_QUOTES, "UTF-8"));
                 } else {
                     $ss->assign('csrfAuthFailure', false);
                     $ss->assign('host', $http_host);
-                    $ss->assign('action', $this->controller->action);
+                    $ss->assign('action', htmlspecialchars($this->controller->action, ENT_QUOTES, "UTF-8"));
                     $ss->assign('whiteListString', $whiteListString);
                 }
                 $ss->display('include/MVC/View/tpls/xsrf.tpl');

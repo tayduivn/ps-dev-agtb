@@ -57,7 +57,6 @@ class DBManagerFactory
                 default:
                     $my_db_manager = self::getManagerByType($type, false);
                     if(empty($my_db_manager)) {
-                        echo $type . "\n";
                         display_stack_trace();
                         $GLOBALS['log']->fatal("unable to load DB manager for: $type");
                         sugar_die("Cannot load DB manager");

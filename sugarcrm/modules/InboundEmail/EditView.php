@@ -10,6 +10,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 $_REQUEST['edit']='true';
 
 require_once('include/SugarFolders/SugarFolders.php');
@@ -45,8 +48,11 @@ if(isset($_REQUEST['record'])) {
 }
 else
 {
-    if(!empty($_REQUEST['mailbox_type']))
-        $focus->mailbox_type = $_REQUEST['mailbox_type'];
+    $request = InputValidation::getService();
+    $request_mailbox_type = $request->getValidInputRequest('mailbox_type');
+    if ($request_mailbox_type) {
+        $focus->mailbox_type = $request_mailbox_type;
+    }
 
     //Default to imap protocol for new accounts.
     $focus->protocol = 'imap';
@@ -242,7 +248,7 @@ $xtpl->assign('SSL', $ssl);
 $protocol = filterInboundEmailPopSelection($app_list_strings['dom_email_server_type']);
 $xtpl->assign('PROTOCOL', get_select_options_with_id($protocol, $focus->protocol));
 $xtpl->assign('MARK_READ', $mark_read);
-$xtpl->assign('MAILBOX_TYPE', $focus->mailbox_type);
+$xtpl->assign('MAILBOX_TYPE', htmlspecialchars($focus->mailbox_type, ENT_COMPAT, 'UTF-8'));
 $xtpl->assign('TEMPLATE_ID', $focus->template_id);
 $xtpl->assign('EMAIL_TEMPLATE_OPTIONS', get_select_options_with_id($email_templates_arr, $focus->template_id));
 $xtpl->assign('ONLY_SINCE', $only_since);

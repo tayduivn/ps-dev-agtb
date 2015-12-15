@@ -17,9 +17,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 require_once 'include/SugarObjects/SugarConfig.php';
 require_once 'include/utils/security_utils.php';
 require_once 'include/utils/array_utils.php';
+
 
 
 function make_sugar_config(&$sugar_config)
@@ -1935,9 +1939,8 @@ function translate($string, $mod='', $selectedValue='')
     if (!empty($mod)) {
         global $current_language;
         //Bug 31275
-        if (isset($_REQUEST['login_language'])) {
-            $current_language = ($_REQUEST['login_language'] == $current_language)? $current_language : $_REQUEST['login_language'];
-        }
+        $request = InputValidation::getService();
+        $current_language = $request->getValidInputRequest('login_language', 'Assert\Language', $current_language);
         $lang = return_module_language($current_language, $mod);
 
         // Bug 60664 - If module language isn't found, just use mod_strings
@@ -4087,7 +4090,7 @@ function getJSONobj()
     static $json = null;
     if (!isset($json)) {
         require_once 'include/JSON.php';
-        $json = new JSON(JSON_LOOSE_TYPE);
+        $json = new JSON();
     }
 
     return $json;
@@ -5652,15 +5655,21 @@ function ensureJSCacheFilesExist($files = array(), $root = '.', $addPath = true)
 
     // If even one of the files doesn't exist, rebuild
     if (!$cacheExists) {
-        // Maintain state as well as possible
-        $rd = isset($_REQUEST['root_directory']) ? $_REQUEST['root_directory'] : null;
 
+        // Safe $_REQUEST['root_directory']
+        $inputValidation = InputValidation::getService();
+
+        // Maintain state as well as possible
+        $rd = $inputValidation->getValidInputRequest('root_directory', 'Assert\File');
+
+        // FIXME: setting $_REQUEST parameters ourselves ...
         // Build the concatenated files
         $_REQUEST['root_directory'] = $root;
         require_once("jssource/minify_utils.php");
         $minifyUtils = new SugarMinifyUtils();
         $minifyUtils->ConcatenateFiles($root);
 
+        // FIXME: setting $_REQUEST parameters ourselves ...
         // Cleanup the root directory request var if it was found. If it was null
         // this will in effect unset it
         $_REQUEST['root_directory'] = $rd;

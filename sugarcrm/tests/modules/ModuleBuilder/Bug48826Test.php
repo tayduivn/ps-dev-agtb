@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 /**
  * Bug #48826
  * Module Builder - Dependent multiselect fields are always displayed
@@ -24,14 +26,6 @@ require_once ('modules/DynamicFields/FieldCases.php') ;
 
 class Bug48826Test extends Sugar_PHPUnit_Framework_TestCase
 {
-	public function setUp()
-	{
-	}
-	
-	public function tearDown()
-	{
-	}
-    
     public function provider()
     {
         $types = array(
@@ -43,18 +37,18 @@ class Bug48826Test extends Sugar_PHPUnit_Framework_TestCase
         foreach ( $types as $type )
         {
             // Bug #48826
-            $provider_array[] = array($type, array('name' => 'equal($dd1_c,&quot;Analyst&quot;)'), 'equal($dd1_c,&quot;Analyst&quot;)');
-            $provider_array[] = array($type, array('dependency' => 'equal($dd1_c,&quot;Analyst&quot;)'), 'equal($dd1_c,"Analyst")');
+            $provider_array[] = array($type, array('name' => 'equal($dd1_c,"Analyst")'), 'equal($dd1_c,"Analyst")');
             $provider_array[] = array($type, array('dependency' => 'equal($dd1_c,"Analyst")'), 'equal($dd1_c,"Analyst")');
-            $provider_array[] = array($type, array('formula' => 'equal($dd1_c,&quot;Analyst&quot;)'), 'equal($dd1_c,"Analyst")');
+            $provider_array[] = array($type, array('dependency' => 'equal($dd1_c,"Analyst")'), 'equal($dd1_c,"Analyst")');
+            $provider_array[] = array($type, array('formula' => 'equal($dd1_c,"Analyst")'), 'equal($dd1_c,"Analyst")');
             $provider_array[] = array($type, array('formula' => 'equal($dd1_c,"Analyst")'), 'equal($dd1_c,"Analyst")');
             // Bug #49775
-            $provider_array[] = array($type, array('formula' => 'concat(&quot;<script>alert(1623651453416)</script>&quot;, &quot;<script>alert(1623651453416)</script>&quot;)'), 'concat("alert(1623651453416)", "alert(1623651453416)")');
             $provider_array[] = array($type, array('formula' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'), 'concat("alert(1623651453416)", "alert(1623651453416)")');
-            $provider_array[] = array($type, array('formula' => 'concat(&quot;&lt;script&gt;alert(1623651453416)&lt;/script&gt;&quot;, &quot;&lt;script&gt;alert(1623651453416)&lt;/script&gt;&quot;)'), 'concat("alert(1623651453416)", "alert(1623651453416)")');
-            $provider_array[] = array($type, array('dependency' => 'concat(&quot;<script>alert(1623651453416)</script>&quot;, &quot;<script>alert(1623651453416)</script>&quot;)'), 'concat("alert(1623651453416)", "alert(1623651453416)")');
+            $provider_array[] = array($type, array('formula' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'), 'concat("alert(1623651453416)", "alert(1623651453416)")');
+            $provider_array[] = array($type, array('formula' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'), 'concat("alert(1623651453416)", "alert(1623651453416)")');
             $provider_array[] = array($type, array('dependency' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'), 'concat("alert(1623651453416)", "alert(1623651453416)")');
-            $provider_array[] = array($type, array('dependency' => 'concat(&quot;&lt;script&gt;alert(1623651453416)&lt;/script&gt;&quot;, &quot;&lt;script&gt;alert(1623651453416)&lt;/script&gt;&quot;)'), 'concat("alert(1623651453416)", "alert(1623651453416)")');
+            $provider_array[] = array($type, array('dependency' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'), 'concat("alert(1623651453416)", "alert(1623651453416)")');
+            $provider_array[] = array($type, array('dependency' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'), 'concat("alert(1623651453416)", "alert(1623651453416)")');
         }
         
         return $provider_array;
@@ -66,24 +60,13 @@ class Bug48826Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testPopulateFromPost($type, $request_data, $expected)
     {
-        $tested_key = null;
-        foreach ( $request_data as $_key => $_data )
-        {
-            $_REQUEST[$_key] = $_data;
-            $tested_key = $_key;
-        }
-        
-        $field = get_widget($type) ;
-        $field->populateFromPost();
+        $this->assertCount(1, $request_data);
+        $tested_key = key($request_data);
 
-        if ( isset($field->$tested_key) )
-        {
-            $this->assertEquals($expected, $field->$tested_key);
-        } 
-        else 
-        {
-            $this->markTestSkipped();
-        }
+        $request = InputValidation::create($request_data, array());
+        $field = get_widget($type) ;
+        $field->populateFromPost($request);
+
+        $this->assertEquals($expected, $field->$tested_key);
     }
 }
-?>

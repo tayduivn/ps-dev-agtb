@@ -50,24 +50,13 @@ class ViewEditFormula extends SugarView
 			$fields = array(array('income', 'number'), array('employed', 'boolean'), array('first_name', 'string'), array('last_name', 'string'));
 			$smarty->assign('Field_Array', $json->encode($fields));
 		}
-		if (!empty($_REQUEST['targetField']))
-		{
-			$smarty->assign("target", $_REQUEST['targetField']);
-		}
-        if (isset($_REQUEST['returnType']))
-		{
-			$smarty->assign("returnType", $_REQUEST['returnType']);
-		}
-		//Assign any requested Javascript event actions
-		foreach(array('onSave', 'onLoad', 'onClose') as $e) {
-			if (!empty($_REQUEST[$e]))
-			{
-				$smarty->assign($e, html_entity_decode($_REQUEST[$e], ENT_QUOTES));
-			} else
-			{
-				$smarty->assign($e, 'function(){}');
-			}
-		}
+
+        $request_target_field = $this->request->getValidInputRequest('targetField');
+        $smarty->assign("target", $request_target_field);
+
+        $request_return_type = $this->request->getValidInputRequest('returnType');
+        $smarty->assign("returnType", $request_return_type);
+
 		//Check if we need to load Ext ourselves
  		if (!isset($_REQUEST['loadExt']) || ($_REQUEST['loadExt'] && $_REQUEST['loadExt'] != "false"))
 		{
@@ -76,17 +65,11 @@ class ViewEditFormula extends SugarView
 		{
 			$smarty->assign('loadExt', false);
 		}
-		if (!empty($_REQUEST['formula'])) {
-			$smarty->assign('formula', $json->decode(htmlspecialchars_decode($_REQUEST['formula'])));
-		}
-		if (isset($_REQUEST['returnType'])) {
-			$smarty->assign('returnType', $_REQUEST['returnType']);
-		}
+        $request_formula = $this->request->getValidInputRequest('formula');
+        $smarty->assign('formula', $json->decode($request_formula));
+
  		$smarty->assign('app_strings', $app_strings);
  		$smarty->assign('mod', $mod_strings);
  		$smarty->display('modules/ExpressionEngine/tpls/formulaBuilder.tpl');
  	}
-
-
 }
-?>

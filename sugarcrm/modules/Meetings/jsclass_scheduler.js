@@ -282,7 +282,11 @@ SugarWidgetSchedulerSearch.createInvitee = function(form){
 	var callback = {
 		success: function (response) {
 
-			var rObj = eval("("+response.responseText+")");
+<<<<<<< HEAD
+            var rObj = JSON.parse(response.responseText);
+=======
+			var rObj = JSON.parse(response.responseText);
+>>>>>>> BR-3546: Fix JPMC Security High Issue Set [101-115]
 
 			ajaxStatus.hideStatus();
 

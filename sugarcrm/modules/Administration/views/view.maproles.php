@@ -16,6 +16,8 @@ require_once 'modules/ModuleBuilder/MB/MBHelper.php';
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 /**
  * Map package ACL roles to the instance's ones
  */
@@ -80,7 +82,12 @@ class ViewMapRoles extends SugarView
      */
     protected function getManifest()
     {
-        return $this->request->getValidInputPost('s_manifest', array('Assert\PhpSerialized' => array('base64Encoded' => true)));
+        $post = InputValidation::getService();
+        $s_manifest = $post->getValidInputPost('s_manifest', array(
+            'Assert\PhpSerialized' => array("base64Encoded" => true)
+        ));
+
+        return $s_manifest;
     }
 
     /**

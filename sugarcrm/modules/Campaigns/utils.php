@@ -94,9 +94,7 @@ function get_campaign_mailboxes_with_stored_options() {
     }
 
     $q = "SELECT id, name, stored_options FROM inbound_email WHERE mailbox_type='bounce' AND status='Active' AND deleted='0'";
-
     $db = DBManagerFactory::getInstance();
-
     $r = $db->query($q);
 
     while($a = $db->fetchByAssoc($r)) {

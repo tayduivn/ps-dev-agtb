@@ -11,6 +11,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 class TemplateEnum extends TemplateText{
     var $max_size = 100;
     var $len = 100;
@@ -21,20 +24,34 @@ class TemplateEnum extends TemplateText{
     var $supports_unified_search = true;
     var $massupdate = 1;
 
-    function __construct ()
+    /**
+     * Ctor
+     */
+    public function __construct()
     {
-    	// ensure that the field dependency information is read in from any _REQUEST
-    	$this->localVardefMap = array (
-    		'trigger' => 'trigger',
-    		'action' => 'action' ,
+        // ensure that the field dependency information is read in from any _REQUEST
+        $this->localVardefMap = array(
+            'trigger' => 'trigger',
+            'action' => 'action' ,
             'visibility_grid' => 'visibility_grid',
-        ) ;
-    	$this->vardef_map = array_merge ( $this->vardef_map , $this->localVardefMap ) ;
+        );
+        $this->vardef_map = array_merge($this->vardef_map, $this->localVardefMap);
+
+        // default_value field is an array of strings
+        $this->vardefMapValidation['default_value'] = array(
+            'Assert\All' => array(
+                'constraints' => array('Assert\Type' => array('type' => 'string')),
+            ),
+        );
     }
 
-    function populateFromPost ()
+    public function populateFromPost(Request $request = null)
     {
-    	parent::populateFromPost();
+        if (!$request) {
+            $request = InputValidation::getService();
+        }
+
+        parent::populateFromPost($request);
         // Handle empty massupdate checkboxes
         $this->massupdate = !empty($_REQUEST['massupdate']);
         if (!empty($this->visibility_grid) && is_string($this->visibility_grid))
@@ -207,6 +224,3 @@ class TemplateEnum extends TemplateText{
         parent::delete($df);
     }
 }
-
-
-?>

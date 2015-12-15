@@ -30,15 +30,20 @@ class DocumentsViewEdit extends ViewEdit
  	{
 		global $app_list_strings, $mod_strings;
 
+		$loadSignedId = $this->request->getValidInputRequest('load_signed_id');
+		$record = $this->request->getValidInputRequest('record', 'Assert\Guid');
+        $action = $this->request->getValidInputRequest('action');
+		$selectedRevisionId = $this->request->getValidInputRequest('selected_revision_id', 'Assert\Guid');
+
 		$load_signed=false;
-		if ((isset($_REQUEST['load_signed_id']) && !empty($_REQUEST['load_signed_id']))) {
+		if (!empty($loadSignedId)) {
 
 			$load_signed=true;
-			if (isset($_REQUEST['record'])) {
-				$this->bean->related_doc_id=$_REQUEST['record'];
+			if ($record !== null) {
+				$this->bean->related_doc_id = $record;
 			}
-			if (isset($_REQUEST['selected_revision_id'])) {
-				$this->bean->related_doc_rev_id=$_REQUEST['selected_revision_id'];
+			if ($selectedRevisionId !== null) {
+				$this->bean->related_doc_rev_id = $selectedRevisionId;
 			}
 
 			$this->bean->id=null;
@@ -48,7 +53,7 @@ class DocumentsViewEdit extends ViewEdit
 		} //if
 
 		if (!empty($this->bean->id) ||
-            (empty($this->bean->id) && !empty($_REQUEST['record']) && !empty($_REQUEST['action']) && strtolower($_REQUEST['action'])=='quickedit')
+            (empty($this->bean->id) && $record !== null && $action !== null && strtolower($action)=='quickedit')
         ) {
 			$this->ss->assign("FILE_OR_HIDDEN", "hidden");
 			if (!$this->ev->isDuplicate) {
@@ -84,17 +89,19 @@ class DocumentsViewEdit extends ViewEdit
 			$this->ss->assign("RELATED_DOCUMENT_REVISION_DISABLED", "disabled");
 		}
 
-
+		$parentId = $this->request->getValidInputRequest('parent_id', 'Assert\Guid');
+		$parentName = $this->request->getValidInputRequest('parent_name');
+		$parentType = $this->request->getValidInputRequest('parent_type', 'Assert\Mvc\ModuleName');
 		//set parent information in the form.
-		if (isset($_REQUEST['parent_id'])) {
-			$this->ss->assign("PARENT_ID",$_REQUEST['parent_id']);
+		if ($parentId !== null) {
+			$this->ss->assign("PARENT_ID",$parentId);
 		} //if
 
-		if (isset($_REQUEST['parent_name'])) {
-			$this->ss->assign("PARENT_NAME", $_REQUEST['parent_name']);
+		if ($parentName !== null) {
+			$this->ss->assign("PARENT_NAME", $parentName);
 
-			if (!empty($_REQUEST['parent_type'])) {
-				switch (strtolower($_REQUEST['parent_type'])) {
+			if (!empty($parentType)) {
+				switch (strtolower($parentType)) {
 
 					case "contracts" :
 						$this->ss->assign("LBL_PARENT_NAME",$mod_strings['LBL_CONTRACT_NAME']);
@@ -108,8 +115,8 @@ class DocumentsViewEdit extends ViewEdit
 			} //if
 		} //if
 
-		if (isset($_REQUEST['parent_type'])) {
-			$this->ss->assign("PARENT_TYPE",$_REQUEST['parent_type']);
+		if ($parentType !== null) {
+			$this->ss->assign("PARENT_TYPE", $parentType);
 		}
 
 		if ($load_signed) {

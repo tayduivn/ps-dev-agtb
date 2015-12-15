@@ -141,7 +141,6 @@ $sugar_smarty = new Sugar_Smarty();
 	if (isset($_REQUEST['return_action'])) $sugar_smarty->assign("RETURN_ACTION", $_REQUEST['return_action']);
 	if (isset($_REQUEST['return_id'])) $sugar_smarty->assign("RETURN_ID", $_REQUEST['return_id']);
 	
-	$sugar_smarty->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 	$sugar_smarty->assign("JAVASCRIPT", get_set_focus_js());
     $sugar_smarty->assign("THEME", SugarThemeRegistry::current()->__toString());
 	$sugar_smarty->assign("ID", $focus->id);

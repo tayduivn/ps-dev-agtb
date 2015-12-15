@@ -15,7 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/MVC/View/views/view.list.php');
 require_once('include/connectors/sources/SourceFactory.php');
 
-class ViewMappingProperties extends ViewList 
+class ViewMappingProperties extends ViewList
 {   
  	/**
 	 * @see SugarView::process()
@@ -38,7 +38,8 @@ class ViewMappingProperties extends ViewList
         require_once('include/connectors/sources/SourceFactory.php');
 		$connector_strings = ConnectorUtils::getConnectorStrings($_REQUEST['source_id']);
         $sources = ConnectorUtils::getConnectors();
-        $source_id = $_REQUEST['source_id'];
+        $source_id = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName');
+
         $source = SourceFactory::getSource($source_id);
         $is_enabled = ConnectorUtils::isSourceEnabled($source_id);
 		$script = '';

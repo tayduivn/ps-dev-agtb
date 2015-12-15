@@ -90,7 +90,7 @@ $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
 $xtpl->assign("THEME", $theme);
 $xtpl->assign("GRIDLINE", $gridline);
-$xtpl->assign("IMAGE_PATH", $image_path); $xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
+$xtpl->assign("IMAGE_PATH", $image_path);
 $xtpl->assign("ID", $focus->id);
 if(isset($focus->description_html)) $xtpl->assign('DESCRIPTION_HTML', from_html($focus->description_html));
 $xtpl->assign("RETURN_MODULE", "Posts");

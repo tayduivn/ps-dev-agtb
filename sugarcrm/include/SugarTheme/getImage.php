@@ -11,13 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// Bug 57062 ///////////////////////////////
-if((!empty($_REQUEST['spriteNamespace']) && substr_count($_REQUEST['spriteNamespace'], '..') > 0) || 
-	(!empty($_REQUEST['imageName']) && substr_count($_REQUEST['imageName'], '..') > 0)) {
-    die();
-}
-// End Bug 57062 ///////////////////////////////
-
+$spriteNamespace = isset($_REQUEST['spriteNamespace']) ? basename($_REQUEST['spriteNamespace']) : '';
+$imageName = basename($_REQUEST['imageName']);
 
 // try to use the user's theme if we can figure it out
 if ( isset($_REQUEST['themeName']) && SugarThemeRegistry::current()->name != $_REQUEST['themeName']) {
@@ -26,18 +21,14 @@ if ( isset($_REQUEST['themeName']) && SugarThemeRegistry::current()->name != $_R
     SugarThemeRegistry::set($_SESSION['authenticated_user_theme']);
 }
 
-while(substr_count($_REQUEST['imageName'], '..') > 0){
-	$_REQUEST['imageName'] = str_replace('..', '.', $_REQUEST['imageName']);
-}
-
-if(isset($_REQUEST['spriteNamespace'])) {
-	$filename = "cache/sprites/{$_REQUEST['spriteNamespace']}/{$_REQUEST['imageName']}";
+if (!empty($spriteNamespace)) {
+    $filename = "cache/sprites/$spriteNamespace/$imageName";
 	if(! file_exists($filename)) {
 		header($_SERVER["SERVER_PROTOCOL"].' 404 Not Found');
 		die;
 	}
 } else {
-	$filename = SugarThemeRegistry::current()->getImageURL($_REQUEST['imageName']);
+	$filename = SugarThemeRegistry::current()->getImageURL($imageName);
 	if ( empty($filename) ) {
 		header($_SERVER["SERVER_PROTOCOL"].' 404 Not Found');
 		die;

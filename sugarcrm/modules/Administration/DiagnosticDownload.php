@@ -13,6 +13,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $current_user;
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 
 if (!is_admin($current_user)) sugar_die("Unauthorized access to administration.");
 if (isset($GLOBALS['sugar_config']['hide_admin_diagnostics']) && $GLOBALS['sugar_config']['hide_admin_diagnostics'])
@@ -20,15 +22,18 @@ if (isset($GLOBALS['sugar_config']['hide_admin_diagnostics']) && $GLOBALS['sugar
     sugar_die("Unauthorized access to diagnostic tool.");
 }
 
-if(!isset($_REQUEST['guid']) || !isset($_REQUEST['time']))
-{
+$request = InputValidation::getService();
+$timeRequest = $request->getValidInputRequest('time');
+$guidRequest = $request->getValidInputRequest('guid', 'Assert\Guid');
+
+if ($guidRequest === null || $timeRequest === null) {
 	die('Did not receive a filename to download');
 }
 
 ini_set('zlib.output_compression','Off');
 
-$time = str_replace(array('.', '/', '\\'), '', $_REQUEST['time']);
-$guid = str_replace(array('.', '/', '\\'), '', $_REQUEST['guid']);
+$time = str_replace(array('.', '/', '\\'), '', $timeRequest);
+$guid = str_replace(array('.', '/', '\\'), '', $guidRequest);
 $path = sugar_cached("diagnostic/{$guid}/diagnostic{$time}.zip");
 $filesize = filesize($path);
 ob_clean();
@@ -42,6 +47,3 @@ header("Content-Transfer-Encoding: binary");
 header("Content-Length: $filesize");
 readfile($path);
 
-
-
-?>

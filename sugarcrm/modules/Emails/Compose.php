@@ -18,16 +18,29 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-//Shorten name.
-$data = $_REQUEST;
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-if (!empty($data['listViewExternalClient'])) {
+$data = array(
+		'parent_type' => InputValidation::getService()->getValidInputRequest('parent_type', 'Assert\Mvc\ModuleName'),
+		'parent_id' => InputValidation::getService()->getValidInputRequest('parent_id', 'Assert\Guid'),
+		'ListView' => InputValidation::getService()->getValidInputRequest('ListView'),
+		'replyForward' => InputValidation::getService()->getValidInputRequest('replyForward'),
+		'to_email_addrs' => InputValidation::getService()->getValidInputRequest('to_email_addrs'),
+		'recordId' => InputValidation::getService()->getValidInputRequest('recordId', 'Assert\Guid'),
+		'record' => InputValidation::getService()->getValidInputRequest('record', 'Assert\Guid'),
+		'reply' => InputValidation::getService()->getValidInputRequest('reply'),
+		'forQuickCreate' => InputValidation::getService()->getValidInputRequest('forQuickCreate'),
+);
+
+if (!empty($_REQUEST['listViewExternalClient'])) {
     $email = BeanFactory::getBean('Emails');
-    echo $email->getNamePlusEmailAddressesForCompose($_REQUEST['action_module'], (explode(",", $_REQUEST['uid'])));
+	$module = InputValidation::getService()->getValidInputRequest('action_module', 'Assert\Mvc\ModuleName');
+	$uid = $this->request->getValidInputRequest('uid', array('Assert\Delimited' => array('constraints' => 'Assert\Guid')));
+    echo $email->getNamePlusEmailAddressesForCompose($module, $uid);
 }
 //For the full compose/email screen, the compose package is generated and script execution
 //continues to the Emails/index.php page.
-else if(!isset($data['forQuickCreate'])) {
+else if(empty($data['forQuickCreate'])) {
 	$ret = generateComposeDataPackage($data);
 }
 

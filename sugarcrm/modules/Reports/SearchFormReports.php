@@ -14,6 +14,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/SearchForm/SearchForm.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 class SearchFormReports extends SearchForm
 {
     /**
@@ -36,14 +39,16 @@ class SearchFormReports extends SearchForm
         global $current_user;
         $GLOBALS['log']->debug('SearchForm.php->displayHeader()');
         $header_text = '';
-        if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){
-            $header_text = "<a href='index.php?action=index&module=DynamicLayout&from_action=SearchForm&from_module=".$_REQUEST['module'] ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>";
+        $module = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
+        $action = $this->request->getValidInputRequest('action');
+        if(is_admin($current_user) && $module != 'DynamicLayout' && !empty($_SESSION['editinplace'])){
+            $header_text = "<a href='index.php?action=index&module=DynamicLayout&from_action=SearchForm&from_module=".$module ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>";
         }
 
         echo "<form name='search_form' class='search_form'>" .
              "<input type='hidden' name='searchFormTab' value='{$view}'/>" .
-             "<input type='hidden' name='module' value='{$_REQUEST['module']}'/>" .
-             "<input type='hidden' name='action' value='{$_REQUEST['action']}'/>" .
+             "<input type='hidden' name='module' value='".htmlspecialchars($module, ENT_QUOTES, 'UTF-8')."'/>" .
+             "<input type='hidden' name='action' value='".htmlspecialchars($action, ENT_QUOTES, 'UTF-8')."'/>" .
              "<input type='hidden' name='query' value='true'/>";
     }
 

@@ -25,7 +25,8 @@ class UserPreferencesController extends SugarController
 		   $retArray = array();
 		   $retArray['height'] = $height;
 		   $retArray['width'] = $width;
-		   echo 'result = ' . $json->encode($retArray);           
+		   header("Content-Type: application/json");
+		   echo $json->encode($retArray);
         }
 	}
 	

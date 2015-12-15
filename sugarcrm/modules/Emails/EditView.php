@@ -22,13 +22,18 @@ global $current_user;
 global $sugar_version, $sugar_config;
 global $timedate;
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 ///////////////////////////////////////////////////////////////////////////////
 ////	PREPROCESS BEAN DATA FOR DISPLAY
 $focus = BeanFactory::getBean('Emails');
 $email_type = 'archived';
 
-if(!empty($_REQUEST['record'])) {
-    $focus->retrieve($_REQUEST['record']);
+$request = InputValidation::getService();
+$recordId = $request->getValidInputRequest('record', 'Assert\Guid');
+
+if(!empty($recordId)) {
+    $focus->retrieve($recordId);
 }
 if(!empty($_REQUEST['type'])) {
 	$email_type = $_REQUEST['type'];
@@ -74,9 +79,13 @@ if(!empty($_REQUEST['load_id']) && !empty($beanList[$_REQUEST['load_module']])) 
 	    		$focus->to_addrs = "$focus->contact_name <$contact->email1>";
     		}
 	    }
-    	if(!empty($_REQUEST['parent_type']) && empty($app_list_strings['record_type_display'][$_REQUEST['parent_type']])){
-    		if(!empty($app_list_strings['record_type_display'][$_REQUEST['load_module']])){
-    			$_REQUEST['parent_type'] = $_REQUEST['load_module'];
+
+		$parentType = $request->getValidInputRequest('parent_type', 'Assert\Mvc\ModuleName');
+		$loadModule = $request->getValidInputRequest('load_module', 'Assert\Mvc\ModuleName');
+
+    	if(!empty($parentType) && empty($app_list_strings['record_type_display'][$parentType])){
+    		if(!empty($app_list_strings['record_type_display'][$loadModule])){
+    			$_REQUEST['parent_type'] = $loadModule;
     			$_REQUEST['parent_id'] = $focus->contact_id;
     			$_REQUEST['parent_name'] = $focus->to_addrs_names;
     		} else {
@@ -358,7 +367,6 @@ if(empty($_REQUEST['return_id']) && !isset($_REQUEST['type'])) {
 	$xtpl->assign('RETURN_ACTION', 'index');
 }
 
-$xtpl->assign('PRINT_URL', 'index.php?'.$GLOBALS['request_string']);
 
 
 	///////////////////////////////////////////////////////////////////////////////

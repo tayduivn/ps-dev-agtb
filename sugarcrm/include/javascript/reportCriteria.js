@@ -1214,9 +1214,9 @@ function addFilterInputRelate(row,field,filter,isCustom) {
 
 	var callback = {
 		success:function(o){
-			if(typeof sqs_objects == 'undefined')
-				sqs_objects = new Array();
-			eval(o.responseText);
+			var sqs_objects = JSON.parse(o.responseText);
+            if(typeof sqs_objects == 'undefined')
+                sqs_objects = new Array();
 			var populate_list = new Array();
 			populate_list.push(field_name_name);
 			populate_list.push(field_id_name);

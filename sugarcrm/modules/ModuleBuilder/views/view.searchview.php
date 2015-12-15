@@ -24,7 +24,7 @@ class ViewSearchView extends ViewListView
  	{
  		parent::__construct();
  		if (!empty($_REQUEST['searchlayout'])) {
- 			$this->editLayout = $_REQUEST['searchlayout'];
+ 			$this->editLayout = $this->request->getValidInputRequest('searchlayout', 'Assert\ComponentName');
  		}
  	}
  	
@@ -50,7 +50,7 @@ class ViewSearchView extends ViewListView
  	    $preview = false
  	    )
  	{
- 		$packageName = (isset ( $_REQUEST [ 'view_package' ] )) ? $_REQUEST [ 'view_package' ] : '' ;
+ 		$packageName = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
  		require_once 'modules/ModuleBuilder/parsers/ParserFactory.php' ;
  		$parser = ParserFactory::getParser ( $this->editLayout , $this->editModule, $packageName ) ;
 
@@ -99,23 +99,53 @@ class ViewSearchView extends ViewListView
         	$layoutView = 'wirelesslayouts' ;
         }
 
- 		if ($this->fromModuleBuilder)
- 		{
- 			$ajax->addCrumb ( translate ( 'LBL_MODULEBUILDER', 'ModuleBuilder' ), 'ModuleBuilder.main("mb")' ) ;
- 			$ajax->addCrumb ( $_REQUEST [ 'view_package' ], 'ModuleBuilder.getContent("module=ModuleBuilder&action=package&package=' . $_REQUEST [ 'view_package' ] . '")' ) ;
- 			$ajax->addCrumb ( $this->editModule, 'ModuleBuilder.getContent("module=ModuleBuilder&action=module&view_package=' . $_REQUEST [ 'view_package' ] . "&view_module={$this->editModule}" . '")'  ) ;
- 			$ajax->addCrumb ( translate ( $layoutLabel, 'ModuleBuilder' ), 'ModuleBuilder.getContent("module=ModuleBuilder&MB=true&action=wizard&view_module=' . $this->editModule. '&view_package=' . $_REQUEST['view_package'] . '")'  ) ;
- 			if ( $layoutLabel == 'LBL_LAYOUTS' ) $ajax->addCrumb ( translate ( 'LBL_SEARCH_FORMS', 'ModuleBuilder' ), 'ModuleBuilder.getContent("module=ModuleBuilder&MB=true&action=wizard&view=search&view_module=' .$this->editModule . '&view_package=' . $_REQUEST [ 'view_package' ] . '")'  ) ;
- 			$ajax->addCrumb ( translate ( $searchLabel, 'ModuleBuilder' ), '' ) ;
- 		} else
- 		{
- 			$ajax->addCrumb ( translate ( 'LBL_STUDIO', 'ModuleBuilder' ), 'ModuleBuilder.main("studio")' ) ;
- 			$ajax->addCrumb ( $this->translatedEditModule, 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view_module=' . $this->editModule . '")'  ) ;
- 			$ajax->addCrumb ( translate ( $layoutLabel, 'ModuleBuilder' ), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view='.$layoutView.'&view_module=' . $this->editModule . '")'  ) ;
- 			if ( $layoutLabel == 'LBL_LAYOUTS' ) $ajax->addCrumb ( translate ( 'LBL_SEARCH_FORMS', 'ModuleBuilder' ), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view=search&view_module=' .$this->editModule . '")' ) ;
- 			$ajax->addCrumb ( translate ( $searchLabel, 'ModuleBuilder' ), ''  ) ;
- 		}
- 		$this->title = $searchLabel;
- 		return $ajax ;
- 	}
+        if ($this->fromModuleBuilder) {
+            $package = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
+            $ajax->addCrumb(translate('LBL_MODULEBUILDER', 'ModuleBuilder'), 'ModuleBuilder.main("mb")');
+            $ajax->addCrumb(
+                $package,
+                'ModuleBuilder.getContent("module=ModuleBuilder&action=package&package=' . $package . '")'
+            );
+            $ajax->addCrumb(
+                $this->editModule,
+                'ModuleBuilder.getContent("module=ModuleBuilder&action=module&view_package='
+                . $package . "&view_module={$this->editModule}" . '")'
+            );
+            $ajax->addCrumb(
+                translate($layoutLabel, 'ModuleBuilder'),
+                'ModuleBuilder.getContent("module=ModuleBuilder&MB=true&action=wizard&view_module='
+                . $this->editModule . '&view_package=' . $package . '")'
+            );
+            if ($layoutLabel == 'LBL_LAYOUTS') {
+                $ajax->addCrumb(
+                    translate('LBL_SEARCH_FORMS', 'ModuleBuilder'),
+                    'ModuleBuilder.getContent("module=ModuleBuilder&MB=true&action=wizard&view=search&view_module='
+                    . $this->editModule . '&view_package=' . $package . '")'
+                );
+            }
+            $ajax->addCrumb(translate($searchLabel, 'ModuleBuilder'), '');
+        } else {
+            $ajax->addCrumb(translate('LBL_STUDIO', 'ModuleBuilder'), 'ModuleBuilder.main("studio")');
+            $ajax->addCrumb(
+                $this->translatedEditModule,
+                'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view_module=' . $this->editModule . '")'
+            );
+            $ajax->addCrumb(
+                translate($layoutLabel, 'ModuleBuilder'),
+                'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view=' . $layoutView
+                . '&view_module=' . $this->editModule . '")'
+            );
+            if ($layoutLabel == 'LBL_LAYOUTS') {
+                $ajax->addCrumb(
+                    translate('LBL_SEARCH_FORMS', 'ModuleBuilder'),
+                    'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view=search&view_module='
+                    . $this->editModule . '")'
+                );
+            }
+            $ajax->addCrumb(translate($searchLabel, 'ModuleBuilder'), '');
+        }
+        $this->title = $searchLabel;
+
+        return $ajax;
+    }
 }

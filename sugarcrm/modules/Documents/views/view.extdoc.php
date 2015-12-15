@@ -26,27 +26,24 @@ class DocumentsViewExtdoc extends SugarView
  	public function display(){
 
         global $mod_strings;
+        $file_search = trim($this->request->getValidInputRequest('name_basic'));
+        $apiName = $this->request->getValidInputRequest('apiName');
+        $isPopup = $this->request->getValidInputRequest('isPopup');
+        $elemBaseName = $this->request->getValidInputRequest('elemBaseName');
 
-        if ( isset($_REQUEST['name_basic']) ) {
-            $file_search = trim($_REQUEST['name_basic']);
-        } else {
-            $file_search = '';
-        }
-
-        if ( !isset($_REQUEST['apiName']) ) {
+        if ($apiName === null) {
             $apiName = 'IBMSmartCloud';
         } else {
-            $tmpApi = ExternalAPIFactory::loadAPI($_REQUEST['apiName'],true);
+            $tmpApi = ExternalAPIFactory::loadAPI($apiName, true);
             if ( $tmpApi === false )
             {
-                $GLOBALS['log']->error(string_format($mod_strings['ERR_INVALID_EXTERNAL_API_ACCESS'], array($_REQUEST['apiName'])));
+                $GLOBALS['log']->error(string_format($mod_strings['ERR_INVALID_EXTERNAL_API_ACCESS'], array($apiName)));
                 return;
             }
-            $apiName = $_REQUEST['apiName'];
         }
 
         // See if we are running as a popup window
-        if ( isset($_REQUEST['isPopup']) && $_REQUEST['isPopup'] == 1 && !empty($_REQUEST['elemBaseName']) ) {
+        if (isTruthy($isPopup) && !empty($elemBaseName) ) {
             $isPopup = true;
         } else {
             $isPopup = false;
@@ -116,7 +113,13 @@ class DocumentsViewExtdoc extends SugarView
 
                 if ( $isPopup ) {
                     // We are running as a popup window, we need to replace the direct url with some javascript
-                    $newRow['DOC_URL'] = "javascript:window.opener.SUGAR.field.file.populateFromPopup('".addslashes($_REQUEST['elemBaseName'])."','".addslashes($newRow['ID'])."','".addslashes($newRow['NAME'])."','".addslashes($newRow['URL'])."','".addslashes($newRow['URL'])."'); window.close();";
+                    $newRow['DOC_URL'] = "javascript:window.opener.SUGAR.field.file.populateFromPopup('"
+                        . htmlspecialchars($elemBaseName, ENT_QUOTES, 'UTF-8')
+                        . "','" . htmlspecialchars($newRow['ID'], ENT_QUOTES, 'UTF-8')
+                        . "','" . htmlspecialchars($newRow['NAME'], ENT_QUOTES, 'UTF-8')
+                        . "','" . htmlspecialchars($newRow['URL'], ENT_QUOTES, 'UTF-8')
+                        . "','" . htmlspecialchars($newRow['URL'], ENT_QUOTES, 'UTF-8')
+                        . "'); window.close();";
                 }else{
                     $newRow['DOC_URL'] = $newRow['URL'];
                 }
@@ -148,7 +151,7 @@ class DocumentsViewExtdoc extends SugarView
         if ( $isPopup ) {
             $ss->assign('linkTarget','');
             $ss->assign('isPopup',1);
-            $ss->assign('elemBaseName',$_REQUEST['elemBaseName']);
+            $ss->assign('elemBaseName',$elemBaseName);
         } else {
             $ss->assign('linkTarget','_new');
             $ss->assign('isPopup',0);

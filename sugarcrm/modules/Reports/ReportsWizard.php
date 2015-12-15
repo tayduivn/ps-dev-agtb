@@ -17,6 +17,8 @@ require_once('modules/Reports/config.php');
 require_once('modules/Reports/Report.php');
 require_once('modules/Reports/templates/templates_reports.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 if(!empty($args['reporter']->saved_report)) {
     $context = array("bean" => $args['reporter']->saved_report);
 } else {
@@ -123,53 +125,68 @@ $sugarChart = SugarChartFactory::getInstance();
 $resources = $sugarChart->getChartResources();
 $sugar_smarty->assign('chartResources', $resources);
 
-if (isset($_REQUEST['run_query']) && ($_REQUEST['run_query'] == 1))
+$request = InputValidation::getService();
+$runQuery = $request->getValidInputRequest('run_query');
+$saveReportAs = $request->getValidInputRequest('save_report_as');
+$saveReport = $request->getValidInputRequest('save_report');
+$id = $request->getValidInputRequest('id', 'Assert\Guid');
+$showQuery = $request->getValidInputRequest('show_query');
+$doRound = $request->getValidInputRequest('do_round');
+$reportDef = $request->getValidInputRequest('report_def');
+$panelsDef = $request->getValidInputRequest('panels_def');
+$filtersDef = $request->getValidInputRequest('filters_defs');
+$assignedUserId = $request->getValidInputRequest('assigned_user_id', 'Assert\Guid');
+$assignedUserName = $request->getValidInputRequest('assigned_user_name');
+$isDelete = $request->getValidInputRequest('is_delete');
+
+
+if ($runQuery == 1)
 	$sugar_smarty->assign("RUN_QUERY", '1');
 else
 	$sugar_smarty->assign("RUN_QUERY", '0');
 
-if (isset($_REQUEST['save_report_as']))
-	$sugar_smarty->assign("save_report_as", $_REQUEST['save_report_as']);
+if ($saveReportAs !== null)
+	$sugar_smarty->assign("save_report_as", $saveReportAs);
 else
 	$sugar_smarty->assign("save_report_as", "");
 
-if (isset($_REQUEST['id']))
-	$sugar_smarty->assign("id", $_REQUEST['id']);
+if ($id	!== null)
+	$sugar_smarty->assign("id", $id);
 
-if (isset($_REQUEST['show_query']))
-	$sugar_smarty->assign("show_query", $_REQUEST['show_query']);
+if ($showQuery !== null)
+	$sugar_smarty->assign("show_query", $showQuery);
 
-if (isset($_REQUEST['do_round']))
-	$sugar_smarty->assign("do_round", $_REQUEST['do_round']);
+if ($doRound !== null)
+	$sugar_smarty->assign("do_round", $doRound);
 
 
 js_setup($sugar_smarty);
 
-if (isset($_REQUEST['run_query']) && ($_REQUEST['run_query'] == 1)) {
+if ($runQuery == 1) {
 	$args = array();
 	$report_def = array();
-	if ( ! empty($_REQUEST['report_def'])) {
-		$report_def = html_entity_decode($_REQUEST['report_def']);
-		$panels_def = html_entity_decode($_REQUEST['panels_def']);
-		$filters_def = html_entity_decode($_REQUEST['filters_defs']);
+	if ($reportDef !== null) {
+		$report_def = html_entity_decode($reportDef, ENT_QUOTES, 'UTF-8');
+		$panels_def = html_entity_decode($panelsDef, ENT_QUOTES, 'UTF-8');
+		$filters_def = html_entity_decode($filtersDef, ENT_QUOTES, 'UTF-8');
 	   	$args['reporter'] =  new Report($report_def, $filters_def, $panels_def);
         $args['reporter']->removeInvalidFilters();
 		$sugar_smarty->assign('report_def_str', $args['reporter']->report_def_str);
 	}
-	if (isset($_REQUEST['id']))
-		$sugar_smarty->assign('record', $_REQUEST['id']);
+	if ($id	!== null)
+		$sugar_smarty->assign('record', $id);
 
 	$assigned_user_html_def = array(
 		'parent_id'=>'assigned_user_id',
-		'parent_id_value'=>$_REQUEST['assigned_user_id'],
+		'parent_id_value'=>$assignedUserId,
 		'parent_name'=>'assigned_user_name',
-		'parent_name_value'=>$_REQUEST['assigned_user_name'],
+		'parent_name_value'=>$assignedUserName,
 		'real_parent_name'=>'user_name',
 		'module'=>'Users',
 	  );
 	$assigned_user_html = get_select_related_html($assigned_user_html_def);
 	$isOwner = 0;
-	if ($_REQUEST['assigned_user_id'] == $current_user->id)
+	if ($assignedUserId == $current_user->id)
 		$isOwner = 1;
 	$sugar_smarty->assign("IS_OWNER", $isOwner);
 	require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
@@ -192,21 +209,21 @@ if (isset($_REQUEST['run_query']) && ($_REQUEST['run_query'] == 1)) {
 	echo "</div>";
 
 }
-else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) {
+else if ($saveReport !== null && ($saveReport == 'on')) {
 	$args = array();
 	$report_def = array();
     $report_name = '';
-	if ( ! empty($_REQUEST['report_def'])) {
-		$report_def = html_entity_decode($_REQUEST['report_def']);
-		$panels_def = html_entity_decode($_REQUEST['panels_def']);
-		$filters_def = html_entity_decode($_REQUEST['filters_defs']);
-        $report_name = html_entity_decode($_REQUEST['save_report_as']);
+	if (!empty($reportDef)) {
+		$report_def = html_entity_decode($reportDef);
+		$panels_def = html_entity_decode($panelsDef);
+		$filters_def = html_entity_decode($filtersDef);
+        $report_name = html_entity_decode($saveReportAs);
 	}
 
-	if (!empty($_REQUEST['id'])) {
+	if (!empty($id)) {
 		$saved_report_seed = BeanFactory::getBean('Reports');
 		$saved_report_seed->disable_row_level_security = true;
-		$saved_report_seed->retrieve($_REQUEST['id'], false);
+		$saved_report_seed->retrieve($id, false);
 	   	$args['reporter'] =  new Report($report_def, $filters_def, $panels_def);
 		$args['reporter']->saved_report = &$saved_report_seed;
 		$args['reporter']->is_saved_report = true;
@@ -216,8 +233,9 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 	   	$args['reporter'] =  new Report($report_def, $filters_def, $panels_def);
         $args['reporter']->removeInvalidFilters();
 	}
+	$currentStep = $request->getValidInputRequest('current_step');
 	$sugar_smarty->assign('report_def_str', $args['reporter']->report_def_str);
-	$sugar_smarty->assign('current_step', $_REQUEST['current_step']);
+	$sugar_smarty->assign('current_step', $currentStep);
 
 	$newReport = false;
 	if (empty($args['reporter']->saved_report_id)) {
@@ -231,22 +249,23 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 	$encodedFilterData = $global_json->encode($newArray);
     saveReportFilters($args['reporter']->saved_report->id, $encodedFilterData);
 
-	if (isset($_REQUEST['save_and_run_query']) && ($_REQUEST['save_and_run_query'] == 'on')) {
+	$saveAndRunQuery = $request->getValidInputRequest('save_and_run_query');
+	if ($saveAndRunQuery !== null && ($saveAndRunQuery == 'on')) {
 		header('location:index.php?action=ReportCriteriaResults&module=Reports&page=report&id='.$args['reporter']->saved_report->id);
 	}
 	else {
 		$assigned_user_html_def = array(
 			'parent_id'=>'assigned_user_id',
-			'parent_id_value'=>$_REQUEST['assigned_user_id'],
+			'parent_id_value'=>$assignedUserId,
 			'parent_name'=>'assigned_user_name',
-			'parent_name_value'=>$_REQUEST['assigned_user_name'],
+			'parent_name_value'=>$assignedUserName,
 			'real_parent_name'=>'user_name',
 			'module'=>'Users',
 		  );
 		$assigned_user_html = get_select_related_html($assigned_user_html_def);
 
 		$isOwner = 0;
-		if ($_REQUEST['assigned_user_id'] == $current_user->id)
+		if ($assignedUserId == $current_user->id)
 			$isOwner = 1;
 		$sugar_smarty->assign("IS_OWNER", $isOwner);
 		require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
@@ -262,7 +281,7 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 		setSortByInfo($args['reporter'], $sugar_smarty);
 		echo $sugar_smarty->fetch('modules/Reports/ReportsWizard.tpl');
 
-		if (!empty($_REQUEST['current_step']) && $_REQUEST['current_step']=='report_details'){
+		if (!empty($currentStep) && $currentStep=='report_details'){
 			echo "<br/><br/>";
 			echo "<div id='resultsDiv' name='resultsDiv'>";
 			//$image_path = $orig_image_path;
@@ -271,18 +290,18 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 		}
 	}
 }
-else if (isset($_REQUEST['is_delete']) && ($_REQUEST['is_delete'] == '1')) {
-    $report = BeanFactory::getBean('Reports', $_REQUEST['id']);
+else if ($isDelete !== null && ($isDelete == '1')) {
+    $report = BeanFactory::getBean('Reports', $id);
     if($report->ACLAccess('Delete')){
-        $report->mark_deleted($_REQUEST['id']);
+        $report->mark_deleted($id);
 		header('location:index.php?action=index&module=Reports');
     }
 
 }
-else if (!empty($_REQUEST['id'])) {
+else if (!empty($id)) {
 	$saved_report_seed = BeanFactory::getBean('Reports');
 	$saved_report_seed->disable_row_level_security = true;
-	$saved_report_seed->retrieve($_REQUEST['id'], false);
+	$saved_report_seed->retrieve($id, false);
 	$args['reporter'] = new Report($saved_report_seed->content);
 	$args['reporter']->saved_report = &$saved_report_seed;
 	$args['reporter']->is_saved_report = true;
@@ -292,8 +311,11 @@ else if (!empty($_REQUEST['id'])) {
 	if (!isset($args['reporter']->report_def['do_round']) || $args['reporter']->report_def['do_round'] == 1)
 			$sugar_smarty->assign("do_round", 1);
 
+	$saveAs = $request->getValidInputRequest('save_as', null, null);
+	$saveAsReportType = $request->getValidInputRequest('save_as_report_type', null, null);
+
 	// Duplicate Functionality
-	if (!empty($_REQUEST['save_as'])) {
+	if (!empty($saveAs)) {
 		$assigned_user_html_def = array(
 			'parent_id'=>'assigned_user_id',
 			'parent_id_value'=>$current_user->id,
@@ -304,8 +326,8 @@ else if (!empty($_REQUEST['id'])) {
 		  );
 		$assigned_user_html = get_select_related_html($assigned_user_html_def);
 
-		if (!empty($_REQUEST['save_as_report_type'])) {
-			$new_report_type = $_REQUEST['save_as_report_type'];
+		if (!empty($saveAsReportType)) {
+			$new_report_type = $saveAsReportType;
 			$prev_report_type = $args['reporter']->report_def['report_type'];
 			$report_def = $args['reporter']->report_def;
 			if ($new_report_type == 'summation') {
@@ -339,7 +361,7 @@ else if (!empty($_REQUEST['id'])) {
 		}
 	}
 	else {
-		$sugar_smarty->assign('record', $_REQUEST['id']);
+		$sugar_smarty->assign('record', $id);
 
 		$sugar_smarty->assign('save_report_as', html_entity_decode($saved_report_seed->name, ENT_QUOTES));
 		$assigned_user_html_def = array(

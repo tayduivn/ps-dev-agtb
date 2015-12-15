@@ -11,19 +11,23 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-	//Used for custom plugins
-	if(
-	!empty($_REQUEST['plugin_action']) && $_REQUEST['plugin_action']!=""
-	&&
-	!empty($_REQUEST['plugin_module']) && $_REQUEST['plugin_module']!=""){
+// Used for custom plugins
+if (!empty($_REQUEST['plugin_action']) && !empty($_REQUEST['plugin_module'])) {
 
-		if(SugarAutoLoader::existing('custom/workflow/plugins/'.$_REQUEST['plugin_module'].'/'.$_REQUEST['plugin_action'].'.php')){
-				include_once('custom/workflow/plugins/'.$_REQUEST['plugin_module'].'/'.$_REQUEST['plugin_action'].'.php');
-		} else {
-			echo "custom plugin file not found";
-		}
-	} else {
+    $request = InputValidation::getService();
+    $module = $request->getValidInputRequest('plugin_action');
+    $action = $request->getValidInputRequest('plugin_action');
 
-		echo "A custom plugin step 2 was not specified";
-	}
+    $plugin = 'custom/workflow/plugins/'.$module.'/'.$action.'.php';
+
+    if (SugarAutoLoader::existing($plugin)) {
+        SugarAutoLoader::includeFileOnce($plugin);
+    } else {
+        echo "custom plugin file not found";
+    }
+
+} else {
+    echo "A custom plugin step 2 was not specified";
+}

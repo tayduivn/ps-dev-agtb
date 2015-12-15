@@ -27,7 +27,8 @@ class ViewSourceProperties extends ViewList {
 		require_once('include/connectors/sources/SourceFactory.php');
 		require_once('include/connectors/utils/ConnectorUtils.php');
 		
-		$source_id = $_REQUEST['source_id'];
+		$source_id = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName');
+
 		$connector_language = ConnectorUtils::getConnectorStrings($source_id);
     	$source = SourceFactory::getSource($source_id);
     	$properties = $source->getProperties();

@@ -11,6 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 
 global $app_list_strings;// $modInvisList;
@@ -32,31 +33,47 @@ $sugar_smarty->assign('APP_LIST', $app_list_strings);
 $role = BeanFactory::getBean('ACLRoles');
 $role_name = '';
 $return= array('module'=>'ACLRoles', 'action'=>'index', 'record'=>'');
-if(!empty($_REQUEST['record'])){
-	$role->retrieve($_REQUEST['record']);
-	$categories = ACLRole::getRoleActions($_REQUEST['record']);
+$request = InputValidation::getService();
+$record = $request->getValidInputRequest('record', 'Assert\Guid');
+$isDuplicate = $request->getValidInputRequest('isDuplicate');
+
+if (!empty($record)) {
+	$role->retrieve($record);
+	$categories = ACLRole::getRoleActions($record);
 	$role_name =  $role->name;
-	if(!empty($_REQUEST['isDuplicate'])){
+	if (!empty($isDuplicate)) {
 		//role id is stripped here in duplicate so anything using role id after this will not have it
 		$role->id = '';
-		$sugar_smarty->assign('ISDUPLICATE', $_REQUEST['record']);
+		$sugar_smarty->assign('ISDUPLICATE', $record);
 		$duplicateString=translate('LBL_DUPLICATE_OF', 'ACLRoles');
-	}else{
+	} else {
 		$return['record']= $role->id;
 		$return['action']='DetailView';
 	}
 
-}else{
+} else {
 	$categories = ACLRole::getRoleActions('');
 }
 $sugar_smarty->assign('ROLE', $role->toArray());
 $tdwidth = 10;
 
-if(isset($_REQUEST['return_module'])){
-	$return['module']=$_REQUEST['return_module'];
-	if(isset($_REQUEST['return_id']))$return['record']=$_REQUEST['return_id'];
-	if(isset($_REQUEST['return_record'])){$return['record']=$_REQUEST['return_record'];}
-    if(isset($_REQUEST['return_action'])){$return['action']=$_REQUEST['return_action'];}
+$returnModule = $request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
+$returnId = $request->getValidInputRequest('return_id', 'Assert\Guid');
+$returnAction = $request->getValidInputRequest('return_action');
+$returnRecord = $request->getValidInputRequest('return_record', 'Assert\Guid');
+
+if ($returnModule !== null) {
+	$return['module'] = $returnModule;
+
+	if($returnId !== null) {
+		$return['record'] = $returnId;
+	}
+	if($returnRecord !== null) {
+		$return['record'] = $returnRecord;
+	}
+	if($returnAction !== null) {
+		$return['action'] = $returnAction;
+	}
     if ( !empty($return['record']) ) {
         $return['action'] = 'DetailView';
     }

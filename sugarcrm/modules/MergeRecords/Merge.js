@@ -67,7 +67,7 @@ function get_fields_to_dedup(parent_mod)
 		var	url = site_url + '/index.php?to_pdf=1&sugar_body_only=1&inline=1&parent_module=' + parent_mod + '&module=MigrationMappings&action=GetRelationshipsToMap';
 		var ajax_return_obj = ajax_fetch_sync(url);
 
-		try	{ eval("var responseObj =" + ajax_return_obj['responseText']); }
+		try	{ var responseObj = JSON.parse(ajax_return_obj['responseText']); }
 		catch(e) { alert(ajax_return_obj['responseText']); }
 
 		build_avail_rels_array(responseObj);

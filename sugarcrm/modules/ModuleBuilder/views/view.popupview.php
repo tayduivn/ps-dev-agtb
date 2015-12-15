@@ -1,4 +1,6 @@
 <?php
+use Sugarcrm\Sugarcrm\Security\Validator\Constraints\ComponentName;
+
 if (! defined ( 'sugarEntry' ) || ! sugarEntry)
     die ( 'Not A Valid Entry Point' ) ;
 /*
@@ -20,11 +22,12 @@ class ViewPopupview extends ViewListView
 {
     public function __construct()
     {
-        $this->editModule = $_REQUEST [ 'view_module' ] ;
-        $this->editLayout = $_REQUEST [ 'view' ];
-        $this->editPackage = (isset ( $_REQUEST [ 'view_package' ] ) && ! empty ( $_REQUEST [ 'view_package' ] )) ? $_REQUEST [ 'view_package' ] : null ;
+        parent::__construct();
+        $this->editModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+        $this->editLayout = $this->request->getValidInputRequest('view', 'Assert\ComponentName');
+        $this->editPackage = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
 
-        $this->fromModuleBuilder = isset ( $_REQUEST [ 'MB' ] ) || (isset($_REQUEST['view_package']) && $_REQUEST['view_package'] && $_REQUEST['view_package'] != 'studio') ;
+        $this->fromModuleBuilder = isset($_REQUEST['MB']) || (!empty($this->editPackage) && $this->editPackage != 'studio');
         if (!$this->fromModuleBuilder)
         {
             global $app_list_strings ;
@@ -85,7 +88,7 @@ class ViewPopupview extends ViewListView
         if ($this->fromModuleBuilder)
         {
             $ajax->addCrumb ( translate ( 'LBL_MODULEBUILDER', 'ModuleBuilder' ), 'ModuleBuilder.main("mb")' ) ;
-            $ajax->addCrumb ( $_REQUEST [ 'view_package' ], 'ModuleBuilder.getContent("module=ModuleBuilder&action=package&package=' . $this->editPackage . '")' ) ;
+            $ajax->addCrumb ( $this->editPackage, 'ModuleBuilder.getContent("module=ModuleBuilder&action=package&package=' . $this->editPackage . '")' ) ;
             $ajax->addCrumb ( $this->editModule, 'ModuleBuilder.getContent("module=ModuleBuilder&action=module&view_package=' . $this->editPackage . '&view_module=' . $this->editModule . '")' ) ;
             $ajax->addCrumb ( translate('LBL_LAYOUTS', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&layouts=1&MB=1&view_package='.$this->editPackage.'&view_module=' . $this->editModule . '")');
             $ajax->addCrumb ( translate('LBL_POPUP', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view=popup&MB=1&view_package='.$this->editPackage.'&view_module=' . $this->editModule . '")' );

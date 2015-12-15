@@ -74,28 +74,24 @@ class ViewShowDuplicates extends SugarView
 
         $this->ss->assign('FORMBODY', $leadForm->buildTableForm($duplicateLeads));
 
+        $fields = array_merge($lead->column_fields, $lead->additional_column_fields, array(
+            // Bug 25311 - Add special handling for when the form specifies many-to-many relationships
+            'relate_to',
+            'relate_id',
+        ));
+
+        $params = array();
+        foreach ($fields as $field) {
+            $value = $this->request->getValidInputPost('Leads' . $field);
+            if ($value) {
+                $params[$field] = $value;
+            }
+        }
+
         $input = '';
-        foreach ($lead->column_fields as $field)
-        {
-            if (!empty($_POST['Leads'.$field])) {
-                $input .= "<input type='hidden' name='$field' value='${_POST['Leads'.$field]}'>\n";
-            }
-        }
-
-        foreach ($lead->additional_column_fields as $field)
-        {
-            if (!empty($_POST['Leads'.$field])) {
-                $input .= "<input type='hidden' name='$field' value='${_POST['Leads'.$field]}'>\n";
-            }
-        }
-
-        // Bug 25311 - Add special handling for when the form specifies many-to-many relationships
-        if(!empty($_POST['Leadsrelate_to'])) {
-            $input .= "<input type='hidden' name='relate_to' value='{$_POST['Leadsrelate_to']}'>\n";
-        }
-
-        if(!empty($_POST['Leadsrelate_id'])) {
-            $input .= "<input type='hidden' name='relate_id' value='{$_POST['Leadsrelate_id']}'>\n";
+        foreach ($params as $param => $value) {
+            $input .= '<input type="hidden" name="' . htmlspecialchars($param, ENT_QUOTES, 'UTF-8')
+                . '" value="' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '">' . "\n";
         }
 
         $input .= get_teams_hidden_inputs('Leads');
@@ -103,59 +99,27 @@ class ViewShowDuplicates extends SugarView
         $emailAddress = BeanFactory::getBean('EmailAddresses');
         $input .= $emailAddress->getEmailAddressWidgetDuplicatesView($lead);
 
-        $get = '';
-        if(!empty($_POST['return_module']))
-        {
-            $this->ss->assign('RETURN_MODULE', $_POST['return_module']);
-        } else {
-            $get .= "Leads";
-        }
-
-        $get .= "&return_action=";
-        if(!empty($_POST['return_action']))
-        {
-            $this->ss->assign('RETURN_ACTION', $_POST['return_action']);
-        } else {
-            $get .= "DetailView";
-        }
+        $this->ss->assign('RETURN_MODULE', $this->request->getValidInputPost('return_module', 'Assert\Mvc\ModuleName'));
+        $this->ss->assign('RETURN_ACTION', $this->request->getValidInputPost('return_action'));
 
         ///////////////////////////////////////////////////////////////////////////////
         ////	INBOUND EMAIL WORKFLOW
         if(isset($_REQUEST['inbound_email_id'])) {
-            $this->ss->assign('INBOUND_EMAIL_ID', $_REQUEST['inbound_email_id']);
+            $inbound_email_id = $this->request->getValidInputRequest('inbound_email_id', 'Assert\Guid');
+            $this->ss->assign('INBOUND_EMAIL_ID', $inbound_email_id);
             $this->ss->assign('RETURN_MODULE', 'Emails');
             $this->ss->assign('RETURN_ACTION', 'EditView');
-            if(isset($_REQUEST['start'])) {
-               $this->ss->assign('START', $_REQUEST['start']);
-            }
+            $this->ss->assign('START', $this->request->getValidInputRequest('start'));
         }
         ////	END INBOUND EMAIL WORKFLOW
         ///////////////////////////////////////////////////////////////////////////////
-        if(!empty($_POST['popup']))
-        {
-            $input .= '<input type="hidden" name="popup" value="'.$_POST['popup'].'">';
-        } else {
-            $input .= '<input type="hidden" name="popup" value="false">';
-        }
-
-        if(!empty($_POST['to_pdf']))
-        {
-            $input .= '<input type="hidden" name="to_pdf" value="'.$_POST['to_pdf'].'">';
-        } else {
-            $input .= '<input type="hidden" name="to_pdf" value="false">';
-        }
-
-        if(!empty($_POST['create']))
-        {
-            $input .= '<input type="hidden" name="create" value="'.$_POST['create'].'">';
-        } else {
-            $input .= '<input type="hidden" name="create" value="false">';
-        }
-
-        if(!empty($_POST['return_id']))
-        {
-            $this->ss->assign('RETURN_ID', $_POST['return_id']);
-        }
+        $popup = $this->request->getValidInputRequest('popup', null, 'false');
+        $input .= '<input type="hidden" name="popup" value="' . htmlspecialchars($popup, ENT_QUOTES, 'UTF-8') . '">';
+        $to_pdf = $this->request->getValidInputRequest('to_pdf', null, 'false');
+        $input .= '<input type="hidden" name="to_pdf" value="' . htmlspecialchars($to_pdf, ENT_QUOTES, 'UTF-8') . '">';
+        $create = $this->request->getValidInputRequest('to_pdf', null, 'false');
+        $input .= '<input type="hidden" name="create" value="' . htmlspecialchars($create, ENT_QUOTES, 'UTF-8') . '">';
+        $this->ss->assign('RETURN_ID', $this->request->getValidInputPost('return_id', 'Assert\Guid'));
 
         $this->ss->assign('INPUT_FIELDS', $input);
 

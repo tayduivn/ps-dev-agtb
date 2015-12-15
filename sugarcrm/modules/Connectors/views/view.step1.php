@@ -48,10 +48,8 @@ class ViewStep1 extends ViewList
 	 */
 	protected function _getModuleTab()
     {
-        if ( !empty($_REQUEST['merge_module']) )
-            return $_REQUEST['merge_module'];
-
-        return parent::_getModuleTab();
+        $merge_module = $this->request->getValidInputRequest('merge_module', 'Assert\Mvc\ModuleName');
+        return !empty($merge_module) ? $merge_module : parent::_getModuleTab();
     }
 
  	/**
@@ -59,13 +57,7 @@ class ViewStep1 extends ViewList
 	 */
 	public function process()
  	{
-        //Load Sources Here...
- 	    if(!empty($_REQUEST['merge_module'])){
-           $this->_merge_module = $_REQUEST['merge_module'];
-        } else {
-           //Error
-        }
-
+        $this->_merge_module = $this->request->getValidInputRequest('merge_module', 'Assert\Mvc\ModuleName');
         $moduleError = false;
         require_once('include/connectors/utils/ConnectorUtils.php');
         require_once('include/connectors/sources/SourceFactory.php');
@@ -143,7 +135,7 @@ class ViewStep1 extends ViewList
 	 */
 	public function display()
     {
- 		$this->ss->assign('RECORD', $_REQUEST['record']);
+ 		$this->ss->assign('RECORD', $this->request->getValidInputRequest('record', 'Assert\Guid'));
         $this->ss->assign('module', $this->_merge_module);
         $this->ss->assign('mod', $GLOBALS['mod_strings']);
 

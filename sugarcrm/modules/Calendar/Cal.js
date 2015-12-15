@@ -442,7 +442,7 @@
 			var callback = {
 				success: function(o){
 					try{
-						res = eval("("+o.responseText+")");
+						res = JSON.parse(o.responseText);
 					}catch(err){
 						alert(CAL.lbl_error_saving);							
 						ajaxStatus.hideStatus();
@@ -559,7 +559,7 @@
 				var callback = {
 					success: function(o){
 						try{							
-							res = eval("("+o.responseText+")");
+							res = JSON.parse(o.responseText);
 						}catch(err){
 							alert(CAL.lbl_error_saving);						
 							ajaxStatus.hideStatus();
@@ -1128,7 +1128,7 @@
 	CAL.GR_update_user = function (user_id){
 		var callback = {
 			success: function(o){				
-				res = eval(o.responseText);
+				res = JSON.parse(o.responseText);
 				GLOBAL_REGISTRY.focus.users_arr_hash = undefined;											
 				//SugarWidgetScheduler.update_time();
 			}
@@ -1148,7 +1148,7 @@
 		}else{		
 			var callback = {
 				success: function(o){
-					res = eval(o.responseText);
+					res = JSON.parse(o.responseText);
 					SugarWidgetScheduler.update_time();											
 					if(CAL.record_editable){
 						CAL.enable_buttons();
@@ -1404,7 +1404,7 @@
         var callback = {
             success: function (o) {
                 try {
-                    res = eval("(" + o.responseText + ")");
+                    res = JSON.parse(o.responseText);
                 } catch (err) {
                     alert(CAL.lbl_error_loading);
                     CAL.editDialog.cancel();
@@ -1564,7 +1564,7 @@
 						var callback = {
 								success: function(o){
 									try{
-										res = eval("("+o.responseText+")");
+										res = JSON.parse(o.responseText);
 									}catch(err){
 										alert(CAL.lbl_error_saving);
 										CAL.editDialog.cancel();							
@@ -1637,7 +1637,7 @@
 									var callback = {
 											success: function(o){
 												try{
-													res = eval("("+o.responseText+")");
+													res = JSON.parse(o.responseText);
 												}catch(err){
 													alert(CAL.lbl_error_saving);
 													CAL.editDialog.cancel();							
@@ -1707,7 +1707,7 @@
 			success: function(o) {
 				
 				try {
-					var activities = eval("("+o.responseText+")");
+					var activities = JSON.parse(o.responseText);
 				} catch(err) {
 					alert(CAL.lbl_error_saving);					
 					ajaxStatus.hideStatus();

@@ -13,7 +13,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('modules/DynamicFields/DynamicField.php');
 
-$module = $_REQUEST['module_name'];
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
+$request = InputValidation::getService();
+$module = $request->getValidInputRequest('module_name', 'Assert\Mvc\ModuleName');
 $custom_fields = new DynamicField($module);
 if(!empty($module)){
     $mod = BeanFactory::getBean($module);
@@ -21,18 +24,24 @@ if(!empty($module)){
 }else{
 	echo "\n".$mod_strings['ERR_NO_MODULE_INCLUDED'];
 }
-$name = $_REQUEST['field_label'];
+
+$fieldLabel = $request->getValidInputRequest('field_label');
+$fieldType = $request->getValidInputRequest('field_type');
+$fieldCount = $request->getValidInputRequest('field_count');
+$fileType = $request->getValidInputRequest('file_type');
+
+$name = $fieldLabel;
 $options = '';
-if($_REQUEST['field_type'] == 'enum'){
-	$options = $_REQUEST['options'];
+if($fieldType == 'enum'){
+	$options = $request->getValidInputRequest('options');
 }
 $default_value = '';
 
-$custom_fields->addField($name,$name, $_REQUEST['field_type'],'255','optional', $default_value, $options, '', '' );
-$html = $custom_fields->getFieldHTML($name, $_REQUEST['file_type']);
+$custom_fields->addField($name,$name, $fieldType,'255','optional', $default_value, $options, '', '' );
+$html = $custom_fields->getFieldHTML($name, $fileType);
 
-set_register_value('dyn_layout', 'field_counter', $_REQUEST['field_count']);
-$label = $custom_fields->getFieldLabelHTML($name, $_REQUEST['field_type']);
+set_register_value('dyn_layout', 'field_counter', $fieldCount);
+$label = $custom_fields->getFieldLabelHTML($name, $fieldType);
 require_once('modules/DynamicLayout/AddField.php');
 $af = new AddField();
 $af->add_field($name, $html,$label, 'window.opener.');

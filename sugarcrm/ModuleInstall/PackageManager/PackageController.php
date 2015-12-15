@@ -23,7 +23,6 @@
         }
 
         function performBasicSearch(){
-            $json = getJSONobj();
             $search_term = '';
             $node_id = '';
              if(isset($_REQUEST['search_term'])) {
@@ -33,7 +32,7 @@
                 $node_id = nl2br($_REQUEST['node_id']);
             }
             $xml = PackageManager::getPackages($node_id);
-            echo 'result = ' . $json->encode(array('packages' => $xml));
+            $this->sendJsonOutput(array('packages' => $xml));
         }
 
         /**
@@ -45,14 +44,13 @@
          *                      the category
          */
         function getPackages(){
-            $json = getJSONobj();
             $category_id = '';
 
              if(isset($_REQUEST['category_id'])) {
                 $category_id = nl2br($_REQUEST['category_id']);
             }
             $xml = PackageManager::getPackages($category_id);
-            echo 'result = ' . $json->encode(array('package_output' => $xml));
+            $this->sendJsonOutput(array('package_output' => $xml));
         }
 
         /**
@@ -60,7 +58,6 @@
          * as well as during installation
          */
         function getReleases(){
-            $json = getJSONobj();
             $category_id = '';
        		$package_id = '';
        		$types = '';
@@ -97,18 +94,17 @@
         		$release_map[$release['id']] = array('package_id' => $release['package_id'], 'category_id' => $release['category_id']);
         	}
         	$_SESSION['ML_PATCHES'] = $release_map;
-            echo 'result = ' . $json->encode(array('releases' => $nodes));
+            $this->sendJsonOutput(array('releases' => $nodes));
         }
 
         /**
          * Obtain a promotion from the depot
          */
         function getPromotion(){
-            $json = getJSONobj();
 
             $header = PackageManager::getPromotion();
 
-            echo 'result = ' . $json->encode(array('promotion' => $header));
+            $this->sendJsonOutput(array('promotion' => $header));
         }
 
         /**
@@ -121,7 +117,6 @@
          */
         function download(){
             global $sugar_config;
-            $json = getJSONobj();
             $package_id = '';
             $category_id  = '';
             $release_id = '';
@@ -146,7 +141,7 @@
                 $GLOBALS['log']->debug("Complete Setup");
                 $success = 'true';
             }
-            echo 'result = ' . $json->encode(array('success' => $success));
+            $this->sendJsonOutput(array('success' => $success));
         }
 
          /**
@@ -156,18 +151,16 @@
          * @return array - a list of categories/nodes which are underneath this node
          */
         function getCategories(){
-            $json = getJSONobj();
             $node_id = '';
              if(isset($_REQUEST['category_id'])) {
                 $node_id = nl2br($_REQUEST['category_id']);
             }
             $GLOBALS['log']->debug("NODE ID: ".$node_id);
             $nodes = PackageManager::getCategories($node_id);
-            echo 'result = ' . $json->encode(array('nodes' => $nodes));
+            $this->sendJsonOutput(array('nodes' => $nodes));
         }
 
          function getNodes(){
-            $json = getJSONobj();
             $category_id = '';
              if(isset($_REQUEST['category_id'])) {
                 $category_id = nl2br($_REQUEST['category_id']);
@@ -175,7 +168,7 @@
             $GLOBALS['log']->debug("CATEGORY ID: ".$category_id);
             $nodes = PackageManager::getModuleLoaderCategoryPackages($category_id);
             $GLOBALS['log']->debug(var_export($nodes, true));
-            echo 'result = ' . $json->encode(array('nodes' => $nodes));
+            $this->sendJsonOutput(array('nodes' => $nodes));
         }
 
         /**
@@ -184,7 +177,6 @@
          * @return array    return an array of releases for each given installed object if an update is found
          */
         function checkForUpdates(){
-            $json = getJSONobj();
             $type = '';
              if(isset($_REQUEST['type'])) {
                 $type = nl2br($_REQUEST['type']);
@@ -211,17 +203,16 @@
 	            }
             }
 			$_SESSION['ML_PATCHES'] = $release_map;
-            echo 'result = ' . $json->encode(array('updates' => $nodes));
+            $this->sendJsonOutput(array('updates' => $nodes));
         }
 
         function getLicenseText(){
-            $json = getJSONobj();
             $file = '';
             if(isset($_REQUEST['file'])) {
                 $file = hashToFile($_REQUEST['file']);
             }
             $GLOBALS['log']->debug("FILE : ".$file);
-            echo 'result = ' . $json->encode(array('license_display' => PackageManagerDisplay::buildLicenseOutput($file)));
+            $this->sendJsonOutput(array('license_display' => PackageManagerDisplay::buildLicenseOutput($file)));
         }
 
         /**
@@ -229,9 +220,8 @@
          */
         function getPackagesInStaging(){
             $packages = $this->_pm->getPackagesInStaging('module');
-            $json = getJSONobj();
 
-            echo 'result = ' . $json->encode(array('packages' => $packages));
+            $this->sendJsonOutput(array('packages' => $packages));
         }
 
         /**
@@ -245,13 +235,11 @@
           	if(!empty($file)){
 	            $this->_pm->performInstall($file);
 			}
-            $json = getJSONobj();
 
-            echo 'result = ' . $json->encode(array('result' => 'success'));
+            $this->sendJsonOutput(array('result' => 'success'));
         }
 
         function authenticate(){
-            $json = getJSONobj();
             $username = '';
             $password = '';
             $servername = '';
@@ -282,11 +270,10 @@
                 $status  = 'failed';
             }
 
-            echo 'result = ' . $json->encode(array('status' => $status));
+            $this->sendJsonOutput(array('status' => $status));
         }
 
         function getDocumentation(){
-        	$json = getJSONobj();
             $package_id = '';
             $release_id = '';
 
@@ -299,11 +286,10 @@
 
             $documents = PackageManager::getDocumentation($package_id, $release_id);
             $GLOBALS['log']->debug("DOCUMENTS: ".var_export($documents, true));
-            echo 'result = ' . $json->encode(array('documents' => $documents));
+            $this->sendJsonOutput(array('documents' => $documents));
         }
 
         function downloadedDocumentation(){
-        	$json = getJSONobj();
             $document_id = '';
 
             if(isset($_REQUEST['document_id'])) {
@@ -311,7 +297,7 @@
             }
              $GLOBALS['log']->debug("Downloading Document: ".$document_id);
             PackageManagerComm::downloadedDocumentation($document_id);
-            echo 'result = ' . $json->encode(array('result' => 'true'));
+            $this->sendJsonOutput(array('result' => 'true'));
         }
 
         /**
@@ -329,7 +315,6 @@
         }
 
  		function remove(){
-        	$json = getJSONobj();
             $file = '';
 
             if(isset($_REQUEST['file'])) {
@@ -342,7 +327,19 @@
             	    $this->rmMetaFile($file, $meta);
             	}
             }
-            echo 'result = ' . $json->encode(array('result' => 'true'));
+            $this->sendJsonOutput(array('result' => 'true'));
         }
- }
-?>
+
+    /**
+    * Sends output in a JSON format
+    * 
+    * @param mixed $output
+    */
+    protected function sendJsonOutput($output)
+    {
+        $json = getJSONobj();
+        header('Content-Type: application/json');
+        echo $json->encode($output);
+    }
+}
+

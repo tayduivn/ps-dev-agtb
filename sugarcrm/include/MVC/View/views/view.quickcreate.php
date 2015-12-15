@@ -82,7 +82,7 @@ class ViewQuickcreate extends ViewAjax
     public function display()
     {
     	$view = (!empty($_REQUEST['target_view']))?$_REQUEST['target_view']: 'QuickCreate';
-		$module = $_REQUEST['module'];
+		$module = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
 
 		// locate the best viewdefs to use: 1. custom/module/quickcreatedefs.php 2. module/quickcreatedefs.php 3. custom/module/editviewdefs.php 4. module/editviewdefs.php
 		$base = 'modules/' . $module . '/metadata/';
@@ -113,7 +113,7 @@ class ViewQuickcreate extends ViewAjax
         loadParentView('edit');
 
 		if(file_exists('modules/'.$module.'/views/view.edit.php')) {
-            include('modules/'.$module.'/views/view.edit.php');
+            SugarAutoLoader::includeFile('modules/'.$module.'/views/view.edit.php');
 
             $c = $module . 'ViewEdit';
 

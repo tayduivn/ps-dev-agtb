@@ -28,6 +28,7 @@ require_once 'modules/Mailer/MailerFactory.php'; // imports all of the Mailer cl
 require_once 'include/utils.php';
 require_once 'include/Expressions/Expression/Parser/Parser.php';
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 /**
  * SugarBean is the base class for all business objects in Sugar.  It implements
  * the primary functionality needed for manipulating business objects: create,
@@ -428,6 +429,11 @@ class SugarBean
         'relate',
         'nestedset',
     );
+
+    /*
+     * @var \Sugarcrm\Sugarcrm\Security\InputValidation\Request
+     */
+    protected $request;
 
     /**
      * This method has been moved into the __construct() method to follow php standards
@@ -2406,8 +2412,10 @@ class SugarBean
         else
         {
             // if we should use relation data from REQUEST
-            $rel_id = isset($_REQUEST['relate_id']) ? $_REQUEST['relate_id'] : '';
-            $rel_link = isset($_REQUEST['relate_to']) ? $_REQUEST['relate_to'] : '';
+            // SugarBean shouldn't rely on any request parameters, needs refactoring ...
+            $request = InputValidation::getService();
+            $rel_id = $request->getValidInputRequest('relate_id', null, '');
+            $rel_link = $request->getValidInputRequest('relate_to', null, '');
         }
 
         // filter relation data
@@ -7105,7 +7113,8 @@ class SugarBean
                     $saveform = "<form name='save' id='save' method='POST'>";
                     foreach($_POST as $key=>$arg)
                     {
-                        $saveform .= "<input type='hidden' name='". addslashes($key) ."' value='". addslashes($arg) ."'>";
+                        $saveform .= "<input type='hidden' name='". htmlspecialchars($key, ENT_QUOTES, 'UTF-8')
+                            ."' value='". htmlspecialchars($arg, ENT_QUOTES, 'UTF-8') ."'>";
                     }
                     $saveform .= "</form><script>document.getElementById('save').submit();</script>";
                     $_SESSION['o_lock_save'] = $saveform;

@@ -43,7 +43,8 @@ class json_config {
 		global $json, $sugar_config;
 
 		$str = "\nvar ". $this->global_registry_var_name." = new Object();\n";
-		$str .= "\n".$this->global_registry_var_name.".config = {\"site_url\":\"".getJavascriptSiteURL()."\"};\n";
+		// _Safe handling of getJavascriptSiteURL() output.
+		$str .= "\n".$this->global_registry_var_name.".config = " . json_encode(array('site_url' => getJavascriptSiteURL())) . ";\n";
 
 		$str .= $this->global_registry_var_name.".meta = new Object();\n";
 		$str .= $this->global_registry_var_name.".meta.modules = new Object();\n";

@@ -347,8 +347,8 @@ class UploadFile
 		global $sugar_config;
 
 		if(!$this->use_soap) {
-			$stored_file_name = $_FILES[$this->field_name]['name'];
-			$this->original_file_name = $stored_file_name;
+			$this->original_file_name = basename($_FILES[$this->field_name]['name']);
+			$stored_file_name = $this->original_file_name;
 
 			/**
 			 * cn: bug 8056 - windows filesystems and IIS do not like utf8.  we are forced to urlencode() to ensure that
@@ -359,9 +359,7 @@ class UploadFile
 				// 176 + 36 char guid = windows' maximum filename length
 				$end = (strlen($stored_file_name) > 176) ? 176 : strlen($stored_file_name);
 				$stored_file_name = substr($stored_file_name, 0, $end);
-				$this->original_file_name = $_FILES[$this->field_name]['name'];
 			}
-		    $stored_file_name = str_replace("\\", "", $stored_file_name);
 		} else {
 			$stored_file_name = $this->stored_file_name;
 			$this->original_file_name = $stored_file_name;

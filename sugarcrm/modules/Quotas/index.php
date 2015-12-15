@@ -17,7 +17,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $theme;
 
-
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 
 
@@ -33,6 +33,7 @@ global $app_strings;
 global $current_user;
 global $sugar_config;
 
+$db = DBManagerFactory::getInstance();
 $focus = BeanFactory::getBean('Quotas');
 $currency = new ListCurrency();
 $params = array();
@@ -45,17 +46,18 @@ $is_edit = false;
 $is_new = false;
 $is_timeperiod_set = false;
 
+$timeperiod_id = InputValidation::getService()->getValidInputRequest('timeperiod_id', 'Assert\Guid');
+
 /* 
  * Check if the time period is set, if it isn't, only display a dropdown 
  * to select a time period.
  */
-if (!empty($_REQUEST['timeperiod_id'])){
-	$optionsTimePeriod = $focus->getTimePeriodsSelectList($_REQUEST['timeperiod_id']);
-	$currentUserQuota = $focus->getCurrentUserQuota($_REQUEST['timeperiod_id']);
-	$timeperiod_id = $_REQUEST['timeperiod_id'];
+if (!empty($timeperiod_id)) {
+    $optionsTimePeriod = $focus->getTimePeriodsSelectList($timeperiod_id);
+    $currentUserQuota = $focus->getCurrentUserQuota($timeperiod_id);
+} else {
+    $optionsTimePeriod = $focus->getTimePeriodsSelectList();
 }
-else
-	$optionsTimePeriod = $focus->getTimePeriodsSelectList();
 
 /* 
  * Check to see if both the records and timeperiod query strings are 
@@ -91,11 +93,10 @@ else
 $GLOBALS['log']->info("Quota list view");
 
 $currentUserQuotaRow = '';
-if (!empty($currentUserQuota['amount'])){
-	$currentUserQuotaRow .= "<td scope='col' width='50%'><slot>" . $mod_strings['LBL_CURRENT_USER_QUOTA'] . "<br /><b>" . $currentUserQuota['formatted_amount'] . "</b></td>\n";
-}
-else if (!empty($_REQUEST['timeperiod_id'])){ 
-	$currentUserQuotaRow .= "<td scope='col' width='50%'><slot>" . $mod_strings['LBL_CURRENT_USER_NO_QUOTA'] . "</td>\n";
+if (!empty($currentUserQuota['amount'])) {
+    $currentUserQuotaRow .= "<td scope='col' width='50%'><slot>" . $mod_strings['LBL_CURRENT_USER_QUOTA'] . "<br /><b>" . $currentUserQuota['formatted_amount'] . "</b></td>\n";
+} else if (!empty($timeperiod_id)) {
+    $currentUserQuotaRow .= "<td scope='col' width='50%'><slot>" . $mod_strings['LBL_CURRENT_USER_NO_QUOTA'] . "</td>\n";
 }
 
 $selectTimePeriod = "<br />\n";
@@ -111,9 +112,11 @@ $selectTimePeriod .= "</td>\n";
 $listViewHeader = $selectTimePeriod . $currentUserQuotaRow;
 $listViewHeader .= "</tr>\n";
 
+
 $where  = "quotas.deleted=0 AND users.deleted = 0 ";
-if (!empty($_REQUEST['timeperiod_id']))
-	$where .= " AND quotas.timeperiod_id = '" . $_REQUEST['timeperiod_id'] ."'";
+if (!empty($timeperiod_id)) {
+	$where .= " AND quotas.timeperiod_id = " . $db->quoted($timeperiod_id);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	QUOTAS MODULE LIST VIEW
@@ -134,7 +137,7 @@ $ListView->setQuery($where, "", "", "QUOTA");
 
 $row_count = $focus->getQuotaRowCount($focus->create_new_list_query("",$where));
 
-if (!empty($_REQUEST['timeperiod_id'])) {
+if (!empty($timeperiod_id)) {
 
 	/* if the user is not a manager, get the user's self quota
 	 * and use a strip down version of ListView to process the
@@ -152,9 +155,8 @@ if (!empty($_REQUEST['timeperiod_id'])) {
 		 * get the group quota and process the ListView
 		 */
 		if ($row_count > 0){
-			$groupQuota = $focus->getGroupQuota($_REQUEST['timeperiod_id']);
-			$ListView->xTemplateAssign("GROUP_QUOTA", 
-										outputGroupQuota($focus->getGroupQuota($_REQUEST['timeperiod_id'],false)));
+			$groupQuota = $focus->getGroupQuota($timeperiod_id);
+			$ListView->xTemplateAssign("GROUP_QUOTA", outputGroupQuota($focus->getGroupQuota($timeperiod_id, false)));
 			$currency->getSelectOptions();
 			$ListView->xTemplateAssign("JAVASCRIPT2", $currency->getJavascript());	
 			$ListView->processListViewTwo($focus, "main", "QUOTA");
@@ -184,11 +186,11 @@ if (!empty($_REQUEST['timeperiod_id'])) {
 	
 		if (empty($_REQUEST['user_id']))
 		{
-			$selectManagedUsers = $focus->getUserManagedSelectList($_REQUEST['timeperiod_id']);
+			$selectManagedUsers = $focus->getUserManagedSelectList($timeperiod_id);
 			$disabled = 'disabled="disabled"';			
 		}
 		else{
-			$selectManagedUsers = $focus->getUserManagedSelectList($_REQUEST['timeperiod_id'],
+			$selectManagedUsers = $focus->getUserManagedSelectList($timeperiod_id,
 																   $_REQUEST['user_id']);
 																   
 			if ($focus->committed == 1){
@@ -225,7 +227,6 @@ if (!empty($_REQUEST['timeperiod_id'])) {
 		if (isset($_REQUEST['return_module'])) $xtpl->assign("RETURN_MODULE", $_REQUEST['return_module']);
 		if (isset($_REQUEST['return_action'])) $xtpl->assign("RETURN_ACTION", $_REQUEST['return_action']);
 		if (isset($_REQUEST['return_id'])) $xtpl->assign("RETURN_ID", $_REQUEST['return_id']);
-		$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 		$xtpl->assign("JAVASCRIPT", get_set_focus_js());
 		$xtpl->assign("ID", $focus->id);
 		$xtpl->assign("USER_ID", $focus->user_id);

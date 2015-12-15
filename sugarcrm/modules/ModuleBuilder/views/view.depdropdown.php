@@ -10,23 +10,24 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
 require_once ("modules/ModuleBuilder/Module/StudioModuleFactory.php");
 
 class ViewDepDropdown extends SugarView
 {
-    protected $vars = array("editModule", "field", "parentList", "childList");
-
     function display ()
     {
         $this->ss = new Sugar_Smarty();
-        foreach($this->vars as $var)
-        {
-            if(isset($_REQUEST[$var])) {
-                $this->$var = $_REQUEST[$var];
-                $this->ss->assign($var, $_REQUEST[$var]);
-            }
-        }
+
+        $editModule = $this->request->getValidInputRequest('editModule', 'Assert\ComponentName');
+        $this->ss->assign('editModule', $editModule);
+
+        $field = $this->request->getValidInputRequest('field');
+        $this->ss->assign('field', $field);
+
+        $parentList = $this->request->getValidInputRequest('parentList');
+        $childList = $this->request->getValidInputRequest('childList');
 
         $mapping = empty($_REQUEST['mapping']) ? array() : json_decode(html_entity_decode($_REQUEST['mapping']), true);
 
@@ -35,11 +36,11 @@ class ViewDepDropdown extends SugarView
         if (empty($_REQUEST['package']) || $_REQUEST['package'] == 'studio') {
             $sm = StudioModuleFactory::getStudioModule($_REQUEST['targetModule']);
             $fields = $sm->getFields();
-            if (!empty($fields[$this->parentList]) && !empty($fields[$this->parentList]['options']))
-                $this->parentList = $fields[$this->parentList]['options'];
-            $parentOptions = translate($this->parentList);
-            $childOptions = translate($this->childList);
-
+            if (!empty($fields[$parentList]['options'])) {
+                $parentList = $fields[$parentList]['options'];
+            }
+            $parentOptions = translate($parentList);
+            $childOptions = translate($childList);
         }
         else {
             $mb = new ModuleBuilder();
@@ -47,10 +48,11 @@ class ViewDepDropdown extends SugarView
             $sm = $mb->getPackageModule($_REQUEST['package'], $moduleName);
             $sm->getVardefs();
             $fields = $sm->mbvardefs->vardefs['fields'];
-            if (!empty($fields[$this->parentList]) && !empty($fields[$this->parentList]['options']))
-                $this->parentList = $fields[$this->parentList]['options'];
-            $parentOptions = $this->getMBOptions($this->parentList, $sm);
-            $childOptions = $this->getMBOptions($this->childList, $sm);
+            if (!empty($fields[$parentList]['options'])) {
+                $parentList = $fields[$parentList]['options'];
+            }
+            $parentOptions = $this->getMBOptions($parentList, $sm);
+            $childOptions = $this->getMBOptions($childList, $sm);
         }
 
         $this->ss->assign("parent_list_options", $parentOptions);

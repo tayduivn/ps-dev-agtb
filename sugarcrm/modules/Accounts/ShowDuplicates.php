@@ -36,7 +36,6 @@ echo getClassicModuleTitle('Accounts', array($moduleName, $mod_strings['LBL_SAVE
 $xtpl=new XTemplate ('modules/Accounts/ShowDuplicates.html');
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
-$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("MODULE", $_REQUEST['module']);
 if ($error_msg != '')
 {

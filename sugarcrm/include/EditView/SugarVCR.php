@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
  /**
   * @api
   */
@@ -66,7 +68,8 @@
         {
             //syncing with display offset;
             $offset ++;
-            $action = (!empty($_REQUEST['action']) ? $_REQUEST['action'] : 'EditView');
+            $action = InputValidation::getService()->getValidInputRequest('action', null, 'EditView');
+            $action = htmlspecialchars($action, ENT_QUOTES, 'UTF-8');
 
             $menu = SugarVCR::play($module, $offset);
 

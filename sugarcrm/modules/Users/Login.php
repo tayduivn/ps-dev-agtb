@@ -1,4 +1,7 @@
 <?php
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -14,8 +17,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $authController->authController->pre_login();
 
 global $current_language, $mod_strings, $app_strings;
-if(isset($_REQUEST['login_language'])){
-    $lang = $_REQUEST['login_language'];
+
+$request = InputValidation::getService();
+$lang = $request->getValidInputRequest('login_language', 'Assert\Language');
+if ($lang) {
 	$current_language = $lang;
     $_SESSION['authenticated_user_language'] = $lang;
     $mod_strings = return_module_language($lang, "Users");
@@ -132,12 +137,12 @@ foreach($lvars as $k => $v) {
 // Retrieve username from the session if possible.
 if(isset($_SESSION["login_user_name"])) {
 	if (isset($_REQUEST['default_user_name']))
-		$login_user_name = $_REQUEST['default_user_name'];
+		$login_user_name = $request->getValidInputRequest('default_user_name');
 	else
 		$login_user_name = $_SESSION['login_user_name'];
 } else {
 	if(isset($_REQUEST['default_user_name'])) {
-		$login_user_name = $_REQUEST['default_user_name'];
+		$login_user_name = $request->getValidInputRequest('default_user_name');
 	}  else {
 		$login_user_name = $sugar_config['default_user_name'];
 	}

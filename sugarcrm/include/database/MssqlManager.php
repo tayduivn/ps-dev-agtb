@@ -583,7 +583,9 @@ class MssqlManager extends DBManager
                         }else{
                             // FIXME: this looks really bad. Probably source for tons of bug
                             // needs to be removed
-                            $tablename = $this->getTableNameFromModuleName($_REQUEST['module'],$sql);
+                            $moduleName = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
+                            $tablename = $this->getTableNameFromModuleName($moduleName, $sql);
+                            $tablename = $this->quote($tablename);
                         }
                         //if there is a distinct clause, form query with rownumber after distinct
                         if ($hasDistinct) {

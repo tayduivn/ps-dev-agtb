@@ -74,8 +74,8 @@ function export($type, $records = null, $members = false, $sample = false)
         $where = '';
     } else {
         $current_post = InputValidation::getService()->getValidInputRequest(
-             'current_post',
-             array('Assert\PhpSerialized' => array('base64Encoded' => true))
+            'current_post', 
+            array('Assert\PhpSerialized' => array('base64Encoded' => true))
         );
 
         if(!empty($current_post)) {
