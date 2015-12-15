@@ -268,7 +268,7 @@ class FilterApi extends SugarApi
     {
         $seed = BeanFactory::newBean($args['module']);
 
-        if (!$seed->ACLAccess($acl)) {
+        if (!$seed->ACLAccess($acl, array('source' => 'filter_api'))) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
         }
 
