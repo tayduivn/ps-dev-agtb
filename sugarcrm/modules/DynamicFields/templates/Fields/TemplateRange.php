@@ -201,11 +201,11 @@ class TemplateRange extends TemplateText
 		{
 				if(file_exists('custom/modules/'.$module.'/metadata/SearchFields.php'))
 			    {
-                    SugarAutoLoader::requireFile('custom/modules/'.$module.'/metadata/SearchFields.php');
+                    require SugarAutoLoader::validateFilePath('custom/modules/'.$module.'/metadata/SearchFields.php');
                 } else if (file_exists('modules/'.$module.'/metadata/SearchFields.php')) {
-                	SugarAutoLoader::requireFile('modules/'.$module.'/metadata/SearchFields.php');
+                	require SugarAutoLoader::validateFilePath('modules/'.$module.'/metadata/SearchFields.php');
                 } else if (file_exists('custom/modulebuilder/' . $package . '/modules/' . $module . '/metadata/SearchFields.php')) {
-                	SugarAutoLoader::requireFile('custom/modulebuilder/' . $package . '/modules/' . $module . '/metadata/SearchFields.php');
+                	require SugarAutoLoader::validateFilePath('custom/modulebuilder/' . $package . '/modules/' . $module . '/metadata/SearchFields.php');
                 }
 
     			foreach($fields as $field_name=>$field)
