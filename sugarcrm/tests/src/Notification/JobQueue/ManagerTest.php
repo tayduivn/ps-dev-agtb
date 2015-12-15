@@ -22,24 +22,28 @@ class ManagerTest extends \Sugar_PHPUnit_Framework_TestCase
         $obj = new \NotificationSomeClassMock();
         return array(
             'true 5' => array(
-                array(true, 5),
-                array(array('', serialize(true)), array('', serialize(5)))
+                array(null, true, 5),
+                array(null, array('', serialize(true)), array('', serialize(5)))
             ),
             '2.2' => array(
-                array(2.2),
-                array(array('', serialize(2.2)))
+                array(null, 2.2),
+                array(null, array('', serialize(2.2)))
             ),
             'String null array' => array(
-                array('String', null, array('1', '2')),
+                array('some_user_id', 'String', null, array('1', '2')),
                 array(
+                    'some_user_id',
                     array('', serialize('String')),
                     array('', serialize(null)),
                     array('', serialize(array('1', '2')))
                 )
             ),
             'true $object' => array(
-                array(true, $obj),
-                array(array('', serialize(true)), array(__DIR__ . '/NotificationSomeClass.php', serialize($obj)))
+                array('some_user_id', true, $obj),
+                array(
+                    'some_user_id',
+                    array('', serialize(true)), array(__DIR__ . '/NotificationSomeClass.php', serialize($obj))
+                )
             ),
         );
     }

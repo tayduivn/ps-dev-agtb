@@ -22,7 +22,7 @@ class Manager extends JobQueueManager
     const BASE_HANDLER = 'Sugarcrm\\Sugarcrm\\Notification\\JobQueue\\BaseHandler';
 
     /**
-     * Serialize arguments and store pass to object's class name if it present.
+     * Serialize arguments and store pass to object's class name if it's present.
      *
      * @inheritDoc
      */
@@ -38,7 +38,7 @@ class Manager extends JobQueueManager
     }
 
     /**
-     * Wrap arguments for easily class unserializing
+     * Wrap arguments for easy class unserializing.
      *
      * @param array $arguments
      * @return array wrapped arguments
@@ -47,6 +47,10 @@ class Manager extends JobQueueManager
     {
         foreach ($arguments as $key => $argument) {
             $path = '';
+            // The first argument is always null or userId - leave it as is.
+            if ($key === 0) {
+                continue;
+            }
             if (is_object($argument)) {
                 $reflection = new \ReflectionObject($argument);
                 $path = $reflection->getFileName();
