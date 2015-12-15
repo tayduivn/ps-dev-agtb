@@ -188,6 +188,9 @@
      */
     bindDataChange: function() {
         this.collection.on('sync', function(collection, fetchedRecords) {
+            if (!_.isArray(fetchedRecords)) {
+                return;
+            }
             var recordsToAdd = _.filter(fetchedRecords, function(attrs) {
                 return this.massCollection.get(attrs.id);
             }, this);
