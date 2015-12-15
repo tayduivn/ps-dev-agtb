@@ -226,7 +226,7 @@ describe("Base.Field.Button", function() {
         expect(field.fullRoute).toEqual('custom/route');
     });
 
-    it("should create accessibility label from icon class name", function() {
+    it('should create accessibility label from icon class name', function() {
         var icons = [
             {
                 'icon' : 'cog',
@@ -244,7 +244,7 @@ describe("Base.Field.Button", function() {
         ];
 
         _.each(icons, function(data) {
-            field = SugarTest.createField("base", null, "button", "edit", data);
+            field = SugarTest.createField('base', null, 'button', 'edit', data);
             field.render();
 
             expect(field.ariaLabel).toEqual(data.expectedLabel);
