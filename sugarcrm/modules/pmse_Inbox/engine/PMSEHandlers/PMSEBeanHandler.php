@@ -359,6 +359,7 @@ class PMSEBeanHandler
      */
     public function processValueExpression($expression, $bean)
     {
+        global $timedate;
         $response = new stdClass();
         $dataEval = array();
         foreach ($expression as $value) {
@@ -390,15 +391,22 @@ class PMSEBeanHandler
                 }
             } else {
                 $fields = $value->expValue;
-                if (strtolower($value->expSubtype) == 'currency') {
-                    $constantCurrency = new stdClass();
-                    $constantCurrency->expType = 'CONSTANT';
-                    $constantCurrency->expSubtype = 'currency';
-                    $constantCurrency->expValue = $bean->$fields;
-                    $constantCurrency->expField = $bean->currency_id;
-                    $dataEval[] = json_encode($constantCurrency);
-                } else {
-                    $dataEval[] = $bean->$fields;
+                $field_value = !empty($bean->fetched_row[$fields]) ? $bean->fetched_row[$fields] : $bean->$fields;
+                switch (strtolower($value->expSubtype)) {
+                    case 'currency':
+                        $constantCurrency = new stdClass();
+                        $constantCurrency->expType = 'CONSTANT';
+                        $constantCurrency->expSubtype = 'currency';
+                        $constantCurrency->expValue = $bean->$fields;
+                        $constantCurrency->expField = $bean->currency_id;
+                        $dataEval[] = json_encode($constantCurrency);
+                        break;
+                    case 'datetime':
+                    case 'datetimecombo':
+                        $dataEval[] = $timedate->asIso(new DateTime($field_value, new DateTimeZone('UTC')));
+                        break;
+                    default:
+                        $dataEval[] = $field_value;
                 }
             }
         }
