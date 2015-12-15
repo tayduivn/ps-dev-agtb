@@ -35,6 +35,9 @@ class Dashboard extends Basic
     {
         $dashboard = parent::retrieve($id, false, $deleted);
 
+        if ($dashboard === null) {
+            return null;
+        }
         // Expand the metadata for processing.
         $metadata = json_decode($dashboard->metadata);
 

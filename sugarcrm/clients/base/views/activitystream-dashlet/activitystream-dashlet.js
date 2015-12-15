@@ -275,7 +275,7 @@
      * Render each ActivityStream model
      *
      * @param model
-     * @returns {*}
+     * @return {Mixed}
      */
     renderPost: function(model) {
         var view;

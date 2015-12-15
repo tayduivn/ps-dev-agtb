@@ -301,7 +301,7 @@
      * gets file object
      * @param {String} value file name
      * @param {Object} urlOpts url options
-     * @returns {{name: *, mimeType: string, url: (String|*)}}
+     * @return {{name: *, mimeType: string, url: (String|*)}}
      * @private
      */
     _createFileObj: function (value, urlOpts) {
@@ -323,13 +323,14 @@
         };
     },
     /**
-     * This is overriden by portal in order to prepend site url
+     * This is overridden by portal in order to prepend site url
      * @param {String} uri
-     * @returns {String} formatted uri
+     * @return {string} formatted uri
      */
     formatUri: function(uri) {
         return uri;
     },
+
     startDownload: function(e) {
         var uri = this.$(e.currentTarget).data('url');
 

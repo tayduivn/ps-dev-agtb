@@ -71,7 +71,7 @@
     /**
      * Formats the language list for the template
      *
-     * @returns {Array} of languages
+     * @return {Array} of languages
      */
     formatLanguageList: function() {
         // Format the list of languages for the template

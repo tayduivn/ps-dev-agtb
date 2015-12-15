@@ -176,7 +176,7 @@
      * Format the D&B Meter Response
      * @param {Object} dnbMeterResponse
      * @param {Object} dnbMeterDD data dictionary
-     * @returns {Object}
+     * @return {Object}
      */
     formatMeterInfo: function(dnbMeterResponse, dnbMeterDD) {
         var formattedMeterResponse = {};
@@ -221,7 +221,7 @@
      * Returns color for the donut chart based on meterUsage percentage
      * @param {Number} meterUsage
      * @param {Number} meterLimit
-     * @returns {string}
+     * @return {string}
      */
     usageToColorMapping: function(meterUsage, meterLimit) {
         var meterUsagePercentage = meterUsage / meterLimit;

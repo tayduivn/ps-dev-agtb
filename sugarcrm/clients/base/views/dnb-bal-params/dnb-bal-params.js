@@ -311,7 +311,7 @@
      * @param {Object} event
      */
     mapSelect2Params: function(event) {
-        var modelMeta = this.balSelector[event.target.name];
+        var modelMeta = this.balSelector[$(event.target).attr('name')] || {};
         var modelKey = modelMeta.modelKey,
             modelSubKey = modelMeta.modelSubKey,
             modelAttr;
@@ -765,9 +765,10 @@
      * @param {Object} event
      */
     setBalFilter: function(event) {
-        if (event.target.name) {
+        var name = $(event.target).attr('name');
+        if (name) {
             //meta data for filter
-            var modelMeta = this.balSelector[event.target.name] || {};
+            var modelMeta = this.balSelector[name] || {};
             //modelKey  = key to be set on model eb. balFilter
             //modelSubKey = name of property on object set to modelKey on model eg. InclusionDataDescription-1
             //model will look like {'balFilter': {'InclusionDataDescription-1': 'filterValue'}}

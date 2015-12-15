@@ -215,7 +215,7 @@
     /**
      * Is this module available as an option to be set as parent type?
      * @param module {string}
-     * @returns {boolean}
+     * @return {boolean}
      */
     isAvailableParentType: function(module) {
         var moduleFound = _.find(this.$(this.typeFieldTag).find('option'), function(dom) {

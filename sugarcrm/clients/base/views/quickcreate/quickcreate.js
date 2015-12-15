@@ -87,7 +87,7 @@
      * Sorts the module list based upon the value of the order attribute.
      *
      * @param {Array} moduleList
-     * @returns {Array}
+     * @return {Array}
      * @private
      */
     _sortByOrder: function(moduleList) {

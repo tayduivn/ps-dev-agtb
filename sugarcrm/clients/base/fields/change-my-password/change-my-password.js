@@ -132,7 +132,7 @@
     /**
      * @override
      * @param {Boolean} value
-     * @returns {String} value
+     * @return {string} value
      */
     format: function(value) {
         if (this.action === 'edit') {

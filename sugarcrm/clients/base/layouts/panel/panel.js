@@ -206,7 +206,7 @@
      * If this returns false: _toggleComponent will continue through render/show/hide checks
      *
      * @param component
-     * @returns {boolean}
+     * @return {boolean}
      * @private
      */
     _stopComponentToggle: function(component) {

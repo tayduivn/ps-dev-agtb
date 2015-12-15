@@ -38,7 +38,7 @@
     },
     /**
      * @override
-     * @returns {boolean}
+     * @return {boolean}
      */
     isPageComplete: function(){
         return this.areAllRequiredFieldsNonEmpty;

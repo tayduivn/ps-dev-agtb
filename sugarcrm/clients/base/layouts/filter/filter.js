@@ -522,7 +522,7 @@
      * - the list view context on records layout
      * - the selection list view context on records layout
      * - the contexts of the subpanels on record layout
-     * @returns {Array} array of contexts
+     * @return {Array} array of contexts
      */
     getRelevantContextList: function() {
         var contextList = [];
@@ -558,7 +558,7 @@
      * @param {Object} oSelectedFilter
      * @param {String} searchTerm
      * @param {Context} context
-     * @returns {Array} array containing filter def
+     * @return {Array} array containing filter def
      */
     buildFilterDef: function(oSelectedFilter, searchTerm, context) {
         var selectedFilter = app.utils.deepCopy(oSelectedFilter),
@@ -697,7 +697,7 @@
 
     /**
      * Utility function to know if the create filter panel is opened.
-     * @returns {Boolean} true if opened
+     * @return {boolean} `true` if opened, `false` otherwise
      */
     createPanelIsOpen: function() {
         return !this.layout.$(".filter-options").is(":hidden");
@@ -705,7 +705,7 @@
 
     /**
      * Determines whether a user can create a filter for the current module.
-     * @return {Boolean} true if creatable
+     * @return {boolean} `true` if creatable, `false` otherwise
      */
     canCreateFilter: function() {
         // Check for create in meta and make sure that we're only showing one

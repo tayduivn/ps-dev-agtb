@@ -101,7 +101,7 @@
      * Checks if User has access to this module
      * Should be overridden in modules to provide module-specific access requirements
      *
-     * @returns {boolean}
+     * @return {boolean}
      */
     checkAccess: function() {
         this.configMetadataOK = this._checkConfigMetadata();
@@ -114,7 +114,7 @@
     /**
      * Checks if there's actually config in the metadata for the current module
      *
-     * @returns {boolean}
+     * @return {boolean}
      * @private
      */
     _checkConfigMetadata: function() {
@@ -124,7 +124,7 @@
     /**
      * Checks if the User has access to the current module
      *
-     * @returns {boolean}
+     * @return {boolean}
      * @private
      */
     _checkUserAccess: function() {
@@ -135,7 +135,7 @@
      * Allow modules to have specific access checks to allow configuration
      * Ex. Forecasts is only configurable by SystemAdmins & Forecasts Developers, not Forecasts admins
      *
-     * @returns {boolean}
+     * @return {boolean}
      * @private
      */
     _checkModuleAccess: function() {
@@ -146,7 +146,7 @@
      * Adds an extra level for if the config cannot be loaded because of some module-specific case
      * Ex. Forecasts config doesn't have the right Sales Stage Won/Lost
      *
-     * @returns {boolean}
+     * @return {boolean}
      * @private
      */
     _checkModuleConfig: function() {

@@ -120,7 +120,7 @@
 
     /**
      * Builds the chart config based on the type of chart
-     * @returns {*}
+     * @return {Mixed}
      */
     getChartConfig: function(chartData) {
         var chartConfig,

@@ -81,7 +81,7 @@
 
     /**
      * Get the list of filters to fill the dropdown
-     * @returns {Array}
+     * @return {Array}
      */
     getFilterList: function() {
         var filters = [];
@@ -238,7 +238,7 @@
     /**
      * Update the text for the selected filter and returns template
      * @param {Object} item
-     * @returns {string}
+     * @return {string}
      */
     formatSelection: function(item) {
         var ctx = {}, safeString;
@@ -273,7 +273,7 @@
     /**
      * Returns template
      * @param {Object} option
-     * @returns {String}
+     * @return {string}
      */
     formatResult: function(option) {
         if (option.id === this.layout.getLastFilter(this.layout.layout.currentModule, this.layout.layoutType)) {
@@ -291,7 +291,7 @@
      * and a class to first user custom filter (to add border top)
      *
      * @param {Object} item
-     * @returns {string} css class to attach
+     * @return {string} css class to attach
      */
     formatResultCssClass: function(item) {
         if (item.id === 'create') { return 'select2-result-border-bottom'; }
@@ -302,7 +302,7 @@
      * Determine if a filter is editable
      *
      * @param {String} id
-     * @returns {Boolean} TRUE if filter is editable, FALSE otherwise
+     * @return {boolean} `true` if filter is editable, `false` otherwise
      */
     isFilterEditable: function(id) {
         if (!this.layout.canCreateFilter() || !this.filterDropdownEnabled || this.layout.showingActivities) {
@@ -318,7 +318,7 @@
     /**
      * Toggles cursor depending if the filter is editable or not.
      *
-     * @param {Boolean} active TRUE for a pointer cursor, FALSE for a not allowed cursor
+     * @param {boolean} active `true` for a pointer cursor, `false` for a not allowed cursor
      */
     toggleFilterCursor: function(editable) {
         if (editable) {
@@ -332,7 +332,7 @@
      * Formats label for `all_records` filter. When showing all subpanels, we expect `All records`
      *
      * @param {Object} item
-     * @returns {Object} item with formatted label
+     * @return {Object} item with formatted label
      */
     formatAllRecordsFilter: function (item, model) {
         item = item || {id: 'all_records'};

@@ -101,7 +101,7 @@
     /**
      * Renders a different page from the wizard
      * @param {Number} newIndex New page index to select
-     * @returns {{page: number, lastPage: number}} Current page number and the
+     * @return {{page: number, lastPage: number}} Current page number and the
      * last page number
      */
     setPage: function(newIndex){
@@ -138,7 +138,7 @@
 
     /**
      * Returns current progress through wizard
-     * @returns {{page: number, lastPage: number}} Current page number and the
+     * @return {{page: number, lastPage: number}} Current page number and the
      * last page number
      */
     getProgress: function(){
@@ -149,7 +149,7 @@
     },
     /**
      * Moves to previous page, if possible.
-     * @returns {{page: number, lastPage: number}} Current page number and the
+     * @return {{page: number, lastPage: number}} Current page number and the
      * last page number
      */
     previousPage: function(){
@@ -159,7 +159,7 @@
     },
     /**
      * Moves to next page, if possible.
-     * @returns {{page: number, lastPage: number}} Current page number and the
+     * @return {{page: number, lastPage: number}} Current page number and the
      * last page number
      */
     nextPage: function(){
