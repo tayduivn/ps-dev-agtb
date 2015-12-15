@@ -86,6 +86,8 @@ function createOCIUsers($shortver, $html_dir, $sys_usr, $sys_pass, $host, $slash
 	{
 		$res = @oci_parse($link, $q);
 		@oci_execute($res);
+		// free statement
+		oci_free_statement($res);
 	}
 
 	@oci_commit($link);

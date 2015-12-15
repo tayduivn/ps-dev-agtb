@@ -744,8 +744,14 @@ class MetaDataManager
      */
     public function getModulesData(MetaDataContextInterface $context = null)
     {
+        $filterModules = false;
+        // BEGIN SUGARCRM flav=ent ONLY
+        if (SugarConfig::getInstance()->get('roleBasedViews')) {
+            $filterModules = true;
+        }
+        // END SUGARCRM flav=ent ONLY
         if (!isset($this->data['full_module_list'])) {
-            $this->data['full_module_list'] = $this->getModuleList();
+            $this->data['full_module_list'] = $this->getModuleList($filterModules);
         }
         $moduleList = $this->data['full_module_list'];
         $modules = array();
@@ -2044,7 +2050,7 @@ class MetaDataManager
 
             if($auth->isExternal()) {
                 $configs['externalLogin'] = true;
-                $configs['externalLoginUrl'] = $auth->getLoginUrl();
+                $configs['externalLoginUrl'] = $auth->getLoginUrl(array('platform'=>$this->args['platform']));
                 $configs['externalLoginSameWindow'] = SugarConfig::getInstance()->get('SAML_SAME_WINDOW');
             }
         }
@@ -2705,7 +2711,13 @@ class MetaDataManager
      */
     public function populateModules($data, MetaDataContextInterface $context = null)
     {
-        $this->data['full_module_list'] = $data['full_module_list'] = $this->getModuleList();
+        $filterModules = false;
+        // BEGIN SUGARCRM flav=ent ONLY
+        if (SugarConfig::getInstance()->get('roleBasedViews')) {
+            $filterModules = true;
+        }
+        // END SUGARCRM flav=ent ONLY
+        $this->data['full_module_list'] = $data['full_module_list'] = $this->getModuleList($filterModules);
         $this->data['modules'] = $data['modules'] = $this->getModulesData($context);
         $data['modules_info'] = $this->getModulesInfo();
         return $data;
@@ -2741,14 +2753,20 @@ class MetaDataManager
     {
         global $moduleList;
 
-        $fullModuleList = $this->getFullModuleList(true);
+        $filterModules = false;
+        // BEGIN SUGARCRM flav=ent ONLY
+        if (SugarConfig::getInstance()->get('roleBasedViews')) {
+            $filterModules = true;
+        }
+        // END SUGARCRM flav=ent ONLY
+        $fullModuleList = $this->getFullModuleList($filterModules);
 
         $modulesInfo = array();
 
         $visibleList = array_flip($moduleList);
-        $tabs = array_flip($this->getTabList());
-        $subpanels = array_flip($this->getSubpanelList());
-        $quickcreate = array_flip($this->getQuickCreateList());
+        $tabs = array_flip($this->getTabList($filterModules));
+        $subpanels = array_flip($this->getSubpanelList($filterModules));
+        $quickcreate = array_flip($this->getQuickCreateList($filterModules));
 
         foreach ($fullModuleList as $module) {
             $modulesInfo[$module] = array();
@@ -2783,33 +2801,39 @@ class MetaDataManager
     /**
      * Get tabs for the navigation bar of this application
      *
+     * @param bool $filter when true, the tabs are filtered by the current user's ACLs
+     *
      * @return array An array of module names
      */
-    public function getTabList()
+    public function getTabList($filter = true)
     {
         $controller = new TabController();
-        return array_keys($controller->get_system_tabs());
+        return array_keys($controller->get_system_tabs($filter));
     }
 
     /**
      * Gets the list of modules displayable as subpanels
      *
+     * @param bool $filter when true, the subpanels are filtered by the current user's ACLs
+     *
      * @return array An array of module names
      */
-    public function getSubpanelList()
+    public function getSubpanelList($filter = true)
     {
-        return SubPanelDefinitions::get_all_subpanels();
+        return SubPanelDefinitions::get_all_subpanels(true, false, $filter);
     }
 
     /**
      * Gets the list of modules enabled in the quickcreate dropdown.
      *
+     * @param bool $filter
+     *
      * @return array An array of module names
      */
-    public function getQuickcreateList()
+    public function getQuickcreateList($filter = true)
     {
         if (!isset($this->data['modules'])) {
-            $this->data['modules'] = $this->getModulesData();
+            $this->data['modules'] = $this->getModulesData(null, $filter);
         }
         $modulesData = $this->data['modules'];
 

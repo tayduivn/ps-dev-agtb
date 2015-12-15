@@ -12,7 +12,31 @@
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
-class PMSERelatedModule {
+class PMSERelatedModule
+{
+    /**
+     * List of fields that need to set a property on the bean to prevent being
+     * overridden on save
+     * @var array
+     */
+    protected $automaticFields = array(
+        'created_by' => array(
+            'property' => 'set_created_by',
+            'value' => false,
+        ),
+        'modified_user_id' => array(
+            'property' => 'update_modified_by',
+            'value' => false,
+        ),
+        'modified_by_name' => array(
+            'property' => 'update_modified_by',
+            'value' => false,
+        ),
+        'date_modified' => array(
+            'property' => 'update_date_modified',
+            'value' => false,
+        ),
+    );
 
     private $logger;
 
@@ -217,6 +241,13 @@ class PMSERelatedModule {
                             break;
                     }
                 } else {
+                    // Certain fields require that a property on the bean be set
+                    // in order for the change to take. This handles that.
+                    if (isset($this->automaticFields[$key])) {
+                        $set = $this->automaticFields[$key];
+                        $relatedModuleBean->{$set['property']} = $set['value'];
+                    }
+
                     $relatedModuleBean->$key = $value;
                 }
             }

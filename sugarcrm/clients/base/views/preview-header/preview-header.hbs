@@ -12,7 +12,7 @@
 --}}
 <h1 class="ellipsis_inline">{{str "LBL_PREVIEW"}} {{#if previewEdit}}<a class="preview-edit-link" data-action="edit"><i class="fa fa-pencil"></i></a>{{/if}}</h1>
 <div class="btn-toolbar pull-right">
-    {{#if previewEdit}}
+    {{#if layout.previewEdit}}
     <div class="preview-headerpane" align="right">
         {{#each meta.buttons}}
             {{field ../this}}

@@ -39,7 +39,6 @@
          * according to list acls.
          *
          * @property {Object}
-         * @public
          */
         this.moduleList = {};
 

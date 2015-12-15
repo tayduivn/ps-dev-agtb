@@ -1238,6 +1238,8 @@ TeamUpdaterItem.prototype._addNewInputLine = function (value) {
     div.appendChild(select);
     this._control.appendChild(div);
     $select = jQuery(select).select2({
+        minimumInputLength: 1,
+        formatInputTooShort: '',
         allowClear: true,
         query: this._queryFunction(),
         width: this.fieldWidth || '220px',

@@ -67,7 +67,7 @@ class PMSEStartEvent extends PMSEEvent
 
     /**
      * Creates a new case based on a determined module and start Event
-     * @param type $bean
+     * @param SugarBean $bean
      * @param type $event
      * @param type $flowData
      * @return type
@@ -114,8 +114,7 @@ class PMSEStartEvent extends PMSEEvent
 
         if (isset($bean->name) && (trim($bean->name) != '')) {
             $cas_title = $bean->name;
-        } elseif (isset($bean->document_name) && (trim($bean->document_name) != '') && (get_class($bean) == 'Document')) {
-            // For Documents, document_name field acts as the name field
+        } elseif ($this->isDocumentBean($bean)) {
             $cas_title = $bean->document_name;
         } elseif (isset($bean->user_name) && (trim($bean->user_name) != '')) {
             $cas_title = $bean->user_name;
@@ -192,5 +191,17 @@ class PMSEStartEvent extends PMSEEvent
         $flowData['cas_delayed'] = 0;
 
         return $flowData;
+    }
+
+    /**
+     * Documents and File based custom modules uses document_name field as the name field
+     * @param SugarBean $bean
+     * @return boolean
+     */
+    private function isDocumentBean($bean)
+    {
+        return (isset($bean->document_name) && (trim($bean->document_name) != '')
+            && (get_class($bean) == 'Document' || is_subclass_of($bean, "file")));
+
     }
 }
