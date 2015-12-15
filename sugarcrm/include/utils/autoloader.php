@@ -1507,38 +1507,6 @@ class SugarAutoLoader
     }
 
     /**
-     * Secure wrapper for `include`
-     */
-    public static function includeFile($file)
-    {
-        include self::validateFilePath($file);
-    }
-
-    /**
-     * Secure wrapper for `include_once`
-     */
-    public static function includeFileOnce($file)
-    {
-        include_once self::validateFilePath($file);
-    }
-
-    /**
-     * Secure wrapper for `require`
-     */
-    public static function requireFile($file)
-    {
-        require self::validateFilePath($file);
-    }
-
-    /**
-     * Secure wrapper for `require_once`
-     */
-    public static function requireFileOnce($file)
-    {
-        require_once self::validateFilePath($file);
-    }
-
-    /**
      * Get base directories
      * @return array
      */
