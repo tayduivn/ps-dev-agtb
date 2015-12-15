@@ -72,14 +72,24 @@ class ReminderApiTest extends \Sugar_PHPUnit_Framework_TestCase
                     'beanId' => 'dummy-bean-id',
                 ),
             ),
-            'throws if "module" isn\'t Calls or Meetings' => array(
-                array(
-                    'module' => 'dummy-module',
-                    'beanId' => 'dummy-bean-id',
-                    'userId' => '1',
-                ),
-            ),
         );
+    }
+
+    /**
+     * remind method should throw on invalid module value
+     *
+     * @dataProvider providerRemindThrowsWithoutRequiredArgs
+     * @covers ReminderApi::remind
+     * @expectedException \SugarApiExceptionInvalidParameter
+     */
+    public function testRemindThrowsOnIncorrectModule()
+    {
+        $args = array(
+            'module' => 'dummy-module',
+            'beanId' => 'dummy-bean-id',
+            'userId' => '1',
+        );
+        $this->reminderApi->remind($this->serviceMock, $args);
     }
 
     /**

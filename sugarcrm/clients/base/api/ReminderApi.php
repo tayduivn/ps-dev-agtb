@@ -40,14 +40,14 @@ class ReminderApi extends SugarApi
      * @param ServiceBase $api
      * @param array $args
      * @return string
-     * @throws SugarApiExceptionMissingParameter when args does not contain all required data
+     * @throws SugarApiExceptionInvalidParameter when module isn't correct
      */
     public function remind(ServiceBase $api, array $args)
     {
         $this->requireArgs($args, array('module', 'beanId', 'userId'));
 
         if (!in_array($args['module'], array('Calls', 'Meetings'))) {
-            throw new SugarApiExceptionMissingParameter();
+            throw new SugarApiExceptionInvalidParameter();
         }
 
         $this->getReminder()->remind($args['module'], $args['beanId'], $args['userId']);
