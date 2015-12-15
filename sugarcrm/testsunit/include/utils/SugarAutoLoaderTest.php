@@ -38,6 +38,7 @@ class SugarAutoLoaderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::validateFilePath
+     * @covers ::getBaseDirs
      * @dataProvider providerTestValidFilePath
      */
     public function testValidFilePath($file)
@@ -55,6 +56,7 @@ class SugarAutoLoaderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::validateFilePath
+     * @covers ::getBaseDirs
      * @dataProvider providerTestInvalidFilePath
      */
     public function testInvalidFilePath($file, $msg)

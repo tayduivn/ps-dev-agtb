@@ -29,10 +29,7 @@ use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
  * set as base directories for validation. This can be overriden if needed
  * on the File constraint.
  *
- * @see \SugarAutoLoader::includeFile
- * @see \SugarAutoLoader::includeFileOnce
- * @see \SugarAutoLoader::requireFile
- * @see \SugarAutoLoader::requireFileOnce
+ * @see \SugarAutoLoader::validateFilePath
  */
 class FileValidator extends ConstraintValidator
 {
