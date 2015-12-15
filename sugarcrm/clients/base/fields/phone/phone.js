@@ -48,7 +48,7 @@
     /**
      * @override
      * @param value
-     * @returns {*}
+     * @return {Mixed}
      */
     format: function (value) {
         if ((this.action === 'list' || this.action === 'detail' || this.action === 'record')
@@ -61,7 +61,7 @@
     /**
      * checks if value should be skype formatted + 00 or 011 leading is necessary
      * @param value {String}
-     * @returns {boolean}
+     * @return {boolean}
      */
     isSkypeFormatted: function (value) {
         if (_.isString(value)) {
@@ -76,7 +76,7 @@
      * Document: https://support.skype.com/en/faq/FA12006/how-do-i-script-webpages-to-find-phone-numbers-using-click-to-call
      *
      * @param value {String}
-     * @returns {String}
+     * @return {string}
      */
     skypeFormat: function (value) {
         if (_.isString(value)) {

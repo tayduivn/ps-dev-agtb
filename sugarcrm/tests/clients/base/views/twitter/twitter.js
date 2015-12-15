@@ -1,6 +1,6 @@
 describe("Twitter View", function() {
 
-    var app, view;
+    var app, view, moduleName = 'Home', layout;
 
     beforeEach(function() {
         if (!$.fn.tooltip) {
@@ -8,13 +8,22 @@ describe("Twitter View", function() {
         }
         SugarTest.loadPlugin('Connector');
         app = SugarTest.app;
-        var context = app.context.getContext();
-        view = SugarTest.createView("base","Home", "twitter", {}, context, true);
+        app.drawer = {
+            close: $.noop,
+            reset: $.noop,
+            open: $.noop
+        };
+        var context = app.context.getContext({module: moduleName});
+        context.set('model', app.data.createBean(moduleName));
+        context.parent = new Backbone.Model();
+        context.parent.set('module', moduleName);
+        layout = SugarTest.createLayout('base', moduleName, 'list', null, context.parent);
+        view = SugarTest.createView('base', moduleName, 'twitter', {}, context, true, layout);
         view.model = new Backbone.Model();
         view.settings = new Backbone.Model();
         view.settings.set('twitter','test');
         view.moduleType = 'Home';
-        view.context.set('module', 'Home');
+        view.context.set('module', moduleName);
         SugarTest.clock.restore();
     });
 
@@ -22,6 +31,7 @@ describe("Twitter View", function() {
         sinon.collection.restore();
         app.cache.cutAll();
         app.view.reset();
+        delete app.drawer;
         Handlebars.templates = {};
         view.model = null;
         view = null;

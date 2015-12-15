@@ -183,7 +183,7 @@
     /**
      * Gets the child field definitions that are defined in the metadata.
      *
-     * @returns {Object} Metadata of the child fields.
+     * @return {Object} Metadata of the child fields.
      * @protected
      */
     _getChildFieldsMeta: function() {
@@ -193,7 +193,7 @@
     /**
      * Creates the children fields that are specified in the definitions.
      *
-     * @returns {Array} Children fields that are created.
+     * @return {Array} Children fields that are created.
      * @protected
      */
     _getChildFields: function() {

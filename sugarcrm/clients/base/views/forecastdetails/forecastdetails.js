@@ -146,6 +146,11 @@
     forecastsNotSetUpMsg: undefined,
 
     /**
+     * Flag for if loadData is currently running
+     */
+    loading: false,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -303,7 +308,7 @@
     /**
      * Builds dashlet url
      *
-     * @return {*} url to call
+     * @return {Mixed} url to call
      */
     getProjectedURL: function() {
         var method = this.shouldRollup ? 'progressManager' : 'progressRep',
@@ -426,7 +431,7 @@
     loadData: function(options) {
         // if in dashlet config, or if Forecasts is not configured properly,
         // do not load data
-        if(this.meta.config || !this.forecastsConfigOK || !this.isForecastSetup) {
+        if(this.meta.config || !this.forecastsConfigOK || !this.isForecastSetup || this.loading) {
             return;
         }
 
@@ -435,6 +440,7 @@
         }
 
         if(!_.isEmpty(this.model.get('selectedTimePeriod'))) {
+            this.loading = true;
             var url = this.getProjectedURL(),
                 cb = {
                     context: this,
@@ -443,10 +449,14 @@
                             data = options.beforeParseData(data);
                             data.parsedData = true;
                         }
-
                         this.handleNewDataFromServer(data)
                     }, this, options),
-                    complete: options ? options.complete : null
+                    complete: _.bind(function(){
+                        this.loading = false;
+                        if (options && options.complete && _.isFunction(options.complete)) {
+                            options.complete();
+                        }
+                    }, this)
                 };
 
             app.api.call('read', url, null, null, cb);
@@ -505,7 +515,7 @@
      * Gets an object from the oldTotals Model
      *
      * @param id the model ID for the Object
-     * @returns {Object}
+     * @return {Object}
      */
     getOldTotalFromCollectionById: function(id) {
         return this.oldTotals.models.get(id);
@@ -516,7 +526,7 @@
      *
      * @param id model id
      * @param totals object to set
-     * @returns {*}
+     * @return {Mixed}
      */
     setOldTotalFromCollectionById: function(id, totals) {
         this.oldTotals.models.set(id, totals);
@@ -810,7 +820,7 @@
      * @param {Number} caseValue the value to check
      * @param {Number} stageValue the value to check against
      * @param {String} type the property to get
-     * @returns {string}
+     * @return {string}
      */
     getClassBasedOnAmount: function (caseValue, stageValue, type) {
         var cssClass = '';
@@ -948,7 +958,7 @@
     },
 
     /**
-     * Handle the click event for the optins menu
+     * Handle the click event for the options menu
      *
      * @param {jQuery.Event} evt click event
      */

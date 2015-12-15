@@ -292,7 +292,7 @@
     /**
      * Returns a custom label for this dashlet.
      *
-     * @returns {String}
+     * @return {string}
      */
     getLabel: function() {
         var module = this.settings.get('module') || this.context.get('module'),
@@ -652,8 +652,8 @@
      * preview and the default dashablelist's that are defined. All columns for
      * the selected module are shown in these cases.
      *
-     * @returns {Object[]} Array of objects defining the field metadata for
-     *                     each column.
+     * @return {Object[]} Array of objects defining the field metadata for
+     *   each column.
      * @private
      */
     _getColumnsForDisplay: function() {

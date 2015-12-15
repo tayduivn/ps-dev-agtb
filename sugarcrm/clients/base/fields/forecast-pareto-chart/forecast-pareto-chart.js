@@ -97,7 +97,7 @@
     /**
      * Utility method to check is the dashlet is visible
      *
-     * @returns {boolean}
+     * @return {boolean}
      */
     isDashletVisible: function() {
         return (!this.disposed && this.state === 'open' &&
@@ -107,7 +107,7 @@
     /**
      * Utility method to resize dashlet with check for visibility
      *
-     * @returns {boolean}
+     * @return {boolean}
      */
     resize: function() {
         if (this.isDashletVisible() && this.paretoChart && _.isFunction(this.paretoChart.update)) {
@@ -605,7 +605,7 @@
 
     /**
      * Do we have serverData yet?
-     * @returns {boolean}
+     * @return {boolean}
      */
     hasServerData: function() {
         return !_.isUndefined(this._serverData);
@@ -613,7 +613,7 @@
 
     /**
      * Return the data that was passed back from the server
-     * @returns {Object}
+     * @return {Object}
      */
     getServerData: function() {
         return this._serverData;

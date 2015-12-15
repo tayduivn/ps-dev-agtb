@@ -9,7 +9,7 @@ describe("Emails.Views.Compose", function() {
             viewName = 'compose',
             moduleName = 'Emails';
         app = SugarTest.app;
-        app.drawer = { on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop };
+        app.drawer = { on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop, reset: $.noop };
 
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('compose-senderoptions', 'view', 'base', 'compose-senderoptions', moduleName);

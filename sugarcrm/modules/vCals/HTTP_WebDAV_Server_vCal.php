@@ -20,13 +20,13 @@ require_once 'modules/Calendar/Calendar.php';
 require_once 'vendor/HTTP_WebDAV_Server/Server.php';
 
 
-    /**
-     * Filesystem access using WebDAV
-     *
-     * @access public
-     */
-    class HTTP_WebDAV_Server_vCal extends HTTP_WebDAV_Server
-    {
+/**
+ * Filesystem access using WebDAV
+ *
+ * @access public
+ */
+class HTTP_WebDAV_Server_vCal extends HTTP_WebDAV_Server
+{
         /**
          * Root directory for WebDAV access
          *
@@ -411,7 +411,17 @@ require_once 'vendor/HTTP_WebDAV_Server/Server.php';
 
         }
 
+    /**
+     * set HTTP return status and mirror it in a private header
+     *
+     * @param  string  status code and message
+     * @return void
+     * @see HTTP_WebDAV_Server::http_status()
+     */
+    public function http_status($status)
+    {
+        parent::http_status($status);
+        header('Content-Type: text/calendar; charset=' . $GLOBALS['sugar_config']['default_charset']);
     }
 
-
-?>
+}

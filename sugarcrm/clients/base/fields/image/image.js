@@ -115,7 +115,7 @@
     /**
      * @override
      * @param value
-     * @returns value
+     * @return value
      */
     format: function(value) {
         if (value) {
@@ -318,7 +318,7 @@
      * Utility function to append px to an integer
      *
      * @param size
-     * @returns {string}
+     * @return {string}
      */
     formatPX: function(size) {
         size = parseInt(size, 10);

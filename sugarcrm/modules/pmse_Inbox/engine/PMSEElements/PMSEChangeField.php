@@ -152,19 +152,12 @@ class PMSEChangeField extends PMSEScriptTask
                             }
 
                         } else {
-
                             if (!$this->emailHandler->doesPrimaryEmailExists($field, $bean, $historyData)) {
                                 $historyData->savePredata($field->field, $bean->{$field->field});
                                 $newValue = '';
                                 if (is_array($field->value)) {
-                                    $newValue = $this->evaluator->evaluateExpression(
-                                        json_encode($field->value),
-                                        $beanModule,
-                                        array(),
-                                        false
-                                    );
-                                    $newValue = $this->postProcessValue($newValue,
-                                        $bean->field_name_map[$field->field]['type']);
+                                    $newValue = $this->beanHandler->processValueExpression($field->value, $bean);
+                                    $newValue = $this->getDBDate($field, $newValue);
                                 } else {
                                     if ($field->field == 'assigned_user_id') {
                                         $field->value = $this->getCustomUser($field->value, $beanModule);
@@ -218,7 +211,13 @@ class PMSEChangeField extends PMSEScriptTask
         }
         return $this->prepareResponse($flowData, 'ROUTE', $flowAction);
     }
-    
+
+    /**
+     * @deprecated
+     * @param $value
+     * @param $fieldType
+     * @return bool|float|string
+     */
     public function postProcessValue($value, $fieldType)
     {
         global $timedate;

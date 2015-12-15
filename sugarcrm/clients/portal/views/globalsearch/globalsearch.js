@@ -190,7 +190,7 @@
      * Get the modules that current user selected for search.
      * Empty array for all.
      *
-     * @returns {array}
+     * @return {Array}
      */
     _getSearchModuleNames: function() {
         if (this.$('input:checkbox[data-module="all"]').attr('checked')) {

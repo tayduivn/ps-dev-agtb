@@ -198,7 +198,18 @@
                 this.displayNoData(true);
             }, this),
             complete: options ? options.complete : null,
-            limit: -1
+            limit: -1,
+            fields: this.getFieldNames()
         });
+    },
+
+    /**
+     * Get the list of field names to render the dashlet correctly
+     * @return {string[]} The list of fields we need to fetch
+     * @override
+     */
+    getFieldNames: function() {
+        // FIXME TY-920: we shouldn't have to override this per-dashlet
+        return this.dashletConfig.dashlets[0].fields || [];
     }
 })
