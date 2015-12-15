@@ -1489,13 +1489,22 @@ class SugarAutoLoader
     /**
      * Validate given file name
      * @param string $file File name
+     * @param boolean $upload Allow validation in upload directory
      * @return string File name
      * @throws Exception
      * @see \Sugarcrm\Sugarcrm\Security\Validator\Constraints\FileValidator
      */
-    public static function validateFilePath($file)
+    public static function validateFilePath($file, $upload = false)
     {
-        $constraint = new File(array('baseDirs' => self::getBaseDirs()));
+        $baseDirs = self::getBaseDirs();
+
+        // add upload directory to the allowed list
+        if ($upload) {
+            $uploadDir = ini_get('upload_tmp_dir');
+            $baseDirs[] = $uploadDir ? $uploadDir : sys_get_temp_dir();
+        }
+
+        $constraint = new File(array('baseDirs' => $baseDirs));
         $violations = Validator::getService()->validate($file, $constraint);
         if (count($violations) > 0) {
             $msg = array_reduce(iterator_to_array($violations), function ($msg, $violation) {
@@ -1504,38 +1513,6 @@ class SugarAutoLoader
             throw new Exception($msg);
         }
         return $constraint->getFormattedReturnValue();
-    }
-
-    /**
-     * Secure wrapper for `include`
-     */
-    public static function includeFile($file)
-    {
-        include self::validateFilePath($file);
-    }
-
-    /**
-     * Secure wrapper for `include_once`
-     */
-    public static function includeFileOnce($file)
-    {
-        include_once self::validateFilePath($file);
-    }
-
-    /**
-     * Secure wrapper for `require`
-     */
-    public static function requireFile($file)
-    {
-        require self::validateFilePath($file);
-    }
-
-    /**
-     * Secure wrapper for `require_once`
-     */
-    public static function requireFileOnce($file)
-    {
-        require_once self::validateFilePath($file);
     }
 
     /**
@@ -1551,5 +1528,33 @@ class SugarAutoLoader
             }
         }
         return self::$baseDirs;
+    }
+
+    /**
+     * Get variable content from include file
+     * @param string $file File name
+     * @param string $returnVar Name of the variable
+     * @return mixed
+     */
+    public static function varFromInclude($file, $returnVar)
+    {
+        $result = self::varsFromInclude($file, array($returnVar));
+        return isset($result[$returnVar]) ? $result[$returnVar] : null;
+    }
+
+    /**
+     * Get variables content from include file
+     * @param string $file File name
+     * @param array $returnVars List of variable names
+     * @return array
+     */
+    public static function varsFromInclude($file, array $returnVars)
+    {
+        include self::validateFilePath($file);
+        $returnVarsResult = array();
+        foreach ($returnVars as $returnVar) {
+            $returnVarsResult[$returnVar] = isset(${$returnVar}) ? ${$returnVar} : null;
+        }
+        return $returnVarsResult;
     }
 }

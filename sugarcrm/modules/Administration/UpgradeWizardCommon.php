@@ -124,7 +124,12 @@ class UpgradeWizardCommon
     public static function getLanguagePackName($the_file)
     {
         global $app_list_strings;
-        require_once("$the_file");
+
+        $new = SugarAutoLoader::varFromInclude($the_file, 'app_list_strings');
+        if (is_array($new)) {
+            $app_list_strings = $new;
+        }
+
         if (isset($app_list_strings["language_pack_name"])) {
             return ($app_list_strings["language_pack_name"]);
         }

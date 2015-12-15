@@ -21,7 +21,7 @@ require_once 'modules/Studio/wizards/StudioWizard.php';
 $wizard = InputValidation::getService()->getValidInputRequest('wizard', null, 'StudioWizard');
 
 if (SugarAutoLoader::fileExists('modules/Studio/wizards/'. $wizard . '.php')) {
-    SugarAutoLoader::requireFileOnce('modules/Studio/wizards/'. $wizard . '.php');
+    require_once SugarAutoLoader::validateFilePath('modules/Studio/wizards/'. $wizard . '.php');
     $thewiz = new $wizard();
 } else {
     unset($_SESSION['studio']['lastWizard']);
