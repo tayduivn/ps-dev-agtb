@@ -41,16 +41,28 @@ class SugarAutoLoaderTest extends \PHPUnit_Framework_TestCase
      * @covers ::getBaseDirs
      * @dataProvider providerTestValidFilePath
      */
-    public function testValidFilePath($file)
+    public function testValidFilePath($file, $upload)
     {
-        $result = \SugarAutoLoader::validateFilePath($file);
+        $this->createFile($file, 'SugarAutoLoaderTestValidFilePath');
+        $result = \SugarAutoLoader::validateFilePath($file, $upload);
         $this->assertSame($result, $file);
     }
 
     public function providerTestValidFilePath()
     {
         return array(
-            array(SUGAR_BASE_DIR . '/modules/Accounts/Account.php'),
+            array(
+                SUGAR_BASE_DIR . '/bogus.php',
+                false,
+            ),
+            array(
+                SUGAR_BASE_DIR . '/bogus.php',
+                true,
+            ),
+            array(
+                $this->getUploadDir() . '/bogus.php',
+                true,
+            ),
         );
     }
 
@@ -70,21 +82,37 @@ class SugarAutoLoaderTest extends \PHPUnit_Framework_TestCase
         return array(
             array(
                 '/etc/passwd',
-                'File name violation: file outside basedir'
+                'File name violation: file outside basedir',
+                false,
             ),
             array(
                 '/etc/passwd' . chr(0),
-                'File name violation: null bytes detected'
+                'File name violation: null bytes detected',
+                false,
             ),
             array(
                 SUGAR_BASE_DIR . '/modules/Accounts/FooBar.php',
-                'File name violation: file not found'
+                'File name violation: file not found',
+                false,
             ),
             array(
                 SUGAR_BASE_DIR . '/modules/../modules/Accounts/Account.php',
-                'File name violation: directory traversal detected'
+                'File name violation: directory traversal detected',
+                false,
             ),
         );
+    }
+
+    /**
+     * @covers ::validateFilePath
+     * @covers ::getBaseDirs
+     */
+    public function testInvalidFilePathUpload()
+    {
+        $file = $this->getUploadDir() . '/bogus.php';
+        $this->createFile($file, 'SugarAutoLoaderTestInvalidFilePathUpload');
+        $this->setExpectedException('\Exception', 'File name violation: file outside basedir');
+        \SugarAutoLoader::validateFilePath($file, false);
     }
 
     /**
@@ -225,5 +253,15 @@ class SugarAutoLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $this->testFiles[] = $file;
         file_put_contents($file, $content);
+    }
+
+    /**
+     * Get current upload directory
+     * @return string
+     */
+    protected function getUploadDir()
+    {
+        $dir = ini_get('upload_tmp_dir');
+        return $dir ? $dir : sys_get_temp_dir();
     }
 }
