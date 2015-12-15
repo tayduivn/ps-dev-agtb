@@ -996,7 +996,7 @@ var REQUIRED_VALIDATION_MESSAGE_CLASS = 'required validation-message';
 function remove_error_style(formName, input) {
     try
     {
-        inputHandle = typeof input === "object" ? input : document.forms[formname][input];
+        inputHandle = typeof input === "object" ? input : document.forms[formName][input];
 
         //  Find and remove all child error elements.
         var errorElements = $(inputHandle).parent().children().filter(function() {
