@@ -67,6 +67,10 @@ class CarrierBulkMessageHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
         $jobQueueManager = $this->getMock(self::NS_JOB_QUEUE_MANAGER, array('NotificationSend'));
         $jobQueueManager->expects($this->exactly($totalOptionsCount))->method('NotificationSend')
             ->with(
+                $this->logicalOr(
+                    $this->equalTo($user1->id),
+                    $this->equalTo($user2->id)
+                ),
                 $this->equalTo($carrierName),
                 $this->logicalOr(
                     $this->equalTo($usersOptions[$user1->id]['options'][0]),
@@ -86,6 +90,7 @@ class CarrierBulkMessageHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
             self::NS_HANDLER,
             array('getMessageBuilderRegistry', 'getJobQueueManager', 'getCarrierRegistry'),
             array(
+                null,
                 array('src/Notification/Emitter/Application/Event.php', serialize($event)),
                 array('', serialize($carrierName)),
                 array('', serialize($usersOptions))

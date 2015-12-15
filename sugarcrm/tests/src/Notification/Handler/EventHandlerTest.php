@@ -102,7 +102,10 @@ class EventHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
         $eventHandler = $this->getMock(
             self::NS_EVENT_HANDLER,
             array('getSubscriptionsRegistry', 'getCarrierRegistry', 'getJobQueueManager', 'getUser'),
-            array(array('src/Notification/Emitter/Application/Event.php', serialize($event)))
+            array(
+                null,
+                array('src/Notification/Emitter/Application/Event.php', serialize($event))
+            )
         );
         $eventHandler->expects($this->once())->method('getSubscriptionsRegistry')
             ->willReturn($subscriptionsRegistry);
@@ -112,6 +115,7 @@ class EventHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
         $manager = $this->getMock(self::NS_MANAGER, array('NotificationCarrierBulkMessage'), array(), '', false);
         $manager->expects($this->exactly(2))->method('NotificationCarrierBulkMessage')
             ->with(
+                $this->equalTo(null),
                 $this->equalTo($event),
                 $this->logicalOr($this->equalTo('carrierName1'), $this->equalTo('carrierName2')),
                 $this->logicalOr(

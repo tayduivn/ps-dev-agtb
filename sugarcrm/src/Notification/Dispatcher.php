@@ -31,7 +31,7 @@ class Dispatcher
     public function dispatch(EventInterface $event)
     {
         $manager = $this->getJobQueueManager();
-        $manager->NotificationEvent($event);
+        $manager->NotificationEvent(null, $event);
     }
 
     /**

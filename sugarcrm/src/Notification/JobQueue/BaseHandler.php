@@ -27,6 +27,10 @@ abstract class BaseHandler implements RunnableInterface
     public function __construct()
     {
         $arguments = func_get_args();
+
+        // Set up global user and eliminate this argument for initialize.
+        $this->setUpCurrentUser(array_shift($arguments));
+
         foreach ($arguments as $key => $argument) {
             if ($argument[0]) {
                 require_once $argument[0];
@@ -48,5 +52,23 @@ abstract class BaseHandler implements RunnableInterface
     protected function getJobQueueManager()
     {
         return new Manager();
+    }
+
+    /**
+     * Set up global current user for job execution.
+     * If $userId is not set, we retrieve the first active admin user.
+     *
+     * @param string|null $userId id of the User to set up as current one.
+     */
+    protected function setUpCurrentUser($userId)
+    {
+        if (is_null($userId)) {
+            $userBean = \BeanFactory::getBean('Users');
+            $user = $userBean->getSystemUser();
+        } else {
+            $user = \BeanFactory::getBean('Users', $userId);
+        }
+
+        $GLOBALS['current_user'] = $user;
     }
 }

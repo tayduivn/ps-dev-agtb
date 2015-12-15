@@ -81,7 +81,7 @@ class EventHandler extends BaseHandler
 
         $manager = $this->getJobQueueManager();
         foreach ($carriers as $carrierName => $carrierRow) {
-            $manager->NotificationCarrierBulkMessage($this->event, $carrierName, $carrierRow['data']);
+            $manager->NotificationCarrierBulkMessage(null, $this->event, $carrierName, $carrierRow['data']);
         }
         return \SchedulersJob::JOB_SUCCESS;
     }

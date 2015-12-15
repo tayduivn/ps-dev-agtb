@@ -36,13 +36,13 @@ class MessageBuilder implements MessageBuilderInterface
         $url = $this->generateUrl($module, $bean);
 
         if (array_key_exists('title', $messageSignature)) {
-            $message['title'] = translate('LBL_EVENT_REMINDER_ABOUT', $module);
+            $message['title'] = sprintf(translate('LBL_EVENT_REMINDER_ABOUT', $module), $bean->name);
         }
         if (array_key_exists('text', $messageSignature)) {
             $message['text'] = sprintf(translate('LBL_EVENT_REMINDER_TEXT', $module), $bean->name, $time, $url);
         }
         if (array_key_exists('html', $messageSignature)) {
-            $message['text'] = sprintf(translate('LBL_EVENT_REMINDER_HTML', $module), $bean->name, $time, $url);
+            $message['html'] = sprintf(translate('LBL_EVENT_REMINDER_HTML', $module), $bean->name, $time, $url);
         }
         return $message;
     }
@@ -84,8 +84,8 @@ class MessageBuilder implements MessageBuilderInterface
      */
     protected function generateTime($bean, $user)
     {
-        $timeDate = new \TimeDate();
-        $start = $timeDate->fromDb($bean->date_start);
+        $timeDate = \TimeDate::getInstance();
+        $start = $timeDate->fromUser($bean->date_start, $GLOBALS['current_user']);
         return $timeDate->asUser($start, $user);
     }
 }

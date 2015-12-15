@@ -69,7 +69,7 @@ class CarrierBulkMessageHandler extends BaseHandler
             $user = \BeanFactory::getBean('Users', $userId);
             $message = $messageBuilder->build($this->event, $userData['filter'], $user, $messageSignature);
             foreach ($userData['options'] as $transportVal) {
-                $jobQueueManager->NotificationSend($this->carrierName, $transportVal, $message);
+                $jobQueueManager->NotificationSend($userId, $this->carrierName, $transportVal, $message);
             }
         }
         return \SchedulersJob::JOB_SUCCESS;

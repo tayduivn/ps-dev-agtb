@@ -35,8 +35,12 @@ class CarrierSugarTransport implements TransportInterface
             $notification = $this->newNotification();
 
             $notification->severity = 'information';
-            $notification->name = $message['title'];
-            $notification->description = $message['html'];
+            if (!empty($message['title'])) {
+                $notification->name = $message['title'];
+            }
+            if (!empty($message['html'])) {
+                $notification->description = $message['html'];
+            }
             if (empty($message['html']) && !empty($message['text'])) {
                 $notification->description = to_html($message['text']);
             }
