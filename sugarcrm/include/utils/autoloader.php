@@ -1550,4 +1550,32 @@ class SugarAutoLoader
         }
         return self::$baseDirs;
     }
+
+    /**
+     * Get variable content from include file
+     * @param string $file File name
+     * @param string $returnVar Name of the variable
+     * @return mixed
+     */
+    public static function varFromInclude($file, $returnVar)
+    {
+        $result = self::varsFromInclude($file, array($returnVar));
+        return isset($result[$returnVar]) ? $result[$returnVar] : null;
+    }
+
+    /**
+     * Get variables content from include file
+     * @param string $file File name
+     * @param array $returnVars List of variable names
+     * @return array
+     */
+    public static function varsFromInclude($file, array $returnVars)
+    {
+        include self::validateFilePath($file);
+        $returnVarsResult = array();
+        foreach ($returnVars as $returnVar) {
+            $returnVarsResult[$returnVar] = isset(${$returnVar}) ? ${$returnVar} : null;
+        }
+        return $returnVarsResult;
+    }
 }
