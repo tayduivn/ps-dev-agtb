@@ -574,6 +574,7 @@ if ($_SESSION['demoData'] != 'no') {
     include("install/populateSeedData.php");
     installerHook('post_installDemoData');
 }
+installLog("done populating the db with seed data");
 
 if ((!empty($_SESSION['fts_type']) || !empty($_SESSION['setup_fts_type'])) &&
     (empty($_SESSION['setup_fts_skip']))
