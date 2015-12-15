@@ -13,10 +13,10 @@
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
 
 /**
- * Class ExportException
+ * Class ImportException
  * @package Sugarcrm\Sugarcrm\Dav\Cal\Adapter
  */
-class ExportException extends \SugarException
+class ImportException extends \SugarException
 {
 
 }

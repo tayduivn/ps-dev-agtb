@@ -28,11 +28,11 @@ interface AdapterInterface
     public function export(array $exportData, \CalDavEventCollection $eventCollection);
 
     /**
+     * @param array $importData
      * @param \SugarBean $sugarBean
-     * @param \CalDavEvent $calDavBean
      * @return bool
      */
-    public function import(\SugarBean $sugarBean, \CalDavEvent $calDavBean);
+    public function import(array $importData, \SugarBean $sugarBean);
 
     /**
      * @param \SugarBean $bean

@@ -12,8 +12,8 @@
 
 require_once 'tests/SugarTestCalDavUtilites.php';
 
-use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Calls as CallAdapater;
-use \Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Calls as CallsAdapter;
 
 /**
  * CalDav bean tests
@@ -23,7 +23,6 @@ use \Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper;
  */
 class CallsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $callIds = array();
     /**
      * set up new user
      */
@@ -33,221 +32,139 @@ class CallsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
         $GLOBALS['current_user']->setPreference('timezone', 'Europe/Moscow');
-        $this->createAnonumouseUsers();
     }
+
 
     /**
-     * remove all created data
+     * @param array $changedFields
+     * @param array $invites
+     * @param array $expectedCalendarStrings
+     * @dataProvider callProvider
+     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Call::export
      */
-    public function tearDown()
+    public function testExport($changedFields, $invites, $expectedCalendarStrings)
     {
-        SugarTestCalDavUtilities::deleteAllCreatedCalendars();
-        SugarTestCalDavUtilities::deleteCreatedEvents();
-        SugarTestCallUtilities::removeAllCreatedMeetingsWithRecuringById($this->callIds);
-        SugarTestMeetingUtilities::removeAllCreatedMeetingsWithRecuringById($this->callIds);
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarTestContactUtilities::removeCreatedContactsEmailAddresses();
-        SugarTestContactUtilities::removeAllCreatedContacts();
-        SugarTestLeadUtilities::removeCreatedLeadsEmailAddresses();
-        SugarTestLeadUtilities::removeCreatedLeadsUsersRelationships();
-        SugarTestLeadUtilities::removeAllCreatedLeads();
-        parent::tearDown();
-    }
+        /**@var \CalDavEventCollection $eventCollection*/
+        $eventCollection = $this->getMockBuilder('\CalDavEventCollection')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
 
-    /**
-     * @covers Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings::import
-     */
-    public function testSaveCall()
-    {
-        $vCalendarEventText = $this->getEventTemplate('vevent');
-        $dateTimeHelper = new DateTimeHelper();
-        /**@var CalDavEvent $calDavBean*/
-        $calDavBean = SugarTestCalDavUtilities::createEvent(array('calendardata' => $vCalendarEventText));
-        $calDavBean->parent_type = 'Calls';
-        $parcipiantsUser = $calDavBean->getParticipants();
-        /**@var \Call $bean*/
-        $bean = $calDavBean->getBean();
-        $callAdapter = new CallAdapater();
-        $result = $callAdapter->import($bean, $calDavBean);
+        $adapter = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Calls')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
 
-        $this->assertTrue($result);
-        $this->assertEquals($calDavBean->getTitle(), $bean->name);
-        $this->saveBean($bean);
+        $meetingBean = $this->getMockBuilder('\Call')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+        $meetingBean->id = 1;
+        $meetingBean->module_name = 'Calls';
 
-        $this->addCreatedCallId($bean);
-
-        if (!$calDavBean->parent_id) {
-            $calDavBean->setBean($bean);
-            $this->saveBean($calDavBean);
-        }
-        /** @var \Call $callBean */
-        $callBean = BeanFactory::getBean('Calls', $bean->id);
-        $this->addCreatedCallId($callBean);
-
-        if ($parcipiantsUser['Users']) {
-            $callUsersList = $callBean->get_call_users();
-            $usersUniqueEmails = array();
-            foreach ($callUsersList as $user) {
-                $userPrimaryEmail = null;
-                $result = $user->getUsersNameAndEmail();
-                if (!empty($result['email'])) {
-                    $userPrimaryEmail = $result['email'];
-                }
-
-                if ($userPrimaryEmail && !in_array($userPrimaryEmail, $usersUniqueEmails)) {
-                    $usersUniqueEmails[] = $userPrimaryEmail;
-                }
-            }
-
-            //$this->assertCount(count($parcipiantsUser['Users']), $usersUniqueEmails);
-
-            foreach ($callUsersList as $meetingUsers) {
-                if (isset($parcipiantsUserEmail[$meetingUsers->id])) {
-                    $this->assertEquals(
-                        $parcipiantsUserEmail[$meetingUsers->id]['accept_status'],
-                        $meetingUsers->accept_status
-                    );
-                }
-            }
-        }
-        if ($parcipiantsUser['Contacts']) {
-            $callBean->load_relationship('contacts');
-            $meetingContactsList = $callBean->contacts->get();
-            $expected = array_keys($parcipiantsUser['Contacts']);
-            sort($expected);
-            sort($meetingContactsList);
-            $this->assertEquals($expected, $meetingContactsList);
-        }
-
-        if ($parcipiantsUser['Leads']) {
-            $callBean->load_relationship('leads');
-            $meetingLeadsList = $callBean->leads->get();
-            $expected = array_keys($parcipiantsUser['Leads']);
-            sort($expected);
-            sort($meetingLeadsList);
-            $this->assertEquals($expected, $meetingLeadsList);
-        }
-
-        $this->assertEquals($calDavBean->getStartDate(), $dateTimeHelper->sugarDateToUTC($callBean->date_start)->format(\TimeDate::DB_DATETIME_FORMAT));
-        $this->assertEquals($calDavBean->getDurationHours(), $callBean->duration_hours);
-        $this->assertEquals($calDavBean->getDurationMinutes(), $callBean->duration_minutes);
-
-        $calendarEvents = new CalendarEvents();
-        $childQuery = $calendarEvents->getChildrenQuery($callBean);
-
-        $childEvents = $callBean->fetchFromQuery($childQuery);
-
-        //childs events count - should be days difference between $callBean->date_start and untill_date
-        $this->assertEquals(count($childEvents), 7);
-        foreach ($childEvents as $event) {
-            $this->assertEquals($event->name, $calDavBean->getTitle());
-        }
-
-
-        $calDavBean->setTitle('test new title', $calDavBean->setComponent('VEVENT'));
-        $this->saveBean($calDavBean);
-        $calDavBean = BeanFactory::getBean($calDavBean->module_name, $calDavBean->id);
-
-        $result = $callAdapter->import($callBean, $calDavBean);
-        $this->assertTrue($result);
-        $this->assertEquals($calDavBean->getTitle(), $callBean->name);
-        $this->saveBean($callBean);
-
-        $childEvents = $callBean->fetchFromQuery($childQuery);
-        $this->assertEquals(7, count($childEvents));
-        foreach ($childEvents as $event) {
-            $this->assertEquals($event->name, $calDavBean->getTitle());
-        }
-
-        $callBean->repeat_until = "2015-08-19";
-        $result = $callAdapter->import($callBean, $calDavBean);
-        $this->assertTrue($result);
-        $this->saveBean($callBean);
-        $childEvents = $callBean->fetchFromQuery($childQuery);
-        $this->assertEquals(7, count($childEvents));
-
-        $eventsKeys = array_keys($childEvents);
-
-        $callBean->mark_deleted($eventsKeys[0]);
-        $callBean->mark_deleted($eventsKeys[2]);
-
-        $result = $callAdapter->import($callBean, $calDavBean);
-        $this->assertTrue($result);
-        $this->saveBean($callBean);
-        $childEvents = $callBean->fetchFromQuery($childQuery, array(), array('cache' => false));
-        $this->assertEquals(7, count($childEvents));
-
-        //check participients status
-        $callUsersList  = $callBean->get_call_users();
-        foreach ($callUsersList as $callUsers) {
-            if (isset($parcipiantsUser['Users'][$callUsers->id])) {
-                $this->assertEquals($parcipiantsUser['Users'][$callUsers->id]['accept_status'], $callUsers->accept_status);
-            }
-        }
-    }
-
-     /**
-     * Load template for event
-     * @param string $templateName
-     * @return string;
-     */
-    protected function getEventTemplate($templateName)
-    {
-        return file_get_contents(dirname(__FILE__).'/../EventTemplates/'.$templateName.'.ics');
-    }
-
-    /**
-     * Add bean id to log
-     * @param $meeting
-     */
-    private function addCreatedCallId($call)
-    {
-        if (!in_array($call->id, $this->callIds)) {
-            $this->callIds[] = $call->id;
-        }
-    }
-
-    /**
-     * Create anonumouse users for test
-     */
-    private function createAnonumouseUsers()
-    {
-        $idUser1 = create_guid();
-        $idUser2 = create_guid();
-        $idUser3 = create_guid();
-
-        $users = array(
-            array('email1' => 'test@test.com', 'new_with_id' => true, 'id' => $idUser1),
+        $exportData = array(
+            array(
+                $meetingBean->module_name,
+                $meetingBean->id,
+                '',
+                array(),
+                false
+            ),
+            $changedFields,
+            $invites,
         );
 
-        $contacts = array(
-            array('email' => 'test2@test.com', 'new_with_id' => true, 'id' => $idUser2)
-        );
-
-        $leads = array(
-            array('email' => 'test1@test.com', 'new_with_id' => true, 'id' => $idUser3)
-        );
-        //print_r($users);
-        foreach ($users as $user) {
-            SugarTestUserUtilities::createAnonymousUser(true, 0, $user);
-        }
-
-        foreach ($contacts as $contact) {
-            SugarTestContactUtilities::createContact($contact['id'], $contact);
-        }
-
-        foreach ($leads as $lead) {
-            SugarTestLeadUtilities::createLead($lead['id'], $lead);
+        $exportResult = $adapter->export($exportData, $eventCollection);
+        $this->assertTrue($exportResult);
+        $vCalendar = TestReflection::callProtectedMethod($eventCollection, 'getVCalendar', array());
+        $calendarText = $vCalendar->serialize();
+        foreach ($expectedCalendarStrings as $str) {
+            $this->assertContains($str, $calendarText);
         }
     }
 
+
     /**
-     * @param SugarBean $bean
-     * @return bool|string
+     * @expectedException \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException
      */
-    protected function saveBean(\SugarBean $bean)
+    public function testExportException()
     {
-        $bean->processed = true;
-        return $bean->save();
+        $changedFields = array(
+            'date_start' => array('2015-11-18 18:30:00', '2015-11-18 18:00:00'),
+        );
+        $eventCollection = $this->getMockBuilder('\CalDavEventCollection')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $adapter = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $meetingBean = $this->getMockBuilder('\Meeting')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+        $meetingBean->id = 1;
+        $meetingBean->module_name = 'Meetings';
+
+        $exportData = array(
+            array(
+                $meetingBean->module_name,
+                $meetingBean->id,
+                '',
+                array(),
+                false
+            ),
+            $changedFields,
+            array(),
+        );
+        $eventCollection->getParent()->setStartDate(new \SugarDateTime('2015-11-18 14:20:00'), new DateTimeZone('UTC'));
+        $adapter->export($exportData, $eventCollection);
+    }
+
+
+    /**
+     * @return array
+     */
+    public function callProvider()
+    {
+        return array(
+            array(
+                'meetingData' => array(
+                    'name' => array(
+                        'Test Meeting',//after
+                    ),
+                    'date_start' => array(
+                        '2015-11-18 18:30:00',//after
+                    ),
+                    'date_end' => array(
+                        '2015-11-18 19:30:00', //after
+                    ),
+                    'description' => array(
+                        'new Description'
+                    )
+                ),
+                'invites' => array(
+                    'added' => array(
+                        array('Contacts', 10, 'accept', 'test10@test.loc', 'Lead One'),
+                        array('Leads', 20, 'accept', 'test20@test.loc', 'Lead One'),
+                        array('Users', 30, 'accept', 'test30@test.loc', 'User Foo')
+                    ),//added
+                    'deleted' => array(),
+                    'changed' => array(),
+                ),//invites
+                'vCalendar' => array(
+                    'SUMMARY:Test Meeting',
+                    'DESCRIPTION:new Description',
+                    'DTSTART:20151118T183000Z',
+                    'DURATION:PT1H',
+                    'ATTENDEE;PARTSTAT=accept;CN=Lead One:mailto:test10@test.loc',
+                    'ATTENDEE;PARTSTAT=accept;CN=Lead One:mailto:test20@test.loc',
+                    'ATTENDEE;PARTSTAT=accept;CN=User Foo:mailto:test30@test.loc'
+                ),
+            ),
+        );
     }
 }

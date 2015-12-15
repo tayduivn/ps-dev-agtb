@@ -319,7 +319,7 @@ class ParticipantsHelper
                     $status = $invitesAfter[$relationType][$idBean]['status'];
                     $beanBefore = $relationInfo['bean'];
                     if ($status != $relationInfo['status'] || $userBean->emailAdresses != $beanBefore->emailAdresses) {
-                        $invitesDiff['changed'][] = $this->addDiff($userBean, $status);;
+                        $invitesDiff['changed'][] = $this->addDiff($userBean, $status);
                     }
                 } else {
                     $userBean = $relationInfo['bean'];
@@ -372,12 +372,28 @@ class ParticipantsHelper
     public function inviteToParticipant($invite)
     {
         $participant = new Participant();
+        $participantStatuses = new DavStatusMapper\AcceptedMap();
         list($beanName, $beanId, $invStatus, $invEmail, $displayName) = $invite;
-        $participant->setStatus($invStatus);
+        $participant->setStatus($participantStatuses->getCalDavValue($invStatus));
         $participant->setEmail($invEmail);
         $participant->setBeanName($beanName);
         $participant->setBeanId($beanId);
         $participant->setDisplayName($displayName);
         return $participant;
+    }
+
+    /**
+     * @param Participant $participant
+     * @return array
+     */
+    public function participantToInvite(Participant $participant)
+    {
+        return array(
+            $participant->getBeanName(),
+            $participant->getBeanId(),
+            $participant->getStatus(),
+            $participant->getEmail(),
+            $participant->getDisplayName()
+        );
     }
 }
