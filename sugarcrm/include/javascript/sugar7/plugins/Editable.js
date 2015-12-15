@@ -41,10 +41,7 @@
                     //event register for preventing actions
                     // when user escapes the page without saving unsaved changes
 
-                    // FIXME MAR-2680: This is the correct event to bind before
-                    // routes on, and the drawer should not trigger a `reset`
-                    // before this event fires.
-                    // app.routing.before('route', this.beforeRouteChange, this);
+                    app.routing.before('route', this.beforeRouteChange, this);
                     $(window).on('beforeunload.' + this.cid, _.bind(this.warnUnsavedChangesOnRefresh, this));
 
                     this.before('unsavedchange', this.beforeViewChange, this);
@@ -52,9 +49,6 @@
                     if (_.isEmpty(app.additionalComponents['drawer'])) {
                         return;
                     }
-                    // FIXME MAR-2680: We shouldn't depend on drawers to handle
-                    // routing changes.
-                    app.drawer.before('reset', this.beforeRouteChange, this);
 
                     //when user confirms exit with unsaved changes, unbind all listeners - no multiple warnings
                     app.events.on('editable:beforehandlers:off', this.unbindBeforeHandler, this);
