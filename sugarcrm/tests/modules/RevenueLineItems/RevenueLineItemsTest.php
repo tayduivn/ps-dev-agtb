@@ -11,6 +11,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * @coversDefaultClass RevenueLineItem
+ */
+
 class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
@@ -251,7 +255,7 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers setBestWorstFromLikely
+     * @covers ::setBestWorstFromLikely
      */
     public function testSetBestWorstFromLikelyDoesNotChangeBecauseOfAcl()
     {
@@ -278,7 +282,7 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderBestWorstAutoFill
-     * @covers setBestWorstFromLikely
+     * @covers ::setBestWorstFromLikely
      */
     public function testBestWorstAutoFill($value, $likely, $expected)
     {
