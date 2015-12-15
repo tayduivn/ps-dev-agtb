@@ -1489,13 +1489,22 @@ class SugarAutoLoader
     /**
      * Validate given file name
      * @param string $file File name
+     * @param boolean $upload Allow validation in upload directory
      * @return string File name
      * @throws Exception
      * @see \Sugarcrm\Sugarcrm\Security\Validator\Constraints\FileValidator
      */
-    public static function validateFilePath($file)
+    public static function validateFilePath($file, $upload = false)
     {
-        $constraint = new File(array('baseDirs' => self::getBaseDirs()));
+        $baseDirs = self::getBaseDirs();
+
+        // add upload directory to the allowed list
+        if ($upload) {
+            $uploadDir = ini_get('upload_tmp_dir');
+            $baseDirs[] = $uploadDir ? $uploadDir : sys_get_temp_dir();
+        }
+
+        $constraint = new File(array('baseDirs' => $baseDirs));
         $violations = Validator::getService()->validate($file, $constraint);
         if (count($violations) > 0) {
             $msg = array_reduce(iterator_to_array($violations), function ($msg, $violation) {
