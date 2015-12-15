@@ -70,9 +70,6 @@ class RelateApi extends FilterApi {
                 )
             );
         }
-        if (!$record->ACLAccess('view')) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
-        }
 
         // Load the relationship.
         $linkName = $args['link_name'];

@@ -1002,12 +1002,9 @@ class SugarEmailAddress extends SugarBean
             $prefill = !empty($prefillDataArr) ? 'true' : 'false';
         }
 
-        $required = false;
-        $object_name = BeanFactory::getObjectName($passedModule);
-        $vardefs = $dictionary[$object_name]['fields'];
-        if (!empty($vardefs['email']['required'])) {
-            $required = true;
-        }
+        $focus = BeanFactory::newBean($passedModule);
+        $required = self::checkEmailAddressWidgetRequired($focus);
+
         $this->smarty->assign('required', $required);
         $this->smarty->assign('module', $saveModule);
         $this->smarty->assign('index', $this->index);
@@ -1288,8 +1285,34 @@ class SugarEmailAddress extends SugarBean
             }
         }
     }
-} // end class def
 
+    /**
+     * Helper function to check whether to enforce required or not on the UI
+     * @param SugarBean $focus SugarBean
+     * @return bool
+     */
+    public static function checkEmailAddressWidgetRequired(SugarBean $focus)
+    {
+        if ($focus instanceof User) {
+            // check usertype as well since applies for create/edit user
+            $usertype = UserViewHelper::getUserType($focus);
+            $configurator = new Configurator();
+
+            if ((isset($configurator->config['passwordsetting'])
+                 && ($configurator->config['passwordsetting']['SystemGeneratedPasswordON']
+                     || $configurator->config['passwordsetting']['forgotpasswordON'])
+                 && $usertype != 'GROUP' && $usertype != 'PORTAL_ONLY')
+                || !empty($focus->field_defs['email']['required'])) {
+                return true;
+            }
+        } elseif (!empty($focus->field_defs['email']['required'])) {
+            // for other modules, just check vardefs
+            return true;
+        }
+
+        return false;
+    }
+}
 
 /**
  * Convenience function for MVC (Mystique)

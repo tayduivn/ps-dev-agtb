@@ -1791,6 +1791,9 @@ protected function checkQuery($sql, $object_name = false)
 			// We have a count query.  Run it and get the results.
 			$result = $this->query($count_query, true, "Error running count query for $this->object_name List: ");
 			$assoc = $this->fetchByAssoc($result);
+
+			// free resource
+			$this->freeDbResult($result);
 			if(!empty($assoc['c']))
 			{
 				$rows_found = $assoc['c'];
@@ -2151,6 +2154,8 @@ protected function checkQuery($sql, $object_name = false)
 		$this->checkError($msg.' Get One Failed:' . $sql, $dieOnError);
 		if (!$queryresult) return false;
 		$row = $this->fetchByAssoc($queryresult);
+
+		$this->freeDbResult($queryresult);
 		if(!empty($row)) {
 			return array_shift($row);
 		}
@@ -2727,7 +2732,6 @@ protected function checkQuery($sql, $object_name = false)
 			// handle some known types
 			switch($this->type_class[$type]) {
 				case 'bool':
-				case 'int':
 					if (!empty($fieldDef['required']) && $val == ''){
 						if (isset($fieldDef['default'])){
 							return $fieldDef['default'];
@@ -2735,20 +2739,31 @@ protected function checkQuery($sql, $object_name = false)
 						return 0;
 					}
 					return intval($val);
-                case 'bigint' :
-                    $val = (float)$val;
-					if (!empty($fieldDef['required']) && $val == false){
-						if (isset($fieldDef['default'])){
+				case 'int':
+					if (!empty($fieldDef['required']) && $val == ''){
+						if (isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
 							return $fieldDef['default'];
 						}
 						return 0;
 					}
-                    return $val;
-				case 'float':
-					if (!empty($fieldDef['required'])  && $val == ''){
-						if (isset($fieldDef['default'])){
+					return intval($val);
+				case 'bigint' :
+					$val = (float)$val;
+					if (!empty($fieldDef['required']) && $val == false){
+						if (isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
 							return $fieldDef['default'];
 						}
+						return 0;
+					}
+					return $val;
+				case 'float':
+					if (!empty($fieldDef['required'])  && $val == ''){
+						if (isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
+							return $fieldDef['default'];
+						}
+						return 0;
+					}
+					if (empty($val)){
 						return 0;
 					}
 					return floatval($val);

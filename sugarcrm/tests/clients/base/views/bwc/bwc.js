@@ -1,9 +1,9 @@
 describe('Base.View.Bwc', function() {
-    var view, app, navigateStub;
+    var view, app, iframeStub;
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.createView('base', 'Documents', 'bwc', null, null);
+
         var module = 'Documents';
         //view's initialize checks context's url so we add a "sidecar url" here
         var url = 'http://localhost:8888/master/ent/sugarcrm/';
@@ -11,6 +11,16 @@ describe('Base.View.Bwc', function() {
         context.set({ url: url, module: module});
         context.prepare();
         view = SugarTest.createView('base', module, 'bwc', null, context);
+
+        iframeStub = sinon.collection.stub(view, '$');
+        iframeStub.withArgs('iframe').returns({
+            get: function() {
+                return {
+                    contentWindow: {
+                    }
+                };
+            }
+        });
     });
 
     afterEach(function() {
@@ -21,7 +31,8 @@ describe('Base.View.Bwc', function() {
     });
 
     describe('Warning unsaved changes', function() {
-        var alertShowStub;
+        var navigateStub, alertShowStub;
+
         beforeEach(function() {
             navigateStub = sinon.collection.stub(app.router, 'navigate');
             alertShowStub = sinon.collection.stub(app.alert, 'show');
@@ -75,7 +86,7 @@ describe('Base.View.Bwc', function() {
                 '<h1>Title foo</h1>' +
                 '</div>').get(0);
 
-            sinon.collection.stub(view, '$').withArgs('iframe').returns({
+            iframeStub.withArgs('iframe').returns({
                 get: function() {
                     return {
                         contentWindow: {
@@ -98,7 +109,8 @@ describe('Base.View.Bwc', function() {
                 '<input name="phone_number" value="121-1213-456">' +
                 '</form>').get(0);
             view.resetBwcModel({module: 'Document'});
-            sinon.collection.stub(view, '$').withArgs('iframe').returns({
+
+            iframeStub.withArgs('iframe').returns({
                 get: function() {
                     return {
                         contentWindow: {
@@ -107,6 +119,7 @@ describe('Base.View.Bwc', function() {
                     };
                 }
             });
+
             expect(view.hasUnsavedChanges()).toBe(true);
             var bwcWindow = view.$('iframe').get(0).contentWindow,
                 attributes = view.serializeObject(bwcWindow.EditView);
