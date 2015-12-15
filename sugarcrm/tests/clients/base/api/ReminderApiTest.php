@@ -13,10 +13,12 @@
 
 namespace Sugarcrm\SugarcrmTests\clients\base\api;
 
+use ReminderApi;
+
 /**
  * Class ReminderApiTest
  * @package Sugarcrm\SugarcrmTests\clients\base\api
- * @coversDefaultClass \ReminderApi
+ * @coversDefaultClass ReminderApi
  */
 class ReminderApiTest extends \Sugar_PHPUnit_Framework_TestCase
 {
@@ -38,9 +40,11 @@ class ReminderApiTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * remind method should throw on invalid arguments
+     *
      * @param array $args
      * @dataProvider providerRemindThrowsWithoutRequiredArgs
-     * @covers ::remind
+     * @covers ReminderApi::remind
      * @expectedException \SugarApiExceptionMissingParameter
      */
     public function testRemindThrowsWithoutRequiredArgs($args)
@@ -51,51 +55,52 @@ class ReminderApiTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function providerRemindThrowsWithoutRequiredArgs()
+    public static function providerRemindThrowsWithoutRequiredArgs()
     {
         return array(
             'throws if "module" isn\'t presented' => array(
-                array()
+                array(),
             ),
             'throws if "beanId" isn\'t presented' => array(
-                array('module' => 'dummy-module')
+                array(
+                    'module' => 'dummy-module',
+                ),
             ),
             'throws if "userId" isn\'t presented' => array(
-                array('module' => 'dummy-module', 'beanId' => 'dummy-bean-id')
-            )
+                array(
+                    'module' => 'dummy-module',
+                    'beanId' => 'dummy-bean-id',
+                ),
+            ),
+            'throws if "module" isn\'t Calls or Meetings' => array(
+                array(
+                    'module' => 'dummy-module',
+                    'beanId' => 'dummy-bean-id',
+                    'userId' => '1',
+                ),
+            ),
         );
     }
 
     /**
-     * @covers ::remind
-     * @expectedException \SugarApiExceptionMissingParameter
-     */
-    public function testRemindThrowsIfModuleIsNotCallOrMeeting()
-    {
-        $args = array(
-            'module' => 'dummy-module',
-            'beanId' => 'dummy-bean-id',
-            'userId' => 'dummy-user-id'
-        );
-        $this->reminderApi->remind($this->serviceMock, $args);
-
-    }
-
-    /**
+     * remind method should pass correct data to Reminder
+     *
      * @param array $args
-     * @param array $expectedCallArgs
      * @dataProvider providerRemindCallsRemindWithCorrectArgs
-     * @covers ::remind
+     * @covers ReminderApi::remind
      */
-    public function testRemindCallsRemindWithCorrectArgs($args, $expectedCallArgs)
+    public function testRemindCallsRemindWithCorrectArgs($args)
     {
         $reminder = $this->getMock('Sugarcrm\\Sugarcrm\\Trigger\\Reminder', array('remind'));
+        $this->reminderApi->method('getReminder')->willReturn($reminder);
 
         $reminder->expects($this->once())
             ->method('remind')
-            ->with($expectedCallArgs[0], $expectedCallArgs[1], $expectedCallArgs[2]);
-
-        $this->reminderApi->method('getReminder')->willReturn($reminder);
+            ->with(
+                $this->equalTo($args['module']),
+                $this->equalTo($args['beanId']),
+                $this->equalTo($args['userId'])
+            );
 
         $this->reminderApi->remind($this->serviceMock, $args);
     }
@@ -103,16 +108,22 @@ class ReminderApiTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function providerRemindCallsRemindWithCorrectArgs()
+    public static function providerRemindCallsRemindWithCorrectArgs()
     {
         return array(
             'calls Reminder::remind() with Calls in args' => array(
-                array('module' => 'Calls', 'beanId' => 'dummy-bean-id', 'userId' => 'dummy-user-id'),
-                array('Calls', 'dummy-bean-id', 'dummy-user-id')
+                array(
+                    'module' => 'Calls',
+                    'beanId' => 'dummy-bean-id',
+                    'userId' => 'dummy-user-id',
+                ),
             ),
             'calls Reminder::remind() with Meetings in args' => array(
-                array('module' => 'Meetings', 'beanId' => 'dummy-bean-id', 'userId' => 'dummy-user-id'),
-                array('Meetings', 'dummy-bean-id', 'dummy-user-id')
+                array(
+                    'module' => 'Meetings',
+                    'beanId' => 'dummy-bean-id',
+                    'userId' => 'dummy-user-id',
+                ),
             ),
         );
     }
