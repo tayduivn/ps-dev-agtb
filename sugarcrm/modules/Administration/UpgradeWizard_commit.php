@@ -227,7 +227,7 @@ if($install_type == 'patch' || $install_type == 'module')
 			if(is_file($file))
 			{
 				print("{$mod_strings['LBL_UW_INCLUDING']}: $file <br>\n");
-				include($file);
+				include SugarAutoLoader::validateFilePath($file);
 				pre_install();
    		}
  			break;
@@ -236,7 +236,7 @@ if($install_type == 'patch' || $install_type == 'module')
 			if(is_file($file))
 			{
 				print("{$mod_strings['LBL_UW_INCLUDING']}: $file <br>\n");
-				include($file);
+				include SugarAutoLoader::validateFilePath($file);
 				pre_uninstall();
    		}
  			break;
@@ -359,7 +359,7 @@ switch( $install_type ){
 				if(is_file($file))
 				{
 					print("{$mod_strings['LBL_UW_INCLUDING']}: $file <br>\n");
-					include($file);
+					include SugarAutoLoader::validateFilePath($file);
 					post_install();
 				}
             	break;
@@ -405,7 +405,7 @@ switch( $install_type ){
 				if(is_file($file))
 				{
 					print("{$mod_strings['LBL_UW_INCLUDING']}: $file <br>\n");
-					include($file);
+					include SugarAutoLoader::validateFilePath($file);
 					post_install();
 				}
 
@@ -415,7 +415,7 @@ switch( $install_type ){
  				$file = "$unzip_dir/" . constant('SUGARCRM_POST_UNINSTALL_FILE');
  				if(is_file($file)) {
 					print("{$mod_strings['LBL_UW_INCLUDING']}: $file <br>\n");
-					include($file);
+					include SugarAutoLoader::validateFilePath($file);
 					post_uninstall();
 				}
 
@@ -474,7 +474,7 @@ switch( $mode ){
         //Check if we need to show a page for the user to finalize their install with.
         if (is_file("$unzip_dir/manifest.php"))
         {
-        	include("$unzip_dir/manifest.php");
+        	include SugarAutoLoader::validateFilePath("$unzip_dir/manifest.php");
         	if (!empty($manifest['post_install_url']))
         	{
         		$url_conf = $manifest['post_install_url'];
