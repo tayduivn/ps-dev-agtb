@@ -1430,8 +1430,7 @@ class ModuleInstaller{
             $GLOBALS['log']->debug( 'File does not exists : '.$file);
             return;
         }
-        include($file);
-        $rel_dictionary = $dictionary;
+        $rel_dictionary = SugarAutoLoader::varFromInclude($file, 'dictionary');
 
         array_walk($rel_dictionary, array("ModuleInstaller", "cleanUpRelationship"));
 
@@ -3317,7 +3316,7 @@ class ModuleInstaller{
     protected function readManifest()
     {
         $installdefs = array();
-        require $this->base_dir . '/manifest.php';
+        require SugarAutoLoader::validateFilePath($this->base_dir . '/manifest.php');
         $installdefs = $this->patchInstallDefs($installdefs);
         return compact('manifest', 'installdefs');
     }
