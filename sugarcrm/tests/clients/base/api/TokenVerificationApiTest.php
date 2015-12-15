@@ -12,43 +12,50 @@
 
 namespace Sugarcrm\SugarcrmTests\clients\base\api;
 
+use TokenVerificationApi;
+
 /**
  * Class TokenVerificationApiTest
  * @package Sugarcrm\SugarcrmTests\clients\base\api
- * @coversDefaultClass \TokenVerificationApi
+ * @coversDefaultClass TokenVerificationApi
  */
 class TokenVerificationApiTest extends \Sugar_PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\TokenVerificationApi
-     */
+    /** @var TokenVerificationApi */
     protected $tokenVerificationApi;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Administration
-     */
-    protected $administration;
 
     /**
      * @var \RestService
      */
     protected $serviceMock;
 
+    /**
+     * @inheritDoc
+     */
     public function setUp()
     {
         parent::setUp();
-        $this->tokenVerificationApi = $this->getMock('TokenVerificationApi', array('getAdministrationBean'));
-        $this->administration = $this->getMock(
-            'Administration',
-            array('getConfigForModule', 'saveSetting')
-        );
+        $this->tokenVerificationApi = new TokenVerificationApi();
         $this->serviceMock = \SugarTestRestUtilities::getRestServiceMock();
+        \BeanFactory::setBeanClass('Administration', 'Sugarcrm\SugarcrmTests\clients\base\api\AdministrationCRYS1259');
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function tearDown()
+    {
+        AdministrationCRYS1259::$testData = array();
+        \BeanFactory::setBeanClass('Administration');
+        parent::tearDown();
+    }
+
+    /**
+     * verifyToken method should throw on missed parameter
+     *
      * @param array $args
      * @dataProvider providerVerifyTokenThrowsWithoutRequiredArgs
-     * @covers ::verifyToken
+     * @covers TokenVerificationApi::verifyToken
      * @expectedException \SugarApiExceptionMissingParameter
      */
     public function testVerifyTokenThrowsWithoutRequiredArgs($args)
@@ -59,23 +66,30 @@ class TokenVerificationApiTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function providerVerifyTokenThrowsWithoutRequiredArgs()
+    public static function providerVerifyTokenThrowsWithoutRequiredArgs()
     {
         return array(
             'throws if "id" isn\'t presented' => array(
-                array()
+                array(),
             ),
             'throws if "original" isn\'t presented' => array(
-                array('id' => 'dummy-external-valid-token-id')
+                array(
+                    'id' => 'dummy-external-valid-token-id',
+                ),
             ),
             'throws if "verified" isn\'t presented' => array(
-                array('id' => 'dummy-external-valid-token-id', 'original' => 'dummy-original-token')
-            )
+                array(
+                    'id' => 'dummy-external-valid-token-id',
+                    'original' => 'dummy-original-token',
+                ),
+            ),
         );
     }
 
     /**
-     * @covers ::verifyToken
+     * verifyToken method should throw if id is not valid
+     *
+     * @covers TokenVerificationApi::verifyToken
      * @expectedException \SugarApiExceptionInvalidParameter
      */
     public function testVerifyTokenThrowsWhenIdNotInAllowedList()
@@ -83,53 +97,40 @@ class TokenVerificationApiTest extends \Sugar_PHPUnit_Framework_TestCase
         $args = array(
             'id' => 'dummy-external-valid-token-id',
             'original' => 'dummy-original-token',
-            'verified' => 'dummy-verified-token'
+            'verified' => 'dummy-verified-token',
         );
         $this->tokenVerificationApi->verifyToken($this->serviceMock, $args);
-
     }
 
     /**
-     * @covers ::verifyToken
+     * verifyToken method should throw if original token is not valid
+     *
+     * @covers TokenVerificationApi::verifyToken
      * @expectedException \SugarApiExceptionEditConflict
      */
     public function testVerifyTokenThrowsWhenOriginalAndStoredTokensAreNotEqual()
     {
         $args = array(
             'id' => 'socket',
-            'original' => 'dummy-original-token',
+            'original' => rand(1000, 9999),
             'verified' => 'dummy-verified-token'
         );
 
-        $this->administration->method('getConfigForModule')
-            ->willReturn(array('external_token_socket' => 'dummy-token'));
-
-        $this->tokenVerificationApi->method('getAdministrationBean')->willReturn($this->administration);
+        AdministrationCRYS1259::$testData['auth']['base']['external_token_socket'] = $args['original'] + 1;
 
         $this->tokenVerificationApi->verifyToken($this->serviceMock, $args);
     }
 
     /**
      * @param array $args
-     * @param array $expected
      * @dataProvider providerVerifyTokenCallsSaveSettingWithCorrectArguments
-     * @covers ::verifyToken
+     * @covers TokenVerificationApi::verifyToken
      */
-    public function testVerifyTokenCallsSaveSettingWithCorrectArguments($args, $expected)
+    public function testVerifyTokenCallsSaveSettingWithCorrectArguments($args)
     {
-        $this->administration->method('getConfigForModule')
-            ->willReturn(array(
-                'external_token_socket' => 'dummy-original-token',
-                'external_token_trigger' => 'dummy-original-token'
-            ));
-
-        $this->administration->expects($this->once())
-            ->method('saveSetting')
-            ->with($expected[0], $expected[1], $expected[2], $expected[3]);
-
-        $this->tokenVerificationApi->method('getAdministrationBean')->willReturn($this->administration);
-
+        AdministrationCRYS1259::$testData['auth']['base']['external_token_' . $args['id']] = $args['original'];
         $this->tokenVerificationApi->verifyToken($this->serviceMock, $args);
+        $this->assertEquals($args['verified'], AdministrationCRYS1259::$testData['auth']['base']['external_token_' . $args['id']]);
     }
 
     /**
@@ -142,28 +143,47 @@ class TokenVerificationApiTest extends \Sugar_PHPUnit_Framework_TestCase
                 array(
                     'id' => 'socket',
                     'original' => 'dummy-original-token',
-                    'verified' => 'dummy-verified-socket-token'
+                    'verified' => 'dummy-verified-socket-token',
                 ),
-                array(
-                    'auth',
-                    'external_token_socket',
-                    'dummy-verified-socket-token',
-                    'base'
-                )
             ),
             'id is "trigger"' => array(
                 array(
                     'id' => 'trigger',
                     'original' => 'dummy-original-token',
-                    'verified' => 'dummy-verified-trigger-token'
+                    'verified' => 'dummy-verified-trigger-token',
                 ),
-                array(
-                    'auth',
-                    'external_token_trigger',
-                    'dummy-verified-trigger-token',
-                    'base'
-                )
             ),
         );
+    }
+}
+
+/**
+ * Sub class for Administration bean
+ *
+ * Class AdministrationCRYS1259
+ * @package Sugarcrm\SugarcrmTests\clients\base\api
+ */
+class AdministrationCRYS1259 extends \Administration
+{
+    /** @var array */
+    public static $testData = array();
+
+    /**
+     * @inheritDoc
+     */
+    public function getConfigForModule($module, $platform = 'base', $clean = false)
+    {
+        if (isset(static::$testData[$module][$platform])) {
+            return static::$testData[$module][$platform];
+        }
+        return array();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function saveSetting($category, $key, $value, $platform = '')
+    {
+        static::$testData[$category][$platform][$key] = $value;
     }
 }

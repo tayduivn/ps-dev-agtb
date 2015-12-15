@@ -54,25 +54,15 @@ class TokenVerificationApi extends SugarApi
                 throw new SugarApiExceptionInvalidParameter();
             }
 
-            $admin = $this->getAdministrationBean();
-            $config = $admin->getConfigForModule('auth');
+            /** @var Administration $admin */
+            $admin = BeanFactory::getBean('Administration');
 
+            $config = $admin->getConfigForModule('auth');
             if ($config['external_token_' . $args['id']] != $args['original']) {
                 throw new SugarApiExceptionEditConflict();
             }
 
             $admin->saveSetting('auth', 'external_token_' . $args['id'], $args['verified'], 'base');
         }
-    }
-
-    /**
-     * Factory method for Administration class.
-     *
-     * @return Administration
-     * @codeCoverageIgnore
-     */
-    protected function getAdministrationBean()
-    {
-        return BeanFactory::getBean('Administration');
     }
 }
