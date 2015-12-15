@@ -297,11 +297,16 @@
         // Cannot be a hard check against "list" since subpanel-list needs this too
         return attachments;
     },
+
     /**
-     * gets file object
-     * @param {String} value file name
-     * @param {Object} urlOpts url options
-     * @return {{name: *, mimeType: string, url: (String|*)}}
+     * Creates a file object
+     * @param {string} value The file name
+     * @param {Object} urlOpts URL options
+     * @return {Object} The created file object
+     * @return {string} return.name The file name
+     * @return {string} return.docType The document type
+     * @return {string} return.mimeType The file's MIME type
+     * @return {string} return.url The file resource url
      * @private
      */
     _createFileObj: function (value, urlOpts) {
@@ -322,6 +327,7 @@
                 })
         };
     },
+
     /**
      * This is overridden by portal in order to prepend site url
      * @param {String} uri

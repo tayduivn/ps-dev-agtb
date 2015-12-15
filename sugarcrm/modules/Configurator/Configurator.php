@@ -143,6 +143,24 @@ class Configurator {
                 }
             }
 
+            // Validate logger file name
+            if ($key === "logger_file_name" && strcmp(trim($value), '') == 0) {
+                $GLOBALS['log']->error("Invalid log file name: Log file name should not blank.");
+                continue;
+            }
+
+            // Validate logger file max size
+            if ($key === "logger_file_maxSize" && strcmp(trim($value), '') == 0) {
+                $GLOBALS['log']->error("Invalid log file max size: Log file max size should not be blank.");
+                continue;
+            }
+
+            // Validate logger file max logs
+            if ($key === "logger_file_maxLogs" && $value <= 0) {
+                $GLOBALS['log']->error("Invalid maximum number of logs: should be 1 or greater.");
+                continue;
+            }
+
             // We can set the value directly if key exists or if allowed as undefined
             if (isset($this->config[$key]) || in_array($key, $this->allowUndefined)) {
 

@@ -36,7 +36,7 @@ class MetaDataContextUser implements MetaDataContextInterface
     {
         $this->user = $user;
 // BEGIN SUGARCRM flav=ent ONLY
-        if (!empty($GLOBALS['sugar_config']['roleBasedViews'])) {
+        if (SugarConfig::getInstance()->get('roleBasedViews')) {
             if (is_null($roleSet)) {
                 $roleSet = $this->getRoleSet($user);
             }

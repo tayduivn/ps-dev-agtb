@@ -85,11 +85,11 @@
                     //next button only
                     buttons.push(this.meta.buttons[1]);
                 } else if (i === this.meta.components.length-1) {
-                    //prevous/start sugar buttons
+                    // previous/start sugar buttons
                     buttons.push(this.meta.buttons[0]);
                     buttons.push(this.meta.buttons[2]);
                 } else {
-                    //prevous/next buttons
+                    // previous/next buttons
                     buttons.push(this.meta.buttons[0]);
                     buttons.push(this.meta.buttons[1]);
                 }
@@ -98,11 +98,13 @@
         component.meta.buttons = buttons;
         return component;
     },
+
     /**
      * Renders a different page from the wizard
-     * @param {Number} newIndex New page index to select
-     * @return {{page: number, lastPage: number}} Current page number and the
-     * last page number
+     * @param {number} newIndex New page index to select
+     * @return {Object} How far the user has progressed through the wizard
+     * @return {number} return.page The current page number
+     * @return {number} return.lastPage The last page number
      */
     setPage: function(newIndex){
         if (newIndex !== this._currentIndex &&
@@ -138,8 +140,9 @@
 
     /**
      * Returns current progress through wizard
-     * @return {{page: number, lastPage: number}} Current page number and the
-     * last page number
+     * @return {Object} How far the user has progressed through the wizard
+     * @return {number} return.page The current page number
+     * @return {number} return.lastPage The last page number
      */
     getProgress: function(){
         return {
@@ -147,20 +150,24 @@
             lastPage: this._components.length
         };
     },
+
     /**
      * Moves to previous page, if possible.
-     * @return {{page: number, lastPage: number}} Current page number and the
-     * last page number
+     * @return {Object} How far the user has progressed through the wizard
+     * @return {number} return.page The current page number
+     * @return {number} return.lastPage The last page number
      */
     previousPage: function(){
         // We're navigating, don't get any more keypresses.
         $(window).off('keypress.' + this.cid);
         return this.setPage(this._currentIndex - 1);
     },
+
     /**
      * Moves to next page, if possible.
-     * @return {{page: number, lastPage: number}} Current page number and the
-     * last page number
+     * @return {Object} How far the user has progressed through the wizard
+     * @return {number} return.page The current page number
+     * @return {number} return.lastPage The last page number
      */
     nextPage: function(){
         // We're navigating, don't get any more keypresses.

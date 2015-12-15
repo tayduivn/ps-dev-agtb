@@ -378,13 +378,17 @@ ENDW;
             on
                 emails.id = emails_text.email_id
                 ";
-        $this->emailBean->addVisibilityFrom($q, array('where_condition' => true));
+        $options = array(
+            'where_condition' => true,
+            'action' => 'list',
+        );
+        $this->emailBean->addVisibilityFrom($q, $options);
         $q .= "
             WHERE
                 (type = '{$type}' OR status = '{$status}')
                 AND assigned_user_id = '{$current_user->id}'
                 AND emails.deleted = 0 ";
-        $this->emailBean->addVisibilityWhere($q, array('where_condition' => true));
+        $this->emailBean->addVisibilityWhere($q, $options);
 		return $q . $ret;
 	} // fn
 

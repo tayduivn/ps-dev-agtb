@@ -101,7 +101,6 @@
      * @param {Object} d tree node metadata.
      * @param {Int} w tree node width.
      * @param {Int} h tree node height.
-     * @public
      */
     nodeRenderer: function(content, d, w, h) {
         if (!d.metadata.img || d.metadata.img === '') {
