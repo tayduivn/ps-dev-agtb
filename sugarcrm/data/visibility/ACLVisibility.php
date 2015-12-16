@@ -53,10 +53,12 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
                 $action
             );
             if (ACLController::requireOwner($this->bean->module_dir, $action)) {
-                $queryPart = $this->bean->getOwnerWhere(
-                    $GLOBALS['current_user']->id,
-                    $this->getOption('table_alias')
+                $parts = array(
+                    $query,
+                    $this->bean->getOwnerWhere($GLOBALS['current_user']->id, $this->getOption('table_alias')),
                 );
+                $parts = array_filter($parts);
+                $queryPart = implode(' AND ', $parts);
             } elseif ($this->tbaConfig->isValidAccess($actualAccess)) {
                 $tbaVisibility = new TeamBasedACLVisibility($this->bean);
                 $tbaVisibility->setOptions(array('where_condition' => true));
