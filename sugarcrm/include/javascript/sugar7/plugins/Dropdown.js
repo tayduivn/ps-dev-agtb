@@ -16,7 +16,9 @@
          */
         app.plugins.register('Dropdown', ['layout', 'view'], {
             events: {
-                'keydown': 'handleDropdownKeydown'
+                'keydown': 'handleDropdownKeydown',
+                'shown.bs.dropdown .dropdown': '_toggleAria',
+                'hidden.bs.dropdown .dropdown': '_toggleAria'
             },
 
             onAttach: function(component, plugin) {
@@ -25,6 +27,11 @@
                         this.listenTo(app.bwc, 'clicked', this.closeDropdown);
                     }
                     app.routing.before('route', this.closeDropdown, this);
+                });
+                this.on('render', function() {
+                    this.$('[data-toggle="dropdown"]')
+                        .attr('aria-haspopup', true)
+                        .attr('aria-expanded', false);
                 });
             },
 
@@ -86,6 +93,15 @@
                     // for example, scrolling up and down.
                     event.preventDefault();
                 }
+            },
+
+            /**
+             * Handler for adding functionality to the bootstrap dropdown toggle event
+             *
+             * @param {Event} event The keydown event
+             */
+            handleDropdownToggle: function(event) {
+                this._toggleAria(event);
             },
 
             /**
@@ -170,10 +186,22 @@
             },
 
             /**
+             * Sets a button accessibility class 'aria-expanded' to true or false
+             * depending on if the dropdown menu is open or closed.
+             *
+             * @param {Event} provides the needed currentTarget
+             * @private
+             */
+            _toggleAria: function(e) {
+                this.$('[data-toggle="dropdown"]').attr('aria-expanded', this.isDropdownOpen());
+            },
+
+            /**
              * Close the dropdown menu.
              */
             closeDropdown: function() {
                 this.$('.open .dropdown-menu').trigger('click.bs.dropdown');
+                this.$('[data-toggle="dropdown"]').attr('aria-expanded', 'false');
             },
 
             /**

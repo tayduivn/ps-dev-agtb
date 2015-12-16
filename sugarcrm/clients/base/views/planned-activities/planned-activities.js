@@ -309,6 +309,23 @@
     },
 
     /**
+     * @inheritdoc
+     *
+     * Additional logic on switch visibility event.
+     */
+    visibilitySwitcher: function() {
+        var activeVisibility;
+        if (!this.isManager) {
+            return;
+        }
+        activeVisibility = this.getVisibility();
+        this.$el.find('[data-action=visibility-switcher]')
+            .attr('aria-pressed', function() {
+                return $(this).val() === activeVisibility;
+            });
+    },
+
+    /**
      * Event handler for date switcher.
      *
      * @param {Event} event Click event.

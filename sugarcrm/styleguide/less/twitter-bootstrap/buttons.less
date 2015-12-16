@@ -45,7 +45,7 @@
   }
 
   // Focus state for keyboard and accessibility
-  &:focus {
+  &:not(.disabled):not(:active):focus {
     .tab-focus();
   }
 

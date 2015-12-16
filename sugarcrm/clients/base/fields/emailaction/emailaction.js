@@ -19,7 +19,6 @@
  */
 ({
     extendsFrom: 'ButtonField',
-    plugins: ['EmailClientLaunch'],
 
     /**
      * @inheritdoc
@@ -28,6 +27,8 @@
      * mailto link if not using Sugar Email Client)
      */
     initialize: function(options) {
+        this.plugins = _.union(this.plugins || [], ['EmailClientLaunch']);
+
         this._super('initialize', [options]);
         this._initEmailOptions();
     },

@@ -206,9 +206,6 @@
         }
       }
     }
-    .fa-favorite {
-      vertical-align: middle;
-    }
     .list + .list .fa-favorite {
       margin: 0 8px;
     }
@@ -579,6 +576,7 @@ FLEXLIST GENERIC */
         overflow: visible;
         z-index: 10;
         padding: 4px 8px;
+        font-size: 0;
         .fieldset-field {
           display: inline-block;
           padding: 0;
@@ -588,9 +586,11 @@ FLEXLIST GENERIC */
         input[type=radio] {
           margin: 8px;
         }
-        .fa-favorite {
-          display: inline-block;
-          margin: 8px 6px;
+        .btn.btn-invisible {
+          margin: 0;
+          &.active {
+            background-color: transparent !important;
+          }
         }
         span.list,
         span.edit {
@@ -792,10 +792,6 @@ FLEXLIST GENERIC */
             right: auto;
           }
         }
-      }
-      .morecol .dropdown {
-        width: 123px;
-        padding-left: 4px;
       }
     }
     /*convert lead dup check*/
@@ -1051,47 +1047,6 @@ table th.nosort span:after {
 .cell-xxlarge {
   min-width: @cell-xxlarge;
   max-width: @cell-xxlarge;
-}
-
-.morecol {
-  .btn {
-    margin: 0;
-  }
-  .dropdown.open {
-    .btn {
-      .box-shadow(none);
-      background-color: @gray;
-      > .fa {
-        color: @white;
-      }
-    }
-  }
-  .dropdown-menu {
-    .border-radius(2px);
-    margin-top: 7px;
-    right: 20px;
-    button {
-      background: none;
-      border: none;
-      padding-left: 30px;
-      width: 100%;
-      text-align: left;
-      margin-left: 0;
-      &.active {
-        font-weight: bold;
-      }
-      .fa {
-        margin-right: 5px;
-        margin-left: -22px;
-      }
-    }
-    li {
-      border-bottom: 1px solid @grayLighter;
-    }
-    li.divider + li {
-      border-top: 1px solid #ddd;
-    }
-  }
 }
 
 [data-type=phone] .gc-cs-link { /*UIUX-1270*/
