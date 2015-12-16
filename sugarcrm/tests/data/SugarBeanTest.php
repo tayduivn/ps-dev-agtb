@@ -745,6 +745,11 @@ class MockMysqlDb extends MssqlManager
     {
         return false;
     }
+
+    public function fetchOneOffset($sql, $offset, $dieOnError = false, $msg = '', $encode = true){
+        $this->lastQuery = $sql;
+        return false;
+    }
 }
 
 class BeanMockTestObjectName extends SugarBean

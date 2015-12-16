@@ -2173,9 +2173,8 @@ class SugarBean
         {
             $query = "SELECT date_modified FROM $this->table_name WHERE id='$this->id' AND modified_user_id != '$current_user->id'
             	AND (modified_user_id != '$modified_user_id' OR date_modified > $date)";
-            $result = $this->db->query($query);
 
-            if($this->db->fetchByAssoc($result))
+            if($this->db->fetchOne($query))
             {
                 return true;
             }
@@ -3106,13 +3105,8 @@ class SugarBean
         }
 
         $GLOBALS['log']->debug("Retrieve $this->object_name : ".$query);
-        $result = $this->db->limitQuery($query,0,1,true, "Retrieving record by id $this->table_name:$id found ");
-        if(empty($result))
-        {
-            return null;
-        }
+        $row = $this->db->fetchOneOffset($query, 0, true, "Retrieving record by id $this->table_name:$id found ", $encode);
 
-        $row = $this->db->fetchByAssoc($result, $encode);
         if(empty($row))
         {
             return null;
@@ -4873,8 +4867,7 @@ class SugarBean
             if(!empty($count_query) && (empty($limit) || $limit == -1))
             {
                 // We have a count query.  Run it and get the results.
-                $result = $db->query($count_query, true, "Error running count query for $this->object_name List: ");
-                $assoc = $db->fetchByAssoc($result);
+                $assoc = $db->fetchOne($count_query, true, "Error running count query for $this->object_name List: ");
                 if(!empty($assoc['c']))
                 {
                     $rows_found = $assoc['c'];
@@ -5350,8 +5343,7 @@ class SugarBean
         if(!empty($count_query) && (empty($limit) || $limit == -1))
         {
             // We have a count query.  Run it and get the results.
-            $result = $this->db->query($count_query, true, "Error running count query for $this->object_name List: ");
-            $assoc = $this->db->fetchByAssoc($result);
+            $assoc = $this->db->fetchOne($count_query, true, "Error running count query for $this->object_name List: ");
             if(!empty($assoc['c']))
             {
                 $total_rows = $assoc['c'];
@@ -5363,12 +5355,11 @@ class SugarBean
             $row_offset = 0;
         }
 
-        $result = $this->db->limitQuery($query, $offset, 1, true,"Error retrieving $this->object_name list: ");
+        $row = $this->db->fetchOneOffset($query, $offset, true,"Error retrieving $this->object_name list: ");
 
         $previous_offset = $row_offset - $max_per_page;
         $next_offset = $row_offset + $max_per_page;
 
-        $row = $this->db->fetchByAssoc($result);
         $this->retrieve($row['id']);
 
         $response = Array();
@@ -6123,16 +6114,9 @@ class SugarBean
         $query = "SELECT $this->table_name.*". $custom_join['select']. " FROM $this->table_name " . $custom_join['join'];
         $query .= " $where_clause";
         $GLOBALS['log']->debug("Retrieve $this->object_name: ".$query);
-        //requireSingleResult has been deprecated.
-        //$result = $this->db->requireSingleResult($query, true, "Retrieving record $where_clause:");
-        $result = $this->db->limitQuery($query,0,1,true, "Retrieving record $where_clause:");
 
+        $row = $this->db->fetchOneOffset($query, 0, true, "Retrieving record $where_clause:", $encode);
 
-        if( empty($result))
-        {
-            return null;
-        }
-        $row = $this->db->fetchByAssoc($result, $encode);
         if(empty($row))
         {
             return null;
@@ -6230,7 +6214,7 @@ class SugarBean
             $query .=  ' FROM ' . $table  . ' WHERE deleted=0 AND id=';
         }
         $result = $GLOBALS['db']->query($query . "'$id'" );
-        $row = $GLOBALS['db']->fetchByAssoc($result);
+        $row = $GLOBALS['db']->fetchByAssoc($result, true);
         if($return_array){
             return $row;
         }
@@ -6387,8 +6371,7 @@ class SugarBean
                 $where .= " AND $name = '$value' ";
             }
             $query .= $where;
-            $result = $this->db->query($query, false, "Looking For Duplicate Relationship:" . $query);
-            $row=$this->db->fetchByAssoc($result);
+            $row=$this->db->fetchOne($query, false, "Looking For Duplicate Relationship:" . $query);
         }
 
         if(!$check_duplicates || empty($row) )

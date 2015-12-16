@@ -184,6 +184,7 @@ class SqlsrvManager extends MssqlManager
         $this->connectOptions = $configOptions;
 
         $GLOBALS['log']->info("Connect:".$this->database);
+
         return true;
     }
 
@@ -306,7 +307,7 @@ class SqlsrvManager extends MssqlManager
      */
     protected function freeDbResult($dbResult)
     {
-        if(!empty($dbResult))
+        if(is_resource($dbResult))
             sqlsrv_free_stmt($dbResult);
     }
 

@@ -248,11 +248,13 @@ abstract class DBManager
 	 */
 	protected $options = array();
 
+
     /**
      * Default performance profile
      * @var array
      */
     protected $defaultPerfProfile = array();
+
 
     /**
      * Gets a string comparison SQL snippet for use in hard coded queries. This
@@ -2141,9 +2143,10 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param  string   $sql        SQL Statement to execute
 	 * @param  bool     $dieOnError True if we want to call die if the query returns errors
 	 * @param  string   $msg        Message to log if error occurs
+	 * @param  bool     $encode   	encode the result
 	 * @return array    single value from the query
 	 */
-	public function getOne($sql, $dieOnError = false, $msg = '')
+	public function getOne($sql, $dieOnError = false, $msg = '', $encode = true)
 	{
 		$this->log->info("Get One: |$sql|");
 		if(!$this->hasLimit($sql)) {
@@ -2155,7 +2158,7 @@ protected function checkQuery($sql, $object_name = false)
 		}
 		$this->checkError($msg.' Get One Failed:' . $sql, $dieOnError);
 		if (!$queryresult) return false;
-		$row = $this->fetchByAssoc($queryresult);
+		$row = $this->fetchByAssoc($queryresult, $encode);
 
 		$this->freeDbResult($queryresult);
 		if(!empty($row)) {
@@ -2170,10 +2173,10 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param  string   $sql        SQL Statement to execute
 	 * @param  bool     $dieOnError True if we want to call die if the query returns errors
 	 * @param  string   $msg        Message to log if error occurs
-	 * @param  bool     $suppress   Message to log if error occurs
+	 * @param  bool     $encode   	encode the result
 	 * @return array    single row from the query
 	 */
-	public function fetchOne($sql, $dieOnError = false, $msg = '', $suppress = false)
+	public function fetchOne($sql, $dieOnError = false, $msg = '', $encode = true)
 	{
 		$this->log->info("Fetch One: |$sql|");
 		$this->checkConnection();
@@ -2182,10 +2185,44 @@ protected function checkQuery($sql, $object_name = false)
 
 		if (!$queryresult) return false;
 
-		$row = $this->fetchByAssoc($queryresult);
+		$row = $this->fetchByAssoc($queryresult, $encode);
+		$this->freeResult($queryresult);
+
 		if ( !$row ) return false;
 
-		$this->freeResult($queryresult);
+		return $row;
+	}
+
+	/**
+	 * Runs a limit offset, 1 query and returns a single row
+	 *
+	 * @param  string   $sql        SQL Statement to execute
+	 * @param  bool     $dieOnError True if we want to call die if the query returns errors
+	 * @param  string   $msg        Message to log if error occurs
+	 * @param  bool     $encode     encode result
+	 * @return array    single row from the query
+	 */
+	public function fetchOneOffset($sql, $offset, $dieOnError = false, $msg = '', $encode = true)
+	{
+		$this->log->info("fetch OneOffset: |$sql|");
+		$this->checkConnection();
+
+		if(!$this->hasLimit($sql)) {
+			$queryresult = $this->limitQuery($sql, $offset, 1, $dieOnError, $msg);
+		} else {
+			$queryresult = $this->query($sql, $dieOnError, $msg, $suppress);
+		}
+		$this->checkError($msg.' fetch OneOffset Failed:' . $sql, $dieOnError);
+		if (!$queryresult) {
+			return false;
+		}
+		$row = $this->fetchByAssoc($queryresult, $encode);
+		$this->freeDbResult($queryresult);
+
+		if (!$row) {
+			return false;
+		}
+
 		return $row;
 	}
 
@@ -4193,33 +4230,40 @@ protected function checkQuery($sql, $object_name = false)
 		return $last;
 	}
 
-	/**
-	 * Fetches the next row in the query result into an associative array
-	 *
-	 * @param  resource $result
-	 * @param  bool $encode Need to HTML-encode the result?
-	 * @return array    returns false if there are no more rows available to fetch
-	 */
-	public function fetchByAssoc($result, $encode = true)
-	{
-	    if (empty($result))	return false;
+    /**
+     * Fetches the next row in the query result into an associative array
+     *
+     * @param  resource $result
+     * @param  bool $encode Need to HTML-encode the result?
+     * @param  bool $freeResult need to free Result or Statement reference
+     * @return array    returns false if there are no more rows available to fetch
+     */
+    public function fetchByAssoc($result, $encode = true, $freeResult = false)
+    {
+        if (empty($result))	return false;
 
-	    if(is_int($encode) && func_num_args() == 3) {
-	        // old API: $result, $rowNum, $encode
-	        $GLOBALS['log']->deprecated("Using row number in fetchByAssoc is not portable and no longer supported. Please fix your code.");
-	        $encode = func_get_arg(2);
-	    }
-	    if($result instanceof PreparedStatement) {
-	       $row = $result->preparedStatementFetch();
-	    } else {
-	       $row = $this->fetchRow($result);
-	    }
-	    if (!empty($row) && $encode && $this->encode) {
-	    	return array_map(array($this, "encodeHTML"), $row);
-	    } else {
-	       return $row;
-	    }
-	}
+        if(is_int($encode) && func_num_args() == 3) {
+            // old API: $result, $rowNum, $encode
+            $GLOBALS['log']->deprecated("Using row number in fetchByAssoc is not portable and no longer supported. Please fix your code.");
+            $encode = func_get_arg(2);
+            $freeResult = false;
+        }
+
+        if($result instanceof PreparedStatement) {
+            $row = $result->preparedStatementFetch();
+        } else {
+            $row = $this->fetchRow($result);
+            if ($freeResult){
+                // free DB result reference
+                $this->freeDbResult($result);
+            }
+        }
+        if (!empty($row) && $encode && $this->encode) {
+            return array_map(array($this, "encodeHTML"), $row);
+        } else {
+           return $row;
+        }
+    }
 
 	/**
 	 * Get DB driver name used for install/upgrade scripts
@@ -4700,13 +4744,14 @@ protected function checkQuery($sql, $object_name = false)
 	abstract public function version();
 
 	/**
-	 * Checks if a table with the name $tableName exists
+	 * to check if a table with the name $tableName exists
 	 * and returns true if it does or false otherwise
 	 *
 	 * @param  string $tableName
 	 * @return bool
 	 */
 	abstract public function tableExists($tableName);
+
 
 	/**
 	 * Fetches the next row in the query result into an associative array

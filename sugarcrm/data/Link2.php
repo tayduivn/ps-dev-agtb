@@ -815,8 +815,7 @@ class Link2 {
 
         $GLOBALS['log']->debug("relationship_exists query(".$query.')');
 
-        $result=$this->_db->query($query, true);
-        $row = $this->_db->fetchByAssoc($result);
+        $row = $this->_db->fetchOne($query, true);
 
         if ($row == null) {
             return false;
