@@ -32,12 +32,12 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
             !empty($GLOBALS['current_user']->id) &&
             ACLController::requireOwner($this->bean->module_dir, $action))
         {
-            $owner_where = $this->bean->getOwnerWhere($GLOBALS['current_user']->id, $this->getOption('table_alias'));
-            if (!empty($query)) {
-                $query .= " AND $owner_where";
-            } else {
-                $query = $owner_where;
-            }
+            $parts = array(
+                $query,
+                $this->bean->getOwnerWhere($GLOBALS['current_user']->id, $this->getOption('table_alias')),
+            );
+            $parts = array_filter($parts);
+            $query = implode(' AND ', $parts);
         }
         return $query;
     }
