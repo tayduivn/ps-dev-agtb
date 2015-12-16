@@ -40,10 +40,6 @@
         main.addComponent(index, def);
     },
 
-    // _placeComponent: function(component) {
-    //     this.$('#page-content').append(component.$el);
-    // },
-
     /**
      * @inheritdoc
      */
