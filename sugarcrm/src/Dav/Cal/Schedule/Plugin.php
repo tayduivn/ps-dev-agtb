@@ -147,15 +147,35 @@ class Plugin extends DavSchedulePlugin
      * This method need to be called whenever there was a calendar object gets
      * created or updated from SugarCRM.
      *
-     * @param VCalendar $vCalendar Parsed iCalendar object
-     * @param string $calendarPath Path to calendar collection
+     * @param VCalendar $vCalendar event for schedule
      * @param string $currentData  Current event data
+     * @param string $userName     User name
      * @return bool A marker to indicate that the original object modified by this process.
      */
-    public function calendarObjectSugarChange(VCalendar $vCalendar, $calendarPath, $currentData)
+    public function calendarObjectSugarChange(VCalendar $vCalendar, $currentData, $userName)
     {
+        $caldavNS = '{' . self::NS_CALDAV . '}';
+        $aclPlugin = $this->server->getPlugin('acl');
+
+        if (!$aclPlugin) {
+            return false;
+        }
+
         $modified = false;
-        $calendarNode = $this->server->tree->getNodeForPath($calendarPath);
+
+        $result = $this->server->getProperties(
+            $aclPlugin->defaultUsernamePath . '/' . $userName,
+            array(
+                '{DAV:}principal-URL',
+                $caldavNS . 'calendar-home-set',
+            )
+        );
+
+        if (!isset($result[$caldavNS . 'calendar-home-set'])) {
+            return false;
+        }
+
+        $calendarNode = $this->server->tree->getNodeForPath($result[$caldavNS . 'calendar-home-set']->getHref());
 
         $addresses = $this->getAddressesForPrincipal(
             $calendarNode->getOwner()
@@ -167,7 +187,7 @@ class Plugin extends DavSchedulePlugin
             $oldObj = null;
         }
 
-        $this->processICalendarChange($oldObj, $vCalendar, $addresses, [], $modified);
+        $this->processICalendarChange($oldObj, $vCalendar, $addresses, array(), $modified);
 
         return $modified;
     }

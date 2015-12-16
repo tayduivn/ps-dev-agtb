@@ -68,11 +68,22 @@ class SugarTestCalDavUtilities
     public static function deleteAllCreatedCalendars()
     {
         if (self::$_createdCalendars) {
+            $assigned = array();
+            foreach (self::$_createdCalendars as $calendarId) {
+                $calendar = \BeanFactory::getBean('CalDavCalendars', $calendarId);
+                $assigned[] = $calendar->assigned_user_id;
+            }
             $GLOBALS['db']->query('DELETE FROM caldav_calendars WHERE id IN (\'' .
                 implode("', '", self::$_createdCalendars) . '\')');
 
             $GLOBALS['db']->query('DELETE FROM caldav_changes WHERE calendarid IN (\'' .
                 implode("', '", self::$_createdCalendars) . '\')');
+
+            $GLOBALS['db']->query('DELETE FROM caldav_events WHERE calendar_id IN (\'' .
+                implode("', '", self::$_createdCalendars) . '\')');
+
+            $GLOBALS['db']->query('DELETE FROM caldav_scheduling WHERE assigned_user_id IN (\'' .
+                implode("', '", $assigned) . '\')');
 
             self::$_createdCalendars = array();
         }
@@ -86,11 +97,13 @@ class SugarTestCalDavUtilities
     /**
      * Create CalDav event by parameters
      * @param array $eventData Set of object properties
-     * @return SugarBean
+     * @param bool $scheduleLocalDelivery
+     * @return \CalDavEventCollection
      */
-    public static function createEvent(array $eventData = array())
+    public static function createEvent(array $eventData = array(), $scheduleLocalDelivery = false)
     {
         $event = BeanFactory::getBean('CalDavEvents');
+        $event->doLocalDelivery = $scheduleLocalDelivery;
 
         if (isset($eventData['calendardata'])) {
             $event->setData($eventData['calendardata']);
@@ -134,9 +147,17 @@ class SugarTestCalDavUtilities
     {
         $createdID = self::getCreatedEventsId();
         if ($createdID) {
+            $uris = array();
+            foreach ($createdID as $id) {
+                $event = \BeanFactory::getBean('CalDavEvents', $id);
+                $uris[] = $event->uri;
+            }
+
             $GLOBALS['db']->query('DELETE FROM caldav_events WHERE id IN (\'' . implode("', '", $createdID) . '\')');
             $GLOBALS['db']->query('DELETE FROM caldav_synchronization WHERE event_id IN (\'' .
                 implode("', '", $createdID) . '\')');
+            $GLOBALS['db']->query('DELETE FROM caldav_scheduling WHERE uri IN (\'' .
+                implode("', '", $uris) . '\')');
         }
     }
 }

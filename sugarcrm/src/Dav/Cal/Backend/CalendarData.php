@@ -108,7 +108,9 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function getEventsBean()
     {
-        return \BeanFactory::getBean('CalDavEvents');
+        $bean = \BeanFactory::getBean('CalDavEvents');
+        $bean->doLocalDelivery = false;
+        return $bean;
     }
 
     /**
@@ -339,6 +341,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
         $eventBean = $this->getEventsBean();
         $events = $eventBean->getByURI($calendarId, array($objectUri), 1);
         $event = array_shift($events);
+        $event->doLocalDelivery = false;
         if ($event && $event->id && $event->setData($calendarData)) {
             $event->save();
 

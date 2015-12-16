@@ -159,6 +159,12 @@ class CalDavEventCollection extends SugarBean
     public $children_order_ids;
 
     /**
+     * Make local delivery for participants or not
+     * @var bool
+     */
+    public $doLocalDelivery = true;
+
+    /**
      * Array of links email => [beanName, beanId]
      * @var string
      */
@@ -891,7 +897,11 @@ class CalDavEventCollection extends SugarBean
     {
         $isUpdate = $this->isUpdate();
         $currentETag = isset($this->fetched_row['etag']) ? $this->fetched_row['etag'] : null;
+
         $this->sync();
+        if ($this->isImportable() && $this->doLocalDelivery && $this->scheduleLocalDelivery()) {
+            $this->sync();
+        }
 
         $result = parent::save($check_notify);
 
@@ -955,35 +965,34 @@ class CalDavEventCollection extends SugarBean
 
     /**
      * Handler for the 'schedule' event.
-     * This method should be called from adapter if any participant was changed.
      * This method should be called before saving caldav event
      *
      * This handler attempts to look at local accounts to deliver the
      * scheduling object from sugar to caldav.
-     * @return void
+     *
+     * @return bool is event object was changed or not
      */
-    public function scheduleLocalDelivery()
+    protected function scheduleLocalDelivery()
     {
-        if ($this->inMailGeneration) {
-            return;
-        }
+        $schedulingUser = $this->getCurrentUser();
 
-        $currentUser = $this->getCurrentUser();
+        if ($this->created_by && $this->created_by != $schedulingUser->id) {
+            $schedulingUser = \BeanFactory::getBean('Users', $this->created_by);
+        }
         $server = $this->serverHelper->setUp();
 
-        if (!$server || !$currentUser) {
-            return;
+        if (!$server || !$schedulingUser) {
+            return false;
         }
 
-        $calendarUri = DavConstants::DEFAULT_CALENDAR_URI;
-
         $schedulePlugin = $server->getPlugin('caldav-schedule');
-        $caldavPlugin = $server->getPlugin('caldav');
+        $oldCalendarData = isset($this->fetched_row['calendar_data']) ? $this->fetched_row['calendar_data'] : null;
 
-        $calendarPath =
-            $caldavPlugin::CALENDAR_ROOT . '/users/' . $currentUser->user_name . '/' . $calendarUri;
-
-        $schedulePlugin->calendarObjectSugarChange($this->getVCalendar(), $calendarPath, $this->calendar_data);
+        return $schedulePlugin->calendarObjectSugarChange(
+            $this->getVCalendar(),
+            $oldCalendarData,
+            $schedulingUser->user_name
+        );
     }
 
     /**
