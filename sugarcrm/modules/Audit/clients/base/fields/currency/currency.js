@@ -8,19 +8,19 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
+/**
+ * @class View.Fields.Base.Audit.CurrencyField
+ * @alias SUGAR.App.view.fields.BaseAuditCurrencyField
+ * @extends View.Fields.Base.CurrencyField
+ */
 ({
-    extendsFrom: 'HeaderpaneView',
-    events:{
-        'click [name=businessrules_finish_button]': 'initiateFinish',
-        'click [name=businessrules_cancel_button]': 'initiateCancel'
-    },
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
 
-    initiateFinish: function() {
-        this.context.trigger('businessrules:import:finish');
-    },
-
-    initiateCancel : function() {
-        app.router.navigate(app.router.buildRoute(this.module), {trigger: true});
+        //audit log is always in base currency. Make sure the currency def reflects that.
+        this.def.is_base_currency = true;
     }
 })
