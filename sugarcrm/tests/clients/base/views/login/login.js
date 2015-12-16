@@ -141,7 +141,7 @@ describe("Login View", function() {
         });
         it("should deem Chrome 47 as a supported browser", function () {
             $.browser = {
-                'version': '43',
+                'version': '537.36',
                 'chrome': true,
                 'webkit': true
             };
