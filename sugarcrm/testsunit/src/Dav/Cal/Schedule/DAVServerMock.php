@@ -31,6 +31,9 @@ class DAVServerMock extends DavServerTest
             $this->server->addPlugin($this->caldavSchedulePlugin);
         }
 
+        $aclPlugin = $this->server->getPlugin('acl');
+        $aclPlugin->defaultUsernamePath = 'principals';
+
         $this->principalBackend->principals = array(
             array(
                 'uri' => 'principals/user1',

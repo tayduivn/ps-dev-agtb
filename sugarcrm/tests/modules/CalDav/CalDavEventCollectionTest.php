@@ -454,16 +454,6 @@ END:VCALENDAR',
         );
     }
 
-    public function scheduleLocalDeliveryProvider()
-    {
-        return array(
-            array(
-                'currentEvent' => '',
-                'updatedEvent' => $this->getEventTemplate('vevent-attendee-needaction', false),
-            ),
-        );
-    }
-
     public function getAllChildrenProvider()
     {
         return array(
@@ -1457,6 +1447,69 @@ END:VCALENDAR',
         $result = $beanMock->getSugarChildrenOrder();
 
         $this->assertEquals($expectedGet, $result);
+    }
+
+    /**
+     * @covers \CalDavEventCollection::scheduleLocalDelivery
+     */
+    public function testScheduleLocalDelivery()
+    {
+        $sugarUser = SugarTestUserUtilities::createAnonymousUser(true, 0, array('email1' => 'test10@test.com'));
+        $GLOBALS['current_user'] = $sugarUser;
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+
+        $attendee1 = SugarTestUserUtilities::createAnonymousUser(true, 0, array('email1' => 'test11@test.com'));
+        $attendeeCalendar1 = SugarTestCalDavUtilities::createCalendar($attendee1, array());
+
+        $attendee2 = SugarTestUserUtilities::createAnonymousUser(true, 0, array('email1' => 'test12@test.com'));
+        $attendeeCalendar2 = SugarTestCalDavUtilities::createCalendar($attendee2, array());
+
+        $event = SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => $this->getEventTemplate('vevent-attendee-needaction'),
+            'calendarid' => $calendarID,
+            'eventURI' => 'test'
+        ), true);
+
+        $GLOBALS['current_user'] = $attendee1;
+
+        $parent = $event->getParent();
+        $participants = $parent->getParticipants();
+
+        $participant = $participants[$parent->findParticipantsByEmail('test11@test.com')];
+        $participant->setStatus('ACCEPTED');
+        $event->save();
+        $this->checkScheduleStatus($event, $attendeeCalendar1, 'test11@test.com', 'ACCEPTED');
+        $this->checkScheduleStatus($event, $attendeeCalendar2, 'test11@test.com', 'ACCEPTED');
+
+        $participant = $participants[$parent->findParticipantsByEmail('test12@test.com')];
+        $participant->setStatus('DECLINED');
+        $event->save();
+
+        $this->checkScheduleStatus($event, $attendeeCalendar1, 'test11@test.com', 'ACCEPTED');
+        $this->checkScheduleStatus($event, $attendeeCalendar2, 'test11@test.com', 'ACCEPTED');
+        $this->checkScheduleStatus($event, $attendeeCalendar1, 'test12@test.com', 'DECLINED');
+        $this->checkScheduleStatus($event, $attendeeCalendar2, 'test12@test.com', 'DECLINED');
+    }
+
+    /**
+     * Check attendee status
+     * @param CalDavEventCollection $event
+     * @param string $calendarId
+     * @param string $attendeeURI
+     * @param string $expectedStatus
+     * @throws SugarQueryException
+     */
+    protected function checkScheduleStatus(\CalDavEventCollection $event, $calendarId, $attendeeURI, $expectedStatus)
+    {
+        $query = new \SugarQuery();
+        $query->from($event);
+        $query->where()->equals('calendar_id', $calendarId);
+        $query->where()->equals('event_uid', $event->event_uid);
+        $foundEvent = array_shift($event->fetchFromQuery($query));
+        $parent = $foundEvent->getParent();
+        $participants = $parent->getParticipants();
+        $found = $participants[$parent->findParticipantsByEmail($attendeeURI)];
+        $this->assertEquals($expectedStatus, $found->getStatus());
     }
 
     /**

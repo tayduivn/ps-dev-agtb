@@ -199,6 +199,7 @@ END:VCALENDAR',
         $event = $backendMock->getEventsBean();
 
         $this->assertInstanceOf('\CalDavEventCollection', $event);
+        $this->assertFalse($event->doLocalDelivery);
     }
 
     /**

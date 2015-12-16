@@ -149,7 +149,7 @@ END:VCALENDAR',
     {
         $this->putPath('/calendars/user2/cal/object.ics', $oldObject);
         $newCalendar = \Sabre\VObject\Reader::read($newObject);
-        $this->caldavSchedulePlugin->calendarObjectSugarChange($newCalendar, '/calendars/user1/cal/', $oldObject);
+        $this->caldavSchedulePlugin->calendarObjectSugarChange($newCalendar, $oldObject, 'user1');
 
         $this->assertItemsInInbox('user2', 1);
         $this->assertItemsInInbox('user1', 0);
