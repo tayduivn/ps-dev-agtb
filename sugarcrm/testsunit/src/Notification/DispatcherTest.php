@@ -31,7 +31,7 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
         $event = new Event('SomeEventName');
 
         $manager = $this->getMock(self::NS_PATH_MANAGER, array('NotificationEvent'));
-        $manager->expects($this->once())->method('NotificationEvent')->with($this->equalTo($event));
+        $manager->expects($this->once())->method('NotificationEvent')->with($this->isNull(), $this->equalTo($event));
 
         $dispatcher = $this->getMock(self::NS_PATH_DISPATCHER, array('getJobQueueManager'));
         $dispatcher->expects($this->once())->method('getJobQueueManager')->willReturn($manager);
