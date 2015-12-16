@@ -359,7 +359,8 @@
                         layout: 'config-drawer',
                         context: {
                             module: module,
-                            create: true
+                            create: true,
+                            fromRouter: true
                         }
                     }, _.bind(function(context, model) {
                         var module = context.get("module") || model.module,
