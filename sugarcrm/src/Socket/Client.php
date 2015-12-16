@@ -47,6 +47,11 @@ class Client
     const RECIPIENT_USER_TYPE = 'userType';
 
     /**
+     * @var Client
+     */
+    protected static $instance = null;
+
+    /**
      * Name of recipient for message, by default message will be send to all sockets
      * To specify recipient use recipient() method with type of recipient
      *
@@ -87,12 +92,25 @@ class Client
     /**
      * Returns object of Client, customized if it's present
      *
+     * @param bool $reset
      * @return Client
      */
-    public static function getInstance()
+    public static function getInstance($reset = false)
     {
-        $class = \SugarAutoLoader::customClass('Sugarcrm\Sugarcrm\Socket\Client');
-        return new $class();
+        if ($reset || !static::$instance) {
+            $class = \SugarAutoLoader::customClass('Sugarcrm\Sugarcrm\Socket\Client');
+            static::$instance = new $class;
+        }
+        return static::$instance;
+    }
+
+    /**
+     * Returns true if socket client is configured
+     * @return bool
+     */
+    public function isConfigured()
+    {
+        return $this->getSugarConfig()->get('websockets.server.url') == true;
     }
 
     /**
@@ -163,7 +181,6 @@ class Client
         $client->getRemoteData($url, $params);
         return $client->isSuccess();
     }
-
 
     /**
      * Check WebSocket settings.

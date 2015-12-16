@@ -17,6 +17,7 @@ use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\AdminSettings;
 
 require_once 'include/MetaDataManager/MetaDataManager.php';
+require_once 'modules/Configurator/Configurator.php';
 
 class AdministrationController extends SugarController
 {
@@ -79,7 +80,7 @@ class AdministrationController extends SugarController
         if (count($sugar_config['languages']) === count($disabled_langs)) {
             sugar_die(translate('LBL_CAN_NOT_DISABLE_ALL_LANG'));
         } else {
-            $cfg = new Configurator();
+            $cfg = $this->getConfigurator();
             if (in_array($sugar_config['default_language'], $disabled_langs)) {
                 reset($enabled_langs);
                 $cfg->config['default_language'] = current($enabled_langs);
@@ -117,9 +118,8 @@ class AdministrationController extends SugarController
 
         if (!is_admin($current_user)) sugar_die($app_strings['ERR_NOT_ADMIN']);
 
-        require_once('modules/Configurator/Configurator.php');
-        $configurator = new Configurator();
-        $configurator->saveConfig();
+        $cfg = $this->getConfigurator();
+        $cfg->saveConfig();
 
         if (isset($_REQUEST['enabled_modules']) && !empty ($_REQUEST['enabled_modules']))
         {
@@ -219,44 +219,44 @@ class AdministrationController extends SugarController
 
         if (!empty($websocket_client_url) || !empty($websocket_server_url)) {
             if (empty($websocket_client_url)) {
-                $errors['ERR_WEB_SOCKET_CLIENT_URL'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_CLIENT_URL'];
+                $errors['ERR_WEB_SOCKET_CLIENT_URL'] = translate('ERR_WEB_SOCKET_CLIENT_URL', 'Administration');
             } else {
                 $clientSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_client_url);
                 if (!$clientSettings['available'] || $clientSettings['type'] != 'client') {
-                    $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_CLIENT_ERROR'];
+                    $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = translate('ERR_WEB_SOCKET_CLIENT_ERROR', 'Administration');
                 } else {
                     if (in_array(parse_url($websocket_client_url, PHP_URL_HOST), array('localhost', '127.0.0.1'))
                     ) {
-                        $warnings[] = translate('ERR_WEB_SOCKET_CLIENT_LOCALHOST');
+                        $warnings[] = translate('ERR_WEB_SOCKET_CLIENT_LOCALHOST', 'Administration');
                     }
                 }
             }
 
             if (empty($websocket_server_url)) {
-                $errors['ERR_WEB_SOCKET_SERVER_URL'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SERVER_URL'];
+                $errors['ERR_WEB_SOCKET_SERVER_URL'] = translate('ERR_WEB_SOCKET_SERVER_URL', 'Administration');
             } else {
                 $serverSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_server_url);
                 if (!$serverSettings['available'] || $serverSettings['type'] != 'server') {
-                    $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SERVER_ERROR'];
+                    $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = translate('ERR_WEB_SOCKET_SERVER_ERROR', 'Administration');
                 } else {
                     if (in_array(parse_url($siteUrl, PHP_URL_HOST), array('localhost', '127.0.0.1'))
                         && !in_array(parse_url($websocket_server_url, PHP_URL_HOST), array('localhost', '127.0.0.1'))
                     ) {
-                        $warnings['ERR_WEB_SOCKET_SERVER_LOCALHOST'] = translate('ERR_WEB_SOCKET_SERVER_LOCALHOST');
+                        $warnings['ERR_WEB_SOCKET_SERVER_LOCALHOST'] = translate('ERR_WEB_SOCKET_SERVER_LOCALHOST', 'Administration');
                     }
 
                 }
             }
         }
 
-        if (count($warnings) > 0) {
-            $result['warnMsg'] = implode('<br />', array_values($warnings));
+        if ($warnings) {
+            $result['warnMsg'] = implode('<br />', $warnings);
         }
-        if (count($errors) == 0) {
+        if (!$errors) {
             $result['status'] = true;
 
-            $this->cfg = new Configurator();
-            $this->cfg->config['websockets'] = array(
+            $cfg = $this->getConfigurator();
+            $cfg->config['websockets'] = array(
                 'server' => array(
                     'url' => $websocket_server_url
                 ),
@@ -265,17 +265,10 @@ class AdministrationController extends SugarController
                     'balancer' => $clientSettings['isBalancer']
                 ),
             );
-            $this->cfg->handleOverride();
+            $cfg->handleOverride();
         } else {
             $result['status'] = false;
-            $validationErr = array();
-            foreach ($errors as $key => $erMsg) {
-                array_push($validationErr, $erMsg);
-            }
-            $result = array(
-                'status' => false,
-                'errMsg' => implode(PHP_EOL, $validationErr)
-            );
+            $result['errMsg'] = implode(PHP_EOL, $errors);
         }
 
         echo json_encode($result);
@@ -311,27 +304,20 @@ class AdministrationController extends SugarController
             }
         }
 
-        if (count($warnings) > 0) {
-            $result['warnMsg'] = implode('<br />', array_values($warnings));
+        if ($warnings) {
+            $result['warnMsg'] = implode('<br />', $warnings);
         }
-        if (count($errors) == 0) {
+        if (!$errors) {
             $result['status'] = true;
 
-            $this->cfg = new Configurator();
-            $this->cfg->config['trigger_server'] = array(
+            $cfg = $this->getConfigurator();
+            $cfg->config['trigger_server'] = array(
                 'url' => $triggerServerUrl
             );
-            $this->cfg->handleOverride();
+            $cfg->handleOverride();
         } else {
             $result['status'] = false;
-            $validationErr = array();
-            foreach ($errors as $key => $erMsg) {
-                array_push($validationErr, $erMsg);
-            }
-            $result = array(
-                'status' => false,
-                'errMsg' => implode(PHP_EOL, $validationErr)
-            );
+            $result['errMsg'] = implode(PHP_EOL, $errors);
         }
 
         echo json_encode($result);
@@ -417,20 +403,6 @@ class AdministrationController extends SugarController
         }
     }
 
-
-/*
-    public function action_UpdateAjaxUI()
-    {
-        // TODO check if we need to use this to update the bwc widget.
-//        require_once('modules/Configurator/Configurator.php');
-//        $cfg = new Configurator();
-//        $disabled = json_decode(html_entity_decode  ($_REQUEST['disabled_modules'], ENT_QUOTES));
-//        $cfg->config['addAjaxBannedModules'] = empty($disabled) ? FALSE : $disabled;
-//        $cfg->handleOverride();
-//        $this->view = "configureajaxui";
-    }
-*/
-
     /*
      * action_callRebuildSprites
      *
@@ -464,7 +436,7 @@ class AdministrationController extends SugarController
     {
         $config = $this->mergeFtsConfig($type, $config);
 
-        $cfg = new Configurator();
+        $cfg = $this->getConfigurator();
         $cfg->config['full_text_engine'] = '';
         $cfg->saveConfig();
         $cfg->config['full_text_engine'] = array($type => $config);
@@ -525,5 +497,15 @@ class AdministrationController extends SugarController
     public function action_UpgradeWizard_map_roles()
     {
         $this->view = 'maproles';
+    }
+
+    /**
+     * Factory method to mock Configurator
+     *
+     * @return Configurator
+     */
+    protected function getConfigurator()
+    {
+        return new Configurator();
     }
 }

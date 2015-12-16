@@ -83,15 +83,24 @@ class Client
     const DELETE_BY_TAGS_METHOD = 'delete';
 
     /**
+     * @var Client
+     */
+    protected static $instance = null;
+
+    /**
      * Returns object of Client
      *
+     * @param bool $reset
      * @return Client
      * @codeCoverageIgnore
      */
-    public static function getInstance()
+    public static function getInstance($reset = false)
     {
-        $class = \SugarAutoLoader::customClass('Sugarcrm\Sugarcrm\Trigger\Client');
-        return new $class();
+        if ($reset || !static::$instance) {
+            $class = \SugarAutoLoader::customClass('Sugarcrm\Sugarcrm\Trigger\Client');
+            static::$instance = new $class;
+        }
+        return static::$instance;
     }
 
     /**

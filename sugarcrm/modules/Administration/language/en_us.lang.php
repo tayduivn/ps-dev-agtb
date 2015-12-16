@@ -1180,8 +1180,8 @@ For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_
 
     'ERR_WEB_SOCKET_CLIENT_URL'         => 'WebSocket Client URL required',
     'ERR_WEB_SOCKET_SERVER_URL'         => 'WebSocket Server URL required',
-    'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL.',
-    'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL.',
+    'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL',
+    'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL',
     'ERR_WEB_SOCKET_SERVER_LOCALHOST'   => 'URL of the instance points to local host but Socket Server is located remotely and can\'t reach the instance.',
     'ERR_WEB_SOCKET_CLIENT_LOCALHOST'   => 'Client URL of Socket Server points to local host. It will work only on local machine.',
 
