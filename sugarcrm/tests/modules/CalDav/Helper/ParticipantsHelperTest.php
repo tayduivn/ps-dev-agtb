@@ -81,15 +81,9 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
             $invitesAfter,
             array(//start expected data
                 'added' => array(
-                    array('Leads', 20, 'accept', $invitesAfter['leads'][20]['bean']->emailAdresses, 'Lead One'),
-                    array('Users', 30, 'accept', $invitesAfter['users'][30]['bean']->emailAdresses, 'User Foo')
+                    array('Leads', 20, 'accept', 'lead20@loc.loc', 'Lead One'),
+                    array('Users', 30, 'accept', 'user30@loc.loc', 'User Foo')
                 ),//added
-                'deleted' => array(
-
-                ),
-                'changed' => array(
-
-                ),
             )//endExpectedData
         );
 
@@ -99,14 +93,11 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
             $invitesAfter,
             array(//start expected data
                 'added' => array(
-                    array('Leads', 20, $invitesAfter['leads'][20]['status'], $invitesAfter['leads'][20]['bean']->emailAdresses, 'Lead One'),
-                    array('Users', 30, $invitesAfter['leads'][20]['status'], $invitesAfter['users'][30]['bean']->emailAdresses, 'User Foo')
+                    array('Leads', 20, $invitesAfter['leads'][20]['status'], 'lead20@loc.loc', 'Lead One'),
+                    array('Users', 30, $invitesAfter['leads'][20]['status'], 'user30@loc.loc', 'User Foo')
                 ),//added
-                'deleted' => array(
-
-                ),
                 'changed' => array(
-                    array('Contacts', 10, $invitesAfter['contacts'][10]['status'], $invitesAfter['contacts'][10]['bean']->emailAdresses, 'Contacts One')
+                    array('Contacts', 10, $invitesAfter['contacts'][10]['status'], 'contacts10@loc.loc', 'Contacts One')
                 ),
             )//endExpectedData
         );
@@ -117,14 +108,11 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
             $invitesAfter,
             array(//start expected data
                 'added' => array(
-                    array('Leads', 20, $invitesAfter['leads'][20]['status'], $invitesAfter['leads'][20]['bean']->emailAdresses, 'Lead One'),
-                    array('Users', 30, $invitesAfter['leads'][20]['status'], $invitesAfter['users'][30]['bean']->emailAdresses, 'User Foo')
+                    array('Leads', 20, $invitesAfter['leads'][20]['status'], 'lead20@loc.loc', 'Lead One'),
+                    array('Users', 30, $invitesAfter['leads'][20]['status'], 'user30@loc.loc', 'User Foo')
                 ),//added
                 'deleted' => array(
-                    array('Contacts', 10, $invitesBefore['contacts'][10]['status'], $invitesBefore['contacts'][10]['bean']->emailAdresses, 'Contacts One')
-                ),
-                'changed' => array(
-
+                    array('Contacts', 10, $invitesBefore['contacts'][10]['status'], 'contacts10@loc.loc', 'Contacts One')
                 ),
             )//endExpectedData
         );
@@ -156,7 +144,7 @@ class ParticipantsHelperTest extends \PHPUnit_Framework_TestCase
         $inviteMock->id = $moduleId;
         $inviteMock->full_name = $userInfo['name'];
         $inviteMock->module_name = $class->module_name;
-        $inviteMock->emailAdresses = $emailAddressMock;
+        $inviteMock->emailAddress = $emailAddressMock;
         return $inviteMock;
     }
 }

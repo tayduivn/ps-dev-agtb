@@ -123,17 +123,21 @@ abstract class AdapterAbstract
 
     /**
      * Retrieve bean fetched row
+     * If bean not saved yet we should make array from bean
      * @param \SugarBean $bean
      * @return array
      */
     protected function getBeanFetchedRow(\SugarBean $bean)
     {
         $dataDiff = array();
+        $fetchedRow = array();
         if (!$bean->fetched_row) {
-            $bean->retrieve($bean->id);
+            $fetchedRow = $bean->isUpdate() ? $bean->retrieve($bean->id)->fetched_row : $bean->toArray(true);
+        } else {
+            $fetchedRow = $bean->fetched_row;
         }
 
-        foreach ($bean->fetched_row as $name => $value) {
+        foreach ($fetchedRow as $name => $value) {
             $dataDiff[$name] = array(
                 0 => $value
             );

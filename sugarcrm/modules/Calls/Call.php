@@ -986,8 +986,7 @@ class Call extends SugarBean {
 
 		$path = SugarConfig::getInstance()->get('upload_dir', 'upload/') . $this->id;
 
-		$calDavEvent = \BeanFactory::getBean('CalDavEvents');
-		$content = $calDavEvent->prepareForInvite($this);
+		$content = CalDavEventCollection::prepareForInvite($this);
 
 		if ($content && file_put_contents($path, $content)) {
 			$attachment = new Attachment($path, "invite.ics", Encoding::Base64, "text/calendar");

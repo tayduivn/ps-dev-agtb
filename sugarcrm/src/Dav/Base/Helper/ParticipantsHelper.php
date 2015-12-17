@@ -318,7 +318,9 @@ class ParticipantsHelper
                     $userBean = $invitesAfter[$relationType][$idBean]['bean'];
                     $status = $invitesAfter[$relationType][$idBean]['status'];
                     $beanBefore = $relationInfo['bean'];
-                    if ($status != $relationInfo['status'] || $userBean->emailAdresses != $beanBefore->emailAdresses) {
+                    $emailCurrent = $userBean->emailAddress->getPrimaryAddress($userBean);
+                    $emailBefore = $beanBefore->emailAddress->getPrimaryAddress($beanBefore);
+                    if ($status != $relationInfo['status'] || $emailCurrent != $emailBefore) {
                         $invitesDiff['changed'][] = $this->addDiff($userBean, $status);
                     }
                 } else {
@@ -340,7 +342,7 @@ class ParticipantsHelper
             }
         }
 
-        return $invitesDiff;
+        return array_filter($invitesDiff);
     }
 
     /**
@@ -360,7 +362,7 @@ class ParticipantsHelper
             $userBean->module_name,
             $userBean->id,
             $status,
-            $userBean->emailAdresses,
+            $userBean->emailAddress->getPrimaryAddress($userBean),
             $fullName
         );
     }

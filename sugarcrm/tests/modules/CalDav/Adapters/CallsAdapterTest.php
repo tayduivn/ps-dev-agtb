@@ -160,9 +160,9 @@ class CallsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
                     'DESCRIPTION:new Description',
                     'DTSTART:20151118T183000Z',
                     'DURATION:PT1H',
-                    'ATTENDEE;PARTSTAT=accept;CN=Lead One:mailto:test10@test.loc',
-                    'ATTENDEE;PARTSTAT=accept;CN=Lead One:mailto:test20@test.loc',
-                    'ATTENDEE;PARTSTAT=accept;CN=User Foo:mailto:test30@test.loc'
+                    'ATTENDEE;PARTSTAT=ACCEPTED;CN=Lead One:mailto:test10@test.loc',
+                    'ATTENDEE;PARTSTAT=ACCEPTED;CN=Lead One:mailto:test20@test.loc',
+                    'ATTENDEE;PARTSTAT=ACCEPTED;CN=User Foo:mailto:test30@test.loc'
                 ),
             ),
         );
