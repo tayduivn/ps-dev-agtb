@@ -88,27 +88,60 @@ class UserViewHelper {
         global $current_user, $app_list_strings;
 
         // There is a lot of extra stuff that needs to go in here to properly render
-        $this->is_current_admin = is_admin($current_user) || $current_user->isAdminForModule('Users');
+        $this->is_current_admin=is_admin($current_user)
+            ||$current_user->isAdminForModule('Users');
         $this->is_super_admin = is_admin($current_user);
-        $this->usertype = self::getUserType($this->bean);
+
+        $this->usertype='REGULAR';
         if($this->is_super_admin){
             $this->usertype='Administrator';
         }
 
+
         // check if the user has access to the User Management
-        $this->ss->assign('USER_ADMIN', $current_user->isAdminForModule('Users') && !is_admin($current_user));
-        $this->ss->assign('IS_ADMIN', $this->is_current_admin ? '1' : '0');
-        $this->ss->assign('IS_SUPER_ADMIN', $this->is_super_admin ? '1' : '0');
-        $this->ss->assign('IS_PORTALONLY', $this->usertype === 'PORTAL_ONLY' ? '1' : '0');
-        $this->ss->assign('IS_GROUP', $this->usertype === 'GROUP' ? '1' : '0');
+        $this->ss->assign('USER_ADMIN',$current_user->isAdminForModule('Users')&& !is_admin($current_user));
+
+
+        if ($this->is_current_admin) {
+            $this->ss->assign('IS_ADMIN','1');
+        } else {
+            $this->ss->assign('IS_ADMIN', '0');
+        }
+
+        if ($this->is_super_admin) {
+            $this->ss->assign('IS_SUPER_ADMIN','1');
+        } else {
+            $this->ss->assign('IS_SUPER_ADMIN', '0');
+        }
+
+        $this->ss->assign('IS_PORTALONLY', '0');
+        //BEGIN SUGARCRM flav=ent ONLY
+        if((!empty($this->bean->portal_only) && $this->bean->portal_only) || (isset($_REQUEST['usertype']) && $_REQUEST['usertype']=='portal')){
+            $this->ss->assign('IS_PORTALONLY', '1');
+            $this->usertype='PORTAL_ONLY';
+        }
+        //END SUGARCRM flav=ent ONLY
+        $this->ss->assign('IS_GROUP', '0');
+        if((!empty($this->bean->is_group) && $this->bean->is_group)  || (isset($_REQUEST['usertype']) && $_REQUEST['usertype']=='group')){
+            $this->ss->assign('IS_GROUP', '1');
+            $this->usertype='GROUP';
+        }
+
+
+
+        $edit_self = $current_user->id == $this->bean->id;
+        $admin_edit_self = is_admin($current_user) && $edit_self;
+
+
         $this->ss->assign('IS_FOCUS_ADMIN', is_admin($this->bean));
 
-        if ($current_user->id == $this->bean->id) {
-            if (is_admin($current_user)) {
-                $this->ss->assign('ADMIN_EDIT_SELF', '1');
-            }
-            $this->ss->assign('EDIT_SELF', '1');
+        if($edit_self) {
+            $this->ss->assign('EDIT_SELF','1');
         }
+        if($admin_edit_self) {
+            $this->ss->assign('ADMIN_EDIT_SELF','1');
+        }
+
     }
 
     protected function setupButtonsAndTabs() {
@@ -283,9 +316,15 @@ class UserViewHelper {
             $this->ss->assign('CHANGE_PWD', '0');
         }
 
-        $required_email = SugarEmailAddress::checkEmailAddressWidgetRequired($this->bean) ? '1' : '0';
-        $this->ss->assign('REQUIRED_EMAIL_ADDRESS', $required_email);
-
+        $configurator = new Configurator();
+        if ( isset($configurator->config['passwordsetting'])
+             && ($configurator->config['passwordsetting']['SystemGeneratedPasswordON']
+                 || $configurator->config['passwordsetting']['forgotpasswordON'])
+             && $this->usertype != 'GROUP' && $this->usertype != 'PORTAL_ONLY' ) {
+            $this->ss->assign('REQUIRED_EMAIL_ADDRESS','1');
+        } else {
+            $this->ss->assign('REQUIRED_EMAIL_ADDRESS','0');
+        }
         if($this->usertype=='GROUP' || $this->usertype=='PORTAL_ONLY') {
             $this->ss->assign('HIDE_FOR_GROUP_AND_PORTAL', 'none');
             $this->ss->assign('HIDE_CHANGE_USERTYPE','none');
@@ -769,27 +808,5 @@ class UserViewHelper {
         {
             $user->user_type = 'RegularUser';
         }
-    }
-
-    /**
-     * This function is used to get the usertype variable for the given user
-     * @param User $user User bean
-     * @return mixed string value representing the user type or null
-     */
-    public static function getUserType(User $user)
-    {
-        if ((!empty($user->is_group)
-            && $user->is_group)
-            || (isset($_REQUEST['usertype']) && $_REQUEST['usertype'] == 'group')) {
-            return 'GROUP';
-        } elseif ((!empty($user->portal_only)
-            && $user->portal_only)
-            || (isset($_REQUEST['usertype']) && $_REQUEST['usertype'] == 'portal')) {
-            return 'PORTAL_ONLY';
-        } elseif (is_admin($user)) {
-            return 'Administrator';
-        }
-
-        return 'REGULAR';
     }
 }
