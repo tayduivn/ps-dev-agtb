@@ -67,7 +67,7 @@
         value = {status: false, disabled: false};
 
         // For now we neglect event filters, so let's do flatten-unique all filters' carriers.
-        var filtersData = _.uniq(_.flatten(eventFilters));
+        var filtersData = _.chain(eventFilters).values().flatten().uniq().value();
         value.status = _.contains(filtersData, this.def.carrier);
 
         // The first filter will be enough to make a decision.
