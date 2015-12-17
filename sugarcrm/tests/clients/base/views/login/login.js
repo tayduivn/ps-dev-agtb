@@ -91,16 +91,16 @@ describe("Login View", function() {
         });
 
         //Mozilla Firefox
-        it("should deem Firefox 41 as an unsupported browser", function () {
+        it("should deem Firefox 40 as an unsupported browser", function () {
             $.browser = {
-                'version': '41',
+                'version': '40',
                 'mozilla': true
             };
             expect(view._isSupportedBrowser()).toBeFalsy();
         });
-        it("should deem Firefox 42 as a supported browser", function () {
+        it("should deem Firefox 41 as a supported browser", function () {
             $.browser = {
-                'version': '42',
+                'version': '41',
                 'mozilla': true
             };
             expect(view._isSupportedBrowser()).toBeTruthy();
