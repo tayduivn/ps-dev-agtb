@@ -161,7 +161,7 @@ class CalDavCalendar extends SugarBean
     /**
      * Create default calendar for selected user
      * @param User $user
-     * @return $this
+     * @return array Fetched row of a created Calendar Bean.
      */
     public function createDefaultForUser(User $user)
     {

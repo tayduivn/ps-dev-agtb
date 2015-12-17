@@ -30,13 +30,15 @@ class Export extends Base
     */
     public function run()
     {
-        $adapter = $this->getAdapterFactory();
-        $bean = $this->getBean();
+        $adapterFactory = $this->getAdapterFactory();
+        $bean = \BeanFactory::getBean($this->processedData[0][0]);
+        $bean->id = $this->processedData[0][1];
         if (!($bean instanceof \SugarBean)) {
             throw new JQInvalidArgumentException('Bean must be an instance of SugarBean. Instance of ' .
                 get_class($bean) . ' given');
         }
-        if (!$adapter->getAdapter($bean->module_name)) {
+        $adapter = $adapterFactory->getAdapter($bean->module_name);
+        if (!$adapter) {
             throw new JQLogicException('Bean ' . $bean->module_name . ' does not have CalDav adapter');
         }
         $handler = $this->getHandler();
@@ -46,7 +48,10 @@ class Export extends Base
             return \SchedulersJob::JOB_CANCELLED;
         }
 
-        $handler->export($bean);
+        if ($adapter->export($this->processedData, $calDavBean)) {
+            $calDavBean->save();
+        }
+
         $calDavBean->getSynchronizationObject()->setJobCounter();
 
         return \SchedulersJob::JOB_SUCCESS;
@@ -58,6 +63,6 @@ class Export extends Base
     protected function reschedule()
     {
         $jqManager = $this->getManager();
-        $jqManager->calDavExport($this->fetchedRow, $this->moduleName, $this->saveCounter);
+        $jqManager->calDavExport($this->processedData, $this->saveCounter);
     }
 }

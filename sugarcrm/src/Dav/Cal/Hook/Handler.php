@@ -14,7 +14,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Hook;
 
 use \Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
 use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
-
+use \Sugarcrm\Sugarcrm\Dav\Cal\Handler as CalDavHandler;
 
 /**
  *
@@ -30,7 +30,8 @@ class Handler
     public function import(\CalDavEventCollection $bean, $calDavData)
     {
         $diff = $bean->getDiffStructure($calDavData);
-        $this->getManager()->calDavImport($diff);
+        $saveCounter = $bean->getSynchronizationObject()->setSaveCounter();
+        $this->getManager()->calDavImport($diff, $saveCounter);
     }
 
     /**
@@ -56,12 +57,15 @@ class Handler
                 $invitesAfter,
                 $insert
             );
-            $this->getManager()->calDavExport($preparedData);
+            $handler = $this->getCalDavHandler();
+            $event = $handler->getDavBean($bean);
+            $saveCounter = $event->getSynchronizationObject()->setSaveCounter();
+            $this->getManager()->calDavExport($preparedData, $saveCounter);
         }
     }
 
     /**
-     * function return manager object for handler processing
+     * Get manager object for handler processing.
      * @return \Sugarcrm\Sugarcrm\JobQueue\Manager\Manager
      */
     protected function getManager()
@@ -75,5 +79,14 @@ class Handler
     protected function getAdapterFactory()
     {
         return CalDavAdapterFactory::getInstance();
+    }
+
+    /**
+     * Get CalDavHandler object.
+     * @return CalDavHandler
+     */
+    protected function getCalDavHandler()
+    {
+        return new CalDavHandler();
     }
 }

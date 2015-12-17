@@ -22,15 +22,16 @@ use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException as JQInvalidAr
 class Import extends Base
 {
     /**
-     * start imports process for current CalDavEvent object
+     * start imports process for current CalDavEventCollection object
      * @throws \Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException if bean not instance of CalDavEvent
      * @throws \Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException if related bean doesn't have adapter
      * @return string
      */
     public function run()
     {
-        /** @var \CalDavEvent $bean */
-        $bean = $this->getBean();
+        /** @var \CalDavEventCollection $bean */
+        // ToDo: with $this->processedData
+        //$bean = $this->getBean();
         if (!($bean instanceof \CalDavEvent)) {
             throw new JQInvalidArgumentException('Bean must be an instance of CalDavEvent. Instance of ' .
                 get_class($bean) . ' given');
@@ -41,7 +42,7 @@ class Import extends Base
         }
 
         $handler = $this->getHandler();
-        $handler->import($bean);
+        $handler->import($this->processedData);
         $bean->getSynchronizationObject()->setJobCounter();
 
         return \SchedulersJob::JOB_SUCCESS;
@@ -53,6 +54,6 @@ class Import extends Base
     protected function reschedule()
     {
         $jqManager = $this->getManager();
-        $jqManager->calDavImport($this->fetchedRow, $this->moduleName, $this->saveCounter);
+        $jqManager->calDavImport($this->processedData, $this->saveCounter);
     }
 }

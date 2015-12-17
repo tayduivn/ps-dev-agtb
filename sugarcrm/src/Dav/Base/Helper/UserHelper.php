@@ -148,10 +148,15 @@ class UserHelper
     public function getCalendars($principalUri)
     {
         $user = $this->getUserByPrincipalString($principalUri);
+        // ToDo: we should not retrieve calendars by relationship. Use direct db-select instead.
         if ($user && $user->load_relationship('caldav_calendars')) {
 
             $calendarBeans = $user->caldav_calendars->getBeans();
             if ($calendarBeans) {
+                $calendarBeansData = array();
+                foreach ($calendarBeans as $bean) {
+                    $calendarBeansData[] = $bean->fetched_row;
+                }
                 return $calendarBeans;
             }
 

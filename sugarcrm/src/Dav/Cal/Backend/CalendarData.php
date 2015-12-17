@@ -102,7 +102,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
     }
 
     /**
-     * Get CalDavEvent bean object
+     * Get CalDavEventCollection bean object
      *
      * @return null|\CalDavEventCollection
      */
@@ -462,8 +462,8 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
 
             $calendarURIS = $calendarIDS = array();
             foreach ($calendars as $calendar) {
-                $calendarIDS[] = $calendar->id;
-                $calendarURIS[$calendar->id] = $calendar->uri;
+                $calendarIDS[] = $calendar['id'];
+                $calendarURIS[$calendar['id']] = $calendar['uri'];
             }
 
             $eventBean = $this->getEventsBean();
