@@ -9,6 +9,10 @@
 *
 * Copyright (C) SugarCRM Inc. All rights reserved.
 */
+
+require_once 'modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php';
+require_once 'modules/Mailer/MailerFactory.php';
+
 use Sugarcrm\Sugarcrm\Notification\Carrier\TransportInterface;
 
 /**
@@ -19,6 +23,7 @@ class CarrierEmailTransport implements TransportInterface
 {
     /**
      * Send message to a specified user by the means of Sugar System Mailer.
+     *
      * @param string $recipient Sugar User email address.
      * @param array $message message pack for delivery.
      * @return bool true if message was sent, otherwise false.
@@ -27,7 +32,7 @@ class CarrierEmailTransport implements TransportInterface
     {
         if ($this->test() && (!empty($message['title']) || !empty($message['text']) || !empty($message['html']))) {
             try {
-                $mailer = $this->getMailer();
+                $mailer = $this->getMailerFactory()->getSystemDefaultMailer();
                 $mailer->addRecipientsTo(new EmailIdentity($recipient));
                 if (!empty($message['title'])) {
                     $mailer->setSubject($message['title']);
@@ -50,20 +55,33 @@ class CarrierEmailTransport implements TransportInterface
 
     /**
      * Test if System Default Outbound Mailer is configured and available.
+     *
      * @return bool true if available, otherwise false.
      */
-    public function test()
+    protected function test()
     {
-        $outboundMailConfig = OutboundEmailConfigurationPeer::getSystemDefaultMailConfiguration();
-        return OutboundEmailConfigurationPeer::isMailConfigurationValid($outboundMailConfig);
+        $configuration = $this->getOutboundEmailConfigurationPeer();
+        $outboundMailConfig = $configuration->getSystemDefaultMailConfiguration();
+        return $configuration->isMailConfigurationValid($outboundMailConfig);
     }
 
     /**
-     * Get configured System Default Outbound Mailer.
-     * @return mixed Outbound Mailer.
+     * Factory method to mock MailerFactory
+     *
+     * @return MailerFactory
      */
-    protected function getMailer()
+    protected function getMailerFactory()
     {
-        return MailerFactory::getSystemDefaultMailer();
+        return new MailerFactory();
+    }
+
+    /**
+     * Factory method to mock OutboundEmailConfigurationPeer
+     *
+     * @return OutboundEmailConfigurationPeer
+     */
+    protected function getOutboundEmailConfigurationPeer()
+    {
+        return new OutboundEmailConfigurationPeer();
     }
 }
