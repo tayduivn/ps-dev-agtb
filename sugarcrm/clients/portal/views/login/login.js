@@ -52,8 +52,7 @@
      * Navigate to the `Signup` view.
      */
     signup: function() {
-        app.router.navigate('#signup');
-        app.router.start();
+        app.router.navigate('#signup', {trigger: true});
     },
 
     /**
