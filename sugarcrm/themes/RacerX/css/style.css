@@ -642,6 +642,10 @@ margin-bottom: 10px;
 table.actionsContainer {
     margin-bottom: 10px;
     clear:both;
+    width: 100%;
+}
+table.actionsContainer td:last-child {
+    padding-right: 10px;
 }
 div.actionsContainer
 {
