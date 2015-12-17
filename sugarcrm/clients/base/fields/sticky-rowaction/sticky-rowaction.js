@@ -40,6 +40,11 @@
             //Remove event listeners on this action since it is disabled
             this.undelegateEvents();
         }
+        // this can't be inside the isDisabled if block above because css_class can be set to 'disabled' by metadata
+        if (!_.isUndefined(this.def.css_class) && this.def.css_class.indexOf('disabled') !== -1) {
+            this.tabIndex = -1;
+        }
+
         this._super("_render");
     },
     /**

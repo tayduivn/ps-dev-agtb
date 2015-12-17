@@ -33,39 +33,52 @@
     vertical-align: top;
     padding: 3px 0;
     &.full-width {
-      padding: 2px 0;
+      padding: 0;
     }
   }
   .border-radius(@baseBorderRadius);
   .user-select(none);
-  //not working for input focus
-  &:focus {
-    border-color: @linkColor !important;
-  }
+  //not working because only input can have focus
+  // &:focus {
+  //   border-color: @linkColor !important;
+  // }
   // non-select2 filter pills
   .choice-related,
   .choice-filter {
     .border-radius(0 10px 10px 0);
     padding: 4px;
     display: inline-block;
-    height: 12px;
+    height: 20px;
+    box-sizing: border-box;
     white-space: nowrap;
     margin-top: 0;
+    margin-right: 3px;
     font-size: @fontSizeSmall;
     font-weight: bold;
-    line-height: 11px;
+    line-height: 10px;
+    border-width: 0;
+    background: @gray;
+    color: @white;
+    cursor: text;
+    &.choice-filter-clickable:focus {
+      .tab-focus();
+    }
     .choice-filter-label {
       vertical-align: top;
-      margin-right: 2px;
     }
     .choice-filter-close {
-      margin-right: 0;
       font-size: 14px;
-      vertical-align: top;
+      height: 12px;
+      width: 16px;
+      display: inline-block;
+      margin: -2px -2px 0 0;
+      &:focus {
+        .tab-focus()
+      }
       i {
         color: fade(@white, 70%);
-        line-height: 12px;
-        vertical-align: top;
+        // line-height: 12px;
+        // vertical-align: top;
         &:hover {
           color: @white;
           cursor: pointer;
@@ -73,22 +86,12 @@
       }
     }
   }
-  .choice-related {
-    background: @gray;
-    color: @white;
-    cursor: text;
-    padding-right: 6px;
-  }
-  .choice-filter {
-    background: @gray;
-    color: @white;
-    cursor: text;
-  }
   // select2 filter pills
   .select2-container {
     &.related-filter,
     &.search-filter {
       vertical-align: top;
+      margin-left: 3px;
     }
     &.select2-container-disabled .select2-choice {
       .select2-arrow {
@@ -96,6 +99,12 @@
         .fa-caret-down {
           display: none;
         }
+      }
+    }
+    &.select2-container-active {
+      .select2-search-choice,
+      .select2-choice {
+        .tab-focus();
       }
     }
     .select2-choices {
@@ -112,7 +121,7 @@
     }
     .select2-search-choice,
     .select2-choice {
-      padding: 0 0 0 4px;
+      padding: 0;
       font-size: @fontSizeSmall;
       background: none;
       border: none;
@@ -217,12 +226,14 @@
   .search-name {
     width: 100%;
     .box-sizing(border-box);
-    height: 22px;
+    height: 26px;
     border: 0;
     padding: 4px 8px;
     box-shadow: none;
+    //the intent was to make the outer .filter-view div have a border
+    //but that is not working so an outline is needed on the input
     &:focus {
-      border: 0;
+      .tab-focus();
       .box-shadow(none);
     }
     &.hide {

@@ -73,7 +73,7 @@
     /**
      * @inheritdoc
      *
-     * Adds listener for bootstrap drop down show even (`shown.bs.dropdown`).
+     * Adds listener for bootstrap drop down show event (`shown.bs.dropdown`).
      * This will trigger menuOpen method.
      */
     initialize: function(options) {

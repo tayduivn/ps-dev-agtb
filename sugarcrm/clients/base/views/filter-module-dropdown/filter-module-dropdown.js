@@ -262,7 +262,7 @@
         //Escape string to prevent XSS injection
         safeString = Handlebars.Utils.escapeExpression(item.text);
         // Update the text for the selected module.
-        this.$('.choice-related').html(safeString);
+        this.$('.choice-filter-label').html(safeString);
 
         return this._select2formatSelectionTemplate(this.getSelectionLabel());
     },

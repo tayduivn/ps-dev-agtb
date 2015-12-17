@@ -1,4 +1,3 @@
-{{!--
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,9 +8,19 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-<input type="hidden" class="select2 search-filter" data-placeholder='{{str labelDropdownTitle}}'>
-<button type="button" class="choice-filter" tabindex="0" aria-label="{{str 'LBL_FILTER_CREATE_FILTER'}}">
-    <span class="choice-filter-label"></span>
-    <span class="choice-filter-close"><i class="fa fa-times-circle"></i></span>
-</button>
+/**
+ * @class View.Fields.Base.Audit.CurrencyField
+ * @alias SUGAR.App.view.fields.BaseAuditCurrencyField
+ * @extends View.Fields.Base.CurrencyField
+ */
+({
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        //audit log is always in base currency. Make sure the currency def reflects that.
+        this.def.is_base_currency = true;
+    }
+})

@@ -8133,6 +8133,9 @@ $app_strings = array (
   'LBL_ADD' => 'Add' /*for 508 compliance fix*/,
   'LBL_COMPANY_LOGO' => 'Company logo' /*for 508 compliance fix*/,
   'LBL_JS_CALENDAR' => 'Calendar' /*for 508 compliance fix*/,
+  // ARIA label additions
+  'LBL_ARIA_MODULENAVIGATION' => 'main module navigation',
+
     'LBL_ADVANCED' => 'Advanced',
     'LBL_BASIC' => 'Basic',
     'LBL_MODULE_FILTER' => 'Filter by...',
@@ -8728,7 +8731,7 @@ $app_strings = array (
     'EXCEPTION_SEARCH_UNAVAILABLE_DESC'    => 'The search engine backend is currently unavailable due to a connection issue. Verify connectivity and configuration in Admin->search->test.',
     'EXCEPTION_SEARCH_RUNTIME_DESC'        => 'A runtime exception occured in SearchEngine. See sugarcrm.log for more details.',
 
-    'EXCEPTION_INVALID_PLATFORM_DESC'   => 'Indicates the platform specified during authenication is unknown. Custom platforms must be added to custom/client/platforms.php',   
+    'EXCEPTION_INVALID_PLATFORM_DESC'   => 'Indicates the platform specified during authenication is unknown. Custom platforms must be added to custom/client/platforms.php',
     
     //Lotus Live specific error messages
     'ERR_EXTERNAL_API_LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system.',
@@ -8866,6 +8869,8 @@ $app_strings = array (
     'LBL_FILTER_SELECT_FIELD' => 'Select field...',
     'LBL_FILTER_SELECT_OPERATOR' => 'Select operator...',
     'LBL_FILTER_CREATE_NEW' => 'Create',
+    'LBL_FILTER_CREATE_FILTER' => 'Create new filter',
+    'LBL_FILTER_EDIT_FILTER' => 'Edit filter',
     'LBL_FILTER_ALL_RECORDS' => 'All Records',
     'TPL_FILTER_SAVE' => 'You successfully created the filter {{name}}.',
     'LBL_FILTER_BETWEEN_FROM' => 'From',
@@ -9561,6 +9566,7 @@ Sincerely, SugarCRM',
     'LBL_COLUMNS_CAN_BE_DISPLAYED' => ' columns can be displayed.',
 
     /* Sugar7 Dashboard */
+    'LBL_DASHBOARD' => 'Dashboard',
     'LBL_DASHBOARD_BWC' => 'My Legacy Dashboard',
     'LBL_DEFAULT_DASHBOARD_TITLE' => 'My Dashboard',
     'LBL_DEFAULT_HELP_DASHBOARD_TITLE' => 'Help Dashboard',
@@ -10648,6 +10654,9 @@ Sincerely, SugarCRM',
     'LBL_PREVIEW_DISABLED_ATTACHMENT' => 'Preview disabled: No data available',
     'LBL_PREVIEW_DISABLED_SAME_RECORD' => 'Preview disabled: In view as current record',
     'LBL_PREVIEW_DISABLED_DELETED_OR_NO_ACCESS' => 'Preview disabled: Record removed or no access to record',
+    'LBL_PREVIEW_PREVIOUS' => 'Preview previous',
+    'LBL_PREVIEW_NEXT' => 'Preview next',
+    'LBL_PREVIEW_CLOSE' => 'Preview close',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
     'LBL_NO_DUPLICATES_FOUND' => 'No duplicates found.',
@@ -11388,7 +11397,7 @@ Sincerely, SugarCRM',
     'LBL_ALERT_TITLE_ERROR' => 'Error:',
     'LBL_ALERT_TITLE_LOADING' => 'Loading',
     'LBL_ALERT_BROWSER_NOT_SUPPORTED' => 'Your browser version is no longer supported or you are using an unsupported browser.',
-    'LBL_ALERT_BROWSER_SUPPORT' => 'The following browser versions are recommended: <ul><li>Internet Explorer 11</li><li>Firefox 39</li><li>Safari 7.1</li><li>Chrome 43</li></ul>',
+    'LBL_ALERT_BROWSER_SUPPORT' => 'The following browser versions are recommended: <ul><li>Internet Explorer 11</li><li>Firefox 41</li><li>Safari 7.1</li><li>Chrome 47</li></ul>',
     'TPL_ALERT_BROWSER_SUPPORT' => 'Please see the {{link}} page for suggested browsers.',
     'LBL_ALERT_SUPPORTED_PLATFORMS_LINK' => 'Supported Platforms',
 

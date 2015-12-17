@@ -11,6 +11,9 @@ describe('Emails.Fields.EmailactionPaneltop', function() {
             module: 'Emails',
             loadFromModule: true
         });
+        field.plugins = ['EmailClientLaunch'];
+        SugarTest.loadPlugin('EmailClientLaunch');
+        SugarTest.app.plugins.attach(field, 'field');
 
         sandbox = sinon.sandbox.create();
     });

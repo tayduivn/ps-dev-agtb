@@ -23,9 +23,10 @@ $viewdefs['KBContents']['base']['view']['panel-top-for-cases'] = array(
                     'name' => 'create_button',
                     'type' => 'sticky-rowaction',
                     'icon' => 'fa-plus',
-                    'label' => 'LNK_NEW_ARTICLE',
+                    'label' => ' ',
                     'acl_module' => 'KBContents',
                     'acl_action' => 'create',
+                    'tooltip' => 'LBL_CREATE_BUTTON_LABEL',
                 ),
                 array(
                     'type' => 'link-action',

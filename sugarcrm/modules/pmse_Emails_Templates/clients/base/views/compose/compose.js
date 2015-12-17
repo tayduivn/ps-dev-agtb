@@ -16,11 +16,7 @@
     buttons: null,
 
     initialize: function(options) {
-        _.bindAll(this);
-        var self = this;
-
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args:[options]});
-
+        this._super('initialize', [options]);
         this.events = _.extend({}, this.events, {
             'click [name=save_button]': 'save',
             'click [name=save_buttonExit]': 'saveExit',

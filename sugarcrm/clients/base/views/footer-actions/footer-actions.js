@@ -249,6 +249,7 @@
         }
 
         if (disable) {
+            button.attr('aria-pressed', false);
             this._watchForDashboard();
         }
 
@@ -267,7 +268,9 @@
         }
 
         if (button) {
-            button.toggleClass('active', active);
+            button
+                .toggleClass('active', active)
+                .attr('aria-pressed', active);
         }
     },
 

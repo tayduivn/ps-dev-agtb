@@ -31,7 +31,6 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        _.bindAll(this);
         this._super('initialize', [options]);
         this.events = _.extend({}, this.events, {
             'click [data-toggle-field]': '_handleSenderOptionClick'
@@ -187,9 +186,9 @@
         } else if (!_.isEmpty(relatedModel.get('id'))) {
             relatedModel.fetch({
                 showAlerts: false,
-                success: function(relatedModel) {
+                success: _.bind(function(relatedModel) {
                     setParent(relatedModel);
-                },
+                }, this),
                 fields: ['name']
             });
         }
@@ -507,7 +506,7 @@
                     module: 'EmailTemplates'
                 }
             },
-            this.templateDrawerCallback
+            _.bind(this.templateDrawerCallback, this)
         );
     },
 
@@ -521,7 +520,7 @@
         if (model) {
             var emailTemplate = app.data.createBean('EmailTemplates', { id: model.id });
             emailTemplate.fetch({
-                success: this.confirmTemplate,
+                success: _.bind(this.confirmTemplate, this),
                 error: _.bind(function(error) {
                     this._showServerError(error);
                 }, this)
@@ -540,9 +539,7 @@
         app.alert.show('delete_confirmation', {
             level: 'confirmation',
             messages: app.lang.get('LBL_EMAILTEMPLATE_MESSAGE_SHOW_MSG', this.module),
-            onConfirm: _.bind(function() {
-                this.insertTemplate(template);
-            }, this)
+            onConfirm: _.bind(this.insertTemplate, this, template)
         });
     },
 
@@ -622,7 +619,8 @@
                 layout: 'selection-list',
                 context: {module: 'Documents'}
             },
-            this.documentDrawerCallback);
+            _.bind(this.documentDrawerCallback, this)
+        );
     },
 
     /**
@@ -682,7 +680,7 @@
                     module: 'UserSignatures'
                 }
             },
-            this._updateEditorWithSignature
+            _.bind(this._updateEditorWithSignature, this)
         );
     },
 

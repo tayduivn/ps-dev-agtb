@@ -67,7 +67,6 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        _.bindAll(this);
         /**
          * @inheritdoc
          * @property {Object} meta
@@ -168,14 +167,13 @@
 
         this.adjustHeaderpane = _.bind(_.debounce(this.adjustHeaderpane, 50), this);
         $(window).on('resize.' + this.cid, this.adjustHeaderpane);
-
-        $(window).on('resize.' + this.cid, this.overflowTabs);
+        $(window).on('resize.' + this.cid, _.bind(this.overflowTabs, this));
 
         // initialize tab view after the component is attached to DOM
         this.on('append', function() {
             this.overflowTabs();
             this.handleActiveTab();
-        });
+        }, this);
 
         this.on('render', this.registerShortcuts, this);
     },
@@ -1094,7 +1092,7 @@
             } else {
                 field.hide();
             }
-        }, this);
+        });
 
         this.toggleButtons(true);
     },

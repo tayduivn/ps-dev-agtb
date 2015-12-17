@@ -1269,7 +1269,7 @@ CheckboxGroup.prototype.evalRequired = function () { var response = true;
 var SearchableCombobox = function (options, parent) {
     Field.call(this, options, parent);
     this._placeholder = null;
-    this._minimumInputLength = null;
+    this._pageSize = null;
     this._valueField = null;
     this._textField = null;
     this._options = [];
@@ -1290,7 +1290,7 @@ SearchableCombobox.prototype.type = "SearchableCombobox";
 SearchableCombobox.prototype.initObject = function (options, parent) {
     var defaults = {
         placeholder: "",
-        minimumInputLength: 1,
+        pageSize: 5,
         textField: "text",
         valueField: "value",
         fieldWidth: "200px",
@@ -1305,9 +1305,9 @@ SearchableCombobox.prototype.initObject = function (options, parent) {
     $.extend(true, defaults, options);
 
     this._placeholder = defaults.placeholder;
-    this._minimumInputLength = defaults.minimumInputLength;
     this._textField = defaults.textField;
     this._valueField = defaults.valueField;
+    this._pageSize = typeof defaults.pageSize === 'number' && defaults.pageSize >= 1 ? Math.floor(defaults.pageSize) : 0;
     this.setFieldWidth(defaults.fieldWidth)
         .setSearchDelay(defaults.searchDelay)
         .setSearchValue(defaults.searchValue)
@@ -1403,6 +1403,15 @@ SearchableCombobox.prototype._getFilteredOptions = function (queryObject, items,
     return finalData;
 };
 
+SearchableCombobox.prototype._resizeListSize = function () {
+    var list = this.controlObject.data("select2").dropdown,
+        listItemHeight;
+    list = $(list).find('ul[role=listbox]');
+    listItemHeight = list.find('li').eq(0).outerHeight();
+    list.get(0).style.maxHeight = (listItemHeight * this._pageSize) + 'px';
+    return this;
+};
+
 SearchableCombobox.prototype.setSearchURL = function(url) {
     var delayToUse, that = this;
 
@@ -1419,7 +1428,6 @@ SearchableCombobox.prototype.setSearchURL = function(url) {
 
     this._searchFunction = _.debounce(function(queryObject) {
         var proxy = new SugarProxy(),
-            termRegExp = /\{TERM\}/g,
             result = {
                 more: false
             }, term = jQuery.trim(queryObject.term),
@@ -1432,17 +1440,20 @@ SearchableCombobox.prototype.setSearchURL = function(url) {
                 }
             };
 
-        finalData = that._getFilteredOptions(queryObject, that._options, "")
+        finalData = queryObject.page > 1 ? [] : that._getFilteredOptions(queryObject, that._options, 'text', 'id');
 
         if (term && that._searchURL) {
-            proxy.url = this._searchURL.replace(termRegExp, queryObject.term);
+            proxy.url = this._searchURL.replace(/\{%TERM%\}/g, queryObject.term)
+                .replace(/\{%OFFSET%\}/g, (queryObject.page - 1) * that._pageSize);
+
+            if (that._pageSize > 0) {
+                proxy.url = proxy.url.replace(/\{%PAGESIZE%\}/g, that._pageSize);
+            }
 
             proxy.getData(null, {
                 success: function (data) {
-                    if (!data.success) {
-                        throw new Error("SearchableCombobox's search function: Error.");
-                    }
-                    data = data.result;
+                    result.more = data.next_offset >= 0 ? true : false;
+                    data = data.records;
                     data.forEach(function (item) {
                         finalData.push({
                             id: getText(item, that._searchValue),
@@ -1452,6 +1463,7 @@ SearchableCombobox.prototype.setSearchURL = function(url) {
 
                     result.results = finalData;
                     queryObject.callback(result);
+                    that._resizeListSize();
                 },
                 error: function () {
                     console.log("failure", arguments);

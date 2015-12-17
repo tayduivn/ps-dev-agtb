@@ -1953,7 +1953,9 @@ AdamActivity.prototype.createAssignUsersAction = function () {
         change: hiddenUpdateFn,
         disabled: true,
         required: true,
-        searchURL: 'pmse_Project/CrmData/users?filter={TERM}',
+        searchURL: 'Users?filter[0][$and][0][status][$not_equals]=Inactive&filter[0][$and][1][$or][0][first_name][$starts]={%TERM%}&filter[0][$and][1][$or][1][last_name][$starts]={%TERM%}&fields=id,full_name&max_num={%PAGESIZE%}&offset={%OFFSET%}',
+        searchValue: 'id',
+        searchLabel: 'full_name',
         placeholder: translate('LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT'),
         searchMore: {
             module: "Users",
@@ -2166,7 +2168,9 @@ AdamActivity.prototype.actionFactory = function (type) {
                 label: translate('LBL_PA_FORM_LABEL_ASSIGN_TO_USER'),
                 name: 'act_assign_user',
                 submit: true,
-                searchURL: 'pmse_Project/CrmData/users?filter={TERM}',
+                searchURL: 'Users?filter[0][$and][0][status][$not_equals]=Inactive&filter[0][$and][1][$or][0][first_name][$starts]={%TERM%}&filter[0][$and][1][$or][1][last_name][$starts]={%TERM%}&fields=id,full_name&max_num={%PAGESIZE%}&offset={%OFFSET%}',
+                searchValue: 'id',
+                searchLabel: 'full_name',
                 required: true,
                 placeholder: translate('LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT')
             });
