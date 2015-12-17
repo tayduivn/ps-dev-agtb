@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,186 +10,143 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+namespace Sugarcrm\SugarcrmTests\tests\modules\CarrierSugar;
+
 require_once 'modules/CarrierSugar/Hook.php';
 
-use Sugarcrm\Sugarcrm\Socket\Client as SocketServerClient;
+use CarrierSugarHook;
+use Notifications;
+use User;
+use Sugarcrm\Sugarcrm\Socket\Client as SocketClient;
 
 /**
  * @coversDefaultClass \CarrierSugarHook
  *
  * Class CarrierSugarHookTest
  */
-class CarrierSugarHookTest extends Sugar_PHPUnit_Framework_TestCase
+class CarrierSugarHookTest extends \Sugar_PHPUnit_Framework_TestCase
 {
+    /** @var CarrierSugarHook */
+    protected $hook = null;
 
-    const NS_CLIENT = 'Sugarcrm\\Sugarcrm\\Socket\\Client';
+    /** @var SocketClient|\PHPUnit_Framework_MockObject_MockObject */
+    protected $socketClient = null;
 
-    public function testHookOnUpdate()
-    {
-        $notification = new Notifications();
-        $arguments = array('isUpdate' => true);
-        $hook = $this->getMock('CarrierSugarHook', array('send'));
-        $hook->expects($this->never())->method('send');
+    /** @var Notifications */
+    protected $notification = null;
 
-        $hook->hook($notification, 'after_save', $arguments);
-    }
-
-    public function testHookOnInsert()
-    {
-        $notification = new Notifications();
-        $arguments = array('isUpdate' => false);
-        $hook = $this->getMock('CarrierSugarHook', array('send'));
-
-        $hook->expects($this->once())->method('send')->with($this->equalTo($notification));
-
-        $hook->hook($notification, 'after_save', $arguments);
-    }
-
-    public function testGetServiceBase()
-    {
-        $apiUser = SugarTestUserUtilities::createAnonymousUser();
-        $hook = new CarrierSugarHook();
-
-        $service = SugarTestReflection::callProtectedMethod($hook, 'getServiceBase', array($apiUser));
-
-        $this->assertInstanceOf('RestService', $service);
-        $this->assertEquals($apiUser, $service->user);
-    }
-
-    public function testPrepareMessage()
-    {
-        $fieldDefs = array(
-            'id' => 'field Id Definitions',
-            'name' => 'field Name Definitions',
-            'description' => 'field Description Definitions',
-            'assigned_user_id' => 'field Assigned user id Definitions'
-        );
-
-        $notificationArr = array('title' => 'title Message', 'text' => 'text Message', '_module' => 'Notifications');
-
-        $recipient = SugarTestUserUtilities::createAnonymousUser();
-
-        $notification = $this->getMock('Notifications', array('getFieldDefinitions'));
-        $notification->expects($this->once())->method('getFieldDefinitions')
-            ->willReturn($fieldDefs);
-        $notification->assigned_user_id = $recipient->id;
-
-        $restService = $this->getMock('RestService');
-
-        $hook = $this->getMock('CarrierSugarHook', array('formatBean', 'getServiceBase'));
-
-        $currentUserOld = SugarTestUserUtilities::createAnonymousUser(true);
-        $GLOBALS['current_user'] = $currentUserOld;
-
-
-        $hook->expects($this->atLeastOnce())->method('getServiceBase')
-            ->with($this->callback(function ($user) use ($recipient) {
-                return $user->id == $recipient->id;
-            }))
-            ->willReturn($restService);
-
-        $hook->expects($this->once())->method('formatBean')
-            ->with(
-                $this->equalTo($restService),
-                $this->equalTo(array('fields' => array('id', 'name', 'description', 'assigned_user_id'))),
-                $this->equalTo($notification)
-            )->willReturn($notificationArr);
-
-        SugarTestReflection::callProtectedMethod($hook, 'prepareMessage', array($notification));
-
-        $this->assertEquals($currentUserOld, $GLOBALS['current_user']);
-    }
-
-    public function testSocketNotConfigured()
-    {
-        $hook = $this->getMock(
-            'CarrierSugarHook',
-            array('isSocketConfigured', 'prepareMessage', 'getSocketServerClient')
-        );
-
-        $hook->expects($this->once())->method('isSocketConfigured')->willReturn(false);
-        $hook->expects($this->never())->method('prepareMessage');
-        $hook->expects($this->never())->method('getSocketServerClient');
-
-        $notification = new Notifications();
-
-        SugarTestReflection::callProtectedMethod($hook, 'send', array($notification));
-    }
-
-    public function testSendingNotification()
-    {
-        $notification = new Notifications();
-        $notification->assigned_user_id = 'some-assigned-user-id';
-        $notificationArr = array('assigned_user_id' => 'some-assigned-user-id', 'name' => 'some-name');
-        $isSent = true;
-
-        $client = $this->getMock(self::NS_CLIENT, array('recipient', 'send'));
-        $client->expects($this->once())->method('recipient')
-            ->with(
-                $this->equalTo(SocketServerClient::RECIPIENT_USER_ID),
-                $this->equalTo($notification->assigned_user_id)
-            )->willReturn($client);
-
-        $client->expects($this->once())->method('send')
-            ->with($this->equalTo('notification'), $this->equalTo($notificationArr))
-            ->willReturn($isSent);
-
-        $hook = $this->getMock(
-            'CarrierSugarHook',
-            array('isSocketConfigured', 'prepareMessage', 'getSocketServerClient')
-        );
-
-        $hook->expects($this->once())->method('isSocketConfigured')->willReturn(true);
-
-        $hook->expects($this->once())->method('prepareMessage')
-            ->with($this->equalTo($notification))
-            ->willReturn($notificationArr);
-
-        $hook->expects($this->once())->method('getSocketServerClient')->willReturn($client);
-
-        SugarTestReflection::callProtectedMethod($hook, 'send', array($notification));
-    }
-
-    public function webSocketUrls()
-    {
-        return array(
-            array('http://some.host', true),
-            array('', false),
-        );
-    }
+    /** @var array */
+    protected $backup = array(
+        'SocketClient' => null,
+    );
 
     /**
-     * @dataProvider webSocketUrls
-     * @param $url
-     * @param $expected
+     * @inheritDoc
      */
-    public function testIsSocketConfigured($url, $expected)
-    {
-        $config = $this->getMock('SugarConfig', array('get'));
-
-        $config->expects($this->once())->method('get')
-            ->with($this->equalTo('websockets.server.url'))
-            ->willReturn($url);
-
-        $hook = $this->getMock('CarrierSugarHook', array('getSugarConfig'));
-        $hook->expects($this->once())->method('getSugarConfig')
-            ->willReturn($config);
-
-        $res = SugarTestReflection::callProtectedMethod($hook, 'isSocketConfigured');
-
-        $this->assertEquals($expected, $res);
-    }
-
     protected function setUp()
     {
         parent::setUp();
-        SugarTestHelper::setUp('current_user');
+        $this->backup['SocketClient'] = \SugarTestReflection::getProtectedValue('Sugarcrm\Sugarcrm\Socket\Client', 'instance');
+        \BeanFactory::setBeanClass('Users', 'Sugarcrm\SugarcrmTests\tests\modules\CarrierSugar\UserCRYS1267');
+
+        $this->socketClient = $this->getMock('Sugarcrm\Sugarcrm\Socket\Client');
+        \SugarTestReflection::setProtectedValue('Sugarcrm\Sugarcrm\Socket\Client', 'instance', $this->socketClient);
+        $this->hook = new CarrierSugarHook();
+        $this->notification = new Notifications();
+        $this->notification->assigned_user_id = create_guid();
+        $this->notification->name = 'Name ' . rand(1000, 9999);
+        $this->notification->description = 'Description ' . rand(1000, 9999);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarTestHelper::tearDown();
+        \SugarTestReflection::setProtectedValue('Sugarcrm\Sugarcrm\Socket\Client', 'instance', $this->backup['SocketClient']);
+        \BeanFactory::setBeanClass('Users');
         parent::tearDown();
+    }
+
+    /**
+     * We should not send notification if it is update
+     *
+     * @covers CarrierSugarHook::hook
+     */
+    public function testHookDoesNotSendBeanToSocketIfItIsUpdate()
+    {
+        $this->socketClient->method('isConfigured')->willReturn(true);
+        $this->socketClient->expects($this->never())->method('send');
+        $this->hook->hook($this->notification, 'after_save', array(
+            'isUpdate' => true,
+        ));
+    }
+
+    /**
+     * We should not send notification if socket is not configured
+     *
+     * @covers CarrierSugarHook::hook
+     */
+    public function testHookDoesNotSendBeanIfSocketIsNotConfigured()
+    {
+        $this->socketClient->method('isConfigured')->willReturn(false);
+        $this->socketClient->expects($this->never())->method('send');
+        $this->hook->hook($this->notification, 'after_save', array(
+            'isUpdate' => false,
+        ));
+    }
+
+    /**
+     * We should format and send proper data
+     *
+     * @covers CarrierSugarHook::hook
+     */
+    public function testHookSendsBeanToSocket()
+    {
+        $this->socketClient->method('isConfigured')->willReturn(true);
+        $this->socketClient
+            ->expects($this->once())
+            ->method('recipient')
+            ->with($this->equalTo(SocketClient::RECIPIENT_USER_ID), $this->equalTo($this->notification->assigned_user_id))
+            ->willReturnSelf();
+
+        $type = '';
+        $data = array();
+        $this->socketClient
+            ->expects($this->once())
+            ->method('send')
+            ->willReturnCallback(function($a, $b) use (&$type, &$data) {
+                $type = $a;
+                $data = $b;
+            });
+
+        $this->hook->hook($this->notification, 'after_save', array(
+            'isUpdate' => false,
+        ));
+        $this->assertEquals('notification', $type);
+
+        $this->assertArrayHasKey('assigned_user_id', $data);
+        $this->assertEquals($this->notification->assigned_user_id, $data['assigned_user_id']);
+        $this->assertArrayHasKey('name', $data);
+        $this->assertEquals($this->notification->name, $data['name']);
+        $this->assertArrayHasKey('description', $data);
+        $this->assertEquals($this->notification->description, $data['description']);
+    }
+}
+
+/**
+ * Mock to override retrieve of user
+ *
+ * @package Sugarcrm\SugarcrmTests\tests\modules\CarrierSugar
+ */
+class UserCRYS1267 extends User
+{
+    /**
+     * @inheritDoc
+     */
+    public function retrieve($id, $encode = true, $deleted = true)
+    {
+        $this->id = $id;
+        return $this;
     }
 }
