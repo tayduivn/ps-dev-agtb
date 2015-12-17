@@ -15,8 +15,9 @@ use Sugarcrm\Sugarcrm\Notification\Emitter\Reminder\Emitter as ReminderEmitter;
 
 /**
  * Class CallEmitter
- *
  * CallEmitter provides possibility to detect event which has happened in call module.
+ *
+ * @method reminder(SugarBean $bean, User $user)
  */
 class CallEmitter implements EmitterInterface
 {

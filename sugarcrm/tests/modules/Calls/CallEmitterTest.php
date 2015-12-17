@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,80 +10,156 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+namespace Sugarcrm\SugarcrmTests\tests\modules\Calls;
+
 require_once 'modules/Calls/Emitter.php';
+
+use CallEmitter;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Reminder\Emitter as ReminderEmitter;
 
 /**
  * @coversDefaultClass CallEmitter
  */
-class CallEmitterTest extends Sugar_PHPUnit_Framework_TestCase
+class CallEmitterTest extends \Sugar_PHPUnit_Framework_TestCase
 {
-    const NS_REMINDER_EMITTER = 'Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Reminder\\Emitter';
+    /** @var CallEmitter */
+    protected $callEmitter = null;
 
+    /** @var ReminderEmitter|\PHPUnit_Framework_MockObject_MockObject */
+    protected $reminderEmitter = null;
+
+    /**
+     * @inheritDoc
+     */
     protected function setUp()
     {
         parent::setUp();
-        SugarTestHelper::setUp('current_user');
-    }
-
-    protected function tearDown()
-    {
-        SugarTestCallUtilities::removeAllCreatedCalls();
-        SugarTestHelper::tearDown();
-        parent::tearDown();
-    }
-
-    /**
-     * @covers ::getEventPrototypeByString
-     */
-    public function testGetEventPrototypeByString()
-    {
-        $expectEvent = 'ExpectEvent'.microtime();
-        $expectEventName = 'reminder-Event-Name'.microtime();
-
-        $reminderEmitter = $this->getMock(self::NS_REMINDER_EMITTER, array('getEventPrototypeByString'));
-        $reminderEmitter->expects($this->atLeastOnce())->method('getEventPrototypeByString')
-            ->with($this->equalTo($expectEventName))
-            ->willReturn($expectEvent);
-
-        $callEmitter = new CallEmitter($reminderEmitter);
-
-        $event = $callEmitter->getEventPrototypeByString($expectEventName);
-
-        $this->assertEquals($expectEvent, $event);
+        $this->reminderEmitter = $this->getMock('Sugarcrm\Sugarcrm\Notification\Emitter\Reminder\Emitter', array(
+            'getEventPrototypeByString',
+            'getEventStrings',
+            'reminder',
+        ));
+        $this->callEmitter = new CallEmitter($this->reminderEmitter);
     }
 
     /**
-     * Checking method is correctly throw calling.
+     * String value of CallEmitter should be name of the module
      *
-     * @covers ::__call
+     * @covers CallEmitter::__toString
      */
-    public function testThrowMethod()
+    public function testToString()
     {
-        $call = SugarTestCallUtilities::createCall();
-        $user = SugarTestUserUtilities::createAnonymousUser(false);
-        $user->id = microtime();
-
-        $reminderEmitter = $this->getMock(self::NS_REMINDER_EMITTER, array('reminder'));
-        $reminderEmitter->expects($this->once())->method('reminder')
-            ->with($this->equalTo($call), $this->equalTo($user));
-
-        $callEmitter = new CallEmitter($reminderEmitter);
-
-        $callEmitter->reminder($call, $user);
+        $this->assertEquals('Calls', (string)$this->callEmitter);
     }
 
     /**
-     * @covers ::getEventStrings
+     * Data provider for testGetEventPrototypeByString
+     *
+     * @see CallEmitterTest::testGetEventPrototypeByString
+     * @return array
      */
-    public function testGetEventStrings()
+    public static function getEventPrototypeByStringProvider()
     {
-        $reminderEmitter = $this->getMock(self::NS_REMINDER_EMITTER, array('getEventStrings'));
-        $reminderEmitter->expects($this->atLeastOnce())->method('getEventStrings')->willReturn(array('reminder'));
+        return array(
+            array(
+                'Some Event ' . rand(1000, 9999),
+                'Some Result ' . rand(1000, 9999),
+            ),
+            array(
+                'Another Event ' . rand(1000, 9999),
+                'Another Result ' . rand(1000, 9999),
+            ),
+        );
+    }
 
-        $callEmitter = new CallEmitter($reminderEmitter);
+    /**
+     * getEventPrototypeByString method should return result of ReminderEmitter
+     *
+     * @covers CallEmitter::getEventPrototypeByString
+     * @dataProvider getEventPrototypeByStringProvider
+     * @param string $string
+     * @param string $result
+     */
+    public function testGetEventPrototypeByString($string, $result)
+    {
+        $this->reminderEmitter
+            ->method('getEventPrototypeByString')
+            ->with($this->equalTo($string))
+            ->willReturn($result);
 
-        $eventStrings = $callEmitter->getEventStrings();
+        $actual = $this->callEmitter->getEventPrototypeByString($string);
+        $this->assertEquals($result, $actual);
+    }
 
-        $this->assertContains('reminder', $eventStrings);
+    /**
+     * Data provider for getEventStringsProvider
+     *
+     * @see CallEmitterTest::getEventStringsProvider
+     * @return array
+     */
+    public static function getEventStringsProvider()
+    {
+        return array(
+            array(
+                'Some Result ' . rand(1000, 9999),
+            ),
+            array(
+                'Another Result ' . rand(1000, 9999),
+            ),
+        );
+    }
+
+    /**
+     * getEventStrings method should return result of ReminderEmitter
+     *
+     * @covers CallEmitter::getEventStrings
+     * @dataProvider getEventStringsProvider
+     * @param string $result
+     */
+    public function testGetEventStrings($result)
+    {
+        $this->reminderEmitter
+            ->method('getEventStrings')
+            ->willReturn($result);
+
+        $actual = $this->callEmitter->getEventStrings();
+        $this->assertEquals($result, $actual);
+    }
+
+    /**
+     * Data provider for testReminder
+     *
+     * @see CallEmitterTest::testReminder
+     * @return array
+     */
+    public static function reminderProvider()
+    {
+        return array(
+            'CallBean' => array(
+                new \Call(),
+                new \User(),
+            ),
+            'MeetingBean' => array(
+                new \Meeting(),
+                new \User(),
+            ),
+        );
+    }
+    /**
+     * reminder method should call method of ReminderEmitter
+     *
+     * @covers CallEmitter::reminder
+     * @dataProvider reminderProvider
+     * @param \SugarBean $bean
+     * @param \User $user
+     */
+    public function testReminder(\SugarBean $bean, \User $user)
+    {
+        $this->reminderEmitter
+            ->expects($this->once())
+            ->method('reminder')
+            ->with($this->equalTo($bean), $this->equalTo($user));
+
+        $this->callEmitter->reminder($bean, $user);
     }
 }
