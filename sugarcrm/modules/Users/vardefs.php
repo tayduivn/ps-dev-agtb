@@ -725,7 +725,6 @@ $dictionary['User'] = array(
                 'enabled' => true,
                 'searchable' => true,
             ),
-           'required' => true,
         ),
         'email_addresses' => array(
             'name' => 'email_addresses',
