@@ -57,7 +57,7 @@ describe('accessibility', function() {
                 var tag = '<' + data + '/>',
                     $el = $(tag, {name: 'foo'}).on('click', $.noop);
                 app.accessibility.run($el, 'click');
-                expect($el.prop('tabindex')).toBe(-1);
+                expect($el.attr('tabindex')).toBe('-1');
             });
 
             it('should not add a tabindex attribute to an "' + data + '" element with an href attribute', function() {
@@ -68,16 +68,28 @@ describe('accessibility', function() {
             });
         });
 
+        it('should add a tabindex attribute of "0" to an "a" element with an role attribute of "button"', function() {
+            var $el = $('<a/>', {name: 'foo'}).attr('role', 'button').on('click', $.noop);
+            app.accessibility.run($el, 'click');
+            expect($el.attr('tabindex')).toBe('0');
+        });
+
+        it('should not modify tabindex attribute of an "a" element with an role attribute of "button"', function() {
+            var $el = $('<a/>', {name: 'foo', role: 'button'}).attr('tabindex', -1).on('click', $.noop);
+            app.accessibility.run($el, 'click');
+            expect($el.attr('tabindex')).toBe('-1');
+        });
+
         it('should add a tabindex attribute to a non-compliant element without a tabindex', function() {
             var $el = $('<foo/>', {name: 'foo'}).on('click', $.noop);
             app.accessibility.run($el, 'click');
-            expect($el.prop('tabindex')).toBe(-1);
+            expect($el.attr('tabindex')).toBe('-1');
         });
 
         it('should not add a tabindex attribute to an element with a tabindex', function() {
             var $el = $('<foo/>', {name: 'foo'}).attr('tabindex', 0).on('click', $.noop);
             app.accessibility.run($el, 'click');
-            expect($el.attr('tabindex')).not.toBe(-1);
+            expect($el.attr('tabindex')).not.toBe('-1');
         });
 
         it('should not add a tabindex attribute to an element without any click events', function() {

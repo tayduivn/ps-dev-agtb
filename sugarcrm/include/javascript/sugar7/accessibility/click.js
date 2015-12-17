@@ -102,6 +102,9 @@
                     // inherently focusable
                     return true;
                 case 'a':
+                    // inherently focusable when an href attribute is present
+                    // or role is button
+                    return !!($el.attr('href')) || $el.attr('role') === 'button';
                 case 'area':
                     // inherently focusable when an href attribute is present
                     return !!($el.attr('href'));
@@ -120,11 +123,22 @@
          * @private
          */
         _makeElementCompliant: function($el) {
-            var tag = app.accessibility.getElementTag($el);
+            var role,
+                tagName,
+                tagPretty;
+
+            role = $el.attr('role');
+            tagName = $el.prop('tagName').toLowerCase();
+            tagPretty = app.accessibility.getElementTag($el);
+
             if (this._isElementCompliant($el)) {
-                app.logger.debug('Found ' + tag + ' to be compliant');
+                app.logger.debug('Found ' + tagPretty + ' to be compliant');
+
+                if (tagName === 'a' && role === 'button' && !$el[0].hasAttribute('tabindex')) {
+                    $el.attr('tabindex', 0);
+                }
             } else {
-                app.logger.debug('Made ' + tag + ' compliant');
+                app.logger.debug('Made ' + tagPretty + ' compliant');
                 $el.attr('tabindex', -1);
             }
         }
