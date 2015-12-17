@@ -9,8 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+namespace Sugarcrm\SugarcrmTests\tests\modules\CarrierEmail;
+
 require_once 'modules/CarrierEmail/Carrier.php';
 require_once 'modules/CarrierEmail/Transport.php';
+
+use CarrierEmailCarrier;
 
 /**
  * Test cases for CarrierEmailCarrier.
@@ -32,15 +37,7 @@ class CarrierEmailCarrierTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
-    /**
-     * Test that getTransport() returns Transport for CarrierEmail and nothing else.
+     * Test that getTransport() returns current object.
      */
     public function testGetTransport()
     {
@@ -58,5 +55,13 @@ class CarrierEmailCarrierTest extends \Sugar_PHPUnit_Framework_TestCase
             'html' => '',
         );
         $this->assertEquals($signature, $this->carrier->getMessageSignature());
+    }
+
+    /**
+     * Test that getAddressType() returns current object.
+     */
+    public function testGetAddressType()
+    {
+        $this->assertInstanceOf('Sugarcrm\Sugarcrm\Notification\Carrier\AddressType\Email', $this->carrier->getAddressType());
     }
 }
