@@ -548,7 +548,8 @@ class PMSEUserAssignmentHandler
                 }
             } else {
                 $teamBean = $this->retrieveBean('Teams', $teamId);
-                $membersList = $teamBean->get_team_members(true, $filter);
+                //$membersList = $teamBean->get_team_members(true, $filter);
+                $membersList = $this->getTeamMembers($teamBean, $filter);
                 usort($membersList, function ($a, $b) {
                     return strcmp($a->full_name, $b->full_name);
                 });
@@ -557,10 +558,7 @@ class PMSEUserAssignmentHandler
         if (!empty($membersList)) {
             foreach ($membersList as $member) {
                 if (!in_array($member->user_id, $reassignedUsers)) {
-                    $user = $this->retrieveBean('Users', $member->id);
-                    if (!empty($user)) {
-                        $assignableUsers[] = $user;
-                    }
+                    $assignableUsers[] = $member;
                 }
             }
         }
@@ -665,6 +663,79 @@ class PMSEUserAssignmentHandler
             }
         }
         return $supervisor;
+    }
+
+    private function getTeamMembers($teamBean, $args)
+    {
+        // Set up the defaults
+        $options['limit'] = 20;
+        $options['offset'] = 0;
+        $options['add_deleted'] = true;
+
+        if (!empty($args['max_num'])) {
+            $options['limit'] = (int) $args['max_num'];
+        }
+
+        if (!empty($args['deleted'])) {
+            $options['add_deleted'] = false;
+        }
+
+        if (!empty($args['offset'])) {
+            if ($args['offset'] == 'end') {
+                $options['offset'] = 'end';
+            } else {
+                $options['offset'] = (int) $args['offset'];
+            }
+        }
+
+        // Get the list of members
+        $membersBean = BeanFactory::getBean('TeamMemberships');
+
+        $fields = array(
+            'user_id'
+        );
+
+        $q = new SugarQuery();
+        $q->from($membersBean, array('add_deleted' => true));
+        $q->distinct(false);
+
+        $q->joinTable('users', array('alias' => 'users', 'joinType' => 'INNER', 'linkingTable' => true))
+            ->on()
+            ->equalsField('users.id', 'user_id')
+            ->equals('users.deleted', 0);
+
+        $fields[] = array('users.first_name', 'first_name');
+        $fields[] = array('users.last_name', 'last_name');
+        $fields[] = array('users.status', 'status');
+
+        $q->where()
+            ->equals('team_id', $teamBean->id)
+            ->equals('explicit_assign', 1)
+            ->notEquals('users.status', 'Inactive');
+
+        $q->where()
+            ->queryOr()
+            ->starts('users.first_name', $args['filter'] . '%')
+            ->starts('users.last_name', $args['filter'] . '%');
+
+        $q->select($fields);
+        
+        $q->limit($options['limit'] + 1);
+        $q->offset($options['offset']);
+
+        $member_list = $q->execute();
+
+        $user_list = Array();
+
+        foreach($member_list as $current_member)
+        {
+            $user = BeanFactory::getBean('Users', $current_member['user_id']);
+            if($user->status == 'Active'){
+                $user_list[] = $user;
+            }
+        }
+
+        return $user_list;
     }
 }
 

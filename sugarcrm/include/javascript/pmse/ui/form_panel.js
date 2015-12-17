@@ -2000,6 +2000,7 @@ var FormPanelFriendlyDropdown = function (settings) {
     this._searchDelay = null;
     this._searchMore = null;
     this._searchMoreList = null;
+    this._pageSize = null;
     FormPanelFriendlyDropdown.prototype.init.call(this, settings);
 };
 
@@ -2014,10 +2015,13 @@ FormPanelFriendlyDropdown.prototype.init = function (settings) {
         searchLabel: "text",
         searchValue: "value",
         searchDelay: 1500,
-        searchMore: false
+        searchMore: false,
+        pageSize: 5
     };
 
     $.extend(true, defaults, settings);
+
+    this._pageSize = typeof defaults.pageSize === 'number' && defaults.pageSize >= 1 ? Math.floor(defaults.pageSize) : 0;
 
     this.setPlaceholder(defaults.placeholder)
         .setSearchDelay(defaults.searchDelay)
@@ -2097,6 +2101,15 @@ FormPanelFriendlyDropdown.prototype.setSearchLabel = function(label) {
     return this;
 };
 
+FormPanelFriendlyDropdown.prototype._resizeListSize = function () {
+    var list = this._htmlControl[0].data("select2").dropdown,
+        listItemHeight;
+    list = $(list).find('ul[role=listbox]');
+    listItemHeight = list.find('li').eq(0).outerHeight();
+    list.get(0).style.maxHeight = (listItemHeight * this._pageSize) + 'px';
+    return this;
+};
+
 FormPanelFriendlyDropdown.prototype.setSearchURL = function(url) {
     var delayToUse, that = this;
 
@@ -2113,7 +2126,6 @@ FormPanelFriendlyDropdown.prototype.setSearchURL = function(url) {
 
     this._searchFunction = _.debounce(function(queryObject) {
         var proxy = new SugarProxy(),
-            termRegExp = /\{TERM\}/g,
             result = {
                 more: false
             }, term = jQuery.trim(queryObject.term),
@@ -2126,24 +2138,29 @@ FormPanelFriendlyDropdown.prototype.setSearchURL = function(url) {
                 }
             }, options = that._options.asArray();
 
-        options.forEach(function(item, index, arr) {
-            if (!term || queryObject.matcher(term, item[that._labelField])) {
-                finalData.push({
-                    id: item[that._valueField],
-                    text: item[that._labelField]
-                });
-            }
-        });
+        if (queryObject.page == 1) {
+            options.forEach(function(item, index, arr) {
+                if (!term || queryObject.matcher(term, item[that._labelField])) {
+                    finalData.push({
+                        id: item[that._valueField],
+                        text: item[that._labelField]
+                    });
+                }
+            });
+        }
 
         if (term && that._searchURL) {
-            proxy.url = this._searchURL.replace(termRegExp, queryObject.term);
+            proxy.url = this._searchURL.replace(/\{%TERM%\}/g, queryObject.term)
+                .replace(/\{%OFFSET%\}/g, (queryObject.page - 1) * that._pageSize);
+
+            if (that._pageSize > 0) {
+                proxy.url = proxy.url.replace(/\{%PAGESIZE%\}/g, that._pageSize);
+            }
 
             proxy.getData(null, {
                 success: function (data) {
-                    if (!data.success) {
-                        throw new Error("FormPanelFriendlyDropdown's search function: Error.");
-                    }
-                    data = data.result;
+                    result.more = data.next_offset >= 0 ? true : false;
+                    data = data.records;
                     data.forEach(function (item) {
                         finalData.push({
                             id: getText(item, that._searchValue),
@@ -2153,6 +2170,7 @@ FormPanelFriendlyDropdown.prototype.setSearchURL = function(url) {
 
                     result.results = finalData;
                     queryObject.callback(result);
+                    that._resizeListSize();
                 },
                 error: function () {
                     console.log("failure", arguments);
