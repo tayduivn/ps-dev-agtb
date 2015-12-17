@@ -20,9 +20,9 @@
            data-toggle="dropdown" href="javascript:void(0);"
            data-placement="bottom"
            rel="tooltip"
-           title="{{str 'LBL_LISTVIEW_ACTIONS' module}}">
-            <span class="fa {{caretIcon}}"></span>
-        </a>
+           role="button" tabindex="{{tabIndex}}" aria-label="{{str 'LBL_LISTVIEW_ACTIONS' module}}"
+           aria-haspopup="true" aria-expanded="false"
+           title="{{str 'LBL_LISTVIEW_ACTIONS' module}}"><i class="fa {{caretIcon}}"></i></a>
         <ul data-menu="dropdown" class="dropdown-menu" role="menu"></ul>
     {{/if}}
 {{/if}}

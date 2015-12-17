@@ -277,8 +277,9 @@
             index = $properties.index($property);
 
         if (property === 'primary_address') {
-            $properties.removeClass('active');
+            $properties.removeClass('active').attr('aria-pressed', false);
         }
+        $property.attr('aria-pressed', !$property.hasClass('active'));
 
         this._toggleExistingAddressPropertyInModel(index, property);
     },

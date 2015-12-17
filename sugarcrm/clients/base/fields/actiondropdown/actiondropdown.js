@@ -44,7 +44,9 @@
     extendsFrom: 'FieldsetField',
 
     events: {
-        'click [data-toggle=dropdown]' : 'renderDropdown'
+        'click [data-toggle=dropdown]' : 'renderDropdown',
+        'shown.bs.dropdown': '_toggleAria',
+        'hidden.bs.dropdown': '_toggleAria'
     },
     plugins: ['Tooltip'],
 
@@ -95,6 +97,13 @@
          * This field doesn't support `showNoData`.
          */
         this.showNoData = false;
+
+        /**
+         * @inheritdoc
+         *
+         * This field's user action is enabled.
+         */
+        this.tabIndex = 0;
 
         this._super('initialize', [options]);
 
@@ -213,6 +222,17 @@
             }
             field.render();
         }, this);
+    },
+
+    /**
+     * Sets a button accessibility class 'aria-expanded' to true or false
+     * depending on if the dropdown menu is open or closed.
+     *
+     * @private
+     */
+    _toggleAria: function() {
+        var $button = this.$(this.actionDropDownTag);
+        $button.attr('aria-expanded', this.$el.hasClass('open'));
     },
 
     /**
@@ -343,7 +363,11 @@
             }
             return false;
         });
-        this.$('.' + this.caretIcon).closest('a').toggleClass('disabled', !caretEnabled);
+        this.$('.' + this.caretIcon)
+            .closest('a')
+                .toggleClass('disabled', !caretEnabled)
+                .attr('aria-haspopup', caretEnabled)
+                .attr('tabindex', caretEnabled ? 0 : -1);
     },
 
     /**
@@ -352,7 +376,11 @@
     setDisabled: function(disable) {
         this._super('setDisabled', [disable]);
         disable = _.isUndefined(disable) ? true : disable;
-        this.$(this.actionDropDownTag).toggleClass('disabled', disable);
+        this.tabIndex = disable ? -1 : 0;
+        this.$(this.actionDropDownTag)
+            .toggleClass('disabled', disable)
+            .attr('aria-haspopup', !disable)
+            .attr('tabindex', this.tabIndex);
     },
 
     /**

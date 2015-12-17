@@ -91,16 +91,16 @@ describe("Login View", function() {
         });
 
         //Mozilla Firefox
-        it("should deem Firefox 37 as an unsupported browser", function() {
+        it("should deem Firefox 40 as an unsupported browser", function () {
             $.browser = {
-                'version': '37',
+                'version': '40',
                 'mozilla': true
             };
             expect(view._isSupportedBrowser()).toBeFalsy();
         });
-        it("should deem Firefox 38 as a supported browser", function() {
+        it("should deem Firefox 41 as a supported browser", function () {
             $.browser = {
-                'version': '38',
+                'version': '41',
                 'mozilla': true
             };
             expect(view._isSupportedBrowser()).toBeTruthy();
@@ -139,9 +139,9 @@ describe("Login View", function() {
             };
             expect(view._isSupportedBrowser()).toBeFalsy();
         });
-        it("should deem Chrome 43 as a supported browser", function() {
+        it("should deem Chrome 47 as a supported browser", function () {
             $.browser = {
-                'version': '43',
+                'version': '537.36',
                 'chrome': true,
                 'webkit': true
             };

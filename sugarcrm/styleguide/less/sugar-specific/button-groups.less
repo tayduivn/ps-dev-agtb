@@ -49,10 +49,12 @@
   }
   // On hover/focus/active, bring the proper btn to front
   .btn:hover,
-  .btn:focus,
   .btn:active,
   .btn.active {
     z-index: 0;
+  }
+  .btn:focus {
+    z-index: 1;
   }
   // On active and open, don't show outline
   .dropdown-toggle:active,

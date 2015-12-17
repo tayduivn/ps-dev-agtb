@@ -258,10 +258,19 @@
      * Additional logic on switch visibility event.
      */
     visibilitySwitcher: function(event) {
+        var activeVisibility;
         this.settings.set({
             display_manager: this.isDisplayManager(),
             show_target_quota: (this.isDisplayManager() && !this.isTopLevelManager)
         });
+        if (!this.isManager) {
+            return;
+        }
+        activeVisibility = this.getVisibility();
+        this.$el.find('[data-action=visibility-switcher]')
+            .attr('aria-pressed', function() {
+                return $(this).val() === activeVisibility;
+            });
     },
 
     /**

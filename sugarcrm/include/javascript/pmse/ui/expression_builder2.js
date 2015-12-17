@@ -1500,7 +1500,9 @@ ExpressionControl.prototype._createModulePanel = function () {
                                     fields: ["id", "full_name"],
                                     filterOptions: null
                                 };
-                                newFieldSettings.searchURL = 'pmse_Project/CrmData/users?filter={TERM}';
+                                newFieldSettings.searchValue = PMSE_USER_SEARCH.value;
+                                newFieldSettings.searchLabel = PMSE_USER_SEARCH.text;
+                                newFieldSettings.searchURL = PMSE_USER_SEARCH.url;
                             }
                             operatorField = form.getItem("operator");
 
@@ -1741,6 +1743,8 @@ ExpressionControl.prototype._createUserPanel = function () {
                     label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_VALUE"),
                     width: "35%",
                     required: true,
+                    searchValue: PMSE_USER_SEARCH.value,
+                    searchLabel: PMSE_USER_SEARCH.text,
                     dependencyHandler: function(dependantField, field, value) {
                         var condition = value.split("|")[0];
                         dependantField.setSearchURL(null)
@@ -1763,7 +1767,7 @@ ExpressionControl.prototype._createUserPanel = function () {
                                 break;
                             case 'USER_IDENTITY':
                                 dependantField.clearOptions()
-                                    .setSearchURL('pmse_Project/CrmData/users?filter={TERM}')
+                                    .setSearchURL(PMSE_USER_SEARCH.url)
                                     .enable()
                                     .enableSearchMore({
                                         module: "Users",

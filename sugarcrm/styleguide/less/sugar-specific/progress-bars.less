@@ -15,6 +15,13 @@
   height: 8px;
   .border-radius(4px);
   background-color: @blue;
+  b {
+    color: @gray;
+    position: absolute;
+    left: 50%;
+    top: 8px;
+    font-weight: normal;
+  }
 }
 
 .progress {
@@ -46,17 +53,17 @@
   background: fade(@black, 90%);
 }
 
-.progress-success .bar, 
+.progress-success .bar,
 .bar-success .bar,  {
   background: @successBackground;
 }
 
-.progress-info .bar, 
+.progress-info .bar,
 .bar-info .bar,  {
   background: @infoBackground;
 }
 
-.progress-danger .bar, 
+.progress-danger .bar,
 .bar-danger .bar,  {
   background: @errorBackground;
 }

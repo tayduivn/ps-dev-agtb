@@ -58,6 +58,7 @@
         this.listenTo(this.layout, "filter:select:filter", this.handleSelect);
         this.listenTo(this.layout, "filter:change:module", this.handleModuleChange);
         this.listenTo(this.layout, "filter:render:filter", this._renderHtml);
+        this.listenTo(this.layout, 'filter:create:close', this.formatSelection);
     },
 
     /**
@@ -241,7 +242,10 @@
      * @return {string}
      */
     formatSelection: function(item) {
-        var ctx = {}, safeString;
+        var ctx = {},
+            safeString,
+            a11yLabel = app.lang.get('LBL_FILTER_CREATE_FILTER'),
+            a11yTabindex = 0;
 
         //Don't remove this line. We want to update the selected filter name but don't want to change to the filter
         //name displayed in the dropdown
@@ -255,8 +259,24 @@
 
         //Escape string to prevent XSS injection
         safeString = Handlebars.Utils.escapeExpression(item.text);
+        if (item.id !== 'all_records') {
+            if (this.isFilterEditable(item.id)) {
+                a11yTabindex = 0;
+                a11yLabel = app.lang.get('LBL_FILTER_EDIT_FILTER') + ' ' + safeString;
+            } else {
+                a11yTabindex = -1;
+                a11yLabel = safeString + ' ' + app.lang.get('LBL_FILTER');
+            }
+        } else {
+            a11yTabindex = this.isFilterEditable(item.id) ? 0 : -1;
+        }
+
         // Update the text for the selected filter.
         this.$('.choice-filter-label').html(safeString);
+        this.$('.choice-filter')
+            .attr('aria-label', a11yLabel);
+        this.$('.choice-filter')
+            .attr('tabindex', a11yTabindex);
 
         if (item.id !== 'all_records') {
             this.$('.choice-filter-close').show();
@@ -322,9 +342,9 @@
      */
     toggleFilterCursor: function(editable) {
         if (editable) {
-            this.$('.choice-filter').css("cursor", "pointer").addClass('choice-filter-clickable');
+            this.$('.choice-filter').css("cursor", "pointer").addClass('choice-filter-clickable').attr('tabindex', 0);
         } else {
-            this.$('.choice-filter').css("cursor", "not-allowed").removeClass('choice-filter-clickable');
+            this.$('.choice-filter').css("cursor", "not-allowed").removeClass('choice-filter-clickable').attr('tabindex', -1);
         }
     },
 
@@ -358,19 +378,27 @@
      */
     handleEditFilter: function() {
         var filterId = this.filterNode.val(),
-            filterModel;
+            filterModel,
+            a11yTabindex = 0;
 
         if (filterId === 'all_records') {
             // Figure out if we have an edit state. This would mean user was editing the filter so we want him to retrieve
             // the filter form in the state he left it.
             this.layout.trigger("filter:select:filter", 'create');
+            a11yTabindex = 0;
         } else {
             filterModel = this.layout.filters.collection.get(filterId);
+            a11yTabindex = -1;
         }
 
         if (filterModel && filterModel.get("editable") !== false) {
             this.layout.trigger("filter:create:open", filterModel);
+            a11yTabindex = 0;
         }
+
+        this.$('.choice-filter')
+            .attr('aria-label', app.lang.get('LBL_FILTER_EDIT_FILTER'))
+            .attr('tabindex', a11yTabindex);
     },
 
     /**

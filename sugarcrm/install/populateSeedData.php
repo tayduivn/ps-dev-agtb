@@ -76,7 +76,9 @@ $large_scale_test = empty($sugar_config['large_scale_test']) ? false : $sugar_co
 
 $seed_user = new User();
 $user_demo_data = new UserDemoData($seed_user, $large_scale_test);
+installLog("DemoData: Creating Users");
 $user_demo_data->create_demo_data();
+installLog("DemoData: Done Creating Users");
 $number_contacts = 200;
 $number_companies = 50;
 $number_leads = 200;
@@ -91,9 +93,11 @@ if($large_scale_test) {
 	$number_leads = 100000;
 }
 
+installLog("DemoData: Teams");
 $seed_team = new Team();
 $team_demo_data = new TeamDemoData($seed_team, $large_scale_test);
 $team_demo_data->create_demo_data();
+installLog("DemoData: Done Teams");
 
 $possible_duration_hours_arr = array( 0, 1, 2, 3);
 $possible_duration_minutes_arr = array('00' => '00','15' => '15', '30' => '30', '45' => '45');
@@ -122,12 +126,15 @@ $replacements[] = '';
 $replacements[] = '';
 
 //create timeperiods - pro only
+
 require_once('modules/Forecasts/ForecastDirectReports.php');
 require_once('modules/Forecasts/Common.php');
 require_once('modules/TimePeriods/TimePeriodsSeedData.php');
 
+installLog("DemoData: Time Periods");
 $timedate = TimeDate::getInstance();
 $timeperiods = TimePeriodsSeedData::populateSeedData();
+installLog("DemoData: Done Time Periods");
 
 echo '.';
 
@@ -139,6 +146,7 @@ echo '.';
 // the name of de-duplication during account population.
 $accounts_companies_list = $sugar_demodata['company_name_array'];
 
+installLog("DemoData: Companies + Related Calls, Notes Meetings and Bugs");
 for($i = 0; $i < $number_companies; $i++) {
 
     if (count($accounts_companies_list) > 0) {
@@ -296,6 +304,7 @@ for($i = 0; $i < $number_companies; $i++) {
         echo '.';
     }
 }
+installLog("DemoData: Done Companies + Related Calls, Notes Meetings and Bugs");
 
 unset($accounts_companies_list);
 
@@ -310,7 +319,7 @@ $lead_status_max = count($app_list_strings['lead_status_dom']) - 1;
 $title_max = count($titles) - 1;
 ///////////////////////////////////////////////////////////////////////////////
 ////	DEMO CONTACTS
-
+installLog("DemoData: Contacts");
 $contacts = array();
 //BEGIN SUGARCRM flav=ent ONLY
 if (file_exists("install/demoData.{$current_language}.php")) {
@@ -451,6 +460,8 @@ for($i=0; $i<1000; $i++)
         echo '.';
     }
 }
+installLog("DemoData: Done Contacts");
+installLog("DemoData: Leads");
 
 for($i=0; $i<$number_leads; $i++)
 {
@@ -549,8 +560,10 @@ for($i=0; $i<$number_leads; $i++)
         echo '.';
     }
 }
+installLog("DemoData: Done Leads");
 
 
+installLog("DemoData: Products Metadata");
 foreach($sugar_demodata['manufacturer_seed_data_names'] as $v){
 	$manufacturer = new Manufacturer;
 	$manufacturer->name = $v;
@@ -667,9 +680,10 @@ foreach($sugar_demodata['producttemplate_seed_data'] as $v){
 	$template->qty_in_stock = $v['qty_in_stock'];
 	$template->save();
 }
-
+installLog("DemoData: Done Products Metadata");
 echo '.';
 
+installLog("DemoData: Contracts");
 include_once('modules/TeamNotices/DefaultNotices.php');
 ///
 /// SEED DATA FOR CONTRACTS
@@ -692,12 +706,14 @@ foreach($sugar_demodata['contract_seed_data'] as $v){
 	$contract->description = $v['description'];
 	$contract->save();
 }
+installLog("DemoData: Done Contracts");
 
 echo '.';
 
 ///
 /// SEED DATA FOR KNOWLEDGE BASE
 ///
+installLog("DemoData: KB");
 $categoryIds = array();
 foreach ($sugar_demodata['kbcategories_array'] as $name => $v) {
     $kbCategory = BeanFactory::newBean('Categories');
@@ -775,9 +791,11 @@ foreach($sugar_demodata['kbdocuments_seed_data'] as $v){
     }
 }
 
+installLog("DemoData: Done KB");
+
 echo '.';
 
-
+installLog("DemoData: Email Templates");
 ///
 /// SEED DATA FOR EMAIL TEMPLATES
 ///
@@ -797,6 +815,8 @@ if(!empty($sugar_demodata['emailtemplates_seed_data'])) {
 	}
 }
 
+installLog("DemoData: Done Email Templates");
+
 echo '.';
 
 //BEGIN SUGARCRM flav=ent ONLY
@@ -814,9 +834,12 @@ $portalConfig->handleSave();
 $GLOBALS['mod_strings']  = $installerStrings;
 //END SUGARCRM flav=ent ONLY
 
+    installLog("DemoData: Products");
     include('install/seed_data/products_SeedData.php');
+    installLog("DemoData: Quotes");
     include('install/seed_data/quotes_SeedData.php');
 
+    installLog("DemoData: Opportunities");
     require_once('modules/Opportunities/OpportunitiesSeedData.php');
     $opportunity_ids = OpportunitiesSeedData::populateSeedData($number_companies*3, $app_list_strings, $accounts, $sugar_demodata['users']);
 
@@ -828,15 +851,22 @@ $GLOBALS['mod_strings']  = $installerStrings;
         $contact->set_relationship('opportunities_contacts', array('contact_id'=>$contact->id ,'opportunity_id'=> $opportunity_ids[$opportunity_key], 'contact_role'=>$app_list_strings['opportunity_relationship_type_default_key']), false);
     }
 
+    installLog("DemoData: Done Opportunities");
+
     echo '.';
 
+    installLog("DemoData: Forecasts");
     require_once('modules/Forecasts/ForecastsSeedData.php');
     ForecastsSeedData::populateSeedData($timeperiods);
+
+    installLog("DemoData: Done Forecasts");
 
     echo '.';
 
     //BEGIN SUGARCRM flav=ent ONLY
+    installLog("DemoData: Ent Reports");
     include('install/seed_data/entreport_SeedData.php');
+    installLog("DemoData: Done Ent Reports");
     //END SUGARCRM flav=ent ONLY
 
 //This is set to yes at the begininning of this file

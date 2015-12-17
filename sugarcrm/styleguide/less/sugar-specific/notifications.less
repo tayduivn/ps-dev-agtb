@@ -1,23 +1,24 @@
 /* NOTIFICATIONS
   ----------------*/
-
 .navbar ul.nav.megamenu li.dropdown.notification-list {
-  .btn-group {
-    padding: 8px;
-  }
-  .btn.dropdown-toggle {
-	.border-radius(3px);
-	text-align: center;
-	min-width: 20px;
-	min-height: 28px;
-	.box-shadow(none);
-    padding: 4px 6px;
-	&:active {
+  .dropdown-toggle {
+    .border-radius(3px);
+    text-align: center;
+    min-width: 20px;
+    min-height: 28px;
+    .box-shadow(none);
+    // padding: 4px 6px;
+    &:not(.btn-danger)  {
+      background: darken(@navbarBackground, 5%);
+    }
+    &:active {
 	  background: none;
 	}
   }
-  div.btn-group.open {
-    padding-left: 9px;
+  // .btn-group {
+  //   padding: 4px 8px;
+  // }
+  .btn-group.open {
 	.dropdown-menu {
 	  width: 400px;
 	  ul {

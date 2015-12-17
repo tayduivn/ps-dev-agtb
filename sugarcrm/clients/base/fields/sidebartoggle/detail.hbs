@@ -10,10 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<button class="btn btn-invisible sidebar-toggle"
+<button type="button" class="btn btn-invisible sidebar-toggle"
    rel="tooltip"
    title="{{str 'LBL_DASHBOARD_TOGGLE' module}}"
    data-placement="{{dataPlacement}}"
-   track="click:togglesidebar">
-    <i class="fa {{#eq _state 'open'}}fa-angle-double-right{{else}}fa-angle-double-left{{/eq}}"></i>
+   track="click:togglesidebar" aria-label="{{ariaLabel}}">
+    <i class="fa {{iconClass}}"></i>
 </button>

@@ -236,6 +236,7 @@
             // Listeners on the checkAll/uncheckAll checkbox.
             this._bindAllModelChangeEvents();
             this.action_enabled = this.massCollection.length > 0;
+            this.tabIndex = this.action_enabled ? 0 : -1;
         } else {
             // Listeners for each record selection.
             this._bindModelChangeEvents();
@@ -320,7 +321,10 @@
      * to enable it.
      */
     setDropdownDisabled: function(disable) {
-        this.$(this.actionDropDownTag).toggleClass('disabled', disable);
+        this.$(this.actionDropDownTag)
+            .toggleClass('disabled', disable)
+            .attr('aria-haspopup', !disable)
+            .attr('tabindex', disable ? -1 : 0);
     },
 
     /**

@@ -14,7 +14,12 @@ var UITools = {
         this.index = this.index + 1;
         return this.index;
     }
+}, PMSE_USER_SEARCH = {
+    url: 'Users?filter[0][$and][0][status][$not_equals]=Inactive&filter[0][$and][1][$or][0][first_name][$starts]={%TERM%}&filter[0][$and][1][$or][1][last_name][$starts]={%TERM%}&fields=id,full_name&max_num={%PAGESIZE%}&offset={%OFFSET%}',
+    text:'full_name',
+    value: 'id'
 };
+
 var getRelativePosition = function (targetElement, relativeElement) {
     var e = $(targetElement).offset(),
         re = ($(relativeElement).get(0) instanceof Document) ? {top: 0, left: 0} : $(relativeElement).offset();
