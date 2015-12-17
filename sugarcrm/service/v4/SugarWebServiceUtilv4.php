@@ -635,4 +635,24 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	    return $results;
 
 	}
+
+    /**
+     * Takes in fields array and bean to check acl access against and returns filtered list of fields
+     * @param array $filterFields  list of fields to check acls
+     * @param SugarBean $seed bean containing the fields
+     * @return array $filterFields  returns array of filtered fields
+     */
+    public function checkFieldAccess($filterFields, $seed)
+    {
+        if (empty($filterFields) || empty($seed)) {
+            return $filterFields;
+        }
+        //filter out fields based on ACL Access
+        foreach ($filterFields as $fieldKey => $fieldToCheck) {
+            if (!$seed->ACLFieldAccess($fieldToCheck, 'read')) {
+                unset($filterFields[$fieldKey]);
+            }
+        }
+        return $filterFields;
+    }
 }
