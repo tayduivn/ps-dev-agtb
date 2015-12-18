@@ -212,7 +212,13 @@ class Tag extends Basic
             if (is_array($context) && isset($context['source']) && $context['source'] === 'search_engine') {
                 return true;
             }
+        } else if ($view === 'list' || $view === 'view') {
+            // for Filters we have 2 values for view - `list` for new tags and
+            // `view` for existing tags and we want Tags to be searchable and
+            // creatable when creating a new record for any module
+            return true;
         }
+
         return parent::ACLAccess($view, $context);
     }
 }

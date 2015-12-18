@@ -165,6 +165,8 @@
             }]
         };
 
+        // Tags should always be available because it's public
+        this.filterResults.module = 'Tags';
         this.filterResults.fetch({
             success: function(data) {
                 shortlist.results = self.parseRecords(data.models);
