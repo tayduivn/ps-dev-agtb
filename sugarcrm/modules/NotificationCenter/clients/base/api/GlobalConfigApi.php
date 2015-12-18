@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -16,7 +15,7 @@ use Sugarcrm\Sugarcrm\Notification\Config\Status;
 use Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry;
 use Sugarcrm\Sugarcrm\Notification\Carrier\ConfigurableInterface;
 
-require_once('include/api/SugarApi.php');
+require_once 'include/api/SugarApi.php';
 
 /**
  * API work with Subscription Registry and with Carriers Status get/put configuration.
