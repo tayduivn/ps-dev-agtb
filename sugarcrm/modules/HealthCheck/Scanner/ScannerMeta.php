@@ -331,7 +331,10 @@ class HealthCheckScannerMeta
             'report' => 'arraySessionUsage',
             'bucket' => self::CUSTOM,
         ),
-
+        435 => array(
+            'report' => 'deprecatedCodeSugarSession',
+            'bucket' => self::MANUAL,
+        ),
 
         // BUCKET F
         501 => array(

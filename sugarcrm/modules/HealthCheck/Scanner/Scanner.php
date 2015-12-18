@@ -277,6 +277,67 @@ class HealthCheckScanner
      */
     protected $upgrader = null;
 
+
+    /**
+     * Dirs that are moved to vendor
+     * @var array
+     */
+    protected $removed_directories = array(
+        'include/HTMLPurifier',
+        'include/HTTP_WebDAV_Server',
+        'include/Pear',
+        'include/Smarty',
+        'XTemplate',
+        'Zend',
+        'include/lessphp',
+        'log4php',
+        'include/nusoap',
+        'include/oauth2-php',
+        'include/pclzip',
+        'include/reCaptcha',
+        'include/tcpdf',
+        'include/ytree',
+        'include/SugarSearchEngine/Elastic/Elastica',
+    );
+    /**
+     * dirs or files that have been deleted
+     * @var array
+     */
+    protected $removed_files = array(
+        'include/Smarty/plugins/function.sugar_help.php',
+    );
+    
+    /**
+     * Specific files that should be excluded from SH include check
+     * @var array
+     */
+    protected $specificSugarFiles = array(
+        'include/Smarty/plugins/function.sugar_action_menu.php'
+    );
+    
+    protected $excludedScanDirectories = array(
+        'backup',
+        'tmp',
+        'temp',
+    );
+    protected $filesToFix = array();
+    
+    protected $specificSugarFilesToFix = array();
+    
+    protected $sessionUsages = array();
+
+    protected $deletedFilesReferenced = array();
+
+    /**
+     * regex'es for removed code
+     * @var array
+     */
+    protected $deprecatedCodePatterns = array(
+        '/[^\w]SugarSession[^\w]/i' => 'deprecatedCodeSugarSession' //report id
+    );
+
+    protected $filesWithDeprecatedCode = array();
+
     /**
      *
      * Ctor setup
@@ -830,54 +891,6 @@ class HealthCheckScanner
     }
 
     /**
-     * Dirs that are moved to vendor
-     * @var array
-     */
-    protected $removed_directories = array(
-        'include/HTMLPurifier',
-        'include/HTTP_WebDAV_Server',
-        'include/Pear',
-        'include/Smarty',
-        'XTemplate',
-        'Zend',
-        'include/lessphp',
-        'log4php',
-        'include/nusoap',
-        'include/oauth2-php',
-        'include/pclzip',
-        'include/reCaptcha',
-        'include/tcpdf',
-        'include/ytree',
-        'include/SugarSearchEngine/Elastic/Elastica',
-    );
-    /**
-     * dirs or files that have been deleted
-     * @var array
-     */
-    protected $removed_files = array(
-        'include/Smarty/plugins/function.sugar_help.php',
-    );
-
-    /**
-     * Specific files that should be excluded from SH include check
-     * @var array
-     */
-    protected $specificSugarFiles = array(
-        'include/Smarty/plugins/function.sugar_action_menu.php'
-    );
-
-    protected $excludedScanDirectories = array(
-        'backup',
-        'tmp',
-        'temp',
-    );
-    protected $filesToFix = array();
-
-    protected $specificSugarFilesToFix = array();
-
-    protected $sessionUsages = array();
-
-    /**
      * Dump Scanner issues to log and optional stdout
      */
     public function dumpMeta()
@@ -891,8 +904,6 @@ class HealthCheckScanner
         }
         $this->log('*** END HEALTHCHECK ISSUES ***');
     }
-
-    protected $deletedFilesReferenced = array();
 
     /**
      * Searching line number of value
@@ -931,6 +942,7 @@ class HealthCheckScanner
             $fileContents = file_get_contents($file);
             $this->scanFileForInvalidReferences($file, $fileContents);
             $this->scanFileForSessionArrayReferences($file, $fileContents);
+            $this->scanFileForDeprecatedCode($file, $fileContents);
         }
         //Now that we have catalogued all the bad files in custom, log them by category.
         $this->updateCustomDirScanStatus();
@@ -1036,6 +1048,19 @@ class HealthCheckScanner
         }
     }
 
+    /**
+     * Checks that we don't use classes deprecated/removed in sugar API
+     * @param string $file
+     * @param string $fileContents
+     */
+    protected function scanFileForDeprecatedCode($file, $fileContents)
+    {
+        foreach ($this->deprecatedCodePatterns as $pattern => $reportId) {
+            if (preg_match($pattern, $fileContents)) {
+                $this->filesWithDeprecatedCode[$reportId][] = $file;
+            }
+        }
+    }
 
     protected function updateCustomDirScanStatus() {
         if (!empty($this->filesToFix)) {
@@ -1068,6 +1093,9 @@ class HealthCheckScanner
                 $filesWithSession .= "'$file' using \$_SESSION with array function '$arrayFunctions'. " . PHP_EOL;
             }
             $this->updateStatus("arraySessionUsage", $filesWithSession);
+        }
+        foreach ($this->filesWithDeprecatedCode as $reportId => $files) {
+            $this->updateStatus($reportId, implode(PHP_EOL, $files));
         }
     }
 
