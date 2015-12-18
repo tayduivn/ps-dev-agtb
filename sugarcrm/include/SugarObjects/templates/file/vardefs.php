@@ -95,7 +95,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'name' => 'active_date',
     'vname' => 'LBL_DOC_ACTIVE_DATE',
     'type' => 'date',
-	'required'=>true,
     'importable' => 'required',
     'display_default' => 'now',
     'duplicate_on_record_copy' => 'always',

@@ -94,8 +94,12 @@ if($_REQUEST['category_name'] == 'All'){
 //WDong Bug 23195: Strings not localized in Role Management.
 echo getClassicModuleTitle($_REQUEST['category_name'],array($app_list_strings['moduleList'][$_REQUEST['category_name']]), false);
 echo $sugar_smarty->fetch('modules/ACLRoles/EditRole.tpl');
-require_once('modules/ACLFields/EditView.php');
-echo ACLFieldsEditView::getView($_REQUEST['category_name'],  $role->id);
+	if (!isset($dictionary[$_REQUEST['category_name']]['hide_fields_to_edit_role']) ||
+			$dictionary[$_REQUEST['category_name']]['hide_fields_to_edit_role'] === false
+	) {
+		require_once('modules/ACLFields/EditView.php');
+		echo ACLFieldsEditView::getView($_REQUEST['category_name'], $role->id);
+	}
 echo '</form>';
 }
 sugar_cleanup(true);

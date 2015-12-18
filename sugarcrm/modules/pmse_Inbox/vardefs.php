@@ -368,7 +368,7 @@ $dictionary['pmse_Inbox'] = array(
 ),
     'optimistic_locking' => true,
     'unified_search' => true,
-    'hidden_to_role_assignment' => true,
+    'hide_fields_to_edit_role' => true,
     // @TODO Fix the Default and Basic SugarObject templates so that Basic
     // implements Default. This would allow the application of various
     // implementations on Basic without forcing Default to have those so that

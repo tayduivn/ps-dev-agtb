@@ -3089,6 +3089,8 @@ class InboundEmail extends SugarBean {
             	$ret = $email->et->displayComposeEmail($email);
             	$ret['description'] = empty($email->description_html) ?  str_replace("\n", "\n<BR/>", $email->description) : $email->description_html;
 
+				include_once('include/workflow/alert_utils.php');
+
 				$reply = BeanFactory::getBean('Emails');
 				$reply->type				= 'out';
 				$reply->to_addrs			= $to[0]['email'];
@@ -3100,9 +3102,9 @@ class InboundEmail extends SugarBean {
 				$reply->reply_to_name		= $replyToName;
 				$reply->reply_to_addr		= $replyToAddr;
 				$reply->name				= $et->subject;
-				$reply->description			= $et->body . "<div><hr /></div>" .  $email->description;
+				$reply->description			= trim(parse_alert_template($c, $et->body)) . "<div><hr /></div>" .  $email->description;
 				if (!$et->text_only) {
-					$reply->description_html	= $et->body_html .  "<div><hr /></div>" . $email->description;
+					$reply->description_html = trim(parse_alert_template($c, $et->body_html)) .  "<div><hr /></div>" . $email->description;
 				}
 				$GLOBALS['log']->debug('saving and sending auto-reply email');
 				//$reply->save(); // don't save the actual email.

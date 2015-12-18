@@ -277,6 +277,9 @@ class Team extends SugarBean
 		if($this->id == $this->global_team) {
 			$msg = $GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'];
 			$GLOBALS['log']->fatal($msg);
+            if (isset($_SESSION['REASSIGN_TEAMS'])) {
+                unset($_SESSION['REASSIGN_TEAMS']);
+            }
 			die($msg);
 		}
 

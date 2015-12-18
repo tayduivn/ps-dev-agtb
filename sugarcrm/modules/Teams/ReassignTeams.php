@@ -41,14 +41,32 @@ if(isset($_REQUEST['team_id']) && isset($_REQUEST['teams'])) {
 $teams = array();
 $focus = BeanFactory::getBean('Teams');
 
-if(isset($_SESSION['REASSIGN_TEAMS'])) {
-  foreach($_SESSION['REASSIGN_TEAMS'] as $team_id) {
-  	 $focus->retrieve($team_id);
-  	 $teams[$team_id] = $focus->name;
-  }
-} else if(isset($_REQUEST['record'])) {
-  $focus->retrieve($_REQUEST['record']);
-  $teams[$focus->id] = $focus->name;	
+if (isset($_SESSION['REASSIGN_TEAMS'])) {
+    foreach ($_SESSION['REASSIGN_TEAMS'] as $team_id) {
+        $focus->retrieve($team_id);
+        if ($team_id == $focus->global_team) {
+            unset($_SESSION['REASSIGN_TEAMS']);
+            $error_message = $app_strings['LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'];
+            SugarApplication::appendErrorMessage($error_message);
+            header('Location: index.php?module=Teams&action=index');
+            return;
+        } else {
+            $teams[$team_id] = $focus->name;
+        }
+    }
+} else {
+    if (isset($_REQUEST['record'])) {
+        $focus->retrieve($_REQUEST['record']);
+        if ($focus->id == $focus->global_team) {
+            unset($_SESSION['REASSIGN_TEAMS']);
+            $error_message = $app_strings['LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'];
+            SugarApplication::appendErrorMessage($error_message);
+            header('Location: index.php?module=Teams&action=index');
+            return;
+        } else {
+            $teams[$focus->id] = $focus->name;
+        }
+    }
 }
 
 if(empty($teams) && !isset($error_message)) {

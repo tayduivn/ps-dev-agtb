@@ -107,7 +107,7 @@ class Bug33918Test extends Sugar_PHPUnit_Framework_TestCase
         
         $note = new Note();
         $note->description = "Unit Test";
-        $note->file_mime_type = 'messsage/rfc822';
+        $note->file_mime_type = 'message/rfc822';
         $note->subject = "Unit Test";
         $note->new_with_id = TRUE;
         $note->id = $noteID;
@@ -159,7 +159,7 @@ class Bug33918Test extends Sugar_PHPUnit_Framework_TestCase
         $parentID = uniqid();
         $note = new Note();
         $note->description = $message;
-        $note->file_mime_type = 'messsage/rfc822';
+        $note->file_mime_type = 'message/rfc822';
         $note->subject = "Unit Test";
         $note->new_with_id = TRUE;
         $note->id = $noteID;
@@ -224,7 +224,7 @@ CIA;
         $parentID = uniqid();
         $note = new Note();
         $note->description = $message;
-        $note->file_mime_type = 'messsage/rfc822';
+        $note->file_mime_type = 'message/rfc822';
         $note->subject = "Unit Test";
         $note->new_with_id = TRUE;
         $note->id = $noteID;

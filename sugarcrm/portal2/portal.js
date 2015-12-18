@@ -126,9 +126,10 @@
     var oHandleRenderError = app.error.handleRenderError;
     app.error.handleRenderError = function(component, method, additionalInfo) {
         function handlePortalRenderDenied(c) {
-            var title, message;
+            var title, module, message;
             title = app.lang.get('ERR_NO_VIEW_ACCESS_TITLE');
-            message = app.utils.formatString(app.lang.get('ERR_NO_VIEW_ACCESS_MSG'),[c.module]);
+            module = app.lang.getModuleName(c.module, {plural: true});
+            message = app.utils.formatString(app.lang.get('ERR_NO_VIEW_ACCESS_MSG'), [module]);
             // TODO: We can later create some special case handlers if we DO wish to alert warn,
             // but since we have recursive views that's usually going to be overbearing.
             app.logger.warn(title + ":\n" + message);

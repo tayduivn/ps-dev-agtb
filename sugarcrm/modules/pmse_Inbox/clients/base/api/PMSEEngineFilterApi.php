@@ -118,11 +118,14 @@ class PMSEEngineFilterApi extends FilterApi
      */
     public function filterListAllPA(ServiceBase $api, array $args, $acl = 'list')
     {
+        if ($acl == 'list' && !isset($args['view'])) {
+            $acl = 'dashlet';
+        }
+
         // Set the default visibility to a regular user
         if (empty($args['filter']['visibility'])) {
             $args['filter'][] = array('visibility' => 'regular_user');
         }
-
         return parent::filterList($api, $args, $acl);
     }
 
@@ -133,6 +136,10 @@ class PMSEEngineFilterApi extends FilterApi
     public function filterListSetup(ServiceBase $api, array $args, $acl = 'list')
     {
         $seed = BeanFactory::newBean('pmse_BpmFlow');
+
+        if (!$seed->ACLAccess($acl)) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . translate('LBL_MODULE_NAME', $args['module']));
+        }
 
         $options = $this->parseArguments($api, $args, $seed);
 
