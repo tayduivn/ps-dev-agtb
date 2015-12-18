@@ -51,6 +51,7 @@ nv.models.pie = function() {
       direction = 'ltr',
       color = function(d, i) { return nv.utils.defaultColor()(d, d.series); },
       fill = color,
+      textureFill = false,
       classes = function(d, i) { return 'nv-slice nv-series-' + d.series; },
       dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove');
 
@@ -105,6 +106,12 @@ nv.models.pie = function() {
 
       //------------------------------------------------------------
 
+      if (textureFill) {
+        var mask = nv.utils.createTexture(defsEnter, id, -availableWidth / 2, -availableHeight / 2);
+      }
+
+      //------------------------------------------------------------
+
       container
         .on('click', function(d, i) {
           dispatch.chartClick({
@@ -121,6 +128,9 @@ nv.models.pie = function() {
       slices.exit().remove();
 
       var ae = slices.enter().append('g')
+            .style('stroke', '#ffffff')
+            .style('stroke-width', 2)
+            .style('stroke-opacity', 0)
             .on('mouseover', function(d, i) {
               d3.select(this).classed('hover', true);
               var eo = buildEventObject(d3.event, d, i);
@@ -145,12 +155,19 @@ nv.models.pie = function() {
             });
 
           ae.append('path')
-              .style('stroke', '#ffffff')
-              .style('stroke-width', 2)
-              .style('stroke-opacity', 0)
+              .attr('class', 'nv-base')
               .each(function(d, i) {
                 this._current = d;
               });
+
+          if (textureFill) {
+            ae.append('path')
+                .attr('class', 'nv-texture')
+                .each(function(d, i) {
+                  this._current = d;
+                })
+                .style('mask', 'url(' + mask + ')');
+          }
 
           ae.append('g')
               .attr('transform', 'translate(0,0)')
@@ -179,11 +196,9 @@ nv.models.pie = function() {
           verticalShift = 0,
           verticalReduction = doLabels ? 5 : 0,
           horizontalShift = 0,
-          horizontalReduction = leaderLength + textOffset,
-          verticalDifferential = 0,
-          horizontalDifferential = 0;
+          horizontalReduction = leaderLength + textOffset;
 
-      slices.select('path').call(calcScalars, maxWidthRadius, maxHeightRadius);
+      slices.select('.nv-base').call(calcScalars, maxWidthRadius, maxHeightRadius);
 
       // Donut Hole Text
       holeWrap.call(holeFormat, hole ? [hole] : []);
@@ -224,6 +239,9 @@ nv.models.pie = function() {
         .attr('transform', 'translate(' + offsetHorizontal + ',' + offsetVertical + ')');
       holeWrap
         .attr('transform', 'translate(' + offsetHorizontal + ',' + offsetVertical + ')');
+      pieWrap.select(mask)
+        .attr('x', -pieRadius / 2)
+        .attr('y', -pieRadius / 2);
 
       var pieArc = d3.svg.arc()
             .innerRadius(donut ? pieRadius * donutRatio : 0)
@@ -249,10 +267,10 @@ nv.models.pie = function() {
       }
 
       slices
-        .classed('nv-active', function(d) { return d.data.active === 'active'; })
-        .classed('nv-inactive', function(d) { return d.data.active === 'inactive'; })
         .attr('class', function(d) { return classes(d.data, d.data.series); })
-        .attr('fill', function(d) { return fill(d.data, d.data.series); });
+        .attr('fill', function(d) { return fill(d.data, d.data.series); })
+        .classed('nv-active', function(d) { return d.data.active === 'active'; })
+        .classed('nv-inactive', function(d) { return d.data.active === 'inactive'; });
 
       // removed d3 transition in MACAROON-133 because
       // there is a "Maximum call stack size exceeded at Date.toString" error
@@ -262,11 +280,23 @@ nv.models.pie = function() {
       //   .attr('d', arc)
       //   .attrTween('d', arcTween);
 
-      slices.select('path')
+      slices.select('.nv-base')
         .attr('d', pieArc)
         .style('stroke-opacity', function(d) {
           return startAngle(d) === endAngle(d) ? 0 : 1;
         });
+
+      if (textureFill) {
+        slices.select('.nv-texture')
+          .attr('d', pieArc)
+          .style('stroke-opacity', function(d) {
+            return startAngle(d) === endAngle(d) ? 0 : 1;
+          })
+          .style('fill', function(d, i) {
+            var backColor = d3.select(this.parentNode).style('fill');
+            return nv.utils.getTextContrast(backColor, i);
+          });
+      }
 
       if (showLabels) {
         // This does the normal label
@@ -484,7 +514,7 @@ nv.models.pie = function() {
         var widthRadius = [maxWidthRadius],
             heightRadius = [maxHeightRadius + leaderLength];
 
-        slices.select('path').each(function(d, i) {
+        slices.select('.nv-base').each(function(d, i) {
           if (!labelOpacity(d)) {
             return;
           }
@@ -500,9 +530,6 @@ nv.models.pie = function() {
           widthRadius.push(rW);
           heightRadius.push(rH);
         });
-
-        verticalDifferential = d3.max(heightRadius) + d3.min(heightRadius);
-        horizontalDifferential = d3.max(widthRadius) + d3.min(widthRadius);
 
         var radius = d3.min(widthRadius.concat(heightRadius).concat([]), function(d) { return Math.abs(d); });
 
@@ -798,6 +825,12 @@ nv.models.pie = function() {
       return fixedRadius;
     }
     fixedRadius = d3.functor(_);
+    return chart;
+  };
+
+  chart.textureFill = function(_) {
+    if (!arguments.length) return textureFill;
+    textureFill = _;
     return chart;
   };
 

@@ -94,65 +94,70 @@
 <script src="../../../include/javascript/nvd3/src/models/pieChart.js"></script>
 
 <script>
-    var jsonFile = window.location.href.match(/(\?|&)file=([a-z_]*)(&|$)/),
-        selectedFile = $('#chartData');
-    if (jsonFile) {
-      selectedFile.val([jsonFile[2]]);
+$(function() {
+
+    var file = window.location.href.match(/(\?|&)file=([a-z_]*)(&|$)/),
+        $file = $('#chartData');
+    if (file) {
+      $file.val([file[2]]);
     }
+    file = $file.val();
+
     var color = window.location.href.match(/(\?|&)color=([a-z]+)(&|$)/),
-        selectedColor = $('input[type="radio"][name="color"]'),
+        $color = $('input[type="radio"][name="color"]'),
         colorLength = 0;
     if (color) {
-      selectedColor.val([color[2]]);
+      $color.val([color[2]]);
     }
+    color = $color.filter(':checked').val() || 'default';
+
     var showValues = window.location.href.match(/(\?|&)show_values=([0-9a-z]+)(&|$)/),
-        selectedShowValues = $('#showValues');
+        $showValues = $('#showValues');
     if (showValues) {
-      selectedShowValues.val(showValues[2]);
+      $showValues.val(showValues[2]);
     }
+    showValues = parseInt($showValues.val(), 10) ? true : false;
+
     var showHole = window.location.href.match(/(\?|&)show_hole=([0-9a-z]+)(&|$)/),
-        selectedShowHole = $('#showHole');
+        $showHole = $('#showHole');
     if (showHole) {
-      selectedShowHole.val(showHole[2]);
+      $showHole.val(showHole[2]);
     }
+    showHole = parseInt($showHole.val(), 10) ? true : false;
+
     var direction = window.location.href.match(/(\?|&)direction=([0-9a-z]+)(&|$)/),
-        selectedDirection = $('input[type="radio"][name="direction"]');
+        $direction = $('input[type="radio"][name="direction"]');
     if (direction) {
-      selectedDirection.val([direction[2]]);
+      $direction.val([direction[2]]);
     }
-
-    jsonFile = selectedFile.val();
-    color = selectedColor.filter(':checked').val() || 'default',
-    showValues = parseInt(selectedShowValues.val(), 10) ? true : false;
-    showHole = parseInt(selectedShowHole.val(), 10) ? true : false;
-    direction = selectedDirection.filter(':checked').val() || 'ltr';
+    direction = $direction.filter(':checked').val() || 'ltr';
     $('html').css('direction', direction);
-    rotate = $('#rotateDegrees').val();
-    arc = $('#arcDegrees').val();
 
-    $(function($) {
-        $('#rotateDegrees').knob({
-            release: function(value) {
-              chart
-                .rotateDegrees(value % 360);
-              chart.update();
-            },
-            format: function(value) {
-                return value % 360 + '°';
-            }
-        });
 
-        $('#arcDegrees').knob({
-            release: function(value) {
-              chart
-                .arcDegrees(value % 360);
-              chart.update();
-            },
-            format: function(value) {
-                return value % 360 + '°';
-            }
-        });
+    $('#rotateDegrees').knob({
+        release: function(value) {
+          chart
+            .rotateDegrees(value % 360);
+          chart.update();
+        },
+        format: function(value) {
+            return value % 360 + '°';
+        }
     });
+    var rotate = parseInt($('#rotateDegrees').val(), 10);
+
+    $('#arcDegrees').knob({
+        release: function(value) {
+          chart
+            .arcDegrees(value % 360);
+          chart.update();
+        },
+        format: function(value) {
+            return (value === 0 || value === 360 ? 360 : value % 360) + '°';
+        }
+    });
+    var arc = parseInt($('#arcDegrees').val(), 10);
+
 
     var chartData = [];
 
@@ -186,6 +191,9 @@
             chart.dataSeriesActivate(eo);
           });
 
+    chart.pie
+      .textureFill(false);
+
     d3.select('#chart1')
         .on('click', chart.dispatch.chartClick);
 
@@ -216,35 +224,37 @@
       });
     }
 
-    loadData(jsonFile);
+    loadData(file);
 
-    selectedFile.on('change', function(d) {
-      jsonFile = selectedFile.val();
-      loadData(jsonFile);
+    $file.on('change', function(d) {
+      file = $file.val();
+      loadData(file);
     });
-    selectedColor.on('click', function(d) {
-      color = selectedColor.filter(':checked').val();
+    $color.on('click', function(d) {
+      color = $color.filter(':checked').val();
       chart
         .colorData(color, {c1: '#e8e2ca', c2: '#3e6c0a', l: colorLength});
       chart.update();
     });
-    selectedShowValues.on('change', function(d) {
+    $showValues.on('change', function(d) {
       chart
-        .showLabels(parseInt(selectedShowValues.val(), 10) ? true : false);
+        .showLabels(parseInt($showValues.val(), 10) ? true : false);
       chart.update();
     });
-    selectedShowHole.on('change', function(d) {
+    $showHole.on('change', function(d) {
       chart
-        .hole(parseInt(selectedShowHole.val(), 10) ? 10 : false);
+        .hole(parseInt($showHole.val(), 10) ? 10 : false);
       chart.update();
     });
-    selectedDirection.on('change', function(d) {
-      direction = selectedDirection.filter(':checked').val();
+    $direction.on('change', function(d) {
+      direction = $direction.filter(':checked').val();
       $('html').css('direction', direction);
       chart
         .direction(direction);
       chart.update();
     });
+
+});
 </script>
 </body>
 </html>

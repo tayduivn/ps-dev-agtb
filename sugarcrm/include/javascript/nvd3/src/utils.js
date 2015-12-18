@@ -430,9 +430,9 @@ nv.utils.getTextContrast = function(c, i, callback) {
   var back = c,
       backLab = d3.lab(back),
       backLumen = backLab.l,
-      textLumen = backLumen > 50 ?
+      textLumen = backLumen > 60 ?
         backLab.darker(4 + (backLumen - 75) / 25).l : // (50..100)[1 to 3.5]
-        backLab.brighter(4 + (25 - backLumen) / 25).l, // (0..50)[3.5..1]
+        backLab.brighter(4 + (18 - backLumen) / 25).l, // (0..50)[3.5..1]
       textLab = d3.lab(textLumen, 0, 0),
       text = textLab.toString();
   if (callback) {
@@ -468,4 +468,39 @@ nv.utils.isValidDate = function(d) {
   }
   var testDate = new Date(d);
   return testDate instanceof Date && !isNaN(testDate.valueOf());
+};
+
+nv.utils.createTexture = function(defs, id, x, y) {
+  var texture = '#nv-diagonalHatch-' + id,
+      mask = '#nv-textureMask-' + id;
+
+  defs
+    .append('pattern')
+      .attr('id', 'nv-diagonalHatch-' + id)
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', 8)
+      .attr('height', 8)
+      .append('path')
+        .attr('d', 'M-1,1 l2,-2 M0,8 l8,-8 M7,9 l1,-1')
+        .attr('class', 'texture-line')
+        // .attr('class', classes)
+        // .attr('stroke', fill)
+        .attr('stroke', '#fff')
+        .attr('stroke-linecap', 'square');
+
+  defs
+    .append('mask')
+      .attr('id', 'nv-textureMask-' + id)
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', '100%')
+      .attr('height', '100%')
+      .append('rect')
+        .attr('x', x || 0)
+        .attr('y', y || -1)
+        .attr('width', '100%')
+        .attr('height', '100%')
+        .attr('fill', 'url(' + texture + ')');
+
+  return mask;
 };
