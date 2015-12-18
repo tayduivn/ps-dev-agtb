@@ -11,6 +11,7 @@
  */
 
 require_once 'tests/SugarTestCalDavUtilites.php';
+require_once 'tests/SugarTestAddresseeUtilities.php';
 require_once 'modules/CalDav/EventCollection.php';
 
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
@@ -53,6 +54,7 @@ class CalDavEventCollectionTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestLeadUtilities::removeAllCreatedLeads();
+        SugarTestAddresseeUtilities::removeAllCreatedAddresses();
         parent::tearDown();
     }
 
@@ -619,36 +621,45 @@ END:VCALENDAR',
                 'vEvent' => $this->getEventTemplate('vevent'),
                 'sugarUsers' => array(
                     'Contacts' => array(
-                        $ids[0] => array('email' => 'test0@test.com')
+                        $ids[0] => array('email' => 'test0@test.com'),
                     ),
                     'Users' => array(),
                     'Leads' => array(
-                        $ids[1] => array('email' => 'test0@test.com'),
-                        $ids[2] => array('email' => 'test2@test.com')
+                        $ids[2] => array('email' => 'test0@test.com'),
+                        $ids[3] => array('email' => 'test2@test.com'),
                     ),
+                    'Addresses' => array(
+                        $ids[4] => array('email' => 'test1@test.com'),
+                    )
                 ),
                 'links' => array(
                     'test0@test.com' => array('beanName' => 'Contacts', 'beanId' => $ids[0]),
-                    'test2@test.com' => array('beanName' => 'Leads', 'beanId' => $ids[2]),
+                    'test2@test.com' => array('beanName' => 'Leads', 'beanId' => $ids[3]),
+                    'test1@test.com' => array('beanName' => 'Addresses', 'beanId' => $ids[4]),
+                    'test@test.com' => array('beanName' => 'Addresses', 'beanId' => null),
                 ),
             ),
             array(
-                'vEvent' => $this->getEventTemplate('vevent'),
+                'vEvent' => $this->getEventTemplate('vevent-with-displayname'),
                 'sugarUsers' => array(
                     'Contacts' => array(),
                     'Users' => array(
-                        $ids[6] => array('email1' => 'test@test.com', 'id' => $ids[6], 'new_with_id' => true),
-                        $ids[7] => array('email1' => 'test1@test.com', 'id' => $ids[7], 'new_with_id' => true)
+                        $ids[5] => array('email1' => 'test@test.com', 'id' => $ids[5], 'new_with_id' => true),
+                        $ids[6] => array('email1' => 'test1@test.com', 'id' => $ids[6], 'new_with_id' => true),
                     ),
                     'Leads' => array(
-                        $ids[8] => array('email' => 'test1@test.com'),
-                        $ids[9] => array('email' => 'test0@test.com')
+                        $ids[7] => array('email' => 'test1@test.com'),
+                        $ids[8] => array('email' => 'test0@test.com'),
                     ),
+                    'Addresses' => array(
+                        $ids[9] => array('email' => 'test1@test.com'),
+                    )
                 ),
                 'links' => array(
-                    'test@test.com' => array('beanName' => 'Users', 'beanId' => $ids[6]),
-                    'test1@test.com' => array('beanName' => 'Leads', 'beanId' => $ids[8]),
-                    'test0@test.com' => array('beanName' => 'Leads', 'beanId' => $ids[9]),
+                    'test@test.com' => array('beanName' => 'Users', 'beanId' => $ids[5]),
+                    'test1@test.com' => array('beanName' => 'Leads', 'beanId' => $ids[7]),
+                    'test0@test.com' => array('beanName' => 'Leads', 'beanId' => $ids[8]),
+                    'test2@test.com' => array('beanName' => 'Addresses', 'beanId' => null),
                 ),
             ),
             array(
@@ -661,10 +672,14 @@ END:VCALENDAR',
                     'Leads' => array(
                         $ids[11] => array('email' => 'test3@test.com'),
                     ),
+                    'Addresses' => array(),
                 ),
                 'links' => array(
                     'test@test.com' => array('beanName' => 'Users', 'beanId' => $ids[10]),
                     'test3@test.com' => array('beanName' => 'Leads', 'beanId' => $ids[11]),
+                    'test0@test.com' => array('beanName' => 'Addresses', 'beanId' => null),
+                    'test1@test.com' => array('beanName' => 'Addresses', 'beanId' => null),
+                    'test2@test.com' => array('beanName' => 'Addresses', 'beanId' => null),
                 ),
             ),
         );
@@ -748,7 +763,7 @@ END:VCALENDAR',
     public function testMapParticipantsToBeans($vEventText, $beansToCreate, $expectedLink)
     {
         $sugarUser = SugarTestUserUtilities::createAnonymousUser();
-        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser);
         $event = SugarTestCalDavUtilities::createEvent(array(
             'calendardata' => $vEventText,
             'calendarid' => $calendarID,
@@ -767,7 +782,19 @@ END:VCALENDAR',
             SugarTestUserUtilities::createAnonymousUser(true, 0, $params);
         }
 
+        foreach ($beansToCreate['Addresses'] as $id => $params) {
+            SugarTestAddresseeUtilities::createAddressee($id, $params);
+        }
+
         $result = TestReflection::callProtectedMethod($event, 'mapParticipantsToBeans');
+
+        foreach ($expectedLink as $email => &$data) {
+            if ($data['beanId'] === null) {
+                $this->assertArrayHasKey($email, $result);
+                SugarTestAddresseeUtilities::setCreatedAddressee([$result[$email]['beanId']]);
+                $data['beanId'] = $result[$email]['beanId'];
+            }
+        }
 
         $this->assertEquals($expectedLink, $result);
     }
