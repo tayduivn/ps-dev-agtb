@@ -39,6 +39,7 @@ $viewdefs['base']['layout']['record'] = array(
                                                 'toggle-view' => 'subpanels',
                                             ),
                                         ),
+                                        'refresh_button' => true,
                                         'availableToggles' => array(
                                             array(
                                                 'name' => 'subpanels',

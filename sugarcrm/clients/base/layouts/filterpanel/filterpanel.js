@@ -60,6 +60,10 @@
             'show_actions': true
         };
 
+        this.events = _.extend({}, this.events, {
+            'click [data-action=refreshList]': '_refreshList'
+        });
+
         var moduleMeta = app.metadata.getModule(opts.module) || {};
         this.disableActivityStreamToggle(opts.module, moduleMeta, opts.meta || {});
 
@@ -151,6 +155,15 @@
         }
     },
 
+    /**
+     * Refreshes the list view by applying filters.
+     *
+     * @private
+     */
+    _refreshList: function() {
+        this.trigger('filter:apply');
+    },
+    
     /**
      * Disables the activity stream toggle if activity stream is not enabled for a module
      * @param {String} moduleName The name of the module

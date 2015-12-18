@@ -34,5 +34,18 @@ class pmse_BpmFlow extends pmse_BpmFlow_sugar {
 		parent::__construct();
 	}
 
+	function bean_implements($interface){
+		switch($interface){
+			case 'ACL':
+				return true;
+		}
+		return false;
+	}
+
+    public function getACLCategory()
+    {
+        return 'pmse_Inbox';
+    }
+
 }
 ?>

@@ -34,20 +34,27 @@ $categories = ACLRole::getRoleActions($_REQUEST['record']);
 $names = ACLAction::setupCategoriesMatrix($categories);
 
 // Skipping modules that have 'hidden_to_role_assignment' property
+$hidden_categories = array(
+    "Campaigns",
+    "Emails",
+    "EmailTemplates",
+    "EmailMarketing",
+    "Forecasts",
+    "PdfManager",
+    "Reports"
+);
 foreach ($categories as $name => $category) {
-	if (isset($dictionary[$name]) &&
-		isset($dictionary[$name]['hidden_to_role_assignment']) &&
-		$dictionary[$name]['hidden_to_role_assignment']
-	) {
-		unset($categories[$name]);
-	}
+    if (isset($dictionary[$name])) {
+        if (!empty($dictionary[$name]['hidden_to_role_assignment'])) {
+            unset($categories[$name]);
+        }
+        if (!empty($dictionary[$name]['hide_fields_to_edit_role'])) {
+            $hidden_categories[] = $name;
+        }
+    }
 }
 
-$categories2 = array();
 $categories2=$categories;
-$hidden_categories = array(
-"Campaigns","Forecasts",
-"Emails","EmailTemplates","EmailMarketing","Reports","PdfManager");
 foreach($hidden_categories as $v){
 	if (isset($categories2[$v])) {
 	   unset($categories2[$v]);

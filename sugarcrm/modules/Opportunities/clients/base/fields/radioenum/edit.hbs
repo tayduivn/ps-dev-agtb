@@ -11,13 +11,13 @@
  */
 --}}
 {{#eachOptions items}}
-    <span class="radioenum-inline">
+    <p class="radioenum-inline">
         <label>
             <input type="radio" name="{{../name}}" value="{{key}}"
                 {{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}{{#eq key ../value}}checked{{/eq}}>
             {{value}}
         </label>
-    </span>
+    </p>
 {{/eachOptions}}
 {{#unless hideHelp}}
     {{#if def.help}}

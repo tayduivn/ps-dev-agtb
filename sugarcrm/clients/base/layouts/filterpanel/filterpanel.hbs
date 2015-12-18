@@ -12,9 +12,14 @@
 --}}
 <div class="search-filter">
     <div class="control-group">
-        <div class="filter controls controls-two btn-group-fit">
+        <div class="filter controls controls-two btn-group-fit{{#if meta.refresh_button}} has-refresh{{/if}}">
             {{component this 'filter'}}
             <div class="toggle-actions actions">
+                {{#if meta.refresh_button}}
+                    <div class="btn-group refresh" data-action="refreshList">
+                        <button class="btn"><i class="fa fa-refresh"></i></button>
+                    </div>
+                {{/if}}
                 <div class="btn-group" data-toggle="buttons-radio">
                     {{#each toggles}}
                         <button type="button" class="btn{{#if disabled}} disabled{{/if}}" {{#if disabled}}disabled{{/if}} data-view="{{toggle}}" data-mode="view" rel="tooltip" title="{{str title}}" aria-label="{{str title}}" track="click:{{toggle}}" aria-pressed="false"><i class="fa {{class}}"></i></button>

@@ -714,7 +714,7 @@ class PackageManager{
                         'description' => $description,
                         'uninstallable' => $uninstallable,
                         'type' => $type,
-                        'file' => fileToHash($upgrade_content),
+                        'file' => fileToHash(urlencode($upgrade_content)),
                         'file_install' => fileToHash($upgrade_content),
                         'unFile' => fileToHash($upgrade_content)
                     );
