@@ -11,6 +11,7 @@
  */
 $dictionary['Task'] = array(
     'table' => 'tasks',
+    'audited' => true,
     'unified_search' => true,
     'full_text_search' => true,
     'activity_enabled' => true,
