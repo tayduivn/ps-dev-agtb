@@ -139,10 +139,6 @@ class CallEmitterTest extends \Sugar_PHPUnit_Framework_TestCase
                 new \Call(),
                 new \User(),
             ),
-            'MeetingBean' => array(
-                new \Meeting(),
-                new \User(),
-            ),
         );
     }
     /**

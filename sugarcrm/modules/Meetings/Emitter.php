@@ -15,8 +15,9 @@ use Sugarcrm\Sugarcrm\Notification\Emitter\Reminder\Emitter as ReminderEmitter;
 
 /**
  * Class MeetingEmitter
- *
  * MeetingEmitter provides possibility to detect event which has happened in meeting module.
+ *
+ * @method reminder(SugarBean $bean, User $user)
  */
 class MeetingEmitter implements EmitterInterface
 {
