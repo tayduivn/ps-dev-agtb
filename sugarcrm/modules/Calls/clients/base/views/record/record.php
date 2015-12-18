@@ -245,13 +245,16 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                             'isMultiSelect' => true,
                         ),
                         array(
+                            'label' => 'LBL_CALENDAR_REPEAT',
+                            'name' => 'repeat_end_type',
+                            'type' => 'enum',
+                            'options' => 'repeat_end_types',
+                            'default' => 'Until',
+                        ),
+                        array(
                             'label' => 'LBL_CALENDAR_REPEAT_UNTIL_DATE',
                             'name' => 'repeat_until',
                             'type' => 'repeat-until',
-                        ),
-                        array(
-                            'type' => 'label',
-                            'default_value' => 'LBL_LOWER_OR'
                         ),
                         array(
                             'label' => 'LBL_CALENDAR_REPEAT_COUNT',

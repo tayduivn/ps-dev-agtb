@@ -1517,6 +1517,11 @@ $app_list_strings = array (
         'Yearly' => 'year(s)',
     ),
 
+    'repeat_end_types' => array(
+        'Until' => 'Until',
+        'Occurrences' => 'Occurrences',
+    ),
+
     'duration_hours_intervals' => array(
       0 => '0',
       1 => '1',
@@ -11663,6 +11668,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_CALENDAR_REPEAT_TYPE' => "Repeat Type",
     'LBL_CALENDAR_REPEAT_INTERVAL' => "Repeat Interval",
     'LBL_CALENDAR_REPEAT_DOW' => "Repeat on Days of Week",
+    'LBL_CALENDAR_REPEAT' => "Repeat",
     'LBL_CALENDAR_REPEAT_UNTIL_DATE' => "Repeat Until",
     'LBL_CALENDAR_REPEAT_COUNT' => "Repeat Occurrences",
     'LBL_CALENDAR_REPEAT_SELECTOR' => "Repeat Selector",

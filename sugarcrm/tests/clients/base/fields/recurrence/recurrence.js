@@ -1,5 +1,5 @@
 describe('View.Fields.Base.RecurrenceField', function() {
-    var app, field, createFieldProperties, sandbox,
+    var app, field, createFieldProperties, sandbox, fieldVisibility
         module = 'Meetings';
 
     beforeEach(function() {
@@ -13,6 +13,14 @@ describe('View.Fields.Base.RecurrenceField', function() {
             module: module
         };
         field = SugarTest.createField(createFieldProperties);
+
+        fieldVisibility = {};
+        sandbox.stub(field, '_showField', function(fieldName) {
+            fieldVisibility[fieldName] = 'shown';
+        });
+        sandbox.stub(field, '_hideField', function(fieldName) {
+            fieldVisibility[fieldName] = 'hidden';
+        });
     });
 
     afterEach(function() {
@@ -25,30 +33,14 @@ describe('View.Fields.Base.RecurrenceField', function() {
     });
 
     describe('Render', function() {
-        var fieldVisibility;
-
-        beforeEach(function() {
-            fieldVisibility = {};
-            sandbox.stub(field, '_showField', function(fieldName) {
-                fieldVisibility[fieldName] = 'shown';
-            });
-            sandbox.stub(field, '_hideField', function(fieldName) {
-                fieldVisibility[fieldName] = 'hidden';
-            });
-        });
-
-        it('should show repeat day of week field when repeat type is weekly', function() {
+        it('should not show recurrence field when repeat type is blank', function() {
             field.model.set('repeat_type', '');
-            field.$el.wrap('<div class="record-cell" data-type="recurrence"><div>');
-            field.render();
-            expect(field.$el.closest('.record-cell')).not.toBeVisible();
+            expect(field.isVisible()).toBe(false);
         });
 
         it('should show recurrence field when repeat type is Daily', function() {
             field.model.set('repeat_type', 'Daily');
-            field.$el.wrap('<div class="record-cell" data-type="recurrence"><div>');
-            field.render();
-            expect(field.$el.closest('.record-cell')).not.toBeVisible();
+            expect(field.isVisible()).toBe(true);
         });
 
         it('should show repeat day of week field when repeat type is weekly', function() {
@@ -60,28 +52,75 @@ describe('View.Fields.Base.RecurrenceField', function() {
             field.model.set('repeat_type', 'Daily');
             expect(fieldVisibility.repeat_dow).toEqual('hidden');
         });
+    });
 
-        it('should show both repeat_count and repeat_until when in edit mode', function() {
-            field.action = 'edit';
-            field.render();
-            expect(fieldVisibility.repeat_count).toEqual('shown');
-            expect(fieldVisibility.repeat_until).toEqual('shown');
-        });
-
-        it('should show repeat_until and hide repeat_count when in detail mode and repeat_until has a value', function() {
-            field.action = 'detail';
-            field.model.set('repeat_until', 'foo');
-            field.render();
-            expect(fieldVisibility.repeat_count).toEqual('hidden');
-            expect(fieldVisibility.repeat_until).toEqual('shown');
-        });
-
-        it('should show repeat_count and hide repeat_until when in detail mode and repeat_until does not have a value', function() {
-            field.action = 'detail';
-            field.model.set('repeat_count', 'bar');
-            field.render();
-            expect(fieldVisibility.repeat_count).toEqual('shown');
+    describe('Repeat End Field Behavior', function() {
+        it('changing repeat_end_type to Occurrences should hide repeat_until and show repeat_count', function() {
+            field.model.set('repeat_end_type', 'Occurrences');
             expect(fieldVisibility.repeat_until).toEqual('hidden');
+            expect(fieldVisibility.repeat_count).toEqual('shown');
+        });
+
+        it('changing repeat_end_type to Until should hide repeat_count and show repeat_until', function() {
+            field.model.set('repeat_end_type', 'Until');
+            expect(fieldVisibility.repeat_until).toEqual('shown');
+            expect(fieldVisibility.repeat_count).toEqual('hidden');
+        });
+
+        it('should clear repeat_until when switching to Occurrences mode', function() {
+            field.model.set('repeat_end_type', 'Until');
+            field.model.set('repeat_until', '1/1/2015');
+            field.model.set('repeat_end_type', 'Occurrences');
+            expect(field.model.has('repeat_until')).toEqual(false);
+        });
+
+        it('should clear repeat_count when switching to Until mode', function() {
+            field.model.set('repeat_end_type', 'Occurrences');
+            field.model.set('repeat_count', 3);
+            field.model.set('repeat_end_type', 'Until');
+            expect(field.model.has('repeat_count')).toEqual(false);
+        });
+
+        it('should remember my previous repeat_until value when switching to Occurrences mode and back', function() {
+            var repeatUntil = '1/1/2015';
+            field.model.set('repeat_end_type', 'Until');
+            field.model.set('repeat_until', repeatUntil);
+            field.model.set('repeat_end_type', 'Occurrences');
+            field.model.set('repeat_end_type', 'Until');
+            expect(field.model.get('repeat_until')).toEqual(repeatUntil);
+        });
+
+        it('should remember my previous repeat_count value when switching to Until mode and back', function() {
+            var repeatCount = 3;
+            field.model.set('repeat_end_type', 'Occurrences');
+            field.model.set('repeat_count', repeatCount);
+            field.model.set('repeat_end_type', 'Until');
+            field.model.set('repeat_end_type', 'Occurrences');
+            expect(field.model.get('repeat_count')).toEqual(repeatCount);
+        });
+
+        it('should default repeat_end_type to "Occurrences" when repeat_count has a value', function() {
+            field.model.set('repeat_count', 3);
+            field.model.trigger('sync');
+            expect(field.model.get('repeat_end_type')).toEqual('Occurrences');
+        });
+
+        it('should default repeat_end_type to "Until" when repeat_until has a value', function() {
+            field.model.set('repeat_until', '1/1/2015');
+            field.model.trigger('sync');
+            expect(field.model.get('repeat_end_type')).toEqual('Until');
+        });
+
+        it('should not hide repeat_count or repeat_until when neither field nor repeat_end_type have a value on render', function() {
+            field.model.set('repeat_end_type', '');
+            field.model.set('repeat_until', '');
+            field.model.set('repeat_count', '');
+            field._showField('repeat_until');
+            field._showField('repeat_count');
+            field.render();
+            expect(field.model.get('repeat_end_type')).toEqual('');
+            expect(fieldVisibility.repeat_until).toEqual('shown');
+            expect(fieldVisibility.repeat_count).toEqual('shown');
         });
     });
 
@@ -90,11 +129,11 @@ describe('View.Fields.Base.RecurrenceField', function() {
             var expected = {
                 repeat_type: 'Weekly',
                 repeat_interval: 1,
-                repeat_count: 10,
-                repeat_until: ''
+                repeat_count: 10
             };
 
             field.fields = [
+                { name: 'repeat_end_type', def: { 'default': expected.repeat_end_type } },
                 { name: 'repeat_interval', def: { 'default': expected.repeat_interval } },
                 { name: 'repeat_count', def: { 'default': expected.repeat_count } }
             ];
@@ -108,21 +147,65 @@ describe('View.Fields.Base.RecurrenceField', function() {
             expect(field.model.attributes).toEqual(expected);
         });
 
-        it('should not set fields to defaults when repeat type changes and field is not blank', function() {
+        it('should not set repeat_count field to default when repeat type changes and repeat_end_type is "Until"', function() {
             var expected = {
+                repeat_end_type: 'Until',
                 repeat_type: 'Weekly',
-                repeat_interval: 2,
-                repeat_count: 11,
-                repeat_until: ''
+                repeat_until: '1/1/2015'
             };
 
             field.fields = [
+                { name: 'repeat_count', def: { 'default': 10 } }
+            ];
+
+            field.model.set('repeat_type', 'Daily');
+            field.model.set({
+                repeat_end_type: 'Until',
+                repeat_count: undefined,
+                repeat_until: expected.repeat_until
+            });
+            field.model.set('repeat_type', expected.repeat_type);
+            expect(field.model.attributes).toEqual(expected);
+        });
+
+        it('should not set repeat_until field to default when repeat type changes and repeat_end_type is "Occurrences"', function() {
+            var expected = {
+                repeat_end_type: 'Occurrences',
+                repeat_type: 'Weekly',
+                repeat_count: 10
+            };
+
+            field.fields = [
+                { name: 'repeat_until', def: { 'default': '1/1/2015' } }
+            ];
+
+            field.model.set('repeat_type', 'Daily');
+            field.model.set({
+                repeat_end_type: 'Occurrences',
+                repeat_count: expected.repeat_count,
+                repeat_until: undefined
+            });
+            field.model.set('repeat_type', expected.repeat_type);
+            expect(field.model.attributes).toEqual(expected);
+        });
+
+        it('should not set fields to defaults when repeat type changes and field is not blank', function() {
+            var expected = {
+                repeat_end_type: 'Occurrences',
+                repeat_type: 'Weekly',
+                repeat_interval: 2,
+                repeat_count: 11
+            };
+
+            field.fields = [
+                { name: 'repeat_end_type', def: { 'default': expected.repeat_end_type } },
                 { name: 'repeat_interval', def: { 'default': 1 } },
                 { name: 'repeat_count', def: { 'default': 10 } }
             ];
 
             field.model.set('repeat_type', 'Daily');
             field.model.set({
+                repeat_end_type: expected.repeat_end_type,
                 repeat_interval: expected.repeat_interval,
                 repeat_count: expected.repeat_count
             });
@@ -130,15 +213,15 @@ describe('View.Fields.Base.RecurrenceField', function() {
             expect(field.model.attributes).toEqual(expected);
         });
 
-        it('should set fields to defaults when repeat type changes to be non-repeating', function() {
+        it('should set fields other than repeat_end_type to defaults when repeat type changes to be non-repeating', function() {
             var expected = {
                 repeat_type: '',
                 repeat_interval: 1,
-                repeat_count: 10,
-                repeat_until: ''
+                repeat_count: 10
             };
 
             field.fields = [
+                { name: 'repeat_end_type', def: { 'default': expected.repeat_end_type } },
                 { name: 'repeat_interval', def: { 'default': expected.repeat_interval } },
                 { name: 'repeat_count', def: { 'default': expected.repeat_count } }
             ];
@@ -146,25 +229,10 @@ describe('View.Fields.Base.RecurrenceField', function() {
             field.model.set('repeat_type', 'Daily');
             field.model.set({
                 repeat_interval: null,
-                repeat_count: undefined,
-                repeat_until: 'foo'
+                repeat_count: undefined
             });
             field.model.set('repeat_type', '');
             expect(field.model.attributes).toEqual(expected);
-        });
-    });
-
-    describe('Toggle Repeat Count & Repeat Until values', function() {
-        it('should clear repeat_until when repeat_count value is set', function() {
-            field.model.set('repeat_until', '1/1/2015');
-            field.model.set('repeat_count', 1);
-            expect(field.model.get('repeat_until')).toEqual('');
-        });
-
-        it('should clear repeat_count when repeat_until value is set', function() {
-            field.model.set('repeat_count', 1);
-            field.model.set('repeat_until', '1/1/2015');
-            expect(field.model.get('repeat_count')).toEqual('');
         });
     });
 
@@ -175,9 +243,9 @@ describe('View.Fields.Base.RecurrenceField', function() {
             errors = {};
         });
 
-        describe('is valid', function() {
+        describe('are valid', function() {
             using('empty values', ['', null, undefined], function(value) {
-                it('should allow repeat_count and repeat_until to be blank for non-recurring events', function() {
+                it('when repeat_count and repeat_until are empty for non-recurring events', function() {
                     field.model.set('repeat_type', '', {silent: true});
                     field.model.set('repeat_count', value, {silent: true});
                     field.model.set('repeat_until', value, {silent: true});
@@ -188,52 +256,69 @@ describe('View.Fields.Base.RecurrenceField', function() {
                 });
             });
 
-            using('empty values', ['', null, undefined], function(value) {
-                it('should allow repeat_count that is the minimum value', function() {
-                    field.model.set('repeat_type', 'Daily', {silent: true});
-                    field.model.set('repeat_count', field.repeatCountMin, {silent: true});
-                    field.model.set('repeat_until', value, {silent: true});
+            it('when repeat_count is the minimum value', function() {
+                field.model.set('repeat_type', 'Daily', {silent: true});
+                field.model.set('repeat_end_type', 'Occurrences', {silent: true});
+                field.model.set('repeat_count', field.repeatCountMin, {silent: true});
+                field.model.set('repeat_until', '', {silent: true});
 
-                    field._doValidateRepeatCountOrUntilRequired(null, errors, $.noop);
+                field._doValidateRepeatCountOrUntilRequired(null, errors, $.noop);
 
-                    expect(_.size(errors)).toBe(0);
-                });
+                expect(_.size(errors)).toBe(0);
             });
 
-            using('empty values', ['', null, undefined], function(value) {
-                it('should allow repeat_count that is greater than the minimum value', function() {
-                    // always more than the minimum, even if the minimum changes
-                    var repeatCount = field.repeatCountMin + 1;
+            it('when repeat_count is greater than the minimum value', function() {
+                // always more than the minimum, even if the minimum changes
+                var repeatCount = field.repeatCountMin + 1;
 
-                    field.model.set('repeat_type', 'Daily', {silent: true});
-                    field.model.set('repeat_count', repeatCount, {silent: true});
-                    field.model.set('repeat_until', value, {silent: true});
+                field.model.set('repeat_type', 'Daily', {silent: true});
+                field.model.set('repeat_end_type', 'Occurrences', {silent: true});
+                field.model.set('repeat_count', repeatCount, {silent: true});
+                field.model.set('repeat_until', '', {silent: true});
 
-                    field._doValidateRepeatCountOrUntilRequired(null, errors, $.noop);
+                field._doValidateRepeatCountOrUntilRequired(null, errors, $.noop);
 
-                    expect(_.size(errors)).toBe(0);
-                });
+                expect(_.size(errors)).toBe(0);
             });
 
-            using('empty values', [0, '', null, undefined], function(value) {
-                it('should allow repeat_count to be empty when repeat_until is not empty', function() {
-                    field.model.set('repeat_type', 'Daily', {silent: true});
-                    field.model.set('repeat_count', value, {silent: true});
-                    field.model.set('repeat_until', '1/1/2015', {silent: true});
+            it('when repeat_end_type is "Until" and repeat_count is empty', function() {
+                field.model.set('repeat_type', 'Daily', {silent: true});
+                field.model.set('repeat_end_type', 'Until', {silent: true});
+                field.model.set('repeat_count', '', {silent: true});
+                field.model.set('repeat_until', '1/1/2015', {silent: true});
 
-                    field._doValidateRepeatCountOrUntilRequired(null, errors, $.noop);
+                field._doValidateRepeatCountOrUntilRequired(null, errors, $.noop);
 
-                    expect(_.size(errors)).toBe(0);
-                });
+                expect(_.size(errors)).toBe(0);
+            });
+
+            it('when repeat_end_type is "Occurrences" and repeat_until is empty', function() {
+                field.model.set('repeat_type', 'Daily', {silent: true});
+                field.model.set('repeat_end_type', 'Occurrences', {silent: true});
+                field.model.set('repeat_count', 5, {silent: true});
+                field.model.set('repeat_until', '', {silent: true});
+
+                field._doValidateRepeatCountOrUntilRequired(null, errors, $.noop);
+
+                expect(_.size(errors)).toBe(0);
             });
         });
 
-        describe('is invalid', function() {
+        describe('are invalid', function() {
             using('empty values', ['', null, undefined], function(value) {
-                it('should not allow repeat_count and repeat_until to be blank for recurring events', function() {
+                it('when repeat_until is empty for recurring event with repeat_end_type of "Until"', function() {
                     field.model.set('repeat_type', 'Daily', {silent: true});
-                    field.model.set('repeat_count', value, {silent: true});
+                    field.model.set('repeat_end_type', 'Until', {silent: true});
                     field.model.set('repeat_until', value, {silent: true});
+
+                    field._doValidateRepeatCountOrUntilRequired(null, errors, $.noop);
+
+                    expect(errors.repeat_until).toEqual({required: true});
+                });
+                it('when repeat_count is empty for recurring event with repeat_end_type of "Occurrences"', function() {
+                    field.model.set('repeat_type', 'Daily', {silent: true});
+                    field.model.set('repeat_end_type', 'Occurrences', {silent: true});
+                    field.model.set('repeat_count', value, {silent: true});
 
                     field._doValidateRepeatCountOrUntilRequired(null, errors, $.noop);
 
@@ -241,11 +326,12 @@ describe('View.Fields.Base.RecurrenceField', function() {
                 });
             });
 
-            it('should now allow repeat_count that is less than the minimum value', function() {
+            it('when repeat_count is less than the minimum value', function() {
                 // always less than the minimum, even if the minimum changes
                 var repeatCount = field.repeatCountMin - 1;
 
                 field.model.set('repeat_type', 'Daily', {silent: true});
+                field.model.set('repeat_end_type', 'Occurrences', {silent: true});
                 field.model.set('repeat_count', repeatCount, {silent: true});
                 field.model.set('repeat_until', '', {silent: true});
 
