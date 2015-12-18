@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,79 +10,203 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+namespace Sugarcrm\SugarcrmTests\tests\modules\CarrierSugar;
+
 require_once 'modules/CarrierSugar/Transport.php';
 
-/**
- * @coversDefaultClass \CarrierSugarTransport
- *
- * Class CarrierSugarTransportTest
- */
-class CarrierSugarTransportTest extends Sugar_PHPUnit_Framework_TestCase
-{
+use CarrierSugarTransport;
+use Notifications;
 
-    public function emptyMessages()
+/**
+ * Class CarrierSugarTransportTest
+
+ * @coversDefaultClass \CarrierSugarTransport
+ */
+class CarrierSugarTransportTest extends \Sugar_PHPUnit_Framework_TestCase
+{
+    /** @var CarrierSugarTransport */
+    protected $transport = null;
+
+    /**
+     * @inheritDoc
+     */
+    protected function setUp()
     {
+        parent::setUp();
+        \BeanFactory::setBeanClass('Notifications', 'Sugarcrm\SugarcrmTests\tests\modules\CarrierSugar\NotificationsCRYS1268');
+        $this->transport = new CarrierSugarTransport();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function tearDown()
+    {
+        NotificationsCRYS1268::$saveReturn = null;
+        NotificationsCRYS1268::$saveData = array();
+        \BeanFactory::setBeanClass('Notifications');
+        parent::tearDown();
+    }
+
+    /**
+     * Data provider for testSend
+     *
+     * @see CarrierSugarTransportTest::testSend
+     * @return array
+     */
+    public static function sendProvider()
+    {
+        $rand = rand(1000, 9999);
+
         return array(
-            array(array()),
-            array(array('title' => '')),
-            array(array('text' => '')),
-            array(array('html' => '')),
-            array(array('title' => '', 'text' => '', 'html' => '')),
+            'returnsFalseOnEmptyMessage' => array(
+                'recipient' => 'guid-' . $rand,
+                'message' => array(),
+                'actualSaveReturn' => true,
+                'expectedResult' => false,
+                'expectedData' => array(),
+            ),
+            'returnsFalseOnNotOurMessage' => array(
+                'recipient' => 'guid-' . $rand,
+                'message' => array(
+                    'someField' => 'someValue ' . $rand,
+                ),
+                'actualSaveReturn' => true,
+                'expectedResult' => false,
+                'expectedData' => array(),
+            ),
+            'returnsFalseOnValidMessageButInvalidSave' => array(
+                'recipient' => 'guid-' . $rand,
+                'message' => array(
+                    'title' => 'someValue ' . $rand,
+                ),
+                'actualSaveReturn' => false,
+                'expectedResult' => false,
+                'expectedData' => array(),
+            ),
+            'validWhenTitleIsPresent' => array(
+                'recipient' => 'guid-' . $rand,
+                'message' => array(
+                    'title' => 'title ' . $rand,
+                ),
+                'actualSaveReturn' => true,
+                'expectedResult' => true,
+                'expectedData' => array(
+                    'name' => 'title ' . $rand,
+                ),
+            ),
+            'validWhenHtmlIsPresent' => array(
+                'recipient' => 'guid-' . $rand,
+                'message' => array(
+                    'html' => 'html ' . $rand,
+                ),
+                'actualSaveReturn' => true,
+                'expectedResult' => true,
+                'expectedData' => array(
+                    'description' => 'html ' . $rand,
+                ),
+            ),
+            'validWhenTextIsPresent' => array(
+                'recipient' => 'guid-' . $rand,
+                'message' => array(
+                    'text' => 'text ' . $rand,
+                ),
+                'actualSaveReturn' => true,
+                'expectedResult' => true,
+                'expectedData' => array(
+                    'description' => 'text ' . $rand,
+                ),
+            ),
+            'validWhenHtmlWithTagsIsPresent' => array(
+                'recipient' => 'guid-' . $rand,
+                'message' => array(
+                    'html' => 'html<br> ' . $rand,
+                ),
+                'actualSaveReturn' => true,
+                'expectedResult' => true,
+                'expectedData' => array(
+                    'description' => 'html<br> ' . $rand,
+                ),
+            ),
+            'validWhenTextWithHtmlSymbolsIsPresent' => array(
+                'recipient' => 'guid-' . $rand,
+                'message' => array(
+                    'text' => 'text > ' . $rand,
+                ),
+                'actualSaveReturn' => true,
+                'expectedResult' => true,
+                'expectedData' => array(
+                    'description' => 'text &gt; ' . $rand,
+                ),
+            ),
+            'validWhenHtmlAndTextArePresentThenTextIsIgnored' => array(
+                'recipient' => 'guid-' . $rand,
+                'message' => array(
+                    'html' => 'html ' . $rand,
+                    'text' => 'text > ' . $rand,
+                ),
+                'actualSaveReturn' => true,
+                'expectedResult' => true,
+                'expectedData' => array(
+                    'description' => 'html ' . $rand,
+                ),
+            ),
+            'validOnRichMessage' => array(
+                'recipient' => 'guid-' . $rand,
+                'message' => array(
+                    'title' => 'title ' . $rand,
+                    'html' => 'html ' . $rand,
+                    'text' => 'text > ' . $rand,
+                ),
+                'actualSaveReturn' => true,
+                'expectedResult' => true,
+                'expectedData' => array(
+                    'name' => 'title ' . $rand,
+                    'description' => 'html ' . $rand,
+                ),
+            ),
         );
     }
 
     /**
-     * @dataProvider emptyMessages
-     * @param $message
+     * Testing notification generation
+     *
+     * @covers CarrierSugarTransport::send
+     * @dataProvider sendProvider
+     * @param string $recipient
+     * @param array $message
+     * @param bool $actualSaveReturn
+     * @param bool $expectedResult
+     * @param array $expectedData
      */
-    public function testEmptyMessage($message)
+    public function testSend($recipient, $message, $actualSaveReturn, $expectedResult, $expectedData)
     {
-        $transport = $this->getMock('CarrierSugarTransport', array('newNotification'));
-
-        $transport->expects($this->never())->method('newNotification');
-
-        $transport->send('some-user-id', $message);
+        NotificationsCRYS1268::$saveReturn = $actualSaveReturn;
+        $result = $this->transport->send($recipient, $message);
+        $this->assertEquals($expectedResult, $result);
+        $this->assertArraySubset($expectedData, NotificationsCRYS1268::$saveData);
     }
+}
 
-    public function testSaveMessage()
+/**
+ * Mocking save method
+ *
+ * @package Sugarcrm\SugarcrmTests\tests\modules\CarrierSugar
+ */
+class NotificationsCRYS1268 extends Notifications
+{
+    /** @var mixed */
+    public static $saveReturn = null;
+
+    /** @var array */
+    public static $saveData = array();
+
+    /**
+     * @inheritDoc
+     */
+    function save($check_notify = false)
     {
-        $isSaved = true;
-        $assignedUserId = 'some-assigned-user-id';
-
-        $notification = $this->getMock('Notifications', array('save'));
-        $notification->expects($this->once())->method('save')->willReturn($isSaved);
-
-        $transport = $this->getMock('CarrierSugarTransport', array('newNotification'));
-        $transport->expects($this->once())->method('newNotification')->willReturn($notification);
-
-        $message = array('title' => 'someTitle', 'text' => 'someText', 'html' => 'someText');
-
-        $res = $transport->send($assignedUserId, $message);
-
-        $this->assertEquals($isSaved, $res);
-        $this->assertEquals($assignedUserId, $notification->assigned_user_id);
-        $this->assertEquals($message['title'], $notification->name);
-        $this->assertEquals($message['html'], $notification->description);
-    }
-
-    public function testSaveMessageVsEmptyHtml()
-    {
-        $isSaved = true;
-        $assignedUserId = 'some-assigned-user-id';
-
-        $notification = $this->getMock('Notifications', array('save'));
-        $notification->expects($this->once())->method('save')->willReturn($isSaved);
-
-        $transport = $this->getMock('CarrierSugarTransport', array('newNotification'));
-        $transport->expects($this->once())->method('newNotification')->willReturn($notification);
-
-        $message = array('title' => 'someTitle', 'text' => '>some >Text', 'html' => '');
-
-        $res = $transport->send($assignedUserId, $message);
-
-        $this->assertEquals($isSaved, $res);
-        $this->assertEquals($assignedUserId, $notification->assigned_user_id);
-        $this->assertEquals($message['title'], $notification->name);
-        $this->assertEquals(to_html($message['text']), $notification->description);
+        static::$saveData = $this->toArray();
+        return static::$saveReturn;
     }
 }

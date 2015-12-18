@@ -29,10 +29,9 @@ class CarrierSugarTransport implements TransportInterface
      */
     public function send($recipient, $message)
     {
-        $isSent = false;
-
         if (!empty($message['title']) || !empty($message['text']) || !empty($message['html'])) {
-            $notification = $this->newNotification();
+            /** @var Notifications $notification */
+            $notification = BeanFactory::newBean('Notifications');
 
             $notification->severity = 'information';
             if (!empty($message['title'])) {
@@ -46,18 +45,8 @@ class CarrierSugarTransport implements TransportInterface
             }
 
             $notification->assigned_user_id = $recipient;
-            $isSent = (bool)$notification->save();
+            return $notification->save() == true;
         }
-        return $isSent;
-    }
-
-    /**
-     * Create new empty notification bean
-     * @return Notifications
-     */
-    protected function newNotification()
-    {
-        $notification = BeanFactory::newBean('Notifications');
-        return $notification;
+        return false;
     }
 }
