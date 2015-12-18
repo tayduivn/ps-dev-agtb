@@ -690,6 +690,52 @@ END:VCALENDAR',
         );
     }
 
+    public function prepareForInviteProvider()
+    {
+        return array(
+            array(
+                'preparedData' => '[
+                       ["Meetings","1b6705f9-d098-130f-39aa-5671685940de",null,null,false],
+                       {
+                          "name":["Meeting1102415055"],
+                          "date_entered":["2015-12-16 13:34:54"],
+                          "date_modified":["2015-12-16 13:34:54"],
+                          "modified_user_id":["531fc10a-78e6-157a-cced-567168676bd3"],
+                          "created_by":["531fc10a-78e6-157a-cced-567168676bd3"],
+                          "description":[null],
+                          "deleted":["0"],
+                          "location":[null],
+                          "duration_hours":["0"],
+                          "duration_minutes":["15"],
+                          "date_start":["2015-12-16 13:34:54"],
+                          "date_end":["2015-12-16 13:49:54"],
+                          "parent_type":[null],
+                          "status":["Planned"],
+                          "type":["Sugar"],
+                          "parent_id":[null],
+                          "reminder_time":["-1"],
+                          "email_reminder_time":["-1"],
+                          "email_reminder_sent":["0"],
+                          "sequence":["0"],
+                          "repeat_type":[null],
+                          "repeat_interval":["1"],
+                          "repeat_dow":[null],
+                          "repeat_until":[null],
+                          "repeat_count":[null],
+                          "repeat_parent_id":[null],
+                          "recurring_source":[null],
+                          "assigned_user_id":["531fc10a-78e6-157a-cced-567168676bd3"]
+                       },
+                       {
+                          "added":[],
+                          "deleted":[],
+                          "changed":[]
+                       }
+                    ]'
+            ),
+        );
+    }
+
     /**
      * @param string $vEventText
      * @param array $beansToCreate
@@ -1549,6 +1595,22 @@ END:VCALENDAR',
 
         $syncBean = $event->getSynchronizationObject();
         $this->assertEquals($event->id, $syncBean->event_id);
+    }
+
+    /**
+     * @param string $preparedData
+     *
+     * @covers \CalDavEventCollection prepareForInvite
+     *
+     * @dataProvider prepareForInviteProvider
+     */
+    public function testPrepareForInvite($preparedData)
+    {
+        $meetingMock = \BeanFactory::getBean('Meetings');
+        $meetingMock->populateFromRow(json_decode($preparedData, true));
+
+        $result = \CalDavEventCollection::prepareForInvite($meetingMock);
+        $this->assertContains('METHOD:REQUEST', $result);
     }
 
     /**

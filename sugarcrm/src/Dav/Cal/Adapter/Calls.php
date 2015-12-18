@@ -81,7 +81,13 @@ class Calls extends CalDavAbstractAdapter implements AdapterInterface
 
         if (isset($invites['added'])) {
             foreach ($invites['added'] as $invite) {
-                $parentEvent->setParticipant($participantHelper->inviteToParticipant($invite));
+                if (isset($changedFields['created_by'][0]) &&
+                    $invite[1] == $changedFields['created_by'][0]
+                ) {
+                    $parentEvent->setOrganizer($participantHelper->inviteToParticipant($invite));
+                } else {
+                    $parentEvent->setParticipant($participantHelper->inviteToParticipant($invite));
+                }
             }
             $isCalDavChanged = true;
         }

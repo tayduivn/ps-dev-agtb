@@ -182,12 +182,6 @@ class CalDavEventCollection extends SugarBean
     protected $serverHelper;
 
     /**
-     * Is mail template generating or not
-     * @var bool
-     */
-    protected $inMailGeneration;
-
-    /**
      * @var Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event
      */
     protected $parentEvent = null;
@@ -228,7 +222,11 @@ class CalDavEventCollection extends SugarBean
         if (!$this->calendar_data) {
             $this->vCalendar = new SabreComponent\VCalendar();
             $timezone = $this->vCalendar->createComponent('VTIMEZONE');
-            $timezone->TZID = $this->getCurrentUser()->getPreference('timezone');
+            $currentTimezone = $this->getCurrentUser()->getPreference('timezone');
+            if (!$currentTimezone) {
+                $currentTimezone = date_default_timezone_get();
+            }
+            $timezone->TZID = $currentTimezone;
             $this->vCalendar->add($timezone);
 
             $event = $this->vCalendar->createComponent('VEVENT');
@@ -1052,28 +1050,23 @@ class CalDavEventCollection extends SugarBean
      * @param SugarBean $bean
      * @return string
      */
-    public function prepareForInvite(\SugarBean $bean)
+    public static function prepareForInvite(\SugarBean $bean)
     {
-        $this->inMailGeneration = true;
-        $adapterFactory = $this->getAdapterFactory();
+        $collection = new static();
+        $adapterFactory = $collection->getAdapterFactory();
         $adapter = $adapterFactory->getAdapter($bean->module_name);
 
-        $result = '';
-
         if ($adapter) {
-            $this->calendar_id = \create_guid();
-            $this->setBean($bean);
+            $dataToExport = $adapter->prepareForExport($bean, array(), array(), CalendarUtils::getInvites($bean), true);
+            if ($adapter->export($dataToExport, $collection)) {
+                $vCalendarEvent = $collection->getVCalendar();
+                $vCalendarEvent->add($vCalendarEvent->createProperty('METHOD', 'REQUEST'));
 
-            if ($adapter->export($bean, $this)) {
-                $vCalendarEvent = $this->getVCalendar();
-                $method = $vCalendarEvent->createProperty('METHOD', 'REQUEST');
-                $vCalendarEvent->add($method);
-                $result = $this->getVCalendar()->serialize();
+                return $vCalendarEvent->serialize();
             }
         }
-        $this->inMailGeneration = false;
 
-        return $result;
+        return '';
     }
 
     /**

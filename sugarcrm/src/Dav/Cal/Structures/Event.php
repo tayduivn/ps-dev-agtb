@@ -701,14 +701,12 @@ class Event
     public function setOrganizer(Participant $participant)
     {
         $currentOrganizer = $this->getOrganizer();
-        if (!$currentOrganizer || $currentOrganizer->getEmail() != $participant->getEmail()) {
+        if ($currentOrganizer && $currentOrganizer->getEmail() != $participant->getEmail()) {
             $currentOrganizer->setType('ATTENDEE');
-            $this->setParticipantNode($participant, 'ORGANIZER');
 
-            return true;
         }
 
-        return false;
+        return $this->setParticipantNode($participant, 'ORGANIZER');
     }
 
     /**
