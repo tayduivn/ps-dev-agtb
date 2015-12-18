@@ -219,10 +219,16 @@ class Team extends SugarBean
 	}
 
 	/**
-	 * Retrieve all of the users that are members of this team.
-	 * This list only includes explicitly assigned members.  (i.e. it will not show the manager of a member unless they are also explicty assigned).
-	 */
-	function get_team_members($only_active_users = false, $filter = null) {
+     * Retrieve all of the users that are members of this team.
+     * This list only includes explicitly assigned members.
+     * (i.e. it will not show the manager of a member unless they are also explicty assigned).
+     * @param bool $active_users Check if the user status is active
+     * @param null $filter filter the user list by name (username, first name or last name)
+     * @param bool $active_employees Check if the employee status is active
+     * @return array All the team members that satisfy active criteria
+     */
+    public function get_team_members($active_users = false, $filter = null, $active_employees = false)
+    {
 		$where = "team_id='$this->id' and explicit_assign=1";
 		$filter = trim($filter);
 		$filter = is_string($filter) && !empty($filter) ? $filter : null;
@@ -249,17 +255,26 @@ class Team extends SugarBean
 					continue;
 			}
 
-			//if the flag $only_active_users is set to true, then we only want to return
-			//active users. This was defined as part of workflow to not send out notifications
-			//to inactive users
-			if($only_active_users){
-				if($user->status == 'Active'){
-					$user_list[] = $user;
-				}
-			}
-			else{
-				$user_list[] = $user;
-			}
+            //if the flag $active_users is set to true, then we only want to return
+            //active users. This was defined as part of workflow to not send out notifications
+            //to inactive users
+            //if the flag for $active_employees is true, we want to check that as well
+            if ($active_users && $active_employees) {
+                if ($user->status == 'Active' && $user->employee_status == 'Active') {
+                    $user_list[] = $user;
+                }
+            } else if ($active_users) {
+                if ($user->status == 'Active') {
+                    $user_list[] = $user;
+                }
+            } else if ($active_employees) {
+                if ($user->employee_status == 'Active') {
+                    $user_list[] = $user;
+                }
+            } else {
+                $user_list[] = $user;
+            }
+
 		}
 
 		return $user_list;
