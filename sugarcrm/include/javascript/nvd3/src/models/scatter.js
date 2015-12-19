@@ -209,25 +209,13 @@ nv.models.scatter = function() {
 
         var eventElements;
 
-        var vertices = d3.merge(data.map(function(group, groupIndex) {
-            return group.values
-              .map(function(point, pointIndex) {
-                // *Adding noise to make duplicates very unlikely
-                // **Injecting series and point index for reference
-                return [x(getX(point, pointIndex)) * (Math.random() / 1e12 + 1), y(getY(point, pointIndex)) * (Math.random() / 1e12 + 1), groupIndex, pointIndex, point]; //temp hack to add noise untill I think of a better way so there are no duplicates
-              })
-              .filter(function(pointArray, pointIndex) {
-                return pointActive(pointArray[4], pointIndex); // Issue #237.. move filter to after map, so pointIndex is correct!
-              });
-          })
-        );
-
         function buildEventObject(e, d, i, j) {
+          var seriesData = data[j];
           return {
-              series: data[j],
-              point: data[j].values[i],
+              series: seriesData,
+              point: seriesData.values[i],
               pointIndex: i,
-              seriesIndex: j,
+              seriesIndex: seriesData.series,
               id: id,
               e: e
             };
@@ -235,6 +223,28 @@ nv.models.scatter = function() {
 
         //inject series and point index for reference into voronoi
         if (useVoronoi === true) {
+
+          var vertices = d3.merge(data.map(function(group, groupIndex) {
+              return group.values
+                .map(function(point, pointIndex) {
+                  // *Adding noise to make duplicates very unlikely
+                  // *Injecting series and point index for reference
+                  /* *Adding a 'jitter' to the points, because there's an issue in d3.geom.voronoi.
+                   */
+                  var pX = getX(point, pointIndex);
+                  var pY = getY(point, pointIndex);
+
+                  return [x(pX) + Math.random() * 1e-4,
+                          y(pY) + Math.random() * 1e-4,
+                      groupIndex,
+                      pointIndex, point]; //temp hack to add noise until I think of a better way so there are no duplicates
+                })
+                .filter(function(pointArray, pointIndex) {
+                  return pointActive(pointArray[4], pointIndex); // Issue #237.. move filter to after map, so pointIndex is correct!
+                });
+            })
+          );
+
           if (clipVoronoi) {
             var pointClipsEnter = wrap.select('defs').selectAll('.nv-point-clips')
                 .data([id])

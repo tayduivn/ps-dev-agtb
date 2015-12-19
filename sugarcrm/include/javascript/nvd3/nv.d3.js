@@ -399,32 +399,33 @@ d3.svg.axisStatic = function() {
   };
 
   nvtooltip.position = function(container, tooltip, evt, gravity, dist) {
+    gravity = gravity || 's';
+    dist = dist || 5;
+
     var pos = [
       typeof evt.layerX === 'undefined' ? evt.offsetX : evt.layerX,
       typeof evt.layerY === 'undefined' ? evt.offsetY : evt.layerY
-    ];
+      ];
 
-    gravity = gravity || 's';
-    dist = dist || 5;
     var tooltipWidth = parseInt(tooltip.offsetWidth, 10),
         tooltipHeight = parseInt(tooltip.offsetHeight, 10),
         containerWidth = container.clientWidth,
         containerHeight = container.clientHeight,
-        scrollTop = container.scrollTop,
-        scrollLeft = container.scrollLeft,
+        containerLeft = container.scrollLeft,
+        containerTop = container.scrollTop,
         class_name = tooltip.className.replace(/ top| right| bottom| left/g, ''),
         left, top;
 
     function alignCenter() {
       var left = pos[0] - (tooltipWidth / 2);
-      if (left < scrollLeft) left = scrollLeft;
+      if (left < containerLeft) left = containerLeft;
       if (left + tooltipWidth > containerWidth) left = containerWidth - tooltipWidth;
       return left;
     }
     function alignMiddle() {
       var top = pos[1] - (tooltipHeight / 2);
-      if (top < scrollTop) top = scrollTop;
-      if (top + tooltipHeight > scrollTop + containerHeight) top = scrollTop - tooltipHeight;
+      if (top < containerTop) top = containerTop;
+      if (top + tooltipHeight > containerTop + containerHeight) top = containerTop - tooltipHeight;
       return top;
     }
     function arrowLeft(left) {
@@ -443,7 +444,7 @@ d3.svg.axisStatic = function() {
         top = alignMiddle();
         left = pos[0] - tooltipWidth - dist;
         arrowTop(top);
-        if (left < scrollLeft) {
+        if (left < containerLeft) {
           left = pos[0] + dist;
           class_name += ' right';
         } else {
@@ -465,7 +466,7 @@ d3.svg.axisStatic = function() {
         left = alignCenter();
         top = pos[1] + dist;
         arrowLeft(left);
-        if (top + tooltipHeight > scrollTop + containerHeight) {
+        if (top + tooltipHeight > containerTop + containerHeight) {
           top = pos[1] - tooltipHeight - dist;
           class_name += ' top';
         } else {
@@ -476,8 +477,8 @@ d3.svg.axisStatic = function() {
         left = alignCenter();
         top = pos[1] - tooltipHeight - dist;
         arrowLeft(left);
-        if (scrollTop > top) {
-          top = pos[1] + 10;
+        if (containerTop > top) {
+          top = pos[1] + dist;
           class_name += ' bottom';
         } else {
           class_name += ' top';
@@ -924,9 +925,9 @@ nv.utils.getTextContrast = function(c, i, callback) {
   var back = c,
       backLab = d3.lab(back),
       backLumen = backLab.l,
-      textLumen = backLumen > 50 ?
+      textLumen = backLumen > 60 ?
         backLab.darker(4 + (backLumen - 75) / 25).l : // (50..100)[1 to 3.5]
-        backLab.brighter(4 + (25 - backLumen) / 25).l, // (0..50)[3.5..1]
+        backLab.brighter(4 + (18 - backLumen) / 25).l, // (0..50)[3.5..1]
       textLab = d3.lab(textLumen, 0, 0),
       text = textLab.toString();
   if (callback) {
@@ -963,6 +964,41 @@ nv.utils.isValidDate = function(d) {
   var testDate = new Date(d);
   return testDate instanceof Date && !isNaN(testDate.valueOf());
 };
+
+nv.utils.createTexture = function(defs, id, x, y) {
+  var texture = '#nv-diagonalHatch-' + id,
+      mask = '#nv-textureMask-' + id;
+
+  defs
+    .append('pattern')
+      .attr('id', 'nv-diagonalHatch-' + id)
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', 8)
+      .attr('height', 8)
+      .append('path')
+        .attr('d', 'M-1,1 l2,-2 M0,8 l8,-8 M7,9 l1,-1')
+        .attr('class', 'texture-line')
+        // .attr('class', classes)
+        // .attr('stroke', fill)
+        .attr('stroke', '#fff')
+        .attr('stroke-linecap', 'square');
+
+  defs
+    .append('mask')
+      .attr('id', 'nv-textureMask-' + id)
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', '100%')
+      .attr('height', '100%')
+      .append('rect')
+        .attr('x', x || 0)
+        .attr('y', y || -1)
+        .attr('width', '100%')
+        .attr('height', '100%')
+        .attr('fill', 'url(' + texture + ')');
+
+  return mask;
+};
 nv.models.axis = function() {
 
   //============================================================
@@ -979,7 +1015,7 @@ nv.models.axis = function() {
       rotateTicks = 30, //one of (rotateTicks, staggerTicks, wrapTicks)
       reduceXTicks = false, // if false a tick will show for every data point
       rotateYLabel = true,
-      isOrdinal = false,
+      hasRangeBand = false,
       textAnchor = null,
       ticks = null,
       axisLabelDistance = 8; //The larger this number is, the closer the axis label is to the axis.
@@ -987,8 +1023,7 @@ nv.models.axis = function() {
   // Public Read-only Variables
   //------------------------------------------------------------
   var margin = {top: 0, right: 0, bottom: 0, left: 0},
-      thickness = 0,
-      labelThickness = null;
+      thickness = 0;
 
   var axis = d3.svg.axisStatic()
         .scale(scale)
@@ -1007,28 +1042,30 @@ nv.models.axis = function() {
       var container = d3.select(this);
       var scaleCalc = axis.scale().copy();
       var marginCalc = {top: 0, right: 0, bottom: 0, left: 0};
+      var extent = getRangeExtent();
+      var scaleWidth = Math.abs(extent[1] - extent[0]);
 
       // Private
       scale0 = scale0 || axis.scale();
 
       var vertical = axis.orient() === 'left' || axis.orient() === 'right' ? true : false,
-          mirror = axis.orient() === 'left' || axis.orient() === 'top' ? -1 : 1,
-          labelAttr = {},
-          anchor = null,
-          tickValueArray = [],
-          maxMinRange = [],
-          maxTickWidth = 0,
-          maxTickHeight = 0,
-          wrapTickHeight = 0,
+          reflect = axis.orient() === 'left' || axis.orient() === 'top' ? -1 : 1,
           fmt = axis.tickFormat(),
-          extent = getRangeExtent(),
-          scaleWidth = Math.abs(extent[1] - extent[0]),
-          tickSpacing = 0;
+          maxLabelWidth = 0,
+          maxLabelHeight = 0,
+          tickGap = 6,
+          tickSpacing = 0,
+          labelThickness = 0;
+
+      var tickDimensions = [],
+          tickDimensionsHash = {},
+          tickValueArray = [],
+          minTickDimensions = {},
+          maxTickDimensions = {};
 
       //------------------------------------------------------------
       // reset public readonly variables
       thickness = 0;
-      labelThickness = null;
 
       if (ticks !== null) {
         axis.ticks(ticks);
@@ -1044,7 +1081,7 @@ nv.models.axis = function() {
       }
 
       // ordinal scales do not have max-min values
-      if (isOrdinal) {
+      if (hasRangeBand) {
         showMaxMin = false;
       }
 
@@ -1054,6 +1091,7 @@ nv.models.axis = function() {
 
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
+
       var wrap = container.selectAll('g.nv-wrap.nv-axis').data([data]),
           gEnter = wrap.enter()
             .append('g').attr('class', 'nvd3 nv-wrap nv-axis')
@@ -1062,11 +1100,9 @@ nv.models.axis = function() {
 
       g.call(axis);
 
-      //------------------------------------------------------------
       // Axis ticks
       var axisTicks = g.selectAll('g.tick');
 
-      //------------------------------------------------------------
       // Min Max ticks
       var dataMaxMin = showMaxMin ? d3.extent(scale.domain()) : [];
       var axisMaxMin = g.selectAll('g.nv-axisMaxMin').data(dataMaxMin);
@@ -1085,20 +1121,184 @@ nv.models.axis = function() {
           });
       }
 
-      //------------------------------------------------------------
       // Axis and Maxmin tick text
-      var tickText = g.selectAll('g.tick, g.nv-axisMaxMin').select('text');
+      var tickText = g.selectAll('g.tick, g.nv-axisMaxMin').select('text')
+            .filter(function(d) { return this.getBoundingClientRect().width; });
       tickText.each(function(d, i) {
-          tickValueArray.push(d3.select(this).text());
-        });
+        tickValueArray.push(d3.select(this).text());
+      });
 
-      //------------------------------------------------------------
       // Axis label
       var axisLabelData = !!axisLabelText ? [axisLabelText] : [];
       var axisLabel = wrap.selectAll('text.nv-axislabel').data(axisLabelData);
       axisLabel.enter().append('text').attr('class', 'nv-axislabel')
         .text(function(d) { return d; });
       axisLabel.exit().remove();
+
+      //------------------------------------------------------------
+      // Tick label handling
+
+      var wrapSucceeded = false,
+          staggerSucceeded = false,
+          rotateSucceeded = false;
+
+      if (vertical) {
+
+        resetTicks();
+
+        tickText
+          .style('text-anchor', rtlTextAnchor(textAnchor || (isMirrored() ? 'start' : 'end')));
+
+      } else {
+
+        //Not needed but keep for now
+        // if (reduceXTicks) {
+        //   axisTicks.each(function(d, i) {
+        //       d3.select(this).selectAll('text,line')
+        //         .style('opacity', i % Math.ceil(data[0].values.length / (scaleWidth / 100)) !== 0 ? 0 : 1);
+        //     });
+        // }
+        resetTicks();
+        recalcMargin();
+
+        if (labelCollision(1)) {
+
+          // if wrap is enabled, try it first (for ordinal scales only)
+          if (wrapTicks) {
+            resetTicks();
+            handleWrap();
+            recalcMargin();
+            handleWrap();
+            // check to see if we still have collisions
+            if (!labelCollision(1)) {
+              wrapSucceeded = true;
+            }
+          }
+
+          // wrapping failed so fall back to stagger if enabled
+          if (!wrapSucceeded && staggerTicks) {
+            resetTicks();
+            handleStagger();
+            recalcMargin();
+            handleStagger();
+            // check to see if we still have collisions
+            if (!labelCollision(2)) {
+              staggerSucceeded = true;
+            }
+          }
+
+          // if we still have a collision
+          // add a test in the following if block to support opt-out of rotate method
+          if (!wrapSucceeded && !staggerSucceeded) {
+            if (!rotateTicks) {
+              rotateTicks = 30;
+            }
+            resetTicks();
+            handleRotation(rotateTicks);
+            recalcMargin(rotateTicks);
+            handleRotation(rotateTicks);
+            rotateSucceeded = true;
+          }
+        }
+      }
+
+      //------------------------------------------------------------
+      // Min Max values
+
+      if (showMaxMin) {
+
+        // only show max line
+        axisMaxMin.select('line')
+          .attr('x1', 0)
+          .attr('y1', 0)
+          .attr('y2', vertical ? 0 : (axis.tickSize() - marginCalc.bottom) * reflect)
+          .attr('x2', vertical ? axis.tickSize() * reflect : 0)
+          .style('opacity', function(d, i) {
+            return isMirrored() ? (i ? 0 : 1) : (i ? 1 : 0);
+          });
+
+        //check if max and min overlap other values, if so, hide the values that overlap
+        axisTicks.each(function(d, i) {
+            var tick = d3.select(this),
+                dim = tickDimensionsHash['key-' + d.toString()],
+                collision = false;
+
+            if (vertical) {
+              collision = dim.bottom > minTickDimensions.top || dim.top < maxTickDimensions.bottom;
+              tick.select('line')
+                .style('opacity', 1 - collision);
+            } else if (rotateSucceeded) {
+              collision = false;
+            } else if (staggerSucceeded) {
+              collision = (dim.left < minTickDimensions.right + tickGap || dim.right > maxTickDimensions.left + tickGap) &&
+                          (dim.bottom < minTickDimensions.top || dim.top > maxTickDimensions.bottom);
+            } else {
+              collision = dim.left < minTickDimensions.right + tickGap || dim.right > maxTickDimensions.left + tickGap;
+            }
+
+            tick.select('text')
+              .style('opacity', 1 - collision);
+            // accounts for minor floating point errors... though could be problematic if the scale is EXTREMELY SMALL
+            // if (d < 1e-10 && d > -1e-10) { // Don't remove the ZERO line!!
+            //   tick.select('line')
+            //     .style('opacity', 0);
+            // }
+          });
+
+      } else {
+
+        //highlight zero line ... Maybe should not be an option and should just be in CSS?
+        axisTicks
+          .filter(function(d) {
+            // this is because sometimes the 0 tick is a very small fraction, TODO: think of cleaner technique
+            // return !parseFloat(Math.round(d * 100000) / 1000000);
+            return scaleCalc(d) === extent[0 + isMirrored()];
+          })
+          .classed('zero', highlightZero);
+
+        // hide zero line if same as domain line
+        axisTicks.select('line')
+          .style('opacity', function(d, i) {
+            return scaleCalc(d) === extent[0 + isMirrored()] ? 0 : 1;
+          });
+
+      }
+
+      //------------------------------------------------------------
+      // Axis label
+
+      if (!!axisLabelText) {
+        var axisLabelX = vertical ?
+              rotateYLabel ? scaleWidth / -2 : (thickness + axisLabelDistance) * reflect :
+              scaleWidth / 2;
+        var axisLabelY = vertical ?
+              rotateYLabel ? (thickness + axisLabelDistance) * reflect : scaleWidth / 2 :
+              (thickness + axisLabelDistance) * reflect;
+
+        axisLabel
+          .attr('x', axisLabelX)
+          .attr('y', axisLabelY)
+          .attr('dy', (0.355 + 0.355 * reflect) + 'em')
+          .attr('transform', vertical && rotateYLabel ? 'rotate(-90)' : '')
+          .style('text-anchor', vertical && !rotateYLabel ? rtlTextAnchor('end') : 'middle');
+
+        axisLabel.each(function(d, i) {
+          labelThickness += vertical ?
+            parseInt(this.getBoundingClientRect().width / 1.3, 10) :
+            parseInt(this.getBoundingClientRect().height / 1.3, 10);
+        });
+
+        thickness += labelThickness + axisLabelDistance;
+      }
+
+      //------------------------------------------------------------
+      // Set final margins
+
+      //store old scales for use in transitions on update
+      scale0 = scale.copy();
+
+      margin = {top: marginCalc.top, right: marginCalc.right, bottom: marginCalc.bottom, left: marginCalc.left};
+      margin[axis.orient()] = thickness;
 
       //------------------------------------------------------------
       // Private functions
@@ -1116,11 +1316,11 @@ nv.models.axis = function() {
       }
 
       function getBarWidth() {
-        return isOrdinal ? scaleCalc.rangeBand() : 0;
+        return hasRangeBand ? scaleCalc.rangeBand() : 0;
       }
 
       function getOuterPadding() {
-        return isOrdinal ? scaleCalc.range()[0] : 0;
+        return hasRangeBand ? scaleCalc.range()[0] : 0;
       }
 
       function getOuterPaddingRatio() {
@@ -1130,7 +1330,7 @@ nv.models.axis = function() {
       function getTickSpacing() {
         var tickSpacing = 0,
             tickArray;
-        if (isOrdinal) {
+        if (hasRangeBand) {
           tickSpacing = scaleCalc.range().length > 1 ? Math.abs(scaleCalc.range()[1] - scaleCalc.range()[0]) : d3.max(getRangeExtent()) / 2;
         } else {
           tickArray = scaleCalc.ticks(axisTicks.size());
@@ -1140,90 +1340,127 @@ nv.models.axis = function() {
       }
 
       function rtlTextAnchor(anchor) {
-        var rtlAnchor = anchor;
         if (direction === 'rtl') {
           if (anchor === 'start') {
-            rtlAnchor = 'end';
+            return 'end';
           } else if (anchor === 'end') {
-            rtlAnchor = 'start';
+            return 'start';
           }
         }
-        return rtlAnchor;
+        return anchor;
       }
 
-      function defaultThickness() {
-        return axis.tickPadding() + (!!axisLabelText ? axisLabelDistance : 0);
+      function isMirrored() {
+        return axis.orient() !== 'left' && axis.orient() !== 'bottom';
+      }
+
+      function setThickness(s) {
+        s = s || 1;
+        thickness = axis.tickPadding() + (vertical ? maxLabelWidth : maxLabelHeight) * s;
       }
 
       // Calculate the longest tick width and height
-      function calcMaxLabelWidth() {
-        var maxW = 0,
-            maxH = 0;
-        tickText.each(function(d, i) {
-          var bbox = this.getBoundingClientRect(),
-              w = parseInt(bbox.width, 10),
-              h = parseInt(bbox.height / 1.2, 10);
-          if (w > maxW) {
-            maxW = w;
-          }
-          if (h > maxH) {
-            maxH = h;
-          }
-        });
-        maxTickWidth = maxW;
-        maxTickHeight = maxH;
+      function calcMaxLabelSizes() {
+        calcTickLabelSizes();
+
+        maxLabelWidth = d3.max(tickDimensions, function(d) { return d.width; });
+        maxLabelHeight = d3.max(tickDimensions, function(d) { return d.height; });
+      }
+
+      function calcTickLabelSizes() {
+        tickDimensions = [];
+        tickDimensionsHash = {};
+
+        // reposition max/min ticks before calculating bbox
+        if (showMaxMin) {
+          axisMaxMin
+            .style('opacity', 1)
+            .attr('transform', function(d, i) {
+              var trans = vertical ? '0,' + scaleCalc(d) : scaleCalc(d) + ',0';
+              return 'translate(' + trans + ')';
+            });
+        }
+
+        tickText.each(function(d, i) { //TODO: make everything relative to domain path
+            var bbox = this.getBoundingClientRect();
+            if (bbox.width > 0) {
+              tickDimensions.push({
+                key: d,
+                width: parseInt(bbox.width, 10),
+                height: parseInt(bbox.height / 1.2, 10),
+                left: bbox.left,
+                right: bbox.right,
+                top: bbox.top,
+                bottom: bbox.bottom
+              });
+            }
+          });
+
+        tickDimensions.sort(function(a, b) {
+            return a.key - b.key;
+          })
+          .forEach(function(d, i) {
+            d.index = i;
+            tickDimensionsHash['key-' + d.key.toString()] = d;
+          });
+
+        minTickDimensions = tickDimensions[0];
+        maxTickDimensions = tickDimensions[tickDimensions.length - 1];
       }
 
       function labelCollision(s) {
-        // this resets the maxTickWidth for label collision detection
-        calcMaxLabelWidth();
-        tickSpacing = getTickSpacing() * s;
-        return tickSpacing < maxTickWidth;
+        // {0}   [2]   [4]   {6}
+        //    [1]   [3]   [5]
+        calcTickLabelSizes();
+        var skip = showMaxMin ? 2 : s || 1;
+        // this resets the maxLabelWidth for label collision detection
+        for (var i = (showMaxMin ? 1 : 0), l = tickDimensions.length - skip; i < l; i += 1) {
+          if (tickDimensions[i].right + tickGap > tickDimensions[i + s].left) {
+            return true;
+          }
+        }
+        return false;
       }
 
-
       function recalcMargin(a) {
-        var normRotation = a ? (a + 360) % 360 : 0, // Normalize rotation: (-30 + 360) % 360 = 330; (30 + 360) % 360 = 30
-            isLeft = normRotation > 90 && normRotation < 270,
-            outerPadding = getOuterPadding(),
-            barWidth = getBarWidth() / 2.0,
-            calcTicks = showMaxMin ? axisMaxMin.select('text') : axisTicks.select('text'),
-            l = calcTicks.size() - 1;
+        var normRotation = a ? (a + 180) % 180 : 0, // Normalize rotation: (-30 + 360) % 360 = 330; (30 + 360) % 360 = 30
+            isRotatedLeft = normRotation > 90,
+            dMin = null,
+            dMax = null;
 
-        calcTicks.each(function(d, i) {
-          var textWidth = Math.ceil(this.getBoundingClientRect().width),
-              tickPosition = showMaxMin ? (i ? extent[1] : extent[0]) : (scaleCalc(d) + (isOrdinal ? barWidth : 0)),
-              hangover = 0;
-          // i==1, max position
-          // i==0, min position
-          if (normRotation) {
-            if (i === l && !isLeft) {
-              hangover = isOrdinal ? barWidth + outerPadding : showMaxMin ? 0 : extent[1] - scaleCalc(d);
-              marginCalc.right = Math.max(textWidth - hangover - 11, 0); //TODO: why hardcoded 11?
-            } else if (i === 0 && isLeft) {
-              marginCalc.left = Math.max(textWidth - barWidth - outerPadding, 0); //TODO:
-            }
-          } else {
-            if (i === l) {
-              hangover = tickPosition + textWidth / 2.0 - extent[1];
-              marginCalc.right = Math.max(hangover, 0);
-            } else if (i === 0) {
-              hangover = textWidth / 2.0;
-              marginCalc.left = Math.max(hangover, 0);
-            }
+        tickDimensions.forEach(function(d, i) {
+          var isMin = dMin === null || d.left <= dMin,
+              isMax = dMax === null || d.right >= dMax,
+              tickPosition = 0,
+              availableSpace = 0;
+
+          if (!isMin && !isMax) {
+            return;
+          }
+
+          textWidth = normRotation ? d.width - 6 : d.width / 2; // 6 is the cos(textHeight) @ 30
+          tickPosition = scaleCalc(d.key) + (hasRangeBand * getBarWidth() / 2);
+
+          if (isMin && (!normRotation || isRotatedLeft)) {
+            dMin = d.left;
+            availableSpace = Math.abs(extent[0] - tickPosition);
+            marginCalc.left = Math.max(textWidth - availableSpace, 0);
+          }
+          if (isMax && (!normRotation || !isRotatedLeft)) {
+            dMax = d.right;
+            availableSpace = Math.abs(extent[1] - tickPosition);
+            marginCalc.right = Math.max(textWidth - availableSpace, 0);
           }
         });
 
         // modify scale range
-        if (!isOrdinal && (marginCalc.right !== margin.right || marginCalc.left !== margin.left)) {
-          // TODO: this is wrong
-          var change = (marginCalc.right > margin.right ? marginCalc.right - margin.right : 0);
-              change += (marginCalc.left > margin.left ? marginCalc.left - margin.left : 0);
+        if (!hasRangeBand) { //TODO: can we get rid of this for bar chart?
+          var change = margin.right - Math.max(margin.right, marginCalc.right);
+              change += margin.left - Math.max(margin.left, marginCalc.left);
 
-          var newExtent = [extent[0], extent[1] - change]; // reduce operable width of axis by margins
+          var newExtent = [extent[0], extent[1] + change]; // reduce operable width of axis by margins
 
           scaleCalc.range(newExtent);
-
           extent = getRangeExtent();
           scaleWidth = Math.abs(extent[1] - extent[0]);
 
@@ -1234,37 +1471,33 @@ nv.models.axis = function() {
       }
 
       function resetTicks() {
-        scaleCalc = scale.copy();
         marginCalc = {top: 0, right: 0, bottom: 0, left: 0};
 
-        tickText.selectAll('tspan').remove();
-        tickText
-          .attr('dy', vertical ? '.32em' : 0.355 + 0.355 * mirror + 'em')
-          .attr('x', vertical ? axis.tickPadding() * mirror : 0)
-          .attr('y', vertical ? 0 : axis.tickPadding() * mirror)
-          .attr('transform', 'translate(0,0)')
-          .text(function(d, i) { return tickValueArray[i]; })
-          .style('opacity', 1);
-
-        // if (showMaxMin) {
-        //   axisMaxMin
-        //     .style('opacity', 0);
-        //   axisMaxMin.select('text,line')
-        //     .style('opacity', 0);
-        // }
-
-        calcMaxLabelWidth();
-        thickness = defaultThickness() + maxTickHeight;
+        scaleCalc = scale.copy();
+        extent = getRangeExtent();
+        scaleWidth = Math.abs(extent[1] - extent[0]);
 
         axis
           .scale(scale);
 
-        extent = getRangeExtent();
-        scaleWidth = Math.abs(extent[1] - extent[0]);
+        g.call(axis);
+
+        tickText.selectAll('tspan').remove();
+        tickText
+          .attr('dy', vertical ? '.32em' : 0.355 + 0.355 * reflect + 'em')
+          .attr('x', vertical ? axis.tickPadding() * reflect : 0)
+          .attr('y', vertical ? 0 : axis.tickPadding() * reflect)
+          .attr('transform', 'translate(0,0)')
+          .text(function(d, i) { return tickValueArray[i]; })
+          .style('text-anchor', 'middle')
+          .style('opacity', 1);
+
+        calcMaxLabelSizes();
+        setThickness();
       }
 
       function handleWrap() {
-        wrapTickHeight = maxTickHeight;
+        tickSpacing = getTickSpacing();
 
         tickText.each(function(d, i) {
           var textContent = fmt(d, i, true),
@@ -1272,9 +1505,8 @@ nv.models.axis = function() {
               textArray = textContent && textContent !== '' ? textContent.replace('/', '/ ').split(' ') : [],
               i = 0,
               l = textArray.length,
-              dy = mirror === 1 ? 0.71 : -1;
+              dy = reflect === 1 ? 0.71 : -1; // TODO: wrong. fails on reflect with 3 lines of wrap
 
-          // do wrapping if needed
           this.textContent = '';
 
           var textString,
@@ -1284,7 +1516,7 @@ nv.models.axis = function() {
                 .attr('x', 0);
 
           i += 1;
-          dy = 1;
+          dy = 1; // TODO: wrong. fails on reflect with 3 lines of wrap
 
           while (i < l) {
             textSpan = textNode.append('tspan')
@@ -1297,6 +1529,7 @@ nv.models.axis = function() {
             while (i < l) {
               textString = textSpan.text();
               textSpan.text(textString + ' ' + textArray[i]);
+              //TODO: this is different than collision test
               if (this.getBoundingClientRect().width <= tickSpacing) {
                 i += 1;
               } else {
@@ -1305,270 +1538,59 @@ nv.models.axis = function() {
               }
             }
           }
-
-          var bbox = this.getBoundingClientRect();
-          wrapTickHeight = Math.max(bbox.height - maxTickHeight * 0.315, wrapTickHeight);
         });
+
+        calcMaxLabelSizes();
+        setThickness();
       }
 
       function handleStagger() {
-        var j = 0;
         tickText
-          // .filter(function() { return d3.select(this).style('opacity') !== 0; })
           .attr('transform', function(d, i) {
-            if (d) {
-              j += 1;
-            }
-            return 'translate(0,' + ((d ? j : 0) % 2 * (maxTickHeight + 2)) + ')';
+            var yOffset = tickDimensionsHash['key-' + d.toString()].index % 2 * (maxLabelHeight + 2);
+            return 'translate(0,' + yOffset + ')';
           });
+
+        calcMaxLabelSizes();
+        setThickness(2);
       }
 
       function handleRotation(a) {
-        var normRotation = (a + 360) % 360, // Normalize rotation: (-30 + 360) % 360 = 330; (30 + 360) % 360 = 30
-            isLeft = normRotation > 90 && normRotation < 270,
-            tickAnchor = direction === 'rtl' ? isLeft ? 'start' : 'end' : isLeft ? 'end' : 'start',
+        // 0..90 = IV, 90..180 = III, 180..270 = IV, 270..360 = III
+        // 0..-90 = III, -90..-180 = IV, -180..-270 = III, -270..-360 = IV
+        // Normalize rotation: (-30 + 180) % 180 = 150; (30 + 180) % 180 = 30
+        var normRotation = (a + 180) % 180,
+            isLeft = normRotation > 90,
+            angle = (normRotation - (isLeft ? 180 : 0)) * reflect,
+            tickAnchor = rtlTextAnchor(isLeft ? 'end' : 'start'),
             //Convert to radians before calculating sin.
-            sin = Math.abs(Math.sin(a * Math.PI / 180));
-
-        thickness = defaultThickness();
-        thickness += sin ? sin * maxTickWidth : maxTickWidth;
-        thickness += sin ? sin * maxTickHeight : 0;
+            cos = Math.abs(Math.cos(a * Math.PI / 180));
 
         //Rotate all tickText
         tickText
           .attr('transform', function(d, i, j) {
-            return 'translate(0,' + axis.tickPadding() + ') rotate(' + a + ')';
+            return 'translate(0,' + (axis.tickPadding() * reflect) + ') rotate(' + angle + ')';
           })
           .attr('y', '0')
           .style('text-anchor', tickAnchor);
-      }
 
-
-      //------------------------------------------------------------
-      // Tick label handling
-
-      var wrapSucceeded = false,
-          staggerSucceeded = false,
-          rotateSucceeded = false;
-
-      resetTicks();
-
-      if (vertical) {
-
-          calcMaxLabelWidth();
-          thickness = defaultThickness() + maxTickWidth;
-          anchor = rtlTextAnchor(textAnchor || (axis.orient() === 'left' ? 'end' : 'start'));
-
-          tickText
-            .style('text-anchor', anchor);
-
-          labelAttr = {
-            x: (rotateYLabel ? scaleWidth / 2 : axis.tickPadding()) * mirror,
-            y: rotateYLabel ? -thickness : -10
-          };
-
-      } else {
-
-          // if (reduceXTicks) {
-          //   axisTicks.each(function(d, i) {
-          //       d3.select(this).selectAll('text,line')
-          //         .style('opacity', i % Math.ceil(data[0].values.length / (scaleWidth / 100)) !== 0 ? 0 : 1);
-          //     });
-          // }
-
-          recalcMargin();
-
-          if (labelCollision(1)) {
-
-            // if wrap is enabled, try it first (for ordinal scales only)
-            if (wrapTicks) {
-              resetTicks();
-              handleWrap();
-              recalcMargin();
-              handleWrap();
-              // check to see if we still have collisions
-              if (!labelCollision(1)) {
-                wrapSucceeded = true;
-                thickness = defaultThickness() + wrapTickHeight;
-              }
-            }
-
-            // wrapping failed so fall back to stagger if enabled
-            if (!wrapSucceeded && staggerTicks) {
-              resetTicks();
-              handleStagger();
-              recalcMargin();
-              handleStagger();
-              // check to see if we still have collisions
-              if (!labelCollision(2)) {
-                staggerSucceeded = true;
-                thickness = defaultThickness() + 2 * maxTickHeight; //TODO: handle more than two lines of wrapping
-              }
-            }
-
-            // if we still have a collision
-            // add a test in the following if block to support opt-out of rotate method
-            if (!wrapSucceeded && !staggerSucceeded) {
-              if (!rotateTicks) {
-                rotateTicks = 30;
-              }
-              resetTicks();
-              handleRotation(rotateTicks);
-              recalcMargin(rotateTicks);
-              handleRotation(rotateTicks);
-              rotateSucceeded = true;
-              if (showMaxMin) {
-                axisMaxMin.select('text')
-                  .attr('transform', 'rotate(' + rotateTicks + ' 0,0)');
-              }
-            }
-
-          } else {
-            thickness = defaultThickness() + maxTickHeight;
-          }
-
-          anchor = rtlTextAnchor(rotateSucceeded ? (rotateTicks % 360 > 0 ? 'start' : 'end') : textAnchor || 'middle');
-
-          labelAttr = {
-            x: scaleWidth / 2,
-            y: thickness * mirror
-          };
+        calcMaxLabelSizes();
+        setThickness();
+        thickness += cos * 11;
       }
 
       //------------------------------------------------------------
-      // Min Max values
+      // Public functions
 
-      if (showMaxMin) {
-
-        axisMaxMin
-          .style('opacity', 1)
-          .attr('transform', function(d, i) {
-            // return 'translate(' + (scale(d) + (isOrdinal ? scale.rangeBand() / 2 : (d > 0 ? -8 : +4))) + ',0)';
-            var trans = vertical ? '0,' + scaleCalc(d) : scaleCalc(d) + ',0';
-            return 'translate(' + trans + ')';
-          });
-
-        axisMaxMin.select('text')
-          .attr('dy', function(d, i) {
-            var dy = vertical ? (i ? 0.515 + 0.195 * mirror : 0) : 0.355 + 0.355 * mirror;
-            return dy + 'em';
-          })
-          .style('text-anchor', anchor)
-          .style('opacity', 1);
-
-        axisMaxMin.select('line')
-          .attr('x1', 0)
-          .attr('y1', 0)
-          .attr('y2', vertical ? 0 : axis.tickSize() * mirror)
-          .attr('x2', vertical ? axis.tickSize() * mirror : 0)
-          .style('opacity', function(d, i) {
-            return axis.orient() === 'left' || axis.orient() === 'bottom' ? (i ? 1 : 0) : (i ? 0 : 1);
-          }); // only max line
-
-        if (vertical) {
-          maxMinRange = [scaleCalc.range()[1] + 10, scaleCalc.range()[0] - 10]; //TODO: why is this hardcoded?
-          //if Max and Min = 0 only show min, Issue #281
-          if (scaleCalc.domain()[0] === scaleCalc.domain()[1] && scaleCalc.domain()[0] === 0) {
-            axisMaxMin
-              .style('opacity', function(d, i) { return i ? 0 : 1; });
-          }
-        } else {
-          axisMaxMin.each(function(d, i) {
-              var width = Math.ceil(this.getBoundingClientRect().width);
-              // i==1, max position
-              // i==0, min position
-              //assuming the max and min labels are as wide as the next tick (with an extra 4 pixels just in case)
-              maxMinRange.push(scaleCalc(d) + (rotateSucceeded ? 10 : width + 4) * (i ? -1 : 1));
-            });
-        }
-
-        //check if max and min overlap other values, if so, hide the values that overlap
-        axisTicks.each(function(d, i) {
-            var tick = d3.select(this);
-            tick.select('line')
-              .style('opacity', 1);
-            if (scaleCalc(d) < maxMinRange[0] || scaleCalc(d) > maxMinRange[1]) {
-              tick.select('text')
-                .style('opacity', 0);
-              tick.select('line')
-                .style('opacity', 0);
-              // accounts for minor floating point errors... though could be problematic if the scale is EXTREMELY SMALL
-              if (d < 1e-10 && d > -1e-10) { // Don't remove the ZERO line!!
-                tick.select('line')
-                  .style('opacity', 0);
-              }
-            }
-          });
-
-      } else {
-
-        //highlight zero line ... Maybe should not be an option and should just be in CSS?
-        axisTicks.select('line')
-          .filter(function(d) {
-            //this is because sometimes the 0 tick is a very small fraction, TODO: think of cleaner technique
-            return !parseFloat(Math.round(d * 100000) / 1000000);
-          })
-          .classed('zero', highlightZero);
-
-        // hide zero line if same as domain line
-        axisTicks.select('line')
-          .style('opacity', function(d, i) {
-            if (axis.orient() === 'left' || axis.orient() === 'bottom') {
-              return scaleCalc(d) === extent[0] ? 0 : 1;
-            } else {
-              return scaleCalc(d) === extent[1] ? 0 : 1;
-            }
-          });
-
-      }
-
-      //------------------------------------------------------------
-      // Axis label
-
-      if (!!axisLabelText) {
-        axisLabel
-          .attr('x', labelAttr.x)
-          .attr('y', labelAttr.y)
-          .attr('dy', (vertical ? 0 : 0.355 + 0.355 * mirror) + 'em')
-          .attr('transform', vertical && rotateYLabel ? 'rotate(' + (90 * mirror) + ')' : '')
-          .style('text-anchor', vertical && !rotateYLabel ? anchor : 'middle');
-
-        axisLabel.each(function(d, i) {
-          labelThickness += vertical ?
-            parseInt(this.getBoundingClientRect().width / 1.3, 10) :
-            parseInt(this.getBoundingClientRect().height / 1.3, 10);
-        });
-
-        thickness += labelThickness;
-      }
-
-
-
-      // set tick line position to half pixels to prevent anti-aliasing
-      // g.selectAll('g.tick, g.nv-axisMaxMin')
-      //   .attr('transform', function(d) {
-      //     var components = d3.transform(d3.select(this).attr('transform')).translate;
-      //     var trans = [
-      //         vertical ? components[0] : (parseInt(components[0], 10) + 0.5),
-      //         vertical ? (parseInt(components[1], 10) + 0.5) : components[1]
-      //       ];
-      //     return 'translate(' + trans[0] + ',' + trans[1] + ')';
-      //   });
-
-      //store old scales for use in transitions on update
-      scale0 = scale.copy();
-
-      margin = {top: marginCalc.top, right: marginCalc.right, bottom: marginCalc.bottom, left: marginCalc.left};
-      margin[axis.orient()] = thickness;
+      chart.resizeTickLines = function(dim) {
+        g.selectAll('g.tick, g.nv-axisMaxMin').select('line')
+          .attr(vertical ? 'x2' : 'y2', dim * reflect);
+      };
 
       chart.labelThickness = function() {
         return labelThickness;
       };
 
-      chart.resizeTickLines = function(dim) {
-        g.selectAll('g.tick, g.nv-axisMaxMin').select('line')
-          .attr(vertical ? 'x2' : 'y2', axis.tickSize() * mirror);
-      };
     });
 
     return chart;
@@ -1647,7 +1669,7 @@ nv.models.axis = function() {
     }
     scale = _;
     axis.scale(scale);
-    isOrdinal = typeof scale.rangeBands === 'function';
+    hasRangeBand = typeof scale.rangeBands === 'function';
     d3.rebind(chart, scale, 'domain', 'range', 'rangeBand', 'rangeBands');
     return chart;
   };
@@ -1700,11 +1722,11 @@ nv.models.axis = function() {
     return chart;
   };
 
-  chart.maxTickWidth = function(_) {
+  chart.maxLabelWidth = function(_) {
     if (!arguments.length) {
-      return maxTickWidth;
+      return maxLabelWidth;
     }
-    maxTickWidth = _;
+    maxLabelWidth = _;
     return chart;
   };
 
@@ -3240,25 +3262,13 @@ nv.models.scatter = function() {
 
         var eventElements;
 
-        var vertices = d3.merge(data.map(function(group, groupIndex) {
-            return group.values
-              .map(function(point, pointIndex) {
-                // *Adding noise to make duplicates very unlikely
-                // **Injecting series and point index for reference
-                return [x(getX(point, pointIndex)) * (Math.random() / 1e12 + 1), y(getY(point, pointIndex)) * (Math.random() / 1e12 + 1), groupIndex, pointIndex, point]; //temp hack to add noise untill I think of a better way so there are no duplicates
-              })
-              .filter(function(pointArray, pointIndex) {
-                return pointActive(pointArray[4], pointIndex); // Issue #237.. move filter to after map, so pointIndex is correct!
-              });
-          })
-        );
-
         function buildEventObject(e, d, i, j) {
+          var seriesData = data[j];
           return {
-              series: data[j],
-              point: data[j].values[i],
+              series: seriesData,
+              point: seriesData.values[i],
               pointIndex: i,
-              seriesIndex: j,
+              seriesIndex: seriesData.series,
               id: id,
               e: e
             };
@@ -3266,6 +3276,28 @@ nv.models.scatter = function() {
 
         //inject series and point index for reference into voronoi
         if (useVoronoi === true) {
+
+          var vertices = d3.merge(data.map(function(group, groupIndex) {
+              return group.values
+                .map(function(point, pointIndex) {
+                  // *Adding noise to make duplicates very unlikely
+                  // *Injecting series and point index for reference
+                  /* *Adding a 'jitter' to the points, because there's an issue in d3.geom.voronoi.
+                   */
+                  var pX = getX(point, pointIndex);
+                  var pY = getY(point, pointIndex);
+
+                  return [x(pX) + Math.random() * 1e-4,
+                          y(pY) + Math.random() * 1e-4,
+                      groupIndex,
+                      pointIndex, point]; //temp hack to add noise until I think of a better way so there are no duplicates
+                })
+                .filter(function(pointArray, pointIndex) {
+                  return pointActive(pointArray[4], pointIndex); // Issue #237.. move filter to after map, so pointIndex is correct!
+                });
+            })
+          );
+
           if (clipVoronoi) {
             var pointClipsEnter = wrap.select('defs').selectAll('.nv-point-clips')
                 .data([id])
@@ -4116,7 +4148,6 @@ nv.models.bubbleChart = function() {
 
         // Y-Axis
         yAxis
-          .tickSize(-innerWidth, 0)
           .margin(innerMargin)
           .tickFormat(function(d, i) {
             return nv.utils.stringEllipsify(yValues[i].key, container, Math.max(availableWidth * 0.2, 75));
@@ -4138,11 +4169,6 @@ nv.models.bubbleChart = function() {
         xAxisMargin = xAxis.margin();
         setInnerMargins();
         setInnerDimensions();
-        // resize ticks based on new dimensions
-        xAxis
-          .tickSize(0);
-        xAxis
-          .resizeTickLines();
 
         // recall y-axis to set final size based on new dimensions
         yAxis
@@ -4495,6 +4521,7 @@ nv.models.funnel = function() {
       fmtValueLabel = function(d) { return d.label || d.value || d; },
       color = function(d, i) { return nv.utils.defaultColor()(d, d.series); },
       fill = color,
+      textureFill = false,
       classes = function(d, i) { return 'nv-group nv-series-' + d.series; },
       dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove');
 
@@ -4526,7 +4553,10 @@ nv.models.funnel = function() {
       // Add series index to each data point for reference
       data.map(function(series, i) {
         series.values = series.values.map(function(point) {
-          point.series = i;
+          point.index = i;
+          if (typeof point.series === 'undefined') {
+            point.series = i;
+          }
           // if value is undefined, not a legitimate 0 value, use point.y
           if (typeof point.value == 'undefined') {
             point.value = getY(point);
@@ -4624,6 +4654,13 @@ nv.models.funnel = function() {
         .attr('height', availableHeight + 1);
       g.attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + id + ')' : '');
 
+
+      //------------------------------------------------------------
+
+      if (textureFill) {
+        var mask = nv.utils.createTexture(defsEnter, id);
+      }
+
       //------------------------------------------------------------
       // Append major data series grouping containers
 
@@ -4647,7 +4684,7 @@ nv.models.funnel = function() {
           .style('fill-opacity', 1);
 
       groups.exit().transition().duration(durationMs)
-        .selectAll('polygon.nv-bar')
+        .selectAll('g.nv-slice')
         .delay(function(d, i) { return i * delay / data[0].values.length; })
           .attr('points', function(d) {
             return pointsTrapezoid(d, 0, calculatedWidth);
@@ -4668,48 +4705,61 @@ nv.models.funnel = function() {
       //------------------------------------------------------------
       // Append polygons for funnel
 
-      var funs = groups.selectAll('polygon.nv-bar')
+      var funs = groups.selectAll('g.nv-slice')
             .data(function(d) {
               return d.values;
             });
+      var funsEnter = funs.enter().append('g').attr('class', 'nv-slice');
 
       funs.exit().remove();
 
-      funs.enter()
-        .append('polygon')
-          .attr('class', 'nv-bar')
+      funsEnter.append('polygon')
+        .attr('class', 'nv-base')
+        .attr('points', function(d) {
+          return pointsTrapezoid(d, 0, calculatedWidth);
+        });
+
+      if (textureFill) {
+        // For on click active bars
+        funsEnter.append('polygon')
+          .attr('class', 'nv-texture')
           .attr('points', function(d) {
             return pointsTrapezoid(d, 0, calculatedWidth);
           })
-          .on('mouseover', function(d, i) {
-            d3.select(this).classed('hover', true);
-            var eo = buildEventObject(d3.event, d, i);
-            dispatch.elementMouseover(eo);
-          })
-          .on('mousemove', function(d, i) {
-            dispatch.elementMousemove(d3.event);
-          })
-          .on('mouseout', function(d, i) {
-            d3.select(this).classed('hover', false);
-            dispatch.elementMouseout();
-          })
-          .on('click', function(d, i) {
-            d3.event.stopPropagation();
-            var eo = buildEventObject(d3.event, d, i);
-            dispatch.elementClick(eo);
-          })
-          .on('dblclick', function(d, i) {
-            d3.event.stopPropagation();
-            var eo = buildEventObject(d3.event, d, i);
-            dispatch.elementDblClick(eo);
-          });
+          .style('mask', 'url(' + mask + ')');
+      }
+
+      funs
+        .on('mouseover', function(d, i) {
+          d3.select(this).classed('hover', true);
+          var eo = buildEventObject(d3.event, d, i);
+          dispatch.elementMouseover(eo);
+        })
+        .on('mousemove', function(d, i) {
+          dispatch.elementMousemove(d3.event);
+        })
+        .on('mouseout', function(d, i) {
+          d3.select(this).classed('hover', false);
+          dispatch.elementMouseout();
+        })
+        .on('click', function(d, i) {
+          d3.event.stopPropagation();
+          var eo = buildEventObject(d3.event, d, i);
+          dispatch.elementClick(eo);
+        })
+        .on('dblclick', function(d, i) {
+          d3.event.stopPropagation();
+          var eo = buildEventObject(d3.event, d, i);
+          dispatch.elementDblClick(eo);
+        });
+
 
       function buildEventObject(e, d, i) {
         return {
             value: getV(d, i),
             point: d,
             id: id,
-            series: data[d.series],
+            series: data[d.index],
             pointIndex: i,
             seriesIndex: d.series,
             e: e
@@ -4734,12 +4784,27 @@ nv.models.funnel = function() {
 
       function renderFunnelLabels() {
         // Remove responsive label elements
+        labels.selectAll('polyline').remove();
+        labels.selectAll('rect').remove();
         labels.selectAll('text').remove();
+
+        labels
+          .append('rect')
+          .attr('class', 'nv-label-box')
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('width', 0)
+          .attr('height', 0)
+          .attr('rx', 2)
+          .attr('ry', 2)
+          .style('pointer-events', 'none')
+          .style('stroke-width', 0)
+          .style('fill-opacity', 0);
 
         // Append label text and wrap if needed
         labels.append('text')
           .text(fmtKey)
-            .call(fmtLabel, 'nv-label', 0.85, '11px', 'middle', fmtFill);
+            .call(fmtLabel, 'nv-label', 0.85, 'middle', fmtFill);
 
         labels.select('.nv-label')
           .call(
@@ -4747,14 +4812,14 @@ nv.models.funnel = function() {
             (wrapLabels ? wrapLabel : ellipsifyLabel),
             calcFunnelWidthAtSliceMidpoint,
             function(txt, dy) {
-              fmtLabel(txt, 'nv-label', dy, '11px', 'middle', fmtFill);
+              fmtLabel(txt, 'nv-label', dy, 'middle', fmtFill);
             }
           );
 
         // Append value and count text
         labels.append('text')
           .text(fmtValueLabel)
-            .call(fmtLabel, 'nv-value', 0.85, '15px', 'middle', fmtFill);
+            .call(fmtLabel, 'nv-value', 0.85, 'middle', fmtFill);
 
         labels.select('.nv-value')
           .append('tspan')
@@ -4768,6 +4833,9 @@ nv.models.funnel = function() {
           .call(calcFunnelLabelDimensions);
 
         labels
+          .call(positionLabelBox);
+
+        labels
           .classed('nv-label-side', function(d) { return d.tooTall || d.tooWide; });
       }
 
@@ -4777,13 +4845,14 @@ nv.models.funnel = function() {
       function renderSideLabels() {
         // Remove all responsive elements
         sideLabels = labels.filter('.nv-label-side');
-        labels.selectAll('polyline').remove();
         sideLabels.selectAll('.nv-label').remove();
+        sideLabels.selectAll('rect').remove();
+        sideLabels.selectAll('polyline').remove();
 
         // Position side labels
         sideLabels.append('text')
           .text(fmtKey)
-            .call(fmtLabel, 'nv-label', 0.85, '11px', 'start', '#555');
+            .call(fmtLabel, 'nv-label', 0.85, 'start', '#555');
 
         sideLabels.select('.nv-label')
           .call(
@@ -4791,7 +4860,7 @@ nv.models.funnel = function() {
             (wrapLabels ? wrapLabel : ellipsifyLabel),
             (wrapLabels ? calcSideWidth : maxSideLabelWidth),
             function(txt, dy) {
-              fmtLabel(txt, 'nv-label', dy, '11px', 'start', '#555');
+              fmtLabel(txt, 'nv-label', dy, 'start', '#555');
             }
           );
 
@@ -4799,7 +4868,7 @@ nv.models.funnel = function() {
           .call(positionValue);
 
         sideLabels.select('.nv-value')
-          .style({'font-size': '15px', 'text-anchor': 'start', 'fill': '#555'});
+          .style({'text-anchor': 'start', 'fill': '#555'});
 
         sideLabels
           .call(calcSideLabelDimensions);
@@ -4885,11 +4954,15 @@ nv.models.funnel = function() {
       //------------------------------------------------------------
       // Reposition responsive elements
 
-      funs
+      funs.selectAll('polygon')
         .attr('points', function(d) {
-          var scalar = d.active && d.active === 'active' ? 1.05 : 1;
-          return pointsTrapezoid(d, 1, calculatedWidth * scalar);
+          return pointsTrapezoid(d, 1, calculatedWidth);
         });
+
+      if (textureFill) {
+        funs.select('.nv-texture')
+          .style('fill', fmtFill);
+      }
 
       labels
         .attr('transform', function(d) {
@@ -5162,17 +5235,16 @@ nv.models.funnel = function() {
       }
 
       function fmtFill(d, i, j) {
-        var backColor = d3.select(this.parentNode).style('fill'),
-            textColor = nv.utils.getTextContrast(backColor, i);
-        return textColor;
+        var backColor = d3.select(this.parentNode).style('fill');
+        return nv.utils.getTextContrast(backColor, i);
       }
 
       function fmtKey(d) {
-        return data[d.series].key;
+        return data[d.index].key;
       }
 
       function fmtCount(d) {
-        var i = data[d.series].count;
+        var i = data[d.index].count;
         return i ? ' (' + i + ')' : '';
       }
 
@@ -5182,7 +5254,7 @@ nv.models.funnel = function() {
         return 'ltr';
       }
 
-      function fmtLabel(txt, classes, dy, fontSize, anchor, fill) {
+      function fmtLabel(txt, classes, dy, anchor, fill) {
         txt
           .attr('x', 0)
           .attr('y', 0)
@@ -5191,20 +5263,32 @@ nv.models.funnel = function() {
           .attr('direction', function() {
             return fmtDirection(txt.text());
           })
-          .style('pointer-events', 'none')
-          .style('text-anchor', anchor)
-          .style('font-size', fontSize)
-          .style('fill', fill);
+          .style({'pointer-events': 'none', 'text-anchor': anchor, 'fill': fill});
       }
 
       function positionValue(lbls) {
         lbls.each(function(d) {
           var lbl = d3.select(this),
               cnt = lbl.selectAll('.nv-label')[0].length + 1,
-              dy = .85 * cnt + 'em';
+              dy = (.85 + cnt - 1) + 'em';
 
           lbl.select('.nv-value')
             .attr('dy', dy);
+        });
+      }
+
+      function positionLabelBox(lbls) {
+        lbls.each(function(d, i) {
+          var lbl = d3.select(this);
+
+          lbl.select('.nv-label-box')
+            .attr('x', (d.labelWidth + 6) / -2)
+            .attr('y', -2)
+            .attr('width', d.labelWidth + 6)
+            .attr('height', d.labelHeight + 4)
+            .attr('rx', 2)
+            .attr('ry', 2)
+            .style('fill-opacity', 1);
         });
       }
 
@@ -5331,6 +5415,12 @@ nv.models.funnel = function() {
     return chart;
   };
 
+  chart.textureFill = function(_) {
+    if (!arguments.length) return textureFill;
+    textureFill = _;
+    return chart;
+  };
+
   //============================================================
 
   return chart;
@@ -5421,23 +5511,20 @@ nv.models.funnelChart = function() {
 
         // if you have activated a data series, inactivate the rest
         if (series.active === 'active') {
-          data.filter(function(d) {
-            return d.active !== 'active';
-          }).map(function(d) {
-            d.values[0].active = 'inactive';
-            d.active = 'inactive';
-            return d;
-          });
+          data
+            .filter(function(d) {
+              return d.active !== 'active';
+            })
+            .map(function(d) {
+              d.active = 'inactive';
+              return d;
+            });
         }
 
         // if there are no active data series, inactivate them all
-        if (!data.filter(function(d) {
-          return d.active === 'active';
-        }).length) {
+        if (!data.filter(function(d) { return d.active === 'active'; }).length) {
           data.map(function(d) {
             d.active = '';
-            d.values[0].active = '';
-            container.selectAll('.nv-series').classed('nv-inactive', false);
             return d;
           });
         }
@@ -5646,11 +5733,20 @@ nv.models.funnelChart = function() {
 
       legend.dispatch.on('legendClick', function(d, i) {
         d.disabled = !d.disabled;
+        d.active = false;
 
+        // if there are no enabled data series, enable them all
         if (!data.filter(function(d) { return !d.disabled; }).length) {
           data.map(function(d) {
             d.disabled = false;
-            wrap.selectAll('.nv-series').classed('disabled', false);
+            return d;
+          });
+        }
+
+        // if there are no active data series, activate them all
+        if (!data.filter(function(d) { return d.active === 'active'; }).length) {
+          data.map(function(d) {
+            d.active = '';
             return d;
           });
         }
@@ -7221,6 +7317,14 @@ nv.models.lineChart = function() {
         }
       });
 
+      isTimeSeries = data[0].values.length && data[0].values[0] instanceof Array && nv.utils.isValidDate(data[0].values[0][0]);
+      // SAVE FOR LATER
+      // isOrdinalSeries = !isTimeSeries && labels.length > 0 && d3.min(lineData, function(d) {
+      //   return d3.min(d.values, function(d, i) {
+      //     return lines.x()(d, i);
+      //   });
+      // }) > 0;
+
       lineData = data.filter(function(d) {
           return !d.disabled;
         });
@@ -7262,14 +7366,6 @@ nv.models.lineChart = function() {
           return d.values.length;
         }) === 1;
 
-      isTimeSeries = lineData[0].values.length && lineData[0].values[0] instanceof Array && nv.utils.isValidDate(lineData[0].values[0][0]);
-      // SAVE FOR LATER
-      // isOrdinalSeries = !isTimeSeries && labels.length > 0 && d3.min(lineData, function(d) {
-      //   return d3.min(d.values, function(d, i) {
-      //     return lines.x()(d, i);
-      //   });
-      // }) > 0;
-
       showMaxMin = isTimeSeries || nv.utils.isValidDate(labels[0]) ? true : false;
 
       lines
@@ -7290,7 +7386,9 @@ nv.models.lineChart = function() {
                 if (p.indexOf(c) < 0) p.push(c);
                 return p;
               }, [])
-              .sort(),
+              .sort(function(a, b) {
+                return a - b;
+              }),
             xExtents = d3.extent(xValues),
             xOffset = 1 * (isTimeSeries ? 86400000 : 1);
 
@@ -7311,6 +7409,7 @@ nv.models.lineChart = function() {
             yExtents[0] - yOffset,
             yExtents[1] + yOffset
           ]);
+
         xAxis
           .ticks(xValues.length)
           .tickValues(xValues)
@@ -7527,8 +7626,6 @@ nv.models.lineChart = function() {
 
         // Y-Axis
         yAxis
-          .tickSize(-innerWidth + (lines.padData() ? pointRadius : 0), 0)
-          // .ticks(innerHeight / 36) //TODO: why was this here?
           .margin(innerMargin);
         yAxisWrap
           .call(yAxis);
@@ -7538,20 +7635,21 @@ nv.models.lineChart = function() {
         setInnerDimensions();
 
         // X-Axis
+        trans = innerMargin.left + ',';
+        trans += innerMargin.top + (xAxis.orient() === 'bottom' ? innerHeight : 0);
+        xAxisWrap
+          .attr('transform', 'translate(' + trans + ')');
+        // resize ticks based on new dimensions
         xAxis
           .tickSize(-innerHeight + (lines.padData() ? pointRadius : 0), 0)
           .margin(innerMargin);
         xAxisWrap
           .call(xAxis);
-        // reset inner dimensions
         xAxisMargin = xAxis.margin();
         setInnerMargins();
         setInnerDimensions();
-        // resize ticks based on new dimensions
         xAxis
-          .tickSize(-innerHeight + (lines.padData() ? pointRadius : 0), 0);
-        xAxis
-          .resizeTickLines();
+          .resizeTickLines(-innerHeight + (lines.padData() ? pointRadius : 0));
 
         // recall y-axis to set final size based on new dimensions
         yAxis
@@ -7892,6 +7990,7 @@ nv.models.lineChart = function() {
     }
     direction = _;
     yAxis.direction(_);
+    xAxis.direction(_);
     legend.direction(_);
     controls.direction(_);
     return chart;
@@ -8503,7 +8602,7 @@ nv.models.multiBar = function() {
       nice = false,
       color = function(d, i) { return nv.utils.defaultColor()(d, d.series); },
       fill = color,
-      textureFill = true,
+      textureFill = false,
       barColor = null, // adding the ability to set the color for each rather than the whole group
       classes = function(d, i) { return 'nv-group nv-series-' + d.series; },
       dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove');
@@ -8765,39 +8864,8 @@ nv.models.multiBar = function() {
       g .attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + id + ')' : '');
 
 
-
-      //------------------------------------------------------------
-
       if (textureFill) {
-        defsEnter
-          .append('pattern')
-            .attr('id', 'nv-diagonalHatch-' + id)
-            .attr('patternUnits', 'userSpaceOnUse')
-            .attr('width', 8)
-            .attr('height', 8)
-            .append('path')
-              .attr('d', 'M-1,1 l2,-2 M0,8 l8,-8 M7,9 l1,-1')
-              .attr('class', 'texture-line')
-              // .attr('class', classes)
-              // .attr('stroke', fill)
-              .attr('stroke', '#fff')
-              .attr('stroke-linecap', 'square');
-        var texture = 'url(#nv-diagonalHatch-' + id + ')';
-
-        defsEnter
-          .append('mask')
-            .attr('id', 'nv-textureMask-' + id)
-            .attr('x', 0)
-            .attr('y', 0)
-            .attr('width', '100%')
-            .attr('height', '100%')
-            .append('rect')
-              .attr('x', 0)
-              .attr('y', -1)
-              .attr('width', '100%')
-              .attr('height', '100%')
-              .attr('fill', texture);
-        var mask = 'url(#nv-textureMask-' + id + ')';
+        var mask = nv.utils.createTexture(defsEnter, id);
       }
 
 
@@ -8829,6 +8897,14 @@ nv.models.multiBar = function() {
         .classed('nv-inactive', function(d) { return d.active === 'inactive'; })
         .style({'stroke-opacity': 1, 'fill-opacity': 1});
 
+      groups
+        .on('mouseover', function(d, i, j) { //TODO: figure out why j works above, but not here
+          d3.select(this).classed('hover', true);
+        })
+        .on('mouseout', function(d, i, j) {
+          d3.select(this).classed('hover', false);
+        });
+
       //------------------------------------------------------------
 
       var bars = groups.selectAll('g.nv-bar')
@@ -8845,12 +8921,14 @@ nv.models.multiBar = function() {
         .attr('x', 0)
         .attr('y', 0);
 
-      // For on click active bars
-      barsEnter.append('rect')
-        .attr('class', 'nv-texture')
-        .attr('x', 0)
-        .attr('y', 0)
-        .style('mask', mask);
+      if (textureFill) {
+        // For on click active bars
+        barsEnter.append('rect')
+          .attr('class', 'nv-texture')
+          .attr('x', 0)
+          .attr('y', 0)
+          .style('mask', 'url(' + mask + ')');
+      }
 
       // For label background
       barsEnter.append('rect')
@@ -8892,16 +8970,18 @@ nv.models.multiBar = function() {
           .attr(dimY, barLength)
           .attr(dimX, barThickness);
 
-      bars
-        .select('rect.nv-texture')
-          .attr(valX, 0)
-          .attr(dimY, barLength)
-          .attr(dimX, barThickness)
-          .style('fill', function(d, i) {
-            var backColor = fill(d),
-                foreColor = nv.utils.getTextContrast(backColor, i);
-            return foreColor;
-          });
+      if (textureFill) {
+        bars
+          .select('rect.nv-texture')
+            .attr(valX, 0)
+            .attr(dimY, barLength)
+            .attr(dimX, barThickness)
+            .style('fill', function(d, i) {
+              var backColor = fill(d),
+                  foreColor = nv.utils.getTextContrast(backColor, i);
+              return foreColor;
+            });
+      }
 
       //------------------------------------------------------------
       // Assign events
@@ -8920,7 +9000,6 @@ nv.models.multiBar = function() {
 
       bars
         .on('mouseover', function(d, i, j) { //TODO: figure out why j works above, but not here
-          d3.select(this).classed('hover', true);
           var eo = buildEventObject(d3.event, d, i, j);
           dispatch.elementMouseover(eo);
         })
@@ -8928,7 +9007,6 @@ nv.models.multiBar = function() {
           dispatch.elementMousemove(d3.event);
         })
         .on('mouseout', function(d, i, j) {
-          d3.select(this).classed('hover', false);
           dispatch.elementMouseout();
         })
         .on('click', function(d, i, j) {
@@ -9063,8 +9141,6 @@ nv.models.multiBar = function() {
               if (!stacked) {
                 return 1;
               } else if (labelPosition === 'total') {
-                // console.log('d.series: ', d.series);
-                // console.log('maxSeries: ', maxSeries);
                 if (d.series !== minSeries && d.series !== maxSeries) {
                   return 0;
                 }
@@ -9403,6 +9479,12 @@ nv.models.multiBar = function() {
       return nice;
     }
     nice = _;
+    return chart;
+  };
+
+  chart.textureFill = function(_) {
+    if (!arguments.length) return textureFill;
+    textureFill = _;
     return chart;
   };
 
@@ -9958,10 +10040,11 @@ nv.models.multiBarChart = function() {
         // }
         setInnerMargins();
         setInnerDimensions();
+
         // X-Axis
         xAxis
-          .orient(vertical ? 'bottom' : 'left')
           .margin(innerMargin)
+          .orient(vertical ? 'bottom' : 'left')
           .tickFormat(function(d, i, noEllipsis) {
             // Set xAxis to use trimmed array rather than data
             var label = groupLabels[i] || 'undefined';
@@ -9970,6 +10053,10 @@ nv.models.multiBarChart = function() {
             }
             return label;
           });
+        trans = innerMargin.left + ',';
+        trans += innerMargin.top + (xAxis.orient() === 'bottom' ? innerHeight : 0);
+        xAxisWrap
+          .attr('transform', 'translate(' + trans + ')');
         xAxisWrap
           .call(xAxis);
         // reset inner dimensions
@@ -9995,8 +10082,6 @@ nv.models.multiBarChart = function() {
           .transition()
             .call(multibar);
 
-        useScroll = minDimension > (vertical ? innerWidth : innerHeight);
-
         //------------------------------------------------------------
         // Final repositioning
 
@@ -10015,13 +10100,16 @@ nv.models.multiBarChart = function() {
         scrollWrap
           .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')');
 
-        xAxisWrap.select('.nv-axislabel')
-          .attr('x', (vertical ? innerWidth : -innerHeight) / 2);
-
         //------------------------------------------------------------
         // Enable scrolling
 
         if (scrollEnabled) {
+
+          useScroll = minDimension > (vertical ? innerWidth : innerHeight);
+
+          xAxisWrap.select('.nv-axislabel')
+            .attr('x', (vertical ? innerWidth : -innerHeight) / 2);
+
           var diff = (vertical ? innerWidth : innerHeight) - minDimension,
               panMultibar = function() {
                 dispatch.tooltipHide(d3.event);
@@ -10059,6 +10147,7 @@ nv.models.multiBarChart = function() {
 
       legend.dispatch.on('legendClick', function(d, i) {
         d.disabled = !d.disabled;
+        d.active = false;
 
         if (hideEmptyGroups) {
           data.map(function(m, j) {
@@ -10070,10 +10159,18 @@ nv.models.multiBarChart = function() {
           });
         }
 
+        // if there are no enabled data series, enable them all
         if (!data.filter(function(d) { return !d.disabled; }).length) {
           data.map(function(d) {
             d.disabled = false;
-            container.selectAll('.nv-series').classed('disabled', false);
+            return d;
+          });
+        }
+
+        // if there are no active data series, activate them all
+        if (!data.filter(function(d) { return d.active === 'active'; }).length) {
+          data.map(function(d) {
+            d.active = '';
             return d;
           });
         }
@@ -10570,6 +10667,45 @@ nv.models.paretoChart = function() {
 
             //------------------------------------------------------------
             // Process data
+
+            chart.dataSeriesActivate = function(eo) {
+                var series = eo.series;
+
+                series.active = (!series.active || series.active === 'inactive') ? 'active' : 'inactive';
+                series.values.map(function(d) {
+                    d.active = series.active;
+                });
+
+                // if you have activated a data series, inactivate the rest
+                if (series.active === 'active') {
+                    data
+                        .filter(function(d) {
+                            return d.active !== 'active';
+                        })
+                        .map(function(d) {
+                            d.active = 'inactive';
+                            d.values.map(function(d) {
+                                d.active = 'inactive';
+                            });
+                            return d;
+                        });
+                }
+
+                // if there are no active data series, activate them all
+                if (!data.filter(function(d) { return d.active === 'active'; }).length) {
+                    data
+                        .map(function(d) {
+                            d.active = '';
+                            d.values.map(function(d) {
+                                d.active = '';
+                            });
+                            container.selectAll('.nv-series').classed('nv-inactive', false);
+                            return d;
+                        });
+                }
+
+                container.call(chart);
+            };
 
             var dataBars = data.filter(function(d) {
                     return !d.disabled && (!d.type || d.type === 'bar');
@@ -11463,6 +11599,7 @@ nv.models.pie = function() {
       direction = 'ltr',
       color = function(d, i) { return nv.utils.defaultColor()(d, d.series); },
       fill = color,
+      textureFill = false,
       classes = function(d, i) { return 'nv-slice nv-series-' + d.series; },
       dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove');
 
@@ -11517,6 +11654,12 @@ nv.models.pie = function() {
 
       //------------------------------------------------------------
 
+      if (textureFill) {
+        var mask = nv.utils.createTexture(defsEnter, id, -availableWidth / 2, -availableHeight / 2);
+      }
+
+      //------------------------------------------------------------
+
       container
         .on('click', function(d, i) {
           dispatch.chartClick({
@@ -11533,6 +11676,9 @@ nv.models.pie = function() {
       slices.exit().remove();
 
       var ae = slices.enter().append('g')
+            .style('stroke', '#ffffff')
+            .style('stroke-width', 2)
+            .style('stroke-opacity', 0)
             .on('mouseover', function(d, i) {
               d3.select(this).classed('hover', true);
               var eo = buildEventObject(d3.event, d, i);
@@ -11557,12 +11703,19 @@ nv.models.pie = function() {
             });
 
           ae.append('path')
-              .style('stroke', '#ffffff')
-              .style('stroke-width', 2)
-              .style('stroke-opacity', 0)
+              .attr('class', 'nv-base')
               .each(function(d, i) {
                 this._current = d;
               });
+
+          if (textureFill) {
+            ae.append('path')
+                .attr('class', 'nv-texture')
+                .each(function(d, i) {
+                  this._current = d;
+                })
+                .style('mask', 'url(' + mask + ')');
+          }
 
           ae.append('g')
               .attr('transform', 'translate(0,0)')
@@ -11591,11 +11744,9 @@ nv.models.pie = function() {
           verticalShift = 0,
           verticalReduction = doLabels ? 5 : 0,
           horizontalShift = 0,
-          horizontalReduction = leaderLength + textOffset,
-          verticalDifferential = 0,
-          horizontalDifferential = 0;
+          horizontalReduction = leaderLength + textOffset;
 
-      slices.select('path').call(calcScalars, maxWidthRadius, maxHeightRadius);
+      slices.select('.nv-base').call(calcScalars, maxWidthRadius, maxHeightRadius);
 
       // Donut Hole Text
       holeWrap.call(holeFormat, hole ? [hole] : []);
@@ -11636,6 +11787,9 @@ nv.models.pie = function() {
         .attr('transform', 'translate(' + offsetHorizontal + ',' + offsetVertical + ')');
       holeWrap
         .attr('transform', 'translate(' + offsetHorizontal + ',' + offsetVertical + ')');
+      pieWrap.select(mask)
+        .attr('x', -pieRadius / 2)
+        .attr('y', -pieRadius / 2);
 
       var pieArc = d3.svg.arc()
             .innerRadius(donut ? pieRadius * donutRatio : 0)
@@ -11661,10 +11815,10 @@ nv.models.pie = function() {
       }
 
       slices
-        .classed('nv-active', function(d) { return d.data.active === 'active'; })
-        .classed('nv-inactive', function(d) { return d.data.active === 'inactive'; })
         .attr('class', function(d) { return classes(d.data, d.data.series); })
-        .attr('fill', function(d) { return fill(d.data, d.data.series); });
+        .attr('fill', function(d) { return fill(d.data, d.data.series); })
+        .classed('nv-active', function(d) { return d.data.active === 'active'; })
+        .classed('nv-inactive', function(d) { return d.data.active === 'inactive'; });
 
       // removed d3 transition in MACAROON-133 because
       // there is a "Maximum call stack size exceeded at Date.toString" error
@@ -11674,11 +11828,23 @@ nv.models.pie = function() {
       //   .attr('d', arc)
       //   .attrTween('d', arcTween);
 
-      slices.select('path')
+      slices.select('.nv-base')
         .attr('d', pieArc)
         .style('stroke-opacity', function(d) {
           return startAngle(d) === endAngle(d) ? 0 : 1;
         });
+
+      if (textureFill) {
+        slices.select('.nv-texture')
+          .attr('d', pieArc)
+          .style('stroke-opacity', function(d) {
+            return startAngle(d) === endAngle(d) ? 0 : 1;
+          })
+          .style('fill', function(d, i) {
+            var backColor = d3.select(this.parentNode).style('fill');
+            return nv.utils.getTextContrast(backColor, i);
+          });
+      }
 
       if (showLabels) {
         // This does the normal label
@@ -11896,7 +12062,7 @@ nv.models.pie = function() {
         var widthRadius = [maxWidthRadius],
             heightRadius = [maxHeightRadius + leaderLength];
 
-        slices.select('path').each(function(d, i) {
+        slices.select('.nv-base').each(function(d, i) {
           if (!labelOpacity(d)) {
             return;
           }
@@ -11912,9 +12078,6 @@ nv.models.pie = function() {
           widthRadius.push(rW);
           heightRadius.push(rH);
         });
-
-        verticalDifferential = d3.max(heightRadius) + d3.min(heightRadius);
-        horizontalDifferential = d3.max(widthRadius) + d3.min(widthRadius);
 
         var radius = d3.min(widthRadius.concat(heightRadius).concat([]), function(d) { return Math.abs(d); });
 
@@ -12213,6 +12376,12 @@ nv.models.pie = function() {
     return chart;
   };
 
+  chart.textureFill = function(_) {
+    if (!arguments.length) return textureFill;
+    textureFill = _;
+    return chart;
+  };
+
   //============================================================
 
   return chart;
@@ -12293,21 +12462,20 @@ nv.models.pieChart = function() {
 
         // if you have activated a data series, inactivate the rest
         if (series.active === 'active') {
-          data.filter(function(d) {
-            return d.active !== 'active';
-          }).map(function(d) {
-            d.active = 'inactive';
-            return d;
-          });
+          data
+            .filter(function(d) {
+              return d.active !== 'active';
+            })
+            .map(function(d) {
+              d.active = 'inactive';
+              return d;
+            });
         }
 
         // if there are no active data series, inactivate them all
-        if (!data.filter(function(d) {
-          return d.active === 'active';
-        }).length) {
+        if (!data.filter(function(d) { return d.active === 'active'; }).length) {
           data.map(function(d) {
             d.active = '';
-            container.selectAll('.nv-series').classed('nv-inactive', false);
             return d;
           });
         }
@@ -12476,16 +12644,25 @@ nv.models.pieChart = function() {
 
       legend.dispatch.on('legendClick', function(d, i) {
         d.disabled = !d.disabled;
+        d.active = false;
 
-        if (!pie.values()(pieData).filter(function(d) { return !d.disabled; }).length) {
-          pie.values()(data).map(function(d) {
+        // if there are no enabled data series, enable them all
+        if (!data.filter(function(d) { return !d.disabled; }).length) {
+          data.map(function(d) {
             d.disabled = false;
-            wrap.selectAll('.nv-series').classed('disabled', false);
             return d;
           });
         }
 
-        state.disabled = pieData.map(function(d) { return !!d.disabled; });
+        // if there are no active data series, activate them all
+        if (!data.filter(function(d) { return d.active === 'active'; }).length) {
+          data.map(function(d) {
+            d.active = '';
+            return d;
+          });
+        }
+
+        state.disabled = data.map(function(d) { return !!d.disabled; });
         dispatch.stateChange(state);
 
         container.transition().duration(durationMs).call(chart);

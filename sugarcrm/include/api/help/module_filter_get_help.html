@@ -18,10 +18,12 @@
 <h2>Summary</h2>
 <span class="lead">
     This endpoint will return a set of records filtered by an expression. The filter can be applied to multiple fields
-    and have multiple and/or conditions in it. Care will need to be taken to make sure this filter has appropriate
-    indexes on the server side otherwise the runtime of the endpoint will be very long. Related fields can be searched
-    by specifying the field name as: "link_name.remote_field", so if you wished to search the Accounts module by a
-    related member account you would use "members.sic_code".
+    and have multiple and/or conditions in it. Alternatively, you may use an existing filter by specifying its id; however,
+    if both a filter definition and a filter id are passed, the definition will override the id. Care will need to be
+    taken to make sure that any filters used have appropriate indexes on the server side otherwise the runtime of the
+    endpoint will be very long. Related fields can be searched by specifying the field name as:
+    "link_name.remote_field", so if you wished to search the Accounts module by a related member account you would
+    use "members.sic_code".
 </span>
 
 <h2>Request Arguments</h2>
@@ -44,6 +46,20 @@
         </td>
         <td>
             The filter expression. Filter expressions are explained below.
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>
+            filter_id
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            Identifier for a preexisting filter. Overwritten if filter is set.
         </td>
         <td>
             False
@@ -142,7 +158,7 @@
             String
         </td>
         <td>
-            A search expression, will search on this module. Cannot be used at the same time as a filter expression.
+            A search expression, will search on this module. Cannot be used at the same time as a filter expression or id.
         </td>
         <td>
             False

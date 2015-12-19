@@ -74,21 +74,20 @@ nv.models.pieChart = function() {
 
         // if you have activated a data series, inactivate the rest
         if (series.active === 'active') {
-          data.filter(function(d) {
-            return d.active !== 'active';
-          }).map(function(d) {
-            d.active = 'inactive';
-            return d;
-          });
+          data
+            .filter(function(d) {
+              return d.active !== 'active';
+            })
+            .map(function(d) {
+              d.active = 'inactive';
+              return d;
+            });
         }
 
         // if there are no active data series, inactivate them all
-        if (!data.filter(function(d) {
-          return d.active === 'active';
-        }).length) {
+        if (!data.filter(function(d) { return d.active === 'active'; }).length) {
           data.map(function(d) {
             d.active = '';
-            container.selectAll('.nv-series').classed('nv-inactive', false);
             return d;
           });
         }
@@ -257,16 +256,25 @@ nv.models.pieChart = function() {
 
       legend.dispatch.on('legendClick', function(d, i) {
         d.disabled = !d.disabled;
+        d.active = false;
 
-        if (!pie.values()(pieData).filter(function(d) { return !d.disabled; }).length) {
-          pie.values()(data).map(function(d) {
+        // if there are no enabled data series, enable them all
+        if (!data.filter(function(d) { return !d.disabled; }).length) {
+          data.map(function(d) {
             d.disabled = false;
-            wrap.selectAll('.nv-series').classed('disabled', false);
             return d;
           });
         }
 
-        state.disabled = pieData.map(function(d) { return !!d.disabled; });
+        // if there are no active data series, activate them all
+        if (!data.filter(function(d) { return d.active === 'active'; }).length) {
+          data.map(function(d) {
+            d.active = '';
+            return d;
+          });
+        }
+
+        state.disabled = data.map(function(d) { return !!d.disabled; });
         dispatch.stateChange(state);
 
         container.transition().duration(durationMs).call(chart);

@@ -142,6 +142,14 @@ nv.models.lineChart = function() {
         }
       });
 
+      isTimeSeries = data[0].values.length && data[0].values[0] instanceof Array && nv.utils.isValidDate(data[0].values[0][0]);
+      // SAVE FOR LATER
+      // isOrdinalSeries = !isTimeSeries && labels.length > 0 && d3.min(lineData, function(d) {
+      //   return d3.min(d.values, function(d, i) {
+      //     return lines.x()(d, i);
+      //   });
+      // }) > 0;
+
       lineData = data.filter(function(d) {
           return !d.disabled;
         });
@@ -183,14 +191,6 @@ nv.models.lineChart = function() {
           return d.values.length;
         }) === 1;
 
-      isTimeSeries = lineData[0].values.length && lineData[0].values[0] instanceof Array && nv.utils.isValidDate(lineData[0].values[0][0]);
-      // SAVE FOR LATER
-      // isOrdinalSeries = !isTimeSeries && labels.length > 0 && d3.min(lineData, function(d) {
-      //   return d3.min(d.values, function(d, i) {
-      //     return lines.x()(d, i);
-      //   });
-      // }) > 0;
-
       showMaxMin = isTimeSeries || nv.utils.isValidDate(labels[0]) ? true : false;
 
       lines
@@ -211,7 +211,9 @@ nv.models.lineChart = function() {
                 if (p.indexOf(c) < 0) p.push(c);
                 return p;
               }, [])
-              .sort(),
+              .sort(function(a, b) {
+                return a - b;
+              }),
             xExtents = d3.extent(xValues),
             xOffset = 1 * (isTimeSeries ? 86400000 : 1);
 
@@ -232,6 +234,7 @@ nv.models.lineChart = function() {
             yExtents[0] - yOffset,
             yExtents[1] + yOffset
           ]);
+
         xAxis
           .ticks(xValues.length)
           .tickValues(xValues)
@@ -448,8 +451,6 @@ nv.models.lineChart = function() {
 
         // Y-Axis
         yAxis
-          .tickSize(-innerWidth + (lines.padData() ? pointRadius : 0), 0)
-          // .ticks(innerHeight / 36) //TODO: why was this here?
           .margin(innerMargin);
         yAxisWrap
           .call(yAxis);
@@ -459,20 +460,21 @@ nv.models.lineChart = function() {
         setInnerDimensions();
 
         // X-Axis
+        trans = innerMargin.left + ',';
+        trans += innerMargin.top + (xAxis.orient() === 'bottom' ? innerHeight : 0);
+        xAxisWrap
+          .attr('transform', 'translate(' + trans + ')');
+        // resize ticks based on new dimensions
         xAxis
           .tickSize(-innerHeight + (lines.padData() ? pointRadius : 0), 0)
           .margin(innerMargin);
         xAxisWrap
           .call(xAxis);
-        // reset inner dimensions
         xAxisMargin = xAxis.margin();
         setInnerMargins();
         setInnerDimensions();
-        // resize ticks based on new dimensions
         xAxis
-          .tickSize(-innerHeight + (lines.padData() ? pointRadius : 0), 0);
-        xAxis
-          .resizeTickLines();
+          .resizeTickLines(-innerHeight + (lines.padData() ? pointRadius : 0));
 
         // recall y-axis to set final size based on new dimensions
         yAxis
@@ -813,6 +815,7 @@ nv.models.lineChart = function() {
     }
     direction = _;
     yAxis.direction(_);
+    xAxis.direction(_);
     legend.direction(_);
     controls.direction(_);
     return chart;
