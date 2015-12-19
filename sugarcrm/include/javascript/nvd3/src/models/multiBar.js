@@ -29,7 +29,7 @@ nv.models.multiBar = function() {
       nice = false,
       color = function(d, i) { return nv.utils.defaultColor()(d, d.series); },
       fill = color,
-      textureFill = true,
+      textureFill = false,
       barColor = null, // adding the ability to set the color for each rather than the whole group
       classes = function(d, i) { return 'nv-group nv-series-' + d.series; },
       dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove');
@@ -291,39 +291,8 @@ nv.models.multiBar = function() {
       g .attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + id + ')' : '');
 
 
-
-      //------------------------------------------------------------
-
       if (textureFill) {
-        defsEnter
-          .append('pattern')
-            .attr('id', 'nv-diagonalHatch-' + id)
-            .attr('patternUnits', 'userSpaceOnUse')
-            .attr('width', 8)
-            .attr('height', 8)
-            .append('path')
-              .attr('d', 'M-1,1 l2,-2 M0,8 l8,-8 M7,9 l1,-1')
-              .attr('class', 'texture-line')
-              // .attr('class', classes)
-              // .attr('stroke', fill)
-              .attr('stroke', '#fff')
-              .attr('stroke-linecap', 'square');
-        var texture = 'url(#nv-diagonalHatch-' + id + ')';
-
-        defsEnter
-          .append('mask')
-            .attr('id', 'nv-textureMask-' + id)
-            .attr('x', 0)
-            .attr('y', 0)
-            .attr('width', '100%')
-            .attr('height', '100%')
-            .append('rect')
-              .attr('x', 0)
-              .attr('y', -1)
-              .attr('width', '100%')
-              .attr('height', '100%')
-              .attr('fill', texture);
-        var mask = 'url(#nv-textureMask-' + id + ')';
+        var mask = nv.utils.createTexture(defsEnter, id);
       }
 
 
@@ -355,6 +324,14 @@ nv.models.multiBar = function() {
         .classed('nv-inactive', function(d) { return d.active === 'inactive'; })
         .style({'stroke-opacity': 1, 'fill-opacity': 1});
 
+      groups
+        .on('mouseover', function(d, i, j) { //TODO: figure out why j works above, but not here
+          d3.select(this).classed('hover', true);
+        })
+        .on('mouseout', function(d, i, j) {
+          d3.select(this).classed('hover', false);
+        });
+
       //------------------------------------------------------------
 
       var bars = groups.selectAll('g.nv-bar')
@@ -371,12 +348,14 @@ nv.models.multiBar = function() {
         .attr('x', 0)
         .attr('y', 0);
 
-      // For on click active bars
-      barsEnter.append('rect')
-        .attr('class', 'nv-texture')
-        .attr('x', 0)
-        .attr('y', 0)
-        .style('mask', mask);
+      if (textureFill) {
+        // For on click active bars
+        barsEnter.append('rect')
+          .attr('class', 'nv-texture')
+          .attr('x', 0)
+          .attr('y', 0)
+          .style('mask', 'url(' + mask + ')');
+      }
 
       // For label background
       barsEnter.append('rect')
@@ -418,16 +397,18 @@ nv.models.multiBar = function() {
           .attr(dimY, barLength)
           .attr(dimX, barThickness);
 
-      bars
-        .select('rect.nv-texture')
-          .attr(valX, 0)
-          .attr(dimY, barLength)
-          .attr(dimX, barThickness)
-          .style('fill', function(d, i) {
-            var backColor = fill(d),
-                foreColor = nv.utils.getTextContrast(backColor, i);
-            return foreColor;
-          });
+      if (textureFill) {
+        bars
+          .select('rect.nv-texture')
+            .attr(valX, 0)
+            .attr(dimY, barLength)
+            .attr(dimX, barThickness)
+            .style('fill', function(d, i) {
+              var backColor = fill(d),
+                  foreColor = nv.utils.getTextContrast(backColor, i);
+              return foreColor;
+            });
+      }
 
       //------------------------------------------------------------
       // Assign events
@@ -446,7 +427,6 @@ nv.models.multiBar = function() {
 
       bars
         .on('mouseover', function(d, i, j) { //TODO: figure out why j works above, but not here
-          d3.select(this).classed('hover', true);
           var eo = buildEventObject(d3.event, d, i, j);
           dispatch.elementMouseover(eo);
         })
@@ -454,7 +434,6 @@ nv.models.multiBar = function() {
           dispatch.elementMousemove(d3.event);
         })
         .on('mouseout', function(d, i, j) {
-          d3.select(this).classed('hover', false);
           dispatch.elementMouseout();
         })
         .on('click', function(d, i, j) {
@@ -589,8 +568,6 @@ nv.models.multiBar = function() {
               if (!stacked) {
                 return 1;
               } else if (labelPosition === 'total') {
-                // console.log('d.series: ', d.series);
-                // console.log('maxSeries: ', maxSeries);
                 if (d.series !== minSeries && d.series !== maxSeries) {
                   return 0;
                 }
@@ -929,6 +906,12 @@ nv.models.multiBar = function() {
       return nice;
     }
     nice = _;
+    return chart;
+  };
+
+  chart.textureFill = function(_) {
+    if (!arguments.length) return textureFill;
+    textureFill = _;
     return chart;
   };
 

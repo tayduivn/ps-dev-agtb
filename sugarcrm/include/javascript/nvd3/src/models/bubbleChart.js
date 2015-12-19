@@ -430,7 +430,6 @@ nv.models.bubbleChart = function() {
 
         // Y-Axis
         yAxis
-          .tickSize(-innerWidth, 0)
           .margin(innerMargin)
           .tickFormat(function(d, i) {
             return nv.utils.stringEllipsify(yValues[i].key, container, Math.max(availableWidth * 0.2, 75));
@@ -452,11 +451,6 @@ nv.models.bubbleChart = function() {
         xAxisMargin = xAxis.margin();
         setInnerMargins();
         setInnerDimensions();
-        // resize ticks based on new dimensions
-        xAxis
-          .tickSize(0);
-        xAxis
-          .resizeTickLines();
 
         // recall y-axis to set final size based on new dimensions
         yAxis

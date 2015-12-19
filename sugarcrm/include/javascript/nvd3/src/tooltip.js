@@ -63,32 +63,33 @@
   };
 
   nvtooltip.position = function(container, tooltip, evt, gravity, dist) {
+    gravity = gravity || 's';
+    dist = dist || 5;
+
     var pos = [
       typeof evt.layerX === 'undefined' ? evt.offsetX : evt.layerX,
       typeof evt.layerY === 'undefined' ? evt.offsetY : evt.layerY
-    ];
+      ];
 
-    gravity = gravity || 's';
-    dist = dist || 5;
     var tooltipWidth = parseInt(tooltip.offsetWidth, 10),
         tooltipHeight = parseInt(tooltip.offsetHeight, 10),
         containerWidth = container.clientWidth,
         containerHeight = container.clientHeight,
-        scrollTop = container.scrollTop,
-        scrollLeft = container.scrollLeft,
+        containerLeft = container.scrollLeft,
+        containerTop = container.scrollTop,
         class_name = tooltip.className.replace(/ top| right| bottom| left/g, ''),
         left, top;
 
     function alignCenter() {
       var left = pos[0] - (tooltipWidth / 2);
-      if (left < scrollLeft) left = scrollLeft;
+      if (left < containerLeft) left = containerLeft;
       if (left + tooltipWidth > containerWidth) left = containerWidth - tooltipWidth;
       return left;
     }
     function alignMiddle() {
       var top = pos[1] - (tooltipHeight / 2);
-      if (top < scrollTop) top = scrollTop;
-      if (top + tooltipHeight > scrollTop + containerHeight) top = scrollTop - tooltipHeight;
+      if (top < containerTop) top = containerTop;
+      if (top + tooltipHeight > containerTop + containerHeight) top = containerTop - tooltipHeight;
       return top;
     }
     function arrowLeft(left) {
@@ -107,7 +108,7 @@
         top = alignMiddle();
         left = pos[0] - tooltipWidth - dist;
         arrowTop(top);
-        if (left < scrollLeft) {
+        if (left < containerLeft) {
           left = pos[0] + dist;
           class_name += ' right';
         } else {
@@ -129,7 +130,7 @@
         left = alignCenter();
         top = pos[1] + dist;
         arrowLeft(left);
-        if (top + tooltipHeight > scrollTop + containerHeight) {
+        if (top + tooltipHeight > containerTop + containerHeight) {
           top = pos[1] - tooltipHeight - dist;
           class_name += ' top';
         } else {
@@ -140,8 +141,8 @@
         left = alignCenter();
         top = pos[1] - tooltipHeight - dist;
         arrowLeft(left);
-        if (scrollTop > top) {
-          top = pos[1] + 10;
+        if (containerTop > top) {
+          top = pos[1] + dist;
           class_name += ' bottom';
         } else {
           class_name += ' top';

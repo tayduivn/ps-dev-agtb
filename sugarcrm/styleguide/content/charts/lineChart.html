@@ -70,7 +70,7 @@
         </div>
       </div>
       <div class="span9">
-        <div id="chart1" class="nv-chart nv-chart-line" style="height:600px;width:600px">
+        <div id="chart1" class="nv-chart nv-chart-line" style="height:600px">
           <svg></svg>
         </div>
       </div>
@@ -146,10 +146,13 @@
     mirrorAxes = selectedMirrorAxes.filter(':checked').val() || 'no';
 
     var chartData = [];
+    var xTickLabels = [];
+
+    var tickFormat = function(d) { return d; };
+    var getX = function(d) { return d[0]; };
+    var getY = function(d) { return d[1]; };
 
     var chart = nv.models.lineChart()
-          .x(function(d) { return d[0]; })
-          .y(function(d) { return d[1]; })
           .showTitle(true)
           .showControls(true)
           .showLegend(true)
@@ -160,6 +163,7 @@
           .rotateTicks(rotateTicks)
           .useVoronoi(true)
           .clipEdge(false)
+          // .margin({top: 0, right: 0, bottom: 0, left: 0})
           //.forceY([0,400])
           //.forceX([0,6]);
           .tooltipContent(function(key, x, y, e, graph) {
@@ -188,52 +192,46 @@
     function loadData(file) {
       d3.json('data/' + file + '.json', function(data) {
         chartData = data.data ? data : translateDataToD3(data, 'lineChart');
-
+        xTickLabels = [];
         colorLength = chartData.data.length;
 
         chart
           .colorData(color, {c1: '#e8e2ca', c2: '#3e6c0a', l: colorLength});
 
-        var xTickLabels = chartData.properties.labels ?
-              chartData.properties.labels.map(function(d) { return d.l || d; }) :
-              [];
+        tickFormat = function(d) { return d; };
+        getX = function(d) { return d[0]; };
+        getY = function(d) { return d[1]; };
 
         if (chartData.data.length) {
+          if (chartData.properties.labels) {
+            xTickLabels = chartData.properties.labels.map(function(d) { return d.l || d; });
+          }
           if (chartData.data[0].values.length && chartData.data[0].values[0] instanceof Array) {
-            chart
-              .x(function(d) { return d[0]; })
-              .y(function(d) { return d[1]; });
-
             if (nv.utils.isValidDate(chartData.data[0].values[0][0])) {
-              chart.xAxis
-                .tickFormat(function(d) {
-                  return d3.time.format('%x')(new Date(d));
-                });
+              tickFormat = function(d) { return d3.time.format('%x')(new Date(d)); };
             } else if (xTickLabels.length > 0) {
-              chart.xAxis
-                .tickFormat(function(d) {
-                  return xTickLabels[d] || ' ';
-                });
+              tickFormat = function(d) { return xTickLabels[d] || ' '; };
             }
           } else {
-            chart
-              .x(function(d) { return d.x; })
-              .y(function(d) { return d.y; });
-
+            getX = function(d) { return d.x; };
+            getY = function(d) { return d.y; };
             if (xTickLabels.length > 0) {
-              chart.xAxis
-                .tickFormat(function(d) {
-                  return xTickLabels[d - 1] || ' ';
-                });
+              tickFormat = function(d) { return xTickLabels[d - 1] || ' '; };
             }
           }
         }
 
+        chart
+          .x(getX)
+          .y(getY);
+
         chart.xAxis
+          .tickFormat(tickFormat)
           .highlightZero(false)
           .reduceXTicks(false)
           .orient(mirrorAxes === 'lab' ? 'bottom' : 'top')
           .axisLabel(showLabels === 'yes' ? xAxisLabel : '');
+
         chart.yAxis
           .orient(mirrorAxes === 'lab' ? 'left' : 'right')
           .axisLabel(showLabels === 'yes' ? yAxisLabel : '');

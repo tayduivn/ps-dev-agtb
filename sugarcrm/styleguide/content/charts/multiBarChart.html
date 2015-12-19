@@ -105,6 +105,7 @@
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.js"></script>
 <script src="../../../include/javascript/nvd3/src/utils.js"></script>
+<script src="../../../include/javascript/nvd3/src/tooltip.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/scroll.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/axis.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/legend.js"></script>
@@ -112,6 +113,8 @@
 <script src="../../../include/javascript/nvd3/src/models/multiBarChart.js"></script>
 
 <script>
+$(function() {
+
     var file = window.uQuery('file', /[a-z0-9_]+/i) || monster.get('file'),
         $file = $('#chartData');
     if (file) {
@@ -224,6 +227,9 @@
             b.scrollTop(b.scrollTop() + data);
           });
 
+    chart.multibar
+      .textureFill(true);
+
     chart.yAxis
       .axisLabel(showLabels === 'yes' ? yAxisLabel : '');
 
@@ -331,6 +337,8 @@
           .datum(chartData)
           .call(chart);
     });
+
+});
 </script>
 </body>
 </html>

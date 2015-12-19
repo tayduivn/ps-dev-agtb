@@ -25,6 +25,7 @@ nv.models.funnel = function() {
       fmtValueLabel = function(d) { return d.label || d.value || d; },
       color = function(d, i) { return nv.utils.defaultColor()(d, d.series); },
       fill = color,
+      textureFill = false,
       classes = function(d, i) { return 'nv-group nv-series-' + d.series; },
       dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove');
 
@@ -56,7 +57,10 @@ nv.models.funnel = function() {
       // Add series index to each data point for reference
       data.map(function(series, i) {
         series.values = series.values.map(function(point) {
-          point.series = i;
+          point.index = i;
+          if (typeof point.series === 'undefined') {
+            point.series = i;
+          }
           // if value is undefined, not a legitimate 0 value, use point.y
           if (typeof point.value == 'undefined') {
             point.value = getY(point);
@@ -154,6 +158,13 @@ nv.models.funnel = function() {
         .attr('height', availableHeight + 1);
       g.attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + id + ')' : '');
 
+
+      //------------------------------------------------------------
+
+      if (textureFill) {
+        var mask = nv.utils.createTexture(defsEnter, id);
+      }
+
       //------------------------------------------------------------
       // Append major data series grouping containers
 
@@ -177,7 +188,7 @@ nv.models.funnel = function() {
           .style('fill-opacity', 1);
 
       groups.exit().transition().duration(durationMs)
-        .selectAll('polygon.nv-bar')
+        .selectAll('g.nv-slice')
         .delay(function(d, i) { return i * delay / data[0].values.length; })
           .attr('points', function(d) {
             return pointsTrapezoid(d, 0, calculatedWidth);
@@ -198,48 +209,61 @@ nv.models.funnel = function() {
       //------------------------------------------------------------
       // Append polygons for funnel
 
-      var funs = groups.selectAll('polygon.nv-bar')
+      var funs = groups.selectAll('g.nv-slice')
             .data(function(d) {
               return d.values;
             });
+      var funsEnter = funs.enter().append('g').attr('class', 'nv-slice');
 
       funs.exit().remove();
 
-      funs.enter()
-        .append('polygon')
-          .attr('class', 'nv-bar')
+      funsEnter.append('polygon')
+        .attr('class', 'nv-base')
+        .attr('points', function(d) {
+          return pointsTrapezoid(d, 0, calculatedWidth);
+        });
+
+      if (textureFill) {
+        // For on click active bars
+        funsEnter.append('polygon')
+          .attr('class', 'nv-texture')
           .attr('points', function(d) {
             return pointsTrapezoid(d, 0, calculatedWidth);
           })
-          .on('mouseover', function(d, i) {
-            d3.select(this).classed('hover', true);
-            var eo = buildEventObject(d3.event, d, i);
-            dispatch.elementMouseover(eo);
-          })
-          .on('mousemove', function(d, i) {
-            dispatch.elementMousemove(d3.event);
-          })
-          .on('mouseout', function(d, i) {
-            d3.select(this).classed('hover', false);
-            dispatch.elementMouseout();
-          })
-          .on('click', function(d, i) {
-            d3.event.stopPropagation();
-            var eo = buildEventObject(d3.event, d, i);
-            dispatch.elementClick(eo);
-          })
-          .on('dblclick', function(d, i) {
-            d3.event.stopPropagation();
-            var eo = buildEventObject(d3.event, d, i);
-            dispatch.elementDblClick(eo);
-          });
+          .style('mask', 'url(' + mask + ')');
+      }
+
+      funs
+        .on('mouseover', function(d, i) {
+          d3.select(this).classed('hover', true);
+          var eo = buildEventObject(d3.event, d, i);
+          dispatch.elementMouseover(eo);
+        })
+        .on('mousemove', function(d, i) {
+          dispatch.elementMousemove(d3.event);
+        })
+        .on('mouseout', function(d, i) {
+          d3.select(this).classed('hover', false);
+          dispatch.elementMouseout();
+        })
+        .on('click', function(d, i) {
+          d3.event.stopPropagation();
+          var eo = buildEventObject(d3.event, d, i);
+          dispatch.elementClick(eo);
+        })
+        .on('dblclick', function(d, i) {
+          d3.event.stopPropagation();
+          var eo = buildEventObject(d3.event, d, i);
+          dispatch.elementDblClick(eo);
+        });
+
 
       function buildEventObject(e, d, i) {
         return {
             value: getV(d, i),
             point: d,
             id: id,
-            series: data[d.series],
+            series: data[d.index],
             pointIndex: i,
             seriesIndex: d.series,
             e: e
@@ -264,12 +288,27 @@ nv.models.funnel = function() {
 
       function renderFunnelLabels() {
         // Remove responsive label elements
+        labels.selectAll('polyline').remove();
+        labels.selectAll('rect').remove();
         labels.selectAll('text').remove();
+
+        labels
+          .append('rect')
+          .attr('class', 'nv-label-box')
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('width', 0)
+          .attr('height', 0)
+          .attr('rx', 2)
+          .attr('ry', 2)
+          .style('pointer-events', 'none')
+          .style('stroke-width', 0)
+          .style('fill-opacity', 0);
 
         // Append label text and wrap if needed
         labels.append('text')
           .text(fmtKey)
-            .call(fmtLabel, 'nv-label', 0.85, '11px', 'middle', fmtFill);
+            .call(fmtLabel, 'nv-label', 0.85, 'middle', fmtFill);
 
         labels.select('.nv-label')
           .call(
@@ -277,14 +316,14 @@ nv.models.funnel = function() {
             (wrapLabels ? wrapLabel : ellipsifyLabel),
             calcFunnelWidthAtSliceMidpoint,
             function(txt, dy) {
-              fmtLabel(txt, 'nv-label', dy, '11px', 'middle', fmtFill);
+              fmtLabel(txt, 'nv-label', dy, 'middle', fmtFill);
             }
           );
 
         // Append value and count text
         labels.append('text')
           .text(fmtValueLabel)
-            .call(fmtLabel, 'nv-value', 0.85, '15px', 'middle', fmtFill);
+            .call(fmtLabel, 'nv-value', 0.85, 'middle', fmtFill);
 
         labels.select('.nv-value')
           .append('tspan')
@@ -298,6 +337,9 @@ nv.models.funnel = function() {
           .call(calcFunnelLabelDimensions);
 
         labels
+          .call(positionLabelBox);
+
+        labels
           .classed('nv-label-side', function(d) { return d.tooTall || d.tooWide; });
       }
 
@@ -307,13 +349,14 @@ nv.models.funnel = function() {
       function renderSideLabels() {
         // Remove all responsive elements
         sideLabels = labels.filter('.nv-label-side');
-        labels.selectAll('polyline').remove();
         sideLabels.selectAll('.nv-label').remove();
+        sideLabels.selectAll('rect').remove();
+        sideLabels.selectAll('polyline').remove();
 
         // Position side labels
         sideLabels.append('text')
           .text(fmtKey)
-            .call(fmtLabel, 'nv-label', 0.85, '11px', 'start', '#555');
+            .call(fmtLabel, 'nv-label', 0.85, 'start', '#555');
 
         sideLabels.select('.nv-label')
           .call(
@@ -321,7 +364,7 @@ nv.models.funnel = function() {
             (wrapLabels ? wrapLabel : ellipsifyLabel),
             (wrapLabels ? calcSideWidth : maxSideLabelWidth),
             function(txt, dy) {
-              fmtLabel(txt, 'nv-label', dy, '11px', 'start', '#555');
+              fmtLabel(txt, 'nv-label', dy, 'start', '#555');
             }
           );
 
@@ -329,7 +372,7 @@ nv.models.funnel = function() {
           .call(positionValue);
 
         sideLabels.select('.nv-value')
-          .style({'font-size': '15px', 'text-anchor': 'start', 'fill': '#555'});
+          .style({'text-anchor': 'start', 'fill': '#555'});
 
         sideLabels
           .call(calcSideLabelDimensions);
@@ -415,11 +458,15 @@ nv.models.funnel = function() {
       //------------------------------------------------------------
       // Reposition responsive elements
 
-      funs
+      funs.selectAll('polygon')
         .attr('points', function(d) {
-          var scalar = d.active && d.active === 'active' ? 1.05 : 1;
-          return pointsTrapezoid(d, 1, calculatedWidth * scalar);
+          return pointsTrapezoid(d, 1, calculatedWidth);
         });
+
+      if (textureFill) {
+        funs.select('.nv-texture')
+          .style('fill', fmtFill);
+      }
 
       labels
         .attr('transform', function(d) {
@@ -692,17 +739,16 @@ nv.models.funnel = function() {
       }
 
       function fmtFill(d, i, j) {
-        var backColor = d3.select(this.parentNode).style('fill'),
-            textColor = nv.utils.getTextContrast(backColor, i);
-        return textColor;
+        var backColor = d3.select(this.parentNode).style('fill');
+        return nv.utils.getTextContrast(backColor, i);
       }
 
       function fmtKey(d) {
-        return data[d.series].key;
+        return data[d.index].key;
       }
 
       function fmtCount(d) {
-        var i = data[d.series].count;
+        var i = data[d.index].count;
         return i ? ' (' + i + ')' : '';
       }
 
@@ -712,7 +758,7 @@ nv.models.funnel = function() {
         return 'ltr';
       }
 
-      function fmtLabel(txt, classes, dy, fontSize, anchor, fill) {
+      function fmtLabel(txt, classes, dy, anchor, fill) {
         txt
           .attr('x', 0)
           .attr('y', 0)
@@ -721,20 +767,32 @@ nv.models.funnel = function() {
           .attr('direction', function() {
             return fmtDirection(txt.text());
           })
-          .style('pointer-events', 'none')
-          .style('text-anchor', anchor)
-          .style('font-size', fontSize)
-          .style('fill', fill);
+          .style({'pointer-events': 'none', 'text-anchor': anchor, 'fill': fill});
       }
 
       function positionValue(lbls) {
         lbls.each(function(d) {
           var lbl = d3.select(this),
               cnt = lbl.selectAll('.nv-label')[0].length + 1,
-              dy = .85 * cnt + 'em';
+              dy = (.85 + cnt - 1) + 'em';
 
           lbl.select('.nv-value')
             .attr('dy', dy);
+        });
+      }
+
+      function positionLabelBox(lbls) {
+        lbls.each(function(d, i) {
+          var lbl = d3.select(this);
+
+          lbl.select('.nv-label-box')
+            .attr('x', (d.labelWidth + 6) / -2)
+            .attr('y', -2)
+            .attr('width', d.labelWidth + 6)
+            .attr('height', d.labelHeight + 4)
+            .attr('rx', 2)
+            .attr('ry', 2)
+            .style('fill-opacity', 1);
         });
       }
 
@@ -858,6 +916,12 @@ nv.models.funnel = function() {
   chart.minLabelWidth = function(_) {
     if (!arguments.length) return minLabelWidth;
     minLabelWidth = _;
+    return chart;
+  };
+
+  chart.textureFill = function(_) {
+    if (!arguments.length) return textureFill;
+    textureFill = _;
     return chart;
   };
 
