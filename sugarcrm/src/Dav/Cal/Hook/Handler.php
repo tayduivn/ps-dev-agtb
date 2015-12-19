@@ -38,14 +38,14 @@ class Handler
      * @param array $changedFields
      * @param array $invitesBefore
      * @param array $invitesAfter
-     * @param bool|false $forceInsert
+     * @param bool $insert
      */
     public function export(
         \SugarBean $bean,
         $changedFields = array(),
         $invitesBefore = array(),
         $invitesAfter = array(),
-        $forceInsert = false
+        $insert = false
     ) {
         $adapter = $this->getAdapterFactory()->getAdapter($bean->module_name);
         if ($adapter) {
@@ -54,7 +54,7 @@ class Handler
                 $changedFields,
                 $invitesBefore,
                 $invitesAfter,
-                $forceInsert
+                $insert
             );
             $this->getManager()->calDavExport($preparedData);
         }

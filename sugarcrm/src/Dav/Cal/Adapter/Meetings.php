@@ -34,7 +34,7 @@ class Meetings extends CalDavAbstractAdapter implements AdapterInterface
         $parentEvent = $eventCollection->getParent();
         $participantHelper = $this->getParticipantHelper();
         list($beanData, $changedFields, $invites) = $exportData;
-        list($beanModuleName, $beanId, $repeatParentId, $childEventsId, $isUpdated) = $beanData;
+        list($beanModuleName, $beanId, $repeatParentId, $childEventsId, $insert) = $beanData;
 
         if (isset($changedFields['name'])) {
             $this->setCalDavTitle($changedFields['name'], $parentEvent);

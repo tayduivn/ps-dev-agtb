@@ -206,7 +206,8 @@ class Call extends SugarBean {
             $this,
             $this->dataChanges,
             $invitesBefore,
-            CalendarUtils::getInvites($this)
+            CalendarUtils::getInvites($this),
+            !$isUpdate
         );
 
         return $return_id;

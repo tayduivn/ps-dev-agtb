@@ -30,7 +30,7 @@ abstract class AdapterAbstract
      * @param array $changedFields
      * @param array $invitesBefore
      * @param array $invitesAfter
-     * @param bool|false $forceInsert
+     * @param bool $insert
      * @return mixed
      */
     public function prepareForExport(
@@ -38,22 +38,21 @@ abstract class AdapterAbstract
         $changedFields = array(),
         $invitesBefore = array(),
         $invitesAfter = array(),
-        $forceInsert = false
+        $insert = false
     ) {
         $participantsHelper = $this->getParticipantHelper();
         $parentBean = null;
         $childEvents = null;
         $repeatParentId = $bean->repeat_parent_id;
-        $isUpdated = $bean->isUpdate() && !$forceInsert;
         /**
          * null means nothing changed, otherwise child was changed
          */
         $childEventsId = null;
 
         if (!$repeatParentId) {
-            if ((!$isUpdated && $bean->repeat_type)
+            if (($insert && $bean->repeat_type)
                 ||
-                ($isUpdated && $this->isRecurringChanged($changedFields))
+                (!$insert && $this->isRecurringChanged($changedFields))
             ) {
                 $childEventsId = array();
                 $calendarEvents = $this->getCalendarEvents();
@@ -64,7 +63,7 @@ abstract class AdapterAbstract
             }
         }
 
-        if ($isUpdated) {
+        if (!$insert) {
             $changedFields = $this->getFieldsDiff($changedFields);
         } else {
             $changedFields = $this->getBeanFetchedRow($bean);
@@ -75,7 +74,7 @@ abstract class AdapterAbstract
             $bean->id,
             $repeatParentId,
             $childEventsId,
-            $isUpdated,
+            $insert,
         );
 
         return array($beanData, $changedFields, $participantsHelper->getInvitesDiff($invitesBefore, $invitesAfter));
