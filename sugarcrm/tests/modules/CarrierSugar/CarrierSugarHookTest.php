@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\tests\modules\CarrierSugar;
+namespace Sugarcrm\SugarcrmTests\modules\CarrierSugar;
 
 require_once 'modules/CarrierSugar/Hook.php';
 
@@ -47,7 +47,7 @@ class CarrierSugarHookTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->backup['SocketClient'] = \SugarTestReflection::getProtectedValue('Sugarcrm\Sugarcrm\Socket\Client', 'instance');
-        \BeanFactory::setBeanClass('Users', 'Sugarcrm\SugarcrmTests\tests\modules\CarrierSugar\UserCRYS1267');
+        \BeanFactory::setBeanClass('Users', 'Sugarcrm\SugarcrmTests\modules\CarrierSugar\UserCRYS1267');
 
         $this->socketClient = $this->getMock('Sugarcrm\Sugarcrm\Socket\Client');
         \SugarTestReflection::setProtectedValue('Sugarcrm\Sugarcrm\Socket\Client', 'instance', $this->socketClient);
@@ -137,7 +137,7 @@ class CarrierSugarHookTest extends \Sugar_PHPUnit_Framework_TestCase
 /**
  * Mock to override retrieve of user
  *
- * @package Sugarcrm\SugarcrmTests\tests\modules\CarrierSugar
+ * @package Sugarcrm\SugarcrmTests\modules\CarrierSugar
  */
 class UserCRYS1267 extends User
 {

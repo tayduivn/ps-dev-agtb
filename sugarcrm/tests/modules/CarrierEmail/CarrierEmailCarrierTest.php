@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\tests\modules\CarrierEmail;
+namespace Sugarcrm\SugarcrmTests\modules\CarrierEmail;
 
 require_once 'modules/CarrierEmail/Carrier.php';
 require_once 'modules/CarrierEmail/Transport.php';

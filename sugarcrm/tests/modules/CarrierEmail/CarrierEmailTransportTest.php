@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\tests\modules\CarrierEmail;
+namespace Sugarcrm\SugarcrmTests\modules\CarrierEmail;
 
 require_once 'modules/CarrierEmail/Transport.php';
 
@@ -207,7 +207,7 @@ class CarrierEmailTransportTest extends \Sugar_PHPUnit_Framework_TestCase
 /**
  * Mocking static methods
  *
- * @package Sugarcrm\SugarcrmTests\tests\modules\CarrierEmail
+ * @package Sugarcrm\SugarcrmTests\modules\CarrierEmail
  */
 class OutboundEmailConfigurationPeerCRYS1265 extends OutboundEmailConfigurationPeer
 {
@@ -245,7 +245,7 @@ class OutboundEmailConfigurationPeerCRYS1265 extends OutboundEmailConfigurationP
 /**
  * Mocking static methods
  *
- * @package Sugarcrm\SugarcrmTests\tests\modules\CarrierEmail
+ * @package Sugarcrm\SugarcrmTests\modules\CarrierEmail
  */
 class MailerFactoryCRYS1265 extends MailerFactory
 {

@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\tests\modules\CarrierSugar;
+namespace Sugarcrm\SugarcrmTests\modules\CarrierSugar;
 
 require_once 'modules/CarrierSugar/Transport.php';
 
@@ -33,7 +33,7 @@ class CarrierSugarTransportTest extends \Sugar_PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        \BeanFactory::setBeanClass('Notifications', 'Sugarcrm\SugarcrmTests\tests\modules\CarrierSugar\NotificationsCRYS1268');
+        \BeanFactory::setBeanClass('Notifications', 'Sugarcrm\SugarcrmTests\modules\CarrierSugar\NotificationsCRYS1268');
         $this->transport = new CarrierSugarTransport();
     }
 
@@ -191,7 +191,7 @@ class CarrierSugarTransportTest extends \Sugar_PHPUnit_Framework_TestCase
 /**
  * Mocking save method
  *
- * @package Sugarcrm\SugarcrmTests\tests\modules\CarrierSugar
+ * @package Sugarcrm\SugarcrmTests\modules\CarrierSugar
  */
 class NotificationsCRYS1268 extends Notifications
 {

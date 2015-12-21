@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\tests\modules\NotificationCenter\clients\base\api;
+namespace Sugarcrm\SugarcrmTests\modules\NotificationCenter\clients\base\api;
 
 require_once 'modules/NotificationCenter/clients/base/api/GlobalConfigApi.php';
 

@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\tests\modules\Meetings;
+namespace Sugarcrm\SugarcrmTests\modules\Meetings;
 
 require_once 'modules/Meetings/Emitter.php';
 

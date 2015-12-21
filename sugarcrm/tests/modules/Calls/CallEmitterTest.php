@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\tests\modules\Calls;
+namespace Sugarcrm\SugarcrmTests\modules\Calls;
 
 require_once 'modules/Calls/Emitter.php';
 
