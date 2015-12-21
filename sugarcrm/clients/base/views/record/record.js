@@ -829,7 +829,7 @@
                 // fields to the record that may have been changed on the server on save.
                 _.each(this.context.children, function(child) {
                     if (!_.isUndefined(child.attributes) && !_.isUndefined(child.attributes.isSubpanel)) {
-                        if (child.attributes.isSubpanel && !child.attributes.hidden) {
+                        if (child.attributes.isSubpanel && !child.attributes.hidden && !child.get('skipFetch')) {
                             child.reloadData({recursive: false});
                         }
                     }
