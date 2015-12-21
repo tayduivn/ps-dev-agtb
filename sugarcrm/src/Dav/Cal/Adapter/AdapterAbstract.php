@@ -129,11 +129,13 @@ abstract class AdapterAbstract
     protected function getBeanFetchedRow(\SugarBean $bean)
     {
         $dataDiff = array();
-        $fetchedRow = array();
-        if (!$bean->fetched_row) {
-            $fetchedRow = $bean->isUpdate() ? $bean->retrieve($bean->id)->fetched_row : $bean->toArray(true);
-        } else {
-            $fetchedRow = $bean->fetched_row;
+        $fetchedRow = $bean->fetched_row;
+        if (!$fetchedRow) {
+            if ($bean->isUpdate() && $bean->retrieve($bean->id)) {
+                $fetchedRow = $bean->fetched_row;
+            } else {
+                $fetchedRow = $bean->toArray(true);
+            }
         }
 
         foreach ($fetchedRow as $name => $value) {
