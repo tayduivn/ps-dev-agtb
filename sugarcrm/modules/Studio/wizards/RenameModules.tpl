@@ -124,9 +124,12 @@
     // this will cause module renames to be reflected on save
     // in the parent frames header menu etc
     // Get the parent api object
-    var api = parent.SUGAR.App.api;
-    // Call the ping api
-    api.call('read', api.buildURL('ping'));
+    // Also there is case where no parent window (Rename Module opened in new browser's tab)
+    if (typeof parent.SUGAR.App !== 'undefined') {
+        var api = parent.SUGAR.App.api;
+        // Call the ping api
+        api.call('read', api.buildURL('ping'));
+    }
 
     var lastField = '';
     var lastRowCount = -1;
