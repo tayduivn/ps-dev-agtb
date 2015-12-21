@@ -271,7 +271,7 @@
                     }
 
                     var prevLayout = app.controller.context.get('layout');
-                    // FIXME we shouldn't rely on the layout type
+                    // FIXME we shouldn't rely on the layout type: SC-5319
                     if (prevLayout && prevLayout !== 'login') {
                         app.drawer.open({
                             layout: 'create',
@@ -345,29 +345,25 @@
                     if (!app.router._moduleExists(module)) {
                         return;
                     }
-                    // figure out where we need to go back to on cancel
-                    var previousModule = app.controller.context.get("module"),
-                        previousLayout = app.controller.context.get("layout");
-                    if (!(previousModule === module && previousLayout === "records")) {
-                        app.controller.loadView({
-                            module: module,
-                            layout: 'records'
+
+                    var prevLayout = app.controller.context.get('layout');
+                    // FIXME we shouldn't rely on the layout type: SC-5319
+                    if (prevLayout && prevLayout !== 'login') {
+                        app.drawer.open({
+                            layout: 'config-drawer',
+                            context: {
+                                module: module,
+                                fromRouter: true
+                            }
                         });
+
+                        return;
                     }
 
-                    app.drawer.open({
+                    app.controller.loadView({
                         layout: 'config-drawer',
-                        context: {
-                            module: module,
-                            create: true,
-                            fromRouter: true
-                        }
-                    }, _.bind(function(context, model) {
-                        var module = context.get("module") || model.module,
-                            route = app.router.buildRoute(module);
-
-                        app.router.navigate(route, {trigger: (model instanceof Backbone.Model)});
-                    }, this));
+                        module: module
+                    });
                 }
             },
             {
@@ -586,8 +582,8 @@
                 accessCheck = checkAccessRoutes[route];
 
             if (accessCheck && !app.acl.hasAccess(accessCheck, module)) {
-                _.defer(function() {
-                    app.controller.loadView({layout: 'access-denied'});
+                app.controller.loadView({
+                    layout: 'access-denied'
                 });
                 return false;
             }
