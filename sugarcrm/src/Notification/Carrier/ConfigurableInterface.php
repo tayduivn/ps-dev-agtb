@@ -18,7 +18,7 @@ namespace Sugarcrm\Sugarcrm\Notification\Carrier;
  * Interface Carrier\ConfigurableInterface
  * @package Sugarcrm\Sugarcrm\Notification
  */
-interface ConfigurableInterface
+interface ConfigurableInterface extends CarrierInterface
 {
     /**
      * Return layout which configure current carrier.

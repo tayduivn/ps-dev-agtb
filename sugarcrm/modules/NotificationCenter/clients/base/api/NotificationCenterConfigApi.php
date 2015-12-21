@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -78,7 +77,7 @@ class NotificationCenterConfigApi extends GlobalConfigApi
             }
             $carriersStatus[$module] = $status;
         }
-        $user->setPreference(self::CARRIER_STATUS_NAME, $carriersStatus, 0, self::CARRIER_STATUS_CATEGORY);
+        $user->setPreference(static::CARRIER_STATUS_NAME, $carriersStatus, 0, static::CARRIER_STATUS_CATEGORY);
     }
 
     /**
@@ -111,14 +110,14 @@ class NotificationCenterConfigApi extends GlobalConfigApi
     protected function getPersonalCarriers(User $user)
     {
         $carriers = array();
-        $carriersStatus = (array)$user->getPreference(self::CARRIER_STATUS_NAME, self::CARRIER_STATUS_CATEGORY);
+        $carriersStatus = (array)$user->getPreference(static::CARRIER_STATUS_NAME, static::CARRIER_STATUS_CATEGORY);
         $globalCarriers = $this->getCarriersConfig();
         foreach ($this->getCarrierRegistry()->getCarriers() as $module) {
             $carrier = $this->getCarrierRegistry()->getCarrier($module);
             $addressType = $carrier->getAddressType();
-            $options = array();
+            $options = new stdClass();
             foreach ($addressType->getOptions($user) as $optionKey => $option) {
-                $options[$optionKey] = $option;
+                $options->{$optionKey} = $option;
             }
 
             $carriers[$module] = array(
@@ -128,7 +127,7 @@ class NotificationCenterConfigApi extends GlobalConfigApi
                     $globalCarriers[$module]['status'],
 
                 'selectable' => $addressType->isSelectable(),
-                'options' => (object)$options,
+                'options' => $options,
             );
         }
         return $carriers;

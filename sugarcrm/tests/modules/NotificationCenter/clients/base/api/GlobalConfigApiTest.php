@@ -72,10 +72,10 @@ class GlobalConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
         $this->api->method('getCarrierRegistry')->willReturn($this->carrierRegistry);
 
         $this->carriers = array(
-            'Carrier' . rand(1000, 19999),
-            'Carrier' . rand(2000, 29999),
-            'Carrier' . rand(3000, 39999),
-            'Carrier' . rand(4000, 49999),
+            'Carrier' . rand(1000, 1999),
+            'Carrier' . rand(2000, 2999),
+            'Carrier' . rand(3000, 3999),
+            'Carrier' . rand(4000, 4999),
         );
         foreach ($this->carriers as $k => $carrier) {
             if ($k % 2) {
@@ -316,7 +316,7 @@ class GlobalConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
      * @see GlobalConfigApiTest::testGetConfigReturnsConfig
      * @return array
      */
-    public static function configReturnsConfigProvider()
+    public static function getConfigReturnsConfigProvider()
     {
         return array(
             'nullConfig' => array(
@@ -324,7 +324,7 @@ class GlobalConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
             ),
             'arrayConfig' => array(
                 array(
-                    rand(1000, 999)
+                    rand(1000, 999),
                 ),
             ),
         );
@@ -333,7 +333,7 @@ class GlobalConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Returns config
      *
-     * @dataProvider configReturnsConfigProvider
+     * @dataProvider getConfigReturnsConfigProvider
      * @covers GlobalConfigApi::getConfig
      * @param mixed $config
      */
