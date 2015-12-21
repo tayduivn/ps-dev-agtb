@@ -51,7 +51,7 @@ class CarrierRegistry
     /**
      * Function return Carrier modules(retrieve from cache)
      *
-     * @return array
+     * @return string[]
      */
     public function getCarriers()
     {

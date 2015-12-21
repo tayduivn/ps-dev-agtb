@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Notification\Config;
 
 use Sugarcrm\Sugarcrm\Notification\CarrierRegistry;
+use Administration;
 
 /**
  * Class Status
@@ -30,7 +31,6 @@ class Status
     public static function getInstance()
     {
         $class = \SugarAutoLoader::customClass('Sugarcrm\Sugarcrm\Notification\Config\Status');
-
         return new $class();
     }
 
@@ -43,6 +43,7 @@ class Status
     public function getCarrierStatus($carrierName)
     {
         $this->verifyModule($carrierName);
+        /** @var Administration $config */
         $config = \BeanFactory::getBean('Administration');
         $config = $config->getSettings(static::CONFIG_CATEGORY);
         $key = static::CONFIG_CATEGORY . '_' . $carrierName;
@@ -52,7 +53,7 @@ class Status
     /**
      * Saving status carrier
      *
-     * @param $carrierName
+     * @param string $carrierName
      * @param bool $status
      * @return bool
      */
@@ -73,17 +74,18 @@ class Status
      */
     protected function verifyModule($module)
     {
-        if (!in_array($module, $this->getCarriers())) {
+        if (!in_array($module, $this->getCarrierRegistry()->getCarriers())) {
             throw new \LogicException('Not found carrier module: ' . $module);
         }
     }
 
     /**
-     * @see CarrierRegistry::getCarriers
+     * Factory method
+     *
+     * @return CarrierRegistry
      */
-    protected function getCarriers()
+    protected function getCarrierRegistry()
     {
-        $registry = CarrierRegistry::getInstance();
-        return $registry->getCarriers();
+        return CarrierRegistry::getInstance();
     }
 }

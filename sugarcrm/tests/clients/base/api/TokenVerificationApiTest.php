@@ -13,9 +13,11 @@
 namespace Sugarcrm\SugarcrmTests\clients\base\api;
 
 use TokenVerificationApi;
+use SugarTestRestServiceMock;
 
 /**
  * Class TokenVerificationApiTest
+ *
  * @package Sugarcrm\SugarcrmTests\clients\base\api
  * @coversDefaultClass TokenVerificationApi
  */
@@ -24,9 +26,7 @@ class TokenVerificationApiTest extends \Sugar_PHPUnit_Framework_TestCase
     /** @var TokenVerificationApi */
     protected $tokenVerificationApi;
 
-    /**
-     * @var \RestService
-     */
+    /** @var SugarTestRestServiceMock */
     protected $serviceMock;
 
     /**
@@ -51,39 +51,46 @@ class TokenVerificationApiTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Data provider for testVerifyTokenThrowsWithoutRequiredArgs
+     *
+     * @see TokenVerificationApiTest::testVerifyTokenThrowsWithoutRequiredArgs
+     * @return array
+     */
+    public static function verifyTokenThrowsWithoutRequiredArgsProvider()
+    {
+        return array(
+            'idIsNotPresent' => array(
+                array(
+                    'original' => rand(1000, 9999),
+                    'verified' => rand(1000, 9999),
+                ),
+            ),
+            'originalIsNotPresent' => array(
+                array(
+                    'id' => rand(1000, 9999),
+                    'verified' => rand(1000, 9999),
+                ),
+            ),
+            'verifiedIsNotPresent' => array(
+                array(
+                    'id' => rand(1000, 9999),
+                    'original' => rand(1000, 9999),
+                ),
+            ),
+        );
+    }
+
+    /**
      * verifyToken method should throw on missed parameter
      *
      * @param array $args
-     * @dataProvider providerVerifyTokenThrowsWithoutRequiredArgs
+     * @dataProvider verifyTokenThrowsWithoutRequiredArgsProvider
      * @covers TokenVerificationApi::verifyToken
      * @expectedException \SugarApiExceptionMissingParameter
      */
     public function testVerifyTokenThrowsWithoutRequiredArgs($args)
     {
         $this->tokenVerificationApi->verifyToken($this->serviceMock, $args);
-    }
-
-    /**
-     * @return array
-     */
-    public static function providerVerifyTokenThrowsWithoutRequiredArgs()
-    {
-        return array(
-            'throws if "id" isn\'t presented' => array(
-                array(),
-            ),
-            'throws if "original" isn\'t presented' => array(
-                array(
-                    'id' => 'dummy-external-valid-token-id',
-                ),
-            ),
-            'throws if "verified" isn\'t presented' => array(
-                array(
-                    'id' => 'dummy-external-valid-token-id',
-                    'original' => 'dummy-original-token',
-                ),
-            ),
-        );
     }
 
     /**
@@ -122,31 +129,22 @@ class TokenVerificationApiTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $args
-     * @dataProvider providerVerifyTokenCallsSaveSettingWithCorrectArguments
-     * @covers TokenVerificationApi::verifyToken
-     */
-    public function testVerifyTokenCallsSaveSettingWithCorrectArguments($args)
-    {
-        AdministrationCRYS1259::$testData['auth']['base']['external_token_' . $args['id']] = $args['original'];
-        $this->tokenVerificationApi->verifyToken($this->serviceMock, $args);
-        $this->assertEquals($args['verified'], AdministrationCRYS1259::$testData['auth']['base']['external_token_' . $args['id']]);
-    }
-
-    /**
+     * Data provider for testVerifyTokenCallsSaveSettingWithCorrectArguments
+     *
+     * @see TokenVerificationApiTest::testVerifyTokenCallsSaveSettingWithCorrectArguments
      * @return array
      */
-    public function providerVerifyTokenCallsSaveSettingWithCorrectArguments()
+    public function verifyTokenCallsSaveSettingWithCorrectArgumentsProvider()
     {
         return array(
-            'id is "socket"' => array(
+            'socket' => array(
                 array(
                     'id' => 'socket',
                     'original' => 'dummy-original-token',
                     'verified' => 'dummy-verified-socket-token',
                 ),
             ),
-            'id is "trigger"' => array(
+            'trigger' => array(
                 array(
                     'id' => 'trigger',
                     'original' => 'dummy-original-token',
@@ -155,10 +153,24 @@ class TokenVerificationApiTest extends \Sugar_PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    /**
+     * verifyToken should save new token
+     *
+     * @dataProvider verifyTokenCallsSaveSettingWithCorrectArgumentsProvider
+     * @covers TokenVerificationApi::verifyToken
+     * @param array $args
+     */
+    public function testVerifyTokenCallsSaveSettingWithCorrectArguments($args)
+    {
+        AdministrationCRYS1259::$testData['auth']['base']['external_token_' . $args['id']] = $args['original'];
+        $this->tokenVerificationApi->verifyToken($this->serviceMock, $args);
+        $this->assertEquals($args['verified'], AdministrationCRYS1259::$testData['auth']['base']['external_token_' . $args['id']]);
+    }
 }
 
 /**
- * Sub class for Administration bean
+ * Stub class for Administration bean
  *
  * Class AdministrationCRYS1259
  * @package Sugarcrm\SugarcrmTests\clients\base\api

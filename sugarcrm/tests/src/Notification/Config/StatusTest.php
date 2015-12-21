@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -13,7 +12,8 @@
 
 namespace Sugarcrm\SugarcrmTests\Notification\Config;
 
-use Sugarcrm\Sugarcrm\Notification\Config\Status;
+use Sugarcrm\Sugarcrm\Notification\Config\Status as ConfigStatus;
+use Sugarcrm\Sugarcrm\Notification\CarrierRegistry;
 
 /**
  * Testing functionality Config/Status
@@ -23,61 +23,194 @@ use Sugarcrm\Sugarcrm\Notification\Config\Status;
  */
 class StatusTest extends \Sugar_PHPUnit_Framework_TestCase
 {
-    const NS_CONFIG = 'Sugarcrm\\Sugarcrm\\Notification\\Config\\Status';
+    /** @var ConfigStatus */
+    protected $configStatus = null;
 
-    public function statusVariants()
+    /** @var CarrierRegistry */
+    protected $carrierRegistry = null;
+
+    /** @var array list of carriers */
+    protected $carriers = array();
+
+    /**
+     * @inheritDoc
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->carriers = array(
+            'Carrier' . rand(1000, 1999),
+            'Carrier' . rand(2000, 2999),
+            'Carrier' . rand(3000, 3999),
+            'Carrier' . rand(4000, 4999),
+        );
+        \BeanFactory::setBeanClass('Administration', 'Sugarcrm\SugarcrmTests\Notification\Config\AdministrationCRYS1275');
+        $this->carrierRegistry = $this->getMock('Sugarcrm\Sugarcrm\Notification\CarrierRegistry');
+        $this->carrierRegistry->method('getCarriers')->willReturn($this->carriers);
+        $this->configStatus = $this->getMock('Sugarcrm\Sugarcrm\Notification\Config\Status', array(
+            'getCarrierRegistry',
+        ));
+        $this->configStatus->method('getCarrierRegistry')->willReturn($this->carrierRegistry);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function tearDown()
+    {
+        AdministrationCRYS1275::$getSettingsArgs = array();
+        AdministrationCRYS1275::$getSettingsReturn = null;
+        AdministrationCRYS1275::$saveSettingArgs = array();
+        AdministrationCRYS1275::$saveSettingReturn = null;
+        \BeanFactory::setBeanClass('Administration');
+        parent::tearDown();
+    }
+
+    /**
+     * getInstance should return object of own class
+     *
+     * @covers Sugarcrm\Sugarcrm\Notification\Config\Status::getInstance
+     */
+    public function testGetInstanceReturnsOwnObject()
+    {
+        $this->assertInstanceOf('Sugarcrm\Sugarcrm\Notification\Config\Status', $this->configStatus->getInstance());
+    }
+
+    /**
+     * Data provider for testGetCarrierStatusThrowsIfModuleIsNotCarrier
+     *
+     * @see StatusTest::testGetCarrierStatusThrowsIfModuleIsNotCarrier
+     * @return array
+     */
+    public static function getCarrierStatusThrowsIfModuleIsNotCarrierProvider()
     {
         return array(
-            array(true, true),
-            array(true, 1),
-            array(true, 'true'),
-            array(false, false),
-            array(false, 0),
-            array(false, null)
+            'emptyName' => array(
+                'carrierName' => '',
+            ),
+            'invalidCarrier' => array(
+                'carrierName' => 'Carrier',
+            ),
         );
     }
 
     /**
-     * @dataProvider statusVariants
-     * @param $expect
-     * @param $statusSet
+     * getCarrierStatus throws on invalid carrier name
+     *
+     * @covers Sugarcrm\Sugarcrm\Notification\Config\Status::getCarrierStatus
+     * @dataProvider getCarrierStatusThrowsIfModuleIsNotCarrierProvider
+     * @expectedException \LogicException
+     * @param string $carrierName
      */
-    public function testGetCarrierStatus($expect, $statusSet)
+    public function testGetCarrierStatusThrowsIfModuleIsNotCarrier($carrierName)
     {
-        $carrierName = 'carrierModule2';
-        $config = \BeanFactory::getBean('Administration');
-        $config->saveSetting(Status::CONFIG_CATEGORY, $carrierName, $statusSet);
-
-        $carrierModules = array('carrierModule1', 'carrierModule2');
-
-        $status = $this->getMock(self::NS_CONFIG, array('getCarriers'));
-        $status->expects($this->once())->method('getCarriers')->willReturn($carrierModules);
-
-        $actual = $status->getCarrierStatus($carrierName);
-        $this->assertEquals($expect, $actual);
+        $this->configStatus->getCarrierStatus($carrierName);
     }
 
     /**
-     * @dataProvider statusVariants
-     * @param $expect
-     * @param $statusSet
+     * getCarrierStatus returns correct result
+     *
+     * @covers Sugarcrm\Sugarcrm\Notification\Config\Status::getCarrierStatus
      */
-    public function testSetCarrierStatus($expect, $statusSet)
+    public function testGetCarrierStatusReturnsCorrectResult()
     {
-        $carrierName = 'carrierModule2';
+        $rand = rand(0, 1); // random number for expected value
+        foreach ($this->carriers as $k => $carrierName) {
+            $expected = ($k % 2 == $rand);
+            AdministrationCRYS1275::$getSettingsReturn = new \stdClass();
+            AdministrationCRYS1275::$getSettingsReturn->settings = array(
+                ConfigStatus::CONFIG_CATEGORY . '_' . $carrierName => $expected,
+            );
 
-        $carrierModules = array('carrierModule1', 'carrierModule2');
+            $result = $this->configStatus->getCarrierStatus($carrierName);
+            $this->assertEquals($expected, $result);
+            $this->assertEquals(array(ConfigStatus::CONFIG_CATEGORY), AdministrationCRYS1275::$getSettingsArgs);
+        }
+    }
 
-        $status = $this->getMock(self::NS_CONFIG, array('getCarriers'));
-        $status->expects($this->once())->method('getCarriers')->willReturn($carrierModules);
+    /**
+     * Data provider for testSetCarrierStatusThrowsIfModuleIsNotCarrier
+     *
+     * @see StatusTest::testSetCarrierStatusThrowsIfModuleIsNotCarrier
+     * @return array
+     */
+    public static function setCarrierStatusThrowsIfModuleIsNotCarrierProvider()
+    {
+        return array(
+            'emptyName' => array(
+                'carrierName' => '',
+            ),
+            'invalidCarrier' => array(
+                'carrierName' => 'Carrier',
+            ),
+        );
+    }
 
-        $setRes = $status->setCarrierStatus($carrierName, $statusSet);
+    /**
+     * setCarrierStatus throws on invalid carrier name
+     *
+     * @covers Sugarcrm\Sugarcrm\Notification\Config\Status::setCarrierStatus
+     * @dataProvider setCarrierStatusThrowsIfModuleIsNotCarrierProvider
+     * @expectedException \LogicException
+     * @param string $carrierName
+     */
+    public function testSetCarrierStatusThrowsIfModuleIsNotCarrier($carrierName)
+    {
+        $this->configStatus->setCarrierStatus($carrierName, true);
+    }
 
-        $config = \BeanFactory::getBean('Administration');
-        $config = $config->getSettings(Status::CONFIG_CATEGORY);
-        $key = Status::CONFIG_CATEGORY . '_' . $carrierName;
+    /**
+     * setCarrierStatus updates and returns correct result
+     *
+     * @covers Sugarcrm\Sugarcrm\Notification\Config\Status::setCarrierStatus
+     */
+    public function testSetCarrierStatusUpdatesStatusCorrectly()
+    {
+        $rand = rand(0, 1); // random number for expected value
+        foreach ($this->carriers as $k => $carrierName) {
+            $expected = ($k % 2 == $rand);
+            $result = $this->configStatus->setCarrierStatus($carrierName, $expected);
+            $this->assertEquals($expected, $result);
+            $this->assertEquals(array(ConfigStatus::CONFIG_CATEGORY, $carrierName, $expected), AdministrationCRYS1275::$saveSettingArgs);
+        }
+    }
+}
 
-        $this->assertEquals($expect, $setRes);
-        $this->assertEquals($statusSet, $config->settings[$key]);
+/**
+ * Stub class for Administration bean
+ *
+ * Class AdministrationCRYS1275
+ * @package Sugarcrm\SugarcrmTests\Notification\Config
+ */
+class AdministrationCRYS1275 extends \Administration
+{
+    /** @var array collects args of getSettings method */
+    public static $getSettingsArgs = array();
+
+    /** @var mixed return value of getSettings method */
+    public static $getSettingsReturn = null;
+
+    /** @var array collects args of saveSetting method */
+    public static $saveSettingArgs = array();
+
+    /** @var mixed return value of saveSetting method */
+    public static $saveSettingReturn = null;
+
+    /**
+     * @inheritDoc
+     */
+    public static function getSettings($category = false, $clean = false)
+    {
+        static::$getSettingsArgs = func_get_args();
+        return static::$getSettingsReturn;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function saveSetting($category, $key, $value, $platform = '')
+    {
+        static::$saveSettingArgs = func_get_args();
+        return static::$saveSettingReturn;
     }
 }
