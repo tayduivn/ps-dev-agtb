@@ -130,13 +130,12 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @param array $fetchedRow
-     * @param array $beanData
      * @param array $expectedMethod
      * @param array $expectedRow
      * @covers       \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings::getBeanFetchedRow
      * @dataProvider getBeanFetchedRowProvider
      */
-    public function testGetBeanFetchedRow(array $fetchedRow, array $beanData, array $expectedMethod, array $expectedRow)
+    public function testGetBeanFetchedRow(array $fetchedRow, array $expectedMethod, array $expectedRow)
     {
         $adapter = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings')
             ->disableOriginalConstructor()
@@ -144,25 +143,16 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
             ->getMock();
         $bean = $this->getMockBuilder('\SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve', 'toArray'))
+            ->setMethods(array('retrieve', 'toArray', 'isUpdate'))
             ->getMock();
 
-        $retrievedBean = $this->getMockBuilder('\SugarBean')
-                     ->disableOriginalConstructor()
-                     ->setMethods(null)
-                     ->getMock();
+        $bean->fetched_row = $fetchedRow;
 
-        foreach ($beanData as $key => $value) {
-            $bean->$key = $value;
+        foreach ($expectedMethod as $method) {
+            $bean->expects($this->exactly($method['count']))->method($method['name'])->willReturn($method['return']);
         }
 
-        $bean->fetched_row = $fetchedRow;
-        $retrievedBean->fetched_row = $beanData;
-        $bean->expects($this->exactly($expectedMethod['count']))->method($expectedMethod['name'])
-             ->willReturn($expectedMethod['return'] ?: $retrievedBean);
-
         $result = TestReflection::callProtectedMethod($adapter, 'getBeanFetchedRow', array($bean));
-
         $this->assertEquals($expectedRow, $result);
     }
 
@@ -422,24 +412,28 @@ class MeetingsAdapterTest extends Sugar_PHPUnit_Framework_TestCase
         return array(
             array(
                 'fetchedRow' => array(),
-                'beanData' => array('id' => 0, 'title' => 'Test title'),
-                'method' => array('name' => 'toArray', 'count' => 1, 'return' => array('title' => 'Test title')),
-                'expectedRow' => array('title' => array('Test title')),
+                'method' => array(
+                    array('name' => 'toArray', 'count' => 1, 'return' => array('id' => 1, 'title' => 'Test title1')),
+                    array('name' => 'retrieve', 'count' => 0, 'return' => null),
+                    array('name' => 'isUpdate', 'count' => 1, 'return' => false),
+                ),
+                'expectedRow' => array('id' => array(1), 'title' => array('Test title1')),
             ),
             array(
                 'fetchedRow' => array(),
-                'beanData' => array('id' => 1, 'title' => 'Test title'),
                 'method' => array(
-                    'name' => 'retrieve',
-                    'count' => 1,
+                    array('name' => 'toArray', 'count' => 1, 'return' => array('id' => 1, 'title' => 'Test title2')),
+                    array('name' => 'retrieve', 'count' => 1, 'return' => null),
+                    array('name' => 'isUpdate', 'count' => 1, 'return' => true),
                 ),
-                'expectedRow' => array('id' => array(1), 'title' => array('Test title')),
+                'expectedRow' => array('id' => array(1), 'title' => array('Test title2')),
             ),
             array(
-                'fetchedRow' => array('id' => 1, 'title' => 'Test title'),
-                'beanData' => array('id' => 1, 'title' => 'Test title'),
-                'method' => array('name' => 'retrieve', 'count' => 0),
-                'expectedRow' => array('id' => array(1), 'title' => array('Test title')),
+                'fetchedRow' => array('id' => 1, 'title' => 'Test title3'),
+                'method' => array(
+                    array('name' => 'retrieve', 'count' => 0, 'return' => false),
+                ),
+                'expectedRow' => array('id' => array(1), 'title' => array('Test title3')),
             ),
         );
     }
