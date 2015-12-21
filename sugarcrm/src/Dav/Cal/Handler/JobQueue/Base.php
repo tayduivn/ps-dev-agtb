@@ -25,13 +25,9 @@ use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
 abstract class Base implements RunnableInterface
 {
     /**
-     * @var string
+     * @var array
      */
-    protected $moduleName;
-    /**
-     * @var string
-     */
-    protected $fetchedRow;
+    protected $processedData = array();
 
     /**
      * @var int
@@ -39,23 +35,13 @@ abstract class Base implements RunnableInterface
     protected $saveCounter;
 
     /**
-     * @param array $processedData
+     * @param array $processedData All needed job's data.
+     * @param int $saveCounter Job counter.
      */
-    public function __construct(array $processedData)
+    public function __construct(array $processedData, $saveCounter)
     {
-        list($beanData, $changedFields, $imvites) = $processedData;
-        $this->moduleName = $beanData[0];
-    }
-
-    /**
-     * get bean for import process
-     * @return null|\SugarBean
-     */
-    protected function getBean()
-    {
-        $bean = \BeanFactory::getBean($this->moduleName);
-        $bean->fetched_row = $bean->populateFromRow($this->fetchedRow);
-        return $bean;
+        $this->processedData = $processedData;
+        $this->saveCounter = $saveCounter;
     }
 
     /**
@@ -77,7 +63,7 @@ abstract class Base implements RunnableInterface
 
     /**
      * Set current job to the end of queue if needed
-     * @param \CalDavEvent $calDavBean
+     * @param \CalDavEventCollection $calDavBean
      * @return bool true - if job set to end
      */
     protected function setJobToEnd($calDavBean)

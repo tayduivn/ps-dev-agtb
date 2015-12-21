@@ -65,11 +65,11 @@ class RecurringHelper
 
     /**
      * Determines recurring event or not
-     * @param \CalDavEvent $event
+     * @param \CalDavEventCollection $event
      * @param CalendarEvent $calendarEvent
      * @return bool
      */
-    protected function isRecurring(\CalDavEvent $event, CalendarEvent $calendarEvent)
+    protected function isRecurring(\CalDavEventCollection $event, CalendarEvent $calendarEvent)
     {
         $component = $event->getComponent($calendarEvent);
 
@@ -106,8 +106,8 @@ class RecurringHelper
     }
 
     /**
-     * Get new CalDavEvent object
-     * @return null|\CalDavEvent
+     * Get new CalDavEventCollection object
+     * @return null|\CalDavEventCollection
      */
     protected function getEventBean()
     {
@@ -132,13 +132,13 @@ class RecurringHelper
      *      [until] =>      Recurring end
      *      [count] =>      Repeating count
      *      [dow] =>        Days of week (1234567)
-     *      [children] =>   All recurring child items, Array of \CalDavEvent
+     *      [children] =>   All recurring child items, Array of \CalDavEventCollection
      *      [deleted] =>    Deleted child items
      *
-     * @param \CalDavEvent $event
+     * @param \CalDavEventCollection $event
      * @return array|null See above
      */
-    public function getRecurringInfo(\CalDavEvent $event)
+    public function getRecurringInfo(\CalDavEventCollection $event)
     {
         $calendarEvent = $event->getVCalendarEvent();
         if ($this->isRecurring($event, $calendarEvent)) {
@@ -229,12 +229,12 @@ class RecurringHelper
      *      [deleted] =>    Deleted child items
      * $recurringInfo format
      *
-     * @param \CalDavEvent $event
+     * @param \CalDavEventCollection $event
      * @param array $recurringInfo See above
      * @return bool
      * @throws \SugarException
      */
-    public function setRecurringInfo(\CalDavEvent $event, array $recurringInfo)
+    public function setRecurringInfo(\CalDavEventCollection $event, array $recurringInfo)
     {
         $calendarEvents = $this->getCalendarEventsObject();
 
@@ -326,13 +326,13 @@ class RecurringHelper
      * Update CalDav event recurring children
      * Returns true if children was updated
      * @param \SugarBean $recurringBean
-     * @param \CalDavEvent $recurringEvent
+     * @param \CalDavEventCollection $recurringEvent
      * @param array $children
      * @return bool
      */
     protected function updateRecurringChildren(
         \SugarBean $recurringBean,
-        \CalDavEvent $recurringEvent,
+        \CalDavEventCollection $recurringEvent,
         array $children
     ) {
         $currentRecirrung = $this->getRecurringInfo($recurringEvent);

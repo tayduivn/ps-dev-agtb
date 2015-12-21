@@ -24,6 +24,7 @@ class Handler
     /**
      * Run export action
      * @param array $exportData
+     * @deprecated The whole class is planned to be eliminated. Do export via Adapter.
      */
     public function export($exportData)
     {
@@ -42,11 +43,11 @@ class Handler
     /**
      * Get CalDav bean object
      * @param \SugarBean $bean
-     * @return \CalDavEvent
+     * @return \CalDavEventCollection
      */
     public function getDavBean(\SugarBean $bean)
     {
-        /** @var \CalDavEvent $event */
+        /** @var \CalDavEventCollection $event */
         $event = \BeanFactory::getBean('CalDavEvents');
         $related = $event->findByBean($bean);
 
@@ -61,10 +62,10 @@ class Handler
 
     /**
      * Get Sugar Bean object, except CalDav
-     * @param \CalDavEvent $calDavBean
+     * @param \CalDavEventCollection $calDavBean
      * @return \SugarBean
      */
-    public function getSugarBean(\CalDavEvent $calDavBean)
+    public function getSugarBean(\CalDavEventCollection $calDavBean)
     {
         global $current_user;
 
@@ -139,8 +140,8 @@ class Handler
     }
 
     /**
-     * Return CalDavEvent bean
-     * @return \CalDavEvent
+     * Return CalDavEventCollection bean
+     * @return \CalDavEventCollection
      */
     protected function getCalDavEvent()
     {

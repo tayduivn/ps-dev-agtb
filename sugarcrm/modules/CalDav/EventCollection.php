@@ -19,6 +19,7 @@ use Sugarcrm\Sugarcrm\Dav\Cal\Structures;
 use Sabre\VObject\Recur\EventIterator;
 use Sugarcrm\Sugarcrm\Dav\Base\Principal;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper;
+use Sugarcrm\Sugarcrm\Dav\Base\Helper\UserHelper;
 
 /**
  * Class CalDavEventCollection
@@ -577,14 +578,6 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
-     * Calculate and set calendar event ETag hash
-     */
-    protected function calculateETag()
-    {
-        $this->etag = md5($this->calendar_data);
-    }
-
-    /**
      * Retrieve component type from vobject
      * Component type can be VEVENT, VTODO or VJOURNAL
      * @param string $data Calendar event text data
@@ -770,6 +763,21 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
+     * Set the organizer's calendar as the related one, if organizer is present.
+     */
+    protected function setRelatedCalendar()
+    {
+        $calendar = $this->getRelatedCalendar();
+        $organizer = $this->getParent()->getOrganizer();
+        if (!$calendar && $organizer) {
+            $userHelper = new UserHelper();
+            $organizerUser = \BeanFactory::getBean($organizer->getBeanName(), $organizer->getBeanId());
+            $calendar = array_shift($userHelper->getCalendars($organizerUser->user_name));
+            $this->setCalendarId($calendar['id']);
+        }
+    }
+
+    /**
      * Find scheduling object by uri and set parent_type of event if object found
      * @return bool
      */
@@ -897,9 +905,14 @@ class CalDavEventCollection extends SugarBean
             $this->calendar_data = $this->getVCalendar()->serialize();
         }
 
-        $this->calculateTimeBoundaries();
         $this->calculateSize();
-        $this->calculateETag();
+
+        if ($this->getParent()->getStartDate()) {
+            $this->etag = md5($this->calendar_data);
+            $this->calculateTimeBoundaries();
+        } else {
+            $this->etag = '';
+        }
 
         if (empty($this->uri) && !empty($this->event_uid)) {
             $this->uri = $this->event_uid . '.ics';
@@ -910,6 +923,8 @@ class CalDavEventCollection extends SugarBean
         if (!$isUpdate) {
             $this->setCalDavParent();
         }
+
+        $this->setRelatedCalendar();
     }
 
     /**
@@ -996,6 +1011,10 @@ class CalDavEventCollection extends SugarBean
      */
     protected function scheduleLocalDelivery()
     {
+        if ($this->etag === '') {
+            return false;
+        }
+
         $schedulingUser = $this->getCurrentUser();
 
         if ($this->created_by && $this->created_by != $schedulingUser->id) {

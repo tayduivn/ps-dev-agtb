@@ -82,11 +82,11 @@ class ParticipantsHelper
      *          )
      *      )
      * )
-     * @param \CalDavEvent $event
+     * @param \CalDavEventCollection $event
      * @param \Sabre\VObject\Property\ICalendar\CalAddress $participants
      * @return array[] See above
      */
-    public function prepareForSugar(\CalDavEvent $event, CalAddress $participants)
+    public function prepareForSugar(\CalDavEventCollection $event, CalAddress $participants)
     {
         $result = array();
         $emailBean = $this->getEmailAddressBean();
@@ -138,11 +138,11 @@ class ParticipantsHelper
      *      )
      *
      * @param \SugarBean $bean
-     * @param \CalDavEvent $event
+     * @param \CalDavEventCollection $event
      * @param string $componentType - DAV component to process
      * @return array See above
      */
-    public function prepareForDav(\SugarBean $bean, \CalDavEvent $event, $componentType = 'ATTENDEE')
+    public function prepareForDav(\SugarBean $bean, \CalDavEventCollection $event, $componentType = 'ATTENDEE')
     {
         $preResult = array();
 
