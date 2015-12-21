@@ -341,7 +341,7 @@ $request = InputValidation::getService();
 
         $uid = $request->getValidInputRequest('uid', 'Assert\Guid');
         $ieId = $request->getValidInputRequest('ieId', 'Assert\Guid');
-        $mailbox = $request->getValidInputRequest('mailbox', 'Assert\Guid');
+        $mailbox = $request->getValidInputRequest('mailbox');
         $qcModule = $request->getValidInputRequest('qc_module', 'Assert\Mvc\ModuleName');
 
         if(!empty($qcModule)) {
