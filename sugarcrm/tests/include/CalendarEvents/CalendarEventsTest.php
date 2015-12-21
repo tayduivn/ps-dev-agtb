@@ -13,14 +13,16 @@
 class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $calendarEventsService;
-
     protected $meetingIds = array();
 
     public function setUp()
     {
-        SugarTestHelper::setUp('current_user');
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $this->calendarEventsService = new CalendarEvents();
         $this->meetingIds = array();
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user']->setPreference('datef', 'Y-m-d');
+        $GLOBALS['current_user']->setPreference('timef', 'H:i');
     }
 
     public function tearDown()
@@ -33,7 +35,9 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         }
         SugarTestMeetingUtilities::removeMeetingUsers();
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
+        sugar_cache_reset_full();
     }
 
     public function testCalendarEvents_Meeting_EventRecurring_NoRepeatType()
@@ -114,30 +118,6 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, $meetingInterval->h, "Incorrect Duration Hours - Non Recurring Meeting");
         $this->assertEquals(30, $meetingInterval->i, "Incorrect Duration Minutes - Non Recurring Meeting");
-    }
-
-    public function testCalendarEvents_WeeklyRecurringMeeting_SetStartAndEndDate_OK()
-    {
-        $format = TimeDate::DB_DATETIME_FORMAT;
-        $timezone = new DateTimeZone('UTC');
-
-        $sugarDateTime = SugarDateTime::createFromFormat($format, '2015-01-01 12:00:00', $timezone);
-        $dow = intval($sugarDateTime->format("w")) + 1;  // Repeat Single Day Of Week (Using Next Day DOW)
-
-        $meeting = BeanFactory::newBean('Meetings');
-        $meeting->repeat_type = 'Weekly';
-        $meeting->repeat_dow  = "{$dow}";
-
-        $this->calendarEventsService->setStartAndEndDateTime($meeting, $sugarDateTime);
-
-        $datetimeStart = SugarDateTime::createFromFormat($format, $meeting->date_start, $timezone);
-        $interval = date_diff ($sugarDateTime, $datetimeStart);
-
-        $diffDays = ($interval->days);
-        $diffMinutes = ($interval->h * 3600) + ($interval->i * 60) + $interval->s;
-
-        $this->assertEquals( 1 ,$diffDays, "Expected 1 Day Offset from Proposed to Actual Start");
-        $this->assertEquals( 0, $diffMinutes, "Expected No Hour or Minute Time Difference");
     }
 
     public function testCalendarEvents_SaveRecurringEvents_EventsSaved()
@@ -477,6 +457,320 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
 
         BeanFactory::unregisterBean($meeting1);
         BeanFactory::setBeanClass('Meetings');
+    }
+
+    public function dataProviderForBuildRecurringSequenceTests()
+    {
+        $calendarEvents = new CalendarEvents();
+        $user = SugarTestUserUtilities::createAnonymousUser();
+        $user->setPreference('datef', 'Y-m-d');
+        $user->setPreference('timef', 'H:i');
+        $dateStart = $calendarEvents->formatDateTime('datetime', '2015-12-15T00:00:00-00:00', 'user', $user);
+
+        $params = array();
+        $params['type'] = 'Daily';
+        $params['interval'] = 1;
+        $params['count'] = 1;
+        $params['until'] = '';
+        $params['dow'] = '';
+
+        $params['selector'] = '';
+        $params['days'] = '';
+        $params['ordinal'] = '';
+        $params['unit'] =  '';
+
+        return array(
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Daily',
+                    'count' => 3,
+                ),
+                3,
+                '2015-12-15 00:00',
+                '2015-12-17 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Daily',
+                    'count' => 3,
+                    'interval' => 3,
+                ),
+                3,
+                '2015-12-15 00:00',
+                '2015-12-21 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Daily',
+                    'until' => '2015-12-30',
+                    'interval' => 2,
+                ),
+                8,
+                '2015-12-15 00:00',
+                '2015-12-29 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Weekly',
+                    'dow'   => "35",
+                    'count' => 4,
+                ),
+                4,
+                '2015-12-16 00:00',
+                '2015-12-25 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Weekly',
+                    'dow'   => "246",
+                    'count' => 5,
+                    'interval' => 4,
+                ),
+                5,
+                '2015-12-15 00:00',
+                '2016-01-14 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Weekly',
+                    'dow'   => "15",
+                    'until' => '2016-01-06',
+                    'interval' => 3,
+                ),
+                2,
+                '2015-12-18 00:00',
+                '2016-01-04 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Monthly',
+                    'count' => 2,
+                ),
+                2,
+                '2015-12-15 00:00',
+                '2016-01-15 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Monthly',
+                    'count' => 3,
+                    'interval' => 5,
+                ),
+                3,
+                '2015-12-15 00:00',
+                '2016-10-15 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Monthly',
+                    'until' => '2018-06-30',
+                    'interval' => 4,
+                ),
+                8,
+                '2015-12-15 00:00',
+                '2018-04-15 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Monthly',
+                    'count' => 5,
+                    'selector' => 'Each',
+                    'interval' => 2,
+                    'days' => '8,17,26',
+                ),
+                5,
+                '2015-12-17 00:00',
+                '2016-02-26 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Monthly',
+                    'count' => 3,
+                    'selector' => 'Each',
+                    'interval' => 7,
+                    'days' => '31',
+                ),
+                3,
+                '2015-12-31 00:00',
+                '2020-01-31 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Monthly',
+                    'until' => '2033-08-14',
+                    'selector' => 'Each',
+                    'interval' => 5,
+                    'days' => '31',
+                ),
+                27,
+                '2015-12-31 00:00',
+                '2033-01-31 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Monthly',
+                    'count' => 5,
+                    'selector' => 'On',
+                    'interval' => 2,
+                    'ordinal' => 'first',
+                    'unit' => 'Day',
+                ),
+                5,
+                '2016-02-01 00:00',
+                '2016-10-01 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Monthly',
+                    'count' => 9,
+                    'selector' => 'On',
+                    'interval' => 2,
+                    'ordinal' => 'last',
+                    'unit' => 'WD',
+                ),
+                9,
+                '2015-12-31 00:00',
+                '2017-04-28 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Monthly',
+                    'until' => '2025-06-11',
+                    'selector' => 'On',
+                    'interval' => 4,
+                    'ordinal' => 'fifth',
+                    'unit' => 'WE',
+                ),
+                29,
+                '2015-12-19 00:00',
+                '2025-04-19 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Yearly',
+                    'count' => 4,
+                ),
+                4,
+                '2015-12-15 00:00',
+                '2018-12-15 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Yearly',
+                    'count' => 2,
+                    'interval' => 5,
+                ),
+                2,
+                '2015-12-15 00:00',
+                '2020-12-15 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Yearly',
+                    'until' => '2025-03-14',
+                    'interval' => 3,
+                ),
+                4,
+                '2015-12-15 00:00',
+                '2024-12-15 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Yearly',
+                    'count' => 5,
+                    'selector' => 'On',
+                    'interval' => 2,
+                    'ordinal' => 'fifth',
+                    'unit' => 'Wed',
+                ),
+                5,
+                '2015-12-30 00:00',
+                '2024-01-03 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Yearly',
+                    'count' => 9,
+                    'selector' => 'On',
+                    'interval' => 2,
+                    'ordinal' => 'last',
+                    'unit' => 'Mon',
+                ),
+                9,
+                '2016-12-26 00:00',
+                '2032-12-27 00:00',
+            ),
+            array(
+                $dateStart,
+                array(
+                    'type'  => 'Yearly',
+                    'until' => '2025-06-11',
+                    'selector' => 'On',
+                    'interval' => 4,
+                    'ordinal' => 'second',
+                    'unit' => 'WE',
+                ),
+                2,
+                '2019-01-06 00:00',
+                '2023-01-07 00:00',
+            ),
+        );
+    }
+
+    /**
+     * test CalendarEvents:buildRecurringSequence()
+     * @dataProvider dataProviderForBuildRecurringSequenceTests
+     */
+    public function testBuildRecurringSequence($dateStart, $paramDelta, $expCount, $expFirst, $expLast)
+    {
+        global $current_user;
+
+        $defaultParams = array();
+        $defaultParams['type'] = 'Daily';
+        $defaultParams['interval'] = 1;
+        $defaultParams['count'] = 1;
+        $defaultParams['until'] = '';
+        $defaultParams['dow'] = '';
+
+        $defaultParams['selector'] = '';
+        $defaultParams['days'] = '';
+        $defaultParams['ordinal'] = '';
+        $defaultParams['unit'] =  '';
+
+        $params = array_merge($defaultParams, $paramDelta);
+
+        $events = $this->calendarEventsService->buildRecurringSequence($dateStart, $params);
+        $count = count($events);
+
+        if (!is_null($expCount)) {
+            $this->assertEquals($expCount, $count, "Unexpected Number of Events Generated");
+        }
+        if (!is_null($expFirst)) {
+            $this->assertEquals($expFirst, $events[0], "Unexpected First Event Date");
+        }
+        if (!is_null($expLast)) {
+            $this->assertEquals($expLast, $events[$count - 1], "Unexpected Last Event Date");
+        }
     }
 
     /**

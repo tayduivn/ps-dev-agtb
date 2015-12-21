@@ -245,7 +245,10 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $calendarEventsApiMock->createRecord($this->api, $args);
     }
 
-    public function testCreateRecord_RecurringMeeting_CallsGenerateRecurringCalendarEventsMethod()
+    /**
+     * @expectedException SugarApiException
+     */
+    public function testCreateRecord_RecurringMeeting_NoTerminationArgs_ThrowsException()
     {
         $id = create_guid();
         $this->meetingIds[] = $id;
@@ -260,14 +263,15 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args['duration_hours'] = 1;
         $args['duration_minutes'] = 30;
 
+        /* Neither repeat_count nor repeat_until specified  - Error */
+
         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
             array('generateRecurringCalendarEvents')
         );
-        $calendarEventsApiMock->expects($this->once())
+        $calendarEventsApiMock->expects($this->never())
             ->method('generateRecurringCalendarEvents');
 
-        $result = $calendarEventsApiMock->createBean($this->api, $args);
-        $this->meetingIds[] = $result->id;
+        $calendarEventsApiMock->createBean($this->api, $args);
     }
 
     public function testCreateRecord_RecurringMeeting_ScheduleMeetingSeries_OK()
