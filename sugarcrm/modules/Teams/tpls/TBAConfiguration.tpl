@@ -70,7 +70,7 @@
                         <td class="title {if !$value|in_array:$config.disabled_modules}active{/if}">
                             <div class="tba-container">
                                 <input type="checkbox" name="team_based[disabled_modules][]"
-                                       data-group="tba_em" value="{$value}" id="tba_em_{$key}"
+                                       data-group="tba_em" data-module-name="{$value}" value="{$value}" id="tba_em_{$key}"
                                        {if !$value|in_array:$config.disabled_modules}checked="checked"{/if}/>
                                 <label for="tba_em_{$key}">{$APP_LIST.moduleList[$value]}</label>
                             </div>
