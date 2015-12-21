@@ -900,7 +900,11 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
         $insert_query.=" AND prospect_lists.deleted=0";
         $insert_query.=" AND plc.deleted=0";
         $insert_query.=" AND plp.deleted=0";
-        $insert_query.=" AND prospect_lists.list_type!='test' AND prospect_lists.list_type not like 'exempt%'";
+        $insert_query.=" AND prospect_lists.list_type!='test'";
+        $insert_query.=" AND plp.related_id NOT IN";
+        $insert_query.=" (SELECT related_id FROM prospect_lists_prospects plp1";
+        $insert_query.="  INNER JOIN prospect_lists pl1 ON plp1.prospect_list_id = pl1.id";
+        $insert_query.="  WHERE pl1.list_type LIKE 'exempt%')";
         $focus->db->query($insert_query);
 
         global $mod_strings;
