@@ -32,7 +32,7 @@ class Email implements AddressTypeInterface
         $emails = $user->emailAddress->getAddressesForBean($user);
         $options = array();
         foreach ($emails as $row) {
-            if (empty($row['opt_out']) && empty($row['invalid_email'])) {
+            if (!$row['opt_out'] && !$row['invalid_email']) {
                 $options[] = $row['email_address'];
             }
         }
@@ -51,9 +51,10 @@ class Email implements AddressTypeInterface
         $list = $this->getOptions($user);
         if (array_key_exists($option, $list)) {
             return $list[$option];
-        } else {
+        } elseif ($list) {
             return $list[0];
         }
+        return null;
     }
 
     /**
