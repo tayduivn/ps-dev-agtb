@@ -291,55 +291,11 @@ describe('Base.Field.DateTimeCombo', function() {
 
                 clock.restore();
             });
-
-            it('should not display 24:00 when given 24 hour time format', function() {
-                var $timepickerList,
-                    now = new Date('Sun Jan 15 1984 19:20:42'),
-                    clock = sinon.useFakeTimers(now.getTime(), 'Date');
-
-                sinon.collection.stub(field, 'getUserTimeFormat').returns('H:i');
-
-                field.render();
-
-                $('body').append(field.$el);
-
-                $timepickerList = field.$(field.secondaryFieldTag);
-                $timepickerList.focus();
-                $timepickerList = $timepickerList.data('timepickerList');
-
-                expect($timepickerList.find('li').length).toBe(96);
-                expect($timepickerList.find('li:contains("24:00")').length).toBe(0);
-                expect($timepickerList.find('li:contains("00:00")').length).toBe(1);
-
-                clock.restore();
-            });
-
-            it('should not display 24.00 when given 24 hour time format', function() {
-                var $timepickerList,
-                    now = new Date('Sun Jan 15 1984 19:20:42'),
-                    clock = sinon.useFakeTimers(now.getTime(), 'Date');
-
-                sinon.collection.stub(field, 'getUserTimeFormat').returns('H.i');
-
-                field.render();
-
-                $('body').append(field.$el);
-
-                $timepickerList = field.$(field.secondaryFieldTag);
-                $timepickerList.focus();
-                $timepickerList = $timepickerList.data('timepickerList');
-
-                expect($timepickerList.find('li').length).toBe(96);
-                expect($timepickerList.find('li:contains("24.00")').length).toBe(0);
-                expect($timepickerList.find('li:contains("00.00")').length).toBe(1);
-
-                clock.restore();
-            });
         });
 
         describe('_enableDuration', function() {
-            it('should add duration to the timepicker dropdown', function() {
-                var $durationDropdown;
+            it('should build proper duration options for the timepicker dropdown', function() {
+                var options = {};
 
                 field.def.time = {
                     duration: {
@@ -352,82 +308,45 @@ describe('Base.Field.DateTimeCombo', function() {
                     bar: '2014-07-17T12:00'
                 });
 
-                field.render();
+                field._enableDuration(options);
 
-                $('body').append(field.$el);
-
-                field.$(field.secondaryFieldTag).focus();
-
-                $durationDropdown = field.$(field.secondaryFieldTag).data().timepickerList;
-
-                expect($durationDropdown.find('.ui-timepicker-duration').length).toBe(52);
-                expect($durationDropdown.find('.ui-timepicker-selected').text()).toBe('12:00pm (1 hr)');
-            });
-
-            it('should only show options in the timepicker dropdown that has 0 or more duration', function() {
-                var $durationDropdown;
-
-                field.def.time = {
-                    duration: {
-                        relative_to: 'foo'
-                    }
-                };
-                field.name = 'bar';
-                field.model.set({
-                    foo: '2014-07-17T11:00',
-                    bar: '2014-07-17T12:00'
-                });
-
-                field.render();
-
-                $('body').append(field.$el);
-
-                field.$(field.secondaryFieldTag).focus();
-
-                $durationDropdown = field.$(field.secondaryFieldTag).data().timepickerList;
-
-                expect($durationDropdown.find('li').first().text()).toBe('11:00am (0 mins)');
-                expect($durationDropdown.find('li').last().text()).toBe('11:45pm (12 hrs 45 mins)');
+                expect(options.durationTime()).toBe(39600);
+                expect(options.showDuration).toBe(true);
             });
 
             it('should not display duration if duration has not been enabled in the view definition', function() {
-                var $durationDropdown;
+                var options = {};
 
+                field.def.time = {};
                 field.name = 'bar';
                 field.model.set({
                     foo: '2014-07-17T11:00',
                     bar: '2014-07-17T12:00'
                 });
 
-                field.render();
+                field._enableDuration(options);
 
-                $('body').append(field.$el);
-
-                field.$(field.secondaryFieldTag).focus();
-
-                $durationDropdown = field.$(field.secondaryFieldTag).data().timepickerList;
-
-                expect($durationDropdown.find('.ui-timepicker-duration').length).toBe(0);
+                expect(options).toEqual({});
             });
 
             it('should not display duration if the datetime is not on the same day as its relative_to field.', function() {
-                var $durationDropdown;
+                var options = {};
 
+                field.def.time = {
+                    duration: {
+                        relative_to: 'foo'
+                    }
+                };
                 field.name = 'bar';
                 field.model.set({
                     foo: '2014-07-17T11:00',
                     bar: '2014-07-18T12:00'
                 });
 
-                field.render();
+                field._enableDuration(options);
 
-                $('body').append(field.$el);
-
-                field.$(field.secondaryFieldTag).focus();
-
-                $durationDropdown = field.$(field.secondaryFieldTag).data().timepickerList;
-
-                expect($durationDropdown.find('.ui-timepicker-duration').length).toBe(0);
+                expect(options.durationTime()).toBeNull();
+                expect(options.showDuration).toBe(false);
             });
         });
     });
