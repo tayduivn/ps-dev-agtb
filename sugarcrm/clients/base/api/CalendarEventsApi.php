@@ -231,6 +231,21 @@ class CalendarEventsApi extends ModuleApi
     }
 
     /**
+     * Before linking related records, pull out already existing invites.
+     * @inheritdoc
+     */
+    protected function linkRelatedRecords(
+        ServiceBase $service,
+        SugarBean $bean,
+        array $ids,
+        $securityTypeLocal = 'view',
+        $securityTypeRemote = 'view'
+    ) {
+        $bean->invitesBefore = CalendarUtils::getInvites($bean);
+        parent::linkRelatedRecords($service, $bean, $ids, $securityTypeLocal, $securityTypeRemote);
+    }
+
+    /**
      * Filter out recurrence fields from the API arguments
      *
      * @param array $args
