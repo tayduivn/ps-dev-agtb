@@ -531,7 +531,8 @@
          * present).
          *
          * @param {Object} options Object containing routing information.
-         * @return {Boolean} Returns `false` if redirected, `true` otherwise.
+         * @return {boolean} Returns `false` if it will redirect to bwc, `true`
+         *   otherwise.
          */
         bwcRedirect: function(options) {
             if (options && _.isArray(options.args) && options.args[0]) {
@@ -553,7 +554,10 @@
                         redirect += '&record=' + id;
                     }
 
-                    app.router.navigate(redirect, {trigger: true, replace: true});
+                    // let the entire before flow to finish before triggering a new navigate
+                    _.defer(function() {
+                        app.router.navigate(redirect, {trigger: true, replace: true});
+                    });
                     return false;
                 }
             }
