@@ -93,6 +93,13 @@ class Meeting extends SugarBean {
 	public $send_invites = false;
 
     /**
+     * Helper-field to store invites before linking new ones.
+     * Is not a sugar-field, is not persisted anywhere.
+     * @var null|array
+     */
+    public $invitesBefore = null;
+
+    /**
      * This is a deprecated method, please start using __construct() as this
      * method will be removed in a future version.
      *
@@ -144,7 +151,9 @@ class Meeting extends SugarBean {
 
 		$isUpdate = $this->isUpdate();
 
-        $invitesBefore = CalendarUtils::getInvites($this);
+        if (is_null($this->invitesBefore)) {
+            $this->invitesBefore = CalendarUtils::getInvites($this);
+        }
 
         if (isset($this->date_start)) {
             $td = $timedate->fromDb($this->date_start);
@@ -255,10 +264,13 @@ class Meeting extends SugarBean {
         $this->getCalDavHandler()->export(
             $this,
             $this->dataChanges,
-            $invitesBefore,
+            $this->invitesBefore,
             CalendarUtils::getInvites($this),
             !$isUpdate
         );
+
+        $this->invitesBefore = null;
+
 		return $return_id;
 	}
 

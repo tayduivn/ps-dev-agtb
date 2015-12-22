@@ -63,7 +63,7 @@ class Calls extends CalDavAbstractAdapter implements AdapterInterface
         if (isset($invites['deleted'])) {
             foreach ($invites['deleted'] as $invite) {
                 if (!$parentEvent->deleteParticipant($invite[3])) {
-                    new ExportException("Email {$invite[3]} hasn't found on invite deleting in Call bean");
+                    throw new ExportException("Email {$invite[3]} hasn't found on invite deleting in Call bean");
                 }
             }
             $isCalDavChanged = true;
@@ -72,7 +72,7 @@ class Calls extends CalDavAbstractAdapter implements AdapterInterface
         if (isset($invites['changed'])) {
             foreach ($invites['changed'] as $invite) {
                 if ($parentEvent->findParticipantsByEmail($invite[3]) == - 1) {
-                    new ExportException("Email {$invite[3]} hasn't found on invite updating in Call bean");
+                    throw new ExportException("Email {$invite[3]} hasn't found on invite updating in Call bean");
                 }
                 $parentEvent->setParticipant($participantHelper->inviteToParticipant($invite));
             }
