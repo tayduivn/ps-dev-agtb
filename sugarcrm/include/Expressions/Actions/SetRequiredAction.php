@@ -24,7 +24,7 @@ class SetRequiredAction extends AbstractAction
     {
         $this->params = $params;
         $this->targetField = $params['target'];
-        $this->targetLabel = $params['label'];
+        $this->targetLabel = isset($params['label']) ? $params['label'] : '';
         $this->expression = str_replace("\n", "", $params['value']);
     }
 
@@ -137,11 +137,14 @@ SUGAR.util.extend(SUGAR.forms.SetRequiredAction, SUGAR.forms.AbstractAction, {
     /**
      * Applies the Action to the target.
      *
-     * @param SugarBeam $target
+     * @param SugarBean $target
      */
     function fire(&$target)
     {
-        //This is a no-op under PHP
+        $value = Parser::evaluate($this->expression, $target)->evaluate();
+        if (!empty($target->field_defs[$this->targetField]) && is_array($target->field_defs[$this->targetField])) {
+            $target->field_defs[$this->targetField]['required'] = ($value == AbstractExpression::$TRUE);
+        }
     }
 
     static function getActionName()

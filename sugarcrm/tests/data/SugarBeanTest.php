@@ -584,9 +584,13 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
         // sut
         $bean = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('call_custom_logic', 'logDistinctMismatch'))
+            ->setMethods(array('call_custom_logic', 'logDistinctMismatch', 'getCleanCopy'))
             ->getMock();
         $bean->field_defs = array('id' => 'id', 'name' => 'name');
+        //Setup the beans returned by cleanCopy to be clones of the mock rather than real beans
+        $bean->method('getCleanCopy')->will($this->returnCallback(
+            function () use ($bean) { return clone $bean; }
+        ));
 
         if ($compensation) {
             $bean->expects($this->once())

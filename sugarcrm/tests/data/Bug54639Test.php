@@ -59,8 +59,7 @@ class Bug54639Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetImportableFields()
     {
-        $c = new Contact();
-        $importableFields = $c->get_importable_fields();
+        $importableFields = $this->contact->get_importable_fields();
         $this->assertTrue(isset($importableFields['as_tetrispac95ccounts_ida']));
     }
 }
