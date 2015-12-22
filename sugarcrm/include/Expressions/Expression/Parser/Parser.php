@@ -211,7 +211,7 @@ class Parser {
 	static function toConstant($expr) {
 
 		// a raw numeric constant
-		if ( preg_match('/^(\-)?[0-9]+(\.[0-9]+)?$/', $expr) ) {
+		if ( preg_match('/^(\-)?[0-9]*(\.[0-9]+)?$/', $expr) ) {
 			return new ConstantExpression($expr);
 		}
 

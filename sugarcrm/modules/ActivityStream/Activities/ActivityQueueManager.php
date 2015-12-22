@@ -47,7 +47,7 @@ class ActivityQueueManager
         if (Activity::isEnabled()) {
             $activity       = BeanFactory::getBean('Activities');
             $eventTriggered = false;
-            if ($event == 'after_save' && self::isEnabledForModule($bean->module_name)) {
+            if ($event == 'after_save' && self::isEnabledForModule($bean->getModuleName())) {
                 $eventTriggered = $this->createOrUpdate($bean, $args, $activity);
             } elseif ($event == 'after_relationship_add' && $this->isValidLink($args)) {
                 $eventTriggered = $this->link($args, $activity);

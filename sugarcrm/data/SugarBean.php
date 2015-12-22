@@ -3460,7 +3460,7 @@ class SugarBean
             count($beans)
         );
 
-        $GLOBALS['log']->fatal($msg);
+        $GLOBALS['log']->error($msg);
 
         // detailed logging
         $counts = array();
@@ -7978,5 +7978,13 @@ class SugarBean
             return !$this->acl_display_only;
         }
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getModuleName()
+    {
+        return $this->module_name;
     }
 }

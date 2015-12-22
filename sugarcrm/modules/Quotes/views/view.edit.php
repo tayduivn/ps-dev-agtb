@@ -174,7 +174,7 @@ class QuotesViewEdit extends ViewEdit
 		require_once('modules/Currencies/ListCurrency.php');
 		$currency = new ListCurrency();
 		$base_rate = '1.00';
-        if ( isset($this->bean->currency_id) && !empty($this->bean->currency_id) ) {
+        if (!empty($this->bean->id) && isset($this->bean->currency_id) && !empty($this->bean->currency_id)) {
             $curid = $this->bean->currency_id;
         } elseif ( isset($_REQUEST['currency_id']) && !empty($_REQUEST['currency_id']) ) {
             $curid = $_REQUEST['currency_id'];
@@ -222,7 +222,9 @@ class QuotesViewEdit extends ViewEdit
 
 				foreach ($product_bundle_list as $product_bundle) {
 					$bundle_list = $product_bundle->get_product_bundle_line_items();
-					$add_row[] = "quotesManager.addTable('$product_bundle->id','$product_bundle->bundle_stage', '$product_bundle->name', '".format_money($product_bundle->shipping,FALSE)."' );\n";
+                    $add_row[] = "quotesManager.addTable('$product_bundle->id', '$product_bundle->bundle_stage', '" .
+                        js_escape(br2nl($product_bundle->name)) . "', '" .
+                        format_money($product_bundle->shipping, false) . "' );\n";
 
 					if (is_array($bundle_list)) {
 						while (list($key, $line_item) = each ($bundle_list)) {

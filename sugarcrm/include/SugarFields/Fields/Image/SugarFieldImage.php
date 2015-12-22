@@ -90,7 +90,7 @@ class SugarFieldImage extends SugarFieldBase
                     $this->error = $upload_file->getErrorMessage();
                 }
             } else {
-                $imgInfo = getimagesize($_FILES[$field]['tmp_name']);
+                $imgInfo = !empty($_FILES[$field]['tmp_name']) ? getimagesize($_FILES[$field]['tmp_name']) : false;
                 // if file is image then this image is no longer supported.
                 if (false !== $imgInfo) {
                     $ext         = end(explode('.', $_FILES[$field]['name']));
