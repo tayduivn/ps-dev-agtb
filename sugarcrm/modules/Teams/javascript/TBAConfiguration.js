@@ -88,7 +88,10 @@ $(document).ready(function() {
             _.difference(disabledModules, initState.disabledModules).length > 0) {
             app.alert.show('submit_tba_confirmation', {
                 level: 'confirmation',
-                messages: SUGAR.language.get('Teams', 'LBL_TBA_CONFIGURATION_WARNING'),
+                messages: app.user.get('type') == 'admin'
+                    ? SUGAR.language.get('Teams', 'LBL_TBA_CONFIGURATION_WARNING')
+                    : SUGAR.language.get('Teams', 'LBL_TBA_CONFIGURATION_WARNING_NO_ADMIN')
+                ,
                 onConfirm: function() {
                     saveConfiguration(isTBAEnabled, disabledModules);
                 }
