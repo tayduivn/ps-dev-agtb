@@ -118,9 +118,15 @@ pre a:link {
 pre.license {
     border: 1px solid #888888;
     font-size: 11px;
-    width: 52em;
-    height: 8em;
-    overflow-y:scroll;
+    height: 120px;
+    width: 97%;
+    overflow: auto;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+
+.pre-wrap {
+    white-space: pre-wrap;
 }
 
 .checkbox {

@@ -74,6 +74,7 @@
 		{$PAGINATION}
 	{{/if}}
 {{/if}}
+<span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span> {$APP.NTC_REQUIRED}
 </td>
 </tr>
 </table>

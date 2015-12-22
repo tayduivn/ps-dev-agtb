@@ -45,7 +45,7 @@ $out =<<<EOQ
     <tr>
       <td width="2%">&nbsp;</td>
       <td>
-        <pre>{$license_file}</pre>
+        <pre class="pre-wrap">{$license_file}</pre>
       </td>
       <td width="2%">&nbsp;</td>
     </tr>

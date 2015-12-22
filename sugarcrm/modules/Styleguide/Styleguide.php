@@ -111,4 +111,13 @@ class Styleguide extends Person
         $this->assigned_user_id = $GLOBALS['current_user']->id;
         return parent::save($check_notify);
     }
+
+    /**
+     * function to handle removeFile method from FileApi.php.
+     * Actual function that removes file calls using js ('save' method with blank filename)
+     */
+    public function deleteAttachment()
+    {
+        return true;
+    }
 }

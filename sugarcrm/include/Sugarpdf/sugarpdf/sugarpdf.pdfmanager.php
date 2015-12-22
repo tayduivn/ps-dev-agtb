@@ -325,8 +325,6 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
             }
             $tpl_filename = sugar_cached('modules/PdfManager/tpls/' . $pdfTemplate->id . '.tpl');
 
-            $pdfTemplate->body_html = from_html($pdfTemplate->body_html);
-
             if ($previewMode !== FALSE) {
                 $tpl_filename = sugar_cached('modules/PdfManager/tpls/' . $pdfTemplate->id . '_preview.tpl');
                 $pdfTemplate->body_html = str_replace(array('{', '}'), array('&#123;', '&#125;'), $pdfTemplate->body_html);
