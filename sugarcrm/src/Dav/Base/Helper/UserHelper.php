@@ -140,7 +140,7 @@ class UserHelper
 
     /**
      * Retrieve default calendar for user.
-     * If calendar doesn't exists create it
+     * If calendar does not exist, create it.
      *
      * @param string $principalUri
      * @return array | null
@@ -148,19 +148,18 @@ class UserHelper
     public function getCalendars($principalUri)
     {
         $user = $this->getUserByPrincipalString($principalUri);
-        // ToDo: we should not retrieve calendars by relationship. Use direct db-select instead.
-        if ($user && $user->load_relationship('caldav_calendars')) {
+        if ($user) {
+            $calendarBean = \BeanFactory::getBean('CalDavCalendars');
+            $query = new \SugarQuery();
+            $query->select();
+            $query->from($calendarBean, array('team_security' => false))
+                ->where()->equals('assigned_user_id', $user->id);
+            $calendarsData = $query->execute();
 
-            $calendarBeans = $user->caldav_calendars->getBeans();
-            if ($calendarBeans) {
-                $calendarBeansData = array();
-                foreach ($calendarBeans as $bean) {
-                    $calendarBeansData[] = $bean->fetched_row;
-                }
-                return $calendarBeans;
+            if ($calendarsData) {
+                return $calendarsData;
             }
 
-            $calendarBean = \BeanFactory::getBean('CalDavCalendars');
             $calendar = $calendarBean->createDefaultForUser($user);
 
             if ($calendar) {
