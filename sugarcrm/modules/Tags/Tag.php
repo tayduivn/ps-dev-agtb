@@ -136,7 +136,9 @@ class Tag extends Basic
             $ids = "'" . implode("','", $ids) . "'";
         }
 
-        $sql = "SELECT tags.id, tags.name, {$focus->table_name}.id as {$focus->table_name}_id";
+        $tableAlias = $this->db->getValidDBName($focus->table_name . '_id', false, 'alias');
+
+        $sql = "SELECT tags.id, tags.name, {$focus->table_name}.id as {$tableAlias}";
         $sql .= " FROM {$focus->table_name} INNER JOIN tag_bean_rel ON {$focus->table_name}.id=tag_bean_rel.bean_id";
         $sql .= " INNER JOIN tags ON tags.id=tag_bean_rel.tag_id";
         $sql .= " WHERE {$focus->table_name}.id in ($ids) AND tag_bean_rel.deleted=0";
@@ -146,7 +148,7 @@ class Tag extends Basic
         $result = $db->query($sql);
         $returnArray = array();
         while ($data = $db->fetchByAssoc($result)) {
-            $returnArray[$data["{$focus->table_name}_id"]][] = array("id" => $data["id"], "name"=>$data["name"]);
+            $returnArray[$data[$tableAlias]][] = array("id" => $data["id"], "name"=>$data["name"]);
         }
         return $returnArray;
     }
