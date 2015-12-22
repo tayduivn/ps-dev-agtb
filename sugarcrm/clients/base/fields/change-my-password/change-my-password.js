@@ -184,6 +184,21 @@
     },
 
     /**
+     * @override
+     */
+    bindDomChange: function() {
+        this.$('input[name=current_password], input[name=new_password], input[name=confirm_password]').on('change.' + this.cid, _.bind(this._setPasswordAttribute, this));
+    },
+
+    /**
+     * @inheritdoc
+     */
+    unbindDom: function() {
+        this.$('input[name=current_password]').off('change.' + this.cid);
+        this._super('unbindDom');
+    },
+
+    /**
      * Remove validation on the model.
      * @inheritdoc
      */
