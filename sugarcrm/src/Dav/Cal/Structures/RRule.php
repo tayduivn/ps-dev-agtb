@@ -15,10 +15,36 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Structures;
 use Sabre\VObject\Component\VCalendar;
 use Sabre\VObject\Property\ICalendar\Recur;
 
+/**
+ * Class RRule
+ * @see     https://tools.ietf.org/html/rfc5545 RRULE section
+ * @package Sugarcrm\Sugarcrm\Dav\Cal\Structures
+ */
 class RRule
 {
+    /**
+     * @var Recur
+     */
     protected $rRule;
 
+    /**
+     * Map property name to validation class
+     * @var array
+     */
+    protected static $validatorsMap = array(
+        'FREQ' => 'Sugarcrm\\Sugarcrm\\Dav\\Cal\\Structures\\Validators\\Frequency',
+        'BYMONTHDAY' => 'Sugarcrm\\Sugarcrm\\Dav\\Cal\\Structures\\Validators\\ByMonthDay',
+        'BYYEARDAY' => 'Sugarcrm\\Sugarcrm\\Dav\\Cal\\Structures\\Validators\\ByYearDay',
+        'BYWEEKNO' => 'Sugarcrm\\Sugarcrm\\Dav\\Cal\\Structures\\Validators\\ByWeekNo',
+        'BYMONTH' => 'Sugarcrm\\Sugarcrm\\Dav\\Cal\\Structures\\Validators\\ByMonth',
+        'INTERVAL' => 'Sugarcrm\\Sugarcrm\\Dav\\Cal\\Structures\\Validators\\Interval',
+        'BYSETPOS' => 'Sugarcrm\\Sugarcrm\\Dav\\Cal\\Structures\\Validators\\BySetPos',
+    );
+
+    /**
+     * RRule constructor.
+     * @param Recur|null $rRule
+     */
     public function __construct(Recur $rRule = null)
     {
         if ($rRule) {
@@ -26,6 +52,38 @@ class RRule
         } else {
             $this->rRule = new Recur(new VCalendar(), 'RRULE');
         }
+    }
+
+    /**
+     * Get validator object for parameter
+     * @param $paramName
+     * @return Validators\RRuleParam | null
+     */
+    protected function getValidator($paramName)
+    {
+        if (isset(static::$validatorsMap[$paramName])) {
+            $validatorClass = \SugarAutoLoader::customClass(static::$validatorsMap[$paramName]);
+            return new $validatorClass($this);
+        }
+
+        return null;
+    }
+
+    /**
+     * Return array with $value
+     * @param mixed $value
+     * @return array
+     */
+    protected function toArray($value)
+    {
+        if (!$value) {
+            return array();
+        }
+        if (is_array($value)) {
+            return $value;
+        }
+
+        return array($value);
     }
 
     /**
@@ -45,17 +103,29 @@ class RRule
      * @param string $name
      * @param mixed $value
      * @return bool
+     * @throws \InvalidArgumentException | \LogicException
      */
     protected function setParameter($name, $value)
     {
-        if (!$value) {
-            return false;
+        if ((is_array($value) && !$value) || is_null($value)) {
+            return $this->deleteParameter($name);
         }
+
+        $validator = $this->getValidator($name);
+        if ($validator) {
+            $validator->validate($value);
+        }
+
         $params = $this->rRule->getParts();
 
         $currentValue = $this->getParameter($name);
 
         if (!$currentValue || $currentValue != $value) {
+            if (!is_array($value)) {
+                $value = (string)$value;
+            } elseif (count($value) == 1) {
+                $value = (string)$value[0];
+            }
             $params[$name] = $value;
             $this->rRule->setParts($params);
 
@@ -132,17 +202,52 @@ class RRule
      */
     public function getByDay()
     {
-        $byDay = $this->getParameter('BYDAY');
+        return $this->toArray($this->getParameter('BYDAY'));
+    }
 
-        if (!$byDay) {
-            return array();
-        }
+    /**
+     * Get BYMONTHDAY property of RRULE
+     * @return array
+     */
+    public function getByMonthDay()
+    {
+        return $this->toArray($this->getParameter('BYMONTHDAY'));
+    }
 
-        if (!is_array($byDay)) {
-            return array($byDay);
-        }
+    /**
+     * Get BYYEARDAY property of RRULE
+     * @return array
+     */
+    public function getByYearDay()
+    {
+        return $this->toArray($this->getParameter('BYYEARDAY'));
+    }
 
-        return $byDay;
+    /**
+     * Get BYWEEKNO property of RRULE
+     * @return array
+     */
+    public function getByWeekNo()
+    {
+        return $this->toArray($this->getParameter('BYWEEKNO'));
+    }
+
+    /**
+     * Get BYMONTH property of RRULE
+     * @return array
+     */
+    public function getByMonth()
+    {
+        return $this->toArray($this->getParameter('BYMONTH'));
+    }
+
+    /**
+     * Get BYSETPOS property of RRULE
+     * @return array
+     */
+    public function getBySetPos()
+    {
+        return $this->toArray($this->getParameter('BYSETPOS'));
     }
 
     /**
@@ -163,8 +268,6 @@ class RRule
      */
     public function setInterval($value)
     {
-        $value = (string)$value;
-
         return $this->setParameter('INTERVAL', $value);
     }
 
@@ -175,9 +278,8 @@ class RRule
      */
     public function setCount($value)
     {
-        $value = (string)$value;
-
         $this->deleteParameter('UNTIL');
+
         return $this->setParameter('COUNT', $value);
     }
 
@@ -189,9 +291,11 @@ class RRule
     public function setUntil(\SugarDateTime $value)
     {
         if ($value != $this->getUntil()) {
+            $value->setTimezone(new \DateTimeZone('UTC'));
             $until = $value->format('Ymd\THis\Z');
 
             $this->deleteParameter('COUNT');
+
             return $this->setParameter('UNTIL', $until);
         }
 
@@ -203,9 +307,64 @@ class RRule
      * @param array $value (Two letters MO, TU e t.c.)
      * @return bool
      */
-    public function setByDay(array $value)
+    public function setByDay(array $value = null)
     {
         return $this->setParameter('BYDAY', $value);
+    }
+
+    /**
+     * Set BYMONTHDAY property
+     * @param array $values
+     * @return bool
+     * @throws \InvalidArgumentException | \LogicException
+     */
+    public function setByMonthDay(array $values = null)
+    {
+        return $this->setParameter('BYMONTHDAY', $values);
+    }
+
+    /**
+     * Set BYYEARDAY property
+     * @param array $values
+     * @return bool
+     * @throws \InvalidArgumentException | \LogicException
+     */
+    public function setByYearDay(array $values = null)
+    {
+        return $this->setParameter('BYYEARDAY', $values);
+    }
+
+    /**
+     * Set BYWEEKNO property
+     * @param array $values
+     * @return bool
+     * @throws \InvalidArgumentException | \LogicException
+     */
+    public function setByWeekNo(array $values = null)
+    {
+        return $this->setParameter('BYWEEKNO', $values);
+    }
+
+    /**
+     * Set BYMONTH property
+     * @param array $values
+     * @return bool
+     * @throws \InvalidArgumentException | \LogicException
+     */
+    public function setByMonth(array $values = null)
+    {
+        return $this->setParameter('BYMONTH', $values);
+    }
+
+    /**
+     * Set BYSETPOS property
+     * @param array $values
+     * @return bool
+     * @throws \InvalidArgumentException | \LogicException
+     */
+    public function setBySetPos(array $values = null)
+    {
+        return $this->setParameter('BYSETPOS', $values);
     }
 
     /**

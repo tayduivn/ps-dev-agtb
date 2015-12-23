@@ -397,6 +397,17 @@ END:VCALENDAR',
                 'instance' => null,
                 'result' => array(),
             ),
+            array(
+                'vEvent' => $this->getEventTemplate('recurring-extended'),
+                'instance' => null,
+                'instance' => 'Sugarcrm\Sugarcrm\Dav\Cal\Structures\RRule',
+                'result' => array(
+                    'getFrequency' => 'YEARLY',
+                    'getInterval' => 2,
+                    'getByDay' => array('SU'),
+                    'getByMonth' => array(1, 3),
+                )
+            ),
         );
     }
 
@@ -404,10 +415,27 @@ END:VCALENDAR',
     {
         return array(
             array(
+                'vEvent' => $this->getEventTemplate('recurring-extended'),
+                'recurringParams' => array(
+                    'setFrequency' => 'YEARLY',
+                    'setInterval' => 2,
+                    'setByDay' => array('SU'),
+                    'setByMonth' => array(1, 3),
+                ),
+                'result' => false,
+                'newParams' => array(
+                    'getFrequency' => 'YEARLY',
+                    'getInterval' => 2,
+                    'getByDay' => array('SU'),
+                    'getByMonth' => array(1, 3),
+                ),
+            ),
+            array(
                 'vEvent' => $this->getEventTemplate('vemptyevent'),
                 'recurringParams' => array(
                     'setFrequency' => 'DAILY',
                     'setInterval' => 1,
+                    'setBySetPos' => array(1),
                     'setCount' => null,
                     'setByDay' => array(),
                 ),
@@ -418,6 +446,7 @@ END:VCALENDAR',
                     'getCount' => null,
                     'getUntil' => null,
                     'getByDay' => array(),
+                    'getBySetPos' => array(1),
                 ),
             ),
             array(
@@ -441,7 +470,7 @@ END:VCALENDAR',
                 'vEvent' => $this->getEventTemplate('vevent'),
                 'recurringParams' => array(
                     'setFrequency' => 'DAILY',
-                    'setUntil' => new \SugarDateTime('20150813T080000Z', new \DateTimeZone('UTC')),
+                    'setUntil' => new \SugarDateTime('20150813T110000', new \DateTimeZone('Europe/Minsk')),
                     'setByDay' => array(),
                 ),
                 'result' => false,
@@ -449,8 +478,24 @@ END:VCALENDAR',
                     'getFrequency' => 'DAILY',
                     'getInterval' => 1,
                     'getCount' => null,
-                    'getUntil' => new \SugarDateTime('20150813T080000Z', new \DateTimeZone('UTC')),
+                    'getUntil' => new \SugarDateTime('20150813T080000', new \DateTimeZone('UTC')),
                     'getByDay' => array(),
+                ),
+            ),
+            array(
+                'vEvent' => $this->getEventTemplate('vevent'),
+                'recurringParams' => array(
+                    'setFrequency' => 'DAILY',
+                    'setUntil' => new \SugarDateTime('20150813T080000', new \DateTimeZone('UTC')),
+                    'setByDay' => array('TU'),
+                ),
+                'result' => true,
+                'newParams' => array(
+                    'getFrequency' => 'DAILY',
+                    'getInterval' => 1,
+                    'getCount' => null,
+                    'getUntil' => new \SugarDateTime('20150813T080000', new \DateTimeZone('UTC')),
+                    'getByDay' => array('TU'),
                 ),
             ),
         );
