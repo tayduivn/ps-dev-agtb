@@ -26,12 +26,20 @@ class Handler
     /**
      * @param \CalDavEventCollection $bean
      * @param string $calDavData
+     * @return bool success of operation
      */
     public function import(\CalDavEventCollection $bean, $calDavData)
     {
+        if (!$bean->isImportable()) {
+            return false;
+        }
+
         $diff = $bean->getDiffStructure($calDavData);
-        $saveCounter = $bean->getSynchronizationObject()->setSaveCounter();
-        $this->getManager()->calDavImport($diff, $saveCounter);
+        if ($diff[1] || $diff[2]) {
+            $saveCounter = $bean->getSynchronizationObject()->setSaveCounter();
+            $this->getManager()->calDavImport($diff, $saveCounter);
+        }
+        return true;
     }
 
     /**
@@ -40,6 +48,7 @@ class Handler
      * @param array $invitesBefore
      * @param array $invitesAfter
      * @param bool $insert
+     * @return bool success of operation
      */
     public function export(
         \SugarBean $bean,
@@ -49,19 +58,24 @@ class Handler
         $insert = false
     ) {
         $adapter = $this->getAdapterFactory()->getAdapter($bean->module_name);
-        if ($adapter) {
-            $preparedData = $adapter->prepareForExport(
-                $bean,
-                $changedFields,
-                $invitesBefore,
-                $invitesAfter,
-                $insert
-            );
+        if (!$adapter) {
+            return false;
+        }
+
+        $preparedData = $adapter->prepareForExport(
+            $bean,
+            $changedFields,
+            $invitesBefore,
+            $invitesAfter,
+            $insert
+        );
+        if ($preparedData[1] || $preparedData[2]) {
             $handler = $this->getCalDavHandler();
             $event = $handler->getDavBean($bean);
             $saveCounter = $event->getSynchronizationObject()->setSaveCounter();
             $this->getManager()->calDavExport($preparedData, $saveCounter);
         }
+        return true;
     }
 
     /**
