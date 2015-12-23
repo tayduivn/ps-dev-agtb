@@ -1128,8 +1128,6 @@ class CalDavEventCollection extends SugarBean
     {
         $this->load_relationship('synchronization');
 
-        BeanFactory::clearCache();
-        $this->synchronization->resetLoaded();
         $result = $this->synchronization->getBeans();
         if ($result) {
             return array_shift($result);
@@ -1142,7 +1140,7 @@ class CalDavEventCollection extends SugarBean
             $syncBean = BeanFactory::getBean('CalDavSynchronizations');
             $syncBean->event_id = $this->id;
             $syncBean->save();
-
+            $this->synchronization->addBean($syncBean);
             return $syncBean;
         }
     }
