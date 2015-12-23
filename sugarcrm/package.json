@@ -6,7 +6,7 @@
     "grunt-jsduck": "1.0.1",
     "karma": "~0.12.16",
     "karma-jasmine": "~0.1.5",
-    "karma-chrome-launcher": "~0.1.12",
+    "karma-chrome-launcher": "~0.2.2",
     "karma-firefox-launcher": "~0.1.7",
     "karma-phantomjs-launcher": "~0.1.2",
     "karma-coverage": "~0.2.4",
