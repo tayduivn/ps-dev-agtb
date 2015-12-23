@@ -569,6 +569,7 @@ ExpressionControl.prototype.setConstantPanel = function(settings) {
             date: true,
             datetime: true,
             timespan: true,
+            datespan: false,
             currency: true
         };
     } else {
@@ -582,6 +583,7 @@ ExpressionControl.prototype.setConstantPanel = function(settings) {
             ._createDateConstantPanel()
             ._createDateTimeConstantPanel()
             ._createTimespanPanel()
+            ._createDatespanPanel()
             ._createCurrencyPanel();
     }
 
@@ -1174,6 +1176,7 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                         expValue: data.datetime
                     };
                     break;
+                case 'form-constant-datespan':
                 case 'form-constant-timespan':
                     itemData = {
                         expType: "CONSTANT",
@@ -1972,6 +1975,57 @@ ExpressionControl.prototype._createTimespanPanel = function() {
     return this;
 };
 
+ExpressionControl.prototype._createDatespanPanel = function() {
+    var settings = this._constantSettings.datespan;
+    if (!this._constantPanels.datespan) {
+        this._constantPanels.datespan = new FormPanel({
+            id: "form-constant-datespan",
+            title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_TITLE"),
+            foregroundAppendTo: this._panel._getUsableAppendTo(),
+            items: [
+                {
+                    type: "integer",
+                    name: "ammount",
+                    label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_AMOUNT"),
+                    filter: "integer",
+                    width: "40%",
+                    required: true,
+                    disabled: true
+                }, {
+                    type: "dropdown",
+                    label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_UNIT"),
+                    name: "unittime",
+                    width: "60%",
+                    disabled: true,
+                    options: [
+                        {
+                            label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_YEARS"),
+                            value: "y"
+                        }, {
+                            label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_MONTHS"),
+                            value: "m"
+                        }, {
+                            label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_WEEKS"),
+                            value: "w"
+                        }, {
+                            label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_DAYS"),
+                            value: "d"
+                        }
+                    ]
+                }
+            ]
+        });
+        this._constantPanel.addItem(this._constantPanels.datespan);
+    }
+    if (settings) {
+        this._constantPanels.datespan.enable();
+    } else {
+        this._constantPanels.datespan.disable();
+    }
+
+    return this;
+};
+
 ExpressionControl.prototype._createCurrencyPanel = function() {
     var settings = this._constantSettings.currency;
     if (!this._constantPanels.currency) {
@@ -2164,6 +2218,7 @@ ExpressionControl.prototype._createMainPanel = function () {
             this._createDateConstantPanel();
             this._createDateTimeConstantPanel();
             this._createTimespanPanel();
+            this._createDatespanPanel();
             this._createCurrencyPanel();
         }
         items.push(this._constantPanel);
