@@ -161,6 +161,15 @@ class Participant
     }
 
     /**
+     * Get RSVP (FALSE or TRUE)
+     * @return string
+     */
+    public function getRSVP()
+    {
+        return $this->getParameter('RSVP');
+    }
+
+    /**
      * Set status of participant
      * @see Participant::getStatus for availiable statuses
      * @param string $value
@@ -238,6 +247,16 @@ class Participant
         $this->participant->name = $value;
 
         return true;
+    }
+
+    /**
+     * Set RSVP
+     * @param string $value Possible value 'FALSE' or 'TRUE'
+     * @return bool
+     */
+    public function setRSVP($value)
+    {
+        return $this->setParameter('RSVP', $value);
     }
 
     /**

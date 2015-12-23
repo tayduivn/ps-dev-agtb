@@ -49,6 +49,12 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 		$lead->account_name = 'MeetingTest Lead Account';
 		$lead->save();
 		$this->lead = $lead;
+
+        $addressee = BeanFactory::newBean('Addresses');
+        $addressee->first_name = 'AddresseeTest';
+        $addressee->last_name = 'Addressee';
+        $addressee->save();
+        $this->addressee = $addressee;
 	}
 
 	public function tearDown(){
@@ -64,6 +70,9 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 
 		$GLOBALS['db']->query("DELETE FROM leads WHERE id = '{$this->lead->id}'");
 		unset($this->lead);
+
+        $GLOBALS['db']->query("DELETE FROM addresses WHERE id = " . $GLOBALS['db']->quote($this->addressee->id));
+        unset($this->addressee);
 
         SugarTestHelper::tearDown();
 	}
@@ -99,6 +108,10 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 		$data_values = array('accept_status'=> 'accept');
 		$meeting->set_relationship($meeting->rel_users_table, $relate_values, true, true, $data_values);
 
+        $relate_values = array('addressee_id' => $this->addressee->id, 'meeting_id' => $meeting->id);
+        $data_values = array('accept_status' => 'accept');
+        $meeting->set_relationship($meeting->rel_addresses_table, $relate_values, true, true, $data_values);
+
 		$invitesAfter = CalendarUtils::getInvites($meeting);
 
 		$invitesBeforeExpected = array (
@@ -109,7 +122,8 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 				)
 			),
 			'leads' => array(),
-			'users' => array()
+            'users' => array(),
+            'addresses' => array(),
 		);
 
 
@@ -131,7 +145,13 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 					'status' => 'accept',
 					'bean' => BeanFactory::getBean('Users', $current_user->id)
 				)
-			)
+            ),
+            'addresses' => array(
+                $this->addressee->id => array(
+                    'status' => 'accept',
+                    'bean' => BeanFactory::getBean('Addresses', $this->addressee->id)
+                )
+            ),
 		);
 
 		$this->assertEquals($invitesBeforeExpected, $invitesBefore);

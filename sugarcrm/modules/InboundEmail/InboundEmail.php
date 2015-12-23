@@ -2814,19 +2814,6 @@ class InboundEmail extends SugarBean {
 	} // fn
 
     /**
-     * Return bean object by name module.
-     * Need to mock result of BeanFactory in UTs.
-     *
-     * @param string $module
-     * @param string|null $id
-     * @return SugarBean|null
-     */
-    protected function getFactoryBean($module, $id = null)
-    {
-        return BeanFactory::getBean($module, $id);
-    }
-
-    /**
      * Constructs an attachment from the SugarBean that is passed in.
      * Need to mock result of AttachmentPeer in UTs.
      *
@@ -2924,26 +2911,32 @@ class InboundEmail extends SugarBean {
      */
     public function parseAndUpdateStatusForInvitee($content, $emailAddress)
     {
-        $calDavEvent = $this->getFactoryBean('CalDavEvents');
-        $calDavEvent->setCalendarEventData($content);
+        /** @var CalDavEventCollection $eventCollection */
+        $eventCollection = BeanFactory::getBean('CalDavEvents');
+        $eventCollection->setData($content);
 
-        $vCalendar = $calDavEvent->getVCalendarEvent();
-        if (isset($vCalendar->VEVENT->{'X-SUGAR-ID'}) && isset($vCalendar->VEVENT->{'X-SUGAR-NAME'})) {
-            $entityId = $vCalendar->VEVENT->{'X-SUGAR-ID'}->getValue();
-            $moduleName = $vCalendar->VEVENT->{'X-SUGAR-NAME'}->getValue();
+        $event = $eventCollection->getParent();
 
-            $event = $this->getFactoryBean($moduleName, $entityId);
-            $calDavEvent->setBean($event);
+        if (isset($event->getObject()->{'X-SUGAR-ID'}) && isset($event->getObject()->{'X-SUGAR-NAME'})) {
+            $entityId = $event->getObject()->{'X-SUGAR-ID'}->getValue();
+            $moduleName = $event->getObject()->{'X-SUGAR-NAME'}->getValue();
 
-            $participants = $calDavEvent->getParticipants();
-            foreach ($participants as $module => $list) {
-                foreach ($list as $beanId => $participantData) {
-                    if ($participantData['email'] === $emailAddress) {
-                        $invitee = $this->getFactoryBean($module, $beanId);
-                        if ($invitee) {
-                            $this->updateStatusForInvitee($event, $invitee, $participantData['accept_status']);
-                        }
-                        break 2;
+            $bean = BeanFactory::getBean($moduleName, $entityId);
+            if ($bean instanceof Call || $bean instanceof Meeting) {
+                $eventCollection->sync();
+                $links = json_decode($eventCollection->participants_links, true);
+
+                $participants = $event->getParticipants();
+                foreach ($participants as $participant) {
+                    $email = $participant->getEmail();
+                    if ($email === $emailAddress && isset($links[$email])) {
+                        $map = SugarAutoLoader::customClass('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\AcceptedMap');
+                        $map = new $map;
+                        $status = $map->getSugarValue($participant->getStatus());
+
+                        $inviteBean = BeanFactory::getBean($links[$email]['beanName'], $links[$email]['beanId']);
+                        $this->updateStatusForInvitee($bean, $inviteBean, $status);
+                        break;
                     }
                 }
             }
@@ -5302,6 +5295,24 @@ eoq;
         }
 
         return array_shift($data);
+    }
+
+    /**
+     * Return email-address for handler CalDAV replies.
+     *
+     * @return string|null
+     */
+    public function getCalDavHandlerEmail()
+    {
+        $inboundEmail = $this->getOneCalDAVInbound();
+        if ($inboundEmail) {
+            $inboundEmail = unserialize(base64_decode($inboundEmail->stored_options));
+            if (!empty($inboundEmail['from_addr'])) {
+                return $inboundEmail['from_addr'];
+            }
+        }
+
+        return null;
     }
 
     /**

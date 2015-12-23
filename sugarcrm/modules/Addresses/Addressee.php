@@ -15,7 +15,7 @@ require_once 'include/SugarObjects/templates/person/Person.php';
 class Addressee extends Person {
     public $new_schema = true;
     public $module_dir = 'Addresses';
-    public $module_name = 'Addresses';
     public $object_name = 'Addressee';
+    public $object_names = 'Addresses';
     public $table_name = 'addresses';
 }
