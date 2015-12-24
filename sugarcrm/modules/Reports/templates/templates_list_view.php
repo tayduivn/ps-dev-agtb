@@ -1090,14 +1090,24 @@ function generateIdForGroupByIndex(&$counterArray, $groupByIndex) {
 	return $returnId;
 } // fn
 
-function incrementCountForRowId(&$rowIdToCountArray, $rowId) {
-	$rowIdSplitArray = explode("_", $rowId);
-	$newRowId = $rowIdSplitArray[0];
-	for ($i = 1 ; $i < count($rowIdSplitArray) ; $i++) {
-		$newRowId = $newRowId . "_" . $rowIdSplitArray[$i];
-		$rowIdToCountArray[$newRowId] = $rowIdToCountArray[$newRowId] + 1;
-	} // for
-} // fn
+function setCountForRowId(&$rowIdToCountArray, $rowId, $row, $countKeyIndex) {
+    if (isset($row['cells'][$countKeyIndex])) {
+        $count = $row['cells'][$countKeyIndex];
+    } else {
+        $count = $row['count'];
+    }
+
+    $rowIdSplitArray = explode('_', $rowId);
+    $newRowId = $rowIdSplitArray[0];
+    for ($i = 1; $i < count($rowIdSplitArray); $i++) {
+        $newRowId = $newRowId . "_" . $rowIdSplitArray[$i];
+        if (isset($rowIdToCountArray[$newRowId])) {
+            $rowIdToCountArray[$newRowId] += $count;
+        } else {
+            $rowIdToCountArray[$newRowId] = $count;
+        }
+    } // for
+}
 
 function getGroupByColumnName(&$reporter, $index, $header_row, $row) {
 	$group_def_array = $reporter->report_def['group_defs'];
