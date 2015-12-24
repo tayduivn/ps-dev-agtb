@@ -20,6 +20,7 @@ use Sabre\VObject\Recur\EventIterator;
 use Sugarcrm\Sugarcrm\Dav\Base\Principal;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper\UserHelper;
+use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as CalDavHandler;
 
 /**
  * Class CalDavEventCollection
@@ -859,8 +860,8 @@ class CalDavEventCollection extends SugarBean
                     $link = array('beanName' => $participant->getBeanName(), 'beanId' => $participant->getBeanId());
                 } else {
                     $link = $this->getPrincipalManager()
-                                 ->setOutputFormat(new Principal\Search\Format\ArrayStrategy())
-                                 ->findSugarLinkByEmail($email);
+                        ->setOutputFormat(new Principal\Search\Format\ArrayStrategy())
+                        ->findSugarLinkByEmail($email);
                 }
                 if (!$link) {
                     global $locale;
@@ -940,12 +941,19 @@ class CalDavEventCollection extends SugarBean
             $this->sync();
         }
 
+        $originalCalendarData = '';
+        if (isset($this->fetched_row['calendar_data'])) {
+            $originalCalendarData = $this->fetched_row['calendar_data'];
+        }
+
         $result = parent::save($check_notify);
 
         if ($result && $currentETag != $this->etag) {
             $operation = $isUpdate ? DavConstants::OPERATION_MODIFY : DavConstants::OPERATION_ADD;
             $this->addChange($operation);
         }
+
+        $this->getCalDavHandler()->import($this, $originalCalendarData);
 
         return $result;
     }
@@ -1068,7 +1076,7 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
-     * Retrive CalDavEventCollection by parent bean
+     * Retrieve CalDavEventCollection by parent bean
      * @param SugarBean $bean
      * @return CalDavEventCollection | null
      * @throws SugarQueryException
@@ -1156,34 +1164,35 @@ class CalDavEventCollection extends SugarBean
         $parentEvent = $this->getParent();
         $participantHelper = new ParticipantsHelper();
         if ($data) {
-            $oldCalendar = new static();
-            $oldCalendar->setData($data);
-            $oldCalendar->participantLinks = $this->participantLinks;
-            $oldCalendar->sync();
-            $oldParent = $oldCalendar->getParent();
-            if ($parentEvent->getTitle() != $oldParent->getTitle()) {
-                $changedFields['title'] = array($parentEvent->getTitle(), $oldParent->getTitle());
+            /** @var CalDavEventCollection $originalCollection */
+            $originalCollection = new static();
+            $originalCollection->setData($data);
+            $originalCollection->participantLinks = $this->participantLinks;
+            $originalCollection->sync();
+            $originalParentEvent = $originalCollection->getParent();
+            if ($parentEvent->getTitle() != $originalParentEvent->getTitle()) {
+                $changedFields['title'] = array($parentEvent->getTitle(), $originalParentEvent->getTitle());
             }
-            if ($parentEvent->getDescription() != $oldParent->getDescription()) {
-                $changedFields['description'] = array($parentEvent->getDescription(), $oldParent->getDescription());
+            if ($parentEvent->getDescription() != $originalParentEvent->getDescription()) {
+                $changedFields['description'] = array($parentEvent->getDescription(), $originalParentEvent->getDescription());
             }
-            if ($parentEvent->getLocation() != $oldParent->getLocation()) {
-                $changedFields['location'] = array($parentEvent->getLocation(), $oldParent->getLocation());
+            if ($parentEvent->getLocation() != $originalParentEvent->getLocation()) {
+                $changedFields['location'] = array($parentEvent->getLocation(), $originalParentEvent->getLocation());
             }
-            if ($parentEvent->getStatus() != $oldParent->getStatus()) {
-                $changedFields['status'] = array($parentEvent->getStatus(), $oldParent->getStatus());
+            if ($parentEvent->getStatus() != $originalParentEvent->getStatus()) {
+                $changedFields['status'] = array($parentEvent->getStatus(), $originalParentEvent->getStatus());
             }
-            if ($parentEvent->getStartDate() != $oldParent->getStartDate()) {
-                $changedFields['date_start'] = array($parentEvent->getStartDate(), $oldParent->getStartDate());
+            if ($parentEvent->getStartDate() != $originalParentEvent->getStartDate()) {
+                $changedFields['date_start'] = array($parentEvent->getStartDate(), $originalParentEvent->getStartDate());
             }
-            if ($parentEvent->getEndDate() != $oldParent->getEndDate()) {
-                $changedFields['date_end'] = array($parentEvent->getEndDate(), $oldParent->getEndDate());
+            if ($parentEvent->getEndDate() != $originalParentEvent->getEndDate()) {
+                $changedFields['date_end'] = array($parentEvent->getEndDate(), $originalParentEvent->getEndDate());
             }
             $currentParticipants = $parentEvent->getParticipants();
-            $participantsBefore = $oldParent->getParticipants();
+            $participantsBefore = $originalParentEvent->getParticipants();
             foreach ($currentParticipants as $participant) {
                 /**@var Structures\Participant $participant*/
-                $fountIndex = $oldParent->findParticipantsByEmail($participant->getEmail());
+                $fountIndex = $originalParentEvent->findParticipantsByEmail($participant->getEmail());
                 $participantType = $participant->getBeanName();
                 if ($fountIndex != -1) {
                     $participantBefore = $participantsBefore[$fountIndex];
@@ -1238,7 +1247,15 @@ class CalDavEventCollection extends SugarBean
             $this->isUpdate(),
         );
 
-        $importData = array($beanData, $changedFields, $invites);
-        return $importData;
+        return array($beanData, $changedFields, $invites);
+    }
+
+    /**
+     * Get CalDav Handler.
+     * @return CalDavHandler
+     */
+    public function getCalDavHandler()
+    {
+        return new CalDavHandler();
     }
 }

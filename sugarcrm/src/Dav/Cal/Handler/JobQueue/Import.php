@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue;
 
-use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException as JQInvalidArgumentException;
+use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException as JQLogicException;
 
 /**
  * Class Import
@@ -23,27 +23,44 @@ class Import extends Base
 {
     /**
      * start imports process for current CalDavEventCollection object
-     * @throws \Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException if bean not instance of CalDavEvent
      * @throws \Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException if related bean doesn't have adapter
      * @return string
      */
     public function run()
     {
-        /** @var \CalDavEventCollection $bean */
-        // ToDo: with $this->processedData
-        //$bean = $this->getBean();
-        if (!($bean instanceof \CalDavEvent)) {
-            throw new JQInvalidArgumentException('Bean must be an instance of CalDavEvent. Instance of ' .
-                get_class($bean) . ' given');
-        }
+        /** @var \User $user */
+        $user = $GLOBALS['current_user'];
 
-        if ($this->setJobToEnd($bean)) {
+        /** @var \CalDavEventCollection $calDavBean */
+        $calDavBean = \BeanFactory::getBean('CalDavEvents', $this->processedData[0][0]);
+
+        if (!$calDavBean->isImportable()) {
+            $calDavBean->getSynchronizationObject()->setJobCounter();
             return \SchedulersJob::JOB_CANCELLED;
         }
 
-        $handler = $this->getHandler();
-        $handler->import($this->processedData);
-        $bean->getSynchronizationObject()->setJobCounter();
+        if ($this->setJobToEnd($calDavBean)) {
+            return \SchedulersJob::JOB_CANCELLED;
+        }
+
+        $bean = $calDavBean->getBean();
+        if (!$bean) {
+            $bean = \BeanFactory::getBean($user->getPreference('default_caldav_module'));
+            if ($bean instanceof \Call) {
+                $bean->direction = $user->getPreference('default_caldav_call_direction');
+            }
+        }
+
+        $adapterFactory = $this->getAdapterFactory();
+        $adapter = $adapterFactory->getAdapter($bean->module_name);
+        if (!$adapter) {
+            throw new JQLogicException('Bean ' . $bean->module_name . ' does not have CalDav adapter');
+        }
+
+        if ($adapter->import($this->processedData, $bean)) {
+            $bean->save();
+        }
+        $calDavBean->getSynchronizationObject()->setJobCounter();
 
         return \SchedulersJob::JOB_SUCCESS;
     }
