@@ -145,6 +145,60 @@ describe('Plugins.AddAsInvitee', function() {
         expect(inviteeAddSpy.lastCall.args[1].default).toEqual(true);
     });
 
+    describe("fetch the person's email field when adding", function() {
+        beforeEach(function() {
+            view.model.set('invitees', new Backbone.Collection());
+        });
+
+        it("should fetch the person's email field before adding when the person has an email field", function() {
+            var person;
+
+            person = app.data.createBean('Contacts', {id: '123'});
+            person.fields = {
+                id: {},
+                name: {},
+                email: {}
+            };
+            sandbox.stub(person, 'fetch', function(options) {
+                options.complete();
+            });
+
+            view.addAsInvitee(person);
+
+            expect(view.model.get('invitees').get('123')).not.toBeUndefined();
+            expect(person.fetch).toHaveBeenCalledOnce();
+            expect(person.fetch.getCall(0).args[0].fields).toEqual(['email']);
+        });
+
+        it("should not fetch the person's email field before adding when the person has no fields", function() {
+            var person;
+
+            person = app.data.createBean('Contacts', {id: '123'});
+            sandbox.spy(person, 'fetch');
+
+            view.addAsInvitee(person);
+
+            expect(view.model.get('invitees').get('123')).not.toBeUndefined();
+            expect(person.fetch).not.toHaveBeenCalledOnce();
+        });
+
+        it("should not fetch the person's email field before adding when the person has no email field", function() {
+            var person;
+
+            person = app.data.createBean('Contacts', {id: '123'});
+            person.fields = {
+                id: {},
+                name: {}
+            };
+            sandbox.spy(person, 'fetch');
+
+            view.addAsInvitee(person);
+
+            expect(view.model.get('invitees').get('123')).not.toBeUndefined();
+            expect(person.fetch).not.toHaveBeenCalledOnce();
+        });
+    });
+
     it('should invite the assigned user', function() {
         var user;
 

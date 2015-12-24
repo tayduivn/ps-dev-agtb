@@ -8088,6 +8088,7 @@ $app_strings = array (
   'LBL_TRADEMARK2' => 'SugarCRM ®, Sugar Enterprise™ and Sugar™ are trademarks of SugarCRM Inc.',
   'LBL_SEND_INVITE' => 'Send invite',
   'LBL_INVITEES' => 'Guests',
+    'LBL_GUEST_WILL_NOT_RECEIVE_INVITE' => 'Guest will not receive your invite',
   'LBL_SELECT_ACTION_LABEL' => 'Select Action',
   'LBL_TOGGLE_DRAWER' => 'Toggle Drawer',
   'LBL_TOUR_NEXT' => 'Next',

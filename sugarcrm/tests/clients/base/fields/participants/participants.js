@@ -811,21 +811,35 @@ describe('View.Fields.Base.ParticipantsField', function() {
         it('should only show module and name when no highlighted field', function() {
             var searchResultTemplateStub = sandbox.stub(field, 'searchResultTemplate'),
                 result = app.data.createBean('Baz', {
-                    full_name: 'Foo Bar'
+                    full_name: 'Foo Bar',
+                    email: [{
+                        email_address: 'foo@bar.com',
+                        primary_address: true,
+                        invalid_email: false,
+                        opt_out: false
+                    }]
                 });
             result.module = 'Baz';
             result.searchInfo = {};
             field.formatSearchResult(result);
             expect(searchResultTemplateStub.lastCall.args).toEqual([{
                 module: 'Baz',
-                name: 'Foo Bar'
+                name: 'Foo Bar',
+                // Always passed, but not displayed.
+                email: 'foo@bar.com'
             }]);
         });
 
         it('should show module, name, and highlighted field when highlighted field is given', function() {
             var searchResultTemplateStub = sandbox.stub(field, 'searchResultTemplate'),
                 result = app.data.createBean('Baz', {
-                    full_name: 'Foo Bar'
+                    full_name: 'Foo Bar',
+                    email: [{
+                        email_address: 'foo@bar.com',
+                        primary_address: true,
+                        invalid_email: false,
+                        opt_out: false
+                    }]
                 });
 
             result.module = 'Baz';
@@ -841,6 +855,8 @@ describe('View.Fields.Base.ParticipantsField', function() {
             expect(searchResultTemplateStub.lastCall.args).toEqual([{
                 module: 'Baz',
                 name: 'Foo Bar',
+                // Always passed, but not displayed.
+                email: 'foo@bar.com',
                 field_name: 'LBL_ACCOUNT_NAME',
                 field_value: 'Bar Enterprises Inc.'
             }]);

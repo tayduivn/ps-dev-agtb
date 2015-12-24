@@ -724,6 +724,7 @@
                 attributes = {
                     accept_status: acceptStatus(participant),
                     deletable: deletable(participant),
+                    email: app.utils.getPrimaryEmailAddress(participant),
                     last: (rows === i++),
                     name: app.utils.getRecordName(participant),
                     preview: preview(participant),
@@ -946,7 +947,8 @@
     formatSearchResult: function(bean) {
         var result = {
             module: bean.module,
-            name: app.utils.getRecordName(bean)
+            name: app.utils.getRecordName(bean),
+            email: app.utils.getPrimaryEmailAddress(bean)
         };
 
         _.each(bean.searchInfo.highlighted, function(field) {
