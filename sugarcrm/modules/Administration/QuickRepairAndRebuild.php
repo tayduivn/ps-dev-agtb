@@ -26,6 +26,8 @@ require_once 'include/api/ServiceDictionary.php';
 //clear out the api metadata cache
 require_once "include/MetaDataManager/MetaDataManager.php";
 
+require_once "include/utils.php";
+
 /**
  * Class for handling repairing of the sugar installation and rebuilding of caches
  */
@@ -148,6 +150,7 @@ class RepairAndClear
                 $this->repairPortalConfig();
                 //END SUGARCRM flav=ent ONLY
                 $this->repairMetadataAPICache($metadata_sections);
+                $this->rebuildJSCacheFiles();
                 break;
         }
 
@@ -636,5 +639,14 @@ class RepairAndClear
         $db = DBManagerFactory::getInstance();
         $db->query("UPDATE config SET value = 0 WHERE name = 'is_setup'");
         $db->query("UPDATE config SET value = 0 WHERE name = 'has_commits'");
+    }
+
+    /*
+     * Rebuild the Javascript files in Cache
+     */
+    public function rebuildJSCacheFiles()
+    {
+        $jsFiles = array("sugar_grp1.js", "sugar_grp1_yui.js", "sugar_grp1_jquery.js");
+        ensureJSCacheFilesExist($jsFiles);
     }
 }
