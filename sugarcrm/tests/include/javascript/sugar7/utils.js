@@ -145,6 +145,149 @@ describe("Sugar7 utils", function() {
         });
     });
 
+    describe('email addresses', function() {
+        var combos,
+            model;
+
+        combos = {
+            primary_valid: {
+                email_address: 'primary@valid.com',
+                primary_address: true,
+                invalid_email: false,
+                opt_out: false
+            },
+            primary_invalid: {
+                email_address: 'primary@invalid.com',
+                primary_address: true,
+                invalid_email: true,
+                opt_out: false
+            },
+            primary_opted_out: {
+                email_address: 'primary@optout.com',
+                primary_address: true,
+                invalid_email: false,
+                opt_out: true
+            },
+            primary_bad: {
+                email_address: 'primary@bad.com',
+                primary_address: true,
+                invalid_email: true,
+                opt_out: true
+            },
+            valid: {
+                email_address: 'is@valid.com',
+                primary_address: false,
+                invalid_email: false,
+                opt_out: false
+            },
+            invalid: {
+                email_address: 'is@invalid.com',
+                primary_address: false,
+                invalid_email: true,
+                opt_out: false
+            },
+            opted_out: {
+                email_address: 'is@optout.com',
+                primary_address: false,
+                invalid_email: false,
+                opt_out: true
+            },
+            bad: {
+                email_address: 'is@bad.com',
+                primary_address: false,
+                invalid_email: true,
+                opt_out: true
+            }
+        };
+
+        beforeEach(function() {
+            model = new Backbone.Model();
+        });
+
+        using('getEmailAddress', [
+            [
+                [combos.primary_valid, combos.valid],
+                {primary_address: true},
+                combos.primary_valid.email_address
+            ],
+            [
+                [combos.valid, combos.primary_valid],
+                undefined,
+                combos.valid.email_address
+            ],
+            [
+                [combos.primary_invalid, combos.invalid],
+                {invalid_email: true},
+                combos.primary_invalid.email_address
+            ],
+            [
+                [combos.primary_valid, combos.valid],
+                {invalid_email: true},
+                ''
+            ],
+            [
+                [combos.primary_valid, combos.valid],
+                {opt_out: true},
+                ''
+            ],
+            [
+                [combos.valid, combos.invalid],
+                {invalid_email: true},
+                combos.invalid.email_address
+            ],
+            [
+                [combos.valid, combos.opted_out],
+                {opt_out: true},
+                combos.opted_out.email_address
+            ],
+            [
+                [combos.valid, combos.invalid, combos.opted_out, combos.bad],
+                {invalid_email: true, opt_out: true},
+                combos.bad.email_address
+            ],
+            [
+                [combos.bad, combos.valid, combos.invalid, combos.primary_bad, combos.opted_out],
+                {primary_address: true, invalid_email: true, opt_out: true},
+                combos.primary_bad.email_address
+            ]
+        ], function(emails, options, expected) {
+            it('should return ' + expected, function() {
+                model.set('email', emails);
+                expect(app.utils.getEmailAddress(model, options)).toEqual(expected);
+            });
+        });
+
+        using('getPrimaryEmailAddress', [
+            [[combos.primary_valid, combos.valid], combos.primary_valid.email_address],
+            [[combos.primary_valid, combos.invalid], combos.primary_valid.email_address],
+            [[combos.primary_valid, combos.opted_out], combos.primary_valid.email_address],
+            [[combos.primary_valid, combos.bad], combos.primary_valid.email_address],
+            [[combos.primary_invalid, combos.valid], combos.valid.email_address],
+            [[combos.primary_invalid, combos.invalid], ''],
+            [[combos.primary_invalid, combos.opted_out], ''],
+            [[combos.primary_invalid, combos.bad], ''],
+            [[combos.primary_opted_out, combos.valid], combos.valid.email_address],
+            [[combos.primary_opted_out, combos.invalid], ''],
+            [[combos.primary_opted_out, combos.opted_out], ''],
+            [[combos.primary_opted_out, combos.bad], ''],
+            [[combos.primary_bad, combos.valid], combos.valid.email_address],
+            [[combos.primary_bad, combos.invalid], ''],
+            [[combos.primary_bad, combos.opted_out], ''],
+            [[combos.primary_bad, combos.bad], ''],
+            [[combos.valid, combos.invalid], combos.valid.email_address],
+            [[combos.valid, combos.opted_out], combos.valid.email_address],
+            [[combos.valid, combos.bad], combos.valid.email_address],
+            [[combos.invalid, combos.opted_out], ''],
+            [[combos.invalid, combos.bad], ''],
+            [[combos.opted_out, combos.bad], '']
+        ], function(emails, expected) {
+            it('should return ' + expected, function() {
+                model.set('email', emails);
+                expect(app.utils.getPrimaryEmailAddress(model)).toEqual(expected);
+            });
+        });
+    });
+
     var name = 'module';
     using('query strings',
         [
