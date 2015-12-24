@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -44,6 +43,9 @@ class Event implements ModuleEventInterface, \Serializable
      */
     public function getBean()
     {
+        if (!$this->bean) {
+            throw new \LogicException('$this->bean should be set');
+        }
         return $this->bean;
     }
 
@@ -56,7 +58,7 @@ class Event implements ModuleEventInterface, \Serializable
     public function setBean(\SugarBean $bean)
     {
         if (!($bean instanceof \Call) && !($bean instanceof \Meeting)) {
-            throw new \LogicException('Unsupported Bean class.' . get_class($bean));
+            throw new \LogicException('Unsupported Bean class: ' . get_class($bean));
         }
         $this->bean = $bean;
         return $this;
@@ -116,6 +118,6 @@ class Event implements ModuleEventInterface, \Serializable
      */
     public function getModuleName()
     {
-        return $this->bean->module_name;
+        return $this->getBean()->module_name;
     }
 }
