@@ -284,7 +284,10 @@ describe('View.Fields.Base.ParticipantsField', function() {
         });
 
         it("should disable a participant's delete button when the participant is marked as not deletable", function() {
-            field.model.set(field.name, {_module: 'Leads', id: '1', name: 'Foo Bar', deletable: false});
+            var participant;
+            participant = app.data.createBean('Leads', {id: '1', name: 'Foo Bar'});
+            participant.deletable = false;
+            field.model.set(field.name, participant);
             field.render();
             expect(field.$('button[data-action=removeRow][data-id=1]').hasClass('disabled')).toBe(true);
         });

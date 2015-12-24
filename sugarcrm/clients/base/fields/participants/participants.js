@@ -738,7 +738,7 @@
                     });
                 }
 
-                return _.extend(attributes, participant.attributes);
+                return _.extend({}, participant.attributes, attributes);
             });
         } catch (e) {
             app.logger.warn(e);
