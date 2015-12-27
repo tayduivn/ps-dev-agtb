@@ -45,10 +45,14 @@ class Import extends Base
 
         $bean = $calDavBean->getBean();
         if (!$bean) {
-            $bean = \BeanFactory::getBean($user->getPreference('default_caldav_module'));
+            $bean = \BeanFactory::getBean($user->getPreference('caldav_module'));
+            $bean->id = create_guid();
+            $bean->new_with_id = true;
             if ($bean instanceof \Call) {
-                $bean->direction = $user->getPreference('default_caldav_call_direction');
+                $bean->direction = $user->getPreference('caldav_call_direction');
             }
+            $calDavBean->setBean($bean);
+            $calDavBean->save();
         }
 
         $adapterFactory = $this->getAdapterFactory();

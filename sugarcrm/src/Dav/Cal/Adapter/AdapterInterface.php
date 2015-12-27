@@ -21,26 +21,26 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
 interface AdapterInterface
 {
     /**
-     * @param array $exportData
-     * @param \CalDavEventCollection $eventCollection
+     * @param array $data
+     * @param \CalDavEventCollection $collection
      * @return bool
      */
-    public function export(array $exportData, \CalDavEventCollection $eventCollection);
+    public function export(array $data, \CalDavEventCollection $collection);
 
     /**
-     * @param array $importData
-     * @param \SugarBean $sugarBean
+     * @param array $data
+     * @param \SugarBean $bean
      * @return bool
      */
-    public function import(array $importData, \SugarBean $sugarBean);
+    public function import(array $data, \SugarBean $bean);
 
     /**
      * @param \SugarBean $bean
      * @param array $changedFields
      * @param array $invitesBefore
      * @param array $invitesAfter
-     * @param bool $forceInsert
+     * @param bool $insert
      * @return mixed
      */
-    public function prepareForExport(\SugarBean $bean, $changedFields, $invitesBefore, $invitesAfter, $forceInsert);
+    public function prepareForExport(\SugarBean $bean, $changedFields, $invitesBefore, $invitesAfter, $insert);
 }

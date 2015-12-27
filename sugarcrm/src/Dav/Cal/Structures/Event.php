@@ -105,7 +105,10 @@ class Event
 
             if ($this->event->ATTENDEE) {
                 foreach ($this->event->ATTENDEE as $attendee) {
-                    $this->participants[] = $this->createParticipantObject($attendee);
+                    $participant = $this->createParticipantObject($attendee);
+                    if (!$participant->getEmail() || $this->findParticipantsByEmail($participant->getEmail()) == -1) {
+                        $this->participants[] = $participant;
+                    }
                 }
             }
 
@@ -118,6 +121,10 @@ class Event
         }
     }
 
+    /**
+     * @param CalAddress $node
+     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Participant
+     */
     protected function createParticipantObject(CalAddress $node)
     {
         $participantClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Cal\\Structures\\Participant');

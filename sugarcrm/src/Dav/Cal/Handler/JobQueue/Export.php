@@ -23,20 +23,20 @@ use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException as JQInvalidAr
 class Export extends Base
 {
     /**
-    * start export process for current bean if it extends from SugarBean
-    * @throws \Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException if bean not instance of SugarBean
-    * @throws \Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException if bean doesn't have adapter
-    * @return string
-    */
+     * start export process for current bean if it extends from SugarBean
+     * @throws \Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException if bean not instance of SugarBean
+     * @throws \Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException if bean doesn't have adapter
+     * @return string
+     */
     public function run()
     {
         $adapterFactory = $this->getAdapterFactory();
         $bean = \BeanFactory::getBean($this->processedData[0][0]);
-        $bean->id = $this->processedData[0][1];
         if (!($bean instanceof \SugarBean)) {
             throw new JQInvalidArgumentException('Bean must be an instance of SugarBean. Instance of ' .
                 get_class($bean) . ' given');
         }
+        $bean->id = $this->processedData[0][1];
         $adapter = $adapterFactory->getAdapter($bean->module_name);
         if (!$adapter) {
             throw new JQLogicException('Bean ' . $bean->module_name . ' does not have CalDav adapter');

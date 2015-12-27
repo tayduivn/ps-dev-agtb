@@ -305,11 +305,7 @@ class ParticipantsHelper
      */
     public function getInvitesDiff(array $invitesBefore, array $invitesAfter)
     {
-        $invitesDiff = array(
-            'added' => array(),
-            'deleted' => array(),
-            'changed' => array()
-        );
+        $invitesDiff = array();
 
         foreach ($invitesBefore as $relationType => $relationsList) {
             foreach ($relationsList as $idBean => $relationInfo) {
@@ -321,11 +317,17 @@ class ParticipantsHelper
                     $emailCurrent = $userBean->emailAddress->getPrimaryAddress($userBean);
                     $emailBefore = $beanBefore->emailAddress->getPrimaryAddress($beanBefore);
                     if ($status != $relationInfo['status'] || $emailCurrent != $emailBefore) {
+                        if (!isset($invitesDiff['changed'])) {
+                            $invitesDiff['changed'] = array();
+                        }
                         $invitesDiff['changed'][] = $this->addDiff($userBean, $status);
                     }
                 } else {
                     $userBean = $relationInfo['bean'];
                     $status = $relationInfo['status'];
+                    if (!isset($invitesDiff['deleted'])) {
+                        $invitesDiff['deleted'] = array();
+                    }
                     $invitesDiff['deleted'][] = $this->addDiff($userBean, $status);
                 }
             }
@@ -337,12 +339,15 @@ class ParticipantsHelper
                     /**@var \SugarBean $userBean*/
                     $userBean = $invitesAfter[$relationType][$idBean]['bean'];
                     $status = $invitesAfter[$relationType][$idBean]['status'];
+                    if (!isset($invitesDiff['added'])) {
+                        $invitesDiff['added'] = array();
+                    }
                     $invitesDiff['added'][] = $this->addDiff($userBean, $status);
                 }
             }
         }
 
-        return array_filter($invitesDiff);
+        return $invitesDiff;
     }
 
     /**

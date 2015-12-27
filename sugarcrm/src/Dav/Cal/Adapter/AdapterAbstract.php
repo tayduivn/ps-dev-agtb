@@ -12,11 +12,10 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
 
-use \Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper as ParticipantsHelper;
-use \Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper as DateTimeHelper;
+use Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper as ParticipantsHelper;
+use Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper as DateTimeHelper;
 use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as CalDavStatus;
-use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException;
-use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ImportException;
+use Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event;
 
 /**
  * Abstract class for iCal adapters common functionality
@@ -147,352 +146,594 @@ abstract class AdapterAbstract
     }
 
     /**
-     * set CalDav title
-     * @param array $fieldValues
-     * @param \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent
-     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException
+     * Checks that title matches current one.
+     *
+     * @param string $value
+     * @param Event $event
+     * @return bool
      */
-    protected function setCalDavTitle(array $fieldValues, \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent)
+    protected function checkCalDavTitle($value, Event $event)
     {
-        if (isset($fieldValues[1]) && $fieldValues[1] != $calDavEvent->getTitle()) {
-            throw new ExportException("Name value conflict with CalDav title: " .
-                "'{$fieldValues[1]}' isn't equal '{$calDavEvent->getTitle()}'");
-        }
-        $calDavEvent->setTitle($fieldValues[0]);
+        return $event->getTitle() == $value;
     }
 
     /**
-     * @param array $fieldValues
-     * @param \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent
-     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException
+     * Checks that description matches current one.
+     *
+     * @param string $value
+     * @param Event $event
+     * @return bool
      */
-    protected function setCalDavDescription(
-        array $fieldValues,
-        \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent
-    ) {
-        if (isset($fieldValues[1]) && $fieldValues[1] != $calDavEvent->getDescription()) {
-            throw new ExportException("Description value conflict with CalDav: ".
-                "'{$fieldValues[1]}' isn't equal '{$calDavEvent->getDescription()}'");
-        }
-        $calDavEvent->setDescription($fieldValues[0]);
+    protected function checkCalDavDescription($value, Event $event)
+    {
+        return $event->getDescription() == $value;
     }
 
     /**
-     * @param array $fieldValues
-     * @param \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent
-     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException
+     * Checks that location matches current one.
+     *
+     * @param string $value
+     * @param Event $event
+     * @return bool
      */
-    protected function setCalDavLocation(array $fieldValues, \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent)
+    protected function checkCalDavLocation($value, Event $event)
     {
-        if (isset($fieldValues[1]) && $fieldValues[1] != $calDavEvent->getLocation()) {
-            throw new ExportException("Location value conflict with CalDav: " .
-                "'{$fieldValues[1]}' isn't equal '{$calDavEvent->getLocation()}'");
-        }
-        $calDavEvent->setLocation($fieldValues[0]);
+        return $event->getLocation() == $value;
     }
 
     /**
-     * @param array $fieldValues
-     * @param \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent
-     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException
+     * Checks that status matches current one.
+     *
+     * @param string $value
+     * @param Event $event
+     * @return bool
      */
-    protected function setCalDavStatus(array $fieldValues, \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent)
+    protected function checkCalDavStatus($value, Event $event)
     {
-        $eventStatus = new CalDavStatus\EventMap();
-        if (isset($fieldValues[1])) {
-            $currentStatus = $eventStatus->getSugarValue($calDavEvent->getStatus(), $fieldValues[1]);
-            if ($fieldValues[1] != $currentStatus) {
-                throw new ExportException("Status value conflict with CalDav: " .
-                    "'{$fieldValues[1]}' isn't equal '{$currentStatus}'");
-            }
-
-        }
-        $calDavEvent->setStatus($eventStatus->getCalDavValue($fieldValues[0], $calDavEvent->getStatus()));
+        $map = new CalDavStatus\EventMap();
+        return $event->getStatus() == $map->getCalDavValue($value, $event->getStatus());
     }
 
     /**
-     * @param array $fieldValues
-     * @param \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent
-     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException
+     * Checks that start date matches current one.
+     *
+     * @param string $value
+     * @param Event $event
+     * @return bool
      */
-    protected function setCalDavStartDate(array $fieldValues, \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent)
+    protected function checkCalDavStartDate($value, Event $event)
     {
-        if (isset($fieldValues[1])) {
-            $dateBefore = new \SugarDateTime($fieldValues[1], new \DateTimeZone('UTC'));
-            if ($dateBefore != $calDavEvent->getStartDate()) {
-                throw new ExportException("Start date value conflict with CalDav: " .
-                    "'{$dateBefore->asDb()}' isn't equal '{$calDavEvent->getStartDate()->asDb()}'");
-            }
-        }
-        $calDavEvent->setStartDate(new \SugarDateTime($fieldValues[0], new \DateTimeZone('UTC')));
+        return $event->getStartDate() == new \SugarDateTime($value, new \DateTimeZone('UTC'));
     }
 
     /**
-     * @param array $fieldValues
-     * @param \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent
-     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException
+     * Checks that end date matches current one.
+     *
+     * @param string $value
+     * @param Event $event
+     * @return bool
      */
-    protected function setCalDavEndDate(array $fieldValues, \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event $calDavEvent)
+    protected function checkCalDavEndDate($value, Event $event)
     {
-        if (isset($fieldValues[1])) {
-            $dateBefore = new \SugarDateTime($fieldValues[1], new \DateTimeZone('UTC'));
-            if ($dateBefore != $calDavEvent->getEndDate()) {
-                throw new ExportException("Start date value conflict with CalDav: " .
-                    "'{$dateBefore->asDb()}' isn't equal '{$calDavEvent->getEndDate()->asDb()}'");
-            }
-        }
-        $calDavEvent->setEndDate(new \SugarDateTime($fieldValues[0], new \DateTimeZone('UTC')));
+        return $event->getEndDate() == new \SugarDateTime($value, new \DateTimeZone('UTC'));
     }
 
     /**
-     * @param array $fieldValues
-     * @param \SugarBean $bean
-     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ImportException
+     * Checks that invites are applicable to current ones.
+     *
+     * @param array $value
+     * @param Event $event
+     * @return bool
      */
-    protected function setBeanName(array $fieldValues, \SugarBean $bean)
+    protected function checkCalDavInvites($value, Event $event)
     {
-        if (isset($fieldValues[1]) && $fieldValues[1] != $bean->name) {
-            throw new ImportException("Name value conflict with {$bean->module_name}: " .
-                "'{$fieldValues[1]}' isn't equal '{$bean->name}'");
-        }
-        $bean->name = $fieldValues[0];
-    }
-
-    /**
-     * @param array $fieldValues
-     * @param \SugarBean $bean
-     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ImportException
-     */
-    protected function setBeanDescription(array $fieldValues, \SugarBean $bean)
-    {
-        if (isset($fieldValues[1]) && $fieldValues[1] != $bean->description) {
-            throw new ImportException("Description value conflict with {$bean->module_name}: " .
-                "'{$fieldValues[1]}' isn't equal '{$bean->description}'");
-        }
-        $bean->description = $fieldValues[0];
-    }
-
-    /**
-     * @param array $fieldValues
-     * @param \SugarBean $bean
-     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ImportException
-     */
-    protected function setBeanLocation(array $fieldValues, \SugarBean $bean)
-    {
-        if (isset($fieldValues[1]) && $fieldValues[1] != $bean->location) {
-            throw new ImportException("Location value conflict with {$bean->module_name}: " .
-                "'{$fieldValues[1]}' isn't equal '{$bean->location}'");
-        }
-        $bean->location = $fieldValues[0];
-    }
-
-    /**
-     * @param array $fieldValues
-     * @param \SugarBean $bean
-     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ImportException
-     */
-    protected function setBeanStatus(array $fieldValues, \SugarBean $bean)
-    {
-        $eventStatus = new CalDavStatus\EventMap();
-        if (isset($fieldValues[1])) {
-            $currentStatus = $eventStatus->getCalDavValue($bean->status, $fieldValues[1]);
-            if ($fieldValues[1] != $currentStatus) {
-                throw new ImportException("Status value conflict with {$bean->module_name}: " .
-                    "'{$fieldValues[1]}' isn't equal '{$currentStatus}'");
-            }
-        }
-        $bean->status = $eventStatus->getSugarValue($fieldValues[0], $bean->status);
-    }
-
-    /**
-     * @param array $fieldValues
-     * @param \SugarBean $bean
-     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ImportException
-     */
-    protected function setBeanStartDate(array $fieldValues, \SugarBean $bean)
-    {
-        if (isset($fieldValues[1])) {
-            $dateBefore = new \SugarDateTime(
-                $bean->date_start,
-                new \DateTimeZone($this->getCurrentUser()->getPreference('timezone'))
-            );
-            if ($fieldValues[1] != $dateBefore) {
-                throw new ImportException("Starts date value conflict with {$bean->module_name}: " .
-                    "'{$fieldValues[1]}' isn't equal '{$bean->date_start}'");
-            }
-        }
-        $bean->date_start =  $fieldValues[0]->asDb();
-    }
-
-    /**
-     * @param array $fieldValues
-     * @param \SugarBean $bean
-     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ImportException
-     */
-    protected function setBeanEndDate(array $fieldValues, \SugarBean $bean)
-    {
-        if (isset($fieldValues[1])) {
-            $dateBefore = new \SugarDateTime(
-                $bean->date_end,
-                new \DateTimeZone($this->getCurrentUser()->getPreference('timezone'))
-            );
-            if ($fieldValues[1] != $dateBefore) {
-                throw new ImportException("End date value conflict with {$bean->module_name}: " .
-                    "'{$fieldValues[1]}' isn't equal '{$bean->date_end}'");
-            }
-        }
-        $bean->date_end = $fieldValues[0]->asDb();
-    }
-
-    /**
-     * @param array $relationInvites
-     * @param \SugarBean $bean
-     */
-    protected function setContactsToBean($relationInvites, \SugarBean $bean)
-    {
-        $ids = $this->prepareSugarInvitees('contacts', $relationInvites, $bean);
-        $bean->setContactInvitees($ids);
-    }
-
-    /**
-     * @param array $relationInvites
-     * @param \SugarBean $bean
-     */
-    protected function setLeadsToBean($relationInvites, \SugarBean $bean)
-    {
-        $ids = $this->prepareSugarInvitees('leads', $relationInvites, $bean);
-        $bean->setLeadInvitees($ids);
-    }
-
-    /**
-     * @param array $relationInvites
-     * @param \SugarBean $bean
-     */
-    protected function setUsersToBean($relationInvites, \SugarBean $bean)
-    {
-        $ids = $this->prepareSugarInvitees('users', $relationInvites, $bean);
-        $bean->setUserInvitees($ids);
-    }
-
-    /**
-     * @param array $addressesInvites
-     * @param \SugarBean $bean
-     */
-    protected function setAddressesToBean($addressesInvites, \SugarBean $bean)
-    {
-        $ids = $this->prepareSugarInvitees('addresses', $addressesInvites, $bean);
-        $bean->setAddresseeInvitees($ids);
-    }
-
-    /**
-     * @param string $relation
-     * @param array $relationInvites
-     * @param \SugarBean $bean
-     * @return array
-     * @throws \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ImportException
-     */
-    protected function prepareSugarInvitees($relation, $relationInvites, \SugarBean $bean)
-    {
-        $relationsBeans = array();
-        $existsBeansIds = array();
-        $newRelationsBeansId = array();
-        $deletedIds = array();
-        if ($bean->load_relationship($relation)) {
-            $bean->$relation->resetLoaded();
-            $relationsBeans = $bean->$relation->getBeans();
-        }
-        foreach ($relationsBeans as $bean) {
-            $existsBeansIds[] = $bean->id;
-        }
-
-        if (isset($relationInvites['added'])) {
-            foreach ($relationInvites['added'] as $invite) {
-                $beanId = $invite[1];
-                if (in_array($beanId, $existsBeansIds)) {
-                    throw new ImportException("{$relation} added error: id '{$beanId}' already exists");
-                }
-                $newRelationsBeansId[] = $beanId;
-            }
-        }
-
-        if (isset($relationInvites['changed'])) {
-            foreach ($relationInvites['changed'] as $invite) {
-                $beanId = $invite[1];
-                if (!in_array($beanId, $existsBeansIds)) {
-                    throw new ImportException("{$relation} changed error: id '{$beanId}' doesn't exists");
-                }
-                $newRelationsBeansId[] = $beanId;
-            }
-        }
-
-        if (isset($relationInvites['deleted'])) {
-            foreach ($relationInvites['deleted'] as $invite) {
-                $beanId = $invite[1];
-                if (!in_array($beanId, $existsBeansIds)) {
-                    throw new ImportException("{$relation} deleted error: id '{$beanId}' doesn't exists");
-                }
-                $deletedIds[] = $beanId;
-            }
-        }
-
-        foreach ($existsBeansIds as $id) {
-            if (!in_array($id, $deletedIds) && !in_array($id, $newRelationsBeansId)) {
-                $newRelationsBeansId[] = $id;
-            }
-        }
-        return $newRelationsBeansId;
-    }
-
-    /**
-     * @param array $invites
-     * @param \SugarBean $bean
-     */
-    protected function setInvitesStatuses($invites, $bean)
-    {
-        $participantStatuses = new CalDavStatus\AcceptedMap();
-        if (isset($invites['added'])) {
-            foreach (array_values($invites['added']) as $invitesType) {
-                foreach ($invitesType as $addedInvite) {
-                    list($beanName, $beanId, $beanStatus, $email, $displayName) = $addedInvite;
-                    $acceptedStatus = $participantStatuses->getSugarValue($beanStatus);
-                    $participant = \BeanFactory::getBean($beanName, $beanId);
-                    $bean->set_accept_status($participant, $acceptedStatus);
+        if (isset($value['added'])) {
+            foreach ($value['added'] as $invite) {
+                if ($event->findParticipantsByEmail($invite[3]) != -1) {
+                    return false;
                 }
             }
         }
+        if (isset($value['changed'])) {
+            foreach ($value['changed'] as $invite) {
+                if ($event->findParticipantsByEmail($invite[3]) == - 1) {
+                    return false;
+                }
+            }
+        }
+        if (isset($value['deleted'])) {
+            foreach ($value['deleted'] as $invite) {
+                if ($event->findParticipantsByEmail($invite[3]) == -1) {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
 
-        if (isset($invites['changed'])) {
-            foreach ($invites['changed'] as $invitesType) {
-                foreach ($invitesType as $changedInvite) {
-                    list($beanName, $beanId, $beanStatus, $email, $displayName) = $changedInvite;
-                    $acceptedStatus = $participantStatuses->getSugarValue($beanStatus);
-                    $participant = \BeanFactory::getBean($beanName, $beanId);
-                    if ($participant->getStatus() != $acceptedStatus) {
-                        $bean->set_accept_status($participant, $acceptedStatus);
+    /**
+     * Sets title to provided event and returns true if it was changed.
+     *
+     * @param string $value
+     * @param Event $event
+     * @return bool
+     */
+    protected function setCalDavTitle($value, Event $event)
+    {
+        if ($value != $event->getTitle()) {
+            $event->setTitle($value);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets description to provided event and returns true if it was changed.
+     *
+     * @param string $value
+     * @param Event $event
+     * @return bool
+     */
+    protected function setCalDavDescription($value, Event $event)
+    {
+        if ($value != $event->getDescription()) {
+            $event->setDescription($value);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets location to provided event and returns true if it was changed.
+     *
+     * @param string $value
+     * @param Event $event
+     * @return bool
+     */
+    protected function setCalDavLocation($value, Event $event)
+    {
+        if ($value != $event->getLocation()) {
+            $event->setLocation($value);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Maps and sets sugar status to provided event and returns true if it was changed.
+     *
+     * @param string $value
+     * @param Event $event
+     * @return bool
+     */
+    protected function setCalDavStatus($value, Event $event)
+    {
+        $map = new CalDavStatus\EventMap();
+        $value = $map->getCalDavValue($value, $event->getStatus());
+
+        if ($value != $event->getStatus()) {
+            $event->setStatus($value);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets start date to provided event and returns true if it was changed.
+     *
+     * @param string $value
+     * @param Event $event
+     * @return bool
+     */
+    protected function setCalDavStartDate($value, Event $event)
+    {
+        $value = new \SugarDateTime($value, new \DateTimeZone('UTC'));
+
+        if ($value != $event->getStartDate()) {
+            $event->setStartDate($value);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets end date to provided event and returns true if it was changed.
+     *
+     * @param string $value
+     * @param Event $event
+     * @return bool
+     */
+    protected function setCalDavEndDate($value, Event $event)
+    {
+        $value = new \SugarDateTime($value, new \DateTimeZone('UTC'));
+
+        if ($value != $event->getEndDate()) {
+            $event->setEndDate($value);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets provided invites to specified event.
+     *
+     * @param array $value
+     * @param Event $event
+     * @return bool
+     */
+    protected function setCalDavInvites(array $value, Event $event)
+    {
+        $result = false;
+        $participantHelper = $this->getParticipantHelper();
+
+        if (isset($value['added'])) {
+            foreach ($value['added'] as $invite) {
+                $event->setParticipant($participantHelper->inviteToParticipant($invite));
+                $result = true;
+            }
+        }
+        if (isset($value['changed'])) {
+            foreach ($value['changed'] as $invite) {
+                $event->setParticipant($participantHelper->inviteToParticipant($invite));
+                $result = true;
+            }
+        }
+        if (isset($value['deleted'])) {
+            foreach ($value['deleted'] as $invite) {
+                $event->deleteParticipant($invite[3]);
+                $result = true;
+            }
+        }
+        if (!$event->getOrganizer() && $GLOBALS['current_user'] instanceof \User) {
+            $email = $GLOBALS['current_user']->emailAddress->getPrimaryAddress($GLOBALS['current_user']);
+            $participant = $event->findParticipantsByEmail($email);
+            if ($participant == -1) {
+                $participant = $participantHelper->inviteToParticipant(array(
+                    $GLOBALS['current_user']->module_name,
+                    $GLOBALS['current_user']->id,
+                    'accept',
+                    $email,
+                    $GLOBALS['current_user']->full_name,
+                ));
+            } else {
+                $participants = $event->getParticipants();
+                $participant = $participants[$participant];
+            }
+            $event->setOrganizer($participant);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Checks that name matches current one.
+     *
+     * @param string $value
+     * @param \SugarBean|\Meeting|\Call $bean
+     * @return bool
+     */
+    protected function checkBeanName($value, \SugarBean $bean)
+    {
+        return $bean->name == $value;
+    }
+
+    /**
+     * Checks that description matches current one.
+     *
+     * @param string $value
+     * @param \SugarBean|\Meeting|\Call $bean
+     * @return bool
+     */
+    protected function checkBeanDescription($value, \SugarBean $bean)
+    {
+        return $bean->description == $value;
+    }
+
+    /**
+     * Checks that location matches current one.
+     *
+     * @param string $value
+     * @param \SugarBean|\Meeting $bean
+     * @return bool
+     */
+    protected function checkBeanLocation($value, \SugarBean $bean)
+    {
+        return $bean->location == $value;
+    }
+
+    /**
+     * Checks that status matches current one.
+     *
+     * @param string $value
+     * @param \SugarBean|\Meeting|\Call $bean
+     * @return bool
+     */
+    protected function checkBeanStatus($value, \SugarBean $bean)
+    {
+        $map = new CalDavStatus\EventMap();
+        return $bean->status == $map->getSugarValue($value, $bean->status);
+    }
+
+    /**
+     * Checks that start date matches current one.
+     *
+     * @param string $value
+     * @param \SugarBean|\Meeting|\Call $bean
+     * @return bool
+     */
+    protected function checkBeanStartDate($value, \SugarBean $bean)
+    {
+        $beanDate = new \SugarDateTime(
+            $bean->date_start,
+            new \DateTimeZone($GLOBALS['current_user']->getPreference('timezone'))
+        );
+        return $beanDate->asDb() == $value;
+    }
+
+    /**
+     * Checks that end date matches current one.
+     *
+     * @param string $value
+     * @param \SugarBean|\Meeting|\Call $bean
+     * @return bool
+     */
+    protected function checkBeanEndDate($value, \SugarBean $bean)
+    {
+        $beanDate = new \SugarDateTime(
+            $bean->date_end,
+            new \DateTimeZone($GLOBALS['current_user']->getPreference('timezone'))
+        );
+        return $beanDate->asDb() == $value;
+    }
+
+    /**
+     * Checks that invites are applicable to current ones.
+     *
+     * @param array $value
+     * @param \SugarBean|\Meeting|\Call $bean
+     * @return bool
+     */
+    protected function checkBeanInvites($value, \SugarBean $bean)
+    {
+        $definitions = \VardefManager::getFieldDefs($bean->module_name);
+        if (isset($definitions['invitees']['links'])) {
+            $links = $definitions['invitees']['links'];
+        } else {
+            $links = array();
+        }
+
+        $existingLinks = array();
+        foreach ($links as $link) {
+            if ($bean->load_relationship($link)) {
+                $bean->$link->resetLoaded();
+                foreach ($bean->$link->getBeans() as $existingBean) {
+                    $existingLinks[$existingBean->module_name][$existingBean->id] = true;
+                }
+
+            }
+        }
+
+        if (isset($value['added'])) {
+            foreach ($value['added'] as $invite) {
+                if (isset($existingLinks[$invite[0]][$invite[1]])) {
+                    return false;
+                }
+            }
+        }
+        if (isset($value['changed'])) {
+            foreach ($value['changed'] as $invite) {
+                if (!isset($existingLinks[$invite[0]][$invite[1]])) {
+                    return false;
+                }
+            }
+        }
+        if (isset($value['deleted'])) {
+            foreach ($value['deleted'] as $invite) {
+                if (!isset($existingLinks[$invite[0]][$invite[1]])) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Sets name to provided bean and returns true if it was changed.
+     *
+     * @param string $value
+     * @param \SugarBean|\Meeting|\Call $bean
+     * @return bool
+     */
+    protected function setBeanName($value, \SugarBean $bean)
+    {
+        if ($value != $bean->name) {
+            $bean->name = $value;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets description to provided bean and returns true if it was changed.
+     *
+     * @param string $value
+     * @param \SugarBean|\Meeting|\Call $bean
+     * @return bool
+     */
+    protected function setBeanDescription($value, \SugarBean $bean)
+    {
+        if ($value != $bean->description) {
+            $bean->description = $value;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets location to provided bean and returns true if it was changed.
+     *
+     * @param string $value
+     * @param \SugarBean|\Meeting $bean
+     * @return bool
+     */
+    protected function setBeanLocation($value, \SugarBean $bean)
+    {
+        if ($value != $bean->location) {
+            $bean->location = $value;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets status to provided bean and returns true if it was changed.
+     *
+     * @param string $value
+     * @param \SugarBean|\Meeting|\Call $bean
+     * @return bool
+     */
+    protected function setBeanStatus($value, \SugarBean $bean)
+    {
+        $map = new CalDavStatus\EventMap();
+        $value = $map->getSugarValue($value, $bean->status);
+
+        if ($value != $bean->status) {
+            $bean->status = $value;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets start date to provided bean and returns true if it was changed.
+     *
+     * @param string $value
+     * @param \SugarBean|\Meeting|\Call $bean
+     * @return bool
+     */
+    protected function setBeanStartDate($value, \SugarBean $bean)
+    {
+        if ($value != $bean->date_start) {
+            $bean->date_start = $value;
+            if ($bean->date_end) {
+                $beanDateStart = new \SugarDateTime(
+                    $value,
+                    new \DateTimeZone('UTC')
+                );
+                $beanDateEnd = new \SugarDateTime(
+                    $bean->date_end,
+                    new \DateTimeZone($GLOBALS['current_user']->getPreference('timezone'))
+                );
+                $diff = $beanDateEnd->diff($beanDateStart);
+                $bean->duration_hours = $diff->h + (int)$diff->format('a') * 24;
+                $bean->duration_minutes = $diff->m;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets end date to provided bean and returns true if it was changed.
+     *
+     * @param string $value
+     * @param \SugarBean|\Meeting|\Call $bean
+     * @return bool
+     */
+    protected function setBeanEndDate($value, \SugarBean $bean)
+    {
+        if ($value != $bean->date_end) {
+            $bean->date_end = $value;
+            if ($bean->date_start) {
+                $beanDateStart = new \SugarDateTime(
+                    $bean->date_start,
+                    new \DateTimeZone($GLOBALS['current_user']->getPreference('timezone'))
+                );
+                $beanDateEnd = new \SugarDateTime(
+                    $value,
+                    new \DateTimeZone('UTC')
+                );
+                $diff = $beanDateEnd->diff($beanDateStart);
+                $bean->duration_hours = $diff->h + (int)$diff->format('a') * 24;
+                $bean->duration_minutes = $diff->m;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets provided invites to specified bean.
+     *
+     * @param array $value
+     * @param \SugarBean|\Meeting|\Call $bean
+     * @return bool
+     */
+    protected function setBeanInvites(array $value, \SugarBean $bean)
+    {
+        $result = false;
+
+        $definitions = \VardefManager::getFieldDefs($bean->module_name);
+        if (isset($definitions['invitees']['links'])) {
+            $links = $definitions['invitees']['links'];
+        } else {
+            $links = array();
+        }
+
+        $existingLinks = array();
+        foreach ($links as $link) {
+            if ($bean->load_relationship($link)) {
+                $bean->$link->resetLoaded();
+                foreach ($bean->$link->getBeans() as $existingBean) {
+                    if (!isset($existingLinks[$existingBean->module_name])) {
+                        $existingLinks[$existingBean->module_name] = array();
                     }
+                    $existingLinks[$existingBean->module_name][$existingBean->id] = true;
                 }
             }
         }
-    }
 
-    /**
-     * @param array $invitees
-     * @param string $inviteBeanName
-     * @return array
-     */
-    protected function getChangedInviteesByModule($invitees, $inviteBeanName)
-    {
-        $changedInvitees = array();
-        if (isset($invitees['added'][$inviteBeanName])) {
-            $changedInvitees['added'] = $invitees['added'][$inviteBeanName];
+        $map = new CalDavStatus\AcceptedMap();
+        if (isset($value['added'])) {
+            foreach ($value['added'] as $invite) {
+                list($beanName, $beanId, $beanStatus, $email, $displayName) = $invite;
+                $participant = \BeanFactory::getBean($beanName, $beanId, array(
+                    'strict_retrieve' => true,
+                ));
+                if ($participant) {
+                    $bean->set_accept_status($participant, $map->getSugarValue($beanStatus));
+                    $existingLinks[$participant->module_name][$participant->id] = true;
+                }
+            }
         }
-        if (isset($invitees['changed'][$inviteBeanName])) {
-            $changedInvitees['changed'] = $invitees['changed'][$inviteBeanName];
+        if (isset($value['changed'])) {
+            foreach ($value['changed'] as $invite) {
+                list($beanName, $beanId, $beanStatus, $email, $displayName) = $invite;
+                $participant = \BeanFactory::getBean($beanName, $beanId, array(
+                    'strict_retrieve' => true,
+                ));
+                if ($participant) {
+                    $bean->set_accept_status($participant, $map->getSugarValue($beanStatus));
+                    $existingLinks[$participant->module_name][$participant->id] = true;
+                }
+            }
         }
-        if (isset($invitees['deleted'][$inviteBeanName])) {
-            $changedInvitees = $invitees['deleted'][$inviteBeanName];
+        if (isset($value['deleted'])) {
+            foreach ($value['deleted'] as $invite) {
+                if (isset($existingLinks[$invite[0]][$invite[1]])) {
+                    unset($existingLinks[$invite[0]][$invite[1]]);
+                    $result = true;
+                }
+            }
+            foreach ($existingLinks as $module => $ids) {
+                if (method_exists($bean, 'set' . substr($module, 0, -1) . 'invitees')) {
+                    call_user_func(array($bean, 'set' . substr($module, 0, -1) . 'invitees'), array_keys($ids));
+                }
+            }
         }
-        return $changedInvitees;
+
+        return $result;
     }
 
     /**

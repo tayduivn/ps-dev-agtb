@@ -12,157 +12,132 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
 
-use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterAbstract as CalDavAbstractAdapter;
-use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException as AdapterInvalidArgumentException;
-
 /**
  * Class for processing Calls by iCal protocol
  *
  * @package Sugarcrm\Sugarcrm\Dav\Cal\Adapter
  */
-class Calls extends CalDavAbstractAdapter implements AdapterInterface
+class Calls extends AdapterAbstract implements AdapterInterface
 {
     /**
-     * @param array $exportData
-     * @param \CalDavEventCollection $eventCollection
+     * Updates caldav bean and returns true if anything was changed
+     *
+     * @param array $data
+     * @param \CalDavEventCollection $collection
      * @return bool
+     * @throws ExportException if conflict has been found
      */
-    public function export(array $exportData, \CalDavEventCollection $eventCollection)
+    public function export(array $data, \CalDavEventCollection $collection)
     {
-        $isCalDavChanged = false;
-        $parentEvent = $eventCollection->getParent();
-        $participantHelper = $this->getParticipantHelper();
-        list($beanData, $changedFields, $invites) = $exportData;
+        $isChanged = false;
+        $event = $collection->getParent();
+        list($beanData, $changedFields, $invites) = $data;
         list($beanModuleName, $beanId, $repeatParentId, $childEventsId, $insert) = $beanData;
 
-        if (isset($changedFields['name'])) {
-            $this->setCalDavTitle($changedFields['name'], $parentEvent);
-            $isCalDavChanged = true;
-        }
-        if (isset($changedFields['description'])) {
-            $this->setCalDavDescription($changedFields['description'], $parentEvent);
-            $isCalDavChanged = true;
-        }
-        if (isset($changedFields['location'])) {
-            $this->setCalDavLocation($changedFields['location'], $parentEvent);
-            $isCalDavChanged = true;
-        }
-        if (isset($changedFields['status'])) {
-            $this->setCalDavStatus($changedFields['status'], $parentEvent);
-            $isCalDavChanged = true;
-        }
-        if (isset($changedFields['date_start'])) {
-            $this->setCalDavStartDate($changedFields['date_start'], $parentEvent);
-            $isCalDavChanged = true;
-        }
-        if (isset($changedFields['date_end'])) {
-            $this->setCalDavEndDate($changedFields['date_end'], $parentEvent);
-            $isCalDavChanged = true;
-        }
-
-        if (isset($invites['deleted'])) {
-            foreach ($invites['deleted'] as $invite) {
-                if (!$parentEvent->deleteParticipant($invite[3])) {
-                    throw new ExportException("Email {$invite[3]} hasn't found on invite deleting in Call bean");
-                }
+        // checking before values
+        if (!$insert) {
+            if (isset($changedFields['name'][1]) && !$this->checkCalDavTitle($changedFields['name'][1], $event)) {
+                throw new ExportException("Conflict with CalDav Title field");
             }
-            $isCalDavChanged = true;
-        }
-
-        if (isset($invites['changed'])) {
-            foreach ($invites['changed'] as $invite) {
-                if ($parentEvent->findParticipantsByEmail($invite[3]) == - 1) {
-                    throw new ExportException("Email {$invite[3]} hasn't found on invite updating in Call bean");
-                }
-                $parentEvent->setParticipant($participantHelper->inviteToParticipant($invite));
+            if (isset($changedFields['description'][1]) && !$this->checkCalDavDescription($changedFields['description'][1], $event)) {
+                throw new ExportException("Conflict with CalDav Description field");
             }
-            $isCalDavChanged = true;
-        }
-
-        if (isset($invites['added'])) {
-            foreach ($invites['added'] as $invite) {
-                if (isset($changedFields['created_by'][0]) &&
-                    $invite[1] == $changedFields['created_by'][0]
-                ) {
-                    $parentEvent->setOrganizer($participantHelper->inviteToParticipant($invite));
-                } else {
-                    $parentEvent->setParticipant($participantHelper->inviteToParticipant($invite));
-                }
+            if (isset($changedFields['status'][1]) && !$this->checkCalDavStatus($changedFields['status'][1], $event)) {
+                throw new ExportException("Conflict with CalDav Status field");
             }
-            $isCalDavChanged = true;
+            if (isset($changedFields['date_start'][1]) && !$this->checkCalDavStartDate($changedFields['date_start'][1], $event)) {
+                throw new ExportException("Conflict with CalDav Start Date field");
+            }
+            if (isset($changedFields['date_end'][1]) && !$this->checkCalDavEndDate($changedFields['date_end'][1], $event)) {
+                throw new ExportException("Conflict with CalDav End Date field");
+            }
+            if ($invites && !$this->checkCalDavInvites($invites, $event)) {
+                throw new ExportException("Conflict with CalDav Invites");
+            }
         }
 
-        return $isCalDavChanged;
+        // setting values
+        if (isset($changedFields['name'][0])) {
+            $isChanged = $isChanged | $this->setCalDavTitle($changedFields['name'][0], $event);
+        }
+        if (isset($changedFields['description'][0])) {
+            $isChanged = $isChanged | $this->setCalDavDescription($changedFields['description'][0], $event);
+        }
+        if (isset($changedFields['status'][0])) {
+            $isChanged = $isChanged | $this->setCalDavStatus($changedFields['status'][0], $event);
+        }
+        if (isset($changedFields['date_start'][0])) {
+            $isChanged = $isChanged | $this->setCalDavStartDate($changedFields['date_start'][0], $event);
+        }
+        if (isset($changedFields['date_end'][0])) {
+            $isChanged = $isChanged | $this->setCalDavEndDate($changedFields['date_end'][0], $event);
+        }
+        if ($invites) {
+            $isChanged = $isChanged | $this->setCalDavInvites($invites, $event);
+        }
+
+        return $isChanged;
     }
 
     /**
-     * set meeting bean property
-     * @param \array $importData
-     * @param \SugarBean $callBean
+     * Updates bean and returns true if anything was changed
+     *
+     * @param array $data
+     * @param \SugarBean $bean
      * @return bool
+     * @throws ImportException if conflict has been found
      */
-    public function import(array $importData, \SugarBean $callBean)
+    public function import(array $data, \SugarBean $bean)
     {
-        /**@var \Call $callBean*/
-        $isBeanChanged = false;
-        list($beanData, $changedFields, $invites) = $importData;
-        if (isset($changedFields['title'])) {
-            $this->setBeanName($changedFields['title'], $callBean);
-            $isBeanChanged = true;
-        }
-        if (isset($changedFields['description'])) {
-            $this->setBeanDescription($changedFields['description'], $callBean);
-            $isBeanChanged = true;
-        }
-        if (isset($changedFields['location'])) {
-            $this->setBeanLocation($changedFields['location'], $callBean);
-            $isBeanChanged = true;
-        }
-        if (isset($changedFields['status'])) {
-            $this->setBeanStatus($changedFields['status'], $callBean);
-            $isBeanChanged = true;
-        }
-        if (isset($changedFields['date_start'])) {
-            $this->setBeanStartDate($changedFields['date_start'], $callBean);
-            $isBeanChanged = true;
-        }
-        if (isset($changedFields['date_end'])) {
-            $this->setBeanEndDate($changedFields['date_end'], $callBean);
-            $isBeanChanged = true;
-        }
+        /**@var \Call $bean*/
+        $isChanged = false;
+        list($beanData, $changedFields, $invites) = $data;
+        list($beanId, $childEventsId, $insert) = $beanData;
 
-        if (isset($invites['added'])) {
-            if (!$callBean->id) {
-                $callBean->id = create_guid();
-                $callBean->new_with_id = true;
+        // checking before values
+        if (!$insert) {
+            if (isset($changedFields['title'][1]) && !$this->checkBeanName($changedFields['title'][1], $bean)) {
+                throw new ImportException("Conflict with Bean Name field");
             }
-            $isBeanChanged = true;
-        }
-        $contactsInvites = $this->getChangedInviteesByModule($invites, 'Contacts');
-        if ($contactsInvites) {
-            $this->setContactsToBean($contactsInvites, $callBean);
-            $isBeanChanged = true;
-        }
-
-        $leadsInvites = $this->getChangedInviteesByModule($invites, 'Leads');
-        if ($leadsInvites) {
-            $this->setLeadsToBean($leadsInvites, $callBean);
-            $isBeanChanged = true;
-        }
-
-        $usersInvites = $this->getChangedInviteesByModule($invites, 'Users');
-        if ($usersInvites) {
-            $this->setUsersToBean($usersInvites, $callBean);
-            $isBeanChanged = true;
+            if (isset($changedFields['description'][1]) && !$this->checkBeanDescription($changedFields['description'][1], $bean)) {
+                throw new ImportException("Conflict with Bean Description field");
+            }
+            if (isset($changedFields['status'][1]) && !$this->checkBeanStatus($changedFields['status'][1], $bean)) {
+                throw new ImportException("Conflict with Bean Status field");
+            }
+            if (isset($changedFields['date_start'][1]) && !$this->checkBeanStartDate($changedFields['date_start'][1], $bean)) {
+                throw new ImportException("Conflict with Bean Start Date field");
+            }
+            if (isset($changedFields['date_end'][1]) && !$this->checkBeanEndDate($changedFields['date_end'][1], $bean)) {
+                throw new ImportException("Conflict with Bean End Date field");
+            }
+            if ($invites && !$this->checkBeanInvites($invites, $bean)) {
+                throw new ImportException("Conflict with Bean Invites");
+            }
         }
 
-        $addressesInvites = $this->getChangedInviteesByModule($invites, 'Addresses');
-        if ($addressesInvites) {
-            $this->setAddressesToBean($addressesInvites, $callBean);
-            $isBeanChanged = true;
+        $bean->invitesBefore = \CalendarUtils::getInvites($bean);
+
+        // setting values
+        if (isset($changedFields['title'][0])) {
+            $isChanged = $isChanged | $this->setBeanName($changedFields['title'][0], $bean);
+        }
+        if (isset($changedFields['description'][0])) {
+            $isChanged = $isChanged | $this->setBeanDescription($changedFields['description'][0], $bean);
+        }
+        if (isset($changedFields['status'][0])) {
+            $isChanged = $isChanged | $this->setBeanStatus($changedFields['status'][0], $bean);
+        }
+        if (isset($changedFields['date_start'][0])) {
+            $isChanged = $isChanged | $this->setBeanStartDate($changedFields['date_start'][0], $bean);
+        }
+        if (isset($changedFields['date_end'][0])) {
+            $isChanged = $isChanged | $this->setBeanEndDate($changedFields['date_end'][0], $bean);
+        }
+        if ($invites) {
+            $isChanged = $isChanged | $this->setBeanInvites($invites, $bean);
         }
 
-        $this->setInvitesStatuses($invites, $callBean);
-        return $isBeanChanged;
+        return $isChanged;
     }
 }

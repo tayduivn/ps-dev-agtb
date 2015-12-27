@@ -519,12 +519,18 @@ class CalendarUtils
 
     /**
      * get all invites for bean, such as  contacts, leads and users
-     * @param SugarBean $bean
+     * @param SugarBean|Call|Meeting $bean
      * @return array
      */
     public static function getInvites(\SugarBean $bean)
     {
-        $requiredRelations = array('contacts', 'leads', 'users');
+        $definitions = \VardefManager::getFieldDefs($bean->module_name);
+        if (isset($definitions['invitees']['links'])) {
+            $requiredRelations = $definitions['invitees']['links'];
+        } else {
+            $requiredRelations = array('contacts', 'leads', 'users');
+        }
+
         $invitesList = array();
         foreach ($requiredRelations as $relationship) {
             if ($bean->load_relationship($relationship)) {
@@ -538,10 +544,11 @@ class CalendarUtils
                     }
                     $invites[$beanId]['bean'] = $relationBean;
                 }
-                $invitesList[$relationship] = $invites;
+                if ($invites) {
+                    $invitesList[$relationship] = $invites;
+                }
             }
         }
         return $invitesList;
     }
-
 }

@@ -52,7 +52,7 @@ abstract class MapBase
                 $find = $this->map[$calDavStatus];
             }
         }
-        return !empty($find) ? array_shift($find) : $this->defaultSugarValue;
+        return $find ? $find[0] : $this->defaultSugarValue;
     }
 
     /**
@@ -73,6 +73,6 @@ abstract class MapBase
                 $find[] = $key;
             }
         }
-        return !empty($find) ? array_shift($find) : $this->defaultCalDavValue;
+        return $find ? $find[0] : $this->defaultCalDavValue;
     }
 }
