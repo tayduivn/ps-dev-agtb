@@ -1,5 +1,5 @@
 describe('View.Fields.Base.RecurrenceField', function() {
-    var app, field, createFieldProperties, sandbox, fieldVisibility
+    var app, field, createFieldProperties, sandbox, fieldVisibility,
         module = 'Meetings';
 
     beforeEach(function() {
@@ -122,6 +122,63 @@ describe('View.Fields.Base.RecurrenceField', function() {
             expect(fieldVisibility.repeat_until).toEqual('shown');
             expect(fieldVisibility.repeat_count).toEqual('shown');
         });
+    });
+
+    describe('Custom Date Repeat Selector Behavior', function() {
+        using(
+            'different repeat_selector values',
+            [
+                {
+                    expectation: 'should not show any dependent fields',
+                    repeatSelector: '',
+                    repeatSelectorVisible: true,
+                    repeatDays: 'hidden',
+                    repeatOrdinal: 'hidden',
+                    repeatUnit: 'hidden'
+                },
+                {
+                    expectation: 'should show only repeat_days',
+                    repeatSelector: 'Each',
+                    repeatSelectorVisible: true,
+                    repeatDays: 'shown',
+                    repeatOrdinal: 'hidden',
+                    repeatUnit: 'hidden'
+                },
+                {
+                    expectation: 'should show repeat_ordinal and repeat_unit',
+                    repeatSelector: 'On',
+                    repeatSelectorVisible: true,
+                    repeatDays: 'hidden',
+                    repeatOrdinal: 'shown',
+                    repeatUnit: 'shown'
+                },
+                {
+                    expectation: 'should not show repeat_days when selector not visible',
+                    repeatSelector: 'Each',
+                    repeatSelectorVisible: false,
+                    repeatDays: 'hidden',
+                    repeatOrdinal: 'hidden',
+                    repeatUnit: 'hidden'
+                },
+                {
+                    expectation: 'should not show repeat_ordinal and repeat_unit when selector not visible',
+                    repeatSelector: 'On',
+                    repeatSelectorVisible: false,
+                    repeatDays: 'hidden',
+                    repeatOrdinal: 'hidden',
+                    repeatUnit: 'hidden'
+                }
+            ],
+            function(value) {
+                it(value.expectation, function() {
+                    sandbox.stub(field, '_isFieldVisible').returns(value.repeatSelectorVisible);
+                    field.model.set('repeat_selector', value.repeatSelector);
+                    expect(fieldVisibility.repeat_days).toEqual(value.repeatDays);
+                    expect(fieldVisibility.repeat_ordinal).toEqual(value.repeatOrdinal);
+                    expect(fieldVisibility.repeat_unit).toEqual(value.repeatUnit);
+                });
+            }
+        );
     });
 
     describe('Defaulting Fields', function() {

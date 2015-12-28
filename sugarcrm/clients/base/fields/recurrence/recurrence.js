@@ -156,6 +156,9 @@
         this.render();
     },
 
+    /**
+     * Update the visibility of fields dependent on the `repeat_type` field
+     */
     updateRepeatTypeDependentFieldVisibility: function() {
         var repeatType = this.model.get('repeat_type');
         _.each(this.repeatTypeSpecificFields, function(showValues, fieldName) {
@@ -167,13 +170,25 @@
         }, this);
     },
 
+    /**
+     * Update the visibility of fields dependent on the `repeat_selector` field
+     */
     updateRepeatSelectorDependentFieldVisibility: function() {
-        var repeatSelector = this.model.get('repeat_selector');
+        var repeatSelector = this.model.get('repeat_selector'),
+            repeatSelectorVisible = this._isFieldVisible('repeat_selector');
 
-        if (repeatSelector === 'Each') {
+        if (repeatSelectorVisible && repeatSelector === 'Each') {
             this._showField('repeat_days');
         } else {
             this._hideField('repeat_days');
+        }
+
+        if (repeatSelectorVisible && repeatSelector === 'On') {
+            this._showField('repeat_ordinal');
+            this._showField('repeat_unit');
+        } else {
+            this._hideField('repeat_ordinal');
+            this._hideField('repeat_unit');
         }
     },
 
@@ -257,6 +272,17 @@
      */
     _hideField: function(fieldName) {
         this._getFieldRecordCellByName(fieldName).hide();
+    },
+
+    /**
+     * Checks if a given field is visible
+     *
+     * @param {string} fieldName
+     * @return {boolean} Returns true if the field is visible, false otherwise
+     * @private
+     */
+    _isFieldVisible: function(fieldName) {
+        return this._getFieldRecordCellByName(fieldName).is(':visible');
     },
 
     /**

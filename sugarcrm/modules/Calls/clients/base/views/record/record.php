@@ -257,6 +257,18 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                             'isMultiSelect' => true,
                         ),
                         array(
+                            'label' => 'LBL_CALENDAR_ORDINAL',
+                            'name' => 'repeat_ordinal',
+                            'type' => 'enum',
+                            'options' => 'repeat_ordinal_dom',
+                        ),
+                        array(
+                            'label' => 'LBL_CALENDAR_UNIT',
+                            'name' => 'repeat_unit',
+                            'type' => 'enum',
+                            'options' => 'repeat_unit_dom',
+                        ),
+                        array(
                             'label' => 'LBL_CALENDAR_REPEAT',
                             'name' => 'repeat_end_type',
                             'type' => 'enum',
