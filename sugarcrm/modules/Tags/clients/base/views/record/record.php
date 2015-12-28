@@ -69,13 +69,6 @@ $viewdefs['Tags']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'event' => 'button:find_duplicates_button:click',
-                    'name' => 'find_duplicates_button',
-                    'label' => 'LBL_DUP_MERGE',
-                    'acl_action' => 'edit',
-                ),
-                array(
-                    'type' => 'rowaction',
                     'event' => 'button:audit_button:click',
                     'name' => 'audit_button',
                     'label' => 'LNK_VIEW_CHANGE_LOG',
