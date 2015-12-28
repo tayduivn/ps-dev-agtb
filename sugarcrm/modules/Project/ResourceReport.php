@@ -41,7 +41,7 @@ $sugar_smarty->assign("BG_COLOR", $hilite_bg);
 $sugar_smarty->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());
 $sugar_smarty->assign("DATE_FORMAT", $timedate->get_date_format());
 $sugar_smarty->assign("CURRENT_USER", $current_user->id);
-$sugar_smarty->assign("CALENDAR_LANG_FILE", getJSPath('jscalendar/lang/calendar-' . substr($GLOBALS['current_language'], 0, 2).'.js'));
+$sugar_smarty->assign("CALENDAR_LANG_FILE", getJSPath(sugar_cached('jsLanguage/'.$GLOBALS['current_language'].'.js')));
 
 
 $focus = BeanFactory::getBean('Project');
