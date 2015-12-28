@@ -17,7 +17,7 @@
 {foreach from=$snapshots item=snapshot key='id'}
 <tr>
 	<td class="oddListRowS1">
-        <a onclick="ModuleBuilder.history.preview('{$view_module}', '{$view}', '{$id}', '{$subpanel}');"
+        <a onclick="ModuleBuilder.history.preview('{$view_module}', '{$view}', '{$id}', '{$subpanel|escape:javascript}');"
             href="javascript:void(0);">
             {$snapshot.label}
         </a>
