@@ -248,7 +248,7 @@ abstract class AdapterAbstract
                 }
             }
         }
-        return false;
+        return true;
     }
 
     /**
@@ -260,11 +260,7 @@ abstract class AdapterAbstract
      */
     protected function setCalDavTitle($value, Event $event)
     {
-        if ($value != $event->getTitle()) {
-            $event->setTitle($value);
-            return true;
-        }
-        return false;
+        return $event->setTitle($value);
     }
 
     /**
@@ -276,11 +272,7 @@ abstract class AdapterAbstract
      */
     protected function setCalDavDescription($value, Event $event)
     {
-        if ($value != $event->getDescription()) {
-            $event->setDescription($value);
-            return true;
-        }
-        return false;
+        return $event->setDescription($value);
     }
 
     /**
@@ -292,11 +284,7 @@ abstract class AdapterAbstract
      */
     protected function setCalDavLocation($value, Event $event)
     {
-        if ($value != $event->getLocation()) {
-            $event->setLocation($value);
-            return true;
-        }
-        return false;
+        return $event->setLocation($value);
     }
 
     /**
@@ -310,12 +298,7 @@ abstract class AdapterAbstract
     {
         $map = new CalDavStatus\EventMap();
         $value = $map->getCalDavValue($value, $event->getStatus());
-
-        if ($value != $event->getStatus()) {
-            $event->setStatus($value);
-            return true;
-        }
-        return false;
+        return $event->setStatus($value);
     }
 
     /**
@@ -328,12 +311,7 @@ abstract class AdapterAbstract
     protected function setCalDavStartDate($value, Event $event)
     {
         $value = new \SugarDateTime($value, new \DateTimeZone('UTC'));
-
-        if ($value != $event->getStartDate()) {
-            $event->setStartDate($value);
-            return true;
-        }
-        return false;
+        return $event->setStartDate($value);
     }
 
     /**
@@ -346,12 +324,7 @@ abstract class AdapterAbstract
     protected function setCalDavEndDate($value, Event $event)
     {
         $value = new \SugarDateTime($value, new \DateTimeZone('UTC'));
-
-        if ($value != $event->getEndDate()) {
-            $event->setEndDate($value);
-            return true;
-        }
-        return false;
+        return $event->setEndDate($value);
     }
 
     /**
@@ -368,20 +341,17 @@ abstract class AdapterAbstract
 
         if (isset($value['added'])) {
             foreach ($value['added'] as $invite) {
-                $event->setParticipant($participantHelper->inviteToParticipant($invite));
-                $result = true;
+                $result |= $event->setParticipant($participantHelper->inviteToParticipant($invite));
             }
         }
         if (isset($value['changed'])) {
             foreach ($value['changed'] as $invite) {
-                $event->setParticipant($participantHelper->inviteToParticipant($invite));
-                $result = true;
+                $result |= $event->setParticipant($participantHelper->inviteToParticipant($invite));
             }
         }
         if (isset($value['deleted'])) {
             foreach ($value['deleted'] as $invite) {
-                $event->deleteParticipant($invite[3]);
-                $result = true;
+                $result |= $event->deleteParticipant($invite[3]);
             }
         }
         if (!$event->getOrganizer() && $GLOBALS['current_user'] instanceof \User) {

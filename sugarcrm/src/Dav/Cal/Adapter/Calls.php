@@ -120,22 +120,22 @@ class Calls extends AdapterAbstract implements AdapterInterface
 
         // setting values
         if (isset($changedFields['title'][0])) {
-            $isChanged = $isChanged | $this->setBeanName($changedFields['title'][0], $bean);
+            $isChanged |= $this->setBeanName($changedFields['title'][0], $bean);
         }
         if (isset($changedFields['description'][0])) {
-            $isChanged = $isChanged | $this->setBeanDescription($changedFields['description'][0], $bean);
+            $isChanged |= $this->setBeanDescription($changedFields['description'][0], $bean);
         }
         if (isset($changedFields['status'][0])) {
-            $isChanged = $isChanged | $this->setBeanStatus($changedFields['status'][0], $bean);
+            $isChanged |= $this->setBeanStatus($changedFields['status'][0], $bean);
         }
         if (isset($changedFields['date_start'][0])) {
-            $isChanged = $isChanged | $this->setBeanStartDate($changedFields['date_start'][0], $bean);
+            $isChanged |= $this->setBeanStartDate($changedFields['date_start'][0], $bean);
         }
         if (isset($changedFields['date_end'][0])) {
-            $isChanged = $isChanged | $this->setBeanEndDate($changedFields['date_end'][0], $bean);
+            $isChanged |= $this->setBeanEndDate($changedFields['date_end'][0], $bean);
         }
         if ($invites) {
-            $isChanged = $isChanged | $this->setBeanInvites($invites, $bean);
+            $isChanged |= $this->setBeanInvites($invites, $bean);
         }
 
         return $isChanged;
