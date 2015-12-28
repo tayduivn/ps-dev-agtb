@@ -245,6 +245,18 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                             'isMultiSelect' => true,
                         ),
                         array(
+                            'label' => 'LBL_CALENDAR_CUSTOM_DATE',
+                            'name' => 'repeat_selector',
+                            'type' => 'enum',
+                            'options' => 'repeat_selector_dom',
+                        ),
+                        array(
+                            'label' => 'LBL_CALENDAR_DAYS',
+                            'name' => 'repeat_days',
+                            'type' => 'repeat-days',
+                            'isMultiSelect' => true,
+                        ),
+                        array(
                             'label' => 'LBL_CALENDAR_REPEAT',
                             'name' => 'repeat_end_type',
                             'type' => 'enum',

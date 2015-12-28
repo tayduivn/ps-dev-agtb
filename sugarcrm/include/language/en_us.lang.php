@@ -11665,6 +11665,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_CALENDAR_RECURRENCE' => "Recurrence",
     'LBL_CALENDAR_REMINDERS' => "Reminders",
 
+    'LBL_CALENDAR_CUSTOM_DATE' => "Custom Date",
+    'LBL_CALENDAR_DAYS' => "Day(s)",
     'LBL_CALENDAR_REPEAT_TYPE' => "Repeat Type",
     'LBL_CALENDAR_REPEAT_INTERVAL' => "Repeat Interval",
     'LBL_CALENDAR_REPEAT_DOW' => "Repeat on Days of Week",

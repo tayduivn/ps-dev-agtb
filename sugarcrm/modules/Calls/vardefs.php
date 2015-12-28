@@ -491,6 +491,20 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
                 'massupdate' => false,
                 'reportable' => false,
                 'studio' => 'false',
+                'visibility_grid' => array(
+                    'trigger' => 'repeat_type',
+                    'values' => array(
+                        'Monthly' => array(
+                            '',
+                            'Each',
+                            'On',
+                        ),
+                        'Yearly' => array(
+                            '',
+                            'On',
+                        ),
+                    ),
+                ),
             ),
         'repeat_days' =>
             array(

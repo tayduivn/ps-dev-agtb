@@ -44,6 +44,11 @@
      */
     repeatEndLastValues: {},
 
+    repeatTypeSpecificFields: {
+        repeat_dow: ['Weekly'],
+        repeat_selector: ['Monthly', 'Yearly']
+    },
+
     /**
      * @inheritdoc
      *
@@ -68,6 +73,7 @@
         this._super('bindDataChange');
         this.model.on('sync', this.setEndTypeFromEndFieldValues, this);
         this.model.on('change:repeat_type', this.repeatTypeChanged, this);
+        this.model.on('change:repeat_selector', this.updateRepeatSelectorDependentFieldVisibility, this);
         this.model.on('change:repeat_end_type', this.updateRepeatEndFieldVisibility, this);
     },
 
@@ -116,14 +122,6 @@
      * * `repeat_end_type` - hide on detail view
      */
     prepareView: function() {
-        var repeatType = this.model.get('repeat_type');
-
-        if (repeatType === 'Weekly') {
-            this._showField('repeat_dow');
-        } else {
-            this._hideField('repeat_dow');
-        }
-
         if (this.action === 'detail') {
             this._hideField('repeat_end_type');
         }
@@ -133,7 +131,9 @@
             this.setEndTypeFromEndFieldValues();
         }
 
+        this.updateRepeatTypeDependentFieldVisibility();
         this.updateRepeatEndFieldVisibility();
+        this.updateRepeatSelectorDependentFieldVisibility();
     },
 
     /**
@@ -154,6 +154,27 @@
         }, this);
 
         this.render();
+    },
+
+    updateRepeatTypeDependentFieldVisibility: function() {
+        var repeatType = this.model.get('repeat_type');
+        _.each(this.repeatTypeSpecificFields, function(showValues, fieldName) {
+            if (_.contains(showValues, repeatType)) {
+                this._showField(fieldName);
+            } else {
+                this._hideField(fieldName);
+            }
+        }, this);
+    },
+
+    updateRepeatSelectorDependentFieldVisibility: function() {
+        var repeatSelector = this.model.get('repeat_selector');
+
+        if (repeatSelector === 'Each') {
+            this._showField('repeat_days');
+        } else {
+            this._hideField('repeat_days');
+        }
     },
 
     /**

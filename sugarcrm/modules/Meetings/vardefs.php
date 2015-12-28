@@ -561,6 +561,20 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
                 'massupdate' => false,
                 'reportable' => false,
                 'studio' => 'false',
+                'visibility_grid' => array(
+                    'trigger' => 'repeat_type',
+                    'values' => array(
+                        'Monthly' => array(
+                            '',
+                            'Each',
+                            'On',
+                        ),
+                        'Yearly' => array(
+                            '',
+                            'On',
+                        ),
+                    ),
+                ),
             ),
         'repeat_days' =>
             array(
