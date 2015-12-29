@@ -1,6 +1,4 @@
 <?php
-if (! defined ( 'sugarEntry' ) || ! sugarEntry)
-    die ( 'Not A Valid Entry Point' ) ;
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,6 +9,8 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 require_once ('modules/DynamicFields/DynamicField.php') ;
 
@@ -31,7 +31,7 @@ class StandardField extends DynamicField
     	{
             $bean_name = get_valid_bean_name($this->module);
             $dictionary = array($bean_name => array("fields" => array($field => array())));
-            include("$this->base_path/sugarfield_$field.php");
+            include FileLoader::validateFilePath("$this->base_path/sugarfield_$field.php");
             if (!empty($dictionary[$bean_name]) && isset($dictionary[$bean_name]["fields"][$field]))
                 $this->custom_def = $dictionary[$bean_name]["fields"][$field];
     	}
@@ -42,7 +42,7 @@ class StandardField extends DynamicField
         if (!empty($beanList[$this->module]) && is_file("modules/{$this->module}/vardefs.php"))
         {
             $dictionary = array();
-            include("modules/{$this->module}/vardefs.php");
+            include FileLoader::validateFilePath("modules/{$this->module}/vardefs.php");
             if (!empty($dictionary[$beanList[$this->module]]) && isset($dictionary[$beanList[$this->module]]["fields"][$field]))
                 $this->base_def = $dictionary[$beanList[$this->module]]["fields"][$field];
         }
