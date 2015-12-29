@@ -32,25 +32,20 @@ class Export extends Base
     public function run()
     {
         $adapterFactory = $this->getAdapterFactory();
-        $bean = \BeanFactory::getBean($this->processedData[0][0]);
-        if (!($bean instanceof \SugarBean)) {
-            throw new JQInvalidArgumentException('Bean must be an instance of SugarBean. Instance of ' .
-                get_class($bean) . ' given');
-        }
-        $bean->id = $this->processedData[0][1];
-        $adapter = $adapterFactory->getAdapter($bean->module_name);
+        $adapter = $adapterFactory->getAdapter($this->processedData[0][0]);
         if (!$adapter) {
-            throw new JQLogicException('Bean ' . $bean->module_name . ' does not have CalDav adapter');
+            throw new JQLogicException('Bean ' . $this->processedData[0][0] . ' does not have CalDav adapter');
         }
         $handler = $this->getHandler();
-        $calDavBean = $handler->getDavBean($bean);
+        $parentBeanId = $this->processedData[0][2] ?: $this->processedData[0][1];
+        $calDavBean = $handler->getDavBean($this->processedData[0][0], $parentBeanId);
 
         if ($this->setJobToEnd($calDavBean)) {
             return \SchedulersJob::JOB_CANCELLED;
         }
 
         $importData = array();
-        HookHandler::$importHandler = function($data, $collection) use (&$importData) {
+        HookHandler::$importHandler = function ($data, $collection) use (&$importData) {
             $importData = $data;
         };
         if ($adapter->export($this->processedData, $calDavBean)) {

@@ -12,13 +12,10 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Base\Helper;
 
-use Sabre\VObject\Component\VCalendar as CalendarEvent;
-use Sabre\VObject\Property\ICalendar\DateTime;
 use Sabre\VObject\Recur\EventIterator;
 use Sabre\VObject\Component as DavComponent;
-
-use Sugarcrm\Sugarcrm\Dav\Base\Constants as DavConstants;
 use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as StatusMapper;
+use Sugarcrm\Sugarcrm\Dav\Cal\Structures\RRule;
 
 /**
  * Provide methods to convert Dav recurring to array and set Dav recurring from array
@@ -28,420 +25,74 @@ use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as StatusMapper;
 class RecurringHelper
 {
     /**
-     * Day map with indexes
+     * List of recurring bean fields
      * @var array
      */
-    protected $dayMap = array(
-        'SU' => 0,
-        'MO' => 1,
-        'TU' => 2,
-        'WE' => 3,
-        'TH' => 4,
-        'FR' => 5,
-        'SA' => 6,
+    public static $recurringFieldList = array(
+        'repeat_type',
+        'repeat_interval',
+        'repeat_count',
+        'repeat_until',
+        'repeat_dow',
     );
 
     /**
-     * @var DateTimeHelper
+     * @var StatusMapper\IntervalMap
      */
-    protected $dateTimeHelper;
+    protected $frequencyMap;
 
     /**
-     * @var \Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\IntervalMap
+     * @var StatusMapper\DayMap
      */
-    protected $intervalMapper;
-
-    /**
-     * @var \Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\EventMap
-     */
-    protected $eventMapper;
+    protected $dayMap;
 
     public function __construct()
     {
-        $this->dateTimeHelper = new DateTimeHelper();
-        $this->intervalMapper = new StatusMapper\IntervalMap();
-        $this->eventMapper = new StatusMapper\EventMap();
+        $this->frequencyMap = new StatusMapper\IntervalMap();
+        $this->dayMap = new StatusMapper\DayMap();
     }
 
     /**
-     * Determines recurring event or not
-     * @param \CalDavEventCollection $event
-     * @param CalendarEvent $calendarEvent
-     * @return bool
+     * Convert sugar bean recurring fields to array
+     * @param \SugarBean $bean
+     * @return array
      */
-    protected function isRecurring(\CalDavEventCollection $event, CalendarEvent $calendarEvent)
+    public function beanToArray(\SugarBean $bean)
     {
-        $component = $event->getComponent($calendarEvent);
-
-        if (!$component) {
-            return false;
-        }
-
-        if ($component->RRULE) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * CalDav RRRULE have more options than SugarCRM RRULE.
-     * We cannot do anything with event If unsupported options found
-     * @param array $rRule
-     *
-     * @return bool
-     */
-    public function isUnsupported(array $rRule)
-    {
-        return
-            !empty($rRule['BYMONTH']) ||
-            !empty($rRule['WKST']) ||
-            !empty($rRule['BYMONTHDAY']) ||
-            !empty($rRule['BYYEARDAY']) ||
-            !empty($rRule['BYWEEKNO']) ||
-            !empty($rRule['BYSETPOS']) ||
-            !empty($rRule['BYHOUR']) ||
-            $rRule['FREQ'] == 'MINUTELY' ||
-            $rRule['FREQ'] == 'HOURLY';
-    }
-
-    /**
-     * Get new CalDavEventCollection object
-     * @return null|\CalDavEventCollection
-     */
-    protected function getEventBean()
-    {
-        return \BeanFactory::getBean('CalDavEvents');
-    }
-
-    /**
-     * Create new CalendarEvents object
-     * @return \CalendarEvents
-     */
-    protected function getCalendarEventsObject()
-    {
-        return new \CalendarEvents();
-    }
-
-    /**
-     * Get recurring event info and all children from CalDav object.
-     *
-     * Return array:
-     *      [type] =>       Recurring type (Daily, Weekly, Monthly e t.c)
-     *      [interval] =>   Recurring events interval
-     *      [until] =>      Recurring end
-     *      [count] =>      Repeating count
-     *      [dow] =>        Days of week (1234567)
-     *      [children] =>   All recurring child items, Array of \CalDavEventCollection
-     *      [deleted] =>    Deleted child items
-     *
-     * @param \CalDavEventCollection $event
-     * @return array|null See above
-     */
-    public function getRecurringInfo(\CalDavEventCollection $event)
-    {
-        $calendarEvent = $event->getVCalendarEvent();
-        if ($this->isRecurring($event, $calendarEvent)) {
-            $component = $event->getComponent($calendarEvent);
-
-            $currentRule = $component->RRULE->getParts();
-            if (!$currentRule || $this->isUnsupported($currentRule)) {
-                return null;
-            }
-
-            $result = array();
-            if (isset($currentRule['FREQ'])) {
-                $result['type'] = $this->intervalMapper->getSugarValue($currentRule['FREQ']);
-            } else {
-                $result['type'] = '';
-            }
-            if (isset($currentRule['INTERVAL'])) {
-                $result['interval'] = $currentRule['INTERVAL'];
-            } else {
-                $result['interval'] = 1;
-            }
-            if (isset($currentRule['COUNT'])) {
-                $result['count'] = $currentRule['COUNT'];
-            } elseif (isset($currentRule['UNTIL'])) {
-                $dateTime = new \SugarDateTime($currentRule['UNTIL']);
-                $result['until'] = $dateTime->asDb();
-            }
-
-            if ($result['type'] == 'Weekly') {
-                $result['dow'] = date('w', strtotime($this->dateTimeHelper->davDateToSugar($component->DTSTART)));
-            }
-
-            if (isset($currentRule['BYDAY'])) {
-                if (!is_array($currentRule['BYDAY'])) {
-                    $currentRule['BYDAY'] = array($currentRule['BYDAY']);
-                }
-                $result['type'] = 'Weekly';
-                $result['dow'] = implode('', array_intersect_key($this->dayMap, array_flip($currentRule['BYDAY'])));
-            }
-
-            $it = new EventIterator($calendarEvent, $component->UID);
-
-            $maxRecur = DavConstants::MAX_INFINITE_RECCURENCE_COUNT;
-
-            $endDate = clone $component->DTSTART->getDateTime();
-            $endDate->modify('+' . $maxRecur . ' day');
-            $end = $it->getDtEnd();
-
-            $result['children'] = array();
-            $result['deleted'] = array();
-
-            if ($component->EXDATE) {
-                foreach ($component->EXDATE as $exDate) {
-                    $result['deleted'][] = $this->dateTimeHelper->davDateToSugar($exDate);
-                }
-            }
-
-            while ($it->valid() && $end < $endDate) {
-                $child = $it->getEventObject();
-                if ($child) {
-                    $bean = $this->getEventBean();
-                    $event = $bean->getVCalendarEvent();
-                    if ($event) {
-                        $event->add($child);
-                        $bean->setCalendarEventData($event->serialize());
-                        $result['children'][$bean->getStartDate()] = $bean;
-                    }
-                }
-                $end = $it->getDtEnd();
-                $it->next();
-            }
-
-            return $result;
-        }
-
-        return null;
-    }
-
-    /**
-     * Update CalDav event recurring info with children
-     *      [type] =>       Recurring type (Daily, Weekly, Monthly e t.c). Bean repeat_type
-     *      [interval] =>   Recurring events interval. Bean repeat_interval
-     *      [until] =>      Recurring end. Bean repeat_until
-     *      [count] =>      Repeating count. Bean repeat_count
-     *      [dow] =>        Days of week (1234567). Bean repeat_dow
-     *      [parent] =>     Main recurring item \SugarBean
-     *      [children] =>   All recurring child items, Array of \SugarBean
-     *      [deleted] =>    Deleted child items
-     * $recurringInfo format
-     *
-     * @param \CalDavEventCollection $event
-     * @param array $recurringInfo See above
-     * @return bool
-     * @throws \SugarException
-     */
-    public function setRecurringInfo(\CalDavEventCollection $event, array $recurringInfo)
-    {
-        $calendarEvents = $this->getCalendarEventsObject();
-
-        if (empty($recurringInfo['parent']) || !($recurringInfo['parent'] instanceof \SugarBean)) {
-            return false;
-        }
-
-        $recurringBean = $recurringInfo['parent'];
-
-        if (!$calendarEvents->isEventRecurring($recurringBean)) {
-            return false;
-        }
-
-        $currentEvent = $event->getVCalendarEvent();
-        $component = $event->setComponent($event->getComponentTypeName());
-
-        if (!$component->RRULE) {
-            $rRule = $currentEvent->createProperty('RRULE');
-            $component->add($rRule);
-        } else {
-            $rRule = $component->RRULE;
-        }
-
-        $currentRules = $rRule->getParts();
-
-        if ($currentRules && $this->isUnsupported($currentRules)) {
-            return false;
-        }
-
-        $newRules = array();
-
-        if (!empty($recurringInfo['type'])) {
-            $newRules['FREQ'] = $this->intervalMapper->getCalDavValue($recurringInfo['type']);
-        }
-
-        if (!empty($recurringInfo['interval'])) {
-            if ($recurringInfo['interval'] == 1) {
-                unset($recurringInfo['interval']);
-            } else {
-                $newRules['INTERVAL'] = (string)strtoupper($recurringInfo['interval']);
-            }
-        }
-
-        if (!empty($recurringInfo['count'])) {
-            $newRules['COUNT'] = (string)$recurringInfo['count'];
-        }
-
-        if (!empty($recurringInfo['until'])) {
-            if (isset($currentRules['UNTIL'])) {
-                $untilDate = $this->dateTimeHelper->sugarDateToDav($currentRules['UNTIL']);
-                $newDate =
-                    $this->dateTimeHelper->sugarDateToDav($recurringInfo['until'] . ' ' . $untilDate->format('H:i:s'));
-            } else {
-                $newDate = $this->dateTimeHelper->sugarDateToDav($recurringInfo['until'] . ' 23:59:59');
-            }
-            $newRules['UNTIL'] = $newDate->format('Ymd\THis\Z');
-            if (isset($newRules['COUNT'])) {
-                unset($newRules['COUNT']);
-            }
-        }
-
-        if (!empty($recurringInfo['dow']) && $recurringInfo['type'] == 'Weekly') {
-            $newRules['BYDAY'] =
-                array_intersect_key(array_flip($this->dayMap), array_flip(str_split($recurringInfo['dow'])));
-            if (isset($currentRules['BYDAY']) && !is_array($currentRules['BYDAY'])) {
-                $newRules['BYDAY'] = implode(',', $newRules['BYDAY']);
-            }
-        }
-
-        $isChanged = false;
-        if ($newRules != $currentRules) {
-            $rRule->setParts($newRules);
-
-            $components = $currentEvent->getComponents();
-            foreach ($components as $component) {
-                if (!empty($component->{'RECURRENCE-ID'})) {
-                    $currentEvent->remove($component);
-                }
-            }
-            $isChanged = true;
-        } elseif (!empty($recurringInfo['children'])) {
-            $isChanged = $this->updateRecurringChildren($recurringBean, $event, $recurringInfo['children']);
-        }
-
-        return $isChanged;
-    }
-
-    /**
-     * Update CalDav event recurring children
-     * Returns true if children was updated
-     * @param \SugarBean $recurringBean
-     * @param \CalDavEventCollection $recurringEvent
-     * @param array $children
-     * @return bool
-     */
-    protected function updateRecurringChildren(
-        \SugarBean $recurringBean,
-        \CalDavEventCollection $recurringEvent,
-        array $children
-    ) {
-        $currentRecirrung = $this->getRecurringInfo($recurringEvent);
         $result = array();
-        foreach ($children as $child) {
-            $event = clone $recurringEvent;
-            $event->clearVCalendarEvent();
-            $event->setBean($child);
-            $component = $event->setComponent($event->getComponentTypeName());
-            if ($component->RRULE) {
-                $component->remove('RRULE');
-            }
-            if ($component->EXDATE) {
-                $component->remove('EXDATE');
-            }
-            $isChanged = false;
-            $startDate = $this->dateTimeHelper->sugarDateToUTC($child->date_start)->format(\TimeDate::DB_DATETIME_FORMAT);
-            if (isset($currentRecirrung['children'][$startDate])) {
-                $event = clone $currentRecirrung['children'][$startDate];
-                $event->clearVCalendarEvent();
-                $component = $event->setComponent($event->getComponentTypeName());
-                $result[$child->date_start] = $component;
-            }
-            $isChanged |= $event->setTitle($child->name, $component);
-            $isChanged |= $event->setDescription($child->description, $component);
-            $isChanged |= $event->setLocation($child->location, $component);
-            $isChanged |= $event->setStatus($this->eventMapper->getCalDavValue($child->status), $component);
-            $isChanged |= $event->setStartDate($child->date_start, $component);
-            $isChanged |= $event->setEndOfEvent(
-                $child->date_end,
-                $child->duration_hours,
-                $child->duration_minutes,
-                $component
-            );
-
-            if ($isChanged) {
-                $component->isModifed = true;
-                $result[$child->date_start] = $component;
-            }
+        foreach (static::$recurringFieldList as $field) {
+            $result[$field] = $bean->$field;
         }
 
-        $isUpdated = false;
-
-        if ($result) {
-            $currentEvent = $recurringEvent->getVCalendarEvent();
-            $recurringComponent = array_shift($currentEvent->getBaseComponents('VEVENT'));
-            $components = $currentEvent->getComponents();
-            $currentComponents = array();
-            foreach ($components as $component) {
-                if (!empty($component->{'RECURRENCE-ID'})) {
-                    $startDate = $this->dateTimeHelper->davDateToSugar($component->DTSTART);
-                    if (!isset($result[$startDate])) {
-                        $isUpdated = true;
-                        $currentEvent->remove($component);
-                    } else {
-                        $currentComponents[$startDate] = $component;
-                    }
-                }
-            }
-            foreach ($result as $startDate => $event) {
-                if (isset($currentComponents[$startDate])) {
-                    $replacedComponent = $currentComponents[$startDate];
-                    if ($replacedComponent->serialize() !== $event->serialize()) {
-                        $currentEvent->remove($replacedComponent);
-                        $this->createRecurringChild($event, $recurringComponent);
-                        $isUpdated = true;
-                    }
-                    unset($result[$startDate]);
-                } elseif (!$event->isModifed) {
-                    unset($result[$startDate]);
-                }
-                unset($event->isModifed);
-            }
-
-            foreach ($result as $component) {
-                $isUpdated = true;
-                $this->createRecurringChild($component, $recurringComponent);
-            }
-        }
-
-        return $isUpdated;
+        return $result;
     }
 
     /**
-     * Create recurring component properties and add it to calendar
-     * @param DavComponent $component
-     * @param DavComponent $recurringComponent
+     * Convert array to RRule
+     * @see $recurringFieldList for avaliable fields
+     * @param array $recurring
+     * @return RRule
      */
-    protected function createRecurringChild(DavComponent $component, DavComponent $recurringComponent)
+    public function arrayToRRule(array $recurring)
     {
-        if ($component->{'RECURRENCE-ID'}) {
-            $component->remove('RECURRENCE-ID');
+        $rRule = new RRule();
+        $rRule->setFrequency($this->frequencyMap->getCalDavValue($recurring['repeat_type']));
+        $rRule->setInterval($recurring['repeat_interval']);
+        if ($recurring['repeat_count']) {
+            $rRule->setCount($recurring['repeat_count']);
+        } elseif ($recurring['repeat_until']) {
+            $rRule->setUntil(new \SugarDateTime($recurring['repeat_until'], new \DateTimeZone('UTC')));
         }
-        $dtStart = $component->DTSTART->getDateTime();
-        $dateTimeString =
-            $dtStart->format('Ymd') . 'T' . $recurringComponent->DTSTART->getDateTime()->format('His');
-        $recurringDateTime = new \DateTime($dateTimeString, $dtStart->getTimezone());
-        $dateTimeElement = $component->parent->createProperty('RECURRENCE-ID', $recurringDateTime);
-        $component->add($dateTimeElement);
 
-        if ($component->UID) {
-            $component->remove('UID');
+        $convertedDow = array();
+        if ($recurring['repeat_dow']) {
+            $aDow = str_split($recurring['repeat_dow']);
+            foreach ($aDow as $value) {
+                $convertedDow[] = $this->dayMap->getCalDavValue($value);
+            }
         }
-        $component->add(
-            'UID',
-            $recurringComponent->UID->getValue(),
-            $recurringComponent->UID->parameters()
-        );
+        $rRule->setByDay($convertedDow);
 
-        $recurringComponent->parent->add($component);
+        return $rRule;
     }
 }

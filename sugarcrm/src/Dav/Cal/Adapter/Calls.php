@@ -30,9 +30,14 @@ class Calls extends AdapterAbstract
     public function export(array $data, \CalDavEventCollection $collection)
     {
         $isChanged = false;
-        $event = $collection->getParent();
         list($beanData, $changedFields, $invites) = $data;
-        list($beanModuleName, $beanId, $repeatParentId, $childEventsId, $insert) = $beanData;
+        list($beanModuleName, $beanId, $repeatParentId, $recurringParam, $insert) = $beanData;
+
+        $event = $this->getCurrentEvent($collection, $repeatParentId, $beanId);
+
+        if (!$event) {
+            return false;
+        }
 
         // checking before values
         if (!$insert) {
@@ -42,6 +47,7 @@ class Calls extends AdapterAbstract
             if (isset($changedFields['description'][1]) && !$this->checkCalDavDescription($changedFields['description'][1], $event)) {
                 throw new ExportException("Conflict with CalDav Description field");
             }
+
             if (isset($changedFields['status'][1]) && !$this->checkCalDavStatus($changedFields['status'][1], $event)) {
                 throw new ExportException("Conflict with CalDav Status field");
             }
@@ -53,6 +59,10 @@ class Calls extends AdapterAbstract
             }
             if ($invites && !$this->checkCalDavInvites($invites, $event)) {
                 throw new ExportException("Conflict with CalDav Invites");
+            }
+
+            if (!$repeatParentId && !$this->checkCalDavRecurring($changedFields, $collection)) {
+                throw new ExportException("Conflict with CalDav recurring params");
             }
         }
 
@@ -76,7 +86,11 @@ class Calls extends AdapterAbstract
             $isChanged = $isChanged | $this->setCalDavInvites($invites, $event);
         }
 
-        return $isChanged;
+        if (!$repeatParentId && $recurringParam) {
+            $isChanged = $isChanged | $this->setCalDavRecurring($recurringParam, $collection, $insert);
+        }
+
+        return (bool)$isChanged;
     }
 
     /**

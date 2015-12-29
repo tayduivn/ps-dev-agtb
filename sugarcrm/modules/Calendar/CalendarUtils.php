@@ -350,9 +350,20 @@ class CalendarUtils
 
         Activity::disable();
 
+		foreach ($timeArray as $key => $date_start) {
+			$timeArray[create_guid()] = $date_start;
+			unset($timeArray[$key]);
+		}
         $calendarEvents = new CalendarEvents();
         $bean->load_relationship('tag_link');
         $parentTagBeans = $bean->tag_link->getBeans();
+
+		$eventCollection = new \CalDavEventCollection();
+		$calDavEvent = $eventCollection->findByBean($bean);
+		if($calDavEvent) {
+			$calDavEvent->setSugarChildrenOrder(array_keys($timeArray));
+			$calDavEvent->save();
+		}
 
 		$clone = clone $bean;
 
@@ -360,8 +371,9 @@ class CalendarUtils
         //attribute that incorrectly makes it look like an existing bean
         $clone->fetched_row = false;
 
-		foreach ($timeArray as $date_start) {
-			$clone->id = "";
+		foreach ($timeArray as $recurringId => $date_start) {
+			$clone->id = $recurringId;
+			$clone->new_with_id = true;
 			$clone->date_start = $date_start;
 			// TODO CHECK DATETIME VARIABLE
 			$date = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$date_start);

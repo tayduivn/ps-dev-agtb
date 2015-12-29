@@ -54,6 +54,11 @@ class RRule
         }
     }
 
+    public function __clone()
+    {
+        $this->rRule = clone $this->rRule;
+    }
+
     /**
      * Get validator object for parameter
      * @param $paramName
@@ -190,7 +195,8 @@ class RRule
     {
         $until = $this->getParameter('UNTIL');
         if ($until) {
-            return new \SugarDateTime($until, new \DateTimeZone('UTC'));
+            $untilDateTime = new \SugarDateTime($until, new \DateTimeZone('UTC'));
+            return $this->normalizeUntil($untilDateTime);
         }
 
         return null;
@@ -292,6 +298,7 @@ class RRule
     {
         if ($value != $this->getUntil()) {
             $value->setTimezone(new \DateTimeZone('UTC'));
+            $value = $this->normalizeUntil($value);
             $until = $value->format('Ymd\THis\Z');
 
             $this->deleteParameter('COUNT');
@@ -374,5 +381,18 @@ class RRule
     public function getObject()
     {
         return $this->rRule;
+    }
+
+    /**
+     * Set until date as day end datetime
+     * @param \SugarDateTime $until
+     * @return \SugarDateTime
+     */
+    public function normalizeUntil(\SugarDateTime $until)
+    {
+        if ($until->format('H:i:s') == '00:00:00') {
+            return $until->get_day_end_time();
+        }
+        return $until;
     }
 }

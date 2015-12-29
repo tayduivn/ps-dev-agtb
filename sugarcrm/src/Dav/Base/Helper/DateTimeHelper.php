@@ -132,7 +132,7 @@ class DateTimeHelper
     /**
      * Create DateTime object with UTC timetone
      * @param string $dateTime
-     * @return \DateTime
+     * @return \SugarDateTime
      */
     public function sugarDateToUTC($dateTime)
     {
@@ -148,7 +148,7 @@ class DateTimeHelper
         }
         $userTimeZone = new \DateTimeZone($currentTimezone);
         $utcTimeZone = new \DateTimeZone('UTC');
-        $dt = new \DateTime($dateTime, $userTimeZone);
+        $dt = new \SugarDateTime($dateTime, $userTimeZone);
         $dt->setTimeZone($utcTimeZone);
 
         return $dt;
