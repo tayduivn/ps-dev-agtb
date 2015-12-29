@@ -119,7 +119,14 @@
 
     /**
      * Prepares Signup API request payload based on form's model and language preferences
-     * @return {{first_name: *, last_name: *, email: *, phone_work: *, primary_address_country: *, title: *, account_name: *}}
+     * @return {Object} Signup API request payload.
+     * @return {string} return.first_name The user's first name.
+     * @return {string} return.last_name The user's last name.
+     * @return {string} return.email The user's email address.
+     * @return {string} return.phone_work The user's phone number.
+     * @return {string} return.primary_address_country The user's country.
+     * @return {string} return.title The user's title.
+     * @return {string} return.account_name The user's company.
      * @private
      */
     _prepareRequestPayload: function() {
