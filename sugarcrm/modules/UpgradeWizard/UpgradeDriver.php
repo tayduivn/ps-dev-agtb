@@ -1250,6 +1250,12 @@ abstract class UpgradeDriver
         if ($this->current_stage == 'post') {
             $this->cleanCaches();
         }
+
+        // reset the sugar cache so that the language files won't be loaded from the cache in upgrade wizard
+        // otherwise when building $app_strings by using Utils.php::return_application_language(),
+        // sugar_cache_retrieve() will return the cached value from the old upgraded-from version.
+        sugar_cache_reset();
+
         SugarApplication::preLoadLanguages();
         $timedate = TimeDate::getInstance();
         if (empty($locale)) {
