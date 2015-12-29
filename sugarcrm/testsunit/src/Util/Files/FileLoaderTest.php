@@ -10,15 +10,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestUnit\inc\utils;
+namespace Sugarcrm\SugarcrmTestUnit\Files;
+
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 /**
  *
- * SugarAutoLoader unit tests
- * @coversDefaultClass \SugarAutoLoader
+ * FileLoader unit tests
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Files\FileLoader
  *
  */
-class SugarAutoLoaderTest extends \PHPUnit_Framework_TestCase
+class FileLoaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * List of test files created
@@ -43,8 +45,8 @@ class SugarAutoLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidFilePath($file, $upload)
     {
-        $this->createFile($file, 'SugarAutoLoaderTestValidFilePath');
-        $result = \SugarAutoLoader::validateFilePath($file, $upload);
+        $this->createFile($file, 'FileLoaderTestValidFilePath');
+        $result = FileLoader::validateFilePath($file, $upload);
         $this->assertSame($result, $file);
     }
 
@@ -74,7 +76,7 @@ class SugarAutoLoaderTest extends \PHPUnit_Framework_TestCase
     public function testInvalidFilePath($file, $msg)
     {
         $this->setExpectedException('\Exception', $msg);
-        \SugarAutoLoader::validateFilePath($file);
+        FileLoader::validateFilePath($file);
     }
 
     public function providerTestInvalidFilePath()
@@ -110,9 +112,9 @@ class SugarAutoLoaderTest extends \PHPUnit_Framework_TestCase
     public function testInvalidFilePathUpload()
     {
         $file = $this->getUploadDir() . '/bogus.php';
-        $this->createFile($file, 'SugarAutoLoaderTestInvalidFilePathUpload');
+        $this->createFile($file, 'FileLoaderTestInvalidFilePathUpload');
         $this->setExpectedException('\Exception', 'File name violation: file outside basedir');
-        \SugarAutoLoader::validateFilePath($file, false);
+        FileLoader::validateFilePath($file, false);
     }
 
     /**
@@ -121,9 +123,9 @@ class SugarAutoLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testVarsFromInclude($content, array $vars, array $expected)
     {
-        $file = 'SugarAutoLoaderTestVarsFromInclude.php';
+        $file = 'FileLoaderTestVarsFromInclude.php';
         $this->createPhpTestFile($file, $content);
-        $actual = \SugarAutoLoader::varsFromInclude($file, $vars);
+        $actual = FileLoader::varsFromInclude($file, $vars);
         $this->assertSame($expected, $actual);
     }
 
@@ -186,9 +188,9 @@ class SugarAutoLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testVarFromInclude($content, $var, $expected)
     {
-        $file = 'SugarAutoLoaderTestVarFromInclude.php';
+        $file = 'FileLoaderTestVarFromInclude.php';
         $this->createPhpTestFile($file, $content);
-        $actual = \SugarAutoLoader::varFromInclude($file, $var);
+        $actual = FileLoader::varFromInclude($file, $var);
         $this->assertSame($expected, $actual);
     }
 
