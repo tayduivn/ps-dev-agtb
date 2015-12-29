@@ -32,6 +32,7 @@ require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
 require_once 'modules/MySettings/TabController.php';
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 define('DISABLED_PATH', 'Disabled');
 
@@ -1430,7 +1431,7 @@ class ModuleInstaller{
             $GLOBALS['log']->debug( 'File does not exists : '.$file);
             return;
         }
-        $rel_dictionary = SugarAutoLoader::varFromInclude($file, 'dictionary');
+        $rel_dictionary = FileLoader::varFromInclude($file, 'dictionary');
 
         array_walk($rel_dictionary, array("ModuleInstaller", "cleanUpRelationship"));
 
@@ -3316,7 +3317,7 @@ class ModuleInstaller{
     protected function readManifest()
     {
         $installdefs = array();
-        require SugarAutoLoader::validateFilePath($this->base_dir . '/manifest.php');
+        require FileLoader::validateFilePath($this->base_dir . '/manifest.php');
         $installdefs = $this->patchInstallDefs($installdefs);
         return compact('manifest', 'installdefs');
     }

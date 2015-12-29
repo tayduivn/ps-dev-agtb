@@ -16,6 +16,7 @@ require_once 'modules/Configurator/Configurator.php';
 require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 function UWrebuild() {
 	global $log;
@@ -227,7 +228,7 @@ if($install_type == 'patch' || $install_type == 'module')
 			if(is_file($file))
 			{
 				print("{$mod_strings['LBL_UW_INCLUDING']}: $file <br>\n");
-				include SugarAutoLoader::validateFilePath($file);
+				include FileLoader::validateFilePath($file);
 				pre_install();
    		}
  			break;
@@ -236,7 +237,7 @@ if($install_type == 'patch' || $install_type == 'module')
 			if(is_file($file))
 			{
 				print("{$mod_strings['LBL_UW_INCLUDING']}: $file <br>\n");
-				include SugarAutoLoader::validateFilePath($file);
+				include FileLoader::validateFilePath($file);
 				pre_uninstall();
    		}
  			break;
@@ -359,7 +360,7 @@ switch( $install_type ){
 				if(is_file($file))
 				{
 					print("{$mod_strings['LBL_UW_INCLUDING']}: $file <br>\n");
-					include SugarAutoLoader::validateFilePath($file);
+					include FileLoader::validateFilePath($file);
 					post_install();
 				}
             	break;
@@ -405,7 +406,7 @@ switch( $install_type ){
 				if(is_file($file))
 				{
 					print("{$mod_strings['LBL_UW_INCLUDING']}: $file <br>\n");
-					include SugarAutoLoader::validateFilePath($file);
+					include FileLoader::validateFilePath($file);
 					post_install();
 				}
 
@@ -415,7 +416,7 @@ switch( $install_type ){
  				$file = "$unzip_dir/" . constant('SUGARCRM_POST_UNINSTALL_FILE');
  				if(is_file($file)) {
 					print("{$mod_strings['LBL_UW_INCLUDING']}: $file <br>\n");
-					include SugarAutoLoader::validateFilePath($file);
+					include FileLoader::validateFilePath($file);
 					post_uninstall();
 				}
 
@@ -474,7 +475,7 @@ switch( $mode ){
         //Check if we need to show a page for the user to finalize their install with.
         if (is_file("$unzip_dir/manifest.php"))
         {
-        	include SugarAutoLoader::validateFilePath("$unzip_dir/manifest.php");
+        	include FileLoader::validateFilePath("$unzip_dir/manifest.php");
         	if (!empty($manifest['post_install_url']))
         	{
         		$url_conf = $manifest['post_install_url'];

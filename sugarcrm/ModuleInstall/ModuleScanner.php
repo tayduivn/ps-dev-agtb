@@ -10,6 +10,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 class ModuleScanner{
 	private $manifestMap = array(
 			'pre_execute'=>'pre_execute',
@@ -856,7 +859,7 @@ class ModuleScanner{
  */
 function MSLoadManifest($manifest_file)
 {
-	include SugarAutoLoader::validateFilePath($manifest_file, true);
+	include FileLoader::validateFilePath($manifest_file, true);
 	return array($manifest, $installdefs);
 }
 

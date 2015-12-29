@@ -17,6 +17,7 @@ require_once('include/utils/db_utils.php');
 require_once('include/utils/zip_utils.php');
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 // increase the cuttoff time to 1 hour
 ini_set("max_execution_time", "3600");
@@ -125,7 +126,7 @@ class UpgradeWizardCommon
     {
         global $app_list_strings;
 
-        $new = SugarAutoLoader::varFromInclude($the_file, 'app_list_strings');
+        $new = FileLoader::varFromInclude($the_file, 'app_list_strings');
         if (is_array($new)) {
             $app_list_strings = $new;
         }
