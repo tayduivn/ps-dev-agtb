@@ -565,12 +565,12 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
                     'trigger' => 'repeat_type',
                     'values' => array(
                         'Monthly' => array(
-                            '',
+                            'None',
                             'Each',
                             'On',
                         ),
                         'Yearly' => array(
-                            '',
+                            'None',
                             'On',
                         ),
                     ),

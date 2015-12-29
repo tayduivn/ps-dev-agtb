@@ -1572,7 +1572,7 @@ $app_list_strings = array (
     ),
 
     'repeat_selector_dom' => array(
-        '' => 'None',
+        'None' => 'None',
         'Each' => 'Each',
         'On' => 'On the',
     ),

@@ -495,12 +495,12 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
                     'trigger' => 'repeat_type',
                     'values' => array(
                         'Monthly' => array(
-                            '',
+                            'None',
                             'Each',
                             'On',
                         ),
                         'Yearly' => array(
-                            '',
+                            'None',
                             'On',
                         ),
                     ),

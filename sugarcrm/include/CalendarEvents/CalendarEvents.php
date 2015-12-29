@@ -324,7 +324,7 @@ class CalendarEvents
     protected function nextMonthly($current, $interval, $options, &$scratchPad)
     {
         global $app_list_strings;
-        if (empty($options['selector'])) {
+        if (empty($options['selector']) || $options['selector'] === 'None') {
             if (!$this->isComplete($current, $options, $scratchPad)) {
                 $current->modify("+{$interval} Months");
                 return true; // Continue
