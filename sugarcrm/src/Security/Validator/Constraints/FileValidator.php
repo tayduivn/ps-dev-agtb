@@ -21,15 +21,24 @@ use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
  *
  * File validator
  *
- * The normalized filename is returned as formatted value. This constraint
- * is primarily used using the SugarAutoLoader file include helper functions
- * to securely include files.
+ * Validate given file path against the following criteria:
+ *  - File should exist
+ *  - File path within allowed base directory (*)
+ *  - Does not contain null characters
+ *  - Does not contain directory traversal (..)
  *
- * By default the SUGAR_BASE_DIR (and SHADOW_INSTANCE_DIR if applicable) are
- * set as base directories for validation. This can be overriden if needed
+ * This validator returns the normalized (realpath) value of the given file
+ * path.
+ *
+ * (*) By default the SUGAR_BASE_DIR (and SHADOW_INSTANCE_DIR if applicable)
+ * are set as base directories for validation. This can be overriden if needed
  * on the File constraint.
  *
- * @see \SugarAutoLoader::validateFilePath
+ * This constraint is primarily used by the following utility methods:
+ * @see \Sugarcrm\Sugarcrm\Util\Files\FileLoader::validateFilePath
+ * @see \Sugarcrm\Sugarcrm\Util\Files\FileLoader::varFromInclude
+ * @see \Sugarcrm\Sugarcrm\Util\Files\FileLoader::varsFromInclude
+ *
  */
 class FileValidator extends ConstraintValidator
 {

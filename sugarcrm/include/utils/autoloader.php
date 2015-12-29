@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Security\Validator\Validator;
-use Sugarcrm\Sugarcrm\Security\Validator\Constraints\File;
-
 require_once 'include/utils/file_utils.php';
 
 /**
@@ -195,15 +192,7 @@ class SugarAutoLoader
         'autoload_psr4' => 'vendor/composer/autoload_psr4.php',
         'autoload_classmap' => 'vendor/composer/autoload_classmap.php',
     );
-
-    /**
-     * @var array Base directories
-     */
-    protected static $baseDirs = array();
-
-    /**
-     * @var string Directory separator
-     */
+    protected static $baseDirs;
     protected static $ds = DIRECTORY_SEPARATOR;
 
     /**
@@ -1465,13 +1454,20 @@ class SugarAutoLoader
      */
     public static function normalizeFilePath($filename)
     {
+        if (!isset(self::$baseDirs)) {
+            self::$baseDirs = array(SUGAR_BASE_DIR);
+            if (defined('SHADOW_INSTANCE_DIR')) {
+                self::$baseDirs[] = SHADOW_INSTANCE_DIR;
+            }
+        }
+
         // Normalize directory separators
         if (self::$ds != '/') {
             $filename = str_replace(self::$ds, "/", $filename);
         }
 
         // Remove base dir - Composer always has absolute paths.
-        foreach (self::getBaseDirs() as $baseDir) {
+        foreach (self::$baseDirs as $baseDir) {
             $filename = str_replace($baseDir . '/', '', $filename, $count);
             if ($count > 0) {
                 break;
@@ -1482,77 +1478,5 @@ class SugarAutoLoader
         $filename = preg_replace('#(/)(\1+)#', '/', $filename);
 
         return $filename;
-    }
-
-    /**
-     * Validate given file name
-     * @param string $file File name
-     * @param boolean $upload Allow validation in upload directory
-     * @return string File name
-     * @throws Exception
-     * @see \Sugarcrm\Sugarcrm\Security\Validator\Constraints\FileValidator
-     */
-    public static function validateFilePath($file, $upload = false)
-    {
-        $baseDirs = self::getBaseDirs();
-
-        // add upload directory to the allowed list
-        if ($upload) {
-            $uploadDir = ini_get('upload_tmp_dir');
-            $baseDirs[] = $uploadDir ? $uploadDir : sys_get_temp_dir();
-        }
-
-        $constraint = new File(array('baseDirs' => $baseDirs));
-        $violations = Validator::getService()->validate($file, $constraint);
-        if (count($violations) > 0) {
-            $msg = array_reduce(iterator_to_array($violations), function ($msg, $violation) {
-                return empty($msg) ? $violation->getMessage() : $msg . ' - ' . $violation->getMessage();
-            });
-            throw new Exception($msg);
-        }
-        return $constraint->getFormattedReturnValue();
-    }
-
-    /**
-     * Get base directories
-     * @return array
-     */
-    public static function getBaseDirs()
-    {
-        if (empty(self::$baseDirs)) {
-            self::$baseDirs = array(SUGAR_BASE_DIR);
-            if (defined('SHADOW_INSTANCE_DIR')) {
-                self::$baseDirs[] = SHADOW_INSTANCE_DIR;
-            }
-        }
-        return self::$baseDirs;
-    }
-
-    /**
-     * Get variable content from include file
-     * @param string $file File name
-     * @param string $returnVar Name of the variable
-     * @return mixed
-     */
-    public static function varFromInclude($file, $returnVar)
-    {
-        $result = self::varsFromInclude($file, array($returnVar));
-        return isset($result[$returnVar]) ? $result[$returnVar] : null;
-    }
-
-    /**
-     * Get variables content from include file
-     * @param string $file File name
-     * @param array $returnVars List of variable names
-     * @return array
-     */
-    public static function varsFromInclude($file, array $returnVars)
-    {
-        include self::validateFilePath($file);
-        $returnVarsResult = array();
-        foreach ($returnVars as $returnVar) {
-            $returnVarsResult[$returnVar] = isset(${$returnVar}) ? ${$returnVar} : null;
-        }
-        return $returnVarsResult;
     }
 }
