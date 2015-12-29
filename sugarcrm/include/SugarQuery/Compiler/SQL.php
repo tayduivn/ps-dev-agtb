@@ -509,10 +509,14 @@ class SugarQuery_Compiler_SQL
                     if ($condition->values instanceof SugarQuery) {
                         $sql .= "(" . $condition->values->compileSql($this->sugar_query) . ")";
                     } else {
-                        foreach ($condition->values as $val) {
-                            $valArray[] = $this->prepareValue($val, $condition);
+                        if (empty($condition->values)) {
+                            $sql .= "(NULL)";
+                        } else {
+                            foreach ($condition->values as $val) {
+                                $valArray[] = $this->prepareValue($val, $condition);
+                            }
+                            $sql .= "(" . implode(',', $valArray) . ")";
                         }
-                        $sql .= "(" . implode(',', $valArray) . ")";
                     }
                     break;
                 case 'NOT IN':
@@ -521,10 +525,14 @@ class SugarQuery_Compiler_SQL
                     if ($condition->values instanceof SugarQuery) {
                         $sql .= '(' . $condition->values->compileSql($this->sugar_query) . ')';
                     } else {
-                        foreach ($condition->values as $val) {
-                            $valArray[] = $this->prepareValue($val, $condition);
+                        if (empty($condition->values)) {
+                            $sql .= "(NULL)";
+                        } else {
+                            foreach ($condition->values as $val) {
+                                $valArray[] = $this->prepareValue($val, $condition);
+                            }
+                            $sql .= '(' . implode(',', $valArray) . ')';
                         }
-                        $sql .= '(' . implode(',', $valArray) . ')';
                     }
                     $sql .= ')';
                     break;
