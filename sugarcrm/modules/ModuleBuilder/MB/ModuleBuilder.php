@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -16,7 +15,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
- 
+
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 define ( 'MB_PACKAGE_PATH', 'custom/modulebuilder/packages' ) ;
 define('MB_PACKAGE_BUILD', 'custom' . DIRECTORY_SEPARATOR . 'modulebuilder' . DIRECTORY_SEPARATOR . 'builds');
@@ -67,7 +67,7 @@ class ModuleBuilder
         $manifestPath = MB_PACKAGE_PATH . '/' . $name . '/manifest.php' ;
         if (file_exists ( $manifestPath ))
         {
-            require( $manifestPath ) ;
+            require FileLoader::validateFilePath($manifestPath);
             if(!empty($manifest))
                 return $manifest['key'];
         }

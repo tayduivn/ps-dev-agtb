@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,6 +9,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 //Used in rebuildExtensions
 require_once 'ModuleInstall/ModuleInstaller.php';
@@ -234,7 +235,7 @@ class RepairAndClear
 					{
 						#30273
 						if(empty($focus->disable_vardefs)) {
-							include('modules/' . $focus->module_dir . '/vardefs.php');
+							include FileLoader::validateFilePath('modules/' . $focus->module_dir . '/vardefs.php');
 							if($this->show_output)
 								print_r("<p>" .$mod_strings['LBL_REPAIR_DB_FOR'].' '. $bean_name . "</p>");
 							$sql .= $db->repairTable($focus, $this->execute);
