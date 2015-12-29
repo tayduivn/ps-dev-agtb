@@ -9,6 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 class MBLanguage{
 		var $iTemplates = array();
 		var $templates = array();
@@ -37,7 +40,7 @@ class MBLanguage{
 			$d = dir($file);
 			while($e = $d->read()){
 				if(substr($e, 0, 1) != '.' && is_file($file . '/' . $e)){
-					include($file.'/'. $e);
+					$mod_strings = FileLoader::varFromInclude($file.'/'. $e, 'mod_strings');
 					if(empty($this->strings[$e])){
 
 						$this->strings[$e] = $mod_strings;
@@ -221,15 +224,17 @@ class MBLanguage{
 			copy_recursive($this->path.'/language/', $path . '/language/');
 		}
 
-		function loadTemplates() {
-			if(empty($this->templates)){
-				if (file_exists("$this->path/config.php")) {
-					include "$this->path/config.php";
-					$this->templates = $config['templates'];
-					$this->iTemplates = array();
-				}
-			}
-		}
+        public function loadTemplates()
+        {
+            if (empty($this->templates)) {
+                $configFile = $this->path . '/config.php';
+                if (file_exists($configFile)) {
+                    $config = FileLoader::varFromInclude($configFile, 'config');
+                    $this->templates = $config['templates'];
+                    $this->iTemplates = array();
+                }
+            }
+        }
 
 		/**
 		 * Reset the templates and load the language files again.  This is called from

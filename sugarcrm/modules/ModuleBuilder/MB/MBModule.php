@@ -12,6 +12,7 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 define('MB_TEMPLATES', 'include/SugarObjects/templates');
 define('MB_IMPLEMENTS', 'include/SugarObjects/implements');
@@ -114,7 +115,7 @@ class MBModule
     {
         if (file_exists ( $this->path . '/config.php' ))
         {
-            include ($this->path . '/config.php') ;
+            include FileLoader::validateFilePath($this->path . '/config.php');
             $this->config = $config ;
             $this->normalizeConfig();
         }
