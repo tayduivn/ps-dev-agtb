@@ -28,6 +28,14 @@ interface AdapterInterface
     public function export(array $data, \CalDavEventCollection $collection);
 
     /**
+     * @param array $exportData current export data
+     * @param array $importData new import data which was generated on save of bean
+     * @param \CalDavEventCollection $collection
+     * @return mixed updated new data for import, false if import isn't required
+     */
+    public function verifyImportAfterExport(array $exportData, array $importData, \CalDavEventCollection $collection);
+
+    /**
      * @param array $data
      * @param \SugarBean $bean
      * @return bool
@@ -35,12 +43,20 @@ interface AdapterInterface
     public function import(array $data, \SugarBean $bean);
 
     /**
+     * @param array $importData current import data
+     * @param array $exportData new export data which was generated on save of collection
+     * @param \SugarBean $bean
+     * @return mixed updated new data for export, false if export isn't required
+     */
+    public function verifyExportAfterImport(array $importData, array $exportData, \SugarBean $bean);
+
+    /**
      * @param \SugarBean $bean
      * @param array $changedFields
      * @param array $invitesBefore
      * @param array $invitesAfter
      * @param bool $insert
-     * @return mixed
+     * @return mixed returns data for export or false if required things weren't changed and nothing to export
      */
     public function prepareForExport(\SugarBean $bean, $changedFields, $invitesBefore, $invitesAfter, $insert);
 }

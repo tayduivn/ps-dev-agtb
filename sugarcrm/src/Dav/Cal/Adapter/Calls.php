@@ -17,7 +17,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
  *
  * @package Sugarcrm\Sugarcrm\Dav\Cal\Adapter
  */
-class Calls extends AdapterAbstract implements AdapterInterface
+class Calls extends AdapterAbstract
 {
     /**
      * Updates caldav bean and returns true if anything was changed

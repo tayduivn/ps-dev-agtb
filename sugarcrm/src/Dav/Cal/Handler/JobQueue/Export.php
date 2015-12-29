@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue;
 
 use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException as JQLogicException;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException as JQInvalidArgumentException;
+use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as HookHandler;
 
 /**
  * Class Export
@@ -48,8 +49,17 @@ class Export extends Base
             return \SchedulersJob::JOB_CANCELLED;
         }
 
+        $importData = array();
+        HookHandler::$importHandler = function($data, $collection) use (&$importData) {
+            $importData = $data;
+        };
         if ($adapter->export($this->processedData, $calDavBean)) {
             $calDavBean->save();
+            $importData = $adapter->verifyImportAfterExport($this->processedData, $importData, $calDavBean);
+            if ($importData) {
+                $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();
+                $this->getManager()->calDavImport($importData, $saveCounter);
+            }
         }
 
         $calDavBean->getSynchronizationObject()->setJobCounter();

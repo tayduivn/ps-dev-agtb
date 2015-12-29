@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue;
 
 use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException as JQLogicException;
+use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as HookHandler;
 
 /**
  * Class Import
@@ -61,8 +62,17 @@ class Import extends Base
             throw new JQLogicException('Bean ' . $bean->module_name . ' does not have CalDav adapter');
         }
 
+        $exportData = array();
+        HookHandler::$exportHandler = function($data, $bean) use (&$exportData) {
+            $exportData = $data;
+        };
         if ($adapter->import($this->processedData, $bean)) {
             $bean->save();
+            $exportData = $adapter->verifyExportAfterImport($this->processedData, $exportData, $bean);
+            if ($exportData) {
+                $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();
+                $this->getManager()->calDavExport($exportData, $saveCounter);
+            }
         }
         $calDavBean->getSynchronizationObject()->setJobCounter();
 
