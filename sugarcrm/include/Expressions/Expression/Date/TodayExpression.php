@@ -24,6 +24,9 @@ class TodayExpression extends DateExpression
 	function evaluate() {
         $d = TimeDate::getInstance()->getNow(true);
         $d->setTime(0,0,0);
+
+        //set isDate flag to true so text fields receive a date only, otherwise it will display date time
+        $d->isDate = true;
 		return $d;
 	}
 
