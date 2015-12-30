@@ -250,7 +250,7 @@
                 });
                 if (focusToggle && this.isOpen()) {
                     // put focus back on toggle after renderPartial
-                    this.$('[data-toggle="recently-viewed"]').focus();
+                    this._focusRecentlyViewedToggle();
                 }
             }, this),
             'endpoint': function(method, model, options, callbacks) {
@@ -260,6 +260,14 @@
         });
 
         return;
+    },
+
+    /**
+     * Set focus on the recently viewed toggle
+     * @private
+     */
+    _focusRecentlyViewedToggle: function() {
+        this.$('[data-toggle="recently-viewed"]').focus();
     },
 
     /**

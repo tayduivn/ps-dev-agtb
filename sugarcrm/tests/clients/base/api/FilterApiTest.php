@@ -9,15 +9,21 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/api/RestService.php');
-require_once("clients/base/api/FilterApi.php");
+
+require_once 'include/api/RestService.php';
+require_once 'clients/base/api/FilterApi.php';
 
 /**
  * @group ApiTests
  */
 class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public static $notes, $opps, $accounts, $meetings, $oldLimit, $predefinedFilter;
+    public static $notes;
+    public static $opps;
+    public static $accounts;
+    public static $meetings;
+    public static $oldLimit;
+    public static $predefinedFilter;
 
     /** @var FilterApi */
     private $filterApi;
@@ -74,7 +80,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         self::$predefinedFilter = SugarTestFilterUtilities::createUserFilter(
             'admin',
             'TestFilter',
-            json_encode(array(array("name" => "TEST 5 Account")))
+            json_encode(array(array('name' => 'TEST 5 Account')))
         );
 
         // Clean up any hanging related records
@@ -151,7 +157,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             $this->serviceMock,
             array(
                 'module' => 'Accounts',
-                'filter' => array(array("name" => "TEST 7 Account")),
+                'filter' => array(array('name' => 'TEST 7 Account')),
                 'fields' => 'id,name'
             )
         );
@@ -206,7 +212,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             $this->serviceMock,
             array(
                 'module' => 'Accounts',
-                'filter' => array(array("notes.name" => "Test 3 Note")),
+                'filter' => array(array('notes.name' => 'Test 3 Note')),
                 'fields' => 'id,name'
             )
         );
@@ -221,7 +227,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             $this->serviceMock,
             array(
                 'module' => 'Accounts',
-                'filter' => array(array("notes.name" => "Test 3 Note")),
+                'filter' => array(array('notes.name' => 'Test 3 Note')),
                 'fields' => 'id,name'
             )
         );
@@ -235,20 +241,20 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['sugar_config']['max_list_limit'] = $max_list_limit;
         $reply = $this->filterApi->filterList(
-                $this->serviceMock,
-                array(
-                        'module' => 'Accounts',
-                        'filter' => array(array("name" => array('$starts' => "TEST 1"))),
-                        'fields' => 'id,name',
-                        'max_num' => $max_num
-                )
+            $this->serviceMock,
+            array(
+                'module' => 'Accounts',
+                'filter' => array(array('name' => array('$starts' => 'TEST 1'))),
+                'fields' => 'id,name',
+                'max_num' => $max_num
+            )
         );
         $this->assertEquals($expected, $reply['next_offset'], 'Next offset is not set correctly');
         $this->assertEquals($expected, count($reply['records']), 'Returned wrong count of results');
-
     }
 
-    function providerMaxListAndNumLimit() {
+    public static function providerMaxListAndNumLimit()
+    {
         return array(
             array(
                 'max_list_limit' => 5,
@@ -275,7 +281,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'max_num' => -10,
                 'expected' => 1
             ),
-        );    
+        );
     }
 
     public function testSimpleFilterWithOffset()
@@ -296,7 +302,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             $this->serviceMock,
             array(
                 'module' => 'Accounts',
-                'filter' => array(array("name" => array('$starts' => "TEST 1"))),
+                'filter' => array(array('name' => array('$starts' => 'TEST 1'))),
                 'fields' => 'id,name',
                 'max_num' => '5',
                 'offset' => '5'
@@ -309,7 +315,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             $this->serviceMock,
             array(
                 'module' => 'Accounts',
-                'filter' => array(array("name" => array('$starts' => "TEST 1"))),
+                'filter' => array(array('name' => array('$starts' => 'TEST 1'))),
                 'fields' => 'id,name',
                 'max_num' => '5',
                 'offset' => '10'
@@ -322,7 +328,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             $this->serviceMock,
             array(
                 'module' => 'Accounts',
-                'filter' => array(array("name" => array('$starts' => "TEST 1"))),
+                'filter' => array(array('name' => array('$starts' => 'TEST 1'))),
                 'fields' => 'id,name',
             )
         );
@@ -338,8 +344,8 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'filter' => array(
                     array(
                         '$or' => array(
-                            array('name' => "TEST 7 Account"),
-                            array('name' => "TEST 17 Account"),
+                            array('name' => 'TEST 7 Account'),
+                            array('name' => 'TEST 17 Account'),
                         )
                     )
                 ),
@@ -359,8 +365,8 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'filter' => array(
                     array(
                         '$or' => array(
-                            array('name' => "TEST 7 Account"),
-                            array('name' => "TEST 17 Account"),
+                            array('name' => 'TEST 7 Account'),
+                            array('name' => 'TEST 17 Account'),
                         )
                     )
                 ),
@@ -380,8 +386,8 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'filter' => array(
                     array(
                         '$and' => array(
-                            array('name' => array('$starts' => "TEST 1")),
-                            array('billing_address_postalcode' => "70210"),
+                            array('name' => array('$starts' => 'TEST 1')),
+                            array('billing_address_postalcode' => '70210'),
                         )
                     )
                 ),
@@ -401,8 +407,8 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             array('module' => 'Accounts', 'filter' => array(), 'max_num' => '10')
         );
 
-        $this->assertNotEmpty($reply, "Empty filter returned no results.");
-        $this->assertEquals(10, $reply['next_offset'], "Empty filter did not return at least 10 results.");
+        $this->assertNotEmpty($reply, 'Empty filter returned no results.');
+        $this->assertEquals(10, $reply['next_offset'], 'Empty filter did not return at least 10 results.');
     }
 
     public function testEmptyFilters()
@@ -425,7 +431,8 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         ), $where, $q);
     }
 
-    public function testNotEmptyFilters(){
+    public function testNotEmptyFilters()
+    {
         $field = $this->equalTo('account_type');
         $bean = new Account();
         $q = new SugarQuery();
@@ -732,7 +739,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      *
-     * Test query exection with distinct/offset compensation
+     * Test query execution with distinct/offset compensation
      *
      * @covers FilterApi::runQuery
      * @covers FilterApi::parseQueryResults
@@ -905,8 +912,8 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $reply = $this->filterApi->filterList($this->serviceMock, $args);
 
-        $this->assertArrayHasKey('records', $reply, "Invalid reply");
-        $this->assertArrayHasKey(0, $reply['records'], "No records found");
+        $this->assertArrayHasKey('records', $reply, 'Invalid reply');
+        $this->assertArrayHasKey(0, $reply['records'], 'No records found');
 
         foreach ($expected as $field) {
             $this->assertArrayHasKey(
@@ -1045,7 +1052,11 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $q->from($bean);
         /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
         $where = $this->getMock('SugarQuery_Builder_Where', array('dateRange'), array($q));
-        $where->expects($this->once())->method('dateRange')->with($this->equalTo('date_entered'), $this->equalTo(''), $this->equalTo($bean));
+        $where->expects($this->once())->method('dateRange')->with(
+            $this->equalTo('date_entered'),
+            $this->equalTo(''),
+            $this->equalTo($bean)
+        );
         FilterApiMock::addFilters(array(
             array(
                 'date_entered' => array(
