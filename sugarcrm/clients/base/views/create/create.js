@@ -581,7 +581,7 @@
     /**
      * Using the model returned from the API call, build the success message
      * @param model
-     * @return {*}
+     * @return {string}
      */
     buildSuccessMessage: function(model) {
         var modelAttributes,
@@ -656,7 +656,7 @@
      * Merge the selected record with the data entered in the form
      * @param newModel
      * @param origAttributes
-     * @return {*}
+     * @return {Object}
      */
     extendModel: function (newModel, origAttributes) {
         var modelAttributes = _.clone(newModel.attributes);
@@ -673,7 +673,7 @@
 
     /**
      * Save the data entered in the form
-     * @return {*}
+     * @return {Object}
      */
     saveFormData: function () {
         this._origAttributes = _.clone(this.model.attributes);
