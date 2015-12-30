@@ -261,19 +261,18 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                             'options' => 'repeat_selector_dom',
                         ),
                         array(
-                            'label' => 'LBL_CALENDAR_DAYS',
                             'name' => 'repeat_days',
                             'type' => 'repeat-days',
                             'isMultiSelect' => true,
                         ),
                         array(
-                            'label' => 'LBL_CALENDAR_ORDINAL',
+                            'label' => ' ',
                             'name' => 'repeat_ordinal',
                             'type' => 'enum',
                             'options' => 'repeat_ordinal_dom',
                         ),
                         array(
-                            'label' => 'LBL_CALENDAR_UNIT',
+                            'label' => ' ',
                             'name' => 'repeat_unit',
                             'type' => 'enum',
                             'options' => 'repeat_unit_dom',
