@@ -12,6 +12,7 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 require_once('modules/ModuleBuilder/MB/MBModule.php');
 
@@ -95,7 +96,7 @@ class MBPackage{
         if (file_exists($packLangFilePath))
         {
 
-            require($packLangFilePath);
+            require FileLoader::validateFilePath($packLangFilePath);
         }
     }
 
@@ -264,7 +265,7 @@ function buildInstall($path){
     function load(){
         $path = $this->getPackageDir();
         if(file_exists($path .'/manifest.php')){
-            require($path . '/manifest.php');
+            require FileLoader::validateFilePath($path . '/manifest.php');
             if(!empty($manifest)){
                 $this->date_modified = $manifest['published_date'];
                 $this->is_uninstallable = $manifest['is_uninstallable'];
@@ -749,7 +750,7 @@ function buildInstall($path){
                 $mod_strings = array();
                 if (strcasecmp(substr($langFile, -4), ".php") != 0)
                     continue;
-                include("$langDir/$langFile");
+                include FileLoader::validateFilePath("$langDir/$langFile");
                 $out = "<?php \n // created: " . date('Y-m-d H:i:s') . "\n";
                 foreach($mod_strings as $lbl_key => $lbl_val )
                 {

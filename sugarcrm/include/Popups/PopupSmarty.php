@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,6 +9,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 require_once('include/ListView/ListViewSmarty.php');
 
 require_once('include/TemplateHandler/TemplateHandler.php');
@@ -239,7 +241,7 @@ class PopupSmarty extends ListViewSmarty{
 
 	    if(isset($this->_popupMeta)){
 			if(isset($this->_popupMeta['create']['formBase'])) {
-				require_once('modules/' . $this->seed->module_dir . '/' . $this->_popupMeta['create']['formBase']);
+				require_once FileLoader::validateFilePath('modules/' . $this->seed->module_dir . '/' . $this->_popupMeta['create']['formBase']);
 				$this->_create = true;
 			}
 		}

@@ -15,6 +15,7 @@ require_once('include/upload_file.php');
 
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 ////////////////
 ////  GLOBAL utility
@@ -464,7 +465,7 @@ function uninstallLangPack() {
  */
 if ( !function_exists('getLanguagePackName') ) {
 function getLanguagePackName($the_file) {
-    $app_list_strings = SugarAutoLoader::varFromInclude($the_file, 'app_list_strings');
+    $app_list_strings = FileLoader::varFromInclude($the_file, 'app_list_strings');
     if( isset( $app_list_strings["language_pack_name"] ) ){
         return( $app_list_strings["language_pack_name"] );
     }

@@ -9,6 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 class MBLanguage{
 		var $iTemplates = array();
 		var $templates = array();
@@ -18,6 +21,12 @@ class MBLanguage{
      */
     public $appListStrings = array();
 
+    /*
+     * Package path
+     * @var string
+     */
+    protected $packagePath;
+
     public function __construct($name, $path, $label, $key_name, $label_singular)
     {
         $this->path = $path;
@@ -25,6 +34,7 @@ class MBLanguage{
         $this->key_name = $key_name;
         $this->label = $label;
         $this->label_singular = $label_singular;
+        $this->packagePath = $this->getPackagePath($path);
     }
 
 		function load(){
@@ -42,7 +52,7 @@ class MBLanguage{
 			$d = dir($file);
 			while($e = $d->read()){
 				if(substr($e, 0, 1) != '.' && is_file($file . '/' . $e)){
-					include($file.'/'. $e);
+					include FileLoader::validateFilePath($file.'/'. $e);
 					if(empty($this->strings[$e])){
 
 						$this->strings[$e] = $mod_strings;
@@ -53,25 +63,26 @@ class MBLanguage{
 			}
 		}
 
-	    function loadAppListStrings($file){
-            if(!file_exists($file))return;
-			//we may not need this when loading in the app strings, but there is no harm
-			//in setting it.
-			$object_name = strtolower($this->key_name);
+    public function loadAppListStrings($file){
+        if (!file_exists($file)) {
+            return;
+        }
+        //we may not need this when loading in the app strings, but there is no harm
+        //in setting it.
+        $object_name = strtolower($this->key_name);
 
-			$d = dir($file);
-			while($e = $d->read()){
-				if(substr($e, 0, 1) != '.' && is_file($file . '/' . $e)){
-					include($file.'/'. $e);
-					if(empty($this->appListStrings[$e])){
-
-						$this->appListStrings[$e] = $app_list_strings;
-					}else{
-						$this->appListStrings[$e] = array_merge($this->appListStrings[$e], $app_list_strings);
-					}
-				}
-			}
-		}
+        $d = dir($file);
+        while ($e = $d->read()) {
+            if(substr($e, 0, 1) != '.' && is_file($file . '/' . $e)) {
+                include FileLoader::validateFilePath($file.'/'. $e);
+                if (empty($this->appListStrings[$e])) {
+                    $this->appListStrings[$e] = $app_list_strings;
+                } else {
+                    $this->appListStrings[$e] = array_merge($this->appListStrings[$e], $app_list_strings);
+                }
+            }
+        }
+    }
 
 		function generateModStrings(){
 			$this->strings = array();
@@ -123,7 +134,7 @@ class MBLanguage{
 					$this->loadAppListStrings($file);
 				}
 			}
-                        $this->loadAppListStrings($this->path . '/../../language/application');
+            $this->loadAppListStrings($this->packagePath . '/language/application');
 		}
 
     function save($key_name, $duplicate = false, $rename = false)
@@ -158,7 +169,7 @@ class MBLanguage{
             }
             write_array_to_file('mod_strings', $values, $save_path . '/' . $lang, 'w', $header);
         }
-        $app_save_path = $this->path . '/../../language/application';
+        $app_save_path = $this->packagePath . '/language/application';
         sugar_mkdir($app_save_path, null, true);
         $key_changed = ($this->key_name != $key_name);
 
@@ -167,7 +178,7 @@ class MBLanguage{
             $app_list_strings = array();
             $neededFile = $app_save_path . '/' . $lang;
             if (file_exists($neededFile)) {
-                include $neededFile;
+                include FileLoader::validateFilePath($neededFile);
             }
 
             if (!$duplicate) {
@@ -253,15 +264,17 @@ class MBLanguage{
 			copy_recursive($this->path.'/language/', $path . '/language/');
 		}
 
-		function loadTemplates() {
-			if(empty($this->templates)){
-				if (file_exists("$this->path/config.php")) {
-					include "$this->path/config.php";
-					$this->templates = $config['templates'];
-					$this->iTemplates = array();
-				}
-			}
-		}
+        public function loadTemplates()
+        {
+            if (empty($this->templates)) {
+                $configFile = $this->path . '/config.php';
+                if (file_exists($configFile)) {
+                    $config = FileLoader::varFromInclude($configFile, 'config');
+                    $this->templates = $config['templates'];
+                    $this->iTemplates = array();
+                }
+            }
+        }
 
 		/**
 		 * Reset the templates and load the language files again.  This is called from
@@ -280,14 +293,28 @@ class MBLanguage{
      * @param string $language Language to use to translate the label
      * @return string
      */
-    public function translate($label, $language = "en_us"){
-            $language = $language . ".lang.php";
-            if (isset($this->strings[$language][$label]))
-                return $this->strings[$language][$label];
-
-            if (isset($this->appListStrings[$language][$label]))
-                return $this->appListStrings[$language][$label];
-
-            return $label;
+    public function translate($label, $language = "en_us")
+    {
+        $language = $language . ".lang.php";
+        if (isset($this->strings[$language][$label])) {
+            return $this->strings[$language][$label];
         }
+
+        if (isset($this->appListStrings[$language][$label])) {
+            return $this->appListStrings[$language][$label];
+        }
+
+        return $label;
+    }
+
+    /**
+     * Get package path from module path
+     * @param string $path Module path
+     * @return false|string
+     */
+    protected function getPackagePath($path)
+    {
+        $split = preg_split('#/#', $this->path);
+        return isset($split[3]) ? MB_PACKAGE_PATH . '/' . $split[3] : false;
+    }
 }

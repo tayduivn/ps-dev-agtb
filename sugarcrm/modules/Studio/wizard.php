@@ -14,6 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  // $Id: wizard.php 18703 2006-12-15 09:42:43Z majed $
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 require_once 'modules/Studio/config.php';
 require_once 'modules/Studio/wizards/StudioWizard.php';
@@ -21,7 +22,7 @@ require_once 'modules/Studio/wizards/StudioWizard.php';
 $wizard = InputValidation::getService()->getValidInputRequest('wizard', null, 'StudioWizard');
 
 if (SugarAutoLoader::fileExists('modules/Studio/wizards/'. $wizard . '.php')) {
-    require_once SugarAutoLoader::validateFilePath('modules/Studio/wizards/'. $wizard . '.php');
+    require_once FileLoader::validateFilePath('modules/Studio/wizards/'. $wizard . '.php');
     $thewiz = new $wizard();
 } else {
     unset($_SESSION['studio']['lastWizard']);
