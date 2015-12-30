@@ -856,8 +856,7 @@ class ModuleScanner{
  */
 function MSLoadManifest($manifest_file)
 {
-	include( $manifest_file );
+	include SugarAutoLoader::validateFilePath($manifest_file, true);
 	return array($manifest, $installdefs);
 }
 
-?>

@@ -113,7 +113,7 @@ class ViewQuickcreate extends ViewAjax
         loadParentView('edit');
 
 		if(file_exists('modules/'.$module.'/views/view.edit.php')) {
-            SugarAutoLoader::includeFile('modules/'.$module.'/views/view.edit.php');
+            include SugarAutoLoader::validateFilePath('modules/'.$module.'/views/view.edit.php');
 
             $c = $module . 'ViewEdit';
 

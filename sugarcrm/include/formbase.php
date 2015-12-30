@@ -464,7 +464,7 @@ function add_to_prospect_list($query_panel,$parent_module,$parent_type,$parent_i
 
 
     if (!class_exists($parent_type)) {
-        SugarAutoLoader::requireFileOnce('modules/'.$parent_module.'/'.$parent_type.'.php');
+        require_once SugarAutoLoader::validateFilePath('modules/'.$parent_module.'/'.$parent_type.'.php');
     }
     $focus = new $parent_type();
     $focus->retrieve($parent_id);

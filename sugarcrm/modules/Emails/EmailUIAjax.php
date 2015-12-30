@@ -13,6 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Util\Serialized;
 
 $request = InputValidation::getService();
 
@@ -352,7 +353,7 @@ $request = InputValidation::getService();
 
         $uid = $request->getValidInputRequest('uid', 'Assert\Guid');
         $ieId = $request->getValidInputRequest('ieId', 'Assert\Guid');
-        $mailbox = $request->getValidInputRequest('mailbox', 'Assert\Guid');
+        $mailbox = $request->getValidInputRequest('mailbox');
         $qcModule = $request->getValidInputRequest('qc_module', 'Assert\Mvc\ModuleName');
 
         if(!empty($qcModule)) {

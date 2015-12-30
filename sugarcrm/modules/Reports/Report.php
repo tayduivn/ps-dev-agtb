@@ -2491,7 +2491,7 @@ class Report
             } // else
         }
 
-        $record = $this->request->getValidInputRequest('record', 'Assert\Guid', -1);
+        $record = $this->request->getValidInputRequest('record', 'Assert\Guid', -1) ?: -1;
         $assignedUserId = $this->request->getValidInputRequest('assigned_user_id', 'Assert\Guid');
 
         require_once('include/formbase.php');

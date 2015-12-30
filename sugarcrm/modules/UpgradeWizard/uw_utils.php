@@ -1813,7 +1813,7 @@ function getImageForType($type) {
 
 if ( !function_exists('getLanguagePackName') ) {
 function getLanguagePackName($the_file) {
-    require_once("$the_file");
+    $app_list_strings = SugarAutoLoader::varFromInclude($the_file, 'app_list_strings');
     if(isset($app_list_strings["language_pack_name"])) {
         return($app_list_strings["language_pack_name"]);
     }

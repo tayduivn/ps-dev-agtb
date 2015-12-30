@@ -69,7 +69,7 @@ var $useForSubpanel = true;
         if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
             $return_action = $this->request->getValidInputRequest('return_action');
             $this->ss->assign('RETURN_ACTION', $return_action);
-            $record = $this->request->getValidInputRequest('return_action', 'Assert\Guid');
+            $record = $this->request->getValidInputRequest('record', 'Assert\Guid');
             $this->ss->assign('RETURN_ID', $record);
             $this->bean->id = "";
             $this->bean->user_name = "";

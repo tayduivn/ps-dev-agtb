@@ -230,7 +230,7 @@ class SugarController
             $this->record = $this->request->getValidInputRequest('record', 'Assert\Guid');
         }
         if (!empty($_REQUEST['view'])) {
-            $this->view = $this->request->getValidInputRequest('view', 'Assert\ComponentName');
+            $this->view = $this->request->getValidInputRequest('view');
         }
         if (!empty($_REQUEST['return_module'])) {
             $this->return_module = $this->request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');

@@ -9,13 +9,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id$
-
 function prep_edit_task_in_grid(the_form)
 {
 	the_form.return_module.value='ProjectTask';
 	the_form.return_action.value='DetailView';
-	the_form.return_id.value='{id}';
+    the_form.return_id.value = the_form.record.value;
 	the_form.module.value='Project';
 	the_form.action.value='EditGridView';
 }
