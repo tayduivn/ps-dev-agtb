@@ -62,39 +62,32 @@ class TabController
     {
         global $moduleList;
 
-        static $system_tabs_result = null;
+        $system_tabs_result = null;
 
-        // if the value is not already cached, then retrieve it.
-        if (empty($system_tabs_result) || !self::$isCacheValid) {
-
-		$administration = Administration::getSettings('MySettings', true);
-		if(isset($administration->settings) && isset($administration->settings['MySettings_tab'])){
-			$tabs = $administration->settings['MySettings_tab'];
-			$trimmed_tabs = trim($tabs);
-			//make sure serialized string is not empty
-			if (!empty($trimmed_tabs)){
+        $administration = Administration::getSettings('MySettings', true);
+        if (isset($administration->settings) && isset($administration->settings['MySettings_tab'])) {
+            $tabs = $administration->settings['MySettings_tab'];
+            $trimmed_tabs = trim($tabs);
+            //make sure serialized string is not empty
+            if (!empty($trimmed_tabs)) {
                 // TODO: decode JSON rather than base64
-				$tabs = base64_decode($tabs);
-				$tabs = unserialize($tabs);
-				//Ensure modules saved in the prefences exist.
-				foreach($tabs as $id => $tab) {
+                $tabs = base64_decode($tabs);
+                $tabs = unserialize($tabs);
+                //Ensure modules saved in the prefences exist.
+                foreach ($tabs as $id => $tab) {
 					if (!in_array($tab, $moduleList))
-						unset($tabs[$id]);
-				}
-				if ($filter) {
-					$tabs = SugarACL::filterModuleList($tabs, 'access', true);
-				}
-				$system_tabs_result = $this->get_key_array($tabs);
-			}else{
-				$system_tabs_result = $this->get_key_array($moduleList);
-			}
-		}
-		else
-		{
-			$system_tabs_result = $this->get_key_array($moduleList);
-		}
-        self::$isCacheValid = true;
-	}
+                        unset($tabs[$id]);
+                }
+                if ($filter) {
+                    $tabs = SugarACL::filterModuleList($tabs, 'access', true);
+                }
+                $system_tabs_result = $this->get_key_array($tabs);
+            } else {
+                $system_tabs_result = $this->get_key_array($moduleList);
+            }
+        } else {
+            $system_tabs_result = $this->get_key_array($moduleList);
+        }
 
         return $system_tabs_result;
     }
