@@ -121,35 +121,31 @@ describe('Home Menu', function() {
         });
 
         describe('focusing the recently viewed toggle after render by calling view.populateRecentlyViewed()', function() {
-            var onFocus;
+            var focusStub;
 
             beforeEach(function() {
-                onFocus = sinon.spy();
-                sinon.collection.stub(view, '_renderPartial', function() {
-                    $('body').append(view.$el.append('<a href="javascript:void(0);" data-toggle="recently-viewed" tabindex="-1">foo</a>'));
-                    view.$('[data-toggle="recently-viewed"]').on('focus', onFocus);
-                }).withArgs('recently-viewed');
+                focusStub = sinon.collection.stub(view, '_focusRecentlyViewedToggle');
             });
 
             it('should focus the toggle when the menu is open and the parameter is true', function() {
                 sinon.collection.stub(view, 'isOpen').returns(true);
                 view.render();
                 view.populateRecentlyViewed(true);
-                expect(onFocus).toHaveBeenCalled();
+                expect(focusStub).toHaveBeenCalled();
             });
 
             it('should not focus the toggle when the menu is open and the parameter is false', function() {
                 sinon.collection.stub(view, 'isOpen').returns(true);
                 view.render();
                 view.populateRecentlyViewed(false);
-                expect(onFocus).not.toHaveBeenCalled();
+                expect(focusStub).not.toHaveBeenCalled();
             });
 
             it('should not focus the toggle when the menu is closed', function() {
                 sinon.collection.stub(view, 'isOpen').returns(false);
                 view.render();
                 view.populateRecentlyViewed(false);
-                expect(onFocus).not.toHaveBeenCalled();
+                expect(focusStub).not.toHaveBeenCalled();
             });
         });
 
