@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 use Sabre\VObject;
 use Sabre\VObject\Component as SabreComponent;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper as DavHelper;
@@ -1167,7 +1168,7 @@ class CalDavEventCollection extends SugarBean
 
     /**
      * @param string $data
-     * @return array
+     * @return mixed returns array with difference or false if data is the same as current object
      */
     public function getDiffStructure($data)
     {
@@ -1235,31 +1236,33 @@ class CalDavEventCollection extends SugarBean
                 }
             }
         } else {
-            if ($parentEvent->getTitle()) {
-                $changedFields['title'] = array($parentEvent->getTitle());
-            }
-            if ($parentEvent->getDescription()) {
-                $changedFields['description'] = array($parentEvent->getDescription());
-            }
-            if ($parentEvent->getLocation()) {
-                $changedFields['location'] = array($parentEvent->getLocation());
-            }
-            if ($parentEvent->getStatus()) {
-                $changedFields['status'] = array($parentEvent->getStatus());
-            }
+            $changedFields['title'] = array($parentEvent->getTitle());
+            $changedFields['description'] = array($parentEvent->getDescription());
+            $changedFields['location'] = array($parentEvent->getLocation());
+            $changedFields['status'] = array($parentEvent->getStatus());
             if ($parentEvent->getStartDate()) {
                 $changedFields['date_start'] = array($parentEvent->getStartDate()->asDb());
             }
             if ($parentEvent->getEndDate()) {
                 $changedFields['date_end'] = array($parentEvent->getEndDate()->asDb());
             }
+            $filter = array_filter($changedFields, function($set) {
+                return $set[0];
+            });
+            if (!$filter) {
+                $changedFields = array();
+            }
             $participants = $parentEvent->getParticipants();
+            if ($participants) {
+                $invites['added'] = array();
+            }
             foreach ($participants as $participant) {
-                if (!isset($invites['added'])) {
-                    $invites['added'] = array();
-                }
                 $invites['added'][] = $participantHelper->participantToInvite($participant);
             }
+        }
+
+        if (!$changedFields && !$invites) {
+            return false;
         }
 
         $beanData = array(

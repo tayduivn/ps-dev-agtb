@@ -54,7 +54,7 @@ abstract class Base implements RunnableInterface
 
     /**
      * return CalDav handler for export processing
-     * @return Handler
+     * @return CalDavHandler
      */
     protected function getHandler()
     {

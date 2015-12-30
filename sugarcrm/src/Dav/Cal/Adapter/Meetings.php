@@ -21,7 +21,7 @@ use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException;
  * Class Meetings
  * @package Sugarcrm\Sugarcrm\Dav\Cal\Adapter
  */
-class Meetings extends CalDavAbstractAdapter implements AdapterInterface
+class Meetings extends CalDavAbstractAdapter
 {
     /**
      * Updates caldav bean and returns true if anything was changed

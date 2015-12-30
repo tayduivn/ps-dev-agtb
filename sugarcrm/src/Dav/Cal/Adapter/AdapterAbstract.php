@@ -22,7 +22,7 @@ use Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event;
  *
  * @package Sugarcrm\Sugarcrm\Dav\Cal\Adapter
  */
-abstract class AdapterAbstract
+abstract class AdapterAbstract implements AdapterInterface
 {
     /**
      * @param \Call|\Meeting|\SugarBean $bean
@@ -67,6 +67,28 @@ abstract class AdapterAbstract
         } else {
             $changedFields = $this->getBeanFetchedRow($bean);
         }
+        $changedFields = array_intersect_key($changedFields, array(
+            'name' => true,
+            'location' => true,
+            'description' => true,
+            'deleted' => true,
+            'date_start' => true,
+            'date_end' => true,
+            'status' => true,
+            'reminder_time' => true,
+            'repeat_type' => true,
+            'repeat_interval' => true,
+            'repeat_dow' => true,
+            'repeat_until' => true,
+            'repeat_count' => true,
+            'repeat_parent_id' => true,
+        ));
+
+        $changedInvites = $participantsHelper->getInvitesDiff($invitesBefore, $invitesAfter);
+
+        if (!$changedFields && !$changedInvites) {
+            return false;
+        }
 
         $beanData = array(
             $bean->module_name,
@@ -76,7 +98,167 @@ abstract class AdapterAbstract
             $insert,
         );
 
-        return array($beanData, $changedFields, $participantsHelper->getInvitesDiff($invitesBefore, $invitesAfter));
+        return array($beanData, $changedFields, $changedInvites);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function verifyImportAfterExport(array $exportData, array $importData, \CalDavEventCollection $collection)
+    {
+        list($exportBean, $exportFields, $exportInvites) = $exportData;
+        list($importBean, $importFields, $importInvites) = $importData;
+
+        if (isset($importFields['title']) && isset($exportFields['name'])) {
+            if ($importFields['title'][0] == $exportFields['name'][0]) {
+                unset($importFields['title']);
+            }
+        }
+        if (isset($importFields['location']) && isset($exportFields['location'])) {
+            if ($importFields['location'][0] == $exportFields['location'][0]) {
+                unset($importFields['location']);
+            }
+        }
+        if (isset($importFields['description']) && isset($exportFields['description'])) {
+            if ($importFields['description'][0] == $exportFields['description'][0]) {
+                unset($importFields['description']);
+            }
+        }
+        if (isset($importFields['status']) && isset($exportFields['status'])) {
+            $map = new CalDavStatus\EventMap();
+            $status = $map->getCalDavValue($exportFields['status'][0], $importFields['status'][0]);
+            if ($importFields['status'][0] == $status) {
+                unset($importFields['status']);
+            }
+        }
+        if (isset($importFields['date_start']) && isset($exportFields['date_start'])) {
+            if ($importFields['date_start'][0] == $exportFields['date_start'][0]) {
+                unset($importFields['date_start']);
+            }
+        }
+        if (isset($importFields['date_end']) && isset($exportFields['date_end'])) {
+            if ($importFields['date_end'][0] == $exportFields['date_end'][0]) {
+                unset($importFields['date_end']);
+            }
+        }
+
+        foreach ($importFields as $field => $diff) {
+            if (isset($diff[1])) {
+                continue;
+            }
+            if ($diff[0] === null) {
+                unset($importFields[$field]);
+            }
+        }
+
+        foreach ($importInvites as $action => $list) {
+            if (empty($exportInvites[$action])) {
+                continue;
+            }
+            foreach ($list as $k => $importInvitee) {
+                foreach ($exportInvites[$action] as $exportInvitee) {
+                    $invitee = $exportInvitee;
+                    $invitee[2] = $importInvitee[2]; // we don't care about real status
+                    if ($importInvitee === $invitee) {
+                        unset($importInvites[$action][$k]);
+                        continue;
+                    }
+                }
+            }
+            if (!$importInvites[$action]) {
+                unset($importInvites[$action]);
+            }
+        }
+
+        if ($importFields || $importInvites) {
+            return array(
+                $importBean,
+                $importFields,
+                $importInvites,
+            );
+        }
+
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function verifyExportAfterImport(array $importData, array $exportData, \SugarBean $bean)
+    {
+        list($exportBean, $exportFields, $exportInvites) = $exportData;
+        list($importBean, $importFields, $importInvites) = $importData;
+
+        if (isset($exportFields['name']) && isset($importFields['title'])) {
+            if ($exportFields['name'][0] == $importFields['title'][0]) {
+                unset($exportFields['name']);
+            }
+        }
+        if (isset($exportFields['location']) && isset($importFields['location'])) {
+            if ($exportFields['location'][0] == $importFields['location'][0]) {
+                unset($exportFields['location']);
+            }
+        }
+        if (isset($exportFields['description']) && isset($importFields['description'])) {
+            if ($exportFields['description'][0] == $importFields['description'][0]) {
+                unset($exportFields['description']);
+            }
+        }
+        if (isset($exportFields['status']) && isset($importFields['status'])) {
+            $map = new CalDavStatus\EventMap();
+            $status = $map->getSugarValue($importFields['status'][0], $exportFields['status'][0]);
+            if ($exportFields['status'][0] == $status) {
+                unset($exportFields['status']);
+            }
+        }
+        if (isset($exportFields['date_start']) && isset($importFields['date_start'])) {
+            if ($exportFields['date_start'][0] == $importFields['date_start'][0]) {
+                unset($exportFields['date_start']);
+            }
+        }
+        if (isset($exportFields['date_end']) && isset($importFields['date_end'])) {
+            if ($exportFields['date_end'][0] == $importFields['date_end'][0]) {
+                unset($exportFields['date_end']);
+            }
+        }
+
+        foreach ($exportFields as $field => $diff) {
+            if (count($diff) > 1) {
+                continue;
+            }
+            if ($diff[0] === null) {
+                unset($exportFields[$field]);
+            }
+        }
+
+        foreach ($exportInvites as $action => $list) {
+            if (empty($importInvites[$action])) {
+                continue;
+            }
+            foreach ($list as $k => $importInvitee) {
+                foreach ($importInvites[$action] as $exportInvitee) {
+                    $invitee = $exportInvitee;
+                    $invitee[2] = $importInvitee[2]; // we don't care about real status
+                    if ($importInvitee === $invitee) {
+                        unset($exportInvites[$action][$k]);
+                        continue;
+                    }
+                }
+            }
+            if (!$exportInvites[$action]) {
+                unset($exportInvites[$action]);
+            }
+        }
+
+        if ($exportFields || $exportInvites) {
+            return array(
+                $exportBean,
+                $exportFields,
+                $exportInvites,
+            );
+        }
+
+        return false;
     }
 
     /**
@@ -475,11 +657,9 @@ abstract class AdapterAbstract
         $existingLinks = array();
         foreach ($links as $link) {
             if ($bean->load_relationship($link)) {
-                $bean->$link->resetLoaded();
                 foreach ($bean->$link->getBeans() as $existingBean) {
                     $existingLinks[$existingBean->module_name][$existingBean->id] = true;
                 }
-
             }
         }
 
@@ -597,7 +777,7 @@ abstract class AdapterAbstract
                 );
                 $diff = $beanDateEnd->diff($beanDateStart);
                 $bean->duration_hours = $diff->h + (int)$diff->format('a') * 24;
-                $bean->duration_minutes = $diff->m;
+                $bean->duration_minutes = $diff->i;
             }
             return true;
         }
@@ -626,7 +806,7 @@ abstract class AdapterAbstract
                 );
                 $diff = $beanDateEnd->diff($beanDateStart);
                 $bean->duration_hours = $diff->h + (int)$diff->format('a') * 24;
-                $bean->duration_minutes = $diff->m;
+                $bean->duration_minutes = $diff->i;
             }
             return true;
         }
@@ -654,7 +834,6 @@ abstract class AdapterAbstract
         $existingLinks = array();
         foreach ($links as $link) {
             if ($bean->load_relationship($link)) {
-                $bean->$link->resetLoaded();
                 foreach ($bean->$link->getBeans() as $existingBean) {
                     if (!isset($existingLinks[$existingBean->module_name])) {
                         $existingLinks[$existingBean->module_name] = array();
@@ -698,7 +877,12 @@ abstract class AdapterAbstract
             }
             foreach ($existingLinks as $module => $ids) {
                 if (method_exists($bean, 'set' . substr($module, 0, -1) . 'invitees')) {
-                    call_user_func(array($bean, 'set' . substr($module, 0, -1) . 'invitees'), array_keys($ids));
+                    call_user_func_array(array($bean, 'set' . substr($module, 0, -1) . 'invitees'), array(
+                        array_keys($ids),
+                        array(
+                            0 => true, // trick to delete everybody if $ids is empty
+                        ),
+                    ));
                 }
             }
         }

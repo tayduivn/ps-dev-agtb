@@ -24,6 +24,16 @@ use \Sugarcrm\Sugarcrm\Dav\Cal\Handler as CalDavHandler;
 class Handler
 {
     /**
+     * @var callable
+     */
+    public static $importHandler = null;
+
+    /**
+     * @var callable
+     */
+    public static $exportHandler = null;
+
+    /**
      * @param \CalDavEventCollection $bean
      * @param string $calDavData
      * @return bool success of operation
@@ -34,11 +44,17 @@ class Handler
             return false;
         }
 
-        $diff = $bean->getDiffStructure($calDavData);
-        if ($diff[1] || $diff[2]) {
+        $preparedData = $bean->getDiffStructure($calDavData);
+        if (is_callable(static::$importHandler)) {
+            call_user_func_array(static::$importHandler, array(
+                $preparedData,
+                $bean,
+            ));
+        } elseif ($preparedData) {
             $saveCounter = $bean->getSynchronizationObject()->setSaveCounter();
-            $this->getManager()->calDavImport($diff, $saveCounter);
+            $this->getManager()->calDavImport($preparedData, $saveCounter);
         }
+        static::$importHandler = null;
         return true;
     }
 
@@ -69,12 +85,16 @@ class Handler
             $invitesAfter,
             $insert
         );
-        if ($preparedData[1] || $preparedData[2]) {
-            $handler = $this->getCalDavHandler();
-            $event = $handler->getDavBean($bean);
-            $saveCounter = $event->getSynchronizationObject()->setSaveCounter();
+        if (is_callable(static::$exportHandler)) {
+            call_user_func_array(static::$exportHandler, array(
+                $preparedData,
+                $this->getCalDavHandler()->getDavBean($bean),
+            ));
+        } elseif ($preparedData) {
+            $saveCounter = $this->getCalDavHandler()->getDavBean($bean)->getSynchronizationObject()->setSaveCounter();
             $this->getManager()->calDavExport($preparedData, $saveCounter);
         }
+        static::$exportHandler = null;
         return true;
     }
 
