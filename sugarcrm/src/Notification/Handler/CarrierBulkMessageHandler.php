@@ -46,7 +46,7 @@ class CarrierBulkMessageHandler extends BaseHandler
      * @param string $carrierName carrier name
      * @param array $usersOptions list of user options
      */
-    public function initialize(EventInterface $event, $carrierName, array $usersOptions)
+    protected function initialize(EventInterface $event, $carrierName, array $usersOptions)
     {
         $this->event = $event;
         $this->carrierName =  $carrierName;
