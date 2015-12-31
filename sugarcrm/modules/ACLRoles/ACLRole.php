@@ -307,7 +307,7 @@ function mark_relationships_deleted($id){
             SET date_modified = %s
             WHERE deleted = 0 AND
               id IN (
-                    SELECT id
+                    SELECT user_id
                     FROM acl_roles_users
                     WHERE deleted = 0
                         AND role_id = %s
