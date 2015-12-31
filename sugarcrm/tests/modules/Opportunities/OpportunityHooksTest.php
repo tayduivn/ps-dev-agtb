@@ -203,10 +203,49 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($opp->commit_stage, $expected);
     }
 
-    public function beforeSaveIncludedCheckProvider(){
+    public function beforeSaveIncludedCheckProvider()
+    {
         return array(
             array('Closed Won', 'exclude', 100, 'include'),
             array('Closed Lost', 'include', 0, 'exclude')
+        );
+    }
+
+    /**
+     * @dataProvider fixWorksheetAccountAssignmentProvider
+     */
+    public function testfixWorksheetAccountAssignment($useRlis, $useForecast, $args, $result)
+    {
+        $hookMock = new MockOpportunityHooks();
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+
+        $hookMock::$bypassSaveWorksheet = true;
+        $hookMock::$useRevenueLineItems = $useRlis;
+        $hookMock::$forecastIsSetup = $useForecast;
+
+        $returnVal = $hookMock::fixWorksheetAccountAssignment($opp, '', $args);
+        $this->assertEquals($returnVal, $result);
+    }
+
+    public function fixWorksheetAccountAssignmentProvider()
+    {
+        return array(
+            array(false, true, array('relationship' => 'accounts_opportunities', 'related_id' => 'foo'), true),
+            array(true, true, array('relationship' => 'accounts_opportunities'), false),
+            array(true, false, array('relationship' => 'accounts_opportunities'), false),
+            array(false, false, array('relationship' => 'accounts_opportunities'), false),
+            array(true, true, array('relationship' => 'foo'), false),
+            array(false, true, array('relationship' => 'foo'), false),
+            array(true, false, array('relationship' => 'foo'), false),
+            array(false, false, array('relationship' => 'foo'), false),
+            array(true, true, array(), false),
+            array(false, true, array(), false),
+            array(true, false, array(), false),
+            array(false, false, array(), false),
+            array(true, true, null, false),
+            array(false, true, null, false),
+            array(true, false, null, false),
+            array(false, false, null, false),
         );
     }
 }
@@ -214,6 +253,8 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
 class MockOpportunityHooks extends OpportunityHooks
 {
     public static $useRevenueLineItems = false;
+    public static $forecastIsSetup = true;
+    public static $bypassSaveWorksheet = false;
 
     public static function useRevenueLineItems()
     {
@@ -223,6 +264,15 @@ class MockOpportunityHooks extends OpportunityHooks
 
     public static function isForecastSetup()
     {
-        return true;
+        return self::$forecastIsSetup;
+    }
+
+    public static function saveWorksheet($bean, $event, $args)
+    {
+        if (self::$bypassSaveWorksheet) {
+            return true;
+        } else {
+            return parent::saveWorksheet($bean, $event, $args);
+        }
     }
 }

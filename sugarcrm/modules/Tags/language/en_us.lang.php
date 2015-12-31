@@ -36,4 +36,9 @@ $mod_strings = array(
     'LBL_PRODUCTTEMPLATES_SUBPANEL_TITLE' => 'Product Catalog',
     'LBL_PRODUCTCATEGORIES_SUBPANEL_TITLE' => 'Product Categories',
     'EXCEPTION_DUPLICATE_TAG_FOUND' => 'Duplicate tag found. Tags are case insensitive and must be unique.',
+    'LBL_EXPORT_ASSIGNED_USER_ID' => 'Assigned User ID',
+    'LBL_EXPORT_MODIFIED_USER_ID' => 'Modified By ID',
+    'LBL_EXPORT_CREATED_BY' => 'Created By ID',
+    'LBL_EXPORT_CREATED_BY_NAME' => 'Created By User Name',
+    'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
 );

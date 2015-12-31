@@ -42,7 +42,15 @@ describe('Base.Layout.SubpanelWithMassupdate', function() {
             {
                 name: 'test-name',
                 expected: false
-            }
+            },
+            {
+                $el: $('<div></div>').addClass('subpanel-header'),
+                expected: true
+            },
+            {
+                $el: $('<div></div>').addClass('test-class'),
+                expected: false
+            },
         ], function(component) {
             it('should stop toggle with certain criteria', function() {
                 var result = layout._stopComponentToggle(component);

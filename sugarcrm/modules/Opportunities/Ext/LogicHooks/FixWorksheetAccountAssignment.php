@@ -10,10 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$apiSettings = array(
-    'minVersion' => 10,
-    'maxVersion' => 10,
-    'minClientVersions' => array(
-        'nomad' => '2.9.1',
-    ),
+
+/**
+ * After we update the relationship of an opportunity, we need to resave so the worksheet gets updated as well.
+ */
+$hook_array['after_relationship_add'][] = array(
+    10,
+    'fixWorksheetAccountAssignment',
+    'modules/Opportunities/OpportunityHooks.php',
+    'OpportunityHooks',
+    'fixWorksheetAccountAssignment',
 );

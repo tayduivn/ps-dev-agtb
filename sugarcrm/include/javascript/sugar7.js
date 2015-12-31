@@ -272,7 +272,8 @@
                         layout: 'config-drawer',
                         context: {
                             module: module,
-                            create: true
+                            create: true,
+                            fromRouter: true
                         }
                     }, _.bind(function(context, model) {
                         var module = context.get("module") || model.module,
@@ -425,7 +426,8 @@
          * present).
          *
          * @param {Object} options Object containing routing information.
-         * @return {Boolean} Returns `false` if redirected, `true` otherwise.
+         * @return {boolean} Returns `false` if it will redirect to bwc, `true`
+         *   otherwise.
          */
         bwcRedirect: function(options) {
             if (options && _.isArray(options.args) && options.args[0]) {
@@ -447,7 +449,10 @@
                         redirect += '&record=' + id;
                     }
 
-                    app.router.navigate(redirect, {trigger: true, replace: true});
+                    // let the entire before flow to finish before triggering a new navigate
+                    _.defer(function() {
+                        app.router.navigate(redirect, {trigger: true, replace: true});
+                    });
                     return false;
                 }
             }
@@ -476,8 +481,8 @@
                 accessCheck = checkAccessRoutes[route];
 
             if (accessCheck && !app.acl.hasAccess(accessCheck, module)) {
-                app.controller.loadView({
-                    layout: 'access-denied'
+                _.defer(function() {
+                    app.controller.loadView({layout: 'access-denied'});
                 });
                 return false;
             }
