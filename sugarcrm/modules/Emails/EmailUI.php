@@ -12,12 +12,12 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+use Sugarcrm\Sugarcrm\Util\Serialized;
 
 require_once("vendor/ytree/Tree.php");
 require_once("vendor/ytree/ExtNode.php");
 require_once("include/SugarFolders/SugarFolders.php");
-
-use Sugarcrm\Sugarcrm\Util\Serialized;
 
 /**
  * Email GUI class
@@ -1359,7 +1359,7 @@ eoq;
 			$cache = sugar_cached("modules/Emails/{$ie->id}/messages/{$ie->mailbox}{$uid}.php");
 		}
 		if(file_exists($cache)) {
-			$cacheFile = SugarAutoLoader::varFromInclude($cache, 'cacheFile'); // provides $cacheFile
+			$cacheFile = FileLoader::varFromInclude($cache, 'cacheFile'); // provides $cacheFile
 			$metaOut = unserialize($cacheFile['out']);
 			$meta = $metaOut['meta']['email'];
 			if (isset($meta['attachments'])) {
@@ -3150,7 +3150,7 @@ eoq;
 		$cacheFile = array();
 
 		if(file_exists($cacheFilePath)) {
-			$cacheFile = SugarAutoLoader::varFromInclude($cacheFilePath, 'cacheFile'); // provides $cacheFile
+			$cacheFile = FileLoader::varFromInclude($cacheFilePath, 'cacheFile'); // provides $cacheFile
 
 			if(isset($cacheFile[$key])) {
 				$ret = unserialize($cacheFile[$key]);
@@ -3182,7 +3182,7 @@ eoq;
 		$cacheFile = array();
 
 		if(file_exists($cacheFilePath)) {
-			$cacheFile = SugarAutoLoader::varFromInclude($cacheFilePath, 'cacheFile'); // provides $cacheFile['timestamp']
+			$cacheFile = FileLoader::varFromInclude($cacheFilePath, 'cacheFile'); // provides $cacheFile['timestamp']
 
 			if(isset($cacheFile['timestamp'])) {
 				$GLOBALS['log']->debug("EMAILUI: found timestamp [ {$cacheFile['timestamp']} ]");
@@ -3210,7 +3210,7 @@ eoq;
 		$cacheFile = array();
 
 		if(file_exists($cacheFilePath)) {
-			$cacheFile = SugarAutoLoader::varFromInclude($cacheFilePath, 'cacheFile'); // provides $cacheFile['timestamp']
+			$cacheFile = FileLoader::varFromInclude($cacheFilePath, 'cacheFile'); // provides $cacheFile['timestamp']
 
 			if(isset($cacheFile['timestamp'])) {
 				$cacheFile['timestamp'] = strtotime('now');

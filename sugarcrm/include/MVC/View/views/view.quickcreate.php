@@ -12,6 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 require_once('include/MVC/View/views/view.ajax.php');
 require_once('include/EditView/EditView2.php');
 
@@ -113,7 +115,7 @@ class ViewQuickcreate extends ViewAjax
         loadParentView('edit');
 
 		if(file_exists('modules/'.$module.'/views/view.edit.php')) {
-            include SugarAutoLoader::validateFilePath('modules/'.$module.'/views/view.edit.php');
+            include FileLoader::validateFilePath('modules/'.$module.'/views/view.edit.php');
 
             $c = $module . 'ViewEdit';
 

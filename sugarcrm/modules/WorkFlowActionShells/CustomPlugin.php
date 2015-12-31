@@ -12,6 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 // Used for custom plugins
 if (!empty($_REQUEST['plugin_action']) && !empty($_REQUEST['plugin_module'])) {
@@ -23,7 +24,7 @@ if (!empty($_REQUEST['plugin_action']) && !empty($_REQUEST['plugin_module'])) {
     $plugin = 'custom/workflow/plugins/'.$module.'/'.$action.'.php';
 
     if (SugarAutoLoader::existing($plugin)) {
-        include_once SugarAutoLoader::validateFilePath($plugin);
+        include_once FileLoader::validateFilePath($plugin);
     } else {
         echo "custom plugin file not found";
     }

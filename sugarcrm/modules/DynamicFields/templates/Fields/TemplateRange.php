@@ -13,6 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 class TemplateRange extends TemplateText
 {
@@ -201,11 +202,11 @@ class TemplateRange extends TemplateText
 		{
 				if(file_exists('custom/modules/'.$module.'/metadata/SearchFields.php'))
 			    {
-                    require SugarAutoLoader::validateFilePath('custom/modules/'.$module.'/metadata/SearchFields.php');
+                    require FileLoader::validateFilePath('custom/modules/'.$module.'/metadata/SearchFields.php');
                 } else if (file_exists('modules/'.$module.'/metadata/SearchFields.php')) {
-                	require SugarAutoLoader::validateFilePath('modules/'.$module.'/metadata/SearchFields.php');
+                	require FileLoader::validateFilePath('modules/'.$module.'/metadata/SearchFields.php');
                 } else if (file_exists('custom/modulebuilder/' . $package . '/modules/' . $module . '/metadata/SearchFields.php')) {
-                	require SugarAutoLoader::validateFilePath('custom/modulebuilder/' . $package . '/modules/' . $module . '/metadata/SearchFields.php');
+                	require FileLoader::validateFilePath('custom/modulebuilder/' . $package . '/modules/' . $module . '/metadata/SearchFields.php');
                 }
 
     			foreach($fields as $field_name=>$field)
