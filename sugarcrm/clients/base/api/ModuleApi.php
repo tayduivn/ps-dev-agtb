@@ -18,6 +18,7 @@ class ModuleApi extends SugarApi {
 
     /** @var RelateRecordApi */
     protected $relateRecordApi;
+    private $aclCheckOptions = array('source' => 'module_api');
 
     /**
      * A list of fields for which we disallow update through updateRecord
@@ -174,7 +175,7 @@ class ModuleApi extends SugarApi {
         $bean = BeanFactory::newBean($args['module']);
 
         // TODO: When the create ACL goes in to effect, add it here.
-        if (!$bean->ACLAccess('save')) {
+        if (!$bean->ACLAccess('save', $this->aclCheckOptions)) {
             // No create access so we construct an error message and throw the exception
             $moduleName = null;
             if(isset($args['module'])){
@@ -249,7 +250,7 @@ class ModuleApi extends SugarApi {
         $api->action = 'view';
         $this->requireArgs($args,array('module','record'));
 
-        $bean = $this->loadBean($api, $args, 'save');
+        $bean = $this->loadBean($api, $args, 'save', $this->aclCheckOptions);
         $api->action = 'save';
 
         // If we uploaded files during the record update, move them from
@@ -276,7 +277,7 @@ class ModuleApi extends SugarApi {
         $bean = $this->loadBean($api, $args, 'view');
         
         // formatBean is soft on view so that creates without view access will still work
-        if (!$bean->ACLAccess('view')) {
+        if (!$bean->ACLAccess('view', $this->aclCheckOptions)) {
             throw new SugarApiExceptionNotAuthorized('SUGAR_API_EXCEPTION_RECORD_NOT_AUTHORIZED',array('view'));
         }
 
@@ -290,7 +291,7 @@ class ModuleApi extends SugarApi {
     public function deleteRecord($api, $args) {
         $this->requireArgs($args,array('module','record'));
 
-        $bean = $this->loadBean($api, $args, 'delete');
+        $bean = $this->loadBean($api, $args, 'delete', $this->aclCheckOptions);
         $bean->mark_deleted($args['record']);
 
         return array('id'=>$bean->id);
@@ -300,7 +301,7 @@ class ModuleApi extends SugarApi {
         $this->requireArgs($args, array('module', 'record'));
         $bean = $this->loadBean($api, $args, 'view');
 
-        if (!$bean->ACLAccess('view')) {
+        if (!$bean->ACLAccess('view', $this->aclCheckOptions)) {
             // No create access so we construct an error message and throw the exception
             $moduleName = null;
             if (isset($args['module'])) {
@@ -325,7 +326,7 @@ class ModuleApi extends SugarApi {
         $this->requireArgs($args, array('module', 'record'));
         $bean = $this->loadBean($api, $args, 'view');
 
-        if (!$bean->ACLAccess('view')) {
+        if (!$bean->ACLAccess('view', $this->aclCheckOptions)) {
             // No create access so we construct an error message and throw the exception
             $moduleName = null;
             if (isset($args['module'])) {

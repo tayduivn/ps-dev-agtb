@@ -207,7 +207,7 @@ $fields = array(
 );
 //END SUGARCRM flav=ent ONLY
 
-$viewdefs['RevenueLineItems']['base']['view']['subpanel-list'] = array(
+$viewdefs['RevenueLineItems']['base']['view']['subpanel-list-with-massupdate'] = array(
     'favorite' => true,
     'panels' => array(
         array(

@@ -1165,7 +1165,7 @@ EOQ;
 			}
 		}
 
-		$query = "SELECT user_name from users where user_name='$this->user_name' AND deleted=0";
+		$query = "SELECT user_name from users where user_name='".$this->db->quote($this->user_name)."' AND deleted=0";
 		if(!empty($this->id))$query .=  " AND id<>'$this->id'";
 		$result = $this->db->query($query, true, "Error selecting possible duplicate users: ");
 		$dup_users = $this->db->fetchByAssoc($result);
