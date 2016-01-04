@@ -687,6 +687,11 @@ $dictionary['pmse_BpmFlow'] = array(
       'max' => false,
   ),
 ),
+'indices' => array(
+  array('name' => 'idx_pmse_bpm_flow_cas_flow_status', 'type' => 'index', 'fields' => array('bpmn_id','cas_flow_status')),
+  array('name' => 'idx_pmse_bpm_flow_parent', 'type' => 'index', 'fields' => array('cas_sugar_object_id','cas_sugar_module')),
+  array('name' => 'idx_pmse_bpm_flow_cas_id', 'type' => 'index', 'fields' => array('cas_id')),
+),
 	'relationships'=>array (
 ),
 	'optimistic_locking'=>true,
