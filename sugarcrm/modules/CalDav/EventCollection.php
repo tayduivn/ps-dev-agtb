@@ -1112,9 +1112,11 @@ class CalDavEventCollection extends SugarBean
     /**
      * Create text representation of event for email
      * @param SugarBean $bean
+     * @param string $emailInvitee
+     * @param string|null $organizerEmail
      * @return string
      */
-    public static function prepareForInvite(\SugarBean $bean)
+    public static function prepareForInvite(SugarBean $bean, $emailInvitee = null, $organizerEmail = null)
     {
         $collection = new static();
         $adapterFactory = $collection->getAdapterFactory();
@@ -1125,6 +1127,25 @@ class CalDavEventCollection extends SugarBean
             if ($adapter->export($dataToExport, $collection)) {
                 $vCalendarEvent = $collection->getVCalendar();
                 $vCalendarEvent->add($vCalendarEvent->createProperty('METHOD', 'REQUEST'));
+
+                /** @var Structures\Event $event */
+                $event = $collection->getParent();
+                $event->getObject()->add($vCalendarEvent->createProperty('X-SUGAR-ID', $bean->id));
+                $event->getObject()->add($vCalendarEvent->createProperty('X-SUGAR-NAME', $bean->module_name));
+
+                if ($emailInvitee) {
+                    $participants = $event->getParticipants();
+                    foreach ($participants as $participant) {
+                        if ($participant->getEmail() === $emailInvitee) {
+                            $participant->setRSVP('TRUE');
+                            break;
+                        }
+                    }
+                }
+
+                if ($organizerEmail) {
+                    $event->getOrganizer()->setEmail($organizerEmail);
+                }
 
                 return $vCalendarEvent->serialize();
             }

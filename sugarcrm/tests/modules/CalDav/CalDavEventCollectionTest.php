@@ -39,6 +39,7 @@ class CalDavEventCollectionTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
+        \BeanFactory::setBeanClass('Meetings', 'MeetingCRYS1322');
     }
 
     public function tearDown()
@@ -55,6 +56,8 @@ class CalDavEventCollectionTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestAddresseeUtilities::removeAllCreatedAddresses();
+
+        \BeanFactory::setBeanClass('Meetings');
         parent::tearDown();
     }
 
@@ -746,52 +749,6 @@ END:VCALENDAR',
                 'ids' => array($id1, $id2, 4, $id3),
                 'result' => false,
                 'getResult' => array(),
-            ),
-        );
-    }
-
-    public function prepareForInviteProvider()
-    {
-        return array(
-            array(
-                'preparedData' => '[
-                       ["Meetings","1b6705f9-d098-130f-39aa-5671685940de",null,null,false],
-                       {
-                          "name":["Meeting1102415055"],
-                          "date_entered":["2015-12-16 13:34:54"],
-                          "date_modified":["2015-12-16 13:34:54"],
-                          "modified_user_id":["531fc10a-78e6-157a-cced-567168676bd3"],
-                          "created_by":["531fc10a-78e6-157a-cced-567168676bd3"],
-                          "description":[null],
-                          "deleted":["0"],
-                          "location":[null],
-                          "duration_hours":["0"],
-                          "duration_minutes":["15"],
-                          "date_start":["2015-12-16 13:34:54"],
-                          "date_end":["2015-12-16 13:49:54"],
-                          "parent_type":[null],
-                          "status":["Planned"],
-                          "type":["Sugar"],
-                          "parent_id":[null],
-                          "reminder_time":["-1"],
-                          "email_reminder_time":["-1"],
-                          "email_reminder_sent":["0"],
-                          "sequence":["0"],
-                          "repeat_type":[null],
-                          "repeat_interval":["1"],
-                          "repeat_dow":[null],
-                          "repeat_until":[null],
-                          "repeat_count":[null],
-                          "repeat_parent_id":[null],
-                          "recurring_source":[null],
-                          "assigned_user_id":["531fc10a-78e6-157a-cced-567168676bd3"]
-                       },
-                       {
-                          "added":[],
-                          "deleted":[],
-                          "changed":[]
-                       }
-                    ]'
             ),
         );
     }
@@ -1670,19 +1627,18 @@ END:VCALENDAR',
     }
 
     /**
-     * @param string $preparedData
+     * Test prepare for invite
      *
      * @covers \CalDavEventCollection prepareForInvite
-     *
-     * @dataProvider prepareForInviteProvider
      */
-    public function testPrepareForInvite($preparedData)
+    public function testPrepareForInvite()
     {
-        $meetingMock = \BeanFactory::getBean('Meetings');
-        $meetingMock->populateFromRow(json_decode($preparedData, true));
+        $meetingMock = \BeanFactory::getBean('Meetings', '1b6705f9-d098-130f-39aa-5671685940de');
 
         $result = \CalDavEventCollection::prepareForInvite($meetingMock);
         $this->assertContains('METHOD:REQUEST', $result);
+        $this->assertContains('X-SUGAR-ID:1b6705f9-d098-130f-39aa-5671685940de', $result);
+        $this->assertContains('X-SUGAR-NAME:Meetings', $result);
     }
 
     /**
@@ -1804,5 +1760,50 @@ END:VCALENDAR',
             ),
         );
 
+    }
+}
+
+/**
+ * Stub class for Meeting bean
+ */
+class MeetingCRYS1322 extends Meeting
+{
+    public function retrieve($id) {
+        $this->populateFromRow(array(
+            'name' => 'Meeting1102415055',
+            'date_entered' => '2015-12-16 13:34:54',
+            'date_modified' => '2015-12-16 13:34:54',
+            'modified_user_id' => '531fc10a-78e6-157a-cced-567168676bd3',
+            'created_by' => '531fc10a-78e6-157a-cced-567168676bd3',
+            'description' => null,
+            'deleted' => '0',
+            'location' => null,
+            'duration_hours' => '0',
+            'duration_minutes' => '15',
+            'date_start' => '2015-12-16 13:34:54',
+            'date_end' => '2015-12-16 13:49:54',
+            'parent_type' => null,
+            'status' => 'Planned',
+            'type' => 'Sugar',
+            'parent_id' => null,
+            'reminder_time' => '-1',
+            'email_reminder_time' => '-1',
+            'email_reminder_sent' => '0',
+            'sequence' => '0',
+            'repeat_type' => null,
+            'repeat_interval' => '1',
+            'repeat_dow' => null,
+            'repeat_until' => null,
+            'repeat_count' => null,
+            'repeat_parent_id' => null,
+            'recurring_source' => null,
+            'assigned_user_id' => '531fc10a-78e6-157a-cced-567168676bd3',
+        ));
+
+        $this->id = $id;
+
+        $this->fetched_row = $this->toArray(true);
+
+        return $this;
     }
 }

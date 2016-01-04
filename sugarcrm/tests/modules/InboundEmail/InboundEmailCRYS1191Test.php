@@ -17,6 +17,29 @@
 class InboundEmailCRYS1191Test extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
+     * @inheritdoc
+     */
+    public function setUp()
+    {
+        BeanFactory::setBeanClass('CalDavEvents', 'CalDavEvents1322');
+        BeanFactory::setBeanClass('Users', 'Users1322');
+        BeanFactory::setBeanClass('Meeting', 'Meeting1322');
+        BeanFactory::setBeanClass('Call', 'Call1322');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function tearDown()
+    {
+        BeanFactory::setBeanClass('CalDavEvents');
+        BeanFactory::setBeanClass('Users');
+        BeanFactory::setBeanClass('Meeting');
+        BeanFactory::setBeanClass('Call');
+    }
+
+
+    /**
      * @covers InboundEmail::handleMailboxType
      */
     public function testHandleMailboxType()
@@ -72,73 +95,143 @@ class InboundEmailCRYS1191Test extends Sugar_PHPUnit_Framework_TestCase
         $inboundEmailMock->handleCalDAV($emailMock);
     }
 
+    /**
+     * Provider for testParseAndUpdateStatusForInvitee.
+     *
+     * @see InboundEmailCRYS1191Test::testParseAndUpdateStatusForInvitee
+     * @return array
+     */
     public function parseAndUpdateStatusForInviteeProvider()
     {
         return array(
-            array('hasXProperty' => false, $participantsResult = null),
-            array('hasXProperty' => true, $participantsResult = array(
-                'module name' => array(
-                    'module id' => array(
-                        'email' => 'test@test.com',
-                        'accept_status' => 'status'
-                    )
-                )
-            ))
+            'xPropertyNotSet' => array(
+                'hasXProperty' => false,
+                'content' => 'content ics',
+                'email' => '',
+                'statusCalDav' => '',
+                'statusSugar' => '',
+                'beanId' => '',
+                'beanName' => '',
+            ),
+            'beanInstanceOfMeeting' => array(
+                'hasXProperty' => true,
+                'content' => 'content ics',
+                'email' => 'test@test.com',
+                'statusCalDav' => 'TENTATIVE',
+                'statusSugar' => 'tentative',
+                'beanId' => 'sugar module id',
+                'beanName' => 'Meeting',
+            ),
+            'beanInstanceOfCall' => array(
+                'hasXProperty' => true,
+                'content' => 'content ics',
+                'email' => 'test@test.com',
+                'statusCalDav' => 'TENTATIVE',
+                'statusSugar' => 'tentative',
+                'beanId' => 'sugar module id',
+                'beanName' => 'Call',
+            ),
+            'beanInstanceOfContact' => array(
+                'hasXProperty' => true,
+                'content' => 'content ics',
+                'email' => 'test@test.com',
+                'statusCalDav' => 'TENTATIVE',
+                'statusSugar' => 'tentative',
+                'beanId' => 'sugar module id',
+                'beanName' => 'Contact',
+            )
         );
     }
 
     /**
-     * @covers InboundEmail::parseAndUpdateStatusForInvitee
+     * Test get new status of invitee and update in the sugar.
      *
+     * @param bool $hasXProperty
+     * @param string $content
+     * @param string $email
+     * @param string $statusCalDav
+     * @param string $statusSugar
+     * @param string $beanId
+     * @param string $beanName
+     *
+     * @covers InboundEmail::parseAndUpdateStatusForInvitee
      * @dataProvider parseAndUpdateStatusForInviteeProvider
      */
-    function testParseAndUpdateStatusForInvitee($hasXProperty, $participantsResult)
+    function testParseAndUpdateStatusForInvitee(
+        $hasXProperty,
+        $content,
+        $email,
+        $statusCalDav,
+        $statusSugar,
+        $beanId,
+        $beanName
+    )
     {
         $xSugarId = $this->getMock('stdClass', array('getValue'));
-        $xSugarId->method('getValue')->willReturn('sugar module id');
+        $xSugarId->method('getValue')->willReturn($beanId);
         $xSugarName = $this->getMock('stdClass', array('getValue'));
-        $xSugarName->method('getValue')->willReturn('sugar module name');
+        $xSugarName->method('getValue')->willReturn($beanName);
 
-        $vEvent = new stdClass();
+        $oEvent = new stdClass();
 
         if ($hasXProperty) {
-            $vEvent->{'X-SUGAR-ID'} = $xSugarId;
-            $vEvent->{'X-SUGAR-NAME'} = $xSugarName;
+            $oEvent->{'X-SUGAR-ID'} = $xSugarId;
+            $oEvent->{'X-SUGAR-NAME'} = $xSugarName;
         }
 
-        $vCalendarEventResult = new stdClass();
-        $vCalendarEventResult->VEVENT = $vEvent;
+        $eventMock = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event', array('getObject', 'getParticipants'));
+        $eventMock->expects($this->any())->method('getObject')->willReturn($oEvent);
 
-        $calDavEventMock = $this->getMock('CalDavEvent', array('setCalendarEventData', 'getVCalendarEvent', 'setBean', 'getParticipants'));
-        $calDavEventMock->expects($this->once())->method('setCalendarEventData')->with($this->stringContains('content ics'));
-        $calDavEventMock->expects($this->once())->method('getVCalendarEvent')->willReturn($vCalendarEventResult);
+        $eventCollection = BeanFactory::getBean('CalDavEvents');
+        $eventCollection->setParent($eventMock);
 
-        $inboundEmailMock = $this->getMock('InboundEmail', array('getFactoryBean', 'updateStatusForInvitee'));
-
-        $eventMock = $this->getMock('SugarBean');
+        $inboundEmailMock = $this->getMock('InboundEmail', array('updateStatusForInvitee'));
+        $participantMock = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Structures\Participant', array('getEmail', 'getStatus'));
 
         if ($hasXProperty) {
-            $inboundEmailMock->expects($this->at(0))->method('getFactoryBean')->with($this->equalTo('CalDavEvents'))->willReturn($calDavEventMock);
-            $inboundEmailMock->expects($this->at(1))->method('getFactoryBean')->with($this->equalTo('sugar module name'), $this->equalTo('sugar module id'))->willReturn($eventMock);
+            if (in_array($beanName, array('Call', 'Meeting'))) {
+                $participantMock->expects($this->once())->method('getEmail')->willReturn($email);
+                $participantMock->expects($this->once())->method('getStatus')->willReturn($statusCalDav);
 
-            $calDavEventMock->expects($this->once())->method('setBean')->with($this->equalTo($eventMock));
-            $calDavEventMock->expects($this->once())->method('getParticipants')->willReturn($participantsResult);
+                $eventMock->expects($this->once())->method('getParticipants')->willReturn(array(
+                    $participantMock
+                ));
 
-            $inviteeMock = $this->getMock('SugarBean');
+                $beanModuleMock = BeanFactory::getBean($beanName, $beanId);
+                $inviteeMock = BeanFactory::getBean('Users', '1');
 
-            $inboundEmailMock->expects($this->at(2))->method('getFactoryBean')->with($this->equalTo('module name'), $this->equalTo('module id'))->willReturn($inviteeMock);
-            $inboundEmailMock->expects($this->once())->method('updateStatusForInvitee')->with($this->equalTo($eventMock), $this->equalTo($inviteeMock), 'status')->willReturn(true);
+                $inboundEmailMock
+                    ->expects($this->once())
+                    ->method('updateStatusForInvitee')
+                    ->with($this->equalTo($beanModuleMock), $this->equalTo($inviteeMock), $this->equalTo($statusSugar));
+            } else {
+                $participantMock->expects($this->never())->method('getEmail');
+                $participantMock->expects($this->never())->method('getStatus');
 
+                $eventMock->expects($this->never())->method('getParticipants');
+
+                $inboundEmailMock
+                    ->expects($this->never())
+                    ->method('updateStatusForInvitee');
+            }
         } else {
-            $inboundEmailMock->expects($this->once())->method('getFactoryBean')->with($this->equalTo('CalDavEvents'))->willReturn($calDavEventMock);
-            $calDavEventMock->expects($this->never())->method('setBean');
-            $calDavEventMock->expects($this->never())->method('getParticipants');
+            $participantMock->expects($this->never())->method('getEmail');
+            $participantMock->expects($this->never())->method('getStatus');
+
+            $eventMock->expects($this->never())->method('getParticipants');
+
             $inboundEmailMock->expects($this->never())->method('updateStatusForInvitee');
         }
 
-        $inboundEmailMock->parseAndUpdateStatusForInvitee('content ics', 'test@test.com');
+        $inboundEmailMock->parseAndUpdateStatusForInvitee($content, $email);
     }
 
+    /**
+     * Provider for testGetOneCalDAVInbound.
+     *
+     * @see InboundEmailCRYS1191Test::testGetOneCalDAVInbound
+     * @return array
+     */
     public function getOneCalDAVInboundProvider()
     {
         return array(
@@ -154,8 +247,9 @@ class InboundEmailCRYS1191Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers InboundEmail::getOneCalDAVInbound
+     * Test get first email from list for CalDAV.
      *
+     * @covers InboundEmail::getOneCalDAVInbound
      * @dataProvider getOneCalDAVInboundProvider
      */
     function testGetOneCalDAVInbound($returnData, $resultMethod)
@@ -177,5 +271,80 @@ class InboundEmailCRYS1191Test extends Sugar_PHPUnit_Framework_TestCase
         $inboundEmailMock->expects($this->once())->method('fetchFromQuery')->with($queryMock)->willReturn($returnData);
 
         $this->assertEquals($resultMethod, $inboundEmailMock->getOneCalDAVInbound());
+    }
+}
+
+/**
+ * Stub class for CalDavEventCollection bean
+ */
+class CalDavEvents1322 extends CalDavEventCollection
+{
+    public static $parent;
+
+    public function setData() {}
+
+    public function sync() {
+        $this->participants_links = json_encode(array(
+            'test@test.com' => array('beanId' => '1', 'beanName' => 'Users')
+        ));
+    }
+
+    public function getParent()
+    {
+        return self::$parent;
+    }
+
+    /**
+     * Method for test
+     */
+    public function setParent($parent)
+    {
+        self::$parent = $parent;
+    }
+}
+
+/**
+ * Stub class for user bean
+ */
+class Users1322 extends User
+{
+    public function retrieve($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+}
+
+/**
+ * Stub class for Meeting bean
+ */
+class Meeting1322 extends Meeting
+{
+    public function __construct() {
+        parent::__construct();
+        $this->added_custom_field_defs = true;
+    }
+
+    public function retrieve($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+}
+
+/**
+ * Stub class for Call bean
+ */
+class Call1322 extends Call
+{
+    public function __construct() {
+        parent::__construct();
+        $this->added_custom_field_defs = true;
+    }
+
+    public function retrieve($id)
+    {
+        $this->id = $id;
+        return $this;
     }
 }

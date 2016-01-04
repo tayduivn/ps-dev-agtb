@@ -15,7 +15,22 @@ $dictionary['Addressee'] = array(
     'audited' => true,
     'activity_enabled' => false,
     'duplicate_merge' => true,
-    'fields' => array(),
+    'fields' => array(
+        'meetings' => array(
+            'name' => 'meetings',
+            'type' => 'link',
+            'relationship' => 'meetings_addresses',
+            'source' => 'non-db',
+            'vname' => 'LBL_MEETINGS',
+        ),
+        'calls' => array(
+            'name' => 'calls',
+            'type' => 'link',
+            'relationship' => 'calls_addresses',
+            'source' => 'non-db',
+            'vname' => 'LBL_CALLS',
+        ),
+    ),
     'relationships' => array(),
     'optimistic_locking' => true,
     'unified_search' => true,

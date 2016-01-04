@@ -616,7 +616,7 @@ class Call extends SugarBean {
 		}
 
         foreach ($this->addresses_arr as $addressee_id) {
-            $notify_user = BeanFactory::getBean('Addressee', $addressee_id);
+            $notify_user = BeanFactory::getBean('Addresses', $addressee_id);
             if (!empty($notify_user->id)) {
                 $notify_user->new_assigned_user_name = $notify_user->full_name;
                 $GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
@@ -999,7 +999,9 @@ class Call extends SugarBean {
 
 		$path = SugarConfig::getInstance()->get('upload_dir', 'upload/') . $this->id;
 
-		$content = CalDavEventCollection::prepareForInvite($this);
+        $emailInvitee = $notify_user->emailAddress->getPrimaryAddress($notify_user);
+        $organizerEmail = BeanFactory::getBean('InboundEmail')->getCalDavHandlerEmail();
+        $content = CalDavEventCollection::prepareForInvite($this, $emailInvitee, $organizerEmail);
 
 		if ($content && file_put_contents($path, $content)) {
 			$attachment = new Attachment($path, "invite.ics", Encoding::Base64, "text/calendar");
