@@ -29,14 +29,11 @@ class Import extends Base
      */
     public function run()
     {
-        /** @var \User $user */
-        $user = $GLOBALS['current_user'];
-
         /** @var \CalDavEventCollection $calDavBean */
-        $calDavBean = \BeanFactory::getBean('CalDavEvents', $this->processedData[0][0]);
-
-        if (!$calDavBean->isImportable()) {
-            $calDavBean->getSynchronizationObject()->setJobCounter();
+        $calDavBean = \BeanFactory::getBean($this->beanModule, $this->beanId, array(
+            'strict_retrieve' => true,
+        ));
+        if (!$calDavBean instanceof \CalDavEventCollection) {
             return \SchedulersJob::JOB_CANCELLED;
         }
 
@@ -46,7 +43,12 @@ class Import extends Base
 
         $bean = $calDavBean->getBean();
         if (!$bean) {
-            $bean = \BeanFactory::getBean($user->getPreference('caldav_module'));
+            /** @var \User $user */
+            $user = $GLOBALS['current_user'];
+            if (!$calDavBean->parent_type) {
+                $calDavBean->parent_type = $user->getPreference('caldav_module');
+            }
+            $bean = \BeanFactory::getBean($calDavBean->parent_type);
             $bean->id = create_guid();
             $bean->new_with_id = true;
             if ($bean instanceof \Call) {
@@ -56,26 +58,29 @@ class Import extends Base
             $calDavBean->save();
         }
 
-        $adapterFactory = $this->getAdapterFactory();
-        $adapter = $adapterFactory->getAdapter($bean->module_name);
+        $adapter = $this->getAdapterFactory()->getAdapter($bean->module_name);
         if (!$adapter) {
             throw new JQLogicException('Bean ' . $bean->module_name . ' does not have CalDav adapter');
         }
 
         $exportData = array();
-        HookHandler::$exportHandler = function($data, $bean) use (&$exportData) {
-            $exportData = $data;
+        HookHandler::$exportHandler = function($beanModule, $beanId, $data) use ($bean, &$exportData) {
+            if ($bean->module_name == $beanModule && $bean->id == $beanId) {
+                $exportData = $data;
+                return false;
+            }
+            return true;
         };
         if ($adapter->import($this->processedData, $bean)) {
             $bean->save();
             $exportData = $adapter->verifyExportAfterImport($this->processedData, $exportData, $bean);
             if ($exportData) {
                 $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();
-                $this->getManager()->calDavExport($exportData, $saveCounter);
+                $this->getManager()->calDavExport($bean->module_name, $bean->id, $exportData, $saveCounter);
             }
         }
         $calDavBean->getSynchronizationObject()->setJobCounter();
-
+        HookHandler::$exportHandler = null;
         return \SchedulersJob::JOB_SUCCESS;
     }
 
@@ -85,6 +90,6 @@ class Import extends Base
     protected function reschedule()
     {
         $jqManager = $this->getManager();
-        $jqManager->calDavImport($this->processedData, $this->saveCounter);
+        $jqManager->calDavImport($this->beanModule, $this->beanId, $this->processedData, $this->saveCounter);
     }
 }

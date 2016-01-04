@@ -14,7 +14,6 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue;
 
 use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
 use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
-use Sugarcrm\Sugarcrm\Dav\Cal\Handler as CalDavHandler;
 use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
 
 /**
@@ -24,22 +23,28 @@ use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
  */
 abstract class Base implements RunnableInterface
 {
-    /**
-     * @var array
-     */
+    /** @var string */
+    protected $beanModule = '';
+
+    /** @var string */
+    protected $beanId = '';
+
+    /** @var array */
     protected $processedData = array();
 
-    /**
-     * @var int
-     */
-    protected $saveCounter;
+    /** @var int */
+    protected $saveCounter = 0;
 
     /**
+     * @param string $beanModule name of module of bean.
+     * @param string $beanId id of bean to process.
      * @param array $processedData All needed job's data.
      * @param int $saveCounter Job counter.
      */
-    public function __construct(array $processedData, $saveCounter)
+    public function __construct($beanModule, $beanId, array $processedData, $saveCounter)
     {
+        $this->beanModule = $beanModule;
+        $this->beanId = $beanId;
         $this->processedData = $processedData;
         $this->saveCounter = $saveCounter;
     }
@@ -50,15 +55,6 @@ abstract class Base implements RunnableInterface
     protected function getAdapterFactory()
     {
         return CalDavAdapterFactory::getInstance();
-    }
-
-    /**
-     * return CalDav handler for export processing
-     * @return CalDavHandler
-     */
-    protected function getHandler()
-    {
-        return new CalDavHandler();
     }
 
     /**

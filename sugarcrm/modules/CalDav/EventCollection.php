@@ -788,19 +788,12 @@ class CalDavEventCollection extends SugarBean
     protected function setRelatedCalendar()
     {
         $calendar = $this->getRelatedCalendar();
-        if (!$calendar) {
-            $organizer = $this->getParent()->getOrganizer();
-            if ($organizer) {
-                $organizer = \BeanFactory::getBean($organizer->getBeanName(), $organizer->getBeanId());
-            }
-            if ($organizer instanceof User) {
-                $userHelper = new UserHelper();
-                $calendar = array_shift($userHelper->getCalendars($organizer->user_name));
-                $this->setCalendarId($calendar['id']);
-                //@todo Must to be changed before final commit
-                if ($this->load_relationship('events_calendar')) {
-                    $this->events_calendar->resetLoaded();
-                }
+        if (!$calendar && $GLOBALS['current_user'] instanceof User) {
+            $userHelper = new UserHelper();
+            $calendar = array_shift($userHelper->getCalendars($GLOBALS['current_user']->user_name));
+            $this->setCalendarId($calendar['id']);
+            if (isset($this->events_calendar)) {
+                $this->events_calendar->resetLoaded();
             }
         }
     }
@@ -956,7 +949,6 @@ class CalDavEventCollection extends SugarBean
             $this->setCalDavParent();
         }
 
-        $this->setRelatedCalendar();
     }
 
     /**
@@ -966,6 +958,11 @@ class CalDavEventCollection extends SugarBean
     {
         $isUpdate = $this->isUpdate();
         $currentETag = isset($this->fetched_row['etag']) ? $this->fetched_row['etag'] : null;
+
+        $this->setRelatedCalendar();
+        if (!$this->parent_type) {
+            $this->parent_type = $GLOBALS['current_user']->getPreference('caldav_module');
+        }
 
         $this->sync();
         if ($this->isImportable() && $this->doLocalDelivery && $this->scheduleLocalDelivery()) {
@@ -1107,17 +1104,29 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
-     * Retrieve CalDavEventCollection by parent bean
+     * Retrieve CalDavEventCollection by parent bean.
+     *
      * @param SugarBean $bean
-     * @return CalDavEventCollection | null
-     * @throws SugarQueryException
+     * @return CalDavEventCollection|null
      */
     public function findByBean(\SugarBean $bean)
     {
+        return $this->findByParentModuleAndId($bean->module_name, $bean->id);
+    }
+
+    /**
+     * Retrieve CalDavEventCollection by parent module name and id.
+
+     * @param string $beanModule
+     * @param string $beanId
+     * @return CalDavEventCollection|null
+     */
+    public function findByParentModuleAndId($beanModule, $beanId)
+    {
         $query = new \SugarQuery();
         $query->from($this);
-        $query->where()->equals('parent_type', $bean->module_name);
-        $query->where()->equals('parent_id', $bean->id);
+        $query->where()->equals('parent_type', $beanModule);
+        $query->where()->equals('parent_id', $beanId);
         $query->limit(1);
         $result = $this->fetchFromQuery($query);
         if ($result) {
@@ -1190,7 +1199,9 @@ class CalDavEventCollection extends SugarBean
 
         $result = $this->synchronization->getBeans();
         if ($result) {
-            return array_shift($result);
+            $result = array_shift($result);
+            $result->retrieve();
+            return $result;
         } else {
             if (!$this->id) {
                 $this->new_with_id = true;

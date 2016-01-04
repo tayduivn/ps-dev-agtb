@@ -14,7 +14,6 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Hook;
 
 use \Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
 use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
-use \Sugarcrm\Sugarcrm\Dav\Cal\Handler as CalDavHandler;
 
 /**
  *
@@ -34,30 +33,37 @@ class Handler
     public static $exportHandler = null;
 
     /**
-     * @param \CalDavEventCollection $bean
+     * @param \CalDavEventCollection $collection
      * @param string $calDavData
      * @return bool success of operation
      */
-    public function import(\CalDavEventCollection $bean, $calDavData)
+    public function import(\CalDavEventCollection $collection, $calDavData)
     {
-        if (!$bean->isImportable()) {
+        if (!$collection->isImportable() || !$collection->parent_type) {
             return false;
         }
 
-        $preparedData = $bean->getDiffStructure($calDavData);
+        $adapter = $this->getAdapterFactory()->getAdapter($collection->parent_type);
+        if (!$adapter) {
+            return false;
+        }
 
+        $preparedData = $adapter->prepareForImport($collection, $calDavData);
         if (!$preparedData) {
             return false;
         }
 
+        $continue = true;
         if (is_callable(static::$importHandler)) {
-            call_user_func_array(static::$importHandler, array(
+            $continue = call_user_func_array(static::$importHandler, array(
+                $collection->module_name,
+                $collection->id,
                 $preparedData,
-                $bean,
             ));
-        } elseif ($preparedData) {
-            $saveCounter = $bean->getSynchronizationObject()->setSaveCounter();
-            $this->getManager()->calDavImport($preparedData, $saveCounter);
+        }
+        if ($continue && $preparedData) {
+            $saveCounter = $collection->getSynchronizationObject()->setSaveCounter();
+            $this->getManager()->calDavImport($collection->module_name, $collection->id, $preparedData, $saveCounter);
         }
         static::$importHandler = null;
         return true;
@@ -90,22 +96,36 @@ class Handler
             $invitesAfter,
             $insert
         );
-
         if (!$preparedData) {
             return false;
         }
 
-        $parentBeanId = $preparedData[0][2] ?: $preparedData[0][1];
+        if (!empty($bean->repeat_parent_id)) {
+            $parentBeanId = $bean->repeat_parent_id;
+        } else {
+            $parentBeanId = $bean->id;
+        }
+
+        /** @var \CalDavEventCollection $collection */
+        $collection = \BeanFactory::getBean('CalDavEvents');
+        $collection = $collection->findByBean($bean);
+        if (!$collection) {
+            $collection = \BeanFactory::getBean('CalDavEvents');
+            $collection->setBean($bean);
+            $collection->save();
+        }
+
+        $continue = true;
         if (is_callable(static::$exportHandler)) {
-            call_user_func_array(static::$exportHandler, array(
+            $continue = call_user_func_array(static::$exportHandler, array(
+                $bean->module_name,
+                $parentBeanId,
                 $preparedData,
-                $this->getCalDavHandler()->getDavBean($preparedData[0][0], $parentBeanId),
             ));
-        } elseif ($preparedData) {
-            $saveCounter =
-                $this->getCalDavHandler()->getDavBean($preparedData[0][0], $parentBeanId)->getSynchronizationObject()
-                     ->setSaveCounter();
-            $this->getManager()->calDavExport($preparedData, $saveCounter);
+        }
+        if ($continue && $preparedData) {
+            $saveCounter = $collection->getSynchronizationObject()->setSaveCounter();
+            $this->getManager()->calDavExport($bean->module_name, $parentBeanId, $preparedData, $saveCounter);
         }
         static::$exportHandler = null;
         return true;
@@ -126,14 +146,5 @@ class Handler
     protected function getAdapterFactory()
     {
         return CalDavAdapterFactory::getInstance();
-    }
-
-    /**
-     * Get CalDavHandler object.
-     * @return CalDavHandler
-     */
-    protected function getCalDavHandler()
-    {
-        return new CalDavHandler();
     }
 }
