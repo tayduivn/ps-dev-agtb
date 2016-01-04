@@ -146,7 +146,7 @@ abstract class SugarApi {
             throw new SugarApiExceptionNotFound('Could not find record: '.$args['record'].' in module: '.$args['module']);
         }
 
-        if (SugarACLStatic::fixUpActionName($aclToCheck) != 'view' && !$bean->ACLAccess(SugarACLStatic::fixUpActionName($aclToCheck))) {
+        if (SugarACLStatic::fixUpActionName($aclToCheck) != 'view' && !$bean->ACLAccess(SugarACLStatic::fixUpActionName($aclToCheck), $options)) {
             throw new SugarApiExceptionNotAuthorized('SUGAR_API_EXCEPTION_RECORD_NOT_AUTHORIZED',array($aclToCheck));
         }
 

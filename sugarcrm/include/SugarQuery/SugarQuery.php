@@ -389,7 +389,7 @@ class SugarQuery
         // FIXME: it's really not good we have a special case here
         if (!empty($options['favorites']) || $link_name == 'favorites') {
             $sfOptions = $options;
-            $sf = new SugarFavorites();
+            $sf = BeanFactory::getBean('SugarFavorites');
             $options['alias'] = $sf->addToSugarQuery($this, $sfOptions);
         } else {
             $this->loadBeans($link_name, $options);
@@ -425,7 +425,7 @@ class SugarQuery
             $alias .= "_" . $table_name;
         }
 
-        return $this->db->getValidDBName($alias, 'alias');
+        return $this->db->getValidDBName($alias, true, 'alias');
     }
 
     /**

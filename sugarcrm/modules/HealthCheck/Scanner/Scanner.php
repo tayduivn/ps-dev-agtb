@@ -277,6 +277,67 @@ class HealthCheckScanner
      */
     protected $upgrader = null;
 
+
+    /**
+     * Dirs that are moved to vendor
+     * @var array
+     */
+    protected $removed_directories = array(
+        'include/HTMLPurifier',
+        'include/HTTP_WebDAV_Server',
+        'include/Pear',
+        'include/Smarty',
+        'XTemplate',
+        'Zend',
+        'include/lessphp',
+        'log4php',
+        'include/nusoap',
+        'include/oauth2-php',
+        'include/pclzip',
+        'include/reCaptcha',
+        'include/tcpdf',
+        'include/ytree',
+        'include/SugarSearchEngine/Elastic/Elastica',
+    );
+    /**
+     * dirs or files that have been deleted
+     * @var array
+     */
+    protected $removed_files = array(
+        'include/Smarty/plugins/function.sugar_help.php',
+    );
+    
+    /**
+     * Specific files that should be excluded from SH include check
+     * @var array
+     */
+    protected $specificSugarFiles = array(
+        'include/Smarty/plugins/function.sugar_action_menu.php'
+    );
+    
+    protected $excludedScanDirectories = array(
+        'backup',
+        'tmp',
+        'temp',
+    );
+    protected $filesToFix = array();
+    
+    protected $specificSugarFilesToFix = array();
+    
+    protected $sessionUsages = array();
+
+    protected $deletedFilesReferenced = array();
+
+    /**
+     * regex'es for removed code
+     * @var array
+     */
+    protected $deprecatedCodePatterns = array(
+        '/[^\w]SugarSession[^\w]/i' => 'deprecatedCodeSugarSession' //report id
+    );
+
+    protected $filesWithDeprecatedCode = array();
+
     /**
      *
      * Ctor setup
@@ -830,54 +891,6 @@ class HealthCheckScanner
     }
 
     /**
-     * Dirs that are moved to vendor
-     * @var array
-     */
-    protected $removed_directories = array(
-        'include/HTMLPurifier',
-        'include/HTTP_WebDAV_Server',
-        'include/Pear',
-        'include/Smarty',
-        'XTemplate',
-        'Zend',
-        'include/lessphp',
-        'log4php',
-        'include/nusoap',
-        'include/oauth2-php',
-        'include/pclzip',
-        'include/reCaptcha',
-        'include/tcpdf',
-        'include/ytree',
-        'include/SugarSearchEngine/Elastic/Elastica',
-    );
-    /**
-     * dirs or files that have been deleted
-     * @var array
-     */
-    protected $removed_files = array(
-        'include/Smarty/plugins/function.sugar_help.php',
-    );
-
-    /**
-     * Specific files that should be excluded from SH include check
-     * @var array
-     */
-    protected $specificSugarFiles = array(
-        'include/Smarty/plugins/function.sugar_action_menu.php'
-    );
-
-    protected $excludedScanDirectories = array(
-        'backup',
-        'tmp',
-        'temp',
-    );
-    protected $filesToFix = array();
-
-    protected $specificSugarFilesToFix = array();
-
-    protected $sessionUsages = array();
-
-    /**
      * Dump Scanner issues to log and optional stdout
      */
     public function dumpMeta()
@@ -891,8 +904,6 @@ class HealthCheckScanner
         }
         $this->log('*** END HEALTHCHECK ISSUES ***');
     }
-
-    protected $deletedFilesReferenced = array();
 
     /**
      * Searching line number of value
@@ -924,6 +935,7 @@ class HealthCheckScanner
      */
     protected function scanCustomDir()
     {
+        $this->checkCreateActions();
         $this->log("Checking custom directory for no longer valid code");
         $files = $this->getPhpFiles("custom/");
         foreach ($files as $name => $file) {
@@ -931,6 +943,7 @@ class HealthCheckScanner
             $fileContents = file_get_contents($file);
             $this->scanFileForInvalidReferences($file, $fileContents);
             $this->scanFileForSessionArrayReferences($file, $fileContents);
+            $this->scanFileForDeprecatedCode($file, $fileContents);
         }
         //Now that we have catalogued all the bad files in custom, log them by category.
         $this->updateCustomDirScanStatus();
@@ -1036,6 +1049,19 @@ class HealthCheckScanner
         }
     }
 
+    /**
+     * Checks that we don't use classes deprecated/removed in sugar API
+     * @param string $file
+     * @param string $fileContents
+     */
+    protected function scanFileForDeprecatedCode($file, $fileContents)
+    {
+        foreach ($this->deprecatedCodePatterns as $pattern => $reportId) {
+            if (preg_match($pattern, $fileContents)) {
+                $this->filesWithDeprecatedCode[$reportId][] = $file;
+            }
+        }
+    }
 
     protected function updateCustomDirScanStatus() {
         if (!empty($this->filesToFix)) {
@@ -1069,6 +1095,9 @@ class HealthCheckScanner
             }
             $this->updateStatus("arraySessionUsage", $filesWithSession);
         }
+        foreach ($this->filesWithDeprecatedCode as $reportId => $files) {
+            $this->updateStatus($reportId, implode(PHP_EOL, $files));
+        }
     }
 
 
@@ -1097,13 +1126,20 @@ class HealthCheckScanner
             $this->checkTableName($module);
         }
 
+        $isNewModule = false;
         if ($this->isNewModule($module)) {
             $this->updateStatus("notStockModule", $module);
             // not a stock module, check if it's working at least with BWC
             $this->checkMBModule($module);
+            $isNewModule = true;
         } else {
             $this->checkStockModule($module);
         }
+        $options = array(
+            'module' => $module,
+            'isNewModule' => $isNewModule,
+        );
+        $this->checkCreateActions($options);
     }
 
     /**
@@ -1120,6 +1156,66 @@ class HealthCheckScanner
             return $this->beanList[$module];
         }
         return null;
+    }
+
+    /**
+     * Check if there is a create-actions customization on this instance. By
+     * default, checks the clients/ folder for these customizations.
+     *
+     * @param array $options {
+     *     Optional hash that defines which module folders should be scanned for
+     *     create-actions components. If passed, the clients/ folder will not
+     *     be scanned.
+     *
+     *     @type string $module The module to scan the custom/$module/clients/*
+     *       directory with.
+     *     @type boolean $isNewModule `true` to scan both the
+     *       custom/$module/clients/* and modules/$module/clients/* directories.
+     *       If `false` or no value passed, only the custom/$module/clients/*
+     *       directory will be scanned.
+     * }
+     */
+    protected function checkCreateActions($options = array()) {
+        $files = array();
+        $createActionsPath = 'clients' . DIRECTORY_SEPARATOR .
+            '*' . DIRECTORY_SEPARATOR .
+            '{layouts,views}' . DIRECTORY_SEPARATOR .
+            'create-actions' . DIRECTORY_SEPARATOR .
+            'create-actions.*';
+
+        if (!empty($options['module'])) {
+            $this->log("Checking for customized create-actions components in custom/modules/{$options['module']}");
+            $files = glob(
+                'custom' . DIRECTORY_SEPARATOR .
+                'modules' . DIRECTORY_SEPARATOR .
+                $options['module'] . DIRECTORY_SEPARATOR .
+                $createActionsPath,
+                GLOB_BRACE
+            );
+
+            if (!empty($options['isNewModule'])) {
+                $this->log("Checking for customized create-actions components in modules/{$options['module']}");
+                $files = array_merge($files, glob(
+                    'modules' . DIRECTORY_SEPARATOR .
+                    $options['module'] . DIRECTORY_SEPARATOR .
+                    $createActionsPath,
+                    GLOB_BRACE
+                ));
+            }
+        } else {
+            $this->log("Checking for customized create-actions components in custom/clients");
+            $files = glob(
+                'custom' . DIRECTORY_SEPARATOR .
+                $createActionsPath,
+                GLOB_BRACE
+            );
+        }
+
+        if (!empty($files)) {
+            $formatted = implode(', ', $files);
+            $this->log('Found custom create-actions components');
+            $this->updateStatus('hasCustomCreateActions', $formatted);
+        }
     }
 
     /**

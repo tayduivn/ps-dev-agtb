@@ -223,7 +223,7 @@ class SugarFavorites extends Basic
             return false;
         }
 
-        $sfAlias = "sf_" . $bean->getTableName();
+        $sfAlias = $this->db->getValidDBName("sf_" . $bean->getTableName(), false, 'alias');
 
         $sugar_query->joinTable(self::getTableName(), array('alias'=>$sfAlias, 'joinType'=>$joinType, 'linkingTable' => true))
                     ->on()->equals("{$sfAlias}.module", $bean->module_name, $this)
