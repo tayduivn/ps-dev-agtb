@@ -939,9 +939,10 @@ a.adam-tooltip-error-off {
 .adam.form-panel-field-control {
   width: 100%;
   box-sizing: border-box;
-  font-size: 12px;
+  font-size: 12px !important;
   line-height: 18px;
   height: 24px;
+  min-height: 20px !important;
   margin-bottom: 0;
 }
 .adam.form-panel-field-control .formpanel-radio {
@@ -979,7 +980,8 @@ a.adam-tooltip-error-off {
 }
 
 .adam-formpaneldatetime .edit * {
-  width: 50%;
+  width: 50% !important;
+  font-size: 10px !important;
 }
 
 .adam.email-picker-suggest {
