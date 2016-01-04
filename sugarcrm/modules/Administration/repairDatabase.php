@@ -91,14 +91,14 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 				// Not all Beans are table based, so we need to check if there
 				// is a table_name for this bean before proceeding
 				// Example Beans are MergeRecord and EmptyBean
-				if ($focus instanceOf SugarBean && !empty($focus->table_name) && !isset($repairedTables[$focus->table_name])) {
+				if ($focus instanceof SugarBean && !empty($focus->table_name) && !isset($repairedTables[$focus->table_name])) {
 					$sql .= $db->repairTable($focus, $execute);
 					$compareIndices = isset($indices[$focus->table_name]) ? $indices[$focus->table_name] : array();
 					$sql .= $db->alterTableIndices($focus->table_name, $focus->getIndices(), $compareIndices, $execute);
 					$repairedTables[$focus->table_name] = true;
 				}
                 //Repair Custom Fields
-                if (($focus instanceOf SugarBean) && $focus->hasCustomFields() && !isset($repairedTables[$focus->table_name . '_cstm'])) {
+                if (($focus instanceof SugarBean) && $focus->hasCustomFields() && !isset($repairedTables[$focus->table_name . '_cstm'])) {
 				    $df = new DynamicField($focus->module_dir);
                     //Need to check if the method exists as during upgrade an old version of Dynamic Fields may be loaded.
                     if (method_exists($df, "repairCustomFields"))
