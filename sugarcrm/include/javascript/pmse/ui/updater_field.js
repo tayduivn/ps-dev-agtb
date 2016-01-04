@@ -501,7 +501,6 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
     var that = this, settings, inputPos, textSize, subjectInput, i,
         variablesDataSource = project.getMetadata("targetModuleFieldsDataSource"), currentFilters, list, targetPanel,
         currentOwner, fieldType = field.getFieldType(), constantPanelCfg;
-
     if (!(field instanceof DateUpdaterItem || field instanceof NumberUpdaterItem)) {
         if (!this._variablesList) {
             this._variablesList = new FieldPanel({
@@ -514,7 +513,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                         collapsed: false,
                         itemsContent: "{{text}}",
                         fieldToFilter: "type",
-                        title: translate('LBL_PMSE_UPDATERFIELD_VARIABLES_LIST_TITLE').replace(/%MODULE%/g, PROJECT_MODULE)
+                        title: translate('LBL_PMSE_UPDATERFIELD_VARIABLES_LIST_TITLE').replace(/%MODULE%/g, App.lang.getModuleName(PROJECT_MODULE))
                     }
                 ],
                 onItemValueAction: this._onValueGenerationHandler(PROJECT_MODULE),
@@ -603,7 +602,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
             }
             this._datePanel.setVariablePanel({
                 data: [{
-                    name: PROJECT_MODULE,
+                    name: App.lang.getModuleName(PROJECT_MODULE),
                     value: PROJECT_MODULE,
                     items: this._variables
                 }],
