@@ -167,6 +167,10 @@ class Meeting extends SugarBean {
             }
         }
 
+		if ($this->repeat_type && $this->repeat_type != 'Weekly') {
+			$this->repeat_dow = '';
+		}
+
         $check_notify = $this->send_invites;
         if ($this->send_invites == false) {
             if ((!empty($_SESSION['workflow_cron']) || !empty($_SESSION['process_author_cron'])) && empty(CalendarEvents::$old_assigned_user_id)) {

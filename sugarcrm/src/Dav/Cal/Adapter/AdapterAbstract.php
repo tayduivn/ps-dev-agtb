@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
 
 use Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper as ParticipantsHelper;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper as DateTimeHelper;
+use Sugarcrm\Sugarcrm\Dav\Base\Helper\RecurringHelper;
 use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as CalDavStatus;
 use Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event;
 
@@ -42,23 +43,15 @@ abstract class AdapterAbstract implements AdapterInterface
         $participantsHelper = $this->getParticipantHelper();
         $parentBean = null;
         $childEvents = null;
+        $recurringParam = null;
         $repeatParentId = $bean->repeat_parent_id;
-        /**
-         * null means nothing changed, otherwise child was changed
-         */
-        $childEventsId = null;
 
         if (!$repeatParentId) {
             if (($insert && $bean->repeat_type)
                 ||
                 (!$insert && $this->isRecurringChanged($changedFields))
             ) {
-                $childEventsId = array();
-                $calendarEvents = $this->getCalendarEvents();
-                $childEvents = $calendarEvents->getChildrenQuery($bean)->execute();
-                foreach ($childEvents as $event) {
-                    $childEventsId[] = $event->id;
-                }
+                $recurringParam = $this->getRecurringHelper()->beanToArray($bean);
             }
         }
 
@@ -94,7 +87,7 @@ abstract class AdapterAbstract implements AdapterInterface
             $bean->module_name,
             $bean->id,
             $repeatParentId,
-            $childEventsId,
+            $recurringParam,
             $insert,
         );
 
@@ -106,6 +99,9 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     public function verifyImportAfterExport(array $exportData, array $importData, \CalDavEventCollection $collection)
     {
+        if (!$importData) {
+            return false;
+        }
         list($exportBean, $exportFields, $exportInvites) = $exportData;
         list($importBean, $importFields, $importInvites) = $importData;
 
@@ -268,18 +264,7 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     protected function isRecurringChanged($changedFields)
     {
-        $fieldList = array(
-            'repeat_type',
-            'repeat_interval',
-            'repeat_count',
-            'repeat_until',
-            'repeat_dow',
-        );
-
-        if (count(array_intersect(array_keys($changedFields), $fieldList))) {
-            return true;
-        }
-        return false;
+        return (bool)array_intersect(array_keys($changedFields), RecurringHelper::$recurringFieldList);
     }
 
     /**
@@ -299,6 +284,34 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
         return $dataDiff;
+    }
+
+    /**
+     * Get Event to work
+     * @param \CalDavEventCollection $collection
+     * @param $repeatParentId
+     * @param $beanId
+     * @return null|Event
+     */
+    protected function getCurrentEvent(\CalDavEventCollection $collection, $repeatParentId, $beanId)
+    {
+        if (!$repeatParentId) {
+            return $collection->getParent();
+        }
+
+        $sugarChildrenIds = $collection->getSugarChildrenOrder();
+        $eventIndex = array_search($beanId, $sugarChildrenIds);
+
+        if ($eventIndex === false) {
+            return null;
+        }
+
+        $davChildren = array_values($collection->getAllChildrenRecurrenceIds());
+        if (!isset($davChildren[$eventIndex])) {
+            return null;
+        }
+
+        return $collection->getChild($davChildren[$eventIndex]);
     }
 
     /**
@@ -434,6 +447,60 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
+     * Checks that recurring rules matches to current
+     * @param $value
+     * @param \CalDavEventCollection $collection
+     * @return bool
+     */
+    protected function checkCalDavRecurring($value, \CalDavEventCollection $collection)
+    {
+        $currentRule = $collection->getRRule();
+        if (!$currentRule) {
+            return true;
+        }
+
+        $frequencyMap = new CalDavStatus\IntervalMap();
+        $dayMap = new CalDavStatus\DayMap();
+
+        if (isset($value['repeat_type'][1]) && ($currentRule->getFrequency() !=
+                $frequencyMap->getCalDavValue($value['repeat_type'][1], $currentRule->getFrequency()))
+        ) {
+            return false;
+        }
+
+        if (isset($value['repeat_interval'][1]) && ($currentRule->getInterval() != $value['repeat_interval'][1])) {
+            return false;
+        }
+
+        if (isset($value['repeat_count'][1]) && ($currentRule->getCount() != $value['repeat_count'][1])) {
+            return false;
+        }
+
+        if (isset($value['repeat_until'][1])) {
+            $valueBefore =
+                $currentRule->normalizeUntil(new \SugarDateTime($value['repeat_until'][1], new \DateTimeZone('UTC')));
+            if ($valueBefore != $currentRule->getUntil()) {
+                return false;
+            }
+        }
+
+        if (isset($value['repeat_dow'][1])) {
+            $converted = array();
+            if ($value['repeat_dow'][1]) {
+                $aDow = str_split($value['repeat_dow'][1]);
+                foreach ($aDow as $value) {
+                    $converted[] = $dayMap->getCalDavValue($value);
+                }
+            }
+            if (array_diff($converted, $currentRule->getByDay())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Sets title to provided event and returns true if it was changed.
      *
      * @param string $value
@@ -558,6 +625,23 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
+     * Set recurring to caldav
+     * @param array $value
+     * @param \CalDavEventCollection $collection
+     * @return bool
+     */
+    protected function setCalDavRecurring(array $value, \CalDavEventCollection $collection)
+    {
+        if (empty($value['repeat_type'])) {
+            return $collection->setRRule(null);
+        }
+
+        $rRule = $this->getRecurringHelper()->arrayToRRule($value);
+
+        return $collection->setRRule($rRule);
+    }
+
+    /**
      * Checks that name matches current one.
      *
      * @param string $value
@@ -615,10 +699,7 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     protected function checkBeanStartDate($value, \SugarBean $bean)
     {
-        $beanDate = new \SugarDateTime(
-            $bean->date_start,
-            new \DateTimeZone($GLOBALS['current_user']->getPreference('timezone'))
-        );
+        $beanDate = $this->getDateTimeHelper()->sugarDateToUTC($bean->date_start);
         return $beanDate->asDb() == $value;
     }
 
@@ -631,10 +712,7 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     protected function checkBeanEndDate($value, \SugarBean $bean)
     {
-        $beanDate = new \SugarDateTime(
-            $bean->date_end,
-            new \DateTimeZone($GLOBALS['current_user']->getPreference('timezone'))
-        );
+        $beanDate = $this->getDateTimeHelper()->sugarDateToUTC($bean->date_end);
         return $beanDate->asDb() == $value;
     }
 
@@ -767,14 +845,8 @@ abstract class AdapterAbstract implements AdapterInterface
         if ($value != $bean->date_start) {
             $bean->date_start = $value;
             if ($bean->date_end) {
-                $beanDateStart = new \SugarDateTime(
-                    $value,
-                    new \DateTimeZone('UTC')
-                );
-                $beanDateEnd = new \SugarDateTime(
-                    $bean->date_end,
-                    new \DateTimeZone($GLOBALS['current_user']->getPreference('timezone'))
-                );
+                $beanDateStart = $this->getDateTimeHelper()->sugarDateToUTC($bean->date_start);
+                $beanDateEnd = $this->getDateTimeHelper()->sugarDateToUTC($bean->date_end);
                 $diff = $beanDateEnd->diff($beanDateStart);
                 $bean->duration_hours = $diff->h + (int)$diff->format('a') * 24;
                 $bean->duration_minutes = $diff->i;
@@ -796,14 +868,8 @@ abstract class AdapterAbstract implements AdapterInterface
         if ($value != $bean->date_end) {
             $bean->date_end = $value;
             if ($bean->date_start) {
-                $beanDateStart = new \SugarDateTime(
-                    $bean->date_start,
-                    new \DateTimeZone($GLOBALS['current_user']->getPreference('timezone'))
-                );
-                $beanDateEnd = new \SugarDateTime(
-                    $value,
-                    new \DateTimeZone('UTC')
-                );
+                $beanDateStart = $this->getDateTimeHelper()->sugarDateToUTC($bean->date_start);
+                $beanDateEnd = $this->getDateTimeHelper()->sugarDateToUTC($bean->date_end);
                 $diff = $beanDateEnd->diff($beanDateStart);
                 $bean->duration_hours = $diff->h + (int)$diff->format('a') * 24;
                 $bean->duration_minutes = $diff->i;
@@ -912,5 +978,13 @@ abstract class AdapterAbstract implements AdapterInterface
     protected function getDateTimeHelper()
     {
         return new DateTimeHelper();
+    }
+
+    /**
+     * @return RecurringHelper
+     */
+    protected function getRecurringHelper()
+    {
+        return new RecurringHelper();
     }
 }

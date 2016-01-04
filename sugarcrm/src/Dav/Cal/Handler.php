@@ -29,11 +29,11 @@ class Handler
     public function export($exportData)
     {
         list($beanData, $changedFields, $invites) = $exportData;
-        list($beanModuleName, $beanId, $repeatParentId, $childEventsId, $isUpdated) = $beanData;
+        list($beanModuleName, $beanId, $repeatParentId, $recurringParam, $isUpdated) = $beanData;
         $adapterFactory = $this->getAdapterFactory();
         if ($adapter = $adapterFactory->getAdapter($beanModuleName)) {
-            $bean = \BeanFactory::getBean($beanModuleName, $beanId);
-            $calDavBean = $this->getDavBean($bean);
+            $parentBeanId = $repeatParentId ?: $beanId;
+            $calDavBean = $this->getDavBean($beanModuleName, $parentBeanId);
             if ($adapter->export($exportData, $calDavBean)) {
                 $calDavBean->save();
             }
@@ -41,14 +41,19 @@ class Handler
     }
 
     /**
-     * Get CalDav bean object
-     * @param \SugarBean $bean
+     * Get CalDav bean object by beanName and beanId
+     * @param string $beanName
+     * @param string $beanId
      * @return \CalDavEventCollection
      */
-    public function getDavBean(\SugarBean $bean)
+    public function getDavBean($beanName, $beanId)
     {
         /** @var \CalDavEventCollection $event */
         $event = \BeanFactory::getBean('CalDavEvents');
+
+        /** @var \SugarBean $bean */
+        $bean = \BeanFactory::getBean($beanName, $beanId);
+
         $related = $event->findByBean($bean);
 
         if ($related) {

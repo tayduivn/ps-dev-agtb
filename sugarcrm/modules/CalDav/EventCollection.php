@@ -484,6 +484,8 @@ class CalDavEventCollection extends SugarBean
 
         if (!$rRule) {
             $event->remove('RRULE');
+            $this->deleteCustomChildren();
+            $this->setSugarChildrenOrder(array());
             $this->childEvents = array();
             $this->rRule = null;
 
@@ -502,12 +504,28 @@ class CalDavEventCollection extends SugarBean
 
         if ($currentRule->getObject()->getParts() != $rRule->getObject()->getParts()) {
             $currentRule->getObject()->setParts($rRule->getObject()->getParts());
+            $this->deleteCustomChildren();
             $this->childEvents = array();
 
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Delete all custom children from collection
+     */
+    protected function deleteCustomChildren()
+    {
+        $customChildren = $this->getCustomizedChildrenRecurrenceIds();
+        foreach ($customChildren as $recurringId) {
+            $child = $this->getChild($recurringId);
+            if ($child) {
+                $vCalendar = $this->getVCalendar();
+                $vCalendar->remove($child->getObject());
+            }
+        }
     }
 
     /**
@@ -815,7 +833,7 @@ class CalDavEventCollection extends SugarBean
      */
     public function isImportable()
     {
-        return $this->parent_type !== $this->module_name;
+        return $this->parent_type !== $this->module_name && $this->calendar_data;
     }
 
     /**

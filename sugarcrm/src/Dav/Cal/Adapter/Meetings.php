@@ -34,9 +34,14 @@ class Meetings extends CalDavAbstractAdapter
     public function export(array $data, \CalDavEventCollection $collection)
     {
         $isChanged = false;
-        $event = $collection->getParent();
         list($beanData, $changedFields, $invites) = $data;
-        list($beanModuleName, $beanId, $repeatParentId, $childEventsId, $insert) = $beanData;
+        list($beanModuleName, $beanId, $repeatParentId, $recurringParam, $insert) = $beanData;
+
+        $event = $this->getCurrentEvent($collection, $repeatParentId, $beanId);
+
+        if (!$event) {
+            return false;
+        }
 
         // checking before values
         if (!$insert) {
@@ -46,6 +51,11 @@ class Meetings extends CalDavAbstractAdapter
             if (isset($changedFields['description'][1]) && !$this->checkCalDavDescription($changedFields['description'][1], $event)) {
                 throw new ExportException("Conflict with CalDav Description field");
             }
+
+            if (isset($changedFields['location'][1]) && !$this->checkCalDavLocation($changedFields['location'][1], $event)) {
+                throw new ExportException("Conflict with CalDav Location field");
+            }
+
             if (isset($changedFields['status'][1]) && !$this->checkCalDavStatus($changedFields['status'][1], $event)) {
                 throw new ExportException("Conflict with CalDav Status field");
             }
@@ -58,6 +68,10 @@ class Meetings extends CalDavAbstractAdapter
             if ($invites && !$this->checkCalDavInvites($invites, $event)) {
                 throw new ExportException("Conflict with CalDav Invites");
             }
+
+            if (!$repeatParentId && !$this->checkCalDavRecurring($changedFields, $collection)) {
+                throw new ExportException("Conflict with CalDav recurring params");
+            }
         }
 
         // setting values
@@ -66,6 +80,9 @@ class Meetings extends CalDavAbstractAdapter
         }
         if (isset($changedFields['description'][0])) {
             $isChanged = $isChanged | $this->setCalDavDescription($changedFields['description'][0], $event);
+        }
+        if (isset($changedFields['location'][0])) {
+            $isChanged = $isChanged | $this->setCalDavLocation($changedFields['location'][0], $event);
         }
         if (isset($changedFields['status'][0])) {
             $isChanged = $isChanged | $this->setCalDavStatus($changedFields['status'][0], $event);
@@ -80,7 +97,11 @@ class Meetings extends CalDavAbstractAdapter
             $isChanged = $isChanged | $this->setCalDavInvites($invites, $event);
         }
 
-        return $isChanged;
+        if (!$repeatParentId && $recurringParam) {
+            $isChanged = $isChanged | $this->setCalDavRecurring($recurringParam, $collection, $insert);
+        }
+
+        return (bool)$isChanged;
     }
 
     /**

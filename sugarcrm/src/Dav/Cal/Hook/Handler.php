@@ -45,6 +45,11 @@ class Handler
         }
 
         $preparedData = $bean->getDiffStructure($calDavData);
+
+        if (!$preparedData) {
+            return false;
+        }
+
         if (is_callable(static::$importHandler)) {
             call_user_func_array(static::$importHandler, array(
                 $preparedData,
@@ -85,13 +90,21 @@ class Handler
             $invitesAfter,
             $insert
         );
+
+        if (!$preparedData) {
+            return false;
+        }
+
+        $parentBeanId = $preparedData[0][2] ?: $preparedData[0][1];
         if (is_callable(static::$exportHandler)) {
             call_user_func_array(static::$exportHandler, array(
                 $preparedData,
-                $this->getCalDavHandler()->getDavBean($bean),
+                $this->getCalDavHandler()->getDavBean($preparedData[0][0], $parentBeanId),
             ));
         } elseif ($preparedData) {
-            $saveCounter = $this->getCalDavHandler()->getDavBean($bean)->getSynchronizationObject()->setSaveCounter();
+            $saveCounter =
+                $this->getCalDavHandler()->getDavBean($preparedData[0][0], $parentBeanId)->getSynchronizationObject()
+                     ->setSaveCounter();
             $this->getManager()->calDavExport($preparedData, $saveCounter);
         }
         static::$exportHandler = null;
