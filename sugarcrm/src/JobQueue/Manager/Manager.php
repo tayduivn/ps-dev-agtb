@@ -47,8 +47,8 @@ use Sugarcrm\Sugarcrm\Logger\LoggerTransition as Logger;
 /**
  * Class Manager
  * @package JobQueue
- * @method calDavExport(mixed $data, int $saveCounter)
- * @method calDavImport(mixed $data, int $saveCounter)
+ * @method calDavExport(string $beanModule, string $beanId, mixed $data, int $saveCounter)
+ * @method calDavImport(string $beanModule, string $beanId, mixed $data, int $saveCounter)
  */
 class Manager implements ClientInterface, RunnerInterface
 {

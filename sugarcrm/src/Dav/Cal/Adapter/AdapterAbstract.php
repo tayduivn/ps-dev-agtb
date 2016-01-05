@@ -97,6 +97,14 @@ abstract class AdapterAbstract implements AdapterInterface
     /**
      * @inheritDoc
      */
+    public function prepareForImport(\CalDavEventCollection $collection, $previousData)
+    {
+        return $collection->getDiffStructure($previousData);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function verifyImportAfterExport(array $exportData, array $importData, \CalDavEventCollection $collection)
     {
         if (!$importData) {
@@ -942,14 +950,16 @@ abstract class AdapterAbstract implements AdapterInterface
                 }
             }
             foreach ($existingLinks as $module => $ids) {
-                if (method_exists($bean, 'set' . substr($module, 0, -1) . 'invitees')) {
-                    call_user_func_array(array($bean, 'set' . substr($module, 0, -1) . 'invitees'), array(
-                        array_keys($ids),
-                        array(
-                            0 => true, // trick to delete everybody if $ids is empty
-                        ),
-                    ));
+                $objectName = \BeanFactory::getObjectName($module);
+                if (!$objectName || !method_exists($bean, 'set' . $objectName . 'Invitees')) {
+                    continue;
                 }
+                call_user_func_array(array($bean, 'set' . $objectName . 'Invitees'), array(
+                    array_keys($ids),
+                    array(
+                        0 => true, // trick to delete everybody if $ids is empty
+                    ),
+                ));
             }
         }
 
