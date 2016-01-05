@@ -36,7 +36,7 @@ $dictionary['Styleguide'] = array(
         ),
         'parent_name' => array(
             'name'=> 'parent_name',
-            'parent_type' => 'record_type_display' ,
+            'parent_type' => 'record_type_display',
             'type_name' => 'parent_type',
             'id_name' => 'parent_id',
             'vname' => 'LBL_PARENT_OF',

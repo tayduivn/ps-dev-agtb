@@ -10,8 +10,13 @@
  */
 ({
     className: 'container-fluid',
-    section_description: '',
-    section_key: '',
+
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        var request = this.context.get('request');
+        this.keys = request.keys;
+        this.page_data = request.page_data[this.keys[0]];
+    },
 
     /* RENDER index page
     *******************/
@@ -19,23 +24,14 @@
         var self = this,
             i = 0,
             html = '',
-            request = this.context.attributes.request;
+            chapter_key = this.keys[0],
+            section_key = this.keys[1],
+            section;
 
-        this._super('_renderHtml');
-
-        this.section_key = request.keys[1];
-
-        function fmtLink(s, p) {
-            return '#Styleguide/docs/' +
-                (p ? '' : 'index-') +
-                s.replace(/[\s\,]+/g,'-').toLowerCase() +
-                (p ? '-' + p : '');
-        }
-
-        if (request.keys.length === 1) {
+        if (section_key === 'index') {
 
             // home index call
-            $.each(request.page_data, function (kS, vS) {
+            $.each(this.page_data.sections, function(kS, vS) {
                 if (!vS.index) {
                     return;
                 }
@@ -43,13 +39,13 @@
                 html += (i % 3 === 0 ? '<div class="row-fluid">' : '');
                 html += '<div class="span4"><h3>' +
                     '<a class="section-link" href="' +
-                    (vS.url ? vS.url : fmtLink(kS)) + '">' +
+                    (vS.url ? vS.url : self.fmtLink(kS)) + '">' +
                     vS.title + '</a></h3><p>' + vS.description + '</p><ul>';
                 if (vS.pages) {
-                    $.each(vS.pages, function (kP, vP) {
+                    $.each(vS.pages, function(kP, vP) {
                         html += '<li ><a class="section-link" href="' +
-                            (vP.url ? vP.url : fmtLink(kS, kP)) + '">' +
-                            vP.label + '</a></li>';
+                            (vP.url ? vP.url : self.fmtLink(kS, kP)) + '">' +
+                            vP.title + '</a></li>';
                     });
                 }
                 html += '</ul></div>';
@@ -58,23 +54,25 @@
                 i += 1;
             });
 
-            this.section_description = request.page_data[request.keys[0]].description;
-
         } else {
 
+            section = this.page_data.sections[section_key];
+
             // section index call
-            $.each(request.page_data[this.section_key].pages, function (kP, vP) {
+            $.each(section.pages, function(kP, vP) {
                 html += (i % 4 === 0 ? '<div class="row-fluid">' : '');
                 html += '<div class="span3"><h3>' +
                     (!vP.items ?
-                        ('<a class="section-link" href="' + (vP.url ? vP.url : fmtLink(self.section_key, kP)) + '">' + vP.label + '</a>') :
-                        vP.label
+                        ('<a class="section-link" href="' +
+                            (vP.url ? vP.url : self.fmtLink(section_key, kP)) + '">' +
+                            vP.title + '</a>') :
+                        vP.title
                     ) +
                     '</h3><p>' + vP.description;
                 // if (vS.items) {
                 //     l = vS.items.length-1;
                 //     $.each(d.items, function (kP,vP) {
-                //         m += ' <a class="section-link" href="'+ (vP.url ? vP.url : fmtLink(kS,kP)) +'">'+ d2 +'</a>'+ (j===l?'.':', ');
+                //         m += ' <a class="section-link" href="'+ (vP.url ? vP.url : self.fmtLink(kS,kP)) +'">'+ d2 +'</a>'+ (j===l?'.':', ');
                 //     });
                 // }
                 html += '</p></div>';
@@ -82,10 +80,15 @@
 
                 i += 1;
             });
-
-            this.section_description = request.page_data[request.keys[1]].description;
         }
 
-        this.$('#index_content').append('<section id="section-menu"></section>').html(html);
+        this._super('_renderHtml');
+
+        this.$('#index-content').append('<section id="section-menu"></section>').html(html);
+    },
+
+    fmtLink: function(s, p) {
+        return '#Styleguide/' + this.keys[0] + '/' + s + (p ? '-' + p : '-index');
     }
+
 })

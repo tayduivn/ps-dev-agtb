@@ -10,7 +10,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Styleguide']['base']['view']['field'] = array(
+$viewdefs['Styleguide']['base']['view']['fields-index'] = array(
     'template_values' => array(
 
         // email widget mock data

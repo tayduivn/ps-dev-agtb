@@ -9,9 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    className: 'container-fluid',
-
-    _renderHtml: function () {
-        this._super('_renderHtml');
-    }
+    plugins: ['Prettify'],
+    extendsFrom: 'StyleguideDocsLayout'
 })

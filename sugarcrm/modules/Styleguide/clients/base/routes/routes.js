@@ -18,7 +18,8 @@
                     app.controller.loadView({
                         module: 'Styleguide',
                         layout: 'styleguide',
-                        page_name: 'home'
+                        chapter_name: 'home',
+                        content_name: null
                     });
                 }
             },
@@ -26,36 +27,33 @@
                 name: 'sg_module',
                 route: 'Styleguide/:layout/:resource',
                 callback: function(layout, resource) {
-                    var page = '',
-                        field = '';
+                    var chapter_name = '',
+                        content_name = '';
                     switch (layout) {
-                        case 'field':
-                            //route: "Styleguide/field/text"
-                            page = 'field';
-                            field = resource;
-                            break;
-                        case 'view':
-                            //route: "Styleguide/view/list"
-                            page = 'layouts_' + resource;
-                            break;
                         case 'docs':
-                            //route: "Styleguide/docs/base_grid"
-                            page = resource;
+                            //route: "Styleguide/docs/base"
+                            //route: "Styleguide/docs/base-grid"
+                        case 'fields':
+                            //route: "Styleguide/fields/text"
+                        case 'views':
+                            //route: "Styleguide/views/list"
+                            chapter_name = layout;
+                            content_name = resource;
                             break;
                         case 'layout':
                             //route: "Styleguide/layout/records"
                             layout = resource;
-                            page = 'module';
+                            content_name = 'module';
                             break;
                         default:
-                            app.logger.warn('Invalid route: ' + route);
+                            app.logger.warn('Invalid route: ' + layout + '/' + resource);
                             break;
                     }
                     app.controller.loadView({
                         module: 'Styleguide',
                         layout: layout,
-                        page_name: page,
-                        field_type: field,
+                        chapter_name: chapter_name,
+                        content_name: content_name,
                         skipFetch: true
                     });
                 }
