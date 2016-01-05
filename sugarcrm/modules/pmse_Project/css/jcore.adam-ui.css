@@ -936,13 +936,23 @@ a.adam-tooltip-error-off {
   margin: 0;
 }
 
+.adam.form-panel-field.record-cell .form-panel-field-control {
+  font-size: 12px;
+  padding: 2px 4px;
+  min-height: 24px;
+}
+
+.adam.form-panel-field.record-cell .normal > .edit {
+  margin-bottom: initial;
+}
+
 .adam.form-panel-field-control {
   width: 100%;
   box-sizing: border-box;
-  font-size: 12px !important;
+  font-size: 12px;
   line-height: 18px;
   height: 24px;
-  min-height: 20px !important;
+  min-height: 20px;
   margin-bottom: 0;
 }
 .adam.form-panel-field-control .formpanel-radio {
@@ -979,9 +989,11 @@ a.adam-tooltip-error-off {
   padding: 3px;
 }
 
-.adam-formpaneldatetime .edit * {
-  width: 50% !important;
-  font-size: 10px !important;
+.adam-formpaneldatetime .edit input {
+  width: 55% !important;
+}
+.adam-formpaneldatetime .edit input.ui-timepicker-input {
+  width: 45% !important;
 }
 
 .adam.email-picker-suggest {
