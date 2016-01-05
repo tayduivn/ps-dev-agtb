@@ -146,18 +146,18 @@ class CalendarEvents
 
     /**
      * Build the set of Dates/Times for the Recurring Meeting parameters specified
-     * @param $date_start
-     * @param $params
-     * @return array Datetime Strings
+     * @param string $date_start
+     * @param array $params
+     * @return array datetime Strings
      */
     public function buildRecurringSequence($date_start, $params)
     {
         $options = $params;
 
         $type = $params['type'];
-        if ($type == "Weekly") {
+        if ($type === "Weekly") {
             $dow = $params['dow'];
-            if ($dow == "") {
+            if ($dow === "") {
                 return array();
             }
         }
@@ -168,9 +168,6 @@ class CalendarEvents
             $interval = 1;
         }
         $options['interval'] = $interval;
-        if ($interval == 0) {
-            return array();
-        }
 
         if (!empty($params['count'])) {
             $count = $params['count'];
@@ -201,7 +198,7 @@ class CalendarEvents
         $current = clone $start;
         $scratchPad = array();
         $days = array();
-        if ($params['type'] == 'Monthly' && !empty($params['selector']) && $params['selector'] == 'Each') {
+        if ($params['type'] === 'Monthly' && !empty($params['selector']) && $params['selector'] === 'Each') {
             if (!empty($params['days'])) {
                 $dArray = explode(',', $params['days']);
                 foreach ($dArray as $day) {
@@ -249,14 +246,18 @@ class CalendarEvents
     }
 
     /**
-     * @param $current
-     * @param $options
-     * @param $scratchPad
+     * Determine whether recurrence iteration meets the  count or until terminating criteria
+     * and Update the Result Array and Result Count Totals Appropriately if the current Date
+     * is part of the recurring result set
+     * @param SugarDateTime $current
+     * @param array $options : the recurrence rules in effect
+     * @param array $scratchPad  : Scratchpad Area for intermediate and final result computation
      * @return bool  true=Complete   false=Incomplete
      */
     protected function isComplete($current, $options, &$scratchPad)
     {
-        if ((!empty($options['until']) &&
+        if (($options['count'] == 0 &&
+                !empty($options['until']) &&
                 !empty($options['end']) &&
                 $current->format("U") <= $options['end']->format("U")) ||
             ($options['count'] > 0 &&
@@ -274,6 +275,7 @@ class CalendarEvents
      * @param SugarDateTime $current : the next Date to be considered as a Result Candidate
      * @param array $interval : interval size
      * @param array $options : array of processing options
+     * @param array $scratchPad  : Scratchpad Area for intermediate and final result computation
      * @return boolean : true=continue false=quit
      */
     protected function nextDaily($current, $interval, $options, &$scratchPad)
@@ -286,11 +288,12 @@ class CalendarEvents
     }
 
     /**
-     * @param $current
-     * @param $interval
-     * @param $options
-     * @param $scratchPad
-     * @return bool
+     * Process the current Datetime for Repeat type = 'Weekly'
+     * @param SugarDateTime $current : the next Date to be considered as a Result Candidate
+     * @param array $interval : interval size
+     * @param array $options : array of processing options
+     * @param array $scratchPad  : Scratchpad Area for intermediate and final result computation
+     * @return boolean : true=continue false=quit
      */
     protected function nextWeekly($current, $interval, $options, &$scratchPad)
     {
@@ -315,11 +318,12 @@ class CalendarEvents
     }
 
     /**
-     * @param $current
-     * @param $interval
-     * @param $options
-     * @param $scratchPad
-     * @return bool  true = continue  false = quit
+     * Process the current Datetime for Repeat type = 'Monthly'
+     * @param SugarDateTime $current : the next Date to be considered as a Result Candidate
+     * @param array $interval : interval size
+     * @param array $options : array of processing options
+     * @param array $scratchPad  : Scratchpad Area for intermediate and final result computation
+     * @return boolean : true=continue false=quit
      */
     protected function nextMonthly($current, $interval, $options, &$scratchPad)
     {
@@ -412,7 +416,7 @@ class CalendarEvents
                             if (isset($dates[$offset])) {
                                 $result = $dates[$offset];
                             }
-                        } elseif ($unit == 'Day') {
+                        } elseif ($unit === 'Day') {
                             if ($last) {
                                 $day = $current->getDaysInMonth();
                             } else {
@@ -420,7 +424,7 @@ class CalendarEvents
                             }
                             $result = $current->setDate($current->getYear(), $current->getMonth(), $day);
                         } else {
-                            if ($unit == 'WD') { // WeekDay
+                            if ($unit === 'WD') { // WeekDay
                                 $dates = $current->getMonthDatesForNonWeekEndDays();
                             } else { // 'WE' = Weekend Day
                                 $dates = $current->getMonthDatesForWeekEndDays();
@@ -484,11 +488,12 @@ class CalendarEvents
     }
 
     /**
-     * @param $current
-     * @param $interval
-     * @param $options
-     * @param $scratchPad
-     * @return bool  true = continue  false = quit
+     * Process the current Datetime for Repeat type = 'Yearly'
+     * @param SugarDateTime $current : the next Date to be considered as a Result Candidate
+     * @param array $interval : interval size
+     * @param array $options : array of processing options
+     * @param array $scratchPad  : Scratchpad Area for intermediate and final result computation
+     * @return boolean : true=continue false=quit
      */
     protected function nextYearly($current, $interval, $options, &$scratchPad)
     {
@@ -588,7 +593,7 @@ class CalendarEvents
                         if (isset($dates[$offset])) {
                             $result = $dates[$offset];
                         }
-                    } elseif ($unit == 'Day') {
+                    } elseif ($unit === 'Day') {
                         if ($last) {
                             $current->setDate($current->getYear(), 12, 31);
                         } else {
@@ -599,7 +604,7 @@ class CalendarEvents
                     } else {
                         if ($last) {
                             $current->setDate($current->getYear(), 12, 1);
-                            if ($unit == 'WD') { // WeekDay
+                            if ($unit === 'WD') { // WeekDay
                                  $dates = $current->getMonthDatesForNonWeekEndDays();
                              } else { // 'WE' = Weekend Day
                                  $dates = $current->getMonthDatesForWeekEndDays();
@@ -610,7 +615,7 @@ class CalendarEvents
                             }
                         } else {
                             $current->setDate($current->getYear(), 1, 1);
-                            if ($unit == 'WD') { // WeekDay
+                            if ($unit === 'WD') { // WeekDay
                                  $dates = $current->getMonthDatesForNonWeekEndDays();
                              } else { // 'WE' = Weekend Day
                                  $dates = $current->getMonthDatesForWeekEndDays();
@@ -686,6 +691,7 @@ class CalendarEvents
      * @param string type of the second argument : one of 'date', 'time', 'datetime', 'datetimecombo'
      * @param string formatted date, time or datetime field in DB, ISO, or User Format
      * @param string output format - one of: 'db', 'iso' or 'user'
+     * @param User whose formatting preferences are to be used if output format is 'user'
      * @return string formatted result
      */
     public function formatDateTime($type, $dtm, $toFormat, $user=null)
@@ -705,6 +711,7 @@ class CalendarEvents
      * Return a SugarDateTime Object given any Date to Time Format
      * @param string type of the second argument : one of 'date', 'time', 'datetime', 'datetimecombo'
      * @param string  formatted date, time or datetime field in DB, ISO, or User Format
+     * @param User whose timezone preferences are to be used (optional - defaults to current user)
      * @return SugarDateTime
      */
     public function getSugarDateTime($type, $dtm, $user=null)

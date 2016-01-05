@@ -11678,6 +11678,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_CALENDAR_REPEAT_UNIT' => "Repeat Unit",
 
     'ERR_CALENDAR_CANNOT_UPDATE_FROM_CHILD' => 'Recurrence changes must be made using the first record in the series.',
+    'ERR_CALENDAR_NO_EVENTS_GENERATED' => 'Recurrence rules do not result in an event being generated.',
 
     'LBL_CALENDAR_EVENT_RESPONSE_ACCEPT' => 'Attending',
     'LBL_CALENDAR_EVENT_RESPONSE_DECLINE' => 'Declined',

@@ -748,7 +748,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         $defaultParams = array();
         $defaultParams['type'] = 'Daily';
         $defaultParams['interval'] = 1;
-        $defaultParams['count'] = 1;
+        $defaultParams['count'] = 0;
         $defaultParams['until'] = '';
         $defaultParams['dow'] = '';
 
