@@ -52,6 +52,7 @@ class ParserFactory
      * @param string $packageName   Package name. If present implies that we are being called from ModuleBuilder
      * @param string $client        The view client (e.g. portal, wireless, etc.)
      * @param array  $params        Additional parser parameters
+     * @param bool   $doNotLoadImplementation Do not load implementation
      * @return AbstractMetaDataParser
      */
     public static function getParser(
@@ -60,7 +61,8 @@ class ParserFactory
         $packageName = null,
         $subpanelName = null,
         $client = '',
-        array $params = array()
+        array $params = array(),
+        $doNotLoadImplementation = false
     ) {
         $GLOBALS [ 'log' ]->info ( "ParserFactory->getParser($view,$moduleName,$packageName,$subpanelName,$client )" ) ;
         $sm = null;
@@ -89,7 +91,7 @@ class ParserFactory
             case MB_QUICKCREATE :
                 require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php';
 
-                return new GridLayoutMetaDataParser ( $view, $moduleName, $packageName ) ;
+                return new GridLayoutMetaDataParser ( $view, $moduleName, $packageName, $client, $params, $doNotLoadImplementation ) ;
             //BEGIN SUGARCRM flav=pro ONLY
             case MB_WIRELESSEDITVIEW :
             case MB_WIRELESSDETAILVIEW :

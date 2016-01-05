@@ -642,12 +642,7 @@ END;
         $customFields = array();
         foreach($this->legacyViewdefs as $lViewtype => $data) {
             // We will need a parser no matter what
-            if($this->sidecar) {
-                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, $this->package, null, $this->client);
-            } else {
-                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, $this->package);
-            }
-
+            $legacyParser = $this->getLegacyParser($lViewtype);
             // Step 1, handle tabDef changes
             $hasTabDefCustomizations = $this->hasTabDefCustomizations($lViewtype);
 
@@ -1145,11 +1140,7 @@ END;
         $origFields = array();
         foreach($this->originalLegacyViewdefs as $lViewtype => $data) {
             // We will need a parser no matter what
-            if($this->sidecar) {
-                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, $this->package, null, $this->client);
-            } else {
-                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, $this->package);
-            }
+            $legacyParser = $this->getLegacyParser($lViewtype);
             // replace viewdefs with defaults, since parser's viewdefs can be already customized by other parts
             // of the upgrade
             $legacyParser->_viewdefs['panels'] = $legacyParser->convertFromCanonicalForm($data['panels'], $legacyParser->_fielddefs);
@@ -1322,5 +1313,22 @@ END;
 
         $data['panels'] = $panels;
         return $data;
+    }
+
+    /**
+     * Returns parser for parsing legacy layout
+     *
+     * @param string $lViewtype
+     * @return AbstractMetaDataParser
+     */
+    protected function getLegacyParser($lViewtype)
+    {
+        if ($this->sidecar) {
+            $parser = ParserFactory::getParser($lViewtype, $this->module, $this->package, null, $this->client, array(), true);
+        } else {
+            $parser = ParserFactory::getParser($lViewtype, $this->module, $this->package, null, null, array(), true);
+        }
+
+        return $parser;
     }
 }
