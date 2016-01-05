@@ -50,55 +50,16 @@
      * @override
      */
     initialize: function(options) {
-        // the parent is not called here so we make sure that nothing else renders until after we init the
-        // the forecast module
         this.initOptions = options;
+        this._super('initialize', [options]);
+        this.syncInitData();
 
-        var acls = app.user.getAcls().Forecasts,
-            hasAccess = (!_.has(acls, 'access') || acls.access == 'yes');
-        if (hasAccess) {
-            // check the module we are forecasting by for access
-            var forecastByAcl = app.user.getAcls()[app.metadata.getModule('Forecasts', 'config').forecast_by] || {};
-            if (_.has(forecastByAcl, 'access') && forecastByAcl.access === 'no') {
-                // the user doesn't have access to what is being forecast by
-                this.codeBlockForecasts('LBL_FORECASTS_ACLS_NO_ACCESS_TITLE', 'LBL_FORECASTS_RECORDS_ACLS_NO_ACCESS_MSG');
-            } else {
-                // Check to make sure users have proper values in their sales_stage_won/_lost cfg values
-                if (app.utils.checkForecastConfig()) {
-                    // correct config exists, continue with syncInitData
-                    this.syncInitData();
-                } else {
-                    // codeblock this sucka
-                    this.codeBlockForecasts('LBL_FORECASTS_MISSING_STAGE_TITLE', 'LBL_FORECASTS_MISSING_SALES_STAGE_VALUES');
-                }
-            }
-        } else {
-            this.codeBlockForecasts('LBL_FORECASTS_ACLS_NO_ACCESS_TITLE', 'LBL_FORECASTS_ACLS_NO_ACCESS_MSG');
-        }
     },
 
     /**
      * @override
      */
     initComponents: function() {
-    },
-
-    /**
-     * Blocks forecasts from continuing to load
-     */
-    codeBlockForecasts: function(title, msg) {
-        var alert = app.alert.show('no_access_to_forecasts', {
-            level: 'error',
-            title: app.lang.get(title, 'Forecasts') + ':',
-            messages: [app.lang.get(msg, 'Forecasts')]
-        });
-
-        var $close = alert.getCloseSelector();
-        $close.on('click', function() {
-            $close.off();
-            app.router.navigate('#Home', {trigger: true});
-        });
-        app.accessibility.run($close, 'click');
     },
 
     /**

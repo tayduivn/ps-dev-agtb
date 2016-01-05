@@ -48,6 +48,50 @@
                 }
             },
             {
+                name: "forecasts",
+                route: "Forecasts",
+                callback: function() {
+
+                    var acls = app.user.getAcls().Forecasts,
+                        hasAccess = (!_.has(acls, 'access') || acls.access == 'yes'),
+                        forecastBy = app.metadata.getModule('Forecasts', 'config'),
+                        forecastByAcl = app.user.getAcls()[forecastBy ? forecastBy.forecast_by : {}],
+                        hasForecastByAccess = (!_.has(forecastByAcl, 'access') || forecastByAcl.access === 'yes'),
+                        title = '',
+                        msg = '';
+
+                    //check for access, set error messages if none
+                    if (hasAccess) {
+                        if (hasForecastByAccess) {
+                            if (!app.utils.checkForecastConfig()) {
+                                title = 'LBL_FORECASTS_MISSING_STAGE_TITLE';
+                                msg = 'LBL_FORECASTS_MISSING_SALES_STAGE_VALUES';
+                            }
+                        } else {
+                            title = 'LBL_FORECASTS_ACLS_NO_ACCESS_TITLE';
+                            msg = 'LBL_FORECASTS_RECORDS_ACLS_NO_ACCESS_MSG';
+                        }
+                    } else {
+                        title = 'LBL_FORECASTS_ACLS_NO_ACCESS_TITLE';
+                        msg = 'LBL_FORECASTS_ACLS_NO_ACCESS_MSG';
+                    }
+
+                    //if no errors, go on to the Forecast module, otherwise, display error message
+                    if (title == '' && msg == '') {
+                        app.controller.loadView({
+                            module: 'Forecasts',
+                            layout: 'records'
+                        });
+                    } else {
+                        app.alert.show('no_access_to_forecasts', {
+                            level: 'error',
+                            title: app.lang.get(title, 'Forecasts') + ':',
+                            messages: [app.lang.get(msg, 'Forecasts')]
+                        });
+                    }
+                }
+            },
+            {
                 name: 'profile',
                 route: 'profile',
                 callback: function() {
