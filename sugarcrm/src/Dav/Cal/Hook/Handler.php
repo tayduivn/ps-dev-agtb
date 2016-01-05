@@ -49,27 +49,30 @@ class Handler
             return false;
         }
 
-        $preparedData = $adapter->prepareForImport($collection, $previousData);
-        if (!$preparedData) {
+        $preparedDataSet = $adapter->prepareForImport($collection, $previousData);
+        if (!$preparedDataSet) {
             return false;
         }
 
-        $continue = true;
-        if (is_callable(static::$importHandler)) {
-            $continue = call_user_func_array(static::$importHandler, array(
-                $collection->module_name,
-                $collection->id,
-                $preparedData,
-            ));
-        }
-        if ($continue && $preparedData) {
-            $saveCounter = $collection->getSynchronizationObject()->setSaveCounter();
-            if ($conflictSolver) {
-                $collection->getSynchronizationObject()->setConflictCounter(true);
+        foreach ($preparedDataSet as $preparedData) {
+            $continue = true;
+            if (is_callable(static::$importHandler)) {
+                $continue = call_user_func_array(static::$importHandler, array(
+                    $collection->module_name,
+                    $collection->id,
+                    $preparedData,
+                ));
             }
-            $this->getManager()->calDavImport($collection->module_name, $collection->id, $preparedData, $saveCounter, $conflictSolver);
+            if ($continue && $preparedData) {
+                $saveCounter = $collection->getSynchronizationObject()->setSaveCounter();
+                if ($conflictSolver) {
+                    $collection->getSynchronizationObject()->setConflictCounter(true);
+                }
+                $this->getManager()
+                     ->calDavImport($collection->module_name, $collection->id, $preparedData, $saveCounter);
+            }
+            static::$importHandler = null;
         }
-        static::$importHandler = null;
         return true;
     }
 
@@ -99,10 +102,10 @@ class Handler
 
         /** @var \CalDavEventCollection $collection */
         $collection = \BeanFactory::getBean('CalDavEvents');
-        $collection = $collection->findByBean($bean);
+        $collection = $collection->findByParentModuleAndId($bean->module_name, $parentBeanId);
         if (!$collection) {
             $collection = \BeanFactory::getBean('CalDavEvents');
-            $collection->setBean($bean);
+            $collection->setParentModuleAndId($bean->module_name, $parentBeanId);
             $collection->save();
         }
 

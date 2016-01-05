@@ -609,7 +609,9 @@ class CalDavEventCollection extends SugarBean
         $component = $vObject->getBaseComponent();
         if ($component) {
             $this->component_type = $component->name;
-            $this->event_uid = $component->UID;
+            if ($component->UID) {
+                $this->event_uid = $component->UID->getValue();
+            }
 
             return true;
         }
@@ -1094,13 +1096,24 @@ class CalDavEventCollection extends SugarBean
     public function setBean(\SugarBean $bean)
     {
         if ($bean->id) {
-            $this->parent_type = $bean->module_name;
-            $this->parent_id = $bean->id;
-
-            return true;
+            return $this->setParentModuleAndId($bean->module_name, $bean->id);
         }
 
         return false;
+    }
+
+    /**
+     * Set related bean by module name and id
+     * @param $beanModule
+     * @param $beanId
+     * @return bool
+     */
+    public function setParentModuleAndId($beanModule, $beanId)
+    {
+        $this->parent_type = $beanModule;
+        $this->parent_id = $beanId;
+
+        return true;
     }
 
     /**
@@ -1217,111 +1230,260 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
+     * Create main fields diff
+     * @param Structures\Event $currentEvent
+     * @param Structures\Event|null $oldEvent
+     * @return array
+     */
+    protected function getEventDiff(Structures\Event $currentEvent, Structures\Event $oldEvent = null)
+    {
+        $changedFields = array();
+        if ($oldEvent) {
+            if ($currentEvent->getTitle() != $oldEvent->getTitle()) {
+                $changedFields['title'] = array($currentEvent->getTitle(), $oldEvent->getTitle());
+            }
+            if ($currentEvent->getDescription() != $oldEvent->getDescription()) {
+                $changedFields['description'] = array($currentEvent->getDescription(), $oldEvent->getDescription());
+            }
+            if ($currentEvent->getLocation() != $oldEvent->getLocation()) {
+                $changedFields['location'] = array($currentEvent->getLocation(), $oldEvent->getLocation());
+            }
+            if ($currentEvent->getStatus() != $oldEvent->getStatus()) {
+                $changedFields['status'] = array($currentEvent->getStatus(), $oldEvent->getStatus());
+            }
+            if ($currentEvent->getStartDate() != $oldEvent->getStartDate()) {
+                $changedFields['date_start'] =
+                    array($currentEvent->getStartDate()->asDb(), $oldEvent->getStartDate()->asDb());
+            }
+            if ($currentEvent->getEndDate() != $oldEvent->getEndDate()) {
+                $changedFields['date_end'] =
+                    array($currentEvent->getEndDate()->asDb(), $oldEvent->getEndDate()->asDb());
+            }
+
+            if (isset($this->fetched_row['deleted']) && $this->deleted != $this->fetched_row['deleted']) {
+                $changedFields['deleted'] = array($this->deleted, $this->fetched_row['deleted']);
+            }
+
+        } else {
+            $changedFields['title'] = array($currentEvent->getTitle());
+            $changedFields['description'] = array($currentEvent->getDescription());
+            $changedFields['location'] = array($currentEvent->getLocation());
+            $changedFields['status'] = array($currentEvent->getStatus());
+            if ($currentEvent->getStartDate()) {
+                $changedFields['date_start'] = array($currentEvent->getStartDate()->asDb());
+            }
+            if ($currentEvent->getEndDate()) {
+                $changedFields['date_end'] = array($currentEvent->getEndDate()->asDb());
+            }
+            $changedFields['deleted'] = array($this->deleted);
+        }
+        return $changedFields;
+    }
+
+    /**
+     * Create participants diff
+     * @param Structures\Event $currentEvent
+     * @param Structures\Event|null $oldEvent
+     * @return array
+     */
+    protected function getParticipantsDiff(Structures\Event $currentEvent, Structures\Event $oldEvent = null)
+    {
+        $invites = array();
+        $participantHelper = new ParticipantsHelper();
+        $currentParticipants = $currentEvent->getParticipants();
+
+        if (!$oldEvent) {
+            if ($currentParticipants) {
+                $invites['added'] = array();
+            }
+            foreach ($currentParticipants as $participant) {
+                $invites['added'][] = $participantHelper->participantToInvite($participant);
+            }
+
+            return $invites;
+        }
+
+        $participantsBefore = $oldEvent->getParticipants();
+        foreach ($currentParticipants as $participant) {
+            /**@var Structures\Participant $participant */
+            $fountIndex = $oldEvent->findParticipantsByEmail($participant->getEmail());
+            if ($fountIndex != - 1) {
+                $participantBefore = $participantsBefore[$fountIndex];
+                if ($participantBefore->getEmail() != $participant->getEmail() ||
+                    $participantBefore->getStatus() != $participant->getStatus() ||
+                    $participantBefore->getDisplayName() != $participant->getDisplayName()
+                ) {
+                    $participant->getType();
+                    $participant->getBeanName();
+                    if (!isset($invites['changed'])) {
+                        $invites['changed'] = array();
+                    }
+                    $invites['changed'][] = $participantHelper->participantToInvite($participant);
+                }
+            } else {
+                if (!isset($invites['added'])) {
+                    $invites['added'] = array();
+                }
+                $invites['added'][] = $participantHelper->participantToInvite($participant);
+            }
+        }
+        foreach ($participantsBefore as $participant) {
+            /**@var Structures\Participant $participant */
+            if ($currentEvent->findParticipantsByEmail($participant->getEmail()) == - 1) {
+                if (!isset($invites['deleted'])) {
+                    $invites['deleted'] = array();
+                }
+                $invites['deleted'][] = $participantHelper->participantToInvite($participant);
+            }
+        }
+
+        return $invites;
+    }
+
+    /**
+     * Create RRULE diff
+     * @param CalDavEventCollection $currentCollection
+     * @param CalDavEventCollection|null $oldCollection
+     * @return array
+     */
+    protected function getRRuleDiff(\CalDavEventCollection $currentCollection, \CalDavEventCollection $oldCollection = null)
+    {
+        $changedFields = array();
+        $oldRRule = $oldCollection ? $oldCollection->getRRule() : null;
+        $currentRRule = $currentCollection->getRRule();
+
+        if ($oldRRule) {
+            if (!$currentRRule) {
+                $changedFields['action'] = 'deleted';
+                $changedFields['frequency'] = array(null, $oldRRule->getFrequency());
+                $changedFields['interval'] = array(null, $oldRRule->getInterval());
+                $changedFields['count'] = array(null, $oldRRule->getCount());
+                $oldUntil = $oldRRule->getUntil() ? $oldRRule->getUntil()->asDbDate() : null;
+                $changedFields['until'] = array(null, $oldUntil);
+                $changedFields['byday'] = array(array(), $oldRRule->getByDay());
+                return $changedFields;
+            }
+
+            if ($oldRRule->getObject()->getParts() != $currentRRule->getObject()->getParts()) {
+                $changedFields['action'] = 'updated';
+                if ($oldRRule->getFrequency() != $currentRRule->getFrequency()) {
+                    $changedFields['frequency'] = array($currentRRule->getFrequency(), $oldRRule->getFrequency());
+                }
+
+                if ($oldRRule->getInterval() != $currentRRule->getInterval()) {
+                    $changedFields['interval'] = array($currentRRule->getInterval(), $oldRRule->getInterval());
+                }
+
+                if ($oldRRule->getCount() != $currentRRule->getCount()) {
+                    $changedFields['count'] = array($currentRRule->getCount(), $oldRRule->getCount());
+                }
+
+                if ($oldRRule->getUntil() != $currentRRule->getUntil()) {
+                    $oldUntil = $oldRRule->getUntil() ? $oldRRule->getUntil()->asDbDate() : null;
+                    $currentUntil = $currentRRule->getUntil() ? $currentRRule->getUntil()->asDbDate() : null;
+                    $changedFields['until'] = array($currentUntil, $oldUntil);
+                }
+
+                if ($oldRRule->getByDay() != $currentRRule->getByDay()) {
+                    $changedFields['byday'] = array($currentRRule->getByDay(), $oldRRule->getByDay());
+                }
+            }
+        } elseif ($currentRRule) {
+            $changedFields['action'] = 'added';
+            $changedFields['frequency'] = array($currentRRule->getFrequency());
+            $changedFields['interval'] = array($currentRRule->getInterval());
+            $changedFields['count'] = array($currentRRule->getCount());
+            $until = $currentRRule->getUntil();
+            $changedFields['until'] = $until ? array($until->asDbDate()) : array(null);
+            $changedFields['byday'] = array($currentRRule->getByDay());
+        }
+
+        return $changedFields;
+    }
+
+    /**
+     * Create event diff
      * @param string $data
      * @return mixed returns array with difference or false if data is the same as current object
      */
     public function getDiffStructure($data)
     {
-        $changedFields = array();
-        $invites = array();
-        $parentEvent = $this->getParent();
-        $participantHelper = new ParticipantsHelper();
+        $currentParent = $this->getParent();
+        $result = array();
         if ($data) {
-            /** @var CalDavEventCollection $originalCollection */
-            $originalCollection = new static();
-            $originalCollection->setData($data);
-            $originalCollection->participantLinks = $this->participantLinks;
-            $originalCollection->sync();
-            $originalParentEvent = $originalCollection->getParent();
-            if ($parentEvent->getTitle() != $originalParentEvent->getTitle()) {
-                $changedFields['title'] = array($parentEvent->getTitle(), $originalParentEvent->getTitle());
-            }
-            if ($parentEvent->getDescription() != $originalParentEvent->getDescription()) {
-                $changedFields['description'] = array($parentEvent->getDescription(), $originalParentEvent->getDescription());
-            }
-            if ($parentEvent->getLocation() != $originalParentEvent->getLocation()) {
-                $changedFields['location'] = array($parentEvent->getLocation(), $originalParentEvent->getLocation());
-            }
-            if ($parentEvent->getStatus() != $originalParentEvent->getStatus()) {
-                $changedFields['status'] = array($parentEvent->getStatus(), $originalParentEvent->getStatus());
-            }
-            if ($parentEvent->getStartDate() != $originalParentEvent->getStartDate()) {
-                $changedFields['date_start'] = array($parentEvent->getStartDate()->asDb(), $originalParentEvent->getStartDate()->asDb());
-            }
-            if ($parentEvent->getEndDate() != $originalParentEvent->getEndDate()) {
-                $changedFields['date_end'] = array($parentEvent->getEndDate()->asDb(), $originalParentEvent->getEndDate()->asDb());
-            }
-            $currentParticipants = $parentEvent->getParticipants();
-            $participantsBefore = $originalParentEvent->getParticipants();
-            foreach ($currentParticipants as $participant) {
-                /**@var Structures\Participant $participant*/
-                $fountIndex = $originalParentEvent->findParticipantsByEmail($participant->getEmail());
-                if ($fountIndex != -1) {
-                    $participantBefore = $participantsBefore[$fountIndex];
-                    if ($participantBefore->getEmail() != $participant->getEmail() ||
-                        $participantBefore->getStatus() != $participant->getStatus() ||
-                        $participantBefore->getDisplayName() != $participant->getDisplayName()
-                    ) {
-                        $participant->getType();
-                        $participant->getBeanName();
-                        if (!isset($invites['changed'])) {
-                            $invites['changed'] = array();
-                        }
-                        $invites['changed'][] = $participantHelper->participantToInvite($participant);
-                    }
-                } else {
-                    if (!isset($invites['added'])) {
-                        $invites['added'] = array();
-                    }
-                    $invites['added'][] = $participantHelper->participantToInvite($participant);
-                }
-            }
-            foreach ($participantsBefore as $participant) {
-                /**@var Structures\Participant $participant*/
-                if ($parentEvent->findParticipantsByEmail($participant->getEmail()) == -1) {
-                    if (!isset($invites['deleted'])) {
-                        $invites['deleted'] = array();
-                    }
-                    $invites['deleted'][] = $participantHelper->participantToInvite($participant);
-                }
-            }
+            /** @var CalDavEventCollection $oldCollection */
+            $oldCollection = new static();
+            $oldCollection->setData($data);
+            $oldCollection->participantLinks = $this->participantLinks;
+            $oldCollection->mapParticipantsToBeans();
+            $oldParent = $oldCollection->getParent();
         } else {
-            $changedFields['title'] = array($parentEvent->getTitle());
-            $changedFields['description'] = array($parentEvent->getDescription());
-            $changedFields['location'] = array($parentEvent->getLocation());
-            $changedFields['status'] = array($parentEvent->getStatus());
-            if ($parentEvent->getStartDate()) {
-                $changedFields['date_start'] = array($parentEvent->getStartDate()->asDb());
-            }
-            if ($parentEvent->getEndDate()) {
-                $changedFields['date_end'] = array($parentEvent->getEndDate()->asDb());
-            }
-            $filter = array_filter($changedFields, function($set) {
+            $oldParent = null;
+            $oldCollection = null;
+        }
+
+        $changedFields = $this->getEventDiff($currentParent, $oldParent);
+        $rRuleParams = $this->getRRuleDiff($this, $oldCollection);
+        if (isset($rRuleParams['action'])) {
+            $changedFields['rrule'] = $rRuleParams;
+        }
+        $invites = $this->getParticipantsDiff($currentParent, $oldParent);
+
+        $filter = true;
+        if (empty($data)) {
+            $filter = array_filter($changedFields, function ($set) {
                 return $set[0];
             });
-            if (!$filter) {
-                $changedFields = array();
+        }
+
+        if ($filter && ($invites || $changedFields)) {
+            $result[] = array(
+                array(
+                    $this->id,
+                    null,
+                    null,
+                    null,
+                    empty($data),
+                ),
+                $changedFields,
+                $invites,
+            );
+        }
+
+        $currentChildrenIDs = $this->getCustomizedChildrenRecurrenceIds();
+        $allChildrenIDs = array_values($this->getAllChildrenRecurrenceIds());
+
+        foreach ($currentChildrenIDs as $recurrenceId) {
+
+            $oldChild = $oldCollection ? $oldCollection->getChild($recurrenceId) : null;
+            $currentChild = $this->getChild($recurrenceId);
+
+            $changedFields = $this->getEventDiff($currentChild, $oldChild);
+            $invites = $this->getParticipantsDiff($currentChild, $oldChild);
+
+            $filter = true;
+            if (!$oldChild) {
+                $filter = array_filter($changedFields, function ($set) {
+                    return $set[0];
+                });
             }
-            $participants = $parentEvent->getParticipants();
-            if ($participants) {
-                $invites['added'] = array();
-            }
-            foreach ($participants as $participant) {
-                $invites['added'][] = $participantHelper->participantToInvite($participant);
+
+            if ($filter && ($invites || $changedFields)) {
+                $result[] = array(
+                    array(
+                        $this->id,
+                        $this->getSugarChildrenOrder(),
+                        $recurrenceId->asDb(),
+                        array_search($recurrenceId, $allChildrenIDs),
+                        false,
+                    ),
+                    $changedFields,
+                    $invites,
+                );
             }
         }
 
-        if (!$changedFields && !$invites) {
-            return false;
-        }
-
-        $beanData = array(
-            $this->id,
-            $this->getAllChildrenRecurrenceIds(),
-            empty($data),
-        );
-
-        return array($beanData, $changedFields, $invites);
+        return $result;
     }
 
     /**

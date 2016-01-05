@@ -64,12 +64,18 @@ class Import extends Base
         }
 
         $status = \SchedulersJob::JOB_SUCCESS;
+        $bean = $adapter->getBeanForImport($bean, $calDavBean, $this->processedData);
         try {
             $liveBean = clone $bean;
             if ($adapter->import($this->processedData, $liveBean)) {
                 $exportData = array();
                 HookHandler::$exportHandler = function($beanModule, $beanId, $data) use ($bean, &$exportData) {
-                    if ($bean->module_name == $beanModule && $bean->id == $beanId) {
+                    if (!empty($bean->repeat_parent_id)) {
+                        $parentBeanId = $bean->repeat_parent_id;
+                    } else {
+                        $parentBeanId = $bean->id;
+                    }
+                    if ($bean->module_name == $beanModule && $parentBeanId == $beanId) {
                         $exportData = $data;
                         return false;
                     }

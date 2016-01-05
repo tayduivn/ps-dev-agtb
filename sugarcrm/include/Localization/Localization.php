@@ -642,7 +642,7 @@ eoq;
             $this->localeNameFormat = $format;
         }
 
-        $formatCommaParts = explode(', ', $format);
+        $formatCommaParts = explode(', ', $this->localeNameFormat);
         $countFormatCommaParts = count($formatCommaParts);
 
         $nameCommaParts = explode(', ', trim($fullName), $countFormatCommaParts);

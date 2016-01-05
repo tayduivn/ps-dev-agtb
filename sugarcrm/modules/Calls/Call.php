@@ -542,8 +542,8 @@ class Call extends SugarBean {
       $relate_values = array('lead_id'=>$user->id,'call_id'=>$this->id);
       $data_values = array('accept_status'=>$status);
       $this->set_relationship($this->rel_leads_table, $relate_values, true, true,$data_values);
-    } elseif ($user->object_name == 'Addresses') {
-        $relate_values = array('addresses_id' => $user->id, 'call_id' => $this->id);
+    } elseif ($user->object_name == 'Addressee') {
+        $relate_values = array('addressee_id' => $user->id, 'call_id' => $this->id);
         $data_values = array('accept_status' => $status);
         $this->set_relationship($this->rel_addresses_table, $relate_values, true, true, $data_values);
     }
