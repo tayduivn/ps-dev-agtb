@@ -156,7 +156,7 @@ class CalendarEvents
      * Mark recurring event deleted
      * @param SugarBean parent Bean
      */
-    protected function markRepeatDeleted(SugarBean $parentBean)
+    public function markRepeatDeleted(SugarBean $parentBean)
     {
         CalendarUtils::markRepeatDeleted($parentBean);
     }

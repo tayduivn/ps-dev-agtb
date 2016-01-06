@@ -765,12 +765,6 @@ END:VCALENDAR',
     public function testMapParticipantsToBeans($vEventText, $beansToCreate, $expectedLink)
     {
         $sugarUser = SugarTestUserUtilities::createAnonymousUser();
-        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser);
-        $event = SugarTestCalDavUtilities::createEvent(array(
-            'calendardata' => $vEventText,
-            'calendarid' => $calendarID,
-            'eventURI' => 'test'
-        ));
 
         foreach ($beansToCreate['Contacts'] as $id => $params) {
             SugarTestContactUtilities::createContact($id, $params);
@@ -787,6 +781,13 @@ END:VCALENDAR',
         foreach ($beansToCreate['Addresses'] as $id => $params) {
             SugarTestAddresseeUtilities::createAddressee($id, $params);
         }
+
+        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser);
+        $event = SugarTestCalDavUtilities::createEvent(array(
+            'calendardata' => $vEventText,
+            'calendarid' => $calendarID,
+            'eventURI' => 'test'
+        ));
 
         $result = TestReflection::callProtectedMethod($event, 'mapParticipantsToBeans');
 
@@ -1503,8 +1504,8 @@ END:VCALENDAR',
      * @param bool $expectedResult
      * @param array $expectedGet
      *
-     * @covers \CalDavEventCollection::setSugarChildrenOrder
-     * @covers \CalDavEventCollection::getSugarChildrenOrder
+     * @covers       \CalDavEventCollection::setSugarChildrenOrder
+     * @covers       \CalDavEventCollection::getSugarChildrenOrder
      *
      * @dataProvider sugarChildrenOrderProvider
      */
@@ -1642,64 +1643,29 @@ END:VCALENDAR',
     }
 
     /**
+     * @param $oldData
+     * @param $currentData
+     * @param $expectedChangedFields
+     * @param $expectedInvites
+     *
      * @dataProvider prepareForImportProvider
-     * @covers \CalDavEventCollection::getDiffStructure
-     * @param string $data
+     * @covers       \CalDavEventCollection::getDiffStructure
      */
-    public function testGetDiffStructure($data, $changedFieldsExpected, $expectedEmails, $calDavDataBefore)
+    public function testGetDiffStructure($oldData, $currentData, $expectedBeanParams, $expectedChangedFields, $expectedInvites)
     {
-        $sugarUser = SugarTestUserUtilities::createAnonymousUser();
-        $calendarID = SugarTestCalDavUtilities::createCalendar($sugarUser, array());
-        $event = SugarTestCalDavUtilities::createEvent(array(
-            'calendardata' => $data,
-            'calendarid' => $calendarID,
-            'eventURI' => 'test'
-        ));
-        $participants = $event->getParent()->getParticipants();
-        $participants[0]->setBeanName('Contacts');
-        $participants[1]->setBeanName('Contacts');
-        $participants[2]->setBeanName('Leads');
+        $event = $this->getObjectForGetters($currentData, array('mapParticipantsToBeans'));
 
-        $importData = $event->getDiffStructure('');
-        list($beanData, $changeFields, $invites) = $importData;
-        $this->assertEquals($changedFieldsExpected, $changeFields);
-        $this->assertCount(2, $invites['added']['Contacts']);
-        $this->assertCount(1, $invites['added']['Leads']);
-        foreach ($invites['added']['Contacts'] as $invite) {
-            /**$var Participant $invite*/
-            $this->assertContains($invite[3], $expectedEmails);
+        $importData = $event->getDiffStructure($oldData);
+        if ($importData) {
+            foreach ($importData as $key => $data) {
+                list($beanData, $changedFields, $invites) = $data;
+                $this->assertEquals($expectedBeanParams[$key], $beanData);
+                $this->assertEquals($expectedChangedFields[$key], $changedFields);
+                $this->assertEquals($expectedInvites[$key], $invites);
+            }
+        } else {
+            $this->assertEmpty($importData);
         }
-        foreach ($invites['added']['Leads'] as $invite) {
-            /**$var Participant $invite*/
-            $this->assertContains($invite[3], $expectedEmails);
-        }
-
-        $event->dataChanges = array(
-            'title' => array(
-                'before' => $changedFieldsExpected['title'][0],
-                'after' => 'New title'
-            ),
-            'description' => array(
-                'before' => $changedFieldsExpected['description'][0],
-                'after' => 'Description updated'
-            )
-        );
-        $event->getParent()->setTitle('New title');
-        $event->getParent()->setDescription('Description updated');
-        $event->getParent()->deleteParticipant('test20@test.loc');
-        $event->calendar_data = $calDavDataBefore;
-        $importData = $event->getDiffStructure($data);
-        list($beanData, $changeFields, $invites) = $importData;
-        $expectedChanged = array(
-            'title' => array($event->dataChanges['title']['after'], $event->dataChanges['title']['before']),
-            'description' => array(
-                $event->dataChanges['description']['after'],
-                $event->dataChanges['description']['before']
-            )
-        );
-        $this->assertEquals($expectedChanged, $changeFields);
-        $this->assertCount(1, $invites['deleted']);
-        $this->assertFalse(isset($invites['changed']));
     }
 
     /**
@@ -1708,58 +1674,331 @@ END:VCALENDAR',
     public function prepareForImportProvider()
     {
         return array(
-            array('BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Sabre//Sabre VObject 3.4.7//EN
-CALSCALE:GREGORIAN
-BEGIN:VTIMEZONE
-TZID:Europe/Moscow
-END:VTIMEZONE
-BEGIN:VEVENT
-UID:8cd87d37-af6c-c5cd-6494-5666b2b0f22d
-DTSTAMP:20151208T133351Z
-SUMMARY:Test Meeting
-DESCRIPTION:Meeting description
-DTSTART:20151118T183000Z
-DURATION:PT1H
-ATTENDEE;PARTSTAT=ACCEPTED;CN=Lead One:mailto:test10@test.loc
-ATTENDEE;PARTSTAT=ACCEPTED;CN=Lead One:mailto:test20@test.loc
-ATTENDEE;PARTSTAT=ACCEPTED;CN=User Foo:mailto:test30@test.loc
-END:VEVENT
-END:VCALENDAR',
-                    'changedFields' => array(
-                        'title' => array('Test Meeting'),
-                        'description' => array('Meeting description'),
-                        'location' => array(''),
-                        'status' => array(''),
-                        'date_start' => array(new SugarDateTime('2015-11-18 18:30:00', new DateTimeZone('UTC'))),
-                        'date_end' => array(new SugarDateTime('2015-11-18 19:30:00', new DateTimeZone('UTC'))),
+            array(
+                'oldEvent' => $this->getEventTemplate('vevent'),
+                'currentEvent' => $this->getEventTemplate('vevent'),
+                'expectedBean' => null,
+                'changedFields' => null,
+                'expectedInvites' => null,
+            ),
+            array(
+                'oldEvent' => '',
+                'currentEvent' => $this->getEventTemplate('vevent-diff-recurring'),
+                'expectedBean' => array(
+                    array(
+                        null,
+                        null,
+                        null,
+                        null,
+                        true,
                     ),
-                    'expectedEmails' => array(
-                        'test10@test.loc', 'test20@test.loc', 'test30@test.loc'
+                    array(
+                        null,
+                        array(),
+                        (new SugarDateTime('20160106T110000', new DateTimeZone('Europe/Minsk')))->asDb(),
+                        false,
+                        false,
+                    )
+                ),
+                'changedFields' => array(
+                    array(
+                        'title' => array('test event 1'),
+                        'description' => array(null),
+                        'location' => array(null),
+                        'status' => array(null),
+                        'date_start' => array(
+                            (new SugarDateTime('20160105T110000', new DateTimeZone('Europe/Minsk')))->asDb()
+                        ),
+                        'date_end' => array(
+                            (new SugarDateTime('20160105T120000', new DateTimeZone('Europe/Minsk')))->asDb()
+                        ),
+                        'rrule' => array(
+                            'frequency' => array('DAILY'),
+                            'interval' => array(1),
+                            'count' => array(10),
+                            'until' => array(null),
+                            'byday' => array(array()),
+                            'action' => 'added',
+                        )
                     ),
-                    'changedCalendarData' => 'BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Sabre//Sabre VObject 3.4.7//EN
-CALSCALE:GREGORIAN
-BEGIN:VTIMEZONE
-TZID:Europe/Moscow
-END:VTIMEZONE
-BEGIN:VEVENT
-UID:8cd87d37-af6c-c5cd-6494-5666b2b0f22d
-DTSTAMP:20151208T133351Z
-SUMMARY:New title
-DESCRIPTION:Description updated
-DTSTART:20151118T183000Z
-DURATION:PT1H
-ATTENDEE;PARTSTAT=accept;CN=Lead One:mailto:test10@test.loc
-ATTENDEE;PARTSTAT=accept;CN=Lead One:mailto:test40@test.loc
-ATTENDEE;PARTSTAT=accept;CN=User Foo:mailto:test30@test.loc
-END:VEVENT
-END:VCALENDAR',
+                    array(
+                        'title' => array('test event 2'),
+                        'description' => array(null),
+                        'location' => array('office'),
+                        'status' => array(null),
+                        'date_start' => array(
+                            (new SugarDateTime('20160106T110000', new DateTimeZone('Europe/Minsk')))->asDb()
+                        ),
+                        'date_end' => array(
+                            (new SugarDateTime('20160106T120000', new DateTimeZone('Europe/Minsk')))->asDb()
+                        ),
+                    ),
+                ),
+                'expectedInvites' => array(
+                    array(
+                        'added' => array(
+                            array(
+                                null,
+                                null,
+                                null,
+                                '/amze5odc4ntc5mze5odc4nqzhqkf3bxlx0byyian9ss8xna6rivu-whvwr-twk49m/principal/',
+                                'Dmitry Dolbik',
+                            ),
+                            array(
+                                null,
+                                null,
+                                'NEEDS-ACTION',
+                                'sally@example.com',
+                                'Sally Bronsen',
+                            ),
+                        ),
+                    ),
+                    array(
+                        'added' => array(
+                            array(
+                                null,
+                                null,
+                                null,
+                                '/amze5odc4ntc5mze5odc4nqzhqkf3bxlx0byyian9ss8xna6rivu-whvwr-twk49m/principal/',
+                                'Dmitry Dolbik',
+                            ),
+                            array(
+                                null,
+                                null,
+                                'NEEDS-ACTION',
+                                'sugar.vegan.phone@example.edu',
+                                'Doyle Brow',
+                            ),
+                            array(
+                                null,
+                                null,
+                                'NEEDS-ACTION',
+                                'sally@example.com',
+                                'Sally Bronsen',
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            array(
+                'oldEvent' => $this->getEventTemplate('vevent-diff'),
+                'currentEvent' => $this->getEventTemplate('vevent-diff-child'),
+                'expectedBean' => array(
+                    array(
+                        null,
+                        array(),
+                        (new SugarDateTime('20160106T110000', new DateTimeZone('Europe/Minsk')))->asDb(),
+                        false,
+                        false,
+                    )
+                ),
+                'changedFields' => array(
+                    array(
+                        'title' => array('test event 2', 'test event'),
+                        'location' => array('office', null),
+                    ),
+                ),
+                'expectedInvites' => array(
+                    array(
+                        'added' => array(
+                            array(
+                                null,
+                                null,
+                                'NEEDS-ACTION',
+                                'sugar.vegan.phone@example.edu',
+                                'Doyle Brow',
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            array(
+                'oldEvent' => $this->getEventTemplate('vevent-diff'),
+                'currentEvent' => $this->getEventTemplate('vevent-diff-recurring'),
+                'expectedBean' => array(
+                    array(
+                        null,
+                        null,
+                        null,
+                        null,
+                        false,
+                    ),
+                    array(
+                        null,
+                        array(),
+                        (new SugarDateTime('20160106T110000', new DateTimeZone('Europe/Minsk')))->asDb(),
+                        false,
+                        false,
+                    )
+                ),
+                'changedFields' => array(
+                    array(
+                        'title' => array('test event 1', 'test event'),
+                    ),
+                    array(
+                        'title' => array('test event 2', 'test event'),
+                        'location' => array('office', null),
+                    ),
+                ),
+                'expectedInvites' => array(
+                    array(),
+                    array(
+                        'added' => array(
+                            array(
+                                null,
+                                null,
+                                'NEEDS-ACTION',
+                                'sugar.vegan.phone@example.edu',
+                                'Doyle Brow',
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            array(
+                'oldEvent' => '',
+                'currentEvent' => $this->getEventTemplate('vevent'),
+                'expectedBean' => array(
+                    array(
+                        null,
+                        null,
+                        null,
+                        null,
+                        true,
+                    )
+                ),
+                'changedFields' => array(
+                    array(
+                        'title' => array('Test event title'),
+                        'description' => array('Test event description'),
+                        'location' => array('office'),
+                        'status' => array(null),
+                        'date_start' => array(
+                            (new SugarDateTime('2015-08-06 10:00:00', new DateTimeZone('Europe/Berlin')))->asDb()
+                        ),
+                        'date_end' => array(
+                            (new SugarDateTime('2015-08-06 11:00:00', new DateTimeZone('Europe/Berlin')))->asDb()
+                        ),
+                        'rrule' => array(
+                            'frequency' => array('DAILY'),
+                            'interval' => array(1),
+                            'count' => array(null),
+                            'until' => array((new SugarDateTime('20150813T080000Z', new DateTimeZone('UTC')))->asDb()),
+                            'byday' => array(array()),
+                            'action' => 'added',
+                        )
+                    ),
+                ),
+                'expectedInvites' => array(
+                    array(
+                        'added' => array(
+                            array(
+                                null,
+                                null,
+                                'ACCEPTED',
+                                'test0@test.com',
+                                'Test0',
+                            ),
+                            array(
+                                null,
+                                null,
+                                'NEEDS-ACTION',
+                                'test@test.com',
+                                null
+                            ),
+                            array(
+                                null,
+                                null,
+                                'ACCEPTED',
+                                'test1@test.com',
+                                null,
+                            ),
+                            array(
+                                null,
+                                null,
+                                'DECLINED',
+                                'test2@test.com',
+                                null,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            array(
+                'oldEvent' => $this->getEventTemplate('vevent'),
+                'currentEvent' => $this->getEventTemplate('vevent-after-edit'),
+                'expectedBean' => array(
+                    array(
+                        null,
+                        null,
+                        null,
+                        null,
+                        false,
+                    )
+                ),
+                'changedFields' => array(
+                    array(
+                        'title' => array('Test event title 1', 'Test event title'),
+                        'description' => array(null, 'Test event description'),
+                        'status' => array('CONFIRMED', null),
+                        'location' => array('home', 'office'),
+                        'date_start' => array(
+                            (new SugarDateTime('2015-08-06 09:00:00', new DateTimeZone('Europe/Berlin')))->asDb(),
+                            (new SugarDateTime('2015-08-06 10:00:00', new DateTimeZone('Europe/Berlin')))->asDb(),
+                        ),
+                        'rrule' => array(
+                            'frequency' => array('WEEKLY', 'DAILY'),
+                            'interval' => array(2, 1),
+                            'count' => array(10, null),
+                            'until' => array(
+                                null,
+                                (new SugarDateTime('20150813T080000Z', new DateTimeZone('UTC')))->asDb()
+                            ),
+                            'byday' => array(array('MO'), array()),
+                            'action' => 'updated'
+                        ),
+                    ),
+                ),
+                'expectedInvites' => array(
+                    array(
+                        'added' => array(
+                            array(
+                                null,
+                                null,
+                                'ACCEPTED',
+                                'test5@test.com',
+                                null
+                            ),
+                        ),
+                        'deleted' => array(
+                            array(
+                                null,
+                                null,
+                                'NEEDS-ACTION',
+                                'test@test.com',
+                                null
+                            ),
+                            array(
+                                null,
+                                null,
+                                'ACCEPTED',
+                                'test1@test.com',
+                                null,
+                            ),
+                        ),
+                        'changed' => array(
+                            array(
+                                null,
+                                null,
+                                'ACCEPTED',
+                                'test2@test.com',
+                                null
+                            ),
+                        ),
+                    ),
+                ),
             ),
         );
-
     }
 }
 
@@ -1768,7 +2007,8 @@ END:VCALENDAR',
  */
 class MeetingCRYS1322 extends Meeting
 {
-    public function retrieve($id) {
+    public function retrieve($id)
+    {
         $this->populateFromRow(array(
             'name' => 'Meeting1102415055',
             'date_entered' => '2015-12-16 13:34:54',

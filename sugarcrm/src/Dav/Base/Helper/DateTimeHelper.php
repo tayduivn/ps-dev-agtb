@@ -142,14 +142,8 @@ class DateTimeHelper
             return $dt;
         }
 
-        $currentTimezone = $this->getCurrentUser()->getPreference('timezone');
-        if (!$currentTimezone) {
-            $currentTimezone = 'UTC';
-        }
-        $userTimeZone = new \DateTimeZone($currentTimezone);
-        $utcTimeZone = new \DateTimeZone('UTC');
-        $dt = new \SugarDateTime($dateTime, $userTimeZone);
-        $dt->setTimeZone($utcTimeZone);
+        $dt = $sugarTimeDate->fromUser($dateTime, $this->getCurrentUser());
+        $dt->setTimeZone(new \DateTimeZone('UTC'));
 
         return $dt;
     }

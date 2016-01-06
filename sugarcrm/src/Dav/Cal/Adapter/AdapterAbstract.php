@@ -69,7 +69,6 @@ abstract class AdapterAbstract implements AdapterInterface
             'date_start' => true,
             'date_end' => true,
             'status' => true,
-            'reminder_time' => true,
             'repeat_type' => true,
             'repeat_interval' => true,
             'repeat_dow' => true,
@@ -117,38 +116,7 @@ abstract class AdapterAbstract implements AdapterInterface
         list($exportBean, $exportFields, $exportInvites) = $exportData;
         list($importBean, $importFields, $importInvites) = $importData;
 
-        if (isset($importFields['title']) && isset($exportFields['name'])) {
-            if ($importFields['title'][0] == $exportFields['name'][0]) {
-                unset($importFields['title']);
-            }
-        }
-        if (isset($importFields['location']) && isset($exportFields['location'])) {
-            if ($importFields['location'][0] == $exportFields['location'][0]) {
-                unset($importFields['location']);
-            }
-        }
-        if (isset($importFields['description']) && isset($exportFields['description'])) {
-            if ($importFields['description'][0] == $exportFields['description'][0]) {
-                unset($importFields['description']);
-            }
-        }
-        if (isset($importFields['status']) && isset($exportFields['status'])) {
-            $map = new CalDavStatus\EventMap();
-            $status = $map->getCalDavValue($exportFields['status'][0], $importFields['status'][0]);
-            if ($importFields['status'][0] == $status) {
-                unset($importFields['status']);
-            }
-        }
-        if (isset($importFields['date_start']) && isset($exportFields['date_start'])) {
-            if ($importFields['date_start'][0] == $exportFields['date_start'][0]) {
-                unset($importFields['date_start']);
-            }
-        }
-        if (isset($importFields['date_end']) && isset($exportFields['date_end'])) {
-            if ($importFields['date_end'][0] == $exportFields['date_end'][0]) {
-                unset($importFields['date_end']);
-            }
-        }
+        $this->filterFieldsOnVerify($exportFields, $importFields);
 
         foreach ($importFields as $field => $diff) {
             if (isset($diff[1])) {
@@ -197,38 +165,7 @@ abstract class AdapterAbstract implements AdapterInterface
         list($exportBean, $exportFields, $exportInvites) = $exportData;
         list($importBean, $importFields, $importInvites) = $importData;
 
-        if (isset($exportFields['name']) && isset($importFields['title'])) {
-            if ($exportFields['name'][0] == $importFields['title'][0]) {
-                unset($exportFields['name']);
-            }
-        }
-        if (isset($exportFields['location']) && isset($importFields['location'])) {
-            if ($exportFields['location'][0] == $importFields['location'][0]) {
-                unset($exportFields['location']);
-            }
-        }
-        if (isset($exportFields['description']) && isset($importFields['description'])) {
-            if ($exportFields['description'][0] == $importFields['description'][0]) {
-                unset($exportFields['description']);
-            }
-        }
-        if (isset($exportFields['status']) && isset($importFields['status'])) {
-            $map = new CalDavStatus\EventMap();
-            $status = $map->getSugarValue($importFields['status'][0], $exportFields['status'][0]);
-            if ($exportFields['status'][0] == $status) {
-                unset($exportFields['status']);
-            }
-        }
-        if (isset($exportFields['date_start']) && isset($importFields['date_start'])) {
-            if ($exportFields['date_start'][0] == $importFields['date_start'][0]) {
-                unset($exportFields['date_start']);
-            }
-        }
-        if (isset($exportFields['date_end']) && isset($importFields['date_end'])) {
-            if ($exportFields['date_end'][0] == $importFields['date_end'][0]) {
-                unset($exportFields['date_end']);
-            }
-        }
+        $this->filterFieldsOnVerify($exportFields, $importFields);
 
         foreach ($exportFields as $field => $diff) {
             if (count($diff) > 1) {
@@ -267,6 +204,106 @@ abstract class AdapterAbstract implements AdapterInterface
         }
 
         return false;
+    }
+
+    /**
+     * Filter fields on verifyExportAfterImport and verifyImportAfterExport
+     * @param array $exportFields
+     * @param array $importFields
+     */
+    protected function filterFieldsOnVerify(array &$exportFields, array &$importFields)
+    {
+        if (isset($exportFields['name']) && isset($importFields['title'])) {
+            if ($exportFields['name'][0] == $importFields['title'][0]) {
+                unset($exportFields['name']);
+                unset($importFields['title']);
+            }
+        }
+        if (isset($exportFields['deleted']) && isset($importFields['deleted'])) {
+            if ($exportFields['deleted'][0] == $importFields['deleted'][0]) {
+                unset($exportFields['deleted']);
+                unset($importFields['deleted']);
+            }
+        }
+        if (isset($exportFields['location']) && isset($importFields['location'])) {
+            if ($exportFields['location'][0] == $importFields['location'][0]) {
+                unset($exportFields['location']);
+                unset($importFields['location']);
+            }
+        }
+        if (isset($exportFields['description']) && isset($importFields['description'])) {
+            if ($exportFields['description'][0] == $importFields['description'][0]) {
+                unset($exportFields['description']);
+                unset($importFields['description']);
+            }
+        }
+        if (isset($exportFields['status']) && isset($importFields['status'])) {
+            $map = new CalDavStatus\EventMap();
+            $status = $map->getSugarValue($importFields['status'][0], $exportFields['status'][0]);
+            if ($exportFields['status'][0] == $status) {
+                unset($exportFields['status']);
+                unset($importFields['status']);
+            }
+        }
+        if (isset($exportFields['date_start']) && isset($importFields['date_start'])) {
+            if ($exportFields['date_start'][0] == $importFields['date_start'][0]) {
+                unset($exportFields['date_start']);
+                unset($importFields['date_start']);
+            }
+        }
+        if (isset($exportFields['date_end']) && isset($importFields['date_end'])) {
+            if ($exportFields['date_end'][0] == $importFields['date_end'][0]) {
+                unset($exportFields['date_end']);
+                unset($importFields['date_end']);
+            }
+        }
+
+        if (isset($exportFields['repeat_type']) && isset($importFields['rrule']['frequency'])) {
+            $frequencyMap = new CalDavStatus\IntervalMap();
+            $sugarValue = $frequencyMap->getSugarValue($importFields['rrule']['frequency'][0]);
+            if ($exportFields['repeat_type'][0] == $sugarValue) {
+                unset($exportFields['repeat_type']);
+                unset($importFields['rrule']['frequency']);
+            }
+        }
+
+        if (isset($exportFields['repeat_count']) && isset($importFields['rrule']['count'])) {
+            if ($exportFields['repeat_count'][0] == $importFields['rrule']['count'][0]) {
+                unset($exportFields['repeat_count']);
+                unset($importFields['rrule']['count']);
+            }
+        }
+
+        if (isset($exportFields['repeat_interval']) && isset($importFields['rrule']['interval'])) {
+            if ($exportFields['repeat_interval'][0] == $importFields['rrule']['interval'][0]) {
+                unset($exportFields['repeat_interval']);
+                unset($importFields['rrule']['interval']);
+            }
+        }
+
+        if (isset($exportFields['repeat_until']) && isset($importFields['rrule']['until'])) {
+            if ($exportFields['repeat_until'][0] == $importFields['rrule']['until'][0]) {
+                unset($exportFields['repeat_until']);
+                unset($importFields['rrule']['until']);
+            }
+        }
+
+        if (isset($exportFields['repeat_dow']) && isset($importFields['rrule']['byday'])) {
+            $sugarValue = '';
+            $dayMap = new CalDavStatus\DayMap();
+            foreach ($importFields['rrule']['byday'][0] as $day) {
+                $sugarValue .= $dayMap->getSugarValue($day);
+            }
+
+            if ($exportFields['repeat_dow'][0] == $sugarValue) {
+                unset($exportFields['repeat_dow']);
+                unset($importFields['rrule']['byday']);
+            }
+        }
+
+        if (isset($importFields['rrule']) && count($importFields['rrule']) == 1) {
+            unset($importFields['rrule']);
+        }
     }
 
     /**
@@ -324,6 +361,37 @@ abstract class AdapterAbstract implements AdapterInterface
         }
 
         return $collection->getChild($davChildren[$eventIndex]);
+    }
+
+    /**
+     * Get bean (call or meeting) to work
+     * @param \SugarBean $bean
+     * @param \CalDavEventCollection $calDavBean
+     * @param array $processedData
+     * @return \SugarBean
+     */
+    public function getBeanForImport(\SugarBean $bean, \CalDavEventCollection $calDavBean, array $processedData)
+    {
+        list($beanData, $changedFields, $invites) = $processedData;
+        list($beanId, $childEventsId, $recurrenceId, $recurrenceIndex, $insert) = $beanData;
+
+        if (is_null($recurrenceIndex)) {
+            return $bean;
+        }
+
+        if (!$childEventsId) {
+            $childEventsId = $calDavBean->getSugarChildrenOrder();
+        }
+
+        if ($childEventsId) {
+            return \BeanFactory::getBean(
+                $bean->module_name,
+                $childEventsId[$recurrenceIndex],
+                array('strict_retrieve' => true)
+            );
+        }
+
+        return null;
     }
 
     /**
@@ -488,12 +556,8 @@ abstract class AdapterAbstract implements AdapterInterface
             return false;
         }
 
-        if (isset($value['repeat_until'][1])) {
-            $valueBefore =
-                $currentRule->normalizeUntil(new \SugarDateTime($value['repeat_until'][1], new \DateTimeZone('UTC')));
-            if ($valueBefore != $currentRule->getUntil()) {
-                return false;
-            }
+        if (isset($value['repeat_until'][1]) && ($value['repeat_until'][1] != $currentRule->getUntil()->asDbDate())) {
+            return false;
         }
 
         if (isset($value['repeat_dow'][1])) {
@@ -910,6 +974,99 @@ abstract class AdapterAbstract implements AdapterInterface
             return true;
         }
         return false;
+    }
+
+    /**
+     * Check bean recurring for conflicts
+     * @param array $value
+     * @param \SugarBean $bean
+     * @return bool
+     */
+    protected function checkBeanRecurrence(array $value, \SugarBean $bean)
+    {
+        $frequencyMap = new CalDavStatus\IntervalMap();
+        $dayMap = new CalDavStatus\DayMap();
+
+        if (isset($value['frequency'][1]) && $bean->repeat_type !=  $frequencyMap->getSugarValue($value['frequency'][1])) {
+            return false;
+        }
+
+        if (isset($value['interval'][1]) && $bean->repeat_interval != $value['interval'][1]) {
+            return false;
+        }
+
+        if (isset($value['count'][1]) && $bean->repeat_count != $value['count'][1]) {
+            return false;
+        }
+
+        if (isset($value['until'][1]) && $bean->repeat_until != $value['until'][1]) {
+            return false;
+        }
+
+        if (isset($value['byday'][1])) {
+            $sugarValue = '';
+            foreach ($value['byday'][1] as $day) {
+                $sugarValue .= $dayMap->getSugarValue($day);
+            }
+
+            if ($bean->repeat_dow != $sugarValue) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Set bean recurring rule
+     * @param array $value
+     * @param \SugarBean $bean
+     * @return bool
+     */
+    protected function setBeanRecurrence(array $value, \SugarBean $bean)
+    {
+        $calendarEvents = $this->getCalendarEvents();
+        if ($value['action'] == 'deleted') {
+            $bean->repeat_type = '';
+            $bean->repeat_interval = 0;
+            $bean->repeat_count = 0;
+            $bean->repeat_until = '';
+            $bean->repeat_dow = '';
+            $calendarEvents->markRepeatDeleted($bean);
+            return true;
+        }
+
+        $frequencyMap = new CalDavStatus\IntervalMap();
+        $dayMap = new CalDavStatus\DayMap();
+
+        if (isset($value['frequency'])) {
+            $bean->repeat_type =  $frequencyMap->getSugarValue($value['frequency'][0]);
+        }
+
+        if (isset($value['interval'])) {
+            $bean->repeat_interval = $value['interval'][0];
+        }
+
+        if (isset($value['count'])) {
+            $bean->repeat_count = $value['count'][0];
+        }
+
+        if (isset($value['until'])) {
+            $bean->repeat_until = $value['until'][0];
+        }
+
+        if (isset($value['byday'])) {
+            $sugarValue = '';
+            foreach ($value['byday'][0] as $day) {
+                $sugarValue .= $dayMap->getSugarValue($day);
+            }
+
+            $bean->repeat_dow = $sugarValue;
+        }
+
+        $calendarEvents->saveRecurringEvents($bean);
+
+        return true;
     }
 
     /**

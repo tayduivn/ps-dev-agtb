@@ -715,8 +715,8 @@ class Meeting extends SugarBean {
 			$relate_values = array('lead_id'=>$user->id,'meeting_id'=>$this->id);
 			$data_values = array('accept_status'=>$status);
 			$this->set_relationship($this->rel_leads_table, $relate_values, true, true,$data_values);
-        } elseif ($user->object_name == 'Addresses') {
-            $relate_values = array('addresses_id' => $user->id, 'meeting_id' => $this->id);
+        } elseif ($user->object_name == 'Addressee') {
+            $relate_values = array('addressee_id' => $user->id, 'meeting_id' => $this->id);
             $data_values = array('accept_status' => $status);
             $this->set_relationship($this->rel_addresses_table, $relate_values, true, true, $data_values);
         }
@@ -1038,10 +1038,10 @@ class Meeting extends SugarBean {
 
         $acceptStatusAddresses = array();
         while ($a = $this->db->fetchByAssoc($result)) {
-            if (!in_array($a['addresses_id'], $addresseeInvitees)) {
-                $deleteAddresses[$a['addresses_id']] = $a['addresses_id'];
+            if (!in_array($a['addressee_id'], $addresseeInvitees)) {
+                $deleteAddresses[$a['addressee_id']] = $a['addressee_id'];
             } else {
-                $acceptStatusAddresses[$a['addresses_id']] = $a['accept_status'];
+                $acceptStatusAddresses[$a['addressee_id']] = $a['addressee_id'];
             }
         }
 
@@ -1066,7 +1066,7 @@ class Meeting extends SugarBean {
                 // update query to preserve accept_status
                 $sql  = 'UPDATE meetings_addresses SET deleted = 0, accept_status = ' . $this->db->quoted($acceptStatusAddresses[$addressesId]);
                 $sql .= ' WHERE meeting_id = ' . $this->db->quoted($this->id);
-                $sql .= ' AND addresses_id = ' . $this->db->quoted($addressesId);
+                $sql .= ' AND addressee_id = ' . $this->db->quoted($addressesId);
                 $this->db->query($sql);
             }
         }

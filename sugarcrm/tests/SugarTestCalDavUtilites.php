@@ -119,7 +119,6 @@ class SugarTestCalDavUtilities
 
         $event->processed = true;
         $event->save();
-        $event->retrieve($event->id);
         self::$createdEvents[] = $event;
 
         return $event;

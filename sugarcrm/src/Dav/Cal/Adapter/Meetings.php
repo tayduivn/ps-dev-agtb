@@ -94,7 +94,7 @@ class Meetings extends CalDavAbstractAdapter
         }
 
         if (!$repeatParentId && $recurringParam) {
-            $isChanged = $isChanged | $this->setCalDavRecurring($recurringParam, $collection);
+            $isChanged = $isChanged | $this->setCalDavRecurring($recurringParam, $collection, $override);
         }
 
         return (bool)$isChanged;
@@ -110,10 +110,10 @@ class Meetings extends CalDavAbstractAdapter
      */
     public function import(array $data, \SugarBean $bean)
     {
-        /**@var \Call $bean*/
+        /**@var \Meeting $bean*/
         $isChanged = false;
         list($beanData, $changedFields, $invitees) = $data;
-        list($beanId, $childEventsId, $override) = $beanData;
+        list($beanId, $childEventsId, $recurrenceId, $recurrenceIndex, $override) = $beanData;
 
         // checking before values
         if (!$override) {
@@ -137,6 +137,9 @@ class Meetings extends CalDavAbstractAdapter
             }
             if ($invitees && !$this->checkBeanInvites($invitees, $bean)) {
                 throw new ImportException("Conflict with Bean Invitees");
+            }
+            if (isset($changedFields['rrule']) && !$this->checkBeanRecurrence($changedFields['rrule'], $bean)) {
+                throw new ImportException("Conflict with Bean recurrence");
             }
         }
 
@@ -163,6 +166,10 @@ class Meetings extends CalDavAbstractAdapter
         }
         if ($invitees) {
             $isChanged |= $this->setBeanInvites($invitees, $bean, $override);
+        }
+
+        if (isset($changedFields['rrule'])) {
+            $isChanged |= $this->setBeanRecurrence($changedFields['rrule'], $bean);
         }
 
         return $isChanged;

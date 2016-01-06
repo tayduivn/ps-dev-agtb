@@ -138,7 +138,7 @@ class Calls extends AdapterAbstract
         /**@var \Call $bean*/
         $isChanged = false;
         list($beanData, $changedFields, $invitees) = $data;
-        list($beanId, $childEventsId, $override) = $beanData;
+        list($beanId, $childEventsId, $recurrenceId, $recurrenceIndex, $override) = $beanData;
 
         // checking before values
         if (!$override) {
@@ -159,6 +159,10 @@ class Calls extends AdapterAbstract
             }
             if ($invitees && !$this->checkBeanInvites($invitees, $bean)) {
                 throw new ImportException("Conflict with Bean Invitees");
+            }
+
+            if (isset($changedFields['rrule']) && !$this->checkBeanRecurrence($changedFields['rrule'], $bean)) {
+                throw new ImportException("Conflict with Bean recurrence");
             }
         }
 
@@ -182,6 +186,10 @@ class Calls extends AdapterAbstract
         }
         if ($invitees) {
             $isChanged |= $this->setBeanInvites($invitees, $bean, $override);
+        }
+
+        if (isset($changedFields['rrule'])) {
+            $isChanged |= $this->setBeanRecurrence($changedFields['rrule'], $bean);
         }
 
         return $isChanged;
