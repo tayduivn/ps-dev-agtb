@@ -215,9 +215,13 @@ $(function() {
           //   return d3.round(si.scale(d), 2) + si.symbol;
           // })
           .tooltipContent(function(key, x, y, e, graph) {
+            var val = d3.format('$,.2f')(y);
             return '<p>Outcome: <b>' + key + '</b></p>' +
                    '<p>Percentage: <b>' + x + '%</b></p>' +
-                   '<p>Amount: <b>$' + parseInt(y) + 'K</b></p>';
+                   '<p>Amount: <b>' + val + '</b></p>';
+          })
+          .valueFormat(function(d) {
+            return '$' + nv.utils.numberFormatSI(d, 2);
           })
           .seriesClick(function(data, eo, chart) {
             chart.dataSeriesActivate(eo);
@@ -231,6 +235,7 @@ $(function() {
       .textureFill(true);
 
     chart.yAxis
+      .tickFormat(chart.multibar.valueFormat())
       .axisLabel(showLabels === 'yes' ? yAxisLabel : '');
 
     chart.xAxis
