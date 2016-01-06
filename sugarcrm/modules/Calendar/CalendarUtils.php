@@ -554,7 +554,7 @@ class CalendarUtils
         if ($new_parent_id) {
             $bean = BeanFactory::getBean($bean->module_name, $new_parent_id);
             $hook = new \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler();
-            $hook->export($bean, array(), array(), static::getInvites($bean), true);
+            $hook->export($bean, false);
         }
 	}
 

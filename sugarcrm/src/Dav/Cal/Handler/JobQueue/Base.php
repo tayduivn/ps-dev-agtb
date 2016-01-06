@@ -64,6 +64,11 @@ abstract class Base implements RunnableInterface
      */
     protected function setJobToEnd($calDavBean)
     {
+        $conflictCounter = $calDavBean->getSynchronizationObject()->getConflictCounter();
+        if ($conflictCounter && $this->saveCounter < $conflictCounter) {
+            $calDavBean->getSynchronizationObject()->setJobCounter();
+            return true;
+        }
         $currentJobCounter = $calDavBean->getSynchronizationObject()->getJobCounter();
         if ($this->saveCounter - $currentJobCounter > 1) {
             $this->reschedule();

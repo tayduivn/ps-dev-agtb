@@ -34,10 +34,11 @@ class Handler
 
     /**
      * @param \CalDavEventCollection $collection
-     * @param string $calDavData
+     * @param mixed|false $previousData in case of false full import should be processed
+     * @param bool $conflictSolver
      * @return bool success of operation
      */
-    public function import(\CalDavEventCollection $collection, $calDavData)
+    public function import(\CalDavEventCollection $collection, $previousData = false, $conflictSolver = false)
     {
         if (!$collection->isImportable() || !$collection->parent_type) {
             return false;
@@ -48,7 +49,7 @@ class Handler
             return false;
         }
 
-        $preparedData = $adapter->prepareForImport($collection, $calDavData);
+        $preparedData = $adapter->prepareForImport($collection, $previousData);
         if (!$preparedData) {
             return false;
         }
@@ -63,7 +64,10 @@ class Handler
         }
         if ($continue && $preparedData) {
             $saveCounter = $collection->getSynchronizationObject()->setSaveCounter();
-            $this->getManager()->calDavImport($collection->module_name, $collection->id, $preparedData, $saveCounter);
+            if ($conflictSolver) {
+                $collection->getSynchronizationObject()->setConflictCounter(true);
+            }
+            $this->getManager()->calDavImport($collection->module_name, $collection->id, $preparedData, $saveCounter, $conflictSolver);
         }
         static::$importHandler = null;
         return true;
@@ -71,31 +75,18 @@ class Handler
 
     /**
      * @param \SugarBean $bean
-     * @param array $changedFields
-     * @param array $invitesBefore
-     * @param array $invitesAfter
-     * @param bool $insert
+     * @param mixed|false $previousData in case of false full export should be processed
+     * @param bool $conflictSolver
      * @return bool success of operation
      */
-    public function export(
-        \SugarBean $bean,
-        $changedFields = array(),
-        $invitesBefore = array(),
-        $invitesAfter = array(),
-        $insert = false
-    ) {
+    public function export(\SugarBean $bean, $previousData = false, $conflictSolver = false)
+    {
         $adapter = $this->getAdapterFactory()->getAdapter($bean->module_name);
         if (!$adapter) {
             return false;
         }
 
-        $preparedData = $adapter->prepareForExport(
-            $bean,
-            $changedFields,
-            $invitesBefore,
-            $invitesAfter,
-            $insert
-        );
+        $preparedData = $adapter->prepareForExport($bean, $previousData);
         if (!$preparedData) {
             return false;
         }
@@ -125,6 +116,9 @@ class Handler
         }
         if ($continue && $preparedData) {
             $saveCounter = $collection->getSynchronizationObject()->setSaveCounter();
+            if ($conflictSolver) {
+                $collection->getSynchronizationObject()->setConflictCounter(true);
+            }
             $this->getManager()->calDavExport($bean->module_name, $parentBeanId, $preparedData, $saveCounter);
         }
         static::$exportHandler = null;

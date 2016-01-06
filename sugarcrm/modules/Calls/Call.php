@@ -147,7 +147,7 @@ class Call extends SugarBean {
 
 		$isUpdate = $this->isUpdate();
 
-        if (is_null($this->invitesBefore)) {
+        if ($isUpdate && is_null($this->invitesBefore)) {
             $this->invitesBefore = CalendarUtils::getInvites($this);
         }
 
@@ -216,13 +216,11 @@ class Call extends SugarBean {
             $this->set_accept_status($GLOBALS['current_user'], 'accept');
         }
 
-        $this->getCalDavHandler()->export(
-            $this,
-            $this->dataChanges,
-            $this->invitesBefore,
-            CalendarUtils::getInvites($this),
-            !$isUpdate
-        );
+        if ($isUpdate) {
+            $this->getCalDavHandler()->export($this, array($this->dataChanges, $this->invitesBefore, CalendarUtils::getInvites($this)));
+        } else {
+            $this->getCalDavHandler()->export($this, false);
+        }
 
         $this->invitesBefore = null;
 
@@ -733,7 +731,7 @@ class Call extends SugarBean {
                     'before' => $deletedStatus
                 ),
             );
-            $this->getCalDavHandler()->export($this, $dataChanges);
+            $this->getCalDavHandler()->export($this, array($dataChanges, array(), array()));
         }
     }
 
@@ -759,7 +757,7 @@ class Call extends SugarBean {
                     'before' => $deletedStatus
                 ),
             );
-            $this->getCalDavHandler()->export($this, $dataChanges);
+            $this->getCalDavHandler()->export($this, array($dataChanges, array(), array()));
         }
     }
 

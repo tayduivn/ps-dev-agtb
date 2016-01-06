@@ -388,8 +388,8 @@ class CalendarEvents
 
         if ($changeWasMade) {
             $invitesAfter = CalendarUtils::getInvites($event);
-            $caldavHandler = new CalDavHandler();
-            $caldavHandler->export($event, array(), $invitesBefore, $invitesAfter);
+            $calDavHandler = new CalDavHandler();
+            $calDavHandler->export($event, array(array(), $invitesBefore, $invitesAfter));
             if ($invitee instanceof User) {
                 $GLOBALS['log']->debug(sprintf('Update vCal cache for %s/%s', $invitee->module_name, $invitee->id));
                 vCal::cache_sugar_vcal($invitee);

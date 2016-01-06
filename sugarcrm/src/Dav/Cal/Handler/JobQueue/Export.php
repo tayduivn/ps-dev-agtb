@@ -38,30 +38,44 @@ class Export extends Base
         /** @var \CalDavEventCollection $collection */
         $collection = \BeanFactory::getBean('CalDavEvents');
         $calDavBean = $collection->findByParentModuleAndId($this->beanModule, $this->beanId);
+        if (!$calDavBean) {
+            return \SchedulersJob::JOB_FAILURE;
+        }
 
         if ($this->setJobToEnd($calDavBean)) {
             return \SchedulersJob::JOB_CANCELLED;
         }
 
-        $importData = array();
-        HookHandler::$importHandler = function ($beanModule, $beanId, $data) use ($calDavBean, &$importData) {
-            if ($calDavBean->module_name == $beanModule && $calDavBean->id == $beanId) {
-                $importData = $data;
-                return false;
+        $status = \SchedulersJob::JOB_SUCCESS;
+        try {
+            if ($adapter->export($this->processedData, $calDavBean)) {
+                $importData = array();
+                HookHandler::$importHandler = function ($beanModule, $beanId, $data) use ($calDavBean, &$importData) {
+                    if ($calDavBean->module_name == $beanModule && $calDavBean->id == $beanId) {
+                        $importData = $data;
+                        return false;
+                    }
+                    return true;
+                };
+                $calDavBean->save();
+                HookHandler::$importHandler = null;
+                if ($importData) {
+                    $importData = $adapter->verifyImportAfterExport($this->processedData, $importData, $calDavBean);
+                }
+                if ($importData) {
+                    $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();
+                    $this->getManager()->calDavImport($calDavBean->module_name, $calDavBean->id, $importData, $saveCounter);
+                }
             }
-            return true;
-        };
-        if ($adapter->export($this->processedData, $calDavBean)) {
-            $calDavBean->save();
-            $importData = $adapter->verifyImportAfterExport($this->processedData, $importData, $calDavBean);
-            if ($importData) {
-                $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();
-                $this->getManager()->calDavImport($calDavBean->module_name, $calDavBean->id, $importData, $saveCounter);
-            }
+        } catch (\Exception $exception) {
+            HookHandler::$importHandler = null;
+            $status = \SchedulersJob::JOB_FAILURE;
+            $hookHandler = new HookHandler();
+            $hookHandler->export(\BeanFactory::getBean($this->beanModule, $this->beanId), false, true);
         }
         $calDavBean->getSynchronizationObject()->setJobCounter();
-        HookHandler::$importHandler = null;
-        return \SchedulersJob::JOB_SUCCESS;
+        $calDavBean->getSynchronizationObject()->setConflictCounter(false);
+        return $status;
     }
 
     /**

@@ -446,35 +446,39 @@ $dictionary['CalDavSynchronization'] = array(
     'audited' => false,
     'activity_enabled' => false,
     'favorites' => false,
-    'fields' =>
-        array(
-            'event_id' =>
-                array(
-                    'name' => 'event_id',
-                    'vname' => 'LBL_EVENT_ID',
-                    'type' => 'id',
-                    'isnull' => 'false',
-                    'comment' => 'Calendar event id',
-                ),
-            'save_counter' =>
-                array(
-                    'name' => 'save_counter',
-                    'vname' => 'LBL_SYNC_SAVE_COUNTER',
-                    'type' => 'int',
-                    'len' => '11',
-                    'default' => '0',
-                    'comment' => 'Save counter',
-                ),
-            'job_counter' =>
-                array(
-                    'name' => 'job_counter',
-                    'vname' => 'LBL_SYNC_JOB_COUNTER',
-                    'type' => 'int',
-                    'len' => '11',
-                    'default' => '0',
-                    'comment' => 'Ended jobs counter',
-                ),
+    'fields' => array(
+        'event_id' => array(
+            'name' => 'event_id',
+            'vname' => 'LBL_EVENT_ID',
+            'type' => 'id',
+            'isnull' => 'false',
+            'comment' => 'Calendar event id',
         ),
+        'save_counter' => array(
+            'name' => 'save_counter',
+            'vname' => 'LBL_SYNC_SAVE_COUNTER',
+            'type' => 'int',
+            'len' => '11',
+            'default' => '0',
+            'comment' => 'Save counter',
+        ),
+        'job_counter' => array(
+            'name' => 'job_counter',
+            'vname' => 'LBL_SYNC_JOB_COUNTER',
+            'type' => 'int',
+            'len' => '11',
+            'default' => '0',
+            'comment' => 'Ended jobs counter',
+        ),
+        'conflict_counter' => array(
+            'name' => 'conflict_counter',
+            'vname' => 'LBL_CONFLICT',
+            'type' => 'int',
+            'len' => '11',
+            'default' => '0',
+            'comment' => 'Number of save_counter which solves conflict',
+        ),
+    ),
     'indices' => array(
         array(
             'name' => 'idx_event_id',
