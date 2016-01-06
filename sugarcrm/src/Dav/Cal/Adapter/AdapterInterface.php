@@ -52,18 +52,15 @@ interface AdapterInterface
 
     /**
      * @param \SugarBean $bean
-     * @param array $changedFields
-     * @param array $invitesBefore
-     * @param array $invitesAfter
-     * @param bool $insert
+     * @param mixed|false $previousData in case of false full export should be processed
      * @return mixed returns data for export or false if required things weren't changed and nothing to export
      */
-    public function prepareForExport(\SugarBean $bean, $changedFields, $invitesBefore, $invitesAfter, $insert);
+    public function prepareForExport(\SugarBean $bean, $previousData = false);
 
     /**
      * @param \CalDavEventCollection $collection
-     * @param string $previousData
+     * @param mixed|false $previousData in case of false full import should be processed
      * @return mixed returns data for import or false if required things weren't changed and nothing to import
      */
-    public function prepareForImport(\CalDavEventCollection $collection, $previousData);
+    public function prepareForImport(\CalDavEventCollection $collection, $previousData = false);
 }

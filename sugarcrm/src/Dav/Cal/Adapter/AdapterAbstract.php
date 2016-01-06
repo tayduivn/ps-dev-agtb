@@ -26,20 +26,21 @@ use Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event;
 abstract class AdapterAbstract implements AdapterInterface
 {
     /**
+     * @inheritdoc
      * @param \Call|\Meeting|\SugarBean $bean
-     * @param array $changedFields
-     * @param array $invitesBefore
-     * @param array $invitesAfter
-     * @param bool $insert
-     * @return mixed
      */
-    public function prepareForExport(
-        \SugarBean $bean,
-        $changedFields = array(),
-        $invitesBefore = array(),
-        $invitesAfter = array(),
-        $insert = false
-    ) {
+    public function prepareForExport(\SugarBean $bean, $previousData = false)
+    {
+        $changedFields = array();
+        $inviteesBefore = array();
+        $override = true;
+        if ($previousData) {
+            list($changedFields, $inviteesBefore, $inviteesAfter) = $previousData;
+            $override = false;
+        } else {
+            $inviteesAfter = \CalendarUtils::getInvites($bean);
+        }
+
         $participantsHelper = $this->getParticipantHelper();
         $parentBean = null;
         $childEvents = null;
@@ -47,18 +48,18 @@ abstract class AdapterAbstract implements AdapterInterface
         $repeatParentId = $bean->repeat_parent_id;
 
         if (!$repeatParentId) {
-            if (($insert && $bean->repeat_type)
+            if (($override && $bean->repeat_type)
                 ||
-                (!$insert && $this->isRecurringChanged($changedFields))
+                (!$override && $this->isRecurringChanged($changedFields))
             ) {
                 $recurringParam = $this->getRecurringHelper()->beanToArray($bean);
             }
         }
 
-        if (!$insert) {
-            $changedFields = $this->getFieldsDiff($changedFields);
-        } else {
+        if ($override) {
             $changedFields = $this->getBeanFetchedRow($bean);
+        } else {
+            $changedFields = $this->getFieldsDiff($changedFields);
         }
         $changedFields = array_intersect_key($changedFields, array(
             'name' => true,
@@ -77,7 +78,7 @@ abstract class AdapterAbstract implements AdapterInterface
             'repeat_parent_id' => true,
         ));
 
-        $changedInvites = $participantsHelper->getInvitesDiff($invitesBefore, $invitesAfter);
+        $changedInvites = $participantsHelper->getInvitesDiff($inviteesBefore, $inviteesAfter);
 
         if (!$changedFields && !$changedInvites) {
             return false;
@@ -88,7 +89,7 @@ abstract class AdapterAbstract implements AdapterInterface
             $bean->id,
             $repeatParentId,
             $recurringParam,
-            $insert,
+            $override,
         );
 
         return array($beanData, $changedFields, $changedInvites);
@@ -97,9 +98,12 @@ abstract class AdapterAbstract implements AdapterInterface
     /**
      * @inheritDoc
      */
-    public function prepareForImport(\CalDavEventCollection $collection, $previousData)
+    public function prepareForImport(\CalDavEventCollection $collection, $previousData = false)
     {
-        return $collection->getDiffStructure($previousData);
+        if ($previousData) {
+            return $collection->getDiffStructure($previousData);
+        }
+        return $collection->getDiffStructure('');
     }
 
     /**
@@ -431,22 +435,22 @@ abstract class AdapterAbstract implements AdapterInterface
     protected function checkCalDavInvites($value, Event $event)
     {
         if (isset($value['added'])) {
-            foreach ($value['added'] as $invite) {
-                if ($event->findParticipantsByEmail($invite[3]) != -1) {
+            foreach ($value['added'] as $invitee) {
+                if ($event->findParticipantsByEmail($invitee[3]) != -1) {
                     return false;
                 }
             }
         }
         if (isset($value['changed'])) {
-            foreach ($value['changed'] as $invite) {
-                if ($event->findParticipantsByEmail($invite[3]) == - 1) {
+            foreach ($value['changed'] as $invitee) {
+                if ($event->findParticipantsByEmail($invitee[3]) == - 1) {
                     return false;
                 }
             }
         }
         if (isset($value['deleted'])) {
-            foreach ($value['deleted'] as $invite) {
-                if ($event->findParticipantsByEmail($invite[3]) == -1) {
+            foreach ($value['deleted'] as $invitee) {
+                if ($event->findParticipantsByEmail($invitee[3]) == -1) {
                     return false;
                 }
             }
@@ -589,26 +593,47 @@ abstract class AdapterAbstract implements AdapterInterface
      *
      * @param array $value
      * @param Event $event
+     * @param bool $override
      * @return bool
      */
-    protected function setCalDavInvites(array $value, Event $event)
+    protected function setCalDavInvites(array $value, Event $event, $override = false)
     {
         $result = false;
         $participantHelper = $this->getParticipantHelper();
 
+        if ($override) {
+            $indexes = array();
+            $value['changed'] = array();
+            $value['deleted'] = array();
+            foreach ($value['added'] as $k => $invitee) {
+                $index = $event->findParticipantsByEmail($invitee[3]);
+                if ($index != -1) {
+                    $indexes[] = $index;
+                    $value['changed'][] = $invitee;
+                    unset($value['added'][$k]);
+                }
+            }
+            foreach ($event->getParticipants() as $k => $participant) {
+                if (!in_array($k, $indexes)) {
+                    $value['deleted'][] = $participantHelper->participantToInvite($participant);
+                }
+            }
+            $value = array_filter($value);
+        }
+
         if (isset($value['added'])) {
-            foreach ($value['added'] as $invite) {
-                $result |= $event->setParticipant($participantHelper->inviteToParticipant($invite));
+            foreach ($value['added'] as $invitee) {
+                $result |= $event->setParticipant($participantHelper->inviteToParticipant($invitee));
             }
         }
         if (isset($value['changed'])) {
-            foreach ($value['changed'] as $invite) {
-                $result |= $event->setParticipant($participantHelper->inviteToParticipant($invite));
+            foreach ($value['changed'] as $invitee) {
+                $result |= $event->setParticipant($participantHelper->inviteToParticipant($invitee));
             }
         }
         if (isset($value['deleted'])) {
-            foreach ($value['deleted'] as $invite) {
-                $result |= $event->deleteParticipant($invite[3]);
+            foreach ($value['deleted'] as $invitee) {
+                $result |= $event->deleteParticipant($invitee[3]);
             }
         }
         if (!$event->getOrganizer() && $GLOBALS['current_user'] instanceof \User) {
@@ -750,22 +775,22 @@ abstract class AdapterAbstract implements AdapterInterface
         }
 
         if (isset($value['added'])) {
-            foreach ($value['added'] as $invite) {
-                if (isset($existingLinks[$invite[0]][$invite[1]])) {
+            foreach ($value['added'] as $invitee) {
+                if (isset($existingLinks[$invitee[0]][$invitee[1]])) {
                     return false;
                 }
             }
         }
         if (isset($value['changed'])) {
-            foreach ($value['changed'] as $invite) {
-                if (!isset($existingLinks[$invite[0]][$invite[1]])) {
+            foreach ($value['changed'] as $invitee) {
+                if (!isset($existingLinks[$invitee[0]][$invitee[1]])) {
                     return false;
                 }
             }
         }
         if (isset($value['deleted'])) {
-            foreach ($value['deleted'] as $invite) {
-                if (!isset($existingLinks[$invite[0]][$invite[1]])) {
+            foreach ($value['deleted'] as $invitee) {
+                if (!isset($existingLinks[$invitee[0]][$invitee[1]])) {
                     return false;
                 }
             }
@@ -892,9 +917,10 @@ abstract class AdapterAbstract implements AdapterInterface
      *
      * @param array $value
      * @param \SugarBean|\Meeting|\Call $bean
+     * @param bool $override
      * @return bool
      */
-    protected function setBeanInvites(array $value, \SugarBean $bean)
+    protected function setBeanInvites(array $value, \SugarBean $bean, $override = false)
     {
         $result = false;
 
@@ -916,36 +942,65 @@ abstract class AdapterAbstract implements AdapterInterface
                 }
             }
         }
+        if ($override) {
+            $value['changed'] = array();
+            $value['deleted'] = array();
+            $indexes = array();
+            foreach ($value['added'] as $k => $invitee) {
+                if (isset($existingLinks[$invitee[0]][$invitee[1]])) {
+                    $indexes[] = array($invitee[0], $invitee[1]);
+                    $value['changed'][] = $invitee;
+                    unset($value['added'][$k]);
+                }
+            }
+            foreach ($existingLinks as $moduleName => $ids) {
+                foreach ($ids as $id => $_) {
+                    $found = false;
+                    foreach ($indexes as $index) {
+                        if ($index[0] == $moduleName && $index[1] == $id) {
+                            $found = true;
+                            break;
+                        }
+                    }
+                    if (!$found) {
+                        $value['deleted'][] = array($moduleName, $id);
+                    }
+                }
+            }
+            $value = array_filter($value);
+        }
 
         $map = new CalDavStatus\AcceptedMap();
         if (isset($value['added'])) {
-            foreach ($value['added'] as $invite) {
-                list($beanName, $beanId, $beanStatus, $email, $displayName) = $invite;
+            foreach ($value['added'] as $invitee) {
+                list($beanName, $beanId, $beanStatus, $email, $displayName) = $invitee;
                 $participant = \BeanFactory::getBean($beanName, $beanId, array(
                     'strict_retrieve' => true,
                 ));
                 if ($participant) {
                     $bean->set_accept_status($participant, $map->getSugarValue($beanStatus));
                     $existingLinks[$participant->module_name][$participant->id] = true;
+                    $result = true;
                 }
             }
         }
         if (isset($value['changed'])) {
-            foreach ($value['changed'] as $invite) {
-                list($beanName, $beanId, $beanStatus, $email, $displayName) = $invite;
+            foreach ($value['changed'] as $invitee) {
+                list($beanName, $beanId, $beanStatus, $email, $displayName) = $invitee;
                 $participant = \BeanFactory::getBean($beanName, $beanId, array(
                     'strict_retrieve' => true,
                 ));
                 if ($participant) {
                     $bean->set_accept_status($participant, $map->getSugarValue($beanStatus));
                     $existingLinks[$participant->module_name][$participant->id] = true;
+                    $result = true;
                 }
             }
         }
         if (isset($value['deleted'])) {
-            foreach ($value['deleted'] as $invite) {
-                if (isset($existingLinks[$invite[0]][$invite[1]])) {
-                    unset($existingLinks[$invite[0]][$invite[1]]);
+            foreach ($value['deleted'] as $invitee) {
+                if (isset($existingLinks[$invitee[0]][$invitee[1]])) {
+                    unset($existingLinks[$invitee[0]][$invitee[1]]);
                     $result = true;
                 }
             }

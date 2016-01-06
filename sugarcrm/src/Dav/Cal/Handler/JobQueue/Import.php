@@ -63,25 +63,37 @@ class Import extends Base
             throw new JQLogicException('Bean ' . $bean->module_name . ' does not have CalDav adapter');
         }
 
-        $exportData = array();
-        HookHandler::$exportHandler = function($beanModule, $beanId, $data) use ($bean, &$exportData) {
-            if ($bean->module_name == $beanModule && $bean->id == $beanId) {
-                $exportData = $data;
-                return false;
+        $status = \SchedulersJob::JOB_SUCCESS;
+        try {
+            $liveBean = clone $bean;
+            if ($adapter->import($this->processedData, $liveBean)) {
+                $exportData = array();
+                HookHandler::$exportHandler = function($beanModule, $beanId, $data) use ($bean, &$exportData) {
+                    if ($bean->module_name == $beanModule && $bean->id == $beanId) {
+                        $exportData = $data;
+                        return false;
+                    }
+                    return true;
+                };
+                $liveBean->save();
+                HookHandler::$exportHandler = null;
+                if ($exportData) {
+                    $exportData = $adapter->verifyExportAfterImport($this->processedData, $exportData, $liveBean);
+                }
+                if ($exportData) {
+                    $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();
+                    $this->getManager()->calDavExport($liveBean->module_name, $liveBean->id, $exportData, $saveCounter);
+                }
             }
-            return true;
-        };
-        if ($adapter->import($this->processedData, $bean)) {
-            $bean->save();
-            $exportData = $adapter->verifyExportAfterImport($this->processedData, $exportData, $bean);
-            if ($exportData) {
-                $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();
-                $this->getManager()->calDavExport($bean->module_name, $bean->id, $exportData, $saveCounter);
-            }
+            $bean = $liveBean;
+        } catch (\Exception $exception) {
+            HookHandler::$exportHandler = null;
+            $status = \SchedulersJob::JOB_FAILURE;
+            $hookHandler = new HookHandler();
+            $hookHandler->export($bean, false, true);
         }
         $calDavBean->getSynchronizationObject()->setJobCounter();
-        HookHandler::$exportHandler = null;
-        return \SchedulersJob::JOB_SUCCESS;
+        return $status;
     }
 
     /**

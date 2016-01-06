@@ -34,8 +34,8 @@ class Meetings extends CalDavAbstractAdapter
     public function export(array $data, \CalDavEventCollection $collection)
     {
         $isChanged = false;
-        list($beanData, $changedFields, $invites) = $data;
-        list($beanModuleName, $beanId, $repeatParentId, $recurringParam, $insert) = $beanData;
+        list($beanData, $changedFields, $invitees) = $data;
+        list($beanModuleName, $beanId, $repeatParentId, $recurringParam, $override) = $beanData;
 
         $event = $this->getCurrentEvent($collection, $repeatParentId, $beanId);
         if (!$event) {
@@ -43,7 +43,7 @@ class Meetings extends CalDavAbstractAdapter
         }
 
         // checking before values
-        if (!$insert) {
+        if (!$override) {
             if (isset($changedFields['name']) && count($changedFields['name']) == 2 && !$this->checkCalDavTitle($changedFields['name'][1], $event)) {
                 throw new ExportException("Conflict with CalDav Title field");
             }
@@ -62,8 +62,8 @@ class Meetings extends CalDavAbstractAdapter
             if (isset($changedFields['date_end']) && count($changedFields['date_end']) == 2 && !$this->checkCalDavEndDate($changedFields['date_end'][1], $event)) {
                 throw new ExportException("Conflict with CalDav End Date field");
             }
-            if ($invites && !$this->checkCalDavInvites($invites, $event)) {
-                throw new ExportException("Conflict with CalDav Invites");
+            if ($invitees && !$this->checkCalDavInvites($invitees, $event)) {
+                throw new ExportException("Conflict with CalDav Invitees");
             }
             if (!$repeatParentId && !$this->checkCalDavRecurring($changedFields, $collection)) {
                 throw new ExportException("Conflict with CalDav recurring params");
@@ -89,12 +89,12 @@ class Meetings extends CalDavAbstractAdapter
         if (isset($changedFields['date_end'])) {
             $isChanged = $isChanged | $this->setCalDavEndDate($changedFields['date_end'][0], $event);
         }
-        if ($invites) {
-            $isChanged = $isChanged | $this->setCalDavInvites($invites, $event);
+        if ($invitees) {
+            $isChanged = $isChanged | $this->setCalDavInvites($invitees, $event, $override);
         }
 
         if (!$repeatParentId && $recurringParam) {
-            $isChanged = $isChanged | $this->setCalDavRecurring($recurringParam, $collection, $insert);
+            $isChanged = $isChanged | $this->setCalDavRecurring($recurringParam, $collection);
         }
 
         return (bool)$isChanged;
@@ -112,11 +112,11 @@ class Meetings extends CalDavAbstractAdapter
     {
         /**@var \Call $bean*/
         $isChanged = false;
-        list($beanData, $changedFields, $invites) = $data;
-        list($beanId, $childEventsId, $insert) = $beanData;
+        list($beanData, $changedFields, $invitees) = $data;
+        list($beanId, $childEventsId, $override) = $beanData;
 
         // checking before values
-        if (!$insert) {
+        if (!$override) {
             if (isset($changedFields['title']) && count($changedFields['title']) == 2 && !$this->checkBeanName($changedFields['title'][1], $bean)) {
                 throw new ImportException("Conflict with Bean Name field");
             }
@@ -135,8 +135,8 @@ class Meetings extends CalDavAbstractAdapter
             if (isset($changedFields['date_end']) && count($changedFields['date_end']) == 2 && !$this->checkBeanEndDate($changedFields['date_end'][1], $bean)) {
                 throw new ImportException("Conflict with Bean End Date field");
             }
-            if ($invites && !$this->checkBeanInvites($invites, $bean)) {
-                throw new ImportException("Conflict with Bean Invites");
+            if ($invitees && !$this->checkBeanInvites($invitees, $bean)) {
+                throw new ImportException("Conflict with Bean Invitees");
             }
         }
 
@@ -161,8 +161,8 @@ class Meetings extends CalDavAbstractAdapter
         if (isset($changedFields['date_end'])) {
             $isChanged |= $this->setBeanEndDate($changedFields['date_end'][0], $bean);
         }
-        if ($invites) {
-            $isChanged |= $this->setBeanInvites($invites, $bean);
+        if ($invitees) {
+            $isChanged |= $this->setBeanInvites($invitees, $bean, $override);
         }
 
         return $isChanged;

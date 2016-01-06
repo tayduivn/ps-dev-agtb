@@ -38,6 +38,12 @@ class CalDavSynchronization extends SugarBean
     public $event_id;
 
     /**
+     * Number of save_counter which solves conflict.
+     * @var bool
+     */
+    public $conflict_counter = 0;
+
+    /**
      * Set save counter of caldav event or module
      * @return int
      */
@@ -62,6 +68,24 @@ class CalDavSynchronization extends SugarBean
     }
 
     /**
+     * Sets conflict counter which will be based on $flag and current save counter.
+     *
+     * @param bool $flag
+     * @return bool
+     */
+    public function setConflictCounter($flag = false)
+    {
+        if ($flag) {
+            $this->conflict_counter = $this->save_counter;
+        } else {
+            $this->conflict_counter = 0;
+        }
+        $this->save();
+
+        return $this->conflict_counter;
+    }
+
+    /**
      * Get save counter of caldav event or module
      * @return int
      */
@@ -77,5 +101,15 @@ class CalDavSynchronization extends SugarBean
     public function getJobCounter()
     {
         return $this->job_counter;
+    }
+
+    /**
+     * Returns conflict counter.
+     *
+     * @return int
+     */
+    public function getConflictCounter()
+    {
+        return $this->conflict_counter;
     }
 }
