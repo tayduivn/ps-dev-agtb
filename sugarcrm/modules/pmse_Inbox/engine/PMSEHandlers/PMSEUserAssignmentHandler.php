@@ -583,9 +583,10 @@ class PMSEUserAssignmentHandler
             $assign_team = '1';
         }
 
-        //getting all members of a team
+        //getting all members of a team who are both active users and
+        // active employees
         $team = $this->retrieveBean('Teams', $assign_team);
-        $members = $team->get_team_members();
+        $members = $team->get_team_members(true, null, true);
 
         $users = array();
         foreach ($members as $user) {

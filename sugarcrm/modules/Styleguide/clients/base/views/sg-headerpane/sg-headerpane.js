@@ -10,51 +10,13 @@
  */
 ({
     className: 'headerpane',
-    pageData: {},
-    section: {},
-    page: {},
-    section_page: false,
-    parent_link: '',
-    file: '',
-    keys: [],
-    $find: [],
 
     initialize: function(options) {
-        var self = this;
-
         this._super('initialize', [options]);
-
-        this.pageData = app.metadata.getLayout(this.module, 'docs').page_data;
-
-        this.file = this.context.get('page_name');
-
-        if (!_.isUndefined(this.file) && !_.isEmpty(this.file)) {
-            this.keys = this.file.split('-');
-        }
-
-        if (this.keys.length) {
-            // get page content variables from pageData (defined in view/docs.php)
-            if (this.keys[0] === 'index') {
-                if (this.keys.length > 1) {
-                    // section index call
-                    this.section = this.pageData[this.keys[1]];
-                } else {
-                    // master index call
-                    this.section = this.pageData[this.keys[0]];
-                    //this.index_search = true;
-                }
-                this.section_page = true;
-                this.file = 'index';
-            } else if (this.keys.length > 1) {
-                // section page call
-                this.section = this.pageData[this.keys[0]];
-                this.page = this.section.pages[this.keys[1]];
-                this.parent_link = '-' + this.keys[0];
-            } else {
-                // general page call
-                this.section = this.pageData[this.keys[0]];
-            }
-        }
+        var request = this.context.get('request');
+        this.page = request.page_details;
+        this.sections = request.page_data.docs.sections;
+        this.$find = [];
     },
 
     _render: function() {
@@ -69,18 +31,18 @@
 
         if (this.$find.length) {
             // build search select2 options
-            $.each(this.pageData, function (k, v) {
-                if ( !v.index ) {
+            $.each(this.sections, function(k, v) {
+                if (!v.index) {
                     return;
                 }
-                $optgroup = $('<optgroup>').appendTo(self.$find).attr('label',v.title);
-                $.each(v.pages, function (i, d) {
+                $optgroup = $('<optgroup>').appendTo(self.$find).attr('label', v.title);
+                $.each(v.pages, function(i, d) {
                     renderSearchOption(k, i, d, $optgroup);
                 });
             });
 
             // search for patterns
-            this.$find.on('change', function (e) {
+            this.$find.on('change', function(e) {
                 window.location.href = $(this).val();
             });
 
@@ -91,13 +53,12 @@
         function renderSearchOption(section, page, d, optgroup) {
             $('<option>')
                 .appendTo(optgroup)
-                .attr('value', (d.url ? d.url : fmtLink(section, page)) )
-                .text(d.label);
+                .attr('value', (d.url ? d.url : fmtLink(section, page)))
+                .text(d.title);
         }
 
         function fmtLink(section, page) {
-            return '#Styleguide/docs/' +
-                (page?'':'index-') + section.replace(/[\s\,]+/g,'-').toLowerCase() + (page?'-'+page:'');
+            return '#Styleguide/docs/' + section + (page ? '-' + page : '-index');
         }
     },
 

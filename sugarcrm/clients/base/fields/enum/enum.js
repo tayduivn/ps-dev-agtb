@@ -426,7 +426,7 @@
             values = values.split(this.def.separator || ',');
         }
         var picked = _.pick(options, values);
-        if (_.isEmpty(picked)) {
+        if (_.isEmpty(picked) && _.isObject(_.first(options))) {
             _.each(options, function(option, id) {
                 if ((_.isArray(values) && values.indexOf(option['id'])) || option['id'] == values) {
                     picked[option['id']] = option['text'];

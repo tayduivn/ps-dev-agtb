@@ -11,7 +11,7 @@
  */
 $mod_strings = array(
     'LBL_MODULE_NAME' => 'Knowledge Base',
-    'LBL_MODULE_NAME_SINGULAR' => 'Knowledge Base',
+    'LBL_MODULE_NAME_SINGULAR' => 'Knowledge Base Article',
     'LBL_MODULE_TITLE' => 'Knowledge Base Article',
     'LBL_STATUS' => 'Status',
     'LBL_KEYWORDS' => 'Keywords',
