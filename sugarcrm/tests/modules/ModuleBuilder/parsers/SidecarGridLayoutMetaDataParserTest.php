@@ -253,7 +253,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
     {
         static $it = 0;
 
-        $output = $this->_parser->testConvertFromCanonicalForm($input, array());
+        $output = $this->_parser->convertFromCanonicalForm($input);
 
         $this->assertEquals($expected, $output, "Iteration $it expectation did not match result");
 
@@ -413,7 +413,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
     public function testPanelLabelsAreSetByPanelDefs($panel, $expectation)
     {
         // Convert the panel def
-        $converted =  $this->_parser->testConvertFromCanonicalForm($panel, array());
+        $converted =  $this->_parser->convertFromCanonicalForm($panel);
 
         // Get the key from the conversion as this is the label
         $label = key($converted);
@@ -726,11 +726,6 @@ class SidecarGridLayoutMetaDataParserTestDerivative extends SidecarGridLayoutMet
     public function testInstallBaseViewFields($fields = array())
     {
         $this->baseViewFields = $fields;
-    }
-
-    public function testConvertFromCanonicalForm($panels , $fielddefs) {
-
-       return $this->_convertFromCanonicalForm($panels, $fielddefs);
     }
 
     public function testConvertToCanonicalForm($panels, $fielddefs=null) {
