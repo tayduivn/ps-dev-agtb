@@ -9,8 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    className: 'container-fluid',
-
     // layouts tabs
     _renderHtml: function () {
         this._super('_renderHtml');

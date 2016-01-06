@@ -131,5 +131,7 @@ $mod_strings = array (
 
     'LBL_PMSE_ASSIGN_USER' => 'Assign User',
     'LBL_PMSE_ASSIGN_USER_APPLIED' => 'Assign User Applied',
+
+    'LBL_PMSE_LABEL_PREVIEW' => 'Process Design Preview',
 );
 
