@@ -89,7 +89,6 @@ $dictionary['ProductTemplate'] = array(
             'len' => '255',
             'source' => 'non-db',
             'importable' => 'true',
-            'studio' => false,
         ),
         'mft_part_num' => array(
             'name' => 'mft_part_num',
