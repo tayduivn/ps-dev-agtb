@@ -25,16 +25,18 @@ $viewdefs['Project']['DetailView'] = array(
 		'form' => array(
 	 		'buttons'=> array(
 			 	array( 'customCode' =>
-                        '<input title="{$APP.LBL_EDIT_BUTTON_TITLE}" ' .
-                        'accessKey="{$APP.LBL_EDIT_BUTTON_KEY}" class="button" type="submit" ' .
-                        'name="Edit" id="edit_button" value="{$APP.LBL_EDIT_BUTTON_LABEL}"'.
-                        'onclick="'.
-                        '{if $IS_TEMPLATE}'.
-                            'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesDetailView\'; this.form.return_id.value=\'{$id}\'; this.form.action.value=\'ProjectTemplatesEditView\';'.
-                        '{else}'.
-                            'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$id}\'; this.form.action.value=\'EditView\'; '.
-                        '{/if}"'.
-                        '/>',
+                        '{if $bean->aclAccess("edit")}' .
+                            '<input title="{$APP.LBL_EDIT_BUTTON_TITLE}" ' .
+                            'accessKey="{$APP.LBL_EDIT_BUTTON_KEY}" class="button" type="submit" ' .
+                            'name="Edit" id="edit_button" value="{$APP.LBL_EDIT_BUTTON_LABEL}"'.
+                            'onclick="'.
+                            '{if $IS_TEMPLATE}'.
+                                'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesDetailView\'; this.form.return_id.value=\'{$id}\'; this.form.action.value=\'ProjectTemplatesEditView\';'.
+                            '{else}'.
+                                'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$id}\'; this.form.action.value=\'EditView\'; '.
+                            '{/if}"'.
+                            '/>' .
+                        '{/if}',
                     //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
                     'sugar_html' => array(
                         'type' => 'submit',
@@ -51,19 +53,22 @@ $viewdefs['Project']['DetailView'] = array(
                                     'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$id}\'; this.form.action.value=\'EditView\'; '.
                                 '{/if}',
                         ),
+                        'template' => '{if $bean->aclAccess("edit")}[CONTENT]{/if}'
                     ),
 				),
 				array( 'customCode' =>
-                        '<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" ' .
-                        'accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" type="button" ' .
-                        'name="Delete" id="delete_button" value="{$APP.LBL_DELETE_BUTTON_LABEL}"'.
-                        'onclick="'.
-                        '{if $IS_TEMPLATE}'.
-                            'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesListView\'; this.form.action.value=\'Delete\'; if( confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\') )  {ldelim} return true; {rdelim} else {ldelim} return false; {rdelim} '.
-                        '{else}'.
-                            'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ListView\'; this.form.action.value=\'Delete\'; if( confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\'))  {ldelim} return true; {rdelim} else {ldelim} return false; {rdelim} '.
-                        '{/if}"'.
-                        '/>',
+                        '{if $bean->aclAccess("delete")}' .
+                            '<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" ' .
+                            'accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" type="button" ' .
+                            'name="Delete" id="delete_button" value="{$APP.LBL_DELETE_BUTTON_LABEL}"'.
+                            'onclick="'.
+                            '{if $IS_TEMPLATE}'.
+                                'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesListView\'; this.form.action.value=\'Delete\'; if( confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\') )  {ldelim} return true; {rdelim} else {ldelim} return false; {rdelim} '.
+                            '{else}'.
+                                'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ListView\'; this.form.action.value=\'Delete\'; if( confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\'))  {ldelim} return true; {rdelim} else {ldelim} return false; {rdelim} '.
+                            '{/if}"'.
+                            '/>' .
+                        '{/if}',
                     //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
                     'sugar_html' => array(
                         'type' => 'button',
@@ -81,7 +86,7 @@ $viewdefs['Project']['DetailView'] = array(
                                     'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ListView\'; this.form.action.value=\'Delete\'; if (confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')) {ldelim} return true; {rdelim} else {ldelim} return false; {rdelim}'.
                                 '{/if}',
                         ),
-
+                        'template' => '{if $bean->aclAccess("delete")}[CONTENT]{/if}'
                     ),
 				),
 
