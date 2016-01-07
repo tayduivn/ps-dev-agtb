@@ -533,11 +533,12 @@ foreach($sync_modules as $name=>$val){
 	   				        $_REQUEST['repair_silent'] = true;
 							 global $current_user;
                               $current_user->is_admin = '1';
-							  require_once('ModuleInstall/ModuleInstaller.php');
 							  global $mod_strings, $current_language;
 							  $mod_strings = return_module_language($current_language, 'Administration');
-                              $mi = new ModuleInstaller();
-                              $mi->rebuild_all();
+                        SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
+                        $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+                        $mi = new $moduleInstallerClass();
+                        $mi->rebuild_all();
 
                                 $current_user->is_admin = '0';
 						echo '<script>document.getElementById("stop_sync_btn").value="Done"</script>';
