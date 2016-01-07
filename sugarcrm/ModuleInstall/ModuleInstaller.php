@@ -2077,13 +2077,19 @@ class ModuleInstaller{
      */
     protected function getExtensionFileContents($files)
     {
-        static $php_tags = array('<?php', '?>', '<?PHP', '<?');
-
-        $contents = "<?php\n// WARNING: The contents of this file are auto-generated.\n";
+        $contents = "<?php\n// WARNING: The contents of this file are auto-generated.\n?>\n";
 
         foreach ($files as $path) {
             $file = file_get_contents($path);
-            $contents .= "\n//Merged from $path\n" . str_replace($php_tags, '', $file);
+
+            // remove the 1st opening tag <?php, <?PHP or <?
+            $replaced = preg_replace('/^\s*<\?(php|PHP)?/', '', $file);
+
+            // replace the closing tag and the trailing whitespace if any
+            $replaced = preg_replace('/\?>\s*$/', '', $replaced);
+
+            // each file is merged with the added open and close tags
+            $contents .= "<?php\n// Merged from $path\n" . $replaced . "\n?>\n";
         }
 
         return $contents;
