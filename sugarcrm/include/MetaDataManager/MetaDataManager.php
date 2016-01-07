@@ -2497,7 +2497,7 @@ class MetaDataManager
                 if (!empty($moduleJS)) {
                     $allModuleJS .= ",\n\t\t\"$module\":{{$moduleJS}}";
                 }
-                $routesJs .= MetaDataFiles::loadRouterFile($module);
+                $routesJs .= MetaDataFiles::loadRouterFile($module, $platform);
             }
             //Chop off the first comma in $allModuleJS
             $js .= substr($allModuleJS, 1);
