@@ -1444,11 +1444,11 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 package:ModuleBuilder.MBpackage,
                 formula:encodeURIComponent(YAHOO.lang.JSON.stringify(formula))
             };
-            win.load(ModuleBuilder.paramsToUrl(win.params), null, function()
+            win.load('', "POST", function ()
             {
                 ModuleBuilder.formulaEditorWindow.center();
                 SUGAR.util.evalScript(ModuleBuilder.formulaEditorWindow.body.innerHTML);
-            });
+            }, ModuleBuilder.paramsToUrl(win.params));
             win.show();
             win.center();
         },
