@@ -564,12 +564,6 @@
             if (this.inlineEditMode) {
                 this.setButtonStates(this.STATE.EDIT);
             }
-            if (this.model.isNotEmpty !== true && fieldType !== 'image') {
-                this.model.isNotEmpty = true;
-                if (!this.disposed) {
-                    this.render();
-                }
-            }
         }, this);
     },
 

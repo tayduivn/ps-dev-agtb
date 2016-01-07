@@ -12,15 +12,13 @@
 --}}
 
 <div>
-{{#if model.isNotEmpty}}
     {{#if enableHeaderPane}}
-        {{partial 'headerpane' ../../this ../../this}}
+        {{partial 'headerpane' ../this ../this}}
     {{/if}}
 
     {{#if meta.useTabsAndPanels}}
-        {{partial 'tabspanels' ../../this ../../this}}
+        {{partial 'tabspanels' ../this ../this}}
     {{else}}
-        {{partial 'businesscard' ../../this ../../this}}
+        {{partial 'businesscard' ../this ../this}}
     {{/if}}
-{{/if}}
 </div>
