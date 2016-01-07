@@ -284,7 +284,7 @@
             // instead of the browser version and it's hard to determine this
             // number.
             msie : {min:11}, // IE 11
-            safari : {min:600}, // Safari 8.0.8, 9.0.1
+            safari : {min:537}, // Safari 8.0.8, 9.0.1
             mozilla : {min:41}, // Firefox 41, 42
             chrome : {min:537.36} // Chrome 47
         };
