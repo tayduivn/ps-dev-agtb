@@ -220,7 +220,7 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-list-with-massupdate'] =
         'type' => 'multi',
         'actions' => array (
             array(
-                'name' => 'delete_button',
+                'name' => 'massdelete_button',
                 'type' => 'button',
                 'label' => 'LBL_DELETE',
                 'acl_action' => 'delete',
