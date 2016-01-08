@@ -204,7 +204,9 @@ $beanList['pmse_BpmGroup'] = 'pmse_BpmGroup';
 $beanList['pmse_BpmGroupUser'] = 'pmse_BpmGroupUser';
 //END SUGARCRM flav=ent ONLY
 $beanList['Empty'] = 'EmptyBean';
+//BEGIN SUGARCRM flav=int ONLY
 $beanList['TeamHierarchy'] = 'TeamHierarchy';
+//END SUGARCRM flav=int ONLY
 $beanList['UpgradeHistory'] = 'UpgradeHistory';
 
 // this list defines all of the files that contain the SugarBean class definitions from $beanList

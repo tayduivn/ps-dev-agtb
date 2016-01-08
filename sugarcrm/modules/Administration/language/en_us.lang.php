@@ -1106,7 +1106,9 @@ expressions in the regex. Regular expressions should not include any delimiters.
 	'SchedulersJobs'  => 'SchedulersJob',
 	'Shippers'       => 'Shipper',
 	'TaxRates'       => 'TaxRate',
+//BEGIN SUGARCRM flav=int ONLY
 	'TeamHierarchies'  => 'TeamHierarchy',
+//END SUGARCRM flav=int ONLY
 	'TeamMemberships'   => 'TeamMembership',
 	'TeamNotices'    => 'TeamNotice',
 	'TeamSetModules'   => 'TeamSetModule',
