@@ -526,6 +526,22 @@ class User extends Person {
         return $theme;
     }
 
+    /**
+     * Toggles this user's admin status and flushes the ACL cache.
+     *
+     * @param boolean $admin If `true`, then make this user an admin.
+     *   Otherwise, remove admin privileges.
+     */
+    public function setAdmin($admin)
+    {
+        $this->is_admin = $admin ? 1 : 0;
+
+        // When we change a user to or from admin status, we have to flush the ACL cache
+        // or else the user will not be able to access some admin modules.
+        AclCache::getInstance()->clear();
+        // FIXME TY-1094: investigate if we should enforce admin/portal API user/group mutual exclusivity here
+    }
+
 	function save($check_notify = false) {
         // Check if data supplied is valid to save the record, return if not.
         if (!$this->verify_data()) {
