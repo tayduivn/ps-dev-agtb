@@ -549,7 +549,7 @@ class SugarBean
             self::$loadedDefs[$this->object_name]['list_fields'] =& $this->list_fields;
             self::$loadedDefs[$this->object_name]['required_fields'] =& $this->required_fields;
             self::$loadedDefs[$this->object_name]['field_name_map'] =& $this->field_name_map;
-            self::$loadedDefs[$this->object_name]['field_defs'] =& $this->field_defs;
+            self::$loadedDefs[$this->object_name]['field_defs'] = $this->field_defs;
             self::$loadedDefs[$this->object_name]['name_format_map'] =& $this->name_format_map;
         }
         else
@@ -558,7 +558,8 @@ class SugarBean
             $this->list_fields =& self::$loadedDefs[$this->object_name]['list_fields'];
             $this->required_fields =& self::$loadedDefs[$this->object_name]['required_fields'];
             $this->field_name_map =& self::$loadedDefs[$this->object_name]['field_name_map'];
-            $this->field_defs =& self::$loadedDefs[$this->object_name]['field_defs'];
+            $this->field_defs = isset(self::$loadedDefs[$this->object_name]['field_defs']) ?
+                self::$loadedDefs[$this->object_name]['field_defs'] : null;
             $this->name_format_map =& self::$loadedDefs[$this->object_name]['name_format_map'];
             $this->added_custom_field_defs = true;
 
@@ -1955,6 +1956,12 @@ class SugarBean
         {
             if ($dep->getFireOnLoad())
             {
+                $dep->fire($this);
+            }
+        }
+        $deps = DependencyManager::getDependentFieldDependencies($this->field_defs, 'save');
+        foreach($deps as $dep) {
+            if ($dep->getFireOnLoad()) {
                 $dep->fire($this);
             }
         }
