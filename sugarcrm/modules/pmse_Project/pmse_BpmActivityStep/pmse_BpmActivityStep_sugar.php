@@ -45,15 +45,6 @@ class pmse_BpmActivityStep_sugar extends Basic {
     var $act_step_form;
     var $act_step_script;
 
-	/**
-	 * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @depreciated
-	 */
-	function pmse_BpmActivityStep_sugar(){
-		self::__construct();
-	}
 
 	public function __construct(){
 		parent::__construct();

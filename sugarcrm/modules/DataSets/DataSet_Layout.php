@@ -80,17 +80,6 @@ class DataSet_Layout extends SugarBean {
         );
 
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function DataSet_Layout()
-    {
-        self::__construct();
-    }
-
     public function __construct() {
         global $dictionary;
         if(isset($this->module_dir) && isset($this->object_name) && !isset($dictionary[$this->object_name])){

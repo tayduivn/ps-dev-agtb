@@ -92,16 +92,6 @@ class DataSet_Attribute extends SugarBean {
     var $required_fields =  array();
 
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function DataSet_Attribute()
-    {
-        self::__construct();
-    }
 
     public function __construct() {
         global $dictionary;

@@ -69,15 +69,6 @@ class pmse_BpmnActivity_sugar extends Basic {
     var $act_default_flow;
     var $act_master_diagram;
 
-	/**
-	 * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @depreciated
-	 */
-	function pmse_BpmnActivity_sugar(){
-		self::__construct();
-	}
 
 	public function __construct(){
 		parent::__construct();

@@ -80,18 +80,6 @@ class aCase extends Basic
         'email_id'=>'emails',
     );
 
-    /**
-     * This is deprecated since 7.7.0 and will be removed in 7.9.0.
-     * Please use __construct() instead.
-     * @deprecated 7.7.0
-     * @see __construct
-     */
-    public function aCase()
-    {
-        self::__construct();
-        $GLOBALS['log']->deprecated('aCase::aCase() is deprecated since 7.7.0. and will be removed in 7.9.0. ' .
-            'Please use aCase::__construct() instead.');
-    }
 
     public function __construct()
     {
