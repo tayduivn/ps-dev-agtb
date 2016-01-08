@@ -45,8 +45,8 @@ class EAPMViewEdit extends ViewEdit {
 
         $returnAction = 'DetailView';
         $returnModule = 'Users';
-        $returnId = $GLOBALS['current_user']->id;
-        $returnName = $GLOBALS['current_user']->full_name;
+        $returnId = $this->bean->assigned_user_id;
+        $returnName = $this->bean->assigned_user_name;
         if(!empty($_REQUEST['return_action']) && !empty($_REQUEST['return_module'])){
             if('Users' == $_REQUEST['return_module']){
                 if('EditView' == $_REQUEST['return_action']){
@@ -108,5 +108,3 @@ class EAPMViewEdit extends ViewEdit {
         }
  	}
 }
-
-?>
