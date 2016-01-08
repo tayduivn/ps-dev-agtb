@@ -1042,11 +1042,11 @@ EOQ;
 	        return false;
 	    }
 
-	    // Custom regex
-	    if(!empty($GLOBALS["sugar_config"]["passwordsetting"]["customregex"]) && !preg_match($GLOBALS["sugar_config"]["passwordsetting"]["customregex"], $password)){
-	        return false;
-	    }
-
+        // Custom regex
+        if (!empty($GLOBALS["sugar_config"]["passwordsetting"]["customregex"]) &&
+            preg_match('/'.$GLOBALS["sugar_config"]["passwordsetting"]["customregex"].'/', $password)) {
+            return false;
+        }
 	    return true;
 	}
 
