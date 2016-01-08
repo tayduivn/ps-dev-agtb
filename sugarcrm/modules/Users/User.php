@@ -1655,7 +1655,7 @@ EOQ;
 		$name['s'] = $app_strings['LBL_LOCALE_NAME_EXAMPLE_SALUTATION'];
 		$name['t'] = $app_strings['LBL_LOCALE_NAME_EXAMPLE_TITLE'];
 
-		$macro = $locale->getLocaleFormatMacro();
+		$macro = $locale->getLocaleFormatMacro($this);
 
 		$ret1 = '';
 		$ret2 = '';
