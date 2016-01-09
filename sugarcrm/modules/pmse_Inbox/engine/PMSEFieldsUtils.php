@@ -1,6 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -12,6 +10,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 function bpminbox_get_username_by_id($userid)
 {
@@ -287,7 +286,7 @@ function bpminbox_execute_special_logic($field_name, &$source_object)
     require_once 'modules/pmse_Inbox/engine/PMSE.php';
     $pmse = PMSE::getInstance();
     if ($pmse->fileExists('modules/' . $source_object->module_dir . '/SaveOverload.php')) {
-        require_once('modules/' . $source_object->module_dir . '/SaveOverload.php');
+        require_once FileLoader::validateFilePath('modules/' . $source_object->module_dir . '/SaveOverload.php');
         perform_save($source_object);
     }
 }

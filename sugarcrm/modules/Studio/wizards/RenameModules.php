@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,8 +9,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 require_once 'modules/Studio/DropDowns/DropDownHelper.php';
 require_once 'modules/ModuleBuilder/parsers/parser.label.php';
@@ -468,23 +469,23 @@ class RenameModules
         // Handle things differently for BWC modules
         if(isModuleBWC($bean->module_dir)) {
             foreach (SugarAutoLoader::existingCustom('modules/' . $bean->module_dir . '/metadata/subpaneldefs.php') as $file) {
-                require $file;
+                require FileLoader::validateFilePath($file);
             }
 
             $defs = SugarAutoLoader::loadExtension('layoutdefs', $bean->module_dir);
             if($defs) {
-                require $defs;
+                require FileLoader::validateFilePath($defs);
             }
         } else {
             // Handle things the new way
             foreach (SugarAutoLoader::existingCustom('modules/' . $bean->module_dir . '/clients/base/layouts/subpanels/subpanels.php') as $file) {
-                require $file;
+                require FileLoader::validateFilePath($file);
             }
             
             // Add in any studio customizations
             $ext = 'custom/modules/' . $bean->module_dir . '/Ext/clients/base/layouts/subpanels/subpanels.ext.php';
             if (SugarAutoLoader::fileExists($ext)) {
-                require $ext;
+                require FileLoader::validateFilePath($ext);
             }
 
             // Massage defs to look like old style for use in the rename process
@@ -839,7 +840,7 @@ class RenameModules
         if ($this->changedModule &&
             file_exists('modules/'.$this->changedModule.'/language/'.$this->selectedLanguage.'.lang.php'))
         {
-            include('modules/'.$this->changedModule.'/language/'.$this->selectedLanguage.'.lang.php');
+            include FileLoader::validateFilePath('modules/'.$this->changedModule.'/language/'.$this->selectedLanguage.'.lang.php');
             return (!empty($mod_strings[$key]) && strpos($mod_strings[$key], $substring) !== false);
         }
         return false;
