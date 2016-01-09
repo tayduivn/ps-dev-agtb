@@ -42,9 +42,6 @@
     // them all by default
     {pattern: 'include/javascript/sugar7/plugins/*.js', included: true, served: true, watched: true},
 
-    // FIXME: this should be included by the tests, not here
-    'modules/Contacts/clients/base/lib/bean.js',
-
     'sidecar/tests/config.js',
 
     'include/javascript/jquery/jquery.dataTables.min.js',

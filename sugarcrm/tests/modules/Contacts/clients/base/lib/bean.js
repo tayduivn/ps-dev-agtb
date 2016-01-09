@@ -10,6 +10,11 @@ describe("ContactsBean", function() {
         _oRouter = app.router;
         app.router = {};
         app.router.start = function(){};
+
+        SugarTest.loadFile('../modules/Contacts/clients/base/lib', 'bean', 'js', function(d) {
+            eval(d);
+            app.events.trigger('app:sync:complete');
+        });
     });
 
     afterEach(function() {
@@ -26,7 +31,6 @@ describe("ContactsBean", function() {
 
     describe("isValid", function(){
         beforeEach(function() {
-            app.events.trigger('app:sync:complete');
             bean = app.data.createBean("Contacts");
             SugarTest.clock.restore();
         });
