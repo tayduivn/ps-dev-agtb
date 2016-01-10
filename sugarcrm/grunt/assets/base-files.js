@@ -44,8 +44,6 @@
 
     // FIXME: this should be included by the tests, not here
     'modules/Contacts/clients/base/lib/bean.js',
-    // FIXME: remove this on SC-3047
-    'modules/Contacts/clients/base/plugins/ContactsPortalMetadataFilter.js',
 
     'sidecar/tests/config.js',
 
