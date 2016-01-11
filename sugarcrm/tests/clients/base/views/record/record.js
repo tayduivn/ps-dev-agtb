@@ -149,13 +149,6 @@ describe("Record View", function () {
     });
 
     describe('Render', function () {
-        it("Should not render any fields if model is empty", function () {
-            view.render();
-
-            expect(_.size(view.fields)).toBe(0);
-        });
-
-
         it("Should render 8 editable fields and 2 sets of buttons", function () {
 
             view.render();
@@ -887,6 +880,7 @@ describe("Record View", function () {
                 case_number: 456,
                 description: 'Previous description'
             });
+            view.render();
             var actual = view.hasUnsavedChanges();
             expect(actual).toBe(false);
             //Changed non-editable field
