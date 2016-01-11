@@ -591,6 +591,7 @@
             messages: app.lang.get('NTC_DELETE_CONFIRMATION_MULTIPLE'),
             onConfirm: _.bind(this.deleteModels, this),
             onCancel: _.bind(function() {
+                app.analytics.trackEvent('click', 'mass_delete_cancel');
                 this._modelsToDelete = null;
                 app.router.navigate(this._targetUrl, {trigger: false, replace: true});
             }, this)
@@ -615,6 +616,8 @@
         var self = this,
             collection = self._modelsToDelete;
         var lastSelectedModels = _.clone(collection.models);
+
+        app.analytics.trackEvent('click', 'mass_delete_confirm');
         if(collection) {
             collection.fetch({
                 //Don't show alerts for this request

@@ -149,7 +149,7 @@ class Meeting extends SugarBean {
     {
         global $timedate, $current_user;
 
-		$isUpdate = $this->isUpdate();
+        $isUpdate = $this->isUpdate();
 
         if ($isUpdate && is_null($this->invitesBefore)) {
             $this->invitesBefore = CalendarUtils::getInvites($this);
@@ -167,9 +167,9 @@ class Meeting extends SugarBean {
             }
         }
 
-		if ($this->repeat_type && $this->repeat_type != 'Weekly') {
-			$this->repeat_dow = '';
-		}
+        if ($this->repeat_type && $this->repeat_type != 'Weekly') {
+                $this->repeat_dow = '';
+        }
 
         $check_notify = $this->send_invites;
         if ($this->send_invites == false) {

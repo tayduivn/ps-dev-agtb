@@ -161,17 +161,6 @@ class Quote extends SugarBean
     );
     public $new_schema = true;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function Quote()
-    {
-        self::__construct();
-    }
-
 
     /**
      * sole constructor

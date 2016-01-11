@@ -15,6 +15,8 @@ require_once('include/upload_file.php');
 
 use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 
+SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
+
 ////////////////
 ////  GLOBAL utility
 /**
@@ -209,7 +211,6 @@ function commitLanguagePack($uninstall=false) {
 }
 
 function commitPatch($unlink = false, $type = 'patch'){
-    require_once('ModuleInstall/ModuleInstaller.php');
     require_once('include/entryPoint.php');
 
 
@@ -226,7 +227,8 @@ function commitPatch($unlink = false, $type = 'patch'){
     $old_mod_strings = $mod_strings;
     if(is_dir($base_upgrade_dir)) {
             $files = findAllFiles("$base_upgrade_dir/$type", $files);
-            $mi = new ModuleInstaller();
+            $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+            $mi = new $moduleInstallerClass();
             $mi->silent = true;
             $mod_strings = return_module_language('en', "Administration");
 
@@ -278,7 +280,6 @@ function commitPatch($unlink = false, $type = 'patch'){
 }
 
 function commitModules($unlink = false, $type = 'module'){
-    require_once('ModuleInstall/ModuleInstaller.php');
     require_once('include/entryPoint.php');
 
 
@@ -295,7 +296,8 @@ function commitModules($unlink = false, $type = 'module'){
     $old_mod_strings = $mod_strings;
     if(is_dir(sugar_cached("upload/upgrades"))) {
             $files = findAllFiles(sugar_cached("upload/upgrades/$type"), $files);
-            $mi = new ModuleInstaller();
+            $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+            $mi = new $moduleInstallerClass();
             $mi->silent = true;
             $mod_strings = return_module_language('en', "Administration");
 
@@ -868,11 +870,11 @@ function handleSugarConfig() {
        require_once('modules/UpgradeWizard/uw_utils.php');
        merge_config_si_settings(false, 'config.php', 'config_si.php');
     }
-    require_once 'ModuleInstall/ModuleInstaller.php';
+    $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
     //BEGIN SUGARCRM flav=ent ONLY
-    ModuleInstaller::handlePortalConfig();
+    $moduleInstallerClass::handlePortalConfig();
     //END SUGARCRM flav=ent ONLY
-    ModuleInstaller::handleBaseConfig();
+    $moduleInstallerClass::handleBaseConfig();
     ////    END $sugar_config
     ///////////////////////////////////////////////////////////////////////////////
     return $bottle;
@@ -914,15 +916,15 @@ function getFtsSettings()
  */
 function handlePortalConfig()
 {
-    require_once 'ModuleInstall/ModuleInstaller.php';
-    return ModuleInstaller::handlePortalConfig();
+    $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+    return $moduleInstallerClass::handlePortalConfig();
 }
 //END SUGARCRM flav=ent ONLY
 
 function handleSidecarConfig()
 {
-    require_once 'ModuleInstall/ModuleInstaller.php';
-    return ModuleInstaller::handleBaseConfig();
+    $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+    return $moduleInstallerClass::handleBaseConfig();
 }
 
 /**

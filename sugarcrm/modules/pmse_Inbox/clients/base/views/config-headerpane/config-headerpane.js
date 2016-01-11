@@ -58,7 +58,6 @@
      * @private
      */
     _cancel: function() {
-        app.router.goBack();
-        //app.router.navigate("bwc/index.php?module=Administration&action=index",{trigger:true});
+        app.router.navigate(app.router.buildRoute('Administration'), {trigger: true});
     }
 })

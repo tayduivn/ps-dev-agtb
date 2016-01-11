@@ -74,6 +74,7 @@ class BasicTemplateTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testGetBeanFieldsAsAnArray()
     {
+        $this->_bean->field_defs['date_entered'] = array();
         $this->_bean->date_entered = '2009-01-01 12:00:00';
         $array = $this->_bean->toArray();
         $this->assertEquals($array['date_entered'],$this->_bean->date_entered);

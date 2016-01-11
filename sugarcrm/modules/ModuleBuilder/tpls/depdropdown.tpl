@@ -260,7 +260,11 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
             }
         },
         remove: function(event, ui) {
-            $("ul.ddd_parent_option").removeClass("valid invalid");
+            if ($("ul.ddd_parent_option").hasClass('invalid')) {
+                $("ul.ddd_parent_option").removeClass("invalid");
+                return;
+            }
+            $("ul.ddd_parent_option").removeClass("valid");
             //If the item is being removed, put a clone back in the original list.
             if (SUGAR.ddd.oldPos[0])
                 SUGAR.ddd.oldPos.after(ui.item.clone());
@@ -317,7 +321,10 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
         hoverClass: 'drophover',
         drop: function (event, ui) {
             $("ul.ddd_parent_option").removeClass("valid invalid");
-            ui.draggable.parent("ul").sortable("cancel");
+            var $ul = ui.draggable.parent("ul");
+            if ($ul.sortable("instance")) {
+                $ul.sortable("cancel");
+            }
             if(ui.draggable.parent("ul.ddd_parent_option").length)
                 ui.draggable.remove();
         }

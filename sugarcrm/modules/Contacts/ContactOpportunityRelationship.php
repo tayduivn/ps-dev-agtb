@@ -45,21 +45,6 @@ class ContactOpportunityRelationship extends SugarBean {
       );
 
 
-    /**
-     * This is deprecated since 7.7.0 and will be removed in 7.9.0.
-     * Please use __construct() instead.
-     * @deprecated 7.7.0
-     * @see __construct
-     */
-    public function ContactOpportunityRelationship()
-    {
-        self::__construct();
-        $GLOBALS['log']->deprecated('ContactOpportunityRelationship::ContactOpportunityRelationship() is deprecated ' .
-            'since 7.7.0. and will be removed in 7.9.0. Please use ' .
-            'ContactOpportunityRelationship::__construct() instead.');
-    }
-
-
 	public function __construct() {
 		$this->db = DBManagerFactory::getInstance();
         $this->dbManager = DBManagerFactory::getInstance();

@@ -136,18 +136,6 @@ class Contact extends Person {
         'contacts_users_id' => 'user_sync',
     );
 
-    /**
-     * This is deprecated since 7.0.0 and will be removed in 7.9.0.
-     * Please use __construct() instead.
-     * @deprecated 7.0.0
-     * @see __construct
-     */
-    public function Contact()
-    {
-        self::__construct();
-        $GLOBALS['log']->deprecated('Contact::Contact() is deprecated since 7.0.0. and will be removed in 7.9.0. ' .
-            'Please use Contact::__construct() instead.');
-    }
 
 	public function __construct() {
 		parent::__construct();

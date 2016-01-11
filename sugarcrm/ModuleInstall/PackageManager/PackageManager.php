@@ -16,8 +16,8 @@ define("CREDENTIAL_PASSWORD", "password");
 
 require_once('vendor/nusoap//nusoap.php');
 require_once('include/utils/zip_utils.php');
+SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
 require_once('ModuleInstall/PackageManager/PackageManagerDisplay.php');
-require_once('ModuleInstall/ModuleInstaller.php');
 require_once('ModuleInstall/PackageManager/PackageManagerComm.php');
 
 class PackageManager{
@@ -504,7 +504,8 @@ class PackageManager{
         }
 
         $GLOBALS['log']->debug("INSTALLING: ".$file);
-        $mi = new ModuleInstaller();
+        $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+        $mi = new $moduleInstallerClass();
         $mi->silent = $silent;
         $mod_strings = return_module_language($current_language, "Administration");
              $GLOBALS['log']->debug("ABOUT TO INSTALL: ".$file);
@@ -569,7 +570,8 @@ class PackageManager{
                 if(!isset($GLOBALS['mi_remove_tables']))$GLOBALS['mi_remove_tables'] = true;
                 $unzip_dir = mk_temp_dir( $base_tmp_upgrade_dir );
                 unzip($found->filename, $unzip_dir );
-                $mi = new ModuleInstaller();
+                $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+                $mi = new $moduleInstallerClass();
                 $mi->silent = true;
                 $mi->uninstall( "$unzip_dir");
                 $found->delete();

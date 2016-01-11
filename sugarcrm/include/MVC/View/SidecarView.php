@@ -22,7 +22,6 @@
 
 require_once('include/MVC/View/SugarView.php');
 require_once('include/SugarTheme/SidecarTheme.php');
-require_once 'ModuleInstall/ModuleInstaller.php';
 
 class SidecarView extends SugarView
 {
@@ -49,12 +48,14 @@ class SidecarView extends SugarView
     {
         global $app_strings;
 
+        SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
+        $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
         //Rebuild config file if it doesn't exist
         if(!file_exists($this->configFile)) {
-           ModuleInstaller::handleBaseConfig();
+           $moduleInstallerClass::handleBaseConfig();
         }
         $this->ss->assign("configFile", $this->configFile);
-        $config = ModuleInstaller::getBaseConfig();
+        $config = $moduleInstallerClass::getBaseConfig();
         $this->ss->assign('configHash', md5(serialize($config)));
 
         $sugarSidecarPath = ensureJSCacheFilesExist();

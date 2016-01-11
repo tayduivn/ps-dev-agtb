@@ -16,7 +16,7 @@ require_once 'modules/ModuleBuilder/parsers/constants.php';
 
 // Used in several actions
 require_once 'modules/ModuleBuilder/parsers/parser.label.php';
-require_once 'ModuleInstall/ModuleInstaller.php';
+SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
 require_once 'modules/DynamicFields/FieldCases.php';
 require_once 'modules/DynamicFields/DynamicField.php';
 
@@ -560,7 +560,8 @@ class ModuleBuilderController extends SugarController
         $GLOBALS ['mod_strings']['LBL_ALL_MODULES'] = 'all_modules';
         $_REQUEST['execute_sql'] = true;
 
-        $mi = new ModuleInstaller();
+        $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+        $mi = new $moduleInstallerClass();
         $mi->silent = true;
         $mi->rebuild_extensions();
 

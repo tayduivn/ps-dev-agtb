@@ -14,17 +14,6 @@ require_once('include/SugarObjects/templates/basic/Basic.php');
 class Company extends Basic
 {
 
-    /**
-     * This is a deprecated method, please start using __construct() as this
-     * method will be removed in a future version.
-     *
-     * @deprecated since 7.0.0. Use __construct() instead.
-     */
-    public function Company()
-    {
-        $GLOBALS['log']->deprecated('Calls to Company::Company() are deprecated.');
-        self::__construct();
-    }
 
     /**
  	 * Constructor

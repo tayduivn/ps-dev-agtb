@@ -139,22 +139,24 @@ class DependencyManager
     /**
      * Used to get a set of Dependencies to drive the dependent fields for this module.
      * @static
-     * @param array $fields fielddef array to create the dependencies from
-     * @return array<Dependency>
+     *
+     * @param array  $fields fielddef array to create the dependencies from
+     * @param string $action (optional)
+     *
+     * @return array <Dependency>
      */
-    public static function getDependentFieldDependencies($fields)
+    public static function getDependentFieldDependencies($fields, $action = 'view')
     {
         $deps = array();
 
         foreach ($fields as $field => $def) {
-            if (!empty ($def ['dependency'])) {
+            if (!empty ($def ['dependency']) && ($action != 'save' || !empty($def['required']))) {
                 // normalize the dependency definition
                 if (!is_array($def ['dependency'])) {
                     $triggerFields = Parser::getFieldsFromExpression($def ['dependency'], $fields);
                     $def ['dependency'] = array(array('trigger' => $triggerFields, 'action' => $def ['dependency']));
                 }
-                foreach ($def ['dependency'] as $depdef)
-                {
+                foreach ($def ['dependency'] as $depdef) {
                     $dep = new Dependency ("{$field}_vis");
                     if (is_array($depdef ['trigger'])) {
                         $triggerFields = $depdef ['trigger'];
@@ -162,8 +164,12 @@ class DependencyManager
                         $triggerFields = Parser::getFieldsFromExpression($depdef ['trigger'], $fields);
                     }
                     $dep->setTrigger(new Trigger ('true', $triggerFields));
-                    $dep->addAction(ActionFactory::getNewAction('SetVisibility',
-                        array('target' => $field, 'value' => $depdef ['action'])));
+                    $value = $depdef['action'];
+                    $actionClass = $action == 'save' ? 'SetRequired' : 'SetVisibility';
+                    //When getting a SetRequried action for save, we need to flip the logic so wrap 'not'
+                    $dep->addAction(
+                        ActionFactory::getNewAction($actionClass, array('target' => $field, 'value' => $value))
+                    );
                     $dep->setFireOnLoad(true);
                     $deps[] = $dep;
                 }

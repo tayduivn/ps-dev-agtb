@@ -88,14 +88,22 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 				require_once ($file);
 				unset($GLOBALS['dictionary'][$bean]);
 				$focus = BeanFactory::newBeanByName($bean);
-				// Not all Beans are table based, so we need to check if there
-				// is a table_name for this bean before proceeding
-				// Example Beans are MergeRecord and EmptyBean
-				if ($focus instanceof SugarBean && !empty($focus->table_name) && !isset($repairedTables[$focus->table_name])) {
-					$sql .= $db->repairTable($focus, $execute);
-					$compareIndices = isset($indices[$focus->table_name]) ? $indices[$focus->table_name] : array();
-					$sql .= $db->alterTableIndices($focus->table_name, $focus->getIndices(), $compareIndices, $execute);
-					$repairedTables[$focus->table_name] = true;
+                if ($focus instanceof SugarBean) {
+                    $tableName = $focus->getTableName();
+                    // Not all Beans are table based, so we need to check if there
+                    // is a table_name for this bean before proceeding
+                    // Example Beans are MergeRecord and EmptyBean
+                    if ($tableName && !isset($repairedTables[$tableName])) {
+                        $tableExists = $db->tableExists($tableName);
+                        $sql .= $db->repairTable($focus, $execute);
+                        // repair table indices only in case if the table previously existed, otherwise the table
+                        // has already been created with indices despite skip_index_rebuild
+                        if ($tableExists) {
+                            $compareIndices = isset($indices[$tableName]) ? $indices[$tableName] : array();
+                            $sql .= $db->alterTableIndices($tableName, $focus->getIndices(), $compareIndices, $execute);
+                        }
+                        $repairedTables[$focus->table_name] = true;
+                    }
 				}
                 //Repair Custom Fields
                 if (($focus instanceof SugarBean) && $focus->hasCustomFields() && !isset($repairedTables[$focus->table_name . '_cstm'])) {

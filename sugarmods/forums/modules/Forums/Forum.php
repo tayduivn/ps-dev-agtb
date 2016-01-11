@@ -105,7 +105,7 @@ class Forum extends SugarBean {
 	/*This bean's constructor*/
 	function Forum() {
 		/*Call the parent's constructor which will setup a database connection, logger and other settings.*/
-		parent::SugarBean();
+		parent::__construct();
 	}
 
 	/* This method should return the summary text which is used to build the bread crumb navigation*/

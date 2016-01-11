@@ -161,8 +161,9 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
 
         // Verify the existence of the javascript config file
         if (!file_exists('portal2/config.js')) {
-            require_once 'ModuleInstall/ModuleInstaller.php';
-            ModuleInstaller::handlePortalConfig();
+            SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
+            $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+            $moduleInstallerClass::handlePortalConfig();
         }
     }
 

@@ -67,15 +67,6 @@ class pmse_BpmActivityDefinition_sugar extends Basic {
     var $act_update_record_owner;
     var $execution_mode;
 
-	/**
-	 * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @depreciated
-	 */
-	function pmse_BpmActivityDefinition_sugar(){
-		self::__construct();
-	}
 
 	public function __construct(){
 		parent::__construct();

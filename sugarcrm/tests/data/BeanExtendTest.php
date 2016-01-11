@@ -50,7 +50,7 @@ class TestBean2 extends SugarBean
 {
     public $ok;
     function TestBean2() {
-        parent::SugarBean();
+        parent::__construct();
 		$this->ok = true;
     }
 }
@@ -59,7 +59,7 @@ class TestBean3 extends SugarBean
 {
     public $ok;
     function __construct() {
-        parent::SugarBean();
+        parent::__construct();
         $this->ok = true;
     }
 }
@@ -86,7 +86,7 @@ class TestBean6 extends Basic
 {
     public $ok;
     function TestBean6() {
-        parent::Basic();
+        parent::__construct();
         $this->ok = true;
     }
 }
@@ -95,7 +95,7 @@ class TestBean7 extends Basic
 {
     public $ok;
     function __construct() {
-        parent::Basic();
+        parent::__construct();
         $this->ok = true;
     }
 }
@@ -118,9 +118,6 @@ class TestBean9 extends Basic
         $this->ok = true;
     }
 
-    function TestBean9() {
-        self::__construct();
-    }
 }
 
 class TestBean10 extends TestBean9
@@ -128,7 +125,7 @@ class TestBean10 extends TestBean9
     public $ok;
 
     function __construct() {
-        parent::TestBean9();
+        parent::__construct();
         $this->ok = true;
     }
 }

@@ -42,7 +42,9 @@ class PackageManagerDisplay{
         $result = PackageManagerDisplay::getHeader();
         $isAlive = $result['isAlive'];
 
-        $mi = new ModuleInstaller();
+        SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
+        $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+        $mi = new $moduleInstallerClass();
         $mi_errors = $mi->getErrors();
         $error_html = "";
         if (!empty($mi_errors)) {
