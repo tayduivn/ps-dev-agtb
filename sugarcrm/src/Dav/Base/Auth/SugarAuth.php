@@ -29,10 +29,23 @@ class SugarAuth extends Backend\AbstractBasic
     {
         $auth = $this->getSugarAuthController();
         if ($auth) {
-            return $auth->login($username, $password, array('noRedirect' => true));
+            $authResult = $auth->login($username, $password, array('noRedirect' => true));
+            $currentUser = $this->getCurrentUser();
+            if ($authResult && $currentUser && $currentUser->load_relationship('email_addresses_primary')) {
+                return (bool)$currentUser->email_addresses_primary->getBeans(array('where' => 'primary_address = 1'));
+            }
         }
 
         return false;
+    }
+
+    /**
+     * Get current user
+     * @return \User | null
+     */
+    protected function getCurrentUser()
+    {
+        return isset($GLOBALS['current_user']) ? $GLOBALS['current_user'] : null;
     }
 
     /**

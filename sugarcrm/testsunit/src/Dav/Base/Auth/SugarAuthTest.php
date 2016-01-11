@@ -16,46 +16,95 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * Class SugarAuthTest
- * @package Sugarcrm\SugarcrmTestsUnit\Dav\Base\Auth
+ * @package            Sugarcrm\SugarcrmTestsUnit\Dav\Base\Auth
  * @coversDefaultClass Sugarcrm\Sugarcrm\Dav\Base\Auth\SugarAuth
  */
 class SugarAuthTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function validateUserPassProvider()
+    public function validateUserPassWithCorrectPasswordProvider()
     {
         return array(
             array(
-                true
+                array(1),
+                true,
             ),
             array(
-                false
+                array(),
+                false,
             ),
         );
     }
 
     /**
-     * @param $sugarLoginResult
-     * @covers       Sugarcrm\Sugarcrm\Dav\Base\Auth\SugarAuth::validateUserPass
+     * @param $queryResult
+     * @param $expectedResult
      *
-     * @dataProvider validateUserPassProvider
+     * @covers        Sugarcrm\Sugarcrm\Dav\Base\Auth\SugarAuth::validateUserPass
+     *
+     * @dataProvider  validateUserPassWithCorrectPasswordProvider
      */
-    public function testValidateUserPass($sugarLoginResult)
+    public function testValidateUserPassWithCorrectPassword($queryResult, $expectedResult)
     {
         $davAuth = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Auth\SugarAuth')
-                        ->setMethods(array('getSugarAuthController'))
+                        ->setMethods(array('getSugarAuthController', 'getCurrentUser', 'getSugarQuery'))
                         ->getMock();
+
+        $userMock = $this->getMockBuilder('\User')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('load_relationship'))
+                         ->getMock();
+        $linkMock = $this->getMockBuilder('\Link2')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array())
+                         ->getMock();
+        $userMock->id = 'test';
+        $userMock->email_addresses_primary = $linkMock;
 
         $sugarAuth = $this->getMockBuilder('SugarAuthenticate')
                           ->setMethods(array('login'))
                           ->getMock();
 
         $sugarAuth->expects($this->once())->method('login')->with('username', 'password', array('noRedirect' => true))
-                  ->willReturn($sugarLoginResult);
+                  ->willReturn(true);
 
         $davAuth->expects($this->once())->method('getSugarAuthController')->willReturn($sugarAuth);
+        $davAuth->expects($this->once())->method('getCurrentUser')->willReturn($userMock);
+        $userMock->expects($this->once())->method('load_relationship')->with('email_addresses_primary')
+                 ->willReturn(true);
+        $linkMock->expects($this->once())->method('getBeans')->with(array('where' => 'primary_address = 1'))
+                 ->willReturn($queryResult);
 
         $authResult = TestReflection::callProtectedMethod($davAuth, 'validateUserPass', array('username', 'password'));
-        $this->assertEquals($sugarLoginResult, $authResult);
+        $this->assertEquals($expectedResult, $authResult);
+    }
+
+    /**
+     * @covers        Sugarcrm\Sugarcrm\Dav\Base\Auth\SugarAuth::validateUserPass
+     */
+    public function testValidateUserPassWithIncorrectPassword()
+    {
+        $davAuth = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Auth\SugarAuth')
+                        ->setMethods(array('getSugarAuthController', 'getCurrentUser', 'getSugarQuery'))
+                        ->getMock();
+
+        $userMock = $this->getMockBuilder('\User')
+                         ->disableOriginalConstructor()
+                         ->setMethods(array('load_relationship'))
+                         ->getMock();
+
+        $sugarAuth = $this->getMockBuilder('SugarAuthenticate')
+                          ->setMethods(array('login'))
+                          ->getMock();
+
+        $sugarAuth->expects($this->once())->method('login')->with('username', 'password', array('noRedirect' => true))
+                  ->willReturn(false);
+
+        $davAuth->expects($this->once())->method('getSugarAuthController')->willReturn($sugarAuth);
+        $davAuth->expects($this->once())->method('getCurrentUser')->willReturn($userMock);
+        $userMock->expects($this->never())->method('load_relationship');
+
+        $authResult = TestReflection::callProtectedMethod($davAuth, 'validateUserPass', array('username', 'password'));
+        $this->assertFalse($authResult);
     }
 }
