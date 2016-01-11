@@ -7,6 +7,14 @@ describe("Contacts Preview View", function() {
         stub_serverInfo;
 
     beforeEach(function() {
+        app = SugarTest.app;
+
+        SugarTest.loadFile('../modules/Contacts/clients/base/plugins', 'ContactsPortalMetadataFilter', 'js', function(d) {
+            app.events.off('app:init');
+            eval(d);
+            app.events.trigger('app:init');
+        });
+
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'preview');
         SugarTest.loadComponent('base', 'view', 'record', moduleName);
@@ -39,7 +47,6 @@ describe("Contacts Preview View", function() {
         }, moduleName);
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
-        app = SugarTest.app;
 
         //Fake portal is inactive
         stub_serverInfo = sinon.stub(app.metadata, "getServerInfo", function() {
