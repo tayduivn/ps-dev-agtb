@@ -249,6 +249,7 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                             'name' => 'repeat_selector',
                             'type' => 'enum',
                             'options' => 'repeat_selector_dom',
+                            'default' => 'None',
                         ),
                         array(
                             'name' => 'repeat_days',
