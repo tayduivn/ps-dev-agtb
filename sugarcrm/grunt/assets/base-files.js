@@ -77,14 +77,12 @@
     'tests/fixtures/search.js',
     'tests/modules/**/fixtures/*.js',
 
-    // FIXME: this should be included by the tests, not here
-    'portal2/user.js',
-
     // If we are emulating what the real app will see, we need to include our hacks
     'include/javascript/sugar7/hacks.js',
 
     'grunt/environment.js',
 
     {pattern: 'clients/**/*.js', included: false, served: true, watched: true},
-    {pattern: 'modules/**/clients/**/*.js', included: false, served: true, watched: true}
+    {pattern: 'modules/**/clients/**/*.js', included: false, served: true, watched: true},
+    {pattern: 'portal2/**/*.js', included: false, served: true, watched: true}
 ]
