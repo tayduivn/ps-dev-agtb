@@ -170,6 +170,9 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
                 if ($sessionObject instanceof SessionStorage && !$sessionObject->isClosed()) {
                     $_SESSION = $sessionObject->getArrayCopy();
                 } else {
+                    // session_start() sends http headers such as 'Cache-Control' depending on php configs
+                    // flush ob to send out these headers so they won't be overwritten
+                    while (@ob_end_flush());
                     SessionStorage::_safeStart();
                     //First verify that the sessions still match and we didn't somehow switch users.
                     if ((!isset($_SESSION['user_id']) && $previousUserId) ||
