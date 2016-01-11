@@ -100,17 +100,6 @@ class Meeting extends SugarBean {
 
 	public $send_invites = false;
 
-    /**
-     * This is a deprecated method, please start using __construct() as this
-     * method will be removed in a future version.
-     *
-     * @deprecated since 7.0.0. Use __construct() instead.
-     */
-    public function Meeting()
-    {
-        $GLOBALS['log']->deprecated('Calls to Meeting::Meeting() are deprecated.');
-        self::__construct();
-    }
 
 	/**
 	 * sole constructor

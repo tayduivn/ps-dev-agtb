@@ -149,8 +149,9 @@ if($sync_module_index == -1)add_to_msg("Logging Into Server...");
                                 </script>";
 
 
-                                require_once('ModuleInstall/ModuleInstaller.php');
-                                $mi = new ModuleInstaller();
+                                SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
+                                $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+                                $mi = new $moduleInstallerClass();
                                 $mi->rebuild_all(true);
 								$current_user->is_admin = 0;
 

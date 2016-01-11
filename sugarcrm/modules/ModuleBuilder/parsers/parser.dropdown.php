@@ -166,7 +166,9 @@ class ParserDropDown extends ModuleBuilderParser
      */
     public function finalize($lang)
     {
-        $mi = new ModuleInstaller();
+        SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
+        $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+        $mi = new $moduleInstallerClass();
         $mi->silent = true;
         $mi->rebuild_languages(
             array(

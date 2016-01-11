@@ -84,7 +84,7 @@ class Feed extends SugarBean {
 
 	function Feed() {
 		;
-		parent::SugarBean();
+		parent::__construct();
 		$this->setupCustomFields('Feeds');
 		foreach ($this->field_defs as $field)
 		{

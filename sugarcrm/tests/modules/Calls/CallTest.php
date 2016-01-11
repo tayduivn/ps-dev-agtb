@@ -123,8 +123,6 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
          $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Calls');         
         
          $call = new Call();
-         $call->field_defs['status']['default'] = 'My Call';
-         $call = new Call();
          $this->callid = $call->id = create_guid();
          $call->new_with_id = 1;
          $call->date_start = TimeDate::getInstance()->getNow()->asDb();
@@ -133,7 +131,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
          // then retrieve
          $call = new Call();
          $call->retrieve($this->callid);
-         $this->assertEquals('My Call', $call->status);
+         $this->assertEquals($call->field_defs['status']['default'], $call->status);
 
         $q = "SELECT cu.accept_status FROM calls_users cu WHERE cu.call_id = '{$this->callid}' AND user_id = '{$GLOBALS['current_user']->id}'";
         $r = $db->query($q);

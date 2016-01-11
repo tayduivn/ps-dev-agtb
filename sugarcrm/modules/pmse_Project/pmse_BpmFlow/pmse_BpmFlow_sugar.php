@@ -66,15 +66,6 @@ class pmse_BpmFlow_sugar extends Basic {
     var $cas_finished;
     var $cas_delayed;
 
-	/**
-	 * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @depreciated
-	 */
-	function pmse_BpmFlow_sugar(){
-		self::__construct();
-	}
 
 	public function __construct(){
 		parent::__construct();

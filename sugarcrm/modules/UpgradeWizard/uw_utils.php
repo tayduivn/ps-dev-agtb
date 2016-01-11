@@ -3444,8 +3444,9 @@ function upgradeTeamColumn($bean, $column_name) {
 
 		//we have written out the teams.php into custom/Extension/modules/{$module_dir}/Ext/Vardefs/teams.php'
 		//now let's merge back into vardefs.ext.php
-		require_once('ModuleInstall/ModuleInstaller.php');
-		$mi = new ModuleInstaller();
+        SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
+        $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+        $mi = new $moduleInstallerClass();
 		$mi->merge_files('Ext/Vardefs/', 'vardefs.ext.php');
 		VardefManager::loadVardef($bean->module_dir, $bean->object_name, true);
 		$bean->field_defs = $GLOBALS['dictionary'][$bean->object_name]['fields'];

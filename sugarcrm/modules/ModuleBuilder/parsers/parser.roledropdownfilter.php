@@ -84,7 +84,9 @@ class ParserRoleDropDownFilter extends ModuleBuilderParser
 
     protected function rebuildExtension($role)
     {
-        $moduleInstaller = new ModuleInstaller();
+        SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
+        $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+        $moduleInstaller = new $moduleInstallerClass();
         $moduleInstaller->silent = true;
         $moduleInstaller->rebuild_role_dropdown_filters($role);
     }

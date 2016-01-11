@@ -18,7 +18,7 @@ nv.models.multiBar = function() {
       disabled, // used in conjunction with barColor to communicate to multiBarChart what series are disabled
       clipEdge = true,
       showValues = false,
-      valueFormat = d3.format(',.2s'),
+      valueFormat = nv.utils.numberFormatSI,
       withLine = false,
       vertical = true,
       baseDimension = 60,

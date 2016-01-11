@@ -115,17 +115,6 @@ class User extends Person {
 
 	var $new_schema = true;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function User()
-    {
-        self::__construct();
-    }
-
 	public function __construct() {
 		parent::__construct();
 		$this->disable_row_level_security = true;
@@ -1053,11 +1042,11 @@ EOQ;
 	        return false;
 	    }
 
-	    // Custom regex
-	    if(!empty($GLOBALS["sugar_config"]["passwordsetting"]["customregex"]) && !preg_match($GLOBALS["sugar_config"]["passwordsetting"]["customregex"], $password)){
-	        return false;
-	    }
-
+        // Custom regex
+        if (!empty($GLOBALS["sugar_config"]["passwordsetting"]["customregex"]) &&
+            preg_match('/'.$GLOBALS["sugar_config"]["passwordsetting"]["customregex"].'/', $password)) {
+            return false;
+        }
 	    return true;
 	}
 
@@ -1666,7 +1655,7 @@ EOQ;
 		$name['s'] = $app_strings['LBL_LOCALE_NAME_EXAMPLE_SALUTATION'];
 		$name['t'] = $app_strings['LBL_LOCALE_NAME_EXAMPLE_TITLE'];
 
-		$macro = $locale->getLocaleFormatMacro();
+		$macro = $locale->getLocaleFormatMacro($this);
 
 		$ret1 = '';
 		$ret2 = '';

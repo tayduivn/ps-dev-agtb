@@ -746,7 +746,7 @@ class MetaDataManager
     {
         $filterModules = false;
         // BEGIN SUGARCRM flav=ent ONLY
-        if (SugarConfig::getInstance()->get('roleBasedViews')) {
+        if (SugarConfig::getInstance()->get('roleBasedViews') && !($context instanceof MetaDataContextDefault)) {
             $filterModules = true;
         }
         // END SUGARCRM flav=ent ONLY
@@ -2713,13 +2713,13 @@ class MetaDataManager
     {
         $filterModules = false;
         // BEGIN SUGARCRM flav=ent ONLY
-        if (SugarConfig::getInstance()->get('roleBasedViews')) {
+        if (SugarConfig::getInstance()->get('roleBasedViews') && !($context instanceof MetaDataContextDefault)) {
             $filterModules = true;
         }
         // END SUGARCRM flav=ent ONLY
         $this->data['full_module_list'] = $data['full_module_list'] = $this->getModuleList($filterModules);
         $this->data['modules'] = $data['modules'] = $this->getModulesData($context);
-        $data['modules_info'] = $this->getModulesInfo();
+        $data['modules_info'] = $this->getModulesInfo(array(), $context);
         return $data;
     }
 
@@ -2749,13 +2749,13 @@ class MetaDataManager
      *
      * @return array An array with all the modules and their properties
      */
-    public function getModulesInfo()
+    public function getModulesInfo($data = array(), MetaDataContextInterface $context = null)
     {
         global $moduleList;
 
         $filterModules = false;
         // BEGIN SUGARCRM flav=ent ONLY
-        if (SugarConfig::getInstance()->get('roleBasedViews')) {
+        if (SugarConfig::getInstance()->get('roleBasedViews') && !($context instanceof MetaDataContextDefault)) {
             $filterModules = true;
         }
         // END SUGARCRM flav=ent ONLY

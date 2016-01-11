@@ -62,15 +62,6 @@ class pmse_BpmnEvent_sugar extends Basic {
     var $evn_time_duration;
     var $evn_behavior;
 
-	/**
-	 * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @depreciated
-	 */
-	function pmse_BpmnEvent_sugar(){
-		self::__construct();
-	}
 
 	public function __construct(){
 		parent::__construct();

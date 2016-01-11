@@ -23,7 +23,6 @@ define('ENTRY_POINT_TYPE', 'api');
 if(!defined('sugarEntry'))define('sugarEntry', true);
 
 require_once('include/entryPoint.php');
-require_once 'ModuleInstall/ModuleInstaller.php';
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
 require_once 'include/MetaDataManager/MetaDataManager.php';
 
@@ -78,7 +77,9 @@ if(!empty($fail)) {
         }
     }
     // refresh caches
-    $mi = new ModuleInstaller();
+    SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
+    $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
+    $mi = new $moduleInstallerClass();
     $mi->silent = true;
     $mi->rebuild_extensions();
     SugarAutoLoader::buildCache();

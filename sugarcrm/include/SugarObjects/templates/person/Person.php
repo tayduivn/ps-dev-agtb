@@ -28,17 +28,6 @@ class Person extends Basic
      */
     public $email_addresses;
 
-    /**
-     * This is a deprecated method, please start using __construct() as this
-     * method will be removed in a future version.
-     *
-     * @deprecated since 7.0.0. Use __construct() instead.
-     */
-    public function Person()
-    {
-        $GLOBALS['log']->deprecated('Calls to Person::Person() are deprecated.');
-        self::__construct();
-    }
 
     public function __construct()
     {

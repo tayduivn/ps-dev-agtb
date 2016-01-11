@@ -24,17 +24,6 @@ class ACLRole extends SugarBean{
 
     var $created_by;
 
-    /**
-     * This is a deprecated method, please start using __construct() as this
-     * method will be removed in a future version.
-     *
-     * @deprecated since 7.0.0. Use __construct() instead.
-     */
-    public function ACLRole()
-    {
-        $GLOBALS['log']->deprecated('Calls to ACLRole::ACLRole() are deprecated.');
-        self::__construct();
-    }
 
     public function __construct(){
         parent::__construct();

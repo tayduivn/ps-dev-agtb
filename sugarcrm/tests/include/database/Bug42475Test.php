@@ -15,22 +15,6 @@
  */
 class Bug42475Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    /** @var  Bug42475TestBean */
-    private $bean;
-
-    public function setUp()
-    {
-        $this->bean = new Bug42475TestBean();
-        $this->bean->field_defs['test_field'] = array(
-            'type' => 'currency',
-        );
-    }
-
-    public function tearDown()
-    {
-        unset($this->bean->field_defs['test_field']);
-    }
-
     public function testAuditingCurrency() {
         // getDataChanges
         $testBean = new Bug42475TestBean();
@@ -57,6 +41,9 @@ class Bug42475TestBean extends SugarBean
         // Fake a fetched row
         $this->fetched_row = array('test_field'=>257.8300000001);
         $this->test_field = 257.83;
+        $this->field_defs['test_field'] = array(
+            'type' => 'currency',
+        );
     }
     function getAuditEnabledFieldDefinitions() {
         return array('test_field'=>array('type'=>'currency'));

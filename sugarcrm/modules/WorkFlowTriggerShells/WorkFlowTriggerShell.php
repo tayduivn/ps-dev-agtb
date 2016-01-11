@@ -99,16 +99,6 @@ class WorkFlowTriggerShell extends SugarBean {
 	// This is the list of fields that are required
 	var $required_fields =  array();
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function WorkFlowTriggerShell()
-    {
-        self::__construct();
-    }
 
 	public function __construct() {
 		parent::__construct();

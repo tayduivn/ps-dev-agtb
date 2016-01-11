@@ -132,7 +132,7 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
                 'acl_action' => 'massquote',
             ),
             array(
-                'name' => 'delete_button',
+                'name' => 'massdelete_button',
                 'type' => 'button',
                 'label' => 'LBL_DELETE',
                 'acl_action' => 'delete',

@@ -59,7 +59,7 @@ class ForumTopic extends SugarBean {
 	var $additional_column_fields = Array();
 
 	function ForumTopic() {
-		parent::SugarBean();
+		parent::__construct();
 
 		$this->disable_row_level_security = true;
 

@@ -51,17 +51,6 @@ class Calendar {
      */
     private $print = false;
 
-    /**
-     * This is a deprecated method, please start using __construct() as this
-     * method will be removed in a future version.
-     *
-     * @deprecated since 7.0.0. Use __construct() instead.
-     */
-    public function Calendar($view = 'day', $time_arr = array())
-    {
-        $GLOBALS['log']->deprecated('Calls to Calendar::Calendar() are deprecated.');
-        self::__construct($view, $time_arr);
-    }
 
 	/**
 	 * constructor
