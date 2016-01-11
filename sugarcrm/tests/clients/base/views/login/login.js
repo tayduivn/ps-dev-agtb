@@ -106,17 +106,17 @@ describe("Login View", function() {
             expect(view._isSupportedBrowser()).toBeTruthy();
         });
         //Safari
-        it("should deem Safari 7 as an unsupported browser", function () {
+        it("should deem Safari 6 as an unsupported browser", function () {
             $.browser = {
-                'version': '537',
+                'version': '536',
                 'safari': true,
                 'webkit': true
             };
             expect(view._isSupportedBrowser()).toBeFalsy();
         });
-        it("should deem Safari 8 as a supported browser", function () {
+        it("should deem Safari 7 as a supported browser", function () {
             $.browser = {
-                'version': '600',
+                'version': '537',
                 'safari': true,
                 'webkit': true
             };
