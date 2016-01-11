@@ -1,18 +1,18 @@
-describe("Filter Quick Search View", function () {
+describe('Filter Quick Search View', function() {
 
     var view, app, parentLayout, filtersBeanPrototype;
 
-    beforeEach(function () {
+    beforeEach(function() {
         parentLayout = new Backbone.View();
         SugarTest.app.data.declareModels();
         SugarTest.declareData('base', 'Filters');
-        view = SugarTest.createView("base", "Accounts", "filter-quicksearch", {}, false, false, parentLayout);
+        view = SugarTest.createView('base', 'Accounts', 'filter-quicksearch', {}, false, false, parentLayout);
         view.layout = parentLayout;
         app = SUGAR.App;
         filtersBeanPrototype = app.data.getBeanClass('Filters').prototype;
     });
 
-    afterEach(function () {
+    afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
@@ -20,26 +20,33 @@ describe("Filter Quick Search View", function () {
         parentLayout = null;
     });
 
-    it('should call clear input on filter:clear:quicksearch', function () {
+    it('should call clear input on filter:clear:quicksearch', function() {
         var stub = sinon.stub(view, 'clearInput');
         view.initialize(view.options);
         parentLayout.trigger('filter:clear:quicksearch');
         expect(stub).toHaveBeenCalled();
         stub.restore();
     });
-    it('should trigger quick search change on throttle search', function () {
+
+    it('should trigger quick search change on applyQuickSearch', function() {
         var spy = sinon.spy();
         parentLayout.on('filter:apply', spy);
-        view.throttledSearch();
+        view.applyQuickSearch(true);
         expect(spy).toHaveBeenCalled();
     });
-    it('should trigger filter:apply on clearInput', function(){
+
+    it('should call applyQuickSearch on throttle search', function() {
+        var stub = sinon.stub(view, 'applyQuickSearch');
+        view.throttledSearch();
+        expect(stub).toHaveBeenCalled();
+    });
+
+    it('should trigger filter:apply on clearInput', function() {
         var spy = sinon.spy();
         parentLayout.on('filter:apply', spy);
         view.clearInput();
         expect(spy).toHaveBeenCalled();
     });
-
 
     it('should update placeholder with field labels on filter:change:module', function() {
         var updatePlaceholderSpy = sinon.spy(view, 'updatePlaceholder');
