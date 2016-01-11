@@ -99,6 +99,6 @@ $mod_strings = array (
     'ERROR_ACTIVE_DATE_APPROVE_REQUIRED' => 'The Approved status requires publishing date.',
     'ERROR_ACTIVE_DATE_LOW' => 'The Publish Date must occur on a later date than today\'s date.',
     'ERROR_ACTIVE_DATE_EMPTY' => 'The Publish Date is empty.',
-    'LBL_RECORD_SAVED_SUCCESS' => 'You successfully created the {{moduleSingularLower}} article <a href="#{{buildRoute model=this}}">{{name}}</a>.', // use when a model is available
+    'LBL_RECORD_SAVED_SUCCESS' => 'You successfully created the {{moduleSingularLower}} <a href="#{{buildRoute model=this}}">{{name}}</a>.', // use when a model is available
     'TPL_SHOW_MORE_MODULE' => 'More {{module}} articles...',
 );
