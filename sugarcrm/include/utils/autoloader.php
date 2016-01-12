@@ -204,6 +204,7 @@ class SugarAutoLoader
     public static function init($useConfig = true)
     {
         if ($useConfig === true) {
+            require_once 'include/SugarObjects/SugarConfig.php';
             $config = SugarConfig::getInstance();
 
             /*

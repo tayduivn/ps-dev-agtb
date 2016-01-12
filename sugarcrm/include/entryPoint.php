@@ -113,9 +113,6 @@ if (!empty($sugar_config['xhprof_config']))
     SugarXHprof::getInstance()->start();
 }
 
-// make sure SugarConfig object is available
-require_once 'include/SugarObjects/SugarConfig.php';
-
 require_once('include/utils.php');
 register_shutdown_function('sugar_cleanup');
 
