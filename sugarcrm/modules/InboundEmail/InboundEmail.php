@@ -16,13 +16,6 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once('include/OutboundEmail/OutboundEmail.php');
 
-function this_callback($str) {
-	foreach($str as $match) {
-		$ret .= chr(hexdec(str_replace("%","",$match)));
-	}
-	return $ret;
-}
-
 /**
  * Stub for certain interactions;
  */

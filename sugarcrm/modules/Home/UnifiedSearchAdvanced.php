@@ -642,16 +642,3 @@ class UnifiedSearchAdvanced {
 	    return true;
 	}
 }
-
-
-function unified_search_modules_cmp($a, $b) {
-	if(!isset($a['translated']) || !isset($b['translated']))
-	{
-	   return 0;
-	}
-
-	$name1 = strtolower($a['translated']);
-	$name2 = strtolower($b['translated']);
-
-	return $name1 < $name2 ? -1 : 1;
-}

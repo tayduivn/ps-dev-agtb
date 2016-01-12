@@ -9,10 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-define('PACKAGE_MANAGER_DOWNLOAD_SERVER', 'https://depot.sugarcrm.com/depot/');
-define('PACKAGE_MANAGER_DOWNLOAD_PAGE', 'download.php');
+
 class PackageManagerDownloader
 {
+    const PACKAGE_MANAGER_DOWNLOAD_SERVER = 'https://depot.sugarcrm.com/depot/';
+
+    const PACKAGE_MANAGER_DOWNLOAD_PAGE = 'download.php';
+
 	/**
 	 * Using curl we will download the file from the depot server
 	 *
@@ -29,9 +32,9 @@ class PackageManagerDownloader
 			$save_dir = "upload://";
 		}
 		if(empty($download_server)){
-			$download_server = PACKAGE_MANAGER_DOWNLOAD_SERVER;
+            $download_server = self::PACKAGE_MANAGER_DOWNLOAD_SERVER;
 		}
-		$download_server .= PACKAGE_MANAGER_DOWNLOAD_PAGE;
+        $download_server .= self::PACKAGE_MANAGER_DOWNLOAD_PAGE;
 		$ch = curl_init($download_server . '?filename='. $file_name);
 		$fp = sugar_fopen($save_dir . $file_name, 'w');
 		curl_setopt($ch, CURLOPT_COOKIE, 'PHPSESSID='.$session_id. ';');

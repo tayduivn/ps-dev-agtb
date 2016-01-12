@@ -621,9 +621,3 @@ class Opportunity extends SugarBean
         return static::$settings;
     }
 }
-
-
-function getTimePeriodsDropDown()
-{
-    return TimePeriod::get_timeperiods_dom();
-}

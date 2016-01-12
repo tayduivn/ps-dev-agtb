@@ -12,13 +12,14 @@
 require_once('vendor/nusoap//nusoap.php');
 require_once('ModuleInstall/PackageManager/PackageManagerDownloader.php');
 
-define("HTTPS_URL", "https://depot.sugarcrm.com/depot/SugarDepotSoap.php");
-//BEGIN SUGARCRM flav=int ONLY
-define("HTTP_URL", "http://depot.sugarcrm.com/depot/SugarDepotSoap.php");
-//END SUGARCRM flav=int ONLY
-define("ACTIVE_STATUS", "ACTIVE");
+class PackageManagerComm
+{
+    const HTTPS_URL = 'https://depot.sugarcrm.com/depot/SugarDepotSoap.php';
 
-class PackageManagerComm{
+//BEGIN SUGARCRM flav=int ONLY
+    const HTTP_URL = 'http://depot.sugarcrm.com/depot/SugarDepotSoap.php';
+//END SUGARCRM flav=int ONLY
+
      /**
       * Initialize the soap client and store in the $GLOBALS object for use
       *
@@ -27,7 +28,7 @@ class PackageManagerComm{
      function initialize($login = true){
         if(empty($GLOBALS['SugarDepot'])){
             $GLOBALS['log']->debug('USING HTTPS TO CONNECT TO HEARTBEAT');
-            $soap_client = new nusoapclient(HTTPS_URL, false);
+            $soap_client = new nusoapclient(self::HTTPS_URL, false);
             $ping = $soap_client->call('sugarPing', array());
             //BEGIN SUGARCRM flav=int ONLY
             if(empty($ping) || $soap_client->getError()){
@@ -37,7 +38,7 @@ class PackageManagerComm{
 			//only internally can we connect over http everyone else must use https
             if(empty($soap_client)){
                 $GLOBALS['log']->debug('USING HTTP TO CONNECT TO HEARTBEAT');
-                $soap_client = new nusoapclient(HTTP_URL, false);
+                $soap_client = new nusoapclient(self::HTTP_URL, false);
             }
             //END SUGARCRM flav=int ONLY
             $GLOBALS['SugarDepot'] = $soap_client;
@@ -298,7 +299,7 @@ class PackageManagerComm{
         PackageManagerComm::initialize(false);
 
         $status = $GLOBALS['SugarDepot']->call('sugarPing', array());
-        if(empty($status) || $GLOBALS['SugarDepot']->getError() || $status != ACTIVE_STATUS){
+        if (empty($status) || $GLOBALS['SugarDepot']->getError() || $status != 'ACTIVE') {
             return false;
         }else{
             return true;
@@ -307,5 +308,3 @@ class PackageManagerComm{
      ////////// END: Base Functions for Communicating with the depot
      ////////////////////////////////////////////////////////
 }
-
-?>

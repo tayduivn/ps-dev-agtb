@@ -126,7 +126,10 @@ JS;
      */
     public function fire(&$target)
     {
-        set_error_handler('handleExpressionError', E_ERROR);
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+            $GLOBALS['log']->fatal("Error evaluating expression: {$errstr}\nLine {$errline} of file {$errfile}");
+        }, E_ERROR);
+
         try {
             $result = Parser::evaluate($this->expression, $target)->evaluate();
         } catch (Exception $e) {
