@@ -13,10 +13,12 @@
 class ACLFieldsEditView{
 	function getView($module, $role_id){
         $options = array();
+        //BEGIN SUGARCRM flav=ent ONLY
         $tbaConfigurator = new TeamBasedACLConfigurator();
         $tbaEnabled = $tbaConfigurator->isEnabledForModule($module);
         $tbaImplemented = $tbaConfigurator->implementsTBA($module);
         $tbaFieldKeys = array_values($tbaConfigurator->getFieldOptions());
+        //END SUGARCRM flav=ent ONLY
 		$fields = ACLField::getFields( $module, '', $role_id);
 		$sugar_smarty = new Sugar_Smarty();
         $sugar_smarty->assign('LBL_MODULE', $module);
@@ -28,9 +30,11 @@ class ACLFieldsEditView{
 		$sugar_smarty->assign('APP_LIST', $GLOBALS['app_list_strings']);
 		$sugar_smarty->assign('FIELDS', $fields);
         foreach ($GLOBALS['aclFieldOptions'] as $key => $option) {
+            //BEGIN SUGARCRM flav=ent ONLY
             if ((!$tbaEnabled || !$tbaImplemented) && in_array($key, $tbaFieldKeys)) {
                 continue;
             }
+            //END SUGARCRM flav=ent ONLY
             $options[$key] = translate($option, 'ACLFields');
         }
         $sugar_smarty->assign('OPTIONS', $options);

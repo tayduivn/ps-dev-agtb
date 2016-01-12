@@ -203,7 +203,8 @@ $vardefs = array(
 		),
 	)
 );
-
+//BEGIN SUGARCRM flav=ent ONLY
 if (TeamBasedACLConfigurator::isEnabledForModule($module)) {
     $vardefs['acls']['SugarACLTeamBased'] = true;
 }
+//END SUGARCRM flav=ent ONLY

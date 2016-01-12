@@ -2925,7 +2925,9 @@ class ModuleInstaller{
                 "editable_dropdown_filters",
 // END SUGARCRM flav=ent ONLY
             ),
+//BEGIN SUGARCRM flav=ent ONLY
             'teamBasedAcl' => $config->get(TeamBasedACLConfigurator::CONFIG_KEY),
+//END SUGARCRM flav=ent ONLY
         );
 
         $jsConfig = $config->get('additional_js_config', array());
