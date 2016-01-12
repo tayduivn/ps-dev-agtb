@@ -22,4 +22,11 @@ class TeamsViewList extends ViewList
 
         parent::preDisplay();
     }
+
+    public function display()
+    {
+        $sugarSmarty = new Sugar_Smarty();
+        echo $sugarSmarty->fetch(SugarAutoLoader::existingCustomOne('modules/Teams/tpls/Errors.tpl'));
+        parent::display();
+    }
 }

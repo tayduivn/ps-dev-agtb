@@ -499,7 +499,7 @@ class SugarView
             $errorMessages = SugarApplication::getErrorMessages();
             if ( !empty($errorMessages)) {
                 foreach ( $errorMessages as $error_message ) {
-                    echo('<p class="error">' . $error_message.'</p>');
+                    echo('<p class="error" data-type="bwc-error">' . $error_message.'</p>');
                 }
             }
     }

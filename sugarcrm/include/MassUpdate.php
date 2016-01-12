@@ -138,7 +138,7 @@ eoq;
         function handleMassUpdate($fetch_only = false, $update_blank=false){
 
 		require_once('include/formbase.php');
-		global $current_user, $db, $disable_date_format, $timedate;
+        global $current_user, $db, $disable_date_format, $timedate, $app_strings;
         $retval = array();
 
 		foreach($_POST as $post=>$value){
@@ -259,6 +259,15 @@ eoq;
 				if(isset($_POST['Delete'])){
 					$this->sugarbean->retrieve($id);
 					if($this->sugarbean->ACLAccess('Delete')){
+                        // Fix for RS-1267 - We should not processing mass delete for global team
+                        if ($this->sugarbean->object_name == 'Team' &&
+                            $this->sugarbean->id == $this->sugarbean->global_team
+                        ) {
+                            $retval[] = $id;
+                            SugarApplication::appendErrorMessage($app_strings['LBL_MASSUPDATE_DELETE_GLOBAL_TEAM']);
+                            continue;
+                        }
+
 					    if ($this->sugarbean->object_name == 'Team' && $this->sugarbean->has_records_in_modules()) {
                             if(!isset($_SESSION['REASSIGN_TEAMS'])) {
                                 $_SESSION['REASSIGN_TEAMS'] = array();
