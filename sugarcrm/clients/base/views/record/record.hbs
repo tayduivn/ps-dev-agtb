@@ -11,14 +11,12 @@
  */
 --}}
 <div>
-    {{#if model.isNotEmpty}}
-        {{#if enableHeaderPane}}
-            {{partial 'headerpane' ../../this view=../../this}}
-        {{/if}}
-        {{#if meta.useTabsAndPanels}}
-            {{partial 'tabspanels' ../../this view=../../this}}
-        {{else}}
-            {{partial 'businesscard' ../../this view=../../this}}
-        {{/if}}
+    {{#if enableHeaderPane}}
+        {{partial 'headerpane' ../this view=../this}}
+    {{/if}}
+    {{#if meta.useTabsAndPanels}}
+        {{partial 'tabspanels' ../this view=../this}}
+    {{else}}
+        {{partial 'businesscard' ../this view=../this}}
     {{/if}}
 </div>
