@@ -23,7 +23,7 @@ interface AdapterInterface
     /**
      * @param array $data
      * @param \CalDavEventCollection $collection
-     * @return bool
+     * @return mixed|false should return updated data for verifyImportAfterExport or false if nothing to do
      */
     public function export(array $data, \CalDavEventCollection $collection);
 
@@ -38,7 +38,7 @@ interface AdapterInterface
     /**
      * @param array $data
      * @param \SugarBean $bean
-     * @return bool
+     * @return mixed|false should return updated data for verifyExportAfterImport or false if nothing to do
      */
     public function import(array $data, \SugarBean $bean);
 

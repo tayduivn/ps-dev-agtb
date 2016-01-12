@@ -241,7 +241,7 @@ class CalendarEventsApi extends ModuleApi
         $securityTypeLocal = 'view',
         $securityTypeRemote = 'view'
     ) {
-        $bean->invitesBefore = CalendarUtils::getInvites($bean);
+        $bean->inviteesBefore = CalendarUtils::getInvitees($bean);
         parent::linkRelatedRecords($service, $bean, $ids, $securityTypeLocal, $securityTypeRemote);
     }
 

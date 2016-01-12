@@ -10,14 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue;
+namespace Sugarcrm\Sugarcrm\Dav\Cal\JobQueue;
 
 use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException as JQLogicException;
 use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as HookHandler;
 
 /**
  * Class Import
- * @package Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue
+ * @package Sugarcrm\Sugarcrm\Dav\Cal\JobQueue
  * Class for import process initialization
  */
 class Import extends Base
@@ -34,7 +34,7 @@ class Import extends Base
             'strict_retrieve' => true,
         ));
         if (!$calDavBean instanceof \CalDavEventCollection) {
-            return \SchedulersJob::JOB_CANCELLED;
+            return \SchedulersJob::JOB_FAILURE;
         }
 
         if ($this->setJobToEnd($calDavBean)) {
@@ -67,7 +67,8 @@ class Import extends Base
         $bean = $adapter->getBeanForImport($bean, $calDavBean, $this->processedData);
         try {
             $liveBean = clone $bean;
-            if ($adapter->import($this->processedData, $liveBean)) {
+            $importData = $adapter->import($this->processedData, $liveBean);
+            if ($importData !== false) {
                 $exportData = array();
                 HookHandler::$exportHandler = function($beanModule, $beanId, $data) use ($bean, &$exportData) {
                     if (!empty($bean->repeat_parent_id)) {
@@ -84,7 +85,7 @@ class Import extends Base
                 $liveBean->save();
                 HookHandler::$exportHandler = null;
                 if ($exportData) {
-                    $exportData = $adapter->verifyExportAfterImport($this->processedData, $exportData, $liveBean);
+                    $exportData = $adapter->verifyExportAfterImport($importData, $exportData, $liveBean);
                 }
                 if ($exportData) {
                     $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();

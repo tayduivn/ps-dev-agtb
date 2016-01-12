@@ -563,8 +563,11 @@ class CalendarUtils
      * @param SugarBean|Call|Meeting $bean
      * @return array
      */
-    public static function getInvites(\SugarBean $bean)
+    public static function getInvitees(\SugarBean $bean)
     {
+        /** @var Localization $locale */
+        global $locale;
+
         $definitions = \VardefManager::getFieldDefs($bean->module_name);
         if (isset($definitions['invitees']['links'])) {
             $requiredRelations = $definitions['invitees']['links'];
@@ -572,24 +575,27 @@ class CalendarUtils
             $requiredRelations = array('contacts', 'leads', 'users');
         }
 
-        $invitesList = array();
+        $invitees = array();
         foreach ($requiredRelations as $relationship) {
             if ($bean->load_relationship($relationship)) {
                 $bean->$relationship->resetLoaded();
                 $beans = $bean->$relationship->getBeans();
-                $invites = array();
-                foreach ($beans as $beanId => $relationBean) {
-                    $invites[$beanId]['status'] = null;
+                /** @var SugarBean $person */
+                foreach ($beans as $beanId => $person) {
+                    $invitee = array(
+                        $person->module_name,
+                        $person->id,
+                        $person->emailAddress->getPrimaryAddress($person),
+                        null,
+                        $locale->formatName($person),
+                    );
                     if (isset($bean->$relationship->rows[$beanId])) {
-                        $invites[$beanId]['status'] = $bean->$relationship->rows[$beanId]['accept_status'];
+                        $invitee[3] = $bean->$relationship->rows[$beanId]['accept_status'];
                     }
-                    $invites[$beanId]['bean'] = $relationBean;
-                }
-                if ($invites) {
-                    $invitesList[$relationship] = $invites;
+                    $invitees[] = $invitee;
                 }
             }
         }
-        return $invitesList;
+        return $invitees;
     }
 }

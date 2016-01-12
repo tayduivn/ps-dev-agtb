@@ -98,7 +98,7 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 		$data_values = array('accept_status'=> 'none');
 		$meeting->set_relationship($meeting->rel_contacts_table, $relate_values, true, true, $data_values);
 
-		$invitesBefore = CalendarUtils::getInvites($meeting);
+		$invitesBefore = CalendarUtils::getInvitees($meeting);
 
 		$relate_values = array('lead_id'=>$this->lead->id,'meeting_id'=> $meeting->id);
 		$data_values = array('accept_status'=> 'accept');
@@ -112,7 +112,7 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
         $data_values = array('accept_status' => 'accept');
         $meeting->set_relationship($meeting->rel_addresses_table, $relate_values, true, true, $data_values);
 
-		$invitesAfter = CalendarUtils::getInvites($meeting);
+		$invitesAfter = CalendarUtils::getInvitees($meeting);
 
 		$invitesBeforeExpected = array (
 			'contacts' => array(

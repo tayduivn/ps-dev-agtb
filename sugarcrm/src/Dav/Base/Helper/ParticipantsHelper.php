@@ -12,12 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Base\Helper;
 
-use Sugarcrm\Sugarcrm\Dav\Base\Constants as DavConstants;
 use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as DavStatusMapper;
-use Sugarcrm\Sugarcrm\Dav\Base\Principal\Manager;
 use Sugarcrm\Sugarcrm\Dav\Cal\Structures\Participant;
-
-use Sabre\VObject\Property\ICalendar\CalAddress;
 
 /**
  * Provides methods to  convert participants from CalDav to SugarCRM and back
@@ -27,380 +23,86 @@ use Sabre\VObject\Property\ICalendar\CalAddress;
 class ParticipantsHelper
 {
     /**
-     * @var \Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\AcceptedMap
-     */
-    protected $statusMapper;
-
-    /**
-     * @var \Sugarcrm\Sugarcrm\Dav\Base\Principal\Manager;
-     */
-    protected $principalManager;
-
-    public function __construct()
-    {
-        $this->statusMapper = new DavStatusMapper\AcceptedMap();
-        $this->principalManager = new Manager();
-    }
-
-    /**
-     * Retrieve EmailAddresses bean object
-     * @return null|\EmailAddress
-     */
-    protected function getEmailAddressBean()
-    {
-        return \BeanFactory::getBean('EmailAddresses');
-    }
-
-    /**
-     * Convert DAV ICalendar\CalAddress to array:
-     *  result => array(
-     *      Participant module
-     *      [moduleName] => Array
-     *      Key - SugarCRM user id
-     *          [1] => (
-     *              [email] =>  sally@example.com - user email
-     *              [status] => NEEDS-ACTION - Event accept status
-     *              [cn] =>     user display name
-     *              [role] =>   REQ-PARTICIPANT - Participant event's role
-     *          )
-     *          [2] => Array
-     *          (
-     *              [email] =>  sally@example.com - user email
-     *              [status] => NEEDS-ACTION - Event accept status
-     *              [cn] =>     user display name
-     *              [role] =>   REQ-PARTICIPANT - Participant event's role
-     *          )
-     *      Participant module
-     *      [secondModuleName] => array(
-     *      Key - SugarCRM user id
-     *          [3] => Array
-     *          (
-     *              [email] =>  sally@example.com - user email
-     *              [status] => NEEDS-ACTION - Event accept status
-     *              [cn] =>     user display name
-     *              [role] =>   REQ-PARTICIPANT - Participant event's role
-     *          )
-     *      )
-     * )
-     * @param \CalDavEventCollection $event
-     * @param \Sabre\VObject\Property\ICalendar\CalAddress $participants
-     * @return array[] See above
-     */
-    public function prepareForSugar(\CalDavEventCollection $event, CalAddress $participants)
-    {
-        $result = array();
-        $emailBean = $this->getEmailAddressBean();
-        foreach ($participants as $participant) {
-            $params = $participant->parameters();
-            $participantModule = !empty($params['X-SUGAR-MODULE']) ? $params['X-SUGAR-MODULE']->getValue() : 'Users';
-            $email = str_replace('mailto:', '', strtolower($participant->getNormalizedValue()));
-            if (!empty($params['X-SUGARUID']) && $params['X-SUGARUID']->getValue()) {
-                $userIds = array($params['X-SUGARUID']->getValue());
-            } else {
-                $userIds = $emailBean->getRelatedId($email, $participantModule);
-            }
-
-            if ($userIds) {
-                foreach ($userIds as $userId) {
-                    if (isset($params['PARTSTAT'])) {
-                        $status = $this->statusMapper->getSugarValue($params['PARTSTAT']->getValue());
-                    } else {
-                        $status = 'none';
-                    }
-                    $cn = isset($params['CN']) ? $params['CN']->getValue() : '';
-                    if (empty($result[$participantModule])) {
-                        $result[$participantModule] = array();
-                    }
-                    $result[$participantModule][$userId] = array(
-                        'email' => $email,
-                        'accept_status' => $status,
-                        'cn' => $cn,
-                        'role' => isset($params['ROLE']) ? $params['ROLE']->getValue() : 'OPT-PARTICIPANT',
-                    );
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Compare DAV attendees and SugarCRM attendees and return array with differences
-     * array
-     *      'operation' => (                    Operation with attendee (notModified, modified, added, deleted)
-     *          'mailto:test@test.com' => (     Attendee Email
-     *              'PARTSTAT' =>               Attendee accept status
-     *              'CN' =>                     Attendee display name
-     *              'ROLE' =>                   Attendee role
-     *              'davLink' =>                Link to old attendee email if it was modified
-     *              'X-SUGARUID' =>               SugarCRM User id
-     *          )
-     *      )
+     * Calculates simple diff between to arrays.
      *
-     * @param \SugarBean $bean
-     * @param \CalDavEventCollection $event
-     * @param string $componentType - DAV component to process
-     * @return array See above
-     */
-    public function prepareForDav(\SugarBean $bean, \CalDavEventCollection $event, $componentType = 'ATTENDEE')
-    {
-        $preResult = array();
-
-        $sugarParticipants = $davParticipants = array();
-        $acceptStatuses = array();
-        switch ($componentType) {
-            case 'ATTENDEE':
-                $allParticipants = $event->getParticipants();
-                foreach ($allParticipants as $moduleName => $participants) {
-                    if (!empty($participants)) {
-                        $davParticipants += $participants;
-                    }
-                }
-
-                $searchModules = $this->principalManager->getModulesForSearch();
-                foreach ($searchModules as $module) {
-                    $loadedParticipants = $this->loadParticipantsByRelationship(strtolower($module), $bean, $acceptStatuses);
-                    $sugarParticipants += $loadedParticipants;
-                }
-                break;
-            case 'ORGANIZER':
-                if (!$bean->load_relationship('users')) {
-                    return array();
-                }
-                $allParticipants = $event->getOrganizer();
-                if (!empty($allParticipants['Users'])) {
-                    $davParticipants += $allParticipants['Users'];
-                }
-                $sugarParticipants = $bean->users->getBeans(array(
-                    'where' => array(
-                        'lhs_field' => 'id',
-                        'operator' => '=',
-                        'rhs_value' => $bean->assigned_user_id
-                    )
-                ));
-                foreach ($sugarParticipants as $userId => $participant) {
-                    if (isset($bean->users->rows[$userId]['accept_status'])) {
-                        $acceptStatuses[$userId] = $bean->users->rows[$userId]['accept_status'];
-                    }
-                }
-                break;
-            default:
-                return array();
-        }
-        if ($davParticipants) {
-            foreach ($davParticipants as $userId => $userInfo) {
-                if (!isset($sugarParticipants[$userId])) {
-                    $preResult[DavConstants::PARTICIPIANT_DELETED][$userId] = array(
-                        'email' => $userInfo['email'],
-                        'accept_status' => null,
-                        'role' => null,
-                        'cn' => null,
-                        'x-sugar-module' => null,
-                    );
-                }
-            }
-        }
-
-        foreach ($sugarParticipants as $userId => $userBean) {
-            $email = $this->getUserPrimaryAddress($userBean);
-            if ($email) {
-                $displayName =
-                    !empty($davParticipants[$userId]['cn']) ? $davParticipants[$userId]['cn'] : $userBean->full_name;
-                $role = !empty($davParticipants[$userId]['role']) ? $davParticipants[$userId]['role'] : 'REQ-PARTICIPANT';
-
-                $preResult[DavConstants::PARTICIPIANT_NOT_MODIFIED][$userId] = array(
-                    'email' => $email,
-                    'accept_status' => isset($acceptStatuses[$userId]) ? $acceptStatuses[$userId] : 'none',
-                    'cn' => $displayName,
-                    'role' => $role,
-                    'x-sugar-module' => $userBean->module_name,
-                );
-            }
-        }
-
-        if (isset($preResult[DavConstants::PARTICIPIANT_NOT_MODIFIED])) {
-            foreach ($preResult[DavConstants::PARTICIPIANT_NOT_MODIFIED] as $userId => $userInfo) {
-                if (!isset($davParticipants[$userId])) {
-                    $preResult[DavConstants::PARTICIPIANT_ADDED][$userId] = $userInfo;
-                } elseif (($davParticipants[$userId]['email'] !== $userInfo['email'] ||
-                    $davParticipants[$userId]['accept_status'] !== $userInfo['accept_status'])
-                ) {
-                    $userInfo['davLink'] = strtolower('mailto:' . $davParticipants[$userId]['email']);
-                    $preResult[DavConstants::PARTICIPIANT_MODIFIED][$userId] = $userInfo;
-                }
-            }
-
-            unset($preResult[DavConstants::PARTICIPIANT_NOT_MODIFIED]);
-        }
-
-        if (!$preResult) {
-            return array();
-        }
-
-        $davAttendees = array();
-
-        foreach ($preResult as $internalStatus => $attendeesInfo) {
-            foreach ($attendeesInfo as $attendeeId => $attendee) {
-                $status = $this->statusMapper->getCalDavValue($attendee['accept_status']);
-                $davLink = isset($attendee['davLink']) ? $attendee['davLink'] : null;
-                $sugarModule = isset($attendee['x-sugar-module']) ? $attendee['x-sugar-module'] : 'Users';
-
-                $davAttendees[$internalStatus][strtolower('mailto:' . $attendee['email'])] = array(
-                    'PARTSTAT' => $status,
-                    'CN' => $attendee['cn'],
-                    'ROLE' => $attendee['role'],
-                    'davLink' => $davLink,
-                    'X-SUGARUID' => $attendeeId,
-                    'RSVP' => 'TRUE',
-                    'X-SUGAR-MODULE' => $sugarModule,
-                );
-            }
-        }
-
-        return $davAttendees;
-    }
-
-    /**
-     * Get all SugarCRM participants
-     * @param string $relationship
-     * @param \SugarBean $bean
-     * @param array $acceptStatuses
+     * Keys:
+     * 0 - beanName
+     * 1 - beanId
+     * 2 - email
+     * 3 - status
+     * 4 - display name
+     *
+     * The same records should have the same beanName, beanId and email.
+     * For the same records difference can be only in status.
+     *
+     * @param array $inviteesBefore
+     * @param array $inviteesAfter
      * @return array
      */
-    protected function loadParticipantsByRelationship($relationship, \SugarBean $bean, array &$acceptStatuses)
+    public function getInviteesDiff(array $inviteesBefore, array $inviteesAfter)
     {
-        $sugarParticipants = array();
-        if ($bean->load_relationship($relationship)) {
-            $bean->$relationship->resetLoaded();
-            $sugarParticipants = $bean->$relationship->getBeans();
-            foreach ($sugarParticipants as $userId => $participant) {
-                if (isset($bean->$relationship->rows[$userId]['accept_status'])) {
-                    $acceptStatuses[$userId] = $bean->$relationship->rows[$userId]['accept_status'];
+        $changedInvitees = array();
+        foreach ($inviteesBefore as $keyBefore => $inviteeBefore) {
+            foreach ($inviteesAfter as $keyAfter => $inviteeAfter) {
+                if ($inviteeBefore[0] != $inviteeAfter[0]) {
+                    continue;
                 }
+                if ($inviteeBefore[1] != $inviteeAfter[1]) {
+                    continue;
+                }
+                if ($inviteeBefore[2] != $inviteeAfter[2]) {
+                    continue;
+                }
+                if ($inviteeBefore[3] != $inviteeAfter[3]) {
+                    $changedInvitees['changed'][] = $inviteeAfter;
+                }
+                unset($inviteesBefore[$keyBefore], $inviteesAfter[$keyAfter]);
             }
         }
-        return $sugarParticipants;
-    }
-
-    /**
-     * Retrieve primary email from user bean
-     * @param \SugarBean $userBean
-     * @return null | string
-     */
-    protected function getUserPrimaryAddress(\SugarBean $userBean)
-    {
-        $emailBean = $this->getEmailAddressBean();
-        $result = $emailBean->getPrimaryAddress($userBean);
-        if ($result) {
-            return $result;
-        }
-
-        return null;
-    }
-
-    /**
-     * @param array $invitesBefore
-     * @param array $invitesAfter
-     * @return array
-     */
-    public function getInvitesDiff(array $invitesBefore, array $invitesAfter)
-    {
-        $invitesDiff = array();
-
-        foreach ($invitesBefore as $relationType => $relationsList) {
-            foreach ($relationsList as $idBean => $relationInfo) {
-                if (isset($invitesAfter[$relationType][$idBean])) {
-                    /**@var \SugarBean $userBean*/
-                    $userBean = $invitesAfter[$relationType][$idBean]['bean'];
-                    $status = $invitesAfter[$relationType][$idBean]['status'];
-                    $beanBefore = $relationInfo['bean'];
-                    $emailCurrent = $userBean->emailAddress->getPrimaryAddress($userBean);
-                    $emailBefore = $beanBefore->emailAddress->getPrimaryAddress($beanBefore);
-                    if ($status != $relationInfo['status'] || $emailCurrent != $emailBefore) {
-                        if (!isset($invitesDiff['changed'])) {
-                            $invitesDiff['changed'] = array();
-                        }
-                        $invitesDiff['changed'][] = $this->addDiff($userBean, $status);
-                    }
-                } else {
-                    $userBean = $relationInfo['bean'];
-                    $status = $relationInfo['status'];
-                    if (!isset($invitesDiff['deleted'])) {
-                        $invitesDiff['deleted'] = array();
-                    }
-                    $invitesDiff['deleted'][] = $this->addDiff($userBean, $status);
-                }
+        if ($inviteesBefore) {
+            $changedInvitees['deleted'] = array();
+            foreach ($inviteesBefore as $invitee) {
+                $changedInvitees['deleted'][] = array_slice($invitee, 0, 3);
             }
         }
-
-        foreach ($invitesAfter as $relationType => $relationsList) {
-            foreach ($relationsList as $idBean => $relationInfo) {
-                if (!isset($invitesBefore[$relationType][$idBean])) {
-                    /**@var \SugarBean $userBean*/
-                    $userBean = $invitesAfter[$relationType][$idBean]['bean'];
-                    $status = $invitesAfter[$relationType][$idBean]['status'];
-                    if (!isset($invitesDiff['added'])) {
-                        $invitesDiff['added'] = array();
-                    }
-                    $invitesDiff['added'][] = $this->addDiff($userBean, $status);
-                }
-            }
+        if ($inviteesAfter) {
+            $changedInvitees['added'] = array_values($inviteesAfter);
         }
-
-        return $invitesDiff;
+        return $changedInvitees;
     }
 
     /**
-     * @param \SugarBean $userBean
-     * @param $status
-     * @return array
-     */
-    protected function addDiff(\SugarBean $userBean, $status)
-    {
-        $fullName = '';
-        if (isset($userBean->full_name)) {
-            $fullName = $userBean->full_name;
-        } elseif (isset($userBean->name)) {
-            $fullName = $userBean->name;
-        }
-        return array(
-            $userBean->module_name,
-            $userBean->id,
-            $status,
-            $userBean->emailAddress->getPrimaryAddress($userBean),
-            $fullName
-        );
-    }
-
-    /**
-     * @param array $invite
+     * Converts sugar's array (with sugar status) to Participant.
+     *
+     * @param array $invitee
      * @return Participant
      */
-    public function inviteToParticipant($invite)
+    public function sugarArrayToParticipant($invitee)
     {
         $participant = new Participant();
         $participantStatuses = new DavStatusMapper\AcceptedMap();
-        list($beanName, $beanId, $invStatus, $invEmail, $displayName) = $invite;
-        $participant->setStatus($participantStatuses->getCalDavValue($invStatus));
-        $participant->setEmail($invEmail);
-        $participant->setBeanName($beanName);
-        $participant->setBeanId($beanId);
-        $participant->setDisplayName($displayName);
+        $participant->setBeanName($invitee[0]);
+        $participant->setBeanId($invitee[1]);
+        $participant->setEmail($invitee[2]);
+        $participant->setStatus($participantStatuses->getCalDavValue($invitee[3]));
+        $participant->setDisplayName($invitee[4]);
         return $participant;
     }
 
     /**
+     * Returns array representation of Participant.
+     *
      * @param Participant $participant
      * @return array
      */
-    public function participantToInvite(Participant $participant)
+    public function participantToArray(Participant $participant)
     {
         return array(
             $participant->getBeanName(),
             $participant->getBeanId(),
-            $participant->getStatus(),
             $participant->getEmail(),
-            $participant->getDisplayName()
+            $participant->getStatus(),
+            $participant->getDisplayName(),
         );
     }
 }
