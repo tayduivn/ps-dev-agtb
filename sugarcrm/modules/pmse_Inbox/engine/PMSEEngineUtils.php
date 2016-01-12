@@ -1269,10 +1269,14 @@ class PMSEEngineUtils
 
                 $newData = array();
                 $fieldData = json_decode($element['act_fields']);
-                foreach ($fieldData as $fieldDef) {
-                    $field = $fieldDef['field'];
-                    if (isset($relBean->field_defs[$field]) && self::isValidField($relBean->field_defs[$field])) {
-                        $newData[] = $fieldDef;
+                // In some cases $fieldData comes back null, so we need to check
+                // if it is actually an array before trying to use it as one
+                if (is_array($fieldData)) {
+                    foreach ($fieldData as $fieldDef) {
+                        $field = $fieldDef['field'];
+                        if (isset($relBean->field_defs[$field]) && self::isValidField($relBean->field_defs[$field])) {
+                            $newData[] = $fieldDef;
+                        }
                     }
                 }
                 $element['act_fields'] = json_encode($newData);
