@@ -2916,9 +2916,16 @@ function javascript_escape($str)
     return $new_str;
 }
 
-function js_escape($str, $keep=true)
+function js_escape($str, $keep = true, $stripBackslashes = true)
 {
-    $str = html_entity_decode(str_replace("\\", "", $str), ENT_QUOTES);
+    if ($stripBackslashes) {
+        //remove backslashes, avoid js errors caused by single backslashes
+        $str = str_replace("\\", "", $str);
+    } else {
+        //add a second backslash to EXISTING backslashes, not using addslashes().
+        $str = str_replace("\\", "\\\\", $str);
+    }
+    $str = html_entity_decode($str, ENT_QUOTES);
 
     if ($keep) {
         $str = javascript_escape($str);
