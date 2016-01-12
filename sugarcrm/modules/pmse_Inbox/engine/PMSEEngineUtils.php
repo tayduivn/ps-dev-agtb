@@ -1138,11 +1138,11 @@ class PMSEEngineUtils
             return false;
         }
 
-        if ($type == 'AC' && isset($def['formula'])) {
+        if (($type == 'AC' || $type == 'CF') && isset($def['formula'])) {
             return false;
         }
 
-        if (($type == 'RR' || $type == 'AC') && !empty($def['readonly'])) {
+        if (($type == 'RR' || $type == 'AC' || $type == 'CF') && !empty($def['readonly'])) {
             return false;
         }
 
