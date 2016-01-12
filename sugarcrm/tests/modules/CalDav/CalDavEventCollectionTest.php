@@ -686,6 +686,7 @@ END:VCALENDAR',
                     'test1@test.com' => array('beanName' => 'Addresses', 'beanId' => $ids[4]),
                     'test@test.com' => array('beanName' => 'Addresses', 'beanId' => null),
                 ),
+                'newName' => array()
             ),
             array(
                 'vEvent' => $this->getEventTemplate('vevent-with-displayname'),
@@ -709,6 +710,9 @@ END:VCALENDAR',
                     'test0@test.com' => array('beanName' => 'Leads', 'beanId' => $ids[8]),
                     'test2@test.com' => array('beanName' => 'Addresses', 'beanId' => null),
                 ),
+                'newName' => array(
+                    'test2@test.com' => 'TestFirstName3 TestLastName3'
+                ),
             ),
             array(
                 'vEvent' => $this->getEventTemplate('recurring'),
@@ -728,6 +732,9 @@ END:VCALENDAR',
                     'test0@test.com' => array('beanName' => 'Addresses', 'beanId' => null),
                     'test1@test.com' => array('beanName' => 'Addresses', 'beanId' => null),
                     'test2@test.com' => array('beanName' => 'Addresses', 'beanId' => null),
+                ),
+                'newName' => array(
+                    'test2@test.com' => 'Ms. Mimi Finkelstein'
                 ),
             ),
         );
@@ -757,12 +764,13 @@ END:VCALENDAR',
      * @param string $vEventText
      * @param array $beansToCreate
      * @param array $expectedLink
+     * @param array $newName
      *
      * @covers       \CalDavEventCollection::mapParticipantsToBeans
      *
      * @dataProvider mapParticipantsToBeansProvider
      */
-    public function testMapParticipantsToBeans($vEventText, $beansToCreate, $expectedLink)
+    public function testMapParticipantsToBeans($vEventText, $beansToCreate, $expectedLink, $newName)
     {
         $sugarUser = SugarTestUserUtilities::createAnonymousUser();
 
@@ -796,6 +804,15 @@ END:VCALENDAR',
                 $this->assertArrayHasKey($email, $result);
                 SugarTestAddresseeUtilities::setCreatedAddressee([$result[$email]['beanId']]);
                 $data['beanId'] = $result[$email]['beanId'];
+
+                $focus = \BeanFactory::getBean('Addresses', $result[$email]['beanId']);
+                $focus->emailAddress->getPrimaryAddress($focus);
+
+                $this->assertEquals($email, $focus->emailAddress->getPrimaryAddress($focus));
+
+                if (isset($newName[$email])) {
+                    $this->assertEquals($newName[$email], $focus->full_name);
+                }
             }
         }
 

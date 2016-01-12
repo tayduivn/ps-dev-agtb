@@ -885,30 +885,34 @@ class CalDavEventCollection extends SugarBean
                         ->setOutputFormat(new Principal\Search\Format\ArrayStrategy())
                         ->findSugarLinkByEmail($email);
                 }
+
+                global $locale;
+
                 if (!$link) {
-                    global $locale;
-
                     $focus = \BeanFactory::getBean('Addresses');
-                    if ($participant->getDisplayName()) {
-                        $parseName = $locale->getLocaleUnFormattedName($participant->getDisplayName());
-                        $focus->first_name = !empty($parseName['f']) ? $parseName['f'] : '';
-                        if (empty($parseName['f']) && empty($parseName['l'])) {
-                            $focus->last_name = $email;
-                        } else {
-                            $focus->last_name = !empty($parseName['l']) ? $parseName['l'] : '';
-                        }
-                        $focus->salutation = isset($parseName['s']) ? $parseName['s'] : '';
-                    } else {
-                        $focus->last_name = $email;
-                    }
-
-                    $focus->emailAddress->addAddress($email, true);
+                    $focus->last_name = $email;
+                    $focus->email1 = $email;
                     $focus->save();
 
                     $link = array(
                         'beanName' => $focus->module_name,
                         'beanId' => $focus->id,
                     );
+                }
+
+                if ($link['beanName'] == 'Addresses') {
+                    $focus = \BeanFactory::getBean('Addresses', $link['beanId']);
+                    if ($focus->last_name === $email) {
+                        $parseName = $locale->getLocaleUnFormattedName($participant->getDisplayName());
+                        $parseName = array_filter($parseName);
+                        if ($parseName) {
+                            $focus->first_name = isset($parseName['f']) ? $parseName['f'] : '';
+                            $focus->last_name = isset($parseName['l']) ? $parseName['l'] : '';
+                            $focus->salutation = isset($parseName['s']) ? $parseName['s'] : '';
+
+                            $focus->save();
+                        }
+                    }
                 }
 
                 $participant->setBeanName($link['beanName']);

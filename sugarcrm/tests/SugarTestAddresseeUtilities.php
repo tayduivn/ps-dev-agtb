@@ -27,6 +27,12 @@ class SugarTestAddresseeUtilities
             $addressee->email1 = 'addressee@'. $time. 'sugar.com';
         }
 
+        if (isset($addresseeValues['last_name'])) {
+            $addressee->last_name = $addresseeValues['last_name'];
+        } else {
+            $addressee->last_name = $addressee->email1;
+        }
+
         if($id)
         {
             $addressee->new_with_id = true;
