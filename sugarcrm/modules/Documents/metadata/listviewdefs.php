@@ -109,12 +109,4 @@ $listViewDefs['Documents'] = array(
         'label' => 'LBL_DATE_ENTERED',
         'default' => true,
     ),
-    'STATUS' => array(
-        'width' => '10%',
-        'label' => 'LBL_DOC_STATUS',
-        'default' => true,
-        'enabled' => false,
-        'related_fields' => array (0 => 'status_id')
-    )
 );
-?>
