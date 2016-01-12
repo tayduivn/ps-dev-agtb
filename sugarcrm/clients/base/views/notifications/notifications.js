@@ -92,6 +92,8 @@
         app.events.on('app:socket:connect', this.socketOn, this);
         app.events.on('app:socket:disconnect', this.socketOff, this);
 
+        app.events.on('app:notifications:markAs', this.notificationMarkHandler, this);
+
         app.events.on('app:logout', this.stopPulling, this);
     },
 
@@ -297,6 +299,22 @@
     },
 
     /**
+     * Handler listens to global app event for notification record markAs read/unread action
+     * and re-renders notifications counter accordingly.
+     *
+     * @param {Object} model Notification model object
+     * @param {boolean} read is notification read?
+     */
+    notificationMarkHandler: function (model, read) {
+        if (read) {
+            this.collection.remove(model);
+        } else {
+            this.collection.add(model);
+        }
+        this.reRender();
+    },
+
+    /**
      * @inheritdoc
      */
     _renderHtml: function() {
@@ -317,6 +335,7 @@
         app.socket.off('notification', this.catchNotification, this);
         app.events.off('app:socket:connect', this.socketOn, this);
         app.events.off('app:socket:disconnect', this.socketOff, this);
+        app.events.off('app:notifications:markAs', this.notificationMarkHandler, this);
 
         this._super('_dispose');
     },
