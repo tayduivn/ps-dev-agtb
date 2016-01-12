@@ -10,7 +10,6 @@ describe('Notifications', function() {
     describe('Initialization with default values', function() {
         beforeEach(function() {
             view = SugarTest.createView('base', moduleName, viewName);
-
         });
 
         afterEach(function() {
@@ -119,6 +118,37 @@ describe('Notifications', function() {
                 sinon.assert.called(view.socketOff);
             });
 
+        });
+
+        describe('should bind listener on app:notifications:markAs events', function () {
+            beforeEach(function () {
+                sinon.stub(app.events, 'on');
+                sinon.stub(view, 'notificationMarkHandler');
+            });
+
+            afterEach(function () {
+                sinon.collection.restore();
+            });
+
+            it('should bind notificationMarkHandler on app app:notifications:markAs', function () {
+
+                view.initialize({});
+
+                sinon.assert.called(app.events.on);
+                sinon.assert.calledWith(app.events.on, 'app:notifications:markAs');
+
+                sinon.assert.notCalled(view.notificationMarkHandler);
+                for (var i = 0; i < app.events.on.callCount; i++) {
+                    var info = app.events.on.getCall(i);
+                    if (info.args[0] != 'app:notifications:markAs') {
+                        continue;
+                    }
+                    if (!_.isUndefined(info.args[1]) && _.isFunction(info.args[1])) {
+                        info.args[1]();
+                    }
+                }
+                sinon.assert.called(view.notificationMarkHandler);
+            });
         });
     });
 
@@ -486,6 +516,48 @@ describe('Notifications', function() {
             view.render();
 
             expect(resetStub).toHaveBeenCalledOnce();
+        });
+    });
+
+    describe('notificationMarkHandler', function() {
+        var model;
+
+        beforeEach(function() {
+            view = SugarTest.createView('base', moduleName, viewName);
+            view._initCollection();
+            model = app.data.createBean(moduleName);
+            sinon.stub(view.collection, 'remove');
+            sinon.stub(view.collection, 'add');
+            sinon.stub(view, 'reRender');
+        });
+
+        afterEach(function() {
+            model = null;
+            sinon.collection.restore();
+            SugarTest.app.view.reset();
+            view.dispose();
+            view = null;
+        });
+
+        it('should remove read notification bean from collection', function() {
+            view.notificationMarkHandler(model, true);
+
+            sinon.assert.called(view.collection.remove);
+            sinon.assert.calledWith(view.collection.remove, model);
+        });
+
+        it('should add unread notification bean to collection', function() {
+            view.notificationMarkHandler(model, false);
+
+            sinon.assert.called(view.collection.add);
+            sinon.assert.calledWith(view.collection.add, model);
+        });
+
+        it('should re-render view in case of read and unread notification mark', function() {
+            view.notificationMarkHandler(model, true);
+            view.notificationMarkHandler(model, false);
+
+            sinon.assert.calledTwice(view.reRender);
         });
     });
 });
