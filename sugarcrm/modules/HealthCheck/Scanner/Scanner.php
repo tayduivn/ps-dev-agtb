@@ -26,6 +26,16 @@ class HealthCheckScanner
     const FAIL = 99;
 
     /**
+     * Constant for failure of unserialization because of data issues
+     */
+    const UNSERIALIZE_FAIL_DATA = 1;
+
+    /**
+     * Constant for failure of unserialization because of object or class references
+     */
+    const UNSERIALIZE_FAIL_OBJECTS = 2;
+
+    /**
      *
      * @var HealthCheckScannerMeta
      */
@@ -276,6 +286,51 @@ class HealthCheckScanner
      * @var UpgradeDriver
      */
     protected $upgrader = null;
+
+    /**
+     * Array of warnings per upgrade method that is used for tracking possible
+     * failures
+     * @var array
+     */
+    protected $unserializeFailureWarnings = array();
+
+    /**
+     * Listing of unserialization failure warnings
+     * @var array
+     */
+    protected $unserializeFailureReasons = array(
+        self::UNSERIALIZE_FAIL_DATA => 'LBL_PA_UNSERIALIZE_DATA_FAILURE',
+        self::UNSERIALIZE_FAIL_OBJECTS => 'LBL_PA_UNSERIALIZE_OBJECT_FAILURE'
+    );
+
+    /**
+     * Listing of methods that are run during the PA unserialize upgrade. At a
+     * minimum this requires a task name that maps to a table name and columns.
+     * @var array
+     */
+    protected $unserializeTasks = array(
+        'lockedVariables' => array(
+            'table' => 'pmse_bpm_process_definition',
+            'cols' => array('pro_locked_variables'),
+        ),
+        'casDataVariables' => array(
+            'table' => 'pmse_bpm_case_data',
+            'cols' => array('cas_data'),
+        ),
+        'bpmFormActionTable' => array(
+            'table' => 'pmse_bpm_form_action',
+            'cols' => array('cas_data', 'cas_pre_data'),
+        ),
+        'dynamicFormTable' => array(
+            'table' => 'pmse_bpm_dynamic_forms',
+            'cols' => array('dyn_view_defs'),
+            'functions' => array('base64_decode'),
+        ),
+        'bpmFlowTable' => array(
+            'table' => 'pmse_bpm_flow',
+            'cols' => array('cas_adhoc_actions'),
+        ),
+    );
 
     /**
      *
@@ -683,6 +738,10 @@ class HealthCheckScanner
                 $this->checkFileForOutput($hook_data[2]);
             }
         }
+
+        // Check Process Author unserialization
+        $this->checkPAUnserialization();
+
         // TODO: custom dashlets
         $this->log("VERDICT: {$this->status}", 'STATUS');
         if ($GLOBALS['sugar_config']['site_url']) {
@@ -699,6 +758,219 @@ class HealthCheckScanner
 
         restore_error_handler();
         return $this->logMeta;
+    }
+
+    /**
+     * Checks whether Process Author unserializtion between 7.6.1 and 7.6.2+ will
+     * fail. If any unserialize calls fail, it will notify with a Bucket F red flag.
+     */
+    protected function checkPAUnserialization()
+    {
+        $warnings = $this->checkUnserializationFailures();
+        foreach ($warnings as $warning) {
+            $this->updateStatus('invalidPASerialization', $warning['count'], $warning['col'], $warning['table'], $warning['reason']);
+        }
+    }
+
+    /**
+     * Checks whether the unserialization of PHP serialized data will actually
+     * work during an upgrade. Used by HealthCheck to ensure that an upgrade will
+     * actually succeed when it comes to Process Author conversion of serialized
+     * data to json data.
+     * @return array List of warnings
+     */
+    protected function checkUnserializationFailures()
+    {
+        foreach ($this->unserializeTasks as $data) {
+            $this->handleUnserializeCheck($data);
+        }
+
+        return $this->getUnserializeFailureWarnings();
+    }
+
+    /**
+     * Triggers the actual unserialize check on the data
+     * @param array $data Collection of properties used to check serialized data
+     */
+    protected function handleUnserializeCheck($data)
+    {
+        // Define our table
+        $table = $data['table'];
+
+        // Define the column(s) we will be working with.
+        // This is always an array.
+        $cols = $data['cols'];
+
+        // Builds a simple list of selectable columns
+        $selectCols = implode(',', $cols);
+
+        // Add a logger for this step
+        $this->log(
+            sprintf(
+                "Checking unserialization of column(s) '%s' in the '%s' table...",
+                $selectCols,
+                $table
+            )
+        );
+
+        // Builds a list of not empty SQL bits.
+        $whereCols = $updateCols = array();
+        foreach ($cols as $col) {
+            // Creates a not empty field where clause for this column
+            $notEmptyFieldSQL = "($col != " . $this->db->quoted('');
+            $notEmptyFieldSQL .= " AND $col IS NOT NULL)";
+            $whereCols[] = $notEmptyFieldSQL;
+        }
+        $whereNotEmpty = implode(' AND ', $whereCols);
+
+        // Build the query and run it
+        $select = "SELECT id, %s FROM %s WHERE %s";
+        $sql = sprintf($select, $selectCols, $table, $whereNotEmpty);
+        $result = $this->db->query($sql);
+
+        // Loop and check now, making sure to send a false flag to fetchByAssoc
+        // to ensure that the data in the row does not get html encoded on fetch
+        while ($row = $this->db->fetchByAssoc($result, false)) {
+            foreach ($cols as $col) {
+                // Isolate the actual data to be handled
+                $string = $row[$col];
+
+                // If there are functions to apply to this data, do that now
+                if (isset($data['functions'])) {
+                    foreach ($data['functions'] as $function) {
+                        $string = $function($string);
+                    }
+                }
+
+                // Do the actual check now
+                $reason = $this->checkSerializedData($string);
+
+                // If there was a failure reason, add it to the stack of reasons
+                if ($reason) {
+                    $msg = $this->getPALogMessage($table, $col, $row['id'], $string, $reason);
+
+                    // Log this so we know what failed and why
+                    $this->log($msg);
+
+                    // Add this failure to the stack
+                    $this->addUnserializeFailureWarning($table, $col, $reason);
+                }
+            }
+        }
+    }
+
+    /**
+     * Gets a parsed log message string for Process Author Unserialization issues
+     * @param string $table The table that contains the data for this failure
+     * @param string $col The column that contains the data for this failure
+     * @param string $id The id of the failed data
+     * @param string $string The actual failed data
+     * @param int $reason The failure reason code
+     * @return string
+     */
+    protected function getPALogMessage($table, $col, $id, $string, $reason)
+    {
+        // Build a log string for parsing into the log
+        $logString = "UNSERIALIZATION FAILURE:\nTable: %s\nColumn: %s\nID: %s";
+        $logString .= "\n-----\n%s\n-----\nReason: %s";
+
+        // Translate the reason code
+        $reason = $this->getUnserializeFailureReason($reason);
+        return sprintf($logString, $table, $col, $id, $string, $reason);
+    }
+
+    /**
+     * Checks an input to see if there are unserialization issues with it
+     * @param string $input Serialized data
+     * @return int
+     */
+    protected function checkSerializedData($input)
+    {
+        // Basic good return
+        $reason = 0;
+        if ($this->serializationHasObjectRefs($input)) {
+            // This is an easy check, and tells us right away why we wouldn't be
+            // able to unserialize
+            $reason = self::UNSERIALIZE_FAIL_OBJECTS;
+        } else {
+            // Since we need to work on html decoded data, get that now
+            $decoded = html_entity_decode($input);
+
+            // Now try to unserialize, suppressing errors in case of bad data
+            $unserialized = @unserialize($decoded);
+
+            // If this failed, it is either an encoding issue or just bad data
+            if ($unserialized === false) {
+                $reason = self::UNSERIALIZE_FAIL_DATA;
+            }
+        }
+
+        return $reason;
+    }
+
+    /**
+     * Checks whether the $value contains object or class references
+     * @param string $value Serialized value of any type
+     * @return boolean
+     */
+    protected function serializationHasObjectRefs($value)
+    {
+        preg_match('/[oc]:\d+:/i', $value, $matches);
+        return count($matches) > 0;
+    }
+
+    /**
+     * Adds a preflight warning to the list of warnings
+     * @param string $table The table that the warning was thrown on
+     * @param string $col The column the warning was thrown on
+     * @param int $reason The reason code for the warning
+     */
+    protected function addUnserializeFailureWarning($table, $col, $reason)
+    {
+        if (!isset($this->unserializeFailureWarnings[$table][$col][$reason])) {
+            $this->unserializeFailureWarnings[$table][$col][$reason] = 0;
+        }
+
+        $this->unserializeFailureWarnings[$table][$col][$reason]++;
+    }
+
+    /**
+     * Gets a semi formatted list of data for use in parsing the healthcheck
+     * scan
+     * @return array
+     */
+    protected function getUnserializeFailureWarnings()
+    {
+        // Order is important, so make it count... col... table.. reason
+        $return = array();
+        foreach ($this->unserializeFailureWarnings as $table => $cols) {
+            foreach ($cols as $col => $reasons) {
+                foreach ($reasons as $reason => $count) {
+                    $return[] = array(
+                        'count' => $count,
+                        'col' => $col,
+                        'table' => $table,
+                        'reason' => $this->getUnserializeFailureReason($reason),
+                    );
+                }
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Gets a translated failure reason
+     * @param int $reason Reason code
+     * @return string
+     */
+    protected function getUnserializeFailureReason($reason)
+    {
+        if ($reason && array_key_exists($reason, $this->unserializeFailureReasons)) {
+            return $this->meta->getModString($this->unserializeFailureReasons[$reason]);
+        }
+
+        return "Could not determine reason (Reason Code: $reason)";
     }
 
     /**
