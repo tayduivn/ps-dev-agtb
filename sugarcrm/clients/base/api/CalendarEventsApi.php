@@ -285,7 +285,7 @@ class CalendarEventsApi extends ModuleApi
             if (!empty($bean)) {
                 $repeatInterval = empty($bean->repeat_interval) ? 0 : intval($bean->repeat_interval);
             }
-            if (array_key_exists('repeat_count', $args)) {
+            if (array_key_exists('repeat_interval', $args)) {
                 $repeatInterval = empty($args['repeat_interval']) ? 0 : intval($args['repeat_interval']);
             }
             if (empty($repeatInterval)) {
