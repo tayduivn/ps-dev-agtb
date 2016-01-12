@@ -932,10 +932,12 @@ EOQ;
     {
         $restrict_str .= "php_value suhosin.executor.include.whitelist upload\n";
     }
+
+    // @codingStandardsIgnoreStart
     $restrict_str .= <<<EOQ
 RedirectMatch 403 {$ignoreCase}.*\.log$
 RedirectMatch 403 {$ignoreCase}/+not_imported_.*\.txt
-RedirectMatch 403 {$ignoreCase}/+(soap|cache|xtemplate|data|examples|include|log4php|metadata|modules)/+.*\.(php|tpl)
+RedirectMatch 403 {$ignoreCase}/+(soap|cache|xtemplate|data|examples|include|log4php|metadata|modules|clients|jssource|ModuleInstall)/+.*\.(php|tpl)
 RedirectMatch 403 {$ignoreCase}/+emailmandelivery\.php
 RedirectMatch 403 {$ignoreCase}/+upload/
 RedirectMatch 403 {$ignoreCase}/+custom/+blowfish
@@ -998,6 +1000,8 @@ AddType     application/javascript  .js
 # END SUGARCRM RESTRICTIONS
 
 EOQ;
+    // @codingStandardsIgnoreEnd
+
         if(file_exists($htaccess_file)){
             $fp = fopen($htaccess_file, 'r');
             $skip = false;
@@ -1076,6 +1080,9 @@ function handleWebConfig($iisCheck = true)
     array('1'=>'vendor/log4php/(.*)/(.*)' ,'2'=>'index.php'),
     array('1'=>'metadata/(.*)/(.*)\.php$' ,'2'=>'index.php'),
     array('1'=>'modules/(.*)/(.*)\.php$' ,'2'=>'index.php'),
+    array('1'=>'clients/(.*)/(.*)\.php$' ,'2'=>'index.php'),
+    array('1'=>'jssource/(.*)/(.*)\.php$' ,'2'=>'index.php'),
+    array('1'=>'ModuleInstall/(.*)/(.*)\.php$' ,'2'=>'index.php'),
     array('1'=>'soap/(.*)\.php$' ,'2'=>'index.php'),
     array('1'=>'emailmandelivery\.php' ,'2'=>'index.php'),
     array('1'=>'cron\.php' ,'2'=>'index.php'),
