@@ -149,7 +149,8 @@ UpdaterField.prototype.setOptions = function (settings) {
         newOption,
         aUsers = [],
         customUsers = {},
-        currentSetting;
+        currentSetting,
+        aux;
 
     this.list = settings;
     for (i = 0; i < settings.length; i += 1) {
@@ -214,6 +215,8 @@ UpdaterField.prototype.setOptions = function (settings) {
                 break;
             case 'team_list':
                 currentSetting.disabledAppendOption = !this.hasCheckbox;
+                aux = this.parent.getField('act_field_module').getSelectedData();
+                currentSetting.disableTeamSelection = !App.metadata.getModule(aux.module).isTBAEnabled;
                 newOption = new TeamUpdaterItem(currentSetting);
                 break;
             default:
@@ -350,6 +353,7 @@ UpdaterField.prototype.setValue = function (value) {
                             if (fields[i].type === 'team_list') {
                                 this.options[j].setPrimaryTeam(fields[i].primary);
                                 this.options[j].setAppendTeams(fields[i].append);
+                                this.options[j].setSelectedTeams(fields[i].selected_teams);
                             }
                             break;
                         }
@@ -1005,8 +1009,10 @@ var TeamUpdaterItem = function (settings) {
     this._disabledAppendOption = null;
     this._appendTeamsCheckbox = null;
     this._appendTeamsLabel = null;
+    this._selectedTeams = null;
     this._appendTeams = null;
     this._addButton = null;
+    this._disabledTeamSelection = null;
     TeamUpdaterItem.prototype.init.call(this, settings);
 };
 
@@ -1017,26 +1023,65 @@ TeamUpdaterItem.prototype.type = 'TeamUpdaterItem';
 TeamUpdaterItem.TEAM_ACTION = {
     PRIMARY: 0,
     ADD: 1,
-    REMOVE: 2
+    REMOVE: 2,
+    LOCK: 3
 };
 
 TeamUpdaterItem.prototype.init = function (settings) {
     var defaults = {
         primaryTeam: null,
         appendTeams: false,
-        disabledAppendOption: false
+        disabledAppendOption: false,
+        selectedTeams: [],
+        disableTeamSelection: true
     };
 
     jQuery.extend(true, defaults, settings);
 
     this.setPrimaryTeam(defaults.primaryTeam)
-        .setAppendTeams(defaults.appendTeams);
+        .setAppendTeams(defaults.appendTeams)
+        .setSelectedTeams(defaults.selectedTeams);
+
+    if (defaults.disableTeamSelection) {
+        this.disableTeamSelection();
+    } else {
+        this.enableTeamSelection();
+    }
 
     if (defaults.disabledAppendOption) {
         this.disableAppendOption();
     } else {
         this.enableAppendOption();
     }
+};
+
+TeamUpdaterItem.prototype.enableTeamSelection = function () {
+    this._disabledTeamSelection = false;
+    if (this._control) {
+        $(this._control)
+            .find('.btn.adam-team-action[name=lock]').show().end()
+            .find('.select2-container').css('width', '184px');
+    }
+    return this;
+};
+
+TeamUpdaterItem.prototype.disableTeamSelection = function () {
+    this._disabledTeamSelection = true;
+    if (this._control) {
+        $(this._control)
+            .find('.btn.adam-team-action[name=lock]').hide().end()
+            .find('.select2-container').css('width', '220px');
+    }
+    return this;
+};
+
+TeamUpdaterItem.prototype._updateTeamSelection = function () {
+    if (this._disabledTeamSelection) {
+        this.disableTeamSelection();
+    } else {
+        this.enableTeamSelection();
+    }
+    return this;
 };
 
 TeamUpdaterItem.prototype.disableAppendOption = function () {
@@ -1057,6 +1102,32 @@ TeamUpdaterItem.prototype.enableAppendOption = function () {
 
 TeamUpdaterItem.prototype.isValid = function () {
     return this._required ? !!this._value.length : true;
+};
+
+TeamUpdaterItem.prototype.setSelectedTeams = function (teams) {
+    var existingValues = [], that = this;
+    if (!jQuery.isArray(teams)) {
+        throw new Error('setSelectedTeams(): The parameter must be an array.');
+    }
+
+    this._selectedTeams = teams.slice(0);
+
+    if (this._control) {
+        jQuery(this._control).find('.adam-team-updater-line').each(function (index, item) {
+            var data = that._getLineData(item);
+
+            if (data !== null) {
+                if (that._selectedTeams.indexOf(data.id) >= 0) {
+                    jQuery(item).find('.adam-team-action[name=lock]').addClass('active')
+                        .find('i').removeClass('fa-lock').addClass('active fa-unlock-alt');
+                    existingValues.push(data.id);
+                }
+            }
+        });
+        this._selectedTeams = existingValues;
+    }
+
+    return this;
 };
 
 TeamUpdaterItem.prototype.setAppendTeams = function (bln) {
@@ -1113,7 +1184,8 @@ TeamUpdaterItem.prototype._setValueToControl = function (value) {
         that._addNewInputLine(item);
         count ++;
     });
-    this.setPrimaryTeam(this._primaryTeam);
+    this.setPrimaryTeam(this._primaryTeam)
+        .setSelectedTeams(this._selectedTeams);
     if (!count) {
         this._addNewInputLine();
     }
@@ -1123,13 +1195,20 @@ TeamUpdaterItem.prototype._setValueToControl = function (value) {
 TeamUpdaterItem.prototype._getValueFromControl = function () {
     var value = [], that = this;
     this._primaryTeam = null;
+    this._selectedTeams = [];
     jQuery(this._control).find('.adam-team-updater-line').each(function () {
         var input = jQuery(this).find('input'),
             data = input.select2('data');
-        if (data !== null && value.indexOf(data.id) < 0) {
-            value.push(data.id);
+
+        if (data !== null) {
+            if (value.indexOf(data.id) < 0) {
+                value.push(data.id);    
+            }
             if (jQuery(this).find('.adam-team-action.active[name=primary]').length) {
                 that._primaryTeam = data.id;
+            }
+            if (that._selectedTeams.indexOf(data.id) < 0 && jQuery(this).find('.adam-team-action.active[name=lock]').length) {
+                that._selectedTeams.push(data.id);
             }
         }
     });
@@ -1241,9 +1320,9 @@ TeamUpdaterItem.prototype._addNewInputLine = function (value) {
     $select = jQuery(select).select2({
         minimumInputLength: 1,
         formatInputTooShort: '',
-        allowClear: true,
+        allowClear: false,
         query: this._queryFunction(),
-        width: this.fieldWidth || '220px',
+        width: this.fieldWidth || '184px',
         placeholder: translate('LBL_PMSE_UPDATERFIELD_ADD_TEAM'),
         initSelection: this._initSelection()
     });
@@ -1300,7 +1379,7 @@ TeamUpdaterItem.prototype._getAddButton = function () {
 
 TeamUpdaterItem.prototype._addButtonsToLine = function (line) {
     var primaryButton = this.createHTMLElement('button'),
-        addButton, removeButton,
+        lockButton, addButton, removeButton,
         i = this.createHTMLElement('i');
 
     if ($(line).hasClass('adam-line-filled')) {
@@ -1313,11 +1392,16 @@ TeamUpdaterItem.prototype._addButtonsToLine = function (line) {
     primaryButton.name = 'primary';
 
     removeButton = primaryButton.cloneNode(false);
-    removeButton.className = 'btn adam-team-action';
     i = i.cloneNode(false);
     i.className = 'fa fa-minus';
     removeButton.appendChild(i);
     removeButton.name = 'remove';
+
+    lockButton = primaryButton.cloneNode(false);
+    i = i.cloneNode(false);
+    i.className = 'fa fa-lock';
+    lockButton.appendChild(i);
+    lockButton.name = 'lock';
 
     if ($(this._control).find('*').index(line) === 0) {
         removeButton.style.visibility = 'hidden';
@@ -1325,12 +1409,15 @@ TeamUpdaterItem.prototype._addButtonsToLine = function (line) {
 
     addButton = this._getAddButton();
 
-    primaryButton.disabled = removeButton.disabled = addButton.disabled = this._disabled;
+    primaryButton.disabled = lockButton.disabled = removeButton.disabled = addButton.disabled = this._disabled;
 
     line.appendChild(primaryButton);
+    line.appendChild(lockButton);
     line.appendChild(removeButton);
     line.appendChild(addButton);
     $(line).addClass('adam-line-filled');
+
+    return this._updateTeamSelection();
 };
 
 TeamUpdaterItem.prototype.setValue = function (value) {
@@ -1343,6 +1430,7 @@ TeamUpdaterItem.prototype.setValue = function (value) {
     if (this._control) {
         this._setValueToControl(value);
         this._value = this._getValueFromControl();
+        this._updateTeamActionsVisibility();
     } else {
         this._value = value;
     }
@@ -1370,7 +1458,8 @@ TeamUpdaterItem.prototype._onChange = function () {
                 if (wasEmpty) {
                     that._addButtonsToLine($line.get(0));
                 }
-                if (!that._getValueFromControl().length) {
+
+                if (that._getLineData($line) === null || !that._getValueFromControl().length) {
                     $line.find('.adam-team-action[name=primary]').removeClass('active');
                 } else if (!that.isAppendMode() && that._primaryTeam === null) {
                     $line.find('.adam-team-action[name=primary]').addClass('active');
@@ -1378,7 +1467,7 @@ TeamUpdaterItem.prototype._onChange = function () {
                 break;
             case TeamUpdaterItem.TEAM_ACTION.REMOVE:
                 if (that._primaryTeam === null && !that.isAppendMode()) {
-                    $(that._control).find('.adam-team-action[name=primary]').first().addClass('active');
+                    $line.find('.adam-team-action[name=primary]').addClass('active');
                 }
                 break;
         }
@@ -1422,6 +1511,7 @@ TeamUpdaterItem.prototype.getData = function () {
         field: this._name,
         value: this._value,
         primary: this._primaryTeam,
+        selected_teams: this._disabledTeamSelection ? [] : this._selectedTeams,
         append: this.isAppendMode(),
         type: this._fieldType
     };
@@ -1444,7 +1534,7 @@ TeamUpdaterItem.prototype._performTeamAction = function () {
             case 'primary':
                 if (lineData !== null) {
                     if (that.isAppendMode() || !$button.hasClass('active')) {
-                        $(that._control).find('.adam-team-action.active').not($button).removeClass('active');
+                        $(that._control).find('.adam-team-action.active[name=' + this.name + ']').not($button).removeClass('active');
                         $button.toggleClass('active');
                         changed = $button;
                         actionID = TeamUpdaterItem.TEAM_ACTION.PRIMARY;
@@ -1454,6 +1544,13 @@ TeamUpdaterItem.prototype._performTeamAction = function () {
             case 'add':
                 if (lineData !== null) {
                     that._addNewInputLine();
+                }
+                break;
+            case 'lock':
+                if (lineData !== null) {
+                    $button.toggleClass('active').find('i').toggleClass('fa-lock fa-unlock-alt');
+                    changed = $button;
+                    actionID = TeamUpdaterItem.TEAM_ACTION.LOCK;
                 }
                 break;
             case 'remove':

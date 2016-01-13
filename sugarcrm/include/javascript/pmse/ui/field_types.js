@@ -281,6 +281,16 @@ ComboboxField.prototype.generateOption = function (item) {
 };
 
 /**
+ * Returns the data associated to the current selected value.
+ * @return {Object|null}
+ */
+ComboboxField.prototype.getSelectedData = function () {
+    return _.find(this.options, function (item) {
+        return item.value == this.value;
+    }, this) || null;
+};
+
+/**
  * Attaches event listeners to the combo box field , it also call some methods to set and evaluate
  * the current value (to send it to the database later).
  *

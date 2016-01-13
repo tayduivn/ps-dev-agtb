@@ -33,7 +33,8 @@ module.exports = function(config) {
             '/fixtures': '/base/tests/fixtures',
             '/tests/modules': '/base/tests/modules',
             '/include': '/base/include',
-            '/modules': '/base/modules'
+            '/modules': '/base/modules',
+            '/portal2': '/base/portal2'
         },
         reportSlowerThan: 500,
         browserDisconnectTimeout: 5000,
