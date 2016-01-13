@@ -147,14 +147,6 @@ $dictionary['CalDavEventCollection'] = array(
                     'link_type' => 'one',
                     'vname' => 'LBL_CALENDAR_EVENTS',
                 ),
-            'synchronization' => array(
-                'name' => 'synchronization',
-                'type' => 'link',
-                'relationship' => 'event_synchronization',
-                'module' => 'CalDavSynchronizations',
-                'source' => 'non-db',
-                'vname' => 'LBL_EVENT_SYNC',
-            ),
         ),
     'relationships' => array(
         'events_calendar' => array(
@@ -165,15 +157,6 @@ $dictionary['CalDavEventCollection'] = array(
             'lhs_table' => 'caldav_calendars',
             'lhs_key' => 'id',
             'relationship_type' => 'one-to-many',
-        ),
-        'event_synchronization' => array(
-            'lhs_module' => 'CalDavEvents',
-            'lhs_table' => 'caldav_events',
-            'lhs_key' => 'id',
-            'rhs_module' => 'CalDavSynchronizations',
-            'rhs_table' => 'caldav_synchronization',
-            'rhs_key' => 'event_id',
-            'relationship_type' => 'one-to-one'
         ),
     ),
     'indices' => array(

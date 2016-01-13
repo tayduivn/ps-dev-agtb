@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\JobQueue;
 
 use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException as JQLogicException;
 use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as HookHandler;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterInterface;
 
 /**
  * Class Import
@@ -32,6 +33,7 @@ class Import extends Base
         /** @var \CalDavEventCollection $calDavBean */
         $calDavBean = \BeanFactory::getBean($this->beanModule, $this->beanId, array(
             'strict_retrieve' => true,
+            'deleted' => false,
         ));
         if (!$calDavBean instanceof \CalDavEventCollection) {
             return \SchedulersJob::JOB_FAILURE;
@@ -64,12 +66,14 @@ class Import extends Base
         }
 
         $status = \SchedulersJob::JOB_SUCCESS;
+        /** @var \SugarBean $bean */
         $bean = $adapter->getBeanForImport($bean, $calDavBean, $this->processedData);
         try {
             $liveBean = clone $bean;
-            $importData = $adapter->import($this->processedData, $liveBean);
-            if ($importData !== false) {
-                $exportData = array();
+            $importData = $this->processedData;
+            $result = $adapter->import($importData, $liveBean);
+            if ($result != AdapterInterface::NOTHING) {
+                $exportData = null;
                 HookHandler::$exportHandler = function($beanModule, $beanId, $data) use ($bean, &$exportData) {
                     if (!empty($bean->repeat_parent_id)) {
                         $parentBeanId = $bean->repeat_parent_id;
@@ -82,7 +86,14 @@ class Import extends Base
                     }
                     return true;
                 };
-                $liveBean->save();
+                switch ($result) {
+                    case AdapterInterface::SAVE :
+                        $liveBean->save();
+                        break;
+                    case AdapterInterface::DELETE :
+                        $liveBean->mark_deleted($liveBean->id);
+                        break;
+                }
                 HookHandler::$exportHandler = null;
                 if ($exportData) {
                     $exportData = $adapter->verifyExportAfterImport($importData, $exportData, $liveBean);

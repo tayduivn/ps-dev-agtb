@@ -24,26 +24,28 @@ use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\ExportException;
 class Meetings extends CalDavAbstractAdapter
 {
     /**
-     * Updates caldav bean and returns true if anything was changed
-     *
-     * @param array $data
-     * @param \CalDavEventCollection $collection
-     * @return bool
-     * @throws ExportException if conflict has been found
+     * @inheritDoc
      */
-    public function export(array $data, \CalDavEventCollection $collection)
+    public function export(&$data, \CalDavEventCollection $collection)
     {
         $isChanged = false;
         list($beanData, $changedFields, $invitees) = $data;
-        list($beanModuleName, $beanId, $repeatParentId, $recurringParam, $override) = $beanData;
+        list($beanModuleName, $beanId, $repeatParentId, $recurringParam, $action) = $beanData;
+
+        if ($action == 'delete' && !$repeatParentId) {
+            return static::DELETE;
+        }
+        if ($collection->deleted) {
+            return static::NOTHING;
+        }
 
         $event = $this->getCurrentEvent($collection, $repeatParentId, $beanId);
         if (!$event) {
-            return false;
+            return static::NOTHING;
         }
 
         // checking before values
-        if (!$override) {
+        if ($action == 'update') {
             if (isset($changedFields['name']) && count($changedFields['name']) == 2 && !$this->checkCalDavTitle($changedFields['name'][1], $event)) {
                 throw new ExportException("Conflict with CalDav Title field");
             }
@@ -113,14 +115,13 @@ class Meetings extends CalDavAbstractAdapter
                 unset($data[1]['date_end']);
             }
         }
-        $changes = $this->setCalDavInvitees($invitees, $event, $override);
+        $changes = $this->setCalDavInvitees($invitees, $event, $action == 'override');
         if ($changes) {
             $isChanged = true;
             $data[2] = $changes;
         } else {
             $data[2] = array();
         }
-
         if (!$repeatParentId && $recurringParam) {
             if ($this->setCalDavRecurring($recurringParam, $collection)) {
                 $isChanged = true;
@@ -136,28 +137,30 @@ class Meetings extends CalDavAbstractAdapter
         }
 
         if ($isChanged) {
-            return $data;
+            return static::SAVE;
         }
-        return false;
+        return static::NOTHING;
     }
 
     /**
-     * Updates bean and returns true if anything was changed
-     *
-     * @param array $data
-     * @param \SugarBean $bean
-     * @return bool
-     * @throws ImportException if conflict has been found
+     * @inheritDoc
      */
-    public function import(array $data, \SugarBean $bean)
+    public function import(&$data, \SugarBean $bean)
     {
         /**@var \Meeting $bean*/
         $isChanged = false;
         list($beanData, $changedFields, $invitees) = $data;
-        list($beanId, $childEventsId, $recurrenceId, $recurrenceIndex, $override) = $beanData;
+        list($beanId, $childEventsId, $recurrenceId, $recurrenceIndex, $action) = $beanData;
+
+        if ($action == 'delete' && !$recurrenceId) {
+            return static::DELETE;
+        }
+        if ($bean->deleted) {
+            return static::NOTHING;
+        }
 
         // checking before values
-        if (!$override) {
+        if ($action == 'update') {
             if (isset($changedFields['title']) && count($changedFields['title']) == 2 && !$this->checkBeanName($changedFields['title'][1], $bean)) {
                 throw new ImportException("Conflict with Bean Name field");
             }
@@ -229,7 +232,7 @@ class Meetings extends CalDavAbstractAdapter
                 unset($data[1]['date_end']);
             }
         }
-        $changes = $this->setBeanInvitees($invitees, $bean, $override);
+        $changes = $this->setBeanInvitees($invitees, $bean, $action == 'override');
         if ($changes) {
             $isChanged = true;
             $data[2] = $changes;
@@ -245,8 +248,8 @@ class Meetings extends CalDavAbstractAdapter
         }
 
         if ($isChanged) {
-            return $data;
+            return static::SAVE;
         }
-        return false;
+        return static::NOTHING;
     }
 }
