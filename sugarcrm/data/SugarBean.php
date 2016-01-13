@@ -3029,7 +3029,10 @@ class SugarBean
      * date/time and numeric values.
      *
      * @param string $id Optional, default -1, is set to -1 id value from the bean is used, else, passed value is used
-     * @param boolean $encode Optional, default true, encodes the values fetched from the database.
+     * @param boolean $encode Optional, default true, encodes the values fetched from the database. 
+     *                        Replaces special characters including single and double qoutes with their  
+     *                        HTML entity values using htmlspecialchars. 
+     *                        See php documentation for more information on htmlspecialchars().
      * @param boolean $deleted Optional, default true, if set to false deleted filter will not be added.
      *
      * Internal function, do not override.
