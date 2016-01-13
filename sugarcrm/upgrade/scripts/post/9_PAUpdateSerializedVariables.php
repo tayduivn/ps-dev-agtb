@@ -70,6 +70,31 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
     );
 
     /**
+     * Handles unserialization of data along the lines of the unserialize
+     * validator, but with looser restrictions that allow the use of stdClass
+     * objects in serialized data
+     * @param string $value Serialized value of any type
+     * @return mixed
+     */
+    protected function getUnserializedData($value)
+    {
+        // Remove all references to stdClass objects
+        $cleared = str_replace('O:8:"stdClass"', '', $value);
+
+        // Now use the same logic as the unserialize validator
+        preg_match('/[oc]:\d+:/i', $cleared, $matches);
+
+        // If there were any references to objects found, return a false
+        if (count($matches) > 0) {
+            return false;
+        }
+
+        // Otherwise return the unserialized data. Do this with error suppression
+        // on in case something unserializable got through.
+        return @unserialize($value);
+    }
+
+    /**
      * Convert value from PHP serialized to JSON
      * @param $input
      * @param $encode
@@ -80,8 +105,10 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
         // Since we need to work on html decoded data, get that now
         $decoded = html_entity_decode($input);
 
-        // Clean unserialize the input
-        $unserialized = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($decoded);
+        // Unserialize the input. NOTE: We are not using the unserialize validator
+        // here because we need to be able to unserialize strings with references
+        // to stdClass.
+        $unserialized = $this->getUnserializedData($decoded);
 
         // If the unserialize failed for some reason, log it and return the
         // original data

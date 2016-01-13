@@ -909,13 +909,18 @@ class HealthCheckScanner
     }
 
     /**
-     * Checks whether the $value contains object or class references
+     * Checks whether the $value contains object or class references, but not
+     * objects of type stdClass
      * @param string $value Serialized value of any type
      * @return boolean
      */
     protected function serializationHasObjectRefs($value)
     {
-        preg_match('/[oc]:\d+:/i', $value, $matches);
+        // Remove all references to stdClass objects
+        $cleared = str_replace('O:8:"stdClass"', '', $value);
+
+        // Now use the same logic as the unserialize validator
+        preg_match('/[oc]:\d+:/i', $cleared, $matches);
         return count($matches) > 0;
     }
 
