@@ -96,22 +96,7 @@ class Event
 
         if ($event) {
             $this->event = $event;
-
-            if ($this->event->ORGANIZER) {
-                foreach ($this->event->ORGANIZER as $organizer) {
-                    $this->participants[] = $this->createParticipantObject($organizer);
-                }
-            }
-
-            if ($this->event->ATTENDEE) {
-                foreach ($this->event->ATTENDEE as $attendee) {
-                    $participant = $this->createParticipantObject($attendee);
-                    if (!$participant->getEmail() || $this->findParticipantsByEmail($participant->getEmail()) == -1) {
-                        $this->participants[] = $participant;
-                    }
-                }
-            }
-
+            $this->getParticipants();
             if ($this->event->VALARM) {
                 $reminderClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Cal\\Structures\\Reminder');
                 foreach ($this->event->VALARM as $reminder) {
@@ -297,6 +282,7 @@ class Event
             $isChanged |= $found->setStatus($participant->getStatus());
             $isChanged |= $found->setDisplayName($participant->getDisplayName());
             $isChanged |= $found->setBeanName($participant->getBeanName());
+            $isChanged |= $found->setRole($participant->getRole());
 
             $found->setBeanId($participant->getBeanId());
             $found->setType($type);
@@ -309,7 +295,7 @@ class Event
 
         $participant->setType($type);
         $this->event->add($participant->getObject());
-        $this->participants[] = $participant;
+        $this->participants = array();
         $this->setCustomized();
         return true;
     }
@@ -489,10 +475,8 @@ class Event
      */
     public function getOrganizer()
     {
-        foreach ($this->participants as $participant) {
-            if ($participant->isOrganizer()) {
-                return $participant;
-            }
+        if ($this->event->ORGANIZER) {
+            return $this->createParticipantObject($this->event->ORGANIZER);
         }
 
         return null;
@@ -504,6 +488,20 @@ class Event
      */
     public function getParticipants()
     {
+        if ($this->participants) {
+            return $this->participants;
+        }
+        if ($this->event->ATTENDEE) {
+            $organizer = $this->getOrganizer();
+            foreach ($this->event->ATTENDEE as $attendee) {
+                $participant = $this->createParticipantObject($attendee);
+                if ($organizer && $organizer->getEmail() == $participant->getEmail()) {
+                    continue;
+                }
+                $this->participants[] = $participant;
+            }
+        }
+
         return $this->participants;
     }
 
@@ -702,18 +700,27 @@ class Event
 
     /**
      * Set organizer of event
-     * @param Participant $participant
+     * @param Participant $organizer
      * @return bool
      */
-    public function setOrganizer(Participant $participant)
+    public function setOrganizer(Participant $organizer)
     {
         $currentOrganizer = $this->getOrganizer();
-        if ($currentOrganizer && $currentOrganizer->getEmail() != $participant->getEmail()) {
+        if ($currentOrganizer && $currentOrganizer->getEmail() != $organizer->getEmail()) {
             $currentOrganizer->setType('ATTENDEE');
 
         }
+        $participant = clone $organizer;
+        $participant->setRole('CHAIR');
+        $participant->setStatus('ACCEPTED');
+        $participant->setType('ATTENDEE');
 
-        return $this->setParticipantNode($participant, 'ORGANIZER');
+        $organizer->setType('ORGANIZER');
+        $organizer->setRole(null);
+        $organizer->setStatus(null);
+
+        return (bool)($this->setParticipantNode($organizer, 'ORGANIZER') |
+            $this->setParticipantNode($participant, 'ATTENDEE'));
     }
 
     /**
@@ -781,7 +788,7 @@ class Event
     }
 
     /**
-     * Found participant in collection
+     * Found participant in collection by email
      * @param string $email
      * @return int - found index
      */

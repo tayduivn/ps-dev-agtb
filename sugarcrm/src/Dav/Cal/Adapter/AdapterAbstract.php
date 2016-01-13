@@ -665,12 +665,14 @@ abstract class AdapterAbstract implements AdapterInterface
             $indexes = array();
             $value['changed'] = array();
             $value['deleted'] = array();
-            foreach ($value['added'] as $k => $invitee) {
-                $index = $event->findParticipantsByEmail($invitee[2]);
-                if ($index != -1) {
-                    $indexes[] = $index;
-                    $value['changed'][] = $invitee;
-                    unset($value['added'][$k]);
+            if (isset($value['added'])) {
+                foreach ($value['added'] as $k => $invitee) {
+                    $index = $event->findParticipantsByEmail($invitee[2]);
+                    if ($index != - 1) {
+                        $indexes[] = $index;
+                        $value['changed'][] = $invitee;
+                        unset($value['added'][$k]);
+                    }
                 }
             }
             foreach ($event->getParticipants() as $k => $participant) {
@@ -723,22 +725,17 @@ abstract class AdapterAbstract implements AdapterInterface
                 unset($value['deleted']);
             }
         }
-        if (!$event->getOrganizer() && $GLOBALS['current_user'] instanceof \User) {
+        $participantsCount = count($event->getParticipants());
+        if (!$event->getOrganizer() && $participantsCount && $GLOBALS['current_user'] instanceof \User) {
             $email = $GLOBALS['current_user']->emailAddress->getPrimaryAddress($GLOBALS['current_user']);
-            $participant = $event->findParticipantsByEmail($email);
-            if ($participant == -1) {
-                $participant = $participantHelper->sugarArrayToParticipant(array(
-                    $GLOBALS['current_user']->module_name,
-                    $GLOBALS['current_user']->id,
-                    $email,
-                    'accept',
-                    $GLOBALS['current_user']->full_name,
-                ));
-            } else {
-                $participants = $event->getParticipants();
-                $participant = $participants[$participant];
-            }
-            $event->setOrganizer($participant);
+            $organizer = $participantHelper->sugarArrayToParticipant(array(
+                $GLOBALS['current_user']->module_name,
+                $GLOBALS['current_user']->id,
+                $email,
+                'accept',
+                $GLOBALS['current_user']->full_name,
+            ));
+            $event->setOrganizer($organizer);
         }
 
         if ($result) {
@@ -1129,11 +1126,13 @@ abstract class AdapterAbstract implements AdapterInterface
             $value['changed'] = array();
             $value['deleted'] = array();
             $indexes = array();
-            foreach ($value['added'] as $k => $invitee) {
-                if (isset($existingLinks[$invitee[0]][$invitee[1]])) {
-                    $indexes[] = array($invitee[0], $invitee[1]);
-                    $value['changed'][] = $invitee;
-                    unset($value['added'][$k]);
+            if (isset($value['added'])) {
+                foreach ($value['added'] as $k => $invitee) {
+                    if (isset($existingLinks[$invitee[0]][$invitee[1]])) {
+                        $indexes[] = array($invitee[0], $invitee[1]);
+                        $value['changed'][] = $invitee;
+                        unset($value['added'][$k]);
+                    }
                 }
             }
             foreach ($existingLinks as $moduleName => $ids) {
@@ -1192,6 +1191,11 @@ abstract class AdapterAbstract implements AdapterInterface
                 unset($value['changed']);
             }
         }
+
+        if (!$bean->assigned_user_id && $GLOBALS['current_user'] instanceof \User) {
+            $bean->assigned_user_id = $GLOBALS['current_user']->id;
+        }
+
         if (isset($value['deleted'])) {
             foreach ($value['deleted'] as $k => $invitee) {
                 if (isset($existingLinks[$invitee[0]][$invitee[1]])) {
