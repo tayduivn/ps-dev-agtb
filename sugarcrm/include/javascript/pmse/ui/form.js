@@ -441,6 +441,18 @@ Form.prototype.setItems = function (items) {
 };
 
 /**
+ * Returns a form's field object based on its name.
+ * @param name
+ * @returns {Object|null}
+ */
+Form.prototype.getField = function (name) {
+    var field = _.find(this.items, function (item) {
+        return item.name == name;
+    });
+    return field || null;
+};
+
+/**
  * Sets the buttons
  * @param {Array} buttons
  * @return {*}

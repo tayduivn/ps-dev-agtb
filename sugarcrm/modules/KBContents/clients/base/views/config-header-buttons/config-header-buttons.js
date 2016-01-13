@@ -31,5 +31,31 @@
                 }
             });
         }
+    },
+
+    /**
+     * Fix for RS-1284.
+     * When we save config, metadata for current user is cleared.
+     * That's why we need to sync metadata manually.
+     * Otherwise user will see error message "Metadata is out of sync" when will try to create new KB content.
+     *
+     * @private
+     */
+    _saveConfig: function() {
+        var self = this;
+        this.context.get('model').save({}, {
+            success: _.bind(function(model) {
+                app.metadata.sync(function() {
+                    self.showSavedConfirmation();
+                    if (app.drawer) {
+                        app.drawer.close(self.context, self.context.get('model'));
+                    }
+                });
+            }, this),
+
+            error: _.bind(function() {
+                this.getField('save_button').setDisabled(false);
+            }, this)
+        });
     }
 })

@@ -20,6 +20,7 @@ require_once 'include/SugarObjects/LanguageManager.php';
 require_once 'modules/ActivityStream/Activities/ActivityQueueManager.php';
 require_once 'include/SubPanel/SubPanelDefinitions.php';
 require_once 'modules/MySettings/TabController.php';
+require_once 'include/TeamBasedACLConfigurator.php';
 
 SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataHacks.php');
 SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataCache.php');
@@ -795,6 +796,8 @@ class MetaDataManager
         $data['menu'] = $this->getModuleMenu($moduleName);
         $data['config'] = $this->getModuleConfig($moduleName);
         $data['filters'] = $this->getModuleFilters($moduleName);
+        // Indicate whether Module has Table Based ACLs enabled
+        $data['isTBAEnabled'] = TeamBasedACLConfigurator::isEnabledForModule($moduleName);
         $deps = $this->getModuleDependencies($moduleName);
         if (!empty($deps) && !empty($deps['dependencies'])) {
             $data['dependencies'] = $deps['dependencies'];

@@ -45,6 +45,12 @@
                         }
 
                         var highlights = model.get('_highlights');
+                        if (!highlights) {
+                            // We add a flag here so that when the user clicks on
+                            // `More results...` we won't reformat the existing ones.
+                            model.formatted = true;
+                            return;
+                        }
                         var formattedHighlights = _.map(highlights, function(val, key) {
 
                             // The `email` highlight contains an array following this

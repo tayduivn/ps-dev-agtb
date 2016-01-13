@@ -47,11 +47,6 @@
     // them all by default
     {pattern: 'include/javascript/sugar7/plugins/*.js', included: true, served: true, watched: true},
 
-    // FIXME: this should be included by the tests, not here
-    'modules/Contacts/clients/base/lib/bean.js',
-    // FIXME: remove this on SC-3047
-    'modules/Contacts/clients/base/plugins/ContactsPortalMetadataFilter.js',
-
     'sidecar/tests/config.js',
 
     'include/javascript/jquery/jquery.dataTables.min.js',
@@ -86,14 +81,12 @@
     'tests/fixtures/search.js',
     'tests/modules/**/fixtures/*.js',
 
-    // FIXME: this should be included by the tests, not here
-    'portal2/user.js',
-
     // If we are emulating what the real app will see, we need to include our hacks
     'include/javascript/sugar7/hacks.js',
 
     'grunt/environment.js',
 
     {pattern: 'clients/**/*.js', included: false, served: true, watched: true},
-    {pattern: 'modules/**/clients/**/*.js', included: false, served: true, watched: true}
+    {pattern: 'modules/**/clients/**/*.js', included: false, served: true, watched: true},
+    {pattern: 'portal2/**/*.js', included: false, served: true, watched: true}
 ]

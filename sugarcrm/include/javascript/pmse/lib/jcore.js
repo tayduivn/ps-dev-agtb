@@ -3609,8 +3609,15 @@ var jCore = (function ($, window) {
         minH = limits[2] + margin;
 
         // update jQueryUI's minWidth and minHeight
-        $shape.resizable('option', 'minWidth', minW);
-        $shape.resizable('option', 'minHeight', minH);
+        if (typeof $shape.resizable("instance") != 'undefined') {
+            $shape.resizable('option', 'minWidth', minW);
+            $shape.resizable('option', 'minHeight', minH);
+        } else {
+            $shape.resizable({
+                minWidth:minW,
+                minHeight:minH
+            });
+        }
         return this;
     };
 
