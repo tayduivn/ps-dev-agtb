@@ -1902,7 +1902,7 @@ ExpressionControl.prototype._createDateTimeConstantPanel = function() {
                 }
             ],
             onCollapse: function (formPanel) {
-                formPanel.getItem("datetime").closeAll();
+                formPanel.getItem("datetime").close();
             }
         });
         this._constantPanel.addItem(this._constantPanels.datetime);

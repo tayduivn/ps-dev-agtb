@@ -180,6 +180,8 @@ describe('Data.Base.FiltersBeanCollection', function() {
             // load after server responded
             filters3.load();
 
+            server.restore();
+
             expect(fetchSpy).toHaveBeenCalledOnce();
 
             // verify that all filters have user-defined data

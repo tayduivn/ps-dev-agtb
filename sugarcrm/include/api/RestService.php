@@ -689,7 +689,9 @@ class RestService extends ServiceBase
     {
         $method = $this->request->getMethod();
         if ($method == 'GET' && empty($route['noEtag'])) {
-            $this->response->generateETagHeader();
+            //Only cache the response in the browser if the Api opts in
+            $cacheAge = empty($route['cacheEtag']) ? 0 : null;
+            $this->response->generateETagHeader(null, $cacheAge);
         }
 
         //leaving this logic split out in case more actions on rawreply need added in the future

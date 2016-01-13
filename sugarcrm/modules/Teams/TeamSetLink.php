@@ -31,6 +31,11 @@ class TeamSetLink extends Link2 {
 	 * maintain an internal array of team_ids we are going to save
 	 */
     protected $_teamList;
+    /*
+     * maintain an internal array of selected team_ids we are going to save
+     * (list of teams with team based acls enabled)
+     */
+    protected $_selectedTeamList;
 	/*
 	 * Whether this data has been committed to the database or not.
 	 */
@@ -161,6 +166,10 @@ class TeamSetLink extends Link2 {
                 if (!empty($this->_teamList)) {
                     $this->focus->team_set_id = $this->_teamSet->addTeams($this->_teamList);
                 }
+                // If Team based ACLs have been enabled on any team then set the correct team set id on the bean
+                if (!empty($this->_selectedTeamList)) {
+                    $this->focus->team_set_selected_id = $this->_teamSet->addTeams($this->_selectedTeamList);
+                }
             }//fi empty($GLOBALS['sugar_config']['disable_team_sanity_check']))
 
             //if this bean already exists in the database, and is not new with id
@@ -172,8 +181,15 @@ class TeamSetLink extends Link2 {
             }
 
             if ($runUpdate) {
-                $GLOBALS['db']->query("UPDATE {$this->focus->table_name} SET team_set_id = '{$this->focus->team_set_id}' WHERE id = '{$this->focus->id}'");
+                $updatesArr[] = "team_set_id = " . $GLOBALS['db']->quoted($this->focus->team_set_id);
+                // If Team based ACLs are enabled on any team then add that to the update as well
+                if (!empty($this->_selectedTeamList)) {
+                    $updatesArr[] .= "team_set_selected_id = " . $GLOBALS['db']->quoted($this->focus->team_set_selected_id);
+                }
+                $update_query = implode(", ", $updatesArr);
+                $GLOBALS['db']->query("UPDATE {$this->focus->table_name} SET $update_query WHERE id = '{$this->focus->id}'");
             }
+
             //keep track of what we put into the database so we can clean things up later
             TeamSetManager::saveTeamSetModule($this->focus->team_set_id, $this->focus->table_name);
 
@@ -194,11 +210,14 @@ class TeamSetLink extends Link2 {
 	 * @param unknown_type $save
 	 */
 	public function replace($rel_keys, $additional_values=array(), $save = true){
-		$this->_teamList = $rel_keys;
-		$this->_saved = false; //bug 48733 - "New team added during merge duplicate is not saved"
-		if($save){
-			$this->save();
-		}
+            $this->_teamList = $rel_keys;
+            if (!empty($additional_values['selected_teams'])) {
+                $this->_selectedTeamList = $additional_values['selected_teams'];
+            }
+            $this->_saved = false; //bug 48733 - "New team added during merge duplicate is not saved"
+            if ($save) {
+                $this->save();
+            }
 	}
 
 	/**
@@ -251,15 +270,33 @@ class TeamSetLink extends Link2 {
 	 * @param unknown_type $save
 	 */
 	protected function appendTeams($rel_keys, $additional_values=array(), $save = true) {
-		if(empty($this->_teamList)){
-			$team_ids = $this->_teamSet->getTeamIds($this->focus->team_set_id);
-			$this->_teamList = array_merge($rel_keys, $team_ids);
-		}else{
-			$this->_teamList = array_merge($this->_teamList, $rel_keys);
-		}
-		if($save){
-			$this->save();
-		}
+            if (empty($this->_teamList)) {
+                $team_ids = $this->_teamSet->getTeamIds($this->focus->team_set_id);
+                $this->_teamList = array_merge($rel_keys, $team_ids);
+            } else {
+                $this->_teamList = array_merge($this->_teamList, $rel_keys);
+            }
+
+            // If Team based ACLs are enabled on any team
+            if (!empty($additional_values['selected_teams'])) {
+                if (empty($this->_selectedTeamList)) {
+                    $selected_team_ids = array();
+                    if (!empty($this->focus->team_set_selected_id)) {
+                        // get the teams associated with this selected team set id
+                        $selected_team_ids = $this->_teamSet->getTeamIds($this->focus->team_set_selected_id);
+                    }
+                    // merge the old teams and new teams
+                    $this->_selectedTeamList = array_merge($selected_team_ids, $additional_values['selected_teams']);
+
+                } else {
+                    // merge the old teams and new teams
+                    $this->_selectedTeamList = array_merge($this->_selectedTeamList, $additional_values['selected_teams']);
+                }
+            }
+
+            if ($save) {
+                $this->save();
+            }
 	}
 
     /**

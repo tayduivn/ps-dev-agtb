@@ -1,14 +1,22 @@
 //FILE SUGARCRM flav=ent ONLY
-describe("Contacts Record View", function() {
+describe("Contacts Create View", function() {
     var moduleName = 'Contacts',
         app,
-        viewName = 'record',
+        viewName = 'create',
         view,
         stub_serverInfo;
 
     beforeEach(function() {
+        app = SugarTest.app;
+
+        SugarTest.loadFile('../modules/Contacts/clients/base/plugins', 'ContactsPortalMetadataFilter', 'js', function(d) {
+            app.events.off('app:init');
+            eval(d);
+            app.events.trigger('app:init');
+        });
+
         SugarTest.testMetadata.init();
-        SugarTest.loadComponent('base', 'view', viewName);
+        SugarTest.loadComponent('base', 'view', 'record', moduleName);
         SugarTest.loadComponent('base', 'view', viewName, moduleName);
         SugarTest.testMetadata.addViewDefinition(viewName, {
             "panels": [
@@ -38,7 +46,6 @@ describe("Contacts Record View", function() {
         }, moduleName);
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
-        app = SugarTest.app;
 
         //Fake portal is inactive
         stub_serverInfo = sinon.stub(app.metadata, "getServerInfo", function() {
@@ -47,7 +54,7 @@ describe("Contacts Record View", function() {
             };
             return fakeInfo;
         });
-        view = SugarTest.createView("base", moduleName, viewName, null, null, true);
+        view = SugarTest.createView("base", moduleName, viewName, null, null);
     });
 
     afterEach(function() {
