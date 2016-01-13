@@ -1142,6 +1142,20 @@ AdamActivity.prototype.getContextMenu = function () {
         actionItems.push(noneAction);
         actionItems.push(businessRuleAction);
         actionItems.push(assignUserAction, assignTeamAction, changeFieldAction, addRelatedRecordAction);
+
+        // For custom actions to appear as Action Types in the Action menu,
+        // create AdamActivity.prototype.customContextMenuActions and make it
+        // return an array with objects defining the action's properties
+        if (_.isFunction(AdamActivity.prototype.customContextMenuActions)) {
+            _.each(this.customContextMenuActions(), function(action) {
+                actionItems.push(new Action({
+                    text: action.text,
+                    cssStyle: action.cssStyle,
+                    handler: self._getScriptTypeActionHandler(action.name),
+                    selected: (self.act_script_type === action.name)
+                }));
+            });
+        }
         items.push(
             {
                 label: translate('LBL_PMSE_CONTEXT_MENU_ACTION_TYPE'),
@@ -2140,40 +2154,131 @@ AdamActivity.prototype.createAssignUsersAction = function () {
 
     return action;
 };
+/**
+ * Creates the action's modal
+ * @param {string} type The name of the action
+ * @return {Action} The action object
+ */
+AdamActivity.prototype.actionFactory = function(type) {
+    var self = this;
+    var fieldsUpdater;
 
-AdamActivity.prototype.actionFactory = function (type) {
-    var action, actionText, actionCSS, root = this, w, f, proxy = null, items = [], callback = {},
-        disabled = false, windowTitle = '', wWidth, wHeight, labelWidth = '30%', messageMap, fields,
-        combo_users,
-        combo_teams,
-        combo_method,
-        navigableData,
-        changeFieldsFn,
-        combo_modules,
-        data,
-        restored_fields,
-        fields_updater,
-        initialModule,
-        combo_business,
-        i,
-        hidden_module,
-        cancelInformation,
-        hidden_method,
-        updater_field,
-        updateRecordOwner;
-    cancelInformation =  new MessagePanel({
+    var cancelInformation =  new MessagePanel({
         title: "Confirm",
         wtype: 'Confirm',
         message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM')
     });
+
+    var windowDef = this.getWindowDef(type);
+
+    var w = new Window({
+        width: windowDef.wWidth || 0,
+        height: windowDef.wHeight || 0,
+        title: windowDef.wTitle || '',
+        modal: true
+    });
+
+    var actionDef = this.getAction(type, w);
+
+    var f = new Form({
+        proxy: actionDef.proxy,
+        items: actionDef.items || [],
+        closeContainerOnSubmit: true,
+        footerAlign: 'right',
+        buttons: [
+            {
+                jtype: 'normal',
+                caption: translate('LBL_PMSE_BUTTON_SAVE'),
+                handler: function() {
+                    if (fieldsUpdater && fieldsUpdater.multiplePanel) {
+                        fieldsUpdater.multiplePanel.close();
+                    }
+                    f.submit();
+                },
+                cssClasses: ['btn btn-primary']
+
+            },
+            {
+                jtype: 'normal',
+                caption: translate('LBL_PMSE_BUTTON_CANCEL'),
+                handler: function() {
+                    if (fieldsUpdater && fieldsUpdater.multiplePanel) {
+                        fieldsUpdater.multiplePanel.close();
+                    }
+
+                    if (f.isDirty()) {
+                        cancelInformation.setButtons(
+                            [
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_YES'),
+                                    handler: function() {
+                                        cancelInformation.hide();
+                                        w.close();
+                                    }
+                                },
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_NO'),
+                                    handler: function() {
+                                        cancelInformation.hide();
+                                    }
+                                }
+                            ]
+                        );
+                        cancelInformation.show();
+                    } else {
+                        w.close();
+                    }
+                },
+                cssClasses: ['btn btn-invisible btn-link']
+
+            }
+        ],
+        labelWidth: actionDef.labelWidth || '30%',
+        callback: actionDef.callback || {},
+        language: PMSE_DESIGNER_FORM_TRANSLATIONS
+    });
+
+    w.addPanel(f);
+
+    var action = new Action({
+        text: actionDef.actionText || '',
+        cssStyle: actionDef.actionCSS || '',
+        handler: function() {
+            self.canvas.project.save();
+            w.show();
+            w.html.style.display = 'none';
+            App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+        },
+        disabled: !_.isUndefined(actionDef.disabled) ? actionDef.disabled : false
+    });
+
+    return action;
+};
+
+/**
+ * Gets an action's properties. Also checks for custom action properties defined by the end user
+ *
+ * @param {string} type The name of the action
+ * @param {Window} w The Window object that will eventually become the modal (not to be confused
+ * with the javascript window)
+ * @return {Object} Object containing an action's properties
+ */
+AdamActivity.prototype.getAction = function(type, w) {
+    var self = this;
+    var action = {};
+
     switch (type) {
         case 'NONE':
-            actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
-            disabled = true;
-            actionCSS = 'adam-menu-icon-configure';
+            var actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
+            var disabled = true;
+            var actionCSS = 'adam-menu-icon-configure';
+            action = {actionText: actionText, disabled: disabled, actionCSS: actionCSS};
             break;
+
         case 'ASSIGN_USER':
-            combo_users = new SearchableCombobox({
+            var combo_users = new SearchableCombobox({
                 label: translate('LBL_PA_FORM_LABEL_ASSIGN_TO_USER'),
                 name: 'act_assign_user',
                 submit: true,
@@ -2184,41 +2289,37 @@ AdamActivity.prototype.actionFactory = function (type) {
                 placeholder: translate('LBL_PA_FORM_COMBO_ASSIGN_TO_USER_HELP_TEXT')
             });
             //here add checkbox
-            updateRecordOwner = new CheckboxField({
+            var updateRecordOwner = new CheckboxField({
                 name: 'act_update_record_owner',
                 label: translate('LBL_PA_FORM_LABEL_UPDATE_RECORD_OWNER'),
                 required: false,
                 value: false,
                 options: {
-
                     labelAlign: 'right',
                     marginLeft: 80
-
                 }
             });
-            proxy = new SugarProxy({
+            var proxy = new SugarProxy({
                 url: 'pmse_Project/ActivityDefinition/' + this.id,
                 uid: this.id,
                 callback: null
             });
-            items = [combo_users, updateRecordOwner];
-            wWidth = 550;
-            wHeight = 160;
-            labelWidth = '40%';
-            actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
-            actionCSS = 'adam-menu-icon-configure';
-            callback = {
-                'loaded': function (data) {
+            var items = [combo_users, updateRecordOwner];
+            var labelWidth = '40%';
+            var actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
+            var actionCSS = 'adam-menu-icon-configure';
+            var callback = {
+                'loaded': function(data) {
                     var users,
                         nValue = false,
                         usersProxy = new SugarProxy(),
                         aUsers = [{'text': 'Select...', 'value': ''}];
-                    root.canvas.emptyCurrentSelection();
+                    self.canvas.emptyCurrentSelection();
                     usersProxy.url = 'pmse_Project/CrmData/users';
 
                     if (data && data.act_assign_user) {
                         usersProxy.getData(null, {
-                            success: function (users) {
+                            success: function(users) {
                                 var theMatch, i;
 
                                 users = users.result || [];
@@ -2257,10 +2358,18 @@ AdamActivity.prototype.actionFactory = function (type) {
                     $(updateRecordOwner.html).children('input').prop('checked', nValue);
                 }
             };
-            windowTitle = translate('LBL_PMSE_FORM_TITLE_ASSIGN_USER') + ': ' + this.getName();
+            action = {
+                proxy: proxy,
+                items: items,
+                labelWidth: labelWidth,
+                actionText: actionText,
+                actionCSS: actionCSS,
+                callback: callback
+            };
             break;
+
         case 'ASSIGN_TEAM':
-            combo_teams = new ComboboxField({
+            var combo_teams = new ComboboxField({
                 jtype: 'combobox',
                 label: translate('LBL_PA_FORM_LABEL_ASSIGN_TO_TEAM'),
                 name: 'act_assign_team',
@@ -2273,7 +2382,7 @@ AdamActivity.prototype.actionFactory = function (type) {
                 })
             });
             //here add checkbox
-            updateRecordOwner = new CheckboxField({
+            var updateRecordOwner = new CheckboxField({
                 name: 'act_update_record_owner',
                 label: translate('LBL_PA_FORM_LABEL_UPDATE_RECORD_OWNER'),
                 required: false,
@@ -2283,7 +2392,7 @@ AdamActivity.prototype.actionFactory = function (type) {
                     marginLeft: 200
                 }
             });
-            combo_method = new ComboboxField({
+            var combo_method = new ComboboxField({
                 jtype: 'combobox',
                 name: 'act_assignment_method',
                 label: translate('LBL_PMSE_FORM_LABEL_ASSIGNMENT_METHOD'),
@@ -2295,33 +2404,30 @@ AdamActivity.prototype.actionFactory = function (type) {
                 editable: false,
                 readOnly: true
             });
-            hidden_method = new HiddenField({
+            var hiddenMethod = new HiddenField({
                 name: 'act_assignment_method',
                 initialValue: 'balanced'
             });
-            proxy = new SugarProxy({
+            var proxy = new SugarProxy({
                 url: 'pmse_Project/ActivityDefinition/' + this.id,
                 uid: this.id,
                 callback: null
             });
 
-            items = [combo_teams, updateRecordOwner, hidden_method];
-            wWidth = 550;
-            wHeight = 160;
-            labelWidth = '40%';
-            actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
-            actionCSS = 'adam-menu-icon-configure';
-            callback = {
-                'loaded': function (data) {
-                    var teams;
-                    root.canvas.emptyCurrentSelection();
-                    teams = combo_teams.proxy.getData(null,{
+            var items = [combo_teams, updateRecordOwner, hiddenMethod];
+            var labelWidth = '40%';
+            var actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
+            var actionCSS = 'adam-menu-icon-configure';
+            var callback = {
+                'loaded': function(data) {
+                    self.canvas.emptyCurrentSelection();
+                    var teams = combo_teams.proxy.getData(null, {
                         success: function(teams) {
                             combo_teams.setOptions(teams.result);
                             if (data) {
                                 combo_teams.setValue(data.act_assign_team || teams.result[0].value);
-                                nValue = false;
-                                if (data.act_update_record_owner && data.act_update_record_owner == 1){
+                                var nValue = false;
+                                if (data.act_update_record_owner && data.act_update_record_owner == 1) {
                                     nValue = true;
                                 }
                                 updateRecordOwner.setValue(nValue);
@@ -2333,20 +2439,27 @@ AdamActivity.prototype.actionFactory = function (type) {
                     });
                 }
             };
-            windowTitle = translate('LBL_PMSE_FORM_TITLE_ASSIGN_TEAM') + ': ' + this.getName();
+            action = {
+                proxy: proxy,
+                items: items,
+                labelWidth: labelWidth,
+                actionText: actionText,
+                actionCSS: actionCSS,
+                callback: callback
+            };
             break;
+
         case 'CHANGE_FIELD':
-            labelWidth = '20%';
-            navigableData = { 'edit': true };
-            changeFieldsFn = function () {
+            var labelWidth = '20%';
+            var changeFieldsFn = function() {
                 $(".pmse-form-error")
                     .removeClass('pmse-form-error-on')
                     .addClass('pmse-form-error-off');
                 App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
 
-                updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/'+ combo_modules.value;
+                updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/' + comboModules.value;
                 // Call type set to CF to distinguish from Add Related Record
-                data = updater_field.proxy.getData({call_type:'CF', base_module: PROJECT_MODULE}, {
+                var data = updater_field.proxy.getData({call_type: 'CF', base_module: PROJECT_MODULE}, {
                     success: function(data) {
                         App.alert.dismiss('upload');
                         if (data) {
@@ -2357,7 +2470,7 @@ AdamActivity.prototype.actionFactory = function (type) {
                 });
 
             };
-            combo_modules = new ComboboxField({
+            var comboModules = new ComboboxField({
                 label: translate('LBL_PMSE_FORM_LABEL_MODULE'),
                 name: 'act_field_module',
                 submit: true,
@@ -2368,12 +2481,12 @@ AdamActivity.prototype.actionFactory = function (type) {
                     callback: null
                 })
             });
-            updater_field = new UpdaterField({
+            var updater_field = new UpdaterField({
                 label: translate('LBL_PMSE_FORM_LABEL_FIELDS'),
                 name: 'act_fields',
                 submit: true,
-                decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
-                numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
+                decimalSeparator: App.config.defaultDecimalSeparator,
+                numberGroupingSeparator: App.config.defaultNumberGroupingSeparator,
                 proxy: new SugarProxy({
                     url: 'pmse_Project/CrmData/fields/' + PROJECT_MODULE,
                     uid: null,
@@ -2384,41 +2497,36 @@ AdamActivity.prototype.actionFactory = function (type) {
                 hasCheckbox: true
             });
 
-            wWidth = 670;
-            wHeight = 400;
-            actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
-            actionCSS = 'adam-menu-icon-configure';
-            items = [combo_modules, updater_field];
-            proxy = new SugarProxy({
+            var actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
+            var actionCSS = 'adam-menu-icon-configure';
+            var items = [comboModules, updater_field];
+            var proxy = new SugarProxy({
                 url: 'pmse_Project/ActivityDefinition/' + this.id,
-                //restClient: this.canvas.project.restClient,
                 uid: this.id,
                 callback: null
             });
-            windowTitle = translate('LBL_PMSE_FORM_TITLE_CHANGE_FIELDS') + ': ' + this.getName();
-            callback = {
-                'loaded' : function (data) {
-                    var modules, opt = [], listProxy;
-                    root.canvas.emptyCurrentSelection();
+            var callback = {
+                'loaded': function(data) {
+                    self.canvas.emptyCurrentSelection();
 
-                    combo_modules.proxy.getData({
+                    comboModules.proxy.getData({
                         cardinality: 'one'
                     }, {
                         success: function(modules) {
                             if (modules && modules.success) {
-                                combo_modules.setOptions(modules.result);
-                                initialModule = data.act_field_module || modules.result[0].value;
+                                comboModules.setOptions(modules.result);
+                                var initialModule = data.act_field_module || modules.result[0].value;
                                 project.addMetadata('projectModuleFields', {
-                                    dataURL: 'pmse_Project/CrmData/fields/'+ PROJECT_MODULE,
+                                    dataURL: 'pmse_Project/CrmData/fields/' + PROJECT_MODULE,
                                     dataRoot: 'result',
-                                    success: function (data) {
+                                    success: function(data) {
                                         updater_field.setVariables(data);
                                     }
                                 });
                                 updater_field.proxy.uid = PROJECT_MODULE;
                                 updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/' + initialModule;
                                 // Call type set to CF to distinguish from Add Related Record
-                                updater_field.proxy.getData({call_type:'CF', base_module: PROJECT_MODULE}, {
+                                updater_field.proxy.getData({call_type: 'CF', base_module: PROJECT_MODULE}, {
                                     success: function(fields) {
                                         if (fields) {
                                             updater_field.setOptions(fields.result, true);
@@ -2434,17 +2542,25 @@ AdamActivity.prototype.actionFactory = function (type) {
                     });
                 }
             };
+            action = {
+                proxy: proxy,
+                items: items,
+                labelWidth: labelWidth,
+                actionText: actionText,
+                actionCSS: actionCSS,
+                callback: callback
+            };
             break;
+
         case 'ADD_RELATED_RECORD':
-            labelWidth = '20%';
-            navigableData = { 'edit': true };
-            changeFieldsFn = function () {
+            var labelWidth = '20%';
+            var changeFieldsFn = function() {
                 $(".pmse-form-error")
                     .removeClass('pmse-form-error-on')
                     .addClass('pmse-form-error-off');
-                App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
-                updater_field.proxy.uid = combo_modules.value;
-                updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + combo_modules.value;
+                App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoClose: false});
+                updater_field.proxy.uid = comboModules.value;
+                updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + comboModules.value;
                 updater_field.proxy.getData({base_module: PROJECT_MODULE}, {
                     success: function(data) {
                         App.alert.dismiss('upload');
@@ -2455,7 +2571,7 @@ AdamActivity.prototype.actionFactory = function (type) {
                 });
 
             };
-            combo_modules = new ComboboxField({
+            var comboModules = new ComboboxField({
                 jtype: 'combobox',
                 label: translate('LBL_PMSE_FORM_LABEL_RELATED_MODULE'),
                 name: 'act_field_module',
@@ -2467,91 +2583,98 @@ AdamActivity.prototype.actionFactory = function (type) {
                     callback: null
                 })
             });
-            updater_field = new UpdaterField({
+            var updater_field = new UpdaterField({
                 label: translate('LBL_PMSE_FORM_LABEL_FIELDS'),
                 name: 'act_fields',
                 submit: true,
-                decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
-                numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
+                decimalSeparator: App.config.defaultDecimalSeparator,
+                numberGroupingSeparator: App.config.defaultNumberGroupingSeparator,
                 proxy: new SugarProxy({
-                    url: 'pmse_Project/CrmData/addRelatedRecord/'+ PROJECT_MODULE,
+                    url: 'pmse_Project/CrmData/addRelatedRecord/' + PROJECT_MODULE,
                     uid: null,
                     callback: null
                 }),
                 fieldWidth: 470,
                 fieldHeight: 260
             });
-            wWidth = 680;
-            wHeight = 420;
-            actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
-            actionCSS = 'adam-menu-icon-configure';
-            items = [combo_modules, updater_field];
-            proxy = new SugarProxy({
+            var actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
+            var actionCSS = 'adam-menu-icon-configure';
+            var items = [comboModules, updater_field];
+            var proxy = new SugarProxy({
                 url: 'pmse_Project/ActivityDefinition/' + this.id,
                 uid: this.id,
                 callback: null
             });
-            windowTitle = translate('LBL_PMSE_FORM_TITLE_ADD_RELATED_RECORD') + ': ' + this.getName();
-            callback = {
-                'loaded' : function (data) {
-                    var modules, opt = [], listProxy;
-                    root.canvas.emptyCurrentSelection();
-                    combo_modules.proxy.getData({cardinality: 'one-to-many'}, {
-                       success: function(modules) {
-                           if (modules && modules.success && modules.result && modules.result.length > 1) {
+            var callback = {
+                'loaded': function(data) {
+                    self.canvas.emptyCurrentSelection();
+                    comboModules.proxy.getData({cardinality: 'one-to-many'}, {
+                        success: function(modules) {
+                            if (modules && modules.success && modules.result && modules.result.length > 1) {
                                 modules.result = modules.result.splice(1);
-                               combo_modules.setOptions(modules.result);
-                               initialModule = data.act_field_module || modules.result[0].value;
-                               updater_field.proxy.uid = PROJECT_MODULE;
-                               updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + initialModule;
-                               project.addMetadata('projectModuleFieldsRelated', {
-                                    dataURL: 'pmse_Project/CrmData/fields/'+ PROJECT_MODULE
-                                        + "?base_module=" + PROJECT_MODULE,
+                                comboModules.setOptions(modules.result);
+                                var initialModule = data.act_field_module || modules.result[0].value;
+                                updater_field.proxy.uid = PROJECT_MODULE;
+                                updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + initialModule;
+                                project.addMetadata('projectModuleFieldsRelated', {
+                                    dataURL: 'pmse_Project/CrmData/fields/' + PROJECT_MODULE +
+                                        '?base_module=' + PROJECT_MODULE,
                                     dataRoot: 'result',
-                                    success: function (data) {
+                                    success: function(data) {
                                         updater_field.setVariables(data);
                                     }
                                 });
-                               updater_field.proxy.getData({base_module: PROJECT_MODULE},{
-                                   success: function(fields) {
-                                       updater_field.setOptions(fields.result);
-                                       updater_field.setValue(data.act_fields || null);
-                                       App.alert.dismiss('upload');
-                                       w.html.style.display = 'inline';
-                                   },
-                                   error: function (sugarHttpError) {
-                                       App.alert.dismiss('upload');
-                                       App.alert.show(this.proxyErrorKey, {
-                                           level: "error",
-                                           messages: sugarHttpError.errorThrown + ': ' + sugarHttpError.message
-                                       });
-                                       w.close();
-                                   }
-                               });
-                           }
-                           else {
-                               App.alert.dismiss('upload');
-                               w.hide();
-                               App.alert.show('upload', {
-                                   level: 'warning',
-                                   messages: SUGAR.App.lang.get('LBL_PMSE_CANNOT_CONFIGURE_ADD_RELATED_RECORD', 'pmse_Project'),
-                                   autoClose: false
-                               });
-                           }
-                       }
+                                updater_field.proxy.getData({base_module: PROJECT_MODULE}, {
+                                    success: function(fields) {
+                                        updater_field.setOptions(fields.result);
+                                        updater_field.setValue(data.act_fields || null);
+                                        App.alert.dismiss('upload');
+                                        w.html.style.display = 'inline';
+                                    },
+                                    error: function(sugarHttpError) {
+                                        App.alert.dismiss('upload');
+                                        App.alert.show(this.proxyErrorKey, {
+                                            level: 'error',
+                                            messages: sugarHttpError.errorThrown + ': ' + sugarHttpError.message
+                                        });
+                                        w.close();
+                                    }
+                                });
+                            } else {
+                                App.alert.dismiss('upload');
+                                w.hide();
+                                App.alert.show('upload', {
+                                    level: 'warning',
+                                    messages: SUGAR.App.lang.get(
+                                        'LBL_PMSE_CANNOT_CONFIGURE_ADD_RELATED_RECORD',
+                                        'pmse_Project'
+                                    ),
+                                    autoClose: false
+                                });
+                            }
+                        }
                     });
 
                 }
             };
+            action = {
+                proxy: proxy,
+                items: items,
+                labelWidth: labelWidth,
+                actionText: actionText,
+                actionCSS: actionCSS,
+                callback: callback
+            };
             break;
+
         case 'BUSINESS_RULE':
-            combo_business = new SearchableCombobox({
+            var comboBusiness = new SearchableCombobox({
                 label: translate('LBL_PMSE_LABEL_RULE'),
                 name: 'act_fields',
                 submit: true,
                 placeholder: translate('LBL_PMSE_FORM_OPTION_SELECT'),
                 change: function() {
-                    combo_business.setValid(true);
+                    comboBusiness.setValid(true);
                 },
                 proxy: new SugarProxy({
                     url: 'pmse_Project/CrmData/rulesets/' + adamUID + '?order_by=name',
@@ -2559,28 +2682,25 @@ AdamActivity.prototype.actionFactory = function (type) {
                     callback: null
                 })
             });
-            hidden_module = new HiddenField({
+            var hiddenModule = new HiddenField({
                 name: 'act_field_module',
                 initialValue: PROJECT_MODULE
             });
-            wWidth = 500;
-            wHeight = 140;
-            actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
-            actionCSS = 'adam-menu-icon-configure';
-            items = [combo_business, hidden_module];
-            proxy = new SugarProxy({
+            var actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
+            var actionCSS = 'adam-menu-icon-configure';
+            var items = [comboBusiness, hiddenModule];
+            var proxy = new SugarProxy({
                 url: 'pmse_Project/ActivityDefinition/' + this.id,
                 uid: this.id,
                 callback: null
             });
-            windowTitle = translate('LBL_PMSE_FORM_TITLE_BUSINESS_RULE') + ': ' + this.getName();
-            callback = {
-                'loaded': function (data) {
-                    root.canvas.emptyCurrentSelection();
-                    combo_business.proxy.getData(null,{
+            var callback = {
+                'loaded': function(data) {
+                    self.canvas.emptyCurrentSelection();
+                    comboBusiness.proxy.getData(null, {
                         success: function(rules) {
                             if (rules && rules.success) {
-                                combo_business.setOptions(rules.result);
+                                comboBusiness.setOptions(rules.result);
                                 if (data && data.act_fields) {
                                     var isValid = false;
                                     for (var i = 0; i < rules.result.length; i++) {
@@ -2589,8 +2709,8 @@ AdamActivity.prototype.actionFactory = function (type) {
                                             break;
                                         }
                                     }
-                                    combo_business.setValue(data.act_fields);
-                                    combo_business.setValid(isValid);
+                                    comboBusiness.setValue(data.act_fields);
+                                    comboBusiness.setValid(isValid);
                                 }
                             }
                             App.alert.dismiss('upload');
@@ -2601,87 +2721,83 @@ AdamActivity.prototype.actionFactory = function (type) {
 
                 }
             };
+            action = {
+                proxy: proxy,
+                items: items,
+                actionText: actionText,
+                actionCSS: actionCSS,
+                callback: callback
+            };
+            break;
+
+        default:
+            // For custom actions, create a function called AdamActivity.prototype.customGetAction
+            // and make it return the properties for the action that is passed in
+            if (_.isFunction(AdamActivity.prototype.customGetAction)) {
+                action = this.customGetAction(type, w) || {};
+            }
+    }
+
+    return action;
+};
+
+/**
+ * Gets the properties for the modal for each action
+ *
+ * @param {string} type The name of the action
+ * @return {Object} An object with the modal's properties
+ */
+AdamActivity.prototype.getWindowDef = function(type) {
+    var wWidth;
+    var wHeight;
+    var wTitle;
+
+    switch (type) {
+        case 'NONE':
+            break;
+
+        case 'ASSIGN_USER':
+            wWidth = 550;
+            wHeight = 160;
+            wTitle = 'LBL_PMSE_FORM_TITLE_ASSIGN_USER';
+            break;
+
+        case 'ASSIGN_TEAM':
+            wWidth = 550;
+            wHeight = 160;
+            wTitle = 'LBL_PMSE_FORM_TITLE_ASSIGN_TEAM';
+            break;
+
+        case 'CHANGE_FIELD':
+            wWidth = 670;
+            wHeight = 400;
+            wTitle = 'LBL_PMSE_FORM_TITLE_CHANGE_FIELDS';
+            break;
+
+        case 'ADD_RELATED_RECORD':
+            wWidth = 680;
+            wHeight = 420;
+            wTitle = 'LBL_PMSE_FORM_TITLE_ADD_RELATED_RECORD';
+            break;
+
+        case 'BUSINESS_RULE':
+            wWidth = 500;
+            wHeight = 140;
+            wTitle = 'LBL_PMSE_FORM_TITLE_BUSINESS_RULE';
+            break;
+
+        default:
+            // For custom actions, create a function called AdamActivity.prototype.customGetWindowDef
+            // and make it return the properties for the modal for the action
+            if (_.isFunction(AdamActivity.prototype.customGetWindowDef)) {
+                return this.customGetWindowDef(type) || {};
+            }
             break;
     }
 
-    f = new Form({
-        proxy: proxy,
-        items: items,
-        closeContainerOnSubmit: true,
-        footerAlign: 'left',
-        buttons: [
-            {
-                jtype: 'normal',
-                caption: translate('LBL_PMSE_BUTTON_SAVE'),
-                handler: function () {
-                    if (fields_updater && fields_updater.multiplePanel) {
-                        fields_updater.multiplePanel.close();
-                    }
-                    f.submit();
-                },
-                cssClasses: ['btn btn-primary']
-
-            },
-            {
-                jtype: 'normal',
-                caption: translate('LBL_PMSE_BUTTON_CANCEL'),
-                handler: function () {
-                    if (fields_updater && fields_updater.multiplePanel) {
-                        fields_updater.multiplePanel.close();
-                    }
-
-                    if (f.isDirty()) {
-                        cancelInformation.setButtons(
-                            [
-                                {
-                                    jtype: 'normal',
-                                    caption: translate('LBL_PMSE_BUTTON_YES'),
-                                    handler: function () {
-                                        cancelInformation.hide();
-                                        w.close();
-                                    }
-                                },
-                                {
-                                    jtype: 'normal',
-                                    caption: translate('LBL_PMSE_BUTTON_NO'),
-                                    handler: function () {
-                                        cancelInformation.hide();
-                                    }
-                                }
-                            ]
-                        );
-                        cancelInformation.show();
-                    } else {
-                        w.close();
-                    }
-                },
-                cssClasses: ['btn btn-invisible btn-link']
-
-            }
-        ],
-        labelWidth: labelWidth,
-        callback: callback,
-        language: PMSE_DESIGNER_FORM_TRANSLATIONS
-    });
-
-    w = new Window({
-        width: wWidth,
-        height: wHeight,
-        title: windowTitle,
-        modal: true
-    });
-    w.addPanel(f);
-
-    action = new Action({
-        text: actionText,
-        cssStyle: actionCSS,
-        handler: function () {
-            root.canvas.project.save();
-            w.show();
-            w.html.style.display = 'none';
-            App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
-        },
-        disabled: disabled
-    });
-    return action;
+    return {
+        wWidth: wWidth,
+        wHeight: wHeight,
+        wTitle: translate(wTitle) + ': ' + this.getName()
+    };
 };
