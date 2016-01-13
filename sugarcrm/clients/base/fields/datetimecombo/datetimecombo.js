@@ -347,6 +347,9 @@
             value = this.format(value) || {'date': '', 'time': ''};
 
             this.$(this.fieldTag).val(value['date']);
+            if (value['date']) {
+                this.$(this.fieldTag).data('datepicker').setValue(value['date']);
+            }
             this.$(this.secondaryFieldTag).val(value['time']);
         }, this);
     },
