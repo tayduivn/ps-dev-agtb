@@ -9439,7 +9439,7 @@ nv.models.multiBar = function() {
     if (!arguments.length) {
       return showValues;
     }
-    showValues = _;
+    showValues = isNaN(_) ? _ : parseInt(_, 10);
     return chart;
   };
 
