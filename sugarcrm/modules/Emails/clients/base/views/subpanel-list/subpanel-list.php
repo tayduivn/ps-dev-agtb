@@ -17,44 +17,64 @@ $viewdefs['Emails']['base']['view']['subpanel-list'] = array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(
-                    'label' => 'LBL_LIST_SUBJECT',
+                    'name' => 'from_addr_name',
                     'enabled' => true,
                     'default' => true,
-                    'name' => 'name',
-                    'link' => 'true',
                 ),
                 array(
+                    'name' => 'name',
+                    'enabled' => true,
+                    'default' => true,
+                    'link' => 'true'
+                ),
+                array(
+                    'name' => 'status',
                     'label' => 'LBL_LIST_STATUS',
                     'enabled' => true,
                     'default' => true,
-                    'name' => 'status',
                 ),
                 array(
-                    'label' => 'LBL_DATE_CREATED',
+                    'name' => 'date_sent',
+                    'label' => 'LBL_LIST_DATE_COLUMN',
                     'enabled' => true,
                     'default' => true,
-                    'name' => 'date_entered',
-                    'readonly' => true,
                 ),
                 array(
-                    'label' => 'LBL_DATE_MODIFIED',
-                    'enabled' => true,
-                    'default' => true,
-                    'name' => 'date_modified',
-                    'readonly' => true,
+                    'name' => 'opens',
+                    'label' => 'LBL_OPENS',
+                ),
+                array(
+                    'name' => 'clicks',
+                    'label' => 'LBL_CLICKS',
                 ),
                 array(
                     'name' => 'assigned_user_name',
                     'target_record_key' => 'assigned_user_id',
                     'target_module' => 'Employees',
-                    'label' => 'LBL_LIST_ASSIGNED_TO_NAME',
                     'enabled' => true,
                     'default' => true,
+                ),
+                array(
+                    'name' => 'parent_name',
+                    'link' => true,
+                    'enabled' => true,
+                    'default' => true,
+                    'sortable' => false,
                 ),
             ),
         ),
     ),
     'rowactions' => array(
-        'actions' => array(),
+        'actions' => array(
+            array(
+                'type' => 'rowaction',
+                'css_class' => 'btn',
+                'tooltip' => 'LBL_PREVIEW',
+                'event' => 'list:preview:fire',
+                'icon' => 'fa-eye',
+                'acl_action' => 'view',
+                'allow_bwc' => false,
+            ),
+        ),
     ),
 );

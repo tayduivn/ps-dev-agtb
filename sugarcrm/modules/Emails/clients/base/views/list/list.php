@@ -12,57 +12,53 @@
 $viewdefs['Emails']['base']['view']['list'] = array(
     'panels' => array(
         array(
-            'name'   => 'panel_header',
-            'label'  => 'LBL_PANEL_1',
+            'name' => 'panel_header',
+            'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(
-                    'label'   => 'LBL_LIST_SUBJECT',
+                    'name' => 'from_addr_name',
                     'enabled' => true,
                     'default' => true,
-                    'name'    => 'name',
-                    'link'    => 'true'
                 ),
                 array(
-                    'label'   => 'LBL_LIST_STATUS',
+                    'name' => 'name',
                     'enabled' => true,
                     'default' => true,
-                    'name'    => 'status',
+                    'link' => 'true'
                 ),
                 array(
-                    'name'           => 'parent_name',
-                    'label'          => 'LBL_LIST_RELATED_TO',
-                    'dynamic_module' => 'PARENT_TYPE',
-                    'id'             => 'PARENT_ID',
-                    'link'           => true,
-                    'enabled'        => true,
-                    'default'        => true,
-                    'sortable'       => false,
-                    'ACLTag'         => 'PARENT',
-                    'related_fields' =>
-                    array(
-                        'parent_id',
-                        'parent_type',
-                    ),
-                ),
-                array(
-                    'label'   => 'LBL_DATE_CREATED',
+                    'name' => 'status',
+                    'label' => 'LBL_LIST_STATUS',
                     'enabled' => true,
                     'default' => true,
-                    'name'    => 'date_entered',
                 ),
                 array(
-                    'label'   => 'LBL_DATE_MODIFIED',
+                    'name' => 'date_sent',
+                    'label' => 'LBL_LIST_DATE_COLUMN',
                     'enabled' => true,
                     'default' => true,
-                    'name'    => 'date_modified',
                 ),
                 array(
-                    'name'              => 'assigned_user_name',
+                    'name' => 'opens',
+                    'label' => 'LBL_OPENS',
+                ),
+                array(
+                    'name' => 'clicks',
+                    'label' => 'LBL_CLICKS',
+                ),
+                array(
+                    'name' => 'assigned_user_name',
                     'target_record_key' => 'assigned_user_id',
-                    'target_module'     => 'Employees',
-                    'label'             => 'LBL_LIST_ASSIGNED_TO_NAME',
-                    'enabled'           => true,
-                    'default'           => true,
+                    'target_module' => 'Employees',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'parent_name',
+                    'link' => true,
+                    'enabled' => true,
+                    'default' => true,
+                    'sortable' => false,
                 ),
             ),
         ),

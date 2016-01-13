@@ -527,6 +527,7 @@ for($i=0; $i<$number_contacts; $i++) {
 	$email->name = $sugar_demodata['email_seed_data_subjects'][$key];
 	$email->date_start = create_date();
 	$email->time_start = create_time();
+    $email->date_sent = create_past_date() . ' ' . create_time();
 	$email->duration_hours = array_rand($possible_duration_hours_arr);
 	$email->duration_minutes = array_rand($possible_duration_minutes_arr);
 	$email->assigned_user_id = $assigned_user_id;
