@@ -23,6 +23,18 @@
     },
 
     /**
+     * @inheritdoc
+     */
+    _setOrderBy: function(options) {
+        this.context.set('sortOptions', options);
+        options.query = this.context.get('query');
+        options.module_list = this.context.get('module_list');
+        options.offset = 0;
+        options.update = false;
+        this._super('_setOrderBy', options);
+    },
+
+    /**
      * Override to hook in additional triggers as the mass collection is updated (rows are checked on/off in
      * the actionmenu field). Also attempts to pre-check any rows when the list is refreshed and selected recipients
      * are found within the new result set (this behavior occurs when the user searches the address book).
