@@ -59,9 +59,9 @@
         // translate the placeholder
         this.placeholder = app.lang.get(this.def.placeholder || this.placeholder, this.module);
 
-        this.addRow = _.debounce(this.addRow, 200);
-        this.removeRow = _.debounce(this.removeRow, 200);
-        this.previewRow = _.debounce(this.previewRow, 200);
+        this.addRow = _.debounce(this._addRowImmediately, 200);
+        this.removeRow = _.debounce(this._removeRowImmediately, 200);
+        this.previewRow = _.debounce(this._previewRowImmediately, 200);
         this.search = _.debounce(this.search, app.config.requiredElapsed || 500);
 
         if (this.model.isNew()) {
@@ -217,7 +217,7 @@
             value = this.getFieldValue();
 
             if (value.length === 0) {
-                this.addRow();
+                this._addRowImmediately();
                 this.$('button[data-action=removeRow]').addClass('disabled');
             }
         } catch (e) {
@@ -754,9 +754,10 @@
      *
      * Hides the [+] button.
      *
+     * @private
      * @param {Event} [event]
      */
-    addRow: function(event) {
+    _addRowImmediately: function(event) {
         this.$('.participants-schedule').addClass('new');
         this.$('[name=newRow]').css('display', 'table-row');
 
@@ -775,9 +776,10 @@
      * row. Otherwise, the search and select row is hidden and the [+] is shown
      * again.
      *
+     * @private
      * @param {Event} event
      */
-    removeRow: function(event) {
+    _removeRowImmediately: function(event) {
         var id, participants;
 
         id = $(event.currentTarget).data('id');
@@ -800,9 +802,10 @@
     /**
      * Shows or hides the preview of the participant.
      *
+     * @private
      * @param {Event} event
      */
-    previewRow: function(event) {
+    _previewRowImmediately: function(event) {
         var data, model, success;
 
         success = _.bind(function(model) {
@@ -811,6 +814,7 @@
         }, this);
 
         data = $(event.currentTarget).data();
+
         if (data && data.module && data.id) {
             model = app.data.createBean(data.module, {id: data.id});
             model.fetch({
