@@ -56,6 +56,14 @@ class Participant
     }
 
     /**
+     * Cloning participant structure
+     */
+    public function __clone()
+    {
+        $this->participant = clone $this->participant;
+    }
+
+    /**
      * @param string $name
      * @return mixed
      */
@@ -74,6 +82,14 @@ class Participant
      */
     protected function setParameter($name, $value)
     {
+        if (is_null($value)) {
+            if ($this->getParameter($name)) {
+                unset($this->participant[$name]);
+                return true;
+            }
+
+            return false;
+        }
         if ($this->getParameter($name) == $value) {
             return false;
         }

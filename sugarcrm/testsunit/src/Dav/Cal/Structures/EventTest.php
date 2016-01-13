@@ -509,16 +509,16 @@ class EventTest extends \PHPUnit_Framework_TestCase
                         'beanId' => 'a4'
                     ),
                 ),
+                'organizer' => array(
+                    'getStatus' => 'ACCEPTED',
+                    'isOrganizer' => true,
+                    'getDisplayName' => '',
+                    'getRole' => 'CHAIR',
+                    'getEmail' => 'test@sugarcrm.com',
+                    'getBeanName' => '',
+                    'getBeanId' => '',
+                ),
                 'participants' => array(
-                    array(
-                        'getStatus' => 'ACCEPTED',
-                        'isOrganizer' => true,
-                        'getDisplayName' => '',
-                        'getRole' => 'CHAIR',
-                        'getEmail' => 'test@sugarcrm.com',
-                        'getBeanName' => '',
-                        'getBeanId' => '',
-                    ),
                     array(
                         'getStatus' => 'NEEDS-ACTION',
                         'isOrganizer' => false,
@@ -556,11 +556,12 @@ class EventTest extends \PHPUnit_Framework_TestCase
                         'getBeanId' => 'a4',
                     ),
                 ),
-                'count' => 5,
+                'count' => 4,
             ),
             array(
                 'vEvent' => $this->getEvent('vemptyevent'),
                 'links' => array(),
+                'organizer' => array(),
                 'participants' => array(),
                 'count' => 0,
             ),
@@ -601,7 +602,7 @@ class EventTest extends \PHPUnit_Framework_TestCase
                     ),
                 'node' => 'ATTENDEE',
                 'result' => true,
-                'newCount' => 6
+                'newCount' => 5
             ),
             array(
                 'vEvent' => $this->getEvent('vevent'),
@@ -616,7 +617,7 @@ class EventTest extends \PHPUnit_Framework_TestCase
                     ),
                 'node' => 'ATTENDEE',
                 'result' => false,
-                'newCount' => 5
+                'newCount' => 4
             ),
             array(
                 'vEvent' => $this->getEvent('vemptyevent'),
@@ -631,7 +632,7 @@ class EventTest extends \PHPUnit_Framework_TestCase
                     ),
                 'node' => 'ORGANIZER',
                 'result' => true,
-                'newCount' => 1
+                'newCount' => 0
             ),
         );
     }
@@ -643,13 +644,13 @@ class EventTest extends \PHPUnit_Framework_TestCase
                 'vEvent' => $this->getEvent('vevent'),
                 'participant' => 'new@new.com',
                 'result' => false,
-                'newCount' => 5
+                'newCount' => 4
             ),
             array(
                 'vEvent' => $this->getEvent('vevent'),
                 'participant' => 'sally@example.com',
                 'result' => true,
-                'newCount' => 4
+                'newCount' => 3
             ),
         );
     }
@@ -1063,6 +1064,7 @@ class EventTest extends \PHPUnit_Framework_TestCase
     /**
      * @param VEvent $VEvent
      * @param array $links
+     * @param array $expectedOrganizer
      * @param array $expectedParticipants
      * @param int $participantsCount
      *
@@ -1070,7 +1072,7 @@ class EventTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider getParticipantsProvider
      */
-    public function testGetParticipants(VEvent $VEvent, array $links, array $expectedParticipants, $participantsCount)
+    public function testGetParticipants(VEvent $VEvent, array $links, array $expectedOrganizer, array $expectedParticipants, $participantsCount)
     {
         $eventMock = $this->getEventMock($VEvent, null, $links);
         $participants = $eventMock->getParticipants();
@@ -1086,6 +1088,12 @@ class EventTest extends \PHPUnit_Framework_TestCase
             foreach ($expectedParticipant as $method => $value) {
                 $this->assertEquals($value, $participant->$method());
             }
+        }
+
+        $organizer = $eventMock->getOrganizer();
+
+        foreach ($expectedOrganizer as $method => $value) {
+            $this->assertEquals($value, $organizer->$method());
         }
     }
 
@@ -1140,7 +1148,8 @@ class EventTest extends \PHPUnit_Framework_TestCase
     {
         $eventMock = $this->getEventMock($this->getEvent('vevent'), array('setParticipantNode'));
         $participant = new Participant();
-        $eventMock->expects($this->once())->method('setParticipantNode')->with($participant, 'ORGANIZER');
+        $eventMock->expects($this->exactly(2))->method('setParticipantNode');
+        $eventMock->expects($this->at(0))->method('setParticipantNode')->with($participant, 'ORGANIZER');
         $eventMock->setOrganizer($participant);
     }
 

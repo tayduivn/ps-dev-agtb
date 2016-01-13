@@ -113,14 +113,12 @@ class Meetings extends CalDavAbstractAdapter
                 unset($data[1]['date_end']);
             }
         }
-        if ($invitees) {
-            $changes = $this->setCalDavInvitees($invitees, $event, $override);
-            if ($changes) {
-                $isChanged = true;
-                $data[2] = $changes;
-            } else {
-                $data[2] = array();
-            }
+        $changes = $this->setCalDavInvitees($invitees, $event, $override);
+        if ($changes) {
+            $isChanged = true;
+            $data[2] = $changes;
+        } else {
+            $data[2] = array();
         }
 
         if (!$repeatParentId && $recurringParam) {
@@ -231,14 +229,12 @@ class Meetings extends CalDavAbstractAdapter
                 unset($data[1]['date_end']);
             }
         }
-        if ($invitees) {
-            $changes = $this->setBeanInvitees($invitees, $bean, $override);
-            if ($changes) {
-                $isChanged = true;
-                $data[2] = $changes;
-            } else {
-                $data[2] = array();
-            }
+        $changes = $this->setBeanInvitees($invitees, $bean, $override);
+        if ($changes) {
+            $isChanged = true;
+            $data[2] = $changes;
+        } else {
+            $data[2] = array();
         }
         if (isset($changedFields['rrule'])) {
             if ($this->setBeanRecurrence($changedFields['rrule'], $bean)) {

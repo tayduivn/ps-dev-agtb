@@ -582,6 +582,9 @@ class CalendarUtils
                 $beans = $bean->$relationship->getBeans();
                 /** @var SugarBean $person */
                 foreach ($beans as $beanId => $person) {
+                    if ($person instanceof \User && $beanId == $bean->created_by) {
+                        continue;
+                    }
                     $invitee = array(
                         $person->module_name,
                         $person->id,
