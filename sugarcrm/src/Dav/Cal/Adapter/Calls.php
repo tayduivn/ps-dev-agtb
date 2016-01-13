@@ -90,7 +90,7 @@ class Calls extends AdapterAbstract
             if (isset($changedFields['date_end']) && count($changedFields['date_end']) == 2 && !$this->checkCalDavEndDate($changedFields['date_end'][1], $event)) {
                 throw new ExportException("Conflict with CalDav End Date field");
             }
-            if ($invitees && !$this->checkCalDavInvites($invitees, $event)) {
+            if ($invitees && !$this->checkCalDavInvitees($invitees, $event)) {
                 throw new ExportException("Conflict with CalDav Invitees");
             }
             if (!$repeatParentId && !$this->checkCalDavRecurring($changedFields, $collection)) {
@@ -100,29 +100,68 @@ class Calls extends AdapterAbstract
 
         // setting values
         if (isset($changedFields['name'])) {
-            $isChanged = $isChanged | $this->setCalDavTitle($changedFields['name'][0], $event);
+            if ($this->setCalDavTitle($changedFields['name'][0], $event)) {
+                $isChanged = true;
+            } else {
+                unset($data[1]['name']);
+            }
         }
         if (isset($changedFields['description'])) {
-            $isChanged = $isChanged | $this->setCalDavDescription($changedFields['description'][0], $event);
+            if ($this->setCalDavDescription($changedFields['description'][0], $event)) {
+                $isChanged = true;
+            } else {
+                unset($data[1]['description']);
+            }
         }
         if (isset($changedFields['status'])) {
-            $isChanged = $isChanged | $this->setCalDavStatus($changedFields['status'][0], $event);
+            if ($this->setCalDavStatus($changedFields['status'][0], $event)) {
+                $isChanged = true;
+            } else {
+                unset($data[1]['status']);
+            }
         }
         if (isset($changedFields['date_start'])) {
-            $isChanged = $isChanged | $this->setCalDavStartDate($changedFields['date_start'][0], $event);
+            if ($this->setCalDavStartDate($changedFields['date_start'][0], $event)) {
+                $isChanged = true;
+            } else {
+                unset($data[1]['date_start']);
+            }
         }
         if (isset($changedFields['date_end'])) {
-            $isChanged = $isChanged | $this->setCalDavEndDate($changedFields['date_end'][0], $event);
+            if ($this->setCalDavEndDate($changedFields['date_end'][0], $event)) {
+                $isChanged = true;
+            } else {
+                unset($data[1]['date_end']);
+            }
         }
         if ($invitees) {
-            $isChanged = $isChanged | $this->setCalDavInvites($invitees, $event, $override);
+            $changes = $this->setCalDavInvitees($invitees, $event, $override);
+            if ($changes) {
+                $isChanged = true;
+                $data[2] = $changes;
+            } else {
+                $data[2] = array();
+            }
         }
 
         if (!$repeatParentId && $recurringParam) {
-            $isChanged = $isChanged | $this->setCalDavRecurring($recurringParam, $collection, $override);
+            if ($this->setCalDavRecurring($recurringParam, $collection)) {
+                $isChanged = true;
+            } else {
+                $data[0][3] = null;
+                unset($data[1]['repeat_type']);
+                unset($data[1]['repeat_interval']);
+                unset($data[1]['repeat_dow']);
+                unset($data[1]['repeat_until']);
+                unset($data[1]['repeat_count']);
+                unset($data[1]['repeat_parent_id']);
+            }
         }
 
-        return (bool)$isChanged;
+        if ($isChanged) {
+            return $data;
+        }
+        return false;
     }
 
     /**
@@ -157,7 +196,7 @@ class Calls extends AdapterAbstract
             if (isset($changedFields['date_end']) && count($changedFields['date_end']) == 2 && !$this->checkBeanEndDate($changedFields['date_end'][1], $bean)) {
                 throw new ImportException("Conflict with Bean End Date field");
             }
-            if ($invitees && !$this->checkBeanInvites($invitees, $bean)) {
+            if ($invitees && !$this->checkBeanInvitees($invitees, $bean)) {
                 throw new ImportException("Conflict with Bean Invitees");
             }
 
@@ -166,32 +205,64 @@ class Calls extends AdapterAbstract
             }
         }
 
-        $bean->invitesBefore = \CalendarUtils::getInvites($bean);
+        $bean->inviteesBefore = \CalendarUtils::getInvitees($bean);
 
         // setting values
         if (isset($changedFields['title'])) {
-            $isChanged |= $this->setBeanName($changedFields['title'][0], $bean);
+            if ($this->setBeanName($changedFields['title'][0], $bean)) {
+                $isChanged = true;
+            } else {
+                unset($data[1]['title']);
+            }
         }
         if (isset($changedFields['description'])) {
-            $isChanged |= $this->setBeanDescription($changedFields['description'][0], $bean);
+            if ($this->setBeanDescription($changedFields['description'][0], $bean)) {
+                $isChanged = true;
+            } else {
+                unset($data[1]['description']);
+            }
         }
         if (isset($changedFields['status'])) {
-            $isChanged |= $this->setBeanStatus($changedFields['status'][0], $bean);
+            if ($this->setBeanStatus($changedFields['status'][0], $bean)) {
+                $isChanged = true;
+            } else {
+                unset($data[1]['status']);
+            }
         }
         if (isset($changedFields['date_start'])) {
-            $isChanged |= $this->setBeanStartDate($changedFields['date_start'][0], $bean);
+            if ($this->setBeanStartDate($changedFields['date_start'][0], $bean)) {
+                $isChanged = true;
+            } else {
+                unset($data[1]['date_start']);
+            }
         }
         if (isset($changedFields['date_end'])) {
-            $isChanged |= $this->setBeanEndDate($changedFields['date_end'][0], $bean);
+            if ($this->setBeanEndDate($changedFields['date_end'][0], $bean)) {
+                $isChanged = true;
+            } else {
+                unset($data[1]['date_end']);
+            }
         }
         if ($invitees) {
-            $isChanged |= $this->setBeanInvites($invitees, $bean, $override);
+            $changes = $this->setBeanInvitees($invitees, $bean, $override);
+            if ($changes) {
+                $isChanged = true;
+                $data[2] = $changes;
+            } else {
+                $data[2] = array();
+            }
         }
-
         if (isset($changedFields['rrule'])) {
-            $isChanged |= $this->setBeanRecurrence($changedFields['rrule'], $bean);
+            if ($this->setBeanRecurrence($changedFields['rrule'], $bean)) {
+                $isChanged = true;
+            } else {
+                unset($data[1]['rrule']);
+            }
         }
 
-        return $isChanged;
+        if ($isChanged) {
+            return $data;
+        }
+        return false;
     }
 }

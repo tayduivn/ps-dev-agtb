@@ -289,7 +289,7 @@ class CalDavEventCollection extends SugarBean
                     if ($child == $it->currentOverriddenEvent) {
                         $state = $eventClass::STATE_CUSTOM;
                     }
-                    $event = new $eventClass($child, $state, $this->participantLinks);
+                    $event = new $eventClass($child, $state, $this->getParticipantsLinks());
                     $this->childEvents[$event->getRecurrenceID()->getTimestamp()] = $event;
                 }
                 $end = $it->getDtEnd();
@@ -408,7 +408,7 @@ class CalDavEventCollection extends SugarBean
         $vCalendar = $this->getVCalendar();
         $parent = $vCalendar->getBaseComponent();
         $eventClass = $this->getEventClass();
-        $this->parentEvent = new $eventClass($parent, $eventClass::STATE_PARENT, $this->participantLinks);
+        $this->parentEvent = new $eventClass($parent, $eventClass::STATE_PARENT, $this->getParticipantsLinks());
 
         return $this->parentEvent;
     }
@@ -864,6 +864,23 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
+     * Returns mapping of emails to sugar's persons.
+     * In case if it's first call then mapping will be received from participants_links property.
+     *
+     * @return array
+     */
+    protected function getParticipantsLinks()
+    {
+        if (!$this->participantLinks && $this->participants_links) {
+            $links = json_decode($this->participants_links, true);
+            if ($links) {
+                $this->participantLinks = $links;
+            }
+        }
+        return $this->participantLinks;
+    }
+
+    /**
      * Links all dav participants to sugar beans and return array with links
      * @return array
      */
@@ -875,6 +892,7 @@ class CalDavEventCollection extends SugarBean
             $participantsList = array_merge($participantsList, $this->getChild($recurrenceId)->getParticipants());
         }
 
+        $this->participantLinks = json_decode($this->participants_links, true);
         foreach ($participantsList as $participant) {
             $email = $participant->getEmail();
             if (!isset($this->participantLinks[$email])) {
@@ -1016,19 +1034,6 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
-     * @inheritdoc
-     */
-    public function retrieve($id = '-1', $encode = true, $deleted = true)
-    {
-        $bean = parent::retrieve($id, $encode, $deleted);
-        if ($bean && $bean->participants_links) {
-            $bean->participantLinks = json_decode($bean->participants_links, true);
-        }
-
-        return $bean;
-    }
-
-    /**
      * Get Event VTIMEZONE section and return timezone in string representation
      * @return string
      */
@@ -1167,7 +1172,7 @@ class CalDavEventCollection extends SugarBean
         $adapter = $adapterFactory->getAdapter($bean->module_name);
 
         if ($adapter) {
-            $dataToExport = $adapter->prepareForExport($bean, array(), array(), CalendarUtils::getInvites($bean), true);
+            $dataToExport = $adapter->prepareForExport($bean, array(), array(), CalendarUtils::getInvitees($bean), true);
             if ($adapter->export($dataToExport, $collection)) {
                 $vCalendarEvent = $collection->getVCalendar();
                 $vCalendarEvent->add($vCalendarEvent->createProperty('METHOD', 'REQUEST'));
@@ -1292,56 +1297,19 @@ class CalDavEventCollection extends SugarBean
      */
     protected function getParticipantsDiff(Structures\Event $currentEvent, Structures\Event $oldEvent = null)
     {
-        $invites = array();
         $participantHelper = new ParticipantsHelper();
-        $currentParticipants = $currentEvent->getParticipants();
 
-        if (!$oldEvent) {
-            if ($currentParticipants) {
-                $invites['added'] = array();
-            }
-            foreach ($currentParticipants as $participant) {
-                $invites['added'][] = $participantHelper->participantToInvite($participant);
-            }
-
-            return $invites;
-        }
-
-        $participantsBefore = $oldEvent->getParticipants();
-        foreach ($currentParticipants as $participant) {
-            /**@var Structures\Participant $participant */
-            $fountIndex = $oldEvent->findParticipantsByEmail($participant->getEmail());
-            if ($fountIndex != - 1) {
-                $participantBefore = $participantsBefore[$fountIndex];
-                if ($participantBefore->getEmail() != $participant->getEmail() ||
-                    $participantBefore->getStatus() != $participant->getStatus() ||
-                    $participantBefore->getDisplayName() != $participant->getDisplayName()
-                ) {
-                    $participant->getType();
-                    $participant->getBeanName();
-                    if (!isset($invites['changed'])) {
-                        $invites['changed'] = array();
-                    }
-                    $invites['changed'][] = $participantHelper->participantToInvite($participant);
-                }
-            } else {
-                if (!isset($invites['added'])) {
-                    $invites['added'] = array();
-                }
-                $invites['added'][] = $participantHelper->participantToInvite($participant);
+        $participantsBefore = array();
+        if ($oldEvent) {
+            foreach ($oldEvent->getParticipants() as $participant) {
+                $participantsBefore[] = $participantHelper->participantToArray($participant);
             }
         }
-        foreach ($participantsBefore as $participant) {
-            /**@var Structures\Participant $participant */
-            if ($currentEvent->findParticipantsByEmail($participant->getEmail()) == - 1) {
-                if (!isset($invites['deleted'])) {
-                    $invites['deleted'] = array();
-                }
-                $invites['deleted'][] = $participantHelper->participantToInvite($participant);
-            }
+        $participantsAfter = array();
+        foreach ($currentEvent->getParticipants() as $participant) {
+            $participantsAfter[] = $participantHelper->participantToArray($participant);
         }
-
-        return $invites;
+        return $participantHelper->getInviteesDiff($participantsBefore, $participantsAfter);
     }
 
     /**
@@ -1418,7 +1386,7 @@ class CalDavEventCollection extends SugarBean
             /** @var CalDavEventCollection $oldCollection */
             $oldCollection = new static();
             $oldCollection->setData($data);
-            $oldCollection->participantLinks = $this->participantLinks;
+            $oldCollection->participants_links = $this->participants_links;
             $oldCollection->mapParticipantsToBeans();
             $oldParent = $oldCollection->getParent();
         } else {

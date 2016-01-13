@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue;
+namespace Sugarcrm\Sugarcrm\Dav\Cal\JobQueue;
 
 use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
 use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
@@ -18,7 +18,7 @@ use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
 
 /**
  * Class Base
- * @package Sugarcrm\Sugarcrm\Dav\Cal\Handler\JobQueue
+ * @package Sugarcrm\Sugarcrm\Dav\Cal\JobQueue
  * Base class for import or export process
  */
 abstract class Base implements RunnableInterface

@@ -38,7 +38,7 @@ abstract class AdapterAbstract implements AdapterInterface
             list($changedFields, $inviteesBefore, $inviteesAfter) = $previousData;
             $override = false;
         } else {
-            $inviteesAfter = \CalendarUtils::getInvites($bean);
+            $inviteesAfter = \CalendarUtils::getInvitees($bean);
         }
 
         $participantsHelper = $this->getParticipantHelper();
@@ -77,9 +77,9 @@ abstract class AdapterAbstract implements AdapterInterface
             'repeat_parent_id' => true,
         ));
 
-        $changedInvites = $participantsHelper->getInvitesDiff($inviteesBefore, $inviteesAfter);
+        $changedInvitees = $participantsHelper->getInviteesDiff($inviteesBefore, $inviteesAfter);
 
-        if (!$changedFields && !$changedInvites) {
+        if (!$changedFields && !$changedInvitees) {
             return false;
         }
 
@@ -91,7 +91,7 @@ abstract class AdapterAbstract implements AdapterInterface
             $override,
         );
 
-        return array($beanData, $changedFields, $changedInvites);
+        return array($beanData, $changedFields, $changedInvitees);
     }
 
     /**
@@ -113,8 +113,8 @@ abstract class AdapterAbstract implements AdapterInterface
         if (!$importData) {
             return false;
         }
-        list($exportBean, $exportFields, $exportInvites) = $exportData;
-        list($importBean, $importFields, $importInvites) = $importData;
+        list($exportBean, $exportFields, $exportInvitees) = $exportData;
+        list($importBean, $importFields, $importInvitees) = $importData;
 
         $this->filterFieldsOnVerify($exportFields, $importFields);
 
@@ -127,30 +127,28 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
 
-        foreach ($importInvites as $action => $list) {
-            if (empty($exportInvites[$action])) {
+        foreach ($importInvitees as $action => $list) {
+            if (empty($exportInvitees[$action])) {
                 continue;
             }
             foreach ($list as $k => $importInvitee) {
-                foreach ($exportInvites[$action] as $exportInvitee) {
-                    $invitee = $exportInvitee;
-                    $invitee[2] = $importInvitee[2]; // we don't care about real status
-                    if ($importInvitee === $invitee) {
-                        unset($importInvites[$action][$k]);
+                foreach ($exportInvitees[$action] as $exportInvitee) {
+                    if ($exportInvitee[0] == $importInvitee[0] && $exportInvitee[1] == $importInvitee[1] && $exportInvitee[2] == $importInvitee[2]) {
+                        unset($importInvitees[$action][$k]);
                         continue;
                     }
                 }
             }
-            if (!$importInvites[$action]) {
-                unset($importInvites[$action]);
+            if (!$importInvitees[$action]) {
+                unset($importInvitees[$action]);
             }
         }
 
-        if ($importFields || $importInvites) {
+        if ($importFields || $importInvitees) {
             return array(
                 $importBean,
                 $importFields,
-                $importInvites,
+                $importInvitees,
             );
         }
 
@@ -162,8 +160,8 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     public function verifyExportAfterImport(array $importData, array $exportData, \SugarBean $bean)
     {
-        list($exportBean, $exportFields, $exportInvites) = $exportData;
-        list($importBean, $importFields, $importInvites) = $importData;
+        list($exportBean, $exportFields, $exportInvitees) = $exportData;
+        list($importBean, $importFields, $importInvitees) = $importData;
 
         $this->filterFieldsOnVerify($exportFields, $importFields);
 
@@ -176,30 +174,28 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
 
-        foreach ($exportInvites as $action => $list) {
-            if (empty($importInvites[$action])) {
+        foreach ($exportInvitees as $action => $list) {
+            if (empty($importInvitees[$action])) {
                 continue;
             }
             foreach ($list as $k => $importInvitee) {
-                foreach ($importInvites[$action] as $exportInvitee) {
-                    $invitee = $exportInvitee;
-                    $invitee[2] = $importInvitee[2]; // we don't care about real status
-                    if ($importInvitee === $invitee) {
-                        unset($exportInvites[$action][$k]);
+                foreach ($importInvitees[$action] as $exportInvitee) {
+                    if ($exportInvitee[0] == $importInvitee[0] && $exportInvitee[1] == $importInvitee[1] && $exportInvitee[2] == $importInvitee[2]) {
+                        unset($exportInvitees[$action][$k]);
                         continue;
                     }
                 }
             }
-            if (!$exportInvites[$action]) {
-                unset($exportInvites[$action]);
+            if (!$exportInvitees[$action]) {
+                unset($exportInvitees[$action]);
             }
         }
 
-        if ($exportFields || $exportInvites) {
+        if ($exportFields || $exportInvitees) {
             return array(
                 $exportBean,
                 $exportFields,
-                $exportInvites,
+                $exportInvitees,
             );
         }
 
@@ -372,7 +368,7 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     public function getBeanForImport(\SugarBean $bean, \CalDavEventCollection $calDavBean, array $processedData)
     {
-        list($beanData, $changedFields, $invites) = $processedData;
+        list($beanData, $changedFields, $invitees) = $processedData;
         list($beanId, $childEventsId, $recurrenceId, $recurrenceIndex, $insert) = $beanData;
 
         if (is_null($recurrenceIndex)) {
@@ -494,31 +490,31 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * Checks that invites are applicable to current ones.
+     * Checks that invitees are applicable to current ones.
      *
      * @param array $value
      * @param Event $event
      * @return bool
      */
-    protected function checkCalDavInvites($value, Event $event)
+    protected function checkCalDavInvitees($value, Event $event)
     {
         if (isset($value['added'])) {
             foreach ($value['added'] as $invitee) {
-                if ($event->findParticipantsByEmail($invitee[3]) != -1) {
+                if ($event->findParticipantsByEmail($invitee[2]) != -1) {
                     return false;
                 }
             }
         }
         if (isset($value['changed'])) {
             foreach ($value['changed'] as $invitee) {
-                if ($event->findParticipantsByEmail($invitee[3]) == - 1) {
+                if ($event->findParticipantsByEmail($invitee[2]) == - 1) {
                     return false;
                 }
             }
         }
         if (isset($value['deleted'])) {
             foreach ($value['deleted'] as $invitee) {
-                if ($event->findParticipantsByEmail($invitee[3]) == -1) {
+                if ($event->findParticipantsByEmail($invitee[2]) == -1) {
                     return false;
                 }
             }
@@ -653,14 +649,14 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * Sets provided invites to specified event.
+     * Sets provided invitees to specified event.
      *
      * @param array $value
      * @param Event $event
      * @param bool $override
      * @return bool
      */
-    protected function setCalDavInvites(array $value, Event $event, $override = false)
+    protected function setCalDavInvitees(array $value, Event $event, $override = false)
     {
         $result = false;
         $participantHelper = $this->getParticipantHelper();
@@ -670,7 +666,7 @@ abstract class AdapterAbstract implements AdapterInterface
             $value['changed'] = array();
             $value['deleted'] = array();
             foreach ($value['added'] as $k => $invitee) {
-                $index = $event->findParticipantsByEmail($invitee[3]);
+                $index = $event->findParticipantsByEmail($invitee[2]);
                 if ($index != -1) {
                     $indexes[] = $index;
                     $value['changed'][] = $invitee;
@@ -679,36 +675,63 @@ abstract class AdapterAbstract implements AdapterInterface
             }
             foreach ($event->getParticipants() as $k => $participant) {
                 if (!in_array($k, $indexes)) {
-                    $value['deleted'][] = $participantHelper->participantToInvite($participant);
+                    $value['deleted'][] = array($participant->getBeanName(), $participant->getBeanId(), $participant->getEmail());
                 }
             }
             $value = array_filter($value);
         }
 
         if (isset($value['added'])) {
-            foreach ($value['added'] as $invitee) {
-                $result |= $event->setParticipant($participantHelper->inviteToParticipant($invitee));
+            foreach ($value['added'] as $k => $invitee) {
+                if ($event->setParticipant($participantHelper->sugarArrayToParticipant($invitee))) {
+                    $result = true;
+                } else {
+                    unset($value['added'][$k]);
+                }
+            }
+            if ($value['added']) {
+                $value['added'] = array_values($value['added']);
+            } else {
+                unset($value['added']);
             }
         }
         if (isset($value['changed'])) {
-            foreach ($value['changed'] as $invitee) {
-                $result |= $event->setParticipant($participantHelper->inviteToParticipant($invitee));
+            foreach ($value['changed'] as $k => $invitee) {
+                if ($event->setParticipant($participantHelper->sugarArrayToParticipant($invitee))) {
+                    $result = true;
+                } else {
+                    unset($value['changed'][$k]);
+                }
+            }
+            if ($value['changed']) {
+                $value['changed'] = array_values($value['changed']);
+            } else {
+                unset($value['changed']);
             }
         }
         if (isset($value['deleted'])) {
-            foreach ($value['deleted'] as $invitee) {
-                $result |= $event->deleteParticipant($invitee[3]);
+            foreach ($value['deleted'] as $k => $invitee) {
+                if ($event->deleteParticipant($invitee[2])) {
+                    $result = true;
+                } else {
+                    unset($value['deleted'][$k]);
+                }
+            }
+            if ($value['deleted']) {
+                $value['deleted'] = array_values($value['deleted']);
+            } else {
+                unset($value['deleted']);
             }
         }
         if (!$event->getOrganizer() && $GLOBALS['current_user'] instanceof \User) {
             $email = $GLOBALS['current_user']->emailAddress->getPrimaryAddress($GLOBALS['current_user']);
             $participant = $event->findParticipantsByEmail($email);
             if ($participant == -1) {
-                $participant = $participantHelper->inviteToParticipant(array(
+                $participant = $participantHelper->sugarArrayToParticipant(array(
                     $GLOBALS['current_user']->module_name,
                     $GLOBALS['current_user']->id,
-                    'accept',
                     $email,
+                    'accept',
                     $GLOBALS['current_user']->full_name,
                 ));
             } else {
@@ -718,7 +741,10 @@ abstract class AdapterAbstract implements AdapterInterface
             $event->setOrganizer($participant);
         }
 
-        return $result;
+        if ($result) {
+            return $value;
+        }
+        return false;
     }
 
     /**
@@ -814,13 +840,13 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * Checks that invites are applicable to current ones.
+     * Checks that invitees are applicable to current ones.
      *
      * @param array $value
      * @param \SugarBean|\Meeting|\Call $bean
      * @return bool
      */
-    protected function checkBeanInvites($value, \SugarBean $bean)
+    protected function checkBeanInvitees($value, \SugarBean $bean)
     {
         $definitions = \VardefManager::getFieldDefs($bean->module_name);
         if (isset($definitions['invitees']['links'])) {
@@ -1070,14 +1096,14 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * Sets provided invites to specified bean.
+     * Sets provided invitees to specified bean.
      *
      * @param array $value
      * @param \SugarBean|\Meeting|\Call $bean
      * @param bool $override
-     * @return bool
+     * @return array|false applied changes to $value or false is nothing was changed
      */
-    protected function setBeanInvites(array $value, \SugarBean $bean, $override = false)
+    protected function setBeanInvitees(array $value, \SugarBean $bean, $override = false)
     {
         $result = false;
 
@@ -1095,7 +1121,7 @@ abstract class AdapterAbstract implements AdapterInterface
                     if (!isset($existingLinks[$existingBean->module_name])) {
                         $existingLinks[$existingBean->module_name] = array();
                     }
-                    $existingLinks[$existingBean->module_name][$existingBean->id] = true;
+                    $existingLinks[$existingBean->module_name][$existingBean->id] = $existingBean->emailAddress->getPrimaryAddress($existingBean);
                 }
             }
         }
@@ -1111,7 +1137,7 @@ abstract class AdapterAbstract implements AdapterInterface
                 }
             }
             foreach ($existingLinks as $moduleName => $ids) {
-                foreach ($ids as $id => $_) {
+                foreach ($ids as $id => $email) {
                     $found = false;
                     foreach ($indexes as $index) {
                         if ($index[0] == $moduleName && $index[1] == $id) {
@@ -1120,7 +1146,7 @@ abstract class AdapterAbstract implements AdapterInterface
                         }
                     }
                     if (!$found) {
-                        $value['deleted'][] = array($moduleName, $id);
+                        $value['deleted'][] = array($moduleName, $id, $email);
                     }
                 }
             }
@@ -1129,37 +1155,56 @@ abstract class AdapterAbstract implements AdapterInterface
 
         $map = new CalDavStatus\AcceptedMap();
         if (isset($value['added'])) {
-            foreach ($value['added'] as $invitee) {
-                list($beanName, $beanId, $beanStatus, $email, $displayName) = $invitee;
-                $participant = \BeanFactory::getBean($beanName, $beanId, array(
+            foreach ($value['added'] as $k => $invitee) {
+                $participant = \BeanFactory::getBean($invitee[0], $invitee[1], array(
                     'strict_retrieve' => true,
                 ));
                 if ($participant) {
-                    $bean->set_accept_status($participant, $map->getSugarValue($beanStatus));
+                    $bean->set_accept_status($participant, $map->getSugarValue($invitee[3]));
                     $existingLinks[$participant->module_name][$participant->id] = true;
                     $result = true;
+                } else {
+                    unset($value['added'][$k]);
                 }
+            }
+            if ($value['added']) {
+                $value['added'] = array_values($value['added']);
+            } else {
+                unset($value['added']);
             }
         }
         if (isset($value['changed'])) {
-            foreach ($value['changed'] as $invitee) {
-                list($beanName, $beanId, $beanStatus, $email, $displayName) = $invitee;
-                $participant = \BeanFactory::getBean($beanName, $beanId, array(
+            foreach ($value['changed'] as $k => $invitee) {
+                $participant = \BeanFactory::getBean($invitee[0], $invitee[1], array(
                     'strict_retrieve' => true,
                 ));
                 if ($participant) {
-                    $bean->set_accept_status($participant, $map->getSugarValue($beanStatus));
+                    $bean->set_accept_status($participant, $map->getSugarValue($invitee[3]));
                     $existingLinks[$participant->module_name][$participant->id] = true;
                     $result = true;
+                } else {
+                    unset($value['changed'][$k]);
                 }
+            }
+            if ($value['changed']) {
+                $value['changed'] = array_values($value['changed']);
+            } else {
+                unset($value['changed']);
             }
         }
         if (isset($value['deleted'])) {
-            foreach ($value['deleted'] as $invitee) {
+            foreach ($value['deleted'] as $k => $invitee) {
                 if (isset($existingLinks[$invitee[0]][$invitee[1]])) {
                     unset($existingLinks[$invitee[0]][$invitee[1]]);
                     $result = true;
+                } else {
+                    unset($value['deleted'][$k]);
                 }
+            }
+            if ($value['deleted']) {
+                $value['deleted'] = array_values($value['deleted']);
+            } else {
+                unset($value['deleted']);
             }
             foreach ($existingLinks as $module => $ids) {
                 $objectName = \BeanFactory::getObjectName($module);
@@ -1175,7 +1220,10 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
 
-        return $result;
+        if ($result) {
+            return $value;
+        }
+        return false;
     }
 
     /**

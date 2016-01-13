@@ -100,7 +100,7 @@ class Call extends SugarBean {
      * Is not a sugar-field, is not persisted anywhere.
      * @var null|array
      */
-    public $invitesBefore = null;
+    public $inviteesBefore = null;
 
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
@@ -147,8 +147,8 @@ class Call extends SugarBean {
 
 		$isUpdate = $this->isUpdate();
 
-        if ($isUpdate && is_null($this->invitesBefore)) {
-            $this->invitesBefore = CalendarUtils::getInvites($this);
+        if ($isUpdate && is_null($this->inviteesBefore)) {
+            $this->inviteesBefore = CalendarUtils::getInvitees($this);
         }
 
         if (isset($this->date_start)) {
@@ -217,12 +217,12 @@ class Call extends SugarBean {
         }
 
         if ($isUpdate) {
-            $this->getCalDavHandler()->export($this, array($this->dataChanges, $this->invitesBefore, CalendarUtils::getInvites($this)));
+            $this->getCalDavHandler()->export($this, array($this->dataChanges, $this->inviteesBefore, CalendarUtils::getInvitees($this)));
         } else {
             $this->getCalDavHandler()->export($this, false);
         }
 
-        $this->invitesBefore = null;
+        $this->inviteesBefore = null;
 
         return $return_id;
 	}
