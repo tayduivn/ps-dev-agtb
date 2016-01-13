@@ -194,7 +194,7 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
      */
     protected function shouldRun()
     {
-        // Only run this id source is 7.6.0.0 or 7.6.1.0 and the target is
+        // Only run this if source is 7.6.0.0 or 7.6.1.0 and the target is
         // greater than 7.6.1.0
         $from = version_compare($this->from_version, '7.6.0.0', '==')
                 || version_compare($this->from_version, '7.6.1.0', '==');

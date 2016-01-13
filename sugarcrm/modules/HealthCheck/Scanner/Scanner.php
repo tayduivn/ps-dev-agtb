@@ -761,14 +761,23 @@ class HealthCheckScanner
     }
 
     /**
-     * Checks whether Process Author unserializtion between 7.6.1 and 7.6.2+ will
+     * Checks whether Process Author unserializtion between 7.6.(0|1) and 7.6.2+ will
      * fail. If any unserialize calls fail, it will notify with a Bucket F red flag.
      */
     protected function checkPAUnserialization()
     {
-        $warnings = $this->checkUnserializationFailures();
-        foreach ($warnings as $warning) {
-            $this->updateStatus('invalidPASerialization', $warning['count'], $warning['col'], $warning['table'], $warning['reason']);
+        // Make sure we need to run this first
+        list($version, $flavor) = $this->getVersionAndFlavor();
+
+        // Only run this for 7.6.0 and 7.6.1 instances
+        if (version_compare($version, '7.6.0.0', '==') || version_compare($version, '7.6.1.0', '==')) {
+            // And only run this for ENT or ULT flavors
+            if (in_array(strtolower($flavor), array('ent', 'ult'))) {
+                $warnings = $this->checkUnserializationFailures();
+                foreach ($warnings as $warning) {
+                    $this->updateStatus('invalidPASerialization', $warning['count'], $warning['col'], $warning['table'], $warning['reason']);
+                }
+            }
         }
     }
 
