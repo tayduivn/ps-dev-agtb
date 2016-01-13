@@ -86,16 +86,15 @@ class MetaDataCache
         $result = null;
         //During install/setup, this function might get called before the DB is setup.
         if (!empty($this->db)) {
-            $sqlResult = $this->db->query("SELECT data FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key));
+            $sqlResult = $this->db->query("SELECT id, data FROM " . static::$cacheTable . " WHERE type="
+                . $this->db->quoted($key) . " ORDER BY date_modified DESC");
 
-            //If we have more than one entry for the same key, we need to remove the duplicate entries and bust the cache
-            if ($this->db->getAffectedRowCount($sqlResult) > 1) {
-                $this->removeFromCacheTable($key);
-
-                return null;
-            }
             if (($row = $this->db->fetchByAssoc($sqlResult))) {
                 $cacheResult = $row['data'];
+            }
+            //If we have more than one entry for the same key, we need to remove the duplicate entries.
+            while (($row = $this->db->fetchByAssoc($sqlResult))) {
+                $this->db->query("DELETE FROM " . static::$cacheTable . " WHERE id=" . $this->db->quoted($row['id']));
             }
 
             if (!empty($cacheResult)) {
@@ -130,16 +129,16 @@ class MetaDataCache
             }
 
             $id = null;
-            $result = $this->db->query("SELECT id FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key));
+            $result = $this->db->query("SELECT id FROM " . static::$cacheTable . " WHERE type="
+                            . $this->db->quoted($key) . " ORDER BY date_modified DESC");
 
-            //If we have more than one entry for the same key, we need to remove the duplicate entries
-            if ($this->db->getAffectedRowCount($result) > 1) {
-                $this->removeFromCacheTable($key);
-            }
-            else if (($row = $this->db->fetchByAssoc($result)) && !empty($row['id'])) {
+            if (($row = $this->db->fetchByAssoc($result)) && !empty($row['id'])) {
                 $id = $row['id'];
+                //If we have more than one entry for the same key, we need to remove the duplicate entries.
+                while (($row = $this->db->fetchByAssoc($result))) {
+                    $this->db->query("DELETE FROM " . static::$cacheTable . " WHERE id=" . $this->db->quoted($row['id']));
+                }
             }
-
 
             $values = array(
                 'id' => $id,
