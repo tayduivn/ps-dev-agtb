@@ -62,6 +62,7 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
             'table' => 'pmse_bpm_dynamic_forms',
             'cols' => array('dyn_view_defs'),
             'functions' => array('base64_decode'),
+            'decode' => false,
         ),
         'bpmFlowTable' => array(
             'table' => 'pmse_bpm_flow',
@@ -96,14 +97,15 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
 
     /**
      * Convert value from PHP serialized to JSON
-     * @param $input
-     * @param $encode
+     * @param string $input The serialized input data
+     * @param boolean $decode Whether to html entity decode the input
+     * @param boolena $encode Whether to htmlentity encode the result
      * @return string
      */
-    protected function convertSerializedData($input, $encode = false)
+    protected function convertSerializedData($input, $decode = true, $encode = false)
     {
         // Since we need to work on html decoded data, get that now
-        $decoded = html_entity_decode($input);
+        $decoded = $decode ? html_entity_decode($input) : $input;
 
         // Unserialize the input. NOTE: We are not using the unserialize validator
         // here because we need to be able to unserialize strings with references
@@ -186,8 +188,15 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
                     }
                 }
 
+                // Get our decode flag from the properties
+                $decode = !isset($data['decode']) || $data['decode'] === true;
+
+                // Get the converted data now. This will turn a serialized string
+                // into a json encoded string
+                $converted = $this->convertSerializedData($string, $decode, !empty($data['encode']));
+
                 // Now set the new data, quoting it for our DB
-                $newData = $this->db->quoted($this->convertSerializedData($string), !empty($data['encode']));
+                $newData = $this->db->quoted($converted);
 
                 // And update the column update SQL strings
                 $updateCols[$col] = sprintf($colSql, $newData);
