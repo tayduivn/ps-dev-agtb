@@ -28,7 +28,7 @@ class TemplateFloat extends TemplateRange
 
     function get_field_def(){
         $def = parent::get_field_def();
-        $def['precision'] = isset($this->ext1) && intval($this->ext1) ? intval($this->ext1) : $this->precision;
+        $def['precision'] = isset($this->ext1) && is_numeric($this->ext1) ? (int)$this->ext1 : $this->precision;
         return $def;
     }
 
