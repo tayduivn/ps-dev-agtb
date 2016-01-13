@@ -407,6 +407,9 @@ EOL;
                 $rli->commit_stage = '';
                 $rli->sales_stage = $opp->sales_stage;
                 $rli->deleted = $opp->deleted;
+                $rli->team_id = $opp->team_id;
+                $rli->team_set_id = $opp->team_set_id;
+                $rli->team_set_selected_id = $opp->team_set_selected_id;
                 $rli->save();
 
                 // set the relationship up correctly
