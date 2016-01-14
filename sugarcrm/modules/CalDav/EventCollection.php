@@ -1199,7 +1199,10 @@ class CalDavEventCollection extends SugarBean
 
         if ($adapter) {
             $dataToExport = $adapter->prepareForExport($bean);
-            if ($adapter->export($dataToExport, $collection)) {
+            if ($dataToExport) {
+                $dataToExport = current($dataToExport);
+            }
+            if ($dataToExport && $adapter->export($dataToExport, $collection)) {
                 $vCalendarEvent = $collection->getVCalendar();
                 $vCalendarEvent->add($vCalendarEvent->createProperty('METHOD', 'REQUEST'));
 
