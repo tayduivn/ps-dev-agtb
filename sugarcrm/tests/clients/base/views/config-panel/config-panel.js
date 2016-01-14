@@ -41,11 +41,6 @@ describe('Base.View.ConfigPanel', function() {
     });
 
     describe('initialize()', function() {
-        it('should set `this.currentModule`', function() {
-            view.initialize(options);
-            expect(view.currentModule).toBe('Opportunities');
-        });
-
         it('should set `this.titleViewNameTitle`', function() {
             view.initialize(options);
             expect(view.titleViewNameTitle).toBe('testLabel');

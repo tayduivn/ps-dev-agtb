@@ -10,23 +10,16 @@
  */
 describe('Base.View.ConfigHeaderButtons', function() {
     var app,
-        context,
         view,
-        options;
+        module;
 
     beforeEach(function() {
         app = SugarTest.app;
-        context = app.context.getContext();
-        context.set('model', new Backbone.Model());
+        module = 'Opportunities';
 
-        options = {
-            context: context
-        };
+        sinon.collection.stub(app.lang, 'getModuleName').withArgs(module, {plural: true}).returns('Opps');
 
-        sinon.collection.stub(app.controller.context, 'get').withArgs('module').returns('Opportunities');
-        sinon.collection.stub(app.lang, 'getModuleName').withArgs('Opportunities', {plural: true}).returns('Opps');
-
-        view = SugarTest.createView('base', null, 'config-header-buttons');
+        view = SugarTest.createView('base', module, 'config-header-buttons');
     });
 
     afterEach(function() {
@@ -42,21 +35,31 @@ describe('Base.View.ConfigHeaderButtons', function() {
         beforeEach(function() {
             sinon.collection.stub(app.router, 'goBack', function() {});
         });
-        it('if app.drawer exists, should call app.drawer.close()', function() {
+        it('should close the drawer if there is one', function() {
             app.drawer = {
-                close: function() {}
+                close: $.noop,
+                count: function() {
+                    return 1;
+                }
             };
             sinon.collection.spy(app.drawer, 'close');
             view.cancelConfig();
+
             expect(app.drawer.close).toHaveBeenCalled();
             delete app.drawer;
         });
 
-        describe('if app.drawer does not exists', function() {
-            it('should call app.router.goBack()', function() {
-                view.cancelConfig();
-                expect(app.router.goBack).toHaveBeenCalled();
-            });
+        it('should navigate to the module if there is no drawer', function() {
+            app.drawer = {
+                count: function() {
+                    return 0;
+                }
+            };
+            sinon.collection.spy(app.router, 'navigate');
+            view.cancelConfig();
+
+            expect(app.router.navigate).toHaveBeenCalledWith(module, {trigger: true});
+            delete app.drawer;
         });
     });
 

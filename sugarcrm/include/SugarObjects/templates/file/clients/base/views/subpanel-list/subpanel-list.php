@@ -23,6 +23,7 @@ $viewdefs[$module_name]['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_DOCUMENT_NAME',
           'enabled' => true,
           'default' => true,
+          'link' => true,
         ),
         array(
           'name' => 'active_date',
