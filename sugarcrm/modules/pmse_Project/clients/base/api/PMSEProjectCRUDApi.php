@@ -159,11 +159,12 @@ class PMSEProjectCRUDApi extends ModuleApi
         $project['project']['name'] =  $args['name'];
         $project['project']['assigned_user_id'] =  $args['assigned_user_id'];
         $project['project']['description'] =  $args['description'];
+        $project['project']['prj_status'] = $args['prj_status'];
 
         $importer = new PMSEProjectImporter();
         $project['_module']['project'] = 'pmse_Project';
-        // The importation always changes the project status to INACTIVE
-        $project['project']['id'] = $importer->saveProjectData($project['project']);
+        // The importation always changes the project status to INACTIVE except when the case is Copy from a Process Definition
+        $project['project']['id'] = $importer->saveProjectData($project['project'], true);
 
         return $project['project'];
     }

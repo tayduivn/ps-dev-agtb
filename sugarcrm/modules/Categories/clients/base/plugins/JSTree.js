@@ -842,14 +842,14 @@
              * @param {String|Number} position
              * @param {Boolean} editable
              * @param {Boolean} addToRoot
-             * @param {Boolean} isDisabled
+             * @param {Boolean} disabled
              */
-            addNode: function(title, position, editable, addToRoot, isDisabled) {
+            addNode: function(title, position, editable, addToRoot, disabled) {
                 var self = this,
                     selectedNode = (addToRoot === true) ? [] : this.jsTree.jstree('get_selected'),
                     pos = position || 'last',
                     isEdit = editable || false,
-                    isDisabled = isDisabled || true,
+                    isDisabled = disabled !== false,
                     customAttr = (isDisabled === true) ? {disabled: 'disabled'} : {};
 
                 if (title) {
