@@ -519,8 +519,8 @@ class CalDavEventCollection extends SugarBean
     protected function deleteCustomChildren()
     {
         $customChildren = $this->getCustomizedChildrenRecurrenceIds();
-        foreach ($customChildren as $recurringId) {
-            $child = $this->getChild($recurringId);
+        foreach ($customChildren as $recurrenceId) {
+            $child = $this->getChild($recurrenceId);
             if ($child) {
                 $vCalendar = $this->getVCalendar();
                 $vCalendar->remove($child->getObject());
@@ -530,14 +530,14 @@ class CalDavEventCollection extends SugarBean
 
     /**
      * Get recurring children by RECURRENCE-ID
-     * @param SugarDateTime $recurringId
+     * @param SugarDateTime $recurrenceId
      * @param bool $restoreDeleted Restore deleted child or not
      * @return Structures\Event | null
      */
-    public function getChild(\SugarDateTime $recurringId, $restoreDeleted = false)
+    public function getChild(\SugarDateTime $recurrenceId, $restoreDeleted = false)
     {
         $children = $this->getAllChildren();
-        $recurringTimeStamp = $recurringId->getTimestamp();
+        $recurringTimeStamp = $recurrenceId->getTimestamp();
         $child = isset($children[$recurringTimeStamp]) ? $children[$recurringTimeStamp] : null;
 
         if ($child) {
@@ -547,7 +547,7 @@ class CalDavEventCollection extends SugarBean
             }
 
             if ($child->isDeleted() && $restoreDeleted) {
-                return $this->addChild($recurringId, $restoreDeleted);
+                return $this->addChild($recurrenceId, $restoreDeleted);
             }
         }
 
@@ -556,12 +556,12 @@ class CalDavEventCollection extends SugarBean
 
     /**
      * Add new child a custom recurring item
-     * If  $recurringId was deleted we can not add new child with this recurring id
-     * @param SugarDateTime $recurringId
+     * If  recurrence-id was deleted we can not add new child with this recurring id
+     * @param SugarDateTime $recurrenceId
      * @param bool $restoreDeleted Restore deleted child or not
      * @return null | Structures\Event
      */
-    protected function addChild(\SugarDateTime $recurringId, $restoreDeleted = false)
+    protected function addChild(\SugarDateTime $recurrenceId, $restoreDeleted = false)
     {
         $vCalendar = $this->getVCalendar();
         /* @var $eventClass \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event */
@@ -577,16 +577,43 @@ class CalDavEventCollection extends SugarBean
         $vCalendar->add($event);
 
         $child = new $eventClass($event, $eventClass::STATE_CUSTOM);
-        $child->setRecurrenceID($recurringId);
+        $child->setRecurrenceID($recurrenceId);
 
-        $recurringTimeStamp = $recurringId->getTimestamp();
+        $recurringTimeStamp = $recurrenceId->getTimestamp();
         $this->childEvents[$recurringTimeStamp] = $child;
 
         if ($restoreDeleted) {
-            $this->removeFromDeleted($recurringId);
+            $this->removeFromDeleted($recurrenceId);
         }
 
         return $child;
+    }
+
+    /**
+     * Deletes event from series.
+     *
+     * @param SugarDateTime $recurrenceId
+     * @return bool
+     */
+    public function deleteChild(\SugarDateTime $recurrenceId)
+    {
+        $children = $this->getAllChildren();
+        $recurrenceTimeStamp = $recurrenceId->getTimestamp();
+        $child = isset($children[$recurrenceTimeStamp]) ? $children[$recurrenceTimeStamp] : null;
+        if (!$child) {
+            return false;
+        }
+        if ($child->isDeleted()) {
+            return false;
+        }
+
+        $object = $this->getParent()->getObject();
+        $property = $object->parent->createProperty('EXDATE');
+        $property->setDateTime($recurrenceId);
+        $object->add($property);
+        $this->childEvents = array();
+
+        return true;
     }
 
     /**
@@ -1433,7 +1460,7 @@ class CalDavEventCollection extends SugarBean
         $filter = true;
         if (empty($data)) {
             $filter = array_filter($changedFields, function ($set) {
-                return $set[0];
+                return !empty($set[0]);
             });
         }
 
@@ -1451,10 +1478,10 @@ class CalDavEventCollection extends SugarBean
             );
         }
 
-        $currentChildrenIDs = $this->getCustomizedChildrenRecurrenceIds();
-        $allChildrenIDs = array_values($this->getAllChildrenRecurrenceIds());
+        $childrenRecurrenceIds = array_values($this->getAllChildrenRecurrenceIds());
 
-        foreach ($currentChildrenIDs as $recurrenceId) {
+        $customizedChildrenRecurrenceIds = $this->getCustomizedChildrenRecurrenceIds();
+        foreach ($customizedChildrenRecurrenceIds as $recurrenceId) {
 
             $oldChild = $oldCollection ? $oldCollection->getChild($recurrenceId) : null;
             $currentChild = $this->getChild($recurrenceId);
@@ -1475,11 +1502,29 @@ class CalDavEventCollection extends SugarBean
                         $this->id,
                         $this->getSugarChildrenOrder(),
                         $recurrenceId->asDb(),
-                        array_search($recurrenceId, $allChildrenIDs),
+                        array_search($recurrenceId, $childrenRecurrenceIds),
                         'update',
                     ),
                     $changedFields,
                     $invites,
+                );
+            }
+        }
+
+        $deletedChildrenRecurrenceIds = $this->getDeletedChildrenRecurrenceIds();
+        foreach ($deletedChildrenRecurrenceIds as $recurrenceId) {
+            $oldChild = $oldCollection ? $oldCollection->getChild($recurrenceId) : null;
+            if ($oldChild && !$oldChild->isDeleted()) {
+                $result[] = array(
+                    array(
+                        $this->id,
+                        $this->getSugarChildrenOrder(),
+                        $recurrenceId->asDb(),
+                        array_search($recurrenceId, $childrenRecurrenceIds),
+                        'delete',
+                    ),
+                    array(),
+                    array(),
                 );
             }
         }

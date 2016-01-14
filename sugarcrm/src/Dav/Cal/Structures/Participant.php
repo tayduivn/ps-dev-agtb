@@ -233,21 +233,33 @@ class Participant
     }
 
     /**
-     * Set module of participant
+     * Set Sugar module to participant.
+     *
      * @param string $value
+     * @return bool
      */
     public function setBeanName($value)
     {
+        if ($this->beanName == $value) {
+            return false;
+        }
         $this->beanName = $value;
+        return true;
     }
 
     /**
-     * Set Sugar user id to participant
+     * Set Sugar id to participant.
+     *
      * @param string $value
+     * @return bool
      */
     public function setBeanId($value)
     {
+        if ($this->beanId == $value) {
+            return false;
+        }
         $this->beanId = $value;
+        return true;
     }
 
     /**

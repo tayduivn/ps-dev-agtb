@@ -515,7 +515,7 @@ class Event
     }
 
     /**
-     * Get recurring id of event
+     * Get recurrence-id of event
      * @return null|\SugarDateTime
      */
     public function getRecurrenceID()
@@ -743,7 +743,7 @@ class Event
     }
 
     /**
-     * Set recurring id of event
+     * Set recurrence-id of event
      * @param \SugarDateTime $value
      * @return null|string
      */
