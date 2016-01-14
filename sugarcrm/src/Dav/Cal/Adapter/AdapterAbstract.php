@@ -86,7 +86,6 @@ abstract class AdapterAbstract implements AdapterInterface
             'name' => true,
             'location' => true,
             'description' => true,
-            'deleted' => true,
             'date_start' => true,
             'date_end' => true,
             'status' => true,
@@ -282,7 +281,7 @@ abstract class AdapterAbstract implements AdapterInterface
         if ($action == 'delete' && !$bean->deleted) {
             return static::DELETE;
         }
-        if ($bean->deleted) {
+        if ($action != 'restore' && $bean->deleted) {
             return static::NOTHING;
         }
 
@@ -320,60 +319,65 @@ abstract class AdapterAbstract implements AdapterInterface
         if (isset($changedFields['title'])) {
             if ($this->setBeanName($changedFields['title'][0], $bean)) {
                 $isChanged = true;
-            } else {
+            } elseif ($action != 'restore') {
                 unset($data[1]['title']);
             }
         }
         if (isset($changedFields['description'])) {
             if ($this->setBeanDescription($changedFields['description'][0], $bean)) {
                 $isChanged = true;
-            } else {
+            } elseif ($action != 'restore') {
                 unset($data[1]['description']);
             }
         }
         if (isset($changedFields['location'])) {
             if ($this->setBeanLocation($changedFields['location'][0], $bean)) {
                 $isChanged = true;
-            } else {
+            } elseif ($action != 'restore') {
                 unset($data[1]['location']);
             }
         }
         if (isset($changedFields['status'])) {
             if ($this->setBeanStatus($changedFields['status'][0], $bean)) {
                 $isChanged = true;
-            } else {
+            } elseif ($action != 'restore') {
                 unset($data[1]['status']);
             }
         }
         if (isset($changedFields['date_start'])) {
             if ($this->setBeanStartDate($changedFields['date_start'][0], $bean)) {
                 $isChanged = true;
-            } else {
+            } elseif ($action != 'restore') {
                 unset($data[1]['date_start']);
             }
         }
         if (isset($changedFields['date_end'])) {
             if ($this->setBeanEndDate($changedFields['date_end'][0], $bean)) {
                 $isChanged = true;
-            } else {
+            } elseif ($action != 'restore') {
                 unset($data[1]['date_end']);
             }
         }
-        $changes = $this->setBeanInvitees($invitees, $bean, $action == 'override');
+        $changes = $this->setBeanInvitees($invitees, $bean, $action == 'override' || $action == 'restore');
         if ($changes) {
             $isChanged = true;
-            $data[2] = $changes;
-        } else {
+            if ($action != 'restore') {
+                $data[2] = $changes;
+            }
+        } elseif ($action != 'restore') {
             $data[2] = array();
         }
         if (isset($changedFields['rrule'])) {
             if ($this->setBeanRecurrence($changedFields['rrule'], $bean)) {
                 $isChanged = true;
-            } else {
+            } elseif ($action != 'restore') {
                 unset($data[1]['rrule']);
             }
         }
 
+        if ($action == 'restore' && $bean->deleted) {
+            return static::RESTORE;
+        }
         if ($isChanged) {
             return static::SAVE;
         }
@@ -497,12 +501,6 @@ abstract class AdapterAbstract implements AdapterInterface
             if ($exportFields['name'][0] == $importFields['title'][0]) {
                 unset($exportFields['name']);
                 unset($importFields['title']);
-            }
-        }
-        if (isset($exportFields['deleted']) && isset($importFields['deleted'])) {
-            if ($exportFields['deleted'][0] == $importFields['deleted'][0]) {
-                unset($exportFields['deleted']);
-                unset($importFields['deleted']);
             }
         }
         if (isset($exportFields['location']) && isset($importFields['location'])) {
@@ -1241,7 +1239,11 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     protected function setBeanStartDate($value, \SugarBean $bean)
     {
-        if ($value != $bean->date_start) {
+        $dateStart = null;
+        if ($bean->date_start) {
+            $dateStart = $this->getDateTimeHelper()->sugarDateToUTC($bean->date_start)->asDb();
+        }
+        if ($value != $dateStart) {
             $bean->date_start = $value;
             if ($bean->date_end) {
                 $beanDateStart = $this->getDateTimeHelper()->sugarDateToUTC($bean->date_start);
@@ -1264,7 +1266,11 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     protected function setBeanEndDate($value, \SugarBean $bean)
     {
-        if ($value != $bean->date_end) {
+        $dateEnd = null;
+        if ($bean->date_end) {
+            $dateEnd = $this->getDateTimeHelper()->sugarDateToUTC($bean->date_end)->asDb();
+        }
+        if ($value != $dateEnd) {
             $bean->date_end = $value;
             if ($bean->date_start) {
                 $beanDateStart = $this->getDateTimeHelper()->sugarDateToUTC($bean->date_start);

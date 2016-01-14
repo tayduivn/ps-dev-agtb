@@ -339,6 +339,9 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
         }
         $eventBean = $this->getEventsBean();
         $events = $eventBean->getByURI($calendarId, array($objectUri), 1);
+        if (!$events) {
+            return null;
+        }
         $event = array_shift($events);
         $event->doLocalDelivery = false;
         if ($event && $event->id && $event->setData($calendarData)) {
@@ -357,6 +360,9 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
     {
         $eventBean = $this->getEventsBean();
         $events = $eventBean->getByURI($calendarId, array($objectUri), 1);
+        if (!$events) {
+            return null;
+        }
         $event = array_shift($events);
         if ($event && $event->id) {
             $event->mark_deleted($event->id);

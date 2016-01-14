@@ -51,10 +51,10 @@ class Export extends Base
             $exportData = $this->processedData;
             $result = $adapter->export($exportData, $calDavBean);
             if ($result != AdapterInterface::NOTHING) {
-                $importData = null;
-                HookHandler::$importHandler = function ($beanModule, $beanId, $data) use ($calDavBean, &$importData) {
+                $importDataSet = array();
+                HookHandler::$importHandler = function ($beanModule, $beanId, $data) use ($calDavBean, &$importDataSet) {
                     if ($calDavBean->module_name == $beanModule && $calDavBean->id == $beanId) {
-                        $importData = $data;
+                        $importDataSet[] = $data;
                         return false;
                     }
                     return true;
@@ -66,14 +66,18 @@ class Export extends Base
                     case AdapterInterface::DELETE :
                         $calDavBean->mark_deleted($calDavBean->id);
                         break;
+                    case AdapterInterface::RESTORE :
+                        $calDavBean->mark_undeleted($calDavBean->id);
+                        $calDavBean->save();
+                        break;
                 }
                 HookHandler::$importHandler = null;
-                if ($importData) {
+                foreach ($importDataSet as $importData) {
                     $importData = $adapter->verifyImportAfterExport($exportData, $importData, $calDavBean);
-                }
-                if ($importData) {
-                    $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();
-                    $this->getManager()->calDavImport($calDavBean->module_name, $calDavBean->id, $importData, $saveCounter);
+                    if ($importData) {
+                        $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();
+                        $this->getManager()->calDavImport($calDavBean->module_name, $calDavBean->id, $importData, $saveCounter);
+                    }
                 }
             }
         } catch (\Exception $exception) {

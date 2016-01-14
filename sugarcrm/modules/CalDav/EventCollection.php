@@ -1324,11 +1324,6 @@ class CalDavEventCollection extends SugarBean
                 $changedFields['date_end'] =
                     array($currentEvent->getEndDate()->asDb(), $oldEvent->getEndDate()->asDb());
             }
-
-            if (isset($this->fetched_row['deleted']) && $this->deleted != $this->fetched_row['deleted']) {
-                $changedFields['deleted'] = array($this->deleted, $this->fetched_row['deleted']);
-            }
-
         } else {
             $changedFields['title'] = array($currentEvent->getTitle());
             $changedFields['description'] = array($currentEvent->getDescription());
@@ -1340,7 +1335,6 @@ class CalDavEventCollection extends SugarBean
             if ($currentEvent->getEndDate()) {
                 $changedFields['date_end'] = array($currentEvent->getEndDate()->asDb());
             }
-            $changedFields['deleted'] = array($this->deleted);
         }
         return $changedFields;
     }
@@ -1479,7 +1473,7 @@ class CalDavEventCollection extends SugarBean
         }
 
         $childrenRecurrenceIds = array_values($this->getAllChildrenRecurrenceIds());
-
+        // looking for events which should be customized
         $customizedChildrenRecurrenceIds = $this->getCustomizedChildrenRecurrenceIds();
         foreach ($customizedChildrenRecurrenceIds as $recurrenceId) {
 
@@ -1503,14 +1497,14 @@ class CalDavEventCollection extends SugarBean
                         $this->getSugarChildrenOrder(),
                         $recurrenceId->asDb(),
                         array_search($recurrenceId, $childrenRecurrenceIds),
-                        'update',
+                        $oldChild ? 'update' : 'override',
                     ),
                     $changedFields,
                     $invites,
                 );
             }
         }
-
+        // looking for events which should be deleted
         $deletedChildrenRecurrenceIds = $this->getDeletedChildrenRecurrenceIds();
         foreach ($deletedChildrenRecurrenceIds as $recurrenceId) {
             $oldChild = $oldCollection ? $oldCollection->getChild($recurrenceId) : null;
@@ -1526,6 +1520,31 @@ class CalDavEventCollection extends SugarBean
                     array(),
                     array(),
                 );
+            }
+        }
+
+        if ($oldCollection) {
+            $recurrenceIds = array_merge(
+                // looking for custom events which should become base
+                $oldCollection->getCustomizedChildrenRecurrenceIds(),
+                // looking for deleted events which should become base
+                $oldCollection->getDeletedChildrenRecurrenceIds()
+            );
+            foreach ($recurrenceIds as $recurrenceId) {
+                $currentChild = $this->getChild($recurrenceId);
+                if ($currentChild && !$currentChild->isCustomized()) {
+                    $result[] = array(
+                        array(
+                            $this->id,
+                            $this->getSugarChildrenOrder(),
+                            $recurrenceId->asDb(),
+                            array_search($recurrenceId, $childrenRecurrenceIds),
+                            'restore',
+                        ),
+                        $this->getEventDiff($currentChild, null),
+                        $this->getParticipantsDiff($currentChild, null),
+                    );
+                }
             }
         }
 

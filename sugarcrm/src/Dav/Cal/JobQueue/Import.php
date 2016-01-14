@@ -73,15 +73,15 @@ class Import extends Base
             $importData = $this->processedData;
             $result = $adapter->import($importData, $liveBean);
             if ($result != AdapterInterface::NOTHING) {
-                $exportData = null;
-                HookHandler::$exportHandler = function($beanModule, $beanId, $data) use ($bean, &$exportData) {
+                $exportDataSet = array();
+                HookHandler::$exportHandler = function($beanModule, $beanId, $data) use ($bean, &$exportDataSet) {
                     if (!empty($bean->repeat_parent_id)) {
                         $parentBeanId = $bean->repeat_parent_id;
                     } else {
                         $parentBeanId = $bean->id;
                     }
                     if ($bean->module_name == $beanModule && $parentBeanId == $beanId) {
-                        $exportData = $data;
+                        $exportDataSet[] = $data;
                         return false;
                     }
                     return true;
@@ -93,14 +93,23 @@ class Import extends Base
                     case AdapterInterface::DELETE :
                         $liveBean->mark_deleted($liveBean->id);
                         break;
+                    case AdapterInterface::RESTORE :
+                        $liveBean->mark_undeleted($liveBean->id);
+                        $liveBean->save();
+                        break;
                 }
                 HookHandler::$exportHandler = null;
-                if ($exportData) {
+                foreach ($exportDataSet as $exportData) {
                     $exportData = $adapter->verifyExportAfterImport($importData, $exportData, $liveBean);
-                }
-                if ($exportData) {
-                    $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();
-                    $this->getManager()->calDavExport($liveBean->module_name, $liveBean->id, $exportData, $saveCounter);
+                    if ($exportData) {
+                        $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();
+                        if (!empty($bean->repeat_parent_id)) {
+                            $liveBeanId = $bean->repeat_parent_id;
+                        } else {
+                            $liveBeanId = $bean->id;
+                        }
+                        $this->getManager()->calDavExport($liveBean->module_name, $liveBeanId, $exportData, $saveCounter);
+                    }
                 }
             }
             $bean = $liveBean;
