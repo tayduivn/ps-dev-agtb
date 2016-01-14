@@ -245,7 +245,10 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $calendarEventsApiMock->createRecord($this->api, $args);
     }
 
-    public function testCreateRecord_RecurringMeeting_CallsGenerateRecurringCalendarEventsMethod()
+    /**
+     * @expectedException SugarApiException
+     */
+    public function testCreateRecord_RecurringMeeting_NoTerminationArgs_ThrowsException()
     {
         $id = create_guid();
         $this->meetingIds[] = $id;
@@ -260,14 +263,15 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args['duration_hours'] = 1;
         $args['duration_minutes'] = 30;
 
+        /* Neither repeat_count nor repeat_until specified  - Error */
+
         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
             array('generateRecurringCalendarEvents')
         );
-        $calendarEventsApiMock->expects($this->once())
+        $calendarEventsApiMock->expects($this->never())
             ->method('generateRecurringCalendarEvents');
 
-        $result = $calendarEventsApiMock->createBean($this->api, $args);
-        $this->meetingIds[] = $result->id;
+        $calendarEventsApiMock->createBean($this->api, $args);
     }
 
     public function testCreateRecord_RecurringMeeting_ScheduleMeetingSeries_OK()
@@ -312,6 +316,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'module' => 'Meetings',
             'record' => $meeting->id,
             'all_recurrences' => 'true',
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
         );
 
         $calendarEvents = $this->getMockForCalendarEventsIsEventRecurring(true);
@@ -336,13 +341,16 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $argsExpected = array(
             'module' => 'Meetings',
             'record' => $meeting->id,
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
         );
         $args = array_merge($argsExpected, array(
-            'repeat_type' => 'foo1',
-            'repeat_interval' => 'foo2',
-            'repeat_dow' => 'foo3',
-            'repeat_until' => 'foo4',
-            'repeat_count' => 'foo5',
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
+            'repeat_type' => 'Daily',
+            'repeat_interval' => '1',
+            'repeat_count' => '5',
+            'repeat_dow' => '',
+            'repeat_until' => '',
+
         ));
 
         $calendarEvents = $this->getMockForCalendarEventsIsEventRecurring(true);
@@ -368,6 +376,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args = array(
             'module' => 'Meetings',
             'record' => $meeting->id,
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
         );
 
         $calendarEvents = $this->getMockForCalendarEventsIsEventRecurring(false);
@@ -394,6 +403,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args = array(
             'module' => 'Meetings',
             'record' => $meeting->id,
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
         );
 
         $calendarEvents = $this->getMockForCalendarEventsIsEventRecurring(false);
@@ -629,6 +639,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args = array();
         $args['module'] = 'Meetings';
         $args['record'] = create_guid();
+        $args['date_start'] = $this->dateTimeAsISO('2014-12-25 13:00:00');
         $this->calendarEventsApi->updateCalendarEvent($this->api, $args);
     }
 
@@ -640,6 +651,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args = array(
             'module' => 'Meetings',
             'record' => $meeting->id,
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
             'all_recurrences' => 'true',
         );
 
@@ -672,6 +684,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args = array(
             'module' => 'Meetings',
             'record' => $meeting->id,
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
             'all_recurrences' => 'false',
         );
 
@@ -704,6 +717,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args = array(
             'module' => 'Meetings',
             'record' => $meeting->id,
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
         );
 
         $calendarEvents = $this->getMockForCalendarEvents(
@@ -743,6 +757,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args = array(
             'module' => 'Meetings',
             'record' => $meeting->id,
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
         );
 
         $calendarEvents = $this->getMockForCalendarEvents(
