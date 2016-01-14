@@ -366,12 +366,14 @@ class CalendarUtils
         $bean->load_relationship('tag_link');
         $parentTagBeans = $bean->tag_link->getBeans();
 
-		$eventCollection = new \CalDavEventCollection();
-		$calDavEvent = $eventCollection->findByBean($bean);
-		if($calDavEvent) {
-			$calDavEvent->setSugarChildrenOrder(array_keys($timeArray));
-			$calDavEvent->save();
-		}
+        $eventCollection = new \CalDavEventCollection();
+        $calDavEvent = $eventCollection->findByBean($bean);
+        if($calDavEvent) {
+            $childrenOrder = array_keys($timeArray);
+            array_unshift($childrenOrder, $bean->id);
+            $calDavEvent->setSugarChildrenOrder($childrenOrder);
+            $calDavEvent->save();
+        }
 
 		$clone = clone $bean;
 

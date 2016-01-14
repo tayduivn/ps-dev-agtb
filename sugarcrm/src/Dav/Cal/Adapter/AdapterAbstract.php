@@ -57,20 +57,32 @@ abstract class AdapterAbstract implements AdapterInterface
                 ($action != 'override' && $this->isRecurringChanged($changedFields))
             ) {
                 $recurringParam = $this->getRecurringHelper()->beanToArray($bean);
+                $action = 'override';
+            } elseif (empty($bean->updateAllChildren)) {
+                $calendarEvents = $this->getCalendarEvents();
+                $children = $calendarEvents->getChildrenQuery($bean)->limit(1)->execute();
+                if ($children) {
+                    $repeatParentId = $bean->id;
+                }
+            } else {
+                $action = 'override';
             }
         }
 
         $beanData = array(
+            $action,
             $bean->module_name,
             $bean->id,
             $repeatParentId,
             $recurringParam,
-            $action,
         );
 
         switch ($action) {
             case 'override' :
                 $changedFields = $this->getBeanFetchedRow($bean);
+                if (!$changedFields['repeat_type'][0]) {
+                    $changedFields['repeat_interval'][0] = null;
+                }
                 break;
             case 'update' :
                 $changedFields = $this->getFieldsDiff($changedFields);
@@ -82,20 +94,22 @@ abstract class AdapterAbstract implements AdapterInterface
                 return false;
         }
 
-        $changedFields = array_intersect_key($changedFields, array(
+        $changedFieldsFilter = array(
             'name' => true,
             'location' => true,
             'description' => true,
             'date_start' => true,
             'date_end' => true,
             'status' => true,
-            'repeat_type' => true,
-            'repeat_interval' => true,
-            'repeat_dow' => true,
-            'repeat_until' => true,
-            'repeat_count' => true,
             'repeat_parent_id' => true,
-        ));
+        );
+
+        if (!$repeatParentId) {
+            $changedFieldsFilter =
+                array_merge($changedFieldsFilter, array_fill_keys(RecurringHelper::$recurringFieldList, true));
+        }
+
+        $changedFields = array_intersect_key($changedFields, $changedFieldsFilter);
 
         $changedInvitees = $participantsHelper->getInviteesDiff($inviteesBefore, $inviteesAfter);
 
@@ -112,7 +126,7 @@ abstract class AdapterAbstract implements AdapterInterface
     {
         $isChanged = false;
         list($beanData, $changedFields, $invitees) = $data;
-        list($beanModuleName, $beanId, $repeatParentId, $recurringParam, $action) = $beanData;
+        list($action, $beanModuleName, $beanId, $repeatParentId, $recurringParam) = $beanData;
 
         if ($action == 'delete' && !$repeatParentId) {
             return static::DELETE;
@@ -217,17 +231,21 @@ abstract class AdapterAbstract implements AdapterInterface
         } else {
             $data[2] = array();
         }
-        if (!$repeatParentId && $recurringParam) {
-            if ($this->setCalDavRecurring($recurringParam, $collection)) {
-                $isChanged = true;
-            } else {
-                $data[0][3] = null;
-                unset($data[1]['repeat_type']);
-                unset($data[1]['repeat_interval']);
-                unset($data[1]['repeat_dow']);
-                unset($data[1]['repeat_until']);
-                unset($data[1]['repeat_count']);
-                unset($data[1]['repeat_parent_id']);
+        if (!$repeatParentId) {
+            if ($recurringParam) {
+                if ($this->setCalDavRecurring($recurringParam, $collection)) {
+                    $isChanged = true;
+                } else {
+                    $data[0][3] = null;
+                    unset($data[1]['repeat_type']);
+                    unset($data[1]['repeat_interval']);
+                    unset($data[1]['repeat_dow']);
+                    unset($data[1]['repeat_until']);
+                    unset($data[1]['repeat_count']);
+                    unset($data[1]['repeat_parent_id']);
+                }
+            } elseif ($collection->getRRule()) {
+                $collection->resetChildrenChanges();
             }
         }
 
@@ -276,7 +294,7 @@ abstract class AdapterAbstract implements AdapterInterface
         /**@var \Meeting $bean*/
         $isChanged = false;
         list($beanData, $changedFields, $invitees) = $data;
-        list($beanId, $childEventsId, $recurrenceId, $recurrenceIndex, $action) = $beanData;
+        list($action, $beanId, $childEventsId, $recurrenceId, $recurrenceIndex) = $beanData;
 
         if ($action == 'delete' && !$bean->deleted) {
             return static::DELETE;
@@ -373,6 +391,9 @@ abstract class AdapterAbstract implements AdapterInterface
             } elseif ($action != 'restore') {
                 unset($data[1]['rrule']);
             }
+        } elseif (!$recurrenceId && $bean->repeat_type) {
+            $calendarEvents = $this->getCalendarEvents();
+            $calendarEvents->saveRecurringEvents($bean);
         }
 
         if ($action == 'restore' && $bean->deleted) {
@@ -395,7 +416,7 @@ abstract class AdapterAbstract implements AdapterInterface
         list($exportBean, $exportFields, $exportInvitees) = $exportData;
         list($importBean, $importFields, $importInvitees) = $importData;
 
-        if ($exportBean[4] == 'delete' && $importBean[4] == 'delete') {
+        if ($exportBean[0] == 'delete' && $importBean[0] == 'delete') {
             return false;
         }
 
@@ -446,7 +467,7 @@ abstract class AdapterAbstract implements AdapterInterface
         list($exportBean, $exportFields, $exportInvitees) = $exportData;
         list($importBean, $importFields, $importInvitees) = $importData;
 
-        if ($importBean[4] == 'delete' && $exportBean[4] == 'delete') {
+        if ($importBean[0] == 'delete' && $exportBean[0] == 'delete') {
             return false;
         }
 
@@ -647,7 +668,7 @@ abstract class AdapterAbstract implements AdapterInterface
     public function getBeanForImport(\SugarBean $bean, \CalDavEventCollection $calDavBean, $importData)
     {
         list($beanData, $changedFields, $invitees) = $importData;
-        list($beanId, $childEventsId, $recurrenceId, $recurrenceIndex, $insert) = $beanData;
+        list($action, $beanId, $childEventsId, $recurrenceId, $recurrenceIndex) = $beanData;
 
         if (is_null($recurrenceIndex)) {
             return $bean;
@@ -1030,12 +1051,17 @@ abstract class AdapterAbstract implements AdapterInterface
     protected function setCalDavRecurring(array $value, \CalDavEventCollection $collection)
     {
         if (empty($value['repeat_type'])) {
+            $collection->resetChildrenChanges();
+            $collection->setSugarChildrenOrder(array());
             return $collection->setRRule(null);
         }
 
         $rRule = $this->getRecurringHelper()->arrayToRRule($value);
-
-        return $collection->setRRule($rRule);
+        $isChanged = $collection->setRRule($rRule);
+        if ($isChanged) {
+            $collection->resetChildrenChanges();
+        }
+        return $isChanged;
     }
 
     /**
@@ -1307,7 +1333,9 @@ abstract class AdapterAbstract implements AdapterInterface
             return false;
         }
 
-        if (isset($value['until'][1]) && $bean->repeat_until != $value['until'][1]) {
+        $untilDate =
+            $bean->repeat_until ? $this->getDateTimeHelper()->sugarDateToUTC($bean->repeat_until)->asDbDate() : '';
+        if (isset($value['until'][1]) && $untilDate != $value['until'][1]) {
             return false;
         }
 
