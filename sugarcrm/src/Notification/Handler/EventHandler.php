@@ -37,7 +37,7 @@ class EventHandler extends BaseHandler
      *
      * @param EventInterface $event event for processing.
      */
-    public function initialize(EventInterface $event)
+    protected function initialize(EventInterface $event)
     {
         $this->event = $event;
     }
