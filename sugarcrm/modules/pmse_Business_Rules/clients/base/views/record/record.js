@@ -12,7 +12,7 @@
     extendsFrom: 'RecordView',
 
     initialize: function (options) {
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args:[options]});
+        this._super('initialize', [options]);
         this.context.on('button:design_businessrules:click', this.designBusinessRules, this);
         this.context.on('button:export_businessrules:click', this.warnExportBusinessRules, this);
         this.context.on('button:delete_businessrules:click', this.warnDeleteBusinessRules, this);

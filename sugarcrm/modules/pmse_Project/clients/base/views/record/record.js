@@ -12,7 +12,7 @@
     extendsFrom: 'RecordView',
 
     initialize: function (options) {
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args:[options]});
+        this._super('initialize', [options]);
         this.context.on('button:open_designer:click', this.openDesigner, this);
         this.context.on('button:export_process:click', this.showExportingWarning, this);
     },

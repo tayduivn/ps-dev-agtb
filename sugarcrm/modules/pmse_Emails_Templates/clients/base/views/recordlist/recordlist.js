@@ -22,7 +22,7 @@
             "list:deleteemailstemplates:fire": "warnDeleteEmailsTemplates",
             "list:edit_emailstemplates:fire": "warnEditEmailsTemplates"
         });
-        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args:[options]});
+        this._super('initialize', [options]);
     },
 
     openEmailsTemplates: function(model) {

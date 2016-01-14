@@ -12,7 +12,7 @@
     extendsFrom: 'RecordView',
 
     initialize: function (options) {
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args:[options]});
+        this._super('initialize', [options]);
         this.context.on('button:design_emailtemplates:click', this.designEmailTemplates, this);
         this.context.on('button:export_emailtemplates:click', this.warnExportEmailTemplates, this);
         this.context.on('button:delete_emailstemplates:click', this.warnDeleteEmailsTemplates, this);
