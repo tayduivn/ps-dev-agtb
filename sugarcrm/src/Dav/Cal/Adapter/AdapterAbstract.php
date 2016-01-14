@@ -1247,7 +1247,7 @@ abstract class AdapterAbstract implements AdapterInterface
                 $beanDateStart = $this->getDateTimeHelper()->sugarDateToUTC($bean->date_start);
                 $beanDateEnd = $this->getDateTimeHelper()->sugarDateToUTC($bean->date_end);
                 $diff = $beanDateEnd->diff($beanDateStart);
-                $bean->duration_hours = $diff->h + (int)$diff->format('a') * 24;
+                $bean->duration_hours = $diff->h + $diff->days * 24;
                 $bean->duration_minutes = $diff->i;
             }
             return true;
@@ -1270,7 +1270,7 @@ abstract class AdapterAbstract implements AdapterInterface
                 $beanDateStart = $this->getDateTimeHelper()->sugarDateToUTC($bean->date_start);
                 $beanDateEnd = $this->getDateTimeHelper()->sugarDateToUTC($bean->date_end);
                 $diff = $beanDateEnd->diff($beanDateStart);
-                $bean->duration_hours = $diff->h + (int)$diff->format('a') * 24;
+                $bean->duration_hours = $diff->h + $diff->days * 24;
                 $bean->duration_minutes = $diff->i;
             }
             return true;
