@@ -86,7 +86,7 @@ class AverageRelatedExpression extends NumericExpression
             current_value = this.context.getRelatedField(relationship, 'rollupAve', rel_field) || '',
             all_values = this.context.getRelatedField(relationship, 'rollupAve', rel_field + '_values') || {},
             new_value = model.get(rel_field) || '',
-            rollup_value = '';
+            rollup_value = '0';
 
         if (isCurrency) {
             new_value = App.currency.convertToBase(
@@ -95,10 +95,13 @@ class AverageRelatedExpression extends NumericExpression
             );
         }
 
-        if (hasModelBeenRemoved || !_.isFinite(new_value)) {
-            delete all_values[model.get('id')];
-        } else {
-            all_values[model.get('id')] = new_value;
+        if (!model.isNew()) {
+            if (hasModelBeenRemoved || !_.isFinite(new_value)) {
+                delete all_values[model.get('id')];
+            } else if (this.context.relatedModel || all_values[model.get('id')]) {
+                 // the model is related or current with related record
+                all_values[model.get('id')] = new_value;
+            }
         }
 
         if (_.size(all_values) > 0) {
@@ -134,6 +137,8 @@ class AverageRelatedExpression extends NumericExpression
             all_values,
             this.context.model.isNew()
         );
+
+        return rollup_value;
 JS;
     }
 
