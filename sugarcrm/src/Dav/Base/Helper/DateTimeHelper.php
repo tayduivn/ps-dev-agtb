@@ -78,7 +78,12 @@ class DateTimeHelper
      */
     public function davDateToSugar(VObject\Property\ICalendar\DateTime $vDateTime)
     {
-        $dt = $vDateTime->getDateTime();
+        $tz = null;
+        if (!$vDateTime->hasTime()) {
+            $tz = new \DateTimeZone($this->getCurrentUser()->getPreference('timezone'));
+        }
+
+        $dt = $vDateTime->getDateTime($tz);
         return new \SugarDateTime($dt->format('Ymd\THis'), $dt->getTimezone());
     }
 
