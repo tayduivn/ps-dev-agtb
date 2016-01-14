@@ -69,7 +69,7 @@ class Handler
                     $collection->getSynchronizationObject()->setConflictCounter(true);
                 }
                 $this->getManager()
-                     ->calDavImport($collection->module_name, $collection->id, $preparedData, $saveCounter);
+                    ->calDavImport($collection->module_name, $collection->id, $preparedData, $saveCounter);
             }
             static::$importHandler = null;
         }
@@ -89,8 +89,8 @@ class Handler
             return false;
         }
 
-        $preparedData = $adapter->prepareForExport($bean, $previousData);
-        if (!$preparedData) {
+        $preparedDataSet = $adapter->prepareForExport($bean, $previousData);
+        if (!$preparedDataSet) {
             return false;
         }
 
@@ -109,22 +109,24 @@ class Handler
             $collection->save();
         }
 
-        $continue = true;
-        if (is_callable(static::$exportHandler)) {
-            $continue = call_user_func_array(static::$exportHandler, array(
-                $bean->module_name,
-                $parentBeanId,
-                $preparedData,
-            ));
-        }
-        if ($continue && $preparedData) {
-            $saveCounter = $collection->getSynchronizationObject()->setSaveCounter();
-            if ($conflictSolver) {
-                $collection->getSynchronizationObject()->setConflictCounter(true);
+        foreach ($preparedDataSet as $preparedData) {
+            $continue = true;
+            if (is_callable(static::$exportHandler)) {
+                $continue = call_user_func_array(static::$exportHandler, array(
+                    $bean->module_name,
+                    $parentBeanId,
+                    $preparedData,
+                ));
             }
-            $this->getManager()->calDavExport($bean->module_name, $parentBeanId, $preparedData, $saveCounter);
+            if ($continue && $preparedData) {
+                $saveCounter = $collection->getSynchronizationObject()->setSaveCounter();
+                if ($conflictSolver) {
+                    $collection->getSynchronizationObject()->setConflictCounter(true);
+                }
+                $this->getManager()->calDavExport($bean->module_name, $parentBeanId, $preparedData, $saveCounter);
+            }
+            static::$exportHandler = null;
         }
-        static::$exportHandler = null;
         return true;
     }
 

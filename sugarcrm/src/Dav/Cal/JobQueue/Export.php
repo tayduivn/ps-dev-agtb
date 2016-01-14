@@ -13,8 +13,8 @@
 namespace Sugarcrm\Sugarcrm\Dav\Cal\JobQueue;
 
 use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException as JQLogicException;
-use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException as JQInvalidArgumentException;
 use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as HookHandler;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterInterface;
 
 /**
  * Class Export
@@ -35,9 +35,9 @@ class Export extends Base
         if (!$adapter) {
             throw new JQLogicException('Bean ' . $this->beanModule . ' does not have CalDav adapter');
         }
-        /** @var \CalDavEventCollection $collection */
-        $collection = \BeanFactory::getBean('CalDavEvents');
-        $calDavBean = $collection->findByParentModuleAndId($this->beanModule, $this->beanId);
+        /** @var \CalDavEventCollection $calDavBean */
+        $calDavBean = \BeanFactory::getBean('CalDavEvents');
+        $calDavBean = $calDavBean->findByParentModuleAndId($this->beanModule, $this->beanId);
         if (!$calDavBean) {
             return \SchedulersJob::JOB_FAILURE;
         }
@@ -48,9 +48,10 @@ class Export extends Base
 
         $status = \SchedulersJob::JOB_SUCCESS;
         try {
-            $exportData = $adapter->export($this->processedData, $calDavBean);
-            if ($exportData !== false) {
-                $importData = array();
+            $exportData = $this->processedData;
+            $result = $adapter->export($exportData, $calDavBean);
+            if ($result != AdapterInterface::NOTHING) {
+                $importData = null;
                 HookHandler::$importHandler = function ($beanModule, $beanId, $data) use ($calDavBean, &$importData) {
                     if ($calDavBean->module_name == $beanModule && $calDavBean->id == $beanId) {
                         $importData = $data;
@@ -58,7 +59,14 @@ class Export extends Base
                     }
                     return true;
                 };
-                $calDavBean->save();
+                switch ($result) {
+                    case AdapterInterface::SAVE :
+                        $calDavBean->save();
+                        break;
+                    case AdapterInterface::DELETE :
+                        $calDavBean->mark_deleted($calDavBean->id);
+                        break;
+                }
                 HookHandler::$importHandler = null;
                 if ($importData) {
                     $importData = $adapter->verifyImportAfterExport($exportData, $importData, $calDavBean);

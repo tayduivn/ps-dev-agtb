@@ -26,17 +26,21 @@ use Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event;
 abstract class AdapterAbstract implements AdapterInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      * @param \Call|\Meeting|\SugarBean $bean
+     * @param array|false $previousData
      */
     public function prepareForExport(\SugarBean $bean, $previousData = false)
     {
         $changedFields = array();
         $inviteesBefore = array();
-        $override = true;
+        $inviteesAfter = array();
+        $action = 'override';
         if ($previousData) {
-            list($changedFields, $inviteesBefore, $inviteesAfter) = $previousData;
-            $override = false;
+            $action = array_shift($previousData);
+            if ($action == 'update') {
+                list($changedFields, $inviteesBefore, $inviteesAfter) = $previousData;
+            }
         } else {
             $inviteesAfter = \CalendarUtils::getInvitees($bean);
         }
@@ -48,19 +52,36 @@ abstract class AdapterAbstract implements AdapterInterface
         $repeatParentId = $bean->repeat_parent_id;
 
         if (!$repeatParentId) {
-            if (($override && $bean->repeat_type)
+            if (($action == 'override' && $bean->repeat_type)
                 ||
-                (!$override && $this->isRecurringChanged($changedFields))
+                ($action != 'override' && $this->isRecurringChanged($changedFields))
             ) {
                 $recurringParam = $this->getRecurringHelper()->beanToArray($bean);
             }
         }
 
-        if ($override) {
-            $changedFields = $this->getBeanFetchedRow($bean);
-        } else {
-            $changedFields = $this->getFieldsDiff($changedFields);
+        $beanData = array(
+            $bean->module_name,
+            $bean->id,
+            $repeatParentId,
+            $recurringParam,
+            $action,
+        );
+
+        switch ($action) {
+            case 'override' :
+                $changedFields = $this->getBeanFetchedRow($bean);
+                break;
+            case 'update' :
+                $changedFields = $this->getFieldsDiff($changedFields);
+                break;
+            case 'delete' :
+                return array(array($beanData, array(), array()));
+                break;
+            default :
+                return false;
         }
+
         $changedFields = array_intersect_key($changedFields, array(
             'name' => true,
             'location' => true,
@@ -83,24 +104,36 @@ abstract class AdapterAbstract implements AdapterInterface
             return false;
         }
 
-        $beanData = array(
-            $bean->module_name,
-            $bean->id,
-            $repeatParentId,
-            $recurringParam,
-            $override,
-        );
-
-        return array($beanData, $changedFields, $changedInvitees);
+        return array(array($beanData, $changedFields, $changedInvitees));
     }
 
     /**
      * @inheritDoc
+     * @param array|false $previousData
      */
     public function prepareForImport(\CalDavEventCollection $collection, $previousData = false)
     {
+        $action = 'override';
         if ($previousData) {
-            return $collection->getDiffStructure($previousData);
+            $action = array_shift($previousData);
+            if ($previousData) {
+                return $collection->getDiffStructure(current($previousData));
+            }
+        }
+        if ($action == 'delete') {
+            return array(
+                array(
+                    array(
+                        $collection->id,
+                        null,
+                        null,
+                        null,
+                        $action,
+                    ),
+                    array(),
+                    array(),
+                ),
+            );
         }
         return $collection->getDiffStructure('');
     }
@@ -108,13 +141,17 @@ abstract class AdapterAbstract implements AdapterInterface
     /**
      * @inheritDoc
      */
-    public function verifyImportAfterExport(array $exportData, array $importData, \CalDavEventCollection $collection)
+    public function verifyImportAfterExport($exportData, $importData, \CalDavEventCollection $collection)
     {
         if (!$importData) {
             return false;
         }
         list($exportBean, $exportFields, $exportInvitees) = $exportData;
         list($importBean, $importFields, $importInvitees) = $importData;
+
+        if ($exportBean[4] == 'delete' && $importBean[4] == 'delete') {
+            return false;
+        }
 
         $this->filterFieldsOnVerify($exportFields, $importFields);
 
@@ -158,10 +195,14 @@ abstract class AdapterAbstract implements AdapterInterface
     /**
      * @inheritDoc
      */
-    public function verifyExportAfterImport(array $importData, array $exportData, \SugarBean $bean)
+    public function verifyExportAfterImport($importData, $exportData, \SugarBean $bean)
     {
         list($exportBean, $exportFields, $exportInvitees) = $exportData;
         list($importBean, $importFields, $importInvitees) = $importData;
+
+        if ($importBean[4] == 'delete' && $exportBean[4] == 'delete') {
+            return false;
+        }
 
         $this->filterFieldsOnVerify($exportFields, $importFields);
 
@@ -203,7 +244,8 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * Filter fields on verifyExportAfterImport and verifyImportAfterExport
+     * Filter fields on verifyExportAfterImport and verifyImportAfterExport.
+     *
      * @param array $exportFields
      * @param array $importFields
      */
@@ -324,7 +366,7 @@ abstract class AdapterAbstract implements AdapterInterface
             $dataDiff[$field] = array(
                 0 => $fieldValues['after'],
             );
-            if ($fieldValues['before']) {
+            if (array_key_exists('before', $fieldValues)) {
                 $dataDiff[$field][1] = $fieldValues['before'];
             }
         }
@@ -360,15 +402,11 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * Get bean (call or meeting) to work
-     * @param \SugarBean $bean
-     * @param \CalDavEventCollection $calDavBean
-     * @param array $processedData
-     * @return \SugarBean
+     * @inheritDoc
      */
-    public function getBeanForImport(\SugarBean $bean, \CalDavEventCollection $calDavBean, array $processedData)
+    public function getBeanForImport(\SugarBean $bean, \CalDavEventCollection $calDavBean, $importData)
     {
-        list($beanData, $changedFields, $invitees) = $processedData;
+        list($beanData, $changedFields, $invitees) = $importData;
         list($beanId, $childEventsId, $recurrenceId, $recurrenceIndex, $insert) = $beanData;
 
         if (is_null($recurrenceIndex)) {

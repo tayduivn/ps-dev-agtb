@@ -266,9 +266,9 @@ class Meeting extends SugarBean {
         }
 
         if ($isUpdate) {
-            $this->getCalDavHandler()->export($this, array($this->dataChanges, $this->inviteesBefore, CalendarUtils::getInvitees($this)));
+            $this->getCalDavHook()->export($this, array('update', $this->dataChanges, $this->inviteesBefore, CalendarUtils::getInvitees($this)));
         } else {
-            $this->getCalDavHandler()->export($this, false);
+            $this->getCalDavHook()->export($this);
         }
 
         $this->inviteesBefore = null;
@@ -279,34 +279,30 @@ class Meeting extends SugarBean {
     /**
      * @return \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler
      */
-    public function getCalDavHandler()
+    public function getCalDavHook()
     {
         return new \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler();
     }
 
-	// this is for calendar
-	function mark_deleted($id) {
+    /**
+     * @inheritdoc
+     */
+    function mark_deleted($id)
+    {
+        if (!$id) {
+            return null;
+        }
         if ($this->id != $id) {
-            if ($id) {
-                BeanFactory::getBean($this->module_name, $id)->mark_deleted($id);
-            }
-            return;
+            BeanFactory::getBean($this->module_name, $id)->mark_deleted($id);
+            return null;
         }
-		CalendarUtils::correctRecurrences($this, $id);
-
-		global $current_user;
+        CalendarUtils::correctRecurrences($this, $id);
+        global $current_user;
         $deletedStatus = $this->deleted;
-		parent::mark_deleted($id);
-        if ($deletedStatus != $this->deleted) {
-            $dataChanges = array(
-                'deleted' => array(
-                    'after' => $this->deleted,
-                    'before' => $deletedStatus
-                ),
-            );
-            $this->getCalDavHandler()->export($this, array($dataChanges, array(), array()));
+        parent::mark_deleted($id);
+        if (!$deletedStatus && $this->deleted) {
+            $this->getCalDavHook()->export($this, array('delete'));
         }
-
 		if($this->update_vcal) {
 			vCal::cache_sugar_vcal($current_user);
 		}
@@ -317,24 +313,17 @@ class Meeting extends SugarBean {
      */
     public function mark_undeleted($id)
     {
-        if ($this->id != $id) {
-            if ($id) {
-                BeanFactory::getBean($this->module_name, $id)->mark_undeleted($id);
-            }
-            return;
+        if (!$id) {
+            return null;
         }
-
+        if ($this->id != $id) {
+            BeanFactory::getBean($this->module_name, $id)->mark_undeleted($id);
+            return null;
+        }
         $deletedStatus = $this->deleted;
         parent::mark_undeleted($id);
-
-        if ($deletedStatus != $this->deleted) {
-            $dataChanges = array(
-                'deleted' => array(
-                    'after' => $this->deleted,
-                    'before' => $deletedStatus
-                ),
-            );
-            $this->getCalDavHandler()->export($this, array($dataChanges, array(), array()));
+        if ($deletedStatus && !$this->deleted) {
+            $this->getCalDavHook()->export($this);
         }
     }
 

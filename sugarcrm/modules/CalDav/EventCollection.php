@@ -21,7 +21,7 @@ use Sabre\VObject\Recur\EventIterator;
 use Sugarcrm\Sugarcrm\Dav\Base\Principal;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper\UserHelper;
-use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as CalDavHandler;
+use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as CalDavHook;
 
 /**
  * Class CalDavEventCollection
@@ -1005,7 +1005,7 @@ class CalDavEventCollection extends SugarBean
             $this->addChange($operation);
         }
 
-        $this->getCalDavHandler()->import($this, $originalCalendarData);
+        $this->getCalDavHook()->import($this, array('update', $originalCalendarData));
 
         return $result;
     }
@@ -1015,10 +1015,21 @@ class CalDavEventCollection extends SugarBean
      */
     public function mark_deleted($id)
     {
+        if (!$id) {
+            return null;
+        }
+        if ($this->id != $id) {
+            BeanFactory::getBean($this->module_name, $id)->mark_deleted($id);
+            return null;
+        }
         if (!$this->deleted) {
             $this->addChange(DavConstants::OPERATION_DELETE);
         }
+        $deletedStatus = $this->deleted;
         parent::mark_deleted($id);
+        if (!$deletedStatus && $this->deleted) {
+            $this->getCalDavHook()->import($this, array('delete'));
+        }
     }
 
     /**
@@ -1026,11 +1037,21 @@ class CalDavEventCollection extends SugarBean
      */
     public function mark_undeleted($id)
     {
+        if (!$id) {
+            return null;
+        }
+        if ($this->id != $id) {
+            BeanFactory::getBean($this->module_name, $id)->mark_undeleted($id);
+            return null;
+        }
         if ($this->deleted) {
             $this->addChange(DavConstants::OPERATION_ADD);
         }
-
+        $deletedStatus = $this->deleted;
         parent::mark_undeleted($id);
+        if ($deletedStatus && !$this->deleted) {
+            $this->getCalDavHook()->import($this);
+        }
     }
 
     /**
@@ -1090,7 +1111,10 @@ class CalDavEventCollection extends SugarBean
     public function getBean()
     {
         if ($this->parent_type && $this->parent_id) {
-            return BeanFactory::getBean($this->parent_type, $this->parent_id);
+            return BeanFactory::getBean($this->parent_type, $this->parent_id, array(
+                'strict_retrieve' => true,
+                'deleted' => false,
+            ));
         }
 
         return null;
@@ -1146,7 +1170,9 @@ class CalDavEventCollection extends SugarBean
     public function findByParentModuleAndId($beanModule, $beanId)
     {
         $query = new \SugarQuery();
-        $query->from($this);
+        $query->from($this, array(
+            'add_deleted' => false,
+        ));
         $query->where()->equals('parent_type', $beanModule);
         $query->where()->equals('parent_id', $beanId);
         $query->limit(1);
@@ -1172,7 +1198,7 @@ class CalDavEventCollection extends SugarBean
         $adapter = $adapterFactory->getAdapter($bean->module_name);
 
         if ($adapter) {
-            $dataToExport = $adapter->prepareForExport($bean, array(), array(), CalendarUtils::getInvitees($bean), true);
+            $dataToExport = $adapter->prepareForExport($bean);
             if ($adapter->export($dataToExport, $collection)) {
                 $vCalendarEvent = $collection->getVCalendar();
                 $vCalendarEvent->add($vCalendarEvent->createProperty('METHOD', 'REQUEST'));
@@ -1217,24 +1243,24 @@ class CalDavEventCollection extends SugarBean
      */
     public function getSynchronizationObject()
     {
-        $this->load_relationship('synchronization');
-
-        $result = $this->synchronization->getBeans();
+        /** @var CalDavSynchronization $synchronizationObject */
+        $synchronizationObject = BeanFactory::getBean('CalDavSynchronizations');
+        $query = new SugarQuery();
+        $query->from($synchronizationObject);
+        $query->where()->equals('event_id', $this->id);
+        $query->limit(1);
+        $result = $synchronizationObject->fetchFromQuery($query);
         if ($result) {
             $result = array_shift($result);
-            $result->retrieve();
             return $result;
         } else {
             if (!$this->id) {
                 $this->new_with_id = true;
                 $this->id = create_guid();
             }
-
-            $syncBean = BeanFactory::getBean('CalDavSynchronizations');
-            $syncBean->event_id = $this->id;
-            $syncBean->save();
-            $this->synchronization->addBean($syncBean);
-            return $syncBean;
+            $synchronizationObject->event_id = $this->id;
+            $synchronizationObject->save();
+            return $synchronizationObject;
         }
     }
 
@@ -1415,7 +1441,7 @@ class CalDavEventCollection extends SugarBean
                     null,
                     null,
                     null,
-                    empty($data),
+                    $data ? 'update' : 'override',
                 ),
                 $changedFields,
                 $invites,
@@ -1447,7 +1473,7 @@ class CalDavEventCollection extends SugarBean
                         $this->getSugarChildrenOrder(),
                         $recurrenceId->asDb(),
                         array_search($recurrenceId, $allChildrenIDs),
-                        false,
+                        'update',
                     ),
                     $changedFields,
                     $invites,
@@ -1460,10 +1486,10 @@ class CalDavEventCollection extends SugarBean
 
     /**
      * Get CalDav Handler.
-     * @return CalDavHandler
+     * @return CalDavHook
      */
-    public function getCalDavHandler()
+    public function getCalDavHook()
     {
-        return new CalDavHandler();
+        return new CalDavHook();
     }
 }

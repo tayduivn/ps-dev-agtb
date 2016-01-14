@@ -27,13 +27,18 @@ class Calls extends AdapterAbstract
     public function prepareForExport(\SugarBean $bean, $previousData = false)
     {
         $data = parent::prepareForExport($bean, $previousData);
-        if ($data && isset($data[1]['location'])) {
-            unset($data[1]['location']);
-            if (!$data[1] && !$data[2]) {
-                return false;
+        if ($data) {
+            foreach ($data as &$item) {
+                if (isset($item[1]['location'])) {
+                    unset($item[1]['location']);
+                    if (!$item[1] && !$item[2]) {
+                        $item = null;
+                    }
+                }
             }
+            unset($item);
+            $data = array_filter($data);
         }
-
         return $data;
     }
 
@@ -45,36 +50,44 @@ class Calls extends AdapterAbstract
     public function prepareForImport(\CalDavEventCollection $collection, $previousData = false)
     {
         $data = parent::prepareForImport($collection, $previousData);
-        if ($data && isset($data[1]['location'])) {
-            unset($data[1]['location']);
-            if (!$data[1] && !$data[2]) {
-                return false;
+        if ($data) {
+            foreach ($data as &$item) {
+                if (isset($item[1]['location'])) {
+                    unset($item[1]['location']);
+                    if (!$item[1] && !$item[2]) {
+                        $item = null;
+                    }
+                }
             }
+            unset($item);
+            $data = array_filter($data);
         }
         return $data;
     }
 
     /**
-     * Updates caldav bean and returns true if anything was changed
-     *
-     * @param array $data
-     * @param \CalDavEventCollection $collection
-     * @return bool
-     * @throws ExportException if conflict has been found
+     * @inheritDoc
      */
-    public function export(array $data, \CalDavEventCollection $collection)
+    public function export(&$data, \CalDavEventCollection $collection)
     {
         $isChanged = false;
         list($beanData, $changedFields, $invitees) = $data;
-        list($beanModuleName, $beanId, $repeatParentId, $recurringParam, $override) = $beanData;
+        list($beanModuleName, $beanId, $repeatParentId, $recurringParam, $action) = $beanData;
+
+        if ($action == 'delete' && !$repeatParentId) {
+            return static::DELETE;
+        }
+        if ($collection->deleted) {
+            return static::NOTHING;
+        }
 
         $event = $this->getCurrentEvent($collection, $repeatParentId, $beanId);
         if (!$event) {
-            return false;
+            return static::NOTHING;
         }
 
         // checking before values
-        if (!$override) {
+        if ($action == 'update') {
             if (isset($changedFields['name']) && count($changedFields['name']) == 2 && !$this->checkCalDavTitle($changedFields['name'][1], $event)) {
                 throw new ExportException("Conflict with CalDav Title field");
             }
@@ -134,14 +147,13 @@ class Calls extends AdapterAbstract
                 unset($data[1]['date_end']);
             }
         }
-        $changes = $this->setCalDavInvitees($invitees, $event, $override);
+        $changes = $this->setCalDavInvitees($invitees, $event, $action == 'override');
         if ($changes) {
             $isChanged = true;
             $data[2] = $changes;
         } else {
             $data[2] = array();
         }
-
         if (!$repeatParentId && $recurringParam) {
             if ($this->setCalDavRecurring($recurringParam, $collection)) {
                 $isChanged = true;
@@ -157,28 +169,30 @@ class Calls extends AdapterAbstract
         }
 
         if ($isChanged) {
-            return $data;
+            return static::SAVE;
         }
-        return false;
+        return static::NOTHING;
     }
 
     /**
-     * Updates bean and returns true if anything was changed
-     *
-     * @param array $data
-     * @param \SugarBean $bean
-     * @return bool
-     * @throws ImportException if conflict has been found
+     * @inheritDoc
      */
-    public function import(array $data, \SugarBean $bean)
+    public function import(&$data, \SugarBean $bean)
     {
         /**@var \Call $bean*/
         $isChanged = false;
         list($beanData, $changedFields, $invitees) = $data;
-        list($beanId, $childEventsId, $recurrenceId, $recurrenceIndex, $override) = $beanData;
+        list($beanId, $childEventsId, $recurrenceId, $recurrenceIndex, $action) = $beanData;
+
+        if ($action == 'delete' && !$recurrenceId) {
+            return static::DELETE;
+        }
+        if ($bean->deleted) {
+            return static::NOTHING;
+        }
 
         // checking before values
-        if (!$override) {
+        if ($action == 'update') {
             if (isset($changedFields['title']) && count($changedFields['title']) == 2 && !$this->checkBeanName($changedFields['title'][1], $bean)) {
                 throw new ImportException("Conflict with Bean Name field");
             }
@@ -241,7 +255,7 @@ class Calls extends AdapterAbstract
                 unset($data[1]['date_end']);
             }
         }
-        $changes = $this->setBeanInvitees($invitees, $bean, $override);
+        $changes = $this->setBeanInvitees($invitees, $bean, $action == 'override');
         if ($changes) {
             $isChanged = true;
             $data[2] = $changes;
@@ -257,8 +271,8 @@ class Calls extends AdapterAbstract
         }
 
         if ($isChanged) {
-            return $data;
+            return static::SAVE;
         }
-        return false;
+        return static::NOTHING;
     }
 }
