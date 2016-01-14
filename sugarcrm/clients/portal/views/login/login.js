@@ -11,18 +11,13 @@
 /**
  * Login form view.
  *
- * @class View.Views.LoginView
+ * @class View.Views.Portal.LoginView
  * @alias SUGAR.App.view.views.PortalLoginView
+ * @extends View.Views.Base.LoginView
  */
 ({
-    /**
-     * @inheritdoc
-     */
     plugins: ['ErrorDecoration', 'Tooltip'],
 
-    /**
-     * @inheritdoc
-     */
     events: {
         'click [name=login_button]': 'login',
         'click [name=signup_button]': 'signup',
@@ -56,7 +51,10 @@
     },
 
     /**
-     * @inheritdoc
+     * @override
+     *
+     * There is no need to see if there's any post login setup we need to do
+     * unlike in the super class. We simply render.
      */
     postLogin: function() {
         app.$contentEl.show();
