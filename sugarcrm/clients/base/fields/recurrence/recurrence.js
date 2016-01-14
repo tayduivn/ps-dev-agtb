@@ -147,8 +147,9 @@
     repeatTypeChanged: function() {
         var isRecurring = this._isPopulated(this.model.get('repeat_type'));
         _.each(this.fields, function(field) {
-            var isPopulated = this._isPopulated(this.model.get(field.name));
-            if ((!isRecurring || !isPopulated) && field.name !== 'repeat_end_type') {
+            var fieldValue = this.model.get(field.name),
+                isEmpty = !this._isPopulated(fieldValue) || (fieldValue === 0);
+            if ((!isRecurring || isEmpty) && field.name !== 'repeat_end_type') {
                 this.model.set(field.name, field.def['default']);
             }
         }, this);

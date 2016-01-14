@@ -182,7 +182,7 @@ describe('View.Fields.Base.RecurrenceField', function() {
     });
 
     describe('Defaulting Fields', function() {
-        it('should set fields to defaults when repeat type changes and field is blank', function() {
+        it('should set fields to defaults when repeat type changes and field is empty', function() {
             var expected = {
                 repeat_type: 'Weekly',
                 repeat_interval: 1,
@@ -197,7 +197,7 @@ describe('View.Fields.Base.RecurrenceField', function() {
 
             field.model.set('repeat_type', 'Daily');
             field.model.set({
-                repeat_interval: null,
+                repeat_interval: 0,
                 repeat_count: undefined
             });
             field.model.set('repeat_type', 'Weekly');

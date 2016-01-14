@@ -236,6 +236,7 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                             'type' => 'enum',
                             'options' => 'repeat_interval_number',
                             'required' => true,
+                            'default' => 1,
                         ),
                         array(
                             'label' => 'LBL_CALENDAR_REPEAT_DOW',
