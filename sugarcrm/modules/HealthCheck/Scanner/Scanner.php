@@ -325,6 +325,7 @@ class HealthCheckScanner
             'table' => 'pmse_bpm_dynamic_forms',
             'cols' => array('dyn_view_defs'),
             'functions' => array('base64_decode'),
+            'decode' => false,
         ),
         'bpmFlowTable' => array(
             'table' => 'pmse_bpm_flow',
@@ -851,8 +852,11 @@ class HealthCheckScanner
                     }
                 }
 
+                // Get our decode flag from the properties
+                $decode = !isset($data['decode']) || $data['decode'] === true;
+
                 // Do the actual check now
-                $reason = $this->checkSerializedData($string);
+                $reason = $this->checkSerializedData($string, $decode);
 
                 // If there was a failure reason, add it to the stack of reasons
                 if ($reason) {
@@ -891,9 +895,10 @@ class HealthCheckScanner
     /**
      * Checks an input to see if there are unserialization issues with it
      * @param string $input Serialized data
+     * @param boolean $decode Whether to html entity decode the input
      * @return int
      */
-    protected function checkSerializedData($input)
+    protected function checkSerializedData($input, $decode = true)
     {
         // Basic good return
         $reason = 0;
@@ -903,7 +908,7 @@ class HealthCheckScanner
             $reason = self::UNSERIALIZE_FAIL_OBJECTS;
         } else {
             // Since we need to work on html decoded data, get that now
-            $decoded = html_entity_decode($input);
+            $decoded = $decode ? html_entity_decode($input) : $input;
 
             // Now try to unserialize, suppressing errors in case of bad data
             $unserialized = @unserialize($decoded);
@@ -918,13 +923,18 @@ class HealthCheckScanner
     }
 
     /**
-     * Checks whether the $value contains object or class references
+     * Checks whether the $value contains object or class references, but not
+     * objects of type stdClass
      * @param string $value Serialized value of any type
      * @return boolean
      */
     protected function serializationHasObjectRefs($value)
     {
-        preg_match('/[oc]:\d+:/i', $value, $matches);
+        // Remove all references to stdClass objects
+        $cleared = str_replace('O:8:"stdClass"', '', $value);
+
+        // Now use the same logic as the unserialize validator
+        preg_match('/[oc]:\d+:/i', $cleared, $matches);
         return count($matches) > 0;
     }
 
