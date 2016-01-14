@@ -63,7 +63,7 @@ class SendHandler extends BaseHandler implements SubtaskCapableInterface
      * @param mixed $transportValue recipient data (normally here it is user ID).
      * @param array $message message pack.
      */
-    public function initialize($carrier, $transportValue, array $message)
+    protected function initialize($carrier, $transportValue, array $message)
     {
         $this->carrierName = $carrier;
         $this->transportValue = $transportValue;
