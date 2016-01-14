@@ -127,7 +127,8 @@ describe('Notifications', function() {
             });
 
             afterEach(function () {
-                sinon.collection.restore();
+                app.events.on.restore();
+                view.notificationMarkHandler.restore();
             });
 
             it('should bind notificationMarkHandler on app app:notifications:markAs', function () {
@@ -533,7 +534,9 @@ describe('Notifications', function() {
 
         afterEach(function() {
             model = null;
-            sinon.collection.restore();
+            view.collection.remove.restore();
+            view.collection.add.restore();
+            view.reRender.restore();
             SugarTest.app.view.reset();
             view.dispose();
             view = null;
