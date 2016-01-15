@@ -41,6 +41,11 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
     protected $xpath = null;
 
     /**
+     * @var SAMLRequestRegistry
+     */
+    protected $requestRegistry;
+
+    /**
      * Does the actual authentication of the user and returns an id that will be
      * used
      * to load the current user (loadUserOnSession)
@@ -66,6 +71,23 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
         } catch (Exception $e) {
             $GLOBALS['log']->error("Unexpected exception: ".$e->getMessage());
             return '';
+        }
+
+        if (SugarConfig::getInstance()->get('saml.validate_request_id')) {
+            $requestId = $this->getRequestId($this->samlresponse);
+            if (!$requestId) {
+                $GLOBALS['log']->warn('SAML response does not contain request ID');
+                return '';
+            }
+
+            $registry = $this->getRequestRegistry();
+            if (!$registry->isRequestRegistered($requestId)) {
+                $GLOBALS['log']->warn('SAML request ' . $requestId . ' is not registered');
+                return '';
+            }
+
+            $GLOBALS['log']->info('Unregistering SAML request ' . $requestId);
+            $registry->unregisterRequest($requestId);
         }
 
         if ($this->samlresponse->isValid()) {
@@ -362,5 +384,31 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
         // authentication
         // process could go on
         return parent::loadUserOnLogin('onelogin', 'onelogin', $fallback, $params);
+    }
+
+    /**
+     * Returns ID of the request which the response belongs to
+     *
+     * @param OneLogin_Saml_Response $response SAML response
+     * @return string
+     */
+    protected function getRequestId(OneLogin_Saml_Response $response)
+    {
+        return $response->document->documentElement->getAttribute('InResponseTo');
+    }
+
+    /**
+     * Returns SAML request registry
+     *
+     * @return SAMLRequestRegistry
+     */
+    protected function getRequestRegistry()
+    {
+        if (!$this->requestRegistry) {
+            require_once 'modules/Users/authentication/SAMLAuthenticate/SAMLRequestRegistry.php';
+            $this->requestRegistry = new SAMLRequestRegistry();
+        }
+
+        return $this->requestRegistry;
     }
 }
