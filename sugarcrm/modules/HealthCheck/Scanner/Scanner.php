@@ -826,11 +826,9 @@ class HealthCheckScanner
         // Builds a list of not empty SQL bits.
         $whereCols = $updateCols = array();
         foreach ($cols as $col) {
-            // Creates a not empty field where clause for this column
-            $notEmptyFieldSQL = "($col != " . $this->db->quoted('');
-            $notEmptyFieldSQL .= " AND $col IS NOT NULL)";
-            $whereCols[] = $notEmptyFieldSQL;
+            $whereCols[] = $this->getNotEmptyFieldSQL($col);
         }
+
         $whereNotEmpty = implode(' AND ', $whereCols);
 
         // Build the query and run it
@@ -870,6 +868,26 @@ class HealthCheckScanner
                 }
             }
         }
+    }
+
+    /**
+     * Get a not empty field where clause for a column. Done in a wrapper method
+     * because Oracle does things a little different.
+     * @param string $col The name of the column to build the SQL on
+     * @return string
+     */
+    protected function getNotEmptyFieldSQL($col)
+    {
+        // Oracle cannot handle empty string comparisons, so this one will be a
+        // NULL check only
+        if ($this->db instanceof OracleManager) {
+            $return = "$col IS NOT NULL";
+        } else {
+            $quoted = $this->db->quoted('');
+            $return = "($col != $quoted AND $col IS NOT NULL)";
+        }
+
+        return $return;
     }
 
     /**
