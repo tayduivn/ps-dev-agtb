@@ -79,9 +79,12 @@
         this.isForecastSetup = this.forecastConfig.is_setup;
         this.forecastsConfigOK = app.utils.checkForecastConfig();
 
-        this.opportunitiesWithRevenueLineItems = (
-            app.metadata.getModule('Opportunities', 'config')['opps_view_by'] === 'RevenueLineItems'
-        );
+        var oppConfig = app.metadata.getModule('Opportunities', 'config');
+        if (oppConfig && oppConfig['opps_view_by'] === 'RevenueLineItems') {
+            this.opportunitiesWithRevenueLineItems = true;
+        } else {
+            this.opportunitiesWithRevenueLineItems = false;
+        }
 
         if (this.isForecastSetup && this.forecastsConfigOK) {
             this.initOptions.meta.template = undefined;
