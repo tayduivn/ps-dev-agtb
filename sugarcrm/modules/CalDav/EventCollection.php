@@ -1497,7 +1497,7 @@ class CalDavEventCollection extends SugarBean
                         $this->getSugarChildrenOrder(),
                         $recurrenceId->asDb(),
                         array_search($recurrenceId, $childrenRecurrenceIds),
-                        $oldChild ? 'update' : 'override',
+                        $oldChild ? 'update' : 'restore',
                     ),
                     $changedFields,
                     $invites,
