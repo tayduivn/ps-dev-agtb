@@ -236,6 +236,7 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                             'type' => 'enum',
                             'options' => 'repeat_interval_number',
                             'required' => true,
+                            'default' => 1,
                         ),
                         array(
                             'label' => 'LBL_CALENDAR_REPEAT_DOW',
@@ -245,13 +246,40 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                             'isMultiSelect' => true,
                         ),
                         array(
+                            'label' => 'LBL_CALENDAR_CUSTOM_DATE',
+                            'name' => 'repeat_selector',
+                            'type' => 'enum',
+                            'options' => 'repeat_selector_dom',
+                            'default' => 'None',
+                        ),
+                        array(
+                            'name' => 'repeat_days',
+                            'type' => 'repeat-days',
+                            'isMultiSelect' => true,
+                        ),
+                        array(
+                            'label' => ' ',
+                            'name' => 'repeat_ordinal',
+                            'type' => 'enum',
+                            'options' => 'repeat_ordinal_dom',
+                        ),
+                        array(
+                            'label' => ' ',
+                            'name' => 'repeat_unit',
+                            'type' => 'enum',
+                            'options' => 'repeat_unit_dom',
+                        ),
+                        array(
+                            'label' => 'LBL_CALENDAR_REPEAT',
+                            'name' => 'repeat_end_type',
+                            'type' => 'enum',
+                            'options' => 'repeat_end_types',
+                            'default' => 'Until',
+                        ),
+                        array(
                             'label' => 'LBL_CALENDAR_REPEAT_UNTIL_DATE',
                             'name' => 'repeat_until',
                             'type' => 'repeat-until',
-                        ),
-                        array(
-                            'type' => 'label',
-                            'default_value' => 'LBL_LOWER_OR'
                         ),
                         array(
                             'label' => 'LBL_CALENDAR_REPEAT_COUNT',

@@ -1523,6 +1523,11 @@ $app_list_strings = array (
         'Yearly' => 'year(s)',
     ),
 
+    'repeat_end_types' => array(
+        'Until' => 'Until',
+        'Occurrences' => 'Occurrences',
+    ),
+
     'duration_hours_intervals' => array(
       0 => '0',
       1 => '1',
@@ -1570,6 +1575,34 @@ $app_list_strings = array (
         28 => '28',
         29 => '29',
         30 => '30',
+    ),
+
+    'repeat_selector_dom' => array(
+        'None' => 'None',
+        'Each' => 'Each',
+        'On' => 'On the',
+    ),
+
+    'repeat_ordinal_dom' => array(
+        'first' => 'first',
+        'second' => 'second',
+        'third' => 'third',
+        'fourth' => 'fourth',
+        'fifth' => 'fifth',
+        'last' => 'last',
+    ),
+
+    'repeat_unit_dom' => array(
+        'Sun' => 'Sunday',
+        'Mon' => 'Monday',
+        'Tue' => 'Tuesday',
+        'Wed' => 'Wednesday',
+        'Thu' => 'Thursday',
+        'Fri' => 'Friday',
+        'Sat' => 'Saturday',
+        'Day' => 'Day',
+        'WD'  => 'Weekday',
+        'WE'  => 'Weekend Day'
     ),
 
     'duration_dom' => array(
@@ -11635,13 +11668,20 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_CALENDAR_RECURRENCE' => "Recurrence",
     'LBL_CALENDAR_REMINDERS' => "Reminders",
 
+    'LBL_CALENDAR_CUSTOM_DATE' => "Custom Date",
     'LBL_CALENDAR_REPEAT_TYPE' => "Repeat Type",
     'LBL_CALENDAR_REPEAT_INTERVAL' => "Repeat Interval",
     'LBL_CALENDAR_REPEAT_DOW' => "Repeat on Days of Week",
+    'LBL_CALENDAR_REPEAT' => "Repeat",
     'LBL_CALENDAR_REPEAT_UNTIL_DATE' => "Repeat Until",
     'LBL_CALENDAR_REPEAT_COUNT' => "Repeat Occurrences",
+    'LBL_CALENDAR_REPEAT_SELECTOR' => "Repeat Selector",
+    'LBL_CALENDAR_REPEAT_DAYS' => "Day(s) of Month",
+    'LBL_CALENDAR_REPEAT_ORDINAL' => "Repeat Ordinal",
+    'LBL_CALENDAR_REPEAT_UNIT' => "Repeat Unit",
 
     'ERR_CALENDAR_CANNOT_UPDATE_FROM_CHILD' => 'Recurrence changes must be made using the first record in the series.',
+    'ERR_CALENDAR_NO_EVENTS_GENERATED' => 'Recurrence rules do not result in an event being generated.',
 
     'LBL_CALENDAR_EVENT_RESPONSE_ACCEPT' => 'Attending',
     'LBL_CALENDAR_EVENT_RESPONSE_DECLINE' => 'Declined',
@@ -11714,6 +11754,10 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     // Javascript enable string
     'LBL_ENABLE_JAVASCRIPT' => 'Sugar 7 requires javascript. Please enable Javascript in your browser to use Sugar 7.',
+
+    // Failure handling in Process Author upgraders
+    'LBL_PA_UNSERIALIZE_DATA_FAILURE' => 'Serialized data could not be unserialized',
+    'LBL_PA_UNSERIALIZE_OBJECT_FAILURE' => 'Serialized data could not be unserialized because it contains references to objects or classes',
 
     'LBL_FIELD_TRIMMED' => 'Field was trimmed, due to exceeding the maximum character limit.',
 );
