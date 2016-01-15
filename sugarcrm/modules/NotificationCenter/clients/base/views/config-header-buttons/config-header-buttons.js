@@ -80,7 +80,7 @@
      */
     cancelConfig: function() {
         if (this.triggerBefore('cancel')) {
-            this._handleCancelRedirect();
+            app.router.goBack();
         }
     }
 })
