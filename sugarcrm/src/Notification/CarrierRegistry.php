@@ -95,7 +95,7 @@ class CarrierRegistry
         $dictionary = array();
         foreach (array_merge($GLOBALS['moduleList'], $GLOBALS['modInvisList']) as $module) {
             $path = 'modules/' . $module . '/Carrier.php';
-            if (!$this->fileExists($path)) {
+            if (!\SugarAutoLoader::fileExists($path)) {
                 continue;
             }
             \SugarAutoLoader::load($path);
@@ -105,9 +105,9 @@ class CarrierRegistry
                 continue;
             }
 
-            $customPath = $this->existingCustomOne($path);
+            $customPath = \SugarAutoLoader::existingCustomOne($path);
             \SugarAutoLoader::load($customPath);
-            $customClass = $this->customClass($class);
+            $customClass = \SugarAutoLoader::customClass($class);
             if ($this->isCarrierClass($customClass)) {
                 $class = $customClass;
                 $path = $customPath;
@@ -180,30 +180,5 @@ class CarrierRegistry
     {
         create_cache_directory(static::CACHE_FILE);
         write_array_to_file(static::CACHE_VARIABLE, $data, sugar_cached(static::CACHE_FILE));
-    }
-
-    /**
-     * @see \SugarAutoLoader::fileExists
-     */
-    protected function fileExists($filename)
-    {
-        return \SugarAutoLoader::fileExists($filename);
-    }
-
-    /**
-     * @see \SugarAutoLoader::existingCustomOne
-     * @param string $path
-     */
-    protected function existingCustomOne($path)
-    {
-        return \SugarAutoLoader::existingCustomOne($path);
-    }
-
-    /**
-     * @see \SugarAutoLoader::customClass
-     */
-    protected function customClass($class)
-    {
-        return \SugarAutoLoader::customClass($class);
     }
 }

@@ -999,8 +999,10 @@ class SugarTestHelper
             }
         }
         foreach (self::$oldDirs as $dirname) {
-            rmdir($dirname);
-            SugarAutoLoader::delFromMap($dirname, false);
+            if (file_exists($dirname)) {
+                rmdir($dirname);
+                SugarAutoLoader::delFromMap($dirname, false);
+            }
         }
         SugarAutoLoader::saveMap();
     }
@@ -1113,4 +1115,31 @@ class SugarTestHelper
         SugarTestThemeUtilities::removeAllCreatedAnonymousThemes();
     }
 
+    /**
+     * Registration of $modInvisList in global scope
+     *
+     * @static
+     * @return bool is variable setuped or not
+     */
+    protected function setUp_modInvisList($params = array(), $register = true)
+    {
+        if ($register) {
+            self::$registeredVars['modInvisList'] = true;
+        }
+        global $modInvisList;
+        require 'include/modules.php';
+
+        return true;
+    }
+
+    /**
+     * Reinitialization of $modInvisList in global scope because we can't unset that variable
+     *
+     * @static
+     * @return bool is variable setuped or not
+     */
+    protected static function tearDown_modInvisList()
+    {
+        return self::setUp_modInvisList();
+    }
 }
