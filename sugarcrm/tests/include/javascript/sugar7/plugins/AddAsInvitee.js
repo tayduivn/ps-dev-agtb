@@ -34,7 +34,6 @@ describe('Plugins.AddAsInvitee', function() {
 
     it('should check if parent is a possible invitee on render in create mode', function() {
         var isPossibleInviteeStub = sandbox.stub(view, 'isPossibleInvitee');
-        view.model.id = null;
         view.model.set('parent_name', 'Foo Man', {silent: true});
         expect(isPossibleInviteeStub.callCount).toEqual(0);
         view.render();
@@ -43,7 +42,7 @@ describe('Plugins.AddAsInvitee', function() {
 
     it('should not check if parent is a possible invitee on render when not in create mode', function() {
         var isPossibleInviteeStub = sandbox.stub(view, 'isPossibleInvitee');
-        view.model.id = '123';
+        view.model.set('id', '123');
         view.model.set('parent_name', 'Foo Man', {silent: true});
         expect(isPossibleInviteeStub.callCount).toEqual(0);
         view.render();

@@ -33,7 +33,7 @@ describe('Plugins.VirtualCollection', function() {
         context = app.context.getContext({module: module});
         context.prepare(true);
         model = context.get('model');
-        model.id = 1;
+        model.set('id', 1);
         model.fields = {
             invitees: {
                 name: 'invitees',
@@ -775,7 +775,7 @@ describe('Plugins.VirtualCollection', function() {
 
                 result = model.toJSON();
 
-                expect(_.size(result)).toBe(2);
+                expect(_.size(result)).toBe(3);
                 expect(_.size(result.invitees)).toBe(4);
                 expect(_.size(result.related_cases)).toBe(2);
             });
