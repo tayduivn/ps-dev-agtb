@@ -36,6 +36,11 @@ interface AdapterInterface
     const DELETE = 2;
 
     /**
+     * Should be used as return value of export & import methods in case if bean should be restored.
+     */
+    const RESTORE = 3;
+
+    /**
      * @param \SugarBean $bean
      * @param mixed|false $previousData in case of false full export should be processed
      * @return mixed|false returns data for export or false if required things weren't changed and nothing to export

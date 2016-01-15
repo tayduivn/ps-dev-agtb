@@ -71,8 +71,8 @@ class Handler
                 $this->getManager()
                     ->calDavImport($collection->module_name, $collection->id, $preparedData, $saveCounter);
             }
-            static::$importHandler = null;
         }
+        static::$importHandler = null;
         return true;
     }
 
@@ -125,8 +125,8 @@ class Handler
                 }
                 $this->getManager()->calDavExport($bean->module_name, $parentBeanId, $preparedData, $saveCounter);
             }
-            static::$exportHandler = null;
         }
+        static::$exportHandler = null;
         return true;
     }
 
