@@ -1587,6 +1587,11 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 {
     margin-bottom: 0;
 }
+.schedulers-editview-panel .collapseLink,
+.schedulers-editview-panel .expandLink
+{
+    display: none;
+}
 
 /* calendar module styles */
 .monthFooter td
