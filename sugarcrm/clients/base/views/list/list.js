@@ -97,6 +97,11 @@
             lastStateOrderBy = {};
         }
 
+        // if no access to the field, don't use it
+        if (!_.isEmpty(lastStateOrderBy.field) && !app.acl.hasAccess('read', this.module, app.user.get('id'), lastStateOrderBy.field)) {
+            lastStateOrderBy = {};
+        }
+
         return _.extend({
                 field : '',
                 direction : 'desc'
@@ -256,6 +261,11 @@
         if (!orderBy) {
             orderBy = eventTarget.data('fieldname');
         }
+        if (!_.isEmpty(orderBy) && !app.acl.hasAccess('read', this.module, app.user.get('id'), orderBy)) {
+            // no read access to the orderBy field, don't bother to reload data
+            return;
+        }
+
         // if same field just flip
         if (orderBy === self.orderBy.field) {
             self.orderBy.direction = self.orderBy.direction === 'desc' ? 'asc' : 'desc';
