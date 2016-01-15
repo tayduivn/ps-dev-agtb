@@ -66,7 +66,7 @@
             <td align="left" class="padding-0">
                 <table width="100%" border="0" cellspacing="10" cellpadding="0" class="edit view">
                     <tr>
-                    {foreach from=$actionsList key=key item=value}
+                    {foreach from=$actionsList key=key item=value name=tba}
                         <td class="title {if !$value|in_array:$config.disabled_modules}active{/if}">
                             <div class="tba-container">
                                 <input type="checkbox" name="team_based[disabled_modules][]"
@@ -75,7 +75,7 @@
                                 <label for="tba_em_{$key}">{$APP_LIST.moduleList[$value]}</label>
                             </div>
                         </td>
-                        {if ($key+1) % 4 eq 0}</tr><tr>{/if}
+                        {if $smarty.foreach.tba.iteration % 4 eq 0}</tr><tr>{/if}
                     {/foreach}
                     </tr>
                 </table>

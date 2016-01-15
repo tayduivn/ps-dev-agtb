@@ -61,8 +61,6 @@ class TeamsViewTBA extends SugarView
      */
     private function _getUserActionsList()
     {
-        $defaultTBAConfig = TeamBasedACLConfigurator::getDefaultConfig();
-
         $actionsList = ACLAction::getUserActions($GLOBALS['current_user']->id);
 
         // Skipping modules that have 'hidden_to_role_assignment' property or not implement TBA
@@ -76,6 +74,6 @@ class TeamsViewTBA extends SugarView
             }
         }
 
-        return array_diff(array_keys($actionsList), $defaultTBAConfig['disabled_modules']);
+        return array_diff(array_keys($actionsList), TeamBasedACLConfigurator::getDisabledModules());
     }
 }
