@@ -187,7 +187,7 @@ class PMSEProjectImporter extends PMSEImporter
      * @param $projectData
      * @return bool|void
      */
-    public function saveProjectData($projectData)
+    public function saveProjectData($projectData, $isCopy = false)
     {
         global $current_user;
         $projectBean = $this->getBean();
@@ -221,7 +221,10 @@ class PMSEProjectImporter extends PMSEImporter
         unset($projectData['diagram'], $projectData['process'], $projectData['definition'], $projectData['dynaforms']);
 
         $projectData['prj_uid'] = PMSEEngineUtils::generateUniqueID();
-        $projectData['prj_status'] = 'INACTIVE';
+
+        if (!$isCopy) {
+            $projectData['prj_status'] = 'INACTIVE';
+        }
 
         foreach ($projectData as $key => $value) {
             if (isset($projectBean->field_defs[$key])){

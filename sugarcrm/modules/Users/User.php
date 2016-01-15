@@ -11,6 +11,7 @@
  */
 
 use \Sugarcrm\Sugarcrm\Security\Password\Hash;
+use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 
 require_once 'include/SugarObjects/templates/person/Person.php';
 require_once 'modules/ACL/AclCache.php';
@@ -718,10 +719,7 @@ class User extends Person {
 		}
 
 		// If the role doesn't exist in the list of the user's roles
-		if(!empty($role_array) && in_array($role_name, $role_array))
-			return true;
-		else
-			return false;
+        return (!empty($role_array) && ArrayFunctions::in_array_access($role_name, $role_array));
 	}
 
     function get_summary_text() {

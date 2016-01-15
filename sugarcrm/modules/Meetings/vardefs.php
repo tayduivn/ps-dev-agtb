@@ -556,6 +556,80 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
 		'reportable' => false,
 		'studio' => 'false',
 	),
+        'repeat_selector' =>
+            array(
+                'name' => 'repeat_selector',
+                'vname' => 'LBL_CALENDAR_REPEAT_SELECTOR',
+                'type' => 'enum',
+                'len' => 36,
+                'options' => 'repeat_selector_dom',
+                'comment' => 'Repeat selector',
+                'importable' => 'false',
+                'massupdate' => false,
+                'reportable' => false,
+                'studio' => 'false',
+                'visibility_grid' => array(
+                    'trigger' => 'repeat_type',
+                    'values' => array(
+                        '' => array(
+                            'None',
+                        ),
+                        'Daily' => array(
+                            'None',
+                        ),
+                        'Weekly' => array(
+                            'None',
+                        ),
+                        'Monthly' => array(
+                            'None',
+                            'Each',
+                            'On',
+                        ),
+                        'Yearly' => array(
+                            'None',
+                            'On',
+                        ),
+                    ),
+                ),
+            ),
+        'repeat_days' =>
+            array(
+                'name' => 'repeat_days',
+                'vname' => 'LBL_CALENDAR_REPEAT_DAYS',
+                'type' => 'varchar',
+                'len' => 128,
+                'comment' => 'Days of month',
+                'importable' => 'false',
+                'massupdate' => false,
+                'reportable' => false,
+                'studio' => 'false',
+            ),
+        'repeat_ordinal' =>
+            array(
+                'name' => 'repeat_ordinal',
+                'vname' => 'LBL_CALENDAR_REPEAT_ORDINAL',
+                'type' => 'enum',
+                'len' => 36,
+                'options' => 'repeat_ordinal_dom',
+                'comment' => 'Repeat ordinal value',
+                'importable' => 'false',
+                'massupdate' => false,
+                'reportable' => false,
+                'studio' => 'false',
+            ),
+        'repeat_unit' =>
+            array(
+                'name' => 'repeat_unit',
+                'vname' => 'LBL_CALENDAR_REPEAT_UNIT',
+                'type' => 'enum',
+                'len' => 36,
+                'options' => 'repeat_unit_dom',
+                'comment' => 'Repeat unit value',
+                'importable' => 'false',
+                'massupdate' => false,
+                'reportable' => false,
+                'studio' => 'false',
+            ),
 	'repeat_parent_id' =>
 	array(
 		'name' => 'repeat_parent_id',
