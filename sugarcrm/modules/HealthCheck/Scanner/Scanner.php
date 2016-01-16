@@ -933,11 +933,42 @@ class HealthCheckScanner
 
             // If this failed, it is either an encoding issue or just bad data
             if ($unserialized === false) {
-                $reason = self::UNSERIALIZE_FAIL_DATA;
+                // If the secondary unserializer returns a false, then we have
+                // bad data that cannot be manipulated into something unserializable
+                if ($this->secondaryUnserialize($decoded) === false) {
+                    $reason = self::UNSERIALIZE_FAIL_DATA;
+                }
             }
         }
 
         return $reason;
+    }
+
+    /**
+     * Handles a second level of unserialization in case the first one didn't
+     * work. This happens in cases where data may have been serialized in one
+     * encoding charset but is being unserialized in another.
+     * @param string $input Serialized data
+     * @param boolean $decode Whether to html entity decode the input
+     * @return boolean
+     */
+    protected function secondaryUnserialize($string) {
+        // For reference, please see the following links...
+        //http://magp.ie/2014/08/13/php-unserialize-string-after-non-utf8-characters-stripped-out/
+        //https://dzone.com/articles/mulit-byte-unserialize
+        //http://stackoverflow.com/questions/2853454/php-unserialize-fails-with-non-encoded-characters
+        $string = preg_replace_callback(
+            '!s:(\d+):"(.*?)";!s',
+            function ($matches) {
+                if (isset($matches[2])) {
+                    return 's:'.strlen($matches[2]).':"'.$matches[2].'";';
+                }
+            },
+            $string
+        );
+
+        // Use error suppression to prevent erroneous output
+        return @unserialize($string) !== false;
     }
 
     /**
