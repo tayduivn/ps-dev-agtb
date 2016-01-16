@@ -151,13 +151,18 @@ class MessageBuilderRegistry
      */
     protected function scan()
     {
-        $baseRegistry = $this->getDataFromFile(self::REGISTRY_FILE);
-        $registry = $baseRegistry;
+        $registry = array();
+
+        foreach ($this->getDataFromFile(self::REGISTRY_FILE) as $class) {
+            if ($this->isBuilderClass($class)) {
+                $registry[] = $class;
+            }
+        }
+
         $customRegistryFile = 'custom/' . self::REGISTRY_FILE;
         if (\SugarAutoLoader::fileExists($customRegistryFile)) {
             foreach ($this->getDataFromFile($customRegistryFile) as $class) {
-                if (!array_key_exists($class, $registry) &&
-                    in_array(self::MESSAGE_BUILDER_INTERFACE, class_implements($class))) {
+                if (!array_key_exists($class, $registry) && $this->isBuilderClass($class)) {
                     $registry[] = $class;
                 }
             }
@@ -174,5 +179,16 @@ class MessageBuilderRegistry
     {
         create_cache_directory(static::CACHE_FILE);
         write_array_to_file(static::VARIABLE, $data, sugar_cached(static::CACHE_FILE));
+    }
+
+    /**
+     * Does class implement BuilderInterface.
+     *
+     * @param string $class
+     * @return bool
+     */
+    protected function isBuilderClass($class)
+    {
+        return class_exists($class) && in_array(static::MESSAGE_BUILDER_INTERFACE, class_implements($class));
     }
 }
