@@ -740,6 +740,7 @@ class SugarFieldTeamset extends SugarFieldBase {
             $bean->teams->replace($teamIds, array(), false);
         }
 
+        // Handle MassUpdate "replace". (see MassUpdateApi::handleTypeAdjustments())
         if (!empty($selectedTeamIds)) {
             $teamSet = BeanFactory::getBean('TeamSets');
             $bean->team_set_selected_id = $teamSet->addTeams($selectedTeamIds);
@@ -766,11 +767,13 @@ class SugarFieldTeamset extends SugarFieldBase {
         $bean->load_relationship('teams');
         $bean->teams->add($teamIds, array(), false);
 
+        // Handle "add" case. (see MassUpdateApi::handleTypeAdjustments())
         if (!empty($selectedTeamIds)) {
             $teamSet = BeanFactory::getBean('TeamSets');
-            $bean->team_set_selected_id = $teamSet->addTeams($selectedTeamIds);
-        } else {
-            $bean->team_set_selected_id = '';
+            $currentSelectedIds = $teamSet->getTeamIds($bean->team_set_selected_id);
+            $bean->team_set_selected_id = $teamSet->addTeams(array_unique(
+                array_merge($currentSelectedIds, $selectedTeamIds)
+            ));
         }
     }
 
