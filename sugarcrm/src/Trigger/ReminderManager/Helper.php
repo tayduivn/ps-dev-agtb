@@ -20,7 +20,6 @@ use Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper;
  */
 class Helper
 {
-
     /**
      * Is date in future
      *
@@ -29,7 +28,7 @@ class Helper
      */
     public static function isInFuture(\DateTime $dateTime)
     {
-        $now = new \DateTime();
+        $now = \TimeDate::getInstance()->getNow();
         return $dateTime->getTimestamp() > $now->getTimestamp();
     }
 
