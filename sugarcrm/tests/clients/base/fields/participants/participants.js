@@ -284,7 +284,10 @@ describe('View.Fields.Base.ParticipantsField', function() {
         });
 
         it("should disable a participant's delete button when the participant is marked as not deletable", function() {
-            field.model.set(field.name, {_module: 'Leads', id: '1', name: 'Foo Bar', deletable: false});
+            var participant;
+            participant = app.data.createBean('Leads', {id: '1', name: 'Foo Bar'});
+            participant.deletable = false;
+            field.model.set(field.name, participant);
             field.render();
             expect(field.$('button[data-action=removeRow][data-id=1]').hasClass('disabled')).toBe(true);
         });
@@ -808,21 +811,35 @@ describe('View.Fields.Base.ParticipantsField', function() {
         it('should only show module and name when no highlighted field', function() {
             var searchResultTemplateStub = sandbox.stub(field, 'searchResultTemplate'),
                 result = app.data.createBean('Baz', {
-                    full_name: 'Foo Bar'
+                    full_name: 'Foo Bar',
+                    email: [{
+                        email_address: 'foo@bar.com',
+                        primary_address: true,
+                        invalid_email: false,
+                        opt_out: false
+                    }]
                 });
             result.module = 'Baz';
             result.searchInfo = {};
             field.formatSearchResult(result);
             expect(searchResultTemplateStub.lastCall.args).toEqual([{
                 module: 'Baz',
-                name: 'Foo Bar'
+                name: 'Foo Bar',
+                // Always passed, but not displayed.
+                email: 'foo@bar.com'
             }]);
         });
 
         it('should show module, name, and highlighted field when highlighted field is given', function() {
             var searchResultTemplateStub = sandbox.stub(field, 'searchResultTemplate'),
                 result = app.data.createBean('Baz', {
-                    full_name: 'Foo Bar'
+                    full_name: 'Foo Bar',
+                    email: [{
+                        email_address: 'foo@bar.com',
+                        primary_address: true,
+                        invalid_email: false,
+                        opt_out: false
+                    }]
                 });
 
             result.module = 'Baz';
@@ -838,6 +855,8 @@ describe('View.Fields.Base.ParticipantsField', function() {
             expect(searchResultTemplateStub.lastCall.args).toEqual([{
                 module: 'Baz',
                 name: 'Foo Bar',
+                // Always passed, but not displayed.
+                email: 'foo@bar.com',
                 field_name: 'LBL_ACCOUNT_NAME',
                 field_value: 'Bar Enterprises Inc.'
             }]);

@@ -739,6 +739,52 @@
             },
 
             /**
+             * Returns the first email address that matches the options or an
+             * empty string if none exist.
+             *
+             * An assumption is made that the associated email addresses will
+             * be found as an array on the model's `email` attribute.
+             *
+             * @param {Data.Bean} model
+             * @param {Object} [options]
+             * @param {Boolean} [options.primary_address]
+             * @param {Boolean} [options.invalid_email]
+             * @param {Boolean} [options.opt_out]
+             * @return {string}
+             */
+            getEmailAddress: function(model, options) {
+                var addresses;
+
+                options || (options = {});
+                addresses = model.get('email');
+
+                return _.chain(addresses).findWhere(options).pick('email_address').values().first().value() || '';
+            },
+
+            /**
+             * Returns the first valid email address associated with the model
+             * or an empty string if none exist.
+             *
+             * An email address is considered valid if its `invalid_email` and
+             * `opt_out` properties are `false`. The email address with `true`
+             * for the `primary_address` property is tested first.
+             *
+             * This method is implemented to simulate the server-side method
+             * SugarEmailAddress::getPrimaryAddress().
+             *
+             * @param {Data.Bean} model
+             * @return {string}
+             */
+            getPrimaryEmailAddress: function(model) {
+                return app.utils.getEmailAddress(model, {
+                        primary_address: true,
+                        invalid_email: false,
+                        opt_out: false
+                    }) ||
+                    app.utils.getEmailAddress(model, {invalid_email: false, opt_out: false});
+            },
+
+            /**
              * Resolve data conflict on bean update. Open a drawer to pick between data in the database
              * or the data currently in the bean.
              * @param error
