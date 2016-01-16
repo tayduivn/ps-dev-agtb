@@ -19,7 +19,7 @@
         </th>
     {{/each}}
     {{#each view._fields.visible}}
-        <th class="{{#isSortable ../view.module this}}sorting{{#eq ../view.orderBy.field name}}_{{../view.orderBy.direction}}{{/eq}} orderBy{{name}}{{/isSortable}}{{#if widthClass}} {{widthClass}}{{/if}}"
+        <th class="{{#isSortable ../view.module this}}sorting{{#eq ../../view.orderBy.field name}}_{{../../../view.orderBy.direction}}{{/eq}} orderBy{{name}}{{/isSortable}}{{#if widthClass}} {{widthClass}}{{/if}}"
             {{#if styles}} style="{{styles}}"{{/if}}
             {{#if name}} data-fieldname="{{name}}"{{/if}} data-orderby="{{orderBy}}">
 
@@ -63,13 +63,13 @@
                         <li class="divider" data-settings-li="order"></li>
                         <li data-settings-li="order">
                             <button data-columns-order="reset">
-                                <i class="icon fa fa-exchange"></i> {{str 'LBL_RESET_DEFAULT_VIEW' ../../../view.module}}
+                                <i class="icon fa fa-exchange"></i> {{str 'LBL_RESET_DEFAULT_VIEW' ../../view.module}}
                             </button>
                         </li>
                         <li class="divider" data-settings-li="widths"></li>
                         <li data-settings-li="widths">
                             <button data-widths="reset">
-                                <i class="icon fa fa-arrows-h"></i> {{str 'LBL_RESET_DEFAULT_WIDTHS' ../../../view.module}}
+                                <i class="icon fa fa-arrows-h"></i> {{str 'LBL_RESET_DEFAULT_WIDTHS' ../../view.module}}
                             </button>
                         </li>
                     </ul>
