@@ -1247,12 +1247,20 @@ class Email extends SugarBean {
         foreach($this->email_to_text as $textfield=>$mailfield) {
             $text->$textfield = $this->$mailfield;
         }
+
+        // Get and save the current Database Encoding setting and force it to be enabled
+        $encodeVal = $GLOBALS['db']->getEncode();
+        $GLOBALS['db']->setEncode(true);
+
         $text->email_id = $this->id;
 		if(!$this->new_with_id) {
             $this->db->update($text);
 		} else {
 		    $this->db->insert($text);
 		}
+
+        // Restore previous Database Encoding setting
+        $GLOBALS['db']->setEncode($encodeVal);
 	}
 
     ///////////////////////////////////////////////////////////////////////////
