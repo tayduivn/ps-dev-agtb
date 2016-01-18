@@ -26,6 +26,7 @@ class CalendarDataTest extends Sugar_PHPUnit_Framework_TestCase
 
         global $current_user;
         $current_user->setPreference('caldav_interval', '6 month');
+        $current_user->setPreference('timezone', 'Europe/Moscow');
     }
 
     public function tearDown()

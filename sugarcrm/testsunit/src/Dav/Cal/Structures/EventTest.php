@@ -111,28 +111,6 @@ class EventTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function getStartDateProvider()
-    {
-        return array(
-            array(
-                'vEvent' => $this->getEvent('vevent'),
-                'result' => new \SugarDateTime('2015-08-06 10:00:00', new \DateTimeZone('Europe/Berlin')),
-            ),
-            array(
-                'vEvent' => $this->getEvent('datetime1'),
-                'result' => new \SugarDateTime('2015-08-06 10:00:00', new \DateTimeZone('UTC')),
-            ),
-            array(
-                'vEvent' => $this->getEvent('datetime3'),
-                'result' => new \SugarDateTime('2015-08-06 00:00:00', new \DateTimeZone('UTC')),
-            ),
-            array(
-                'vEvent' => $this->getEvent('vemptyevent'),
-                'result' => null,
-            ),
-        );
-    }
-
     public function getEndDateProvider()
     {
         return array(
@@ -586,57 +564,6 @@ class EventTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function setParticipantNodeProvider()
-    {
-        return array(
-            array(
-                'vEvent' => $this->getEvent('vevent'),
-                'participant' =>
-                    array(
-                        'setStatus' => 'ACCEPTED',
-                        'setDisplayName' => 'new new',
-                        'setRole' => 'CHAIR',
-                        'setEmail' => 'new@new.com',
-                        'setBeanName' => 'new',
-                        'setBeanId' => 1,
-                    ),
-                'node' => 'ATTENDEE',
-                'result' => true,
-                'newCount' => 5
-            ),
-            array(
-                'vEvent' => $this->getEvent('vevent'),
-                'participant' =>
-                    array(
-                        'setStatus' => 'NEEDS-ACTION',
-                        'setDisplayName' => '',
-                        'setRole' => 'REQ-PARTICIPANT',
-                        'setEmail' => 'sally@example.com',
-                        'setBeanName' => 'Users',
-                        'setBeanId' => 'a1',
-                    ),
-                'node' => 'ATTENDEE',
-                'result' => false,
-                'newCount' => 4
-            ),
-            array(
-                'vEvent' => $this->getEvent('vemptyevent'),
-                'participant' =>
-                    array(
-                        'setStatus' => 'ACCEPTED',
-                        'setDisplayName' => 'new new',
-                        'setRole' => 'CHAIR',
-                        'setEmail' => 'new@new.com',
-                        'setBeanName' => 'new',
-                        'setBeanId' => 1,
-                    ),
-                'node' => 'ORGANIZER',
-                'result' => true,
-                'newCount' => 0
-            ),
-        );
-    }
-
     public function deleteParticipantProvider()
     {
         return array(
@@ -727,21 +654,6 @@ class EventTest extends \PHPUnit_Framework_TestCase
     {
         $eventMock = $this->getEventMock($VEvent);
         $result = $eventMock->getStatus();
-        $this->assertEquals($expectedResult, $result);
-    }
-
-    /**
-     * @param VEvent $VEvent
-     * @param string $expectedResult
-     *
-     * @covers       \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event::getStartDate
-     *
-     * @dataProvider getStartDateProvider
-     */
-    public function testGetStartDate(VEvent $VEvent, $expectedResult)
-    {
-        $eventMock = $this->getEventMock($VEvent);
-        $result = $eventMock->getStartDate();
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -1113,55 +1025,6 @@ class EventTest extends \PHPUnit_Framework_TestCase
         foreach ($expectedOrganizer as $method => $value) {
             $this->assertEquals($value, $organizer->$method());
         }
-    }
-
-    /**
-     * @param VEvent $VEvent
-     * @param array $data
-     * @param string $node
-     * @param bool $expectedResult
-     * @param int $expectedCount
-     *
-     * @covers       \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event::setParticipantNode
-     *
-     * @dataProvider setParticipantNodeProvider
-     */
-    public function testSetParticipantNode(VEvent $VEvent, $data, $node, $expectedResult, $expectedCount)
-    {
-        $eventMock = $this->getEventMock($VEvent);
-
-        $participant = new Participant();
-
-        foreach ($data as $function => $value) {
-            $participant->$function($value);
-        }
-
-        $result = TestReflection::callProtectedMethod($eventMock, 'setParticipantNode', array($participant, $node));
-        $this->assertEquals($expectedResult, $result);
-        $this->assertEquals($expectedCount, count($eventMock->getParticipants()));
-    }
-
-    /**
-     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event::setOrganizer
-     */
-    public function testSetOrganizer()
-    {
-        $eventMock = $this->getEventMock($this->getEvent('vevent'), array('setParticipantNode'));
-        $participant = new Participant();
-        $eventMock->expects($this->exactly(2))->method('setParticipantNode');
-        $eventMock->expects($this->at(0))->method('setParticipantNode')->with($participant, 'ORGANIZER');
-        $eventMock->setOrganizer($participant);
-    }
-
-    /**
-     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event::setParticipant
-     */
-    public function testSetParticipant()
-    {
-        $eventMock = $this->getEventMock($this->getEvent('vevent'), array('setParticipantNode'));
-        $participant = new Participant();
-        $eventMock->expects($this->once())->method('setParticipantNode')->with($participant, 'ATTENDEE');
-        $eventMock->setParticipant($participant);
     }
 
     /**

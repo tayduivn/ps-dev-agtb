@@ -40,6 +40,7 @@ class CalDavEventCollectionTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         \BeanFactory::setBeanClass('Meetings', 'MeetingCRYS1322');
+        $GLOBALS['current_user']->setPreference('timezone', 'Europe/Moscow');
     }
 
     public function tearDown()
@@ -120,7 +121,6 @@ DTSTART;VALUE=DATE:20160101
 END:VEVENT
 END:VCALENDAR',
                 'size' => 81,
-                'ETag' => '852ca4ec17e847ca5190754e21d53c54',
             ),
         );
     }
@@ -960,7 +960,7 @@ END:VCALENDAR',
      *
      * @dataProvider sizeAndETagDataProvider
      */
-    public function testSizeAndETag($data, $expectedSize, $expectedETag)
+    public function testSizeAndETag($data, $expectedSize)
     {
         $beanMock = $this->getMockBuilder('CalDavEventCollection')
                          ->disableOriginalConstructor()
@@ -970,10 +970,8 @@ END:VCALENDAR',
         $beanMock->setData($data);
 
         TestReflection::callProtectedMethod($beanMock, 'calculateSize');
-        TestReflection::callProtectedMethod($beanMock, 'calculateETag');
 
         $this->assertEquals($expectedSize, $beanMock->data_size);
-        $this->assertEquals($expectedETag, $beanMock->etag);
     }
 
     /**

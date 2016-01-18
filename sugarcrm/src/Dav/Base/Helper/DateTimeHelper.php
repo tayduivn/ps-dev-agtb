@@ -157,7 +157,7 @@ class DateTimeHelper
      * Get current user
      * @return \User
      */
-    protected function getCurrentUser()
+    public function getCurrentUser()
     {
         return $GLOBALS['current_user'];
     }
