@@ -17,6 +17,14 @@
  */
 class SugarDateTime extends DateTime
 {
+    const DOW_SUN = 0;
+    const DOW_MON = 1;
+    const DOW_TUE = 2;
+    const DOW_WED = 3;
+    const DOW_THU = 4;
+    const DOW_FRI = 5;
+    const DOW_SAT = 6;
+
     // Recognized properties and their formats
 	protected $formats = array(
 		"sec" => "s",
@@ -738,5 +746,221 @@ class SugarDateTime extends DateTime
         }
 
         return $result;
+    }
+
+    /**
+     * Set Current Date to First Day of Current Month
+     * @return SugarDateTime
+     */
+    public function setDateForFirstDayOfMonth()
+    {
+        $this->setDate($this->getYear(), $this->getMonth(), 1);
+        return $this;
+    }
+
+    /**
+     * Return a new SugarDateTime object holding the Date for the Next
+     * matching Day of Week.
+     * Current Date is Not Included.
+     *
+     * @param int $dow
+     * @return SugarDateTime
+     */
+    public function getDateForNextDayOfWeek($dow)
+    {
+        $dow = $dow % 7;
+        $interval = new DateInterval('P1D');
+        $sdtm = clone $this;
+        $sdtm->add($interval);
+        while ($sdtm->getDayOfWeek() !== $dow) {
+            $sdtm->add($interval);
+        }
+        return $sdtm;
+    }
+
+    /**
+     * Return a new SugarDateTime object holding the Date for the Previous
+     * matching Day of Week.
+     * Current Date is Not Included.
+     *
+     * @param int $dow
+     * @return SugarDateTime
+     */
+    public function getDateForPreviousDayOfWeek($dow)
+    {
+        $dow = $dow % 7;
+        $interval = new DateInterval('P1D');
+        $sdtm = clone $this;
+        $sdtm->sub($interval);
+        while ($sdtm->getDayOfWeek() !== $dow) {
+            $sdtm->sub($interval);
+        }
+        return $sdtm;
+    }
+
+    /**
+     * Return an array of SugarDateTime objects for all of the current month's dates
+     * that match the Days of Week supplied.
+     * @param  array  Days Of Week (0-6)
+     * @return array(SugarDateTime)
+     */
+    public function getMonthDatesForDaysOfWeek($dayOfWeekArray = array())
+    {
+        $dates = array();
+        $interval = new DateInterval('P1D');
+        $sdtm = clone $this;
+        $sdtm->setDate($sdtm->getYear(), $sdtm->getMonth(), 1);
+
+        $daysInMonth = $sdtm->getDaysInMonth();
+        for ($i=1; $i <= $daysInMonth; $i++) {
+            if (in_array($sdtm->getDayOfWeek(), $dayOfWeekArray)) {
+                 $dates[] = clone $sdtm;
+             }
+            $sdtm->add($interval);
+        }
+        return $dates;
+    }
+
+    /**
+     * Return an array of SugarDateTime objects for all of the current month's dates
+     * that land on a WeekEnd.
+     * @return array(SugarDateTime)
+     */
+    public function getMonthDatesForWeekEndDays()
+    {
+        return $this->getMonthDatesForDaysOfWeek(array(self::DOW_SAT, self::DOW_SUN));
+    }
+
+    /**
+     * Return an array of SugarDateTime objects for all of the current month's dates
+     * that land on a Monday through Friday.
+     * @return array(SugarDateTime)
+     */
+    public function getMonthDatesForNonWeekEndDays()
+    {
+        return $this->getMonthDatesForDaysOfWeek(
+            array(
+                self::DOW_MON,
+                self::DOW_TUE,
+                self::DOW_WED,
+                self::DOW_THU,
+                self::DOW_FRI
+            )
+        );
+    }
+
+    /**
+     * Return an array of SugarDateTime objects for all of the current month's dates
+     * that match the Days of Week supplied.
+     * @param  array  Days Of Week (0-6)
+     * @return array(SugarDateTime)
+     */
+    public function getYearDatesForDaysOfWeek($dayOfWeekArray = array(), $last = false)
+    {
+        $dates = array();
+        $interval = new DateInterval('P1D');
+        $sdtm = clone $this;
+        $sdtm->setDate($sdtm->getYear(), $sdtm->getMonth(), 1);
+        for ($i=1; $i <= 45; $i++) {
+            if (in_array($sdtm->getDayOfWeek(), $dayOfWeekArray)) {
+                 $dates[] = clone $sdtm;
+             }
+            $sdtm->add($interval);
+        }
+        $sdtm->setDate($sdtm->getYear(), 12, 25);
+        for ($i=1; $i <= 7; $i++) {
+            if (in_array($sdtm->getDayOfWeek(), $dayOfWeekArray)) {
+                 $dates[] = clone $sdtm;
+             }
+            $sdtm->add($interval);
+        }
+        return $dates;
+    }
+
+    /**
+     * Get Month of the Year
+     * @return int (1-12)
+     */
+    public function getMonth()
+    {
+        return $this->format('n');
+    }
+
+    /**
+     * Get Day of the Month
+     * @return int (1-31)
+     */
+    public function getDay()
+    {
+        return $this->format('j');
+    }
+
+    /**
+     * Get Year
+     * @return int (4-digit year)
+     */
+    public function getYear()
+    {
+        return $this->format('Y');
+    }
+
+    /**
+     * Get Hours
+     * @return int (0-23)
+     */
+    public function getHour()
+    {
+        return $this->format('G');
+    }
+
+    /**
+     * Get minutes
+     * @return int (0-59)
+     */
+    public function getMinute()
+    {
+        return (int) $this->format('i');
+    }
+
+    /**
+     * Get seconds
+     * @return int (0-59)
+     */
+    public function getSecond()
+    {
+        return (int) $this->format('s');
+    }
+
+    /**
+     * Get Number of Days in Current Month
+     * @return int (28-31)
+     */
+    public function getDaysInMonth()
+    {
+        return (int) $this->format('t');
+    }
+
+    /**
+     * Get Current Date's Day Of Week
+     * @return int     (0=Sun, 1=Mon, ... 6=Sat)
+     */
+    public function getDayOfWeek()
+    {
+        return $this->format('w');
+    }
+
+    /**
+     * Is the DayOfWeek (supplied or current Date's Day Of Week) a Week End Date (Sat/Sun) ?
+     * @param $dow  (optional)
+     * @return bool
+     */
+    public function isWeekEndDay($dow = null)
+    {
+        if (is_null($dow)) {
+            $dow = $this->getDayOfWeek();
+        } else {
+            $dow = $dow % 7;
+        }
+        return ($dow == self::DOW_SAT || $dow == self::DOW_SUN);
     }
 }

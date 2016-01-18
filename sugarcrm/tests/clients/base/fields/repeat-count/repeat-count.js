@@ -33,40 +33,6 @@ describe('View.Fields.Base.RepeatCountField', function() {
         app.view.reset();
     });
 
-    it('should default the value when creating a new record', function() {
-        sandbox.stub(field, '_super');
-        sandbox.stub(field.model, 'isNew').returns(true);
-        sandbox.stub(field.model, 'addValidationTask');
-        field.model.unset(field.name);
-
-        field.initialize();
-
-        expect(field.model.get(field.name)).toBe(field.defaultCount);
-    });
-
-    it('should not default the value when the model has been copied', function() {
-        sandbox.stub(field, '_super');
-        sandbox.stub(field.model, 'isNew').returns(true);
-        sandbox.stub(field.model, 'isCopy').returns(true);
-        sandbox.stub(field.model, 'addValidationTask');
-        field.model.unset(field.name);
-
-        field.initialize();
-
-        expect(field.model.get(field.name)).toBeUndefined();
-    });
-
-    it('should not default the value when not creating a new record', function() {
-        sandbox.stub(field, '_super');
-        sandbox.stub(field.model, 'isNew').returns(false);
-        sandbox.stub(field.model, 'addValidationTask');
-        field.model.set(field.name, 4, {silent: true});
-
-        field.initialize();
-
-        expect(field.model.get(field.name)).toBe(4);
-    });
-
     describe('formatting the value for the DOM', function() {
         using('non-empty values', [4, '4'], function(value) {
             it('should return a string', function() {

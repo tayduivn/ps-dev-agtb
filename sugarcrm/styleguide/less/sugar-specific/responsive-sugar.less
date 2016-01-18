@@ -490,11 +490,8 @@ and (orientation: portrait) {
 
   // Scheduler UI profile row
   .record div[data-name="invitees"] {
-    .participants-schedule .row.participant .cell.profile .name span {
+    .participants-schedule .participant .profile .name .ellipsis_inline {
       width: 72px;
-    }
-    .participants-form .cell.select .field {
-      margin-left: -181px;
     }
   }
 
@@ -511,9 +508,9 @@ and (orientation: portrait) {
 
 @media (max-width: 700px) {
   #searchForm .typeahead {
-      width: 100%;
-      .border-radius(0);
-      border: 0;
+    width: 100%;
+    .border-radius(0);
+    border: 0;
   }
 
   .navbar-inner .nav-collapse ul.nav.megamenu {

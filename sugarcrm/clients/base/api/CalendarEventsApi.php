@@ -74,6 +74,13 @@ class CalendarEventsApi extends ModuleApi
     public function createBean(ServiceBase $api, array $args, array $additionalProperties = array())
     {
         $this->requireArgs($args, array('module'));
+
+        if (empty($args['date_start'])) {
+            throw new SugarApiExceptionMissingParameter('Missing parameter: date_start');
+        }
+        $args = $this->initializeArgs($args, null);
+        $this->adjustStartDate($args); // adjust start date as necessary if this is a recurring event
+
         $this->getCalendarEvents()->setOldAssignedUser($args['module'], null);
 
         $bean = parent::createBean($api, $args, $additionalProperties);
@@ -106,6 +113,8 @@ class CalendarEventsApi extends ModuleApi
         $api->action = 'view';
         $bean = $this->loadBean($api, $args, 'view');
 
+        $args = $this->initializeArgs($args, $bean);
+
         if ($this->shouldAutoInviteParent($bean, $args)) {
             $this->getCalendarEvents()->inviteParent($bean, $args['parent_type'], $args['parent_id']);
         }
@@ -120,6 +129,9 @@ class CalendarEventsApi extends ModuleApi
                 $this->getCalendarEvents()->rebuildFreeBusyCache($GLOBALS['current_user']);
             }
         } else {
+            // adjust start date as necessary if being updated to a recurring event
+            $this->adjustStartDate($args);
+
             $updateResult = $this->updateRecord($api, $args);
 
             // check if it changed from a non-recurring to recurring & generate events if necessary
@@ -167,11 +179,13 @@ class CalendarEventsApi extends ModuleApi
      * @throws SugarApiExceptionInvalidParameter - when updating using the 'all_recurrences' option, the id of the
      *         Parent (root) bean must be provided.
      */
-    public function updateRecurringCalendarEvent(SugarBean $bean, $api, $args)
+    public function updateRecurringCalendarEvent(SugarBean $bean, $api, &$args)
     {
         if (!empty($bean->repeat_parent_id) && ($bean->repeat_parent_id !== $bean->id)) {
             throw new SugarApiExceptionInvalidParameter('ERR_CALENDAR_CANNOT_UPDATE_FROM_CHILD');
         }
+
+        $this->adjustStartDate($args); // adjust start date as necessary
 
         $api->action = 'save';
         $this->updateRecord($api, $args);
@@ -231,6 +245,88 @@ class CalendarEventsApi extends ModuleApi
     }
 
     /**
+     * If the event specifies a recurring series, ensure that the series date_start represents
+     * the first date in the series.
+     *
+     * @param array $args
+     * @return array
+     */
+    protected function initializeArgs($args, $bean=null)
+    {
+        $repeatType = '';
+        if (!empty($bean)) {
+            $repeatType = empty($bean->repeat_type) ? '' : $bean->repeat_type;
+        }
+        if (array_key_exists('repeat_type', $args)) {
+            $repeatType = empty($args['repeat_type']) ? '' : $args['repeat_type'];
+        }
+
+        if (empty($repeatType)) {
+            $args['repeat_count'] = 0;
+            $args['repeat_until'] = '';
+            $args['repeat_interval'] = 0;
+            $args['repeat_dow'] = '';
+            $args['repeat_selector'] = 'None';
+            $args['repeat_days'] = '';
+            $args['repeat_ordinal'] = '';
+            $args['repeat_unit'] = '';
+        } else {
+            $repeatCount = 0;
+            if (!empty($bean)) {
+                $repeatCount = empty($bean->repeat_count) ? 0 : intval($bean->repeat_count);
+                if (!empty($args['repeat_until'])) {
+                    $repeatCount = 0;
+                }
+            }
+            if (array_key_exists('repeat_count', $args)) {
+                $repeatCount = empty($args['repeat_count']) ? 0 : intval($args['repeat_count']);
+            }
+            $repeatInterval = 0;
+            if (!empty($bean)) {
+                $repeatInterval = empty($bean->repeat_interval) ? 0 : intval($bean->repeat_interval);
+            }
+            if (array_key_exists('repeat_interval', $args)) {
+                $repeatInterval = empty($args['repeat_interval']) ? 0 : intval($args['repeat_interval']);
+            }
+            if (empty($repeatInterval)) {
+                $repeatInterval = 1;
+            }
+            if ($repeatCount > 0) {
+                $args['repeat_until'] = '';
+            }
+            if ($repeatType != 'Monthly' && $repeatType != 'Yearly') {
+                $args['repeat_selector'] = 'None';
+                $args['repeat_days'] = '';
+                $args['repeat_ordinal'] = '';
+                $args['repeat_unit'] = '';
+            }
+            if ($repeatType != 'Weekly') {
+                $args['repeat_dow'] = '';
+            }
+            $args['repeat_count'] = $repeatCount;
+            $args['repeat_interval'] = $repeatInterval;
+        }
+        return $args;
+    }
+
+    /**
+     * If the event specifies a recurring series, ensure that the series date_start represents
+     * the first date in the series.
+     * @param array $args
+     */
+    protected function adjustStartDate(&$args)
+    {
+        if (!empty($args['repeat_type'])) {
+            $sequence = $this->getRecurringSequence($args);
+            if (empty($sequence)) {
+                throw new SugarApiExceptionMissingParameter('ERR_CALENDAR_NO_EVENTS_GENERATED');
+            }
+            $firstEventDate = $this->getCalendarEvents()->formatDateTime('datetime', $sequence[0], 'iso');
+            $args['date_start'] = $firstEventDate;
+        }
+    }
+
+    /**
      * Filter out recurrence fields from the API arguments
      *
      * @param array $args
@@ -243,6 +339,10 @@ class CalendarEventsApi extends ModuleApi
             'repeat_dow',
             'repeat_until',
             'repeat_count',
+            'repeat_selector',
+            'repeat_days',
+            'repeat_ordinal',
+            'repeat_unit',
         );
         foreach($recurrenceFieldBlacklist as $fieldName) {
             unset($args[$fieldName]);
@@ -300,4 +400,33 @@ class CalendarEventsApi extends ModuleApi
 
         return true;
     }
+
+    /**
+     * Generate the recurring DateTime sequence for a Recurring Event given the Recurring Parent Bean
+     * @param SugarBean $parentBean
+     * @return array
+     */
+    protected function getRecurringSequence($args)
+    {
+        $calEvents = $this->getCalendarEvents();
+
+        $dateStart = $calEvents->formatDateTime('datetime', $args['date_start'], 'user');
+
+        $params = array();
+        $params['type'] = isset($args['repeat_type']) ? $args['repeat_type'] : '';
+        $params['interval'] = isset($args['repeat_interval']) ? $args['repeat_interval'] : '';
+        $params['count'] = isset($args['repeat_count']) ? $args['repeat_count'] : '';
+        $params['until'] = isset($args['repeat_until']) ? $args['repeat_until'] : '';
+        $params['until'] = $calEvents->formatDateTime('date', $params['until'], 'user');
+        $params['dow'] = isset($args['repeat_dow']) ? $args['repeat_dow'] : '';
+
+        $params['selector'] = isset($args['repeat_selector']) ? $args['repeat_selector'] : '';
+        $params['days'] = isset($args['repeat_days']) ? $args['repeat_days'] : '';
+        $params['ordinal'] = isset($args['repeat_ordinal']) ? $args['repeat_ordinal'] : '';
+        $params['unit'] = isset($args['repeat_unit']) ? $args['repeat_unit'] : '';
+
+        $repeatDateTimeArray = $calEvents->buildRecurringSequence($dateStart, $params);
+        return $repeatDateTimeArray;
+    }
+
 }

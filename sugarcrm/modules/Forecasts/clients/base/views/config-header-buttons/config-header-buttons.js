@@ -53,14 +53,5 @@
                 show_custom_buckets_options: finalLabels
             }, {silent: true});
         }
-    },
-
-    /**
-     * @inheritdoc
-     */
-    _handleCancelRedirect: function() {
-        if (this.context.get('model').get('is_setup') == 0) {
-            app.router.goBack();
-        }
     }
 })

@@ -16,15 +16,10 @@
 ({
 
     /**
-     * Holds the current module the user is in when config is called
-     */
-    currentModule: undefined,
-
-    /**
      * Holds an object with the current module in it for parsing language strings
      *
      * <pre><code>
-     *  { module: currentModule }
+     *  { module: this.module }
      * </pre></code>
      */
     moduleLangObj: undefined,
@@ -53,17 +48,16 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        this.currentModule = app.controller.context.get('module');
-        this.moduleLangObj = {
-            module: this.currentModule
-        };
-
         this._super('initialize', [options]);
+
+        this.moduleLangObj = {
+            module: this.module
+        };
 
         if (this.checkAccess()) {
             // get the context model
             var ctxModel = options.context.get('model'),
-                metadata = app.metadata.getModule(this.currentModule);
+                metadata = app.metadata.getModule(this.module);
             // empty the model
             ctxModel.clear({silent: true});
 
@@ -118,7 +112,7 @@
      * @private
      */
     _checkConfigMetadata: function() {
-        return !_.isEmpty(app.metadata.getModule(this.currentModule, 'config'));
+        return !_.isEmpty(app.metadata.getModule(this.module, 'config'));
     },
 
     /**
@@ -128,7 +122,7 @@
      * @private
      */
     _checkUserAccess: function() {
-        return !_.has(app.user.getAcls()[this.currentModule], 'access');
+        return !_.has(app.user.getAcls()[this.module], 'access');
     },
 
     /**
@@ -157,17 +151,17 @@
      * Blocks config from continuing to load
      */
     blockModule: function() {
-        var title = app.lang.get('LBL_CONFIG_BLOCKED_TITLE', this.currentModule, this.moduleLangObj),
+        var title = app.lang.get('LBL_CONFIG_BLOCKED_TITLE', this.module, this.moduleLangObj),
             msg;
 
         if (!this.configMetadataOK) {
-            msg = app.lang.get('LBL_CONFIG_BLOCKED_DESC_NO_CONFIG_METADATA', this.currentModule, this.moduleLangObj);
+            msg = app.lang.get('LBL_CONFIG_BLOCKED_DESC_NO_CONFIG_METADATA', this.module, this.moduleLangObj);
         } else if (!this.accessUserOK) {
-            msg = app.lang.get('LBL_CONFIG_BLOCKED_DESC_USER_ACCESS', this.currentModule, this.moduleLangObj);
+            msg = app.lang.get('LBL_CONFIG_BLOCKED_DESC_USER_ACCESS', this.module, this.moduleLangObj);
         } else if (!this.accessModuleOK) {
-            msg = app.lang.get('LBL_CONFIG_BLOCKED_DESC_MODULE_ACCESS', this.currentModule, this.moduleLangObj);
+            msg = app.lang.get('LBL_CONFIG_BLOCKED_DESC_MODULE_ACCESS', this.module, this.moduleLangObj);
         } else if (!this.accessConfigOK) {
-            msg = app.lang.get('LBL_CONFIG_BLOCKED_DESC_CONFIG_ACCESS', this.currentModule, this.moduleLangObj);
+            msg = app.lang.get('LBL_CONFIG_BLOCKED_DESC_CONFIG_ACCESS', this.module, this.moduleLangObj);
         }
 
         this.displayNoAccessAlert(title, msg);
@@ -180,7 +174,7 @@
      * @param {String} msg Already-translated language string for the Alert's message
      */
     displayNoAccessAlert: function(title, msg) {
-        var alert = app.alert.show('no_access_to_module_' + this.currentModule, {
+        var alert = app.alert.show('no_access_to_module_' + this.module, {
             level: 'error',
             title: title,
             messages: [msg]

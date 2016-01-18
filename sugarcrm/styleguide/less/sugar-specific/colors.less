@@ -41,7 +41,7 @@
 .army-text {color: @army;}
 .yellow-text {color: @yellow;}
 .orange-text {color: @orange;}
-.red-text {color: @red;}
+.red-text, .red-text .fa {color: @red;}
 .pink-text {color: @pink;}
 .purple-text {color: @purple;}
 .night-text {color: @night;}
@@ -52,21 +52,24 @@
 .coral-text {color: @coral;}
 
 /* alert state colors */
-
-.info-text {background-color: @infoText;}
-.error-text {background-color: @errorText;}
-.error-text-alert {background-color: @errorTextAlert;}
-.success-text {background-color: @successText;}
-.warning-text {background-color: @warningText;}
-
+.info, .info > .fa {color: @inform;}
+.info-text, .info-text > .fa {color: @infoText;}
 .info-background {background-color: @infoBackground;}
-.error-background {background-color: @errorBackground;}
-.success-background {background-color: @successBackground;}
-.warning-background {background-color: @warningBackground;}
+.info-border {border-color: @infoBorder;}
 
-.info-border {background-color: @infoBorder;}
-.error-border {background-color: @errorBorder;}
-.success-border {background-color: @successBorder;}
-.warning-border {background-color: @warningBorder;}
+.success, .success > .fa {color: @success;}
+.success-text, .success-text > .fa {color: @successText;}
+.success-background {background-color: @successBackground;}
+.success-border {border-color: @successBorder;}
+
+.warning, .warning > .fa {color: @warning;}
+.warning-text, .warning-text > .fa {color: @warningText;}
+.warning-background {background-color: @warningBackground;}
+.warning-border {border-color: @warningBorder;}
+
+.error, .error > .fa {color: @error;}
+.error-text, .error-text > .fa {color: @errorText;}
+.error-background {background-color: @errorBackground;}
+.error-border {border-color: @errorBorder;}
 
 /* colors for D3 charts are in nv.d3.less */

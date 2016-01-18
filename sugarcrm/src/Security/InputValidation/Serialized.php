@@ -15,6 +15,17 @@ namespace Sugarcrm\Sugarcrm\Security\InputValidation;
 class Serialized
 {
     /**
+     * Checks whether the $value contains object or class references
+     * @param string $value Serialized value of any type
+     * @return boolean
+     */
+    public static function hasObjectRefs($value)
+    {
+        preg_match('/[oc]:\d+:/i', $value, $matches);
+        return count($matches) > 0;
+    }
+
+    /**
      * Performs unserialization. Accepts all types except Objects
      *
      * @param string $value Serialized value of any type except Object
@@ -22,9 +33,7 @@ class Serialized
      */
     public static function unserialize($value)
     {
-        preg_match('/[oc]:\d+:/i', $value, $matches);
-
-        if (count($matches)) {
+        if (self::hasObjectRefs($value)) {
             \LoggerManager::getLogger()->warning('Objects unserialization is not allowed');
             return false;
         }

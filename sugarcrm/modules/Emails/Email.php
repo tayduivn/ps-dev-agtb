@@ -1247,12 +1247,20 @@ class Email extends SugarBean {
         foreach($this->email_to_text as $textfield=>$mailfield) {
             $text->$textfield = $this->$mailfield;
         }
+
+        // Get and save the current Database Encoding setting and force it to be enabled
+        $encodeVal = $GLOBALS['db']->getEncode();
+        $GLOBALS['db']->setEncode(true);
+
         $text->email_id = $this->id;
 		if(!$this->new_with_id) {
             $this->db->update($text);
 		} else {
 		    $this->db->insert($text);
 		}
+
+        // Restore previous Database Encoding setting
+        $GLOBALS['db']->setEncode($encodeVal);
 	}
 
     ///////////////////////////////////////////////////////////////////////////
@@ -2734,7 +2742,10 @@ class Email extends SugarBean {
         $GLOBALS['log']->debug("------ EMAIL SEARCH DATETIME Values ---------------------------------------------");
         $GLOBALS['log']->debug("dbFormatDateFrom: {$dbFormatDateFrom}");
         $GLOBALS['log']->debug("dbFormatDateTo: {$dbFormatDateTo}");
-        $GLOBALS['log']->debug("additionalWhereClause: " . $additionalWhereClause[count($additionalWhereClause)-1]);
+        if (count($additionalWhereClause)) {
+            $GLOBALS['log']->debug("additionalWhereClause: " .
+                $additionalWhereClause[count($additionalWhereClause) - 1]);
+        }
         $GLOBALS['log']->debug("---------------------------------------------------------------------------------");
 
         $additionalWhereClause = implode(" AND ", $additionalWhereClause);

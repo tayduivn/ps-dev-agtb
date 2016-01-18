@@ -50,6 +50,9 @@
                     if (app.drawer) {
                         app.drawer.close(self.context, self.context.get('model'));
                     }
+                    if (self.context.parent && self.context.parent.get('module') === self.module) {
+                        self.context.parent.reloadData();
+                    }
                 });
             }, this),
 
