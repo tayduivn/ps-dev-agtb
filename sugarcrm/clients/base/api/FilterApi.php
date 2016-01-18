@@ -323,8 +323,8 @@ class FilterApi extends SugarApi
             return $search->globalSearch($api, $args);
         }
 
-        list($args, $q, $options, $seed) = $this->filterListSetup($api, $args, $acl);
         $api->action = 'list';
+        list($args, $q, $options, $seed) = $this->filterListSetup($api, $args, $acl);
 
         return $this->runQuery($api, $args, $q, $options, $seed);
     }
