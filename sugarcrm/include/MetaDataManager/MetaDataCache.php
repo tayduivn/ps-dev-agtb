@@ -92,9 +92,11 @@ class MetaDataCache
             if (($row = $this->db->fetchByAssoc($sqlResult))) {
                 $cacheResult = $row['data'];
             }
-            //If we have more than one entry for the same key, we need to remove the duplicate entries.
-            while (($row = $this->db->fetchByAssoc($sqlResult))) {
-                $this->db->query("DELETE FROM " . static::$cacheTable . " WHERE id=" . $this->db->quoted($row['id']));
+            if ($row){
+                //If we have more than one entry for the same key, we need to remove the duplicate entries.
+                while (($row = $this->db->fetchByAssoc($sqlResult))) {
+                    $this->db->query("DELETE FROM " . static::$cacheTable . " WHERE id=" . $this->db->quoted($row['id']));
+                }
             }
 
             if (!empty($cacheResult)) {
