@@ -435,6 +435,11 @@ class HealthCheckScannerMeta
             'bucket' => self::MANUAL,
             'kb'     => 'http://support.sugarcrm.com/04_Knowledge_Base/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Incompatible_Integration_Data_Reset/',
         ),
+        541 => array(
+            'report' => 'invalidPASerialization',
+            'bucket' => self::MANUAL,
+            'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Invalid_PA_Serialization/',
+        ),
 
         // Bucket G
         901 => array(
@@ -651,7 +656,7 @@ class HealthCheckScannerMeta
      * @param array $params
      * @return string
      */
-    protected function getModString($label, $params = array())
+    public function getModString($label, $params = array())
     {
         if (!empty($this->modStrings[$label])) {
             $label = vsprintf($this->modStrings[$label], $params);

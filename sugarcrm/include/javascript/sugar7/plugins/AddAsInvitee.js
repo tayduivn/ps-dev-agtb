@@ -203,8 +203,18 @@
              *   adding an invitee to the collection.
              */
             addAsInvitee: function(person, options) {
-                options = _.extend({merge: true}, (options || {}));
-                this.model.get('invitees').add(person, options);
+                var complete;
+
+                complete = _.bind(function complete(request) {
+                    options = _.extend({merge: true}, (options || {}));
+                    this.model.get('invitees').add(person, options);
+                }, this);
+
+                if (person.fields && _.has(person.fields, 'email') && _.isFunction(person.fetch)) {
+                    person.fetch({fields: ['email'], complete: complete});
+                } else {
+                    complete();
+                }
             }
         });
     });

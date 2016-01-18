@@ -20,15 +20,10 @@
     },
 
     /**
-     * Holds the current module the user is in when config is called
-     */
-    currentModule: undefined,
-
-    /**
      * Holds an object with the current module in it for parsing language strings
      *
      * <pre><code>
-     *  { module: currentModule }
+     *  { module: this.module }
      * </pre></code>
      */
     moduleLangObj: undefined,
@@ -39,10 +34,9 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
-        this.currentModule = app.controller.context.get('module');
         this.moduleLangObj = {
             // get the actual plural module name
-            module: app.lang.getModuleName(this.currentModule, { plural: true })
+            module: app.lang.getModuleName(this.module, { plural: true })
         };
 
         /**
@@ -52,7 +46,7 @@
          * TODO: SIDECAR-404
          */
         var model = this.context.get('model');
-        model.url = app.api.buildURL(this.currentModule, 'config');
+        model.url = app.api.buildURL(this.module, 'config');
         model.sync = function(method, model, options) {
             this.trigger('data:sync:start', method, model, options);
             var url = _.isFunction(model.url) ? model.url() : model.url;
@@ -179,7 +173,7 @@
             // getting the fresh model with correct config settings passed in as the param
             success: _.bind(function(model) {
                 // If we're inside a drawer and Forecasts is setup and this isn't the first time, otherwise refresh
-                if (app.drawer) {
+                if (app.drawer.count()) {
                     this.showSavedConfirmation();
                     // close the drawer and return to Forecasts
                     app.drawer.close(this.context, this.context.get('model'));
@@ -214,8 +208,8 @@
         onClose = onClose || function() {};
         var alert = app.alert.show('module_config_success', {
             level: 'success',
-            title: app.lang.get('LBL_CONFIG_TITLE_MODULE_SETTINGS', this.currentModule, this.moduleLangObj) + ':',
-            messages: app.lang.get('LBL_CONFIG_MODULE_SETTINGS_SAVED', this.currentModule, this.moduleLangObj),
+            title: app.lang.get('LBL_CONFIG_TITLE_MODULE_SETTINGS', this.module, this.moduleLangObj) + ':',
+            messages: app.lang.get('LBL_CONFIG_MODULE_SETTINGS_SAVED', this.module, this.moduleLangObj),
             autoClose: true,
             autoCloseDelay: 10000,
             onAutoClose: _.bind(function() {
@@ -234,12 +228,12 @@
     cancelConfig: function() {
         if (this.triggerBefore('cancel')) {
             // If we're inside a drawer
-            if (app.drawer) {
+            if (app.drawer.count()) {
                 // close the drawer
                 app.drawer.close(this.context, this.context.get('model'));
+            } else {
+                app.router.navigate(this.module, {trigger: true});
             }
-
-            this._handleCancelRedirect();
         }
     },
 
@@ -255,13 +249,5 @@
      */
     _beforeCancelConfig: function() {
         return true;
-    },
-
-    /**
-     * Handles where to redirect on cancel
-     * @private
-     */
-    _handleCancelRedirect: function() {
-        app.router.goBack();
     }
 })
