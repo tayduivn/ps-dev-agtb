@@ -31,7 +31,7 @@ $mod_strings = array(
     'LBL_SNIP_APPLICATION_UNIQUE_KEY' => 'Application Unique Key',
     'LBL_SNIP_USER' => 'Email Archiving User',
     'LBL_SNIP_PWD' => 'Email Archiving Password',
-    'LBL_SNIP_SUGAR_URL' => 'This Sugar instance URL',
+    'LBL_SNIP_SUGAR_URL' => 'This Sugar Instance URL',
 	'LBL_SNIP_CALLBACK_URL' => 'Email Archiving service URL',
     'LBL_SNIP_USER_DESC' => 'Email Archiving user',
     'LBL_SNIP_KEY_DESC' => 'Email Archiving OAuth key. Used for acessing this instance for purposes of importing emails.',
@@ -54,7 +54,7 @@ $mod_strings = array(
     "LBL_SNIP_DESCRIPTION_SUMMARY" => "It allows you to see emails that were sent to or from your contacts inside SugarCRM, without you having to manually import and link the emails",
     "LBL_SNIP_PURCHASE_SUMMARY" => "In order to use Email Archiving, you must purchase a license for your SugarCRM instance",
     "LBL_SNIP_PURCHASE" => "Click here to purchase",
-    'LBL_SNIP_EMAIL' => 'Email Archiving Adress',
+    'LBL_SNIP_EMAIL' => 'Email Archiving Address',
     'LBL_SNIP_AGREE' => "I agree to the above terms and the <a href='http://www.sugarcrm.com/crm/TRUSTe/privacy.html' target='_blank'>privacy agreement</a>.",
     'LBL_SNIP_PRIVACY' => 'privacy agreement',
 
