@@ -43,6 +43,11 @@ class EventMapTest extends \PHPUnit_Framework_TestCase
                 'calDavStatus' => 'CONFIRMED',
                 'expectedStatus' => 'CANCELLED',
             ),
+            array(
+                'beanStatus' => null,
+                'calDavStatus' => null,
+                'expectedStatus' => null,
+            ),
         );
     }
 
@@ -68,6 +73,11 @@ class EventMapTest extends \PHPUnit_Framework_TestCase
                 'calDavStatus' => 'CANCELLED',
                 'beanStatus' => null,
                 'expectedStatus' => 'Not Held',
+            ),
+            array(
+                'calDavStatus' => null,
+                'beanStatus' => null,
+                'expectedStatus' => null,
             ),
         );
     }

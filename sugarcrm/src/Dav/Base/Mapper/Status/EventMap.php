@@ -15,6 +15,8 @@ namespace Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status;
 
 class EventMap extends MapBase
 {
+    protected $defaultSugarValue = null;
+
     protected $map = array(
         'CANCELLED' => array('Not Held'),
         'CONFIRMED' => array('Planned', 'Held'),
