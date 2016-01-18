@@ -117,7 +117,7 @@ class RecreateUserRemindersJob implements RunnableInterface
             ->queryAnd()
             ->equals($usersAlias . '.id', $userId)
             ->notEquals('assigned_user_id', $userId)
-            ->gt('date_start', $this->getTimeDate()->asDb(new \DateTime()));
+            ->gt('date_start', $this->getTimeDate()->getNow()->asDb());
 
         return $query;
     }
