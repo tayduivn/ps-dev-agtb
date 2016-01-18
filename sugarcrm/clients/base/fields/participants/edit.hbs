@@ -37,6 +37,11 @@
                 </div>
                 <div class="name">
                     <span class="ellipsis_inline" title="{{name}}">{{name}}</span>
+                    {{#unless email}}
+                    <span class="flag error">
+                        <i class="fa fa-times"></i><i class="fa fa-envelope"></i>
+                    </span>
+                    {{/unless}}
                 </div>
                 <div class="status">
                     <div class="label{{#if accept_status.css_class}} label-{{accept_status.css_class}}{{/if}}">
