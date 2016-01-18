@@ -55,6 +55,8 @@ class Scheduler extends Base
      */
     public function addReminderForUser(\SugarBean $bean, \User $user, \DateTime $reminderTime)
     {
+        $utcReminderTime = clone $reminderTime;
+        $utcReminderTime->setTimezone(new \DateTimeZone('UTC'));
         /* @var $job \SchedulersJob */
         $job = \BeanFactory::newBean('SchedulersJobs');
         /* @var $bean \Call|\Meeting */
@@ -63,7 +65,7 @@ class Scheduler extends Base
         $job->data = json_encode($this->prepareTriggerArgs($bean, $user));
         $job->target = static::CALLBACK_CLASS;
 
-        $job->execute_time = $this->getTimeDate()->asDb($reminderTime, false);
+        $job->execute_time = $this->getTimeDate()->asDb($utcReminderTime, false);
         $job->requeue = true;
         $this->getSugarJobQueue()->submitJob($job);
     }
