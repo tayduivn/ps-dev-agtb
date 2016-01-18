@@ -161,7 +161,8 @@ describe('View.Fields.Base.ParticipantsField', function() {
     describe('when copying a meeting', function() {
         it('should include the participants from the copied record', function() {
             var collection = app.data.createMixedBeanCollection();
-            model.set(fieldDef.name, collection.add({_module: 'Contacts', id: '1', name: 'Foo Bar'}));
+            collection.add({_module: 'Contacts', id: '1', name: 'Foo Bar'});
+            model.set(fieldDef.name, collection);
             sandbox.stub(model, 'isNew').returns(true);
             field = SugarTest.createField(
                 'base',
