@@ -55,8 +55,8 @@
             this._buildFieldDefinitions(copyOfModelToSave, modelInDb);
 
             // set IDs to be different so that backbone collection can recognize that they're not the same
-            copyOfModelToSave.id = originalId + '-client';
-            modelInDb.id = originalId + '-database';
+            copyOfModelToSave.set('id', originalId + '-client');
+            modelInDb.set('id', originalId + '-database');
 
             // indicate which model is from the client and the server
             copyOfModelToSave.set('_dataOrigin', 'client');
