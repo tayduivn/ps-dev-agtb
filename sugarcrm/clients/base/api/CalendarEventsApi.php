@@ -163,6 +163,7 @@ class CalendarEventsApi extends ModuleApi
 
         if ($this->getCalendarEvents()->isEventRecurring($bean)) {
             if (isset($args['all_recurrences']) && $args['all_recurrences'] === 'true') {
+                $bean->updateAllChildren = true;
                 $updateResult = $this->updateRecurringCalendarEvent($bean, $api, $args);
             } else {
                 // when updating a single occurrence of a recurring meeting without the

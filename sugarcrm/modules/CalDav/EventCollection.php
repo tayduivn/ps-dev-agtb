@@ -281,8 +281,9 @@ class CalDavEventCollection extends SugarBean
                 $state = $eventClass::STATE_VIRTUAL;
                 $child = $it->getEventObject();
                 if (!$child->{'RECURRENCE-ID'}) {
-                    $it->next();
-                    continue;
+                    $recurrenceNode = clone $child->DTSTART;
+                    $recurrenceNode->name = 'RECURRENCE-ID';
+                    $child->add($recurrenceNode);
                 }
                 if ($child) {
 
@@ -484,8 +485,6 @@ class CalDavEventCollection extends SugarBean
 
         if (!$rRule) {
             $event->remove('RRULE');
-            $this->deleteCustomChildren();
-            $this->setSugarChildrenOrder(array());
             $this->childEvents = array();
             $this->rRule = null;
 
@@ -504,7 +503,6 @@ class CalDavEventCollection extends SugarBean
 
         if ($currentRule->getObject()->getParts() != $rRule->getObject()->getParts()) {
             $currentRule->getObject()->setParts($rRule->getObject()->getParts());
-            $this->deleteCustomChildren();
             $this->childEvents = array();
 
             return true;
@@ -526,6 +524,22 @@ class CalDavEventCollection extends SugarBean
                 $vCalendar->remove($child->getObject());
             }
         }
+    }
+
+    /**
+     * Cleaning all custom and deleted nodes from event
+     */
+    public function resetChildrenChanges()
+    {
+        $this->deleteCustomChildren();
+        $event = $this->getParent()->getObject();
+        if ($event->EXDATE) {
+            foreach ($event->EXDATE as $deleted) {
+                $event->remove($deleted);
+            }
+        }
+
+        $this->childEvents = array();
     }
 
     /**
@@ -1461,11 +1475,11 @@ class CalDavEventCollection extends SugarBean
         if ($filter && ($invites || $changedFields)) {
             $result[] = array(
                 array(
+                    $data ? 'update' : 'override',
                     $this->id,
                     null,
                     null,
                     null,
-                    $data ? 'update' : 'override',
                 ),
                 $changedFields,
                 $invites,
@@ -1493,11 +1507,11 @@ class CalDavEventCollection extends SugarBean
             if ($filter && ($invites || $changedFields)) {
                 $result[] = array(
                     array(
+                        $oldChild ? 'update' : 'restore',
                         $this->id,
                         $this->getSugarChildrenOrder(),
                         $recurrenceId->asDb(),
                         array_search($recurrenceId, $childrenRecurrenceIds),
-                        $oldChild ? 'update' : 'restore',
                     ),
                     $changedFields,
                     $invites,
@@ -1511,11 +1525,11 @@ class CalDavEventCollection extends SugarBean
             if ($oldChild && !$oldChild->isDeleted()) {
                 $result[] = array(
                     array(
+                        'delete',
                         $this->id,
                         $this->getSugarChildrenOrder(),
                         $recurrenceId->asDb(),
                         array_search($recurrenceId, $childrenRecurrenceIds),
-                        'delete',
                     ),
                     array(),
                     array(),
@@ -1535,11 +1549,11 @@ class CalDavEventCollection extends SugarBean
                 if ($currentChild && !$currentChild->isCustomized()) {
                     $result[] = array(
                         array(
+                            'restore',
                             $this->id,
                             $this->getSugarChildrenOrder(),
                             $recurrenceId->asDb(),
                             array_search($recurrenceId, $childrenRecurrenceIds),
-                            'restore',
                         ),
                         $this->getEventDiff($currentChild, null),
                         $this->getParticipantsDiff($currentChild, null),

@@ -103,6 +103,13 @@ class Call extends SugarBean {
     public $inviteesBefore = null;
 
     /**
+     * Helper-field to store information to change all recurrence or only parent.
+     * Is not a sugar-field, is not persisted anywhere.
+     * @var bool
+     */
+    public $updateAllChildren = false;
+
+    /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
      *
      * @see __construct
