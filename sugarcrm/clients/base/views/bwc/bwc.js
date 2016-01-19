@@ -441,6 +441,26 @@
     },
 
     /**
+     * Rewrites old error elements to the new one pop-ups.
+     *
+     * @param {Object} $errors DOM elements containing errors to rewrite into standard errors.
+     */
+    convertToSidecarErrors: function($errors) {
+        if ($errors.length === 0) {
+            return;
+        }
+
+        $errors.hide();
+        var errorMessages = _.map($errors, function(error) {
+            return $(error).text();
+        });
+        app.alert.show('delete-error', {
+            level: 'error',
+            messages: errorMessages
+        });
+    },
+
+    /**
      * Allow BWC modules to rewrite their links when using their own ajax
      * calls.
      *

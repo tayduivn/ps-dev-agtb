@@ -901,4 +901,14 @@ class Team extends SugarBean
 
         return $team_array;
     }
+
+    /**
+     * Checks if team is global
+     *
+     * @return bool
+     */
+    public function isGlobalTeam()
+    {
+        return ($this->id == $this->global_team);
+    }
 }
