@@ -167,7 +167,7 @@ class HookManager
      * @param \Call|\Meeting $bean event for which will be set reminders.
      * @param boolean $isUpdate If event was added the $isUpdate is false. Otherwise is true.
      */
-    public function setReminders(\SugarBean $bean, $isUpdate)
+    protected function setReminders(\SugarBean $bean, $isUpdate)
     {
         $reminderManager = $this->getReminderManager();
         if ($isUpdate) {
