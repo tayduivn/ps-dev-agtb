@@ -176,12 +176,14 @@ if (!$focus->is_group && !$focus->portal_only) {
     if (isset($_POST['user_name'])) {
         $focus->user_name = $_POST['user_name'];
     }
+
+    // change user type to/from admin if desired
     if ((isset($_POST['is_admin']) && ($_POST['is_admin'] == 'on' || $_POST['is_admin'] == '1')) ||
        (isset($_POST['UserType']) && $_POST['UserType'] == "Administrator")
     ) {
-        $focus->is_admin = 1;
+        $focus->setAdmin(true);
     } elseif (isset($_POST['is_admin']) && empty($_POST['is_admin'])) {
-        $focus->is_admin = 0;
+        $focus->setAdmin(false);
     }
 
     if (empty($_POST['receive_notifications'])) {
