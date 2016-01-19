@@ -171,8 +171,9 @@ var resources = new Array();
 					<th id="optional_0" width="4%">{$MOD.LBL_ACTUAL_DURATION}</th>
 				</tr>
 				{foreach from=$TASKS item="TASK" }
+                    {assign var=taskEditAccess value=$TASK->ACLAccess('edit')}
 				<tr id="project_task_row_{$TASK->project_task_id}" height="23">
-					<td style="cursor:default" scope="row" align="center" onClick="SUGAR.grid.clickedRow({$TASK->project_task_id}, event);">
+                    <td style="cursor:default" scope="row" align="center" {if $taskEditAccess}onClick="SUGAR.grid.clickedRow({$TASK->project_task_id}, event);"{/if}>
 						<div id='id_{$TASK->project_task_id}_divlink' style="display:inline;">{$TASK->project_task_id}{if $TASK->milestone_flag == 1}*{/if}</div>
 						<input type="hidden" name="mapped_row_{$TASK->project_task_id}" id="mapped_row_{$TASK->project_task_id}" value="{$TASK->project_task_id}">
 						<input type="hidden" name="parent_{$TASK->project_task_id}" id="parent_{$TASK->project_task_id}" value="{$TASK->parent_task_id}">
@@ -182,7 +183,7 @@ var resources = new Array();
 						<input type="hidden" name="time_finish_{$TASK->project_task_id}" id="time_finish_{$TASK->project_task_id}" value="{$TASK->time_finish}">
 					</td>
 					<td>
-						<input  {if $CURRENT_USER != $TASK->resource_id && !$CANEDIT}readonly="readonly"{/if} type=text size=5 style="border:0" name=percent_complete_{$TASK->project_task_id} id=percent_complete_{$TASK->project_task_id} value="{$TASK->percent_complete}"
+                        <input {if $CURRENT_USER != $TASK->resource_id && !$CANEDIT || !$taskEditAccess}readonly="readonly"{/if} type=text size=5 style="border:0" name=percent_complete_{$TASK->project_task_id} id=percent_complete_{$TASK->project_task_id} value="{$TASK->percent_complete}"
 							onBlur="if (SUGAR.grid.validatePercentComplete(this)) {literal}{{/literal}
 							SUGAR.grid.updateAncestorsPercentComplete({$TASK->project_task_id})
 							SUGAR.gantt.changeTask({$TASK->project_task_id});
@@ -190,7 +191,7 @@ var resources = new Array();
 					</td>
 					<td nowrap ondblclick="SUGAR.grid.toggle('description_{$TASK->project_task_id}_div', 'description_{$TASK->project_task_id}', 'description_{$TASK->project_task_id}_divlink');">
 						<div id='description_{$TASK->project_task_id}_div' style="display:none;">
-							<input {if !$CANEDIT}readonly="readonly"{/if} name=description_{$TASK->project_task_id} type=text maxlength="{ $NAME_LENGTH }" style="border:0"  size=40 id=description_{$TASK->project_task_id} value="{$TASK->name}"
+							<input {if !$CANEDIT || !$taskEditAccess}readonly="readonly"{/if} name=description_{$TASK->project_task_id} type=text maxlength="{ $NAME_LENGTH }" style="border:0"  size=40 id=description_{$TASK->project_task_id} value="{$TASK->name}"
 								onblur="SUGAR.grid.blurEvent({$TASK->project_task_id}, 'description_{$TASK->project_task_id}_div','description_{$TASK->project_task_id}', 'description_{$TASK->project_task_id}_divlink');">
 							<input type="hidden" name="description_divlink_input_{$TASK->project_task_id}" id="description_divlink_input_{$TASK->project_task_id}" value="{$TASK->name}">
 
@@ -198,7 +199,7 @@ var resources = new Array();
 						<div id='description_{$TASK->project_task_id}_divlink' style="display:inline;width:250px">{$TASK->name}</div>
 					</td>
 					<td>
-						<input  {if !$CANEDIT}readonly="readonly"{/if} type=text  style="border:0;" size=3 name=duration_{$TASK->project_task_id} id=duration_{$TASK->project_task_id} value="{$TASK->duration}"
+						<input  {if !$CANEDIT || !$taskEditAccess}readonly="readonly"{/if} type=text  style="border:0;" size=3 name=duration_{$TASK->project_task_id} id=duration_{$TASK->project_task_id} value="{$TASK->duration}"
 							onBlur="if (SUGAR.grid.validateDuration(this)) {literal}{{/literal}
 							SUGAR.grid.calculateEndDate(document.getElementById('date_start_{$TASK->project_task_id}').value, this.value, {$TASK->project_task_id});
 							SUGAR.grid.updateAllDependentsAfterDateChanges({$TASK->project_task_id});
@@ -209,7 +210,7 @@ var resources = new Array();
 					<td>
 						<!--Need the hidden duration unit so that even when a resource logs in and the duration_unit select is disabled, we can still export to PDF via this hidden field-->
 						<input type='hidden' name="duration_unit_hidden_{$TASK->project_task_id}" id="duration_unit_hidden_{$TASK->project_task_id}" value="{$TASK->duration_unit}">
-						<select  {if !$CANEDIT}disabled{/if} style='border:0' name=duration_unit_{$TASK->project_task_id} id=duration_unit_{$TASK->project_task_id} onChange="SUGAR.grid.changeDurationUnits('{$TASK->project_task_id}')">
+						<select  {if !$CANEDIT || !$taskEditAccess}disabled{/if} style='border:0' name=duration_unit_{$TASK->project_task_id} id=duration_unit_{$TASK->project_task_id} onChange="SUGAR.grid.changeDurationUnits('{$TASK->project_task_id}')">
 							{foreach from=$DURATION_UNITS item="DURATION_UNIT" key="DURATION_UNIT_KEY"}
 								{if $DURATION_UNIT == $TASK->duration_unit}
 									<option value="{$DURATION_UNIT_KEY}" selected>{$DURATION_UNIT}</option>
@@ -220,15 +221,14 @@ var resources = new Array();
 						</select>
 					</td>
 					<td>
-						<input {if !$CANEDIT}readonly="readonly"{/if} name=date_start_{$TASK->project_task_id} id=date_start_{$TASK->project_task_id} style="border:0" onchange="parseDate(this, '{$CALENDAR_DATEFORMAT}'); SUGAR.grid.processStartDate(this, '{$TASK->project_task_id}');"
-							 type="text" tabindex='2' size='11' maxlength='10' value="{$TASK->date_start}">
+                        <input {if !$CANEDIT || !$taskEditAccess}readonly="readonly" {/if} id=date_start_{$TASK->project_task_id} name=date_start_{$TASK->project_task_id} style="border:0" type="text" tabindex='2' size='11' maxlength='10' value="{$TASK->date_start}">
 					</td>
 					<td>
-						<input {if !$CANEDIT}readonly="readonly"{/if} name=date_finish_{$TASK->project_task_id} id=date_finish_{$TASK->project_task_id} style="border:0" onchange="parseDate(this, '{$CALENDAR_DATEFORMAT}'); SUGAR.grid.processFinishDate(this, '{$TASK->project_task_id}');"
+                        <input {if !$CANEDIT || !$taskEditAccess}readonly="readonly"{/if} name=date_finish_{$TASK->project_task_id} id=date_finish_{$TASK->project_task_id} style="border:0" onchange="parseDate(this, '{$CALENDAR_DATEFORMAT}'); SUGAR.grid.processFinishDate(this, '{$TASK->project_task_id}');"
 							type="text" tabindex='2' size='11' maxlength='10' value="{$TASK->date_finish}">
 					</td>
 					<td>
-						<input  {if !$CANEDIT}readonly="readonly"{/if} type=text size=10  style='border:0' name=predecessors_{$TASK->project_task_id} id=predecessors_{$TASK->project_task_id} value="{$TASK->predecessors}"
+                        <input  {if !$CANEDIT || !$taskEditAccess}readonly="readonly"{/if} type=text size=10  style='border:0' name=predecessors_{$TASK->project_task_id} id=predecessors_{$TASK->project_task_id} value="{$TASK->predecessors}"
 						onblur="if (SUGAR.grid.validatePredecessors(this)){literal}{{/literal}
 							SUGAR.grid.setDependencyCheckRow({$TASK->project_task_id});
 							SUGAR.grid.validateDependencyCycles({$TASK->project_task_id});
@@ -247,7 +247,7 @@ var resources = new Array();
 					<td>
 						<input type='hidden' name="resource_full_name_{$TASK->project_task_id}" id="resource_full_name_{$TASK->project_task_id}">
 						<input type='hidden' name="resource_type_{$TASK->project_task_id}" id="resource_type_{$TASK->project_task_id}">
-						<select  {if !$CANEDIT}disabled{/if} style='border:0' name=resource_{$TASK->project_task_id} id=resource_{$TASK->project_task_id}
+                        <select  {if !$CANEDIT || !$taskEditAccess}disabled{/if} style='border:0' name=resource_{$TASK->project_task_id} id=resource_{$TASK->project_task_id}
 						 onChange="SUGAR.grid.updateResourceFullNameAndType('{$TASK->project_task_id}');
 						 	SUGAR.grid.calculateEndDate(document.getElementById('date_start_{$TASK->project_task_id}').value, document.getElementById('duration_{$TASK->project_task_id}').value, {$TASK->project_task_id});
 						 	SUGAR.grid.calculateDatesAfterAddingPredecessors({$TASK->project_task_id});
@@ -266,7 +266,7 @@ var resources = new Array();
 							{/foreach}
 						</select>
 					</td>
-					<td id="optional_{$TASK->project_task_id}"><input {if $CURRENT_USER != $TASK->resource_id && !$CANEDIT}readonly="readonly"{/if} type=text size=10 style="border:0" name=actual_duration_{$TASK->project_task_id} id=actual_duration_{$TASK->project_task_id} value="{$TASK->actual_duration}" onBlur="SUGAR.grid.validateDuration(this);">
+					<td id="optional_{$TASK->project_task_id}"><input {if $CURRENT_USER != $TASK->resource_id && !$CANEDIT || !$taskEditAccess}readonly="readonly"{/if} type=text size=10 style="border:0" name=actual_duration_{$TASK->project_task_id} id=actual_duration_{$TASK->project_task_id} value="{$TASK->actual_duration}" onBlur="SUGAR.grid.validateDuration(this);">
 					</td>
 				</tr>
 				<script type="text/javascript">
