@@ -249,6 +249,9 @@
      * triggering a new event and not calling the default code of
      * `bindDomChange()`.
      *
+     * Undefined model values will not be replaced with empty string to prevent
+     * unnecessary unsaved changes warnings.
+     *
      * @override
      */
     handleHideDatePicker: function() {
@@ -262,6 +265,11 @@
             $dateField.val('');
             $timeField.val('');
         }
+
+        if (_.isEmptyValue(datetime) && _.isUndefined(this.model.get(this.name))) {
+            return;
+        }
+
         this.model.set(this.name, datetime);
     },
 

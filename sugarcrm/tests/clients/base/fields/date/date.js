@@ -199,6 +199,18 @@ describe('Base.Field.Date', function() {
 
                 expect(field.model.get(field.name)).toBe('1984-01-15');
             });
+
+            it('should not set empty value if model value not defined to prevent unsaved changes warning', function() {
+                field.render();
+
+                expect(field.$(field.fieldTag).val()).toBe('');
+                expect(field.model.get(field.name)).toBeUndefined();
+
+                // FIXME: this should be reviewed once SC-2395 gets in
+                field.$(field.fieldTag).trigger('hide');
+
+                expect(field.model.get(field.name)).toBeUndefined();
+            });
         });
 
         describe('massupdate', function() {
