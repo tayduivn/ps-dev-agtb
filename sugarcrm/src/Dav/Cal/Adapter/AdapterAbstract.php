@@ -237,11 +237,9 @@ abstract class AdapterAbstract implements AdapterInterface
                     $isChanged = true;
                 } else {
                     $data[0][3] = null;
-                    unset($data[1]['repeat_type']);
-                    unset($data[1]['repeat_interval']);
-                    unset($data[1]['repeat_dow']);
-                    unset($data[1]['repeat_until']);
-                    unset($data[1]['repeat_count']);
+                    foreach (RecurringHelper::$recurringFieldList as $recurringFieldName) {
+                        unset($data[1][$recurringFieldName]);
+                    }
                     unset($data[1]['repeat_parent_id']);
                 }
             } elseif ($collection->getRRule()) {
@@ -600,6 +598,37 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
 
+        if (isset($exportFields['repeat_unit']) && isset($importFields['rrule']['byday'])) {
+            $monthlyDayMap = new CalDavStatus\MonthlyDayMap();
+            if (count($importFields['rrule']['byday'][0]) == 1) {
+                $weekDay = substr($importFields['rrule']['byday'][0][0], -2);
+                if ($exportFields['repeat_unit'][0] == $monthlyDayMap->getSugarValue($weekDay)) {
+                    unset($exportFields['repeat_unit']);
+                    unset($importFields['rrule']['byday']);
+                }
+            } else {
+                unset($exportFields['repeat_unit']);
+                unset($importFields['rrule']['byday']);
+            }
+        }
+
+        if (isset($exportFields['repeat_days']) && isset($importFields['rrule']['bymonthday'])) {
+            $aDays = explode(',', $exportFields['repeat_days'][0]);
+            if ($aDays == $importFields['rrule']['bymonthday'][0]) {
+                unset($exportFields['repeat_days']);
+                unset($importFields['rrule']['bymonthday']);
+            }
+        }
+
+        if (isset($exportFields['repeat_ordinal']) && isset($importFields['rrule']['bysetpos'])) {
+            $map = new CalDavStatus\DayPositionMap();
+            if ($exportFields['repeat_ordinal'][0] == $map->getSugarValue($importFields['rrule']['bysetpos'][0][0])) {
+                unset($exportFields['repeat_ordinal']);
+                unset($importFields['rrule']['bysetpos']);
+            }
+        }
+        unset($exportFields['repeat_selector']);
+
         if (isset($importFields['rrule']) && count($importFields['rrule']) == 1) {
             unset($importFields['rrule']);
         }
@@ -863,6 +892,13 @@ abstract class AdapterAbstract implements AdapterInterface
                 }
             }
             if (array_diff($converted, $currentRule->getByDay())) {
+                return false;
+            }
+        }
+
+        if (isset($value['repeat_days'][1])) {
+            $aDays = explode(',', $value['repeat_days'][1]);
+            if ($aDays != $currentRule->getByMonthDay()) {
                 return false;
             }
         }
@@ -1320,6 +1356,8 @@ abstract class AdapterAbstract implements AdapterInterface
     {
         $frequencyMap = new CalDavStatus\IntervalMap();
         $dayMap = new CalDavStatus\DayMap();
+        $dayPositionMap = new CalDavStatus\DayPositionMap();
+        $monthlyDayMap = new CalDavStatus\MonthlyDayMap();
 
         if (isset($value['frequency'][1]) && $bean->repeat_type !=  $frequencyMap->getSugarValue($value['frequency'][1])) {
             return false;
@@ -1340,12 +1378,32 @@ abstract class AdapterAbstract implements AdapterInterface
         }
 
         if (isset($value['byday'][1])) {
-            $sugarValue = '';
-            foreach ($value['byday'][1] as $day) {
-                $sugarValue .= $dayMap->getSugarValue($day);
-            }
+            if ($bean->repeat_type == 'Monthly') {
+                $daysData = $value['byday'][1];
+                if (count($daysData) == 1) {
+                    $weekDay = substr($daysData[0], - 2);
+                    $dayPosition = substr($daysData[0], 0, strlen($daysData[0]) - 2);
+                    if ($bean->repeat_ordinal != $dayPositionMap->getSugarValue($dayPosition) ||
+                        $bean->repeat_unit != $monthlyDayMap->getSugarValue($weekDay)
+                    ) {
+                        return false;
+                    }
 
-            if ($bean->repeat_dow != $sugarValue) {
+                }
+            } else {
+                $sugarValue = '';
+                foreach ($value['byday'][1] as $day) {
+                    $sugarValue .= $dayMap->getSugarValue($day);
+                }
+                if ($bean->repeat_dow != $sugarValue) {
+                    return false;
+                }
+            }
+        }
+
+        if (isset($value['bymonthday'][1])) {
+            $aDays = $bean->repeat_days ? explode(',', $bean->repeat_days) : array();
+            if ($aDays != $value['bymonthday'][1]) {
                 return false;
             }
         }
@@ -1372,33 +1430,7 @@ abstract class AdapterAbstract implements AdapterInterface
             return true;
         }
 
-        $frequencyMap = new CalDavStatus\IntervalMap();
-        $dayMap = new CalDavStatus\DayMap();
-
-        if (isset($value['frequency'])) {
-            $bean->repeat_type =  $frequencyMap->getSugarValue($value['frequency'][0]);
-        }
-
-        if (isset($value['interval'])) {
-            $bean->repeat_interval = $value['interval'][0];
-        }
-
-        if (isset($value['count'])) {
-            $bean->repeat_count = $value['count'][0];
-        }
-
-        if (isset($value['until'])) {
-            $bean->repeat_until = $value['until'][0];
-        }
-
-        if (isset($value['byday'])) {
-            $sugarValue = '';
-            foreach ($value['byday'][0] as $day) {
-                $sugarValue .= $dayMap->getSugarValue($day);
-            }
-
-            $bean->repeat_dow = $sugarValue;
-        }
+        $this->getRecurringHelper()->arrayToBean($value, $bean);
 
         $calendarEvents->saveRecurringEvents($bean);
 

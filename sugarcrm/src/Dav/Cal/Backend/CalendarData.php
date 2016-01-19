@@ -78,10 +78,8 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
             $rRule = $mainComponent->RRULE->getParts();
             return
                 !empty($rRule['BYMONTH']) ||
-                !empty($rRule['BYMONTHDAY']) ||
                 !empty($rRule['BYYEARDAY']) ||
                 !empty($rRule['BYWEEKNO']) ||
-                !empty($rRule['BYSETPOS']) ||
                 !empty($rRule['BYHOUR']) ||
                 $rRule['FREQ'] == 'MINUTELY' ||
                 $rRule['FREQ'] == 'HOURLY';

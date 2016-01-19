@@ -1397,6 +1397,8 @@ class CalDavEventCollection extends SugarBean
                 $oldUntil = $oldRRule->getUntil() ? $oldRRule->getUntil()->asDbDate() : null;
                 $changedFields['until'] = array(null, $oldUntil);
                 $changedFields['byday'] = array(array(), $oldRRule->getByDay());
+                $changedFields['bymonthday'] = array(array(), $oldRRule->getByDay());
+                $changedFields['bysetpos'] = array(array(), $oldRRule->getBySetPos());
                 return $changedFields;
             }
 
@@ -1423,6 +1425,14 @@ class CalDavEventCollection extends SugarBean
                 if ($oldRRule->getByDay() != $currentRRule->getByDay()) {
                     $changedFields['byday'] = array($currentRRule->getByDay(), $oldRRule->getByDay());
                 }
+
+                if ($oldRRule->getByMonthDay() != $currentRRule->getByMonthDay()) {
+                    $changedFields['bymonthday'] = array($currentRRule->getByMonthDay(), $oldRRule->getByMonthDay());
+                }
+
+                if ($oldRRule->getBySetPos() != $currentRRule->getBySetPos()) {
+                    $changedFields['bysetpos'] = array($currentRRule->getBySetPos(), $oldRRule->getBySetPos());
+                }
             }
         } elseif ($currentRRule) {
             $changedFields['action'] = 'added';
@@ -1432,6 +1442,8 @@ class CalDavEventCollection extends SugarBean
             $until = $currentRRule->getUntil();
             $changedFields['until'] = $until ? array($until->asDbDate()) : array(null);
             $changedFields['byday'] = array($currentRRule->getByDay());
+            $changedFields['bymonthday'] = array($currentRRule->getByMonthDay());
+            $changedFields['bysetpos'] = array($currentRRule->getBySetPos());
         }
 
         return $changedFields;
