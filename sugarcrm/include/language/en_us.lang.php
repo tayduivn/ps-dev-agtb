@@ -11666,7 +11666,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_PA_UNSERIALIZE_DATA_FAILURE' => 'Serialized data could not be unserialized',
     'LBL_PA_UNSERIALIZE_OBJECT_FAILURE' => 'Serialized data could not be unserialized because it contains references to objects or classes',
 
-    'LBL_FIELD_TRIMMED' => 'Field was trimmed, due to exceeding the maximum character limit.',
+    'LBL_FIELDSIZE_OVERFLOW' => 'Field exceeds maximum character limit.',
 );
 
 $app_list_strings['activity_user_options'] = array (
