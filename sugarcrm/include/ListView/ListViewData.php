@@ -213,8 +213,6 @@ class ListViewData {
 
         $this->setVariableName($seed->object_name, $where, $this->listviewName);
 
-		$this->seed->id = '[SELECT_ID_LIST]';
-
         // if $params tell us to override all ordering
         if(!empty($params['overrideOrder']) && !empty($params['orderBy'])) {
             $order = $this->getOrderBy(strtolower($params['orderBy']), (empty($params['sortOrder']) ? '' : $params['sortOrder'])); // retreive from $_REQUEST
