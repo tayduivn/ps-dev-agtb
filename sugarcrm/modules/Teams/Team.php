@@ -718,32 +718,74 @@ class Team extends SugarBean
 	 *
 	 * @param $old_teams Array of team ids whose records will be reassigned to the team instance id
 	 */
-	function reassign_team_records($old_teams=array()) {
+	function reassign_team_records($old_teams = array())
+	{
+		$logger = \LoggerManager::getLogger();
+
 		$old_team = BeanFactory::getBean('Teams');
-		foreach($old_teams as $old_team_id) {
+		foreach ($old_teams as $old_team_id) {
 			$old_team->retrieve($old_team_id);
 
-			$query = "SELECT tsm.module_table_name FROM team_sets_modules tsm inner join team_sets_teams tst on tsm.team_set_id = tst.team_set_id where tst.team_id = '{$old_team->id}'";
+			$query =
+				"SELECT tsm.module_table_name
+				 FROM team_sets_modules tsm
+				 INNER JOIN team_sets_teams tst
+				   ON tsm.team_set_id = tst.team_set_id
+				 WHERE tst.team_id = {$this->db->quoted($old_team->id)}";
 			$results = $this->db->query($query);
 			$modules_with_team = array();
-			if(!empty($results)) {
-				while($row = $this->db->fetchByAssoc($results)) {
-			          $modules_with_team[] = $row['module_table_name'];
+			if (!empty($results)) {
+				while ($row = $this->db->fetchByAssoc($results)) {
+					$modules_with_team[] = $row['module_table_name'];
 				}
 			}
 
-			if(!empty($modules_with_team)) {
-			   foreach($modules_with_team as $module) {
-			   	   $sql = "UPDATE {$module} SET team_id = '{$this->id}' WHERE team_id = '{$old_team->id}'";
-			   	   $GLOBALS['log']->info("Updating team_id column values in {$module} table from '{$old_team->id}' to '{$this->id}'");
-			   	   $this->db->query($sql);
+			if (!empty($modules_with_team)) {
+				$modules_with_team = array_unique($modules_with_team);
+				foreach ($modules_with_team as $module) {
+					// skip users module, will process it below
+					if ($module === 'users') {
+						continue;
+					}
+					$sql =
+						"UPDATE {$module}
+						 SET team_id = {$this->db->quoted($this->id)}
+						 WHERE team_id = {$this->db->quoted($old_team->id)}";
+					$logger->info("Updating team_id column values in {$module} table from '{$old_team->id}' to '{$this->id}'");
+					$this->db->query($sql);
 
-			   	   $sql = "UPDATE team_sets_teams SET team_id = '{$this->id}' WHERE team_id = '{$old_team->id}'";
-			   	   $GLOBALS['log']->info("Updating team_id column values in team_sets_teams table from '{$old_team->id}' to '{$this->id}'");
-			   	   $this->db->query($sql);
-
-			   }
+					$sql =
+						"UPDATE team_sets_teams
+						 SET team_id = {$this->db->quoted($this->id)}
+						 WHERE team_id = {$this->db->quoted($old_team->id)}";
+					$logger->info("Updating team_id column values in team_sets_teams table from '{$old_team->id}' to '{$this->id}'");
+					$this->db->query($sql);
+				}
 			}
+
+			// find affected users
+			$userIds = array();
+			$query = "SELECT id FROM users WHERE default_team = {$this->db->quoted($old_team->id)}";
+			$results = $this->db->query($query);
+			if (!empty($results)) {
+				while ($row = $this->db->fetchByAssoc($results)) {
+					$userIds[] = $row['id'];
+				}
+			}
+			// for User bean team_id is default_team
+			if (!empty($userIds)) {
+				$sql =
+					"UPDATE {$module}
+					 SET default_team = {$this->db->quoted($this->id)}
+					 WHERE default_team = {$this->db->quoted($old_team->id)}";
+				$logger->info("Updating default_team column values in users table from '{$old_team->id}' to '{$this->id}'");
+				$this->db->query($sql);
+				// make sure users are members of the assigned team
+				foreach ($userIds as $userId) {
+					$this->add_user_to_team($userId);
+				}
+			}
+
 			$old_team->delete_team();
 		}
 	}
