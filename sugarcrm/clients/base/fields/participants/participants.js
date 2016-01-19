@@ -307,8 +307,13 @@
         firstUserOverlay = $startEndOverlays.first();
         firstUserData = firstUserOverlay.closest('.participant').data();
         $timelineBlocks = this.getTimelineBlocks(firstUserData.module, firstUserData.id);
+
         timelineBlockStartIndex = startAndEndDates.meetingStart.diff(startAndEndDates.timelineStart, 'hours', true) * 4;
+        timelineBlockStartIndex = Math.round(timelineBlockStartIndex);
+
         timelineBlockEndIndex = (startAndEndDates.meetingEnd.diff(startAndEndDates.timelineStart, 'hours', true) * 4) - 1;
+        timelineBlockEndIndex = Math.round(timelineBlockEndIndex);
+
         $startBlock = $timelineBlocks.eq(timelineBlockStartIndex);
         $endBlock = $timelineBlocks.eq(timelineBlockEndIndex);
 

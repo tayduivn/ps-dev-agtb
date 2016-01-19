@@ -199,7 +199,6 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                         array(
                             'name' => 'date_start',
                             'time' => array(
-                                'disable_text_input' => true,
                                 'step' => 15,
                             ),
                             'readonly' => false,
@@ -211,7 +210,6 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                         array(
                             'name' => 'date_end',
                             'time' => array(
-                                'disable_text_input' => true,
                                 'step' => 15,
                                 'duration' => array(
                                     'relative_to' => 'date_start'
