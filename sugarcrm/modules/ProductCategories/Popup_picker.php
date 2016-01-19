@@ -22,6 +22,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $theme;
 
+// do not remove these extra lines, we need the file size to be bigger than 8k to workaround
+// a php 5.4 bug that causes honeycomb builds to fail
+
+
+
+
+
+
 global $app_strings;
 global $app_list_strings;
 global $mod_strings;
