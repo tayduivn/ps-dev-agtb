@@ -1448,4 +1448,26 @@ class PMSEEngineUtils
             }
         }
     }
+
+    /*
+     * Gets module label based on module name
+     * @param string $module
+     * @param bool $plural
+     * @return string $label
+     */
+    public static function getModuleLabelFromModuleName($module, $plural = false)
+    {
+        global $app_list_strings;
+        $label = '';
+
+        if (!empty($module)) {
+            if ($plural) {
+                $label = isset($app_list_strings['moduleList'][$module]) ? $app_list_strings['moduleList'][$module] : $module;
+            } else {
+                $label = isset($app_list_strings['moduleListSingular'][$module]) ? $app_list_strings['moduleListSingular'][$module] : $module;
+            }
+        }
+
+        return $label;
+    }
 }
