@@ -216,7 +216,10 @@ UpdaterField.prototype.setOptions = function (settings) {
             case 'team_list':
                 currentSetting.disabledAppendOption = !this.hasCheckbox;
                 aux = this.parent.getField('act_field_module').getSelectedData();
-                currentSetting.disableTeamSelection = !App.metadata.getModule(aux.module).isTBAEnabled;
+                var moduleData = App.metadata.getModule(aux.module_name);
+                currentSetting.disableTeamSelection = !_.isUndefined(moduleData) && !_.isUndefined(moduleData.isTBAEnabled)
+                    ? !moduleData.isTBAEnabled
+                    : true;
                 newOption = new TeamUpdaterItem(currentSetting);
                 break;
             default:
