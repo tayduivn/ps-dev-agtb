@@ -64,10 +64,18 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
             'show_worksheet_worst' => 0
         );
         /* @var ForecastsConfigApi $apiClass */
-        $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged'));
+        $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged', 'refreshForecastByMetadata', 'rebuildExtensions'));
+
         $apiClass->expects($this->once())
             ->method('timePeriodSettingsChanged')
             ->will($this->returnValue(false));
+
+        $apiClass->expects($this->once())
+            ->method('refreshForecastByMetadata');
+
+        $apiClass->expects($this->once())
+            ->method('rebuildExtensions');
+
         $result = $apiClass->forecastsConfigSave($api, $args);
         $this->assertArrayHasKey("testSetting", $result);
         $this->assertEquals($result['testSetting'], "testValue");
@@ -79,6 +87,72 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertArrayHasKey("testSetting", $results);
         $this->assertEquals($results['testSetting'], "testValue");
+    }
+
+    public function testRefreshForecastByMetadata()
+    {
+        SugarAutoLoader::load('modules/Opportunities/include/OpportunityWithRevenueLineItem.php');
+        $apiClass = $this->getMock('ForecastsConfigApi', array('getOpportunityConfigObject'));
+        $oppClass = $this->getMockBuilder('OpportunityWithRevenueLineItem')->getMock();
+
+        $oppClass->expects($this->once())
+                 ->method('doMetadataConvert');
+
+        $apiClass->expects($this->once())
+                 ->method('getOpportunityConfigObject')
+                 ->will($this->returnValue($oppClass));
+
+        $apiClass->refreshForecastByMetadata('foo');
+    }
+
+    /**
+     * @dataProvider getOpportunityConfigObjectProvider
+     * @param $forecast_by
+     * @param $result
+     */
+    public function testGetOpportunityConfigObject($forecast_by, $result)
+    {
+        $apiClass = new ForecastsConfigApi();
+
+        $class = $apiClass->getOpportunityConfigObject($forecast_by);
+        $this->assertEquals($result, get_class($class));
+    }
+
+    public function getOpportunityConfigObjectProvider()
+    {
+        return array(
+            array('RevenueLineItems', 'OpportunityWithRevenueLineItem'),
+            array('Opportunities', 'OpportunityWithOutRevenueLineItem'),
+        );
+    }
+
+    public function testGetRepairAndClear()
+    {
+        $apiClass = new ForecastsConfigApi();
+
+        $class = $apiClass->getRepairAndClear();
+        $this->assertEquals('RepairAndClear', get_class($class));
+    }
+
+    public function testRebuildExtensions()
+    {
+        $module = 'foo';
+        SugarAutoLoader::load('modules/Administration/QuickRepairAndRebuild.php');
+        $apiClass = $this->getMock('ForecastsConfigApi', array('getRepairAndClear'));
+        $repairClass = $this->getMockBuilder('RepairandClear')->getMock();
+
+        $apiClass->expects($this->once())
+                 ->method('getRepairandClear')
+                 ->will($this->returnValue($repairClass));
+
+        $repairClass->expects($this->once())
+                    ->method('clearVardefs');
+
+        $repairClass->expects($this->once())
+            ->method('rebuildExtensions')
+            ->with($module);
+
+        $apiClass->rebuildExtensions($module);
     }
 
     /**
@@ -124,7 +198,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
             'show_worksheet_best' => 1,
             'show_worksheet_worst' => 0
         );
-        $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged'));
+        $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged', 'refreshForecastByMetadata', 'rebuildExtensions'));
         $apiClass->expects($this->once())
             ->method('timePeriodSettingsChanged')
             ->will($this->returnValue(false));
@@ -156,7 +230,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
             'show_worksheet_best' => 1,
             'show_worksheet_worst' => 0
         );
-        $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged', 'setWorksheetColumns'));
+        $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged', 'refreshForecastByMetadata', 'rebuildExtensions', 'setWorksheetColumns'));
         $apiClass->expects($this->once())
             ->method('timePeriodSettingsChanged')
             ->will($this->returnValue(false));
@@ -188,7 +262,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
             "module" => "Forecasts",
             "testSetting" => "testValue",
         );
-        $apiClass = new ForecastsConfigApi();
+        $apiClass = $this->getMock('ForecastsConfigApi', array('refreshForecastByMetadata', 'rebuildExtensions'));
         $result = $apiClass->forecastsConfigSave($api, $args);
 
         /* @var $admin Administration */
@@ -229,7 +303,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array_merge($args, $priorSettings);
 
-        $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged'));
+        $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged', 'refreshForecastByMetadata', 'rebuildExtensions'));
 
         if(empty($priorSettings['is_setup'])) {
             $priorSettings['timeperiod_shown_forward'] = 0;
