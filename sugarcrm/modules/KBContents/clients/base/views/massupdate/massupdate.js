@@ -65,63 +65,64 @@
      * @private
      */
     _doValidateMassUpdate: function(models, fields, callback) {
-        var checkField = 'status',
+        var self = this,
+            value = '',
+            checkField = 'status',
             errorFields = [],
             messages = [],
-            errors = {},
-            updatedValues = {};
-        _.each(fields, function(field) {
-            updatedValues[field.name] = this.model.get(field.name);
-            if (undefined !== field.id_name && this.model.has(field.id_name)) {
-                updatedValues[field.id_name] = this.model.get(field.id_name);
-            }
-        }, this);
-        _.each(models, function(model) {
-            var values = _.extend({}, model.toJSON(), updatedValues),
-                newModel = app.data.createBean(model.module, values);
-            if (undefined !== updatedValues[checkField] && updatedValues[checkField] === 'approved') {
-                this._doValidateActiveDateField(newModel, fields, errors, function(model, fields, errors) {
-                    var fieldName = 'active_date';
-                    if (!_.isEmpty(errors[fieldName])) {
-                        errors[checkField] = errors[fieldName];
-                        errorFields.push(fieldName);
-                        messages.push(app.lang.get('LBL_SPECIFY_PUBLISH_DATE', 'KBContents'));
+            checkFieldIndex = _.find(fields, function(field) {
+                return field.name === checkField;
+            }),
+            errors = {};
+        if (undefined !== checkFieldIndex) {
+            value = this.model.get(checkField);
+            _.each(models, function(model) {
+                switch (value) {
+                    case 'published':
+                        self._doValidateExpDateField(model, fields, errors, function(model, fields, errors){
+                            var fieldName = 'exp_date';
+                            if (!_.isEmpty(errors[fieldName])) {
+                                errors[checkField] = errors[fieldName];
+                                errorFields.push(fieldName);
+                                messages.push(app.lang.get('LBL_MODIFY_EXP_DATE_LOW', 'KBContents'));
+                            }
+
+                        });
+                        break;
+                    case 'approved':
+                        self._doValidateActiveDateField(model, fields, errors, function(model, fields, errors){
+                            var fieldName = 'active_date';
+                            if (!_.isEmpty(errors[fieldName])) {
+                                errors[checkField] = errors[fieldName];
+                                errorFields.push(fieldName);
+                                messages.push(app.lang.get('LBL_SPECIFY_PUBLISH_DATE', 'KBContents'));
+                            }
+                        });
+                        break;
+
+                }
+            });
+            if (!_.isEmpty(errorFields)) {
+                errorFields.push(checkField);
+                app.alert.show('save_without_publish_date_confirmation', {
+                    level: 'confirmation',
+                    messages: _.uniq(messages),
+                    confirm: {
+                        label: app.lang.get('LBL_YES')
+                    },
+                    cancel: {
+                        label: app.lang.get('LBL_NO')
+                    },
+                    onConfirm: function() {
+                        errors = _.filter(errors, function(error, key) {
+                            _.indexOf(errorFields, key) === -1;
+                        });
+                        callback(fields, errors);
                     }
                 });
-            }
-            this._doValidateExpDateField(newModel, fields, errors, function(model, fields, errors) {
-                var fieldName = 'exp_date';
-                if (!_.isEmpty(errors[fieldName])) {
-                    errors[checkField] = errors[fieldName];
-                    errorFields.push(fieldName);
-                    messages.push(app.lang.get('LBL_MODIFY_EXP_DATE_LOW', 'KBContents'));
-                }
-            });
-        }, this);
-
-        if (!_.isEmpty(errorFields)) {
-            if (!_.isUndefined(errors.active_date) && errors.active_date.activeDateLow ||
-                !_.isUndefined(errors.exp_date) && errors.exp_date.expDateLow) {
+            } else {
                 callback(fields, errors);
-                return;
             }
-            errorFields.push(checkField);
-            app.alert.show('save_without_publish_date_confirmation', {
-                level: 'confirmation',
-                messages: _.uniq(messages),
-                confirm: {
-                    label: app.lang.get('LBL_YES')
-                },
-                cancel: {
-                    label: app.lang.get('LBL_NO')
-                },
-                onConfirm: function() {
-                    errors = _.filter(errors, function(error, key) {
-                        _.indexOf(errorFields, key) === -1;
-                    });
-                    callback(fields, errors);
-                }
-            });
         } else {
             callback(fields, errors);
         }
