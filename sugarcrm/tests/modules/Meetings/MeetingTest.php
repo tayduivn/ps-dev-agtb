@@ -237,16 +237,4 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
         $actual = $meeting->get_notification_recipients();
         $this->assertEmpty($actual, 'The current user should be in the list.');
     }
-
-    /**
-     * @dataProvider dataChangesProvider
-     * @param array $dataChanges
-     * @param array $expectedData
-     */
-    public function testClearDataChanges($dataChanges, $expectedData)
-    {
-        $meeting = new Meeting();
-        $meeting->dataChanges = $dataChanges;
-        $this->assertEquals($expectedData, $meeting->getCleanDataChanges());
-    }
 }

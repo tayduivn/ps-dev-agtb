@@ -83,6 +83,7 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 	public function testGetInvites()
 	{
 		global $current_user;
+        global $locale;
 		$meeting = \BeanFactory::getBean('Meetings');
 		$meeting->id = create_guid();
 		$meeting->new_with_id = false;
@@ -114,45 +115,46 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 
 		$invitesAfter = CalendarUtils::getInvitees($meeting);
 
-		$invitesBeforeExpected = array (
-			'contacts' => array(
-				$this->contact->id => array(
-					'status' => 'none',
-					'bean' => BeanFactory::getBean('Contacts', $this->contact->id)
-				)
-			),
-			'leads' => array(),
-            'users' => array(),
-            'addresses' => array(),
-		);
-
-
-		$invitesAfterExpected = array (
-			'contacts' => array(
-				$this->contact->id => array(
-					'status' => 'none',
-					'bean' => BeanFactory::getBean('Contacts', $this->contact->id)
-				)
-			),
-			'leads' => array(
-				$this->lead->id => array(
-					'status' => 'accept',
-					'bean' => BeanFactory::getBean('Leads', $this->lead->id)
-				)
-			),
-			'users' => array(
-				$current_user->id => array(
-					'status' => 'accept',
-					'bean' => BeanFactory::getBean('Users', $current_user->id)
-				)
+        $invitesBeforeExpected = array (
+            array(
+                'Contacts',
+                $this->contact->id,
+                '',
+                'none',
+                $locale->formatName($this->contact)
             ),
-            'addresses' => array(
-                $this->addressee->id => array(
-                    'status' => 'accept',
-                    'bean' => BeanFactory::getBean('Addresses', $this->addressee->id)
-                )
+        );
+
+        $invitesAfterExpected = array (
+            array(
+                'Contacts',
+                $this->contact->id,
+                '',
+                'none',
+                $locale->formatName($this->contact)
             ),
-		);
+            array(
+                'Leads',
+                $this->lead->id,
+                '',
+                'accept',
+                $locale->formatName($this->lead)
+            ),
+            array(
+                'Users',
+                $current_user->id,
+                '',
+                'accept',
+                $locale->formatName($current_user)
+            ),
+            array(
+                'Addresses',
+                $this->addressee->id,
+                '',
+                'accept',
+                $locale->formatName($this->addressee)
+            ),
+        );
 
 		$this->assertEquals($invitesBeforeExpected, $invitesBefore);
 		$this->assertEquals($invitesAfterExpected, $invitesAfter);

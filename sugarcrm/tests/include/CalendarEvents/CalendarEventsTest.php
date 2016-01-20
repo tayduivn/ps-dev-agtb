@@ -299,11 +299,10 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $events = $this->getMockBuilder('CalendarEvents')
             ->disableOriginalConstructor()
-            ->setMethods(array('getChildrenQuery', 'isEventRecurring', 'runCalDavUpdate'))
+            ->setMethods(array('getChildrenQuery', 'isEventRecurring'))
             ->getMock();
         $events->expects($this->once())->method('isEventRecurring')->willReturn(true);
         $events->expects($this->once())->method('getChildrenQuery')->willReturn($q);
-        $events->expects($this->once())->method('runCalDavUpdate')->with($meeting1);
 
         $invitee = BeanFactory::getBean('Contacts', create_guid());
         $updated = $events->updateAcceptStatusForInvitee(
@@ -336,11 +335,10 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $events = $this->getMockBuilder('CalendarEvents')
             ->disableOriginalConstructor()
-            ->setMethods(array('getChildrenQuery', 'isEventRecurring', 'runCalDavUpdate'))
+            ->setMethods(array('getChildrenQuery', 'isEventRecurring'))
             ->getMock();
         $events->expects($this->once())->method('isEventRecurring')->willReturn(false);
         $events->expects($this->never())->method('getChildrenQuery');
-        $events->expects($this->once())->method('runCalDavUpdate')->with($meeting);
 
         $invitee = BeanFactory::getBean('Contacts', create_guid());
         $updated = $events->updateAcceptStatusForInvitee($meeting, $invitee, 'tentative');
@@ -398,11 +396,10 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $events = $this->getMockBuilder('CalendarEvents')
             ->disableOriginalConstructor()
-            ->setMethods(array('getChildrenQuery', 'isEventRecurring', 'runCalDavUpdate'))
+            ->setMethods(array('getChildrenQuery', 'isEventRecurring'))
             ->getMock();
         $events->expects($this->once())->method('isEventRecurring')->willReturn(true);
         $events->expects($this->once())->method('getChildrenQuery')->willReturn($q);
-        $events->expects($this->once())->method('runCalDavUpdate')->with($meeting1);
 
         $invitee = BeanFactory::getBean('Contacts', create_guid());
         $updated = $events->updateAcceptStatusForInvitee(
@@ -443,11 +440,10 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $events = $this->getMockBuilder('CalendarEvents')
             ->disableOriginalConstructor()
-            ->setMethods(array('getChildrenQuery', 'isEventRecurring', 'runCalDavUpdate'))
+            ->setMethods(array('getChildrenQuery', 'isEventRecurring'))
             ->getMock();
         $events->expects($this->once())->method('isEventRecurring')->willReturn(true);
         $events->expects($this->once())->method('getChildrenQuery')->willReturn($q);
-        $events->expects($this->never())->method('runCalDavUpdate')->with($meeting1);
 
         $invitee = BeanFactory::getBean('Contacts', create_guid());
         $updated = $events->updateAcceptStatusForInvitee(

@@ -21,6 +21,7 @@ class CalendarCRYS1322 extends Sugar_PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
+        SugarTestHelper::setUp('current_user');
         BeanFactory::setBeanClass('Meetings', 'MeetingCRYS1322');
         $GLOBALS['db'] = $this->getMock('MysqlManager', array('query', 'fetchByAssoc', 'insertParams'));
     }
@@ -32,6 +33,7 @@ class CalendarCRYS1322 extends Sugar_PHPUnit_Framework_TestCase
     {
         BeanFactory::setBeanClass('Meetings', 'MeetingCRYS1322');
         $GLOBALS['db'] = DBManagerFactory::getInstance();
+        SugarTestHelper::tearDown();
     }
 
     /**
@@ -57,7 +59,7 @@ class CalendarCRYS1322 extends Sugar_PHPUnit_Framework_TestCase
 
 
         $meeting = BeanFactory::getBean('Meetings', '__ID__');
-        CalendarUtils::saveRecurring($meeting, array('12/16/2015 2:34pm'));
+        CalendarUtils::saveRecurring($meeting, array('2015-12-16 14:34'));
 
         $this->assertContains( "SELECT * FROM meetings_addresses WHERE deleted = 0 AND meeting_id = '__ID__'", $sqls );
     }

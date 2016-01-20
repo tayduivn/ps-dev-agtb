@@ -36,10 +36,11 @@ class UserHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $calendars = $userHelper->getCalendars('principals/users/' . $sugarUser->user_name);
 
-        $this->assertArrayHasKey($calendarID, $calendars);
-        $this->assertEquals($sugarUser->id, $calendars[$calendarID]->assigned_user_id);
-        $this->assertEquals(translate('LBL_DAFAULT_CALDAV_NAME'), $calendars[$calendarID]->name);
-        $this->assertEquals('VEVENT,VTODO', $calendars[$calendarID]->components);
+        $this->assertArrayHasKey(0, $calendars);
+        $this->assertEquals($calendarID, $calendars[0]['id']);
+        $this->assertEquals($sugarUser->id, $calendars[0]['assigned_user_id']);
+        $this->assertEquals(translate('LBL_DAFAULT_CALDAV_NAME'), $calendars[0]['name']);
+        $this->assertEquals('VEVENT,VTODO', $calendars[0]['components']);
     }
 
     /**
@@ -53,9 +54,9 @@ class UserHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $calendars = $userHelper->getCalendars('principals/users/' . $sugarUser->user_name);
 
         $this->assertArrayHasKey(0, $calendars);
-        $this->assertEquals($sugarUser->id, $calendars[0]->assigned_user_id);
-        $this->assertEquals(translate('LBL_DAFAULT_CALDAV_NAME'), $calendars[0]->name);
+        $this->assertEquals($sugarUser->id, $calendars[0]['assigned_user_id']);
+        $this->assertEquals(translate('LBL_DAFAULT_CALDAV_NAME'), $calendars[0]['name']);
 
-        SugarTestCalDavUtilities::addCalendarToCreated($calendars[0]->id);
+        SugarTestCalDavUtilities::addCalendarToCreated($calendars[0]['id']);
     }
 }

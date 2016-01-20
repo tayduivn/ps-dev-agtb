@@ -23,7 +23,7 @@ class CalDavEventCollectionCRYS1322Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        BeanFactory::setBeanClass('Meetings', 'MeetingCRYS1322');
+        BeanFactory::setBeanClass('Meetings', 'CalDavEventCollectionMeetingCRYS1322');
         BeanFactory::setBeanClass('Users', 'UserCRYS1322');
         BeanFactory::setBeanClass('Contacts', 'ContactCRYS1322');
         BeanFactory::setBeanClass('EmailAddresses', 'EmailAddressCRYS1322');
@@ -103,7 +103,7 @@ class CalDavEventCollectionCRYS1322Test extends Sugar_PHPUnit_Framework_TestCase
 /**
  * Stub class for Meeting bean
  */
-class MeetingCRYS1322 extends \Meeting
+class CalDavEventCollectionMeetingCRYS1322 extends \Meeting
 {
     public function retrieve($id) {
         $this->populateFromRow(array(

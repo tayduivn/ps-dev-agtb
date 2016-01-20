@@ -102,12 +102,8 @@ class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testDurationToSecond($duration, $expectedResult)
     {
-        $helperMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
-                           ->disableOriginalConstructor()
-                           ->setMethods(null)
-                           ->getMock();
+        $helperMock = $this->getDateTimeHelperMock();
         $result = $helperMock->durationToSeconds($duration);
-
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -121,12 +117,8 @@ class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testSecondsToDuration($seconds, $expectedResult)
     {
-        $helperMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
-                           ->disableOriginalConstructor()
-                           ->setMethods(null)
-                           ->getMock();
+        $helperMock = $this->getDateTimeHelperMock();
         $result = $helperMock->secondsToDuration($seconds);
-
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -141,15 +133,30 @@ class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testDavDateToSugar($vEvent, $elementToSelect, $expectedDateTime)
     {
-        $helperMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
-                           ->disableOriginalConstructor()
-                           ->setMethods(null)
-                           ->getMock();
-
+        $helperMock = $this->getDateTimeHelperMock();
         $dateTimeElement = array_shift($vEvent->getBaseComponent()->select($elementToSelect));
-
         $result = $helperMock->davDateToSugar($dateTimeElement);
-
         $this->assertEquals($expectedDateTime, $result);
+    }
+
+    /**
+     * Get basic DateTimeHelper mock with mocked getCurrentUser() method.
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getDateTimeHelperMock()
+    {
+        $userMock = $this->getMockBuilder('\User')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getPreference'))
+            ->getMock();
+        $userMock->expects($this->any())->method('getPreference')->with('timezone')->willReturn('UTC');
+
+        $helperMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getCurrentUser'))
+            ->getMock();
+        $helperMock->expects($this->any())->method('getCurrentUser')->willReturn($userMock);
+
+        return $helperMock;
     }
 }

@@ -53,18 +53,6 @@ describe('CalDav.Layout.ConfigDrawer', function() {
             expect(layout._checkUserAccess()).toBeTruthy();
         });
 
-        it('should allow access when user has CalDav Developer role', function() {
-            sinon.collection.stub(app.user, 'getAcls', function() {
-                return {
-                    CalDav: {
-                        admin: 'no'
-                    }
-                }
-            });
-
-            expect(layout._checkUserAccess()).toBeTruthy();
-        });
-
         it('should allow to access when user is CalDav Admin', function() {
             sinon.collection.stub(app.user, 'getAcls', function() {
                 return {
