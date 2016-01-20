@@ -47,7 +47,7 @@ class EventTest extends \Sugar_PHPUnit_Framework_TestCase
                 'eventName' => '',
             ),
             'someString' => array(
-                'eventName' => 'after_save' . rand(1000, 1999),
+                'eventName' => 'test' . rand(1000, 1999),
             ),
         );
     }
@@ -60,118 +60,51 @@ class EventTest extends \Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetBeanThrowsIfBeanWasNotSet()
     {
-        $event = new BeanEvent('after_save');
+        $event = new BeanEvent('test' . rand(1000, 1999));
         $event->getBean();
     }
 
     /**
-     * Check if covered function returns bean given in event constructor.
+     * Data provider for testGetBeanAndSetBean
      *
-     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event::getBean
-     */
-    public function testGetBeanReturnsBeanFromConstructor()
-    {
-        $bean = \BeanFactory::getBean('Users');
-        $event = new BeanEvent('test' . rand(1000, 1999), $bean);
-        $this->assertEquals($bean, $event->getBean());
-    }
-
-    /**
-     * Check if covered function returns bean given in setBean function.
-     *
-     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event::getBean
-     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event::setBean
-     * @dataProvider getBeanReturnsBeanFromSetBeanProvider
-     * @param string $eventName
-     * @param string $targetBeanModule
-     */
-    public function testGetBeanReturnsBeanFromSetBean($eventName, $targetBeanModule)
-    {
-        $targetBean = \BeanFactory::getBean($targetBeanModule);
-        $targetBean->id = create_guid();
-        $event = new BeanEvent($eventName);
-        $event->setBean($targetBean);
-        $this->assertEquals($targetBean, $event->getBean());
-    }
-
-    /**
-     * Data provider for testGetBeanReturnsBeanFromSetBean.
-     *
-     * @see EventTest::testGetBeanReturnsBeanFromSetBean
+     * @see EventTest::testGetBeanAndSetBean
      * @return array
      */
-    public static function getBeanReturnsBeanFromSetBeanProvider()
+    public static function getBeanAndSetBeanProvider()
     {
         return array(
-            'constructorWithoutBean' => array(
-                'eventName' => 'after_save',
-                'targetBeanModule' => 'Accounts',
+            'accounts' => array(
+                'constructorBean' => 'Meetings',
+                'methodBean' => 'Accounts',
             ),
-            'constructorWithBean' => array(
-                'eventName' => 'after_save',
-                'targetBeanModule' => 'Meetings',
+            'meetings' => array(
+                'constructorBean' => 'Accounts',
+                'methodBean' => 'Meetings',
             ),
         );
     }
 
     /**
-     * Check if covered function returns bean given in setBean function, not in constructor.
+     * Checks behavior of constructor, setBean, getBean methods.
      *
-     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event::getBean
+     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event::__construct
      * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event::setBean
-     * @dataProvider getBeanInitializeEventWithBeanProvider
-     * @param string $eventName
-     * @param string $targetBeanModule
+     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event::getBean
+     * @dataProvider getBeanAndSetBeanProvider
+     * @param string $constructorBean
+     * @param string $methodBean
      */
-    public function testGetBeanInitializeEventWithBean($eventName, $targetBeanModule)
+    public function testGetBeanAndSetBean($constructorBean, $methodBean)
     {
-        $targetBean = \BeanFactory::getBean($targetBeanModule);
-        $targetBean->id = create_guid();
-        $constructorBean = \BeanFactory::getBean('Users');
+        $constructorBean = \BeanFactory::getBean($constructorBean);
         $constructorBean->id = create_guid();
-        $event = new BeanEvent($eventName, $constructorBean);
-        $event->setBean($targetBean);
-        $this->assertEquals($targetBean, $event->getBean());
-    }
+        $methodBean = \BeanFactory::getBean($methodBean);
+        $methodBean->id = create_guid();
 
-    /**
-     * Data provider for testGetBeanInitializeEventWithBean.
-     *
-     * @see EventTest::testGetBeanInitializeEventWithBean
-     * @return array
-     */
-    public static function getBeanInitializeEventWithBeanProvider()
-    {
-        return array(
-            'constructorWithoutBean' => array(
-                'eventName' => 'after_save',
-                'targetBeanModule' => 'Accounts',
-            ),
-            'constructorWithBean' => array(
-                'eventName' => 'after_save',
-                'targetBeanModule' => 'Meetings',
-            ),
-        );
-    }
-
-    /**
-     * Check if covered function set bean to event and return event object.
-     *
-     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event::setBean
-     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event::getBean
-     */
-    public function testSetBeanSetsBeanAndReturnsThis()
-    {
-        $accountBean = \BeanFactory::getBean('Accounts');
-        $accountBean->id = create_guid();
-
-        $leadBean = \BeanFactory::getBean('Leads');
-        $leadBean->id = create_guid();
-
-        $event = new BeanEvent('Accounts', $accountBean);
-        $result = $event->setBean($leadBean);
-
-        $this->assertEquals($leadBean, $event->getBean());
+        $event = new BeanEvent(null, $constructorBean);
+        $this->assertEquals($constructorBean, $event->getBean());
+        $result = $event->setBean($methodBean);
+        $this->assertEquals($methodBean, $event->getBean());
         $this->assertEquals($event, $result);
     }
 
@@ -192,14 +125,14 @@ class EventTest extends \Sugar_PHPUnit_Framework_TestCase
      *
      * @dataProvider getModuleNameBeanSetInConstructorProvider
      * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event::getModuleName
-     * @param string $beanModuleName
+     * @param string $beanModule
      */
-    public function testGetModuleNameBeanSetInConstructor($beanModuleName)
+    public function testGetModuleNameBeanSetInConstructor($beanModule)
     {
-        $bean = \BeanFactory::getBean($beanModuleName);
-        $bean->id = create_guid();
-        $event = new BeanEvent('test', $bean);
-        $this->assertEquals($bean->module_name, $event->getModuleName());
+        $beanModule = \BeanFactory::getBean($beanModule);
+        $beanModule->id = create_guid();
+        $event = new BeanEvent('test', $beanModule);
+        $this->assertEquals($beanModule->module_name, $event->getModuleName());
     }
 
     /**
@@ -212,52 +145,55 @@ class EventTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             'userBean' => array(
-                'beanModuleName' => 'Users',
+                'beanModule' => 'Users',
             ),
             'accountBean' => array(
-                'beanModuleName' => 'Accounts',
+                'beanModule' => 'Accounts',
             ),
             'teamBean' => array(
-                'beanModuleName' => 'Teams',
+                'beanModule' => 'Teams',
             ),
         );
     }
 
+    /**
+     * Data provider for testGetModuleName.
+     *
+     * @see EventTest::testGetModuleName
+     * @return array
+     */
+    public static function getModuleNameProvider()
+    {
+        return array(
+            'accounts' => array(
+                'constructorBean' => 'Meetings',
+                'methodBean' => 'Accounts',
+            ),
+            'meetings' => array(
+                'constructorBean' => 'Accounts',
+                'methodBean' => 'Meetings',
+            ),
+        );
+    }
 
     /**
      * Check if covered function returns module name of bean given in setBean function.
      *
      * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event::getModuleName
-     * @dataProvider getModuleNameFromSetBeanProvider
-     * @param string $eventName
-     * @param string $targetBeanModule
+     * @dataProvider getModuleNameProvider
+     * @param string $constructorBean
+     * @param string $methodBean
      */
-    public function testGetModuleNameFromSetBean($eventName, $targetBeanModule)
+    public function testGetModuleName($constructorBean, $methodBean)
     {
-        $bean = \BeanFactory::getBean($targetBeanModule);
-        $bean->id = create_guid();
-        $event = new BeanEvent($eventName);
-        $event->setBean($bean);
-        $this->assertEquals($bean->module_name, $event->getModuleName());
-    }
+        $constructorBean = \BeanFactory::getBean($constructorBean);
+        $constructorBean->id = create_guid();
+        $methodBean = \BeanFactory::getBean($methodBean);
+        $methodBean->id = create_guid();
 
-    /**
-     * Data provider for testGetModuleNameFromSetBean.
-     *
-     * @see EventTest::testGetModuleNameFromSetBean
-     * @return array
-     */
-    public static function getModuleNameFromSetBeanProvider()
-    {
-        return array(
-            'constructorWithoutBean' => array(
-                'eventName' => 'after_save' . rand(1000, 1999),
-                'targetBeanModule' => 'Users',
-            ),
-            'constructorWithBean' => array(
-                'eventName' => 'after_save' . rand(2000, 2999),
-                'targetBeanModule' => 'Meetings',
-            ),
-        );
+        $event = new BeanEvent(null, $constructorBean);
+        $this->assertEquals($constructorBean->module_name, $event->getModuleName());
+        $event->setBean($methodBean);
+        $this->assertEquals($methodBean->module_name, $event->getModuleName());
     }
 }

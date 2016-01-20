@@ -30,7 +30,7 @@ class HookTest extends \Sugar_PHPUnit_Framework_TestCase
     protected $emitterRegistry = null;
 
     /** @var BeanEmitterInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $moduleEmitter = null;
+    protected $beanEmitter = null;
 
     /**
      * {@inheritdoc}
@@ -39,37 +39,13 @@ class HookTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->emitterRegistry = $this->getMock('Sugarcrm\Sugarcrm\Notification\EmitterRegistry');
-        $this->moduleEmitter = $this->getMock('Sugarcrm\Sugarcrm\Notification\Emitter\Bean\BeanEmitterInterface');
+        $this->beanEmitter = $this->getMock('Sugarcrm\Sugarcrm\Notification\Emitter\Bean\BeanEmitterInterface');
         $this->hook = $this->getMock(
             'Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Hook',
             array('getEmitterRegistry')
         );
 
         $this->hook->method('getEmitterRegistry')->willReturn($this->emitterRegistry);
-    }
-
-    /**
-     * Returns false when module does not have emitter or emitter not instance of BeanEmitterInterface.
-     *
-     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Hook::hook
-     * @dataProvider hookReturnsFalseForInvalidModulesProvider
-     * @param string $eventName
-     * @param array $arguments
-     * @param bool|string $moduleEmitterClass
-     */
-    public function testHookReturnsFalseForInvalidModules($eventName, $arguments, $moduleEmitterClass)
-    {
-        $moduleEmitter = false;
-        if ($moduleEmitterClass) {
-            $moduleEmitter = $this->getMock($moduleEmitterClass);
-        }
-        $bean = $this->getMock('SugarBean');
-        $this->emitterRegistry
-            ->expects($this->once())
-            ->method('getModuleEmitter')
-            ->with($this->equalTo($bean->module_name))
-            ->willReturn($moduleEmitter);
-        $this->assertFalse($this->hook->hook($bean, $eventName, $arguments));
     }
 
     /**
@@ -81,116 +57,81 @@ class HookTest extends \Sugar_PHPUnit_Framework_TestCase
     public static function hookReturnsFalseForInvalidModulesProvider()
     {
         return array(
-            'noEmitterUnknownEventWithoutArguments' => array(
-                'eventName' => '',
-                'arguments' => array(),
-                'moduleEmitterClass' => false,
+            'accounts' => array(
+                'beanModule' => 'Accounts',
             ),
-            'noEmitterUpdateWithoutArguments' => array(
-                'eventName' => 'update',
-                'arguments' => array(),
-                'moduleEmitterClass' => false,
-            ),
-            'noEmitterUnknownEventWithArguments' => array(
-                'eventName' => '',
-                'arguments' => array(
-                    'dataChanges' => array('dummy-data-changes'),
-                ),
-                'moduleEmitterClass' => false,
-            ),
-            'noEmitterUpdateWithArguments' => array(
-                'eventName' => 'update',
-                'arguments' => array(
-                    'dataChanges' => array('dummy-data-changes'),
-                ),
-                'moduleEmitterClass' => false,
-            ),
-            'wrongEmitterUnknownEventWithoutArguments' => array(
-                'eventName' => '',
-                'arguments' => array(),
-                'moduleEmitterClass' => 'Sugarcrm\Sugarcrm\Notification\EmitterInterface',
-            ),
-            'wrongEmitterUpdateWithoutArguments' => array(
-                'eventName' => 'update',
-                'arguments' => array(),
-                'moduleEmitterClass' => 'Sugarcrm\Sugarcrm\Notification\EmitterInterface',
-            ),
-            'wrongEmitterUnknownEventWithArguments' => array(
-                'eventName' => '',
-                'arguments' => array(
-                    'dataChanges' => array('dummy-data-changes'),
-                ),
-                'moduleEmitterClass' => 'Sugarcrm\Sugarcrm\Notification\EmitterInterface',
-            ),
-            'wrongEmitterUpdateWithArguments' => array(
-                'eventName' => 'update',
-                'arguments' => array(
-                    'dataChanges' => array('dummy-data-changes'),
-                ),
-                'moduleEmitterClass' => 'Sugarcrm\Sugarcrm\Notification\EmitterInterface',
+            'leads' => array(
+                'beanModule' => 'Leads',
             ),
         );
+    }
+
+    /**
+     * Returns false when module does not have emitter.
+     *
+     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Hook::hook
+     * @dataProvider hookReturnsFalseForInvalidModulesProvider
+     * @param string $beanModule
+     */
+    public function testHookReturnsFalseForInvalidModules($beanModule)
+    {
+        $bean = \BeanFactory::getBean($beanModule);
+        $this->emitterRegistry->method('getModuleEmitter')->willReturnMap(array(
+            array($beanModule, false),
+        ));
+        $this->assertFalse($this->hook->hook($bean, array(), array()));
     }
 
     /**
      * Module emitter should call exec function with right params.
      * Function returns emitter exec result.
      *
-     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Hook::hook
-     * @dataProvider hookModuleHasEmitterProvider
-     * @param string $eventName
-     * @param array $arguments
+     * @covers       Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Hook::hook
+     * @dataProvider hookExecutesExecProvider
+     * @param string $beanModule
+     * @param string $event
+     * @param array  $arguments
      */
-    public function testHookModuleHasEmitter($eventName, $arguments)
+    public function testHookExecutesExec($beanModule, $event, $arguments)
     {
-        $bean = \BeanFactory::getBean('Accounts');
+        $bean = \BeanFactory::getBean($beanModule);
         $bean->id = create_guid();
-        $moduleEmitterExecResult = array(
-            'result' . rand(1000, 1999),
-        );
-        $this->emitterRegistry->method('getModuleEmitter')->willReturn($this->moduleEmitter);
-        $this->moduleEmitter->expects($this->once())
+        $expectedReturn = 'return' . rand(1000, 9999);
+        $this->beanEmitter
+            ->expects($this->once())
             ->method('exec')
-            ->with(
-                $this->equalTo($bean),
-                $this->equalTo($eventName),
-                $this->equalTo($arguments)
-            )
-            ->willReturn($moduleEmitterExecResult);
-
-        $this->assertEquals(
-            $moduleEmitterExecResult,
-            $this->hook->hook($bean, $eventName, $arguments)
-        );
+            ->with($this->equalTo($bean), $this->equalTo($event), $this->equalTo($arguments))
+            ->willReturn($expectedReturn);
+        $this->emitterRegistry->method('getModuleEmitter')->willReturnMap(array(
+            array($beanModule, $this->beanEmitter),
+        ));
+        $actualReturn = $this->hook->hook($bean, $event, $arguments);
+        $this->assertEquals($expectedReturn, $actualReturn);
     }
 
     /**
-     * Data provider for testHookModuleHasEmitter.
+     * Data provider for testHookExecutesExec.
      *
-     * @see HookTest::testHookModuleHasEmitter
+     * @see HookTest::testHookExecutesExec
      * @return array
      */
-    public static function hookModuleHasEmitterProvider()
+    public static function hookExecutesExecProvider()
     {
         return array(
-            'unknownEventWithoutArguments' => array(
-                'eventName' => '',
-                'arguments' => array(),
-            ),
-            'updateWithoutArguments' => array(
-                'eventName' => 'update',
-                'arguments' => array(),
-            ),
-            'unknownEventWithArguments' => array(
-                'eventName' => '',
+            'saveOfAccount' => array(
+                'beanModule' => 'Accounts',
+                'event' => 'after_save' . rand(1000, 9999),
                 'arguments' => array(
-                    'dataChanges' => array('dummy-data-changes'),
+                    'isUpdate' => rand(1000, 9999),
+                    'changedFields' => rand(1000, 9999),
                 ),
             ),
-            'updateWithArguments' => array(
-                'eventName' => 'update',
+            'saveOfMeeting' => array(
+                'beanModule' => 'Meetings',
+                'event' => 'after_save' . rand(1000, 9999),
                 'arguments' => array(
-                    'dataChanges' => array('dummy-data-changes'),
+                    'isUpdate' => rand(1000, 9999),
+                    'changedFields' => rand(1000, 9999),
                 ),
             ),
         );
