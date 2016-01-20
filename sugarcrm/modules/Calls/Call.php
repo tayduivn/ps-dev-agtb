@@ -189,6 +189,12 @@ class Call extends SugarBean {
             $this->repeat_root_id = $this->repeat_parent_id ?: $this->id;
         }
 
+        if ($this->repeat_selector == 'None') {
+            $this->repeat_unit = '';
+            $this->repeat_ordinal = '';
+            $this->repeat_days = '';
+        }
+
         $check_notify = $this->send_invites;
         if ($this->send_invites == false) {
             if ((!empty($_SESSION['workflow_cron']) || !empty($_SESSION['process_author_cron'])) && empty(CalendarEvents::$old_assigned_user_id)) {
