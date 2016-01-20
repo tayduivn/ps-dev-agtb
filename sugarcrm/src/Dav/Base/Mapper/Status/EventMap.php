@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -15,7 +14,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status;
 
 class EventMap extends MapBase
 {
-    protected $defaultSugarValue = null;
+    protected $defaultSugarValue = 'Planned';
 
     protected $map = array(
         'CANCELLED' => array('Not Held'),
