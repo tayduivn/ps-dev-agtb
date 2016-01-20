@@ -83,6 +83,7 @@ class SugarACLTeamBased extends SugarACLStrategy
             case 'read':
             case 'detail':
             case 'list':
+            case 'access':
                 if (($access == ACL_SELECTED_TEAMS_READ_OWNER_WRITE || $access == ACL_SELECTED_TEAMS_READ_WRITE) &&
                     !$this->isUserInSelectedTeams($user, $bean)
                 ) {
