@@ -127,7 +127,7 @@ class PMSEProjectCRUDApi extends ModuleApi
         $relDepStatus = $projectBean->prj_status=='ACTIVE'?'INACTIVE':'ACTIVE';
         while(
             $relatedDepBean = BeanFactory::getBean('pmse_BpmRelatedDependency')
-            ->retrieve_by_string_fields(array('prj_id'=>$id, 'pro_status'=>$relDepStatus))
+            ->retrieve_by_string_fields(array('pro_id'=>$pro_id, 'pro_status'=>$relDepStatus))
         ) {
             $relatedDepBean->pro_status = $projectBean->prj_status;
             $relatedDepBean->save();
