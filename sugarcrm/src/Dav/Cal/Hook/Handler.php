@@ -23,6 +23,14 @@ use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
 class Handler
 {
     /**
+     * Allow us to enable / disable hook.
+     * Should be used in UTs.
+     *
+     * @var bool
+     */
+    protected static $disabled = false;
+
+    /**
      * @var callable
      */
     public static $importHandler = null;
@@ -40,10 +48,12 @@ class Handler
      */
     public function import(\CalDavEventCollection $collection, $previousData = false, $conflictSolver = false)
     {
+        if (static::$disabled) {
+            return false;
+        }
         if (!$collection->isImportable() || !$collection->parent_type) {
             return false;
         }
-
         $adapter = $this->getAdapterFactory()->getAdapter($collection->parent_type);
         if (!$adapter) {
             return false;
@@ -84,6 +94,9 @@ class Handler
      */
     public function export(\SugarBean $bean, $previousData = false, $conflictSolver = false)
     {
+        if (static::$disabled) {
+            return false;
+        }
         $adapter = $this->getAdapterFactory()->getAdapter($bean->module_name);
         if (!$adapter) {
             return false;
