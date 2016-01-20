@@ -170,7 +170,7 @@ public function saveMonitor($monitor, $flush=true, $ignoreDisabled = false) {
 
 	if(!$this->isPaused() && !empty($monitor)){
 
-		if((empty($this->disabledMonitors[$monitor->name]) || $ignoreDisabled) && array_key_exists('Trackable', class_implements($monitor))) {
+		if(($ignoreDisabled || $this->isMonitorEnabled($monitor)) && $monitor instanceof Trackable) {
 
 		   $monitor->save($flush);
 
@@ -181,6 +181,17 @@ public function saveMonitor($monitor, $flush=true, $ignoreDisabled = false) {
 	    }
 	}
 }
+
+    /**
+     * Check if the monitor is enabled
+     *
+     * @param $monitor
+     * @return bool
+     */
+    public function isMonitorEnabled($monitor)
+    {
+        return empty($this->disabledMonitors[$monitor->name]);
+    }
 
 /**
  * unsetMonitor

@@ -1707,12 +1707,16 @@ EOQ;
 
     public static function staticGetPrivateTeamID($user_id)
 	{
-	    $teamFocus = BeanFactory::getBean('Teams');
-	    $teamFocus->retrieve_by_string_fields(array('associated_user_id'=>$user_id));
-	    if ( empty($teamFocus->id) )
-	        return '';
+        global $db;
 
-	    return $teamFocus->id;
+        $query = sprintf(
+            'SELECT id FROM teams WHERE associated_user_id = %s AND deleted = 0',
+            $db->quoted($user_id)
+        );
+        $query = $db->limitQuerySql($query, 0, 1);
+        $result = $db->fetchOne($query);
+
+        return $result ? $result['id'] : '';
 	}
     /*
      *

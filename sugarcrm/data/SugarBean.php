@@ -5523,7 +5523,8 @@ class SugarBean
 	function track_view($user_id, $current_module, $current_view='')
 	{
 	    $trackerManager = TrackerManager::getInstance();
-		if($monitor = $trackerManager->getMonitor('tracker')){
+        $monitor = $trackerManager->getMonitor('tracker');
+		if($monitor && $trackerManager->isMonitorEnabled($monitor)){
 	        $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
 	        $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
 	        $monitor->setValue('user_id', $user_id);
