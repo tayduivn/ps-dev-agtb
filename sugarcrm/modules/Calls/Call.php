@@ -110,6 +110,18 @@ class Call extends SugarBean {
     public $updateAllChildren = false;
 
     /**
+     * Parent id of recurring.
+     * @var string
+     */
+    public $repeat_parent_id = null;
+
+    /**
+     * Root id of recurring.
+     * @var string
+     */
+    public $repeat_root_id = null;
+
+    /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
      *
      * @see __construct
@@ -173,6 +185,9 @@ class Call extends SugarBean {
 		if ($this->repeat_type && $this->repeat_type != 'Weekly') {
 			$this->repeat_dow = '';
 		}
+        if (!$this->repeat_root_id) {
+            $this->repeat_root_id = $this->repeat_parent_id ?: $this->id;
+        }
 
         $check_notify = $this->send_invites;
         if ($this->send_invites == false) {
@@ -749,6 +764,7 @@ class Call extends SugarBean {
             BeanFactory::getBean($this->module_name, $id)->mark_undeleted($id);
             return null;
         }
+        CalendarUtils::correctDeletedRecurrence($this);
         $deletedStatus = $this->deleted;
         parent::mark_undeleted($id);
         if ($deletedStatus && !$this->deleted) {

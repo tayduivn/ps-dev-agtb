@@ -94,18 +94,18 @@ class Handler
             return false;
         }
 
-        if (!empty($bean->repeat_parent_id)) {
-            $parentBeanId = $bean->repeat_parent_id;
+        if (!empty($bean->repeat_root_id)) {
+            $rootBeanId = $bean->repeat_root_id;
         } else {
-            $parentBeanId = $bean->id;
+            $rootBeanId = $bean->id;
         }
 
         /** @var \CalDavEventCollection $collection */
         $collection = \BeanFactory::getBean('CalDavEvents');
-        $collection = $collection->findByParentModuleAndId($bean->module_name, $parentBeanId);
+        $collection = $collection->findByParentModuleAndId($bean->module_name, $rootBeanId);
         if (!$collection) {
             $collection = \BeanFactory::getBean('CalDavEvents');
-            $collection->setParentModuleAndId($bean->module_name, $parentBeanId);
+            $collection->setParentModuleAndId($bean->module_name, $rootBeanId);
             $collection->save();
         }
 
@@ -114,7 +114,7 @@ class Handler
             if (is_callable(static::$exportHandler)) {
                 $continue = call_user_func_array(static::$exportHandler, array(
                     $bean->module_name,
-                    $parentBeanId,
+                    $rootBeanId,
                     $preparedData,
                 ));
             }
@@ -123,7 +123,7 @@ class Handler
                 if ($conflictSolver) {
                     $collection->getSynchronizationObject()->setConflictCounter(true);
                 }
-                $this->getManager()->calDavExport($bean->module_name, $parentBeanId, $preparedData, $saveCounter);
+                $this->getManager()->calDavExport($bean->module_name, $rootBeanId, $preparedData, $saveCounter);
             }
         }
         static::$exportHandler = null;

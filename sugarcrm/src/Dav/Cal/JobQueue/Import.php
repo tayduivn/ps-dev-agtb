@@ -86,12 +86,12 @@ class Import extends Base
             if ($result != AdapterInterface::NOTHING) {
                 $exportDataSet = array();
                 HookHandler::$exportHandler = function($beanModule, $beanId, $data) use ($bean, &$exportDataSet) {
-                    if (!empty($bean->repeat_parent_id)) {
-                        $parentBeanId = $bean->repeat_parent_id;
+                    if (!empty($bean->repeat_root_id)) {
+                        $rootBeanId = $bean->repeat_root_id;
                     } else {
-                        $parentBeanId = $bean->id;
+                        $rootBeanId = $bean->id;
                     }
-                    if ($bean->module_name == $beanModule && $parentBeanId == $beanId) {
+                    if ($bean->module_name == $beanModule && $rootBeanId == $beanId) {
                         $exportDataSet[] = $data;
                         return false;
                     }
@@ -114,8 +114,8 @@ class Import extends Base
                     $exportData = $adapter->verifyExportAfterImport($importData, $exportData, $liveBean);
                     if ($exportData) {
                         $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();
-                        if (!empty($bean->repeat_parent_id)) {
-                            $liveBeanId = $bean->repeat_parent_id;
+                        if (!empty($bean->repeat_root_id)) {
+                            $liveBeanId = $bean->repeat_root_id;
                         } else {
                             $liveBeanId = $bean->id;
                         }
