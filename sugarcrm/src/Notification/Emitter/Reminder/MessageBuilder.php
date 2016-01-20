@@ -36,7 +36,7 @@ class MessageBuilder implements MessageBuilderInterface
         $url = $this->generateUrl($module, $bean);
 
         if (array_key_exists('title', $messageSignature)) {
-            $message['title'] = sprintf(translate('LBL_EVENT_REMINDER_ABOUT', $module), $bean->name);
+            $message['title'] = sprintf(translate('LBL_EVENT_REMINDER_TITLE', $module), $bean->name);
         }
         if (array_key_exists('text', $messageSignature)) {
             $message['text'] = sprintf(translate('LBL_EVENT_REMINDER_TEXT', $module), $bean->name, $time, $url);
