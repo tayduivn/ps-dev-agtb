@@ -642,6 +642,17 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
 		'reportable' => false,
 		'studio' => 'false',
 	),
+    'repeat_root_id' => array(
+        'name' => 'repeat_root_id',
+        'vname' => 'LBL_REPEAT_ROOT_ID',
+        'type' => 'id',
+        'len' => 36,
+        'comment' => 'Id of the root element of recurring records',
+        'importable' => 'false',
+        'massupdate' => false,
+        'reportable' => false,
+        'studio' => 'false',
+    ),
 	'recurring_source' =>
 	array(
 		'name' => 'recurring_source',

@@ -252,6 +252,7 @@ class CalendarEventsApi extends ModuleApi
      */
     public function deleteRecordAndRecurrences($api, $args)
     {
+        /** @var Call|Meeting $bean */
         $bean = $this->loadBean($api, $args, 'delete');
 
         if (!empty($bean->repeat_parent_id)) {
@@ -262,6 +263,7 @@ class CalendarEventsApi extends ModuleApi
 
             $bean = $this->loadBean($api, $parentArgs, 'delete');
         }
+        $bean->updateAllChildren = true;
 
         // Turn off The Cache Updates while deleting the multiple recurrences.
         // The current Cache Enabled status is returned so it can be appropriately

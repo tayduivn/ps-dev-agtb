@@ -107,6 +107,18 @@ class Meeting extends SugarBean {
     public $updateAllChildren = false;
 
     /**
+     * Parent id of recurring.
+     * @var string
+     */
+    public $repeat_parent_id = null;
+
+    /**
+     * Root id of recurring.
+     * @var string
+     */
+    public $repeat_root_id = null;
+
+    /**
      * This is a deprecated method, please start using __construct() as this
      * method will be removed in a future version.
      *
@@ -176,6 +188,9 @@ class Meeting extends SugarBean {
 
         if ($this->repeat_type && $this->repeat_type != 'Weekly') {
                 $this->repeat_dow = '';
+        }
+        if (!$this->repeat_root_id) {
+            $this->repeat_root_id = $this->repeat_parent_id ?: $this->id;
         }
 
         $check_notify = $this->send_invites;
@@ -304,15 +319,15 @@ class Meeting extends SugarBean {
             return null;
         }
         CalendarUtils::correctRecurrences($this, $id);
-        global $current_user;
         $deletedStatus = $this->deleted;
         parent::mark_deleted($id);
         if (!$deletedStatus && $this->deleted) {
             $this->getCalDavHook()->export($this, array('delete'));
         }
-		if($this->update_vcal) {
-			vCal::cache_sugar_vcal($current_user);
-		}
+        if ($this->update_vcal) {
+            global $current_user;
+            vCal::cache_sugar_vcal($current_user);
+        }
     }
 
     /**
@@ -327,6 +342,7 @@ class Meeting extends SugarBean {
             BeanFactory::getBean($this->module_name, $id)->mark_undeleted($id);
             return null;
         }
+        CalendarUtils::correctDeletedRecurrence($this);
         $deletedStatus = $this->deleted;
         parent::mark_undeleted($id);
         if ($deletedStatus && !$this->deleted) {

@@ -299,7 +299,7 @@ class CalendarUtils
 	/**
 	 * Save repeat activities
      * Invites are sent once for a Recurring Series (only when the Parent was saved)
-	 * @param SugarBean $bean
+	 * @param Call|Meeting|SugarBean $bean
 	 * @param array $timeArray array of datetimes
 	 * @return array
 	 */
@@ -392,7 +392,8 @@ class CalendarUtils
 			$date_end = $date->format($GLOBALS['timedate']->get_date_time_format());
 			$clone->date_end = $date_end;
 			$clone->recurring_source = "Sugar";
-			$clone->repeat_parent_id = $id;
+            $clone->repeat_parent_id = $id;
+            $clone->repeat_root_id = null;
 			$clone->update_vcal = false;
             $clone->send_invites = false;
 			$clone->save(false);
@@ -522,43 +523,57 @@ class CalendarUtils
 		vCal::cache_sugar_vcal($GLOBALS['current_user']);
 	}
 
-	/**
-	 * check if meeting has repeat children and pass repeat_parent over to the 2nd meeting in sequence
-	 * @param SugarBean $bean
-	 * @param string $beanId
-	 */
-	static function correctRecurrences(SugarBean $bean, $beanId)
-	{
-		global $db;
+    /**
+     * check if meeting has repeat children and pass repeat_parent over to the 2nd meeting in sequence
+     * @param Call|Meeting|SugarBean $bean
+     * @param string $beanId
+     */
+    static function correctRecurrences(SugarBean $bean, $beanId)
+    {
+        global $db;
 
-        if (empty($beanId) || trim($beanId) == '') {
+        if (!$beanId || trim($beanId) == '') {
             return;
         }
 
-		$qu = "SELECT id FROM {$bean->table_name} WHERE repeat_parent_id = '{$beanId}' AND deleted = 0 ORDER BY date_start";
-		$re = $db->query($qu);
-		
-		$date_modified = $GLOBALS['timedate']->nowDb();
+        $query = "SELECT id FROM {$bean->table_name} WHERE repeat_parent_id = '{$beanId}' AND deleted = 0 ORDER BY date_start";
+        $result = $db->query($query);
 
-		$i = 0;
-		$new_parent_id = false;
-		while ($ro = $db->fetchByAssoc($re)) {
-			$id = $ro['id'];
-			if($i == 0){
-				$new_parent_id = $id;
-				$qu = "UPDATE {$bean->table_name} SET repeat_parent_id = NULL, recurring_source = NULL, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE id = '{$id}'";
-			}else{
-				$qu = "UPDATE {$bean->table_name} SET repeat_parent_id = '{$new_parent_id}', date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE id = '{$id}'";
-			}
-			$db->query($qu);
-      		$i++;
-		}
-        if ($new_parent_id) {
-            $bean = BeanFactory::getBean($bean->module_name, $new_parent_id);
-            $calDavHook = new \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler();
-            $calDavHook->export($bean);
+        $date_modified = $GLOBALS['timedate']->nowDb();
+
+        $new_parent_id = false;
+        while ($row = $db->fetchByAssoc($result)) {
+            $id = $row['id'];
+            if (!$new_parent_id) {
+                $new_parent_id = $id;
+                $query = "UPDATE {$bean->table_name} SET repeat_parent_id = NULL, recurring_source = NULL, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE id = '{$id}'";
+            } else {
+                $query = "UPDATE {$bean->table_name} SET repeat_parent_id = '{$new_parent_id}', date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE id = '{$id}'";
+            }
+            $db->query($query);
         }
-	}
+    }
+
+    /**
+     * Restores deleted series.
+     *
+     * @param Call|Meeting|SugarBean $bean
+     * @return bool true if series was restored or false if nothing found
+     */
+    public static function correctDeletedRecurrence(SugarBean $bean)
+    {
+        if ($bean->repeat_parent_id) {
+            return false;
+        }
+        /** @var DBManager $db */
+        /** @var TimeDate $timedate */
+        global $db, $timedate;
+
+        $query = 'UPDATE %1$s SET repeat_parent_id = %2$s, date_modified = %3$s WHERE id <> %2$s AND repeat_root_id = %2$s';
+        $query = sprintf($query, $bean->table_name, $db->quoted($bean->id), $db->convert($db->quoted($timedate->nowDb()), 'datetime'));
+        $db->query($query);
+        return true;
+    }
 
     /**
      * get all invites for bean, such as  contacts, leads and users
