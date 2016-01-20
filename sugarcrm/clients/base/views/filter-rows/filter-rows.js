@@ -771,7 +771,7 @@
                 model.set(value);
                 value = value[fieldName] || [];
                 // FIXME: Change currency.js to retrieve correct unit for currency filters (see TY-156).
-                model.id = 'not_new';
+                model.set('id', 'not_new');
             }
 
             model.set(fieldName + '_min', value[0] || '');
@@ -839,7 +839,7 @@
                 model.set($row.data('value'));
                 // FIXME: Change currency.js to retrieve correct unit for currency filters (see TY-156).
                 // Mark this one as not_new so that model isn't treated as new
-                model.id = 'not_new';
+                model.set('id', 'not_new');
             } else {
                 model.set(fieldDef.id_name || fieldName, $row.data('value'));
             }
