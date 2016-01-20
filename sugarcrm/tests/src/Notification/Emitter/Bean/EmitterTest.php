@@ -72,8 +72,8 @@ class EmitterTest extends \Sugar_PHPUnit_Framework_TestCase
                 $event = $arg;
             });
         $this->emitter->exec($this->bean, $eventName, $arguments);
-        $this->assertEquals($this->bean, $event->getBean());
         $this->assertInstanceOf('Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event', $event);
+        $this->assertEquals($this->bean, $event->getBean());
         $this->assertEquals('update', (string)$event);
     }
 
@@ -108,7 +108,6 @@ class EmitterTest extends \Sugar_PHPUnit_Framework_TestCase
             )
         );
     }
-
 
     /**
      * Checks whether the getEventPrototypeByString returns Event object.
