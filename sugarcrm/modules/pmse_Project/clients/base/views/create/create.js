@@ -41,12 +41,6 @@
     saveOpenDesign: function() {
         this.context.lastSaveAction = this.SAVEACTIONS.SAVE_OPEN_DESIGN;
         this.initiateSave(_.bind(function () {
-            // When copying the PD, we end up pseudo importing the old PD into the new one
-            // To pass back errors, we were using the id as an object to send back warnings
-            // We want to check if id is an object and extract the real id from that
-            if (_.isObject(this.model.id)) {
-                this.model.id = this.model.id.id;
-            }
             app.navigate(this.context, this.model, 'layout/designer');
         }, this));
     }

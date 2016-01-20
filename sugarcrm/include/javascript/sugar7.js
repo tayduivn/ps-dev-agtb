@@ -477,8 +477,8 @@
                 accessCheck = checkAccessRoutes[route];
 
             if (accessCheck && !app.acl.hasAccess(accessCheck, module)) {
-                app.controller.loadView({
-                    layout: 'access-denied'
+                _.defer(function() {
+                    app.controller.loadView({layout: 'access-denied'});
                 });
                 return false;
             }
