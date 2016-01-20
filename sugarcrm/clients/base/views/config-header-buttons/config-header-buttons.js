@@ -166,7 +166,7 @@
      * Calls the context model save and saves the config model in case
      * the default model save needs to be overwritten
      *
-     * @private
+     * @protected
      */
     _saveConfig: function() {
         this.context.get('model').save({}, {

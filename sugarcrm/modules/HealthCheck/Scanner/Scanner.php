@@ -386,6 +386,7 @@ class HealthCheckScanner
             'table' => 'pmse_bpm_dynamic_forms',
             'cols' => array('dyn_view_defs'),
             'functions' => array('base64_decode'),
+            'decode' => false,
         ),
         'bpmFlowTable' => array(
             'table' => 'pmse_bpm_flow',
@@ -786,14 +787,23 @@ class HealthCheckScanner
     }
 
     /**
-     * Checks whether Process Author unserializtion between 7.6.1 and 7.6.2+ will
+     * Checks whether Process Author unserializtion between 7.6.(0|1) and 7.6.2+ will
      * fail. If any unserialize calls fail, it will notify with a Bucket F red flag.
      */
     protected function checkPAUnserialization()
     {
-        $warnings = $this->checkUnserializationFailures();
-        foreach ($warnings as $warning) {
-            $this->updateStatus('invalidPASerialization', $warning['count'], $warning['col'], $warning['table'], $warning['reason']);
+        // Make sure we need to run this first
+        list($version, $flavor) = $this->getVersionAndFlavor();
+
+        // Only run this for 7.6.0 and 7.6.1 instances
+        if (version_compare($version, '7.6.0.0', '==') || version_compare($version, '7.6.1.0', '==')) {
+            // And only run this for ENT or ULT flavors
+            if (in_array(strtolower($flavor), array('ent', 'ult'))) {
+                $warnings = $this->checkUnserializationFailures();
+                foreach ($warnings as $warning) {
+                    $this->updateStatus('invalidPASerialization', $warning['count'], $warning['col'], $warning['table'], $warning['reason']);
+                }
+            }
         }
     }
 
@@ -841,11 +851,9 @@ class HealthCheckScanner
         // Builds a list of not empty SQL bits.
         $whereCols = $updateCols = array();
         foreach ($cols as $col) {
-            // Creates a not empty field where clause for this column
-            $notEmptyFieldSQL = "($col != " . $this->db->quoted('');
-            $notEmptyFieldSQL .= " AND $col IS NOT NULL)";
-            $whereCols[] = $notEmptyFieldSQL;
+            $whereCols[] = $this->getNotEmptyFieldSQL($col);
         }
+
         $whereNotEmpty = implode(' AND ', $whereCols);
 
         // Build the query and run it
@@ -867,8 +875,11 @@ class HealthCheckScanner
                     }
                 }
 
+                // Get our decode flag from the properties
+                $decode = !isset($data['decode']) || $data['decode'] === true;
+
                 // Do the actual check now
-                $reason = $this->checkSerializedData($string);
+                $reason = $this->checkSerializedData($string, $decode);
 
                 // If there was a failure reason, add it to the stack of reasons
                 if ($reason) {
@@ -882,6 +893,26 @@ class HealthCheckScanner
                 }
             }
         }
+    }
+
+    /**
+     * Get a not empty field where clause for a column. Done in a wrapper method
+     * because Oracle does things a little different.
+     * @param string $col The name of the column to build the SQL on
+     * @return string
+     */
+    protected function getNotEmptyFieldSQL($col)
+    {
+        // Oracle cannot handle empty string comparisons, so this one will be a
+        // NULL check only
+        if ($this->db instanceof OracleManager) {
+            $return = "$col IS NOT NULL";
+        } else {
+            $quoted = $this->db->quoted('');
+            $return = "($col != $quoted AND $col IS NOT NULL)";
+        }
+
+        return $return;
     }
 
     /**
@@ -907,9 +938,10 @@ class HealthCheckScanner
     /**
      * Checks an input to see if there are unserialization issues with it
      * @param string $input Serialized data
+     * @param boolean $decode Whether to html entity decode the input
      * @return int
      */
-    protected function checkSerializedData($input)
+    protected function checkSerializedData($input, $decode = true)
     {
         // Basic good return
         $reason = 0;
@@ -919,7 +951,7 @@ class HealthCheckScanner
             $reason = self::UNSERIALIZE_FAIL_OBJECTS;
         } else {
             // Since we need to work on html decoded data, get that now
-            $decoded = html_entity_decode($input);
+            $decoded = $decode ? html_entity_decode($input) : $input;
 
             // Now try to unserialize, suppressing errors in case of bad data
             $unserialized = @unserialize($decoded);
@@ -934,13 +966,18 @@ class HealthCheckScanner
     }
 
     /**
-     * Checks whether the $value contains object or class references
+     * Checks whether the $value contains object or class references, but not
+     * objects of type stdClass
      * @param string $value Serialized value of any type
      * @return boolean
      */
     protected function serializationHasObjectRefs($value)
     {
-        preg_match('/[oc]:\d+:/i', $value, $matches);
+        // Remove all references to stdClass objects
+        $cleared = str_replace('O:8:"stdClass"', '', $value);
+
+        // Now use the same logic as the unserialize validator
+        preg_match('/[oc]:\d+:/i', $cleared, $matches);
         return count($matches) > 0;
     }
 
