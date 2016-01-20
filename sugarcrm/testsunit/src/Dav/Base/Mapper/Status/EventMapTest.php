@@ -23,27 +23,33 @@ class EventMapTest extends \PHPUnit_Framework_TestCase
     /**
      * Provider for testGetCalDavValue.
      *
+     * @see EventMapTest::testGetCalDavValue
      * @return array
      */
-    public function fromBeanProvider()
+    public static function fromBeanProvider()
     {
         return array(
-            array(
+            'heldShouldBeConfirmed' => array(
                 'beanStatus' => 'Held',
                 'calDavStatus' => 'CANCELLED',
                 'expectedStatus' => 'CONFIRMED',
             ),
-            array(
+            'defaultStatusShouldStayDefault' => array(
                 'beanStatus' => 'Planned',
                 'calDavStatus' => null,
+                'expectedStatus' => null,
+            ),
+            'mappedStatusShouldStayMapped' => array(
+                'beanStatus' => 'Planned',
+                'calDavStatus' => 'CONFIRMED',
                 'expectedStatus' => 'CONFIRMED',
             ),
-            array(
+            'notHeldShouldBeCanceled' => array(
                 'beanStatus' => 'Not Held',
                 'calDavStatus' => 'CONFIRMED',
                 'expectedStatus' => 'CANCELLED',
             ),
-            array(
+            'UnknownValueShouldBeDefault' => array(
                 'beanStatus' => null,
                 'calDavStatus' => null,
                 'expectedStatus' => null,
@@ -54,30 +60,31 @@ class EventMapTest extends \PHPUnit_Framework_TestCase
     /**
      * Provider for testGetSugarValue.
      *
+     * @see EventMapTest::fromCalDavProvider
      * @return array
      */
-    public function fromCalDavProvider()
+    public static function fromCalDavProvider()
     {
         return array(
-            array(
+            'confirmedShouldBePlanned' => array(
                 'calDavStatus' => 'CONFIRMED',
                 'beanStatus' => 'Not Held',
                 'expectedStatus' => 'Planned',
             ),
-            array(
+            'confirmedShouldStayHeldIfItWasHeldBefore' => array(
                 'calDavStatus' => 'CONFIRMED',
                 'beanStatus' => 'Held',
                 'expectedStatus' => 'Held',
             ),
-            array(
+            'canceledShouldBeNotHeld' => array(
                 'calDavStatus' => 'CANCELLED',
                 'beanStatus' => null,
                 'expectedStatus' => 'Not Held',
             ),
-            array(
+            'UnknownValueShouldBeDefault' => array(
                 'calDavStatus' => null,
                 'beanStatus' => null,
-                'expectedStatus' => null,
+                'expectedStatus' => 'Planned',
             ),
         );
     }
