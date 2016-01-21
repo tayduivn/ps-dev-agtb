@@ -148,11 +148,11 @@ class SugarFieldTag extends SugarFieldRelatecollection
                     $names = array();
 
                     foreach ($currRelBeans as $tagId => $tagRecord) {
-                        // Build a sort array for sorting the tag list
-                        $names[$tagId] = $tagRecord->name;
+                        // Build a sort case-insensitively array for sorting the tag list
+                        $names[$tagId] = strtolower($tagRecord->name);
 
                         // Build a tag list, using the sort tag name value as the tag
-                        $tags[] = array('id' => $tagId, 'name' => $names[$tagId]);
+                        $tags[] = array('id' => $tagId, 'name' => $tagRecord->name);
                     }
 
                     // Sort the tags array in alphabetical order

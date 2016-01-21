@@ -349,21 +349,19 @@ class PMSEHistoryLogWrapper
     private function getActivityModule($caseData)
     {
         global $beanList;
-        //global $db;
+
         $activityDefinitionBean = BeanFactory::getBean('pmse_BpmActivityDefinition', $caseData['bpmn_id']);
-        //$query = "select act_field_module from bpm_activity_definition where act_id = " . $caseData->bpmn_id;
-        //$result = $this->db->Query($query);
-        //$row = $this->db->fetchByAssoc($result);
+
         if (empty($activityDefinitionBean) || empty($activityDefinitionBean->act_field_module)) {
-            return $beanList[$caseData['cas_sugar_module']];
+            return PMSEEngineUtils::getModuleLabelFromModuleName($beanList[$caseData['cas_sugar_module']]);
         }
 
         $related_module_data = $this->getRelationshipData($activityDefinitionBean->act_field_module);
 
         if ($related_module_data == null) {
-            return $activityDefinitionBean->act_field_module;
+            return PMSEEngineUtils::getModuleLabelFromModuleName($activityDefinitionBean->act_field_module);
         }
-        return $related_module_data['rhs_module'];
+        return PMSEEngineUtils::getModuleLabelFromModuleName($related_module_data['rhs_module']);
     }
 
     /**
