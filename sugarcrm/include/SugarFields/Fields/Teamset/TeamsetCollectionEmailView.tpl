@@ -56,11 +56,11 @@
         <td rowspan='1' scope='row' style='white-space:nowrap; word-wrap:normal;'>
             &nbsp;
             {if !$hideShowHideButton}
-            <span onclick="javascript:collection['{$displayParams.formName}_{$vardef.name}'].js_more();" id='more_{$displayParams.formName}_{$vardef.name}' {if empty($values.secondaries)}style="display:none; text-decoration:none;"{else}style="text-decoration:none;"{/if} title="{sugar_translate label="LBL_HIDE_SHOW"}">
+            <span onclick="javascript:collection['{$displayParams.formName}_{$vardef.name}'].js_more();" id='more_{$displayParams.formName}_{$vardef.name}' style="text-decoration:none;" title="{sugar_translate label="LBL_HIDE_SHOW"}">
             <input id="arrow_{$vardef.name}" name="arrow_{$vardef.name}" type="hidden" value="show">
 			{capture assign="attr"}border="0" id="more_img_{$displayParams.formName}_{$vardef.name}"{/capture}
             {sugar_getimage name="advanced_search.gif" attr=$attr}
-            <span id="more_div_{$displayParams.formName}_{$vardef.name}" {if empty($values.secondaries)}style="display:none"{/if}>{sugar_translate label='LBL_SHOW'}</span>
+            <span id="more_div_{$displayParams.formName}_{$vardef.name}" >{sugar_translate label='LBL_SHOW'}</span>
         	</span>
         	{/if}
         </td>
