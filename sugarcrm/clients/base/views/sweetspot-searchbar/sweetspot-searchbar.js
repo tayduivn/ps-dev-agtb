@@ -104,7 +104,7 @@
             }
             actionsById[customSetting.action].keyword = customSetting.keyword;
         });
-        return _.flatten(actionsById);
+        return _.toArray(actionsById);
     },
 
     /**
