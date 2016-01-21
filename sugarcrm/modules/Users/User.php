@@ -416,6 +416,20 @@ class User extends Person {
         return $user->_userPreferenceFocus->getPreference($name, $category);
 	}
 
+    /**
+     * Interface for the User object to calling the UserPreference::removePreference() method
+     * in modules/UserPreferences/UserPreference.php
+     *
+     * @see UserPreference::removePreference()
+     *
+     * @param string $name name of the preference to remove
+     * @param string $category name of the category to remove, defaults to global scope
+     */
+    public function removePreference($name, $category = 'global')
+    {
+        $this->_userPreferenceFocus->removePreference($name, $category);
+    }
+
 	/**
      * incrementETag
      *

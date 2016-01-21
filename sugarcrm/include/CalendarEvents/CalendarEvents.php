@@ -14,6 +14,8 @@
  * @var CalendarEvents
  */
 
+use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as CalDavHook;
+
 class CalendarEvents
 {
     public static $old_assigned_user_id = '';
@@ -132,7 +134,7 @@ class CalendarEvents
      */
     public function reconcileTags(array $parentTagBeans, SugarBean $childBean, $childTagBeans = array())
     {
-        $sf = new SugarFieldTag('tag');
+        $sf = SugarFieldHandler::getSugarField('tag');
         $parentTags = $sf->getOriginalTags($parentTagBeans);
         $childTags = $sf->getOriginalTags($childTagBeans);
         list($addTags, $removeTags) = $sf->getChangedValues($childTags, $parentTags);
@@ -659,7 +661,7 @@ class CalendarEvents
      * Mark recurring event deleted
      * @param SugarBean parent Bean
      */
-    protected function markRepeatDeleted(SugarBean $parentBean)
+    public function markRepeatDeleted(SugarBean $parentBean)
     {
         CalendarUtils::markRepeatDeleted($parentBean);
     }
@@ -674,7 +676,8 @@ class CalendarEvents
         // Load the user relationship so the child events that are created will
         // have the users added via bean->save (which has special auto-accept
         // logic)
-        if ($parentBean->load_relationship('users')) {
+        if (empty($parentBean->users_arr) && $parentBean->load_relationship('users')) {
+            $parentBean->users->load();
             $parentBean->users_arr = $parentBean->users->get();
         }
 
@@ -747,7 +750,7 @@ class CalendarEvents
     {
         static::$old_assigned_user_id = '';
         if (!empty($module) && !empty($id)) {
-            $old_record = BeanFactory::retrieveBean($module, $id);
+            $old_record = BeanFactory::getBean($module, $id);
             if (!empty($old_record->assigned_user_id)) {
                 static::$old_assigned_user_id = $old_record->assigned_user_id;
             }
@@ -821,7 +824,7 @@ class CalendarEvents
         $options = array()
     ) {
         $changeWasMade = false;
-
+        $inviteesBefore = CalendarUtils::getInvitees($event);
         if (in_array($event->status, array('Held', 'Not Held'))) {
             $GLOBALS['log']->debug(
                 sprintf(
@@ -883,10 +886,16 @@ class CalendarEvents
             $this->repeatAction($query, $callback);
         }
 
-        if ($changeWasMade && $invitee instanceof User) {
-            $GLOBALS['log']->debug(sprintf('Update vCal cache for %s/%s', $invitee->module_name, $invitee->id));
-            vCal::cache_sugar_vcal($invitee);
+        if ($changeWasMade) {
+            $inviteesAfter = CalendarUtils::getInvitees($event);
+            $calDavHook = new CalDavHook();
+            $calDavHook->export($event, array('update', array(), $inviteesBefore, $inviteesAfter));
+            if ($invitee instanceof User) {
+                $GLOBALS['log']->debug(sprintf('Update vCal cache for %s/%s', $invitee->module_name, $invitee->id));
+                vCal::cache_sugar_vcal($invitee);
+            }
         }
+
 
         return $changeWasMade;
     }
@@ -898,7 +907,7 @@ class CalendarEvents
      * @return SugarQuery Modify the object to restrict the result set based on additional conditions.
      * @throws SugarQueryException
      */
-    protected function getChildrenQuery(SugarBean $parent)
+    public function getChildrenQuery(SugarBean $parent)
     {
         $GLOBALS['log']->debug(sprintf(
             'Building a query to retrieve the IDs for %s records where the repeat_parent_id is %s',
@@ -909,6 +918,7 @@ class CalendarEvents
         $query->select(array('id'));
         $query->from($parent);
         $query->where()->equals('repeat_parent_id', $parent->id);
+        $query->orderBy('date_start', 'ASC');
         return $query;
     }
 

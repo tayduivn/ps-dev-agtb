@@ -252,7 +252,7 @@
             {
                 name: 'config',
                 route: ':module/config',
-                callback: function(module) {
+                callback: function (module) {
                     // FIXME: We shouldn't be calling private methods like this.
                     // Will be addressed in SC-2761.
                     if (!app.router._moduleExists(module)) {

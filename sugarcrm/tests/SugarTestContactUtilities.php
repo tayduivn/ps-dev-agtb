@@ -70,6 +70,7 @@ class SugarTestContactUtilities
         if ($contact_ids) {
             $GLOBALS['db']->query('DELETE FROM contacts WHERE id IN (\'' . implode("', '", $contact_ids) . '\')');
         }
+        static::removeCreatedContactsEmailAddresses();
     }
 
     /**

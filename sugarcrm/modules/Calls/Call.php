@@ -11,6 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once("modules/Calendar/CalendarUtils.php");
+
 class Call extends SugarBean {
 	var $field_name_map;
 	// Stored fields
@@ -62,6 +64,7 @@ class Call extends SugarBean {
 	var $contacts_arr = array();
 	var $users_arr = array();
 	var $leads_arr = array();
+	public $addresses_arr = array();
 	var $default_call_name_values = array('Assemble catalogs', 'Make travel arrangements', 'Send a letter', 'Send contract', 'Send fax', 'Send a follow-up letter', 'Send literature', 'Send proposal', 'Send quote');
 	var $minutes_value_default = 15;
 	var $minutes_values = array('0'=>'00','15'=>'15','30'=>'30','45'=>'45');
@@ -69,6 +72,7 @@ class Call extends SugarBean {
 	var $rel_users_table = "calls_users";
 	var $rel_contacts_table = "calls_contacts";
     var $rel_leads_table = "calls_leads";
+	public $rel_addresses_table = "calls_addresses";
 	var $module_dir = 'Calls';
 	var $object_name = "Call";
 	var $new_schema = true;
@@ -86,10 +90,47 @@ class Call extends SugarBean {
 										'assigned_user_id'	=> 'users',
 										'note_id'			=> 'notes',
                                         'lead_id'			=> 'leads',
+                                        'addressee_id'      => 'addresses',
 								);
 
 	public $send_invites = false;
 
+    /**
+     * Helper-field to store invites before linking new ones.
+     * Is not a sugar-field, is not persisted anywhere.
+     * @var null|array
+     */
+    public $inviteesBefore = null;
+
+    /**
+     * Helper-field to store information to change all recurrence or only parent.
+     * Is not a sugar-field, is not persisted anywhere.
+     * @var bool
+     */
+    public $updateAllChildren = false;
+
+    /**
+     * Parent id of recurring.
+     * @var string
+     */
+    public $repeat_parent_id = null;
+
+    /**
+     * Root id of recurring.
+     * @var string
+     */
+    public $repeat_root_id = null;
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Call()
+    {
+        self::__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();
@@ -123,6 +164,12 @@ class Call extends SugarBean {
     {
         global $timedate, $current_user;
 
+		$isUpdate = $this->isUpdate();
+
+        if ($isUpdate && is_null($this->inviteesBefore)) {
+            $this->inviteesBefore = CalendarUtils::getInvitees($this);
+        }
+
         if (isset($this->date_start)) {
             $td = $timedate->fromDb($this->date_start);
             if (!$td) {
@@ -133,6 +180,19 @@ class Call extends SugarBean {
                 $calEvent = new CalendarEvents();
                 $calEvent->setStartAndEndDateTime($this, $td);
             }
+        }
+
+		if ($this->repeat_type && $this->repeat_type != 'Weekly') {
+			$this->repeat_dow = '';
+		}
+        if (!$this->repeat_root_id) {
+            $this->repeat_root_id = $this->repeat_parent_id ?: $this->id;
+        }
+
+        if ($this->repeat_selector == 'None') {
+            $this->repeat_unit = '';
+            $this->repeat_ordinal = '';
+            $this->repeat_days = '';
         }
 
         $check_notify = $this->send_invites;
@@ -180,9 +240,17 @@ class Call extends SugarBean {
         // CCL - Comment out call to set $current_user as invitee
         // set organizer to auto-accept
         // if there isn't a fetched row its new
-        if ($this->assigned_user_id == $GLOBALS['current_user']->id && empty($this->fetched_row)) {
+        if ($this->assigned_user_id == $GLOBALS['current_user']->id && !$isUpdate) {
             $this->set_accept_status($GLOBALS['current_user'], 'accept');
         }
+
+        if ($isUpdate) {
+            $this->getCalDavHook()->export($this, array('update', $this->dataChanges, $this->inviteesBefore, CalendarUtils::getInvitees($this)));
+        } else {
+            $this->getCalDavHook()->export($this);
+        }
+
+        $this->inviteesBefore = null;
 
         return $return_id;
 	}
@@ -502,6 +570,10 @@ class Call extends SugarBean {
       $relate_values = array('lead_id'=>$user->id,'call_id'=>$this->id);
       $data_values = array('accept_status'=>$status);
       $this->set_relationship($this->rel_leads_table, $relate_values, true, true,$data_values);
+    } elseif ($user->object_name == 'Addressee') {
+        $relate_values = array('addressee_id' => $user->id, 'call_id' => $this->id);
+        $data_values = array('accept_status' => $status);
+        $this->set_relationship($this->rel_addresses_table, $relate_values, true, true, $data_values);
     }
   }
 
@@ -538,6 +610,14 @@ class Call extends SugarBean {
             $this->leads_arr = $this->leads->get();
         }
 
+        if (!is_array($this->addresses_arr)) {
+            $this->addresses_arr = array();
+        }
+
+        if (empty($this->addresses_arr) && $this->load_relationship('addresses')) {
+            $this->addresses_arr = $this->addresses->get();
+        }
+
 		foreach($this->users_arr as $user_id) {
 			$notify_user = BeanFactory::getBean('Users', $user_id);
 			if(!empty($notify_user->id)) {
@@ -564,6 +644,15 @@ class Call extends SugarBean {
 				$list[$notify_user->id] = $notify_user;
 			}
 		}
+
+        foreach ($this->addresses_arr as $addressee_id) {
+            $notify_user = BeanFactory::getBean('Addresses', $addressee_id);
+            if (!empty($notify_user->id)) {
+                $notify_user->new_assigned_user_name = $notify_user->full_name;
+                $GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
+                $list[$notify_user->id] = $notify_user;
+            }
+        }
 //		$GLOBALS['log']->debug('Call.php->get_notification_recipients():'.print_r($list,true));
 		return $list;
 	}
@@ -649,12 +738,44 @@ class Call extends SugarBean {
         return '';
     }
 
+    /**
+     * @inheritdoc
+     */
     public function mark_deleted($id)
     {
-        require_once("modules/Calendar/CalendarUtils.php");
+        if (!$id) {
+            return null;
+        }
+        if ($this->id != $id) {
+            BeanFactory::getBean($this->module_name, $id)->mark_deleted($id);
+            return null;
+        }
         CalendarUtils::correctRecurrences($this, $id);
-
+        $deletedStatus = $this->deleted;
         parent::mark_deleted($id);
+        if (!$deletedStatus && $this->deleted) {
+            $this->getCalDavHook()->export($this, array('delete'));
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function mark_undeleted($id)
+    {
+        if (!$id) {
+            return null;
+        }
+        if ($this->id != $id) {
+            BeanFactory::getBean($this->module_name, $id)->mark_undeleted($id);
+            return null;
+        }
+        CalendarUtils::correctDeletedRecurrence($this);
+        $deletedStatus = $this->deleted;
+        parent::mark_undeleted($id);
+        if ($deletedStatus && !$this->deleted) {
+            $this->getCalDavHook()->export($this);
+        }
     }
 
     /**
@@ -811,6 +932,60 @@ class Call extends SugarBean {
     }
 
     /**
+     * Stores addressee invitees
+     *
+     * @param array $addresseeInvitees Array of addressee invitees ids
+     * @param array $existingAddresses
+     */
+    public function setAddresseeInvitees($addresseeInvitees, $existingAddresses = array())
+    {
+        $this->addresses_arr = $addresseeInvitees;
+
+        $deleteAddresses = array();
+        $this->load_relationship('addresses');
+
+        $sql = 'SELECT mu.addressee_id, mu.accept_status FROM calls_addresses mu';
+        $sql .= ' WHERE mu.call_id = ' . $this->db->quoted($this->id);
+        $result = $this->db->query($sql);
+
+        $acceptStatusAddresses = array();
+        while ($a = $this->db->fetchByAssoc($result)) {
+            if (!in_array($a['addressee_id'], $addresseeInvitees)) {
+                $deleteAddresses[$a['addressee_id']] = $a['addressee_id'];
+            } else {
+                $acceptStatusAddresses[$a['addressee_id']] = $a['accept_status'];
+            }
+        }
+
+        if (count($deleteAddresses) > 0) {
+            $ids = array();
+            foreach ($deleteAddresses as $u) {
+                $ids = $this->db->quoted($u);
+            }
+
+            $sql = 'UPDATE calls_addresses SET deleted = 1';
+            $sql .= ' WHERE addressee_id IN (' . implode(',', $ids) . ') AND call_id = ' . $this->db->quoted($this->id);
+            $this->db->query($sql);
+        }
+
+        foreach ($addresseeInvitees as $addresseeId) {
+            if (empty($addresseeId) || isset($existingAddresses[$addresseeId]) || isset($deleteAddresses[$addresseeId])) {
+                continue;
+            }
+
+            if (!isset($acceptStatusAddresses[$addresseeId])) {
+                $this->leads->add($addresseeId);
+            } else {
+                // update query to preserve accept_status
+                $sql = 'UPDATE calls_addresses SET deleted = 0, accept_status = '. $this->db->quoted($acceptStatusAddresses[$addresseeId]);
+                $sql .= ' WHERE call_id = ' . $this->db->quoted($this->id);
+                $sql .= ' AND addressee_id = ' . $this->db->quoted($addresseeId);
+                $this->db->query($sql);
+            }
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function loadFromRow($arr, $convert = false)
@@ -830,10 +1005,44 @@ class Call extends SugarBean {
     }
 
 	/**
+	 * {@inheritdoc}
+	 */
+	public function create_notification_email($notify_user)
+	{
+		// reset acceptance status for non organizer if date is changed
+		if (($notify_user->id != $GLOBALS['current_user']->id) && $this->date_changed) {
+			$this->set_accept_status($notify_user, 'none');
+		}
+
+		$mailer = parent::create_notification_email($notify_user);
+
+		$path = SugarConfig::getInstance()->get('upload_dir', 'upload/') . $this->id;
+
+        $emailInvitee = $notify_user->emailAddress->getPrimaryAddress($notify_user);
+        $organizerEmail = BeanFactory::getBean('InboundEmail')->getCalDavHandlerEmail();
+        $content = CalDavEventCollection::prepareForInvite($this, $emailInvitee, $organizerEmail);
+
+		if ($content && file_put_contents($path, $content)) {
+			$attachment = new Attachment($path, "invite.ics", Encoding::Base64, "text/calendar");
+			$mailer->addAttachment($attachment);
+		}
+
+		return $mailer;
+	}
+
+	/**
 	 * @param boolean $fill_additional_column_fields
 	 */
 	public function setFillAdditionalColumnFields($fill_additional_column_fields)
 	{
 		$this->fill_additional_column_fields = $fill_additional_column_fields;
 	}
+
+    /**
+     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler
+     */
+    public function getCalDavHook()
+    {
+        return new \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler();
+    }
 }

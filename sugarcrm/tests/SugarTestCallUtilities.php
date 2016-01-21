@@ -80,4 +80,12 @@ class SugarTestCallUtilities
         $call_ids = self::getCreatedCallIds();
         $GLOBALS['db']->query(sprintf("DELETE FROM calls_users WHERE call_id IN ('%s')", implode("', '", $call_ids)));
     }
+
+    public static function removeAllCreatedMeetingsWithRecuringById($call_ids)
+    {
+        if ($call_ids) {
+            $imploded_call_ids = implode("', '", $call_ids);
+            $GLOBALS['db']->query(sprintf("DELETE FROM meetings WHERE id IN ('%s') OR repeat_parent_id IN ('%s')", $imploded_call_ids, $imploded_call_ids));
+        }
+    }
 }

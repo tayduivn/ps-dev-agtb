@@ -54,6 +54,10 @@ if($focus->mailbox_type == 'bounce')
 {
     unset($domMailBoxType['pick']);
     unset($domMailBoxType['createcase']);
+} elseif ($focus->mailbox_type == 'caldav') {
+    unset($domMailBoxType['pick']);
+    unset($domMailBoxType['createcase']);
+    unset($domMailBoxType['bounce']);
 }
 else
     unset($domMailBoxType['bounce']);
@@ -427,6 +431,14 @@ if ($focus->mailbox_type == 'bounce')
     $xtpl->assign("EMAIL_OPTIONS", $mod_strings['LBL_EMAIL_BOUNCE_OPTIONS']);
     $xtpl->assign('MAILBOX_TYPE_STYLE', "display:none");
     $xtpl->assign('AUTO_IMPORT_STYLE', "display:none");
+}
+elseif ($focus->mailbox_type == 'caldav') {
+    $xtpl->assign('EMAIL_OPTIONS', $mod_strings['LBL_EMAIL_CALDAV_OPTIONS']);
+    $xtpl->assign('MAILBOX_TYPE_STYLE', "display:none");
+    $xtpl->assign('AUTO_IMPORT_STYLE', "display:none");
+    $xtpl->assign('REPLY_TO_STYLE', "display:none");
+    $xtpl->assign('CREATE_GROUP_FOLDER_STYLE', "display:none");
+    $xtpl->assign('LEAVEMESSAGESONMAILSERVER_STYLE', "display:none");
 }
 elseif ($focus->mailbox_type == 'createcase')
     $xtpl->assign("IS_CREATE_CASE", 'checked');
