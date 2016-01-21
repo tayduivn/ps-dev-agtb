@@ -160,7 +160,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   'reminder_time' =>
   array (
     'name' => 'reminder_time',
-    'vname' => 'LBL_POPUP_REMINDER_TIME',
+    'vname' => 'LBL_REMINDER_TIME',
     'type' => 'enum',
     'dbType' => 'int',
     'options' => 'reminder_time_options',
@@ -190,7 +190,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'massupdate' => false,
     'default'=> -1,
     'comment' => 'Specifies when a email reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start',
-    'studio' => array('recordview' => false, 'wirelesseditview' => false),
+    'studio' => false,
   ),
   'email_reminder_sent' => array( 
     'name' => 'email_reminder_sent',

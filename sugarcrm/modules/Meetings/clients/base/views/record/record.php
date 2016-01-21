@@ -307,7 +307,6 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     'show_child_labels' => true,
                     'fields' => array(
                         'reminder_time',
-                        'email_reminder_time',
                     ),
                 ),
                 array(

@@ -74,9 +74,7 @@ $mod_strings = array (
 	'LBL_REMINDER_EMAIL' => 'Email',
     'LBL_REMINDER_EMAIL_ALL_INVITEES' => 'Email all invitees',
     'LBL_POPUP_REMINDER' => 'Popup Reminder',
-    'LBL_POPUP_REMINDER_TIME' => 'Popup Reminder Time',
     'LBL_EMAIL_REMINDER' => 'Email Reminder',
-    'LBL_EMAIL_REMINDER_TIME' => 'Email Reminder Time',
     'LBL_REMOVE' => 'rem',
 	'LBL_SCHEDULING_FORM_TITLE' => 'Scheduling',
 	'LBL_SEARCH_BUTTON'=> 'Search',
@@ -214,4 +212,16 @@ To create a {{meetings_singular_module}}:
     - Click "Select an Attendee" to add an existing user, contact, or lead to the {{meetings_singular_module}}.
     - Click the plus icon to the right of "Select an Attendee" to create a {{meetings_singular_module}} attendee as a new Sugar record.
 3. Click "Save" to finalize the new record and return to the previous page.',
+
+  // Notification Center Strings
+    'LBL_EMITTER_TITLE' => 'Notifications for Meetings',
+    'LBL_EMITTER_HELP' => 'ToDo: Help text of Notifications for Meetings settings',
+    'LBL_EMITTER_DESC_ADMIN' => 'Chose what types of notifications your users receive. You can also change the delivery methods for each notification. Notifications apply to the users that are assigned to a record, on a team with belonging to a record, or invited to a call or meeting.',
+    'LBL_EMITTER_DESC_USER' => 'Chose what types of notifications your receive. You can also change the delivery methods for each notification. Notifications apply to the users that are assigned to a record, on a team with belonging to a record, or invited to a call or meeting.',
+  // Event remind
+    'LBL_EVENT_REMINDER_ABOUT' => 'Reminder about Meeting',
+    'LBL_EVENT_REMINDER_TITLE' => 'Reminder about %s',
+    'LBL_EVENT_REMINDER_TEXT' => 'You have meeting "%1$s" at %2$s: %3$s',
+    'LBL_EVENT_REMINDER_HTML' => 'You have meeting <a href="%3$s">%1$s</a> at %2$s.',
+    'LBL_EVENT_REMINDER_MORE_INFO' => 'If you want to change reminder time please update your profile settings',
 );

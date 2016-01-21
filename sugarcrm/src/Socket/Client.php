@@ -47,6 +47,11 @@ class Client
     const RECIPIENT_USER_TYPE = 'userType';
 
     /**
+     * @var Client
+     */
+    protected static $instance = null;
+
+    /**
      * Name of recipient for message, by default message will be send to all sockets
      * To specify recipient use recipient() method with type of recipient
      *
@@ -54,7 +59,7 @@ class Client
      */
     protected $to = array(
         'type' => self::RECIPIENT_ALL,
-        'id' =>  null,
+        'id' => null,
         'channel' => null
     );
 
@@ -63,8 +68,8 @@ class Client
      *
      * @param Client::RECIPIENT_ALL|Client::RECIPIENT_USER_ID|Client::RECIPIENT_TEAM_ID|Client::RECIPIENT_USER_TYPE $type
      * @param string $id
-     * @return Client|CustomClient
-     * @throws SugarApiExceptionInvalidParameter
+     * @return Client
+     * @throws \SugarApiExceptionInvalidParameter
      */
     public function recipient($type, $id = null)
     {
@@ -87,12 +92,25 @@ class Client
     /**
      * Returns object of Client, customized if it's present
      *
-     * @return Client|CustomClient
+     * @param bool $reset
+     * @return Client
      */
-    public static function getInstance()
+    public static function getInstance($reset = false)
     {
-        $class = \SugarAutoLoader::customClass('Sugarcrm\Sugarcrm\Socket\Client');
-        return new $class();
+        if ($reset || !static::$instance) {
+            $class = \SugarAutoLoader::customClass('Sugarcrm\Sugarcrm\Socket\Client');
+            static::$instance = new $class;
+        }
+        return static::$instance;
+    }
+
+    /**
+     * Returns true if socket client is configured
+     * @return bool
+     */
+    public function isConfigured()
+    {
+        return $this->getSugarConfig()->get('websockets.server.url') == true;
     }
 
     /**
@@ -125,12 +143,13 @@ class Client
     protected function retrieveToken()
     {
         $admin = $this->getAdministrationBean();
-        $config = $admin->getConfigForModule('auth');
-        if (empty($config['socket_token'])) {
+        // Should not use cache in memory because this code run in daemon.
+        $config = $admin->getConfigForModule('auth', 'base', true);
+        if (empty($config['external_token_socket'])) {
             $token = create_guid();
-            $admin->saveSetting('auth', 'socket_token', $token, 'base');
+            $admin->saveSetting('auth', 'external_token_socket', $token, 'base');
         } else {
-            $token = $config['socket_token'];
+            $token = $config['external_token_socket'];
         }
         return $token;
     }
@@ -162,7 +181,6 @@ class Client
         $client->getRemoteData($url, $params);
         return $client->isSuccess();
     }
-
 
     /**
      * Check WebSocket settings.

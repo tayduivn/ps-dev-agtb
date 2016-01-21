@@ -10,12 +10,16 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('src/Socket/Client.php');
+namespace Sugarcrm\SugarcrmTests\Socket;
+
+use Sugarcrm\Sugarcrm\Socket\Client;
 
 /**
- * @covers \Sugarcrm\Sugarcrm\Socket\Client
+ * Class SocketClientTest
+ * @package Sugarcrm\SugarcrmTests\Socket
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Socket\Client
  */
-class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
+class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * Data provider for testRecipient()
@@ -28,21 +32,21 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
             'user' => array(
                 array(
                     'url' => 'http://come.sugar.url.com/some/path',
-                    'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_USER_ID,
+                    'type' => Client::RECIPIENT_USER_ID,
                     'id' => 123,
                 ),
             ),
             'team' => array(
                 array(
                     'url' => 'http://come.sugar.url.com/some/path',
-                    'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_TEAM_ID,
+                    'type' => Client::RECIPIENT_TEAM_ID,
                     'id' => 456,
                 ),
             ),
             'group' => array(
                 array(
                     'url' => 'http://come.sugar.url.com/some/path',
-                    'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_USER_TYPE,
+                    'type' => Client::RECIPIENT_USER_TYPE,
                     'id' => 'admin',
                 ),
             ),
@@ -50,7 +54,7 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'url' => 'http://come.sugar.url.com/some/path',
                     'channel' => 'channel-home',
-                    'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_USER_ID,
+                    'type' => Client::RECIPIENT_USER_ID,
                     'id' => 123,
                 ),
             ),
@@ -58,7 +62,7 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'url' => 'http://come.sugar.url.com/some/path',
                     'channel' => 'channel-home',
-                    'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_TEAM_ID,
+                    'type' => Client::RECIPIENT_TEAM_ID,
                     'id' => 456,
                 ),
             ),
@@ -66,7 +70,7 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'url' => 'http://come.sugar.url.com/some/path',
                     'channel' => 'channel-home',
-                    'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_USER_TYPE,
+                    'type' => Client::RECIPIENT_USER_TYPE,
                     'id' => 'admin',
                 ),
             ),
@@ -111,14 +115,15 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests socket server settings check with invalid url. Socket server availability should be false
      *
-     * @covers \Sugarcrm\Sugarcrm\Socket\Client::checkWSSettings
+     * @covers ::checkWSSettings
      */
     public function testCheckWSSettingsInvalidUrl()
     {
         $url = 'invalid-url';
 
-        $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper', 'getWSUrl'));
+        $httpHelper = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\HttpHelper');
+        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
+        $client = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\Client', array('getHttpHelper', 'getWSUrl'));
 
         $client->expects($this->once())->method('getHttpHelper')->willReturn($httpHelper);
 
@@ -140,14 +145,15 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests socket server settings check with unreachable socket server url
      *
-     * @covers \Sugarcrm\Sugarcrm\Socket\Client::checkWSSettings
+     * @covers ::checkWSSettings
      */
     public function testCheckWSSettingsUnreachableUrl()
     {
         $url = 'http://unreachable.host.com';
 
-        $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper'));
+        $httpHelper = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\HttpHelper');
+        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
+        $client = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\Client', array('getHttpHelper'));
 
         $client->expects($this->once())->method('getHttpHelper')->willReturn($httpHelper);
 
@@ -169,7 +175,7 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests socket server settings check with valid and reachable url. Socket server availability should be true
      *
-     * @covers \Sugarcrm\Sugarcrm\Socket\Client::checkWSSettings
+     * @covers ::checkWSSettings
      */
     public function testCheckWSSettingsValidClientUrl()
     {
@@ -185,8 +191,9 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
             'isBalancer' => false,
         );
 
-        $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper'));
+        $httpHelper = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\HttpHelper');
+        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
+        $client = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\Client', array('getHttpHelper'));
 
         $client->expects($this->once())->method('getHttpHelper')->willReturn($httpHelper);
 
@@ -201,7 +208,7 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests socket server settings check with valid and reachable url. Socket server availability should be true
      *
-     * @covers \Sugarcrm\Sugarcrm\Socket\Client::checkWSSettings
+     * @covers ::checkWSSettings
      */
     public function testCheckWSSettingsValidServerUrl()
     {
@@ -217,8 +224,9 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
             'isBalancer' => false,
         );
 
-        $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper'));
+        $httpHelper = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\HttpHelper');
+        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
+        $client = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\Client', array('getHttpHelper'));
 
         $client->expects($this->once())->method('getHttpHelper')->willReturn($httpHelper);
 
@@ -233,7 +241,7 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests socket server settings check with invalid socket server type in response
      *
-     * @covers \Sugarcrm\Sugarcrm\Socket\Client::checkWSSettings
+     * @covers ::checkWSSettings
      */
     public function testCheckWSSettingsInvalidType()
     {
@@ -249,8 +257,9 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
             'isBalancer' => false,
         );
 
-        $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper'));
+        $httpHelper = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\HttpHelper');
+        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
+        $client = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\Client', array('getHttpHelper'));
 
         $client->expects($this->once())->method('getHttpHelper')->willReturn($httpHelper);
 
@@ -265,7 +274,7 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests socket server settings check with invalid socket server response
      *
-     * @covers \Sugarcrm\Sugarcrm\Socket\Client::checkWSSettings
+     * @covers ::checkWSSettings
      */
     public function testCheckWSSettingsInvalidResponse()
     {
@@ -279,8 +288,9 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
             'isBalancer' => false,
         );
 
-        $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper'));
+        $httpHelper = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\HttpHelper');
+        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
+        $client = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\Client', array('getHttpHelper'));
 
         $client->expects($this->once())->method('getHttpHelper')->willReturn($httpHelper);
 
@@ -295,7 +305,7 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests socket server settings check with balanced urls
      *
-     * @covers \Sugarcrm\Sugarcrm\Socket\Client::checkWSSettings
+     * @covers ::checkWSSettings
      */
     public function testCheckWSSettingsBalancerValid()
     {
@@ -316,8 +326,9 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
             'isBalancer' => true,
         );
 
-        $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper'));
+        $httpHelper = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\HttpHelper');
+        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
+        $client = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\Client', array('getHttpHelper'));
 
         $client->expects($this->once())->method('getHttpHelper')->willReturn($httpHelper);
 
@@ -334,7 +345,7 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests socket server settings check with invalid server response at balanced url
      *
-     * @covers \Sugarcrm\Sugarcrm\Socket\Client::checkWSSettings
+     * @covers ::checkWSSettings
      */
     public function testCheckWSSettingsBalancerInvalidResponse()
     {
@@ -351,8 +362,9 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
             'isBalancer' => true,
         );
 
-        $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper'));
+        $httpHelper = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\HttpHelper');
+        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
+        $client = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\Client', array('getHttpHelper'));
 
         $client->expects($this->once())->method('getHttpHelper')->willReturn($httpHelper);
 
@@ -370,15 +382,19 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
      * Tests if send() method returns correct operation status
      *
      * @dataProvider messageUrlsProvider
-     * @covers       \Sugarcrm\Sugarcrm\Socket\Client::send
+     * @covers       ::send
      * @param bool $expectedResult - expected response from send() method
      */
     public function testSendReturnValue($expectedResult)
     {
         $messageToSend = 'dummy message';
 
-        $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper', 'getSugarConfig', 'retrieveToken'));
+        $httpHelper = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\HttpHelper');
+        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
+        $client = $this->getMock(
+            'Sugarcrm\\Sugarcrm\\Socket\\Client',
+            array('getHttpHelper', 'getSugarConfig', 'retrieveToken')
+        );
 
         $config = $this->getMock('SugarConfig');
 
@@ -396,26 +412,35 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
      * Tests sending message with data payload to socket server
      *
      * @dataProvider messageDataProvider
-     * @covers       \Sugarcrm\Sugarcrm\Socket\Client::send
+     * @covers       ::send
      * @param string $message - message to be sent
-     * @param array|null $data - data payload to be sent
+     * @param array|null $args - data payload to be sent
      */
     public function testSend($message, $args)
     {
-        $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper', 'getSugarConfig', 'retrieveToken'));
+        $httpHelper = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\HttpHelper');
+        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
+        $client = $this->getMock(
+            'Sugarcrm\\Sugarcrm\\Socket\\Client',
+            array('getHttpHelper', 'getSugarConfig', 'retrieveToken')
+        );
 
         $config = $this->getMock('SugarConfig');
 
         $client->expects($this->any())->method('getHttpHelper')->willReturn($httpHelper);
         $client->expects($this->any())->method('getSugarConfig')->willReturn($config);
 
-        $httpHelper->expects($this->once())->method('getRemoteData')->with($this->anything(), $this->callback(function ($val) use ($message, $args) {
-            $data = json_decode($val, true);
-            $messagePassed = (isset($data['data']['message']) && $message == $data['data']['message']);
-            $argsPassed = (array_key_exists('args', $data['data']) && $args == $data['data']['args']);
-            return $messagePassed && $argsPassed;
-        }));
+        $httpHelper->expects($this->once())
+            ->method('getRemoteData')
+            ->with(
+                $this->anything(),
+                $this->callback(function ($val) use ($message, $args) {
+                    $data = json_decode($val, true);
+                    $messagePassed = (isset($data['data']['message']) && $message == $data['data']['message']);
+                    $argsPassed = (array_key_exists('args', $data['data']) && $args == $data['data']['args']);
+                    return $messagePassed && $argsPassed;
+                })
+            );
 
         $client->send($message, $args);
     }
@@ -430,16 +455,21 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $message = 'test-message';
 
-        $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper', 'getSugarConfig', 'retrieveToken'));
+        $httpHelper = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\HttpHelper');
+        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
+        $client = $this->getMock(
+            'Sugarcrm\\Sugarcrm\\Socket\\Client',
+            array('getHttpHelper', 'getSugarConfig', 'retrieveToken')
+        );
 
         $client->recipient($expectedTo['type'], $expectedTo['id']);
-        if (isset($expectedTo['channel']) && $expectedTo['channel']){
+        if (isset($expectedTo['channel']) && $expectedTo['channel']) {
             $client->channel($expectedTo['channel']);
         }
 
         $config = $this->getMockBuilder('SugarConfig')
-            ->getMock('SugarConfig', array('get'));
+            ->setMethods(array('get'))
+            ->getMock();
 
         $config->expects($this->any())
             ->method('get')
@@ -454,12 +484,15 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
         $client->expects($this->any())->method('getHttpHelper')->willReturn($httpHelper);
         $client->expects($this->any())->method('getSugarConfig')->willReturn($config);
 
-        $httpHelper->expects($this->once())->method('getRemoteData')->with(
-            $this->anything(),
-            $this->callback(function ($val) use ($expectedTo) {
-                $actualData = json_decode($val, true);
-                return 0 == count(array_diff($expectedTo, $actualData['to']));
-            }));
+        $httpHelper->expects($this->once())
+            ->method('getRemoteData')
+            ->with(
+                $this->anything(),
+                $this->callback(function ($val) use ($expectedTo) {
+                    $actualData = json_decode($val, true);
+                    return 0 == count(array_diff($expectedTo, $actualData['to']));
+                })
+            );
 
         $client->send($message);
     }
@@ -471,8 +504,12 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $message = 'test-message';
 
-        $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper', 'getSugarConfig', 'retrieveToken'));
+        $httpHelper = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\HttpHelper');
+        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
+        $client = $this->getMock(
+            'Sugarcrm\\Sugarcrm\\Socket\\Client',
+            array('getHttpHelper', 'getSugarConfig', 'retrieveToken')
+        );
 
         $config = $this->getMock('SugarConfig');
 
@@ -480,14 +517,17 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
         $client->expects($this->any())->method('getSugarConfig')->willReturn($config);
 
         $actualData = '';
-        $httpHelper->expects($this->once())->method('getRemoteData')->with(
-            $this->anything(),
-            $this->callback(function ($val) use ($actualData) {
-                $actualData = json_decode($val, true);
-                return $actualData['to']['type'] == \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_ALL
-                && is_null($actualData['to']['id'])
-                && is_null($actualData['to']['channel']);
-            }));
+        $httpHelper->expects($this->once())
+            ->method('getRemoteData')
+            ->with(
+                $this->anything(),
+                $this->callback(function ($val) use ($actualData) {
+                    $actualData = json_decode($val, true);
+                    return $actualData['to']['type'] == Client::RECIPIENT_ALL
+                    && is_null($actualData['to']['id'])
+                    && is_null($actualData['to']['channel']);
+                })
+            );
 
         $client->send($message);
     }
@@ -496,93 +536,125 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests getInstance() factory method
      *
-     * @covers \Sugarcrm\Sugarcrm\Socket\Client::getInstance
+     * @covers ::getInstance
      */
     public function testGetInstance()
     {
-        $this->assertInstanceOf('\Sugarcrm\Sugarcrm\Socket\Client', \Sugarcrm\Sugarcrm\Socket\Client::getInstance());
+        $this->assertInstanceOf('Sugarcrm\\Sugarcrm\\Socket\\Client', Client::getInstance());
     }
 
     /**
      * Tests getHttpHelper() factory method
      *
-     * @covers \Sugarcrm\Sugarcrm\Socket\Client::getHttpHelper
+     * @covers ::getHttpHelper
      */
     public function testGetHttpHelper()
     {
-        $this->assertInstanceOf('\Sugarcrm\Sugarcrm\Socket\HttpHelper', SugarTestReflection::callProtectedMethod(new \Sugarcrm\Sugarcrm\Socket\Client(), 'getHttpHelper'));
+        $this->assertInstanceOf(
+            'Sugarcrm\\Sugarcrm\\Socket\\HttpHelper',
+            \SugarTestReflection::callProtectedMethod(new Client(), 'getHttpHelper')
+        );
     }
 
     /**
      * Tests getAdministrationBean() factory method
      *
-     * @covers \Sugarcrm\Sugarcrm\Socket\Client::getAdministrationBean
+     * @covers ::getAdministrationBean
      */
     public function testgetAdministrationBean()
     {
-        $this->assertInstanceOf('Administration', SugarTestReflection::callProtectedMethod(new \Sugarcrm\Sugarcrm\Socket\Client(), 'getAdministrationBean'));
+        $this->assertInstanceOf(
+            'Administration',
+            \SugarTestReflection::callProtectedMethod(new Client(), 'getAdministrationBean')
+        );
     }
 
     /**
      * Tests getSugarConfig() factory method
      *
-     * @covers \Sugarcrm\Sugarcrm\Socket\Client::getSugarConfig
+     * @covers ::getSugarConfig
      */
     public function testGetSugarConfig()
     {
-        $this->assertInstanceOf('SugarConfig', SugarTestReflection::callProtectedMethod(new \Sugarcrm\Sugarcrm\Socket\Client(), 'getSugarConfig'));
+        $this->assertInstanceOf(
+            'SugarConfig',
+            \SugarTestReflection::callProtectedMethod(new Client(), 'getSugarConfig')
+        );
     }
 
     /**
      * Tests auth token retrieve (token is stored in DB)
      *
-     * @covers \Sugarcrm\Sugarcrm\Socket\Client::retrieveToken
+     * @covers ::retrieveToken
      */
     public function testRetrieveToken()
     {
         $config = array(
-            'socket_token' => 'sample-token',
+            'external_token_socket' => 'sample-token',
         );
 
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getAdministrationBean'));
+        $client = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\Client', array('getAdministrationBean'));
         $admin = $this->getMock('Administration', array('getConfigForModule', 'saveSetting'));
 
         $admin->expects($this->atLeastOnce())->method('getConfigForModule')->willReturn($config);
         $client->expects($this->atLeastOnce())->method('getAdministrationBean')->willReturn($admin);
         $admin->expects($this->never())->method('saveSetting');
 
-        $token = SugarTestReflection::callProtectedMethod($client, 'retrieveToken');
-        $this->assertEquals($config['socket_token'], $token);
+        $token = \SugarTestReflection::callProtectedMethod($client, 'retrieveToken');
+        $this->assertEquals($config['external_token_socket'], $token);
+    }
+
+    /**
+     * Code run in daemon, should not use cache in memory.
+     */
+    public function testIsClearSettingsCache()
+    {
+        $config = array(
+            'external_token_socket' => 'sample-token',
+        );
+        $admin = $this->getMock('Administration', array('getConfigForModule', 'saveSetting'));
+        $admin->expects($this->atLeastOnce())->method('getConfigForModule')
+            ->with($this->equalTo('auth'), $this->equalTo('base'), $this->isTrue())
+            ->willReturn($config);
+
+        $client = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\Client', array('getAdministrationBean'));
+
+        $client->expects($this->atLeastOnce())->method('getAdministrationBean')->willReturn($admin);
+
+        \SugarTestReflection::callProtectedMethod($client, 'retrieveToken');
     }
 
     /**
      * Tests auth token retrieve (token is generated)
      *
-     * @covers \Sugarcrm\Sugarcrm\Socket\Client::retrieveToken
+     * @covers ::retrieveToken
      */
     public function testGenerateToken()
     {
         $config = array(
-            'socket_token' => '',
+            'external_token_socket' => '',
         );
 
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getAdministrationBean'));
+        $client = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\Client', array('getAdministrationBean'));
         $admin = $this->getMock('Administration', array('getConfigForModule', 'saveSetting'));
 
         $token = '';
-        $admin->expects($this->once())->method('saveSetting')->with(
-            $this->anything(),
-            $this->anything(),
-            $this->callback(function ($val) use (&$token) {
-                $token = $val;
-                return !empty($token);
-            }),
-            $this->anything());
+        $admin->expects($this->once())
+            ->method('saveSetting')
+            ->with(
+                $this->anything(),
+                $this->anything(),
+                $this->callback(function ($val) use (&$token) {
+                    $token = $val;
+                    return !empty($token);
+                }),
+                $this->anything()
+            );
 
         $admin->expects($this->atLeastOnce())->method('getConfigForModule')->willReturn($config);
         $client->expects($this->atLeastOnce())->method('getAdministrationBean')->willReturn($admin);
 
-        $newToken = SugarTestReflection::callProtectedMethod($client, 'retrieveToken');
+        $newToken = \SugarTestReflection::callProtectedMethod($client, 'retrieveToken');
         $this->assertEquals($token, $newToken);
     }
 
@@ -593,8 +665,12 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $dummyToken = 'test-token';
 
-        $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper', 'getSugarConfig', 'retrieveToken'));
+        $httpHelper = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\HttpHelper');
+        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
+        $client = $this->getMock(
+            'Sugarcrm\\Sugarcrm\\Socket\\Client',
+            array('getHttpHelper', 'getSugarConfig', 'retrieveToken')
+        );
 
         $config = $this->getMock('SugarConfig');
 
@@ -602,12 +678,15 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
         $client->expects($this->any())->method('getSugarConfig')->willReturn($config);
         $client->expects($this->any())->method('retrieveToken')->willReturn($dummyToken);
 
-        $httpHelper->expects($this->once())->method('getRemoteData')->with(
-            $this->anything(),
-            $this->callback(function ($val) use ($dummyToken) {
-                $actualData = json_decode($val, true);
-                return $actualData['token'] == $dummyToken;
-            }));
+        $httpHelper->expects($this->once())
+            ->method('getRemoteData')
+            ->with(
+                $this->anything(),
+                $this->callback(function ($val) use ($dummyToken) {
+                    $actualData = json_decode($val, true);
+                    return $actualData['token'] == $dummyToken;
+                })
+            );
 
         $client->send('test');
     }
@@ -619,8 +698,12 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $url = 'http://dummy.net';
 
-        $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper', 'getSugarConfig', 'retrieveToken'));
+        $httpHelper = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\HttpHelper');
+        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
+        $client = $this->getMock(
+            'Sugarcrm\\Sugarcrm\\Socket\\Client',
+            array('getHttpHelper', 'getSugarConfig', 'retrieveToken')
+        );
 
         $config = $this->getMock('SugarConfig');
 
@@ -629,12 +712,15 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
 
         $config->expects($this->at(0))->method('get')->with($this->equalTo('site_url'))->willReturn($url);
 
-        $httpHelper->expects($this->once())->method('getRemoteData')->with(
-            $this->anything(),
-            $this->callback(function ($val) use ($url) {
-                $actualData = json_decode($val, true);
-                return $actualData['to']['url'] == $url;
-            }));
+        $httpHelper->expects($this->once())
+            ->method('getRemoteData')
+            ->with(
+                $this->anything(),
+                $this->callback(function ($val) use ($url) {
+                    $actualData = json_decode($val, true);
+                    return $actualData['to']['url'] == $url;
+                })
+            );
 
         $client->send('test');
     }
@@ -646,17 +732,26 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $serverUrl = 'http://server.dummy';
 
-        $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
-        $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper', 'getSugarConfig', 'retrieveToken'));
+        $httpHelper = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\HttpHelper');
+        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
+        $client = $this->getMock(
+            'Sugarcrm\\Sugarcrm\\Socket\\Client',
+            array('getHttpHelper', 'getSugarConfig', 'retrieveToken')
+        );
 
         $config = $this->getMock('SugarConfig');
 
         $client->expects($this->any())->method('getHttpHelper')->willReturn($httpHelper);
         $client->expects($this->any())->method('getSugarConfig')->willReturn($config);
 
-        $config->expects($this->at(1))->method('get')->with($this->equalTo('websockets.server.url'))->willReturn($serverUrl);
+        $config->expects($this->at(1))
+            ->method('get')
+            ->with($this->equalTo('websockets.server.url'))
+            ->willReturn($serverUrl);
 
-        $httpHelper->expects($this->once())->method('getRemoteData')->with($this->equalTo($serverUrl . '/forward'), $this->anything());
+        $httpHelper->expects($this->once())
+            ->method('getRemoteData')
+            ->with($this->equalTo($serverUrl . '/forward'), $this->anything());
 
         $client->send('test');
     }

@@ -70,7 +70,11 @@ class Manager implements ClientInterface, RunnerInterface
         'ExportListViewDemo' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportListViewDemo',
         'ExportToCSVDemo' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportToCSVDemo',
         'CalDavImport' => 'Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\Import',
-        'CalDavExport' => 'Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\Export'
+        'CalDavExport' => 'Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\Export',
+        'NotificationEvent' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\EventHandler',
+        'NotificationCarrierBulkMessage' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\CarrierBulkMessageHandler',
+        'NotificationSend' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\SendHandler',
+        'RecreateUserRemindersJob' => 'Sugarcrm\\Sugarcrm\\Trigger\Job\\RecreateUserRemindersJob',
     );
 
     /**

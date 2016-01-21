@@ -157,6 +157,10 @@
             this._app.events.on('app:login:success', this.authorize, this);
             this._app.events.on('app:logout', this.authorize, this);
             this.socket().on('connect', _.bind(this.authorize, this));
+
+            this.socket().on('connect', _.bind(this._app.events.trigger, this._app.events, 'app:socket:connect'));
+            this.socket().on('disconnect', _.bind(this._app.events.trigger, this._app.events, 'app:socket:disconnect'));
+
             this.socket().on('message', _.bind(this._message, this));
         },
 

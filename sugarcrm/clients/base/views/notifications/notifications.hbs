@@ -40,7 +40,17 @@
                             {{relativeTime this.attributes.date_entered class="span4 pull-right"}}
                         </a></li>
                     {{/each}}
-                    <li><a class="row-fluid" href="#{{module}}" tabindex="-1"><i class="fa fa-bars span1"></i><span class="span8 ellipsis_inline">{{str "LBL_SHOW_NOTIFICATIONS" module}}</span></a></li>
+                    <li class="list-and-config">
+                        <a class="row-fluid" href="#{{module}}" tabindex="-1">
+                            <i class="fa fa-bars span1"></i>
+                            <span class="span8 ellipsis_inline">{{str "LBL_SHOW_NOTIFICATIONS" module}}</span>
+                        </a>
+                        <span class="config">
+                            <a data-action="config" href="#NotificationCenter/config" tabindex="-1">
+                                <i class="fa fa-cog"></i>
+                            </a>
+                        </span>
+                    </li>
                 </ul>
             </div>
         </div>

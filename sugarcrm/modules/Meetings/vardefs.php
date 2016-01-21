@@ -250,7 +250,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
   ),
   'reminder_checked' => array(
     'name' => 'reminder_checked',
-    'vname' => 'LBL_POPUP_REMINDER',
+    'vname' => 'LBL_REMINDER',
     'type' => 'bool',
     'source' => 'non-db',
     'comment' => 'checkbox indicating whether or not the reminder value is set (Meta-data only)',
@@ -260,7 +260,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
   'reminder_time' =>
   array (
     'name' => 'reminder_time',
-    'vname' => 'LBL_POPUP_REMINDER_TIME',
+    'vname' => 'LBL_REMINDER_TIME',
     'type' => 'enum',
     'dbType' => 'int',
     'options' => 'reminder_time_options',

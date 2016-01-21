@@ -13,7 +13,6 @@
 
 require_once 'modules/Meetings/Meeting.php';
 require_once 'modules/Meetings/MeetingFormBase.php';
-require_once 'modules/Activities/EmailReminder.php';
 require_once 'include/externalAPI/ExternalAPIFactory.php';
 require_once 'tests/SugarTestAddresseeUtilities.php';
 
@@ -88,24 +87,6 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
             // Assert doc type default is 'Sugar'
             $this->assertEquals($row['type'], 'Sugar');
         }
-    }
-
-    public function testEmailReminder()
-    {
-        global $current_user;
-        $meeting = new Meeting();
-        $meeting->email_reminder_time = "20";
-        $meeting->name = 'Test Email Reminder';
-        $meeting->assigned_user_id = $current_user->id;
-        $meeting->status = "Planned";
-        $meeting->date_start = $GLOBALS['timedate']->nowDb();
-        $meeting->save();
-
-        $er = new EmailReminder();
-        $to_remind = $er->getMeetingsForRemind();
-
-        $this->assertTrue(in_array($meeting->id, $to_remind));
-        $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$meeting->id}'");
     }
 
     public function testMeetingFormBaseRelationshipsSetTest()
