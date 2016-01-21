@@ -39,4 +39,12 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>$module_name,
         'icon' => 'fa-bars',
     ),
+    array(
+        'route'=>'#CalDav/config/user',
+        'label' =>'LBL_CALDAV_USER_CONFIG',
+        'acl_action'=>'create',
+        'acl_module'=>$module_name,
+        'icon' => 'fa-cog',
+    ),
+
 );

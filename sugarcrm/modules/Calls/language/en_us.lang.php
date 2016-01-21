@@ -129,6 +129,7 @@ $mod_strings = array (
     'LBL_REMOVE_ALL_RECURRENCES' => 'Delete All Recurrences',
     'LBL_DATE_END_ERROR' => 'End date is before start date',
     'LBL_REPEAT_PARENT_ID' => 'Repeat Parent ID',
+    'LBL_REPEAT_ROOT_ID' => 'Repeat Root ID',
     'LBL_RECURRING_SOURCE' => 'Recurring Source',
     'LBL_CONFIRM_REMOVE_ALL_RECURRENCES' => 'Are you sure you want to remove all recurring records?',
     'LBL_RECURRING_LIMIT_ERROR' => 'This recurring call cannot be scheduled because it exceeds the maximum allowed recurrence of $limit.',

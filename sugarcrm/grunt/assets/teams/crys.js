@@ -12,5 +12,6 @@
 [
     'include/javascript/sugar7/socket.js',
     'clients/base/views/notifications/notifications.js',
-    'modules/NotificationCenter/clients/**/*.js'
+    'modules/NotificationCenter/clients/**/*.js',
+    'modules/CalDav/clients/**/*.js'
 ]

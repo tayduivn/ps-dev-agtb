@@ -150,6 +150,8 @@ if (file_exists($customHelperIncludeFile)) {
 }
 
 $GLOBALS['db']->commit();
+// Disabled CalDav handler for tests, we don't need it
+SugarTestReflection::setProtectedValue('Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler', 'disabled', true);
 
 define('CHECK_FILE_MAPS', false);
 // define our testcase subclass

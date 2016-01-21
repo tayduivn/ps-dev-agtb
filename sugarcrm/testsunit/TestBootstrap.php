@@ -36,6 +36,7 @@ $classMapDirs = array(
     'data',
     'clients',
     'vendor/Zend',
+    'vendor/sabre',
 );
 
 $autoLoaderHelper = new Sugarcrm\SugarcrmTestsUnit\AutoLoaderHelper();

@@ -299,7 +299,7 @@ class CalendarUtils
 	/**
 	 * Save repeat activities
      * Invites are sent once for a Recurring Series (only when the Parent was saved)
-	 * @param SugarBean $bean
+	 * @param Call|Meeting|SugarBean $bean
 	 * @param array $timeArray array of datetimes
 	 * @return array
 	 */
@@ -342,17 +342,38 @@ class CalendarUtils
 			$leads_rel_arr[] = $ro['lead_id'];
 		}
 
+        $qu = "SELECT * FROM {$bean->rel_addresses_table} WHERE deleted = 0 AND {$lower_name}_id = " . $db->quoted($id);
+        $re = $db->query($qu);
+        $addresses_rel_arr = array();
+        while ($ro = $db->fetchByAssoc($re)) {
+            $addresses_rel_arr[] = $ro['addressee_id'];
+        }
+
 		$qu_contacts = array();
 		$qu_users = array();
 		$qu_leads = array();
+        $qu_addresses = array();
 		$arr = array();
 		$i = 0;
 
         Activity::disable();
 
+		foreach ($timeArray as $key => $date_start) {
+			$timeArray[create_guid()] = $date_start;
+			unset($timeArray[$key]);
+		}
         $calendarEvents = new CalendarEvents();
         $bean->load_relationship('tag_link');
         $parentTagBeans = $bean->tag_link->getBeans();
+
+        $eventCollection = new \CalDavEventCollection();
+        $calDavEvent = $eventCollection->findByBean($bean);
+        if($calDavEvent) {
+            $childrenOrder = array_keys($timeArray);
+            array_unshift($childrenOrder, $bean->id);
+            $calDavEvent->setSugarChildrenOrder($childrenOrder);
+            $calDavEvent->save();
+        }
 
 		$clone = clone $bean;
 
@@ -360,16 +381,19 @@ class CalendarUtils
         //attribute that incorrectly makes it look like an existing bean
         $clone->fetched_row = false;
 
-		foreach ($timeArray as $date_start) {
-			$clone->id = "";
+		foreach ($timeArray as $recurringId => $date_start) {
+			$clone->id = $recurringId;
+			$clone->new_with_id = true;
 			$clone->date_start = $date_start;
 			// TODO CHECK DATETIME VARIABLE
 			$date = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$date_start);
+            $bean->duration_minutes = $bean->duration_minutes ? : 0;
 			$date = $date->get("+{$bean->duration_hours} Hours")->get("+{$bean->duration_minutes} Minutes");
 			$date_end = $date->format($GLOBALS['timedate']->get_date_time_format());
 			$clone->date_end = $date_end;
 			$clone->recurring_source = "Sugar";
-			$clone->repeat_parent_id = $id;
+            $clone->repeat_parent_id = $id;
+            $clone->repeat_root_id = null;
 			$clone->update_vcal = false;
             $clone->send_invites = false;
 			$clone->save(false);
@@ -401,6 +425,14 @@ class CalendarUtils
                         'date_modified' => $date_modified,
                     );
 				}
+                foreach ($addresses_rel_arr as $addressee_id) {
+                    $qu_addresses[] = array(
+                        'id' => create_guid(),
+                        'addressee_id' => $addressee_id,
+                        $lower_name . '_id' => $clone->id,
+                        'date_modified' => $date_modified,
+                    );
+                }
 				if($i < 44){
 					$clone->date_start = $date_start;
 					$clone->date_end = $date_end;
@@ -445,6 +477,18 @@ class CalendarUtils
                 $db->insertParams($bean->rel_leads_table, $fields, $qu_lead);
             }
         }
+
+        if (!empty($qu_addresses)) {
+            $fields = array(
+                'id' => array('name' => 'id', 'type' => 'id'),
+                'addressee_id' => array('name' => 'addressee_id', 'type' => 'id'),
+                $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
+                'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
+            );
+            foreach ($qu_addresses as $qu_addressee) {
+                $db->insertParams($bean->rel_addresses_table, $fields, $qu_addressee);
+            }
+        }
 		
 		vCal::cache_sugar_vcal($GLOBALS['current_user']);
 		return $arr;
@@ -474,40 +518,104 @@ class CalendarUtils
 			$db->query("UPDATE {$bean->rel_users_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = '{$id}'");
 			$db->query("UPDATE {$bean->rel_contacts_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = '{$id}'");
 			$db->query("UPDATE {$bean->rel_leads_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = '{$id}'");
+			$db->query("UPDATE {$bean->rel_addresses_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = " . $db->quoted($id));
 		}
 		vCal::cache_sugar_vcal($GLOBALS['current_user']);
 	}
 
-	/**
-	 * check if meeting has repeat children and pass repeat_parent over to the 2nd meeting in sequence
-	 * @param SugarBean $bean
-	 * @param string $beanId
-	 */
-	static function correctRecurrences(SugarBean $bean, $beanId)
-	{
-		global $db;
+    /**
+     * check if meeting has repeat children and pass repeat_parent over to the 2nd meeting in sequence
+     * @param Call|Meeting|SugarBean $bean
+     * @param string $beanId
+     */
+    static function correctRecurrences(SugarBean $bean, $beanId)
+    {
+        global $db;
 
-        if (empty($beanId) || trim($beanId) == '') {
+        if (!$beanId || trim($beanId) == '') {
             return;
         }
 
-		$qu = "SELECT id FROM {$bean->table_name} WHERE repeat_parent_id = '{$beanId}' AND deleted = 0 ORDER BY date_start";
-		$re = $db->query($qu);
-		
-		$date_modified = $GLOBALS['timedate']->nowDb();
+        $query = "SELECT id FROM {$bean->table_name} WHERE repeat_parent_id = '{$beanId}' AND deleted = 0 ORDER BY date_start";
+        $result = $db->query($query);
 
-		$i = 0;
-		while ($ro = $db->fetchByAssoc($re)) {
-			$id = $ro['id'];
-			if($i == 0){
-				$new_parent_id = $id;
-				$qu = "UPDATE {$bean->table_name} SET repeat_parent_id = NULL, recurring_source = NULL, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE id = '{$id}'";
-			}else{
-				$qu = "UPDATE {$bean->table_name} SET repeat_parent_id = '{$new_parent_id}', date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE id = '{$id}'";
-			}
-			$db->query($qu);
-      		$i++;
-		}
-	}
+        $date_modified = $GLOBALS['timedate']->nowDb();
 
+        $new_parent_id = false;
+        while ($row = $db->fetchByAssoc($result)) {
+            $id = $row['id'];
+            if (!$new_parent_id) {
+                $new_parent_id = $id;
+                $query = "UPDATE {$bean->table_name} SET repeat_parent_id = NULL, recurring_source = NULL, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE id = '{$id}'";
+            } else {
+                $query = "UPDATE {$bean->table_name} SET repeat_parent_id = '{$new_parent_id}', date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE id = '{$id}'";
+            }
+            $db->query($query);
+        }
+    }
+
+    /**
+     * Restores deleted series.
+     *
+     * @param Call|Meeting|SugarBean $bean
+     * @return bool true if series was restored or false if nothing found
+     */
+    public static function correctDeletedRecurrence(SugarBean $bean)
+    {
+        if ($bean->repeat_parent_id) {
+            return false;
+        }
+        /** @var DBManager $db */
+        /** @var TimeDate $timedate */
+        global $db, $timedate;
+
+        $query = 'UPDATE %1$s SET repeat_parent_id = %2$s, date_modified = %3$s WHERE id <> %2$s AND repeat_root_id = %2$s';
+        $query = sprintf($query, $bean->table_name, $db->quoted($bean->id), $db->convert($db->quoted($timedate->nowDb()), 'datetime'));
+        $db->query($query);
+        return true;
+    }
+
+    /**
+     * get all invites for bean, such as  contacts, leads and users
+     * @param SugarBean|Call|Meeting $bean
+     * @return array
+     */
+    public static function getInvitees(\SugarBean $bean)
+    {
+        /** @var Localization $locale */
+        global $locale;
+
+        $definitions = \VardefManager::getFieldDefs($bean->module_name);
+        if (isset($definitions['invitees']['links'])) {
+            $requiredRelations = $definitions['invitees']['links'];
+        } else {
+            $requiredRelations = array('contacts', 'leads', 'users');
+        }
+
+        $invitees = array();
+        foreach ($requiredRelations as $relationship) {
+            if ($bean->load_relationship($relationship)) {
+                $bean->$relationship->resetLoaded();
+                $beans = $bean->$relationship->getBeans();
+                /** @var SugarBean $person */
+                foreach ($beans as $beanId => $person) {
+                    if ($person instanceof \User && $beanId == $bean->created_by) {
+                        continue;
+                    }
+                    $invitee = array(
+                        $person->module_name,
+                        $person->id,
+                        $person->emailAddress->getPrimaryAddress($person),
+                        null,
+                        $locale->formatName($person),
+                    );
+                    if (isset($bean->$relationship->rows[$beanId])) {
+                        $invitee[3] = $bean->$relationship->rows[$beanId]['accept_status'];
+                    }
+                    $invitees[] = $invitee;
+                }
+            }
+        }
+        return $invitees;
+    }
 }

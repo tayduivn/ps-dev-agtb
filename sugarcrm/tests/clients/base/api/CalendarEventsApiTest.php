@@ -23,11 +23,12 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        SugarTestHelper::setUp('current_user');
         parent::setUp();
         $this->meetingIds = array();
 
         $this->api = SugarTestRestUtilities::getRestServiceMock();
-        $this->api->user = $GLOBALS['current_user']->getSystemUser();
+        $this->api->user = $GLOBALS['current_user'];
         $GLOBALS['current_user'] = $this->api->user;
         $this->calendarEventsApi = new CalendarEventsApi();
     }
@@ -37,6 +38,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         BeanFactory::setBeanClass('Meetings');
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
+        SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
         if (!empty($this->meetingIds)) {
             $ids = implode("','", $this->meetingIds);
@@ -212,7 +214,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
                     'duration_hours' => '9',
                 ),
             ),
-       );
+        );
     }
 
     /**
@@ -949,6 +951,95 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual, $message);
     }
 
+    /**
+     * @covers \CalendarEventsApi::createBean
+     */
+    public function testCreateBeanCausesExportWithoutAnyInvitesData()
+    {
+        $args = array(
+            'module' => 'Meetings',
+            'name' => 'Test Meeting',
+            'date_start' => $this->dateTimeAsISO(date('Y-m-d H:i:s')),
+            'duration_minutes' => '10',
+            'assigned_user_id' => $GLOBALS['current_user']->id,
+        );
+
+        $calDavHandler = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler', array('export'));
+        $calDavHandler->expects($this->once())
+            ->method('export')
+            ->will($this->returnCallback(
+                function ($bean, $diffArray) {
+                    $actualArgs = array($bean, $diffArray);
+                    $this->assertNotEquals(
+                        array(),
+                        $actualArgs[1],
+                        'Second arg (array with diff data) should not be passed to export on the first bean save.'
+                    );
+                }
+            ));
+
+        CalendarEventsApiTestMockMeetingCRYS1341::$calDavHandler = $calDavHandler;
+        BeanFactory::setBeanClass('Meetings', 'CalendarEventsApiTestMockMeetingCRYS1341');
+
+        $this->calendarEventsApi->createBean($this->api, $args);
+    }
+
+    /**
+     * @covers \CalendarEventsApi::updateRecord
+     */
+    public function testUpdateRecordCausesExportWithCorrectInvitesBeforeAndAfter()
+    {
+        $contact = SugarTestContactUtilities::createContact();
+
+        $calDavHandler = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler', array('export'));
+        $calDavHandler->expects($this->at(1))
+            ->method('export')
+            ->with(
+                $this->anything(),
+                $this->equalTo(
+                    array(
+                        'update',
+                        array(),
+                        array(),
+                        array(
+                            array(
+                                'Contacts',
+                                $contact->id,
+                                $contact->emailAddress->getPrimaryAddress($contact),
+                                'none',
+                                $GLOBALS['locale']->formatName($contact),
+                            )
+                        ),
+                    )
+                )
+            );
+
+        $meeting = $this->getMock('Meeting', array('getCalDavHook'));
+        $meeting->expects($this->any())
+            ->method('getCalDavHook')
+            ->will($this->returnValue($calDavHandler));
+
+        $meeting->name = 'Test Meeting';
+        $meeting->assigned_user_id = $GLOBALS['current_user']->id;
+        $meeting->load_relationship('users');
+        $meeting->users->add($GLOBALS['current_user']);
+        $meeting->save();
+
+        $args = array(
+            'module' => $meeting->module_name,
+            'name' => $meeting->name,
+            'record' => $meeting->id,
+            'date_start' => $this->dateTimeAsISO(date('Y-m-d H:i:s')),
+            'duration_minutes' => '10',
+            'assigned_user_id' => $GLOBALS['current_user']->id,
+            'contacts' => array(
+                'add' => array($contact->id),
+            ),
+        );
+
+        $this->calendarEventsApi->updateRecord($this->api, $args);
+    }
+
     private function dateTimeAsISO($dbDateTime)
     {
         global $timedate;
@@ -1029,3 +1120,12 @@ class CalendarEventsApiTest_CalendarEvents extends CalendarEvents
     }
 }
 
+class CalendarEventsApiTestMockMeetingCRYS1341 extends Meeting
+{
+    public static $calDavHandler = null;
+
+    public function getCalDavHook()
+    {
+        return self::$calDavHandler;
+    }
+}

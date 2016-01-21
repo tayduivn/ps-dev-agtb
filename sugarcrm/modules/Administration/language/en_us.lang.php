@@ -1290,4 +1290,9 @@ For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_
     'LBL_PMSE_ADMIN_TITLE_MODULE' => 'Process Author',
     'LBL_PMSE_ADMIN_DESC_MODULE' => 'Configure Process Author settings and view logs. Manage all BPM processes for all users via Process Management.',
     //END SUGARCRM flav=ent ONLY
+
+    //CalDav
+    'LBL_CONFIGURE_CALDAV' => 'iCal Sync Settings',
+    'LBL_CONFIGURE_CALDAV_DESC' => 'Here you can configure default bean for new events from client side, and setup sync period.',
+
 );
