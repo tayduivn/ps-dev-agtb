@@ -23,7 +23,8 @@
     plugins: ['EllipsisInline'],
     events: {
         'click [data-event]': 'handleMenuEvent',
-        'click [data-route]': 'handleRouteEvent'
+        'click [data-route]': 'handleRouteEvent',
+        'shown.bs.dropdown': 'populateMenu'
     },
 
     /**
@@ -87,10 +88,6 @@
 
         this._super('initialize', [options]);
         this._initSettings();
-
-        this.events = _.extend({}, this.events, {
-            'shown.bs.dropdown': 'populateMenu'
-        });
 
         /**
          * The internal array of collections for favorites and recent.
