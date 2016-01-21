@@ -53,6 +53,11 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
                 'Audit',
                 'MergeRecords',
                 'Relationships',
+                'CalDavEvents',
+                'CalDavCalendars',
+                'CalDavChanges',
+                'CalDavSchedulings',
+                'CalDavSynchronizations',
             );
 
 

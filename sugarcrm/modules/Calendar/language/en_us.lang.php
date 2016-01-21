@@ -137,6 +137,8 @@ $mod_strings = array (
     'LBL_CALENDAR_EVENT_NOT_A_RECURRING_EVENT' => "{0} is not a recurring event",
     'LBL_CALENDAR_EVENT_NOT_A_PARENT_OCCURRENCE' => "{0} is not a parent recurrence",
     'LBL_CALENDAR_EVENT_RECURRENCE_MODULE_NOT_SUPPORTED' => "{0} is not recognized as a recurring event module",
+
+    'LBL_CALDAV_USER_CONFIG' => 'iCal Settings',
 );
 
 $mod_list_strings = array(

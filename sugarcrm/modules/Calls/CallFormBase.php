@@ -190,23 +190,12 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	if($useRequired && !checkRequired($prefix, array_keys($focus->required_fields))) {
 		return null;
 	}
-    if ( !isset($_POST[$prefix.'reminder_checked']) or ($_POST[$prefix.'reminder_checked'] == 0)) {
-        $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): No reminder checked, resetting the reminder_time');
-        $_POST[$prefix.'reminder_time'] = -1;
-    }
 
 	if(!isset($_POST[$prefix.'reminder_time'])) {
         $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Getting the users default reminder time');
 		$_POST[$prefix.'reminder_time'] = $current_user->getPreference('reminder_time');
 	}
 
-	if(!isset($_POST['email_reminder_checked']) || (isset($_POST['email_reminder_checked']) && $_POST['email_reminder_checked'] == '0')) {
-		$_POST['email_reminder_time'] = -1;
-	}
-	if(!isset($_POST['email_reminder_time'])){
-		$_POST['email_reminder_time'] = $current_user->getPreference('email_reminder_time');
-		$_POST['email_reminder_checked'] = 1;
-	}
     if (isset($_POST['repeat_parent_id']) && trim($_POST['repeat_parent_id']) == '') {
         unset($_POST['repeat_parent_id']);
     }
@@ -284,11 +273,13 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
             $userInvitees = array();
             $contactInvitees = array();
             $leadInvitees = array();
-           
+            $addresseeInvitees = array();
+
             $existingUsers = array();
             $existingContacts = array();
             $existingLeads =  array();
-            
+            $existingAddresses =  array();
+
             if (!empty($_POST['user_invitees'])) {
                $userInvitees = explode(',', trim($_POST['user_invitees'], ','));
             }
@@ -326,6 +317,24 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
                 } 
             }
 
+            if (!empty($_POST['addressee_invitees'])) {
+                $addresseeInvitees = explode(',', trim($_POST['addressee_invitees'], ','));
+            }
+
+            if (!empty($_POST['existing_addressee_invitees'])) {
+                $existingLeads =  explode(",", trim($_POST['existing_addressee_invitees'], ','));
+            }
+
+            if (!empty($_POST['parent_id']) && $_POST['parent_type'] == 'Leads') {
+                $addresseeInvitees[] = $_POST['parent_id'];
+            }
+
+            if ($relate_to == 'Addresses') {
+                if (!empty($_REQUEST['relate_id']) && !in_array($_REQUEST['relate_id'], $addresseeInvitees)) {
+                    $addresseeInvitees[] = $_REQUEST['relate_id'];
+                }
+            }
+
             // Call the Call module's save function to handle saving other fields besides
             // the users and contacts relationships
             $focus->update_vcal = false;    // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
@@ -333,13 +342,15 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
             $focus->users_arr = $userInvitees;
             $focus->contacts_arr = $contactInvitees;
             $focus->leads_arr = $leadInvitees;
-            
+            $focus->addresses_arr = $addresseeInvitees;
+
             $focus->save(true);
             $return_id = $focus->id;
 
             $focus->setUserInvitees($userInvitees, $existingUsers);
             $focus->setContactInvitees($contactInvitees, $existingContacts);
             $focus->setLeadInvitees($leadInvitees, $existingLeads);
+            $focus->setAddresseeInvitees($addresseeInvitees, $existingAddresses);
 
             // Bug #49195 : update vcal
             vCal::cache_sugar_vcal($current_user);

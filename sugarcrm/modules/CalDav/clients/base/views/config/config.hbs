@@ -1,0 +1,34 @@
+{{!--
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+--}}
+{{#each meta.panels}}
+    <div></div>
+    {{#each fields}}
+        {{#eq this.name 'caldav_module'}}
+            <div class="span10"><h4>{{str this.label ../../../this.model.module}}</h4></div>
+            <div class="span10"><p>{{str this.description ../../../this.model.module}}</p></div>
+            <div class="span3">{{field ../../../this model=../../../context.attributes.createModel template="edit"}}</div>
+        {{/eq}}
+
+        {{#eq this.name 'caldav_call_direction'}}
+            <div class="span10"><h4>{{field ../../../this model=../../../context.attributes.createModel template="edit"}}</h4></div>
+            <div class="span11"><hr></div>
+        {{/eq}}
+
+        {{#eq this.name 'caldav_interval'}}
+            <div class="span10"><h4>{{str this.label ../../../this.model.module}}</h4></div>
+            <div class="span10"><p>{{str this.description ../../../this.model.module}}</p></div>
+            <div class="span3">{{field ../../../this model=../../../context.attributes.createModel template="edit"}}</div>
+        {{/eq}}
+    {{/each}}
+{{/each}}
+

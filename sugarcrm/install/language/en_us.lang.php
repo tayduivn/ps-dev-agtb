@@ -184,10 +184,13 @@ $mod_strings = array(
 	'ERR_WEB_SOCKET_SERVER_URL'         => 'WebSocket Server URL required',
     'ERR_WEB_SOCKET_CLIENT_URL_INVALID' => 'Please provide correct WebSocket Client URL',
     'ERR_WEB_SOCKET_SERVER_URL_INVALID' => 'Please provide correct WebSocket Server URL',
-	'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL.',
-	'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL.',
+	'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL',
+	'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL',
 	'ERR_TRIGGER_SERVER_URL_INVALID'    => 'Please provide correct Trigger Server URL',
 	'ERR_TRIGGER_SERVER_ERROR'          => 'Unable to connect to Trigger Server',
+    'ERR_TRIGGER_SERVER_LOCALHOST'      => 'URL of the instance points to local host but Trigger Server is located remotely and can\'t reach the instance.',
+    'ERR_WEB_SOCKET_SERVER_LOCALHOST'   => 'URL of the instance points to local host but Socket Server is located remotely and can\'t reach the instance.',
+    'ERR_WEB_SOCKET_CLIENT_LOCALHOST'   => 'Client URL of Socket Server points to local host. It will work only on local machine.',
 
 	'LBL_BACK'							=> 'Back',
     'LBL_CANCEL'                        => 'Cancel',
@@ -573,7 +576,6 @@ $mod_strings = array(
     'LBL_OOTB_CAMPAIGN'		=> 'Run Nightly Mass Email Campaigns',
 	'LBL_OOTB_PRUNE'		=> 'Prune Database on 1st of Month',
     'LBL_OOTB_TRACKER'		=> 'Prune tracker tables',
-    'LBL_OOTB_SEND_EMAIL_REMINDERS'	=> 'Run Email Reminder Notifications',
     'LBL_UPDATE_TRACKER_SESSIONS' => 'Update tracker_sessions table',
     'LBL_OOTB_CLEANUP_QUEUE' => 'Clean Jobs Queue',
 

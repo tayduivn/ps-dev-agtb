@@ -160,7 +160,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   'reminder_time' =>
   array (
     'name' => 'reminder_time',
-    'vname' => 'LBL_POPUP_REMINDER_TIME',
+    'vname' => 'LBL_REMINDER_TIME',
     'type' => 'enum',
     'dbType' => 'int',
     'options' => 'reminder_time_options',
@@ -190,7 +190,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'massupdate' => false,
     'default'=> -1,
     'comment' => 'Specifies when a email reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start',
-    'studio' => array('recordview' => false, 'wirelesseditview' => false),
+    'studio' => false,
   ),
   'email_reminder_sent' => array( 
     'name' => 'email_reminder_sent',
@@ -265,6 +265,14 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source'=>'non-db',
         'vname'=>'LBL_LEADS',
   ),
+        'addresses' =>
+            array (
+                'name' => 'addresses',
+                'type' => 'link',
+                'relationship' => 'calls_addresses',
+                'source'=>'non-db',
+                'vname'=>'LBL_ADDRESSES',
+            ),
     // Bug #42619 Missed back-relation from Project module
     'project'=> array (
         'name' => 'project',
@@ -565,6 +573,17 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'reportable' => false,
     'studio' => 'false',
   ),
+    'repeat_root_id' => array(
+        'name' => 'repeat_root_id',
+        'vname' => 'LBL_REPEAT_ROOT_ID',
+        'type' => 'id',
+        'len' => 36,
+        'comment' => 'Id of the root element of recurring records',
+        'importable' => 'false',
+        'massupdate' => false,
+        'reportable' => false,
+        'studio' => 'false',
+    ),
   'recurring_source' =>
   array(
     'name' => 'recurring_source',
@@ -594,6 +613,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
                 'contacts',
                 'leads',
                 'users',
+                'addresses'
             ),
             'order_by' => 'name:asc',
             'studio' => false,

@@ -121,15 +121,7 @@
             }
         }, function(context, newModel) {
             if (newModel && newModel.id) {
-                // When copying the PD, we end up pseudo importing the old PD into the new one
-                // To pass back errors, we were using the id as an object to send back warnings
-                // We want to check if id is an object and extract the real id from that
-                if (_.isObject(newModel.id)) {
-                    // feels so dirty
-                    newModel.id = newModel.id.id;
-                }
                 app.router.navigate(self.model.module + '/' + newModel.id, {trigger: true});
-
             }
         });
 

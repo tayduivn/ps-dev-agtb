@@ -416,6 +416,20 @@ class User extends Person {
         return $user->_userPreferenceFocus->getPreference($name, $category);
 	}
 
+    /**
+     * Interface for the User object to calling the UserPreference::removePreference() method
+     * in modules/UserPreferences/UserPreference.php
+     *
+     * @see UserPreference::removePreference()
+     *
+     * @param string $name name of the preference to remove
+     * @param string $category name of the category to remove, defaults to global scope
+     */
+    public function removePreference($name, $category = 'global')
+    {
+        $this->_userPreferenceFocus->removePreference($name, $category);
+    }
+
 	/**
      * incrementETag
      *
@@ -514,6 +528,22 @@ class User extends Person {
         $theme = in_array($language, $rtlLanguages) ? 'RTL' : 'RacerX';
 
         return $theme;
+    }
+
+    /**
+     * Toggles this user's admin status and flushes the ACL cache.
+     *
+     * @param boolean $admin If `true`, then make this user an admin.
+     *   Otherwise, remove admin privileges.
+     */
+    public function setAdmin($admin)
+    {
+        $this->is_admin = $admin ? 1 : 0;
+
+        // When we change a user to or from admin status, we have to flush the ACL cache
+        // or else the user will not be able to access some admin modules.
+        AclCache::getInstance()->clear();
+        // FIXME TY-1094: investigate if we should enforce admin/portal API user/group mutual exclusivity here
     }
 
 	function save($check_notify = false) {

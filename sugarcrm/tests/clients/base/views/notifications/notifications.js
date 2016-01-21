@@ -21,14 +21,12 @@ describe('Notifications', function() {
 
         it('should bootstrap', function() {
             var _initOptions = sinon.collection.stub(view, '_initOptions', $.noop()),
-                _initCollection = sinon.collection.stub(view, '_initCollection', $.noop()),
-                _initReminders = sinon.collection.stub(view, '_initReminders', $.noop());
+                _initCollection = sinon.collection.stub(view, '_initCollection', $.noop());
 
             view._bootstrap();
 
             expect(_initOptions).toHaveBeenCalledOnce();
             expect(_initCollection).toHaveBeenCalledOnce();
-            expect(_initReminders).toHaveBeenCalledOnce();
         });
 
         it('should initialize options with default values', function() {
@@ -65,6 +63,92 @@ describe('Notifications', function() {
                 apiOptions: {
                     skipMetadataHash: true
                 }
+            });
+        });
+
+        describe('should bind listeners on app:socket events', function () {
+            beforeEach(function () {
+                sinon.stub(app.events, 'on');
+                sinon.stub(view, 'socketOn');
+                sinon.stub(view, 'socketOff');
+            });
+            afterEach(function () {
+                app.events.on.restore();
+                view.socketOn.restore();
+                view.socketOff.restore();
+            });
+
+            it('should bind socketOn on app app:socket:connect', function () {
+
+                view.initialize({});
+
+                sinon.assert.called(app.events.on);
+                sinon.assert.calledWith(app.events.on, 'app:socket:connect');
+
+                sinon.assert.notCalled(view.socketOn);
+                for (var i = 0; i < app.events.on.callCount; i++) {
+                    var info = app.events.on.getCall(i);
+                    if (info.args[0] != 'app:socket:connect') {
+                        continue;
+                    }
+                    if (!_.isUndefined(info.args[1]) && _.isFunction(info.args[1])) {
+                        info.args[1]();
+                    }
+                }
+                sinon.assert.called(view.socketOn);
+            });
+
+            it('should bind socketOff on app app:socket:disconnect', function () {
+
+                view.initialize({});
+
+                sinon.assert.called(app.events.on);
+                sinon.assert.calledWith(app.events.on, 'app:socket:disconnect');
+
+                sinon.assert.notCalled(view.socketOff);
+                for (var i = 0; i < app.events.on.callCount; i++) {
+                    var info = app.events.on.getCall(i);
+                    if (info.args[0] != 'app:socket:disconnect') {
+                        continue;
+                    }
+                    if (!_.isUndefined(info.args[1]) && _.isFunction(info.args[1])) {
+                        info.args[1]();
+                    }
+                }
+                sinon.assert.called(view.socketOff);
+            });
+
+        });
+
+        describe('should bind listener on app:notifications:markAs events', function () {
+            beforeEach(function () {
+                sinon.stub(app.events, 'on');
+                sinon.stub(view, 'notificationMarkHandler');
+            });
+
+            afterEach(function () {
+                app.events.on.restore();
+                view.notificationMarkHandler.restore();
+            });
+
+            it('should bind notificationMarkHandler on app app:notifications:markAs', function () {
+
+                view.initialize({});
+
+                sinon.assert.called(app.events.on);
+                sinon.assert.calledWith(app.events.on, 'app:notifications:markAs');
+
+                sinon.assert.notCalled(view.notificationMarkHandler);
+                for (var i = 0; i < app.events.on.callCount; i++) {
+                    var info = app.events.on.getCall(i);
+                    if (info.args[0] != 'app:notifications:markAs') {
+                        continue;
+                    }
+                    if (!_.isUndefined(info.args[1]) && _.isFunction(info.args[1])) {
+                        info.args[1]();
+                    }
+                }
+                sinon.assert.called(view.notificationMarkHandler);
             });
         });
     });
@@ -191,19 +275,18 @@ describe('Notifications', function() {
             expect(view.render).not.toHaveBeenCalled();
         });
 
-        it('should set timeout twice once on multiple start pulling calls', function() {
+        it('should set timeout and call pull once on multiple start pulling calls', function() {
             var pull = sinon.collection.stub(view, 'pull', $.noop()),
                 setTimeout = sinon.collection.stub(window, 'setTimeout', $.noop());
 
             view.startPulling().startPulling();
 
             expect(pull).toHaveBeenCalledOnce();
-            expect(setTimeout).toHaveBeenCalledTwice();
+            expect(setTimeout).toHaveBeenCalledOnce();
         });
 
         it('should clear intervals on stop pulling', function() {
             var pull = sinon.collection.stub(view, 'pull', $.noop()),
-                _pullReminders = sinon.collection.stub(view, '_pullReminders', $.noop()),
                 setTimeout = sinon.collection.stub(window, 'setTimeout', function() {
                     return intervalId;
                 }),
@@ -212,9 +295,8 @@ describe('Notifications', function() {
 
             view.startPulling().stopPulling();
 
-            expect(clearTimeout).toHaveBeenCalledTwice();
+            expect(clearTimeout).toHaveBeenCalledOnce();
             expect(view._intervalId).toBeNull();
-            expect(view._remindersIntervalId).toBeNull();
         });
 
         it('should stop pulling on dispose', function() {
@@ -230,7 +312,6 @@ describe('Notifications', function() {
                     return false;
                 }),
                 pull = sinon.collection.stub(view, 'pull', $.noop()),
-                _pullReminders = sinon.collection.stub(view, '_pullReminders', $.noop()),
                 setTimeout = sinon.collection.stub(window, 'setTimeout', function(fn) {
                     fn();
                 }),
@@ -239,131 +320,147 @@ describe('Notifications', function() {
             view.startPulling();
 
             expect(pull).toHaveBeenCalledOnce();
-            expect(setTimeout).toHaveBeenCalledTwice();
-            expect(isAuthenticated).toHaveBeenCalledTwice();
-            expect(stopPulling).toHaveBeenCalledTwice();
+            expect(setTimeout).toHaveBeenCalledOnce();
+            expect(isAuthenticated).toHaveBeenCalledOnce();
+            expect(stopPulling).toHaveBeenCalledOnce();
+        });
+
+        it('should stop pulling if connected to socket', function () {
+            var isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function () {
+                    return true;
+            }),
+            pull = sinon.collection.stub(view, 'pull', $.noop()),
+            setTimeout = sinon.collection.stub(window, 'setTimeout', function (fn) {
+                    fn();
+            });
+
+            view.isSocketConnected = true;
+            view._pullAction();
+
+            expect(pull).not.toHaveBeenCalled();
+            expect(setTimeout).not.toHaveBeenCalled();
         });
     });
 
-    describe('Reminders', function() {
-        beforeEach(function() {
-            var meta = {
-                remindersFilterDef: {
-                    reminder_time: { $gte: 0},
-                    status: {$equals: 'Planned'}
-                },
-                remindersLimit: 100
-            };
-
-            view = SugarTest.createView('base', moduleName, viewName, meta);
+    describe('Socket mechanism', function () {
+        beforeEach(function () {
+            view = SugarTest.createView('base', moduleName, viewName);
         });
 
-        afterEach(function() {
+        afterEach(function () {
             sinon.collection.restore();
             SugarTest.app.view.reset();
             view.dispose();
             view = null;
         });
 
-        it('should initialize collections for Meetings and Calls', function() {
+        it('socket off', function () {
+            view.isSocketConnected = true;
+            view.startPulling = sinon.collection.stub();
+            app.socket.off = sinon.collection.stub();
+            view.catchNotification = sinon.collection.stub();
 
-            sinon.collection.stub(app.data, 'createBeanCollection', function() {
-                return {
-                    options: {},
-                    off: function() {
-                    }
-                };
-            });
-            sinon.collection.stub(app.lang, 'getAppListStrings', function() {
-                return {
-                    '60': '1 minute prior',
-                    '300': '5 minutes prior',
-                    '600': '10 minutes prior',
-                    '900': '15 minutes prior',
-                    '1800': '30 minutes prior',
-                    '3600': '1 hour prior',
-                    '7200': '2 hours prior',
-                    '10800': '3 hours prior',
-                    '18000': '5 hours prior',
-                    '86400': '1 day prior'
-                };
-            });
+            view.socketOff();
 
-            view.delay = 300000; // 5 minutes for each pull;
-            view._initReminders();
+            expect(view.isSocketConnected).toBeFalsy();
 
-            _.each(['Calls', 'Meetings'], function(module) {
-                expect(view._alertsCollections[module].options).toEqual({
-                    limit: 100,
-                    fields: ['date_start', 'id', 'name', 'reminder_time', 'location', 'parent_name']
-                });
-            });
+            sinon.assert.called(view.startPulling);
+            sinon.assert.called(app.socket.off);
+            sinon.assert.calledWith(app.socket.off, 'notification');
 
-            expect(view.reminderMaxTime).toBe(86700); // 1 day + 5 minutes
+            app.socket.off.getCall(0).args[1]();
+            sinon.assert.called(view.catchNotification);
         });
 
+        it('socket on', function () {
+            view.isSocketConnected = false;
+            view.stopPulling = sinon.collection.stub();
+            view.catchNotification = sinon.collection.stub();
+            app.socket.on = sinon.collection.stub();
 
-        describe('Check reminders', function() {
+            view.socketOn();
 
-            var reminderModule = 'Meetings';
+            expect(view.isSocketConnected).toBeTruthy();
 
-            beforeEach(function() {
+            sinon.assert.called(view.stopPulling);
+            sinon.assert.called(app.socket.on);
+            sinon.assert.calledWith(app.socket.on, 'notification');
 
-                var meta = {
-                    fields: [],
-                    views: [],
-                    layouts: []
+            app.socket.on.getCall(0).args[1]();
+            sinon.assert.called(view.catchNotification);
+        });
+
+        it('catchNotification', function () {
+            var catchedNotif = 'catched Notif';
+            view.transferToCollection = sinon.collection.stub();
+            view._buffer = [];
+
+            view.catchNotification(catchedNotif);
+
+            expect(view._buffer[0]).toBe(catchedNotif);
+            sinon.assert.called(view.transferToCollection);
+        });
+
+        describe('transferToCollection', function () {
+            beforeEach(function () {
+                sinon.stub(view, 'reRender');
+                sinon.stub(app.data, 'createBean');
+            });
+
+            afterEach(function () {
+                view.reRender.restore();
+                app.data.createBean.restore();
+                view.collection = null;
+            });
+
+            it('check calling transferToCollection before bootstrap', function () {
+                view._buffer = [
+                    {data: 'someData1', _module: 'module'},
+                    {data: 'someData2', _module: 'module'}
+                ];
+
+                view.collection = null;
+
+                view.transferToCollection();
+
+                sinon.assert.notCalled(view.reRender);
+            });
+
+            it('check calling transferToCollection after bootstrap', function () {
+                var buffer = [{data: 'someData1', _module: 'module'}, {data: 'someData2', _module: 'module'}],
+                    models = ['Model1', 'Model2'];
+
+                view._buffer = buffer;
+
+                app.data.createBean
+                    .withArgs(buffer[0]['_module'], _.clone(buffer[0])).returns(models[0])
+                    .withArgs(buffer[1]['_module'], _.clone(buffer[1])).returns(models[1]);
+
+                view.collection = {
+                    add: sinon.spy()
                 };
-                app.data.declareModel(reminderModule, meta);
+                view.transferToCollection();
 
+                sinon.assert.called(view.reRender);
+                sinon.assert.calledTwice(app.data.createBean);
+
+                sinon.assert.calledTwice(view.collection.add);
+                sinon.assert.calledWith(view.collection.add, models[0]);
+                sinon.assert.calledWith(view.collection.add, models[1]);
             });
 
-            afterEach(function() {
-                app.data.reset(reminderModule);
-            });
+            it('check calling transferToCollection after bootstrap if empty buffer', function () {
+                view._buffer = [];
 
-            it('Shouldn\'t check reminders if authentication expires', function() {
-                var isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function() {
-                        return false;
-                    }),
-                    setTimeout = sinon.collection.stub(window, 'setTimeout', $.noop()),
-                    stopPulling = sinon.collection.stub(view, 'stopPulling', $.noop());
+                view.collection = {
+                    add: sinon.spy()
+                };
 
-                view.checkReminders();
+                view.transferToCollection();
 
-                expect(setTimeout).not.toHaveBeenCalled();
-                expect(isAuthenticated).toHaveBeenCalledOnce();
-                expect(stopPulling).toHaveBeenCalledOnce();
-            });
-
-            it('Should show reminder if need', function() {
-
-                var now = new Date('2013-09-04T22:45:56+02:00'),
-                    dateStart = new Date('2013-09-04T23:15:16+02:00'),
-                    clock = sinon.useFakeTimers(now.getTime(), 'Date'),
-                    setTimeout = sinon.collection.stub(window, 'setTimeout', $.noop()),
-                    _showReminderAlert = sinon.collection.stub(view, '_showReminderAlert'),
-                    isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function() {
-                        return true;
-                    }),
-                    model = new app.data.createBean(reminderModule, {
-                        'id': '105b0b4a-1337-e0db-b448-522784b92270',
-                        'name': 'Discuss pricing',
-                        'date_modified': '2013-09-05T00:59:00+02:00',
-                        'description': 'Meeting',
-                        'date_start': dateStart.toISOString(),
-                        'reminder_time': '1800'
-                    });
-
-                view._initReminders();
-                view._alertsCollections[reminderModule].add(model);
-                view.dateStarted = now.getTime();
-                view._remindersIntervalStamp = view.dateStarted - 60000;
-                view.checkReminders();
-
-                expect(_showReminderAlert).toHaveBeenCalledWith(model);
-
-                clock.restore();
+                sinon.assert.called(view.reRender);
+                sinon.assert.notCalled(app.data.createBean);
+                sinon.assert.notCalled(view.collection.add);
             });
         });
     });
@@ -420,6 +517,50 @@ describe('Notifications', function() {
             view.render();
 
             expect(resetStub).toHaveBeenCalledOnce();
+        });
+    });
+
+    describe('notificationMarkHandler', function() {
+        var model;
+
+        beforeEach(function() {
+            view = SugarTest.createView('base', moduleName, viewName);
+            view._initCollection();
+            model = app.data.createBean(moduleName);
+            sinon.stub(view.collection, 'remove');
+            sinon.stub(view.collection, 'add');
+            sinon.stub(view, 'reRender');
+        });
+
+        afterEach(function() {
+            model = null;
+            view.collection.remove.restore();
+            view.collection.add.restore();
+            view.reRender.restore();
+            SugarTest.app.view.reset();
+            view.dispose();
+            view = null;
+        });
+
+        it('should remove read notification bean from collection', function() {
+            view.notificationMarkHandler(model, true);
+
+            sinon.assert.called(view.collection.remove);
+            sinon.assert.calledWith(view.collection.remove, model);
+        });
+
+        it('should add unread notification bean to collection', function() {
+            view.notificationMarkHandler(model, false);
+
+            sinon.assert.called(view.collection.add);
+            sinon.assert.calledWith(view.collection.add, model);
+        });
+
+        it('should re-render view in case of read and unread notification mark', function() {
+            view.notificationMarkHandler(model, true);
+            view.notificationMarkHandler(model, false);
+
+            sinon.assert.calledTwice(view.reRender);
         });
     });
 });

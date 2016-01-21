@@ -622,6 +622,104 @@ eoq;
 		return $returnFormat;
 	}
 
+    /**
+     * Returns parsed name according to $current_user's locale settings.
+     *
+     * @param string $fullName
+     * @param string $format If a particular format is desired, then pass this optional parameter as a simple string.
+     * @return array
+     */
+    public function getLocaleUnFormattedName($fullName, $format = '')
+    {
+        global $current_user;
+        global $app_list_strings;
+
+        $result = array();
+
+        if (empty($format)) {
+            $this->localeNameFormat = $this->getLocaleFormatMacro($current_user);
+        } else {
+            $this->localeNameFormat = $format;
+        }
+
+        $formatCommaParts = explode(', ', $this->localeNameFormat);
+        $countFormatCommaParts = count($formatCommaParts);
+
+        $nameCommaParts = explode(', ', trim($fullName), $countFormatCommaParts);
+        $nameCommaParts = array_pad($nameCommaParts, $countFormatCommaParts, '');
+
+        foreach ($formatCommaParts as $idx => $part) {
+            $formatSpaceParts = explode(' ', $part);
+            $nameSpaceParts = explode(' ', $nameCommaParts[$idx]);
+
+            $salutationFormatKey = array_search('s', $formatSpaceParts);
+            $salutationNameKey = false;
+
+            if ($salutationFormatKey !== false) {
+                foreach($nameSpaceParts as $_idx => $_part) {
+                    if (
+                        isset($app_list_strings['salutation_dom'])
+                        && is_array($app_list_strings['salutation_dom'])
+                        && ($result['s'] = array_search($_part, $app_list_strings['salutation_dom'])) !== false
+                    ) {
+                        $salutationNameKey = $_idx;
+                        break;
+                    }
+                }
+
+                if (!empty($result['s'])) {
+                    $this->helperCombineFormatToName(
+                        array_slice($formatSpaceParts, 0, $salutationFormatKey),
+                        array_slice($nameSpaceParts, 0, $salutationNameKey),
+                        $result
+                    );
+
+                    $this->helperCombineFormatToName(
+                        array_slice($formatSpaceParts, $salutationFormatKey + 1),
+                        array_slice($nameSpaceParts, $salutationNameKey + 1),
+                        $result
+                    );
+                    continue;
+                } else {
+                    unset($formatSpaceParts[$salutationFormatKey]);
+                }
+            }
+
+            $this->helperCombineFormatToName($formatSpaceParts, $nameSpaceParts, $result);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Helper method combine name by format.
+     *
+     * @param array $formatSpaceParts
+     * @param array $nameSpaceParts
+     * @param array $result
+     */
+    protected function helperCombineFormatToName($formatSpaceParts, $nameSpaceParts, &$result)
+    {
+        $formatSpaceParts = array_values($formatSpaceParts);
+        $nameSpaceParts = array_values($nameSpaceParts);
+
+        $countFormatSpaceParts = count($formatSpaceParts);
+        $countNameSpaceParts = count($nameSpaceParts);
+
+        if ($countFormatSpaceParts == $countNameSpaceParts) {
+            $result = array_merge($result, array_combine($formatSpaceParts, $nameSpaceParts));
+        } else {
+            foreach($formatSpaceParts as $idx => $item) {
+                if ($idx == ($countFormatSpaceParts - 1)) {
+                    $result[$item] = implode(' ', $nameSpaceParts);
+                } else {
+                    $result[$item] = $nameSpaceParts[$idx];
+                    unset($nameSpaceParts[$idx]);
+                }
+            }
+        }
+    }
+
 	/**
 	 * returns formatted name according to $current_user's locale settings
 	 *

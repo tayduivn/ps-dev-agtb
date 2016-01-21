@@ -86,11 +86,15 @@ function export($type, $records = null, $members = false, $sample = false)
             ACLController::displayNoAccess();
             sugar_die('');
         }
+        $tba = new TeamBasedACLConfigurator();
+        $access = ACLAction::getUserAccessLevel($current_user->id, $focus->module_dir, 'export');
         if (ACLController::requireOwner($focus->module_dir, 'export')) {
             if (!empty($where)) {
                 $where .= ' AND ';
             }
             $where .= $focus->getOwnerWhere($current_user->id);
+        } elseif ($tba->isValidAccess($access)) {
+            $focus->addVisibilityStrategy('TeamBasedACLVisibility');
         }
     }
 

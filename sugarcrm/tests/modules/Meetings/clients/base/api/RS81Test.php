@@ -1,7 +1,6 @@
 <?php
 
 require_once 'modules/Meetings/clients/base/api/MeetingsApi.php';
-require_once 'clients/base/api/FilterApi.php';
 
 /**
  * RS-81
@@ -24,8 +23,7 @@ class RS81Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
 
-        $this->meetingsApi = new MeetingsApi();
-        $this->filterApi = new FilterApi();
+        $this->api = new MeetingsApi();
         SugarTestMeetingUtilities::createMeeting();
     }
 
@@ -36,34 +34,11 @@ class RS81Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test asserts behavior of filterList method without wildcard search
-     */
-    public function testGlobalSearchWithoutQ()
-    {
-        $actual = $this->filterApi->filterList($this->service, array(
-            'module' => 'Meetings',
-        ));
-        $this->assertArrayHasKey('records', $actual);
-    }
-
-    /**
-     * Test asserts behavior of filterList method with wildcard search
-     */
-    public function testGlobalSearchWithQ()
-    {
-        $actual = $this->filterApi->filterList($this->service, array(
-            'module' => 'Meetings',
-            'q' => 'anything',
-        ));
-        $this->assertArrayHasKey('records', $actual);
-    }
-
-    /**
      * Test asserts behavior of getAgenda method
      */
     public function testGetAgenda()
     {
-        $actual = $this->meetingsApi->getAgenda($this->service, array());
+        $actual = $this->api->getAgenda($this->service, array());
         $this->assertArrayHasKey('today', $actual);
         $this->assertArrayHasKey('tomorrow', $actual);
         $this->assertArrayHasKey('upcoming', $actual);

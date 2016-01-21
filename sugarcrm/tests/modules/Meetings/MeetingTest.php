@@ -13,8 +13,8 @@
 
 require_once 'modules/Meetings/Meeting.php';
 require_once 'modules/Meetings/MeetingFormBase.php';
-require_once 'modules/Activities/EmailReminder.php';
 require_once 'include/externalAPI/ExternalAPIFactory.php';
+require_once 'tests/SugarTestAddresseeUtilities.php';
 
 
 class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
@@ -56,6 +56,8 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestAddresseeUtilities::removeAllCreatedAddresses();
+
         unset($GLOBALS['current_user']);
         unset($GLOBALS['mod_strings']);
 
@@ -85,24 +87,6 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
             // Assert doc type default is 'Sugar'
             $this->assertEquals($row['type'], 'Sugar');
         }
-    }
-
-    public function testEmailReminder()
-    {
-        global $current_user;
-        $meeting = new Meeting();
-        $meeting->email_reminder_time = "20";
-        $meeting->name = 'Test Email Reminder';
-        $meeting->assigned_user_id = $current_user->id;
-        $meeting->status = "Planned";
-        $meeting->date_start = $GLOBALS['timedate']->nowDb();
-        $meeting->save();
-
-        $er = new EmailReminder();
-        $to_remind = $er->getMeetingsForRemind();
-
-        $this->assertTrue(in_array($meeting->id, $to_remind));
-        $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$meeting->id}'");
     }
 
     public function testMeetingFormBaseRelationshipsSetTest()
@@ -203,14 +187,20 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
             SugarTestContactUtilities::createContact(),
         );
 
+        $addresses = array(
+            SugarTestAddresseeUtilities::createAddressee(),
+        );
+
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->users_arr = array($GLOBALS['current_user']->id);
         $meeting->contacts_arr = array($contacts[0]->id, $contacts[1]->id);
+        $meeting->addresses_arr = array($addresses[0]->id);
 
         $actual = $meeting->get_notification_recipients();
         $this->assertArrayHasKey($GLOBALS['current_user']->id, $actual, 'The current user should be in the list.');
         $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
         $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
+        $this->assertArrayHasKey($addresses[0]->id, $actual, 'The one addressee should be in the list.');
     }
 
     public function testGetNotificationRecipients_RecipientsAreNotAlreadyLoaded_ReturnsEmptyRecipients()

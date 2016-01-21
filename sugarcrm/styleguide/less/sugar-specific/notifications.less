@@ -61,7 +61,27 @@
 			line-height: 20px;
 			text-indent: 0 !important;
 		  }
+          .fa-cog {
+            margin-left: 5px;
+            text-indent: 0;
+          }
+          a[data-action="config"] {
+            text-decoration: none;
+            color: @linkColor
+          }
+          a:hover[data-action="config"] {
+            text-decoration: underline;
+            background-color: transparent;
+          }
 		}
+        li.list-and-config {
+          position: relative;
+          span.config {
+            position: absolute;
+            top: 0;
+            right: 0;
+          }
+        }
 	  }
 	}
   }

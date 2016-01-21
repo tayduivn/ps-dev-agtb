@@ -176,12 +176,14 @@ if (!$focus->is_group && !$focus->portal_only) {
     if (isset($_POST['user_name'])) {
         $focus->user_name = $_POST['user_name'];
     }
+
+    // change user type to/from admin if desired
     if ((isset($_POST['is_admin']) && ($_POST['is_admin'] == 'on' || $_POST['is_admin'] == '1')) ||
        (isset($_POST['UserType']) && $_POST['UserType'] == "Administrator")
     ) {
-        $focus->is_admin = 1;
+        $focus->setAdmin(true);
     } elseif (isset($_POST['is_admin']) && empty($_POST['is_admin'])) {
-        $focus->is_admin = 0;
+        $focus->setAdmin(false);
     }
 
     if (empty($_POST['receive_notifications'])) {
@@ -260,20 +262,13 @@ if (!$focus->is_group && !$focus->portal_only) {
     // Always set this preference to 'off' as we are not using it any more
     $focus->setPreference('no_opps', 'off', 0, 'global');
 
-    if (isset($_POST['reminder_checked']) && $_POST['reminder_checked'] == '1' &&
-        isset($_POST['reminder_checked'])) {
+    if (isset($_POST['reminder_time'])) {
         $focus->setPreference('reminder_time', $_POST['reminder_time'], 0, 'global');
     } else {
         // cn: bug 5522, need to unset reminder time if unchecked.
         $focus->setPreference('reminder_time', -1, 0, 'global');
     }
 
-    if (isset($_POST['email_reminder_checked']) && $_POST['email_reminder_checked'] == '1' &&
-        isset($_POST['email_reminder_checked'])) {
-        $focus->setPreference('email_reminder_time', $_POST['email_reminder_time'], 0, 'global');
-    } else {
-        $focus->setPreference('email_reminder_time', -1, 0, 'global');
-    }
     if (isset($_POST['timezone'])) {
         $focus->setPreference('timezone', $_POST['timezone'], 0, 'global');
     }

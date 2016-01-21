@@ -619,6 +619,13 @@
 
         app.analytics.trackEvent('click', 'mass_delete_confirm');
         if(collection) {
+            // massupdate:end could be triggered without triggering success event on collection.
+            // For example, when we user has no permissions to perform delete.
+            // That's why we need to clear modelsToDelete when massupdate:end triggered too.
+            collection.once('massupdate:end', function() {
+                self._modelsToDelete = null;
+            }, this);
+
             collection.fetch({
                 //Don't show alerts for this request
                 showAlerts: false,
