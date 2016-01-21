@@ -72,6 +72,7 @@ class PMSEEngineUtils
         // but we needed different things from this
         'CF' => array(
             'dnb_principal_id',
+            'system_generated_password',
             'duns_num',
             'kbdocument_body',
             'viewcount',
