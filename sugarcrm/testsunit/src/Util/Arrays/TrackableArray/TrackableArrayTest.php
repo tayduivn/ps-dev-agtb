@@ -135,7 +135,7 @@ class TrackableArrayTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test validating that a new TrackableArray still passes empty checks.
-     * @covers ::toArray
+     * @covers ::getIterator
      */
     public function testTrackableArrayRegistersEmpty()
     {
@@ -213,7 +213,7 @@ class TrackableArrayTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Tests that in_array_access works with TrackableArray
-     * @covers ArrayFunctions::in_array_access
+     * @covers Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions::in_array_access
      */
     public function testInArrayAccess()
     {
@@ -225,7 +225,7 @@ class TrackableArrayTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Tests that array_access_merge works with TrackableArray
-     * @covers ArrayFunctions::array_access_merge
+     * @covers Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions::array_access_merge
      */
     public function testArrayAccessMerge()
     {
@@ -241,7 +241,7 @@ class TrackableArrayTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Tests that array_access_keys works with TrackableArray
-     * @covers ArrayFunctions::array_access_keys
+     * @covers Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions::array_access_keys
      */
     public function testArrayAccessKeys()
     {
@@ -254,7 +254,7 @@ class TrackableArrayTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Tests that array_access_keys works with TrackableArray
-     * @covers ArrayFunctions::array_access_keys
+     * @covers Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions::array_access_keys
      */
     public function testIsArrayAccess()
     {

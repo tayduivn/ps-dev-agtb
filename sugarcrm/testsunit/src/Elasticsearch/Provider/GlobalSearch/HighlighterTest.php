@@ -20,7 +20,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 class HighlighterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers ::addTagsInValue
+     * @covers ::wrapValueWithTags
      * @dataProvider providerTestAddTagsInValue
      */
     public function testAddTagsInValue($value, $expected)
@@ -98,7 +98,7 @@ class HighlighterTest extends \PHPUnit_Framework_TestCase
             ),
         );
     }
-    
+
     /**
      * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Highlighter
      */

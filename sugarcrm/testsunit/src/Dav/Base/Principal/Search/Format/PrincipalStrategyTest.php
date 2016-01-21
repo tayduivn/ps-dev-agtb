@@ -22,8 +22,8 @@ namespace Sugarcrm\SugarcrmTestsUnit\Dav\Base\Principal\Search\Format;
 class PrincipalStrategyTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Base::getPrincipalArray
-     * @covers Sugarcrm\Sugarcrm\Dav\Base\Principal\Search\Users::getPrincipalArray
+     * @covers ::formatBody
+     * @covers ::formatUri
      */
     public function testGetPrincipalArray()
     {
