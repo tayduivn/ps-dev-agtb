@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 namespace Sugarcrm\SugarcrmTests\Notification\Emitter\Bean;
 
 use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder;
@@ -68,6 +69,7 @@ class MessageBuilderTest extends \Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test build() with different message signatures.
+     *
      * @param array $messageSignature Message signature to test.
      * @param array $message Expected output message.
      * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder::build
@@ -81,6 +83,7 @@ class MessageBuilderTest extends \Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test that MessageBuilder has Base level.
+     *
      * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder::getLevel
      */
     public function testGetLevelReturnsBase()
@@ -93,6 +96,7 @@ class MessageBuilderTest extends \Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test that BeanEmitter Event is supported, any other Event isn't.
+     *
      * @covers \Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder::supports
      */
     public function testSupports()
@@ -107,6 +111,7 @@ class MessageBuilderTest extends \Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Data provider for testBuildWithDifferentMessageSignatures().
+     *
      * @return array
      */
     public static function messageSignatureProvider()
