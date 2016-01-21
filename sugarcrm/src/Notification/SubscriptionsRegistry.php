@@ -344,9 +344,9 @@ class SubscriptionsRegistry
                     if (!empty($config[$emitter][$event][$filter])) {
                         $path = $this->pathToBranch($emitter, $event, $filter);
                         $reducesBeans = $this->reduceBeans($beans, $path);
-                        $carriers = $this->filterCarriers($config[$emitter][$event][$filter]);
-                        if ($carriers == self::CARRIER_VALUE_DEFAULT) {
-                            $carriers = array();
+                        $carriers = array();
+                        if ($config[$emitter][$event][$filter] !== self::CARRIER_VALUE_DEFAULT) {
+                            $carriers = $this->filterCarriers($config[$emitter][$event][$filter]);
                         }
 
                         if ($delCarrierOption) {
@@ -398,12 +398,16 @@ class SubscriptionsRegistry
             foreach ($emitterConfig as $event => $eventConfig) {
                 $normalized[$emitter][$event] = array();
                 foreach ($eventConfig as $filter => $carriers) {
-                    $normalized[$emitter][$event][$filter] = array_filter(
-                        $carriers,
-                        function ($carrier) use ($enabledCarrier) {
-                            return in_array($carrier[0], $enabledCarrier);
-                        }
-                    );
+                    if ($carriers === self::CARRIER_VALUE_DEFAULT) {
+                        $normalized[$emitter][$event][$filter] = $carriers;
+                    } else {
+                        $normalized[$emitter][$event][$filter] = array_filter(
+                            $carriers,
+                            function ($carrier) use ($enabledCarrier) {
+                                return in_array($carrier[0], $enabledCarrier);
+                            }
+                        );
+                    }
                 }
             }
         }
@@ -717,7 +721,7 @@ class SubscriptionsRegistry
      * @param array $globalData global config data
      * @return array calculated user configuration
      */
-    public function calculateUserConfig(array $userData, array $globalData)
+    protected function calculateUserConfig(array $userData, array $globalData)
     {
         $config = array();
         if (array_key_exists('main', $userData)) {
@@ -866,7 +870,8 @@ class SubscriptionsRegistry
     protected function getUsersFilters(EventInterface $event)
     {
         $sfList = $this->getSupportedFilters($event);
-        usort($sfList, function (SubscriptionFilterInterface $a, SubscriptionFilterInterface $b) {
+        /** @todo remove @ symbol when https://bugs.php.net/bug.php?id=50688 will be fixed */
+        @usort($sfList, function (SubscriptionFilterInterface $a, SubscriptionFilterInterface $b) {
             $a = $a->getOrder();
             $b = $b->getOrder();
             if ($a == $b) {
