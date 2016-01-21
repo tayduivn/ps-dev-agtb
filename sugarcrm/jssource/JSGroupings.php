@@ -54,9 +54,10 @@
                         break;
                     case 'jquery_core':
                         return array (
-                            'include/javascript/jquery/jquery-min.js'             =>    $target,
-                            'include/javascript/jquery/jquery-ui-min.js'          =>    $target,
-                            'include/javascript/jquery/jquery.json-2.3.js'        =>    $target,
+                            'include/javascript/jquery/jquery-min.js'               =>  $target,
+                            'include/javascript/jquery/jquery-ui-min.js'            =>  $target,
+                            'include/javascript/jquery/jquery.json-2.3.js'          =>  $target,
+                            'include/javascript/jquery/jquery-migrate-1.2.1.min.js' =>  $target,
                         );
                         break;
                     case 'jquery_menus':
