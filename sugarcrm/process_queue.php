@@ -55,4 +55,4 @@ foreach ($reportsToEmail as $scheduleInfo) {
     $queue->submitJob($job);
 }
 
-sugar_cleanup(false); // continue script execution so that if run from Scheduler, job status will be set back to "Active"
+DBManagerFactory::getInstance()->commit();
