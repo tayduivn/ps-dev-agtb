@@ -16,7 +16,7 @@
 <script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
 
-<form name="TriggerServerConfiguration" method="POST">
+<form name="TriggerServerConfiguration" onsubmit="SUGAR.saveTriggerServerConfiguration(event);" method="POST">
 
     <input type="hidden" name="module" value="Administration">
     <input type="hidden" name="action" value="saveTriggerServerConfiguration">
@@ -30,8 +30,7 @@
                 <input title="{$APP.LBL_SAVE_BUTTON_TITLE}"
                        accessKey="{$APP.LBL_SAVE_BUTTON_KEY}"
                        class="button primary"
-                       onclick="SUGAR.saveTriggerServerConfiguration();"
-                       type="button"
+                       type="submit"
                        name="save"
                        value="{$APP.LBL_SAVE_BUTTON_LABEL}"/>
                 &nbsp;
@@ -59,8 +58,7 @@
                 <input title="{$APP.LBL_SAVE_BUTTON_TITLE}"
                        accessKey="{$APP.LBL_SAVE_BUTTON_KEY}"
                        class="button primary"
-                       onclick="SUGAR.saveTriggerServerConfiguration();"
-                       type="button"
+                       type="submit"
                        name="save"
                        value="{$APP.LBL_SAVE_BUTTON_LABEL}"/>
                 &nbsp;
@@ -80,7 +78,9 @@
             Connect.method = 'POST';
             Connect.timeout = 300000;
 
-            SUGAR.saveTriggerServerConfiguration = function() {
+            SUGAR.saveTriggerServerConfiguration = function(event) {
+                event.preventDefault();
+                                
                 var trigger_server_url = document.getElementById('trigger_server_url').value;
 
                 ajaxStatus.showStatus(SUGAR.language.get('Administration', 'LBL_SAVING'));
@@ -104,10 +104,16 @@
                 var response = YAHOO.lang.JSON.parse(o.responseText);
 
                 if (response['status'] === true) {
+                    if (response.warnMsg) {
+                        app.alert.show('web_socket_confirmation', {
+                            level: 'warning',
+                            autoClose: false,
+                            messages: response.warnMsg
+                        });
+                    }
                     window.location.assign('index.php?module=Administration&action=index');
                 } else {
-                    var errMsg = response.errMsg;
-                    YAHOO.SUGAR.MessageBox.show({msg: errMsg});
+                    app.alert.show('WebSocketsErr', {level: 'error', messages: response.errMsg});
                 }
             };
         })();

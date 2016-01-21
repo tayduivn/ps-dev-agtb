@@ -124,7 +124,7 @@ class SugarUpgradeOpportunityWithRevenueLineItems extends UpgradeScript
                         amount=(%f*base_rate),
                         best_case=(%f*base_rate),
                         worst_case=(%f*base_rate)
-                    WHERE id = '%s'";
+                    WHERE id = '%s' and total_revenue_line_items != closed_revenue_line_items";
         while ($row = $this->db->fetchRow($results)) {
             $this->db->query(
                 sprintf(

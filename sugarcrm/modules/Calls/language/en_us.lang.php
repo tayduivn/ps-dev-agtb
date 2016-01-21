@@ -65,8 +65,6 @@ $mod_strings = array (
     'LBL_REMINDER_EMAIL' => 'Email',
     'LBL_REMINDER_EMAIL_ALL_INVITEES' => 'Email all invitees',
     'LBL_EMAIL_REMINDER' => 'Email Reminder',
-    'LBL_EMAIL_REMINDER_TIME' => 'Email Reminder Time',
-    'LBL_POPUP_REMINDER_TIME' => 'Popup Reminder Time',
     'LBL_SEND_BUTTON_TITLE'=>'Save & Send Invites [Alt+I]',
     'LBL_SEND_BUTTON_KEY'=>'I',
     'LBL_SEND_BUTTON_LABEL'=>'Save & Send Invites',
@@ -131,6 +129,7 @@ $mod_strings = array (
     'LBL_REMOVE_ALL_RECURRENCES' => 'Delete All Recurrences',
     'LBL_DATE_END_ERROR' => 'End date is before start date',
     'LBL_REPEAT_PARENT_ID' => 'Repeat Parent ID',
+    'LBL_REPEAT_ROOT_ID' => 'Repeat Root ID',
     'LBL_RECURRING_SOURCE' => 'Recurring Source',
     'LBL_CONFIRM_REMOVE_ALL_RECURRENCES' => 'Are you sure you want to remove all recurring records?',
     'LBL_RECURRING_LIMIT_ERROR' => 'This recurring call cannot be scheduled because it exceeds the maximum allowed recurrence of $limit.',
@@ -178,4 +177,16 @@ To create a {{calls_singular_module}}:
     - Click "Select an Attendee" to add an existing user, contact, or lead to the {{calls_singular_module}}.
     - Click the plus icon to the right of "Select an Attendee" to create a {{calls_singular_module}} attendee as a new Sugar record.
 3. Click "Save" to finalize the new record and return to the previous page.',
+
+    // Notification Center Strings
+    'LBL_EMITTER_TITLE' => 'Notifications for Calls',
+    'LBL_EMITTER_HELP' => 'ToDo: Help text of Notifications for Calls settings',
+    'LBL_EMITTER_DESC_ADMIN' => 'Chose what types of notifications your users receive. You can also change the delivery methods for each notification. Notifications apply to the users that are assigned to a record, on a team with belonging to a record, or invited to a call or meeting.',
+    'LBL_EMITTER_DESC_USER' => 'Chose what types of notifications your receive. You can also change the delivery methods for each notification. Notifications apply to the users that are assigned to a record, on a team with belonging to a record, or invited to a call or meeting.',
+    // Event remind
+    'LBL_EVENT_REMINDER_ABOUT' => 'Reminder about Call',
+    'LBL_EVENT_REMINDER_TITLE' => 'Reminder about %s',
+    'LBL_EVENT_REMINDER_TEXT' => 'You have call "%1$s" at %2$s: %3$s',
+    'LBL_EVENT_REMINDER_HTML' => 'You have call <a href="%3$s">%1$s</a> at %2$s.',
+    'LBL_EVENT_REMINDER_MORE_INFO' => 'If you want to change reminder time please update your profile settings',
 );

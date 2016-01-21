@@ -30,7 +30,7 @@ $viewdefs['Documents']['DetailView'] = array(
               'id' => 'document_revision_id',
             ),
           ),
-          'status',
+          'status_id',
         ),
 
         array (

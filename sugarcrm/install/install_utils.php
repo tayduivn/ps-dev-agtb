@@ -766,6 +766,9 @@ function handleSugarConfig() {
         );
     }
 
+    // Token verification
+    $sugar_config['external_valid_token_ids'] = array('socket', 'trigger');
+
     // Setup WebSocket configuration
     if (!empty($_SESSION['websockets_server_url']) && !empty($_SESSION['websockets_client_url'])) {
         $sugar_config['websockets'] = array(

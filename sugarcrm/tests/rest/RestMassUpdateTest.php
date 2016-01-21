@@ -735,4 +735,55 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * Test replacing and adding selected teams to a set.
+     */
+    public function testSelectedTeamSetMassUpdate()
+    {
+        $contact = SugarTestContactUtilities::createContact();
+        $team1 = SugarTestTeamUtilities::createAnonymousTeam();
+        $team2 = SugarTestTeamUtilities::createAnonymousTeam();
+
+        $api = new RestService();
+        $api->user = $GLOBALS['current_user'];
+
+        $args = array(
+            'massupdate_params' => array(
+                'uid' => array($contact->id),
+            ),
+            'module' => 'Contacts',
+        );
+        $apiClass = new MassUpdateApi();
+
+        $args['massupdate_params']['team_name'] = array(
+            array('id' => $team1->id, 'primary' => true, 'selected' => true),
+        );
+        $args['massupdate_params']['team_name_type'] = '0'; // Replace.
+        $apiClass->massUpdate($api, $args); // Replace mode.
+
+        $contact->retrieve();
+        $resultTeam = TeamSetManager::getTeamsFromSet($contact->team_set_selected_id);
+        $this->assertEquals($team1->id, $resultTeam[0]['id']);
+
+        $args['massupdate_params']['team_name'] = array(
+            array('id' => $team2->id, 'primary' => false, 'selected' => true),
+        );
+        $args['massupdate_params']['team_name_type'] = '1'; // Add.
+        $apiClass->massUpdate($api, $args);
+
+        $contact->retrieve();
+        $resultTeam = TeamSetManager::getTeamsFromSet($contact->team_set_selected_id);
+        $this->assertContains($team1->id, array($resultTeam[0]['id'], $resultTeam[1]['id']));
+        $this->assertContains($team2->id, array($resultTeam[0]['id'], $resultTeam[1]['id']));
+
+        $args['massupdate_params']['team_name'] = array(
+            array('id' => $team2->id, 'primary' => false, 'selected' => true),
+        );
+        $args['massupdate_params']['team_name_type'] = '0'; // Replace.
+        $apiClass->massUpdate($api, $args);
+
+        $contact->retrieve();
+        $resultTeam = TeamSetManager::getTeamsFromSet($contact->team_set_selected_id);
+        $this->assertEquals($team2->id, $resultTeam[0]['id']);
+    }
 }

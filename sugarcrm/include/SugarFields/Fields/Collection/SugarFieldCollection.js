@@ -342,7 +342,9 @@ if(typeof(SUGAR.collection) == "undefined") {
                     case "selected_" + toreplace:
                         currentNode.name = new_name.replace(RegExp('_0', 'g'), "_" + this.fields_count);
                         currentNode.id = new_id.replace(RegExp('_0', 'g'), "_" + this.fields_count);
-                        currentNode.value = values['id'];
+                        if (this.form !== 'MassUpdate') {
+                            currentNode.value = values['id'];
+                        }
                         if (values.selected) {
                             currentNode.setAttribute('checked', 'checked');
                         } else {

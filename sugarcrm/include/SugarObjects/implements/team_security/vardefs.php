@@ -122,6 +122,7 @@ $vardefs = array(
           'exportable' => true,
           'studio' => false,
           'massupdate' => false,
+          'hideacl' => true,
       ),
 		'team_link' =>
 	    array (

@@ -189,7 +189,6 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                         array(
                             'name' => 'date_start',
                             'time' => array(
-                                'disable_text_input' => true,
                                 'step' => 15,
                             ),
                             'readonly' => false,
@@ -201,7 +200,6 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                         array(
                             'name' => 'date_end',
                             'time' => array(
-                                'disable_text_input' => true,
                                 'step' => 15,
                                 'duration' => array(
                                     'relative_to' => 'date_start'
@@ -297,7 +295,6 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                     'show_child_labels' => true,
                     'fields' => array(
                         'reminder_time',
-                        'email_reminder_time',
                     ),
                 ),
                 array(

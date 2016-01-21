@@ -80,13 +80,6 @@ YAHOO.util.Event.onContentReady("{/literal}{{$form_name}}{literal}",function() {
     if (durationHours) {
         document.getElementById('duration_minutes').tabIndex = durationHours.tabIndex;
     }
-
-    var reminderChecked = document.getElementsByName('reminder_checked');
-    for(i=0;i<reminderChecked.length;i++) {
-        if (reminderChecked[i].type == 'checkbox' && document.getElementById('reminder_list')) {
-            YAHOO.util.Dom.getFirstChild('reminder_list').tabIndex = reminderChecked[i].tabIndex;
-        }
-    }
 });
 {/literal}
 </script>

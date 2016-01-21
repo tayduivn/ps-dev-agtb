@@ -62,6 +62,7 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
             'table' => 'pmse_bpm_dynamic_forms',
             'cols' => array('dyn_view_defs'),
             'functions' => array('base64_decode'),
+            'decode' => false,
         ),
         'bpmFlowTable' => array(
             'table' => 'pmse_bpm_flow',
@@ -70,18 +71,46 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
     );
 
     /**
+     * Handles unserialization of data along the lines of the unserialize
+     * validator, but with looser restrictions that allow the use of stdClass
+     * objects in serialized data
+     * @param string $value Serialized value of any type
+     * @return mixed
+     */
+    protected function getUnserializedData($value)
+    {
+        // Remove all references to stdClass objects
+        $cleared = str_replace('O:8:"stdClass"', '', $value);
+
+        // Now use the same logic as the unserialize validator
+        preg_match('/[oc]:\d+:/i', $cleared, $matches);
+
+        // If there were any references to objects found, return a false
+        if (count($matches) > 0) {
+            return false;
+        }
+
+        // Otherwise return the unserialized data. Do this with error suppression
+        // on in case something unserializable got through.
+        return @unserialize($value);
+    }
+
+    /**
      * Convert value from PHP serialized to JSON
-     * @param $input
-     * @param $encode
+     * @param string $input The serialized input data
+     * @param boolean $decode Whether to html entity decode the input
+     * @param boolena $encode Whether to htmlentity encode the result
      * @return string
      */
-    protected function convertSerializedData($input, $encode = false)
+    protected function convertSerializedData($input, $decode = true, $encode = false)
     {
         // Since we need to work on html decoded data, get that now
-        $decoded = html_entity_decode($input);
+        $decoded = $decode ? html_entity_decode($input) : $input;
 
-        // Clean unserialize the input
-        $unserialized = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize($decoded);
+        // Unserialize the input. NOTE: We are not using the unserialize validator
+        // here because we need to be able to unserialize strings with references
+        // to stdClass.
+        $unserialized = $this->getUnserializedData($decoded);
 
         // If the unserialize failed for some reason, log it and return the
         // original data
@@ -159,8 +188,15 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
                     }
                 }
 
+                // Get our decode flag from the properties
+                $decode = !isset($data['decode']) || $data['decode'] === true;
+
+                // Get the converted data now. This will turn a serialized string
+                // into a json encoded string
+                $converted = $this->convertSerializedData($string, $decode, !empty($data['encode']));
+
                 // Now set the new data, quoting it for our DB
-                $newData = $this->db->quoted($this->convertSerializedData($string), !empty($data['encode']));
+                $newData = $this->db->quoted($converted);
 
                 // And update the column update SQL strings
                 $updateCols[$col] = sprintf($colSql, $newData);
@@ -194,7 +230,7 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
      */
     protected function shouldRun()
     {
-        // Only run this id source is 7.6.0.0 or 7.6.1.0 and the target is
+        // Only run this if source is 7.6.0.0 or 7.6.1.0 and the target is
         // greater than 7.6.1.0
         $from = version_compare($this->from_version, '7.6.0.0', '==')
                 || version_compare($this->from_version, '7.6.1.0', '==');

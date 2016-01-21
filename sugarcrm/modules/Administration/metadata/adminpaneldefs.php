@@ -109,6 +109,7 @@ if(SugarOAuthServer::enabled()) {
 
 $admin_option_defs['Administration']['websockets'] = array('Administration', 'LBL_WEB_SOCKET_CONFIGURATION', 'LBL_WEB_SOCKET_CONFIGURATION_DESC', './index.php?module=Administration&action=websockets');
 $admin_option_defs['Administration']['trigger_server'] = array('Administration', 'LBL_TRIGGER_SERVER_CONFIGURATION', 'LBL_TRIGGER_SERVER_CONFIGURATION_DESC', './index.php?module=Administration&action=TriggerServer');
+$admin_option_defs['Notifications']['config-default'] = array('Administration', 'LBL_NOTIFICATIONS_CONFIGURATION', 'LBL_NOTIFICATIONS_CONFIGURATION_DESC', 'javascript:parent.SUGAR.App.router.navigate("NotificationCenter/config/default", {trigger: true});');
 
 $admin_group_header[]= array('LBL_ADMINISTRATION_HOME_TITLE','',false,$admin_option_defs, 'LBL_ADMINISTRATION_HOME_DESC');
 
@@ -124,6 +125,11 @@ $admin_option_defs['Campaigns']['mass_Email']= array('EmailMan','LBL_MASS_EMAIL_
 $admin_option_defs['Emails']['history_contacts_emails'] = array('ConfigureTabs', 'LBL_HISTORY_CONTACTS_EMAILS', 'LBL_HISTORY_CONTACTS_EMAILS_DESC', './index.php?module=Configurator&action=historyContactsEmails');
 
 $admin_option_defs['Campaigns']['register_snip']=array('icon_AdminThemes','LBL_CONFIGURE_SNIP','LBL_CONFIGURE_SNIP_DESC','./index.php?module=SNIP&action=ConfigureSnip');
+
+$admin_option_defs['CalDav']['caldav_config'] = array('ical-settings-icon',
+    'LBL_CONFIGURE_CALDAV',
+    '',
+    'javascript:parent.SUGAR.App.router.navigate("CalDav/config", {trigger: true});');
 
 $admin_group_header[]= array('LBL_EMAIL_TITLE','',false,$admin_option_defs, 'LBL_EMAIL_DESC');
 
@@ -183,13 +189,13 @@ $admin_group_header[]= array('LBL_BUG_TITLE','',false,$admin_option_defs, 'LBL_B
 
 //Forecasting
 $admin_option_defs=array();
-$admin_option_defs['Forecasts']['forecast_setup'] = array('ForecastReports','LBL_MANAGE_FORECASTS_TITLE', 'LBL_MANAGE_FORECASTS', 'javascript:parent.SUGAR.App.router.navigate("Forecasts/config", {trigger: true});');
+$admin_option_defs['Forecasts']['forecast_setup'] = array('ForecastReports','LBL_MANAGE_FORECASTS_TITLE', 'LBL_MANAGE_FORECASTS', 'javascript:void(parent.SUGAR.App.router.navigate("Forecasts/config", {trigger: true}));');
 $admin_group_header[]= array('LBL_FORECAST_TITLE', '', false, $admin_option_defs, 'LBL_FORECAST_DESC');
 
 //BEGIN SUGARCRM flav=ent ONLY
 //Opportunities
 $admin_option_defs=array();
-$admin_option_defs['Opportunities']['opportunities_setup'] = array('Opportunities','LBL_MANAGE_OPPORTUNITIES_TITLE', 'LBL_MANAGE_OPPORTUNITIES_DESC', 'javascript:parent.SUGAR.App.router.navigate("Opportunities/config", {trigger: true});');
+$admin_option_defs['Opportunities']['opportunities_setup'] = array('Opportunities','LBL_MANAGE_OPPORTUNITIES_TITLE', 'LBL_MANAGE_OPPORTUNITIES_DESC', 'javascript:void(parent.SUGAR.App.router.navigate("Opportunities/config", {trigger: true}));');
 $admin_group_header[]= array('LBL_MANAGE_OPPORTUNITIES_TITLE', '', false, $admin_option_defs, 'LBL_OPPORTUNITIES_DESC');
 //END SUGARCRM flav=ent ONLY
 

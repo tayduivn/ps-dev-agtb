@@ -1183,8 +1183,10 @@ For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_
 
     'ERR_WEB_SOCKET_CLIENT_URL'         => 'WebSocket Client URL required',
     'ERR_WEB_SOCKET_SERVER_URL'         => 'WebSocket Server URL required',
-    'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL.',
-    'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL.',
+    'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL',
+    'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL',
+    'ERR_WEB_SOCKET_SERVER_LOCALHOST'   => 'URL of the instance points to local host but Socket Server is located remotely and can\'t reach the instance.',
+    'ERR_WEB_SOCKET_CLIENT_LOCALHOST'   => 'Client URL of Socket Server points to local host. It will work only on local machine.',
 
     // Team-Based Permissions
     'LBL_TBA_CONFIGURATION' => 'Team-based Permissions',
@@ -1196,6 +1198,11 @@ For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_
     'LBL_TRIGGER_SERVER_CONFIGURATION_DESC' => 'Here you can specify URL to trigger server.',
     'ERR_TRIGGER_SERVER_URL_INVALID'        => 'Please provide correct Trigger Server URL',
     'ERR_TRIGGER_SERVER_ERROR'              => 'Unable to connect to Trigger Server',
+    'ERR_TRIGGER_SERVER_LOCALHOST'      => 'URL of the instance points to local host but Trigger Server is located remotely and can\'t reach the instance.',
+
+    // Notification Center
+    'LBL_NOTIFICATIONS_CONFIGURATION' => 'Notification Settings',
+    'LBL_NOTIFICATIONS_CONFIGURATION_DESC' => 'Define how users get notifications delivered and choose the events to show notifications for.',
 
     //FTS
     'LBL_FTS_TYPE' => 'System Type',
@@ -1283,4 +1290,9 @@ For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_
     'LBL_PMSE_ADMIN_TITLE_MODULE' => 'Process Author',
     'LBL_PMSE_ADMIN_DESC_MODULE' => 'Configure Process Author settings and view logs. Manage all BPM processes for all users via Process Management.',
     //END SUGARCRM flav=ent ONLY
+
+    //CalDav
+    'LBL_CONFIGURE_CALDAV' => 'iCal Sync Settings',
+    'LBL_CONFIGURE_CALDAV_DESC' => 'Here you can configure default bean for new events from client side, and setup sync period.',
+
 );

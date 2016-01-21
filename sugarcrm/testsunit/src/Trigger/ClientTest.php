@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Trigger;
 
+use Sugarcrm\Sugarcrm\Trigger\Client;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
@@ -58,6 +59,45 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param boolean $httpClientReturns
+     * @param boolean $expected
+     * @dataProvider providerIsAvailable
+     * @covers ::isAvailable
+     */
+    public function testIsAvailable($httpClientReturns, $expected)
+    {
+
+        $sugarConfig = $this->getSugarConfigMock(array('get'));
+        $sugarConfig->method('get')
+            ->with('trigger_server.url')
+            ->willReturn(static::TRIGGER_SERVER_URL);
+
+        $httpHelper = $this->getHttpClientMock(array('ping'));
+        $httpHelper->expects($this->once())
+            ->method('ping')
+            ->with(static::TRIGGER_SERVER_URL)
+            ->willReturn($httpClientReturns);
+
+        $client = $this->getClientMock(array('getSugarConfig', 'getHttpHelper'));
+        $client->method('getSugarConfig')->willReturn($sugarConfig);
+        $client->method('getHttpHelper')->willReturn($httpHelper);
+
+        $this->assertEquals($expected, $client->isAvailable());
+    }
+
+    /**
+     * (HttpClient::ping returned value, expected value)
+     * @return array
+     */
+    public function providerIsAvailable()
+    {
+        return array(
+            array(false, false),
+            array(true, true)
+        );
+    }
+
+    /**
      * @param string|null $storedToken
      * @param string|null $newToken
      * @param int $count
@@ -74,11 +114,11 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $adminBean->method('getConfigForModule')
             ->with('auth')
-            ->willReturn(array('trigger_server_token' => $storedToken));
+            ->willReturn(array('external_token_trigger' => $storedToken));
 
         $adminBean->expects($this->exactly($count))
             ->method('saveSetting')
-            ->with('auth', 'trigger_server_token', $newToken, 'base')
+            ->with('auth', 'external_token_trigger', $newToken, 'base')
             ->willReturn(1);
 
         $client = $this->getClientMock(array('getAdministrationBean', 'createGuid'));
@@ -109,11 +149,12 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      * @param array $params
      * @param string $method
      * @param array $args
+     * @param array|null $tags
      * @param string $encodedMessageToSend
      * @dataProvider providerPush
      * @covers ::push
      */
-    public function testPush($params, $method, $args, $encodedMessageToSend)
+    public function testPush($params, $method, $args, $tags, $encodedMessageToSend)
     {
         $sugarConfig = $this->getSugarConfigMock(array('get'));
         $sugarConfig->method('get')
@@ -121,7 +162,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                 $this->equalTo('site_url'),
                 $this->equalTo('trigger_server.url')
             ))
-            ->willReturnCallback(function($setting){
+            ->willReturnCallback(function ($setting) {
                 if ($setting === 'site_url') {
                     return ClientTest::SITE_URL;
                 } else {
@@ -129,10 +170,12 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                 }
             });
 
+        $triggerServerPostUrl = static::TRIGGER_SERVER_URL . Client::POST_URI;
+
         $httpHelper = $this->getHttpClientMock(array('send'));
         $httpHelper->expects($this->once())
             ->method('send')
-            ->with('post', static::TRIGGER_SERVER_URL, $encodedMessageToSend)
+            ->with(Client::POST_METHOD, $triggerServerPostUrl, $encodedMessageToSend)
             ->willReturn(true);
 
         $client = $this->getClientMock(array('retrieveToken', 'getSugarConfig', 'getHttpHelper'));
@@ -146,7 +189,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client->method('getHttpHelper')
             ->willReturn($httpHelper);
 
-        $client->push($params['id'], $params['stamp'], $method, $params['uri'], $args);
+        $client->push($params['id'], $params['stamp'], $method, $params['uri'], $args, $tags);
     }
 
     /**
@@ -165,16 +208,75 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             'stringArg' => 'dummy-string',
             'intArg' => 1
         );
+        $tags = array(
+            'tag 1',
+            'tag 2'
+        );
 
         return array(
-            'method GET without args' => array($params, 'get', null, $this->getEncodedMessageToPush($params,'get', null)),
-            'method GET with args' => array($params, 'get', $args, $this->getEncodedMessageToPush($params,'get', $args)),
-            'method POST without args' => array($params, 'post', null, $this->getEncodedMessageToPush($params,'post', null)),
-            'method POST with args' => array($params, 'post', $args, $this->getEncodedMessageToPush($params,'post', $args)),
-            'method PUT without args' => array($params, 'put', null, $this->getEncodedMessageToPush($params,'put', null)),
-            'method PUT with args' => array($params, 'put', $args, $this->getEncodedMessageToPush($params,'put', $args)),
-            'method DELETE without args' => array($params, 'delete', null, $this->getEncodedMessageToPush($params,'delete', null)),
-            'method DELETE with args' => array($params, 'delete', $args, $this->getEncodedMessageToPush($params,'delete', $args))
+            'method GET without args' => array(
+                $params,
+                'get',
+                null,
+                null,
+                $this->getEncodedMessageToPush($params, 'get', null)
+            ),
+            'method GET with args' => array(
+                $params,
+                'get',
+                $args,
+                null,
+                $this->getEncodedMessageToPush($params, 'get', $args)
+            ),
+            'method POST without args' => array(
+                $params,
+                'post',
+                null,
+                null,
+                $this->getEncodedMessageToPush($params, 'post', null)
+            ),
+            'method POST with args' => array(
+                $params,
+                'post',
+                $args,
+                null,
+                $this->getEncodedMessageToPush($params, 'post', $args)
+            ),
+            'method PUT without args' => array(
+                $params,
+                'put',
+                null,
+                null,
+                $this->getEncodedMessageToPush($params, 'put', null)
+            ),
+            'method PUT with args' => array(
+                $params,
+                'put',
+                $args,
+                null,
+                $this->getEncodedMessageToPush($params, 'put', $args)
+            ),
+            'method DELETE without args' => array(
+                $params,
+                'delete',
+                null,
+                null,
+                $this->getEncodedMessageToPush($params, 'delete', null)
+            ),
+            'method DELETE with args' => array(
+                $params,
+                'delete',
+                $args,
+                null,
+                $this->getEncodedMessageToPush($params, 'delete', $args)
+            ),
+            'any method with tags' => array(
+                $params,
+                'get',
+                $args,
+                $tags,
+                $this->getEncodedMessageToPush($params, 'get', $args, $tags)
+            ),
         );
     }
 
@@ -182,9 +284,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      * @param array $params
      * @param string $method
      * @param array $args
+     * @param array|null $tags
      * @return string
      */
-    private function getEncodedMessageToPush($params, $method, $args)
+    private function getEncodedMessageToPush($params, $method, $args, $tags = null)
     {
         $encodedMessageToSend = array(
             'url' => static::SITE_URL,
@@ -197,12 +300,12 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        if ($args) {
-            if (in_array($method, array('get', 'delete'))) {
-                $encodedMessageToSend['trigger']['url'] .= '?'.http_build_query($args);
-            } else {
-                $encodedMessageToSend['trigger']['args'] = $args;
-            }
+        if ($args && !in_array($method, array('get', 'delete'))) {
+            $encodedMessageToSend['trigger']['args'] = $args;
+        }
+
+        if ($tags) {
+            $encodedMessageToSend['tags'] = $tags;
         }
 
         return json_encode($encodedMessageToSend);
@@ -220,7 +323,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                 $this->equalTo('site_url'),
                 $this->equalTo('trigger_server.url')
             ))
-            ->willReturnCallback(function($setting){
+            ->willReturnCallback(function ($setting) {
                 if ($setting === 'site_url') {
                     return ClientTest::SITE_URL;
                 } else {
@@ -228,10 +331,12 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                 }
             });
 
+        $triggerServerDeleteUrl = static::TRIGGER_SERVER_URL . Client::DELETE_URI;
+
         $httpHelper = $this->getHttpClientMock(array('send'));
         $httpHelper->expects($this->once())
             ->method('send')
-            ->with('delete', static::TRIGGER_SERVER_URL, $this->getEncodedMessageToDelete($triggerId))
+            ->with(Client::DELETE_METHOD, $triggerServerDeleteUrl, $this->getEncodedMessageToDelete($triggerId))
             ->willReturn(true);
 
         $client = $this->getClientMock(array('retrieveToken', 'getSugarConfig', 'getHttpHelper'));
@@ -258,6 +363,81 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             'url' => static::SITE_URL,
             'id' => $id,
             'token' => static::TOKEN
+        ));
+    }
+
+    /**
+     * @param array $tags
+     * @param int $sendCallsCount
+     * @param boolean $expected
+     * @dataProvider providerDeleteByTags
+     * @covers ::deleteByTags
+     */
+    public function testDeleteByTags($tags, $sendCallsCount, $expected)
+    {
+        $sugarConfig = $this->getSugarConfigMock(array('get'));
+        $sugarConfig->method('get')
+            ->with($this->logicalOr(
+                $this->equalTo('site_url'),
+                $this->equalTo('trigger_server.url')
+            ))
+            ->willReturnCallback(function ($setting) {
+                if ($setting === 'site_url') {
+                    return ClientTest::SITE_URL;
+                } else {
+                    return ClientTest::TRIGGER_SERVER_URL;
+                }
+            });
+
+        $triggerServerDeleteByTagsUrl = static::TRIGGER_SERVER_URL . Client::DELETE_BY_TAGS_URI;
+
+        $httpHelper = $this->getHttpClientMock(array('send'));
+        $httpHelper->expects($this->exactly($sendCallsCount))
+            ->method('send')
+            ->with(
+                Client::DELETE_BY_TAGS_METHOD,
+                $triggerServerDeleteByTagsUrl,
+                $this->getEncodedMessageToDeleteByTags($tags)
+            )
+            ->willReturn(true);
+
+        $client = $this->getClientMock(array('retrieveToken', 'getSugarConfig', 'getHttpHelper'));
+
+        $client->method('retrieveToken')
+            ->willReturn(static::TOKEN);
+
+        $client->method('getSugarConfig')
+            ->willReturn($sugarConfig);
+
+        $client->method('getHttpHelper')
+            ->willReturn($httpHelper);
+
+        $this->assertEquals($expected, $client->deleteByTags($tags));
+    }
+
+    /**
+     * (array of tags, expected result)
+     * @return array
+     */
+    public function providerDeleteByTags()
+    {
+        return array(
+            'false if $tags is empty' => array(array(), 0, false),
+            'true if $tags contains one tag' => array(array('tag'), 1, true),
+            'true if $tags contains three tags' => array(array('tag 1', 'tag 2', 'tag 3'), 1, true)
+        );
+    }
+
+    /**
+     * @param array $tags
+     * @return string
+     */
+    private function getEncodedMessageToDeleteByTags($tags)
+    {
+        return json_encode(array(
+            'url' => static::SITE_URL,
+            'token' => static::TOKEN,
+            'tags' => $tags
         ));
     }
 
@@ -304,7 +484,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     public function testGetHttpHelper()
     {
         $client = new \Sugarcrm\Sugarcrm\Trigger\Client();
-        $this->assertInstanceOf('\Sugarcrm\Sugarcrm\Trigger\HttpHelper', TestReflection::callProtectedMethod($client, 'getHttpHelper'));
+        $this->assertInstanceOf(
+            'Sugarcrm\\Sugarcrm\\Trigger\\HttpHelper',
+            TestReflection::callProtectedMethod($client, 'getHttpHelper')
+        );
     }
 
     /**
@@ -313,7 +496,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     public function testGetSugarConfig()
     {
         $client = new \Sugarcrm\Sugarcrm\Trigger\Client();
-        $this->assertInstanceOf('\SugarConfig', TestReflection::callProtectedMethod($client, 'getSugarConfig'));
+        $this->assertInstanceOf('SugarConfig', TestReflection::callProtectedMethod($client, 'getSugarConfig'));
     }
 
     /**
@@ -322,7 +505,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     protected function getClientMock($methods)
     {
-        return $this->getMockBuilder('\Sugarcrm\Sugarcrm\Trigger\Client')
+        return $this->getMockBuilder('Sugarcrm\\Sugarcrm\\Trigger\\Client')
             ->setMethods($methods)
             ->getMock();
     }
@@ -333,17 +516,18 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     protected function getHttpClientMock($methods)
     {
-        return $this->getMockBuilder('\Sugarcrm\Sugarcrm\Trigger\HttpHelper')
+        return $this->getMockBuilder('Sugarcrm\\Sugarcrm\\Trigger\\HttpHelper')
             ->setMethods($methods)
             ->getMock();
     }
+
     /**
      * @param string[] $methods
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
     protected function getSugarConfigMock($methods)
     {
-        return $this->getMockBuilder('\SugarConfig')
+        return $this->getMockBuilder('SugarConfig')
             ->setMethods($methods)
             ->getMock();
     }

@@ -53,5 +53,39 @@
                 show_custom_buckets_options: finalLabels
             }, {silent: true});
         }
+    },
+
+    /**
+     * @inheritdoc
+     */
+    cancelConfig: function() {
+        this._super('cancelConfig');
+        // Forecasts requires a refresh when it's not set up, so we force it
+        if (!app.metadata.getModule('Forecasts', 'config').is_setup) {
+            Backbone.history.loadUrl(app.api.buildURL(this.module));
+        }
+    },
+
+
+    /**
+     * @inheritdoc
+     */
+    _saveConfig: function() {
+        this.context.get('model').save({}, {
+            // getting the fresh model with correct config settings passed in as the param
+            success: _.bind(function(model) {
+                // If we're inside a drawer and Forecasts is setup and this isn't the first time, otherwise refresh
+                if (app.drawer.count()) {
+                    this.showSavedConfirmation();
+                    // close the drawer and return to Forecasts
+                    app.drawer.close(this.context, this.context.get('model'));
+                    // Forecasts requires a refresh, always, so we force it
+                    Backbone.history.loadUrl(app.api.buildURL(this.module));
+                }
+            }, this),
+            error: _.bind(function() {
+                this.getField('save_button').setDisabled(false);
+            }, this)
+        });
     }
 })
