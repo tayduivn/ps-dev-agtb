@@ -39,6 +39,14 @@ class TeamBasedACLConfigurator
     );
 
     /**
+     * Permanently disabled modules.
+     * @var array
+     */
+    protected static $disabledModules = array(
+        'pmse_Inbox', // see RS-1275
+    );
+
+    /**
      * @var array List of TBA field constants.
      */
     protected $fieldOptions = array(
@@ -205,7 +213,9 @@ class TeamBasedACLConfigurator
         }
         if (!isset(self::$moduleCache[$module])) {
             $config = self::getConfig();
-            self::$moduleCache[$module] = !in_array($module, $config['disabled_modules']);
+            self::$moduleCache[$module] =
+                !in_array($module, $config['disabled_modules'])
+                && !in_array($module, self::$disabledModules);
         }
         return self::$moduleCache[$module];
     }
@@ -457,6 +467,15 @@ class TeamBasedACLConfigurator
     public static function getDefaultConfig()
     {
         return self::$defaultConfig;
+    }
+
+    /**
+     * Returns permanently disabled modules.
+     * @return array
+     */
+    public static function getDisabledModules()
+    {
+        return self::$disabledModules;
     }
 
     /**
