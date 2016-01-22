@@ -92,6 +92,11 @@ class SugarUpgradeFixDropdownData extends UpgradeScript
 
         $OOBLangFile = substr($file, 7); // remove 'custom/' from the file path
 
+        // OOB equivalent doesn't exist, it is a custom field
+        if (!file_exists($OOBLangFile)) {
+            return true;
+        }
+
         include ($OOBLangFile);
 
         if (isset($app_list_strings)) {
