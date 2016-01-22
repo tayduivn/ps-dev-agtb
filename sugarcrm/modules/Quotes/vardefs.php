@@ -584,7 +584,9 @@ $dictionary['Quote'] = array(
             'vname' => 'LBL_ACCOUNT_ID',
             'source' => 'non-db',
             'massupdate' => false,
+            'module' => 'Accounts',
             'studio' => 'false',
+            'id_name' => 'account_id',
         ),
         'billing_account_name' => array(
             'name' => 'billing_account_name',
