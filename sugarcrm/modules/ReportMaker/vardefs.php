@@ -107,6 +107,7 @@ $dictionary['ReportMaker'] = array('table' => 'report_maker'
 )
                                                       , 'indices' => array (
        array('name' =>'rmaker_k', 'type' =>'primary', 'fields'=>array('id')),
+       array('name' =>'idx_rmaker', 'type'=>'index', 'fields'=>array('name','deleted')),
     ),
     'acls' => array(
         'SugarACLAdminOnly' => array(
