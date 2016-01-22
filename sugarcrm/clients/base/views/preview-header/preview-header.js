@@ -14,6 +14,8 @@
  * @extends View.View
  */
 ({
+    plugins: ['EllipsisInline'],
+
     className: 'preview-headerbar',
 
     events: {
