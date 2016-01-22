@@ -66,13 +66,12 @@
         {/if}
 <!-- BEGIN Add and collapse -->
         <td rowspan='1' scope='row' style='white-space:nowrap; word-wrap:normal;' valign='top'>
-            &nbsp;
             {if !$hideShowHideButton}
-            <span onclick="collection['{$displayParams.formName}_{$idname}'].js_more();" id='more_{$displayParams.formName}_{$idname}' {if empty($values.secondaries)}style="display:none; text-decoration:none;"{else}style="text-decoration:none;"{/if} title="{sugar_translate label="LBL_HIDE_SHOW"}">
+            <span onclick="collection['{$displayParams.formName}_{$idname}'].js_more();" id='more_{$displayParams.formName}_{$idname}' style="text-decoration:none;" title="{sugar_translate label="LBL_HIDE_SHOW"}">
             <input id="arrow_{$idname}" name="arrow_{$idname}" type="hidden" value="show">
 			{capture assign="attr"}border="0" id="more_img_{$displayParams.formName}_{$idname}"{/capture}
             {sugar_getimage name="advanced_search.gif" width="8" height="8" attr=$attr}
-            <span id="more_div_{$displayParams.formName}_{$idname}" {if empty($values.secondaries)}style="display:none"{/if}>{sugar_translate label='LBL_SHOW'}</span>
+            <span id="more_div_{$displayParams.formName}_{$idname}" >{sugar_translate label='LBL_SHOW'}</span>
             </span>
             {/if}
         </td>
