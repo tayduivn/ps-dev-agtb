@@ -22,6 +22,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
  */
 class ACLVisibility extends SugarVisibility implements StrategyInterface
 {
+    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * @var TeamBasedACLConfigurator
      */
@@ -36,6 +37,7 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
         $this->tbaConfig = new TeamBasedACLConfigurator();
         parent::__construct($bean, $params);
     }
+    //END SUGARCRM flav=ent ONLY
 
     /**
      * {@inheritdoc}
@@ -57,10 +59,12 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
                     $GLOBALS['current_user']->id,
                     $this->getOption('table_alias')
                 );
+            //BEGIN SUGARCRM flav=ent ONLY
             } elseif ($this->tbaConfig->isValidAccess($actualAccess)) {
                 $tbaVisibility = new TeamBasedACLVisibility($this->bean);
                 $tbaVisibility->setOptions(array('where_condition' => true));
                 $tbaVisibility->addVisibilityWhere($queryPart);
+            //END SUGARCRM flav=ent ONLY
             }
             if ($query && $queryPart) {
                 $query .= " AND $queryPart";
@@ -99,11 +103,12 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
     {
         $ownerField = $provider->getFilter('Owner')->getOwnerField($this->bean);
         $mapping->addNotAnalyzedField($ownerField);
-
+        //BEGIN SUGARCRM flav=ent ONLY
         if ($this->tbaConfig->implementsTBA($this->bean->module_dir)) {
             $tbaVisibility = new TeamBasedACLVisibility($this->bean);
             $tbaVisibility->elasticBuildMapping($mapping, $provider);
         }
+        //END SUGARCRM flav=ent ONLY
     }
 
     /**
@@ -123,11 +128,12 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
         // retrieve the owner field directly from the bean
         $ownerField = $provider->getFilter('Owner')->getOwnerField($this->bean);
         $result[$ownerField] = 'id';
-
+        //BEGIN SUGARCRM flav=ent ONLY
         if ($this->tbaConfig->implementsTBA($this->bean->module_dir)) {
             $tbaVisibility = new TeamBasedACLVisibility($this->bean);
             $result = array_merge($result, $tbaVisibility->elasticGetBeanIndexFields($module, $provider));
         }
+        //END SUGARCRM flav=ent ONLY
         return $result;
     }
 
@@ -146,9 +152,11 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
                     'user' => $user,
                 );
                 $filter->addMust($provider->createFilter('Owner', $options));
+            //BEGIN SUGARCRM flav=ent ONLY
             } elseif ($this->tbaConfig->isValidAccess($actualAccess)) {
                 $tbaVisibility = new TeamBasedACLVisibility($this->bean);
                 $tbaVisibility->elasticAddFilters($user, $filter, $provider);
+            //END SUGARCRM flav=ent ONLY
             }
         }
     }

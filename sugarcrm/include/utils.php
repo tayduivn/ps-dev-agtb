@@ -509,8 +509,9 @@ function get_sugar_config_defaults()
 
     $sugar_config_defaults = sugarArrayMerge($locale->getLocaleConfigDefaults(), $sugar_config_defaults);
 
+    //BEGIN SUGARCRM flav=ent ONLY
     $sugar_config_defaults[TeamBasedACLConfigurator::CONFIG_KEY] = TeamBasedACLConfigurator::getDefaultConfig();
-
+    //END SUGARCRM flav=ent ONLY
     return( $sugar_config_defaults );
 }
 

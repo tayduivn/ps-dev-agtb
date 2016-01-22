@@ -312,7 +312,9 @@
                     'include/javascript/sugar7/plugins/Chart.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/EmailClientLaunch.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'modules/KBContents/clients/base/plugins/KBContent.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    //BEGIN SUGARCRM flav=ent ONLY
                     'modules/Teams/clients/base/plugins/TbACLs.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    //END SUGARCRM flav=ent ONLY
                     'include/javascript/sugar7/plugins/Tinymce.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/VirtualCollection.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/SearchForMore.js'  => 'include/javascript/sugar_sidecar.min.js',
@@ -512,13 +514,11 @@
                 'include/javascript/pmse/ui/criteria_field.js' => 'include/javascript/pmse.ui.min.js',
             ),
 
-            //END SUGARCRM flav=ent ONLY
-
             //Grouping for TBA configuration.
             $sugar_grp_tba = array(
                 'modules/Teams/javascript/TBAConfiguration.js' => 'include/javascript/sugar_grp_tba.js',
             ),
-
+            //END SUGARCRM flav=ent ONLY
         );
 
     /**

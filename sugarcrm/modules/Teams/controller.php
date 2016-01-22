@@ -103,7 +103,7 @@ class TeamsController extends SugarController {
 	    $retArray['theme'] = $theme;
 	    echo 'result = ' . $json->encode($retArray);
 	}
-
+    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * This method handles the saving team-based access configuration.
      */
@@ -131,4 +131,5 @@ class TeamsController extends SugarController {
             ));
         }
     }
+    //END SUGARCRM flav=ent ONLY
 }

@@ -356,17 +356,21 @@ class TeamSetManager {
     public static function getFormattedTeamsFromSet($focus, $forDisplay = false)
     {
         $result = array();
+        //BEGIN SUGARCRM flav=ent ONLY
         $isTBAEnabled = TeamBasedACLConfigurator::isEnabledForModule($focus->module_dir);
+        //END SUGARCRM flav=ent ONLY
 
         $team_set_id = $focus->team_set_id ? $focus->team_set_id : $focus->team_id;
         $teams = self::getTeamsFromSet($team_set_id);
 
+        //BEGIN SUGARCRM flav=ent ONLY
         $selectedTeamIds = array();
         if ($isTBAEnabled && !empty($focus->team_set_selected_id)) {
             $selectedTeamIds = array_map(function ($el) {
                 return $el['id'];
             }, TeamSetManager::getTeamsFromSet($focus->team_set_selected_id));
         }
+        //END SUGARCRM flav=ent ONLY
 
         foreach ($teams as $key => $row) {
             $isPrimaryTeam = false;
@@ -378,9 +382,11 @@ class TeamSetManager {
                 $row['badges']['primary'] = $isPrimaryTeam = true;
             }
 
+            //BEGIN SUGARCRM flav=ent ONLY
             if ($isTBAEnabled && in_array($row['id'], $selectedTeamIds)) {
                 $row['badges']['selected'] = $hasBadge = true;
             }
+            //END SUGARCRM flav=ent ONLY
 
             if ($isPrimaryTeam) {
                 array_unshift($result, $row);
