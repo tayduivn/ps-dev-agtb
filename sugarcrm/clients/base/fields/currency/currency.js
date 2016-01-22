@@ -190,14 +190,20 @@
         if (this.hasEditAccess) {
             // if the base rate changes, it should trigger a field re-render
             this.model.on('change:' + baseRateField, function(model, baseRate, options) {
-                // lets actually make sure this really changed before triggering the deferModelChange method.
-                // that way if base_rate is a integer we can actually make sure it didn't change
-                // eg: 1 to "1.000000"
-                var newValue = app.math.round(baseRate, 6, true),
-                    previousValue = app.math.round(model.previous(baseRateField), 6, true);
-                if (!_.isEqual(newValue, previousValue)) {
-                    if (options && _.isUndefined(options.revert)) {
-                        this._deferModelChange();
+
+                var prevBaseRate = model.previous(baseRateField);
+                if (!_.isUndefined(prevBaseRate)) { // it is undefined, of course, at first load
+
+                    var precision = this.def && this.def.precision || 6;
+                    // lets actually make sure this really changed before triggering the deferModelChange method.
+                    // that way if base_rate is a integer we can actually make sure it didn't change
+                    // eg: 1 to "1.000000"
+                    var newValue = app.math.round(baseRate, precision, true),
+                        previousValue = app.math.round(prevBaseRate, precision, true);
+                    if (!_.isEqual(newValue, previousValue)) {
+                        if (options && _.isUndefined(options.revert)) {
+                            this._deferModelChange();
+                        }
                     }
                 }
             }, this);
