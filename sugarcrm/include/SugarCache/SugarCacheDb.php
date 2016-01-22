@@ -116,25 +116,24 @@ class SugarCacheDb extends SugarCacheAbstract
         $hashedKey = $this->hashKeyName($key);
         $this->logger->debug("SugarCacheDb writing key '$key' using hash '$hashedKey'");
 
-        $value = $this->db->quoted($this->encode($value));
+        $value = $this->encode($value);
 
         if ($this->_expireTimeout > 0) {
-            $expires = $this->getSqlDateTime('+'.$this->_expireTimeout.' seconds');
+            $expires = $this->getDateTime('+' . $this->_expireTimeout . ' seconds');
         } else {
-            $expires = 'NULL';
+            $expires = null;
         }
 
-        $upsert = sprintf(
-            "INSERT INTO key_value_cache (id, value, date_expires) VALUES (%s, %s, %s) " .
-            "ON DUPLICATE KEY UPDATE value = %s, date_expires = %s",
-            $this->db->quoted($hashedKey),
+        $placeholder = $this->db->convert('?', 'datetime');
+        $sql = 'INSERT INTO key_value_cache (id, value, date_expires) VALUES (?, ?, ' . $placeholder . ') '
+            . 'ON DUPLICATE KEY UPDATE value = ?, date_expires = ' . $placeholder;
+        $this->query($sql, array(
+            $hashedKey,
             $value,
             $expires,
             $value,
             $expires
-        );
-
-        $this->query($upsert);
+        ));
     }
 
     /**
@@ -142,14 +141,16 @@ class SugarCacheDb extends SugarCacheAbstract
      */
     protected function _getExternal($key)
     {
-        $query = sprintf(
-            "SELECT value FROM key_value_cache WHERE id = %s AND (date_expires IS NULL OR date_expires > %s)",
-            $this->db->quoted($this->hashKeyName($key)),
-            $this->getSqlDateTime()
-        );
-        $this->db->increaseQueryLimit();
-        if ($row = $this->db->fetchOne($query, '', false)) {
-            return $this->decode($row['value'], $key);
+        $sql = 'SELECT value FROM key_value_cache WHERE id = ? AND (date_expires IS NULL'
+            . ' OR date_expires > ' . $this->db->convert('?', 'datetime') . ')';
+        $stmt = $this->query($sql, array(
+            $this->hashKeyName($key),
+            $this->getDateTime(),
+        ));
+
+        $value = $stmt->fetchColumn();
+        if ($value) {
+            return $this->decode($value, $key);
         }
 
         return null;
@@ -160,8 +161,10 @@ class SugarCacheDb extends SugarCacheAbstract
      */
     protected function _clearExternal($key)
     {
-        $id = $this->db->quoted($this->hashKeyName($key));
-        $this->query("DELETE FROM key_value_cache WHERE id = $id");
+        $sql = 'DELETE FROM key_value_cache WHERE id = ?';
+        $this->query($sql, array(
+            $this->hashKeyName($key),
+        ));
     }
 
     /**
@@ -181,9 +184,10 @@ class SugarCacheDb extends SugarCacheAbstract
             return;
         }
 
-        $expires = $this->getSqlDateTime();
         $start = microtime(true);
-        $this->query("DELETE FROM key_value_cache WHERE date_expires <= $expires");
+        $this->query("DELETE FROM key_value_cache WHERE date_expires <= " . $this->db->convert('?', 'datetime'), array(
+            $this->getDateTime(),
+        ));
         $runtime = round((microtime(true) - $start) * 1000);
 
         $msg = "SugarCacheDb running garbage collection - took $runtime msecs";
@@ -254,33 +258,35 @@ class SugarCacheDb extends SugarCacheAbstract
     }
 
     /**
-     * Prepare or modify DateTime for Db
+     * Returns datetime with the given offset in database format
      *
-     * @param string $modify
+     * @param string|null $offset
      * @return string
      */
-    protected function getSqlDateTime($modify = '')
+    protected function getDateTime($offset = null)
     {
-        $expires = $this->timeDate->getNow();
-        if ($modify) {
-            $expires->modify($modify);
+        $dateTime = $this->timeDate->getNow();
+        if ($offset) {
+            $dateTime->modify($offset);
         }
 
-        return $this->db->convert(
-            $this->db->quoted($expires->asDb()),
-            'datetime'
-        );
+        return $dateTime->asDb();
     }
 
     /**
      * Calls the normal DB query but first sets the DB to ignore the next query.
      * @param string $sql
+     * @param array $params
      *
-     * @return bool|resource
+     * @return \Doctrine\DBAL\Driver\Statement
      */
-    protected function query($sql)
+    protected function query($sql, array $params = array())
     {
         $this->db->increaseQueryLimit();
-        return $this->db->query($sql);
+
+        // TODO: make sure Doctrine connection respects query limit
+        $stmt = $this->db->getConnection()->prepare($sql);
+        $stmt->execute($params);
+        return $stmt;
     }
 }

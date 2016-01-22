@@ -22,7 +22,7 @@ abstract class SugarCacheAbstract
     public $useLocalStore = true;
 
     /**
-     * @var timeout in seconds used for cache item expiration
+     * @var int timeout in seconds used for cache item expiration
      */
     protected $_expireTimeout = 300;
 
