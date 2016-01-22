@@ -258,6 +258,8 @@ class IBMDB2Manager  extends DBManager
 			db2_close($this->database);
 			$this->database = null;
 		}
+
+        parent::disconnect();
 	}
 
 	/**+

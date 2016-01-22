@@ -218,6 +218,8 @@ class MysqlManager extends DBManager
 			mysql_close($this->database);
 			$this->database = null;
 		}
+
+        parent::disconnect();
 	}
 
 	/**

@@ -68,6 +68,11 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
  */
 abstract class DBManager
 {
+    /**
+     * @var string
+     */
+    public $variant;
+
 	/**
 	 * Actual database link, used in concrete classes
 	 * @var resource
@@ -265,6 +270,13 @@ abstract class DBManager
 
 
     /**
+     * Doctrine connection
+     *
+     * @var Doctrine\DBAL\Connection
+     */
+    protected $conn;
+
+    /**
      * Gets a string comparison SQL snippet for use in hard coded queries. This
      * is done this way because some DBs handle empty strings differently than
      * others.
@@ -438,6 +450,21 @@ abstract class DBManager
 		$this->checkConnection();
 		return $this->database;
 	}
+
+    /**
+     * Returns the Doctrine connection with the same connection resource
+     *
+     * @return \Doctrine\DBAL\Connection
+     * @throws Exception
+     */
+    public function getConnection()
+    {
+        if (!$this->conn) {
+            $this->conn = DBManagerFactory::createConnection($this);
+        }
+
+        return $this->conn;
+    }
 
 	/**
 	 * Checks for error happening in the database
@@ -4875,7 +4902,10 @@ protected function checkQuery($sql, $object_name = false)
 	 *
 	 * Also handles any cleanup needed
 	 */
-	abstract public function disconnect();
+    public function disconnect()
+    {
+        $this->conn = null;
+    }
 
 	/**
 	 * Get last database error

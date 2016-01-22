@@ -2042,6 +2042,8 @@ EOQ;
             mssql_close($this->database);
             $this->database = null;
         }
+
+        parent::disconnect();
     }
 
     /**

@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Doctrine\DBAL\DriverManager as DoctrineDriverManager;
 
 /**
  * Database driver factory
@@ -150,6 +151,44 @@ class DBManagerFactory
             self::$instances[$instanceName]->references = $old_count;
         }
         return self::$instances[$instanceName];
+    }
+
+    /**
+     * Returns Doctrine connection for the given database instance
+     *
+     * @param string $instanceName Name of the instance
+     * @return \Doctrine\DBAL\Connection
+     */
+    public static function getConnection($instanceName = '')
+    {
+        return self::getInstance($instanceName)->getConnection();
+    }
+
+    /**
+     * Creates Doctrine connection for the given database instance
+     *
+     * @param DBManager $instance Database instance
+     * @return Doctrine\DBAL\Connection
+     * @throws Exception
+     * @throws Doctrine\DBAL\DBALException
+     */
+    public static function createConnection(DBManager $instance)
+    {
+        static $driverMap = array(
+            'mysqli' => 'Sugarcrm\Sugarcrm\Dbal\Mysqli\Driver',
+            'sqlsrv' => 'Sugarcrm\Sugarcrm\Dbal\SqlSrv\Driver',
+            'oci8' => 'Sugarcrm\Sugarcrm\Dbal\Oci8\Driver',
+            'ibm_db2' => 'Sugarcrm\Sugarcrm\Dbal\IbmDb2\Driver',
+        );
+
+        if (!isset($driverMap[$instance->variant])) {
+            throw new Exception('Unsupported DB driver ' . $instance->variant);
+        }
+
+        return DoctrineDriverManager::getConnection(array(
+            'driverClass' => $driverMap[$instance->variant],
+            'connection' => $instance->getDatabase(),
+        ));
     }
 
     /**

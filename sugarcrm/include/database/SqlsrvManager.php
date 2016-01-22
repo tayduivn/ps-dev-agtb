@@ -298,6 +298,8 @@ class SqlsrvManager extends MssqlManager
             sqlsrv_close($this->database);
             $this->database = null;
         }
+
+        parent::disconnect();
     }
 
     /**

@@ -727,6 +727,11 @@ class SugarTestHelper
             $mock = new SugarTestDatabaseMock();
         }
 
+        // as far as we mock the global object but don't know how to mock Doctrine connection,
+        // leave it unmocked
+        $doctrineConnection = DBManagerFactory::getConnection();
+        SugarTestReflection::setProtectedValue($mock, 'conn', $doctrineConnection);
+
         self::$systemVars['db'] = DBManagerFactory::$instances;
         self::$registeredVars['mock_db'] = $mock;
         DBManagerFactory::$instances = array('' => $mock);

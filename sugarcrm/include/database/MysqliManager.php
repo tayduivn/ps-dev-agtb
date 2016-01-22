@@ -214,6 +214,8 @@ class MysqliManager extends MysqlManager
         }
 
         $this->connected = false;
+
+        parent::disconnect();
     }
 
 	/**
