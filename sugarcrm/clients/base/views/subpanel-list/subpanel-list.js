@@ -33,7 +33,8 @@
      */
     initialize: function(options) {
         // `dataViewName` corresponds to the list of fields the API should retrieve.
-        this.dataViewName = options.name || 'subpanel-list';
+        // Inherit from the layout unless not defined.
+        this.dataViewName = (options.layout && options.layout.dataView) || options.type || 'subpanel-list';
 
         this._super("initialize", [options]);
 
