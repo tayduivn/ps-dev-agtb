@@ -64,6 +64,7 @@ class CountRelatedExpression extends NumericExpression
             current_value,
             this.context.model.isNew()
         );
+        return current_value;
 JS;
     }
 
