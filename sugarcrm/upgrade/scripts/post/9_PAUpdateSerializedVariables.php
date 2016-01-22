@@ -224,12 +224,18 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
                     }
                 }
 
-                // Get our decode flag from the properties
-                $decode = !isset($data['decode']) || $data['decode'] === true;
+                // If, for some reason, the string to be checked is empty, there
+                // is nothing to do, so set it to an empty string and move on.
+                if (empty($string)) {
+                    $converted = '';
+                } else {
+                    // Get our decode flag from the properties
+                    $decode = !isset($data['decode']) || $data['decode'] === true;
 
-                // Get the converted data now. This will turn a serialized string
-                // into a json encoded string
-                $converted = $this->convertSerializedData($string, $decode, !empty($data['encode']));
+                    // Get the converted data now. This will turn a serialized string
+                    // into a json encoded string
+                    $converted = $this->convertSerializedData($string, $decode, !empty($data['encode']));
+                }
 
                 // Now set the new data, quoting it for our DB
                 $newData = $this->db->quoted($converted);

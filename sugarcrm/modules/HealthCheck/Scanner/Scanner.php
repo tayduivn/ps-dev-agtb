@@ -850,6 +850,12 @@ class HealthCheckScanner
                     }
                 }
 
+                // If, for some reason, the string to be checked is empty, there
+                // is nothing to do.
+                if (empty($string)) {
+                    continue;
+                }
+
                 // Get our decode flag from the properties
                 $decode = !isset($data['decode']) || $data['decode'] === true;
 
