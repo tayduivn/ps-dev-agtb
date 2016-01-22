@@ -88,6 +88,7 @@ class VisibilityAction extends AbstractAction
             },
             sidecarExec : function(context, target, hide) {
                 var inv_class = 'vis_action_hidden',
+                    panel_class = 'record-panel-content',
                     wasHidden = $(target).hasClass(inv_class),
                     field = context.view.getField(this.target),
                     row = $(target).parents('.panel_body')[0];
@@ -117,6 +118,7 @@ class VisibilityAction extends AbstractAction
                 }
                 if (row) {
                     this.checkRowSidecar(row, inv_class);
+                    this.checkPanelSidecar(row.parentElement, inv_class, panel_class);
                 }
             },
             legacyExec : function(context, target, hide) {
@@ -197,6 +199,28 @@ class VisibilityAction extends AbstractAction
                     }
                 }
                 el.style.display = hide ? 'none' : '';
+            },
+            checkPanelSidecar: function(el, inv_class, panel_class) {
+                if (!el || !el.children) {
+                    return;
+                }
+
+                var hide = true;
+
+                // check if each row has its elements hidden
+                for (var i = 0; i < el.children.length; i++) {
+                    var node = el.children[i];
+                    var inv_nodes = $(node).children('.' + inv_class);
+                    // visible non-empty nodes (i.e. data-type not empty)
+                    var vis_nodes = $(node).children(':not([data-type=\"\"])');
+                    hide &= inv_nodes.length == vis_nodes.length;
+                }
+
+                if (hide) {
+                    $(el).removeClass(panel_class);
+                } else {
+                    $(el).addClass(panel_class);
+                }
             }
         });";
     }
