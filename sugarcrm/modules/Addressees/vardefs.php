@@ -11,7 +11,7 @@
  */
 
 $dictionary['Addressee'] = array(
-    'table' => 'addresses',
+    'table' => 'addressees',
     'audited' => true,
     'activity_enabled' => false,
     'duplicate_merge' => true,
@@ -19,14 +19,14 @@ $dictionary['Addressee'] = array(
         'meetings' => array(
             'name' => 'meetings',
             'type' => 'link',
-            'relationship' => 'meetings_addresses',
+            'relationship' => 'meetings_addressees',
             'source' => 'non-db',
             'vname' => 'LBL_MEETINGS',
         ),
         'calls' => array(
             'name' => 'calls',
             'type' => 'link',
-            'relationship' => 'calls_addresses',
+            'relationship' => 'calls_addressees',
             'source' => 'non-db',
             'vname' => 'LBL_CALLS',
         ),
@@ -37,4 +37,4 @@ $dictionary['Addressee'] = array(
     'full_text_search' => true,
 );
 
-VardefManager::createVardef('Addresses', 'Addressee', array('basic', 'team_security', 'assignable', 'taggable', 'person'));
+VardefManager::createVardef('Addressees', 'Addressee', array('basic', 'team_security', 'assignable', 'taggable', 'person'));

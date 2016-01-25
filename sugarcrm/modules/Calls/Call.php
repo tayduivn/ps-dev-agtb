@@ -76,7 +76,7 @@ class Call extends SugarBean {
 	var $contacts_arr = array();
 	var $users_arr = array();
 	var $leads_arr = array();
-	public $addresses_arr = array();
+	public $addressees_arr = array();
 	var $default_call_name_values = array('Assemble catalogs', 'Make travel arrangements', 'Send a letter', 'Send contract', 'Send fax', 'Send a follow-up letter', 'Send literature', 'Send proposal', 'Send quote');
 	var $minutes_value_default = 15;
 	var $minutes_values = array('0'=>'00','15'=>'15','30'=>'30','45'=>'45');
@@ -84,7 +84,7 @@ class Call extends SugarBean {
 	var $rel_users_table = "calls_users";
 	var $rel_contacts_table = "calls_contacts";
     var $rel_leads_table = "calls_leads";
-	public $rel_addresses_table = "calls_addresses";
+	public $rel_addressees_table = "calls_addressees";
 	var $module_dir = 'Calls';
 	var $object_name = "Call";
 	var $new_schema = true;
@@ -102,7 +102,7 @@ class Call extends SugarBean {
 										'assigned_user_id'	=> 'users',
 										'note_id'			=> 'notes',
                                         'lead_id'			=> 'leads',
-                                        'addressee_id'      => 'addresses',
+                                        'addressee_id'      => 'addressees',
 								);
 
 	public $send_invites = false;
@@ -592,7 +592,7 @@ class Call extends SugarBean {
     } elseif ($user->object_name == 'Addressee') {
         $relate_values = array('addressee_id' => $user->id, 'call_id' => $this->id);
         $data_values = array('accept_status' => $status);
-        $this->set_relationship($this->rel_addresses_table, $relate_values, true, true, $data_values);
+        $this->set_relationship($this->rel_addressees_table, $relate_values, true, true, $data_values);
     }
   }
 
@@ -629,12 +629,12 @@ class Call extends SugarBean {
             $this->leads_arr = $this->leads->get();
         }
 
-        if (!is_array($this->addresses_arr)) {
-            $this->addresses_arr = array();
+        if (!is_array($this->addressees_arr)) {
+            $this->addressees_arr = array();
         }
 
-        if (empty($this->addresses_arr) && $this->load_relationship('addresses')) {
-            $this->addresses_arr = $this->addresses->get();
+        if (empty($this->addressees_arr) && $this->load_relationship('addressees')) {
+            $this->addressees_arr = $this->addressees->get();
         }
 
 		foreach($this->users_arr as $user_id) {
@@ -664,8 +664,8 @@ class Call extends SugarBean {
 			}
 		}
 
-        foreach ($this->addresses_arr as $addressee_id) {
-            $notify_user = BeanFactory::getBean('Addresses', $addressee_id);
+        foreach ($this->addressees_arr as $addressee_id) {
+            $notify_user = BeanFactory::getBean('Addressees', $addressee_id);
             if (!empty($notify_user->id)) {
                 $notify_user->new_assigned_user_name = $notify_user->full_name;
                 $GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
@@ -954,49 +954,49 @@ class Call extends SugarBean {
      * Stores addressee invitees
      *
      * @param array $addresseeInvitees Array of addressee invitees ids
-     * @param array $existingAddresses
+     * @param array $existingAddressees
      */
-    public function setAddresseeInvitees($addresseeInvitees, $existingAddresses = array())
+    public function setAddresseeInvitees($addresseeInvitees, $existingAddressees = array())
     {
-        $this->addresses_arr = $addresseeInvitees;
+        $this->addressees_arr = $addresseeInvitees;
 
-        $deleteAddresses = array();
-        $this->load_relationship('addresses');
+        $deleteAddressees = array();
+        $this->load_relationship('addressees');
 
-        $sql = 'SELECT mu.addressee_id, mu.accept_status FROM calls_addresses mu';
+        $sql = 'SELECT mu.addressee_id, mu.accept_status FROM calls_addressees mu';
         $sql .= ' WHERE mu.call_id = ' . $this->db->quoted($this->id);
         $result = $this->db->query($sql);
 
-        $acceptStatusAddresses = array();
+        $acceptStatusAddressees = array();
         while ($a = $this->db->fetchByAssoc($result)) {
             if (!in_array($a['addressee_id'], $addresseeInvitees)) {
-                $deleteAddresses[$a['addressee_id']] = $a['addressee_id'];
+                $deleteAddressees[$a['addressee_id']] = $a['addressee_id'];
             } else {
-                $acceptStatusAddresses[$a['addressee_id']] = $a['accept_status'];
+                $acceptStatusAddressees[$a['addressee_id']] = $a['accept_status'];
             }
         }
 
-        if (count($deleteAddresses) > 0) {
+        if (count($deleteAddressees) > 0) {
             $ids = array();
-            foreach ($deleteAddresses as $u) {
+            foreach ($deleteAddressees as $u) {
                 $ids[] = $this->db->quoted($u);
             }
 
-            $sql = 'UPDATE calls_addresses SET deleted = 1';
+            $sql = 'UPDATE calls_addressees SET deleted = 1';
             $sql .= ' WHERE addressee_id IN (' . implode(',', $ids) . ') AND call_id = ' . $this->db->quoted($this->id);
             $this->db->query($sql);
         }
 
         foreach ($addresseeInvitees as $addresseeId) {
-            if (empty($addresseeId) || isset($existingAddresses[$addresseeId]) || isset($deleteAddresses[$addresseeId])) {
+            if (empty($addresseeId) || isset($existingAddressees[$addresseeId]) || isset($deleteAddressees[$addresseeId])) {
                 continue;
             }
 
-            if (!isset($acceptStatusAddresses[$addresseeId])) {
+            if (!isset($acceptStatusAddressees[$addresseeId])) {
                 $this->leads->add($addresseeId);
             } else {
                 // update query to preserve accept_status
-                $sql = 'UPDATE calls_addresses SET deleted = 0, accept_status = '. $this->db->quoted($acceptStatusAddresses[$addresseeId]);
+                $sql = 'UPDATE calls_addressees SET deleted = 0, accept_status = '. $this->db->quoted($acceptStatusAddressees[$addresseeId]);
                 $sql .= ' WHERE call_id = ' . $this->db->quoted($this->id);
                 $sql .= ' AND addressee_id = ' . $this->db->quoted($addresseeId);
                 $this->db->query($sql);

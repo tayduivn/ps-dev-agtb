@@ -1190,7 +1190,7 @@
 		CAL.get("user_invitees").value = "";
 		CAL.get("contact_invitees").value = "";
 		CAL.get("lead_invitees").value = "";
-		CAL.get("addresses_invitees").value = "";
+		CAL.get("addressees_invitees").value = "";
 
 		CAL.each( GLOBAL_REGISTRY['focus'].users_arr, 	function(i,v){
 									var field_name = "";
@@ -1200,8 +1200,8 @@
 										field_name = "contact_invitees";
 									if(v.module == "Lead")
 										field_name = "lead_invitees";
-            if (v.module == "Addresses") {
-                field_name = "addresses_invitees";
+            if (v.module == "Addressees") {
+                field_name = "addressees_invitees";
             }
 									var str = CAL.get(field_name).value;
 									CAL.get(field_name).value = str + v.fields.id + ",";	

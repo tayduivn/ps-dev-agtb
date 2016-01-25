@@ -259,12 +259,12 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
             $userInvitees = array();
             $contactInvitees = array();
             $leadInvitees = array();
-            $addressesInvitees = array();
+            $addresseesInvitees = array();
            
             $existingUsers = array();
             $existingContacts = array();
             $existingLeads =  array();
-            $existingAddresses =  array();
+            $existingAddressees =  array();
 
             if (!empty($_POST['user_invitees'])) {
                $userInvitees = explode(',', trim($_POST['user_invitees'], ','));
@@ -303,21 +303,21 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
                 } 
             }
 
-            if (!empty($_POST['addresses_invitees'])) {
-                $addressesInvitees = explode(',', trim($_POST['addresses_invitees'], ','));
+            if (!empty($_POST['addressees_invitees'])) {
+                $addresseesInvitees = explode(',', trim($_POST['addressees_invitees'], ','));
             }
 
-            if (!empty($_POST['existing_addresses_invitees'])) {
-                $existingAddresses =  explode(",", trim($_POST['existing_addresses_invitees'], ','));
+            if (!empty($_POST['existing_addressees_invitees'])) {
+                $existingAddressees =  explode(",", trim($_POST['existing_addressees_invitees'], ','));
             }
 
-            if (!empty($_POST['parent_id']) && $_POST['parent_type'] == 'Addresses') {
-                $addressesInvitees[] = $_POST['parent_id'];
+            if (!empty($_POST['parent_id']) && $_POST['parent_type'] == 'Addressees') {
+                $addresseesInvitees[] = $_POST['parent_id'];
             }
 
-            if ($relate_to == 'Addresses') {
-                if (!empty($_REQUEST['relate_id']) && !in_array($_REQUEST['relate_id'], $addressesInvitees)) {
-                    $addressesInvitees[] = $_REQUEST['relate_id'];
+            if ($relate_to == 'Addressees') {
+                if (!empty($_REQUEST['relate_id']) && !in_array($_REQUEST['relate_id'], $addresseesInvitees)) {
+                    $addresseesInvitees[] = $_REQUEST['relate_id'];
                 }
             }
 
@@ -328,7 +328,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
             $focus->users_arr = $userInvitees;
             $focus->contacts_arr = $contactInvitees;
             $focus->leads_arr = $leadInvitees;
-            $focus->addresses_arr = $addressesInvitees;
+            $focus->addressees_arr = $addresseesInvitees;
 
             $focus->save(true);
             $return_id = $focus->id;
@@ -345,8 +345,8 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 
             //BEGIN SUGARCRM flav!=sales ONLY
             $focus->setLeadInvitees($focus->leads_arr, $existingLeads);
-            $focus->setAddresseeInvitees($focus->addresses_arr, $existingAddresses);
             //END SUGARCRM flav!=sales ONLY
+            $focus->setAddresseeInvitees($focus->addressees_arr, $existingAddressees);
 
             // Bug #49195 : update vcal
             vCal::cache_sugar_vcal($current_user);

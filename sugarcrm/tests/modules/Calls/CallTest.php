@@ -37,7 +37,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestCallUtilities::removeCallContacts();
         SugarTestCallUtilities::removeAllCreatedCalls();
         SugarTestContactUtilities::removeAllCreatedContacts();
-        SugarTestAddresseeUtilities::removeAllCreatedAddresses();
+        SugarTestAddresseeUtilities::removeAllCreatedAddressees();
 
         if(!empty($this->callid)) {
             $GLOBALS['db']->query("DELETE FROM calls WHERE id='{$this->callid}'");
@@ -164,20 +164,21 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
             SugarTestContactUtilities::createContact(),
         );
 
-        $addresses = array(
+        $addressees = array(
             SugarTestAddresseeUtilities::createAddressee(),
         );
 
+        /** @var Call $call */
         $call = BeanFactory::newBean('Calls');
         $call->users_arr = array($GLOBALS['current_user']->id);
         $call->contacts_arr = array($contacts[0]->id, $contacts[1]->id);
-        $call->addresses_arr = array($addresses[0]->id);
+        $call->addressees_arr = array($addressees[0]->id);
 
         $actual = $call->get_notification_recipients();
         $this->assertArrayHasKey($GLOBALS['current_user']->id, $actual, 'The current user should be in the list.');
         $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
         $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
-        $this->assertArrayHasKey($addresses[0]->id, $actual, 'The one addressee should be in the list.');
+        $this->assertArrayHasKey($addressees[0]->id, $actual, 'The one addressee should be in the list.');
     }
 
     public function testGetNotificationRecipients_RecipientsAreNotAlreadyLoaded_ReturnsRecipients()

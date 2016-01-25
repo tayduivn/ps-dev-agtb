@@ -342,17 +342,17 @@ class CalendarUtils
 			$leads_rel_arr[] = $ro['lead_id'];
 		}
 
-        $qu = "SELECT * FROM {$bean->rel_addresses_table} WHERE deleted = 0 AND {$lower_name}_id = " . $db->quoted($id);
+        $qu = "SELECT * FROM {$bean->rel_addressees_table} WHERE deleted = 0 AND {$lower_name}_id = " . $db->quoted($id);
         $re = $db->query($qu);
-        $addresses_rel_arr = array();
+        $addressees_rel_arr = array();
         while ($ro = $db->fetchByAssoc($re)) {
-            $addresses_rel_arr[] = $ro['addressee_id'];
+            $addressees_rel_arr[] = $ro['addressee_id'];
         }
 
 		$qu_contacts = array();
 		$qu_users = array();
 		$qu_leads = array();
-        $qu_addresses = array();
+        $qu_addressees = array();
 		$arr = array();
 		$i = 0;
 
@@ -450,8 +450,8 @@ class CalendarUtils
                 $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
                 'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
             );
-            foreach ($addresses_rel_arr as $addressee_id) {
-                $db->insertParams($bean->rel_addresses_table, $fields, array(
+            foreach ($addressees_rel_arr as $addressee_id) {
+                $db->insertParams($bean->rel_addressees_table, $fields, array(
                     'id' => create_guid(),
                     'addressee_id' => $addressee_id,
                     $lower_name . '_id' => $clone->id,
@@ -474,13 +474,14 @@ class CalendarUtils
         }
 		
         Activity::enable();
+
 		vCal::cache_sugar_vcal($GLOBALS['current_user']);
 		return $arr;
 	}
 
 	/**
 	 * Delete recurring activities and their invitee relationships
-	 * @param SugarBean $bean
+	 * @param Call|Meeting|SugarBean $bean
 	 */
 	static function markRepeatDeleted(SugarBean $bean)
 	{
@@ -502,7 +503,7 @@ class CalendarUtils
 			$db->query("UPDATE {$bean->rel_users_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = '{$id}'");
 			$db->query("UPDATE {$bean->rel_contacts_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = '{$id}'");
 			$db->query("UPDATE {$bean->rel_leads_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = '{$id}'");
-			$db->query("UPDATE {$bean->rel_addresses_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = " . $db->quoted($id));
+			$db->query("UPDATE {$bean->rel_addressees_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = " . $db->quoted($id));
 		}
 		vCal::cache_sugar_vcal($GLOBALS['current_user']);
 	}

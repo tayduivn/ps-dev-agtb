@@ -950,7 +950,8 @@ class CalDavEventCollection extends SugarBean
                 global $locale;
 
                 if (!$link) {
-                    $focus = \BeanFactory::getBean('Addresses');
+                    /** @var Addressee $focus */
+                    $focus = \BeanFactory::getBean('Addressees');
                     $focus->last_name = $email;
                     $focus->email1 = $email;
                     $focus->save();
@@ -961,8 +962,9 @@ class CalDavEventCollection extends SugarBean
                     );
                 }
 
-                if ($link['beanName'] == 'Addresses') {
-                    $focus = \BeanFactory::getBean('Addresses', $link['beanId']);
+                if ($link['beanName'] == 'Addressees') {
+                    /** @var Addressee $focus */
+                    $focus = \BeanFactory::getBean('Addressees', $link['beanId']);
                     if ($focus->last_name === $email) {
                         $parseName = $locale->getLocaleUnFormattedName($participant->getDisplayName());
                         $parseName = array_filter($parseName);

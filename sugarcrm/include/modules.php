@@ -724,7 +724,7 @@ $beanList['NotificationCenterSubscriptions'] = 'NotificationCenterSubscription';
 $beanFiles['NotificationCenterSubscription'] = 'modules/NotificationCenter/NotificationCenterSubscription.php';
 
 $modInvisList[] = 'CalDav';
-$modInvisList[] = 'Addresses';
+$modInvisList[] = 'Addressees';
 $beanList['CalDavEvents'] = 'CalDavEventCollection';
 $beanFiles['CalDavEventCollection'] = 'modules/CalDav/EventCollection.php';
 $beanList['CalDavCalendars'] = 'CalDavCalendar';
@@ -735,8 +735,8 @@ $beanList['CalDavSchedulings'] = 'CalDavScheduling';
 $beanFiles['CalDavScheduling'] = 'modules/CalDav/Scheduling.php';
 $beanList['CalDavSynchronizations'] = 'CalDavSynchronization';
 $beanFiles['CalDavSynchronization'] = 'modules/CalDav/Synchronization.php';
-$beanList['Addresses'] = 'Addressee';
-$beanFiles['Addressee'] = 'modules/Addresses/Addressee.php';
+$beanList['Addressees'] = 'Addressee';
+$beanFiles['Addressee'] = 'modules/Addressees/Addressee.php';
 
 // this module doesn't need a Bean
 $modInvisList[] = 'Feedbacks';
