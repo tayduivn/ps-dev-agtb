@@ -92,7 +92,7 @@ class ACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue($this->isBeanAvailable());
     }
-
+//BEGIN SUGARCRM flav=ent ONLY
     /**
      * TBA visibility should be applied by ACLVisibility.
      */
@@ -109,6 +109,7 @@ class ACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue($this->isBeanAvailable());
     }
+//END SUGARCRM flav=ent ONLY
 
     /**
      * Check possibility to receive the bean.

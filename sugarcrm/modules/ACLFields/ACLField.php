@@ -324,7 +324,9 @@ class ACLField  extends ACLAction
         if (!empty($user) && $user->isAdmin()) {
             return 4;
         }
+        //BEGIN SUGARCRM flav=ent ONLY
         $tbaConfigurator = new TeamBasedACLConfigurator();
+        //END SUGARCRM flav=ent ONLY
 
         $access = self::$acl_fields[$user_id][$module][$field];
 
@@ -332,9 +334,11 @@ class ACLField  extends ACLAction
             return 4;
         } elseif($access == ACL_READ_ONLY || $access==ACL_READ_OWNER_WRITE) {
             return 1;
+        //BEGIN SUGARCRM flav=ent ONLY
         } elseif ($tbaConfigurator->isEnabledForModule($module) && $tbaConfigurator->isValidAccess($access)) {
             // Handled by SugarACLTeamBased.
             return 4;
+        //END SUGARCRM flav=ent ONLY
         }
         return 0;
     }

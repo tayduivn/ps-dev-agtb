@@ -17,7 +17,9 @@ $admin_option_defs['Users']['user_management']= array('Users','LBL_MANAGE_USERS_
 $admin_option_defs['Users']['roles_management']= array('Roles','LBL_MANAGE_ROLES_TITLE','LBL_MANAGE_ROLES','./index.php?module=ACLRoles&action=index');
 $admin_option_defs['Users']['teams_management']= array('Teams','LBL_MANAGE_TEAMS_TITLE','LBL_MANAGE_TEAMS','./index.php?module=Teams&action=index');
 $admin_option_defs['Administration']['password_management']= array('Password','LBL_MANAGE_PASSWORD_TITLE','LBL_MANAGE_PASSWORD','./index.php?module=Administration&action=PasswordManager');
+//BEGIN SUGARCRM flav=ent ONLY
 $admin_option_defs['Users']['tba_management'] = array('TbACLs', 'LBL_TBA_CONFIGURATION', 'LBL_TBA_CONFIGURATION_DESC', './index.php?module=Teams&action=tba');
+//END SUGARCRM flav=ent ONLY
 $admin_group_header[]= array('LBL_USERS_TITLE','',false,$admin_option_defs, 'LBL_USERS_DESC');
 $license_management = false;
     if (!isset($GLOBALS['sugar_config']['hide_admin_licensing']) || !$GLOBALS['sugar_config']['hide_admin_licensing']) {
@@ -290,7 +292,7 @@ foreach ($admin_group_header as $key=>$values) {
                 {
                     unset($admin_group_header[$key][3][$mod_val]);
                 }
-
+                //BEGIN SUGARCRM flav=ent ONLY
                 // Unless a user is a system admin, or module admin, they cannot see TBACLs config links
                 if ($mod_val == 'Users'
                     && !$current_user->isAdminForModule('Users')
@@ -299,7 +301,6 @@ foreach ($admin_group_header as $key=>$values) {
                     unset($admin_group_header[$key][3][$mod_val]['tba_management']);
                 }
 
-                //BEGIN SUGARCRM flav=ent ONLY
                 // Maintain same access for Opps as we have for Forecasts
                 // Unless a user is a system admin, or module admin, they cannot see Forecasts config links
                 if($mod_val == 'Opportunities'

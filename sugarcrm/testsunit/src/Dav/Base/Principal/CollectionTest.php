@@ -21,7 +21,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Dav\Base\Principal;
 class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers Sugarcrm\Sugarcrm\Dav\Base\Principal\Collection::testSearchPrincipals
+     * @covers Sugarcrm\Sugarcrm\Dav\Base\Principal\Collection::searchPrincipals
      */
     public function testSearchPrincipals()
     {

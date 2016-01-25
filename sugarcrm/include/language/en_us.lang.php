@@ -11765,6 +11765,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     'LBL_FIELD_TRIMMED' => 'Field was trimmed, due to exceeding the maximum character limit.',
     'LBL_DAFAULT_CALDAV_NAME' => 'Default',
+    'LBL_FIELDSIZE_OVERFLOW' => 'Field exceeds maximum character limit.',
 );
 
 $app_list_strings['activity_user_options'] = array (

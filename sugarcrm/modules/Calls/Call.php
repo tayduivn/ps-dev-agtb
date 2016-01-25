@@ -259,6 +259,9 @@ class Call extends SugarBean {
         if ($isUpdate) {
             $this->getCalDavHook()->export($this, array('update', $this->dataChanges, $this->inviteesBefore, CalendarUtils::getInvitees($this)));
         } else {
+            if ($this->repeat_type && !$this->repeat_parent_id) {
+                $this->updateAllChildren = true;
+            }
             $this->getCalDavHook()->export($this);
         }
 

@@ -106,6 +106,8 @@ class SugarFieldTeamset extends SugarFieldBase {
         if (!empty($this->fields['team_set_selected_id'])) {
             if (!empty($this->fields['team_set_selected_id']['value'])) {
                 $this->view->team_set_selected_id = $this->fields['team_set_selected_id']['value'];
+            } else {
+                $this->view->team_set_selected_id = $GLOBALS['current_user']->team_set_selected_id;
             }
         }
     	if(!empty($this->fields['team_id']) && !empty($this->fields['team_id']['value'])){

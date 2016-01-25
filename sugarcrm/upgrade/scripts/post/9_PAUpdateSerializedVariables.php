@@ -90,9 +90,45 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
             return false;
         }
 
-        // Otherwise return the unserialized data. Do this with error suppression
-        // on in case something unserializable got through.
-        return @unserialize($value);
+        // Otherwise return the unserialized data if it was unserializable. If not,
+        // send it through the secondary unserializer. Using error suppression in
+        // case something unserializable got through.
+        $return = @unserialize($value);
+
+        // Handle the secondary unserialization if needed
+        if ($return === false) {
+            $return = $this->secondaryUnserialize($value);
+        }
+
+        return $return;
+    }
+
+    /**
+     * Handles a second level of unserialization in case the first one didn't
+     * work. This happens in cases where data may have been serialized in one
+     * encoding charset but is being unserialized in another.
+     * @param string $input Serialized data
+     * @param boolean $decode Whether to html entity decode the input
+     * @return boolean
+     */
+    protected function secondaryUnserialize($string) {
+        // For reference, please see the following links...
+        //http://magp.ie/2014/08/13/php-unserialize-string-after-non-utf8-characters-stripped-out/
+        //https://dzone.com/articles/mulit-byte-unserialize
+        //http://stackoverflow.com/questions/2853454/php-unserialize-fails-with-non-encoded-characters
+        $string = preg_replace_callback(
+            '!s:(\d+):"(.*?)";!s',
+            function ($matches) {
+                if (isset($matches[2])) {
+                    return 's:'.strlen($matches[2]).':"'.$matches[2].'";';
+                }
+            },
+            $string
+        );
+
+        // Use error suppression to prevent erroneous output. Realistically, this
+        // should never happen, but better safe than sorry.
+        return @unserialize($string);
     }
 
     /**

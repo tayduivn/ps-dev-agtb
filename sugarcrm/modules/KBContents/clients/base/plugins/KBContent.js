@@ -442,19 +442,19 @@
                     expDate = model.get(fieldName),
                     publishingDate = model.get(actFName),
                     status = model.get('status'),
-                    changed = model.changedAttributes(model.getSynced()),
+                    changed = model.changedAttributes(model.getSynced()) || {},
                     errorKeys = [];
 
                 if (
                     (this._isPublishingStatus(status) &&
-                    (!changed.status || !this._isPublishingStatus(changed.status))) ||
-                    (this._massupdateStatusValidation('published') &&
-                    (!publishingDate || app.date(publishingDate).isBefore(Date.now())))
+                    ((!changed.status || !this._isPublishingStatus(changed.status)) ||
+                     (this._isMassUpdate() &&
+                     (!publishingDate || app.date(publishingDate).isBefore(Date.now()))))
+                    )
                 ) {
                     publishingDate = app.date().formatServer(true);
                     model.set(actFName, publishingDate);
                 }
-
                 if (status !== 'expired' && expDate && publishingDate && app.date(expDate).isBefore(publishingDate)) {
                     if (!this.getField(fieldName) && this.getField(actFName)) {
                         fieldName = actFName;
@@ -488,20 +488,19 @@
                     status = model.get('status'),
                     publishingDate = model.get(fieldName),
                     errorKeys = [];
-
-                if (status == 'approved' || this._massupdateStatusValidation('approved')) {
+                if (status == 'approved') {
                     if (publishingDate && app.date(publishingDate).isBefore(Date.now())) {
                         errors[fieldName] = errors[fieldName] || {};
                         errors[fieldName].activeDateLow = true;
                         errorKeys.push('activeDateLow');
                         if (
                             (this.context.get('layout') === 'records' || this.context.get('isSubpanel') === true) &&
-                                !_.isEmpty(errors[fieldName]) && !this._massupdateStatusValidation('approved')
+                                !_.isEmpty(errors[fieldName]) && !this._isMassUpdate()
                         ) {
                             this._alertError(errorKeys);
                         }
                         callback(null, fields, errors);
-                    } else if (!publishingDate && !this._massupdateStatusValidation('approved')) {
+                    } else if (!publishingDate && !this._isMassUpdate()) {
                         app.alert.show('save_without_publish_date_confirmation', {
                             level: 'confirmation',
                             messages: app.lang.get('LBL_SPECIFY_PUBLISH_DATE', 'KBContents'),
@@ -560,13 +559,12 @@
             },
 
             /**
-             * Check if massupdate status called.
-             * @param status
+             * Check if massupdate in progress.
              * @return {boolean}
              * @private
              */
-            _massupdateStatusValidation: function(status) {
-                return (this.action === 'massupdate' && this.model.changedAttributes()['status'] === status);
+            _isMassUpdate: function() {
+                return this.action === 'massupdate';
             },
 
             /**

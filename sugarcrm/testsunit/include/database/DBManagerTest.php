@@ -17,7 +17,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 /**
  *
  * SugarCacheDb tests
- * @coversDefaultClass \SugarCacheDb
+ * @coversDefaultClass \DBManager
  *
  */
 class DBManagerTest extends \PHPUnit_Framework_TestCase

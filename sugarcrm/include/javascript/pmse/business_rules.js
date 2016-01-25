@@ -161,7 +161,7 @@ function init(params) {
     var data;
 
     brName = params.data.name;
-    brModule = params.data.rst_module;
+    brModule = App.lang.getModuleName(params.data.rst_module, {plural: true});
 
     //errorLog = $('#error-log');
 
