@@ -167,38 +167,33 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
                 $logger = new LoggerTransition(\LoggerManager::getLogger());
                 //Now write out the session data again during shutdown
                 $sessionObject = $_SESSION;
-                if ($sessionObject instanceof SessionStorage && !$sessionObject->isClosed()) {
-                    $_SESSION = $sessionObject->getArrayCopy();
-                } else {
-                    // session_start() sends http headers such as 'Cache-Control' depending on php configs
-                    // flush ob to send out these headers so they won't be overwritten
-                    while (@ob_end_flush());
-                    SessionStorage::_safeStart();
-                    //First verify that the sessions still match and we didn't somehow switch users.
-                    if ((!isset($_SESSION['user_id']) && $previousUserId) ||
-                        ($previousUserId && isset($_SESSION['user_id']) && $previousUserId != $_SESSION['user_id'])
-                    ) {
-                        $logger->warning(
-                            'Unexpected change in user or logout during session write at shutdown'
-                        );
+                if ($sessionObject instanceof SessionStorage) {
+                    if (!$sessionObject->isClosed()) {
+                        $_SESSION = $sessionObject->getArrayCopy();
                     } else {
-                        if ($sessionObject instanceof TrackableArray) {
-                            $sessionObject->applyTrackedChangesToArray($_SESSION);
+                        // session_start() sends http headers such as 'Cache-Control' depending on php configs
+                        // flush ob to send out these headers so they won't be overwritten
+                        while (@ob_end_flush());
+                        SessionStorage::_safeStart();
+                        //First verify that the sessions still match and we didn't somehow switch users.
+                        if ((!isset($_SESSION['user_id']) && $previousUserId) ||
+                            ($previousUserId && isset($_SESSION['user_id']) && $previousUserId != $_SESSION['user_id'])
+                        ) {
+                            $logger->warning('Unexpected change in user or logout during session write at shutdown');
                         } else {
-                            if (is_array($_SESSION)) {
-                                $klass = "array";
-                            } else {
-                                $klass = get_class($_SESSION);
-                            }
-                            $logger->alert(
-                                '$_SESSION changed from TrackableArray obect to ' . $klass
-                            );
+                            $sessionObject->applyTrackedChangesToArray($_SESSION);
                         }
                     }
+                } else {
+                    if (is_array($sessionObject)) {
+                        $klass = "array";
+                    } else {
+                        $klass = get_class($sessionObject);
+                    }
+                    $logger->alert('$_SESSION changed from TrackableArray object to ' . $klass);
                 }
                 session_write_close();
-            }
-            );
+            });
             static::$shutdownRegisterd = true;
         }
     }
