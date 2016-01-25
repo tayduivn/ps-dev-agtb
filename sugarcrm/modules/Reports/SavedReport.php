@@ -67,7 +67,18 @@ class SavedReport extends SugarBean
 
 	var $list_fields = array('id', 'name', 'module', 'report_type', 'schedule_id', 'active', 'next_run', 'last_run_date');
 
-	function save_report($id, $owner_id, $name, $module,$report_type,$content,$is_published = 0,$team_id, $chart_type='none') {
+    function save_report(
+        $id,
+        $owner_id,
+        $name,
+        $module,
+        $report_type,
+        $content,
+        $is_published = 0,
+        $team_id,
+        $chart_type = 'none',
+        $teamSetSelectedId = null
+    ) {
 		global $json;
 		global $current_user;
 
@@ -105,6 +116,7 @@ class SavedReport extends SugarBean
 		$this->module = $module;
 		$this->is_published = $is_published;
 		$this->chart_type = $chart_type;
+        $this->team_set_selected_id = $teamSetSelectedId;
 
 		$this->save();
 		return $result;

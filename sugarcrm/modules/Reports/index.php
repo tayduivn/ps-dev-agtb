@@ -260,9 +260,17 @@ function checkSavedReportACL(&$reporter,&$args) {
 		global $current_user;
 		if (isset($args['reporter']->saved_report) && $args['reporter']->saved_report->assigned_user_id != $current_user->id)
 			$is_owner = false;
-		if(!ACLController::checkAccess('Reports', 'list', $is_owner) || !ACLController::checkAccess('Reports', 'view', $is_owner))  {
-			sugar_die($mod_strings['LBL_NO_ACCESS']);
-		}
+
+        if ($reporter->saved_report) {
+            if (!$reporter->saved_report->ACLAccess('list') || !$reporter->saved_report->ACLAccess('view')) {
+                sugar_die($mod_strings['LBL_NO_ACCESS']);
+            }
+        } elseif (
+            !ACLController::checkAccess('Reports', 'list', $is_owner) ||
+            !ACLController::checkAccess('Reports', 'view', $is_owner)
+        ) {
+            sugar_die($mod_strings['LBL_NO_ACCESS']);
+        }
 	}
 	return true;
 }
