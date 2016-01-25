@@ -57,6 +57,7 @@ abstract class AdapterAbstract implements AdapterInterface
                     }
                     break;
                 case 'update' :
+                    list($changedFields, $inviteesBefore, $inviteesAfter) = $previousData;
                     if ($this->isRecurringChanged($changedFields)) {
                         $recurringParam = $this->getRecurringHelper()->beanToArray($bean);
                         $action = 'override';
@@ -76,7 +77,6 @@ abstract class AdapterAbstract implements AdapterInterface
                 }
                 break;
             case 'update' :
-                list($changedFields, $inviteesBefore, $inviteesAfter) = $previousData;
                 $changedFields = $this->getFieldsDiff($changedFields);
                 if ($bean->updateAllChildren) { // no validation is needed in that case
                     foreach ($changedFields as $field => $value) {
