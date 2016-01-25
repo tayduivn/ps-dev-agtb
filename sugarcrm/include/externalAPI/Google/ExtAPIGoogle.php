@@ -200,9 +200,11 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument
             'maxResults' => $sugar_config['list_max_entries_per_page']
         );
 
+        $queryString = "trashed = false ";
         if (!empty($keywords)) {
-            $options['q'] = "title contains '{$keywords}'";
+             $queryString .= "and title contains '{$keywords}'";
         }
+        $options['q'] = $queryString;
 
         try {
             $files = $drive->files->listFiles($options);

@@ -16,6 +16,7 @@
  * Window - Preferences - PHPeclipse - PHP - Code Templates
  */
  //format '<action_name>' => '<view_name>'
+$action_view_map['duplicateview']= 'duplicate';
 $action_view_map['multieditview']= 'multiedit';
 $action_view_map['detailview']= 'detail';
 $action_view_map['editview']= 'edit';

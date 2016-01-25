@@ -11,8 +11,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+//BEGIN SUGARCRM flav=ent ONLY
 $tbaConfig = new TeamBasedACLConfigurator();
 $tbaModuleOptions = $tbaConfig->getModuleOptions();
+//END SUGARCRM flav=ent ONLY
 
 if (!defined('ACL_ALLOW_NONE')) {
     define('ACL_ALLOW_ADMIN_DEV', 100);
@@ -20,7 +22,9 @@ if (!defined('ACL_ALLOW_NONE')) {
     define('ACL_ALLOW_DEV', 95);
     define('ACL_ALLOW_ALL', 90);
     define('ACL_ALLOW_ENABLED', 89);
+    //BEGIN SUGARCRM flav=ent ONLY
     define('ACL_ALLOW_SELECTED_TEAMS', $tbaModuleOptions['ACL_ALLOW_SELECTED_TEAMS']);
+    //END SUGARCRM flav=ent ONLY
     define('ACL_ALLOW_OWNER', 75);
     define('ACL_ALLOW_NORMAL', 1);
     define('ACL_ALLOW_DEFAULT', 0);
@@ -41,11 +45,13 @@ $GLOBALS['ACLActionAccessLevels'] = array(
         'label' => 'LBL_ACCESS_OWNER',
         'text_color' => 'white',
     ),
+    //BEGIN SUGARCRM flav=ent ONLY
     ACL_ALLOW_SELECTED_TEAMS => array(
         'color' => '#FFAA00',
         'label' => 'LBL_ACCESS_SELECTED_TEAMS',
         'text_color' => 'white',
     ),
+    //END SUGARCRM flav=ent ONLY
     ACL_ALLOW_NONE => array(
         'color' => '#FF0000',
         'label' => 'LBL_ACCESS_NONE',
@@ -92,9 +98,11 @@ $actionsDropdown = array(
     ACL_ALLOW_ALL,
     ACL_ALLOW_OWNER,
 );
+//BEGIN SUGARCRM flav=ent ONLY
 if ($tbaConfig->isEnabledGlobally()) {
     $actionsDropdown[] = ACL_ALLOW_SELECTED_TEAMS;
 }
+//END SUGARCRM flav=ent ONLY
 $actionsDropdown[] = ACL_ALLOW_DEFAULT;
 $actionsDropdown[] = ACL_ALLOW_NONE;
 

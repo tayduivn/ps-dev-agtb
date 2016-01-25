@@ -40,33 +40,52 @@ abstract class AdapterAbstract implements AdapterInterface
             $action = array_shift($previousData);
         }
 
-        switch ($action) {
-            case 'override' :
-                $inviteesAfter = \CalendarUtils::getInvitees($bean);
-                break;
-            case 'update' :
-                list($changedFields, $inviteesBefore, $inviteesAfter) = $previousData;
-                break;
-        }
-
         $participantsHelper = $this->getParticipantHelper();
         $parentBean = null;
         $childEvents = null;
         $recurringParam = null;
-        $rootBeanId = $bean->id == $bean->repeat_root_id ? null : $bean->repeat_root_id;
+        $rootBeanId = null;
+        if (!$bean->updateAllChildren && $this->getCalendarEvents()->isEventRecurring($bean)) {
+            $rootBeanId = $bean->repeat_root_id;
+        }
 
         if (!$rootBeanId) {
-            if (($action == 'override' && $bean->repeat_type)
-                ||
-                ($action != 'override' && $this->isRecurringChanged($changedFields))
-            ) {
-                $recurringParam = $this->getRecurringHelper()->beanToArray($bean);
-                $action = 'override';
-            } elseif (!$bean->updateAllChildren && $this->getCalendarEvents()->isEventRecurring($bean)) {
-                $rootBeanId = $bean->id;
-            } elseif ($action != 'delete') {
-                $action = 'override';
+            switch ($action) {
+                case 'override' :
+                    if ($bean->repeat_type) {
+                        $recurringParam = $this->getRecurringHelper()->beanToArray($bean);
+                    }
+                    break;
+                case 'update' :
+                    list($changedFields, $inviteesBefore, $inviteesAfter) = $previousData;
+                    if ($this->isRecurringChanged($changedFields)) {
+                        $recurringParam = $this->getRecurringHelper()->beanToArray($bean);
+                        $action = 'override';
+                    } elseif ($bean->updateAllChildren && $this->getCalendarEvents()->isEventRecurring($bean)) {
+                        $action = 'override';
+                    }
+                    break;
             }
+        }
+
+        switch ($action) {
+            case 'override' :
+                $inviteesAfter = \CalendarUtils::getInvitees($bean);
+                $changedFields = $this->getBeanFetchedRow($bean);
+                if (!$changedFields['repeat_type'][0]) {
+                    $changedFields['repeat_interval'][0] = null;
+                }
+                break;
+            case 'update' :
+                $changedFields = $this->getFieldsDiff($changedFields);
+                if ($bean->updateAllChildren) { // no validation is needed in that case
+                    foreach ($changedFields as $field => $value) {
+                        if (count($value) == 2) {
+                            unset($changedFields[$field][1]);
+                        }
+                    }
+                }
+                break;
         }
 
         $beanData = array(
@@ -77,21 +96,8 @@ abstract class AdapterAbstract implements AdapterInterface
             $recurringParam,
         );
 
-        switch ($action) {
-            case 'override' :
-                $changedFields = $this->getBeanFetchedRow($bean);
-                if (!$changedFields['repeat_type'][0]) {
-                    $changedFields['repeat_interval'][0] = null;
-                }
-                break;
-            case 'update' :
-                $changedFields = $this->getFieldsDiff($changedFields);
-                break;
-            case 'delete' :
-                return array(array($beanData, array(), array()));
-                break;
-            default :
-                return false;
+        if ($action == 'delete') {
+            return array(array($beanData, array(), array()));
         }
 
         $changedFieldsFilter = array(

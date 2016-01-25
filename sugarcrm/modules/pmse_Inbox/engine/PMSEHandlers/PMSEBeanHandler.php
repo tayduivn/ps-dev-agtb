@@ -462,6 +462,12 @@ class PMSEBeanHandler
                     $component_array[$base_module][$meta_name]['name'] = $split_array[1];
                     $component_array[$base_module][$meta_name]['value_type'] = 'future';
                     $component_array[$base_module][$meta_name]['original'] = $matched_component;
+
+                    // If the base_module has an alternate name which matches the filter then use the
+                    // base_module name as the filter instead of the alternate name
+                    if (translate($base_module) === $component_array[$base_module][$meta_name]['filter']) {
+                        $component_array[$base_module][$meta_name]['filter'] = $base_module;
+                    }
                 }
             }
         }
