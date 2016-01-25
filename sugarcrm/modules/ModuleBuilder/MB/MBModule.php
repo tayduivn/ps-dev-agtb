@@ -922,15 +922,18 @@ class MBModule
             $this->addTemplate ( $_REQUEST [ 'type' ] ) ;
         }
 
-        if (! empty ( $_REQUEST [ 'label' ] ))
-        {
+        if (!empty($_REQUEST['label'])) {
             // this is encoded by securexss,
             // but since this is a label that will go into language files, decode it
-            $this->config['label'] = htmlspecialchars_decode($_REQUEST['label'], ENT_QUOTES);
+            $label = htmlspecialchars_decode($_REQUEST['label'], ENT_QUOTES);
+            $label = SugarCleaner::cleanHtml($label, false);
+            $this->config['label'] = $label == '' ? $this->name : $label;
         }
 
         if (!empty($_REQUEST['label_singular'])) {
-            $this->config['label_singular'] = htmlspecialchars_decode($_REQUEST['label_singular'], ENT_QUOTES);
+            $label = htmlspecialchars_decode($_REQUEST['label_singular'], ENT_QUOTES);
+            $label = SugarCleaner::cleanHtml($label, false);
+            $this->config['label_singular'] = $label == '' ? $this->name : $label;
         }
 
         $this->config [ 'importable' ] = ! empty( $_REQUEST[ 'importable' ] ) ;
