@@ -189,6 +189,7 @@ class SugarEmailAddress extends SugarBean
         if (isset($_REQUEST) && isset($_REQUEST['useEmailWidget'])) {
             $this->populateLegacyFields($bean);
         }
+        $this->hasFetched = true;
     }
 
     /**
@@ -357,6 +358,7 @@ class SugarEmailAddress extends SugarBean
             $this->db->query($eabr_unlink);
         }
         $this->stateBeforeWorkflow = null;
+        $this->hasFetched = true;
         return;
     }
 
