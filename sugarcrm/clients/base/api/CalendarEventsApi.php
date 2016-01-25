@@ -153,6 +153,7 @@ class CalendarEventsApi extends ModuleApi
         $this->getCalendarEvents()->setOldAssignedUser($args['module'], $args['record']);
 
         $api->action = 'view';
+        /** @var Call|Meeting $bean */
         $bean = $this->loadBean($api, $args, 'view');
 
         $args = $this->initializeArgs($args, $bean);
@@ -174,7 +175,9 @@ class CalendarEventsApi extends ModuleApi
         } else {
             // adjust start date as necessary if being updated to a recurring event
             $this->adjustStartDate($args);
-
+            if (!empty($args['repeat_type'])) {
+                $bean->updateAllChildren = true;
+            }
             $updateResult = $this->updateRecord($api, $args);
 
             // check if it changed from a non-recurring to recurring & generate events if necessary
