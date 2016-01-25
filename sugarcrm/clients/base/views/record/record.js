@@ -719,20 +719,16 @@
     saveClicked: function() {
         // Disable the action buttons.
         this.toggleButtons(false);
-
-        var diff = _.changed(this.model.attributes, this.model._syncedAttributes);
-        var changedFields = [];
-
-        // Only validate fields that have changed.
-        _.each(diff, function(changed, field) {
-            if (changed) {
-                changedFields.push(field);
+        var allFields = this.getFields(this.module, this.model);
+        var fieldsToValidate = {};
+        for (var fieldKey in allFields) {
+            if (app.acl.hasAccessToModel('edit', this.model, fieldKey)) {
+                _.extend(fieldsToValidate, _.pick(allFields, fieldKey));
             }
-        });
-
-        var fieldsToValidate = _.pick(this.getFields(this.module, this.model), changedFields);
+        }
         this.model.doValidate(fieldsToValidate, _.bind(this.validationComplete, this));
     },
+
 
     cancelClicked: function() {
         this.handleCancel();
