@@ -193,7 +193,15 @@ $GLOBALS['log']->info('----->InboundEmail now saving self');
 $previousTeamAccessCheck = isset($GLOBALS['sugar_config']['disable_team_access_check']) ? $GLOBALS['sugar_config']['disable_team_access_check'] : null;
 $GLOBALS['sugar_config']['disable_team_access_check'] = TRUE;
 
-$monitor_fields = array('name', 'status', 'team_id', 'team_set_id');
+$monitor_fields = array(
+    'name',
+    'status',
+    'team_id',
+    'team_set_id',
+//BEGIN SUGARCRM flav=ent ONLY
+    'team_set_selected_id',
+//END SUGARCRM flav=ent ONLY
+);
 
 $current_monitor_fields = array();
 foreach ($monitor_fields as $singleField) {
@@ -276,6 +284,9 @@ function syncSugarFoldersWithBeanChanges($fieldName, $focus)
         case 'name':
         case 'team_id':
         case 'team_set_id':
+//BEGIN SUGARCRM flav=ent ONLY
+        case 'team_set_selected_id':
+//END SUGARCRM flav=ent ONLY
             $f->$fieldName = $focus->$fieldName;
             $f->save();
             break;

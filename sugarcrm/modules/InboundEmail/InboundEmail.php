@@ -2972,7 +2972,9 @@ class InboundEmail extends SugarBean {
 			$c->priority = 'P1';
 			$c->team_id = $_REQUEST['team_id'];
 			$c->team_set_id = $_REQUEST['team_set_id'];
-
+//BEGIN SUGARCRM flav=ent ONLY		
+            $c->team_set_selected_id = $_REQUEST['team_set_selected_id'];
+//END SUGARCRM flav=ent ONLY
 			if(!empty($email->reply_to_email)) {
 				$contactAddr = $email->reply_to_email;
 			} else {
