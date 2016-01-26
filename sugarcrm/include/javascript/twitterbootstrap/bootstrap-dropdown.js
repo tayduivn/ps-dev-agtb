@@ -54,8 +54,6 @@
                 .trigger('shown.bs.dropdown')
 
             $this.focus()
-
-            normalizeScroll($parent);
         }
 
         return false
@@ -116,22 +114,6 @@
         return $parent && $parent.length ? $parent : $this.parent()
     }
 
-    function normalizeScroll($parent) {
-        var menu = $('ul.dropdown-menu', $parent);
-        if (menu.size()) {
-            var menuTopOffset = menu.offset().top; // menu y position
-            var menuHeight = menu.prop('scrollHeight'); // inner size
-            var menuOuterSpaceY = menu.outerHeight(true) - menu.height(); // borders, margins etc.
-            var menuMaxHeight = $(window).height() - $('footer').outerHeight(true) - menuTopOffset - menuOuterSpaceY;
-
-            if (menuHeight > menuMaxHeight) {
-                menu.height(menuMaxHeight);
-                menu.css('overflow-y', 'auto');
-            } else {
-                menu.height('auto');
-            }
-        }
-    }
 
     // DROPDOWN PLUGIN DEFINITION
     // ==========================
