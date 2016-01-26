@@ -238,6 +238,15 @@ $dictionary['EmailTemplate'] = array(
             'options' => 'emailTemplates_type_list',
             'comment' => 'Type of the email template'
        ),
+        'attachments' => array(
+            'bean_name' => 'Note',
+            'module' => 'Notes',
+            'name' => 'attachments',
+            'relationship' => 'emailtemplates_attachments',
+            'source' => 'non-db',
+            'type' => 'link',
+            'vname' => 'LBL_ATTACHMENTS',
+        ),
 	),
 	'indices' => array(
 		array(
@@ -281,6 +290,17 @@ $dictionary['EmailTemplate'] = array(
             'rhs_table' => 'email_templates',
             'rhs_key' => 'created_by',
             'relationship_type' => 'one-to-many'
+        ),
+        'emailtemplates_attachments' => array(
+            'lhs_module' => 'EmailTemplates',
+            'lhs_table' => 'email_templates',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Notes',
+            'rhs_table' => 'notes',
+            'rhs_key' => 'email_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'email_type',
+            'relationship_role_column_value' => 'EmailTemplates',
         ),
     ),
 );

@@ -494,6 +494,15 @@ $dictionary['Email'] = array(
             'bean_name' => 'Note',
             'source' => 'non-db',
         ),
+        'attachments' => array(
+            'bean_name' => 'Note',
+            'module' => 'Notes',
+            'name' => 'attachments',
+            'relationship' => 'emails_attachments',
+            'source' => 'non-db',
+            'type' => 'link',
+            'vname' => 'LBL_ATTACHMENTS',
+        ),
         // SNIP
         'meetings' => array(
             'name' => 'meetings',
@@ -534,14 +543,30 @@ $dictionary['Email'] = array(
             'rhs_key' => 'created_by',
             'relationship_type' => 'one-to-many'
         ),
+        'emails_attachments' => array(
+            'lhs_module' => 'Emails',
+            'lhs_table' => 'emails',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Notes',
+            'rhs_table' => 'notes',
+            'rhs_key' => 'email_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'email_type',
+            'relationship_role_column_value' => 'Emails',
+        ),
         'emails_notes_rel' => array(
             'lhs_module' => 'Emails',
             'lhs_table' => 'emails',
             'lhs_key' => 'id',
             'rhs_module' => 'Notes',
             'rhs_table' => 'notes',
-            'rhs_key' => 'parent_id',
-            'relationship_type' => 'one-to-many',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'emails_beans',
+            'join_key_lhs' => 'email_id',
+            'join_key_rhs' => 'bean_id',
+            'relationship_role_column' => 'bean_module',
+            'relationship_role_column_value' => 'Notes',
         ),
         'emails_contacts_rel' => array(
             'lhs_module' => 'Emails',

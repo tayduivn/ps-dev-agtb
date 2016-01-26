@@ -72,6 +72,24 @@ $dictionary['Note'] = array(
         'reportable' => false,
         'comment' => 'File id under uploads/ dir. Set only for email attachments',
     ),
+        'email_type' => array(
+            'comment' => "The module of the record to which this note's file is attached (Emails or EmailTemplates)",
+            'name' => 'email_type',
+            'reportable' => false,
+            'required' => false,
+            'studio' => false,
+            'type' => 'varchar',
+            'vname' => 'LBL_EMAIL_TYPE',
+        ),
+        'email_id' => array(
+            'comment' => 'Email or EmailTemplate ID to which this note is attached',
+            'name' => 'email_id',
+            'reportable' => false,
+            'required' => false,
+            'studio' => false,
+            'type' => 'id',
+            'vname' => 'LBL_EMAIL_ID',
+        ),
   'parent_type'=>
   array(
   	'name'=>'parent_type',
@@ -397,6 +415,24 @@ $dictionary['Note'] = array(
        array('name' =>'idx_note_name', 'type'=>'index', 'fields'=>array('name')),
        array('name' =>'idx_notes_parent', 'type'=>'index', 'fields'=>array('parent_id', 'parent_type')),
        array('name' =>'idx_note_contact', 'type'=>'index', 'fields'=>array('contact_id')),
+        array(
+            'name' =>'idx_note_email_id',
+            'type'=>'index',
+            'fields' => array('email_id'),
+        ),
+        array(
+            'name' => 'idx_note_email_type',
+            'type' => 'index',
+            'fields' => array('email_type'),
+        ),
+        array(
+            'name' => 'idx_note_email',
+            'type' => 'index',
+            'fields' => array(
+                'email_id',
+                'email_type',
+            ),
+        ),
     )
 
     //This enables optimistic locking for Saves From EditView
