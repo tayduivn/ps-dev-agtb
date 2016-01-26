@@ -53,7 +53,7 @@ class ParticipantsHelper
                 if ($inviteeBefore[2] != $inviteeAfter[2]) {
                     continue;
                 }
-                if ($inviteeBefore[3] != $inviteeAfter[3] && $inviteeAfter[3] != 'X-UNDELIVERABLE') {
+                if ($inviteeBefore[3] != $inviteeAfter[3]) {
                     $changedInvitees['changed'][] = $inviteeAfter;
                 }
                 unset($inviteesBefore[$keyBefore], $inviteesAfter[$keyAfter]);

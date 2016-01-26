@@ -76,8 +76,7 @@ class Export extends Base
                     $importData = $adapter->verifyImportAfterExport($exportData, $importData, $calDavBean);
                     if ($importData) {
                         $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();
-                        $this->getManager()
-                             ->calDavImport($calDavBean->module_name, $calDavBean->id, $importData, $saveCounter);
+                        $this->getManager()->calDavImport($calDavBean->module_name, $calDavBean->id, $importData, $saveCounter);
                     }
                 }
             }

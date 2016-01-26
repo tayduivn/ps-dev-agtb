@@ -916,8 +916,6 @@ class CalDavEventCollection extends SugarBean
             $links = json_decode($this->participants_links, true);
             if ($links) {
                 $this->participantLinks = $links;
-            } else {
-                $this->participantLinks = array();
             }
         }
         return $this->participantLinks;
@@ -1458,8 +1456,6 @@ class CalDavEventCollection extends SugarBean
      */
     public function getDiffStructure($data)
     {
-        $this->childEvents = array();
-        $this->parentEvent = null;
         $currentParent = $this->getParent();
         $result = array();
         if ($data) {
@@ -1474,24 +1470,12 @@ class CalDavEventCollection extends SugarBean
             $oldCollection = null;
         }
 
-        $rRuleParams = $this->getRRuleDiff($this, $oldCollection);
-
-        $mainParentChanged = $updateAllChildren = false;
-        if (isset($rRuleParams['action'])) {
-            if ($oldParent) {
-                $oldCustomizedParent = $oldCollection->getChild($oldParent->getStartDate());
-                if ($oldCustomizedParent && $oldCustomizedParent->isCustomized()) {
-                    $oldParent = $oldCustomizedParent;
-                }
-            }
-            $updateAllChildren = true;
-        }
-
         $changedFields = $this->getEventDiff($currentParent, $oldParent);
-        $invites = $this->getParticipantsDiff($currentParent, $oldParent);
+        $rRuleParams = $this->getRRuleDiff($this, $oldCollection);
         if (isset($rRuleParams['action'])) {
             $changedFields['rrule'] = $rRuleParams;
         }
+        $invites = $this->getParticipantsDiff($currentParent, $oldParent);
 
         $filter = true;
         if (empty($data)) {
@@ -1501,9 +1485,6 @@ class CalDavEventCollection extends SugarBean
         }
 
         if ($filter && ($invites || $changedFields)) {
-            if (!$updateAllChildren) {
-                $mainParentChanged = true;
-            }
             $result[] = array(
                 array(
                     $data ? 'update' : 'override',
@@ -1518,22 +1499,12 @@ class CalDavEventCollection extends SugarBean
         }
 
         $childrenRecurrenceIds = array_values($this->getAllChildrenRecurrenceIds());
-        foreach ($childrenRecurrenceIds as $recurrenceId) {
+        // looking for events which should be customized
+        $customizedChildrenRecurrenceIds = $this->getCustomizedChildrenRecurrenceIds();
+        foreach ($customizedChildrenRecurrenceIds as $recurrenceId) {
 
-            $oldChild = $oldCollection && !$updateAllChildren ? $oldCollection->getChild($recurrenceId) : null;
+            $oldChild = $oldCollection ? $oldCollection->getChild($recurrenceId) : null;
             $currentChild = $this->getChild($recurrenceId);
-
-            if (!$currentChild) {
-                continue;
-            }
-
-            if ($currentParent->getStartDate() == $currentChild->getRecurrenceID()) {
-                if (!$currentChild->isCustomized()) {
-                    continue;
-                } elseif ($mainParentChanged) {
-                    continue;
-                }
-            }
 
             $changedFields = $this->getEventDiff($currentChild, $oldChild);
             $invites = $this->getParticipantsDiff($currentChild, $oldChild);

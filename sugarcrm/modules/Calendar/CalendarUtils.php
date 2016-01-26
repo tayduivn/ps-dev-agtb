@@ -396,74 +396,43 @@ class CalendarUtils
             $clone->repeat_root_id = null;
 			$clone->update_vcal = false;
             $clone->send_invites = false;
-            $clone->updateAllChildren = false;
-
-            $fields = array(
-                'id' => array('name' => 'id', 'type' => 'id'),
-                'user_id' => array('name' => 'user_id', 'type' => 'id'),
-                $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
-                'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
-            );
-            foreach ($users_rel_arr as $user_id) {
-                $db->insertParams($clone->rel_users_table, $fields, array(
-                    'id' => create_guid(),
-                    'user_id' => $user_id,
-                    $lower_name . '_id' => $clone->id,
-                    'date_modified' => $date_modified,
-                ));
-            }
-
-            $fields = array(
-                'id' => array('name' => 'id', 'type' => 'id'),
-                'contact_id' => array('name' => 'contact_id', 'type' => 'id'),
-                $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
-                'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
-            );
-
-            foreach ($contacts_rel_arr as $contact_id) {
-                $db->insertParams($bean->rel_contacts_table, $fields, array(
-                    'id' => create_guid(),
-                    'contact_id' => $contact_id,
-                    $lower_name . '_id' => $clone->id,
-                    'date_modified' => $date_modified,
-                ));
-            }
-
-            $fields = array(
-                'id' => array('name' => 'id', 'type' => 'id'),
-                'lead_id' => array('name' => 'lead_id', 'type' => 'id'),
-                $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
-                'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
-            );
-            foreach ($leads_rel_arr as $lead_id) {
-                $db->insertParams($bean->rel_leads_table, $fields, array(
-                    'id' => create_guid(),
-                    'lead_id' => $lead_id,
-                    $lower_name . '_id' => $clone->id,
-                    'date_modified' => $date_modified,
-                ));
-            }
-
-            $fields = array(
-                'id' => array('name' => 'id', 'type' => 'id'),
-                'addressee_id' => array('name' => 'addressee_id', 'type' => 'id'),
-                $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
-                'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
-            );
-            foreach ($addresses_rel_arr as $addressee_id) {
-                $db->insertParams($bean->rel_addresses_table, $fields, array(
-                    'id' => create_guid(),
-                    'addressee_id' => $addressee_id,
-                    $lower_name . '_id' => $clone->id,
-                    'date_modified' => $date_modified,
-                ));
-            }
-
 			$clone->save(false);
 
 			if($clone->id){
                 $clone->load_relationship('tag_link');
                 $calendarEvents->reconcileTags($parentTagBeans, $clone);
+				foreach($users_rel_arr as $user_id){
+                    $qu_users[] = array(
+                        'id' => create_guid(),
+                        'user_id' => $user_id,
+                        $lower_name . '_id' => $clone->id,
+                        'date_modified' => $date_modified,
+                    );
+				}
+				foreach($contacts_rel_arr as $contact_id){
+                    $qu_contacts[] = array(
+                        'id' => create_guid(),
+                        'contact_id' => $contact_id,
+                        $lower_name . '_id' => $clone->id,
+                        'date_modified' => $date_modified,
+                    );
+				}
+				foreach($leads_rel_arr as $lead_id){
+                    $qu_leads[] = array(
+                        'id' => create_guid(),
+                        'lead_id' => $lead_id,
+                        $lower_name . '_id' => $clone->id,
+                        'date_modified' => $date_modified,
+                    );
+				}
+                foreach ($addresses_rel_arr as $addressee_id) {
+                    $qu_addresses[] = array(
+                        'id' => create_guid(),
+                        'addressee_id' => $addressee_id,
+                        $lower_name . '_id' => $clone->id,
+                        'date_modified' => $date_modified,
+                    );
+                }
 				if($i < 44){
 					$clone->date_start = $date_start;
 					$clone->date_end = $date_end;
@@ -474,6 +443,53 @@ class CalendarUtils
 		}
 		
         Activity::enable();
+
+        if (!empty($qu_users)) {
+            $fields = array(
+                'id' => array('name' => 'id', 'type' => 'id'),
+                'user_id' => array('name' => 'user_id', 'type' => 'id'),
+                $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
+                'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
+            );
+            foreach ($qu_users as $qu_user) {
+                $db->insertParams($bean->rel_users_table, $fields, $qu_user);
+            }
+        }
+        if (!empty($qu_contacts)) {
+            $fields = array(
+                'id' => array('name' => 'id', 'type' => 'id'),
+                'contact_id' => array('name' => 'contact_id', 'type' => 'id'),
+                $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
+                'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
+            );
+            foreach ($qu_contacts as $qu_contact) {
+                $db->insertParams($bean->rel_contacts_table, $fields, $qu_contact);
+            }
+        }
+        if (!empty($qu_leads)) {
+            $fields = array(
+                'id' => array('name' => 'id', 'type' => 'id'),
+                'lead_id' => array('name' => 'lead_id', 'type' => 'id'),
+                $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
+                'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
+            );
+            foreach ($qu_leads as $qu_lead) {
+                $db->insertParams($bean->rel_leads_table, $fields, $qu_lead);
+            }
+        }
+
+        if (!empty($qu_addresses)) {
+            $fields = array(
+                'id' => array('name' => 'id', 'type' => 'id'),
+                'addressee_id' => array('name' => 'addressee_id', 'type' => 'id'),
+                $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
+                'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
+            );
+            foreach ($qu_addresses as $qu_addressee) {
+                $db->insertParams($bean->rel_addresses_table, $fields, $qu_addressee);
+            }
+        }
+		
 		vCal::cache_sugar_vcal($GLOBALS['current_user']);
 		return $arr;
 	}
