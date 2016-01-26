@@ -76,10 +76,10 @@
         //add an event delegate for right action dropdown buttons onclick events
         if (this.rightColumns.length) {
             rightColumnsEvents = {
-                'hidden.bs.dropdown .flex-list-view .actions': 'resetDropdownDelegate',
-                'shown.bs.dropdown .flex-list-view .actions': 'delegateDropdown',
-                'shown.bs.dropdown .flex-list-view .morecol': '_toggleAria',
-                'hidden.bs.dropdown .flex-list-view .morecol': '_toggleAria'
+                'hidden.bs.dropdown .actions': 'resetDropdownDelegate',
+                'shown.bs.dropdown .actions': 'delegateDropdown',
+                'shown.bs.dropdown .morecol': '_toggleAria',
+                'hidden.bs.dropdown .morecol': '_toggleAria'
             };
         }
 
