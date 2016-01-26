@@ -205,15 +205,19 @@ class ForecastsConfigApi extends ConfigModuleApi
 
     /**
      * Rebuilds the metadata for a given module
-     * @param $module
+     * @param $modules List of modules to rebuild extensions for
      */
-    public function rebuildExtensions($module)
+    public function rebuildExtensions($modules)
     {
+        if (!is_array($modules)) {
+            $modules = array($modules);
+        }
+
         $rac = $this->getRepairAndClear();
         $rac->show_output = false;
-        $rac->module_list = $module;
+        $rac->module_list = $modules;
         $rac->clearVardefs();
-        $rac->rebuildExtensions($module);
+        $rac->rebuildExtensions($modules);
     }
 
     /**
