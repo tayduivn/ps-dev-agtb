@@ -15,18 +15,6 @@ $viewdefs['Accounts']['base']['view']['recordlist'] = array(
         'type' => 'multi',
         'actions' => array(
             array(
-                'name' => 'mass_email_button',
-                'type' => 'mass-email-button',
-                'label' => 'LBL_EMAIL_COMPOSE',
-                'primary' => true,
-                'events' => array(
-                    'click' => 'list:massaction:hide',
-                ),
-                'acl_module' => 'Emails',
-                'acl_action' => 'edit',
-                'related_fields' => array('name', 'email'),
-            ),
-            array(
                 'name' => 'massupdate_button',
                 'type' => 'button',
                 'label' => 'LBL_MASS_UPDATE',
