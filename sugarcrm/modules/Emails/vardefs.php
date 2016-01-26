@@ -219,6 +219,7 @@ $dictionary['Email'] = array(
             'name' => 'date_sent',
             'vname' => 'LBL_DATE_SENT',
             'type' => 'datetime',
+            'massupdate' => false,
         ),
         'message_id' => array(
             'name' => 'message_id',
@@ -260,6 +261,7 @@ $dictionary['Email'] = array(
             'type' => 'enum',
             'len' => 100,
             'options' => 'dom_email_status',
+            'massupdate' => false,
         ),
         'flagged' => array(
             'name' => 'flagged',
@@ -268,6 +270,7 @@ $dictionary['Email'] = array(
             'required' => false,
             'reportable' => false,
             'comment' => 'flagged status',
+            'massupdate' => false,
         ),
         'reply_to_status' => array(
             'name' => 'reply_to_status',
@@ -276,6 +279,7 @@ $dictionary['Email'] = array(
             'required' => false,
             'reportable' => false,
             'comment' => 'I you reply to an email then reply to status of original email is set',
+            'massupdate' => false,
         ),
         'intent' => array(
             'name' => 'intent',
