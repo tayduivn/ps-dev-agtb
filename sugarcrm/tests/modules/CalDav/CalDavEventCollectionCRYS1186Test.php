@@ -125,11 +125,11 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                 'expected' => array(
                     array(
                         array(
+                            'update',
                             null,
                             array(),
                             '2016-01-12 16:00:00',
-                            0,
-                            'update',
+                            1,
                         ),
                         array(
                             'title' => array(
@@ -229,11 +229,11 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                 'expected' => array(
                     array(
                         array(
+                            'restore',
                             null,
                             array(),
                             '2016-01-12 16:00:00',
-                            0,
-                            'restore',
+                            1,
                         ),
                         array(
                             'title' => array(
@@ -336,11 +336,11 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                 'expected' => array(
                     array(
                         array(
+                            'delete',
                             null,
                             array(),
                             '2016-01-12 16:00:00',
-                            0,
-                            'delete',
+                            1,
                         ),
                         array(),
                         array(),
@@ -424,11 +424,11 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                 'expected' => array(
                     array(
                         array(
+                            'restore',
                             null,
                             array(),
                             '2016-01-12 16:00:00',
-                            0,
-                            'restore',
+                            1,
                         ),
                         array(
                             'title' => array(
@@ -543,11 +543,11 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                 'expected' => array(
                     array(
                         array(
+                            'delete',
                             null,
                             array(),
                             '2016-01-12 16:00:00',
-                            0,
-                            'delete',
+                            1,
                         ),
                         array(),
                         array(),
@@ -643,11 +643,11 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                 'expected' => array(
                     array(
                         array(
+                            'restore',
                             null,
                             array(),
                             '2016-01-12 16:00:00',
-                            0,
-                            'override',
+                            1,
                         ),
                         array(
                             'title' => array(
