@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "601ad9bb03b281049dac54ae69413d8e",
+    "hash": "bf65c505f352d34ba987816254adb205",
+    "content-hash": "15fa9ff8688cc653b0d187bd2d1cdd62",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -254,13 +255,22 @@
         },
         {
             "name": "onelogin/php-saml",
-            "version": "2.1.0.1",
+            "version": "2.6.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sugarcrm/php-saml",
-                "reference": "a8ba9dbb92c6dac3f50dac268764b5d2a56e706e"
+                "url": "https://github.com/onelogin/php-saml.git",
+                "reference": "9f3583c35339f185e114d148eac08d600a9360ef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/onelogin/php-saml/zipball/9f3583c35339f185e114d148eac08d600a9360ef",
+                "reference": "9f3583c35339f185e114d148eac08d600a9360ef",
+                "shasum": ""
             },
             "require": {
+                "ext-dom": "*",
+                "ext-mcrypt": "*",
+                "ext-openssl": "*",
                 "php": ">=5.3.2"
             },
             "require-dev": {
@@ -284,22 +294,18 @@
                     "lib/Saml2"
                 ]
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "OneLogin PHP SAML Toolkit",
             "homepage": "https://onelogin.zendesk.com/hc/en-us/sections/200245634-SAML-Toolkits",
             "keywords": [
+                "SAML2",
                 "onelogin",
-                "saml",
-                "saml2"
+                "saml"
             ],
-            "support": {
-                "email": "sixto.garcia@onelogin.com",
-                "issues": "https://github.com/onelogin/php-saml/issues",
-                "source": "https://github.com/onelogin/php-saml/"
-            },
-            "time": "2014-09-27 00:00:51"
+            "time": "2015-09-09 14:18:12"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -800,12 +806,12 @@
             "version": "v2.7.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/EventDispatcher.git",
+                "url": "https://github.com/symfony/event-dispatcher.git",
                 "reference": "be3c5ff8d503c46768aeb78ce6333051aa6f26d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/be3c5ff8d503c46768aeb78ce6333051aa6f26d9",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/be3c5ff8d503c46768aeb78ce6333051aa6f26d9",
                 "reference": "be3c5ff8d503c46768aeb78ce6333051aa6f26d9",
                 "shasum": ""
             },
@@ -2058,12 +2064,12 @@
             "version": "v2.7.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Console.git",
+                "url": "https://github.com/symfony/console.git",
                 "reference": "564398bc1f33faf92fc2ec86859983d30eb81806"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/564398bc1f33faf92fc2ec86859983d30eb81806",
+                "url": "https://api.github.com/repos/symfony/console/zipball/564398bc1f33faf92fc2ec86859983d30eb81806",
                 "reference": "564398bc1f33faf92fc2ec86859983d30eb81806",
                 "shasum": ""
             },

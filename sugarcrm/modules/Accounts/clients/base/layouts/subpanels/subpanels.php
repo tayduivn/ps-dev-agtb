@@ -1,16 +1,16 @@
 <?php
- /*
- * Your installation or use of this SugarCRM file is subject to the applicable
- * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
- * If you do not agree to all of the applicable terms or do not have the
- * authority to bind the entity as an authorized representative, then do not
- * install or use this SugarCRM file.
- *
- * Copyright (C) SugarCRM Inc. All rights reserved.
- */
-$viewdefs['Accounts']['base']['layout']['subpanels'] = array (
-    'components' => array (
+/*
+* Your installation or use of this SugarCRM file is subject to the applicable
+* terms available at
+* http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+* If you do not agree to all of the applicable terms or do not have the
+* authority to bind the entity as an authorized representative, then do not
+* install or use this SugarCRM file.
+*
+* Copyright (C) SugarCRM Inc. All rights reserved.
+*/
+$viewdefs['Accounts']['base']['layout']['subpanels'] = array(
+    'components' => array(
         array(
             'layout' => 'subpanel',
             'label' => 'LBL_CALLS_SUBPANEL_TITLE',
@@ -33,11 +33,11 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
             ),
         ),
         array(
-          'layout' => 'subpanel',
-          'label' => 'LBL_NOTES_SUBPANEL_TITLE',
-          'context' => array(
-              'link' => 'notes',
-          ),
+            'layout' => 'subpanel',
+            'label' => 'LBL_NOTES_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'notes',
+            ),
         ),
         array(
             'layout' => 'subpanel',
@@ -93,7 +93,7 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
         ),
         //BEGIN SUGARCRM flav=ent ONLY
         array(
-          'layout' => 'subpanel',
+            'layout' => 'subpanel',
             'label' => 'LBL_RLI_SUBPANEL_TITLE',
             'override_subpanel_list_view' => 'subpanel-for-accounts',
             'context' => array(
@@ -117,11 +117,20 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
         ),
         array(
             'layout' => 'subpanel',
-            'label' => 'LBL_QUOTES_SUBPANEL_TITLE',
+            'label' => 'LBL_QUOTES_BILLTO',
             'override_subpanel_list_view' => 'subpanel-for-accounts',
             'context' => array(
                 'link' => 'quotes',
-                'ignore_role' => 1,
+                'ignore_role' => 0
+            ),
+        ),
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_QUOTES_SHIPTO',
+            'override_subpanel_list_view' => 'subpanel-for-accounts',
+            'context' => array(
+                'link' => 'quotes_shipto',
+                'ignore_role' => 0
             ),
         ),
         array(

@@ -117,7 +117,7 @@ class ViewLayoutView extends SugarView
 		            $disableLayout = $parser2->getSyncDetailEditViews();
                 }
                 if(!empty($_REQUEST['copyFromEditView'])){
-                    $editViewPanels = $parser2->convertFromCanonicalForm ( $parser2->_viewdefs [ 'panels' ] , $parser2->_fielddefs ) ;
+                    $editViewPanels = $parser2->convertFromCanonicalForm($parser2->_viewdefs['panels']);
                     $parser->_viewdefs [ 'panels' ] = $editViewPanels;
                     $parser->_fielddefs = $parser2->_fielddefs;
                     $parser->setUseTabs($parser2->getUseTabs());

@@ -66,7 +66,7 @@
                     if (this.disposed) {
                         return;
                     }
-                    this.$('.error:not(.sugar-logic-error)').removeClass('error');
+                    this.$('.error').removeClass('error');
                     this.$('.error-tooltip').remove();
                     this.$('[data-toggle="tab"] .fa-exclamation-circle').remove();
                 }, this);
