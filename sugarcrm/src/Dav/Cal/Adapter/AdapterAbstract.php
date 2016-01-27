@@ -1295,7 +1295,7 @@ abstract class AdapterAbstract implements AdapterInterface
     protected function setBeanName($value, \SugarBean $bean)
     {
         if ($value != $bean->name) {
-            $bean->name = $value;
+            $bean->name = $value === null ? '' : $value;
             return true;
         }
         return false;
@@ -1311,7 +1311,7 @@ abstract class AdapterAbstract implements AdapterInterface
     protected function setBeanDescription($value, \SugarBean $bean)
     {
         if ($value != $bean->description) {
-            $bean->description = $value;
+            $bean->description = $value === null ? '' : $value;
             return true;
         }
         return false;
@@ -1327,7 +1327,7 @@ abstract class AdapterAbstract implements AdapterInterface
     protected function setBeanLocation($value, \SugarBean $bean)
     {
         if ($value != $bean->location) {
-            $bean->location = $value;
+            $bean->location = $value === null ? '' : $value;
             return true;
         }
         return false;
@@ -1346,7 +1346,7 @@ abstract class AdapterAbstract implements AdapterInterface
         $value = $map->getSugarValue($value, $bean->status);
 
         if ($value != $bean->status) {
-            $bean->status = $value;
+            $bean->status = $value === null ? '' : $value;
             return true;
         }
         return false;
