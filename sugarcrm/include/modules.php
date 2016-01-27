@@ -716,11 +716,10 @@ $beanList['EmbeddedFiles'] = 'EmbeddedFile';
 $beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';
 $modInvisList[] = 'EmbeddedFiles';
 
-$moduleList[] = 'CarrierSugar';
 $modInvisList[] = 'CarrierSugar';
-$moduleList[] = 'CarrierEmail';
 $modInvisList[] = 'CarrierEmail';
-$moduleList[] = 'NotificationCenterSubscriptions';
+$modInvisList[] = 'NotificationCenterSubscriptions';
+
 $beanList['NotificationCenterSubscriptions'] = 'NotificationCenterSubscription';
 $beanFiles['NotificationCenterSubscription'] = 'modules/NotificationCenter/NotificationCenterSubscription.php';
 
