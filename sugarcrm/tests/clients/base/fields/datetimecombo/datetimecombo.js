@@ -291,6 +291,22 @@ describe('Base.Field.DateTimeCombo', function() {
 
                 clock.restore();
             });
+
+            it('should not set empty value if model value not defined to prevent unsaved changes warning', function() {
+                field.render();
+
+                var $d = field.$(field.fieldTag),
+                    $t = field.$(field.secondaryFieldTag);
+
+                expect($d.val()).toBe('');
+                expect($t.val()).toBe('');
+                expect(field.model.get(field.name)).toBeUndefined();
+
+                // FIXME: this should be reviewed once SC-2395 gets in
+                $d.trigger('hide');
+
+                expect(field.model.get(field.name)).toBeUndefined();
+            });
         });
 
         describe('_enableDuration', function() {

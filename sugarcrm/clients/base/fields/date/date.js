@@ -228,6 +228,9 @@
      * because `this.model.set()` could have been already empty thus not
      * triggering a new event and not calling the default code of
      * `bindDomChange()`.
+     *
+     * Undefined model values will not be replaced with empty string to prevent
+     * unnecessary unsaved changes warnings.
      */
     handleHideDatePicker: function() {
         var $field = this.$(this.fieldTag),
@@ -235,6 +238,10 @@
 
         if (!value) {
             $field.val(value);
+        }
+
+        if (_.isEmptyValue(value) && _.isUndefined(this.model.get(this.name))) {
+            return;
         }
 
         this.model.set(this.name, value);
