@@ -36,6 +36,13 @@
                         section: null
                     });
                 }
+        },
+            {
+                name: "RedirectConfigPage",
+                route: "NotificationCenter",
+                callback: function () {
+                    app.router.goBack();
+                }
         }
         ];
 
