@@ -713,10 +713,9 @@ class Report
         $this->clear_group_by();
         $this->create_order_by();
         $this->create_select();
-        // false means don't
+        $this->create_from();
         $this->create_where();
         $this->create_group_by(false);
-        $this->create_from();
         $this->create_query();
 
         if (empty($this->child_filter_by)) {
@@ -766,8 +765,8 @@ class Report
         $this->create_group_by();
         $this->create_order_by();
         $this->create_summary_select();
-        $this->create_where();
         $this->create_from('summary_columns');
+        $this->create_where();
         $this->create_summary_query();
         $this->execute_summary_query();
 
@@ -777,8 +776,8 @@ class Report
     {
         $this->create_order_by();
         $this->create_total_select();
-        $this->create_where();
         $this->create_from('summary_columns');
+        $this->create_where();
         $this->create_total_query();
         $this->execute_total_query();
     }
@@ -788,10 +787,10 @@ class Report
         $this->clear_group_by();
         $this->create_order_by();
         $this->create_select();
-        // false means don't
-        $this->create_where();
-        $this->create_group_by(false);
         $this->create_from();
+        $this->create_where();
+        // FIXME TY-1182: Investigate the non-use of $do_group_by
+        $this->create_group_by(false);
         $this->create_query();
         $limit = false;
         if ($this->report_type == 'tabular' && $this->enable_paging) {
@@ -1192,8 +1191,8 @@ class Report
         } else {
             $options['where_condition'] = true;
         }
-        $focus->addVisibilityWhere($where, $options);
         $focus->addVisibilityFrom($from, $options);
+        $focus->addVisibilityWhere($where, $options);
         if(!empty($from) || !empty($where)) {
             if($as_condition && strtolower(substr(ltrim($from), 0, 5)) != "inner") {
                 // check that we indeed got condition in FROM - it should not start with joins
@@ -1827,6 +1826,7 @@ class Report
             }
             $this->from .= implode(' ', $join);
         }
+        $this->from = $this->focus->addVisibilityFrom($this->from, $this->visibilityOpts);
     }
 
     protected function wrapIfNull($field)
