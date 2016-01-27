@@ -653,8 +653,8 @@ class Email extends SugarBean {
                             $note                 = new Note();
                             $note->id             = create_guid();
                             $note->new_with_id    = true; // duplicating the note with files
-                            $note->parent_id      = $this->id;
-                            $note->parent_type    = $this->module_dir;
+                            $note->email_id = $this->id;
+                            $note->email_type = $this->module_dir;
                             $note->name           = $filename;
                             $note->filename       = $filename;
                             $note->file_mime_type = $this->email2GetMime($fileLocation);
@@ -719,8 +719,8 @@ class Email extends SugarBean {
                             $note                 = new Note();
                             $note->id             = create_guid();
                             $note->new_with_id    = true; // duplicating the note with files
-                            $note->parent_id      = $this->id;
-                            $note->parent_type    = $this->module_dir;
+                            $note->email_id = $this->id;
+                            $note->email_type = $this->module_dir;
                             $note->name           = $filename;
                             $note->filename       = $filename;
                             $note->file_mime_type = $documentRevision->file_mime_type;
@@ -768,7 +768,7 @@ class Email extends SugarBean {
 
                                 // only save attachments if we're archiving or drafting
                                 if ((($this->type == 'draft') && !empty($this->id)) || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
-                                    if ($note->parent_id != $this->id) {
+                                    if ($note->email_id != $this->id) {
                                         $this->saveTempNoteAttachments($filename, $fileLocation, $mime_type, $noteGUID);
                                     }
                                 } // if
@@ -1136,8 +1136,8 @@ class Email extends SugarBean {
 	    $tmpNote = BeanFactory::newBean('Notes');
 	    $tmpNote->id = create_guid();
 	    $tmpNote->new_with_id = true;
-	    $tmpNote->parent_id = $this->id;
-	    $tmpNote->parent_type = $this->module_dir;
+	    $tmpNote->email_id = $this->id;
+	    $tmpNote->email_type = $this->module_dir;
 	    $tmpNote->name = $filename;
 	    $tmpNote->filename = $filename;
 	    $tmpNote->file_mime_type = $mimeType;
@@ -1494,7 +1494,7 @@ class Email extends SugarBean {
         }
 
         $noteArray = array();
-        $query = 'SELECT id FROM notes WHERE parent_id = ?';
+        $query = 'SELECT id FROM notes WHERE email_id = ?';
         $conn = $this->db->getConnection();
         $stmt = $conn->executeQuery($query, array($id));
 
@@ -1880,8 +1880,8 @@ class Email extends SugarBean {
 				$noteTemplate = BeanFactory::getBean('Notes', $noteId);
 				$noteTemplate->id = create_guid();
 				$noteTemplate->new_with_id = true; // duplicating the note with files
-				$noteTemplate->parent_id = $this->id;
-				$noteTemplate->parent_type = $this->module_dir;
+				$noteTemplate->email_id = $this->id;
+				$noteTemplate->email_type = $this->module_dir;
 				$noteTemplate->date_entered = '';
 				$noteTemplate->save();
 				$noteTemplate->team_id = $this->team_id;
@@ -1904,7 +1904,8 @@ class Email extends SugarBean {
     		$notes_list = array();
     		if(!empty($this->id) && !$this->new_with_id) {
     			$note = BeanFactory::newBean('Notes');
-    			$where = "notes.parent_id='{$this->id}'";
+                //FIXME: notes.email_type should be Emails
+    			$where = "notes.email_id='{$this->id}'";
     			$notes_list = $note->get_full_list("", $where, true);
     		}
     		$this->attachments = array_merge($this->attachments, $notes_list);
@@ -1933,8 +1934,8 @@ class Email extends SugarBean {
 			}
 
 			$note = BeanFactory::newBean('Notes');
-			$note->parent_id = $this->id;
-			$note->parent_type = $this->module_dir;
+			$note->email_id = $this->id;
+			$note->email_type = $this->module_dir;
 			$upload_file = new UploadFile('email_attachment'.$i);
 
 			if(empty($upload_file)) {
@@ -1957,8 +1958,8 @@ class Email extends SugarBean {
 				array_push($this->saved_attachments, $note);
 				continue;
 			}
-			$note->parent_id = $this->id;
-			$note->parent_type = 'Emails';
+			$note->email_id = $this->id;
+			$note->email_type = 'Emails';
 			$note->file_mime_type = $note->file->mime_type;
 			$note_id = $note->save();
 
@@ -1988,8 +1989,8 @@ class Email extends SugarBean {
 				$docNote->name = $docRev->getDocumentRevisionNameForDisplay();
 				$docNote->filename = $docRev->filename;
 				$docNote->description = $doc->description;
-				$docNote->parent_id = $this->id;
-				$docNote->parent_type = 'Emails';
+				$docNote->email_id = $this->id;
+				$docNote->email_type = 'Emails';
 				$docNote->file_mime_type = $docRev->file_mime_type;
 				$docId = $docNote = $docNote->save();
 
@@ -2396,7 +2397,7 @@ class Email extends SugarBean {
         $this->link_action = 'DetailView';
         ///////////////////////////////////////////////////////////////////////
         //populate attachment_image, used to display attachment icon.
-        $query =  "select 1 from notes where notes.parent_id = ? and notes.deleted = ?";
+        $query =  "select 1 from notes where notes.email_id = ? and notes.deleted = ?";
         $conn = $this->db->getConnection();
         $stmt = $conn->executeQuery($query, array($this->id, 0));
 
@@ -2677,7 +2678,8 @@ class Email extends SugarBean {
     function doesImportedEmailHaveAttachment($id)
 	{
 	   $hasAttachment = FALSE;
-	   $query = "SELECT id FROM notes where parent_id='$id' AND parent_type='Emails' AND file_mime_type is not null AND deleted=0";
+        //FIXME: notes.file_mime_type IS NOT NULL is probably not necessary
+	   $query = "SELECT id FROM notes where email_id='$id' AND email_type='Emails' AND file_mime_type is not null AND deleted=0";
 	   $rs = $this->db->limitQuery($query, 0, 1);
 	   $row = $this->db->fetchByAssoc($rs);
 	   if( !empty($row['id']) )
@@ -2726,10 +2728,12 @@ class Email extends SugarBean {
     	//If we are explicitly looking for attachments.  Do not use a distinct query as the to_addr is defined
     	//as a text which equals clob in oracle and the distinct query can not be executed correctly.
     	$addDistinctKeyword = "";
+        //FIXME: notes.email_type should be Emails
+        //FIXME: notes.filename IS NOT NULL is probably not necessary
         if( !empty($_REQUEST['attachmentsSearch']) &&  $_REQUEST['attachmentsSearch'] == 1) //1 indicates yes
-            $query['where'] .= " AND EXISTS ( SELECT id FROM notes n WHERE n.parent_id = emails.id AND n.deleted = 0 AND n.filename is not null )";
+            $query['where'] .= " AND EXISTS ( SELECT id FROM notes n WHERE n.email_id = emails.id AND n.deleted = 0 AND n.filename is not null )";
         else if( !empty($_REQUEST['attachmentsSearch']) &&  $_REQUEST['attachmentsSearch'] == 2 )
-             $query['where'] .= " AND NOT EXISTS ( SELECT id FROM notes n WHERE n.parent_id = emails.id AND n.deleted = 0 AND n.filename is not null )";
+             $query['where'] .= " AND NOT EXISTS ( SELECT id FROM notes n WHERE n.email_id = emails.id AND n.deleted = 0 AND n.filename is not null )";
 
         $this->addVisibilityWhere($query['where'], array('where_condition' => true));
 
@@ -3206,7 +3210,8 @@ eoq;
     	function cids2Links()
     	{
             if(empty($this->description_html)) return;
-    	    $q = "SELECT id, file_mime_type FROM notes WHERE parent_id = '{$this->id}' AND deleted = 0";
+            //FIXME: notes.email_type should be Emails
+    	    $q = "SELECT id, file_mime_type FROM notes WHERE email_id = '{$this->id}' AND deleted = 0";
     		$r = $this->db->query($q);
             while($a = $this->db->fetchByAssoc($r)) {
                 $this->cid2Link($a['id'], $a['file_mime_type']);

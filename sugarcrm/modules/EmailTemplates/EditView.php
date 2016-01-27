@@ -300,7 +300,9 @@ if(true) {
 	}
 	if(!empty($etid)) {
 	    $note = BeanFactory::newBean('Notes');
-	    $where = "notes.parent_id='{$etid}' AND notes.filename IS NOT NULL";
+        //FIXME: notes.email_type should be EmailTemplates
+        //FIXME: notes.filename IS NOT NULL is probably not necessary
+	    $where = "notes.email_id='{$etid}' AND notes.filename IS NOT NULL";
 	    $notes_list = $note->get_full_list("", $where,true);
 
 	    if(!isset($notes_list)) {

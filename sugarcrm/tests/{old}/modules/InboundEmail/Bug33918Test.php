@@ -102,7 +102,7 @@ class Bug33918Test extends Sugar_PHPUnit_Framework_TestCase
     function testErrorReportRetrieval()
     {   
         $noteID = uniqid();
-        $parentID = uniqid();
+        $emailId = uniqid();
         
         $note = new Note();
         $note->description = "Unit Test";
@@ -110,12 +110,12 @@ class Bug33918Test extends Sugar_PHPUnit_Framework_TestCase
         $note->subject = "Unit Test";
         $note->new_with_id = TRUE;
         $note->id = $noteID;
-        $note->parent_id = $parentID;
-        $note->parent_type = 'Emails';
+        $note->email_id = $emailId;
+        $note->email_type = 'Emails';
         $note->save();
         
         $email = new stdClass();
-        $email->id = $parentID;
+        $email->id = $emailId;
         
         $emailEmpty = new stdClass();
         $emailEmpty->id = '1234';
@@ -155,19 +155,19 @@ class Bug33918Test extends Sugar_PHPUnit_Framework_TestCase
     function testProcessBouncedGmailEmailWithIdentifierInHeader($trackerKey, $message)
     {
         $noteID = uniqid();
-        $parentID = uniqid();
+        $emailId = uniqid();
         $note = new Note();
         $note->description = $message;
         $note->file_mime_type = 'message/rfc822';
         $note->subject = "Unit Test";
         $note->new_with_id = TRUE;
         $note->id = $noteID;
-        $note->parent_id = $parentID;
-        $note->parent_type = 'Emails';
+        $note->email_id = $emailId;
+        $note->email_type = 'Emails';
         $note->save();
     
         $email = new stdClass();
-        $email->id = $parentID;
+        $email->id = $emailId;
         $email->description = $message;
         $email->raw_source = $message;
         $email->date_created = gmdate('Y-m-d H:i:s'); 
@@ -220,19 +220,19 @@ ndex.php?entryPoint=3Dimage&identifier=3D173e8e08-5826-c6a4-a17f-4be9d7c6d8=
 b4'></body></html>
 CIA;
         $noteID = uniqid();
-        $parentID = uniqid();
+        $emailId = uniqid();
         $note = new Note();
         $note->description = $message;
         $note->file_mime_type = 'message/rfc822';
         $note->subject = "Unit Test";
         $note->new_with_id = TRUE;
         $note->id = $noteID;
-        $note->parent_id = $parentID;
-        $note->parent_type = 'Emails';
+        $note->email_id = $emailId;
+        $note->email_type = 'Emails';
         $note->save();
     
         $email = new stdClass();
-        $email->id = $parentID;
+        $email->id = $emailId;
         $email->description = $message;
         $email->raw_source = $message;
         $email->date_created = gmdate('Y-m-d H:i:s'); 

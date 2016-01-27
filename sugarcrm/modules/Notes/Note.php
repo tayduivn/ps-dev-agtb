@@ -93,7 +93,7 @@ class Note extends SugarBean
     {
         global $sugar_config;
 
-        if ($this->parent_type == 'Emails') {
+        if (!empty($this->email_id)) {
             if (isset($sugar_config['email_default_delete_attachments']) &&
                 $sugar_config['email_default_delete_attachments'] == true
             ) {

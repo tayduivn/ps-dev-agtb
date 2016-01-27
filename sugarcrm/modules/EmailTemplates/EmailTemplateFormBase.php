@@ -162,14 +162,12 @@ EOQ;
 
 		///////////////////////////////////////////////////////////////////////////
 		////	ADDING NEW ATTACHMENTS
-
-		$max_files_upload = count($_FILES);
-
 		if(!empty($focus->id)) {
 			$note = BeanFactory::newBean('Notes');
-            $where = sprintf(' notes.parent_id = %s', $focus->db->quoted($focus->id));
+            //FIXME: notes.email_type should be EmailTemplates
+            $where = sprintf(' notes.email_id = %s', $focus->db->quoted($focus->id));
 			if(!empty($_REQUEST['old_id'])) { // to support duplication of email templates
-                $where .= sprintf(' OR notes.parent_id = %s', $focus->db->quoted($_REQUEST['old_id']));
+                $where .= sprintf(' OR notes.email_id = %s', $focus->db->quoted($_REQUEST['old_id']));
 			}
 			$notes_list = $note->get_full_list("", $where, true);
 		}
@@ -232,7 +230,8 @@ EOQ;
 					// dupe the file, create a new note, assign the note to the new template
 					$newNote = BeanFactory::getBean('Notes', $note->id);
 					$newNote->id = create_guid();
-					$newNote->parent_id = $focus->id;
+					$newNote->email_id = $focus->id;
+                    //FIXME: Should email_type be set to Emails or EmailTemplates ($focus->module_name)?
 					$newNote->new_with_id = true;
 					$newNote->date_modified = '';
 					$newNote->date_entered = '';
@@ -242,8 +241,10 @@ EOQ;
 				}
 				continue;
 			}
-			$note->parent_id = $focus->id;
-			$note->parent_type = 'Emails';
+			$note->email_id = $focus->id;
+            //FIXME: Is this code used for anything other than saving a template? If no, then email_type should be
+            // EmailTemplates. If yes, then email_type may be Emails or EmailTemplates depending on the use.
+			$note->email_type = 'Emails';
 			$note->file_mime_type = $note->file->mime_type;
 			$note_id = $note->save();
 			array_push($focus->saved_attachments, $note);
@@ -279,8 +280,10 @@ EOQ;
 			$docNote->name = $doc->document_name;
 			$docNote->filename = $docRev->filename;
 			$docNote->description = $doc->description;
-			$docNote->parent_id = $focus->id;
-			$docNote->parent_type = 'Emails';
+			$docNote->email_id = $focus->id;
+            //FIXME: Is this code used for anything other than saving a template? If no, then email_type should be
+            // EmailTemplates. If yes, then email_type may be Emails or EmailTemplates depending on the use.
+			$docNote->email_type = 'Emails';
 			$docNote->file_mime_type = $docRev->file_mime_type;
 			$docId = $docNote = $docNote->save();
 

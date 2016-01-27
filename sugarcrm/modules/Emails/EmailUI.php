@@ -1317,7 +1317,8 @@ eoq;
 		// $ret['uid'] is the draft Email object's GUID
 		$ret['attachments'] = array();
 
-        $q = "SELECT id, filename FROM notes WHERE parent_id = {$db->quoted($ret['uid'])} AND deleted = 0";
+        //FIXME: notes.email_type should be Emails
+        $q = "SELECT id, filename FROM notes WHERE email_id = {$db->quoted($ret['uid'])} AND deleted = 0";
 		$r = $db->query($q);
 
 		while($a = $db->fetchByAssoc($r)) {
@@ -1713,11 +1714,13 @@ EOQ;
 		///////////////////////////////////////////////////////////////////////////////
 
 		$note = BeanFactory::newBean('Notes');
-		$where = "notes.parent_id='{$focus->id}'";
+        //FIXME: notes.email_type should be Emails
+		$where = "notes.email_id='{$focus->id}'";
 		//take in account if this is from campaign and the template id is stored in the macros.
 
 		if(isset($macro_values) && isset($macro_values['email_template_id'])){
-		    $where = "notes.parent_id='{$macro_values['email_template_id']}'";
+            //FIXME: notes.email_type should be EmailTemplates
+		    $where = "notes.email_id='{$macro_values['email_template_id']}'";
 		}
 		$notes_list = $note->get_full_list("notes.name", $where, true);
 

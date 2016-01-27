@@ -600,7 +600,8 @@
             notes.fetch({
                 'filter': {
                     'filter': [
-                        {'parent_id': {'$equals': template.id}}
+                        //FIXME: email_type should be EmailTemplates
+                        {'email_id': {'$equals': template.id}}
                     ]
                 },
                 success: _.bind(function(data) {

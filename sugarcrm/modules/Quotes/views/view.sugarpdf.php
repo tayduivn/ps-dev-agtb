@@ -150,8 +150,8 @@ class QuotesViewSugarpdf extends ViewSugarpdf{
         $note->name = $mod_strings['LBL_EMAIL_ATTACHMENT'].$file_name;
 
         //save the pdf attachment note
-        $note->parent_id = $email_object->id;
-        $note->parent_type = "Emails";
+        $note->email_id = $email_object->id;
+        $note->email_type = "Emails";
         $note->save();
         $note_id = $note->id;
 

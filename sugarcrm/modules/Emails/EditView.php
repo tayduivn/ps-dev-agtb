@@ -600,7 +600,9 @@ if(!empty($focus->id) || (!empty($_REQUEST['record']) && $_REQUEST['type'] == 'f
 
         $focusId = empty($focus->id) ? $recordId : $focus->id;
         $note = BeanFactory::newBean('Notes');
-        $where = sprintf('notes.parent_id = %s AND notes.filename IS NOT NULL', $focus->db->quoted($focusId));
+        //FIXME: notes.email_type should be Emails
+        //FIXME: notes.filename IS NOT NULL is probably not necessary
+        $where = sprintf('notes.email_id = %s AND notes.filename IS NOT NULL', $focus->db->quoted($focusId));
         $notes_list = $note->get_full_list("", $where, true);
 
 	if(!isset($notes_list)) {

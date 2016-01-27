@@ -339,8 +339,8 @@ class EmailMan extends SugarBean{
                 foreach($notes as $note) {
                     list($filename, $mime_type) = $this->getFileInfo($note);
                     $noteAudit = BeanFactory::newBean('Notes');
-                    $noteAudit->parent_id = $retId;
-                    $noteAudit->parent_type = $this->ref_email->module_dir;
+                    $noteAudit->email_id = $retId;
+                    $noteAudit->email_type = $this->ref_email->module_dir;
                     $noteAudit->description = "[".$note->filename."] ".$mod_strings['LBL_ATTACHMENT_AUDIT'];
                     $noteAudit->name = $note->name;
                     $noteAudit->filename=$filename;
@@ -449,8 +449,8 @@ class EmailMan extends SugarBean{
             list($filename, $mime_type) = $this->getFileInfo($note);
             // create "audit" email without duping off the file to save on disk space
             $noteAudit              = BeanFactory::newBean('Notes');
-            $noteAudit->parent_id   = $retId;
-            $noteAudit->parent_type = $email->module_dir;
+            $noteAudit->email_id = $retId;
+            $noteAudit->email_type = $email->module_dir;
             $noteAudit->name        = $note->name;
             $noteAudit->description = "[{$note->filename}] {$mod_strings['LBL_ATTACHMENT_AUDIT']}";
             $noteAudit->filename=$filename;
@@ -644,7 +644,8 @@ class EmailMan extends SugarBean{
 				$this->current_emailtemplate->body_html=from_html($this->current_emailtemplate->body_html);
 				$this->current_emailtemplate->body=from_html($this->current_emailtemplate->body);
 
-				$q = "SELECT * FROM notes WHERE parent_id = '".$this->current_emailtemplate->id."' AND deleted = 0";
+                //FIXME: notes.email_type should be EmailTemplates
+				$q = "SELECT * FROM notes WHERE email_id = '".$this->current_emailtemplate->id."' AND deleted = 0";
 				$r = $this->db->query($q);
 
 				// cn: bug 4684 - initialize the notes array, else old data is still around for the next round

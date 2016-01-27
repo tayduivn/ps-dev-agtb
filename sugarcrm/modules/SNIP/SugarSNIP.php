@@ -752,8 +752,8 @@ class SugarSNIP
         $note->team_id = $email->team_id;
         $note->team_set_id = $email->team_set_id;
         $note->assigned_user_id = $email->assigned_user_id;
-        $note->parent_type = 'Emails';
-        $note->parent_id = $email->id;
+        $note->email_type = 'Emails';
+        $note->email_id = $email->id;
         $note->name = $note->filename;
 
         $note->save();

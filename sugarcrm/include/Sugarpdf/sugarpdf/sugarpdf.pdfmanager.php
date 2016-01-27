@@ -279,9 +279,9 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
         $note->file_mime_type = $email_object->email2GetMime('upload://'.$file_name);
         $note->name = translate('LBL_EMAIL_ATTACHMENT', "Quotes").$file_name;
 
-        $note->parent_id = $email_object->id;
-        $note->parent_type = $email_object->module_name;
-        
+        $note->email_id = $email_object->id;
+        $note->email_type = $email_object->module_name;
+
         //teams
         $note->team_id = $current_user->getPrivateTeamID();
         $noteTeamSet = BeanFactory::newBean('TeamSets');

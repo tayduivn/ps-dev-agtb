@@ -113,8 +113,8 @@ function email_layout ($layout) {
 	$note->name = $lbl_email_attachment.$file_name;
 
 	//save the pdf attachment note
-	$note->parent_id = $email_object->id;
-	$note->parent_type = "Emails";
+	$note->email_id = $email_object->id;
+	$note->email_type = "Emails";
 	$note->save();
 	$note_id = $note->id;
 

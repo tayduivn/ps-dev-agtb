@@ -3581,8 +3581,8 @@ class InboundEmail extends SugarBean {
 	function getNoteBeanForAttachment($emailId)
 	{
 	    $attach = BeanFactory::newBean('Notes');
-	    $attach->parent_id = $emailId;
-	    $attach->parent_type = 'Emails';
+	    $attach->email_id = $emailId;
+	    $attach->email_type = 'Emails';
 	    // Check whether it is from Email Module Import or from CheckInboundEmail
 	    if(isset($_REQUEST['primary_team_id']) && !empty($_REQUEST['primary_team_id'])) {
 	        $attach->team_id = $_REQUEST['primary_team_id'];
@@ -4355,8 +4355,8 @@ class InboundEmail extends SugarBean {
 		require_once('include/PHP_Compat/convert_uudecode.php');
 
 		$attach = BeanFactory::newBean('Notes');
-		$attach->parent_id = $id;
-		$attach->parent_type = 'Emails';
+		$attach->email_id = $id;
+		$attach->email_type = 'Emails';
 		$attach->team_id = $this->team_id;
 		$attach->team_set_id = $this->team_set_id;
 		//$attach
@@ -5826,7 +5826,8 @@ eoq;
 		$attachments = '';
 		if ($mbox == "sugar::Emails") {
 
-            $q = "SELECT id, filename, file_mime_type FROM notes WHERE parent_id = " .
+            //FIXME: notes.email_type should be Emails
+            $q = "SELECT id, filename, file_mime_type FROM notes WHERE email_id = " .
                 $this->db->quoted($uid) . " AND deleted = 0";
 			$r = $this->db->query($q);
 			$i = 0;

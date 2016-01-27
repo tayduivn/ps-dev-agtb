@@ -272,10 +272,10 @@ $request = InputValidation::getService();
     	break;
     case "getTemplateAttachments":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: getTemplateAttachments");
-        if(isset($_REQUEST['parent_id']) && !empty($_REQUEST['parent_id'])) {
+        if(isset($_REQUEST['email_id']) && !empty($_REQUEST['email_id'])) {
 
-
-            $where = "parent_id='{$_REQUEST['parent_id']}'";
+            //FIXME: Should notes.email_type be Emails or EmailTemplates?
+            $where = "email_id='{$_REQUEST['parent_id']}'";
             $order = "";
             $seed = BeanFactory::newBean('Notes');
             $fullList = $seed->get_full_list($order, $where, '');
