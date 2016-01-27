@@ -38,9 +38,9 @@ class CalDavApi extends SugarApi
      * @var array
      */
     protected $contentValuesList = array(
-        'module'=>'getSupportedCalDavModules',
-        'interval'=>'getOldestSyncDates',
-        'call_direction'=>'getCallDirections',
+        'module' => 'getSupportedCalDavModules',
+        'interval' => 'getOldestSyncDates',
+        'call_direction' => 'getCallDirections',
     );
 
     public function registerApiRest()
@@ -127,11 +127,11 @@ class CalDavApi extends SugarApi
      */
     public function adminConfigSave($values)
     {
-        if (!empty($values['update'])) {
+        if (!empty($values)) {
             $cfg = $this->getConfigurator();
 
-            foreach ($values['update'] as $val) {
-                $cfg->config['default_' . $val] = $values[$val];
+            foreach ($values as $key => $val) {
+                $cfg->config['default_' . $key] = $val;
             }
             // set new config values
             $cfg->handleOverride();
@@ -175,7 +175,6 @@ class CalDavApi extends SugarApi
         $values = $this->checkArgs($args);
 
         $this->userConfigUpdate($values);
-        $this->userConfigDelete($values);
 
         return $this->userConfigGet($api, $args);
     }
@@ -189,26 +188,9 @@ class CalDavApi extends SugarApi
     {
         global $current_user;
 
-        if (!empty($values['update'])) {
-            foreach ($values['update'] as $val) {
-                $current_user->setPreference($val, $values[$val]);
-            }
-            $current_user->save();
-        }
-    }
-
-    /**
-     * User config delete/set default CalDav settings
-     *
-     * @param array $values then returned checkArgs
-     */
-    public function userConfigDelete($values)
-    {
-        global $current_user;
-
-        if (!empty($values['delete'])) {
-            foreach ($values['delete'] as $val) {
-                $current_user->removePreference($val);
+        if (!empty($values)) {
+            foreach ($values as $key => $val) {
+                $current_user->setPreference($key, $val);
             }
             $current_user->save();
         }
@@ -257,18 +239,11 @@ class CalDavApi extends SugarApi
     public function checkArgs($args)
     {
         $out = $this->getDefaultsValues();
-        $out['update'] = array();
-        $out['delete'] = array();
 
         foreach ($this->valuesList as $valueName) {
             if (isset($args['caldav_' . $valueName])) {
                 $values = $this->{$this->contentValuesList[$valueName]}();
                 if (isset($values[$args['caldav_' . $valueName]])) {
-                    if ($out['caldav_' . $valueName] != $args['caldav_' . $valueName]) {
-                        $out['update'][] = 'caldav_' . $valueName;
-                    } else {
-                        $out['delete'][] = 'caldav_' . $valueName;
-                    }
                     $out['caldav_' . $valueName] = $args['caldav_' . $valueName];
                 }
             }
