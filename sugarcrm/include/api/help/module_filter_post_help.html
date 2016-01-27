@@ -18,8 +18,9 @@
 <h2>Summary</h2>
 <span class="lead">
     This endpoint will return a set of records filtered by an expression. The filter can be applied to multiple fields
-    and have multiple and/or conditions in it. Alternatively, you may use an existing filter by specifying its id; however,
-    if both a filter definition and a filter id are passed, the definition will override the id. Care will need to be
+    and have multiple and/or conditions in it. Alternatively, you may use an existing filter by specifying its id.
+    If both a filter definition and a filter id are passed, currently the definition will override the id, <strong>but
+    please do not rely on this behavior as it is subject to change</strong>. Care will need to be
     taken to make sure that any filters used have appropriate indexes on the server side otherwise the runtime of the
     endpoint will be very long. Related fields can be searched by specifying the field name as:
     "link_name.remote_field", so if you wished to search the Accounts module by a related member account you would
@@ -59,7 +60,8 @@
             String
         </td>
         <td>
-            Identifier for a preexisting filter. Overwritten if filter is set.
+            Identifier for a preexisting filter.
+            Overwritten if filter is set (but please do not depend on this behavior).
         </td>
         <td>
             False

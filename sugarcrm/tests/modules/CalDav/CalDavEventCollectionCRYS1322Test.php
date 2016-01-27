@@ -27,6 +27,8 @@ class CalDavEventCollectionCRYS1322Test extends Sugar_PHPUnit_Framework_TestCase
         BeanFactory::setBeanClass('Users', 'UserCRYS1322');
         BeanFactory::setBeanClass('Contacts', 'ContactCRYS1322');
         BeanFactory::setBeanClass('EmailAddresses', 'EmailAddressCRYS1322');
+        $GLOBALS['current_user'] = new UserCRYS1322();
+        $GLOBALS['current_user']->retrieve('_user_id_');
     }
 
     /**
@@ -34,6 +36,7 @@ class CalDavEventCollectionCRYS1322Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
+        $GLOBALS['current_user'] = null;
         BeanFactory::setBeanClass('Meetings');
         BeanFactory::setBeanClass('Users');
         BeanFactory::setBeanClass('Contacts');
@@ -87,15 +90,17 @@ class CalDavEventCollectionCRYS1322Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains('X-SUGAR-NAME:Meetings', $result);
 
         if ($emailInvitee) {
-            $this->assertContains("ATTENDEE;PARTSTAT=NEEDS-ACTION;CN=Contact Test2;RSVP=TRUE:mailto:attendee@t\r\n est.com", $result);
+            $this->assertContains("ATTENDEE;CN=Contact Test2;RSVP=TRUE:mailto:attendee@test.com", $result);
         } else {
-            $this->assertContains('ATTENDEE;PARTSTAT=NEEDS-ACTION;CN=Contact Test2:mailto:attendee@test.com', $result);
+            $this->assertContains('ATTENDEE;CN=Contact Test2:mailto:attendee@test.com', $result);
+
         }
 
+        $this->assertContains("ATTENDEE;PARTSTAT=ACCEPTED;CN=User Test1;ROLE=CHAIR:mailto:organizer@test.c\r\n om", $result);
         if ($organizerEmail) {
-            $this->assertContains('ORGANIZER;PARTSTAT=NEEDS-ACTION;CN=User Test1:mailto:' . $organizerEmail, $result);
+            $this->assertContains('ORGANIZER;CN=User Test1:mailto:' . $organizerEmail, $result);
         } else {
-            $this->assertContains('ORGANIZER;PARTSTAT=NEEDS-ACTION;CN=User Test1:mailto:organizer@test.com', $result);
+            $this->assertContains("ORGANIZER;CN=User Test1:mailto:organizer@test.com", $result);
         }
     }
 }
@@ -110,7 +115,7 @@ class CalDavEventCollectionMeetingCRYS1322 extends \Meeting
             'name' => 'Meeting1102415055',
             'date_entered' => '2015-12-16 13:34:54',
             'date_modified' => '2015-12-16 13:34:54',
-            'modified_user_id' => '531fc10a-78e6-157a-cced-567168676bd3',
+            'modified_user_id' => '_user_id_',
             'created_by' => '_user_id_',
             'description' => null,
             'deleted' => '0',
@@ -134,7 +139,7 @@ class CalDavEventCollectionMeetingCRYS1322 extends \Meeting
             'repeat_count' => null,
             'repeat_parent_id' => null,
             'recurring_source' => null,
-            'assigned_user_id' => '531fc10a-78e6-157a-cced-567168676bd3',
+            'assigned_user_id' => '_user_id_',
         ));
 
         $this->id = $id;
@@ -244,5 +249,3 @@ class EmailAddressCRYS1322 extends EmailAddress
         return 'attendee@test.com';
     }
 }
-
-

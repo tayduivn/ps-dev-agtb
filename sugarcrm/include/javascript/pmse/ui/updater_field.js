@@ -216,7 +216,10 @@ UpdaterField.prototype.setOptions = function (settings) {
             case 'team_list':
                 currentSetting.disabledAppendOption = !this.hasCheckbox;
                 aux = this.parent.getField('act_field_module').getSelectedData();
-                currentSetting.disableTeamSelection = !App.metadata.getModule(aux.module).isTBAEnabled;
+                var moduleData = App.metadata.getModule(aux.module_name);
+                currentSetting.disableTeamSelection = !_.isUndefined(moduleData) && !_.isUndefined(moduleData.isTBAEnabled)
+                    ? !moduleData.isTBAEnabled
+                    : true;
                 newOption = new TeamUpdaterItem(currentSetting);
                 break;
             default:
@@ -1759,7 +1762,10 @@ CheckboxUpdaterItem.prototype.constructor = CheckboxUpdaterItem;
 CheckboxUpdaterItem.prototype.type = "CheckboxUpdaterItem";
 
 CheckboxUpdaterItem.prototype.isValid = function () {
-    return this._required ? !!field.getValue() : true;
+    // In contrast to the other UpdaterItem classes, it doesn't make sense to apply a validation method to a checkbox,
+    // since if it is checked its value will be TRUE, otherwise its value will be FALSE. Those are all the values that
+    // the checkbox can take, therefore, in CHECKED state or UNCHECKED state it always will meet the Required Field validation.
+    return true;
 };
 
 CheckboxUpdaterItem.prototype.setValue = function (value) {

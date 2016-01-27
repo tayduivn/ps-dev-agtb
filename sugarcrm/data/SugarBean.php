@@ -3240,9 +3240,97 @@ class SugarBean
      */
     function fetchFromQuery(SugarQuery $query, array $fields = array(), array $options = array())
     {
-        $queryFields = array();
-        $secondaryFields = array();
         $beans = array();
+
+        list($queryFields, $additionalQueryFields, $secondaryFields) = $this->getQueryFields($query, $fields, $options);
+
+        $query->select($queryFields);
+
+        if ($this->queryProducesDuplicates($query)) {
+            $this->fixQuery($query);
+        }
+
+        $this->call_custom_logic('before_fetch_query', array('query' => $query, 'fields' => $fields));
+
+        $rows = $query->execute();
+
+        $additionalRows = $this->fetchFromAdditionalQuery($additionalQueryFields, $rows);
+
+        $rawRows = array();
+        foreach ($rows as $row) {
+            if (isset($options['beanList'][$row['id']])) {
+                $bean = $options['beanList'][$row['id']];
+            } else {
+                $bean = $this->getCleanCopy();
+            }
+            if (count($additionalRows) && array_key_exists($row['id'], $additionalRows)) {
+                $row = array_merge($row, $additionalRows[$row['id']]);
+            }
+            //true parameter below tells populate to perform conversions on row data
+            $bean->fetched_row = $bean->populateFromRow($row, true);
+            $this->populateFetchedEmail();
+            $bean->call_custom_logic("process_record");
+            $beans[$bean->id] = $bean;
+            $rawRows[$bean->id] = $row;
+        }
+
+        if (!isset($options['skipSecondaryQuery'])
+            || $options['skipSecondaryQuery'] == false) {
+            foreach ($secondaryFields as $fieldName => $sugarField) {
+                $sugarField->runSecondaryQuery($fieldName, $this, $beans);
+            }
+        }
+
+        $this->call_custom_logic('after_fetch_query', array('beans' => $beans, 'fields' => $fields, 'rows' => $rawRows));
+
+        if (!empty($options['compensateDistinct'])) {
+            $beans['_distinctCompensation'] = $this->computeDistinctCompensation($rows, $beans);
+        }
+
+        if (!empty($options['returnRawRows'])) {
+            $beans['_rows'] = $rawRows;
+        }
+
+        return $beans;
+    }
+
+    /**
+     * @param array $additionalQueryFields
+     * @param array $rows
+     * @return array
+     */
+    protected function fetchFromAdditionalQuery(array $additionalQueryFields, array $rows)
+    {
+        $additionalRows = array();
+        // run additional query if needed
+        if (count($additionalQueryFields)) {
+            $ids = array();
+            foreach ($rows as $row) {
+                $ids[] = $row['id'];
+            }
+            $additionalQuery = new SugarQuery();
+            $additionalQuery->select(array_merge(array('id'), $additionalQueryFields));
+            $additionalQuery->from($this);
+            $additionalQuery->where()->in('id', $ids);
+            $result = $additionalQuery->execute();
+            foreach ($result as $row) {
+                $additionalRows[$row['id']] = $row;
+            }
+        }
+        return $additionalRows;
+    }
+
+    /**
+     * @param SugarQuery $query
+     * @param array $fields Optional
+     * @param array $options Optional
+     * @return array
+     */
+    protected function getQueryFields(SugarQuery $query, array $fields = array(), array $options = array())
+    {
+        $queryFields = array();
+        $additionalQueryFields = array();
+        $secondaryFields = array();
 
         $sfh = new SugarFieldHandler();
 
@@ -3292,7 +3380,6 @@ class SugarBean
                 // Non-db that isn't a relate or db-concat field.
                 continue;
             }
-            $queryFields[$field] = $field;
 
             // Disable distinct on text type fields, since Oracle doesn't
             // allow distinct selects on CLOB types
@@ -3300,7 +3387,17 @@ class SugarBean
             $isTextType = $fieldType ? $this->db->isTextType($fieldType) : false;
             if ($isTextType) {
                 $query->distinct(false);
+                if (count($query->group_by)) {
+                    // grouping by text fields may cause problems, at least in DB2
+                    $additionalQueryFields[$field] = $field;
+                    if (isset($query->select->select[$field])) {
+                        unset($query->select->select[$field]);
+                    }
+                    continue;
+                }
             }
+
+            $queryFields[$field] = $field;
         }
 
         foreach ($this->field_defs as $field => $fieldDef) {
@@ -3314,49 +3411,9 @@ class SugarBean
             $queryFields['assigned_user_id'] = 'assigned_user_id';
         }
 
-        $query->select($queryFields);
-
-        if ($this->queryProducesDuplicates($query)) {
-            $this->fixQuery($query);
-        }
-
-        $this->call_custom_logic('before_fetch_query', array('query' => $query, 'fields' => $fields));
-
-        $rows = $query->execute();
-        $rawRows = array();
-        foreach ($rows as $row) {
-            if (isset($options['beanList'][$row['id']])) {
-                $bean = $options['beanList'][$row['id']];
-            } else {
-                $bean = $this->getCleanCopy();
-            }
-            //true parameter below tells populate to perform conversions on row data
-            $bean->fetched_row = $bean->populateFromRow($row, true);
-            $bean->populateFetchedEmail();
-            $bean->call_custom_logic("process_record");
-            $beans[$bean->id] = $bean;
-            $rawRows[$bean->id] = $row;
-        }
-
-        if (!isset($options['skipSecondaryQuery'])
-            || $options['skipSecondaryQuery'] == false) {
-            foreach ($secondaryFields as $fieldName => $sugarField) {
-                $sugarField->runSecondaryQuery($fieldName, $this, $beans);
-            }
-        }
-
-        $this->call_custom_logic('after_fetch_query', array('beans' => $beans, 'fields' => $fields, 'rows' => $rawRows));
-
-        if (!empty($options['compensateDistinct'])) {
-            $beans['_distinctCompensation'] = $this->computeDistinctCompensation($rows, $beans);
-        }
-
-        if (!empty($options['returnRawRows'])) {
-            $beans['_rows'] = $rawRows;
-        }
-
-        return $beans;
+        return array($queryFields, $additionalQueryFields, $secondaryFields);
     }
+
 
     protected function queryProducesDuplicates(SugarQuery $query)
     {

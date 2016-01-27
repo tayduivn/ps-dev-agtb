@@ -254,7 +254,7 @@
     _render: function () {
         var self = this;
 
-        if (_.isEmpty(this.value) && this.action == 'edit') {
+        if (_.isEmpty(this.value) && this.action == 'edit' && this._checkAccessToAction(this.action)) {
             // Leave an empty team set on list view in case of cancel.
             this.value = app.utils.deepCopy(app.user.getPreference('default_teams'));
             this._updateAndTriggerChange(this.value);
