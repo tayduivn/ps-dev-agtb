@@ -1230,6 +1230,25 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
+     * Check if invite was canceled for user
+     * @param SugarBean $bean
+     * @param null $emailInvitee
+     *
+     * @return bool
+     */
+    public static function isInviteCanceled(SugarBean $bean, $emailInvitee = null)
+    {
+        $event = static::prepareForInvite($bean, $emailInvitee);
+        if ($event) {
+            $collection = new static();
+            $collection->setData($event);
+            $vCalendarEvent = $collection->getVCalendar();
+            return $vCalendarEvent->METHOD == 'CANCEL';
+        }
+        return false;
+    }
+
+    /**
      * Create text representation of event for email
      * @param SugarBean $bean
      * @param string $inviteeEmail
@@ -1249,32 +1268,42 @@ class CalDavEventCollection extends SugarBean
                     $adapter->export($exportData, $collection);
                 }
                 $vCalendarEvent = $collection->getVCalendar();
-                $vCalendarEvent->add($vCalendarEvent->createProperty('METHOD', 'REQUEST'));
 
                 /** @var Structures\Event $event */
                 $event = $collection->getParent();
                 $event->getObject()->add($vCalendarEvent->createProperty('X-SUGAR-ID', $bean->id));
                 $event->getObject()->add($vCalendarEvent->createProperty('X-SUGAR-NAME', $bean->module_name));
 
+                $organizer = $event->getOrganizer();
+                if (!$organizer) {
+                    $tempOrganizer = \BeanFactory::getBean('Users', $bean->created_by);
+                    $email = $tempOrganizer->emailAddress->getPrimaryAddress($tempOrganizer);
+                    $organizer = new Structures\Participant();
+                    $organizer->setEmail($email);
+                    $event->setOrganizer($organizer);
+                }
+
                 if ($inviteeEmail) {
                     $participants = $event->getParticipants();
+                    $participants[] = $organizer;
+                    $found = false;
                     foreach ($participants as $participant) {
                         if ($participant->getEmail() === $inviteeEmail) {
                             $participant->setRSVP('TRUE');
+                            $found = true;
                             break;
                         }
+                    }
+
+                    if ($found) {
+                        $vCalendarEvent->add($vCalendarEvent->createProperty('METHOD', 'REQUEST'));
+                    } else {
+                        $vCalendarEvent->add($vCalendarEvent->createProperty('METHOD', 'CANCEL'));
                     }
                 }
 
                 if ($organizerEmail) {
-                    $organizer = $event->getOrganizer();
-                    if ($organizer) {
-                        $organizer->setEmail($organizerEmail);
-                    } else {
-                        $organizer = new Structures\Participant();
-                        $organizer->setEmail($organizerEmail);
-                        $event->setOrganizer($organizer);
-                    }
+                    $organizer->setEmail($organizerEmail);
                 }
 
                 return $vCalendarEvent->serialize();

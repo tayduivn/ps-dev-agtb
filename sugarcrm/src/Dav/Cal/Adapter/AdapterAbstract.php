@@ -436,6 +436,9 @@ abstract class AdapterAbstract implements AdapterInterface
             return static::RESTORE;
         }
         if ($isChanged) {
+            if (!$bean->repeat_parent_id) {
+                $bean->send_invites = true;
+            }
             return static::SAVE;
         }
         return static::NOTHING;
