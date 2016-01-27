@@ -42,6 +42,14 @@ else if ( ! empty($_REQUEST['lead_id'])) {
         die("The lead id doesn't exist");
     }
     $current_entity = $result;
+} elseif (!empty($_REQUEST['addressee_id'])) {
+    $result = BeanFactory::retrieveBean('Addresses', $_REQUEST['addressee_id'], array('disable_row_level_security' => true));
+    if(empty($result)) {
+        session_destroy();
+        sugar_cleanup();
+        die("The addressee id doesn't exist");
+    }
+    $current_entity = $result;
 }
 
 $service = new CalendarEvents();
