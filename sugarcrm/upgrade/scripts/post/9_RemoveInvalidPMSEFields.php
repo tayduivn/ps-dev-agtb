@@ -23,26 +23,6 @@ class SugarUpgradeRemoveInvalidPMSEFields extends UpgradeScript
     public $order = 9400;
     public $type = self::UPGRADE_CUSTOM;
 
-    /**
-     * List of validation types needed when checking fields
-     * @var array
-     */
-    protected $validationTypes = array(
-        'ADD_RELATED_RECORD' => 'AC',
-        'CHANGE_FIELD' => 'CF',
-        'BUSINESS_RULE' => 'BR',
-    );
-
-    /**
-     * Returns the correct validation type code for a given key
-     * @param string $key The key for the validation types array
-     * @return string
-     */
-    protected function getValidationType($key)
-    {
-        return isset($this->validationTypes[$key]) ? $this->validationTypes[$key] : '';
-    }
-
     public function run()
     {
         // The supported upgrade for this is to 7.6.2
@@ -58,19 +38,14 @@ class SugarUpgradeRemoveInvalidPMSEFields extends UpgradeScript
 
             // build the SQL now
             $sql = "SELECT
-                        ad.id, ad.act_fields, ad.act_field_module,
-                        pd.pro_module,
-                        a.act_task_type, a.act_script_type
+                        ad.id, ad.act_fields, ad.act_field_module, pd.pro_module
                     FROM
-                        pmse_bpm_activity_definition ad
-                        INNER JOIN
-                            pmse_bpmn_activity a on ad.id = a.id
-                        INNER JOIN
-                            pmse_bpm_process_definition pd ON ad.pro_id = pd.id
+                        pmse_bpm_activity_definition ad 
+                        INNER JOIN 
+                            pmse_bpm_process_definition pd ON pd.id = ad.pro_id
                     WHERE 
                         $afmNotEmptyString
                         AND $afNotEmptyString
-                        AND a.act_task_type = 'SCRIPTTASK'
                         AND pd.deleted = 0
                         AND ad.deleted = 0";
             $result = $db->query($sql);
@@ -78,31 +53,12 @@ class SugarUpgradeRemoveInvalidPMSEFields extends UpgradeScript
                 // This is the content in the database, as JSON
                 $act_fields = $row['act_fields'];
                 if ($act_fields) {
-                    // Certain tasks require special field validation, so this
-                    // handles that
-                    $validationType = $this->getValidationType($row['act_script_type']);
-
                     // This method expects a row of data as thought from an import
                     // and depends on act_fields and act_field_module
-                    $new = PMSEEngineUtils::sanitizeImportActivityFields($row, $row['pro_module'], $validationType);
+                    $new = PMSEEngineUtils::sanitizeImportActivityFields($row, $row['pro_module']);
 
                     // Only update if there was an actual change
                     if ($new != $act_fields) {
-                        // Build a log message for parsing and writing
-                        $lMessage =  "Changes were found to PMSE activity fields:\n";
-                        $lMessage .= "Before:\n%s\nAfter:\n%s\nScript Type: %s\nValidation Type: %s";
-
-                        // Log this message now
-                        $this->log(
-                            sprintf(
-                                $lMessage,
-                                $act_fields,
-                                $new,
-                                $row['act_script_type'],
-                                $validationType
-                            )
-                        );
-
                         $new = $db->quoted($new);
                         $id = $db->quoted($row['id']);
 
