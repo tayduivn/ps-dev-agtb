@@ -1230,11 +1230,11 @@ class CalDavEventCollection extends SugarBean
     /**
      * Create text representation of event for email
      * @param SugarBean $bean
-     * @param string $emailInvitee
+     * @param string $inviteeEmail
      * @param string|null $organizerEmail
      * @return string
      */
-    public static function prepareForInvite(SugarBean $bean, $emailInvitee = null, $organizerEmail = null)
+    public static function prepareForInvite(SugarBean $bean, $inviteeEmail = null, $organizerEmail = null)
     {
         $collection = new static();
         $adapterFactory = $collection->getAdapterFactory();
@@ -1254,10 +1254,10 @@ class CalDavEventCollection extends SugarBean
                 $event->getObject()->add($vCalendarEvent->createProperty('X-SUGAR-ID', $bean->id));
                 $event->getObject()->add($vCalendarEvent->createProperty('X-SUGAR-NAME', $bean->module_name));
 
-                if ($emailInvitee) {
+                if ($inviteeEmail) {
                     $participants = $event->getParticipants();
                     foreach ($participants as $participant) {
-                        if ($participant->getEmail() === $emailInvitee) {
+                        if ($participant->getEmail() === $inviteeEmail) {
                             $participant->setRSVP('TRUE');
                             break;
                         }
@@ -1265,7 +1265,14 @@ class CalDavEventCollection extends SugarBean
                 }
 
                 if ($organizerEmail) {
-                    $event->getOrganizer()->setEmail($organizerEmail);
+                    $organizer = $event->getOrganizer();
+                    if ($organizer) {
+                        $organizer->setEmail($organizerEmail);
+                    } else {
+                        $organizer = new Structures\Participant();
+                        $organizer->setEmail($organizerEmail);
+                        $event->setOrganizer($organizer);
+                    }
                 }
 
                 return $vCalendarEvent->serialize();
@@ -1580,10 +1587,8 @@ class CalDavEventCollection extends SugarBean
 
         if ($oldCollection) {
             $recurrenceIds = array_merge(
-                // looking for custom events which should become base
-                $oldCollection->getCustomizedChildrenRecurrenceIds(),
-                // looking for deleted events which should become base
-                $oldCollection->getDeletedChildrenRecurrenceIds()
+                $oldCollection->getCustomizedChildrenRecurrenceIds(), // looking for custom events which should become base
+                $oldCollection->getDeletedChildrenRecurrenceIds() // looking for deleted events which should become base
             );
             foreach ($recurrenceIds as $recurrenceId) {
                 $currentChild = $this->getChild($recurrenceId);
