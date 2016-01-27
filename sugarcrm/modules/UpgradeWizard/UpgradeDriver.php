@@ -1714,6 +1714,8 @@ abstract class UpgradeDriver
      */
     public function saveConfig()
     {
+        global $sugar_version;
+
         //read the existing configs from the file config.php & config_override.php
         list($oldConfig, $overrideConfig) = $this->readConfigFiles();
 
@@ -1722,7 +1724,7 @@ abstract class UpgradeDriver
 
         //write to the file "config.php"
         ksort($configs);
-        return write_array_to_file("sugar_config", $configs, $this->context['source_dir'] . "/config.php");
+        return rebuildConfigFile($configs, $sugar_version);
     }
 
     protected $stages = array('unpack', 'healthcheck', 'pre', 'commit', 'post', 'cleanup');

@@ -468,10 +468,14 @@
 
                     // Append search results to the dropdown list
                     collection.each(function(model, index) {
-                        var $tagListOption, data, name, htmlName;
+                        var $tagListOption, data, escapedSearchTerm, name, secureName, htmlName;
 
-                        name = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model));
-                        htmlName = name.replace(new RegExp('(' + searchTerm + ')', 'ig'), function($1, match) {
+                        name = app.utils.getRecordName(model);
+                        // secureName used as htmlName to insert into template without escaping ("triple-stash")
+                        secureName = Handlebars.Utils.escapeExpression(name).trim();
+                        // searchTerm can contains special symbols that escaped in secureName
+                        escapedSearchTerm = Handlebars.Utils.escapeExpression(searchTerm).trim();
+                        htmlName = secureName.replace(new RegExp('(' + escapedSearchTerm + ')', 'ig'), function($1, match) {
                             return '<strong>' + match + '</strong>';
                         });
 

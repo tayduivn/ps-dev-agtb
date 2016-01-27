@@ -92,10 +92,18 @@ $viewdefs['Contacts']['base']['layout']['subpanels'] = array(
         ),
         array(
             'layout' => 'subpanel',
-            'label' => 'LBL_QUOTES_SUBPANEL_TITLE',
+            'label' => 'LBL_QUOTES_SHIP_TO',
             'context' => array(
                 'link' => 'quotes',
-                'ignore_role' => 1,
+                'ignore_role' => 0,
+            ),
+        ),
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_QUOTES_BILL_TO',
+            'context' => array(
+                'link' => 'billing_quotes',
+                'ignore_role' => 0
             ),
         ),
         array(

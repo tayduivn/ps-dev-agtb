@@ -439,9 +439,23 @@
             }});
         }, function() {
             self.primaryRecord.trigger('mergeduplicates:primary:merged');
+            self.hideMainPreviewPanel();
         });
     },
 
+    /**
+     * Hide the preview panel, from the main drawer
+     */
+    hideMainPreviewPanel: function() {
+        //Get main drawer
+        var $main_drawer = app.$contentEl.children().first();
+        if (!_.isUndefined($main_drawer) && $main_drawer.hasClass('drawer inactive')) {
+            var layout = $main_drawer.find('.sidebar-content');
+            layout.find('.side-pane').addClass('active');
+            layout.find('.dashboard-pane').show();
+            layout.find('.preview-pane').removeClass('active');
+        }
+    },
     /**
      * @inheritdoc
      *
