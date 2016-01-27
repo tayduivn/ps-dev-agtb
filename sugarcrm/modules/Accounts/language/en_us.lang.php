@@ -20,6 +20,8 @@ $mod_strings = array (
 	'LBL_CONTRACTS_SUBPANEL_TITLE'=>'Contracts',
     'LBL_RLI_SUBPANEL_TITLE' => 'Revenue Line Items',
 	'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
+    'LBL_QUOTES_BILLTO' => 'Quotes (Bill To)',
+    'LBL_QUOTES_SHIPTO' => 'Quotes (Ship To)',
 	'LNK_ACCOUNT_REPORTS' => 'View Account Reports',
     'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
 	// Dashlet Categories

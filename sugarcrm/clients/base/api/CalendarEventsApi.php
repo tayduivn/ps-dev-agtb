@@ -175,9 +175,6 @@ class CalendarEventsApi extends ModuleApi
         } else {
             // adjust start date as necessary if being updated to a recurring event
             $this->adjustStartDate($args);
-            if (!empty($args['repeat_type'])) {
-                $bean->updateAllChildren = true;
-            }
             $updateResult = $this->updateRecord($api, $args);
 
             // check if it changed from a non-recurring to recurring & generate events if necessary

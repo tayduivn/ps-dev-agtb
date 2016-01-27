@@ -33,11 +33,11 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
             ),
         ),
         array(
-          'layout' => 'subpanel',
-          'label' => 'LBL_NOTES_SUBPANEL_TITLE',
-          'context' => array(
-              'link' => 'notes',
-          ),
+            'layout' => 'subpanel',
+            'label' => 'LBL_NOTES_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'notes',
+            ),
         ),
         array(
             'layout' => 'subpanel',
@@ -93,7 +93,7 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
         ),
         //BEGIN SUGARCRM flav=ent ONLY
         array(
-          'layout' => 'subpanel',
+            'layout' => 'subpanel',
             'label' => 'LBL_RLI_SUBPANEL_TITLE',
             'override_subpanel_list_view' => 'subpanel-for-accounts',
             'context' => array(
@@ -117,11 +117,20 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
         ),
         array(
             'layout' => 'subpanel',
-            'label' => 'LBL_QUOTES_SUBPANEL_TITLE',
+            'label' => 'LBL_QUOTES_BILLTO',
             'override_subpanel_list_view' => 'subpanel-for-accounts',
             'context' => array(
                 'link' => 'quotes',
-                'ignore_role' => 1,
+                'ignore_role' => 0
+            ),
+        ),
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_QUOTES_SHIPTO',
+            'override_subpanel_list_view' => 'subpanel-for-accounts',
+            'context' => array(
+                'link' => 'quotes_shipto',
+                'ignore_role' => 0
             ),
         ),
         array(

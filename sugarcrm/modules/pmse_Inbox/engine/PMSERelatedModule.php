@@ -135,6 +135,8 @@ class PMSERelatedModule
                     'value' => $link,
                     'text' => $pval,
                     'module' => $moduleLabel,
+                    'module_label' => $moduleLabel, // Added so that module can be deprecated
+                    'module_name' => $relatedModule, // Added so that we have access to the module name
                     'relationship' => $def['relationship'],
                 );
                 if ($relType == 'one') {

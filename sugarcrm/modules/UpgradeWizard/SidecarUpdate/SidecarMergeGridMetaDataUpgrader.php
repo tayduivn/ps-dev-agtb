@@ -642,12 +642,7 @@ END;
         $customFields = array();
         foreach($this->legacyViewdefs as $lViewtype => $data) {
             // We will need a parser no matter what
-            if($this->sidecar) {
-                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, $this->package, null, $this->client);
-            } else {
-                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, $this->package);
-            }
-
+            $legacyParser = $this->getLegacyParser($lViewtype);
             // Step 1, handle tabDef changes
             $hasTabDefCustomizations = $this->hasTabDefCustomizations($lViewtype);
 
@@ -839,9 +834,9 @@ END;
             $origFields = array();
             // replace viewdefs with defaults, since parser's viewdefs can be already customized by other parts
             // of the upgrade
-            $parser->_viewdefs['panels'] = $parser->convertFromCanonicalForm($defaultDefs['panels'], $parser->_fielddefs);
+            $parser->_viewdefs['panels'] = $parser->convertFromCanonicalForm($defaultDefs['panels']);
             // get field list
-            $origData = $parser->getFieldsFromPanels($defaultDefs['panels'], $parser->_fielddefs);
+            $origData = $parser->getFieldsFromPanels($defaultDefs['panels']);
             // Go through existing fields and remove those not in the new data
             foreach($origData as $fname => $fielddef) {
                 if (!$this->isValidField($fname)) {
@@ -1140,21 +1135,17 @@ END;
     protected function addNewFieldsToLayout(array $newDefs) {
         $defaultDefs = $this->loadDefaultMetadata();
         $parser = ParserFactory::getParser($this->viewtype, $this->module, $this->package, null, $this->client);
-        $defaultFields = $parser->getFieldsFromPanels($defaultDefs['panels'], $parser->_fielddefs);
-        $currentFields = $parser->getFieldsFromPanels($newDefs['panels'], $parser->_fielddefs);
+        $defaultFields = $parser->getFieldsFromPanels($defaultDefs['panels']);
+        $currentFields = $parser->getFieldsFromPanels($newDefs['panels']);
         $origFields = array();
         foreach($this->originalLegacyViewdefs as $lViewtype => $data) {
             // We will need a parser no matter what
-            if($this->sidecar) {
-                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, $this->package, null, $this->client);
-            } else {
-                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, $this->package);
-            }
+            $legacyParser = $this->getLegacyParser($lViewtype);
             // replace viewdefs with defaults, since parser's viewdefs can be already customized by other parts
             // of the upgrade
-            $legacyParser->_viewdefs['panels'] = $legacyParser->convertFromCanonicalForm($data['panels'], $legacyParser->_fielddefs);
+            $legacyParser->_viewdefs['panels'] = $legacyParser->convertFromCanonicalForm($data['panels']);
             // get field list
-            $origData = $legacyParser->getFieldsFromPanels($data['panels'], $legacyParser->_fielddefs);
+            $origData = $legacyParser->getFieldsFromPanels($data['panels']);
             $origFields = array_merge($origFields, $origData);
         }
         //Add fields always defaults to the bottom of the first panel.
@@ -1322,5 +1313,25 @@ END;
 
         $data['panels'] = $panels;
         return $data;
+    }
+
+    /**
+     * Returns parser for parsing legacy layout
+     *
+     * @param string $lViewtype
+     * @return AbstractMetaDataParser
+     */
+    protected function getLegacyParser($lViewtype)
+    {
+        if ($this->sidecar) {
+            $parser = ParserFactory::getParser($lViewtype, $this->module, $this->package, null, $this->client);
+        } elseif ($this->client == 'portal') {
+            require_once 'modules/ModuleBuilder/parsers/parser.portallupgrade.php';
+            $parser = new ParserPortalUpgrade();
+        } else {
+            $parser = ParserFactory::getParser($lViewtype, $this->module, $this->package);
+        }
+
+        return $parser;
     }
 }

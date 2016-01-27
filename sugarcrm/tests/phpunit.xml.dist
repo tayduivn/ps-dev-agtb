@@ -182,6 +182,8 @@
         </testsuite>
         <testsuite name="NotificationCenter">
             <directory>./src/Notification</directory>
+            <directory>./src/Socket</directory>
+            <directory>./src/Trigger</directory>
             <directory>./modules/NotificationCenter</directory>
             <directory>./modules/CarrierSugar</directory>
             <directory>./modules/CarrierEmail</directory>
@@ -190,6 +192,11 @@
             <file>./modules/Administration/controllerCRYS1262Test.php</file>
             <file>./modules/Calls/CallEmitterTest.php</file>
             <file>./modules/Meetings/MeetingEmitterTest.php</file>
+        </testsuite>
+        <testsuite name="CalDav">
+            <directory>./src/Dav</directory>
+            <directory>./modules/Addressees</directory>
+            <directory>./modules/CalDav</directory>
         </testsuite>
         <testsuite name="TbACL">
             <file>./clients/base/api/TeamBasedACLExportApiTest.php</file>

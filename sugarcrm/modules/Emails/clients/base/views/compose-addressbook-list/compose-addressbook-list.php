@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['Emails']['base']['view']['compose-addressbook-list'] = array(
-    'template' => 'list',
+    'template' => 'flex-list',
     'selection' => array(
         'type' => 'multi',
         'actions' => array(),
