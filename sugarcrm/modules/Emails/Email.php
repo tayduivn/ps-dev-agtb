@@ -1485,9 +1485,15 @@ class Email extends SugarBean {
 
     /**
      * retrieves Notes that belong to this Email and stuffs them into the "attachments" attribute
+     *
+     * @deprecated 7.9 This method is no longer used. {@link Email::attachments} is now a link, while this method
+     * assumes that it is an array. Use "$attachments = $bean->get_linked_beans('attachments', 'Note');" from now on.
      */
     protected function getNotes($id, $duplicate = false)
     {
+        $GLOBALS['log']->warn('Email::getNotes() has been deprecated as of 7.9.0. Please use Email::get_linked_beans(' .
+            "'attachments', 'Note') instead.");
+
         $exRemoved = array();
         if (isset($_REQUEST['removeAttachment'])) {
             $exRemoved = explode('::', $_REQUEST['removeAttachment']);
@@ -1830,10 +1836,18 @@ class Email extends SugarBean {
 
 		global $mod_strings;
 
+        $attachmentsToCopy = array();
+        $attachmentBean = BeanFactory::getBean('Notes');
+
         ///////////////////////////////////////////////////////////////////////////
         ////    ATTACHMENTS FROM DRAFTS
         if(($this->type == 'out' || $this->type == 'draft') && $this->status == 'draft' && isset($_REQUEST['record'])) {
-            $this->getNotes($_REQUEST['record']); // cn: get notes from OLD email for use in new email
+            // cn: get notes from OLD email for use in new email
+            //FIXME: notes.email_type should be Emails
+            $attachmentsToCopy = array_merge(
+                $attachmentsToCopy,
+                $attachmentBean->get_full_list('', "notes.email_id='{$_REQUEST['record']}'", true)
+            );
         }
         ////    END ATTACHMENTS FROM DRAFTS
         ///////////////////////////////////////////////////////////////////////////
@@ -1846,7 +1860,28 @@ class Email extends SugarBean {
         	isset($_REQUEST['origType']) && $_REQUEST['origType'] == 'forward' &&
         	isset($_REQUEST['return_id']) && !empty($_REQUEST['return_id'])
         ) {
-            $this->getNotes($_REQUEST['return_id'], true);
+            //FIXME: notes.email_type should be Emails
+            $attachmentsFromForwards = $attachmentBean->get_full_list(
+                '',
+                "notes.email_id='{$_REQUEST['return_id']}'",
+                true
+            );
+
+            // Duplicate the attachments.
+            foreach ($attachmentsFromForwards as $attachment) {
+                $note = BeanFactory::getBean($attachment->getModuleName(), $attachment->id);
+                $note->id = create_guid();
+                $note->new_with_id = true;
+                // By not setting $note->email_id = $this->id, it may be possible for some attachments to have the wrong
+                // parent after the request is done. This has been left as is to maintain the state of legacy code,
+                // given that there are no known bugs regarding this behavior.
+                // The same is true of $note->email_type, although it is guaranteed that the framework cannot find the
+                // related email without an email_type.
+                $note->save();
+
+                UploadFile::duplicate_file($attachment->id, $note->id, $note->filename);
+                $attachmentsToCopy[] = $note;
+            }
         }
 
         // cn: bug 8034 - attachments from forward/replies lost when saving in draft
@@ -1866,7 +1901,6 @@ class Email extends SugarBean {
 		// for each outbound email - good for integrity, bad for filespace
 		if(isset($_REQUEST['template_attachment']) && !empty($_REQUEST['template_attachment'])) {
 			$removeArr = array();
-			$noteArray = array();
 
 			if(isset($_REQUEST['temp_remove_attachment']) && !empty($_REQUEST['temp_remove_attachment'])) {
 				$removeArr = $_REQUEST['temp_remove_attachment'];
@@ -1886,11 +1920,9 @@ class Email extends SugarBean {
 				$noteTemplate->save();
 				$noteTemplate->team_id = $this->team_id;
 
-				$noteFile = new UploadFile();
-				$noteFile->duplicate_file($noteId, $noteTemplate->id, $noteTemplate->filename);
-				$noteArray[] = $noteTemplate;
+                UploadFile::duplicate_file($noteId, $noteTemplate->id, $noteTemplate->filename);
+                $attachmentsToCopy[] = $noteTemplate;
 			}
-			$this->attachments = array_merge($this->attachments, $noteArray);
 		}
 		////	END ATTACHMENTS FROM TEMPLATES
 		///////////////////////////////////////////////////////////////////////////
@@ -1901,14 +1933,13 @@ class Email extends SugarBean {
         // Jenny - Bug 8211 Since attachments for drafts have already been processed,
         // we don't need to re-process them.
         if($this->status != "draft") {
-    		$notes_list = array();
     		if(!empty($this->id) && !$this->new_with_id) {
-    			$note = BeanFactory::newBean('Notes');
                 //FIXME: notes.email_type should be Emails
-    			$where = "notes.email_id='{$this->id}'";
-    			$notes_list = $note->get_full_list("", $where, true);
+                $attachmentsToCopy = array_merge(
+                    $attachmentsToCopy,
+                    $attachmentBean->get_full_list('', "notes.email_id='{$this->id}'", true)
+                );
     		}
-    		$this->attachments = array_merge($this->attachments, $notes_list);
         }
 		// cn: Bug 5995 - rudimentary error checking
 		$filesError = array(
@@ -1947,13 +1978,12 @@ class Email extends SugarBean {
 				$note->file = $upload_file;
 				$note->name = $mod_strings['LBL_EMAIL_ATTACHMENT'].': '.$note->file->original_file_name;
 				$note->team_id = $this->team_id;
-
-				$this->attachments[] = $note;
+                $attachmentsToCopy[] = $note;
 			}
 		}
 
 		$this->saved_attachments = array();
-		foreach($this->attachments as $note) {
+		foreach($attachmentsToCopy as $note) {
 			if(!empty($note->id)) {
 				array_push($this->saved_attachments, $note);
 				continue;
@@ -1961,12 +1991,10 @@ class Email extends SugarBean {
 			$note->email_id = $this->id;
 			$note->email_type = 'Emails';
 			$note->file_mime_type = $note->file->mime_type;
-			$note_id = $note->save();
+            $note->save();
+            $note->file->final_move($note->id);
 
 			$this->saved_attachments[] = $note;
-
-			$note->id = $note_id;
-			$note->file->final_move($note->id);
 		}
 		////	END NEW ATTACHMENTS
 		///////////////////////////////////////////////////////////////////////////
@@ -1978,7 +2006,6 @@ class Email extends SugarBean {
 				$doc = BeanFactory::newBean('Documents');
 				$docRev = BeanFactory::newBean('DocumentRevisions');
 				$docNote = BeanFactory::newBean('Notes');
-				$noteFile = new UploadFile();
 
 				$doc->retrieve($_REQUEST['documentId'.$i]);
 				$docRev->retrieve($doc->document_revision_id);
@@ -1992,9 +2019,8 @@ class Email extends SugarBean {
 				$docNote->email_id = $this->id;
 				$docNote->email_type = 'Emails';
 				$docNote->file_mime_type = $docRev->file_mime_type;
-				$docId = $docNote = $docNote->save();
-
-				$noteFile->duplicate_file($docRev->id, $docId, $docRev->filename);
+                $docNote->save();
+                UploadFile::duplicate_file($docRev->id, $docNote->id, $docRev->filename);
 			}
 		}
 

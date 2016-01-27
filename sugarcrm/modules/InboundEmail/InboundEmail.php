@@ -5292,14 +5292,16 @@ eoq;
 						$email->save();
                         $email->revertFieldNullable('assigned_user_id');
                         // End fix 50972
-						$email->getNotes($id);
-                        if(!empty($email->attachments)) {
-                            foreach($email->attachments as $note) {
-                                $note->team_id = $toSugarFolder->team_id;
-                                $note->team_set_id = $toSugarFolder->team_set_id;
-                                $note->save();
-                            }
+
+                        //FIXME: notes.email_type should be Emails
+                        $attachments = BeanFactory::getBean('Notes')->get_full_list('', "notes.email_id='{$id}'", true);
+
+                        foreach ($attachments as $note) {
+                            $note->team_id = $toSugarFolder->team_id;
+                            $note->team_set_id = $toSugarFolder->team_set_id;
+                            $note->save();
                         }
+
 						if (!$toSugarFolder->checkEmailExistForFolder($id)) {
 							$fromSugarFolder->deleteEmailFromAllFolder($id);
 							$toSugarFolder->addBean($email);
@@ -5402,13 +5404,17 @@ eoq;
 								$this->deleteMessageFromCache($uid);
 							} // if
                             if ($sugarFolder->is_group) {
-                                $this->email->getNotes($this->email->id);
-                                if(!empty($this->email->attachments)) {
-                                    foreach($this->email->attachments as $note) {
-                                        $note->team_id = $sugarFolder->team_id;
-                                        $note->team_set_id = $sugarFolder->team_set_id;
-                                        $note->save();
-                                    }
+                                //FIXME: notes.email_type should be Emails
+                                $attachments = BeanFactory::getBean('Notes')->get_full_list(
+                                    '',
+                                    "notes.email_id='{$this->email->id}'",
+                                    true
+                                );
+
+                                foreach ($attachments as $note) {
+                                    $note->team_id = $sugarFolder->team_id;
+                                    $note->team_set_id = $sugarFolder->team_set_id;
+                                    $note->save();
                                 }
                             }
 						}

@@ -1995,13 +1995,14 @@ function distRoundRobin($userIds, $mailIds) {
 		$email->team_id = $assignedTeamInfo['primaryTeamId'];
 		$email->team_set_id = $assignedTeamInfo['teamSetId'];
 		$email->save();
-		$email->getNotes($mailId);
-        if(!empty($email->attachments)) {
-            foreach($email->attachments as $note) {
-                $note->team_id = $email->team_id;
-                $note->team_set_id = $email->team_set_id;
-                $note->save();
-            }
+
+        //FIXME: notes.email_type should be Emails
+        $attachments = BeanFactory::getBean('Notes')->get_full_list('', "notes.email_id='{$mailId}'", true);
+
+        foreach ($attachments as $note) {
+            $note->team_id = $email->team_id;
+            $note->team_set_id = $email->team_set_id;
+            $note->save();
         }
 	}
 
@@ -2031,13 +2032,14 @@ function distLeastBusy($userIds, $mailIds) {
 		$email->team_id = $assignedTeamInfo['primaryTeamId'];
 		$email->team_set_id = $assignedTeamInfo['teamSetId'];
 		$email->save();
-		$email->getNotes($mailId);
-        if(!empty($email->attachments)) {
-            foreach($email->attachments as $note) {
-                $note->team_id = $email->team_id;
-                $note->team_set_id = $email->team_set_id;
-                $note->save();
-            }
+
+        //FIXME: notes.email_type should be Emails
+        $attachments = BeanFactory::getBean('Notes')->get_full_list('', "notes.email_id='{$mailId}'", true);
+
+        foreach ($attachments as $note) {
+            $note->team_id = $email->team_id;
+            $note->team_set_id = $email->team_set_id;
+            $note->save();
         }
 	}
 	return true;
@@ -2072,13 +2074,14 @@ function distDirect($user, $mailIds) {
 
 		}
 		$email->save();
-		$email->getNotes($mailId);
-        if(!empty($email->attachments)) {
-            foreach($email->attachments as $note) {
-                $note->team_id = $email->team_id;
-                $note->team_set_id = $email->team_set_id;
-                $note->save();
-            }
+
+        //FIXME: notes.email_type should be Emails
+        $attachments = BeanFactory::getBean('Notes')->get_full_list('', "notes.email_id='{$mailId}'", true);
+
+        foreach ($attachments as $note) {
+            $note->team_id = $email->team_id;
+            $note->team_set_id = $email->team_set_id;
+            $note->save();
         }
 	}
 	return true;
