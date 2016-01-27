@@ -43,6 +43,9 @@ class BugsApi extends ModuleApi
                 $args['assigned_user_id'] = $contact->assigned_user_id;
                 $args['team_id'] = $contact->team_id;
                 $args['team_set_id'] = $contact->team_set_id;
+                //BEGIN SUGARCRM flav=ent ONLY
+                $args['team_set_selected_id'] = $contact->team_set_selected_id;
+                //END SUGARCRM flav=ent ONLY
             }
         }
 
