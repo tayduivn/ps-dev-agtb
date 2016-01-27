@@ -169,19 +169,12 @@ EOQ;
 			if(!empty($_REQUEST['old_id'])) { // to support duplication of email templates
                 $where .= sprintf(' OR notes.email_id = %s', $focus->db->quoted($_REQUEST['old_id']));
 			}
-			$notes_list = $note->get_full_list("", $where, true);
+            $attachments = $note->get_full_list("", $where, true);
 		}
 
-		if(!isset($notes_list)) {
-			$notes_list = array();
+		if(!isset($attachments)) {
+			$attachments = array();
 		}
-
-		if(!is_array($focus->attachments)) { // PHP5 does not auto-create arrays(). Need to initialize it here.
-			$focus->attachments = array();
-		}
-		$focus->attachments = array_merge($focus->attachments, $notes_list);
-
-
 
 		foreach ($_FILES as $key => $file)
 		{
@@ -212,13 +205,13 @@ EOQ;
                   	$note->embed_flag =false;
                   }
 				}
-				array_push($focus->attachments, $note);
+				array_push($attachments, $note);
 			}
 
 		}
 
 		$focus->saved_attachments = array();
-		foreach($focus->attachments as $note)
+		foreach($attachments as $note)
 		{
 			if( !empty($note->id) && $note->new_with_id === FALSE)
 			{
