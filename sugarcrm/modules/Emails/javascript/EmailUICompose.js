@@ -1951,8 +1951,9 @@ SE.composeLayout = {
         form.ieId.value = ieId;
         form.mbox.value = mbox;
 		var teamIdsArray = SUGAR.collection.prototype.getTeamIdsfromUI(composeOptionsFormName, 'team_name');
+		var selTeamIdsArray = SUGAR.collection.prototype.getSelectedTeamIdsFromUI(composeOptionsFormName, 'team_name');
 		form.teamIds.value = teamIdsArray.join(",");
-        //form.selectedTeam.value = document.getElementById('teamOptions' + idx).value;
+        form.selectedTeam.value = selTeamIdsArray.join(",");
         form.primaryteam.value = SUGAR.collection.prototype.getPrimaryTeamidsFromUI(composeOptionsFormName, 'team_name');
 
         // email attachments

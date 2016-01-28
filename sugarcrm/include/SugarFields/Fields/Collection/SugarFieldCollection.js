@@ -494,6 +494,25 @@ if(typeof(SUGAR.collection) == "undefined") {
 			} // if
 			return '';	
 		},
+        /**
+         * return an array of selected team ids for a team field
+         */
+        getSelectedTeamIdsFromUI: function(formname, fieldname) {
+            var team_ids = [];
+            var table_element_id = formname + '_' + fieldname + '_table';
+            if (document.getElementById(table_element_id)) {
+                var input_elements = YAHOO.util.Selector.query(
+                    'input[type=checkbox]:checked',
+                    document.getElementById(table_element_id)
+                );
+                for (var t = 0; t < input_elements.length; t++) {
+                    if (input_elements[t].id.match("selected_" + fieldname + "_collection_") != null) {
+                        team_ids.push(input_elements[t].value);
+                    } // if
+                } // for
+            } // if
+            return team_ids;
+        },
         /*
          * Change the primary row onchange of the radio button.
          */

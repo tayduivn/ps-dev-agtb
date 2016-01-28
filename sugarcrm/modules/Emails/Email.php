@@ -876,10 +876,19 @@ class Email extends SugarBean {
 			$this->cc_addrs_names = $_REQUEST['sendCc'];
 			$this->bcc_addrs = $_REQUEST['sendBcc'];
 			$this->bcc_addrs_names = $_REQUEST['sendBcc'];
-			$this->team_id = (isset($_REQUEST['primaryteam']) ?  $_REQUEST['primaryteam'] : $current_user->getPrivateTeamID());
+			$this->team_id = (!empty($_REQUEST['primaryteam']) ?  $_REQUEST['primaryteam'] : $current_user->getPrivateTeamID());
+			/* @var TeamSet $teamSet */
 			$teamSet = BeanFactory::getBean('TeamSets');
-			$teamIdsArray = (isset($_REQUEST['teamIds']) ?  explode(",", $_REQUEST['teamIds']) : array($current_user->getPrivateTeamID()));
+			$teamIdsArray = (!empty($_REQUEST['teamIds']) ?  explode(",", $_REQUEST['teamIds']) : array($current_user->getPrivateTeamID()));
 			$this->team_set_id = $teamSet->addTeams($teamIdsArray);
+			$selectedTeamIdsArray = !empty($_REQUEST['selectedTeam'])
+				? explode(",", $_REQUEST['selectedTeam'])
+				: array();
+			if (!empty($selectedTeamIdsArray)) {
+				$this->team_set_selected_id = $teamSet->addTeams($selectedTeamIdsArray);
+			} else {
+				$this->team_set_selected_id = '';
+			}
 
             if ($archived && !empty($request['assignedUser'])) {
                 $this->assigned_user_id = $request['assignedUser'];
