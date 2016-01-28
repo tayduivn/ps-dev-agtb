@@ -36,7 +36,7 @@
             value.caldav_call_direction = this.model.get('caldav_call_direction');
         }
         var section = this.context.get('section');
-        var url = app.api.buildURL('caldav', 'config/' + (section ? '/' + section : ''), null, null);
+        var url = app.api.buildURL('caldav', 'config' + (section ? '/' + section : ''), null, null);
         app.api.call('update', url, value,{
             success: function() {
                     app.alert.dismiss('upload');
