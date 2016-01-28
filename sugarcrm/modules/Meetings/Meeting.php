@@ -113,6 +113,12 @@ class Meeting extends SugarBean {
 	public $send_invites = false;
 
     /**
+     * UID for invitation to specify the same event.
+     * @var string
+     */
+    public $send_invites_uid = '';
+
+    /**
      * Helper-field to store invites before linking new ones.
      * Is not a sugar-field, is not persisted anywhere.
      * @var null|array
