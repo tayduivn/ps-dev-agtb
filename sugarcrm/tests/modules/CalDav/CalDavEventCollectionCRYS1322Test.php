@@ -173,6 +173,13 @@ class Link2UsersCRYS1322 extends Link2
             '_user_id_' => BeanFactory::getBean('Users', '_user_id_')
         );
     }
+
+    public function load()
+    {
+        $this->rows = array(
+            '_user_id_' => array('accept_status' => 'none')
+        );
+    }
 }
 
 /**
@@ -186,6 +193,13 @@ class Link2ContactsCRYS1322 extends Link2
         );
         return array(
             '_contact_id_' => BeanFactory::getBean('Contacts', '_contact_id_')
+        );
+    }
+
+    public function load()
+    {
+        $this->rows = array(
+            '_contact_id_' => array('accept_status' => 'none')
         );
     }
 }

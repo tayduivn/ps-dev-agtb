@@ -574,16 +574,21 @@ class CalendarUtils
         if (isset($definitions['invitees']['links'])) {
             $requiredRelations = $definitions['invitees']['links'];
         } else {
-            $requiredRelations = array('contacts', 'leads', 'users');
+            $requiredRelations = array('contacts', 'leads', 'users', 'addressees');
         }
 
         $invitees = array();
         foreach ($requiredRelations as $relationship) {
             if ($bean->load_relationship($relationship)) {
                 $bean->$relationship->resetLoaded();
-                $beans = $bean->$relationship->getBeans();
-                /** @var SugarBean $person */
-                foreach ($beans as $beanId => $person) {
+                $bean->$relationship->load();
+                foreach ($bean->$relationship->rows as $beanId => $row) {
+                    /** @var SugarBean $person */
+                    $person = BeanFactory::getBean(ucfirst($relationship), $beanId,
+                        array('disable_row_level_security' => true));
+                    if (!$person) {
+                        continue;
+                    }
                     if ($person instanceof \User && $beanId == $bean->created_by) {
                         continue;
                     }
@@ -591,12 +596,9 @@ class CalendarUtils
                         $person->module_name,
                         $person->id,
                         $person->emailAddress->getPrimaryAddress($person),
-                        null,
+                        $row['accept_status'],
                         $locale->formatName($person),
                     );
-                    if (isset($bean->$relationship->rows[$beanId])) {
-                        $invitee[3] = $bean->$relationship->rows[$beanId]['accept_status'];
-                    }
                     $invitees[] = $invitee;
                 }
             }
