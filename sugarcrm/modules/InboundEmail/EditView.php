@@ -150,8 +150,13 @@ if(!empty($focus->stored_options)) {
 		$leaveMessagesOnMailServer = 0;
 	} // else
 } else { // initialize empty vars for template
-	$from_name = $current_user->name;
-	$from_addr = $current_user->email1;
+    if ($focus->mailbox_type == 'caldav') {
+        $from_name = '';
+        $from_addr = '';
+    } else {
+        $from_name = $current_user->name;
+        $from_addr = $current_user->email1;
+    }
 	$reply_to_name = '';
 	$reply_to_addr = '';
 	$only_since = '';
