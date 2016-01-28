@@ -256,8 +256,8 @@ function mark_relationships_deleted($id){
         parent::mark_relationships_deleted($id);
 }
 
-/**
- *  toArray()
+   /**
+    *  toArray()
     * returns this role as an array
     *
     * @return array of fields with id, name, description
@@ -292,15 +292,34 @@ function mark_relationships_deleted($id){
      */
     public function updateUsersACLInfo()
     {
-        $query = sprintf("UPDATE users
-            SET date_modified = %s
-            WHERE deleted = 0 AND
-              id IN (
-                    SELECT user_id
-                    FROM acl_roles_users
-                    WHERE deleted = 0
-                        AND role_id = %s
-                )", $this->db->now(), $this->db->quoted($this->id));
+        $query = sprintf(
+            'SELECT user_id
+             FROM acl_roles_users
+             WHERE deleted = 0
+               AND role_id = %s',
+            $this->db->quoted($this->id)
+        );
+        $result = $this->db->query($query);
+        if (!$result) {
+            return;
+        }
+
+        $ids = array();
+        while ($row = $this->db->fetchByAssoc($result)) {
+            $ids[] = $this->db->quoted($row['id']);
+        }
+        if (empty($ids)) {
+            return;
+        }
+
+        $query = sprintf(
+            'UPDATE users
+             SET date_modified = %s
+             WHERE deleted = 0
+               AND id IN (%s)',
+            $this->db->now(),
+            implode(',', $ids)
+        );
         $this->db->query($query);
     }
 }
