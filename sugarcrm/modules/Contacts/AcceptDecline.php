@@ -43,7 +43,7 @@ else if ( ! empty($_REQUEST['lead_id'])) {
     }
     $current_entity = $result;
 } elseif (!empty($_REQUEST['addressee_id'])) {
-    $result = BeanFactory::retrieveBean('Addresses', $_REQUEST['addressee_id'], array('disable_row_level_security' => true));
+    $result = BeanFactory::retrieveBean('Addressees', $_REQUEST['addressee_id'], array('disable_row_level_security' => true));
     if(empty($result)) {
         session_destroy();
         sugar_cleanup();

@@ -10,11 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once 'modules/Addresses/Addressee.php';
+require_once 'modules/Addressees/Addressee.php';
 
 class SugarTestAddresseeUtilities
 {
-    protected static $_createdAddresses = array();
+    protected static $_createdAddressees = array();
 
     public static function createAddressee($id = '', $addresseeValues = array())
     {
@@ -41,7 +41,7 @@ class SugarTestAddresseeUtilities
 
         $addressee->save();
         $GLOBALS['db']->commit();
-        static::$_createdAddresses[] = $addressee;
+        static::$_createdAddressees[] = $addressee;
         return $addressee;
     }
 
@@ -50,43 +50,43 @@ class SugarTestAddresseeUtilities
         foreach ($addressee_ids as $addressee_id) {
             $addressee = new Addressee();
             $addressee->id = $addressee_id;
-            static::$_createdAddresses[] = $addressee;
+            static::$_createdAddressees[] = $addressee;
         }
     }
     
-    public static function removeAllCreatedAddresses() 
+    public static function removeAllCreatedAddressees()
     {
         $addressee_ids = static::getCreatedAddresseeIds();
-        $GLOBALS['db']->query('DELETE FROM addresses WHERE id IN (\'' . implode("', '", $addressee_ids) . '\')');
-        self::removeCreatedAddressesEmailAddresses();
+        $GLOBALS['db']->query('DELETE FROM addressees WHERE id IN (\'' . implode("', '", $addressee_ids) . '\')');
+        self::removeCreatedAddresseesEmailAddresses();
     }
 
     /**
-     * removeCreatedAddressesEmailAddresses
+     * removeCreatedAddresseesEmailAddresses
      *
-     * This function removes email addresses that may have been associated with the addresses created
+     * This function removes email addresses that may have been associated with the addressees created
      *
      * @static
      * @return void
      */
-    public static function removeCreatedAddressesEmailAddresses()
+    public static function removeCreatedAddresseesEmailAddresses()
     {
         $addressee_ids = static::getCreatedAddresseeIds();
-        $GLOBALS['db']->query('DELETE FROM email_addresses WHERE id IN (SELECT DISTINCT email_address_id FROM email_addr_bean_rel WHERE bean_module =\'Addresses\' AND bean_id IN (\'' . implode("', '", $addressee_ids) . '\'))');
-        $GLOBALS['db']->query('DELETE FROM emails_beans WHERE bean_module=\'Addresses\' AND bean_id IN (\'' . implode("', '", $addressee_ids) . '\')');
-        $GLOBALS['db']->query('DELETE FROM email_addr_bean_rel WHERE bean_module=\'Addresses\' AND bean_id IN (\'' . implode("', '", $addressee_ids) . '\')');
+        $GLOBALS['db']->query('DELETE FROM email_addresses WHERE id IN (SELECT DISTINCT email_address_id FROM email_addr_bean_rel WHERE bean_module =\'Addressees\' AND bean_id IN (\'' . implode("', '", $addressee_ids) . '\'))');
+        $GLOBALS['db']->query('DELETE FROM emails_beans WHERE bean_module=\'Addressees\' AND bean_id IN (\'' . implode("', '", $addressee_ids) . '\')');
+        $GLOBALS['db']->query('DELETE FROM email_addr_bean_rel WHERE bean_module=\'Addressees\' AND bean_id IN (\'' . implode("', '", $addressee_ids) . '\')');
     }
 
-    public static function removeCreatedAddressesUsersRelationships()
+    public static function removeCreatedAddresseesUsersRelationships()
     {
         $addressee_ids = static::getCreatedAddresseeIds();
-        $GLOBALS['db']->query('DELETE FROM addresses_users WHERE addressee_id IN (\'' . implode("', '", $addressee_ids) . '\')');
+        $GLOBALS['db']->query('DELETE FROM addressees_users WHERE addressee_id IN (\'' . implode("', '", $addressee_ids) . '\')');
     }
     
     public static function getCreatedAddresseeIds() 
     {
         $addressee_ids = array();
-        foreach (static::$_createdAddresses as $addressee) {
+        foreach (static::$_createdAddressees as $addressee) {
             $addressee_ids[] = $addressee->id;
         }
         return $addressee_ids;

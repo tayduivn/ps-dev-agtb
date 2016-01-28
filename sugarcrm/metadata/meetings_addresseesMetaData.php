@@ -9,8 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$dictionary['meetings_addresses'] = array(
-    'table' => 'meetings_addresses',
+$dictionary['meetings_addressees'] = array(
+    'table' => 'meetings_addressees',
     'fields' => array(
         array('name' => 'id', 'type' => 'id', 'len' => '36'),
         array('name' => 'meeting_id', 'type' => 'id', 'len' => '36'),
@@ -21,21 +21,21 @@ $dictionary['meetings_addresses'] = array(
         array('name' => 'deleted', 'type' => 'bool', 'len' => '1', 'default' => '0', 'required' => false),
     ),
     'indices' => array(
-        array('name' => 'meetings_addressespk', 'type' => 'primary', 'fields' => array('id')),
+        array('name' => 'meetings_addressees_pk', 'type' => 'primary', 'fields' => array('id')),
         array('name' => 'idx_addressee_meeting_meeting', 'type' => 'index', 'fields' => array('meeting_id')),
         array('name' => 'idx_addressee_meeting_addressee', 'type' => 'index', 'fields' => array('addressee_id')),
         array('name' => 'idx_meeting_addressee', 'type' => 'alternate_key', 'fields' => array('meeting_id', 'addressee_id')),
     ),
     'relationships' => array(
-        'meetings_addresses' => array(
+        'meetings_addressees' => array(
             'lhs_module' => 'Meetings',
             'lhs_table' => 'meetings',
             'lhs_key' => 'id',
-            'rhs_module' => 'Addresses',
-            'rhs_table' => 'addresses',
+            'rhs_module' => 'Addressees',
+            'rhs_table' => 'addressees',
             'rhs_key' => 'id',
             'relationship_type' => 'many-to-many',
-            'join_table' => 'meetings_addresses',
+            'join_table' => 'meetings_addressees',
             'join_key_lhs' => 'meeting_id',
             'join_key_rhs' => 'addressee_id',
         ),

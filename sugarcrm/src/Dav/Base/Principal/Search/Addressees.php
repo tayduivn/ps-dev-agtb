@@ -10,12 +10,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarObjects/templates/person/Person.php';
+namespace Sugarcrm\Sugarcrm\Dav\Base\Principal\Search;
 
-class Addressee extends Person {
-    public $new_schema = true;
-    public $module_dir = 'Addresses';
-    public $object_name = 'Addressee';
-    public $object_names = 'Addresses';
-    public $table_name = 'addresses';
+class Addressees extends Base
+{
+    protected $moduleName = 'Addressees';
+
+    /**
+     * @inheritdoc
+     */
+    public static function getOrder()
+    {
+        return 400;
+    }
 }

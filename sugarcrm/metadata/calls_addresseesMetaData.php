@@ -9,8 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$dictionary['calls_addresses'] = array(
-    'table' => 'calls_addresses',
+$dictionary['calls_addressees'] = array(
+    'table' => 'calls_addressees',
     'fields' => array(
         array('name' => 'id', 'type' => 'id', 'len' => '36'),
         array('name' => 'call_id', 'type' => 'id', 'len' => '36'),
@@ -21,21 +21,21 @@ $dictionary['calls_addresses'] = array(
         array('name' => 'deleted', 'type' => 'bool', 'len' => '1', 'default' => '0', 'required' => false),
     ),
     'indices' => array(
-        array('name' => 'calls_addressespk', 'type' => 'primary', 'fields' => array('id')),
+        array('name' => 'calls_addressees_pk', 'type' => 'primary', 'fields' => array('id')),
         array('name' => 'idx_addressee_call_call', 'type' => 'index', 'fields' => array('call_id')),
         array('name' => 'idx_addressee_call_addressee', 'type' => 'index', 'fields' => array('addressee_id')),
         array('name' => 'idx_call_addressee', 'type' => 'alternate_key', 'fields' => array('call_id', 'addressee_id')),
     ),
     'relationships' => array(
-        'calls_addresses' => array(
+        'calls_addressees' => array(
             'lhs_module' => 'Calls',
             'lhs_table' => 'calls',
             'lhs_key' => 'id',
-            'rhs_module' => 'Addresses',
-            'rhs_table' => 'addresses',
+            'rhs_module' => 'Addressees',
+            'rhs_table' => 'addressees',
             'rhs_key' => 'id',
             'relationship_type' => 'many-to-many',
-            'join_table' => 'calls_addresses',
+            'join_table' => 'calls_addressees',
             'join_key_lhs' => 'call_id',
             'join_key_rhs' => 'addressee_id',
         ),

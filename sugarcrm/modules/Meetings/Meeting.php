@@ -78,7 +78,7 @@ class Meeting extends SugarBean {
 	var $contacts_arr = array();
 	var $users_arr = array();
 	var $leads_arr = array();
-    public $addresses_arr = array();
+    public $addressees_arr = array();
 	var $meetings_arr;
 	// when assoc w/ a user/contact:
 	var $minutes_value_default = 15;
@@ -87,7 +87,7 @@ class Meeting extends SugarBean {
 	var $rel_users_table = "meetings_users";
 	var $rel_contacts_table = "meetings_contacts";
 	var $rel_leads_table = "meetings_leads";
-	public $rel_addresses_table = "meetings_addresses";
+	public $rel_addressees_table = "meetings_addressees";
 	var $module_dir = "Meetings";
 	var $object_name = "Meeting";
 
@@ -95,8 +95,16 @@ class Meeting extends SugarBean {
 	var $fill_additional_column_fields = true;
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = array('assigned_user_name', 'assigned_user_id', 'contact_id', 'user_id', 'contact_name', 'accept_status');
-	var $relationship_fields = array('account_id'=>'accounts','opportunity_id'=>'opportunity','case_id'=>'case',
-									 'assigned_user_id'=>'users','contact_id'=>'contacts', 'user_id'=>'users', 'meeting_id'=>'meetings', 'addressee_id'=>'addresses');
+	var $relationship_fields = array(
+        'account_id' => 'accounts',
+        'opportunity_id' => 'opportunity',
+        'case_id' => 'case',
+        'assigned_user_id' => 'users',
+        'contact_id' => 'contacts',
+        'user_id' => 'users',
+        'meeting_id' => 'meetings',
+        'addressee_id' => 'addressees',
+    );
 	// so you can run get_users() twice and run query only once
 	var $cached_get_users = null;
 	var $new_schema = true;
@@ -755,7 +763,7 @@ class Meeting extends SugarBean {
         } elseif ($user->object_name == 'Addressee') {
             $relate_values = array('addressee_id' => $user->id, 'meeting_id' => $this->id);
             $data_values = array('accept_status' => $status);
-            $this->set_relationship($this->rel_addresses_table, $relate_values, true, true, $data_values);
+            $this->set_relationship($this->rel_addressees_table, $relate_values, true, true, $data_values);
         }
 	}
 
@@ -778,8 +786,8 @@ class Meeting extends SugarBean {
             $this->leads_arr = array();
         }
 
-        if (!is_array($this->addresses_arr)) {
-            $this->addresses_arr = array();
+        if (!is_array($this->addressees_arr)) {
+            $this->addressees_arr = array();
         }
 
         if (empty($this->leads_arr) && $this->load_relationship('leads')) {
@@ -813,8 +821,9 @@ class Meeting extends SugarBean {
 			}
 		}
 
-        foreach ($this->addresses_arr as $addresses_id) {
-            $notify_user = BeanFactory::getBean('Addresses', $addresses_id);
+        foreach ($this->addressees_arr as $addresseeId) {
+            /** @var Addressee $notify_user */
+            $notify_user = BeanFactory::getBean('Addressees', $addresseeId);
             if (!empty($notify_user->id)) {
                 $notify_user->new_assigned_user_name = $notify_user->full_name;
                 $GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
@@ -1060,50 +1069,50 @@ class Meeting extends SugarBean {
      * Stores addressee invitees
      *
      * @param array $addresseeInvitees Array of addressee invitees ids
-     * @param array $existingAddresses
+     * @param array $existingAddressees
      */
-    public function setAddresseeInvitees($addresseeInvitees, $existingAddresses = array())
+    public function setAddresseeInvitees($addresseeInvitees, $existingAddressees = array())
     {
-        $this->addresses_arr = $addresseeInvitees;
+        $this->addressees_arr = $addresseeInvitees;
 
-        $deleteAddresses = array();
-        $this->load_relationship('addresses');
+        $deleteAddressees = array();
+        $this->load_relationship('addressees');
 
-        $sql = 'SELECT mu.addressee_id, mu.accept_status FROM meetings_addresses mu';
+        $sql = 'SELECT mu.addressee_id, mu.accept_status FROM meetings_addressees mu';
         $sql .= ' WHERE mu.meeting_id = ' . $this->db->quoted($this->id);
         $result = $this->db->query($sql);
 
-        $acceptStatusAddresses = array();
+        $acceptStatusAddressees = array();
         while ($a = $this->db->fetchByAssoc($result)) {
             if (!in_array($a['addressee_id'], $addresseeInvitees)) {
-                $deleteAddresses[$a['addressee_id']] = $a['addressee_id'];
+                $deleteAddressees[$a['addressee_id']] = $a['addressee_id'];
             } else {
-                $acceptStatusAddresses[$a['addressee_id']] = $a['addressee_id'];
+                $acceptStatusAddressees[$a['addressee_id']] = $a['addressee_id'];
             }
         }
 
-        if (count($deleteAddresses) > 0) {
+        if (count($deleteAddressees) > 0) {
             $ids = array();
-            foreach ($deleteAddresses as $u) {
+            foreach ($deleteAddressees as $u) {
                 $ids[] = $this->db->quoted($u);
             }
 
-            $sql = 'UPDATE meetings_addresses SET deleted = 1';
+            $sql = 'UPDATE meetings_addressees SET deleted = 1';
             $sql .= ' WHERE addressee_id IN (' . implode(',', $ids) . ') AND meeting_id = ' . $this->db->quoted($this->id);
             $this->db->query($sql);
         }
 
-        foreach ($addresseeInvitees as $addressesId) {
-            if (empty($addressesId) || isset($existingAddresses[$addressesId]) || isset($deleteAddresses[$addressesId])) {
+        foreach ($addresseeInvitees as $addresseeId) {
+            if (empty($addresseeId) || isset($existingAddressees[$addresseeId]) || isset($deleteAddressees[$addresseeId])) {
                 continue;
             }
-            if (!isset($acceptStatusAddresses[$addressesId])) {
-                $this->leads->add($addressesId);
+            if (!isset($acceptStatusAddressees[$addresseeId])) {
+                $this->leads->add($addresseeId);
             } else {
                 // update query to preserve accept_status
-                $sql  = 'UPDATE meetings_addresses SET deleted = 0, accept_status = ' . $this->db->quoted($acceptStatusAddresses[$addressesId]);
+                $sql  = 'UPDATE meetings_addressees SET deleted = 0, accept_status = ' . $this->db->quoted($acceptStatusAddressees[$addresseeId]);
                 $sql .= ' WHERE meeting_id = ' . $this->db->quoted($this->id);
-                $sql .= ' AND addressee_id = ' . $this->db->quoted($addressesId);
+                $sql .= ' AND addressee_id = ' . $this->db->quoted($addresseeId);
                 $this->db->query($sql);
             }
         }
