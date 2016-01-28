@@ -162,6 +162,10 @@ class Client
      */
     public function push($id, $stamp, $method, $uri, $args = null, $tags = null)
     {
+        if (!$this->isConfigured()) {
+            $this->getLogger()->error('Trigger\\Client::push - attempt to use client which is not configured.');
+            return false;
+        }
         $token = $this->retrieveToken();
         $method = strtolower($method);
 
@@ -172,8 +176,8 @@ class Client
             'stamp' => $stamp,
             'trigger' => array(
                 'url' => $uri,
-                'method' => $method
-            )
+                'method' => $method,
+            ),
         );
         if ($args && !in_array($method, array('get', 'delete'))) {
             $params['trigger']['args'] = $args;
@@ -197,12 +201,16 @@ class Client
      */
     public function delete($id)
     {
+        if (!$this->isConfigured()) {
+            $this->getLogger()->error('Trigger\\Client::push - attempt to use client which is not configured.');
+            return false;
+        }
         $token = $this->retrieveToken();
 
         $params = array(
             'url' => $this->getSugarConfig()->get('site_url'),
             'id' => $id,
-            'token' => $token
+            'token' => $token,
         );
 
         $client = $this->getHttpHelper();
@@ -220,6 +228,10 @@ class Client
      */
     public function deleteByTags($tags)
     {
+        if (!$this->isConfigured()) {
+            $this->getLogger()->error('Trigger\\Client::push - attempt to use client which is not configured.');
+            return false;
+        }
         if (empty($tags) || !is_array($tags)) {
             return false;
         }
@@ -229,7 +241,7 @@ class Client
         $params = array(
             'url' => $this->getSugarConfig()->get('site_url'),
             'token' => $token,
-            'tags' => $tags
+            'tags' => $tags,
         );
 
         $client = $this->getHttpHelper();
@@ -270,6 +282,14 @@ class Client
     protected function getHttpHelper()
     {
         return new HttpHelper();
+    }
+
+    /**
+     * @return \LoggerManager
+     */
+    protected function getLogger()
+    {
+        return \LoggerManager::getLogger();
     }
 
     /**

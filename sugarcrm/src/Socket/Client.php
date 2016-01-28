@@ -60,7 +60,7 @@ class Client
     protected $to = array(
         'type' => self::RECIPIENT_ALL,
         'id' => null,
-        'channel' => null
+        'channel' => null,
     );
 
     /**
@@ -101,6 +101,11 @@ class Client
             $class = \SugarAutoLoader::customClass('Sugarcrm\Sugarcrm\Socket\Client');
             static::$instance = new $class;
         }
+        static::$instance->to = array(
+            'type' => self::RECIPIENT_ALL,
+            'id' => null,
+            'channel' => null,
+        );
         return static::$instance;
     }
 
@@ -119,6 +124,14 @@ class Client
     protected function getHttpHelper()
     {
         return new HttpHelper();
+    }
+
+    /**
+     * @return \LoggerManager
+     */
+    protected function getLogger()
+    {
+        return \LoggerManager::getLogger();
     }
 
     /**
@@ -163,6 +176,10 @@ class Client
      */
     public function send($message, $data = null)
     {
+        if (!$this->isConfigured()) {
+            $this->getLogger()->error('Socket\\Client::send - attempt to use client which is not configured.');
+            return false;
+        }
         $token = $this->retrieveToken();
 
         $params = json_encode(
@@ -172,7 +189,7 @@ class Client
                 'data' => array(
                     'message' => $message,
                     'args' => $data,
-                )
+                ),
             )
         );
         $client = $this->getHttpHelper();
