@@ -59,10 +59,15 @@
      * @inheritdoc
      */
     cancelConfig: function() {
-        this._super('cancelConfig');
-        // Forecasts requires a refresh when it's not set up, so we force it
-        if (!app.metadata.getModule('Forecasts', 'config').is_setup) {
-            Backbone.history.loadUrl(app.api.buildURL(this.module));
+        if (app.metadata.getModule('Forecasts', 'config').is_setup) {
+            return this._super('cancelConfig');
+        }
+        if (this.triggerBefore('cancel')) {
+            if (app.drawer.count()) {
+                app.drawer.close(this.context, this.context.get('model'));
+            }
+            // Redirect to Admin panel if Forecasts has not been set up
+            app.router.navigate('#Administration', {trigger: true});
         }
     },
 
