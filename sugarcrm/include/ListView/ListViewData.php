@@ -517,13 +517,13 @@ class ListViewData {
             $pageData['error'] = 'ACL restricted access';
         }
 
-        $queryString = '';
+        $searchString = '';
 
         if( isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "advanced_search" ||
         	isset($_REQUEST["type_basic"]) && (count($_REQUEST["type_basic"] > 1) || $_REQUEST["type_basic"][0] != "") ||
         	isset($_REQUEST["module"]) && $_REQUEST["module"] == "MergeRecords")
         {
-            $queryString = "-advanced_search";
+            $searchString = "-advanced_search";
         }
         else if (isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "basic_search")
         {
@@ -544,14 +544,14 @@ class ListViewData {
                 $field_name .= "_basic";
                 if( isset($_REQUEST[$field_name])  && ( !is_array($basicSearchField) || !isset($basicSearchField['type']) || $basicSearchField['type'] == 'text' || $basicSearchField['type'] == 'name') )
                 {
-                    $queryString = $_REQUEST[$field_name];
+                    $searchString = $this->request->getValidInputRequest($field_name);
                     break;
                 }
             }
         }
 
 
-		return array('data'=>$data , 'pageData'=>$pageData, 'query' => $queryString);
+        return array('data'=>$data , 'pageData'=>$pageData, 'query' => $searchString);
 	}
 
 
