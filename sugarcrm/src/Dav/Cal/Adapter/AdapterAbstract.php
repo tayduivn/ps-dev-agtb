@@ -69,7 +69,7 @@ abstract class AdapterAbstract implements AdapterInterface
                     }
                     break;
                 case 'delete':
-                    if (!$bean->updateAllChildren) {
+                    if (!$bean->updateAllChildren && $this->getCalendarEvents()->isEventRecurring($bean)) {
                         $rootBeanId = $bean->repeat_root_id;
                     }
                     break;
