@@ -47,8 +47,8 @@ $mod_strings = array(
     'LBL_TITLE' => 'CalDav',
 
     'LBL_CALDAV_TAB_TEXT' => 'Email & iCal Sync',
-    'LBL_CALDAV_TITLE' => 'iCal Sync Settings',
-    'LBL_CONFIG_TITLE_MODULE_SETTINGS' => 'iCal Sync Settings',
+    'LBL_CALDAV_TITLE' => 'CalDAV Sync Settings',
+    'LBL_CONFIG_TITLE_MODULE_SETTINGS' => 'CalDAV Sync Settings',
     'LBL_CALDAV_DEFAULT_MODULE' => 'Default event mapping',
     'LBL_CALDAV_DEFAULT_MODULE_DESC' => 'Select the default module you would like events to be mapped to.',
     'LBL_CALDAV_DEFAULT_INTERVAL' => 'Sync',
