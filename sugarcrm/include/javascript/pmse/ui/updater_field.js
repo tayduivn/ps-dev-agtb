@@ -758,6 +758,8 @@ UpdaterItem.prototype.setLabel = function (label) {
     this._label = label;
     if (this._dom.labelText) {
         this._dom.labelText.textContent = label;
+        this._dom.labelText.setAttribute('data-original-title', label);
+        App.utils.tooltip.initialize([this._dom.labelText]);
     }
     return this;
 };
@@ -867,6 +869,10 @@ UpdaterItem.prototype._createConfigButton = function () {
     var button = this.createHTMLElement("a");
     button.href = "#";
     button.className = "adam-itemupdater-cfg fa fa-cog";
+    button.setAttribute('rel', 'tooltip');
+    button.setAttribute('data-placement', 'right');
+    button.setAttribute('data-original-title', App.lang.get('LBL_SUGAR_FIELD_SELECTOR', 'pmse_Emails_Templates'));
+    App.utils.tooltip.initialize([button]);
     this._configButton = button;
     return this._configButton;
 };
@@ -958,6 +964,8 @@ UpdaterItem.prototype.createHTML = function () {
 
         labelText = this.createHTMLElement("span");
         labelText.className = "adam-itemupdater-labeltext";
+        labelText.setAttribute('rel', 'tooltip');
+        labelText.setAttribute('data-placement', 'left');
 
         requiredContainer = this.createHTMLElement("span");
         requiredContainer.className = "adam-itemupdater-required required noshadow";
@@ -1362,7 +1370,7 @@ TeamUpdaterItem.prototype._createControl = function () {
 };
 
 TeamUpdaterItem.prototype._getAddButton = function () {
-    var addButton;
+    var addButton, i;
 
     if (this._addButton) {
         return this._addButton;
@@ -1374,6 +1382,10 @@ TeamUpdaterItem.prototype._getAddButton = function () {
     i.className = 'fa fa-plus';
     addButton.appendChild(i);
     addButton.name = 'add';
+    addButton.setAttribute('rel', 'tooltip');
+    addButton.setAttribute('data-placement', 'top');
+    addButton.setAttribute('data-original-title', App.lang.get('LBL_TEAM_ADD'));
+
     this._addButton = addButton;
 
     return addButton;
@@ -1392,19 +1404,27 @@ TeamUpdaterItem.prototype._addButtonsToLine = function (line) {
     primaryButton.appendChild(i);
     primaryButton.className = 'btn adam-team-action ';
     primaryButton.name = 'primary';
+    primaryButton.setAttribute('rel', 'tooltip');
+    primaryButton.setAttribute('data-placement', 'top');
+    primaryButton.setAttribute('data-original-title', App.lang.get('LBL_TEAM_PRIMARY'));
 
     removeButton = primaryButton.cloneNode(false);
     i = i.cloneNode(false);
     i.className = 'fa fa-minus';
     removeButton.appendChild(i);
     removeButton.name = 'remove';
+    removeButton.setAttribute('rel', 'tooltip');
+    removeButton.setAttribute('data-placement', 'top');
+    removeButton.setAttribute('data-original-title', App.lang.get('LBL_TEAM_REMOVE'));
 
     lockButton = primaryButton.cloneNode(false);
     i = i.cloneNode(false);
     i.className = 'fa fa-lock';
     lockButton.appendChild(i);
     lockButton.name = 'lock';
-
+    lockButton.setAttribute('rel', 'tooltip');
+    lockButton.setAttribute('data-placement', 'top');
+    lockButton.setAttribute('data-original-title', App.lang.get('LBL_TEAM_SET_ENABLE'));
     if ($(this._control).find('*').index(line) === 0) {
         removeButton.style.visibility = 'hidden';
     }
@@ -1418,7 +1438,7 @@ TeamUpdaterItem.prototype._addButtonsToLine = function (line) {
     line.appendChild(removeButton);
     line.appendChild(addButton);
     $(line).addClass('adam-line-filled');
-
+    App.utils.tooltip.initialize([primaryButton, addButton, removeButton, lockButton]);
     return this._updateTeamSelection();
 };
 
@@ -1446,6 +1466,7 @@ TeamUpdaterItem.prototype._updateTeamActionsVisibility = function () {
         $(this._control).find('.adam-team-action[name=remove]').first().css('visibility', 'hidden');
     }
     $(this._control).find('.adam-team-updater-line').last().append(this._addButton);
+    App.utils.tooltip.initialize([this._addButton]);
     return this;
 };
 
@@ -1561,6 +1582,8 @@ TeamUpdaterItem.prototype._performTeamAction = function () {
                     that._primaryTeam = null;
                 }
                 $line.remove();
+                // remove any tooltips left behind
+                $('.tooltip').remove();
                 changed = jQuery(that._control);
                 break;
         }
