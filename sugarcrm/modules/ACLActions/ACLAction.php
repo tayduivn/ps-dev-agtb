@@ -398,12 +398,19 @@ class ACLAction  extends SugarBean
 
         }
         if(!empty(self::$acls[$user_id][$category][$type][$action])){
+            $actionAccess = self::$acls[$user_id][$category][$type][$action]['aclaccess'];
+
             if (!empty(self::$acls[$user_id][$category][$type]['admin']) && self::$acls[$user_id][$category][$type]['admin']['aclaccess'] >= ACL_ALLOW_ADMIN)
             {
+                $tbaConfigurator = new TeamBasedACLConfigurator();
+                if ($tbaConfigurator->isValidAccess($actionAccess)) {
+                    // The TBA is not suppressed by admin access.
+                    return $actionAccess;
+                }
                 // If you have admin access for a module, all ACL's are allowed
                 return self::$acls[$user_id][$category][$type]['admin']['aclaccess'];
             }
-            return  self::$acls[$user_id][$category][$type][$action]['aclaccess'];
+            return $actionAccess;
         }
     }
 
