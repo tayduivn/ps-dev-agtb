@@ -17,13 +17,11 @@
     {{else}}
         {{#if dropdown_buttons}}
         <div class="btn-group">
-            <button type="button" data-toggle="dropdown" rel="tooltip" title="{{str "LBL_DASHLET_CONFIGURE"}}" class="dropdown-toggle btn btn-invisible" data-placement="bottom"><i data-action="loading" class="fa fa-cog" track="click:dashletToolbarCog"></i></button>
-            <ul class="dropdown-menu left">
-                <div>
-                    {{#each dropdown_buttons}}
-                        <li>{{field ../../../../this model=../../../../this.model}}</li>
-                    {{/each}}
-                </div>
+            <button type="button" data-toggle="dropdown" rel="tooltip" title="{{str "LBL_DASHLET_CONFIGURE"}}" class="btn btn-invisible dropdown-toggle" data-placement="bottom" aria-label="{{str "LBL_DASHLET_CONFIGURE"}}" aria-haspopup="true" aria-expanded="false"><i data-action="loading" class="fa fa-cog" track="click:dashletToolbarCog"></i></button>
+            <ul class="dropdown-menu left" role="menu">
+                {{#each dropdown_buttons}}
+                    <li role="menuitem">{{field ../../../../this model=../../../../this.model}}</li>
+                {{/each}}
             </ul>
         </div>
         {{/if}}
