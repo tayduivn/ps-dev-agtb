@@ -1268,6 +1268,9 @@ class CalDavEventCollection extends SugarBean
                     $adapter->export($exportData, $collection);
                 }
                 $vCalendarEvent = $collection->getVCalendar();
+                if (!empty($bean->send_invites_uid)) {
+                    $vCalendarEvent->getBaseComponent()->UID->setValue($bean->send_invites_uid);
+                }
 
                 if ($bean->deleted) {
                     $vCalendarEvent->add($vCalendarEvent->createProperty('METHOD', 'CANCEL'));

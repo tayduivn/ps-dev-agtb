@@ -336,6 +336,7 @@ abstract class AdapterAbstract implements AdapterInterface
         list($action, $beanId, $childEventsId, $recurrenceId, $recurrenceIndex) = $beanData;
 
         if (!$bean->repeat_parent_id) {
+            $bean->send_invites_uid = $beanData[1];
             $bean->send_invites = true;
         }
 
