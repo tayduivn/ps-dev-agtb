@@ -85,15 +85,14 @@ class CalDavEventCollectionCRYS1322Test extends Sugar_PHPUnit_Framework_TestCase
 
         $result = CalDavEventCollection::prepareForInvite($meetingMock, $emailInvitee, $organizerEmail);
 
-        $this->assertContains('METHOD:REQUEST', $result);
         $this->assertContains('X-SUGAR-ID:_meeting_id_', $result);
         $this->assertContains('X-SUGAR-NAME:Meetings', $result);
 
         if ($emailInvitee) {
+            $this->assertContains('METHOD:REQUEST', $result);
             $this->assertContains("ATTENDEE;CN=Contact Test2;RSVP=TRUE:mailto:attendee@test.com", $result);
         } else {
             $this->assertContains('ATTENDEE;CN=Contact Test2:mailto:attendee@test.com', $result);
-
         }
 
         $this->assertContains("ATTENDEE;PARTSTAT=ACCEPTED;CN=User Test1;ROLE=CHAIR:mailto:organizer@test.c\r\n om", $result);

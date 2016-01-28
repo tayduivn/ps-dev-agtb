@@ -606,6 +606,21 @@ class Meeting extends SugarBean {
 		return $meeting_fields;
 	}
 
+    /**
+     * @inheritdoc
+     */
+    protected function getTemplateNameForNotificationEmail()
+    {
+        if ($this->current_notify_user) {
+            $emailInvitee = $this->current_notify_user->emailAddress->getPrimaryAddress($this->current_notify_user);
+            if (CalDavEventCollection::isInviteCanceled($this, $emailInvitee)) {
+                return 'MeetingCanceled';
+            }
+        }
+
+        return parent::getTemplateNameForNotificationEmail();
+    }
+
 	function set_notification_body($xtpl, &$meeting) {
 		global $sugar_config;
 		global $app_list_strings;
@@ -768,65 +783,35 @@ class Meeting extends SugarBean {
 	}
 
 
+    /**
+     * @inheritdoc
+     */
 	function get_notification_recipients() {
 		if($this->special_notification) {
 			return parent::get_notification_recipients();
 		}
 
+        $inviteesBefore = $this->inviteesBefore ?: array();
+        $inviteesAfter = \CalendarUtils::getInvitees($this);
+
+        $mergedInvitees = array();
+
+        foreach ($inviteesBefore as $invitee) {
+            $mergedInvitees[$invitee[1]] = $invitee[0];
+        }
+        foreach ($inviteesAfter as $invitee) {
+            $mergedInvitees[$invitee[1]] = $invitee[0];
+        }
+
+        if (!isset($mergedInvitees[$this->created_by])) {
+            $mergedInvitees[$this->created_by] = 'Users';
+        }
+
         $list = array();
-        if(!is_array($this->contacts_arr)) {
-            $this->contacts_arr = array();
-        }
-
-        if(!is_array($this->users_arr)) {
-            $this->users_arr = array();
-        }
-
-        if(!is_array($this->leads_arr)) {
-            $this->leads_arr = array();
-        }
-
-        if (!is_array($this->addressees_arr)) {
-            $this->addressees_arr = array();
-        }
-
-        if (empty($this->leads_arr) && $this->load_relationship('leads')) {
-            $this->leads_arr = $this->leads->get();
-        }
-
-		foreach($this->users_arr as $user_id) {
-			$notify_user = BeanFactory::getBean('Users', $user_id);
-			if(!empty($notify_user->id)) {
-				$notify_user->new_assigned_user_name = $notify_user->full_name;
-				$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-				$list[$notify_user->id] = $notify_user;
-			}
-		}
-
-		foreach($this->contacts_arr as $contact_id) {
-			$notify_user = BeanFactory::getBean('Contacts', $contact_id);
-			if(!empty($notify_user->id)) {
-				$notify_user->new_assigned_user_name = $notify_user->full_name;
-				$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-				$list[$notify_user->id] = $notify_user;
-			}
-		}
-
-        foreach($this->leads_arr as $lead_id) {
-			$notify_user = BeanFactory::getBean('Leads', $lead_id);
-			if(!empty($notify_user->id)) {
-				$notify_user->new_assigned_user_name = $notify_user->full_name;
-				$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-				$list[$notify_user->id] = $notify_user;
-			}
-		}
-
-        foreach ($this->addressees_arr as $addresseeId) {
-            /** @var Addressee $notify_user */
-            $notify_user = BeanFactory::getBean('Addressees', $addresseeId);
-            if (!empty($notify_user->id)) {
+        foreach ($mergedInvitees as $id => $module) {
+            $notify_user = BeanFactory::getBean($module, $id);
+            if(!empty($notify_user->id)) {
                 $notify_user->new_assigned_user_name = $notify_user->full_name;
-                $GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
                 $list[$notify_user->id] = $notify_user;
             }
         }
