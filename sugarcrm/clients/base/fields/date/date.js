@@ -206,7 +206,8 @@
      */
     _getAppendToTarget: function() {
         var component = this.closestComponent('main-pane') ||
-            this.closestComponent('drawer');
+            this.closestComponent('drawer') ||
+            this.closestComponent('preview-pane');
 
         if (component) {
             return component.$el;
