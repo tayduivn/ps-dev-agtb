@@ -1269,6 +1269,11 @@ class CalDavEventCollection extends SugarBean
                 }
                 $vCalendarEvent = $collection->getVCalendar();
 
+                if ($bean->deleted) {
+                    $vCalendarEvent->add($vCalendarEvent->createProperty('METHOD', 'CANCEL'));
+                    return $vCalendarEvent->serialize();
+                }
+
                 /** @var Structures\Event $event */
                 $event = $collection->getParent();
                 $event->getObject()->add($vCalendarEvent->createProperty('X-SUGAR-ID', $bean->id));

@@ -505,7 +505,8 @@ class Call extends SugarBean {
 
 
 		// Assumes $call dates are in user format
-		$calldate = $timedate->fromDb($call->date_start);
+        $dateTimeHelper = new \Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper();
+        $calldate = $dateTimeHelper->sugarDateToUTC($call->date_start);
 		$xOffset = $timedate->asUser($calldate, $notifyUser).' '.$timedate->userTimezoneSuffix($calldate, $notifyUser);
 
 		$propertyUrlUserId = array_search(strtolower(get_class($call->current_notify_user)), array(
@@ -631,7 +632,7 @@ class Call extends SugarBean {
             $mergedInvitees[$invitee[1]] = $invitee[0];
         }
 
-        if (!isset($mergedInvitees[$this->created_by])) {
+        if (!empty($this->created_by) && !isset($mergedInvitees[$this->created_by])) {
             $mergedInvitees[$this->created_by] = 'Users';
         }
 
@@ -743,6 +744,9 @@ class Call extends SugarBean {
         CalendarUtils::correctRecurrences($this, $id);
         $deletedStatus = $this->deleted;
         parent::mark_deleted($id);
+        if ($this->send_invites) {
+            $this->_sendNotifications(true);
+        }
         if (!$deletedStatus && $this->deleted) {
             $this->getCalDavHook()->export($this, array('delete'));
         }

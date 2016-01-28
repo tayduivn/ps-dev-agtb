@@ -347,6 +347,9 @@ class Meeting extends SugarBean {
         CalendarUtils::correctRecurrences($this, $id);
         $deletedStatus = $this->deleted;
         parent::mark_deleted($id);
+        if ($this->send_invites) {
+            $this->_sendNotifications(true);
+        }
         if (!$deletedStatus && $this->deleted) {
             $this->getCalDavHook()->export($this, array('delete'));
         }
@@ -661,11 +664,14 @@ class Meeting extends SugarBean {
                 $typestring = $app_list_strings['meeting_type_dom'][$meeting->type];
             }
         }
+
+        $dateTimeHelper = new \Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper();
+        $dateStart = $dateTimeHelper->sugarDateToUTC($meeting->date_start);
+        $dateEnd = $dateTimeHelper->sugarDateToUTC($meeting->date_end);
+
         $xtpl->assign("MEETING_TYPE", isset($meeting->type) ? $typestring : "");
-		$startdate = $timedate->fromDb($meeting->date_start);
-		$xtpl->assign("MEETING_STARTDATE", $timedate->asUser($startdate, $notifyUser)." ".TimeDate::userTimezoneSuffix($startdate, $notifyUser));
-		$enddate = $timedate->fromDb($meeting->date_end);
-		$xtpl->assign("MEETING_ENDDATE", $timedate->asUser($enddate, $notifyUser)." ".TimeDate::userTimezoneSuffix($enddate, $notifyUser));
+		$xtpl->assign("MEETING_STARTDATE", $timedate->asUser($dateStart, $notifyUser)." ".TimeDate::userTimezoneSuffix($dateStart, $notifyUser));
+		$xtpl->assign("MEETING_ENDDATE", $timedate->asUser($dateEnd, $notifyUser)." ".TimeDate::userTimezoneSuffix($dateEnd, $notifyUser));
 		$xtpl->assign("MEETING_HOURS", $meeting->duration_hours);
 		$xtpl->assign("MEETING_MINUTES", $meeting->duration_minutes);
 		$xtpl->assign("MEETING_DESCRIPTION", $meeting->description);
@@ -803,7 +809,7 @@ class Meeting extends SugarBean {
             $mergedInvitees[$invitee[1]] = $invitee[0];
         }
 
-        if (!isset($mergedInvitees[$this->created_by])) {
+        if (!empty($this->created_by) && !isset($mergedInvitees[$this->created_by])) {
             $mergedInvitees[$this->created_by] = 'Users';
         }
 

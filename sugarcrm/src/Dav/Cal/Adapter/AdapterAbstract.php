@@ -335,7 +335,14 @@ abstract class AdapterAbstract implements AdapterInterface
         list($beanData, $changedFields, $invitees) = $data;
         list($action, $beanId, $childEventsId, $recurrenceId, $recurrenceIndex) = $beanData;
 
+        if (!$bean->repeat_parent_id) {
+            $bean->send_invites = true;
+        }
+
         if ($action == 'delete' && !$bean->deleted) {
+            if ($bean->send_invites) {
+                $bean->inviteesBefore = \CalendarUtils::getInvitees($bean);
+            }
             return static::DELETE;
         }
         if ($action != 'restore' && $bean->deleted) {
@@ -436,9 +443,6 @@ abstract class AdapterAbstract implements AdapterInterface
             return static::RESTORE;
         }
         if ($isChanged) {
-            if (!$bean->repeat_parent_id) {
-                $bean->send_invites = true;
-            }
             return static::SAVE;
         }
         return static::NOTHING;

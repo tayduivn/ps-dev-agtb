@@ -5794,7 +5794,15 @@ class SugarBean
                 }
             }
 
+            // creator should be present after removal
+            $createdBy = null;
+            if (isset($this->field_defs['created_by'])) {
+                $createdBy = $this->created_by;
+            }
             $this->mark_relationships_deleted($id);
+            if ($createdBy) {
+                $this->created_by = $createdBy;
+            }
             if (isset($this->field_defs['modified_user_id'])) {
                 if (!empty($current_user)) {
                     $this->modified_user_id = $current_user->id;
@@ -7204,8 +7212,10 @@ class SugarBean
 
     /**
     * Send assignment notifications and invites for meetings and calls
+     * @param bool $check_notify
     */
-    private function _sendNotifications($check_notify){
+    protected function _sendNotifications($check_notify)
+    {
         if($check_notify || (isset($this->notify_inworkflow) && $this->notify_inworkflow == true) // cn: bug 5795 - no invites sent to Contacts, and also bug 25995, in workflow, it will set the notify_on_save=true.
            && !$this->isOwner($this->created_by) )  // cn: bug 42727 no need to send email to owner (within workflow)
         {
