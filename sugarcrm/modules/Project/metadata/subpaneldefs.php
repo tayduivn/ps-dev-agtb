@@ -22,7 +22,6 @@ $modules_exempt_from_availability_check = array('Holidays'=>'Holidays',
 												'History'=>'History',
 												'Notes'=>'Notes',
 												'Emails'=>'Emails',
-												'ProjectTask'=>'ProjectTask',
 												'Users'=>'Users',
 											   );
 
