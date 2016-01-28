@@ -36,6 +36,20 @@
                         section: null
                     });
                 }
+        },
+            {
+                name: "RedirectConfigPage",
+                route: "NotificationCenter",
+                callback: function () {
+                    app.router.goBack();
+                }
+        },
+            {
+                name: "NotificationCenterSubscriptions",
+                route: "NotificationCenterSubscriptions",
+                callback: function () {
+                    app.router.navigate('#Home', {trigger: true, replace: true});
+                }
         }
         ];
 
