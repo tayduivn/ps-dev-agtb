@@ -178,7 +178,9 @@ class PMSERelatedModule
         $filterArray = array(
             'value' => $filter,
             'text' => '<' . $filterText . '>',
-            'module' => $filter, 
+            'module' => $filter,
+            'module_label' => $filterText, // Display value for Module Name
+            'module_name' => $filter, // Actual Module Name Key
             'relationship' => $filter
         );
         
