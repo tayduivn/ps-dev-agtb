@@ -1901,13 +1901,11 @@ class Report
             if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE) {
                 $this->handleException($mod_strings['LBL_NO_ACCESS']);
             }
-            //BEGIN SUGARCRM flav=ent ONLY
             $aclVisibility = new ACLVisibility($this->focus);
             $aclVisibility->setOptions(array('action' => 'view'));
             $aclVisibility->addVisibilityWhere($where_auto);
             $aclVisibility->setOptions(array('action' => 'list'));
             $aclVisibility->addVisibilityWhere($where_auto);
-            //END SUGARCRM flav=ent ONLY
         }
         // End ACL check
 
