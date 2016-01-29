@@ -150,11 +150,6 @@ class Audit extends SugarBean
                 continue;
             }
 
-            if ($this->handleRelatedIdField($bean, $row)) {
-                $return[] = $row;
-                continue;
-            }
-
             // look for opportunities to relate ids to name values.
             if (!empty($this->genericAssocFieldsArray[$row['field_name']]) ||
                 !empty($this->moduleAssocFieldsArray[$bean->object_name][$row['field_name']])
@@ -204,41 +199,6 @@ class Audit extends SugarBean
         }
 
         return $return;
-    }
-
-    /**
-     * Handles related id fields
-     *
-     * @param SugarBean $bean
-     * @param array $row A row of database-queried audit table results.
-     * @return boolean
-     */
-    protected function handleRelatedIdField($bean, &$row)
-    {
-        foreach ($bean->field_defs as $field => $value) {
-            if (isset($value['id_name']) && $value['id_name'] == $row['field_name'] &&
-                $value['type'] = 'relate' && !empty($value['module'])) {
-                $row['field_name'] = $field;
-
-                if (!empty($row['before_value_string'])) {
-                    $beforeBean = BeanFactory::getBean($value['module'], $row['before_value_string']);
-                    if (!empty($beforeBean)) {
-                        $row['before_value_string'] = $beforeBean->get_summary_text();
-                    }
-                }
-
-                if (!empty($row['after_value_string'])) {
-                    $afterBean = BeanFactory::getBean($value['module'], $row['after_value_string']);
-                    if (!empty($afterBean)) {
-                        $row['after_value_string'] = $afterBean->get_summary_text();
-                    }
-                }
-
-                $row = $this->formatRowForApi($row);
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
