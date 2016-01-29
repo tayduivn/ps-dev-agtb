@@ -149,7 +149,7 @@
         this.url = app.utils.addIframeMark(this.context.get('url') || 'index.php?module=' + this.module + '&action=index');
         app.view.View.prototype._renderHtml.call(this);
 
-        this.$('iframe').load(function() {
+        this.$('iframe').on('load', function() {
             //In order to update current location once bwc link is clicked.
             self.url = 'index.php' + this.contentWindow.location.search;
             self._setCurrentUrl();
