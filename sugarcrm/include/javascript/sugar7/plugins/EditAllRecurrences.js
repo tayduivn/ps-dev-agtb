@@ -158,7 +158,8 @@
                     'repeat_interval',
                     'repeat_dow',
                     'repeat_until',
-                    'repeat_count'
+                    'repeat_count',
+                    'repeat_days'
                 ], function(field) {
                     var $editWrapper = this.$('span.record-edit-link-wrapper[data-name="' + field + '"]');
 
