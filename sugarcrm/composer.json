@@ -47,6 +47,7 @@
             "ModuleInstall/",
             "service/",
             "soap/",
+            "src/Dbal/Compat/PDO.php",
             "themes/",
             "upgrade/",
             "vendor/lessphp",
