@@ -240,7 +240,7 @@
             $(this).removeClass('loaded').addClass('loaded');
         });
 
-        this.$('img').error(function() {
+        this.$('img').on('error', function() {
             $(this).attr('src', 'include/images/user.svg');
         });
     },
