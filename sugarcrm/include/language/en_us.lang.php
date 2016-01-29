@@ -683,6 +683,25 @@ $app_list_strings = array (
     'Calls' => 'Call',
       'KBContents' => 'Knowledge Base',
   ),
+    'record_type_display_emails' => array(
+        //FIXME: Remove the empty option once the BWC Emails UI has reached its EOL.
+        '' => '',
+        'Accounts' => 'Account',
+        'Contacts' => 'Contact',
+        'Tasks' => 'Task',
+        'Opportunities' => 'Opportunity',
+        'Products' => 'Quoted Line Item',
+        'Quotes' => 'Quote',
+        'Bugs' => 'Bug',
+        'Cases' => 'Case',
+        'Leads' => 'Lead',
+        'Project' => 'Project',
+        'ProjectTask' => 'Project Task',
+        'Prospects' => 'Target',
+        'Notes' => 'Note',
+        'Meetings' => 'Meeting',
+        'RevenueLineItems' => 'Revenue Line Item',
+    ),
 
   'parent_type_display' =>
   array (

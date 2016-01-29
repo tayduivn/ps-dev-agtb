@@ -161,7 +161,7 @@ $viewdefs['Emails']['base']['view']['archive-email'] = array(
                     'label' => 'LBL_LIST_RELATED_TO',
                     'type' => 'parent',
                     'name' => 'parent_name',
-                    'options' => 'parent_type_display',
+                    'options' => 'record_type_display_emails',
                     'span' => 12,
                 ),
                 array(

@@ -81,8 +81,8 @@ if(!empty($_REQUEST['load_id']) && !empty($beanList[$_REQUEST['load_module']])) 
 		$parentType = $request->getValidInputRequest('parent_type', 'Assert\Mvc\ModuleName');
 		$loadModule = $request->getValidInputRequest('load_module', 'Assert\Mvc\ModuleName');
 
-    	if(!empty($parentType) && empty($app_list_strings['record_type_display'][$parentType])){
-    		if(!empty($app_list_strings['record_type_display'][$loadModule])){
+    	if(!empty($parentType) && empty($app_list_strings['record_type_display_emails'][$parentType])){
+    		if(!empty($app_list_strings['record_type_display_emails'][$loadModule])){
     			$_REQUEST['parent_type'] = $loadModule;
     			$_REQUEST['parent_id'] = $focus->contact_id;
     			$_REQUEST['parent_name'] = $focus->to_addrs_names;
@@ -448,7 +448,7 @@ $xtpl->assign('TIME_FORMAT', '('. $timedate->get_user_time_format().')');
 $xtpl->assign('TIME_START', substr($focus->time_start,0,5));
 $xtpl->assign('TIME_MERIDIEM', $timedate->AMPMMenu('',$focus->time_start));
 
-$parent_types = $app_list_strings['record_type_display'];
+$parent_types = $app_list_strings['record_type_display_emails'];
 $disabled_parent_types = SugarACL::disabledModuleList($parent_types);
 
 foreach($disabled_parent_types as $disabled_parent_type){

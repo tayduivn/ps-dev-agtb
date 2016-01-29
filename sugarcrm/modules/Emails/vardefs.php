@@ -328,7 +328,7 @@ $dictionary['Email'] = array(
         ),
         'parent_name' => array(
             'name' => 'parent_name',
-            'parent_type' => 'record_type_display',
+            'parent_type' => 'record_type_display_emails',
             'type_name' => 'parent_type',
             'id_name' => 'parent_id',
             'vname' => 'LBL_LIST_RELATED_TO',
@@ -336,7 +336,7 @@ $dictionary['Email'] = array(
             'group' => 'parent_name',
             'reportable' => false,
             'source' => 'non-db',
-            'options' => 'parent_type_display',
+            'options' => 'record_type_display_emails',
         ),
         'parent_type' => array(
             'name' => 'parent_type',
@@ -344,7 +344,7 @@ $dictionary['Email'] = array(
             'type' => 'parent_type',
             'dbType' => 'varchar',
             'group' => 'parent_name',
-            'options' => 'parent_type_display',
+            'options' => 'record_type_display_emails',
             'reportable' => false,
             'comment' => 'Identifier of Sugar module to which this email is associated',
         ),

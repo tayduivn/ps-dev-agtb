@@ -27,6 +27,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
         parent::setUp();
         SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('dictionary');
         $this->api     = SugarTestRestUtilities::getRestServiceMock();
         $this->mailApi = $this->createPartialMock('MailApi', array("initMailRecord", "getEmailRecipientsService", "getEmailBean"));
 

@@ -354,8 +354,8 @@ class MailApi extends ModuleApi
      */
     public function validateArguments(array &$args)
     {
-        global $app_list_strings;
-        $relatedToModules = array_keys($app_list_strings['parent_type_display']);
+        $relatedToOptions = $GLOBALS['dictionary']['Email']['fields']['parent_name']['options'];
+        $relatedToModules = array_keys($GLOBALS['app_list_strings'][$relatedToOptions]);
 
         /*--- Validate status value ---*/
         if (empty($args[self::STATUS]) || !in_array($args[self::STATUS], self::$apiStatusValues)) {
