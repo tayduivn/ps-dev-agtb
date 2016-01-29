@@ -390,9 +390,6 @@ class RRule
      */
     public function normalizeUntil(\SugarDateTime $until)
     {
-        if ($until->format('H:i:s') == '00:00:00') {
-            return $until->get_day_end_time();
-        }
-        return $until;
+        return $until->get_day_end_time();
     }
 }
