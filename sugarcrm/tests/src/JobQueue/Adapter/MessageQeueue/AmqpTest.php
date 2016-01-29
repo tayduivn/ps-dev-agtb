@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\JobQueue\Adapter\MessageQeueue;
 
+use Psr\Log\NullLogger;
 use Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue\AMQP;
 use Sugarcrm\SugarcrmTests\JobQueue\MessageQueue\MessageQueueTestAbstract;
 
@@ -23,6 +24,6 @@ class AmqpTest extends MessageQueueTestAbstract
         if (!$config) {
             $this->markTestSkipped('Skipping, AMQP adapter is not configured.');
         }
-        $this->adapter = new AMQP($config);
+        $this->adapter = new AMQP($config, new NullLogger());
     }
 }

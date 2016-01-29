@@ -112,6 +112,7 @@ require_once 'SugarTestCommentUtilities.php';
 require_once 'SugarTestReflection.php';
 require_once 'SugarTestConfigUtilities.php';
 require_once 'SugarTestDashboardUtilities.php';
+require_once 'SugarTestNoteUtilities.php';
 
 require_once 'SugarTestForecastUtilities.php';
 require_once 'SugarTestProductUtilities.php';

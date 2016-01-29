@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Client;
 
+use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Helper\Producer;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
 
@@ -27,13 +28,20 @@ class Immediate implements ClientInterface
     protected $function;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * Initialize object and set up handler function (normally it is Manager's proxyHandler).
      * ToDo: Add type-hint 'callable' when we finally leave 5.3.
      * @param callable $function
+     * @param LoggerInterface $logger
      */
-    public function __construct($function)
+    public function __construct($function, LoggerInterface $logger)
     {
         $this->function = $function;
+        $this->logger = $logger;
     }
 
     /**
@@ -42,6 +50,9 @@ class Immediate implements ClientInterface
      */
     public function addJob(WorkloadInterface $workload)
     {
+        $this->logger->info("[Immediate]: execute a task '{$workload->getHandlerName()}'.");
+        $this->logger->debug("[Immediate]: workload " . var_export($workload, true));
+
         call_user_func($this->function, $workload);
 
         $job = \BeanFactory::getBean('SchedulersJobs', $workload->getAttribute('dbId'));

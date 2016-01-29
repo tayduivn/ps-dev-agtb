@@ -12,9 +12,9 @@
 
 namespace Sugarcrm\SugarcrmTests\JobQueue\Handler;
 
-use Sugarcrm\Sugarcrm\JobQueue\Handler\ExportToCSVDemo;
+use Sugarcrm\Sugarcrm\JobQueue\Handler\ExportToCSV;
 
-class ExportToCSVDemoTest extends \Sugar_PHPUnit_Framework_TestCase
+class ExportToCSVTest extends \Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var \Account
@@ -22,21 +22,21 @@ class ExportToCSVDemoTest extends \Sugar_PHPUnit_Framework_TestCase
     protected $account;
 
     /**
-     * @var string $file File name to write results.
+     * @inheritdoc
      */
-    protected $file;
-
     public function setUp()
     {
         \SugarTestHelper::setUp('current_user', array(true, 1));
         $this->account = \SugarTestAccountUtilities::createAccount();
-        $this->file = tempnam(sys_get_temp_dir(), __CLASS__);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function tearDown()
     {
-        \SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         \SugarTestAccountUtilities::removeAllCreatedAccounts();
+        \SugarTestNoteUtilities::removeAllCreatedNotes();
         \SugarTestHelper::tearDown();
     }
 
@@ -45,15 +45,16 @@ class ExportToCSVDemoTest extends \Sugar_PHPUnit_Framework_TestCase
      */
     public function testEmptyData()
     {
-        new ExportToCSVDemo($this->account->module_name, array(), $this->file);
+        $note = \SugarTestNoteUtilities::createNote(create_guid());
+        new ExportToCSV($this->account->module_name, array(), $note->id);
     }
 
     /**
      * @expectedException \Exception
      */
-    public function testInvalidFile()
+    public function testNoteDoesNotExist()
     {
-        new ExportToCSVDemo($this->account->module_name, array($this->account->id), 'invalidFile');
+        new ExportToCSV($this->account->module_name, array($this->account->id), '');
     }
 
     /**
@@ -61,8 +62,9 @@ class ExportToCSVDemoTest extends \Sugar_PHPUnit_Framework_TestCase
      */
     public function testExportToCSV()
     {
-        $handler = new ExportToCSVDemo($this->account->module_name, array($this->account->id), $this->file);
+        $note = \SugarTestNoteUtilities::createNote(create_guid());
+        $handler = new ExportToCSV($this->account->module_name, array($this->account->id), $note->id);
         $handler->run();
-        $this->assertNotEquals(0, filesize($this->file));
+        $this->assertNotEquals(0, filesize('upload://' . $note->id));
     }
 }
