@@ -113,6 +113,29 @@ class TeamBasedACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test no access for non-owner when a bean is not passed.
+     * Teams intersections is ignored.
+     */
+    public function testTBANoBeanOwner()
+    {
+        $action = 'view';
+        $context = array();
+        // The user is in the TeamSetT1.
+        $this->bean->team_set_selected_id = $this->teamSetT1T2->id;
+        $this->bean->save();
+
+        $aclData['module'][$action]['aclaccess'] = ACL_ALLOW_SELECTED_TEAMS;
+        ACLAction::setACLData($this->user->id, $this->module, $aclData);
+
+        $acl = $this->getMock('SugarACLTeamBased', array('getCurrentUser'));
+        $acl->expects($this->any())->method('getCurrentUser')->will($this->returnValue($this->user));
+
+        $actualUserAccess = $acl->checkAccess($this->module, $action, $context);
+
+        $this->assertEquals(false, $actualUserAccess[$action]);
+    }
+
+    /**
      * The TBA handle the Delete, Edit, Export, List and View actions only.
      * @dataProvider aclDataProvider
      */
