@@ -35,9 +35,9 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     public function testIsConfigured($triggerServerUrl, $returnIsConfigured)
     {
         $sugarConfig = $this->getSugarConfigMock();
-        $sugarConfig->method('get')
-            ->with('trigger_server.url')
-            ->willReturn($triggerServerUrl);
+        $sugarConfig->method('get')->willReturnMap(array(
+            array('trigger_server.url', null, $triggerServerUrl),
+        ));
 
         $client = $this->getClientMock(array('getSugarConfig'));
         $client->method('getSugarConfig')
@@ -66,16 +66,15 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsAvailable($httpClientReturns, $expected)
     {
-
         $sugarConfig = $this->getSugarConfigMock();
-        $sugarConfig->method('get')
-            ->with('trigger_server.url')
-            ->willReturn(static::TRIGGER_SERVER_URL);
+        $sugarConfig->method('get')->willReturnMap(array(
+            array('trigger_server.url', null, static::TRIGGER_SERVER_URL),
+        ));
 
-        $httpHelper = $this->getHttpClientMock(array('ping'));
+        $httpHelper = $this->getHttpHelperMock();
         $httpHelper->expects($this->once())
             ->method('ping')
-            ->with(static::TRIGGER_SERVER_URL)
+            ->with($this->equalTo(static::TRIGGER_SERVER_URL))
             ->willReturn($httpClientReturns);
 
         $client = $this->getClientMock(array('getSugarConfig', 'getHttpHelper'));
@@ -107,34 +106,32 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testRetrieveToken($storedToken, $newToken, $count, $returnToken)
     {
-        $adminBean = $this->getMockBuilder('\Administration')
-            ->disableOriginalConstructor()
-            ->setMethods(array('getConfigForModule', 'saveSetting'))
-            ->getMock();
-
-        $adminBean->method('getConfigForModule')
-            ->with('auth')
-            ->willReturn(array('external_token_trigger' => $storedToken));
-
+        $adminBean = $this->getAdministrationBeanMock();
+        $adminBean->method('getConfigForModule')->willReturnMap(array(
+            array('auth', 'base', true, array('external_token_trigger' => $storedToken)),
+        ));
         $adminBean->expects($this->exactly($count))
             ->method('saveSetting')
-            ->with('auth', 'external_token_trigger', $newToken, 'base')
+            ->with(
+                $this->equalTo('auth'),
+                $this->equalTo('external_token_trigger'),
+                $this->equalTo($newToken),
+                $this->equalTo('base')
+            )
             ->willReturn(1);
 
         $client = $this->getClientMock(array('getAdministrationBean', 'createGuid'));
-
-        $client->method('getAdministrationBean')
-            ->willReturn($adminBean);
-
-        $client->method('createGuid')
-            ->willReturn($newToken);
+        $client->method('getAdministrationBean')->willReturn($adminBean);
+        $client->method('createGuid')->willReturn($newToken);
 
         $this->assertEquals($returnToken, TestReflection::callProtectedMethod($client, 'retrieveToken'));
 
     }
 
     /**
-     * (stored token, new generated token, expected Administration::saveSetting number of calls, Client::retrieveToken returns)
+     * (stored token, new generated token,
+     * expected Administration::saveSetting number of calls,
+     * Client::retrieveToken returns)
      * @return array
      */
     public function providerRetrieveToken()
@@ -157,35 +154,38 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     public function testPush($params, $method, $args, $tags, $encodedMessageToSend)
     {
         $sugarConfig = $this->getSugarConfigMock();
-
-        $sugarConfig->method('get')->will($this->returnValueMap(array(
+        $sugarConfig->method('get')->willReturnMap(array(
             array('trigger_server.url', null, ClientTest::TRIGGER_SERVER_URL),
             array('site_url', null, ClientTest::SITE_URL),
-
-        )));
+        ));
 
         $triggerServerPostUrl = static::TRIGGER_SERVER_URL . Client::POST_URI;
+        $headers = $this->getDefaultAuthHeaders();
 
-        $httpHelper = $this->getHttpClientMock(array('send'));
+        $httpHelper = $this->getHttpHelperMock();
         $httpHelper->expects($this->once())
             ->method('send')
-            ->with(Client::POST_METHOD, $triggerServerPostUrl, $encodedMessageToSend)
+            ->with(
+                $this->equalTo(Client::POST_METHOD),
+                $this->equalTo($triggerServerPostUrl),
+                $this->equalTo($encodedMessageToSend),
+                $this->equalTo($headers)
+            )
             ->willReturn(true);
 
+        $adminBean = $this->getAdministrationBeanMock();
+        $adminBean->method('getConfigForModule')->willReturnMap(array(
+            array('auth', 'base', true, array('external_token_trigger' => static::TOKEN)),
+        ));
+
         $client = $this->getClientMock(array(
-            'retrieveToken',
+            'getAdministrationBean',
             'getSugarConfig',
             'getHttpHelper',
         ));
-
-        $client->method('retrieveToken')
-            ->willReturn(static::TOKEN);
-
-        $client->method('getSugarConfig')
-            ->willReturn($sugarConfig);
-
-        $client->method('getHttpHelper')
-            ->willReturn($httpHelper);
+        $client->method('getAdministrationBean')->willReturn($adminBean);
+        $client->method('getSugarConfig')->willReturn($sugarConfig);
+        $client->method('getHttpHelper')->willReturn($httpHelper);
 
         $client->push($params['id'], $params['stamp'], $method, $params['uri'], $args, $tags);
     }
@@ -290,7 +290,6 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $encodedMessageToSend = array(
             'url' => static::SITE_URL,
             'id' => $params['id'],
-            'token' => static::TOKEN,
             'stamp' => $params['stamp'],
             'trigger' => array(
                 'url' => $params['uri'],
@@ -319,32 +318,29 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     public function testPushIsConfigured($isConfigured, $send, $returned)
     {
         $sugarConfig = $this->getSugarConfigMock();
-
-        $sugarConfig->method('get')->will($this->returnValueMap(array(
+        $sugarConfig->method('get')->willReturnMap(array(
             array('trigger_server.url', null, $isConfigured ? ClientTest::TRIGGER_SERVER_URL : ''),
             array('site_url', null, ClientTest::SITE_URL),
+        ));
 
-        )));
-
-        $httpHelper = $this->getHttpClientMock(array('send'));
+        $httpHelper = $this->getHttpHelperMock();
         $httpHelper->expects($this->exactly($send ? 1 : 0))
             ->method('send')
             ->willReturn(true);
 
+        $adminBean = $this->getAdministrationBeanMock();
+        $adminBean->method('getConfigForModule')->willReturnMap(array(
+            array('auth', 'base', true, array('external_token_trigger' => static::TOKEN)),
+        ));
+
         $client = $this->getClientMock(array(
-            'retrieveToken',
+            'getAdministrationBean',
             'getSugarConfig',
             'getHttpHelper',
         ));
-
-        $client->method('retrieveToken')
-            ->willReturn(static::TOKEN);
-
-        $client->method('getSugarConfig')
-            ->willReturn($sugarConfig);
-
-        $client->method('getHttpHelper')
-            ->willReturn($httpHelper);
+        $client->method('getAdministrationBean')->willReturn($adminBean);
+        $client->method('getSugarConfig')->willReturn($sugarConfig);
+        $client->method('getHttpHelper')->willReturn($httpHelper);
 
         $this->assertEquals($returned, $client->push('dummy-id', 'dummy-stamp', 'get', '/dummy-uri', null, null));
     }
@@ -354,37 +350,41 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testDelete()
     {
-        $triggerId = 'dummy-id';
         $sugarConfig = $this->getSugarConfigMock();
-
-        $sugarConfig->method('get')->will($this->returnValueMap(array(
+        $sugarConfig->method('get')->willReturnMap(array(
             array('trigger_server.url', null, ClientTest::TRIGGER_SERVER_URL),
             array('site_url', null, ClientTest::SITE_URL),
+        ));
 
-        )));
-
+        $triggerId = 'dummy-id';
         $triggerServerDeleteUrl = static::TRIGGER_SERVER_URL . Client::DELETE_URI;
+        $headers = $this->getDefaultAuthHeaders();
 
-        $httpHelper = $this->getHttpClientMock(array('send'));
+        $httpHelper = $this->getHttpHelperMock();
         $httpHelper->expects($this->once())
             ->method('send')
-            ->with(Client::DELETE_METHOD, $triggerServerDeleteUrl, $this->getEncodedMessageToDelete($triggerId))
+            ->with(
+                $this->equalTo(Client::DELETE_METHOD),
+                $this->equalTo($triggerServerDeleteUrl),
+                $this->equalTo($this->getEncodedMessageToDelete($triggerId)),
+                $this->equalTo($headers)
+            )
             ->willReturn(true);
 
+        $adminBean = $this->getAdministrationBeanMock();
+        $adminBean->method('getConfigForModule')->willReturnMap(array(
+            array('auth', 'base', true, array('external_token_trigger' => static::TOKEN)),
+        ));
+
         $client = $this->getClientMock(array(
-            'retrieveToken',
+            'getAdministrationBean',
             'getSugarConfig',
             'getHttpHelper',
         ));
 
-        $client->method('retrieveToken')
-            ->willReturn(static::TOKEN);
-
-        $client->method('getSugarConfig')
-            ->willReturn($sugarConfig);
-
-        $client->method('getHttpHelper')
-            ->willReturn($httpHelper);
+        $client->method('getAdministrationBean')->willReturn($adminBean);
+        $client->method('getSugarConfig')->willReturn($sugarConfig);
+        $client->method('getHttpHelper')->willReturn($httpHelper);
 
         $client->delete($triggerId);
     }
@@ -398,7 +398,6 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         return json_encode(array(
             'url' => static::SITE_URL,
             'id' => $id,
-            'token' => static::TOKEN,
         ));
     }
 
@@ -412,33 +411,31 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     public function testDeleteIsConfigured($isConfigured, $send, $returned)
     {
         $triggerId = 'dummy-id';
-        $sugarConfig = $this->getSugarConfigMock();
 
-        $sugarConfig->method('get')->will($this->returnValueMap(array(
+        $sugarConfig = $this->getSugarConfigMock();
+        $sugarConfig->method('get')->willReturnMap(array(
             array('trigger_server.url', null, $isConfigured ? ClientTest::TRIGGER_SERVER_URL : ''),
             array('site_url', null, ClientTest::SITE_URL),
+        ));
 
-        )));
-
-        $httpHelper = $this->getHttpClientMock(array('send'));
+        $httpHelper = $this->getHttpHelperMock();
         $httpHelper->expects($this->exactly($send ? 1 : 0))
             ->method('send')
             ->willReturn(true);
 
+        $adminBean = $this->getAdministrationBeanMock();
+        $adminBean->method('getConfigForModule')->willReturnMap(array(
+            array('auth', 'base', true, array('external_token_trigger' => static::TOKEN)),
+        ));
+
         $client = $this->getClientMock(array(
-            'retrieveToken',
+            'getAdministrationBean',
             'getSugarConfig',
             'getHttpHelper',
         ));
-
-        $client->method('retrieveToken')
-            ->willReturn(static::TOKEN);
-
-        $client->method('getSugarConfig')
-            ->willReturn($sugarConfig);
-
-        $client->method('getHttpHelper')
-            ->willReturn($httpHelper);
+        $client->method('getAdministrationBean')->willReturn($adminBean);
+        $client->method('getSugarConfig')->willReturn($sugarConfig);
+        $client->method('getHttpHelper')->willReturn($httpHelper);
 
         $this->assertEquals($returned, $client->delete($triggerId));
     }
@@ -453,39 +450,38 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     public function testDeleteByTags($tags, $sendCallsCount, $expected)
     {
         $sugarConfig = $this->getSugarConfigMock();
-
-        $sugarConfig->method('get')->will($this->returnValueMap(array(
+        $sugarConfig->method('get')->willReturnMap(array(
             array('trigger_server.url', null, ClientTest::TRIGGER_SERVER_URL),
             array('site_url', null, ClientTest::SITE_URL),
-
-        )));
+        ));
 
         $triggerServerDeleteByTagsUrl = static::TRIGGER_SERVER_URL . Client::DELETE_BY_TAGS_URI;
+        $headers = $this->getDefaultAuthHeaders();
 
-        $httpHelper = $this->getHttpClientMock(array('send'));
+        $httpHelper = $this->getHttpHelperMock();
         $httpHelper->expects($this->exactly($sendCallsCount))
             ->method('send')
             ->with(
-                Client::DELETE_BY_TAGS_METHOD,
-                $triggerServerDeleteByTagsUrl,
-                $this->getEncodedMessageToDeleteByTags($tags)
+                $this->equalTo(Client::DELETE_BY_TAGS_METHOD),
+                $this->equalTo($triggerServerDeleteByTagsUrl),
+                $this->equalTo($this->getEncodedMessageToDeleteByTags($tags)),
+                $this->equalTo($headers)
             )
             ->willReturn(true);
 
+        $adminBean = $this->getAdministrationBeanMock();
+        $adminBean->method('getConfigForModule')->willReturnMap(array(
+            array('auth', 'base', true, array('external_token_trigger' => static::TOKEN)),
+        ));
+
         $client = $this->getClientMock(array(
-            'retrieveToken',
+            'getAdministrationBean',
             'getSugarConfig',
             'getHttpHelper',
         ));
-
-        $client->method('retrieveToken')
-            ->willReturn(static::TOKEN);
-
-        $client->method('getSugarConfig')
-            ->willReturn($sugarConfig);
-
-        $client->method('getHttpHelper')
-            ->willReturn($httpHelper);
+        $client->method('getAdministrationBean')->willReturn($adminBean);
+        $client->method('getSugarConfig')->willReturn($sugarConfig);
+        $client->method('getHttpHelper')->willReturn($httpHelper);
 
         $this->assertEquals($expected, $client->deleteByTags($tags));
     }
@@ -511,7 +507,6 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         return json_encode(array(
             'url' => static::SITE_URL,
-            'token' => static::TOKEN,
             'tags' => $tags,
         ));
     }
@@ -526,32 +521,29 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     public function testDeleteByTagsIsConfigured($isConfigured, $send, $returned)
     {
         $sugarConfig = $this->getSugarConfigMock();
-
-        $sugarConfig->method('get')->will($this->returnValueMap(array(
+        $sugarConfig->method('get')->willReturnMap(array(
             array('trigger_server.url', null, $isConfigured ? ClientTest::TRIGGER_SERVER_URL : ''),
             array('site_url', null, ClientTest::SITE_URL),
+        ));
 
-        )));
-
-        $httpHelper = $this->getHttpClientMock(array('send'));
+        $httpHelper = $this->getHttpHelperMock();
         $httpHelper->expects($this->exactly($send ? 1 : 0))
             ->method('send')
             ->willReturn(true);
 
+        $adminBean = $this->getAdministrationBeanMock();
+        $adminBean->method('getConfigForModule')->willReturnMap(array(
+            array('auth', 'base', true, array('external_token_trigger' => static::TOKEN)),
+        ));
+
         $client = $this->getClientMock(array(
-            'retrieveToken',
+            'getAdministrationBean',
             'getSugarConfig',
             'getHttpHelper',
         ));
-
-        $client->method('retrieveToken')
-            ->willReturn(static::TOKEN);
-
-        $client->method('getSugarConfig')
-            ->willReturn($sugarConfig);
-
-        $client->method('getHttpHelper')
-            ->willReturn($httpHelper);
+        $client->method('getAdministrationBean')->willReturn($adminBean);
+        $client->method('getSugarConfig')->willReturn($sugarConfig);
+        $client->method('getHttpHelper')->willReturn($httpHelper);
 
         $this->assertEquals($returned, $client->deleteByTags(array('tag 1', 'tag 2', 'tag 3')));
     }
@@ -578,22 +570,23 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testCheckTriggerServerSettings($url, $count, $returnPing, $return)
     {
-        $httpHelper = $this->getHttpClientMock(array('ping'));
+        $httpHelper = $this->getHttpHelperMock();
         $httpHelper->expects($this->exactly($count))
             ->method('ping')
-            ->with($url)
+            ->with($this->equalTo($url))
             ->willReturn($returnPing);
 
         $client = $this->getClientMock(array('getHttpHelper'));
-
-        $client->method('getHttpHelper')
-            ->willReturn($httpHelper);
+        $client->method('getHttpHelper')->willReturn($httpHelper);
 
         $this->assertEquals($return, $client->checkTriggerServerSettings($url));
     }
 
     /**
-     * (url, expected HttpHelper::ping number of calls, HttpHelper::ping returns, Client::checkTriggerServerSettings returns)
+     * (url,
+     * expected HttpHelper::ping number of calls,
+     * HttpHelper::ping returns,
+     * Client::checkTriggerServerSettings returns)
      * @return array
      */
     public function providerCheckTriggerServerSettings()
@@ -606,53 +599,50 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::getHttpHelper
-     */
-    public function testGetHttpHelper()
-    {
-        $client = new \Sugarcrm\Sugarcrm\Trigger\Client();
-        $this->assertInstanceOf(
-            'Sugarcrm\\Sugarcrm\\Trigger\\HttpHelper',
-            TestReflection::callProtectedMethod($client, 'getHttpHelper')
-        );
-    }
-
-    /**
-     * @covers ::getSugarConfig
-     */
-    public function testGetSugarConfig()
-    {
-        $client = new \Sugarcrm\Sugarcrm\Trigger\Client();
-        $this->assertInstanceOf('SugarConfig', TestReflection::callProtectedMethod($client, 'getSugarConfig'));
-    }
-
-    /**
      * @param string[] $methods
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|\Sugarcrm\Sugarcrm\Trigger\Client|Object
      */
     protected function getClientMock($methods)
     {
-        return $this->getMockBuilder('Sugarcrm\\Sugarcrm\\Trigger\\Client')
+        return $this->getMockBuilder('Sugarcrm\Sugarcrm\Trigger\Client')
             ->setMethods($methods)
             ->getMock();
     }
 
     /**
-     * @param string[] $methods
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|\Sugarcrm\Sugarcrm\Trigger\HttpHelper
      */
-    protected function getHttpClientMock($methods)
+    protected function getHttpHelperMock()
     {
-        return $this->getMockBuilder('Sugarcrm\\Sugarcrm\\Trigger\\HttpHelper')
-            ->setMethods($methods)
-            ->getMock();
+        return $this->getMockBuilder('Sugarcrm\Sugarcrm\Trigger\HttpHelper')->getMock();
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|\SugarConfig
      */
     protected function getSugarConfigMock()
     {
         return $this->getMockBuilder('SugarConfig')->getMock();
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|\Administration
+     */
+    protected function getAdministrationBeanMock()
+    {
+        return $this->getMockBuilder('Administration')
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDefaultAuthHeaders()
+    {
+        return array(
+            Client::AUTH_TOKEN_HEADER . ': ' . static::TOKEN,
+            Client::AUTH_VERSION_HEADER . ': ' . Client::AUTH_VERSION,
+        );
     }
 }

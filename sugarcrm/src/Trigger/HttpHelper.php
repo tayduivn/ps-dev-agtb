@@ -33,7 +33,11 @@ namespace Sugarcrm\Sugarcrm\Trigger;
  * $httpHelper->send(
  *      'delete',
  *      'http://trigger_server.site/',
- *      '{"url":"http://sugar_host.site","token": "20db6fcd-0ce9-4da4-87d1-fae1d563b5a2","id":"c92af13d"}'
+ *      '{"url":"http://sugar_host.site","token": "20db6fcd-0ce9-4da4-87d1-fae1d563b5a2","id":"c92af13d"}',
+ *      array(
+ *          'X-Auth-Token: auth-token',
+ *          'X-Auth-Version: 1',
+ *      )
  * );
  *
  * </code>
@@ -64,26 +68,32 @@ class HttpHelper extends \SugarHttpClient
     }
 
     /**
-     * Performs trigger server request
+     * Performs trigger server request.
      *
      * @param string $method (post or delete)
      * @param string $url
      * @param string $args
+     * @param array $headers
      * @return bool was request performed successfully
      */
-    public function send($method, $url, $args = '')
+    public function send($method, $url, $args = '', $headers = array())
     {
         $curl = curl_init($url);
 
+        $headers = array_merge($headers, array(
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($args),
+        ));
+
         $curlOpts = $this->getCurlOpts(array(
             CURLOPT_CUSTOMREQUEST => strtoupper($method),
-            CURLOPT_HTTPHEADER => array('Content-Type: application/json', 'Content-Length: ' . strlen($args)),
-            CURLOPT_POSTFIELDS => $args
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_POSTFIELDS => $args,
         ));
 
         curl_setopt_array($curl, $curlOpts);
 
-        $GLOBALS['log']->debug("HTTP client call: $method $url -> " . var_export($args, true));
+        $this->getLogger()->debug("HTTP client call: $method $url -> " . var_export($args, true));
         $response = curl_exec($curl);
 
         // Handle error
@@ -91,13 +101,25 @@ class HttpHelper extends \SugarHttpClient
             $this->last_error = 'ERROR_REQUEST_FAILED';
             $curl_errno = curl_errno($curl);
             $curl_error = curl_error($curl);
-            $GLOBALS['log']->error("HTTP client: cURL call failed for $method '$url': error $curl_errno: $curl_error");
+            $this->getLogger()
+                ->error("HTTP client: cURL call failed for $method '$url': error $curl_errno: $curl_error");
             return false;
         }
 
-        $GLOBALS['log']->debug("HTTP client response: $response");
+        $this->getLogger()->debug("HTTP client response: $response");
         curl_close($curl);
 
         return true;
+    }
+
+    /**
+     * Factory method for LoggerManager class.
+     *
+     * @return \LoggerManager
+     * @codeCoverageIgnore
+     */
+    protected function getLogger()
+    {
+        return \LoggerManager::getLogger();
     }
 }

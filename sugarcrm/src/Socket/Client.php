@@ -39,7 +39,7 @@ namespace Sugarcrm\Sugarcrm\Socket;
 class Client
 {
     /**
-     * Constants for types of recipients
+     * Constants for types of recipients.
      */
     const RECIPIENT_ALL = 'all';
     const RECIPIENT_USER_ID = 'userId';
@@ -57,7 +57,7 @@ class Client
 
     /**
      * Name of recipient for message, by default message will be send to all sockets
-     * To specify recipient use recipient() method with type of recipient
+     * To specify recipient use recipient() method with type of recipient.
      *
      * @var array
      */
@@ -68,7 +68,7 @@ class Client
     );
 
     /**
-     * The method should be used if we need to send message to specified user, team, or type of user
+     * The method should be used if we need to send message to specified user, team, or type of user.
      *
      * @param Client::RECIPIENT_ALL|Client::RECIPIENT_USER_ID|Client::RECIPIENT_TEAM_ID|Client::RECIPIENT_USER_TYPE $type
      * @param string $id
@@ -84,6 +84,8 @@ class Client
     }
 
     /**
+     * The method should be used if we need to send message to specified channel.
+     *
      * @param string $channel
      * @return $this
      */
@@ -94,7 +96,7 @@ class Client
     }
 
     /**
-     * Returns object of Client, customized if it's present
+     * Returns object of Client, customized if it's present.
      *
      * @param bool $reset
      * @return Client
@@ -114,7 +116,8 @@ class Client
     }
 
     /**
-     * Returns true if socket client is configured
+     * Returns true if socket client is configured.
+     *
      * @return bool
      */
     public function isConfigured()
@@ -123,6 +126,8 @@ class Client
     }
 
     /**
+     * Factory method for HttpHelper class.
+     *
      * @return HttpHelper
      */
     protected function getHttpHelper()
@@ -131,6 +136,8 @@ class Client
     }
 
     /**
+     * Factory method for LoggerManager class.
+     *
      * @return \LoggerManager
      */
     protected function getLogger()
@@ -139,6 +146,8 @@ class Client
     }
 
     /**
+     * Factory method for Administration class.
+     *
      * @return \Administration
      */
     protected function getAdministrationBean()
@@ -147,6 +156,8 @@ class Client
     }
 
     /**
+     * Factory method for SugarConfig class.
+     *
      * @return \SugarConfig
      */
     protected function getSugarConfig()
@@ -155,7 +166,11 @@ class Client
     }
 
     /**
-     * @return String
+     * Gets token from config.
+     * If token does not exists the method creates
+     * new one and sets it to config for future calls.
+     *
+     * @return string
      */
     protected function retrieveToken()
     {
@@ -185,7 +200,7 @@ class Client
     }
 
     /**
-     * Sending $message with $data to socket
+     * Sending $message with $data to socket.
      *
      * @param string $message
      * @param mixed $data
@@ -194,7 +209,7 @@ class Client
     public function send($message, $data = null)
     {
         if (!$this->isConfigured()) {
-            $this->getLogger()->error('Socket\\Client::send - attempt to use client which is not configured.');
+            $this->getLogger()->error('Socket\Client::send - attempt to use client which is not configured.');
             return false;
         }
 
@@ -216,7 +231,8 @@ class Client
 
     /**
      * Check WebSocket settings.
-     * @param $url
+     *
+     * @param string $url
      * @return array
      */
     public function checkWSSettings($url)

@@ -48,7 +48,7 @@ namespace Sugarcrm\Sugarcrm\Trigger;
  * // update existing trigger
  * $args = array(
  *      'param1' => 'some param',
- *      'numberParam' => 1
+ *      'numberParam' => 1,
  * );
  * $tags = array('bean-20db6fcd-0ce9-4da4-87d1-fae1d563b5a2', 'user-c92af13d-b29a-3d3f-f457-562e59ef3412');
  * $isSuccess = $triggerServerClient->push(
@@ -66,7 +66,7 @@ namespace Sugarcrm\Sugarcrm\Trigger;
  * $isSuccess = $triggerServerClient->deleteByTags(array('bean-20db6fcd-0ce9-4da4-87d1-fae1d563b5a2'));
  * $isSuccess = $triggerServerClient->deleteByTags(array(
  *      'bean-20db6fcd-0ce9-4da4-87d1-fae1d563b5a2',
- *      'user-c92af13d-b29a-3d3f-f457-562e59ef3412'
+ *      'user-c92af13d-b29a-3d3f-f457-562e59ef3412',
  * ));
  *
  * </code>
@@ -82,13 +82,17 @@ class Client
     const DELETE_METHOD = 'delete';
     const DELETE_BY_TAGS_METHOD = 'delete';
 
+    const AUTH_TOKEN_HEADER = 'X-Auth-Token';
+    const AUTH_VERSION_HEADER = 'X-Auth-Version';
+    const AUTH_VERSION = 1;
+
     /**
      * @var Client
      */
     protected static $instance = null;
 
     /**
-     * Returns object of Client
+     * Returns object of Client.
      *
      * @param bool $reset
      * @return Client
@@ -163,16 +167,14 @@ class Client
     public function push($id, $stamp, $method, $uri, $args = null, $tags = null)
     {
         if (!$this->isConfigured()) {
-            $this->getLogger()->error('Trigger\\Client::push - attempt to use client which is not configured.');
+            $this->getLogger()->error('Trigger\Client::push - attempt to use client which is not configured.');
             return false;
         }
-        $token = $this->retrieveToken();
         $method = strtolower($method);
 
         $params = array(
             'url' => $this->getSugarConfig()->get('site_url'),
             'id' => $id,
-            'token' => $token,
             'stamp' => $stamp,
             'trigger' => array(
                 'url' => $uri,
@@ -190,7 +192,7 @@ class Client
         $triggerServerUrl = $this->getSugarConfig()->get('trigger_server.url');
         $triggerServerUrl = rtrim($triggerServerUrl, '/') . static::POST_URI;
 
-        return $client->send(static::POST_METHOD, $triggerServerUrl, json_encode($params));
+        return $client->send(static::POST_METHOD, $triggerServerUrl, json_encode($params), $this->makeHeaders());
     }
 
     /**
@@ -202,22 +204,20 @@ class Client
     public function delete($id)
     {
         if (!$this->isConfigured()) {
-            $this->getLogger()->error('Trigger\\Client::push - attempt to use client which is not configured.');
+            $this->getLogger()->error('Trigger\Client::push - attempt to use client which is not configured.');
             return false;
         }
-        $token = $this->retrieveToken();
 
         $params = array(
             'url' => $this->getSugarConfig()->get('site_url'),
             'id' => $id,
-            'token' => $token,
         );
 
         $client = $this->getHttpHelper();
         $triggerServerUrl = $this->getSugarConfig()->get('trigger_server.url');
         $triggerServerUrl = rtrim($triggerServerUrl, '/') . static::DELETE_URI;
 
-        return $client->send(static::DELETE_METHOD, $triggerServerUrl, json_encode($params));
+        return $client->send(static::DELETE_METHOD, $triggerServerUrl, json_encode($params), $this->makeHeaders());
     }
 
     /**
@@ -229,18 +229,15 @@ class Client
     public function deleteByTags($tags)
     {
         if (!$this->isConfigured()) {
-            $this->getLogger()->error('Trigger\\Client::push - attempt to use client which is not configured.');
+            $this->getLogger()->error('Trigger\Client::push - attempt to use client which is not configured.');
             return false;
         }
         if (empty($tags) || !is_array($tags)) {
             return false;
         }
 
-        $token = $this->retrieveToken();
-
         $params = array(
             'url' => $this->getSugarConfig()->get('site_url'),
-            'token' => $token,
             'tags' => $tags,
         );
 
@@ -248,7 +245,12 @@ class Client
         $triggerServerUrl = $this->getSugarConfig()->get('trigger_server.url');
         $triggerServerUrl = rtrim($triggerServerUrl, '/') . static::DELETE_BY_TAGS_URI;
 
-        return $client->send(static::DELETE_BY_TAGS_METHOD, $triggerServerUrl, json_encode($params));
+        return $client->send(
+            static::DELETE_BY_TAGS_METHOD,
+            $triggerServerUrl,
+            json_encode($params),
+            $this->makeHeaders()
+        );
     }
 
     /**
@@ -261,6 +263,19 @@ class Client
     {
         $httpClient = $this->getHttpHelper();
         return (filter_var($url, FILTER_VALIDATE_URL) !== false && $httpClient->ping($url));
+    }
+
+    /**
+     * Makes auth headers.
+     *
+     * @return array
+     */
+    protected function makeHeaders()
+    {
+        return array(
+            static::AUTH_TOKEN_HEADER . ': ' . $this->retrieveToken(),
+            static::AUTH_VERSION_HEADER . ': ' . static::AUTH_VERSION,
+        );
     }
 
     /**
@@ -278,6 +293,7 @@ class Client
      * Factory method for HttpHelper class.
      *
      * @return HttpHelper
+     * @codeCoverageIgnore
      */
     protected function getHttpHelper()
     {
@@ -285,7 +301,10 @@ class Client
     }
 
     /**
+     * Factory method for LoggerManager class.
+     *
      * @return \LoggerManager
+     * @codeCoverageIgnore
      */
     protected function getLogger()
     {
@@ -307,6 +326,7 @@ class Client
      * Factory method for SugarConfig class.
      *
      * @return \SugarConfig
+     * @codeCoverageIgnore
      */
     protected function getSugarConfig()
     {
