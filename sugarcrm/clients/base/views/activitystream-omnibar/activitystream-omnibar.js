@@ -21,7 +21,7 @@
         'paste .sayit': '_handleContentPaste' //for IE - right click, paste
     },
 
-    className: "omnibar",
+    className: 'omnibar',
 
     plugins: ['DragdropAttachments', 'Taggable', 'Tooltip', 'Pagination'],
 
@@ -76,10 +76,9 @@
      */
     addPost: function() {
         var self = this,
-            parentId = this.context.parent.get("model").id,
-            parentType = this.context.parent.get("model").module,
+            parentId = this.context.parent.get('model').id,
+            parentType = this.context.parent.get('model').module,
             attachments = this.$('.activitystream-pending-attachment'),
-            $submitButton = this.$('button.addPost'),
             bean;
 
         // Process "Home" and "Activity" layouts as global activity stream types
@@ -89,17 +88,17 @@
         }
 
         var payload = {
-            activity_type: "post",
+            activity_type: 'post',
             parent_id: parentId || null,
             parent_type: parentType,
             data: {}
         };
 
-        if (!$submitButton.hasClass('disabled')) {
+        if (!this.isSubmitDisabled()) {
             payload.data = this.getPost();
 
             if (payload.data.value && (payload.data.value.length > 0)) {
-                $submitButton.addClass('disabled');
+                this.disableSubmitButton();
                 bean = app.data.createBean('Activities');
                 bean.save(payload, {
                     success: function(model) {
@@ -113,7 +112,7 @@
                         self.context.trigger('activitystream:post:prepend', model);
                     },
                     complete: function() {
-                        $submitButton.removeClass('disabled');
+                        self.enableSubmitButton();
                     },
                     showAlerts: true
                 });
@@ -143,11 +142,18 @@
     /**
      * Check to see if the Submit button should be disabled/enabled.
      */
-    toggleSubmitButton: function() {
+    isSubmitDisabled: function() {
         var post = this.getPost(),
             attachments = this.getAttachments();
 
-        if ((post.value.length === 0) && (_.size(attachments) === 0)) {
+        return post.value.length === 0 && _.size(attachments) === 0;
+    },
+
+    /**
+     * Toggle the Submit button disabled/enabled state.
+     */
+    toggleSubmitButton: function() {
+        if (this.isSubmitDisabled()) {
             this.disableSubmitButton();
         } else {
             this.enableSubmitButton();
@@ -158,14 +164,20 @@
      * Enable Submit button
      */
     enableSubmitButton: function() {
-        this.$('.addPost').removeClass('disabled');
+        this.$('.addPost')
+            .removeClass('disabled')
+            .attr('aria-disabled', false)
+            .attr('tabindex', 0);
     },
 
     /**
      * Disable Submit button
      */
     disableSubmitButton: function() {
-        this.$('.addPost').addClass('disabled');
+        this.$('.addPost')
+            .addClass('disabled')
+            .attr('aria-disabled', true)
+            .attr('tabindex', -1);
     },
 
     /**
