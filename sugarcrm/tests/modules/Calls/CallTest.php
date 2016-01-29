@@ -174,4 +174,25 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
         $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
     }
+
+    public function testIgnoreOrganizerNotification()
+    {
+        $contacts = array(
+            SugarTestContactUtilities::createContact(),
+            SugarTestContactUtilities::createContact(),
+        );
+
+        $currentUser = $GLOBALS['current_user']->id;
+        $call = SugarTestCallUtilities::createCall();
+        SugarTestCallUtilities::addCallUserRelation($call->id, $currentUser);
+        SugarTestCallUtilities::addCallContactRelation($call->id, $contacts[0]->id);
+        SugarTestCallUtilities::addCallContactRelation($call->id, $contacts[1]->id);
+
+        $call->ignoreOrganizerNotification = true;
+
+        $actual = $call->get_notification_recipients();
+        $this->assertArrayNotHasKey($currentUser, $actual, 'The current user should not be in the list.');
+        $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
+        $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
+    }
 }
