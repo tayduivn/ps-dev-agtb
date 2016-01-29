@@ -100,6 +100,10 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
                                     $fields['currency_id'] = $newValue->expField;
                                     $newValue = $newValue->expValue;
                                     break;
+                                case 'MultiSelect':
+                                    $newValue = !empty($value->value) && is_array($value->value) ?
+                                        encodeMultienumValue($value->value) : '';
+                                    break;
                                 default:
                                     if ($value->field == 'teams') {
                                         $newValue = $value;

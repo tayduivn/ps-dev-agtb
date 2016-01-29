@@ -196,17 +196,22 @@ class PMSERelatedModule
     public function getFieldValue($newBean, $field)
     {
         global $timedate;
-        $value= '';
+        $value= !empty($newBean->fetched_row[$field]) ? $newBean->fetched_row[$field] : $newBean->$field;
         $def = $newBean->field_defs[$field];
-        if ($def['type'] == 'datetime' || $def['type'] == 'datetimecombo'){
-            $theDate = (!empty($newBean->fetched_row[$field])) ? $newBean->fetched_row[$field] : $newBean->$field;
-            $value = $timedate->fromDb($theDate);
-        } else if ($def['type'] == 'bool') {
-            $value = ($newBean->$field == 1) ? true : false;
-        } else {
-            $value = $newBean->$field;
-        }
-        return $value;
+        switch ($def['type']){
+            case 'datetime':
+            case 'datetimecombo':
+                $theDate = $value;
+                $value = $timedate->fromDb($theDate);
+                break;
+            case 'bool':
+                $value = $value === 1;
+                break;
+            case 'multienum':
+                $value = !empty($value) ? unencodeMultienum($value) : array();
+                break;
+          }
+          return $value;
     }
 
     /**

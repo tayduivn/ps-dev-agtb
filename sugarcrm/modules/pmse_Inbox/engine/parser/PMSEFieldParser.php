@@ -310,7 +310,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
      */
     public function hasParseMethod($token)
     {
-        return !empty($token->expValue)
+        return !empty($token->expValue) && !is_array($token->expValue)
                && isset($this->tokenMethods[$token->expValue])
                && method_exists($this, $this->tokenMethods[$token->expValue]);
     }
