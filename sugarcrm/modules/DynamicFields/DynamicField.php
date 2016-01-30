@@ -126,9 +126,7 @@ class DynamicField {
 
         static $results = array ( ) ;
 
-        $where = '';
         if (! empty ( $module )) {
-            $where .= " custom_module='$module' AND ";
             unset( $results[ $module ] ) ; // clear out any old results for the module as $results is declared static
         }
         else
@@ -137,15 +135,20 @@ class DynamicField {
         }
 
         $GLOBALS['log']->debug('rebuilding cache for ' . $module);
-        $query = "SELECT * FROM fields_meta_data WHERE $where deleted = 0";
+        $builder = $db->getConnection()->createQueryBuilder();
+        $query = $builder
+            ->select('*')
+            ->from('fields_meta_data');
 
-        $result = $GLOBALS['db']->query ( $query );
+        if ($module) {
+            $query->where('custom_module = ' . $builder->createPositionalParameter($module));
+        }
+
+        $query->andWhere('deleted = 0');
+        $stmt = $query->execute();
+
         require_once 'modules/DynamicFields/FieldCases.php';
-
-        // retrieve the field definition from the fields_meta_data table
-        // using 'encode'=false to fetchByAssoc to prevent any pre-formatting of the base metadata
-        // for immediate use in HTML. This metadata will be further massaged by get_field_def() and so should not be pre-formatted
-        while ( $row = $GLOBALS['db']->fetchByAssoc ( $result, false ) ) {
+        while ($row = $stmt->fetch()) {
             $field = get_widget ( $row ['type'] );
 
             foreach ( $row as $key => $value ) {
