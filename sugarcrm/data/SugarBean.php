@@ -1886,13 +1886,6 @@ class SugarBean
                 $GLOBALS['log']->debug('Auditing: Retrieve was not called, audit record will not be created.');
             } else {
                 $auditFields = $this->getAuditEnabledFieldDefinitions();
-                // audit its id field for a relate field
-                foreach ($auditFields as $field => $value) {
-                    if ($value['type'] == 'relate' && !empty($value['id_name']) &&
-                        !isset($auditFields[$value['id_name']]) && !empty($this->field_defs[$value['id_name']])) {
-                        $auditFields[$value['id_name']] = $this->field_defs[$value['id_name']];
-                    }
-                }
                 $auditDataChanges = array_intersect_key($this->dataChanges, $auditFields);
             }
         }
