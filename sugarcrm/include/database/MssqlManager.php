@@ -1324,16 +1324,26 @@ class MssqlManager extends DBManager
     public function emptyValue($type, $forPrepared = false)
     {
         $ctype = $this->getColumnType($type);
-        if($ctype == "datetime") {
-            return $this->convert($this->quoted("1970-01-01 00:00:00"), "datetime");
+
+        if ($ctype == "datetime") {
+            return $forPrepared
+                ? "1970-01-01 00:00:00"
+                : $this->convert($this->quoted("1970-01-01 00:00:00"), "datetime");
         }
-        if($ctype == "date") {
-            return $this->convert($this->quoted("1970-01-01"), "datetime");
+
+        if ($ctype == "date") {
+            return $forPrepared
+                ? "1970-01-01"
+                : $this->convert($this->quoted("1970-01-01"), "datetime");
         }
-        if($ctype == "time") {
-            return $this->convert($this->quoted("00:00:00"), "time");
+
+        if ($ctype == "time") {
+            return $forPrepared
+                ? "00:00:00"
+                : $this->convert($this->quoted("00:00:00"), "time");
         }
-        return parent::emptyValue($type);
+
+        return parent::emptyValue($type, $forPrepared);
     }
 
     public function renameColumnSQL($tablename, $column, $newname)

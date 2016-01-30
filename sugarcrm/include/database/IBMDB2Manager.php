@@ -1500,17 +1500,25 @@ FROM SYSIBMTS.TSINDEXES';
 		// http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.sql.ref.doc/doc/r0008474.html
 
 		$ctype = $this->getColumnType($type);
-		if($ctype == "datetime" || $ctype == "timestamp") {
-			return $this->convert($this->quoted("0001-01-01 00:00:00"), "datetime");
-		}
-		if($ctype == "date") {
-			return $this->convert($this->quoted("0001-01-01"), "date");
-		}
-		if($ctype == "time") {
-			return $this->convert($this->quoted("00:00:00"), "time");
-		}
+        if ($ctype == "datetime" || $ctype == "timestamp") {
+            return $forPrepared
+                ? "0001-01-01 00:00:00"
+                : $this->convert($this->quoted("0001-01-01 00:00:00"), "datetime");
+        }
 
-		return parent::emptyValue($type);
+        if ($ctype == "date") {
+            return $forPrepared
+                ? "0001-01-01"
+                : $this->convert($this->quoted("0001-01-01"), "date");
+        }
+
+        if ($ctype == "time") {
+            return $forPrepared
+                ? "00:00:00"
+                : $this->convert($this->quoted("00:00:00"), "time");
+        }
+
+        return parent::emptyValue($type, $forPrepared);
 	}
 
 	/**
