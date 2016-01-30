@@ -135,12 +135,10 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
         return array(
             array('A', 'A'), // simple string
             array('A\\B', 'A\\B'), // slashes
-            array('&amp;', '&'), // html decode
             array('Русский', 'Русский'), // unicode
             array('7.0', '7.0'), // simple number
             array('7.0.0', '7.0.0'),
             array(7, 7),      // integer
-            array('', ''),      // empty string check
             array(array('portal'), array('portal')), // indexed array
             array(array('foo' => 'bar'), array('foo' => 'bar')), // associative array
             array('"value1"', '"value1"'), // quoted string

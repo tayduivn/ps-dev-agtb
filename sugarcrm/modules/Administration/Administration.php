@@ -9,6 +9,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Query\Expression\CompositeExpression;
+
 class Administration extends SugarBean {
     var $settings;
     var $table_name = "config";
@@ -77,19 +81,17 @@ class Administration extends SugarBean {
             }
         }
 
-        if ( ! empty($category) ) {
-            $query = "SELECT category, name, value, platform FROM {$this->table_name} WHERE category = '{$category}'";
-        } else {
-            $query = "SELECT category, name, value, platform FROM {$this->table_name}";
+        $conn = $this->db->getConnection();
+        $builder = $conn->createQueryBuilder();
+        $query = $builder
+            ->select('category', 'name', 'value', 'platform')
+            ->from($this->table_name);
+        if ($category) {
+            $query->where('category = ' . $builder->createPositionalParameter($category));
         }
 
-        $result = $this->db->query($query, true, "Unable to retrieve system settings");
-
-        if(empty($result)) {
-            return null;
-        }
-
-        while ($row = $this->db->fetchByAssoc($result)) {
+        $stmt = $query->execute();
+        while ($row = $stmt->fetch()) {
             $key = $row['category'] . '_' . $row['name'];
             // There can be settings that have the same `category`, the same
             // `name` but a different platform. We are going to prevent the
@@ -167,12 +169,17 @@ class Administration extends SugarBean {
     public function saveSetting($category, $key, $value, $platform = '') {
         // platform is always lower case
         $platform = strtolower($platform);
-        if (empty($platform)) {
-            $result = $this->db->query("SELECT count(*) AS the_count FROM config WHERE category = '{$category}' AND name = '{$key}' AND (platform = '{$platform}' OR platform IS NULL)");
-        } else {
-            $result = $this->db->query("SELECT count(*) AS the_count FROM config WHERE category = '{$category}' AND name = '{$key}' AND platform = '{$platform}'");
-        }
-        $row = $this->db->fetchByAssoc($result);
+        $conn = $this->db->getConnection();
+
+        $builder = $conn->createQueryBuilder();
+        $query = $builder
+            ->select('COUNT(*) AS the_count')
+            ->from($this->table_name)
+            ->where($this->getConfigWhere($builder, $category, $key, $platform));
+
+        $stmt = $query->execute();
+
+        $row = $stmt->fetch();
         $row_count = $row['the_count'];
 
         if (is_array($value)) {
@@ -182,18 +189,24 @@ class Administration extends SugarBean {
         if($category."_".$key == 'ldap_admin_password' || $category."_".$key == 'proxy_password')
             $value = $this->encrpyt_before_save($value);
 
-        $value = $this->db->quote($value);
-        if( $row_count == 0){
-            $sql = "INSERT INTO config (value, category, name, platform) VALUES ('$value','$category', '$key', '$platform')";
+        $builder = $conn->createQueryBuilder();
+        if ($row_count == 0) {
+            $query = $builder
+                ->insert($this->table_name)
+                ->values(array(
+                    'category' => $builder->createPositionalParameter($category),
+                    'name' => $builder->createPositionalParameter($key),
+                    'platform' => $builder->createPositionalParameter($platform),
+                    'value' => $builder->createPositionalParameter($value),
+                ));
         }
         else{
-            if (empty($platform)) {
-                $sql = "UPDATE config SET value = '{$value}' WHERE category = '{$category}' AND name = '{$key}' AND (platform = '{$platform}' OR platform IS NULL)";
-            } else {
-                $sql = "UPDATE config SET value = '{$value}' WHERE category = '{$category}' AND name = '{$key}' AND platform = '{$platform}'";
-            }
+            $query = $builder
+                ->update($this->table_name)
+                ->set('value', $builder->createPositionalParameter($value))
+                ->where($this->getConfigWhere($builder, $category, $key, $platform));
         }
-        $result = $this->db->query($sql);
+        $result = $query->execute();
 
         sugar_cache_clear('admin_settings_cache');
 
@@ -212,6 +225,33 @@ class Administration extends SugarBean {
         }
 
         return $result;
+    }
+
+    /**
+     * Builds WHERE for the given configuration parameter
+     *
+     * @param QueryBuilder $builder Query builder
+     * @param string $category Config parameter category
+     * @param string $name Config parameter name
+     * @param string $platform Platform name
+     * @return CompositeExpression
+     */
+    protected function getConfigWhere(QueryBuilder $builder, $category, $name, $platform)
+    {
+        $where = $builder->expr()->andX(
+            $builder->expr()->eq('category', $builder->createPositionalParameter($category)),
+            $builder->expr()->eq('name', $builder->createPositionalParameter($name))
+        );
+
+        $wherePlatform = $builder->expr()->eq('platform', $builder->createPositionalParameter($platform));
+        if (empty($platform)) {
+            $wherePlatform = $builder->expr()->orX(
+                $wherePlatform,
+                $builder->expr()->isNull('platform')
+            );
+        }
+
+        return $where->add($wherePlatform);
     }
 
     /**
@@ -242,19 +282,20 @@ class Administration extends SugarBean {
             }
         }
 
-        $sql = "SELECT name, value FROM config WHERE category = '{$module}'";
+        $sql = "SELECT name, value FROM config WHERE category = ?";
         if($platform != "base") {
             // if the platform is not base, we need to order it so the platform we are looking for overrides any base values
-            $sql .= "and platform in ('base', '{$platform}') ORDER BY CASE WHEN platform='base' THEN 0
-                        WHEN platform='{$platform}' THEN 1 ELSE 2 END ASC";
+            $sql .= " AND platform IN ('base', ?) ORDER BY CASE WHEN platform = 'base' THEN 0 ELSE 1 END";
         } else {
-            $sql .= " and platform = '{$platform}'";
+            $sql .= " AND platform = ?";
         }
 
-        $result = $this->db->query($sql);
+        $conn = $this->db->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(array($module, $platform));
 
         $moduleConfig = array();
-        while($row = $this->db->fetchByAssoc($result)) {
+        while ($row = $stmt->fetch()) {
             $moduleConfig[$row['name']] = $this->decodeConfigVar($row['value']);
         }
 
@@ -276,11 +317,15 @@ class Administration extends SugarBean {
      */
     public function getAllSettings()
     {
-        $sql = "SELECT category, name, value, platform FROM {$this->table_name}";
-        $rows = $this->db->query($sql);
+        $conn = $this->db->getConnection();
+        $builder = $conn->createQueryBuilder();
+        $query = $builder
+            ->select('category', 'name', 'value', 'platform')
+            ->from($this->table_name);
+        $stmt = $query->execute();
 
         $return = array();
-        while($row = $this->db->fetchByAssoc($rows)) {
+        while ($row = $stmt->fetch()) {
             $row['value'] = $this->decodeConfigVar($row['value']);
             $return[] = $row;
         }
@@ -295,7 +340,6 @@ class Administration extends SugarBean {
      */
     protected function decodeConfigVar($var)
     {
-        $var = html_entity_decode($var);
         // make sure the value is not null and the length is greater than 0
         if (!is_null($var) && strlen($var) > 0) {
             // if it looks like a JSON string then lets run the json_decode on it
