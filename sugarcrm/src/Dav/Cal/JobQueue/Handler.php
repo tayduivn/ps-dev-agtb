@@ -18,11 +18,24 @@ use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as HookHandler;
 use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException as JQLogicException;
 use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
+use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Notifier\ListenerInterface;
+use Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\HookListener\ExportListener;
+use Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\HookListener\ImportListener;
 
 class Handler implements RunnableInterface
 {
     /** @var string */
     protected $eventId = '';
+
+    /**
+     * @var ListenerInterface|null
+     */
+    protected $listener = null;
+
+    /**
+     * @var HookHandler
+     */
+    protected $hookHandler;
 
     /**
      * Handler constructor.
@@ -58,6 +71,8 @@ class Handler implements RunnableInterface
         /** @var \CalDavQueue $queueBean */
         $queueBean = $calDavBean->getQueueObject();
 
+        $this->hookHandler = new HookHandler();
+
         /** @var \CalDavQueue $queueItem */
         while ($queueItem = $queueBean->findFirstQueued($calDavBean->id)) {
             $GLOBALS['current_user'] = \BeanFactory::getBean('Users', $queueItem->created_by);
@@ -85,10 +100,12 @@ class Handler implements RunnableInterface
 
                 $calDavBean->getSynchronizationObject()->setConflictCounter(false);
             } catch (\Exception $e) {
-                HookHandler::$importHandler = null;
-
-                $hookHandler = new HookHandler();
-                $hookHandler->export($calDavBean->getBean(), false, true);
+                if ($this->listener instanceof ExportListener) {
+                    $this->hookHandler->getExportNotifier()->detach($this->listener);
+                } elseif ($this->listener instanceof ImportListener) {
+                    $this->hookHandler->getImportNotifier()->detach($this->listener);
+                }
+                $this->hookHandler->export($calDavBean->getBean(), false, true);
             }
 
             $calDavBean->getSynchronizationObject()->setJobCounter();
@@ -141,19 +158,8 @@ class Handler implements RunnableInterface
         $bean = $adapter->getBeanForImport($bean, $calDavBean, $importData);
         $result = $adapter->import($importData, $bean);
         if ($result != AdapterInterface::NOTHING) {
-            $exportDataSet = array();
-            HookHandler::$exportHandler = function($beanModule, $beanId, $data) use ($bean, &$exportDataSet) {
-                if (!empty($bean->repeat_parent_id)) {
-                    $parentBeanId = $bean->repeat_parent_id;
-                } else {
-                    $parentBeanId = $bean->id;
-                }
-                if ($bean->module_name == $beanModule && $parentBeanId == $beanId) {
-                    $exportDataSet[] = $data;
-                    return false;
-                }
-                return true;
-            };
+            $this->listener = new ExportListener($bean);
+            $this->hookHandler->getExportNotifier()->attach($this->listener);
             switch ($result) {
                 case AdapterInterface::SAVE :
                     $bean->save();
@@ -166,7 +172,8 @@ class Handler implements RunnableInterface
                     $bean->save();
                     break;
             }
-            HookHandler::$exportHandler = null;
+            $exportDataSet = $this->listener->getDataSet();
+            $this->hookHandler->getExportNotifier()->detach($this->listener);
             foreach ($exportDataSet as $exportData) {
                 $exportData = $adapter->verifyExportAfterImport($importData, $exportData, $bean);
                 if ($exportData) {
@@ -196,14 +203,8 @@ class Handler implements RunnableInterface
 
         $result = $adapter->export($exportData, $calDavBean);
         if ($result != AdapterInterface::NOTHING) {
-            $importDataSet = array();
-            HookHandler::$importHandler = function ($beanModule, $beanId, $data) use ($calDavBean, &$importDataSet) {
-                if ($calDavBean->module_name == $beanModule && $calDavBean->id == $beanId) {
-                    $importDataSet[] = $data;
-                    return false;
-                }
-                return true;
-            };
+            $this->listener = new ImportListener($calDavBean);
+            $this->hookHandler->getImportNotifier()->attach($this->listener);
             switch ($result) {
                 case AdapterInterface::SAVE :
                     $calDavBean->save();
@@ -216,7 +217,8 @@ class Handler implements RunnableInterface
                     $calDavBean->save();
                     break;
             }
-            HookHandler::$importHandler = null;
+            $importDataSet = $this->listener->getDataSet();
+            $this->hookHandler->getImportNotifier()->detach($this->listener);
             foreach ($importDataSet as $importData) {
                 $importData = $adapter->verifyImportAfterExport($exportData, $importData, $calDavBean);
                 if ($importData) {
