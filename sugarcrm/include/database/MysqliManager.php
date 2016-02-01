@@ -237,7 +237,7 @@ class MysqliManager extends MysqlManager
 	 */
 	protected function freeDbResult($dbResult)
 	{
-		if(!empty($dbResult))
+		if(is_resource($dbResult))
 			mysqli_free_result($dbResult);
 	}
 
@@ -354,6 +354,7 @@ class MysqliManager extends MysqlManager
 			$GLOBALS['log']->info("connected to db");
 
 		$this->connectOptions = $configOptions;
+
 		return true;
 	}
 

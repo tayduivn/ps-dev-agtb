@@ -325,8 +325,7 @@ abstract class SugarRelationship
         )} WHERE $leftIDName='$leftID' AND $rightIDName='$rightID' $roleCheck AND deleted=0";
 
         $db = DBManagerFactory::getInstance();
-        $result = $db->query($query);
-        $row = $db->fetchByAssoc($result);
+        $row = $db->fetchOne($query);
         if (!empty($row)) {
             return $row;
         } else {
