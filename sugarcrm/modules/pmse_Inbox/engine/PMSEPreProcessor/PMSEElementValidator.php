@@ -303,14 +303,14 @@ class PMSEElementValidator implements PMSEValidate
     {
         //Validate if start event was already processed
         foreach ($_SESSION['triggeredFlows'] as $flow) {
-            if ($flowData['pro_id'] == $flow['pro_id'] && $bean->id == $flow['bean_id']) {
+            if ($flowData['pro_id'] == $flow['pro_id'] && $bean->id == $flow['bean']->id) {
                 $this->logger->debug("Start Event {$bean->id} was already triggered in after save hook.");
                 return true;
             }
         }
         $triggeredFlow = array();
         $triggeredFlow['pro_id'] = $flowData['pro_id'];
-        $triggeredFlow['bean_id'] = $bean->id;
+        $triggeredFlow['bean'] = $bean;
         $_SESSION['triggeredFlows'][] = $triggeredFlow;
         return false;
     }
