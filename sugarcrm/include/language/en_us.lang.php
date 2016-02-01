@@ -8178,8 +8178,10 @@ $app_strings = array (
   'LBL_ADD' => 'Add' /*for 508 compliance fix*/,
   'LBL_COMPANY_LOGO' => 'Company logo' /*for 508 compliance fix*/,
   'LBL_JS_CALENDAR' => 'Calendar' /*for 508 compliance fix*/,
-  // ARIA label additions
+
+  // ARIA label additions (should be lowercase)
   'LBL_ARIA_MODULENAVIGATION' => 'main module navigation',
+  'LBL_ARIA_TOGGLE_SUBPANEL_VISIBILITY' => 'toggle subpanel',
 
     'LBL_ADVANCED' => 'Advanced',
     'LBL_BASIC' => 'Basic',

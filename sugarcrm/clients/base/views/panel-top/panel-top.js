@@ -33,7 +33,8 @@
      */
     events: {
         'click': 'togglePanel',
-        'click a[name=create_button]:not(".disabled")': 'createRelatedClicked'
+        'click a[name=create_button]:not(".disabled")': 'createRelatedClicked',
+        'keydown [data-a11y=toggle]': '_handleKeyClick'
     },
 
     plugins: ['LinkedModel', 'Tooltip'],
@@ -56,6 +57,10 @@
         // This is in place to get the lang strings from the right module. See
         // if there is a better way to do this later.
         this.parentModule = this.context.parent.get('module');
+
+        // Listen to the context for collapsed attribute to change
+        // and toggle the aria-expanded attribute on the button element
+        this.listenTo(this.context, 'change:collapsed', this._toggleAria);
 
         // FIXME: Revisit with SC-4775.
         this.on('linked-model:create', function() {
@@ -94,5 +99,26 @@
         }
 
         this.context.set('collapsed', !this.context.get('collapsed'));
+    },
+
+    /**
+     * Sets the subpanel header accessibility class 'aria-expanded' to true or false
+     * depending on if the subpanel is open or closed.
+     *
+     * @private
+     */
+    _toggleAria: function(context, collapsed) {
+        this.$('[data-a11y=toggle]')
+            .attr('aria-expanded', !collapsed);
+    },
+
+    /**
+     * Triggers the click event when the data-a11y toggle element has focus
+     * and the spacebar or enter keydown event occurs
+     *
+     * @private
+     */
+    _handleKeyClick: function(evt) {
+        app.accessibility.handleKeyClick(evt, this.$el);
     }
 })
