@@ -67,9 +67,11 @@ class TeamsViewTBA extends SugarView
 
         // Skipping modules that have 'hidden_to_role_assignment' property or not implement TBA
         foreach ($actionsList as $name => $category) {
+            $objName = BeanFactory::getObjectName($name);
+            VardefManager::loadVardef($name, $objName);
             if (
-                (!empty($GLOBALS['dictionary'][$name]['hidden_to_role_assignment']) &&
-                    $GLOBALS['dictionary'][$name]['hidden_to_role_assignment']) ||
+                (!empty($GLOBALS['dictionary'][$objName]['hidden_to_role_assignment']) &&
+                    $GLOBALS['dictionary'][$objName]['hidden_to_role_assignment']) ||
                 !TeamBasedACLConfigurator::implementsTBA($name)
             ) {
                 unset($actionsList[$name]);
