@@ -430,6 +430,17 @@ class SugarBean
     );
 
     /**
+     * Fields with HTML content provided by a user. Should be cleaned before save.
+     * @var array
+     */
+    protected $htmlFieldTypes = array(
+        'html',
+        'longhtml',
+        'htmleditable_tinymce',
+        'pmse_htmleditable_tinymce',
+    );
+
+    /**
      * This method has been moved into the __construct() method to follow php standards
      *
      * Please start using __construct() as this method will be removed in a future version
@@ -1680,7 +1691,7 @@ class SugarBean
                 $type .= $def['dbType'];
             }
 
-            if ($def['type'] == 'html' || $def['type'] == 'longhtml') {
+            if (in_array($def['type'], $this->getHtmlFieldTypes())) {
                 $this->$key = SugarCleaner::cleanHtml($this->$key, true);
             } elseif ((strpos($type, 'char') !== false || strpos($type, 'text') !== false || $type == 'enum')
                 && !empty($this->$key)
@@ -8020,5 +8031,14 @@ class SugarBean
             return !$this->acl_display_only;
         }
         return true;
+    }
+
+    /**
+     * Returns a list of fields which are considered as HTML and should be cleaned before save
+     * @return array
+     */
+    public function getHtmlFieldTypes()
+    {
+        return $this->htmlFieldTypes;
     }
 }
