@@ -308,7 +308,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 		<table id="report_details_table" border="0"  width="100%" cellspacing="0" cellpadding="0" >
 			<tr>
 				<td width="20%" scope='row'><label for='save_report_as'>{$MOD.LBL_REPORT_NAME}:</label> <span class='required'>*</span></td>
-				<td><input type='text' size='45' name='save_report_as' id='save_report_as' value='{$save_report_as}'></td>
+				<td><input type='text' size='45' name='save_report_as' id='save_report_as' value='{$save_report_as|escape}'></td>
 			</tr>
 			{if $IS_ADMIN}
 			<tr>
