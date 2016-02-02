@@ -39,23 +39,22 @@ class ViewModulelabels extends SugarView
         $bak_mod_strings=$mod_strings;
         $smarty = new Sugar_Smarty();
         $smarty->assign('mod_strings', $mod_strings);
-        $package_name = $_REQUEST['view_package'];
-        $module_name = $_REQUEST['view_module'];
+        $package_name = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
+        $module_name = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
 
         require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
         $mb = new ModuleBuilder();
-        $mb->getPackage($_REQUEST['view_package']);
-        $package = $mb->packages[$_REQUEST['view_package']];
+        $mb->getPackage($package_name);
+        $package = $mb->packages[$package_name];
         $package->getModule($module_name);
         $mbModule = $package->modules[$module_name];
 
-        if (!empty($_REQUEST['selected_lang'])) {
-            $selected_lang = $_REQUEST['selected_lang'];
-        } else {
+        $selected_lang = $this->request->getValidInputRequest('selected_lang', 'Assert\Language');
+        if (empty($selected_lang)) {
             $selected_lang = $locale->getAuthenticatedUserLanguage();
         }
 
-            //need to change the following to interface with MBlanguage.
+        //need to change the following to interface with MBlanguage.
 
         $smarty->assign('MOD', $mbModule->getModStrings($selected_lang));
         $smarty->assign('APP', $GLOBALS['app_strings']);

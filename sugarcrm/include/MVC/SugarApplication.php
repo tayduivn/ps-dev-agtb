@@ -14,7 +14,9 @@ require_once 'include/MVC/Controller/ControllerFactory.php';
 require_once 'include/MVC/View/ViewFactory.php';
 
 use Sugarcrm\Sugarcrm\Session\SessionStorage;
-use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 /**
  * SugarCRM application
@@ -34,6 +36,11 @@ class SugarApplication
     protected $inBwc = false;
 
     /**
+     * @var Request 
+     */
+    protected $request;
+
+    /**
      * Use __construct
      * @deprecated
      */
@@ -47,7 +54,14 @@ class SugarApplication
      */
     public function __construct()
     {
-        $this->inBwc = !empty($_GET['bwcFrame']);
+        $this->request = InputValidation::getService();
+
+        // Safe $_GET['bwcFrame']
+        $bwcFrame = array(
+            'Assert\Type' => array('type' => 'numeric'),
+            'Assert\Range' => array('min' => 0, 'max' => 1),
+        );
+        $this->inBwc = (bool) $this->request->getValidInputGet('bwcFrame', $bwcFrame, 0);
     }
 
     /**
@@ -59,10 +73,10 @@ class SugarApplication
         if (!empty($sugar_config['default_module'])) {
             $this->default_module = $sugar_config['default_module'];
         }
-        $module = $this->default_module;
-        if (!empty($_REQUEST['module'])) {
-            $module = $_REQUEST['module'];
-        }
+
+        // Safe $_REQUEST['module']
+        $module = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName', $this->default_module);
+
         insert_charset_header();
         $this->setupPrint();
 
@@ -70,11 +84,20 @@ class SugarApplication
 
         // make sidecar view load faster
         // TODO the rest of the code will be removed as soon as we migrate all modules to sidecar
-        if (!empty($_REQUEST['MSID'])
+
+        // Safe $_REQUEST['MSID']
+        $msid = $this->request->getValidInputRequest('MSID', array('Assert\Type' => array('type' => 'string')));
+
+        // Safe $_REQUEST['entryPoint']
+        // add entry point validator
+
+        if (!empty($msid)
             && ($this->controller->action !== 'Authenticate' || $this->controller->module !== 'Users')
         ) {
             //This is not longer a valid path for MSID. We can only accept it through view.authenticate.php
-            $url = 'index.php?module=Users&action=Authenticate&MSID=' . urlencode($_REQUEST['MSID']);
+            $url = 'index.php?module=Users&action=Authenticate&MSID=' . urlencode($msid);
+
+            // TODO: add example with safe redirect builder/validator
             $req = array_diff_key($this->getRequestVars(), array("MSID" => 1));
             if (!empty($req['module'])) {
                 if (isModuleBWC($req['module'])) {
@@ -767,11 +790,11 @@ EOF;
                 if ($authFailure) {
                     $ss->assign('csrfAuthFailure', true);
                     $ss->assign('module', $this->controller->module);
-                    $ss->assign('action', $this->controller->action);
+                    $ss->assign('action', htmlspecialchars($this->controller->action, ENT_QUOTES, "UTF-8"));
                 } else {
                     $ss->assign('csrfAuthFailure', false);
                     $ss->assign('host', $http_host);
-                    $ss->assign('action', $this->controller->action);
+                    $ss->assign('action', htmlspecialchars($this->controller->action, ENT_QUOTES, "UTF-8"));
                     $ss->assign('whiteListString', $whiteListString);
                 }
                 $ss->display('include/MVC/View/tpls/xsrf.tpl');
@@ -973,6 +996,7 @@ EOF;
     /**
      * Get combined values of GET and POST
      * @return array
+     * @deprecated
      */
     protected function getRequestVars()
     {

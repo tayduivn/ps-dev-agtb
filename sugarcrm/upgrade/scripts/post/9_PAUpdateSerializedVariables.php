@@ -16,7 +16,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * Upgrader to handle conversion of PHP serialized data from 7.6.1 and below into
  * JSON encoded data for 7.6.2 and above.
- * 
+ *
  * NOTE: This upgrader should be run on an environment with an encoding that is
  * the same as the system in which the serializing took place, otherwise
  * unserialize may not work as expected all the time.

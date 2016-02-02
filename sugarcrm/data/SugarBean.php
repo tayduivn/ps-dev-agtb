@@ -28,6 +28,7 @@ require_once 'modules/Mailer/MailerFactory.php'; // imports all of the Mailer cl
 require_once 'include/utils.php';
 require_once 'include/Expressions/Expression/Parser/Parser.php';
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 /**
  * SugarBean is the base class for all business objects in Sugar.  It implements
  * the primary functionality needed for manipulating business objects: create,
@@ -428,6 +429,11 @@ class SugarBean
         'relate',
         'nestedset',
     );
+
+    /**
+     * @var \Sugarcrm\Sugarcrm\Security\InputValidation\Request
+     */
+    protected $request;
 
     // FIXME: this will be removed, needed for ensuring BeanFactory is always used
     protected function checkBacktrace()
@@ -2412,8 +2418,10 @@ class SugarBean
         else
         {
             // if we should use relation data from REQUEST
-            $rel_id = isset($_REQUEST['relate_id']) ? $_REQUEST['relate_id'] : '';
-            $rel_link = isset($_REQUEST['relate_to']) ? $_REQUEST['relate_to'] : '';
+            // SugarBean shouldn't rely on any request parameters, needs refactoring ...
+            $request = InputValidation::getService();
+            $rel_id = $request->getValidInputRequest('relate_id', null, '');
+            $rel_link = $request->getValidInputRequest('relate_to', null, '');
         }
 
         // filter relation data
@@ -3037,6 +3045,9 @@ class SugarBean
      *
      * @param string $id Optional, default -1, is set to -1 id value from the bean is used, else, passed value is used
      * @param boolean $encode Optional, default true, encodes the values fetched from the database.
+     *                        Replaces special characters including single and double qoutes with their
+     *                        HTML entity values using htmlspecialchars.
+     *                        See php documentation for more information on htmlspecialchars().
      * @param boolean $deleted Optional, default true, if set to false deleted filter will not be added.
      *
      * Internal function, do not override.
@@ -7185,7 +7196,8 @@ class SugarBean
                     $saveform = "<form name='save' id='save' method='POST'>";
                     foreach($_POST as $key=>$arg)
                     {
-                        $saveform .= "<input type='hidden' name='". addslashes($key) ."' value='". addslashes($arg) ."'>";
+                        $saveform .= "<input type='hidden' name='". htmlspecialchars($key, ENT_QUOTES, 'UTF-8')
+                            ."' value='". htmlspecialchars($arg, ENT_QUOTES, 'UTF-8') ."'>";
                     }
                     $saveform .= "</form><script>document.getElementById('save').submit();</script>";
                     $_SESSION['o_lock_save'] = $saveform;

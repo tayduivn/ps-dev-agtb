@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -88,7 +87,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
         //try to retrieve the subpanel defs
         global $beanList;
         $isValid = false;
-        $layout_defs = $this->getSubpanelDefs($_REQUEST['module']);
+        $layout_defs = $this->getSubpanelDefs($module);
 
         //For Sidecar modules return false as we want caller to add an
         //onClick routed to the SubPanelTiles.js subp_nav_sidecar function
@@ -99,21 +98,21 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
         //lets check to see if the subpanel buttons are defined, and if they extend quick create
         //If no buttons are defined, then the default ones are used which do NOT use quick create
         if (!empty($panel_id) && !empty($layout_defs) && is_array($layout_defs)
-            && !empty($layout_defs[$_REQUEST['module']]) && !empty($layout_defs[$_REQUEST['module']]['subpanel_setup'][$panel_id])
-            && !empty($layout_defs[$_REQUEST['module']]['subpanel_setup'][$panel_id]['top_buttons'])
-            && is_array($layout_defs[$_REQUEST['module']]['subpanel_setup'][$panel_id]['top_buttons'])
-        ){
+            && !empty($layout_defs[$module]) && !empty($layout_defs[$module]['subpanel_setup'][$panel_id])
+            && !empty($layout_defs[$module]['subpanel_setup'][$panel_id]['top_buttons'])
+            && is_array($layout_defs[$module]['subpanel_setup'][$panel_id]['top_buttons'])
+        ) {
             //we have the buttons from the definitions, lets see if they enabled for quickcreate
-            foreach($layout_defs[$_REQUEST['module']]['subpanel_setup'][$panel_id]['top_buttons'] as $buttonClasses){
+            foreach ($layout_defs[$module]['subpanel_setup'][$panel_id]['top_buttons'] as $buttonClasses) {
                 $buttonClass = '';
                 //get the button class
-                if (isset($buttonClasses['widget_class'])){
+                if (isset($buttonClasses['widget_class'])) {
                     $buttonClass = $buttonClasses['widget_class'];
                 }
                 //include the button class and see if it extends quick create
                 $className = 'SugarWidget'.$buttonClass;
                 if (SugarAutoLoader::requireWithCustom('include/generic/SugarWidgets/'.$className.'.php')) {
-                    if (class_exists($className)){
+                    if (class_exists($className)) {
                         $button = new $className();
                         //set valid flag to true if this class extends quickcreate button
                         if($button instanceof SugarWidgetSubPanelTopButtonQuickCreate){
@@ -126,12 +125,12 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 
 
         //if only default buttons are used, or none of the buttons extended quick create, then there is no need to proceed
-        if(!$isValid){
+        if (!$isValid) {
             return false;
         }
 
         //So our create buttons are defined, now lets check for the proper quick create meta files
-        if(SugarAutoLoader::existingCustomOne('modules/'.$module.'/metadata/quickcreatedefs.php')) {
+        if (SugarAutoLoader::existingCustomOne('modules/'.$module.'/metadata/quickcreatedefs.php')) {
             return true;
         }
 
@@ -192,4 +191,3 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 	}
 }
 
-?>

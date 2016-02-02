@@ -11,6 +11,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
 
 class TemplateDate extends TemplateRange
@@ -73,11 +76,15 @@ function get_field_def(){
         $def['default'] = null;
 		return $def;
 	}
-    
-    function populateFromPost(){
-        parent::populateFromPost();
+
+    public function populateFromPost(Request $request = null)
+    {
+        if (!$request) {
+            $request = InputValidation::getService();
+        }
+
+        parent::populateFromPost($request);
         // Handle empty massupdate checkboxes
-        $this->massupdate = !empty($_REQUEST['massupdate']);
+        $this->massupdate = (bool) $request->getValidInputRequest('massupdate');
     }
 }
-?>

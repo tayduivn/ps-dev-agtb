@@ -42,6 +42,7 @@ else {
     $ret_array['formatted_value'] = format_number($bean->$field);
 }
 
+header("Content-Type: application/json");
 $json = getJSONobj();
-echo 'result = '. $json->encode($ret_array);
+echo $json->encode($ret_array);
 ?>

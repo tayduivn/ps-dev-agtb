@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once('modules/Users/User.php');
 require_once('modules/Employees/views/view.list.php');
@@ -50,9 +51,14 @@ class Bug46923Test extends Sugar_PHPUnit_Framework_TestCase
         $view = new EmployeesViewList();
         $GLOBALS['action'] = 'index';
         $GLOBALS['module'] = 'Employees';
-        $_REQUEST['module'] = 'Employees';
+
+        $request = InputValidation::create(array(
+            'module' => 'Employees',
+        ), array());
+        SugarTestReflection::setProtectedValue($view, 'request', $request);
+
         $view->init($user);
-        $view->lv = new ListViewSmarty();
+        $view->lv = new ListViewSmarty($request);
         $view->display();
 
         // ensure the new user shows up in the employees list view
@@ -65,5 +71,3 @@ class Bug46923Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("delete from users where id='{$user_id}'");
     }
 }
-
-?>

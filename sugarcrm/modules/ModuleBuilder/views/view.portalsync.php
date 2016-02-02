@@ -46,9 +46,9 @@ class ViewPortalSync extends SugarView
         $smarty = new Sugar_Smarty();
         $smarty->assign('welcome', $GLOBALS['mod_strings']['LBL_SYNCP_WELCOME']);
         $smarty->assign('mod', $GLOBALS['mod_strings']);
-        if (isset($_REQUEST['label']))
-        {
-            $smarty->assign('label',$_REQUEST['label']);
+        $label = $this->request->getValidInputRequest('label');
+        if ($label !== null) {
+            $smarty->assign('label', $label);
         }
         $options = (!empty($GLOBALS['system_config']->settings['system_portal_url'])) ? $GLOBALS['system_config']->settings['system_portal_url'] : 'https://';
         $smarty->assign('options',$options);

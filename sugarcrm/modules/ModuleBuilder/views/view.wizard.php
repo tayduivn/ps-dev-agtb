@@ -29,10 +29,9 @@ class ModuleBuilderViewWizard extends SugarView
 
     public function __construct()
     {
-        if ( isset ( $_REQUEST [ 'view' ] ) )
-            $this->view = $_REQUEST [ 'view' ] ;
-
-        $this->editModule = (! empty ( $_REQUEST [ 'view_module' ] ) ) ? $_REQUEST [ 'view_module' ] : null ;
+        parent::__construct();
+        $this->view = $this->request->getValidInputRequest('view', 'Assert\ComponentName');
+        $this->editModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
         $this->buttons = array(); // initialize so that modules without subpanels for example don't result in this being unset and causing problems in the smarty->assign
     }
 
@@ -179,8 +178,8 @@ class ModuleBuilderViewWizard extends SugarView
             sugar_die ( "no ModuleBuilder package set" ) ;
         }
 
-        $this->editModule = $_REQUEST [ 'view_module' ] ;
-        $this->package = $_REQUEST [ 'view_package' ] ;
+        $this->editModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+        $this->package = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
 
         $ajax->addCrumb ( translate ( 'LBL_MODULEBUILDER', 'ModuleBuilder' ), 'ModuleBuilder.main("mb")' ) ;
         $ajax->addCrumb ( $this->package, 'ModuleBuilder.getContent("module=ModuleBuilder&action=package&view_package=' . $this->package . '")' ) ;

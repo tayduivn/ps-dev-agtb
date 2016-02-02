@@ -14,6 +14,8 @@ require_once('clients/base/api/FilterApi.php');
 require_once('include/SugarFields/SugarFieldHandler.php');
 require_once 'modules/Teams/TeamSetManager.php';
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 /**
  * gets the system default delimiter or an user-preference based override
  * @return string the delimiter
@@ -72,8 +74,13 @@ function export($type, $records = null, $members = false, $sample = false)
     } elseif (isset($_REQUEST['all'])) {
         $where = '';
     } else {
-        if (!empty($_REQUEST['current_post'])) {
-            $ret_array = generateSearchWhere($type, $_REQUEST['current_post']);
+        $current_post = InputValidation::getService()->getValidInputRequest(
+            'current_post', 
+            array('Assert\PhpSerialized' => array('base64Encoded' => true))
+        );
+
+        if(!empty($current_post)) {
+            $ret_array = generateSearchWhere($type, $current_post);
             $where = $ret_array['where'];
             $searchFields = $ret_array['searchFields'];
         } else {
@@ -706,9 +713,7 @@ function generateSearchWhere($module, $query)
         $searchForm = getSearchForm($seed, $module);
         $searchForm->setup($searchdefs, $searchFields, 'SearchFormGeneric.tpl');
     }
-    $searchForm->populateFromArray(
-        \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($query))
-    );
+    $searchForm->populateFromArray($query);
     $where_clauses = $searchForm->generateSearchWhere(true, $module);
     if (count($where_clauses) > 0) {
         $where = '(' . implode(' ) AND ( ', $where_clauses) . ')';

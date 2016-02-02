@@ -75,7 +75,7 @@ if(!empty($_REQUEST['name'])){
     $role->clearCaches();
     $role->updateUsersACLInfo();
 
-    echo "result = {role_id:'$role->id', module:'$flc_module'}";
+    echo json_encode(array('role_id' => $role->id, 'module' => $flc_module));
     sugar_cleanup(true);
 }
 

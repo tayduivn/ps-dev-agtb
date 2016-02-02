@@ -17,9 +17,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 require_once 'include/SugarObjects/SugarConfig.php';
 require_once 'include/utils/security_utils.php';
 require_once 'include/utils/array_utils.php';
+
 
 
 function make_sugar_config(&$sugar_config)
@@ -1941,9 +1945,8 @@ function translate($string, $mod='', $selectedValue='')
     if (!empty($mod)) {
         global $current_language;
         //Bug 31275
-        if (isset($_REQUEST['login_language'])) {
-            $current_language = ($_REQUEST['login_language'] == $current_language)? $current_language : $_REQUEST['login_language'];
-        }
+        $request = InputValidation::getService();
+        $current_language = $request->getValidInputRequest('login_language', 'Assert\Language', $current_language);
         $lang = return_module_language($current_language, $mod);
 
         // Bug 60664 - If module language isn't found, just use mod_strings
@@ -2166,6 +2169,9 @@ function xss_check_pattern($pattern, $str)
  * 		"AUTO_INCREMENT"
  * 		"ALPHANUM"
  * @param boolean $dieOnBadData true (default) if you want to die if bad data if found, false if not
+ *
+ * @deprecated This is now an integral part of the new Validator service and is implemented
+ * in \Sugarcrm\Sugarcrm\Security\Validator\Constraints\LegacyCleanStringValidator. 
  */
 function clean_string($value, $filter = "STANDARD", $dieOnBadData = true)
 {
@@ -2210,6 +2216,10 @@ function clean_string($value, $filter = "STANDARD", $dieOnBadData = true)
     }
 }
 
+/**
+ * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
+ * framework in combination with Validator constraints for input validation.
+ */
 function clean_special_arguments()
 {
     if (isset($_SERVER['PHP_SELF']) && 'cli' !== PHP_SAPI) {
@@ -2240,6 +2250,8 @@ function clean_special_arguments()
 
 /**
  * cleans the given key in superglobals $_GET, $_POST, $_REQUEST
+ * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
+ * framework in combination with Validator constraints for input validation. 
  */
 function clean_superglobals($key, $filter = 'STANDARD')
 {
@@ -2248,6 +2260,10 @@ function clean_superglobals($key, $filter = 'STANDARD')
     if(isset($_REQUEST[$key])) clean_string($_REQUEST[$key], $filter);
 }
 
+/**
+ * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
+ * framework in combination with Validator constraints for input validation.
+ */
 function set_superglobals($key, $val)
 {
     $_GET[$key] = $val;
@@ -2255,7 +2271,11 @@ function set_superglobals($key, $val)
     $_REQUEST[$key] = $val;
 }
 
-// Works in conjunction with clean_string() to defeat SQL injection, file inclusion attacks, and XSS
+/**
+ * Works in conjunction with clean_string() to defeat SQL injection, file inclusion attacks, and XSS
+ * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
+ * framework in combination with Validator constraints for input validation.
+ */
 function clean_incoming_data()
 {
     global $sugar_config;
@@ -2338,6 +2358,11 @@ function str_end($str, $end)
     return (substr($str, strlen($str) - strlen($end)) == $end);
 }
 
+/**
+ * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
+ * framework in combination with Validator constraints for input validation. XSS prevention needs
+ * to be performed on the output layer in the form of escaping.
+ */
 function securexss($value)
 {
     if (defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
@@ -2357,6 +2382,11 @@ function securexss($value)
     return htmlspecialchars($value, ENT_QUOTES, "UTF-8");
 }
 
+/**
+ * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
+ * framework in combination with Validator constraints for input validation. XSS prevention needs
+ * to be performed on the output layer in the form of escaping.
+ */
 function securexsskey($value, $die=true)
 {
     global $sugar_config;
@@ -2373,6 +2403,11 @@ function securexsskey($value, $die=true)
     }
 }
 
+/**
+ * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
+ * framework in combination with Validator constraints for input validation. XSS prevention needs
+ * to be performed on the output layer in the form of escaping.
+ */
 function preprocess_param($value)
 {
     if (is_string($value)) {
@@ -2386,6 +2421,11 @@ function preprocess_param($value)
     return $value;
 }
 
+/**
+ * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
+ * framework in combination with Validator constraints for input validation. XSS prevention needs
+ * to be performed on the output layer in the form of escaping.
+ */
 function cleanup_slashes($value)
 {
     if(is_string($value)) return stripslashes($value);
@@ -4056,7 +4096,7 @@ function getJSONobj()
     static $json = null;
     if (!isset($json)) {
         require_once 'include/JSON.php';
-        $json = new JSON(JSON_LOOSE_TYPE);
+        $json = new JSON();
     }
 
     return $json;
@@ -5618,15 +5658,21 @@ function ensureJSCacheFilesExist($files = array(), $root = '.', $addPath = true)
 
     // If even one of the files doesn't exist, rebuild
     if (!$cacheExists) {
-        // Maintain state as well as possible
-        $rd = isset($_REQUEST['root_directory']) ? $_REQUEST['root_directory'] : null;
 
+        // Safe $_REQUEST['root_directory']
+        $inputValidation = InputValidation::getService();
+
+        // Maintain state as well as possible
+        $rd = $inputValidation->getValidInputRequest('root_directory', 'Assert\File');
+
+        // FIXME: setting $_REQUEST parameters ourselves ...
         // Build the concatenated files
         $_REQUEST['root_directory'] = $root;
         require_once("jssource/minify_utils.php");
         $minifyUtils = new SugarMinifyUtils();
         $minifyUtils->ConcatenateFiles($root);
 
+        // FIXME: setting $_REQUEST parameters ourselves ...
         // Cleanup the root directory request var if it was found. If it was null
         // this will in effect unset it
         $_REQUEST['root_directory'] = $rd;

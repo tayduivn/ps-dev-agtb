@@ -81,7 +81,7 @@ if (isset($_REQUEST['return_id'])) $xtpl->assign("RETURN_ID", $_REQUEST['return_
 if (empty($_REQUEST['return_id'])) {
 	$xtpl->assign("RETURN_ACTION", 'index');
 }
-$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
+
 $xtpl->assign("JAVASCRIPT", get_set_focus_js().get_validate_record_js());
 $xtpl->assign("ID", $focus->id);
 $xtpl->assign("HEADER", get_module_title("Feeds", "{MOD.LBL_CONTACT}  ".$focus->title, true));

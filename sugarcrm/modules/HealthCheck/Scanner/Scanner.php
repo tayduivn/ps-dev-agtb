@@ -13,6 +13,8 @@
 
 require_once dirname(__FILE__) . '/ScannerMeta.php';
 
+use Sugarcrm\Sugarcrm\Util\Serialized;
+
 /**
  *
  * HealthCheck Scanner
@@ -1172,7 +1174,10 @@ class HealthCheckScanner
                             true,
                             false
                         );
-                        $manifest = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($uh->manifest));
+                        $manifest = Serialized::unserialize($uh->manifest, null, true);
+                        if (empty($manifest)) {
+                            break;
+                        }
                         $manifest = $manifest['manifest'];
                         $scp = strcasecmp($manifest['author'], $req['author']);
                         $incompatible = $incompatible && ($req['author'] == '*' || empty($scp));

@@ -52,7 +52,6 @@ $aqb_sub_xtpl=new XTemplate ('modules/QueryBuilder/AQBPanelView.html');
 $aqb_sub_xtpl->assign("MOD", $mod_strings);
 $aqb_sub_xtpl->assign("APP", $app_strings);
 $aqb_sub_xtpl->assign("GRIDLINE", $gridline);
-$aqb_sub_xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $aqb_sub_xtpl->assign("RECORD", $focus->id);
 $aqb_sub_xtpl->assign('EDIT_INLINE', SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_EDIT']));
 $aqb_sub_xtpl->assign('MOVE_INLINE', SugarThemeRegistry::current()->getImage('arrow','align="absmiddle" border="0"',null,null,'.gif',$mod_strings['LBL_ORDER']));

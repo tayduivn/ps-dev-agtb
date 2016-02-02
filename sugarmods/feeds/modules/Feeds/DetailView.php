@@ -70,7 +70,6 @@ $xtpl=new XTemplate ('modules/Feeds/DetailView.html');
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
 $xtpl->assign("GRIDLINE", $gridline);
-$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("ID", $focus->id);
 $xtpl->assign("TITLE", $focus->title);
 $xtpl->assign("FEED", $focus->display_feed());

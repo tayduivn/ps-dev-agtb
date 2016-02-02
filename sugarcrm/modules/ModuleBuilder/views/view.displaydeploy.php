@@ -9,18 +9,26 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 
 class ViewDisplaydeploy extends SugarView 
 {
 	function ViewDisplaydeploy()
 	{
+        parent::SugarView();
+
+        $name = $this->request->getValidInputRequest('name', 'Assert\ComponentName');
 		$smarty = new Sugar_Smarty();
- 		$smarty->assign('package', $_REQUEST['name']);
+        $smarty->assign('package', $name);
 		$smarty->assign('message', $GLOBALS['mod_strings']['LBL_DEPLOY_IN_PROGRESS']);
 		$ajax = new AjaxCompose();
 		$ajax->addCrumb($GLOBALS['mod_strings']['LBL_MODULEBUILDER'], 'ModuleBuilder.main("mb")');
-		$ajax->addCrumb($_REQUEST['name'],'ModuleBuilder.getContent("module=ModuleBuilder&action=package&package='.$_REQUEST['name'].'")');
+        $ajax->addCrumb($name, 'ModuleBuilder.getContent(' . json_encode(http_build_query(array(
+            'module' => 'ModuleBuilder',
+            'action' => 'package',
+            'package' => $name,
+        ))) . ')');
 		$ajax->addCrumb(translate('LBL_SECTION_DEPLOY', 'ModuleBuilder'), '');
 		$ajax->addSection('center', translate('LBL_SECTION_DEPLOY', 'ModuleBuilder'), $smarty->fetch('modules/ModuleBuilder/tpls/MBPackage/deploy.tpl'));
 		echo $ajax->getJavascript();

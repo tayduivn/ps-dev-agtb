@@ -13,6 +13,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/Reports/config.php');
 require_once('include/api/SugarApiException.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 class Report
 {
     var $result;
@@ -148,6 +150,11 @@ class Report
      */
     public $extModules = array();
 
+    /**
+     * @var \Sugarcrm\Sugarcrm\Security\InputValidation\Request
+     */
+    protected $request;
+
     function Report($report_def_str = '', $filters_def_str = '', $panels_def_str = '')
     {
         global $current_user, $current_language, $app_list_strings;
@@ -155,6 +162,8 @@ class Report
 
             $current_user = BeanFactory::getBean('Users', '1');
         }
+
+        $this->request = InputValidation::getService();
 
         //Scheduled reports don't have $_REQUEST.
         if ((!isset($_REQUEST['module']) || $_REQUEST['module'] == 'Reports') && !defined('SUGAR_PHPUNIT_RUNNER')) {
@@ -166,7 +175,8 @@ class Report
 
         $this->report_max = (!empty($GLOBALS['sugar_config']['list_report_max_per_page']))
                 ? $GLOBALS['sugar_config']['list_report_max_per_page'] : 100;
-        $this->report_offset = (!empty($_REQUEST['report_offset'])) ? $_REQUEST['report_offset'] : 0;
+        $this->report_offset = (int) $this->request->getValidInputRequest('report_offset', null, 0);
+
         if ($this->report_offset < 0) $this->report_offset = 0;
         $this->time_date_obj = new TimeDate();
         $this->name = $mod_strings['LBL_UNTITLED'];
@@ -2489,16 +2499,15 @@ class Report
             } // else
         }
 
-        if (empty($_REQUEST['record'])) {
-            $_REQUEST['record'] = -1;
-        }
+        $record = $this->request->getValidInputRequest('record', 'Assert\Guid', -1) ?: -1;
+        $assignedUserId = $this->request->getValidInputRequest('assigned_user_id', 'Assert\Guid');
 
         require_once('include/formbase.php');
         populateFromPost('', $saved_report);
 
         $result = $saved_report->save_report(
-            $_REQUEST['record'],
-            $_REQUEST['assigned_user_id'],
+            $record,
+            $assignedUserId,
             $report_name,
             $this->module,
             $report_type,

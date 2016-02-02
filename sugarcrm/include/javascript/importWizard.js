@@ -68,12 +68,8 @@ SUGAR.importWizard = function() {
 					document.getElementById('importWizardDialog').style.display = '';												 
 					SUGAR.importWizard.dialog.render();
 					SUGAR.importWizard.dialog.show();
-	
-					eval(response['script']);
-	
-	
 				}
-				
+
 				var cObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Import&action='+actionVar+'&import_module='+importModuleVAR+'&source='+sourceVar, {success: success, failure: success});			
 				return false;
 			});

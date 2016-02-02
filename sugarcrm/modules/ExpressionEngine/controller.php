@@ -59,10 +59,6 @@ class ExpressionEngineController extends SugarController
         }
     }
 
-    function ExpressionEngineController() {
-		$this->view = 'editFormula';
-	}
-	
 	function action_editFormula ()
     {
      	$this->view = 'editFormula';  

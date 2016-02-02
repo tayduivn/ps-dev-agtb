@@ -115,12 +115,13 @@ class QuotesViewEdit extends ViewEdit
 
 
 		if((is_admin($current_user) || is_admin_for_module($GLOBALS['current_user'],'Quotes')) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){
-			$record = '';
-			if(!empty($_REQUEST['record'])){
-				$record = $_REQUEST['record'];
-			}
-			$this->ss->assign('ADMIN_EDIT',"<a href='index.php?action=index&module=DynamicLayout&from_action=".$_REQUEST['action'] ."&from_module=".$_REQUEST['module'] ."&record=".$record. "'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>");
-
+            $this->ss->assign('ADMIN_EDIT', '<a href="' . htmlspecialchars('index.php?' . http_build_query(array(
+                'module' => 'DynamicLayout',
+                'action' => 'index',
+                'from_action' => $this->request->getValidInputRequest('action'),
+                'from_module' => $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName'),
+                'record' => $this->request->getValidInputRequest('record', 'Assert\Guid', ''),
+            )), ENT_QUOTES, 'UTF-8') . '">' . SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>");
 		}
 		$this->ss->assign('QUOTE_STAGE_OPTIONS', get_select_options_with_id($app_list_strings['quote_stage_dom'], $this->bean->quote_stage));
 		$this->ss->assign('DEFAULT_PRODUCT_STATUS', $app_list_strings['product_status_quote_key']);
