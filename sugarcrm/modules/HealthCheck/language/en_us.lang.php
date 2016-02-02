@@ -21,6 +21,10 @@ $mod_strings = array(
     'LBL_LOGMETA' => 'Log meta',
     'LBL_ERROR' => 'Error',
 
+    // Failure handling in Process Author upgraders
+    'LBL_PA_UNSERIALIZE_DATA_FAILURE' => 'Serialized data could not be unserialized',
+    'LBL_PA_UNSERIALIZE_OBJECT_FAILURE' => 'Serialized data could not be unserialized because it contains references to objects or classes',
+
     'LBL_SCAN_101_LOG' => '%s has studio history',
     'LBL_SCAN_102_LOG' => '%s has extensions: %s',
     'LBL_SCAN_103_LOG' => '%s has custom vardefs',
@@ -52,6 +56,7 @@ $mod_strings = array(
 //    'LBL_SCAN_405_LOG' => 'Incompatible Integration - %s %s',
     'LBL_SCAN_406_LOG' => '%s has unsupported custom views. These custom views files will be moved to a Disabled directory during the upgrade',
     'LBL_SCAN_407_LOG' => '%s has unsupported custom views. These custom views files will be moved to a Disabled directory during the upgrade',
+    'LBL_SCAN_408_LOG' => 'Custom create-actions components were found in %s. These components will be copied and modified to extend the create component instead during the upgrade',
     'LBL_SCAN_519_LOG' => 'Extension dir %s detected',
     'LBL_SCAN_518_LOG' => 'Found customCode %s in %s, file %s',
     'LBL_SCAN_410_LOG' => 'Max fields - Found more than %s fields (%s) in %s',
@@ -85,6 +90,7 @@ $mod_strings = array(
     'LBL_SCAN_530_LOG' => 'Missing custom file: %s',
     'LBL_SCAN_433_LOG' => 'Found custom Elastic Search files %s',
     'LBL_SCAN_434_LOG' => 'Found usage of array functions on $_SESSION in files: %s',
+    'LBL_SCAN_435_LOG' => 'Class SugarSession was removed from API, use Sugarcrm\Sugarcrm\Session\SessionStorage instead. Files with deprecated code: ' . PHP_EOL . '%s',
 
     'LBL_SCAN_501_LOG' => 'Missing file: %s',
     'LBL_SCAN_502_LOG' => 'md5 mismatch for %s, expected %s',
@@ -104,6 +110,7 @@ $mod_strings = array(
     'LBL_SCAN_516_LOG' => 'Previously removed files found referenced in: %s',
     'LBL_SCAN_517_LOG' => 'Incompatible Integration - %s %s',
     'LBL_SCAN_540_LOG' => 'Incompatible Integration Data Reset - %s %s',
+    'LBL_SCAN_541_LOG' => 'Invalid Process Author Serialization - %s invalid serialization(s) in the %s column of the %s table:  %s.',
 
     'LBL_SCAN_901_LOG' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_903_LOG' => 'Unsupported Upgrader version. Please install the appropriate SugarUpgradeWizardPrereq package',
@@ -140,6 +147,7 @@ $mod_strings = array(
 //    'LBL_SCAN_405_TITLE' => 'Incompatible Integration - %s %s',
     'LBL_SCAN_406_TITLE' => '%s has unsupported custom views. These custom views files will be moved to a Disabled directory during the upgrade',
     'LBL_SCAN_407_TITLE' => '%s has unsupported custom views. These custom views files will be moved to a Disabled directory during the upgrade',
+    'LBL_SCAN_408_TITLE' => 'Customized create-actions components were found, which are no longer supported.',
     'LBL_SCAN_519_TITLE' => 'Extension dir %s detected',
     'LBL_SCAN_518_TITLE' => 'Found customCode %s in %s, file %s',
     'LBL_SCAN_410_TITLE' => 'Max fields - Found more than %s fields (%s) in %s',
@@ -168,6 +176,7 @@ $mod_strings = array(
     'LBL_SCAN_432_TITLE' => 'Bad vardefs - \'name\' field type is invalid \'%s\', module - \'%s\'',
     'LBL_SCAN_433_TITLE' => 'Found custom Elastic Search files %s',
     'LBL_SCAN_434_TITLE' => 'Found usage of array functions on $_SESSION in files: %s',
+    'LBL_SCAN_435_TITLE' => 'Found usage of removed SugarSession class',
 
     'LBL_SCAN_501_TITLE' => 'Missing file: %s',
     'LBL_SCAN_502_TITLE' => 'md5 mismatch for %s, expected %s',
@@ -190,6 +199,7 @@ $mod_strings = array(
     'LBL_SCAN_529_TITLE' => '%s: %s in file %s on line %s',
     'LBL_SCAN_530_TITLE' => 'Missing custom file: %s',
     'LBL_SCAN_540_TITLE' => 'Incompatible Integration Data Reset - %s %s',
+    'LBL_SCAN_541_TITLE' => 'Invalid Process Author Serialization - %s invalid serialization(s) in the %s column of the %s table: %s',
 
     'LBL_SCAN_901_TITLE' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_903_TITLE' => 'Unsupported Upgrader version',
@@ -226,6 +236,7 @@ $mod_strings = array(
 //    'LBL_SCAN_405_DESCR' => 'Package detected which has been blacklisted as not supported in Sugar 7',
     'LBL_SCAN_406_DESCR' => 'Stock Sugar module has unsupported custom views in custom/modules/%s/views. These custom views files will be moved to a Disabled directory during the upgrade',
     'LBL_SCAN_407_DESCR' => 'Stock Sugar module has unsupported custom views in modules/%s/views. These custom views files will be moved to a Disabled directory during the upgrade',
+    'LBL_SCAN_408_DESCR' => 'Custom create-actions components were found in %s. These components will be copied and modified to extend the create component instead during the upgrade',
     'LBL_SCAN_519_DESCR' => 'Stock Sugar module has one of the extensions which we do not support for upgrade, such as customized routing, access control, Javascript, etc.',
     'LBL_SCAN_518_DESCR' => 'The vardefs include user customCode definitions that we do not know how to convert',
     'LBL_SCAN_410_DESCR' => 'Too many fields in the view',
@@ -276,6 +287,7 @@ $mod_strings = array(
     'LBL_SCAN_529_DESCR' => 'PHP errors may be triggered by the interpreter when incorrect php-syntax or some run-time code-problems are found.',
     'LBL_SCAN_530_DESCR' => 'One of the custom files is not present in the instance, but is used by the custom code.',
     'LBL_SCAN_540_DESCR' => 'Package detected which has been blacklisted as not supported in the target Sugar version.  These packages need to be uninstalled AND deleted prior to upgrade.  Please note that the uninstallation of these packages will remove the tables and data generated by the package and the use of the packages\'s modules.',
+    'LBL_SCAN_541_DESCR' => 'Data has been discovered in your Process Management tables that is not unserializable or convertible',
 
     'LBL_SCAN_901_DESCR' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_903_DESCR' => 'Unsupported Upgrader version. Please install the appropriate SugarUpgradeWizardPrereq package',

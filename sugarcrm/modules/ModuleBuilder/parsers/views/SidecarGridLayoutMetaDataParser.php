@@ -660,10 +660,9 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     /**
      * here we convert from file (canonical) metadata => internal metadata format
      * @param $panels
-     * @param $fielddefs
      * @return array $internalPanels
      */
-    protected function _convertFromCanonicalForm($panels , $fielddefs)
+    protected function _convertFromCanonicalForm($panels)
     {
         // canonical form has format:
         // $panels[n]['label'] = label for panel n

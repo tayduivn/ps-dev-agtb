@@ -16,6 +16,8 @@ require_once "include/api/RestService.php";
 require_once 'clients/base/api/OAuth2Api.php';
 require_once 'include/SugarOAuth2/SugarOAuth2Server.php';
 
+use Sugarcrm\Sugarcrm\Session\SessionStorage;
+
 class UsersViewAuthenticate extends SidecarView
 {
     /**
@@ -26,10 +28,12 @@ class UsersViewAuthenticate extends SidecarView
 
     public function preDisplay()
     {
-        if(session_id()) {
+        $sess = SessionStorage::getInstance();
+        if ($sess->getId()) {
             // kill old session
-            session_destroy();
-        }
+            $sess->destroy();
+        };
+
         SugarAutoLoader::load('custom/include/RestService.php');
         $restServiceClass = SugarAutoLoader::customClass('RestService');
         $service = new $restServiceClass();

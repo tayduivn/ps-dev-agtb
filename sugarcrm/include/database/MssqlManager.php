@@ -236,6 +236,7 @@ class MssqlManager extends DBManager
         $this->connectOptions = $configOptions;
 
         $GLOBALS['log']->info("Connect:".$this->database);
+
         return true;
     }
 
@@ -1049,7 +1050,7 @@ class MssqlManager extends DBManager
         return str_replace("'","''", $this->quoteInternal($string));
     }
 
-    /**
+    /**+
      * @see DBManager::tableExists()
      */
     public function tableExists($tableName)
@@ -2043,7 +2044,7 @@ EOQ;
      */
     protected function freeDbResult($dbResult)
     {
-        if(!empty($dbResult))
+        if(is_resource($dbResult))
             mssql_free_result($dbResult);
     }
 

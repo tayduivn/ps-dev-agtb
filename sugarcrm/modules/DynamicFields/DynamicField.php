@@ -118,9 +118,17 @@ class DynamicField {
     function buildCache($module = false, $saveCache=true) {
         global $db;
 
+        static $tableFieldsMetaDataExists = false; // for performance purpose, don't need to call tableExists('fields_meta_data') thousands times.
+
         // this method may be called before database connection established and `fields_meta_data` table created
-        if (!$db || !$db->tableExists('fields_meta_data')) {
-            return false;
+
+        if (!$tableFieldsMetaDataExists) {
+            if (!$db || !$db->tableExists('fields_meta_data')) { // this call could be repeated thousands times
+                return false;
+            }
+            else {
+                $tableFieldsMetaDataExists = true;
+            }
         }
 
         if($module == '../data')return false;

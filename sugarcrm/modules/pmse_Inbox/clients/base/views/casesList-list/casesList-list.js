@@ -32,6 +32,19 @@
         // id and module always get returned, so name and email just need to be added
         return ['name', 'email'];
     },
+
+    /**
+     * @inheritdoc
+     */
+    _setOrderBy: function(options) {
+        this.context.set('sortOptions', options);
+        options.query = this.context.get('query');
+        options.module_list = this.context.get('module_list');
+        options.offset = 0;
+        options.update = false;
+        this._super('_setOrderBy', options);
+    },
+
     /**
      * Override to hook in additional triggers as the mass collection is updated (rows are checked on/off in
      * the actionmenu field). Also attempts to pre-check any rows when the list is refreshed and selected recipients
@@ -63,5 +76,4 @@
         jQuery('.adam-modal').remove();
         this._super("_dispose", arguments);
     }
-
 })

@@ -54,6 +54,8 @@
          *   for the mass collection to be tied to the view collection.
          */
         this.independentMassCollection = options.context.get('independentMassCollection') || true;
+        // if no metadata defined for `multi-selection-list`, use `selection-list`
+        options.meta = _.extend({}, app.metadata.getView(options.module, 'selection-list'), options.meta);
         this._super('initialize', [options]);
     },
 

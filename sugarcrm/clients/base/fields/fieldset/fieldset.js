@@ -104,7 +104,7 @@
         this._super('_loadTemplate');
 
         if ((this.view.name === 'record' || this.view.name === 'create'
-            || this.view.name === 'create-nodupecheck')
+            || this.view.name === 'create-nodupecheck' || this.view.name === 'pmse-case')
             && this.type === 'fieldset' && !_.contains(this.fallbackActions, this.action)) {
 
             this.template = app.template.getField('fieldset', 'record-detail', this.model.module);

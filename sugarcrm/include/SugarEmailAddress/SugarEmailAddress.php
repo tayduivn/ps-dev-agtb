@@ -190,6 +190,7 @@ class SugarEmailAddress extends SugarBean
         if (isset($_REQUEST) && isset($_REQUEST['useEmailWidget'])) {
             $this->populateLegacyFields($bean);
         }
+        $this->hasFetched = true;
     }
 
     /**
@@ -358,6 +359,7 @@ class SugarEmailAddress extends SugarBean
             $this->db->query($eabr_unlink);
         }
         $this->stateBeforeWorkflow = null;
+        $this->hasFetched = true;
         return;
     }
 
@@ -641,18 +643,6 @@ class SugarEmailAddress extends SugarBean
             return false; 
         }
 
-        $key = false;
-        foreach ($this->addresses as $k => $address) {
-            if ($address['email_address'] == $addr) {
-                $key = $k;
-
-                if ($address['primary_address'] === '1') {
-                    $GLOBALS['log']->fatal("SUGAREMAILADDRESS: Existing primary address could not be overriden [ {$addr} ]");
-                    return false;
-                }
-            }
-        }
-
         $new_address = array(
             'email_address' => $addr,
             'primary_address' => ($primary) ? '1' : '0',
@@ -661,6 +651,19 @@ class SugarEmailAddress extends SugarBean
             'opt_out' => ($optOut) ? '1' : '0',
             'email_address_id' => $email_id,
         );
+
+        $key = false;
+        foreach ($this->addresses as $k => $address) {
+            if ($address['email_address'] == $addr) {
+                $key = $k;
+
+                $diffCount = array_diff_assoc($new_address, $address);
+                if ($address['primary_address'] === '1' && !empty($diffCount)) {
+                    $GLOBALS['log']->fatal("SUGAREMAILADDRESS: Existing primary address could not be overriden [ {$addr} ]");
+                    return false;
+                }
+            }
+        }
 
         if ($key === false) {
             $this->addresses[] = $new_address;

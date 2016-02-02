@@ -80,11 +80,11 @@ class MetaDataManagerMobile extends MetaDataManager
      *
      * @return array An array with all the modules and their properties
      */
-    public function getModulesInfo()
+    public function getModulesInfo($data = array(), MetaDataContextInterface $context = null)
     {
         // Need to override the base one because it grabs the visibility settings from
         // the $moduleList global and we don't like messing with globals
-        $modulesInfo = parent::getModulesInfo();
+        $modulesInfo = parent::getModulesInfo($data, $context);
         if (isset($modulesInfo['Employees'])) {
             $modulesInfo['Employees']['visible'] = $modulesInfo['Employees']['display_tab'];
         }

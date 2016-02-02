@@ -40,13 +40,19 @@
                 case: data.case
             };
             app.controller.loadView(this.params);
-        }else{
+        } else if (data.case.flow.cas_flow_status === 'CLOSED') {
             app.alert.show('message-id', {
                 level: 'warning',
-                messages: app.lang.get('LBL_NSC_MESSAGE','pmse_Inbox')+data.case.flow.cas_flow_status,
+                messages: app.lang.get('LBL_PA_PROCESS_CLOSED','pmse_Inbox'),
                 autoClose: false
             });
             app.router.goBack();
+        } else {
+            app.alert.show('message-id', {
+                level: 'warning',
+                messages: app.lang.get('LBL_PA_PROCESS_UNAVAILABLE','pmse_Inbox'),
+                autoClose: false
+            });
         }
     },
 

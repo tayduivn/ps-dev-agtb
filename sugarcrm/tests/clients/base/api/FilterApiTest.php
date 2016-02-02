@@ -152,6 +152,18 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($reply['records']), 'Simple: Returned too many results');
     }
 
+    public function testBadLinkName()
+    {
+        $this->setExpectedException('SugarApiExceptionInvalidParameter');
+        $this->filterApi->filterList(
+            $this->serviceMock,
+            array(
+                'module' => 'Accounts',
+                'filter' => array(array('accounts.name' => 'TEST 3 Account')),
+            )
+        );
+    }
+
     public function testSimpleJoinFilter()
     {
         $reply = $this->filterApi->filterList(

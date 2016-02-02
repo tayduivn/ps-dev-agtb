@@ -72,7 +72,7 @@ $dictionary['RevenueLineItem'] = array(
             'reportable' => false,
             'audited' => true,
             'comment' => 'Account this product is associated with',
-            'formula' => 'related($opportunities, "account_id")',
+            'formula' => 'ifElse(related($opportunities, "account_id"), related($opportunities, "account_id"), $account_id)',
             'enforced' => true,
             'calculated' => true,
         ),

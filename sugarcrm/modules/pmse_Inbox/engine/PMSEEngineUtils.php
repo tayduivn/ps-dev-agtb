@@ -71,6 +71,8 @@ class PMSEEngineUtils
         // Change field action... this used to be the same as Add Related Record
         // but we needed different things from this
         'CF' => array(
+            'dnb_principal_id',
+            'system_generated_password',
             'duns_num',
             'kbdocument_body',
             'viewcount',
@@ -130,6 +132,7 @@ class PMSEEngineUtils
         'BR' => array('assigned_user_id', 'email1', 'outlook_id'),
         'ET' => array('email1'),
         'AC' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
+        'CF' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
         'RR' => array(),
     );
 
@@ -1136,11 +1139,11 @@ class PMSEEngineUtils
             return false;
         }
 
-        if ($type == 'AC' && isset($def['formula'])) {
+        if (($type == 'AC' || $type == 'CF') && isset($def['formula'])) {
             return false;
         }
 
-        if (($type == 'RR' || $type == 'AC') && !empty($def['readonly'])) {
+        if (($type == 'RR' || $type == 'AC' || $type == 'CF') && !empty($def['readonly'])) {
             return false;
         }
 
@@ -1300,11 +1303,15 @@ class PMSEEngineUtils
                 $relBean = BeanFactory::getBean($targetBean->field_defs[$element['act_field_module']]['module']);
 
                 $newData = array();
-                $fieldData = json_decode(html_entity_decode($element['act_fields']), true);
-                foreach ($fieldData as $fieldDef) {
-                    $field = $fieldDef['field'];
-                    if (isset($relBean->field_defs[$field]) && self::isValidField($relBean->field_defs[$field])) {
-                        $newData[] = $fieldDef;
+                $fieldData = json_decode(html_entity_decode($element['act_fields']));
+                // In some cases $fieldData comes back null, so we need to check
+                // if it is actually an array before trying to use it as one
+                if (is_array($fieldData)) {
+                    foreach ($fieldData as $fieldDef) {
+                        $field = $fieldDef['field'];
+                        if (isset($relBean->field_defs[$field]) && self::isValidField($relBean->field_defs[$field])) {
+                            $newData[] = $fieldDef;
+                        }
                     }
                 }
                 $element['act_fields'] = json_encode($newData);
@@ -1441,5 +1448,27 @@ class PMSEEngineUtils
                 $bean->teams->replace($field->value, array(), true);
             }
         }
+    }
+
+    /*
+     * Gets module label based on module name
+     * @param string $module
+     * @param bool $plural
+     * @return string $label
+     */
+    public static function getModuleLabelFromModuleName($module, $plural = false)
+    {
+        global $app_list_strings;
+        $label = '';
+
+        if (!empty($module)) {
+            if ($plural) {
+                $label = isset($app_list_strings['moduleList'][$module]) ? $app_list_strings['moduleList'][$module] : $module;
+            } else {
+                $label = isset($app_list_strings['moduleListSingular'][$module]) ? $app_list_strings['moduleListSingular'][$module] : $module;
+            }
+        }
+
+        return $label;
     }
 }

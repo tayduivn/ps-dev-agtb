@@ -225,7 +225,7 @@ $app_list_strings = array (
     'Subscriptions' => 'Subscription',
     'UserSignatures' => 'User Signature',
     'Feedbacks' => 'Feedback',
-    'Tags' => 'Tag', 
+    'Tags' => 'Tag',
     'Categories' => 'Category',
   ),
 
@@ -8716,7 +8716,7 @@ $app_strings = array (
     'EXCEPTION_SEARCH_UNAVAILABLE_DESC'    => 'The search engine backend is currently unavailable due to a connection issue. Verify connectivity and configuration in Admin->search->test.',
     'EXCEPTION_SEARCH_RUNTIME_DESC'        => 'A runtime exception occured in SearchEngine. See sugarcrm.log for more details.',
 
-    'EXCEPTION_INVALID_PLATFORM_DESC'   => 'Indicates the platform specified during authenication is unknown. Custom platforms must be added to custom/client/platforms.php',   
+    'EXCEPTION_INVALID_PLATFORM_DESC'   => 'Indicates the platform specified during authenication is unknown. Custom platforms must be added to custom/client/platforms.php',
     
     //Lotus Live specific error messages
     'ERR_EXTERNAL_API_LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system.',
@@ -9236,10 +9236,7 @@ $app_strings = array (
 
     // The following version of LBL_SUGAR_COPYRIGHT is for Professional and Enterprise editions.
 
-    'LBL_SUGAR_COPYRIGHT_SUB' => '&copy; 2004-2015 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
-    'LBL_SUGAR_COPYRIGHT_NAME_AND_RIGHTS' => 'SugarCRM Inc. All Rights Reserved.',
-    'LBL_SUGAR7_COPYRIGHT' => '&copy; 2004-2015 <a href="http://www.sugarcrm.com" target="_blank">SugarCRM Inc.</a>',
-
+    'LBL_SUGAR_COPYRIGHT_SUB' => '&copy; 2004-2016 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
 
     // GENERIC JOB NOTIFICATIONS LABELS
     'LBL_JOB_NOTIFICATION_SUBJECT_GENERIC' => 'Scheduled Job Completed',
@@ -11666,6 +11663,10 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     // Javascript enable string
     'LBL_ENABLE_JAVASCRIPT' => 'Sugar 7 requires javascript. Please enable Javascript in your browser to use Sugar 7.',
 
+    // Failure handling in Process Author upgraders
+    'LBL_PA_UNSERIALIZE_DATA_FAILURE' => 'Serialized data could not be unserialized',
+    'LBL_PA_UNSERIALIZE_OBJECT_FAILURE' => 'Serialized data could not be unserialized because it contains references to objects or classes',
+
     'LBL_FIELD_TRIMMED' => 'Field was trimmed, due to exceeding the maximum character limit.',
 );
 
@@ -12716,7 +12717,7 @@ $app_list_strings['dnb_bal_cntct_type'] = array(
 $app_list_strings['moduleList']['KBDocuments'] = 'Knowledge Base Document';
 $app_list_strings['moduleListSingular']['KBDocuments'] = 'Knowledge Base Document';
 $app_list_strings['moduleList']['KBContents'] = 'Knowledge Base';
-$app_list_strings['moduleListSingular']['KBContents'] = 'Knowledge Base';
+$app_list_strings['moduleListSingular']['KBContents'] = 'Knowledge Base Article';
 $app_list_strings['moduleList']['KBArticles'] = 'Knowledge Base Article';
 $app_list_strings['moduleListSingular']['KBArticles'] = 'Knowledge Base Article';
 $app_list_strings['moduleList']['KBContentTemplates'] = 'Knowledge Base Template';

@@ -93,36 +93,4 @@ describe('Forecasts.View.ConfigHeaderButtons', function() {
             });
         });
     });
-
-    describe('cancelConfig()', function() {
-        beforeEach(function() {
-            sinon.collection.stub(app.router, 'goBack', function() {});
-        });
-
-        it('if app.drawer exists, should call app.drawer.close()', function() {
-            app.drawer = {
-                close: function() {}
-            };
-            sinon.collection.spy(app.drawer, 'close');
-            view.cancelConfig();
-            expect(app.drawer.close).toHaveBeenCalled();
-            delete app.drawer;
-        });
-
-        describe('if app.drawer does not exists', function() {
-            describe('and module is_setup == 0', function() {
-                it('should call app.router.goBack()', function() {
-                    view.context.get('model').set('is_setup', 0);
-                    view.cancelConfig();
-                    expect(app.router.goBack).toHaveBeenCalled();
-                });
-            });
-
-            it('and module is_setup == 1, should not call app.router.goBack()', function() {
-                view.context.get('model').set('is_setup', 1);
-                view.cancelConfig();
-                expect(app.router.goBack).not.toHaveBeenCalled();
-            });
-        });
-    });
 });

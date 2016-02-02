@@ -154,8 +154,7 @@ else {
 		}
 
 		if($doQuery && isset($query)) {
-            $rs = $GLOBALS['db']->query($query);
-			$row = $GLOBALS['db']->fetchByAssoc($rs);
+            $row = $GLOBALS['db']->fetchOne($query);
 
 			if(empty($row)){
 				die($app_strings['ERROR_NO_RECORD']);

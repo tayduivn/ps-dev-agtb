@@ -414,7 +414,7 @@ class MockSidecarMergeGridMetaDataUpgrader extends SidecarMergeGridMetaDataUpgra
         if(empty($this->sidecarViewdefs[$module][$client]['view'][$viewname]['panels'])) {
             return array();
         }
-        return $parser->getFieldsFromPanels($this->sidecarViewdefs[$module][$client]['view'][$viewname]['panels'], $parser->_fielddefs);
+        return $parser->getFieldsFromPanels($this->sidecarViewdefs[$module][$client]['view'][$viewname]['panels']);
     }
 
 

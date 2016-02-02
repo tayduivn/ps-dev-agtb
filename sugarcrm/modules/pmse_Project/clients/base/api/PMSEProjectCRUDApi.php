@@ -127,7 +127,7 @@ class PMSEProjectCRUDApi extends ModuleApi
         $relDepStatus = $projectBean->prj_status=='ACTIVE'?'INACTIVE':'ACTIVE';
         while(
             $relatedDepBean = BeanFactory::getBean('pmse_BpmRelatedDependency')
-            ->retrieve_by_string_fields(array('prj_id'=>$id, 'pro_status'=>$relDepStatus))
+            ->retrieve_by_string_fields(array('pro_id'=>$pro_id, 'pro_status'=>$relDepStatus))
         ) {
             $relatedDepBean->pro_status = $projectBean->prj_status;
             $relatedDepBean->save();
@@ -159,11 +159,15 @@ class PMSEProjectCRUDApi extends ModuleApi
         $project['project']['name'] =  $args['name'];
         $project['project']['assigned_user_id'] =  $args['assigned_user_id'];
         $project['project']['description'] =  $args['description'];
+        $project['project']['prj_status'] = $args['prj_status'];
 
         $importer = new PMSEProjectImporter();
         $project['_module']['project'] = 'pmse_Project';
-        // The importation always changes the project status to INACTIVE
-        $project['project']['id'] = $importer->saveProjectData($project['project']);
+
+        // The importation always changes the project status to INACTIVE except when the case is Copy from a Process Definition
+        $savedProject = $importer->saveProjectData($project['project'], true);
+        $project['project']['id'] = $savedProject['id'];
+        $project['project']['warnings'] = array($savedProject['br_warning'], $savedProject['et_warning']);
 
         return $project['project'];
     }

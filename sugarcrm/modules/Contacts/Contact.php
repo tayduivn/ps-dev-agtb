@@ -600,4 +600,21 @@ class Contact extends Person {
             }
         }
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * In Portal, allows to access only the logged in Contact.
+     */
+    public function getOwnerWhere($user_id, $table_alias = null)
+    {
+        if (isset($_SESSION['type'], $_SESSION['contact_id']) && $_SESSION['type'] === 'support_portal') {
+            if ($table_alias === null) {
+                $table_alias = $this->table_name;
+            }
+            return $table_alias  . '.id = ' . $this->db->quoted($_SESSION['contact_id']);
+        }
+
+        return parent::getOwnerWhere($user_id, $table_alias);
+    }
 }

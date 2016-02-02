@@ -33,7 +33,6 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             'readonly' => true,
             'massupdate' => false,
             'importable' => true,
-            'convertToBase' => true,
         ),
         'best_case' => array(
             'calculated' => true,
@@ -42,7 +41,6 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             'audited' => false,
             'readonly' => true,
             'massupdate' => false,
-            'convertToBase' => true,
         ),
         'worst_case' => array(
             'calculated' => true,
@@ -51,7 +49,6 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             'audited' => false,
             'readonly' => true,
             'massupdate' => false,
-            'convertToBase' => true,
         ),
         'date_closed' => array(
             'calculated' => true,
@@ -410,6 +407,9 @@ EOL;
                 $rli->commit_stage = '';
                 $rli->sales_stage = $opp->sales_stage;
                 $rli->deleted = $opp->deleted;
+                $rli->team_id = $opp->team_id;
+                $rli->team_set_id = $opp->team_set_id;
+                $rli->team_set_selected_id = $opp->team_set_selected_id;
                 $rli->save();
 
                 // set the relationship up correctly

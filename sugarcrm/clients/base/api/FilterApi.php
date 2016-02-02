@@ -268,7 +268,7 @@ class FilterApi extends SugarApi
     {
         $seed = BeanFactory::newBean($args['module']);
 
-        if (!$seed->ACLAccess($acl)) {
+        if (!$seed->ACLAccess($acl, array('source' => 'filter_api'))) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
         }
 
@@ -323,8 +323,8 @@ class FilterApi extends SugarApi
             return $search->globalSearch($api, $args);
         }
 
-        list($args, $q, $options, $seed) = $this->filterListSetup($api, $args, $acl);
         $api->action = 'list';
+        list($args, $q, $options, $seed) = $this->filterListSetup($api, $args, $acl);
 
         return $this->runQuery($api, $args, $q, $options, $seed);
     }
@@ -664,14 +664,14 @@ class FilterApi extends SugarApi
 
             $q->from->load_relationship($linkName);
             if(empty($q->from->$linkName)) {
-                throw new SugarApiExceptionInvalidParameter("Invalid link $relatedTable for field $field");
+                throw new SugarApiExceptionInvalidParameter("Invalid link $linkName for field $field");
             }
 
             if($q->from->$linkName->getType() == "many") {
-                // FIXME: we have a problem here: we should allow 'many' links for related to match against parent object
-                // but allowing 'many' in  other links may lead to duplicates. So for now we allow 'many'
+                // FIXME TY-1192: we have a problem here: we should allow 'many' links for related to match against
+                // parent object but allowing 'many' in  other links may lead to duplicates. So for now we allow 'many'
                 // but we should figure out how to find if 'many' is permittable or not.
-                // throw new SugarApiExceptionInvalidParameter("Cannot use condition against multi-link $relatedTable");
+                // throw new SugarApiExceptionInvalidParameter("Cannot use condition against multi-link $linkName");
             }
 
             $join = $q->join($linkName, array('joinType' => 'LEFT'));

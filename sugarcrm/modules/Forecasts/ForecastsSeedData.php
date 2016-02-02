@@ -60,6 +60,9 @@ class ForecastsSeedData
                         continue;
                     }
 
+                    // output to the screen to keep the connection active
+                    echo '.';
+
                     /* @var $quota Quota */
                     $quota = BeanFactory::getBean('Quotas');
                     $quota->timeperiod_id = $timeperiod_id;
@@ -186,6 +189,9 @@ class ForecastsSeedData
                     if ($totals['included_opp_count'] == 0) {
                         continue;
                     }
+
+                    // output to the screen to keep the connection active
+                    echo '.';
 
                     /* @var $quota Quota */
                     $quota = BeanFactory::getBean('Quotas');

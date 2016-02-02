@@ -245,7 +245,7 @@ class EmailAddressHandler extends AbstractHandler implements
         }
 
         // Fetch email addresses from database if needed
-        if (empty($bean->emailAddress->dontLegacySave) && empty($bean->emailAddress->hasFetched)) {
+        if (empty($bean->emailAddress->hasFetched)) {
             return $this->fetchEmailAddressesFromDatabase($bean);
         }
 
