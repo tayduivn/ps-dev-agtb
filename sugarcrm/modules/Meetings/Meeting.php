@@ -220,9 +220,9 @@ class Meeting extends SugarBean {
         }
 
         if ($this->repeat_selector == 'None') {
-            $this->repeat_unit = null;
-            $this->repeat_ordinal = null;
-            $this->repeat_days = null;
+            $this->repeat_unit = '';
+            $this->repeat_ordinal = '';
+            $this->repeat_days = '';
         }
 
         $check_notify = $this->send_invites;

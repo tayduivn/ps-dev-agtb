@@ -77,12 +77,12 @@ class RRule
     /**
      * Return array with $value
      * @param mixed $value
-     * @return array
+     * @return array | null
      */
     protected function toArray($value)
     {
-        if (!$value) {
-            return array();
+        if (is_null($value)) {
+            return null;
         }
         if (is_array($value)) {
             return $value;
