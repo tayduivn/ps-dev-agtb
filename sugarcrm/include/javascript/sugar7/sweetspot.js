@@ -80,9 +80,12 @@
                 moduleList = _.uniq(moduleList);
             }
             _.each(moduleList, function(module) {
-                var menuMeta = app.metadata.getModule(module).menu;
+                var moduleMeta = app.metadata.getModule(module);
+                var menuMeta = moduleMeta && moduleMeta.menu;
                 var headerMeta = menuMeta && menuMeta.header && menuMeta.header.meta || [];
                 var sweetspotMeta = menuMeta && menuMeta.sweetspot && menuMeta.sweetspot.meta || [];
+
+                // merge header metadata with sweetspot metadata
                 _.each(headerMeta.concat(sweetspotMeta), function(action) {
                     if (hasAccessToAction(action.acl_module || module, action) === false) {
                         return;

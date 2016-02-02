@@ -293,7 +293,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         $results = $sq->execute();
 
         $chunk = array();
-        $max_chunk_size = 50;
+        $max_chunk_size = 10;
 
         $job_group = md5(microtime());
 
@@ -408,6 +408,12 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         foreach ($results as $result) {
             $opportunity_ids[] = $db->quoted($result['opportunity_id']);
         }
+
+        // If we have no Opportunities to work with, we're done processing.
+        if (empty($opportunity_ids)) {
+            return true;
+        }
+
         $opportunity_ids = implode(',', $opportunity_ids);
 
         $closed_rli_sql = 'SELECT opportunity_id, COUNT(id) AS rli_count, SUM(best_case) AS best, SUM(likely_case) AS likely, SUM(worst_case) AS worst FROM revenue_line_items WHERE opportunity_id IN (' . $opportunity_ids . ') AND sales_stage IN (' . $lost_stages . ') GROUP BY opportunity_id';
@@ -423,10 +429,10 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
                 date_closed_timestamp = ' . $db->quoted((!empty($result['dct_open']) ? $result['dct_open'] : $result['dct_closed'])) . ',
                 sales_stage = ' . $db->quoted($list_value[$result['sales_stage']]) . ',
                 probability = ' . $db->quoted($app_list_strings['sales_probability_dom'][$list_value[$result['sales_stage']]]) . ',
-                sales_status = ' . $db->quoted('') . ', commit_stage = ' . $db->quoted('') . ',';
+                sales_status = ' . $db->quoted('') . ', commit_stage = ' . $db->quoted('');
 
-            if ($result['rli_count'] == $closed_rlis[$result['opportunity_id']]['rli_count']) {
-                $sql .= 'amount = ' . $db->quoted($closed_rlis[$result['opportunity_id']]['likely']) . ',
+            if (isset($closed_rlis[$result['opportunity_id']]) && $result['rli_count'] == $closed_rlis[$result['opportunity_id']]['rli_count']) {
+                $sql .= ', amount = ' . $db->quoted($closed_rlis[$result['opportunity_id']]['likely']) . ',
                     best_case = ' . $db->quoted($closed_rlis[$result['opportunity_id']]['best']) . ',
                     worst_case = ' . $db->quoted($closed_rlis[$result['opportunity_id']]['worst']);
             }

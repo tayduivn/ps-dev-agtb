@@ -3512,6 +3512,11 @@ function sugar_cleanup($exit = false)
     }
     SugarAutoLoader::saveClassMap();
 
+    // Clean PA session arrays
+    if (isset($_SESSION['triggeredFlows'])) {
+        unset($_SESSION['triggeredFlows']);
+    }
+
     if (class_exists('DBManagerFactory', false)) {
         DBManagerFactory::disconnectAll();
     }
