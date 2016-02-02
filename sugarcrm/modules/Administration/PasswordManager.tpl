@@ -340,8 +340,31 @@
         <td scope="row" width="75%"><input type='hidden' name='captcha_on' value='0'><input name="captcha_on"
                                                                                             id="captcha_id" value="1"
                                                                                             class="checkbox"
-                                                                                            tabindex='1' type="checkbox"
-                                                                                            onclick='document.getElementById("captcha_config_display").style.display=this.checked?"":"none";' {$captcha_checked}>
+                                                                                            tabindex='1' type="checkbox" {$captcha_checked}
+                                                                                            onclick='toggleDisplay("captcha_config_display");'>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" id="captcha_config_display" width="100%" scope="row" style="display:{$CAPTCHA_CONFIG_DISPLAY}">
+            <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td width="10%" scope="row">{$MOD.LBL_PUBLIC_KEY}<span class="required">*</span></td>
+                    <td width="40%"><input type="text" name="captcha_public_key" id="captcha_public_key" size="45"
+                                           value="{$settings.captcha_public_key}" tabindex='1'
+                                           onblur="this.value=this.value.replace(/^\s+/,'').replace(/\s+$/,'')">
+                    </td>
+                    <td width="10%" scope="row">{$MOD.LBL_PRIVATE_KEY}<span class="required">*</span></td>
+                    <td width="40%"><input type="text" name="captcha_private_key" size="45"
+                                           value="{$settings.captcha_private_key}" tabindex='1'
+                                           onblur="this.value=this.value.replace(/^\s+/,'').replace(/\s+$/,'')">
+                    </td>
+                </tr>
+                {if !($VALID_PUBLIC_KEY)}
+                    <tr>
+                        <td scope="row"><span class='error'>{$MOD.ERR_PUBLIC_CAPTCHA_KEY}</span></td>
+                    </tr>
+                {/if}
+            </table>
         </td>
     </tr>
     {if !empty($settings.honeypot_on)}
@@ -357,33 +380,6 @@
     </td>
     </tr>
 
-</table>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr>
-        <td colspan="4">
-            <div id="captcha_config_display" style="display:{$CAPTCHA_CONFIG_DISPLAY}">
-                <table width="100%" cellpadding="0" cellspacing="0">
-                    <tr>
-                        <td width="10%" scope="row">{$MOD.LBL_PUBLIC_KEY}<span class="required">*</span></td>
-                        <td width="40%"><input type="text" name="captcha_public_key" id="captcha_public_key" size="45"
-                                               value="{$settings.captcha_public_key}" tabindex='1'
-                                               onblur="this.value=this.value.replace(/^\s+/,'').replace(/\s+$/,'')">
-                        </td>
-                        <td width="10%" scope="row">{$MOD.LBL_PRIVATE_KEY}<span class="required">*</span></td>
-                        <td width="40%"><input type="text" name="captcha_private_key" size="45"
-                                               value="{$settings.captcha_private_key}" tabindex='1'
-                                               onblur="this.value=this.value.replace(/^\s+/,'').replace(/\s+$/,'')">
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </td>
-    </tr>
-    {if !($VALID_PUBLIC_KEY)}
-        <tr>
-            <td scope="row"><span class='error'>{$MOD.ERR_PUBLIC_CAPTCHA_KEY}</span></td>
-        </tr>
-    {/if}
 </table>
 
 
