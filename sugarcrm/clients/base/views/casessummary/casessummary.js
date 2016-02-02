@@ -95,7 +95,7 @@
                             viewName: 'detail',
                             view: self
                         });
-                    field.setElement(self.$('.favTarget.[data-model-id="' + model.id + '"]'));
+                    field.setElement(self.$('[data-model-id="' + model.id + '"]'));
                     field.render();
                 });
             }
