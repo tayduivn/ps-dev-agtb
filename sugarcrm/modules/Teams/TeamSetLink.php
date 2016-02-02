@@ -169,6 +169,9 @@ class TeamSetLink extends Link2 {
                 // If Team based ACLs have been enabled on any team then set the correct team set id on the bean
                 if (!empty($this->_selectedTeamList)) {
                     $this->focus->team_set_selected_id = $this->_teamSet->addTeams($this->_selectedTeamList);
+                } elseif (empty($this->focus->team_set_selected_id) && (!empty($GLOBALS['current_user']->team_set_selected_id))) {
+                    // If no teams have been "selected" (unlocked) then check user's default selected teams
+                    $this->focus->team_set_selected_id = $GLOBALS['current_user']->team_set_selected_id;
                 }
             }//fi empty($GLOBALS['sugar_config']['disable_team_sanity_check']))
 
