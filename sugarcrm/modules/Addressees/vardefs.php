@@ -58,7 +58,7 @@ $dictionary['Addressee'] = array(
     'relationships' => array(),
     'optimistic_locking' => true,
     'unified_search' => true,
-    'full_text_search' => true,
+    'full_text_search' => false,
 );
 
 VardefManager::createVardef('Addressees', 'Addressee', array('basic', 'team_security', 'assignable', 'taggable', 'person'));
