@@ -87,7 +87,7 @@ class PMSEScriptTask extends PMSEActivity
      */
     public function getDBDate($field, $value)
     {
-        $result = '';
+        $result = $value;
         switch ($field->type) {
             case 'Date':
                 $date = $this->timeDate->fromIsoDate($value);
