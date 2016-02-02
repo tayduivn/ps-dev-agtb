@@ -149,7 +149,8 @@
                 css_class: 'btn',
                 tooltip: 'LBL_PREVIEW',
                 event: 'list:preview:fire',
-                icon: 'fa-eye'
+                icon: 'fa-eye',
+                acl_action: 'view'
             });
         } else {
             this.rightColumns.push({});
