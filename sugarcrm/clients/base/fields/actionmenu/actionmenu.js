@@ -149,18 +149,18 @@
     _bindModelChangeEvents: function() {
         this.massCollection.on('add', function(model) {
             if (this.model && model.id === this.model.id) {
-                this.$(this.fieldTag).attr('checked', true);
+                this.$(this.fieldTag).prop('checked', true);
             }
         }, this);
 
         this.massCollection.on('remove', function(model) {
             if (this.model && model.id === this.model.id) {
-                this.$(this.fieldTag).attr('checked', false);
+                this.$(this.fieldTag).prop('checked', false);
             }
         }, this);
 
         this.massCollection.on('reset', function() {
-            this.$(this.fieldTag).attr('checked', !!this.massCollection.get(this.model.id));
+            this.$(this.fieldTag).prop('checked', !!this.massCollection.get(this.model.id));
         }, this);
     },
 
@@ -175,14 +175,14 @@
         // row are all checked.
         this.massCollection.on('all:checked', function() {
             if (this.collection.length !== 0) {
-                this.$(this.fieldTag).attr('checked', true);
+                this.$(this.fieldTag).prop('checked', true);
             }
         }, this);
 
         // Unchecks/deselects the actionmenu checkbox if the checkboxes of
         // each row are NOT all checked.
         this.massCollection.on('not:all:checked', function() {
-            this.$(this.fieldTag).attr('checked', false);
+            this.$(this.fieldTag).prop('checked', false);
         }, this);
 
         this.massCollection.on('add', this._onMassCollectionAddAll, this);
@@ -217,7 +217,7 @@
             //so we need to compare ids instead of models directly.
         } else if (_.intersection(massCollectionIds, viewCollectionIds).length !== 0) {
             this.setDropdownDisabled(false);
-            this.$(this.fieldTag).attr('checked', true);
+            this.$(this.fieldTag).prop('checked', true);
         }
         if (!this.def.disable_select_all_alert) {
             this.context.trigger('toggleSelectAllAlert');
