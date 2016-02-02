@@ -13,8 +13,6 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Util\Serialized;
-
 /**
  * Upgrader to handle conversion of PHP serialized data from 7.6.1 and below into
  * JSON encoded data for 7.6.2 and above.
