@@ -412,7 +412,7 @@ EOD
     $smarty->assign('reportModuleList', implode(", ", $fullTableListArray));
     $smarty->assign('reportDisplayColumnsList', implode(", ", $displayColumnsArray));
     require_once('modules/Teams/TeamSetManager.php');
-    $smarty->assign('reportTeam', TeamSetManager::getCommaDelimitedTeams($args['reporter']->saved_report->team_set_id, $args['reporter']->saved_report->team_id, true));
+    $smarty->assign('reportTeam', TeamSetManager::getFormattedTeamsFromSet($args['reporter']->saved_report, true));
     $smarty->assign('reportAssignedToName', $args['reporter']->saved_report->assigned_user_name);
     $smarty->assign('summaryAndGroupDefData', $summaryAndGroupDefData);
 
