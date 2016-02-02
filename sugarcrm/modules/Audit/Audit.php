@@ -266,7 +266,7 @@ class Audit extends SugarBean
 
         if ($value) {
             $obj = $timedate->fromDbType($value, $type);
-            $value = $timedate->asIsoDate($obj);
+            $value = $timedate->asIso($obj);
         }
 
         return $value;
