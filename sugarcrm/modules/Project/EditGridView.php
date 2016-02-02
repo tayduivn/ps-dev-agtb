@@ -133,22 +133,42 @@ if (isset($_REQUEST["view_filter_resource"]))
 $projectTaskBean = BeanFactory::getBean('ProjectTask');
 $projectTasks = array();
 
+$queryPart = '';
+
+// Start ACL check
+global $current_user, $mod_strings;
+if (!is_admin($current_user)) {
+    $list_action = ACLAction::getUserAccessLevel($current_user->id, $projectTaskBean->module_dir, 'list', 'module');
+
+    if ($list_action == ACL_ALLOW_NONE) {
+        ACLController::displayNoAccess(true);
+        return false;
+    }
+
+    $aclVisibility = new ACLVisibility($projectTaskBean);
+    $aclVisibility->addVisibilityWhere($queryPart);
+}
+if (!empty($queryPart)) {
+    $queryPart = 'AND ' . $queryPart;
+}
+// End ACL check
+
 //todo: Ajay to make sure that the getBeans() call takes a sortArray and actually uses it.
 //$focus->load_relationship("projecttask");
 //$projectTasks = $focus->projecttask->getBeans($projectTaskBean);
 
 // Completed Tasks
 if (isset($_REQUEST["selected_view"]) && $_REQUEST["selected_view"] == 2) {
-    $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']."' AND project_task.percent_complete='100' AND project_task.deleted=0 order by project_task.project_task_id";
+    $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']."' AND project_task.percent_complete='100' AND project_task.deleted=0 {$queryPart} order by project_task.project_task_id";
     $result = $projectTaskBean->db->query($query, true, "");
 }
 //Incomplete Tasks
 elseif (isset($_REQUEST["selected_view"]) && $_REQUEST["selected_view"] == 3) {
-    $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']."' AND project_task.percent_complete < 100 AND project_task.deleted=0 order by project_task.project_task_id";
+    $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']."' AND project_task.percent_complete < 100 AND project_task.deleted=0 {$queryPart} order by project_task.project_task_id";
 }
 //Milestone Tasks
 elseif (isset($_REQUEST["selected_view"]) && $_REQUEST["selected_view"] == 4) {
-    $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']."' AND project_task.milestone_flag='1' AND project_task.deleted=0 order by project_task.project_task_id";
+    $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']."' AND project_task.milestone_flag='1' AND project_task.deleted=0 {$queryPart} order by project_task.project_task_id";
     $result = $projectTaskBean->db->query($query, true, "");
 }
 //Tasks for Resource
@@ -180,7 +200,7 @@ elseif (isset($_REQUEST["selected_view"]) && $_REQUEST["selected_view"] == 6) {
         "' AND (project_task.date_start BETWEEN '". $timedate->to_db_date($_REQUEST['view_filter_date_start'], false) .
         "' AND '". $timedate->to_db_date($_REQUEST['view_filter_date_finish'], false)."' OR project_task.date_finish BETWEEN '".
         $timedate->to_db_date($_REQUEST['view_filter_date_start'], false) ."' AND '" . $timedate->to_db_date($_REQUEST['view_filter_date_finish'], false).
-        "') AND project_task.deleted=0 order by project_task.project_task_id";
+        "') AND project_task.deleted=0 {$queryPart} order by project_task.project_task_id";
     $result = $projectTaskBean->db->query($query, true, "");
     $sugar_smarty->assign("VIEW_FILTER_DATE_START", $_REQUEST["view_filter_date_start"]);
     $sugar_smarty->assign("VIEW_FILTER_DATE_FINISH", $_REQUEST["view_filter_date_finish"]);
@@ -188,38 +208,38 @@ elseif (isset($_REQUEST["selected_view"]) && $_REQUEST["selected_view"] == 6) {
 
 // Overdue Tasks
 elseif (isset($_REQUEST["selected_view"]) && $_REQUEST["selected_view"] == 7) {
-    $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']."' AND project_task.date_finish < '". $today . "' AND project_task.percent_complete < 100 AND project_task.deleted=0 order by project_task.project_task_id";
+    $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']."' AND project_task.date_finish < '". $today . "' AND project_task.percent_complete < 100 AND project_task.deleted=0 {$queryPart} order by project_task.project_task_id";
     $result = $projectTaskBean->db->query($query, true, "");
 }
 // Upcoming Tasks
 elseif (isset($_REQUEST["selected_view"]) && $_REQUEST["selected_view"] == 8) {
     $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']."' AND " .
             "(project_task.date_start BETWEEN '" . $today . "' AND '". $nextWeek . "' OR ".
-            "project_task.date_finish BETWEEN '". $today . "' AND '". $nextWeek . "') AND project_task.deleted=0 order by project_task.project_task_id";
+            "project_task.date_finish BETWEEN '". $today . "' AND '". $nextWeek . "') AND project_task.deleted=0 {$queryPart} order by project_task.project_task_id";
 
     $result = $projectTaskBean->db->query($query, true, "");
 }
 // My Tasks
 elseif (isset($_REQUEST["selected_view"]) && $_REQUEST["selected_view"] == 9) {
-    $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']."' AND project_task.resource_id like '". $current_user->id . "' AND project_task.deleted=0 order by project_task.project_task_id";
+    $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']."' AND project_task.resource_id like '". $current_user->id . "' AND project_task.deleted=0 {$queryPart} order by project_task.project_task_id";
     $result = $projectTaskBean->db->query($query, true, "");
 }
 // My Overdue Tasks
 elseif (isset($_REQUEST["selected_view"]) && $_REQUEST["selected_view"] == 10) {
     $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']. "' AND project_task.resource_id like '".$current_user->id ."' AND " .
-             "project_task.date_finish < '". $today . "' AND project_task.percent_complete < 100 AND project_task.deleted=0 order by project_task.project_task_id";
+             "project_task.date_finish < '". $today . "' AND project_task.percent_complete < 100 AND project_task.deleted=0 {$queryPart} order by project_task.project_task_id";
     $result = $projectTaskBean->db->query($query, true, "");
 }
 // My Upcoming Tasks
 elseif (isset($_REQUEST["selected_view"]) && $_REQUEST["selected_view"] == 11) {
     $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']. "' AND project_task.resource_id like '" .$current_user->id ."' AND " .
         "(project_task.date_start BETWEEN '" . $today . "' AND '". $nextWeek . "' OR ".
-        "project_task.date_finish BETWEEN '". $today . "' AND '". $nextWeek . "') AND project_task.deleted=0 order by project_task.project_task_id";
+        "project_task.date_finish BETWEEN '". $today . "' AND '". $nextWeek . "') AND project_task.deleted=0 {$queryPart} order by project_task.project_task_id";
 
     $result = $projectTaskBean->db->query($query, true, "");
 }
 else
-    $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']."' AND project_task.deleted=0 order by project_task.project_task_id";
+    $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']."' AND project_task.deleted=0 {$queryPart} order by project_task.project_task_id";
 
 if (!isset($_REQUEST["selected_view"]) || ($_REQUEST["selected_view"] == 0 || $_REQUEST["selected_view"] == 1 || $_REQUEST["selected_view"] == 3)) {
     $result = $projectTaskBean->db->query($query, true, "");
