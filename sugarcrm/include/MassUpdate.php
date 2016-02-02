@@ -257,6 +257,8 @@ eoq;
                     continue;
                 }
 				if(isset($_POST['Delete'])){
+					// disable row level security so that bean can be retrieved for checking ACL access.
+					$this->sugarbean->disable_row_level_security = true;
 					$this->sugarbean->retrieve($id);
 					if($this->sugarbean->ACLAccess('Delete')){
 					    if ($this->sugarbean->object_name == 'Team' && $this->sugarbean->has_records_in_modules()) {
