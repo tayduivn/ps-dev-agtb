@@ -47,9 +47,8 @@ class ACLAction  extends SugarBean
 
                 $action = BeanFactory::getBean('ACLActions');
                 $query = "SELECT * FROM " . $action->table_name . " WHERE name='$action_name' AND category = '$category' AND acltype='$type' AND deleted=0 ";
-                $result = $db->query($query);
+                $row = $db->fetchOne($query);
                 //only add if an action with that name and category don't exist
-                $row=$db->fetchByAssoc($result);
                 if (empty($row)) {
                     $action->name = $action_name;
                     $action->category = $category;

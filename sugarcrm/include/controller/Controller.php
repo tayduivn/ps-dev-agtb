@@ -156,9 +156,8 @@ class Controller extends SugarBean {
 						  WHERE ".$this->focus->controller_def['parent_var']."='$parent_id'
 						  AND ".$this->focus->table_name.".deleted='0'
 						 ";
-				$result = $this->db->query($query,true," Error capturing max start order: ");
-				$row = $this->db->fetchByAssoc($result);
-		
+				$row = $this->db->fetchOne($query,true," Error capturing max start order: ");
+
 			if(!is_null($row['max_start'])){		
 				
 				if($this->focus->controller_def['start_axis']=="x")	{
@@ -220,8 +219,7 @@ class Controller extends SugarBean {
 		}			
 
 	//echo $query."<BR>";		
-		$result = $this->db->query($query,true," Error capturing affected id: ");
-		$row = $this->db->fetchByAssoc($result);
+		$row = $this->db->fetchOne($query,true," Error capturing affected id: ");
 
 		return $row['id'];
 		
@@ -245,9 +243,8 @@ function check_wall($magnitude, $direction, $parent_id){
 				  WHERE ".$this->focus->controller_def['parent_var']."='$parent_id'
 				  AND ".$this->focus->table_name.".deleted='0'
 						 ";
-		$result = $this->db->query($query,true," Error capturing max start order: ");
-		$row = $this->db->fetchByAssoc($result);
-		
+		$row = $this->db->fetchOne($query,true," Error capturing max start order: ");
+
 			if($this->focus->controller_def['start_axis']=="x")	{
 				if($row['max_start'] == $this->focus->list_order_x){
 					return false;	

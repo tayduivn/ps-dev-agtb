@@ -1475,8 +1475,7 @@ class Report
                         $do_id = 1;
                     }
                     // Bug 45019: don't add ID column if this column is the ID column
-                    // PAT-1008: add id column to select for summation query to make name column linkable
-                    if ($field_list_name != 'total_select_fields' && ($field_list_name != 'summary_select_fields' || $display_column['type'] == 'name') && $do_id) {
+                    if (($field_list_name != 'total_select_fields' && $field_list_name != 'summary_select_fields') && $do_id) {
                         $id_column['name'] = 'id';
                         $id_column['type'] = 'id';
                         $id_column['table_key'] = $display_column['table_key'];
@@ -1490,12 +1489,6 @@ class Report
                         $select_piece = $this->layout_manager->widgetQuery($id_column);
                         if (!$this->select_already_defined($select_piece, $field_list_name)) {
                             array_push($this->$field_list_name, $select_piece);
-                            // PAT-1008: add id column to group by since it's added to select for summation query. Required by non-mysql dbs
-                            if ($field_list_name == 'summary_select_fields') {
-                                $this->layout_manager->setAttribute('context', 'GroupBy');
-                                $this->group_by_arr[] = $this->layout_manager->widgetQuery($id_column);
-                                $this->layout_manager->setAttribute('context', 'Select');
-                            }
                         }
                     }
                 }

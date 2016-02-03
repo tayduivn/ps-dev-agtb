@@ -813,8 +813,7 @@ function get_user_name($id)
     $db = DBManagerFactory::getInstance();
 
     $q = "SELECT user_name FROM users WHERE id='{$id}'";
-    $r = $db->query($q);
-    $a = $db->fetchByAssoc($r);
+    $a = $db->fetchOne($q);
 
     return (empty($a)) ? '' : $a['user_name'];
 }

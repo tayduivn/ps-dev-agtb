@@ -1668,7 +1668,8 @@ SQL;
         }
 
         $beanIds = $this->_createRecords(1);
-        $result = $this->_db->query("DELETE From contacts where id = '{$beanIds[0]}'");
+        // need to keep $result
+        $result = $this->_db->query("DELETE From contacts where id = '{$beanIds[0]}'", false, '', false, true);
         $this->assertEquals(1, $this->_db->getAffectedRowCount($result));
     }
 
