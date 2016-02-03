@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Base\Helper;
 
 use Sabre\VObject\Recur\EventIterator;
 use Sabre\VObject\Component as DavComponent;
+use Sugarcrm\Sugarcrm\Dav\Base\Constants;
 use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as StatusMapper;
 use Sugarcrm\Sugarcrm\Dav\Cal\Structures\RRule;
 
@@ -169,6 +170,10 @@ class RecurringHelper
 
         if (isset($value['until'])) {
             $bean->repeat_until = $value['until'][0];
+        }
+
+        if (empty($bean->repeat_count) && empty($bean->repeat_until)) {
+            $bean->repeat_count = Constants::MAX_INFINITE_RECCURENCE_COUNT;
         }
 
         if (isset($value['byday']) && $bean->repeat_type == 'Weekly') {

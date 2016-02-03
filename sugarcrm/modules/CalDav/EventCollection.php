@@ -908,13 +908,15 @@ class CalDavEventCollection extends SugarBean
      * Returns mapping of emails to sugar's persons.
      * In case if it's first call then mapping will be received from participants_links property.
      *
+     * @var bool $force
      * @return array
      */
-    protected function getParticipantsLinks()
+    protected function getParticipantsLinks($force = false)
     {
-        if (!$this->participantLinks && $this->participants_links) {
+        if ($force || (!$this->participantLinks && $this->participants_links)) {
+            $this->participantLinks = array();
             $links = json_decode($this->participants_links, true);
-            if ($links) {
+            if (is_array($links)) {
                 $this->participantLinks = $links;
             } else {
                 $this->participantLinks = array();
@@ -935,7 +937,7 @@ class CalDavEventCollection extends SugarBean
             $participantsList = array_merge($participantsList, $this->getChild($recurrenceId)->getParticipants());
         }
 
-        $this->participantLinks = json_decode($this->participants_links, true);
+        $this->getParticipantsLinks(true);
         foreach ($participantsList as $participant) {
             $email = $participant->getEmail();
             if (!isset($this->participantLinks[$email])) {
@@ -1354,6 +1356,19 @@ class CalDavEventCollection extends SugarBean
             $synchronizationObject->save();
             return $synchronizationObject;
         }
+    }
+
+    /**
+     * Get queue object for operation queue
+     *
+     * @return null|CalDavQueue
+     */
+    public function getQueueObject()
+    {
+        /** @var CalDavQueue $queueObject */
+        $queueObject = BeanFactory::getBean('CalDavQueues');
+        $queueObject->event_id = $this->id;
+        return $queueObject;
     }
 
     /**

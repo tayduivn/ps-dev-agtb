@@ -78,8 +78,12 @@ class Handler
                 if ($conflictSolver) {
                     $collection->getSynchronizationObject()->setConflictCounter(true);
                 }
-                $this->getManager()
-                    ->calDavImport($collection->module_name, $collection->id, $preparedData, $saveCounter);
+
+                $collection->getQueueObject()->import($preparedData, $saveCounter);
+
+                if ($saveCounter - $collection->getSynchronizationObject()->getJobCounter() == 1) {
+                    $this->getManager()->calDavHandler($collection->id);
+                }
             }
         }
         static::$importHandler = null;
@@ -136,7 +140,12 @@ class Handler
                 if ($conflictSolver) {
                     $collection->getSynchronizationObject()->setConflictCounter(true);
                 }
-                $this->getManager()->calDavExport($bean->module_name, $rootBeanId, $preparedData, $saveCounter);
+
+                $collection->getQueueObject()->export($preparedData, $saveCounter);
+
+                if ($saveCounter - $collection->getSynchronizationObject()->getJobCounter() == 1) {
+                    $this->getManager()->calDavHandler($collection->id);
+                }
             }
         }
         static::$exportHandler = null;

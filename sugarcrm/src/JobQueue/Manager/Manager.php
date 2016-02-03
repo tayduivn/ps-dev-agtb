@@ -47,8 +47,7 @@ use Sugarcrm\Sugarcrm\Logger\LoggerTransition as Logger;
 /**
  * Class Manager
  * @package JobQueue
- * @method calDavExport(string $beanModule, string $beanId, mixed $data, int $saveCounter)
- * @method calDavImport(string $beanModule, string $beanId, mixed $data, int $saveCounter)
+ * @method calDavHandler(string $calDavCollectionId)
  */
 class Manager implements ClientInterface, RunnerInterface
 {
@@ -69,8 +68,7 @@ class Manager implements ClientInterface, RunnerInterface
         'UpdateBeanDemo' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\UpdateBeanDemo',
         'ExportListViewDemo' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportListViewDemo',
         'ExportToCSVDemo' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportToCSVDemo',
-        'CalDavImport' => 'Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\Import',
-        'CalDavExport' => 'Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\Export',
+        'CalDavHandler' => 'Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\Handler',
         'NotificationEvent' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\EventHandler',
         'NotificationCarrierBulkMessage' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\CarrierBulkMessageHandler',
         'NotificationSend' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\SendHandler',
