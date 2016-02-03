@@ -502,6 +502,20 @@
             }
         }, this);
         return isRequired;
+    },
+
+    /**
+     * @override
+     */
+    bindDataChange: function() {
+        this.model.on('change', function(fieldType) {
+            if (this.model.isNotEmpty !== true && fieldType !== 'image') {
+                this.model.isNotEmpty = true;
+                if (!this.disposed) {
+                    this.render();
+                }
+            }
+        }, this);
     }
 
 })
