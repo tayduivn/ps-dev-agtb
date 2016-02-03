@@ -13,7 +13,7 @@
 $hook_array['after_save'][] = array(
     1,
     'afterUserPreferenceSave',
-    'sugarcrm/src/Trigger/HookManager.php',
+    'src/Trigger/HookManager.php',
     '\Sugarcrm\Sugarcrm\Trigger\HookManager',
     'afterUserPreferenceSave',
 );
