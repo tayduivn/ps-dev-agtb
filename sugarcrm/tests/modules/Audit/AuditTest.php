@@ -28,13 +28,13 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-
+        $GLOBALS['current_user'] = BeanFactory::getBean('Users');
         self::$db = SugarTestHelper::setUp('mock_db');
-        SugarTestHelper::setUp('current_user');
     }
 
     public static function tearDownAfterClass()
     {
+        $GLOBALS['current_user'] = null;
         SugarTestHelper::tearDown();
     }
 
