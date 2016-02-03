@@ -47,6 +47,14 @@
         </span>
     </date>
 </span>
+{{#unless readonly}}
+    <div class="actions btn-group">
+        <button class="btn comment-btn" rel="tooltip" title="{{str 'LBL_COMMENT'}}"><i class="fa fa-comment"></i></button>
+        {{#unless nopreview}}
+            <button class="btn preview-btn {{#unless preview.enabled}}disabled{{/unless}}" rel="tooltip" title="{{str preview.label}}" data-module="{{model.attributes.display_parent_type}}" data-id="{{model.attributes.display_parent_id}}" tabindex="{{#if preview.enabled}}0{{else}}-1{{/if}}"><i class="fa fa-eye"></i></button>
+        {{/unless}}
+    </div>
+{{/unless}}
 <ul class="comments">
     {{#if model.attributes.comment_count}}
         {{#each model.attributes.comments.models}}
@@ -65,21 +73,9 @@
     {{#unless readonly}}
         <li class="comment reply-area hide">
             <div class="reply-input">
-                <div data-placeholder="{{str "LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER"}}" class="reply taggable" contenteditable="true"></div>
-                <button class="btn btn-primary reply-btn">{{str "LBL_EMAIL_REPLY"}}</button>
+                <div data-placeholder="{{str "LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER"}}" class="reply taggable" contenteditable="true" tabindex="0"></div>
+                <button class="btn btn-primary reply-btn disabled" tabindex="-1" aria-disabled="true">{{str "LBL_EMAIL_REPLY"}}</button>
             </div>
         </li>
     {{/unless}}
 </ul>
-{{#unless readonly}}
-    <div class="actions btn-group">
-        <a class="btn btn-mini comment-btn" rel="tooltip" title="{{str 'LBL_COMMENT'}}">
-            <i class="fa fa-comment"></i>
-        </a>
-        {{#unless nopreview}}
-            <a class="btn btn-mini preview-btn {{#unless preview.enabled}}disabled{{/unless}}" rel="tooltip" title="{{str preview.label}}" data-module="{{model.attributes.display_parent_type}}" data-id="{{model.attributes.display_parent_id}}">
-                <i class="fa fa-eye"></i>
-            </a>
-        {{/unless}}
-    </div>
-{{/unless}}
