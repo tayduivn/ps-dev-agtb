@@ -13,61 +13,55 @@
 namespace Sugarcrm\Sugarcrm\JobQueue\Handler;
 
 use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException;
-use Sugarcrm\Sugarcrm\JobQueue\Exception\RuntimeException;
 
-class UpdateBeanDemo implements RunnableInterface
+require_once 'include/export_utils.php';
+
+class ExportToCSV implements RunnableInterface
 {
-    /**
-     * @var \SugarBean
-     */
-    protected $bean;
-
     /**
      * @var string $module Module name.
      */
     protected $module;
 
     /**
-     * @var string $id Bean id.
-     */
-    protected $id;
-
-    /**
-     * @var array ['fieldName' => 'value', ...]
+     * @var array $data Of Ids.
      */
     protected $data;
 
     /**
+     * @var string Id of the Note.
+     */
+    protected $noteId;
+
+    /**
      * @param string $module
-     * @param string $id
-     * @param array $data ['fieldName' => 'value', ...]
+     * @param string $data
+     * @param string $noteId Id of the Note.
      * @throws LogicException
      */
-    public function __construct($module, $id, array $data)
+    public function __construct($module, $data, $noteId)
     {
-        $this->bean = \BeanFactory::getBean($module, $id);
-        if (empty($this->bean->id)) {
-            throw new LogicException('Cannot find a record by id.');
+        if (empty($data)) {
+            throw new LogicException('Nothing to export.');
+        }
+        $note = \BeanFactory::getBean('Notes', $noteId);
+        if (!$note || !$note->id) {
+            throw new LogicException('The Note does not exist.');
         }
         $this->module = $module;
-        $this->id = $id;
         $this->data = $data;
+        $this->noteId = $noteId;
     }
 
     /**
-     * Update a single record.
+     * Export records to CSV file.
      * {@inheritdoc}
-     * @throws RuntimeException
      */
     public function run()
     {
-        if (!$this->bean->aclAccess('edit')) {
-            throw new RuntimeException('Has no access to edit.');
-        }
-        foreach ($this->data as $fName => $value) {
-            $this->bean->$fName = $value;
-        }
-        $this->bean->save();
+        $filename = 'upload://' . $this->noteId;
+        $result = export($this->module, implode(',', $this->data));
+        file_put_contents($filename, $result);
 
         return \SchedulersJob::JOB_SUCCESS;
     }

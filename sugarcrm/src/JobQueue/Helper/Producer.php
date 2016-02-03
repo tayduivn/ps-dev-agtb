@@ -153,7 +153,7 @@ class Producer
     protected function updateProgress()
     {
         $sql = "SELECT COUNT(self.status) * 100 / COUNT(0) AS percentage
-                FROM job_queue
+                FROM {$this->bean->table_name}
                 LEFT JOIN job_queue AS self
                   ON job_queue.id = self.id
                   AND self.status = {$this->db->quoted(\SchedulersJob::JOB_STATUS_DONE)}
@@ -162,7 +162,15 @@ class Producer
                 GROUP BY job_queue.job_group";
         $res = $this->db->fetchOne($sql);
 
-        $this->bean->percent_complete = (int)$res['percentage'];
-        $this->bean->save();
+        $percentage = (int)$res['percentage'];
+        if ($this->bean->percent_complete != $percentage) {
+            $this->bean->percent_complete = $percentage;
+            $sql = "UPDATE {$this->bean->table_name}
+                    SET percent_complete = {$percentage}
+                    WHERE id = {$this->db->quoted($this->bean->id)}";
+            if ($this->db->query($sql)) {
+                $this->resolutionHelper->sendProgressMessage($this->bean);
+            }
+        }
     }
 }

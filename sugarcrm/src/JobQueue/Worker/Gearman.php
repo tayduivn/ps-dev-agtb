@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Worker;
 
+use Psr\Log\LoggerInterface;
+use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\RuntimeException;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Serializer\SerializerInterface;
@@ -45,17 +47,24 @@ class Gearman implements WorkerInterface
     protected $serializer;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * @param array $config Configuration parameters:
      * servers - A comma separated list of job servers in the format host:port. Empty string is 127.0.0.1:4730.
      * @param array $config
      * @param SerializerInterface $serializer
+     * @param LoggerInterface $logger
      * @throws RuntimeException
      */
-    public function __construct(array $config, SerializerInterface $serializer)
+    public function __construct(array $config, SerializerInterface $serializer, LoggerInterface $logger)
     {
         if (!extension_loaded('gearman')) {
             throw new RuntimeException('The gearman extension is not loaded.');
         }
+        $this->logger = $logger;
         $this->worker = new \GearmanWorker();
         $this->worker->addOptions(GEARMAN_WORKER_NON_BLOCKING);
         $this->worker->setTimeout(5000);
@@ -75,9 +84,17 @@ class Gearman implements WorkerInterface
     /**
      * The function is manager's 'proxyHandler()'.
      * {@inheritdoc}
+     * @throw InvalidArgumentException
      */
     public function registerHandler($route, $function)
     {
+        if (empty($route) || !is_string($route)) {
+            throw new InvalidArgumentException("Cannot register Handler for non-string route name");
+        }
+        if (!is_callable($function)) {
+            throw new InvalidArgumentException("Cannot register Handler '{$route}' as it is not callable");
+        }
+
         $envelope = function (\GearmanJob $gearmanJob) use ($function) {
             $workload = $this->getJob($gearmanJob);
 
@@ -85,6 +102,7 @@ class Gearman implements WorkerInterface
         };
         $this->handlers[$route] = $envelope;
 
+        $this->logger->debug("[Gearman]: add function for route '{$route}'.");
         $this->worker->addFunction($route, $envelope);
     }
 
@@ -106,6 +124,7 @@ class Gearman implements WorkerInterface
         if (!$this->handlers) {
             throw new RuntimeException('No handlers registered.');
         }
+        $this->logger->info('[Gearman]: work.');
         return $this->worker->work();
     }
 
@@ -143,6 +162,7 @@ class Gearman implements WorkerInterface
      */
     public function getJob(\GearmanJob $gearmanJob)
     {
+        $this->logger->info('[Gearman]: getting job.');
         return $this->serializer->unserialize($gearmanJob->workload());
     }
 }

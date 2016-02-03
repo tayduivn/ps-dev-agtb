@@ -15,7 +15,7 @@ namespace Sugarcrm\Sugarcrm\JobQueue\Handler;
 use Sugarcrm\Sugarcrm\JobQueue\Client\ClientInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException;
 
-class ExportListViewDemo implements RunnableInterface, SubtaskCapableInterface
+class ExportRecords implements RunnableInterface, SubtaskCapableInterface
 {
     /**
      * @var string $module Module name.
@@ -30,20 +30,31 @@ class ExportListViewDemo implements RunnableInterface, SubtaskCapableInterface
     /**
      * @var ClientInterface To create related jobs.
      */
-    protected $client;
+    protected $JQClient;
+
+    /**
+     * @var string Id of the Note.
+     */
+    protected $noteId;
 
     /**
      * @param string $module
      * @param string $data
+     * @param string $noteId Id of the Note.
      * @throws LogicException
      */
-    public function __construct($module, $data)
+    public function __construct($module, $data, $noteId)
     {
         if (empty($data)) {
             throw new LogicException('Nothing to export.');
         }
+        $note = \BeanFactory::getBean('Notes', $noteId);
+        if (!$note || !$note->id) {
+            throw new LogicException('The Note does not exist.');
+        }
         $this->module = $module;
         $this->data = $data;
+        $this->noteId = $noteId;
     }
 
     /**
@@ -52,22 +63,31 @@ class ExportListViewDemo implements RunnableInterface, SubtaskCapableInterface
      */
     public function run()
     {
-        // Or a link to a Note record can be passed via constructor.
-        $note = \BeanFactory::getBean('Notes');
-        $note->id = create_guid();
-        $note->new_with_id = true;
-        $note->name = "ExportListView_{$this->module}_{$note->id}";
-        $note->filename = $note->id;
-        $note->save();
-
-        $fileName = "upload://{$note->id}";
-        file_put_contents($fileName, '');
-
         $records = array_chunk($this->data, \SugarConfig::getInstance()->get('max_record_fetch_size'));
         foreach ($records as $chunk) {
-            $this->client->exportToCSVDemo($this->module, $chunk, $fileName);
+            $note = \BeanFactory::getBean('Notes');
+            $note->id = create_guid();
+            $note->new_with_id = true;
+            $note->name = self::generateNoteName($this->module, true);
+            $note->filename = $note->id  . '.csv';
+            $note->file_mime_type = 'text/csv';
+            $note->save();
+
+            $this->JQClient->ExportToCSV($this->module, $chunk, $note->id);
         }
 
         return \SchedulersJob::JOB_RUNNING;
+    }
+
+    /**
+     * Generates general name of the Note.
+     * @param string $module Name fo the module.
+     * @param bool $part Is it a chunk note.
+     * @return string
+     */
+    public static function generateNoteName($module, $part = false)
+    {
+        $dt = new \TimeDate();
+        return "Exporting " . ($part ? "(a part) " : "") . "of {$module} at {$dt->now()}";
     }
 }

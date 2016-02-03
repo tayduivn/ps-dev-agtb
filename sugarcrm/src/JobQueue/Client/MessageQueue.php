@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Client;
 
+use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue\AdapterInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Serializer\SerializerInterface;
@@ -33,14 +34,21 @@ class MessageQueue implements ClientInterface
     protected $serializer;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * Create MessageQueue client instance and set an adapter to work with.
      * @param AdapterInterface $adapter
      * @param SerializerInterface $serializer
+     * @param LoggerInterface $logger
      */
-    public function __construct(AdapterInterface $adapter, SerializerInterface $serializer)
+    public function __construct(AdapterInterface $adapter, SerializerInterface $serializer, LoggerInterface $logger)
     {
         $this->adapter = $adapter;
         $this->serializer = $serializer;
+        $this->logger = $logger;
     }
 
     /**
@@ -49,6 +57,8 @@ class MessageQueue implements ClientInterface
      */
     public function addJob(WorkloadInterface $workload)
     {
+        $this->logger->info('[MessageQueue]: serialize workload.');
+        $this->logger->debug('[MessageQueue]: workload ' . var_export($workload, true));
         $data = $this->serializer->serialize($workload);
         $this->adapter->addJob($workload->getRoute(), $data);
     }

@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\JobQueue\Adapter\MessageQeueue;
 
+use Psr\Log\NullLogger;
 use Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue\AmazonSQS;
 use Sugarcrm\SugarcrmTests\JobQueue\MessageQueue\MessageQueueTestAbstract;
 
@@ -23,6 +24,6 @@ class AmazonSQSTest extends MessageQueueTestAbstract
         if (!$config) {
             $this->markTestSkipped('Skipping, AmazonSQS adapter is not configured.');
         }
-        $this->adapter = new AmazonSQS($config);
+        $this->adapter = new AmazonSQS($config, new NullLogger());
     }
 }

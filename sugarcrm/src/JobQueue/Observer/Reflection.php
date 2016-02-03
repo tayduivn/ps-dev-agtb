@@ -12,10 +12,10 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Observer;
 
+use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException;
 use Sugarcrm\Sugarcrm\JobQueue\Helper\Resolution;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
-use Sugarcrm\Sugarcrm\Logger\LoggerTransition as Logger;
 
 /**
  * Class Reflection
@@ -29,24 +29,18 @@ class Reflection implements ObserverInterface
     protected $resolutionHelper;
 
     /**
-     * @var \User
-     */
-    protected $user;
-
-    /**
-     * @var Logger
+     * @var LoggerInterface
      */
     protected $logger;
 
     /**
      * Setup resolution helper.
-     * @param \User|null $user
+     * @param LoggerInterface $logger
      */
-    public function __construct(\User $user = null)
+    public function __construct(LoggerInterface $logger)
     {
         $this->resolutionHelper = new Resolution();
-        $this->user = $user ? $user : $GLOBALS['current_user'];
-        $this->logger = new Logger(\LoggerManager::getLogger());
+        $this->logger = $logger;
     }
 
     /**
@@ -57,12 +51,17 @@ class Reflection implements ObserverInterface
      */
     public function onAdd(WorkloadInterface $workload)
     {
+        /* @var \SchedulersJob $job */
         $job = \BeanFactory::newBean('SchedulersJobs');
+        if (!$job) {
+            $this->logger->error('Cannot create bean SchedulersJobs.');
+            return;
+        }
 
         $job->interface = true;
         $job->name = $workload->getHandlerName();
         $job->target = $workload->getRoute();
-        $job->data = base64_encode(serialize($workload->getData()));
+        $job->data = $job->serializeData($workload->getData());
         $job->execute_time = null;
 
         $job->job_group = $workload->getAttribute('dbId');
@@ -73,7 +72,7 @@ class Reflection implements ObserverInterface
         $job->fallible = $workload->getAttribute('fallible');
         $job->rerun = $workload->getAttribute('rerun');
 
-        $job->assigned_user_id = $this->user->id;
+        $job->assigned_user_id = $GLOBALS['current_user']->id;
 
         $job->save();
         $this->resolutionHelper->setResolution($job, \SchedulersJob::JOB_PENDING);
@@ -96,6 +95,8 @@ class Reflection implements ObserverInterface
         if (!$jobUser->id) {
             new LogicException("The user '{$job->assigned_user_id}' is not found.");
         }
+        // Save a user id started the JQ.
+        $workload->setAttribute('jqUserId', $GLOBALS['current_user']->id);
         $this->sudo($jobUser);
         $job->execute_time = \TimeDate::getInstance()->nowDb();
         $job->save();
@@ -122,7 +123,8 @@ class Reflection implements ObserverInterface
         $this->resolutionHelper->setResolution($job, $resolution);
         $this->clearSugarCache();
         // Should be the last action.
-        $this->sudo($this->user);
+        $jqAdmin = \BeanFactory::getBean('Users', $workload->getAttribute('jqUserId'));
+        $this->sudo($jqAdmin);
     }
 
     /**
