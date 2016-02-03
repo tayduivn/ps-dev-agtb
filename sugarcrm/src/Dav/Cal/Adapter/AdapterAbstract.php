@@ -157,6 +157,10 @@ abstract class AdapterAbstract implements AdapterInterface
                 throw new ExportException('Can not find recurrence-id');
             }
             $recurrenceId = $collection->getAllChildrenRecurrenceIds();
+            $deletedIds = $collection->getDeletedChildrenRecurrenceIds();
+            if (count($recurrenceId) - count($deletedIds) == 1) {
+                return static::DELETE;
+            }
             $recurrenceId = array_splice($recurrenceId, $index, 1);
             $recurrenceId = current($recurrenceId);
             if ($collection->deleteChild($recurrenceId)) {

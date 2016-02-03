@@ -501,7 +501,18 @@ class CalDavEventCollection extends SugarBean
             return true;
         }
 
-        if ($currentRule->getObject()->getParts() != $rRule->getObject()->getParts()) {
+        $needChange = $currentRule->getUntil() != $rRule->getUntil() ||
+            $currentRule->getFrequency() != $rRule->getFrequency() ||
+            $currentRule->getInterval() != $rRule->getInterval() ||
+            $currentRule->getCount() != $rRule->getCount() ||
+            $currentRule->getByDay() != $rRule->getByDay() ||
+            $currentRule->getByMonthDay() != $rRule->getByMonthDay() ||
+            $currentRule->getByYearDay() != $rRule->getByYearDay() ||
+            $currentRule->getByWeekNo() != $rRule->getByWeekNo() ||
+            $currentRule->getByMonth() != $rRule->getByMonth() ||
+            $currentRule->getBySetPos() != $rRule->getBySetPos();
+
+        if ($needChange) {
             $currentRule->getObject()->setParts($rRule->getObject()->getParts());
             $this->childEvents = array();
 
@@ -945,8 +956,8 @@ class CalDavEventCollection extends SugarBean
                     $link = array('beanName' => $participant->getBeanName(), 'beanId' => $participant->getBeanId());
                 } else {
                     $link = $this->getPrincipalManager()
-                        ->setOutputFormat(new Principal\Search\Format\ArrayStrategy())
-                        ->findSugarLinkByEmail($email);
+                                 ->setOutputFormat(new Principal\Search\Format\ArrayStrategy())
+                                 ->findSugarLinkByEmail($email);
                 }
 
                 global $locale;
