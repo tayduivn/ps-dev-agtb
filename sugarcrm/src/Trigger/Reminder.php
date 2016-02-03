@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Trigger;
 
 use Sugarcrm\Sugarcrm\Notification\EmitterRegistry;
+use Sugarcrm\Sugarcrm\Trigger\ReminderManager\Helper;
 
 /**
  * Class Reminder is entry point to notify user about call or meeting.
@@ -54,19 +55,7 @@ class Reminder
      */
     protected function validate(\SugarBean $bean, \User $user)
     {
-        if ($bean->assigned_user_id == $user->id) {
-            $reminderTime = $bean->reminder_time;
-        } else {
-            $reminderTime = $user->getPreference('reminder_time');
-        }
-
-        if ($reminderTime < 0) {
-            return false;
-        }
-
-        $reminderDateTime = new \DateTime($bean->date_start, new \DateTimeZone('UTC'));
-        $reminderDateTime->modify('- ' . $reminderTime . ' seconds');
-
+        $reminderDateTime = Helper::calculateReminderDateTime($bean, $user);
         $now = new \DateTime();
         $diff = abs($reminderDateTime->getTimestamp() - $now->getTimestamp());
 

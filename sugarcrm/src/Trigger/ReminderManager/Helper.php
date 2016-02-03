@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Trigger\ReminderManager;
 
+use Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper;
+
 /**
  * Class Helper
  * @package Sugarcrm\Sugarcrm\Trigger\ReminderManager
@@ -49,7 +51,8 @@ class Helper
             return null;
         }
 
-        $reminderDateTime = new \DateTime($bean->date_start, new \DateTimeZone('UTC'));
+        $dateTimeHelper = new DateTimeHelper();
+        $reminderDateTime = $dateTimeHelper->sugarDateToUTC($bean->date_start);
         $reminderDateTime->modify('- ' . $reminderTime . ' seconds');
         return $reminderDateTime;
     }
