@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
 require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php';
@@ -222,26 +223,29 @@ class ModuleBuilderController extends SugarController
 
     public function action_SavePackage()
     {
+        $originalName = $this->request->getValidInputRequest('original_name', 'Assert\ComponentName');
+        $name = $this->request->getValidInputRequest('name', 'Assert\ComponentName');
+
         $mb = new ModuleBuilder ();
-        $load = (!empty ($_REQUEST ['original_name'])) ? $_REQUEST ['original_name'] : $_REQUEST ['name'];
+        $load = $originalName ? $originalName : $name;
         if (!empty ($load)) {
             $mb->getPackage($load);
 
             if (!empty ($_REQUEST ['duplicate'])) {
-                $result = $mb->packages [$load]->copy($_REQUEST ['name']);
+                $result = $mb->packages [$load]->copy($name);
                 $load = $mb->packages [$load]->name;
                 $mb->getPackage($load);
             }
             $mb->packages [$load]->populateFromPost();
             $mb->packages [$load]->loadModules();
             $mb->save();
-            if (!empty ($_REQUEST ['original_name']) && $_REQUEST ['original_name'] != $_REQUEST ['name']) {
-                if (!$mb->packages [$load]->rename($_REQUEST ['name'])) {
-                    $mb->packages [$load]->name = $_REQUEST ['original_name'];
-                    $_REQUEST ['name'] = $_REQUEST ['original_name'];
+            if ($originalName && $originalName != $name) {
+                if (!$mb->packages [$load]->rename($name)) {
+                    $mb->packages [$load]->name = $originalName;
+                    $name = $originalName;
                 }
             }
-            $_REQUEST ['package'] = $_REQUEST ['name'];
+            $_REQUEST ['package'] = $name;
             $this->view = 'package';
         }
     }
@@ -249,7 +253,7 @@ class ModuleBuilderController extends SugarController
     public function action_BuildPackage()
     {
         $mb = new ModuleBuilder ();
-        $load = $_REQUEST ['name'];
+        $load = $this->request->getValidInputRequest('name', 'Assert\ComponentName');
         if (!empty ($load)) {
             $mb->getPackage($load);
             $mb->packages [$load]->build();
@@ -269,7 +273,7 @@ class ModuleBuilderController extends SugarController
         $current_user->incrementETag("mainMenuETag");
 
         $mb = new ModuleBuilder ();
-        $load = $_REQUEST ['package'];
+        $load = $this->request->getValidInputRequest('package', 'Assert\ComponentName');
         $message = $GLOBALS ['mod_strings'] ['LBL_MODULE_DEPLOYED'];
         if (!empty ($load)) {
             $zip = $mb->getPackage($load);
@@ -279,7 +283,11 @@ class ModuleBuilderController extends SugarController
             mkdir_recursive($uploadDir);
             rename($info ['zip'], $uploadDir . $info ['name'] . '.zip');
             copy($info ['manifest'], $uploadDir . $info ['name'] . '-manifest.php');
-            $_REQUEST ['install_file'] = $uploadDir . $info ['name'] . '.zip';
+            $installFile = $uploadDir . $info ['name'] . '.zip';
+
+            // FIXME: This *may* be needed somewhere else, leaving it for now
+            $_REQUEST ['install_file'] = $installFile;
+
             $GLOBALS ['mi_remove_tables'] = false;
             $pm->performUninstall($load);
             //#23177 , js cache clear
@@ -289,7 +297,7 @@ class ModuleBuilderController extends SugarController
             sugar_cache_clear($cache_key);
             sugar_cache_reset();
             //clear end
-            $pm->performInstall($_REQUEST ['install_file'], true);
+            $pm->performInstall($installFile, true);
 
             //clear the unified_search_module.php file
             UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
@@ -334,7 +342,7 @@ class ModuleBuilderController extends SugarController
     public function action_ExportPackage()
     {
         $mb = new ModuleBuilder ();
-        $load = $_REQUEST ['name'];
+        $load = $this->request->getValidInputRequest('name', 'Assert\ComponentName');
         $author = $_REQUEST ['author'];
         $description = $_REQUEST ['description'];
         $readme = $_REQUEST ['readme'];
@@ -349,32 +357,36 @@ class ModuleBuilderController extends SugarController
 
     public function action_DeletePackage()
     {
+        $package = $this->request->getValidInputRequest('package', 'Assert\ComponentName');
+
         $mb = new ModuleBuilder ();
-        $mb->getPackage($_REQUEST ['package']);
-        $mb->packages [$_REQUEST ['package']]->delete();
+        $mb->getPackage($package)->delete();
         $this->view = 'deletepackage';
     }
 
     public function action_SaveModule()
     {
+        $originalName = $this->request->getValidInputRequest('original_name', 'Assert\ComponentName');
+        $name = $this->request->getValidInputRequest('name', 'Assert\ComponentName');
+        $package = $this->request->getValidInputRequest('package', 'Assert\ComponentName');
+
         $mb = new ModuleBuilder ();
-        $load = (!empty ($_REQUEST ['original_name'])) ? $_REQUEST ['original_name'] : $_REQUEST ['name'];
+        $load = $originalName ? $originalName : $name;
         if (!empty ($load)) {
-            $package = $mb->getPackage($_REQUEST['package']);
-            $package->loadModuleTitles();
-            $module = $package->getModule($load);
-            $module->populateFromPost();
+            $mb->getPackage($package);
+            $mb->packages [$package]->getModule($load);
+            $module = & $mb->packages [$package]->modules [$load];
+            $module->populateFromPost($this->request);
             $mb->save();
             if (!empty ($_REQUEST ['duplicate'])) {
-                $module->copy($_REQUEST ['name']);
-            } elseif (!empty ($_REQUEST ['original_name']) && $_REQUEST ['original_name'] != $_REQUEST ['name']) {
-                if (!$module->rename($_REQUEST ['name'])) {
-                    $module->name = $_REQUEST ['original_name'];
-                    $_REQUEST ['name'] = $_REQUEST ['original_name'];
+                $module->copy($name);
+            } elseif (!empty ($originalName) && $originalName != $name) {
+                if (!$module->rename($name)) {
+                    $module->name = $originalName;
+                    $_REQUEST ['name'] = $originalName;
                 }
             }
-
-            $_REQUEST ['view_package'] = $_REQUEST ['package'];
+            $_REQUEST ['view_package'] = $package;
             $_REQUEST ['view_module'] = $module->name;
             $this->view = 'module';
         }
@@ -382,24 +394,30 @@ class ModuleBuilderController extends SugarController
 
     public function action_DeleteModule()
     {
+        $package = $this->request->getValidInputRequest('package', 'Assert\ComponentName');
+        $viewModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+
         $mb = new ModuleBuilder ();
-        $module = & $mb->getPackageModule($_REQUEST ['package'], $_REQUEST ['view_module']);
+        $module = & $mb->getPackageModule($package, $viewModule);
         $module->delete();
         $this->view = 'package';
     }
 
     public function action_saveLabels()
     {
-        $parser = new ParserLabel ($_REQUEST['view_module'], isset ($_REQUEST ['view_package']) ? $_REQUEST ['view_package'] : null);
+        $viewPackage = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
+        $viewModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+
+        $parser = new ParserLabel($viewModule, $viewPackage);
         $parser->handleSave($_REQUEST, $_REQUEST ['selected_lang']);
 
         // Clear the language cache to make sure the view picks up the latest
-        $cache_key = LanguageManager::getLanguageCacheKey($_REQUEST['view_module'], $_REQUEST['selected_lang']);
+        $cache_key = LanguageManager::getLanguageCacheKey($viewModule, $_REQUEST['selected_lang']);
         sugar_cache_clear($cache_key);
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_LABELS);
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_ORDEREDLABELS);
 
-        if (isset ($_REQUEST ['view_package'])) { //MODULE BUILDER
+        if ($viewPackage) { //MODULE BUILDER
             $this->view = 'modulelabels';
         } else { //STUDIO
             $this->view = isset ($_REQUEST ['view']) ? 'edit' : 'labels'; // detect if we are being called by the LayoutEditor rather than the LabelEditor (set in view.layoutlabel.php)
@@ -408,16 +426,18 @@ class ModuleBuilderController extends SugarController
 
     public function action_SaveLabel()
     {
-        if (!empty ($_REQUEST ['view_module']) && !empty($_REQUEST ['labelValue'])) {
+        $viewModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+        if ($viewModule && !empty($_REQUEST ['labelValue'])) {
             $_REQUEST ["label_" . $_REQUEST ['label']] = $_REQUEST ['labelValue'];
 
             // Since the following loop will change aspects of the $_REQUEST 
             // array read it into a copy to preserve state on $_REQUEST
             $req = $_REQUEST;
-            foreach (ModuleBuilder::getModuleAliases($_REQUEST['view_module']) as $key)
+            $packageName = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
+            foreach (ModuleBuilder::getModuleAliases($viewModule) as $key)
             {
                 $req['view_module'] = $key;
-                $parser = new ParserLabel($req['view_module'], isset($req['view_package']) ? $req['view_package'] : null);
+                $parser = new ParserLabel($req['view_module'], $packageName);
                 $parser->handleSave($req, $GLOBALS['current_language']);
                 
                 // Clear the language cache to make sure the view picks up the latest
@@ -433,8 +453,10 @@ class ModuleBuilderController extends SugarController
 
     public function action_ExportCustom()
     {
-        $modules = $_REQUEST ['modules'];
-        $name = $_REQUEST ['name'];
+        $modules = $this->request->getValidInputRequest('modules', array('Assert\All' => array(
+            'constraints' => 'Assert\ComponentName',
+        )));
+        $name = $this->request->getValidInputRequest('name', 'Assert\ComponentName');
         $author = $_REQUEST ['author'];
         $description = $_REQUEST ['description'];
         ob_clean();
@@ -449,14 +471,17 @@ class ModuleBuilderController extends SugarController
 
     public function action_SaveField()
     {
-        $field = get_widget($_REQUEST ['type']);
-        $_REQUEST ['name'] = trim($_REQUEST ['name']);
+        $type = $this->request->getValidInputRequest('type');
 
-        $field->populateFromPost();
+        $field = get_widget($type);
+        $field->populateFromPost($this->request);
 
-        if (!isset ($_REQUEST ['view_package'])) {
-            if (!empty ($_REQUEST ['view_module'])) {
-                $module = $_REQUEST ['view_module'];
+        $packageName = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
+        $viewModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+
+        if (!$packageName) {
+            if ($viewModule) {
+                $module = $viewModule;
                 if ($module == 'Employees') {
                     $module = 'Users';
                 }
@@ -520,11 +545,11 @@ class ModuleBuilderController extends SugarController
             }
         } else {
             $mb = new ModuleBuilder ();
-            $module = & $mb->getPackageModule($_REQUEST ['view_package'], $_REQUEST ['view_module']);
+            $module = & $mb->getPackageModule($packageName, $viewModule);
             $field->save($module);
             $module->mbvardefs->save();
             // get the module again to refresh the labels we might have saved with the $field->save (e.g., for address fields)
-            $module = & $mb->getPackageModule($_REQUEST ['view_package'], $_REQUEST ['view_module']);
+            $module = & $mb->getPackageModule($packageName, $viewModule);
             if (isset ($_REQUEST ['label']) && isset ($_REQUEST ['labelValue']))
                 $module->setLabel($GLOBALS ['current_language'], $_REQUEST ['label'], $_REQUEST ['labelValue']);
             $module->save();
@@ -537,12 +562,13 @@ class ModuleBuilderController extends SugarController
     {
         global $mod_strings;
 
-        $field = get_widget($_REQUEST ['type']);
+        $type = $this->request->getValidInputRequest('type');
+        $field = get_widget($type);
         $_REQUEST ['name'] = trim($_POST ['name']);
 
         $field->populateFromPost();
 
-        $module = $_REQUEST ['view_module'];
+        $module = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
 
         $df = new StandardField ($module);
         $mod = BeanFactory::getBean($module);
@@ -683,17 +709,20 @@ class ModuleBuilderController extends SugarController
 
     public function action_DeleteRelationship()
     {
-        if (isset ($_REQUEST ['relationship_name'])) {
-            if (empty($_REQUEST ['view_package'])) {
+        $relationshipName = $this->request->getValidInputRequest('relationship_name', 'Assert\ComponentName');
+        $packageName = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
+        if ($relationshipName) {
+            $videModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+            if (!$packageName) {
                 if (!empty($_REQUEST['remove_tables']))
                     $GLOBALS['mi_remove_tables'] = $_REQUEST['remove_tables'];
-                $relationships = new DeployedRelationships ($_REQUEST ['view_module']);
+                $relationships = new DeployedRelationships($videModule);
             } else {
                 $mb = new ModuleBuilder ();
-                $module = & $mb->getPackageModule($_REQUEST ['view_package'], $_REQUEST ['view_module']);
+                $module = & $mb->getPackageModule($packageName, $videModule);
                 $relationships = new UndeployedRelationships ($module->getModuleDir());
             }
-            $relationships->delete($_REQUEST ['relationship_name']);
+            $relationships->delete($relationshipName);
 
             $relationships->save();
             SugarRelationshipFactory::deleteCache();
@@ -717,23 +746,32 @@ class ModuleBuilderController extends SugarController
 // BEGIN SUGARCRM flav=ent ONLY
     public function action_SaveRoleDropDownFilter()
     {
-        $params = $_REQUEST;
-        if(empty($params['dropdown_role']) || empty($params['dropdown_name']) || empty($params['dropdown_keys'])) {
+        $dropDownName = $this->request->getValidInputRequest('dropdown_name', 'Assert\ComponentName');
+        $dropDownRole = $this->request->getValidInputRequest('dropdown_role', 'Assert\Guid');
+        if (empty($dropDownName) || empty($dropDownRole) || empty($_REQUEST['dropdown_keys'])) {
             return;
         }
+
         $parser = new ParserRoleDropDownFilter();
-        $parser->handleSave($params['dropdown_name'], $params['dropdown_role'], $params['dropdown_keys']);
+        $parser->handleSave($dropDownName, $dropDownRole, $_REQUEST['dropdown_keys']);
         $this->view = 'dropdowns';
     }
 // END SUGARCRM flav=ent ONLY
 
     public function action_DeleteField()
     {
-        $field = get_widget($_REQUEST ['type']);
-        $field->name = $_REQUEST ['name'];
-        if (!isset ($_REQUEST ['view_package'])) {
-            if (!empty ($_REQUEST ['name']) && !empty ($_REQUEST ['view_module'])) {
-                $moduleName = $_REQUEST ['view_module'];
+        $type = $this->request->getValidInputRequest('type');
+        $name = $this->request->getValidInputRequest('name', 'Assert\ComponentName');
+
+        $field = get_widget($type);
+        $field->name = $name;
+
+        $viewPackage = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
+        $moduleName = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+
+        $module = null;
+        if (!$viewPackage) {
+            if ($name && $moduleName) {
 
                 // bug 51325 make sure we make this switch or delete will not work
                 if ($moduleName == 'Employees')
@@ -757,18 +795,29 @@ class ModuleBuilderController extends SugarController
             }
         } else {
             $mb = new ModuleBuilder ();
-            $module = & $mb->getPackageModule($_REQUEST ['view_package'], $_REQUEST ['view_module']);
+            $module = & $mb->getPackageModule($viewPackage, $moduleName);
             $field = $module->getField($field->name);
             $field->delete($module);
             $mb->save();
         }
+
+        if (!$module) {
+            $GLOBALS['log']->fatal('Module not found');
+            return;
+        }
+
         $module->removeFieldFromLayouts($field->name);
         $this->view = 'modulefields';
 
-        if (isset($GLOBALS['current_language']) && isset($_REQUEST['label']) &&
-            isset($_REQUEST['labelValue']) && isset($_REQUEST['view_module'])
+        $label = $this->request->getValidInputRequest('label');
+        $labelValue = $this->request->getValidInputRequest('label');
+
+        if (isset($GLOBALS['current_language'])
+            && $label !== null
+            && $labelValue !== null
+            && $moduleName !== null
         ) {
-            $this->DeleteLabel($GLOBALS['current_language'], $_REQUEST['label'], $_REQUEST['labelValue'], $_REQUEST['view_module']);
+            $this->DeleteLabel($GLOBALS['current_language'], $label, $labelValue, $moduleName);
             $this->metadataApiCacheCleared = true;
         }
 
@@ -804,7 +853,7 @@ class ModuleBuilderController extends SugarController
                 $current_user->setPreference('mb_assist', 'ENABLED', 0, 'Assistant');
             }
             $current_pref = $current_user->getPreference('mb_assist', 'Assistant');
-            echo "Assistant.processUserPref('$current_pref')";
+            echo "Assistant.processUserPref(" . json_encode($current_pref) . ")";
             sugar_cleanup(true); //push preferences to DB.
         }
     }
@@ -818,11 +867,14 @@ class ModuleBuilderController extends SugarController
 
     public function action_saveProperty()
     {
-        $modules = $_REQUEST['view_module'];
-        if (!empty($_REQUEST['subpanel'])) {
-            $modules = $_REQUEST['subpanel'];
-        }
-        $parser = new ParserLabel ($modules, isset ($_REQUEST ['view_package']) ? $_REQUEST ['view_package'] : null);
+        $module = $this->request->getValidInputRequest(
+            'subpanel',
+            'Assert\ComponentName',
+            $this->request->getValidInputRequest('view_module', 'Assert\ComponentName')
+        );
+
+        $viewPackage = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
+        $parser = new ParserLabel ($module, $viewPackage);
         // if no language provided, then use the user's current language which is most likely what they intended
         $language = (isset($_REQUEST ['selected_lang'])) ? $_REQUEST ['selected_lang'] : $GLOBALS['current_language'];
         $parser->handleSave($_REQUEST, $language);
@@ -998,12 +1050,20 @@ class ModuleBuilderController extends SugarController
     public function action_popupSave()
     {
         $this->view = 'popupview';
-        $packageName = (isset($_REQUEST['view_package']) && (strtolower($_REQUEST['view_package']) != 'studio')) ? $_REQUEST['view_package'] : null;
-        $parser = ParserFactory::getParser($_REQUEST['view'], $_REQUEST['view_module'], $packageName);
+
+        $view = $this->request->getValidInputRequest('view', 'Assert\ComponentName');
+        $viewModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+        $packageName = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
+
+        if ($packageName === 'studio') {
+            $packageName = null;
+        }
+
+        $parser = ParserFactory::getParser($view, $viewModule, $packageName);
         $parser->handleSave();
 
-        if ($_REQUEST['view'] != MB_POPUPSEARCH) {
-            $parser = ParserFactory::getParser(MB_POPUPLIST, $_REQUEST['view_module'], $packageName);
+        if ($view != MB_POPUPSEARCH) {
+            $parser = ParserFactory::getParser(MB_POPUPLIST, $viewNodule, $packageName);
             $parser->handleSave();
         }
 
@@ -1013,7 +1073,7 @@ class ModuleBuilderController extends SugarController
             $mod_strings['LBL_ALL_MODULES'] = 'all_modules';
             $repair = new RepairAndClear();
             $repair->show_output = false;
-            $class_name = $GLOBALS['beanList'][$_REQUEST['view_module']];
+            $class_name = $GLOBALS ['beanList'] [$viewModule];
             $repair->module_list = array($class_name);
             $repair->clearTpls();
             // Clear the module metadata but nothing else
@@ -1023,7 +1083,7 @@ class ModuleBuilderController extends SugarController
 
     public function action_searchViewSave()
     {
-        $packageName = (isset ($_REQUEST ['view_package'])) ? $_REQUEST ['view_package'] : null;
+        $packageName = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
 
         // Bug 56789 - Set the client from the view to ensure the proper viewdef file
         $client = MetaDataFiles::getClientByView($_REQUEST['view']);
@@ -1036,7 +1096,7 @@ class ModuleBuilderController extends SugarController
         $parser->handleSave();
 
         //Repair or create a custom SearchFields.php file as needed
-        $module_name = $_REQUEST ['view_module'];
+        $module_name = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
         global $beanList;
         if (isset($beanList[$module_name]) && $beanList[$module_name] != "") {
             $objectName = BeanFactory::getObjectName($module_name);
@@ -1124,10 +1184,10 @@ class ModuleBuilderController extends SugarController
         if (strcmp(strtolower($_FILES ['filename'] ['type']), 'text/css') == 0) {
             mkdir_recursive('custom/portal/custom');
             move_uploaded_file($_FILES ['filename'] ['tmp_name'], 'custom/portal/custom/style.css');
-            $_REQUEST ['label'] = 'LBL_SP_UPLOADED';
+            $this->viewParams['label'] = 'LBL_SP_UPLOADED';
             $GLOBALS ['log']->debug('action_portalstylesave(): saving file ' . $_FILES ['filename'] ['name']);
         } else {
-            $_REQUEST ['label'] = 'ERROR_SP_UPLOADED';
+            $this->viewParams['label'] = 'ERROR_SP_UPLOADED';
             $GLOBALS ['log']->error('action_portalstylesave(): error uploading ' . $_FILES ['filename'] ['tmp_name']);
         }
 

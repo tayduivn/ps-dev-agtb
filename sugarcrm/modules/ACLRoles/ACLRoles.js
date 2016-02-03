@@ -22,7 +22,7 @@ var aclviewer = function(){
 					ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
 		},
 		postSave: function(o){
-			eval(o.responseText);
+			var result = JSON.parse(o.responseText);
 			aclviewer.view(result['role_id'], result['module']);
             if (!_.isUndefined(window.parent.SUGAR) && !_.isUndefined(window.parent.SUGAR.App.view)) {
                  window.parent.SUGAR.App.controller.layout.getComponent('bwc').revertBwcModel();

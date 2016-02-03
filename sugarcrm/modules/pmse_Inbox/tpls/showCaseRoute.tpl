@@ -59,13 +59,13 @@
             {/if}
             {if $act_reassign}
                 {if !$reclaimCaseByUser}
-                    <a href="javascript:adhocFormBWC({$caseData.cas_id}, {$caseData.cas_index}, '{$flowId}', '{$caseData.idInbox}', '{$nameTask}','{$caseData.cas_sugar_module}','{$caseData.cas_sugar_object_id}');" title="{sugar_translate label='LBL_PMSE_LABEL_CHANGE_OWNER'}"><span class="adam-icon-record_owner"></span></a>
+                    <a href="javascript:adhocFormBWC({$caseData.cas_id}, {$caseData.cas_index}, '{$flowId|escape:'html':'UTF-8'}', '{$caseData.idInbox}', '{$nameTask}','{$caseData.cas_sugar_module}','{$caseData.cas_sugar_object_id}');" title="{sugar_translate label='LBL_PMSE_LABEL_CHANGE_OWNER'}"><span class="adam-icon-record_owner"></span></a>
                 {/if}
             {/if}
             {if $act_adhoc}
                 {if !$reclaimCaseByUser}
                     {*<li><a href="javascript:reassignForm({$caseData.cas_id}, {$caseData.cas_index});" title="{sugar_translate label='LBL_PMSE_LABEL_REASSIGN'}"><span class="adam-icon-reassing"></span></a></li>*}
-                    <a href="javascript:reassignFormBWC({$caseData.cas_id}, {$caseData.cas_index}, '{$flowId}', '{$caseData.idInbox}', '{$nameTask}','{$caseData.cas_sugar_module}','{$caseData.cas_sugar_object_id}');" title="{sugar_translate label='LBL_PMSE_LABEL_REASSIGN'}"><span class="adam-icon-reassing"></span></a>
+                    <a href="javascript:reassignFormBWC({$caseData.cas_id}, {$caseData.cas_index}, '{$flowId|escape:'html':'UTF-8'}', '{$caseData.idInbox}', '{$nameTask}','{$caseData.cas_sugar_module}','{$caseData.cas_sugar_object_id}');" title="{sugar_translate label='LBL_PMSE_LABEL_REASSIGN'}"><span class="adam-icon-reassing"></span></a>
                 {/if}
             {/if}
             <a href="javascript:showHistory({$caseData.cas_id});" title="{sugar_translate label='LBL_PMSE_LABEL_HISTORY'}"><span class="adam-icon-history"></span></a>

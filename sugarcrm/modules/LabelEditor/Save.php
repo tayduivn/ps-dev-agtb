@@ -10,8 +10,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 global $current_language;
-$module_name = $_REQUEST['module_name'];
+
+$request = InputValidation::getService();
+$module_name = $request->getValidInputRequest('module_name', 'Assert\Mvc\ModuleName');
+
+//Since $current_language could be passed in from anywhere, we cannot use the input validation directly.
+//Just use basename() to avoid the basic path traversal
+$current_language = basename($current_language);
+
 if(isset($_REQUEST['multi_edit'])){
 	unset($_REQUEST['action']);
 	unset($_REQUEST['module_name']);
@@ -38,6 +48,3 @@ if(isset($_REQUEST['multi_edit'])){
 	}
 	header("Location:$location" );
 }
-
-
-?>

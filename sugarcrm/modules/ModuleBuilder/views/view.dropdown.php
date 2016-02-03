@@ -23,6 +23,7 @@ class ViewDropdown extends SugarView
         'view_module' => '',
         'dropdown_lang' => '',
         'dropdown_name' => '',
+        'dropdown_role' => '',
         'field' => '',
         'new' => false
     );
@@ -45,7 +46,18 @@ class ViewDropdown extends SugarView
     function display()
     {
         $ajax = new AjaxCompose();
-        $params = $this->parseArguments($_REQUEST);
+
+        $args = array(
+            'view_package' => $this->request->getValidInputRequest('view_package', 'Assert\ComponentName'),
+            'view_module' => $this->request->getValidInputRequest('view_module', 'Assert\ComponentName'),
+            'dropdown_lang' => $this->request->getValidInputRequest('dropdown_lang', 'Assert\Language'),
+            'dropdown_name' => $this->request->getValidInputRequest('dropdown_name', 'Assert\ComponentName'),
+            'dropdown_role' => $this->request->getValidInputRequest('dropdown_role', 'Assert\Guid'),
+            'field' => $this->request->getValidInputRequest('field'),
+            'new' => $this->request->getValidInputRequest('new'),
+        );
+
+        $params = $this->parseArguments($args);
         $smarty = $this->generateSmarty($params);
 
         if (isset($_REQUEST['refreshTree'])) {

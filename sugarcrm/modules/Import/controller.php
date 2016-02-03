@@ -23,8 +23,21 @@ require_once("include/MVC/Controller/SugarController.php");
 require_once('modules/Import/sources/ImportFile.php');
 require_once('modules/Import/views/ImportListView.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 class ImportController extends SugarController
 {
+    /**
+     * @var Request
+     */
+    protected $request;
+
+    public function __construct()
+    {
+        $this->request = InputValidation::getService();
+    }
+
     /**
      * @see SugarController::loadBean()
      */
@@ -106,7 +119,7 @@ class ImportController extends SugarController
         require_once('modules/Import/sources/ImportFile.php');
         require_once('modules/Import/views/view.confirm.php');
         $v = new ImportViewConfirm();
-        $fileName = $_REQUEST['importFile'];
+        $fileName = $this->request->getValidInputRequest('importFile', null, '');
         $delim = $_REQUEST['delim'];
         if ($delim == '\t') {
             $delim = "\t";
@@ -131,8 +144,13 @@ class ImportController extends SugarController
 
     function action_RefreshTable()
     {
-        $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : 0;
-        $tableID = isset($_REQUEST['tableID']) ? $_REQUEST['tableID'] : 'errors';
+        $offset = $this->request->getValidInputRequest('offset', array(
+            'Assert\Type' => array('type' => 'numeric'),
+            'Assert\Range' => array('min' => 0),
+        ), 0);
+
+        $tableID = $this->request->getValidInputRequest('tableID', array('Assert\Choice' => array('choices' => array('errors', 'dup'))));
+
         $has_header = $_REQUEST['has_header'] == 'on' ? TRUE : FALSE;
         if($tableID == 'dup')
             $tableFilename = ImportCacheFiles::getDuplicateFileName();
@@ -217,7 +235,9 @@ class ImportController extends SugarController
 
     function action_GetControl()
     {
-        echo getControl($_REQUEST['import_module'],$_REQUEST['field_name']);
+        $module = $this->request->getValidInputRequest('import_module', 'Assert\Mvc\ModuleName');
+        $fieldName = $this->request->getValidInputRequest('field_name');
+        echo getControl($module, $fieldName);
         exit;
     }
 

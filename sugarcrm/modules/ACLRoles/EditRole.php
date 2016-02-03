@@ -1,4 +1,5 @@
 <?php
+
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -11,8 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 global $app_list_strings, $modInvisList;
 
@@ -31,20 +31,25 @@ $sugar_smarty->assign('APP_LIST', $app_list_strings);
 $role = BeanFactory::getBean('ACLRoles');
 $role_name = '';
 $return= array('module'=>'ACLRoles', 'action'=>'index', 'record'=>'');
-if(!empty($_REQUEST['record'])){
-	$role->retrieve($_REQUEST['record']);
-	$categories = ACLRole::getRoleActions($_REQUEST['record']);
+
+$request = InputValidation::getService();
+$record = $request->getValidInputRequest('record', 'Assert\Guid');
+$isDuplicate = $request->getValidInputRequest('isDuplicate');
+
+if (!empty($record)) {
+	$role->retrieve($record);
+	$categories = ACLRole::getRoleActions($record);
 	
 	$role_name =  $role->name;
-	if(!empty($_REQUEST['isDuplicate'])){
+	if (!empty($isDuplicate)) {
 		//role id is stripped here in duplicate so anything using role id after this will not have it
 		$role->id = '';
-	}else{
+	} else {
 		$return['record']= $role->id;
 		$return['action']='DetailView';
 	}
 	
-}else{
+} else {
 	$categories = ACLRole::getRoleActions('');
 }
 
@@ -65,41 +70,52 @@ if (in_array('Project', $modInvisList)) {
 $sugar_smarty->assign('ROLE', $role->toArray());
 $tdwidth = 10;
 
-if(isset($_REQUEST['return_module'])){
-	$return['module']=$_REQUEST['return_module'];
-	if(isset($_REQUEST['return_action']))$return['action']=$_REQUEST['return_action'];
-	if(isset($_REQUEST['return_record']))$return['record']=$_REQUEST['return_record'];
+$returnModule = $request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
+$returnAction = $request->getValidInputRequest('return_action');
+$returnRecord = $request->getValidInputRequest('return_record', 'Assert\Guid');
+if ($returnModule !== null) {
+	$return['module'] = $returnModule;
+	if($returnAction !== null) {
+		$return['action'] = $returnAction;
+	}
+	if($returnRecord !== null) {
+		$return['record'] = $returnRecord;
+	}
 }
+$categoryName = $request->getValidInputRequest('category_name');
 
 $sugar_smarty->assign('RETURN', $return);
 $names = ACLAction::setupCategoriesMatrix($categories);
 if(!empty($names))$tdwidth = 100 / sizeof($names);
 $sugar_smarty->assign('CATEGORIES', $categories);
-$sugar_smarty->assign('CATEGORY_NAME', $_REQUEST['category_name']);
+$sugar_smarty->assign('CATEGORY_NAME', $categoryName);
 $sugar_smarty->assign('TDWIDTH', $tdwidth);
 $sugar_smarty->assign('ACTION_NAMES', $names);
 
 $actions = null;
-if (isset($categories[$_REQUEST['category_name']]['module']))
-{
-    $actions = $categories[$_REQUEST['category_name']]['module'];
+if (isset($categories[$_REQUEST['category_name']]['module'])) {
+    $actions = $categories[$categoryName]['module'];
 }
 
 $sugar_smarty->assign('ACTIONS', $actions);
 ob_clean();
 
-if($_REQUEST['category_name'] == 'All'){
+if($categoryName == 'All'){
 	echo $sugar_smarty->fetch('modules/ACLRoles/EditAllBody.tpl');	
 }else{
 //WDong Bug 23195: Strings not localized in Role Management.
-echo getClassicModuleTitle($_REQUEST['category_name'],array($app_list_strings['moduleList'][$_REQUEST['category_name']]), false);
+echo getClassicModuleTitle(
+    $categoryName,
+    array($app_list_strings['moduleList'][$categoryName]),
+    false
+);
 echo $sugar_smarty->fetch('modules/ACLRoles/EditRole.tpl');
-	if (!isset($dictionary[$_REQUEST['category_name']]['hide_fields_to_edit_role']) ||
-			$dictionary[$_REQUEST['category_name']]['hide_fields_to_edit_role'] === false
-	) {
-		require_once('modules/ACLFields/EditView.php');
-		echo ACLFieldsEditView::getView($_REQUEST['category_name'], $role->id);
-	}
+if (!isset($dictionary[$categoryName]['hide_fields_to_edit_role']) ||
+    $dictionary[$categoryName]['hide_fields_to_edit_role'] === false
+) {
+    require_once('modules/ACLFields/EditView.php');
+    echo ACLFieldsEditView::getView($categoryName, $role->id);
+}
 echo '</form>';
 }
 sugar_cleanup(true);

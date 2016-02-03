@@ -34,7 +34,7 @@ class ViewResetmodule extends SugarView
 
 	function display()
     {
-        $moduleName = $this->module = $_REQUEST['view_module'];
+        $moduleName = $this->module = $this->request->getValidInputRequest('view_module', 'Assert\Mvc\ModuleName');
         if (isset($_REQUEST['handle']) && $_REQUEST['handle'] == "execute") {
             return $this->handleSave();
         }

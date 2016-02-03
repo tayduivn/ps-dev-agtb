@@ -417,6 +417,7 @@ class SugarTestHelper
         }
 
         SugarCache::instance()->flush();
+        SugarConfig::getInstance()->clearCache();
 
         // initialization & backup of sugar_config
         self::$initVars['GLOBALS']['sugar_config'] = null;
@@ -559,6 +560,8 @@ class SugarTestHelper
         // Restoring of theme
         SugarThemeRegistry::set(self::$systemVars['SugarThemeRegistry']->dirName);
         SugarCache::$isCacheReset = false;
+
+        SugarConfig::getInstance()->clearCache();
 
         return true;
     }

@@ -23,22 +23,21 @@ class ViewLayoutView extends SugarView
     /** @var GridLayoutMetaDataParser */
     protected $parser;
 
-    function ViewLayoutView ()
+    function ViewLayoutView($bean = null, $view_object_map = array(), $request = null)
     {
-        $GLOBALS [ 'log' ]->debug ( 'in ViewLayoutView' ) ;
-        $this->editModule = $_REQUEST [ 'view_module' ] ;
-        $this->editLayout = $_REQUEST [ 'view' ] ;
-        $this->package = null;
-        $this->fromModuleBuilder = isset ( $_REQUEST [ 'MB' ] ) || !empty($_REQUEST [ 'view_package' ]);
-        if ($this->fromModuleBuilder)
-        {
-            $this->package = $_REQUEST [ 'view_package' ] ;
+        parent::__construct($bean, $view_object_map, $request);
+        $GLOBALS ['log']->debug('in ViewLayoutView');
+        $this->editModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+        $this->editLayout = $this->request->getValidInputRequest('view','Assert\ComponentName');
+        $this->package = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
+        $mb = $this->request->getValidInputRequest('MB');
+        $this->fromModuleBuilder = !is_null($mb) || !empty($this->package);
+        if ($this->fromModuleBuilder) {
             $this->type = $this->editLayout;
-        } else
-        {
-            global $app_list_strings ;
-            $moduleNames = array_change_key_case ( $app_list_strings [ 'moduleList' ] ) ;
-            $this->translatedEditModule = $moduleNames [ strtolower ( $this->editModule ) ] ;
+        } else {
+            global $app_list_strings;
+            $moduleNames = array_change_key_case($app_list_strings ['moduleList']);
+            $this->translatedEditModule = $moduleNames [strtolower($this->editModule)];
             $this->sm = StudioModuleFactory::getStudioModule($this->editModule);
             $this->type = $this->sm->getViewType($this->editLayout);
         }
@@ -67,10 +66,9 @@ class ViewLayoutView extends SugarView
         global $mod_strings ;
         $params = array();
 // BEGIN SUGARCRM flav=ent ONLY
-        if (!empty($_REQUEST['role'])) {
-            $role = $params['role'] = $_REQUEST['role'];
-        } else {
-            $role = null;
+        $role = $this->request->getValidInputRequest('role', 'Assert\Guid');
+        if (!empty($role)) {
+            $params['role'] = $role;
         }
 // END SUGARCRM flav=ent ONLY
         $this->parser = $parser = ParserFactory::getParser(
@@ -116,7 +114,9 @@ class ViewLayoutView extends SugarView
                 if($this->editLayout == MB_DETAILVIEW){
 		            $disableLayout = $parser2->getSyncDetailEditViews();
                 }
-                if(!empty($_REQUEST['copyFromEditView'])){
+
+                $copyFromEditView = $this->request->getValidInputRequest('copyFromEditView');
+                if(!empty($copyFromEditView)){
                     $editViewPanels = $parser2->convertFromCanonicalForm($parser2->_viewdefs['panels']);
                     $parser->_viewdefs [ 'panels' ] = $editViewPanels;
                     $parser->_fielddefs = $parser2->_fielddefs;

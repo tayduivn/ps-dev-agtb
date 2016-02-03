@@ -21,6 +21,8 @@ require_once 'ModuleInstall/PackageManager/PackageManagerDisplay.php';
 require_once 'ModuleInstall/ModuleScanner.php';
 require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 global $mod_strings;
 $uh = new UpgradeHistory();
 
@@ -73,24 +75,29 @@ if($upload_max_filesize_bytes < constant('SUGARCRM_MIN_UPLOAD_MAX_FILESIZE_BYTES
 //
 // process "run" commands
 //
+$request = InputValidation::getService();
+$run = $request->getValidInputRequest('run', null, "");
+$releaseId = $request->getValidInputRequest('release_id', null, "");
+$loadModuleFromDir = $request->getValidInputRequest('load_module_from_dir', null, null);
+$upgradeZipEscaped = $request->getValidInputRequest('upgrade_zip_escaped', null, "");
+$installFile = $request->getValidInputRequest('install_file');
+$reloadMetadata = $request->getValidInputRequest('reloadMetadata');
 
-if( isset( $_REQUEST['run'] ) && ($_REQUEST['run'] != "") ){
-    $run = $_REQUEST['run'];
-
-    if( $run == "upload" ){
+if ($run !== "") {
+    if ($run == "upload") {
         $perform = false;
-        if(isset($_REQUEST['release_id']) && $_REQUEST['release_id'] != ""){
+        if ($releaseId != "") {
             require_once('ModuleInstall/PackageManager.php');
             $pm = new PackageManager();
-            $tempFile = $pm->download('','',$_REQUEST['release_id']);
+            $tempFile = $pm->download('','',$releaseId);
             $perform = true;
             $base_filename = urldecode($tempFile);
-        } elseif(!empty($_REQUEST['load_module_from_dir'])) {
+        } elseif (!empty($loadModuleFromDir)) {
         	//copy file to proper location then call performSetup
-        	copy($_REQUEST['load_module_from_dir'].'/'.$_REQUEST['upgrade_zip_escaped'], "upload://".$_REQUEST['upgrade_zip_escaped']);
+        	copy($loadModuleFromDir.'/'.$upgradeZipEscaped, "upload://".$upgradeZipEscaped);
 
         	$perform = true;
-            $base_filename = urldecode( $_REQUEST['upgrade_zip_escaped'] );
+            $base_filename = urldecode($upgradeZipEscaped);
         } else {
             if( empty( $_FILES['upgrade_zip']['tmp_name'] ) ){
                 echo $mod_strings['ERR_UW_NO_UPLOAD_FILE'];
@@ -105,7 +112,7 @@ if( isset( $_REQUEST['run'] ) && ($_REQUEST['run'] != "") ){
             	} else {
     			     $tempFile = "upload://".$upload->get_stored_file_name();
                      $perform = true;
-                     $base_filename = urldecode( $_REQUEST['upgrade_zip_escaped'] );
+                     $base_filename = urldecode($upgradeZipEscaped);
     		    }
             }
         }
@@ -175,7 +182,7 @@ if( isset( $_REQUEST['run'] ) && ($_REQUEST['run'] != "") ){
 			}
         }
     } else if( $run == $mod_strings['LBL_UW_BTN_DELETE_PACKAGE'] ){
-        if(!empty ($_REQUEST['install_file']) ){
+        if(!empty($installFile)){
             die($mod_strings['ERR_UW_NO_UPLOAD_FILE']);
         }
 
@@ -255,7 +262,7 @@ eoq3;
 
 echo $form2.$form3;
 
-if (!empty($_REQUEST['reloadMetadata'])) {
+if (!empty($reloadMetadata)) {
     echo "
         <script>
             var app = window.parent.SUGAR.App;

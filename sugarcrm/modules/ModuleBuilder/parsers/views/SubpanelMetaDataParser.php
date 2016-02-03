@@ -11,6 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 require_once ('modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php') ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
@@ -21,6 +23,11 @@ class SubpanelMetaDataParser extends ListLayoutMetaDataParser
     // Columns is used by the view to construct the listview - each column is built by calling the named function
     public $columns = array ( 'LBL_DEFAULT' => 'getDefaultFields' , 'LBL_HIDDEN' => 'getAvailableFields' ) ;
     protected $labelIdentifier = 'vname' ; // labels in the subpanel defs are tagged 'vname' =>
+
+    /**
+     * @var Request
+     */
+    protected $request;
 
     /*
      * Constructor
@@ -34,6 +41,7 @@ class SubpanelMetaDataParser extends ListLayoutMetaDataParser
     function __construct ($subpanelName , $moduleName , $packageName = '')
     {
         $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": __construct()" ) ;
+        $this->request = InputValidation::getService();
 
         // TODO: check the implementations
         if (empty ( $packageName ))
@@ -73,7 +81,8 @@ class SubpanelMetaDataParser extends ListLayoutMetaDataParser
 		        }
 		        require_once 'modules/ModuleBuilder/parsers/parser.label.php' ;
             	$labelParser = new ParserLabel ( $_REQUEST['view_module'] , isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
-            	$labelParser->addLabels($selected_lang, array($_REQUEST['subpanel_title_key'] =>  remove_xss(from_html($_REQUEST['subpanel_title']))), $_REQUEST['view_module']);
+                $viewModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+                $labelParser->addLabels($selected_lang, array($_REQUEST['subpanel_title_key'] =>  remove_xss(from_html($_REQUEST['subpanel_title']))), $viewModule);
             }            
         } 
         // Bug 46291 - Missing widget_class for edit_button and remove_button

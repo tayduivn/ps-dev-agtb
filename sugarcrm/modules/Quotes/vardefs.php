@@ -90,8 +90,9 @@ $dictionary['Quote'] = array(
         'quote_type' => array(
             'name' => 'quote_type',
             'vname' => 'LBL_QUOTE_TYPE',
-            'type' => 'varchar',
-            'len' => 100,
+            'type' => 'radioenum',
+            'dbtype' => 'varchar',
+            'options' => 'quote_type_dom',
         ),
         'date_quote_expected_closed' => array(
             'name' => 'date_quote_expected_closed',

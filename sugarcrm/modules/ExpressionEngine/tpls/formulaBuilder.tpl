@@ -12,7 +12,7 @@
 *}
 <table width="100%" id="formulaBuilder">
 	<tr style=""><td colspan=3 style="border-bottom:1px solid #AAA; padding-bottom:2px;">
-		<textarea type="text" name="formulaInput" id="formulaInput" style="width:490px;height:120px;position: relative;z-index:50">{$formula}</textarea>
+		<textarea type="text" name="formulaInput" id="formulaInput" style="width:490px;height:120px;position: relative;z-index:50">{$formula|escape:'html':'UTF-8'}</textarea>
 	</td></tr>
 	<tr id="fb_browse_row">
 		<td id="functionsList" width="200">
@@ -39,7 +39,7 @@
 <input type='button' class='button' name='formulacancelbtn' value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_CANCEL"}'
 	onclick="SUGAR.expressions.closeFormulaBuilder()" >
 <input type='button' class='button' name='fomulaSaveButton' id="fomulaSaveButton" value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_SAVE"}'
-	onclick="if(SUGAR.expressions.saveCurrentExpression('{$target}', '{$returnType}'))SUGAR.expressions.closeFormulaBuilder()">
+	onclick="if(SUGAR.expressions.saveCurrentExpression('{$target|escape:javascript|escape:'html':'UTF-8'}', '{$returnType|escape:javascript|escape:'html':'UTF-8'}'))SUGAR.expressions.closeFormulaBuilder()">
 </div>
 <script src="{sugar_getjspath file='modules/ExpressionEngine/javascript/formulaBuilder.js'}"></script>
 <script type="text/javascript">
@@ -66,6 +66,6 @@ FBLoader.addModule({
 });
 {/literal}
 var fieldsArray = {$Field_Array};
-var returnType = '{$returnType}';
+var returnType = '{$returnType|escape:javascript}';
 FBLoader.insert();
 </script>

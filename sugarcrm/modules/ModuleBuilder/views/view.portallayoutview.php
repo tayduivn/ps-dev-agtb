@@ -13,18 +13,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 //FILE SUGARCRM flav=ent ONLY
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once('modules/ModuleBuilder/views/view.layoutview.php');
 require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
 require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 
-class ViewPortalLayoutView extends ViewLayoutView 
+class ViewPortalLayoutView extends ViewLayoutView
 {
-	function ViewPortalLayoutView()
+	function ViewPortalLayoutView($bean = null, $view_object_map = array(), Request $request = null)
 	{
-	    $GLOBALS['log']->debug('in ViewPortalLayoutView');
-		$this->editModule = $_REQUEST['view_module'];
-		$this->editLayout = $_REQUEST['view'];
+		parent::SugarView($bean, $view_object_map, $request);
+		$GLOBALS['log']->debug('in ViewPortalLayoutView');
+		$this->editModule = $this->request->getValidInputRequest('view_module', 'Assert\Mvc\ModuleName');
+		$this->editLayout = $this->request->getValidInputRequest('view', 'Assert\ComponentName');
 	}
 
 	/**
@@ -70,13 +72,15 @@ class ViewPortalLayoutView extends ViewLayoutView
 		  'id'=>'saveBtn',
 		  'image'=>SugarThemeRegistry::current()->getImage($images['icon_save'],'',null,null,'.gif',$mod_strings['LBL_BTN_SAVE']),
 		  'text'=>$GLOBALS['mod_strings']['LBL_BTN_SAVE'],
-		  'actionScript'=>"onclick='if(Studio2.checkCalcFields(\"{$_REQUEST['view']}\", \"ERROR_CALCULATED_PORTAL_FIELDS\"))Studio2.handleSave();'"
+		  'actionScript'=>"onclick='if(Studio2.checkCalcFields(" . JSON::encode($this->editLayout)
+				  . ", \"ERROR_CALCULATED_PORTAL_FIELDS\"))Studio2.handleSave();'"
 		);
 		$buttons[] = array(
 		  'id'=>'publishBtn',
 		  'image'=>SugarThemeRegistry::current()->getImage($images['icon_publish'],'',null,null,'.gif',$mod_strings['LBL_BTN_PUBLISH']),
 		  'text'=>$GLOBALS['mod_strings']['LBL_BTN_SAVEPUBLISH'],
-		  'actionScript'=>"onclick='if(Studio2.checkCalcFields(\"{$_REQUEST['view']}\", \"ERROR_CALCULATED_PORTAL_FIELDS\"))Studio2.handlePublish();'"
+		  'actionScript'=>"onclick='if(Studio2.checkCalcFields(" . JSON::encode($this->editLayout)
+				  . ", \"ERROR_CALCULATED_PORTAL_FIELDS\"))Studio2.handlePublish();'"
 		);
 
 		$html = "";

@@ -426,8 +426,7 @@ class M2MRelationship extends SugarRelationship
             ." FROM {$this->getRelationshipTable()} WHERE "
             ." {$this->def['primary_flag_column']} = 1 AND {$wherePart}";
 
-        $ret = $db->query($query,true);
-        $oldRow = $db->fetchByAssoc($ret);
+        $oldRow = $db->fetchOne($query, true);
         $success = true;
         if (!empty($oldRow)) {
             // Deleted the primary record, and we need a default primary
@@ -444,8 +443,7 @@ class M2MRelationship extends SugarRelationship
             $query = "SELECT id,date_modified FROM {$this->getRelationshipTable()} "
                 ." WHERE deleted = 0 AND ".$queryColPart
                 ." ORDER BY date_modified";
-            $ret = $db->limitQuery($query, 0, 1, true);
-            $row = $db->fetchByAssoc($ret);
+            $row = $db->fetchOneOffset($query, 0, true);
             if (empty($row)) {
                 // No other relationships to set as primary
                 return;

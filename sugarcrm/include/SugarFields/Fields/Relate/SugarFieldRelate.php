@@ -330,41 +330,40 @@ class SugarFieldRelate extends SugarFieldBase {
                             WHERE {$fieldname} = '" . $focus->db->quote($value) . "'
                                 AND deleted != 1";
 
-                $result = $focus->db->limitQuery($query,0,1,true, "Want only a single row");
-                if(!empty($result)){
-                    if ( $relaterow = $focus->db->fetchByAssoc($result) )
-                        $focus->$idField = $relaterow['id'];
-                    elseif ( !$settings->addRelatedBean
-                            || ( $newbean->bean_implements('ACL') && !$newbean->ACLAccess('save') )
-                            || ( in_array($newbean->module_dir,array('Teams','Users')) )
-                            )
-                        return false;
-                    else {
-                        // add this as a new record in that bean, then relate
-                        if ( isset($relatedFieldDef['db_concat_fields'])
-                                && is_array($relatedFieldDef['db_concat_fields']) ) {
-                            assignConcatenatedValue($newbean, $relatedFieldDef, $value);
-                        }
-                        else
-                            $newbean->$vardef['rname'] = $value;
-                        if ( !isset($focus->assigned_user_id) || $focus->assigned_user_id == '' )
-                            $newbean->assigned_user_id = $GLOBALS['current_user']->id;
-                        else
-                            $newbean->assigned_user_id = $focus->assigned_user_id;
-                        if ( !isset($focus->modified_user_id) || $focus->modified_user_id == '' )
-                            $newbean->modified_user_id = $GLOBALS['current_user']->id;
-                        else
-                            $newbean->modified_user_id = $focus->modified_user_id;
-
-                        // populate fields from the parent bean to the child bean
-                        $focus->populateRelatedBean($newbean);
-
-                        $newbean->save(false);
-                        $focus->$idField = $newbean->id;
-                        $settings->createdBeans[] = ImportFile::writeRowToLastImport(
-                                $focus->module_dir,$newbean->object_name,$newbean->id);
+                $relaterow = $focus->db->fetchOneOffset($query, 0, true, "Want only a single row");
+                if ($relaterow)
+                    $focus->$idField = $relaterow['id'];
+                elseif ( !$settings->addRelatedBean
+                        || ( $newbean->bean_implements('ACL') && !$newbean->ACLAccess('save') )
+                        || ( in_array($newbean->module_dir,array('Teams','Users')) )
+                        )
+                    return false;
+                else {
+                    // add this as a new record in that bean, then relate
+                    if ( isset($relatedFieldDef['db_concat_fields'])
+                            && is_array($relatedFieldDef['db_concat_fields']) ) {
+                        assignConcatenatedValue($newbean, $relatedFieldDef, $value);
                     }
+                    else
+                        $newbean->$vardef['rname'] = $value;
+                    if ( !isset($focus->assigned_user_id) || $focus->assigned_user_id == '' )
+                        $newbean->assigned_user_id = $GLOBALS['current_user']->id;
+                    else
+                        $newbean->assigned_user_id = $focus->assigned_user_id;
+                    if ( !isset($focus->modified_user_id) || $focus->modified_user_id == '' )
+                        $newbean->modified_user_id = $GLOBALS['current_user']->id;
+                    else
+                        $newbean->modified_user_id = $focus->modified_user_id;
+
+                    // populate fields from the parent bean to the child bean
+                    $focus->populateRelatedBean($newbean);
+
+                    $newbean->save(false);
+                    $focus->$idField = $newbean->id;
+                    $settings->createdBeans[] = ImportFile::writeRowToLastImport(
+                            $focus->module_dir,$newbean->object_name,$newbean->id);
                 }
+
             }
         }
 

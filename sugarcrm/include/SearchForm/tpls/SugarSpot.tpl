@@ -38,14 +38,14 @@
         <div class="clear"></div>
     </section>
     {/foreach}
-    <a href='index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$queryEncoded}' class="resultAll" data-sidecar-rewrite="false">
+    <a href='index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$queryEncoded|escape:'html':'UTF-8'}' class="resultAll" data-sidecar-rewrite="false">
         {$appStrings.LNK_SEARCH_NONFTS_VIEW_ALL}
     </a>
 {else}
     <section class="resultNull">
         <h1>{$appStrings.LBL_EMAIL_SEARCH_NO_RESULTS}</h1>
         <div style="float:right;">
-            <a href="index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$queryEncoded}" data-sidecar-rewrite="false">{$appStrings.LNK_ADVANCED_SEARCH}</a>
+            <a href="index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$queryEncoded|escape:'html':'UTF-8'}" data-sidecar-rewrite="false">{$appStrings.LNK_ADVANCED_SEARCH}</a>
         </div>
     </section>
 {/if}

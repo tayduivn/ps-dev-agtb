@@ -36,7 +36,7 @@ class ViewSearchProperties extends ViewList
 	{    	
         require_once('include/connectors/utils/ConnectorUtils.php');
         require_once('include/connectors/sources/SourceFactory.php');
-        $source_id = $_REQUEST['source_id'];
+        $source_id = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName');
         $connector_strings = ConnectorUtils::getConnectorStrings($source_id);
         $is_enabled = ConnectorUtils::isSourceEnabled($source_id);
         $modules_sources = array();
@@ -87,7 +87,7 @@ class ViewSearchProperties extends ViewList
     	$this->ss->assign('sources', $sources);
     	$this->ss->assign('mod', $GLOBALS['mod_strings']);
     	$this->ss->assign('APP', $GLOBALS['app_strings']);
-    	$this->ss->assign('source_id', $_REQUEST['source_id']);
+    	$this->ss->assign('source_id', $this->request->getValidInputRequest('source_id', 'Assert\ComponentName'));
     	$this->ss->assign('theme', $GLOBALS['theme']);
     	$this->ss->assign('connector_language', $connector_strings);
     	echo $this->ss->fetch($this->getCustomFilePathIfExists('modules/Connectors/tpls/search_properties.tpl'));

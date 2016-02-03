@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,13 +9,22 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-// $Id: ListViewData.php 57227 2010-06-30 23:02:27Z kjing $
-require_once('include/EditView/SugarVCR.php');
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
+require_once 'include/EditView/SugarVCR.php';
+
 /**
  * Data set for ListView
  * @api
  */
 class ListViewData {
+
+    /**
+     * @var Request 
+     */
+    protected $request;
 
 	var $additionalDetails = true;
     var $listviewName = null;
@@ -33,33 +41,47 @@ class ListViewData {
 	/**
 	 * Constructor sets the limitName to look up the limit in $sugar_config
 	 *
+     * @param Request $request
 	 * @return ListViewData
 	 */
-	function ListViewData() {
+    public function ListViewData(Request $request = null)
+    {
 		$this->limitName = 'list_max_entries_per_page';
 		$this->db = &DBManagerFactory::getInstance('listviews');
+        $this->request = $request ?: InputValidation::getService();
 	}
 
-	/**
-	 * checks the request for the order by and if that is not set then it checks the session for it
-	 *
-	 * @return array containing the keys orderBy => field being ordered off of and sortOrder => the sort order of that field
-	 */
-	function getOrderBy($orderBy = '', $direction = '') {
-		if (!empty($orderBy) || !empty($_REQUEST[$this->var_order_by])) {
-            if(!empty($_REQUEST[$this->var_order_by])) {
-    			$direction = 'ASC';
-    			$orderBy = $_REQUEST[$this->var_order_by];
-    			if(!empty($_REQUEST['lvso']) && (empty($_SESSION['lvd']['last_ob']) || strcmp($orderBy, $_SESSION['lvd']['last_ob']) == 0) ){
-    				$direction = $_REQUEST['lvso'];
-    			}
+    /**
+     * checks the request for the order by and if that is not set then it checks the session for it
+     *
+     * @return array containing the keys orderBy => field being ordered off of and sortOrder => the sort order of that field
+     */
+    function getOrderBy($orderBy = '', $direction = '') {
+        // Safe $_REQUEST[$this->var_order_by']
+        $reqOrderBy = $this->request->getValidInputRequest($this->var_order_by, 'Assert\Sql\OrderBy');
+
+        if (!empty($orderBy) || !empty($reqOrderBy)) {
+
+            if (!empty($reqOrderBy)) {
+                $direction = 'ASC';
+                $orderBy = $reqOrderBy;
+
+                // Safe $_REQUEST['lvso']
+                $reqLvso = $this->request->getValidInputRequest('lvso', 'Assert\Sql\OrderDirection');
+
+                if (!empty($reqLvso) && (empty($_SESSION['lvd']['last_ob']) ||
+                    strcmp($orderBy, $_SESSION['lvd']['last_ob']) == 0))
+                {
+                    $direction = $reqLvso;
+                }
             }
+
             $_SESSION[$this->var_order_by] = array('orderBy'=>$orderBy, 'direction'=> $direction);
             $_SESSION['lvd']['last_ob'] = $orderBy;
-        }
-		else {
+
+        } else {
             $userPreferenceOrder = $GLOBALS['current_user']->getPreference('listviewOrder', $this->var_name);
-			if(!empty($_SESSION[$this->var_order_by])) {
+			if (!empty($_SESSION[$this->var_order_by])) {
 				$orderBy = $_SESSION[$this->var_order_by]['orderBy'];
 				$direction = $_SESSION[$this->var_order_by]['direction'];
             } elseif (!empty($userPreferenceOrder)) {
@@ -70,15 +92,17 @@ class ListViewData {
 				$direction = 'DESC';
 			}
 		}
-		if(!empty($direction)) {
-    		if(strtolower($direction) == "desc") {
-    		    $direction = 'DESC';
-    		} else {
-    		    $direction = 'ASC';
-    		}
-		}
-		return array('orderBy' => $orderBy, 'sortOrder' => $direction);
-	}
+
+        if (!empty($direction)) {
+            if (strtolower($direction) == "desc") {
+                $direction = 'DESC';
+            } else {
+                $direction = 'ASC';
+            }
+        }
+
+        return array('orderBy' => $orderBy, 'sortOrder' => $direction);
+    }
 
 	/**
 	 * gets the reverse of the sort order for use on links to reverse a sort order from what is currently used
@@ -104,7 +128,14 @@ class ListViewData {
 	 * @return INT (current offset)
 	 */
 	function getOffset() {
-		return (!empty($_REQUEST[$this->var_offset])) ? $_REQUEST[$this->var_offset] : 0;
+        // Safe $_REQUEST[$this->var_offset]
+        return (isset($_REQUEST[$this->var_offset]) && ($_REQUEST[$this->var_offset] === 'end'))
+            ? $_REQUEST[$this->var_offset]
+            : $this->request->getValidInputRequest(
+                $this->var_offset,
+                array('Assert\Type' => array('type' => 'numeric')),
+                0
+            );
 	}
 
     /**
@@ -138,7 +169,11 @@ class ListViewData {
 	 */
 	function setVariableName($baseName, $where, $listviewName = null){
         global $timedate;
-        $module = (!empty($listviewName)) ? $listviewName: $_REQUEST['module'];
+
+        // Safe $_REQUEST['module']
+        $reqModule = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
+
+        $module = (!empty($listviewName)) ? $listviewName: $reqModule;
         $this->var_name = $module .'2_'. strtoupper($baseName);
 
 		$this->var_order_by = $this->var_name .'_ORDER_BY';
@@ -158,8 +193,7 @@ class ListViewData {
 		}else{
 	        $count_query = SugarBean::create_list_count_query($main_query);
 	    }
-		$result = $this->db->query($count_query);
-		if($row = $this->db->fetchByAssoc($result)){
+		if($row = $this->db->fetchOne($count_query)){
 			return $row['c'];
 		}
 		return 0;
@@ -207,7 +241,11 @@ class ListViewData {
         $this->seed = $seed;
         $totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']);
         $_SESSION['MAILMERGE_MODULE_FROM_LISTVIEW'] = $seed->module_dir;
-        if(empty($_REQUEST['action']) || $_REQUEST['action'] != 'Popup'){
+
+        // Safe $_REQUEST['action'] - may need a constraint
+        $reqAction = $this->request->getValidInputRequest('action');
+
+        if(empty($reqAction) || $reqAction != 'Popup'){
             $_SESSION['MAILMERGE_MODULE'] = $seed->module_dir;
         }
 

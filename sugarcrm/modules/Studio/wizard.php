@@ -13,27 +13,27 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
  // $Id: wizard.php 18703 2006-12-15 09:42:43Z majed $
 
-require_once('modules/Studio/config.php');
-require_once('modules/Studio/wizards/StudioWizard.php');
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
-$wizard = !empty($_REQUEST['wizard'])? $_REQUEST['wizard']: 'StudioWizard';
+require_once 'modules/Studio/config.php';
+require_once 'modules/Studio/wizards/StudioWizard.php';
 
-if(SugarAutoLoader::fileExists('modules/Studio/wizards/'. $wizard . '.php')){
-	require_once('modules/Studio/wizards/'. $wizard . '.php');
-	$thewiz = new $wizard();
-}else{
-	unset($_SESSION['studio']['lastWizard']);
-	$thewiz = new StudioWizard();
+$wizard = InputValidation::getService()->getValidInputRequest('wizard', null, 'StudioWizard');
+
+if (SugarAutoLoader::fileExists('modules/Studio/wizards/'. $wizard . '.php')) {
+    require_once FileLoader::validateFilePath('modules/Studio/wizards/'. $wizard . '.php');
+    $thewiz = new $wizard();
+} else {
+    unset($_SESSION['studio']['lastWizard']);
+    $thewiz = new StudioWizard();
 }
 
-if(!empty($_REQUEST['back'])){
+if (!empty($_REQUEST['back'])) {
     $thewiz->back();
 }
-if(!empty($_REQUEST['option'])){
-	$thewiz->process($_REQUEST['option']);
-}else{
-	$thewiz->display();
-
+if (!empty($_REQUEST['option'])) {
+    $thewiz->process($_REQUEST['option']);
+} else {
+    $thewiz->display();
 }
-
-

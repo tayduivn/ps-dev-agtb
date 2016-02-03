@@ -35,9 +35,22 @@ class ViewModule extends SugarView
 
 		require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
 		$mb = new ModuleBuilder();
-		$mb->getPackage($_REQUEST['view_package']);
-		$package = $mb->packages[$_REQUEST['view_package']];
-		$module_name = (!empty($_REQUEST['view_module']))?$_REQUEST['view_module']:'';
+		$pakName = $this->request->getValidInputRequest(
+			'view_package',
+			'Assert\ComponentName',
+			$this->request->getValidInputRequest('package', 'Assert\ComponentName')
+		);
+		$mb->getPackage($pakName);
+		$package = $mb->packages[$pakName];
+		$module_name = $this->request->getValidInputRequest(
+			'view_module',
+			'Assert\ComponentName',
+			$this->request->getValidInputRequest('name', 'Assert\ComponentName', '')
+		);
+		//Check for a failed rename
+		if (isset($_REQUEST['name']) && isset($_REQUEST['original_name']) && $_REQUEST['name'] == $_REQUEST['original_name']) {
+			$module_name = $this->request->getValidInputRequest('original_name', 'Assert\ComponentName');
+		}
 		$package->getModule($module_name);
 		$this->mbModule = $package->modules[$module_name];
 		$this->loadPackageHelp($module_name);
