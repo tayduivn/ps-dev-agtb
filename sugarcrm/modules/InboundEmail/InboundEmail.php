@@ -4685,7 +4685,7 @@ eoq;
     public static function decode_stored_option($stored_options, $option_name, $default_value = null)
     {
         if (!empty($stored_options)) {
-			$storedOptions = Serialized::unserialize($stored_options, array(), true);
+            $decoded = Serialized::unserialize($stored_options, array(), true);
             if (isset($decoded[$option_name])) {
                 return $decoded[$option_name];
             }

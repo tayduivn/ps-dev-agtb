@@ -91,8 +91,6 @@ if(empty($sugar_config) && isset($dbconfig['db_host_name']))
 // Administration include
 
 
-global $HTTP_RAW_POST_DATA;
-
 $administrator = new Administration();
 $administrator->retrieveSettings();
 

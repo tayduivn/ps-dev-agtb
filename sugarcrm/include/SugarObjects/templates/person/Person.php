@@ -196,22 +196,8 @@ class Person extends Basic
     public function getFreeBusySchedule(array $options = array())
     {
         global $timedate;
-        global $sugar_config;
+        $lines = $this->getVCalData($options);
 
-        //--- Explicit config can be used to force use of vCal Cache instead of RealTime Search
-        $useFreeBusyCache = !empty($sugar_config['freebusy_use_vcal_cache']);
-
-        $vcalBean = BeanFactory::getBean('vCals');
-        if (!$useFreeBusyCache && !empty($options['start']) && !empty($options['end'])) {
-            $sugarDateTimeStart = $timedate->fromIso($options['start']);
-            $sugarDateTimeEnd = $timedate->fromIso($options['end']);
-            $vcalData = $vcalBean->get_vcal_freebusy($this, false, $sugarDateTimeStart, $sugarDateTimeEnd);
-        } else {
-            $vcalData = $vcalBean->get_vcal_freebusy($this, true);
-        }
-
-        $vcalData = str_replace("\r\n", "\n", $vcalData);
-        $lines = explode("\n", $vcalData);
         $utc = new DateTimeZone("UTC");
 
         $activities = array();
@@ -237,5 +223,29 @@ class Person extends Basic
         }
 
         return $freeBusySchedule;
+    }
+
+    /**
+     * @param array $options
+     */
+     protected function getVCalData($options)
+     {
+        global $timedate, $sugar_config;
+
+        //--- Explicit config can be used to force use of vCal Cache instead of RealTime Search
+        $useFreeBusyCache = !empty($sugar_config['freebusy_use_vcal_cache']);
+
+        $vcalBean = BeanFactory::getBean('vCals');
+        if (!$useFreeBusyCache && !empty($options['start']) && !empty($options['end'])) {
+            $sugarDateTimeStart = $timedate->fromIso($options['start']);
+            $sugarDateTimeEnd = $timedate->fromIso($options['end']);
+            $vcalData = $vcalBean->get_vcal_freebusy($this, false, $sugarDateTimeStart, $sugarDateTimeEnd);
+        } else {
+            $vcalData = $vcalBean->get_vcal_freebusy($this, true);
+        }
+
+        $vcalData = str_replace("\r\n", "\n", $vcalData);
+        $lines = explode("\n", $vcalData);
+        return $lines;
     }
 }

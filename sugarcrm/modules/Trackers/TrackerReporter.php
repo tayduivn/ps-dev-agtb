@@ -388,7 +388,7 @@ class TrackerReporter{
 	 */
 	private function execute($query){
 		if(!empty($query)){
-			$db = &DBManagerFactory::getInstance('reports');
+            $db = DBManagerFactory::getInstance('reports');
 			$result = $db->query($query);
 			$data = array();
 			while($row = $db->fetchByAssoc($result)){

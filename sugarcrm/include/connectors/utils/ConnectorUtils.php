@@ -348,7 +348,7 @@ class ConnectorUtils
      * Source sorting by order value
      * @internal
      */
-    public function sortSources($a, $b) {
+    public static function sortSources($a, $b) {
         if(isset($a['order']) && isset($b['order'])) {
            if($a['order'] == $b['order']) {
               return 0;

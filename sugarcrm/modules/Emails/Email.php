@@ -2742,7 +2742,9 @@ class Email extends SugarBean {
         $GLOBALS['log']->debug("------ EMAIL SEARCH DATETIME Values ---------------------------------------------");
         $GLOBALS['log']->debug("dbFormatDateFrom: {$dbFormatDateFrom}");
         $GLOBALS['log']->debug("dbFormatDateTo: {$dbFormatDateTo}");
-        $GLOBALS['log']->debug("$additionalWhereClause: " . $additionalWhereClause[count($additionalWhereClause)-1]);
+        if (count($additionalWhereClause)) {
+            $GLOBALS['log']->debug("additionalWhereClause: " . $additionalWhereClause[count($additionalWhereClause)-1]);
+        }
         $GLOBALS['log']->debug("---------------------------------------------------------------------------------");
 
         $additionalWhereClause = implode(" AND ", $additionalWhereClause);

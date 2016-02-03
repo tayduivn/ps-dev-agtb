@@ -4122,6 +4122,7 @@ function setPhpIniSettings()
     if (!empty($backtrack_limit)) {
         ini_set('pcre.backtrack_limit', '-1');
     }
+    ini_set('always_populate_raw_post_data', '-1');
 }
 
 /**

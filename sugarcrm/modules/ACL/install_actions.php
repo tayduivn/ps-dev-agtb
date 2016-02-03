@@ -162,7 +162,6 @@ if($installActions || $missingAclRolesActions) {
 
 
     foreach($mlaRoles as $roleName=>$role){
-        $ACLField = BeanFactory::getBean('ACLFields');
         $role1 = BeanFactory::getBean('ACLRoles');
         $role1->name = $roleName;
         $role1->description = $roleName." Role";
@@ -171,7 +170,7 @@ if($installActions || $missingAclRolesActions) {
             foreach($actions as $name=>$access_override){
                 if($name=='fields'){
                     foreach($access_override as $field_id=>$access){
-                        $ACLField->setAccessControl($category, $role1_id, $field_id, $access);
+                        ACLField::setAccessControl($category, $role1_id, $field_id, $access);
                     }
                 }else{
                     $queryACL="SELECT id FROM acl_actions where category='$category' and name='$name'";

@@ -92,8 +92,15 @@ while ($row = $db->fetchByAssoc($result)) {
 	                }
 	        }
 	        	if($execute){
-        			$newstr = mysql_real_escape_string(base64_encode(serialize($newprefs)));
-       				$db->query("UPDATE users SET user_preferences = '{$newstr}' WHERE id = '{$row['id']}'");
+                    $db->query(
+                        sprintf(
+                            'UPDATE users
+                            SET user_preferences = %s
+                            WHERE id = %s',
+                            $db->quoted(base64_encode(serialize($newprefs))),
+                            $db->quoted($row['id'])
+                        )
+                    );
 	        	}
 	        }
 		if(!empty($setTo)){

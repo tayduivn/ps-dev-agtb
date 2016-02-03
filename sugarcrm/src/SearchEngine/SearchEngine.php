@@ -57,7 +57,8 @@ class SearchEngine
                 throw new \RuntimeException("No search engine configured");
             }
 
-            $type = array_pop(array_keys($config));
+            $configKeys = array_keys($config);
+            $type = array_pop($configKeys);
             self::$instance = new self(self::newEngine($type, $config[$type]));
             self::$instance->setGlobalConfig($sugarConfig->get('search_engine', array()));
         }
