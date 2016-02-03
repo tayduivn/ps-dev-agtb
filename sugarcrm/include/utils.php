@@ -3855,8 +3855,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
         {
             $temp_bean = BeanFactory::getBean($tar_rel_module);
             $temp_bean->disable_row_level_security = true;
-        //	echo $focus->$field_def['id_name'];
-            $temp_bean->retrieve($focus->$field_def['id_name']);
+            $temp_bean->retrieve($focus->{$field_def['id_name']});
             if ($temp_bean->id!="") {
 
                 $rel_list[] = $temp_bean;
@@ -3867,8 +3866,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
         } elseif (!empty($rel_value['link']) && !empty($rel_value['id_name']) && $rel_value['link'] == $relationship_name) {
             $temp_bean = BeanFactory::getBean($tar_rel_module);
             $temp_bean->disable_row_level_security = true;
-        //	echo $focus->$rel_value['id_name'];
-            $temp_bean->retrieve($focus->$rel_value['id_name']);
+            $temp_bean->retrieve($focus->{$rel_value['id_name']});
             if ($temp_bean->id!="") {
 
                 $rel_list[] = $temp_bean;
@@ -5021,7 +5019,7 @@ function create_export_query_relate_link_patch($module, $searchFields, $where)
             } else {
                 $params['join_table_link_alias'] = 'join_link_'.$field['name'];
             }
-            $join = $seed->$field['link']->getJoin($params, true);
+            $join = $seed->{$field['link']}->getJoin($params, true);
             $join_table_alias = 'join_'.$field['name'];
             if (isset($field['db_concat_fields'])) {
                 $db_field = db_concat($join_table_alias, $field['db_concat_fields']);

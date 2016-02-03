@@ -593,7 +593,7 @@ class SugarFieldTeamset extends SugarFieldBase {
                 //3) ok we did not find the id, so we need to create a team.
                 $newbean = BeanFactory::getBean('Teams');
                  if ( $newbean->ACLAccess('save') ) {
-                 	$newbean->$vardef['rname'] = $val;
+                    $newbean->{$vardef['rname']} = $val;
 
                     if ( !isset($focus->assigned_user_id) || $focus->assigned_user_id == '' ){
                     	$newbean->assigned_user_id = $GLOBALS['current_user']->id;

@@ -264,7 +264,7 @@ function get_relationship_information(& $target_bean, $get_upstream_rel_field_na
 	if($rel_array!=null){
 		if($rel_array['relationship_type']=="many-to-many"){
             $join_key = $flip_sides ? 'join_key_rhs' : 'join_key_lhs';
-			$target_bean->$rel_array[$join_key] = $this->base_bean->id;
+            $target_bean->{$rel_array[$join_key]} = $this->base_bean->id;
 			foreach ($this->getRoleColumns($rel_array) as $column => $value) {
 			    $target_bean->$column = $value;
 			}
@@ -274,11 +274,11 @@ function get_relationship_information(& $target_bean, $get_upstream_rel_field_na
 		if($rel_array['relationship_type']=="one-to-many"){
 			if (!empty($rel_array['join_key_rhs'])) {
 			    $join_key = $flip_sides ? 'join_key_rhs' : 'join_key_lhs';
-			    $target_bean->$rel_array[$join_key] = $this->base_bean->id;
+                $target_bean->{$rel_array[$join_key]} = $this->base_bean->id;
 			}
 			else {
                 $rel_key = $flip_sides ? 'lhs_key' : 'rhs_key';
-                $target_bean->$rel_array[$rel_key] = $this->base_bean->id;
+                $target_bean->{$rel_array[$rel_key]} = $this->base_bean->id;
 			}
 			foreach ($this->getRoleColumns($rel_array) as $column => $value) {
 			    $target_bean->$column = $value;
@@ -299,18 +299,18 @@ function get_relationship_information(& $target_bean, $get_upstream_rel_field_na
 	if($rel_array!=null){
 		if($rel_array['relationship_type']=="many-to-many"){
             $join_key = $flip_sides ? 'join_key_lhs' : 'join_key_rhs';
-			$target_bean->$rel_array[$join_key] = $this->base_bean->id;
+            $target_bean->{$rel_array[$join_key]} = $this->base_bean->id;
 			if(!empty($rel_array['relationship_role_column'])){
-				$target_bean->$rel_array['relationship_role_column'] = $rel_array['relationship_role_column_value'];
+                $target_bean->{$rel_array['relationship_role_column']} = $rel_array['relationship_role_column_value'];
 			}
 		//end if many-to-many
 		}
 
 		if($rel_array['relationship_type']=="one-to-many"){
             $rel_key = $flip_sides ? 'lhs_key' : 'rhs_key';
-			$this->$rel_array[$rel_key] = $this->base_bean->id;
+            $this->{$rel_array[$rel_key]} = $this->base_bean->id;
 			if(!empty($rel_array['relationship_role_column'])){
-				$this->$rel_array['relationship_role_column'] = $rel_array['relationship_role_column_value'];
+                $this->{$rel_array['relationship_role_column']} = $rel_array['relationship_role_column_value'];
 			}
 		//end if one-to-many
 		}

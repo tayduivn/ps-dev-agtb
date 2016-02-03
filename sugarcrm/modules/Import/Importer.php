@@ -263,7 +263,7 @@ class Importer
 
                 if ($fieldDef['type'] == 'relate' && !empty($row[$fieldNum]) && $row[$fieldNum] != $_REQUEST["default_value_$field"]) {
                     if (!empty($fieldDef['id_name']) && empty($row[$fieldDef['id_name']])) {
-                        $focus->$fieldDef['id_name'] = "";
+                        $focus->{$fieldDef['id_name']} = '';
                     }
                 }
 

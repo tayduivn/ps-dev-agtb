@@ -349,8 +349,8 @@ function get_name_value_list($value, $returnDomValue = false){
 					}
 				}
 
-			if(isset($value->$var['name'])){
-				$val = $value->$var['name'];
+            if (isset($value->{$var['name']})) {
+                $val = $value->{$var['name']};
 				$type = $var['type'];
 
 				if(strcmp($type, 'date') == 0){
@@ -410,8 +410,8 @@ function get_name_value_list_for_fields($value, $fields) {
 		$filterFields = filter_fields($value, $fields);
 		foreach($filterFields as $field){
 			$var = $value->field_defs[$field];
-			if(isset($value->$var['name'])){
-				$val = $value->$var['name'];
+            if (isset($value->{$var['name']})) {
+                $val = $value->{$var['name']};
 				$type = $var['type'];
 
 				if(strcmp($type, 'date') == 0){
@@ -632,7 +632,7 @@ function new_handle_set_entries($module_name, $name_value_lists, $select_fields 
 		            }
 		        }
 			}
-			$seed->$value['name'] = $val;
+            $seed->{$value['name']} = $val;
 		}
 
 		if($count == $total){

@@ -777,12 +777,8 @@ class InboundEmail extends SugarBean {
 					if(	isset($colDef['len']) && !empty($colDef['len']) &&
 						isset($colDef['type']) && !empty($colDef['type']) &&
 						$colDef['type'] == 'varchar'
-					)
-                    {
-                        if (isset($overview->$colDef['name']))
-                        {
-                            $overview->$colDef['name'] = substr($overview->$colDef['name'], 0, $colDef['len']);
-                        }
+                        && isset($overview->{$colDef['name']})) {
+                            $overview->{$colDef['name']} = substr($overview->{$colDef['name']}, 0, $colDef['len']);
                     }
 
 					switch($colDef['name']) {
@@ -833,8 +829,8 @@ class InboundEmail extends SugarBean {
 						break;
 
 						default:
-							$overview->$colDef['name'] = SugarCleaner::cleanHtml(from_html($overview->$colDef['name']));
-							$values .= $this->db->quoted($overview->$colDef['name']);
+                            $overview->{$colDef['name']} = SugarCleaner::cleanHtml(from_html($overview->{$colDef['name']}));
+                            $values .= $this->db->quoted($overview->{$colDef['name']});
 						break;
 					}
 				}
@@ -876,9 +872,8 @@ class InboundEmail extends SugarBean {
                                 $set .= ",";
                             }
                             $value = '';
-                            if (isset($overview->$colDef['name']))
-                            {
-                                $value = $this->db->quoted($overview->$colDef['name']);
+                            if (isset($overview->{$colDef['name']})) {
+                                $value = $this->db->quoted($overview->{$colDef['name']});
                             }
                             else
                             {

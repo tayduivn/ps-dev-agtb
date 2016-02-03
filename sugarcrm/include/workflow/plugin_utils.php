@@ -168,7 +168,7 @@ class SugarWorkflowPluginList
 			require_once $file;
 			if(class_exists($plugin_array["class"])) {
 				$plugin_class = new $plugin_array["class"]();
-			    return $plugin_class->$plugin_array["function"]($opt);
+                return $plugin_class->{$plugin_array['function']}($opt);
 			}
 		}
 		return null;

@@ -746,7 +746,7 @@ class PMSEProjectImporter extends PMSEImporter
             if (!empty($elementBean)) {
                 $flowBean = BeanFactory::getBean('pmse_BpmnFlow', $this->savedElements['bpmnFlows'][$defaultFlow['default_flow_value']]);
                 if (!empty($flowBean)){
-                    $elementBean->$defaultFlow['default_flow_field'] = $flowBean->id;
+                    $elementBean->{$defaultFlow['default_flow_field']} = $flowBean->id;
                     $elementBean->save();
                 }
             }

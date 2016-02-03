@@ -419,7 +419,7 @@ class ViewConvertLead extends SugarView
                 $fieldDef = $beans['Contacts']->field_defs[$select];
                 if (!empty($fieldDef['id_name']) && !empty($_REQUEST[$fieldDef['id_name']]))
                 {
-                    $beans['Contacts']->$fieldDef['id_name'] = $_REQUEST[$fieldDef['id_name']];
+                    $beans['Contacts']->{$fieldDef['id_name']} = $_REQUEST[$fieldDef['id_name']];
                     $selects[$module] = $_REQUEST[$fieldDef['id_name']];
                     if (!empty($_REQUEST[$select]))
                     {
@@ -841,7 +841,7 @@ class ViewConvertLead extends SugarView
 			{
 				$bean->id = create_guid();
 				$bean->new_with_id = true;
-				$contact->$fieldDef['id_name'] = $bean->id ;
+                $contact->{$fieldDef['id_name']} = $bean->id;
 				if ($fieldDef['id_name'] != $select) {
 					$rname = isset($fieldDef['rname']) ? $fieldDef['rname'] : "";
 					if (!empty($rname) && isset($bean->$rname))
