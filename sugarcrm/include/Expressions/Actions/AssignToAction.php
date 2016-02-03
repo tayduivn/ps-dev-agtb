@@ -138,7 +138,7 @@ class AssignToAction extends AbstractAction
             $data = $qsd->getQSUser();
             $data['modules'] = array('Users');
             $data['conditions'][0]['value'] = $userName;
-            $qs = new quicksearchQuery();
+            $qs = new QuickSearchQuery();
             $result = $qs->query($data);
             $resultBean = $json->decodeReal($result);
             print_r($resultBean);

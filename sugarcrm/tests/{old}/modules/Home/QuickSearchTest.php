@@ -54,7 +54,7 @@ class QuickSearchTest extends Sugar_PHPUnit_Framework_TestCase
     			}
     		}
 		}
- 		$this->quickSearch = new quicksearchQuery();
+        $this->quickSearch = new QuickSearchQuery();
 		$result = $this->quickSearch->query($data);
 		$resultBean = $json->decodeReal($result);
 		$this->assertEquals($resultBean['fields'][0]['description'], $tempPT->description);

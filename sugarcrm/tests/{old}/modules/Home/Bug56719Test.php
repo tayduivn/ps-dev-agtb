@@ -145,7 +145,7 @@ class Bug56719Test extends Sugar_PHPUnit_Framework_TestCase
             $args
         );
 
-        $query = new QuicksearchQuery();
+        $query = new QuickSearchQuery();
         $data = $query->get_non_private_teams_array($args);
         $data = json_decode($data, true);
 

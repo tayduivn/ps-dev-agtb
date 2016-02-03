@@ -225,7 +225,7 @@ class Bug61373Test extends Sugar_PHPUnit_Framework_TestCase
             true
         );
 
-        $quickSearchQuery = new quicksearchQuery();
+        $quickSearchQuery = new QuickSearchQuery();
 
         $args = array (
             'method' => 'query',

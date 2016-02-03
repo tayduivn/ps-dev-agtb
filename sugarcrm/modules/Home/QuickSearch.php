@@ -19,7 +19,7 @@
  * @license    http://www.sugarcrm.com/crm/products/sugar-professional-eula.html  SugarCRM Professional End User License
  * @since      Class available since Release 4.5.1
  */
-class quicksearchQuery
+class QuickSearchQuery
 {
     /**
      * Condition operators
