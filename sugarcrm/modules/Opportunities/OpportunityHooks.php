@@ -146,4 +146,26 @@ class OpportunityHooks extends AbstractForecastHooks
             }
         }
     }
+
+    /**
+     * If the account relationship on an opportunity is changed via merging accounts, we need to resave the opportunity
+     * so that the worksheet will reflect the new account.
+     * @param $bean
+     * @param $event
+     * @param $args
+     */
+    public static function fixWorksheetAccountAssignment($bean, $event, $args)
+    {
+        if (!empty($args)
+            && $args['relationship'] == 'accounts_opportunities'
+            && static::isForecastSetup()
+            && !static::useRevenueLineItems()) {
+
+            $bean->account_id = $args['related_id'];
+            static::saveWorksheet($bean, $event, $args);
+            return true;
+        }
+
+        return false;
+    }
 }

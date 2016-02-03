@@ -234,6 +234,7 @@ describe('Base.View.Dashletselect', function() {
 
         afterEach(function() {
             metadata = null;
+            delete app.drawer;
         });
 
         it('should load dashlet configurations in the drawer', function() {

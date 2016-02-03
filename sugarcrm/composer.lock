@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "eea0dedf7363b700d986d361813c5b27",
-    "content-hash": "cb3977236227f3d3bd605b3ee3543d29",
+    "hash": "40bb822f080513405022ae1f2a9409c7",
+    "content-hash": "f554264f52015bbc51cd5a1e75cd0355",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -255,19 +255,22 @@
         },
         {
             "name": "onelogin/php-saml",
-            "version": "2.1.0.1",
+            "version": "2.6.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sugarcrm/php-saml.git",
-                "reference": "a8ba9dbb92c6dac3f50dac268764b5d2a56e706e"
+                "url": "https://github.com/onelogin/php-saml.git",
+                "reference": "9f3583c35339f185e114d148eac08d600a9360ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sugarcrm/php-saml/zipball/a8ba9dbb92c6dac3f50dac268764b5d2a56e706e",
-                "reference": "a8ba9dbb92c6dac3f50dac268764b5d2a56e706e",
+                "url": "https://api.github.com/repos/onelogin/php-saml/zipball/9f3583c35339f185e114d148eac08d600a9360ef",
+                "reference": "9f3583c35339f185e114d148eac08d600a9360ef",
                 "shasum": ""
             },
             "require": {
+                "ext-dom": "*",
+                "ext-mcrypt": "*",
+                "ext-openssl": "*",
                 "php": ">=5.3.2"
             },
             "require-dev": {
@@ -291,22 +294,18 @@
                     "lib/Saml2"
                 ]
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "OneLogin PHP SAML Toolkit",
             "homepage": "https://onelogin.zendesk.com/hc/en-us/sections/200245634-SAML-Toolkits",
             "keywords": [
+                "SAML2",
                 "onelogin",
-                "saml",
-                "saml2"
+                "saml"
             ],
-            "support": {
-                "email": "sixto.garcia@onelogin.com",
-                "issues": "https://github.com/onelogin/php-saml/issues",
-                "source": "https://github.com/onelogin/php-saml/"
-            },
-            "time": "2014-09-27 00:00:51"
+            "time": "2015-09-09 14:18:12"
         },
         {
             "name": "phpmailer/phpmailer",

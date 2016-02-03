@@ -11,6 +11,7 @@
  */
 
 use \Sugarcrm\Sugarcrm\Security\Password\Hash;
+use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 
 require_once 'include/SugarObjects/templates/person/Person.php';
 require_once 'modules/ACL/AclCache.php';
@@ -526,6 +527,22 @@ class User extends Person {
         return $theme;
     }
 
+    /**
+     * Toggles this user's admin status and flushes the ACL cache.
+     *
+     * @param boolean $admin If `true`, then make this user an admin.
+     *   Otherwise, remove admin privileges.
+     */
+    public function setAdmin($admin)
+    {
+        $this->is_admin = $admin ? 1 : 0;
+
+        // When we change a user to or from admin status, we have to flush the ACL cache
+        // or else the user will not be able to access some admin modules.
+        AclCache::getInstance()->clear();
+        // FIXME TY-1094: investigate if we should enforce admin/portal API user/group mutual exclusivity here
+    }
+
 	function save($check_notify = false) {
         // Check if data supplied is valid to save the record, return if not.
         if (!$this->verify_data()) {
@@ -715,10 +732,7 @@ class User extends Person {
 		}
 
 		// If the role doesn't exist in the list of the user's roles
-		if(!empty($role_array) && in_array($role_name, $role_array))
-			return true;
-		else
-			return false;
+        return (!empty($role_array) && ArrayFunctions::in_array_access($role_name, $role_array));
 	}
 
     function get_summary_text() {
@@ -1165,7 +1179,7 @@ EOQ;
 			}
 		}
 
-		$query = "SELECT user_name from users where user_name='$this->user_name' AND deleted=0";
+		$query = "SELECT user_name from users where user_name='".$this->db->quote($this->user_name)."' AND deleted=0";
 		if(!empty($this->id))$query .=  " AND id<>'$this->id'";
 		$result = $this->db->query($query, true, "Error selecting possible duplicate users: ");
 		$dup_users = $this->db->fetchByAssoc($result);

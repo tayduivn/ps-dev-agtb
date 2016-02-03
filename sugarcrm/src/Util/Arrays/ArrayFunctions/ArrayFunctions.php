@@ -13,12 +13,11 @@
 namespace Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions;
 
 /**
- * Class OrderedHash
- * @package Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash
+ * Class ArrayFunctions
+ * @package Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions
  *
- * This class represents an associative array in which the order of pairs is important. The implementation resembles
- * that of {@see SplDoublyLinkedList} with a few exceptions, like in the arguments the `add` method accepts and the role
- * that the constructor plays. And instead of a numerical index, each element is stored under a unique key.
+ * Utility functions for working with standard arrays and Array accessible objects such as Sugar's $_SESSION object
+ * and other custom Array implementations such as TrackableArray or OrderedHash.
  */
 class ArrayFunctions
 {

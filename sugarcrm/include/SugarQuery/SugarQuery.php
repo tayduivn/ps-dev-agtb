@@ -222,6 +222,10 @@ class SugarQuery
      */
     public function from(SugarBean $bean, $options = array())
     {
+        if (is_string($options)){
+            $options = array('alias' => $options);
+        }
+
         $alias = (isset($options['alias'])) ? $options['alias'] : false;
 
         if (!empty($alias)) {
@@ -724,7 +728,7 @@ class SugarQuery
        if(empty($result)) {
            return false;
        }
-       $row = $this->db->fetchByAssoc($result);
+       $row = $this->db->fetchByAssoc($result, true, true);
        if(!empty($row)) {
            return array_shift($row);
        }

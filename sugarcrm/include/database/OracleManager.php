@@ -276,10 +276,11 @@ class OracleManager extends DBManager
 		if(!$this->checkError("$msg Parse Failed: $sql", $dieOnError)) {
 
             $freeStmt = false;
-            if (oci_statement_type($stmt) != 'SELECT' && oci_statement_type($stmt) != 'UPDATE'){ // getAffectedRowCount using UPDATE returned cursor
+            if (!$keepResult && oci_statement_type($stmt) != 'SELECT' && oci_statement_type($stmt) != 'UPDATE'){ // getAffectedRowCount using UPDATE returned cursor
                 // free statement if not SELECT or UPDATE
                 $freeStmt = true;
             }
+
 			$exec_result = $suppress?@oci_execute($stmt):oci_execute($stmt);
 	        $this->query_time = microtime(true) - $this->query_time;
 	        $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
@@ -297,11 +298,7 @@ class OracleManager extends DBManager
 
             $this->lastQuery = $sql;
             if($keepResult) {
-                if (!$freeStmt) {
-                    $this->lastResult = $result;
-                }else{
-                    $this->lastResult = null;
-                }
+                $this->lastResult = $result;
             }
 
             if($this->checkError($msg.' Query Failed: ' . $sql, $dieOnError, $stmt)) {
@@ -509,7 +506,7 @@ class OracleManager extends DBManager
         return false; // no database available
     }
 
-    /**
+    /**+
      * @see DBManager::tableExists()
      */
     public function tableExists($tableName)
@@ -804,6 +801,7 @@ class OracleManager extends DBManager
 			$GLOBALS['log']->info("connected to db");
 
         $GLOBALS['log']->info("Connect:".$this->database);
+
         return true;
 	}
 

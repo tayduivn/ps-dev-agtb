@@ -443,14 +443,14 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
             ),
-            // emailAddress present and dontLegacySave
+            // emailAddress present with fetched and dontLegacySave
             array(
                 'Leads',
                 array(
                     'name' => 'SugarCRM',
                     'email' => 'foobar',
                     'emailAddress' => $this->getSugarEmailAddressFixture(
-                        false,
+                        true,
                         true,
                         array('first@gmail.com', 'second@sugarcrm.com')
                     ),

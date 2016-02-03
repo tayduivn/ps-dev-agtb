@@ -1156,6 +1156,7 @@ AdamCanvas.prototype.triggerTextChangeEvent = function (element, oldText, newTex
     this.updatedElement = [{
         id : element.parent.id,
         type : element.parent.type,
+        relatedObject: element.parent,
         fields : [{
             field : "name",
             oldVal : oldText,

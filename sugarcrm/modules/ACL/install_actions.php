@@ -67,14 +67,12 @@ $missingAclRolesActions = false;
 
 $role1 = BeanFactory::getBean('ACLRoles');
 
-$result = $GLOBALS['db']->query("SELECT id FROM acl_roles where name = 'Tracker'");
-$role_id = $GLOBALS['db']->fetchByAssoc($result);
+$role_id = $GLOBALS['db']->fetchOne("SELECT id FROM acl_roles where name = 'Tracker'");
 
 if(!empty($role_id['id'])) {
    $role_id = $role_id['id'];
    $role1->retrieve($role_id);
-   $result = $GLOBALS['db']->query("SELECT count(role_id) as count FROM acl_roles_actions where role_id = '{$role_id}'");
-   $count = $GLOBALS['db']->fetchByAssoc($result);
+   $count = $GLOBALS['db']->fetchOne("SELECT count(role_id) as count FROM acl_roles_actions where role_id = '{$role_id}'");
    // If there are no corresponding entries in acl_roles_actions, then we need to add it
    if(empty($count['count'])) {
         $missingAclRolesActions = true;
@@ -101,12 +99,11 @@ if($installActions || $missingAclRolesActions) {
     foreach($defaultTrackerRoles as $roleName=>$role){
         foreach($role as $category=>$actions){
             foreach($actions as $name=>$access_override){
-                    $queryACL="SELECT id FROM acl_actions where category='$category' and name='$name'";
-                    $result = $GLOBALS['db']->query($queryACL);
-                    $actionId = $GLOBALS['db']->fetchByAssoc($result);
-                    if (isset($actionId['id']) && !empty($actionId['id'])){
-                        $role1->setAction($role1->id, $actionId['id'], $access_override);
-                    }
+                $queryACL="SELECT id FROM acl_actions where category='$category' and name='$name'";
+                $actionId = $GLOBALS['db']->fetchOne($queryACL);
+                if (isset($actionId['id']) && !empty($actionId['id'])){
+                    $role1->setAction($role1->id, $actionId['id'], $access_override);
+                }
             }
         }
     } //foreach
@@ -119,12 +116,11 @@ $missingAclRolesActions = false;
 $role1 = BeanFactory::getBean('ACLRoles');
 
 $result = $GLOBALS['db']->query("SELECT id FROM acl_roles where name = 'Sales Administrator'");
-$role_id = $GLOBALS['db']->fetchByAssoc($result);
+$role_id = $GLOBALS['db']->fetchByAssoc($result, true, true);
 if(!empty($role_id['id'])) {
    $role_id = $role_id['id'];
    $role1->retrieve($role_id);
-   $result = $GLOBALS['db']->query("SELECT count(role_id) as count FROM acl_roles_actions where role_id = '{$role_id}'");
-   $count = $GLOBALS['db']->fetchByAssoc($result);
+   $count = $GLOBALS['db']->fetchOne("SELECT count(role_id) as count FROM acl_roles_actions where role_id = '{$role_id}'");
    // If there are no corresponding entries in acl_roles_actions, then we need to add it
    if(empty($count['count'])) {
       $missingAclRolesActions = true;
@@ -179,8 +175,7 @@ if($installActions || $missingAclRolesActions) {
                     }
                 }else{
                     $queryACL="SELECT id FROM acl_actions where category='$category' and name='$name'";
-                    $result = $GLOBALS['db']->query($queryACL);
-                    $actionId=$GLOBALS['db']->fetchByAssoc($result);
+                    $actionId = $GLOBALS['db']->fetchOe($queryACL);
                     if (isset($actionId['id']) && !empty($actionId['id'])){
                         $role1->setAction($role1_id, $actionId['id'], $access_override);
                     }

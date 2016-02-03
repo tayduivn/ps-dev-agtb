@@ -11,7 +11,7 @@
  */
 
 /**
- * @coversDefaultClass ForecastWorksheets
+ * @coversDefaultClass ForecastWorksheet
  */
 
 require_once 'tests/SugarTestDatabaseMock.php';

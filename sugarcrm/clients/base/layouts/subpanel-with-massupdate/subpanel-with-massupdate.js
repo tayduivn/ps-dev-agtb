@@ -22,6 +22,9 @@
      * @override
      */
     _stopComponentToggle: function(component) {
-        return component.name === "panel-top" || component.name === 'massupdate';
+        // subpanel header top should always render
+        return component.name === "panel-top" || component.name === 'massupdate'
+        || (!_.isUndefined(component.$el)
+        && component.$el.hasClass('subpanel-header'));
     }
 })

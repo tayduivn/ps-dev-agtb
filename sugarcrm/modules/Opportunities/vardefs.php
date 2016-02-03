@@ -139,6 +139,7 @@ $dictionary['Opportunity'] = array(
                 'currency_id',
                 'base_rate'
             ),
+            'convertToBase' => true,
             'showTransactionalAmount' => true,
         ),
         'amount_usdollar' => array(
@@ -264,6 +265,7 @@ $dictionary['Opportunity'] = array(
                 'currency_id',
                 'base_rate'
             ),
+            'convertToBase' => true,
             'showTransactionalAmount' => true,
         ),
         'worst_case' => array(
@@ -278,6 +280,7 @@ $dictionary['Opportunity'] = array(
                 'currency_id',
                 'base_rate'
             ),
+            'convertToBase' => true,
             'showTransactionalAmount' => true,
         ),
         'commit_stage' => array(

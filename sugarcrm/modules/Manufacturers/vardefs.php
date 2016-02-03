@@ -163,7 +163,7 @@ $dictionary['Manufacturer'] = array(
       'workflow' => false
     ),
 ),
-'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Products', 'allowUserRead' => true)),
+'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Products', 'allowUserRead' => true), 'SugarACLStatic' => false),
 'indices' => array (
        array('name' =>'manufacturerspk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_manufacturers', 'type'=>'index', 'fields'=>array('name','deleted'))

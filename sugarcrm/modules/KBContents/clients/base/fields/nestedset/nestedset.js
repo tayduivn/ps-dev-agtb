@@ -387,6 +387,11 @@
                     if (this.context.parent) {
                         this.context.parent.trigger('kbcontents:category:deleted', node);
                     }
+                },
+                'onSelect': function(node) {
+                    if (!_.isEmpty(node) && !_.isEmpty(node.id) && !_.isEmpty(node.name)) {
+                        return true;
+                    }
                 }
             },
         // @TODO: Find out why params from context for drawer don't pass to our view tree::_initSettings

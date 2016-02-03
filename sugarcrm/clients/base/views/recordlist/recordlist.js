@@ -161,7 +161,7 @@
     /**
      * Filters the given meta removing non-applicable portions
      * @param {Object} meta data to be filtered
-     * @return {*}
+     * @return {Object}
      * @private
      */
     _filterMeta : function(meta, options) {

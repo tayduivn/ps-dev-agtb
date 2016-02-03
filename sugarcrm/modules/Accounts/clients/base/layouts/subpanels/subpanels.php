@@ -116,14 +116,23 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
         'link' => 'documents',
       ),
     ),
-    array (
-      'layout' => 'subpanel',
-      'label' => 'LBL_QUOTES_SUBPANEL_TITLE',
-      'override_subpanel_list_view' => 'subpanel-for-accounts',
-      'context' => array (
-        'link' => 'quotes',
-        'ignore_role' => 1,
-      ),
+    array(
+        'layout' => 'subpanel',
+        'label' => 'LBL_QUOTES_BILLTO',
+        'override_subpanel_list_view' => 'subpanel-for-accounts',
+        'context' => array(
+            'link' => 'quotes',
+            'ignore_role' => 0
+        ),
+    ),
+    array(
+        'layout' => 'subpanel',
+        'label' => 'LBL_QUOTES_SHIPTO',
+        'override_subpanel_list_view' => 'subpanel-for-accounts',
+        'context' => array(
+            'link' => 'quotes_shipto',
+            'ignore_role' => 0
+        ),
     ),
     array (
       'layout' => 'subpanel',

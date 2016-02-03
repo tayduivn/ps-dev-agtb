@@ -126,6 +126,8 @@ $mod_strings = array (
     'LBL_PA_PROCESS_APPROVED_SUCCESS' => 'Process has been approved successfully',
     'LBL_PA_PROCESS_REJECTED_SUCCESS' => 'Process has been rejected successfully',
     'LBL_PA_PROCESS_ROUTED_SUCCESS' => 'Process has been routed successfully',
+    'LBL_PA_PROCESS_CLOSED' => 'The process you are trying to view is closed.',
+    'LBL_PA_PROCESS_UNAVAILABLE' => 'The process you are trying view is not available at this moment.',
 
     'LBL_PMSE_ASSIGN_USER' => 'Assign User',
     'LBL_PMSE_ASSIGN_USER_APPLIED' => 'Assign User Applied',

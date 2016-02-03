@@ -124,8 +124,8 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
                                         $newValue = $this->beanHandler->mergeBeanInTemplate($bean, $value->value);
                                     }
                             }
-
-                            if ($key == 'assigned_user_id') {
+                            
+                            if (in_array($key, array('assigned_user_id', 'created_by', 'modified_user_id'))) {
                                 $newValue = $this->beanHandler->mergeBeanInTemplate($bean,
                                     $this->getCustomUser($value->value, $bean));
                             }

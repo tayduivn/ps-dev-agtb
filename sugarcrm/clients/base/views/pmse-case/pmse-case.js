@@ -135,6 +135,7 @@
                                 messages: app.lang.get('LBL_PA_PROCESS_APPROVED_SUCCESS', 'pmse_Inbox'),
                                 autoClose: true
                             });
+                            self.model.setSyncedAttributes(self.model.attributes);
                             self.redirectCase();
                         }
                     });
@@ -173,6 +174,7 @@
                                 messages: app.lang.get('LBL_PA_PROCESS_REJECTED_SUCCESS', 'pmse_Inbox'),
                                 autoClose: true
                             });
+                            self.model.setSyncedAttributes(self.model.attributes);
                             self.redirectCase();
                         }
                     });

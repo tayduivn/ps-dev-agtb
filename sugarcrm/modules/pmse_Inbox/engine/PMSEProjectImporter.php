@@ -187,7 +187,7 @@ class PMSEProjectImporter extends PMSEImporter
      * @param $projectData
      * @return bool|void
      */
-    public function saveProjectData($projectData)
+    public function saveProjectData($projectData, $isCopy = false)
     {
         global $current_user;
         $projectBean = $this->getBean();
@@ -221,7 +221,10 @@ class PMSEProjectImporter extends PMSEImporter
         unset($projectData['diagram'], $projectData['process'], $projectData['definition'], $projectData['dynaforms']);
 
         $projectData['prj_uid'] = PMSEEngineUtils::generateUniqueID();
-        $projectData['prj_status'] = 'INACTIVE';
+
+        if (!$isCopy) {
+            $projectData['prj_status'] = 'INACTIVE';
+        }
 
         foreach ($projectData as $key => $value) {
             if (isset($projectBean->field_defs[$key])){
@@ -268,6 +271,11 @@ class PMSEProjectImporter extends PMSEImporter
         // by default an imported project should be disabled
         $processDefinitionBean->pro_status = 'INACTIVE';
         $processDefinitionBean->save();
+
+        // terminate fields
+        if (!empty($processDefinitionBean->pro_terminate_variables) && $processDefinitionBean->pro_terminate_variables != '[]'){
+            $this->createRelatedDependencyTerminateProcess($processDefinitionBean->id, $processDefinitionBean->pro_terminate_variables);
+        }
 
         $this->saveProjectActivitiesData($diagramData['activities'], $keysArray);
         $this->saveProjectEventsData($diagramData['events'], $keysArray);
@@ -789,4 +797,15 @@ class PMSEProjectImporter extends PMSEImporter
         return array($element, $definition, $bound);
     }
 
+    private function createRelatedDependencyTerminateProcess($pro_id, $pro_terminate_variables)
+    {
+        $fakeEventData = array(
+            'id' => 'TERMINATE',
+            'evn_type' => 'GLOBAL_TERMINATE',
+            'evn_criteria' => $pro_terminate_variables,
+            'evn_behavior' => 'CATCH',
+            'pro_id' => $pro_id
+        );
+        $this->dependenciesWrapper->processRelatedDependencies($fakeEventData);
+    }
 }

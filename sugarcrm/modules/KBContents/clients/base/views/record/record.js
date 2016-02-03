@@ -40,6 +40,18 @@
             return;
         }
         this.render();
+    },
+
+    /**
+     * @inheritdoc
+     *
+     * Need to switch field to `edit` if it has errors.
+     */
+    handleFieldError: function(field, hasError) {
+        this._super('handleFieldError', [field, hasError]);
+        if (hasError && field.tplName === 'detail') {
+            field.setMode('edit');
+        }
     }
 
 })

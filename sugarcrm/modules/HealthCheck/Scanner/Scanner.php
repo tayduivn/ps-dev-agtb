@@ -28,6 +28,16 @@ class HealthCheckScanner
     const FAIL = 99;
 
     /**
+     * Constant for failure of unserialization because of data issues
+     */
+    const UNSERIALIZE_FAIL_DATA = 1;
+
+    /**
+     * Constant for failure of unserialization because of object or class references
+     */
+    const UNSERIALIZE_FAIL_OBJECTS = 2;
+
+    /**
      *
      * @var HealthCheckScannerMeta
      */
@@ -278,6 +288,113 @@ class HealthCheckScanner
      * @var UpgradeDriver
      */
     protected $upgrader = null;
+
+
+    /**
+     * Dirs that are moved to vendor
+     * @var array
+     */
+    protected $removed_directories = array(
+        'include/HTMLPurifier',
+        'include/HTTP_WebDAV_Server',
+        'include/Pear',
+        'include/Smarty',
+        'XTemplate',
+        'Zend',
+        'include/lessphp',
+        'log4php',
+        'include/nusoap',
+        'include/oauth2-php',
+        'include/pclzip',
+        'include/reCaptcha',
+        'include/tcpdf',
+        'include/ytree',
+        'include/SugarSearchEngine/Elastic/Elastica',
+    );
+    /**
+     * dirs or files that have been deleted
+     * @var array
+     */
+    protected $removed_files = array(
+        'include/Smarty/plugins/function.sugar_help.php',
+    );
+
+    /**
+     * Specific files that should be excluded from SH include check
+     * @var array
+     */
+    protected $specificSugarFiles = array(
+        'include/Smarty/plugins/function.sugar_action_menu.php'
+    );
+
+    protected $excludedScanDirectories = array(
+        'backup',
+        'tmp',
+        'temp',
+    );
+    protected $filesToFix = array();
+
+    protected $specificSugarFilesToFix = array();
+
+    protected $sessionUsages = array();
+
+    protected $deletedFilesReferenced = array();
+
+    /**
+     * regex'es for removed code
+     * @var array
+     */
+    protected $deprecatedCodePatterns = array(
+        '/[^\w]SugarSession[^\w]/i' => 'deprecatedCodeSugarSession' //report id
+    );
+
+    protected $filesWithDeprecatedCode = array();
+
+    /**
+     * Array of warnings per upgrade method that is used for tracking possible
+     * failures
+     * @var array
+     */
+    protected $unserializeFailureWarnings = array();
+
+    /**
+     * Listing of unserialization failure warnings
+     * @var array
+     */
+    protected $unserializeFailureReasons = array(
+        self::UNSERIALIZE_FAIL_DATA => 'LBL_PA_UNSERIALIZE_DATA_FAILURE',
+        self::UNSERIALIZE_FAIL_OBJECTS => 'LBL_PA_UNSERIALIZE_OBJECT_FAILURE'
+    );
+
+    /**
+     * Listing of methods that are run during the PA unserialize upgrade. At a
+     * minimum this requires a task name that maps to a table name and columns.
+     * @var array
+     */
+    protected $unserializeTasks = array(
+        'lockedVariables' => array(
+            'table' => 'pmse_bpm_process_definition',
+            'cols' => array('pro_locked_variables'),
+        ),
+        'casDataVariables' => array(
+            'table' => 'pmse_bpm_case_data',
+            'cols' => array('cas_data'),
+        ),
+        'bpmFormActionTable' => array(
+            'table' => 'pmse_bpm_form_action',
+            'cols' => array('cas_data', 'cas_pre_data'),
+        ),
+        'dynamicFormTable' => array(
+            'table' => 'pmse_bpm_dynamic_forms',
+            'cols' => array('dyn_view_defs'),
+            'functions' => array('base64_decode'),
+            'decode' => false,
+        ),
+        'bpmFlowTable' => array(
+            'table' => 'pmse_bpm_flow',
+            'cols' => array('cas_adhoc_actions'),
+        ),
+    );
 
     /**
      *
@@ -649,6 +766,10 @@ class HealthCheckScanner
         // Check the Elastic Search Customization
         $this->checkCustomElastic();
 
+
+        // Check Process Author unserialization
+        $this->checkPAUnserialization();
+
         // TODO: custom dashlets
         $this->log("VERDICT: {$this->status}", 'STATUS');
         if ($GLOBALS['sugar_config']['site_url']) {
@@ -665,6 +786,292 @@ class HealthCheckScanner
 
         restore_error_handler();
         return $this->logMeta;
+    }
+
+    /**
+     * Checks whether Process Author unserializtion between 7.6.(0|1) and 7.6.2+ will
+     * fail. If any unserialize calls fail, it will notify with a Bucket F red flag.
+     */
+    protected function checkPAUnserialization()
+    {
+        // Make sure we need to run this first
+        list($version, $flavor) = $this->getVersionAndFlavor();
+
+        // Only run this for 7.6.0 and 7.6.1 instances
+        if (version_compare($version, '7.6.0.0', '==') || version_compare($version, '7.6.1.0', '==')) {
+            // And only run this for ENT or ULT flavors
+            if (in_array(strtolower($flavor), array('ent', 'ult'))) {
+                $warnings = $this->checkUnserializationFailures();
+                foreach ($warnings as $warning) {
+                    $this->updateStatus('invalidPASerialization', $warning['count'], $warning['col'], $warning['table'], $warning['reason']);
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks whether the unserialization of PHP serialized data will actually
+     * work during an upgrade. Used by HealthCheck to ensure that an upgrade will
+     * actually succeed when it comes to Process Author conversion of serialized
+     * data to json data.
+     * @return array List of warnings
+     */
+    protected function checkUnserializationFailures()
+    {
+        foreach ($this->unserializeTasks as $data) {
+            $this->handleUnserializeCheck($data);
+        }
+
+        return $this->getUnserializeFailureWarnings();
+    }
+
+    /**
+     * Triggers the actual unserialize check on the data
+     * @param array $data Collection of properties used to check serialized data
+     */
+    protected function handleUnserializeCheck($data)
+    {
+        // Define our table
+        $table = $data['table'];
+
+        // Define the column(s) we will be working with.
+        // This is always an array.
+        $cols = $data['cols'];
+
+        // Builds a simple list of selectable columns
+        $selectCols = implode(',', $cols);
+
+        // Add a logger for this step
+        $this->log(
+            sprintf(
+                "Checking unserialization of column(s) '%s' in the '%s' table...",
+                $selectCols,
+                $table
+            )
+        );
+
+        // Builds a list of not empty SQL bits.
+        $whereCols = $updateCols = array();
+        foreach ($cols as $col) {
+            $whereCols[] = $this->getNotEmptyFieldSQL($col);
+        }
+
+        $whereNotEmpty = implode(' AND ', $whereCols);
+
+        // Build the query and run it
+        $select = "SELECT id, %s FROM %s WHERE %s";
+        $sql = sprintf($select, $selectCols, $table, $whereNotEmpty);
+        $result = $this->db->query($sql);
+
+        // Loop and check now, making sure to send a false flag to fetchByAssoc
+        // to ensure that the data in the row does not get html encoded on fetch
+        while ($row = $this->db->fetchByAssoc($result, false)) {
+            foreach ($cols as $col) {
+                // Isolate the actual data to be handled
+                $string = $row[$col];
+
+                // If there are functions to apply to this data, do that now
+                if (isset($data['functions'])) {
+                    foreach ($data['functions'] as $function) {
+                        $string = $function($string);
+                    }
+                }
+
+                // If, for some reason, the string to be checked is empty, there
+                // is nothing to do.
+                if (empty($string)) {
+                    continue;
+                }
+
+                // Get our decode flag from the properties
+                $decode = !isset($data['decode']) || $data['decode'] === true;
+
+                // Do the actual check now
+                $reason = $this->checkSerializedData($string, $decode);
+
+                // If there was a failure reason, add it to the stack of reasons
+                if ($reason) {
+                    $msg = $this->getPALogMessage($table, $col, $row['id'], $string, $reason);
+
+                    // Log this so we know what failed and why
+                    $this->log($msg);
+
+                    // Add this failure to the stack
+                    $this->addUnserializeFailureWarning($table, $col, $reason);
+                }
+            }
+        }
+    }
+
+    /**
+     * Get a not empty field where clause for a column. Done in a wrapper method
+     * because Oracle does things a little different.
+     * @param string $col The name of the column to build the SQL on
+     * @return string
+     */
+    protected function getNotEmptyFieldSQL($col)
+    {
+        // Oracle cannot handle empty string comparisons, so this one will be a
+        // NULL check only
+        if ($this->db instanceof OracleManager) {
+            $return = "$col IS NOT NULL";
+        } else {
+            $quoted = $this->db->quoted('');
+            $return = "($col != $quoted AND $col IS NOT NULL)";
+        }
+
+        return $return;
+    }
+
+    /**
+     * Gets a parsed log message string for Process Author Unserialization issues
+     * @param string $table The table that contains the data for this failure
+     * @param string $col The column that contains the data for this failure
+     * @param string $id The id of the failed data
+     * @param string $string The actual failed data
+     * @param int $reason The failure reason code
+     * @return string
+     */
+    protected function getPALogMessage($table, $col, $id, $string, $reason)
+    {
+        // Build a log string for parsing into the log
+        $logString = "UNSERIALIZATION FAILURE:\nTable: %s\nColumn: %s\nID: %s";
+        $logString .= "\n-----\n%s\n-----\nReason: %s";
+
+        // Translate the reason code
+        $reason = $this->getUnserializeFailureReason($reason);
+        return sprintf($logString, $table, $col, $id, $string, $reason);
+    }
+
+    /**
+     * Checks an input to see if there are unserialization issues with it
+     * @param string $input Serialized data
+     * @param boolean $decode Whether to html entity decode the input
+     * @return int
+     */
+    protected function checkSerializedData($input, $decode = true)
+    {
+        // Basic good return
+        $reason = 0;
+        if ($this->serializationHasObjectRefs($input)) {
+            // This is an easy check, and tells us right away why we wouldn't be
+            // able to unserialize
+            $reason = self::UNSERIALIZE_FAIL_OBJECTS;
+        } else {
+            // Since we need to work on html decoded data, get that now
+            $decoded = $decode ? html_entity_decode($input) : $input;
+
+            // Now try to unserialize, suppressing errors in case of bad data
+            $unserialized = @unserialize($decoded);
+
+            // If this failed, it is either an encoding issue or just bad data
+            if ($unserialized === false) {
+                // If the secondary unserializer returns a false, then we have
+                // bad data that cannot be manipulated into something unserializable
+                if ($this->secondaryUnserialize($decoded) === false) {
+                    $reason = self::UNSERIALIZE_FAIL_DATA;
+                }
+            }
+        }
+
+        return $reason;
+    }
+
+    /**
+     * Handles a second level of unserialization in case the first one didn't
+     * work. This happens in cases where data may have been serialized in one
+     * encoding charset but is being unserialized in another.
+     * @param string $input Serialized data
+     * @param boolean $decode Whether to html entity decode the input
+     * @return boolean
+     */
+    protected function secondaryUnserialize($string) {
+        // For reference, please see the following links...
+        //http://magp.ie/2014/08/13/php-unserialize-string-after-non-utf8-characters-stripped-out/
+        //https://dzone.com/articles/mulit-byte-unserialize
+        //http://stackoverflow.com/questions/2853454/php-unserialize-fails-with-non-encoded-characters
+        $string = preg_replace_callback(
+            '!s:(\d+):"(.*?)";!s',
+            function ($matches) {
+                if (isset($matches[2])) {
+                    return 's:'.strlen($matches[2]).':"'.$matches[2].'";';
+                }
+            },
+            $string
+        );
+
+        // Use error suppression to prevent erroneous output
+        return @unserialize($string) !== false;
+    }
+
+    /**
+     * Checks whether the $value contains object or class references, but not
+     * objects of type stdClass
+     * @param string $value Serialized value of any type
+     * @return boolean
+     */
+    protected function serializationHasObjectRefs($value)
+    {
+        // Remove all references to stdClass objects
+        $cleared = str_replace('O:8:"stdClass"', '', $value);
+
+        // Now use the same logic as the unserialize validator
+        preg_match('/[oc]:\d+:/i', $cleared, $matches);
+        return count($matches) > 0;
+    }
+
+    /**
+     * Adds a preflight warning to the list of warnings
+     * @param string $table The table that the warning was thrown on
+     * @param string $col The column the warning was thrown on
+     * @param int $reason The reason code for the warning
+     */
+    protected function addUnserializeFailureWarning($table, $col, $reason)
+    {
+        if (!isset($this->unserializeFailureWarnings[$table][$col][$reason])) {
+            $this->unserializeFailureWarnings[$table][$col][$reason] = 0;
+        }
+
+        $this->unserializeFailureWarnings[$table][$col][$reason]++;
+    }
+
+    /**
+     * Gets a semi formatted list of data for use in parsing the healthcheck
+     * scan
+     * @return array
+     */
+    protected function getUnserializeFailureWarnings()
+    {
+        // Order is important, so make it count... col... table.. reason
+        $return = array();
+        foreach ($this->unserializeFailureWarnings as $table => $cols) {
+            foreach ($cols as $col => $reasons) {
+                foreach ($reasons as $reason => $count) {
+                    $return[] = array(
+                        'count' => $count,
+                        'col' => $col,
+                        'table' => $table,
+                        'reason' => $this->getUnserializeFailureReason($reason),
+                    );
+                }
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Gets a translated failure reason
+     * @param int $reason Reason code
+     * @return string
+     */
+    protected function getUnserializeFailureReason($reason)
+    {
+        if ($reason && array_key_exists($reason, $this->unserializeFailureReasons)) {
+            return $this->meta->getModString($this->unserializeFailureReasons[$reason]);
+        }
+
+        return "Could not determine reason (Reason Code: $reason)";
     }
 
     /**
@@ -835,54 +1242,6 @@ class HealthCheckScanner
     }
 
     /**
-     * Dirs that are moved to vendor
-     * @var array
-     */
-    protected $removed_directories = array(
-        'include/HTMLPurifier',
-        'include/HTTP_WebDAV_Server',
-        'include/Pear',
-        'include/Smarty',
-        'XTemplate',
-        'Zend',
-        'include/lessphp',
-        'log4php',
-        'include/nusoap',
-        'include/oauth2-php',
-        'include/pclzip',
-        'include/reCaptcha',
-        'include/tcpdf',
-        'include/ytree',
-        'include/SugarSearchEngine/Elastic/Elastica',
-    );
-    /**
-     * dirs or files that have been deleted
-     * @var array
-     */
-    protected $removed_files = array(
-        'include/Smarty/plugins/function.sugar_help.php',
-    );
-
-    /**
-     * Specific files that should be excluded from SH include check
-     * @var array
-     */
-    protected $specificSugarFiles = array(
-        'include/Smarty/plugins/function.sugar_action_menu.php'
-    );
-
-    protected $excludedScanDirectories = array(
-        'backup',
-        'tmp',
-        'temp',
-    );
-    protected $filesToFix = array();
-
-    protected $specificSugarFilesToFix = array();
-
-    protected $sessionUsages = array();
-
-    /**
      * Dump Scanner issues to log and optional stdout
      */
     public function dumpMeta()
@@ -896,8 +1255,6 @@ class HealthCheckScanner
         }
         $this->log('*** END HEALTHCHECK ISSUES ***');
     }
-
-    protected $deletedFilesReferenced = array();
 
     /**
      * Searching line number of value
@@ -929,6 +1286,7 @@ class HealthCheckScanner
      */
     protected function scanCustomDir()
     {
+        $this->checkCreateActions();
         $this->log("Checking custom directory for no longer valid code");
         $files = $this->getPhpFiles("custom/");
         foreach ($files as $name => $file) {
@@ -936,6 +1294,7 @@ class HealthCheckScanner
             $fileContents = file_get_contents($file);
             $this->scanFileForInvalidReferences($file, $fileContents);
             $this->scanFileForSessionArrayReferences($file, $fileContents);
+            $this->scanFileForDeprecatedCode($file, $fileContents);
         }
         //Now that we have catalogued all the bad files in custom, log them by category.
         $this->updateCustomDirScanStatus();
@@ -1041,6 +1400,19 @@ class HealthCheckScanner
         }
     }
 
+    /**
+     * Checks that we don't use classes deprecated/removed in sugar API
+     * @param string $file
+     * @param string $fileContents
+     */
+    protected function scanFileForDeprecatedCode($file, $fileContents)
+    {
+        foreach ($this->deprecatedCodePatterns as $pattern => $reportId) {
+            if (preg_match($pattern, $fileContents)) {
+                $this->filesWithDeprecatedCode[$reportId][] = $file;
+            }
+        }
+    }
 
     protected function updateCustomDirScanStatus() {
         if (!empty($this->filesToFix)) {
@@ -1074,6 +1446,9 @@ class HealthCheckScanner
             }
             $this->updateStatus("arraySessionUsage", $filesWithSession);
         }
+        foreach ($this->filesWithDeprecatedCode as $reportId => $files) {
+            $this->updateStatus($reportId, implode(PHP_EOL, $files));
+        }
     }
 
 
@@ -1102,13 +1477,20 @@ class HealthCheckScanner
             $this->checkTableName($module);
         }
 
+        $isNewModule = false;
         if ($this->isNewModule($module)) {
             $this->updateStatus("notStockModule", $module);
             // not a stock module, check if it's working at least with BWC
             $this->checkMBModule($module);
+            $isNewModule = true;
         } else {
             $this->checkStockModule($module);
         }
+        $options = array(
+            'module' => $module,
+            'isNewModule' => $isNewModule,
+        );
+        $this->checkCreateActions($options);
     }
 
     /**
@@ -1125,6 +1507,66 @@ class HealthCheckScanner
             return $this->beanList[$module];
         }
         return null;
+    }
+
+    /**
+     * Check if there is a create-actions customization on this instance. By
+     * default, checks the clients/ folder for these customizations.
+     *
+     * @param array $options {
+     *     Optional hash that defines which module folders should be scanned for
+     *     create-actions components. If passed, the clients/ folder will not
+     *     be scanned.
+     *
+     *     @type string $module The module to scan the custom/$module/clients/*
+     *       directory with.
+     *     @type boolean $isNewModule `true` to scan both the
+     *       custom/$module/clients/* and modules/$module/clients/* directories.
+     *       If `false` or no value passed, only the custom/$module/clients/*
+     *       directory will be scanned.
+     * }
+     */
+    protected function checkCreateActions($options = array()) {
+        $files = array();
+        $createActionsPath = 'clients' . DIRECTORY_SEPARATOR .
+            '*' . DIRECTORY_SEPARATOR .
+            '{layouts,views}' . DIRECTORY_SEPARATOR .
+            'create-actions' . DIRECTORY_SEPARATOR .
+            'create-actions.*';
+
+        if (!empty($options['module'])) {
+            $this->log("Checking for customized create-actions components in custom/modules/{$options['module']}");
+            $files = glob(
+                'custom' . DIRECTORY_SEPARATOR .
+                'modules' . DIRECTORY_SEPARATOR .
+                $options['module'] . DIRECTORY_SEPARATOR .
+                $createActionsPath,
+                GLOB_BRACE
+            );
+
+            if (!empty($options['isNewModule'])) {
+                $this->log("Checking for customized create-actions components in modules/{$options['module']}");
+                $files = array_merge($files, glob(
+                    'modules' . DIRECTORY_SEPARATOR .
+                    $options['module'] . DIRECTORY_SEPARATOR .
+                    $createActionsPath,
+                    GLOB_BRACE
+                ));
+            }
+        } else {
+            $this->log("Checking for customized create-actions components in custom/clients");
+            $files = glob(
+                'custom' . DIRECTORY_SEPARATOR .
+                $createActionsPath,
+                GLOB_BRACE
+            );
+        }
+
+        if (!empty($files)) {
+            $formatted = implode(', ', $files);
+            $this->log('Found custom create-actions components');
+            $this->updateStatus('hasCustomCreateActions', $formatted);
+        }
     }
 
     /**

@@ -1288,10 +1288,15 @@ EOHTML;
                     $params[] = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
                 break;
             case 'DetailView':
-                $beanName = $this->bean->get_summary_text();
-                if($this->bean->isFavoritesEnabled())
-                    $beanName .= '&nbsp;' . SugarFavorites::generateStar(SugarFavorites::isUserFavorite($this->module, $this->bean->id), $this->module, $this->bean->id);
-                $params[] = $beanName;
+                // We cannot assume we will always have a bean, especially in
+                // cases like hitting Administration and not having permission
+                if ($this->bean) {
+                    $beanName = $this->bean->get_summary_text();
+                    if($this->bean->isFavoritesEnabled()) {
+                        $beanName .= '&nbsp;' . SugarFavorites::generateStar(SugarFavorites::isUserFavorite($this->module, $this->bean->id), $this->module, $this->bean->id);
+                    }
+                    $params[] = $beanName;
+                }
                 break;
             }
         }

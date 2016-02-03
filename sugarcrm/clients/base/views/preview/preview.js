@@ -41,6 +41,61 @@
         this._delegateEvents();
         this.delegateButtonEvents();
         this.collection = app.data.createBeanCollection(this.module);
+
+        /**
+         * An array of the {@link #alerts alert} names in this view.
+         *
+         * @property {Array}
+         * @protected
+         */
+        this._viewAlerts = [];
+
+        /**
+         * A collection of alert messages to be used in this view. The alert methods
+         * should be invoked by Function.prototype.call(), passing in an instance of
+         * a sidecar view. For example:
+         *
+         *     // ...
+         *     this.alerts.showInvalidModel.call(this);
+         *     // ...
+         *
+         * FIXME: SC-3451 will refactor this `alerts` structure.
+         * @property {Object}
+         */
+        this.alerts = {
+            showInvalidModel: function() {
+                if (!this instanceof app.view.View) {
+                    app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
+                    'an instance of this view.');
+                    return;
+                }
+                var name = 'invalid-data';
+                this._viewAlerts.push(name);
+                app.alert.show(name, {
+                    level: 'error',
+                    messages: 'ERR_RESOLVE_ERRORS'
+                });
+            },
+            showNoAccessError: function() {
+                if (!this instanceof app.view.View) {
+                    app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
+                    'an instance of this view.');
+                    return;
+                }
+                // dismiss the default error
+                app.alert.dismiss('data:sync:error');
+                // display no access error
+                app.alert.show('server-error', {
+                    level: 'error',
+                    messages: 'ERR_HTTP_404_TEXT_LINE1'
+                });
+                // discard any changes before redirect
+                this.handleCancel();
+                // redirect to list view
+                var route = app.router.buildRoute(this.module);
+                app.router.navigate(route, {trigger: true});
+            }
+        };
     },
 
     /**
@@ -367,13 +422,14 @@
      * is allowed
      */
     setEditableFields: function() {
+        var self = this;
         // we only want to edit non readonly fields
         this.editableFields = _.reject(this.fields, function(field) {
             return field.def.readOnly || field.def.calculated ||
                 //Added for SugarLogic fields since they are not supported
                 //Fixme: PAT-2241 will remove this
                 field.def.previewEdit === false ||
-                !app.acl.hasAccessToModel('edit', this.model, field.name);
+                !app.acl.hasAccessToModel('edit', self.model, field.name);
         });
     },
 
