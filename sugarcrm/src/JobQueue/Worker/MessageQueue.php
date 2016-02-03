@@ -12,7 +12,9 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Worker;
 
+use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue\AdapterInterface;
+use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\RuntimeException;
 use Sugarcrm\Sugarcrm\JobQueue\Serializer\SerializerInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
@@ -44,14 +46,21 @@ class MessageQueue implements WorkerInterface
     protected $serializer;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * Initialize worker and set an adapter to work with.
      * @param AdapterInterface $adapter
      * @param SerializerInterface $serializer
+     * @param LoggerInterface $logger
      */
-    public function __construct(AdapterInterface $adapter, SerializerInterface $serializer)
+    public function __construct(AdapterInterface $adapter, SerializerInterface $serializer, LoggerInterface $logger)
     {
         $this->adapter = $adapter;
         $this->serializer = $serializer;
+        $this->logger = $logger;
     }
 
     /**
@@ -64,9 +73,16 @@ class MessageQueue implements WorkerInterface
 
     /**
      * {@inheritdoc}
+     * @throw InvalidArgumentException
      */
     public function registerHandler($route, $function)
     {
+        if (empty($route) || !is_string($route)) {
+            throw new InvalidArgumentException("Cannot register Handler for non-string route name");
+        }
+        if (!is_callable($function)) {
+            throw new InvalidArgumentException("Cannot register Handler '{$route}' as it is not callable");
+        }
         $this->adapter->bind($route);
         $this->addHandler($route, $function);
     }
@@ -86,23 +102,25 @@ class MessageQueue implements WorkerInterface
      */
     public function work()
     {
+        $this->logger->info('[MessageQueue]: work.');
         if (!$this->handlers) {
             throw new RuntimeException('No handlers registered.');
         }
         $message = $this->adapter->getMessage();
         if (!$message) {
+            $this->logger->info('[MessageQueue]: no jobs in queue.');
             $this->returnCode = self::RETURN_CODE_NO_JOBS;
             return false;
         }
-
         $job = $this->adapter->getJob($message);
         if (!$job) {
+            $this->logger->error('[MessageQueue]: cannot receive a job by message.');
             return false;
         }
         $this->returnCode = self::RETURN_CODE_SUCCESS;
-
         $workload = $this->serializer->unserialize($job);
         if (!($workload instanceof WorkloadInterface)) {
+            $this->logger->error('[MessageQueue]: invalid workload instance.');
             return false;
         }
         $function = $this->getHandler($workload->getRoute());
@@ -111,9 +129,9 @@ class MessageQueue implements WorkerInterface
             $this->adapter->resolve($message);
         } else {
             $this->returnCode = self::RETURN_CODE_NO_REGISTERED_FUNCTIONS;
+            $this->logger->warning("[MessageQueue]: no registered function for handler '{$workload->getRoute()}'.");
             return false;
         }
-
         return true;
     }
 
@@ -133,6 +151,7 @@ class MessageQueue implements WorkerInterface
      */
     protected function addHandler($route, $function)
     {
+        $this->logger->debug("[MessageQueue]: register route '{$route}'.");
         $this->handlers[$route] = $function;
     }
 

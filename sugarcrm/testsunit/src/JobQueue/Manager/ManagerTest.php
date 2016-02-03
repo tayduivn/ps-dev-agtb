@@ -12,11 +12,10 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\JobQueue\Manager;
 
+use Psr\Log\NullLogger;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 use Sugarcrm\Sugarcrm\JobQueue\Adapter\AdapterRegistry;
 use Sugarcrm\Sugarcrm\JobQueue\Handler\HandlerRegistry;
-use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
-use Psr\Log\LogLevel;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\JobQueue\Manager\Manager
@@ -120,23 +119,20 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
             ->setMethods(array(
                 'getSystemConfig',
                 'getLockStrategy',
-                'getObserver',
+                'getSystemObservers',
+                'applyObserver',
                 'getClient',
                 'getDispatcher',
                 'getMessageQueueAdapter'
             ))
             ->getMock();
 
-        $manager
-            ->expects($this->any())
-            ->method('getObserver')
-            ->will($this->returnValue(new \SplObjectStorage()));
+        $manager->expects($this->any())->method('getSystemObservers')->will($this->returnValue(array()));
+        $manager->expects($this->any())->method('applyObserver')->will($this->returnValue(true));
 
-        $logMan = $this->getMockBuilder('LoggerManager')
-            ->disableOriginalConstructor()
-            ->setMethods(array(LogLevel::INFO))
-            ->getMock();
-        TestReflection::setProtectedValue($manager, 'logger', new LoggerTransition($logMan));
+        TestReflection::setProtectedValue($manager, 'logger', new NullLogger());
+        // Instead of mocking getObserver();
+        TestReflection::setProtectedValue($manager, 'observer', new \SplPriorityQueue());
         TestReflection::setProtectedValue($manager, 'handlerRegistry', new HandlerRegistry());
         TestReflection::setProtectedValue($manager, 'adapterRegistry', new AdapterRegistry());
 

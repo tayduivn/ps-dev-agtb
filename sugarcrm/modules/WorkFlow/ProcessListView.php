@@ -1,4 +1,7 @@
 <?php
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -42,17 +45,8 @@ global $focus_list;
 
 echo getClassicModuleTitle($mod_strings['LBL_MODULE_ID'], array($mod_strings['LBL_PROCESS_LIST'])	, true); 
 
-if(!empty($_REQUEST['base_module']) && $_REQUEST['base_module']){
-	
-	$target_base_module = $_REQUEST['base_module'];
-	
-} else {
-
-	$target_base_module = "";
-	
-}	
-
-
+$request = InputValidation::getService();
+$target_base_module = $request->getValidInputRequest('base_module', 'Assert\Bean\ModuleName');
 
 require_once('modules/MySettings/StoreQuery.php');
 $storeQuery = new StoreQuery();
@@ -96,7 +90,7 @@ if ($title) $display_title = $title;
 
 
 
-	$where = "workflow.base_module='".$target_base_module."'";
+	$where = "workflow.base_module=".$GLOBALS['db']->quoted($target_base_module);
 	
 	$ListView = new ListView();
 

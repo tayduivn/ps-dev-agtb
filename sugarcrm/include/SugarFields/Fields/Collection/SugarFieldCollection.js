@@ -292,7 +292,7 @@ if(typeof(SUGAR.collection) == "undefined") {
                     	var sqs_id = this.form + '_' + new_name;
                         if (typeof this.sqs_clone != 'undefined') {
                         	var sqs_clone = YAHOO.lang.JSON.stringify(this.sqs_clone);
-                            eval('sqs_objects[sqs_id]=' + sqs_clone);
+                            sqs_objects[sqs_id] = JSON.parse(sqs_clone);
                             
                             for (var pop_field in sqs_objects[sqs_id]['populate_list']) {
                                 if (typeof sqs_objects[sqs_id]['populate_list'][pop_field] == 'string') {
@@ -432,7 +432,7 @@ if(typeof(SUGAR.collection) == "undefined") {
 
             if (typeof sqs_objects != 'undefined' && typeof sqs_objects[clone_id] != 'undefined') {
                 var clone = YAHOO.lang.JSON.stringify(sqs_objects[clone_id]);
-                eval('this.sqs_clone=' + clone);
+                this.sqs_clone = JSON.parse(clone);
             }
         },
         /**

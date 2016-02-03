@@ -11,6 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 /*
 ARGS:
  $_REQUEST['method']; : options: 'SaveRelationship','Save','DeleteRelationship','Delete'
@@ -23,10 +25,11 @@ ARGS:
 //$_REQUEST['return_type']; : when set the results of a report will be linked with the parent.
 */
 
-
 require_once('include/formbase.php');
 
-$refreshsubpanel=true;
+$request = InputValidation::getService();
+$refreshsubpanel = true;
+
 if (isset($_REQUEST['return_type'])  && $_REQUEST['return_type'] == 'report') {
 	save_from_report($_REQUEST['subpanel_id'] //report_id
 					 ,$_REQUEST['record'] //parent_id
@@ -35,22 +38,28 @@ if (isset($_REQUEST['return_type'])  && $_REQUEST['return_type'] == 'report') {
 	);
 } else if (isset($_REQUEST['return_type'])  && $_REQUEST['return_type'] == 'addtoprospectlist') {
 
-	$GLOBALS['log']->debug(print_r($_REQUEST,true));
-	if(!empty($_REQUEST['prospect_list_id']) and !empty($_REQUEST['prospect_ids']))
-	{
-	    add_prospects_to_prospect_list(
-	        $_REQUEST['prospect_list_id'],
-	        $_REQUEST['prospect_ids']
-	    );
-	}
-	else
-	{
-	    $parent = BeanFactory::getBean($_REQUEST['module'], $_REQUEST['record']);
-	    add_to_prospect_list(urldecode($_REQUEST['subpanel_module_name']),$_REQUEST['parent_module'],$_REQUEST['parent_type'],$_REQUEST['subpanel_id'],
-	        $_REQUEST['child_id'],$_REQUEST['link_attribute'],$_REQUEST['link_type'], $parent);
+    if (!empty($_REQUEST['prospect_list_id']) and !empty($_REQUEST['prospect_ids'])) {
+        add_prospects_to_prospect_list(
+            $_REQUEST['prospect_list_id'],
+            $_REQUEST['prospect_ids']
+        );
+    } else {
+        $parent = BeanFactory::getBean($_REQUEST['module'], $_REQUEST['record']);
+        $parentModule = $request->getValidInputRequest('parent_module', 'Assert\Mvc\ModuleName');
+        $parentType = $request->getValidInputRequest('parent_type');
+        add_to_prospect_list(
+            urldecode($_REQUEST['subpanel_module_name']),
+            $parentModule,
+            $parentType,
+            $_REQUEST['subpanel_id'],
+            $_REQUEST['child_id'],
+            $_REQUEST['link_attribute'],
+            $_REQUEST['link_type'],
+            $parent
+        );
 	}
 
-	$refreshsubpanel=false;
+    $refreshsubpanel = false;
 }else if (isset($_REQUEST['return_type'])  && $_REQUEST['return_type'] == 'addcampaignlog') {
     //if param is set to "addcampaignlog", then we need to create a campaign log entry
     //for each campaign id passed in.
@@ -74,8 +83,10 @@ else {
  	// based on the query they used on that popup to relate them to the parent record
  	if(!empty($_REQUEST['select_entire_list']) &&  $_REQUEST['select_entire_list'] != 'undefined' && isset($_REQUEST['current_query_by_page'])){
 		$order_by = '';
-		$current_query_by_page = $_REQUEST['current_query_by_page'];
- 		$current_query_by_page_array = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($current_query_by_page));
+		$current_query_by_page_array = InputValidation::getService()->getValidInputRequest(
+			'current_query_by_page', 
+			array('Assert\PhpSerialized' => array('base64Encoded' => true))
+		);
 
         $module = $current_query_by_page_array['module'];
         $seed = BeanFactory::getBean($module);

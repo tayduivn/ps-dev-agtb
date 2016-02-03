@@ -63,7 +63,7 @@ $sugar_smarty->assign('MOD', $mod_strings);
 $sugar_smarty->assign('APP', $app_strings);
 
 $sugar_smarty->assign("THEME", $theme);
-$sugar_smarty->assign("IMAGE_PATH", $image_path);$sugar_smarty->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
+$sugar_smarty->assign("IMAGE_PATH", $image_path);
 
 // MY PROJECTS DASHBOARD ////////////////////////////////////////
 $projectBean = new Project();

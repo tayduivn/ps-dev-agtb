@@ -33,7 +33,7 @@
 </div>
 {$tiny}
 <script>
-ModuleBuilder.setMode('{$TYPE}');
+ModuleBuilder.setMode({$TYPE});
 closeMenus();
 {literal}
 //document.getElementById('HideHandle').parentNode.style.display = 'none';

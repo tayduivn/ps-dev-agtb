@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue;
 
+use Psr\Log\LoggerInterface;
+
 /**
  * Class Sugar
  * @package JobQueue
@@ -29,11 +31,19 @@ class Sugar implements AdapterInterface
     protected $routes = array();
 
     /**
-     * Initialize db instance.
+     * @var LoggerInterface
      */
-    public function __construct()
+    protected $logger;
+
+    /**
+     * Initialize db instance.
+     * @param array $config
+     * @param LoggerInterface $logger
+     */
+    public function __construct($config, LoggerInterface $logger)
     {
         $this->db = \DBManagerFactory::getInstance();
+        $this->logger = $logger;
     }
 
     /**
@@ -42,6 +52,8 @@ class Sugar implements AdapterInterface
      */
     public function addJob($route, $data)
     {
+        $this->logger->info("[Sugar]: add a job '{$route}'.");
+        $this->logger->debug("[Sugar]: data '{$data}'.");
         $job = \BeanFactory::newBean('SchedulersJobs');
         $job->interface = false;
         $job->target = $route;
@@ -115,6 +127,7 @@ class Sugar implements AdapterInterface
             }
         }
 
+        $this->logger->debug("[Sugar]: receiving job '$id'.");
         return $id;
     }
 
@@ -124,6 +137,7 @@ class Sugar implements AdapterInterface
      */
     public function resolve($message)
     {
+        $this->logger->debug("[Sugar]: resolve message '{$message}'.");
         $job = \BeanFactory::getBean('SchedulersJobs', $message);
         $job->mark_deleted($job->id);
     }

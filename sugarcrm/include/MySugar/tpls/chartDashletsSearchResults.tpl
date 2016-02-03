@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 *}
-<h4>{$lblSearchResults} - <i>{$searchString}</i>:</h4>
+<h4>{$lblSearchResults} - <i>{$searchString|escape:'html':'UTF-8'}</i>:</h4>
 <hr>
 {if count($charts)}
 <h3>{sugar_translate label='LBL_BASIC_CHARTS' module='Home'}</h3>

@@ -29,6 +29,7 @@ class ImportViewStep3 extends ImportView
     protected $previousAction = 'Confirm';
     protected $nextAction = 'dupcheck';
 
+
  	/**
      * @see SugarView::display()
      */
@@ -36,8 +37,9 @@ class ImportViewStep3 extends ImportView
     {
         global $mod_strings, $app_strings, $current_user, $sugar_config, $app_list_strings, $locale;
 
-        $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
-        $has_header = ( isset( $_REQUEST['has_header']) ? 1 : 0 );
+        $import_module = $this->request->getValidInputRequest('import_module', 'Assert\Mvc\ModuleName', false);
+        $this->ss->assign("IMPORT_MODULE", $import_module);
+        $has_header =  ( isset( $_REQUEST['has_header']) ? 1 : 0 );
         $sugar_config['import_max_records_per_file'] = ( empty($sugar_config['import_max_records_per_file']) ? 1000 : $sugar_config['import_max_records_per_file'] );
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
         // attempt to lookup a preexisting field map
@@ -76,26 +78,27 @@ class ImportViewStep3 extends ImportView
             if (class_exists($classname))
             {
                 $mapping_file = new $classname;
-                $ignored_fields = $mapping_file->getIgnoredFields($_REQUEST['import_module']);
-                $field_map2 = $mapping_file->getMapping($_REQUEST['import_module']);
+                $ignored_fields = $mapping_file->getIgnoredFields($import_module);
+                $field_map2 = $mapping_file->getMapping($import_module);
                 $field_map = array_merge($field_map,$field_map2);
             }
         }
 
         $delimiter = $this->getRequestDelimiter();
+        $customEnclosure = $this->request->getValidInputRequest('custom_enclosure', null, '');
 
         $this->ss->assign("CUSTOM_DELIMITER", $delimiter);
-        $this->ss->assign("CUSTOM_ENCLOSURE", ( !empty($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : "" ));
+        $this->ss->assign("CUSTOM_ENCLOSURE", htmlentities($customEnclosure));
 
        //populate import locale  values from import mapping if available, these values will be used througout the rest of the code path
 
-        $uploadFileName = $_REQUEST['file_name'];
+        $uploadFileName =  $this->request->getValidInputRequest('file_name', null, '');
 
         // Now parse the file and look for errors
-        $importFile = new ImportFile( $uploadFileName, $delimiter, html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), FALSE);
+        $importFile = new ImportFile( $uploadFileName, $delimiter, html_entity_decode($customEnclosure,ENT_QUOTES), FALSE);
 
         if ( !$importFile->fileExists() ) {
-            $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2');
+            $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'], $import_module,'Step2');
             return;
         }
 
@@ -123,7 +126,7 @@ class ImportViewStep3 extends ImportView
         }
 
         if ($isempty || $rows[(int)$has_header] == false) {
-            $this->_showImportError($mod_strings['LBL_NO_LINES'],$_REQUEST['import_module'],'Step2');
+            $this->_showImportError($mod_strings['LBL_NO_LINES'], $import_module,'Step2');
             return;
         }
 
@@ -132,8 +135,8 @@ class ImportViewStep3 extends ImportView
 
         // Now build template
         $this->ss->assign("TMP_FILE", $uploadFileName );
-        $this->ss->assign("SOURCE", $_REQUEST['source'] );
-        $this->ss->assign("TYPE", $_REQUEST['type'] );
+        $this->ss->assign("SOURCE",$this->request->getValidInputRequest('source', array('Assert\Choice' => array('choices' => array('csv', 'external', ''))), ''));
+        $this->ss->assign('TYPE', $this->request->getValidInputRequest('type', array('Assert\Choice' => array('choices' => array('import', 'update', ''))), ''));
         $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('basic_search','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
         $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('advanced_search','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
 
@@ -163,6 +166,8 @@ class ImportViewStep3 extends ImportView
         if (!empty($importColumns)) {
             $column_sel_from_req = true;
         }
+
+        $import_module = $this->request->getValidInputRequest('import_module', 'Assert\Mvc\ModuleName');
 
         for($field_count = 0; $field_count < $ret_field_count; $field_count++) {
             // See if we have any field map matches
@@ -251,11 +256,12 @@ class ImportViewStep3 extends ImportView
             $defaultFieldHTML = '';
             if ( !empty($defaultField) ) {
                 $defaultFieldHTML = getControl(
-                    $_REQUEST['import_module'],
+                    $import_module,
                     $defaultField,
                     $fields[$defaultField],
-                    ( isset($default_values[$defaultField]) ? $default_values[$defaultField] : '' )
-                    );
+                    ( isset($default_values[$defaultField]) ? $default_values[$defaultField] : '' ),
+                    array('idName' => "default_value_$defaultField")
+                );
             }
 
             if ( isset($default_values[$defaultField]) )
@@ -326,7 +332,7 @@ class ImportViewStep3 extends ImportView
                 $defaultFieldHTML = '';
                 if ( !empty($defaultField) ) {
                     $defaultFieldHTML = getControl(
-                        $_REQUEST['import_module'],
+                        $import_module,
                         $defaultField,
                         $fields[$defaultField],
                         $default_value
@@ -360,7 +366,7 @@ class ImportViewStep3 extends ImportView
         elseif ( $this->bean instanceof Company )
             $module_key = "LBL_ACCOUNTS_NOTE_";
         else
-            $module_key = "LBL_".strtoupper($_REQUEST['import_module'])."_NOTE_";
+            $module_key = "LBL_".strtoupper($import_module)."_NOTE_";
         $notetext = '';
         for ($i = 1;isset($mod_strings[$module_key.$i]);$i++) {
             $notetext .= '<li>' . $mod_strings[$module_key.$i] . '</li>';
@@ -437,12 +443,14 @@ class ImportViewStep3 extends ImportView
 
     protected function getRequestDelimiter()
     {
-        $delimiter = !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : ",";
+        $singleCharConstraints = array('Assert\Type' => array('type' => 'string'), 'Assert\Length' => array('min' => 1, 'max' => 2));
+        $customDelimiter = $this->request->getValidInputRequest('custom_delimiter', $singleCharConstraints, '');
+        $delimiter = !empty($customDelimiter) ? $customDelimiter : ",";
 
         switch ($delimiter)
         {
             case "other":
-                $delimiter = $_REQUEST['custom_delimiter_other'];
+                $delimiter = $this->request->getValidInputRequest('custom_delimiter_other', $singleCharConstraints, '');
                 break;
             case '\t':
                 $delimiter = "\t";

@@ -5,7 +5,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\MetaData;
 use Sugarcrm\Sugarcrm\MetaData\RefreshQueue;
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\MetaData\RefreshQueue
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\MetaData\RefreshQueue
  */
 class RefreshQueueTest extends \PHPUnit_Framework_TestCase
 {

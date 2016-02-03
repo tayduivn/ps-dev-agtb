@@ -11,6 +11,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 require_once 'include/EditView/EditView2.php';
 require_once 'modules/ActivityStream/Activities/Activity.php';
 
@@ -31,12 +34,21 @@ class MassUpdate
 	var $where_clauses = '';
 
     /**
-     * Constructor for Mass Update
+     * @var Request
      */
-    public function __construct() {
+    protected $request;
+
+    /**
+     * Constructor for Mass Update
+     *
+     * @param Request $request
+     */
+    public function __construct(Request $request = null)
+    {
         //TODO: Creation of Activities are turned off for mass update.
         //TODO: It will be turned on when job queue, asynchronous processing, activity Stream performance has been handled after 7.0
         Activity::disable();
+        $this->request = $request ?: InputValidation::getService();
     }
 
 	/**
@@ -92,39 +104,34 @@ class MassUpdate
 		unset($_REQUEST['PHPSESSID']);
 		$query = base64_encode(serialize($_REQUEST));
 
-        $bean = BeanFactory::getBean($_REQUEST['module']);
+        $module = $this->request->getValidInputRequest('module', 'Assert\Bean\ModuleName');
+        $action = $this->request->getValidInputRequest('action');
+        $bean = BeanFactory::getBean($module);
        $order_by_name = $bean->module_dir.'2_'.strtoupper($bean->object_name).'_ORDER_BY' ;
-       $lvso = isset($_REQUEST['lvso'])?$_REQUEST['lvso']:"";
-       $request_order_by_name = isset($_REQUEST[$order_by_name])?$_REQUEST[$order_by_name]:"";
-       $action = isset($_REQUEST['action'])?$_REQUEST['action']:"";
-       $module = isset($_REQUEST['module'])?$_REQUEST['module']:"";
+        $lvso = $this->request->getValidInputRequest('lvso');
+        $request_order_by_name = $this->request->getValidInputRequest($order_by_name, 'Assert\Sql\OrderBy');
 		if($multi_select_popup)
 		$tempString = '';
 		else
 		$tempString = "<form action='index.php' method='post' name='MassUpdate'  id='MassUpdate' onsubmit=\"return check_form('MassUpdate');\">\n"
-		. "<input type='hidden' name='return_action' value='{$action}' />\n"
-        . "<input type='hidden' name='return_module' value='{$module}' />\n"
+        . "<input type='hidden' name='return_action' value='" . htmlspecialchars($action, ENT_QUOTES, 'UTF-8') . "' />\n"
+        . "<input type='hidden' name='return_module' value='" . htmlspecialchars($module, ENT_QUOTES, 'UTF-8') . "' />\n"
 		. "<input type='hidden' name='massupdate' value='true' />\n"
 		. "<input type='hidden' name='delete' value='false' />\n"
 		. "<input type='hidden' name='merge' value='false' />\n"
-        . "<input type='hidden' name='current_query_by_page' value='{$query}' />\n"
-        . "<input type='hidden' name='module' value='{$module}' />\n"
+        . "<input type='hidden' name='current_query_by_page' value='" . htmlspecialchars($query, ENT_QUOTES, 'UTF-8') . "' />\n"
+        . "<input type='hidden' name='module' value='" . htmlspecialchars($module, ENT_QUOTES, 'UTF-8') . "' />\n"
         . "<input type='hidden' name='action' value='MassUpdate' />\n"
-        . "<input type='hidden' name='lvso' value='{$lvso}' />\n"
-        . "<input type='hidden' name='{$order_by_name}' value='{$request_order_by_name}' />\n";
+        . "<input type='hidden' name='lvso' value='" . htmlspecialchars($lvso, ENT_QUOTES, 'UTF-8') . "' />\n"
+        . "<input type='hidden' name='" . htmlspecialchars($order_by_name, ENT_QUOTES, 'UTF-8') . "' value='" . htmlspecialchars($request_order_by_name, ENT_QUOTES, 'UTF-8') . "' />\n";
 
 		// cn: bug 9103 - MU navigation in emails is broken
-		if($_REQUEST['module'] == 'Emails') {
-			$type = "";
+		if ($module == 'Emails') {
 			// determine "type" - inbound, archive, etc.
-			if (isset($_REQUEST['type'])) {
-				$type = $_REQUEST['type'];
-			}
+			$type = $this->request->getValidInputRequest('type');
 			// determine owner
-			$tempString .=<<<eoq
-				<input type='hidden' name='type' value="{$type}" />
-				<input type='hidden' name='ie_assigned_user_id' value="{$current_user->id}" />
-eoq;
+			$tempString .= "<input type='hidden' name='type' value='" . htmlspecialchars($type, ENT_QUOTES, 'UTF-8') . "' />\n"
+			. "<input type='hidden' name='ie_assigned_user_id' value='" . htmlspecialchars($current_user->id, ENT_QUOTES, 'UTF-8') . "' />";
 		}
 
 		return $tempString;
@@ -193,21 +200,24 @@ eoq;
 		$old_value = $disable_date_format;
 		$disable_date_format = true;
 
-		if(!empty($_REQUEST['uid']) && !isset($_REQUEST['entire'])) $_POST['mass'] = explode(',', $_REQUEST['uid']); // coming from listview
-		elseif(isset($_REQUEST['entire']) && empty($_POST['mass'])) {
-			if(empty($order_by))$order_by = '';
+        if (!empty($_REQUEST['uid']) && !isset($_REQUEST['entire'])) {
+            $_POST['mass'] = $this->request->getValidInputRequest(
+                'uid',
+                array('Assert\Delimited' => array('constraints' => 'Assert\Guid'))
+            );
+        } elseif(isset($_REQUEST['entire']) && empty($_POST['mass'])) {
+            if(empty($order_by))$order_by = '';
 
             // TODO: define filter array here to optimize the query
             // by not joining the unneeded tables
             $query = $this->sugarbean->create_new_list_query($order_by, $this->where_clauses, array(), array(), 0, '', false, $this, true, true);
-			$result = $db->query($query,true);
-			$new_arr = array();
-			while($val = $db->fetchByAssoc($result,false))
-			{
-				array_push($new_arr, $val['id']);
-			}
-			$_POST['mass'] = $new_arr;
-		}
+            $result = $db->query($query,true);
+            $new_arr = array();
+            while ($val = $db->fetchByAssoc($result,false)) {
+                array_push($new_arr, $val['id']);
+            }
+            $_POST['mass'] = $new_arr;
+        }
 
                 if ($fetch_only) {
                     return;
@@ -1415,7 +1425,6 @@ EOQ;
         }
 	/* bug 31271: using false to not add all bean fields since some beans - like SavedReports
 	   can have fields named 'module' etc. which may break the query */
-        $query = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($query));
         $searchForm->populateFromArray($query, null, true);
         $this->searchFields = $searchForm->searchFields;
         $where_clauses = $searchForm->generateSearchWhere(true, $module);

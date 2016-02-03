@@ -11,6 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 global $db;
 
 if((!isset($_REQUEST['isProfile']) && empty($_REQUEST['id'])) || empty($_REQUEST['type']) || !isset($_SESSION['authenticated_user_id'])) {
@@ -84,24 +86,31 @@ else {
 
     } // if
 
+    // Add the input validation for paths
+    $request = InputValidation::getService();
     if(isset($_REQUEST['ieId']) && isset($_REQUEST['isTempFile'])) {
-		$local_location = sugar_cached("modules/Emails/{$_REQUEST['ieId']}/attachments/{$_REQUEST['id']}");
+        $ieId = $request->getValidInputRequest('ieId', 'Assert\Guid');
+        $id = $request->getValidInputRequest('id', 'Assert\Guid');
+        $local_location = sugar_cached("modules/Emails/{$ieId}/attachments/{$id}");
     } elseif(isset($_REQUEST['isTempFile']) && $file_type == "import") {
-    	$local_location = "upload://import/{$_REQUEST['tempName']}";
+        $tempName = $request->getValidInputRequest('tempName', 'Assert\Guid');
+        $local_location = "upload://import/{$tempName}";
     } else if ($file_type == 'notes') {
         $note = BeanFactory::newBean('Notes');
         if (!$note->ACLAccess('view')) {
             die($mod_strings['LBL_NO_ACCESS']);
         } // if
-        $note->retrieve($_REQUEST['id']);
+        $id = $request->getValidInputRequest('id', 'Assert\Guid');
+        $note->retrieve($id);
         $local_location = "upload://".$note->getUploadId();
-    }
-    else {
-		$local_location = "upload://{$_REQUEST['id']}";
+    } else {
+        $id = $request->getValidInputRequest('id', 'Assert\Guid');
+        $local_location = "upload://{$id}";
     }
 
 	if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
-	    $local_location =  "upload://{$_REQUEST['id']}";
+        $id = $request->getValidInputRequest('id', 'Assert\Guid');
+        $local_location =  "upload://{$id}";
     }
 
     if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage") && (isset($_REQUEST['isProfile'])) && empty($_REQUEST['id'])) {
@@ -145,14 +154,18 @@ else {
 		}
 
 		if($doQuery && isset($query)) {
-            $rs = $GLOBALS['db']->query($query);
-			$row = $GLOBALS['db']->fetchByAssoc($rs);
+            $row = $GLOBALS['db']->fetchOne($query);
 
 			if(empty($row)){
 				die($app_strings['ERROR_NO_RECORD']);
 			}
 			$name = $row['name'];
-			$download_location = $file_type == 'notes' ? $local_location : "upload://{$_REQUEST['id']}";
+            if ($file_type == 'notes') {
+                $download_location = $local_location;
+            } else {
+                $id = $request->getValidInputRequest('id', 'Assert\Guid');
+                $download_location = "upload://{$id}";
+            }
 		} else if(isset(  $_REQUEST['tempName'] ) && isset($_REQUEST['isTempFile']) ){
 			// downloading a temp file (email 2.0)
 			$download_location = $local_location;

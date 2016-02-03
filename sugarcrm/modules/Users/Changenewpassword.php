@@ -1,4 +1,7 @@
 <?php
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -69,10 +72,12 @@ if(isset($_REQUEST['recaptcha_challenge_field']) && isset($_REQUEST['recaptcha_r
 //// This script :  - check the link expiration
 ////			   - send the filled form to authenticate.php after changing the password in the database
 $redirect='1';
-if (isset($_REQUEST['guid']))
+$request = InputValidation::getService();
+$guid = $request->getValidInputRequest('guid', 'Assert\Guid');
+if ($guid)
  	{
  	// Change 'deleted = 0' clause to 'COALESCE(deleted, 0) = 0' because by default the values were NULL
- 	$Q = "SELECT * FROM users_password_link WHERE id = '" . $_REQUEST['guid'] . "' AND COALESCE(deleted, 0) = '0'";
+ 	$Q = "SELECT * FROM users_password_link WHERE id = " . $GLOBALS['db']->quoted($guid) . " AND COALESCE(deleted, 0) = '0'";
  	$result =$GLOBALS['db']->limitQuery($Q,0,1,false);
 	$row = $GLOBALS['db']->fetchByAssoc($result);
 	if (!empty($row)){
@@ -97,7 +102,7 @@ if (isset($_REQUEST['guid']))
 						$usr_id=$usr->retrieve_user_id($_POST['user_name']);
 	    				$usr->retrieve($usr_id);
 	    				$usr->setNewPassword($_POST['new_password']);
-					    $query2 = "UPDATE users_password_link SET deleted='1' where id='".$_REQUEST['guid']."'";
+					    $query2 = "UPDATE users_password_link SET deleted='1' where id=".$GLOBALS['db']->quoted($guid);
 				   		$GLOBALS['db']->query($query2, true, "Error setting link for $usr->user_name: ");
 				   		$_POST['user_name'] = $_REQUEST['user_name'];
 						$_POST['user_password'] = $_REQUEST['new_password'];
@@ -121,7 +126,7 @@ if (isset($_REQUEST['guid']))
     		}
 		else
 			{
-				$query2 = "UPDATE users_password_link SET deleted='1' where id='".$_REQUEST['guid']."'";
+				$query2 = "UPDATE users_password_link SET deleted='1' where id=".$GLOBALS['db']->quoted($guid);
 		    	$GLOBALS['db']->query($query2, true, "Error setting link");
 			}
  		}
@@ -254,6 +259,6 @@ $sugar_smarty->assign('SUBMIT_BUTTON','<input title="'.$mod_strings['LBL_LOGIN_B
 	. 'onclick="if(!set_password(form,newrules(' . $rules . '))) return false; validateCaptchaAndSubmit();" '
 	. 'type="button" tabindex="3" id="login_button" name="Login" value="'.$mod_strings['LBL_LOGIN_BUTTON_LABEL'].'" /><br>&nbsp');
 
-if(!empty($_REQUEST['guid'])) $sugar_smarty->assign("GUID", $_REQUEST['guid']);
+$sugar_smarty->assign("GUID", $guid);
 $sugar_smarty->display('modules/Users/Changenewpassword.tpl');
 $view->displayFooter();

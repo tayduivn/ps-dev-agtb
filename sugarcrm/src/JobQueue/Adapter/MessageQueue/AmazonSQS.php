@@ -12,7 +12,10 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue;
 
+use Psr\Log\LoggerInterface;
 use Aws\Sqs\SqsClient;
+use Aws\Common\Credentials\Credentials;
+use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\RuntimeException;
 
 /**
@@ -32,24 +35,34 @@ class AmazonSQS implements AdapterInterface
     protected $queueUrl;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @var int The duration (in seconds) that the received messages are hidden after ReceiveMessage request.
+     */
+    protected $visibilityTimeout = 1800;
+
+    /**
      * Initialize connection, client and queueUrl.
      *
      * @param array $config
+     * @param LoggerInterface $logger
      * @throws RuntimeException
      */
-    public function __construct($config)
+    public function __construct($config, LoggerInterface $logger)
     {
-        $this->client = SqsClient::factory(
-            array(
-                'key' => $config['key'],
-                'secret' => $config['secret'],
-                'region' => $config['region'],
-            )
-        );
+        $credentials = new Credentials($config['key'], $config['secret']);
+        $this->client = SqsClient::factory(array(
+            'credentials' => $credentials,
+            'region' => $config['region'],
+        ));
 
         if (!$this->client) {
-            throw new RuntimeException('Failed to connect to AmazonSQS server.');
+            throw new LogicException('Failed to connect to AmazonSQS server.');
         }
+        $this->logger = $logger;
 
         $uniqueKey = (!empty($config['unique_key'])) ? '_' . $config['unique_key'] : '';
         $queueName = $config['queueName'] . $uniqueKey;
@@ -65,6 +78,8 @@ class AmazonSQS implements AdapterInterface
      */
     public function addJob($route, $data)
     {
+        $this->logger->info("[AmazonSQS]: send a message '{$route}'.");
+        $this->logger->debug("[AmazonSQS]: data '{$data}'.");
         $done = $this->client->sendMessage(
             array(
                 'QueueUrl' => $this->queueUrl,
@@ -95,10 +110,19 @@ class AmazonSQS implements AdapterInterface
 
     /**
      * Get a job based on AmazonSQS specific message format.
+     * Handler notification from Amazon SNS.
      * {@inheritdoc}
      */
     public function getJob($message)
     {
+        $notificationBody = json_decode($message['Body']);
+
+        if (json_last_error() === JSON_ERROR_NONE &&
+            is_object($notificationBody) &&
+            $notificationBody->Type === 'Notification'
+        ) {
+            return $notificationBody->Message;
+        }
         return $message['Body'];
     }
 
@@ -111,8 +135,9 @@ class AmazonSQS implements AdapterInterface
         $responseModel = $this->client->receiveMessage(
             array(
                 'QueueUrl' => $this->queueUrl,
+                'VisibilityTimeout' => $this->visibilityTimeout,
                 'MaxNumberOfMessages' => 1,
-                'WaitTimeSeconds' => 1,
+                'WaitTimeSeconds' => 3,
             )
         );
 
@@ -125,6 +150,7 @@ class AmazonSQS implements AdapterInterface
      */
     public function resolve($message)
     {
+        $this->logger->debug("[AmazonSQS]: resolve a message '{$message['ReceiptHandle']}'.");
         $this->client->deleteMessage(
             array(
                 'QueueUrl' => $this->queueUrl,

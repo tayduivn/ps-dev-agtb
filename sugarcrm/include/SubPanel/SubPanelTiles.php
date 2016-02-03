@@ -91,7 +91,7 @@ if(document.DetailView != null &&
    document.DetailView.elements != null &&
    document.DetailView.elements.layout_def_key != null &&
    typeof document.DetailView.elements['layout_def_key'] != 'undefined'){
-    document.DetailView.elements['layout_def_key'].value = '<?php echo $this->layout_def_key; ?>';
+    document.DetailView.elements['layout_def_key'].value = <?php echo json_encode($this->layout_def_key); ?>;
 }
 </script>
 <?php
@@ -179,7 +179,7 @@ if(document.DetailView != null &&
                 }
             }
 
-			echo '<li class="noBullet" id="whole_subpanel_' . $tab . '">';
+			echo '<li class="noBullet" id="whole_subpanel_' . htmlspecialchars($tab, ENT_QUOTES, 'UTF-8') . '">';
 
 			$display= 'none';
 			$div_display = $default_div_display;
@@ -219,22 +219,21 @@ if(document.DetailView != null &&
 				$show_icon_html = SugarThemeRegistry::current()->getImage( 'advanced_search', 'border="0" align="absmiddle"',null,null,'.gif',translate('LBL_SHOW'));
 				$hide_icon_html = SugarThemeRegistry::current()->getImage( 'basic_search', 'border="0" align="absmiddle"',null,null,'.gif',translate('LBL_HIDE'));
 
- 		 		$max_min = "<a name=\"$tab\"> </a><span id=\"show_link_".$tab."\" style=\"display: $opp_display\"><a href='#' class='utilsLink' onclick=\"current_child_field = '".$tab."';showSubPanel('".$tab."',null,null,'".$layout_def_key."');document.getElementById('show_link_".$tab."').style.display='none';document.getElementById('hide_link_".$tab."').style.display='';return false;\">"
+ 		 		$max_min = "<a name=\"" . htmlspecialchars($tab, ENT_QUOTES, 'UTF-8') . "\"> </a><span id=\"show_link_".htmlspecialchars($tab, ENT_QUOTES, 'UTF-8')."\" style=\"display: $opp_display\"><a href='#' class='utilsLink' onclick=\"current_child_field = ".htmlspecialchars(json_encode($tab), ENT_QUOTES, 'UTF-8').";showSubPanel(".htmlspecialchars(json_encode($tab), ENT_QUOTES, 'UTF-8').",null,null,'".$layout_def_key."');document.getElementById(".htmlspecialchars(json_encode('show_link_'.$tab), ENT_QUOTES, 'UTF-8').").style.display='none';document.getElementById(".htmlspecialchars(json_encode('hide_link_'.$tab), ENT_QUOTES, 'UTF-8').").style.display='';return false;\">"
  		 			. "" . $show_icon_html . "</a></span>";
-				$max_min .= "<span id=\"hide_link_".$tab."\" style=\"display: $div_display\"><a href='#' class='utilsLink' onclick=\"hideSubPanel('".$tab."');document.getElementById('hide_link_".$tab."').style.display='none';document.getElementById('show_link_".$tab."').style.display='';return false;\">"
+				$max_min .= "<span id=\"hide_link_".htmlspecialchars($tab, ENT_QUOTES, 'UTF-8')."\" style=\"display: $div_display\"><a href='#' class='utilsLink' onclick=\"hideSubPanel(".htmlspecialchars(json_encode($tab), ENT_QUOTES, 'UTF-8').");document.getElementById(".htmlspecialchars(json_encode('hide_link_'.$tab), ENT_QUOTES, 'UTF-8').").style.display='none';document.getElementById('".htmlspecialchars(json_encode('show_link_'.$tab), ENT_QUOTES, 'UTF-8')."').style.display='';return false;\">"
 				 . "" . $hide_icon_html . "</a></span>";
-				echo '<div id="subpanel_title_' . $tab . '"';
+				echo '<div id="subpanel_title_' . htmlspecialchars($tab, ENT_QUOTES, 'UTF-8') . '"';
                 if(empty($sugar_config['lock_subpanels']) || $sugar_config['lock_subpanels'] == false) echo ' onmouseover="this.style.cursor = \'move\';"';
                 echo '>' . get_form_header( $thisPanel->get_title(), $max_min, false) . '</div>';
 			}
 
-            echo <<<EOQ
-<div cookie_name="$cookie_name" id="subpanel_$tab" style="display:$div_display">
-    <script>document.getElementById("subpanel_$tab" ).cookie_name="$cookie_name";</script>
-EOQ;
+            echo '<div cookie_name="' . htmlspecialchars($cookie_name, ENT_QUOTES, 'UTF-8') . '" id="subpanel_' . htmlspecialchars($tab, ENT_QUOTES, 'UTF-8') . '" style="display:' . $div_display . '">';
+            echo '<script>document.getElementById(' . json_encode('subpanel_' . $tab) . ').cookie_name=' . json_encode($cookie_name) . ';</script>';
+
             $display_spd = '';
             if($div_display != 'none'){
-            	echo "<script>SUGAR.util.doWhen(\"typeof(markSubPanelLoaded) != 'undefined'\", function() {markSubPanelLoaded('$tab');});</script>";
+                echo "<script>SUGAR.util.doWhen(\"typeof(markSubPanelLoaded) != 'undefined'\", function() {markSubPanelLoaded(" . json_encode($tab) . ");});</script>";
             	$old_contents = ob_get_contents();
             	@ob_end_clean();
 
@@ -256,10 +255,7 @@ EOQ;
             	//echo $buttons;
                 $display_spd = $subpanel_data;
             }
-            echo <<<EOQ
-    <div id="list_subpanel_$tab">$display_spd</div>
-</div>
-EOQ;
+            echo '<div id="list_subpanel_' . htmlspecialchars($tab, ENT_QUOTES, 'UTF-8') . '">' . $display_spd . '</div></div>';
         	array_push($tab_names, $tab);
         	echo '</li>';
         } // end $tabs foreach

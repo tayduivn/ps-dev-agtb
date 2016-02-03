@@ -60,7 +60,6 @@ $xtpl=new XTemplate ('modules/QueryBuilder/SubcalcView.html');
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
 $xtpl->assign("GRIDLINE", $gridline);
-$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("RECORD", $focus->id);
 $xtpl->assign('EDIT_INLINE', SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_EDIT']));
 $xtpl->assign('MOVE_INLINE', SugarThemeRegistry::current()->getImage('arrow','align="absmiddle" border="0"',null,null,'.gif',$mod_strings['LBL_ORDER']));

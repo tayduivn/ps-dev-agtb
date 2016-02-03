@@ -55,7 +55,7 @@ $xtpl=new XTemplate ('modules/Forums/ForumsSearch.html');
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
 $xtpl->assign("THEME", $theme);
-$xtpl->assign("IMAGE_PATH", $image_path); $xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
+$xtpl->assign("IMAGE_PATH", $image_path);
 $xtpl->assign("QUERY_STRING_USER", get_select_options_with_id(get_user_array(TRUE), ''));
 $xtpl->parse("main");
 $xtpl->out("main");

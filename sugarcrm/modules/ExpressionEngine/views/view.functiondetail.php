@@ -27,24 +27,25 @@ class ViewFunctiondetail extends SugarView
  		include $cachefile;
  		require_once('include/JSON.php');
  		$desc = "";
- 		if (!empty($_REQUEST['function']) && !empty($FUNCTION_MAP[$_REQUEST['function']])){
- 			$func_def =  $FUNCTION_MAP[$_REQUEST['function']];
+		$function = $this->request->getValidInputRequest('function', 'Assert\SugarLogic\FunctionName');
+ 		if (!empty($function) && !empty($FUNCTION_MAP[$function])){
+ 			$func_def =  $FUNCTION_MAP[$function];
 			require_once($func_def['src']);
 			$class = new ReflectionClass($func_def['class']);
 			$doc = $class->getDocComment();
 			if (!empty($doc)) {
 				//Remove the javadoc style comment *'s
 				$desc = preg_replace("/((\/\*+)|(\*+\/)|(\n\s*\*)[^\/])/", "", $doc);
-			} else if (isset($mod_strings['func_descriptions'][$_REQUEST['function']]))
+			} else if (isset($mod_strings['func_descriptions'][$function]))
 			{
-				$desc = $mod_strings['func_descriptions'][$_REQUEST['function']];
+				$desc = $mod_strings['func_descriptions'][$function];
 			}
 			else
 			{
 				$seed = $func_def['class'];
 				$count = call_user_func(array($seed, "getParamCount"));
 				$type = call_user_func(array($seed, "getParameterTypes"));
-				$desc = $_REQUEST['function'] . "(";
+				$desc = $function . "(";
 				if ($count == -1)
 				{
 					$desc .=  $type . ", ...";
@@ -63,8 +64,8 @@ class ViewFunctiondetail extends SugarView
 		else {
 			$desc = "function not found";
 		}
-		echo json_encode(array(
-			"func" => empty($_REQUEST['function']) ? "" : $_REQUEST['function'],
+		echo JSON::encode(array(
+			"func" => empty($function) ? "" : $function,
 			"desc" => $desc,
 		));
  	}

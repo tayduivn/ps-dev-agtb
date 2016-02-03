@@ -236,6 +236,7 @@ class MssqlManager extends DBManager
         $this->connectOptions = $configOptions;
 
         $GLOBALS['log']->info("Connect:".$this->database);
+
         return true;
     }
 
@@ -583,7 +584,9 @@ class MssqlManager extends DBManager
                         }else{
                             // FIXME: this looks really bad. Probably source for tons of bug
                             // needs to be removed
-                            $tablename = $this->getTableNameFromModuleName($_REQUEST['module'],$sql);
+                            $moduleName = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
+                            $tablename = $this->getTableNameFromModuleName($moduleName, $sql);
+                            $tablename = $this->quote($tablename);
                         }
                         //if there is a distinct clause, form query with rownumber after distinct
                         if ($hasDistinct) {
@@ -2041,7 +2044,7 @@ EOQ;
      */
     protected function freeDbResult($dbResult)
     {
-        if(!empty($dbResult))
+        if(is_resource($dbResult))
             mssql_free_result($dbResult);
     }
 

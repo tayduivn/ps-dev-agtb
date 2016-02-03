@@ -12,11 +12,11 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Observer;
 
+use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\UnexpectedResolutionException;
 use Sugarcrm\Sugarcrm\JobQueue\Helper\Child;
 use Sugarcrm\Sugarcrm\JobQueue\Helper\Producer as ParentHelper;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
-use Sugarcrm\Sugarcrm\Logger\LoggerTransition as Logger;
 
 /**
  * Class State
@@ -25,11 +25,17 @@ use Sugarcrm\Sugarcrm\Logger\LoggerTransition as Logger;
 class State implements ObserverInterface
 {
     /**
-     * Setup logger.
+     * @var LoggerInterface
      */
-    public function __construct()
+    protected $logger;
+
+    /**
+     * Setup logger.
+     * @param LoggerInterface $logger
+     */
+    public function __construct(LoggerInterface $logger)
     {
-        $this->logger = new Logger(\LoggerManager::getLogger());
+        $this->logger = $logger;
     }
 
     /**

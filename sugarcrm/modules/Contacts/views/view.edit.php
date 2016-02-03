@@ -12,6 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 class ContactsViewEdit extends ViewEdit
 {
  	public function __construct()
@@ -30,11 +32,14 @@ class ContactsViewEdit extends ViewEdit
  	public function display()
  	{
         $this->ev->process();
-		if ( !empty($_REQUEST['contact_name']) && !empty($_REQUEST['contact_id'])
+        $request = InputValidation::getService();
+        $contactName = $request->getValidInputRequest('contact_name', array('Assert\Type' => (array('type' => 'string'))));
+        $contactId = $request->getValidInputRequest('contact_id', 'Assert\Guid');
+		if (!empty($contactName) && !empty($contactId)
             && $this->ev->fieldDefs['report_to_name']['value'] == ''
             && $this->ev->fieldDefs['reports_to_id']['value'] == '') {
-            $this->ev->fieldDefs['report_to_name']['value'] = $_REQUEST['contact_name'];
-            $this->ev->fieldDefs['reports_to_id']['value'] = $_REQUEST['contact_id'];
+            $this->ev->fieldDefs['report_to_name']['value'] = $contactName;
+            $this->ev->fieldDefs['reports_to_id']['value'] = $contactId;
         }
         $admin = Administration::getSettings();
 		if(empty($admin->settings['portal_on']) || !$admin->settings['portal_on']) {

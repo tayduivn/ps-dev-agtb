@@ -18,15 +18,17 @@ class EAPMViewEdit extends ViewEdit {
 
     public function __construct()
     {
-        $this->setReturnId();
         parent::__construct();
+        $this->setReturnId();
     }
 
     protected function setReturnId()
     {
         $returnId = $GLOBALS['current_user']->id;
-        if(!empty($_REQUEST['user_id']) && !empty($_REQUEST['return_module']) && 'Users' == $_REQUEST['return_module']){
-            $returnId = $_REQUEST['user_id'];
+        $userId = $this->request->getValidInputRequest('user_id', 'Assert\Guid');
+        $returnModule = $this->request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
+        if (!empty($userId) && !empty($returnModule) && 'Users' == $returnModule) {
+            $returnId = $userId;
         }
         $this->_returnId = $returnId;
     }
@@ -47,16 +49,22 @@ class EAPMViewEdit extends ViewEdit {
         $returnModule = 'Users';
         $returnId = $this->bean->assigned_user_id;
         $returnName = $this->bean->assigned_user_name;
-        if(!empty($_REQUEST['return_action']) && !empty($_REQUEST['return_module'])){
-            if('Users' == $_REQUEST['return_module']){
-                if('EditView' == $_REQUEST['return_action']){
+
+        $returnModuleFromRequest = $this->request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
+        $returnActionFromRequest = $this->request->getValidInputRequest('return_action');
+        $returnNameFromRequest = $this->request->getValidInputRequest('return_name');
+        $returnIdFromRequest = $this->request->getValidInputRequest('user_id', 'Assert\Guid');
+
+        if(!empty($returnActionFromRequest) && !empty($returnModuleFromRequest)){
+            if('Users' == $returnModuleFromRequest){
+                if('EditView' == $returnActionFromRequest){
                     $returnAction = 'EditView';
                 }
-                if(!empty($_REQUEST['return_name'])){
-                    $returnName = $_REQUEST['return_name'];
+                if(!empty($returnNameFromRequest)){
+                    $returnName = $returnNameFromRequest;
                 }
-                if(!empty($_REQUEST['user_id'])){
-                    $returnId = $_REQUEST['user_id'];
+                if(!empty($returnIdFromRequest)){
+                    $returnId = $returnIdFromRequest;
                 }
             }
         }
@@ -86,14 +94,19 @@ class EAPMViewEdit extends ViewEdit {
     }
 
  	function display() {
+        $returnModuleFromRequest = $this->request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
+        $returnActionFromRequest = $this->request->getValidInputRequest('return_action');
+        $applicationFromRequest = $this->request->getValidInputRequest('application');
+
         $this->bean->password = empty($this->bean->password) ? '' : EAPM::$passwordPlaceholder;
 
         $this->ss->assign('return_id', $this->_returnId);
 
         $cancelUrl = "index.php?action=EditView&module=Users&record={$this->_returnId}#tab5";
 
-        if(isset($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'Import') {
-            $cancelUrl = "index.php?module=Import&action=Step1&import_module=". $_REQUEST['return_action'] . "&application=" . $_REQUEST['application'];
+        if($returnModuleFromRequest !== null && $returnModuleFromRequest == 'Import') {
+            $cancelUrl = "index.php?module=Import&action=Step1&import_module="
+                . $returnActionFromRequest . "&application=" . $applicationFromRequest;
         }
          $this->ss->assign('cancelUrl', $cancelUrl);
 

@@ -14,6 +14,8 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  */
 require_once 'include/MetaDataManager/MetaDataManager.php';
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 class DynamicField {
 
     public $module_dir = 'DynamicFields';
@@ -54,7 +56,12 @@ class DynamicField {
 
 
     public function __construct($module = '') {
-        $this->module = (! empty ( $module )) ? $module :( (isset($_REQUEST['module']) && ! empty($_REQUEST['module'])) ? $_REQUEST ['module'] : '');
+        $this->request = InputValidation::getService();
+        if (!empty($module)) {
+            $this->module = $module;
+        } else {
+            $this->module = $this->request->getValidInputRequest('module', 'Assert\ComponentName', '');
+        }
         $this->base_path = "custom/Extension/modules/{$this->module}/Ext/Vardefs";
     }
 
@@ -111,9 +118,17 @@ class DynamicField {
     function buildCache($module = false, $saveCache=true) {
         global $db;
 
+        static $tableFieldsMetaDataExists = false; // for performance purpose, don't need to call tableExists('fields_meta_data') thousands times.
+
         // this method may be called before database connection established and `fields_meta_data` table created
-        if (!$db || !$db->tableExists('fields_meta_data')) {
-            return false;
+
+        if (!$tableFieldsMetaDataExists) {
+            if (!$db || !$db->tableExists('fields_meta_data')) { // this call could be repeated thousands times
+                return false;
+            }
+            else {
+                $tableFieldsMetaDataExists = true;
+            }
         }
 
         if($module == '../data')return false;
@@ -899,9 +914,14 @@ class DynamicField {
                 $count++;
             }
         }
-        $selMod = (!empty($_REQUEST['view_module'])) ? $_REQUEST['view_module'] : $this->module;
+
+        $selMod = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
+        if (empty($selMod)) {
+            $selMod = $this->module;
+        }
+        $viewPackage = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName', null);
         require_once 'modules/ModuleBuilder/parsers/parser.label.php' ;
-        $parser = new ParserLabel ( $selMod , isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
+        $parser = new ParserLabel ( $selMod , $viewPackage) ;
         $parser->handleSave ( array('label_'. $systemLabel => $displayLabel ) , $GLOBALS [ 'current_language' ] ) ;
 
         return $systemLabel;

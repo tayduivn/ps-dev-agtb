@@ -67,7 +67,6 @@ $data_set_list = $focus->get_data_sets("ORDER BY list_order_y ASC");
 $header_xtpl=new XTemplate ('modules/ReportMaker/ReportHeaderView.html');
 $header_xtpl->assign("REPORT_ALIGN", $focus->report_align);
 $header_xtpl->assign("REPORT_TITLE", $focus->title);
-$header_xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 
 echo "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"> \n";
 echo "<tr><td>";

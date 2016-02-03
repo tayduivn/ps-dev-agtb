@@ -43,8 +43,8 @@
 	SUGAR.savedViews.columnsMeta = {$columnsMeta};
 	columnsMeta = {$columnsMeta};
 	saved_search_select = "{$SAVED_SEARCH_SELECT}";
-	selectedSortOrder = "{$selectedSortOrder|default:'DESC'}";
-	selectedOrderBy = "{$selectedOrderBy}";
+	selectedSortOrder = "{$selectedSortOrder|default:'DESC'|escape:javascript}";
+	selectedOrderBy = "{$selectedOrderBy|escape:javascript}";
 
 
 {literal}

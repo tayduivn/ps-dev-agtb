@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: uw_utils.php 58174 2010-09-14 18:18:39Z kjing $
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 /**
  * Implodes some parts of version with specified delimiter, beta & rc parts are removed all time
@@ -1813,7 +1813,7 @@ function getImageForType($type) {
 
 if ( !function_exists('getLanguagePackName') ) {
 function getLanguagePackName($the_file) {
-    require_once("$the_file");
+    $app_list_strings = FileLoader::varFromInclude($the_file, 'app_list_strings');
     if(isset($app_list_strings["language_pack_name"])) {
         return($app_list_strings["language_pack_name"]);
     }

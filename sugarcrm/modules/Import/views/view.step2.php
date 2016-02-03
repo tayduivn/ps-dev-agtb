@@ -19,7 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('modules/Import/views/ImportView.php');
 
-
 class ImportViewStep2 extends ImportView
 {
  	protected $pageTitleKey = 'LBL_STEP_2_TITLE';
@@ -38,18 +37,25 @@ class ImportViewStep2 extends ImportView
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
         $this->ss->assign("IMP", $import_mod_strings);
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
-        $this->ss->assign("TYPE",( !empty($_REQUEST['type']) ? $_REQUEST['type'] : "import" ));
-        $this->ss->assign("CUSTOM_DELIMITER", ( !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : "," ));
-        $this->ss->assign("CUSTOM_ENCLOSURE",htmlentities(
-            ( !empty($_REQUEST['custom_enclosure']) && $_REQUEST['custom_enclosure'] != 'other'
-                ? $_REQUEST['custom_enclosure'] :
-                ( !empty($_REQUEST['custom_enclosure_other'])
-                    ? $_REQUEST['custom_enclosure_other'] : "" ) )));
 
-        $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
+        $importType = $this->request->getValidInputRequest('type', null, '');
+
+        $singleCharConstraints = array('Assert\Type' => array('type' => 'string'), 'Assert\Length' => array('min' => 1));
+
+        $customDelimiter = $this->request->getValidInputRequest('custom_delimiter', $singleCharConstraints, '');
+        $customEnclosure = $this->request->getValidInputRequest('custom_enclosure', $singleCharConstraints, '');
+        $customEnclosureOther = $this->request->getValidInputRequest('custom_enclosure_other', null, '');
+
+        $this->ss->assign("TYPE",( !empty($importType) ? $importType : "import" ));
+
+        $this->ss->assign("CUSTOM_DELIMITER", ( !empty($customDelimiter) ? $customDelimiter : "," ));
+        $this->ss->assign("CUSTOM_ENCLOSURE",htmlentities(( !empty($customEnclosure) && $customEnclosure != 'other' ? $customEnclosure : $customEnclosureOther )));
+
+        $importModule = $this->request->getValidInputRequest('import_module', 'Assert\Mvc\ModuleName', false);
+        $this->ss->assign("IMPORT_MODULE", $importModule);
         $this->ss->assign("HEADER", $app_strings['LBL_IMPORT']." ". $mod_strings['LBL_MODULE_NAME']);
         $this->ss->assign("JAVASCRIPT", $this->_getJS());
-        $this->ss->assign("SAMPLE_URL", "<a href=\"javascript: void(0);\" onclick=\"window.location.href='index.php?entryPoint=export&module=".urlencode($_REQUEST['import_module'])."&action=index&all=true&sample=true'\" >".$mod_strings['LBL_EXAMPLE_FILE']."</a>");
+        $this->ss->assign("SAMPLE_URL", "<a href=\"javascript: void(0);\" onclick=\"window.location.href='index.php?entryPoint=export&module=".urlencode($importModule)."&action=index&all=true&sample=true'\" >".$mod_strings['LBL_EXAMPLE_FILE']."</a>"); //FIXME
 
         $displayBackBttn = isset($_REQUEST['action']) && $_REQUEST['action'] == 'Step2' && isset($_REQUEST['current_step']) && $_REQUEST['current_step']!=='2'? TRUE : FALSE; //bug 51239
         $this->ss->assign("displayBackBttn", $displayBackBttn);
@@ -65,7 +71,7 @@ class ImportViewStep2 extends ImportView
         $this->ss->assign('is_admin',$is_admin);
 
         $import_map_seed = BeanFactory::getBean('Import_1');
-        $custom_imports_arr = $import_map_seed->retrieve_all_by_string_fields( array('assigned_user_id' => $current_user->id, 'is_published' => 'no','module' => $_REQUEST['import_module']));
+        $custom_imports_arr = $import_map_seed->retrieve_all_by_string_fields( array('assigned_user_id' => $current_user->id, 'is_published' => 'no','module' => $importModule));
 
         if( count($custom_imports_arr) )
         {
@@ -78,7 +84,7 @@ class ImportViewStep2 extends ImportView
         }
 
         // get globally defined import maps
-        $published_imports_arr = $import_map_seed->retrieve_all_by_string_fields(array('is_published' => 'yes', 'module' => $_REQUEST['import_module'],) );
+        $published_imports_arr = $import_map_seed->retrieve_all_by_string_fields(array('is_published' => 'yes', 'module' => $importModule,) );
         if ( count($published_imports_arr) )
         {
             $published = array();

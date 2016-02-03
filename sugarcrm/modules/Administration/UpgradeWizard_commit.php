@@ -15,6 +15,9 @@ require_once 'modules/Administration/UpgradeWizardCommon.php';
 require_once 'modules/Configurator/Configurator.php';
 require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 function UWrebuild() {
 	global $log;
 	global $db;
@@ -120,32 +123,38 @@ unset($_SESSION['rebuild_extensions']);
 
 global $log, $db;
 
+$request = InputValidation::getService();
+$mode = $request->getValidInputRequest('mode');
+$version = $request->getValidInputRequest('version');
+$copyCount = $request->getValidInputRequest('copy_count');
+$unzipDir = $request->getValidInputRequest('unzip_dir');
+
+// $_REQUEST['install_file'] is a hash as per fileToHash/hashToFile
+$installFile = $request->getValidInputRequest('install_file');
+
 // process commands
-if( !isset($_REQUEST['mode']) || ($_REQUEST['mode'] == "") ){
+if ($mode === null) {
     die($mod_strings['ERR_UW_NO_MODE']);
 }
-$mode = $_REQUEST['mode'];
 
-
-if( !isset($_REQUEST['version']) ){
+if ($version === null) {
     die($mod_strings['ERR_UW_NO_MODE']);
 }
-$version = $_REQUEST['version'];
 
-if( !isset($_REQUEST['copy_count']) || ($_REQUEST['copy_count'] == "") ){
+if ($copyCount === null) {
     die($mod_strings['ERR_UW_NO_FILES']);
 }
 
-if( empty($_REQUEST['unzip_dir']) || $_REQUEST['unzip_dir'] == "." || $_REQUEST['unzip_dir'] == ".."){
+if ($unzipDir === null || $unzipDir == "." || $unzipDir == "..") {
     die($mod_strings['ERR_UW_NO_TEMP_DIR']);
 }
-$unzip_dir = $base_tmp_upgrade_dir. "/". basename($_REQUEST['unzip_dir']);
+$unzip_dir = $base_tmp_upgrade_dir. "/". basename($unzipDir);
 
-if(empty($_REQUEST['install_file'])){
+if ($installFile === null) {
     die($mod_strings['ERR_UW_NO_INSTALL_FILE']);
 }
 
-$install_file   = hashToFile($_REQUEST['install_file'] );
+$install_file   = hashToFile($installFile);
 $install_type   = UpgradeWizardCommon::getInstallType( $install_file );
 
 //from here on out, the install_file is used as the file path to copy or rename the physical file, so let's remove the stream wrapper if it's set
@@ -159,47 +168,21 @@ if(strpos($install_file,'upload://') === 0){
     $_REQUEST['install_file'] = $install_file;
 }
 
-$id_name = '';
-if(isset($_REQUEST['id_name'])){
- $id_name = $_REQUEST['id_name'];
+$id_name = $request->getValidInputRequest('id_name', null, '');
+$s_manifest = $request->getValidInputRequest('s_manifest', null, '');
+$s_patch = $request->getValidInputRequest('patch');
+$previous_version = $request->getValidInputRequest('previous_version', null, '');
+$previous_id = $request->getValidInputRequest('previous_id', null, '');
+
+if ($install_type != "module") {
+	$zip_from_dir = $request->getValidInputRequest('zip_from_dir', null, '.');
+	$zip_to_dir = $request->getValidInputRequest('zip_to_dir', null, '.');
 }
-$s_manifest = '';
-if(isset($_REQUEST['s_manifest'])){
- $s_manifest = $_REQUEST['s_manifest'];
-}
-$s_patch = null;
-if (isset($_REQUEST['patch'])) {
-    $s_patch = base64_encode(serialize($_REQUEST['patch']));
-}
-$previous_version = '';
-if(isset($_REQUEST['previous_version'])){
-	$previous_version = $_REQUEST['previous_version'];
-}
-$previous_id = '';
-if(isset($_REQUEST['previous_id'])){
-	$previous_id = $_REQUEST['previous_id'];
-}
-if( $install_type != "module" ){
-    if( !isset($_REQUEST['zip_from_dir']) || ($_REQUEST['zip_from_dir'] == "") ){
-        $zip_from_dir     = ".";
-    }
-    else{
-        $zip_from_dir   = $_REQUEST['zip_from_dir'];
-    }
-    if( !isset($_REQUEST['zip_to_dir']) || ($_REQUEST['zip_to_dir'] == "") ){
-        $zip_to_dir     = ".";
-    }
-    else{
-        $zip_to_dir     = $_REQUEST['zip_to_dir'];
-    }
-}
-$remove_tables = 'true';
-if(isset($_REQUEST['remove_tables'])){
-	$remove_tables = $_REQUEST['remove_tables'];
-}
-$overwrite_files = true;
-if(isset($_REQUEST['radio_overwrite'])){
- $overwrite_files = (($_REQUEST['radio_overwrite'] == 'do_not_overwrite') ? false : true);
+$remove_tables = $request->getValidInputRequest('remove_tables', null, 'true');
+$overwrite_files = $request->getValidInputRequest('radio_overwrite', null, true);
+
+if($overwrite_files){
+ $overwrite_files = (($overwrite_files == 'do_not_overwrite') ? false : true);
 }
 
 //rrs
@@ -209,9 +192,9 @@ $name = '';
 $description = '';
 
 if($install_type == 'module'){
-    $is_uninstallable = $_REQUEST['is_uninstallable'];
-    $name = $_REQUEST['name'];
-    $description = $_REQUEST['description'];
+	$is_uninstallable = $request->getValidInputRequest('is_uninstallable', null, true);
+	$name = $request->getValidInputRequest('name', null, '');
+	$description = $request->getValidInputRequest('description', null, '');
 }
 
 
@@ -246,7 +229,7 @@ if($install_type == 'patch' || $install_type == 'module')
 			if(is_file($file))
 			{
 				print("{$mod_strings['LBL_UW_INCLUDING']}: $file <br>\n");
-				include($file);
+				include FileLoader::validateFilePath($file);
 				pre_install();
    		}
  			break;
@@ -255,7 +238,7 @@ if($install_type == 'patch' || $install_type == 'module')
 			if(is_file($file))
 			{
 				print("{$mod_strings['LBL_UW_INCLUDING']}: $file <br>\n");
-				include($file);
+				include FileLoader::validateFilePath($file);
 				pre_uninstall();
    		}
  			break;
@@ -268,7 +251,7 @@ if($install_type == 'patch' || $install_type == 'module')
 // perform the action
 //
 
-for( $iii = 0; $iii < $_REQUEST['copy_count']; $iii++ ){
+for( $iii = 0; $iii < $copyCount; $iii++ ){
     if( isset($_REQUEST["copy_" . $iii]) && ($_REQUEST["copy_" . $iii] != "") ){
         $file_to_copy = $_REQUEST["copy_" . $iii];
         $src_file   = clean_path( "$unzip_dir/$zip_from_dir/$file_to_copy" );
@@ -319,33 +302,35 @@ for( $iii = 0; $iii < $_REQUEST['copy_count']; $iii++ ){
 
 switch( $install_type ){
     case "langpack":
-        if( !isset($_REQUEST['new_lang_name']) || ($_REQUEST['new_lang_name'] == "") ){
+		$newLangName = $request->getValidInputRequest('new_lang_name', null, "");
+		$newLangDesc = $request->getValidInputRequest('new_lang_desc', null, "");
+        if ($newLangName == "") {
             die($mod_strings['ERR_UW_NO_LANG']);
         }
-        if( !isset($_REQUEST['new_lang_desc']) || ($_REQUEST['new_lang_desc'] == "") ){
+        if ($newLangDesc == "") {
             die($mod_strings['ERR_UW_NO_LANG_DESC']);
         }
 
         if( $mode == "Install" || $mode=="Enable" ){
-            $sugar_config['languages'] = $sugar_config['languages'] + array( $_REQUEST['new_lang_name'] => $_REQUEST['new_lang_desc'] );
+            $sugar_config['languages'] = $sugar_config['languages'] + array( $newLangName => $newLangDesc );
         }
         else if( $mode == "Uninstall" || $mode=="Disable" ){
             $new_langs = array();
             $old_langs = $sugar_config['languages'];
             foreach( $old_langs as $key => $value ){
-                if( $key != $_REQUEST['new_lang_name'] ){
+                if( $key != $newLangName ){
                     $new_langs += array( $key => $value );
                 }
             }
 			$sugar_config['languages'] = $new_langs;
 
 	        $default_sugar_instance_lang = 'en_us';
-	        if($current_language == $_REQUEST['new_lang_name']){
+	        if($current_language == $newLangName){
 	        	$_SESSION['authenticated_user_language'] =$default_sugar_instance_lang;
 	        	$lang_changed_string = $mod_strings['LBL_CURRENT_LANGUAGE_CHANGE'].$sugar_config['languages'][$default_sugar_instance_lang].'<br/>';
 	        }
 
-	        if($sugar_config['default_language'] == $_REQUEST['new_lang_name']){
+	        if($sugar_config['default_language'] == $newLangName){
 	        	$cfg = new Configurator();
              	$cfg->config['languages'] = $new_langs;
 				$cfg->config['default_language'] = $default_sugar_instance_lang;
@@ -377,7 +362,7 @@ switch( $install_type ){
 				if(is_file($file))
 				{
 					print("{$mod_strings['LBL_UW_INCLUDING']}: $file <br>\n");
-					include($file);
+					include FileLoader::validateFilePath($file);
 					post_install();
 				}
             	break;
@@ -423,7 +408,7 @@ switch( $install_type ){
 				if(is_file($file))
 				{
 					print("{$mod_strings['LBL_UW_INCLUDING']}: $file <br>\n");
-					include($file);
+					include FileLoader::validateFilePath($file);
 					post_install();
 				}
 
@@ -433,7 +418,7 @@ switch( $install_type ){
  				$file = "$unzip_dir/" . constant('SUGARCRM_POST_UNINSTALL_FILE');
  				if(is_file($file)) {
 					print("{$mod_strings['LBL_UW_INCLUDING']}: $file <br>\n");
-					include($file);
+					include FileLoader::validateFilePath($file);
 					post_uninstall();
 				}
 
@@ -492,7 +477,7 @@ switch( $mode ){
         //Check if we need to show a page for the user to finalize their install with.
         if (is_file("$unzip_dir/manifest.php"))
         {
-        	include("$unzip_dir/manifest.php");
+        	include FileLoader::validateFilePath("$unzip_dir/manifest.php");
         	if (!empty($manifest['post_install_url']))
         	{
         		$url_conf = $manifest['post_install_url'];

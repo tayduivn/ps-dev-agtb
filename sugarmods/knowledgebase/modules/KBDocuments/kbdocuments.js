@@ -534,10 +534,8 @@ SUGAR.kb = function() {
 			clickedNodeMove = '';											 
 		    var moveTags = 'Move Tags';                                            
 			fillInTags = function(data) {                                                
-		    			try {					
-							eval(data.responseText);
-						}
-						catch(e) {
+		    			var result = JSON.parse(data.responseText);
+                        if (typeof result == 'undefined' || typeof result['header'] == 'undefined') {
 							result = new Array();
 							result['body'] = SUGAR.kb.getLocalizedLabels('KBDocuments','LBL_THERE_WAS_AN_ERROR_HANDLING_TAGS');
 						}
@@ -607,10 +605,8 @@ SUGAR.kb = function() {
 		                                                } );
 		    var applyTags = 'Apply Tags';                                            
 			fillInTags = function(data) {                                                
-		    			try {					
-							eval(data.responseText);
-						}
-						catch(e) {
+		    			var result = JSON.parse(data.responseText);
+                        if (typeof result == 'undefined' || typeof result['header'] == 'undefined') {
 							result = new Array();
 							result['body'] = 'There was an error handling this request.';
 						}
@@ -1106,10 +1102,8 @@ SUGAR.kb = function() {
 			previousNodesCount = 0;												 			
 		    var selectCreateTags = 'Select Create Tags';                                            
 			fillInTags = function(data) {                                                
-					try {									
-						eval(data.responseText);
-					}
-					catch(e) {
+					var result = JSON.parse(data.responseText);
+                    if (typeof result == 'undefined' || typeof result['header'] == 'undefined') {
 						result = new Array();
 						result['body'] = 'There was an error handling this request.';
 					}

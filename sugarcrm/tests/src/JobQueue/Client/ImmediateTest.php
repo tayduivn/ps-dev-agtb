@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\JobQueue\Client;
 
+use Psr\Log\NullLogger;
 use Sugarcrm\Sugarcrm\JobQueue\Client\Immediate;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\Workload;
 
@@ -42,7 +43,7 @@ class ImmediateTest extends \Sugar_PHPUnit_Framework_TestCase
         $callable = function ($workload) use ($expected) {
             $workload->setAttribute('actual', $expected);
         };
-        $client = new Immediate($callable);
+        $client = new Immediate($callable, new NullLogger());
         $client->addJob($this->workload);
 
         $this->assertEquals($expected, $this->workload->getAttribute('actual'));

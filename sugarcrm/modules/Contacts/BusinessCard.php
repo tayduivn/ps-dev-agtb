@@ -30,7 +30,6 @@ echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['
 $xtpl=new XTemplate ('modules/Contacts/BusinessCard.html');
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
-$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 
 $xtpl->assign("HEADER", $mod_strings['LBL_ADD_BUSINESSCARD']);
 

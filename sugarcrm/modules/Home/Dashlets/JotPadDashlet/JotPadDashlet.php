@@ -134,7 +134,8 @@ class JotPadDashlet extends Dashlet {
         else {
             $optionsArray['savedText'] = '';
         }
-        echo 'result = ' . $json->encode(array('id' => $_REQUEST['id'],
+        header("Content-Type: application/json");
+        echo $json->encode(array('id' => $_REQUEST['id'],
                                        'savedText' => $optionsArray['savedText']));
     }
 }

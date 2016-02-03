@@ -9,6 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
  
 require_once("modules/ModuleBuilder/views/view.listview.php");
 
@@ -20,11 +22,7 @@ class ViewListViewTest extends Sugar_PHPUnit_Framework_TestCase
 	    global $app_list_strings;
         include("include/language/en_us.lang.php");
     }
-    
-    public function tearDown() 
-    {
-        $_REQUEST = array();
-    }
+
 
     /**
      * Simple test that the list view class will not throw errors when used.
@@ -32,7 +30,7 @@ class ViewListViewTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testConstructor()
     {
-    	$_REQUEST = array(
+    	$req = array(
             "to_pdf" => "1",
             "sugar_body_only"=>"1",
             "module"=>"ModuleBuilder",
@@ -40,7 +38,7 @@ class ViewListViewTest extends Sugar_PHPUnit_Framework_TestCase
             "view_module"=>"Bugs",
             "view"=>"listview",
         );
-        $view = new ViewListView();
+        $view = new ViewListView(null, null, InputValidation::create($req, $req));
         $ajax = $view->constructAjax();
         $this->assertNotNull($ajax);
     }
