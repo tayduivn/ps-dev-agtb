@@ -21,7 +21,7 @@ class MetaDataManagerPortal extends MetaDataManager
      * 
      * @return array List of Portal module names
      */
-    protected function getModules()
+    protected function getModules($filtered = true)
     {
         $modules = array();
         foreach (SugarAutoLoader::getDirFiles("modules", true) as $mdir) {
@@ -42,7 +42,7 @@ class MetaDataManagerPortal extends MetaDataManager
      *
      * @return array List of Portal module names
      */
-    public function getFullModuleList()
+    public function getFullModuleList($filtered = false)
     {
         return $this->getModules();
     }
@@ -92,7 +92,7 @@ class MetaDataManagerPortal extends MetaDataManager
      *
      * @return array The list of module names
      */
-    public function getTabList()
+    public function getTabList($filter = true)
     {
         $controller = new TabController();
         return $controller->getPortalTabs();

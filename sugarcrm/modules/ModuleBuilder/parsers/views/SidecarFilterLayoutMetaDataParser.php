@@ -174,7 +174,7 @@ class SidecarFilterLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
      * @param array $defs
      * @return bool True if the field was added, false otherwise
      */
-    public function addField($fieldName, $defs = array())
+    public function addField($fieldName, $defs = array(), $placementIndex = null, $panelIndex = 0)
     {
         if (!$this->panelHasField($fieldName)) {
             $this->_viewdefs['fields'][$fieldName] = $defs;

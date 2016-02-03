@@ -41,7 +41,7 @@ class Filters extends Basic
     public $assigned_user_link;
     public $filter_definition;
 
-    public function retrieve($id, $encode = true, $deleted = false)
+    public function retrieve($id = '-1', $encode = true, $deleted = false)
     {
         // TODO: Remove after ENGRD-8/ENGRD-17.
         $encode = false;

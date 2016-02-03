@@ -262,7 +262,7 @@ class SugarTestDatabaseMock extends DBManager
     public function installConfig() {}
     public function getFromDummyTable() {}
     public function getGuidSQL() {}
-    public function prepareStatement($sql) { return null; }
+    public function prepareStatement($sql, array $lobs = array(), $msg = '') { return null; }
     public function fetchOneOffset($sql, $offset, $dieOnError = false, $msg = '', $encode = true) {}
 
     /** {@inheritDoc} */

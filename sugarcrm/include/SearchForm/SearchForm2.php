@@ -129,7 +129,8 @@ require_once('include/EditView/EditView2.php');
         }
  	}
 
- 	function display($header = true){
+    public function display($header = true, $ajaxSave = false)
+    {
     	global $theme, $timedate, $current_user;
  		$header_txt = '';
  		$footer_txt = '';

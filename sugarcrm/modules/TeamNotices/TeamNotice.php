@@ -53,7 +53,7 @@ class TeamNotice extends SugarBean {
 		$this->team_id = 1; // make the item globally accessible
 	}
 
-	function save_relationship_changes($is_update)
+    public function save_relationship_changes($is_update, $exclude = array())
     {
 
     }

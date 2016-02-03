@@ -313,8 +313,12 @@ class OracleManager extends DBManager
 
     /**
      * @see DBManager::checkQuery()
+     *
+     * @param  string $sql         query to be run
+     * @param  bool   $object_name optional, object to look up indices in
+     * @return bool   true if an index is found false otherwise
      */
-    protected function checkQuery($sql)
+    protected function checkQuery($sql, $object_name = false)
     {
         $name = (empty($GLOBALS['current_user']) || empty($GLOBALS['current_user']->user_name))
             ? 'generic' : $GLOBALS['current_user']->user_name;

@@ -16,7 +16,7 @@ require_once('tests/SugarTestLangPackCreator.php');
 
 class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function setUp()
+    protected function setUp()
     {
         $this->_ifs = new ImportFieldSanitize();
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);

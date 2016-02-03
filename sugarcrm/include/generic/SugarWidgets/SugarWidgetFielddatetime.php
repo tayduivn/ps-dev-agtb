@@ -1110,7 +1110,8 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         }
     }
 
-    function displayInput(&$layout_def) {
+    public function displayInput($layout_def)
+    {
     	global $timedate, $current_language, $app_strings;
         $home_mod_strings = return_module_language($current_language, 'Home');
         $filterTypes = array(' '                 => $app_strings['LBL_NONE'],

@@ -100,7 +100,8 @@ class Team extends SugarBean
 		return $team_fields;
 	}
 
-	function list_view_parse_additional_sections(&$list_form, $xTemplateSection) {
+    public function list_view_parse_additional_sections(&$list_form, $xTemplateSection = '')
+    {
 		global $current_user;
 
 		if (($_REQUEST['module'] == "Users") && ($_REQUEST['action'] == "DetailView"))

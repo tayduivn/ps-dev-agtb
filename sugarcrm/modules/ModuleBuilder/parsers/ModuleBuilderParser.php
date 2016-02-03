@@ -89,7 +89,7 @@ class ModuleBuilderParser
         return (array('viewdefs' => $defs, 'variables' => $variables));
 	}
 	
-	function handleSave ($file,$view,$moduleName,$defs)
+    public function handleSave()
 	{
 	}
 	

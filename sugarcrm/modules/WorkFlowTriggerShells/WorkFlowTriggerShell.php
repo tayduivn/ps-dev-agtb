@@ -114,7 +114,7 @@ class WorkFlowTriggerShell extends SugarBean {
 		return "$this->name";
 	}
 
-	function save_relationship_changes($is_update)
+    public function save_relationship_changes($is_update, $exclude = array())
     {
     }
 

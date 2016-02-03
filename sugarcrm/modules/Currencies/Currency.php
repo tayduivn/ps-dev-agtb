@@ -216,7 +216,7 @@ class Currency extends SugarBean
      * @param  object $list_form
      * @return object $list_form with merged currency id
      */
-    function list_view_parse_additional_sections($list_form)
+    function list_view_parse_additional_sections(&$list_form)
     {
         global $isMerge;
 
@@ -277,7 +277,7 @@ class Currency extends SugarBean
      * @param  boolean  $deleted
      * @return object   currency object, base currency if id is not found
      */
-    function retrieve($id, $encode = true, $deleted = true)
+    public function retrieve($id = -1, $encode = true, $deleted = true)
     {
         if(empty($id) || $id == '-99') {
             $this->setBaseCurrency();

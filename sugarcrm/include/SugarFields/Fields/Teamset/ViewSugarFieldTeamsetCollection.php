@@ -368,7 +368,8 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
        return '';
     }
 
-    function findTemplate($view) {
+    public function findTemplate($view, $classList = null)
+    {
         return parent::findTemplate($view, array('Teamset'));
     }
 }

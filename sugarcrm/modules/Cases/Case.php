@@ -127,7 +127,16 @@ class aCase extends Basic
         return $array_assign;
     }
 
-    function save_relationship_changes($is_update)
+    /**
+     * This function is a good location to save changes that have been made to a relationship.
+     * This should be overridden in subclasses that have something to save.
+     *
+     * @param boolean $is_update    true if this save is an update.
+     * @param array $exclude        a way to exclude relationships
+     *
+     * @see SugarBean::save_relationship_changes()
+     */
+    public function save_relationship_changes($is_update, $exclude = array())
     {
         parent::save_relationship_changes($is_update);
 

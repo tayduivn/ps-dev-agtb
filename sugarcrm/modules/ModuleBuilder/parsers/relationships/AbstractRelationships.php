@@ -71,7 +71,7 @@ class AbstractRelationships
      * @param boolean $includeActivitiesSubmodules True if the list should include Calls, Meetings etc; false if they should be replaced by the parent, Activities
      * @return array    Array of [$module][$subpanel]
      */
-    static function findRelatableModules ($includeActivitiesSubmodules = true)
+    public static function findRelatableModules($includeActivitiesSubmodules = true)
     {
         $relatableModules = array ( ) ;
 

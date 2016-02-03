@@ -1265,7 +1265,7 @@ class Email extends SugarBean {
 
     ///////////////////////////////////////////////////////////////////////////
     ////	RETRIEVERS
-    function retrieve($id, $encoded = true, $deleted = true)
+    public function retrieve($id = '-1', $encoded = true, $deleted = true)
     {
         // cn: bug 11915, return SugarBean's retrieve() call bean instead of $this
         $bean = parent::retrieve($id, $encoded, $deleted);

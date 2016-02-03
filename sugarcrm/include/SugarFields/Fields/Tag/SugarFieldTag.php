@@ -128,7 +128,7 @@ class SugarFieldTag extends SugarFieldRelatecollection
     /**
      * {@inheritDoc}
      */
-    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties)
+    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties, array $fieldList = null, ServiceBase $service = null)
     {
         if (isset($args['rc_beans'])) {
             if (!empty($args['rc_beans'][$fieldName][$bean->id])) {

@@ -1536,7 +1536,16 @@ FROM SYSIBMTS.TSINDEXES';
         return "ALTER TABLE $tablename RENAME COLUMN $column TO $newname";
 	}
 
-	public function emptyValue($type)
+    /**
+     * Return representation of an empty value depending on type
+     * The value is fully quoted, converted, etc.
+     * @param string $type
+     * @param bool $forPrepared Is it going to be used for prepared statement?
+     * @return mixed Empty value
+     * 
+     * @see DBManager::emptyValue()
+     */
+    public function emptyValue($type, $forPrepared = false)
 	{
 		// http://www.devx.com/dbzone/Article/28713
 		// http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.sql.ref.doc/doc/r0008474.html

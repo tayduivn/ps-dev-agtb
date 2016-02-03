@@ -166,7 +166,8 @@ class InboundEmail extends SugarBean {
 	 * @param string id
 	 * @return object Bean
 	 */
-	function retrieve($id, $encode=true, $deleted=true) {
+    function retrieve($id = -1, $encode=true, $deleted=true)
+    {
 		$ret = parent::retrieve($id,$encode,$deleted);
 		// if I-E bean exist
 		if (!is_null($ret)) {

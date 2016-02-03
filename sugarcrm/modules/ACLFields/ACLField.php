@@ -16,7 +16,7 @@ require_once('modules/ACLFields/actiondefs.php');
  * Field-level ACLs
  * @api
  */
-class ACLField  extends ACLAction
+class ACLField extends SugarBean
 {
     public $module_dir = 'ACLFields';
     public $object_name = 'ACLField';
@@ -234,7 +234,7 @@ class ACLField  extends ACLAction
      * @param bool $addACLParam Add 'acl' key with acl access value?
      * @param string $suffix Field suffix to strip from the list.
      */
-    function listFilter(&$list,$category, $user_id, $is_owner, $by_key=true, $min_access = 1, $blank_value=false, $addACLParam=false, $suffix='')
+    public static function listFilter(&$list, $category, $user_id, $is_owner, $by_key = true, $min_access = 1, $blank_value = false, $addACLParam = false, $suffix = '')
     {
         foreach($list as $key=>$value){
             if($by_key){
@@ -304,7 +304,7 @@ class ACLField  extends ACLAction
     * @param boolean $is_owner Boolean value indicating whether or not the field access should also take into account ownership access
     * @return Integer value indicating the ACL field level access
     */
-    static function hasAccess($field, $module, $user_id, $is_owner)
+    static function hasAccess($field = false, $module = 0, $user_id = null, $is_owner = null)
     {
         if(is_null($user_id)) {
             $user = $GLOBALS['current_user'];
@@ -442,7 +442,7 @@ class ACLField  extends ACLAction
     public static function clearACLCache()
     {
         self::$acl_fields = array();
-        parent::clearACLCache();
+        ACLAction::clearACLCache();
     }
 
     /**
@@ -457,5 +457,24 @@ class ACLField  extends ACLAction
             self::$acl_fields[$user_id] = self::loadFromCache($user_id, 'fields');
         }
         return !empty(self::$acl_fields[$user_id][$module]);
+    }
+
+    /**
+     * @param string $user_id
+     * @param string $type
+     */
+    protected static function loadFromCache($user_id, $type)
+    {
+        return AclCache::getInstance()->retrieve($user_id, $type);
+    }
+
+    /**
+     * @param string $user_id
+     * @param string $type
+     * @param array $data
+     */
+    protected static function storeToCache($user_id, $type, $data)
+    {
+        return AclCache::getInstance()->store($user_id, $type, $data);
     }
 }

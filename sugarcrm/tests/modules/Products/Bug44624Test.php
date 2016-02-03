@@ -32,7 +32,7 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
 
 	    $GLOBALS['module'] = "Products";
 		SugarTestProductTypesUtilities::createType(false, '1');
-		$this->_product = SugarTestProductUtilitiesWithTypes2::createProduct("1");
+        $this->_product = SugarTestProductUtilitiesWithTypes2::createProduct('', '1');
         $this->_product->disable_row_level_security = true;
         //Clear out the products_audit table
         $GLOBALS['db']->query("DELETE FROM products_audit WHERE parent_id = '{$this->_product->id}'");
@@ -174,7 +174,7 @@ class SugarTestProductUtilitiesWithTypes2 extends SugarTestProductUtilities
 	 * @param string $typeName type of created product will be
 	 * @param int $id id of created product
 	 */
-	public static function createProduct($typeName, $id = '', $prodName="SugarProduct")
+    public static function createProduct($id = '', $typeName = null, $prodName = 'SugarProduct')
 	{
 		$time = mt_rand();
 		$name = $prodName;

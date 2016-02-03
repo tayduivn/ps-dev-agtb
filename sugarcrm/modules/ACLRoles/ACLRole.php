@@ -257,13 +257,14 @@ function mark_relationships_deleted($id){
         parent::mark_relationships_deleted($id);
 }
 
-   /**
-    *  toArray()
-    * returns this role as an array
-    *
-    * @return array of fields with id, name, description
-    */
-    function toArray(){
+    /**
+     *  toArray()
+     * returns this role as an array
+     *
+     * @return array of fields with id, name, description
+     */
+    public function toArray($dbOnly = false, $stringOnly = false, $upperKeys = false)
+    {
         $array_fields = array('id', 'name', 'description');
         $arr = array();
         foreach($array_fields as $field){

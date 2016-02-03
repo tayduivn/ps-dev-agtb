@@ -23,7 +23,7 @@ class SugarWidgetTabs
         $this->jscallback = $jscallback;
     }
 
- function display()
+    public function display(&$layout_def)
  {
 	ob_start();
 ?>

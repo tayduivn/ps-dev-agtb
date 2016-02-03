@@ -1016,8 +1016,13 @@ class MssqlManager extends DBManager
 
     /**
      * @see DBManager::getAffectedRowCount()
+     * 
+     * Returns the number of rows affected by the last query
+	 * See also affected_rows capability, will return 0 unless the DB supports it
+     * @param resource $result query result resource
+     * @return int
      */
-	public function getAffectedRowCount()
+    public function getAffectedRowCount($result)
     {
         return $this->getOne("SELECT @@ROWCOUNT");
     }
@@ -1291,8 +1296,10 @@ class MssqlManager extends DBManager
     /**
      * Return representation of an empty value depending on type
      * @param string $type
+     * @param bool $forPrepared Is it going to be used for prepared statement?
+     * @return mixed Empty value
      */
-    public function emptyValue($type)
+    public function emptyValue($type, $forPrepared = false)
     {
         $ctype = $this->getColumnType($type);
         if($ctype == "datetime") {

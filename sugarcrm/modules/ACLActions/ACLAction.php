@@ -490,7 +490,8 @@ class ACLAction  extends SugarBean
     *
     * @return array of fields with id, name, access and category
     */
-    function toArray(){
+    public function toArray($dbOnly = false, $stringOnly = false, $upperKeys=false)
+    {
         $array_fields = array('id', 'aclaccess');
         $arr = array();
         foreach($array_fields as $field){
@@ -530,10 +531,10 @@ class ACLAction  extends SugarBean
         AclCache::getInstance()->clear();
     }
 
-    public function save()
+    public function save($check_notify = false)
     {
         self::clearACLCache();
-    	parent::save();
+        parent::save($check_notify);
     }
 
     public function mark_deleted($id)

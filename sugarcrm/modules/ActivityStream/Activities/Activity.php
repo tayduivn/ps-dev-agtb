@@ -65,7 +65,7 @@ class Activity extends Basic
      * @param  boolean $deleted Flag to allow retrieval of deleted records
      * @return Activity
      */
-    public function retrieve($id, $encode = false, $deleted = true)
+    public function retrieve($id = '-1', $encode = false, $deleted = true)
     {
         // TODO: Fix this after ENGRD-17 is resolved.
         $encode = false;

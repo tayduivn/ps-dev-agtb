@@ -36,7 +36,7 @@ class ParserLabel extends ModuleBuilderParser
      * @param array $params Labels as "label_".System label => Display label pairs
      * @param string $language      Language key, for example 'en_us'
      */
-    function handleSave ($params , $language)
+    function handleSave($params = null, $language = null)
     {
         $labels = array ( ) ;
         foreach ( $params as $key => $value )

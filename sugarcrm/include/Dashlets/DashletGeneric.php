@@ -430,8 +430,9 @@ class DashletGeneric extends Dashlet {
      *
      * @return string HTML that displays Dashlet
      */
-    function display() {
-        return parent::display() . $this->lvs->display(false) . $this->processAutoRefresh();
+    public function display($text = '')
+    {
+        return parent::display($text) . $this->lvs->display(false) . $this->processAutoRefresh();
     }
 
     /**

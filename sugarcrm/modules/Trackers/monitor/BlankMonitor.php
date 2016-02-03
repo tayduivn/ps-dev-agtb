@@ -59,8 +59,8 @@ class BlankMonitor extends Monitor implements Trackable {
      * the flush method passing with the montior ($this) instance.
      * 
      */
-    public function save() {
- 	
+    public function save($flush=true)
+    {
     }
 
 

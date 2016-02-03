@@ -58,7 +58,7 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
      * @param $count int value of the time period count (not used in MonthTimePeriod class)
      * @return string The formatted name of the timeperiod
      */
-    public function getTimePeriodName($count)
+    public function getTimePeriodName($count, $timeperiod = null)
     {
         global $sugar_config;
         $timedate = TimeDate::getInstance();

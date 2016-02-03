@@ -29,7 +29,7 @@ class SugarWidgetSubPanelTopSelectContactsButton extends SugarWidgetSubPanelTopS
     }
 
 	//widget_data is the collection of attributes associated with the button in the layout_defs file.
-	function display(&$widget_data)
+    public function display($widget_data)
 	{
 		global $app_strings;
 		$initial_filter = '';

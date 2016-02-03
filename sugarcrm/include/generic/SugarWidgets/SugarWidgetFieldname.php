@@ -24,7 +24,7 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
         $this->reporter = $this->layout_manager->getAttribute('reporter');
     }
 
-	function displayList(&$layout_def)
+    public function displayList($layout_def)
 	{
 		if(empty($layout_def['column_key']))
 		{

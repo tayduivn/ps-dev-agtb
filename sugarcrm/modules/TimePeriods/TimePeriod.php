@@ -117,7 +117,7 @@ class TimePeriod extends SugarBean
      * @param bool $deleted
      * @return null|SugarBean
      */
-    public function retrieve($id, $encode = false, $deleted = true)
+    public function retrieve($id = '-1', $encode = false, $deleted = true)
     {
         global $disable_date_format;
         $previous_disable_date_format = $disable_date_format;
@@ -165,7 +165,7 @@ class TimePeriod extends SugarBean
         return $timeperiod_fields;
     }
 
-    public function list_view_parse_additional_sections(&$list_form, $xTemplateSection)
+    public function list_view_parse_additional_sections(&$list_form)
     {
         return $list_form;
     }

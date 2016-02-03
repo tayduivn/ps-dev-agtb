@@ -30,7 +30,8 @@ class SugarWidget
 	{
 		$this->layout_manager = $layout_manager;
 	}
-	function display(&$layout_def)
+
+    public function display($layout_def)
 	{
 		return 'display class undefined';
 	}

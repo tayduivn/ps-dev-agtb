@@ -288,7 +288,8 @@ class Document extends SugarBean {
         }
 	}
 
-	function list_view_parse_additional_sections(& $list_form, $xTemplateSection) {
+    public function list_view_parse_additional_sections(&$list_form)
+    {
 		return $list_form;
 	}
 

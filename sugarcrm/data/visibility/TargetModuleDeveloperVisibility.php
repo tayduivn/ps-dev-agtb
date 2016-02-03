@@ -41,7 +41,7 @@ class TargetModuleDeveloperVisibility extends ACLVisibility
      *
      * @return SugarQuery
      */
-    public function addVisibilityWhereQuery(SugarQuery $query)
+    public function addVisibilityWhereQuery(SugarQuery $query, $options = array())
     {
         global $current_user;
 

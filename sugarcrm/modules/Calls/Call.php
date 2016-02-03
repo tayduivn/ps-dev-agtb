@@ -612,7 +612,8 @@ class Call extends SugarBean {
 		return $array_assign;
 	}
 
-	function save_relationship_changes($is_update) {
+    public function save_relationship_changes($is_update, $exclude = array())
+    {
 		$exclude = array();
 		if(empty($this->in_workflow))
         {

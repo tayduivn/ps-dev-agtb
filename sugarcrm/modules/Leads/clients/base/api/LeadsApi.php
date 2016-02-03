@@ -39,7 +39,8 @@ class LeadsApi extends ModuleApi {
     /**
      * Create the lead record and optionally perform post-save actions for Convert Target & Lead from Email cases
      */
-    public function createRecord($api, $args) {
+    public function createRecord(ServiceBase $api, array $args)
+    {
         //create the lead using the ModuleApi
         $data = parent::createRecord($api, $args);
 

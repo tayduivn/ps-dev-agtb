@@ -36,9 +36,10 @@ class MetaDataManagerMobile extends MetaDataManager
      *
      * @return array List of Mobile module names
      */
-    protected function getModules() {
+    protected function getModules($filtered = true)
+    {
         // Get the current user module list
-        $modules = array_intersect(parent::getModules(), $this->getTabList());
+        $modules = array_intersect(parent::getModules($filtered), $this->getTabList());
         $defaultEnabledModules = $this->getDefaultEnabledModuleList();
 
         // Add default enabled modules to the list
@@ -69,7 +70,7 @@ class MetaDataManagerMobile extends MetaDataManager
      *
      * @return array List of Mobile module names
      */
-    public function getFullModuleList()
+    public function getFullModuleList($filtered = false)
     {
         return $this->getModules();
     }
@@ -98,7 +99,7 @@ class MetaDataManagerMobile extends MetaDataManager
      * 
      * @return array The list of modules for mobile
      */
-    public function getTabList()
+    public function getTabList($filter = true)
     {
         $cache = SugarCache::instance();
         $wireless_module_registry_keys = $cache->wireless_module_registry_keys;
@@ -123,7 +124,8 @@ class MetaDataManagerMobile extends MetaDataManager
         return $wireless_module_registry_keys;
     }
 
-    public function getQuickcreateList() {
+    public function getQuickcreateList($filter = true)
+    {
         // replicate the essential part of the behavior of the private loadMapping() method in SugarController
         foreach (SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
             require $file;
