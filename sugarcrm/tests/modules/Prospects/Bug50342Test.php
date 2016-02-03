@@ -130,19 +130,15 @@ class Bug50342Test extends Sugar_PHPUnit_Framework_TestCase
        	$valid = new SugarSQLValidate();
         $this->assertTrue($valid->validateQueryClauses($sql), "SugarSQLValidate found Bad query: {$sql}");
 
-        $mock = new Bug50342ProspectMock();
+        $mock = $this->getMockBuilder('Prospect')
+            ->setMethods(array('process_list_query'))
+            ->getMock();
+        $mock->expects($this->once())
+            ->method('process_list_query')
+            ->will($this->returnArgument(0));
         $select = $mock->retrieveTargetList($sql, array('id', 'first_name', 'last_name'));
         $this->assertRegExp("/from\s+{$tableName}/i", $select, 'Incorrect from SQL clause: ' . $select);
     }
 
 }
 
-
-class Bug50342ProspectMock extends Prospect {
-
-public function process_list_query($select, $offset, $limit, $max, $query)
-{
-    return $select;
-}
-
-}

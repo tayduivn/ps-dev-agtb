@@ -21,7 +21,7 @@ class Bug38850Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function testCanInterjectCodeInTcpdfTag()
     {
-        $pdf = new Bug38850TestMock(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+        $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
         $dom = array(
             0 => array(
@@ -37,15 +37,7 @@ class Bug38850Test extends Sugar_PHPUnit_Framework_TestCase
                 ),
             );
 
-        $pdf->openHTMLTagHandler($dom, 1);
+        SugarTestReflection::callProtectedMethod($pdf, 'openHTMLTagHandler', array(&$dom, 1));
         $this->expectOutputNotRegex('/Can Interject Code/');
-    }
-}
-
-class Bug38850TestMock extends TCPDF
-{
-    public function openHTMLTagHandler($dom, $key, $cell=false)
-    {
-        parent::openHTMLTagHandler($dom, $key, $cell);
     }
 }

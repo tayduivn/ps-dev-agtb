@@ -69,7 +69,12 @@ class SnipStatusTest extends Sugar_PHPUnit_Framework_TestCase
     protected function statusTest($serverResponse,$expectedStatus,$expectedMessage=null,$snipEmailExists=true)
     {
     	//give snip our mock client
-    	$this->snip->setClient(new MockClient($this->snip,$this,$serverResponse));
+        $clientMock = $this->getMock('SugarHttpClient');
+        $clientMock->expects($this->once())
+            ->method('callRest')
+            ->with($this->matchesRegularExpression('`^' . $this->snip->getSnipURL() . 'status/?`'))
+            ->will($this->returnValue($serverResponse));
+        $this->snip->setClient($clientMock);
         $oldemail = $this->snip->getSnipEmail();
         if ($snipEmailExists){
             $this->snip->setSnipEmail("snip-test-182391820@sugarcrm.com");
@@ -86,38 +91,5 @@ class SnipStatusTest extends Sugar_PHPUnit_Framework_TestCase
     	$this->assertTrue(is_array($status),"getStatus() should always return an associative array of the form array('status'=>string,'message'=>string|null). But it did not return an array.");
     	$this->assertEquals($expectedStatus,$status['status'],"Expected status: '$expectedStatus'. Returned status: '{$status['status']}'");
     	$this->assertEquals($expectedMessage,$status['message'],"Expected message: ".(is_null($expectedMessage)?"null":"'$expectedMessage'").". Returned message: '{$status['message']}'");
-    }
-}
-
-class MockClient extends SugarHttpClient
-{
-	private $snip;
-	private $hasfailed=false;
-	private $testcase;
-	private $status;
-
-	/**
-	* Construct the mock snip client. Example:
-	* $mc = new MockClient(SugarSNIP::getInstance(),new Sugar_PHPUnit_Framework_TestCase,json_encode(array('result'=>'ok','status'=>'success')));
-	*  - this example would cause the mock client to return the {'result' : 'ok', 'status' : 'success'}, which is the result returned when the Sugar instance has a SNIP license.
-	* @param SugarSNIP $snip The SugarSNIP object
-	* @param Sugar_PHPUnit_Framework_TestCase $testcase The testcase that is currently running (used to trigger exceptions/assertions).
-	* @param string $status The status message that should be returned from the mock server (should be a string that is a json-encoded object).
-	*/
-	public function __construct($snip,$testcase,$status)
-	{
-		$this->snip=$snip;
-		$this->testcase = $testcase;
-		$this->status = $status;
-	}
-
-	//overrides callRest to provide a status message based on the prameter
-	public function callRest($url, $postArgs)
-    {
-    	if (preg_match('`^'.$this->snip->getSnipURL().'status/?`',$url))
-    	{
-    		return $this->status;
-    	}
-    	$this->testcase->throwException(new Exception("The MockClient can only handle callRest calls that query the status."));
     }
 }

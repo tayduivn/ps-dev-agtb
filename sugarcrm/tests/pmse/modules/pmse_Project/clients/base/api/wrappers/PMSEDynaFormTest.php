@@ -10,15 +10,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSEDynaFormTest extends PHPUnit_Framework_TestCase
+class PMSEDynaFormTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
     protected $adamDynaform;
-
-    public static function setUpBeforeClass()
-    {
-        parent::setUpBeforeClass();
-    }
 
     protected function setUp()
     {

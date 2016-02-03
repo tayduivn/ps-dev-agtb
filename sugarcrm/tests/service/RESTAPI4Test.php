@@ -23,7 +23,6 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
     private static $helperObject;
 
     protected $aclRole;
-    protected $aclField;
 
     public function setUp()
     {
@@ -54,8 +53,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->aclRole->set_relationship('acl_roles_users', array('role_id'=>$this->aclRole->id ,'user_id'=> $this->_user->id), false);
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
-        $this->aclField = new ACLField();
-        $this->aclField->setAccessControl('Accounts', $this->aclRole->id, 'website', -99);
+        ACLField::setAccessControl('Accounts', $this->aclRole->id, 'website', -99);
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
         ACLField::loadUserFields('Accounts', 'Account', $this->_user->id, true );
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing

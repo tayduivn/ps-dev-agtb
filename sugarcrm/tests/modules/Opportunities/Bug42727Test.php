@@ -12,17 +12,6 @@
 
 require_once "modules/Opportunities/Opportunity.php";
 
-class MockOpportunity extends Opportunity {
-
-    public $mailWasSent = false;
-    public $notify_inworkflow = true;
-    public $set_created_by = false;
-    
-    public function send_assignment_notifications() {
-        $this->mailWasSent = true;
-    }
-}
-
 class Bug42727Test extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $_opportunity;
@@ -33,7 +22,12 @@ class Bug42727Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-        $this->_opportunity = new MockOpportunity();
+        $this->_opportunity = $this->getMockBuilder('Opportunity')
+            ->setMethods(array('send_assignment_notifications'))
+            ->getMock();
+        $this->_opportunity->mailWasSent = false;
+        $this->_opportunity->notify_inworkflow = true;
+        $this->_opportunity->set_created_by = false;
         $this->_opportunity->date_closed = TimeDate::getInstance()->getNow()->asDbDate();
     }
 
@@ -48,17 +42,19 @@ class Bug42727Test extends Sugar_PHPUnit_Framework_TestCase
     public function testSentMail() 
     {
         $this->_opportunity->created_by = $this->_opportunity->assigned_user_id = SugarTestUserUtilities::createAnonymousUser()->id;
+        $this->_opportunity->expects($this->never())
+            ->method('send_assignment_notifications');
         $this->_opportunityIds[] = $this->_opportunity->save();
         $this->assertTrue($this->_opportunity->isOwner($this->_opportunity->created_by));
-        $this->assertFalse($this->_opportunity->mailWasSent);
     }
     
     public function testNotSentMail() 
     {
         $this->_opportunity->created_by = SugarTestUserUtilities::createAnonymousUser()->id;
         $this->_opportunity->assigned_user_id = SugarTestUserUtilities::createAnonymousUser()->id;
+        $this->_opportunity->expects($this->once())
+            ->method('send_assignment_notifications');
         $this->_opportunityIds[] = $this->_opportunity->save(true);
         $this->assertFalse($this->_opportunity->isOwner($this->_opportunity->created_by));
-        $this->assertTrue($this->_opportunity->mailWasSent);    
     }
 }
