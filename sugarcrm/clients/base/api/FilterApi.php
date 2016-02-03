@@ -120,7 +120,7 @@ class FilterApi extends SugarApi
                     'SugarApiExceptionNotAuthorized',
                 ),
             ),
-            // FIXME TY-927: Deprecate me
+            // filterModuleById is deprecated. Please use filterModuleGet and pass a filter_id instead
             'filterModuleById' => array(
                 'reqType' => 'GET',
                 'path' => array('<module>', 'filter', '?'),
@@ -166,9 +166,24 @@ class FilterApi extends SugarApi
         self::$current_user = $current_user;
     }
 
-    // FIXME TY-927: deprecate me
+    /**
+     * filterById retrieves records based on the module and a preexisting
+     * filter set id.
+     *
+     * @param ServiceBase $api The REST API object.
+     * @param array $args REST API arguments.
+     * @return array The results of the REST call.
+     * @throws SugarApiExceptionInvalidParameter If any parameters are invalid.
+     * @throws SugarApiExceptionNotFound If we cannot find the requested filter.
+     * @deprecated 7.8.0 This function does not work correctly and will be
+     *   removed in 7.9.0.
+     * @see FilterApi::filterList() Please use filterList and supply
+     *   $args['filter_id'] instead.
+     */
     public function filterById(ServiceBase $api, array $args)
     {
+        LoggerManager::getLogger()->deprecated('GET /<module>/filter/? has been deprecated as of 7.8.0 and will be ' .
+            'removed in 7.9.0. Please use GET /<module>/filter and supply a filter_id instead.');
         $filter = BeanFactory::getBean('Filters', $args['record']);
 
         // Bad filter ID in request
