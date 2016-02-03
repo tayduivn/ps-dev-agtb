@@ -577,22 +577,22 @@
         },
         {
             "name": "sabre/http",
-            "version": "4.1.0",
+            "version": "4.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fruux/sabre-http.git",
-                "reference": "5874c9c449e690242cf32884da9d32a3369a2c78"
+                "reference": "2e93bc8321524c67be4ca5b8415daebd4c8bf85e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fruux/sabre-http/zipball/5874c9c449e690242cf32884da9d32a3369a2c78",
-                "reference": "5874c9c449e690242cf32884da9d32a3369a2c78",
+                "url": "https://api.github.com/repos/fruux/sabre-http/zipball/2e93bc8321524c67be4ca5b8415daebd4c8bf85e",
+                "reference": "2e93bc8321524c67be4ca5b8415daebd4c8bf85e",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
                 "php": ">=5.4",
-                "sabre/event": ">=1.0.0,<3.0.0",
+                "sabre/event": ">=1.0.0,<4.0.0",
                 "sabre/uri": "~1.0"
             },
             "require-dev": {
@@ -628,7 +628,7 @@
             "keywords": [
                 "http"
             ],
-            "time": "2015-09-04 21:56:22"
+            "time": "2016-01-06 23:00:08"
         },
         {
             "name": "sabre/uri",
@@ -683,16 +683,16 @@
         },
         {
             "name": "sabre/vobject",
-            "version": "3.4.7",
+            "version": "3.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fruux/sabre-vobject.git",
-                "reference": "7b3690545451159fc608dfac6696110f6770ff5d"
+                "reference": "061dd47ce40074bf63da8e3d6dbe7f18b5a4f3a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fruux/sabre-vobject/zipball/7b3690545451159fc608dfac6696110f6770ff5d",
-                "reference": "7b3690545451159fc608dfac6696110f6770ff5d",
+                "url": "https://api.github.com/repos/fruux/sabre-vobject/zipball/061dd47ce40074bf63da8e3d6dbe7f18b5a4f3a4",
+                "reference": "061dd47ce40074bf63da8e3d6dbe7f18b5a4f3a4",
                 "shasum": ""
             },
             "require": {
@@ -745,20 +745,20 @@
                 "jCard",
                 "vCard"
             ],
-            "time": "2015-09-04 15:17:58"
+            "time": "2016-01-11 18:13:23"
         },
         {
             "name": "sabre/xml",
-            "version": "1.2.0",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fruux/sabre-xml.git",
-                "reference": "a3eeef9f3f13ee42503a1e06e5df3a6fc95b479b"
+                "reference": "420400f36655d79894fae8ce970516a71ea8f5f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fruux/sabre-xml/zipball/a3eeef9f3f13ee42503a1e06e5df3a6fc95b479b",
-                "reference": "a3eeef9f3f13ee42503a1e06e5df3a6fc95b479b",
+                "url": "https://api.github.com/repos/fruux/sabre-xml/zipball/420400f36655d79894fae8ce970516a71ea8f5f5",
+                "reference": "420400f36655d79894fae8ce970516a71ea8f5f5",
                 "shasum": ""
             },
             "require": {
@@ -777,7 +777,11 @@
             "autoload": {
                 "psr-4": {
                     "Sabre\\Xml\\": "lib/"
-                }
+                },
+                "files": [
+                    "lib/Deserializer/functions.php",
+                    "lib/Serializer/functions.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -789,9 +793,14 @@
                     "email": "me@evertpot.com",
                     "homepage": "http://evertpot.com/",
                     "role": "Developer"
+                },
+                {
+                    "name": "Markus Staab",
+                    "email": "markus.staab@redaxo.de",
+                    "role": "Developer"
                 }
             ],
-            "description": "The Sabre XML parser is the only XML library that you may not hate.",
+            "description": "sabre/xml is an XML library that you may not hate.",
             "homepage": "https://sabre.io/xml/",
             "keywords": [
                 "XMLReader",
@@ -799,20 +808,20 @@
                 "dom",
                 "xml"
             ],
-            "time": "2015-08-30 07:57:48"
+            "time": "2015-12-29 20:51:22"
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.7.1",
+            "version": "v2.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "be3c5ff8d503c46768aeb78ce6333051aa6f26d9"
+                "reference": "ee278f7c851533e58ca307f66305ccb9188aceda"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/be3c5ff8d503c46768aeb78ce6333051aa6f26d9",
-                "reference": "be3c5ff8d503c46768aeb78ce6333051aa6f26d9",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/ee278f7c851533e58ca307f66305ccb9188aceda",
+                "reference": "ee278f7c851533e58ca307f66305ccb9188aceda",
                 "shasum": ""
             },
             "require": {
@@ -820,11 +829,10 @@
             },
             "require-dev": {
                 "psr/log": "~1.0",
-                "symfony/config": "~2.0,>=2.0.5",
-                "symfony/dependency-injection": "~2.6",
-                "symfony/expression-language": "~2.6",
-                "symfony/phpunit-bridge": "~2.7",
-                "symfony/stopwatch": "~2.3"
+                "symfony/config": "~2.0,>=2.0.5|~3.0.0",
+                "symfony/dependency-injection": "~2.6|~3.0.0",
+                "symfony/expression-language": "~2.6|~3.0.0",
+                "symfony/stopwatch": "~2.3|~3.0.0"
             },
             "suggest": {
                 "symfony/dependency-injection": "",
@@ -833,13 +841,16 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.7-dev"
+                    "dev-master": "2.8-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
                     "Symfony\\Component\\EventDispatcher\\": ""
-                }
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -857,7 +868,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2015-06-08 09:37:21"
+            "time": "2016-01-13 10:28:07"
         },
         {
             "name": "symfony/security-core",
