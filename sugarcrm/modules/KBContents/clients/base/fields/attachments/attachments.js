@@ -155,6 +155,39 @@
             $(this.$node.data('select2').container).attr('data-attachable', true);
             this.refreshFromModel();
         }
+        this._IEDownloadAttributeWorkaroud();
+    },
+
+    /**
+     * 'Download' attribute workaround for IE browser (which does not support it)
+     */
+    _IEDownloadAttributeWorkaroud: function () {
+        var isIE = /*@cc_on!@*/false || !!document.documentMode;
+        var field = "";
+        var href = "";
+        if (isIE) {
+            var downloadFile = function (event) {
+                field = this.getAttribute("download");
+                href = this.getAttribute("href");
+                event.preventDefault();
+                var request = new XMLHttpRequest();
+                request.addEventListener("load",requestListener, false);
+                request.open("get", this, true);
+                request.responseType = 'blob';
+                request.send();
+            }
+            var requestListener = function () {
+                if (field == "") {
+                    field = href;
+                }
+                var blobObject = this.response;
+                window.navigator.msSaveBlob(blobObject, field);
+            }
+            var items = document.querySelectorAll('a[download], area[download]');
+            for (var i = 0; i < items.length; i++) {
+                items[i].addEventListener('click', downloadFile, false);
+            }
+        }
     },
 
     /**
