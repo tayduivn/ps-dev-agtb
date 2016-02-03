@@ -79,7 +79,7 @@ $dictionary['NotificationCenterSubscription'] = array(
     ),
     'indices' => array(
         'idx_user_id' => array(
-            'name' => 'idx_user_id',
+            'name' => 'idx_notification_subscription_user_id',
             'type' => 'index',
             'fields' => array(
                 'user_id',
