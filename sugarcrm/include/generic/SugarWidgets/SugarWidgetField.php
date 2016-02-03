@@ -17,12 +17,8 @@ if(!defined('sugarEntry') || !sugarEntry)
 
 
 class SugarWidgetField extends SugarWidget {
-
-	function SugarWidgetField(&$layout_manager) {
-        parent::SugarWidget($layout_manager);
-    }
-
-	function display($layout_def) {
+    public function display($layout_def)
+    {
 		//print $layout_def['start_link_wrapper']."===";
 		$context = $this->layout_manager->getAttribute('context'); //_ppd($context);
 		$func_name = 'display'.$context;

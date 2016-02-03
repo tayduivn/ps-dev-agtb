@@ -22,7 +22,8 @@ class javascript{
 		$this->formname = $name;
 	}
 
-	function javascript(){
+    public function __construct()
+    {
 		global $app_strings, $current_user, $sugar_config;
 
         // Bug 24730 - default initialize the bean object in case we never set it to the current bean object

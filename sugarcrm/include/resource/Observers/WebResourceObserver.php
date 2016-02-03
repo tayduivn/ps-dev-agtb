@@ -19,11 +19,6 @@ require_once('include/resource/Observers/ResourceObserver.php');
  * for web clients.
  */
 class WebResourceObserver extends ResourceObserver {
-
-function WebResourceObserver($module) {
-   parent::ResourceObserver($module);
-}
-
 /**
  * notify
  * Web implementation to notify the browser

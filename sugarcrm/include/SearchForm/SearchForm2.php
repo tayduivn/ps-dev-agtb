@@ -61,7 +61,7 @@ require_once('include/EditView/EditView2.php');
       */
      protected $request;
 
-    public function SearchForm($seed, $module, $action = 'index', $options = array())
+    public function __construct($seed, $module, $action = 'index', $options = array())
     {
         $this->request = InputValidation::getService();
  		$this->th = new TemplateHandler();

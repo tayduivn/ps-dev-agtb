@@ -86,8 +86,9 @@ class DashletGeneric extends Dashlet {
     var $lvs;
     var $layoutManager;
 
-    function DashletGeneric($id, $options = null) {
-        parent::Dashlet($id);
+    public function __construct($id, $options = null)
+    {
+        parent::__construct($id);
         $this->isConfigurable = true;
         if(isset($options)) {
             if(!empty($options['filters'])) $this->filters = $options['filters'];

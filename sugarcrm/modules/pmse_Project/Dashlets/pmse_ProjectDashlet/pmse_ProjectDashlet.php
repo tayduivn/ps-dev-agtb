@@ -19,11 +19,12 @@ require_once 'include/Dashlets/DashletGeneric.php';
 require_once 'modules/pmse_Project/pmse_Project.php';
 
 class pmse_ProjectDashlet extends DashletGeneric { 
-    function pmse_ProjectDashlet($id, $def = null) {
+    public function __construct($id, $def = null)
+    {
 		global $current_user, $app_strings;
 		require('modules/pmse_Project/metadata/dashletviewdefs.php');
 
-        parent::DashletGeneric($id, $def);
+        parent::__construct($id, $def);
 
         if(empty($def['title'])) $this->title = translate('LBL_HOMEPAGE_TITLE', 'pmse_Project');
 

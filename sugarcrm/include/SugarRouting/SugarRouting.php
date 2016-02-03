@@ -41,7 +41,8 @@ class SugarRouting {
 	/**
 	 * Sole constructor
 	 */
-	function SugarRouting($bean, $user) {
+    public function __construct($bean, $user)
+    {
 		if(!empty($bean)) {
 			if($user == null) {
 				global $current_user;

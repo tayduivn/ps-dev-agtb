@@ -23,7 +23,7 @@ class ViewConvertLead extends SugarView
         $view_object_map = array()
         )
     {
-        parent::SugarView($bean, $view_object_map);
+        parent::__construct($bean, $view_object_map);
     	$this->medataDataFile = SugarAutoLoader::existingCustomOne($this->fileName);
     }
 

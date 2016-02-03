@@ -6802,7 +6802,9 @@ class Overview {
 			),
 		);
 	*/
-	function Overview() {
+
+    public function __construct()
+    {
 		global $dictionary;
 
 		if(!isset($dictionary['email_cache']) || empty($dictionary['email_cache'])) {

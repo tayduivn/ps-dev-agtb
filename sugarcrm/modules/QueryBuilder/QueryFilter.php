@@ -100,7 +100,8 @@ class QueryFilter extends QueryBuilder {
 	// This is the list of fields that are required
 	var $required_fields =  array();
 
-	function QueryFilter() {
+    public function __construct()
+    {
 		parent::__construct();
 
 		$this->disable_row_level_security =true;
@@ -376,5 +377,3 @@ class QueryFilter extends QueryBuilder {
 	
 
 }
-
-?>

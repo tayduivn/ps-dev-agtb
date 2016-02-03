@@ -40,7 +40,8 @@ class ProcessView {
     var $top_block;
     var $bottom_block;
 
-    function ProcessView($workflow_object, $target_bean){
+    public function __construct($workflow_object, $target_bean)
+    {
         $this->xtpl = new XTemplate ('include/ListView/ProcessView.html');
         $this->workflow_object = $workflow_object;
         $this->target_bean = $target_bean;

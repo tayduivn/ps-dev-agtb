@@ -43,9 +43,9 @@ class ListViewSmarty extends ListViewDisplay{
      *
      * @param Request $request
      */
-    public function ListViewSmarty(Request $request = null)
+    public function __construct(Request $request = null)
     {
-        parent::ListViewDisplay($request);
+        parent::__construct($request);
 		$this->ss = new Sugar_Smarty();
 	}
 

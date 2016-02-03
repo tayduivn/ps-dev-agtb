@@ -17,11 +17,12 @@ require_once('include/tabs.php');
 class ConnectorWidgetTabs extends SugarWidgetTabs
 {
  var $class;
- function ConnectorWidgetTabs(&$tabs,$current_key,$jscallback, $class='tablist')
- {
-   parent::SugarWidgetTabs($tabs, $current_key, $jscallback);
-   $this->class = $class;
- }
+
+    public function __construct(&$tabs,$current_key,$jscallback, $class='tablist')
+    {
+        parent::__construct($tabs, $current_key, $jscallback);
+        $this->class = $class;
+    }
 
  function display()
  {

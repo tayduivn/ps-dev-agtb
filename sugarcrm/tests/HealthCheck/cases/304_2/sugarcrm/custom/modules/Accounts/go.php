@@ -12,7 +12,7 @@
 
 class Go
 {
-    function Go($bean, $event, $arguments)
+    public function __construct($bean, $event, $arguments)
     {
         //logic
     }

@@ -14,7 +14,8 @@ class contextMenu {
     var $menuItems;
     var $objectName;
     
-    function contextMenu() {
+    public function __construct()
+    {
         $this->menuItems = array();
     } 
 

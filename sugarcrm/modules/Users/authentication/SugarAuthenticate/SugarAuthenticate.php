@@ -28,7 +28,7 @@ class SugarAuthenticate{
 	 *
 	 * @return SugarAuthenticate
 	 */
-	function SugarAuthenticate()
+    public function __construct()
 	{
 	    // check in custom dir first, in case someone want's to override an auth controller
 	    SugarAutoLoader::requireWithCustom('modules/Users/authentication/'.$this->authenticationDir.'/' . $this->userAuthenticateClass . '.php');

@@ -84,10 +84,8 @@ class QueryColumn extends QueryBuilder {
 		,"start_axis" => "x"
 		);		
 	
-	
-	
-	
-	function QueryColumn() {
+    public function __construct()
+    {
 		parent::__construct();
 
 		$this->disable_row_level_security =true;
@@ -265,5 +263,3 @@ class QueryColumn extends QueryBuilder {
 	
 
 }
-
-?>

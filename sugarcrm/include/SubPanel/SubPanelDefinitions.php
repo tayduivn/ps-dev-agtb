@@ -51,7 +51,7 @@ class aSubPanel
 	var $bean_name ;
 	var $template_instance ;
 
-	function aSubPanel ( $name , $instance_properties , $parent_bean , $reload = false , $original_only = false, $forApi = false )
+    public function __construct($name, $instance_properties, $parent_bean, $reload = false, $original_only = false, $forApi = false)
 	{
 
 		$this->_instance_properties = $instance_properties ;
@@ -615,7 +615,7 @@ class SubPanelDefinitions
 	 * @param ARRAY $layout_def_override - if you wish to override the default loaded layout defs you pass them in here.
 	 * @return SubPanelDefinitions
 	 */
-	function SubPanelDefinitions ( $focus , $layout_def_key = '' , $layout_def_override = '' , $platform = null)
+    public function __construct($focus, $layout_def_key = '', $layout_def_override = '', $platform = null)
 	{
 		$this->_focus = $focus ;
 		$this->platform = $platform;

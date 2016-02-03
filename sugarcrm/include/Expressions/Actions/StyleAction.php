@@ -14,7 +14,8 @@ require_once("include/Expressions/Actions/AbstractAction.php");
 class StyleAction extends AbstractAction{
 	protected $expression =  "";
 	
-	function StyleAction($params) {
+    public function __construct($params)
+    {
 		$this->targetField = $params['target'];
 		$this->attributes = array();
         foreach($params['attrs'] as $prop => $val)

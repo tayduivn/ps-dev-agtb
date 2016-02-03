@@ -18,8 +18,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 {
 
-    function SugarWidgetFieldName(&$layout_manager) {
-        parent::SugarWidgetFieldVarchar($layout_manager);
+    public function __construct(&$layout_manager)
+    {
+        parent::__construct($layout_manager);
         $this->reporter = $this->layout_manager->getAttribute('reporter');
     }
 

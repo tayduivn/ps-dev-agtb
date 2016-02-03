@@ -32,7 +32,7 @@ class SidecarView extends SugarView
     public function __construct()
     {
         $this->configFile = sugar_cached($this->configFileName);
-        parent::SugarView();
+        parent::__construct();
     }
 
     /**

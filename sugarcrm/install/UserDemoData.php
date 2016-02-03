@@ -37,7 +37,7 @@ class UserDemoData {
 	/**
 	 * Constructor for creating user demo data
 	 */
-	function UserDemoData($seed_user, $large_scale_test = false)
+    public function __construct($seed_user, $large_scale_test = false)
 	{
 		// use a seed user so it does not have to be known which file to
 		// include the User class from

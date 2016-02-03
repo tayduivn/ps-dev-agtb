@@ -49,11 +49,11 @@ class pmse_InboxViewShowCase extends SugarView
         ),
     );
 
-    public function pmse_InboxViewShowCase()
+    public function __construct()
     {
         $this->pmse = PMSE::getInstance();
         $this->wrapper = new PMSEWrapper();
-        parent::SugarView();
+        parent::__construct();
     }
 
     /**

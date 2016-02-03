@@ -23,7 +23,7 @@ class ParserLabel extends ModuleBuilderParser
      */
     protected static $moduleInstaller;
 
-    function ParserLabel ($moduleName, $packageName = '' )
+    public function __construct($moduleName, $packageName = '')
     {
         $this->moduleName = $moduleName;
         if (!empty($packageName))

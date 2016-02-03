@@ -13,11 +13,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class SugarWidgetFieldVarchar extends SugarWidgetReportField
 {
- function SugarWidgetFieldVarchar(&$layout_manager) 
- {
-        parent::SugarWidgetReportField($layout_manager);
- }
- 
  function queryFilterEquals(&$layout_def)
  {
 		return $this->_get_column_select($layout_def)."='".$GLOBALS['db']->quote($layout_def['input_name0'])."'\n";
@@ -61,5 +56,3 @@ class SugarWidgetFieldVarchar extends SugarWidgetReportField
  		return $str;
  }
 }
-
-?>

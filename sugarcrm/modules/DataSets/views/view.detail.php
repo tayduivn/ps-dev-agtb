@@ -23,11 +23,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/MVC/View/views/view.detail.php');
 
 class DataSetsViewDetail extends ViewDetail {
-   
- 	function DataSetsViewDetail(){
- 		parent::ViewDetail();
- 	}
- 	
  	/**
  	 * display
      *

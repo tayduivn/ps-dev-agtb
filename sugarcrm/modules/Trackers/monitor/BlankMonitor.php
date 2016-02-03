@@ -20,8 +20,8 @@ class BlankMonitor extends Monitor implements Trackable {
     /**
      * BlankMonitor constructor
      */
-    function BlankMonitor() {
-
+    public function __construct()
+    {
     }
     
     /**
@@ -86,5 +86,3 @@ class BlankMonitor extends Monitor implements Trackable {
 
 	}
 }
-
-?>

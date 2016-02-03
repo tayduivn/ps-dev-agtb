@@ -85,15 +85,6 @@ class SugarView
     protected $request;
 
     /**
-     * @see __construct
-     * @deprecated
-     */
-    protected function SugarView($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        self::__construct($bean, $view_object_map, $request);
-    }
-
-    /**
      * Ctor
      * @param SugarBean $bean
      * @param array $view_object_map

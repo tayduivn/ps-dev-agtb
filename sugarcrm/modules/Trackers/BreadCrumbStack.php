@@ -40,7 +40,8 @@ class BreadCrumbStack {
     * @param $user_id String value of user id to get bread crumb items for
     * @param $modules mixed value of module name(s) to provide extra filtering
     */
-   public function BreadCrumbStack($user_id, $modules='') {
+   public function __construct($user_id, $modules='')
+   {
       $this->stack = array();
       $this->stackMap = array();
       

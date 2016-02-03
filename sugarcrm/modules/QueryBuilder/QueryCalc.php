@@ -89,7 +89,8 @@ class QueryCalc extends QueryBuilder {
 	// This is the list of fields that are required
 	var $required_fields =  array("name"=>1);
 
-	function QueryCalc() {
+    public function __construct()
+    {
 		parent::__construct();
 
 		$this->disable_row_level_security =true;
@@ -305,5 +306,3 @@ class QueryCalc extends QueryBuilder {
 	
 //end class
 }
-
-?>

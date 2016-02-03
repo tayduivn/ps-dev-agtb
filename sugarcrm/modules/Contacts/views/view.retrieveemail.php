@@ -23,11 +23,6 @@ require_once('include/MVC/View/SugarView.php');
 require_once("include/JSON.php");
 
 class ContactsViewRetrieveEmail extends SugarView {
-	
- 	function ContactsViewRetrieveEmail(){
- 		parent::SugarView();
- 	}
- 	
  	function process() {
 		$this->display();
  	}
@@ -50,4 +45,3 @@ class ContactsViewRetrieveEmail extends SugarView {
 		echo $json->encode($data); 
  	}	
 }
-?>

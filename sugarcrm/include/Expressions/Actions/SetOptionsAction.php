@@ -20,7 +20,8 @@ class SetOptionsAction extends AbstractAction{
      */
     protected $disallowedActions = array('view');
 
-	function SetOptionsAction($params) {
+    public function __construct($params)
+    {
         $this->params = $params;
 		$this->targetField = $params['target'];
 		$this->keysExpression = str_replace("\n", "",$params['keys']);

@@ -16,7 +16,8 @@ class SetValueAction extends AbstractAction{
 	protected $expression =  "";
     protected $errorValue = null;
 
-	function SetValueAction($params) {
+    public function __construct($params)
+    {
         $this->targetField = $params['target'];
         $this->expression = str_replace("\n", "",$params['value']);
         $this->errorValue = array_key_exists('errorValue', $params)? $params['errorValue'] : null;

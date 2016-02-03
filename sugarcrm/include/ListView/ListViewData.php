@@ -44,10 +44,10 @@ class ListViewData {
      * @param Request $request
 	 * @return ListViewData
 	 */
-    public function ListViewData(Request $request = null)
+    public function __construct(Request $request = null)
     {
 		$this->limitName = 'list_max_entries_per_page';
-		$this->db = &DBManagerFactory::getInstance('listviews');
+        $this->db = DBManagerFactory::getInstance('listviews');
         $this->request = $request ?: InputValidation::getService();
 	}
 

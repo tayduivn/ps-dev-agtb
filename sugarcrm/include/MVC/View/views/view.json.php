@@ -13,9 +13,6 @@
 
 class ViewJson extends SugarView{
 	var $type ='detail';
-	function ViewJson(){
- 		parent::SugarView();
- 	}
  	
 	function display(){
  		global $beanList;

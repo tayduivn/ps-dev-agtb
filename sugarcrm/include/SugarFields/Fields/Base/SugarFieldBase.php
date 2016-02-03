@@ -45,7 +45,8 @@ class SugarFieldBase {
      */
     protected $options = array();
 
-    function SugarFieldBase($type) {
+    public function __construct($type)
+    {
     	$this->type = $type;
         $this->ss = new Sugar_Smarty();
     }

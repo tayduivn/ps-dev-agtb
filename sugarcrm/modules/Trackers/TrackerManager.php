@@ -21,15 +21,16 @@ private $monitors = array();
 private $disabledMonitors = array();
 private static $paused = false;
 
-/**
- * Constructor for TrackerManager.  Declared private for singleton pattern.
- *
- */
-private function TrackerManager() {
-	require('modules/Trackers/config.php');
-	$this->metadata = $tracker_config;
-    self::$monitor_id = create_guid();
-}
+    /**
+     * Constructor for TrackerManager.  Declared private for singleton pattern.
+     *
+     */
+    private function __construct()
+    {
+        require('modules/Trackers/config.php');
+        $this->metadata = $tracker_config;
+        self::$monitor_id = create_guid();
+    }
 
 /**
  * setup

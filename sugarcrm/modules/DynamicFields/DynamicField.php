@@ -43,18 +43,6 @@ class DynamicField {
         ),
     );
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function DynamicField($module = '')
-    {
-        self::__construct($module);
-    }
-
-
     public function __construct($module = '') {
         $this->request = InputValidation::getService();
         if (!empty($module)) {

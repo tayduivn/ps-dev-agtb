@@ -13,7 +13,7 @@ require_once 'vendor/ytree/Tree.php';
 require_once 'vendor/ytree/Node.php';
 class MBPackageTree
 {
-    public function MBPackageTree()
+    public function __construct()
     {
         $this->tree = new Tree('package_tree');
         $this->tree->id = 'package_tree';

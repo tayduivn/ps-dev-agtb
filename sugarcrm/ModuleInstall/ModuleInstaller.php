@@ -64,7 +64,8 @@ class ModuleInstaller{
      */
     protected $patch = array();
 
-    function ModuleInstaller(){
+    public function __construct()
+    {
         $this->ms = new ModuleScanner();
         $this->modules = $this->getModuleDirs();
         $this->db = DBManagerFactory::getInstance();

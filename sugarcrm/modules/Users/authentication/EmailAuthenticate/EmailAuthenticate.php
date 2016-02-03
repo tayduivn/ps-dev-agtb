@@ -23,15 +23,4 @@ require_once('modules/Users/authentication/SugarAuthenticate/SugarAuthenticate.p
 class EmailAuthenticate extends SugarAuthenticate {
 	var $userAuthenticateClass = 'EmailAuthenticateUser';
 	var $authenticationDir = 'EmailAuthenticate';
-	/**
-	 * Constructs EmailAuthenticate
-	 * This will load the user authentication class
-	 *
-	 * @return EmailAuthenticate
-	 */
-	function EmailAuthenticate(){
-	    
-		parent::SugarAuthenticate();
-	}
-
 }

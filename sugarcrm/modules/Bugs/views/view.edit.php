@@ -13,11 +13,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 class BugsViewEdit extends ViewEdit {
-
- 	function BugsViewEdit(){
- 		parent::ViewEdit();
- 	}
- 	
  	function display() {
         $admin = Administration::getSettings();
         if(isset($admin->settings['portal_on']) && $admin->settings['portal_on']) {
@@ -26,4 +21,3 @@ class BugsViewEdit extends ViewEdit {
  		parent::display();
  	}
 }
-?>

@@ -11,8 +11,4 @@
  */
 require_once('include/SugarObjects/templates/basic/Basic.php');
 class Issue extends Basic{
-
-	public function __construct(){
-		parent::__construct();
-	}
 }

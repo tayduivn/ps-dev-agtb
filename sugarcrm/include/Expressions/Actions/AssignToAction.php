@@ -20,7 +20,7 @@ class AssignToAction extends AbstractAction
      */
     protected $disallowedActions = array('view');
 
-    public function AssignToAction($params)
+    public function __construct($params)
     {
         $this->expression = str_replace("\n", '', $params['value']);
     }

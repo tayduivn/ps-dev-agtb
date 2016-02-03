@@ -33,7 +33,8 @@ class SugarPHPMailer extends PHPMailerProxy
      * Doesn't call PHPMailerProxy's constructor so that using PHPMailer with exceptions is not imposed on
      * SugarPHPMailer.
      */
-    public function SugarPHPMailer() {
+    public function __construct()
+    {
         global $locale;
         global $current_user;
         global $sugar_config;

@@ -41,10 +41,6 @@ function setHideNewButton($value){
 	$this->hideNewButton = $value;	
 }
 
-function SubPanelViewNotes(){
-	global $theme;
-}
-
 function getHeaderText($action, $currentModule){
 	global $app_strings;
 	$button  = "<table cellspacing='0' cellpadding='0' border='0'><form border='0' action='index.php' method='post' name='form' id='form'>\n";
@@ -89,4 +85,3 @@ if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($
 }
 
 }
-?>

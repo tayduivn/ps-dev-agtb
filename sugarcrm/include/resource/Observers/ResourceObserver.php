@@ -21,9 +21,10 @@ class ResourceObserver {
 var $module;
 var $limit;
 
-function ResourceObserver($module) {
-	$this->module = $module;
-}
+    public function __construct($module)
+    {
+        $this->module = $module;
+    }
 
 function setLimit($limit) {
 	$this->limit = $limit;

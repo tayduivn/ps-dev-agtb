@@ -49,7 +49,7 @@ class VarDefHandler {
     );
 
 
-    function VarDefHandler($module, $meta_array_name=null)
+    public function __construct($module, $meta_array_name = null)
     {
         $this->meta_array_name = $meta_array_name;
 		$this->module_object = $module;

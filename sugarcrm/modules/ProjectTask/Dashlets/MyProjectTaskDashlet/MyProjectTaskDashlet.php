@@ -18,11 +18,12 @@ require_once('include/Dashlets/DashletGeneric.php');
 
 
 class MyProjectTaskDashlet extends DashletGeneric { 
-    function MyProjectTaskDashlet($id, $def = null) {
+    public function __construct($id, $def = null)
+    {
         global $current_user, $app_strings;
 		require('modules/ProjectTask/Dashlets/MyProjectTaskDashlet/MyProjectTaskDashlet.data.php');
 		
-        parent::DashletGeneric($id, $def);
+        parent::__construct($id, $def);
         
         if(empty($def['title'])) $this->title = translate('LBL_LIST_MY_PROJECT_TASKS', 'ProjectTask');
         
@@ -41,5 +42,3 @@ class MyProjectTaskDashlet extends DashletGeneric {
         return $resultArray;
     }
 }
-
-?>

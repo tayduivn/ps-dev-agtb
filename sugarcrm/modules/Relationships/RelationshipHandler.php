@@ -57,7 +57,7 @@ class RelationshipHandler extends Relationship {
 
 ///////////////////////////Setup and populate functions//////////////////////////////
 
-    public function RelationshipHandler($db, $base_module="")
+    public function __construct($db, $base_module = '')
     {
         $this->base_module = $base_module;
         parent::__construct();

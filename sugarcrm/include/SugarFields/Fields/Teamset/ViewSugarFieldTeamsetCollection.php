@@ -21,8 +21,9 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 	var $team_id = null;
 	var $type = 'TeamsetCollection';
 
-	function ViewSugarFieldTeamsetCollection($fill_data=false){
-    	parent::ViewSugarFieldCollection($fill_data);
+    public function __construct($fill_data = false)
+    {
+        parent::__construct($fill_data);
     }
 
     function populate(){

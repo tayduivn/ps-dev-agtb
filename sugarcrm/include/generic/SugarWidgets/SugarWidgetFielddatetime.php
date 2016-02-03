@@ -15,11 +15,6 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 	var $reporter;
 	var $assigned_user=null;
 
-    function SugarWidgetFieldDateTime($layout_manager)
-    {
-        parent::SugarWidgetReportField($layout_manager);
-    }
-
 	// get the reporter attribute
     // deprecated, now called in the constructor
     /**

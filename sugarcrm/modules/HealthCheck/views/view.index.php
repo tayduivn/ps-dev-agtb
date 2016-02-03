@@ -22,7 +22,7 @@ class ViewIndex extends SugarView
      *
      * Constructor
      *
-     * @see SugarView::SugarView()
+     * @see SugarView::__construct()
      */
     public function __construct($bean = null, $view_object_map = array())
     {
@@ -35,7 +35,7 @@ class ViewIndex extends SugarView
         $this->options['show_subpanels'] = false;
         $this->options['show_search'] = false;
 
-        parent::SugarView($bean, $view_object_map);
+        parent::__construct($bean, $view_object_map);
     }
 
     /**

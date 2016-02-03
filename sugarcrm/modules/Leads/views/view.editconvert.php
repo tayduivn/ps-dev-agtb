@@ -25,7 +25,7 @@ class ViewEditConvert extends SugarView
 
     function __construct()
     {
-        parent::SugarView();
+        parent::__construct();
         global $current_user;
         if (!$current_user->isDeveloperForModule("Leads")) {
             die("Unauthorized Access to Administration");

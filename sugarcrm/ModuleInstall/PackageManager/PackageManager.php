@@ -26,7 +26,8 @@ class PackageManager{
     /**
      * Constructor: In this method we will initialize the nusoap client to point to the hearbeat server
      */
-    function PackageManager(){
+    public function __construct()
+    {
         $this->db = DBManagerFactory::getInstance();
         $this->upload_dir = empty($GLOBALS['sugar_config']['upload_dir']) ? 'upload' : rtrim($GLOBALS['sugar_config']['upload_dir'], '/\\');
     }

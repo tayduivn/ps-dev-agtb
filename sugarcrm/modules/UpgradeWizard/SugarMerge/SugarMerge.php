@@ -22,7 +22,8 @@ class SugarMerge {
 	private $merged = array();
 	private $fp = NULL;
 
-	function SugarMerge($new_path='', $original_path='', $custom_path='custom', $includeFromNew = false) {
+    public function __construct($new_path='', $original_path='', $custom_path='custom', $includeFromNew = false)
+    {
 
 		$this->new_path = empty($new_path) || preg_match('/[\/]$/', $new_path) ? $new_path : $new_path . '/';
 		$this->original_path = empty($original_path) || preg_match('/[\/]$/', $original_path) ? $original_path : $original_path . '/';
@@ -217,4 +218,3 @@ class SugarMerge {
 	}
 
 }
-?>

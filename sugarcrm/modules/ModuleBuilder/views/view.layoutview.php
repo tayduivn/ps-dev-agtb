@@ -23,7 +23,7 @@ class ViewLayoutView extends SugarView
     /** @var GridLayoutMetaDataParser */
     protected $parser;
 
-    function ViewLayoutView($bean = null, $view_object_map = array(), $request = null)
+    public function __construct($bean = null, $view_object_map = array(), $request = null)
     {
         parent::__construct($bean, $view_object_map, $request);
         $GLOBALS ['log']->debug('in ViewLayoutView');

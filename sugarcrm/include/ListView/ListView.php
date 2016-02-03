@@ -570,7 +570,8 @@ function setDisplayHeaderAndFooter($bool) {
  * All Rights Reserved.
  * Contributor(s): ______________________________________.
 */
- function ListView() {
+    public function __construct()
+    {
 
     $this->request = InputValidation::getService();
 

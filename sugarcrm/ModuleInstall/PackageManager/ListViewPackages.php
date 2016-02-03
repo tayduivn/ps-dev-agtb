@@ -13,13 +13,7 @@
  
 class ListViewPackages extends ListViewSmarty{
     var $secondaryDisplayColumns;
-    /**
-     * Constructor  Call ListViewSmarty
-     */
-    function ListViewPackages(){
-        parent::ListViewSmarty();   
-    } 
-    
+
     /**
      * Override the setup method in ListViewSmarty since we are not passing in a bean
      * 
@@ -44,4 +38,3 @@ class ListViewPackages extends ListViewSmarty{
         return $this->ss->fetch($this->tpl);  
     }  
 }
-?>
