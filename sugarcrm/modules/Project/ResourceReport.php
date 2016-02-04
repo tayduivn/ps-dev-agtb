@@ -4,7 +4,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -40,7 +40,7 @@ $sugar_smarty->assign("BG_COLOR", $hilite_bg);
 $sugar_smarty->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());
 $sugar_smarty->assign("DATE_FORMAT", $timedate->get_date_format());
 $sugar_smarty->assign("CURRENT_USER", $current_user->id);
-$sugar_smarty->assign("CALENDAR_LANG_FILE", getJSPath('jscalendar/lang/calendar-' . substr($GLOBALS['current_language'], 0, 2).'.js'));
+$sugar_smarty->assign("CALENDAR_LANG_FILE", getJSPath(sugar_cached('jsLanguage/'.$GLOBALS['current_language'].'.js')));
 
 
 $focus = BeanFactory::getBean('Project');

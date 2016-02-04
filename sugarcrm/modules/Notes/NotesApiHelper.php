@@ -3,7 +3,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -48,6 +48,9 @@ class NotesApiHelper extends SugarBeanApiHelper
 
             $bean->team_id = $contact->fetched_row['team_id'];
             $bean->team_set_id = $contact->fetched_row['team_set_id'];
+            //BEGIN SUGARCRM flav=ent ONLY
+            $bean->team_set_selected_id = $contact->fetched_row['team_set_selected_id'];
+            //END SUGARCRM flav=ent ONLY
 
             $bean->account_id = $account;
             $bean->contact_id= $contact->id;

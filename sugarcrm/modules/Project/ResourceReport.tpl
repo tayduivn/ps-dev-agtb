@@ -2,7 +2,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -41,14 +41,14 @@
 		<td>{$MOD.LBL_FILTER_DATE_RANGE_START}:<span class="required">*</span></td>
         <td>
             <input name="date_start" id="date_start" tabindex="2" size="11" maxlength="10" type="text" value="{$DATE_START|escape:'html':'UTF-8'}" />
-            {sugar_getimage name="jscalendar" ext=".gif" alt="$USER_DATEFORMAT" other_attributes='align="absmiddle" id="date_start_trigger" onclick="parseDate(document.getElementById(\'date_start\'), \'$CALENDAR_DATEFORMAT\');" '}&nbsp;</td>
+            {sugar_getimage name="jscalendar" ext=".gif" alt="$USER_DATEFORMAT" other_attributes="align='absmiddle' id='date_start_trigger' onclick='parseDate(document.getElementById(\'date_start\'), \'$CALENDAR_DATEFORMAT\');' "}&nbsp;</td>
         </td>
 	</tr>
 	<tr>
 		<td>{$MOD.LBL_FILTER_DATE_RANGE_FINISH}:<span class="required">*</span></td>
         <td>
             <input name="date_finish" id="date_finish" type="input" tabindex="2" size="11" maxlength="10" value="{$DATE_FINISH|escape:'html':'UTF-8'}" />
-            {sugar_getimage name="jscalendar" ext=".gif" alt="$USER_DATEFORMAT" other_attributes='align="absmiddle" id="date_finish_trigger" onclick="parseDate(document.getElementById(\'date_finish\'), \'$CALENDAR_DATEFORMAT\');" '}&nbsp;
+            {sugar_getimage name="jscalendar" ext=".gif" alt="$USER_DATEFORMAT" other_attributes="align='absmiddle' id='date_finish_trigger' onclick='parseDate(document.getElementById(\'date_finish\'), \'$CALENDAR_DATEFORMAT\');' "}&nbsp;
         </td>
     </tr>
 	<tr>

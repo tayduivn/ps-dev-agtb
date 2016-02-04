@@ -34,7 +34,6 @@ describe('Plugins.AddAsInvitee', function() {
 
     it('should check if parent is a possible invitee on render in create mode', function() {
         var isPossibleInviteeStub = sandbox.stub(view, 'isPossibleInvitee');
-        view.model.id = null;
         view.model.set('parent_name', 'Foo Man', {silent: true});
         expect(isPossibleInviteeStub.callCount).toEqual(0);
         view.render();
@@ -43,7 +42,7 @@ describe('Plugins.AddAsInvitee', function() {
 
     it('should not check if parent is a possible invitee on render when not in create mode', function() {
         var isPossibleInviteeStub = sandbox.stub(view, 'isPossibleInvitee');
-        view.model.id = '123';
+        view.model.set('id', '123');
         view.model.set('parent_name', 'Foo Man', {silent: true});
         expect(isPossibleInviteeStub.callCount).toEqual(0);
         view.render();
@@ -204,9 +203,10 @@ describe('Plugins.AddAsInvitee', function() {
 
         user = new app.Bean({id: '123', _module: 'Users', name: 'Jack'});
         user.module = user.get('_module');
+        view.render();
         sandbox.stub(app.data, 'createBean').withArgs('Users').returns(user);
 
-        view.model.set('invitees', new Backbone.Collection());
+        view.model.set('invitees', app.data.createBeanCollection());
         view.model.set('assigned_user_id', user.id);
         expect(view.model.get('invitees').get(user.id)).toBeUndefined();
         view.model.set('assigned_user_name', user.get('name'));

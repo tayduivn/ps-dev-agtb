@@ -3,7 +3,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -3655,20 +3655,11 @@ protected function checkQuery($sql, $object_name = false)
         $fields = array_intersect_key($fields, (array) $bean);
 
         if (is_array($fields) and count($fields) > 0) {
-            foreach ($fields as $field=>$properties) {
+            foreach ($fields as $field => $vardefs) {
                 if (array_key_exists($field, $fetched_row)) {
                     $before_value = $fetched_row[$field];
                     $after_value=$bean->$field;
-                    if (isset($properties['type'])) {
-                        $field_type=$properties['type'];
-                    } else {
-                        if (isset($properties['dbType']))
-                            $field_type=$properties['dbType'];
-                        else if(isset($properties['data_type']))
-                            $field_type=$properties['data_type'];
-                        else
-                            $field_type=$properties['dbtype'];
-                    }
+                    $field_type = $this->getFieldType($vardefs);
                 }
 
                 //Because of bug #25078(sqlserver haven't 'date' type, trim extra "00:00:00" when insert into *_cstm table).

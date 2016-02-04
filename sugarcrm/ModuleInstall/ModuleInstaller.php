@@ -3,7 +3,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -2745,13 +2745,11 @@ class ModuleInstaller{
 //				$GLOBALS['log']->debug('ModuleInstaller.php->disable_copy(): installdefs not empty');
                 foreach($this->installdefs['copy'] as $cp){
                     $cp['to'] = clean_path(str_replace('<basepath>', $this->base_dir, $cp['to']));
-                    if (file_exists($cp['to'])) {
-                        $GLOBALS['log']->debug('DISABLE COPY:: REMOVING: ' . $cp['to']);
-                        rmdir_recursive($cp['to']);
-                    }
+                    $cp['from'] = clean_path(str_replace('<basepath>', $this->base_dir, $cp['from']));
                     $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($this->validateInstallFile())))."-restore/".$cp['to'] ); // bug 16966 tyoung - replaced missing assignment to $backup_path
                     //check if this file exists in the -restore directory
 //					$GLOBALS['log']->debug("ModuleInstaller.php->disable_copy(): backup_path=".$backup_path);
+                    $this->uninstall_new_files($cp, $backup_path);
                     if(file_exists($backup_path)){
                         //since the file exists, then we want do an md5 of the install version and the file system version
                         $from = str_replace('<basepath>', $this->base_dir, $cp['from']);

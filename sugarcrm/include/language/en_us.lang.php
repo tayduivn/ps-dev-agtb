@@ -2,7 +2,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -11247,10 +11247,9 @@ Sincerely, SugarCRM',
     'LBL_WIZ_APPLICATION_SETTINGS' => 'System Settings',
     'LBL_WIZ_CONFIGURE_APPLICATION' => 'Studio',
 
-    // For passwordmodal widget
+    // For password related labels
     'LBL_PASSWORD'						=> 'Password',
     'LBL_CURRENT_PASSWORD'				=> 'Current Password',
-    'LBL_SET_NEW_PASSWORD'              => 'Enter Password',
     'LBL_NEW_PASSWORD1'                 => 'New Password',
     'LBL_NEW_PASSWORD2'                 => 'Confirm Password',
     'ERR_ENTER_CONFIRMATION_PASSWORD'	=> 'Please enter your password confirmation.',
@@ -11258,7 +11257,6 @@ Sincerely, SugarCRM',
     'ERR_ENTER_OLD_PASSWORD'			=> 'Please enter your current password.',
     'ERR_REENTER_PASSWORDS' => 'The passwords must match.',
     'ERR_PASSWORD_MISMATCH' => 'Password entered does not match that in our system.',
-    'LBL_NEW_USER_PASSWORD_1' => 'Your password has been successfully updated.',
     'LBL_CANNOT_SEND_PASSWORD' => 'Cannot send password',
     'LBL_REQUEST_PASSWORD' => 'Request Password',
     'LBL_PASSWORD_UPDATE_GENERIC_ISSUE' => 'Error: There was a problem updating password for this user.',

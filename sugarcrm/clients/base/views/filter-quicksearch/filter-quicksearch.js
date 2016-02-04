@@ -1,7 +1,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -33,6 +33,14 @@
         app.view.View.prototype.initialize.call(this, opts);
         this.listenTo(this.layout, 'filter:clear:quicksearch', this.clearInput);
         this.listenTo(this.layout, 'filter:change:module', this.updatePlaceholder);
+
+        /**
+         * The previous search string. This is used to prevent searches from
+         * being triggered on keyup if the search string is not changed.
+         *
+         * @type {string}
+         */
+        this.currentSearch = '';
 
         //shortcut keys
         app.shortcuts.register({

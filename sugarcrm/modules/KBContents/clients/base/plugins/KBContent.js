@@ -1,7 +1,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -36,8 +36,9 @@
             onAttach: function(component, plugin) {
                 this.on('init', function() {
                     this._initKBListeners();
-                    if (this.tplName === 'list' || this.tplName === 'panel-top' ||
-                        (!_.isUndefined(this.context) && this.context.get('isSubpanel') === true)
+                    if ((this.tplName === 'list' ||
+                        (!_.isUndefined(this.context) && this.context.get('isSubpanel') === true)) &&
+                        this.tplName !== 'panel-top'
                     ) {
                         this.context.on('list:editrow:fire', _.bind(function(model, view) {
                             this._initValidationHandler(model);

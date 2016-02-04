@@ -1,7 +1,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -161,7 +161,8 @@ describe('View.Fields.Base.ParticipantsField', function() {
     describe('when copying a meeting', function() {
         it('should include the participants from the copied record', function() {
             var collection = app.data.createMixedBeanCollection();
-            model.set(fieldDef.name, collection.add({_module: 'Contacts', id: '1', name: 'Foo Bar'}));
+            collection.add({_module: 'Contacts', id: '1', name: 'Foo Bar'});
+            model.set(fieldDef.name, collection);
             sandbox.stub(model, 'isNew').returns(true);
             field = SugarTest.createField(
                 'base',

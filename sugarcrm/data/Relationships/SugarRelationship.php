@@ -3,7 +3,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -319,7 +319,7 @@ abstract class SugarRelationship
         $leftID = $row[$leftIDName];
         $rightID = $row[$rightIDName];
         //Check the relationship role as well
-        $roleCheck = $this->getRoleWhere();
+        $roleCheck = $this->getRoleWhere('', false, true);
 
         $query = "SELECT * FROM {$this->getRelationshipTable(
         )} WHERE $leftIDName='$leftID' AND $rightIDName='$rightID' $roleCheck AND deleted=0";
@@ -355,7 +355,7 @@ abstract class SugarRelationship
      *
      * @return string
      */
-    protected function getRoleWhere($table = "", $ignore_role_filter = false)
+    protected function getRoleWhere($table = "", $ignore_role_filter = false, $ignore_primary_flag = false)
     {
         $ignore_role_filter = $ignore_role_filter || $this->ignore_role_filter;
         $roleCheck = "";
@@ -381,7 +381,7 @@ abstract class SugarRelationship
         }
         if (!empty($this->def['primary_flag_column'])
             && !empty($this->primaryOnly)
-            && !$ignore_role_filter) {
+            && !$ignore_primary_flag) {
 
             $field = $table.'.'.$this->def['primary_flag_column'];
 

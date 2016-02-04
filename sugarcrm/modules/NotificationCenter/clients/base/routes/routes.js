@@ -24,7 +24,7 @@
                         section: 'default'
                     });
                 }
-        },
+            },
             {
                 name: "UserDeliveryConfigPage",
                 route: "NotificationCenter/config",
@@ -36,14 +36,21 @@
                         section: null
                     });
                 }
-        },
+            },
             {
-                name: "RedirectConfigPage",
+                name: "NotificationCenter",
                 route: "NotificationCenter",
                 callback: function () {
-                    app.router.goBack();
+                    app.router.navigate('#Home', {trigger: true, replace: true});
                 }
-        }
+            },
+            {
+                name: "NotificationCenterSubscriptions",
+                route: "NotificationCenterSubscriptions",
+                callback: function () {
+                    app.router.navigate('#Home', {trigger: true, replace: true});
+                }
+            }
         ];
 
         app.router.addRoutes(routes);

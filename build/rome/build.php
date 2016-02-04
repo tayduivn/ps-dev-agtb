@@ -133,10 +133,23 @@ if (!empty($config['base_dir'])) {
     }
 
     if (!empty($config['latin'])) {
+        if (!empty($config['langs'])) {
+            $langs = explode(",", $config['langs']);
+        } else {
+            $langs = null;
+        }
+
         echo "\nImporting Languages\n\n";
         $no_latin_scm = !empty($config['no-latin-scm']);
         require_once('Latin.php');
-        $latin = new Latin($rome, $config['languages']['gitPath'], $config['base_dir'], $config['ver'], $no_latin_scm);
+        $latin = new Latin(
+            $rome,
+            $config['languages']['gitPath'],
+            $config['base_dir'],
+            $config['ver'],
+            $no_latin_scm,
+            $langs
+        );
         $latin->copyTranslations();
     }
 
@@ -295,6 +308,10 @@ Build options:
 
 --latin
     Add language files to the build.
+
+--langs[=de_DE,it_it,...]
+    Will build Sugar using only specified languages.
+    Defaults to all languages. Requires latin flag.
 
 --no-latin-scm
     Do not execute source control management commands to update

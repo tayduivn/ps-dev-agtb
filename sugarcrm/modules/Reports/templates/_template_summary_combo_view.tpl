@@ -2,7 +2,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -200,10 +200,10 @@ for ($forLoopIndexForGroupBy = $indexOfGroupByStart ; $forLoopIndexForGroupBy < 
 {php}
 		//_pp($reporter->current_summary_row_count);
   		if ($reporter->current_summary_row_count > 0) {
+            setCountForRowId($rowIdToCountArray, $rowId, $row, $countKeyIndex);
   			for($i=0; $i < $reporter->current_summary_row_count; $i++ ) {
 				if (($column_row = $reporter->get_next_row() ) != 0 ) {
 					template_list_row($column_row, true);
-					incrementCountForRowId($rowIdToCountArray, $rowId);
 {/php}
 <tr height=20 class="{$row_class}">
 {if ($isSummaryComboHeader)}

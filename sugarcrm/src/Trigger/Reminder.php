@@ -60,6 +60,9 @@ class Reminder
             $reminderTime = $user->getPreference('reminder_time');
         }
 
+        if ($reminderTime < 0) {
+            return false;
+        }
 
         $reminderDateTime = new \DateTime($bean->date_start, new \DateTimeZone('UTC'));
         $reminderDateTime->modify('- ' . $reminderTime . ' seconds');

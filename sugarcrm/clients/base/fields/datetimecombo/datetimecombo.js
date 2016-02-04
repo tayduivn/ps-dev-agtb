@@ -1,7 +1,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -249,6 +249,9 @@
      * triggering a new event and not calling the default code of
      * `bindDomChange()`.
      *
+     * Undefined model values will not be replaced with empty string to prevent
+     * unnecessary unsaved changes warnings.
+     *
      * @override
      */
     handleHideDatePicker: function() {
@@ -262,6 +265,11 @@
             $dateField.val('');
             $timeField.val('');
         }
+
+        if (_.isEmptyValue(datetime) && _.isUndefined(this.model.get(this.name))) {
+            return;
+        }
+
         this.model.set(this.name, datetime);
     },
 
@@ -347,6 +355,9 @@
             value = this.format(value) || {'date': '', 'time': ''};
 
             this.$(this.fieldTag).val(value['date']);
+            if (value['date']) {
+                this.$(this.fieldTag).data('datepicker').setValue(value['date']);
+            }
             this.$(this.secondaryFieldTag).val(value['time']);
         }, this);
     },

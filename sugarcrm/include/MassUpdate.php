@@ -3,7 +3,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -145,7 +145,7 @@ class MassUpdate
         function handleMassUpdate($fetch_only = false, $update_blank=false){
 
 		require_once('include/formbase.php');
-		global $current_user, $db, $disable_date_format, $timedate;
+        global $current_user, $db, $disable_date_format, $timedate, $app_strings;
         $retval = array();
 
 		foreach($_POST as $post=>$value){
@@ -269,6 +269,15 @@ class MassUpdate
 				if(isset($_POST['Delete'])){
 					$this->sugarbean->retrieve($id);
 					if($this->sugarbean->ACLAccess('Delete')){
+                        // Fix for RS-1267 - We should not processing mass delete for global team
+                        if ($this->sugarbean->object_name == 'Team' &&
+                            $this->sugarbean->id == $this->sugarbean->global_team
+                        ) {
+                            $retval[] = $id;
+                            SugarApplication::appendErrorMessage($app_strings['LBL_MASSUPDATE_DELETE_GLOBAL_TEAM']);
+                            continue;
+                        }
+
 					    if ($this->sugarbean->object_name == 'Team' && $this->sugarbean->has_records_in_modules()) {
                             if(!isset($_SESSION['REASSIGN_TEAMS'])) {
                                 $_SESSION['REASSIGN_TEAMS'] = array();

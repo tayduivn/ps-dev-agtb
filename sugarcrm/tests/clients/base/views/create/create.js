@@ -182,7 +182,7 @@ describe('Base.View.Create', function() {
             save_user_id = app.user.id;
             save_user_name = app.user.attributes.full_name;
 
-            app.user.id = current_user_id;
+            app.user.set('id', current_user_id);
             app.user.attributes.full_name = current_user_name;
 
             sinonSandbox.stub(app.metadata, 'getModule', function() {
@@ -198,7 +198,7 @@ describe('Base.View.Create', function() {
         });
 
         afterEach(function() {
-            app.user.id = save_user_id;
+            app.user.set('id', save_user_id);
             app.user.attributes.full_name = save_user_name;
         });
 
@@ -670,7 +670,7 @@ describe('Base.View.Create', function() {
                     success(app.data.createBeanCollection(moduleName));
                 }),
                 saveModelStub = sinonSandbox.stub(view, 'saveModel', function() {
-                    view.model.id = 123;
+                    view.model.set('id', 123);
                     flag = true;
                 });
 
@@ -704,7 +704,7 @@ describe('Base.View.Create', function() {
                     success(app.data.createBeanCollection(moduleName));
                 });
                 sinonSandbox.stub(view, 'saveModel', function(success) {
-                    view.model.id = modelId;
+                    view.model.set('id', modelId);
                     success();
                 });
                 drawerCloseStub = sinonSandbox.stub(app.drawer, 'close', function() {
@@ -974,7 +974,7 @@ describe('Base.View.Create', function() {
             view.model.set('foo', true);
             expect(view.hasUnsavedChanges()).toBeTruthy();
 
-            view.model.id = 'not_undefined';
+            view.model.set('id', 'not_undefined');
             expect(view.hasUnsavedChanges()).toBeFalsy();
         });
     });

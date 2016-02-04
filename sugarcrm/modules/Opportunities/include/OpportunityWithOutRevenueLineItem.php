@@ -3,7 +3,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -494,7 +494,6 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
     {
         $this->deleteRevenueLineItemsWorkFlows();
         $this->deleteRevenueLineItemsRelatedActions();
-        $this->deleteRevenueLineItemsRelatedAlerts();
         $this->deleteRevenueLineItemsRelatedTriggers();
         $this->deleteRevenueLineItemWorkFlowEmailTemplates();
 
@@ -555,44 +554,6 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             mark_delete_components($actionShells->get_linked_beans('rel1_action_fil', 'Expression'));
             $actionShells->mark_deleted($row['id']);
             $actionShells->get_workflow_object()->write_workflow();
-        }
-    }
-
-    /**
-     * Delete all the Alerts that do something on the RevenueLineItems Module
-     *
-     * @throws SugarQueryException
-     */
-    private function deleteRevenueLineItemsRelatedAlerts()
-    {
-        // get the action shells
-        $alertShells = BeanFactory::getBean('WorkFlowAlertShells');
-
-        $sq = new SugarQuery();
-        $sq->select(array('id', 'parent_id'));
-        $sq->from($alertShells);
-        $sq->where()
-            ->queryOr()
-            ->equals('rel_module2', 'revenuelineitems')
-            ->equals('rel_module2', 'revenuelineitems');
-
-        $rows = $sq->execute();
-
-        foreach ($rows as $row) {
-            $alertShells->retrieve($row['id']);
-
-            //mark delete alert components and sub expression components
-            $alert_object_list = $alertShells->get_linked_beans('alert_components', 'WorkFlowAlert');
-
-            foreach ($alert_object_list as $alert_object) {
-                mark_delete_components($alert_object->get_linked_beans('expressions', 'Expression'));
-                mark_delete_components($alert_object->get_linked_beans('rel1_alert_fil', 'Expression'));
-                mark_delete_components($alert_object->get_linked_beans('rel2_alert_fil', 'Expression'));
-                $alert_object->mark_deleted($alert_object->id);
-            }
-
-            $alertShells->mark_deleted($row['id']);
-            $alertShells->get_workflow_object()->write_workflow();
         }
     }
 

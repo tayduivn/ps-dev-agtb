@@ -120,7 +120,7 @@ describe('Plugins.EditAllRecurrences', function() {
 
     it('should show a /edit/all_recurrences route when editing all recurrences', function() {
         view.allRecurrencesMode = true;
-        view.model.id = 'foo_id';
+        view.model.set('id', 'foo_id');
         view.editClicked();
         expect(navigateStub).toHaveBeenCalledWith('Meetings/foo_id/edit/all_recurrences', {trigger: false});
     });
@@ -128,7 +128,7 @@ describe('Plugins.EditAllRecurrences', function() {
     it('should show a /edit route when editing non-recurring meeting, even though allRecurrences is true', function() {
         view.allRecurrencesMode = true;
         view.model.set('repeat_type', '');
-        view.model.id = 'foo_id';
+        view.model.set('id', 'foo_id');
         view.editClicked();
         expect(navigateStub).toHaveBeenCalledWith('Meetings/foo_id/edit', {trigger: false});
     });

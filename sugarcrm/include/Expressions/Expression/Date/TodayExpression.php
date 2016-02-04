@@ -2,7 +2,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -24,6 +24,9 @@ class TodayExpression extends DateExpression
 	function evaluate() {
         $d = TimeDate::getInstance()->getNow(true);
         $d->setTime(0,0,0);
+
+        //set isDate flag to true so text fields receive a date only, otherwise it will display date time
+        $d->isDate = true;
 		return $d;
 	}
 

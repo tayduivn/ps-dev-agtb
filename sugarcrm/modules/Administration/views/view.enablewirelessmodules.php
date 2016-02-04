@@ -5,7 +5,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -116,7 +116,10 @@ class AdministrationViewEnablewirelessmodules extends SugarView
         include 'include/MVC/Controller/wireless_module_registry.php';
         foreach($wireless_module_registry as $moduleName => $def) {
             // not in any list
-            if (empty($enabled_modules[$moduleName]) && empty($disabled_modules[$moduleName]) && in_array($moduleName, $GLOBALS['moduleList']) && !in_array($e, $wireless_not_supported_modules)) {
+            if (empty($enabled_modules[$moduleName]) &&
+                empty($disabled_modules[$moduleName]) &&
+                in_array($moduleName, $GLOBALS['moduleList']) &&
+                !in_array($moduleName, $wireless_not_supported_modules)) {
                 // add module to disabled modules list
                 $disabled_modules[$moduleName] = empty($app_list_strings['moduleList'][$moduleName]) ? $moduleName : ($app_list_strings['moduleList'][$moduleName]);
             }

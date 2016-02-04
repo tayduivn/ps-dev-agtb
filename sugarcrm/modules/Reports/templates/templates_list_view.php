@@ -4,7 +4,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -1090,14 +1090,24 @@ function generateIdForGroupByIndex(&$counterArray, $groupByIndex) {
 	return $returnId;
 } // fn
 
-function incrementCountForRowId(&$rowIdToCountArray, $rowId) {
-	$rowIdSplitArray = explode("_", $rowId);
-	$newRowId = $rowIdSplitArray[0];
-	for ($i = 1 ; $i < count($rowIdSplitArray) ; $i++) {
-		$newRowId = $newRowId . "_" . $rowIdSplitArray[$i];
-		$rowIdToCountArray[$newRowId] = $rowIdToCountArray[$newRowId] + 1;
-	} // for
-} // fn
+function setCountForRowId(&$rowIdToCountArray, $rowId, $row, $countKeyIndex) {
+    if (isset($row['cells'][$countKeyIndex])) {
+        $count = $row['cells'][$countKeyIndex];
+    } else {
+        $count = $row['count'];
+    }
+
+    $rowIdSplitArray = explode('_', $rowId);
+    $newRowId = $rowIdSplitArray[0];
+    for ($i = 1; $i < count($rowIdSplitArray); $i++) {
+        $newRowId = $newRowId . "_" . $rowIdSplitArray[$i];
+        if (isset($rowIdToCountArray[$newRowId])) {
+            $rowIdToCountArray[$newRowId] += $count;
+        } else {
+            $rowIdToCountArray[$newRowId] = $count;
+        }
+    } // for
+}
 
 function getGroupByColumnName(&$reporter, $index, $header_row, $row) {
 	$group_def_array = $reporter->report_def['group_defs'];

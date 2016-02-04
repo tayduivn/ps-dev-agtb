@@ -1,7 +1,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -33,7 +33,7 @@ describe('Plugins.VirtualCollection', function() {
         context = app.context.getContext({module: module});
         context.prepare(true);
         model = context.get('model');
-        model.id = 1;
+        model.set('id', 1);
         model.fields = {
             invitees: {
                 name: 'invitees',
@@ -775,7 +775,7 @@ describe('Plugins.VirtualCollection', function() {
 
                 result = model.toJSON();
 
-                expect(_.size(result)).toBe(2);
+                expect(_.size(result)).toBe(3);
                 expect(_.size(result.invitees)).toBe(4);
                 expect(_.size(result.related_cases)).toBe(2);
             });

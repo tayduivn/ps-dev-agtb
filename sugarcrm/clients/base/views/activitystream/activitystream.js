@@ -1,7 +1,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -129,6 +129,7 @@
         }
 
         this.processEmbed();
+        this.toggleSubmitButton = _.debounce(this.toggleSubmitButton, 200);
 
         // Resize video when the browser window is resized
         this.resizeVideo = _.bind(_.throttle(this.resizeVideo, 500), this);
@@ -336,7 +337,7 @@
      * @private
      */
     _addBrokenImageHandler: function() {
-        this.$(this._attachImageSelector).error(_.bind(function(event) {
+        this.$(this._attachImageSelector).on('error', _.bind(function(event) {
             var $brokenImg = $(event.currentTarget),
                 linkSelector = 'a[data-note-id="' + $brokenImg.data('note-id') + '"]';
 
@@ -684,6 +685,41 @@
         }
     },
 
+    /**
+     * Toggle the Submit button disabled/enabled state.
+     */
+    toggleSubmitButton: function(enable) {
+        if (!enable) {
+            this.disableSubmitButton();
+        } else {
+            this.enableSubmitButton();
+        }
+    },
+
+    /**
+     * Enable Submit button
+     */
+    enableSubmitButton: function() {
+        this.$('.reply-btn')
+            .removeClass('disabled')
+            .attr('aria-disabled', false)
+            .attr('tabindex', 0);
+    },
+
+    /**
+     * Disable Submit button
+     */
+    disableSubmitButton: function() {
+        this.$('.reply-btn')
+            .addClass('disabled')
+            .attr('aria-disabled', true)
+            .attr('tabindex', -1);
+    },
+
+    /**
+     * If the reply area has content, remove placeholder and
+     * enable the reply button
+     */
     checkPlaceholder: function(e) {
         // We can't use any of the jQuery methods or use the dataset property to
         // set this attribute because they don't seem to work in IE 10. Dataset
@@ -691,8 +727,10 @@
         var el = e.currentTarget;
         if (el.textContent) {
             el.setAttribute('data-hide-placeholder', 'true');
+            this.toggleSubmitButton(true);
         } else {
             el.removeAttribute('data-hide-placeholder');
+            this.toggleSubmitButton(false);
         }
     },
 

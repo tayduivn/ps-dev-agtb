@@ -4,7 +4,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -63,8 +63,6 @@ class TeamsViewTBA extends SugarView
      */
     private function _getUserActionsList()
     {
-        $defaultTBAConfig = TeamBasedACLConfigurator::getDefaultConfig();
-
         $actionsList = ACLAction::getUserActions($GLOBALS['current_user']->id);
 
         // Skipping modules that have 'hidden_to_role_assignment' property or not implement TBA
@@ -78,6 +76,6 @@ class TeamsViewTBA extends SugarView
             }
         }
 
-        return array_diff(array_keys($actionsList), $defaultTBAConfig['disabled_modules']);
+        return array_diff(array_keys($actionsList), TeamBasedACLConfigurator::getDisabledModules());
     }
 }

@@ -2,7 +2,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -54,9 +54,10 @@
                         break;
                     case 'jquery_core':
                         return array (
-                            'include/javascript/jquery/jquery-min.js'             =>    $target,
-                            'include/javascript/jquery/jquery-ui-min.js'          =>    $target,
-                            'include/javascript/jquery/jquery.json-2.3.js'        =>    $target,
+                            'include/javascript/jquery/jquery-min.js'               =>  $target,
+                            'include/javascript/jquery/jquery-ui-min.js'            =>  $target,
+                            'include/javascript/jquery/jquery.json-2.3.js'          =>  $target,
+                            'include/javascript/jquery/jquery-migrate-1.2.1.min.js' =>  $target,
                         );
                         break;
                     case 'jquery_menus':

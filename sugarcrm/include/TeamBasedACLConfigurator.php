@@ -4,7 +4,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -37,6 +37,14 @@ class TeamBasedACLConfigurator
     protected static $defaultConfig = array(
         'enabled' => false,
         'disabled_modules' => array(),
+    );
+
+    /**
+     * Permanently disabled modules.
+     * @var array
+     */
+    protected static $disabledModules = array(
+        'pmse_Inbox', // see RS-1275
     );
 
     /**
@@ -206,7 +214,9 @@ class TeamBasedACLConfigurator
         }
         if (!isset(self::$moduleCache[$module])) {
             $config = self::getConfig();
-            self::$moduleCache[$module] = !in_array($module, $config['disabled_modules']);
+            self::$moduleCache[$module] =
+                !in_array($module, $config['disabled_modules'])
+                && !in_array($module, self::$disabledModules);
         }
         return self::$moduleCache[$module];
     }
@@ -458,6 +468,15 @@ class TeamBasedACLConfigurator
     public static function getDefaultConfig()
     {
         return self::$defaultConfig;
+    }
+
+    /**
+     * Returns permanently disabled modules.
+     * @return array
+     */
+    public static function getDisabledModules()
+    {
+        return self::$disabledModules;
     }
 
     /**

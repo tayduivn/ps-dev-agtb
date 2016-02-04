@@ -3,7 +3,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -116,9 +116,7 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
             '/012345678/',
             array(
                 array(
-                    'first_name' => 'Jim',
-                    'last_name' => 'Brennan',
-                    'date_modified' => $dateCreated
+                    'user_name' => 'Jim'
                 ),
             )
         );
@@ -127,9 +125,7 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
             '/876543210/',
             array(
                 array(
-                    'first_name' => 'Sally',
-                    'last_name' => 'Bronsen',
-                    'date_modified' => $dateCreated
+                    'user_name' => 'Sally'
                 ),
             )
         );
@@ -139,10 +135,10 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
         $expectedDateCreated = $timedate->asIso($dateCreated);
         $expected = array(
             0 => array(
-                'field_name' => 'assigned_user_name',
+                'field_name' => 'assigned_user_id',
                 'date_created' => $expectedDateCreated,
-                'after' => 'Sally Bronsen',
-                'before' => 'Jim Brennan',
+                'after' => 'Sally',
+                'before' => 'Jim',
             ),
         );
 

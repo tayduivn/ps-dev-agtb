@@ -1,7 +1,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -94,6 +94,11 @@
             lastOrderedFieldMeta = this.getFieldMeta(lastStateOrderBy.field);
 
         if (_.isEmpty(lastOrderedFieldMeta) || !app.utils.isSortable(this.module, lastOrderedFieldMeta)) {
+            lastStateOrderBy = {};
+        }
+
+        // if no access to the field, don't use it
+        if (!_.isEmpty(lastStateOrderBy.field) && !app.acl.hasAccess('read', this.module, app.user.get('id'), lastStateOrderBy.field)) {
             lastStateOrderBy = {};
         }
 
@@ -256,6 +261,11 @@
         if (!orderBy) {
             orderBy = eventTarget.data('fieldname');
         }
+        if (!_.isEmpty(orderBy) && !app.acl.hasAccess('read', this.module, app.user.get('id'), orderBy)) {
+            // no read access to the orderBy field, don't bother to reload data
+            return;
+        }
+
         // if same field just flip
         if (orderBy === self.orderBy.field) {
             self.orderBy.direction = self.orderBy.direction === 'desc' ? 'asc' : 'desc';

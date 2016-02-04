@@ -1,7 +1,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -438,6 +438,26 @@
             return false;
         });
         app.accessibility.run(elem, 'click');
+    },
+
+    /**
+     * Rewrites old error elements to the new one pop-ups.
+     *
+     * @param {Object} $errors DOM elements containing errors to rewrite into standard errors.
+     */
+    convertToSidecarErrors: function($errors) {
+        if ($errors.length === 0) {
+            return;
+        }
+
+        $errors.hide();
+        var errorMessages = _.map($errors, function(error) {
+            return $(error).text();
+        });
+        app.alert.show('delete-error', {
+            level: 'error',
+            messages: errorMessages
+        });
     },
 
     /**

@@ -3,7 +3,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -257,9 +257,7 @@ $mod_strings = array (
 	'LBL_NEW_PASSWORD'					=> 'New Password',
 	'LBL_NEW_PASSWORD1'					=> 'Password',
 	'LBL_NEW_PASSWORD2'					=> 'Confirm Password',
-	'LBL_NEW_USER_PASSWORD_1'			=> 'Password was changed successfully.',
 	'LBL_NEW_USER_PASSWORD_2'			=> 'An email was sent to the user containing a system-generated password.',
-	'LBL_NEW_USER_PASSWORD_3'			=> 'Password was created successfully.',
 	'LBL_NEW_USER_BUTTON_KEY'			=> 'N',
 	'LBL_NEW_USER_BUTTON_LABEL'			=> 'New User',
 	'LBL_NEW_USER_BUTTON_TITLE'			=> 'New User',
