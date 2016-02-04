@@ -16,6 +16,7 @@ use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event as BeanEvent;
 use Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event as ApplicationEvent;
 use Sugarcrm\Sugarcrm\Notification\SubscriptionFilter\SubscriptionFilterInterface;
 use Sugarcrm\Sugarcrm\Notification\SubscriptionFilter\SubscriptionFilterRegistry;
+use Sugarcrm\Sugarcrm\Notification\Config\Status as CarrierStatus;
 
 /**
  * Subscription Registry will be our entry point to work with configuration of subscriptions.
@@ -333,6 +334,8 @@ class SubscriptionsRegistry
     protected function setConfiguration($userId, $config, $delCarrierOption)
     {
         $beans = $this->getBeans($this->getSugarQuery($userId));
+        $beans = $this->removeBeansWithDisabledCarrier($beans);
+        $config = $this->removeConfigsWithDisabledCarrier($config);
 
         $tree = $this->getTree();
         foreach ($tree as $emitter => $emitterConfig) {
@@ -364,6 +367,80 @@ class SubscriptionsRegistry
         }
 
         $this->deleteConfigBeans($beans);
+    }
+
+    /**
+     * Filter NotificationCenterSubscription beans, remove beans with disabled carriers.
+     *
+     * @param \NotificationCenterSubscription[] $beans list of beans.
+     * @return array filtered list of beans.
+     */
+    protected function removeBeansWithDisabledCarrier($beans)
+    {
+        $enabledCarrier = $this->getEnabledCarriers();
+        return array_filter($beans, function ($bean) use ($enabledCarrier) {
+            return in_array($bean->carrier_name, $enabledCarrier);
+        });
+    }
+
+    /**
+     * Filter configuration array, remove configs with disabled carrier.
+     *
+     * @param array $config configuration for saving.
+     * @return array
+     */
+    protected function removeConfigsWithDisabledCarrier($config)
+    {
+        $normalized = array();
+        $enabledCarrier = $this->getEnabledCarriers();
+        foreach ($config as $emitter => $emitterConfig) {
+            $normalized[$emitter] = array();
+            foreach ($emitterConfig as $event => $eventConfig) {
+                $normalized[$emitter][$event] = array();
+                foreach ($eventConfig as $filter => $carriers) {
+                    $normalized[$emitter][$event][$filter] = array_filter(
+                        $carriers,
+                        function ($carrier) use ($enabledCarrier) {
+                            return in_array($carrier[0], $enabledCarrier);
+                        }
+                    );
+                }
+            }
+        }
+        return $normalized;
+    }
+
+    /**
+     * Return list of enabled carriers.
+     *
+     * @return array
+     */
+    protected function getEnabledCarriers()
+    {
+        $enabled = array();
+        $status = $this->getCarrierStatus();
+        foreach ($this->getCarrierRegistry()->getCarriers() as $carrierName) {
+            if ($status->getCarrierStatus($carrierName)) {
+                $enabled[] = $carrierName;
+            }
+        }
+        return $enabled;
+    }
+
+    /**
+     * @see CarrierRegistry::getInstance
+     */
+    protected function getCarrierRegistry()
+    {
+        return CarrierRegistry::getInstance();
+    }
+
+    /**
+     * @see CarrierStatus::getInstance
+     */
+    protected function getCarrierStatus()
+    {
+        return CarrierStatus::getInstance();
     }
 
     /**

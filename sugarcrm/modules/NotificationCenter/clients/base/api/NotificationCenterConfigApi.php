@@ -69,13 +69,16 @@ class NotificationCenterConfigApi extends GlobalConfigApi
      */
     protected function updatePersonalCarriers(User $user, array $carriers)
     {
-        $carriersStatus = array();
+        $carriersStatus = $user->getPreference(static::CARRIER_STATUS_NAME, static::CARRIER_STATUS_CATEGORY);
+        $globalCarriers = $this->getCarriersConfig();
         foreach ($this->getCarrierRegistry()->getCarriers() as $module) {
-            $status = false;
-            if (array_key_exists($module, $carriers) && array_key_exists('status', $carriers[$module])) {
-                $status = !empty($carriers[$module]['status']);
+            if (!empty($globalCarriers[$module]['status'])) {
+                $status = false;
+                if (!empty($carriers[$module]['status'])) {
+                    $status = true;
+                }
+                $carriersStatus[$module] = $status;
             }
-            $carriersStatus[$module] = $status;
         }
         $user->setPreference(static::CARRIER_STATUS_NAME, $carriersStatus, 0, static::CARRIER_STATUS_CATEGORY);
     }
