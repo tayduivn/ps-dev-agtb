@@ -318,6 +318,9 @@ class Contact extends Person {
         if ( !empty($clean_account_id) ) {
 		    $query .= " and acc.id = '{$this->account_id}'";
 		}
+        else { // get primary account
+            $query .= " and a_c.primary_account = 1";
+        }
 
         $query .= " ORDER BY a_c.date_modified DESC";
 

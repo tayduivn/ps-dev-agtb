@@ -319,7 +319,7 @@ abstract class SugarRelationship
         $leftID = $row[$leftIDName];
         $rightID = $row[$rightIDName];
         //Check the relationship role as well
-        $roleCheck = $this->getRoleWhere();
+        $roleCheck = $this->getRoleWhere('', false, true);
 
         $query = "SELECT * FROM {$this->getRelationshipTable(
         )} WHERE $leftIDName='$leftID' AND $rightIDName='$rightID' $roleCheck AND deleted=0";
@@ -356,7 +356,7 @@ abstract class SugarRelationship
      *
      * @return string
      */
-    protected function getRoleWhere($table = "", $ignore_role_filter = false)
+    protected function getRoleWhere($table = "", $ignore_role_filter = false, $ignore_primary_flag = false)
     {
         $ignore_role_filter = $ignore_role_filter || $this->ignore_role_filter;
         $roleCheck = "";
@@ -382,7 +382,7 @@ abstract class SugarRelationship
         }
         if (!empty($this->def['primary_flag_column'])
             && !empty($this->primaryOnly)
-            && !$ignore_role_filter) {
+            && !$ignore_primary_flag) {
 
             $field = $table.'.'.$this->def['primary_flag_column'];
 
