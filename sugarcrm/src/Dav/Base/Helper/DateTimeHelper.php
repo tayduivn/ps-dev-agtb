@@ -142,13 +142,14 @@ class DateTimeHelper
     public function sugarDateToUTC($dateTime)
     {
         $sugarTimeDate = new \TimeDate();
-        $timePart = $sugarTimeDate->getTimePart($dateTime);
-        $dt = $timePart ? $sugarTimeDate->fromDb($dateTime) : $sugarTimeDate->fromDbDate($dateTime);
+        $dateTimeParts = explode(' ', $dateTime, 2);
+        $hasTime = isset($dateTimeParts[1]);
+        $dt = $hasTime ? $sugarTimeDate->fromDb($dateTime) : $sugarTimeDate->fromDbDate($dateTime);
         if ($dt) {
             return $dt;
         }
 
-        $dt = $timePart ? $sugarTimeDate->fromUser($dateTime, $this->getCurrentUser()) :
+        $dt = $hasTime ? $sugarTimeDate->fromUser($dateTime, $this->getCurrentUser()) :
             $sugarTimeDate->fromUserDate($dateTime, true, $this->getCurrentUser());
         $dt->setTimeZone(new \DateTimeZone('UTC'));
 

@@ -12856,3 +12856,13 @@ $app_list_strings['caldav_oldest_sync_date'] = array(
     '6 month' => '6 months',
     0 => 'All events',
 );
+
+$app_list_strings['caldav_queue_action'] = array(
+    'import' => 'Import',
+    'export' => 'Export',
+);
+
+$app_list_strings['caldav_queue_status'] = array(
+    'queued' => 'Queued',
+    'completed' => 'Completed',
+);

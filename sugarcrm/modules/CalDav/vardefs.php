@@ -451,6 +451,66 @@ $dictionary['CalDavSynchronization'] = array(
     ),
 );
 
+$dictionary['CalDavQueue'] = array(
+    'table' => 'caldav_queue',
+    'comment' => 'Queues counters for caldav event and sugar bean',
+    'full_text_search' => false,
+    'audited' => false,
+    'activity_enabled' => false,
+    'favorites' => false,
+    'fields' => array(
+        'event_id' => array(
+            'name' => 'event_id',
+            'vname' => 'LBL_EVENT_ID',
+            'type' => 'id',
+            'isnull' => 'false',
+            'comment' => 'Calendar event id',
+        ),
+        'action' => array(
+            'name' => 'action',
+            'vname' => 'LBL_ACTION',
+            'type' => 'enum',
+            'options' => 'caldav_queue_action',
+            'len' => 100,
+            'required' => false,
+            'reportable' => false,
+            'importable' => 'required',
+        ),
+        'save_counter' => array(
+            'name' => 'save_counter',
+            'vname' => 'LBL_SYNC_SAVE_COUNTER',
+            'type' => 'int',
+            'len' => '11',
+            'default' => '0',
+            'comment' => 'Save counter',
+        ),
+        'status' => array(
+            'name' => 'status',
+            'vname' => 'LBL_STATUS',
+            'type' => 'enum',
+            'options' => 'caldav_queue_status',
+            'len' => 100,
+            'required' => false,
+            'reportable' => false,
+            'importable' => 'required',
+        ),
+        'data' => array(
+            'name' => 'data',
+            'vname' => 'LBL_DATA',
+            'type' => 'longtext',
+            'required' => false,
+            'reportable' => true,
+        ),
+    ),
+    'indices' => array(
+        array(
+            'name' => 'event_status_counter',
+            'type' => 'index',
+            'fields' => array('event_id', 'status', 'save_counter'),
+        ),
+    ),
+);
+
 VardefManager::createVardef(
     'CalDavEvents',
     'CalDavEventCollection'
@@ -474,4 +534,9 @@ VardefManager::createVardef(
 VardefManager::createVardef(
     'CalDavSynchronizations',
     'CalDavSynchronization'
+);
+
+VardefManager::createVardef(
+    'CalDavQueues',
+    'CalDavQueue'
 );

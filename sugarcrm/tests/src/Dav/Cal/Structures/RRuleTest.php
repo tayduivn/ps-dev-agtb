@@ -70,7 +70,7 @@ class RRuleTest extends \PHPUnit_Framework_TestCase
             array(
                 'value' => null,
                 'freqValue' => 'DAILY',
-                'expected' => array(),
+                'expected' => null,
                 'exception' => null
             ),
         );
@@ -124,7 +124,7 @@ class RRuleTest extends \PHPUnit_Framework_TestCase
             array(
                 'value' => null,
                 'freqValue' => 'DAILY',
-                'expected' => array(),
+                'expected' => null,
                 'exception' => null
             ),
         );
@@ -172,7 +172,7 @@ class RRuleTest extends \PHPUnit_Framework_TestCase
             array(
                 'value' => null,
                 'freqValue' => 'DAILY',
-                'expected' => array(),
+                'expected' => null,
                 'exception' => null
             ),
         );
@@ -214,7 +214,7 @@ class RRuleTest extends \PHPUnit_Framework_TestCase
             array(
                 'value' => null,
                 'freqValue' => 'DAILY',
-                'expected' => array(),
+                'expected' => null,
                 'exception' => null
             ),
         );
@@ -256,7 +256,7 @@ class RRuleTest extends \PHPUnit_Framework_TestCase
             array(
                 'value' => null,
                 'freqValue' => 'DAILY',
-                'expected' => array(),
+                'expected' => null,
                 'exception' => null
             ),
         );

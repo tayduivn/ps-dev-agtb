@@ -45,8 +45,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Class Manager
  * @package JobQueue
- * @method calDavExport(string $beanModule, string $beanId, mixed $data, int $saveCounter)
- * @method calDavImport(string $beanModule, string $beanId, mixed $data, int $saveCounter)
+ * @method calDavHandler(string $calDavCollectionId)
  */
 class Manager extends AbstractManager
 {
@@ -79,8 +78,7 @@ class Manager extends AbstractManager
         'MassUpdate' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\MassUpdate',
         'ExportRecords' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportRecords',
         'ExportToCSV' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportToCSV',
-        'CalDavImport' => 'Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\Import',
-        'CalDavExport' => 'Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\Export',
+        'CalDavHandler' => 'Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\Handler',
         'NotificationEvent' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\EventHandler',
         'NotificationCarrierBulkMessage' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\CarrierBulkMessageHandler',
         'NotificationSend' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\SendHandler',

@@ -77,12 +77,12 @@ class RRule
     /**
      * Return array with $value
      * @param mixed $value
-     * @return array
+     * @return array | null
      */
     protected function toArray($value)
     {
-        if (!$value) {
-            return array();
+        if (is_null($value)) {
+            return null;
         }
         if (is_array($value)) {
             return $value;
@@ -390,9 +390,6 @@ class RRule
      */
     public function normalizeUntil(\SugarDateTime $until)
     {
-        if ($until->format('H:i:s') == '00:00:00') {
-            return $until->get_day_end_time();
-        }
-        return $until;
+        return $until->get_day_end_time();
     }
 }

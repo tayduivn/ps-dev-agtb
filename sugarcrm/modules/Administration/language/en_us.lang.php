@@ -1292,7 +1292,7 @@ For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_
     //END SUGARCRM flav=ent ONLY
 
     //CalDav
-    'LBL_CONFIGURE_CALDAV' => 'iCal Sync Settings',
+    'LBL_CONFIGURE_CALDAV' => 'CalDAV Sync Settings',
     'LBL_CONFIGURE_CALDAV_DESC' => 'Here you can configure default bean for new events from client side, and setup sync period.',
 
 );

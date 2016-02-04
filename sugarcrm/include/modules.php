@@ -735,6 +735,8 @@ $beanList['CalDavSchedulings'] = 'CalDavScheduling';
 $beanFiles['CalDavScheduling'] = 'modules/CalDav/Scheduling.php';
 $beanList['CalDavSynchronizations'] = 'CalDavSynchronization';
 $beanFiles['CalDavSynchronization'] = 'modules/CalDav/Synchronization.php';
+$beanList['CalDavQueues'] = 'CalDavQueue';
+$beanFiles['CalDavQueue'] = 'modules/CalDav/Queue.php';
 $beanList['Addressees'] = 'Addressee';
 $beanFiles['Addressee'] = 'modules/Addressees/Addressee.php';
 

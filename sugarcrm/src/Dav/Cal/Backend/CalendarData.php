@@ -341,6 +341,11 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
             return null;
         }
         $event = array_shift($events);
+
+        if ($event->getSynchronizationObject()->getConflictCounter()) {
+            throw new DAV\Exception\Conflict('Event in the middle of conflict solving');
+        }
+
         $event->doLocalDelivery = false;
         if ($event && $event->id && $event->setData($calendarData)) {
             $event->save();

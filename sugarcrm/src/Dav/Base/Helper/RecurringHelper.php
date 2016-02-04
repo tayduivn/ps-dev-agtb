@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Base\Helper;
 
 use Sabre\VObject\Recur\EventIterator;
 use Sabre\VObject\Component as DavComponent;
+use Sugarcrm\Sugarcrm\Dav\Base\Constants;
 use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as StatusMapper;
 use Sugarcrm\Sugarcrm\Dav\Cal\Structures\RRule;
 
@@ -38,6 +39,21 @@ class RecurringHelper
         'repeat_days',
         'repeat_ordinal',
         'repeat_unit',
+    );
+
+    /**
+     * List of RRULE recurring fields
+     * @var array
+     */
+    public static $rruleFieldList = array(
+        'rrule_action',
+        'rrule_frequency',
+        'rrule_interval',
+        'rrule_count',
+        'rrule_until',
+        'rrule_byday',
+        'rrule_bymonthday',
+        'rrule_bysetpos',
     );
 
     /**
@@ -148,88 +164,170 @@ class RecurringHelper
 
     /**
      * Set bean fields for RRUle
+     * Return true if fields was changed
      * @param array $value
      * @param \SugarBean $bean
      *
-     * @return \SugarBean $bean
+     * @return bool
      */
     public function arrayToBean(array $value, \SugarBean $bean)
     {
-        if (isset($value['frequency'])) {
-            $bean->repeat_type = $this->frequencyMap->getSugarValue($value['frequency'][0]);
-        }
-
-        if (isset($value['interval'])) {
-            $bean->repeat_interval = $value['interval'][0];
-        }
-
-        if (isset($value['count'])) {
-            $bean->repeat_count = $value['count'][0];
-        }
-
-        if (isset($value['until'])) {
-            $bean->repeat_until = $value['until'][0];
-        }
-
-        if (isset($value['byday']) && $bean->repeat_type == 'Weekly') {
-            $sugarValue = '';
-            foreach ($value['byday'][0] as $day) {
-                $sugarValue .= $this->dayMap->getSugarValue($day);
+        $dateTimeHelper = new DateTimeHelper();
+        $isChanged = false;
+        if (isset($value['rrule_frequency'])) {
+            $valueToSet =
+                is_null($value['rrule_frequency'][0]) ? '' :
+                    $this->frequencyMap->getSugarValue($value['rrule_frequency'][0]);
+            if ($bean->repeat_type != $valueToSet) {
+                $bean->repeat_type = $valueToSet;
+                $isChanged = true;
             }
-            $bean->repeat_dow = $sugarValue;
+        }
+
+        if (isset($value['rrule_interval'])) {
+            $valueToSet = is_null($value['rrule_interval'][0]) ? 0 : $value['rrule_interval'][0];
+            if ($bean->repeat_interval != $valueToSet) {
+                $bean->repeat_interval = $valueToSet;
+                $isChanged = true;
+            }
+        }
+
+        if (isset($value['rrule_count'])) {
+            $valueToSet = is_null($value['rrule_count'][0]) ? 0 : $value['rrule_count'][0];
+            if ($bean->repeat_count != $valueToSet) {
+                $bean->repeat_count = $valueToSet;
+                $isChanged = true;
+            }
+        }
+
+        if (isset($value['rrule_until'])) {
+            $valueToSet = is_null($value['rrule_until'][0]) ? '' : $value['rrule_until'][0];
+            $beanValue = $bean->repeat_until ? $dateTimeHelper->sugarDateToUTC($bean->repeat_until)->asDbDate() : '';
+            if ($beanValue != $valueToSet) {
+                $bean->repeat_until = $valueToSet;
+                $isChanged = true;
+            }
+        }
+
+        if (empty($bean->repeat_count) && empty($bean->repeat_until)) {
+            $bean->repeat_count = Constants::MAX_INFINITE_RECCURENCE_COUNT;
+            $isChanged = true;
+        }
+
+        if (isset($value['rrule_byday']) && $bean->repeat_type == 'Weekly') {
+            $sugarValue = '';
+            if (!is_null($value['rrule_byday'][0])) {
+                foreach ($value['rrule_byday'][0] as $day) {
+                    $sugarValue .= $this->dayMap->getSugarValue($day);
+                }
+            }
+            if ($bean->repeat_dow != $sugarValue) {
+                $bean->repeat_dow = $sugarValue;
+                $isChanged = true;
+            }
         }
 
         if ($bean->repeat_type == 'Monthly') {
-            $monthlySet = false;
-            if (isset($value['byday'])) {
-                $daysData = $value['byday'][0];
-                $daysCount = count($daysData);
+            if (isset($value['rrule_byday'])) {
+                if (!is_null($value['rrule_byday'][0])) {
+                    $daysData = $value['rrule_byday'][0];
+                    $daysCount = count($daysData);
+                } else {
+                    $daysCount = 0;
+                }
                 switch ($daysCount) {
                     case 1:
                         $weekDay = substr($daysData[0], - 2);
                         $dayPosition = substr($daysData[0], 0, strlen($daysData[0]) - 2);
-                        $bean->repeat_ordinal = $this->dayPositionMap->getSugarValue($dayPosition);
-                        $bean->repeat_unit = $this->monthlyDayMap->getSugarValue($weekDay);
+                        $davRepeatOrdinal = $this->dayPositionMap->getSugarValue($dayPosition);
+                        $davRepeatUnit = $this->monthlyDayMap->getSugarValue($weekDay);
+                        if ($bean->repeat_ordinal != $davRepeatOrdinal) {
+                            $bean->repeat_ordinal = $davRepeatOrdinal;
+                            $isChanged = true;
+                        }
+                        if ($bean->repeat_unit != $davRepeatUnit) {
+                            $bean->repeat_unit = $davRepeatUnit;
+                            $isChanged = true;
+                        }
                         $bean->repeat_selector = 'On';
                         break;
                     case 2:
-                        $bean->repeat_unit = 'WE';
+                        if ($bean->repeat_unit != 'WE') {
+                            $bean->repeat_unit = 'WE';
+                            $isChanged = true;
+                        }
                         $bean->repeat_selector = 'On';
                         break;
                     case 5:
-                        $bean->repeat_unit = 'WD';
+                        if ($bean->repeat_unit != 'WD') {
+                            $bean->repeat_unit = 'WD';
+                            $isChanged = true;
+                        }
                         $bean->repeat_selector = 'On';
                         break;
                     case 7:
-                        $bean->repeat_unit = 'Day';
+                        if ($bean->repeat_unit != 'Day') {
+                            $bean->repeat_unit = 'Day';
+                            $isChanged = true;
+                        }
                         $bean->repeat_selector = 'On';
                         break;
                     default:
                         $bean->repeat_selector = 'None';
+                        if (!empty($bean->repeat_ordinal)) {
+                            $bean->repeat_ordinal = '';
+                            $isChanged = true;
+                        }
+                        if (!empty($bean->repeat_unit)) {
+                            $bean->repeat_unit = '';
+                            $isChanged = true;
+                        }
                         break;
                 }
-                $monthlySet = true;
             }
-            if (!empty($value['bysetpos'][0])) {
-                $bean->repeat_ordinal = $this->dayPositionMap->getSugarValue($value['bysetpos'][0][0]);
-                $monthlySet = true;
+            if (isset($value['rrule_bysetpos'])) {
+                if (is_null($value['rrule_bysetpos'][0])) {
+                    if (!empty($bean->repeat_ordinal)) {
+                        $bean->repeat_ordinal = '';
+                        $isChanged = true;
+                    }
+                } else {
+                    $davRepeatOrdinal = $this->dayPositionMap->getSugarValue($value['rrule_bysetpos'][0][0]);
+                    if ($bean->repeat_ordinal != $davRepeatOrdinal) {
+                        $bean->repeat_ordinal = $davRepeatOrdinal;
+                        $isChanged = true;
+                    }
+                }
             }
 
-            if (isset($value['bymonthday']) && $value['bymonthday'][0]) {
-                $sDays = implode(',', $value['bymonthday'][0]);
-                $bean->repeat_days = $sDays;
-                $bean->repeat_selector = 'Each';
-                $bean->repeat_ordinal = null;
-                $monthlySet = true;
-            }
-
-            if (!$monthlySet) {
-                $bean->repeat_selector = 'None';
+            if (isset($value['rrule_bymonthday'])) {
+                $sDays = !is_null($value['rrule_bymonthday'][0]) ? implode(',', $value['rrule_bymonthday'][0]) : '';
+                if ($sDays && $bean->repeat_days != $sDays) {
+                    $bean->repeat_days = $sDays;
+                    $isChanged = true;
+                    if ($sDays) {
+                        $bean->repeat_selector = 'Each';
+                        $bean->repeat_ordinal = '';
+                    }
+                }
             }
         } else {
+            if (!empty($this->repeat_unit)) {
+                $this->repeat_unit = '';
+                $isChanged = true;
+            }
+            if (!empty($this->repeat_ordinal)) {
+                $this->repeat_ordinal = '';
+                $isChanged = true;
+            }
+            if (!empty($this->repeat_days)) {
+                $this->repeat_days = '';
+                $isChanged = true;
+            }
+
             $bean->repeat_selector = 'None';
         }
 
-        return $bean;
+        return $isChanged;
     }
 }
