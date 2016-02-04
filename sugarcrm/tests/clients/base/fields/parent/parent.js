@@ -97,36 +97,4 @@ describe('Base.Field.Parent', function() {
             expect(field.isAvailableParentType('Contacts')).toBe(false);
         });
     });
-
-    describe('render', function() {
-        var _renderStub, getSearchModuleStub;
-
-        beforeEach(function() {
-            _renderStub = sinon.collection.stub(app.view.Field.prototype, '_render');
-            getSearchModuleStub = sinon.collection.stub(field, 'getSearchModule');
-        });
-
-        using('different search modules', [
-            {
-                module: undefined,
-                render: true
-            },
-            {
-                module: 'invalidModule',
-                render: false
-            },
-            {
-                module: 'Cases',
-                render: true
-            }
-        ], function(options) {
-
-            it('should not render if the related module is invalid', function() {
-                getSearchModuleStub.returns(options.module);
-                field.render();
-
-                expect(_renderStub.called).toBe(options.render);
-            });
-        });
-    });
 });
