@@ -25,5 +25,7 @@
         //force the action dropdown to be disabled so we don't show the link-existing button. Removing the button
         //breaks rendering of the UI control (no dropdown toggle appears).
         this.$(this.actionDropDownTag).toggleClass('disabled', true);
+
+        return this;
     }
 });
