@@ -3,13 +3,14 @@
 class Latin
 {
 
-    public function __construct($rome, $translationPath, $baseDir, $ver, $no_latin_scm)
+    public function __construct($rome, $translationPath, $baseDir, $ver, $no_latin_scm, $langs = null)
     {
         $this->translationPath = $translationPath;
         $this->rome = $rome;
         $this->baseDir = realpath($baseDir);
         $this->ver = $ver;
         $this->no_latin_scm = $no_latin_scm;
+        $this->langs = $langs;
         if (empty($this->startPath)) {
             $this->startPath = $this->baseDir;
         }
@@ -65,6 +66,9 @@ class Latin
 
                     if (empty($build['languages'])) {
                         continue;
+                    }
+                    if ($this->langs) {
+                        $build['languages'] = array_intersect($build['languages'], $this->langs);
                     }
                     foreach ($build['languages'] as $lang) {
                         if (strpos($fileInfo->getFilename(), $lang . '.') !== false) {
