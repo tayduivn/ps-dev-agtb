@@ -267,7 +267,8 @@ abstract class DBManager
      */
     public function getEmptyStringSQL($field)
     {
-        return " $field = '' ";
+        $empty = $this->quoted('');
+        return " $field = $empty ";
     }
 
     /**
@@ -279,7 +280,8 @@ abstract class DBManager
      */
     public function getNotEmptyStringSQL($field)
     {
-        return " $field != '' ";
+        $empty = $this->quoted('');
+        return " $field != $empty ";
     }
 
     /**

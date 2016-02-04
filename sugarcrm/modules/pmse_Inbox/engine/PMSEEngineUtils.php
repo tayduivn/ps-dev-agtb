@@ -12,6 +12,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * Get the logger class for handling the log
+ */
+require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 /**
  * Class contains utilities as encoder and decoders for codes url, remove bound fields,
@@ -98,6 +102,7 @@ class PMSEEngineUtils
         'BR' => array('assigned_user_id', 'email1'),
         'ET' => array('email1'),
         'AC' => array('assigned_user_id'),
+        'CF' => array('assigned_user_id'),
         'RR' => array(),
     );
 
@@ -107,6 +112,25 @@ class PMSEEngineUtils
      * @var array
      */
     public static $blacklistedFieldTypes = array('image','password','file');
+
+    /**
+     * PMSE Logger object
+     * @var PMSELogger
+     */
+    protected $logger;
+
+    /**
+     * Gets an instance of the PMSELogger object
+     * @return PMSELogger
+     */
+    public function getLogger()
+    {
+        if (!isset($this->logger)) {
+            $this->logger = PMSELogger::getInstance();
+        }
+
+        return $this->logger;
+    }
 
     /**
      * Method get key fields
@@ -1256,23 +1280,36 @@ class PMSEEngineUtils
      * in a version when they were still acceptable valid fields
      * @param array $element An activity element from an import
      * @param string $module The module to get fields to validate from
+     * @param string $type The type of field validation to apply
      * @return string
      */
-    public static function sanitizeImportActivityFields(array $element, $module)
+    public static function sanitizeImportActivityFields(array $element, $module, $type = '')
     {
         if (!empty($element['act_field_module'])) {
             // We will need these for validations
             $targetBean = BeanFactory::getBean($module);
             if (isset($targetBean->field_defs[$element['act_field_module']]['module'])) {
                 // We need the related module bean to get field defs for validation
-                $relBean = BeanFactory::getBean($targetBean->field_defs[$element['act_field_module']]['module']);
+                $relBeanName = $targetBean->field_defs[$element['act_field_module']]['module'];
+                $relBean = BeanFactory::getBean($relBeanName);
 
                 $newData = array();
-                $fieldData = json_decode($element['act_fields']);
-                foreach ($fieldData as $fieldDef) {
-                    $field = $fieldDef['field'];
-                    if (isset($relBean->field_defs[$field]) && self::isValidField($relBean->field_defs[$field])) {
-                        $newData[] = $fieldDef;
+                $fieldData = json_decode(html_entity_decode($element['act_fields']), true);
+                // In some cases $fieldData comes back null, so we need to check
+                // if it is actually an array before trying to use it as one
+                if (is_array($fieldData)) {
+                    foreach ($fieldData as $fieldDef) {
+                        $field = $fieldDef['field'];
+                        if (isset($relBean->field_defs[$field])) {
+                            if (self::isValidField($relBean->field_defs[$field], $type)) {
+                                $newData[] = $fieldDef;
+                            } else {
+                                $typeMark = empty($type) ? '(EMPTY)' : $type;
+                                $this->getLogger()->warning("sanitizeImportActivityFields: $field field on $relBeanName module did not pass validation for $typeMark");
+                            }
+                        } else {
+                            $this->getLogger()->warning("sanitizeImportActivityFields: $field $field not found in $relBeanName module");
+                        }
                     }
                 }
                 $element['act_fields'] = json_encode($newData);

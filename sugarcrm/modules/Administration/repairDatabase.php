@@ -87,7 +87,7 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 				require_once ($file);
 				unset($GLOBALS['dictionary'][$bean]);
 				$focus = BeanFactory::newBeanByName($bean);
-				if (($focus instanceOf SugarBean) && !isset($repairedTables[$focus->table_name])) {
+                if ($focus instanceof SugarBean && $focus->table_name && !isset($repairedTables[$focus->table_name])) {
 				    $sql .= $db->repairTable($focus, $execute);
                     $compareIndices = isset($indices[$focus->table_name]) ? $indices[$focus->table_name] : array();
                     $sql .= $db->alterTableIndices($focus->table_name, $focus->getIndices(), $compareIndices, $execute);
