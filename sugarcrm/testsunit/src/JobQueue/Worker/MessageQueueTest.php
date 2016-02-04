@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\JobQueue\Worker;
 
+use Psr\Log\NullLogger;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 use Sugarcrm\Sugarcrm\JobQueue\Worker\MessageQueue;
 
@@ -134,7 +135,7 @@ class MessageQueueTest extends \PHPUnit_Framework_TestCase
             'Sugarcrm\Sugarcrm\JobQueue\Serializer\SerializerInterface',
             array('serialize', 'unserialize')
         );
-        $worker = new MessageQueue($adapter, $serializer);
+        $worker = new MessageQueue($adapter, $serializer, new NullLogger());
         return array('adapter' => $adapter, 'worker' => $worker, 'serializer' => $serializer);
     }
 }

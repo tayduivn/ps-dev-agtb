@@ -134,7 +134,6 @@ if (isset($_REQUEST['return_id']))
   $xtpl->assign("RETURN_ID", $_REQUEST['return_id']);
 $xtpl->assign("JAVASCRIPT", get_set_focus_js());
 $xtpl->assign("IMAGE_PATH", $image_path);
-$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 
 require_once('include/QuickSearchDefaults.php');
 $qsd = new QuickSearchDefaults();

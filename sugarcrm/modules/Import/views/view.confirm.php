@@ -31,9 +31,17 @@ class ImportViewConfirm extends ImportView
         global $mod_strings, $app_strings, $current_user;
         global $sugar_config, $locale;
 
-        $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
-        $this->ss->assign("TYPE",( !empty($_REQUEST['type']) ? $_REQUEST['type'] : "import" ));
-        $this->ss->assign("SOURCE_ID", $_REQUEST['source_id']);
+        $importModule = $this->request->getValidInputRequest('import_module', 'Assert\Mvc\ModuleName', '');
+        $this->ss->assign("IMPORT_MODULE", $importModule);
+        $this->ss->assign(
+            'TYPE',
+            $this->request->getValidInputRequest(
+                'type',
+                array('Assert\Choice' => array('choices' => array('import', 'update', ''))),
+                'import'
+            ) ?: 'import'
+        );
+        $this->ss->assign("SOURCE_ID", $this->request->getValidInputRequest('source_id'));
 
         $this->instruction = 'LBL_SELECT_PROPERTY_INSTRUCTION';
         $this->ss->assign('INSTRUCTION', $this->getInstruction());
@@ -41,7 +49,7 @@ class ImportViewConfirm extends ImportView
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false), ENT_NOQUOTES);
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
         $sugar_config['import_max_records_per_file'] = ( empty($sugar_config['import_max_records_per_file']) ? 1000 : $sugar_config['import_max_records_per_file'] );
-        $importSource = isset($_REQUEST['source']) ? $_REQUEST['source'] : 'csv' ;
+        $importSource = $this->request->getValidInputRequest('source', array('Assert\Choice' => array('choices' => array('csv', 'external', ''))), 'csv');
 
         // Clear out this user's last import
         $seedUsersLastImport = BeanFactory::getBean('Import_2');
@@ -61,14 +69,14 @@ class ImportViewConfirm extends ImportView
         }
         else
         {
-            $this->_showImportError($mod_strings['LBL_IMPORT_MODULE_ERROR_NO_UPLOAD'],$_REQUEST['import_module'],'Step2', true, null, true);
+            $this->_showImportError($mod_strings['LBL_IMPORT_MODULE_ERROR_NO_UPLOAD'], $importModule,'Step2', true, null, true);
             return;
         }
 
         //check the file size, we dont want to process an empty file
         if(isset($_FILES['userfile']['size']) && $_FILES['userfile']['size'] == 0){
             //this file is empty, throw error message
-            $this->_showImportError($mod_strings['LBL_NO_LINES'],$_REQUEST['import_module'],'Step2', false, null, true);
+            $this->_showImportError($mod_strings['LBL_NO_LINES'], $importModule,'Step2', false, null, true);
             return;
         }
 
@@ -80,14 +88,19 @@ class ImportViewConfirm extends ImportView
             //this file does not have a known text or application type of mime type, issue the warning
             $error_msgs[] = $mod_strings['LBL_MIME_TYPE_ERROR_1'];
             $error_msgs[] = $mod_strings['LBL_MIME_TYPE_ERROR_2'];
-            $this->_showImportError($error_msgs,$_REQUEST['import_module'],'Step2', true, $mod_strings['LBL_OK']);
+            $this->_showImportError($error_msgs, $importModule,'Step2', true, $mod_strings['LBL_OK']);
             $mimeTypeOk = false;
         }
 
         $this->ss->assign("FILE_NAME", $uploadFileName);
 
+
+
         // Now parse the file and look for errors
-        $importFile = new ImportFile( $uploadFileName, $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), FALSE);
+        $customDelimiter = $this->request->getValidInputRequest('custom_delimiter', array('Assert\Type' => array('type' => 'string'), 'Assert\Length' => array('min' => 0, 'max' => 1)), '');
+        $customEnclosure = $this->request->getValidInputRequest('custom_enclosure', array('Assert\Type' => array('type' => 'string'), 'Assert\Length' => array('min' => 0, 'max' => 1)), '');
+
+        $importFile = new ImportFile( $uploadFileName, $customDelimiter, html_entity_decode($customEnclosure,ENT_QUOTES), FALSE);
 
         if( $this->shouldAutoDetectProperties($importSource) )
         {
@@ -131,8 +144,12 @@ class ImportViewConfirm extends ImportView
         {
             $encodeOutput = FALSE;
             $importFileMap = $this->overloadImportFileMapFromRequest($importFileMap);
-            $delimeter = !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : $delimeter;
-            $enclosure = isset($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : $enclosure;
+
+            $singleCharConstraints = array('Assert\Type' => array('type' => 'string'), 'Assert\Length' => array('min' => 1));
+            $previousCustomDelimiter = $this->request->getValidInputRequest('custom_delimiter', $singleCharConstraints, '');
+
+            $delimeter = !empty($previousCustomDelimiter) ? $previousCustomDelimiter : $delimeter;
+            $enclosure = $this->request->getValidInputRequest('custom_enclosure', $singleCharConstraints, $enclosure);
             $enclosure = html_entity_decode($enclosure, ENT_QUOTES);
             $hasHeader = !empty($_REQUEST['has_header']) ? $_REQUEST['has_header'] : $hasHeader;
             if ($hasHeader == 'on') {
@@ -150,7 +167,7 @@ class ImportViewConfirm extends ImportView
         $this->ss->assign("HAS_HEADER_CHECKED", $hasHeaderFlag);
 
         if ( !$importFile->fileExists() ) {
-            $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2', false, null, true);
+            $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'], $importModule,'Step2', false, null, true);
             return;
         }
 
@@ -215,7 +232,7 @@ class ImportViewConfirm extends ImportView
         foreach($overideKeys as $key)
         {
             if( !empty( $_REQUEST[$key]) )
-                $importFileMap[$key] = $_REQUEST[$key];
+                $importFileMap[$key] = $this->request->getValidInputRequest($key);
         }
         return $importFileMap;
     }
@@ -595,8 +612,7 @@ EOJAVASCRIPT;
         $ss->assign("MOD", $GLOBALS['mod_strings']);
         $ss->assign("SOURCE","");
         $ss->assign("SHOWCANCEL",$showCancel);
-        if ( isset($_REQUEST['source']) )
-            $ss->assign("SOURCE", $_REQUEST['source']);
+        $ss->assign("SOURCE", $this->request->getValidInputRequest('source', array('Assert\Choice' => array('choices' => array('csv', 'external', '')))));
 
         if ($cancelLabel) {
             $ss->assign('CANCELLABEL', $cancelLabel);

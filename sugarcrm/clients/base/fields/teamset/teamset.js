@@ -416,6 +416,9 @@
     bindDataChange: function() {
         if (this.model) {
             this.model.on('change:' + this.name, function() {
+                if (this._currentIndex !== this.model.get(this.name).length - 1) {
+                    this._currentIndex = this.model.get(this.name).length - 1;
+                }
                 this.render();
                 if (!_.isEmpty(this.$(this.fieldTag).data('select2'))) {
                     this.$(this.$(this.fieldTag).get(this._currentIndex)).focus();

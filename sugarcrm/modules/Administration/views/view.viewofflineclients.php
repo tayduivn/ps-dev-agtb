@@ -14,6 +14,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/SearchForm/SearchForm.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 class ViewViewofflineclients extends SugarView
 {
     /**
@@ -72,16 +74,19 @@ class ViewViewofflineclients extends SugarView
         $where = 'system_id != '.$system_id;
         
         $row_count = $seed->getEnabledOfflineClients($seed->create_new_list_query("",$where));
-        
-        if(isset($_REQUEST['view']) && ($_REQUEST['view'] == 'disable' || $_REQUEST['view'] == 'enable')){
-            if(isset($_REQUEST['system_id'])){
+
+        $request = InputValidation::getService();
+        $view = $request->getValidInputRequest('view', array('Assert\Type' => (array('type' => 'string'))));
+        $systemIdFromRequest = $request->getValidInputRequest('system_id');
+        if($view !== null && ($view == 'disable' || $view == 'enable')){
+            if($systemIdFromRequest !== null){
                 $system = new System();
-                $system->retrieve($_REQUEST['system_id']);
+                $system->retrieve($systemIdFromRequest);
                 if($system != null && $system->deleted != 1){
-                    if($_REQUEST['view'] == 'disable'){
+                    if($view == 'disable'){
                         $system->status = 'Inactive';
                          $system->save();
-                    }else if($_REQUEST['view'] == 'enable'){
+                    }else if($view == 'enable'){
                         if($row_count == $num_lic_oc){
                             $error = $mod_strings['ERR_NUM_OFFLINE_CLIENTS_MET'];
                         }else{
@@ -101,12 +106,13 @@ class ViewViewofflineclients extends SugarView
         }
         
         $user_name = '';
-        if(isset($_REQUEST['query']))
+        $query = $request->getValidInputRequest('query');
+
+        if($query !== null)
         {
-            $user_name = (isset($_REQUEST['user_name']) ? $_REQUEST['user_name'] : ''); 
+            $user_name = $request->getValidInputRequest('user_name', null, '');
             require_once('modules/Administration/metadata/SearchFields.php');
             $searchForm->setup();
-            $user = BeanFactory::getBean('Users');
             $searchForm->populateFromRequest('advanced_search');
             
             $where_clauses = $searchForm->generateSearchWhere(true, "Administration"); 
@@ -142,7 +148,8 @@ class ViewViewofflineclients extends SugarView
         echo "</h4>";
         
         //SEARCH
-        if (!isset($_REQUEST['search_form']) || $_REQUEST['search_form'] != 'false') {
+        $searchFormFromRequest = $request->getValidInputRequest('search_form');
+        if ($searchFormFromRequest !== null || $searchFormFromRequest != 'false') {
             $search_form = new Sugar_Smarty;
             $search_form->assign("MOD", $mod_strings);
             $search_form->assign("APP", $app_strings);

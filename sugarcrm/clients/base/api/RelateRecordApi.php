@@ -346,6 +346,13 @@ class RelateRecordApi extends SugarApi
         }
         BeanFactory::registerBean($relatedBean);
 
+        // Calendar relevant modules should be updated only after all their relations have been updated.
+        // But it's impossible to move update of $relatedBean to the end of this method because of PAT-337.
+        $forCalendar = $relatedBean instanceof Call || $relatedBean instanceof Meeting;
+        if ($forCalendar) {
+            $inviteesBefore = CalendarUtils::getInvitees($relatedBean);
+        }
+
         // updateBean may remove the relationship. see PAT-337 for details
         $this->updateBean($relatedBean, $api, $args);
         $relatedBean->retrieve($args['remote_id']);
@@ -390,6 +397,15 @@ class RelateRecordApi extends SugarApi
 
         //Clean up any hanging related records.
         SugarRelationship::resaveRelatedBeans();
+
+        if ($forCalendar) {
+            $relatedBean->getCalDavHook()->export($relatedBean, array(
+                'update',
+                array(),
+                $inviteesBefore,
+                CalendarUtils::getInvitees($relatedBean)
+            ));
+        }
 
         // This forces a re-retrieval of the bean from the database
         BeanFactory::unregisterBean($relatedBean);

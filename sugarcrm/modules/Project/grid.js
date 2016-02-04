@@ -2658,7 +2658,7 @@ SUGAR.grid = function() {
 
 		success: function(o) {
 			ajaxStatus.hideStatus();
-			eval(o.responseText);
+			var result = JSON.parse(o.responseText);
 //			debugger
 			for (var i = 1; i <= totalRowsInGrid; i++) {
 				if (result[i]) {

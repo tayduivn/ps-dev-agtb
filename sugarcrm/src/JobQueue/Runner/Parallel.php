@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Runner;
 
+use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\RuntimeException;
 use Sugarcrm\Sugarcrm\JobQueue\LockStrategy\LockStrategyInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Worker\WorkerInterface;
@@ -120,7 +121,7 @@ class Parallel extends AbstractRunner
      * Check possibility to run in parallel mode, setup posix specific parameters.
      * {@inheritdoc}
      */
-    public function __construct(WorkerInterface $worker, LockStrategyInterface $lock)
+    public function __construct($config, WorkerInterface $worker, LockStrategyInterface $lock, LoggerInterface $logger)
     {
         if (!extension_loaded('posix')) {
             throw new RuntimeException('The posix PHP extension is not loaded.');
@@ -130,7 +131,7 @@ class Parallel extends AbstractRunner
             throw new RuntimeException('The pcntl PHP extension is not loaded.');
         }
 
-        parent::__construct($worker, $lock);
+        parent::__construct($config, $worker, $lock, $logger);
 
         $this->pid = getmypid();
 

@@ -55,7 +55,6 @@ $xtpl=new XTemplate ('modules/WorkFlowAlertShells/DetailView.html');
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
 $xtpl->assign("GRIDLINE", $gridline);
-$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign('ID', $focus->id);
 $xtpl->assign('NAME', $focus->name);
 

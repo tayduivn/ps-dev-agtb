@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\JobQueue\Client;
 
+use Psr\Log\NullLogger;
 use Sugarcrm\Sugarcrm\JobQueue\Client\MessageQueue;
 
 /**
@@ -36,7 +37,7 @@ class MessageQueueTest extends \PHPUnit_Framework_TestCase
             'Sugarcrm\Sugarcrm\JobQueue\Serializer\SerializerInterface',
             array('serialize', 'unserialize')
         );
-        $mqClient = new MessageQueue($mqAdapter, $serializer);
+        $mqClient = new MessageQueue($mqAdapter, $serializer, new NullLogger());
 
         $workload = $this->getMock('Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface');
         $mqClient->addJob($workload);

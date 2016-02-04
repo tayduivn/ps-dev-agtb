@@ -564,7 +564,15 @@ class Event
      */
     public function setStartDate(\SugarDateTime $value = null)
     {
-        return $this->setDateTimeProperty('DTSTART', $value);
+        $dtEnd = $this->getEndDate();
+        $isChanged = $this->setDateTimeProperty('DTSTART', $value);
+        if ($isChanged && $dtEnd && !empty($this->event->DURATION)) {
+            $duration = $dtEnd->getTimestamp() - $value->getTimestamp();
+            $duration = $this->dateTimeHelper->secondsToDuration($duration);
+            $this->setStringProperty('DURATION', $duration);
+        }
+
+        return $isChanged;
     }
 
     /**

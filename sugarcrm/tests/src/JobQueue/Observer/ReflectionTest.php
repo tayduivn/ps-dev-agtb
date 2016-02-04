@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\JobQueue\Observer;
 
-use Sugarcrm\Sugarcrm\JobQueue\Observer\Database;
+use Psr\Log\NullLogger;
 use Sugarcrm\Sugarcrm\JobQueue\Observer\Reflection;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\Workload;
 
@@ -32,7 +32,7 @@ class ReflectionTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         \SugarTestHelper::setUp('current_user', array(true, 1));
         $this->workload = new Workload('testRoute', array());
-        $this->observer = new Reflection();
+        $this->observer = new Reflection(new NullLogger());
     }
 
     public function tearDown()
@@ -64,6 +64,8 @@ class ReflectionTest extends \Sugar_PHPUnit_Framework_TestCase
         $job->resolution = \SchedulersJob::JOB_RUNNING;
         $job->save();
 
+        $this->observer = new Reflection(new NullLogger());
+
         $this->workload->setAttribute('dbId', $job->id);
         $this->observer->onResolve($this->workload, \SchedulersJob::JOB_SUCCESS);
 
@@ -78,26 +80,26 @@ class ReflectionTest extends \Sugar_PHPUnit_Framework_TestCase
      */
     public function testChangeCurrentUser()
     {
-        $currentUser = $GLOBALS['current_user'];
-        $JobUser = \SugarTestUserUtilities::createAnonymousUser();
+        $admin = $GLOBALS['current_user'];
+        $jobUser = \SugarTestUserUtilities::createAnonymousUser();
 
-        // The system user is the JobUser.
-        $this->observer = new Reflection($JobUser);
+        // Add a job under a regular user.
+        $GLOBALS['current_user'] = $jobUser;
         $this->observer->onAdd($this->workload);
 
         $job = \BeanFactory::getBean('SchedulersJobs', $this->workload->getAttribute('dbId'));
         \SugarTestSchedulersJobUtilities::setCreatedJob(array($job->id));
 
-        $this->assertEquals($JobUser->id, $job->assigned_user_id);
+        $this->assertEquals($jobUser->id, $job->assigned_user_id);
 
-        // The user is again admin.
-        $this->observer = new Reflection($currentUser);
+        // Restore the user.
+        $GLOBALS['current_user'] = $admin;
         $this->observer->onRun($this->workload);
 
-        $this->assertEquals($JobUser->id, $GLOBALS['current_user']->id);
+        $this->assertEquals($jobUser->id, $GLOBALS['current_user']->id);
 
         $this->observer->onResolve($this->workload, \SchedulersJob::JOB_SUCCESS);
 
-        $this->assertEquals($currentUser->id, $GLOBALS['current_user']->id);
+        $this->assertEquals($admin->id, $GLOBALS['current_user']->id);
     }
 }

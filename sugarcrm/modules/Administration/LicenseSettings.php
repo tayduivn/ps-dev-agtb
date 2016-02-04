@@ -93,7 +93,6 @@ $xtpl->assign("RETURN_MODULE", "Administration");
 $xtpl->assign("RETURN_ACTION", "index");
 
 $xtpl->assign("MODULE", $currentModule);
-$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("HEADER", getClassicModuleTitle("Administration", array("{MOD.LBL_MANAGE_LICENSE}"), true));
 
 //move the url part out LBL_MANUAL_VALIDATION3 in the language file

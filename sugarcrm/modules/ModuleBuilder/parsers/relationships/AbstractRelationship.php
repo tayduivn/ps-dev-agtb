@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,6 +9,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 /**
  * A mechanism to dynamically define new Relationships between modules
@@ -204,14 +205,14 @@ class AbstractRelationship
         if (!$this->relationship_only)
         {
         	if(!$this->is_custom && $update && file_exists("modules/{$this->rhs_module}/metadata/subpaneldefs.php")){
-        		include("modules/{$this->rhs_module}/metadata/subpaneldefs.php");
+        		include FileLoader::validateFilePath("modules/{$this->rhs_module}/metadata/subpaneldefs.php");
         		if(isset($layout_defs[$this->rhs_module]['subpanel_setup'][strtolower($this->lhs_module)]['title_key'])){
         			$rightSysLabel = $layout_defs[$this->rhs_module]['subpanel_setup'][strtolower($this->lhs_module)]['title_key'];
         		}
         		$layout_defs = array();
         	}
         	if(!$this->is_custom && $update && file_exists("modules/{$this->lhs_module}/metadata/subpaneldefs.php")){
-        		include("modules/{$this->lhs_module}/metadata/subpaneldefs.php");
+        		include FileLoader::validateFilePath("modules/{$this->lhs_module}/metadata/subpaneldefs.php");
         		if(isset($layout_defs[$this->lhs_module]['subpanel_setup'][strtolower($this->rhs_module)]['title_key'])){
         			$leftSysLabel = $layout_defs[$this->lhs_module]['subpanel_setup'][strtolower($this->rhs_module)]['title_key'];
         		}
@@ -766,12 +767,12 @@ class AbstractRelationship
 
     public function getTitleKey($left=false){
 		if(!$this->is_custom && !$left && file_exists("modules/{$this->rhs_module}/metadata/subpaneldefs.php")){
-    		include("modules/{$this->rhs_module}/metadata/subpaneldefs.php");
+    		include FileLoader::validateFilePath("modules/{$this->rhs_module}/metadata/subpaneldefs.php");
     		if(isset($layout_defs[$this->rhs_module]['subpanel_setup'][strtolower($this->lhs_module)]['title_key'])){
     			return $layout_defs[$this->rhs_module]['subpanel_setup'][strtolower($this->lhs_module)]['title_key'];
     		}
     	}else if(!$this->is_custom &&  file_exists("modules/{$this->lhs_module}/metadata/subpaneldefs.php")){
-    		include("modules/{$this->lhs_module}/metadata/subpaneldefs.php");
+    		include FileLoader::validateFilePath("modules/{$this->lhs_module}/metadata/subpaneldefs.php");
     		if(isset($layout_defs[$this->lhs_module]['subpanel_setup'][strtolower($this->rhs_module)]['title_key'])){
     			return $layout_defs[$this->lhs_module]['subpanel_setup'][strtolower($this->rhs_module)]['title_key'];
     		}

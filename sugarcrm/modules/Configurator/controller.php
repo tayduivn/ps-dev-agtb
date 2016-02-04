@@ -72,10 +72,11 @@ class ConfiguratorController extends SugarController
             sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
         }
         $urlSTR = 'index.php?module=Configurator&action=FontManager';
-        if(!empty($_REQUEST['filename'])){
+        $filename = $this->request->getValidInputRequest('filename', 'Assert\File');
+        if ($filename) {
             require_once('include/Sugarpdf/FontManager.php');
             $fontManager = new FontManager();
-            $fontManager->filename = $_REQUEST['filename'];
+            $fontManager->filename = $filename;
             if(!$fontManager->deleteFont()){
                 $urlSTR .='&error='.urlencode(implode("<br>",$fontManager->errors));
             }

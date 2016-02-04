@@ -19,15 +19,13 @@ use Sugarcrm\Sugarcrm\JobQueue\Client\Immediate as ImmediateClient;
 use Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue\AdapterInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Dispatcher\DispatcherInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Dispatcher\Handler;
+use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\RuntimeException;
-use Sugarcrm\Sugarcrm\JobQueue\Exception\UnexpectedResolutionException;
 use Sugarcrm\Sugarcrm\JobQueue\LockStrategy\CacheFile;
 use Sugarcrm\Sugarcrm\JobQueue\LockStrategy\LockStrategyInterface;
 use Sugarcrm\Sugarcrm\JobQueue\LockStrategy\Stub;
-use Sugarcrm\Sugarcrm\JobQueue\Observer\Reflection;
 use Sugarcrm\Sugarcrm\JobQueue\Observer\ObserverInterface;
-use Sugarcrm\Sugarcrm\JobQueue\Observer\State;
 use Sugarcrm\Sugarcrm\JobQueue\Runner\OD as ODRunner;
 use Sugarcrm\Sugarcrm\JobQueue\Runner\Parallel;
 use Sugarcrm\Sugarcrm\JobQueue\Runner\RunnerInterface;
@@ -42,7 +40,7 @@ use Sugarcrm\Sugarcrm\JobQueue\Adapter\AdapterRegistry;
 use Sugarcrm\Sugarcrm\JobQueue\Handler\HandlerRegistry;
 use Sugarcrm\Sugarcrm\JobQueue\Serializer\SerializerInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Serializer\Serializer;
-use Sugarcrm\Sugarcrm\Logger\LoggerTransition as Logger;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class Manager
@@ -50,25 +48,37 @@ use Sugarcrm\Sugarcrm\Logger\LoggerTransition as Logger;
  * @method calDavExport(string $beanModule, string $beanId, mixed $data, int $saveCounter)
  * @method calDavImport(string $beanModule, string $beanId, mixed $data, int $saveCounter)
  */
-class Manager implements ClientInterface, RunnerInterface
+class Manager extends AbstractManager
 {
     /**
+     * Run jobs in demonized locked process.
      * @var array $defaultConfig
      */
     protected $defaultConfig = array(
         'adapter' => 'Sugar',
         'runner' => 'Standard',
+        'lock' => 'CacheFile',
+        'workload' => 'Workload',
+    );
+
+    /**
+     * Execute all jobs from queue without locking the process.
+     * @var array $defaultODConfig
+     */
+    protected $defaultODConfig = array(
+        'adapter' => 'Sugar',
+        'runner' => 'OD',
+        'lock' => 'Stub',
+        'workload' => 'OD',
     );
 
     /**
      * @var array $systemHandlers Of system handlers.
      */
     protected $systemHandlers = array(
-        'MassUpdateDemo' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\MassUpdateDemo',
-        'DeleteBeanDemo' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\DeleteBeanDemo',
-        'UpdateBeanDemo' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\UpdateBeanDemo',
-        'ExportListViewDemo' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportListViewDemo',
-        'ExportToCSVDemo' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportToCSVDemo',
+        'MassUpdate' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\MassUpdate',
+        'ExportRecords' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportRecords',
+        'ExportToCSV' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportToCSV',
         'CalDavImport' => 'Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\Import',
         'CalDavExport' => 'Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\Export',
         'NotificationEvent' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\EventHandler',
@@ -88,6 +98,47 @@ class Manager implements ClientInterface, RunnerInterface
         'AMQP' => 'Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue\AMQP',
         'Sugar' => 'Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue\Sugar',
     );
+
+    /**
+     * @var array $systemObservers Of system observers.
+     */
+    protected $systemObservers = array(
+        array(
+            'class' => 'Sugarcrm\Sugarcrm\JobQueue\Observer\Reflection',
+            'priority' => 0,
+            'on' => array(), // Handlers to perform, false - all.
+            'off' => array(), // Handlers to exclude.
+            'config' => null, // The second in constructor.
+        ),
+        array(
+            'class' => 'Sugarcrm\Sugarcrm\JobQueue\Observer\State',
+            'priority' => -100,
+        ),
+        array(
+            'class' => 'Sugarcrm\Sugarcrm\JobQueue\Observer\ExportRecordsObserver',
+            'priority' => -200,
+            'on' => array(
+                'ExportRecords',
+                'ExportToCSV',
+            ),
+        ),
+    );
+
+    /**
+     * @var int $observerDefaultPriority Default priority for observers queue.
+     */
+    protected $observerDefaultPriority = -150;
+
+    /**
+     * Save observers - handlers mapping.
+     * @var array $observerMap [observerClass => [on => [handlerName], off => []]];
+     */
+    protected $observerHandlerMap = array();
+
+    /**
+     * @var array $systemConfig Cached config.
+     */
+    protected $systemConfig;
 
     /**
      * @var HandlerRegistry
@@ -110,7 +161,7 @@ class Manager implements ClientInterface, RunnerInterface
     protected $worker;
 
     /**
-     * @var \SplObjectStorage
+     * @var \SplPriorityQueue
      */
     protected $observer;
 
@@ -118,11 +169,6 @@ class Manager implements ClientInterface, RunnerInterface
      * @var RunnerInterface
      */
     protected $runner;
-
-    /**
-     * @var Logger
-     */
-    protected $logger;
 
     /**
      * @var array $context Context the manager is called.
@@ -140,11 +186,13 @@ class Manager implements ClientInterface, RunnerInterface
     protected $lockStrategy;
 
     /**
+     * SugarCRM dependent manager.
      * Load default handlers and adapters.
+     * @param LoggerInterface $logger
      */
-    public function __construct()
+    public function __construct(LoggerInterface $logger = null)
     {
-        $this->logger = new Logger(\LoggerManager::getLogger());
+        parent::__construct($logger);
         $this->handlerRegistry = new HandlerRegistry();
         $this->adapterRegistry = new AdapterRegistry();
         $this->initHandlers();
@@ -162,26 +210,32 @@ class Manager implements ClientInterface, RunnerInterface
         if ($this->client) {
             return $this->client;
         }
-
         $config = $this->getSystemConfig();
         $serializer = $this->getSerializer();
+        $config['adapter'] = !empty($config['client']) ? $config['client'] : $config['adapter'];
 
-        if (empty($config['adapter'])) {
-            throw new LogicException('Cannot setup client. Adapter is not found.');
-        }
-        if (strtolower($config['adapter']) == 'gearman' && isset($config['gearman'])) {
-            $this->client = new GearmanClient($config['gearman'], $serializer);
-        } elseif (strtolower($config['adapter']) == 'immediate') {
-            $this->client = new ImmediateClient(array($this, 'proxyHandler'));
-        } else {
+        switch (strtolower($config['adapter'])) {
+            case 'gearman':
+                $this->client = new GearmanClient($config['gearman'], $serializer, $this->logger);
+                break;
+            case 'immediate':
+                $this->client = new ImmediateClient(array($this, 'proxyHandler'), $this->logger);
+                break;
             // Message queue client.
-            $adapter = $this->getMessageQueueAdapter($config);
-            if (!$adapter) {
-                throw new LogicException("Cannot create a client, adapter {$config['adapter']} is not found.");
-            }
-            $this->client = new MessageQueueClient($adapter, $serializer);
+            case 'amazon_sqs':
+            case 'amqp':
+            case 'sugar':
+            default: // Custom adapters are MQ only.
+                $adapter = $this->getMessageQueueAdapter($config);
+                if (!$adapter) {
+                    throw new LogicException(
+                        "Cannot create a client, no config for the '{$config['adapter']}' adapter found."
+                    );
+                }
+                $this->client = new MessageQueueClient($adapter, $serializer, $this->logger);
+                break;
         }
-
+        $this->logger->debug('Instantiate Client: ' . get_class($this->client));
         return $this->client;
     }
 
@@ -196,47 +250,113 @@ class Manager implements ClientInterface, RunnerInterface
         if ($this->worker) {
             return $this->worker;
         }
-
         $config = $this->getSystemConfig();
         $serializer = $this->getSerializer();
+        $config['adapter'] = !empty($config['worker']) ? $config['worker'] : $config['adapter'];
 
-        if (empty($config['adapter'])) {
-            throw new LogicException('Cannot setup worker. Adapter is not found.');
-        }
-        if (strtolower($config['adapter']) == 'gearman' && isset($config['gearman'])) {
-            $this->worker = new GearmanWorker($config['gearman'], $serializer);
-        } elseif (strtolower($config['adapter']) == 'immediate') {
-            throw new LogicException(
-                'Worker is not needed to run immediate job - run is performed in ImmediateClient.'
-            );
-        } else {
+        switch (strtolower($config['adapter'])) {
+            case 'gearman':
+                $this->worker = new GearmanWorker($config['gearman'], $serializer, $this->logger);
+                break;
+            case 'immediate':
+                throw new LogicException(
+                    'Worker is not needed to run immediate job - run is performed in ImmediateClient.'
+                );
+                break;
             // Message queue worker.
-            $adapter = $this->getMessageQueueAdapter($config);
-            if (!$adapter) {
-                throw new LogicException("Cannot create a worker, adapter {$config['adapter']} is not found.");
-            }
-            $this->worker = new MessageQueueWorker($adapter, $serializer);
+            case 'amazon_sqs':
+            case 'amqp':
+            case 'sugar':
+            default: // Custom workers are MQ only.
+                $adapter = $this->getMessageQueueAdapter($config);
+                if (!$adapter) {
+                    throw new LogicException(
+                        "Cannot create a worker, no config for the '{$config['adapter']}' adapter found."
+                    );
+                }
+                $this->worker = new MessageQueueWorker($adapter, $serializer, $this->logger);
+                break;
         }
-
+        $this->logger->debug('Instantiate Worker: ' . get_class($this->worker));
         return $this->worker;
     }
 
     /**
      * Get observer.
-     *
-     * @return \SplObjectStorage
+     * @return \SplPriorityQueue
      */
     protected function getObserver()
     {
         if ($this->observer) {
-            return $this->observer;
+            // \SplPriorityQueue extracts elements while walking on the queue
+            return clone $this->observer;
         }
-        $this->observer = new \SplObjectStorage();
-        $this->observer->attach(new Reflection());
-        if (!($this->getClient() instanceof ImmediateClient)) {
-            $this->observer->attach(new State());
+        $config = $this->getSystemConfig();
+        $this->observer = new \SplPriorityQueue();
+        $this->observer->setExtractFlags(\SplPriorityQueue::EXTR_DATA);
+
+        $resultConfig = array_merge(
+            $this->getSystemObservers(),
+            empty($config['observers']) ? array() : $config['observers']
+        );
+
+        foreach ($resultConfig as $obsConf) {
+            $observer = $this->initObserver($obsConf['class'], isset($obsConf['config']) ? $obsConf['config'] : null);
+            $this->observer->insert(
+                $observer,
+                isset($obsConf['priority']) ? $obsConf['priority'] : $this->observerDefaultPriority
+            );
+            $observerClass = get_class($observer);
+            $this->logger->debug("Attach Observer: {$observerClass}");
+            // Cache.
+            $this->observerHandlerMap[$observerClass] = array(
+                'on' => empty($obsConf['on']) ? array() : $obsConf['on'],
+                'off' => empty($obsConf['off']) ? array() : $obsConf['off'],
+            );
         }
-        return $this->observer;
+        // \SplPriorityQueue extracts elements while walking on the queue.
+        return clone $this->observer;
+    }
+
+    /**
+     * Apply observers according to configs keys "on" and "off".
+     * {@inheritdoc}
+     */
+    protected function applyObserver($observer, $handlerName)
+    {
+        $map = $this->observerHandlerMap[get_class($observer)];
+        if (!empty($map['on']) && !in_array($handlerName, $map['on'])) {
+            return false;
+        }
+        if (!empty($map['off']) && in_array($handlerName, $map['off'])) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Return system defined observers.
+     */
+    protected function getSystemObservers()
+    {
+        return $this->systemObservers;
+    }
+
+    /**
+     * Initialize observer.
+     * @param string $class
+     * @param mixed $config Observers configuration.
+     * @return ObserverInterface
+     * @throws InvalidArgumentException If the class does not exist.
+     */
+    protected function initObserver($class, $config = null)
+    {
+        if (empty($class) || !class_exists($class)) {
+            throw new InvalidArgumentException(
+                'Invalid observer: empty "class" config property or the class does not exist.'
+            );
+        }
+        return new $class($this->logger, $config);
     }
 
     /**
@@ -254,13 +374,20 @@ class Manager implements ClientInterface, RunnerInterface
         $lock = $this->getLockStrategy();
         $this->logger->info('Creating worker runner.');
 
-        if (!empty($config['od'])) {
-            $this->runner = new ODRunner($worker, $lock);
-        } elseif (isset($config['runner']) && $config['runner'] == 'parallel') {
-            $this->runner = new Parallel($worker, $lock);
-        } else {
-            $this->runner = new Standard($worker, $lock);
+        switch (strtolower($config['runner'])) {
+            case 'od':
+                $this->runner = new ODRunner($config, $worker, $lock, $this->logger);
+                break;
+            case 'parallel':
+                $this->runner = new Parallel($config, $worker, $lock, $this->logger);
+                break;
+            case 'standard':
+                $this->runner = new Standard($config, $worker, $lock, $this->logger);
+                break;
+            default:
+                throw new LogicException("The runner '{$config['runner']}' is not found.");
         }
+        $this->logger->debug('Instantiate Runner: ' . get_class($this->runner));
         return $this->runner;
     }
 
@@ -273,27 +400,55 @@ class Manager implements ClientInterface, RunnerInterface
         if (!$this->serializer) {
             $this->serializer = new Serializer();
         }
+        $this->logger->debug('Instantiate Serializer: ' . get_class($this->serializer));
         return $this->serializer;
     }
 
     /**
      * Get proper configuration data.
      * In OD mode internal configuration is used, otherwise module interface.
-     *
+     * Read config once from SugarConfig, than read from internal cache.
      * @return array
      */
-    protected function getSystemConfig()
+    public function getSystemConfig()
     {
+        if ($this->systemConfig) {
+            return $this->systemConfig;
+        }
         // In OD params are taken from config, otherwise from interface.
         $od = \SugarConfig::getInstance()->get('job_queue.od');
         if (!empty($od)) {
-            return \SugarConfig::getInstance()->get('job_queue');
+            $this->logger->info('OD mode is enabled. Read system file config.');
+            $config = array_merge(
+                $this->defaultODConfig,
+                \SugarConfig::getInstance()->get('job_queue')
+            );
+        } else {
+            $this->logger->info('Read SchedulersJobs base config. Add adapters, handlers and observers from config.');
+
+            $customAdapters = \SugarConfig::getInstance()->get('job_queue.adapters', array());
+            $adaptersConfig = array();
+            foreach ($customAdapters as $name => $val) {
+                $adaptersConfig += array(
+                    strtolower($name) => \SugarConfig::getInstance()->get('job_queue.' . strtolower($name), array()),
+                );
+            }
+            $config = array_merge(
+                $this->defaultConfig,
+                array(
+                    'handlers' => \SugarConfig::getInstance()->get('job_queue.handlers', array()),
+                    'observers' => \SugarConfig::getInstance()->get('job_queue.observers', array()),
+                    // List of custom adapters.
+                    'adapters' => $customAdapters,
+                    // Default adapter.
+                    'adapter' => \SugarConfig::getInstance()->get('job_queue.adapter', $this->defaultConfig['adapter']),
+                ),
+                // Custom adapters configs.
+                $adaptersConfig,
+                \BeanFactory::getBean('Administration')->getConfigForModule('SchedulersJobs', 'base')
+            );
         }
-        $config = \BeanFactory::getBean('Administration')->getConfigForModule('SchedulersJobs', 'base');
-        if (!empty($config)) {
-            return $config;
-        }
-        return $this->defaultConfig;
+        return $this->systemConfig = $config;
     }
 
     /**
@@ -316,7 +471,8 @@ class Manager implements ClientInterface, RunnerInterface
             $adapterConfig = $config[strtolower($config['adapter'])];
         }
 
-        return new $class($adapterConfig);
+        $this->logger->debug("Instantiate MessageQueue Adapter: {$class}");
+        return new $class($adapterConfig, $this->logger);
     }
 
     /**
@@ -334,6 +490,8 @@ class Manager implements ClientInterface, RunnerInterface
          * @var DispatcherInterface $dispatcher Handler class.
          */
         extract($this->handlerRegistry->get($handlerName));
+
+        $this->logger->debug("Dispatch handler '{$handlerName}'.");
         return $dispatcher;
     }
 
@@ -348,11 +506,18 @@ class Manager implements ClientInterface, RunnerInterface
             return $this->lockStrategy;
         }
         $config = $this->getSystemConfig();
-        if (!empty($config['od'])) {
-            $this->lockStrategy = new Stub();
-        } else {
-            $this->lockStrategy = new CacheFile();
+
+        switch (strtolower($config['lock'])) {
+            case 'cachefile':
+                $this->lockStrategy = new CacheFile();
+                break;
+            case 'stub':
+                $this->lockStrategy = new Stub();
+                break;
+            default:
+                throw new LogicException("Cannot setup the lock strategy '{$config['lock']}'.");
         }
+        $this->logger->debug('Instantiate LockStrategy: ' . get_class($this->lockStrategy));
         return $this->lockStrategy;
     }
 
@@ -367,10 +532,20 @@ class Manager implements ClientInterface, RunnerInterface
     public function createWorkload($handlerName, $data, array $attributes = array())
     {
         $config = $this->getSystemConfig();
-        if (!empty($config['od'])) {
-            return new ODWorkload($handlerName, $data, $attributes);
+        $workload = null;
+
+        switch (strtolower($config['workload'])) {
+            case 'od':
+                $workload = new ODWorkload($handlerName, $data, $attributes);
+                break;
+            case 'workload':
+                $workload = new Workload($handlerName, $data, $attributes);
+                break;
+            default:
+                $workload = new Workload($handlerName, $data, $attributes);
         }
-        return new Workload($handlerName, $data, $attributes);
+        $this->logger->debug('Use workload ' . get_class($workload) . " for handler '{$handlerName}'.");
+        return $workload;
     }
 
     /**
@@ -382,7 +557,7 @@ class Manager implements ClientInterface, RunnerInterface
             throw new LogicException('No handlers found.');
         }
         $this->registerHandlersInWorker();
-        $this->getRunner()->run();
+        parent::run();
     }
 
     /**
@@ -392,6 +567,7 @@ class Manager implements ClientInterface, RunnerInterface
     {
         foreach ($this->handlerRegistry as $params) {
             $workload = $this->createWorkload($params['name'], array());
+            $this->logger->debug("Register handler {$params['name']} in worker.");
             $this->getWorker()->registerHandler($workload->getRoute(), array($this, 'proxyHandler'));
         }
     }
@@ -403,6 +579,7 @@ class Manager implements ClientInterface, RunnerInterface
     {
         // Override lock to kill running managers.
         $this->getLockStrategy()->setLock(time());
+        $this->logger->info('Stop the process.');
     }
 
     /**
@@ -411,65 +588,46 @@ class Manager implements ClientInterface, RunnerInterface
      */
     protected function initAdapters()
     {
-        foreach ($this->systemAdapters as $name => $class) {
+        $config = $this->getSystemConfig();
+        $resultConfig = array_merge(
+            $this->systemAdapters,
+            empty($config['adapters']) ? array() : $config['adapters']
+        );
+        foreach ($resultConfig as $name => $class) {
+            if (empty($name) || !is_string($name)) {
+                throw new InvalidArgumentException('Cannot register non-string adapter.');
+            }
+            $this->logger->debug("Register adapter '{$class}' as '{$name}'.");
             $this->adapterRegistry->add($name, $class);
         }
     }
 
     /**
      * Load handler registry and add system handlers.
+     * @throw InvalidArgumentException
      */
     protected function initHandlers()
     {
-        foreach ($this->systemHandlers as $name => $class) {
+        $config = $this->getSystemConfig();
+        $resultConfig = array_merge(
+            $this->systemHandlers,
+            empty($config['handlers']) ? array() : $config['handlers']
+        );
+        foreach ($resultConfig as $name => $class) {
+            if (empty($name) || !is_string($name)) {
+                throw new InvalidArgumentException('Cannot register Handler for non-string route name.');
+            }
             $this->registerHandler($name, $class);
         }
     }
 
     /**
-     * Proxy method to handle jobs.
-     * This method is called each time when we need handle some job.
-     *
-     * @param WorkloadInterface $workload
-     * @return string Resolution.
+     * Uses SchedulersJobs fail resolution.
+     * {@inheritdoc}
      */
-    public function proxyHandler($workload)
+    protected function getFailMark()
     {
-        $resolution = null;
-        $handlerName = $workload->getHandlerName();
-        $dispatcher = $this->getDispatcher($handlerName);
-        if (!$dispatcher) {
-            $this->logger->error("The handler {$handlerName} is not registered.");
-            return \SchedulersJob::JOB_FAILURE;
-        }
-        $callable = $dispatcher->dispatch();
-
-        try {
-            foreach ($this->getObserver() as $observer) {
-                $observer->onRun($workload);
-            }
-        } catch (\Exception $ex) {
-            $this->logger->error("Killed by observer: {$ex->getMessage()}");
-            $resolution = \SchedulersJob::JOB_FAILURE;
-
-            if ($ex instanceof UnexpectedResolutionException) {
-                $resolution = $ex->getResolution();
-            }
-        }
-
-        try {
-            if (!$resolution) {
-                $resolution = call_user_func($callable, $workload);
-            }
-        } catch (\Exception $ex) {
-            $this->logger->error("Cannot run the handler {$handlerName}: {$ex->getMessage()}");
-            $resolution = \SchedulersJob::JOB_FAILURE;
-        }
-        foreach ($this->getObserver() as $observer) {
-            $observer->onResolve($workload, $resolution);
-        }
-
-        return $resolution;
+        return \SchedulersJob::JOB_FAILURE;
     }
 
     /**
@@ -508,12 +666,8 @@ class Manager implements ClientInterface, RunnerInterface
         foreach ($this->context as $key => $val) {
             $workload->setAttribute($key, $val);
         }
-        // To check client initializing.
-        $client = $this->getClient();
-        foreach ($this->getObserver() as $observer) {
-            $observer->onAdd($workload);
-        }
-        $client->addJob($workload);
+        $this->logger->debug('Add job in context: ' . var_export($this->context, true));
+        parent::addJob($workload);
     }
 
     /**
@@ -526,12 +680,19 @@ class Manager implements ClientInterface, RunnerInterface
 
     /**
      * Register a new observer in manager.
-     *
      * @param ObserverInterface $observer
+     * @param int|null $priority SplPriorityQueue priority.
      */
-    public function registerObserver(ObserverInterface $observer)
+    public function registerObserver(ObserverInterface $observer, $priority = null)
     {
-        $this->getObserver()->attach($observer);
+        if ($priority === null) {
+            $priority = $this->observerDefaultPriority;
+        }
+        $this->logger->info('Register Observer ' . get_class($observer));
+        // Make sure the property "observer" is populated.
+        $this->getObserver();
+        // Because getObserver() return a clone need to insert to original queue.
+        $this->observer->insert($observer, $priority);
     }
 
     /**
@@ -551,7 +712,8 @@ class Manager implements ClientInterface, RunnerInterface
         if (!in_array('Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface', $interfaces)) {
             throw new LogicException('Handler should implement RunnableInterface.');
         }
-        $dispatcher = new Handler($class);
+        $dispatcher = new Handler($class, $this->logger);
+        $this->logger->info("Register handler '{$class}' as '{$name}'.");
         $this->handlerRegistry->add($name, $class, $dispatcher);
     }
 
@@ -563,6 +725,7 @@ class Manager implements ClientInterface, RunnerInterface
      */
     public function registerAdapter($name, $class)
     {
+        $this->logger->info("Register adapter '{$class}' as '{$name}'.");
         $this->adapterRegistry->add($name, $class);
     }
 
@@ -573,6 +736,7 @@ class Manager implements ClientInterface, RunnerInterface
      */
     public function setContext(array $context)
     {
+        $this->logger->debug('Set context for manager: ' . var_export($context, true));
         $this->context = $context;
     }
 
@@ -594,6 +758,7 @@ class Manager implements ClientInterface, RunnerInterface
      */
     public function getRegisteredHandler($name)
     {
+        $this->logger->info("Register handler '{$name}'.");
         return $this->handlerRegistry->get($name);
     }
 }

@@ -99,7 +99,7 @@ class UsersViewAuthenticate extends SidecarView
             $platforms = MetaDataManager::getPlatformList();
             if (in_array($this->platform, $platforms, true)) {
                 $platformTemplate = SugarAutoLoader::existingCustomOne(
-                    'modules/Users/tpls/Authenticate' . ucfirst($this->platform) . '.tpl'
+                    'modules/Users/tpls/Authenticate' . ucfirst(basename($this->platform)) . '.tpl'
                 );
                 if ($platformTemplate) {
                     return $platformTemplate;

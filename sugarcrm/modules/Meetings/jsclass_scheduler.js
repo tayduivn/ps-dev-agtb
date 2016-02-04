@@ -282,7 +282,7 @@ SugarWidgetSchedulerSearch.createInvitee = function(form){
 	var callback = {
 		success: function (response) {
 
-			var rObj = eval("("+response.responseText+")");
+            var rObj = JSON.parse(response.responseText);
 
 			ajaxStatus.hideStatus();
 

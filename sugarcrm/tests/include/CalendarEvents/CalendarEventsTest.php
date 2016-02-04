@@ -752,7 +752,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         $defaultParams['until'] = '';
         $defaultParams['dow'] = '';
 
-        $defaultParams['selector'] = '';
+        $defaultParams['selector'] = 'None';
         $defaultParams['days'] = '';
         $defaultParams['ordinal'] = '';
         $defaultParams['unit'] =  '';

@@ -10,10 +10,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 $_REQUEST['edit']='true';
 
 require_once('include/SugarFolders/SugarFolders.php');
 require_once('include/templates/TemplateGroupChooser.php');
+
+use Sugarcrm\Sugarcrm\Util\Serialized;
 
 // GLOBALS
 global $mod_strings;
@@ -43,8 +48,11 @@ if(isset($_REQUEST['record'])) {
 }
 else
 {
-    if(!empty($_REQUEST['mailbox_type']))
-        $focus->mailbox_type = $_REQUEST['mailbox_type'];
+    $request = InputValidation::getService();
+    $request_mailbox_type = $request->getValidInputRequest('mailbox_type');
+    if ($request_mailbox_type) {
+        $focus->mailbox_type = $request_mailbox_type;
+    }
 
     //Default to imap protocol for new accounts.
     $focus->protocol = 'imap';
@@ -121,7 +129,7 @@ $mailbox_type = get_select_options_with_id($domMailBoxType, $focus->mailbox_type
 $email_templates_arr = get_bean_select_array(true, 'EmailTemplate','name', '','name',true);
 
 if(!empty($focus->stored_options)) {
-	$storedOptions = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($focus->stored_options));
+	$storedOptions = Serialized::unserialize($focus->stored_options, array(), true);
 	$from_name = $storedOptions['from_name'];
 	$from_addr = $storedOptions['from_addr'];
 
@@ -150,8 +158,13 @@ if(!empty($focus->stored_options)) {
 		$leaveMessagesOnMailServer = 0;
 	} // else
 } else { // initialize empty vars for template
-	$from_name = $current_user->name;
-	$from_addr = $current_user->email1;
+    if ($focus->mailbox_type == 'caldav') {
+        $from_name = '';
+        $from_addr = '';
+    } else {
+        $from_name = $current_user->name;
+        $from_addr = $current_user->email1;
+    }
 	$reply_to_name = '';
 	$reply_to_addr = '';
 	$only_since = '';
@@ -244,7 +257,7 @@ $xtpl->assign('SSL', $ssl);
 $protocol = filterInboundEmailPopSelection($app_list_strings['dom_email_server_type']);
 $xtpl->assign('PROTOCOL', get_select_options_with_id($protocol, $focus->protocol));
 $xtpl->assign('MARK_READ', $mark_read);
-$xtpl->assign('MAILBOX_TYPE', $focus->mailbox_type);
+$xtpl->assign('MAILBOX_TYPE', htmlspecialchars($focus->mailbox_type, ENT_COMPAT, 'UTF-8'));
 $xtpl->assign('TEMPLATE_ID', $focus->template_id);
 $xtpl->assign('EMAIL_TEMPLATE_OPTIONS', get_select_options_with_id($email_templates_arr, $focus->template_id));
 $xtpl->assign('ONLY_SINCE', $only_since);

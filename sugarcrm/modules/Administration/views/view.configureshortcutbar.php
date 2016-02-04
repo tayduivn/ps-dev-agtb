@@ -17,6 +17,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 class ViewConfigureshortcutbar extends SugarView
 {
@@ -64,9 +65,6 @@ class ViewConfigureshortcutbar extends SugarView
 	 */
     public function display()
     {
-        require_once("include/JSON.php");
-        $json = new JSON();
-
         global $mod_strings;
 
         $title = getClassicModuleTitle(
@@ -81,12 +79,15 @@ class ViewConfigureshortcutbar extends SugarView
         $GLOBALS['log']->info("Administration ConfigureShortcutBar view");
 
         $quickCreateModules = $this->getQuickCreateModules();
+        $request = InputValidation::getService();
+        $enabled_modules = $request->getValidInputRequest('enabled_modules', array(
+            'Assert\JSON' => array('htmlDecode' => true)
+        ));
 
         //If save is set, save then let the user know if the save worked.
-        if (!empty($_REQUEST['enabled_modules'])) {
-            $toDecode = html_entity_decode($_REQUEST['enabled_modules'], ENT_QUOTES);
+        if (!empty($enabled_modules)) {
             // get the enabled
-            $enabledModules = array_flip(json_decode($toDecode));
+            $enabledModules = array_flip($enabled_modules);
 
             $successful = $this->saveChangesToQuickCreateMetadata(
                 $quickCreateModules['enabled'],
@@ -111,13 +112,21 @@ class ViewConfigureshortcutbar extends SugarView
             $this->ss->assign('MOD', $GLOBALS['mod_strings']);
             $this->ss->assign('title', $title);
 
-            $this->ss->assign('enabled_modules', $json->encode($enabled));
-            $this->ss->assign('disabled_modules', $json->encode($disabled));
+            $this->ss->assign('enabled_modules', json_encode($enabled));
+            $this->ss->assign('disabled_modules', json_encode($disabled));
             $this->ss->assign('description', translate("LBL_CONFIGURE_SHORTCUT_BAR"));
             $this->ss->assign('msg', $msg);
 
-            $returnModule = !empty($_REQUEST['return_module']) ? $_REQUEST['return_module'] : 'Administration';
-            $returnAction = !empty($_REQUEST['return_action']) ? $_REQUEST['return_action'] : 'index';
+            $returnModule = $request->getValidInputRequest(
+                'return_module',
+                array('Assert\Type' => (array('type' => 'string'))),
+                'Administration'
+            );
+            $returnAction = $request->getValidInputRequest(
+                'return_action',
+                array('Assert\Type' => (array('type' => 'string'))),
+                'index'
+            );
             $this->ss->assign('RETURN_MODULE', $returnModule);
             $this->ss->assign('RETURN_ACTION', $returnAction);
 

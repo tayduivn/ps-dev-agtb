@@ -12,11 +12,11 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Dispatcher;
 
+use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException;
 use Sugarcrm\Sugarcrm\JobQueue\Handler\SubtaskCapableInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
-use Sugarcrm\Sugarcrm\Logger\LoggerTransition as Logger;
 
 /**
  * Class Handler
@@ -30,16 +30,18 @@ class Handler implements DispatcherInterface
     protected $class;
 
      /**
-     * @var Logger
+     * @var LoggerInterface
      */
     protected $logger;
 
     /**
+     * SugarCRM dependent dispatcher.
      * Should implement the Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface interface.
      * @param string $className Handler class.
+     * @param LoggerInterface $logger
      * @throws InvalidArgumentException
      */
-    public function __construct($className)
+    public function __construct($className, LoggerInterface $logger)
     {
         if (class_exists($className)) {
             $interfaces = class_implements($className);
@@ -50,7 +52,7 @@ class Handler implements DispatcherInterface
             throw new InvalidArgumentException('Handler should be a class.');
         }
         $this->class = $className;
-        $this->logger = new Logger(\LoggerManager::getLogger());
+        $this->logger = $logger;
     }
 
     /**
@@ -59,20 +61,27 @@ class Handler implements DispatcherInterface
     public function dispatch()
     {
         $className = $this->class;
-        return function (WorkloadInterface $workload) use ($className) {
+        $logger = $this->logger;
+        return function (WorkloadInterface $workload) use ($className, $logger) {
             $reflector = new \ReflectionClass($className);
             $handler = $reflector->newInstanceArgs($workload->getData());
 
             // The interface populates the $client property with ClientInterface for creating child tasks in context.
-            if ($handler instanceof SubtaskCapableInterface && property_exists($handler, 'client')) {
+            if ($handler instanceof SubtaskCapableInterface) {
+                $this->logger->debug('Inject an instance of ClientInterface into handler.');
                 $manager = new Manager();
                 $manager->setContext($workload->getAttributes());
 
-                $property = $reflector->getProperty('client');
-                $property->setAccessible(true);
-                $property->setValue($handler, $manager);
+                if (!property_exists($handler, 'JQClient')) {
+                    $handler->JQClient = $manager;
+                } else {
+                    $property = $reflector->getProperty('JQClient');
+                    $property->setAccessible(true);
+                    $property->setValue($handler, $manager);
+                }
             }
             try {
+                $this->logger->info("Run handler '{$className}'.");
                 return $handler->run();
             } catch (\Exception $ex) {
                 $errorMessage = $reflector->getName() . ' error: ' . $ex->getMessage();

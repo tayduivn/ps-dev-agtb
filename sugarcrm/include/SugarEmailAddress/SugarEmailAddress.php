@@ -10,6 +10,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 class SugarEmailAddress extends SugarBean
 {
@@ -957,6 +958,9 @@ class SugarEmailAddress extends SugarBean
 
         global $app_strings, $dictionary, $beanList;
 
+        // SugarBean shouldn't rely on any request parameters, needs refactoring ...
+        $request = InputValidation::getService();
+
         $prefill = 'false';
 
         $prefillData = 'new Object()';
@@ -964,8 +968,8 @@ class SugarEmailAddress extends SugarBean
         $module = $this->getCorrectedModule($module);
         $saveModule = $module;
         if (isset($_POST['is_converted']) && $_POST['is_converted'] == true) {
-            $id = $_POST['return_id'];
-            $module = $_POST['return_module'];
+            $id = $request->getValidInputPost('return_id', 'Assert\Guid');
+            $module = $request->getValidInputPost('return_module', 'Assert\Mvc\ModuleName');
         }
         $prefillDataArr = array();
         if (!empty($id)) {
@@ -1134,6 +1138,9 @@ class SugarEmailAddress extends SugarBean
      */
     function getEmailAddressWidgetDuplicatesView($focus)
     {
+        // SugarBean shouldn't rely on any request parameters, needs refactoring ...
+        $request = InputValidation::getService();
+
         if (!($this->smarty instanceOf Sugar_Smarty))
             $this->smarty = new Sugar_Smarty();
 
@@ -1144,16 +1151,16 @@ class SugarEmailAddress extends SugarBean
         $invalid = array();
         $mod = isset($focus) ? $focus->module_dir : "";
 
-        $widget_id = $_POST[$mod . '_email_widget_id'];
+        $widget_id = $request->getValidInputPost($mod . '_email_widget_id', array('Assert\Type' => array('type' => 'numeric')));
         $this->smarty->assign('email_widget_id', $widget_id);
-        $this->smarty->assign('emailAddressWidget', $_POST['emailAddressWidget']);
+        $this->smarty->assign('emailAddressWidget', $request->getValidInputPost('emailAddressWidget'));
 
         if (isset($_POST[$mod . $widget_id . 'emailAddressPrimaryFlag'])) {
-            $primary = $_POST[$mod . $widget_id . 'emailAddressPrimaryFlag'];
+            $primary = $request->getValidInputPost($mod . $widget_id . 'emailAddressPrimaryFlag');
         }
 
         while (isset($_POST[$mod . $widget_id . "emailAddress" . $count])) {
-            $emails[] = $_POST[$mod . $widget_id . 'emailAddress' . $count];
+            $emails[] = $request->getValidInputPost($mod . $widget_id . 'emailAddress' . $count);
             $count++;
         }
 
@@ -1162,31 +1169,35 @@ class SugarEmailAddress extends SugarBean
         }
 
         if (isset($_POST[$mod . $widget_id . 'emailAddressOptOutFlag'])) {
-            foreach ($_POST[$mod . $widget_id . 'emailAddressOptOutFlag'] as $v) {
+            $optOutFlags = $request->getValidInputPost($mod . $widget_id . 'emailAddressOptOutFlag');
+            foreach ($optOutFlags as $v) {
                 $optOut[] = $v;
             }
         }
 
         if (isset($_POST[$mod . $widget_id . 'emailAddressInvalidFlag'])) {
-            foreach ($_POST[$mod . $widget_id . 'emailAddressInvalidFlag'] as $v) {
+            $invalidFlags = $request->getValidInputPost($mod . $widget_id . 'emailAddressInvalidFlag');
+            foreach ($invalidFlags as $v) {
                 $invalid[] = $v;
             }
         }
 
         if (isset($_POST[$mod . $widget_id . 'emailAddressReplyToFlag'])) {
-            foreach ($_POST[$mod . $widget_id . 'emailAddressReplyToFlag'] as $v) {
+            $replyToFlags = $request->getValidInputPost($mod . $widget_id . 'emailAddressReplyToFlag');
+            foreach ($replyToFlags as $v) {
                 $replyTo[] = $v;
             }
         }
 
         if (isset($_POST[$mod . $widget_id . 'emailAddressDeleteFlag'])) {
-            foreach ($_POST[$mod . $widget_id . 'emailAddressDeleteFlag'] as $v) {
+            $deleteFlags = $request->getValidInputPost($mod . $widget_id . 'emailAddressDeleteFlag');
+            foreach ($deleteFlags as $v) {
                 $delete[] = $v;
             }
         }
 
         while (isset($_POST[$mod . $widget_id . "emailAddressVerifiedValue" . $count])) {
-            $verified[] = $_POST[$mod . $widget_id . 'emailAddressVerifiedValue' . $count];
+            $verified[] = $request->getValidInputPost($mod . $widget_id . 'emailAddressVerifiedValue' . $count);
             $count++;
         }
 
@@ -1194,9 +1205,9 @@ class SugarEmailAddress extends SugarBean
         $this->smarty->assign('primary', $primary);
         $this->smarty->assign('optOut', $optOut);
         $this->smarty->assign('invalid', $invalid);
-        $this->smarty->assign('replyTo', $invalid);
-        $this->smarty->assign('delete', $invalid);
-        $this->smarty->assign('verified', $invalid);
+        $this->smarty->assign('replyTo', $replyTo);
+        $this->smarty->assign('delete', $delete);
+        $this->smarty->assign('verified', $verified);
         $this->smarty->assign('moduleDir', $mod);
 
         return $this->smarty->fetch("include/SugarEmailAddress/templates/forDuplicatesView.tpl");

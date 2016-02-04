@@ -76,7 +76,7 @@ class Call extends SugarBean {
 	var $contacts_arr = array();
 	var $users_arr = array();
 	var $leads_arr = array();
-	public $addresses_arr = array();
+	public $addressees_arr = array();
 	var $default_call_name_values = array('Assemble catalogs', 'Make travel arrangements', 'Send a letter', 'Send contract', 'Send fax', 'Send a follow-up letter', 'Send literature', 'Send proposal', 'Send quote');
 	var $minutes_value_default = 15;
 	var $minutes_values = array('0'=>'00','15'=>'15','30'=>'30','45'=>'45');
@@ -84,7 +84,7 @@ class Call extends SugarBean {
 	var $rel_users_table = "calls_users";
 	var $rel_contacts_table = "calls_contacts";
     var $rel_leads_table = "calls_leads";
-	public $rel_addresses_table = "calls_addresses";
+	public $rel_addressees_table = "calls_addressees";
 	var $module_dir = 'Calls';
 	var $object_name = "Call";
 	var $new_schema = true;
@@ -102,10 +102,16 @@ class Call extends SugarBean {
 										'assigned_user_id'	=> 'users',
 										'note_id'			=> 'notes',
                                         'lead_id'			=> 'leads',
-                                        'addressee_id'      => 'addresses',
+                                        'addressee_id'      => 'addressees',
 								);
 
 	public $send_invites = false;
+
+    /**
+     * UID for invitation to specify the same event.
+     * @var string
+     */
+    public $send_invites_uid = '';
 
     /**
      * Helper-field to store invites before linking new ones.
@@ -478,6 +484,21 @@ class Call extends SugarBean {
 		return $call_fields;
 	}
 
+    /**
+     * @inheritdoc
+     */
+    protected function getTemplateNameForNotificationEmail()
+    {
+        if ($this->current_notify_user) {
+            $emailInvitee = $this->current_notify_user->emailAddress->getPrimaryAddress($this->current_notify_user);
+            if (CalDavEventCollection::isInviteCanceled($this, $emailInvitee)) {
+                return 'CallCanceled';
+            }
+        }
+
+        return parent::getTemplateNameForNotificationEmail();
+    }
+
 	function set_notification_body($xtpl, $call) {
 		global $sugar_config;
 		global $app_list_strings;
@@ -490,19 +511,27 @@ class Call extends SugarBean {
 
 
 		// Assumes $call dates are in user format
-		$calldate = $timedate->fromDb($call->date_start);
+        $dateTimeHelper = new \Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper();
+        $calldate = $dateTimeHelper->sugarDateToUTC($call->date_start);
 		$xOffset = $timedate->asUser($calldate, $notifyUser).' '.$timedate->userTimezoneSuffix($calldate, $notifyUser);
 
-		if ( strtolower(get_class($call->current_notify_user)) == 'contact' ) {
-			$xtpl->assign("ACCEPT_URL", $sugar_config['site_url'].
-				  '/index.php?entryPoint=acceptDecline&module=Calls&contact_id='.$call->current_notify_user->id.'&record='.$call->id);
-		} elseif ( strtolower(get_class($call->current_notify_user)) == 'lead' ) {
-			$xtpl->assign("ACCEPT_URL", $sugar_config['site_url'].
-				  '/index.php?entryPoint=acceptDecline&module=Calls&lead_id='.$call->current_notify_user->id.'&record='.$call->id);
-		} else {
-			$xtpl->assign("ACCEPT_URL", $sugar_config['site_url'].
-				  '/index.php?entryPoint=acceptDecline&module=Calls&user_id='.$call->current_notify_user->id.'&record='.$call->id);
+		$propertyUrlUserId = array_search(strtolower(get_class($call->current_notify_user)), array(
+			'contact_id' => 'contact',
+			'lead_id' => 'lead',
+			'addressee_id' => 'addressee',
+		));
+
+		if ($propertyUrlUserId === false) {
+			$propertyUrlUserId = 'user_id';
 		}
+
+		$xtpl->assign("ACCEPT_URL", sprintf(
+			'%s/index.php?entryPoint=acceptDecline&module=Calls&%s=%s&record=%s',
+			$sugar_config['site_url'],
+			$propertyUrlUserId,
+			$call->current_notify_user->id,
+			$call->id
+		));
 
 		$xtpl->assign("CALL_TO", $call->current_notify_user->new_assigned_user_name);
 		$xtpl->assign("CALL_SUBJECT", $call->name);
@@ -585,88 +614,44 @@ class Call extends SugarBean {
     } elseif ($user->object_name == 'Addressee') {
         $relate_values = array('addressee_id' => $user->id, 'call_id' => $this->id);
         $data_values = array('accept_status' => $status);
-        $this->set_relationship($this->rel_addresses_table, $relate_values, true, true, $data_values);
+        $this->set_relationship($this->rel_addressees_table, $relate_values, true, true, $data_values);
     }
   }
 
-
-
+    /**
+     * @inheritdoc
+     */
 	function get_notification_recipients() {
-		if($this->special_notification) {
-			return parent::get_notification_recipients();
-		}
-
-//		$GLOBALS['log']->debug('Call.php->get_notification_recipients():'.print_r($this,true));
-		$list = array();
-        if(!is_array($this->contacts_arr)) {
-			$this->contacts_arr =	array();
-		}
-
-        if (empty($this->contacts_arr) && $this->load_relationship('contacts')) {
-            $this->contacts_arr = $this->contacts->get();
+        if($this->special_notification) {
+            return parent::get_notification_recipients();
         }
 
-		if(!is_array($this->users_arr)) {
-			$this->users_arr =	array();
-		}
+        $inviteesBefore = $this->inviteesBefore ? : array();
+        $inviteesAfter = \CalendarUtils::getInvitees($this);
 
-        if (empty($this->users_arr) && $this->load_relationship('users')) {
-            $this->users_arr = $this->users->get();
+        $mergedInvitees = array();
+
+        foreach ($inviteesBefore as $invitee) {
+            $mergedInvitees[$invitee[1]] = $invitee[0];
+        }
+        foreach ($inviteesAfter as $invitee) {
+            $mergedInvitees[$invitee[1]] = $invitee[0];
         }
 
-        if(!is_array($this->leads_arr)) {
-			$this->leads_arr =	array();
-		}
-
-        if (empty($this->leads_arr) && $this->load_relationship('leads')) {
-            $this->leads_arr = $this->leads->get();
+        if (!empty($this->created_by) && !isset($mergedInvitees[$this->created_by])) {
+            $mergedInvitees[$this->created_by] = 'Users';
         }
 
-        if (!is_array($this->addresses_arr)) {
-            $this->addresses_arr = array();
-        }
-
-        if (empty($this->addresses_arr) && $this->load_relationship('addresses')) {
-            $this->addresses_arr = $this->addresses->get();
-        }
-
-		foreach($this->users_arr as $user_id) {
-			$notify_user = BeanFactory::getBean('Users', $user_id);
-			if(!empty($notify_user->id)) {
-				$notify_user->new_assigned_user_name = $notify_user->full_name;
-				$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-				$list[$notify_user->id] = $notify_user;
-			}
-		}
-
-		foreach($this->contacts_arr as $contact_id) {
-			$notify_user = BeanFactory::getBean('Contacts', $contact_id);
-			if(!empty($notify_user->id) && !empty($notify_user->email1)) {
-				$notify_user->new_assigned_user_name = $notify_user->full_name;
-				$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-				$list[$notify_user->id] = $notify_user;
-			}
-		}
-
-        foreach($this->leads_arr as $lead_id) {
-			$notify_user = BeanFactory::getBean('Leads', $lead_id);
-			if(!empty($notify_user->id)) {
-				$notify_user->new_assigned_user_name = $notify_user->full_name;
-				$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-				$list[$notify_user->id] = $notify_user;
-			}
-		}
-
-        foreach ($this->addresses_arr as $addressee_id) {
-            $notify_user = BeanFactory::getBean('Addresses', $addressee_id);
-            if (!empty($notify_user->id)) {
+        $list = array();
+        foreach ($mergedInvitees as $id => $module) {
+            $notify_user = BeanFactory::getBean($module, $id);
+            if(!empty($notify_user->id)) {
                 $notify_user->new_assigned_user_name = $notify_user->full_name;
-                $GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
                 $list[$notify_user->id] = $notify_user;
             }
         }
-//		$GLOBALS['log']->debug('Call.php->get_notification_recipients():'.print_r($list,true));
-		return $list;
+
+        return $list;
 	}
 
     function bean_implements($interface){
@@ -765,6 +750,9 @@ class Call extends SugarBean {
         CalendarUtils::correctRecurrences($this, $id);
         $deletedStatus = $this->deleted;
         parent::mark_deleted($id);
+        if ($this->send_invites) {
+            $this->_sendNotifications(true);
+        }
         if (!$deletedStatus && $this->deleted) {
             $this->getCalDavHook()->export($this, array('delete'));
         }
@@ -947,49 +935,49 @@ class Call extends SugarBean {
      * Stores addressee invitees
      *
      * @param array $addresseeInvitees Array of addressee invitees ids
-     * @param array $existingAddresses
+     * @param array $existingAddressees
      */
-    public function setAddresseeInvitees($addresseeInvitees, $existingAddresses = array())
+    public function setAddresseeInvitees($addresseeInvitees, $existingAddressees = array())
     {
-        $this->addresses_arr = $addresseeInvitees;
+        $this->addressees_arr = $addresseeInvitees;
 
-        $deleteAddresses = array();
-        $this->load_relationship('addresses');
+        $deleteAddressees = array();
+        $this->load_relationship('addressees');
 
-        $sql = 'SELECT mu.addressee_id, mu.accept_status FROM calls_addresses mu';
+        $sql = 'SELECT mu.addressee_id, mu.accept_status FROM calls_addressees mu';
         $sql .= ' WHERE mu.call_id = ' . $this->db->quoted($this->id);
         $result = $this->db->query($sql);
 
-        $acceptStatusAddresses = array();
+        $acceptStatusAddressees = array();
         while ($a = $this->db->fetchByAssoc($result)) {
             if (!in_array($a['addressee_id'], $addresseeInvitees)) {
-                $deleteAddresses[$a['addressee_id']] = $a['addressee_id'];
+                $deleteAddressees[$a['addressee_id']] = $a['addressee_id'];
             } else {
-                $acceptStatusAddresses[$a['addressee_id']] = $a['accept_status'];
+                $acceptStatusAddressees[$a['addressee_id']] = $a['accept_status'];
             }
         }
 
-        if (count($deleteAddresses) > 0) {
+        if (count($deleteAddressees) > 0) {
             $ids = array();
-            foreach ($deleteAddresses as $u) {
+            foreach ($deleteAddressees as $u) {
                 $ids[] = $this->db->quoted($u);
             }
 
-            $sql = 'UPDATE calls_addresses SET deleted = 1';
+            $sql = 'UPDATE calls_addressees SET deleted = 1';
             $sql .= ' WHERE addressee_id IN (' . implode(',', $ids) . ') AND call_id = ' . $this->db->quoted($this->id);
             $this->db->query($sql);
         }
 
         foreach ($addresseeInvitees as $addresseeId) {
-            if (empty($addresseeId) || isset($existingAddresses[$addresseeId]) || isset($deleteAddresses[$addresseeId])) {
+            if (empty($addresseeId) || isset($existingAddressees[$addresseeId]) || isset($deleteAddressees[$addresseeId])) {
                 continue;
             }
 
-            if (!isset($acceptStatusAddresses[$addresseeId])) {
+            if (!isset($acceptStatusAddressees[$addresseeId])) {
                 $this->leads->add($addresseeId);
             } else {
                 // update query to preserve accept_status
-                $sql = 'UPDATE calls_addresses SET deleted = 0, accept_status = '. $this->db->quoted($acceptStatusAddresses[$addresseeId]);
+                $sql = 'UPDATE calls_addressees SET deleted = 0, accept_status = '. $this->db->quoted($acceptStatusAddressees[$addresseeId]);
                 $sql .= ' WHERE call_id = ' . $this->db->quoted($this->id);
                 $sql .= ' AND addressee_id = ' . $this->db->quoted($addresseeId);
                 $this->db->query($sql);

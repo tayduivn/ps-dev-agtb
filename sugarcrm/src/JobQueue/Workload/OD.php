@@ -52,6 +52,7 @@ class OD extends Workload
      */
     protected function getInstanceUnique()
     {
-        return \SugarConfig::getInstance()->get('unique_key');
+        $urlData = parse_url(\SugarConfig::getInstance()->get('site_url'));
+        return $urlData['host'];
     }
 }

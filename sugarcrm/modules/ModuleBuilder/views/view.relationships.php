@@ -32,7 +32,12 @@ class ViewRelationships extends SugarView
 
     function display()
     {
-        $moduleName = ! empty ( $_REQUEST [ 'view_module' ] ) ? $_REQUEST [ 'view_module' ] : $_REQUEST [ 'edit_module' ] ;
+        $moduleName = $this->request->getValidInputRequest(
+            'view_module',
+            'Assert\ComponentName',
+            $this->request->getValidInputRequest('edit_module', 'Assert\ComponentName')
+        );
+        $packageName = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
         $smarty = new Sugar_Smarty ( ) ;
         // set the mod_strings as we can be called after doing a Repair and the mod_strings are set to Administration
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'ModuleBuilder');
@@ -41,7 +46,7 @@ class ViewRelationships extends SugarView
 
         $ajax = new AjaxCompose ( ) ;
         $json = getJSONobj () ;
-		$this->fromModuleBuilder = !empty ( $_REQUEST [ 'MB' ] ) || (!empty($_REQUEST['view_package']) && $_REQUEST['view_package'] != 'studio') ;
+        $this->fromModuleBuilder = !empty($_REQUEST['MB']) || (!empty($packageName) && ($packageName != 'studio'));
         $smarty->assign('fromModuleBuilder', $this->fromModuleBuilder);
         if (!$this->fromModuleBuilder)
         {
@@ -64,19 +69,19 @@ class ViewRelationships extends SugarView
 
         } else
         {
-            $smarty->assign ( 'view_package', $_REQUEST [ 'view_package' ] ) ;
+            $smarty->assign ( 'view_package', $packageName ) ;
 
             $mb = new ModuleBuilder ( ) ;
-            $module = & $mb->getPackageModule ( $_REQUEST [ 'view_package' ], $_REQUEST [ 'view_module' ] ) ;
-            $package = $mb->packages [ $_REQUEST [ 'view_package' ] ] ;
+            $module = &$mb->getPackageModule($packageName, $moduleName);
+            $package = $mb->packages[$packageName];
 			$package->loadModuleTitles();
             $relationships = new UndeployedRelationships ( $module->getModuleDir () ) ;
             $ajaxRelationships = $this->getAjaxRelationships( $relationships ) ;
             $smarty->assign ( 'relationships', $json->encode ( $ajaxRelationships ) ) ;
             $smarty->assign ( 'empty', (sizeof ( $ajaxRelationships ) == 0) ) ;
 
-            $module->help [ 'default' ] = (empty ( $_REQUEST [ 'view_module' ] )) ? 'create' : 'modify' ;
-            $module->help [ 'group' ] = 'module' ;
+            $module->help['default'] = (empty($moduleName)) ? 'create' : 'modify';
+            $module->help['group'] = 'module';
 
             $ajax->addCrumb ( translate('LBL_MODULEBUILDER'), 'ModuleBuilder.main("mb")' ) ;
             $ajax->addCrumb ( $package->name, 'ModuleBuilder.getContent("module=ModuleBuilder&action=package&package=' . $package->name . '")' ) ;

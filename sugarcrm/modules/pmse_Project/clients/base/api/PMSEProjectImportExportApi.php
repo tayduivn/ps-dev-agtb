@@ -78,6 +78,10 @@ class PMSEProjectImportExportApi extends vCardApi
                 throw new SugarApiExceptionMissingParameter('Missing parameter: ' . $fieldName);
             }
         }
+        
+        if (PMSEEngineUtils::isExportDisabled($args['module'])) {
+            throw new SugarApiExceptionNotAuthorized($GLOBALS['app_strings']['ERR_EXPORT_DISABLED']);
+        }
 
         return $projectBean->exportProject($args['record'], $api);
     }

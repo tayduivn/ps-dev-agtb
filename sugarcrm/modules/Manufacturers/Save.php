@@ -15,7 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Description:  
  ********************************************************************************/
 
-
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 
 
@@ -26,7 +26,7 @@ $focus = BeanFactory::getBean('Manufacturers', $_REQUEST['record']);
 	{
 	if(isset($_REQUEST[$field]))
 	{
-		$focus->$field = $_REQUEST[$field];
+		$focus->$field = InputValidation::getService()->getValidInputRequest($field);
 		
 	}
 	}
@@ -35,8 +35,7 @@ $focus = BeanFactory::getBean('Manufacturers', $_REQUEST['record']);
 	{
 	if(isset($_REQUEST[$field]))
 	{
-		$value = $_REQUEST[$field];
-		$focus->$field = $value;
+		$focus->$field = InputValidation::getService()->getValidInputRequest($field);
 		
 	}
 	}

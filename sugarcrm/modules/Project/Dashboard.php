@@ -33,8 +33,6 @@ $sugar_smarty = new Sugar_Smarty();
 $sugar_smarty->assign('MOD', $mod_strings);
 $sugar_smarty->assign('APP', $app_strings);
 
-$sugar_smarty->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
-
 // MY PROJECTS DASHBOARD ////////////////////////////////////////
 $projectBean = BeanFactory::getBean('Project');
 $projects = array();

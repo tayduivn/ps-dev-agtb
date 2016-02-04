@@ -18,12 +18,12 @@ class ViewEditFields extends ViewAjax{
     public function __construct(){
         $rel = $this->rel = $_REQUEST['rel'];
         $this->id = $_REQUEST['id'];
-        $moduleName = $this->module = $_REQUEST['rel_module'];
+        $this->module = $this->request->getValidInputRequest('rel_module', 'Assert\Mvc\ModuleName');
 
         global $beanList;
         require_once("data/Link.php");
 
-        $beanName = $beanList [ $moduleName ];
+        $beanName = $beanList[$this->module];
         $link = new Link($this->rel, new $beanName(), array());
         $this->fields = $link->_get_link_table_definition($rel, 'fields');
  	}

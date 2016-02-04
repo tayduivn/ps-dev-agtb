@@ -341,8 +341,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
                 // Refresh token needs to be verified
                 global $db;
 
-                $ret = $db->query("SELECT COUNT(id) AS token_count FROM oauth_tokens WHERE id = '".$db->quote($_SESSION['oauth2']['refresh_token'])."'");
-                $row = $db->fetchByAssoc($ret);
+                $row = $db->fetchOne("SELECT COUNT(id) AS token_count FROM oauth_tokens WHERE id = '".$db->quote($_SESSION['oauth2']['refresh_token'])."'");
                 if (empty($row['token_count'])) {
                     // No, or 0 token_count, the refresh token is invalid
                     return NULL;

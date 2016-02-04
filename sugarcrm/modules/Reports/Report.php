@@ -13,6 +13,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/Reports/config.php');
 require_once('include/api/SugarApiException.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 class Report
 {
     var $result;
@@ -148,6 +150,11 @@ class Report
      */
     public $extModules = array();
 
+    /**
+     * @var \Sugarcrm\Sugarcrm\Security\InputValidation\Request
+     */
+    protected $request;
+
     function Report($report_def_str = '', $filters_def_str = '', $panels_def_str = '')
     {
         global $current_user, $current_language, $app_list_strings;
@@ -155,6 +162,8 @@ class Report
 
             $current_user = BeanFactory::getBean('Users', '1');
         }
+
+        $this->request = InputValidation::getService();
 
         //Scheduled reports don't have $_REQUEST.
         if ((!isset($_REQUEST['module']) || $_REQUEST['module'] == 'Reports') && !defined('SUGAR_PHPUNIT_RUNNER')) {
@@ -166,7 +175,8 @@ class Report
 
         $this->report_max = (!empty($GLOBALS['sugar_config']['list_report_max_per_page']))
                 ? $GLOBALS['sugar_config']['list_report_max_per_page'] : 100;
-        $this->report_offset = (!empty($_REQUEST['report_offset'])) ? $_REQUEST['report_offset'] : 0;
+        $this->report_offset = (int) $this->request->getValidInputRequest('report_offset', null, 0);
+
         if ($this->report_offset < 0) $this->report_offset = 0;
         $this->time_date_obj = new TimeDate();
         $this->name = $mod_strings['LBL_UNTITLED'];
@@ -1465,8 +1475,7 @@ class Report
                         $do_id = 1;
                     }
                     // Bug 45019: don't add ID column if this column is the ID column
-                    // PAT-1008: add id column to select for summation query to make name column linkable
-                    if ($field_list_name != 'total_select_fields' && ($field_list_name != 'summary_select_fields' || $display_column['type'] == 'name') && $do_id) {
+                    if (($field_list_name != 'total_select_fields' && $field_list_name != 'summary_select_fields') && $do_id) {
                         $id_column['name'] = 'id';
                         $id_column['type'] = 'id';
                         $id_column['table_key'] = $display_column['table_key'];
@@ -1480,12 +1489,6 @@ class Report
                         $select_piece = $this->layout_manager->widgetQuery($id_column);
                         if (!$this->select_already_defined($select_piece, $field_list_name)) {
                             array_push($this->$field_list_name, $select_piece);
-                            // PAT-1008: add id column to group by since it's added to select for summation query. Required by non-mysql dbs
-                            if ($field_list_name == 'summary_select_fields') {
-                                $this->layout_manager->setAttribute('context', 'GroupBy');
-                                $this->group_by_arr[] = $this->layout_manager->widgetQuery($id_column);
-                                $this->layout_manager->setAttribute('context', 'Select');
-                            }
                         }
                     }
                 }
@@ -1897,11 +1900,15 @@ class Report
         if (!is_admin($current_user)) {
             $list_action = ACLAction::getUserAccessLevel($current_user->id, $this->focus->module_dir, 'list', $type = 'module');
             $view_action = ACLAction::getUserAccessLevel($current_user->id, $this->focus->module_dir, 'view', $type = 'module');
-    
-            if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
+
+            if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE) {
                 $this->handleException($mod_strings['LBL_NO_ACCESS']);
-            if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER)
-                $where_auto .= " AND " . $this->focus->table_name . ".assigned_user_id='" . $current_user->id . "' \n";
+            }
+            $aclVisibility = new ACLVisibility($this->focus);
+            $aclVisibility->setOptions(array('action' => 'view'));
+            $aclVisibility->addVisibilityWhere($where_auto);
+            $aclVisibility->setOptions(array('action' => 'list'));
+            $aclVisibility->addVisibilityWhere($where_auto);
         }
         // End ACL check
 
@@ -2485,23 +2492,24 @@ class Report
             } // else
         }
 
-        if (empty($_REQUEST['record'])) {
-            $_REQUEST['record'] = -1;
-        }
+        $record = $this->request->getValidInputRequest('record', 'Assert\Guid', -1) ?: -1;
+        $assignedUserId = $this->request->getValidInputRequest('assigned_user_id', 'Assert\Guid');
 
         require_once('include/formbase.php');
         populateFromPost('', $saved_report);
 
         $result = $saved_report->save_report(
-            $_REQUEST['record'],
-            $_REQUEST['assigned_user_id'],
+            $record,
+            $assignedUserId,
             $report_name,
             $this->module,
             $report_type,
             $this->report_def_str,
             0,
             $saved_report->team_id,
-            $chart_type);
+            $chart_type,
+            $saved_report->team_set_selected_id
+        );
         $this->saved_report = $saved_report;
 
         if (!empty($this->saved_report)) {

@@ -87,10 +87,10 @@ class SugarCacheDbTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetExternal($key, $ttl, $expected)
     {
-        $db = $this->getDBManagerMock(array('query'));
+        $db = $this->getDBManagerMock(array('fetchOne'));
 
         $db->expects($this->once())
-            ->method('query')
+            ->method('fetchOne')
             ->with($this->equalTo($expected));
 
         $cache = $this->getCacheMock();

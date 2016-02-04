@@ -65,7 +65,8 @@ require_once ('include/utils/zip_utils.php');
         		$session = -1;
         	}
         }
-        echo 'result = ' . $json->encode(array('result' => $session));
+        header("Content-Type: application/json");
+        echo $json->encode(array('result' => $session));
  	}
  	
 	function beginSync(){
@@ -85,7 +86,8 @@ require_once ('include/utils/zip_utils.php');
         }else{
         	$result = '-1';
         }
-        echo 'result = ' . $json->encode(array('result' => $result));
+        header("Content-Type: application/json");
+        echo $json->encode(array('result' => $result));
 	}
 	
 	function performSync($session, $force_md5_sync = false){

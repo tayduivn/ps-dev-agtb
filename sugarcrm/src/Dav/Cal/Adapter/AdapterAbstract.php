@@ -69,7 +69,7 @@ abstract class AdapterAbstract implements AdapterInterface
                     }
                     break;
                 case 'delete':
-                    if (!$bean->updateAllChildren) {
+                    if (!$bean->updateAllChildren && $this->getCalendarEvents()->isEventRecurring($bean)) {
                         $rootBeanId = $bean->repeat_root_id;
                     }
                     break;
@@ -79,7 +79,7 @@ abstract class AdapterAbstract implements AdapterInterface
         switch ($action) {
             case 'override' :
                 $inviteesAfter = \CalendarUtils::getInvitees($bean);
-                $changedFields = $this->getBeanFetchedRow($bean);
+                $changedFields = $this->getBeanDataAsArray($bean);
                 if (!$changedFields['repeat_type'][0]) {
                     $changedFields['repeat_interval'][0] = null;
                 }
@@ -335,7 +335,15 @@ abstract class AdapterAbstract implements AdapterInterface
         list($beanData, $changedFields, $invitees) = $data;
         list($action, $beanId, $childEventsId, $recurrenceId, $recurrenceIndex) = $beanData;
 
+        if (!$bean->repeat_parent_id) {
+            $bean->send_invites_uid = $beanData[1];
+            $bean->send_invites = true;
+        }
+
         if ($action == 'delete' && !$bean->deleted) {
+            if ($bean->send_invites) {
+                $bean->inviteesBefore = \CalendarUtils::getInvitees($bean);
+            }
             return static::DELETE;
         }
         if ($action != 'restore' && $bean->deleted) {
@@ -778,24 +786,17 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * Retrieve bean fetched row
-     * If bean not saved yet we should make array from bean
-     * @param \SugarBean $bean
-     * @return array
+     * Retrieve bean data as a specially constructed array.
+     *
+     * @param \SugarBean $bean Source bean.
+     * @return array array('id' => array('123'), 'name' => array('foo'), ...)
      */
-    protected function getBeanFetchedRow(\SugarBean $bean)
+    protected function getBeanDataAsArray(\SugarBean $bean)
     {
         $dataDiff = array();
-        $fetchedRow = $bean->fetched_row;
-        if (!$fetchedRow) {
-            if ($bean->isUpdate() && $bean->retrieve($bean->id)) {
-                $fetchedRow = $bean->fetched_row;
-            } else {
-                $fetchedRow = $bean->toArray(true);
-            }
-        }
+        $beanData = $bean->toArray(true);
 
-        foreach ($fetchedRow as $name => $value) {
+        foreach ($beanData as $name => $value) {
             $dataDiff[$name] = array(
                 0 => $value
             );

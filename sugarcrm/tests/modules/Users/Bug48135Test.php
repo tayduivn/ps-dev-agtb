@@ -113,12 +113,11 @@ class Bug48135Test extends Sugar_PHPUnit_Framework_TestCase
         $_SESSION['reassignRecords']['assignedModuleListCache'] = array('EAPM' => 'EAPM');
         $_SESSION['reassignRecords']['assignedModuleListCacheDisp'] = array ('EAPM' => 'EAPM');
 
-        $_POST['module'] = 'Users';
-        $_POST['action'] = 'reassignUserRecords';
-        $_POST['fromuser'] = $this->user1->id;
-        $_POST['touser'] = $this->user2->id;
-        $_POST['modules'] = array('EAPM');
-        $_POST['steponesubmit'] = 'Next';
-
+        $_REQUEST['module'] = 'Users';
+        $_REQUEST['action'] = 'reassignUserRecords';
+        $_REQUEST['fromuser'] = $this->user1->id;
+        $_REQUEST['touser'] = $this->user2->id;
+        $_REQUEST['modules'] = array('EAPM');
+        $_REQUEST['steponesubmit'] = 'Next';
     }
 }

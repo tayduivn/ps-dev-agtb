@@ -14,6 +14,7 @@ if (!defined('sugarEntry')) {
  */
 
 use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 chdir(dirname(__FILE__));
 define('ENTRY_POINT_TYPE', 'api');
@@ -21,7 +22,7 @@ require_once 'include/entryPoint.php';
 
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {
-    sugar_die("queue_manager.php is CLI only.");
+    sugar_die('queueManager.php is CLI only.');
 }
 SugarMetric_Manager::getInstance()->setMetricClass('background')->setTransactionName('cron');
 if (empty($current_language)) {
@@ -33,6 +34,8 @@ $app_strings = return_application_language($current_language);
 $current_user = BeanFactory::getBean('Users');
 $current_user->getSystemUser();
 
-$manager = new Manager();
+TimeDate::getInstance()->allow_cache = false;
+
+$manager = new Manager(new LoggerTransition(\LoggerManager::getLogger()));
 register_shutdown_function(array($manager, 'shutdownHandler'));
 $manager->run();

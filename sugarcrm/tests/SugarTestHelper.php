@@ -112,6 +112,7 @@ require_once 'SugarTestCommentUtilities.php';
 require_once 'SugarTestReflection.php';
 require_once 'SugarTestConfigUtilities.php';
 require_once 'SugarTestDashboardUtilities.php';
+require_once 'SugarTestNoteUtilities.php';
 
 require_once 'SugarTestForecastUtilities.php';
 require_once 'SugarTestProductUtilities.php';
@@ -416,6 +417,7 @@ class SugarTestHelper
         }
 
         SugarCache::instance()->flush();
+        SugarConfig::getInstance()->clearCache();
 
         // initialization & backup of sugar_config
         self::$initVars['GLOBALS']['sugar_config'] = null;
@@ -558,6 +560,8 @@ class SugarTestHelper
         // Restoring of theme
         SugarThemeRegistry::set(self::$systemVars['SugarThemeRegistry']->dirName);
         SugarCache::$isCacheReset = false;
+
+        SugarConfig::getInstance()->clearCache();
 
         return true;
     }

@@ -24,7 +24,7 @@
 <tr>
     <td align='right'>
         <a href='javascript:window.print()'>{$MOD.LBL_HELP_PRINT}</a> - 
-        <a href='mailto:?subject="{$MOD.LBL_SUGARCRM_HELP}&body={$currentURL}'>{$MOD.LBL_HELP_EMAIL}</a> - 
+        <a href='mailto:?subject="{$MOD.LBL_SUGARCRM_HELP}&body={$currentURL|escape:url}'>{$MOD.LBL_HELP_EMAIL}</a> -
         <a href='#' onmousedown="createBookmarkLink('{$MOD.LBL_SUGARCRM_HELP} - {$moduleName}', '{$currentURL|escape:url}')">{$MOD.LBL_HELP_BOOKMARK}</a>
     </td>
 </tr>

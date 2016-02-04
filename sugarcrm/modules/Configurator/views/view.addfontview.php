@@ -40,16 +40,11 @@ class ConfiguratorViewAddFontView extends SugarView {
                 true
                 )
             );
-        if(!empty($_REQUEST['error'])){
-            $this->ss->assign("error", $_REQUEST['error']);
-        }
+        $this->ss->assign("error", $this->request->getValidInputRequest('request_error'));
         $this->ss->assign("MOD", $mod_strings);
         $this->ss->assign("APP", $app_strings);
-        if(isset($_REQUEST['return_action'])){
-            $this->ss->assign("RETURN_ACTION", $_REQUEST['return_action']);
-        }else{
-            $this->ss->assign("RETURN_ACTION", 'FontManager');
-        }
+        $return_action = $this->request->getValidInputRequest('return_action', null, 'FontManager');
+        $this->ss->assign("RETURN_ACTION", $return_action);
         $this->ss->assign("STYLE_LIST", array(
                 "regular"=>$mod_strings["LBL_FONT_REGULAR"],
                 "italic"=>$mod_strings["LBL_FONT_ITALIC"],

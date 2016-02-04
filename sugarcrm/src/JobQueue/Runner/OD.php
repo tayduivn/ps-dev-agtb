@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Runner;
 
+use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\JobQueue\LockStrategy\LockStrategyInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Worker\WorkerInterface;
 
@@ -23,14 +24,14 @@ class OD extends Standard
 {
     /**
      * Special functionality for on-demand mode that uses legacy config variables.
-     *
-     * @param WorkerInterface $worker
-     * @param LockStrategyInterface $lock
+     * {@inheritDoc}
      */
-    public function __construct(WorkerInterface $worker, LockStrategyInterface $lock)
+    public function __construct($config, WorkerInterface $worker, LockStrategyInterface $lock, LoggerInterface $logger)
     {
-        $this->maxRuntime = \SugarConfig::getInstance()->get('cron.max_cron_runtime', $this->maxRuntime);
-        parent::__construct($worker, $lock);
+        $this->maxRuntime = !empty($config['max_runtime']) ?
+            $config['cron']['max_runtime'] :
+            $this->maxRuntime;
+        parent::__construct($config, $worker, $lock, $logger);
     }
 
     /**
@@ -40,22 +41,5 @@ class OD extends Standard
     protected function noJobsHandler()
     {
         $this->stopWork = true;
-    }
-
-    /**
-     * Do not release lock.
-     * {@inheritdoc}
-     */
-    public function run()
-    {
-        $this->startWorker();
-    }
-
-    /**
-     * Stub.
-     * {@inheritdoc}
-     */
-    public function acquireLock()
-    {
     }
 }

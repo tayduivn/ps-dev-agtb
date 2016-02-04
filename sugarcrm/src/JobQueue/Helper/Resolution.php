@@ -12,12 +12,31 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Helper;
 
+use Sugarcrm\Sugarcrm\Socket\Client as SocketClient;
+
 /**
  * Class Resolution
  * @package JobQueue
  */
 class Resolution
 {
+    /**
+     * @var SocketClient|null
+     */
+    protected $socketClient = null;
+
+    /**
+     * Resolution constructor.
+     */
+    public function __construct()
+    {
+        if ($this->getSugarConfig()->get('websockets.server.url') && class_exists('\Sugarcrm\Sugarcrm\Socket\Client')) {
+            $this->socketClient = SocketClient::getInstance()
+                ->recipient(SocketClient::RECIPIENT_ALL)
+                ->channel('JobQueue');
+        }
+    }
+
     /**
      * Check if it's possible to change resolution for passed job.
      * Backlog: Pause - queued and running parent. Resume - partial.
@@ -106,6 +125,11 @@ class Resolution
      */
     public function setResolution(\SchedulersJob $job, $resolution)
     {
+        if ($resolution === true) {
+            $resolution = \SchedulersJob::JOB_SUCCESS;
+        } elseif ($resolution === false) {
+            $resolution = \SchedulersJob::JOB_FAILURE;
+        }
         if (!$this->checkDependencies($job->resolution, $resolution)) {
             return false;
         }
@@ -115,6 +139,40 @@ class Resolution
         }
         $job->status = $status;
         $job->resolution = $resolution;
-        return $job->save();
+        $result = $job->save();
+        if ($result) {
+            $this->sendProgressMessage($job);
+        }
+        return $result;
+    }
+
+    /**
+     * Sends a "progressUpdate" message to the Socket Server.
+     *
+     * @param \SchedulersJob $job
+     */
+    public function sendProgressMessage(\SchedulersJob $job)
+    {
+        // check socket client and job
+        if (!$this->socketClient || !$job->id) {
+            return;
+        }
+
+        $this->socketClient->send(
+            'progressUpdate',
+            array(
+                'id' => $job->id,
+                'percent' => $job->percent_complete,
+                'resolution' => $job->resolution,
+            )
+        );
+    }
+
+    /**
+     * @return \SugarConfig
+     */
+    protected function getSugarConfig()
+    {
+        return \SugarConfig::getInstance();
     }
 }

@@ -32,7 +32,7 @@ interface SugarSearchEngineInterface
      * @param $query
      * @param int $offset
      * @param int $limit
-     * @return void
+     * @return array
      */
     public function search($query, $offset = 0, $limit = 20);
 
@@ -192,4 +192,5 @@ interface SugarSearchEngineResult
      *
      */
     public function __toString();
+
 }

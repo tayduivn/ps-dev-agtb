@@ -19,14 +19,6 @@ require_once('modules/ModuleBuilder/views/view.listview.php');
 
 class ViewPortalListView extends ViewListView 
 {
-    public function __construct()
-    {
-        $this->editModule = $_REQUEST['view_module'];
-        $this->editLayout = $_REQUEST['view'];
-        $this->subpanel = (!empty($_REQUEST['subpanel'])) ? $_REQUEST['subpanel'] : false;
-        $this->fromModuleBuilder = ! empty ( $_REQUEST [ 'view_package' ] ) ;
-    }
-
     /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */

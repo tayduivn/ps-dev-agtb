@@ -53,17 +53,6 @@ class Import extends Base
             $bean = \BeanFactory::getBean($calDavBean->parent_type);
             $bean->id = create_guid();
             $bean->new_with_id = true;
-
-            // Set Call/Meeting attendees array properties from known participants.
-            $participants = $calDavBean->getParent()->getParticipants();
-            if ($participants) {
-                foreach ($participants as $participant) {
-                    $property = strtolower($participant->getBeanName()) . '_arr';
-                    array_push($bean->$property, $participant->getBeanId());
-                }
-                $bean->send_invites = true;
-            }
-
             if ($bean instanceof \Call) {
                 $bean->direction = $user->getPreference('caldav_call_direction');
             }

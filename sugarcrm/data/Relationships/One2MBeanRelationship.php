@@ -97,11 +97,11 @@ class One2MBeanRelationship extends One2MRelationship
     protected function updateLinks($lhs, $lhsLinkName, $rhs, $rhsLinkName)
     {
         if (isset($lhs->$lhsLinkName)) {
-            $lhs->$lhsLinkName->addBean($rhs);
+            $lhs->$lhsLinkName->resetLoaded();
         }
-        //RHS only has one bean ever, so we don't need to preload the relationship
+
         if (isset($rhs->$rhsLinkName)) {
-            $rhs->$rhsLinkName->beans = array($lhs->id => $lhs);
+            $rhs->$rhsLinkName->resetLoaded();
         }
     }
 
@@ -157,11 +157,9 @@ class One2MBeanRelationship extends One2MRelationship
             }
         }
 
-
-        // remove the rhs bean from the lhs link
         $link = $this->lhsLink;
         if ($lhs->load_relationship($link)) {
-            $lhs->$link->removeBean($rhs);
+            $lhs->$link->resetLoaded();
         }
         if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes") {
             $this->callAfterDelete($lhs, $rhs, $this->getLHSLink());

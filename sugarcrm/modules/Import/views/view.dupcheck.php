@@ -45,7 +45,7 @@ class ImportViewDupcheck extends ImportView
         $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
         $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('publish_inline','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
         $this->ss->assign("UNPUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('unpublish_inline','align="absmiddle" alt="'.$mod_strings['LBL_UNPUBLISH'].'" border="0"'));
-        $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
+        $this->ss->assign("IMPORT_MODULE", $this->request->getValidInputRequest('import_module', 'Assert\Mvc\ModuleName', ''));
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
         $this->ss->assign("JAVASCRIPT", $this->_getJS());
 
@@ -76,6 +76,7 @@ class ImportViewDupcheck extends ImportView
         global $mod_strings, $sugar_config;
 
         $has_header = $_REQUEST['has_header'] == 'on' ? TRUE : FALSE;
+        $importModule = $this->request->getValidInputRequest('import_module', 'Assert\Mvc\ModuleName', '');
         $uploadFileName = "upload://".basename($_REQUEST['tmp_file']);
         $splitter = new ImportFileSplitter($uploadFileName, $sugar_config['import_max_records_per_file']);
         $splitter->splitSourceFile( $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), $has_header);
@@ -130,7 +131,7 @@ class ImportViewDupcheck extends ImportView
         $stepTitle4 = $mod_strings['LBL_IMPORT_RECORDS'];
 
         $dateTimeFormat = $GLOBALS['timedate']->get_cal_date_time_format();
-        $type = (isset($_REQUEST['type'])) ? $_REQUEST['type'] : '';
+        $type = $this->request->getValidInputRequest('type', null, '');
         $lblUsed = str_replace(":","",$mod_strings['LBL_INDEX_USED']);
         $lblNotUsed = str_replace(":","",$mod_strings['LBL_INDEX_NOT_USED']);
         return <<<EOJAVASCRIPT
@@ -178,7 +179,7 @@ ProcessImport = new function()
                             + "&action=Last"
                             + "&current_step=" + document.getElementById("importstepdup").current_step.value
                             + "&type={$type}"
-                            + "&import_module={$_REQUEST['import_module']}"
+                            + "&import_module={$importModule}"
                             + "&has_header=" +  document.getElementById("importstepdup").has_header.value ;
                         if ( ProcessImport.fileCount >= ProcessImport.fileTotal ) {
                         	YAHOO.SUGAR.MessageBox.updateProgress(1,'{$mod_strings['LBL_IMPORT_COMPLETED']}');

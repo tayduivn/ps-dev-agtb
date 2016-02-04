@@ -3620,7 +3620,7 @@ SUGAR.util = function () {
 				}
 
 				success = function(data) {
-					eval(data.responseText);
+					var result = JSON.parse(data.responseText);
 
 					SUGAR.util.additionalDetailsCache[id] = new Array();
 					SUGAR.util.additionalDetailsCache[id]['body'] = result['body'];

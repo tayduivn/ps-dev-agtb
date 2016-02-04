@@ -35,7 +35,7 @@ class CalendarEventsApiHelper extends SugarBeanApiHelper
      * The vCal cache is not updated for the current user as it is handled in the endpoints to guarantee that it happens
      * after all recurrences of an event are saved.
      *
-     * @param SugarBean $bean
+     * @param Call|Meeting|SugarBean $bean
      * @param array $submittedData
      * @param array $options
      * @return array
@@ -83,7 +83,7 @@ class CalendarEventsApiHelper extends SugarBeanApiHelper
         $bean->users_arr = $this->getUserInvitees($bean, $submittedData);
         $bean->leads_arr = $this->getInvitees($bean, 'leads', $submittedData);
         $bean->contacts_arr = $this->getInvitees($bean, 'contacts', $submittedData);
-        $bean->addresses_arr = $this->getInvitees($bean, 'addresses', $submittedData);
+        $bean->addressees_arr = $this->getInvitees($bean, 'addressees', $submittedData);
 
         return $data;
     }

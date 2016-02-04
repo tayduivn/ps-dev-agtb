@@ -36,12 +36,21 @@ class SugarACLTeamBased extends SugarACLStrategy
             return true;
         }
         $user = $this->getCurrentUser($context);
-        $bean = $context['bean'];
+        $bean = isset($context['bean']) ? $context['bean'] : null;
         $isOwner = !empty($context['owner_override']) ?
             $context['owner_override'] :
-            $bean->isOwner($user->id);
-        if ($isOwner || !$bean->bean_implements('ACL')) {
+            ($bean && $bean->isOwner($user->id));
+
+        if ($isOwner) {
             // Owner has access.
+            return true;
+        } elseif (!$bean && $this->getModuleAccess($user, $module, $action, 'module') == ACL_ALLOW_SELECTED_TEAMS) {
+            // There is only one case when the ACL handles an empty bean:
+            // role is "Owner & Selected Teams" and empty context which, according to SugarACLStrategy::checkAccess(),
+            // equivalents to "$isOwner = false".
+            return false;
+        } elseif (!$bean) {
+            // Else a valid bean is required.
             return true;
         }
 
@@ -147,8 +156,7 @@ class SugarACLTeamBased extends SugarACLStrategy
         $user = $this->getCurrentUser($context);
         if (!$user ||
             $user->isAdmin() ||
-            empty($context['bean']) ||
-            !$context['bean']->id
+            !empty($context['bean']) && (!$context['bean']->id || !$context['bean']->bean_implements('ACL'))
         ) {
             return false;
         }

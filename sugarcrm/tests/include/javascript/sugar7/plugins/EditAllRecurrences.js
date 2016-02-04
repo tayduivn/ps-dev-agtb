@@ -113,7 +113,8 @@ describe('Plugins.EditAllRecurrences', function() {
             'repeat_interval',
             'repeat_dow',
             'repeat_until',
-            'repeat_count'
+            'repeat_count',
+            'repeat_days'
         ]);
     });
 

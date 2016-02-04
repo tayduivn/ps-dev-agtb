@@ -93,7 +93,7 @@ class CarrierRegistry
     protected function scan()
     {
         $dictionary = array();
-        foreach ($GLOBALS['moduleList'] as $module) {
+        foreach (array_merge($GLOBALS['moduleList'], $GLOBALS['modInvisList']) as $module) {
             $path = 'modules/' . $module . '/Carrier.php';
             if (!$this->fileExists($path)) {
                 continue;

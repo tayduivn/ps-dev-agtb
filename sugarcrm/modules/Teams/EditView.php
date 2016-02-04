@@ -57,7 +57,6 @@ $xtpl->assign("RETURN_ID", $return_id);
 $xtpl->assign("RETURN_ACTION", $return_action);
 
 if (isset($_REQUEST['isDuplicate'])) $xtpl->assign("IS_DUPLICATE", $_REQUEST['isDuplicate']);
-$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("ID", $focus->id);
 $xtpl->assign("NAME", Team::getDisplayName($focus->name, $focus->name_2));
 $xtpl->assign("DESCRIPTION", $focus->description);

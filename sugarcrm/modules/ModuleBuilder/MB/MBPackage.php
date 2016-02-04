@@ -9,6 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 require_once('modules/ModuleBuilder/MB/MBModule.php');
 
 class MBPackage{
@@ -21,6 +26,11 @@ class MBPackage{
     var $author = '';
     var $key = '';
     var $readme='';
+
+    /**
+     * @var Request
+     */
+    protected $request;
 
     /**
      * Flavor compatibility map
@@ -54,9 +64,10 @@ class MBPackage{
 
     function MBPackage($name){
         $this->name = $name;
+        $this->request = InputValidation::getService();
         $this->load();
-
     }
+
     function loadModules($force=false){
         if(!file_exists(MB_PACKAGE_PATH . '/' . $this->name .'/modules'))return;
         $d = dir(MB_PACKAGE_PATH . '/' . $this->name .'/modules');
@@ -85,7 +96,7 @@ class MBPackage{
         if (file_exists($packLangFilePath))
         {
 
-            require($packLangFilePath);
+            require FileLoader::validateFilePath($packLangFilePath);
         }
     }
 
@@ -254,7 +265,7 @@ function buildInstall($path){
     function load(){
         $path = $this->getPackageDir();
         if(file_exists($path .'/manifest.php')){
-            require($path . '/manifest.php');
+            require FileLoader::validateFilePath($path . '/manifest.php');
             if(!empty($manifest)){
                 $this->date_modified = $manifest['published_date'];
                 $this->is_uninstallable = $manifest['is_uninstallable'];
@@ -321,10 +332,10 @@ function buildInstall($path){
     }
 
     function populateFromPost(){
-        $this->description = trim($_REQUEST['description']);
-        $this->author = trim($_REQUEST['author']);
-        $this->key = trim($_REQUEST['key']);
-        $this->readme = trim($_REQUEST['readme']);
+        $this->description = trim($this->request->getValidInputRequest('description'));
+        $this->author = trim($this->request->getValidInputRequest('author'));
+        $this->key = trim($this->request->getValidInputRequest('key', 'Assert\ComponentName'));
+        $this->readme = trim($this->request->getValidInputRequest('readme'));
     }
 
     function rename($new_name){
@@ -739,7 +750,7 @@ function buildInstall($path){
                 $mod_strings = array();
                 if (strcasecmp(substr($langFile, -4), ".php") != 0)
                     continue;
-                include("$langDir/$langFile");
+                include FileLoader::validateFilePath("$langDir/$langFile");
                 $out = "<?php \n // created: " . date('Y-m-d H:i:s') . "\n";
                 foreach($mod_strings as $lbl_key => $lbl_val )
                 {

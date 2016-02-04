@@ -11,10 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-
-
-
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 global $mod_strings;
 global $app_list_strings;
@@ -22,7 +19,10 @@ global $app_strings;
 global $current_user;
 global $currentModule;
 
-switch ($_REQUEST['view']) {
+$request = InputValidation::getService();
+$view = $request->getValidInputRequest('view', array('Assert\Type' => (array('type' => 'string'))));
+
+switch ($view) {
 	case "support_portal":
 		if (!is_admin($current_user)) sugar_die("Unauthorized access to administration.");
 		$GLOBALS['log']->info("Administration SupportPortal");
@@ -46,12 +46,12 @@ switch ($_REQUEST['view']) {
 		break;
 
 	default:
-		$send_version = isset($_REQUEST['version']) ? $_REQUEST['version'] : "";
-		$send_edition = isset($_REQUEST['edition']) ? $_REQUEST['edition'] : "";
-		$send_lang = isset($_REQUEST['lang']) ? $_REQUEST['lang'] : "";
-		$send_module = isset($_REQUEST['help_module']) ? $_REQUEST['help_module'] : "";
-		$send_action = isset($_REQUEST['help_action']) ? $_REQUEST['help_action'] : "";
-		$send_key = isset($_REQUEST['key']) ? $_REQUEST['key'] : "";
+		$send_version = $request->getValidInputRequest('version', null, '');
+		$send_edition = $request->getValidInputRequest('edition', null, '');
+		$send_lang = $request->getValidInputRequest('lang', 'Assert\Language', '');
+		$send_module = $request->getValidInputRequest('help_module', 'Assert\Mvc\ModuleName', '');
+        $send_action = $request->getValidInputRequest('help_action', null, '');
+		$send_key = $request->getValidInputRequest('key', null, '');
 		$send_anchor = '';
 		// awu: Fixes the ProjectTasks pluralization issue -- must fix in later versions.
 		if ($send_module == 'ProjectTasks')

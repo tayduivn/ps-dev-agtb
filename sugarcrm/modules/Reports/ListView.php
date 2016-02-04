@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once('include/contextMenus/contextMenu.php');
 require_once('modules/Reports/schedule/ReportSchedule.php');
@@ -45,7 +45,10 @@ if(isset($_REQUEST['Reports2_SAVEDREPORT_offset'])) {//if you click the paginati
         	$blockVariables[] = 'lvso';
         }
 
-        $current_query_by_page = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($_REQUEST['current_query_by_page']));
+        $current_query_by_page = InputValidation::getService()->getValidInputRequest(
+            'current_query_by_page',
+            array('Assert\PhpSerialized' => array('base64Encoded' => true))
+        );
         foreach($current_query_by_page as $search_key=>$search_value) {
             if($search_key != 'Reports2_SAVEDREPORT_offset' && !in_array($search_key, $blockVariables)) {
                 //bug 48620
