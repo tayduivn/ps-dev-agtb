@@ -1483,4 +1483,41 @@ class PMSEEngineUtils
 
         return $label;
     }
+
+    /**
+     * Checks to see if a module is disabled for export, either based on configuration
+     * or user permission.
+     * @param string $module The module to check
+     * @return boolean
+     */
+    public static function isExportDisabled($module)
+    {
+        global $sugar_config, $current_user;
+
+        // Return a disabled = true straight away if that is the case
+        if (!empty($sugar_config['disable_export'])) {
+            return true;
+        }
+
+        //The current user id
+        $id = $current_user->id;
+
+        // Does this module support ACLs?
+        $aclSupported = ACLController::moduleSupportsACL($module);
+
+        // Is access enabled for this user?
+        $aclEnabled = ACLAction::getUserAccessLevel($id, $module, 'access') === ACL_ALLOW_ENABLED;
+
+        // Does the user have admin access to the module?
+        $aclAdmin = ACLAction::getUserAccessLevel($id, $module, 'admin') == ACL_ALLOW_ADMIN;
+
+        // Is the user an admin or dev for the module?
+        $aclDev = ACLAction::getUserAccessLevel($id, $module, 'admin') == ACL_ALLOW_ADMIN_DEV;
+
+        // Is this user a non-admin user?
+        $nonAdmin = !(is_admin($current_user) || ($aclSupported && $aclEnabled && ($aclAdmin || $aclDev)));
+
+        // Send back if we are admin only and the user is able to admin this module
+        return !empty($sugar_config['admin_export_only']) && $nonAdmin;
+    }
 }
