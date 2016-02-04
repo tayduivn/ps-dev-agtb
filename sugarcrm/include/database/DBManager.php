@@ -863,7 +863,7 @@ protected function checkQuery($sql, $object_name = false)
             return $execute?$this->query($query):$query;
         } else {  //Prepared Statement
             $query = "INSERT INTO $table (".implode(",", array_keys($values)).") VALUES (";
-            $lobs = $types = $data_values = array();
+            $blobs = $types = $data_values = array();
 
             // :TODO: make sure all field defs are indexed by name and get rid of this
             $field_defs_indexed = array();
@@ -878,18 +878,18 @@ protected function checkQuery($sql, $object_name = false)
                     $type = $this->getFieldType($field_defs_indexed[$valueKey]);
                     $types[] = $this->convert("?$type", $type);
                     $data_values[] = $value;
-                    if ($this->isTextType($type)) {
-                        $lobs[] = $valueKey;
+                    if ($this->isBlobType($type)) {
+                        $blobs[] = $valueKey;
                     }
                 }
             }
             $query .= join(",", $types).")";
 
             if (!$execute)
-                return array($query, $data_values, $lobs);
+                return array($query, $data_values, $blobs);
 
             // Prepare and execute the statement
-            return $this->preparedQuery($query, $data_values, $lobs);
+            return $this->preparedQuery($query, $data_values, $blobs);
         }
 
 	}
@@ -910,9 +910,9 @@ protected function checkQuery($sql, $object_name = false)
 		$msg = "Error updating table: $tablename:";
 		// usePreparedStatements will be deprecated in 7.8 version and above
 	    if($this->usePreparedStatements) {
-            list($sql, $data, $lobs) = $this->updateSQL($bean, $where, true);
+            list($sql, $data, $blobs) = $this->updateSQL($bean, $where, true);
             // Prepare and execute the statement
-            return $this->preparedQuery($sql, $data, $lobs, $msg);
+            return $this->preparedQuery($sql, $data, $blobs, $msg);
 	    } else {
 	        $sql = $this->updateSQL($bean, $where);
 	        return $this->query($sql,true,$msg);
@@ -998,16 +998,16 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Run query throuh prepared statement
 	 * @param string $sql SQL query
-	 * @param array $lobs names of clob and blob fields from query
 	 * @param string $data Data for SQL
+     * @param array $blobs names of blob fields from query
 	 * @param string $msg Error message
 	 * @return boolean
      *
      * @deprecated
 	 */
-	public function preparedQuery($sql, $data, array $lobs = array(), $msg = '')
+    public function preparedQuery($sql, $data, array $blobs = array(), $msg = '')
 	{
-	    $ps = $this->prepareStatement($sql, $lobs);
+        $ps = $this->prepareStatement($sql, $blobs);
 	    if(!$ps) {
 	        return false;
 	    }
@@ -2732,22 +2732,22 @@ protected function checkQuery($sql, $object_name = false)
         } else { //Prepared Statement
             $data = array_merge(array_values($values), array_values($where));
             $query = "UPDATE " . $table . "\n\t\t\t\t\tSET";
-            $lobs = array();
+            $blobs = array();
             $sep = ' ';
             foreach ($values as $field => $value) {
                 $type = $this->getFieldType($field_defs[$field]);
                 $query .= $sep . $field . '=' . $this->convert("?$type", $type);
                 $sep = ', ';
-                if ($this->isTextType($type)) {
-                    $lobs[] = $field;
+                if ($this->isBlobType($type)) {
+                    $blobs[] = $field;
                 }
             }
             $query .= "\n\t\t\t\t\t" . $whereString;
 
             if (!$execute) {
-                return array($query, $data, $lobs);
+                return array($query, $data, $blobs);
             }
-            return $this->preparedQuery($query, $data, $lobs);
+            return $this->preparedQuery($query, $data, $blobs);
         }
     }
 
@@ -3982,6 +3982,17 @@ protected function checkQuery($sql, $object_name = false)
 		return false;
 	}
 
+    /**
+     * Does this type represent blob value?
+     *
+     * @param string $type
+     * @return bool
+     */
+    public function isBlobType($type)
+    {
+        return false;
+    }
+
 	/**
 	 * Check if this DB supports certain capability
 	 * See $this->capabilities for the list
@@ -4578,13 +4589,13 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Create prepared statement from query
 	 * @param string $sql SQL Query
-	 * @param array $lobs names of clob and blob fields from query
+     * @param array $blobs names of blob fields from query
 	 * @param string $msg Error message
 	 * @return false|PreparedStatement
      *
      * @deprecated
 	 */
-	public function prepareStatement($sql, array $lobs = array(), $msg = '')
+    public function prepareStatement($sql, array $blobs = array(), $msg = '')
 	{
 	    if(empty($this->capabilities['prepared_statements']) || empty($this->preparedStatementClass)) {
 	       $this->registerError($msg, "Prepared statements not supported");
@@ -4593,7 +4604,7 @@ protected function checkQuery($sql, $object_name = false)
 	    if(!$ps) {
 	        return false;
 	    }
-	    return $ps->prepareStatement($sql, $lobs, $msg);
+        return $ps->prepareStatement($sql, $blobs, $msg);
 	}
 
 

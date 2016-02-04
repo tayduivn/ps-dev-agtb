@@ -1309,6 +1309,18 @@ class MssqlManager extends DBManager
     }
 
     /**
+     * Does this type represent blob value?
+     *
+     * @param string $type
+     * @return bool
+     */
+    public function isBlobType($type)
+    {
+        $type = strtolower($type);
+        return $this->getColumnType($type) === 'image';
+    }
+
+    /**
      * Return representation of an empty value depending on type
      * @param string $type
      * @param bool $forPrepared Is it going to be used for prepared statement?

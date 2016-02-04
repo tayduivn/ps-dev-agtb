@@ -580,8 +580,8 @@ class OracleManager extends DBManager
         $msg = "Error updating table: ".$this->tableName;
         // usePreparedStatements will be deprecated in 7.8 version and above
         if($this->usePreparedStatements) {
-            list($sql, $data, $lobs) = $this->updateSQL($bean, $where, true);
-            return $this->preparedQuery($sql, $data, $lobs, $msg);
+            list($sql, $data, $blobs) = $this->updateSQL($bean, $where, true);
+            return $this->preparedQuery($sql, $data, $blobs, $msg);
         } else {
             $sql = $this->updateSQL($bean,$where);
             $ret = $this->AltlobExecute($this->tableName, $bean->getFieldDefinitions(), get_object_vars($bean), $sql);
@@ -600,8 +600,8 @@ class OracleManager extends DBManager
         $msg = "Error inserting into table: ".$this->tableName;
         // usePreparedStatements will be deprecated in 7.8 version and above
         if($this->usePreparedStatements) {
-            list($sql, $data, $lobs) = $this->insertSQL($bean, true);
-            return $this->preparedQuery($sql, $data, $lobs, $msg);
+            list($sql, $data, $blobs) = $this->insertSQL($bean, true);
+            return $this->preparedQuery($sql, $data, $blobs, $msg);
         } else {
             $sql = $this->insertSQL($bean);
             $ret = $this->AltlobExecute($this->tableName, $bean->getFieldDefinitions(), get_object_vars($bean), $sql);
@@ -1022,6 +1022,18 @@ class OracleManager extends DBManager
         $type = strtolower($type);
         $ctype = $this->getColumnType($type);
         return $type == 'clob' || $ctype == 'clob' || $type == 'blob' || $ctype == 'blob';
+    }
+
+    /**
+     * Does this type represent blob value?
+     *
+     * @param string $type
+     * @return bool
+     */
+    public function isBlobType($type)
+    {
+        $type = strtolower($type);
+        return $type === 'blob' || $this->getColumnType($type) == 'blob';
     }
 
     /**

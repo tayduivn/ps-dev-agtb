@@ -771,6 +771,19 @@ class MysqlManager extends DBManager
         return in_array($type, array('blob','text','longblob', 'longtext'));
     }
 
+    /**
+     * Does this type represent blob value?
+     *
+     * @param string $type
+     * @return bool
+     */
+    public function isBlobType($type)
+    {
+        $type = strtolower($type);
+        $ctype = $this->getColumnType($type);
+        return $ctype === 'blob' || $ctype === 'longblob';
+    }
+
 	/**
 	 * @see DBManager::oneColumnSQLRep()
 	 */

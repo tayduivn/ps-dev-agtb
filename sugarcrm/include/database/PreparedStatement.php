@@ -60,10 +60,10 @@ abstract class PreparedStatement
     protected $fieldDefs = array();
 
     /**
-     * Array where key is position of lob field in query and value is name of field
+     * Array where key is position of blob field in query and value is name of field
      * @var array
      */
-    protected $lobFields = array();
+    protected $blobFields = array();
 
     /**
      * Place to bind query vars to
@@ -134,10 +134,10 @@ abstract class PreparedStatement
     /**
      * Parse SQL with types from sql in the form of "INSERT INTO testPreparedStatement(id, name) VALUES(?int, ?varchar)"
      * @param string $sql
-     * @param array $lobs names of clob and blob fields from query
+     * @param array $blobs names of blob fields from query
      * @return boolean
      */
-    protected function parseSQL($sql, array $lobs = array())
+    protected function parseSQL($sql, array $blobs = array())
     {
         if (empty($this->DBM)) {
             $this->log->error("Prepare failed: Database object missing");
@@ -174,12 +174,12 @@ abstract class PreparedStatement
                 }
                 // insert the fieldDef
                 $this->fieldDefs[$row]['type'] = $sugarDataType;
-                if ($this->DBM->isTextType($sugarDataType)) {
-                    if (empty($lobs)) {
-                        $this->log->fatal('Name of lob field is not specified: ' . $this->sqlText);
+                if ($this->DBM->isBlobType($sugarDataType)) {
+                    if (empty($blobs)) {
+                        $this->log->fatal('Name of blob field is not specified: ' . $this->sqlText);
                         return false;
                     }
-                    $this->lobFields[$row] = array_shift($lobs);
+                    $this->blobFields[$row] = array_shift($blobs);
                 }
                 $sql = substr($sql, $i); // strip off the SugarDataType
                 $nextParam = strpos($sql, "?"); // look for another param
@@ -196,13 +196,13 @@ abstract class PreparedStatement
     /**
      * Prepare statement for execution
      * @param string $sql SQL string to prepare
-     * @param array $lobs names of clob and blob fields from query
+     * @param array $blobs names of blob fields from query
      * @param string $msg Error message
      * @return false|PreparedStatement
      */
-    public function prepareStatement($sql, array $lobs = array(), $msg = '')
+    public function prepareStatement($sql, array $blobs = array(), $msg = '')
     {
-        if(!$this->parseSQL($sql, $lobs)) {
+        if (!$this->parseSQL($sql, $blobs)) {
             $this->log->error("$msg: SQL parse failed: {$this->sqlText}");
             return false;
         }

@@ -1472,6 +1472,19 @@ FROM SYSIBMTS.TSINDEXES';
 	    return false;
 	}
 
+    /**
+     * Does this type represent blob value?
+     *
+     * @param string $type
+     * @return bool
+     */
+    public function isBlobType($type)
+    {
+        $type = strtolower($type);
+        return strncmp($type, 'blob', 4) === 0
+            || strncmp($this->getColumnType($type), 'blob', 4) === 0;
+    }
+
 	/**+
 	 * @see DBManager::renameColumnSQL()
 	 * Only supported

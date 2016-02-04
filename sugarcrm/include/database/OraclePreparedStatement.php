@@ -129,11 +129,11 @@ class OraclePreparedStatement extends PreparedStatement
         $i = -1;
         $db = $this->DBM;
         $defs = $this->fieldDefs;
-        $lobFields = $this->lobFields;
+        $blobFields = $this->blobFields;
         $oSQL = preg_replace_callback('#\?#',
-            function () use (&$i, $db, $defs, $lobFields) {
+            function () use (&$i, $db, $defs, $blobFields) {
                 ++$i;
-                if ($db->isTextType($defs[$i]["type"]) || !empty($lobFields[$i])) {
+                if ($db->isBlobType($defs[$i]["type"]) || !empty($blobFields[$i])) {
                     // BLOBS should have empty(...) in the query
                     return $db->emptyValue($defs[$i]["type"], true);
                 }
@@ -141,12 +141,13 @@ class OraclePreparedStatement extends PreparedStatement
             },
             $this->parsedSQL
         );
-        if(!empty($this->lobFields)) {
+
+        if (!empty($this->blobFields)) {
             $aliases = array();
-            foreach ($this->lobFields as $key => $_) {
+            foreach ($this->blobFields as $key => $_) {
                 array_push($aliases, ":p{$key}");
             }
-            $oSQL .= ' RETURNING ' . implode(",", array_values($this->lobFields)).
+            $oSQL .= ' RETURNING ' . implode(",", array_values($this->blobFields)).
                 ' INTO ' . implode(",", $aliases);
         }
 
@@ -160,7 +161,7 @@ class OraclePreparedStatement extends PreparedStatement
         $num_args = count($this->fieldDefs);
         $this->bound_vars = array_fill(0, $num_args, null);
 
-        foreach ($this->lobFields as $idx => $name) {
+        foreach ($this->blobFields as $idx => $name) {
             $this->bound_vars[$idx] = oci_new_descriptor($this->dblink, OCI_D_LOB);
         }
         return $this;
@@ -177,7 +178,7 @@ class OraclePreparedStatement extends PreparedStatement
         }
         $res = oci_execute($this->stmt, OCI_NO_AUTO_COMMIT);
 
-        foreach ($this->lobFields as $ind => $field) {
+        foreach ($this->blobFields as $ind => $field) {
             if (isset($data[$ind])) {
                 if (!$this->bound_vars[$ind]->save($data[$ind])) {
                     $this->DBM->checkError("$msg: Saving BLOB for {$field}");
@@ -221,8 +222,7 @@ class OraclePreparedStatement extends PreparedStatement
                     return false;
                 }
                 $type = $this->fieldDefs[$i]["type"];
-                if (empty($this->lobFields[$i])) {
-
+                if (empty($this->blobFields[$i])) {
                     if (empty($this->fieldDefs[$i]["type"])) {
                         $this->DBM->registerError($msg, "No defs entry for parameter $i");
                         return false;
@@ -262,7 +262,7 @@ class OraclePreparedStatement extends PreparedStatement
      */
     public function preparedStatementClose()
     {
-        foreach($this->lobFields as $idx => $name) {
+        foreach ($this->blobFields as $idx => $name) {
             if(!empty($this->bound_vars[$idx])) {
                 $this->bound_vars[$idx]->free();
             }
