@@ -13,6 +13,8 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
 
 require_once('service/core/REST/SugarRest.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 /**
  * This class is a serialize implementation of REST protocol
  * @api
@@ -41,14 +43,17 @@ class SugarRestSerialize extends SugarRest{
 	 */
 	function serve(){
 		$GLOBALS['log']->info('Begin: SugarRestSerialize->serve');
-		$data = !empty($_REQUEST['rest_data'])? $_REQUEST['rest_data']: '';
 		if(empty($_REQUEST['method']) || !method_exists($this->implementation, $_REQUEST['method'])){
 			$er = new SoapError();
 			$er->set_error('invalid_call');
 			$this->fault($er);
 		}else{
 			$method = $_REQUEST['method'];
-			$data = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(from_html($data));
+			$data = InputValidation::getService()->getValidInputRequest(
+                'rest_data',
+                array('Assert\PhpSerialized' => array('htmlEncoded' => true)),
+                ''
+            );
 			if(!is_array($data))$data = array($data);
 			$GLOBALS['log']->info('End: SugarRestSerialize->serve');
 			return call_user_func_array(array( $this->implementation, $method),$data);

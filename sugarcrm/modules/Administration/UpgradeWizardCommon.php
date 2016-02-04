@@ -16,11 +16,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/utils/db_utils.php');
 require_once('include/utils/zip_utils.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 // increase the cuttoff time to 1 hour
 ini_set("max_execution_time", "3600");
-
-if( isset( $_REQUEST['view'] ) && ($_REQUEST['view'] != "") ){
-    $view = $_REQUEST['view'];
+$request = InputValidation::getService();
+$view = $request->getValidInputRequest('view', null, '');
+if ($view !== '') {
     if( $view != "default" && $view != "module" ){
         throw new Exception($mod_strings['ERR_UW_INVALID_VIEW']);
     }
@@ -122,7 +125,12 @@ class UpgradeWizardCommon
     public static function getLanguagePackName($the_file)
     {
         global $app_list_strings;
-        require_once("$the_file");
+
+        $new = FileLoader::varFromInclude($the_file, 'app_list_strings');
+        if (is_array($new)) {
+            $app_list_strings = $new;
+        }
+
         if (isset($app_list_strings["language_pack_name"])) {
             return ($app_list_strings["language_pack_name"]);
         }

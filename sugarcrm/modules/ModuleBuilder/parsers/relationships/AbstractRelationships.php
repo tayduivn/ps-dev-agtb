@@ -1,7 +1,4 @@
 <?php
-if (! defined ( 'sugarEntry' ) || ! sugarEntry)
-    die ( 'Not A Valid Entry Point' ) ;
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -12,6 +9,8 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 // Used in findRelatableModules
 require_once 'modules/ModuleBuilder/Module/StudioBrowser.php';
@@ -201,7 +200,7 @@ class AbstractRelationships
         $objects = array ( ) ;
         if (file_exists ( $basepath . '/relationships.php' ))
         {
-            include ($basepath . '/relationships.php') ;
+            include FileLoader::validateFilePath($basepath . '/relationships.php');
             foreach ( $relationships as $name => $definition )
             {
                 // update any pre-5.1 relationships to the new definitions
@@ -398,7 +397,7 @@ class AbstractRelationships
             $app_list_strings = array();
 
             if (file_exists($filename)) {
-                include($filename);
+                include FileLoader::validateFilePath($filename);
             }
 
             if ($module == 'application') {

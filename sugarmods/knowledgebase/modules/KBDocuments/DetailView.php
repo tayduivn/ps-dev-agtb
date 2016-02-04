@@ -85,7 +85,7 @@ if (isset($_REQUEST['return_action'])) $xtpl->assign("RETURN_ACTION", $_REQUEST[
 if (isset($_REQUEST['return_id'])) $xtpl->assign("RETURN_ID", $_REQUEST['return_id']);
 $xtpl->assign("THEME", $theme);
 $xtpl->assign("GRIDLINE", $gridline);
-$xtpl->assign("IMAGE_PATH", $image_path);$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
+$xtpl->assign("IMAGE_PATH", $image_path);
 $xtpl->assign("ID", $focus->id);
 
 $xtpl->assign("DOCUMENT_NAME", $focus->kbdocument_name);

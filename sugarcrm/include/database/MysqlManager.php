@@ -224,7 +224,7 @@ class MysqlManager extends DBManager
 	 */
 	protected function freeDbResult($dbResult)
 	{
-		if(!empty($dbResult))
+		if(is_resource($dbResult))
 			mysql_free_result($dbResult);
 	}
 
@@ -534,6 +534,7 @@ class MysqlManager extends DBManager
 		$this->connectOptions = $configOptions;
 
 		$GLOBALS['log']->info("Connect:".$this->database);
+
 		return true;
 	}
 

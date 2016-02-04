@@ -12,6 +12,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'modules/ACLActions/actiondefs.php';
+
 class TeamBasedACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
@@ -184,6 +186,36 @@ class TeamBasedACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
             array(array('TeamBasedACLVisibility' => true), false, false),
             array(array(), true, true),
             array(array(), false, true),
+        );
+    }
+
+    /**
+     * Test that admin access does NOT affect TBA.
+     * @dataProvider accessProvider
+     */
+    public function testAdminAccessTeamCheck($access)
+    {
+        $action = 'view';
+        $expectedAccess = ACL_ALLOW_SELECTED_TEAMS;
+
+        $this->bean->team_id = $this->team->id;
+        $this->bean->team_set_id = $this->teamSet->id;
+        $this->bean->team_set_selected_id = $this->teamSet->id;
+        $this->bean->save();
+
+        $aclData['module'][$action]['aclaccess'] = $expectedAccess;
+        $aclData['module']['admin']['aclaccess'] = $access;
+        ACLAction::setACLData($this->user->id, $this->bean->module_dir, $aclData);
+
+        $actualAccess = ACLAction::getUserAccessLevel($this->user->id, $this->bean->module_dir, $action);
+        $this->assertEquals($expectedAccess, $actualAccess);
+    }
+
+    public function accessProvider()
+    {
+        return array(
+            array(ACL_ALLOW_ADMIN),
+            array(ACL_ALLOW_ADMIN_DEV),
         );
     }
 

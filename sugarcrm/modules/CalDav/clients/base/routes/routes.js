@@ -36,6 +36,13 @@
                         section: null
                     });
                 }
+            },
+            {
+                name: "RedirectToUserCalDavConfigPage",
+                route: "CalDav",
+                callback: function () {
+                    app.router.goBack();
+                }
             }
         ];
 

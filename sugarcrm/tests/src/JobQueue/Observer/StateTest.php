@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\JobQueue\Observer;
 
+use Psr\Log\NullLogger;
 use Sugarcrm\Sugarcrm\JobQueue\Observer\State;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\Workload;
 
@@ -46,7 +47,7 @@ class StateTest extends \Sugar_PHPUnit_Framework_TestCase
         $this->subJob->save();
 
         $this->workload = new Workload('testRoute', array(), array('dbId' => $this->subJob->id));
-        $this->observer = new State();
+        $this->observer = new State(new NullLogger());
     }
 
     public function tearDown()

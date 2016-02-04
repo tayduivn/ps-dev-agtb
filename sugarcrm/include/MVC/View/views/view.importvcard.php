@@ -46,10 +46,11 @@ class ViewImportvcard extends SugarView
             }
             $this->ss->assign("ERROR", $app_strings[$error]);
         }
+        $reqModule = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
         $this->ss->assign("HEADER", $app_strings['LBL_IMPORT_VCARD']);
-        $this->ss->assign("MODULE", $_REQUEST['module']);
+        $this->ss->assign("MODULE", $reqModule);
         $params = array();
-        $params[] = "<a href='index.php?module={$_REQUEST['module']}&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
+        $params[] = "<a href='index.php?module={$reqModule}&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
         $params[] = $app_strings['LBL_IMPORT_VCARD_BUTTON_LABEL'];
 		echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], $params, true);
         $this->ss->display($this->getCustomFilePathIfExists('include/MVC/View/tpls/Importvcard.tpl'));

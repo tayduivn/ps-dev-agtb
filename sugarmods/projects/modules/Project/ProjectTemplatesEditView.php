@@ -177,7 +177,7 @@ $quicksearch_js .= '<script type="text/javascript" language="javascript">sqs_obj
 
 $xtpl->assign("JAVASCRIPT", get_set_focus_js().get_validate_record_js() . $quicksearch_js);
 $xtpl->assign("THEME", $theme);
-$xtpl->assign("IMAGE_PATH", $image_path);$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
+$xtpl->assign("IMAGE_PATH", $image_path);
 $xtpl->assign("ID", $focus->id);
 $xtpl->assign("NAME", $focus->name);
 $xtpl->assign("STATUS_OPTIONS", get_select_options_with_id($app_list_strings['project_status_dom'], $focus->status));

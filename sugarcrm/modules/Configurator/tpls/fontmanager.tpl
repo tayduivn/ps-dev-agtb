@@ -28,7 +28,7 @@
 <input type="hidden" name="action" value="FontManager">
 <input type="hidden" name="action_type" value="">
 <input type="hidden" name="filename" value="">
-<input type="hidden" name='return_action' value="{$RETURN_ACTION}">
+<input type="hidden" name='return_action' value="{$RETURN_ACTION|escape:'html':'UTF-8'}">
 <span class='error'>{$error}</span>
 <br>
 <table width="100%" cellpadding="0" cellspacing="0" border="0">

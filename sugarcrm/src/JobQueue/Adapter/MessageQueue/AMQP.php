@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue;
 
+use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\RuntimeException;
 
 /**
@@ -31,16 +32,23 @@ class AMQP implements AdapterInterface
     protected $exchange;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * Initialize connection, exchange and queue.
      *
      * @param array $config
+     * @param LoggerInterface $logger
      * @throws RuntimeException
      */
-    public function __construct($config)
+    public function __construct($config, LoggerInterface $logger)
     {
         if (!extension_loaded('amqp')) {
             throw new RuntimeException('The amqp PHP extension is not loaded.');
         }
+        $this->logger = $logger;
 
         $connection = new \AMQPConnection();
         if (!empty($config['servers'])) {
@@ -82,6 +90,8 @@ class AMQP implements AdapterInterface
      */
     public function addJob($route, $data)
     {
+        $this->logger->info("[AMQP]: publish a message '{$route}'.");
+        $this->logger->debug("[AMQP]: data '{$data}'.");
         try {
             $this->exchange->publish($data, $route);
         } catch (\AMQPExchangeException $ex) {
@@ -131,6 +141,7 @@ class AMQP implements AdapterInterface
      */
     public function resolve($message)
     {
+        $this->logger->debug("[AMQP]: resolve a message '{$message->getDeliveryTag()}'.");
         $this->queue->ack($message->getDeliveryTag());
     }
 }

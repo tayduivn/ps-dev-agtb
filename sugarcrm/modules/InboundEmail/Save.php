@@ -13,6 +13,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/SugarFolders/SugarFolders.php');
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 global $current_user;
 
 $focus = BeanFactory::getBean('InboundEmail');
@@ -30,20 +32,18 @@ foreach($focus->column_fields as $field) {
     }
 	if(isset($_REQUEST[$field])) {
 		if ($field != "group_id") {
-			$focus->$field = trim($_REQUEST[$field]);
+			$focus->$field = trim(InputValidation::getService()->getValidInputRequest($field));
 		}
 	}
 }
 foreach($focus->additional_column_fields as $field) {
 	if(isset($_REQUEST[$field])) {
-		$value = trim($_REQUEST[$field]);
-		$focus->$field = $value;
+		$focus->$field = trim(InputValidation::getService()->getValidInputRequest($field));
 	}
 }
 foreach($focus->required_fields as $field) {
 	if(isset($_REQUEST[$field])) {
-		$value = trim($_REQUEST[$field]);
-		$focus->$field = $value;
+		$focus->$field = trim(InputValidation::getService()->getValidInputRequest($field));
 	}
 }
 
@@ -193,7 +193,15 @@ $GLOBALS['log']->info('----->InboundEmail now saving self');
 $previousTeamAccessCheck = isset($GLOBALS['sugar_config']['disable_team_access_check']) ? $GLOBALS['sugar_config']['disable_team_access_check'] : null;
 $GLOBALS['sugar_config']['disable_team_access_check'] = TRUE;
 
-$monitor_fields = array('name', 'status', 'team_id', 'team_set_id');
+$monitor_fields = array(
+    'name',
+    'status',
+    'team_id',
+    'team_set_id',
+//BEGIN SUGARCRM flav=ent ONLY
+    'team_set_selected_id',
+//END SUGARCRM flav=ent ONLY
+);
 
 $current_monitor_fields = array();
 foreach ($monitor_fields as $singleField) {
@@ -276,6 +284,9 @@ function syncSugarFoldersWithBeanChanges($fieldName, $focus)
         case 'name':
         case 'team_id':
         case 'team_set_id':
+//BEGIN SUGARCRM flav=ent ONLY
+        case 'team_set_selected_id':
+//END SUGARCRM flav=ent ONLY
             $f->$fieldName = $focus->$fieldName;
             $f->save();
             break;

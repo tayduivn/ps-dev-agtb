@@ -442,7 +442,7 @@
 			var callback = {
 				success: function(o){
 					try{
-						res = eval("("+o.responseText+")");
+						res = JSON.parse(o.responseText);
 					}catch(err){
 						alert(CAL.lbl_error_saving);							
 						ajaxStatus.hideStatus();
@@ -559,7 +559,7 @@
 				var callback = {
 					success: function(o){
 						try{							
-							res = eval("("+o.responseText+")");
+							res = JSON.parse(o.responseText);
 						}catch(err){
 							alert(CAL.lbl_error_saving);						
 							ajaxStatus.hideStatus();
@@ -1128,7 +1128,7 @@
 	CAL.GR_update_user = function (user_id){
 		var callback = {
 			success: function(o){				
-				res = eval(o.responseText);
+				res = JSON.parse(o.responseText);
 				GLOBAL_REGISTRY.focus.users_arr_hash = undefined;											
 				//SugarWidgetScheduler.update_time();
 			}
@@ -1148,7 +1148,7 @@
 		}else{		
 			var callback = {
 				success: function(o){
-					res = eval(o.responseText);
+					res = JSON.parse(o.responseText);
 					SugarWidgetScheduler.update_time();											
 					if(CAL.record_editable){
 						CAL.enable_buttons();
@@ -1190,7 +1190,7 @@
 		CAL.get("user_invitees").value = "";
 		CAL.get("contact_invitees").value = "";
 		CAL.get("lead_invitees").value = "";
-		CAL.get("addresses_invitees").value = "";
+		CAL.get("addressees_invitees").value = "";
 
 		CAL.each( GLOBAL_REGISTRY['focus'].users_arr, 	function(i,v){
 									var field_name = "";
@@ -1200,8 +1200,8 @@
 										field_name = "contact_invitees";
 									if(v.module == "Lead")
 										field_name = "lead_invitees";
-            if (v.module == "Addresses") {
-                field_name = "addresses_invitees";
+            if (v.module == "Addressees") {
+                field_name = "addressees_invitees";
             }
 									var str = CAL.get(field_name).value;
 									CAL.get(field_name).value = str + v.fields.id + ",";	
@@ -1408,7 +1408,7 @@
         var callback = {
             success: function (o) {
                 try {
-                    res = eval("(" + o.responseText + ")");
+                    res = JSON.parse(o.responseText);
                 } catch (err) {
                     alert(CAL.lbl_error_loading);
                     CAL.editDialog.cancel();
@@ -1568,7 +1568,7 @@
 						var callback = {
 								success: function(o){
 									try{
-										res = eval("("+o.responseText+")");
+										res = JSON.parse(o.responseText);
 									}catch(err){
 										alert(CAL.lbl_error_saving);
 										CAL.editDialog.cancel();							
@@ -1641,7 +1641,7 @@
 									var callback = {
 											success: function(o){
 												try{
-													res = eval("("+o.responseText+")");
+													res = JSON.parse(o.responseText);
 												}catch(err){
 													alert(CAL.lbl_error_saving);
 													CAL.editDialog.cancel();							
@@ -1711,7 +1711,7 @@
 			success: function(o) {
 				
 				try {
-					var activities = eval("("+o.responseText+")");
+					var activities = JSON.parse(o.responseText);
 				} catch(err) {
 					alert(CAL.lbl_error_saving);					
 					ajaxStatus.hideStatus();

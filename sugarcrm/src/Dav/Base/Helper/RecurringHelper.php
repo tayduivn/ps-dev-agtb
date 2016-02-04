@@ -187,7 +187,7 @@ class RecurringHelper
                 switch ($daysCount) {
                     case 1:
                         $weekDay = substr($daysData[0], - 2);
-                        $dayPosition = substr($daysData[0], 0, strlen($daysData[0] - 2));
+                        $dayPosition = substr($daysData[0], 0, strlen($daysData[0]) - 2);
                         $bean->repeat_ordinal = $this->dayPositionMap->getSugarValue($dayPosition);
                         $bean->repeat_unit = $this->monthlyDayMap->getSugarValue($weekDay);
                         $bean->repeat_selector = 'On';

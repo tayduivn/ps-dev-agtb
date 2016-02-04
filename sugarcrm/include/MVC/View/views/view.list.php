@@ -58,7 +58,12 @@ class ViewList extends SugarView{
                 if(isset($_REQUEST['lvso'])){
                     $blockVariables[] = 'lvso';
                 }
-                $current_query_by_page = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($_REQUEST['current_query_by_page']));
+
+                $current_query_by_page = $this->request->getValidInputRequest(
+                    'current_query_by_page',
+                    array('Assert\PhpSerialized' => array('base64Encoded' => true))
+                );
+
                 foreach($current_query_by_page as $search_key=>$search_value) {
                     if($search_key != $module.'2_'.strtoupper($this->bean->object_name).'_offset' && !in_array($search_key, $blockVariables)) {
                         if (!is_array($search_value)) {
@@ -124,7 +129,7 @@ class ViewList extends SugarView{
         }
         $this->params = array('massupdate' => true);
         if(!empty($_REQUEST['orderBy'])) {
-            $this->params['orderBy'] = $_REQUEST['orderBy'];
+            $this->params['orderBy'] = $this->request->getValidInputRequest('orderBy', 'Assert\Sql\OrderBy');
             $this->params['overrideOrder'] = true;
             if(!empty($_REQUEST['sortOrder'])) $this->params['sortOrder'] = $_REQUEST['sortOrder'];
         }

@@ -25,7 +25,8 @@ class ViewRetrieveSource extends ViewList {
 
     function display() {
 
-        $source_id = $_REQUEST['source_id'];
+        $source_id = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName');
+
         if(empty($source_id)) {
            $GLOBALS['log']->error($GLOBALS['mod_strings']['ERROR_EMPTY_SOURCE_ID']);
            echo $GLOBALS['mod_strings']['ERROR_EMPTY_SOURCE'];

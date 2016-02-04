@@ -44,17 +44,24 @@ class ViewFts extends SugarView
      */
     public function display($return = false, $encode = false)
     {
-        $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : 0;
+        $offset = $this->request->getValidInputRequest('offset', array('Assert\Type' => array('type' => 'numeric')), 0);
         $resultSetOnly = !empty($_REQUEST['rs_only']) ? $_REQUEST['rs_only'] : FALSE;
         $refreshModuleFilter = !empty($_REQUEST['refreshModList']) ? $_REQUEST['refreshModList'] : FALSE;
 
         $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 10 );
         $indexOffset = $offset / $limit;
-        $moduleFilter = !empty($_REQUEST['m']) ? $_REQUEST['m'] : false;
-        if (!empty($moduleFilter) && is_scalar($moduleFilter)) {
-            $moduleFilter = str_getcsv($moduleFilter);
+        $moduleFilter = false;
+
+        if (!empty($_REQUEST['m'])) {
+            $assert = is_array($_REQUEST['m']) ? 'Assert\All' : 'Assert\Delimited';
+            $moduleFilter = $this->request->getValidInputRequest('m', array($assert => array('constraints' => 'Assert\Mvc\ModuleName')));
         }
-        $disabledModules = !empty($_REQUEST['disabled_modules']) ? str_getcsv($_REQUEST['disabled_modules']) : array();
+
+        $disabledModules = $this->request->getValidInputRequest(
+            'disabled_modules', 
+            array('Assert\Delimited' => array('constraints' => 'Assert\Mvc\ModuleName'))
+        );
+
         //If no modules have been passed in then lets check user preferences.
         if ($moduleFilter === false) {
             $moduleFilter = SugarSearchEngineMetadataHelper::getUserEnabledFTSModules();
@@ -69,7 +76,7 @@ class ViewFts extends SugarView
         }
 
         $searchEngine = SugarSearchEngineFactory::getInstance();
-        $queryString = !empty($_REQUEST['q']) ? $_REQUEST['q'] : '';
+        $queryString = $this->request->getValidInputRequest('q');
         $trimmed_query = trim($queryString);
         $rs = $searchEngine->search($trimmed_query, $offset, $limit, $options);
         if($rs == null)

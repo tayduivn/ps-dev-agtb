@@ -128,8 +128,9 @@ class InvadersDashlet extends Dashlet {
             $optionsArray['savedText'] = '';
         }
         $json = getJSONobj();
-        echo 'result = ' . $json->encode(array('id' => $_REQUEST['id'],
-                                       'savedText' => $optionsArray['savedText']));
+        header("Content-Type: application/json");
+        $guid = InputValidation::getService()->getValidInputRequest('id', 'Assert\Guid', '');
+        echo $json->encode(array('id' => $guid, 'savedText' => $optionsArray['savedText']));
     }
 }
 

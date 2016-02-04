@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-
 require_once "modules/Calendar/CalendarUtils.php";
 require_once('modules/Meetings/Meeting.php');
 
@@ -50,7 +48,7 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 		$lead->save();
 		$this->lead = $lead;
 
-        $addressee = BeanFactory::newBean('Addresses');
+        $addressee = BeanFactory::newBean('Addressees');
         $addressee->first_name = 'AddresseeTest';
         $addressee->last_name = 'Addressee';
         $addressee->save();
@@ -71,7 +69,7 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 		$GLOBALS['db']->query("DELETE FROM leads WHERE id = '{$this->lead->id}'");
 		unset($this->lead);
 
-        $GLOBALS['db']->query("DELETE FROM addresses WHERE id = " . $GLOBALS['db']->quote($this->addressee->id));
+        $GLOBALS['db']->query("DELETE FROM addressees WHERE id = " . $GLOBALS['db']->quote($this->addressee->id));
         unset($this->addressee);
 
         SugarTestHelper::tearDown();
@@ -84,6 +82,7 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 	{
 		global $current_user;
         global $locale;
+        /** @var Meeting $meeting */
 		$meeting = \BeanFactory::getBean('Meetings');
 		$meeting->id = create_guid();
 		$meeting->new_with_id = false;
@@ -111,7 +110,7 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 
         $relate_values = array('addressee_id' => $this->addressee->id, 'meeting_id' => $meeting->id);
         $data_values = array('accept_status' => 'accept');
-        $meeting->set_relationship($meeting->rel_addresses_table, $relate_values, true, true, $data_values);
+        $meeting->set_relationship($meeting->rel_addressees_table, $relate_values, true, true, $data_values);
 
 		$invitesAfter = CalendarUtils::getInvitees($meeting);
 
@@ -148,7 +147,7 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
                 $locale->formatName($current_user)
             ),
             array(
-                'Addresses',
+                'Addressees',
                 $this->addressee->id,
                 '',
                 'accept',

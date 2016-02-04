@@ -278,7 +278,7 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
             $existingUsers = array();
             $existingContacts = array();
             $existingLeads =  array();
-            $existingAddresses =  array();
+            $existingAddressees =  array();
 
             if (!empty($_POST['user_invitees'])) {
                $userInvitees = explode(',', trim($_POST['user_invitees'], ','));
@@ -329,7 +329,7 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
                 $addresseeInvitees[] = $_POST['parent_id'];
             }
 
-            if ($relate_to == 'Addresses') {
+            if ($relate_to == 'Addressees') {
                 if (!empty($_REQUEST['relate_id']) && !in_array($_REQUEST['relate_id'], $addresseeInvitees)) {
                     $addresseeInvitees[] = $_REQUEST['relate_id'];
                 }
@@ -342,7 +342,7 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
             $focus->users_arr = $userInvitees;
             $focus->contacts_arr = $contactInvitees;
             $focus->leads_arr = $leadInvitees;
-            $focus->addresses_arr = $addresseeInvitees;
+            $focus->addressees_arr = $addresseeInvitees;
 
             $focus->save(true);
             $return_id = $focus->id;
@@ -350,7 +350,7 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
             $focus->setUserInvitees($userInvitees, $existingUsers);
             $focus->setContactInvitees($contactInvitees, $existingContacts);
             $focus->setLeadInvitees($leadInvitees, $existingLeads);
-            $focus->setAddresseeInvitees($addresseeInvitees, $existingAddresses);
+            $focus->setAddresseeInvitees($addresseeInvitees, $existingAddressees);
 
             // Bug #49195 : update vcal
             vCal::cache_sugar_vcal($current_user);

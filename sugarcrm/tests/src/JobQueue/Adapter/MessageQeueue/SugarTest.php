@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\JobQueue\Adapter\MessageQeueue;
 
+use Psr\Log\NullLogger;
 use Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue\Sugar;
 use Sugarcrm\SugarcrmTests\JobQueue\MessageQueue\MessageQueueTestAbstract;
 
@@ -19,6 +20,6 @@ class SugarTest extends MessageQueueTestAbstract
 {
     public function setUp()
     {
-        $this->adapter = new Sugar();
+        $this->adapter = new Sugar(array(), new NullLogger());
     }
 }

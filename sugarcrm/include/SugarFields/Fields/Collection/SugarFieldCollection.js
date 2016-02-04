@@ -292,7 +292,7 @@ if(typeof(SUGAR.collection) == "undefined") {
                     	var sqs_id = this.form + '_' + new_name;
                         if (typeof this.sqs_clone != 'undefined') {
                         	var sqs_clone = YAHOO.lang.JSON.stringify(this.sqs_clone);
-                            eval('sqs_objects[sqs_id]=' + sqs_clone);
+                            sqs_objects[sqs_id] = JSON.parse(sqs_clone);
                             
                             for (var pop_field in sqs_objects[sqs_id]['populate_list']) {
                                 if (typeof sqs_objects[sqs_id]['populate_list'][pop_field] == 'string') {
@@ -432,7 +432,7 @@ if(typeof(SUGAR.collection) == "undefined") {
 
             if (typeof sqs_objects != 'undefined' && typeof sqs_objects[clone_id] != 'undefined') {
                 var clone = YAHOO.lang.JSON.stringify(sqs_objects[clone_id]);
-                eval('this.sqs_clone=' + clone);
+                this.sqs_clone = JSON.parse(clone);
             }
         },
         /**
@@ -494,6 +494,25 @@ if(typeof(SUGAR.collection) == "undefined") {
 			} // if
 			return '';	
 		},
+        /**
+         * return an array of selected team ids for a team field
+         */
+        getSelectedTeamIdsFromUI: function(formname, fieldname) {
+            var team_ids = [];
+            var table_element_id = formname + '_' + fieldname + '_table';
+            if (document.getElementById(table_element_id)) {
+                var input_elements = YAHOO.util.Selector.query(
+                    'input[type=checkbox]:checked',
+                    document.getElementById(table_element_id)
+                );
+                for (var t = 0; t < input_elements.length; t++) {
+                    if (input_elements[t].id.match("selected_" + fieldname + "_collection_") != null) {
+                        team_ids.push(input_elements[t].value);
+                    } // if
+                } // for
+            } // if
+            return team_ids;
+        },
         /*
          * Change the primary row onchange of the radio button.
          */

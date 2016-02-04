@@ -17,11 +17,6 @@ require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 
 class ViewPortalStyle extends SugarView 
 {
-	function ViewPortalStyle()
-	{
-	    $GLOBALS['log']->debug('in ViewPortalStyle');
-	}
-
 	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
@@ -40,15 +35,15 @@ class ViewPortalStyle extends SugarView
 	{
 	}
 
-	function display() 
+	function display($params = array())
 	{
         $smarty = new Sugar_Smarty();
         //$smarty->assign('welcome', $GLOBALS['mod_strings']['LBL_SP_UPLOADSTYLE']);
         $smarty->assign('mod', $GLOBALS['mod_strings']);
-        if (isset($_REQUEST['label']))
-        {
-        	$GLOBALS['log']->debug('ViewPortalStyle->display(): label = '.$_REQUEST['label']);
-            $smarty->assign('label',$_REQUEST['label']);
+        $label = isset($params['label']) ? $params['label'] : $this->request->getValidInputRequest('label');
+        if ($label !== null) {
+            $GLOBALS['log']->debug('ViewPortalStyle->display(): label = ' . $label);
+            $smarty->assign('label', $label);
         }
         $ajax = new AjaxCompose();
         $ajax->addCrumb(translate('LBL_SUGARPORTAL', 'ModuleBuilder'), 'ModuleBuilder.main("sugarportal")');

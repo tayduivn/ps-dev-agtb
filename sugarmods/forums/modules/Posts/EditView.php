@@ -87,7 +87,6 @@ $xtpl->assign("THREAD_ID", $_REQUEST['return_id']);
 
 $xtpl->assign("JAVASCRIPT", get_set_focus_js());
 $xtpl->assign("IMAGE_PATH", $image_path);
-$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 /*
   var $id;
   var $title;

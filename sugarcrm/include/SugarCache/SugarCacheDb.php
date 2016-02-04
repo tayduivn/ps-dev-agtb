@@ -148,8 +148,7 @@ class SugarCacheDb extends SugarCacheAbstract
             $this->db->quoted($this->hashKeyName($key)),
             $this->getSqlDateTime()
         );
-        $res = $this->db->query($query);
-        if ($row = $this->db->fetchByAssoc($res, false)) {
+        if ($row = $this->db->fetchOne($query)) {
             return $this->decode($row['value'], $key);
         }
 

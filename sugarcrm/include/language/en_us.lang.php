@@ -115,7 +115,7 @@ $app_list_strings = array (
     'NotificationCenterSubscriptions' => 'Notification Center Subscriptions',
     'CarrierEmail' => 'Email Carrier',
     'CarrierSugar' => 'Sugar Carrier',
-    'Addresses' => 'Addresses',
+    'Addressees' => 'Addressees',
   ),
 
     'moduleIconList' =>
@@ -234,7 +234,7 @@ $app_list_strings = array (
     'NotificationCenterSubscriptions' => 'Notification Center Subscription',
     'CarrierEmail' => 'Email Carrier',
     'CarrierSugar' => 'Sugar Carrier',
-    'Addresses' => 'Addressee',
+    'Addressees' => 'Addressee',
   ),
 
 /*
@@ -1933,7 +1933,15 @@ $app_list_strings = array (
       'light' => 'Light',
       'dark' => 'Dark',
   ),
-
+    'repeat_days_dom' => array(
+        array(1, 8, 15, 22, 29),
+        array(2, 9, 16, 23, 30),
+        array(3, 10, 17, 24, 31),
+        array(4, 11, 18, 25, ''),
+        array(5, 12, 19, 26, ''),
+        array(6, 13, 20, 27, ''),
+        array(7, 14, 21, 28, '')
+    ),
   'lead_conv_activity_opt' =>
   array(
         'move' => 'Move',

@@ -10,6 +10,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 require_once('include/Dashlets/Dashlet.php');
 require_once('include/generic/LayoutManager.php');
 
@@ -301,7 +303,11 @@ abstract class DashletGenericChart extends Dashlet
             $dashletOffset = 0;
             $module = $_REQUEST['module'];
             if(isset($_REQUEST[$module.'2_'.strtoupper($this->getSeedBean()->object_name).'_offset'])) {
-            	$dashletOffset = $_REQUEST[$module.'2_'.strtoupper($this->getSeedBean()->object_name).'_offset'];
+                $dashletOffset = InputValidation::getService()->getValidInputRequest(
+                    $module.'2_'.strtoupper($this->getSeedBean()->object_name).'_offset'
+                );
+                $dashletOffset = htmlspecialchars($dashletOffset, ENT_QUOTES, 'UTF-8');
+
             }
         }
 

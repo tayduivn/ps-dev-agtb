@@ -58,9 +58,9 @@ class Bugs39819_39820Test extends Sugar_PHPUnit_Framework_TestCase
         // Custom help (NOT en_us) on a standard module.
         SugarAutoLoader::put("custom/modules/Accounts/language/it_it.help.DetailView.html", "<h1>Bugs39819-39820</h1>");
 
-        $_SERVER['HTTP_HOST'] = "";
-        $_SERVER['SCRIPT_NAME'] = "";
-        $_SERVER['QUERY_STRING'] = "";
+        $_SERVER['HTTP_HOST'] = "localhost";
+        $_SERVER['SCRIPT_NAME'] = "/index.php";
+        $_SERVER['QUERY_STRING'] = "module=Administration&action=index";
 
         $_REQUEST['view'] = 'documentation';
         $_REQUEST['lang'] = 'it_it';
@@ -77,5 +77,8 @@ class Bugs39819_39820Test extends Sugar_PHPUnit_Framework_TestCase
 
         // I expect to get the it_it custom help....
         $this->assertRegExp("/.*Bugs39819\-39820.*/", $tStr);
+
+        // check for encoded URL in mailto body BR-3545. Change done in SupportPortal.tpl
+        $this->assertRegExp("/body=http%3A%2F%2Flocalhost%2Findex\.php%3Fmodule%3DAdministration%26action%3Dindex/", $tStr);
     }
 }

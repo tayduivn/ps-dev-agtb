@@ -1,6 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,6 +9,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEActivity.php';
 require_once 'modules/pmse_Inbox/engine/PMSEHistoryData.php';
@@ -229,7 +229,7 @@ class PMSEUserTask extends PMSEActivity
             $disable_redirects = true;
 
             $_REQUEST['record'] = $beanObject->id;
-            include "modules/{$beanObject->module_dir}/Save.php";
+            include FileLoader::validateFilePath("modules/{$beanObject->module_dir}/Save.php");
 
             $disable_redirects = false;
         } else {

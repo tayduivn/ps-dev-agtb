@@ -9,12 +9,19 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 require_once 'include/ListView/ListViewDisplay.php';
 
 class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $save_query;
+
+    /**
+     * @var ListViewDisplayMock
+     */
+    private $_lvd;
 
     public function setUp()
     {
@@ -439,7 +446,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
 
         $output = $this->_lvd->buildMergeDuplicatesLink();
 
-        $this->assertContains("\"foobarfoobar\",\"\");}",$output);
+        $this->assertContains('"foobarfoobar", "");}', htmlspecialchars_decode($output));
     }
 
     public function testBuildMergeDuplicatesLinkBuildsReturnString()
@@ -449,14 +456,22 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_lvd->seed->module_dir = 'foobarfoobar';
         $GLOBALS['dictionary']['foobar']['duplicate_merge'] = true;
         $GLOBALS['current_user']->is_admin = 1;
-        $_REQUEST['module'] = 'foo';
-        $_REQUEST['action'] = 'bar';
-        $_REQUEST['record'] = '1';
+
+        $request = InputValidation::create(array(
+            'module' => 'Accounts',
+            'action' => 'bar',
+            'record' => '1',
+        ), array());
+        SugarTestReflection::setProtectedValue($this->_lvd, 'request', $request);
 
         $output = $this->_lvd->buildMergeDuplicatesLink();
 
-        $this->assertContains("\"foobarfoobar\",\"&return_module=foo&return_action=bar&return_id=1\");}",$output);
+        $this->assertContains(
+            '"foobarfoobar", "&return_module=Accounts&return_action=bar&return_id=1");}',
+            htmlspecialchars_decode($output)
+        );
     }
+
     public function testBuildMergeLinkWhenUserDisabledMailMerge()
     {
         $this->_lvd->seed = new stdClass;
@@ -660,7 +675,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * bug 50645 Blank value for URL custom field in DetailView and subpanel
-     * @dataProvider testDefaultSeedDefValuesProvider
+     * @dataProvider defaultSeedDefValuesProvider
      */
     public function testDefaultSeedDefValues($expected, $displayColumns, $fieldDefs)
     {
@@ -676,7 +691,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
-    public function testDefaultSeedDefValuesProvider()
+    public static function defaultSeedDefValuesProvider()
     {
         return array(
             array(

@@ -263,7 +263,10 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                         array(
                             'name' => 'repeat_days',
                             'type' => 'repeat-days',
+                            'options' => array('' => ''),
                             'isMultiSelect' => true,
+                            'dropdown_class' => 'recurring-date-dropdown',
+                            'container_class' => 'recurring-date-container select2-choices-pills-close',
                         ),
                         array(
                             'label' => ' ',

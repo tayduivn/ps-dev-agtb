@@ -13,6 +13,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: UpgradeWizard_prepare.php 55665 2010-03-29 23:55:22Z dwheeler $
 
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 require_once 'modules/Administration/UpgradeWizardCommon.php';
 require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
 
@@ -93,7 +95,7 @@ if (((defined('MODULE_INSTALLER_PACKAGE_SCAN') && MODULE_INSTALLER_PACKAGE_SCAN)
 }
 
 // assumption -- already validated manifest.php at time of upload
-require( "$unzip_dir/manifest.php" );
+require FileLoader::validateFilePath("$unzip_dir/manifest.php");
 
 
 

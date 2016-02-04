@@ -30,6 +30,7 @@ global $mod_strings;
 global $urlPrefix;
 global $currentModule;
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 $seed_object = BeanFactory::getBean('DataSets');
 
@@ -53,27 +54,34 @@ if(isset($_REQUEST['query']))
 ////////////////////////////////////////////////////////
 // Start the output
 ////////////////////////////////////////////////////////
-if (!isset($_REQUEST['html'])) {
+$reqHTML = $request->getValidInputRequest('html', 'Asser\ComponentName');
+if ($reqHTML === null) {
 	$form =new XTemplate ('modules/DataSets/Popup_picker.html');
 	$GLOBALS['log']->debug("using file modules/DataSets/Popup_picker.html");
 }
 else {
-	$GLOBALS['log']->debug("_REQUEST['html'] is ".$_REQUEST['html']);
-	$form =new XTemplate ('modules/DataSets/'.$_REQUEST['html'].'.html');
-	$GLOBALS['log']->debug("using file modules/DataSets/".$_REQUEST['html'].'.html');
+	$GLOBALS['log']->debug("_REQUEST['html'] is ".$reqHTML);
+	$form =new XTemplate ('modules/DataSets/'.$reqHTML.'.html');
+	$GLOBALS['log']->debug("using file modules/DataSets/".$reqHTML.'.html');
 }
+
+$request = InputValidation::getService();
+$reqForm = $request->getValidInputRequest('form');
+$description = $request->getValidInputRequest('description');
+$name = $request->getValidInputRequest('name');
+$selfId = $request->getValidInputRequest('self_id', 'Assert\Guid', '');
 
 $form->assign("MOD", $mod_strings);
 $form->assign("APP", $app_strings);
 
 // the form key is required
-if(!isset($_REQUEST['form']))
+if($reqForm === null)
 	sugar_die("Missing 'form' parameter");
 
 // This code should always return an answer.
 // The form name should be made into a parameter and not be hard coded in this file.
 
-if ($_REQUEST['form'] == 'EditView')
+if ($reqForm == 'EditView')
 {
         $the_javascript  = "<script type='text/javascript' language='JavaScript'>\n";
         $the_javascript .= "function set_return(parent_id, parent_name, list_order_x, list_order_y) {\n";
@@ -89,7 +97,7 @@ if ($_REQUEST['form'] == 'EditView')
 }
 
 //if requesting from the add data_set form in the detailview of the reportmaker
-if ($_REQUEST['form'] == 'AddDataSetEditView')
+if ($reqForm == 'AddDataSetEditView')
 {
         $the_javascript  = "<script type='text/javascript' language='JavaScript'>\n";
         $the_javascript .= "function set_return(data_set_id, name) {\n";
@@ -107,22 +115,22 @@ if ($_REQUEST['form'] == 'AddDataSetEditView')
 $form->assign("SET_RETURN_JS", $the_javascript);
 
 $form->assign("MODULE_NAME", $currentModule);
-$form->assign("FORM", $_REQUEST['form']);
+$form->assign("FORM", $reqForm);
 
 insert_popup_header($theme);
 
 // Quick search.
 echo get_form_header($mod_strings['LBL_SEARCH_FORM_TITLE'], "", false);
 
-if (isset($_REQUEST['description']))
+if ($description !== null)
 {
-	$last_search['DESCRIPTION'] = $_REQUEST['description'];
+	$last_search['DESCRIPTION'] = $description;
 
 }
 
-if (isset($_REQUEST['name']))
+if ($name !== null)
 {
-	$last_search['NAME'] = $_REQUEST['name'];
+	$last_search['NAME'] = $name;
 
 }
 
@@ -143,8 +151,7 @@ $form->reset("main.SearchHeaderEnd");
 
 // Stick the form header out there.
 
-
-if ($_REQUEST['form'] == 'AddDataSetEditView'){
+if ($reqForm  == 'AddDataSetEditView') {
 
 	if(!empty($where)){
 		$where .= "AND ( report_id='' OR report_id IS NULL ) AND ( parent_id='' OR parent_id IS NULL )";
@@ -156,21 +163,18 @@ if ($_REQUEST['form'] == 'AddDataSetEditView'){
 
 
 
-if ($_REQUEST['form'] == 'EditView'){
-	
-	
-	//ensuring you don't pick yourself as your parent
-	if(empty($_REQUEST['self_id'])) $_REQUEST['self_id'] = "";	
+if ($reqForm == 'EditView') {
 
+	if (empty($selfId)) $selfId = '';
 	//Don't allow picking of parents that are itself
-	if(!empty($where)){
-		$where .= "AND data_sets.id!='".$_REQUEST['self_id']."' AND data_sets.deleted=0 ";
+	if(!empty($where)) {
+		$where .= "AND data_sets.id!='". $selfId ."' AND data_sets.deleted=0 ";
 	} else {
-		$where = "data_sets.id!='".$_REQUEST['self_id']."' AND data_sets.deleted=0 ";	
+		$where = "data_sets.id!='". $selfId ."' AND data_sets.deleted=0 ";
 	}
 	
-	if(!empty($_REQUEST['self_id'])){
-		$special_where_part = "WHERE id!='".$_REQUEST['self_id']."' AND data_sets.deleted=0";
+	if(!empty($selfId)) {
+		$special_where_part = "WHERE id!='". $selfId ."' AND data_sets.deleted=0";
 	} else {
 		$special_where_part = "WHERE data_sets.deleted=0";
 	}

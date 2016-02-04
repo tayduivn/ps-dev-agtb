@@ -11,6 +11,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
 
 class TemplateDatetimecombo extends TemplateRange 
@@ -105,16 +108,21 @@ class TemplateDatetimecombo extends TemplateRange
         $def['default'] = null;
 		return $def;
 	}
-	
-    function populateFromPost(){
-    	parent::populateFromPost();
-        // Handle empty massupdate checkboxes
-        $this->massupdate = !empty($_REQUEST['massupdate']);
-    	if(!empty($_REQUEST['defaultDate']) && !empty($_REQUEST['defaultTime'])){
-    		$_REQUEST['default'] = $_REQUEST['defaultDate'].'&'.$_REQUEST['defaultTime'];
 
-    		$defaultTime = $_REQUEST['defaultTime'];
-			$hours = substr($defaultTime, 0, 2); 
+    public function populateFromPost(Request $request = null)
+    {
+        if (!$request) {
+            $request = InputValidation::getService();
+        }
+
+        parent::populateFromPost($request);
+        // Handle empty massupdate checkboxes
+        $this->massupdate = (bool) $request->getValidInputRequest('massupdate');
+        $defaultDate = $request->getValidInputRequest('defaultDate');
+        $defaultTime = $request->getValidInputRequest('defaultTime');
+        if ($defaultDate && $defaultTime) {
+            $default = $defaultDate . '&' . $defaultTime;
+            $hours = substr($defaultTime, 0, 2);
 			$minutes = substr($defaultTime, 3, 2);
 			$meridiem = substr($defaultTime, 5, 2);
     		if(empty($meridiem)) {
@@ -131,25 +139,21 @@ class TemplateDatetimecombo extends TemplateRange
   		      	 $meridiem = 'am';
   		      }
   		      //lets format the string to make sure the leading 0's are added back in for hours and minutes
-  		      $_REQUEST['default'] = $_REQUEST['defaultDate'] . '&' . sprintf('%02d:%02d%s', $hours, $minutes, $meridiem);
+              $default = $defaultDate . '&' . sprintf('%02d:%02d%s', $hours, $minutes, $meridiem);
     		}
     	}else{
-    		$_REQUEST['default'] = '';
+            $default = '';
     	}
-    	unset($_REQUEST['defaultDate']);
-    	unset($_REQUEST['defaultTime']);
-    	
-		foreach($this->vardef_map as $vardef=>$field){
-			if(isset($_REQUEST[$vardef])){
-                //  Bug #48826. Some fields are allowed to have special characters and must be decoded from the request
+
+        foreach ($this->vardef_map as $vardef => $field) {
+            $value = $request->getValidInputRequest($vardef);
+            if ($value !== null) {
+                // Bug #48826. Some fields are allowed to have special characters and must be decoded from the request
                 // Bug 49774, 49775: Strip html tags from 'formula' and 'dependency'.
-                if (is_string($_REQUEST[$vardef]) && in_array($vardef, $this->decode_from_request_fields_map))
-                {
-                    $this->$vardef = html_entity_decode(strip_tags(from_html($_REQUEST[$vardef])));
-                }
-                else
-                {
-                    $this->$vardef = $_REQUEST[$vardef];
+                if (is_string($value) && in_array($vardef, $this->decode_from_request_fields_map)) {
+                    $this->$vardef = strip_tags($value);
+                } else {
+                    $this->$vardef = $value;
                 }
 
 				if($vardef != $field){
@@ -157,8 +161,8 @@ class TemplateDatetimecombo extends TemplateRange
 				}
 			}
 		}
+        $this->default = $default;
 		$GLOBALS['log']->debug('populate: '.print_r($this,true));
 	}
 	
 }
-?>

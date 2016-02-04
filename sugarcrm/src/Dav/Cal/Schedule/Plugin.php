@@ -40,8 +40,13 @@ class Plugin extends DavSchedulePlugin
         $principalUri = $aclPlugin->getPrincipalByUri($iTipMessage->recipient);
 
         if (!$principalUri) {
-            $iTipMessage->scheduleStatus = '3.7;Could not find principal.';
+            $iTipMessage->scheduleStatus = '1.1;Message will be delivered via email';
 
+            return;
+        }
+
+        if (stripos($principalUri, '/users/') === false) {
+            $iTipMessage->scheduleStatus = '1.1;Message will be delivered via email';
             return;
         }
 

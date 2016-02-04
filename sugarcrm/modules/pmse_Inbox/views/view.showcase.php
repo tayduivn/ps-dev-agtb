@@ -235,7 +235,7 @@ class pmse_InboxViewShowCase extends SugarView
 
     public function display()
     {
-        $id_flow = $_REQUEST['id'];
+        $id_flow = $this->request->getValidInputRequest('id', 'Assert\Guid');
         $time_data = $GLOBALS['timedate'];
         $expected_time = 0;
         $expected_time_warning = false;

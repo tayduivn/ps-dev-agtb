@@ -63,7 +63,6 @@ $xtpl->assign("RETURN_URL", "&return_module=$currentModule&return_action=DetailV
 $xtpl->assign("RETURN_MODULE", $_REQUEST['return_module']);
 $xtpl->assign("RETURN_ACTION", $_REQUEST['return_action']);
 $xtpl->assign("RETURN_ID", $_REQUEST['return_id']);
-$xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("ID", $focus->id);
 $xtpl->assign("CONTACT",$contactName = Array("NAME" => $focus->contact_name, "ID" => $focus->contact_id));
 $xtpl->assign("OPPORTUNITY",$oppName = Array("NAME" => $focus->opportunity_name, "ID" => $focus->opportunity_id));

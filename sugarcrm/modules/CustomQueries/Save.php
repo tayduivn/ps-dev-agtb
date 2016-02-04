@@ -15,6 +15,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Description:  
  ********************************************************************************/
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 if (!is_admin($current_user)) {
     sugar_die($app_strings['LBL_UNAUTH_ADMIN']);
 }
@@ -30,21 +32,19 @@ if(!empty($_REQUEST['record']) && $_REQUEST['record']!=""){
 	$is_edit = true;
 }
 
-	$temp_custom_array = array();
-
 	foreach($focus->column_fields as $field)
 	{
 		if(isset($_REQUEST[$field]))
 		{
-			$focus->$field = $_REQUEST[$field];
-			$temp_custom_array[$field] = $_REQUEST[$field];
+			$value = InputValidation::getService()->getValidInputRequest($field);
+			$focus->$field = $value;
 		}
 	}
 	foreach($focus->additional_column_fields as $field)
 	{
 		if(isset($_REQUEST[$field]))
 		{
-			$value = $_REQUEST[$field];
+			$value = InputValidation::getService()->getValidInputRequest($field);
 			$focus->$field = $value;
 			
 		}
@@ -66,9 +66,6 @@ if(!empty($_REQUEST['record']) && $_REQUEST['record']!=""){
 		if(!empty($focus->id) && $focus->id!=''){
 			$edit='edit=true';
 		}
-
-		//save the variables the are temporary right now
-		$_SESSION['temp_custom_array'] = $temp_custom_array;	
 
 		$GLOBALS['log']->debug("Saved record with id of ".$return_id);
 

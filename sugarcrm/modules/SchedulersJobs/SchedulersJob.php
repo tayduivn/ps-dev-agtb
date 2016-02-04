@@ -11,6 +11,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager;
+use Sugarcrm\Sugarcrm\JobQueue\Helper\Resolution;
+
 /**
  * Job queue job
  * @api
@@ -484,6 +487,35 @@ class SchedulersJob extends Basic
         if (!empty($this->old_user->id) && $this->old_user->id != $this->user->id) {
             $this->sudo($this->old_user);
         }
+    }
+
+    /**
+     * Unserializes serialized string.
+     * @param string $string
+     * @return mixed
+     */
+    public function unserializeData($string)
+    {
+        return unserialize(base64_decode($string));
+    }
+
+    /**
+     * Serializes data into safe string.
+     * @param mixed $data
+     * @return string
+     */
+    public function serializeData($data)
+    {
+        return base64_encode(serialize($data));
+    }
+
+    /**
+     * Return instance of Job Queue manager.
+     * @return Manager
+     */
+    protected function getJQManager()
+    {
+        return new Manager();
     }
 
     /**

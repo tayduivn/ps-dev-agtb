@@ -19,6 +19,8 @@ use Sugarcrm\Sugarcrm\SearchEngine\AdminSettings;
 require_once 'include/MetaDataManager/MetaDataManager.php';
 require_once 'modules/Configurator/Configurator.php';
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 class AdministrationController extends SugarController
 {
     public function action_savetabs()
@@ -34,8 +36,7 @@ class AdministrationController extends SugarController
         }
 
         // handle the tabs listing
-        $toDecode = html_entity_decode($_REQUEST['enabled_tabs'], ENT_QUOTES);
-        $enabled_tabs = json_decode($toDecode);
+        $enabled_tabs = json_decode(html_entity_decode(InputValidation::getService()->getValidInputRequest('enabled_tabs'), ENT_QUOTES));
         // Add Home back in so that it always appears first in Sugar 7
         array_unshift($enabled_tabs, 'Home');
         $tabs = new TabController();
@@ -47,7 +48,7 @@ class AdministrationController extends SugarController
 
         // handle the subpanels
         if (isset($_REQUEST['disabled_tabs'])) {
-            $disabledTabs = json_decode(html_entity_decode($_REQUEST['disabled_tabs'], ENT_QUOTES));
+            $disabledTabs = json_decode(html_entity_decode(InputValidation::getService()->getValidInputRequest('disabled_tabs'), ENT_QUOTES));
             $disabledTabsKeyArray = TabController::get_key_array($disabledTabs);
             //Never show Project subpanels if Project module is hidden
             if (!in_array('project', $disabledTabsKeyArray) && in_array('Project', $modInvisList)) {
@@ -72,10 +73,8 @@ class AdministrationController extends SugarController
     public function action_savelanguages()
     {
         global $sugar_config;
-        $toDecode = html_entity_decode  ($_REQUEST['disabled_langs'], ENT_QUOTES);
-        $disabled_langs = json_decode($toDecode);
-        $toDecode = html_entity_decode  ($_REQUEST['enabled_langs'], ENT_QUOTES);
-        $enabled_langs = json_decode($toDecode);
+        $disabled_langs = json_decode(html_entity_decode(InputValidation::getService()->getValidInputRequest('disabled_langs'), ENT_QUOTES));
+        $enabled_langs = json_decode(html_entity_decode(InputValidation::getService()->getValidInputRequest('enabled_langs'), ENT_QUOTES));
 
         if (count($sugar_config['languages']) === count($disabled_langs)) {
             sugar_die(translate('LBL_CAN_NOT_DISABLE_ALL_LANG'));

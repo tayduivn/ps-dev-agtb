@@ -30,7 +30,7 @@ abstract class MessageQueueTestAbstract extends \Sugar_PHPUnit_Framework_TestCas
         $route = \create_guid();
         $this->adapter->bind($route);
 
-        $this->assertNull($this->adapter->getMessage());
+        $this->assertNull($this->adapter->getMessage(), 'Tested queue should be empty.');
 
         $this->adapter->addJob($route, $expectedData);
         $message = $this->adapter->getMessage();

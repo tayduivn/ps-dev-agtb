@@ -11,8 +11,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
+$request = InputValidation::getService();
 if (isset($_REQUEST['uid'])) {
-	$merge_ids = explode(',',$_REQUEST['uid']);
+    $merge_ids = explode(',', $request->getValidInputRequest('uid'));
 	// Bug 18852 - Check to make sure we have ACL Edit privledges on both records involved in the merge before proceeding
 	if ( ($bean1 = BeanFactory::getBean($_REQUEST['action_module'])) != null
     	    && ($bean2 = BeanFactory::getBean($_REQUEST['action_module'])) != null ) {
@@ -26,7 +29,7 @@ if (isset($_REQUEST['uid'])) {
 
 	 //redirect to step3.
 	$_REQUEST['record']=$merge_ids[0];
-	$_REQUEST['merge_module']=$_REQUEST['action_module'];
+    $_REQUEST['merge_module'] = $request->getValidInputRequest('action_module', 'Assert\Mvc\ModuleName');
 	unset($merge_ids[0]);
 	$_REQUEST['mass']=$merge_ids;
 }
@@ -57,10 +60,9 @@ else {
 	}
 	$_REQUEST['record']=$merge_ids[0];
 	$_REQUEST['action']='index.php';
-	$_REQUEST['merge_module']=$_REQUEST['return_module'];
+    $_REQUEST['merge_module'] = $request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
 	unset($merge_ids[0]);
 	$_REQUEST['mass']=$merge_ids;
 }
 require('modules/MergeRecords/Step3.php');
 
-?>

@@ -78,7 +78,7 @@
 <input type='hidden' name='wizard' value='RenameModules'>
 <input type='hidden' name='option' value='SaveDropDown'>
 <input type='hidden' name='module' value='Studio'>
-<input type='hidden' name='dropdown_lang' value='{$dropdown_lang}'>
+<input type='hidden' name='dropdown_lang' value='{$dropdown_lang|escape:'html':'UTF-8'}'>
 <input type='hidden' name='dropdown_name' value='moduleList'>
 
 <table name='tabDropdown' id='tabDropdown'>

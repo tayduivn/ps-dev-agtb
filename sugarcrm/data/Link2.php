@@ -42,8 +42,6 @@ class Link2 {
     protected $rows;   //any additional fields on the relationship
     protected $loaded; //true if this link has been loaded from the database
     protected $relationship_fields = array();
-    //Used to store unsaved beans on this relationship that will be combined with the ones pulled from the DB if getBeans() is called.
-    protected $tempBeans = array();
 
     /**
      * @param  $linkName String name of a link field in the module's vardefs
@@ -434,12 +432,6 @@ class Link2 {
 
             $rel_module = $this->getRelatedModuleName();
 
-            //First swap in the temp loaded beans, only if we are doing a complete load (no params)
-            if (empty($params)) {
-                $result = $this->tempBeans;
-                $this->tempBeans = array();
-            }
-
             //If there are any relationship fields, we need to figure out the mapping from the relationship fields to the
             //fields in the related module
             $relBean = BeanFactory::getBean($rel_module);
@@ -507,8 +499,7 @@ class Link2 {
         if (isset($rows[$relBean->id])) {
             $relationshipFields = $this->getRelationshipFields($relBean);
             $this->populateRelationshipOnlyFields($relationshipFields, $rows[$relBean->id], $relBean);
-            // add bean
-            $this->addBean($relBean);
+            $this->resetLoaded();
         }
     }
 
@@ -745,19 +736,12 @@ class Link2 {
      * This for the most part should not need to be called except by the relatipnship implementation classes.
      * @param SugarBean $bean
      * @return void
+     *
+     * @deprecated
      */
     public function addBean($bean)
     {
-        if (!is_array($this->beans))
-        {
-            $this->tempBeans[$bean->id] = $bean;
-            $this->rows[$bean->id] = array("id" => $bean->id);
-        }
-        else {
-            $this->beans[$bean->id] = $bean;
-            $this->rows[$bean->id] = array("id" => $bean->id);
-        }
-
+        $this->resetLoaded();
     }
 
     /**
@@ -766,18 +750,13 @@ class Link2 {
      *
      * @param SugarBean $bean
      * @return void
+     *
+     * @deprecated
      */
     public function removeBean($bean)
     {
-        if (!is_array($this->beans) && isset($this->tempBeans[$bean->id]))
-        {
-            unset($this->tempBeans[$bean->id]);
-        } else {
-            unset($this->beans[$bean->id]);
-            unset($this->rows[$bean->id]);
-        }
+        $this->resetLoaded();
     }
-
 
     /**
      * Directly queries the databse for set of values. The relationship classes and not link should handle this.
@@ -815,8 +794,7 @@ class Link2 {
 
         $GLOBALS['log']->debug("relationship_exists query(".$query.')');
 
-        $result=$this->_db->query($query, true);
-        $row = $this->_db->fetchByAssoc($result);
+        $row = $this->_db->fetchOne($query, true);
 
         if ($row == null) {
             return false;

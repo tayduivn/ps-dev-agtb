@@ -14,6 +14,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/Sugarpdf/Sugarpdf.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 class ProjectSugarpdfProjectgrid extends Sugarpdf{
      /**
      * Options array for the header table.
@@ -104,10 +106,11 @@ class ProjectSugarpdfProjectgrid extends Sugarpdf{
         $grid[2]['TITLE'] = $mod_strings['LBL_DATE_END'];
         $grid[3]['TITLE'] = $mod_strings['LBL_LIST_FILTER_VIEW'];
         $grid[4]['TITLE'] = $mod_strings['LBL_DATE'];
-        
-        $grid[0]['VALUE']['value'] = $_REQUEST['project_name'];
-        $grid[1]['VALUE']['value'] = $_REQUEST['project_start'];
-        $grid[2]['VALUE']['value'] = $_REQUEST['project_end'];
+
+        $request = InputValidation::getService();
+        $grid[0]['VALUE']['value'] = $request->getValidInputRequest('project_name');
+        $grid[1]['VALUE']['value'] = $request->getValidInputRequest('project_start');
+        $grid[2]['VALUE']['value'] = $request->getValidInputRequest('project_end');
         if ($_REQUEST['selected_view'] == '0' || $_REQUEST['selected_view'] == '1')
             $grid[3]['VALUE']['value'] = $mod_strings['LBL_FILTER_ALL_TASKS'];
         else if ($_REQUEST['selected_view'] == '2')

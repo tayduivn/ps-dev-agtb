@@ -28,6 +28,7 @@ require_once 'modules/Mailer/MailerFactory.php'; // imports all of the Mailer cl
 require_once 'include/utils.php';
 require_once 'include/Expressions/Expression/Parser/Parser.php';
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 /**
  * SugarBean is the base class for all business objects in Sugar.  It implements
  * the primary functionality needed for manipulating business objects: create,
@@ -427,6 +428,22 @@ class SugarBean
     public static $relateFieldTypes = array(
         'relate',
         'nestedset',
+    );
+
+    /**
+     * @var \Sugarcrm\Sugarcrm\Security\InputValidation\Request
+     */
+    protected $request;
+
+    /**
+     * Fields with HTML content provided by a user. Should be cleaned before save.
+     * @var array
+     */
+    protected $htmlFieldTypes = array(
+        'html',
+        'longhtml',
+        'htmleditable_tinymce',
+        'pmse_htmleditable_tinymce',
     );
 
     // FIXME: this will be removed, needed for ensuring BeanFactory is always used
@@ -1668,7 +1685,7 @@ class SugarBean
                 $type .= $def['dbType'];
             }
 
-            if ($def['type'] == 'html' || $def['type'] == 'longhtml') {
+            if (in_array($def['type'], $this->getHtmlFieldTypes())) {
                 $this->$key = SugarCleaner::cleanHtml($this->$key, true);
             } elseif ((strpos($type, 'char') !== false || strpos($type, 'text') !== false || $type == 'enum')
                 && !empty($this->$key)
@@ -2172,9 +2189,8 @@ class SugarBean
         {
             $query = "SELECT date_modified FROM $this->table_name WHERE id='$this->id' AND modified_user_id != '$current_user->id'
             	AND (modified_user_id != '$modified_user_id' OR date_modified > $date)";
-            $result = $this->db->query($query);
 
-            if($this->db->fetchByAssoc($result))
+            if($this->db->fetchOne($query))
             {
                 return true;
             }
@@ -2405,8 +2421,10 @@ class SugarBean
         else
         {
             // if we should use relation data from REQUEST
-            $rel_id = isset($_REQUEST['relate_id']) ? $_REQUEST['relate_id'] : '';
-            $rel_link = isset($_REQUEST['relate_to']) ? $_REQUEST['relate_to'] : '';
+            // SugarBean shouldn't rely on any request parameters, needs refactoring ...
+            $request = InputValidation::getService();
+            $rel_id = $request->getValidInputRequest('relate_id', null, '');
+            $rel_link = $request->getValidInputRequest('relate_to', null, '');
         }
 
         // filter relation data
@@ -3030,6 +3048,9 @@ class SugarBean
      *
      * @param string $id Optional, default -1, is set to -1 id value from the bean is used, else, passed value is used
      * @param boolean $encode Optional, default true, encodes the values fetched from the database.
+     *                        Replaces special characters including single and double qoutes with their
+     *                        HTML entity values using htmlspecialchars.
+     *                        See php documentation for more information on htmlspecialchars().
      * @param boolean $deleted Optional, default true, if set to false deleted filter will not be added.
      *
      * Internal function, do not override.
@@ -3114,13 +3135,8 @@ class SugarBean
         }
 
         $GLOBALS['log']->debug("Retrieve $this->object_name : ".$query);
-        $result = $this->db->limitQuery($query,0,1,true, "Retrieving record by id $this->table_name:$id found ");
-        if(empty($result))
-        {
-            return null;
-        }
+        $row = $this->db->fetchOneOffset($query, 0, true, "Retrieving record by id $this->table_name:$id found ", $encode);
 
-        $row = $this->db->fetchByAssoc($result, $encode);
         if(empty($row))
         {
             return null;
@@ -4938,8 +4954,7 @@ class SugarBean
             if(!empty($count_query) && (empty($limit) || $limit == -1))
             {
                 // We have a count query.  Run it and get the results.
-                $result = $db->query($count_query, true, "Error running count query for $this->object_name List: ");
-                $assoc = $db->fetchByAssoc($result);
+                $assoc = $db->fetchOne($count_query, true, "Error running count query for $this->object_name List: ");
                 if(!empty($assoc['c']))
                 {
                     $rows_found = $assoc['c'];
@@ -5415,8 +5430,7 @@ class SugarBean
         if(!empty($count_query) && (empty($limit) || $limit == -1))
         {
             // We have a count query.  Run it and get the results.
-            $result = $this->db->query($count_query, true, "Error running count query for $this->object_name List: ");
-            $assoc = $this->db->fetchByAssoc($result);
+            $assoc = $this->db->fetchOne($count_query, true, "Error running count query for $this->object_name List: ");
             if(!empty($assoc['c']))
             {
                 $total_rows = $assoc['c'];
@@ -5428,12 +5442,11 @@ class SugarBean
             $row_offset = 0;
         }
 
-        $result = $this->db->limitQuery($query, $offset, 1, true,"Error retrieving $this->object_name list: ");
+        $row = $this->db->fetchOneOffset($query, $offset, true,"Error retrieving $this->object_name list: ");
 
         $previous_offset = $row_offset - $max_per_page;
         $next_offset = $row_offset + $max_per_page;
 
-        $row = $this->db->fetchByAssoc($result);
         $this->retrieve($row['id']);
 
         $response = Array();
@@ -5787,7 +5800,15 @@ class SugarBean
                 }
             }
 
+            // creator should be present after removal
+            $createdBy = null;
+            if (isset($this->field_defs['created_by'])) {
+                $createdBy = $this->created_by;
+            }
             $this->mark_relationships_deleted($id);
+            if ($createdBy) {
+                $this->created_by = $createdBy;
+            }
             if (isset($this->field_defs['modified_user_id'])) {
                 if (!empty($current_user)) {
                     $this->modified_user_id = $current_user->id;
@@ -6188,16 +6209,9 @@ class SugarBean
         $query = "SELECT $this->table_name.*". $custom_join['select']. " FROM $this->table_name " . $custom_join['join'];
         $query .= " $where_clause";
         $GLOBALS['log']->debug("Retrieve $this->object_name: ".$query);
-        //requireSingleResult has been deprecated.
-        //$result = $this->db->requireSingleResult($query, true, "Retrieving record $where_clause:");
-        $result = $this->db->limitQuery($query,0,1,true, "Retrieving record $where_clause:");
 
+        $row = $this->db->fetchOneOffset($query, 0, true, "Retrieving record $where_clause:", $encode);
 
-        if( empty($result))
-        {
-            return null;
-        }
-        $row = $this->db->fetchByAssoc($result, $encode);
         if(empty($row))
         {
             return null;
@@ -6295,7 +6309,7 @@ class SugarBean
             $query .=  ' FROM ' . $table  . ' WHERE deleted=0 AND id=';
         }
         $result = $GLOBALS['db']->query($query . "'$id'" );
-        $row = $GLOBALS['db']->fetchByAssoc($result);
+        $row = $GLOBALS['db']->fetchByAssoc($result, true);
         if($return_array){
             return $row;
         }
@@ -6452,8 +6466,7 @@ class SugarBean
                 $where .= " AND $name = '$value' ";
             }
             $query .= $where;
-            $result = $this->db->query($query, false, "Looking For Duplicate Relationship:" . $query);
-            $row=$this->db->fetchByAssoc($result);
+            $row=$this->db->fetchOne($query, false, "Looking For Duplicate Relationship:" . $query);
         }
 
         if(!$check_duplicates || empty($row) )
@@ -7170,7 +7183,8 @@ class SugarBean
                     $saveform = "<form name='save' id='save' method='POST'>";
                     foreach($_POST as $key=>$arg)
                     {
-                        $saveform .= "<input type='hidden' name='". addslashes($key) ."' value='". addslashes($arg) ."'>";
+                        $saveform .= "<input type='hidden' name='". htmlspecialchars($key, ENT_QUOTES, 'UTF-8')
+                            ."' value='". htmlspecialchars($arg, ENT_QUOTES, 'UTF-8') ."'>";
                     }
                     $saveform .= "</form><script>document.getElementById('save').submit();</script>";
                     $_SESSION['o_lock_save'] = $saveform;
@@ -7197,8 +7211,10 @@ class SugarBean
 
     /**
     * Send assignment notifications and invites for meetings and calls
+     * @param bool $check_notify
     */
-    private function _sendNotifications($check_notify){
+    protected function _sendNotifications($check_notify)
+    {
         if($check_notify || (isset($this->notify_inworkflow) && $this->notify_inworkflow == true) // cn: bug 5795 - no invites sent to Contacts, and also bug 25995, in workflow, it will set the notify_on_save=true.
            && !$this->isOwner($this->created_by) )  // cn: bug 42727 no need to send email to owner (within workflow)
         {
@@ -8022,6 +8038,15 @@ class SugarBean
             return !$this->acl_display_only;
         }
         return true;
+    }
+
+    /**
+     * Returns a list of fields which are considered as HTML and should be cleaned before save
+     * @return array
+     */
+    public function getHtmlFieldTypes()
+    {
+        return $this->htmlFieldTypes;
     }
 
     /**

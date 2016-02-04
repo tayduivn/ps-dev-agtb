@@ -14,7 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $theme;
 
-
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once('modules/Reports/index.php');
 require_once('modules/Reports/templates/templates_reports.php');
@@ -27,6 +27,8 @@ require_once('modules/Reports/config.php');
 global $current_language, $report_modules, $modules_report, $current_user, $app_strings, $mod_strings;
 
 require_once('modules/Reports/Report.php');
+
+$reporterName = InputValidation::getService()->getValidInputRequest('save_report_as');
 
 $args = array();
 $jsonObj = getJSONobj();
@@ -91,7 +93,7 @@ else if (isset($_REQUEST['record'])){
     // do this to go through the transformation
     $reportObj = new Report($saved_report_seed->content);
     $saved_report_seed->content = $reportObj->report_def_str;
-    $report_def = isset($_REQUEST['report_def']) ? html_entity_decode($_REQUEST['report_def']) : array();
+	$report_def = InputValidation::getService()->getValidInputRequest('report_def', null, array());
 
     if (!empty($_REQUEST['reset_filters'])) {
 //        $rCache = new ReportCache();
@@ -122,8 +124,8 @@ else if (isset($_REQUEST['record'])){
                 //saveReportFilters($saved_report_seed->id, '');
         //}
 
-        if (! empty($_REQUEST['save_report_as'])) {
-                $args['reporter']->name = $_REQUEST['save_report_as'];
+        if (!empty($reporterName)) {
+                $args['reporter']->name = $reporterName;
         } // if
     }
     if (!isset($args['reporter'])) {
@@ -150,26 +152,22 @@ else if (isset($_REQUEST['record'])){
         sugar_die('');
 } else if(!empty($_REQUEST['report_options'])) {
 	$reportOptionsArray = array();
-	if (isset($_REQUEST['showDetails'])) {
-		$reportOptionsArray['showDetails'] = $_REQUEST['showDetails'];
-	}
-	if (isset($_REQUEST['showChart'])) {
-		$reportOptionsArray['showChart'] = $_REQUEST['showChart'];
-	}
-	if (isset($_REQUEST['expandAll'])) {
-		$reportOptionsArray['expandAll'] = $_REQUEST['expandAll'];
-	}
+    foreach(array('showDetails', 'showChart', 'expandAll') as $param) {
+        $value = InputValidation::getService()->getValidInputRequest($param);
+        if (!empty($value)) {
+            $reportOptionsArray[$param] = $value;
+        }
+    }
 	updateReportOptions($_REQUEST['report_id'], $reportOptionsArray);
 } else {
-	$report_def = array();
-	if ( ! empty($_REQUEST['report_def'])) {
-		$report_def = html_entity_decode($_REQUEST['report_def']);
+	$report_def = InputValidation::getService()->getValidInputRequest('report_def', null, array());
+	if (!empty($report_def)) {
 		$panels_def = html_entity_decode($_REQUEST['panels_def']);
 		$filters_def = html_entity_decode($_REQUEST['filters_defs']);
        	$args['reporter'] =  new Report($report_def, $filters_def, $panels_def);
 
-    	if (! empty($_REQUEST['save_report_as'])) {
-         	$args['reporter']->name = $_REQUEST['save_report_as'];
+    	if (!empty($reporterName)) {
+         	$args['reporter']->name = $reporterName;
     	}
 	} else {
 		$reporter = new Report();

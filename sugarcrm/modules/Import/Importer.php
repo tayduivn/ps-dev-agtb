@@ -17,6 +17,9 @@ require_once 'modules/Import/ImportFieldSanitize.php';
 require_once 'modules/Import/ImportDuplicateCheck.php';
 require_once 'include/SugarFields/SugarFieldHandler.php';
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 class Importer
 {
     /**
@@ -74,9 +77,16 @@ class Importer
      */
     protected $hasTags = false;
 
+    /*
+     * @var Request
+     */
+    protected $request;
+
     public function __construct($importSource, $bean)
     {
         global $mod_strings, $sugar_config;
+
+        $this->request = InputValidation::getService();
 
         $this->importSource = $importSource;
 
@@ -249,15 +259,15 @@ class Importer
             }
 
             // If there is an default value then use it instead
-            if ( !empty($_REQUEST[$field]) )
-            {
-                if ($fieldDef['type'] == 'relate' && !empty($row[$fieldNum]) && $row[$fieldNum] != $_REQUEST[$field]) {
+            if (!empty($_REQUEST["default_value_$field"])) {
+
+                if ($fieldDef['type'] == 'relate' && !empty($row[$fieldNum]) && $row[$fieldNum] != $_REQUEST["default_value_$field"]) {
                     if (!empty($fieldDef['id_name']) && empty($row[$fieldDef['id_name']])) {
                         $focus->$fieldDef['id_name'] = "";
                     }
                 }
 
-                $defaultRowValue = $this->populateDefaultMapValue($field, $_REQUEST[$field], $fieldDef);
+                $defaultRowValue = $this->populateDefaultMapValue($field, $_REQUEST["default_value_$field"], $fieldDef);
 
                 if(!empty($fieldDef['custom_type']) && $fieldDef['custom_type'] == 'teamset' && empty($rowValue))
                 {
@@ -803,8 +813,10 @@ class Importer
         $focus->afterImportSave();
 
         // Add ID to User's Last Import records
-        if ( $newRecord )
-            $this->importSource->writeRowToLastImport( $_REQUEST['import_module'],($focus->object_name == 'Case' ? 'aCase' : $focus->object_name),$focus->id);
+        if ( $newRecord ) {
+            $importModule = $this->request->getValidInputRequest('import_module', 'Assert\Mvc\ModuleName', '');
+            $this->importSource->writeRowToLastImport($importModule, ($focus->object_name == 'Case' ? 'aCase' : $focus->object_name), $focus->id);
+        }
 
     }
 
@@ -812,7 +824,10 @@ class Importer
     {
         global $current_user;
 
-        $firstrow    = \Sugarcrm\Sugarcrm\Security\InputValidation\Serialized::unserialize(base64_decode($_REQUEST['firstrow']));
+        $firstrow = InputValidation::getService()->getValidInputRequest(
+            'firstrow', 
+            array('Assert\PhpSerialized' => array('base64Encoded' => true))
+        );
         $mappingValsArr = $this->importColumns;
         $mapping_file = BeanFactory::getBean('Import_1');
         $mapping_file->delimiter = $_REQUEST['custom_delimiter'];

@@ -8,6 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Views.Base.Meetings.RecordView
+ * @alias SUGAR.App.view.views.BaseMeetingsRecordView
+ * @extends View.Views.Base.RecordView
+ */
 ({
     extendsFrom: 'RecordView',
 

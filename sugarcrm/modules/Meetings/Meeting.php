@@ -78,7 +78,7 @@ class Meeting extends SugarBean {
 	var $contacts_arr = array();
 	var $users_arr = array();
 	var $leads_arr = array();
-    public $addresses_arr = array();
+    public $addressees_arr = array();
 	var $meetings_arr;
 	// when assoc w/ a user/contact:
 	var $minutes_value_default = 15;
@@ -87,7 +87,7 @@ class Meeting extends SugarBean {
 	var $rel_users_table = "meetings_users";
 	var $rel_contacts_table = "meetings_contacts";
 	var $rel_leads_table = "meetings_leads";
-	public $rel_addresses_table = "meetings_addresses";
+	public $rel_addressees_table = "meetings_addressees";
 	var $module_dir = "Meetings";
 	var $object_name = "Meeting";
 
@@ -95,14 +95,28 @@ class Meeting extends SugarBean {
 	var $fill_additional_column_fields = true;
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = array('assigned_user_name', 'assigned_user_id', 'contact_id', 'user_id', 'contact_name', 'accept_status');
-	var $relationship_fields = array('account_id'=>'accounts','opportunity_id'=>'opportunity','case_id'=>'case',
-									 'assigned_user_id'=>'users','contact_id'=>'contacts', 'user_id'=>'users', 'meeting_id'=>'meetings', 'addressee_id'=>'addresses');
+	var $relationship_fields = array(
+        'account_id' => 'accounts',
+        'opportunity_id' => 'opportunity',
+        'case_id' => 'case',
+        'assigned_user_id' => 'users',
+        'contact_id' => 'contacts',
+        'user_id' => 'users',
+        'meeting_id' => 'meetings',
+        'addressee_id' => 'addressees',
+    );
 	// so you can run get_users() twice and run query only once
 	var $cached_get_users = null;
 	var $new_schema = true;
     var $date_changed = false;
 
 	public $send_invites = false;
+
+    /**
+     * UID for invitation to specify the same event.
+     * @var string
+     */
+    public $send_invites_uid = '';
 
     /**
      * Helper-field to store invites before linking new ones.
@@ -339,6 +353,9 @@ class Meeting extends SugarBean {
         CalendarUtils::correctRecurrences($this, $id);
         $deletedStatus = $this->deleted;
         parent::mark_deleted($id);
+        if ($this->send_invites) {
+            $this->_sendNotifications(true);
+        }
         if (!$deletedStatus && $this->deleted) {
             $this->getCalDavHook()->export($this, array('delete'));
         }
@@ -598,26 +615,48 @@ class Meeting extends SugarBean {
 		return $meeting_fields;
 	}
 
+    /**
+     * @inheritdoc
+     */
+    protected function getTemplateNameForNotificationEmail()
+    {
+        if ($this->current_notify_user) {
+            $emailInvitee = $this->current_notify_user->emailAddress->getPrimaryAddress($this->current_notify_user);
+            if (CalDavEventCollection::isInviteCanceled($this, $emailInvitee)) {
+                return 'MeetingCanceled';
+            }
+        }
+
+        return parent::getTemplateNameForNotificationEmail();
+    }
+
 	function set_notification_body($xtpl, &$meeting) {
 		global $sugar_config;
 		global $app_list_strings;
 		global $current_user;
 		global $timedate;
 
-
 		// cn: bug 9494 - passing a contact breaks this call
 		$notifyUser =($meeting->current_notify_user->object_name == 'User') ? $meeting->current_notify_user : $current_user;
 		// cn: bug 8078 - fixed call to $timedate
-		if(strtolower(get_class($meeting->current_notify_user)) == 'contact') {
-			$xtpl->assign("ACCEPT_URL", $sugar_config['site_url'].
-							'/index.php?entryPoint=acceptDecline&module=Meetings&contact_id='.$meeting->current_notify_user->id.'&record='.$meeting->id);
-		} elseif(strtolower(get_class($meeting->current_notify_user)) == 'lead') {
-			$xtpl->assign("ACCEPT_URL", $sugar_config['site_url'].
-							'/index.php?entryPoint=acceptDecline&module=Meetings&lead_id='.$meeting->current_notify_user->id.'&record='.$meeting->id);
-		} else {
-			$xtpl->assign("ACCEPT_URL", $sugar_config['site_url'].
-							'/index.php?entryPoint=acceptDecline&module=Meetings&user_id='.$meeting->current_notify_user->id.'&record='.$meeting->id);
-		}
+        $propertyUrlUserId = array_search(strtolower(get_class($meeting->current_notify_user)), array(
+            'contact_id' => 'contact',
+            'lead_id' => 'lead',
+            'addressee_id' => 'addressee',
+        ));
+
+        if ($propertyUrlUserId === false) {
+            $propertyUrlUserId = 'user_id';
+        }
+
+        $xtpl->assign("ACCEPT_URL", sprintf(
+            '%s/index.php?entryPoint=acceptDecline&module=Meetings&%s=%s&record=%s',
+            $sugar_config['site_url'],
+            $propertyUrlUserId,
+            $meeting->current_notify_user->id,
+            $meeting->id
+        ));
+
 		$xtpl->assign("MEETING_TO", $meeting->current_notify_user->new_assigned_user_name);
 		$xtpl->assign("MEETING_SUBJECT", trim($meeting->name));
 		$xtpl->assign("MEETING_STATUS",(isset($meeting->status)? $app_list_strings['meeting_status_dom'][$meeting->status]:""));
@@ -631,11 +670,14 @@ class Meeting extends SugarBean {
                 $typestring = $app_list_strings['meeting_type_dom'][$meeting->type];
             }
         }
+
+        $dateTimeHelper = new \Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper();
+        $dateStart = $dateTimeHelper->sugarDateToUTC($meeting->date_start);
+        $dateEnd = $dateTimeHelper->sugarDateToUTC($meeting->date_end);
+
         $xtpl->assign("MEETING_TYPE", isset($meeting->type) ? $typestring : "");
-		$startdate = $timedate->fromDb($meeting->date_start);
-		$xtpl->assign("MEETING_STARTDATE", $timedate->asUser($startdate, $notifyUser)." ".TimeDate::userTimezoneSuffix($startdate, $notifyUser));
-		$enddate = $timedate->fromDb($meeting->date_end);
-		$xtpl->assign("MEETING_ENDDATE", $timedate->asUser($enddate, $notifyUser)." ".TimeDate::userTimezoneSuffix($enddate, $notifyUser));
+		$xtpl->assign("MEETING_STARTDATE", $timedate->asUser($dateStart, $notifyUser)." ".TimeDate::userTimezoneSuffix($dateStart, $notifyUser));
+		$xtpl->assign("MEETING_ENDDATE", $timedate->asUser($dateEnd, $notifyUser)." ".TimeDate::userTimezoneSuffix($dateEnd, $notifyUser));
 		$xtpl->assign("MEETING_HOURS", $meeting->duration_hours);
 		$xtpl->assign("MEETING_MINUTES", $meeting->duration_minutes);
 		$xtpl->assign("MEETING_DESCRIPTION", $meeting->description);
@@ -748,69 +790,40 @@ class Meeting extends SugarBean {
         } elseif ($user->object_name == 'Addressee') {
             $relate_values = array('addressee_id' => $user->id, 'meeting_id' => $this->id);
             $data_values = array('accept_status' => $status);
-            $this->set_relationship($this->rel_addresses_table, $relate_values, true, true, $data_values);
+            $this->set_relationship($this->rel_addressees_table, $relate_values, true, true, $data_values);
         }
 	}
 
 
+    /**
+     * @inheritdoc
+     */
 	function get_notification_recipients() {
 		if($this->special_notification) {
 			return parent::get_notification_recipients();
 		}
 
+        $inviteesBefore = $this->inviteesBefore ?: array();
+        $inviteesAfter = \CalendarUtils::getInvitees($this);
+
+        $mergedInvitees = array();
+
+        foreach ($inviteesBefore as $invitee) {
+            $mergedInvitees[$invitee[1]] = $invitee[0];
+        }
+        foreach ($inviteesAfter as $invitee) {
+            $mergedInvitees[$invitee[1]] = $invitee[0];
+        }
+
+        if (!empty($this->created_by) && !isset($mergedInvitees[$this->created_by])) {
+            $mergedInvitees[$this->created_by] = 'Users';
+        }
+
         $list = array();
-        if(!is_array($this->contacts_arr)) {
-            $this->contacts_arr = array();
-        }
-
-        if(!is_array($this->users_arr)) {
-            $this->users_arr = array();
-        }
-
-        if(!is_array($this->leads_arr)) {
-            $this->leads_arr = array();
-        }
-
-        if (!is_array($this->addresses_arr)) {
-            $this->addresses_arr = array();
-        }
-
-        if (empty($this->leads_arr) && $this->load_relationship('leads')) {
-            $this->leads_arr = $this->leads->get();
-        }
-
-		foreach($this->users_arr as $user_id) {
-			$notify_user = BeanFactory::getBean('Users', $user_id);
-			if(!empty($notify_user->id)) {
-				$notify_user->new_assigned_user_name = $notify_user->full_name;
-				$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-				$list[$notify_user->id] = $notify_user;
-			}
-		}
-
-		foreach($this->contacts_arr as $contact_id) {
-			$notify_user = BeanFactory::getBean('Contacts', $contact_id);
-			if(!empty($notify_user->id)) {
-				$notify_user->new_assigned_user_name = $notify_user->full_name;
-				$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-				$list[$notify_user->id] = $notify_user;
-			}
-		}
-
-        foreach($this->leads_arr as $lead_id) {
-			$notify_user = BeanFactory::getBean('Leads', $lead_id);
-			if(!empty($notify_user->id)) {
-				$notify_user->new_assigned_user_name = $notify_user->full_name;
-				$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-				$list[$notify_user->id] = $notify_user;
-			}
-		}
-
-        foreach ($this->addresses_arr as $addresses_id) {
-            $notify_user = BeanFactory::getBean('Addresses', $addresses_id);
-            if (!empty($notify_user->id)) {
+        foreach ($mergedInvitees as $id => $module) {
+            $notify_user = BeanFactory::getBean($module, $id);
+            if(!empty($notify_user->id)) {
                 $notify_user->new_assigned_user_name = $notify_user->full_name;
-                $GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
                 $list[$notify_user->id] = $notify_user;
             }
         }
@@ -1053,50 +1066,50 @@ class Meeting extends SugarBean {
      * Stores addressee invitees
      *
      * @param array $addresseeInvitees Array of addressee invitees ids
-     * @param array $existingAddresses
+     * @param array $existingAddressees
      */
-    public function setAddresseeInvitees($addresseeInvitees, $existingAddresses = array())
+    public function setAddresseeInvitees($addresseeInvitees, $existingAddressees = array())
     {
-        $this->addresses_arr = $addresseeInvitees;
+        $this->addressees_arr = $addresseeInvitees;
 
-        $deleteAddresses = array();
-        $this->load_relationship('addresses');
+        $deleteAddressees = array();
+        $this->load_relationship('addressees');
 
-        $sql = 'SELECT mu.addressee_id, mu.accept_status FROM meetings_addresses mu';
+        $sql = 'SELECT mu.addressee_id, mu.accept_status FROM meetings_addressees mu';
         $sql .= ' WHERE mu.meeting_id = ' . $this->db->quoted($this->id);
         $result = $this->db->query($sql);
 
-        $acceptStatusAddresses = array();
+        $acceptStatusAddressees = array();
         while ($a = $this->db->fetchByAssoc($result)) {
             if (!in_array($a['addressee_id'], $addresseeInvitees)) {
-                $deleteAddresses[$a['addressee_id']] = $a['addressee_id'];
+                $deleteAddressees[$a['addressee_id']] = $a['addressee_id'];
             } else {
-                $acceptStatusAddresses[$a['addressee_id']] = $a['addressee_id'];
+                $acceptStatusAddressees[$a['addressee_id']] = $a['addressee_id'];
             }
         }
 
-        if (count($deleteAddresses) > 0) {
+        if (count($deleteAddressees) > 0) {
             $ids = array();
-            foreach ($deleteAddresses as $u) {
+            foreach ($deleteAddressees as $u) {
                 $ids[] = $this->db->quoted($u);
             }
 
-            $sql = 'UPDATE meetings_addresses SET deleted = 1';
+            $sql = 'UPDATE meetings_addressees SET deleted = 1';
             $sql .= ' WHERE addressee_id IN (' . implode(',', $ids) . ') AND meeting_id = ' . $this->db->quoted($this->id);
             $this->db->query($sql);
         }
 
-        foreach ($addresseeInvitees as $addressesId) {
-            if (empty($addressesId) || isset($existingAddresses[$addressesId]) || isset($deleteAddresses[$addressesId])) {
+        foreach ($addresseeInvitees as $addresseeId) {
+            if (empty($addresseeId) || isset($existingAddressees[$addresseeId]) || isset($deleteAddressees[$addresseeId])) {
                 continue;
             }
-            if (!isset($acceptStatusAddresses[$addressesId])) {
-                $this->leads->add($addressesId);
+            if (!isset($acceptStatusAddressees[$addresseeId])) {
+                $this->leads->add($addresseeId);
             } else {
                 // update query to preserve accept_status
-                $sql  = 'UPDATE meetings_addresses SET deleted = 0, accept_status = ' . $this->db->quoted($acceptStatusAddresses[$addressesId]);
+                $sql  = 'UPDATE meetings_addressees SET deleted = 0, accept_status = ' . $this->db->quoted($acceptStatusAddressees[$addresseeId]);
                 $sql .= ' WHERE meeting_id = ' . $this->db->quoted($this->id);
-                $sql .= ' AND addressee_id = ' . $this->db->quoted($addressesId);
+                $sql .= ' AND addressee_id = ' . $this->db->quoted($addresseeId);
                 $this->db->query($sql);
             }
         }

@@ -299,6 +299,7 @@ for($i = 0; $i < $number_companies; $i++) {
     //Set the user to accept the call
     $seed_user->id = $call->assigned_user_id;
     $call->set_accept_status($seed_user,'accept');
+    $call->getCalDavHook()->export($call);
 
     if ($i % 10 === 0) {
         echo '.';
@@ -423,6 +424,7 @@ for($i=0; $i<1000; $i++)
 	// leverage the seed user to set the acceptance status on the meeting.
 	$seed_user->id = $meeting->assigned_user_id;
     $meeting->set_accept_status($seed_user,'accept');
+    $meeting->getCalDavHook()->export($meeting);
 
 	//Create new emails
 	$email = new Email();

@@ -9,6 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+
 define('MB_TEMPLATES', 'include/SugarObjects/templates');
 define('MB_IMPLEMENTS', 'include/SugarObjects/implements');
 require_once 'modules/ModuleBuilder/MB/MBVardefs.php';
@@ -110,7 +115,7 @@ class MBModule
     {
         if (file_exists ( $this->path . '/config.php' ))
         {
-            include ($this->path . '/config.php') ;
+            include FileLoader::validateFilePath($this->path . '/config.php');
             $this->config = $config ;
             $this->normalizeConfig();
         }
@@ -907,33 +912,42 @@ class MBModule
         return rmdir_recursive($this->getModuleDir());
     }
 
-    function populateFromPost ()
+    /**
+     * Populates object from request
+     *
+     * @param Request $request
+     */
+    public function populateFromPost(Request $request = null)
     {
-        foreach ( $this->implementable as $key => $value )
-        {
-            $this->config [ $key ] = ! empty ( $_REQUEST [ $key ] ) ;
+        if (!$request) {
+            $request = InputValidation::getService();
         }
+
+        foreach ($this->implementable as $key => $_) {
+            $this->config[$key] = (bool) $request->getValidInputRequest($key);
+        }
+
         foreach ( $this->always_implement as $key => $value )
         {
             $this->config [ $key ] = true ;
         }
-        if (! empty ( $_REQUEST [ 'type' ] ))
-        {
-            $this->addTemplate ( $_REQUEST [ 'type' ] ) ;
+
+        $type = $request->getValidInputRequest('type');
+        if ($type) {
+            $this->addTemplate($type);
         }
 
-        if (! empty ( $_REQUEST [ 'label' ] ))
-        {
-            // this is encoded by securexss,
-            // but since this is a label that will go into language files, decode it
-            $this->config['label'] = htmlspecialchars_decode($_REQUEST['label'], ENT_QUOTES);
+        $label = $request->getValidInputRequest('label');
+        if ($label) {
+            $this->config['label'] = $label;
         }
 
-        if (!empty($_REQUEST['label_singular'])) {
-            $this->config['label_singular'] = htmlspecialchars_decode($_REQUEST['label_singular'], ENT_QUOTES);
+        $singularLabel = $request->getValidInputRequest('label_singular');
+        if ($singularLabel) {
+            $this->config['label_singular'] = $singularLabel;
         }
 
-        $this->config [ 'importable' ] = ! empty( $_REQUEST[ 'importable' ] ) ;
+        $this->config['importable'] = (bool) $request->getValidInputRequest('importable');
 
     }
 

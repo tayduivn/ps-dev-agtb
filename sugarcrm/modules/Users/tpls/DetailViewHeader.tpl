@@ -16,7 +16,10 @@
 var LBL_NEW_USER_PASSWORD = '{$MOD.LBL_NEW_USER_PASSWORD_2}';
 {if !empty($ERRORS)}
 {literal}
-YAHOO.SUGAR.MessageBox.show({title: '{/literal}{$ERROR_MESSAGE}{literal}', msg: '{/literal}{$ERRORS}{literal}'} );
+YAHOO.SUGAR.MessageBox.show({
+    title: '{/literal}{$ERROR_MESSAGE|escape:javascript}{literal}',
+    msg: '{/literal}{$ERRORS|escape:javascript}{literal}'
+});
 {/literal}
 {/if}
 </script>

@@ -34,18 +34,19 @@ class ContactsViewRetrieveEmail extends SugarView {
 
  	function display(){
 	    $data = array();
-	    $data['target'] = $_REQUEST['target'];
+	    $data['target'] = $this->request->getValidInputRequest('target', 'Assert\ComponentName');
         if(!empty($_REQUEST['email'])) {
+			$emailAddr = $this->request->getValidInputRequest('email', 'Assert\Email');
 	        $db = DBManagerFactory::getInstance();
-	        $email = $GLOBALS['db']->quote(strtoupper(trim($_REQUEST['email'])));
-	        $result = $db->query("SELECT * FROM email_addresses WHERE email_address_caps = '$email' AND deleted = 0");
+	        $email = $GLOBALS['db']->quoted(strtoupper(trim($emailAddr)));
+	        $result = $db->query("SELECT * FROM email_addresses WHERE email_address_caps = $email AND deleted = 0");
 			if($row = $db->fetchByAssoc($result)) {
 		        $data['email'] = $row;
 			} else {
 				$data['email'] = '';
 			}
         }
-		$json = new JSON(JSON_LOOSE_TYPE);
+		$json = new JSON();
 		echo $json->encode($data); 
  	}	
 }

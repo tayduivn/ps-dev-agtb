@@ -8802,7 +8802,7 @@ YAHOO.extendX(YAHOO.ext.grid.LoadableDataModel, YAHOO.ext.grid.DefaultDataModel,
     		
     		        
     		        
-    		        var jsonObjRaw = eval("(" + rtext + ")");
+    		        var jsonObjRaw = JSON.parse(rtext);
     		        if(!jsonObjRaw) {
     		            throw "Error evaling JSON response";
     		        }

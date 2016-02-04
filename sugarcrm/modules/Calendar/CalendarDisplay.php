@@ -242,7 +242,6 @@ class CalendarDisplay {
 			$displayTimeslots = SugarConfig::getInstance()->get('calendar.display_timeslots', true);
 		}
 
-		$ss->assign('week',$_REQUEST['week']);
 		$ss->assign('display_timeslots', $displayTimeslots);
 		$ss->assign('show_calls',$this->cal->show_calls);
 		$ss->assign('show_tasks',$this->cal->show_tasks);

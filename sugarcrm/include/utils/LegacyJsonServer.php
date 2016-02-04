@@ -262,7 +262,7 @@ class LegacyJsonServer
 
         foreach ($query_obj['conditions'] as $condition) {
             if ($condition['name'] == 'user_hash' ||
-                ($condition['name'] == 'account_name' && ($module === "Users" || $module === "Addresses"))) {
+                ($condition['name'] == 'account_name' && ($module === "Users" || $module === "Addressees"))) {
                 continue;
             }
             if ($condition['name'] == 'email1' or $condition['name'] == 'email2' or $condition['name'] == 'email') {

@@ -9,9 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/SugarFields/Fields/Collection/SugarFieldCollection.php');
-require_once('include/SugarFields/Fields/Collection/ViewSugarFieldCollection.php');
+require_once 'include/SugarFields/Fields/Collection/SugarFieldCollection.php';
+require_once 'include/SugarFields/Fields/Collection/ViewSugarFieldCollection.php';
 require_once 'modules/Teams/TeamSetManager.php';
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 
@@ -239,8 +241,8 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 	    	$this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, $full_form_values);
 
 	    	//Save the search type (any, all, exact)
-	        if(isset($_REQUEST["{$this->name}_type"])) {
-	        	$this->displayParams['searchType'] = $_REQUEST["{$this->name}_type"];
+	        if (isset($_REQUEST["{$this->name}_type"])) {
+	        	$this->displayParams['searchType'] = InputValidation::getService()->getValidInputRequest($this->name.'_type');
 	        }
         } else {
             //Don't pre-populate the search form

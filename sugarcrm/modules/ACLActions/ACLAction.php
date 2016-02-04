@@ -47,9 +47,8 @@ class ACLAction  extends SugarBean
 
                 $action = BeanFactory::getBean('ACLActions');
                 $query = "SELECT * FROM " . $action->table_name . " WHERE name='$action_name' AND category = '$category' AND acltype='$type' AND deleted=0 ";
-                $result = $db->query($query);
+                $row = $db->fetchOne($query);
                 //only add if an action with that name and category don't exist
-                $row=$db->fetchByAssoc($result);
                 if (empty($row)) {
                     $action->name = $action_name;
                     $action->category = $category;
@@ -398,12 +397,19 @@ class ACLAction  extends SugarBean
 
         }
         if(!empty(self::$acls[$user_id][$category][$type][$action])){
+            $actionAccess = self::$acls[$user_id][$category][$type][$action]['aclaccess'];
+
             if (!empty(self::$acls[$user_id][$category][$type]['admin']) && self::$acls[$user_id][$category][$type]['admin']['aclaccess'] >= ACL_ALLOW_ADMIN)
             {
+                $tbaConfigurator = new TeamBasedACLConfigurator();
+                if ($tbaConfigurator->isValidAccess($actionAccess)) {
+                    // The TBA is not suppressed by admin access.
+                    return $actionAccess;
+                }
                 // If you have admin access for a module, all ACL's are allowed
                 return self::$acls[$user_id][$category][$type]['admin']['aclaccess'];
             }
-            return  self::$acls[$user_id][$category][$type][$action]['aclaccess'];
+            return $actionAccess;
         }
     }
 

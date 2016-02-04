@@ -268,7 +268,7 @@ class IBMDB2Manager  extends DBManager
 	 */
 	protected function freeDbResult($dbResult)
 	{
-		if(!empty($dbResult))
+		if(is_resource($dbResult))
 			db2_free_result($dbResult);
 	}
 
@@ -666,6 +666,7 @@ class IBMDB2Manager  extends DBManager
 		}
 		$this->ignoreErrors = false;
 		$this->log->info("Connect:".$this->database);
+
 		return !empty($this->database);
 	}
 

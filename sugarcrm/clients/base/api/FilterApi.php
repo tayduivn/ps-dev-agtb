@@ -425,7 +425,7 @@ class FilterApi extends SugarApi
      *
      * This method is now deprecated. Use getFilterListCount instead.
      *
-     * @deprecated Since 7.7.0. Will be removed in 7.8.0.
+     * @deprecated Since 7.7.0. Will be removed in 7.9.0.
      * @param ServiceBase $api
      * @param array $args
      * @return Object The number of filtered/unfiltered records for the module
@@ -729,14 +729,14 @@ class FilterApi extends SugarApi
 
             $q->from->load_relationship($linkName);
             if(empty($q->from->$linkName)) {
-                throw new SugarApiExceptionInvalidParameter("Invalid link $relatedTable for field $field");
+                throw new SugarApiExceptionInvalidParameter("Invalid link $linkName for field $field");
             }
 
             if($q->from->$linkName->getType() == "many") {
-                // FIXME: we have a problem here: we should allow 'many' links for related to match against parent object
-                // but allowing 'many' in  other links may lead to duplicates. So for now we allow 'many'
+                // FIXME TY-1192: we have a problem here: we should allow 'many' links for related to match against
+                // parent object but allowing 'many' in  other links may lead to duplicates. So for now we allow 'many'
                 // but we should figure out how to find if 'many' is permittable or not.
-                // throw new SugarApiExceptionInvalidParameter("Cannot use condition against multi-link $relatedTable");
+                // throw new SugarApiExceptionInvalidParameter("Cannot use condition against multi-link $linkName");
             }
 
             $join = $q->join($linkName, array('joinType' => 'LEFT'));

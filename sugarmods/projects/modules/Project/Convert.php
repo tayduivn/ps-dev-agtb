@@ -79,7 +79,6 @@ $sugar_smarty->assign('name', $focus->name);
 
 $sugar_smarty->assign('THEME', $theme);
 $sugar_smarty->assign('IMAGE_PATH', $image_path);
-$sugar_smarty->assign('PRINT_URL', "index.php?".$GLOBALS['request_string']);
 $sugar_smarty->assign('ID', $focus->id);
 $sugar_smarty->assign('NAME', $focus->name);
 
