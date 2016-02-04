@@ -423,6 +423,12 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
         $eventQuery->from($eventBean);
         $eventQuery->where()->equals('calendar_id', $calendarId);
 
+        $interval = $this->getCurrentUser()->getPreference('caldav_interval');
+        if ($interval != 0) {
+            $syncDate = $this->getDateTime()->modify('- ' . $interval)->format('U');
+            $eventQuery->where()->gte('last_occurence', $syncDate);
+        }
+
         if ($componentType) {
             $eventQuery->where()->equals('component_type', $componentType);
         }
