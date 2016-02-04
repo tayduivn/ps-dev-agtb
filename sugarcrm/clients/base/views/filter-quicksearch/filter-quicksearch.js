@@ -34,6 +34,14 @@
         this.listenTo(this.layout, 'filter:clear:quicksearch', this.clearInput);
         this.listenTo(this.layout, 'filter:change:module', this.updatePlaceholder);
 
+        /**
+         * The previous search string. This is used to prevent searches from
+         * being triggered on keyup if the search string is not changed.
+         *
+         * @type {string}
+         */
+        this.currentSearch = '';
+
         //shortcut keys
         app.shortcuts.register({
             id: 'Filter:Search',
