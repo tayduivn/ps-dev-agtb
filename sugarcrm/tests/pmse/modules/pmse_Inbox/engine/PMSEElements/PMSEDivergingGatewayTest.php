@@ -55,12 +55,12 @@ class PMSEDivergingGatewayTest extends PHPUnit_Framework_TestCase
         $this->divergingGateway->setLogger($this->loggerMock);
 
         $mockBean = $this->getMockBuilder('SugarBean')
-                ->setMethods(array('get_full_list'))
+                ->setMethods(array('fetchFromQuery'))
                 ->disableOriginalConstructor()
                 ->getMock();
 
         $mockBean->expects($this->once())
-                ->method('get_full_list')
+                ->method('fetchFromQuery')
                 ->will($this->returnValue(array()));
 
         $caseFlowHandler = $this->getMockBuilder('PMSECaseFlowHandler')
