@@ -21,6 +21,9 @@ use Sugarcrm\Sugarcrm\Socket\Client;
  */
 class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
 {
+    const SITE_URL = 'http://dummy-site';
+    const SOCKET_SERVER_URL = 'http://dummy-socket-server';
+
     /**
      * Data provider for testRecipient()
      *
@@ -398,6 +401,12 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $config = $this->getMock('SugarConfig');
 
+        $config->method('get')->will($this->returnValueMap(array(
+            array('websockets.server.url', null, SocketClientTest::SOCKET_SERVER_URL),
+            array('site_url', null, SocketClientTest::SITE_URL),
+
+        )));
+
         $client->expects($this->any())->method('getHttpHelper')->willReturn($httpHelper);
         $client->expects($this->any())->method('getSugarConfig')->willReturn($config);
 
@@ -427,6 +436,12 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $config = $this->getMock('SugarConfig');
 
+        $config->method('get')->will($this->returnValueMap(array(
+            array('websockets.server.url', null, SocketClientTest::SOCKET_SERVER_URL),
+            array('site_url', null, SocketClientTest::SITE_URL),
+
+        )));
+
         $client->expects($this->any())->method('getHttpHelper')->willReturn($httpHelper);
         $client->expects($this->any())->method('getSugarConfig')->willReturn($config);
 
@@ -443,6 +458,57 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
             );
 
         $client->send($message, $args);
+    }
+
+    /**
+     * Tests sending message depending is Socket server configured
+     *
+     * @param boolean $isConfigured
+     * @param boolean $send
+     * @param boolean $returned
+     * @dataProvider providerCheckIsConfigured
+     * @covers ::push
+     */
+    public function testSendIsConfigured($isConfigured, $send, $returned)
+    {
+        $httpHelper = $this->getMock('Sugarcrm\\Sugarcrm\\Socket\\HttpHelper');
+        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
+        $client = $this->getMock(
+            'Sugarcrm\\Sugarcrm\\Socket\\Client',
+            array(
+                'getHttpHelper',
+                'getSugarConfig',
+                'retrieveToken',
+            )
+        );
+
+        $config = $this->getMock('SugarConfig');
+
+        $config->method('get')->will($this->returnValueMap(array(
+            array('websockets.server.url', null, $isConfigured ? SocketClientTest::SOCKET_SERVER_URL : ''),
+            array('site_url', null, SocketClientTest::SITE_URL),
+
+        )));
+
+        $client->expects($this->any())->method('getHttpHelper')->willReturn($httpHelper);
+        $client->expects($this->any())->method('getSugarConfig')->willReturn($config);
+
+        $httpHelper->expects($this->exactly($send ? 1 : 0))->method('getRemoteData');
+        $httpHelper->method('isSuccess')->willReturn(true);
+
+        $this->assertEquals($returned, $client->send('test message'));
+    }
+
+    /**
+     * (is Socket server configured, is HttpHelper::getRemoteData() called, returned)
+     * @return array
+     */
+    public function providerCheckIsConfigured()
+    {
+        return array(
+            'Socket server is not configured' => array(false, false, false),
+            'Socket server is configured' => array(true, true, true),
+        );
     }
 
     /**
@@ -513,6 +579,12 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $config = $this->getMock('SugarConfig');
 
+        $config->method('get')->will($this->returnValueMap(array(
+            array('websockets.server.url', null, SocketClientTest::SOCKET_SERVER_URL),
+            array('site_url', null, SocketClientTest::SITE_URL),
+
+        )));
+
         $client->expects($this->any())->method('getHttpHelper')->willReturn($httpHelper);
         $client->expects($this->any())->method('getSugarConfig')->willReturn($config);
 
@@ -541,6 +613,27 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
     public function testGetInstance()
     {
         $this->assertInstanceOf('Sugarcrm\\Sugarcrm\\Socket\\Client', Client::getInstance());
+    }
+
+    /**
+     * Tests getInstance() factory method resets class properties to default values
+     *
+     * @covers ::getInstance
+     */
+    public function testGetInstanceResetsItself()
+    {
+        $expected = array(
+            'type' => Client::RECIPIENT_ALL,
+            'id' => null,
+            'channel' => null,
+        );
+
+        $client = Client::getInstance();
+        $client->recipient(Client::RECIPIENT_TEAM_ID, 'team-id');
+        $client->channel('channel-id');
+
+        $anotherClient = Client::getInstance();
+        $this->assertAttributeEquals($expected, 'to', $anotherClient);
     }
 
     /**
@@ -674,6 +767,12 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $config = $this->getMock('SugarConfig');
 
+        $config->method('get')->will($this->returnValueMap(array(
+            array('websockets.server.url', null, SocketClientTest::SOCKET_SERVER_URL),
+            array('site_url', null, SocketClientTest::SITE_URL),
+
+        )));;
+
         $client->expects($this->any())->method('getHttpHelper')->willReturn($httpHelper);
         $client->expects($this->any())->method('getSugarConfig')->willReturn($config);
         $client->expects($this->any())->method('retrieveToken')->willReturn($dummyToken);
@@ -707,10 +806,14 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $config = $this->getMock('SugarConfig');
 
+        $config->method('get')->will($this->returnValueMap(array(
+            array('websockets.server.url', null, SocketClientTest::SOCKET_SERVER_URL),
+            array('site_url', null, $url),
+
+        )));
+
         $client->expects($this->any())->method('getHttpHelper')->willReturn($httpHelper);
         $client->expects($this->any())->method('getSugarConfig')->willReturn($config);
-
-        $config->expects($this->at(0))->method('get')->with($this->equalTo('site_url'))->willReturn($url);
 
         $httpHelper->expects($this->once())
             ->method('getRemoteData')
@@ -741,13 +844,14 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $config = $this->getMock('SugarConfig');
 
+        $config->method('get')->will($this->returnValueMap(array(
+            array('websockets.server.url', null, $serverUrl),
+            array('site_url', null, SocketClientTest::SITE_URL),
+
+        )));
+
         $client->expects($this->any())->method('getHttpHelper')->willReturn($httpHelper);
         $client->expects($this->any())->method('getSugarConfig')->willReturn($config);
-
-        $config->expects($this->at(1))
-            ->method('get')
-            ->with($this->equalTo('websockets.server.url'))
-            ->willReturn($serverUrl);
 
         $httpHelper->expects($this->once())
             ->method('getRemoteData')
