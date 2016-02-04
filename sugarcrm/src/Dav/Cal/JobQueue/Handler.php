@@ -90,6 +90,7 @@ class Handler implements RunnableInterface
             $calDavBean->getSynchronizationObject()->setJobCounter();
             $queueItem->status = \CalDavQueue::STATUS_COMPLETED;
             $queueItem->save();
+            $calDavBean->retrieve(-1, true, false);
         }
 
         return \SchedulersJob::JOB_SUCCESS;
@@ -162,7 +163,7 @@ class Handler implements RunnableInterface
                 $exportData = $adapter->verifyExportAfterImport($importData, $exportData, $bean);
                 if ($exportData) {
                     $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();
-                    $calDavBean->getQueueObject()->export($importData, $saveCounter);
+                    $calDavBean->getQueueObject()->export($exportData, $saveCounter);
                 }
             }
         }

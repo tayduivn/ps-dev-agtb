@@ -377,7 +377,7 @@ abstract class AdapterAbstract implements AdapterInterface
             if ($invitees && !$this->checkBeanInvitees($invitees, $bean)) {
                 throw new ImportException("Conflict with Bean Invitees");
             }
-            if (isset($changedFields['rrule']) && !$this->checkBeanRecurrence($changedFields['rrule'], $bean)) {
+            if (isset($changedFields['rrule_action']) && !$this->checkBeanRecurrence($changedFields, $bean)) {
                 throw new ImportException("Conflict with Bean recurrence");
             }
         }
@@ -436,11 +436,13 @@ abstract class AdapterAbstract implements AdapterInterface
         } elseif ($action != 'restore') {
             $data[2] = array();
         }
-        if (isset($changedFields['rrule'])) {
-            if ($this->setBeanRecurrence($changedFields['rrule'], $bean)) {
+        if (isset($changedFields['rrule_action'])) {
+            if ($this->setBeanRecurrence($changedFields, $bean)) {
                 $isChanged = true;
             } elseif ($action != 'restore') {
-                unset($data[1]['rrule']);
+                foreach (RecurringHelper::$rruleFieldList as $rRuleField) {
+                    unset($data[1][$rRuleField]);
+                }
             }
         }
 
@@ -613,83 +615,125 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
 
-        if (isset($exportFields['repeat_type']) && isset($importFields['rrule']['frequency'])) {
+        if (isset($exportFields['repeat_type']) && isset($importFields['rrule_frequency'])) {
             $frequencyMap = new CalDavStatus\IntervalMap();
-            $sugarValue = $frequencyMap->getSugarValue($importFields['rrule']['frequency'][0]);
+            $sugarValue = $frequencyMap->getSugarValue($importFields['rrule_frequency'][0]);
             if ($exportFields['repeat_type'][0] == $sugarValue) {
                 unset($exportFields['repeat_type']);
-                unset($importFields['rrule']['frequency']);
+                unset($importFields['rrule_frequency']);
             }
         }
 
-        if (isset($exportFields['repeat_count']) && isset($importFields['rrule']['count'])) {
-            if ($exportFields['repeat_count'][0] == $importFields['rrule']['count'][0]) {
+        if (isset($exportFields['repeat_count']) && isset($importFields['rrule_count'])) {
+            if ($exportFields['repeat_count'][0] == $importFields['rrule_count'][0]) {
                 unset($exportFields['repeat_count']);
-                unset($importFields['rrule']['count']);
+                unset($importFields['rrule_count']);
             }
         }
 
-        if (isset($exportFields['repeat_interval']) && isset($importFields['rrule']['interval'])) {
-            if ($exportFields['repeat_interval'][0] == $importFields['rrule']['interval'][0]) {
+        if (isset($exportFields['repeat_interval']) && isset($importFields['rrule_interval'])) {
+            if ($exportFields['repeat_interval'][0] == $importFields['rrule_interval'][0]) {
                 unset($exportFields['repeat_interval']);
-                unset($importFields['rrule']['interval']);
+                unset($importFields['rrule_interval']);
             }
         }
 
-        if (isset($exportFields['repeat_until']) && isset($importFields['rrule']['until'])) {
-            if ($exportFields['repeat_until'][0] == $importFields['rrule']['until'][0]) {
+        if (isset($exportFields['repeat_until']) && isset($importFields['rrule_until'])) {
+            if ($exportFields['repeat_until'][0] == $importFields['rrule_until'][0]) {
                 unset($exportFields['repeat_until']);
-                unset($importFields['rrule']['until']);
+                unset($importFields['rrule_until']);
             }
         }
 
-        if (isset($exportFields['repeat_dow']) && isset($importFields['rrule']['byday'])) {
+        if (isset($exportFields['repeat_dow']) && isset($importFields['rrule_byday'])) {
             $sugarValue = '';
-            $dayMap = new CalDavStatus\DayMap();
-            foreach ($importFields['rrule']['byday'][0] as $day) {
-                $sugarValue .= $dayMap->getSugarValue($day);
+            if (!is_null($importFields['rrule_byday'][0])) {
+                $dayMap = new CalDavStatus\DayMap();
+                foreach ($importFields['rrule_byday'][0] as $day) {
+                    $sugarValue .= $dayMap->getSugarValue($day);
+                }
             }
 
             if ($exportFields['repeat_dow'][0] == $sugarValue) {
                 unset($exportFields['repeat_dow']);
-                unset($importFields['rrule']['byday']);
-            }
-        }
-
-        if (isset($exportFields['repeat_unit']) && isset($importFields['rrule']['byday'])) {
-            $monthlyDayMap = new CalDavStatus\MonthlyDayMap();
-            if (count($importFields['rrule']['byday'][0]) == 1) {
-                $weekDay = substr($importFields['rrule']['byday'][0][0], -2);
-                if ($exportFields['repeat_unit'][0] == $monthlyDayMap->getSugarValue($weekDay)) {
-                    unset($exportFields['repeat_unit']);
-                    unset($importFields['rrule']['byday']);
-                }
-            } else {
+                unset($importFields['rrule_byday']);
                 unset($exportFields['repeat_unit']);
-                unset($importFields['rrule']['byday']);
             }
         }
 
-        if (isset($exportFields['repeat_days']) && isset($importFields['rrule']['bymonthday'])) {
+        if (isset($exportFields['repeat_unit']) && isset($importFields['rrule_byday'])) {
+            $monthlyDayMap = new CalDavStatus\MonthlyDayMap();
+            $dayPositionMap = new CalDavStatus\DayPositionMap();
+            $byDayCount = count($importFields['rrule_byday'][0]);
+            if (isset($exportFields['repeat_ordinal'])) {
+                $unsetFields = false;
+                switch ($byDayCount) {
+                    case 1:
+                        $weekDay = substr($importFields['rrule_byday'][0][0], - 2);
+                        $dayPosition =
+                            substr($importFields['rrule_byday'][0][0], 0, strlen($importFields['rrule_byday'][0][0]) - 2);
+                        if ($exportFields['repeat_unit'][0] == $monthlyDayMap->getSugarValue($weekDay) &&
+                            $exportFields['repeat_ordinal'][0] == $dayPositionMap->getSugarValue($dayPosition)
+                        ) {
+                            unset($importFields['rrule_bysetpos']);
+                            unset($exportFields['repeat_ordinal']);
+                            $unsetFields = true;
+                        }
+
+                        break;
+                    case 5:
+                        $unsetFields = $exportFields['repeat_unit'][0] == 'WD';
+                        break;
+                    case 2:
+                        $unsetFields = $exportFields['repeat_unit'][0] == 'WE';
+                        break;
+                    case 7:
+                        $unsetFields = $exportFields['repeat_unit'][0] == 'Day';
+                        break;
+                }
+                if ($unsetFields) {
+                    unset($importFields['rrule_bymonthday']);
+                    unset($importFields['rrule_byday']);
+                    unset($exportFields['repeat_unit']);
+                    unset($exportFields['repeat_dow']);
+                    unset($exportFields['repeat_days']);
+                }
+            }
+        }
+
+        if (isset($exportFields['repeat_days']) && isset($importFields['rrule_bymonthday'])) {
             $aDays = explode(',', $exportFields['repeat_days'][0]);
-            if ($aDays == $importFields['rrule']['bymonthday'][0]) {
+            if ((empty($exportFields['repeat_days'][0]) && empty($importFields['rrule_bymonthday'][0])) ||
+                $aDays == $importFields['rrule_bymonthday'][0]
+            ) {
+                unset($importFields['rrule_bymonthday']);
+                unset($importFields['rrule_bysetpos']);
+                unset($exportFields['repeat_ordinal']);
                 unset($exportFields['repeat_days']);
-                unset($importFields['rrule']['bymonthday']);
             }
         }
 
-        if (isset($exportFields['repeat_ordinal']) && isset($importFields['rrule']['bysetpos'])) {
+        if (isset($exportFields['repeat_ordinal']) && isset($importFields['rrule_bysetpos'])) {
             $map = new CalDavStatus\DayPositionMap();
-            if ($exportFields['repeat_ordinal'][0] == $map->getSugarValue($importFields['rrule']['bysetpos'][0][0])) {
+            if ((empty($exportFields['repeat_ordinal'][0]) && empty($importFields['rrule_bysetpos'][0])) ||
+                $exportFields['repeat_ordinal'][0] == $map->getSugarValue($importFields['rrule_bysetpos'][0][0])
+            ) {
                 unset($exportFields['repeat_ordinal']);
-                unset($importFields['rrule']['bysetpos']);
+                unset($importFields['rrule_bysetpos']);
             }
         }
         unset($exportFields['repeat_selector']);
         unset($exportFields['repeat_parent_id']);
 
-        if (isset($importFields['rrule']) && count($importFields['rrule']) == 1) {
-            unset($importFields['rrule']);
+        $rRuleSetCount = 0;
+        foreach (RecurringHelper::$rruleFieldList as $rRuleField) {
+            if (isset($importFields[$rRuleField])) {
+                $rRuleSetCount ++;
+            }
+        }
+
+        if ($rRuleSetCount == 1) {
+            unset($importFields['rrule_action']);
         }
     }
 
@@ -1424,27 +1468,35 @@ abstract class AdapterAbstract implements AdapterInterface
         $dayPositionMap = new CalDavStatus\DayPositionMap();
         $monthlyDayMap = new CalDavStatus\MonthlyDayMap();
 
-        if (isset($value['frequency'][1]) && $bean->repeat_type !=  $frequencyMap->getSugarValue($value['frequency'][1])) {
+        if (isset($value['rrule_frequency']) && count($value['rrule_frequency']) == 2 &&
+            $bean->repeat_type != $frequencyMap->getSugarValue($value['rrule_frequency'][1])
+        ) {
             return false;
         }
 
-        if (isset($value['interval'][1]) && $bean->repeat_interval != $value['interval'][1]) {
+        if (isset($value['rrule_interval']) && count($value['rrule_interval']) == 2 &&
+            $bean->repeat_interval != $value['rrule_interval'][1]
+        ) {
             return false;
         }
 
-        if (isset($value['count'][1]) && $bean->repeat_count != $value['count'][1]) {
+        if (isset($value['rrule_count']) && count($value['rrule_count']) == 2 &&
+            $bean->repeat_count != $value['rrule_count'][1]
+        ) {
             return false;
         }
 
         $untilDate =
             $bean->repeat_until ? $this->getDateTimeHelper()->sugarDateToUTC($bean->repeat_until)->asDbDate() : '';
-        if (isset($value['until'][1]) && $untilDate != $value['until'][1]) {
+        if (isset($value['rrule_until']) && count($value['rrule_until']) == 2 &&
+            $untilDate != $value['rrule_until'][1]
+        ) {
             return false;
         }
 
-        if (isset($value['byday'][1])) {
+        if (isset($value['rrule_byday']) && count($value['rrule_byday']) == 2) {
             if ($bean->repeat_type == 'Monthly') {
-                $daysData = $value['byday'][1];
+                $daysData = $value['rrule_byday'][1];
                 if (count($daysData) == 1) {
                     $weekDay = substr($daysData[0], - 2);
                     $dayPosition = substr($daysData[0], 0, strlen($daysData[0]) - 2);
@@ -1457,7 +1509,7 @@ abstract class AdapterAbstract implements AdapterInterface
                 }
             } else {
                 $sugarValue = '';
-                foreach ($value['byday'][1] as $day) {
+                foreach ($value['rrule_byday'][1] as $day) {
                     $sugarValue .= $dayMap->getSugarValue($day);
                 }
                 if ($bean->repeat_dow != $sugarValue) {
@@ -1466,9 +1518,9 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
 
-        if (isset($value['bymonthday'][1])) {
+        if (isset($value['rrule_bymonthday']) && count($value['rrule_bymonthday']) == 2) {
             $aDays = $bean->repeat_days ? explode(',', $bean->repeat_days) : array();
-            if ($aDays != $value['bymonthday'][1]) {
+            if ($aDays != $value['rrule_bymonthday'][1]) {
                 return false;
             }
         }
@@ -1485,21 +1537,29 @@ abstract class AdapterAbstract implements AdapterInterface
     protected function setBeanRecurrence(array $value, \SugarBean $bean)
     {
         $calendarEvents = $this->getCalendarEvents();
-        if ($value['action'] == 'deleted') {
+        if ($value['rrule_action'] == 'deleted') {
+            if (!$calendarEvents->isEventRecurring($bean)) {
+                return false;
+            }
             $bean->repeat_type = '';
             $bean->repeat_interval = 0;
             $bean->repeat_count = 0;
             $bean->repeat_until = '';
             $bean->repeat_dow = '';
+            $bean->repeat_selector = 'None';
+            $bean->repeat_days = '';
+            $bean->repeat_ordinal = '';
+            $bean->repeat_unit = '';
             $calendarEvents->markRepeatDeleted($bean);
             return true;
         }
 
-        $this->getRecurringHelper()->arrayToBean($value, $bean);
+        if ($this->getRecurringHelper()->arrayToBean($value, $bean)) {
+            $this->setRecurrenceChildrenOrder($bean);
+            return true;
+        }
 
-        $this->setRecurrenceChildrenOrder($bean);
-
-        return true;
+        return false;
     }
 
     /**

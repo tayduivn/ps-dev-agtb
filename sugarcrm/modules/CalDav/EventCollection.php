@@ -1464,60 +1464,60 @@ class CalDavEventCollection extends SugarBean
 
         if ($oldRRule) {
             if (!$currentRRule) {
-                $changedFields['action'] = 'deleted';
-                $changedFields['frequency'] = array(null, $oldRRule->getFrequency());
-                $changedFields['interval'] = array(null, $oldRRule->getInterval());
-                $changedFields['count'] = array(null, $oldRRule->getCount());
+                $changedFields['rrule_action'] = 'deleted';
+                $changedFields['rrule_frequency'] = array(null, $oldRRule->getFrequency());
+                $changedFields['rrule_interval'] = array(null, $oldRRule->getInterval());
+                $changedFields['rrule_count'] = array(null, $oldRRule->getCount());
                 $oldUntil = $oldRRule->getUntil() ? $oldRRule->getUntil()->asDbDate() : null;
-                $changedFields['until'] = array(null, $oldUntil);
-                $changedFields['byday'] = array(array(), $oldRRule->getByDay());
-                $changedFields['bymonthday'] = array(array(), $oldRRule->getByDay());
-                $changedFields['bysetpos'] = array(array(), $oldRRule->getBySetPos());
+                $changedFields['rrule_until'] = array(null, $oldUntil);
+                $changedFields['rrule_byday'] = array(null, $oldRRule->getByDay());
+                $changedFields['rrule_bymonthday'] = array(null, $oldRRule->getByMonthDay());
+                $changedFields['rrule_bysetpos'] = array(null, $oldRRule->getBySetPos());
                 return $changedFields;
             }
 
             if ($oldRRule->getObject()->getParts() != $currentRRule->getObject()->getParts()) {
-                $changedFields['action'] = 'updated';
+                $changedFields['rrule_action'] = 'updated';
                 if ($oldRRule->getFrequency() != $currentRRule->getFrequency()) {
-                    $changedFields['frequency'] = array($currentRRule->getFrequency(), $oldRRule->getFrequency());
+                    $changedFields['rrule_frequency'] = array($currentRRule->getFrequency(), $oldRRule->getFrequency());
                 }
 
                 if ($oldRRule->getInterval() != $currentRRule->getInterval()) {
-                    $changedFields['interval'] = array($currentRRule->getInterval(), $oldRRule->getInterval());
+                    $changedFields['rrule_interval'] = array($currentRRule->getInterval(), $oldRRule->getInterval());
                 }
 
                 if ($oldRRule->getCount() != $currentRRule->getCount()) {
-                    $changedFields['count'] = array($currentRRule->getCount(), $oldRRule->getCount());
+                    $changedFields['rrule_count'] = array($currentRRule->getCount(), $oldRRule->getCount());
                 }
 
                 if ($oldRRule->getUntil() != $currentRRule->getUntil()) {
                     $oldUntil = $oldRRule->getUntil() ? $oldRRule->getUntil()->asDbDate() : null;
                     $currentUntil = $currentRRule->getUntil() ? $currentRRule->getUntil()->asDbDate() : null;
-                    $changedFields['until'] = array($currentUntil, $oldUntil);
+                    $changedFields['rrule_until'] = array($currentUntil, $oldUntil);
                 }
 
                 if ($oldRRule->getByDay() != $currentRRule->getByDay()) {
-                    $changedFields['byday'] = array($currentRRule->getByDay(), $oldRRule->getByDay());
+                    $changedFields['rrule_byday'] = array($currentRRule->getByDay(), $oldRRule->getByDay());
                 }
 
                 if ($oldRRule->getByMonthDay() != $currentRRule->getByMonthDay()) {
-                    $changedFields['bymonthday'] = array($currentRRule->getByMonthDay(), $oldRRule->getByMonthDay());
+                    $changedFields['rrule_bymonthday'] = array($currentRRule->getByMonthDay(), $oldRRule->getByMonthDay());
                 }
 
                 if ($oldRRule->getBySetPos() != $currentRRule->getBySetPos()) {
-                    $changedFields['bysetpos'] = array($currentRRule->getBySetPos(), $oldRRule->getBySetPos());
+                    $changedFields['rrule_bysetpos'] = array($currentRRule->getBySetPos(), $oldRRule->getBySetPos());
                 }
             }
         } elseif ($currentRRule) {
-            $changedFields['action'] = 'added';
-            $changedFields['frequency'] = array($currentRRule->getFrequency());
-            $changedFields['interval'] = array($currentRRule->getInterval());
-            $changedFields['count'] = array($currentRRule->getCount());
+            $changedFields['rrule_action'] = 'added';
+            $changedFields['rrule_frequency'] = array($currentRRule->getFrequency());
+            $changedFields['rrule_interval'] = array($currentRRule->getInterval());
+            $changedFields['rrule_count'] = array($currentRRule->getCount());
             $until = $currentRRule->getUntil();
-            $changedFields['until'] = $until ? array($until->asDbDate()) : array(null);
-            $changedFields['byday'] = array($currentRRule->getByDay());
-            $changedFields['bymonthday'] = array($currentRRule->getByMonthDay());
-            $changedFields['bysetpos'] = array($currentRRule->getBySetPos());
+            $changedFields['rrule_until'] = $until ? array($until->asDbDate()) : array(null);
+            $changedFields['rrule_byday'] = array($currentRRule->getByDay());
+            $changedFields['rrule_bymonthday'] = array($currentRRule->getByMonthDay());
+            $changedFields['rrule_bysetpos'] = array($currentRRule->getBySetPos());
         }
 
         return $changedFields;
@@ -1549,7 +1549,7 @@ class CalDavEventCollection extends SugarBean
         $rRuleParams = $this->getRRuleDiff($this, $oldCollection);
 
         $mainParentChanged = $updateAllChildren = false;
-        if (isset($rRuleParams['action'])) {
+        if (isset($rRuleParams['rrule_action'])) {
             if ($oldParent) {
                 $oldCustomizedParent = $oldCollection->getChild($oldParent->getStartDate());
                 if ($oldCustomizedParent && $oldCustomizedParent->isCustomized()) {
@@ -1560,10 +1560,8 @@ class CalDavEventCollection extends SugarBean
         }
 
         $changedFields = $this->getEventDiff($currentParent, $oldParent);
+        $changedFields = array_merge($changedFields, $rRuleParams);
         $invites = $this->getParticipantsDiff($currentParent, $oldParent);
-        if (isset($rRuleParams['action'])) {
-            $changedFields['rrule'] = $rRuleParams;
-        }
 
         $filter = true;
         if (empty($data)) {
