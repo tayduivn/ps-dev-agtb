@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
@@ -24,21 +35,22 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
         $calendarId = 'cal_not_found_id';
         $sugarQueryMock = $this->getMock('SugarQuery', array('execute'));
 
-        $calendarDataMock = $this->getMock('\Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData', array('getSugarQuery', 'getDateTime', 'getCurrentUser'));
+        $calendarDataMock = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData', array('getSugarQuery', 'getDateTime', 'getCurrentUser'));
         $sugarQueryMock->expects($this->never())->method('execute');
         $this->assertEquals(array(), $calendarDataMock->getCalendarObjects($calendarId));
     }
 
     /**
-     * Provider for testGetCalendarObjectsIntervalIsZero.
+     * Provider for testGetCalendarObjects.
      *
+     * @see testGetCalendarObjects
      * @return array
      */
-    public function getGetCalendarObjectsIntervalIsZero()
+    public function getCalendarObjectsProvider()
     {
         return array(
-            array(
-                'date' => '2015-10-30 12:12:12',
+            'gettingObjectswithoutInterval' => array(
+                'date' => '',
                 'calendarId' => 'cal_id',
                 'interval' => '0',
                 'resultExecute' => array(
@@ -65,55 +77,9 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
                         'component' => 'componenttype'
                     ),
                 ),
+                'expectedDate' => 0
             ),
-        );
-    }
-
-    /**
-     * Test method getCalendarObjects if calendar found because interval is zero.
-     *
-     * @param string $date
-     * @param string $calendarId
-     * @param string|integer $interval
-     * @param array $resultExecute
-     * @param array $expected
-     *
-     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::getCalendarObjects
-     * @dataProvider getGetCalendarObjectsIntervalIsZero
-     */
-    public function testGetCalendarObjectsIntervalIsZero($date, $calendarId, $interval, $resultExecute, $expected)
-    {
-        $currentUserMock = $this->getMock('\User', array('getPreference'));
-        $sugarQueryMock = $this->getMock('SugarQuery', array('execute'));
-
-        $calendarDataMock = $this->getMock('\Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData', array('getSugarQuery', 'getDateTime', 'getCurrentUser'));
-
-        $currentUserMock->expects($this->once())->method('getPreference')->with($this->equalTo('caldav_interval'))->willReturn($interval);
-
-        $sugarQueryMock->expects($this->once())->method('execute')->will(
-            $this->returnCallback(function($type, $encode) use (&$query, $sugarQueryMock, $resultExecute) {
-                $query = $sugarQueryMock->compileSql($sugarQueryMock);
-                return $resultExecute;
-            })
-        );
-
-        $calendarDataMock->expects($this->once())->method('getSugarQuery')->willReturn($sugarQueryMock);
-        $calendarDataMock->expects($this->once())->method('getCurrentUser')->willReturn($currentUserMock);
-
-        $this->assertEquals($expected, $calendarDataMock->getCalendarObjects($calendarId));
-        $this->assertContains('caldav_events.calendar_id = \'' . $calendarId, $query);
-        $this->assertNotContains('caldav_events.last_occurence >= ' . strtotime($date), $query);
-    }
-
-    /**
-     * Provider for testGetCalendarObjectsIntervalIsPresent.
-     *
-     * @return array
-     */
-    public function getCalendarObjectsIntervalIsPresentProvider()
-    {
-        return array(
-            array(
+            'gettingObjectswithInterval' => array(
                 'date' => '2015-10-30 12:12:12',
                 'calendarId' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
                 'interval' => '6 month',
@@ -147,7 +113,7 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test method getCalendarObjects if calendar found because interval is present.
+     * Test method getCalendarObjects if calendar found because interval is zero or present.
      *
      * @param string $date
      * @param string $calendarId
@@ -157,9 +123,9 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
      * @param int $expectedDate
      *
      * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::getCalendarObjects
-     * @dataProvider getCalendarObjectsIntervalIsPresentProvider
+     * @dataProvider getCalendarObjectsProvider
      */
-    public function testGetCalendarObjectsIntervalIsPresent(
+    public function testGetCalendarObjects(
         $date,
         $calendarId,
         $interval,
@@ -168,30 +134,35 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
         $expectedDate
     )
     {
-        $currentUserMock = $this->getMock('\User', array('getPreference'));
-        $sugarQueryMock = $this->getMock('SugarQuery', array('execute'));
-
         $dateTimeMock = new DateTime($date, new DateTimeZone('UTC'));
 
-        $calendarDataMock = $this->getMock('\Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData', array('getSugarQuery', 'getDateTime', 'getCurrentUser'));
+        $currentUserMock            = $this->getMock('User');
+        $sugarQueryBuilderWhereMock = $this->getMock('SugarQuery_Builder_Where', array(), array(), '', false);
+        $sugarQueryMock             = $this->getMock('SugarQuery', array(), array(), '', false);
+        $eventMock                  = $this->getMock('CalDavEventCollection', array(), array(), '', false);
 
-        $currentUserMock->expects($this->once())->method('getPreference')->with($this->equalTo('caldav_interval'))->willReturn($interval);
+        $calendarDataMock = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData', array('getEventsBean', 'getSugarQuery', 'getCurrentUser', 'getDateTime'));
+        $calendarDataMock->method('getEventsBean')->willReturn($eventMock);
+        $calendarDataMock->method('getSugarQuery')->willReturn($sugarQueryMock);
+        $calendarDataMock->method('getCurrentUser')->willReturn($currentUserMock);
+        $calendarDataMock->method('getDateTime')->willReturn($dateTimeMock);
 
-        $calendarDataMock->expects($this->once())->method('getDateTime')->willReturn($dateTimeMock);
+        $sugarQueryMock->expects($this->once())->method('from')->with($this->equalTo($eventMock));
+        $sugarQueryMock->method('where')->willReturn($sugarQueryBuilderWhereMock);
 
-        $sugarQueryMock->expects($this->once())->method('execute')->will(
-            $this->returnCallback(function($type, $encode) use (&$query, $sugarQueryMock, $resultExecute) {
-                $query = $sugarQueryMock->compileSql($sugarQueryMock);
-                return $resultExecute;
-            })
-        );
+        $sugarQueryBuilderWhereMock->expects($this->once())->method('equals')->with($this->equalTo('calendar_id'), $this->equalTo($calendarId));
 
-        $calendarDataMock->expects($this->once())->method('getSugarQuery')->willReturn($sugarQueryMock);
-        $calendarDataMock->expects($this->once())->method('getCurrentUser')->willReturn($currentUserMock);
+        if ($interval == '0') {
+            $sugarQueryBuilderWhereMock->expects($this->never())->method('gte')->with($this->equalTo('last_occurence'));
+        } else {
+            $sugarQueryBuilderWhereMock->expects($this->once())->method('gte')->with($this->equalTo('last_occurence'), $this->equalTo($expectedDate));
+        }
+
+        $currentUserMock->method('getPreference')->will($this->returnValueMap(array(array('caldav_interval', 'global', $interval))));
+        $sugarQueryMock->method('execute')->willReturn($resultExecute);
 
         $this->assertEquals($expected, $calendarDataMock->getCalendarObjects($calendarId));
-        $this->assertContains('caldav_events.calendar_id = \'' . $calendarId, $query);
-        $this->assertContains('caldav_events.last_occurence >= ' . $expectedDate, $query);
+
     }
 
     /**
@@ -203,13 +174,19 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                'uris' => array('__URI__'),
+                'calendarId' => null,
+                'uris' => array(),
                 'resultExecute' => array(),
-                'expected' => array(),
-                'expectedSqlPart' => 'caldav_events.uri = \'__URI__\'',
                 'expectedObject' => array(),
             ),
             array(
+                'calendarId' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
+                'uris' => array('__URI__'),
+                'resultExecute' => array(),
+                'expectedObject' => array(),
+            ),
+            array(
+                'calendarId' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
                 'uris' => array('__URI_1__', '__URI_2__', '__URI_3__'),
                 'resultExecute' => array(
                     array(
@@ -233,29 +210,6 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
                         'component_type' => 'VEVENT',
                     ),
                 ),
-                'expected' => array(
-                    array(
-                        'id' => '11556963-7d57-dad2-9d40-56571157b76f',
-                        'uri' => '__URI_1__',
-                        'lastmodified' => 1448546706,
-                        'etag' => '"6745fe5be1f72508792e1e09dd13b18b"',
-                        'calendarid' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
-                        'size' => '94',
-                        'calendardata' => "BEGIN:VCALENDAR\nBEGIN:VEVENT\nDTSTART;VALUE=DATE:20150826\nDURATION:P2D\nEND:VEVENT\nEND:VCALENDAR",
-                        'component' => 'vevent',
-                    ),
-                    array(
-                        'id' => '69edda45-54cc-463a-19b7-56571a8eecdb',
-                        'uri' => '__URI_1__',
-                        'etag' => '"ecc90eda365fea22a8743b854514f537"',
-                        'calendarid' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
-                        'calendardata' => "BEGIN:VCALENDAR\nBEGIN:VEVENT\nDTSTART;VALUE=DATE:20150626\nDURATION:P2D\nEND:VEVENT\nEND:VCALENDAR",
-                        'lastmodified' => 1448549070,
-                        'size' => '94',
-                        'component' => 'vevent',
-                    ),
-                ),
-                'expectedSqlPart' => 'caldav_events.uri IN (\'__URI_1__\',\'__URI_2__\',\'__URI_3__\')',
                 'expectedObject' => array(
                     'id' => '11556963-7d57-dad2-9d40-56571157b76f',
                     'uri' => '__URI_1__',
@@ -268,6 +222,7 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
                 ),
             ),
             array(
+                'calendarId' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
                 'uris' => array('__URI_2__', '__URI_3__'),
                 'resultExecute' => array(
                     array(
@@ -281,19 +236,6 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
                         'component_type' => 'VEVENT',
                     ),
                 ),
-                'expected' => array(
-                    array(
-                        'id' => '11556963-7d57-dad2-9d40-56571157b76f',
-                        'uri' => 'test',
-                        'lastmodified' => 1448546706,
-                        'etag' => '"6745fe5be1f72508792e1e09dd13b18b"',
-                        'calendarid' => 'c9ca048b-6194-47e5-85b3-5657117d86a7',
-                        'size' => '94',
-                        'calendardata' => "BEGIN:VCALENDAR\nBEGIN:VEVENT\nDTSTART;VALUE=DATE:20150826\nDURATION:P2D\nEND:VEVENT\nEND:VCALENDAR",
-                        'component' => 'vevent',
-                    ),
-                ),
-                'expectedSqlPart' => 'caldav_events.uri IN (\'__URI_2__\',\'__URI_3__\')',
                 'expectedObject' => array(
                     'id' => '11556963-7d57-dad2-9d40-56571157b76f',
                     'uri' => 'test',
@@ -311,42 +253,71 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Test method getMultipleCalendarObjects.
      *
+     * @param string|null $calendarId
      * @param array $uris
      * @param array $resultExecute
-     * @param array $expected
-     * @param string $expectedSqlPart
      * @param array $expectedObject
      *
      * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::getMultipleCalendarObjects
      * @dataProvider getMultipleCalendarObjectsProvider
      */
     public function testGetMultipleCalendarObjects(
+        $calendarId,
         array $uris,
         array $resultExecute,
-        array $expected,
-        $expectedSqlPart,
         array $expectedObject
     )
     {
-        $calendarId = 'c9ca048b-6194-47e5-85b3-5657117d86a7';
+        $sugarQueryBuilderWhereMock = $this->getMock('SugarQuery_Builder_Where', array(), array(), '', false);
+        $sugarQueryMock             = $this->getMock('SugarQuery', array(), array(), '', false);
+        $eventMock                  = $this->getMock('CalDavEventCollection', array(), array(), '', false);
 
-        $sugarQueryMock = $this->getMock('SugarQuery', array('execute'));
-        $sugarQueryMock->method('execute')->will(
-            $this->returnCallback(function($type, $encode) use (&$query, $sugarQueryMock, $resultExecute) {
-                $query = $sugarQueryMock->compileSql($sugarQueryMock);
-                return $resultExecute;
-            })
-        );
-
-        $calendarDataMock = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData', array('getSugarQuery', 'getDateTime'));
+        $calendarDataMock = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData', array('getEventsBean', 'getSugarQuery'));
+        $calendarDataMock->method('getEventsBean')->willReturn($eventMock);
         $calendarDataMock->method('getSugarQuery')->willReturn($sugarQueryMock);
 
-        $this->assertEquals($expected, $calendarDataMock->getMultipleCalendarObjects($calendarId, $uris));
+        if ($calendarId) {
+            $sugarQueryMock->expects($this->once())->method('from')->with($eventMock);
+            $sugarQueryMock->method('where')->willReturn($sugarQueryBuilderWhereMock);
 
-        $this->assertContains('caldav_events.calendar_id = \'' . $calendarId, $query);
-        $this->assertContains($expectedSqlPart, $query);
+            $sugarQueryBuilderWhereMock->expects($this->at(0))->method('equals')->with($this->equalTo('calendar_id'), $this->equalTo($calendarId));
+
+            if (count($uris) == 1) {
+                $sugarQueryBuilderWhereMock->expects($this->at(1))->method('equals')->with($this->equalTo('caldav_events.uri'), $this->equalTo($uris[0]));
+                $sugarQueryMock->method('limit')->with($this->equalTo(1));
+            } else {
+                $sugarQueryBuilderWhereMock->method('in')->with($this->equalTo('caldav_events.uri'), $this->equalTo($uris));
+            }
+
+            $sugarQueryMock->method('execute')->willReturn($resultExecute);
+        } else {
+            $sugarQueryMock->expects($this->never())->method('execute')->willReturn($resultExecute);
+        }
 
         $this->assertEquals($expectedObject, $calendarDataMock->getCalendarObject($calendarId, array_shift($uris)));
+    }
+
+    /**
+     * Test query to database in method getCalendarObjects. If interval is zero.
+
+     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::getCalendarObjects
+     */
+    public function testSugarQueryForCalDavEventsAddsFieldsToWhere()
+    {
+        $eventBean = \BeanFactory::getBean('CalDavEvents');
+        $eventBean->doLocalDelivery = false;
+
+        $query = new \SugarQuery();
+        $query->from($eventBean);
+        $query->where()->equals('calendar_id', '');
+        $query->where()->gte('last_occurence', '');
+        $query->where()->equals('caldav_events.uri', '');
+
+        $sql = $query->execute('raw');
+
+        $this->assertContains('caldav_events.calendar_id = ', $sql);
+        $this->assertContains('caldav_events.last_occurence >= ', $sql);
+        $this->assertContains('caldav_events.uri = ', $sql);
     }
 
     /**
@@ -476,16 +447,9 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
         $calendarDataMock = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData', array('getSugarQuery', 'createDefaultForUser'));
         $sugarQueryMock = $this->getMock('SugarQuery', array('execute'));
 
-        $query = '';
-
         if ($expected) {
             $calendarDataMock->expects($this->once())->method('getSugarQuery')->willReturn($sugarQueryMock);
-            $sugarQueryMock->expects($this->once())->method('execute')->will(
-                $this->returnCallback(function() use (&$query, $sugarQueryMock, $resultExecute) {
-                    $query = $sugarQueryMock->compileSql($sugarQueryMock);
-                    return $resultExecute;
-                })
-            );
+            $sugarQueryMock->method('execute')->willReturn($resultExecute);
         } else {
             $sugarQueryMock->expects($this->never())->method('execute');
         }
@@ -493,8 +457,6 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
         $actual = $calendarDataMock->getCalendarsForUser($principalUri);
 
         if ($expected) {
-            $this->assertContains('caldav_calendars.assigned_user_id = \'c9ca048b-6194-47e5-85b3-5657117d86a7\'', $query);
-
             $this->assertEquals(
                 $expected[0]['{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set']->getValue(),
                 $actual[0]['{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set']->getValue()
@@ -514,6 +476,23 @@ class CalendarDataCRYS1207Test extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Test query to database in method getCalendarsForUser.
+     *
+     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData::getCalendarsForUser
+     */
+    public function testSugarQueryForCalDavCalendarsAddsFieldsToWhere()
+    {
+        $calendarBean = \BeanFactory::getBean('CalDavCalendars');
+
+        $query = new \SugarQuery();
+        $query->from($calendarBean);
+        $query->where()->equals('assigned_user_id', '');
+        $sql = $query->execute('raw');
+
+        $this->assertContains('assigned_user_id = ', $sql);
     }
 }
 
