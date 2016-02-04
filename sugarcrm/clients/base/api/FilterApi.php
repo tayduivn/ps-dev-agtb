@@ -360,7 +360,7 @@ class FilterApi extends SugarApi
      *
      * This method is now deprecated. Use getFilterListCount instead.
      *
-     * @deprecated Since 7.7.0. Will be removed in 7.8.0.
+     * @deprecated Since 7.7.0. Will be removed in 7.9.0.
      * @param ServiceBase $api
      * @param array $args
      * @return Object The number of filtered/unfiltered records for the module
