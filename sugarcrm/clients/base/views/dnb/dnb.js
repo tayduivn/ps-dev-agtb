@@ -1321,7 +1321,7 @@
 
         // Import new data, but only if updated data is empty, otherwise the
         // next conditional block will handle it
-        if (newData.length > 0 && updatedData.length === 0) {
+        if (newData.length > 0) {
             this.updateAccountsModel(newData, setModelFlag);
         }
 
