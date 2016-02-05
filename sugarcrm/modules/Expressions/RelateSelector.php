@@ -55,7 +55,7 @@ if($_REQUEST['type']=='new_rel') {
 
 	$form->assign("SELECTOR_JSCRIPT_RETURN", "'href_".$_REQUEST['type']."','rel_module','action_module'");
 	$form->assign("SELECTOR_TAG", $mod_strings['LBL_REL1']);
-	$var_def_array2 = $temp_module->vardef_handler->get_vardef_array(true, true, true, true);
+    $var_def_array2 = $temp_module->vardef_handler->get_vardef_array(true, true, true, true, true);
 	$form->assign("SELECTOR_DROPDOWN", get_select_options_with_id($var_def_array2,$_REQUEST['rel_module1']));
 
 	if(!empty($_REQUEST['rel_module1']) && $_REQUEST['rel_module1']!=''){
@@ -80,7 +80,7 @@ if($_REQUEST['type']=='new_rel') {
 		$temp_module2->vardef_handler->start_none=true;
 		$temp_module2->vardef_handler->start_none_lbl = $mod_strings['LBL_PLEASE_SELECT'];
 
-		$var_def_array2 = $temp_module2->vardef_handler->get_vardef_array(true, '', true, true);
+        $var_def_array2 = $temp_module2->vardef_handler->get_vardef_array(true, '', true, true, true);
 		$rel_select2 = get_select_options_with_id($var_def_array2,$rel_module2);
 
 		$form->assign("SELECTOR_TAG2", $mod_strings['LBL_REL2']);
