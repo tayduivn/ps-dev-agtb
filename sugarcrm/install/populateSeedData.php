@@ -281,11 +281,14 @@ for($i = 0; $i < $number_companies; $i++) {
 	$note->save();
 
 	$call = new Call();
+    $call->set_created_by = false;
 	$call->parent_type = 'Accounts';
 	$call->parent_id = $account->id;
 	$call->name = $sugar_demodata['call_seed_data_names'][mt_rand(0,3)];
 	$call->assigned_user_id = $account->assigned_user_id;
 	$call->assigned_user_name = $account->assigned_user_name;
+    $call->created_by = $call->assigned_user_id;
+    $call->created_by_name = $call->assigned_user_name;
 	$call->direction='Outbound';
 	$call->date_start = create_date(). ' ' . create_time();
 	$call->duration_hours='0';
@@ -402,6 +405,7 @@ for($i=0; $i<1000; $i++)
 
 	//Create new meetings
 	$meeting = new Meeting();
+    $meeting->set_created_by = false;
 	$key = array_rand($sugar_demodata['meeting_seed_data_names']);
 	$meeting->name = $sugar_demodata['meeting_seed_data_names'][$key];
 	$meeting->date_start = create_date(). ' ' . create_time();
@@ -413,6 +417,8 @@ for($i=0; $i<1000; $i++)
 	$meeting->team_set_id = $contacts_account->team_set_id;
 	$meeting->assigned_user_id = $contacts_account->assigned_user_id;
 	$meeting->assigned_user_name = $contacts_account->assigned_user_name;
+    $meeting->created_by = $meeting->assigned_user_id;
+    $meeting->created_by_name = $meeting->assigned_user_name;
 	$meeting->description = $sugar_demodata['meeting_seed_data_descriptions'];
 	$meeting->status = array_rand($app_list_strings['meeting_status_dom']);
 	$meeting->contact_id = $contact->id;
