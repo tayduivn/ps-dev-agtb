@@ -46,7 +46,7 @@ class PMSEEngineUtils
             'password',
             'is_admin',
         ),
-        // Business Rules
+        // list for BR conclusions and others (write)
         'BR' => array(
             'duration_hours',
             'kbdocument_body',
@@ -57,6 +57,9 @@ class PMSEEngineUtils
             'modified_user_id',
             'date_entered',
             'date_modified',
+        ),
+        // list for BR conditions (read)
+        'BRR' => array(
         ),
         // Add related record Activity item in Process Definitions
         'AC' => array(
@@ -134,6 +137,7 @@ class PMSEEngineUtils
     public static $specialFields = array(
         'All' => array('created_by', 'modified_user_id'),
         'BR' => array('assigned_user_id', 'email1', 'outlook_id'),
+        'BRR' => array('assigned_user_id', 'email1', 'outlook_id'),
         'ET' => array('email1'),
         'AC' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
         'CF' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
@@ -1143,11 +1147,11 @@ class PMSEEngineUtils
             return false;
         }
 
-        if (($type == 'AC' || $type == 'CF') && isset($def['formula'])) {
+        if (in_array($type, array('AC', 'CF', 'BR')) && isset($def['formula'])) {
             return false;
         }
 
-        if (($type == 'RR' || $type == 'AC' || $type == 'CF') && !empty($def['readonly'])) {
+        if (in_array($type, array('RR', 'AC', 'CF', 'BR')) && !empty($def['readonly'])) {
             return false;
         }
 
