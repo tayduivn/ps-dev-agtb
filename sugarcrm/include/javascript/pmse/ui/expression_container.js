@@ -318,9 +318,10 @@ ExpressionContainer.prototype.handleCriteriaBuilder = function (globalParent, pa
                             arithmetic: ["+","-"]
                         },
                         constants: {
-                            date: parentVariable.fieldType === 'Date' ? true : false,
-                            datetime: parentVariable.fieldType === 'Datetime' ? true : false,
-                            timespan: true
+                            date: parentVariable.fieldType === 'Date',
+                            datetime: parentVariable.fieldType === 'Datetime',
+                            timespan: parentVariable.fieldType === 'Datetime',
+                            datespan: parentVariable.fieldType === 'Date'
                         },
                         variables: {
                             dataRoot: null,

@@ -26,6 +26,26 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
     }
 
     /**
+     * Sets a related module onto this object
+     * @param mixed $relatedModule <Enter a description of what this is here>
+     * @codeCoverageIgnore
+     */
+    public function setPARelatedModule($relatedModule)
+    {
+        $this->pmseRelatedModule = $relatedModule;
+    }
+
+    /**
+     * Gets related module
+     * @return mixed
+     * @codeCoverageIgnore
+     */
+    public function getPARelatedModule()
+    {
+        return $this->pmseRelatedModule;
+    }
+
+    /**
      * This method prepares the response of the current element based on the
      * $bean object and the $flowData, an external action such as
      * ROUTE or ADHOC_REASSIGN could be also processed.

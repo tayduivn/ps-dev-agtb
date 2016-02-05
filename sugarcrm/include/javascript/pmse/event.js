@@ -1444,7 +1444,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                     textField: "text",
                     valueField: "value",
                     typeField: "type",
-                    typeFilter: ['Date', 'Datetime'],
+                    typeFilter: ['Datetime'],
                     moduleTextField: "text",
                     moduleValueField: "value"
                 },

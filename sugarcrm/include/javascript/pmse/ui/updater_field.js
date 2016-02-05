@@ -577,7 +577,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                 if (fieldType === 'Date') {
                     constantPanelCfg = {
                         date: true,
-                        timespan: true
+                        datespan: true
                     };
                 } else {
                     constantPanelCfg = {
@@ -616,7 +616,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                 }],
                 dataFormat: "hierarchical",
                 typeField: "type",
-                typeFilter: field instanceof DateUpdaterItem ? ["Date", "Datetime"] : field._fieldType,
+                typeFilter: field._fieldType,
                 textField: "text",
                 valueField: "value",
                 dataChildRoot: "items",
@@ -1161,7 +1161,7 @@ TeamUpdaterItem.prototype.setPrimaryTeam = function (team) {
             .removeClass('active').end().toArray();
         for (i = 0; i < lines.length; i += 1) {
             data = this._getLineData(lines[i]);
-            if (data.id === this._primaryTeam) {
+            if (!_.isNull(data) && data.id === this._primaryTeam) {
                 jQuery(lines[i]).find('.adam-team-action[name=primary]').addClass('active');
                 return this;
             }
