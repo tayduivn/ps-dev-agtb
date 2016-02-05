@@ -256,7 +256,9 @@
     _deferModelChange: function() {
         if (this.hasEditAccess) {
             _.defer(_.bind(function() {
-                this.model.trigger('change:' + this.name, this.model, this.model.get(this.name));
+                if (!this.disposed) {
+                    this.model.trigger('change:' + this.name, this.model, this.model.get(this.name));
+                }
             }, this));
         }
     },
