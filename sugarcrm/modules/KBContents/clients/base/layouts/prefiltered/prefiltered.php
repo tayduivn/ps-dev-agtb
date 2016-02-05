@@ -59,7 +59,10 @@ $viewdefs['KBContents']['base']['layout']['prefiltered'] = array(
                                                 'view' => 'filter-actions',
                                             ),
                                             array(
-                                                'view' => 'prefilteredlist',
+                                                'view' => array(
+                                                    'view' => 'prefilteredlist',
+                                                    'name' => 'recordlist',
+                                                ),
                                             ),
                                             array(
                                                 'view' => 'list-bottom',
