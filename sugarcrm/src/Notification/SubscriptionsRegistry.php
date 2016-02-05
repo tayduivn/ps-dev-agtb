@@ -46,7 +46,7 @@ class SubscriptionsRegistry
                 $emitter = (string)$this->getEmitter($bean);
                 $res[$emitter][$bean->event_name][$bean->filter_name][] = array(
                     $bean->carrier_name,
-                    $bean->carrier_option
+                    $bean->carrier_option,
                 );
             }
         }
@@ -187,7 +187,7 @@ class SubscriptionsRegistry
                 'event_name',
                 'filter_name',
                 'carrier_name',
-                'carrier_option'
+                'carrier_option',
             );
         }
 
@@ -286,7 +286,7 @@ class SubscriptionsRegistry
                 $emitter = (string)$this->getEmitter($bean);
                 $res[$emitter][$bean->event_name][$bean->filter_name][] = array(
                     $bean->carrier_name,
-                    $bean->carrier_option
+                    $bean->carrier_option,
                 );
             }
         }
@@ -344,7 +344,7 @@ class SubscriptionsRegistry
                     if (!empty($config[$emitter][$event][$filter])) {
                         $path = $this->pathToBranch($emitter, $event, $filter);
                         $reducesBeans = $this->reduceBeans($beans, $path);
-                        $carriers = $config[$emitter][$event][$filter];
+                        $carriers = $this->filterCarriers($config[$emitter][$event][$filter]);
                         if ($carriers == self::CARRIER_VALUE_DEFAULT) {
                             $carriers = array();
                         }
@@ -444,6 +444,29 @@ class SubscriptionsRegistry
     }
 
     /**
+     * Filters carriers
+     *
+     * @param array $carriers
+     * @return array
+     */
+    protected function filterCarriers($carriers)
+    {
+        $availableCarriers = $this->getCarrierRegistry()->getCarriers();
+        $filtered = array();
+
+        if (is_array($carriers)) {
+            foreach ($carriers as $item) {
+                if (is_array($item) && count($item) > 0) {
+                    if (in_array($item[0], $availableCarriers)) {
+                        $filtered[] = $item;
+                    }
+                }
+            }
+        }
+        return $filtered;
+    }
+
+    /**
      * Generate search options map based on emitter name, event name, relation name
      *
      * @param string $emitter emitter name
@@ -458,7 +481,7 @@ class SubscriptionsRegistry
             'type' => $emitterArr['type'],
             'emitter_module_name' => $emitterArr['emitter_module_name'],
             'event_name' => $event,
-            'filter_name' => $filter
+            'filter_name' => $filter,
         );
     }
 
@@ -541,7 +564,7 @@ class SubscriptionsRegistry
             $carrier[1] = array_key_exists(1, $carrier) ? $carrier[1] : '';
             $carrierFilter = array(
                 'carrier_name' => $carrier[0],
-                'carrier_option' => $carrier[1]
+                'carrier_option' => $carrier[1],
             );
             // Need to reduce out a list of only one bean, because the other is duplicates and go on deleting.
             if ($this->reduceBeans($beans, $carrierFilter, 1)) {
@@ -566,7 +589,7 @@ class SubscriptionsRegistry
                 $carrier = array_shift($carriersForInsert);
                 $carrierArr = array(
                     'carrier_name' => $carrier[0],
-                    'carrier_option' => array_key_exists(1, $carrier) ? $carrier[1] : ''
+                    'carrier_option' => array_key_exists(1, $carrier) ? $carrier[1] : '',
                 );
                 $bean->fromArray($carrierArr);
                 $bean->save();
@@ -639,7 +662,7 @@ class SubscriptionsRegistry
                 if (!empty($userConfig)) {
                     $config[$userId] = array(
                         'filter' => $filterName,
-                        'config' => $userConfig
+                        'config' => $userConfig,
                     );
                 }
             }
@@ -886,7 +909,7 @@ class SubscriptionsRegistry
 
         $joinOptions = array(
             'team_security' => false,
-            'joinType' => 'LEFT'
+            'joinType' => 'LEFT',
         );
         $join = $query->joinTable('notification_subscription', $joinOptions);
         $joinOn = $join->on()->equalsField('notification_subscription.user_id', "{$userAlias}.id")
@@ -912,5 +935,13 @@ class SubscriptionsRegistry
     protected function getBaseSugarQuery()
     {
         return new \SugarQuery();
+    }
+
+    /**
+     * @see CarrierRegistry::getInstance
+     */
+    protected function getCarrierRegistry()
+    {
+        return CarrierRegistry::getInstance();
     }
 }
