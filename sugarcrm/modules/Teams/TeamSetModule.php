@@ -52,8 +52,15 @@ class TeamSetModule extends SugarBean{
         $result = $this->db->query($sql);
         $row = $this->db->fetchByAssoc($result);
         if (!$row){
-            parent::save();
+            $id = create_guid();
+            // insert the record by means of plain SQL in order to not trigger all other logic in SugarBean::save(),
+            // since this method is manually called from SugarBean::save()
+            $sql = 'INSERT INTO ' . $this->table_name . ' (id, team_set_id, module_table_name, deleted) VALUES ('
+                . $this->db->quoted($id) . ', '
+                . $this->db->quoted($this->team_set_id) . ', '
+                . $this->db->quoted($this->module_table_name) . ', '
+                . '0)';
+            $this->db->query($sql);
         }
     }
 }
-?>
