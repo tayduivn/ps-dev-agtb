@@ -273,6 +273,9 @@ class EmailMan extends SugarBean{
      * this function will create an email if one does not exist. also the function will load these relationships leads, accounts, contacts
      * users and targets
      *
+     * The Message-ID is not stored on the reference email because the reference email is a single Emails record that
+     * represents N emails, all with their own Message-ID values.
+     *
      * @param varchar marketing_id message id
      * @param string $subject email subject
      * @param string $body_text Email Body Text
@@ -414,12 +417,18 @@ class EmailMan extends SugarBean{
     *
     * @param $module
     * @param BaseMailer $mail
+    * @param string $emailId
     */
-    public function create_indiv_email($module, $mail) {
+    public function create_indiv_email($module, $mail, $emailId = '') {
         global $timedate,
                $mod_strings;
 
         $email = BeanFactory::getBean('Emails');
+
+        if (!empty($emailId)) {
+            $email->id = $emailId;
+            $email->new_with_id = true;
+        }
 
         $email->team_id = 1;
 
@@ -439,13 +448,14 @@ class EmailMan extends SugarBean{
         $email->date_start       = $timedate->nowDbDate();
         $email->time_start       = $timedate->asDbTime($timedate->getNow());
         $email->status           = 'sent';
-        $retId                   = $email->save();
+        $email->message_id = $mail->getHeader(EmailHeaders::MessageId);
+        $email->save();
 
         foreach ($this->notes_array as $note) {
             list($filename, $mime_type) = $this->getFileInfo($note);
             // create "audit" email without duping off the file to save on disk space
             $noteAudit              = BeanFactory::getBean('Notes');
-            $noteAudit->parent_id   = $retId;
+            $noteAudit->parent_id   = $email->id;
             $noteAudit->parent_type = $email->module_dir;
             $noteAudit->name        = $note->name;
             $noteAudit->description = "[{$note->filename}] {$mod_strings['LBL_ATTACHMENT_AUDIT']}";
@@ -807,33 +817,35 @@ class EmailMan extends SugarBean{
                     }
                 }
 
+                $emailId = create_guid();
+                $mail->setMessageId($emailId);
+
                 $mail->send();
                 $success = true;
 
-                $email_id = null;
                 if ($save_emails == 1) {
-                    $email_id = $this->create_indiv_email($module, $mail);
+                    $this->create_indiv_email($module, $mail, $emailId);
                 } else {
                     //find/create reference email record. all campaign targets reveiving this message will be linked with this message.
                     $decodedFromName = mb_decode_mimeheader($this->current_emailmarketing->from_name);
                     $fromAddressName = "{$decodedFromName} <{$this->mailbox_from_addr}>";
 
-                    $email_id         = $this->create_ref_email($this->marketing_id,
-                                                                $this->current_emailtemplate->subject,
-                                                                $this->current_emailtemplate->body,
-                                                                $this->current_emailtemplate->body_html,
-                                                                $this->current_campaign->name,
-                                                                $this->mailbox_from_addr,
-                                                                $this->user_id,
-                                                                $this->notes_array,
-                                                                $macro_nv,
-                                                                $this->newmessage,
-                                                                $fromAddressName
+                    $this->create_ref_email($this->marketing_id,
+                        $this->current_emailtemplate->subject,
+                        $this->current_emailtemplate->body,
+                        $this->current_emailtemplate->body_html,
+                        $this->current_campaign->name,
+                        $this->mailbox_from_addr,
+                        $this->user_id,
+                        $this->notes_array,
+                        $macro_nv,
+                        $this->newmessage,
+                        $fromAddressName
                     );
                     $this->newmessage = false;
                 }
 
-                $this->set_as_sent($module->email1, true, $email_id, 'Emails', 'targeted');
+                $this->set_as_sent($module->email1, true, $emailId, 'Emails', 'targeted');
             } catch (MailerException $me) {
                 //log send error. save for next attempt after 24hrs. no campaign log entry will be created.
                 $this->set_as_sent($module->email1,false,null,null,'send error');
