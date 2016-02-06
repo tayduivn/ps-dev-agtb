@@ -11,9 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Import/sources/ImportFile.php';
-require_once('modules/Import/Importer.php');
-require_once('modules/Import/ImportCacheFiles.php');
 
 /**
  * Bug #56584

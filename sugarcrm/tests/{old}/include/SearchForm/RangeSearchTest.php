@@ -10,10 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/DynamicFields/templates/Fields/TemplateInt.php';
-require_once 'modules/DynamicFields/templates/Fields/TemplateDate.php';
 require_once 'include/SearchForm/SearchForm2.php';
-require_once 'modules/Opportunities/Opportunity.php';
 
 class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -181,7 +178,6 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRangeSearchWithSavedReportValues()
     {
-    	require_once('include/SugarFields/Fields/Datetime/SugarFieldDatetime.php');
     	$parentFieldArray = 'fields';
 
     	$vardef = array();

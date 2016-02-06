@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
-require_once 'include/MetaDataManager/MetaDataManager.php';
 
 abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 {

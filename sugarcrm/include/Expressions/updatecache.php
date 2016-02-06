@@ -194,7 +194,6 @@ if (is_dir("custom/include/Expressions/Expression")) {
 }
 
 //Parse Actions into the cached javascript.
-require_once("include/Expressions/Actions/ActionFactory.php");
 $contents["javascript"] .= ActionFactory::buildActionCache($silent);
 
 
@@ -253,7 +252,6 @@ create_cache_directory("Expressions/functions_cache_debug.js");
 sugar_file_put_contents(sugar_cached("Expressions/functions_cache_debug.js"), $cache_contents);
 
 
-require_once("jssource/minify_utils.php");
 $minifyUtils = new SugarMinifyUtils();
 $minifyUtils->CompressFiles(sugar_cached('Expressions/functions_cache_debug.js'), sugar_cached('Expressions/functions_cache.js'));
 if (!$silent) echo "complete.";

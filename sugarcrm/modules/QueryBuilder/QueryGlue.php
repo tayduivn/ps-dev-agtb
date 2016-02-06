@@ -15,10 +15,6 @@
  ********************************************************************************/
 
 //Library of functions used to compile the query for run
-require_once('modules/QueryBuilder/QueryGroupBy.php');
-require_once('modules/QueryBuilder/QueryCalc.php');
-require_once('modules/QueryBuilder/QueryColumn.php');
-require_once('modules/QueryBuilder/QueryBuilder.php');
 
 class QueryGlue {
 	

@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/externalAPI/Base/OAuthPluginBase.php');
-require_once('include/externalAPI/Base/WebMeeting.php');
-require_once('include/externalAPI/Base/WebDocument.php');
 
 //BEGIN ENCODE
 function ExtAPILotusLiveGetCredentials() {

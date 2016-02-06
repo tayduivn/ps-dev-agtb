@@ -654,7 +654,6 @@ class EmailMan extends SugarBean{
 				// cn: bug 4684 - initialize the notes array, else old data is still around for the next round
 				$this->notes_array = array();
                 if (!class_exists('Note')){
-                	require_once('modules/Notes/Note.php');
 				}
 				while($a = $this->db->fetchByAssoc($r)) {
 					$noteTemplate = BeanFactory::getBean('Notes', $a['id']);

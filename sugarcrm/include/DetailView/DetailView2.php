@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/TemplateHandler/TemplateHandler.php');
 require_once('include/EditView/EditView2.php');
 
 /**
@@ -65,7 +64,6 @@ class DetailView2 extends EditView
 	    $ajaxSave = false
 	    )
 	{
-	 	require_once('include/EditView/InlineEdit.php');
 
 	 	$str = parent::display($showTitle, $ajaxSave);
 		$ie = new InlineEdit();

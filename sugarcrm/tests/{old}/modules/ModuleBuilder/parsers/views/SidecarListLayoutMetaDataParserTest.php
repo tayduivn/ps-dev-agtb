@@ -1,6 +1,5 @@
 <?php
 
-require_once('modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php');
 
 class SidecarListLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
 {

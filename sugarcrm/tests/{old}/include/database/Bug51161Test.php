@@ -12,7 +12,6 @@
  */
 
 
-require_once 'include/database/DBManagerFactory.php';
 
 class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 {

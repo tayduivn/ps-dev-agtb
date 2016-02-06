@@ -14,10 +14,8 @@
 
 
 
-require_once("include/upload_file.php");
 
 require_once('include/utils/db_utils.php');
-require_once('modules/Audit/Audit.php');
 
 global $currentModule, $focus, $action, $app_strings, $app_list_strings, $current_language, $timedate, $mod_strings;
 //we don't want the parent module's string file, but rather the string file specific to this subpanel
@@ -124,7 +122,6 @@ EOHTML;
 
             // Let's run the audit data through the sugar field system
             if(isset($audit['data_type'])){
-                require_once('include/SugarFields/SugarFieldHandler.php');
                 $vardef = array('name'=>'audit_field','type'=>$audit['data_type']);
                 $field = SugarFieldHandler::getSugarField($audit['data_type']);
                 $before_value = $field->getChangeLogSmarty(array($vardef['name']=>$before_value), $vardef, array(), $vardef['name']);

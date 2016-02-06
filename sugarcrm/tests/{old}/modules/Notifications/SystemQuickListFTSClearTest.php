@@ -10,8 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/Notifications/views/view.systemquicklist.php');
-require_once('modules/Administration/Administration.php');
 
 class SystemQuickListFTSClearTest extends Sugar_PHPUnit_Framework_TestCase
 {

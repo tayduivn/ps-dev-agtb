@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/psr/Log/AbstractLogger.php';
-require_once 'modules/pmse_Inbox/engine/PMSELoggerWriter.php';
 
 class PMSELogger extends AbstractLogger
 {
@@ -256,7 +254,6 @@ class PMSELogger extends AbstractLogger
             $data->value = preg_replace($patterns, $substitutions, $message);
         }
 
-        require_once 'modules/ActivityStream/Activities/Activity.php';
         $beanActivity = new Activity();
         $beanActivity->parent_id = $module_id;
         $beanActivity->parent_type = $module_name;

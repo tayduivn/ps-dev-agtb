@@ -103,7 +103,6 @@ class PMSE
     {
         //$this->bpmLog('INFO', " getting log from " . $file);
         //return file_get_contents($file);
-        require_once 'include/upload_file.php';
 
         $_file = new UploadFile();
 

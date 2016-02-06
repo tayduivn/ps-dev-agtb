@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("include/SugarCharts/JsChart.php");
 
 class nvd3 extends JsChart
 {

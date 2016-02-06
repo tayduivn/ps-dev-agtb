@@ -11,7 +11,6 @@
  */
 
 
-require_once('include/Sugarpdf/SugarpdfFactory.php');
 
 class ViewSugarpdf extends SugarView{
     

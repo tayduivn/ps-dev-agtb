@@ -17,7 +17,6 @@ use Sugarcrm\Sugarcrm\Util\Serialized;
 
 require_once("vendor/ytree/Tree.php");
 require_once("vendor/ytree/ExtNode.php");
-require_once("include/SugarFolders/SugarFolders.php");
 
 /**
  * Email GUI class
@@ -71,7 +70,6 @@ class EmailUI {
 	 */
 	function displayEmailFrame() {
 
-		require_once("include/OutboundEmail/OutboundEmail.php");
 
 		global $app_strings, $app_list_strings;
 		global $mod_strings;
@@ -105,7 +103,6 @@ class EmailUI {
         $QCAvailableModules = $this->_loadQuickCreateModules();
 
         //Get the quickSearch js needed for assigned user id on Search Tab
-        require_once('include/QuickSearchDefaults.php');
         $qsd = QuickSearchDefaults::getQuickSearchDefaults();
         $qsd->setFormName('advancedSearchForm');
         $quicksearchAssignedUser = "if(typeof sqs_objects == 'undefined'){var sqs_objects = new Array;}";
@@ -421,7 +418,6 @@ eoq;
 		$linkBeans = json_encode(get_select_options_with_id($parent_types, ''));
 
 		//TinyMCE Config
-		require_once("include/SugarTinyMCE.php");
         $tiny = new SugarTinyMCE();
         $tinyConf = $tiny->getConfig($type);
 
@@ -474,7 +470,6 @@ eoq;
         $emailsBean->acl_team_set_id = $ie1->acl_team_set_id;
         //END SUGARCRM flav=ent ONLY
 
-		require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
         $teamSetField
             = new EmailSugarFieldTeamsetCollection($emailsBean, $emailsBean->field_defs, '', 'composeEmailForm');
 		$code1 = $teamSetField->get_code();
@@ -1504,7 +1499,6 @@ eoq;
 
 		//Get the module language for javascript
 	    if(!is_file(sugar_cached('jsLanguage/') . "{$module}/{$GLOBALS['current_language']}.js")) {
-            require_once('include/language/jsLanguage.php');
             jsLanguage::createModuleStringsCache($module, $GLOBALS['current_language']);
         }
 		$jsLanguage = getVersionedScript("cache/jsLanguage/{$module}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
@@ -1565,8 +1559,6 @@ EOQ;
      */
     function getImportForm($vars, $email, $formName = 'ImportEditView') {
 		require_once("include/EditView/EditView2.php");
-        require_once("include/TemplateHandler/TemplateHandler.php");
-		require_once('include/QuickSearchDefaults.php');
         $qsd = QuickSearchDefaults::getQuickSearchDefaults();
 		$qsd->setFormName($formName);
 
@@ -1591,7 +1583,6 @@ EOQ;
         }
         $smarty->assign("showTeam",$showTeam);
 
-		require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 		$teamSetField = new EmailSugarFieldTeamsetCollection($email, $email->field_defs, '', $formName);
 		$code = $teamSetField->get_code();
         $code .= $teamSetField->createQuickSearchCode(true);
@@ -1644,7 +1635,6 @@ EOQ;
      */
     function getDetailViewForEmail2($emailId) {
 
-		require_once('include/DetailView/DetailView.php');
 		global $app_strings, $app_list_strings;
 		global $mod_strings;
 
@@ -1752,7 +1742,6 @@ EOQ;
 		///////////////////////////////////////////////////////////////////////////////
 		$show_subpanels = true;
 		if ($show_subpanels) {
-		    require_once('include/SubPanel/SubPanelTiles.php');
 		    $subpanel = new SubPanelTiles($focus, 'Emails');
 		    $smarty->assign("SUBPANEL", $subpanel->display());
 		}
@@ -2675,7 +2664,6 @@ eoq;
 			$a = $user->db->fetchByAssoc($r);
 
 			if($a['count'] < 1) {
-				require_once("include/SugarFolders/SugarFolders.php");
 				$privateTeam = $user->getPrivateTeamID();
 				// My Emails
 				$folder = new SugarFolder();

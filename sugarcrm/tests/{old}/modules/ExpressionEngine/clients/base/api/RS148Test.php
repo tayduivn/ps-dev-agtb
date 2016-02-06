@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ExpressionEngine/clients/base/api/RelatedValueApi.php';
 
 /**
  * Tests RelatedValueApi.

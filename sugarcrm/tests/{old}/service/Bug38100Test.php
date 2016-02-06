@@ -42,7 +42,6 @@ class Bug38100Test extends SOAPTestCase
     public function testGetReportEntries()
     {
     	require_once('service/core/SoapHelperWebService.php');
-    	require_once('modules/Reports/Report.php');
     	require_once('modules/Reports/SavedReport.php');
     	//$savedReportId = $GLOBALS['db']->getOne("SELECT id FROM saved_reports WHERE deleted=0");
 

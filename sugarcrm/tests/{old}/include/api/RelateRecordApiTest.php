@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/api/RestService.php';
-require_once 'clients/base/api/RelateRecordApi.php';
 
 class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -123,7 +121,6 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $service = SugarTestRestUtilities::getRestServiceMock();
 
-        require_once 'clients/base/api/RelateRecordApi.php';
         $api = $this->createPartialMock('RelateRecordApi', array('loadModuleApi'));
         $api->expects($this->once())
             ->method('loadModuleApi')
@@ -136,7 +133,6 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function getModuleApiProvider()
     {
-        require_once 'modules/Users/clients/base/api/UsersApi.php';
         return array(
             'module-specific' => array(new UsersApi(), 'UsersApi'),
             'non-module' => array(new StdClass(), 'ModuleApi'),

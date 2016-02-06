@@ -15,7 +15,6 @@
  *
  */
 
-require_once('modules/Leads/LeadFormBase.php');
 
 class LeadFormBaseTest extends Sugar_PHPUnit_Framework_TestCase {
 

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarForecasting/Export/AbstractExport.php');
-require_once('include/SugarForecasting/Manager.php');
 class SugarForecasting_Export_Manager extends SugarForecasting_Export_AbstractExport
 {
     /**

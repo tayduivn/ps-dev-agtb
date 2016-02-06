@@ -15,9 +15,6 @@ if(!ACLController::checkAccess('Calendar', 'list', true)){
 	ACLController::displayNoAccess(true);
 }
 
-require_once('modules/Calendar/Calendar.php');
-require_once('modules/Calendar/CalendarDisplay.php');
-require_once("modules/Calendar/CalendarGrid.php");
 
 global $cal_strings, $current_language;
 $cal_strings = return_module_language($current_language, 'Calendar');

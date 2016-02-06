@@ -23,7 +23,6 @@ function canSendPassword() {
            $current_user,
            $app_strings;
 
-    require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php";
 
     if ($current_user->is_admin) {
         $emailTemplate                             = new EmailTemplate();

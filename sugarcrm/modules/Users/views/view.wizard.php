@@ -17,7 +17,6 @@
  ********************************************************************************/
 
 require_once('modules/Users/Forms.php');
-require_once('modules/Configurator/Configurator.php');
 
 class ViewWizard extends SugarView
 {
@@ -116,7 +115,6 @@ class ViewWizard extends SugarView
         $this->ss->assign('TIMEZONEOPTIONS', TimeDate::getTimezoneList());
 
         //// Numbers and Currency display
-        require_once('modules/Currencies/ListCurrency.php');
         $currency = new ListCurrency();
 
         // 10/13/2006 Collin - Changed to use Localization.getConfigPreference

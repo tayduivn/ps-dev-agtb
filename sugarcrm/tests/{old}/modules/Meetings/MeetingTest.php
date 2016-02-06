@@ -12,10 +12,6 @@
  */
 
 require_once 'modules/Meetings/Meeting.php';
-require_once 'modules/Meetings/MeetingFormBase.php';
-require_once 'modules/Activities/EmailReminder.php';
-require_once 'include/externalAPI/ExternalAPIFactory.php';
-
 
 class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 {

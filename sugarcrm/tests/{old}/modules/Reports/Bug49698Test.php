@@ -19,7 +19,6 @@
  * @author Collin Lee
  */
 
-require_once('modules/Reports/views/view.buildreportmoduletree.php');
 
 class Bug49698Test extends Sugar_PHPUnit_Framework_TestCase
 {

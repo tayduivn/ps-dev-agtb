@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/UpgradeWizard/TestUpgrader.php';
 require_once 'upgrade/scripts/post/1_ClearVarDefs.php';
 require_once 'SugarTestReflection.php';
 

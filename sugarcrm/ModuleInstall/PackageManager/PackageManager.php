@@ -17,8 +17,6 @@ define("CREDENTIAL_PASSWORD", "password");
 require_once('vendor/nusoap//nusoap.php');
 require_once('include/utils/zip_utils.php');
 SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
-require_once('ModuleInstall/PackageManager/PackageManagerDisplay.php');
-require_once('ModuleInstall/PackageManager/PackageManagerComm.php');
 
 class PackageManager{
     var $soap_client;

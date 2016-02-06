@@ -20,7 +20,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Dashlets/DashletGeneric.php');
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 

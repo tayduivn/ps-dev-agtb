@@ -11,7 +11,6 @@
  */
 
 require_once 'tests/{old}/rest/RestTestBase.php';
-require_once 'include/MetaDataManager/MetaDataManager.php';
 
 /**
  * Tests the rest metadata endpoint
@@ -67,7 +66,6 @@ class RestMetadataModuleListTest extends RestTestBase {
         }
         // Set the tabs back to what they were
         if ( isset($this->defaultTabs[0]) ) {
-            require_once('modules/MySettings/TabController.php');
             $tabs = new TabController();
 
             $tabs->set_system_tabs($this->defaultTabs[0]);
@@ -88,7 +86,6 @@ class RestMetadataModuleListTest extends RestTestBase {
      */
     public function testMetadataGetModuleListPortal() {
         // Setup the tab controller here and get the default tabs for setting and resetting
-        require_once('modules/MySettings/TabController.php');
         $tabs = new TabController();
         $this->defaultTabs = $tabs->get_tabs_system();
 
@@ -257,7 +254,6 @@ class RestMetadataModuleListTest extends RestTestBase {
         $mm = MetaDataManager::getManager();
 
         // Get the api
-        require_once 'clients/base/api/MetadataApi.php';
         $api = new MetadataApi();
 
         $data['module_list'] = $api->getModuleList();
@@ -316,10 +312,8 @@ class RestMetadataModuleListTest extends RestTestBase {
      */
     public function testMetadataModulesWithoutIndex() {
 
-        require_once("data/BeanFactory.php");
         $obj = BeanFactory::getObjectName("Bugs");
 
-        require_once("include/SugarObjects/VardefManager.php");
         VardefManager::loadVardef("Bugs", $obj);
         global $dictionary;
 

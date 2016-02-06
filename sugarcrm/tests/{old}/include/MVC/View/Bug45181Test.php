@@ -90,7 +90,6 @@ class Bug45181 extends Sugar_PHPUnit_Framework_TestCase {
     }
 }
 
-require_once('include/MVC/View/SugarView.php');
 class Bug45181TestSugarViewMock extends SugarView
 {
     public function logMemoryStatisticsTest($newline)

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/MetadataApi.php';
 
 class MetadataApiTest extends Sugar_PHPUnit_Framework_TestCase
 {

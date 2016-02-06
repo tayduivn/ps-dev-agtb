@@ -14,7 +14,6 @@
  * Description:
  ********************************************************************************/
 
-require_once('include/ListView/ProcessView.php');
 global $mod_strings;
 
 $focus = BeanFactory::getBean('WorkFlowTriggerShells');

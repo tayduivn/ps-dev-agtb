@@ -11,7 +11,6 @@
  */
 
  
-require_once('modules/Emails/Email.php');
 
 class Bug45960 extends Sugar_PHPUnit_Framework_TestCase
 {

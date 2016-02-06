@@ -14,7 +14,6 @@
 
 //FILE SUGARCRM flav=ent ONLY
 
-require_once('modules/ModuleBuilder/views/view.listview.php');
 
 class ViewPortalListView extends ViewListView 
 {
@@ -33,7 +32,6 @@ class ViewPortalListView extends ViewListView
 
     function display() 
     {
-        require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
         $parser = ParserFactory::getParser(MB_PORTALLISTVIEW,$this->editModule,null,null,MB_PORTAL);
 
         $smarty = $this->constructSmarty($parser);
@@ -63,7 +61,6 @@ class ViewPortalListView extends ViewListView
 
     function constructAjax()
     {
-        require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
         $ajax = new AjaxCompose();
 
 		$ajax->addCrumb(translate('LBL_SUGARPORTAL', 'ModuleBuilder'), 'ModuleBuilder.main("sugarportal")');

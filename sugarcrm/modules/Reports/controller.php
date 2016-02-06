@@ -80,7 +80,6 @@ class ReportsController extends SugarController
 
 	public function action_get_teamset_field() 
 	{
-		require_once('include/SugarFields/Fields/Teamset/ReportsSugarFieldTeamsetCollection.php');
 		$view = new ReportsSugarFieldTeamsetCollection(true);
 		$view->setup();
 		$view->process();
@@ -91,7 +90,6 @@ class ReportsController extends SugarController
 	{
 		global $global_json;
 		$global_json = getJSONobj();
-		require_once('include/QuickSearchDefaults.php');
 		$qsd = QuickSearchDefaults::getQuickSearchDefaults();
 		if (!empty($_REQUEST['parent_form']))
 			$qsd->form_name = $_REQUEST['parent_form'];

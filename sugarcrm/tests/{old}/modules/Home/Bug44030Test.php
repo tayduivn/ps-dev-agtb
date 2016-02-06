@@ -80,7 +80,6 @@ EOQ;
 
 	public function testUnifiedSearchAdvancedBuildCache()
 	{
-		require_once('modules/Home/UnifiedSearchAdvanced.php');
 		$usa = new UnifiedSearchAdvanced();
 		$usa->buildCache();
 

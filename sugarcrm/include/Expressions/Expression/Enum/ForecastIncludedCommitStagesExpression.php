@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Expressions/Expression/Enum/EnumExpression.php');
 
 /**
  * <b>forecastIncludedCommitStages()</b><br/>

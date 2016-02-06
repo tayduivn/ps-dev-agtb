@@ -11,7 +11,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 global $sugar_version, $js_custom_version;
-require_once('ModuleInstall/PackageManager/PackageManagerDisplay.php');
 if( !isset( $install_script ) || !$install_script ){
     die($mod_strings['ERR_NO_DIRECT_SCRIPT']);
 }
@@ -30,7 +29,6 @@ if(empty($sugar_config['upload_badext'])) {
 ///////////////////////////////////////////////////////////////////////////////
 require_once('include/utils/zip_utils.php');
 
-require_once('include/upload_file.php');
 
 
 ///////////////////////////////////////////////////////////////////////////////

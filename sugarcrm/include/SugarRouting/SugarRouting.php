@@ -66,7 +66,6 @@ class SugarRouting {
 	 * @param array $rules Passed $_REQUEST var
 	 */
 	function save($rules) {
-		require_once('include/SugarDependentDropdown/SugarDependentDropdown.php');
 		global $sugar_config;
 
 		// need $sdd->metadata

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/ListView/ReportListView.php');
-require_once('modules/QueryBuilder/QueryGlue.php');
 
 // ProductTemplate is used to store customer information.
 class QueryBuilder extends SugarBean {
@@ -390,7 +388,6 @@ class QueryBuilder extends SugarBean {
     function run_query(){
 
         //Create the glue object
-        require_once('modules/QueryBuilder/QueryGlue.php');
         $query_glue = new QueryGlue($this);
 
         $query_glue->build_select();

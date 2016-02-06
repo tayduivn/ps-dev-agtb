@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("modules/Accounts/Account.php");
 
 class Bug34993Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -80,8 +79,6 @@ class Bug34993Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCustomFieldDefaultValue()
     {
-        require_once('modules/DynamicFields/templates/Fields/TemplateText.php');
-        require_once('modules/DynamicFields/DynamicField.php');
         require_once('modules/DynamicFields/FieldCases.php');
 
         //Simulate create a custom text field with a default value set to 123
@@ -162,8 +159,6 @@ class Bug34993Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCustomFieldFloatType()
     {
-        require_once('modules/DynamicFields/templates/Fields/TemplateFloat.php');
-        require_once('modules/DynamicFields/DynamicField.php');
         require_once('modules/DynamicFields/FieldCases.php');
 
         // custom field: float type required is false

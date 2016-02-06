@@ -517,7 +517,6 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
             return;
         }
 
-        require_once('include/Sugarpdf/SugarpdfFactory.php');
         $bean = BeanFactory::getBean('Quotes', $quote_id);
         $sugarpdfBean = SugarpdfFactory::loadSugarpdf($pdf_format, 'Quotes', $bean, array() );
         $sugarpdfBean->process();
@@ -767,7 +766,6 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
     		$sugar_config['list_max_entries_per_page'] = $max_results;
     	}
 
-    	require_once('modules/Home/UnifiedSearchAdvanced.php');
     	require_once 'include/utils.php';
     	$usa = new UnifiedSearchAdvanced();
         if(!file_exists($cachedfile = sugar_cached('modules/unified_search_modules.php'))) {

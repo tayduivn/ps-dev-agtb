@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Leads/Lead.php";
-require_once "include/Popups/PopupSmarty.php";
 
 class Bug43452Test extends Sugar_PHPUnit_Framework_TestCase
 {

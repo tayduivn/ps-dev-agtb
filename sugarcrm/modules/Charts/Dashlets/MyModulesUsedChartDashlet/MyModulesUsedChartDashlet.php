@@ -17,7 +17,6 @@
  ********************************************************************************/
 
 
-require_once('include/Dashlets/DashletGenericChart.php');
 
 class MyModulesUsedChartDashlet extends DashletGenericChart 
 {
@@ -46,7 +45,6 @@ class MyModulesUsedChartDashlet extends DashletGenericChart
         require("modules/Charts/chartdefs.php");
         $chartDef = $chartDefs['my_modules_used_last_30_days'];
         
-        require_once('include/SugarCharts/SugarChartFactory.php');
         $sugarChart = SugarChartFactory::getInstance();
         $sugarChart->setProperties('',  translate('LBL_MY_MODULES_USED_SIZE', 'Charts'), $chartDef['chartType']);
         $sugarChart->base_url = $chartDef['base_url'];

@@ -11,9 +11,6 @@
  */
 
 
-require_once('modules/Reports/sugarpdf/sugarpdf.reports.php');
-require_once('include/SugarCharts/SugarChartFactory.php');
-require_once('include/SugarCharts/ChartDisplay.php');
 
 class ReportsSugarpdfSummary_combo extends ReportsSugarpdfReports
 {

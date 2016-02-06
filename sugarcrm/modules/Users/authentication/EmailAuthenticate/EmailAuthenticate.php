@@ -18,7 +18,6 @@
  * based on the users validation
  *
  */
-require_once('modules/Users/authentication/SugarAuthenticate/SugarAuthenticate.php');
 class EmailAuthenticate extends SugarAuthenticate {
 	var $userAuthenticateClass = 'EmailAuthenticateUser';
 	var $authenticationDir = 'EmailAuthenticate';

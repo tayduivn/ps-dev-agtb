@@ -11,10 +11,6 @@
  */
 
 require_once 'modules/Import/Forms.php';
-require_once 'modules/Import/controller.php';
-require_once 'modules/Import/views/view.step3.php';
-require_once 'modules/Import/views/view.step4.php';
-require_once 'modules/Import/Importer.php';
 
 class ImportFormsTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -142,7 +138,6 @@ class ImportFormsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $focus = BeanFactory::getBean('Opportunities');
 
-        require_once('modules/Opportunities/Opportunity.php');
 
         $string = str_ireplace('</select>','<option value="">'.$app_strings['LBL_NONE'].'</option></select>',getCurrencyDropDown($focus, 'currency_id', '', 'EditView'));
         $this->assertContains($string,$html,"Failed to find string '$string' in '$html'");

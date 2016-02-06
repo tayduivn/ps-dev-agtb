@@ -1,6 +1,5 @@
 <?php
 
-require_once 'clients/base/api/FilterApi.php';
 
 class RS193Test extends Sugar_PHPUnit_Framework_TestCase
 {

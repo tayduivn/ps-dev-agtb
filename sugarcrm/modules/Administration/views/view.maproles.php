@@ -1,6 +1,5 @@
 <?php
 
-require_once 'modules/ModuleBuilder/MB/MBHelper.php';
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable

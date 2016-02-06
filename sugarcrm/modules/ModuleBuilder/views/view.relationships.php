@@ -9,11 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once ('modules/ModuleBuilder/MB/AjaxCompose.php') ;
 require_once ('modules/ModuleBuilder/MB/ModuleBuilder.php') ;
-require_once ('modules/ModuleBuilder/views/view.relationship.php') ;
-require_once ('modules/ModuleBuilder/Module/StudioModule.php') ;
-require_once ('modules/ModuleBuilder/Module/StudioBrowser.php') ;
 
 class ViewRelationships extends SugarView
 {

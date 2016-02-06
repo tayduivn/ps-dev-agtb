@@ -20,8 +20,6 @@
 
 
 
-require_once('modules/QueryBuilder/QueryColumn.php');
-require_once('modules/QueryBuilder/QueryGroupBy.php');
 
 
 global $app_strings;

@@ -14,7 +14,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 installLog("creating new user for Snip");
 
-require_once 'modules/SNIP/SugarSNIP.php';
 $snip = SugarSNIP::getInstance();
 $snip->getSnipUser();
 

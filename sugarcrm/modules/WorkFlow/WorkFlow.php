@@ -12,7 +12,6 @@
 require_once('include/workflow/workflow_utils.php');
 require_once('include/workflow/time_utils.php');
 require_once('include/workflow/alert_utils.php');
-require_once('include/workflow/glue.php');
 
 
 /**
@@ -455,7 +454,6 @@ function filter_base_modules(){
 	function run_query(){
 
 		//Create the glue object
-		require_once('modules/QueryBuilder/QueryGlue.php');
 		$query_glue = new QueryGlue($this);
 
 		$query_glue->build_select();
@@ -1265,7 +1263,6 @@ function get_rel_module($var_rel_name, $get_rel_name = false){
         return $module_bean->$var_rel_name->getRelatedModuleName();
     }
 
-	require_once 'data/Link.php';
 	$rel_name = Relationship::retrieve_by_modules($var_rel_name, $this->base_module, $GLOBALS['db']);
 	if(!empty($module_bean->field_defs[$rel_name])){
 		$var_rel_name = $rel_name;
@@ -1463,7 +1460,6 @@ check_logic_hook_file($module_name, $event, $action_array);
 		}
 
 		if($this->check_controller==true){
-             require_once('include/controller/Controller.php');
              //Handle re-processing orders
              $controller = new Controller();
              $controller->init($this, "Delete");

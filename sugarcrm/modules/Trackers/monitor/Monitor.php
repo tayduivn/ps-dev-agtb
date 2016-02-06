@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Trackers/Metric.php');
-require_once('modules/Trackers/Trackable.php');
 
 define('MAX_SESSION_LENGTH', 36);
 

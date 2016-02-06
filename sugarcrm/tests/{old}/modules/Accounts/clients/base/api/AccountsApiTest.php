@@ -19,7 +19,6 @@ class AccountsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        require_once 'modules/Accounts/clients/base/api/AccountsApi.php';
     }
 
     public function setUp()

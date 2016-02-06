@@ -20,7 +20,6 @@
  * attributes
  */
 require_once 'include/dir_inc.php';
-require_once 'include/EditView/SubpanelQuickCreate.php';
 
 class Bug49219Test extends Sugar_PHPUnit_Framework_TestCase  {
 
@@ -51,7 +50,6 @@ function testUpgradeMeetingsQuickCreate641() {
    require('custom/modules/Meetings/metadata/quickcreatedefs.php');
    $this->assertArrayHasKey('headerTpl', $viewdefs['Meetings']['QuickCreate']['templateMeta']['form'], 'Unit test setup failed');
    $this->assertArrayHasKey('footerTpl', $viewdefs['Meetings']['QuickCreate']['templateMeta']['form'], 'Unit test setup failed');
-   require_once 'modules/UpgradeWizard/SugarMerge/QuickCreateMerge.php';
    $this->merge = new QuickCreateMerge();
    $this->merge->merge('Meetings', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/640/modules/Meetings/metadata/quickcreatedefs.php','modules/Meetings/metadata/quickcreatedefs.php','custom/modules/Meetings/metadata/quickcreatedefs.php');
    SugarAutoLoader::buildCache();
@@ -71,7 +69,6 @@ function testSubpanelQuickCreate()
     $quickCreate = new SubpanelQuickCreate('Meetings', 'QuickCreate', true);
     $this->assertEquals('modules/Meetings/tpls/header.tpl', $quickCreate->ev->defs['templateMeta']['form']['headerTpl'], 'SubpanelQuickCreate fails to pick up headerTpl attribute');
     $this->assertEquals('modules/Meetings/tpls/footer.tpl', $quickCreate->ev->defs['templateMeta']['form']['footerTpl'], 'SubpanelQuickCreate fails to pick up footerTpl attribute');
-    require_once 'modules/UpgradeWizard/SugarMerge/QuickCreateMerge.php';
     $this->merge = new QuickCreateMerge();
     $this->merge->merge('Meetings', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/640/modules/Meetings/metadata/quickcreatedefs.php','modules/Meetings/metadata/quickcreatedefs.php','custom/modules/Meetings/metadata/quickcreatedefs.php');
     SugarAutoLoader::buildCache();

@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/database/MysqlManager.php';
 
 class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {

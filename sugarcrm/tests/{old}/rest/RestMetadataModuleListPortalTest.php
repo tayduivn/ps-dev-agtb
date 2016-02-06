@@ -50,7 +50,6 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         SugarAutoLoader::saveMap();
         // Set the tabs back to what they were
         if ( isset($this->defaultTabs[0]) ) {
-            require_once('modules/MySettings/TabController.php');
             $tabs = new TabController();
 
             $tabs->set_system_tabs($this->defaultTabs[0]);
@@ -70,7 +69,6 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
      */
     public function testMetadataGetModuleListPortal() {
         // Setup the tab controller here and get the default tabs for setting and resetting
-        require_once('modules/MySettings/TabController.php');
         $tabs = new TabController();
         $this->defaultTabs = $tabs->get_tabs_system();
 

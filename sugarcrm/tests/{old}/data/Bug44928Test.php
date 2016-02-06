@@ -14,17 +14,14 @@
 /**
  * @see Team
  */
-require_once 'modules/Teams/Team.php';
 
 /**
  * @see Campaign
  */
-require_once 'modules/Campaigns/Campaign.php';
 
 /**
  * @see Lead
  */
-require_once 'modules/Leads/Lead.php';
 
 /**
  * @ticket 44928

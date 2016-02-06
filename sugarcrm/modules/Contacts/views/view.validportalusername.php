@@ -21,7 +21,6 @@
  * @author Collin Lee
  * */
  
-require_once('include/MVC/View/SugarView.php');
 
 class ContactsViewValidPortalUsername extends SugarView 
 {

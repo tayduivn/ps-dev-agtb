@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarForecasting/AbstractForecast.php');
 class SugarForecasting_Filter_TimePeriodFilter extends SugarForecasting_AbstractForecast
 {
 

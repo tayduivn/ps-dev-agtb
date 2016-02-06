@@ -11,7 +11,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'data/SugarACLStrategy.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 

@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/controller.php';
 
 /**
  * Bug 59273 - Field name in viewdefs has different char case as in vardefs

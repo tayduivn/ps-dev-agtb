@@ -13,8 +13,6 @@
 use \Sugarcrm\Sugarcrm\Security\Password\Hash;
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 
-require_once 'include/SugarObjects/templates/person/Person.php';
-require_once 'modules/ACL/AclCache.php';
 
 /**
  * User is used to store customer information.
@@ -1591,7 +1589,6 @@ EOQ;
 				'&return_action='.$ret_action.
 				'&return_id='.$ret_id;
 
-			require_once('modules/Emails/EmailUI.php');
             $eUi = new EmailUI();
             $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl, true);
 
@@ -1659,7 +1656,6 @@ EOQ;
 				'&return_id='.$ret_id;
 
 			//Generate the compose package for the quick create options.
-    		require_once('modules/Emails/EmailUI.php');
             $eUi = new EmailUI();
             $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl, true);
     		$emailLink = "<a href='javascript:void(0);' onclick='SUGAR.quickCompose.init($j_quickComposeOptions);' class='$class'>";

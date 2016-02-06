@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("modules/DynamicFields/templates/Fields/TemplateCurrency.php");
 
 class Bug51695Test extends Sugar_PHPUnit_Framework_TestCase
 {

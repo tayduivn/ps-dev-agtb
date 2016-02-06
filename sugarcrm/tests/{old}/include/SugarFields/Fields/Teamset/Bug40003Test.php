@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 
 /**
  * Bug #40003

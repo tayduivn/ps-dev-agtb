@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Expressions/Expression/AbstractExpression.php');
 
 /**
  * Base class that all functions which return a boolean value should extend.

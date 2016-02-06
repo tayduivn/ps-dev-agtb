@@ -16,7 +16,6 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/MVC/View/SugarView.php');
 
 class ImportViewError extends SugarView 
 {	

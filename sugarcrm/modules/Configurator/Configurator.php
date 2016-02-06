@@ -202,7 +202,6 @@ class Configurator {
                 ( !isset($this->previous_sugar_override_config_array['enable_action_menu']) ||
                     $overrideArray['enable_action_menu'] != $this->previous_sugar_override_config_array['enable_action_menu'] )
         ) {
-            require_once('modules/Administration/QuickRepairAndRebuild.php');
             $repair = new RepairAndClear;
             $repair->module_list = array();
             $repair->clearTpls();
@@ -236,7 +235,6 @@ class Configurator {
             if (in_array($key, $this->allowUndefined) || isset ($sugar_config[$key])) {
                 if (empty($val) ) {
                     if(!empty($this->previous_sugar_override_config_array['stack_trace_errors']) && $key == 'stack_trace_errors'){
-                        require_once('include/TemplateHandler/TemplateHandler.php');
                         TemplateHandler::clearAll();
                         return;
                     }
@@ -391,7 +389,6 @@ class Configurator {
 			$this->handleOverride();
 			unlink('log4php.properties');
 			$GLOBALS['sugar_config'] = $this->config; //load the rest of the sugar_config settings.
-			require_once('include/SugarLogger/SugarLogger.php');
 			//$logger = new SugarLogger(); //this will create the log file.
 
 		}

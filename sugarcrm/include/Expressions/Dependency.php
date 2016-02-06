@@ -9,11 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once("include/Expressions/Trigger.php");
-require_once("include/Expressions/Actions/AbstractAction.php");
-require_once("include/Expressions/Actions/ReadOnlyAction.php");
-require_once("include/Expressions/Actions/VisibilityAction.php");
-require_once("include/Expressions/Expression/Parser/Parser.php");
 
 /**
  * Generic dependency

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarFields/Fields/Password/SugarFieldPassword.php';
-require_once 'modules/Import/ImportFieldSanitize.php';
 
 class SugarFieldPasswordTest extends Sugar_PHPUnit_Framework_TestCase
 {

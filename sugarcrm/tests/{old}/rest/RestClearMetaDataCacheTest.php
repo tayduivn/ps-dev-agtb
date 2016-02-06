@@ -11,9 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/controller.php';
-require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php';
-require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
 require_once 'tests/{old}/rest/RestTestBase.php';
 
 /**

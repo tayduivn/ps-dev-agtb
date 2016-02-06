@@ -22,17 +22,11 @@ if(empty($session_id)){
 $GLOBALS['installing'] = true;
 define('SUGARCRM_IS_INSTALLING', $GLOBALS['installing']);
 $GLOBALS['sql_queries'] = 0;
-require_once('include/SugarLogger/LoggerManager.php');
 require_once('sugar_version.php');
 require_once('include/utils.php');
 require_once('include/entryPoint.php');
 require_once('install/install_utils.php');
 require_once('install/install_defaults.php');
-require_once('include/TimeDate.php');
-require_once('include/Localization/Localization.php');
-require_once('include/SugarTheme/SugarTheme.php');
-require_once('include/utils/LogicHook.php');
-require_once('data/SugarBean.php');
 //check to see if the script files need to be rebuilt, add needed variables to request array
 $_REQUEST['root_directory'] = getcwd();
 $_REQUEST['js_rebuild_concat'] = 'rebuild';

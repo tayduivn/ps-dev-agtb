@@ -9,12 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/ModuleBuilder/MB/AjaxCompose.php' ;
-require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php' ;
 //BEGIN SUGARCRM flav=ent ONLY
-require_once 'modules/ModuleBuilder/Module/SugarPortalModule.php' ;
 //END SUGARCRM flav=ent ONLY
-require_once 'include/MVC/View/SugarView.php' ;
 
 class ModuleBuilderViewWizard extends SugarView
 {
@@ -265,7 +261,6 @@ class ModuleBuilderViewWizard extends SugarView
 
     public function generateStudioModuleButtons()
     {
-        require_once 'modules/ModuleBuilder/Module/StudioBrowser.php' ;
         $sb = new StudioBrowser ( ) ;
         $sb->loadModules () ;
         $nodes = $sb->getNodes () ;
@@ -297,7 +292,6 @@ class ModuleBuilderViewWizard extends SugarView
 
     public function generateSugarPortalModuleButtons()
     {
-        require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php' ;
         $sb = new SugarPortalBrowser ( ) ;
         $nodes = $sb->getNodes () ;
         $this->buttons = array ( ) ;
@@ -313,7 +307,6 @@ class ModuleBuilderViewWizard extends SugarView
     }
     public function generateSugarPortalMainButtons()
     {
-        require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php' ;
         $sb = new SugarPortalBrowser ( ) ;
         $nodes = $sb->getNodes () ;
         $GLOBALS [ 'log' ]->debug ( print_r ( $nodes, true ) ) ;

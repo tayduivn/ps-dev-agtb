@@ -13,7 +13,6 @@
 
 //FILE SUGARCRM flav=ent ONLY
 
-require_once 'include/database/OracleManager.php';
 require_once 'modules/UpgradeWizard/uw_utils.php';
 
 /**

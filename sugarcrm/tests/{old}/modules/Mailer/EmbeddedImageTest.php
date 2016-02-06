@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Mailer/EmbeddedImage.php";
-require_once "modules/Mailer/AttachmentPeer.php";
 
 class EmbeddedImageTest extends Sugar_PHPUnit_Framework_TestCase
 {

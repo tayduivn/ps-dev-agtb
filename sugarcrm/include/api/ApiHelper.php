@@ -38,7 +38,6 @@ class ApiHelper
         $moduleName = $bean->module_name;
 
         if (!isset(self::$moduleHelpers[$moduleName])) {
-            require_once('data/SugarBeanApiHelper.php');
             if (SugarAutoLoader::requireWithCustom('modules/' . $modulePath . '/' . $moduleName . 'ApiHelper.php')) {
                 $moduleHelperClass = SugarAutoLoader::customClass($moduleName . 'ApiHelper');
             } elseif (SugarAutoLoader::fileExists('custom/data/SugarBeanApiHelper.php')) {

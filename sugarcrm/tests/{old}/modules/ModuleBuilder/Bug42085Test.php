@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once("modules/ModuleBuilder/parsers/views/AbstractMetaDataParser.php");
-require_once("modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php");
 
 class Bug42085Test extends Sugar_PHPUnit_Framework_TestCase
 {

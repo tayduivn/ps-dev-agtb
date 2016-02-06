@@ -14,7 +14,6 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Queue;
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 
-require_once 'modules/Schedulers/Scheduler.php';
 
 /**
  *

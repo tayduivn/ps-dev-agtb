@@ -115,7 +115,6 @@ class SugarUpgradeUpdateFTSSettings extends UpgradeScript
      */
     protected function getUsaModuleList()
     {
-        require_once 'modules/Home/UnifiedSearchAdvanced.php';
         $usa = new UnifiedSearchAdvanced();
         $usaModules = $usa->getUnifiedSearchModulesDisplay();
         return $usaModules;

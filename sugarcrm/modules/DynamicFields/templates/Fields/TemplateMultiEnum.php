@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/DynamicFields/templates/Fields/TemplateEnum.php');
 class TemplateMultiEnum extends TemplateEnum{
 	var $type = 'text';
 

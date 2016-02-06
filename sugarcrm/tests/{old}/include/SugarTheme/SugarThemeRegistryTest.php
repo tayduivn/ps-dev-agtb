@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarTheme/SugarTheme.php';
 require_once 'include/dir_inc.php';
 
 class SugarThemeRegistryTest extends Sugar_PHPUnit_Framework_TestCase

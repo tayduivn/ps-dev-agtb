@@ -13,8 +13,6 @@
 
  * Description:
  ********************************************************************************/
-require_once('modules/DataSets/DataSet_Attribute.php');
-require_once('modules/DataSets/ScalarFormat.php');
 
 // DataSet_Layout is used to store customer information.
 class DataSet_Layout extends SugarBean {

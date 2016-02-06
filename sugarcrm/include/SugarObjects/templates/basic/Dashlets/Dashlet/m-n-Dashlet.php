@@ -17,7 +17,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/Dashlets/DashletGeneric.php');
 require_once('modules/<module_name>/<object_name>.php');
 
 class <module_name>Dashlet extends DashletGeneric { 

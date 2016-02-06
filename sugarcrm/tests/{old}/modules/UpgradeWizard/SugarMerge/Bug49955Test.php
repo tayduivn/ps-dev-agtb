@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once 'include/dir_inc.php';
-require_once('modules/UpgradeWizard/UpgradeRemoval.php');
 
 class Bug49955Test extends Sugar_PHPUnit_Framework_TestCase  {
 
@@ -61,7 +60,6 @@ function tearDown() {
 }
 
 function test_filename_convert_merge() {
-   require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
    $this->merge = new EditViewMerge();
    $this->merge->merge('Notes', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/610/modules/Notes/metadata/editviewdefs.php','modules/Notes/metadata/editviewdefs.php','custom/modules/Notes/metadata/editviewdefs.php');
    require('custom/modules/Notes/metadata/editviewdefs.php');

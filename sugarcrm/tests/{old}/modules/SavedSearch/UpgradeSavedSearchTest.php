@@ -33,10 +33,8 @@ class UpgradeSavedSearchTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testUpgradingAdvancedSearch() 
     {
-        require_once('modules/SavedSearch/UpgradeSavedSearch.php');
         $x = new UpgradeSavedSearch();
         
-        require_once('modules/SavedSearch/SavedSearch.php');
 	    $focus = new SavedSearch();
 	    
 		$focus->retrieve('f25fd18a-b72b-f466-014c-48a78f0eae69');
@@ -46,10 +44,8 @@ class UpgradeSavedSearchTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testUpgradingTeamSearch() 
     {
-        require_once('modules/SavedSearch/UpgradeSavedSearch.php');
         $x = new UpgradeSavedSearch();
         
-        require_once('modules/SavedSearch/SavedSearch.php');
 	    $focus = new SavedSearch();
 	    
 		$focus->retrieve('62ca8b0a-3ccd-0aaf-a462-49906aa9b337');

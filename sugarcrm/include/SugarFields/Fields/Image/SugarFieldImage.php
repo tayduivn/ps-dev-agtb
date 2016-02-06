@@ -10,7 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
 class SugarFieldImage extends SugarFieldBase
 {
@@ -45,7 +44,6 @@ class SugarFieldImage extends SugarFieldBase
 
     public function save($bean, $params, $field, $properties, $prefix = '')
     {
-        require_once('include/upload_file.php');
         $upload_file = new UploadFile($field);
 
         //remove file

@@ -45,7 +45,6 @@ class SugarUpgradeOpportunityRemoveForecastField extends UpgradeScript
                 'commit_stage'
             );
 
-            require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
             $this->log('Processing Opportunity RecordView');
             $recordViewDefsParser = ParserFactory::getParser(MB_RECORDVIEW, 'Opportunities', null, null, 'base');
             if ($this->removeFields($recordViewDefsParser, $fields)) {

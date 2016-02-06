@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/ListView/ListViewSmarty.php');
 
 global $app_strings, $app_list_strings, $current_language, $currentModule, $mod_strings;
 

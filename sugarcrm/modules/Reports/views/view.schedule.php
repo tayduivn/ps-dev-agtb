@@ -36,7 +36,6 @@ class ViewSchedule extends SugarView
         $time_format = $timedate->get_user_time_format();
         $smarty->assign("TIME_FORMAT", $time_format);
         $smarty->assign("TIMEDATE_JS", self::getJavascriptValidation());
-        require_once('modules/Reports/schedule/ReportSchedule.php');
         $rs = new ReportSchedule();
         $schedule = $rs->get_report_schedule_for_user($_REQUEST['id']);
         if($schedule)

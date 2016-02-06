@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/MVC/View/SugarView.php');
 require_once('modules/Teams/Popup_picker.php');
 class TeamsViewPopup extends SugarView
 {

@@ -12,7 +12,6 @@
  */
 
  
-require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
 
 /**
  * Bug 55003

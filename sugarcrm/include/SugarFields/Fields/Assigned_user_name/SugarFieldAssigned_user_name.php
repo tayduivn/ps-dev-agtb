@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
 class SugarFieldAssigned_user_name extends SugarFieldBase {
 

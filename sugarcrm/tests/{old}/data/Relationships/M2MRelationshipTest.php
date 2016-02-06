@@ -28,7 +28,6 @@ class M2MRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->opportunity2 = SugarTestOpportunityUtilities::createOpportunity();
         $GLOBALS['db']->commit();
 
-        require_once('data/Relationships/M2MRelationship.php');
         $this->def = array(
             'table'=>'opportunities_contacts',
             'join_table'=>'opportunities_contacts',

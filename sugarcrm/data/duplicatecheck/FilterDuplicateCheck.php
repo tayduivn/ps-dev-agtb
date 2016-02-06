@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('clients/base/api/FilterApi.php');
-require_once('include/api/RestService.php');
 
 /**
  * This method of duplicate check passes a configurable set of filters off to the Filter API to find duplicates.

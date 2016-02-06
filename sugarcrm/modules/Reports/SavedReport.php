@@ -124,7 +124,6 @@ class SavedReport extends SugarBean
 	}
 
 	function mark_deleted($id){
-	    require_once('modules/Reports/schedule/ReportSchedule.php');
 	    $report_schedule = new ReportSchedule();
 	    $scheduled_reports = $report_schedule->get_report_schedule($id);
 	    foreach($scheduled_reports as $rs_row){
@@ -419,7 +418,6 @@ class SavedReport extends SugarBean
      */
     public function runReportQuery()
     {
-        require_once('modules/Reports/SubpanelFromReports.php');
         $records = array();
         $report = new SubpanelFromReports($this);
         if(!empty($report)){

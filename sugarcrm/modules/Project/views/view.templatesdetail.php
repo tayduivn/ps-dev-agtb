@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/View/views/view.detail.php');
 
 class ProjectViewTemplatesDetail extends ViewDetail 
 {
@@ -63,7 +62,6 @@ class ProjectViewTemplatesDetail extends ViewDetail
      */
     protected function _displaySubPanels()
     {
-    	require_once ('include/SubPanel/SubPanelTiles.php');
    	 	$subpanel = new SubPanelTiles( $this->bean, 'ProjectTemplates' );
     	echo $subpanel->display( true, true );
     }

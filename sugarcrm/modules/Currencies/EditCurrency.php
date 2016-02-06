@@ -18,7 +18,6 @@ global $mod_strings;
 
 if ($current_user->is_admin)
 {
-    require_once('modules/Currencies/ListCurrency.php');
     $lc = new ListCurrency();
     $lc->handleDelete();
     $lc->handleAdd();

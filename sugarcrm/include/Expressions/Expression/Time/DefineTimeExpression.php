@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Expressions/Expression/Time/TimeExpression.php');
 /**
  * <b>time(String s)</b><br/>
  * Returns <i>s</i> as a time value.<br>

@@ -69,7 +69,6 @@ class SugarWidgetSubPanelTopComposeEmailButton extends SugarWidgetSubPanelTopBut
 		} else {
 			//Generate the compose package for the quick create options.
     		$composeData = array("parent_id" => $parent_id, "parent_type"=>$parent_type);
-            require_once('modules/Emails/EmailUI.php');
             $eUi = new EmailUI();
             $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreate($composeData, http_build_query($composeData), false, $defines['focus']);
 

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarFields/Fields/Tag/SugarFieldTag.php';
 
 /**
  * Test SugarFieldTag class

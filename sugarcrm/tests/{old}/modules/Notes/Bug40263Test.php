@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once 'modules/Users/User.php';
-require_once "modules/Notes/Note.php";
 
 /**
  * @group bug40263
@@ -46,7 +44,6 @@ class Bug40263Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function testGetListViewQueryCreatedBy()
     {
-		require_once("include/ListView/ListViewDisplay.php");
         include("modules/Notes/metadata/listviewdefs.php");
         $displayColumns = array(
             'NAME' => array (

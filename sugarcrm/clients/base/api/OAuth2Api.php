@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarOAuth2/SugarOAuth2Server.php');
 
 class OAuth2Api extends SugarApi
 {

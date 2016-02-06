@@ -11,7 +11,6 @@
  */
 
 require_once 'include/EditView/EditView2.php';
-require_once 'modules/pmse_Inbox/engine/PMSE.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
@@ -863,7 +862,6 @@ FLIST;
                 SugarAutoLoader::loadExtension("layoutdefs", $this->module))
         ) {
             $GLOBALS['focus'] = $this->bean;
-            require_once 'include/SubPanel/SubPanelTiles.php';
             $subpanel = new SubPanelTiles($this->bean, $this->module);
             echo $subpanel->display();
         }

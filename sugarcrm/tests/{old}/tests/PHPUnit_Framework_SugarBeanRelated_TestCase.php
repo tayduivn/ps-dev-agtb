@@ -1,6 +1,5 @@
 <?php
 
-require_once 'data/SugarBean.php';
 
 class PHPUnit_Framework_SugarBeanRelated_TestCase extends PHPUnit_Framework_TestCase
 {

@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/MetaDataManager/MetaDataManager.php';
         
 class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -78,7 +77,6 @@ class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
     //BEGIN SUGARCRM flav=ent ONLY
     public function testPortalLayoutsAreCorrect()
     {
-        require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
         $pb = new SugarPortalBrowser();
         $nodes = $pb->getNodes();
         $this->assertNotEmpty($nodes[2]);

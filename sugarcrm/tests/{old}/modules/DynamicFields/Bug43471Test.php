@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/database/MysqliManager.php';
 
 /**
  * @ticket 43471
@@ -113,7 +112,6 @@ class Bug43471Test extends Sugar_PHPUnit_Framework_TestCase
 
 
 // test bean class
-require_once("include/SugarObjects/templates/company/Company.php");
 
 // Account is used to store account information.
 class TestBean extends Company {

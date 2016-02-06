@@ -11,7 +11,6 @@
  */
 
 
-require_once('include/generic/LayoutManager.php');
 require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
 
 /**

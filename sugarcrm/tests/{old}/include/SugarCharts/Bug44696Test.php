@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarCharts/SugarChart.php');
 
 /**
  * Bug 44696 - Wrong shortcut to the opportunities module from the dashlet

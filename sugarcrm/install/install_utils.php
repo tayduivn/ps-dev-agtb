@@ -11,7 +11,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once('include/utils/zip_utils.php');
-require_once('include/upload_file.php');
 
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
@@ -2381,7 +2380,6 @@ function enableInsideViewConnector()
         require($mapFile);
     }
 
-    require_once('modules/Connectors/connectors/sources/ext/rest/insideview/insideview.php');
     $source = new ext_rest_insideview();
 
     // $mapping is brought in from the mapping.php file above
@@ -2394,7 +2392,6 @@ function enableInsideViewConnector()
  */
 function handleMissingSmtpServerSettingsNotifications()
 {
-    require_once 'include/OutboundEmail/OutboundEmail.php';
 
     $oe = new OutboundEmail();
     $settings = $oe->getSystemMailerSettings();

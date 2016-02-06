@@ -100,8 +100,6 @@ EOQ;
         $_REQUEST['action'] = 'EditView';
         $_REQUEST['record'] = $lead->id;
         
-        require_once('include/MVC/Controller/ControllerFactory.php');
-        require_once('include/MVC/View/ViewFactory.php');
         $GLOBALS['app']->controller = ControllerFactory::getController($_REQUEST['module']);
         //ob_start();
         $GLOBALS['app']->controller->execute();

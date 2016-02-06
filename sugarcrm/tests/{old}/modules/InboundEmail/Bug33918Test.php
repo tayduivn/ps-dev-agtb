@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('include/SugarFolders/SugarFolders.php');
 require_once('modules/Campaigns/ProcessBouncedEmails.php');
 
 /**

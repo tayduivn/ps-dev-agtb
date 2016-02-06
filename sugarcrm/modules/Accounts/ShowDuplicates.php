@@ -46,7 +46,6 @@ if((isset($_REQUEST['popup']) && $_REQUEST['popup'] == 'true') ||(isset($_POST['
 
 
 $account = BeanFactory::getBean('Accounts');
-require_once('modules/Accounts/AccountFormBase.php');
 $accountForm = new AccountFormBase();
 $GLOBALS['check_notify'] = FALSE;
 

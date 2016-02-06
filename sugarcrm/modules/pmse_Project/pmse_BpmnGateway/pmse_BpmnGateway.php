@@ -14,7 +14,6 @@
  * THIS CLASS IS FOR DEVELOPERS TO MAKE CUSTOMIZATIONS IN
  */
 
-require_once 'modules/pmse_Project/pmse_BpmnGateway/pmse_BpmnGateway_sugar.php';
 
 class pmse_BpmnGateway extends pmse_BpmnGateway_sugar {
 

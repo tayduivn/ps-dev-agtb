@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/externalAPI/Base/ExternalAPIBase.php';
-require_once 'include/externalAPI/Base/WebDocument.php';
 require_once 'vendor/Zend/Gdata/Contacts.php';
 
 /**

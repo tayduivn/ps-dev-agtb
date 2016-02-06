@@ -9,10 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/upload_file.php');
 
 
-require_once('include/upload_file.php');
 
 class DocumentSoap{
     var $upload_file;

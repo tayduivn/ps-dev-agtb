@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Emails/Email.php');
 require_once "tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php";
 
 /**
@@ -204,7 +203,6 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     }
 }
 
-require_once "modules/Mailer/SmtpMailer.php"; // requires BaseMailer in order to extend it
 
 class MockMailer extends SmtpMailer
 {

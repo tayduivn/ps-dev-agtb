@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('data/BeanFactory.php');
-require_once('include/api/SugarListApi.php');
 
 class ListApi extends SugarListApi {
     public function registerApiRest() {
@@ -174,7 +172,6 @@ class ListApi extends SugarListApi {
     }
 
     protected function performSearch(ServiceBase $api, $args, SugarBean $seed, $searchTerm, $options) {
-        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
         $searchEngine = SugarSearchEngineFactory::getInstance();
         //Default db search will be handled by the spot view, everything else by fts.
         if($searchEngine instanceOf SugarSearchEngine) {

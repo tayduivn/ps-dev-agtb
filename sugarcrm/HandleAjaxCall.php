@@ -18,7 +18,6 @@ if (!defined('ENTRY_POINT_TYPE')) {
     define('ENTRY_POINT_TYPE', 'gui');
 }
  require_once('include/entryPoint.php');
- require_once('ModuleInstall/PackageManager/PackageController.php');
 if(!is_admin($GLOBALS['current_user'])){
 	sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
 }

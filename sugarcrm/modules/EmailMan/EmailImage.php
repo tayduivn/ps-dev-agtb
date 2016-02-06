@@ -14,7 +14,6 @@ if(empty($_REQUEST['id']) || !preg_match("/^[\w\d\-]+$/", $_REQUEST['id'])) {
 	die("Not a Valid Entry Point");
 }
 global $mod_strings;
-require_once('modules/Notes/Note.php');
 $note = BeanFactory::getBean('Notes');
 //check if file is an email image
 if (!$note->retrieve_by_string_fields(array('id' => $_REQUEST['id'], 'parent_type' => "Emails"))) {

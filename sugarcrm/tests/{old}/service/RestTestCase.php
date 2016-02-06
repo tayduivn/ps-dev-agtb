@@ -11,7 +11,6 @@
  */
 
 //Uses the latest version of SugarWebServiceUtil implementation
-require_once('service/v4/SugarWebServiceUtilv4.php');
 
 /**
  * RestTestCase

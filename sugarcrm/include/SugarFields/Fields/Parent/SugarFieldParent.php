@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarFields/Fields/Relate/SugarFieldRelate.php');
 
 class SugarFieldParent extends SugarFieldRelate {
 
@@ -139,7 +138,6 @@ class SugarFieldParent extends SugarFieldRelate {
 
     function createQuickSearchCode($formName = 'EditView', $vardef){
 
-        require_once('include/QuickSearchDefaults.php');
         $json = getJSONobj();
 
         $dynamicParentTypePlaceHolder = "**@**"; //Placeholder for dynamic parent so smarty tags are not escaped in json encoding.

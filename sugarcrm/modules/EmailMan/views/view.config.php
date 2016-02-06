@@ -17,7 +17,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/MVC/View/SugarView.php');
 require_once('modules/EmailMan/Forms.php');
 
 class ViewConfig extends SugarView
@@ -143,7 +142,6 @@ class ViewConfig extends SugarView
         ////	END EMAIL SECURITY
         ///////////////////////////////////////////////////////////////////////////////
 
-        require_once('modules/Emails/Email.php');
         $email = BeanFactory::getBean('Emails');
         $this->ss->assign('ROLLOVER', $email->rolloverStyle);
         $this->ss->assign('THEME', $GLOBALS['theme']);

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Forecasts/ForecastHooks.php';
 
 class ForecastHooksTest extends Sugar_PHPUnit_Framework_TestCase
 {

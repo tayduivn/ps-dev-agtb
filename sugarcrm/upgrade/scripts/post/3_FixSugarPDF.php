@@ -23,7 +23,6 @@ class SugarUpgradeFixSugarPDF extends UpgradeScript
     public function run()
     {
         // clear fontlist cache file first
-        require_once('include/Sugarpdf/FontManager.php');
         $fontManager = new FontManager();
         $fontManager->clearCachedFile();
 

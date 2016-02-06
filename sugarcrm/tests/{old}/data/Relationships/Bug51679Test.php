@@ -42,7 +42,6 @@ class Bug51679Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testM2MRelationships()
     {
-        require_once('data/Relationships/M2MRelationship.php');
         $def = array(
             'table'=>'accounts_contacts',
             'join_table'=>'accounts_contacts',

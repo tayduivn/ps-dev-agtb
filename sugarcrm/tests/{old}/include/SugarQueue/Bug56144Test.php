@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarQueue/SugarJobQueue.php';
-require_once 'modules/SchedulersJobs/SchedulersJob.php';
 
 /**
  * Bug #56144

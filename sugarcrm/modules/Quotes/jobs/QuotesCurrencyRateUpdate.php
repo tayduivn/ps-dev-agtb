@@ -11,7 +11,6 @@
  */
 
 
-require_once('include/SugarCurrency/CurrencyRateUpdateAbstract.php');
 
 /**
  * QuotesCurrencyRateUpdate

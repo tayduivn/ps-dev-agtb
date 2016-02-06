@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/View/views/view.ajax.php');
 
 class ViewDownloadplugin extends ViewAjax
 {
@@ -20,7 +19,6 @@ class ViewDownloadplugin extends ViewAjax
      */
     public function display()
     {
-    	require_once('include/SugarPlugins/SugarPlugins.php');
 		$sp = new SugarPlugins();
 		$sp->downloadPlugin($_REQUEST['plugin']);	
     }

@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/RevenueLineItems/clients/base/api/RevenueLineItemToQuoteConvertApi.php');
 class RevenueLineItemToQuoteConvertApiTests extends Sugar_PHPUnit_Framework_TestCase
 {
     /**

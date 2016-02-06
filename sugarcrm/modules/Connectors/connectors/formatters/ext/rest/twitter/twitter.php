@@ -17,7 +17,6 @@
 * Reserved. Contributor(s): contact@synolia.com - www.synolia.com
 * *******************************************************************************/
 
-require_once('include/connectors/formatters/default/formatter.php');
 
 class ext_rest_twitter_formatter extends default_formatter {
 	

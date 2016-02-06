@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/DynamicFields/templates/Fields/TemplateURL.php');
 class TemplateIFrame extends TemplateURL{
 	var $type='iframe';
 	

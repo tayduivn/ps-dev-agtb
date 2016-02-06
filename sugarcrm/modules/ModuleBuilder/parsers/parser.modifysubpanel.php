@@ -20,7 +20,6 @@
  * There are two relevant modules for every subpanel - the module whose detailview this subpanel will appear in ($module_name), and the module that is the source of the data for the subpanel ($subPanelParentModule)
  */
 
-require_once ('modules/ModuleBuilder/parsers/parser.modifylistview.php') ;
 
 class ParserModifySubPanel extends ParserModifyListView
 {
@@ -44,7 +43,6 @@ class ParserModifySubPanel extends ParserModifyListView
         // Retrieve the definitions for all the available subpanels for this module
         $module = BeanFactory::newBeanByName($beanListLower[ strtolower( $this->moduleName )]);
 
-        require_once ('include/SubPanel/SubPanelDefinitions.php') ;
         $spd = new SubPanelDefinitions ( $module ) ;
 
         // Get the lists of fields already in the subpanel and those that can be added in
@@ -159,7 +157,6 @@ class ParserModifySubPanel extends ParserModifyListView
     function handleSave ()
     {
         $GLOBALS [ 'log' ]->debug ( "in ParserModifySubPanel->handleSave()" ) ;
-        require_once ('include/SubPanel/SubPanel.php') ;
         $subpanel = new SubPanel ( $this->moduleName, 'fab4', $this->subPanelName, $this->panel ) ;
 
         $newFields = array ( ) ;

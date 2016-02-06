@@ -17,7 +17,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/vCard.php');
 
 class ViewVcard extends SugarView
 {

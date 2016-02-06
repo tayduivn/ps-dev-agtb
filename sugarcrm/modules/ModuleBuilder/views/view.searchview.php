@@ -13,7 +13,6 @@
  // $Id: EditView.php 18703 2006-12-15 09:42:43Z majed $
 
 
-require_once ('modules/ModuleBuilder/views/view.listview.php') ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 class ViewSearchView extends ViewListView
@@ -49,7 +48,6 @@ class ViewSearchView extends ViewListView
  	    )
  	{
  		$packageName = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
- 		require_once 'modules/ModuleBuilder/parsers/ParserFactory.php' ;
  		$parser = ParserFactory::getParser ( $this->editLayout , $this->editModule, $packageName ) ;
 
  		$smarty = parent::constructSmarty ( $parser ) ;
@@ -71,7 +69,6 @@ class ViewSearchView extends ViewListView
 
  	function constructAjax()
  	{
- 		require_once ('modules/ModuleBuilder/MB/AjaxCompose.php') ;
  		$ajax = new AjaxCompose ( ) ;
  		switch ( $this->editLayout )
  		{

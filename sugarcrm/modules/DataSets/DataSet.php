@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/ListView/ReportListView.php');
-require_once('modules/DataSets/DataSet_Layout.php');
 
 // DataSet is used to store data formatting for CSQL queries.
 class DataSet extends SugarBean {

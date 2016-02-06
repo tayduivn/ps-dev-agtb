@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Expressions/Expression/Enum/EnumExpression.php');
 
 /**
  * <b>getListWhere(String trigger, Enum lists)</b><br>

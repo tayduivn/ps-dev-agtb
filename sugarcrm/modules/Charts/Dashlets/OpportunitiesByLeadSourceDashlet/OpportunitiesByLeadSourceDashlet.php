@@ -13,7 +13,6 @@
  // $Id: MyPipelineBySalesStageDashlet.php 24275 2007-07-13 04:26:44Z awu $
 
 
-require_once('include/Dashlets/DashletGenericChart.php');
 
 class OpportunitiesByLeadSourceDashlet extends DashletGenericChart 
 {
@@ -57,7 +56,6 @@ class OpportunitiesByLeadSourceDashlet extends DashletGenericChart
         require("modules/Charts/chartdefs.php");
         $chartDef = $chartDefs['pipeline_by_lead_source'];
         
-        require_once('include/SugarCharts/SugarChartFactory.php');
         $sugarChart = SugarChartFactory::getInstance();
         $sugarChart->is_currency = true; 
         $currency_symbol = $sugar_config['default_currency_symbol'];

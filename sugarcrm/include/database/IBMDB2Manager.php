@@ -12,7 +12,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/database/IBMDB2PreparedStatement.php';
 
 /**
  * This class handles the Data base functionality for the application using

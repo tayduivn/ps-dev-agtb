@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once('modules/Reports/config.php');
-require_once('include/api/SugarApiException.php');
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
@@ -459,7 +458,6 @@ class Report
         $this->_load_all_fields();
         $this->_load_currency();
 
-        require_once('include/generic/LayoutManager.php');
 
         if ($this->layout_manager == null) {
             $this->layout_manager = new LayoutManager();
@@ -597,7 +595,6 @@ class Report
     {
         global $current_user;
         if (isset($current_user)) {
-            require_once('modules/MySettings/TabController.php');
             $tabs = new TabController();
             $tabArray = $tabs->get_user_tabs($current_user);
 

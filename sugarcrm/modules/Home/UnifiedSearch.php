@@ -18,7 +18,6 @@
  ********************************************************************************/
 
 
-require_once('modules/Home/UnifiedSearchAdvanced.php');
 global $mod_strings, $modListHeader, $app_strings, $beanList, $beanFiles;
 $usa = new UnifiedSearchAdvanced();
 $usa->search();

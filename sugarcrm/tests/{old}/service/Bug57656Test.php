@@ -11,7 +11,6 @@
  */
 
 require_once('tests/{old}/service/SOAPTestCase.php');
-require_once('modules/MySettings/TabController.php');
 /**
  * @ticket 57656
  */

@@ -13,7 +13,6 @@
 
 require_once 'include/connectors/ConnectorsTestCase.php';
 require_once 'include/utils.php';
-require_once 'include/connectors/sources/default/source.php';
 
 class ConnectorsOriginalMapping extends Sugar_Connectors_TestCase
 {

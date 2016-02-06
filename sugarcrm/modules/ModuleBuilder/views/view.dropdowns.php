@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 
 class ViewDropdowns extends SugarView
 {
@@ -33,7 +32,6 @@ class ViewDropdowns extends SugarView
 		
  		if (isset($_REQUEST['refreshTree']))
 		{
-			require_once ('modules/ModuleBuilder/Module/DropDownTree.php');
 			$mbt = new DropDownTree();
 			$ajax->addSection('west', $mbt->getName(), $mbt->fetchNodes());
 			$smarty->assign('refreshTree',true);
@@ -42,7 +40,6 @@ class ViewDropdowns extends SugarView
         global $mod_strings;
         $ajax->addCrumb($mod_strings['LBL_DROPDOWNEDITOR'], 'ModuleBuilder.main("dropdowns")');
         
-        require_once('modules/ModuleBuilder/Module/DropDownBrowser.php');
         $dd = new DropDownBrowser();
         
         $smarty->assign('LBL_BTN_ADDDROPDOWN',translate('LBL_BTN_ADDDROPDOWN'));

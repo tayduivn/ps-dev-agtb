@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/connectors/sources/ext/rest/rest.php');
 class ext_rest_zoominfocompany extends ext_rest {
 
 	var $xml_parser;

@@ -18,7 +18,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('modules/Meetings/MeetingFormBase.php');
 $formBase = new MeetingFormBase();
 if ($formBase->prepareRecurring()) {
     if ($limit = $formBase->checkRecurringLimitExceeded()) {

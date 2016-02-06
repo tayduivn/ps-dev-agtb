@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Users/UsersApiHelper.php');
-require_once('include/api/RestService.php');
 
 class UsersApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {

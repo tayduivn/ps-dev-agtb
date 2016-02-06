@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarOAuth2/SugarOAuth2Storage.php');
 require_once('tests/{old}/rest/RestTestPortalBase.php');
 
 class SugarOAuth2StorageTest extends RestTestPortalBase

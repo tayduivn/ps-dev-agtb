@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarQueue/jobs/SugarJobHeartbeat.php';
 
 /**
  * Class SugarJobHeartbeatTest

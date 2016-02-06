@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/DynamicFields/templates/Fields/TemplateInt.php');
 
 /**
  * Bug #56694

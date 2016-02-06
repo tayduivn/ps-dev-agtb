@@ -16,7 +16,6 @@
 
 
 
-require_once('modules/QueryBuilder/QueryBuilder.php');
 
 
 global $mod_strings;

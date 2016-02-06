@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once('soap/SoapHelperFunctions.php');
-require_once('modules/MailMerge/MailMerge.php');
 
 $module = $_POST['mailmerge_module'];
 $document_id = $_POST['document_id'];

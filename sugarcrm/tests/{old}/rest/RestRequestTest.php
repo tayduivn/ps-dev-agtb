@@ -1,5 +1,4 @@
 <?php
-require_once('include/api/RestService.php');
 
 class RestRequestTest extends Sugar_PHPUnit_Framework_TestCase
 {

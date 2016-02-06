@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/ModuleBuilder/Module/StudioModule.php' ;
 
 class EmployeesStudioModule extends StudioModule {
     function getProvidedSubpanels ()

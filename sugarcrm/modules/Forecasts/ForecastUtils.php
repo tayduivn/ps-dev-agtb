@@ -10,11 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once ('modules/Forecasts/Common.php');
 
-require_once ('modules/Forecasts/ForecastDirectReports.php');
 
-require_once ('include/JSON.php');
 global $theme, $mod_strings, $current_language;
 
 
@@ -49,8 +46,6 @@ function get_worksheet_defintion($user_id, $forecast_type, $timeperiod_id, $allo
 	$seedForecastOpportunities = BeanFactory::getBean('ForecastOpportunities');
 	if (strtolower($forecast_type) == 'direct') {
 
-		require_once ('include/ListView/ListViewXTPL.php');
-		require_once ('include/ListView/ListViewSmarty.php');
 		$lv = new ListViewSmarty();
         $lv->lvd->additionalDetailsAjax=false;
 		$lv->showMassupdateFields = false;
@@ -149,8 +144,6 @@ function get_worksheet_defintion($user_id, $forecast_type, $timeperiod_id, $allo
 		$totals = array ('USER_NAME' => $mod_strings['LBL_TOTAL_VALUE'], 'BEST_CASE' => $DirReportsFocus->total_best_case_number, 'LIKELY_CASE' => $DirReportsFocus->total_likely_case_number, 'WORST_CASE' => $DirReportsFocus->total_worst_case_number, 'DATE_COMMITTED' => '&nbsp;', 'WK_BEST_CASE' => $DirReportsFocus->total_wk_best_case_number, 'WK_LIKELY_CASE' => $DirReportsFocus->total_wk_likely_case_number, 'WK_WORST_CASE' => $DirReportsFocus->total_wk_worst_case_number,);
 		//build list view contents.
 		if (ACLController :: checkAccess('Forecasts', 'list', true)) {
-			require_once ('include/ListView/ListViewXTPL.php');
-			require_once ('include/ListView/ListViewSmarty.php');
 			$lv = new ListViewSmarty();
             $lv->lvd->additionalDetailsAjax=false;
             global $listViewDefs;

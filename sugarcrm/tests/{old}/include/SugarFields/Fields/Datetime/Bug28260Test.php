@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('include/SugarFields/Fields/Datetime/SugarFieldDatetime.php');
 
 $timedate = TimeDate::getInstance();
 
@@ -54,7 +53,6 @@ class Bug28260Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user']->setPreference('datef', $dateFormat);
 		$GLOBALS['current_user']->setPreference('timef', $timeFormat);
 		
-        require_once('include/SugarFields/SugarFieldHandler.php');
    		$sfr = SugarFieldHandler::getSugarField('datetime');
     	$formattedValue = $sfr->getEmailTemplateValue($unformattedValue,array('type'=>'datetime'), array('notify_user' => $this->user));
     	

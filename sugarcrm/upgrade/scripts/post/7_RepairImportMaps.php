@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Import/maps/ImportMap.php';
 
 /**
  * Fix Import Maps created in 6.x

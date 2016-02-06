@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Expressions/Expression/Enum/EnumExpression.php');
 /**
  * <b>createList(v1, ...)</b><br/>
  * Returns a list made up of the passed in variables.<br/>

@@ -26,9 +26,6 @@
 
 require_once 'include/utils/progress_bar_utils.php';
 require_once 'ModuleInstall/ModuleScanner.php';
-require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
-require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
-require_once 'modules/MySettings/TabController.php';
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
@@ -223,7 +220,6 @@ class ModuleInstaller{
             require_once("modules/Administration/upgrade_custom_relationships.php");
             upgrade_custom_relationships($this->installed_modules);
             $this->rebuild_all(true);
-            require_once('modules/Administration/QuickRepairAndRebuild.php');
             $rac = new RepairAndClear();
             $rac->repairAndClearAll($selectedActions, $this->installed_modules,true, false);
             $this->updateSystemTabs('Add',$this->tab_modules);
@@ -234,7 +230,6 @@ class ModuleInstaller{
             sugar_cache_reset();
 
             //clear the unified_search_module.php file
-            require_once('modules/Home/UnifiedSearchAdvanced.php');
             UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
 
             // Rebuild roles so the ACLs for new modules are fresh immediately
@@ -257,7 +252,6 @@ class ModuleInstaller{
             //Doing this inline is prohibitively expensive
             //MetaDataManager::setupMetadata();
 
-            require_once 'include/api/ServiceDictionaryRest.php';
             $dict = new ServiceDictionaryRest();
             $dict->buildAllDictionaries();
 
@@ -1049,7 +1043,6 @@ class ModuleInstaller{
             ConnectorUtils::installSource($cp['name']);
 
             // refresh connector cache
-            require_once('include/connectors/ConnectorManager.php');
             $cm = new ConnectorManager();
             $connectors = $cm->buildConnectorsMeta();
 
@@ -1359,7 +1352,6 @@ class ModuleInstaller{
     }
 
     function uninstall_custom_fields($fields){
-        require_once('modules/DynamicFields/DynamicField.php');
         $dyField = new DynamicField();
 
         foreach($fields as $field){
@@ -1697,11 +1689,9 @@ class ModuleInstaller{
                             foreach($this->modulesInPackage as $removed_mod) {
                                 if ($def['module'] == $removed_mod)
                                 {
-                                    require_once 'modules/ModuleBuilder/Module/StudioModule.php' ;
                                     $studioMod = new StudioModule ( $mod );
                                     $studioMod->removeFieldFromLayouts( $field );
                                     if (isset($def['custom_module'])) {
-                                        require_once ('modules/DynamicFields/DynamicField.php') ;
                                         $seed = BeanFactory::getBean($mod);
                                         $df = new DynamicField ( $mod ) ;
                                         $df->setup ( $seed ) ;
@@ -1835,7 +1825,6 @@ class ModuleInstaller{
             $this->updateSystemTabs('Restore',$installed_modules);
 
             //clear the unified_search_module.php file
-            require_once('modules/Home/UnifiedSearchAdvanced.php');
             UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
 
             // Destroy all metadata caches and rebuild the base metadata. This
@@ -1844,7 +1833,6 @@ class ModuleInstaller{
             MetaDataManager::clearAPICache(true, true);
             MetaDataManager::setupMetadata();
 
-            require_once 'include/api/ServiceDictionaryRest.php';
             $dict = new ServiceDictionaryRest();
             $dict->buildAllDictionaries();
 

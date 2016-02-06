@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/ModuleApi.php';
-require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 

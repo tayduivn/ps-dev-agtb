@@ -10,11 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/FilterApi.php';
-require_once 'include/SugarQuery/SugarQuery.php';
-require_once 'modules/pmse_Inbox/engine/PMSE.php';
-require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
-require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
 class PMSECasesListApi extends FilterApi
 {

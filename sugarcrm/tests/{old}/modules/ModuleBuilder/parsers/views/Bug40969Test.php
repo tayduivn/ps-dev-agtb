@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php";
-require_once 'modules/ModuleBuilder/parsers/views/DeployedMetaDataImplementation.php' ;
 
 /**
  * Check ListLayoutMetaDataParser fills listviewdefs correctly for flex relate custom field to be displayed

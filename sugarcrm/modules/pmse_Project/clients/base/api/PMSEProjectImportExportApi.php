@@ -10,12 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'data/BeanFactory.php';
-require_once 'clients/base/api/vCardApi.php';
 
-require_once 'modules/pmse_Inbox/engine/PMSEProjectImporter.php';
-require_once 'modules/pmse_Inbox/engine/PMSEProjectExporter.php';
-require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 

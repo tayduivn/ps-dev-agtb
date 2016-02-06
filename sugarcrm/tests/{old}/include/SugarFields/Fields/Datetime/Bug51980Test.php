@@ -9,9 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/MVC/View/views/view.detail.php');
-require_once('modules/Opportunities/Opportunity.php');
-require_once('modules/Opportunities/views/view.detail.php');
 
 class Bug51980Test extends Sugar_PHPUnit_Framework_TestCase {
 // class Bug51980Test extends  Sugar_PHPUnit_Framework_TestCase{

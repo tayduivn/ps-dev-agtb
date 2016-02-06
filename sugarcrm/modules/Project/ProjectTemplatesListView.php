@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/ListView/ListViewSmarty.php');
 require SugarAutoLoader::loadWithMetafiles('Project', 'projecttemplate_listviewdefs');
 
 require_once('include/SearchForm/SearchForm.php');
@@ -88,7 +87,6 @@ if(!empty($_REQUEST['search_form_only']) && $_REQUEST['search_form_only']) { // 
 
 // use the stored query if there is one
 if (!isset($where)) $where = "";
-require_once('modules/MySettings/StoreQuery.php');
 $storeQuery = new StoreQuery();
 if(!isset($_REQUEST['query'])){
     $storeQuery->loadQuery($currentModule);

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('clients/base/api/ConfigModuleApi.php');
 
 class ForecastsConfigApi extends ConfigModuleApi
 {
@@ -110,7 +109,6 @@ class ForecastsConfigApi extends ConfigModuleApi
                 'skip_sync' => true,
             );
             $_REQUEST['view_package'] = 'studio';
-            require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
             $parser = ParserFactory::getParser('dropdown');
             $parser->saveDropDown($_args);
             unset($args['show_custom_buckets_options']);

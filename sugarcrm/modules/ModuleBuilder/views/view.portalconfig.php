@@ -14,7 +14,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 
 class ViewPortalConfig extends SugarView
 {
@@ -59,7 +58,6 @@ class ViewPortalConfig extends SugarView
         '', 'maxQueryResult'=>'20', 'maxSearchQueryResult'=>'5', 'defaultUser'=>'');
         $userList = get_user_array();
         $userList[''] = '';
-        require_once("modules/MySettings/TabController.php");
         $controller = new TabController();
         $disabledModulesFlag = false;
         $disabledModules = array_diff($controller->getAllPortalTabs(), $controller->getPortalTabs());

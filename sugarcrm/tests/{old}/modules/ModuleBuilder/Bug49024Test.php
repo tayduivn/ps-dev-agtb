@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/relationships/OneToOneRelationship.php' ;
-require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php' ;
-require_once 'modules/ModuleBuilder/parsers/relationships/UndeployedRelationships.php' ;
 
 /**
  * Bug 49024

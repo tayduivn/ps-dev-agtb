@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/api/RestService.php';
-require_once 'modules/Forecasts/clients/base/api/ForecastsConfigApi.php';
 
 /**
  * Class ForecastsConfigApiTest

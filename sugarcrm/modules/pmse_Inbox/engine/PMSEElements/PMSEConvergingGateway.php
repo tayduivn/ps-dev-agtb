@@ -11,7 +11,6 @@
  */
 
 
-require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEGateway.php';
 
 
 class PMSEConvergingGateway extends PMSEGateway

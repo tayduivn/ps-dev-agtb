@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarQuery/Builder/Where.php');
-require_once('include/SugarQuery/Builder/Andwhere.php');
-require_once('include/SugarQuery/Builder/Orwhere.php');
 
 class SugarQuery_Builder_Join {
 

@@ -60,7 +60,6 @@ echo '<br>';
 
 require_once('include/entryPoint.php');
 
-require_once('soap/SoapError.php');
 require_once('soap/SoapHelperFunctions.php');
 
 

@@ -1,7 +1,5 @@
 <?php
 
-require_once 'include/SugarFields/Fields/Fullname/SugarFieldFullname.php';
-require_once 'include/MetaDataManager/ViewIterator.php';
 
 /**
  * @covers SugarFieldFullname

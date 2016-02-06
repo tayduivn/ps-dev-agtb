@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("modules/Calendar/Calendar.php");
 
 class Bug50567Test extends Sugar_PHPUnit_Framework_TestCase
 {

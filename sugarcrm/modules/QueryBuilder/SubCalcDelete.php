@@ -14,7 +14,6 @@
  * Description:  
  ********************************************************************************/
 
-require_once('modules/QueryBuilder/QueryFilter.php');
 global $mod_strings;
 
 

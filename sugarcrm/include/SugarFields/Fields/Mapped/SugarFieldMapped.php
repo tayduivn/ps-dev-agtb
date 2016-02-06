@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
 /**
  * Class SugarFieldMapped
@@ -40,7 +39,6 @@ class SugarFieldMapped extends SugarFieldBase
 
         // First make sure the parent field exists on this bean
         if (isset($bean->field_defs[$properties['parentField']])) {
-            require_once 'include/SugarFields/SugarFieldHandler.php';
             $sfh = new SugarFieldHandler();
             $sf = $sfh->getSugarField($bean->field_defs[$properties['parentField']]['type']);
             if (method_exists($sf, $properties['mapFunction'])) {

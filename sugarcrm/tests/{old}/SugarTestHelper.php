@@ -71,7 +71,6 @@ $_SESSION['VALIDATION_EXPIRES_IN'] = 'valid';
 $GLOBALS['startTime'] = microtime(true);
 
 // clean out the cache directory
-require_once 'modules/Administration/QuickRepairAndRebuild.php';
 $repair = new RepairAndClear();
 $repair->module_list = array();
 $repair->show_output = false;
@@ -841,7 +840,6 @@ class SugarTestHelper
      */
     protected static function setUp_custom_field(array $params)
     {
-        require_once 'include/Expressions/Expression/Parser/Parser.php';
         self::$registeredVars['custom_field'] = true;
 
         if (count($params) < 2) {

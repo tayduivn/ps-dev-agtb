@@ -28,7 +28,6 @@ class SugarUpgradeForecastsSetup extends UpgradeScript
             return;
         }
 
-        require_once('modules/Forecasts/ForecastsDefaults.php');
         ForecastsDefaults::setupForecastSettings(true, $this->from_version, $this->to_version);
         ForecastsDefaults::upgradeColumns();
     }

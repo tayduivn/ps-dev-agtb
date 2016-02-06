@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/connectors/sources/default/source.php';
 
 /**
  * Class ext_eapm_google

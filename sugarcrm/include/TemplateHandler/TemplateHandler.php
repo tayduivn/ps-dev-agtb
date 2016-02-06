@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("include/Expressions/DependencyManager.php");
 
 /**
  * TemplateHandler builds templates using SugarFields and a generic view.
@@ -324,7 +323,6 @@ class TemplateHandler {
     public function createQuickSearchCode($defs, $defs2, $view = '', $module='')
     {
         $sqs_objects = array();
-        require_once('include/QuickSearchDefaults.php');
         if(isset($this) && $this instanceof TemplateHandler) //If someone calls createQuickSearchCode as a static method (@see ImportViewStep3) $this becomes anoter object, not TemplateHandler
         {
             $qsd = QuickSearchDefaults::getQuickSearchDefaults($this->getQSDLookup());

@@ -13,7 +13,6 @@
 * $Id: updater_utils.php 54741 2010-02-23 19:49:41Z rob $
 ********************************************************************************/
 require_once 'include/utils/encryption_utils.php';
-require_once 'include/SugarSystemInfo/SugarSystemInfo.php';
 
 /**
  * Proxy to SugarSystemInfo::getInstance()->getInfo()
@@ -847,7 +846,6 @@ function isAboutToExpire($expire_date, $days_before_warning = 7){
 
 function hasExceededOfflineClientLicenses($num_oc_lic){
 	if (file_exists('modules/Administration/System.php')) {
-	    require_once('modules/Administration/System.php');
 	    $system = new System();
 	    $where = "systems.system_id != 1 AND systems.deleted = 0";
 	    $GLOBALS['log']->debug("CHECKING SYSTEMS TABLE");

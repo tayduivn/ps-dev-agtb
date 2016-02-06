@@ -13,7 +13,6 @@
 
 
 
-require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopSelectButton.php');
 
 class SugarWidgetSubPanelTopSelectReportsButton extends SugarWidgetSubPanelTopSelectButton
 {

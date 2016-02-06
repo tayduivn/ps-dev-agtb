@@ -9,9 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once "modules/Mailer/MailerFactory.php";  // imports all but one of the Mailer classes that are needed
-require_once "modules/Mailer/AttachmentPeer.php"; // AttachmentPeer is needed to factor Attachments and EmbeddedImages
-require_once 'include/upload_file.php';
 
 class Email extends SugarBean {
 	/* SugarBean schema */
@@ -151,7 +148,6 @@ class Email extends SugarBean {
 	}
 
 	function email2init() {
-		require_once('modules/Emails/EmailUI.php');
 		$this->et = new EmailUI();
 	}
 
@@ -1466,7 +1462,6 @@ class Email extends SugarBean {
 	            // duplicate actual file when creating forwards
 		        if($duplicate) {
 		        	if(!class_exists('UploadFile')) {
-		        		require_once('include/upload_file.php');
 		        	}
 
                     /*--- ????
@@ -2533,7 +2528,6 @@ class Email extends SugarBean {
      */
     function searchImportedEmails($sort = '', $direction='')
     {
-       	require_once('include/TimeDate.php');
 		global $timedate;
 		global $current_user;
 		global $beanList;
@@ -2812,7 +2806,6 @@ class Email extends SugarBean {
 		$distribution	= get_select_options_with_id($app_list_strings['dom_email_distribution'], '');
 		$_SESSION['distribute_where'] = $where;
 
-		require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 		$teamSetField = new EmailSugarFieldTeamsetCollection($this, $this->field_defs, '', 'Distribute');
 		$code = $teamSetField->get_code();
 		$sqs_objects = $teamSetField->createQuickSearchCode(true);

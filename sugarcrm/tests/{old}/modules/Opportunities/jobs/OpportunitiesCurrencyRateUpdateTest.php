@@ -12,7 +12,6 @@
  */
 
 require_once 'tests/{old}/SugarTestDatabaseMock.php';
-require_once 'modules/Opportunities/jobs/OpportunitiesCurrencyRateUpdate.php';
 
 class OpportunitiesCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 {

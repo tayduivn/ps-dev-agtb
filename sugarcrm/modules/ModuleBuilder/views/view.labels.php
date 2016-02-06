@@ -9,9 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/ModuleBuilder/MB/AjaxCompose.php';
-require_once 'modules/ModuleBuilder/views/view.modulefields.php';
-require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 
 class ViewLabels extends ViewModulefields
 {
@@ -66,7 +63,6 @@ class ViewLabels extends ViewModulefields
             }
         }
 
-        require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php';
         $variableMap = $this->getVariableMap($editModule);
         foreach ($variableMap as $key => $value) {
             $gridLayoutMetaDataParserTemp = ParserFactory::getParser($key, $editModule);
@@ -83,7 +79,6 @@ class ViewLabels extends ViewModulefields
         //end
 
         //Get Subpanel Labels:
-        require_once ('include/SubPanel/SubPanel.php');
         $subList =  SubPanel::getModuleSubpanels ( $editModule );
         foreach ($subList as $subpanel => $titleLabel) {
             $vnames[$titleLabel] = $titleLabel;

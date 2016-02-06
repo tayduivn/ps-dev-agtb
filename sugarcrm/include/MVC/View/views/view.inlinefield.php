@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/MVC/View/views/view.ajax.php');
-require_once('include/SugarFields/SugarFieldHandler.php');
 
 class ViewInlineField extends ViewAjax 
 {

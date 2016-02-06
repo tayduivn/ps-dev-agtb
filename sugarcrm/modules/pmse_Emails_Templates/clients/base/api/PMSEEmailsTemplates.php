@@ -11,10 +11,6 @@
  */
 
 
-require_once 'clients/base/api/vCardApi.php';
-require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
-require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
-require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 

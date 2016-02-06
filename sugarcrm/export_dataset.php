@@ -11,7 +11,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 //FILE SUGARCRM flav=ent ONLY
-require_once('modules/DataSets/DataSet.php');
 
 if($GLOBALS['sugar_config']['disable_export'] || (!empty($GLOBALS['sugar_config']['admin_export_only']) && !is_admin($current_user))){
 	die("Exports Disabled");

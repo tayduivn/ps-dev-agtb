@@ -12,8 +12,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("modules/ModuleBuilder/parsers/parser.portalconfig.php");
-require_once("modules/ACLRoles/ACLRole.php");
 
 
 class PortalConfigParserTest extends Sugar_PHPUnit_Framework_TestCase

@@ -13,7 +13,6 @@
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\AdminSettings;
 
-require_once 'modules/Administration/Administration.php';
 
 /**
  *

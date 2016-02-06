@@ -17,7 +17,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('modules/Quotes/ContactQuoteRelationship.php');
 global $mod_strings;
 
 

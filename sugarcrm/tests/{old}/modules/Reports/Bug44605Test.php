@@ -75,7 +75,6 @@ class Bug44605Test extends Sugar_PHPUnit_Framework_TestCase
             );
         }
 
-        require_once 'modules/Reports/Report.php';
         $report = new Report(json_encode($definition));
         $report->create_summary_select();
 

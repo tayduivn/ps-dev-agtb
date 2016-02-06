@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once ('modules/DynamicFields/DynamicField.php');
 require_once ('modules/DynamicFields/FieldCases.php');
 global $db, $mod_strings;
 

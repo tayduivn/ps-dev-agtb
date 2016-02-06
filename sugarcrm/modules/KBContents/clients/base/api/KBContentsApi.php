@@ -14,8 +14,6 @@ use \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use \Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
 use \Sugarcrm\Sugarcrm\Elasticsearch\Query\KBQuery;
 
-require_once 'include/api/SugarListApi.php';
-require_once 'data/BeanFactory.php';
 
 class KBContentsApi extends SugarListApi
 {

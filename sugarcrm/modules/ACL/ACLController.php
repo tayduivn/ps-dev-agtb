@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once('modules/ACLActions/actiondefs.php');
-require_once('modules/ACL/ACLJSController.php');
 class ACLController
 {
 

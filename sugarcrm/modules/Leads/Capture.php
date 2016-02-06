@@ -12,7 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-require_once('modules/Leads/LeadFormBase.php');
 
 global $app_strings, $app_list_strings;
 

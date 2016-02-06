@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Filters/Filters.php";
 
 class FiltersTest extends Sugar_PHPUnit_Framework_TestCase
 {

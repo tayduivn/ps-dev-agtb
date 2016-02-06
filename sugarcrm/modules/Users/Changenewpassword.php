@@ -139,7 +139,6 @@ if ($redirect!='0') {
 ////	PASSWORD GENERATED LINK CHECK USING
 ///////////////////////////////////////////////////////////////////////////////
 
-	require_once('include/MVC/View/SugarView.php');
 	$view= new SugarView();
 	$view->init();
 	$view->displayHeader();

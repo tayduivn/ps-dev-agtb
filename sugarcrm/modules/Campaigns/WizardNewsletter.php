@@ -57,7 +57,6 @@ if (empty($_REQUEST['return_id'])) {
     $ss->assign("RETURN_ACTION", 'index');
 }
 
-require_once('include/QuickSearchDefaults.php');
 $qsd = QuickSearchDefaults::getQuickSearchDefaults();
 $qsd->setFormName('wizform');
 $sqs_objects = array('parent_name' => $qsd->getQSParent(),
@@ -69,7 +68,6 @@ $sqs_objects = array('parent_name' => $qsd->getQSParent(),
                     );
 
 
-require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 $teamSetField = new SugarFieldTeamset('Teamset');
 $teamSetField->initClassicView($focus->field_defs, 'wizform');
 $sqs_objects = array_merge($sqs_objects, $teamSetField->getClassicViewQS());
@@ -174,7 +172,6 @@ if($campaign_type == 'newsletter'){
     $ss->assign("FREQUENCY_LABEL", '&nbsp;');
 }
 global $current_user;
-require_once('modules/Currencies/ListCurrency.php');
 $currency = new ListCurrency();
 if(isset($focus->currency_id) && !empty($focus->currency_id)){
     $selectCurrency = $currency->getSelectOptions($focus->currency_id);
@@ -577,7 +574,6 @@ function create_email_steps(){
 function create_wiz_step_divs($steps,$ss){
 
 //Assign the Teamset field
-require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 $teamSetField = new SugarFieldTeamset('Teamset');
 $focus = BeanFactory::getBean('Campaigns');
 $code = $teamSetField->getClassicView($focus->field_defs, 'wizform');

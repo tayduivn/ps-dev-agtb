@@ -12,8 +12,6 @@
 
 
 
-require_once "modules/Calendar/Calendar.php";
-require_once "modules/Calendar/CalendarUtils.php";
 require_once('modules/Meetings/Meeting.php');
 
 class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {

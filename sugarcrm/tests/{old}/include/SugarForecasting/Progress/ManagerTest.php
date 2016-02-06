@@ -10,8 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/SugarForecasting/Progress/Manager.php');
-require_once 'modules/Opportunities/Opportunity.php';
 
 class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {

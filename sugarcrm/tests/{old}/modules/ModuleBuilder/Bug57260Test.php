@@ -13,9 +13,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-require_once 'modules/ModuleBuilder/controller.php';
-require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
-require_once 'modules/ModuleBuilder/views/view.layoutview.php';
 
 /**
  * Bug 57260 - Panel label of mobile layout in module builder is wrong

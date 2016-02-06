@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/KBContents/clients/base/api/KBContentsFilterApi.php';
 
 class KBContentsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 {

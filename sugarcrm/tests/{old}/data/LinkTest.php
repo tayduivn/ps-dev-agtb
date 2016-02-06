@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("data/BeanFactory.php");
 class LinkTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $createdBeans = array();

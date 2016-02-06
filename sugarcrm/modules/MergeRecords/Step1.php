@@ -21,7 +21,6 @@
 
 
 
-require_once('include/JSON.php');
 
 global $app_strings;
 global $mod_strings;

@@ -28,10 +28,8 @@ class Bug67014Test extends Sugar_PHPUnit_Framework_TestCase
         require_once 'service/core/SugarWebService.php';
         $service_object = $this->getMockForAbstractClass('SugarWebService');
 
-        require_once 'service/v4/SugarWebServiceUtilv4.php';
         $helper = new SugarWebServiceUtilv4();
 
-        require_once 'soap/SoapError.php';
         $error = new SoapError();
 
         $_GET['oauth_signature_method'] = null;

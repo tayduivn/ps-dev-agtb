@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Home/UnifiedSearchAdvanced.php';
 
 /**
  * @brief Try to find force_unifedsearch fields

@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Expressions/Expression/Generic/GenericExpression.php');
 
 /**
  * <b>ifElse(Boolean c, Val1, Val2)</b><br>

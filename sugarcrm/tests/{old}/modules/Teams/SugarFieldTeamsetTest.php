@@ -67,8 +67,6 @@ class SugarFieldTeamsetTest extends Sugar_PHPUnit_Framework_TestCase
 		$contact->teams->add($teams);
 		$contact->teams->save();
 		
-		require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
-		require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 		$sugar_field = new SugarFieldTeamset('Teamset');
 		
 		//Seed the $_POST variable to simulate removing the West team
@@ -100,8 +98,6 @@ class SugarFieldTeamsetTest extends Sugar_PHPUnit_Framework_TestCase
     	$contact = new Contact();
     	$contact = $contact->retrieve($this->_contactId);
 
-		require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
-		require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 		$sugar_field = new SugarFieldTeamset('Teamset');
 		
 		//Seed the $_POST variable to simulate removing the Global team

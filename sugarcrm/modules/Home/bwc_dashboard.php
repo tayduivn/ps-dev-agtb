@@ -12,11 +12,9 @@
 
 global $current_user, $sugar_version, $sugar_config, $beanFiles;
 
-require_once('include/MySugar/MySugar.php');
 
 // build dashlet cache file if not found
 if(!is_file($cachefile = sugar_cached('dashlets/dashlets.php'))) {
-    require_once('include/Dashlets/DashletCacheBuilder.php');
 
     $dc = new DashletCacheBuilder();
     $dc->buildCache();
@@ -590,7 +588,6 @@ $sugar_smarty->assign('mod', return_module_language($GLOBALS['current_language']
 $sugar_smarty->assign('app', $GLOBALS['app_strings']);
 $sugar_smarty->assign('module', 'Home');
 //custom chart code
-require_once('include/SugarCharts/SugarChartFactory.php');
 $sugarChart = SugarChartFactory::getInstance();
 $resources = $sugarChart->getChartResources();
 $mySugarResources = $sugarChart->getMySugarChartResources();

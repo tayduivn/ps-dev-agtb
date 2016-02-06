@@ -11,13 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('modules/Contacts/Contact.php');
-require_once('modules/Accounts/Account.php');
-require_once('modules/Campaigns/Campaign.php');
-require_once('modules/CampaignLog/CampaignLog.php');
 require_once('modules/Campaigns/utils.php');
-require_once('modules/EmailMarketing/EmailMarketing.php');
-require_once('include/ListView/ListView.php');
 require_once('SugarTestContactUtilities.php');
 require_once('SugarTestLeadUtilities.php');
 
@@ -203,7 +197,6 @@ class Bug39665Test extends Sugar_PHPUnit_Framework_TestCase
 	{
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$_REQUEST['module'] = 'Campaigns';
-		require_once('include/SubPanel/SubPanelDefinitions.php');
 		$subpanel_definitions = new SubPanelDefinitions($this->campaign);
 		
 		$ids = array('viewed', 'link', 'blocked');

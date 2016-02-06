@@ -10,10 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/controller/Controller.php';
-require_once 'modules/WorkFlow/WorkFlow.php';
-require_once 'modules/WorkFlowActions/WorkFlowAction.php';
-require_once 'modules/WorkFlowTriggerShells/WorkFlowTriggerShell.php';
 
 
 class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase

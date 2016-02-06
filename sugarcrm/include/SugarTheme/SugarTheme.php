@@ -21,7 +21,6 @@ if(!defined('JSMIN_AS_LIB'))
     define('JSMIN_AS_LIB', true);
 
 require_once("include/SugarTheme/cssmin.php");
-require_once("jssource/jsmin.php");
 require_once('include/utils/sugar_file_utils.php');
 
 /**
@@ -734,7 +733,6 @@ EOHTML;
 		}
 
 		// load meta data, includes default images
-		require_once("include/SugarTheme/SugarSprites.php");
 		$meta = SugarSprites::getInstance();
 		// add current theme dir
 		$meta->loadSpriteMeta($this->dirName);

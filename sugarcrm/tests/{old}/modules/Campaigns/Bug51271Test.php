@@ -11,14 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Contacts/Contact.php');
-require_once('modules/Campaigns/Campaign.php');
-require_once('modules/CampaignLog/CampaignLog.php');
 require_once('modules/Campaigns/utils.php');
-require_once('modules/EmailMarketing/EmailMarketing.php');
-require_once('include/ListView/ListView.php');
-require_once('modules/Emails/Email.php');
-require_once('modules/EmailMan/EmailMan.php');
 require_once('SugarTestContactUtilities.php');
 require_once('SugarTestLeadUtilities.php');
 
@@ -217,7 +210,6 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
         $result = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM campaign_log WHERE deleted=0 AND campaign_id = '{$this->campaign->id}'");
         $this->assertEquals(8, $result);
 
-        require_once('modules/Campaigns/DeleteTestCampaigns.php');
         $deleteTest = new DeleteTestCampaigns();
         $deleteTest->deleteTestRecords($this->campaign);
 

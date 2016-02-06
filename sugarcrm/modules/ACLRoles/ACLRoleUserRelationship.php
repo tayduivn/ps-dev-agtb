@@ -54,7 +54,6 @@ class ACLRoleUserRelationship extends M2MRelationship
     protected function registerUserAclRoles(User $user)
     {
         if (!$this->registrar) {
-            require_once 'modules/ACLRoles/AclRoleSetRegistrar.php';
             $this->registrar = new AclRoleSetRegistrar();
         }
 

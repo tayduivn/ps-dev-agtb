@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/SugarFields/Parsers/MetaParser.php');
 	class InlineEdit{
 
 

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once('vendor/nusoap//nusoap.php');
-require_once('ModuleInstall/PackageManager/PackageManagerDownloader.php');
 
 class PackageManagerComm
 {

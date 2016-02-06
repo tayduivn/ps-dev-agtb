@@ -131,7 +131,6 @@ class DashletManager
 	    )
 	{
 		if($refresh || !is_file(sugar_cached('dashlets/dashlets.php'))) {
-            require_once('include/Dashlets/DashletCacheBuilder.php');
             $dc = new DashletCacheBuilder();
             $dc->buildCache();
 		}

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/ListView/ListViewFacade.php');
-require_once('modules/Import/views/view.last.php');
 
 class Bug48496Test extends Sugar_PHPUnit_Framework_TestCase
 {

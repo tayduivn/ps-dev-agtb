@@ -11,7 +11,6 @@
  */
  
 require_once('vendor/nusoap//nusoap.php');
-require_once('modules/Users/User.php');
 
 
 /**

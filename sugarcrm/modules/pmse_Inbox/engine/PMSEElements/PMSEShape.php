@@ -11,7 +11,6 @@
  */
 
 
-require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEElement.php';
 
 class PMSEShape extends PMSEElement
 {

@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php' ;
 
 class StudioBrowser{
 	var $modules = array();

@@ -12,7 +12,6 @@
  */
 
 
-require_once('include/MVC/View/views/view.fts.php');
 
 class ViewFtsTest extends Sugar_PHPUnit_Framework_TestCase
 {

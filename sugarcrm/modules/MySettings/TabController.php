@@ -352,7 +352,6 @@ class TabController
      */
     public static function getAllPortalTabs()
     {
-        require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
 
         $tabs = array('Home');
 

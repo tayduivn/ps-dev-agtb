@@ -11,8 +11,6 @@
  */
 
  
-require_once 'modules/Import/Importer.php';
-require_once 'modules/Import/sources/ImportFile.php';
 
 class ImporterTest extends Sugar_PHPUnit_Framework_TestCase
 {

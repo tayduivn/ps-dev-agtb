@@ -10,12 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Mailer/Encoding.php";      // needs to know the valid encodings that are available for email
-require_once "modules/Mailer/EmailIdentity.php"; // requires EmailIdentity for representing email senders and recipients
-require_once "modules/Mailer/EmbeddedImage.php"; // requires Attachment and EmbeddedImage, which imports Attachment
 
 // external imports
-require_once "modules/OutboundEmailConfiguration/OutboundEmailConfiguration.php"; // needs to take on an
                                                                                   // OutboundEmailConfiguration or a
                                                                                   // type that derives from it
 

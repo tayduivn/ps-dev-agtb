@@ -11,7 +11,6 @@
  */
 
 
-require_once "include/generic/LayoutManager.php";
 require_once "include/generic/SugarWidgets/SugarWidgetFieldcurrency.php";
 class SugarWidgetFieldcurrencyTest extends Sugar_PHPUnit_Framework_TestCase
 {

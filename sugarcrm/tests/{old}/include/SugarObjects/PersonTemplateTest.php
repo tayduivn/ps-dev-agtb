@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Contacts/Contact.php';
-require_once 'modules/vCals/vCal.php';
 
 class PersonTemplateTest extends Sugar_PHPUnit_Framework_TestCase
 {

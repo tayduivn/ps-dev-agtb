@@ -12,7 +12,6 @@
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 
-require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
 class PMSELogicHook
 {

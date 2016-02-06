@@ -11,9 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarQuery/SugarQuery.php';
-require_once 'data/SugarVisibility.php';
-require_once 'data/visibility/SupportPortalVisibility.php';
 
 class SugarQueryPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
 {

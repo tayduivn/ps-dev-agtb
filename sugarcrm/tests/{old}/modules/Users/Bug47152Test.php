@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 //FILE SUGARCRM lic=sub ONLY
-require_once 'modules/Users/User.php';
 
 /**
  * @ticket 47152

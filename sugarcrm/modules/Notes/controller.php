@@ -9,13 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- require_once('include/MVC/Controller/SugarController.php');
 
 
  class NotesController extends SugarController
 {
 	function action_save(){
-		require_once('include/upload_file.php');
 
 		// CCL - Bugs 41103 and 43751.  41103 address the issue where the parent_id is set, but
 		// the relate_id field overrides the relationship.  43751 fixes the problem where the relate_id and

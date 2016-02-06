@@ -9,12 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/Contacts/Contact.php');
-require_once('modules/Accounts/Account.php');
-require_once('modules/Contacts/ContactFormBase.php');
-require_once('include/api/ServiceBase.php');
-require_once('clients/base/api/ModuleApi.php');
-require_once('modules/Contacts/ContactsApiHelper.php');
 
 class ContactsBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
 {

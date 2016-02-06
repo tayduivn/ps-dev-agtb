@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Expressions/Expression/Enum/EnumExpression.php');
 /**
  * <b>getDropdownKeySet(String list_name)</b><br>
  * Returns a collection of the keys in the supplied dropdown list.<br/>

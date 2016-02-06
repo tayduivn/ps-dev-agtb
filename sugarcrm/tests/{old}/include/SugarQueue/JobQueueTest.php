@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/SugarQueue/SugarJobQueue.php';
-require_once 'modules/SchedulersJobs/SchedulersJob.php';
 
 class JobQueueTest extends Sugar_PHPUnit_Framework_TestCase
 {

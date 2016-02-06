@@ -11,8 +11,6 @@
  */
 
 
-require_once "include/generic/LayoutManager.php";
-require_once "include/generic/SugarWidgets/SugarWidgetFieldfloat.php";
 class SugarWidgetFieldfloatTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**

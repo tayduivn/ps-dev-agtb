@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/Documents/DocumentSoap.php');
 
 class Bug43560Test extends Sugar_PHPUnit_Framework_TestCase
 {

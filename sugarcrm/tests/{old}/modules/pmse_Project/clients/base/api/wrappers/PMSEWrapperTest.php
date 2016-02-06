@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php';
-require_once 'data/EmptyBean.php';
 
 class PMSEWrapperTest extends Sugar_PHPUnit_Framework_TestCase
 {

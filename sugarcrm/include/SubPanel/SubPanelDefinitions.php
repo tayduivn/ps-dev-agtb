@@ -778,7 +778,6 @@ class SubPanelDefinitions
      */
     function open_layout_defs($reload = false, $layout_def_key = '', $original_only = false)
     {
-        require_once 'include/MetaDataManager/MetaDataManager.php';
 
         $mm = MetaDataManager::getManager();
 
@@ -803,7 +802,6 @@ class SubPanelDefinitions
             $layoutDefsKey = !empty($layout_def_key) ? $layout_def_key : $this->_focus->module_dir;
             // convert sidecar subpanels to the array the SubpanelDefinitions are looking for
             if ($this->_focus instanceof SugarBean && !isModuleBWC($this->_focus->module_dir) && isset($viewdefs)) {
-                require_once('include/MetaDataManager/MetaDataConverter.php');
                 $metaDataConverter = new MetaDataConverter();
                 $layout_defs[$layoutDefsKey] = $metaDataConverter->toLegacySubpanelLayoutDefs($viewdefs, $this->_focus);
             }
@@ -848,7 +846,6 @@ class SubPanelDefinitions
 		global $moduleList;
 
 		//use tab controller function to get module list with named keys
-		require_once("modules/MySettings/TabController.php");
 		$modules_to_check = TabController::get_key_array($moduleList);
 
 		//change case to match subpanel processing later on

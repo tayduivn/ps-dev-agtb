@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'clients/base/api/RSSFeedApi.php';
 
 class RSSFeedApiTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationship.php' ;
 
 /*
  * Class to manage the metadata for a One-To-Many Relationship

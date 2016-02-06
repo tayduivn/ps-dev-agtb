@@ -23,7 +23,6 @@ class SugarUpgradeRebuildRoles extends UpgradeScript
 
         if(!($this->from_flavor == 'ce' && $this->toFlavor('pro'))) return;
 
-	    require_once('modules/ACLFields/ACLField.php');
 
 	    include('modules/ACLActions/actiondefs.php');
         include('include/modules.php');

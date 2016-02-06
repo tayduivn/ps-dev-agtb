@@ -12,11 +12,7 @@
  */
 
 require_once('install/install_utils.php');
-require_once('modules/Opportunities/OpportunitiesSeedData.php');
-require_once('modules/Accounts/Account.php');
-require_once('modules/Products/Product.php');
 require_once('modules/TimePeriods/TimePeriod.php');
-require_once('modules/Users/User.php');
 
 class PopulateOppSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once 'include/MassUpdate.php';
-require_once 'modules/Opportunities/Opportunity.php';
 
 
 class Bug46276Test extends Sugar_PHPUnit_Framework_TestCase

@@ -21,8 +21,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('include/MVC/View/SugarView.php');
-require_once("include/JSON.php");
 
 class ContactsViewRetrieveEmail extends SugarView {
 

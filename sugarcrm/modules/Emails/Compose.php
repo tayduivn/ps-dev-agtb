@@ -152,7 +152,6 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE, $bean = null)
 		);
 	} else if (isset($data['replyForward'])) {
 
-		require_once("modules/Emails/EmailUI.php");
 
 		$ret = array();
 		$ie = BeanFactory::getBean('InboundEmail');
@@ -237,7 +236,6 @@ function getQuotesRelatedData($bean,$data) {
 	$return = array();
 	$emailId = $data['recordId'];
 
-  	require_once("modules/Emails/EmailUI.php");
 	$email = BeanFactory::getBean('Emails', $emailId);
 	$return['subject'] = $email->name;
 	$return['body'] = from_html($email->description_html);

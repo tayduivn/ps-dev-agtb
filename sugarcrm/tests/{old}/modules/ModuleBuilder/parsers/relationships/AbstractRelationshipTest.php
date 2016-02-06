@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationship.php';
 
 /**
  * Test for AbstractRelationship class

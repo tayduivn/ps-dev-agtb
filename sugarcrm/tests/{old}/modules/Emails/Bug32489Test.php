@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('modules/Emails/Email.php');
-require_once('modules/Notes/Note.php');
 
 /**
  * @ticket 32489

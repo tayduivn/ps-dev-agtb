@@ -21,5 +21,4 @@ class SugarRestServiceImpl extends SugarWebServiceImpl {
 		return md5($string);
 	}
 }
-require_once('service/core/SugarRestUtils.php');
 SugarRestServiceImpl::$helperObject = new SugarRestUtils();

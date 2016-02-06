@@ -11,33 +11,7 @@
  */
 
 
-require_once('modules/DynamicFields/templates/Fields/TemplateTextArea.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateFloat.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateInt.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateDate.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateDatetimecombo.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateBoolean.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateEnum.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateMultiEnum.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateRadioEnum.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateEmail.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateRelatedTextField.php');
 
-require_once('modules/DynamicFields/templates/Fields/TemplateURL.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateIFrame.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateHTML.php');
-require_once('modules/DynamicFields/templates/Fields/TemplatePhone.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateCurrency.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateParent.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateCurrencyId.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateAddress.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateParentType.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateEncrypt.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateId.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateImage.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateDecimal.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateLink.php');
-require_once('modules/DynamicFields/templates/Fields/TemplatePricingFormula.php');
 function get_widget($type)
 {
 

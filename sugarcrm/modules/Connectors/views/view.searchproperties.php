@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/View/views/view.list.php');
-require_once('include/connectors/sources/SourceFactory.php');
 
 class ViewSearchProperties extends ViewList 
 {
@@ -33,7 +31,6 @@ class ViewSearchProperties extends ViewList
 	public function display() 
 	{    	
         require_once('include/connectors/utils/ConnectorUtils.php');
-        require_once('include/connectors/sources/SourceFactory.php');
         $source_id = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName');
         $connector_strings = ConnectorUtils::getConnectorStrings($source_id);
         $is_enabled = ConnectorUtils::isSourceEnabled($source_id);

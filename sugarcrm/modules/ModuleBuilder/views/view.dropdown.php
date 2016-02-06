@@ -9,10 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/ModuleBuilder/MB/AjaxCompose.php';
-require_once 'modules/ModuleBuilder/Module/DropDownTree.php';
 require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
-require_once 'modules/ModuleBuilder/MB/MBHelper.php';
 
 class ViewDropdown extends SugarView
 {

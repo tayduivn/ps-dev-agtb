@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarFields/Fields/Relatecollection/SugarFieldRelatecollection.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 use Sugarcrm\Sugarcrm\ProcessManager;

@@ -12,7 +12,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 global $sugar_version, $js_custom_version;
 $lang_curr = isset($_SESSION['language']) ? $_SESSION['language'] : '';
-require_once('ModuleInstall/PackageManager/PackageManagerDisplay.php');
 
 if(!isset( $install_script ) || !$install_script || empty($_SESSION['setup_db_admin_user_name'])){
     die($mod_strings['ERR_NO_DIRECT_SCRIPT']);
@@ -32,7 +31,6 @@ if(empty($sugar_config['upload_badext'])) {
 ///////////////////////////////////////////////////////////////////////////////
 require_once('include/utils/zip_utils.php');
 
-require_once('include/upload_file.php');
 
 
 

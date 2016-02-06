@@ -25,7 +25,6 @@ function tearDown() {
 }
 
 function test_uploadfile_convert_merge_600() {
-   require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
    $this->merge = new EditViewMerge();
    $this->merge->merge('Documents', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/600/modules/Documents/metadata/editviewdefs.php','modules/Documents/metadata/editviewdefs.php','custom/modules/Documents/metadata/editviewdefs.php');
 
@@ -62,7 +61,6 @@ function test_uploadfile_convert_merge_600() {
 }
 
 function test_uploadfile_convert_merge_610() {
-   require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
    $this->merge = new EditViewMerge();
    $this->merge->merge('Documents', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/610/modules/Documents/metadata/editviewdefs.php','modules/Documents/metadata/editviewdefs.php','custom/modules/Documents/metadata/editviewdefs.php');
 

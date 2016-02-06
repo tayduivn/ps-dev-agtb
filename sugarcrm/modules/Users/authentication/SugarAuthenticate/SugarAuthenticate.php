@@ -210,7 +210,6 @@ class SugarAuthenticate{
 		$GLOBALS['log']->debug("authenticated_user_language is $authenticated_user_language");
 
 		// Clear all uploaded import files for this user if it exists
-        require_once('modules/Import/ImportCacheFiles.php');
         $tmp_file_name = ImportCacheFiles::getImportDir()."/IMPORT_" . $GLOBALS['current_user']->id;
 
 		if (file_exists($tmp_file_name)) {

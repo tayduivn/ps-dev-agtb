@@ -12,7 +12,6 @@
  */
 
 require_once('modules/TimePeriods/TimePeriod.php');
-require_once('include/SugarForecasting/Filter/TimePeriodFilter.php');
 
 class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {

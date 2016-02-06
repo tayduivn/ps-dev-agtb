@@ -17,8 +17,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/upload_file.php');
-require_once('include/DetailView/DetailView.php');
 
 
 global $app_strings;

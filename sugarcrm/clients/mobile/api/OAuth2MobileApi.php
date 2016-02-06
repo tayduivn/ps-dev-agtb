@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('clients/base/api/OAuth2Api.php');
 
 class OAuth2MobileApi extends OAuth2Api
 {

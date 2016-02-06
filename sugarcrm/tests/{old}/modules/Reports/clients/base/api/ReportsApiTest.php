@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/api/RestService.php';
-require_once 'modules/Reports/clients/base/api/ReportsApi.php';
 
 class ReportsApiTest extends Sugar_PHPUnit_Framework_TestCase
 {

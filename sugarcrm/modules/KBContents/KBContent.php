@@ -66,8 +66,6 @@ class KBContent extends SugarBean {
      */
     public function setupCategoryRoot()
     {
-        require_once 'clients/base/api/ConfigModuleApi.php';
-        require_once 'include/api/RestService.php';
 
         $categoryRoot = BeanFactory::newBean('Categories');
         $categoryRoot->name = 'KBContentCategory';
@@ -146,8 +144,6 @@ class KBContent extends SugarBean {
      */
     public function setupPrimaryLanguage()
     {
-        require_once 'clients/base/api/ConfigModuleApi.php';
-        require_once 'include/api/RestService.php';
 
         $apiUser = new User();
         $apiUser->is_admin = '1';

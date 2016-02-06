@@ -181,7 +181,6 @@ function get_notes_in_module($in, $module, $orderBy = '')
              AND deleted = 0 AND portal_flag = 1";
 
         if(!empty($orderBy)){
-            require_once 'include/SugarSQLValidate.php';
             $valid = new SugarSQLValidate();
             $fakeWhere = " 1=1 ";
             if($valid->validateQueryClauses($fakeWhere,$orderBy)) {
@@ -246,7 +245,6 @@ function get_related_list($in, $template, $where, $order_by, $row_offset = 0, $l
              $q = 'select id from '.$template->table_name.' where deleted = 0 ';
         	//add where statement if it is not empty
 			if(!empty($where)){
-                require_once 'include/SugarSQLValidate.php';
                 $valid = new SugarSQLValidate();
                 if(!$valid->validateQueryClauses($where)) {
                     $GLOBALS['log']->error("Bad query: $where");

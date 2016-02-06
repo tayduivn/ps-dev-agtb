@@ -58,7 +58,6 @@ class MySugar{
         }
 
 		if(!is_file(sugar_cached('dashlets/dashlets.php'))) {
-            require_once('include/Dashlets/DashletCacheBuilder.php');
 
             $dc = new DashletCacheBuilder();
             $dc->buildCache();
@@ -76,7 +75,6 @@ class MySugar{
 			$options = array();
             if (isset($_POST['type'], $_POST['type_module']) && $_POST['type'] == 'web') {
 				$dashlet_module = 'Home';
-				require_once('include/Dashlets/DashletRssFeedTitle.php');
                 $options['url'] = $_POST['type_module'];
 				$webDashlet = new DashletRssFeedTitle($options['url']);
 				$options['title'] = $webDashlet->generateTitle();
@@ -262,7 +260,6 @@ class MySugar{
 	}
 
 	function dashletsDialog(){
-		require_once('include/MySugar/DashletsDialog/DashletsDialog.php');
 
 		global $current_language, $app_strings;
 
@@ -301,7 +298,6 @@ class MySugar{
 	function getReportCharts(){
 		$category = $_REQUEST['category'];
 
-		require_once('include/MySugar/DashletsDialog/DashletsDialog.php');
 
 		global $current_language;
 
@@ -321,7 +317,6 @@ class MySugar{
 	}
 
 	function searchModuleToolsDashlets($searchStr, $category){
-		require_once('include/MySugar/DashletsDialog/DashletsDialog.php');
 
 		global $app_strings;
 
@@ -365,7 +360,6 @@ class MySugar{
 	}
 
 	function searchChartsDashlets($searchStr){
-		require_once('include/MySugar/DashletsDialog/DashletsDialog.php');
 
 		global $current_language, $app_strings;
 
@@ -625,7 +619,6 @@ class MySugar{
 
 		// build dashlet cache file if not found
 		if(!is_file(sugar_cached('dashlets/dashlets.php'))) {
-		    require_once('include/Dashlets/DashletCacheBuilder.php');
 
 		    $dc = new DashletCacheBuilder();
 		    $dc->buildCache();
@@ -659,7 +652,6 @@ class MySugar{
 
 	    $chartStringsXML = $sugar_config['tmp_dir'].'chart_strings.' . $current_language .'.lang.xml';
 
-	    require_once('include/SugarCharts/SugarChartFactory.php');
 		$sugarChart = SugarChartFactory::getInstance();
 
 

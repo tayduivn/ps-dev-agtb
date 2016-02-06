@@ -11,9 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('modules/Teams/Team.php');
-require_once('modules/Teams/TeamSet.php');
-require_once('modules/Contacts/ContactFormBase.php');
 
 class CreateDefaultTeamsTest extends Sugar_PHPUnit_Framework_TestCase
 {

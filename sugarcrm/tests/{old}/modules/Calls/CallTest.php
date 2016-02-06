@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/Calls/Call.php';
 
 class CallTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ActivityStream/Activities/ActivityQueueManager.php';
 
 class Activity extends Basic
 {

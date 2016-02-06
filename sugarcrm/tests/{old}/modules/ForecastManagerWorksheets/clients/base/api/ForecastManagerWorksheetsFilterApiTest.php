@@ -1,6 +1,5 @@
 <?php
 
-require_once 'modules/ForecastManagerWorksheets/clients/base/api/ForecastManagerWorksheetsFilterApi.php';
 
 /**
  * RS-144

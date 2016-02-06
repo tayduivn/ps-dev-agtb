@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Import/ImportDuplicateCheck.php';
 
 class ImportDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
 {

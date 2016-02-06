@@ -11,7 +11,6 @@
  */
 
 require_once 'modules/Administration/UpgradeWizardCommon.php';
-require_once 'modules/Configurator/Configurator.php';
 require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;

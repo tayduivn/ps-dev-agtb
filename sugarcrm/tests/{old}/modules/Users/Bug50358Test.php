@@ -18,7 +18,6 @@
  * To change this template use File | Settings | File Templates.
  */
 
-require_once 'modules/Users/views/view.wizard.php';
 
 class Bug50358Test extends Sugar_PHPUnit_Framework_TestCase
 {

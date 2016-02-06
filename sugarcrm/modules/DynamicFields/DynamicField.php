@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/MetaDataManager/MetaDataManager.php';
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
@@ -96,7 +95,6 @@ class DynamicField {
     function setLabel( $language='en_us' , $key , $value )
     {
         $params [ "label_" . $key ] = $value;
-        require_once 'modules/ModuleBuilder/parsers/parser.label.php' ;
         $parser = new ParserLabel ( $this->module ) ;
         $parser->handleSave( $params , $language);
     }
@@ -642,7 +640,6 @@ class DynamicField {
 
     public function saveExtendedAttributes($field, $column_fields)
     {
-        require_once ('modules/ModuleBuilder/parsers/StandardField.php') ;
         require_once ('modules/DynamicFields/FieldCases.php') ;
         global $beanList;
 
@@ -917,7 +914,6 @@ class DynamicField {
             $selMod = $this->module;
         }
         $viewPackage = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName', null);
-        require_once 'modules/ModuleBuilder/parsers/parser.label.php' ;
         $parser = new ParserLabel ( $selMod , $viewPackage) ;
         $parser->handleSave ( array('label_'. $systemLabel => $displayLabel ) , $GLOBALS [ 'current_language' ] ) ;
 

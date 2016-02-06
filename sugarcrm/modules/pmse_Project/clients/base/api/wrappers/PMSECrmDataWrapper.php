@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEObservers/PMSEObservable.php';
-require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
-require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 
@@ -182,7 +179,6 @@ class PMSECrmDataWrapper implements PMSEObservable
          * @name $db
          */
         global $db;
-        require_once 'modules/ACLRoles/ACLRole.php';
         $this->aclRoleObject = new ACLRole();
 
         $this->defaultDynaform = ProcessManager\Factory::getPMSEObject('PMSEDynaForm');

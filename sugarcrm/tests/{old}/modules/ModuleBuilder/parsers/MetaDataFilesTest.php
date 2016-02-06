@@ -18,7 +18,6 @@
  *
  */
 
-require_once('modules/ModuleBuilder/parsers/MetaDataFiles.php');
 
 class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
 {

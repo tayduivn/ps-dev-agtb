@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Users/UserViewHelper.php');
 
 /**
  * Bug49627Test.php

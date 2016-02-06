@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/ModuleBuilder/MB/MBPackageTree.php');
-require_once('modules/ModuleBuilder/Module/StudioBrowser.php');
 class MainTree extends MBPackageTree{
 
     /**

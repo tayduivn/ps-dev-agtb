@@ -12,7 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('modules/Notifications/views/view.quicklist.php');
 
 class ViewSystemQuicklist extends ViewQuickList{
 

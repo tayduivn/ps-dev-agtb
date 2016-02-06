@@ -11,10 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('data/SugarBean.php');
-require_once('modules/Contacts/Contact.php');
-require_once('modules/SNIP/SugarSNIP.php');
-require_once('include/TimeDate.php');
 
 /*
  * Tests SNIP's object creation feature by setting up a createdefs.php file and importing emails.

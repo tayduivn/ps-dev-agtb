@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/Users/authentication/AuthenticationController.php');
 
 class AuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
 {

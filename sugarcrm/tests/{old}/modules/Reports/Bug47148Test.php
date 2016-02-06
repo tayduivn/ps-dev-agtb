@@ -12,8 +12,6 @@
  */
 
 
-require_once('include/SugarCharts/ChartDisplay.php');
-require_once('modules/Reports/Report.php');
 
 class ChartDisplayMock47148 extends ChartDisplay
 {

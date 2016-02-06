@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/api/RestService.php';
-require_once 'clients/base/api/MassUpdateApi.php';
-
 /*
  * Tests mass update Rest api.
  */

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Quotes/sugarpdf/sugarpdf.standard.php');
 
 class QuotesSugarpdfInvoice extends QuotesSugarpdfStandard{
     

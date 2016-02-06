@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarFields/SugarFieldHandler.php';
-require_once('modules/SchedulersJobs/SchedulersJob.php');
 
 class WebLogicHook extends SugarBean implements RunnableSchedulerJob
 {

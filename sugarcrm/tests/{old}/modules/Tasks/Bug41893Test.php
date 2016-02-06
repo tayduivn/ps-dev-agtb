@@ -12,7 +12,6 @@
  */
 
 
-require_once "modules/Tasks/Task.php";
 
 class Bug41893Test extends Sugar_PHPUnit_Framework_TestCase
 {

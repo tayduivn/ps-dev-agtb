@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'vendor/XTemplate/xtpl.php';
 
 class XTemplateTest extends Sugar_PHPUnit_Framework_TestCase
 {

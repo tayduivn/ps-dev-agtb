@@ -10,11 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Mailer/IMailer.php";              // requires IMailer in order to implement it
-require_once "modules/Mailer/MailerException.php";      // requires MailerException in order to throw exceptions of that type
-require_once "modules/Mailer/RecipientsCollection.php"; // stores recipients in a RecipientsCollection
-require_once "modules/Mailer/EmailHeaders.php";         // email headers are contained in an EmailHeaders object
-require_once "modules/Mailer/EmailFormatter.php";       // formatting methods needed for preparing the message parts appropriately
 
 /**
  * This class implements the basic functionality that is expected from a Mailer.

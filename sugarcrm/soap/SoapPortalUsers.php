@@ -515,7 +515,6 @@ function portal_set_note_attachment($session,$note)
         $error->set_error('no_access');
         return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
-    require_once('modules/Notes/NoteSoap.php');
     $ns = new NoteSoap();
     $id = $ns->saveFile($note, true);
     return array('id'=>$id, 'error'=>$error->get_soap_array());
@@ -571,7 +570,6 @@ function portal_get_note_attachment($session,$id)
     $note = BeanFactory::getBean('Notes', $id
                 , array("disable_row_level_security" => true)
     );
-    require_once('modules/Notes/NoteSoap.php');
     $ns = new NoteSoap();
     if(!isset($note->filename)){
         $note->filename = '';

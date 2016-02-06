@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Mailer/RecipientsCollection.php";
 
 class RecipientsCollectionTest extends Sugar_PHPUnit_Framework_TestCase
 {

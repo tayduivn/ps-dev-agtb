@@ -12,7 +12,6 @@
 
 // $Id$
 
-require_once("include/SugarCharts/SugarChart.php");
 
 class JsChart extends SugarChart {
 	protected $ss;

@@ -48,7 +48,6 @@ class ACLRole extends SugarBean{
         }
         //END SUGARCRM flav=ent ONLY
         sugar_cache_clear('ACL');
-        require_once('modules/Reports/Report.php');
         Report::clearCaches();
     }
 

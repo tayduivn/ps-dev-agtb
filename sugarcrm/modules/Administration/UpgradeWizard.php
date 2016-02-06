@@ -16,7 +16,6 @@ if(!is_admin($GLOBALS['current_user'])){
 }
 
 require_once 'modules/Administration/UpgradeWizardCommon.php';
-require_once 'ModuleInstall/PackageManager/PackageManagerDisplay.php';
 require_once 'ModuleInstall/ModuleScanner.php';
 require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
 

@@ -12,8 +12,6 @@
  */
 
  
-require_once('include/SugarFields/Fields/Relate/SugarFieldRelate.php');
-require_once('include/SugarFields/Fields/Encrypt/SugarFieldEncrypt.php');
 
 class SugarFieldEncryptTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -41,7 +39,6 @@ class SugarFieldEncryptTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testEmailTemplateFormat($unformattedValue, $expectedValue)
 	{
-        require_once('include/SugarFields/SugarFieldHandler.php');
    		$sfr = SugarFieldHandler::getSugarField('encrypt');
         $formattedValue = $sfr->getEmailTemplateValue($unformattedValue,array(), array('notify_user' => $GLOBALS['current_user']));
         $this->assertEquals($expectedValue, $formattedValue);    	

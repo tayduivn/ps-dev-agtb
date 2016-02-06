@@ -9,9 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Dashlets/Dashlet.php');
-require_once('include/ListView/ListViewSmarty.php');
-require_once('include/generic/LayoutManager.php');
 
 /**
  * Generic Dashlet class

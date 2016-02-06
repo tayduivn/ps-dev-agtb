@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Mailer/MailerException.php"; // requires MailerException in order to throw exceptions of that type
-require_once "modules/Mailer/Encoding.php";        // needs the valid encodings defined in Encoding
 
 /**
  * This class encapsulates properties and behavior of an attachment so that a common interface can be expected

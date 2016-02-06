@@ -79,7 +79,6 @@ class SugarMin {
              }
         }
 
-        require_once('jssource/Minifier.php');
         return JShrink\Minifier::minify($this->text);
 	}
 

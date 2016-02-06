@@ -11,7 +11,6 @@
  */
 
 require_once 'modules/pmse_Inbox/engine/PMSEFieldsUtils.php';
-require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 

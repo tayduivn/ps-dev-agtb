@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/DynamicFields/DynamicField.php');
 
 class Bug61859Test extends Sugar_PHPUnit_Framework_TestCase
 {

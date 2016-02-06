@@ -68,7 +68,6 @@ class TrackerQueriesTest extends Sugar_PHPUnit_Framework_TestCase {
         $timedate = TimeDate::getInstance();
 
 		$mon = $trackerManager->getMonitor('tracker_queries');
-        require_once('modules/Trackers/TrackerUtility.php');
 
         $sql = "INSERT INTO FOO VALUES ('Test', 101, 'News Time', 'Our Latest Headlines', 4)";
    		$mon->setValue('text', $sql);

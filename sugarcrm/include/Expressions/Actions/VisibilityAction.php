@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once("include/Expressions/Actions/AbstractAction.php");
 
 class VisibilityAction extends AbstractAction
 {
@@ -250,7 +249,6 @@ class VisibilityAction extends AbstractAction
      */
     function fire(&$target)
     {
-        require_once("include/Expressions/Expression/AbstractExpression.php");
         $result = Parser::evaluate($this->expression, $target)->evaluate();
         if ($result === AbstractExpression::$FALSE) {
             $target->field_defs[$this->targetField]['hidden'] = true;

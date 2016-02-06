@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("include/SugarCharts/nvd3/nvd3.php");
 
 class nvd3Reports extends nvd3
 {

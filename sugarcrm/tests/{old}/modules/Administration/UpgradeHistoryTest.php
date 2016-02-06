@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/Administration/UpgradeHistory.php';
 
 class UpgradeHistoryTest extends Sugar_PHPUnit_Framework_TestCase
 {

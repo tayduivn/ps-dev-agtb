@@ -20,7 +20,6 @@ if (!defined('sugarEntry')) define('sugarEntry', true);
  *
  */
 require_once('service/v4/SugarWebServiceImplv4.php');
-require_once('service/v4_1/SugarWebServiceUtilv4_1.php');
 
 class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
 {

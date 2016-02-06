@@ -11,7 +11,6 @@
  */
 
 // For clearing the metadata API cache
-require_once "include/MetaDataManager/MetaDataManager.php";
 
 /**
  * Create relationship objects

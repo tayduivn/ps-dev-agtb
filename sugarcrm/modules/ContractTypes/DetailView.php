@@ -69,7 +69,6 @@ $xtpl->assign("LIST_ORDER", $focus->list_order);
 $xtpl->parse("main");
 $xtpl->out("main");
 
-require_once('include/SubPanel/SubPanelTiles.php');
 $subpanel = new SubPanelTiles($focus, 'ContractTypes');
 echo $subpanel->display();
 ?>

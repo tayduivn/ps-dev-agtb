@@ -36,7 +36,6 @@ if(SugarAutoLoader::existing('modules/'. $_REQUEST['target_module'] . '/EditView
 	    $subpanelClass = SugarAutoLoader::customClass($target_module . 'SubpanelQuickCreate');
 		$sqc  = new $subpanelClass($target_module, $view);
 	} else {
-		require_once('include/EditView/SubpanelQuickEdit.php');
 		$sqc  = new SubpanelQuickEdit($target_module, $view);
 	}
 }

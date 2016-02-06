@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Reports/Report.php';
 require_once 'modules/Reports/SavedReport.php';
 /**
  * @group Bug45686

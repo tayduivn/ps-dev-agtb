@@ -12,7 +12,6 @@
 
 // $Id: SugarWidgetSubPanelTopSelectButton.php 54093 2010-01-28 05:12:24Z dwheeler $
 
-require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopButton.php');
 
 class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 {

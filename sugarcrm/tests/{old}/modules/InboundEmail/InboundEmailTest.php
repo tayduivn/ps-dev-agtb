@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('modules/InboundEmail/InboundEmail.php');
-require_once('include/TimeDate.php');
 /**
  * This class is meant to test everything for InboundEmail
  *

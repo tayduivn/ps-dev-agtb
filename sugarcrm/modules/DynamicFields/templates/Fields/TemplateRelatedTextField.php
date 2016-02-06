@@ -11,7 +11,6 @@
  */
 
 require_once('modules/DynamicFields/templates/Fields/TemplateField.php');
-require_once 'modules/ModuleBuilder/parsers/parser.label.php';
 require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
 
 class TemplateRelatedTextField extends TemplateText{
@@ -244,7 +243,6 @@ class TemplateRelatedTextField extends TemplateText{
     protected function deleteIdLabel(TemplateField $fieldId, $df)
     {
         if ($df instanceof DynamicField) {
-            require_once 'modules/ModuleBuilder/parsers/parser.label.php';
             foreach (array_keys($GLOBALS['sugar_config']['languages']) AS $language) {
                 foreach (ModuleBuilder::getModuleAliases($df->module) AS $module) {
                     $mod_strings = return_module_language($language, $module);

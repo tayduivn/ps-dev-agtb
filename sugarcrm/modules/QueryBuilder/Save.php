@@ -14,7 +14,6 @@
  * Description:  
  ********************************************************************************/
 
-require_once('modules/QueryBuilder/QueryBuilder.php');
 
 
 

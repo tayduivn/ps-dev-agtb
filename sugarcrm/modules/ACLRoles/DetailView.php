@@ -67,7 +67,6 @@ echo $sugar_smarty->fetch('modules/ACLRoles/DetailView.tpl');
 //for subpanels the variable must be named focus;
 $focus =& $role;
 $_REQUEST['module'] = 'ACLRoles';
-require_once('include/SubPanel/SubPanelTiles.php');
 
 $subpanel = new SubPanelTiles($role, 'ACLRoles');
 

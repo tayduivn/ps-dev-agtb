@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('include/OutboundEmail/OutboundEmail.php');
 
 /**
  * @ticket 32487

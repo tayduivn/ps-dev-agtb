@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("modules/Forecasts/clients/base/api/ForecastsFilterApi.php");
-require_once('include/api/RestService.php');
 
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php

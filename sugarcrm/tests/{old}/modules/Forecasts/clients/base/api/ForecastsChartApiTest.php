@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Forecasts/clients/base/api/ForecastsChartApi.php');
 
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php

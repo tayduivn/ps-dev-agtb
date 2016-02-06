@@ -12,7 +12,6 @@
  */
 
 
-require_once 'modules/Project/Project.php';
 class SugarTestProjectUtilities extends SugarTestObjectUtilities
 {
 	public static $tableName = "project";

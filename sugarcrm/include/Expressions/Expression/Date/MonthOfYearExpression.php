@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
 /**
  * <b>monthofyear(Date d)</b><br>
  * Returns the month of year that <i>d</i> is in.<br/>

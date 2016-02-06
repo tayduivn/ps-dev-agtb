@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/UpgradeWizard/SugarMerge/MergeUtils.php";
 
 /**
  * Merge Sugar 7 templates with customizations

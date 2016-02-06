@@ -10,10 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/views/AbstractMetaDataParser.php' ;
-require_once 'modules/ModuleBuilder/parsers/views/MetaDataParserInterface.php' ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
-require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php' ;
 
 class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDataParserInterface
 {
@@ -74,11 +71,9 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 
         if (empty ( $packageName ))
         {
-            require_once 'modules/ModuleBuilder/parsers/views/DeployedMetaDataImplementation.php' ;
             $this->implementation = new DeployedMetaDataImplementation($view, $moduleName, $client, $params);
         } else
         {
-            require_once 'modules/ModuleBuilder/parsers/views/UndeployedMetaDataImplementation.php' ;
             $this->implementation = new UndeployedMetaDataImplementation ( $view, $moduleName, $packageName, $client ) ;
         }
 

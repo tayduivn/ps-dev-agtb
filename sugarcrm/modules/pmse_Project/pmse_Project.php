@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Project/pmse_Project_sugar.php';
 
 class pmse_Project extends pmse_Project_sugar
 {

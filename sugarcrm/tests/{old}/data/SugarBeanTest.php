@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('data/SugarBean.php');
 
 use SugarTestAccountUtilities as AccountHelper;
 use SugarTestUserUtilities as UserHelper;
@@ -977,7 +976,6 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 }
 
 // Using Mssql here because mysql needs real connection for quoting
-require_once 'include/database/MssqlManager.php';
 class MockMysqlDb extends MssqlManager
 {
     public $database = true;

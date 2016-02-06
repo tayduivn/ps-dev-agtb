@@ -17,7 +17,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/SugarQuery/SugarQuery.php');
 
 class UserPreference extends SugarBean
 {

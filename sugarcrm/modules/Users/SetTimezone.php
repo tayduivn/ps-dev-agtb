@@ -19,7 +19,6 @@
 
 
 
-require_once('include/JSON.php');
 require_once('modules/Users/Forms.php');
 
 global $app_strings;

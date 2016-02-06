@@ -25,8 +25,6 @@ class ConnectorFactory{
 	 */
 	public static function getInstance($source_name, $fresh = false) {
 		if (empty(self::$source_map[$source_name]) || $fresh) {
-			require_once('include/connectors/sources/SourceFactory.php');
-			require_once('include/connectors/component.php');
 			$source = SourceFactory::getSource($source_name);
 			if(empty($source)) {
 			    $GLOBALS['log']->fatal("Failed to load source $source_name");

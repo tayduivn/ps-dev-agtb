@@ -33,9 +33,6 @@ class SugarUpgradeForecastsListViewSetup extends UpgradeScript
     public function run()
     {
         // setup the forecast columns based on the config
-        require_once('include/api/RestService.php');
-        require_once('modules/Forecasts/clients/base/api/ForecastsConfigApi.php');
-        require_once('modules/Forecasts/ForecastsDefaults.php');
 
         $this->api = new RestService();
         $this->api->user = $this->context['admin'];

@@ -269,7 +269,6 @@ if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
  */
 function defineFromConfig($value, $default){
     $lowerValue = strtolower($value);
-   require_once("modules/Administration/Administration.php");
     $focus = Administration::getSettings();
     if(isset($focus->settings["sugarpdf_".$lowerValue])){
         define($value, $focus->settings["sugarpdf_".$lowerValue]);
@@ -298,7 +297,6 @@ function defineFromUserPreference($value, $default){
         $pref = $current_user->getPreference("sugarpdf_".$lowerValue);
     }
     if(strpos($value, "PDF_FONT_NAME_") !== false){
-        require_once('include/Sugarpdf/FontManager.php');
         $fontManager = new FontManager();
         $fontManager->listFontFiles();
         if(!isset($fontManager->fontList[$pref]) || !$fontManager->fontFileExist($fontManager->fontList[$pref]['filename'])){

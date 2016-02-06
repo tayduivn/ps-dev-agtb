@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Reports/Report.php';
 
 /**
  * Bug #54294
@@ -217,7 +216,6 @@ class Bug54294Test extends Sugar_PHPUnit_Framework_TestCase
     }
 }
 
-require_once('include/SugarCharts/ChartDisplay.php');
 class ChartDisplayMock extends ChartDisplay
 {
     public function print_currency_symbol()

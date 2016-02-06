@@ -19,7 +19,6 @@
  */
 
 require_once('service/core/SoapHelperWebService.php');
-require_once('soap/SoapError.php');
 
 class SoapHelperWebServiceTest extends Sugar_PHPUnit_Framework_TestCase {
 

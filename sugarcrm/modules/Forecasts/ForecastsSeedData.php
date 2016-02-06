@@ -23,7 +23,6 @@ class ForecastsSeedData
      */
     public static function populateSeedData($timeperiods)
     {
-        require_once('modules/Forecasts/Common.php');
 
         global $timedate, $current_user, $app_list_strings;
 

@@ -145,7 +145,6 @@ class UnifiedSearchAdvanced {
 		$unified_search_modules_display = $this->getUnifiedSearchModulesDisplay();
 
 
-		require_once 'include/ListView/ListViewSmarty.php';
 
 		global $modListHeader, $beanList, $beanFiles, $current_language, $app_strings, $current_user, $mod_strings;
 		$home_mod_strings = return_module_language($current_language, 'Home');

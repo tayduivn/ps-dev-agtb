@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/MetaDataManager/MetaDataManager.php';
-require_once 'modules/Administration/QuickRepairAndRebuild.php';
 
 /**
  * Tests metadata manager caching and refreshing. This will be a somewhat slow

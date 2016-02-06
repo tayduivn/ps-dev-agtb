@@ -12,7 +12,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/ModuleBuilderParser.php';
 
 /**
  * Parser for role based dropdowns. Stores dropdown filter data.

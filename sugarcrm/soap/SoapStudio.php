@@ -247,9 +247,6 @@ function set_custom_field($session, $module_name, $type, $properties, $add_to_la
 	$_REQUEST = array_merge($_REQUEST, $request_arr);
 	$_POST = array_merge($_POST, $request_arr);
 
-	require_once('include/MVC/Controller/SugarController.php');
-	require_once('modules/ModuleBuilder/controller.php');
-	require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
 
 	$mbc = new ModuleBuilderController();
 	$mbc->setup();

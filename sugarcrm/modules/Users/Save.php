@@ -10,11 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarFields/SugarFieldHandler.php';
-require_once 'modules/MySettings/TabController.php';
-require_once 'include/MetaDataManager/MetaDataManager.php';
-require_once 'include/api/SugarApi.php';
-require_once 'clients/base/api/CurrentUserApi.php';
 
 /**
  * Verifies the given user's data, sends the result as JSON, and then exits
@@ -114,7 +109,6 @@ foreach ($focus->field_defs as $fieldName => $field) {
     }
 }
 
-require_once 'include/SugarFields/Fields/Teamset/SugarFieldTeamset.php';
 $teamSetField = new SugarFieldTeamset('Teamset');
 if (!$newUser && $teamSetField != null) {
     $teamSetField->save($focus, $_POST, 'team_name', '');

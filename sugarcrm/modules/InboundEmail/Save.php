@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/SugarFolders/SugarFolders.php');
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
@@ -132,7 +131,6 @@ if(!empty($_REQUEST['team_id'])) {
 	$focus->team_id = $_REQUEST['team_id'];
 }
 
-require_once('include/SugarFields/SugarFieldHandler.php');
 $sfh = new SugarFieldHandler();
 
 foreach($focus->field_defs as $field=>$def) {

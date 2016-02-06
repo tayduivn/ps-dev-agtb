@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 /**
  * <b>isRequiredCollection(String table)</b><br/>
  * Returns true none of the fields under html element <i>table</i> are empty.

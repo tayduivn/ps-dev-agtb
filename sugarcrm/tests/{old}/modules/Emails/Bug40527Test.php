@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('modules/Emails/Email.php');
 
 class Bug40527Test extends Sugar_PHPUnit_Framework_TestCase
 {

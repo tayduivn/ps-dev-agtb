@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/generic/LayoutManager.php');
-require_once('modules/Reports/Report.php');
 
 /**
  * Test Days Before date filter

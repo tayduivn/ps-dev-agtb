@@ -13,7 +13,6 @@
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once 'include/EditView/SugarVCR.php';
 require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
 
 /**
@@ -108,7 +107,6 @@ function processListView($seed, $xTemplateSection, $html_varName)
     //needs to the reset after each search.
     $this->setLocalSessionVariable($html_varName,"DETAIL_NAV_HISTORY",false);
 
-    require_once('include/MassUpdate.php');
     $mass = new MassUpdate();
     $add_acl_javascript = false;
     if(!isset($_REQUEST['action'])) {
@@ -448,7 +446,6 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                 $list_field = array_merge($list_field, $field_acl);
 
                 if ( isset($aItem->field_defs[strtolower($list_field['name'])])) {
-                    require_once('include/SugarFields/SugarFieldHandler.php');
                     // We need to see if a sugar field exists for this field type first,
                     // if it doesn't, toss it at the old sugarWidgets. This is for
                     // backwards compatibility and will be removed in a future release
@@ -1720,7 +1717,6 @@ function getUserVariable($localVarName, $varName) {
 
     function getLayoutManager()
     {
-        require_once('include/generic/LayoutManager.php');
         if($this->layout_manager == null)
         {
             $this->layout_manager = new LayoutManager();

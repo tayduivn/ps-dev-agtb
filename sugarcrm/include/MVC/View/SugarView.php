@@ -511,7 +511,6 @@ class SugarView
         echo '<script>jscal_today = 1000*' . $timedate->asUserTs($timedate->getNow()) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
         if (!is_file(sugar_cached("include/javascript/sugar_grp1.js"))) {
             $_REQUEST['root_directory'] = ".";
-            require_once("jssource/minify_utils.php");
             $minifyUtils = new SugarMinifyUtils();
             $minifyUtils->ConcatenateFiles(".");
         }
@@ -639,7 +638,6 @@ EOHTML;
             echo '<script type="text/javascript">var name_format = "' . $locale->getLocaleFormatMacro() . '";</script>';
             echo self::getJavascriptValidation();
             if (!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
-                require_once ('include/language/jsLanguage.php');
                 jsLanguage::createAppStringsCache($GLOBALS['current_language']);
             }
             echo getVersionedScript('cache/jsLanguage/'. $GLOBALS['current_language'] . '.js', $GLOBALS['sugar_config']['js_lang_version']);
@@ -659,7 +657,6 @@ EOHTML;
                 : 'cache/Expressions/functions_cache_debug.js';
             echo getVersionedScript($path);
 
-            require_once("include/Expressions/DependencyManager.php");
             echo "\n" . '<script type="text/javascript">' . DependencyManager::getJSUserVariables($GLOBALS['current_user']) . "</script>\n";
 
             //echo out the $js_vars variables as javascript variables
@@ -674,7 +671,6 @@ EOHTML;
 
 	protected function _getModLanguageJS(){
 		if (!is_file(sugar_cached('jsLanguage/') . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
-			require_once ('include/language/jsLanguage.php');
 			jsLanguage::createModuleStringsCache($this->module, $GLOBALS['current_language']);
 		}
 		return getVersionedScript("cache/jsLanguage/{$this->module}/". $GLOBALS['current_language'] . '.js', $GLOBALS['sugar_config']['js_lang_version']);
@@ -845,7 +841,6 @@ EOHTML;
         $ss->assign('COPYRIGHT',$copyright);
         if(isset($GLOBALS['current_user']) && !empty($GLOBALS['current_user']->id))
         {
-            require_once('include/DashletContainer/DCFactory.php');
             $dcm = DCFactory::getContainer(null, 'DCMenu');
             $ss->assign('DYNAMICDCACTIONS',$dcm->getPartnerIconMenus());
         }
@@ -881,7 +876,6 @@ EOHTML;
             (SugarAutoLoader::existingCustom('modules/' . $this->module . '/metadata/subpaneldefs.php') ||
              SugarAutoLoader::loadExtension("layoutdefs", $this->module))) {
             $GLOBALS['focus'] = $this->bean;
-            require_once ('include/SubPanel/SubPanelTiles.php');
             $subpanel = new SubPanelTiles($this->bean, $this->module);
             echo $subpanel->display();
         }

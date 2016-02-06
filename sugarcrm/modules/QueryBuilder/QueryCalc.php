@@ -17,9 +17,6 @@
 
 
 
-require_once('modules/QueryBuilder/QueryBuilder.php');
-require_once('modules/QueryBuilder/QueryGroupBy.php');
-require_once('modules/QueryBuilder/QueryColumn.php');
 
 
 

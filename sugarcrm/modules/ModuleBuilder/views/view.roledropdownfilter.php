@@ -11,7 +11,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/ModuleBuilder/views/view.dropdown.php';
 
 /**
  * Role based dropdown filter editor

@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once("include/Expressions/Expression/String/StringExpression.php");
 
 /**
  * <b>getDropdownValue(String list_name, String key)</b><br>

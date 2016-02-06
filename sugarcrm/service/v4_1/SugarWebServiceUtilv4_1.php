@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('service/v4/SugarWebServiceUtilv4.php');
 
 class SugarWebServiceUtilv4_1 extends SugarWebServiceUtilv4
 {
@@ -34,7 +33,6 @@ class SugarWebServiceUtilv4_1 extends SugarWebServiceUtilv4
    			if(!empty($_SESSION['is_valid_session']) && $this->is_valid_ip_address('ip_address') && $_SESSION['type'] == 'user'){
 
    				global $current_user;
-   				require_once('modules/Users/User.php');
    				$current_user = BeanFactory::getBean('Users', $_SESSION['user_id']);
    				$this->login_success();
    				$GLOBALS['log']->info('Begin: SoapHelperWebServices->validate_authenticated - passed');
@@ -85,7 +83,6 @@ class SugarWebServiceUtilv4_1 extends SugarWebServiceUtilv4
      */
     function getRelationshipResults($bean, $link_field_name, $link_module_fields, $optional_where = '', $order_by = '', $offset = 0, $limit = '') {
         $GLOBALS['log']->info('Begin: SoapHelperWebServices->getRelationshipResults');
-		require_once('include/TimeDate.php');
 		global $beanList, $beanFiles, $current_user;
 		global $disable_date_format, $timedate;
 

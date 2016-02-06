@@ -77,7 +77,6 @@ function pollMonitoredInboxes() {
 	global $app_strings;
 
 
-	require_once('modules/Emails/EmailUI.php');
 
 	$ie = BeanFactory::getBean('InboundEmail');
 	$emailUI = new EmailUI();
@@ -113,7 +112,6 @@ function pollMonitoredInboxes() {
 				if(is_array($newMsgs)) {
 					$current = 1;
 					$total = count($newMsgs);
-					require_once("include/SugarFolders/SugarFolders.php");
 					$sugarFolder = new SugarFolder();
 					$groupFolderId = $ieX->groupfolder_id;
 					$isGroupFolderExists = false;
@@ -130,8 +128,6 @@ function pollMonitoredInboxes() {
 					$messagesToDelete = array();
 					if ($ieX->isMailBoxTypeCreateCase()) {
 						$users[] = $sugarFolder->assign_to_id;
-						require_once("modules/Teams/TeamSet.php");
-						require_once("modules/Teams/Team.php");
 						$GLOBALS['log']->debug('Getting users for teamset');
 						$teamSet = BeanFactory::getBean('TeamSets');
 						$usersList = $teamSet->getTeamSetUsers($sugarFolder->team_set_id, true);
@@ -480,7 +476,6 @@ function updateTrackerSessions() {
 function sendEmailReminders()
 {
     $GLOBALS['log']->info('----->Scheduler fired job of type sendEmailReminders()');
-    require_once "modules/Activities/EmailReminder.php";
     $reminder = new EmailReminder();
     return $reminder->process();
 }

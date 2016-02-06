@@ -12,7 +12,6 @@
 
 
 
-require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEElement.php';
 
 class PMSEFlow extends PMSEElement
 {

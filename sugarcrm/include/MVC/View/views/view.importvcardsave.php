@@ -16,7 +16,6 @@
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-require_once('include/vCard.php');
 
 class ViewImportvcardsave extends SugarView
 {

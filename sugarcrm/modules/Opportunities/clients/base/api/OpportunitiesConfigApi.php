@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/ConfigModuleApi.php';
 
 class OpportunitiesConfigApi extends ConfigModuleApi
 {
@@ -82,12 +81,10 @@ class OpportunitiesConfigApi extends ConfigModuleApi
             /* @var $converter OpportunityWithOutRevenueLineItem|OpportunityWithRevenueLineItem */
             switch ($settings['opps_view_by']) {
                 case 'Opportunities':
-                    require_once 'modules/Opportunities/include/OpportunityWithOutRevenueLineItem.php';
                     $converter = new OpportunityWithOutRevenueLineItem();
                     $converter->setDateClosedMigrationParam($date_rollup_type);
                     break;
                 case 'RevenueLineItems':
-                    require_once 'modules/Opportunities/include/OpportunityWithRevenueLineItem.php';
                     $converter = new OpportunityWithRevenueLineItem();
                     break;
             }
@@ -98,7 +95,6 @@ class OpportunitiesConfigApi extends ConfigModuleApi
             // then do data
             $converter->doDataConvert();
 
-            require_once('modules/Home/UnifiedSearchAdvanced.php');
             register_shutdown_function(array('UnifiedSearchAdvanced', 'clearCache'));
 
             // we need to refresh the cache but do it in the shutdown for this process

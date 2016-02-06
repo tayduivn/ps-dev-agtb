@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Quotes/sugarpdf/sugarpdf.quotes.php');
 
 class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
     /**
@@ -124,7 +123,6 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
         global $mod_strings, $app_strings, $app_list_strings;
         global $locale;
 
-        require_once('modules/Quotes/Quote.php');
         require('modules/Quotes/config.php');
 
         parent::display();

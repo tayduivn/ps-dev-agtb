@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/UpgradeWizard/SugarMerge/MergeUtils.php';
-require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
 
 class EditViewMergeTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -19,7 +19,6 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 function getJSLanguage()
 {
 
-    require_once ('include/language/jsLanguage.php');
 
     global $app_list_strings;
 

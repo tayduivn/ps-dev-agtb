@@ -12,7 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-require_once 'modules/Reports/Report.php';
 
 /**
  * CRYS-408:

@@ -11,10 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Contacts/ContactFormBase.php');
-require_once('modules/Contacts/Contact.php');
-require_once('modules/Leads/LeadFormBase.php');
-require_once('modules/Leads/Lead.php');
 
 /**
  * Bug #46427

@@ -236,7 +236,6 @@ class OpportunityReports
     protected function cleanUp()
     {
         // clear out any js cache, as the reports will screw up if they are not cleared
-        require_once("modules/Administration/QuickRepairAndRebuild.php");
         $rac = new RepairAndClear();
         $rac->clearJsFiles();
     }

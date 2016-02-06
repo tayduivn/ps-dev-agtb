@@ -17,8 +17,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/Dashlets/DashletGeneric.php');
-require_once('modules/SugarFavorites/SugarFavorites.php');
 
 class SugarFavoritesDashlet extends DashletGeneric 
 { 

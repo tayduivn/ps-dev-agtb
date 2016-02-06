@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/Users/authentication/AuthenticationController.php');
 require_once('tests/{old}/modules/Users/AuthenticateTest.php');
 
 /**
@@ -44,7 +43,6 @@ class Bug50936Test extends Sugar_PHPUnit_Framework_TestCase
 
 $contents = <<<EOQ
 <?php
-    require_once 'modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticate.php';
     require_once 'modules/Users/authentication/SAMLAuthenticate/saml.php';
 
     \$authrequest = new OneLogin_Saml_AuthRequest(SAMLAuthenticate::loadSettings());

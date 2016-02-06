@@ -10,11 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/MetaDataManager/MetaDataManager.php';
 //BEGIN SUGARCRM flav=ent ONLY
-require_once 'include/MetaDataManager/MetaDataManagerPortal.php';
 //END SUGARCRM flav=ent ONLY
-require_once 'include/MetaDataManager/MetaDataManagerMobile.php';
 
 class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
 {

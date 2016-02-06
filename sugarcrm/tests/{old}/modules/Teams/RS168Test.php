@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Teams/Team.php';
 
 /**
  * RS168: Prepare Teams Module.

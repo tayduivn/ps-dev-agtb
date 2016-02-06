@@ -13,7 +13,6 @@
 
 
 
-require_once 'include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php';
 
 class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {

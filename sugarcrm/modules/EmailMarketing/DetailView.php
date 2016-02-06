@@ -135,7 +135,6 @@ $javascript->setSugarBean($focus);
 $javascript->addAllFields('');
 echo $javascript->getScript();
 
-require_once('include/SubPanel/SubPanelTiles.php');
 $subpanel = new SubPanelTiles($focus, 'EmailMarketing');
 
 if ($focus->all_prospect_lists == 1) {

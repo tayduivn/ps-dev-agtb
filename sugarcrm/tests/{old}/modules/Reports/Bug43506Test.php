@@ -11,9 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Reports/Report.php');
 require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
-require_once('include/generic/SugarWidgets/SugarWidgetFieldparent_type.php');
 
 /**
  * Bug #43506

@@ -16,7 +16,6 @@ use Elastica\Response;
 use Elastica\ResultSet;
 use Elastica\Result;
 
-require_once 'include/SugarSearchEngine/Elastic/SugarSearchEngineElasticResultSet.php';
 
 class SugarSearchEngineElasticResultSetTest extends Sugar_PHPUnit_Framework_TestCase
 {

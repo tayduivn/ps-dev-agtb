@@ -12,7 +12,6 @@
 
 
  
-require_once 'modules/Import/CsvAutoDetect.php';
 
 class Bug45907Test extends Sugar_PHPUnit_Framework_TestCase
 {

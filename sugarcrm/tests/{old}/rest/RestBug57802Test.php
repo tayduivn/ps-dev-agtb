@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once 'tests/{old}/rest/RestTestBase.php';
-require_once 'include/MetaDataManager/MetaDataHacks.php';
 
 /**
  * Bug 57802 - REST API Metadata: vardef len property must be number, not string

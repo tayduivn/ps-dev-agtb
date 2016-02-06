@@ -17,7 +17,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/MVC/View/SugarView.php');
 require_once('modules/EmailMan/Forms.php');
 
 class ViewCampaignconfig extends SugarView

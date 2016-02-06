@@ -11,10 +11,6 @@
  */
 
 
-require_once 'include/SugarQuery/Builder/Field.php';
-require_once 'include/SugarQuery/SugarQuery.php';
-require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
-//require_once 'clients/base/api/FilterApi.php';
 
 class PMSECaseWrapper //extends FilterApi
 {

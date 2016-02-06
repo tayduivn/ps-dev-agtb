@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once("include/Expressions/Actions/AbstractAction.php");
 
 class PanelVisibilityAction extends AbstractAction{
 	protected $targetPanel = "";
@@ -264,7 +263,6 @@ EOQ;
     {
         $result = Parser::evaluate($this->expression, $target)->evaluate();
         if ($result === AbstractExpression::$FALSE) {
-            require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
             require_once 'modules/ModuleBuilder/parsers/constants.php';
             $view = isModuleBWC($target->module_name) ? MB_EDITVIEW : MB_RECORDVIEW;
             $parser = ParserFactory::getParser($view, $target->module_dir);

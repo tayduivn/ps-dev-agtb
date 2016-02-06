@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Home/QuickSearch.php';
 
 class Bug56719Test extends Sugar_PHPUnit_Framework_TestCase
 {

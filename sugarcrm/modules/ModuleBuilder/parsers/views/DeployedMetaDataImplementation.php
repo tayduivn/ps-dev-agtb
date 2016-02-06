@@ -14,14 +14,7 @@
  * For example, listview or editview viewdefs
  */
 
-require_once 'modules/ModuleBuilder/parsers/views/AbstractMetaDataImplementation.php' ;
-require_once 'modules/ModuleBuilder/parsers/views/MetaDataImplementationInterface.php' ;
-require_once 'modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php' ;
-require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
-require_once 'modules/ModuleBuilder/parsers/views/PopupMetaDataParser.php' ;
-require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php' ;
 require_once 'modules/ModuleBuilder/parsers/constants.php';
-require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 
 class DeployedMetaDataImplementation extends AbstractMetaDataImplementation implements MetaDataImplementationInterface
 {

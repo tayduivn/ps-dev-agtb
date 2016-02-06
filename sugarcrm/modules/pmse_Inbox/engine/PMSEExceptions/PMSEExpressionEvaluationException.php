@@ -39,7 +39,6 @@ class PMSEExpressionEvaluationException extends Exception
     public function logMessage()
     {
         // Since we need to log our exceptions, let's get the logger
-        require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
         $logMessage = get_class($this) . ' : ' . $this->message;
 

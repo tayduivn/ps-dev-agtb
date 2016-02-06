@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/MetaDataManager/MetaDataManager.php';
 require_once 'tests/{old}/SugarTestACLUtilities.php';
 /**
  * Bug 56391 - ACL's used in the MetadataManager were the static ones.  Have switched to use the SugarACL methods

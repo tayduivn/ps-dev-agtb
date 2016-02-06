@@ -12,7 +12,6 @@
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('include/tabs.php');
 /**
  * Old search form
  * @api

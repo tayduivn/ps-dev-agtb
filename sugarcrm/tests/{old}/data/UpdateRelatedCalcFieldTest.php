@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('data/SugarBean.php');
-require_once("modules/Administration/QuickRepairAndRebuild.php");
 
 class UpdateRelatedCalcFieldTest extends Sugar_PHPUnit_Framework_TestCase
 {

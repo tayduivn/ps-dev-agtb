@@ -16,7 +16,6 @@
  * @author myarotsky@sugarcrm.com
  * @ticket 34880
  */
-require_once('include/VarDefHandler/VarDefHandler.php');
 class Bug34880Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public static function provider()

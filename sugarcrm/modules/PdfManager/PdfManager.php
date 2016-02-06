@@ -12,7 +12,6 @@
 
 
 require_once 'modules/PdfManager/PdfManagerHelper.php';
-require_once 'include/upload_file.php';
 
 class PdfManager extends Basic
 {

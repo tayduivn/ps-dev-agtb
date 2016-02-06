@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 class ViewHome extends SugarView
 {
 	/**

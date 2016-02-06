@@ -11,8 +11,6 @@
  */
 
 require_once 'tests/{old}/SugarTestReflection.php';
-require_once 'include/api/RestService.php';
-require_once 'clients/base/api/BulkApi.php';
 
 class BulkApiTest extends Sugar_PHPUnit_Framework_TestCase
 {

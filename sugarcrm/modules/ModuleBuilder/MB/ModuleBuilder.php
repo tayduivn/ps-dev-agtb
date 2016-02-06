@@ -20,7 +20,6 @@ use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 define ( 'MB_PACKAGE_PATH', 'custom/modulebuilder/packages' ) ;
 define('MB_PACKAGE_BUILD', 'custom' . DIRECTORY_SEPARATOR . 'modulebuilder' . DIRECTORY_SEPARATOR . 'builds');
-require_once ('modules/ModuleBuilder/MB/MBPackage.php') ;
 
 class ModuleBuilder
 {

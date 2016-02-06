@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/api/SugarApi.php');
-require_once('include/SugarQuery/SugarQuery.php');
 
 class ReportsDashletsApi extends SugarApi
 {
@@ -96,7 +94,6 @@ class ReportsDashletsApi extends SugarApi
      */
     public function getSavedReportChartById($api, $args)
     {
-        require_once("include/SugarCharts/ChartDisplay.php");
 
         $chartReport = $this->getSavedReportById($args['reportId']);
 
@@ -113,7 +110,6 @@ class ReportsDashletsApi extends SugarApi
 
             $this->title = $chartReport->name;
 
-            require_once("modules/Reports/Report.php");
 
             $reporter = new Report($chartReport->content);
             $reporter->saved_report_id = $chartReport->id;

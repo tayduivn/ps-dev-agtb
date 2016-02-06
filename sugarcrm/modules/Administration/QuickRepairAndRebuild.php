@@ -14,16 +14,12 @@
 SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
 
 // Used in clearExternalAPICache
-require_once 'include/externalAPI/ExternalAPIFactory.php';
 
 // Used in clearPDFFontCache
-require_once 'include/Sugarpdf/FontManager.php';
 
 // Used in clearAdditionalCaches
-require_once 'include/api/ServiceDictionary.php';
 
 //clear out the api metadata cache
-require_once "include/MetaDataManager/MetaDataManager.php";
 
 require_once "include/utils.php";
 

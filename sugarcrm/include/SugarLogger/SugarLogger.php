@@ -16,8 +16,6 @@
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-require_once('include/SugarLogger/LoggerManager.php');
-require_once('include/SugarLogger/LoggerTemplate.php');
 
 /**
  * Default SugarCRM Logger

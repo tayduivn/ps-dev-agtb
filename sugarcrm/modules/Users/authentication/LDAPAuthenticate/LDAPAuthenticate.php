@@ -18,7 +18,6 @@
  * based on the users validation
  *
  */
-require_once('modules/Users/authentication/SugarAuthenticate/SugarAuthenticate.php');
 class LDAPAuthenticate extends SugarAuthenticate {
 	var $userAuthenticateClass = 'LDAPAuthenticateUser';
 	var $authenticationDir = 'LDAPAuthenticate';

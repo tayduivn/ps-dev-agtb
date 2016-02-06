@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Teams/TeamSet.php');
 
 /***
  * Test cases for Bug 42379

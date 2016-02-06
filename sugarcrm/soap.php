@@ -15,12 +15,7 @@ require_once('include/entryPoint.php');
 require_once('include/utils/file_utils.php');
 ob_start();
 
-require_once('soap/SoapError.php');
 require_once('vendor/nusoap//nusoap.php');
-require_once('modules/Contacts/Contact.php');
-require_once('modules/Accounts/Account.php');
-require_once('modules/Opportunities/Opportunity.php');
-require_once('modules/Cases/Case.php');
 //ignore notices
 error_reporting(E_ALL ^ E_NOTICE);
 
@@ -59,7 +54,6 @@ if (!isset($HTTP_RAW_POST_DATA)){
     $HTTP_RAW_POST_DATA = file_get_contents('php://input');
 }
 
-require_once('include/resource/ResourceManager.php');
 $resourceManager = ResourceManager::getInstance();
 $resourceManager->setup('Soap');
 $observers = $resourceManager->getObservers();

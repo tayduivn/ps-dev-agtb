@@ -48,7 +48,6 @@ class SugarUpgradeOpportunityRemoveHiddenEntFields extends UpgradeScript
                 'commit_stage'
             );
 
-            require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
             $this->log('Processing Opportunity RecordView');
             $recordViewDefsParser = ParserFactory::getParser(MB_RECORDVIEW, 'Opportunities', null, null, 'base');
             if ($this->removeFields($recordViewDefsParser, $fields)) {
@@ -76,7 +75,6 @@ class SugarUpgradeOpportunityRemoveHiddenEntFields extends UpgradeScript
             foreach ($modules as $module) {
                 $this->log('Processing Opportunity SubPanel for ' . $module . ' module');
                 if (isModuleBWC($module)) {
-                    require_once 'modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php';
                     $pf = new SubpanelMetaDataParser('opportunities', $module);
                 } else {
                     $pf = ParserFactory::getParser(MB_LISTVIEW, $module, null, 'opportunities');

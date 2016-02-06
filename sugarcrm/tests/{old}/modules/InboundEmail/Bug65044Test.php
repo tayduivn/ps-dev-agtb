@@ -11,7 +11,6 @@
  */
 
 
-require_once("modules/InboundEmail/InboundEmail.php");
 
 /**
  * Bug #65044

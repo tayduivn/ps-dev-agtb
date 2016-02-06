@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('data/SugarBean.php');
-require_once('modules/Contacts/Contact.php');
-require_once('include/SubPanel/SubPanelDefinitions.php');
 
 class Bug41738Test extends Sugar_PHPUnit_Framework_TestCase 
 {   	

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('clients/base/api/FilterApi.php');
-require_once('clients/base/api/UnifiedSearchApi.php');
 
 class PersonFilterApi extends FilterApi {
     public function registerApiRest() {

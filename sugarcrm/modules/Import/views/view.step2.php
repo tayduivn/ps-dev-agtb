@@ -16,7 +16,6 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Import/views/ImportView.php');
 
 class ImportViewStep2 extends ImportView
 {

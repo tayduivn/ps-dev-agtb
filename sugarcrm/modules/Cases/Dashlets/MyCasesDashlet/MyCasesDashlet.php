@@ -12,7 +12,6 @@
 
 // $Id: MyCasesDashlet.php 51865 2009-10-27 00:40:13Z clee $
 
-require_once('include/Dashlets/DashletGeneric.php');
 
 
 class MyCasesDashlet extends DashletGeneric { 

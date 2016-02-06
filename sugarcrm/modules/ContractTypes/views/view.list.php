@@ -16,7 +16,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/MVC/View/views/view.list.php');
 
 class ContractTypesViewList extends ViewList {
  	function preDisplay(){

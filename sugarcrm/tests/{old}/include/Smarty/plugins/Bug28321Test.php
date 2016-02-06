@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/connectors/formatters/FormatterFactory.php';
 class Bug28321Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	public function testCustomCodeRenderField()

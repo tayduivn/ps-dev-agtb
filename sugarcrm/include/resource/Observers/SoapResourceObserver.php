@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/resource/Observers/ResourceObserver.php');
 
 class SoapResourceObserver extends ResourceObserver {
 

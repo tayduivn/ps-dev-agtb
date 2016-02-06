@@ -11,10 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/api/SugarApi.php';
-require_once 'include/SugarQuery/SugarQuery.php';
-require_once 'data/Relationships/RelationshipFactory.php';
-require_once 'include/SugarFields/SugarFieldHandler.php';
 
 class FilterApi extends SugarApi
 {
@@ -447,7 +443,6 @@ class FilterApi extends SugarApi
                 throw new SugarApiExceptionInvalidParameter();
             }
             // We need to use unified search for this for compatibilty with Nomad
-            require_once('clients/base/api/UnifiedSearchApi.php');
             $search = new UnifiedSearchApi();
             $args['module_list'] = $args['module'];
             return $search->globalSearch($api, $args);

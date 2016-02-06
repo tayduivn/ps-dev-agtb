@@ -118,7 +118,6 @@ function smarty_function_sugar_actions_link($params, &$smarty)
 			    );
 	            $json = getJSONobj();
 
-	            require_once('include/SugarFields/Parsers/MetaParser.php');
 	            $encoded_popup_request_data = MetaParser::parseDelimiters($json->encode($popup_request_data));
 	 			$audit_link = '<a id="btn_view_change_log" title="{$APP.LNK_VIEW_CHANGE_LOG}" onclick=\'open_popup("Audit", "600", "400", "&record={$fields.id.value}&module_name=' . $params['module'] . '", true, false, ' . $encoded_popup_request_data . '); return false;\'>{$APP.LNK_VIEW_CHANGE_LOG}</a>';
 				$view = '{if $bean->aclAccess("detail")}{if !empty($fields.id.value) && $isAuditEnabled}'.$audit_link.'{/if}{/if}';
@@ -127,7 +126,6 @@ function smarty_function_sugar_actions_link($params, &$smarty)
 			//Button for the Connector intergration wizard
 			case "CONNECTOR":
 				require_once('include/connectors/utils/ConnectorUtils.php');
-				require_once('include/connectors/sources/SourceFactory.php');
 				$modules_sources = ConnectorUtils::getDisplayConfig();
 				if(!is_null($modules_sources) && !empty($modules_sources))
 				{

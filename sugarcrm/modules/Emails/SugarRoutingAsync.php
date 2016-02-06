@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("include/SugarRouting/SugarRouting.php");
 
 $ie = BeanFactory::getBean('InboundEmail');
 $ie->disable_row_level_security = true;
@@ -32,7 +31,6 @@ switch($_REQUEST['routingAction']) {
 
 	/* returns metadata to construct actions */
 	case "getActions":
-		require_once("include/SugarDependentDropdown/SugarDependentDropdown.php");
 
 		$sdd = new SugarDependentDropdown();
 		$sdd->init("include/SugarDependentDropdown/metadata/dependentDropdown.php");
@@ -77,7 +75,6 @@ switch($_REQUEST['routingAction']) {
 
 	//BEGIN SUGARCRM flav=int ONLY
 	case "test":
-		require_once("include/SugarDependentDropdown/SugarDependentDropdown.php");
 
 		$sdd = new SugarDependentDropdown();
 		$sdd->debugMode = true;

@@ -9,9 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/MVC/View/views/view.ajax.php');
-require_once('include/Expressions/Expression/Parser/Parser.php');
-require_once("data/BeanFactory.php");
 class ViewExecFunction extends ViewAjax
 {
     var $vars = array("tmodule", "id", "params", "function");

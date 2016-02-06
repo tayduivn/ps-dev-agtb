@@ -18,7 +18,6 @@
  * originally filed for the Connectors module, this change was applied to the SugarView layer to allow all
  * views to take advantage of not having to repeatedly check the custom directory for the presence of a file.
  */
-require_once('include/MVC/View/SugarView.php');
 
 class Bug49991Test extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -315,7 +315,6 @@ field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"].opt
 				}
                 elseif (isset($field_def['type']) && $field_def['type'] == 'currency_id')
                 {
-                    require_once('include/generic/SugarWidgets/SugarWidgetFieldcurrency_id.php');
                     $tmpList = SugarWidgetFieldcurrency_id::getCurrenciesList();
                     $currencyList = array();
                     foreach ($tmpList as $bean)

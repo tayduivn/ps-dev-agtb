@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarObjects/SugarConfig.php';
-require_once 'include/SugarObjects/VardefManager.php';
 
 /**
  * @group bug32797

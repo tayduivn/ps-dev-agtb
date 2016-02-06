@@ -11,7 +11,6 @@
  */
 
 //FILE SUGARCRM flav=ent ONLY
-require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 
 class ViewPortalStyle extends SugarView 
 {

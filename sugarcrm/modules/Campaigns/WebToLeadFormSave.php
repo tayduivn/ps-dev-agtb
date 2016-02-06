@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once('include/formbase.php');
-require_once('include/SugarTinyMCE.php');
 
 global $mod_strings;
 global $app_strings;

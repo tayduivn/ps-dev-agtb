@@ -1,8 +1,6 @@
 <?php
 require_once 'tests/{old}/upgrade/UpgradeTestCase.php';
 require_once 'modules/ModuleBuilder/parsers/constants.php';
-require_once 'modules/ModuleBuilder/parsers/views/PopupMetaDataParser.php';
-require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
 
 /**
  * Class UpgradeConvertPopupListViewTest

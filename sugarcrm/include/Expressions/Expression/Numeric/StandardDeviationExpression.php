@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
 
 /**
  * <b>stddev(Number n, ...)</b><br>

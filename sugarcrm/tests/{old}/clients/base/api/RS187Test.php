@@ -1,6 +1,5 @@
 <?php
 
-require_once 'modules/Dashboards/clients/base/api/DashboardApi.php';
 
 /**
  * RS-187: Prepare Dashboard Api

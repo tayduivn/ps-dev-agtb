@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/database/DBManager.php');
 
 /**
  * Database driver factory

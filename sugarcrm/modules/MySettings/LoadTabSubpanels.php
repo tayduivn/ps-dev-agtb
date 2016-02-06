@@ -16,13 +16,11 @@
  */
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-require_once('include/DetailView/DetailView.php');
 $detailView = new DetailView();
 
 $focus = BeanFactory::getBean($_REQUEST['loadModule']);
 $focus->id = $_REQUEST['record'];
 
-require_once('include/SubPanel/SubPanelTiles.php');
 $loadModule = InputValidation::getService()->getValidInputRequest('loadModule', 'Assert\Mvc\ModuleName');
 $subpanel = new SubPanelTiles($focus, $loadModule);
 

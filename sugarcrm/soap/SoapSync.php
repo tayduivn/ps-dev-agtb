@@ -50,7 +50,6 @@ function sync_get_entries($session, $module_name,$from_date,$to_date,$offset, $m
 	$table_name = $seed->table_name;
 
 	if(!empty($query)){
-	    require_once 'include/SugarSQLValidate.php';
 	    $valid = new SugarSQLValidate();
 	    if(!$valid->validateQueryClauses($query)) {
             $GLOBALS['log']->error("Bad query: $query");

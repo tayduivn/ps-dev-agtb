@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/DynamicFields/FieldViewer.php';
 
 class Bug58307Test extends Sugar_PHPUnit_Framework_TestCase
 {

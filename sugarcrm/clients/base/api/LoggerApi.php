@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'data/BeanFactory.php';
-require_once 'include/api/SugarListApi.php';
 
 class LoggerApi extends SugarApi
 {

@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once("include/SugarFields/Fields/Radioenum/SugarFieldRadioenum.php");
 /**
  * Created: Aug 22, 2011
  */

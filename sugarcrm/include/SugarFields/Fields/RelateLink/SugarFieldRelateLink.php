@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarFields/Fields/Base/SugarFieldBase.php';
 
 /**
  * SugarField implementation for link fields
@@ -116,7 +115,6 @@ class SugarFieldRelateLink extends SugarFieldBase
     protected function getRelateApi()
     {
         if (!$this->relateApi) {
-            require_once 'clients/base/api/RelateApi.php';
             $this->relateApi = new RelateApi();
         }
 

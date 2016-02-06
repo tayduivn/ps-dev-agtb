@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once ('modules/DynamicFields/templates/Fields/TemplateField.php');
-require_once ('modules/DynamicFields/templates/Fields/TemplateAddressCountry.php');
-require_once ('modules/DynamicFields/templates/Fields/TemplateAddressStreet.php');
 
 class TemplateAddress extends TemplateField
 {
@@ -20,7 +18,6 @@ class TemplateAddress extends TemplateField
         // Bug 58560 - Set the group name since addresses are part of a group
         $this->group = $df->getDBName($this->name);
 
-        require_once 'modules/ModuleBuilder/parsers/parser.label.php' ;
         $parser = new ParserLabel ( $df->getModuleName() , $df->getPackageName() ) ;
 
         // Clean up the labels so they more accurately reflect the actual field

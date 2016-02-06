@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once 'include/database/DBManagerFactory.php';
 
 class RepairDatabaseTest extends Sugar_PHPUnit_Framework_TestCase
 {

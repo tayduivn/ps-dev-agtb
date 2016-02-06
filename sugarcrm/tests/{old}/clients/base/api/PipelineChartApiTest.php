@@ -11,7 +11,6 @@
  */
 
 
-require_once 'clients/base/api/PipelineChartApi.php';
 
 class PipelineChartApiTest extends Sugar_PHPUnit_Framework_TestCase
 {

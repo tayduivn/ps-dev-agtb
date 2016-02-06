@@ -12,7 +12,6 @@
 
  // $Id: MyPipelineBySalesStageDashlet.php 24275 2007-07-13 04:26:44Z awu $
 
-require_once('include/Dashlets/DashletGenericChart.php');
 
 class MyOpportunitiesGaugeDashlet extends DashletGenericChart 
 {
@@ -48,7 +47,6 @@ class MyOpportunitiesGaugeDashlet extends DashletGenericChart
         require('modules/Charts/chartdefs.php');
         $chartDef = $chartDefs['opportunities_this_quarter'];
 		
-        require_once('include/SugarCharts/SugarChartFactory.php');
         $sugarChart = SugarChartFactory::getInstance();
         $sugarChart->setProperties('', translate('LBL_NUMBER_OF_OPPS', 'Charts'), $chartDef['chartType']);
         $sugarChart->base_url = $chartDef['base_url'];

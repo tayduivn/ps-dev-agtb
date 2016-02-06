@@ -10,8 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/SugarQueue/SugarCronJobs.php';
-require_once 'include/SugarHttpClient.php';
 
 /**
  * CRON driver for job queue that forks a process for each job

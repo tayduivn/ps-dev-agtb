@@ -55,7 +55,6 @@ $current_date = $campaign->db->now();
 foreach ($_POST['mass'] as $message_id) {
 
 	//fetch email marketing definition.
-	if (!class_exists('EmailMarketing')) require_once('modules/EmailMarketing/EmailMarketing.php');
 
 
 	$marketing = BeanFactory::getBean('EmailMarketing', $message_id);

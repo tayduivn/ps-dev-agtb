@@ -11,10 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/database/DBManagerFactory.php';
-require_once 'modules/Contacts/Contact.php';
 require_once 'tests/{old}/include/database/TestBean.php';
-require_once 'include/SugarQuery/SugarQuery.php';
 
 class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -16,7 +16,6 @@
 
 
 
-require_once('include/ListView/ReportListView.php');
 
 $header_text = '';
 global $mod_strings;

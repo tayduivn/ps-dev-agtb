@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/MVC/View/views/view.popup.php');
 require_once('vendor/ytree/Tree.php');
 require_once('vendor/ytree/Node.php');
 require_once('modules/ProductTemplates/TreeData.php');

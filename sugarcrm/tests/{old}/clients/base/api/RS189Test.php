@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/MassUpdateApi.php';
 
 /**
  *  Prepare MassUpdate Api.

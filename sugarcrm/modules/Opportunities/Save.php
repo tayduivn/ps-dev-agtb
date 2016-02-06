@@ -17,7 +17,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('modules/Opportunities/OpportunityFormBase.php');
 $opportunityForm = new OpportunityFormBase();
 $opportunityForm->handleSave('', true, false);
 ?>

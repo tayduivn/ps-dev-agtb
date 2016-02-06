@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('include/SugarFields/SugarFieldHandler.php');
-require_once('include/SugarFields/Fields/Currency_id/SugarFieldCurrency_id.php');
-require_once('data/SugarBean.php');
 
 class SugarFieldCurrency_idTest extends Sugar_PHPUnit_Framework_TestCase
 {

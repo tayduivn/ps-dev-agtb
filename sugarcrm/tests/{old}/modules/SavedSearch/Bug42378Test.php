@@ -48,7 +48,6 @@ class Bug42378Test extends Sugar_PHPUnit_Framework_TestCase
     public function testSaveRangeDateFields()
     {
         $this->markTestIncomplete('Needs to be fixed by FRM team.');
-        require_once('modules/SavedSearch/SavedSearch.php');
         $focus = new SavedSearch();
         $focus->retrieve($this->saved_search_id);
         $_REQUEST = unserialize(base64_decode($focus->contents));
@@ -94,7 +93,6 @@ class Bug42378Test extends Sugar_PHPUnit_Framework_TestCase
     public function testSaveDateFields()
     {
         $this->markTestIncomplete('Needs to be fixed by FRM team.');
-        require_once('modules/SavedSearch/SavedSearch.php');
         $focus = new SavedSearch();
         $focus->retrieve($this->saved_search_id);
         $_REQUEST = unserialize(base64_decode($focus->contents));

@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once("include/Expressions/Expression/String/StringExpression.php");
 /**
  * <b>strToUpper(String s)</b><br/> 
  * Returns <i>s</i> converted to upper case.<br/>

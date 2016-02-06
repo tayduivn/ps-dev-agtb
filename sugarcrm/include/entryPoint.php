@@ -108,14 +108,12 @@ if(empty($GLOBALS['installing']) &&empty($sugar_config['dbconfig']['db_name']))
 
 if (!empty($sugar_config['xhprof_config']))
 {
-    require_once 'include/SugarXHprof/SugarXHprof.php';
     SugarXHprof::getInstance()->start();
 }
 
 require_once('include/utils.php');
 register_shutdown_function('sugar_cleanup');
 
-require_once('include/clean.php');
 
 // cn: set php.ini settings at entry points
 setPhpIniSettings();
@@ -138,34 +136,19 @@ foreach (SugarAutoLoader::existing('include/custom_utils.php', 'custom/include/c
     require_once $file;
 }
 
-require_once('include/database/DBManagerFactory.php');
 require_once('include/dir_inc.php');
 
-require_once('include/Localization/Localization.php');
-require_once('include/TimeDate.php');
 require_once('include/modules.php'); // provides $moduleList, $beanList, $beanFiles, $modInvisList, $adminOnlyList, $modInvisListActivities
 
-require_once('data/SugarBean.php');
 require_once('include/utils/mvc_utils.php');
 require_once('include/SugarObjects/LanguageManager.php');
-require_once('include/SugarObjects/VardefManager.php');
 
 require_once('include/utils/file_utils.php');
-require_once('include/SugarLogger/LoggerManager.php');
-require_once('modules/Trackers/BreadCrumbStack.php');
 require_once('modules/Trackers/Tracker.php');
-require_once('modules/Trackers/TrackerManager.php');
 require_once('modules/Administration/updater_utils.php');
-require_once('modules/Users/User.php');
-require_once('modules/Users/authentication/AuthenticationController.php');
-require_once('include/utils/LogicHook.php');
-require_once('include/MVC/SugarModule.php');
 require_once('include/SugarCache/SugarCache.php');
 require_once('modules/Currencies/Currency.php');
-require_once('include/MVC/SugarApplication.php');
-require_once 'data/SugarACL.php';
 
-require_once('include/upload_file.php');
 UploadStream::register();
 //
 //SugarApplication::startSession();

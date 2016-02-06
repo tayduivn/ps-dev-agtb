@@ -13,7 +13,6 @@
  // $Id: PipelineBySalesStageDashlet.php 28775 2007-10-24 00:26:22 +0000 (Wed, 24 Oct 2007) awu $
 
 
-require_once('include/Dashlets/DashletGenericChart.php');
 
 class PipelineBySalesStageDashlet extends DashletGenericChart
 {
@@ -76,7 +75,6 @@ class PipelineBySalesStageDashlet extends DashletGenericChart
     {
         global $current_user, $sugar_config;
 
-        require_once('include/SugarCharts/SugarChartFactory.php');
         $sugarChart = SugarChartFactory::getInstance();
         $sugarChart->base_url = array(
             'module' => 'Opportunities',

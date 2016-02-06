@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/MetaDataManager/MetaDataManager.php';
 
 /**
  * Bug 58926 

@@ -145,7 +145,6 @@ class Bug51596Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $contact = new Contact();
 
-        require_once 'include/MassUpdate.php';
         $mass_update = new MassUpdate();
         $mass_update->sugarbean = $contact;
 

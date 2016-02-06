@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("modules/Emails/clients/base/api/MailApi.php");
 
 /**
  * @group api

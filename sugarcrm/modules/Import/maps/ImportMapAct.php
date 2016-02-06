@@ -16,7 +16,6 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Import/maps/ImportMapOther.php');
 
 class ImportMapAct extends ImportMapOther
 {

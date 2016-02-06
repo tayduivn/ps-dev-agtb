@@ -236,7 +236,6 @@ class DashletsDialog {
 			foreach($savedReports as $savedReport){
 				// clint - fixes bug #20398
 				// only display dashlets that are from visibile modules and that the user has permission to list
-				require_once('include/MySugar/MySugar.php');
 				$myDashlet = new MySugar($savedReport->module);
 				$displayDashlet = $myDashlet->checkDashletDisplay();
 

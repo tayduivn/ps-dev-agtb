@@ -11,8 +11,6 @@
  */
 
 
-require_once 'modules/DynamicFields/templates/Fields/TemplateRelatedTextField.php';
-require_once 'modules/ModuleBuilder/parsers/parser.label.php';
 
 class Bug46152_P3Test extends Sugar_PHPUnit_Framework_TestCase
 {

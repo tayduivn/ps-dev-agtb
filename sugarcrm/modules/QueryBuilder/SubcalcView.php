@@ -20,7 +20,6 @@
 
 
 
-require_once('modules/QueryBuilder/QueryFilter.php');
 
 
 global $app_strings;

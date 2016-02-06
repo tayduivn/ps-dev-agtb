@@ -14,7 +14,6 @@
  * Description:
  ********************************************************************************/
 
-require_once('include/ListView/ReportListView.php');
 
 
 // DataSet Attribute is used to store attribute information for a particular data format.

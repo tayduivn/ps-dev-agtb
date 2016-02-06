@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/MetaDataManager/MetaDataHacks.php';
 
 class MetaDataHacksTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Reports/Report.php';
 
 /**
  * Filtering Report on Multiselect field with "Is One Of" returns "false positives"

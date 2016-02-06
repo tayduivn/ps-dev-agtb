@@ -387,7 +387,6 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
 }
 
 // need to make sure SugarApi is included when extending FilterDuplicateCheck to avoid a fatal error
-require_once('include/api/SugarApi.php');
 
 class FilterDuplicateCheckCaller extends FilterDuplicateCheck
 {

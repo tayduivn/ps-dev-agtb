@@ -93,6 +93,5 @@ $dictionary['Dashboard'] = array(
 );
 
 if (!class_exists('VardefManager')) {
-    require_once('include/SugarObjects/VardefManager.php');
 }
 VardefManager::createVardef('Dashboards', 'Dashboard', array('basic', 'assignable'));

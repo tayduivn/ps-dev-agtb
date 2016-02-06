@@ -11,11 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/View/views/view.list.php');
 require_once('include/SearchForm/SearchForm2.php');
-require_once('modules/Connectors/ConnectorRecord.php');
-require_once('include/connectors/sources/SourceFactory.php');
-require_once('modules/Connectors/tabs.php');
 
 class ViewStep1 extends ViewList
 {
@@ -58,7 +54,6 @@ class ViewStep1 extends ViewList
         $this->_merge_module = $this->request->getValidInputRequest('merge_module', 'Assert\Mvc\ModuleName');
         $moduleError = false;
         require_once('include/connectors/utils/ConnectorUtils.php');
-        require_once('include/connectors/sources/SourceFactory.php');
         $modules_sources = ConnectorUtils::getDisplayConfig();
         if(empty($modules_sources)) {
           $moduleError = true;

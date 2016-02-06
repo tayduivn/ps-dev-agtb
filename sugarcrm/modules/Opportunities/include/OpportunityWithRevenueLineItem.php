@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Opportunities/include/OpportunitySetup.php';
 
 /**
  * Class OpportunityWithRevenueLineItem
@@ -367,7 +366,6 @@ EOL;
         $job->assigned_user_id = $GLOBALS['current_user']->id;
         $job->job_group = $job_group;
 
-        require_once('include/SugarQueue/SugarJobQueue.php');
         $jq = new SugarJobQueue();
         $jq->submitJob($job);
     }

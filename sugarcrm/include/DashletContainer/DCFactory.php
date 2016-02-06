@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/DashletContainer/Containers/DCAbstract.php');
 
 /**
  * The Dashlet Container Factory (DCF) provides a facility for loading the appropriate Dashlet Container.

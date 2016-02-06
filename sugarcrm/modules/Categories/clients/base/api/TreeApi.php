@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/FilterApi.php';
-require_once 'modules/Categories/NestedBeanInterface.php';
 
 /**
  * Api to work with data in tree-like format.

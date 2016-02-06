@@ -9,13 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('service/v3_1/SugarWebServiceUtilv3_1.php');
 
 class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 {
     function get_module_view_defs($moduleName, $type, $view)
     {
-        require_once 'include/MVC/View/SugarView.php';
         $metadataFile = null;
         $results = array();
         if (empty($moduleName)) {
@@ -311,7 +309,6 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 		}
 
 		if($value->module_dir == 'Bugs'){
-			require_once('modules/Releases/Release.php');
 			$seedRelease = BeanFactory::getBean('Releases');
 			$options = $seedRelease->get_releases(TRUE, "Active");
 			$options_ret = array();
@@ -541,7 +538,6 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 
     public function checkOAuthAccess($errorObject)
     {
-        require_once "include/SugarOAuthServer.php";
         try {
 	        $oauth = new SugarOAuthServer();
 	        $token = $oauth->authorizedToken();

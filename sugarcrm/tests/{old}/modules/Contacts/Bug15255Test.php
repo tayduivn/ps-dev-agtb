@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/Contacts/Contact.php');
-require_once('modules/Accounts/Account.php');
 
 class Bug15255Test extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -11,12 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
-require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php';
-//BEGIN SUGARCRM flav=ent ONLY
-require_once 'modules/ModuleBuilder/parsers/views/SidecarPortalListLayoutMetaDataParser.php';
-//END SUGARCRM flav=ent ONLY
-
 /**
  * Accessor class, in the event the parsers public properties go protected, which
  * they are slated to do.

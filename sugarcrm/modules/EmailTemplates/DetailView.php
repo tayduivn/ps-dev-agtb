@@ -18,8 +18,6 @@
  ********************************************************************************/
 
 
-require_once('include/upload_file.php');
-require_once('include/DetailView/DetailView.php');
 
 //Old DetailView compares wrong session variable against new view.list.  Need to sync so that
 //the pagination on the DetailView page will show.

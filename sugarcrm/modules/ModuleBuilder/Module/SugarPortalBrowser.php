@@ -12,8 +12,6 @@
 
 //FILE SUGARCRM flav=ent ONLY
 
-require_once('modules/ModuleBuilder/Module/SugarPortalModule.php');
-require_once('modules/ModuleBuilder/Module/SugarPortalFunctions.php');
 
 class SugarPortalBrowser
 {

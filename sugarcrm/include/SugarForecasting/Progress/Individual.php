@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("include/SugarForecasting/Progress/AbstractProgress.php");
 class SugarForecasting_Progress_Individual extends SugarForecasting_Progress_AbstractProgress
 {
     /**

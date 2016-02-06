@@ -12,8 +12,6 @@
 
 
 require_once 'tests/{old}/service/SOAPTestCase.php';
-require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationship.php';
-require_once 'modules/ModuleBuilder/parsers/relationships/ActivitiesRelationship.php';
 
 class Bug62094Test extends SOAPTestCase
 {

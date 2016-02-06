@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('modules/Teams/Team.php');
-require_once('modules/Teams/TeamSet.php');
 require_once('vendor/nusoap//nusoap.php');
 
 class AdvancedSearchWidgetTest extends Sugar_PHPUnit_Framework_TestCase
@@ -30,7 +28,6 @@ class AdvancedSearchWidgetTest extends Sugar_PHPUnit_Framework_TestCase
            unlink('custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
         }
 
-	    require_once('include/SugarFields/SugarFieldHandler.php');
 		$sfh = new SugarFieldHandler();
 		$this->_sugarField = $sfh->getSugarField('Teamset', true);
 

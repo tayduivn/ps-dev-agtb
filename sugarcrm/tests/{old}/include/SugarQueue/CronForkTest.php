@@ -10,9 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/SugarQueue/SugarJobQueue.php';
-require_once 'include/SugarQueue/SugarCronParallelJobs.php';
-require_once 'modules/SchedulersJobs/SchedulersJob.php';
 
 class CronForkTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -1,7 +1,5 @@
 <?php
 
-require_once 'data/SugarACL.php';
-require_once 'data/SugarBean.php';
 require_once 'tests/{old}/tests/PHPUnit_Framework_SugarBeanRelated_TestCase.php';
 
 /**

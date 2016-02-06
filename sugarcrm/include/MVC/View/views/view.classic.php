@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/View/SugarView.php');
-require_once('include/MVC/Controller/SugarController.php');
 
 class ViewClassic extends SugarView
 {

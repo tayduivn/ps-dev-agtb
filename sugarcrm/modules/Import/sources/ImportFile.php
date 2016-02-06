@@ -16,8 +16,6 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Import/CsvAutoDetect.php');
-require_once('modules/Import/sources/ImportDataSource.php');
 
 class ImportFile extends ImportDataSource
 {

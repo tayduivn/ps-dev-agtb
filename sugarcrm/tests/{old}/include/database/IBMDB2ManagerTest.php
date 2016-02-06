@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/database/IBMDB2Manager.php');
 
 class IBMDB2ManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {

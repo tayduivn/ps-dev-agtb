@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once('soap/SoapHelperFunctions.php');
-require_once('modules/MailMerge/MailMerge.php');
-require_once('include/upload_file.php');
 
 global $app_strings;
 global $app_list_strings;

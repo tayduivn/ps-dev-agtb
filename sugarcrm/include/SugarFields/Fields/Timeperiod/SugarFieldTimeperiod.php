@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarFields/Fields/Enum/SugarFieldEnum.php');
 
 class SugarFieldTimeperiod extends SugarFieldEnum {
 

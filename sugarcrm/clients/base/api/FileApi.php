@@ -203,7 +203,6 @@ class FileApi extends SugarApi {
         // Only work on file or image fields
         if (isset($def['type']) && ($def['type'] == 'image' || $def['type'] == 'file')) {
             // Get our tools to actually save the file|image
-            require_once 'include/SugarFields/SugarFieldHandler.php';
             $sfh = new SugarFieldHandler();
             $sf = $sfh->getSugarField($def['type']);
             if ($sf) {
@@ -413,7 +412,6 @@ class FileApi extends SugarApi {
                         throw new SugarApiExceptionNoMethod('No method found to remove attachment.');
                     }
                 } else {
-                    require_once 'include/upload_file.php';
                     $upload = new UploadFile($field);
                     $upload->unlink_file($bean->$field);
                     $bean->$field = '';

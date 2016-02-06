@@ -23,7 +23,6 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 /* Requires to get the Currencies available to use */
 
-require_once('modules/Currencies/ListCurrency.php');
 
 $header_text = '';
 global $mod_strings;

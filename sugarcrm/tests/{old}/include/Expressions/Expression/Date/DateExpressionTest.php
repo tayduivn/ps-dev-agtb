@@ -10,10 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-//require_once("include/Expressions/Expression/Date/DateExpression.php");
-require_once("include/Expressions/Expression/Parser/Parser.php");
-require_once 'include/Expressions/Expression/String/StringLiteralExpression.php';
-require_once 'include/Expressions/Expression/Date/HoursUntilExpression.php';
 
 class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 {

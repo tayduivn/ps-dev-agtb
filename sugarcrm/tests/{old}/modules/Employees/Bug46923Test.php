@@ -12,8 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-require_once('modules/Users/User.php');
-require_once('modules/Employees/views/view.list.php');
 
 class Bug46923Test extends Sugar_PHPUnit_Framework_TestCase
 {

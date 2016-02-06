@@ -12,7 +12,6 @@
  */
 
 // FIXME remove this view
-require_once('include/MVC/View/SugarView.php');
 
 class ViewAjaxUI extends SugarView
 {

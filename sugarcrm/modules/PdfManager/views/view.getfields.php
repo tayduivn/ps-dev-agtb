@@ -11,7 +11,6 @@
  */
 
 
-require_once 'modules/ExpressionEngine/formulaHelper.php';
 
 class ViewGetFields extends SugarView
 {

@@ -98,5 +98,4 @@ $dictionary['SugarFavorites'] = array(
         ),
 	'optimistic_lock'=>true,
 );
-require_once('include/SugarObjects/VardefManager.php');
 VardefManager::createVardef('SugarFavorites', 'SugarFavorites', array('basic','assignable'));

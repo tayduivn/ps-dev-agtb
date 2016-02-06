@@ -11,12 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Mailer/MailerException.php"; // requires MailerException in order to throw exceptions of that type
-require_once "modules/Mailer/EmailHeaders.php"; // email headers are contained in an EmailHeaders object
-require_once "modules/Mailer/EmailIdentity.php"; // requires EmailIdentity to build the From header
 
 // external imports
-require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php"; // needs the constants that
                                                                                       // represent the modes; also
                                                                                       // imports
                                                                                       // OutboundSmtpEmailConfiguration

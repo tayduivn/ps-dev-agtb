@@ -10,9 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('data/BeanFactory.php');
 require_once('include/download_file.php');
-require_once('modules/Reports/ReportCache.php');
 /**
  * @api
  */

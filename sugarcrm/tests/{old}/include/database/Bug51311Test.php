@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/database/FreeTDSManager.php');
-require_once('include/database/SqlsrvManager.php');
 
 class Bug51311Test extends Sugar_PHPUnit_Framework_TestCase
 {

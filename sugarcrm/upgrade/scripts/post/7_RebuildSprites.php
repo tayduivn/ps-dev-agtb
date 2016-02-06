@@ -19,7 +19,6 @@ class SugarUpgradeRebuildSprites extends UpgradeScript
 
     public function run()
     {
-        require_once('modules/Administration/SugarSpriteBuilder.php');
         $sb = new SugarSpriteBuilder();
         $sb->cssMinify = true;
         $sb->fromSilentUpgrade = true;

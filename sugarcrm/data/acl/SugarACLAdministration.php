@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('data/SugarACLStrategy.php');
 
 /**
  * This class is used to enforce ACLs on modules that are restricted to admins only.

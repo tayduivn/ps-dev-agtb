@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/SchedulersJobs/SchedulersJob.php';
 
 class Bug27344Test extends Sugar_PHPUnit_Framework_TestCase
 {

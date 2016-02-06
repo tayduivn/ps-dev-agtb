@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Expressions/Expression/Relationship/RelateExpression.php');
 
 class DefineRelateExpression extends RelateExpression
 {

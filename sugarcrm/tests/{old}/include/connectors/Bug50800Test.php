@@ -10,8 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/connectors/ConnectorFactory.php');
-require_once('include/connectors/sources/SourceFactory.php');
 require_once('include/connectors/utils/ConnectorUtils.php');
 
 /*

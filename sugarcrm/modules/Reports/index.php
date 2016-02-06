@@ -22,7 +22,6 @@ require_once('modules/Reports/templates/templates_export.php');
 require_once('modules/Reports/config.php');
 global $current_language, $report_modules, $modules_report, $mod_strings;
 
-require_once('modules/Reports/Report.php');
 $args = array();
 
 // set default

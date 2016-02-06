@@ -13,7 +13,6 @@
 /**
  * Include the Tab Controller since we will need this
  */
-require_once 'modules/MySettings/TabController.php';
 
 /**
  * Add new modules to the megamenu (tab controller)

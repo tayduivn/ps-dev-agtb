@@ -13,7 +13,6 @@
  // $Id: MyReportsDashlet.php 16981 2006-10-10 22:51:30 +0000 (Tue, 10 Oct 2006) clee $
 
 
-require_once('include/Dashlets/DashletGeneric.php');
 
 
 class MyReportsDashlet extends DashletGeneric { 

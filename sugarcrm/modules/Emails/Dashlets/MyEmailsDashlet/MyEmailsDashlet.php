@@ -13,7 +13,6 @@
  // $Id: MyEmailsDashlet.php 16537 2006-08-29 23:12:04Z wayne $
 
 
-require_once('include/Dashlets/DashletGeneric.php');
 
 
 class MyEmailsDashlet extends DashletGeneric {

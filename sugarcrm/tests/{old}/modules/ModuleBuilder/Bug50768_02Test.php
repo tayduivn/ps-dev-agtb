@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/DynamicFields/templates/Fields/TemplateCurrency.php';
-require_once("modules/ModuleBuilder/controller.php");
 
 /**
  * Bug #50768

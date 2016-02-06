@@ -11,7 +11,6 @@
  */
 
 SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
-require_once 'include/utils/LogicHook.php';
 
 /**
  * Upgrade script to update the compiled logic hooks extension file

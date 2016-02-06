@@ -19,7 +19,6 @@ class SugarUpgradeRenameModules extends UpgradeScript
 
     public function run()
     {
-        require_once('modules/Studio/wizards/RenameModules.php');
         require_once('include/utils.php');
 
         $languageDefault = $GLOBALS['sugar_config']['default_language']; // if empty

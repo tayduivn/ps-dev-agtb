@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Reports/schedule/ReportSchedule.php');
 class Bug23934Test extends Sugar_PHPUnit_Framework_TestCase
 {
     private $_reportId = "ad832c9b-59be-bf94-9b8d-4cdab4d3f1e8";

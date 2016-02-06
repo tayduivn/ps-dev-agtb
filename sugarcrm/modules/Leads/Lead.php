@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarObjects/templates/person/Person.php');
 
 /**
  *  Lead is used to store profile information for people who may become customers.
@@ -517,7 +516,6 @@ class Lead extends Person {
      */
     public function call_vardef_handler($meta_array_type=null)
     {
-        require_once('modules/Leads/LeadsVarDefHandler.php');
         $this->vardef_handler = new LeadsVarDefHandler($this, $meta_array_type);
     }
 }

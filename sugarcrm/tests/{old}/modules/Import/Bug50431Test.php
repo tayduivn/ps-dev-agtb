@@ -11,7 +11,6 @@
  */
 
 
-require_once('modules/Import/views/view.step3.php');
 
 /**
  * Bug50431Test.php

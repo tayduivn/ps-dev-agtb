@@ -11,7 +11,6 @@
  */
 
 
-require_once('modules/Calls/CallFormBase.php');
 
 
 class Bug60114Test extends Sugar_PHPUnit_Framework_TestCase

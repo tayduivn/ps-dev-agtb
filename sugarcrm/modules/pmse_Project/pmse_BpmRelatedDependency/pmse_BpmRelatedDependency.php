@@ -14,7 +14,6 @@
  * THIS CLASS IS FOR DEVELOPERS TO MAKE CUSTOMIZATIONS IN
  */
 
-require_once 'modules/pmse_Project/pmse_BpmRelatedDependency/pmse_BpmRelatedDependency_sugar.php';
 
 class pmse_BpmRelatedDependency extends pmse_BpmRelatedDependency_sugar {
 

@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/Calls/Call.php');
 require_once('modules/Calls/CallHelper.php');
 
 class CallHelperTest extends Sugar_PHPUnit_Framework_TestCase

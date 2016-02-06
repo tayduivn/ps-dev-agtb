@@ -15,8 +15,6 @@
  //		PARAM prefixed properties: array of these property/values will be passed to the function as parameter.
 
 
-require_once('include/JSON.php');
-require_once('include/upload_file.php');
 
 if (!is_dir($cachedir = sugar_cached('images/')))
     mkdir_recursive($cachedir);

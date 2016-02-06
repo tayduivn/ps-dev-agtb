@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarForecasting/ForecastProcessInterface.php');
-require_once('include/SugarForecasting/AbstractForecastArgs.php');
 abstract class SugarForecasting_Progress_AbstractProgress extends SugarForecasting_AbstractForecastArgs implements SugarForecasting_ForecastProcessInterface
 {
     /**

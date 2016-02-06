@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/generic/LayoutManager.php';
 
 /**
  * Bug #51568

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/MetaDataManager/MetaDataManager.php';
-require_once 'include/api/SugarApi.php';
 
 // An API to let the user in to the metadata
 class MetadataApi extends SugarApi

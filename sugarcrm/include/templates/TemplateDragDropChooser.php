@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("include/templates/Template.php");
 
 class TemplateDragDropChooser extends Template {
     var $args;

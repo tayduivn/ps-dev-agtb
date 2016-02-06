@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/Dashlets/Dashlet.php';
 
 class DashletSaveUserPreferencesTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -10,10 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationships.php' ;
-require_once 'modules/ModuleBuilder/parsers/relationships/RelationshipsInterface.php' ;
-require_once 'modules/ModuleBuilder/parsers/relationships/RelationshipFactory.php' ;
-require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 
 class UndeployedRelationships extends AbstractRelationships implements RelationshipsInterface
 {

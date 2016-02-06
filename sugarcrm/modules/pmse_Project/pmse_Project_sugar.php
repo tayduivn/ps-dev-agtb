@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEDynaForm.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 

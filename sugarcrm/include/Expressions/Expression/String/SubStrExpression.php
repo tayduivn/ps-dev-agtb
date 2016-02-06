@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("include/Expressions/Expression/String/StringExpression.php");
 /**
  * <b>subStr(String s, Number from, Number length)</b><br>
  * Returns <i>length</i> characters starting at 0-based index <i>from</i>.<br />

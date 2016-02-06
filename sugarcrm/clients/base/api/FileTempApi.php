@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/FileApi.php';
 
 /**
  * API Class to handle temporary image (attachment) interactions with a field in

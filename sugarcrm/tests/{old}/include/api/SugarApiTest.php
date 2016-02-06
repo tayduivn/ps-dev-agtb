@@ -12,10 +12,6 @@
 
 require_once 'tests/{old}/SugarTestDatabaseMock.php';
 require_once 'tests/{old}/SugarTestReflection.php';
-require_once 'include/api/SugarApi.php';
-require_once 'data/SugarBeanApiHelper.php';
-require_once 'include/api/RestService.php';
-require_once 'modules/Users/User.php';
 
 class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -690,7 +686,6 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
 
 
 // need to make sure ServiceBase is included when extending it to avoid a fatal error
-require_once("include/api/ServiceBase.php");
 
 class SugarApiMock extends SugarApi
 {

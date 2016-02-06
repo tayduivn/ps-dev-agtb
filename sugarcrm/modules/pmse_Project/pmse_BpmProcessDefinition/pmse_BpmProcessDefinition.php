@@ -14,7 +14,6 @@
  * THIS CLASS IS FOR DEVELOPERS TO MAKE CUSTOMIZATIONS IN
  */
 
-require_once 'modules/pmse_Project/pmse_BpmProcessDefinition/pmse_BpmProcessDefinition_sugar.php';
 
 class pmse_BpmProcessDefinition extends pmse_BpmProcessDefinition_sugar
 {

@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/ModuleBuilder/Module/DropDownBrowser.php');
 
 class ModuleBuilderRelatedTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -87,7 +87,6 @@ class Bug50422Test extends Sugar_PHPUnit_Framework_TestCase
         $relationshipName = $this->relationship->getName();
         $relateFieldName = $relationshipName . '_name';
 
-        require_once 'include/ListView/ListViewData.php';
         $lvd = new ListViewData();
         $lvd->listviewName = $call->module_name;
         $response = $lvd->getListViewData(

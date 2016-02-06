@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("data/BeanFactory.php");
-require_once('modules/ExpressionEngine/formulaHelper.php');
 
 class ViewRollupWizard extends SugarView
 {

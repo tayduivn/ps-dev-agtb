@@ -28,7 +28,6 @@ if(!empty($_SESSION['display_lotuslive_alert'])){
 
 if( is_admin($current_user) && SugarAutoLoader::fileExists('include/SugarSearchEngine/SugarSearchEngineFactory.php') )
 {
-    require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
     $ftsType = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
     if(!empty($ftsType) && isset($GLOBALS['sugar_config']['full_text_engine'][$ftsType]['valid']) && !$GLOBALS['sugar_config']['full_text_engine'][$ftsType]['valid'])
     {

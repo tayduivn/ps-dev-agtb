@@ -22,7 +22,6 @@ class SugarUpgradeRebuild extends UpgradeScript
     {
         global $dictionary, $beanFiles;
         include "include/modules.php";
-        require_once("modules/Administration/QuickRepairAndRebuild.php");
         $rac = new RepairAndClear('', '', false, false);
         $rac->clearVardefs();
         $rac->rebuildExtensions();

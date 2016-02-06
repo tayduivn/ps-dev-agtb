@@ -16,13 +16,11 @@
 
 
 
-require_once('modules/QueryBuilder/QueryBuilder.php');
 
 
 
 
 
-require_once('modules/MySettings/StoreQuery.php');
 $storeQuery = new StoreQuery();
 if(!isset($_REQUEST['query'])){
 	$storeQuery->loadQuery($currentModule);

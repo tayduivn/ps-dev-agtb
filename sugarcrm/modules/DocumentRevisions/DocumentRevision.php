@@ -20,7 +20,6 @@
 
 
 
-require_once('include/upload_file.php');
 
 // User is used to store Forecast information.
 class DocumentRevision extends SugarBean {

@@ -1,6 +1,5 @@
 <?php
 
-require_once 'data/SugarACLStrategy.php';
 
 /**
  * Test class for SugarACLStrategy.

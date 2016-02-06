@@ -11,9 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Forecasts/ForecastsDefaults.php');
-require_once('include/generic/LayoutManager.php');
-require_once('modules/Reports/Report.php');
 
 /**
  * Test Fiscal Filters and Fiscal Group By for report date/time fields

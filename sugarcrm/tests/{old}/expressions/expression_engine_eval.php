@@ -15,9 +15,7 @@
 chdir("../../");
  
 require_once('include/entryPoint.php');
-require_once('include/Expressions/Expression/Parser/Parser.php');
 
-require_once('modules/Users/User.php');
 
 if (!empty($_REQUEST['expression']))
 {

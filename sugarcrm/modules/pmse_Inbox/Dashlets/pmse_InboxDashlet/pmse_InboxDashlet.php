@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/Dashlets/DashletGeneric.php';
-require_once 'modules/pmse_Inbox/pmse_Inbox.php';
 
 class pmse_InboxDashlet extends DashletGeneric {
 

@@ -11,8 +11,6 @@
  */
 
 
-require_once('include/TemplateHandler/TemplateHandler.php');
-require_once('include/EditView/SugarVCR.php');
 
 /**
  * New EditView
@@ -875,7 +873,6 @@ class EditView
         }
 
         //if it's a bean field - unformat it
-        require_once('include/SugarFields/SugarFieldHandler.php');
 
         $sfh  = new SugarFieldHandler();
         $type = !empty($this->fieldDefs[$name]['custom_type'])

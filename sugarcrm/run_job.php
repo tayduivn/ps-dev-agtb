@@ -36,7 +36,6 @@ $current_user = BeanFactory::getBean('Users');
 $current_user->getSystemUser();
 
 $GLOBALS['log']->debug('Starting job {$argv[1]} execution as ${argv[2]}');
-require_once 'modules/SchedulersJobs/SchedulersJob.php';
 $result = SchedulersJob::runJobId($argv[1], $argv[2]);
 
 if(is_string($result)) {

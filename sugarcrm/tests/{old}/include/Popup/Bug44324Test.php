@@ -42,7 +42,6 @@ class Bug44324Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSearchNamePopulatedCorrectly()
     {
-    	require_once('include/Popups/PopupSmarty.php');
     	$popupSmarty = new PopupSmarty($this->contact, $this->contact->module_dir);
     	$this->contact->_create_proper_name_field();
     	$search_data = array();

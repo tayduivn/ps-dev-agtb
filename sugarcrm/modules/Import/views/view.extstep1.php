@@ -16,8 +16,6 @@
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  ********************************************************************************/
-require_once('modules/Import/views/view.step3.php');
-require_once('modules/Import/ImportCacheFiles.php');
 
 class ImportViewExtStep1 extends ImportViewStep3
 {
@@ -187,7 +185,6 @@ class ImportViewExtStep1 extends ImportViewStep3
 
     private function getImportableExternalEAPMs()
     {
-        require_once('include/externalAPI/ExternalAPIFactory.php');
 
         return ExternalAPIFactory::getModuleDropDown('Import', FALSE, FALSE, 'eapm_import_list');
     }

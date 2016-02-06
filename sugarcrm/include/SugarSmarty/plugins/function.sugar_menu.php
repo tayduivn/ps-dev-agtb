@@ -59,7 +59,6 @@
  * </pre>
  * * @author Justin Park (jpark@sugarcrm.com)
  */
-require_once('include/SugarHtml/SugarHtml.php');
 function smarty_function_sugar_menu($params, &$smarty)
 {
     $root_options = array(

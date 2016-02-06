@@ -9,12 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/Import/views/ImportView.php');
-require_once('modules/Import/sources/ImportFile.php');
-require_once('modules/Import/ImportFileSplitter.php');
-require_once('modules/Import/CsvAutoDetect.php');
 
-require_once('include/upload_file.php');
 
 class ImportViewConfirm extends ImportView
 {
@@ -319,7 +314,6 @@ class ImportViewConfirm extends ImportView
         global $locale, $current_user;
         $cur_id = isset($field_map['importlocale_currency'])? $field_map['importlocale_currency'] : $locale->getPrecedentPreference('currency', $current_user);
         // get currency preference
-        require_once('modules/Currencies/ListCurrency.php');
         $currency = new ListCurrency();
         if($cur_id)
             $selectCurrency = $currency->getSelectOptions($cur_id);

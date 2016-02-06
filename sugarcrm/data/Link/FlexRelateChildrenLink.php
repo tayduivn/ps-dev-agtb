@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'data/Link2.php';
 
 /**
  * Left-hand side link which aggregates related beans and the beans whose parent is current bean

@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 /**
  * <b>contains(String haystack, String needle)</b><br/>

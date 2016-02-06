@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/controller.php';
 require_once 'tests/{old}/rest/RestTestBase.php';
 
 /**

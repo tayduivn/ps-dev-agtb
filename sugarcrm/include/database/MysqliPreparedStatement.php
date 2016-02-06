@@ -21,7 +21,6 @@
  *
  * The meta interface has the following functions:
  */
-require_once 'include/database/PreparedStatement.php';
 
 class MysqliPreparedStatement extends PreparedStatement
 {

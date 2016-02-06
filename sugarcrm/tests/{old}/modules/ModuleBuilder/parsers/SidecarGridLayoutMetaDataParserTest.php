@@ -12,7 +12,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php' ;
 
 
 
@@ -31,7 +30,6 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['mod_strings'] = array();
 
-        require_once 'modules/ModuleBuilder/parsers/views/AbstractMetaDataImplementation.php';
         $implementation = $this->getMockForAbstractClass('AbstractMetaDataImplementation');
         $this->_parser = new SidecarGridLayoutMetaDataParserTestDerivative(
             MB_PORTALRECORDVIEW,

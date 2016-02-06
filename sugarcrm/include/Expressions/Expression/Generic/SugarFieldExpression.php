@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Expressions/Expression/Generic/GenericExpression.php');
 
 
 class SugarFieldExpression extends GenericExpression

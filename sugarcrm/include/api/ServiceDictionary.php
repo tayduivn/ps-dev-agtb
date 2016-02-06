@@ -142,8 +142,6 @@ class ServiceDictionary {
      */
     protected function loadAllDictionaryClasses() {
         // Currently hardcoded to just Soap and Rest
-        require_once('include/api/ServiceDictionaryRest.php');
-        // require_once('include/api/ServiceDictionarySoap.php');
         
 
         $apis = array();

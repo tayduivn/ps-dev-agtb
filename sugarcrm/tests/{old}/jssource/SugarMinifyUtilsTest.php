@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'jssource/minify_utils.php';
 
 class SugarMinifyUtilsTest extends Sugar_PHPUnit_Framework_TestCase
 {

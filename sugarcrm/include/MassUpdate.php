@@ -15,7 +15,6 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 require_once 'include/EditView/EditView2.php';
-require_once 'modules/ActivityStream/Activities/Activity.php';
 
 /**
  * MassUpdate class for updating multiple records at once
@@ -289,7 +288,6 @@ class MassUpdate
 						}
                         $this->sugarbean->mark_deleted($id);
                         // ideally we should use after_delete logic hook
-                        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
                         $searchEngine = SugarSearchEngineFactory::getInstance();
                         $searchEngine->delete($this->sugarbean);
                     } else {
@@ -1082,7 +1080,6 @@ EOHTML;
 	  * @param varname name of the variable
 	  */
 	function addTeamList($displayname, $field){
-		require_once('include/SugarFields/SugarFieldHandler.php');
 		$sfh = new SugarFieldHandler();
 		$field['custom_type'] = 'Teamset';
 		$field['name'] = 'team_name';

@@ -15,9 +15,6 @@
  ********************************************************************************/
 
 global $theme;
-require_once('modules/QueryBuilder/QueryBuilder.php');
-require_once('modules/QueryBuilder/QueryColumn.php');
-require_once('modules/QueryBuilder/QueryCalc.php');
 
 
 

@@ -12,10 +12,7 @@
 
 use Sugarcrm\Sugarcrm\Security\Crypto\CSPRNG;
 
-require_once 'include/MVC/SugarModule.php';
-require_once 'modules/OAuthKeys/OAuthKey.php';
 require_once 'modules/OAuthTokens/OAuthToken.php';
-require_once 'include/SugarHttpClient.php';
 
 /**
  * SNIP data handling implementation
@@ -712,7 +709,6 @@ class SugarSNIP
     protected function processEmailAttachment($data, $email)
     {
         if (substr($data['filename'], - 4) === '.ics') {
-            require_once ('modules/SNIP/iCalParser.php');
             $ic = new iCalendar();
             try {
                 $ic->parse(base64_decode($data['content']));
@@ -732,7 +728,6 @@ class SugarSNIP
     */
     protected function createNote($data, $email)
     {
-        require_once 'include/upload_file.php';
         $upload_file = new UploadFile('uploadfile');
         $decodedFile = base64_decode($data['content']);
         $upload_file->set_for_soap($data['filename'], $decodedFile);

@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/iCals/iCal.php';
 
 class iCalTest extends Sugar_PHPUnit_Framework_TestCase
 {

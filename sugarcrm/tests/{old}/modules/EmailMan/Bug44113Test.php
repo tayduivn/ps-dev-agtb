@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Configurator/Configurator.php');
-require_once('modules/EmailMan/EmailMan.php');
 require_once "tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php";
 
 /***
@@ -67,8 +65,6 @@ class Bug44113Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testEmailManController()
     {
-        require_once('modules/EmailMan/controller.php');
-        require_once('include/MVC/Controller/SugarController.php');
 
         global $sugar_config;
         $conn = new EmailManController();

@@ -20,7 +20,6 @@
 
 require_once('include/json_config.php');
 
-require_once('include/MVC/View/views/view.detail.php');
 
 class CampaignsViewDetail extends ViewDetail {
 
@@ -96,7 +95,6 @@ class CampaignsViewDetail extends ViewDetail {
         //We want to display subset of available, panels, so we will call subpanel
         //object directly instead of using sugarview.
         $GLOBALS['focus'] = $this->bean;
-        require_once('include/SubPanel/SubPanelTiles.php');
         $subpanel = new SubPanelTiles($this->bean, $this->module);
         //get available list of subpanels
         $alltabs=$subpanel->subpanel_definitions->get_available_tabs();

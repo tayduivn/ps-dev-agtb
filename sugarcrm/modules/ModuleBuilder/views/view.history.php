@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once ('modules/ModuleBuilder/MB/AjaxCompose.php') ;
-require_once ('modules/ModuleBuilder/parsers/views/History.php') ;
-require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
 
 class ViewHistory extends SugarView
 {
@@ -161,23 +158,18 @@ class ViewHistory extends SugarView
         $this->history->restoreByTimestamp ( $sid ) ;
 
         if (($this->layout == 'listview') || ($this->layout == 'wirelesslistview')) {
-            require_once ("modules/ModuleBuilder/views/view.listview.php") ;
             $view = new ViewListView ( ) ;
         } else if ($this->layout == 'basic_search' || $this->layout == 'advanced_search')
         {
-            require_once ("modules/ModuleBuilder/views/view.searchview.php") ;
             $view = new ViewSearchView ( ) ;
         } else if ($this->layout == 'dashlet' || $this->layout == 'dashletsearch')
         {
-        	require_once ("modules/ModuleBuilder/views/view.dashlet.php") ;
         	$view = new ViewDashlet ( ) ;
         }  else if ($this->layout == 'popuplist' || $this->layout == 'popupsearch' || $this->layout == 'selection-list')
         {
-        	require_once ("modules/ModuleBuilder/views/view.popupview.php") ;
         	$view = new ViewPopupview ( ) ;
         } else
         {
-            require_once ("modules/ModuleBuilder/views/view.layoutview.php") ;
             $view = new ViewLayoutView ( ) ;
         }
         

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/EmailMan/EmailMan.php');
-require_once('include/MassUpdate.php');
 
 class Bug42193Test extends Sugar_PHPUnit_Framework_TestCase
 {

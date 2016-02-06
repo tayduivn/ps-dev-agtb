@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/api/RestService.php';
-require_once 'clients/base/api/OAuth2Api.php';
 
 class OAuth2ApiTest extends Sugar_PHPUnit_Framework_TestCase
 {

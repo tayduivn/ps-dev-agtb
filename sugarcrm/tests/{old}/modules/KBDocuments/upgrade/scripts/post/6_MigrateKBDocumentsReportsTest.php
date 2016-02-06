@@ -11,7 +11,6 @@
  */
 
 require_once 'tests/{old}/upgrade/UpgradeTestCase.php';
-require_once 'modules/Reports/Report.php';
 
 class SugarUpgradeMigrateKBDocumentsReportsTest extends UpgradeTestCase
 {

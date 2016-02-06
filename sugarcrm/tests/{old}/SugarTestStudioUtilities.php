@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('include/MVC/Controller/SugarController.php');
-require_once('modules/ModuleBuilder/controller.php');
-require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
 
 class SugarTestStudioUtilities
 {

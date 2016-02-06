@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarSearchEngine/Interface.php';
-require_once 'include/SearchForm/SugarSpot.php';
 
 /**
  * This class is an adapter to the existing SugarSpot/UnifiedSearch capabilities and is the default

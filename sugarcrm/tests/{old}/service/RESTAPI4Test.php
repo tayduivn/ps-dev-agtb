@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('service/v3/SugarWebServiceUtilv3.php');
 require_once('tests/{old}/service/APIv3Helper.php');
 
 
@@ -650,7 +649,6 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
     
     /*
     public function testAddFieldLevelACLsToWirelessList() {
-        require_once 'service/v4/SugarWebServiceUtilv4.php';
         $v4 = new SugarWebServiceUtilv4();
         $defs = $v4->get_module_view_defs('Cases', 'wireless', 'list');
     }

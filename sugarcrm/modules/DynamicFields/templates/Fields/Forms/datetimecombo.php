@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/DynamicFields/templates/Fields/TemplateDatetimecombo.php');
 
 function get_body(&$ss, $vardef){
 	$defaultTime = '';

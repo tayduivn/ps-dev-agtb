@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('data/SugarACLStrategy.php');
 
 class SugarACLForecastWorksheets extends SugarACLStrategy
 {
@@ -77,7 +76,6 @@ class SugarACLForecastWorksheets extends SugarACLStrategy
 
             // if we don't have the forecast_by from the db, grab the defaults that we use on set.
             if (empty($settings['forecast_by'])) {
-                require_once('modules/Forecasts/ForecastsDefaults.php');
                 $settings = ForecastsDefaults::getDefaults();
             }
 

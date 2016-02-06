@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once ('modules/ModuleBuilder/MB/ModuleBuilder.php') ;
-require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
-require_once ('modules/ExpressionEngine/formulaHelper.php');
 
 class ExpressionEngineController extends SugarController
 {

@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SubPanel/SubPanelTiles.php';
 
 class SubPanelTilesBase extends Sugar_PHPUnit_Framework_TestCase
 {

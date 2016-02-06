@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'data/BeanFactory.php';
-require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php';
 require_once 'modules/ModuleBuilder/parsers/constants.php';
 
 class StudioModule
@@ -527,7 +525,6 @@ class StudioModule
             $GLOBALS['modListHeader'] = query_module_access_list($GLOBALS['current_user']);
         }
 
-        require_once 'include/SubPanel/SubPanel.php';
 
         $nodes = array();
 
@@ -574,7 +571,6 @@ class StudioModule
 
     public function getBWCProvidedSubpanels()
     {
-        require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationships.php';
         $this->providedSubpanels = array();
         $subpanelDir = 'modules/' . $this->module . '/metadata/subpanels/';
         foreach (array($subpanelDir, "custom/$subpanelDir") as $dir) {
@@ -598,7 +594,6 @@ class StudioModule
 
     public function getSidecarProvidedSubpanels()
     {
-        require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationships.php';
         $this->providedSubpanels = array();
         $subpanelDir = 'modules/' . $this->module . '/clients/base/views/';
         foreach (array($subpanelDir, "custom/$subpanelDir") as $dir) {
@@ -634,8 +629,6 @@ class StudioModule
         global $moduleList, $beanFiles, $beanList, $module;
 
         //use tab controller function to get module list with named keys
-        require_once 'modules/MySettings/TabController.php';
-        require_once 'include/SubPanel/SubPanelDefinitions.php';
         $modules_to_check = TabController::get_key_array($moduleList);
 
         //change case to match subpanel processing later on
@@ -688,7 +681,6 @@ class StudioModule
      */
     public function removeFieldFromLayouts($fieldName)
     {
-        require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
         $GLOBALS ['log']->info(get_class($this) . "->removeFieldFromLayouts($fieldName)");
         $sources = $this->getViewMetadataSources();
         $sources[] = array('type'  => MB_BASICSEARCH);
@@ -701,7 +693,6 @@ class StudioModule
 
         $GLOBALS['log']->debug(print_r($sources, true));
 
-        require_once 'modules/ModuleBuilder/MB/MBHelper.php';
         $roles = MBHelper::getRoles();
         foreach ($sources as $name => $defs) {
             $this->removeFieldFromLayout($this->module, $defs['type'], null, $fieldName);

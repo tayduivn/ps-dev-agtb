@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('include/SugarFields/Fields/Link/SugarFieldLink.php');
 
 class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -55,7 +54,6 @@ class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
      * @ticket 36744
      */
 	public function testLinkField() {
-        require_once('include/SugarFields/SugarFieldHandler.php');
         $sf = SugarFieldHandler::getSugarField('url');
         $data = array();
         $service = SugarTestRestUtilities::getRestServiceMock();

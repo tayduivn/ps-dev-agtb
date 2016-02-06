@@ -16,7 +16,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('modules/Trackers/store/Store.php');
 
 class TrackerQueriesDatabaseStore implements Store {
 

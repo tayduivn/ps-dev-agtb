@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/EmailAddresses/EmailAddress.php');
 
 /**
  * Test cases for php file Emails/emailAddress.php

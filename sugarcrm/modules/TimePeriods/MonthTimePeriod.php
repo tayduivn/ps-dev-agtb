@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/TimePeriods/TimePeriodInterface.php');
 /**
  * Implements the annual representation of a time period
  * @api

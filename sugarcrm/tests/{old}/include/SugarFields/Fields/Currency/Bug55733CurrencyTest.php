@@ -11,7 +11,6 @@
  */
 
 
-require_once('include/SugarFields/Fields/Currency/SugarFieldCurrency.php');
 /*
  * This tests for precision formatting from the sugarfieldcurrency object.  Prior to bug 55733, the value would get picked up from
  * the vardefs['precision'] value, instead of the currency settings.

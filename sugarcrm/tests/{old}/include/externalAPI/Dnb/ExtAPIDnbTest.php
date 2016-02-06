@@ -11,7 +11,6 @@
  */
 //FILE SUGARCRM flav=pro ONLY
 
-require_once('include/externalAPI/Dnb/ExtAPIDnb.php');
 
 /**
  * Class ExtAPIDnbTest

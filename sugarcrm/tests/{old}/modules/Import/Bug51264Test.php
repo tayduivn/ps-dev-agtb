@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Import/ImportDuplicateCheck.php');
 
 /**
  * Bug #51264

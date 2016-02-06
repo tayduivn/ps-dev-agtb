@@ -11,11 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/connectors/ConnectorFactory.php';
-require_once 'include/connectors/sources/SourceFactory.php';
 require_once 'include/connectors/ConnectorsTestUtility.php';
 require_once 'include/connectors/utils/ConnectorUtils.php';
-require_once 'modules/Connectors/controller.php';
 
 class Sugar_Connectors_TestCase extends Sugar_PHPUnit_Framework_TestCase
 {

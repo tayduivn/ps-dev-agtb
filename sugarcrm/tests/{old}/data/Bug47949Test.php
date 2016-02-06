@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Cases/Case.php');
 
 class Bug47949Test extends Sugar_PHPUnit_Framework_TestCase
 {

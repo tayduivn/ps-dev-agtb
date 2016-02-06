@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once("include/EditView/EditView2.php");
-require_once("include/upload_file.php");
 
 class ViewConvertLead extends SugarView
 {
@@ -70,7 +69,6 @@ class ViewConvertLead extends SugarView
         $ev->view = "ConvertLead";
         echo $this->getModuleTitle();
 
-        require_once("include/QuickSearchDefaults.php");
         $qsd = QuickSearchDefaults::getQuickSearchDefaults();
         $qsd->setFormName("ConvertLead");
 
@@ -358,7 +356,6 @@ class ViewConvertLead extends SugarView
         }
         elseif (!empty($_REQUEST["convert_create_Contacts"]) && $_REQUEST["convert_create_Contacts"] != "false" && !isset($_POST['ContinueContact']))
         {
-            require_once('modules/Contacts/ContactFormBase.php');
             $contactForm = new ContactFormBase();
             $duplicateContacts = $contactForm->checkForDuplicates('Contacts');
 
@@ -380,7 +377,6 @@ class ViewConvertLead extends SugarView
         }
         elseif (!empty($_REQUEST["convert_create_Accounts"]) && $_REQUEST["convert_create_Accounts"] != "false" && empty($_POST['ContinueAccount']))
         {
-            require_once('modules/Accounts/AccountFormBase.php');
             $accountForm = new AccountFormBase();
             $duplicateAccounts = $accountForm->checkForDuplicates('Accounts');
             if (isset($duplicateAccounts))

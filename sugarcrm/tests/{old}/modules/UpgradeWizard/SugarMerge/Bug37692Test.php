@@ -77,7 +77,6 @@ function tearDown() {
 
 
 function test_project_merge() {
-   require_once('modules/UpgradeWizard/SugarMerge/SugarMerge.php');
    $sugar_merge = new SugarMerge('tests/{old}/modules/UpgradeWizard/SugarMerge/od_metadata_files/custom');
    $sugar_merge->mergeModule('Project');
    $this->assertTrue(file_exists('custom/modules/Project/metadata/detailviewdefs.php.suback.php'));

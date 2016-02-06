@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Schedulers/Scheduler.php';
 
 /**
  * Bug44819Test

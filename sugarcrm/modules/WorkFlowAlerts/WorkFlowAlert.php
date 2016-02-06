@@ -235,7 +235,6 @@ function get_rel_module($base_module, $var_rel_name){
 	//get the vardef fields relationship name
 	//get the base_module bean
 	$module_bean = BeanFactory::getBean($base_module);
-	require_once('data/Link.php');
 	$rel_name = Relationship::retrieve_by_modules($var_rel_name, $this->base_module, $GLOBALS['db']);
 	if(!empty($module_bean->field_defs[$rel_name])){
 		$var_rel_name = $rel_name;

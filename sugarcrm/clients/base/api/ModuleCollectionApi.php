@@ -12,7 +12,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/CollectionApi.php';
 
 /**
  * Module collection API
@@ -69,7 +68,6 @@ class ModuleCollectionApi extends CollectionApi
     {
         $this->requireArgs($args, array('collection_name'));
 
-        require_once 'clients/base/api/CollectionApi/CollectionDefinition/ModuleCollectionDefinition.php';
         $definition = new ModuleCollectionDefinition($args['collection_name']);
 
         return $definition;

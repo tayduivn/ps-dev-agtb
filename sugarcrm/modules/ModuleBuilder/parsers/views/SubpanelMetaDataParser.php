@@ -13,7 +13,6 @@
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once ('modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php') ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 class SubpanelMetaDataParser extends ListLayoutMetaDataParser
@@ -45,12 +44,10 @@ class SubpanelMetaDataParser extends ListLayoutMetaDataParser
         // TODO: check the implementations
         if (empty ( $packageName ))
         {
-            require_once 'modules/ModuleBuilder/parsers/views/DeployedSubpanelImplementation.php' ;
             $this->implementation = new DeployedSubpanelImplementation ( $subpanelName, $moduleName ) ;
             //$this->originalViewDef = $this->implementation->getOriginalDefs ();
         } else
         {
-            require_once 'modules/ModuleBuilder/parsers/views/UndeployedSubpanelImplementation.php' ;
             $this->implementation = new UndeployedSubpanelImplementation ( $subpanelName, $moduleName, $packageName ) ;
         }
 
@@ -78,7 +75,6 @@ class SubpanelMetaDataParser extends ListLayoutMetaDataParser
 		        if(empty($selected_lang)){
 		            $selected_lang = $GLOBALS['sugar_config']['default_language'];
 		        }
-		        require_once 'modules/ModuleBuilder/parsers/parser.label.php' ;
             	$labelParser = new ParserLabel ( $_REQUEST['view_module'] , isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
                 $viewModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
                 $labelParser->addLabels($selected_lang, array($_REQUEST['subpanel_title_key'] =>  remove_xss(from_html($_REQUEST['subpanel_title']))), $viewModule);

@@ -11,7 +11,6 @@
  */
 
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
-require_once 'modules/ModuleBuilder/parsers/views/HistoryInterface.php' ;
 
 class History implements HistoryInterface
 {

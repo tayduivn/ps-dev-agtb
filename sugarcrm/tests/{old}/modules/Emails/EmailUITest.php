@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Emails/EmailUI.php');
 
 class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
 {

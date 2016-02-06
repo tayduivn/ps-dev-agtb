@@ -10,10 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationships.php' ;
-require_once 'modules/ModuleBuilder/parsers/relationships/RelationshipsInterface.php' ;
-require_once 'modules/ModuleBuilder/parsers/relationships/RelationshipFactory.php' ;
-require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 
 
 class DeployedRelationships extends AbstractRelationships implements RelationshipsInterface
@@ -133,7 +129,6 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
             $this->removeFieldsFromDeployedLayout($rel);
         }
         SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
-    	require_once ('modules/Administration/QuickRepairAndRebuild.php') ;
         $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
         $mi = new $moduleInstallerClass();
     	$mi->silent = true;
@@ -192,7 +187,6 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
     }
 
     static protected function loadSubpanelDefs($bean) {
-        require_once('include/SubPanel/SubPanelDefinitions.php');
         $module = $bean->module_dir;
         if (!isset(static::$subpanelDefs[$module])) {
             static::$subpanelDefs[$module] = array();
@@ -359,7 +353,6 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
         $this->save(false);
 
         // now clear all caches so that our changes are visible
-        require_once ('modules/Administration/QuickRepairAndRebuild.php') ;
         $rac = new RepairAndClear ( ) ;
         $rac->module_list = $modulesToBuild;
         $rac->clearJsFiles();

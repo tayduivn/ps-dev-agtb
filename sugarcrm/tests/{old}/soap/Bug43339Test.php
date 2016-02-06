@@ -12,7 +12,6 @@
 
 require_once("service/v4_1/SugarWebServiceImplv4_1.php");
 require_once('tests/{old}/service/SOAPTestCase.php');
-require_once('soap/SoapError.php');
 
 /**
  * Bug #43339

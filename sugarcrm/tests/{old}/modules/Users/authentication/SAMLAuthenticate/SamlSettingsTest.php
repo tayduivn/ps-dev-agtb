@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticate.php');
 
 class SamlAuthTest extends  Sugar_PHPUnit_Framework_TestCase
 {

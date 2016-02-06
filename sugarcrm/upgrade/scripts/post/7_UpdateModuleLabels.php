@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/parser.label.php';
 
 /**
  * Update customized LBL_MODULE_NAMEs for consistency with 6.x

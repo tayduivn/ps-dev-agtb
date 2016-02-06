@@ -13,7 +13,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('include/MVC/View/SugarView.php');
 
 class ViewHtml extends SugarView{
 

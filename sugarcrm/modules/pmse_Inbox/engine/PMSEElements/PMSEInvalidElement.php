@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEShape.php';
-require_once 'modules/pmse_Inbox/engine/PMSEExceptions/PMSEElementException.php';
 
 class PMSEInvalidElement extends PMSEShape
 {

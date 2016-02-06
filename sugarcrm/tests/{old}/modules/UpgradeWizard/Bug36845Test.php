@@ -96,7 +96,6 @@ EOQ;
     'optimistic_locking'=>true,
 );
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
 }
 VardefManager::createVardef("{$this->module}","{$this->module}", array('basic','team_security','assignable','company'));
 ?>
@@ -170,7 +169,6 @@ EOQ;
         $this->assertTrue(file_exists("{$this->module_dir}/vardefs.php"), 'Assert that we have a vardefs.php file');
         require_once('modules/UpgradeWizard/uw_utils.php');
         add_unified_search_to_custom_modules_vardefs();
-        require_once('modules/Home/UnifiedSearchAdvanced.php');
         $usa = new UnifiedSearchAdvanced();
         $usa->buildCache();
         $this->assertTrue(file_exists(sugar_cached('modules/unified_search_modules.php')), 'Assert that we have a unified_search_modules.php file');
@@ -188,7 +186,6 @@ EOQ;
         $this->assertTrue(file_exists("{$this->module_dir}/vardefs.php"), 'Assert that we have a vardefs.php file');
         require_once('modules/UpgradeWizard/uw_utils.php');
         add_unified_search_to_custom_modules_vardefs();
-        require_once('modules/Home/UnifiedSearchAdvanced.php');
         $usa = new UnifiedSearchAdvanced();
         $usa->buildCache();
 

@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/DetailView/DetailView2.php');
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 

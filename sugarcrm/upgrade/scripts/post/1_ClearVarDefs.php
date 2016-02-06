@@ -11,7 +11,6 @@
  */
 
 require_once 'ModuleInstall/ModuleInstaller.php';
-require_once 'data/Relationships/RelationshipFactory.php';
 
 /**
  * Upgrade script to clear vardefs with wrong links/relationships.

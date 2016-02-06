@@ -16,8 +16,6 @@ if (!is_admin($current_user)) {
     sugar_die("Unauthorized access to administration.");
 }
 
-require_once('modules/Configurator/Configurator.php');
-require_once('include/MetaDataManager/MetaDataManager.php');
 
 
 echo getClassicModuleTitle(

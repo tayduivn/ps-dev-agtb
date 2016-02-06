@@ -10,10 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/DataSets/DataSet_Attribute.php');
-require_once('modules/DataSets/DataSet_Layout.php');
 
-require_once('include/controller/Controller.php');
 require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
 
 // CustomQuery is used to store custom sql queries.

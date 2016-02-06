@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Import/Importer.php');
-require_once('modules/Calls/Call.php');
 /**
  * Bug #46411
  * Importing Calls will not populate Leads or Contacts Subpanel

@@ -11,9 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarFields/Fields/Relate/SugarFieldRelate.php');
-require_once('modules/Leads/Lead.php');
-require_once('modules/Import/ImportFieldSanitize.php');
 /**
  * Bug #47722
  * 	Imports to Custom Relate Fields Do Not Work

@@ -9,12 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/Accounts/Account.php';
-require_once 'modules/Campaigns/Campaign.php';
-require_once 'modules/CampaignLog/CampaignLog.php';
-require_once 'modules/CampaignTrackers/CampaignTracker.php';
-require_once 'modules/Contacts/Contact.php';
-require_once 'modules/Users/User.php';
 require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
 
 class CampaignLogTest extends Sugar_PHPUnit_Framework_TestCase

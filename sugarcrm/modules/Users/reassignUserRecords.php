@@ -10,8 +10,6 @@ Activity::disable();
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
-require_once('modules/Teams/TeamSet.php');
 require_once('modules/Teams/TeamSetManager.php');
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;

@@ -58,7 +58,6 @@ class ModuleScannerTest extends Sugar_PHPUnit_Framework_TestCase
 
     	$fileModContents = <<<EOQ
 <?PHP
-require_once('include/SugarObjects/templates/file/File.php');
 
 class testFile_sugar extends File {
 	function fileT_testFiles_sugar(){
@@ -80,7 +79,6 @@ EOQ;
 
     	$fileModContents = <<<EOQ
 <?PHP
-require_once('include/SugarObjects/templates/file/File.php');
 
 class testFile_sugar extends File {
 	function fileT_testFiles_sugar(){

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarObjects/templates/basic/Basic.php');
-require_once('include/upload_file.php');
 require_once('include/formbase.php');
 
 class File extends Basic

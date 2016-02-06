@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/JSON.php');
-require_once 'include/upload_file.php';
 
 global $sugar_config;
 $supportedExtensions = array('jpg', 'png', 'jpeg');

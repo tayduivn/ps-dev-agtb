@@ -16,10 +16,7 @@
  * which tracks files, not objects, needs us to create an intermediate file representation of the definition that it can manage and restore
  */
 
-require_once 'modules/ModuleBuilder/parsers/views/MetaDataImplementationInterface.php' ;
-require_once 'modules/ModuleBuilder/parsers/views/AbstractMetaDataImplementation.php' ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
-require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 
 class UndeployedSubpanelImplementation extends AbstractMetaDataImplementation implements MetaDataImplementationInterface
 {

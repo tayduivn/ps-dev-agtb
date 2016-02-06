@@ -12,11 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-require_once('include/contextMenus/contextMenu.php');
-require_once('modules/Reports/schedule/ReportSchedule.php');
-require_once('modules/Reports/ListViewReports.php');
-require_once('modules/Reports/SearchFormReports.php');
-require_once('include/ListView/ListViewSmarty.php');
 
 require SugarAutoLoader::loadWithMetafiles('Reports', 'listviewdefs');
 
@@ -77,7 +72,6 @@ if(!empty($_REQUEST['saved_search_select']) && $_REQUEST['saved_search_select']!
     }
 }
 
-require_once('modules/MySettings/StoreQuery.php');
 $storeQuery = new StoreQuery();
 
 if(!isset($_REQUEST['query']) && empty($_GET['favorite'])){// when we click the 'My Favorate Reports', it should not populate the StoredQuery

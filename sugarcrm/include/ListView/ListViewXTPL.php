@@ -14,7 +14,6 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
  
  // $Id: ListViewXTPL.php 55799 2010-04-05 20:00:37Z jmertic $
 
-require_once('include/ListView/ListViewDisplay.php');
 	
 class ListViewXTPL extends ListViewDisplay{
 	var $row_block = 'main.row';

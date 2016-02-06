@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('include/SugarFields/Fields/Relate/SugarFieldRelate.php');
 
 class Bug41114Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -51,7 +50,6 @@ class Bug41114Test extends Sugar_PHPUnit_Framework_TestCase
 		$this->user->setPreference('datef', $dateFormat);
 		$this->user->setPreference('timef', $timeFormat);
 		
-        require_once('include/SugarFields/SugarFieldHandler.php');
    		$sfr = SugarFieldHandler::getSugarField('datetimecombo');
     	$formattedValue = $sfr->getEmailTemplateValue($unformattedValue,array(), array('notify_user' => $this->user));
     	

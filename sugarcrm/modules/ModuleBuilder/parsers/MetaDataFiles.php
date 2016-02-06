@@ -9,10 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php';
 require_once 'modules/ModuleBuilder/parsers/constants.php';
-require_once 'include/Expressions/DependencyManager.php';
-require_once 'jssource/jsmin.php';
 
 class MetaDataFiles
 {
@@ -452,28 +449,22 @@ class MetaDataFiles
 
     public static function getFile($view, $module, array $params = array())
     {
-        require_once 'modules/ModuleBuilder/parsers/MetaDataFile.php';
         $file = new MetaDataFile($view, $module);
 
         if (!empty($params['client'])) {
-            require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileSidecar.php';
             $file = new MetaDataFileSidecar($file, $params['client']);
         } else {
-            require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileBwc.php';
             $file = new MetaDataFileBwc($file);
         }
 
         if (!empty($params['location'])) {
             if (!empty($params['package'])) {
-                require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileUndeployed.php';
                 $file = new MetaDataFileUndeployed($file, $params['package'], $params['location']);
             } else {
-                require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileDeployed.php';
                 $file = new MetaDataFileDeployed($file, $params['location']);
 
 // BEGIN SUGARCRM flav=ent ONLY
                 if (!empty($params['role'])) {
-                    require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileRoleDependent.php';
                     $file = new MetaDataFileRoleDependent($file, $params['role']);
                 }
 // END SUGARCRM flav=ent ONLY
@@ -568,7 +559,6 @@ class MetaDataFiles
      */
     public static function getSugarObjectFileDir($module, $client = '', $component = self::COMPONENTVIEW, $seed = null)
     {
-        require_once 'modules/ModuleBuilder/Module/StudioModule.php';
         $sm = StudioModuleFactory::getStudioModule($module, $seed);
 
         $dirname = 'include/SugarObjects/templates/' . $sm->getType();

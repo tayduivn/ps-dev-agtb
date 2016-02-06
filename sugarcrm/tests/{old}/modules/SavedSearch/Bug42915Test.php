@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/MySettings/StoreQuery.php');
 
 class Bug42915Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -59,7 +58,6 @@ class Bug42915Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
         global $current_user;
-        require_once('modules/SavedSearch/SavedSearch.php');
         $focus = new SavedSearch();
         $focus->retrieve($this->saved_search_id);
         $_REQUEST = unserialize(base64_decode($focus->contents));

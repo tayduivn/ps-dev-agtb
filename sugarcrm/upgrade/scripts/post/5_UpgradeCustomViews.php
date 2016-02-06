@@ -20,7 +20,6 @@ class SugarUpgradeUpgradeCustomViews extends UpgradeScript
     {
         // somehow we missed quick create configuration on upgrade. here we update it too.
         if (version_compare($this->from_version, '7.6', '<') && is_file('custom/include/DashletContainer/Containers/DCActions.php')) {
-            require_once 'modules/Administration/views/view.configureshortcutbar.php';
             $quickCreate = new ViewConfigureshortcutbar();
             $modules = $quickCreate->getQuickCreateModules();
             $needToUpdate = true;

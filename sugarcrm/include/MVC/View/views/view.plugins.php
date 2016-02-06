@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/View/views/view.ajax.php');
-require_once('include/SugarPlugins/SugarPlugins.php');
 
 class ViewPlugins extends ViewAjax
 {

@@ -16,10 +16,6 @@
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  ********************************************************************************/
-require_once('modules/Import/views/ImportView.php');
-require_once('modules/Import/Importer.php');
-require_once('modules/Import/sources/ExternalSourceEAPMAdapter.php');
-require_once('include/upload_file.php');
 
 class ImportViewExtimport extends ImportView
 {

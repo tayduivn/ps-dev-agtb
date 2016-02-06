@@ -383,7 +383,6 @@ class SugarUpgradeFixPARelatedModules extends UpgradeScript
             );
         }
         if (empty($this->relatedModules[$baseModule][$rel_type])) {
-            require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
             $relatedModule = new PMSERelatedModule();
             $relatedModules = $relatedModule->getRelatedBeans($baseModule, $rel_type);
             $this->relatedModules[$baseModule][$rel_type] = array();

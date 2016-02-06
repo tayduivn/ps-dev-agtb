@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarFolders/SugarFolders.php');
 
 /**
  * This test simulates a failure in creating an inbound email from the campaigns 'Email Setup' wizard

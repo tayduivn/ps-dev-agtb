@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('include/MVC/View/views/view.ajax.php');
 
 class ViewEditFields extends ViewAjax{
  	
@@ -20,7 +19,6 @@ class ViewEditFields extends ViewAjax{
         $this->module = $this->request->getValidInputRequest('rel_module', 'Assert\Mvc\ModuleName');
 
         global $beanList;
-        require_once("data/Link.php");
 
         $beanName = $beanList[$this->module];
         $link = new Link($this->rel, new $beanName(), array());

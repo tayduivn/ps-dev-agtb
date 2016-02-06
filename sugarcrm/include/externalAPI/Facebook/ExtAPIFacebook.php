@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/externalAPI/Base/ExternalAPIBase.php');
-require_once('include/externalAPI/Base/WebFeed.php');
 
 
 class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
@@ -159,7 +157,6 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
     {
         try {
             // This will throw exceptions if either the curl or json libraries aren't available.
-            require_once('include/externalAPI/Facebook/FacebookLib.php');
 
         } catch ( Exception $e ) { return false; }
 

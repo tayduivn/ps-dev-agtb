@@ -16,7 +16,6 @@ require_once('modules/Reports/templates/templates_modules_def_js.php');
 require_once('modules/Reports/templates/templates_reports_request_js.php');
 
 require_once('modules/Reports/config.php');
-require_once('modules/Reports/schedule/ReportSchedule.php');
 
 
 
@@ -78,7 +77,6 @@ global $modules_report;
 // grab information for tab access to show only reports relative to modules a user has access to
 if(isset($current_user))
 {
-	require_once('modules/MySettings/TabController.php');
 	$tabs = new TabController();
 	$tabArray = $tabs->get_user_tabs($current_user);
 	
@@ -160,7 +158,6 @@ $module_value = '';
 // grab information for tab access to show only reports relative to modules a user has access to
 if(isset($current_user))
 {
-	require_once('modules/MySettings/TabController.php');
 	$tabs = new TabController();
 	$tabArray = $tabs->get_user_tabs($current_user);
 }

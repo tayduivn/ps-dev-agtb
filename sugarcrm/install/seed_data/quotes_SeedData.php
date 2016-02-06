@@ -12,9 +12,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 
-require_once('modules/Quotes/Quote.php');
-require_once('modules/ProductBundleNotes/ProductBundleNote.php');
-require_once('modules/Products/Product.php');
 
 global $current_user;
 global $sugar_demodata;

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/Dashlets/DashletGeneric.php');
 
 class MyDocumentsDashlet extends DashletGeneric { 
 
@@ -39,7 +38,6 @@ class MyDocumentsDashlet extends DashletGeneric {
 
     function displayOptions() {
         $this->processDisplayOptions();
-        require_once('modules/Documents/Document.php');
 
         $types = getDocumentsExternalApiDropDown();
         $this->currentSearchFields['doc_type']['input'] = '<select size="3" multiple="true" name="doc_type[]">'

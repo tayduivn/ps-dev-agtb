@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticate.php';
 require_once 'modules/Users/authentication/SAMLAuthenticate/saml.php';
 
 $authrequest = new OneLogin_Saml_AuthRequest(SAMLAuthenticate::loadSettings());

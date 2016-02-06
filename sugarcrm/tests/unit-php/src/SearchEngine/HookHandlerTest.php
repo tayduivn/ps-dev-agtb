@@ -15,7 +15,6 @@ namespace Sugarcrm\SugarcrmTestsUnit\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\HookHandler;
 
-require_once 'include/SugarLogger/SugarNullLogger.php';
 
 /**
  *

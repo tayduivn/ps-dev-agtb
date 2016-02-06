@@ -15,13 +15,7 @@
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  ********************************************************************************/
-require_once('modules/Import/views/ImportView.php');
-require_once('modules/Import/sources/ImportFile.php');
-require_once('modules/Import/ImportFileSplitter.php');
-require_once('modules/Import/ImportCacheFiles.php');
-require_once('modules/Import/ImportDuplicateCheck.php');
 
-require_once('include/upload_file.php');
 
 class ImportViewDupcheck extends ImportView
 {

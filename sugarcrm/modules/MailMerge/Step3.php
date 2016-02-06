@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once ('include/JSON.php');
 require_once('modules/MailMerge/modules_array.php');
 require_once('modules/MailMerge/merge_query.php');
 

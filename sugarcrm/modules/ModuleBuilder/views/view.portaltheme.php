@@ -14,8 +14,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
-require_once("include/SugarTheme/SidecarTheme.php");
 
 class ViewPortalTheme extends SugarView
 {

@@ -37,7 +37,6 @@ class SugarUpgradeAddModulesToCE extends UpgradeScript
         $newModuleList = $moduleList;
 
         //include tab controller
-        require_once('modules/MySettings/TabController.php');
         $newTB = new TabController();
 
         //make sure new modules list has a key we can reference directly

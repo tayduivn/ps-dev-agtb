@@ -12,9 +12,7 @@
 
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
-require_once 'modules/ModuleBuilder/parsers/ModuleBuilderParser.php';
 require_once 'modules/Administration/Common.php';
-require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class ParserDropDown extends ModuleBuilderParser
 {

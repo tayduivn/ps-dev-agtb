@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/MySettings/StoreQuery.php');
 
 class Bug44908Test extends Sugar_PHPUnit_Framework_TestCase 
 {

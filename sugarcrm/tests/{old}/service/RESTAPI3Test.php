@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('service/v3/SugarWebServiceUtilv3.php');
 require_once('tests/{old}/service/APIv3Helper.php');
 
 
@@ -49,7 +48,6 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
             unlink(sugar_cached('modules/unified_search_modules.php'));
         }
 
-        require_once('modules/Home/UnifiedSearchAdvanced.php');
         $unifiedSearchAdvanced = new UnifiedSearchAdvanced();
         $_REQUEST['enabled_modules'] = 'Accounts,Contacts,Opportunities';
         $unifiedSearchAdvanced->saveGlobalSearchSettings();

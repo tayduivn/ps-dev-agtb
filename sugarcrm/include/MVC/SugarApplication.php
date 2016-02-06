@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/MVC/Controller/ControllerFactory.php';
-require_once 'include/MVC/View/ViewFactory.php';
 
 use Sugarcrm\Sugarcrm\Session\SessionStorage;
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
@@ -450,7 +448,6 @@ EOF;
      */
     function setupResourceManagement($module)
     {
-        require_once('include/resource/ResourceManager.php');
         $resourceManager = ResourceManager::getInstance();
         $resourceManager->setup($module);
     }

@@ -33,7 +33,6 @@ class ImportViewRevokeAccess extends SugarView
     private function revokeAccess($application)
     {
         if ($application == 'Google') {
-            require_once 'include/externalAPI/Google/ExtAPIGoogle.php';
             $api = new ExtAPIGoogle();
             return $api->revokeToken();
         }

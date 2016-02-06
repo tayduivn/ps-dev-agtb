@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 /**
  * <b>isForecastClosed(String $status)</b><br>
  * Returns true if $status is in the forecast config for sales_stage_won or sales_stage_closed

@@ -1,6 +1,5 @@
 <?php
 
-require_once 'modules/Accounts/clients/base/api/AccountsRelateApi.php';
 
 /**
  * RS-172: Prepare Accounts Relate Api

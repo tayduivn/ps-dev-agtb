@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 
 class Bug59825Test extends Sugar_PHPUnit_Framework_TestCase
 {

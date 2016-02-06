@@ -11,7 +11,6 @@
  */
 
 require_once 'service/core/NusoapSoap.php';
-require_once 'soap/SoapError.php';
 
 class NusoapSoapTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Expressions/Expression/Generic/GenericExpression.php');
 /**
  * <b>valueAt(Number index, Enum values)</b><br>
  * Returns the value at position <i>index</i> in the collection <i>values</i>.<br/>

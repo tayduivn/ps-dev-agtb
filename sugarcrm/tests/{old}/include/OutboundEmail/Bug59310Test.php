@@ -1,5 +1,4 @@
 <?php
-require_once('include/OutboundEmail/OutboundEmail.php');
 
 /**
  * @ticket 59310

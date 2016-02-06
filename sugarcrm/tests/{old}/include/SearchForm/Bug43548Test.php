@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once 'include/SearchForm/SugarSpot.php';
 
 class Bug43548Test extends Sugar_PHPUnit_Framework_TestCase
 {

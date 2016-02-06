@@ -63,7 +63,6 @@ function & displayListPlain($layout_def){
  * @return string the subquery to be run
  */
  function queryFilterany(&$layout_def){
-		require_once('include/SugarFields/SugarFieldHandler.php');
 		$sfh = new SugarFieldHandler();
         $sf = $sfh->getSugarField('teamset');
         $teams = array();
@@ -90,7 +89,6 @@ function & displayListPlain($layout_def){
   * @return string the subquery to be run
   */
  function queryFilterall(&$layout_def){
-		require_once('include/SugarFields/SugarFieldHandler.php');
 		$sfh = new SugarFieldHandler();
         $sf = $sfh->getSugarField('teamset');
         $teams = array();
@@ -117,7 +115,6 @@ function & displayListPlain($layout_def){
   * @return string the subquery to be run
   */
  function queryFilterexact(&$layout_def){
- 	require_once('include/SugarFields/SugarFieldHandler.php');
 	$sfh = new SugarFieldHandler();
     $sf = $sfh->getSugarField('teamset');
     $teams = array();

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEGateway.php';
 
 class PMSEDivergingGateway extends PMSEGateway
 {

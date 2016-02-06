@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticateUser.php';
-require_once 'modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticate.php';
 require_once 'modules/Users/authentication/SAMLAuthenticate/saml.php';
 
 /**
@@ -405,7 +403,6 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
     protected function getRequestRegistry()
     {
         if (!$this->requestRegistry) {
-            require_once 'modules/Users/authentication/SAMLAuthenticate/SAMLRequestRegistry.php';
             $this->requestRegistry = new SAMLRequestRegistry();
         }
 

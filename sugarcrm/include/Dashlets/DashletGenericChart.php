@@ -11,8 +11,6 @@
  */
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-require_once('include/Dashlets/Dashlet.php');
-require_once('include/generic/LayoutManager.php');
 
 abstract class DashletGenericChart extends Dashlet
 {
@@ -128,7 +126,6 @@ abstract class DashletGenericChart extends Dashlet
     public function displayScript()
     {
 
-		require_once('include/SugarCharts/SugarChartFactory.php');
 		$sugarChart = SugarChartFactory::getInstance();
 		return $sugarChart->getDashletScript($this->id);
 

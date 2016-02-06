@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SearchForm/SugarSpot.php';
-require_once 'include/api/SugarListApi.php';
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 
@@ -209,7 +207,6 @@ class UnifiedSearchApi extends SugarListApi {
      */
     public function globalSearch(ServiceBase $api, array $args) {
         $api->action = 'list';
-        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
         // This is required to keep the loadFromRow() function in the bean from making our day harder than it already is.
         $GLOBALS['disable_date_format'] = true;
@@ -249,7 +246,6 @@ class UnifiedSearchApi extends SugarListApi {
      */
     protected function determineSugarSearchEngine(ServiceBase $api, array $args, array $options)
     {
-        require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
         /*
             How to determine which Elastic Search
             1 - Not Portal
@@ -374,7 +370,6 @@ class UnifiedSearchApi extends SugarListApi {
      */
     public function globalSearchSpot(ServiceBase $api, array $args, $searchEngine, array $options)
     {
-        require_once('modules/Home/UnifiedSearchAdvanced.php');
 
 
         $searchOptions = array(
@@ -403,7 +398,6 @@ class UnifiedSearchApi extends SugarListApi {
 
         if(empty($options['moduleList']))
         {
-            require_once('modules/ACL/ACLController.php');
             $usa = new UnifiedSearchAdvanced();
             $moduleList = $usa->getUnifiedSearchModules();
 

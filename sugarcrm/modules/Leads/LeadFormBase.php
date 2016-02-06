@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/SugarObjects/forms/PersonFormBase.php');
 
 class LeadFormBase extends PersonFormBase {
 

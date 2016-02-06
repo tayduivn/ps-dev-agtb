@@ -20,8 +20,6 @@
 
 
 
-require_once('include/ListView/ListViewSmarty.php');
-require_once('include/MVC/View/views/view.list.php');
 global $app_strings;
 global $app_list_strings;
 global $current_language;

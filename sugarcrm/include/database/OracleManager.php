@@ -28,7 +28,6 @@
 ********************************************************************************/
 
 //FILE SUGARCRM flav=ent ONLY
-require_once 'include/database/OraclePreparedStatement.php';
 
 /**
  * Oracle driver

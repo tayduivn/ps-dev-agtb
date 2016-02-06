@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 class ReportsUtilities
 {

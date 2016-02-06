@@ -17,7 +17,6 @@
 
 
 
-require_once('include/SugarCharts/SugarChartFactory.php');
 
 
 class campaign_charts {

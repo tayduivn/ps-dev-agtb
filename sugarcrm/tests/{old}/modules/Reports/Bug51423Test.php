@@ -13,7 +13,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-require_once 'modules/Reports/Report.php';
 
 /**
  * Bug 51423:

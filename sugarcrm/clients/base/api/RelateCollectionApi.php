@@ -12,7 +12,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/CollectionApi.php';
 
 /**
  * Collection API
@@ -69,7 +68,6 @@ class RelateCollectionApi extends CollectionApi
         $this->requireArgs($args, array('module', 'collection_name'));
         $bean = $this->bean = BeanFactory::newBean($args['module']);
 
-        require_once 'clients/base/api/CollectionApi/CollectionDefinition/RelateCollectionDefinition.php';
         $definition = new RelateCollectionDefinition($bean, $args['collection_name']);
 
         return $definition;

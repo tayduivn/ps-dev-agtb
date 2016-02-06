@@ -18,7 +18,6 @@
 */
 
 require_once('include/workflow/action_utils.php');
-require_once('modules/WorkFlow/WorkFlow.php');
 
 class Bug46246Test extends Sugar_PHPUnit_Framework_TestCase
 {

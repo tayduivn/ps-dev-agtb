@@ -1,6 +1,5 @@
 <?php
 
-require_once 'modules/Meetings/clients/base/api/MeetingsApi.php';
 
 /**
  * RS-81

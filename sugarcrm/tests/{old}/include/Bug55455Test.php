@@ -11,7 +11,6 @@
  */
 
 require_once 'include/download_file.php';
-require_once 'include/upload_file.php';
 require_once 'include/utils/file_utils.php';
 
 class Bug55455Test extends Sugar_PHPUnit_Framework_TestCase

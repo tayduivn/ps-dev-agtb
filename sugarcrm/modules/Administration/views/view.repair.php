@@ -16,7 +16,6 @@
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-require_once('modules/Administration/QuickRepairAndRebuild.php');
 
 class ViewRepair extends SugarView
 {

@@ -12,8 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('include/MVC/View/SugarView.php');
-require_once('include/Sugarpdf/FontManager.php');
 class ConfiguratorViewAddFontView extends SugarView {
 
     /**

@@ -12,8 +12,6 @@
 
 //FILE SUGARCRM flav=ent ONLY
 
-require_once('modules/ModuleBuilder/MB/MBPackageTree.php');
-require_once('modules/ModuleBuilder/Module/SugarPortalBrowser.php');
 
 class SugarPortalTree extends MBPackageTree{
 

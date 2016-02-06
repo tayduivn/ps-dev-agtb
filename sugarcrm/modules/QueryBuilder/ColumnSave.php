@@ -14,9 +14,6 @@
  * Description:
  ********************************************************************************/
 
-require_once('modules/QueryBuilder/QueryColumn.php');
-require_once('modules/QueryBuilder/QueryCalc.php');
-require_once('include/controller/Controller.php');
 
 
 

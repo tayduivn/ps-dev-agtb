@@ -14,7 +14,6 @@
  * THIS CLASS IS FOR DEVELOPERS TO MAKE CUSTOMIZATIONS IN
  */
 
-require_once 'modules/pmse_Project/pmse_BpmFlow/pmse_BpmFlow_sugar.php';
 
 class pmse_BpmFlow extends pmse_BpmFlow_sugar {
 

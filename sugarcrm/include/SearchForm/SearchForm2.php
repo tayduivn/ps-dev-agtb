@@ -13,9 +13,6 @@
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('include/tabs.php');
-require_once('include/ListView/ListViewSmarty.php');
-require_once('include/TemplateHandler/TemplateHandler.php');
 require_once('include/EditView/EditView2.php');
 
 
@@ -508,7 +505,6 @@ require_once('include/EditView/EditView2.php');
                     }
                 }
                 if(isset($array['team_name_advanced_new_on_update'])){
-                   	require_once('include/SugarFields/SugarFieldHandler.php');
 					$sfh = new SugarFieldHandler();
                    	$sf = $sfh->getSugarField('Teamset', true);
                    	$this->searchFields['team_set_id'] = $sf->getTeamSetIdSearchField('team_name_advanced');
@@ -569,7 +565,6 @@ require_once('include/EditView/EditView2.php');
                                 if (!empty($params['type']) && $params['type'] == 'parent'
                                     && !empty($params['type_name']) && !empty($this->searchFields[$key]['value']))
                                 {
-                                	    require_once('include/SugarFields/SugarFieldHandler.php');
 										$sfh = new SugarFieldHandler();
                    						$sf = $sfh->getSugarField('Parent');
 
@@ -585,7 +580,6 @@ require_once('include/EditView/EditView2.php');
                     }
                 }
                 if(isset($array['team_name_advanced_new_on_update'])){
-                   	require_once('include/SugarFields/SugarFieldHandler.php');
 					$sfh = new SugarFieldHandler();
                    	$sf = $sfh->getSugarField('Teamset', true);
                    	$teamSearchType = ( isset( $array['team_name_advanced_type'] ) && $array['team_name_advanced_type'] == 'exact' ) ? 'exact' : 'any';
@@ -757,7 +751,6 @@ require_once('include/EditView/EditView2.php');
              }
 
              if ($type == 'int' && isset($parms['value']) && !empty($parms['value'])) {
-                 require_once ('include/SugarFields/SugarFieldHandler.php');
                  $intField = SugarFieldHandler::getSugarField('int');
                  $newVal = $intField->getSearchWhereValue($parms['value']);
                  $parms['value'] = $newVal;

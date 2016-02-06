@@ -11,8 +11,6 @@
  */
 
 require_once('tests/{old}/rest/RestTestBase.php');
-require_once('include/MetaDataManager/MetaDataManager.php');
-require_once('modules/Administration/controller.php');
 
 class RestMetadataServerInfoChangeTest extends RestTestBase {
     /**

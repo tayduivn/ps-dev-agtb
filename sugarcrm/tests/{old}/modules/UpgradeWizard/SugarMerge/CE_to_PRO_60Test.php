@@ -79,7 +79,6 @@ function tearDown() {
 
 
 function test_contacts_detailview_merge() {
-   require_once 'modules/UpgradeWizard/SugarMerge/DetailViewMerge.php';
    $this->merge = new DetailViewMerge();
    $this->merge->merge('Contacts', 'tests/{old}/modules/UpgradeWizard/SugarMerge/ce_metadata_files/600/modules/Contacts/metadata/detailviewdefs.php', 'modules/Contacts/metadata/detailviewdefs.php', 'custom/modules/Contacts/metadata/detailviewdefs.php');
    $this->assertTrue(file_exists('custom/modules/Contacts/metadata/detailviewdefs.php.suback.php'));
@@ -139,7 +138,6 @@ function test_contacts_detailview_merge() {
 
 
 function test_contacts_editview_merge() {
-   require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
    $this->merge = new EditViewMerge();
    $this->merge->merge('Contacts', 'tests/{old}/modules/UpgradeWizard/SugarMerge/ce_metadata_files/600/modules/Contacts/metadata/editviewdefs.php', 'modules/Contacts/metadata/editviewdefs.php', 'custom/modules/Contacts/metadata/editviewdefs.php');
    $this->assertTrue(file_exists('custom/modules/Contacts/metadata/editviewdefs.php.suback.php'));
@@ -201,7 +199,6 @@ function test_contacts_editview_merge() {
 
 
 function test_contacts_listview_merge() {
-   require_once 'modules/UpgradeWizard/SugarMerge/ListViewMerge.php';
    $this->merge = new ListViewMerge();
    $this->merge->merge('Contacts', 'tests/{old}/modules/UpgradeWizard/SugarMerge/ce_metadata_files/600/modules/Contacts/metadata/listviewdefs.php', 'modules/Contacts/metadata/listviewdefs.php', 'custom/modules/Contacts/metadata/listviewdefs.php');
    $this->assertTrue(file_exists('custom/modules/Contacts/metadata/listviewdefs.php.suback.php'));

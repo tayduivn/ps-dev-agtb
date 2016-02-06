@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 require_once('include/SugarSmarty/plugins/function.sugar_replace_vars.php');
 
 class SugarFieldLink extends SugarFieldBase {

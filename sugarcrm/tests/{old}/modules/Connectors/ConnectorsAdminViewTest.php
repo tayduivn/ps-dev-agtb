@@ -46,7 +46,6 @@ class ConnectorsAdminViewTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testMapConnectorFields()
     {
-        require_once 'modules/Connectors/views/view.modifymapping.php';
         $view = new ViewModifyMapping(null, null);
         $view->ss = new Sugar_Smarty();
         $view->display();
@@ -55,7 +54,6 @@ class ConnectorsAdminViewTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testEnableConnectors()
     {
-        require_once 'modules/Connectors/views/view.modifydisplay.php';
         $view = new ViewModifyDisplay(null, null);
         $view->ss = new Sugar_Smarty();
         $view->display();
@@ -64,7 +62,6 @@ class ConnectorsAdminViewTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testConnectorProperties()
     {
-        require_once 'modules/Connectors/views/view.modifyproperties.php';
         $view = new ViewModifyProperties(null, null);
         $view->ss = new Sugar_Smarty();
         $view->display();
@@ -73,7 +70,6 @@ class ConnectorsAdminViewTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testConnectorSearchProperties()
     {
-        require_once 'modules/Connectors/views/view.modifysearch.php';
         $view = new ViewModifySearch(null, null);
         $view->ss = new Sugar_Smarty();
         $view->display();

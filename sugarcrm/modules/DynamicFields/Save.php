@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/DynamicFields/DynamicField.php');
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 

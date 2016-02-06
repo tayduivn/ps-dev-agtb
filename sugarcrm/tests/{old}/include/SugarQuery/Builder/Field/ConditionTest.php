@@ -1,6 +1,5 @@
 <?php
 
-require_once('include/SugarQuery/Builder/Field/Condition.php');
 
 class SugarQuery_Builder_Field_ConditionTest extends Sugar_PHPUnit_Framework_TestCase
 {

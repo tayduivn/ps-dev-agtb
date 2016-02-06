@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/SugarQueue/SugarJobQueue.php';
-require_once 'modules/Schedulers/Scheduler.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 

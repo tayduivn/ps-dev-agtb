@@ -643,7 +643,6 @@ class TemplateField{
 		//	    $GLOBALS['log']->debug('saving field: '.print_r($this,true));
 		$df->addFieldObject($this);
 
-        require_once('modules/ModuleBuilder/parsers/parser.searchfields.php');
         $searchFieldParser = new ParserSearchFields( $df->getModuleName() , $df->getPackageName() ) ;
 	    //If unified_search is enabled for this field, then create the SearchFields entry
 	    $fieldName = $this->get_field_name($df->getModuleName(), $this->name);

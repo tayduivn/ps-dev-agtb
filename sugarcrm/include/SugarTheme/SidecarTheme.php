@@ -17,8 +17,6 @@
  ********************************************************************************/
 
 
-require_once 'vendor/lessphp/lessc.inc.php';
-require_once 'include/api/SugarApiException.php';
 
 /**
  * Class that provides tools for working with a theme.

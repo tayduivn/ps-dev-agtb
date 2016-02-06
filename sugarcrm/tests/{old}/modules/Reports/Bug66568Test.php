@@ -12,7 +12,6 @@
  */
 
 require_once('modules/Reports/templates/templates_reports.php');
-require_once('modules/Reports/Report.php');
 
 /**
  * Test all cases if user is allowed to export a report

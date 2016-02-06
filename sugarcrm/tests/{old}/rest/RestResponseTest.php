@@ -1,5 +1,4 @@
 <?php
-require_once('include/api/RestService.php');
 require_once('include/download_file.php');
 
 class RestResponseTest extends Sugar_PHPUnit_Framework_TestCase

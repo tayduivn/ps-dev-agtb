@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/PMSEExporter.php';
-require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
 /**
  * Exports a record of Project

@@ -19,7 +19,6 @@
 
  // $Id: ChangePassword.php 55866 2010-04-07 19:53:06Z jmertic $
 if (isset($_POST['saveConfig'])){
-    require_once('modules/Users/User.php');
 	$focus = BeanFactory::getBean('Users', $_POST['record']);	
 	if(!$focus->change_password($_POST['old_password'], $_POST['new_password']))
 		SugarApplication::redirect("index.php?action=ChangePassword&module=Users&record=".$_POST['record']."&error_password=".urlencode($focus->error_string));
@@ -34,12 +33,10 @@ if (isset($_POST['saveConfig'])){
 }
 
 require_once('modules/Administration/Forms.php');
-require_once('modules/Configurator/Configurator.php');
 $configurator = new Configurator();
 $sugarConfig = SugarConfig::getInstance();
 
 
-require_once('include/SugarLogger/SugarLogger.php');
 $sugar_smarty = new Sugar_Smarty();
 $sugar_smarty->assign('MOD', $mod_strings);
 $sugar_smarty->assign('APP', $app_strings);

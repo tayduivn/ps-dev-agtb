@@ -1,6 +1,5 @@
 <?php
 
-require_once 'modules/Audit/clients/base/api/AuditApi.php';
 
 /**
  * RS-167: Prepare Audit Api

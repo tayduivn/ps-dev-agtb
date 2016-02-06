@@ -12,10 +12,7 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
-require_once ('modules/ModuleBuilder/MB/AjaxCompose.php') ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
-require_once 'modules/ModuleBuilder/MB/MBHelper.php';
 
 class ViewLayoutView extends SugarView
 {

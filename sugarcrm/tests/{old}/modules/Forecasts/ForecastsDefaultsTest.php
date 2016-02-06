@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Forecasts/ForecastsDefaults.php');
 
 class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -196,7 +195,6 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testOpportunitySaves()
     {
-        require_once('modules/Forecasts/ForecastsDefaults.php');
         $db = DBManagerFactory::getInstance();
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting('Forecasts', 'is_setup', '1', 'base');

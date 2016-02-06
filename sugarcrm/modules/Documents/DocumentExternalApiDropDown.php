@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 function getDocumentsExternalApiDropDown($focus = null, $name = null, $value = null, $view = null) {
-    require_once('include/externalAPI/ExternalAPIFactory.php');
 
     $apiList = ExternalAPIFactory::getModuleDropDown('Documents');
 

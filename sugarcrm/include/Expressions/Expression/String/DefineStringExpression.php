@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once("include/Expressions/Expression/String/StringExpression.php");
 /**
  * <b>toString(val)</b><br/>
  * Converts the given value to a string.<br>
@@ -26,7 +25,6 @@ class DefineStringExpression extends StringExpression {
             if(($val instanceof SugarDateTime) && !empty($val->def))
             {
                 global $timedate;
-                require_once("include/Expressions/Expression/Date/DateExpression.php");
                 $date = DateExpression::roundTime($val);
                 if ($val->def['type'] == "date")
                 {

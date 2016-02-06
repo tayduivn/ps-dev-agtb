@@ -11,7 +11,6 @@
  */
 
 
-require_once 'include/SugarOAuthServer.php';
 
 class OauthTokensViewAuthorize extends SugarView
 {

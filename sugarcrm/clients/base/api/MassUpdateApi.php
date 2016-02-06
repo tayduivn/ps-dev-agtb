@@ -11,8 +11,6 @@
  */
 
 
-require_once('include/SugarQueue/jobs/SugarJobMassUpdate.php');
-require_once('include/api/SugarApi.php');
 
 /*
  * Mass Update API implementation

@@ -1,6 +1,5 @@
 <?php
 
-require_once ("modules/SugarFavorites/SugarFavorites.php");
 
 /**
  * @ticket 64650

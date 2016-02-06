@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Mailer/MailerException.php"; // requires MailerException in order to throw exceptions of that type
 
 /**
  * This class encapsulates properties and behavior of email identities, which are the email address and a name, if one

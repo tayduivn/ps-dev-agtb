@@ -170,7 +170,6 @@ class QuotesViewEdit extends ViewEdit
 		}
 
 		// Set Currency values and currency javascript
-		require_once('modules/Currencies/ListCurrency.php');
 		$currency = new ListCurrency();
 		$base_rate = '1.00';
 

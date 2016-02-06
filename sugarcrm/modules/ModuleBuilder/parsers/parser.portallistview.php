@@ -15,8 +15,6 @@
 //FILE SUGARCRM flav=ent ONLY
 
 
-require_once ('modules/ModuleBuilder/parsers/parser.modifylistview.php');
-require_once 'modules/ModuleBuilder/parsers/views/History.php' ;
 
 class ParserPortalListView extends ParserModifyListView
 {

@@ -14,8 +14,6 @@ use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet;
 
-require_once 'include/SugarSearchEngine/SugarSearchEngineAbstractBase.php';
-require_once 'include/SugarSearchEngine/Elastic/SugarSearchEngineElasticResultSet.php';
 
 /**
  *

@@ -9,12 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once ('modules/ModuleBuilder/MB/AjaxCompose.php') ;
 require_once ('modules/ModuleBuilder/MB/ModuleBuilder.php') ;
-require_once ('modules/ModuleBuilder/Module/StudioModuleFactory.php') ;
-require_once ('modules/ModuleBuilder/Module/StudioBrowser.php') ;
 require_once ('modules/ModuleBuilder/parsers/constants.php') ;
-require_once 'modules/ModuleBuilder/parsers/relationships/RelationshipFactory.php' ;
 
 class ViewRelationship extends SugarView
 {
@@ -33,7 +29,6 @@ class ViewRelationship extends SugarView
 
     public function overrideDefinitionFromPOST($definition)
     {
-        require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationship.php';
         foreach ( AbstractRelationship::$definitionKeys as $key ) {
             if (!empty($_REQUEST[$key])) {
                 $reqVal = $this->request->getValidInputRequest($key);
@@ -70,7 +65,6 @@ class ViewRelationship extends SugarView
             $module = StudioModuleFactory::getStudioModule($viewModule);
             $moduleName = $viewModule;
             $fields = $module->fields;
-            require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php';
             $relatableModules = DeployedRelationships::findRelatableModules();
         } else {
             $mb = new ModuleBuilder();
@@ -82,7 +76,6 @@ class ViewRelationship extends SugarView
             $this->smarty->assign('view_package', $viewPackage);
             $mbvardefs = $module->getVardefs();
             $fields = $mbvardefs['fields'];
-            require_once 'modules/ModuleBuilder/parsers/relationships/UndeployedRelationships.php';
             $relatableModules = UndeployedRelationships::findRelatableModules();
         }
 

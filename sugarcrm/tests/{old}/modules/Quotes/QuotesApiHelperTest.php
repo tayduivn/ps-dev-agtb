@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Quotes/QuotesApiHelper.php');
 
 class QuotesApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {

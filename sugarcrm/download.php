@@ -21,7 +21,6 @@ if((!isset($_REQUEST['isProfile']) && empty($_REQUEST['id'])) || empty($_REQUEST
 else {
 
     $file_type=''; // bug 45896
-    require_once("data/BeanFactory.php");
     ini_set('zlib.output_compression','Off');//bug 27089, if use gzip here, the Content-Length in header may be incorrect.
     // cn: bug 8753: current_user's preferred export charset not being honored
     if (isset($_SESSION['authenticated_user_id'])) {

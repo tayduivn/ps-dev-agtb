@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarObjects/templates/person/Person.php');
-require_once('include/MVC/SugarModule.php');
 
 /**
  * quicksearchQuery class, handles AJAX calls from quicksearch.js
@@ -113,7 +111,6 @@ class quicksearchQuery
      */
     public function externalApi($args)
     {
-        require_once('include/externalAPI/ExternalAPIFactory.php');
         $data = array();
         try {
             $api = ExternalAPIFactory::loadAPI($args['api']);
@@ -128,7 +125,6 @@ class quicksearchQuery
 
     function fts_query()
     {
-        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
         $_REQUEST['q'] = trim($_REQUEST['term']);
         $view = new ViewFts();
         $view->init();

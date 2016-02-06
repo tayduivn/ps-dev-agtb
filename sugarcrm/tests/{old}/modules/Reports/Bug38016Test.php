@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Reports/Report.php';
-require_once 'modules/Reports/sugarpdf/sugarpdf.summary.php';
 
 class Bug38016Test extends Sugar_PHPUnit_Framework_TestCase
 {

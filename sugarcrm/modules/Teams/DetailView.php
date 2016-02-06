@@ -19,7 +19,6 @@
 
 
 require_once('modules/Teams/Forms.php');
-require_once('include/DetailView/DetailView.php');
 
 global $mod_strings;
 global $app_strings;
@@ -92,7 +91,6 @@ ob_end_clean();
 ob_start();
 echo $old_contents;
 
-require_once('include/SubPanel/SubPanelTiles.php');
 $subpanel = new SubPanelTiles($focus, 'Teams');
 echo $subpanel->display();
 

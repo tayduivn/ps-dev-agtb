@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/RegisterLeadApi.php';
 
 /**
  *  RS-44: Prepare RegisterLead Api.

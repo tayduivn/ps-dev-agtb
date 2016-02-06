@@ -16,8 +16,6 @@
 * @ticket 53288
 */
 
-require_once('modules/ProspectLists/ProspectList.php');
-//require_once('modules/Prospects/Prospect.php');
 
 class Bug53288Test extends Sugar_PHPUnit_Framework_TestCase
 {

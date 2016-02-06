@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/Controller/SugarController.php');
   
 class MergeRecordsController extends SugarController
 {	

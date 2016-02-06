@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/SchedulersJobs/SchedulersJob.php';
-require_once 'include/SugarQueue/jobs/AbstractJobNotification.php';
 
 /**
  * SugarJobCreateRevenueLineItemNotes

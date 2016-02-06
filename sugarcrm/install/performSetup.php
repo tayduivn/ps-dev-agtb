@@ -51,7 +51,6 @@ $mi->silent = true;
 $mi->rebuild_tabledictionary();
 $mi->rebuild_vardefs();
 
-require_once 'include/MetaDataManager/MetaDataManager.php';
 MetaDataManager::disableCache();
 
 include "modules/Trackers/tracker_perfMetaData.php";
@@ -347,11 +346,9 @@ echo $mod_strings['LBL_PERFORM_DONE'];
 //END SUGARCRM lic=sub ONLY
 
 //Install forecasts configuration
-require_once('modules/Forecasts/ForecastsDefaults.php');
 $forecast_config = ForecastsDefaults::setupForecastSettings();
 
 //Install Opportunities configuration
-require_once('modules/Opportunities/OpportunitiesDefaults.php');
 $opps_config = OpportunitiesDefaults::setupOpportunitiesSettings();
 
 unset($opps_config);
@@ -451,8 +448,6 @@ create_default_roles();
 installerHook('post_addDefaultRoles');
 
 // Hide certain subpanels by default
-require_once('include/SubPanel/SubPanelDefinitions.php');
-require_once('modules/MySettings/TabController.php');
 
 $disabledTabs = array(
     "project",
@@ -503,7 +498,6 @@ if ($_SESSION['demoData'] != 'no') {
 //END SUGARCRM flav=ent ONLY
 
 installerHook('pre_setSystemTabs');
-require_once('modules/MySettings/TabController.php');
 $tabs = new TabController();
 $tabs->set_system_tabs($enabled_tabs);
 installerHook('post_setSystemTabs');
@@ -523,14 +517,12 @@ installLog("Converting Opportunities to use RevenueLineItems");
 $admin = BeanFactory::getBean('Administration');
 $admin->saveSetting('Opportunities', 'opps_view_by', 'RevenueLineItems', 'base');
 
-require_once 'modules/Opportunities/include/OpportunityWithRevenueLineItem.php';
 $converter = new OpportunityWithRevenueLineItem();
 $converter->doMetadataConvert();
 
 if ($new_report) {
     installLog("Converting Opportunities Reports to use RevenueLineItems");
     // convert the stock reports
-    require_once 'modules/Opportunities/include/OpportunityReports.php';
     $reports = new OpportunityReports();
     $reports->migrateToRevenueLineItems();
 }
@@ -619,7 +611,6 @@ require_once('modules/Versions/InstallDefaultVersions.php');
 if (is_file(sugar_cached('dashlets/dashlets.php'))) {
     unlink(sugar_cached('dashlets/dashlets.php'));
 }
-require_once('include/Dashlets/DashletCacheBuilder.php');
 $dc = new DashletCacheBuilder();
 $dc->buildCache();
 //END SUGARCRM flav=int ONLY

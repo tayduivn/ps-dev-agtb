@@ -13,8 +13,6 @@
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('include/ListView/ListViewData.php');
-require_once('include/MassUpdate.php');
 
 class ListViewDisplay {
     static $listViewCounter = 0;

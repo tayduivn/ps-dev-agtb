@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("modules/ModuleBuilder/views/view.dropdown.php");
 
 class Bug47010Test extends Sugar_PHPUnit_Framework_TestCase {
 

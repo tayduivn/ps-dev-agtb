@@ -11,7 +11,6 @@
  */
 
 require_once('include/connectors/utils/ConnectorUtils.php');
-require_once('include/connectors/sources/SourceFactory.php');
 /**
  * Provides a factory to list, discover and create external API calls
  *

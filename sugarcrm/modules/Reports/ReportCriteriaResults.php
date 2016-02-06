@@ -23,7 +23,6 @@ require_once('modules/Reports/templates/templates_export.php');
 require_once('modules/Reports/config.php');
 global $current_language, $report_modules, $modules_report, $current_user, $app_strings, $mod_strings;
 
-require_once('modules/Reports/Report.php');
 
 $reporterName = InputValidation::getService()->getValidInputRequest('save_report_as');
 

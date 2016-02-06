@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarQueue/jobs/SugarJobKBContentUpdateArticles.php';
 
 class SugarJobKBContentUpdateArticlesTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/externalAPI/Twitter/ExtAPITwitter.php');
-require_once('clients/base/api/ConnectorApi.php');
 // A simple example class
 class TwitterApi extends ConnectorApi
 {

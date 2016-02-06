@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/View/views/view.edit.php');
 
 class SchedulersViewEdit extends ViewEdit {
 	protected static $xtDays = array(

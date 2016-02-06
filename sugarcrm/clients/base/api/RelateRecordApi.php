@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/api/SugarApi.php');
-require_once('include/RecordListFactory.php');
 
 class RelateRecordApi extends SugarApi
 {
@@ -491,7 +489,6 @@ class RelateRecordApi extends SugarApi
             return $moduleApi;
         }
 
-        require_once 'clients/base/api/ModuleApi.php';
         return new ModuleApi();
     }
 

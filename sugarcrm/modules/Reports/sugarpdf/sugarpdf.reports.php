@@ -11,7 +11,6 @@
  */
 
 
-require_once('include/Sugarpdf/Sugarpdf.php');
 
 class ReportsSugarpdfReports extends Sugarpdf
 {

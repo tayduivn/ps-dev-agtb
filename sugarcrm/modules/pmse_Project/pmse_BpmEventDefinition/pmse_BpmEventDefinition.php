@@ -14,7 +14,6 @@
  * THIS CLASS IS FOR DEVELOPERS TO MAKE CUSTOMIZATIONS IN
  */
 
-require_once 'modules/pmse_Project/pmse_BpmEventDefinition/pmse_BpmEventDefinition_sugar.php';
 
 class pmse_BpmEventDefinition extends pmse_BpmEventDefinition_sugar {
 

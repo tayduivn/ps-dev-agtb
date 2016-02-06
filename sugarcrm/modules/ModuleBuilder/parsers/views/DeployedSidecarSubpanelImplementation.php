@@ -10,13 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/views/MetaDataImplementationInterface.php';
-require_once 'modules/ModuleBuilder/parsers/views/AbstractMetaDataImplementation.php';
 require_once 'modules/ModuleBuilder/parsers/constants.php';
-require_once 'include/MetaDataManager/MetaDataConverter.php';
-require_once 'include/MetaDataManager/MetaDataManager.php';
-require_once 'include/SubPanel/SubPanelDefinitions.php';
-require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 
 class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementation implements MetaDataImplementationInterface
 {

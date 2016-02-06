@@ -1,6 +1,5 @@
 <?php
 
-require_once 'modules/Cases/clients/base/api/CasesApi.php';
 
 /**
  * RS-152

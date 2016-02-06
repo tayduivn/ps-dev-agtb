@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('modules/MySettings/StoreQuery.php');
 
 class StoreQueryTest extends Sugar_PHPUnit_Framework_TestCase{
 	public function setUp(){

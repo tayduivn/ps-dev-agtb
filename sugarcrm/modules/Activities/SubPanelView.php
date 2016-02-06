@@ -19,7 +19,6 @@
 
 
 
-require_once("include/upload_file.php");
 
 global $currentModule;
 

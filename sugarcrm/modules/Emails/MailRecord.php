@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Mailer/EmailIdentity.php';
-require_once 'modules/Mailer/MailerException.php';
 
 class MailRecord
 {

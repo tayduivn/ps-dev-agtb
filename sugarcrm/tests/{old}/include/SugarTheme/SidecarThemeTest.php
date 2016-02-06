@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarTheme/SidecarTheme.php';
 require_once 'tests/{old}/SugarTestReflection.php';
 
 class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase

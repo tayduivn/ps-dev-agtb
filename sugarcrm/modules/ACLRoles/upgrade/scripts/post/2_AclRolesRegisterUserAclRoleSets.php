@@ -22,7 +22,6 @@ class SugarUpgradeAclRolesRegisterUserAclRoleSets extends UpgradeScript
             return;
         }
 
-        require_once 'modules/ACLRoles/AclRoleSetRegistrar.php';
         $registrar = new AclRoleSetRegistrar();
 
         $result = $this->db->query("SELECT id FROM users where deleted = 0");

@@ -18,7 +18,6 @@
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-require_once 'modules/ModuleBuilder/Module/StudioModule.php' ;
 
 class DocumentsStudioModule extends StudioModule
 {

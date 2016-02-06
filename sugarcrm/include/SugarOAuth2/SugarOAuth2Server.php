@@ -12,8 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
-require_once 'vendor/oauth2-php/lib/OAuth2.php';
-
 /**
  * Sugar OAuth2.0 server, is a wrapper around the php-oauth2 library
  * @api

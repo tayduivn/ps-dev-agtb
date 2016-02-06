@@ -10,14 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once('modules/Reports/templates/templates_group_chooser.php');
-require_once('modules/Reports/ReportCache.php');
 require_once('modules/Reports/templates/templates_reports_functions_js.php');
 require_once('modules/Reports/templates/templates_list_view.php');
 require_once('modules/Reports/templates/templates_reports_request_js.php');
 
 require_once('modules/Reports/config.php');
 
-require_once('modules/Reports/schedule/ReportSchedule.php');
 global $global_json;
 $global_json = getJSONobj();
 
@@ -271,7 +269,6 @@ function reportCriteriaWithResult(&$reporter,&$args) {
     $smarty->assign('cache_path', sugar_cached(''));
 	template_reports_request_vars_js($smarty, $reporter,$args);
 	//custom chart code
-    require_once('include/SugarCharts/SugarChartFactory.php');
     $sugarChart = SugarChartFactory::getInstance();
 	$resources = $sugarChart->getChartResources();
 	$smarty->assign('chartResources', $resources);
@@ -747,7 +744,6 @@ function template_reports_report(&$reporter,&$args) {
 	$ACLAllowedModules = getACLAllowedModules();
 	$smarty->assign('ACLAllowedModules', $global_json->encode(array_keys($ACLAllowedModules)));
 
-	require_once('include/tabs.php');
 
 	$tabs = array();
 
@@ -914,7 +910,6 @@ if (isset($reporter->saved_report->id) ) {
 }
 
 	echo "<div class='reportChartContainer' id='{$report_id}_div' style='{$reportChartDivStyle}'>";
-     require_once("include/SugarCharts/ChartDisplay.php");
      $chartDisplay = new ChartDisplay();
      $chartDisplay->setReporter($reporter);
      echo "<div align='center'>".$chartDisplay->legacyDisplay(null, false)."</div>";
@@ -1041,7 +1036,6 @@ function get_select_related_html(&$args)
 
 function js_setup(&$smarty) {
 	global $global_json;
-	require_once('include/QuickSearchDefaults.php');
 	$qsd = QuickSearchDefaults::getQuickSearchDefaults();
 	$qsd->form_name = "ReportsWizardForm";
 	$sqs_objects = array('ReportsWizardForm_assigned_user_name' => $qsd->getQSUser()); //, 'ReportsWizardForm_team_name_collection_0' => $qsd->getQSTeam());

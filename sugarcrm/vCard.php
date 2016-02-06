@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/vCard.php');
 
 if(isset($_SESSION['authenticated_user_language']) && $_SESSION['authenticated_user_language'] != ''){
 	$current_language = $_SESSION['authenticated_user_language'];

@@ -57,7 +57,6 @@ class Bug25820_Test extends Sugar_PHPUnit_Framework_TestCase
     }
 }
 
-require_once('modules/Trackers/TrackerReporter.php');
 
 class TrackerReporterBug25820Mock extends TrackerReporter
 {

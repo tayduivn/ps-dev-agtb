@@ -11,9 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/View/views/view.ajax.php');
-require_once('modules/Home/UnifiedSearchAdvanced.php');
-require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
 
 class ViewSpot extends ViewAjax

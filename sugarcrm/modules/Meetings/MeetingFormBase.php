@@ -17,7 +17,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/SugarObjects/forms/FormBase.php');
 
 class MeetingFormBase extends FormBase {
 
@@ -373,7 +372,6 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
      */
     protected function processRecurring(Meeting $focus)
     {
-            require_once "modules/Calendar/CalendarUtils.php";            
             if (!empty($_REQUEST['edit_all_recurrences'])) {
                 // flush existing recurrence
                 CalendarUtils::markRepeatDeleted($focus);
@@ -391,7 +389,6 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
      */
     public function prepareRecurring()
     {       
-        require_once "modules/Calendar/CalendarUtils.php";
         
         if (empty($_REQUEST['edit_all_recurrences'])) {        
             $repeatFields = array('type', 'interval', 'count', 'until', 'dow', 'parent_id');

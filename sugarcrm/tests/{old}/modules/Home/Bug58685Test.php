@@ -17,7 +17,6 @@
  *
  * @ticket 58685
  */
-require_once('modules/Home/views/view.list.php');
 class Bug58685Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	public function setUp()

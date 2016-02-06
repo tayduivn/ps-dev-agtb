@@ -14,7 +14,6 @@
  * THIS CLASS IS FOR DEVELOPERS TO MAKE CUSTOMIZATIONS IN
  */
 
-require_once 'modules/pmse_Project/pmse_BpmnDiagram/pmse_BpmnDiagram_sugar.php';
 
 class pmse_BpmnDiagram extends pmse_BpmnDiagram_sugar {
 

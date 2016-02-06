@@ -55,29 +55,24 @@ class ViewMain extends SugarView
  		switch($type){
  			case 'studio':
  				//$smarty->assign('ONLOAD','ModuleBuilder.getContent("module=ModuleBuilder&action=wizard")');
- 				require_once('modules/ModuleBuilder/Module/StudioTree.php');
 				$mbt = new StudioTree();
 				break;
  			case 'mb':
  				//$smarty->assign('ONLOAD','ModuleBuilder.getContent("module=ModuleBuilder&action=package&package=")');
- 				require_once('modules/ModuleBuilder/MB/MBPackageTree.php');
 				$mbt = new MBPackageTree();
 				break;
  			//BEGIN SUGARCRM flav=ent ONLY
 
 			case 'sugarportal':
- 			    require_once('modules/ModuleBuilder/Module/SugarPortalTree.php');
  			    $mbt = new SugarPortalTree();
  			    break;
  			//END SUGARCRM flav=ent ONLY
  			case 'dropdowns':
  			   // $admin = is_admin($current_user);
- 			    require_once('modules/ModuleBuilder/Module/DropDownTree.php');
  			    $mbt = new DropDownTree();
  			    break;
  			default:
  				//$smarty->assign('ONLOAD','ModuleBuilder.getContent("module=ModuleBuilder&action=home")');	
-				require_once('modules/ModuleBuilder/Module/MainTree.php');
 				$mbt = new MainTree();
  		}
  		$smarty->assign('TEST_STUDIO', displayStudioForCurrentUser());
@@ -93,7 +88,6 @@ class ViewMain extends SugarView
 		$smarty->assign('userPref',$userPref);
 		
 		///////////////////////////////////
-	    require_once('include/SugarTinyMCE.php');
 	    $tiny = new SugarTinyMCE();
 	    $tiny->defaultConfig['width']=300;
 	    $tiny->defaultConfig['height']=300;

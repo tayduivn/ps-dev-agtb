@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php' ;
 
 class SugarTestRelationshipUtilities
 {
@@ -87,7 +86,6 @@ class SugarTestRelationshipUtilities
 
             $relationships->save();
             LanguageManager::clearLanguageCache($rel['lhs_module']);
-            require_once("data/Relationships/RelationshipFactory.php");
             SugarRelationshipFactory::deleteCache();
 
             SugarRelationshipFactory::rebuildCache();

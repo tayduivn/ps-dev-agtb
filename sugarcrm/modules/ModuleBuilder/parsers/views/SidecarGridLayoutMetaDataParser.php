@@ -10,9 +10,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php';
 require_once 'modules/ModuleBuilder/parsers/constants.php';
-require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     /**

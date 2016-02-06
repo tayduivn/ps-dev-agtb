@@ -17,7 +17,6 @@
  *
  */
 require_once('modules/Users/authentication/LDAPAuthenticate/LDAPConfigs/default.php');
-require_once('modules/Users/authentication/SugarAuthenticate/SugarAuthenticateUser.php');
 
 define('DEFAULT_PORT', 389);
 class LDAPAuthenticateUser extends SugarAuthenticateUser{

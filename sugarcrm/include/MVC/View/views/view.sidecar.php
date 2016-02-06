@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/View/SidecarView.php');
 
 class ViewSidecar extends SidecarView
 {

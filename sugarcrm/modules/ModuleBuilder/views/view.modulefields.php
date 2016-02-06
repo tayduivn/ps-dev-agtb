@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
-require_once('modules/ModuleBuilder/views/view.modulefield.php');
 
 class ViewModulefields extends SugarView
 {

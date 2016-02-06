@@ -16,7 +16,6 @@
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-require_once('modules/Leads/LeadFormBase.php');
 $leadForm = new LeadFormBase();
 $leadForm->handleSave('', true, false);
 

@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once 'modules/Bugs/Bug.php';
-require_once 'include/database/MysqlManager.php';
 
 class Bug60780Test extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -11,7 +11,6 @@
  */
 
 
-require_once('include/Sugarpdf/Sugarpdf.php');
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 

@@ -55,7 +55,6 @@ class Bug45573Test extends Sugar_PHPUnit_Framework_TestCase
 	 */
 	public function testActionAdvancedSearchViewSave()
 	{
-		require_once('modules/ModuleBuilder/controller.php');
 		$mbController = new ModuleBuilderController();
 		$_REQUEST['view_module'] = 'Cases';
 		$_REQUEST['view'] = 'advanced_search';
@@ -75,7 +74,6 @@ class Bug45573Test extends Sugar_PHPUnit_Framework_TestCase
 	 */
 	public function testActionBasicSearchViewSave()
 	{
-		require_once('modules/ModuleBuilder/controller.php');
 		$mbController = new ModuleBuilderController();
 		$_REQUEST['view_module'] = 'Cases';
 		$_REQUEST['view'] = 'basic_search';
@@ -108,7 +106,6 @@ class Bug45573Test extends Sugar_PHPUnit_Framework_TestCase
         	}
         }
 
-        require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
         TemplateRange::repairCustomSearchFields($vardefs, 'Cases');
 
         //In this case there would be no custom SearchFields.php file created

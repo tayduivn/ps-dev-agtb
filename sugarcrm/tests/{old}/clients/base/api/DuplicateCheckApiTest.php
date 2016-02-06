@@ -11,8 +11,6 @@
  */
 
 // need to make sure SugarApi is included when extending DuplicateCheckStrategy to avoid a fatal error
-require_once('include/api/SugarApi.php');
-require_once("clients/base/api/DuplicateCheckApi.php");
 require_once("tests/{old}/SugarTestRestUtilities.php");
 /**
  * @group api

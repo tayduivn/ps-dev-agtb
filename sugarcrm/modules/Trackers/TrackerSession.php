@@ -17,7 +17,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('data/SugarBean.php');
 
 class TrackerSession extends SugarBean {
 

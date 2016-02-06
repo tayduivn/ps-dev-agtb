@@ -12,7 +12,6 @@
  */
 
 
-require_once 'modules/ProductCategories/ProductCategory.php';
 
 class SugarTestProductCategoryUtilities
 {

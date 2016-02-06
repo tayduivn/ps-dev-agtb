@@ -104,7 +104,6 @@ class ChartDisplay
     public function getSugarChart()
     {
         if ($this->canDrawChart()) {
-            require_once('include/SugarCharts/SugarChartFactory.php');
 
             /* @var $sugarChart JitReports */
             $sugarChart = SugarChartFactory::getInstance('', 'Reports');

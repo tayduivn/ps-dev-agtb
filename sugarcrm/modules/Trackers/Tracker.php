@@ -16,7 +16,6 @@
 
 if(!class_exists('Tracker')){
 
-require_once 'data/SugarBean.php';
 
 class Tracker extends SugarBean
 {

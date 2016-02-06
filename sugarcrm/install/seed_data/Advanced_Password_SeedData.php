@@ -16,7 +16,6 @@ global $sugar_config;
 global $timedate;
 global $mod_strings;
 
-require_once('modules/Teams/Team.php');
 $Team = new Team();
 $Team_id = $Team->retrieve_team_id('Administrator');
 

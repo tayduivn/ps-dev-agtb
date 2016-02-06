@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/upload_file.php';
 
 // Note is used to store customer information.
 class Note extends SugarBean

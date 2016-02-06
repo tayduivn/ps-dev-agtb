@@ -25,7 +25,6 @@ function tearDown() {
 }
 
 function test_leads_searchdefs_merge() {	
-   require_once 'modules/UpgradeWizard/SugarMerge/SearchMerge.php';		
    $this->merge = new SearchMerge();
    $this->merge->merge('Leads', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/600/modules/Leads/metadata/searchdefs.php', 'modules/Leads/metadata/searchdefs.php', 'custom/modules/Leads/metadata/searchdefs.php');
    $this->assertTrue(file_exists('custom/modules/Leads/metadata/searchdefs.php.suback.php'));
@@ -52,7 +51,6 @@ function test_leads_searchdefs_merge() {
 
 
 function test_accounts_searchdefs_merge() {	
-   require_once 'modules/UpgradeWizard/SugarMerge/SearchMerge.php';		
    $this->merge = new SearchMerge();
    $this->merge->merge('Accounts', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/600/modules/Accounts/metadata/searchdefs.php', 'modules/Accounts/metadata/searchdefs.php', 'custom/modules/Accounts/metadata/searchdefs.php');
    $this->assertTrue(file_exists('custom/modules/Accounts/metadata/searchdefs.php.suback.php'));

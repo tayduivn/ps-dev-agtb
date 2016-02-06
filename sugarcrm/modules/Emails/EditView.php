@@ -11,7 +11,6 @@
  */
 $GLOBALS['log']->info("Email edit view");
 
-require_once('include/SugarTinyMCE.php');
 
 global $theme;
 global $app_strings;
@@ -368,13 +367,11 @@ if(empty($_REQUEST['return_id']) && !isset($_REQUEST['type'])) {
 
 	///////////////////////////////////////////////////////////////////////////////
 	////	QUICKSEARCH CODE
-	require_once('include/QuickSearchDefaults.php');
 	$qsd = QuickSearchDefaults::getQuickSearchDefaults();
 	$sqs_objects = array('EditView_parent_name' => $qsd->getQSParent(),
 						'EditView_assigned_user_name' => $qsd->getQSUser(),
 						);
 
-	require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 	$teamSetField = new SugarFieldTeamset('Teamset');
 	$teamSetField->initClassicView($focus->field_defs);
 	$sqs_objects = array_merge($sqs_objects, $teamSetField->getClassicViewQS());

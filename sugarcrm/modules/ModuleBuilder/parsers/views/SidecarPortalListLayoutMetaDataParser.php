@@ -10,7 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
 
 class SidecarPortalListLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
 {

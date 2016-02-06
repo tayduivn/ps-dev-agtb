@@ -17,7 +17,6 @@
  *
  * @codeCoverageIgnore
  */
-require_once 'modules/pmse_Inbox/engine/parser/PMSEDataParserInterface.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 

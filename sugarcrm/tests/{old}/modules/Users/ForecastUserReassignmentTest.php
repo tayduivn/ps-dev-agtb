@@ -12,7 +12,6 @@
  */
 
 
-require_once('modules/Forecasts/ForecastsSeedData.php');
 //require_once('modules/Forecasts/WorksheetSeedData.php');
 
 /**
@@ -473,7 +472,6 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $worksheets_ids = WorksheetSeedData::populateSeedData( array($this->_timeperiod->id => $this->_timeperiod) );
         SugarTestWorksheetUtilities::setCreatedWorksheet($worksheets_ids);
 
-        require_once('include/SugarForecasting/Individual.php');
 
         global $current_user;
         $this->_users['sally']->is_admin = true;
@@ -510,7 +508,6 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $worksheets_ids = WorksheetSeedData::populateSeedData();
         SugarTestWorksheetUtilities::setCreatedWorksheet($worksheets_ids);
 
-        require_once('include/SugarForecasting/Manager.php');
 
         $api = new SugarForecasting_Manager( array('timeperiod_id' => $this->_timeperiod->id, 'user_id' => $this->_users['sarah']->id) );
         $result = $api->process();

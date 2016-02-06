@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once ('modules/ModuleBuilder/views/view.listview.php') ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 class ViewDashlet extends ViewListView
@@ -56,7 +55,6 @@ class ViewDashlet extends ViewListView
     {
 
 
-        require_once 'modules/ModuleBuilder/parsers/ParserFactory.php' ;
         $parser = ParserFactory::getParser ( $this->editLayout, $this->editModule, $this->editPackage) ;
 
         $smarty = $this->constructSmarty ( $parser ) ;
@@ -73,7 +71,6 @@ class ViewDashlet extends ViewListView
 
     function constructAjax()
     {
-        require_once ('modules/ModuleBuilder/MB/AjaxCompose.php') ;
         $ajax = new AjaxCompose ( ) ;
 
         if ($this->fromModuleBuilder)

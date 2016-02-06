@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('modules/EmailMan/EmailMan.php');
 
 class Bug41615Test extends Sugar_PHPUnit_Framework_TestCase
 {

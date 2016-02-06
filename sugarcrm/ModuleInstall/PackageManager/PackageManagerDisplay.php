@@ -15,7 +15,6 @@ require_once('ModuleInstall/PackageManager/PackageManager.php');
 
 require_once('vendor/ytree/Tree.php');
 require_once('vendor/ytree/Node.php');
-require_once('ModuleInstall/PackageManager/ListViewPackages.php');
 
 class PackageManagerDisplay{
 

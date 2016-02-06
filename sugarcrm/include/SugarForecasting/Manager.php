@@ -11,8 +11,6 @@
  */
 
 // This class is used for the Manager Views
-require_once('include/SugarForecasting/AbstractForecast.php');
-require_once('include/SugarForecasting/Exception.php');
 class SugarForecasting_Manager extends SugarForecasting_AbstractForecast implements SugarForecasting_ForecastSaveInterface
 {
 

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("include/Expressions/Actions/AbstractAction.php");
 
 class ReadOnlyAction extends AbstractAction
 {

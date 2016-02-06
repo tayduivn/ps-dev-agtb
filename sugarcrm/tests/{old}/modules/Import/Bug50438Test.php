@@ -17,8 +17,6 @@
  * @ticket 50438
  */
 
-require_once('modules/Import/Importer.php');
-require_once('modules/Import/sources/ImportFile.php');
 
 class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -92,7 +90,6 @@ class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
         $importer->import();
 
         //fetch the bean using the passed in id and get related contacts
-        require_once('modules/Calls/Call.php');
         $call = new Call();
         $call->retrieve($this->call_id);
         $call->load_relationship('contacts');

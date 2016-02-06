@@ -11,7 +11,6 @@
  */
 
 
-require_once("modules/ModuleBuilder/MB/MBVardefs.php");
 if (file_exists("custom/include/SugarSmarty/plugins/function.sugar_currency_format.php"))
 {
 	require_once("custom/include/SugarSmarty/plugins/function.sugar_currency_format.php");

@@ -12,8 +12,6 @@
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 
-require_once 'include/SugarFields/SugarFieldHandler.php';
-require_once 'include/MetaDataManager/MetaDataManager.php';
 
 /**
  * This class is here to provide functions to easily call in to the individual module api helpers

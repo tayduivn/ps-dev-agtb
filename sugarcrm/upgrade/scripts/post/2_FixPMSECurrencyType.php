@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 /**
  * Script to fix currency fields while upgrading to 7.7 and above. Previously currency took into account 
  * only integer fields. From 7.7 we switched to comparing using currency values. 

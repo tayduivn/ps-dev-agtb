@@ -272,8 +272,6 @@ EOF;
      */
     protected function checkMenu()
     {
-        require_once('modules/MySettings/TabController.php');
-        require_once('include/SubPanel/SubPanelDefinitions.php');
         $tc = new TabController();
 
         if (!empty($this->upgrader->state['addKBToMenu'])) {

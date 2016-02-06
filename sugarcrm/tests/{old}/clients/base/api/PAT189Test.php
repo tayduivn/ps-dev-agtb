@@ -10,7 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/Accounts/clients/base/api/AccountsRelateApi.php';
 require_once 'tests/{old}/SugarTestRestUtilities.php';
 
 /**

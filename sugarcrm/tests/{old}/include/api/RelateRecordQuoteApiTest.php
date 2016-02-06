@@ -12,8 +12,6 @@
  */
 
 
-require_once 'include/api/RestService.php';
-require_once 'clients/base/api/RelateRecordApi.php';
 /**
  * Bug #57888
  * REST API: Create related quote must populate billing/shipping contact and account

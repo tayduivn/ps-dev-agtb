@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/EditView/SubpanelQuickCreate.php');
 /**
  * Quick create form as a pop-up window
  * @api

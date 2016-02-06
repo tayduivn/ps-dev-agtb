@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/workflow/glue.php');
 /**
  * Time triggered workflow isn't working when condition checks a calculated field.
  */

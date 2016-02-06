@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/RecordListFactory.php');
-require_once('modules/Reports/Report.php');
-require_once('clients/base/api/ModuleApi.php');
 
 class ReportsApi extends ModuleApi
 {

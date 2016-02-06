@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SubPanel/SubPanelDefinitions.php';
 
 /**
  * Dependent Fields do not display in the Subpanel of a Related Module unless the Field(s) they Depend on are also in

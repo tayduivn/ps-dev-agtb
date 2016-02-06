@@ -48,7 +48,6 @@ class SugarUpgradeRebuildActivitiesDashboards extends UpgradeScript
 
         // Grab files first, then process them so glob() doesn't ever freak out.
         foreach ($convertModules as $moduleName => $relName) {
-            require_once('modules/ModuleBuilder/parsers/relationships/ActivitiesRelationship.php');
             $parser = new ActivitiesRelationship(array(
                                                      'for_activities' => true,
                                                      'is_custom' => true,

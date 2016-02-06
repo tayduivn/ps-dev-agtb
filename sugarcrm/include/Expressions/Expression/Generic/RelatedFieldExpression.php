@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Expressions/Expression/Generic/GenericExpression.php');
 /**
  * <b>related(Relationship <i>link</i>, String <i>field</i>)</b><br>
  * Returns the value of <i>field</i> in the related module <i>link</i><br/>
@@ -61,7 +60,6 @@ class RelatedFieldExpression extends GenericExpression
                     }
                     if ($bean->field_defs[$relfield]['type'] == "bool")
                     {
-                        require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
                         if ($bean->$relfield)
                             return BooleanExpression::$TRUE;
                         else

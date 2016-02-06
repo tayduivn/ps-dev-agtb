@@ -12,7 +12,6 @@
  */
 
 require_once('modules/UpgradeWizard/uw_utils.php');
-require_once ('modules/SchedulersJobs/SchedulersJob.php');
 
 class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
 

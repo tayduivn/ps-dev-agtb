@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once ('include/upload_file.php');
 
 
 // User is used to store Forecast information.

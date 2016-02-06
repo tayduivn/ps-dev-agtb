@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Calendar/CalendarUtils.php";
 require_once('modules/Meetings/Meeting.php');
 
 class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {

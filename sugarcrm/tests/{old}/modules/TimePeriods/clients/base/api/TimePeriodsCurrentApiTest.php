@@ -11,7 +11,6 @@
  */
 
 
-require_once("modules/TimePeriods/clients/base/api/TimePeriodsCurrentApi.php");
 
 class TimePeriodsCurrentApiTest extends Sugar_PHPUnit_Framework_TestCase
 {

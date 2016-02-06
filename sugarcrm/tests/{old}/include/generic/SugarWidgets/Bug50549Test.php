@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("include/generic/SugarWidgets/SugarWidgetFieldmultienum.php");
-require_once("modules/Reports/Report.php");
 
 
 class Bug50549Test extends Sugar_PHPUnit_Framework_TestCase {

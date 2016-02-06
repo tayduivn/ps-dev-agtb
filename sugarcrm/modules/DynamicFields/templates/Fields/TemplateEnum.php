@@ -211,7 +211,6 @@ class TemplateEnum extends TemplateText{
                     else
                     {
                         //Out of the box field that we need to use a StandardField rather than DynamicFIeld object to save
-                        require_once ('modules/ModuleBuilder/parsers/StandardField.php') ;
                         $sf = new StandardField ( $df->getModuleName() ) ;
                         $sf->setup ( $seed ) ;
                         $field->module = $seed;

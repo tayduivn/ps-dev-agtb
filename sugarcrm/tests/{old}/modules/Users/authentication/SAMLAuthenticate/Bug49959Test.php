@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticateUser.php';
-require_once 'modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticate.php';
 
 /**
  * @ticket 49959

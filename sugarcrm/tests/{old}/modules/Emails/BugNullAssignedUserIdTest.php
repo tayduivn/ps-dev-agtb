@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('modules/Emails/Email.php');
 
 /**
  * Test case for Bugs 50972, 50973 and 50979

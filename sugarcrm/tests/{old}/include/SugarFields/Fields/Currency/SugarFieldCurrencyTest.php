@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/SugarFields/SugarFieldHandler.php');
-require_once('modules/Import/ImportFieldSanitize.php');
 
 class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
 {

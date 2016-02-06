@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarLeadConvertMetaDataUpgrader.php';
-require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
-require_once 'modules/Leads/ConvertLayoutMetadataParser.php';
 
 /**
  * @group leadconvert

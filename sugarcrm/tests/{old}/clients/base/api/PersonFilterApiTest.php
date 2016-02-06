@@ -12,8 +12,6 @@
 
 
 
-require_once ('include/api/RestService.php');
-require_once ("clients/base/api/PersonFilterApi.php");
 
 
 /**

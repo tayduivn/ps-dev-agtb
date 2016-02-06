@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarLicensing/SugarLicensing.php');
 
 class AdministrationViewEnablewirelessmodules extends SugarView
 {
@@ -92,7 +91,6 @@ class AdministrationViewEnablewirelessmodules extends SugarView
             $enabled_modules ['Employees'] = $app_strings['LBL_EMPLOYEES'];
         }
 
-        require_once('modules/ModuleBuilder/Module/StudioBrowser.php');
         $browser = new StudioBrowser();
         $browser->loadModules();
 

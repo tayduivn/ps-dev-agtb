@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Import/Importer.php');
 
 class Bug45963Test extends Sugar_PHPUnit_Framework_TestCase
 {

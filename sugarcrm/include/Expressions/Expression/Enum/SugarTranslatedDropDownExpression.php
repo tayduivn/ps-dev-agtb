@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/Expressions/Expression/Enum/EnumExpression.php');
 /**
  * <b>getDropdownValueSet(String list_name)</b><br>
  * Returns a collection of the translated values in the supplied dropdown list.<br/>

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/api/SugarApi.php');
 class TimePeriodsCurrentApi extends SugarApi
 {
     public function registerApiRest()

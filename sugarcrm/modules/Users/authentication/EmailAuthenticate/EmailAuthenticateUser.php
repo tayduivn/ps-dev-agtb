@@ -17,8 +17,6 @@
  *
  */
 
-require_once('modules/Users/authentication/SugarAuthenticate/SugarAuthenticateUser.php');
-require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 class EmailAuthenticateUser extends SugarAuthenticateUser
 {

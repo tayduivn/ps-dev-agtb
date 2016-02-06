@@ -70,7 +70,6 @@ class PdfManagerHelper
         $bannedModules = PdfManagerHelper::getBannnedModules();
 
         $module_names = array_change_key_case ($GLOBALS['app_list_strings']['moduleList']);
-        require_once 'modules/ModuleBuilder/Module/StudioBrowser.php';
         $studio_browser = new StudioBrowser();
         $studio_browser->loadModules();
         $studio_modules = array_keys($studio_browser->modules);

@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/ForecastWorksheets/clients/base/api/ForecastWorksheetsApi.php');
-require_once('include/api/RestService.php');
 
 /**
  * Class ForecastWorksheetsApiTest

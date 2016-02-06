@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarCharts/SugarChartFactory.php');
 
 class CustomSugarChartFactoryTest extends Sugar_PHPUnit_Framework_TestCase {
 
@@ -34,7 +33,6 @@ mkdir_recursive('custom/include/SugarCharts/CustomSugarChartFactory');
 $the_string = <<<EOQ
 <?php
 
-require_once("include/SugarCharts/JsChart.php");
 
 class CustomSugarChartFactory extends JsChart {
 

@@ -861,7 +861,6 @@ function buildInstall($path){
         $modules = array_unique($modules);
 
         //Use StudioBrowser to grab list of modules that are customizeable through studio.
-        require_once('modules/ModuleBuilder/Module/StudioBrowser.php');
         $sb = new StudioBrowser();
         $sb->loadModules();
         $studioModules = array_keys($sb->modules);

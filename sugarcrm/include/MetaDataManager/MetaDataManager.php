@@ -13,14 +13,8 @@
 use Sugarcrm\Sugarcrm\MetaData\RefreshQueue;
 
 require_once 'soap/SoapHelperFunctions.php';
-require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
-require_once 'include/SugarFields/SugarFieldHandler.php';
 require_once 'include/SugarObjects/LanguageManager.php';
-require_once 'modules/ActivityStream/Activities/ActivityQueueManager.php';
-require_once 'include/SubPanel/SubPanelDefinitions.php';
-require_once 'modules/MySettings/TabController.php';
 //BEGIN SUGARCRM flav=ent ONLY
-require_once 'include/TeamBasedACLConfigurator.php';
 //END SUGARCRM flav=ent ONLY
 
 SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataHacks.php');
@@ -772,10 +766,8 @@ class MetaDataManager
      */
     public function getModuleData($moduleName, MetaDataContextInterface $context = null)
     {
-        require_once 'include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php';
         $vardefs = $this->getVarDef($moduleName);
         if (!empty($vardefs['fields']) && is_array($vardefs['fields'])) {
-            require_once 'include/MassUpdate.php';
             $vardefs['fields'] = MassUpdate::setMassUpdateFielddefs($vardefs['fields'], $moduleName);
         }
 
@@ -908,11 +900,9 @@ class MetaDataManager
      */
     public function getVarDef($moduleName)
     {
-        require_once 'data/BeanFactory.php';
         $obj = BeanFactory::getObjectName($moduleName);
 
         if ($obj) {
-            require_once 'include/SugarObjects/VardefManager.php';
             global $dictionary;
             VardefManager::loadVardef($moduleName, $obj);
             if (isset($dictionary[$obj])) {
@@ -2974,7 +2964,6 @@ class MetaDataManager
     public function getSystemCurrencies()
     {
         $currencies = array();
-        require_once 'modules/Currencies/ListCurrency.php';
         $lcurrency = new ListCurrency();
         $lcurrency->lookupCurrencies(true);
         if (!empty($lcurrency->list)) {
@@ -3462,7 +3451,6 @@ class MetaDataManager
      */
     public function getUserModuleList() {
         // Loading a standard module list
-        require_once("modules/MySettings/TabController.php");
         $controller = new TabController();
         $tabs = $controller->get_tabs($this->getCurrentUser());
         $moduleList = array_keys($tabs[0]);
@@ -3808,7 +3796,6 @@ class MetaDataManager
      */
     protected function getViewIterator($module, array $fieldDefs)
     {
-        require_once 'include/MetaDataManager/ViewIterator.php';
         return new ViewIterator($module, $fieldDefs);
     }
 

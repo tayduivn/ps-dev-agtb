@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/DynamicFields/templates/Fields/TemplateCurrencyId.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateCurrencyBaseRate.php');
-require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
 
 class TemplateCurrency extends TemplateRange
 {

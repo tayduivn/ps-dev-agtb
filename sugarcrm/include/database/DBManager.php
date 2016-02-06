@@ -2039,7 +2039,6 @@ protected function checkQuery($sql, $object_name = false)
         if (self::$queryLimit != 0 && ++self::$queryCount > self::$queryLimit
             && (empty($GLOBALS['current_user']) || !$current_user->isDeveloperForAnyModule())
         ) {
-            require_once('include/resource/ResourceManager.php');
             if ($sql) {
                 $GLOBALS['log']->fatal("Last query before failure:\n" . $sql);
             }

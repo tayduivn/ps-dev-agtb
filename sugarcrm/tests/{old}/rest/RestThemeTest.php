@@ -11,8 +11,6 @@
  */
 
 require_once 'tests/{old}/rest/RestTestBase.php';
-require_once 'include/api/SugarApi.php';
-require_once 'clients/base/api/ThemeApi.php';
 
 class RestThemeTest extends RestTestBase
 {

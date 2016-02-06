@@ -11,8 +11,6 @@
  */
 
 
-require_once("include/Expressions/Expression/Date/TimestampExpression.php");
-require_once("include/Expressions/Expression/Parser/Parser.php");
 
 /**
  * Class TimestampExpressionTest

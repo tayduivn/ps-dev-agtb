@@ -10,10 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Import/ImportCacheFiles.php';
-require_once 'modules/Import/ImportFieldSanitize.php';
-require_once 'modules/Import/ImportDuplicateCheck.php';
-require_once 'include/SugarFields/SugarFieldHandler.php';
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
@@ -288,7 +284,6 @@ class Importer
 
                 if(!empty($fieldDef['custom_type']) && $fieldDef['custom_type'] == 'teamset' && empty($rowValue))
                 {
-                    require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
                     $rowValue = implode(', ', SugarFieldTeamset::getTeamsFromRequest($field));
                 }
 
@@ -913,7 +908,6 @@ class Importer
                 $fieldDef = $this->bean->getFieldDefinition($field);
                 if(!empty($fieldDef['custom_type']) && $fieldDef['custom_type'] == 'teamset')
                 {
-                    require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
                     $teams = SugarFieldTeamset::getTeamsFromRequest($field);
                     if(isset($_REQUEST['primary_team_name_collection']))
                     {

@@ -11,7 +11,6 @@
  */
 
 require_once 'service/v4/SugarWebServiceImplv4.php';
-require_once 'modules/Employees/Employee.php';
 
 class Bug48889Test extends Sugar_PHPUnit_Framework_TestCase
 {

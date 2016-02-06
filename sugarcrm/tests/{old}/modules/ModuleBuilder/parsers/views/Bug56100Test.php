@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once ('modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php');
 
 /**
  * Bug 56100 - Undefined property: SubpanelMetaDataParser

@@ -12,7 +12,6 @@
  */
 
 
-require_once('modules/Users/User.php');
 /**
  * Bug #48135
  * Testing that reassigning EAPM modules from one user to another will produce working query

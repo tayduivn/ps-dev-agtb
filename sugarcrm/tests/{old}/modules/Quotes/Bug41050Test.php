@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once 'modules/Accounts/Account.php';
-require_once 'modules/Quotes/Quote.php';
 
 class Bug41050Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -79,7 +77,6 @@ class Bug41050Test extends Sugar_PHPUnit_Framework_TestCase
 		global $current_user;
 		
 		//We are going to mimic searching for the quotes by account name using the same api the list views do.
-		require_once('include/ListView/ListViewData.php');
 		$lvd = new ListViewData();
 
 		//create a fake post/request object	used by listview	

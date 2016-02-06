@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/ProspectLists/ProspectListsService.php";
 
 class ProspectListsServiceTest extends Sugar_PHPUnit_Framework_TestCase
 {

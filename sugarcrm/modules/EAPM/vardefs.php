@@ -173,6 +173,5 @@ $dictionary['EAPM'] = array(
     'visibility' => array('OwnerOrAdminVisibility' => true),
 );
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
 }
 VardefManager::createVardef('EAPM','EAPM', array('basic','assignable'));

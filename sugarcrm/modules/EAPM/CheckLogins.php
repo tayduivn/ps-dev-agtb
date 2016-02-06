@@ -13,7 +13,6 @@
 // This file checks if the external accounts for the logged in user are still valid or not.
 // We only check oAuth logins right now, because usernames/passwords shouldn't really expire.
 
-require_once('include/externalAPI/ExternalAPIFactory.php');
 
 global $app_strings;
 

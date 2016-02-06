@@ -1,6 +1,5 @@
 <?php
 
-require_once 'data/SugarBean.php';
 
 class MeetingBug57478Test extends Sugar_PHPUnit_Framework_TestCase
 {

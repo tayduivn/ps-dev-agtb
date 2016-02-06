@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Categories/NestedBeanInterface.php';
-require_once 'modules/Categories/exception/CategoriesRuntimeException.php';
 
 class Category extends SugarBean implements NestedBeanInterface
 {

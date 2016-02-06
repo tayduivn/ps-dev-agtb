@@ -12,7 +12,6 @@
 
 // Check to see if we have already registered our upload stream wrapper
 if (!in_array('upload', stream_get_wrappers())) {
-    require_once 'include/upload_file.php';
     UploadStream::register();
 }
 
@@ -38,7 +37,6 @@ class DownloadFile {
             } elseif ($def['type'] == 'file') {
                 $info = $this->getFileInfo($bean, $field);
 
-                require_once 'include/SugarFields/SugarFieldHandler.php';
                 $sfh = new SugarFieldHandler();
                 /* @var $sf SugarFieldFile */
                 $sf = $sfh->getSugarField($def['type']);

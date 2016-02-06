@@ -13,8 +13,6 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: process_queue.php 56786 2010-06-02 18:29:56Z jenny $
 
 $modListHeader = array();
-require_once('modules/Reports/schedule/ReportSchedule.php');
-require_once('modules/Reports/utils.php');
 require_once('include/modules.php');
 require_once('config.php');
 

@@ -18,7 +18,6 @@ class ForecastTreeSeedData {
 
     public function __construct()
     {
-        require_once('modules/Forecasts/Common.php');
         $this->common = new Common();
     }
 

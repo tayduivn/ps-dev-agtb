@@ -18,7 +18,6 @@
  ********************************************************************************/
 
 
-require_once('include/SugarObjects/templates/person/Person.php');
 
 // Employee is used to store customer information.
 class Employee extends Person {
@@ -165,7 +164,6 @@ class Employee extends Person {
 		parent::preprocess_fields_on_save();
 
 		//BEGIN SUGARCRM flav!=com ONLY
-        require_once('include/upload_file.php');
 		$upload_file = new UploadFile("picture");
 
 		//remove file

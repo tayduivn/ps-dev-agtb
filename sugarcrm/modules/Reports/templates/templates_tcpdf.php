@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/Sugarpdf/SugarpdfFactory.php');
-require_once('modules/Reports/Report.php');
 
 
 function preprocess($type = NULL, $reporter){

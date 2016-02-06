@@ -17,7 +17,6 @@
 * Reserved. Contributor(s): contact@synolia.com - www.synolia.com
 * *******************************************************************************/
 
-require_once('include/connectors/sources/ext/rest/rest.php');
 
 class ext_rest_dnb extends ext_rest {
     protected $_has_testing_enabled = true;

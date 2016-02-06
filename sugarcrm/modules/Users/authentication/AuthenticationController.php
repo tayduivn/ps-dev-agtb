@@ -37,7 +37,6 @@ class AuthenticationController
 
         // check in custom dir first, in case someone want's to override an auth controller
         if(!SugarAutoLoader::requireWithCustom('modules/Users/authentication/'.$type.'/' . $type . '.php')) {
-            require_once('modules/Users/authentication/SugarAuthenticate/SugarAuthenticate.php');
             $type = 'SugarAuthenticate';
         }
 

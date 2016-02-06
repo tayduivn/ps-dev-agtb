@@ -15,7 +15,6 @@ function get_body (&$ss , $vardef)
 
     $modules = array ( ) ;
 
-    require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php' ;
     $relatableModules = array_keys ( DeployedRelationships::findRelatableModules () ) ;
 
     foreach ( $relatableModules as $module )

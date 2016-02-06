@@ -340,7 +340,6 @@ function get_required_upgrades($soapclient, $session){
     $upgrade_history->disable_row_level_security = true;
     $installeds = $upgrade_history->getAllOrderBy('date_entered ASC');
     $history = array();
-    require_once('soap/SoapError.php');
 	$error = new SoapError();
     foreach($installeds as $installed)
 	{

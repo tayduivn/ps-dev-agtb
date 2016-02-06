@@ -12,8 +12,6 @@
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 
-require_once 'modules/Administration/Administration.php';
-require_once 'modules/Home/UnifiedSearchAdvanced.php';
 
 /**
  *

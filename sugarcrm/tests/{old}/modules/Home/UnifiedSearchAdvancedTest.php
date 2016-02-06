@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Home/UnifiedSearchAdvanced.php';
-require_once 'modules/Contacts/Contact.php';
 require_once 'include/utils/layout_utils.php';
 
 /**

@@ -57,7 +57,6 @@ class StudioWizard{
                 $newWiz->display();
                 break;
             case 'RenameTabs':
-                require_once('modules/Studio/wizards/RenameModules.php');
                 $newWiz = new RenameModules();
                 $newWiz->process();
                 break; 

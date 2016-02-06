@@ -10,7 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/SugarForecasting/Progress/Individual.php');
 class SugarForecasting_Progress_IndividualTest extends Sugar_PHPUnit_Framework_TestCase
 {
 

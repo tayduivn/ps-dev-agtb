@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/SugarFields/Fields/Collection/SugarFieldCollection.php';
-require_once 'include/SugarFields/Fields/Collection/ViewSugarFieldCollection.php';
 require_once 'modules/Teams/TeamSetManager.php';
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
@@ -175,7 +173,6 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
                     // we should get teams from POST while preview report
                     elseif(empty($this->bean->team_id) && empty($this->bean->team_set_id))
                     {
-                        require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
                         $teams = SugarFieldTeamset::getTeamsFromRequest($this->bean->{$this->value_name}['role_field'], $_POST);
                         $primary_id = SugarFieldTeamset::getPrimaryTeamidFromRequest($this->bean->{$this->value_name}['role_field'], $_POST);
                         //BEGIN SUGARCRM flav=ent ONLY
@@ -245,7 +242,6 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
      *
      */
     private function process_searchform() {
-        require_once('include/SugarFields/SugarFieldHandler.php');
         $sfh = new SugarFieldHandler();
         $sf = $sfh->getSugarField('Teamset', true);
         $teams = $sf->getTeamsFromRequest($this->name);
@@ -317,7 +313,6 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 	            $this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, $full_form_values);
 	            //If this request is coming from a subpanel quick create, we have to store the selected values
 	       } else if(isset($_REQUEST['full_form'])) {
-		        require_once('include/SugarFields/SugarFieldHandler.php');
 		        $sfh = new SugarFieldHandler();
 		        $sf = $sfh->getSugarField('Teamset', true);
 	            $teams = $sf->getTeamsFromRequest('team_name');
@@ -368,7 +363,6 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
     function createQuickSearchCode($returnAsJavascript = true){
         $fieldName = empty($this->displayParams['idName']) ? $this->name : $this->displayParams['idName'];
 		$sqs_objects = array();
-        require_once('include/QuickSearchDefaults.php');
         $qsd = QuickSearchDefaults::getQuickSearchDefaults();
         $qsd->setFormName($this->form_name);
         for($i=0; $i<$this->numFields; $i++){

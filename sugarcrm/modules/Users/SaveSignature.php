@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/UserSignatures/UserSignature.php');
 global $current_user;
 
 $us = new UserSignature();

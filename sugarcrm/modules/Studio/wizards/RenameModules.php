@@ -14,10 +14,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
-require_once 'modules/Studio/DropDowns/DropDownHelper.php';
-require_once 'modules/ModuleBuilder/parsers/parser.label.php';
 require_once 'modules/Administration/Common.php';
-require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class RenameModules
 {
@@ -104,7 +101,6 @@ class RenameModules
     {
         global $app_list_strings, $mod_strings, $locale;
 
-        require_once('modules/Studio/parsers/StudioParser.php');
         $dh = new DropDownHelper();
 
         $smarty = new Sugar_Smarty();
@@ -166,11 +162,9 @@ class RenameModules
         $smarty->assign('deleteImage',$deleteImage);
         $smarty->display("modules/Studio/wizards/RenameModules.tpl");
         if (!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
-            require_once ('include/language/jsLanguage.php');
             jsLanguage::createAppStringsCache($GLOBALS['current_language']);
         }
         if (!is_file(sugar_cached('jsLanguage/') . 'Studio' . '/' . $GLOBALS['current_language'] . '.js')) {
-            require_once ('include/language/jsLanguage.php');
             jsLanguage::createModuleStringsCache('Studio', $GLOBALS['current_language']);
         }
     }
@@ -656,7 +650,6 @@ class RenameModules
     {
         //Load the Dashlet metadata so we know what needs to be changed
         if (!is_file(sugar_cached('dashlets/dashlets.php'))) {
-            require_once('include/Dashlets/DashletCacheBuilder.php');
             $dc = new DashletCacheBuilder();
             $dc->buildCache();
         }

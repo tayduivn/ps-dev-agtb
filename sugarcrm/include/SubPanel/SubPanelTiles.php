@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SubPanel/SubPanel.php');
-require_once('include/SubPanel/SubPanelDefinitions.php');
 
 /**
  * Subpanel tiles
@@ -332,7 +330,6 @@ EOQ;
 
 	function getLayoutManager()
 	{
-		require_once('include/generic/LayoutManager.php');
 	  	if ( $this->layout_manager == null) {
 	    	$this->layout_manager = new LayoutManager();
 	  	}

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/externalAPI/Base/ExternalAPIBase.php');
-require_once('include/SugarOauth.php');
 
 /**
  * External API based on OAuth

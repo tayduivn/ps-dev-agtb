@@ -11,7 +11,6 @@
  */
 global $theme;
 
-require_once('include/ListView/ProcessView.php');
 
 global $app_strings;
 global $app_list_strings;

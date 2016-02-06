@@ -10,12 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarQuery/Builder/Field/Condition.php';
-require_once 'include/SugarQuery/Builder/Field/Groupby.php';
-require_once 'include/SugarQuery/Builder/Field/Having.php';
-require_once 'include/SugarQuery/Builder/Field/Orderby.php';
-require_once 'include/SugarQuery/Builder/Field/Raw.php';
-require_once 'include/SugarQuery/Builder/Field/Select.php';
 
 /**
  * SugarQuery_Builder_Field

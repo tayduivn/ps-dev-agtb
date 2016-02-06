@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Reports/Report.php';
-require_once 'include/generic/LayoutManager.php';
 
 /**
  * Bug #58360

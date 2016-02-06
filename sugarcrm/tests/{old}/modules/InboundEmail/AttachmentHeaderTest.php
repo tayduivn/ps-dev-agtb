@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/InboundEmail/InboundEmail.php';
 class AttachmentHeaderTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $ie = null;

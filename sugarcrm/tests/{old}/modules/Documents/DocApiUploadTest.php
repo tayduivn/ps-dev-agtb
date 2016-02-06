@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Documents/Document.php';
-require_once 'modules/Documents/clients/base/api/DocumentsFileApi.php';
 
 class DocApiUploadTest extends Sugar_PHPUnit_Framework_TestCase
 {

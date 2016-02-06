@@ -33,7 +33,6 @@ class ViewFunctiondetail extends SugarView
             include ('include/Expressions/updatecache.php');
         }
  		include $cachefile;
- 		require_once('include/JSON.php');
  		$desc = "";
 		$function = $this->request->getValidInputRequest('function', 'Assert\SugarLogic\FunctionName');
  		if (!empty($function) && !empty($FUNCTION_MAP[$function])){

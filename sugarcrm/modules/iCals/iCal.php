@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Calendar/Calendar.php');
-require_once('modules/vCals/vCal.php');
 
 /**
 * Class for constructing the iCal response string for the current user.
@@ -310,7 +308,6 @@ class iCal extends vCal {
 
         $str = vCal::create_ical_string_from_array($ical_array);
 
-        require_once('include/TimeDate.php');
         $timedate = new TimeDate();
         $today = gmdate("Y-m-d");
         $today = $timedate->handle_offset($today, $timedate->dbDayFormat, false);

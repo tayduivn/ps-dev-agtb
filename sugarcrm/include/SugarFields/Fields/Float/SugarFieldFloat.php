@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarFields/Fields/Int/SugarFieldInt.php');
 
 class SugarFieldFloat extends SugarFieldInt 
 {

@@ -12,7 +12,6 @@
 //updates the link between contract and document with latest revision of
 //the document and sends the control back to calling page.
 
-require_once('modules/Documents/Document.php');
 require_once('include/formbase.php');
 if (!empty($_REQUEST['record'])) {
 

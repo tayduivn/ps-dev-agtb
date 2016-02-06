@@ -411,7 +411,6 @@ ENDW;
 	 * returns array of items for listView display in yui-ext Grid
 	 */
 	function getListItemsForEmailXML($folderId, $page = 1, $pageSize = 10, $sort = '', $direction='') {
-		require_once('include/TimeDate.php');
 		global $timedate;
 		global $current_user;
 		global $beanList;
@@ -1158,7 +1157,6 @@ ENDW;
 
 	    if ($this->is_group)
 	    {
-	        require_once("modules/Teams/Team.php");
 	        $team = BeanFactory::getBean('Teams', $this->team_id);
 	        $usersList = $team->get_team_members(true);
 	        foreach($usersList as $userObject)

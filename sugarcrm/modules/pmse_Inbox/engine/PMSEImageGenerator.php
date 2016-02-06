@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarQuery/SugarQuery.php';
-require_once 'modules/pmse_Inbox/engine/PMSE.php';
 
 class PMSEImageGenerator
 {

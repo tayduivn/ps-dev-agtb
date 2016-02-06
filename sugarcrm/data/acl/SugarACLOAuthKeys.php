@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('data/SugarACLStrategy.php');
 
 class SugarACLOAuthKeys extends SugarACLStrategy
 {

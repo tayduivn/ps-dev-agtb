@@ -15,8 +15,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  //		Function: name of the function to be called in TreeData.php, the function will be called statically.
  //		PARAM prefixed properties: array of these property/values will be passed to the function as parameter.
 
-require_once('include/JSON.php');
-require_once('include/upload_file.php');
 
 $json = getJSONobj();
 

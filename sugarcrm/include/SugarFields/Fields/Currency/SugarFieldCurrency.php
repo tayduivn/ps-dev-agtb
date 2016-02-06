@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarFields/Fields/Float/SugarFieldFloat.php');
 
 class SugarFieldCurrency extends SugarFieldFloat 
 {
@@ -60,7 +59,6 @@ class SugarFieldCurrency extends SugarFieldFloat
      */
     public function importSanitize($value, $vardef, $focus, ImportFieldSanitize $settings)
     {
-        require_once('include/SugarCurrency/SugarCurrency.php');
         /** @var Currency $base_currency */
         $base_currency = SugarCurrency::getBaseCurrency();
         $currency_id = $settings->currency_id;
@@ -112,7 +110,6 @@ class SugarFieldCurrency extends SugarFieldFloat
         // If $value is null, default to zero to prevent conversion errors.
         $value = is_null($value) ? 0 : $value;
 
-        require_once('include/SugarCurrency/SugarCurrency.php');
         if (isset($vardef['convertToBase']) && $vardef['convertToBase']) {
             // convert amount to base
             $baseRate = isset($row['base_rate']) ? $row['base_rate'] : $focus->base_rate;

@@ -18,8 +18,6 @@
 
 
 require_once('include/workflow/workflow_utils.php');
-//require_once('modules/QueryBuilder/QueryBuilder.php');
-require_once('include/workflow/glue.php');
 
 
 

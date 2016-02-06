@@ -12,7 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
-require_once ('modules/DynamicFields/DynamicField.php') ;
 
 class StandardField extends DynamicField
 {

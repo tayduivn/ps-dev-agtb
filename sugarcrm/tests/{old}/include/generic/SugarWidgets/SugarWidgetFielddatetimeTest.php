@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "include/generic/LayoutManager.php";
-require_once "include/generic/SugarWidgets/SugarWidgetFielddatetime.php";
 
 class SugarWidgetFielddatetimeTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -13,7 +13,6 @@
 
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
-require_once('include/MVC/View/views/view.ajax.php');
 require_once('include/EditView/EditView2.php');
 
 class ViewQuickcreate extends ViewAjax

@@ -19,7 +19,6 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once('include/utils/expression_utils.php');
 
-require_once('include/ListView/ProcessView.php');
 require_once('modules/WorkFlowTriggerShells/MetaArray.php');
 
 global $current_user;
@@ -63,7 +62,6 @@ $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
 $xtpl->assign("RETURN_PREFIX", $exp_object->return_prefix);
 
-require_once('include/language/jsLanguage.php');
 if (!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
 	jsLanguage::createAppStringsCache($GLOBALS['current_language']);
 }

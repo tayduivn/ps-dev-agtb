@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php');
-require_once('modules/ModuleBuilder/views/view.relationships.php');
 
 class CRYS642Test extends Sugar_PHPUnit_Framework_TestCase
 {

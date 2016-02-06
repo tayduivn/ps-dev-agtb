@@ -14,9 +14,6 @@
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('modules/ModuleBuilder/views/view.layoutview.php');
-require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
-require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 
 class ViewPortalLayoutView extends ViewLayoutView
 {

@@ -17,7 +17,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/SugarObjects/templates/basic/Basic.php');
 class Chance extends Basic
 {
 }

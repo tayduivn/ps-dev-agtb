@@ -10,8 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/MVC/View/views/view.quickcreate.php');
-require_once('modules/Emails/EmailUI.php');
 
 class EmailsViewQuickcreate extends ViewQuickcreate 
 {

@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/SugarFields/Fields/Collection/ViewSugarFieldCollection.php');
 $view = new ViewSugarFieldCollection();
 $view->setup();
 $view->process();

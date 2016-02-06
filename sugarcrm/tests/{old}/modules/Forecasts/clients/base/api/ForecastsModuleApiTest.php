@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/Forecasts/clients/base/api/ForecastsModuleApi.php';
 
 class ForecastsModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 {

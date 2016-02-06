@@ -14,7 +14,6 @@
  * THIS CLASS IS FOR DEVELOPERS TO MAKE CUSTOMIZATIONS IN
  */
 
-require_once 'modules/pmse_Project/pmse_BpmnLane/pmse_BpmnLane_sugar.php';
 
 class pmse_BpmnLane extends pmse_BpmnLane_sugar {
 

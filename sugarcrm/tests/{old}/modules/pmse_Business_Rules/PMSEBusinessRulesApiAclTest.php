@@ -12,7 +12,6 @@
  */
 
 require_once 'tests/{old}/SugarTestACLUtilities.php';
-require_once 'include/api/RestService.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 

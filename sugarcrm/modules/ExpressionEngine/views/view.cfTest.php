@@ -27,8 +27,6 @@ class ViewCfTest extends SugarView
  	}
  	
  	function display() {
- 		require_once("include/Expressions/Dependency.php");
- 		require_once("include/TemplateHandler/TemplateHandler.php");
  		$th = new TemplateHandler();
  		$depScript = $th->createDependencyJavascript(array(
  			'phone_office' => array(

@@ -394,7 +394,6 @@ class Currency extends SugarBean
      */
     public static function getCurrencies()
     {
-        require_once('modules/Currencies/ListCurrency.php');
 
         $currency = new ListCurrency();
         $currency->lookupCurrencies();
@@ -416,7 +415,6 @@ class Currency extends SugarBean
      */
     public static function getCurrencySymbols()
     {
-        require_once('modules/Currencies/ListCurrency.php');
 
         $currency = new ListCurrency();
         $currency->lookupCurrencies();
@@ -764,7 +762,6 @@ function getCurrencyDropDown($focus, $field='currency_id', $value='', $view='Det
                 $value = -99;
             }
         }
-        require_once('modules/Currencies/ListCurrency.php');
         $currency_fields = array();
         //Bug 18276 - Fix for php 5.1.6
         $defs=$focus->field_defs;
@@ -810,7 +807,6 @@ function getCurrencyDropDown($focus, $field='currency_id', $value='', $view='Det
 function getCurrencyNameDropDown($focus, $field='currency_name', $value='', $view='DetailView')
 {
     if($view == 'EditView' || $view == 'MassUpdate' || $view == 'QuickCreate'){
-        require_once('modules/Currencies/ListCurrency.php');
         $currency_fields = array();
         //Bug 18276 - Fix for php 5.1.6
         $defs=$focus->field_defs;
@@ -851,7 +847,6 @@ function getCurrencyNameDropDown($focus, $field='currency_name', $value='', $vie
 function getCurrencySymbolDropDown($focus, $field='currency_name', $value='', $view='DetailView')
 {
     if($view == 'EditView' || $view == 'MassUpdate' || $view == 'QuickCreate'){
-        require_once('modules/Currencies/ListCurrency.php');
         $currency_fields = array();
         //Bug 18276 - Fix for php 5.1.6
         $defs=$focus->field_defs;

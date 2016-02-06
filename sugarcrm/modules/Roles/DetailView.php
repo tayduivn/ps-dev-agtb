@@ -22,7 +22,6 @@
 
 
 require_once('modules/Roles/Forms.php');
-require_once('include/DetailView/DetailView.php');
 
 global $mod_strings;
 global $app_strings;
@@ -64,7 +63,6 @@ $xtpl->assign("DESCRIPTION", nl2br(url2html($focus->description)));
 $detailView->processListNavigation($xtpl, "ROLE", $offset);
 
 require_once("include/templates/TemplateGroupChooser.php");
-require_once("modules/MySettings/TabController.php");
 
 $chooser = new TemplateGroupChooser();
 $controller = new TabController();
@@ -120,7 +118,6 @@ ob_end_clean();
 ob_start();
 echo $old_contents;
 
-require_once('include/SubPanel/SubPanelTiles.php');
 $subpanel = new SubPanelTiles($focus, 'Roles');
 echo $subpanel->display();
 ?>

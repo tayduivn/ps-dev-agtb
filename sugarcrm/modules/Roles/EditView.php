@@ -59,7 +59,6 @@ $xtpl->assign("NAME", $focus->name);
 $xtpl->assign("DESCRIPTION", $focus->description);
 
 require_once("include/templates/TemplateGroupChooser.php");
-require_once("modules/MySettings/TabController.php");
 
 $chooser = new TemplateGroupChooser();
 $controller = new TabController();

@@ -15,7 +15,6 @@
  * methods and variables.
  ********************************************************************************/
 
-require_once("include/SugarObjects/templates/company/Company.php");
 
 // Account is used to store account information.
 class Account extends Company {

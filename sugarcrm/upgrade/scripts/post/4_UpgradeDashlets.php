@@ -32,7 +32,6 @@ class SugarUpgradeUpgradeDashlets extends UpgradeScript
             require 'modules/Home/dashlets.php';
         }
 
-        require_once 'include/MySugar/MySugar.php';
 
         $prefstomove = array('mypbss_date_start' => 'MyPipelineBySalesStageDashlet',
             'mypbss_date_end' => 'MyPipelineBySalesStageDashlet',

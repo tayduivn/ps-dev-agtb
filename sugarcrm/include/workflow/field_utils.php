@@ -690,7 +690,6 @@ function get_display_text($temp_module, $field, $field_value, $adv_type=null, $e
 
 //Used primarily for alert templates
 
-    require_once('include/SugarFields/SugarFieldHandler.php');
     $sugarField = SugarFieldHandler::getSugarField($target_type);
     $field_value = $sugarField->getEmailTemplateValue($field_value,$temp_module->field_defs[$field], $context);
 

@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
 
 /**
  * <b>indexOf(val, List l)</b><br>

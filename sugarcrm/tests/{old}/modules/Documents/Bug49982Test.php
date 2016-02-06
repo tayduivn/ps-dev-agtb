@@ -45,7 +45,6 @@ class Bug49982Test extends Sugar_PHPUnit_Framework_TestCase
      */
     function testSaveUploadError() {
         //first lets test that no errors show up under normal conditions, clear out Post array just in case there is stale info
-        require_once('include/MVC/View/SugarView.php');
         $sv = new SugarView();
         $this->assertFalse($sv->checkPostMaxSizeError(),'Sugar view indicated an upload error when there should be none.');
 

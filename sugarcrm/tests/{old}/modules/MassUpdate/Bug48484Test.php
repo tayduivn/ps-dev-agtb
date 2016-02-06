@@ -79,7 +79,6 @@ class Bug48484Test extends Sugar_PHPUnit_Framework_TestCase
 
 }
 
-require_once 'include/MassUpdate.php';
 
 class MassUpdateStub extends MassUpdate
 {

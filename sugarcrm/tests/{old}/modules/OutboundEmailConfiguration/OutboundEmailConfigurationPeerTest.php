@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php";
 require_once "OutboundEmailConfigurationTestHelper.php";
 
 /**

@@ -1,6 +1,5 @@
 <?php
 
-require_once 'data/BeanVisibility.php';
 require_once 'tests/{old}/tests/PHPUnit_Framework_SugarBeanRelated_TestCase.php';
 
 /**

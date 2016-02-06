@@ -112,7 +112,6 @@ function bpminbox_get_display_text($temp_module, $field, $field_value, $adv_type
         $field_value = (bool)$field_value;
     }
 
-    require_once 'include/SugarFields/SugarFieldHandler.php';
     $sugarField = SugarFieldHandler::getSugarField($target_type);
     //$GLOBALS['log']->debug("Field: $field is of type $target_type, before: $field_value");
     $field_value = $sugarField->getEmailTemplateValue($field_value, $temp_module->field_defs[$field], $context);
@@ -304,7 +303,6 @@ function get_bean_field_type($field_name_mapped, $bean_source_object)
 
 function bpminbox_execute_special_logic($field_name, &$source_object)
 {
-    require_once 'modules/pmse_Inbox/engine/PMSE.php';
     $pmse = PMSE::getInstance();
     if ($pmse->fileExists('modules/' . $source_object->module_dir . '/SaveOverload.php')) {
         require_once FileLoader::validateFilePath('modules/' . $source_object->module_dir . '/SaveOverload.php');

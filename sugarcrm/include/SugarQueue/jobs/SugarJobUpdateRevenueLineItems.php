@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/SchedulersJobs/SchedulersJob.php');
 
 /**
  * SugarJobUpdateRevenueLineItems.php
@@ -112,7 +111,6 @@ class SugarJobUpdateRevenueLineItems implements RunnableSchedulerJob
         $job->data = json_encode($data);
         $job->retry_count = 0;
         $job->assigned_user_id = $current_user->id;
-        require_once('include/SugarQueue/SugarJobQueue.php');
         $job_queue = new SugarJobQueue();
         return $job_queue->submitJob($job);
     }

@@ -10,9 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/DetailView/DetailView.php');
 
-require_once('include/SugarFolders/SugarFolders.php');
 
 use Sugarcrm\Sugarcrm\Util\Serialized;
 

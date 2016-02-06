@@ -11,7 +11,6 @@
  */
 
  
-require_once 'modules/Import/CsvAutoDetect.php';
 
 class CsvAutoDetectTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/TimeDate.php');
-require_once ('modules/SNIP/iCalParser.php');
 
 /**
  * @ticket 53942

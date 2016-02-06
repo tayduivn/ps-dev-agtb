@@ -20,7 +20,6 @@ class SugarUpgradeRebuildExtensions extends UpgradeScript
     {
         // we just finished with the layouts, we need to rebuild the extensions
         include "include/modules.php";
-        require_once("modules/Administration/QuickRepairAndRebuild.php");
         $rac = new RepairAndClear('', '', false, false);
         $rac->rebuildExtensions();
     }

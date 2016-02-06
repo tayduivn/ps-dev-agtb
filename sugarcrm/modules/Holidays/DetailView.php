@@ -20,7 +20,6 @@
 
 
 require_once('modules/Holidays/Forms.php');
-require_once('include/DetailView/DetailView.php');
 
 global $mod_strings;
 global $app_strings;

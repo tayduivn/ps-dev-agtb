@@ -11,9 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Reports/Report.php');
-require_once('include/generic/LayoutManager.php');
-require_once('include/generic/SugarWidgets/SugarWidgetFieldrelate.php');
 
 class Bug45716Helper {
     public $all_fields = array (

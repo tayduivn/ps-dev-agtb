@@ -17,7 +17,6 @@
  * For meetings module, in mobile edit and detail, duration hours and duration_minutes
  * should not be on any layout. 
  */
-require_once('modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php');
 
 class Bug57636Test extends Sugar_PHPUnit_Framework_TestCase {
     protected $testModule = 'Meetings';

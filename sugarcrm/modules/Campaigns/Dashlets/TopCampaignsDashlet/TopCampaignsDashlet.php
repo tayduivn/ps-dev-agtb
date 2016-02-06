@@ -12,7 +12,6 @@
 
  // $Id: MyOpportunitiesDashlet.php 24647 2007-07-26 00:21:25Z awu $
 
-require_once('include/Dashlets/Dashlet.php');
 
 class TopCampaignsDashlet extends Dashlet 
 { 

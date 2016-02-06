@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/connectors/sources/ext/rest/rest.php');
 class ext_rest_insideview extends ext_rest {
 	protected $_enable_in_wizard = false;
 	protected $_enable_in_hover = false;

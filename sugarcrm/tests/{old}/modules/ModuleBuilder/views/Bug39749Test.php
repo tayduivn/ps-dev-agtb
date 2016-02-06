@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/ModuleBuilder/views/view.labels.php');
 
 /**
  * Bug #39749

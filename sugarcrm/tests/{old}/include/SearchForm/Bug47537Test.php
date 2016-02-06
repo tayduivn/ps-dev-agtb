@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Quotes/Quote.php';
 require_once 'include/SearchForm/SearchForm2.php';
 
 class Bug47537Test extends Sugar_PHPUnit_Framework_TestCase {

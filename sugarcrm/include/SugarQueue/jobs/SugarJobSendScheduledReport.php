@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/SchedulersJobs/SchedulersJob.php';
 
 /**
  * Class to run a job which should submit report to a single user and schedule next run time
@@ -45,7 +44,6 @@ class SugarJobSendScheduledReport implements RunnableSchedulerJob
 
         $report_schedule_id = $data;
 
-        require_once 'modules/Reports/schedule/ReportSchedule.php';
         $reportSchedule = new ReportSchedule();
         $scheduleInfo = $reportSchedule->getInfo($report_schedule_id);
 
@@ -54,7 +52,6 @@ class SugarJobSendScheduledReport implements RunnableSchedulerJob
         $savedReport = BeanFactory::getBean('Reports', $scheduleInfo['report_id']);
 
         $GLOBALS["log"]->debug("-----> Generating Reporter");
-        require_once 'modules/Reports/Report.php';
         $reporter = new Report(from_html($savedReport->content));
 
         $reporter->is_saved_report = true;
@@ -73,7 +70,6 @@ class SugarJobSendScheduledReport implements RunnableSchedulerJob
 
             $reportOwner = BeanFactory::retrieveBean('Users', $savedReport->assigned_user_id);
             if ($reportOwner) {
-                require_once 'modules/Reports/utils.php';
                 $reportsUtils = new ReportsUtilities();
                 try {
                     $reportsUtils->sendNotificationOfInvalidReport($reportOwner, $message);

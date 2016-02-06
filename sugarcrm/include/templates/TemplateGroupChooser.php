@@ -11,7 +11,6 @@
  */
 
 $js_loaded = false;
-require_once("include/templates/Template.php");
 
 class TemplateGroupChooser extends Template {
     var $args;

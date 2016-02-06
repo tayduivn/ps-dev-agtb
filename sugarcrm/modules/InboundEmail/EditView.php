@@ -14,7 +14,6 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 $_REQUEST['edit']='true';
 
-require_once('include/SugarFolders/SugarFolders.php');
 require_once('include/templates/TemplateGroupChooser.php');
 
 use Sugarcrm\Sugarcrm\Util\Serialized;
@@ -356,7 +355,6 @@ $team_id = get_select_options_with_id($teamArr, $my_team_id);
 if($focus->is_personal) {
 	$code = "<select name='team_id' id ='team_id' tabindex='211' disabled >{$team_id}</select>";
 } else {
-require_once('include/QuickSearchDefaults.php');
 $qsd = QuickSearchDefaults::getQuickSearchDefaults();
 
 $sqs_objects = array(
@@ -364,7 +362,6 @@ $sqs_objects = array(
 );
 
 
-require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 $teamSetField = new EmailSugarFieldTeamsetCollection($focus, $focus->field_defs, "get_non_private_teams_array");
 $sqs_objects = array_merge($sqs_objects, $teamSetField->createQuickSearchCode(false));
 $json = getJSONobj();

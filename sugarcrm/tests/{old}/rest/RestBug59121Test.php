@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Administration/controller.php';
 require_once 'tests/{old}/rest/RestTestBase.php';
 
 class RestBug59121Test extends RestTestBase

@@ -11,11 +11,6 @@
  */
 
 
-require_once 'data/SugarBean.php';
-require_once 'modules/Contacts/Contact.php';
-require_once 'include/SubPanel/SubPanel.php';
-require_once 'include/SubPanel/SubPanel.php';
-require_once 'include/SubPanel/SubPanelDefinitions.php';
 
 /**
  * @ticket 41853

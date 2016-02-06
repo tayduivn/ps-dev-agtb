@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/connectors/formatters/FormatterFactory.php';
-require_once 'include/MVC/Controller/SugarController.php';
 require_once 'include/connectors/ConnectorsTestCase.php';
 
 class ConnectorsFormatterTest extends Sugar_Connectors_TestCase
@@ -56,7 +54,6 @@ EOQ;
 
            //Setup the neccessary Smarty configurations
         $this->parentFieldArray = 'fields';
-        require_once 'include/SugarObjects/VardefManager.php';
         VardefManager::loadVardef('Accounts', 'Account', true);
         require_once 'cache/modules/Accounts/Accountvardefs.php';
         $this->vardef = $GLOBALS['dictionary']['Account']['fields']['name'];

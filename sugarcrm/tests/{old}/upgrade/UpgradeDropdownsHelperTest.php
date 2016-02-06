@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'upgrade/UpgradeDropdownsHelper.php';
 
 /**
  * @covers UpgradeDropdownsHelper

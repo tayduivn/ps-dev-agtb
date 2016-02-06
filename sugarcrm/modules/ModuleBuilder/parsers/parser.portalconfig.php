@@ -13,9 +13,6 @@
 
 use Sugarcrm\Sugarcrm\Security\Crypto\CSPRNG;
 
-require_once 'modules/ModuleBuilder/parsers/ModuleBuilderParser.php';
-require_once 'modules/Administration/Administration.php';
-require_once 'modules/MySettings/TabController.php';
 
 class ParserModifyPortalConfig extends ModuleBuilderParser
 {

@@ -74,7 +74,6 @@ class SoapHelperWebServices {
 		} //if
 
 		if($value->module_dir == 'Bugs'){
-			require_once('modules/Releases/Release.php');
 			$seedRelease = BeanFactory::getBean('Releases');
 			$options = $seedRelease->get_releases(TRUE, "Active");
 			$options_ret = array();
@@ -183,7 +182,6 @@ function validate_user($user_name, $password){
 			if(!empty($_SESSION['is_valid_session']) && $this->is_valid_ip_address('ip_address') && $_SESSION['type'] == 'user'){
 
 				global $current_user;
-				require_once('modules/Users/User.php');
 				$current_user = BeanFactory::getBean('Users', $_SESSION['user_id']);
 				$this->login_success();
 				$GLOBALS['log']->info('Begin: SoapHelperWebServices->validate_authenticated - passed');
@@ -291,7 +289,6 @@ function validate_user($user_name, $password){
 
 	function checkQuery($errorObject, $query, $order_by = '')
     {
-        require_once 'include/SugarSQLValidate.php';
     	$valid = new SugarSQLValidate();
     	if(!$valid->validateQueryClauses($query, $order_by)) {
     		$GLOBALS['log']->error("SoapHelperWebServices->checkQuery - bad query: $query $order_by");
@@ -1094,7 +1091,6 @@ function validate_user($user_name, $password){
 
 	function check_for_duplicate_contacts($seed){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->check_for_duplicate_contacts');
-		require_once('modules/Contacts/Contact.php');
 
 		if(isset($seed->id)){
 			$GLOBALS['log']->info('End: SoapHelperWebServices->check_for_duplicate_contacts - no duplicte found');
@@ -1160,7 +1156,6 @@ function validate_user($user_name, $password){
 	function decrypt_string($string){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->decrypt_string');
         if (extension_loaded('mcrypt')) {
-			require_once('modules/Administration/Administration.php');
 			$focus = Administration::getSettings();
 			$key = '';
 			if(!empty($focus->settings['ldap_enc_key'])){

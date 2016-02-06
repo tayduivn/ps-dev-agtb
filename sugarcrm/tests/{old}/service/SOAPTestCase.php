@@ -11,7 +11,6 @@
  */
 
 require_once('vendor/nusoap//nusoap.php');
-require_once('include/TimeDate.php');
 
 abstract class SOAPTestCase extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -11,7 +11,6 @@
  */
 
 require_once('tests/{old}/rest/RestTestBase.php');
-require_once('modules/Leads/LeadConvert.php');
 
 /***
  * Used to test Lead Convert in Leads Module endpoints from LeadConvertApi.php

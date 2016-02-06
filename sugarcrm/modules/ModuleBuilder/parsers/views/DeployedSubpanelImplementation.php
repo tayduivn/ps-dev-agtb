@@ -16,8 +16,6 @@
  * which tracks files, not objects, needs us to create an intermediate file representation of the definition that it can manage and restore
  */
 
-require_once 'modules/ModuleBuilder/parsers/views/MetaDataImplementationInterface.php' ;
-require_once 'modules/ModuleBuilder/parsers/views/AbstractMetaDataImplementation.php' ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 class DeployedSubpanelImplementation extends AbstractMetaDataImplementation implements MetaDataImplementationInterface
@@ -52,7 +50,6 @@ class DeployedSubpanelImplementation extends AbstractMetaDataImplementation impl
         $this->historyPathname = 'custom/history/modules/' . $moduleName . '/subpanels/' . $subpanelName . '/' . self::HISTORYFILENAME ;
         $this->_history = new History ( $this->historyPathname ) ;
 
-        require_once ('include/SubPanel/SubPanelDefinitions.php') ;
         // retrieve the definitions for all the available subpanels for this module from the subpanel
         $spd = new SubPanelDefinitions ( $module ) ;
 
@@ -129,7 +126,6 @@ class DeployedSubpanelImplementation extends AbstractMetaDataImplementation impl
 
         $this->_viewdefs = $defs ;
 
-        require_once 'include/SubPanel/SubPanel.php' ;
         $subpanel = new SubPanel ( $this->_moduleName, 'fab4', $this->_subpanelName , $this->_aSubPanelObject ) ;
 
         $subpanel->saveSubPanelDefOverride ( $this->_aSubPanelObject, 'list_fields', $defs ) ;

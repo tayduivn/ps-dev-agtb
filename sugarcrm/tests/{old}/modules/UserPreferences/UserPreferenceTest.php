@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/Users/User.php';
 
 class UserPreferenceTest extends Sugar_PHPUnit_Framework_TestCase
 {

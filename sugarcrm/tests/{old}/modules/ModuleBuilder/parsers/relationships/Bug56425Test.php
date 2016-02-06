@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/ModuleBuilder/parsers/relationships/ActivitiesRelationship.php');
 
 /**
  * Bug #56425

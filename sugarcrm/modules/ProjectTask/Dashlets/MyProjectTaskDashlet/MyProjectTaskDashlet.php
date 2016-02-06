@@ -13,7 +13,6 @@
  // $Id: MyProjectTaskDashlet.php 45763 2009-04-01 19:16:18Z majed $
 
 
-require_once('include/Dashlets/DashletGeneric.php');
 
 
 class MyProjectTaskDashlet extends DashletGeneric { 

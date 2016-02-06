@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Teams/Team.php');
-require_once('modules/Teams/TeamMembership.php');
 
 class Bug43683Test extends Sugar_PHPUnit_Framework_TestCase
 {

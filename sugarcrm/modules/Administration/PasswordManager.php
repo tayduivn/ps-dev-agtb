@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php";
 
 use Sugarcrm\Sugarcrm\Util\Serialized;
 
@@ -35,7 +34,6 @@ echo getClassicModuleTitle(
            ),
         false
         );
-require_once('modules/Configurator/Configurator.php');
 $configurator = new Configurator();
 $sugarConfig = SugarConfig::getInstance();
 $focus = BeanFactory::getBean('Administration');
@@ -153,7 +151,6 @@ if (!empty($focus->settings['ldap_admin_password'])) {
     $focus->settings['ldap_admin_password'] = Administration::$passwordPlaceholder;
 }
 
-require_once('include/SugarLogger/SugarLogger.php');
 $sugar_smarty = new Sugar_Smarty();
 
 // if no IMAP libraries available, disable Save/Test Settings

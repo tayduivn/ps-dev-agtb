@@ -32,7 +32,6 @@ class UpgradeCustomTemplateMetaTest extends Sugar_PHPUnit_Framework_TestCase
      */
     function testMergeCallsEditviewdefsFor611()
     {
-        require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
         $this->merge = new EditViewMerge();
         $this->merge->merge('Calls', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/611/modules/Calls/metadata/editviewdefs.php', 'modules/Calls/metadata/editviewdefs.php', 'custom/modules/Calls/metadata/editviewdefs.php');
 
@@ -47,7 +46,6 @@ class UpgradeCustomTemplateMetaTest extends Sugar_PHPUnit_Framework_TestCase
      */
     function testMergeMeetingsEditviewdefsFor611()
     {
-        require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
         $this->merge = new EditViewMerge();
         $this->merge->merge('Meetings', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/611/modules/Meetings/metadata/editviewdefs.php', 'modules/Meetings/metadata/editviewdefs.php', 'custom/modules/Meetings/metadata/editviewdefs.php');
 
@@ -64,7 +62,6 @@ class UpgradeCustomTemplateMetaTest extends Sugar_PHPUnit_Framework_TestCase
      */
     function testMergeCustomButtonsAndStudioChanges()
     {
-        require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
         $this->merge = new EditViewMerge();
         $this->merge->merge('Notes', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/610/modules/Notes/metadata/editviewdefs.php', 'modules/Notes/metadata/editviewdefs.php', 'custom/modules/Notes/metadata/editviewdefs.php');
 

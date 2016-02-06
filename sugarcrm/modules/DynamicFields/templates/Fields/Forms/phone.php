@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 // $Id: date.php 30233 2007-12-05 00:31:22Z majed $
-require_once('modules/DynamicFields/templates/Fields/TemplatePhone.php');
 
 function get_body(&$ss, $vardef){
 	return $ss->fetch('modules/DynamicFields/templates/Fields/Forms/phone.tpl');

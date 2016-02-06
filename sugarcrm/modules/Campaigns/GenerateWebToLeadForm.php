@@ -74,7 +74,6 @@ if(!empty($_REQUEST['assigned_user_id'])){
 
 
 if(isset($_REQUEST['team_name']) && !empty($_REQUEST['team_name'])){
-	require_once('include/SugarFields/SugarFieldHandler.php');
 	$sfh = new SugarFieldHandler();
 	$sf = $sfh->getSugarField('Teamset', true);
 	
@@ -659,7 +658,6 @@ if(isset($Web_To_Lead_Form_html)) $xtpl->assign("BODY", $Web_To_Lead_Form_html);
 if(isset($Web_To_Lead_Form_html)) $xtpl->assign("BODY_HTML", $Web_To_Lead_Form_html); else $xtpl->assign("BODY_HTML", "");
 
 
-require_once('include/SugarTinyMCE.php');
 $tiny = new SugarTinyMCE();
 $tiny->defaultConfig['height']=400;
 $tiny->defaultConfig['apply_source_formatting']=true;

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once 'include/SubPanel/SubPanelDefinitions.php';
-require_once 'modules/MySettings/TabController.php';
 
 class Bug58089Test extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -19,7 +19,6 @@
  * Using the parser factory delegates including necessary parser files at construct
  * time as opposed to loading all required files per fixture.
  */
-require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
 
 class Bug56838Test extends Sugar_PHPUnit_Framework_TestCase {
     protected static $testModule = 'Cases';

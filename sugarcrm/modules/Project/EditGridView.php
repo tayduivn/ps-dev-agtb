@@ -338,7 +338,6 @@ $sugar_smarty->assign("CANEDIT",$current_user->id == $focus->assigned_user_id ||
 // Based on teamset ID, get a list of teams, and use that to check if this user
 // can edit the gantt chart
 $GLOBALS['log']->debug('EditGridView.php: Getting list of teams to determine access for editing gantt chart');
-require_once("modules/Teams/TeamSet.php");
 
 $list_of_teams = array();
 

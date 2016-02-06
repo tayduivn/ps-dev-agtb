@@ -12,8 +12,6 @@
 
 require_once('include/Sugarpdf/sugarpdf_config.php');
 require_once('vendor/tcpdf/tcpdf.php');
-require_once('include/SugarCache/SugarCacheFile.php');
-require_once('modules/Import/sources/ImportFile.php');
 require_once('vendor/Zend/Http/Response.php');
 require_once('vendor/Zend/Http/Response/Stream.php');
 

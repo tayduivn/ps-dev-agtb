@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/Expressions/Expression/String/ForecastCommitStageExpression.php');
 
 class ForecastCommitStageExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 {

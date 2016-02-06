@@ -14,7 +14,6 @@
 global $dictionary;
 //Load all relationship metadata
 include_once("modules/TableDictionary.php");
-require_once("data/BeanFactory.php");
 
 
 define('REL_LHS', 'LHS');

@@ -71,7 +71,6 @@ class component
             throw new Exception($GLOBALS['app_strings']['ERR_MISSING_MAPPING_ENTRY_FORM_MODULE']);
         }
 
-        require_once 'include/connectors/filters/FilterFactory.php';
         $filter = FilterFactory::getInstance(get_class($this->_source));
         $list = $filter->getList($args, $module);
 

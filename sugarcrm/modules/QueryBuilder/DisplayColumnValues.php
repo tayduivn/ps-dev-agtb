@@ -12,7 +12,6 @@
 global $app_list_strings;
 global $beanList;
 
-require_once('modules/QueryBuilder/QueryBuilder.php');
 
 //echo "MODULE NAME:".$_REQUEST['col_module_name'];
 $dropdown_module = $_REQUEST['column_module'];

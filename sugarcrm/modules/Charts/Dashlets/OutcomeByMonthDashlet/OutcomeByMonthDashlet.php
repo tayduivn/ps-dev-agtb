@@ -13,7 +13,6 @@
  // $Id: MyPipelineBySalesStageDashlet.php 24275 2007-07-13 04:26:44Z awu $
 
 
-require_once('include/Dashlets/DashletGenericChart.php');
 
 class OutcomeByMonthDashlet extends DashletGenericChart
 {
@@ -71,7 +70,6 @@ class OutcomeByMonthDashlet extends DashletGenericChart
         require("modules/Charts/chartdefs.php");
         $chartDef = $chartDefs['outcome_by_month'];
 
-        require_once('include/SugarCharts/SugarChartFactory.php');
         $sugarChart = SugarChartFactory::getInstance();
         $sugarChart->setProperties('',
             translate('LBL_OPP_SIZE', 'Charts') . ' ' . $currency_symbol . '1' .translate('LBL_OPP_THOUSANDS', 'Charts'),

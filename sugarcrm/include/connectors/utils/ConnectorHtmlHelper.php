@@ -26,7 +26,6 @@ class ConnectorHtmlHelper
      */
     public function getConnectorButtonCode(array $shown_sources, $module, $smarty)
     {
-        require_once('include/connectors/formatters/FormatterFactory.php');
 
         return $this->getButton($shown_sources, $module, $smarty);
     }

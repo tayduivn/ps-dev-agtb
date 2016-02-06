@@ -13,7 +13,6 @@
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
 
 class TemplateDatetimecombo extends TemplateRange 
 {

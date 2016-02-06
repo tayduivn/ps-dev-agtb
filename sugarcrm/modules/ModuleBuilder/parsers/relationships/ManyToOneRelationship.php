@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationship.php' ;
-require_once 'modules/ModuleBuilder/parsers/relationships/OneToManyRelationship.php' ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 /*

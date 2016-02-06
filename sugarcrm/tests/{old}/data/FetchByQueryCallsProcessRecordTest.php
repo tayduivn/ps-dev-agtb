@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/api/RestService.php');
-require_once('include/utils/LogicHook.php');
-require_once('include/MVC/View/SugarView.php');
 
 class FetchByQueryCallsProcessRecordTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -77,7 +74,6 @@ class FetchByQueryCallsProcessRecordTest extends Sugar_PHPUnit_Framework_TestCas
 
     public function testFetchByQueryCallsProcessRecordLogicHooks()
     {
-        require_once('include/SugarQuery/SugarQuery.php');
         global $accountHookRunCount;
         $accountHookRunCount = 0;
 

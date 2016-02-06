@@ -17,7 +17,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/SugarObjects/forms/PersonFormBase.php');
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
@@ -221,7 +220,6 @@ EOQ;
 
 $form .= $sugarEmailAddress->getEmailAddressWidgetEditView($contact->id, $_REQUEST['action']=='ConvertLead'?'Leads':'Contacts', false, 'include/SugarEmailAddress/templates/forWideFormBodyView.tpl');
 
-require_once('include/SugarFields/Fields/Text/SugarFieldText.php');
 $sugarfield = new SugarFieldText('Text');
 $description_text = $sugarfield->getClassicEditView('description', $contact->description, $prefix, true);
 

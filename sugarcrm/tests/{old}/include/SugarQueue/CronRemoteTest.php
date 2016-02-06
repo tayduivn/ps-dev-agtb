@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/SugarQueue/SugarJobQueue.php';
-require_once 'include/SugarQueue/SugarCronRemoteJobs.php';
 
 class CronRemoteTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/connectors/sources/default/source.php');
 require_once('vendor/nusoap//nusoap.php');
 
 /**

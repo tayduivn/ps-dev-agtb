@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('data/visibility/OwnerVisibility.php');
 
 /**
  *  Dashboards is used to store dashboard configuration data.

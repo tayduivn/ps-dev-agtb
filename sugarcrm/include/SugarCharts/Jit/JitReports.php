@@ -12,7 +12,6 @@
 
 // $Id$
 
-require_once("include/SugarCharts/Jit/Jit.php");
 
 class JitReports extends Jit {
 	

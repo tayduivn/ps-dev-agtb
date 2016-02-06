@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Forecasts/AbstractForecastHooks.php');
 class OpportunityHooks extends AbstractForecastHooks
 {
     /**

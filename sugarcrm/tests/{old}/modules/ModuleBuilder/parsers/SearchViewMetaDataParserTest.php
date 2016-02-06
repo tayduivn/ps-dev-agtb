@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("modules/ModuleBuilder/parsers/views/SearchViewMetaDataParser.php");
-require_once("modules/ModuleBuilder/parsers/views/DeployedMetaDataImplementation.php");
 
 class SearchViewMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
 {

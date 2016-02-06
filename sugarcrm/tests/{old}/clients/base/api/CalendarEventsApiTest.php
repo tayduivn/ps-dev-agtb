@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Meetings/clients/base/api/MeetingsApi.php';
-require_once 'modules/Calls/clients/base/api/CallsApi.php';
 
 /**
  * @group api

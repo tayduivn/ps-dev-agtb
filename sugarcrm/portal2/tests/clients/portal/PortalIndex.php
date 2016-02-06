@@ -11,7 +11,6 @@
  */
 
 // php phpunit.php --group=portal2 portal2/PortalIndex.php
-require_once 'jssource/minify_utils.php';
 
 class PortalIndexTest extends Sugar_PHPUnit_Framework_TestCase
 {

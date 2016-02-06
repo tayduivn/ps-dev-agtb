@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Tasks/Task.php";
-require_once('modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php');
 
 class Bug45715Test extends Sugar_PHPUnit_Framework_TestCase
 {

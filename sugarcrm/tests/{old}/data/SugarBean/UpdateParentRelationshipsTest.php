@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'data/Relationships/One2MBeanRelationship.php';
 
 class UpdateParentRelationshipsTest extends Sugar_PHPUnit_Framework_TestCase
 {

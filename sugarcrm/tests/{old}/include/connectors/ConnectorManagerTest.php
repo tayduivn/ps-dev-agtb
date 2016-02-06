@@ -17,9 +17,7 @@
 
 
 require_once 'include/connectors/utils/ConnectorUtils.php';
-require_once 'include/connectors/sources/SourceFactory.php';
 require_once 'modules/EAPM/EAPM.php';
-require_once 'include/connectors/ConnectorManager.php';
 
 
 class SourceTest

@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once('include/workflow/workflow_utils.php');
-require_once('modules/Expressions/Expression.php');
-require_once('include/workflow/glue.php');
 
 class Bug43572Test extends Sugar_PHPUnit_Framework_TestCase
 {

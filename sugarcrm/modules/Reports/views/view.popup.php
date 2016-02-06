@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/MVC/View/views/view.popup.php');
 class ReportsViewPopup extends ViewPopup
 {
 	var $type ='list';

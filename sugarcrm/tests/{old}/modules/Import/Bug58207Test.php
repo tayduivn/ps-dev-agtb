@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Import/sources/ImportFile.php');
 
 /**
  * Test checks Import when not using UTF-8 encoding

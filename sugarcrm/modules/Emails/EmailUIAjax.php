@@ -20,7 +20,6 @@ $request = InputValidation::getService();
       ini_set('max_execution_time', 300);
   }
 
-  require_once("include/OutboundEmail/OutboundEmail.php");
   require_once("vendor/ytree/Tree.php");
   require_once("vendor/ytree/ExtNode.php");
   global $mod_strings, $current_user;
@@ -38,7 +37,6 @@ $request = InputValidation::getService();
   $ie->email = $email;
   $json = getJSONobj();
 
-  require_once("include/SugarRouting/SugarRouting.php");
   $rules = new SugarRouting($ie, $current_user);
 
   $showFolders = Serialized::unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
@@ -252,7 +250,6 @@ $request = InputValidation::getService();
     case "deleteSignature":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: deleteSignature");
         if(isset($_REQUEST['id'])) {
-  			require_once("modules/UserSignatures/UserSignature.php");
 
   			BeanFactory::deleteBean('UserSignatures', $_REQUEST['id']);
             $signatureArray = $current_user->getSignaturesArray();
@@ -382,7 +379,6 @@ $request = InputValidation::getService();
 
     case 'saveQuickCreate':
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: saveQuickCreate");
-        require_once('include/MVC/Controller/ControllerFactory.php');
         if (isset($_REQUEST['qcmodule'])) {
             $GLOBALS['log']->debug("********** QCmodule was set: {$_REQUEST['qcmodule']}");
         }
@@ -788,7 +784,6 @@ $request = InputValidation::getService();
                 $ret = $ie->email->et->getDraftAttachments($ret, $ie);
             	$ret = $ie->email->et->getFromAllAccountsArray($ie, $ret);
 
-				require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 				$teamSetField = new EmailSugarFieldTeamsetCollection($ie->email, $ie->email->field_defs, "get_non_private_teams_array", 'composeEmailForm');
 				$teamSetField->user_id = $current_user->id;
 				$sqs_objects = $teamSetField->createQuickSearchCode(true);
@@ -1140,7 +1135,6 @@ eoq;
             $ret['folderId'] = $email->et->folder->id;
             $ret['folderName'] = $email->et->folder->name;
             $ret['parentFolderId'] = $email->et->folder->parent_folder;
-			require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 			$teamSetField = new EmailSugarFieldTeamsetCollection($email->et->folder, $ie->field_defs, "get_non_private_teams_array", 'EditViewGroupFolder');
 			$sqs_objects = $teamSetField->createQuickSearchCode(true);
 			$code = $teamSetField->get_code();

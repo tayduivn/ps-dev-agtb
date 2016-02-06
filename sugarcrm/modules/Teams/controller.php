@@ -13,7 +13,6 @@
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Symfony\Component\Validator\Constraints as AssertBasic;
 
-require_once('include/MVC/Controller/SugarController.php');
 class TeamsController extends SugarController {
 
 	//BEGIN SUGARCRM flav=int ONLY

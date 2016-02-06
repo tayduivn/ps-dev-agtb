@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/Employees/views/view.list.php';
 require_once 'include/SearchForm/SearchForm2.php';
 
 class EmployeesViewListTest extends Sugar_PHPUnit_Framework_TestCase

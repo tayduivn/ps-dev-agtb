@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/Expressions/Expression/Parser/Parser.php';
 
 
 if ( !empty($_GET['expression']) ) {

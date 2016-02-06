@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once ('modules/ModuleBuilder/parsers/ModuleBuilderParser.php') ;
 
 class ParserLabel extends ModuleBuilderParser
 {
@@ -71,7 +70,6 @@ class ParserLabel extends ModuleBuilderParser
      */
     protected function saveModuleLists($language, array $labels)
     {
-        require_once 'modules/Studio/wizards/RenameModules.php';
         $wizard = new RenameModules();
         $moduleLists = array(
             'LBL_MODULE_NAME' => 'moduleList',

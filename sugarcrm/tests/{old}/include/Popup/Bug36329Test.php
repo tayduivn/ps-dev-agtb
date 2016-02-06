@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('include/OutboundEmail/OutboundEmail.php');
 
 /**
  * @ticket 23140
@@ -69,12 +68,9 @@ class Bug36329Test extends Sugar_PHPUnit_Framework_TestCase
     	$_REQUEST['mode'] = 'single';
     	$_REQUEST['create'] = 'true';
     	$_REQUEST['metadata'] = 'undefined';
-    	require_once('include/MVC/View/SugarView.php');
-    	require_once('include/MVC/View/views/view.popup.php');
     	require_once('include/utils/layout_utils.php');
     	$popup = new ViewPopup();
     	$popup->module = 'Accounts';
-    	require_once('modules/Accounts/Account.php');
     	$popup->bean = new account();
     	$this->expectOutputRegex('/Perform a search using the search form above/');
     	$popup->display();
@@ -91,12 +87,9 @@ class Bug36329Test extends Sugar_PHPUnit_Framework_TestCase
     	$_REQUEST['metadata'] = 'undefined';
     	$_REQUEST['name_advanced'] = 'Test';
     	$_REQUEST['query'] = 'true';
-    	require_once('include/MVC/View/SugarView.php');
-    	require_once('include/MVC/View/views/view.popup.php');
     	require_once('include/utils/layout_utils.php');
     	$popup = new ViewPopup();
     	$popup->module = 'Accounts';
-    	require_once('modules/Accounts/Account.php');
     	$popup->bean = new account();
     	// Negative regexp
     	$this->expectOutputNotRegex('/Perform a search using the search form above/');

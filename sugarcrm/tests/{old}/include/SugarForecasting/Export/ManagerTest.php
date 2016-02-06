@@ -10,7 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/SugarForecasting/Export/Manager.php');
 
 class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {

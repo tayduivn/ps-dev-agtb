@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Calendar/Calendar.php';
 
 require_once 'vendor/HTTP_WebDAV_Server/Server.php';
 

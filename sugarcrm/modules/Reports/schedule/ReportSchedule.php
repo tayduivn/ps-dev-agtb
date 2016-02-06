@@ -197,7 +197,6 @@ function get_report_schedule($report_id){
             $owner = BeanFactory::retrieveBean('Users', $schedule['owner_id']);
             $subscriber = BeanFactory::retrieveBean('Users', $schedule['subscriber_id']);
 
-            require_once 'modules/Reports/utils.php';
             $utils = new ReportsUtilities();
             $utils->sendNotificationOfDisabledReport($schedule['report_id'], $owner, $subscriber);
         }

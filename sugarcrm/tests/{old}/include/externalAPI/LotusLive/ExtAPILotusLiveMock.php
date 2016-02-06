@@ -20,7 +20,6 @@
  *
  */
 
-require_once('include/externalAPI/LotusLive/ExtAPILotusLive.php');
 
 class ExtAPILotusLiveMock extends ExtAPILotusLive
 {

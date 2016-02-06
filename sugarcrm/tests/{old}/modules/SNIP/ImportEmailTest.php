@@ -11,10 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('data/SugarBean.php');
-require_once('modules/SNIP/SugarSNIP.php');
-require_once('modules/Emails/Email.php');
-require_once('include/TimeDate.php');
 
 /*
  * Tests SNIP's import email feature by calling $snip->importEmail() using dummy data. Does not test object creation.

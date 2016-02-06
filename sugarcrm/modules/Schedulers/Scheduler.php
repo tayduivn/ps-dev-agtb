@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/SchedulersJobs/SchedulersJob.php';
 require_once 'install/install_utils.php';
 
 class Scheduler extends SugarBean {

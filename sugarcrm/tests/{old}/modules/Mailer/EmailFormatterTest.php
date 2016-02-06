@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Mailer/EmailFormatter.php";
 
 class EmailFormatterTest extends Sugar_PHPUnit_Framework_TestCase
 {

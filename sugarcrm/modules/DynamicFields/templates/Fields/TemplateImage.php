@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/DynamicFields/templates/Fields/TemplateText.php');
 class TemplateImage extends TemplateText{
 	var $type = 'image';	
 		

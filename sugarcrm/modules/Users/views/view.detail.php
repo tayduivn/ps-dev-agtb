@@ -12,7 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('modules/Users/UserViewHelper.php');
 
 class UsersViewDetail extends ViewDetail {
 

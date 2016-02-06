@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/externalAPI/ExternalAPIFactory.php');
 
 
 class DocumentsViewExtdoc extends SugarView

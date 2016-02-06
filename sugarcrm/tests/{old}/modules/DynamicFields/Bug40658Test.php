@@ -22,7 +22,6 @@ class Bug40658Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function testGetRelateJoin()
     {
-		require_once('modules/DynamicFields/DynamicField.php');
 		$dynamicField = new DynamicField();
 		$account = new Account();
 		$dynamicField->bean = $account;
@@ -82,7 +81,6 @@ class Bug40658Test extends Sugar_PHPUnit_Framework_TestCase
     }
 }
 
-require_once('modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php');
 
 class SubpanelMetaDataParserMock extends SubpanelMetaDataParser
 {

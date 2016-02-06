@@ -13,7 +13,6 @@
 use Sugarcrm\Sugarcrm\Security\Crypto\CSPRNG;
 use Sugarcrm\Sugarcrm\Security\Password\Hash;
 
-require_once 'include/SugarOAuth2/SugarOAuth2StoragePlatform.php';
 
 class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
     /**
@@ -153,7 +152,6 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
      */
     public function setupVisibility() {
         // Add the necessary visibility and acl classes to the default bean list
-        require_once('modules/ACL/SugarACLSupportPortal.php');
         $default_acls = SugarBean::getDefaultACL();
         // This one overrides the Static ACL's, so disable that
         unset($default_acls['SugarACLStatic']);

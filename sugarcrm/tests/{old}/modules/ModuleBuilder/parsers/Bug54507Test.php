@@ -18,7 +18,6 @@
  * duplicate labels are not included for the Bugs module.
  */
 
-require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
 
 class Bug54507Test extends Sugar_PHPUnit_Framework_TestCase {
     protected $editModule = 'Bugs';

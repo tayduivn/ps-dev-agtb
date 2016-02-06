@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/View/views/view.modulelistmenu.php');
 
 class HomeViewModulelistmenu extends ViewModulelistmenu
 {

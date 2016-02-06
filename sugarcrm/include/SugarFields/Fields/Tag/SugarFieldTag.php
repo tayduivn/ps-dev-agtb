@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/SugarFields/Fields/Relatecollection/SugarFieldRelatecollection.php';
 
 /**
  * The SugarFieldTag handles the tag field

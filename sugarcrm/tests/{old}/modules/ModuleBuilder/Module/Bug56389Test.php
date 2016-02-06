@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/Module/StudioModule.php';
 
 /**
  * Make a test StudioModule class so as not to destroy ALL of the metadata. This
@@ -28,7 +27,6 @@ class Bug56389SugarModule extends StudioModule
      */
     function removeFieldFromLayouts($fieldName)
     {
-    	require_once("modules/ModuleBuilder/parsers/ParserFactory.php");
     	$sources = $this->getPortalLayoutSources();
         foreach ($sources as $defs)
         {

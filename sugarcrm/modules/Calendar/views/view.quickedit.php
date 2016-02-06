@@ -30,7 +30,6 @@ class CalendarViewQuickEdit extends SugarView
 
 	public function display()
 	{
-		require_once("modules/Calendar/CalendarUtils.php");
 
 		$module = $this->view_object_map['currentModule'];
 

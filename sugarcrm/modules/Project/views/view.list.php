@@ -20,7 +20,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('include/MVC/View/views/view.list.php');
 
 class ProjectViewList extends ViewList{
 

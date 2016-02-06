@@ -74,7 +74,6 @@ class Bug37841Test extends Sugar_PHPUnit_Framework_TestCase
     {
        $this->clearFilesInDirectory('custom/modules/Accounts/metadata');
        $this->clearFilesInDirectory('custom/history/modules/Accounts/metadata');
-       require_once('modules/UpgradeWizard/SugarMerge/SugarMerge.php');
        $sugar_merge = new SugarMerge('tests/{old}/modules/UpgradeWizard/SugarMerge/od_metadata_files/610/oob');
 
        //Using oob defs make sure nothing is merged
@@ -96,7 +95,6 @@ class Bug37841Test extends Sugar_PHPUnit_Framework_TestCase
         $customFile = "tests/{old}/modules/UpgradeWizard/SugarMerge/od_metadata_files/610/custom/modules/Accounts/metadata/detailviewdefs.php";
         $customFileTo = "custom/modules/Accounts/metadata/detailviewdefs.php";
         copy($customFile, $customFileTo);
-        require_once('modules/UpgradeWizard/SugarMerge/SugarMerge.php');
         $sugar_merge = new SugarMerge('tests/{old}/modules/UpgradeWizard/SugarMerge/od_metadata_files/610/custom');
         $mergedFiles = $sugar_merge->mergeModule('Accounts');
 

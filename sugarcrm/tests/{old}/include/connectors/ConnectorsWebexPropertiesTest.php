@@ -36,8 +36,6 @@ class ConnectorsWebexPropertiesTest extends Sugar_Connectors_TestCase {
 
     function testWebexProperty() {
 
-        require_once('modules/Connectors/controller.php');
-    	require_once('include/MVC/Controller/SugarController.php');
     	$controller = new ConnectorsController();
     	$_REQUEST['action'] = 'SaveModifyProperties';
     	$_REQUEST['module'] = 'Connectors';

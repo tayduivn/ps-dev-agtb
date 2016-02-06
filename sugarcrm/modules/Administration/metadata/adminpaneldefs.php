@@ -104,7 +104,6 @@ $admin_option_defs['Administration']['web_logic_hooks']=array('Administration','
 
 
 
-require_once 'include/SugarOAuthServer.php';
 if(SugarOAuthServer::enabled()) {
     $admin_option_defs['Administration']['oauth']= array('Password','LBL_OAUTH_TITLE','LBL_OAUTH','./index.php?module=OAuthKeys&action=index');
 }

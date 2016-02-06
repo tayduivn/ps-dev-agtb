@@ -11,11 +11,6 @@
  */
  
 require_once("modules/Meetings/Meeting.php");
-require_once("modules/Calls/Call.php");
-require_once("modules/Users/User.php");
-require_once("modules/Contacts/Contact.php");
-require_once("modules/Leads/Lead.php");
-require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 /**
  * Class for sending email reminders of meetings and call to invitees

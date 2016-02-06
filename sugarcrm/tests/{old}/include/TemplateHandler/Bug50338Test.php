@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/TemplateHandler/TemplateHandler.php';
  
 class Bug50338Test extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -11,7 +11,6 @@
  */
 
 
-require_once 'include/MVC/View/views/view.list.php';
 
 class PdfManagerViewList extends ViewList
 {

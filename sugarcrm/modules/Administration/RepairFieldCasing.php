@@ -57,8 +57,6 @@ if(is_admin($current_user)) {
 	    $views = array('basic_search', 'advanced_search', 'detailview', 'editview', 'quickcreate');
 	    $class_names = array();
 
-        require_once ('include/TemplateHandler/TemplateHandler.php') ;
-	    require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
 
 	    foreach($modules as $module) {
 	       if(isset($GLOBALS['beanList'][$module])) {
@@ -104,7 +102,6 @@ if(is_admin($current_user)) {
 	    } //foreach
 
 	    echo '<br>'.$mod_strings['LBL_CLEAR_VARDEFS_DATA_CACHE_TITLE'];
-	    require_once('modules/Administration/QuickRepairAndRebuild.php');
         $repair = new RepairAndClear();
         $repair->show_output = false;
         $repair->module_list = array($class_names);

@@ -30,7 +30,6 @@ class ConnectorManager
      */
     public function buildConnectorsMeta()
     {
-        require_once('include/connectors/sources/SourceFactory.php');
         require_once('include/connectors/utils/ConnectorUtils.php');
 
         $allConnectors = $this->getConnectorList();

@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once ('modules/ModuleBuilder/parsers/ModuleBuilderParser.php') ;
-require_once ('modules/ModuleBuilder/MB/MBPackage.php');
 
 class ParserSearchFields extends ModuleBuilderParser
 {

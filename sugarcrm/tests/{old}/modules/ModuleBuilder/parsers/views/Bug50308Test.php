@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once ('modules/ModuleBuilder/parsers/views/PopupMetaDataParser.php');
 
 /*
  * This test checks to see if custom elements can be defined in a popupdef and be handled by PopupMetaDataParser.php

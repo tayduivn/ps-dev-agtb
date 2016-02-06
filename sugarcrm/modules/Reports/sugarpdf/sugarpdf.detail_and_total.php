@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Reports/sugarpdf/sugarpdf.reports.php');
 
 class ReportsSugarpdfDetail_and_total extends ReportsSugarpdfReports
 {

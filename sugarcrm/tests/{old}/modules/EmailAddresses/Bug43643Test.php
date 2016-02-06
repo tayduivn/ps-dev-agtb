@@ -43,7 +43,6 @@ class Bug43643Test extends Sugar_PHPUnit_Framework_TestCase
             $non_reply_to_value
         );
 
-        require_once 'modules/EmailAddresses/EmailAddress.php';
         $email_address = new EmailAddress();
 
         // ensure that the only email address value is returned

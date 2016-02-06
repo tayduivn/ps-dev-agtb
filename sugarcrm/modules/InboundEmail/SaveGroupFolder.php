@@ -18,12 +18,10 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/SugarFolders/SugarFolders.php');
 $folder = new SugarFolder();
 $_REQUEST['name'] = $_REQUEST['groupFolderAddName'];
 $_REQUEST['parent_folder'] = $_REQUEST['groupFoldersAdd'];
 $_REQUEST['group_id'] = $_REQUEST['groupFoldersUser'];
-require_once("modules/Teams/TeamSet.php");
 $_REQUEST['team_id'] = $_REQUEST['primaryTeamId'];
 $teamSet = BeanFactory::getBean('TeamSets');
 $teamIds = explode(",", $_REQUEST['teamIds']);

@@ -1,6 +1,5 @@
 <?php
 
-require_once 'modules/ActivityStream/clients/base/api/SubscriptionsApi.php';
 
 /**
  * RS-77: Prepare Subscriptions Api

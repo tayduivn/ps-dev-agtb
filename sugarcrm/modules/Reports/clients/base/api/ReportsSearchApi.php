@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('clients/base/api/PersonFilterApi.php');
 require_once('modules/Reports/SavedReport.php');
 
 class ReportsSearchApi extends PersonFilterApi

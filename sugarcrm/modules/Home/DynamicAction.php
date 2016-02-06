@@ -12,7 +12,6 @@
 
 // $Id$
 
-require_once('include/MySugar/MySugar.php');
 
 $mySugar = new MySugar($_REQUEST['module']);
 if (!isset($_REQUEST['DynamicAction'])) {

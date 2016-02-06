@@ -12,7 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Security\Password\Hash;
 
-require_once 'include/SugarObjects/templates/person/Person.php';
 
 /**
  *  Contact is used to store customer information.

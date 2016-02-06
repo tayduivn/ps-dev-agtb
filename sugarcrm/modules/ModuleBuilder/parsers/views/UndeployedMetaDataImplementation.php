@@ -11,10 +11,6 @@
  */
 
 require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php' ;
-require_once 'modules/ModuleBuilder/parsers/views/AbstractMetaDataImplementation.php' ;
-require_once 'modules/ModuleBuilder/parsers/views/MetaDataImplementationInterface.php' ;
-require_once 'modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php' ;
-require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 class UndeployedMetaDataImplementation extends AbstractMetaDataImplementation implements MetaDataImplementationInterface

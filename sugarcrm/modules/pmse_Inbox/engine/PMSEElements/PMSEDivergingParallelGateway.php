@@ -11,7 +11,6 @@
  */
 
 
-require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEDivergingGateway.php';
 
 class PMSEDivergingParallelGateway extends PMSEDivergingGateway
 {

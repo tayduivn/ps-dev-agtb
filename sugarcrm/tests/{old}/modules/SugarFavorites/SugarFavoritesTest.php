@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('modules/SugarFavorites/SugarFavorites.php');
-require_once('modules/SugarFavorites/controller.php');
 
 class SugarFavoritesTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -19,7 +19,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Table;
 
-require_once 'modules/Administration/clients/base/api/AdministrationApi.php';
 
 /**
  *

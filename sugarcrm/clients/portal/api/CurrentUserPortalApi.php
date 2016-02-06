@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/CurrentUserApi.php';
 
 class CurrentUserPortalApi extends CurrentUserApi {
     /**

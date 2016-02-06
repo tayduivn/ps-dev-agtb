@@ -11,12 +11,8 @@
  */
 
 // also imports OutboundEmailConfiguration.php
-require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.php";
 
 // external imports
-require_once "include/OutboundEmail/OutboundEmail.php";
-require_once "modules/InboundEmail/InboundEmail.php";
-require_once "modules/Users/User.php";
 
 use Sugarcrm\Sugarcrm\Util\Serialized;
 

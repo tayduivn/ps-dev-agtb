@@ -1,6 +1,5 @@
 <?php
 
-require_once 'include/SugarQuery/Compiler/SQL.php';
 
 class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
 {

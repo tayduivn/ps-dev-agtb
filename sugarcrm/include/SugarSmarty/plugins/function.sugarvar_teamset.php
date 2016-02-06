@@ -74,7 +74,6 @@ r42627 - 2008-12-17 21:21:09 -0800 (Wed, 17 Dec 2008) - Collin Lee - Changed the
 */
 
 function smarty_function_sugarvar_teamset($params, &$smarty) {
-    require_once('include/SugarFields/SugarFieldHandler.php');
     $sfh = new SugarFieldHandler();
     $sugarField = $sfh->getSugarField('Teamset');
     return $sugarField->render($params, $smarty);

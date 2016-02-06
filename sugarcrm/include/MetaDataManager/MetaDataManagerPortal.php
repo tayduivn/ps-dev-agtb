@@ -10,9 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/MetaDataManager/MetaDataManager.php';
-require_once 'modules/MySettings/TabController.php';
-require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
 
 class MetaDataManagerPortal extends MetaDataManager
 {

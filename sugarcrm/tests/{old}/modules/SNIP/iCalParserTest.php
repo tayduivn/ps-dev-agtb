@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once ('modules/SNIP/iCalParser.php');
 
 /**
  * Tests SNIP's iCal Parser

@@ -1,7 +1,5 @@
 <?php
 
-require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticate.php';
-require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticateUser.php';
 
 class SugarAuthenticateTest extends Sugar_PHPUnit_Framework_TestCase {
 

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Mailer/EmailIdentity.php";   // requires EmailIdentity to represent each recipient
-require_once "modules/Mailer/MailerException.php"; // requires MailerException in order to throw exceptions of that type
 
 /**
  * This class encapsulates behavior related to translating recipient lists to the package that is being used to deliver

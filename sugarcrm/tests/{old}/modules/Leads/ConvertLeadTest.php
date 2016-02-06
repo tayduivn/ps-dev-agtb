@@ -11,7 +11,6 @@
  */
 
 require_once('tests/{old}/SugarTestViewConvertLeadUtilities.php');
-require_once 'modules/Leads/views/view.convertlead.php';
 require_once 'tests/{old}/SugarTestViewConvertLeadUtilities.php';
 
 

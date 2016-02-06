@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/View/SugarView.php');
 
 class ViewModifyProperties extends SugarView 
 {   
@@ -44,7 +43,6 @@ class ViewModifyProperties extends SugarView
     	global $mod_strings, $app_strings;
 		
 		require_once('include/connectors/utils/ConnectorUtils.php');
-		require_once('include/connectors/sources/SourceFactory.php');
 		
 		$this->ss->assign('mod', $mod_strings);
 		$this->ss->assign('APP', $app_strings);

@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/Users/authentication/AuthenticationController.php');
-require_once('modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticate.php');
 require_once('tests/{old}/modules/Users/AuthenticateTest.php');
 
 class Bug49069Test extends  Sugar_PHPUnit_Framework_TestCase

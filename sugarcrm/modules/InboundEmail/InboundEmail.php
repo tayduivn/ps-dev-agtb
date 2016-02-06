@@ -13,7 +13,6 @@
 use Sugarcrm\Sugarcrm\Util\Serialized;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-require_once('include/OutboundEmail/OutboundEmail.php');
 
 /**
  * Stub for certain interactions;
@@ -1055,7 +1054,6 @@ class InboundEmail extends SugarBean {
 				// new email cache values we should deal with
 				$diff = array_diff_assoc($UIDLs, $cacheUIDLs);
 				$diff = $this->pop3_shiftCache($diff, $cacheUIDLs);
-				require_once('modules/Emails/EmailUI.php');
                 $ui = new EmailUI();
                 $ui->preflightEmailCache("{$this->EmailCachePath}/{$this->id}");
 
@@ -1665,7 +1663,6 @@ class InboundEmail extends SugarBean {
 	function processRules($searchResults, $user=null) {
 		global $current_user;
 
-		require_once("include/SugarRouting/SugarRouting.php");
 
 
 		if(empty($user)) {
@@ -5235,7 +5232,6 @@ eoq;
 		} elseif($toIe == 'folder' && $fromFolder == 'sugar::Emails') {
 			$GLOBALS['log']->debug("********* SUGARFOLDER - moveEmails() moving email from SugarFolder to SugarFolder");
 			// move from sugar folder to sugar folder
-			require_once("include/SugarFolders/SugarFolders.php");
 			$sugarFolder = new SugarFolder();
 			$exUids = explode($app_strings['LBL_EMAIL_DELIMITER'], $uids);
 			foreach($exUids as $id) {
@@ -5314,7 +5310,6 @@ eoq;
 		} elseif($toIe == 'folder') {
 			$GLOBALS['log']->debug("********* SUGARFOLDER - moveEmails() moving email from I-E to SugarFolder");
 			// move to Sugar folder
-			require_once("include/SugarFolders/SugarFolders.php");
 			$sugarFolder = new SugarFolder();
 			$sugarFolder->retrieve($toFolder);
 			//Show the import form if we don't have the required info
@@ -5727,7 +5722,6 @@ eoq;
 	 * @param bool isMsgNo Flag to assume $uid is a MessageNo, not UniqueID, default false
 	 */
 	function displayOneEmail($uid, $mbox, $isMsgNo=false) {
-		require_once("include/JSON.php");
 
 		global $timedate;
 		global $app_strings;

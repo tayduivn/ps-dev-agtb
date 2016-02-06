@@ -36,7 +36,6 @@
  *  ),
  * 
  */
-require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 class SugarFieldAddress extends SugarFieldBase {
 
     function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {

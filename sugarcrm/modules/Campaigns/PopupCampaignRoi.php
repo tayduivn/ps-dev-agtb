@@ -20,8 +20,6 @@
 
 
 
-require_once('include/DetailView/DetailView.php');
-require_once('modules/Campaigns/Charts.php');
 
 
 global $mod_strings;

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("modules/Calendar/CalendarUtils.php");
 
 class Meeting extends SugarBean {
 	// Stored fields
@@ -194,7 +193,6 @@ class Meeting extends SugarBean {
         }
 
         if (!empty($this->type) && $this->type != 'Sugar' ) {
-            require_once('include/externalAPI/ExternalAPIFactory.php');
             $api = ExternalAPIFactory::loadAPI($this->type);
         }
 
@@ -582,7 +580,6 @@ class Meeting extends SugarBean {
 
 		$path = SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
 
-        require_once 'modules/vCals/vCal.php';
         $content = vCal::get_ical_event($this, $GLOBALS['current_user']);
 
         if (file_put_contents($path, $content)) {
@@ -909,7 +906,6 @@ function getMeetingsExternalApiDropDown($focus = null, $name = null, $value = nu
     $cacheKeyName = 'meetings_type_drop_down';
     $apiList = sugar_cache_retrieve($cacheKeyName);
     if ($apiList === null) {
-        require_once('include/externalAPI/ExternalAPIFactory.php');
 
         $apiList = ExternalAPIFactory::getModuleDropDown('Meetings');
         $apiList = array_merge(array('Sugar' => $app_list_strings['eapm_list']['Sugar']), $apiList);

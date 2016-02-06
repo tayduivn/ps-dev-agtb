@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Dashboards/clients/base/api/DashboardApi.php';
-require_once 'modules/Dashboards/clients/base/api/DashboardListApi.php';
 
 /**
  * RS-278: Fix Dashboards regression caused by RussianStandard PR #17355

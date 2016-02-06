@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/ExportApi.php';
-require_once 'clients/base/api/RecordListApi.php';
 
 /**
  * RS192: Prepare Export Api.

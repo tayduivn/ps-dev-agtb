@@ -41,7 +41,6 @@ class EAPMViewGoogleOauth2Redirect extends SugarView
             return false;
         }
 
-        require_once 'include/externalAPI/Google/ExtAPIGoogle.php';
         $api = new ExtAPIGoogle();
         return $api->authenticate($_GET['code']);
     }

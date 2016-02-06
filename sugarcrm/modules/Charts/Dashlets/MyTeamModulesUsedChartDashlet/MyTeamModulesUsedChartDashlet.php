@@ -17,7 +17,6 @@
  ********************************************************************************/
 
 
-require_once('include/Dashlets/DashletGenericChart.php');
 
 class MyTeamModulesUsedChartDashlet extends DashletGenericChart
 {
@@ -46,7 +45,6 @@ class MyTeamModulesUsedChartDashlet extends DashletGenericChart
         require("modules/Charts/chartdefs.php");
         $chartDef = $chartDefs['my_team_modules_used_last_30_days'];
 
-        require_once('include/SugarCharts/SugarChartFactory.php');
         $sugarChart = SugarChartFactory::getInstance();
         $sugarChart->forceHideDataGroupLink = true;
         $sugarChart->setProperties('', $chartDef['chartUnits'], $chartDef['chartType']);

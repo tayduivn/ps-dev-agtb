@@ -18,7 +18,6 @@
  ********************************************************************************/
 
 
-require_once('modules/Contacts/ContactOpportunityRelationship.php');
 
 
 global $app_strings;
@@ -47,7 +46,6 @@ safe_map('contact_role', $focus);
 $GLOBALS['log']->info("Contact opportunity relationship");
 
 $json = getJSONobj();
-require_once('include/QuickSearchDefaults.php');
 $qsd = QuickSearchDefaults::getQuickSearchDefaults();
 $sqs_objects = array('opportunity_name' => $qsd->getQSParent());
 $sqs_objects['opportunity_name']['populate_list'] = array('opportunity_name', 'opportunity_id');

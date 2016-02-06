@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/Localization/Localization.php');
 
 /**
  * Bug #35413

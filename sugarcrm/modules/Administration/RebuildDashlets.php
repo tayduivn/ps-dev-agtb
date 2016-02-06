@@ -17,7 +17,6 @@ if(is_admin($current_user)){
     if(is_file($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
         unlink($cachedfile);
     }
-    require_once('include/Dashlets/DashletCacheBuilder.php');
 
     $dc = new DashletCacheBuilder();
     $dc->buildCache();

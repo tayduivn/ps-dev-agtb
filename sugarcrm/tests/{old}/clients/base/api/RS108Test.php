@@ -1,6 +1,5 @@
 <?php
 
-require_once 'clients/base/api/FileTempApi.php';
 
 /**
  * RS-108

@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('data/SugarBean.php');
 
 class GetACLCategoryTest extends Sugar_PHPUnit_Framework_TestCase
 {

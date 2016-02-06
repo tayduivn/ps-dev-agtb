@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarSelectionListMetaDataUpgrader.php';
-require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
 
 class SidecarSelectionListMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
 {

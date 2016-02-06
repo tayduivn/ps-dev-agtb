@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarOAuth2/SugarOAuth2StoragePlatform.php';
 
 /**
  * Sugar OAuth2.0 Base Storage system, allows the OAuth2 library we are using to

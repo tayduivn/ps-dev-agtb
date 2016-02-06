@@ -11,10 +11,6 @@
  */
 
 
-require_once 'include/api/SugarApi.php';
-require_once 'modules/pmse_Inbox/engine/PMSE.php';
-require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
-require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Home/QuickSearch.php');
 require_once('modules/ACLFields/actiondefs.php');
 
 /**

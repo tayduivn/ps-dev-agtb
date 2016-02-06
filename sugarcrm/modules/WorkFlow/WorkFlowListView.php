@@ -42,7 +42,6 @@ global $focus_list;
 
 echo getClassicModuleTitle($mod_strings['LBL_MODULE_ID'], array($mod_strings['LBL_ALERT_TEMPLATES']), true); 
 
-require_once('modules/MySettings/StoreQuery.php');
 $storeQuery = new StoreQuery();
 if(!isset($_REQUEST['query'])){
 	$storeQuery->loadQuery($currentModule);

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/relationships/OneToManyRelationship.php';
 
 /**
  * One to Many relationship created between Targets module

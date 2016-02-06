@@ -615,7 +615,6 @@ function get_server_info(){
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_server_info');
 	global $sugar_flavor;
 	require_once('sugar_version.php');
-	require_once('modules/Administration/Administration.php');
 
 	$admin = Administration::getSettings('info');
 	$sugar_version = '';
@@ -725,7 +724,6 @@ function set_note_attachment($session, $note) {
 		return;
 	} // if
 
-	require_once('modules/Notes/NoteSoap.php');
 	$ns = new NoteSoap();
 	$GLOBALS['log']->info('End: SugarWebServiceImpl->set_note_attachment');
 	return array('id'=>$ns->newSaveFile($note));
@@ -749,14 +747,12 @@ function get_note_attachment($session,$id) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_note_attachment');
 		return;
 	} // if
-	require_once('modules/Notes/Note.php');
 	$note = BeanFactory::getBean('Notes', $id);
     if (!self::$helperObject->checkACLAccess($note, 'DetailView', $error, 'no_access')) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_note_attachment');
     	return;
     } // if
 
-	require_once('modules/Notes/NoteSoap.php');
 	$ns = new NoteSoap();
 	if(!isset($note->filename)){
 		$note->filename = '';
@@ -791,7 +787,6 @@ function set_document_revision($session, $document_revision) {
 		return;
 	} // if
 
-	require_once('modules/Documents/DocumentSoap.php');
 	$dr = new DocumentSoap();
 	$GLOBALS['log']->info('End: SugarWebServiceImpl->set_document_revision');
 	return array('id'=>$dr->saveFile($document_revision));
@@ -820,7 +815,6 @@ function get_document_revision($session, $id) {
 		return;
 	} // if
 
-    require_once('modules/DocumentRevisions/DocumentRevision.php');
     $dr = BeanFactory::getBean('DocumentRevisions', $id);
     if(!empty($dr->filename)){
         $filename = "upload://{$dr->id}";
@@ -869,7 +863,6 @@ function search_by_module($session, $search_string, $modules, $offset, $max_resu
 		$sugar_config['list_max_entries_per_page'] = $max_results;
 	}
 
-	require_once('modules/Home/UnifiedSearchAdvanced.php');
 	require_once 'include/utils.php';
 	$usa = new UnifiedSearchAdvanced();
     if(!file_exists($cachedfile = sugar_cached('modules/unified_search_modules.php'))) {
@@ -1169,7 +1162,6 @@ function get_report_entries($session, $ids, $select_fields ){
 	} // if
 
 	require_once('modules/Reports/SavedReport.php');
-	require_once('modules/Reports/Report.php');
 
 	foreach($ids as $id) {
 		$seed = BeanFactory::getBean('Reports', $id);

@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarFields/Fields/Base/SugarFieldBase.php';
 require_once 'modules/Teams/TeamSetManager.php';
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
@@ -92,7 +91,6 @@ class SugarFieldTeamset extends SugarFieldBase {
 
         $this->fields = $this->smarty->get_template_vars('fields');
     	$team_name_vardef = $this->fields["{$this->field_name}"];
-		require_once('include/SugarFields/Fields/Teamset/ViewSugarFieldTeamsetCollection.php');
 		$this->view = new ViewSugarFieldTeamsetCollection();
 		$this->view->displayParams = $this->params;
 		$this->view->vardef = $team_name_vardef;
@@ -233,7 +231,6 @@ class SugarFieldTeamset extends SugarFieldBase {
 	function renderImportView() {
     	$this->fields = $this->smarty->get_template_vars('fields');
     	$team_name_vardef = $this->fields["{$this->field_name}"];
-		require_once('include/SugarFields/Fields/Teamset/ViewSugarFieldTeamsetCollection.php');
 		$this->view = new ViewSugarFieldTeamsetCollection();
 		$this->view->displayParams = $this->params;
 		$this->view->vardef = $team_name_vardef;
@@ -278,7 +275,6 @@ class SugarFieldTeamset extends SugarFieldBase {
 	}
 
 	function initClassicView($fields, $formName='EditView'){
-		require_once('include/SugarFields/Fields/Teamset/ViewSugarFieldTeamsetCollection.php');
 		$this->view = new ViewSugarFieldTeamsetCollection();
         if(!$this->add_user_private_team)
         {
@@ -366,7 +362,6 @@ class SugarFieldTeamset extends SugarFieldBase {
 	 */
 	function getMassUpdateViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {
     	$_REQUEST['bean_id'] = isset($_REQUEST['record']) ? $_REQUEST['record'] : '';
-		require_once('include/SugarFields/Fields/Teamset/MassUpdateSugarFieldTeamsetCollection.php');
 		$this->view = new MassUpdateSugarFieldTeamsetCollection();
 		$displayParams['formName'] = 'MassUpdate';
 		$this->view->displayParams = $displayParams;

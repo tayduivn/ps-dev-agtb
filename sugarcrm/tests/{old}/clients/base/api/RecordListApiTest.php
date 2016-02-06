@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/RecordListApi.php';
 
 /**
  * RecordList Api Test

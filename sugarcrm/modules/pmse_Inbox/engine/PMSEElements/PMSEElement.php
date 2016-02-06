@@ -11,9 +11,6 @@
  */
 
 
-require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSERunnable.php';
-require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
-require_once 'include/SugarQuery/SugarQuery.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 

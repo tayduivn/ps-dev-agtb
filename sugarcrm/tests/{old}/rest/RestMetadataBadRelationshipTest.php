@@ -11,7 +11,6 @@
  */
 
 require_once('tests/{old}/rest/RestTestBase.php');
-require_once 'data/Relationships/RelationshipFactory.php';
 /**
  * Bug 57782 and 57780
  */

@@ -1,6 +1,5 @@
 <?php
 
-require_once 'clients/base/api/ListApi.php';
 
 /**
  * RS-176: Prepare List Api

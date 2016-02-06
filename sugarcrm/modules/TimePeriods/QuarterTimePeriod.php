@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/TimePeriods/TimePeriodInterface.php');
 /**
  * Implements the calendar quarter representation of a time period where the monthly
  * leaves are split by the calendar month

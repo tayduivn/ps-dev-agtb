@@ -20,7 +20,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('include/MVC/View/views/view.detail.php');
 
 class ProductsViewDetail extends ViewDetail {
 

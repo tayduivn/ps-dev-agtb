@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once ('modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php');
 
 /**
  * Bug #44428

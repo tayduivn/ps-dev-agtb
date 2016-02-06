@@ -20,7 +20,6 @@
 
 
 require_once("include/charts/Charts.php");
-require_once("modules/Charts/code/Chart_pipeline_by_sales_stage.php");
 
 global $app_list_strings, $current_language, $sugar_config, $currentModule, $action, $current_user, $theme, $timedate;
 $user_dateFormat = $timedate->get_date_format();

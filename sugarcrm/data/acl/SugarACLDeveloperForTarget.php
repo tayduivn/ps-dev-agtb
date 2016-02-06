@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'data/SugarACLStrategy.php';
-require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
 /**
  * This class is used to enforce ACLs on modules that are restricted to developers of a specific module

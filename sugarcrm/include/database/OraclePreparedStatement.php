@@ -62,7 +62,6 @@
         oci_execute($stmt);
  */
 
-require_once 'include/database/PreparedStatement.php';
 
 class OraclePreparedStatement extends PreparedStatement
 {

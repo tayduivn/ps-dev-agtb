@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
 
 /**
  * Bug 58463 - Drop Down Lists do not show in studio after save

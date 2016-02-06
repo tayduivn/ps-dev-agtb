@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/api/SugarListApi.php';
 
 /**
  *  RS-162: Prepare SugarList Api.

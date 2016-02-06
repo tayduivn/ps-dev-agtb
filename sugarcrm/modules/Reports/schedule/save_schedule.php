@@ -12,7 +12,6 @@
 
 if(!empty($_REQUEST['save_schedule_msi'])){
 	global $current_user, $timedate, $app_strings;
-require_once('modules/Reports/schedule/ReportSchedule.php');
 $rs = new ReportSchedule();
 global $timedate;
 if(!empty($_REQUEST['schedule_id'])){

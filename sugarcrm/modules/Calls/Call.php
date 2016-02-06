@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("modules/Calendar/CalendarUtils.php");
 
 class Call extends SugarBean {
 	var $field_name_map;

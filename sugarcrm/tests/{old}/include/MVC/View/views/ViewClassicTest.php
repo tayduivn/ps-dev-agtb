@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/View/views/view.classic.php');
 
 class ViewClassicTest extends Sugar_PHPUnit_Framework_TestCase
 {

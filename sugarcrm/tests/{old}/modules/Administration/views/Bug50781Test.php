@@ -12,7 +12,6 @@
  */
 
 
-require_once('modules/Administration/views/view.globalsearchsettings.php');
 
 class Bug50781Test extends Sugar_PHPUnit_Framework_TestCase
 {

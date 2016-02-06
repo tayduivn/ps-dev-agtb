@@ -15,7 +15,6 @@
  *
  */
 require_once('modules/UpgradeWizard/uw_utils.php');
-require_once('modules/Administration/UpgradeHistory.php');
 
 class Bug51721Test extends Sugar_PHPUnit_Framework_TestCase
 {

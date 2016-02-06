@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/api/SugarApi.php');
 
 class QuoteConvertApi extends SugarApi
 {

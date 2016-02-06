@@ -11,7 +11,6 @@
  */
 
  
-require_once("modules/ModuleBuilder/MB/MBPackage.php");
 
 class Bug49614Test extends Sugar_PHPUnit_Framework_TestCase
 {	

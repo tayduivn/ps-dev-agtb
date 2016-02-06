@@ -1,6 +1,5 @@
 <?php
 
-require_once('modules/Reports/Report.php');
 
 /**
  * Bug47723Test.php

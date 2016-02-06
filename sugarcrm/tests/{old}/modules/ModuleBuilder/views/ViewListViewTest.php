@@ -12,7 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
  
-require_once("modules/ModuleBuilder/views/view.listview.php");
 
 class ViewListViewTest extends Sugar_PHPUnit_Framework_TestCase
 {

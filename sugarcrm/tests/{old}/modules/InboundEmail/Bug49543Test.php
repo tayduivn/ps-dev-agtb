@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/InboundEmail/InboundEmail.php');
 /**
  * Bug #49543
  * Email cache reset issue causing email deletion slowness

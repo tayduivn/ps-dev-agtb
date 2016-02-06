@@ -12,7 +12,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/CollectionApi/CollectionDefinition/AbstractCollectionDefinition.php';
 
 /**
  * Collection of beans related to the primary bean by means of multiple links

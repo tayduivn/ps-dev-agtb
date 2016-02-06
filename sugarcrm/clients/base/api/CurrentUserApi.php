@@ -10,11 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'data/BeanFactory.php';
-require_once 'include/SugarFields/SugarFieldHandler.php';
-require_once 'include/MetaDataManager/MetaDataManager.php';
-require_once 'include/TimeDate.php';
-require_once 'include/api/SugarApi.php';
 require_once('modules/Users/password_utils.php');
 
 class CurrentUserApi extends SugarApi

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/api/SugarApi.php');
-require_once('modules/ExpressionEngine/formulaHelper.php');
 
 /**
  * Used to evaluate related expressions on the front end for arbitrary (possibly unsaved) records.

@@ -2,8 +2,6 @@
 /**
  * @group ActivityStream
  */
-require_once 'modules/ActivityStream/Activities/ActivityQueueManager.php';
-require_once 'modules/ActivityStream/Activities/Activity.php';
 
 /**
  * @group activities

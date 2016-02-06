@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once ('modules/SNIP/SugarSNIP.php');
 
 /*
  * Tests the getStatus() function of SugarSNIP to ensure that the return value is correct for various server responses.

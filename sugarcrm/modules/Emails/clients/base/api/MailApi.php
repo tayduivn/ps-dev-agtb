@@ -11,10 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('clients/base/api/ModuleApi.php');
-require_once('modules/Emails/MailRecord.php');
-require_once('modules/Emails/EmailRecipientsService.php');
-require_once('modules/Emails/EmailUI.php');
 
 class MailApi extends ModuleApi
 {

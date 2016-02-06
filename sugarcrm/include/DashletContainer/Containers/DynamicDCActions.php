@@ -25,7 +25,6 @@ if (isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version
 
 
 require_once('include/connectors/utils/ConnectorUtils.php');
-require_once('include/connectors/sources/SourceFactory.php');
 $connector = SourceFactory::getSource('ext_eapm_ibmsmartcloud', false);
 
 // Check if IBM SmartCloud (was Lotus Live) is configured and enabled

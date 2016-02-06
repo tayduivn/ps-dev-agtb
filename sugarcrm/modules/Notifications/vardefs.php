@@ -105,7 +105,6 @@ $dictionary['Notifications'] = array(
     ),
 );
 
-require_once 'include/SugarObjects/VardefManager.php';
 VardefManager::createVardef('Notifications', 'Notifications', array('basic', 'assignable'));
 
 $dictionary['Notifications']['fields']['assigned_user_name']['massupdate'] = false;

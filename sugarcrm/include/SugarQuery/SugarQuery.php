@@ -10,20 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarQuery/SugarQueryException.php';
-require_once 'include/SugarQuery/Compiler.php';
-require_once 'include/SugarQuery/Builder/Orderby.php';
-require_once 'include/SugarQuery/Builder/Having.php';
-require_once 'include/SugarQuery/Builder/Groupby.php';
-require_once 'include/SugarQuery/Builder/Where.php';
-require_once 'include/SugarQuery/Builder/Andwhere.php';
-require_once 'include/SugarQuery/Builder/Orwhere.php';
-require_once 'include/SugarQuery/Builder/Join.php';
-require_once 'include/SugarQuery/Builder/Select.php';
-require_once 'include/SugarQuery/Builder/Union.php';
-require_once 'include/SugarQuery/Builder/Condition.php';
-require_once 'include/SugarQuery/Builder/Literal.php';
-require_once 'include/SugarQuery/Builder/Field.php';
 
 class SugarQuery
 {

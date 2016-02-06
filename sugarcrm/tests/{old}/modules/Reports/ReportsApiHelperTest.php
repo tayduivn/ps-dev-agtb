@@ -12,8 +12,6 @@
  */
 
 
-require_once('modules/Reports/ReportsApiHelper.php');
-require_once('include/api/RestService.php');
 
 class ReportsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {

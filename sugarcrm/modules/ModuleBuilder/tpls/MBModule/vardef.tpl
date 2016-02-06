@@ -28,6 +28,5 @@ $dictionary['{{$class.name}}'] = array(
 );
 
 if (!class_exists('VardefManager')){
-    require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('{{$class.name}}','{{$class.name}}', array({{$class.templates}}));

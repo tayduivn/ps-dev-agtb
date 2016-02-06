@@ -11,7 +11,6 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once 'service/core/SugarWebServiceImpl.php';
-require_once 'service/v3/SugarWebServiceUtilv3.php';
 
 use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 
@@ -367,7 +366,6 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     		$sugar_config['list_max_entries_per_page'] = $max_results;
     	}
 
-    	require_once('modules/Home/UnifiedSearchAdvanced.php');
     	require_once 'include/utils.php';
     	$usa = new UnifiedSearchAdvanced();
         if(!file_exists($cachedfile = sugar_cached('modules/unified_search_modules.php'))) {

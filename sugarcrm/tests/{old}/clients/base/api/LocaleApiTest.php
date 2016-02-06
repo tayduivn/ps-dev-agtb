@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'clients/base/api/LocaleApi.php';
 
 /**
  * @group ApiTests

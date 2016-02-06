@@ -254,7 +254,6 @@ class EAPMController extends SugarController
     protected function action_delete()
     {
         if ($this->bean->application == 'Google') {
-            require_once 'include/externalAPI/Google/ExtAPIGoogle.php';
             $api = new ExtAPIGoogle();
             $api->revokeToken();
         } else {

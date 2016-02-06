@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once("include/Expressions/Expression/String/StringExpression.php");
 /**
  * <b>charAt(String s, Number index)</b><br>
  * Returns character at index <i>i</i> in <i>s</i>.<br/>

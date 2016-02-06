@@ -11,7 +11,6 @@
  */
 if(!file_exists('modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php')) return;
 
-require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
 /**
  * Upgrade sidecar portal metadata
  */

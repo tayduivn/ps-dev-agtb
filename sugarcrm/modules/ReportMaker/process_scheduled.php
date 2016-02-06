@@ -16,9 +16,7 @@
 //FILE SUGARCRM flav=ent ONLY
 $modListHeader = array();
 
-require_once('modules/Reports/schedule/ReportSchedule.php');
 require_once('modules/Reports/templates/templates_pdf.php');
-require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 global $sugar_config;
 

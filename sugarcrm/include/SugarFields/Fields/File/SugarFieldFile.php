@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarFields/Fields/Base/SugarFieldBase.php';
 
 class SugarFieldFile extends SugarFieldBase
 {
@@ -81,7 +80,6 @@ class SugarFieldFile extends SugarFieldBase
         $fakeDisplayParams = array();
         $this->fillInOptions($vardef, $fakeDisplayParams);
 
-        require_once 'include/upload_file.php';
         $upload_file = new UploadFile($prefix . $field . '_file');
 
         //remove file
@@ -299,7 +297,6 @@ class SugarFieldFile extends SugarFieldBase
         // handle copy
         // $params[$field . '_duplicateBeanId'] contains id of bean from which we should copy file
         if (!empty($params[$field . '_duplicateBeanId'])) {
-            require_once 'include/upload_file.php';
             $upload_file = new UploadFile($field . '_file');
             $duplicateModuleId = $params[$field . '_duplicateBeanId'];
             if ($bean->object_name == 'Note') {

@@ -11,7 +11,6 @@
  */
 
 
-require_once('modules/Import/maps/ImportMapOther.php');
 
 class ImportMapGoogle extends ImportMapOther
 {

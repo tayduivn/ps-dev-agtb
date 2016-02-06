@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once('modules/DynamicFields/FieldCases.php');
-require_once('modules/DynamicFields/DynamicField.php');
 
 global $mod_strings;
 $db = DBManagerFactory::getInstance();

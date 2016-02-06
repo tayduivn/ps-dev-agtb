@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarCharts/Jit/JitReports.php');
 
 class Bug52901Test extends Sugar_PHPUnit_Framework_TestCase
 {

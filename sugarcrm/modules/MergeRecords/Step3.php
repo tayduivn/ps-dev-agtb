@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once ('include/JSON.php');
 $timedate = TimeDate::getInstance();
 global $app_strings;
 global $mod_strings;
@@ -261,7 +260,6 @@ foreach ($temp_field_array as $field_array) {
                 break;
             case ('teamset') :
 
-				require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 				$mod = isset($_REQUEST['action_module']) ? $_REQUEST['action_module'] : $_REQUEST['merge_module'];
 				$bean = BeanFactory::getBean($mod, $base_id);
 				$teamsWidget = new EmailSugarFieldTeamsetCollection($bean, $bean->field_defs, '', 'EditView');

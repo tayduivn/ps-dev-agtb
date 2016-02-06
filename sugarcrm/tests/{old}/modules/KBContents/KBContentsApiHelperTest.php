@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'data/SugarBeanApiHelper.php';
-require_once 'modules/KBContents/KBContentsApiHelper.php';
-require_once 'include/api/RestService.php';
 
 class KBContentsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase 
 {

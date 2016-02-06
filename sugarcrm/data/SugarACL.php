@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'data/SugarACLStrategy.php';
-require_once 'modules/ACL/SugarACLStatic.php';
 
 /**
  * Generic ACL implementation

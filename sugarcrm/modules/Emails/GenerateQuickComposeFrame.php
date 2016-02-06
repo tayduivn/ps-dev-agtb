@@ -15,7 +15,6 @@
  * object and consumed by the client in an ajax call.
  */
 
-require_once('modules/Emails/EmailUI.php');
 $em = new EmailUI();
 $out = $em->displayQuickComposeEmailFrame();
 		

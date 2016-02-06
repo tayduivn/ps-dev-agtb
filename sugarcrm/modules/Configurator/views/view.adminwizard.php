@@ -16,10 +16,8 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/MVC/View/SugarView.php');
 require_once('modules/Configurator/Forms.php');
 require_once('modules/Administration/Forms.php');
-require_once('modules/Configurator/Configurator.php');
 
 class ViewAdminwizard extends SugarView
 {

@@ -84,7 +84,6 @@ class TrackerReportsAccessTest extends Sugar_PHPUnit_Framework_TestCase {
 		$result = $GLOBALS['db']->query($queryTrackerRole);
 		$trackerRoleId = $GLOBALS['db']->fetchByAssoc($result);
 		if(!empty($trackerRoleId['id'])) {
-		   require_once('modules/ACLRoles/ACLRole.php');
 		   $role1= new ACLRole();
 		   $role1->retrieve($trackerRoleId['id']);
 		   $role1->set_relationship('acl_roles_users', array('role_id'=>$role1->id ,'user_id'=>$this->non_admin_user->id), false);

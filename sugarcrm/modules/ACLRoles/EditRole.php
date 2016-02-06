@@ -106,7 +106,6 @@ echo $sugar_smarty->fetch('modules/ACLRoles/EditRole.tpl');
 if (!isset($dictionary[$categoryName]['hide_fields_to_edit_role']) ||
     $dictionary[$categoryName]['hide_fields_to_edit_role'] === false
 ) {
-    require_once('modules/ACLFields/EditView.php');
     echo ACLFieldsEditView::getView($categoryName, $role->id);
 }
 echo '</form>';

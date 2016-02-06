@@ -27,7 +27,6 @@ $focus = BeanFactory::getBean($module);
 
 $uids = array();
 if($_REQUEST['select_entire_list'] == '1'){
-	require_once('include/MassUpdate.php');
     $query = InputValidation::getService()->getValidInputRequest(
         'current_query_by_page',
         array('Assert\PhpSerialized' => array('base64Encoded' => true))

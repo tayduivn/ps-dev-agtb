@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/Dashlets/Dashlet.php');
 
 
 class CalendarDashlet extends Dashlet {
@@ -49,9 +48,6 @@ class CalendarDashlet extends Dashlet {
 		if(isset($GLOBALS['cal_strings']))
 			return parent::display() . "Only one Calendar dashlet is allowed.";
 			
-		require_once('modules/Calendar/Calendar.php');
-		require_once('modules/Calendar/CalendarDisplay.php');
-		require_once("modules/Calendar/CalendarGrid.php");
 		
 		global $cal_strings, $current_language;
 		$cal_strings = return_module_language($current_language, 'Calendar');

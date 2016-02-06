@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/View/views/view.list.php');
 
 class EmployeesViewList extends ViewList
 {
@@ -27,7 +26,6 @@ class EmployeesViewList extends ViewList
      */
     function prepareSearchForm() {
         parent::prepareSearchForm();
-        require_once('modules/Employees/EmployeesSearchForm.php');
         $newForm = new EmployeesSearchForm($this->searchForm);
         $this->searchForm = $newForm;
     }

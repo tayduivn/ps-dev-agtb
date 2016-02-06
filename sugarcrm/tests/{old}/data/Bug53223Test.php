@@ -12,9 +12,6 @@
 
 
 
-require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php' ;
-require_once 'include/SubPanel/SubPanelDefinitions.php';
-require_once 'include/SubPanel/SubPanel.php';
 /**
  * Bug #53223
  * wrong relationship from subpanel create button

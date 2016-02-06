@@ -148,7 +148,6 @@ if(!empty($focus->assigned_user_name))
 $xtpl->assign("assign_user_select", SugarThemeRegistry::current()->getImage('id-ff-select','',null,null,'.png',$mod_strings['LBL_SELECT']));
 $xtpl->assign("assign_user_clear", SugarThemeRegistry::current()->getImage('id-ff-clear','',null,null,'.gif',$mod_strings['LBL_ID_FF_CLEAR']));
 //Assign qsd script
-require_once('include/QuickSearchDefaults.php');
 $qsd = QuickSearchDefaults::getQuickSearchDefaults();
 $sqs_objects = array( 'EditView_assigned_user_name' => $qsd->getQSUser());
 $quicksearch_js = '<script type="text/javascript" language="javascript">sqs_objects = ' . $json->encode($sqs_objects) . '; enableQS();</script>';
@@ -157,7 +156,6 @@ $xtpl->assign("CANCEL_SCRIPT", $cancel_script);
 $xtpl->assign("JAVASCRIPT", get_set_focus_js() . $quicksearch_js);
 
 if(!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
-    require_once('include/language/jsLanguage.php');
     jsLanguage::createAppStringsCache($GLOBALS['current_language']);
 }
 $jsLang = getVersionedScript("cache/jsLanguage/{$GLOBALS['current_language']}.js",  $GLOBALS['sugar_config']['js_lang_version']);
@@ -186,7 +184,6 @@ if(isset($focus->text_only) && $focus->text_only){
 
 
 //Assign the Teamset field
-require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 $teamSetField = new SugarFieldTeamset('Teamset');
 $code = $teamSetField->getClassicView($focus->field_defs);
 $xtpl->assign("TEAM", $code);
@@ -225,7 +222,6 @@ if(isset($focus->body_html)) $xtpl->assign("BODY_HTML", $focus->body_html); else
 
 if(true) {
     if ( !isTouchScreen() ) {
-        require_once("include/SugarTinyMCE.php");
         $tiny = new SugarTinyMCE();
         $tiny->defaultConfig['cleanup_on_startup']=true;
         $tiny->defaultConfig['height']=600;

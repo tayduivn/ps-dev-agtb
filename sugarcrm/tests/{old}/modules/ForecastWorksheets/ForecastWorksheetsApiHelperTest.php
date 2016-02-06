@@ -11,7 +11,6 @@
  */
 
 require_once 'tests/{old}/SugarTestDatabaseMock.php';
-require_once 'modules/ForecastWorksheets/ForecastWorksheetsApiHelper.php';
 
 class ForecastWorksheetsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {

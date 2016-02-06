@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 //FILE SUGARCRM flav=ent ONLY
-require_once 'include/database/DBManagerFactory.php';
 
 class Bug57563Test extends Sugar_PHPUnit_Framework_TestCase
 {

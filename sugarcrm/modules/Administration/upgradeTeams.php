@@ -22,7 +22,6 @@ if(isset($globalteam->name)){
     $globalteam->create_team("Global", $mod_strings['LBL_GLOBAL_TEAM_DESC'], $globalteam->global_team);
 }
 
-require_once 'modules/SNIP/SugarSNIP.php';
 $results = $GLOBALS['db']->query("SELECT id, user_name FROM users WHERE default_team != '' AND default_team IS NOT NULL
     AND user_name NOT IN (" . $GLOBALS['db']->quoted(SugarSNIP::SNIP_USER) . ", 'SugarCustomerSupportPortalUser')");
 

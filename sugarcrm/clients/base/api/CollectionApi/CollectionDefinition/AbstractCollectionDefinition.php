@@ -12,7 +12,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/CollectionApi/CollectionDefinition/CollectionDefinitionInterface.php';
 
 /**
  * Base implementation of collection definition

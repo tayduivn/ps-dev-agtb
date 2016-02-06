@@ -11,8 +11,6 @@
  */
 
 
-require_once('include/SubPanel/SubPanel.php');
-require_once('include/SubPanel/SubPanelDefinitions.php');
 
 class Bug44272Test extends PHPUnit_Framework_TestCase
 {

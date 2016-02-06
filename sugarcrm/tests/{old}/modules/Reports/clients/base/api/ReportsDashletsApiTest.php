@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Reports/clients/base/api/ReportsDashletsApi.php');
 
 /**
  * Test ReportsDashlets Api

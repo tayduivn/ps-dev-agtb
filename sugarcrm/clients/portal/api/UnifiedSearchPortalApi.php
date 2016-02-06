@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'clients/base/api/UnifiedSearchApi.php';
 
 class UnifiedSearchPortalApi extends UnifiedSearchApi {
     /**

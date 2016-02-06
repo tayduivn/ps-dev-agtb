@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/QuickSearchDefaults.php');
 
 /**
  * @ticket 66276

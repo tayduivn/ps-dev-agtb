@@ -63,8 +63,6 @@
 * Contributor(s): ______________________________________..
 ********************************************************************************/
 
-require_once('include/database/MysqlManager.php');
-require_once 'include/database/MysqliPreparedStatement.php';
 
 /**
  * MySQL manager implementation for mysqli extension

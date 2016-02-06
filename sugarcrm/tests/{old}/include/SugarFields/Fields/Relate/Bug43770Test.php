@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarFields/Fields/Relate/SugarFieldRelate.php');
 
 class Bug43770Test extends Sugar_PHPUnit_Framework_TestCase
 {

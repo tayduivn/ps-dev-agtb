@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php');
 
 class SidecarMetaDataUpgraderBugCrys697Test extends Sugar_PHPUnit_Framework_TestCase
 {

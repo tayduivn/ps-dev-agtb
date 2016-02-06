@@ -11,7 +11,6 @@
  */
 $_REQUEST['edit']='true';
 
-require_once('include/SugarFolders/SugarFolders.php');
 
 // GLOBALS
 global $mod_strings;
@@ -93,7 +92,6 @@ if(!empty($focus->id)) {
 }
 
 
-require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 $teamSetField = new EmailSugarFieldTeamsetCollection($focus, $ie->field_defs, "get_non_private_teams_array");
 $code = $teamSetField->get_code();
 $sqs_objects = $teamSetField->createQuickSearchCode(false);

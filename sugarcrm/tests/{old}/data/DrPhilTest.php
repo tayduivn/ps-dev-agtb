@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/Relationships/Relationship.php';
-require_once 'data/Relationships/RelationshipFactory.php';
 
 /*
  * What is the DrPhilTest?

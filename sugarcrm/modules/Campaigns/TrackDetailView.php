@@ -19,8 +19,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-require_once('include/DetailView/DetailView.php');
-require_once('modules/Campaigns/Charts.php');
 
 
 global $mod_strings;
@@ -199,14 +197,12 @@ $chart= new campaign_charts();
 
 //end chart
 //custom chart code
-    require_once('include/SugarCharts/SugarChartFactory.php');
     $sugarChart = SugarChartFactory::getInstance();
 	$resources = $sugarChart->getChartResources();
 	$smarty->assign('chartResources', $resources);
 
 echo $smarty->fetch('modules/Campaigns/TrackDetailView.tpl');
 
-require_once('include/SubPanel/SubPanelTiles.php');
 $subpanel = new SubPanelTiles($focus, 'Campaigns');
     //if latest marketing id is empty, or if it is set to 'all'', then do no filtering, otherwise filter..
     //.. out the chart and subpanels by marketing id

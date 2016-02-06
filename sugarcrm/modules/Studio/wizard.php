@@ -16,7 +16,6 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 require_once 'modules/Studio/config.php';
-require_once 'modules/Studio/wizards/StudioWizard.php';
 
 $wizard = InputValidation::getService()->getValidInputRequest('wizard', null, 'StudioWizard');
 

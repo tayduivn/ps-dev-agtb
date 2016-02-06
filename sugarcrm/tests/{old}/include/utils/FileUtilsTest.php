@@ -48,7 +48,6 @@ class FileUtilsTests extends Sugar_PHPUnit_Framework_TestCase
 
     public function testEmail2GetMime()
     {
-        require_once 'modules/Emails/Email.php';
         $email = new Email();
         $expected = $email->email2GetMime($this->_testFileWithExt);
         $actual = $this->_getDefaultMimeType();
@@ -76,7 +75,6 @@ class FileUtilsTests extends Sugar_PHPUnit_Framework_TestCase
 
     public function testUploadFileGetSoapMime()
     {
-        require_once 'include/upload_file.php';
         $ul = new UploadFile();
 
         // Assert #1 file with extension
@@ -95,7 +93,6 @@ class FileUtilsTests extends Sugar_PHPUnit_Framework_TestCase
 
     public function testUploadFileGetMime()
     {
-        require_once 'include/upload_file.php';
         $ul = new UploadFile();
 
         // Assert #1 - file with extension and type set

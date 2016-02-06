@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/database/DBManagerFactory.php';
 
 class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
 {

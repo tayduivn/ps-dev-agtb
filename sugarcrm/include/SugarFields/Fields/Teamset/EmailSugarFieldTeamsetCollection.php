@@ -17,7 +17,6 @@
  *
  */
 
-require_once('include/SugarFields/Fields/Teamset/ViewSugarFieldTeamsetCollection.php');
 require_once 'modules/Teams/TeamSetManager.php';
 
 class EmailSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
@@ -157,7 +156,6 @@ class EmailSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
      */
     function createQuickSearchCode($returnAsJavascript=true){
         $sqs_objects = array();
-        require_once('include/QuickSearchDefaults.php');
         $qsd = QuickSearchDefaults::getQuickSearchDefaults();
         $qsd->setFormName($this->form_name);
         for($i=0; $i<$this->numFields; $i++) {

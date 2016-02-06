@@ -18,8 +18,6 @@
  ********************************************************************************/
 
 require_once('modules/Administration/Forms.php');
-require_once('include/SubPanel/SubPanelDefinitions.php');
-require_once('modules/MySettings/TabController.php');
 
 class ViewConfiguretabs extends SugarView
 {
@@ -57,7 +55,6 @@ class ViewConfiguretabs extends SugarView
         global $app_list_strings;
         global $app_strings;
         
-        require_once("modules/MySettings/TabController.php");
         $controller = new TabController();
         $tabs = $controller->get_tabs_system();
         // Remove Home module from UI.  We add it back to front of display tab list on save.

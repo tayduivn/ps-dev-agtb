@@ -11,9 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Calendar/Calendar.php';
-require_once 'modules/iCals/iCal.php';
-require_once 'modules/vCals/HTTP_WebDAV_Server_vCal.php';
 
     /**
      * Calendar access using WebDAV

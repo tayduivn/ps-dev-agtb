@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/api/ServiceBase.php';
-require_once 'data/SugarBeanApiHelper.php';
 
 /**
  * @group ApiTests

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Opportunities/Opportunity.php";
-require_once "modules/Accounts/Account.php";
 require_once "include/SearchForm/SearchForm2.php";
 
 class Bug45053Test extends Sugar_PHPUnit_Framework_TestCase

@@ -15,9 +15,6 @@
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  ********************************************************************************/
-require_once('modules/Import/views/ImportView.php');
-require_once('include/externalAPI/ExternalAPIFactory.php');
-require_once('modules/Import/Importer.php');
 
 class ImportViewStep1 extends ImportView
 {
@@ -122,7 +119,6 @@ class ImportViewStep1 extends ImportView
         $apis = ExternalAPIFactory::listAPI('Import', true);
         foreach ($apis as $name => $_) {
             if ($name == 'Google') {
-                require_once 'include/externalAPI/Google/ExtAPIGoogle.php';
                 $api = new ExtAPIGoogle();
                 $client = $api->getClient();
                 $loginUrl = $client->createAuthUrl();

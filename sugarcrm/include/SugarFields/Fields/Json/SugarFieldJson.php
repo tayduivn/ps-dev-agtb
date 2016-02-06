@@ -18,7 +18,6 @@
  *
  */
 
-require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
 class SugarFieldJson extends SugarFieldBase {
 	/**

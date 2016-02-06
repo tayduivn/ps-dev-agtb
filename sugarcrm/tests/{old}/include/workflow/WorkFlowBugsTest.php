@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/utils/LogicHook.php');
 
 class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -110,7 +109,6 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
 
 		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
-		require_once('modules/Accounts/Account.php');
     	unset($GLOBALS['triggeredWorkflows']);
     }
 

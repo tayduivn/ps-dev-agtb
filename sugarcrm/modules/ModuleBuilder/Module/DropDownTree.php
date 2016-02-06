@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/ModuleBuilder/MB/MBPackageTree.php');
-require_once('modules/ModuleBuilder/Module/DropDownBrowser.php');
 
 class DropDownTree extends MBPackageTree{
 

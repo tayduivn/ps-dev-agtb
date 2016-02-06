@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/UpgradeWizard/SugarMerge/DropdownMerger.php';
 
 /**
  * Merges all customized dropdown lists with their respective core dropdown lists. Uses data from the
@@ -35,7 +34,6 @@ class SugarUpgradeMergeDropdowns extends UpgradeScript
     {
         if (is_null($this->dropdownParser)) {
             if (!class_exists('ParserDropDown')) {
-                require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
             }
             $this->dropdownParser = new ParserDropDown();
         }

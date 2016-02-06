@@ -12,7 +12,6 @@
  */
 
 
-require_once 'modules/Quotes/Quote.php';
 
 class Bug49719Test extends Sugar_PHPUnit_Framework_TestCase
 {

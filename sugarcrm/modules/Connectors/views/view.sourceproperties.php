@@ -12,7 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('include/MVC/View/views/view.list.php');
 
 class ViewSourceProperties extends ViewList {
 
@@ -33,7 +32,6 @@ class ViewSourceProperties extends ViewList {
     {
         global $sugar_config;
 
-		require_once('include/connectors/sources/SourceFactory.php');
 		require_once('include/connectors/utils/ConnectorUtils.php');
 		
 		$source_id = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName');

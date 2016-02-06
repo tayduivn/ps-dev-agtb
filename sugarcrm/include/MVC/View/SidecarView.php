@@ -20,8 +20,6 @@
  *
  */
 
-require_once('include/MVC/View/SugarView.php');
-require_once('include/SugarTheme/SidecarTheme.php');
 
 class SidecarView extends SugarView
 {

@@ -12,7 +12,6 @@
  */
 
 
-require_once 'include/Sugarpdf/sugarpdf/sugarpdf.smarty.php';
 
 class SugarpdfPdfmanager extends SugarpdfSmarty
 {
@@ -99,7 +98,6 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
 
         if ($this->module == 'Quotes' && $previewMode === FALSE) {
             global $locale;
-            require_once 'modules/Quotes/Quote.php';
             require_once 'modules/Quotes/config.php';
             require_once 'modules/Currencies/Currency.php';
             $currency = BeanFactory::getBean('Currencies');

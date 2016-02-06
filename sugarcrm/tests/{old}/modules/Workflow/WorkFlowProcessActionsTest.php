@@ -11,7 +11,6 @@
  */
 
 require_once('include/workflow/action_utils.php');
-require_once('modules/WorkFlow/WorkFlow.php');
 
 class WorkFlowProcessActionsTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarSearchEngine/SugarSearchEngineAbstractResult.php';
-require_once 'include/SugarSearchEngine/SugarSearchEngineHighlighter.php';
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Result;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;

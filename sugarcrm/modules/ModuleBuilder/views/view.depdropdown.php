@@ -12,7 +12,6 @@
  */
 
 require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
-require_once ("modules/ModuleBuilder/Module/StudioModuleFactory.php");
 
 class ViewDepDropdown extends SugarView
 {

@@ -17,9 +17,6 @@
  ********************************************************************************/
 
 require_once("modules/Import/Forms.php");
-require_once("include/MVC/Controller/SugarController.php");
-require_once('modules/Import/sources/ImportFile.php');
-require_once('modules/Import/views/ImportListView.php');
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
@@ -114,8 +111,6 @@ class ImportController extends SugarController
     function action_RefreshMapping()
     {
         global $mod_strings;
-        require_once('modules/Import/sources/ImportFile.php');
-        require_once('modules/Import/views/view.confirm.php');
         $v = new ImportViewConfirm();
         $fileName = $this->request->getValidInputRequest('importFile', null, '');
         $delim = $_REQUEST['delim'];

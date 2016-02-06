@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Tasks/Task.php";
-require_once "modules/Teams/Team.php";
-require_once "modules/Contacts/Contact.php";
 require_once "include/SearchForm/SearchForm2.php";
 
 /**

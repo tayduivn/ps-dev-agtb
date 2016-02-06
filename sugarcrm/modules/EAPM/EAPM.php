@@ -9,10 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('data/SugarBean.php');
-require_once('include/SugarObjects/templates/basic/Basic.php');
-require_once('include/externalAPI/ExternalAPIFactory.php');
-require_once('include/SugarOauth.php');
 
 use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 /**
  * @group email
@@ -71,7 +70,6 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 
         $customMailer = <<<PHP
 <?php
-require_once "modules/Mailer/BaseMailer.php";
 
 class {$expected} extends BaseMailer
 {

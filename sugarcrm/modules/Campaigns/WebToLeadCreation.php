@@ -186,7 +186,6 @@ foreach ($lead->field_defs as $field_def) {
 
 $xtpl->assign("WEB_POST_URL",$web_post_url);
 
-require_once('include/QuickSearchDefaults.php');
 $qsd = QuickSearchDefaults::getQuickSearchDefaults();
 $sqs_objects = array('account_name' => $qsd->getQSParent(),
 					'assigned_user_name' => $qsd->getQSUser(),
@@ -196,7 +195,6 @@ $sqs_objects = array('account_name' => $qsd->getQSParent(),
 
 					);
 
-require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 $teamSetField = new SugarFieldTeamset('Teamset');
 $teamSetField->initClassicView($lead->field_defs, 'WebToLeadCreation');
 $sqs_objects = array_merge($sqs_objects, $teamSetField->getClassicViewQS());
@@ -256,7 +254,6 @@ $xtpl->out("main");
  *This function constructs Drag and Drop multiselect box of subscriptions for display in manage subscription form
 */
 function constructDDWebToLeadFields($fields,$classname){
-require_once("include/templates/TemplateDragDropChooser.php");
 global $mod_strings;
 $d2 = array();
     //now call function that creates javascript for invoking DDChooser object

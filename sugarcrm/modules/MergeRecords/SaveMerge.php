@@ -100,7 +100,6 @@ if (is_array($merged)) {
             	continue;
 
             if ($name == 'teams') {
-				require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 				$teamSetField = new SugarFieldTeamset('Teamset');
 			    if($teamSetField != null){
 			       $teamSetField->save($focus->merge_bean, $_REQUEST, 'team_name', '');

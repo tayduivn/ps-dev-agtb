@@ -11,9 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
-require_once('modules/Leads/ConvertLayoutMetadataParser.php');
-require_once('include/MetaDataManager/MetaDataManager.php');
 
 class ViewEditConvert extends SugarView
 {
@@ -76,7 +73,6 @@ class ViewEditConvert extends SugarView
         $modules = $this->getModulesFromDefs();
         $smarty->assign('modules', $this->jsonHelper->encode($modules));
 
-        require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php';
         $relatableModules = DeployedRelationships::findRelatableModules();
 
         //pull out modules that have already been chosen

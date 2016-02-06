@@ -14,8 +14,6 @@
 
 
 require_once('include/utils/activity_utils.php');
-require_once('modules/Calendar/CalendarUtils.php');
-require_once('modules/Calendar/CalendarActivity.php');
 
 
 class Calendar {

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once 'modules/Leads/Lead.php';
 
 class SugarTestLeadUtilities
 {

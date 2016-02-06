@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
 require_once 'include/dir_inc.php';
 
 class Bug44472Test extends Sugar_PHPUnit_Framework_TestCase  {
@@ -26,7 +25,6 @@ function tearDown() {
 
 function test620TemplateMetaMergeOnCases() 
 {		
-   require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
    $this->merge = new EditViewMerge();	
    $this->merge->merge('Cases', 'tests/{old}/modules/UpgradeWizard/SugarMerge/od_metadata_files/610/oob/modules/Cases/metadata/editviewdefs.php', 'modules/Cases/metadata/editviewdefs.php', 'custom/modules/Cases/metadata/editviewdefs.php');
    $this->assertTrue(file_exists('custom/modules/Cases/metadata/editviewdefs.php.suback.php'));
@@ -36,7 +34,6 @@ function test620TemplateMetaMergeOnCases()
 
 function test620TemplateMetaMergeOnMeetings() 
 {		
-   require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
    $this->merge = new EditViewMergeMock();	
    $this->merge->setModule('Meetings');
    $data = array();
@@ -52,7 +49,6 @@ function test620TemplateMetaMergeOnMeetings()
 
 function test620TemplateMetaMergeOnCalls() 
 {		
-   require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
    $this->merge = new EditViewMergeMock();	
    $this->merge->setModule('Calls');
    $data = array();

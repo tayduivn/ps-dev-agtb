@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ACL/SugarACLStatic.php';
 require_once 'SugarTestACLUtilities.php';
 
 /**

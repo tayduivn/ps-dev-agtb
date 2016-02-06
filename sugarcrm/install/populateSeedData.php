@@ -127,9 +127,6 @@ $replacements[] = '';
 
 //create timeperiods - pro only
 
-require_once('modules/Forecasts/ForecastDirectReports.php');
-require_once('modules/Forecasts/Common.php');
-require_once('modules/TimePeriods/TimePeriodsSeedData.php');
 
 installLog("DemoData: Time Periods");
 $timedate = TimeDate::getInstance();
@@ -855,7 +852,6 @@ $GLOBALS['mod_strings']  = $installerStrings;
     include('install/seed_data/quotes_SeedData.php');
 
     installLog("DemoData: Opportunities");
-    require_once('modules/Opportunities/OpportunitiesSeedData.php');
     $opportunity_ids = OpportunitiesSeedData::populateSeedData($number_companies*3, $app_list_strings, $accounts, $sugar_demodata['users']);
 
     foreach($contacts as $id)
@@ -871,7 +867,6 @@ $GLOBALS['mod_strings']  = $installerStrings;
     echo '.';
 
     installLog("DemoData: Forecasts");
-    require_once('modules/Forecasts/ForecastsSeedData.php');
     ForecastsSeedData::populateSeedData($timeperiods);
 
     installLog("DemoData: Done Forecasts");

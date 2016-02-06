@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/TimeDate.php';
-require_once 'modules/Calendar/Calendar.php';
 require_once 'modules/Meetings/Meeting.php';
 
 /**

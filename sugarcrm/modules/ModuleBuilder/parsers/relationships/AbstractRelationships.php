@@ -13,16 +13,13 @@
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 // Used in findRelatableModules
-require_once 'modules/ModuleBuilder/Module/StudioBrowser.php';
 
 // Used in addFromPost 
-require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationship.php';
 
 // Used in parseDeployedModuleName
 require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
 
 // Metadata API cache clearing
-require_once 'include/MetaDataManager/MetaDataManager.php';
 
 /*
  * Abstract class for managing a set of Relationships
@@ -144,7 +141,6 @@ class AbstractRelationships
     function addFromPost ()
     {
         $definition = array ( ) ;
-        require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationship.php' ;
 
         foreach (AbstractRelationship::$definitionKeys as $key) {
             if (!empty($_REQUEST[$key])) {
@@ -600,7 +596,6 @@ class AbstractRelationships
                 }
 
                 if ($definition['subpanel_name'] !== 'default') {
-                    require_once('include/MetaDataManager/MetaDataConverter.php');
                     $mc = new MetaDataConverter();
                     $override_array = array(
                         'override_subpanel_list_view' => array(

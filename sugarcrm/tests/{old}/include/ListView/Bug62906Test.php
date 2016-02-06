@@ -11,7 +11,6 @@
  */
 
 
-require_once('include/ListView/ListView.php');
 require_once('modules/ACLFields/actiondefs.php');
 
 /**

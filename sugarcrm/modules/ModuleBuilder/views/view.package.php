@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
 class Viewpackage extends SugarView
 {
@@ -62,7 +61,6 @@ class Viewpackage extends SugarView
 				$name = $original_name;
 			}
 			
-            require_once ('modules/ModuleBuilder/MB/MBPackageTree.php') ;
             $mbt = new MBPackageTree();
             $nodes = $mbt->fetchNodes();
             

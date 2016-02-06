@@ -13,7 +13,6 @@
 /**
  * Get the logger class for handling the log
  */
-require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 /**
  * Class contains utilities as encoder and decoders for codes url, remove bound fields,

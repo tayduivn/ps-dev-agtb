@@ -11,10 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/relationships/UndeployedRelationships.php' ;
-require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationships.php' ;
-require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationship.php' ;
-require_once 'modules/ModuleBuilder/parsers/relationships/ManyToManyRelationship.php' ;
 
 /*
  * This is an Adapter for the new UndeployedRelationships Class to allow ModuleBuilder to use the new class without change

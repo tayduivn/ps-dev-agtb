@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/Mailer/EmbeddedImage.php";                         // needed for converting inline images to embedded images
-require_once "modules/Administration/Administration.php"; // needed for getting the disclosure settings
 
 /**
  * This class implements the additional SugarCRM-specific email formatting that SmtpMailer lacks.

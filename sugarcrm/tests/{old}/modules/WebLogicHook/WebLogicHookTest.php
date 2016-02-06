@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Accounts/Account.php';
-require_once 'modules/WebLogicHooks/WebLogicHook.php';
 
 class WebLogicHookTest extends Sugar_PHPUnit_Framework_TestCase
 {

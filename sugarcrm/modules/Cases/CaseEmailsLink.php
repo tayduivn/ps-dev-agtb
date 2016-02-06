@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Emails/ArchivedEmailsBeanLink.php';
 
 /**
  * Links connected emails for a case

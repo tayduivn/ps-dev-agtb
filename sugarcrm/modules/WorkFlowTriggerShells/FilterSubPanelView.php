@@ -20,7 +20,6 @@
 
 
 
-require_once('include/JSON.php');
 
 global $app_strings;
 //we don't want the parent module's string file, but rather the string file specifc to this subpanel

@@ -19,9 +19,6 @@
  *
  */
 
-require_once('include/externalAPI/Base/OAuthPluginBase.php');
-require_once('include/externalAPI/Base/WebMeeting.php');
-require_once('include/externalAPI/Base/WebDocument.php');
 
 class ExtAPIIBMSmartCloud extends OAuthPluginBase implements WebMeeting,WebDocument {
 

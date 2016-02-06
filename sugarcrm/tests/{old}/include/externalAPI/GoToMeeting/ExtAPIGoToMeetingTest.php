@@ -20,7 +20,6 @@
  *
  */
 
-require_once('include/externalAPI/GoToMeeting/ExtAPIGoToMeeting.php');
 
 /**
  * Class ExtAPIGoToMeetingTest

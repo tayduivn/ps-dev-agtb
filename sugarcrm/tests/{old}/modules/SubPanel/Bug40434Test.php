@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "include/SubPanel/SubPanelDefinitions.php";
 
 class Bug40434Test extends Sugar_PHPUnit_Framework_TestCase
 {

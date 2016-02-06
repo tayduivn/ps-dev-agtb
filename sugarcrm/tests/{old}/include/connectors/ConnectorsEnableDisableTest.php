@@ -61,8 +61,6 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
 
     public function testEnableAll()
     {
-        require_once 'modules/Connectors/controller.php';
-        require_once 'include/MVC/Controller/SugarController.php';
 
         $_REQUEST['display_values'] = "ext_rest_twitter:Accounts,ext_rest_twitter:Leads";
         $_REQUEST['display_sources'] = 'ext_rest_twitter';
@@ -84,8 +82,6 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
 
     public function testDisableAll()
     {
-        require_once 'modules/Connectors/controller.php';
-        require_once 'include/MVC/Controller/SugarController.php';
         $controller = new ConnectorsController();
 
         $_REQUEST['display_values'] = '';

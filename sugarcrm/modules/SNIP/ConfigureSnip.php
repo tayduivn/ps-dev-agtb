@@ -18,7 +18,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once 'modules/SNIP/SugarSNIP.php';
 if (!is_admin($current_user)) {
     sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
 }

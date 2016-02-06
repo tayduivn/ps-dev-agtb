@@ -15,7 +15,6 @@
 include_once('include/workflow/workflow_utils.php');
 include_once('include/workflow/field_utils.php');
 include_once('include/utils/expression_utils.php');
-require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 function process_workflow_alerts(& $target_module, $alert_user_array, $alert_shell_array, $check_for_bridge=false){
 

@@ -12,7 +12,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/ExportApi.php';
 
 class TeamBasedACLExportApiTest extends Sugar_PHPUnit_Framework_TestCase
 {

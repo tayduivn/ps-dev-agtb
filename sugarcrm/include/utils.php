@@ -19,7 +19,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-require_once 'include/SugarObjects/SugarConfig.php';
 require_once 'include/utils/security_utils.php';
 require_once 'include/utils/array_utils.php';
 
@@ -2543,7 +2542,6 @@ function clone_history(&$db, $from_id,$to_id, $to_type)
     global $timedate;
     $old_note_id=null;
     $old_filename=null;
-    require_once 'include/upload_file.php';
     $tables = array('calls'=>'Call', 'meetings'=>'Meeting', 'notes'=>'Note', 'tasks'=>'Task');
 
     $location=array('Email'=>"modules/Emails/Email.php",
@@ -3305,7 +3303,6 @@ function sugar_cleanup($exit = false)
     }
 
     global $sugar_config;
-    require_once 'include/utils/LogicHook.php';
     LogicHook::initialize();
     $GLOBALS['logic_hook']->call_custom_logic('', 'server_round_trip');
 
@@ -4336,7 +4333,6 @@ function generate_search_where ($field_list=array(),$values=array(),&$bean,$add_
         }
     }
     if ($add_custom_fields) {
-        require_once 'modules/DynamicFields/DynamicField.php';
         $bean->setupCustomFields($module);
         $bean->custom_fields->setWhereClauses($where_clauses);
     }
@@ -5597,7 +5593,6 @@ function ensureJSCacheFilesExist($files = array(), $root = '.', $addPath = true)
         // FIXME: setting $_REQUEST parameters ourselves ...
         // Build the concatenated files
         $_REQUEST['root_directory'] = $root;
-        require_once("jssource/minify_utils.php");
         $minifyUtils = new SugarMinifyUtils();
         $minifyUtils->ConcatenateFiles($root);
 

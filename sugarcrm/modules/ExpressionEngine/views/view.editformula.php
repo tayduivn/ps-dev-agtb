@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/ExpressionEngine/formulaHelper.php');
 
 class ViewEditFormula extends SugarView
 {
@@ -37,14 +36,12 @@ class ViewEditFormula extends SugarView
  		global $app_strings, $current_user, $mod_strings, $theme, $beanList, $beanFiles;
 		$smarty = new Sugar_Smarty();
  		$json = new JSON();
-		require_once('include/JSON.php');
 		//Load the field list from the target module
         if(!empty($_REQUEST['targetModule']) && $_REQUEST['targetModule'] != 'undefined')
  		{
 			$module = $_REQUEST['targetModule'];
  			if (isset($_REQUEST['package']) && $_REQUEST['package'] != 'studio' && $_REQUEST['package'] != '') {
 				//Get the MB Parsers
- 				require_once('modules/ModuleBuilder/MB/MBPackage.php');
  				$pak = new MBPackage($_REQUEST['package']);
  				$defs = $pak->modules[$module]->getVardefs();
                 $fields = FormulaHelper::cleanFields(array_merge($pak->modules[$module]->getLinkFields(), $defs['fields']));

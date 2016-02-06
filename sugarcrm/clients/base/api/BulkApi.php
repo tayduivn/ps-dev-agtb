@@ -9,9 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/api/BulkRestService.php';
-require_once 'include/api/BulkRestRequest.php';
-require_once 'include/api/BulkRestResponse.php';
 
 /**
  * Bulk API calls

@@ -57,7 +57,6 @@ class SugarMetric_Helper
             if (file_exists('custom/include/SugarMetric/Manager.php')) {
                 require_once 'custom/include/SugarMetric/Manager.php';
             } elseif (file_exists('include/SugarMetric/Manager.php')) {
-                require_once 'include/SugarMetric/Manager.php';
             }
         }
     }

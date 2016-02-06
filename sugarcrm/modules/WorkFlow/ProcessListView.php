@@ -47,7 +47,6 @@ echo getClassicModuleTitle($mod_strings['LBL_MODULE_ID'], array($mod_strings['LB
 $request = InputValidation::getService();
 $target_base_module = $request->getValidInputRequest('base_module', 'Assert\Bean\ModuleName');
 
-require_once('modules/MySettings/StoreQuery.php');
 $storeQuery = new StoreQuery();
 if(!isset($_REQUEST['query'])){
 	$storeQuery->loadQuery($currentModule);

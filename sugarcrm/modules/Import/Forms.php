@@ -81,7 +81,6 @@ function getControl(
         static $sfh;
 
         if(!isset($sfh)) {
-            require_once('include/SugarFields/SugarFieldHandler.php');
             $sfh = new SugarFieldHandler();
         }
 

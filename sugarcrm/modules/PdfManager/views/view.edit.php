@@ -12,7 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once 'include/MVC/View/views/view.edit.php';
 
 class PdfManagerViewEdit extends ViewEdit
 {
@@ -42,7 +41,6 @@ class PdfManagerViewEdit extends ViewEdit
         }
     
         // Load TinyMCE
-        require_once 'include/SugarTinyMCE.php';
         $tiny = new SugarTinyMCE();
         $tiny->defaultConfig['apply_source_formatting']=true;
         $tiny->defaultConfig['cleanup_on_startup']=true;

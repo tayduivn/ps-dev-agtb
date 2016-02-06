@@ -11,8 +11,6 @@
  */
 
  
-require_once('include/MVC/View/views/view.detail.php');
-require_once('include/MVC/View/ViewFactory.php');
 
 /**
  * @group bug47572

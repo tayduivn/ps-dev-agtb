@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/View/SugarView.php');
-require_once('include/connectors/sources/SourceFactory.php');
 
 class ViewModifyMapping extends SugarView 
 {   
@@ -43,7 +41,6 @@ class ViewModifyMapping extends SugarView
 	public function display() 
 	{	
 		require_once('include/connectors/utils/ConnectorUtils.php');
-		require_once('include/connectors/sources/SourceFactory.php');
 		global $mod_strings, $app_strings;
 		$this->ss->assign('mod', $mod_strings);
 		$this->ss->assign('APP', $app_strings);

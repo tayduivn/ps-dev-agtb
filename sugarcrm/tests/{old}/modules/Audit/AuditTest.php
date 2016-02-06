@@ -12,7 +12,6 @@
  */
 
 require_once 'tests/{old}/SugarTestDatabaseMock.php';
-require_once 'modules/Audit/Audit.php';
 
 class AuditTest extends Sugar_PHPUnit_Framework_TestCase
 {

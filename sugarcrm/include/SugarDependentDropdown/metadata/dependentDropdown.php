@@ -13,7 +13,6 @@ global $app_strings; // coming from an include in a method call
 global $current_user;
 
 
-require_once("include/SugarRouting/SugarRouting.php");
 
 $ie = BeanFactory::getBean('InboundEmail');
 $rules = new SugarRouting($ie, $current_user);

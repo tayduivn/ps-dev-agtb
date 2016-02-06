@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/TimePeriods/TimePeriodsSeedData.php');
 
 class PopulateTimePeriodsSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
 {

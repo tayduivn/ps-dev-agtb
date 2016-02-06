@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Filters/clients/base/api/PreviouslyUsedFiltersApi.php';
 
 /**
  *  RS175: Prepare PreviouslyUsedFilters Api.

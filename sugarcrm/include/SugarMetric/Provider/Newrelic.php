@@ -11,7 +11,6 @@
  */
 
 
-require_once 'include/SugarMetric/Provider/Interface.php';
 
 /**
  * Newrelic data provider class

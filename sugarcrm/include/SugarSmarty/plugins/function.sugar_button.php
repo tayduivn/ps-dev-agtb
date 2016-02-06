@@ -415,7 +415,6 @@ function smarty_function_sugar_button($params, $smarty)
 			    );
 	            $json = getJSONobj();
 
-	            require_once('include/SugarFields/Parsers/MetaParser.php');
 	            $encoded_popup_request_data = MetaParser::parseDelimiters($json->encode($popup_request_data));
 	 			$audit_link = '<input id="btn_view_change_log" title="{$APP.LNK_VIEW_CHANGE_LOG}" class="button" onclick=\'open_popup("Audit", "600", "400", "&record={$fields.id.value}&module_name=' . $params['module'] . '", true, false, ' . $encoded_popup_request_data . '); return false;\' type="button" value="{$APP.LNK_VIEW_CHANGE_LOG}">';
                 $output = '{if $bean->aclAccess("detail")}{if !empty($fields.id.value) && $isAuditEnabled}'.$audit_link.'{/if}{/if}';
@@ -424,7 +423,6 @@ function smarty_function_sugar_button($params, $smarty)
 			//Button for the Connector intergration wizard
 			case "CONNECTOR":
 				require_once('include/connectors/utils/ConnectorUtils.php');
-				require_once('include/connectors/sources/SourceFactory.php');
 				$modules_sources = ConnectorUtils::getDisplayConfig();
 				if(!is_null($modules_sources) && !empty($modules_sources))
 				{
@@ -785,7 +783,6 @@ ENDB;
       }
       return $output;
    } else if(is_array($type) && isset($type['sugar_html'])) {
-       require_once('include/SugarHtml/SugarHtml.php');
 
        $dom_tree = SugarHtml::parseSugarHtml($type['sugar_html']);
        replaceFormClick($dom_tree, $js_form);
@@ -797,7 +794,6 @@ ENDB;
        }
        return $output;
    } else if(is_array($type) && isset($type['customCode'])) {
-       require_once('include/SugarHtml/SugarHtml.php');
 
        $dom_tree = SugarHtml::parseHtmlTag($type['customCode']);
        $hidden_exists = false;

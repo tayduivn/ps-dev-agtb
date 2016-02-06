@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/connectors/sources/default/source.php');
 
 /**
  * REST generic connector

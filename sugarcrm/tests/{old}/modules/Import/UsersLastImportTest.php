@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once 'modules/Import/UsersLastImport.php';
 
 class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
 {

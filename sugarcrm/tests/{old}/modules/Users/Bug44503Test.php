@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/Users/authentication/AuthenticationController.php');
 
 class Bug44503Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -24,7 +23,6 @@ class Bug44503Test extends Sugar_PHPUnit_Framework_TestCase
         sugar_file_put_contents(
             "custom/modules/Users/authentication/{$this->authclassname}/{$this->authclassname}.php",
             "<?php
-require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticate.php';
 class {$this->authclassname} extends SugarAuthenticate {
     public \$userAuthenticateClass = '{$this->authclassname}User';
     public \$authenticationDir = '{$this->authclassname}';
@@ -33,7 +31,6 @@ class {$this->authclassname} extends SugarAuthenticate {
         sugar_file_put_contents(
             "custom/modules/Users/authentication/{$this->authclassname}/{$this->authclassname}User.php",
             "<?php
-require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticateUser.php';
 class {$this->authclassname}User extends SugarAuthenticateUser {
 }"
             );

@@ -26,7 +26,6 @@ if(!isset($_REQUEST['record']) || empty($_REQUEST['record'])) {
 ///////////////////////////////////////////////////////////////////////////////
 
 
-require_once('include/DetailView/DetailView.php');
 global $gridline;
 global $app_strings;
 global $focus;
@@ -479,7 +478,6 @@ echo $old_contents;
 ////    SUBPANELS
 ///////////////////////////////////////////////////////////////////////////////
 if ($show_subpanels) {
-    require_once('include/SubPanel/SubPanelTiles.php');
     $subpanel = new SubPanelTiles($focus, 'Emails');
     echo $subpanel->display();
 }

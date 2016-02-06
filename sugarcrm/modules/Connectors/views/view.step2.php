@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/View/SugarView.php');
-require_once ('modules/Connectors/ConnectorRecord.php');
 
 class ViewStep2 extends SugarView
 {
@@ -76,7 +74,6 @@ class ViewStep2 extends SugarView
 		    $source_names = array();
 		    $source_names['module']['name'] = $this->_leadQual->merge_bean->name;
 		    $result_beans = array();
-		    require_once('include/connectors/ConnectorFactory.php');
 		    $index = 1;
 		    $viewdef_sources = array();
 		    foreach($sources as $source_id => $source_info){

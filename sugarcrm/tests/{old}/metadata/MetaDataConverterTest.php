@@ -10,7 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/MetaDataManager/MetaDataConverter.php';
 
 class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -168,7 +167,6 @@ class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
             'target_record_key' => true,
         );
         $converter = new MetaDataConverter();
-        require_once 'include/SubPanel/SubPanelDefinitions.php';
         $bean = BeanFactory::getBean('Quotes');
 
         $spDefs = new SubPanelDefinitions($bean);

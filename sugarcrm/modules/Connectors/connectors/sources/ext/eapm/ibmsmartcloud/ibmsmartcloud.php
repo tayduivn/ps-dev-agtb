@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/connectors/sources/default/source.php');
 
 class ext_eapm_ibmsmartcloud extends source {
 	protected $_enable_in_wizard = false;

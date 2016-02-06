@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ACL/AclCache.php';
 
 class AclCacheTest extends PHPUnit_Framework_TestCase
 {

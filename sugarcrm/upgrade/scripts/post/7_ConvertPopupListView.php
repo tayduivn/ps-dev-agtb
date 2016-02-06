@@ -11,9 +11,6 @@
  */
 
 require_once 'modules/ModuleBuilder/parsers/constants.php';
-require_once 'modules/ModuleBuilder/Module/StudioBrowser.php';
-require_once 'modules/ModuleBuilder/parsers/views/PopupMetaDataParser.php';
-require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
 
 /**
  * Converts custom "popupdefs.php" files to sidecar "selection-list.php".

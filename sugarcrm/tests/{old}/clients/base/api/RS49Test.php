@@ -1,6 +1,5 @@
 <?php
 
-require_once 'clients/base/api/FileApi.php';
 
 /**
  * RS-49

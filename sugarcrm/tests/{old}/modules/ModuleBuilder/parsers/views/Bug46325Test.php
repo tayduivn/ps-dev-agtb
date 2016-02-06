@@ -11,7 +11,6 @@
  */
 
 
-require_once ('modules/ModuleBuilder/parsers/views/PopupMetaDataParser.php');
 
 class Bug46325Test extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('soap/SoapError.php');
 
 function check_for_relationship($relationships, $module){
 	foreach($relationships as $table=>$rel){

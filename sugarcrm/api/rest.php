@@ -15,7 +15,6 @@ ob_start();
 chdir(dirname(__FILE__).'/../');
 define('ENTRY_POINT_TYPE', 'api');
 require('include/entryPoint.php');
-require_once("include/api/RestService.php");
 SugarAutoLoader::load('custom/include/RestService.php');
 $restServiceClass = SugarAutoLoader::customClass('RestService');
 

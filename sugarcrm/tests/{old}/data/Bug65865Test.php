@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("data/BeanFactory.php");
 
 class Bug65865Test extends Sugar_PHPUnit_Framework_TestCase
 {

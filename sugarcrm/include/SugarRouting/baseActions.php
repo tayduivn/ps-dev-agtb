@@ -214,7 +214,6 @@ function copy_mail($action, $bean, $ie, $copy=true) {
 
 		$GLOBALS['log']->fatal("*** SUGARROUTING: dest folder is Sugar Folder");
 		// destination is a Sugar folder
-		require_once("include/SugarFolders/SugarFolders.php");
 		$sf = new SugarFolder();
 
 		if($sf->retrieve($folder_id)) {

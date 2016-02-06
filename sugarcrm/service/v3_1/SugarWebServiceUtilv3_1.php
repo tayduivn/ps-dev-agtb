@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('service/v3/SugarWebServiceUtilv3.php');
 class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 {
 
@@ -98,7 +97,6 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
      */
     function get_visible_modules($availModules)
     {
-        require_once("modules/MySettings/TabController.php");
         $controller = new TabController();
         $tabs = $controller->get_tabs_system();
         return $this->getModulesFromList($tabs[0], $availModules);
@@ -264,7 +262,6 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 		}
 
 		if($value->module_dir == 'Bugs'){
-			require_once('modules/Releases/Release.php');
 			$seedRelease = BeanFactory::getBean('Releases');
 			$options = $seedRelease->get_releases(TRUE, "Active");
 			$options_ret = array();
@@ -479,7 +476,6 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
         static $sfh;
 
         if (!isset($sfh)) {
-            require_once('include/SugarFields/SugarFieldHandler.php');
             $sfh = new SugarFieldHandler();
         }
 

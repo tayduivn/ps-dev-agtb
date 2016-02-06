@@ -12,15 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
-require_once 'vendor/oauth2-php/lib/IOAuth2Storage.php';
-require_once 'vendor/oauth2-php/lib/IOAuth2GrantUser.php';
-require_once 'vendor/oauth2-php/lib/IOAuth2RefreshTokens.php';
-require_once 'vendor/oauth2-php/lib/IOAuth2GrantExtension.php';
-
-require_once 'modules/Administration/SessionManager.php';
-require_once 'include/api/SugarApiException.php';
-require_once 'include/SugarOAuth2/SugarOAuth2StorageInterface.php';
-
 /**
  * Sugar OAuth2.0 Storage system, allows the OAuth2 library we are using to
  * store and retrieve data.

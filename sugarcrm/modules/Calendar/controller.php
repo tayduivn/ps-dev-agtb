@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("modules/Calendar/CalendarUtils.php");
 
 class CalendarController extends SugarController
 {
@@ -218,7 +217,6 @@ class CalendarController extends SugarController
             $record = $_REQUEST['record'];
         }
 
-        require_once("data/BeanFactory.php");
         $this->currentBean = BeanFactory::getBean($module, $record);
 
         if (!empty($actionToCheck)) {
@@ -243,7 +241,6 @@ class CalendarController extends SugarController
             ACLController::displayNoAccess(true);
         }
 
-        require_once('modules/Calendar/Calendar.php');
         $cal = new Calendar($_REQUEST['view']);
 
         if (in_array($cal->view, array('day', 'week', 'month'))){

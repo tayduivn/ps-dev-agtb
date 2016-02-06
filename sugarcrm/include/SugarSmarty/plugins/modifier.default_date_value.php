@@ -177,7 +177,6 @@ include/SugarSmarty/modifier.default_date_value.php
  */
 function smarty_modifier_default_date_value($defaultValue) {
 	global $timedate;
-	require_once('modules/DynamicFields/templates/Fields/TemplateDate.php');
 	$td = new TemplateDate();
 	return $timedate->asUser(new SugarDateTime($td->dateStrings[$defaultValue]));
 }

@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Meetings/MeetingFormBase.php';
 
 
 class Bug58012Test extends Sugar_PHPUnit_Framework_TestCase

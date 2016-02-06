@@ -112,7 +112,6 @@ else {
 require_once('modules/DynamicFields/templates/Files/EditView.php');
 
 
-	require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 	$teamSetField = new SugarFieldTeamset('Teamset');
 	$teamSetField->initClassicView($focus->field_defs);
 	$code = $teamSetField->getClassicView($focus->field_defs, 'EditView');

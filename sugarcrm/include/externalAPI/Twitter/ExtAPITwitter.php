@@ -10,8 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/externalAPI/Base/OAuthPluginBase.php');
-require_once('include/externalAPI/Base/WebFeed.php');
 
 
 class ExtAPITwitter extends OAuthPluginBase implements WebFeed {

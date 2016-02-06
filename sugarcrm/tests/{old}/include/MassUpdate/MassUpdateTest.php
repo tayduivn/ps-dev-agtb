@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once 'include/MassUpdate.php';
 require_once 'include/dir_inc.php';
 
 class MassUpdateTest extends Sugar_PHPUnit_Framework_TestCase

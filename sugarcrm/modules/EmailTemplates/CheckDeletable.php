@@ -17,7 +17,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('modules/EmailTemplates/EmailTemplate.php');
 
 $focus = BeanFactory::getBean('EmailTemplates');
 if($_REQUEST['from'] == 'DetailView') {

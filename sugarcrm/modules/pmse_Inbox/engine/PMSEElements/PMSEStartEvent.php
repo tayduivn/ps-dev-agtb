@@ -12,8 +12,6 @@
 
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
-require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEEvent.php';
-
 class PMSEStartEvent extends PMSEEvent
 {
     /**

@@ -46,7 +46,6 @@ class SugarTestTrackerUtility
     
     public static function insertTrackerEntry($bean, $action)
     {
-        require_once('modules/Trackers/TrackerManager.php');
         $trackerManager = TrackerManager::getInstance();
         $timeStamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
         $_REQUEST['action'] = $action;

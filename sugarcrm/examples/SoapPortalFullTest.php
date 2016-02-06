@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 //FILE SUGARCRM flav=ent ONLY
-require_once('soap/SoapError.php');
 require_once('soap/SoapHelperFunctions.php');
 
 require_once('include/entryPoint.php');

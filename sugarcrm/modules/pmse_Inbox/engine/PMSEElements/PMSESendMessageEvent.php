@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEIntermediateEvent.php';
-require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEBeanHandler.php';
 
 class PMSESendMessageEvent extends PMSEIntermediateEvent
 {

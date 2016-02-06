@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/DynamicFields/templates/Fields/TemplateDate.php';
-require_once("modules/ModuleBuilder/controller.php");
 
 /**
  * This is testing a bug where a custom date field whos value was not set would cause a bad SQL query to prevent the other custom fields from saving correctly.

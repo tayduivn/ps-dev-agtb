@@ -34,7 +34,6 @@ echo getClassicModuleTitle(
         );
 
 if($current_user->is_admin){
-require_once('modules/Currencies/ListCurrency.php');
 
 $focus = BeanFactory::getBean('Currencies');
 $lc = new ListCurrency();

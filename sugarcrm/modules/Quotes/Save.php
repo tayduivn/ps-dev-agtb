@@ -12,7 +12,6 @@
 
 require_once('include/formbase.php');
 require_once('modules/Quotes/config.php');
-require_once('include/SugarFields/SugarFieldHandler.php');
 Activity::disable();
 /* @var $focus Quote */
 $focus = BeanFactory::getBean('Quotes');

@@ -190,7 +190,6 @@ class ViewPopup extends SugarView{
      */
     protected function getPopupSmarty($bean, $module)
     {
-        require_once 'include/Popups/PopupSmarty.php';
         return new PopupSmarty($bean, $module);
     }
 }

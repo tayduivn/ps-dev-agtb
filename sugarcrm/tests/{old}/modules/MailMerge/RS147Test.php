@@ -11,7 +11,6 @@
  */
 
 require_once 'modules/MailMerge/merge_query.php';
-require_once 'modules/MailMerge/controller.php';
 
 
 /**

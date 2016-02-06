@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("data/Link2.php");
 
 class RevisionsLink extends Link2
 {

@@ -1,6 +1,5 @@
 <?php
 
-require_once 'modules/Bugs/clients/base/api/BugsApi.php';
 
 /**
  * RS-64: Prepare Bugs Api

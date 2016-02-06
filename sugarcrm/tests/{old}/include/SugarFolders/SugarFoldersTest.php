@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarFolders/SugarFolders.php');
 
 
 class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
@@ -162,7 +161,6 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
      */
     function testGetUserFolders()
     {
-        require_once('modules/Emails/EmailUI.php');
         $emailUI = new EmailUI();
         $emailUI->preflightUser($GLOBALS['current_user']);
         $error_message = "Unable to get user folders";
@@ -261,7 +259,6 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
         $this->markTestIncomplete('Needs to be fixed by FRM team.');
         //Create the my Emails Folder
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], "Emails");
-        require_once('modules/Emails/EmailUI.php');
         $emailUI = new EmailUI();
         $emailUI->preflightUser($GLOBALS['current_user']);
         $error_message = "Unable to get list items for email.";

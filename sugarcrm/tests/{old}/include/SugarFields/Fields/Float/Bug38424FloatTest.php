@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarFields/Fields/Float/SugarFieldFloat.php');
 
 class Bug38424FloatTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "modules/ModuleBuilder/parsers/views/AbstractMetaDataParser.php";
 
 /**
  * PAT-1334

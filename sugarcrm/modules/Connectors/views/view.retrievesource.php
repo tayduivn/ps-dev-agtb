@@ -14,8 +14,6 @@
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 require_once('include/json_config.php');
-require_once('include/MVC/View/views/view.list.php');
-require_once('include/connectors/ConnectorFactory.php');
 
 class ViewRetrieveSource extends ViewList {
 

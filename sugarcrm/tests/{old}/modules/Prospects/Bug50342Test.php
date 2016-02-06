@@ -27,8 +27,6 @@
  */
 
 require_once('tests/{old}/SugarTestProspectUtilities.php');
-require_once('include/SugarSQLValidate.php');
-require_once('modules/Prospects/Prospect.php');
 
 class Bug50342Test extends Sugar_PHPUnit_Framework_TestCase
 {

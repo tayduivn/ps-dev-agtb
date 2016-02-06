@@ -13,8 +13,6 @@
 use \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use \Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable;
 
-require_once 'modules/ModuleBuilder/MB/AjaxCompose.php';
-require_once 'modules/DynamicFields/FieldViewer.php';
 
 class ViewModulefield extends SugarView
 {
@@ -86,7 +84,6 @@ class ViewModulefield extends SugarView
 		  array('ID', 'ID_C', 'PARENT_NAME', 'PARENT_ID'));
 
         //C.L. - Add support to mark related module id columns as reserved keywords
-        require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php';
         $relatedModules = array_keys(DeployedRelationships::findRelatableModules()) ;
         global $beanList, $current_language;
         foreach($relatedModules as $relModule)

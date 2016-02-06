@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('clients/base/api/FilterApi.php');
-require_once('include/SugarFields/SugarFieldHandler.php');
 require_once 'modules/Teams/TeamSetManager.php';
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
@@ -186,7 +184,6 @@ function exportFromApi($args, $sample = false)
 
     $type = clean_string($args['module']);
 
-    require_once 'include/RecordListFactory.php';
     $recordList = RecordListFactory::getRecordList($args['record_list_id']);
     if (empty($recordList)) {
         throw new SugarApiExceptionNotFound();
@@ -501,7 +498,6 @@ function getExportContentFromResult(
             }
             $pre_id = $is_id_exported ? $val['id'] : '';
 
-            require_once('include/SugarFields/SugarFieldHandler.php');
 
             // replace user_name with full name if use_real_name preference setting is enabled
             // and this is a user name field

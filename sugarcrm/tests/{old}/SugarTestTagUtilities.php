@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Tags/Tag.php';
 
 /** 
  * SugarTestTagUtilities is a unit test class to test Tags 

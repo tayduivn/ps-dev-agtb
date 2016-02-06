@@ -17,7 +17,6 @@
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-require_once('modules/Calls/CallFormBase.php');
 $formBase = new CallFormBase();
 if ($formBase->prepareRecurring()) {
     if ($limit = $formBase->checkRecurringLimitExceeded()) {

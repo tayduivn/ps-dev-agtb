@@ -12,7 +12,6 @@
 
 
 require_once 'modules/DynamicFields/FieldCases.php';
-require_once 'modules/DynamicFields/DynamicField.php';
 
 class Bug46152_P2Test extends Sugar_PHPUnit_Framework_TestCase
 {

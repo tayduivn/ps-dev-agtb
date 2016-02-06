@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once("modules/ActivityStream/clients/base/api/ActivitiesApi.php");
-require_once("data/SugarACL.php");
 
 /**
  * @group api

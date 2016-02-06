@@ -11,8 +11,6 @@
  */
 
 
-require_once("include/Expressions/Expression/Date/MaxRelatedDateExpression.php");
-require_once("include/Expressions/Expression/Parser/Parser.php");
 
 class MaxRelatedDateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 {

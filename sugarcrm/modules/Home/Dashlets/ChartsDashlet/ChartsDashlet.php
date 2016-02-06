@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/Dashlets/Dashlet.php');
 
 
 class ChartsDashlet extends Dashlet {
@@ -53,7 +52,6 @@ class ChartsDashlet extends Dashlet {
      * @return string html to display dashlet
      */
     function display() {
-    	require_once("modules/Reports/Report.php");
 
         $chartReport = BeanFactory::getBean(
             'Reports', $this->report_id, array('encode' => false, 'strict_retrieve' => true)
@@ -70,7 +68,6 @@ class ChartsDashlet extends Dashlet {
 			$reporter->run_chart_queries();
 
 			ob_start();
-            require_once("include/SugarCharts/ChartDisplay.php");
             $chartDisplay = new ChartDisplay();
             $chartDisplay->setReporter($reporter);
             echo $chartDisplay->legacyDisplay($this->id, true);
@@ -98,15 +95,12 @@ class ChartsDashlet extends Dashlet {
      * @return string javascript to use with this dashlet
      */
     function displayScript() {
-    	require_once("modules/Reports/Report.php");
-        require_once("include/SugarCharts/ChartDisplay.php");
 
         $chartReport = BeanFactory::getBean('Reports', $this->report_id, array("encode" => false));
 
 		if (!empty($chartReport)){
 	        $this->title = $chartReport->name;
 
-			require_once('include/SugarCharts/SugarChartFactory.php');
 
 			$sugarChart = SugarChartFactory::getInstance();
 

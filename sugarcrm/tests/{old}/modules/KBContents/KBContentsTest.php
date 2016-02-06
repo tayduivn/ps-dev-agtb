@@ -12,7 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
-require_once 'modules/KBContents/KBContentsApiHelper.php';
 
 class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
 {

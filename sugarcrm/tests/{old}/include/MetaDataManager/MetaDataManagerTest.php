@@ -10,7 +10,6 @@
 * Copyright (C) SugarCRM Inc. All rights reserved.
 */
 
-require_once 'include/MetaDataManager/MetaDataManager.php';
 class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $mm;

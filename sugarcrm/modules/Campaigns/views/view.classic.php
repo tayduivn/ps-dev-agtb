@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/MVC/View/SugarView.php');
-require_once('include/MVC/Controller/SugarController.php');
 
 class CampaignsViewClassic extends SugarView
 {

@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/Users/authentication/SugarAuthenticate/SugarAuthenticateUser.php');
 class SummerAuthenticateUser extends SugarAuthenticateUser
 {
     public function __construct()

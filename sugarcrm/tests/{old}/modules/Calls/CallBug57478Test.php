@@ -1,6 +1,5 @@
 <?php
 
-require_once 'data/SugarBean.php';
 
 /**
  * Test class for SugarACL getUserActions

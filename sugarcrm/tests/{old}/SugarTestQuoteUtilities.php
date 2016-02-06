@@ -16,7 +16,6 @@ $beanFiles = array();
 require('include/modules.php');
 $GLOBALS['beanList'] = $beanList;
 $GLOBALS['beanFiles'] = $beanFiles;
-require_once 'modules/Quotes/Quote.php';
 
 class SugarTestQuoteUtilities
 {

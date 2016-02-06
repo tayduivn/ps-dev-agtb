@@ -21,7 +21,6 @@ class SugarUpgradeRebuildTeams extends UpgradeScript
     {
         if(!($this->from_flavor == 'ce' && $this->toFlavor('pro'))) return;
 
-        require_once('modules/Teams/Team.php');
         require_once('modules/Administration/RepairTeams.php');
         process_team_access(false, false,true,'1');
     }

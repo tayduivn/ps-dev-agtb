@@ -14,8 +14,6 @@ class EmailManController extends SugarController
 {
     function action_Save()
     {
-        require_once('include/OutboundEmail/OutboundEmail.php');
-        require_once('modules/Configurator/Configurator.php');
 
         $configurator = new Configurator();
         global $sugar_config;

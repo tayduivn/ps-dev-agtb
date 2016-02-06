@@ -36,7 +36,6 @@ class ExpressionEngine_ControllerTest extends Sugar_PHPUnit_Framework_TestCase
             'record_id' => $id,
         );
 
-        require_once 'modules/ExpressionEngine/controller.php';
 
         /** @var PHPUnit_Framework_MockObject_MockObject | ExpressionEngineController $controller */
         $controller = $this->createPartialMock('ExpressionEngineController', array('display'));

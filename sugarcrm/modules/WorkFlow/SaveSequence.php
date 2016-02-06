@@ -15,7 +15,6 @@
  ********************************************************************************/
 
 
-require_once('include/controller/Controller.php');
 
 
 $local_log =& LoggerManager::getLogger('index');

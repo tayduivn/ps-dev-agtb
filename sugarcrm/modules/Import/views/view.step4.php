@@ -16,8 +16,6 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/MVC/View/SugarView.php');
-require_once('modules/Import/Importer.php');
 
 class ImportViewStep4 extends SugarView
 {

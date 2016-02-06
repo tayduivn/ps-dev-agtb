@@ -10,11 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 //include the base class
-require_once 'modules/ModuleBuilder/parsers/views/DeployedMetaDataImplementation.php';
 //include the file to convert BWC metadata files
-require_once 'include/MetaDataManager/MetaDataConverter.php';
 //include the class to deploy sidecar files
-require_once 'modules/ModuleBuilder/parsers/views/DeployedSidecarFilterImplementation.php';
 
 
 /*

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Trackers/store/TrackerSessionsDatabaseStore.php');
-require_once('modules/Trackers/TrackerManager.php');
 
 class Bug41051Test extends Sugar_PHPUnit_Framework_TestCase {
 

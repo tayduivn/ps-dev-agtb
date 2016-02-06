@@ -10,11 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/api/ServiceBase.php');
-require_once('include/api/ServiceDictionaryRest.php');
-require_once('include/SugarOAuth2/SugarOAuth2Server.php');
-require_once('include/api/RestResponse.php');
-require_once('include/api/RestRequest.php');
 
 /** @noinspection PhpInconsistentReturnPointsInspection */
 class RestService extends ServiceBase

@@ -12,7 +12,6 @@
 
 require_once 'include/SugarSmarty/plugins/function.sugar_button.php';
 require_once 'include/SugarSmarty/plugins/function.sugar_menu.php';
-require_once 'include/SugarHtml/SugarHtml.php';
 
 class FunctionSugarButtonTest extends Sugar_PHPUnit_Framework_TestCase
 {

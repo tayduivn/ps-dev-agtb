@@ -12,8 +12,6 @@
  */
 
 
-require_once('modules/Meetings/MeetingsApiHelper.php');
-require_once('include/api/RestService.php');
 
 class MeetingsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {

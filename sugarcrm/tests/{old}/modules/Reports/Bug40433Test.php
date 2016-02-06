@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('modules/Reports/Report.php');
 
 /**
  * Bug40433Test.php

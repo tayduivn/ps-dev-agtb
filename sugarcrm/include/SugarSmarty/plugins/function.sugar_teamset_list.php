@@ -34,7 +34,6 @@ function smarty_function_sugar_teamset_list($params, &$smarty)
 		return '';
     }
 
-    require_once('include/SugarFields/SugarFieldHandler.php');
     $sfh = new SugarFieldHandler();
 
     return($sfh->displaySmarty($params['row'], $params['vardef'], 'ListView', array('col'=>$params['col'])));

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once 'include/SugarObjects/SugarRegistry.php';
 
 class SugarRegistryTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -9,13 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once ('modules/ModuleBuilder/MB/AjaxCompose.php') ;
 require_once ('modules/ModuleBuilder/MB/ModuleBuilder.php') ;
-require_once ('modules/ModuleBuilder/Module/StudioModule.php') ;
-require_once ('modules/ModuleBuilder/Module/StudioBrowser.php') ;
-require_once ('modules/DynamicFields/DynamicField.php') ;
-require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php' ;
-require_once 'modules/ModuleBuilder/parsers/views/DeployedMetaDataImplementation.php';
 
 class ViewResetmodule extends SugarView
 {
@@ -85,7 +79,6 @@ class ViewResetmodule extends SugarView
         if($this->module === 'Opportunities') {
             $opp_settings = Opportunity::getSettings();
             if ($opp_settings['opps_view_by'] == 'RevenueLineItems') {
-                require_once 'modules/Opportunities/include/OpportunityWithRevenueLineItem.php';
                 $opp_setup = new OpportunityWithRevenueLineItem();
                 $opp_setup->doMetadataConvert();
                 $out .= 'Enabling Opportunities with RevenueLineItems<br />';
@@ -212,7 +205,6 @@ class ViewResetmodule extends SugarView
      */
     function removeCustomRelationships()
     {
-    	require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php' ;
         $out = "";
         $madeChanges = false;
         $relationships = new DeployedRelationships ( $this->module ) ;
@@ -257,7 +249,6 @@ class ViewResetmodule extends SugarView
         $extDir = "custom/Extension/modules/{$this->module}";
         if (is_dir($extDir)) {
         	rmdir_recursive($extDir);
-        	require_once ('modules/Administration/QuickRepairAndRebuild.php') ;
             $rac = new RepairAndClear ( ) ;
             $rac->repairAndClearAll ( array ( 'clearAll' ), array ( $this->module ), true, false ) ;
 			$rac->rebuildExtensions();

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('clients/base/api/ConfigModuleApi.php');
 
 class KBContentsConfigApi extends ConfigModuleApi
 {

@@ -11,8 +11,6 @@
  */
 
 
-require_once('modules/Import/Importer.php');
-require_once('modules/Import/sources/ImportFile.php');
 
 /**
  * Export as iso-8859-1 and reimport breaks special characters

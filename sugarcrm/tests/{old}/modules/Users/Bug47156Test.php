@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Users/User.php');
 /**
  * Bug #47156
  * Reassigning Users With Instance That Has Numeric Ids

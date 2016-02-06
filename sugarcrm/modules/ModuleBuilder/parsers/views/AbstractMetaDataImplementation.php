@@ -19,7 +19,6 @@ require_once 'modules/ModuleBuilder/parsers/constants.php';
  * - WIP modules which are being worked on in ModuleBuilder and that are located in custom
  */
 
-require_once 'modules/ModuleBuilder/parsers/views/History.php';
 
 abstract class AbstractMetaDataImplementation
 {

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarForecasting/ForecastProcessInterface.php');
-require_once('include/SugarForecasting/AbstractForecastArgs.php');
 abstract class SugarForecasting_Export_AbstractExport extends SugarForecasting_AbstractForecastArgs implements SugarForecasting_ForecastProcessInterface
 {
 
@@ -93,7 +91,6 @@ abstract class SugarForecasting_Export_AbstractExport extends SugarForecasting_A
      */
     protected function getExportDataContent($data, $focus, $fields_array, $filter_by = null, array $filters = array())
     {
-        require_once('include/SugarFields/SugarFieldHandler.php');
         require_once('include/export_utils.php');
 
         global $current_user;

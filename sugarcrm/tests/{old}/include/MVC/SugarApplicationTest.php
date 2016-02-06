@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/MVC/SugarApplication.php';
 
 class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
 {

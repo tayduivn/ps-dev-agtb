@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarMetric/Provider/Interface.php';
 
 /**
  * SugarMetric_Provider_Log class used for logging and debugging metric's providers
@@ -41,7 +40,6 @@ class SugarMetric_Provider_Log implements SugarMetric_Provider_Interface
     public function __construct($params)
     {
         if (!isset($GLOBALS['log']) && class_exists('SugarObject')) {
-            require_once 'include/SugarLogger/LoggerManager.php';
             $this->logger = LoggerManager::getLogger('SugarCRM');
         } elseif (isset($GLOBALS['log'])) {
             $this->logger = $GLOBALS['log'];

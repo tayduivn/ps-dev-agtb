@@ -11,9 +11,7 @@
  */
 
 require_once 'include/download_file.php';
-require_once 'include/upload_file.php';
 require_once 'include/utils/file_utils.php';
-require_once 'include/SugarFields/SugarFieldHandler.php';
 
 /**
  * Test DownloadFile:getArchive()

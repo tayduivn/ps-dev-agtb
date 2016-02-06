@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/MetaDataManager/MetaDataHacks.php';
 
 /**
  * Bug 56505 - Incorrect format for property "default" in multiselect field's vardef

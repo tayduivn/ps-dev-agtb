@@ -11,7 +11,6 @@
  */
 
 
-require_once('data/SugarBeanApiHelper.php');
 
 class NotesApiHelper extends SugarBeanApiHelper
 {

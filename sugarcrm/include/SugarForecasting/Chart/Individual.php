@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarForecasting/Chart/AbstractChart.php');
-require_once('include/SugarForecasting/Individual.php');
 class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractChart
 {
     /**

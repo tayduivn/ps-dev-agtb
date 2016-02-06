@@ -23,7 +23,6 @@
 
 
 
-require_once('modules/MySettings/StoreQuery.php');
 
 global $app_strings;
 global $app_list_strings;

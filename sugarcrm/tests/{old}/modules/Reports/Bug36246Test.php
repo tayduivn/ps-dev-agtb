@@ -10,10 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "include/generic/LayoutManager.php";
 require_once "include/generic/SugarWidgets/SugarWidgetReportField.php";
-require_once "include/generic/SugarWidgets/SugarWidgetFieldvarchar.php";
-require_once "include/generic/SugarWidgets/SugarWidgetFieldurl.php";
 
 class Bug36246Test extends Sugar_PHPUnit_Framework_TestCase
 {

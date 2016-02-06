@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarCache/SugarCacheAbstract.php');
 
 /**
  * Redis SugarCache backend, using the PHP Redis C library at http://github.com/nicolasff/phpredis

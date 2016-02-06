@@ -11,10 +11,7 @@
  */
 
 
-require_once 'modules/DynamicFields/templates/Fields/TemplateInt.php';
-require_once 'modules/DynamicFields/templates/Fields/TemplateDate.php';
 require_once 'include/SearchForm/SearchForm2.php';
-require_once 'modules/Cases/Case.php';
 
 class Bug46713Test extends Sugar_PHPUnit_Framework_TestCase
 {

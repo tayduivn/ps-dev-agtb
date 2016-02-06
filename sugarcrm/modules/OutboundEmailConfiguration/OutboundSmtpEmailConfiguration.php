@@ -11,7 +11,6 @@
  */
 
 // requires OutboundEmailConfiguration in order to extend it
-require_once "modules/OutboundEmailConfiguration/OutboundEmailConfiguration.php";
 
 /**
  * Represents the configurations and contains the logic for setting the configurations for an SMTP Mailer.

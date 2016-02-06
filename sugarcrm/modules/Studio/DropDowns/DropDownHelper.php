@@ -12,7 +12,6 @@
 
  // $Id: DropDownHelper.php 19013 2007-01-04 02:15:22Z majed $
 require_once('modules/Administration/Common.php');
-require_once('modules/Administration/QuickRepairAndRebuild.php');
 class DropDownHelper
 {
     public $modules = array();

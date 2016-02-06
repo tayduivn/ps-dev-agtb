@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Calendar/clients/base/api/CalendarApi.php';
 
 /**
  * @group api

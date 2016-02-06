@@ -12,8 +12,6 @@
 
 
 require_once('modules/Trackers/monitor/Monitor.php');
-require_once('modules/Trackers/Metric.php');
-require_once('modules/Trackers/Trackable.php');
 
 class tracker_queries_monitor extends Monitor implements Trackable {
 
@@ -45,7 +43,6 @@ class tracker_queries_monitor extends Monitor implements Trackable {
         $this->cached_data[] = $this->toArray();
 
     	if($flush && empty($GLOBALS['tracker_' . $this->table_name]) && !empty($this->cached_data)) {
-            require_once('modules/Trackers/TrackerUtility.php');
             $write_entries = array();
 
             foreach($this->cached_data as $entry) {

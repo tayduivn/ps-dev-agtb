@@ -10,7 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/SugarForecasting/AbstractForecast.php');
 class SugarForecasting_AbstractForecastTest extends Sugar_PHPUnit_Framework_TestCase
 {
 

@@ -11,7 +11,6 @@
  */
 //FILE SUGARCRM flav=ent ONLY
 
-require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php';
 
 /**
  * Special metadata parser implementation for upgrading old portal edit/detail views

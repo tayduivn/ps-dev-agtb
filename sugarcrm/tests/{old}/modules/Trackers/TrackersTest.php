@@ -9,14 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/Trackers/Tracker.php');
-require_once('modules/Trackers/TrackerPerf.php');
-require_once('modules/Trackers/TrackerQuery.php');
-require_once('modules/Trackers/TrackerSession.php');
-
-require_once 'include/api/SugarApi.php';
-require_once 'include/api/RestService.php';
-require_once 'clients/base/api/CurrentUserApi.php';
 
 class TrackersTest extends Sugar_PHPUnit_Framework_TestCase
 {

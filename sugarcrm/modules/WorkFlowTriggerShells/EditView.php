@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once('include/workflow/workflow_utils.php');
-require_once('include/VarDefHandler/VarDefHandler.php');
 global $current_user;
 //Only allow admins to enter this screen
 if (!is_admin($current_user)&& !is_admin_for_any_module($current_user)) {

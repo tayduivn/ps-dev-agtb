@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Opportunities/Dashlets/MyOpportunitiesDashlet/MyOpportunitiesDashlet.php';
-require_once 'modules/ModuleBuilder/parsers/views/DashletMetaDataParser.php';
 
 class Bug59546Test extends Sugar_PHPUnit_Framework_TestCase
 {

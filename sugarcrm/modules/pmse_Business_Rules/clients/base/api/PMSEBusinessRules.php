@@ -11,12 +11,9 @@
  */
 
 
-require_once 'data/BeanFactory.php';
-require_once 'clients/base/api/vCardApi.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 
-require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 class PMSEBusinessRules extends vCardApi
 {

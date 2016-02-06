@@ -25,7 +25,6 @@ class Bug51105Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCheckEditViewHeaderTpl()
     {
-        require_once 'include/EditView/SubpanelQuickCreate.php';
         $view    = 'QuickCreate';
         $error   = 'Unexpected headerTpl value';
         $default = 'include/EditView/header.tpl';

@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/Campaigns/Campaign.php';
-require_once 'modules/CampaignTrackers/CampaignTracker.php';
 
 class CampaignTrackersTest extends Sugar_PHPUnit_Framework_TestCase
 {

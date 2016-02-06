@@ -20,7 +20,6 @@
 
 
 
-require_once('modules/Emails/Email.php');
 
 global $mod_strings;
 global $app_list_strings;

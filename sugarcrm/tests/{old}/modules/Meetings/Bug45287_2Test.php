@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Accounts/Account.php';
 require_once 'modules/Meetings/Meeting.php';
 require_once 'include/SearchForm/SearchForm2.php';
 

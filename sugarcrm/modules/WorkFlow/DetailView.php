@@ -17,7 +17,6 @@
 
 
 
-require_once('include/DetailView/DetailView.php');
 
 
 global $mod_strings;

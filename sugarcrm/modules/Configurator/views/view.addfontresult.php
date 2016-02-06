@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/MVC/View/SugarView.php');
 class ConfiguratorViewAddFontResult extends SugarView {
    var $log="";
     /**
@@ -69,7 +68,6 @@ class ConfiguratorViewAddFontResult extends SugarView {
                 )
             );
             $embedded = (bool) $this->request->getValidInputRequest('pdf_embedded');
-            require_once('include/Sugarpdf/FontManager.php');
             $fontManager = new FontManager();
             $error = $fontManager->addFont(
                 $uploadFileNames["pdf_font_file"],

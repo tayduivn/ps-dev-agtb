@@ -18,7 +18,6 @@
 require_once 'SugarTestUserUtilities.php';
 require_once 'SugarTestAccountUtilities.php';
 require_once 'SugarTestContactUtilities.php';
-require_once 'modules/Trackers/TrackerManager.php';
 
 class Bug40019_Test extends Sugar_PHPUnit_Framework_TestCase 
 {

@@ -1,6 +1,5 @@
 <?php
 
-require_once 'modules/Leads/clients/base/api/LeadsApi.php';
 
 /**
  * RS-46

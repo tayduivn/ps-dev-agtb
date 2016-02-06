@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Users/User.php');
 
 class Bug45714Test extends Sugar_PHPUnit_Framework_TestCase 
 {
@@ -54,7 +53,6 @@ class Bug45714Test extends Sugar_PHPUnit_Framework_TestCase
 	
 	private function getEmployeeListViewOutput()
 	{
-		require_once('modules/Employees/views/view.list.php');
 		$employeeViewList = new EmployeesViewList();
 		$employeeViewList->module = 'Employees';
 		return $employeeViewList->getModuleTitle(true);
@@ -62,7 +60,6 @@ class Bug45714Test extends Sugar_PHPUnit_Framework_TestCase
 	
 	private function getEmployeeDetailViewOutput()
 	{
-		require_once('modules/Employees/views/view.detail.php');
 		$employeeViewDetail = new EmployeesViewDetail();
 		$employeeViewDetail->module = 'Employees';
 		return $employeeViewDetail->getModuleTitle(true);

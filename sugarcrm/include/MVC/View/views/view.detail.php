@@ -13,7 +13,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('include/DetailView/DetailView2.php');
 
 /**
  * Default view class for handling DetailViews

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Users/User.php');
-require_once('modules/Users/UserViewHelper.php');
 
 /**
  * Bug #49175

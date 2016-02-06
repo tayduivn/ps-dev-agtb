@@ -11,7 +11,6 @@
  */
 
 require_once 'modules/OAuthTokens/OAuthToken.php';
-require_once 'modules/OAuthKeys/OAuthKey.php';
 /**
  * Sugar OAuth provider implementation
  * @api

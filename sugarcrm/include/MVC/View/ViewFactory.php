@@ -17,9 +17,7 @@
   * View factory class. This file is used by the controller along with a view paramter to build the
   * requested view.
   */
-require_once('include/MVC/View/SugarView.php');
 
-require_once('include/MVC/View/SidecarView.php');
 
 /**
  * Sugar view factory

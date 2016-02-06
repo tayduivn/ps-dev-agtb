@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/connectors/filters/default/filter.php');
 
 class ext_rest_zoominfocompany_filter extends default_filter {	
 	

@@ -10,8 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/SugarFields/Fields/Collection/SugarFieldCollection.php');
-require_once('include/SugarFields/Fields/Teamset/ViewSugarFieldTeamsetCollection.php');
 
 /**
  * ReportsSugarFieldTeamsetCollection.php
@@ -70,7 +68,6 @@ class ReportsSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection
     }    
     
     private function process_reports() {
-        require_once('include/SugarFields/SugarFieldHandler.php');
         $sfh = new SugarFieldHandler();  
         $sf = $sfh->getSugarField('Teamset', true);  					
         $teams = $sf->getTeamsFromRequest($this->name);

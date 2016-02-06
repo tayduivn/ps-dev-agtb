@@ -18,7 +18,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/MVC/View/views/view.detail.php');
 
 class ProjectViewDetail extends ViewDetail 
 {

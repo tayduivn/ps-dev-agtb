@@ -64,7 +64,6 @@ $action_button = smarty_function_sugar_action_menu(array(
 
 $xtpl->assign('ACTION_BUTTON', $action_button);
 
-require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 $teamSetField = new SugarFieldTeamset('Teamset');
 $code = $teamSetField->getClassicView($focus->field_defs);
 $xtpl->assign("TEAM_SET_FIELD", $code);

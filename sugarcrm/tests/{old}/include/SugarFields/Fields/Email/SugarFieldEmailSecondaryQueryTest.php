@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once('include/SugarFields/Fields/Email/SugarFieldEmail.php');
 
 class SugarFieldEmailSecondaryQueryTest extends Sugar_PHPUnit_Framework_TestCase
 {

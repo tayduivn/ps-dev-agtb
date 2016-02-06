@@ -11,7 +11,6 @@
  */
 
 require_once('include/dir_inc.php');
-require_once('modules/UpgradeWizard/UpgradeRemoval.php');
 
 class Bug46027Test extends Sugar_PHPUnit_Framework_TestCase 
 {

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/api/SugarApi.php');
 
 abstract class SugarListApi extends SugarApi {
     protected $defaultLimit = 20;

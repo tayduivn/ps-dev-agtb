@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/Expressions/Expression/Generic/SugarFieldExpression.php';
 
 /**
  * @ticket 59069

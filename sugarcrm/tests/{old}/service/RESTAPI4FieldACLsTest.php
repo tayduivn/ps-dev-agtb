@@ -11,9 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('service/v3/SugarWebServiceUtilv3.php');
 require_once('tests/{old}/service/APIv3Helper.php');
-require_once 'service/v4/SugarWebServiceUtilv4.php';
 
 class RESTAPI4FieldACLsTest extends Sugar_PHPUnit_Framework_TestCase
 {

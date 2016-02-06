@@ -11,7 +11,6 @@
  */
 
 require_once('modules/Campaigns/utils.php');
-require_once('clients/base/api/ModuleApi.php');
 
 class LeadsApi extends ModuleApi {
     public function registerApiRest() {

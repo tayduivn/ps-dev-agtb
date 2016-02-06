@@ -12,7 +12,6 @@
 
 require_once 'tests/{old}/SugarTestRestUtilities.php';
 require_once 'tests/{old}/SugarTestACLUtilities.php';
-require_once 'data/SugarBeanApiHelper.php';
 
 /**
  * @group ApiTests

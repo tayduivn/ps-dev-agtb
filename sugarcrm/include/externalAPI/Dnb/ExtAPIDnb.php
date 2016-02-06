@@ -10,11 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/externalAPI/Base/OAuthPluginBase.php');
-require_once('include/externalAPI/Base/WebFeed.php');
-require_once 'include/SugarQuery/SugarQuery.php';
 require_once('include/SugarCache/SugarCache.php');
-require_once('include/externalAPI/Dnb/DnbCurlWrapper.php');
 
 class ExtAPIDnb extends ExternalAPIBase
 {

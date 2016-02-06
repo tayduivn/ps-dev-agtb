@@ -11,7 +11,6 @@
  */
 require_once 'tests/{old}/service/SOAPTestCase.php';
 require_once 'tests/{old}/SugarTestAccountUtilities.php';
-require_once 'modules/Emails/Email.php';
 /**
  * @ticket 22504
  */

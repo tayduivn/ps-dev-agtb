@@ -403,7 +403,6 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     		$sugar_config['list_max_entries_per_page'] = $max_results;
     	}
 
-    	require_once('modules/Home/UnifiedSearchAdvanced.php');
     	require_once 'include/utils.php';
     	$usa = new UnifiedSearchAdvanced();
         if(!file_exists($cachefile = sugar_cached('modules/unified_search_modules.php'))) {
@@ -611,7 +610,6 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         }
 
         $GLOBALS['disable_date_format'] = FALSE;
-        require_once('include/Sugarpdf/SugarpdfFactory.php');
         $bean = BeanFactory::getBean('Quotes', $quote_id);
         $sugarpdfBean = SugarpdfFactory::loadSugarpdf($pdf_format, 'Quotes', $bean, array() );
         $sugarpdfBean->process();
@@ -680,7 +678,6 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     public function oauth_request_token()
     {
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->oauth_request_token');
-        require_once "include/SugarOAuthServer.php";
         try {
 	        $oauth = new SugarOAuthServer(rtrim($GLOBALS['sugar_config']['site_url'],'/').'/service/v4/rest.php');
 	        $result = $oauth->requestToken()."&oauth_callback_confirmed=true&authorize_url=".$oauth->authURL();
@@ -701,7 +698,6 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     public function oauth_access_token()
     {
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->oauth_access_token');
-        require_once "include/SugarOAuthServer.php";
         try {
 	        $oauth = new SugarOAuthServer();
 	        $result = $oauth->accessToken();
@@ -747,7 +743,6 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             $GLOBALS['log']->info('End: SugarWebServiceImpl->snip_import_emails denied.');
             return;
         } // if
-        require_once 'modules/SNIP/SugarSNIP.php';
         $snip = SugarSNIP::getInstance();
         $snip->importEmail($email);
         $GLOBALS['log']->info('End: SugarWebServiceImpl->snip_import_emails');
@@ -800,7 +795,6 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             $GLOBALS['log']->info('End: SugarWebServiceImpl->job_queue_next denied.');
             return;
         }
-        require_once 'include/SugarQueue/SugarJobQueue.php';
         $queue = new SugarJobQueue();
         $job = $queue->nextJob($clientid);
         if(!empty($job)) {
@@ -825,7 +819,6 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             $GLOBALS['log']->info('End: SugarWebServiceImpl->job_queue_cycle denied.');
             return;
         }
-        require_once 'include/SugarQueue/SugarJobQueue.php';
         $queue = new SugarJobQueue();
         $queue->cleanup();
         $queue->runSchedulers();
@@ -848,7 +841,6 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             return;
         }
         $GLOBALS['log']->debug('Starting job $jobid execution as $clientid');
-        require_once 'modules/SchedulersJobs/SchedulersJob.php';
         $result = SchedulersJob::runJobId($jobid, $clientid);
         $GLOBALS['log']->info('End: SugarWebServiceImpl->job_queue_run');
         if($result === true) {

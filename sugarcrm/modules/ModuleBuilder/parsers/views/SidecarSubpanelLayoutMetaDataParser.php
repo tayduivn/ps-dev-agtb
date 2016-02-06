@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
-require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class SidecarSubpanelLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
 {
@@ -36,10 +34,8 @@ class SidecarSubpanelLayoutMetaDataParser extends SidecarListLayoutMetaDataParse
         }
 
         if (empty($packageName)) {
-            require_once 'modules/ModuleBuilder/parsers/views/DeployedSidecarSubpanelImplementation.php';
             $this->implementation = new DeployedSidecarSubpanelImplementation($subpanelName, $moduleName, $client);
         } else {
-            require_once 'modules/ModuleBuilder/parsers/views/UndeployedSidecarSubpanelImplementation.php';
             $this->implementation = new UndeployedSidecarSubpanelImplementation($subpanelName, $moduleName, $packageName, $client);
         }
 

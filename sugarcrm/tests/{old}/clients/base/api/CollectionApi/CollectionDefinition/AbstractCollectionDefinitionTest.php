@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/CollectionApi.php';
-require_once 'clients/base/api/CollectionApi/CollectionDefinition/AbstractCollectionDefinition.php';
 
 /**
  * @covers AbstractCollectionDefinition

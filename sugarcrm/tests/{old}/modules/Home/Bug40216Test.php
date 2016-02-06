@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Home/views/view.additionaldetailsretrieve.php');
 
 /**
  * @ticket bug40216

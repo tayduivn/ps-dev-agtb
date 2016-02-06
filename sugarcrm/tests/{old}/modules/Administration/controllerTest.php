@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/Administration/controller.php';
-require_once 'modules/MySettings/TabController.php';
 
 class AdministrationControllerTest extends Sugar_PHPUnit_Framework_TestCase
 {

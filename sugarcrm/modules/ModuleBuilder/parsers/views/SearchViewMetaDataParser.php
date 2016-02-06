@@ -11,7 +11,6 @@
  */
 
 
-require_once ('modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php') ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 class SearchViewMetaDataParser extends ListLayoutMetaDataParser
@@ -53,11 +52,9 @@ class SearchViewMetaDataParser extends ListLayoutMetaDataParser
         {
         	if (empty ( $packageName ))
         	{
-                require_once 'modules/ModuleBuilder/parsers/views/DeployedSearchMetaDataImplementation.php';
                 $this->implementation = new DeployedSearchMetaDataImplementation($searchLayout, $moduleName, $client);
         	} else
         	{
-            	require_once 'modules/ModuleBuilder/parsers/views/UndeployedMetaDataImplementation.php' ;
             	$this->implementation = new UndeployedMetaDataImplementation ( $searchLayout, $moduleName, $packageName, $client ) ;
         	}
         } catch (Exception $e)

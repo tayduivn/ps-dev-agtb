@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarFields/Fields/Base/SugarFieldBase.php';
 
 class SugarFieldEmail extends SugarFieldBase
 {
@@ -99,7 +98,6 @@ class SugarFieldEmail extends SugarFieldBase
 
             $email = array_merge($mergeAddr, $email);
             if (!SugarEmailAddress::isValidEmail($email['email_address'])) {
-                require_once 'include/api/SugarApiException.php';
                 throw new SugarApiExceptionInvalidParameter("{$email['email_address']} is an invalid email address");
             }
             $bean->emailAddress->addAddress($email['email_address'],

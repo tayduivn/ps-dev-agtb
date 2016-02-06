@@ -13,7 +13,6 @@
 
  * Description:
  ********************************************************************************/
-require_once ('modules/QueryBuilder/QueryBuilder.php');
 
 
 // ProductTemplate is used to store customer information.

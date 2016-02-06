@@ -41,7 +41,6 @@ class ViewShowDuplicates extends SugarView
         unset($_SESSION['SHOW_DUPLICATES']);
 
         $lead = BeanFactory::getBean('Leads');
-        require_once('modules/Leads/LeadFormBase.php');
         $leadForm = new LeadFormBase();
         $GLOBALS['check_notify'] = FALSE;
 

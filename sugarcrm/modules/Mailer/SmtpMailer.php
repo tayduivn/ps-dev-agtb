@@ -15,19 +15,16 @@
 /**
  * Needs a proxy to the PHPMailer library.
  */
-require_once "modules/Mailer/PHPMailerProxy.php";
 
 /**
  * Requires BaseMailer in order to extend it.
  */
-require_once "modules/Mailer/BaseMailer.php";
 
 /* External Imports */
 
 /**
  * Needs to take on an OutboundSmtpEmailConfiguration.
  */
-require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.php";
 
 /**
  * This class implements the basic functionality that is expected from a Mailer that uses PHPMailer to deliver its

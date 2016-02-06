@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Studio/wizards/RenameModules.php');
 
 
 class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase

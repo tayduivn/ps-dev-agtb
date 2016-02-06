@@ -12,7 +12,6 @@
 
  // $Id: EditDropDownWizard.php 18703 2006-12-15 09:42:43Z majed $
 
-require_once('modules/Studio/DropDowns/DropDownHelper.php');
 class EditDropDownWizard extends StudioWizard {
 	var $wizard = 'EditDropDownWizard';
     function welcome(){

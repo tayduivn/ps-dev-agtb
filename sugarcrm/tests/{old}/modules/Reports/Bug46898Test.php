@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Reports/schedule/ReportSchedule.php');
 require_once('modules/Reports/SavedReport.php');
 
 /**

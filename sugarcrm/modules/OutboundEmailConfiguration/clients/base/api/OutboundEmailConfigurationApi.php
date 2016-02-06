@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "clients/base/api/ModuleApi.php";
-require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php"; // also imports
                                                                                       // OutboundEmailConfiguration and
                                                                                       // OutboundSmtpEmailConfiguration
 

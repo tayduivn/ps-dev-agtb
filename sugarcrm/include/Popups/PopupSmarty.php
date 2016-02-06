@@ -12,9 +12,7 @@
 
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
-require_once('include/ListView/ListViewSmarty.php');
 
-require_once('include/TemplateHandler/TemplateHandler.php');
 require_once('include/SearchForm/SearchForm2.php');
 define("NUM_COLS", 2);
 class PopupSmarty extends ListViewSmarty{
@@ -183,7 +181,6 @@ class PopupSmarty extends ListViewSmarty{
         global $app_strings;
 
         if(!is_file(sugar_cached("jsLanguage/{$GLOBALS['current_language']}.js"))) {
-            require_once('include/language/jsLanguage.php');
             jsLanguage::createAppStringsCache($GLOBALS['current_language']);
         }
         $jsLang = getVersionedScript("cache/jsLanguage/{$GLOBALS['current_language']}.js",  $GLOBALS['sugar_config']['js_lang_version']);
@@ -537,7 +534,6 @@ EOQ;
 	}
 
 	function getQuickCreate(){
-		require_once("include/EditView/PopupQuickCreate.php");
 		$qc = new PopupQuickCreate($this->module);
 		return $qc->process($this->module);
 	}

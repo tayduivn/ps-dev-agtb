@@ -41,12 +41,9 @@ if ($error_msg != '')
 
 if(isset($_POST['handle']) && $_POST['handle'] == 'Save'){
 	
-	require_once('modules/Contacts/ContactFormBase.php');
 	$contactForm = new ContactFormBase();
-	require_once('modules/Accounts/AccountFormBase.php');
 	$accountForm = new AccountFormBase();
 	
-	require_once('modules/Opportunities/OpportunityFormBase.php');
 	$oppForm = new OpportunityFormBase();
 	if(!isset($_POST['selectedContact']) && !isset($_POST['ContinueContact'])){
 		$duplicateContacts = $contactForm->checkForDuplicates('Contacts');
@@ -127,11 +124,9 @@ if(isset($_POST['handle']) && $_POST['handle'] == 'Save'){
 		}
 	if(isset($_POST['newappointment']) && $_POST['newappointment']=='on' ){	
 	if(isset($_POST['appointment']) && $_POST['appointment'] == 'Meeting'){
-		require_once('modules/Meetings/MeetingFormBase.php');
 		$meetingForm = new MeetingFormBase();
 		$meeting= $meetingForm->handleSave('Appointments',false, false);
 	}else{
-		require_once('modules/Calls/CallFormBase.php');
 		$callForm = new CallFormBase();
 		$call= $callForm->handleSave('Appointments',false, false);	
 	}
@@ -264,7 +259,6 @@ else{
 $xtpl->assign('FORMHEADER',$mod_strings['LNK_NEW_CONTACT']);
 $xtpl->parse("main.startform");
 $xtpl->parse("main.savebegin");
-require_once('modules/Contacts/ContactFormBase.php');
 $xtpl->assign('OPPNEEDSACCOUNT',$mod_strings['NTC_OPPORTUNITY_REQUIRES_ACCOUNT']);
 if ($sugar_config['require_accounts']) {
 	$xtpl->assign('CHECKOPPORTUNITY', "&& checkOpportunity()");
@@ -300,7 +294,6 @@ $json = getJSONobj();
 $encoded_contact_popup_request_data = $json->encode($popup_request_data);
 
 //Account
-require_once('include/QuickSearchDefaults.php');
 $qsd = QuickSearchDefaults::getQuickSearchDefaults();
 $qsd->setFormName('BusinessCard');
 $sqs_objects = array('BusinessCard_display_account_name' => $qsd->getQSParent());
@@ -313,7 +306,6 @@ $quicksearch_js = '<script type="text/javascript" language="javascript">
 $selectAccountButton = $quicksearch_js;
 $selectAccountButton .= "<div id='newaccountdivlink' style='display:inline' class='dataLabel'>{$mod_strings['LNK_SELECT_ACCOUNT']}:&nbsp;<input class='sqsEnabled' name='display_account_name' id='display_account_name' type=\"text\" value=\"\"><input name='selectedAccount' id='selectedAccount' type=\"hidden\" value=''>&nbsp;<input type='button' title=\"{$app_strings['LBL_SELECT_BUTTON_TITLE']}\"  type=\"button\"  class=\"button\" value='{$app_strings['LBL_SELECT_BUTTON_LABEL']}' name=btn1 LANGUAGE=javascript onclick='open_popup(\"Accounts\", 600, 400, \"\", true, false, $encoded_contact_popup_request_data);'/> <input type='button' title=\"{$app_strings['LBL_CLEAR_BUTTON_TITLE']}\" accessKey=\"{$app_strings['LBL_CLEAR_BUTTON_KEY']}\" type=\"button\"  class=\"button\" value='{$app_strings['LBL_CLEAR_BUTTON_LABEL']}' name=btn1 LANGUAGE=javascript onclick='document.forms[\"BusinessCard\"].selectedAccount.value=\"\";document.forms[\"BusinessCard\"].display_account_name.value=\"\"; '><br><b>{$app_strings['LBL_OR']}</b></div><br><br>";
 $xtpl->assign('FORMHEADER',get_form_header($mod_strings['LNK_NEW_ACCOUNT'], '', ''));
-require_once('modules/Accounts/AccountFormBase.php');
 $accountForm = new AccountFormBase();
 $xtpl->assign('CLASS', 'evenListRow');
 $xtpl->assign('FORMBODY',$selectAccountButton."<slot class='dataLabel'><input class='checkbox' type='checkbox' name='newaccount' onclick='document.forms[\"BusinessCard\"].selectedAccount.value=\"\";document.forms[\"BusinessCard\"].display_account_name.value=\"\";toggleDisplay(\"newaccountdiv\");'>&nbsp;".$mod_strings['LNK_NEW_ACCOUNT']."</slot>&nbsp;<div id='newaccountdiv' style='display:none'>".$accountForm->getWideFormBody('Accounts', 'Accounts','BusinessCard', '' ));
@@ -326,7 +318,6 @@ $xtpl->parse("main.headlessform");
 
 //OPPORTUNITTY
 $xtpl->assign('FORMHEADER',get_form_header($mod_strings['LNK_NEW_OPPORTUNITY'], '', ''));
-require_once('modules/Opportunities/OpportunityFormBase.php');
 $oppForm = new OpportunityFormBase();
 $xtpl->assign('CLASS', 'evenListRow');
 $xtpl->assign('FORMBODY',"<slot class='dataLabel'><input class='checkbox' type='checkbox' name='newopportunity' onclick='toggleDisplay(\"newoppdiv\");'>&nbsp;".$mod_strings['LNK_NEW_OPPORTUNITY']."</slot><div id='newoppdiv' style='display:none'>".$oppForm->getWideFormBody('Opportunities', 'Opportunities','BusinessCard', '' , false));
@@ -339,7 +330,6 @@ $xtpl->parse("main.headlessform");
 
 //Appointment
 $xtpl->assign('FORMHEADER',$mod_strings['LNK_NEW_APPOINTMENT']);
-require_once('modules/Calls/CallFormBase.php');
 $callForm = new CallFormBase();
 $xtpl->assign('FORMBODY', "<input class='checkbox' type='checkbox' name='newappointment' onclick='toggleDisplay(\"newappointmentdiv\");'>&nbsp;".$mod_strings['LNK_NEW_APPOINTMENT']."<div id='newappointmentdiv' style='display:none'>".$callForm->getWideFormBody('Appointments', 'Calls',85));
 $xtpl->assign('POSTFORM','');

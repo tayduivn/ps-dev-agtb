@@ -19,15 +19,8 @@
  * All Rights Reserved.
  *******************************************************************************/
 
-require_once 'modules/DynamicFields/DynamicField.php';
-require_once 'data/BeanVisibility.php';
-require_once 'data/BeanDuplicateCheck.php';
-require_once 'data/SugarACL.php';
-require_once 'modules/Mailer/MailerFactory.php'; // imports all of the Mailer classes that are needed
 require_once 'include/utils.php';
-require_once 'include/Expressions/Expression/Parser/Parser.php';
 //BEGIN SUGARCRM flav=ent ONLY
-require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 //END SUGARCRM flav=ent ONLY
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
@@ -1344,7 +1337,6 @@ class SugarBean
         if (!empty($fieldDefs[$link_name]))
         {
             //initialize a variable of type Link
-            require_once('data/Link2.php');
             $class = load_link_class($fieldDefs[$link_name]);
             if (isset($this->$link_name) && $this->$link_name instanceof $class) {
                     return true;
@@ -1450,7 +1442,6 @@ class SugarBean
 
         $linked_fields=array();
 
- //   	require_once('data/Link.php');
 
         $fieldDefs = $this->getFieldDefinitions();
 
@@ -1536,7 +1527,6 @@ class SugarBean
 
         $related_fields=array();
 
-//    	require_once('data/Link.php');
 
         $fieldDefs = $this->getFieldDefinitions();
 
@@ -1876,7 +1866,6 @@ class SugarBean
             SugarCurrency::verifyCurrencyBaseRateSet($this, $isUpdate);
         }
 
-        require_once("data/BeanFactory.php");
         BeanFactory::registerBean($this);
 
         if (!static::inOperation('saving_related') && static::enterOperation('updating_relationships')) {
@@ -1989,7 +1978,6 @@ class SugarBean
     */
     function updateCalculatedFields()
     {
-        require_once("include/Expressions/DependencyManager.php");
         $deps = DependencyManager::getCalculatedFieldDependencies($this->field_defs, false, true);
         foreach($deps as $dep)
         {
@@ -2025,7 +2013,6 @@ class SugarBean
         // This is ignored when coming via a webservice as it's only needed for display and not just raw data.
         // It results in a huge performance gain when pulling multiple records via webservices.
         if(!isset($GLOBALS['service_object']) && !$this->is_updated_dependent_fields) {
-            require_once("include/Expressions/DependencyManager.php");
 
             if (empty($filter_fields)) {
                 $filterFields = $this->field_defs;
@@ -2191,7 +2178,6 @@ class SugarBean
                 //Look through all calculated fields for uses of this link field
                 if(!empty($def['formula']))
                 {
-		    require_once("include/Expressions/Expression/Parser/Parser.php");
                     $fields = Parser::getFieldsFromExpression($def['formula']);
                     foreach($fields as $var)
                     {
@@ -6638,7 +6624,6 @@ class SugarBean
      */
     function process_workflow_alerts()
     {
-        require_once('include/workflow/WorkFlowHandler.php');
         $handler = new WorkFlowHandler($this, 'after_save');
         if(!empty($_SESSION['WORKFLOW_ALERTS']))
         {

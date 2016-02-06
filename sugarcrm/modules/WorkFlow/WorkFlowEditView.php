@@ -176,7 +176,6 @@ if (isset($focus->body)) $xtpl->assign("BODY", $focus->body); else $xtpl->assign
 if (isset($focus->body_html)) $xtpl->assign("BODY_HTML", $focus->body_html); else $xtpl->assign("BODY_HTML", "");
 
 //////////////////////////////////
-require_once('include/SugarTinyMCE.php');
 $tiny = new SugarTinyMCE();
 $tiny->defaultConfig['apply_source_formatting']=true;
 $tiny->defaultConfig['cleanup_on_startup']=true;

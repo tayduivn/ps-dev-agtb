@@ -10,9 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/Dashlets/Dashlet.php');
 
-require_once('modules/Trackers/TrackerReporter.php');
 
 class TrackerDashlet extends Dashlet {
     var $savedText; // users's saved text

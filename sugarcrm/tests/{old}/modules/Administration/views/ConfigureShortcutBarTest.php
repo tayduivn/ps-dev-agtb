@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Administration/views/view.configureshortcutbar.php');
 
 class ConfigureShortcutBarTest extends Sugar_PHPUnit_Framework_TestCase
 {

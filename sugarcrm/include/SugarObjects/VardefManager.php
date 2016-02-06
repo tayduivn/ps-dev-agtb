@@ -724,7 +724,6 @@ class VardefManager{
 
         //load custom fields into the vardef cache
         if($cacheCustom && !empty($GLOBALS['dictionary'][$object]['fields'])){
-            require_once("modules/DynamicFields/DynamicField.php");
             $df = new DynamicField ($module) ;
             $df->buildCache($module, false);
         }

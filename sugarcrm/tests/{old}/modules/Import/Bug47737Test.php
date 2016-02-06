@@ -12,7 +12,6 @@
 
 
  
-require_once('modules/Import/Importer.php');
 
 class Bug47737Test extends Sugar_PHPUnit_Framework_TestCase
 {

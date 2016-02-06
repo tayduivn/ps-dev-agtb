@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Import/Importer.php');
-require_once('modules/Import/sources/ImportFile.php');
 
 /**
  * Test if non-primary emails are being imported properly from a CSV file

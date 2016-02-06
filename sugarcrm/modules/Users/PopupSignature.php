@@ -9,11 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/SugarTinyMCE.php');
 
 
 
-require_once('modules/UserSignatures/UserSignature.php');
 global $app_strings;
 global $app_list_strings;
 global $curent_language;

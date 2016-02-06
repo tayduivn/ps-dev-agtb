@@ -66,7 +66,6 @@ class PingApi extends SugarApi {
 
     public function ping($api, $args) {
         if ( isset($args['sub_method']) && $args['sub_method'] == 'whattimeisit' ) {
-            require_once('include/SugarDateTime.php');
             $dt = new SugarDateTime();
             $td = new TimeDate();
             return $td->asIso($dt);

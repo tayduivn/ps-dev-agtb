@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/DynamicFields/templates/Fields/TemplateDecimal.php');
 class TemplateCurrencyBaseRate extends TemplateDecimal
 {
     public $len = 26;

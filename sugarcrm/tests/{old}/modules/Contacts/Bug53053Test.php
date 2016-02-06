@@ -10,7 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/Contacts/ContactFormBase.php');
 
 class Bug53053Test extends Sugar_PHPUnit_Framework_TestCase
 {

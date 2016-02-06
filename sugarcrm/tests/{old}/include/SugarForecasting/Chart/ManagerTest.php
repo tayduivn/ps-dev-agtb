@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarForecasting/Chart/Manager.php');
 class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {
 

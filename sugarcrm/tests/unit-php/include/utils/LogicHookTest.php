@@ -29,7 +29,6 @@ class LogicHookTest extends \PHPUnit_Framework_TestCase
 
     public static function setupBeforeClass()
     {
-        require_once 'include/utils/LogicHook.php';
     }
 
     /**

@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/Mailer/PHPMailerProxy.php';
-require_once 'include/OutboundEmail/OutboundEmail.php';
 
 /**
  * Sugar mailer
@@ -86,7 +84,6 @@ class SugarPHPMailer extends PHPMailerProxy
     public function setMailer() {
         global $current_user;
 
-        require_once("include/OutboundEmail/OutboundEmail.php");
         $oe = new OutboundEmail();
         $oe = $oe->getUserMailerSettings($current_user);
 
@@ -120,7 +117,6 @@ class SugarPHPMailer extends PHPMailerProxy
      * Prefills mailer for system
      */
     public function setMailerForSystem() {
-        require_once("include/OutboundEmail/OutboundEmail.php");
         $oe = new OutboundEmail();
         $oe = $oe->getSystemMailerSettings();
 

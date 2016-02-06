@@ -15,7 +15,6 @@
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-require_once("include/OutboundEmail/OutboundEmail.php");
 
 class UsersController extends SugarController
 {

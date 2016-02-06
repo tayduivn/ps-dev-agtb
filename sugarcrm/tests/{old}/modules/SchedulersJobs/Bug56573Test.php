@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/SchedulersJobs/SchedulersJob.php';
 
 /**
  * Bug #56537 : Schedule Jobs don't work with classes
@@ -41,7 +40,6 @@ class Bug56573Test extends Sugar_PHPUnit_Framework_TestCase
 
     protected function execJob($name, $data)
     {
-        require_once('include/SugarQueue/SugarJobQueue.php');
 
         $job = new SchedulersJob();
         $job->name = "Bug56573Test Alert Job - '{$name}'";

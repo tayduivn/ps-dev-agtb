@@ -59,7 +59,6 @@
 */
 
 include_once('include/database/MssqlManager.php');
-require_once 'include/database/SqlsrvPreparedStatement.php';
 
 /**
  * SQL Server (sqlsrv) manager

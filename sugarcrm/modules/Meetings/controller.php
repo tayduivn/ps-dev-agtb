@@ -16,7 +16,6 @@ class MeetingsController extends SugarController
     {
         $this->view = 'edit';
        
-        require_once "modules/Calendar/CalendarUtils.php";
         $editAllRecurrences = isset($_REQUEST['edit_all_recurrences']) ? $_REQUEST['edit_all_recurrences'] : false;
         $this->view_object_map['repeatData'] = CalendarUtils::getRepeatData($this->bean, $editAllRecurrences);
         
@@ -47,7 +46,6 @@ class MeetingsController extends SugarController
             sugar_cleanup(true);
         }
         
-        require_once "modules/Calendar/CalendarUtils.php";
         CalendarUtils::markRepeatDeleted($this->bean);
         $this->bean->mark_deleted($id);
         

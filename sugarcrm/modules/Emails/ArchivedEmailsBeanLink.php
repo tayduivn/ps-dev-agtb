@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Emails/ArchivedEmailsLink.php';
 
 /**
  * Link collects archived emails - both directly assigned and

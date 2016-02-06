@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/MVC/Controller/SugarController.php';
 
 class ConfiguratorController extends SugarController
 {
@@ -74,7 +73,6 @@ class ConfiguratorController extends SugarController
         $urlSTR = 'index.php?module=Configurator&action=FontManager';
         $filename = $this->request->getValidInputRequest('filename', 'Assert\File');
         if ($filename) {
-            require_once('include/Sugarpdf/FontManager.php');
             $fontManager = new FontManager();
             $fontManager->filename = $filename;
             if(!$fontManager->deleteFont()){

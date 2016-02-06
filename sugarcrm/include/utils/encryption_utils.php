@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('vendor/Pear/Crypt_Blowfish/Blowfish.php');
 
 function sugarEncode($key, $data){
 	return base64_encode($data);

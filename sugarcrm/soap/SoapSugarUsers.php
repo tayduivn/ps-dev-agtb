@@ -11,7 +11,6 @@
  */
 require_once('soap/SoapHelperFunctions.php');
 require_once('soap/SoapTypes.php');
-require_once('modules/Reports/Report.php');
 
 use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 
@@ -312,7 +311,6 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
 	}
 
-	require_once 'include/SugarSQLValidate.php';
 	$valid = new SugarSQLValidate();
 	if(!$valid->validateQueryClauses($query, $order_by)) {
         $GLOBALS['log']->error("Bad query: $query $order_by");
@@ -667,7 +665,6 @@ function set_note_attachment($session,$note)
 		return array('id'=>-1, 'error'=>$error->get_soap_array());
 	}
 
-	require_once('modules/Notes/NoteSoap.php');
 	$ns = new NoteSoap();
 	return array('id'=>$ns->saveFile($note), 'error'=>$error->get_soap_array());
 
@@ -706,7 +703,6 @@ function get_note_attachment($session,$id)
 		$error->set_error('no_access');
 		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
 	}
-	require_once('modules/Notes/NoteSoap.php');
 	$ns = new NoteSoap();
 	if(!isset($note->filename)){
 		$note->filename = '';
@@ -1144,7 +1140,6 @@ function get_relationships($session, $module_name, $module_id, $related_module, 
 		return array('ids'=>$ids, 'error'=>$error->get_soap_array());
 	}
 
-	require_once 'include/SugarSQLValidate.php';
 	$valid = new SugarSQLValidate();
 	if(!$valid->validateQueryClauses($related_module_query)) {
         $GLOBALS['log']->error("Bad query: $related_module_query");
@@ -1436,7 +1431,6 @@ function set_document_revision($session,$document_revision)
 		return array('id'=>-1, 'error'=>$error->get_soap_array());
 	}
 
-	require_once('modules/Documents/DocumentSoap.php');
 	$dr = new DocumentSoap();
 	return array('id'=>$dr->saveFile($document_revision), 'error'=>$error->get_soap_array());
 
@@ -2035,7 +2029,6 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 	// build WHERE clauses, if any
 	$where_clauses = array();
 	if (!empty($query)) {
-	    require_once 'include/SugarSQLValidate.php';
 	    $valid = new SugarSQLValidate();
 	    if(!$valid->validateQueryClauses($query)) {
             $GLOBALS['log']->error("Bad query: $query");

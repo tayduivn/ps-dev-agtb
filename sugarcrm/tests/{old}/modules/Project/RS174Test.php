@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Project/Project.php';
 
 /**
  *  RS174: Prepare Project Module.

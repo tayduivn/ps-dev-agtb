@@ -13,7 +13,6 @@ use Sugarcrm\Sugarcrm\Security\Validator\Constraints\ComponentName;
  */
 
 
-require_once ('modules/ModuleBuilder/views/view.listview.php') ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 class ViewPopupview extends ViewListView
@@ -63,7 +62,6 @@ class ViewPopupview extends ViewListView
         $preview = false
         )
     {
-        require_once 'modules/ModuleBuilder/parsers/ParserFactory.php' ;
         $parser = ParserFactory::getParser ( $this->editLayout, $this->editModule, $this->editPackage) ;
 
         $smarty = $this->constructSmarty ( $parser ) ;
@@ -80,7 +78,6 @@ class ViewPopupview extends ViewListView
 
     function constructAjax()
     {
-        require_once ('modules/ModuleBuilder/MB/AjaxCompose.php') ;
         $ajax = new AjaxCompose ( ) ;
 
         if ($this->fromModuleBuilder)

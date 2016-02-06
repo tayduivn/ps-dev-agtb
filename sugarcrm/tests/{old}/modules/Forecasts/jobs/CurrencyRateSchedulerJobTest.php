@@ -12,8 +12,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/SchedulersJobs/SchedulersJob.php';
-require_once 'include/SugarCurrency/CurrencyRateUpdateAbstract.php';
 
 class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
 {

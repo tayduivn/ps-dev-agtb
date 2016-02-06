@@ -31,7 +31,6 @@ class EmployeesViewEdit extends ViewEdit {
  	function display() {
        	if(is_admin($GLOBALS['current_user'])) {
             $json = getJSONobj();
-            require_once('include/QuickSearchDefaults.php');
             $qsd = QuickSearchDefaults::getQuickSearchDefaults();
             $sqs_objects = array('EditView_reports_to_name' => $qsd->getQSUser());
             $sqs_objects['EditView_reports_to_name']['populate_list'] = array('reports_to_name', 'reports_to_id');

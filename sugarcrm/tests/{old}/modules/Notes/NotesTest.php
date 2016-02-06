@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-require_once "modules/Notes/Note.php";
 
 class NotesTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -30,7 +29,6 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateProperNameFieldContainsFirstAndLastName()
     {
-        require_once("modules/Contacts/Contact.php");
         $contact = new Contact();
         $contact->first_name = "Josh";
         $contact->last_name = "Chi";

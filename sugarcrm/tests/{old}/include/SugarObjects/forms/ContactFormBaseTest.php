@@ -15,7 +15,6 @@
  *
  */
 
-require_once('modules/Contacts/ContactFormBase.php');
 
 class ContactFormBaseTest extends Sugar_PHPUnit_Framework_TestCase {
 

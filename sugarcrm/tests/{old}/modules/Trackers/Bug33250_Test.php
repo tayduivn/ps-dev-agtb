@@ -18,7 +18,6 @@
  * 
  */
 
-require_once('modules/Trackers/TrackerUtility.php');
 
 class Bug33250_Test extends Sugar_PHPUnit_Framework_TestCase 
 {

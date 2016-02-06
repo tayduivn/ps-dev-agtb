@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'include/Expressions/Actions/AbstractAction.php';
 
 class AssignToAction extends AbstractAction
 {
@@ -133,7 +132,6 @@ class AssignToAction extends AbstractAction
         // No-op for sidecar
         if (isModuleBWC($target)) {
             require_once 'modules/Home/quicksearchQuery.php';
-            require_once 'include/QuickSearchDefaults.php';
             $json = getJSONobj();
             $userName = Parser::evaluate($this->expression, $target)->evaluate();
             $qsd = QuickSearchDefaults::getQuickSearchDefaults();

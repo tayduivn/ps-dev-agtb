@@ -15,11 +15,6 @@
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  ********************************************************************************/
-require_once('modules/Import/views/ImportView.php');
-require_once('modules/Import/ImportCacheFiles.php');
-require_once('modules/Import/sources/ImportFile.php');
-require_once('modules/Import/views/ImportListView.php');
-require_once('include/ListView/ListViewFacade.php');
 
 class ImportViewLast extends ImportView
 {

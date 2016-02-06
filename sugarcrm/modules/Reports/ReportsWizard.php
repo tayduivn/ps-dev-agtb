@@ -13,7 +13,6 @@
 require_once('modules/Reports/config.php');
 
 
-require_once('modules/Reports/Report.php');
 require_once('modules/Reports/templates/templates_reports.php');
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
@@ -40,7 +39,6 @@ uksort($ACLAllowedModules,"juliansort");
 
 $buttons = array();
 
-require_once("modules/MySettings/TabController.php");
 $controller = new TabController();
 $tabs = $controller->get_user_tabs($current_user, $type='display');
 //$ACLAllowedModulesAdded = array();
@@ -119,7 +117,6 @@ $chart_types = array(
 $sugar_smarty->assign('chart_types', $chart_types);
 //$sugar_smarty->assign('chart_description', $chart_description);
 
-require_once('include/SugarCharts/SugarChartFactory.php');
 $sugarChart = SugarChartFactory::getInstance();
 $resources = $sugarChart->getChartResources();
 $sugar_smarty->assign('chartResources', $resources);
@@ -188,7 +185,6 @@ if ($runQuery == 1) {
 	if ($assignedUserId == $current_user->id)
 		$isOwner = 1;
 	$sugar_smarty->assign("IS_OWNER", $isOwner);
-	require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 	$teamSetField = new SugarFieldTeamset('Teamset');
 	$field_defs = VardefManager::loadVardef('Reports', 'SavedReport');
 	$teamSetField->initClassicView($GLOBALS['dictionary']['SavedReport']['fields'], 'ReportsWizardForm');
@@ -267,7 +263,6 @@ else if ($saveReport !== null && ($saveReport == 'on')) {
 		if ($assignedUserId == $current_user->id)
 			$isOwner = 1;
 		$sugar_smarty->assign("IS_OWNER", $isOwner);
-		require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 		$teamSetField = new SugarFieldTeamset('Teamset');
 		$field_defs = VardefManager::loadVardef('Reports', 'SavedReport');
 		$teamSetField->initClassicView($GLOBALS['dictionary']['SavedReport']['fields'], 'ReportsWizardForm');
@@ -378,7 +373,6 @@ else if (!empty($id)) {
 	if ($saved_report_seed->assigned_user_id == $current_user->id)
 		$isOwner = 1;
 	$sugar_smarty->assign("IS_OWNER", $isOwner);
-	require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 	$teamSetField = new SugarFieldTeamset('Teamset');
 	$field_defs = VardefManager::loadVardef('Reports', 'SavedReport');
 	$teamSetField->initClassicView($GLOBALS['dictionary']['SavedReport']['fields'], 'ReportsWizardForm');
@@ -405,7 +399,6 @@ else {
 	$assigned_user_html = get_select_related_html($assigned_user_html_def);
 
 	$sugar_smarty->assign("do_round", 1);
-	require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 	$teamSetField = new SugarFieldTeamset('Teamset');
 	$field_defs = VardefManager::loadVardef('Reports', 'SavedReport');
 	$teamSetField->initClassicView($GLOBALS['dictionary']['SavedReport']['fields'], 'ReportsWizardForm');

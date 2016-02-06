@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/database/DBManagerFactory.php';
-require_once 'modules/Contacts/Contact.php';
 require_once 'tests/{old}/include/database/TestBean.php';
 
 class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase

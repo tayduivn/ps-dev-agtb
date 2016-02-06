@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once 'tests/{old}/service/SOAPTestCase.php';
-require_once('include/TimeDate.php');
 /**
  * This class is meant to test everything SOAP
  *

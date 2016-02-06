@@ -11,7 +11,6 @@
  */
 
 require_once('tests/{old}/service/APIv3Helper.php');
-require_once 'include/SugarOAuthServer.php';
 
 class OAuthTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -17,7 +17,6 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
  * 
  * */
  
-require_once('include/MVC/View/SugarView.php');
 require_once('modules/Contacts/Popup_picker.php');
 
 class ContactsViewContactAddressPopup extends SugarView {

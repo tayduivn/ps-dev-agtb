@@ -11,10 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/connectors/ConnectorFactory.php';
-require_once 'include/connectors/sources/SourceFactory.php';
 require_once 'include/connectors/utils/ConnectorUtils.php';
-require_once 'modules/Connectors/controller.php';
 require_once 'include/connectors/ConnectorsTestCase.php';
 require_once 'tests/{old}/include/connectors/ZoominfoHelper.php';
 
@@ -75,7 +72,6 @@ class ZoominfoConnectorsTest extends Sugar_Connectors_TestCase
 
     public function testZoominfoCompanyFillBeans()
     {
-        require_once 'modules/Leads/Lead.php';
         $source_instance = ConnectorFactory::getInstance('ext_rest_zoominfocompany');
         $source_instance->getSource()->loadMapping();
         $props = $source_instance->getSource()->getProperties();
@@ -91,7 +87,6 @@ class ZoominfoConnectorsTest extends Sugar_Connectors_TestCase
 
     public function testZoominfoCompanyFillBean()
     {
-        require_once 'modules/Leads/Lead.php';
         $source_instance = ConnectorFactory::getInstance('ext_rest_zoominfocompany');
         $source_instance->getSource()->loadMapping();
         $props = $source_instance->getSource()->getProperties();
@@ -104,7 +99,6 @@ class ZoominfoConnectorsTest extends Sugar_Connectors_TestCase
 
     public function testZoominfoPersonFillBeans()
     {
-        require_once 'modules/Leads/Lead.php';
         $source_instance = SourceFactory::getSource('ext_rest_zoominfoperson');
         $props = $source_instance->getProperties();
         $props['person_search_url'] = $this->mock->url('people_search_query');

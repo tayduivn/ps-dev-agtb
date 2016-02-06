@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('data/BeanFactory.php');
-require_once('include/api/SugarApi.php');
 
 class ModuleApi extends SugarApi {
 
@@ -390,8 +388,6 @@ class ModuleApi extends SugarApi {
      */
     protected function moveTemporaryFiles($args, SugarBean $bean)
     {
-        require_once 'include/upload_file.php';
-        require_once 'include/SugarFields/SugarFieldHandler.php';
 
         $fileFields = $bean->getFieldDefinitions('type', array('file', 'image'));
         $sfh = new SugarFieldHandler();
@@ -669,7 +665,6 @@ class ModuleApi extends SugarApi {
     protected function getRelateRecordApi()
     {
         if (!$this->relateRecordApi) {
-            require_once 'clients/base/api/RelateRecordApi.php';
             $this->relateRecordApi = new RelateRecordApi();
         }
 
