@@ -72,6 +72,13 @@ interface IMailer
     public function setHeader($key, $value = null);
 
     /**
+     * Adds or replaces the Message-ID header.
+     *
+     * @param string $id A unique identifier.
+     */
+    public function setMessageId($id);
+
+    /**
      * Adds or replaces the Subject header.
      *
      * @access public

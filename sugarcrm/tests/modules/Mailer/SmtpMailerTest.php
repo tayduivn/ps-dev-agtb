@@ -111,6 +111,87 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->send();
     }
 
+    public function testSend_MessageIdHeaderIsSet()
+    {
+        $config = new OutboundSmtpEmailConfiguration($GLOBALS['current_user']);
+        $config->setHostname('mycompany.com');
+        $config->setLocale($GLOBALS['locale']);
+
+        $phpMailerProxy = $this->getMockBuilder('PHPMailerProxy')
+            ->setMethods(array('postSend'))
+            ->getMock();
+        $phpMailerProxy->expects($this->once())->method('postSend')->willReturn(true);
+        $phpMailerProxy->addAddress('foo@bar.com');
+        $phpMailerProxy->Body = 'baz';
+
+        $mailer = $this->getMockBuilder('SmtpMailer')
+            ->setConstructorArgs(array($config))
+            ->setMethods(array(
+                'generateMailer',
+                'connectToHost',
+                'transferRecipients',
+                'transferBody',
+                'transferAttachments',
+            ))
+            ->getMock();
+        $mailer->expects($this->once())->method('generateMailer')->willReturn($phpMailerProxy);
+        $mailer->expects($this->once())->method('connectToHost')->willReturn(true);
+        $mailer->expects($this->once())->method('transferRecipients')->willReturn(true);
+        $mailer->expects($this->once())->method('transferBody')->willReturn(true);
+        $mailer->expects($this->once())->method('transferAttachments')->willReturn(true);
+        $mailer->setHeader(EmailHeaders::From, new EmailIdentity('sales@mycompany.com'));
+        $mailer->setSubject('biz');
+
+        $id = create_guid();
+        $mailer->setMessageId($id);
+        $expected = $mailer->getHeader(EmailHeaders::MessageId);
+
+        $mailer->send();
+
+        $actual = $mailer->getHeader(EmailHeaders::MessageId);
+        $this->assertSame($expected, $actual);
+    }
+
+    public function testSend_MessageIdHeaderIsNotSet()
+    {
+        $config = new OutboundSmtpEmailConfiguration($GLOBALS['current_user']);
+        $config->setHostname('mycompany.com');
+        $config->setLocale($GLOBALS['locale']);
+
+        $phpMailerProxy = $this->getMockBuilder('PHPMailerProxy')
+            ->setMethods(array('postSend'))
+            ->getMock();
+        $phpMailerProxy->expects($this->once())->method('postSend')->willReturn(true);
+        $phpMailerProxy->addAddress('foo@bar.com');
+        $phpMailerProxy->Body = 'baz';
+
+        $mailer = $this->getMockBuilder('SmtpMailer')
+            ->setConstructorArgs(array($config))
+            ->setMethods(
+                array(
+                    'generateMailer',
+                    'connectToHost',
+                    'transferRecipients',
+                    'transferBody',
+                    'transferAttachments',
+                )
+            )
+            ->getMock();
+        $mailer->expects($this->once())->method('generateMailer')->willReturn($phpMailerProxy);
+        $mailer->expects($this->once())->method('connectToHost')->willReturn(true);
+        $mailer->expects($this->once())->method('transferRecipients')->willReturn(true);
+        $mailer->expects($this->once())->method('transferBody')->willReturn(true);
+        $mailer->expects($this->once())->method('transferAttachments')->willReturn(true);
+        $mailer->setHeader(EmailHeaders::From, new EmailIdentity('sales@mycompany.com'));
+        $mailer->setSubject('biz');
+
+        $this->assertEmpty($mailer->getHeader(EmailHeaders::MessageId), 'Should be empty before sending');
+
+        $mailer->send();
+
+        $this->assertNotEmpty($mailer->getHeader(EmailHeaders::MessageId), 'Should not be empty after sending');
+    }
+
     public function testSend_PHPMailerSetFromThrowsException_TransferHeadersThrowsMailerException()
     {
         $packagedEmailHeaders = array(

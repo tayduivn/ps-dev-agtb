@@ -131,6 +131,21 @@ abstract class BaseMailer implements IMailer
     }
 
     /**
+     * Adds or replaces the Message-ID header.
+     *
+     * The unique identifier is coupled with the hostname from the configuration in order to construct a Message-ID that
+     * is as unique as possible. The format of the Message-ID is <unique_id@hostname> per the recommendations from
+     * {@link https://www.jwz.org/doc/mid.html}. See the section on "Message-ID generation" to learn how to construct a
+     * unique identifier.
+     *
+     * @param string $id A unique identifier.
+     */
+    public function setMessageId($id)
+    {
+        $this->setHeader(EmailHeaders::MessageId, sprintf('<%s@%s>', $id, $this->config->getHostname()));
+    }
+
+    /**
      * Adds or replaces the Subject header.
      *
      * @access public

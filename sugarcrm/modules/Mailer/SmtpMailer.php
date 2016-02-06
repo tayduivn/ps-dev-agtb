@@ -76,13 +76,22 @@ class SmtpMailer extends BaseMailer
         try {
             // send the email with PHPMailer
             $mailer->send();
+            $messageId = $this->headers->getMessageId();
+
+            // Capture the Message-ID set by PHPMailer if the caller didn't supply one.
+            // This allows callers to use the Message-ID after the email has been sent.
+            if (empty($messageId)) {
+                $messageId = $mailer->getLastMessageID();
+                $this->headers->setHeader(EmailHeaders::MessageId, $messageId);
+            }
 
             /*--- Debug Only ----------------------------------------------------*/
             $message = "MAIL SENT:\n";
             $message .= "--- Mail Config ---\n" . print_r($this->config->toArray(), true);
             $headers = array(
-                "Subject" => $this->headers->getSubject(),
-                "From"    => $this->headers->getFrom(),
+                EmailHeaders::Subject => $this->headers->getSubject(),
+                EmailHeaders::From => $this->headers->getFrom(),
+                EmailHeaders::MessageId => $messageId,
             );
             $message .= "--- Mail Headers ---\n" . print_r($headers, true);
             $GLOBALS["log"]->debug($message);
