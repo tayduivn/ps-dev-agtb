@@ -22,7 +22,7 @@
             "list:edit_businessrules:fire": "warnEditBusinessRules",
             "list:deletebusinessrules:fire": "warnDeleteBusinessRules"
         });
-        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args:[options]});
+        this._super('initialize', [options]);
     },
 
     openBusinessRules: function(model) {

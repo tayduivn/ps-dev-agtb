@@ -142,15 +142,7 @@
      * allow one to define relative dates for date filters.
      */
     _initTabs: function() {
-        // FIXME: this should be replaced with this._super('_initTabs'); which
-        // is currently throwing an error with the following message: "Attempt
-        // to call different parent method from child method"
-        app.view.invokeParent(this, {
-            type: 'view',
-            name: 'tabbed-dashlet',
-            method: '_initTabs',
-            platform: 'base'
-        });
+        this._super('_initTabs');
 
         // FIXME: since there's no way to do this metadata driven (at the
         // moment) and for the sake of simplicity only filters with 'date_due'
