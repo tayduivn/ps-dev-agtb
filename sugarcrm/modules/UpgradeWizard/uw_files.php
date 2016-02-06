@@ -13,9 +13,6 @@
  // $Id$
 
 global $sugar_version;
-if(!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	DYNAMICALLY GENERATE UPGRADEWIZARD MODULE FILE LIST

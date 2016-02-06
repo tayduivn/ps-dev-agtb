@@ -12,9 +12,6 @@
 
  // $Id: disc_client_utils.php 51719 2009-10-22 17:18:00Z mitani $
 
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
-
 require_once ('include/utils/zip_utils.php');
 
 function convert_disc_client(){

@@ -30,8 +30,6 @@ class RepairVendorsTest extends UpgradeTestCase
 
     protected $pluginContent = <<<EOC
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 function smarty_function_sugar_test(\$params, &\$smarty)
 {
     return 'sugar_test';

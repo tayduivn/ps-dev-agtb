@@ -1,5 +1,4 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 require_once('modules/Users/authentication/SugarAuthenticate/SugarAuthenticateUser.php');
 class SummerAuthenticateUser extends SugarAuthenticateUser
 {

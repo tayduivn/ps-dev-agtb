@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
 
 require_once 'include/api/SugarApi.php';
 require_once 'modules/pmse_Inbox/engine/PMSE.php';

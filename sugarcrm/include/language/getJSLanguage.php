@@ -9,9 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
 
 /**
  * Retrieves the requested js language file, building it if it doesn't exist.

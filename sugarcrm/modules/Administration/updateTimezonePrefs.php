@@ -17,7 +17,6 @@
 <table>
 <?php
 global $mod_strings;
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $prompt_users = 'checked';
 if(isset($_POST['preview']) && !isset($_POST['prompt_users'])){
 	$prompt_users = '';

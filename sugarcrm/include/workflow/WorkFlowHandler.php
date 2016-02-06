@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 require_once('include/workflow/workflow_utils.php');
 
 /**

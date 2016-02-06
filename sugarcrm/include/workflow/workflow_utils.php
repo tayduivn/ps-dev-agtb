@@ -11,8 +11,6 @@
  */
 
  // $Id: workflow_utils.php 53057 2009-12-08 01:36:37Z mitani $
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 function get_module_map($start_none = false){
 	global $current_user;
 	global $app_strings;

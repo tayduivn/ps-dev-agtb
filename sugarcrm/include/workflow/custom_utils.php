@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 //Custom plugins
 //Search through the plugins to include any custom_utils.php files
 $dir_path = "./custom/workflow/plugins";

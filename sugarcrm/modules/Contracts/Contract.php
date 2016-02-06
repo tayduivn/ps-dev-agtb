@@ -12,9 +12,6 @@
 
 use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
 
 if (!defined('SUGARCRM_SECONDS_PER_DAY')) {
     define('SUGARCRM_SECONDS_PER_DAY', 60 * 60 * 24);

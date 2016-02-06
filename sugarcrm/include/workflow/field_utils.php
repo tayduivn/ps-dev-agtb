@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: field_utils.php 56426 2010-05-12 23:53:01Z smalyshev $
 
 include_once('include/workflow/workflow_utils.php');

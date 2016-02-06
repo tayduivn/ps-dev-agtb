@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
 
 $viewdefs['Tags']['base']['view']['create'] = array(
     'template' => 'record',
