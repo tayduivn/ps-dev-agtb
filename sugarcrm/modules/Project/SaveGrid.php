@@ -27,6 +27,9 @@ for ($i = 1; $i <= $_REQUEST['numRowsToSave']; $i++) {
         if (isset($_REQUEST["obj_id_" . $i])) {
             //$projectTask->id = $_REQUEST["obj_id_" . $i];
             $projectTask->retrieve($_REQUEST["obj_id_" . $i]);
+            if (!$projectTask->ACLAccess('edit')) {
+                continue;
+            }
         }
         $projectTask->project_task_id = $_REQUEST["mapped_row_" . $i];
         $projectTask->percent_complete = $_REQUEST["percent_complete_" . $i];
@@ -93,7 +96,10 @@ $deletedRows = $_REQUEST['deletedRows'];
 if ($deletedRows != "") {
     $deletedRowsArray = explode(",", $deletedRows);
     foreach ($deletedRowsArray as $rowid) {
-        BeanFactory::deleteBean('ProjectTask', $rowid);
+        $projectTask = BeanFactory::getBean('ProjectTask', $rowid);
+        if ($projectTask->ACLAccess('delete')) {
+            $projectTask->mark_deleted($projectTask->id);
+        }
     }
 }
 

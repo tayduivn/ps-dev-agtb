@@ -2568,14 +2568,30 @@ SUGAR.grid = function() {
 
 			if (!forRow) {
 				for (var i = 1; i < document.getElementById(gridName).rows.length; i++) {
-					Calendar.setup ({
-						inputField : "date_start_" + i, ifFormat : calendar_dateformat, showsTime : false, button : "date_start_" + i, singleClick : true, step : 1, weekNumbers:false
-					});
-					Calendar.setup ({
-						inputField : "date_finish_" + i, ifFormat : calendar_dateformat, showsTime : false, button : "date_finish_" + i, singleClick : true, step : 1, weekNumbers:false
-					});
-
-					//totalRowsInGrid++;
+                    var dateStartEl = 'date_start_' + i;
+                    var dateFinishEl = 'date_finish_' + i;
+                    if (!$('#' + dateStartEl).is('[readonly]')) {
+                        Calendar.setup({
+                            inputField: dateStartEl,
+                            ifFormat: calendar_dateformat,
+                            showsTime: false,
+                            button: dateStartEl,
+                            singleClick: true,
+                            step: 1,
+                            weekNumbers: false
+                        });
+                    }
+                    if (!$('#' + dateFinishEl).is('[readonly]')) {
+                        Calendar.setup({
+                            inputField: dateFinishEl,
+                            ifFormat: calendar_dateformat,
+                            showsTime: false,
+                            button: dateFinishEl,
+                            singleClick: true,
+                            step: 1,
+                            weekNumbers: false
+                        });
+                    }
 				}
 			}
 			else {
