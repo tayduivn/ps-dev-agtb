@@ -28,9 +28,7 @@ class OD extends Standard
      */
     public function __construct($config, WorkerInterface $worker, LockStrategyInterface $lock, LoggerInterface $logger)
     {
-        $this->maxRuntime = !empty($config['max_runtime']) ?
-            $config['cron']['max_runtime'] :
-            $this->maxRuntime;
+        $this->maxRuntime = !empty($config['max_runtime']) ? $config['max_runtime'] : $this->maxRuntime;
         parent::__construct($config, $worker, $lock, $logger);
     }
 
