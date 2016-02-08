@@ -120,6 +120,7 @@ class Person extends Basic
             $this->emailAddress->save($this->id, $this->module_dir, $override_email, '', '', '', '', $this->in_workflow);
             // $this->emailAddress->applyWorkflowChanges($this->id, $this->module_dir);
         }
+        $this->_create_proper_name_field();
         return $this->id;
     }
 
