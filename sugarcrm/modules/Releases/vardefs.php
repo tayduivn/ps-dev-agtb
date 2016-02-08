@@ -100,6 +100,7 @@ $dictionary['Release'] = array(
 'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Bugs', 'allowUserRead' => true)),
 'indices' => array (
        array('name' =>'releasespk', 'type' =>'primary', 'fields'=>array('id')),
+       array('name' =>'idx_releases', 'type'=>'index', 'fields'=>array('name','deleted')),
                                                       )
                             );
 ?>

@@ -130,6 +130,7 @@ $dictionary['Shipper'] = array(
 'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Products', 'allowUserRead' => true)),
 'indices' => array (
        array('name' =>'shipperspk', 'type' =>'primary', 'fields'=>array('id')),
+       array('name' =>'idx_shippers', 'type'=>'index', 'fields'=>array('name','deleted')),
                                                       )
   ,'relationships' => array (
         'shipper_quotes' => array ('lhs_module'=> 'Shippers', 'lhs_table'=> 'shippers', 'lhs_key' => 'id',

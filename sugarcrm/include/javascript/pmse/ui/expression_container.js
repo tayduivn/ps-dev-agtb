@@ -294,7 +294,7 @@ ExpressionContainer.prototype.handleCriteriaBuilder = function (globalParent, pa
                 constants: true,
                 variables: {
                     dataRoot: null,
-                    data: parentVariable.fields,
+                    data: parentVariable.inputFields,
                     dataFormat: "tabular",
                     textField: "label",
                     moduleTextField: "moduleText",
@@ -324,7 +324,7 @@ ExpressionContainer.prototype.handleCriteriaBuilder = function (globalParent, pa
                         },
                         variables: {
                             dataRoot: null,
-                            data: parentVariable.fields,
+                            data: parentVariable.inputFields,
                             dataFormat: "tabular",
                             textField: "label",
                             typeFilter: parentVariable.fieldType,
@@ -346,7 +346,7 @@ ExpressionContainer.prototype.handleCriteriaBuilder = function (globalParent, pa
                         },
                         variables: {
                             dataRoot: null,
-                            data: parentVariable.fields,
+                            data: parentVariable.inputFields,
                             dataFormat: "tabular",
                             textField: "label",
                             typeFilter: parentVariable.fieldType,
@@ -383,7 +383,7 @@ ExpressionContainer.prototype.handleCriteriaBuilder = function (globalParent, pa
                         },
                         variables: {
                             dataRoot: null,
-                            data: parentVariable.fields,
+                            data: parentVariable.inputFields,
                             dataFormat: "tabular",
                             textField: "label",
                             typeFilter: parentVariable.fieldType,
@@ -409,7 +409,7 @@ ExpressionContainer.prototype.handleCriteriaBuilder = function (globalParent, pa
                             },
                             variables: {
                                 dataRoot: null,
-                                data: parentVariable.fields,
+                                data: parentVariable.inputFields,
                                 dataFormat: "tabular",
                                 textField: "label",
                                 typeFilter: parentVariable.fieldType,

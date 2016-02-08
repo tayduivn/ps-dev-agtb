@@ -12,6 +12,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * Get the logger class for handling the log
+ */
+require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 /**
  * Class contains utilities as encoder and decoders for codes url, remove bound fields,
@@ -42,7 +46,7 @@ class PMSEEngineUtils
             'password',
             'is_admin',
         ),
-        // Business Rules
+        // list for BR conclusions and others (write)
         'BR' => array(
             'duration_hours',
             'kbdocument_body',
@@ -53,6 +57,9 @@ class PMSEEngineUtils
             'modified_user_id',
             'date_entered',
             'date_modified',
+        ),
+        // list for BR conditions (read)
+        'BRR' => array(
         ),
         // Add related record Activity item in Process Definitions
         'AC' => array(
@@ -130,6 +137,7 @@ class PMSEEngineUtils
     public static $specialFields = array(
         'All' => array('created_by', 'modified_user_id'),
         'BR' => array('assigned_user_id', 'email1', 'outlook_id'),
+        'BRR' => array('assigned_user_id', 'email1', 'outlook_id'),
         'ET' => array('email1'),
         'AC' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
         'CF' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
@@ -1139,11 +1147,11 @@ class PMSEEngineUtils
             return false;
         }
 
-        if (($type == 'AC' || $type == 'CF') && isset($def['formula'])) {
+        if (in_array($type, array('AC', 'CF', 'BR')) && isset($def['formula'])) {
             return false;
         }
 
-        if (($type == 'RR' || $type == 'AC' || $type == 'CF') && !empty($def['readonly'])) {
+        if (in_array($type, array('RR', 'AC', 'CF', 'BR')) && !empty($def['readonly'])) {
             return false;
         }
 
@@ -1291,26 +1299,35 @@ class PMSEEngineUtils
      * in a version when they were still acceptable valid fields
      * @param array $element An activity element from an import
      * @param string $module The module to get fields to validate from
+     * @param string $type The type of field validation to apply
      * @return string
      */
-    public static function sanitizeImportActivityFields(array $element, $module)
+    public static function sanitizeImportActivityFields(array $element, $module, $type = '')
     {
         if (!empty($element['act_field_module'])) {
             // We will need these for validations
             $targetBean = BeanFactory::getBean($module);
             if (isset($targetBean->field_defs[$element['act_field_module']]['module'])) {
                 // We need the related module bean to get field defs for validation
-                $relBean = BeanFactory::getBean($targetBean->field_defs[$element['act_field_module']]['module']);
+                $relBeanName = $targetBean->field_defs[$element['act_field_module']]['module'];
+                $relBean = BeanFactory::getBean($relBeanName);
 
                 $newData = array();
-                $fieldData = json_decode(html_entity_decode($element['act_fields']));
+                $fieldData = json_decode(html_entity_decode($element['act_fields']), true);
                 // In some cases $fieldData comes back null, so we need to check
                 // if it is actually an array before trying to use it as one
                 if (is_array($fieldData)) {
                     foreach ($fieldData as $fieldDef) {
                         $field = $fieldDef['field'];
-                        if (isset($relBean->field_defs[$field]) && self::isValidField($relBean->field_defs[$field])) {
-                            $newData[] = $fieldDef;
+                        if (isset($relBean->field_defs[$field])) {
+                            if (self::isValidField($relBean->field_defs[$field], $type)) {
+                                $newData[] = $fieldDef;
+                            } else {
+                                $typeMark = empty($type) ? '(EMPTY)' : $type;
+                                PMSELogger::getInstance()->warning("sanitizeImportActivityFields: $field field on $relBeanName module did not pass validation for $typeMark");
+                            }
+                        } else {
+                            PMSELogger::getInstance()->warning("sanitizeImportActivityFields: $field field not found in $relBeanName module");
                         }
                     }
                 }
