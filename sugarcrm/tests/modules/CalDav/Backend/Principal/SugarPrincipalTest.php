@@ -118,13 +118,19 @@ class SugarPrincipalTest extends Sugar_PHPUnit_Framework_TestCase
             array(
                 'prefixPath' => 'principals/users',
                 'email' => 'asdfskdod@test.com',
+                'search string' => 'AsDfskdod@',
+                'find' => true,
+            ),
+            array(
+                'prefixPath' => 'principals/users',
+                'email' => 'asdfskdod@test.com',
                 'search string' => '@test.com',
                 'find' => false,
             ),
             array(
                 'prefixPath' => 'principals/users',
-                'email' => 'asdfskdod@test.com',
-                'search string' => 'asdfskdod@test.com',
+                'email' => 'ASDaskdod@test.com',
+                'search string' => 'asdaskdod@test.com',
                 'find' => true,
             ),
             array(

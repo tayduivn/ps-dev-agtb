@@ -139,10 +139,11 @@ abstract class Base implements SearchInterface
 
                         $query->select(array('email_addresses.email_address'));
 
+                        $emailCaps = strtoupper(trim($value));
                         if ($test == 'allof') {
-                            $query->where()->starts('email_addresses.email_address', $value);
+                            $query->where()->starts('email_addresses.email_address_caps', $emailCaps);
                         } else {
-                            $mainOrQuery->starts('email_addresses.email_address', $value);
+                            $mainOrQuery->starts('email_addresses.email_address_caps', $emailCaps);
                         }
                     } else {
                         return array();
