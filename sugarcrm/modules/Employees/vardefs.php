@@ -95,4 +95,4 @@ $dictionary['Employee']['fields']['created_by_link']['relationship'] = 'employee
 
 $dictionary['Employee']['relationships']['employees_created_by'] = $dictionary['User']['relationships']['users_created_by'];
 $dictionary['Employee']['relationships']['employees_created_by']['lhs_module'] = 'Employees';
-?>
+$dictionary['Employee']['hidden_to_role_assignment'] = true;
