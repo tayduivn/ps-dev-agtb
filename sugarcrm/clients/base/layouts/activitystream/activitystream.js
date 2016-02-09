@@ -41,7 +41,9 @@
         if (_.isUndefined(app.drawer) || app.drawer.isActive(this.$el)) {
             var activities = this.$('.activitystream-posts-comments-container');
             activities.removeClass('highlighted');
-            activities.find('.preview-btn').removeClass('active');
+            activities.find('.preview-btn')
+                .removeClass('active')
+                .attr('aria-pressed', false);
         }
     },
 
