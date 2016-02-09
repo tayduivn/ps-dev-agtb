@@ -197,7 +197,7 @@ if ($run !== "") {
 		if(unlink($delete_me)) { // successful deletion?
 			echo string_format($mod_strings['LBL_UPGRADE_WIZARD_PKG_REMOVED'], array($delete_me))."<br>";
 		} else {
-			die("Problem removing package $delete_me.");
+            die('Problem removing package ' . htmlspecialchars($delete_me, ENT_QUOTES, 'UTF-8'));
 		}
     }
 }

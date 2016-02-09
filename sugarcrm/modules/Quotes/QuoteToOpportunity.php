@@ -108,7 +108,10 @@ if ($quote->getRelatedOpportunityCount() > 0) {
 } elseif (query_opportunity_subject_exists($_REQUEST["opportunity_subject"]) > 0) {
     $LBLITUP = $app_strings['ERR_OPPORTUNITY_NAME_DUPE'];
 
-    printf("<span class=\"error\">$LBLITUP</span>", $_REQUEST["opportunity_subject"]);
+    printf(
+        "<span class=\"error\">$LBLITUP</span>",
+        htmlspecialchars($_REQUEST["opportunity_subject"], ENT_QUOTES, 'UTF-8')
+    );
     generate_name_form($_REQUEST);
 } else {
 

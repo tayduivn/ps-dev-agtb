@@ -10,11 +10,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
+$module_name = InputValidation::getService()->getValidInputRequest('module_name', 'Assert\Mvc\ModuleName', '');
+
 if(isset($_REQUEST['refreshparent'])){
 	echo '<SCRIPT> parent.location.reload();</script>';	
-}else if(isset($_REQUEST['module_name']) && isset($_REQUEST['showlist'])){
-	$the_strings = return_module_language($current_language, $_REQUEST['module_name']);
-	$mod_name = $_REQUEST['module_name'];
+} elseif (!empty($module_name) && isset($_REQUEST['showlist'])) {
+    $the_strings = return_module_language($current_language, $module_name);
 	echo SugarThemeRegistry::current()->getCSS();
 	echo '<table width="100%" border="0" cellspacing=0 cellpadding="0" class="contentBox">';
 	$sugar_body_only = 0;
@@ -22,18 +26,17 @@ if(isset($_REQUEST['refreshparent'])){
 		$sugar_body_only = $_REQUEST['sugar_body_only'];
 	}
 	foreach($the_strings as $key=>$value){
-		echo "<tr><td nowrap>$key &nbsp;=>&nbsp; <a href='index.php?action=EditView&module=LabelEditor&module_name=$mod_name&record=$key&sugar_body_only=$sugar_body_only&style=popup'> $value </a></td></tr>";	
-		
+        echo "<tr><td nowrap>$key &nbsp;=>&nbsp; <a href='index.php?action=EditView&module=LabelEditor&
+            module_name=$module_name&record=$key&sugar_body_only=$sugar_body_only&style=popup'> $value </a></td></tr>";
 	}
 	echo '</table>';
-}else if(isset($_REQUEST['module_name'])){
-	$the_strings = return_module_language($current_language, $_REQUEST['module_name']);
-	$mod_name = $_REQUEST['module_name'];
+} elseif (!empty($module_name)) {
+    $the_strings = return_module_language($current_language, $module_name);
 	global $app_strings;
 	echo '<form name="ListEdit"  name="EditView" method="POST" action="index.php">';
 	echo '<input type="hidden" name="action" value="Save">';
 	echo '<input type="hidden" name="multi_edit" value="true">';
-	echo '<input type="hidden" name="module_name" value="'.$_REQUEST['module_name'].'">';
+    echo '<input type="hidden" name="module_name" value="'.$module_name.'">';
 	echo '<input type="hidden" name="module" value="LabelEditor">';
 	echo SugarThemeRegistry::current()->getCSS();
 	echo <<<EOQ

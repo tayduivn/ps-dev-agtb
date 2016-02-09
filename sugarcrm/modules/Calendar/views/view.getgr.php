@@ -11,6 +11,8 @@
  */
 require_once('include/MVC/View/SugarView.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 class CalendarViewGetGR extends SugarView {
 	function process(){
 		$this->display();
@@ -22,7 +24,9 @@ class CalendarViewGetGR extends SugarView {
 		global $json;
         	$json = getJSONobj();
         	$json_config = new json_config();
-        	$GRjavascript = $json_config->getFocusData($_REQUEST['type'], $_REQUEST['record']);
+            $module = InputValidation::getService()->getValidInputRequest('type', 'Assert\Mvc\ModuleName', '');
+            $record = InputValidation::getService()->getValidInputRequest('record', 'Assert\Guid', '');
+            $GRjavascript = $json_config->getFocusData($module, $record);
         	ob_clean();
         	echo $GRjavascript;
 	}	

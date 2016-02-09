@@ -11,15 +11,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 if(empty($_SESSION['oc_install'])){
 	die('Not A Valid Entry Point');
 }
 require_once('include/utils/disc_client_utils.php');
 global $beanList, $beanFiles, $sugar_config;
-$first_time = 'false';
-if(isset($_REQUEST['first_time']) && !empty($_REQUEST['first_time'])){
-    $first_time = $_REQUEST['first_time'];
-}
+
+$first_time = InputValidation::getService()->getValidInputRequest(
+    'first_time',
+    array('Assert\Choice' => array('choices' => array('false', 'true'))),
+    'false'
+);
 
 if(!empty($_REQUEST['oc_server_url']) && $_REQUEST['oc_server_url'] != 'http://'){
 	 $_SESSION['oc_server_url'] = $_REQUEST['oc_server_url'];

@@ -13,18 +13,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SubPanelViewer.php 41439 2008-11-06 20:10:33Z jmertic $
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 global $beanList;
 global $beanFiles;
 
+$module = InputValidation::getService()->getValidInputRequest('module', 'Assert\Mvc\ModuleName', '');
+$record = InputValidation::getService()->getValidInputRequest('record', 'Assert\Guid', '');
 
-if(empty($_REQUEST['module']))
-{
-	die("'module' was not defined");
+if (empty($module)) {
+    die("'module' was not defined");
 }
 
-if(empty($_REQUEST['record']))
-{
-	die("'record' was not defined");
+if (empty($record)) {
+    die("'record' was not defined");
 }
 
 if(empty($_REQUEST['subpanel']))
@@ -33,14 +35,11 @@ if(empty($_REQUEST['subpanel']))
     exit(1);
 }
 
-if(!isset($beanList[$_REQUEST['module']]))
-{
-	die("'".$_REQUEST['module']."' is not defined in \$beanList");
+if (!isset($beanList[$module])) {
+    die("'".$module."' is not defined in \$beanList");
 }
 
 $subpanel = $_REQUEST['subpanel'];
-$record = $_REQUEST['record'];
-$module = $_REQUEST['module'];
 
 if(empty($_REQUEST['inline']))
 {
