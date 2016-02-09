@@ -339,6 +339,12 @@ abstract class AdapterAbstract implements AdapterInterface
         list($beanData, $changedFields, $invitees) = $data;
         list($action, $beanId, $childEventsId, $recurrenceId, $recurrenceIndex) = $beanData;
 
+        if ($bean->assigned_user_id) {
+            \CalendarEvents::$old_assigned_user_id = $bean->assigned_user_id;
+        } else {
+            \CalendarEvents::$old_assigned_user_id = $GLOBALS['current_user']->id;
+        }
+
         if (!$bean->repeat_parent_id) {
             $bean->send_invites_uid = $beanData[1];
             $bean->send_invites = true;
