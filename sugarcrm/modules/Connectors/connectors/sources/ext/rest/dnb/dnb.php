@@ -70,6 +70,16 @@ class ext_rest_dnb extends ext_rest {
      * override this abstract method
      */
     public function getList($args=array(), $module=null){}
+
+    /*
+     *
+     * Handles actions at the beginning of saveConfig().
+     */
+    public function preSaveConfig() {
+        $api = ExternalAPIFactory::loadAPI('Dnb', true);
+        $api->setConnector($this);
+        $api->checkTokenValidity(true);
+    }
 }
 
 ?>

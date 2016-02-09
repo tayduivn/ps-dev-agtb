@@ -28,8 +28,12 @@
         this.onDirty = null;
         this.showDirtyIndicator = null;
         this.isDirty = null;
-        this.fields = [];
-        this.combos = {};
+        this.conditionFields = [];
+        this.conditionCombos = {};
+        this.conditionFieldsReady = false;
+        this.conclusionFields = [];
+        this.conclusionCombos = {};
+        this.conclusionFieldsReady = false;
         this.language = {};
         this.correctlyBuilt = false;
         this.globalCBControl = null;
@@ -587,70 +591,102 @@
         }
     };
 
-    DecisionTable.prototype.getFields = function(defaultValue) {
-        var self = this;
-        if(this.fields.length) {
-            return this.fields;
-        }
-        App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
-        this.proxy.setUrl('pmse_Project/CrmData/oneToOneRelated/' + this.base_module);
-        //this.proxy.setUrl('pmse_Project/CrmData/allRelated/' + this.base_module);
-        //this.proxy.setUrl('pmse_Project/CrmData/fields/' + this.base_module);
-        this.proxy.getData({base_module: this.base_module, call_type: 'BR'}, {
-            success: function(data) {
-                var i, j, fields, combos, module;
-                if(data && data.success) {
-                    fields = [];
-                    combos = {};
-                    for(i = 0; i < data.result.length; i += 1) {
-                        module = data.result[i];
-                        for (j = 0; j < module.fields.length; j += 1) {
-                            fields.push({
-                                label: module.fields[j].text,
-                                value: module.fields[j].value,
-                                type: module.fields[j].type,
-                                moduleText: module.text,
-                                moduleValue: module.value
-                            });
-                            //Maybe backend shouldn't send the optionItem field if doesn't apply to the field.
-                            if (module.fields[j].optionItem !== "none") {
-                                combos[module.value + self.moduleFieldSeparator + module.fields[j].value] = module.fields[j].optionItem;
-                            } else if (module.fields[j].type === 'Checkbox') {
-                                combos[module.value + self.moduleFieldSeparator + module.fields[j].value] = {
-                                    checked: translate('LBL_PMSE_DROP_DOWN_CHECKED', 'pmse_Business_Rules'),
-                                    unchecked: translate('LBL_PMSE_DROP_DOWN_UNCHECKED', 'pmse_Business_Rules')
-                                };
-                            }
-                        }
+    DecisionTable.prototype.parseFieldsData = function(data, self) {
+        var i, j, fields, combos, module, result = {success : false};
+        if (data && data.success) {
+            fields = [];
+            combos = {};
+            for (i = 0; i < data.result.length; i += 1) {
+                module = data.result[i];
+                for (j = 0; j < module.fields.length; j += 1) {
+                    fields.push({
+                        label: module.fields[j].text,
+                        value: module.fields[j].value,
+                        type: module.fields[j].type,
+                        moduleText: module.text,
+                        moduleValue: module.value
+                    });
+                    //Maybe backend shouldn't send the optionItem field if doesn't apply to the field.
+                    if (module.fields[j].optionItem !== "none") {
+                        combos[module.value + self.moduleFieldSeparator + module.fields[j].value] = module.fields[j].optionItem;
+                    } else if (module.fields[j].type === 'Checkbox') {
+                        combos[module.value + self.moduleFieldSeparator + module.fields[j].value] = {
+                            checked: translate('LBL_PMSE_DROP_DOWN_CHECKED', 'pmse_Business_Rules'),
+                            unchecked: translate('LBL_PMSE_DROP_DOWN_UNCHECKED', 'pmse_Business_Rules')
+                        };
                     }
-
-                    self.fields = fields;
-                    self.combos = combos;
-
-
-                    self.setConditions(self.auxConditions);
-                    self.setConclusions(self.auxConclutions);
-                    self.setRuleset(self.rules);
-
-                    if(!self.conditions.length) {
-                        self.addCondition(defaultValue);
-                    }
-
-                    if(!self.conclusions.length) {
-                        self.addConclusion(true);
-                    }
-
-                    if(!self.decisionRows) {
-                        self.addDecisionRow();
-                    }
-                    App.alert.dismiss('upload');
-                    self.setIsDirty(false);
                 }
+            }
+            result.fields = fields;
+            result.combos = combos;
+            result.success = true;
+        }
+        return result;
+    };
 
+    DecisionTable.prototype.finishGetFields = function(defaultValue, self) {
+        self.setConditions(self.auxConditions);
+        self.setConclusions(self.auxConclutions);
+        self.setRuleset(self.rules);
+        if(!self.conditions.length) {
+            self.addCondition(defaultValue);
+        }
+        if(!self.conclusions.length) {
+            self.addConclusion(true);
+        }
+        if(!self.decisionRows) {
+            self.addDecisionRow();
+        }
+        App.alert.dismiss('upload');
+        self.setIsDirty(false);
+    };
+
+    DecisionTable.prototype.getConditionFields = function(defaultValue) {
+        var self = this;
+        this.proxy.setUrl('ProcessBusinessRules/fields/conditions');
+        this.proxy.getData({base_module: this.base_module, call_type: 'BRR'}, {
+            success: function(data) {
+                var result = self.parseFieldsData(data, self);
+                if (result.success) {
+                    self.conditionFields = result.fields;
+                    self.conditionCombos = result.combos;
+                    self.conditionFieldsReady = true;
+                    if (self.conclusionFieldsReady) {
+                        self.finishGetFields(defaultValue, self);
+                    }
+                }
             }
         });
+    };
 
-        return this;
+    DecisionTable.prototype.getConclusionFields = function(defaultValue) {
+        var self = this;
+        this.proxy.setUrl('ProcessBusinessRules/fields/conclusions');
+        this.proxy.getData({base_module: this.base_module, call_type: 'BR'}, {
+            success: function(data) {
+                var result = self.parseFieldsData(data, self);
+                if (result.success) {
+                    self.conclusionFields = result.fields;
+                    self.conclusionCombos = result.combos;
+                    self.conclusionFieldsReady = true;
+                    if (self.conditionFieldsReady) {
+                        self.finishGetFields(defaultValue, self);
+                    }
+                }
+            }
+        });
+    };
+
+    DecisionTable.prototype.getFields = function(defaultValue) {
+        if (!this.conditionFieldsReady || !this.conclusionFieldsReady) {
+            App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+            if (!this.conditionFieldsReady) {
+                this.getConditionFields(defaultValue);
+            }
+            if (!this.conclusionFieldsReady) {
+                this.getConclusionFields(defaultValue);
+            }
+        }
     };
 
     DecisionTable.prototype.setProxy = function(proxy/*, restClient*/) {
@@ -724,8 +760,9 @@
         var condition = new DecisionTableVariable({
             parent: this,
             field: defaultValue || null,
-            fields: this.fields,
-            combos: this.combos,
+            fields: this.conditionFields,
+            combos: this.conditionCombos,
+            inputFields: this.conditionFields,
             language: this.language
         }), i, html;
 
@@ -760,8 +797,9 @@
         var conclusion = new DecisionTableVariable({
             isReturnType: returnType,
             variableMode: "conclusion",
-            fields: this.fields,
-            combos: this.combos,
+            fields: this.conclusionFields,
+            combos: this.conclusionCombos,
+            inputFields: this.conditionFields,
             field: defaultValue,
             parent: this,
             language: this.language
@@ -1415,6 +1453,7 @@
         this.values = [];
         this.fields = null;
         this.combos = {};
+        this.inputFields = null;
 
         this.variableMode = null;
         this.isReturnType = null;
@@ -1441,6 +1480,7 @@
 
             fields: [],
             combos: {},
+            inputFields: [],
 
             variableMode: "condition",
             isReturnType: false,
@@ -1462,6 +1502,7 @@
 
         this.setFields(defaults.fields)
             .setCombos(defaults.combos)
+            .setInputFields(defaults.inputFields)
             .setField(defaults.field);
 
         if (defaults.values) {
@@ -1495,6 +1536,17 @@
                 module = newField.module;
                 field = newField.field;
                 moduleFieldConcat = module + this.parent.moduleFieldSeparator + field;
+            }
+            for (i = 0; i < this.inputFields.length; i += 1) {
+                currentField = this.inputFields[i];
+                if (currentField.value === field && currentField.moduleValue === module) {
+                    this.field = field;
+                    this.fieldName = currentField.label;
+                    this.fieldType = currentField.type;
+                    this.module = module;
+                    this.select.value = moduleFieldConcat;
+                    return this;
+                }
             }
             for (i = 0; i < this.fields.length; i += 1) {
                 currentField = this.fields[i];
@@ -1532,6 +1584,13 @@
 
     DecisionTableVariable.prototype.setCombos = function (combos) {
         this.combos = combos;
+        return this;
+    };
+
+    DecisionTableVariable.prototype.setInputFields = function(fields) {
+        if(fields.push && fields.pop) {
+            this.inputFields = fields;
+        }
         return this;
     };
 
@@ -1602,7 +1661,7 @@
                     this.values.push(new DecisionTableSingleValue({
                         value: values[i],
                         parent: this,
-                        fields: this.fields
+                        fields: this.inputFields
                     }));
                 }
             }
@@ -1612,7 +1671,7 @@
                     value: values[i].value,
                     operator: values[i].operator,
                     parent: this,
-                    fields: this.fields,
+                    fields: this.inputFields,
                     language: this.language
                 }));
             }
@@ -1828,9 +1887,9 @@
     DecisionTableVariable.prototype.addValue = function(value, operator) {
         var value;
         if(this.variableMode === 'conclusion') {
-            value = new DecisionTableSingleValue({value: value, parent: this, fields: this.fields, language: this.language});
+            value = new DecisionTableSingleValue({value: value, parent: this, fields: this.inputFields, language: this.language});
         } else {
-            value = new DecisionTableValueEvaluation({value: value, operator: operator, parent: this, fields: this.fields, language: this.language});
+            value = new DecisionTableValueEvaluation({value: value, operator: operator, parent: this, fields: this.inputFields, language: this.language});
         }
         value.onBeforeOpenPanel = this.onBeforeValueOpenPanelHandler();
         value.onRemove = this.onRemoveValueHandler();
