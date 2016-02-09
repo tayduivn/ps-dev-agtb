@@ -54,15 +54,15 @@
     initialize: function(options) {
         var fieldValue;
 
-        this._super('initialize', [options]);
-
-        // translate the placeholder
-        this.placeholder = app.lang.get(this.def.placeholder || this.placeholder, this.module);
-
         this.addRow = _.debounce(this._addRowImmediately, 200);
         this.removeRow = _.debounce(this._removeRowImmediately, 200);
         this.previewRow = _.debounce(this._previewRowImmediately, 200);
         this.search = _.debounce(this.search, app.config.requiredElapsed || 500);
+
+        this._super('initialize', [options]);
+
+        // translate the placeholder
+        this.placeholder = app.lang.get(this.def.placeholder || this.placeholder, this.module);
 
         if (this.model.isNew()) {
             try {
