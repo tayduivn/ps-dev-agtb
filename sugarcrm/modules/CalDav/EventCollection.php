@@ -325,6 +325,27 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
+     * Add single bean id into mapping
+     * Return true if id was added
+     * @param string $id
+     * @return bool
+     */
+    public function addIdToSugarChildrenOrder($id)
+    {
+        if (!$this->parent_type || !$this->parent_id) {
+            return false;
+        }
+        $currentOrder = $this->getSugarChildrenOrder();
+        $idIndex = array_search($id, $currentOrder);
+        if ($idIndex === false) {
+            $currentOrder[] = $id;
+            return $this->setSugarChildrenOrder($currentOrder);
+        }
+
+        return false;
+    }
+
+    /**
      * Set sugar bean children ids
      * @param array $ids Array with bean ids
      * @return bool
