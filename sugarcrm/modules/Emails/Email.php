@@ -511,15 +511,18 @@ class Email extends SugarBean {
 			    }
 			}
 
-	        /* template parsing */
-	        if (empty($object_arr)) {
-	          $object_arr= array('Contacts' => '123');
-	        }
-	        $object_arr['Users'] = $current_user->id;
-	        $this->description_html = EmailTemplate::parse_template($this->description_html, $object_arr);
-	        $this->name = EmailTemplate::parse_template($this->name, $object_arr);
-	        $this->description = EmailTemplate::parse_template($this->description, $object_arr);
-	        $this->description = html_entity_decode($this->description,ENT_COMPAT,'UTF-8');
+            if ($this->type != 'archived') {
+                /* template parsing */
+                if (empty($object_arr)) {
+                    $object_arr = array('Contacts' => '123');
+                }
+                $object_arr['Users'] = $current_user->id;
+                $this->description_html = EmailTemplate::parse_template($this->description_html, $object_arr);
+                $this->name = EmailTemplate::parse_template($this->name, $object_arr);
+                $this->description = EmailTemplate::parse_template($this->description, $object_arr);
+            }
+
+            $this->description = html_entity_decode($this->description, ENT_COMPAT, 'UTF-8');
 
             if ($this->type != 'draft' && $this->status != 'draft' &&
                 $this->type != 'archived' && $this->status != 'archived'
@@ -574,19 +577,16 @@ class Email extends SugarBean {
         $this->description_html = $htmlBody;
 
         $mailConfig = null;
-        try {
-            if (isset($request["fromAccount"]) && !empty($request["fromAccount"])) {
-                $mailConfig = OutboundEmailConfigurationPeer::getMailConfigurationFromId($current_user, $request["fromAccount"]);
-            } else {
-                $mailConfig = OutboundEmailConfigurationPeer::getSystemMailConfiguration($current_user);
+        if (!$saveAsDraft && !$archived) {
+                if (isset($request["fromAccount"]) && !empty($request["fromAccount"])) {
+                    $mailConfig = OutboundEmailConfigurationPeer::getMailConfigurationFromId($current_user, $request["fromAccount"]);
+                } else {
+                    $mailConfig = OutboundEmailConfigurationPeer::getSystemMailConfiguration($current_user);
+                }
+
+            if (is_null($mailConfig)) {
+                throw new MailerException("No Valid Mail Configurations Found", MailerException::InvalidConfiguration);
             }
-        } catch(Exception $e) {
-            if (!$saveAsDraft && !$archived) {
-                throw $e;
-            }
-        }
-        if (!$saveAsDraft && !$archived && is_null($mailConfig)) {
-            throw new MailerException("No Valid Mail Configurations Found", MailerException::InvalidConfiguration);
         }
 
         try {
