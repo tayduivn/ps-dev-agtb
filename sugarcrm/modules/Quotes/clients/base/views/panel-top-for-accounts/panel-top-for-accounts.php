@@ -14,7 +14,7 @@ $viewdefs['Quotes']['base']['view']['panel-top-for-accounts'] = array(
     'template' => 'panel-top',
     'buttons' => array(
         array(
-            'type' => 'actiondropdown-for-accounts',
+            'type' => 'actiondropdown',
             'name' => 'panel_dropdown',
             'css_class' => 'pull-right',
             'buttons' => array(
@@ -22,7 +22,8 @@ $viewdefs['Quotes']['base']['view']['panel-top-for-accounts'] = array(
                     'type' => 'sticky-rowaction',
                     'icon' => 'fa-plus',
                     'name' => 'create_button',
-                    'label' => ' ',
+                    'dismiss_label' => true,
+                    'label' => '',
                     'acl_action' => 'create',
                     'tooltip' => 'LBL_CREATE_BUTTON_LABEL',
                 ),
@@ -30,6 +31,7 @@ $viewdefs['Quotes']['base']['view']['panel-top-for-accounts'] = array(
                     'type' => 'link-action',
                     'name' => 'select_button',
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
+                    'css_class' => 'disabled'
                 ),
             ),
         ),
