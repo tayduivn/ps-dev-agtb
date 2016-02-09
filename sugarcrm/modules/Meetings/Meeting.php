@@ -704,6 +704,15 @@ class Meeting extends SugarBean {
 
         $emailInvitee = $notify_user->emailAddress->getPrimaryAddress($notify_user);
         $organizerEmail = BeanFactory::getBean('InboundEmail')->getCalDavHandlerEmail();
+
+        // Trying to get real UID of event. It will be set later in prepareForInvite.
+        // We need to fetch it and change only for events, that came from calendar app.
+        if (empty($this->send_invites_uid)) {
+            $eventBean = BeanFactory::newBean('CalDavEvents')->findByParentModuleAndId('Meetings', $this->id);
+            if ($eventBean) {
+                $this->send_invites_uid = $eventBean->event_uid;
+            }
+        }
         $content = CalDavEventCollection::prepareForInvite($this, $emailInvitee, $organizerEmail);
 
 		if ($content && file_put_contents($path, $content)) {

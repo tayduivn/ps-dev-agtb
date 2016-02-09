@@ -115,6 +115,7 @@ class Handler implements RunnableInterface
 
             $bean = \BeanFactory::getBean($calDavBean->parent_type);
             $bean->id = create_guid();
+            $bean->send_invites_uid = $calDavBean->event_uid;
             $bean->new_with_id = true;
             if ($bean instanceof \Call) {
                 $bean->direction = $user->getPreference('caldav_call_direction');
