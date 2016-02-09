@@ -132,9 +132,17 @@ class TeamSetLink extends Link2 {
                     }
 
                     //this stmt is intended to handle the situation where the code has set the team_id but not the team_set_id as may be the case
-                    //from SOAP.
+                    //from SOAP or related bean creation.
                     if (!in_array($this->focus->team_id, $this->_teamList)) {
                         $this->_teamList[] = $this->focus->team_id;
+                        //BEGIN SUGARCRM flav=ent ONLY
+                        //use default team_set_selected_id
+                        if (empty($this->focus->team_set_selected_id)
+                            && isset($GLOBALS['current_user']) && isset($GLOBALS['current_user']->team_set_selected_id)
+                        ) {
+                            $this->_selectedTeamList[] = $GLOBALS['current_user']->team_set_selected_id;
+                        }
+                        //END SUGARCRM flav=ent ONLY
                     }
 
                     //BEGIN SUGARCRM flav=ent ONLY
@@ -146,7 +154,7 @@ class TeamSetLink extends Link2 {
                             $this->focus->team_set_selected_id = $GLOBALS['current_user']->team_set_selected_id;
                         }
 
-                        //this is a safety check to ensure we actually do have a set team_set_id
+                        //this is a safety check to ensure we actually do have a set team_set_selected_id
                         if (!empty($this->focus->team_set_selected_id)) {
                             $this->_selectedTeamList = $this->_teamSet->getTeamIds($this->focus->team_set_selected_id);
                         }
