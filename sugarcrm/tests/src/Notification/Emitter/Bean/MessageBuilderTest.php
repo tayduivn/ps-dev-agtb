@@ -12,73 +12,163 @@
 
 namespace Sugarcrm\SugarcrmTests\Notification\Emitter\Bean;
 
-use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder;
-use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder as BeanMessageBuilder;
+use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event as BeanEvent;
 use Sugarcrm\Sugarcrm\Notification\MessageBuilder\MessageBuilderInterface;
+use \Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event as ApplicationEvent;
 
 /**
+ * Class MessageBuilderTest
+ *
  * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder
  */
 class MessageBuilderTest extends \Sugar_PHPUnit_Framework_TestCase
 {
-    const accountName = 'TestAccount';
-    const eventName = 'event1';
-
-    /**
-     * @var MessageBuilder
-     */
+    /** @var BeanMessageBuilder */
     protected $builder;
 
-    /**
-     * @var \Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event
-     */
+    /** @var BeanEvent */
     protected $event;
 
-    /**
-     * @var \SugarBean
-     */
+    /** @var \SugarBean */
     protected $bean;
 
-    /**
-     * @var \User
-     */
+    /** @var \User */
     protected $user;
 
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
-        $this->user = \SugarTestHelper::setUp('current_user');
+        $this->user = new \User();
+        $this->user->id = create_guid();
 
-        $this->builder = new MessageBuilder();
+        $this->builder = new BeanMessageBuilder();
 
         $this->bean = new \Account();
-        $this->bean->name = static::accountName;
+        $this->bean->name = 'Name' . rand(1000, 1999);
 
-        $this->event = new Event(static::eventName);
+        $this->event = new BeanEvent('event' . rand(1000, 1999));
         $this->event->setBean($this->bean);
     }
 
-    public function tearDown()
+    /**
+     * Data provider for testBuildWithDifferentMessageSignatures.
+     *
+     * @see MessageBuilderTest::testBuildWithDifferentMessageSignatures
+     * @return array
+     */
+    public static function messageSignatureProvider()
     {
-        \SugarTestHelper::tearDown();
-        parent::tearDown();
+        return array(
+            'withoutSignatureGeneratesNothing' => array(
+                'messageSignature' => array(),
+                'expectedKeys' => array(),
+            ),
+            'getsTitleAndGeneratesTitle' => array(
+                'messageSignature' => array(
+                    'title' => '',
+                ),
+                'expectedKeys' => array(
+                    'title',
+                ),
+            ),
+            'getsTextAndGeneratesText' => array(
+                'messageSignature' => array(
+                    'text' => '',
+                ),
+                'expectedKeys' => array(
+                    'text',
+                ),
+            ),
+            'getsHtmlAndGeneratesHtml' => array(
+                'messageSignature' => array(
+                    'html' => '',
+                ),
+                'expectedKeys' => array(
+                    'html',
+                ),
+            ),
+            'getTitleTextAndGeneratesTitleText' => array(
+                'messageSignature' => array(
+                    'title' => '',
+                    'text' => '',
+                ),
+                'expectedKeys' => array(
+                    'title',
+                    'text',
+                ),
+            ),
+            'getsTitleHtmlAndGeneratesTitleHtml' => array(
+                'messageSignature' => array(
+                    'title' => '',
+                    'html' => '',
+                ),
+                'expectedKeys' => array(
+                    'title',
+                    'html',
+                ),
+            ),
+            'getTextHtmlAndGeneratesTextHtml' => array(
+                'messageSignature' => array(
+                    'text' => '',
+                    'html' => '',
+                ),
+                'expectedKeys' => array(
+                    'text',
+                    'html',
+                ),
+            ),
+            'getsTitleTextHtmlAndGeneratesTitleTextHtml' => array(
+                'messageSignature' => array(
+                    'title' => '',
+                    'text' => '',
+                    'html' => '',
+                ),
+                'expectedKeys' => array(
+                    'title',
+                    'text',
+                    'html',
+                ),
+            ),
+        );
     }
 
     /**
-     * Test build() with different message signatures.
+     * Test build with different message signatures.
      *
-     * @param array $messageSignature Message signature to test.
-     * @param array $message Expected output message.
-     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder::build
      * @dataProvider messageSignatureProvider
+     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder::build
+     * @param array $messageSignature Message signature to test.
+     * @param array $expectedKeys Expected array messages keys.
      */
-    public function testBuildWithDifferentMessageSignatures($messageSignature, $message)
+    public function testBuildWithDifferentMessageSignatures($messageSignature, $expectedKeys)
     {
         $result = $this->builder->build($this->event, '', $this->user, $messageSignature);
-        $this->assertEquals($message, $result);
+        $this->assertEquals($expectedKeys, array_keys($result));
+    }
+
+    /**
+     * Test that any event except BeanEvent does not support.
+     *
+     * @covers \Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder::supports
+     */
+    public function testSupportsWrongEvent()
+    {
+        $event = new ApplicationEvent('update');
+        $this->assertFalse($this->builder->supports($event));
+    }
+
+    /**
+     * Test that BeanEvent supports by builder.
+     *
+     * @covers \Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder::supports
+     */
+    public function testSupportsCorrectEvent()
+    {
+        $this->assertTrue($this->builder->supports($this->event));
     }
 
     /**
@@ -91,62 +181,6 @@ class MessageBuilderTest extends \Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(
             MessageBuilderInterface::LEVEL_BASE,
             $this->builder->getLevel()
-        );
-    }
-
-    /**
-     * Test that BeanEmitter Event is supported, any other Event isn't.
-     *
-     * @covers \Sugarcrm\Sugarcrm\Notification\Emitter\Bean\MessageBuilder::supports
-     */
-    public function testSupports()
-    {
-        $this->assertTrue(
-            $this->builder->supports(new Event('event1'))
-        );
-        $this->assertFalse(
-            $this->builder->supports(new \Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event('event2'))
-        );
-    }
-
-    /**
-     * Data provider for testBuildWithDifferentMessageSignatures().
-     *
-     * @return array
-     */
-    public static function messageSignatureProvider()
-    {
-        return array(
-            array(
-                array(),
-                array(),
-            ),
-            array(
-                array(
-                    'title' => '',
-                ),
-                array(
-                    'title' => static::eventName . " triggered",
-                ),
-            ),
-            array(
-                array(
-                    'text' => '',
-                ),
-                array(
-                    'text' => "Triggered in Accounts:'" . static::accountName . "'",
-                ),
-            ),
-            array(
-                array(
-                    'title' => '',
-                    'text' => '',
-                ),
-                array(
-                    'title' => static::eventName . " triggered",
-                    'text' => "Triggered in Accounts:'" . static::accountName . "'",
-                ),
-            ),
         );
     }
 }
