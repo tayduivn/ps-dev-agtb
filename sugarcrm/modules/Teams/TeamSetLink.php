@@ -136,6 +136,22 @@ class TeamSetLink extends Link2 {
                     if (!in_array($this->focus->team_id, $this->_teamList)) {
                         $this->_teamList[] = $this->focus->team_id;
                     }
+
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    // Apply the above-described functionality for team_set_selected_id also.
+                    if (empty($this->_selectedTeamList)) {
+                        if ($usedDefaultTeam && empty($this->focus->team_set_selected_id)
+                            && isset($GLOBALS['current_user']) && isset($GLOBALS['current_user']->team_set_selected_id)
+                        ) {
+                            $this->focus->team_set_selected_id = $GLOBALS['current_user']->team_set_selected_id;
+                        }
+
+                        //this is a safety check to ensure we actually do have a set team_set_id
+                        if (!empty($this->focus->team_set_selected_id)) {
+                            $this->_selectedTeamList = $this->_teamSet->getTeamIds($this->focus->team_set_selected_id);
+                        }
+                    }
+                    //END SUGARCRM flav=ent ONLY
                 }
 
                 //we need to check if the assigned_user has access to any of the teams on this record,
