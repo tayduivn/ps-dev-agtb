@@ -42,17 +42,37 @@
          * Detects click events bound to an element and applies accessibility
          * rules to the targets of each click event.
          *
-         * @param {Component/jQuery} component
-         * The element to test for accessibility compliance.
+         * @param {Array/Component/jQuery} component
+         * The element(s) to test for accessibility compliance.
          */
         run: function(component) {
-            var $el,
-                events,
-                self;
+            var self = this,
+                $el,
+                events;
 
-            $el = (component instanceof app.view.Component) ? component.$el : component;
+            if (component instanceof app.view.Component) {
+                // component is a Sugar view
+                $el = component.$el;
+            } else if (_.isArray(component)) {
+                // component may be an array of components
+                // so each should be compliant
+                component.each(function() {
+                    self.run(this);
+                });
+                return;
+            } else if (component.length > 1) {
+                // component may be a jQuery collection of elements
+                // so each should be compliant
+                component.each(function() {
+                    self.run($(this));
+                });
+                return;
+            } else {
+                // the component is only a single element
+                $el = component;
+            }
+
             events = $el.data('events');
-            self = this;
 
             // only bother with elements that have click events attached to them
             if (!events || !events.click) {
