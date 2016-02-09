@@ -426,27 +426,65 @@ describe('Notifications', function() {
                 sinon.assert.notCalled(view.reRender);
             });
 
-            it('check calling transferToCollection after bootstrap', function () {
-                var buffer = [{data: 'someData1', _module: 'module'}, {data: 'someData2', _module: 'module'}],
-                    models = ['Model1', 'Model2'];
+            describe('check calling transferToCollection after bootstrap', function () {
+                beforeEach(function () {
+                    view.collection = {
+                        add: sinon.spy(),
+                        get: sinon.stub(),
+                        remove: sinon.spy()
+                    };
+                });
 
-                view._buffer = buffer;
+                it('adding notifications', function () {
+                    var buffer = [
+                            {data: 'someData1', is_read: false, _module: 'module'},
+                            {data: 'someData2', is_read: false, _module: 'module'}
+                        ],
+                        models = ['Model1', 'Model2'];
 
-                app.data.createBean
-                    .withArgs(buffer[0]['_module'], _.clone(buffer[0])).returns(models[0])
-                    .withArgs(buffer[1]['_module'], _.clone(buffer[1])).returns(models[1]);
+                    view._buffer = buffer;
 
-                view.collection = {
-                    add: sinon.spy()
-                };
-                view.transferToCollection();
+                    app.data.createBean
+                        .withArgs(buffer[0]['_module'], _.clone(buffer[0])).returns(models[0])
+                        .withArgs(buffer[1]['_module'], _.clone(buffer[1])).returns(models[1]);
 
-                sinon.assert.called(view.reRender);
-                sinon.assert.calledTwice(app.data.createBean);
+                    view.transferToCollection();
 
-                sinon.assert.calledTwice(view.collection.add);
-                sinon.assert.calledWith(view.collection.add, models[0]);
-                sinon.assert.calledWith(view.collection.add, models[1]);
+                    sinon.assert.called(view.reRender);
+                    sinon.assert.calledTwice(app.data.createBean);
+
+                    sinon.assert.notCalled(view.collection.get);
+                    sinon.assert.notCalled(view.collection.remove);
+                    sinon.assert.calledTwice(view.collection.add);
+                    sinon.assert.calledWith(view.collection.add, models[0]);
+                    sinon.assert.calledWith(view.collection.add, models[1]);
+                });
+
+                it('removing notifications', function () {
+                    var buffer = [
+                            {data: 'someData1', is_read: true, id: 'id:1:' + Math.random(), _module: 'module'},
+                            {data: 'someData2', is_read: true, id: 'id:2:' + Math.random(), _module: 'module'}
+                        ],
+                        models = ['Model1:' + Math.random(), 'Model1:' + Math.random()];
+
+                    view._buffer = _.clone(buffer);
+
+                    view.collection.get
+                        .withArgs(buffer[0].id).returns(models[0])
+                        .withArgs(buffer[1].id).returns(models[1]);
+
+                    view.transferToCollection();
+
+                    sinon.assert.called(view.reRender);
+                    sinon.assert.notCalled(app.data.createBean);
+                    sinon.assert.notCalled(view.collection.add);
+                    sinon.assert.calledTwice(view.collection.get);
+                    sinon.assert.calledWith(view.collection.get, buffer[0].id);
+                    sinon.assert.calledWith(view.collection.get, buffer[1].id);
+                    sinon.assert.calledTwice(view.collection.remove);
+                    sinon.assert.calledWith(view.collection.remove, models[0]);
+                    sinon.assert.calledWith(view.collection.remove, models[0]);
+                });
             });
 
             it('check calling transferToCollection after bootstrap if empty buffer', function () {
