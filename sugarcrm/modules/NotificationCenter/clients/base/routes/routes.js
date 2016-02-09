@@ -41,14 +41,14 @@
                 name: "NotificationCenter",
                 route: "NotificationCenter",
                 callback: function () {
-                    app.router.navigate('#Home', {trigger: true, replace: true});
+                    app.router.redirect('Home');
                 }
             },
             {
                 name: "NotificationCenterSubscriptions",
                 route: "NotificationCenterSubscriptions",
                 callback: function () {
-                    app.router.navigate('#Home', {trigger: true, replace: true});
+                    app.router.redirect('Home');
                 }
             }
         ];
