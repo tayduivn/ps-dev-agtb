@@ -105,12 +105,29 @@ class Manager extends AbstractManager
             'class' => 'Sugarcrm\Sugarcrm\JobQueue\Observer\Reflection',
             'priority' => 0,
             'on' => array(), // Handlers to perform, false - all.
-            'off' => array(), // Handlers to exclude.
+            'off' => array(  // Handlers to exclude.
+                'CalDavHandler',
+                'NotificationEvent',
+                'NotificationCarrierBulkMessage',
+                'NotificationSend',
+                'RecreateUserRemindersJob',
+            ),
             'config' => null, // The second in constructor.
+        ),
+        array(
+            'class' => 'Sugarcrm\Sugarcrm\JobQueue\Observer\Cache',
+            'priority' => -10,
         ),
         array(
             'class' => 'Sugarcrm\Sugarcrm\JobQueue\Observer\State',
             'priority' => -100,
+            'off' => array(  // Handlers to exclude.
+                'CalDavHandler',
+                'NotificationEvent',
+                'NotificationCarrierBulkMessage',
+                'NotificationSend',
+                'RecreateUserRemindersJob',
+            ),
         ),
         array(
             'class' => 'Sugarcrm\Sugarcrm\JobQueue\Observer\ExportRecordsObserver',
