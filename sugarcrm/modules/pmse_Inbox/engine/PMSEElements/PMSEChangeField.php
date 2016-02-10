@@ -163,8 +163,11 @@ class PMSEChangeField extends PMSEScriptTask
                                         array(),
                                         false
                                     );
-                                    $newValue = $this->postProcessValue($newValue,
-                                        $bean->field_name_map[$field->field]['type']);
+
+                                    $newValue = $this->postProcessValue($newValue, $bean->field_name_map[$field->field]['type']);
+
+                                    // This will handle currency type fields
+                                    $newValue = $this->handleFieldTypeProcessing($newValue, $field, $bean);
                                 } else {
                                     if ($field->field == 'assigned_user_id') {
                                         $field->value = $this->getCustomUser($field->value, $beanModule);
@@ -175,15 +178,15 @@ class PMSEChangeField extends PMSEScriptTask
                                     throw new PMSEElementException('Cannot fill a required field ' . $field->field . ' with an empty value',
                                         $flowData, $this);
                                 }
+
+                                // Finally, set the new value of the field onto
+                                // the bean
                                 $bean->{$field->field} = $newValue;
                             }
                         }
 
                         $historyData->savePostdata($field->field, $field->value);
                         $ifields++;
-                    } else {
-                        
-                        //$this->logger->warning("[{$flowData['cas_id']}][{$flowData['cas_index']}] $moduleClassName->" . $field->field . " not defined");
                     }
                 }
 
