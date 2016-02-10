@@ -11,14 +11,19 @@
  */
 --}}
 <a href="{{#if fullRoute}}#{{fullRoute}}{{else}}{{#if def.route}}#{{buildRoute context=context model=model action=def.route.action}}{{else}}javascript:void(0);{{/if}}{{/if}}"
-   track="click:{{name}}"
-{{#if def.action}}
-   data-dashletaction="{{def.action}}" track="click:dashletSettings_{{def.action}}"
+{{#if def.tooltip}}
+    rel="tooltip"
+    data-placement="bottom"
+    title="{{str def.tooltip module}}"
 {{/if}}
-    {{#if def.tooltip}}
-   rel="tooltip"
-   data-placement="bottom"
-   title="{{str def.tooltip module}}"
-    {{/if}}
-   name="{{name}}">
-    {{#if def.icon}}<i class="fa {{def.icon}}"></i>{{/if}}{{str label}}</a>
+{{#if ariaLabel}}
+    aria-label="{{ariaLabel}}"
+{{/if}}
+{{#if def.action}}
+    data-dashletaction="{{def.action}}"
+    track="click:dashletSettings_{{def.action}}"
+{{else}}
+    track="click:{{name}}"
+{{/if}}
+    role="button" tabindex="{{tabIndex}}"
+    name="{{name}}">{{#if def.icon}}<i class="fa {{def.icon}}"></i>{{/if}}{{str label}}</a>
