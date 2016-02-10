@@ -155,7 +155,15 @@ class SugarApplication
             if (parent.location == window.location) {
                 window.location = ' . json_encode($location) . ';
             } else {
-                window.top.SUGAR.App.bwc.login(' . json_encode($loginRedirect) . ');
+                try {
+                    window.top.SUGAR.App.bwc.login(' . json_encode($loginRedirect) . ');
+                } catch (e) {
+                    try {
+                        parent.SUGAR.App.bwc.login(' . json_encode($loginRedirect) . ');
+                    } catch (e) {
+                        window.location = ' . json_encode($location) . ';
+                    }
+                }
             }
             </script>';
             return;
