@@ -259,12 +259,13 @@
      * @return {String}
      */
     formatResult: function(recipient) {
-        var format;
+        var format,
+            email = Handlebars.Utils.escapeExpression(recipient.email);
 
         if (recipient.name) {
-            format = '"' + Handlebars.Utils.escapeExpression(recipient.name) + '" &lt;' + recipient.email + '&gt;';
+            format = '"' + Handlebars.Utils.escapeExpression(recipient.name) + '" &lt;' + email + '&gt;';
         } else {
-            format = recipient.email;
+            format = email;
         }
 
         return format;
