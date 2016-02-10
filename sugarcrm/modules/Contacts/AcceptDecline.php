@@ -78,6 +78,8 @@ if ($updated) {
 print $app_strings['LBL_STATUS']. " ". $app_list_strings['dom_meeting_accept_status'][$_REQUEST['accept_status']];
 print "<BR><BR>";
 
-print "<a href='{$url}'>" . $app_strings['LBL_MEETING_GO_BACK'] . "</a><br />";
+if ($current_entity->module_name === 'Users') {
+    print "<a href='{$url}'>" . $app_strings['LBL_MEETING_GO_BACK'] . "</a><br />";
+}
 sugar_cleanup();
 exit;
