@@ -285,9 +285,7 @@ class MassUpdate
                             $_SESSION['REASSIGN_TEAMS'][] = $this->sugarbean->id;
 						    continue;
 						}
-                        if ($this->sugarbean->mark_deleted($id) == false) {
-                            $retval[] = $id;
-                        }
+                        $this->sugarbean->mark_deleted($id);
                         // ideally we should use after_delete logic hook
                         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
                         $searchEngine = SugarSearchEngineFactory::getInstance();
