@@ -31,7 +31,7 @@ class RecordListFactory
             $user = $GLOBALS['current_user'];
         }
 
-        $row = $db->fetchOne("SELECT * FROM record_list WHERE id = '".$db->quote($id)."' AND assigned_user_id = '".$db->quote($user->id)."'",true);
+        $row = $db->fetchOne("SELECT * FROM record_list WHERE id = '".$db->quote($id)."' AND assigned_user_id = '".$db->quote($user->id)."'",true, '', false);
 
         if (!empty($row['records'])) {
             $data = $row;

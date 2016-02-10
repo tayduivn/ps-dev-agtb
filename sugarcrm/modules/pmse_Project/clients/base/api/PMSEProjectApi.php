@@ -67,6 +67,14 @@ class PMSEProjectApi extends ModuleApi
                 'acl' => 'create',
 //                'shortHelp' => 'Update the process definition schema edited in PA designer',
             ),
+            'readBRFields' => array(
+                'reqType' => 'GET',
+                'path' => array('ProcessBusinessRules', 'fields', '?'),
+                'pathVars' => array('module', 'data', 'filter'),
+                'method' => 'getBRFields',
+                'acl' => 'view',
+//                'shortHelp' => 'Returns information about Fields to be exposed in the Business Rules designer.',
+            ),
             'readCrmData' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Project', 'CrmData', '?', '?'),
@@ -226,6 +234,20 @@ class PMSEProjectApi extends ModuleApi
         }
 
         return $data;
+    }
+
+    /**
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     * @return type
+     */
+    public function getBRFields($api, $args)
+    {
+        $args['module'] = 'pmse_Project';
+        $args['data'] = 'oneToOneRelated';
+        $args['filter'] = $args['base_module'];
+        return $this->getCrmData($api, $args);
     }
 
     /**

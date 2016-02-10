@@ -1545,7 +1545,7 @@ class PMSECrmDataWrapper implements PMSEObservable
      * @return object
      * @codeCoverageIgnore
      */
-    public function retrieveFields($filter = '', ModuleApi $moduleApi, $type = '', $baseModule='')
+    public function retrieveFields($filter = '', ModuleApi $moduleApi, $type = '', $baseModule = '')
     {
         global $beanList;
         if (isset($beanList[$filter])) {
