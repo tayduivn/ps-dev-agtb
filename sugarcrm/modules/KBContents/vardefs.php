@@ -548,6 +548,14 @@ $dictionary['KBContent'] = array(
             'type' => 'index',
             'fields' => array('name'),
         ),
+        array(
+            'name' => 'idx_kbcontent_del_doc_id',
+            'type' => 'index',
+            'fields' => array(
+                'kbdocument_id',
+                'deleted',
+            ),
+        ),
     ),
     'duplicate_check' => array(
         'enabled' => false,
