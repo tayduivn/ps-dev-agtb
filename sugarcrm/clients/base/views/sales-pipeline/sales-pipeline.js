@@ -170,9 +170,18 @@
     loadData: function(options) {
         var timeperiod = this.settings.get('selectedTimePeriod');
         if (timeperiod) {
-            var oppsConfig = app.metadata.getModule('Opportunities', 'config'),
-                oppsViewBy = oppsConfig['opps_view_by'] || 'Opportunities',
-                url_base = oppsViewBy + '/chart/pipeline/' + timeperiod + '/';
+            var oppsConfig = app.metadata.getModule('Opportunities', 'config');
+
+            if (oppsConfig) {
+                var oppsViewBy = oppsConfig['opps_view_by'];
+            } else {
+                this.results = {};
+                this.renderChart();
+
+                return false;
+            }
+
+            var url_base = oppsViewBy + '/chart/pipeline/' + timeperiod + '/';
 
             if (this.isManager) {
                 url_base += this.getVisibility() + '/';
