@@ -40,13 +40,13 @@
      * {@inheritDoc}
      */
     initDashlet: function(view) {
-        var userConversionRate = 1 / app.metadata.getCurrency(app.user.getPreference('currency_id')).conversion_rate;
         var userCurrencyPreference = app.user.getPreference('currency_id');
         var salesStageLabels = app.lang.getAppListStrings('sales_stage_dom');
 
         function formatValue(d, precision) {
-            return app.currency.formatAmountLocale(app.currency.convertWithRate(d, userConversionRate), userCurrencyPreference, precision);
+            return app.currency.formatAmountLocale(d, userCurrencyPreference, precision);
         }
+
         if (!this.isManager && this.meta.config) {
             // FIXME: Dashlet's config page is rendered from meta.panels directly.
             // See the "dashletconfiguration-edit.hbs" file.
