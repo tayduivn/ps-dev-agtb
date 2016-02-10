@@ -286,11 +286,6 @@ YAHOO.util.Event.onContentReady(
     function () {ldelim} {rdelim}
 );
 //window.setTimeout(, 100);
-{{if $module == "Users"}}
-window.onbeforeunload = function () {ldelim} return disableOnUnloadEditView(); {rdelim};
-{{else}}
-window.onbeforeunload = function () {ldelim} return onUnloadEditView(); {rdelim};
-{{/if}}
 
 // bug 55468 -- IE is too aggressive with onUnload event
 {{literal}}

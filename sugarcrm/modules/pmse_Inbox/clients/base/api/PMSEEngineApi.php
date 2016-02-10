@@ -345,7 +345,6 @@ class PMSEEngineApi extends SugarApi
         $this->checkACL($api, $args);
         $cas_id = $args['cas_id'];
         $cas_index = $args['cas_index'];
-        $taskName = $args['taskName'];
 
         $flowBean = BeanFactory::getBean('pmse_BpmFlow');
         $flowBean->retrieve_by_string_fields(array(

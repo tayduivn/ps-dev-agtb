@@ -101,8 +101,8 @@ if (isset($_REQUEST['total'])) {
 }
 
 //unset relate fields for product bundles
-$tmpRelate_id = $_REQUEST['relate_id'];
-$tmpRelate_to = $_REQUEST['relate_to'];
+$tmpRelate_id = isset($_REQUEST['relate_id']) ? $_REQUEST['relate_id'] : '';
+$tmpRelate_to = isset($_REQUEST['relate_to']) ? $_REQUEST['relate_to'] : '';
 unset($_REQUEST['relate_id']);
 unset($_REQUEST['relate_to']);
 
