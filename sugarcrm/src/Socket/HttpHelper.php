@@ -45,14 +45,22 @@ class HttpHelper extends \SugarHttpClient
      *
      * @param string $url
      * @param string $args
+     * @param array $headers
      * @return bool|mixed
      */
-    public function getRemoteData($url, $args = '')
+    public function getRemoteData($url, $args = '', $headers = array())
     {
+        $options = array(
+            CURLOPT_HTTPHEADER => array("Content-Type: application/json")
+        );
+        if ($headers) {
+            $options[CURLOPT_HTTPHEADER] = array_merge($options[CURLOPT_HTTPHEADER], $headers);
+        }
+
         $response = $this->callRest(
             $url,
             $args,
-            array(CURLOPT_HTTPHEADER => array("Content-Type: application/json"))
+            $options
         );
         $this->lastStatus = ($this->getLastError() === '');
         return $this->isSuccess() ? json_decode($response, true) : false;
