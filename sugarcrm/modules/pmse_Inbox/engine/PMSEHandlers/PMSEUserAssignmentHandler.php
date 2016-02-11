@@ -583,34 +583,50 @@ class PMSEUserAssignmentHandler
             $assign_team = '1';
         }
 
-        //getting all members of a team who are both active users and
-        // active employees
-        $team = $this->retrieveBean('Teams', $assign_team);
-        $members = $team->get_team_members(true, null, true);
+        $q = $this->prepareTeamUserIdsQuery($assign_team);
+        $q->where()->gt('id', $last_assigned);
+        $q->limit(1);
+        $nextUserId = $q->execute();
 
-        $users = array();
-        foreach ($members as $user) {
-            $users[] = $user->id;
+        if (!$nextUserId) {
+            $q = $this->prepareTeamUserIdsQuery($assign_team);
+            $q->limit(1);
+            $nextUserId = $q->execute();
         }
-        sort($users);
 
-        $newCurrent = "";
-        $current = $last_assigned;
-        foreach ($users as $user) {
-            if ($current < $user) {
-                $newCurrent = $user;
-                break;
-            }
-        }
-        if (empty($newCurrent)) {
-            $newCurrent = $users[0];
-        }
+        $nextUserId = $nextUserId ? $nextUserId[0]['id'] : '';
 
         //updating last user selected
-        $beanBpmActivity->act_last_user_assigned = $newCurrent;
+        $beanBpmActivity->act_last_user_assigned = $nextUserId;
         $beanBpmActivity->save();
 
-        return $newCurrent;
+        return $nextUserId;
+    }
+
+    /**
+     * Gets all members of a team who are both active users and active employees
+     *
+     * @param $teamId
+     * @return SugarQuery
+     */
+    protected function prepareTeamUserIdsQuery($teamId)
+    {
+        $q = new SugarQuery();
+        $q->select(array('id'));
+        $q->from(BeanFactory::getBean('Users'));
+
+        $q->joinTable('team_memberships', array('alias' => 'membership'))->on()
+            ->equals('membership.team_id', $teamId)
+            ->equalsField('membership.user_id', 'id')
+            ->equals('membership.explicit_assign', 1)
+            ->equals('membership.deleted', 0);
+
+        $q->where()
+            ->equals('status', 'Active')
+            ->equals('employee_status', 'Active');
+        $q->orderBy('id', 'ASC');
+
+        return $q;
     }
 
     /**
