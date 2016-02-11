@@ -67,6 +67,13 @@ $dictionary['pmse_BpmCaseData'] = array(
     'cols' => '20',
   ),
 ),
+    'indices' => array(
+        array(
+            'name' => 'idx_pmse_bpm_case_data_del_cas_id',
+            'type' => 'index',
+            'fields' => array('deleted','cas_id')
+        ),
+    ),
 	'relationships'=>array (
 ),
 	'optimistic_locking'=>true,
