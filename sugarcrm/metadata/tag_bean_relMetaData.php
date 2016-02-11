@@ -54,5 +54,10 @@ $dictionary['tag_bean_rel'] = array(
             'type'	 => 'index',
             'fields' => array('tag_id','bean_id'),
         ),
+        array(
+            'name'  => 'idx_tag_bean_rel_del_bean_module_beanid',
+            'type'  => 'index',
+            'fields'=> array('deleted', 'bean_module', 'bean_id'),
+        ),
     ),
 );
