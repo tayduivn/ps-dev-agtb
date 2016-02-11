@@ -52,6 +52,24 @@ class PMSEImageGeneratorApi extends FileTempApi
                 'allowDownloadCookie' => true,
 //                'shortHelp' => 'Returns the process status image file from tmp folder',
             ),
+            'getPaProjectFileContents' => array(
+                'reqType' => 'GET',
+                'path' => array('pmse_Project', '?', 'file', '?'),
+                'pathVars' => array('module', 'record', '', 'field'),
+                'method' => 'getProjectFile',
+                'rawReply' => true,
+                'allowDownloadCookie' => true,
+//                'shortHelp' => 'Returns Project image file',
+            ),
+            'getPaProjectTempImage' => array(
+                'reqType' => 'GET',
+                'path' => array('pmse_Project', 'temp', 'file', '?', '?'),
+                'pathVars' => array('module', 'record', '', 'field', 'temp_id'),
+                'method' => 'getTempImage',
+                'rawReply' => true,
+                'allowDownloadCookie' => true,
+//                'shortHelp' => 'Returns project image file from tmp folder',
+            ),
         );
     }
 
@@ -82,11 +100,28 @@ class PMSEImageGeneratorApi extends FileTempApi
         parent::getTempImage($api, $args);
     }
 
+    /**
+     * Get Project preview file for render
+     *
+     * @param ServiceBase $api The service base
+     * @param array $args Arguments array built by the service base
+     * @return string
+     * @throws SugarApiExceptionMissingParameter|SugarApiExceptionNotFound
+     */
+    public function getProjectFile($api, $args)
+    {
+        $args['_project'] = true;
+        $this->getProcessImage($api, $args);
+        $args['temp_id'] = $args['record'];
+        parent::getTempImage($api, $args);
+    }
+
     public function getProcessImage($api, $args)
     {
         $path = 'upload://tmp/';
         $image = new PMSEImageGenerator();
-        $img = $image->get_image($args['record']);
+        $img = empty($args['_project']) ?
+            $image->get_image($args['record']) : $image->getProjectImage($args['record']);
         $file = new UploadStream();
         if (!$file->checkDir($path)) {
             $file->createDir($path);

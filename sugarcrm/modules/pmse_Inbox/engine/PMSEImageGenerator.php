@@ -45,6 +45,12 @@ class PMSEImageGenerator
 
     private $running_elements;
 
+    /**
+     * Variable which checks if all elements on the diagram should be highlighted
+     * @var boolean
+     */
+    private $allElements = false;
+
     public function __construct()
     {
         $this->pmse = PMSE::getInstance();
@@ -67,6 +73,30 @@ class PMSEImageGenerator
             }
 
         }
+        return $files;
+    }
+
+    public function getProjectImage($id)
+    {
+        $processBean = BeanFactory::newBean('pmse_BpmnProcess');
+        $this->allElements = true;
+        $q = new SugarQuery();
+        $q->select(array('id', 'prj_id', 'deleted'));
+        $q->from($processBean);
+        $q->where()
+            ->equals('prj_id', $id);
+
+        $rows = $q->execute();
+        foreach ($rows as $row) {
+            $this->cas_id = $row['id'];
+            $this->running_elements = array();
+            $this->prj_id = $row['prj_id'];
+            $diagrams = $this->get_project_diagrams($this->prj_id, $row['deleted'] == "1" ? 1 : 0);
+            foreach ($diagrams as $diagram) {
+                $files = $this->diagram_to_png($diagram);
+            }
+        }
+
         return $files;
     }
 
@@ -978,16 +1008,34 @@ class PMSEImageGenerator
 
     private function get_element_running($id)
     {
-        $element = isset($this->running_elements[$id])? $this->running_elements[$id] : null;
-        if (isset($element) && !empty($element)) {
+        if ($this->allElements) {
+            $element = $this->getElementObject(true);
+            return $element;
+        }
+        $element = isset($this->running_elements[$id]) ? $this->running_elements[$id] : $this->getElementObject();
+        if (isset($this->running_elements[$id])) {
             $element->in_flow = true;
-        } else {
-            $element = new stdClass();
-            $element->in_flow = false;
-            $element->running = false;
-            $element->terminated = false;
-            $element->count = 0;
         }
         return $element;
     }
+
+    /**
+     * Method which return an element for diagram
+     * @param boolean $inFlow Determines if element will be rendered in color or b&w
+     * @param boolean $running Currently running element
+     * @param boolean $terminated Adds Terminated icon to element
+     * @param int $count Adds # of iteration of element
+     * @return stdClass
+     */
+    protected function getElementObject($inFlow = false, $running = false, $terminated = false, $count = 0)
+    {
+        $element = new stdClass();
+        $element->in_flow = $inFlow;
+        $element->running = $running;
+        $element->terminated = $terminated;
+        $element->count = $count;
+
+        return $element;
+    }
+
 }
