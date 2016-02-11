@@ -196,10 +196,23 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             'doesNotSaveAnything' => array(
-                array(),
+                'personal' => array(),
+                'expected' => array(
+                    0 => true,
+                    1 => false,
+                    2 => true,
+                    3 => false,
+                ),
             ),
+
             'savesAllCarriersCorrectly' => array(
-                array(
+                'personal' => array(
+                    0 => true,
+                    1 => true,
+                    2 => true,
+                    3 => true,
+                ),
+                'expected' => array(
                     0 => true,
                     1 => true,
                     2 => true,
@@ -207,15 +220,41 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
                 ),
             ),
             'savesSomeCarriersCorrectly' => array(
-                array(
+                'personal' => array(
                     1 => true,
+                    3 => false,
+                ),
+                'expected' => array(
+                    0 => true,
+                    1 => true,
+                    2 => true,
                     3 => false,
                 ),
             ),
             'savesAnotherCarriersCorrectly' => array(
-                array(
+                'personal' => array(
                     0 => false,
                     1 => false,
+                    3 => false,
+                ),
+                'expected' => array(
+                    0 => true,
+                    1 => false,
+                    2 => true,
+                    3 => false,
+                ),
+            ),
+            'savesGlobalEnabledCarriers' => array(
+                'personal' => array(
+                    0 => true,
+                    1 => true,
+                    2 => true,
+                    3 => false,
+                ),
+                'expected' => array(
+                    0 => true,
+                    1 => true,
+                    2 => true,
                     3 => false,
                 ),
             ),
@@ -225,11 +264,12 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * setPreference of user is called with correct args
      *
-     * @covers NotificationCenterConfigApi::updateUserConfig
+     * @covers       NotificationCenterConfigApi::updateUserConfig
      * @dataProvider updateUserConfigUpdatesCarrierStatusInUserPreferencesProvider
-     * @param array $carriers
+     * @param array $carriersPersonal
+     * @param array $carriersExpected
      */
-    public function testUpdateUserConfigUpdatesCarrierStatusInUserPreferences($carriers)
+    public function testUpdateUserConfigUpdatesCarrierStatusInUserPreferences($carriersPersonal, $carriersExpected)
     {
         $args = array(
             'personal' => array(
@@ -240,10 +280,11 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $expected = array();
         foreach ($this->carriers as $k => $name) {
-            $expected[$name] = false;
-            if (isset($carriers[$k])) {
-                $expected[$name] = $carriers[$k];
-                $args['personal']['carriers'][$name]['status'] = $carriers[$k];
+            if (isset($carriersPersonal[$k])) {
+                $args['personal']['carriers'][$name]['status'] = $carriersPersonal[$k];
+            }
+            if (isset($carriersExpected[$k])) {
+                $expected[$name] = $carriersExpected[$k];
             }
         }
 
