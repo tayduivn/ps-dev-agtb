@@ -138,6 +138,23 @@ UpdaterField.prototype._parseSettings = function (settings) {
     return parsedSettings;
 };
 
+UpdaterField.prototype._toOptionsArray = function (obj, labelField) {
+    var arr = [];
+    if (_.isArray(obj)) {
+        return obj;
+    } else if (typeof obj !== 'object') {
+        throw new Error('_toOptionsArray(): The parameter must be an object or array.')
+    }
+    labelField = labelField || 'text';
+
+    _.each(obj, function (value, key) {
+        var text = typeof value === 'object' ? value[labelField] : value;
+        arr.push({value: key, text: text});
+    }, this);
+
+    return arr;
+};
+
 /**
  * Sets child option fiels into updater container
  * @param {Array} settings
@@ -154,21 +171,20 @@ UpdaterField.prototype.setOptions = function (settings) {
 
     this.list = settings;
     for (i = 0; i < settings.length; i += 1) {
-        /*CREATE INPUT FIELD*/
         currentSetting = this._parseSettings(settings[i]);
         currentSetting.parent = this;
         currentSetting.allowDisabling = this.hasCheckbox;
         currentSetting.disabled = this.hasCheckbox;
         switch (currentSetting.fieldType) {
             case 'TextField':
-                newOption =  new TextUpdaterItem(currentSetting);
+                newOption = new TextUpdaterItem(currentSetting);
                 break;
             case 'TextArea':
-                newOption =  new TextAreaUpdaterItem(currentSetting);
+                newOption = new TextAreaUpdaterItem(currentSetting);
                 break;
             case 'Date':
             case 'Datetime':
-                newOption =  new DateUpdaterItem(currentSetting);
+                newOption = new DateUpdaterItem(currentSetting);
                 break;
             case 'DropDown':
                 aUsers = [];
@@ -184,24 +200,25 @@ UpdaterField.prototype.setOptions = function (settings) {
                     }
                 } else {
                     if (currentSetting.options) {
-                        $.each(currentSetting.options, function (key, value) {
-                            aUsers.push({value: key, text: value});
-                        });
+                        aUsers = this._toOptionsArray(currentSetting.options);
                     }
                     currentSetting.options = aUsers;
-
                 }
-                newOption =  new DropdownUpdaterItem(currentSetting);
+                newOption = new DropdownUpdaterItem(currentSetting);
                 break;
             case 'Checkbox':
-                newOption =  new CheckboxUpdaterItem(currentSetting);
+                newOption = new CheckboxUpdaterItem(currentSetting);
                 break;
             case 'Currency':
                 currentSetting.currency = true;
             case 'Integer':
             case 'Decimal':
             case 'Float':
-                newOption =  new NumberUpdaterItem(currentSetting);
+                newOption = new NumberUpdaterItem(currentSetting);
+                break;
+            case 'MultiSelect':
+                currentSetting.options = this._toOptionsArray(currentSetting.options);
+                newOption = new MultiselectUpdaterItem(currentSetting);
                 break;
             case 'user':
                 currentSetting.searchUrl = PMSE_USER_SEARCH.url;
@@ -1989,7 +2006,7 @@ DropdownUpdaterItem.prototype._existsValueInOptions = function (value) {
     return false;
 };
 
-DropdownUpdaterItem.prototype._getFirstAvailabelValue = function () {
+DropdownUpdaterItem.prototype._getFirstAvailableValue = function () {
     return (this._options[0] && this._options[0].value) || "";
 };
 
@@ -2005,7 +2022,7 @@ DropdownUpdaterItem.prototype.setValue = function (value) {
             if (this._existsValueInOptions(value)) {
                 this._value = value;
             } else {
-                this._value = this._getFirstAvailabelValue();
+                this._value = this._getFirstAvailableValue();
             }
         }
     }
@@ -2445,4 +2462,235 @@ SearchUpdaterItem.prototype._filterSelections = function(searchOptions, results)
     }, this);
 
     return finalData;
+};
+
+var MultiselectUpdaterItem = function (settings) {
+    UpdaterItem.call(this, settings);
+    this._options = null;
+    this._labelField = null;
+    this._valueField = null;
+    this._quickAccessOptions = {};
+    this._select2Control = null;
+    MultiselectUpdaterItem.prototype.init.call(this, settings);
+};
+
+MultiselectUpdaterItem.prototype =  new UpdaterItem();
+MultiselectUpdaterItem.prototype.constructor = MultiselectUpdaterItem;
+MultiselectUpdaterItem.prototype.type = 'MultiselectUpdaterItem';
+
+MultiselectUpdaterItem.ITEM_SEPARATOR = '<##>';
+
+MultiselectUpdaterItem.prototype.init = function (settings) {
+    var defaults = {
+        options: [],
+        value: [],
+        labelField: 'text',
+        valueField: 'value'
+    };
+
+    jQuery.extend(true, defaults, settings);
+    this.setLabelField(defaults.labelField)
+        .setValueField(defaults.valueField)
+        .setOptions(defaults.options)
+        .setValue(defaults.value);
+};
+
+MultiselectUpdaterItem.prototype.isValid = function () {
+    return this._required ? !!this._value.length : true;
+};
+
+MultiselectUpdaterItem.prototype.clear = function () {
+    if (this._control) {
+        this._setValueToControl([]);
+    }
+    this._value = [];
+    return this;
+};
+
+MultiselectUpdaterItem.prototype._disableControl = function () {
+    if (this._select2Control) {
+        this._select2Control.select2('disable');
+    }
+    return this;
+};
+
+MultiselectUpdaterItem.prototype._enableControl = function () {
+    if (this._select2Control) {
+        this._select2Control.select2('enable');
+    }
+    return this;
+};
+
+MultiselectUpdaterItem.prototype._getQueryFunction = function () {
+    return _.bind(function (queryObject) {
+        var term = jQuery.trim(queryObject.term),
+            results = [], i,
+            matcherFunction = term ? function (term, subject) {
+                return queryObject.matcher(term, subject);
+            } : function () { return true; };
+
+
+        _.each(this._options, function (item) {
+            if (matcherFunction(term, item[this._labelField])) {
+                results.push({
+                    id: item[this._valueField],
+                    text: item[this._labelField] + ''
+                });
+            }
+        }, this);
+
+        queryObject.callback({
+            more: false,
+            results: results
+        });
+    }, this);
+};
+
+MultiselectUpdaterItem.prototype.setValue = function (value){
+    if (!!this._options) {
+        if (value === "" || value === null) {
+            value = [];
+        }
+        if (!jQuery.isArray(value)) {
+            throw new Error("setValue(): The parameter must be an array.");
+        }
+        if (this._control) {
+            this._setValueToControl(value);
+            this._value = this._getValueFromControl();
+        } else {
+            this._value = value;
+        }
+    }
+    return this;
+};
+
+MultiselectUpdaterItem.prototype._setQuickAccessOptions = function (options) {
+    var obj = {};
+    _.each(options, function (item) {
+        obj[item[this._valueField]] = item;
+    }, this);
+    this._quickAccessOptions = obj;
+    return this;
+};
+
+MultiselectUpdaterItem.prototype.setLabelField = function (field) {
+    var currentValue = this.getValue(), modifiedValue;
+    if (typeof field !== 'string' || field === '') {
+        throw new Error('setLabelField(): The parameter must be a non empty string.');
+    }
+    this._labelField = field;
+    // The items text will be updated by executing the next line
+    this._setValueToControl(this._value);
+    return this;
+};
+
+MultiselectUpdaterItem.prototype.setValueField = function (field) {
+    var prevValueField = this._valueField, currentValue = this.getValue(), updatedValue = [], previousQuickAccessOptions;
+    if (typeof field !== 'string' || field === '') {
+        throw new Error('setValuefield(): The parameter must be a non empty string.');
+    }
+
+    this._valueField = field;
+
+    if (prevValueField !== field) {
+        previousQuickAccessOptions = _.clone(this._quickAccessOptions);
+        this._setQuickAccessOptions(this._options);
+
+        // The items values will be updated by executing the next block of code
+        _.each(currentValue, function (item) {
+            var quickAccessOption = previousQuickAccessOptions[item];
+            this.push(quickAccessOption[field]);
+        }, updatedValue);
+
+        this.setValue(updatedValue);
+    }
+
+    return this;
+};
+
+MultiselectUpdaterItem.prototype.setOptions = function (options) {
+    if (!_.isArray(options)) {
+        throw new Error('setItems(): The parameter must be an array.');
+    }
+    this._options = options;
+    this.setValue([]);
+    this._setQuickAccessOptions(options);
+    return this;
+};
+
+MultiselectUpdaterItem.prototype._setValueToControl = function (value) {
+    if (this._select2Control) {
+        this._select2Control.select2('val', value);
+    }
+    return this;
+};
+
+MultiselectUpdaterItem.prototype._getValueFromControl = function () {
+    var data, value = [];
+    if (this._select2Control) {
+        data = this._select2Control.select2("data");
+        _.each(data, function (item) {
+            this.push(item.id);
+        }, value);
+    }
+    return value;
+};
+
+MultiselectUpdaterItem.prototype._getInitSelectionFunction = function () {
+    return _.bind(function (element, callback) {
+        var eValue = element.val(),
+            value = eValue !== "" ? element.val().split(MultiselectUpdaterItem.ITEM_SEPARATOR) : [],
+            results = [];
+
+        value = _.sortBy(value);
+
+        _.each(value, function(value) {
+            var item = this._quickAccessOptions[value];
+            if (item !== undefined) {
+                results.push({
+                    id: item[this._valueField],
+                    text: item[this._labelField]
+                });
+            }
+        }, this);
+
+        callback(results);
+    }, this);
+};
+
+MultiselectUpdaterItem.prototype._onChange = function () {
+    var that = this;
+    return function (e) {
+        var value = that._getValueFromControl();
+        if (value.length){
+            that._setValueToControl(value);
+        }
+        UpdaterItem.prototype._onChange.call(that).apply(this, arguments);
+    };
+};
+
+MultiselectUpdaterItem.prototype.attachListeners = function () {
+    if (this.html && !this._attachedListeners) {
+        UpdaterItem.prototype.attachListeners.call(this);
+        this._select2Control.on("change", this._onChange());
+    }
+    return this;
+};
+
+MultiselectUpdaterItem.prototype._createControl = function () {
+    var input = this.createHTMLElement('input');
+    input.type = 'hidden';
+    input = jQuery(input).select2({
+        allowClear: false,
+        containerCssClass: 'select2-choices-pills-close',
+        dropdownCssClass: '',
+        multiple: true,
+        query: this._getQueryFunction(),
+        initSelection: this._getInitSelectionFunction(),
+        separator: MultiselectUpdaterItem.ITEM_SEPARATOR,
+        width: this.fieldWidth || '220px'
+    });
+    this._control = input.data('select2').container[0];
+    this._select2Control = input;
+    return UpdaterItem.prototype._createControl.call(this);
 };

@@ -449,6 +449,19 @@ class PMSEExpressionEvaluator
     }
 
     /**
+     * Evaluates if two arrays have the same content. Note that the array's elements are comared using the ===, so the
+     * comparision is an identity comparison too.
+     * @param $arr1
+     * @param $arr2
+     * @return boolean
+     */
+    public function evalEqualArrays($arr1, $arr2) {
+        $d1 = array_diff($arr1, $arr2);
+        $d2 = array_diff($arr2, $arr1);
+        return empty($d1) && empty($d2);
+    }
+
+    /**
      * Method that evaluates the relational part
      * @param string $value1 value
      * @param string $relational This value can be null or
@@ -484,13 +497,17 @@ class PMSEExpressionEvaluator
         }
         $value1 = $this->typeData($value1, $typeDate);
         $value2 = $this->typeData($value2, $typeDate);
-        $this->condition .= ':(' . $value1 . '):'; // . $relSig . ' ' . $value2 . '::';
+        $this->condition .= ':(' . is_array($value1) ? encodeMultienumValue($value1) : $value1 . '):'; // . $relSig . ' ' . $value2 . '::';
         switch ($relLit) {
             case 'equals':
-                if ($value1 == $value2) {
-                    $ret = 1;
+                if (is_array($value1) && is_array($value2)) {
+                    $ret = $this->evalEqualArrays($value1, $value2);
                 } else {
-                    $ret = 0;
+                    if ($value1 == $value2) {
+                        $ret = 1;
+                    } else {
+                        $ret = 0;
+                    }
                 }
                 break;
             case 'major_than':

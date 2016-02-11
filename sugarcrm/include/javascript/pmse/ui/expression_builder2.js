@@ -72,7 +72,7 @@ ExpressionControl.prototype._typeToControl = {
     //"iframe": "iframe",
     //"image": "image" ,
     "integer": "integer",
-    "multiselect": "text", //"multiselect",
+    "multiselect": "multiselect",
     //"flex relate": "flexrelate",
     "phone": "text",
     "radio": "radio",
@@ -1042,6 +1042,8 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     valueField = subpanel.getItem("value");
                     if (aux[1] === 'Currency') {
                         value = valueField.getAmount();
+                    } else if (aux[1] === 'MultiSelect') {
+                        value = data.value;
                     } else {
                         value = that._getStringOrNumber(data.value);
                     }
@@ -1060,6 +1062,9 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                             break;
                         case 'Currency':
                             label += valueField.getCurrencyText() + ' %VALUE%';
+                            break;
+                        case 'MultiSelect':
+                            label += valueField.getSelectionAsText();
                             break;
                         default:
                             label += (valueType === "string" ? "\"" + value + "\"" : data.value);
@@ -1464,7 +1469,7 @@ ExpressionControl.prototype._createModulePanel = function () {
                     dependencyHandler: function (dependantField, parentField, value) {
                         var type = value.split(that._auxSeparator)[1],
                             form, newField, items = [], itemsObj, keys, operators, newFieldSettings, operatorField,
-                            labelField = 'text';
+                            labelField = 'text', aux;
                         type = type && that._typeToControl[type.toLowerCase()];
                         if ((type && type !== currentType) || type === 'dropdown') {
                             currentType = type;
@@ -1477,9 +1482,10 @@ ExpressionControl.prototype._createModulePanel = function () {
                                 name: dependantField.getName()
                             };
 
-                            if (type === 'dropdown') {
-                                if (parentField.getSelectedData()) {
-                                    itemsObj = parentField.getSelectedData()["optionItem"];
+                            if (type === 'dropdown' || type === 'multiselect') {
+                                aux = parentField.getSelectedData();
+                                if (aux) {
+                                    itemsObj = aux["optionItem"];
                                 }
                                 else {
                                     itemsObj = parentField._getFirstAvailableOption()["optionItem"];

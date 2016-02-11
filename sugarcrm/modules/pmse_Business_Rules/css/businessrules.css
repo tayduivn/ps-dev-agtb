@@ -637,6 +637,11 @@ table.decision-table-index span {
   width: 50% !important;
 }
 
+.adam.form-panel-field.adam-formpanelmultiselect .select2-choices {
+  height: 27px !important;
+  overflow: scroll;
+}
+
 .adam-formpanelcurrency .currency-part {
   width: 50%;
   float: left;

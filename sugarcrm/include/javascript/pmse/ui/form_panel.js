@@ -118,6 +118,9 @@ FormPanel.prototype._createField = function (settings) {
         case 'checkbox':
             field = new FormPanelCheckbox(defaults);
             break;
+        case 'multiselect':
+            field = new FormPanelMultiselect(defaults);
+            break;
         case 'button':
             field = new FormPanelButton(defaults);
             break;
@@ -582,6 +585,7 @@ var FormPanelField = function (settings) {
     this._disabled = null;
     this._form = null;
     this._initialValue = null;
+    this._lastErrorMessage = null;
     FormPanelField.prototype.init.call(this, settings);
 };
 
@@ -721,10 +725,25 @@ FormPanelField.prototype._setValueToControl = function(value) {
     return this;
 };
 
+/**
+ * Verify if the supplied parameter is a valid value for the field.
+ * @param value
+ * @returns {Boolean}
+ * @private
+ */
+FormPanelField.prototype._isValidValue = function(value) {
+    if(typeof value !== 'string') {
+        this._lastErrorMessage = "The parameter must be a string.";
+        return false;
+    }
+    return true;
+};
+
 FormPanelField.prototype.setValue = function (value) {
     var preValue = this._value;
-    if(typeof value !== 'string') {
-        throw new Error("setValue(): The parameter must be a string.");
+
+    if(!this._isValidValue(value)) {
+        throw new Error("setValue(): " + this._lastErrorMessage);
     }
     this._setValueToControl(value);
     this._value = value;
@@ -1062,13 +1081,21 @@ FormPanelNumber.prototype._getValueFromControl = function () {
     return numericValue;
 };
 
+FormPanelNumber.prototype._isValidValue = function (value) {
+    if (!(value === null || typeof value === 'number')) {
+        this._lastErrorMessage = "The parameter must be a number.";
+        return false;
+    }
+    return true;
+};
+
 FormPanelNumber.prototype.setValue = function (value) {
     var preValue = this._value;
     if (!this._decimalSeparator) {
         return this;
     }
-    if (!(value === null || typeof value === 'number')) {
-        throw new Error("setValue(): The parameter must be a number.");
+    if (!this._isValidValue(value)) {
+        throw new Error("setValue(): " + this._lastErrorMessage);
     }
     this._setValueToControl(value);
     this._value = value;
@@ -1278,8 +1305,6 @@ FormPanelDate.prototype.close = function () {
 };
 
 FormPanelDate.prototype._validateField = function () {
-    var isValid;
-
     return this._value !== null || this._htmlControl[0].value === "";
 };
 
@@ -1437,20 +1462,16 @@ FormPanelDatetime.prototype._getValueFromControl = function () {
     return value;
 };
 
-FormPanelDatetime.prototype.setValue = function (value) {
-    var preValue = this._value, splittedDate, aux, aux2, invalidValueMessage ="setValue(): Invalid value.";
+FormPanelDatetime.prototype._isValidValue = function (value) {
     if (!(value === null || typeof value === 'string')) {
-        throw new Error("setValue(): The parameter must be a string.");
+        this._lastErrorMessage = 'The parameter must be a string.';
+        return false;
     }
     if (!(typeof value === 'string' && (value === "" || (App.date(value)).isValid()))) {
-        throw new Error(invalidValueMessage);
+        this._lastErrorMessage = 'Invalid value.';
+        return false;
     }
-    this._setValueToControl(value);
-    this._value = value;
-    if (value !== preValue) {
-        this.fireDependentFields();
-    }
-    return this;
+    return true;
 };
 
 FormPanelDatetime.prototype.setTimeFormat = function (timeFormat) {
@@ -1969,14 +1990,16 @@ FormPanelCheckbox.prototype._getValueFromControl = function () {
     return this._htmlControl[0].checked;
 };
 
-FormPanelCheckbox.prototype.setValue = function (value) {
-    var preValue = this._value;
-    this._setValueToControl(!!value);
-    this._value = !!value;
-    if (value !== preValue) {
-        this.fireDependentFields();
+FormPanelCheckbox.prototype._isValidValue = function (value) {
+    if (typeof value === 'boolean') {
+        return true;
     }
-    return this;
+    this._lastErrorMessage = 'Invalid value.';
+    return false;
+};
+
+FormPanelCheckbox.prototype.setValue = function (value) {
+    return FormPanelField.prototype.setValue(!!value);
 };
 
 FormPanelCheckbox.prototype._createControl = function () {
@@ -2464,12 +2487,20 @@ FormPanelCurrency.prototype._getValueFromControl = function() {
     return this._htmlControl[1].val() + this._valueSeparator + amount;
 };
 
+FormPanelCurrency.prototype._isValidValue = function (value) {
+    if (!_.isArray(value) || value.length !== 2) {
+        this._lastErrorMessage = "Invalid value.";
+        return false;
+    }
+    return true;
+};
+
 FormPanelCurrency.prototype.setValue = function(value) {
     var valueArray, amount, currency;
     if (this._valueSeparator) {
         valueArray = value.split(this._valueSeparator);
-        if (valueArray.length !== 2) {
-            throw new Error("setValue(): Invalid format.");
+        if (!this._isValidValue(valueArray)) {
+            throw new Error("setValue(): " + this._lastErrorMessage);
         }
         amount = parseFloat(valueArray[1]);
         currency = valueArray[0];
@@ -2682,4 +2713,259 @@ FormPanelCurrency.prototype.createHTML = function() {
         this._createControl()
             ._postCreateHTML();
     }
+};
+
+// TODO: Make a superclass for FormPanelDropdown, FormPanelFriendlyDropdown and FormPanelMultiselect since all of them
+// share a similar structure.
+
+var FormPanelMultiselect = function (settings) {
+    FormPanelField.call(this, settings);
+    this._options = null;
+    this._labelField = null;
+    this._valueField = null;
+    this._quickAccessOptions = {};
+    FormPanelMultiselect.prototype.init.call(this, settings);
+};
+
+FormPanelMultiselect.prototype = new FormPanelField();
+FormPanelMultiselect.prototype.constructor = FormPanelMultiselect;
+FormPanelMultiselect.prototype.type = 'FormPanelMultiselect';
+FormPanelMultiselect.ITEM_SEPARATOR = '<%$&>';
+
+FormPanelMultiselect.prototype.init = function (settings) {
+    var defaults = {
+        options: [],
+        labelField: 'label',
+        valueField: 'value',
+        value: []
+    };
+
+    jQuery.extend(true, defaults, settings);
+    this.setLabelField(defaults.labelField)
+        .setValueField(defaults.valueField)
+        .setOptions(defaults.options)
+        .setValue(defaults.value);
+
+    this._initialValue = this._value;
+};
+
+FormPanelMultiselect.prototype.setValue = function (value){
+    if (!!this._options) {
+        return FormPanelField.prototype.setValue.call(this, value);
+    }
+    return this;
+};
+
+FormPanelMultiselect.prototype._setQuickAccessOptions = function (options) {
+    var obj = {};
+    _.each(options, function (item) {
+        obj[item[this._valueField]] = item;
+    }, this);
+    this._quickAccessOptions = obj;
+    return this;
+};
+
+FormPanelMultiselect.prototype.setLabelField = function (field) {
+    var currentValue = this.getValue(), modifiedValue;
+    if (typeof field !== 'string' || field === '') {
+        throw new Error('setLabelField(): The parameter must be a non empty string.');
+    }
+    this._labelField = field;
+    // The items text will be updated by executing the next line
+    this._setValueToControl(this._value);
+    return this;
+};
+
+FormPanelMultiselect.prototype.setValueField = function (field) {
+    var prevValueField = this._valueField, currentValue = this.getValue(), updatedValue = [], previousQuickAccessOptions;
+    if (typeof field !== 'string' || field === '') {
+        throw new Error('setValuefield(): The parameter must be a non empty string.');
+    }
+
+    this._valueField = field;
+
+    if (prevValueField !== field) {
+        previousQuickAccessOptions = _.clone(this._quickAccessOptions);
+        this._setQuickAccessOptions(this._options);
+
+        // The items values will be updated by executing the next block of code
+        _.each(currentValue, function (item) {
+            var quickAccessOption = previousQuickAccessOptions[item];
+            this.push(quickAccessOption[field]);
+        }, updatedValue);
+
+        this.setValue(updatedValue);
+    }
+
+    return this;
+};
+
+FormPanelMultiselect.prototype.setOptions = function (options) {
+    if (!_.isArray(options)) {
+        throw new Error('setItems(): The parameter must be an array.');
+    }
+    this._options = options;
+    this.setValue([]);
+    this._setQuickAccessOptions(options);
+    return this;
+};
+
+FormPanelMultiselect.prototype.enable = function () {
+    if (this._htmlControl[0]) {
+        this._htmlControl[0].select2("enable");
+    }
+    FormPanelItem.prototype.enable.call(this);
+    return this;
+};
+
+FormPanelMultiselect.prototype.disable = function () {
+    if (this._htmlControl[0]) {
+        this._htmlControl[0].select2("disable");
+    }
+    FormPanelItem.prototype.disable.call(this);
+    return this;
+};
+
+FormPanelMultiselect.prototype.getSelectionAsText = function () {
+    var text = '', value = this.getValue();
+
+    _.each(value, function (item) {
+        var item = this._quickAccessOptions[item];
+        text += item[this._labelField] + ', ';
+    }, this);
+
+    if (text.length) {
+        text = text.slice(0, -2);
+    }
+
+    return '[' + text + ']';
+};
+
+FormPanelMultiselect.prototype._evalRequired = function () {
+    if(this.required && !this._disabled) {
+        return !!this._value.length;
+    }
+    return true;
+};
+
+FormPanelMultiselect.prototype._getQueryFunction = function () {
+    var that = this;
+    return function (queryObject) {
+        var term = jQuery.trim(queryObject.term),
+            results = [], i,
+            matcherFunction = term ? function (term, subject) {
+                return queryObject.matcher(term, subject);
+            } : function () { return true; };
+
+
+        _.each(that._options, function (item) {
+            if (matcherFunction(term, item[that._labelField])) {
+                results.push({
+                    id: item[that._valueField],
+                    text: item[that._labelField] + ''
+                });
+            }
+        });
+
+        queryObject.callback({
+            more: false,
+            results: results
+        });
+    };
+};
+
+FormPanelMultiselect.prototype._getValueFromControl = function () {
+    var data, value = [];
+    if (this._htmlControl[0]) {
+        data = this._htmlControl[0].select2("data");
+        _.each(data, function (item) {
+            this.push(item.id);
+        }, value);
+    }
+    return value;
+};
+
+FormPanelMultiselect.prototype._setValueToControl = function (value) {
+    if (this._htmlControl[0]) {
+        this._htmlControl[0].select2("val", value);
+    }
+    return this;
+};
+
+FormPanelMultiselect.prototype._isValidValue = function (value) {
+    if (!_.isArray(value)) {
+        this._lastErrorMessage = 'Invalid value, array expected.';
+        return false;
+    }
+    return true;
+};
+
+FormPanelMultiselect.prototype._getSortResultsFunction = function () {
+    return _.bind(function (results, container, query) {
+        return _.sortBy(results, function (item) {
+            return item.text;
+        }, this);
+    }, this);
+};
+
+FormPanelMultiselect.prototype._getInitSelectionFunction = function () {
+    var that = this;
+    return function (element, callback) {
+        var eValue = element.val(),
+            value = eValue !== "" ? element.val().split(FormPanelMultiselect.ITEM_SEPARATOR) : [],
+            results = [];
+
+        value = _.sortBy(value);
+
+        _.find(value, function(value) {
+            var item = this._quickAccessOptions[value];
+            if (item !== undefined) {
+                results.push({
+                    id: item[this._valueField],
+                    text: item[this._labelField]
+                });
+            }
+        }, that);
+
+        callback(results);
+    };
+};
+
+FormPanelMultiselect.prototype._onChangeHandler = function () {
+    var that = this;
+    return function () {
+        var valueInControl = that._getValueFromControl();
+        if (valueInControl.length) {
+            that._setValueToControl(that._getValueFromControl());
+        }
+        FormPanelField.prototype._onChangeHandler.call(that).apply(this, arguments);
+    };
+};
+
+FormPanelMultiselect.prototype._createControl = function(first_argument) {
+    var input, control;
+
+    if (!this._htmlControl[0]) {
+        input = this.createHTMLElement('input');
+        input.name = this._name;
+        input.type = 'hidden';
+        this._htmlControlContainer.appendChild(input);
+        this._htmlControl[0] = jQuery(input);
+        this._htmlControl[0].select2({
+            allowClear: false,
+            containerCssClass: 'select2-choices-pills-close',
+            dropdownCssClass: '',
+            multiple: true,
+            query: this._getQueryFunction(),
+            initSelection: this._getInitSelectionFunction(),
+            separator: FormPanelMultiselect.ITEM_SEPARATOR,
+            sortResults: this._getSortResultsFunction(),
+            width: '100%'
+        });
+        this._setValueToControl(this._value);
+        control = this._htmlControl[0].data('select2').container[0];
+        control.className += 'inherit-width adam form-panel-field-control';
+        this._value = this._getValueFromControl();
+    }
+    return this;
 };

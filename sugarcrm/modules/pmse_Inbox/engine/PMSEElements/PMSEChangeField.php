@@ -151,6 +151,10 @@ class PMSEChangeField extends PMSEScriptTask
                                     break;
                             }
 
+                        }
+                        else if (isset($bean->field_defs[$field->field]['type']) &&
+                            $bean->field_defs[$field->field]['type'] == 'multienum') {
+                            $bean->{$field->field} = encodeMultienumValue($field->value);
                         } else {
                             if (!$this->emailHandler->doesPrimaryEmailExists($field, $bean, $historyData)) {
                                 $historyData->savePredata($field->field, $bean->{$field->field});
