@@ -159,10 +159,6 @@ class PMSEChangeField extends PMSEScriptTask
                                     $newValue = $this->beanHandler->processValueExpression($field->value, $bean);
                                     $newValue = $this->getDBDate($field, $newValue);
 
-                                    $newValue = $this->postProcessValue($newValue, $bean->field_name_map[$field->field]['type']);
-
-                                    // This will handle currency type fields
-                                    $newValue = $this->handleFieldTypeProcessing($newValue, $field, $bean);
                                 } else {
                                     if ($field->field == 'assigned_user_id') {
                                         $field->value = $this->getCustomUser($field->value, $beanModule);
