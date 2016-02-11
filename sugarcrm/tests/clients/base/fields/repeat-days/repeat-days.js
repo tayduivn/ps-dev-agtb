@@ -105,14 +105,14 @@ describe('View.Fields.Base.RepeatDaysField', function() {
         });
 
         it('should not call getSelect2Field if model is new', function() {
-            field.model.id = null;
+            field.model.set('id', null);
             field.setMode('edit');
 
             expect(field.getSelect2Field).not.toHaveBeenCalled();
         });
 
         it('should not call getSelect2Field if mode is not edit', function() {
-            field.model.id = 'id';
+            field.model.set('id', 'id');
             field.action = 'detail';
             field.setMode('detail');
 
@@ -120,7 +120,7 @@ describe('View.Fields.Base.RepeatDaysField', function() {
         });
 
         it('should call setMode on select2 field when mode is edit', function() {
-            field.model.id = 'id';
+            field.model.set('id', 'id');
             field.action = 'edit';
             field.setMode('edit');
 
@@ -128,7 +128,7 @@ describe('View.Fields.Base.RepeatDaysField', function() {
         });
 
         it('should call _updateSelect2SelectedDates with true, false', function() {
-            field.model.id = 'id';
+            field.model.set('id', 'id');
             field.action = 'edit';
             field.setMode('edit');
 
@@ -136,7 +136,7 @@ describe('View.Fields.Base.RepeatDaysField', function() {
         });
 
         it('should call decorateCalendarDates', function() {
-            field.model.id = 'id';
+            field.model.set('id', 'id');
             field.action = 'edit';
             field.setMode('edit');
 
