@@ -107,11 +107,6 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'id',
             'required' => false,
             'reportable' => false,
-            'function' => array(
-                'name' => 'getProductTypes',
-                'returns' => 'html',
-                'include' => 'modules/ProductTemplates/ProductTemplate.php'
-            ),
             'comment' => 'Product type (ex: hardware, software)'
         ),
         'quote_id' => array(
@@ -485,11 +480,6 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_SUPPORT_TERM',
             'type' => 'varchar',
             'len' => 100,
-            'function' => array(
-                'name' => 'getSupportTerms',
-                'returns' => 'html',
-                'include' => 'modules/ProductTemplates/ProductTemplate.php'
-            ),
             'comment' => 'Term (length) of support contract'
         ),
         'date_support_expires' => array(
