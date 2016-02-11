@@ -267,6 +267,8 @@ class MassUpdate
                     continue;
                 }
 				if(isset($_POST['Delete'])){
+					// disable row level security so that bean can be retrieved for checking ACL access.
+					$this->sugarbean->disable_row_level_security = true;
 					$this->sugarbean->retrieve($id);
 					if($this->sugarbean->ACLAccess('Delete')){
                         // Fix for RS-1267 - We should not processing mass delete for global team

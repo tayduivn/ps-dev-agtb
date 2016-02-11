@@ -374,12 +374,12 @@ describe('Base.Field.Relate', function() {
     });
 
     describe('render', function() {
-        var _renderStub, getSearchModuleStub;
-
         beforeEach(function() {
             field = SugarTest.createField('base', 'account_name', 'relate', 'edit', fieldDef);
-            _renderStub = sinon.collection.stub(app.view.Field.prototype, '_render');
-            getSearchModuleStub = sinon.collection.stub(field, 'getSearchModule');
+            sinon.collection.stub(field, 'getSearchModule');
+            sinon.collection.stub(field, '_renderEditableDropdown');
+            sinon.collection.stub(field, '_renderDisabledDropdown');
+            field.filters = {};
         });
 
         afterEach(function() {
@@ -389,23 +389,27 @@ describe('Base.Field.Relate', function() {
         using('different search modules', [
             {
                 module: undefined,
-                render: true
+                renderEditable: true,
+                renderDisabled: false
             },
             {
                 module: 'invalidModule',
-                render: false
+                renderEditable: false,
+                renderDisabled: true
             },
             {
                 module: 'Cases',
-                render: true
+                renderEditable: true,
+                renderDisabled: false
             }
         ], function(options) {
 
-            it('should not render if the related module is invalid', function() {
-                getSearchModuleStub.returns(options.module);
+            it('should render the dropdown disabled if the search module is defined but invalid', function() {
+                field.getSearchModule.returns(options.module);
                 field.render();
 
-                expect(_renderStub.called).toBe(options.render);
+                expect(field._renderEditableDropdown.called).toBe(options.renderEditable);
+                expect(field._renderDisabledDropdown.called).toBe(options.renderDisabled);
             });
         });
     });

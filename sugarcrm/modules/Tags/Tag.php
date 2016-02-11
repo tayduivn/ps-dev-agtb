@@ -125,7 +125,8 @@ class Tag extends Basic
     public function getRelatedModuleRecords($focus, $ids)
     {
         // No ids means nothing to do
-        if (empty($ids) || ($focus == null)) {
+        // Not use this in Tags module, use only for other modules
+        if (empty($ids) || ($focus == null) || ($focus->table_name === 'tags')) {
             return array();
         }
 
