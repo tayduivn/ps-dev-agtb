@@ -49,33 +49,17 @@ class SugarUpgradeAddNewModulesToMegamenuTest extends UpgradeTestCase
     }
 
     /**
-     * Tests the modification routine
+     * Tests the addition routine
      *
      * @param array $def new module definition array
      * @dataProvider moduleDefDataProvider
      */
-    public function testGetModifiedTabs($def, $expect)
+    public function testGetNewTabsList($def, $expect)
     {
-        // Get the Tab Controller mock
-        $tc = $this->getMockBuilder('TabController')->getMock();
-        $tc->expects($this->any())
-           ->method('get_system_tabs')
-           ->willReturn($this->mockTabs);
+        $ug = new SugarUpgradeAddNewModulesToMegamenu($this->upgrader);
 
-        $ug = $this->getMockBuilder('SugarUpgradeAddNewModulesToMegamenu')
-            ->setConstructorArgs(array($this->upgrader))
-            ->setMethods(array('getTabController'))
-            ->getMock();
+        $actual = $ug->getNewTabsList($this->mockTabs, $def);
 
-        // Setup the upgrader to return our mock tab controller
-        $ug->expects($this->any())
-            ->method('getTabController')
-            ->will($this->returnValue($tc));
-
-        // Get the return result
-        $actual = $ug->getModifiedTabs($tc, $def);
-
-        // Test it
         $this->assertEquals($expect, $actual);
     }
 
@@ -186,6 +170,29 @@ class SugarUpgradeAddNewModulesToMegamenuTest extends UpgradeTestCase
                     ),
                     'expectCheck' => true,
                     'expectMsg' => 'Megamenu module list updated',
+                ),
+            ),
+            // Tests flavor conversion on 7.7+
+            array(
+                'def' => array(
+                    'name' => 'PMSE Modules Converted',
+                    'fromFlavor' => 'pro',
+                    'toFlavor' => array('ent', 'ult'),
+                    'fromVersion' => array('7.7', '>='),
+                    'modules' => array(
+                        'pmse_Project',
+                        'pmse_Inbox',
+                        'pmse_Business_Rules',
+                        'pmse_Emails_Templates',
+                    ),
+                    'setupVersions' => array(
+                        'from_version' => '7.7.0.0',
+                        'from_flavor' => 'pro',
+                        'to_version' => '7.7.0.0',
+                        'to_flavor' => 'ult',
+                    ),
+                    'expectCheck' => true,
+                    'expectMsg' => 'Megamenu module list updated with PMSE Modules Converted',
                 ),
             ),
         );
