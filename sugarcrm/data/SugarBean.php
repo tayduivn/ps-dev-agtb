@@ -4867,25 +4867,11 @@ class SugarBean
             }
         }
         $results = array();
-        foreach ($queries as $module => $query) {
+        foreach ($queries as $query) {
             $result = $this->db->query($query . ')');
             while($row = $this->db->fetchByAssoc($result))
             {
-                $id = $row['id'];
-
-                // trying to reconstruct parent bean from fetched data
-                $parent = BeanFactory::getBean($module);
-                $parent->id = $id;
-                if (isset($row['parent_name_owner'])) {
-                    $parent->assigned_user_id = $row['parent_name_owner'];
-                }
-
-                // remove parent ID from the result in case it's inaccessible to the user
-                if (!SugarACL::checkAccess($module, 'view', array('bean' => $parent))) {
-                    unset($row['id']);
-                }
-
-                $results[$id] = $row;
+                $results[$row['id']] = $row;
             }
         }
 
