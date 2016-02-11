@@ -171,6 +171,13 @@
   &.nodata {
     padding: 5px 7px;
   }
+  &:not(.edit):not(.fieldset-equal):not(.fieldset-wrap) .fieldset-field:last-child {/* temporary hack SC-4564 */
+    width: 100%;
+    max-width: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .fieldset.list {
