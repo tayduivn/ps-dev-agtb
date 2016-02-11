@@ -70,6 +70,10 @@ class SugarUpgradeMergeDropdowns extends UpgradeScript
      */
     public function run()
     {
+        if (version_compare($this->from_version, '7.6.1.0', '>=')) {
+            return;
+        }
+
         if (empty($this->context['new_source_dir'])) {
             $this->log('**** Skipped Dropdown Lists Merge **** The new source directory was not found.');
             return;
