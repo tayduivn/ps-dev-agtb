@@ -74,6 +74,14 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
     {
         $vObject = VObject\Reader::read($calendarData);
         $mainComponent = $vObject->getBaseComponent();
+        if (!$mainComponent) {
+            foreach ($vObject->getComponents() as $component) {
+                if ($component->name !== 'VTIMEZONE') {
+                    $mainComponent = $component;
+                    break;
+                }
+            }
+        }
         if ($mainComponent->RRULE) {
             $rRule = $mainComponent->RRULE->getParts();
             return
