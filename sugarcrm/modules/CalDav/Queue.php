@@ -24,6 +24,7 @@ class CalDavQueue extends SugarBean
     public $module_name = 'CalDavQueues';
     public $object_name = 'CalDavQueue';
     public $table_name = 'caldav_queue';
+    public $disable_custom_fields = true;
 
     /**
      * CalDav bean id

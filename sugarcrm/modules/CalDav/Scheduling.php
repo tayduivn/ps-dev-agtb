@@ -21,6 +21,7 @@ class CalDavScheduling extends SugarBean
     public $module_name = 'CalDavSchedulings';
     public $object_name = 'CalDavScheduling';
     public $table_name = 'caldav_scheduling';
+    public $disable_custom_fields = true;
 
     /**
      * Scheduling object ID

@@ -23,6 +23,7 @@ class pmse_BpmAccessManagement_sugar extends Basic {
 	var $object_name = 'pmse_BpmAccessManagement';
 	var $table_name = 'pmse_bpm_access_management';
 	var $importable = false;
+	var $disable_custom_fields = true;
         var $id;
 		var $name;
 		var $date_entered;

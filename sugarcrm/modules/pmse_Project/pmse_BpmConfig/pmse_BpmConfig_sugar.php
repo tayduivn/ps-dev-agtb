@@ -23,6 +23,7 @@ class pmse_BpmConfig_sugar extends Basic {
 	var $object_name = 'pmse_BpmConfig';
 	var $table_name = 'pmse_bpm_config';
 	var $importable = false;
+    var $disable_custom_fields = true;
     var $id;
     var $name;
     var $date_entered;

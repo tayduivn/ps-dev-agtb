@@ -18,6 +18,7 @@ class CalDavSynchronization extends SugarBean
     public $module_name = 'CalDavSynchronizations';
     public $object_name = 'CalDavSynchronization';
     public $table_name = 'caldav_synchronization';
+    public $disable_custom_fields = true;
 
     /**
      * Module synchronization counter

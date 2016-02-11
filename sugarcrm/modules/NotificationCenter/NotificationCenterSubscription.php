@@ -135,4 +135,9 @@ class NotificationCenterSubscription extends Basic
      * {@inheritdoc}
      */
     public $table_name = 'notification_subscription';
+
+    /**
+     * {@inheritdoc}
+     */
+    public $disable_custom_fields = true;
 }

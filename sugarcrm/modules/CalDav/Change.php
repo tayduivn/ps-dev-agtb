@@ -21,6 +21,7 @@ class CalDavChange extends SugarBean
     public $module_name = 'CalDavChanges';
     public $object_name = 'CalDavChange';
     public $table_name = 'caldav_changes';
+    public $disable_custom_fields = true;
 
     /**
      * Object ID

@@ -20,6 +20,7 @@ class ACLRoleSet extends Basic
     public $module_name = 'ACLRoleSets';
     public $module_dir = 'ACLRoles';
     public $table_name = 'acl_role_sets';
+    public $disable_custom_fields = true;
     public $hash;
 
     /**
