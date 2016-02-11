@@ -209,8 +209,10 @@ abstract class OpportunitySetup
         // hide/show reports
         $this->handleReports();
 
-        // lets fix the workflows module
-        $this->processWorkFlows();
+        if ($this->isUpgrade === false) {
+            // lets fix the workflows module
+            $this->processWorkFlows();
+        }
 
         // r&r the rli + related modules
         $this->runRepairAndRebuild($rnr_modules);
