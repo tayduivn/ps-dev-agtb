@@ -31,9 +31,10 @@ class BaseMailerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSetMessageId()
     {
         $id = create_guid();
+        $hostname = 'mycompany.com';
 
         $config = new OutboundSmtpEmailConfiguration($GLOBALS['current_user']);
-        $config->setHostname('mycompany.com');
+        $config->setHostname($hostname);
 
         $mailer = $this->getMockBuilder('BaseMailer')
             ->setConstructorArgs(array($config))
@@ -41,6 +42,6 @@ class BaseMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mailer->setMessageId($id);
 
         $actual = $mailer->getHeader(EmailHeaders::MessageId);
-        $this->assertEquals("<{$id}@mycompany.com>", $actual);
+        $this->assertRegExp('/\<\d+\.' . $id . '@' . $hostname . '\>/', $actual);
     }
 }

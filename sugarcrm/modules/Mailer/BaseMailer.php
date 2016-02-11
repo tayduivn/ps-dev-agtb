@@ -138,11 +138,19 @@ abstract class BaseMailer implements IMailer
      * {@link https://www.jwz.org/doc/mid.html}. See the section on "Message-ID generation" to learn how to construct a
      * unique identifier.
      *
+     * In this particular implementation, the format of the Message-ID is <unix_timestamp.$id@hostname>. SugarCRM cleans
+     * values that appear as HTML in certain cases before inserting that data into the database. Because the Message-ID
+     * begins with a "<", an $id that begins with an alphabetic character will cause the Message-ID to be parsed as an
+     * invalid HTML tag by HTMLPurifier. Prefixing the unix timestamp guarantees that the Message-ID will begin with
+     * "<", followed by an integer, which HTMLPurifier will correctly ignore as a non-threatening tag. This allows the
+     * Message-ID to be saved to the database whenever appropriate, without risk of losing the value.
+     *
      * @param string $id A unique identifier.
      */
     public function setMessageId($id)
     {
-        $this->setHeader(EmailHeaders::MessageId, sprintf('<%s@%s>', $id, $this->config->getHostname()));
+        $messageId = sprintf('<%s.%s@%s>', time(), $id, $this->config->getHostname());
+        $this->setHeader(EmailHeaders::MessageId, $messageId);
     }
 
     /**

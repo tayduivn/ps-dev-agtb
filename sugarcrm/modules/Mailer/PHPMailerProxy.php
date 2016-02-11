@@ -46,6 +46,31 @@ class PHPMailerProxy extends PHPMailer
     }
 
     /**
+     * {@inheritdoc}
+     *
+     * SugarCRM cleans values that appear as HTML in certain cases before inserting that data into the database. When
+     * PHPMailer generates a Message-ID header, the string may begin with a "<", followed by an alphabetic
+     * character, which will cause the Message-ID to be parsed as an invalid HTML tag by HTMLPurifier. To combat this,
+     * the unix timestamp is prefixed to the Message-ID to guarantee that the Message-ID will begin with "<", followed
+     * by an integer, which HTMLPurifier will correctly ignore as a non-threatening tag. This allows the Message-ID to
+     * be saved to the database whenever appropriate, without risk of losing the value.
+     *
+     * Besides prefixing the unix timestamp, the rest of the Message-ID is generated exactly as PHPMailer does it. The
+     * format of the Message-ID is <unix_timestamp.unique_id@server_hostname>. If the Message-ID is already provided,
+     * then it will not be generated.
+     */
+    public function createHeader()
+    {
+        $time = time();
+
+        if (empty($this->MessageID)) {
+            $this->MessageID = sprintf('<%s.%s@%s>', $time, md5(uniqid($time)), $this->serverHostname());
+        }
+
+        return parent::createHeader();
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function setError($msg)
