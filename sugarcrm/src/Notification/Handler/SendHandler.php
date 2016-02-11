@@ -13,7 +13,6 @@
 namespace Sugarcrm\Sugarcrm\Notification\Handler;
 
 use Sugarcrm\Sugarcrm\Notification\CarrierRegistry;
-use Sugarcrm\Sugarcrm\JobQueue\Handler\SubtaskCapableInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager;
 use Sugarcrm\Sugarcrm\Notification\JobQueue\BaseHandler;
 
@@ -22,7 +21,7 @@ use Sugarcrm\Sugarcrm\Notification\JobQueue\BaseHandler;
  * Is used to send messages to a user via various carriers.
  * @package Sugarcrm\Sugarcrm\Notification
  */
-class SendHandler extends BaseHandler implements SubtaskCapableInterface
+class SendHandler extends BaseHandler
 {
     /**
      * Fail the task if a single child ends as failed.

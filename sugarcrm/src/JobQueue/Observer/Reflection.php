@@ -121,7 +121,6 @@ class Reflection implements ObserverInterface
 
         $job->save();
         $this->resolutionHelper->setResolution($job, $resolution);
-        $this->clearSugarCache();
         // Should be the last action.
         $jqAdmin = \BeanFactory::getBean('Users', $workload->getAttribute('jqUserId'));
         $this->sudo($jqAdmin);
@@ -141,16 +140,5 @@ class Reflection implements ObserverInterface
             $_SESSION['user_id'] = $user->id;
             $_SESSION['authenticated_user_id'] = $user->id;
         }
-    }
-
-    /**
-     * Clear BeanFactory's and locals cache.
-     */
-    protected function clearSugarCache()
-    {
-        \BeanFactory::clearCache();
-        sugar_cache_reset();
-        // Start populating local cache again.
-        \SugarCache::$isCacheReset = false;
     }
 }
