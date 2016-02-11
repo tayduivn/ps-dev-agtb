@@ -215,7 +215,7 @@
                     self.model.set(self.name, self.unformat(value));
                 }
             });
-            if (this.def.ordered) {
+            if (this.def.isMultiSelect && this.def.ordered) {
                 $el.select2('container').find('ul.select2-choices').sortable({
                     containment: 'parent',
                     start: function() {
