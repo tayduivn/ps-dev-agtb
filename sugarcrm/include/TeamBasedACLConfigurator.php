@@ -41,10 +41,12 @@ class TeamBasedACLConfigurator
 
     /**
      * Permanently disabled modules.
+     * These modules can't be enabled/disabled on Team-based Permissions admin page.
      * @var array
      */
     protected static $disabledModules = array(
         'pmse_Inbox', // see RS-1275
+        'Users', // see RS-1347
     );
 
     /**
