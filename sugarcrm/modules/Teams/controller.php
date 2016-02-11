@@ -10,6 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Symfony\Component\Validator\Constraints as AssertBasic;
+
 require_once('include/MVC/Controller/SugarController.php');
 class TeamsController extends SugarController {
 
@@ -111,8 +114,19 @@ class TeamsController extends SugarController {
     public function action_saveTBAConfiguration()
     {
         if ($GLOBALS['current_user']->isAdminForModule('Users')) {
-            $enabled = !empty($_POST['enabled']) ? isTruthy($_POST['enabled']) : false;
-            $disabledModules = !empty($_POST['disabled_modules']) ? explode(',', $_POST['disabled_modules']) : array();
+            $request = InputValidation::getService();
+            $validators = array(
+                'Assert\Choice' => array(
+                    'choices' => ['true', 'false']
+                )
+            );
+            $enabled = isTruthy($request->getValidInputPost('enabled', $validators, false));
+            $validators = array(
+                'Assert\Delimited' => array(
+                    new AssertBasic\Type(array('type' => 'string'))
+                )
+            );
+            $disabledModules = $request->getValidInputPost('disabled_modules', $validators, array());
 
             $tbaConfigurator = new TeamBasedACLConfigurator();
             $tbaConfigurator->setGlobal($enabled);
