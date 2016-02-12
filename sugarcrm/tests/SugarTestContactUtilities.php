@@ -109,18 +109,3 @@ class SugarTestContactUtilities
         return $contact_ids;
     }
 }
-
-
-class ContactMock extends Contact
-{
-    public function getNotificationEmailTemplate($test = false)
-    {
-        if ($test) {
-            $templateName = $this->getTemplateNameForNotificationEmail();
-            return $this->createNotificationEmailTemplate($templateName);    
-        }
-        
-        return $this->createNotificationEmailTemplate($templateName);
-
-    }
-}
