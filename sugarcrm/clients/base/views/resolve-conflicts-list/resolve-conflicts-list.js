@@ -22,6 +22,9 @@
         options.meta = options.meta || {};
         options.meta.selection = {type: 'single', label: 'LBL_LINK_SELECT'};
 
+        //FIXME: This will be moved out as part of SC-5449.
+        options.meta.template = 'flex-list';
+
         this._super('initialize', [options]);
 
         // do not fetch on initial load
