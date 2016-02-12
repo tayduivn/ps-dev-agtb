@@ -237,20 +237,21 @@
     _render: function() {
         var searchModule = this.getSearchModule();
 
-        //Do not render if the related module is invalid
-        if (searchModule && !_.contains(app.metadata.getModuleNames(), searchModule)) {
-            return this;
-        }
-
         this._super('_render');
 
         //FIXME remove check for tplName SC-2608
         switch(this.tplName) {
             case 'edit':
             case 'massupdate':
-                if (!app.acl.hasAccess('list', this.getSearchModule())) {
-                    this._renderDisabledDropdown();
-                    break;
+                // `searchModule` can be undefined for a parent field when there
+                // is no value set (ie in create mode). In that case, we don't
+                // want to render the dropdown disabled.
+                if (!_.isUndefined(searchModule)) {
+                    if (!app.acl.hasAccess('list', searchModule) ||
+                        !_.contains(app.metadata.getModuleNames(), searchModule)) {
+                        this._renderDisabledDropdown();
+                        break;
+                    }
                 }
                 if (_.isUndefined(this.filters)) {
                     this._createFiltersCollection({

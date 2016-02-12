@@ -85,7 +85,7 @@ class ViewHistory extends SugarView
         $smarty->assign ( 'view_module', $this->module ) ;
         $smarty->assign ( 'view', $this->layout ) ;
 
-        $subpanel = $this->request->getValidInputRequest('subpanel', 'Assert\ComponentName');
+        $subpanel = $this->request->getValidInputRequest('subpanel');
         $smarty->assign('subpanel', $subpanel);
 
         $page = $this->request->getValidInputRequest('page', array(

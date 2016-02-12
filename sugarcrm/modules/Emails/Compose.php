@@ -35,7 +35,7 @@ $data = array(
 if (!empty($_REQUEST['listViewExternalClient'])) {
     $email = BeanFactory::getBean('Emails');
 	$module = InputValidation::getService()->getValidInputRequest('action_module', 'Assert\Mvc\ModuleName');
-	$uid = $this->request->getValidInputRequest('uid', array('Assert\Delimited' => array('constraints' => 'Assert\Guid')));
+	$uid = InputValidation::getService()->getValidInputRequest('uid', array('Assert\Delimited' => array('constraints' => 'Assert\Guid')));
     echo $email->getNamePlusEmailAddressesForCompose($module, $uid);
 }
 //For the full compose/email screen, the compose package is generated and script execution

@@ -75,7 +75,7 @@ $request = InputValidation::getService();
 
         $uid = $request->getValidInputRequest('uid', 'Assert\Guid');
         $ieId = $request->getValidInputRequest('ieId', 'Assert\Guid');
-        $mbox = $request->getValidInputRequest('mbox', 'Assert\Guid');
+        $mbox = $request->getValidInputRequest('mbox');
 
         if (isset($_REQUEST['sugarEmail']) && $_REQUEST['sugarEmail'] == 'true' && !empty($uid)) {
             $ie->email->retrieve($uid);
