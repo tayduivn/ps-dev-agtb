@@ -83,9 +83,8 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
         }
         if ($originalMeta && !empty($originalMeta[$this->_moduleName]['base']['filter']['default']['fields']) && is_array($originalMeta[$this->_moduleName]['base']['filter']['default']['fields'])) {
             foreach ($originalMeta[$this->_moduleName]['base']['filter']['default']['fields'] as $key => $val) {
-                //FIXME This is a temporary fix, will have a more generic solution in TY-228
-                if ((!isset($this->_fielddefs[$key]) && isset($val['dbFields']))
-                    || in_array($key, array('$favorite', '$owner'))) {
+                // FIXME This is a temporary fix, will have a more generic solution in TY-228
+                if ((!isset($this->_fielddefs[$key]) && isset($val['dbFields'])) || $key === '$favorite') {
                     // if this field is not already in _fielddefs, add it
                     $this->_comboFieldDefs[$key] = $val;
                 }
@@ -142,7 +141,6 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
     public function getFieldDefs()
     {
         unset($this->_fielddefs['my_favorite']);
-        unset($this->_fielddefs['ownership']);
         return $this->_fielddefs;
     }
 
