@@ -11491,6 +11491,9 @@ Sincerely, SugarCRM',
     'ERR_GENERIC_SERVER_ERROR' => 'There was an error while connecting to the server. Please try again.',
     'ERR_RESOLVE_ERRORS' => 'Please resolve any errors before proceeding.',
 
+    // Refresh button on list views
+    'LBL_LIST_REFRESH' => 'Refresh list',
+
     // Textarea field.
     'LBL_TEXTAREA_MORE' => 'more',
     'LBL_TEXTAREA_LESS' => 'less',

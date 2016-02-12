@@ -17,7 +17,7 @@
             <div class="toggle-actions actions">
                 {{#if meta.refresh_button}}
                     <div class="btn-group refresh" data-action="refreshList">
-                        <button class="btn"><i class="fa fa-refresh"></i></button>
+                        <button class="btn" rel="tooltip" title="{{str 'LBL_LIST_REFRESH' module}}" aria-label="{{str 'LBL_LIST_REFRESH' module}}"><i class="fa fa-refresh"></i></button>
                     </div>
                 {{/if}}
                 <div class="btn-group" data-toggle="buttons-radio">
