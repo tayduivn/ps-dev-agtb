@@ -62,7 +62,8 @@ class TeamBasedACLConfigurator
      * @var array List of TBA module constants.
      */
     protected $moduleOptions = array(
-        'ACL_ALLOW_SELECTED_TEAMS' => 72,
+        // 78 to be suppressed by owner's 75.
+        'ACL_ALLOW_SELECTED_TEAMS' => 78,
     );
 
     /**
