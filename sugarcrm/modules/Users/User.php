@@ -2214,12 +2214,17 @@ EOQ;
                 // add the recipient
                 $mailer->addRecipientsTo(new EmailIdentity($itemail));
 
+                $emailId = create_guid();
+                $mailer->setMessageId($emailId);
+
                 // if send doesn't raise an exception then set the result status to true
                 $mailer->send();
                 $result["status"] = true;
 
                 // save the email record
                 $email                   = new Email();
+                $email->id = $emailId;
+                $email->new_with_id = true;
                 $email->team_id          = 1;
                 $email->to_addrs         = '';
                 $email->type             = 'archived';
@@ -2233,6 +2238,7 @@ EOQ;
                 $email->modified_user_id = '1';
                 $email->created_by       = '1';
                 $email->status           = 'sent';
+                $email->message_id = $mailer->getHeader(EmailHeaders::MessageId);
                 $email->save();
 
                 if (!isset($additionalData['link']) || $additionalData['link'] == false) {

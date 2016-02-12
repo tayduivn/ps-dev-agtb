@@ -273,6 +273,9 @@ class EmailMan extends SugarBean{
      * this function will create an email if one does not exist. also the function will load these relationships leads, accounts, contacts
      * users and targets
      *
+     * The Message-ID is not stored on the reference email because the reference email is a single Emails record that
+     * represents N emails, all with their own Message-ID values.
+     *
      * @param varchar marketing_id message id
      * @param string $subject email subject
      * @param string $body_text Email Body Text
@@ -439,6 +442,7 @@ class EmailMan extends SugarBean{
         $email->date_start       = $timedate->nowDbDate();
         $email->time_start       = $timedate->asDbTime($timedate->getNow());
         $email->status           = 'sent';
+        $email->message_id = $mail->getHeader(EmailHeaders::MessageId);
         $retId                   = $email->save();
 
         foreach ($this->notes_array as $note) {

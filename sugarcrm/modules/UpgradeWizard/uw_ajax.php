@@ -114,6 +114,8 @@ function commitAjaxFinalTouches($persistence) {
 			logThis('Sending Reminder for admin for manual merge.');
 
 			$email = BeanFactory::getBean('Emails');
+            $email->id = create_guid();
+            $email->new_with_id = true;
 			$email->assigned_user_id = $current_user->id;
 			$email->name = $mod_strings['LBL_UW_COMMIT_ADD_TASK_NAME'];
 			$email->description = $desc;

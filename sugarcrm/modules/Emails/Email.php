@@ -802,6 +802,8 @@ class Email extends SugarBean {
             }
 
             if (!is_null($mailer)) {
+                $mailer->setMessageId($this->id);
+                $this->message_id = $mailer->getHeader(EmailHeaders::MessageId);
                 $sentMessage = $mailer->send();
             }
         }
@@ -2189,7 +2191,13 @@ class Email extends SugarBean {
             $mailer->setHtmlBody($htmlBody);
             $mailer->setTextBody($textBody);
 
+            // Use this email's ID in the Message-ID if it exists. Otherwise, let it be auto-generated.
+            if (!empty($this->id)) {
+                $mailer->setMessageId($this->id);
+            }
+
             $mailer->send();
+            $this->message_id = $mailer->getHeader(EmailHeaders::MessageId);
 
             ///////////////////////////////////////////////////////////////////
             ////	INBOUND EMAIL HANDLING
