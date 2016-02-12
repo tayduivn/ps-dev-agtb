@@ -15,6 +15,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as CalDavHook;
+use Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper;
 
 class CalendarEvents
 {
@@ -887,9 +888,10 @@ class CalendarEvents
         }
 
         if ($changeWasMade) {
-            $inviteesAfter = CalendarUtils::getInvitees($event);
+            $participantHelper = new ParticipantsHelper();
+            $inviteesChanges = $participantHelper->getInviteesDiff($inviteesBefore, CalendarUtils::getInvitees($event));
             $calDavHook = new CalDavHook();
-            $calDavHook->export($event, array('update', array(), $inviteesBefore, $inviteesAfter));
+            $calDavHook->export($event, array('update', array(), $inviteesChanges));
             if ($invitee instanceof User) {
                 $GLOBALS['log']->debug(sprintf('Update vCal cache for %s/%s', $invitee->module_name, $invitee->id));
                 vCal::cache_sugar_vcal($invitee);

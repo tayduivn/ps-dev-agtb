@@ -33,13 +33,12 @@ abstract class AdapterAbstract implements AdapterInterface
     public function prepareForExport(\SugarBean $bean, $previousData = false)
     {
         $changedFields = array();
-        $inviteesBefore = array();
-        $inviteesAfter = array();
+        $changedInvitees = array();
         $action = 'override';
         if ($previousData) {
             $action = array_shift($previousData);
             if ($previousData) {
-                list($changedFields, $inviteesBefore, $inviteesAfter) = $previousData;
+                list($changedFields, $changedInvitees) = $previousData;
             }
         }
 
@@ -78,12 +77,11 @@ abstract class AdapterAbstract implements AdapterInterface
 
         switch ($action) {
             case 'override' :
-                $inviteesAfter = \CalendarUtils::getInvitees($bean);
                 $changedFields = $this->getBeanDataAsArray($bean);
                 if (!$changedFields['repeat_type'][0]) {
                     $changedFields['repeat_interval'][0] = null;
                 }
-                $inviteesBefore = array();
+                $changedInvitees = $participantsHelper->getInviteesDiff(array(), \CalendarUtils::getInvitees($bean));
                 break;
             case 'update' :
                 $changedFields = $this->getFieldsDiff($changedFields);
@@ -130,8 +128,6 @@ abstract class AdapterAbstract implements AdapterInterface
         }
 
         $changedFields = array_intersect_key($changedFields, $changedFieldsFilter);
-
-        $changedInvitees = $participantsHelper->getInviteesDiff($inviteesBefore, $inviteesAfter);
 
         if (!$changedFields && !$changedInvitees) {
             return false;

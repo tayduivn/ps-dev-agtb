@@ -100,48 +100,6 @@ class CalendarEventsApi extends ModuleApi
     }
 
     /**
-     * Update all bean's relations and related records, and only then update bean itself.
-     * @param ServiceBase $api API object.
-     * @param array $args arguments.
-     * @return array Array of formatted fields.
-     */
-    public function updateRecord($api, $args)
-    {
-        foreach ($this->disabledUpdateFields as $field) {
-            if (isset($args[$field])) {
-                unset($args[$field]);
-            }
-        }
-
-        $api->action = 'view';
-        $this->requireArgs($args, array('module','record'));
-
-        $aclCheckOptions = array('source' => 'module_api');
-        $bean = $this->loadBean($api, $args, 'save', $aclCheckOptions);
-        $api->action = 'save';
-
-        // CalDav needs all relations & related records to be updated before the actual bean update.
-        $bean->inviteesBefore = CalendarUtils::getInvitees($bean);
-
-        $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'delete');
-        $this->unlinkRelatedRecords($api, $bean, $relateArgs);
-
-        $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'add');
-        $this->linkRelatedRecords($api, $bean, $relateArgs);
-
-        $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'create');
-        $this->createRelatedRecords($api, $bean, $relateArgs);
-
-        // If we uploaded files during the record update, move them from
-        // the temporary folder to the configured upload folder.
-        // FIXME Moving temporary files will be handled better in BR-2059.
-        $this->moveTemporaryFiles($args, $bean);
-        $this->updateBean($bean, $api, $args);
-
-        return $this->getLoadedAndFormattedBean($api, $args);
-    }
-
-    /**
      * Updates either a single event record or a set of recurring events based on all_recurrences flag
      * @param $api
      * @param $args

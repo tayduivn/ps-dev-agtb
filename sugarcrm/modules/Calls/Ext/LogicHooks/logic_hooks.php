@@ -17,6 +17,27 @@ $hook_array['before_relationship_update'][] = array(
     'CalendarEventsHookManager',
     'beforeRelationshipUpdate',
 );
+$hook_array['after_relationship_update'][] = array(
+    1,
+    'AfterCallsRelationshipsUpdate',
+    'include/CalendarEvents/CalendarEventsHookManager.php',
+    'CalendarEventsHookManager',
+    'afterRelationshipUpdate',
+);
+$hook_array['after_relationship_add'][] = array(
+    1,
+    'AfterCallsRelationshipsAdd',
+    'include/CalendarEvents/CalendarEventsHookManager.php',
+    'CalendarEventsHookManager',
+    'afterRelationshipAdd',
+);
+$hook_array['after_relationship_delete'][] = array(
+    1,
+    'AfterCallsRelationshipsDelete',
+    'include/CalendarEvents/CalendarEventsHookManager.php',
+    'CalendarEventsHookManager',
+    'afterRelationshipDelete',
+);
 $hook_array['after_save'][] = array(
     1,
     'afterCallOrMeetingSave',
