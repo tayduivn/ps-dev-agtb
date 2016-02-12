@@ -346,6 +346,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             //MACAROON-1005 remove casesList-list.js
             $files[] = 'modules/pmse_Inbox/clients/base/layouts/casesList-list/casesList-list.js';
             $files[] = 'clients/base/views/passwordmodal';
+            $files[] = 'clients/portal/views/passwordmodal';
             $files[] = 'modules/Notifications/controller.php';
             $files[] = 'include/api/AttachmentListApi.php';
         }
