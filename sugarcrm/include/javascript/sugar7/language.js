@@ -80,8 +80,8 @@
         if (language) {
             language = language.replace('_', '-')
 
-            // Set moment.js language
-            app.date.lang(language.toLowerCase());
+            // Set moment.js locale with moment.js 2.8+
+            app.date.locale(language.toLowerCase());
 
             if ($.fn.select2.locales) {
                 var twoLetterCode = language.substring(0, 2).toLowerCase();

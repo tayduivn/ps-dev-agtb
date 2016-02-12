@@ -263,6 +263,7 @@
      * When application finishes syncing.
      */
     app.events.on('app:sync:complete', function() {
-        app.date.lang(app.user.getPreference('language'));
+        // Set moment.js locale with moment.js 2.8+
+        app.date.locale(app.user.getPreference('language'));
     });
 })(SUGAR.App);
