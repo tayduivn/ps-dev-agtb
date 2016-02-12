@@ -150,7 +150,10 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                   'name' => 'description',
                   'span' => 12,
                 ),
-                'uploadfile',
+                array(
+                    'name' => 'uploadfile',
+                    'populate_list' => array('document_name'),
+                ),
                 array(
                     'name' => 'tag',
                     'span' => 12,
