@@ -64,6 +64,9 @@ describe('Opportunities.View.ConfigHeaderButtons', function() {
     });
 
     describe('initialize()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(Object, 'defineProperty').returns();
+        });
         it('should set currentOppsViewBySetting', function() {
             view.initialize(options);
             expect(view.currentOppsViewBySetting).toEqual('Opportunities');

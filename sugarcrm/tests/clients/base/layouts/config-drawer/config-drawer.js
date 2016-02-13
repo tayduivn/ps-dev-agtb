@@ -64,6 +64,7 @@ describe('Base.Layout.ConfigDrawer', function() {
 
         describe('checkAccess true', function() {
             beforeEach(function() {
+                sinon.collection.stub(Object, 'defineProperty').returns();
                 sinon.collection.stub(layout, 'checkAccess', function() {
                     return true;
                 });

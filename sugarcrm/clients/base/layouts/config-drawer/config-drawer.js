@@ -50,6 +50,19 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
+        Object.defineProperty(this, 'currentModule', {
+            /**
+             * @property {string}
+             * @deprecated since 7.7.0.0 and will be removed in 7.8.0.0.
+             *   Please use {@link #module} instead.
+             */
+            get: function () {
+                app.logger.warn('ConfigDrawerLayout\'s `currentModule` property is deprecated since 7.7.0 and will be removed in 7.8.0. ' +
+                    'Please use `module` instead.');
+                return this.module;
+            }
+        });
+
         this.moduleLangObj = {
             module: this.module
         };
