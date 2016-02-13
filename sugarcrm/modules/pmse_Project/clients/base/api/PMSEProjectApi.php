@@ -29,11 +29,35 @@ require_once 'modules/pmse_Inbox/engine/PMSEProjectExporter.php';
 
 class PMSEProjectApi extends ModuleApi
 {
-    private $projectWrapper;
-    private $crmDataWrapper;
-    private $activityDefinitionWrapper;
-    private $eventDefinitionWrapper;
-    private $gatewayDefinitionWrapper;
+    /**
+     * PMSEProjectWrapper object
+     * @var PMSEProjectWrapper
+     */
+    protected $projectWrapper;
+
+    /**
+     * PMSECrmDataWrapper object
+     * @var PMSECrmDataWrapper
+     */
+    protected $crmDataWrapper;
+
+    /**
+     * PMSEActivityDefinitionWrapper object
+     * @var PMSEActivityDefinitionWrapper
+     */
+    protected $activityDefinitionWrapper;
+
+    /**
+     * PMSEEventDefinitionWrapper object
+     * @var PMSEEventDefinitionWrapper
+     */
+    protected $eventDefinitionWrapper;
+
+    /**
+     * PMSEGatewayDefinitionWrapper object
+     * @var PMSEGatewayDefinitionWrapper
+     */
+    protected $gatewayDefinitionWrapper;
 
     public function __construct()
     {
