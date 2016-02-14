@@ -19,6 +19,16 @@ if (!defined('SUGAR_BASE_DIR')) {
     define('SUGAR_BASE_DIR', str_replace('\\', '/', dirname(__DIR__)));
 }
 
+set_include_path(
+    dirname(__FILE__) . PATH_SEPARATOR
+    . SUGAR_BASE_DIR . PATH_SEPARATOR
+    . get_include_path()
+);
+
+require_once 'include/SugarObjects/SugarConfig.php';
+require_once 'include/utils/array_utils.php';
+require_once 'jssource/Minifier.php';
+
 $minifyUtils = null;
 
 //assumes jsmin.php is in same directory
