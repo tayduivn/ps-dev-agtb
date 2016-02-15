@@ -15,7 +15,7 @@
 	    <span class="qs-tags-row qs-tag-icon"><i class="fa fa-tag"></i></span>
 	    {{#if tagCollection}}
 	        {{#each tagCollection}}
-	            <span class="qs-tags-row qs-tag"><a href="javascript:void(0);">{{this.name}}</a></span>
+	            <span class="qs-tags-row qs-tag"><a track="click:{{name}}" href="javascript:void(0);">{{name}}</a></span>
 	        {{/each}}
 	    {{/if}}
 	</div>

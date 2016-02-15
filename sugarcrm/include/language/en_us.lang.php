@@ -9767,8 +9767,8 @@ Sincerely, SugarCRM',
     'LBL_DNB_CONTACT_SHOW_MORE' => 'Show More D&B Contacts',
 
     /*D&B Metering*/
-    'LBL_DNB_METER' => 'D&B for Sugar Usage',
-    'LBL_DNB_METER_LONG_DESC' => 'D&B for Sugar Usage – View used and remaining credit counts for your account',
+    'LBL_DNB_METER' => 'D&B: Usage Meter',
+    'LBL_DNB_METER_LONG_DESC' => 'D&B: Usage Meter – View used and remaining credit counts for your account',
     'LBL_DNB_METER_LOADING' => 'Loading usage information',
     'LBL_DNB_METER_USED' => 'Used',
     'LBL_DNB_METER_REMAINING' => 'Remaining',

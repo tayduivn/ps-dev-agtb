@@ -196,14 +196,26 @@
             'desc': 'LBL_DNB_LONG_DESC'
         },
         'phone': {
-            'json_path': 'Telecommunication.TelephoneNumber.0.TelecommunicationNumber',
-            'label': 'LBL_DNB_PHONE',
-            'desc': 'LBL_DNB_PHONE_DESC'
+            'json_path': 'Telecommunication.TelephoneNumber.0',
+            'desc': 'LBL_DNB_PHONE_DESC',
+            'sub_object': {
+                'data_type': 'phone_idc',
+                'data_name': 'phone_office',
+                'phone_no': 'TelecommunicationNumber',
+                'id_code': 'InternationalDialingCode',
+                'label': 'LBL_DNB_PHONE'
+            }
         },
         'fax': {
-            'json_path': 'Telecommunication.FacsimileNumber.0.TelecommunicationNumber',
-            'label': 'LBL_DNB_FAX',
-            'desc': 'LBL_DNB_FAX_DESC'
+            'json_path': 'Telecommunication.FacsimileNumber.0',
+            'desc': 'LBL_DNB_FAX_DESC',
+            'sub_object': {
+                'data_type': 'phone_idc',
+                'data_name': 'fax',
+                'phone_no': 'TelecommunicationNumber',
+                'id_code': 'InternationalDialingCode',
+                'label': 'LBL_DNB_FAX'
+            }
         },
         'webpage': {
             'json_path': 'Telecommunication.WebPageAddress.0.TelecommunicationAddress',
@@ -491,7 +503,8 @@
         'responseMsg': 'OrderProductResponse.TransactionResult.ResultText',
         'industry': 'OrderProductResponse.OrderProductResponseDetail.Product.Organization.IndustryCode.IndustryCode',
         'product': 'OrderProductResponse.OrderProductResponseDetail.Product.Organization',
-        'duns': 'OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber'
+        'duns': 'OrderProductResponse.OrderProductResponseDetail.InquiryDetail.DUNSNumber',
+        'idc': 'Telecommunication.TelephoneNumber.0.InternationalDialingCode'
     },
     //common json paths
     commonJSONPaths: {
@@ -672,7 +685,8 @@
             'tpa': this.formatTPA,
             'sales_rev': this.formatAnnualSales,
             'prim_sic': this.formatPrimSic,
-            'org_id': this.formatOrgId
+            'org_id': this.formatOrgId,
+            'phone_idc': this.formatPhone
         };
         this.leadsAttr = this.contactAttr.slice();
         this.leadsAttr.push('account_name');
@@ -1117,6 +1131,41 @@
     },
 
     /**
+     * Preprocesses search result
+     * @param {Object} phoneObj D&B Current Principal Object
+     * @param {Object} phoneDD Data Dictionary
+     * @return {Object} with label and dataelement
+     */
+    formatPhone: function(phoneObj, phoneDD) {
+        var dnbDataObj = null;
+        var phoneNo = this.getJsonNode(phoneObj, phoneDD.phone_no);
+        var idCode = this.getJsonNode(phoneObj, phoneDD.id_code);
+        if (phoneNo) {
+            dnbDataObj = {};
+            dnbDataObj.dataElement = this.appendIDCPhone(phoneNo, idCode);
+            dnbDataObj.dataName = phoneDD.data_name;
+            dnbDataObj.dnbLabel = app.lang.get(phoneDD.label);
+        }
+        return dnbDataObj;
+    },
+
+    /**
+     * Preprocesses search result
+     * @param {Number} phoneNo Phone Number
+     * @param {Number} idCode International Dailing Code
+     * @return {String} phone Number with international dailing code
+     */
+    appendIDCPhone: function (phoneNo, idCode) {
+        var retVal;
+        if(idCode) {
+            retVal = '+' + idCode + phoneNo.replace(/^0+/, '');
+        } else {
+            retVal = phoneNo;
+        }
+        return retVal;
+    },
+
+    /**
      * Renders the dnb company details for adding companies from dashlets
      * @param {Object} companyDetails dnb api response for company details
      */
@@ -1205,6 +1254,7 @@
     getAccountsModel: function(companyApiResponse) {
         var organizationDetails = this.getJsonNode(companyApiResponse, this.appendSVCPaths.product);
         var accountsModel = null;
+        var idcode = this.getJsonNode(organizationDetails, this.appendSVCPaths.idc);
         if (!_.isUndefined(organizationDetails)) {
             var accountsBean = {};
             if (companyApiResponse.primarySIC) {
@@ -1215,6 +1265,8 @@
                 if (dnbDataElement) {
                     if (sugarColumnName === 'annual_revenue') {
                         dnbDataElement = this.formatSalesRevenue(dnbDataElement);
+                    } else if (sugarColumnName === 'phone_office') {
+                        dnbDataElement = this.appendIDCPhone(dnbDataElement, idcode)
                     }
                     accountsBean[sugarColumnName] = dnbDataElement;
                 }

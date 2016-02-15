@@ -51,6 +51,9 @@ class ext_rest_dnb extends ext_rest {
     public function test() {
         $api = ExternalAPIFactory::loadAPI('Dnb', true);
         $api->setConnector($this);
+        // Since we are testing we want to make sure that we use the test credentials
+        // instead of what might already be set on the connector
+        $api->setInTest();
         return $api->checkTokenValidity(false);
     }
 

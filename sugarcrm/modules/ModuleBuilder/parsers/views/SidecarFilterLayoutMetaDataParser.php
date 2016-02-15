@@ -232,8 +232,10 @@ class SidecarFilterLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
                 //Check if the field was previously on the layout
                 if (!empty($this->_viewdefs['fields'][$fieldname])) {
                     $newPaneldefs[$fieldname] = $this->_viewdefs['fields'][$fieldname];
-                } else if ((!empty($comboFieldDefs[$fieldname]) && isset($comboFieldDefs[$fieldname]['dbFields']))
-                    || in_array($fieldname, array('$favorite', '$owner'))) {
+                } elseif ((!empty($comboFieldDefs[$fieldname]) &&
+                        isset($comboFieldDefs[$fieldname]['dbFields'])) ||
+                    $fieldname === '$favorite'
+                ) {
                     // combo fields such as address_street
                     // Or condition is for special field found that should be added too
                     $newPaneldefs[$fieldname] = $comboFieldDefs[$fieldname];
