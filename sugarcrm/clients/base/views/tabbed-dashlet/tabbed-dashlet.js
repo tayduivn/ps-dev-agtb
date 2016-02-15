@@ -596,10 +596,11 @@
      *  @private
      */
     _renderAvatars: function() {
-        this.$('img.avatar').load(function() {
-            $(this).removeClass('hide');
-        })
-            .error(function() {
+        this.$('img.avatar')
+            .on('load', function() {
+                $(this).removeClass('hide');
+            })
+            .on('error', function() {
                 $(this).parent().removeClass('avatar avatar-md').addClass('label label-module label-module-md label-Users');
                 $(this).parent().find('span').removeClass('hide');
             });
