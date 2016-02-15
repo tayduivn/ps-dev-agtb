@@ -121,12 +121,16 @@ class EmailTemplate extends SugarBean {
 			'Users' => array(
 				'Users' => $current_user,
 			),
+            'Current User' => array(
+                'Users' => $current_user,
+            ),
 		);
 
 		$prefixes = array(
 			'Contacts' => 'contact_',
 			'Accounts' => 'account_',
 			'Users'	=> 'contact_user_',
+            'Current User'  => 'user_',
 		);
 
 		$collection = array();

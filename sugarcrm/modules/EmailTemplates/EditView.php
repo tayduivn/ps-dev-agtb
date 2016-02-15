@@ -284,7 +284,10 @@ if(true) {
 			       </option>
 			       <option value='Users'>
 						".$app_list_strings['moduleListSingular']['Users']."
-			       </option>";
+                               </option>
+                <option value='Current User'>
+                        Current ".$app_list_strings['moduleListSingular']['Users']."
+                </option>";
 		$xtpl->assign("DROPDOWN",$dropdown);
 		$xtpl->assign("DEFAULT_MODULE",'Accounts');
 	}
