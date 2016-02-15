@@ -126,8 +126,9 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 
 		foreach ($dictionary as $meta) {
 
-			if ( !isset($meta['table']) || isset($repairedTables[$meta['table']]))
+            if (empty($meta['table']) || isset($repairedTables[$meta['table']])) {
                 continue;
+            }
 
             $tablename = $meta['table'];
 			$fielddefs = $meta['fields'];

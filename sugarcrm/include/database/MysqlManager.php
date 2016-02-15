@@ -543,8 +543,14 @@ class MysqlManager extends DBManager
 	 *
 	 * For MySQL, we can write the ALTER TABLE statement all in one line, which speeds things
 	 * up quite a bit. So here, we'll parse the returned SQL into a single ALTER TABLE command.
+     * @param  string $tablename Table name
+     * @param  array  $fielddefs Field definitions, in vardef format
+     * @param  array  $indices   Index definitions, in vardef format
+     * @param  bool   $execute   optional, true if we want the queries executed instead of returned
+     * @param  string $engine    optional, MySQL engine
+     * @return string
 	 */
-	public function repairTableParams($tablename, $fielddefs, $indices, $execute = true, $engine = null)
+    public function repairTableParams($tablename, $fielddefs, array $indices, $execute = true, $engine = null)
 	{
         foreach ($indices as $key => $ind) {
             if (strtolower($ind['type']) == 'primary') {
