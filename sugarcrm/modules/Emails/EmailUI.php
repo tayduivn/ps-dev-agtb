@@ -1581,9 +1581,18 @@ EOQ;
 		require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 		$teamSetField = new EmailSugarFieldTeamsetCollection($email, $email->field_defs, '', $formName);
 		$code = $teamSetField->get_code();
-		$sqs_objects1 = $teamSetField->createQuickSearchCode(true);
-		//$sqs_objects = array_merge($sqs_objects, $sqs_objects1);
-		$smarty->assign("TEAM_SET_FIELD", $code . $sqs_objects1);
+        $code .= $teamSetField->createQuickSearchCode(true);
+        $jsCode = '';
+
+        // extract js code. need to add it to the top of the template. so it can be evaluated.
+        preg_match_all('#<script[^>]*>.*?</script>#is', $code, $js);
+        if (!empty($js[0])) {
+            $jsCode = implode("\n", $js[0]);
+            $code = str_replace($js[0], '', $code);
+        }
+
+        $smarty->assign("TEAM_SET_FIELD", $code);
+        $smarty->assign("JS", $jsCode);
         $showAssignTo = false;
         if (!isset($vars['showAssignTo']) || $vars['showAssignTo'] == true) {
         	$showAssignTo = true;
