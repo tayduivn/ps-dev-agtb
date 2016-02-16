@@ -527,7 +527,6 @@ class ACLAction  extends SugarBean
     public function clearACLCache()
     {
         self::$acls = array();
-        unset($_SESSION['ACL']);
         AclCache::getInstance()->clear();
     }
 
