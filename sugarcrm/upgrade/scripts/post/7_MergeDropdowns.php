@@ -94,17 +94,18 @@ class SugarUpgradeMergeDropdowns extends UpgradeScript
 
             foreach ($dropdowns['custom'] as $name => $customOptions) {
                 if (!isset($new[$name])) {
-                    continue;
+                    $listValue = $this->prepareForSave($customOptions);
+                } else {
+                    $oldOptions = array();
+                    $newOptions = $new[$name];
+
+                    if (isset($dropdowns['old']) && isset($dropdowns['old'][$name])) {
+                        $oldOptions = $dropdowns['old'][$name];
+                    }
+
+                    $listValue = $this->prepareForSave($merger->merge($oldOptions, $newOptions, $customOptions));
                 }
 
-                $oldOptions = array();
-                $newOptions = $new[$name];
-
-                if (isset($dropdowns['old']) && isset($dropdowns['old'][$name])) {
-                    $oldOptions = $dropdowns['old'][$name];
-                }
-
-                $listValue = $this->prepareForSave($merger->merge($oldOptions, $newOptions, $customOptions));
 
                 $_REQUEST['dropdown_lang'] = $language;
                 $_REQUEST['view_package'] = 'studio';
