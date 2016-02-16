@@ -31,7 +31,6 @@ $vardefs = array(
             ),
             'duplicate_on_record_copy' => 'always',
             'len' => 100,
-            'importable' => false,
             'link' => 'email_addresses_primary',
             'rname' => 'email_address',
             'module' => 'EmailAddresses',
@@ -57,6 +56,7 @@ $vardefs = array(
             'module' => 'EmailAddresses',
 		    'studio' => false,
             'duplicate_on_record_copy' => 'always',
+            'importable' => false,
         ),
         'email2' => array(
 			'name'		=> 'email2',
