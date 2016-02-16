@@ -124,6 +124,8 @@ class Handler implements RunnableInterface
             $calDavBean->save();
         }
 
+        $bean->send_invites_uid = $calDavBean->event_uid;
+
         $adapter = $this->getAdapterFactory()->getAdapter($bean->module_name);
         if (!$adapter) {
             throw new JQLogicException('Bean ' . $bean->module_name . ' does not have CalDav adapter');

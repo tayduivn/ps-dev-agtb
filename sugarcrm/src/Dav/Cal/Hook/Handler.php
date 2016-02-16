@@ -123,6 +123,7 @@ class Handler
         if (!$collection) {
             $collection = \BeanFactory::getBean('CalDavEvents');
             $collection->setParentModuleAndId($bean->module_name, $rootBeanId);
+            $collection->event_uid = $rootBeanId;
             $collection->save();
         }
 

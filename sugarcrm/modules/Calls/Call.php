@@ -1025,8 +1025,10 @@ class Call extends SugarBean {
         // We need to fetch it and change only for events, that came from calendar app.
         if (empty($this->send_invites_uid)) {
             $eventBean = BeanFactory::newBean('CalDavEvents')->findByParentModuleAndId('Calls', $this->id);
-            if ($eventBean) {
+            if ($eventBean && !empty($eventBean->event_uid)) {
                 $this->send_invites_uid = $eventBean->event_uid;
+            } else {
+                $this->send_invites_uid = $this->id;
             }
         }
         $content = CalDavEventCollection::prepareForInvite($this, $emailInvitee, $organizerEmail);

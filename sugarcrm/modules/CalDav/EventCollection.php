@@ -234,9 +234,9 @@ class CalDavEventCollection extends SugarBean
 
             $event = $this->vCalendar->createComponent('VEVENT');
             if (!empty($event->UID)) {
-                $event->UID->setValue(create_guid());
+                $event->UID->setValue($this->event_uid ?: create_guid());
             } else {
-                $uid = $event->createProperty('UID', create_guid());
+                $uid = $event->createProperty('UID', $this->event_uid ?: create_guid());
                 $event->add($uid);
             }
             $this->vCalendar->add($event);
