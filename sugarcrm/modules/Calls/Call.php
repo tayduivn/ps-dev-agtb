@@ -258,8 +258,10 @@ class Call extends SugarBean {
         // CCL - Comment out call to set $current_user as invitee
         // set organizer to auto-accept
         // if there isn't a fetched row its new
-        if ($this->assigned_user_id == $GLOBALS['current_user']->id && !$isUpdate) {
-            $this->set_accept_status($GLOBALS['current_user'], 'accept');
+        if (!$isUpdate) {
+            $organizer = ($this->assigned_user_id == $GLOBALS['current_user']->id) ?
+                $GLOBALS['current_user'] : BeanFactory::getBean('Users', $this->assigned_user_id);
+            $this->set_accept_status($organizer, 'accept');
         }
 
         if ($isUpdate) {
