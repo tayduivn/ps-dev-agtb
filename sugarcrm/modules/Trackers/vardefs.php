@@ -160,6 +160,15 @@ $dictionary['Tracker'] = array(
             ),
         ),
         array(
+            'name' => 'idx_tracker_userid_del_vis',
+            'type' => 'index',
+            'fields' => array(
+                'user_id',
+                'deleted',
+                'visible',
+            ),
+        ),
+        array(
             'name' => 'idx_tracker_monitor_id',
             'type' => 'index',
             'fields' => array(
