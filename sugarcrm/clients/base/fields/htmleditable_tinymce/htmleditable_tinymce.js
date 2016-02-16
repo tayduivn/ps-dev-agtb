@@ -138,7 +138,7 @@
             statusbar: false,
             resize: false,
             toolbar: 'code | bold italic underline strikethrough | bullist numlist | ' +
-                     'alignleft aligncenter alignright alignjustify | forecolor backcolor | fontsizeselect',
+                     'alignleft aligncenter alignright alignjustify | forecolor backcolor | fontsizeselect | formatselect | fontselect',
 
             // Sets the text of the Target element of the link plugin. To disable
             // this completely, set target_list: false
