@@ -103,6 +103,7 @@ $mod_strings = array (
     'LBL_PMSE_TITLE_ACTIVITY_TO_REASSIGN' => "Select New Process User",
     'LBL_PMSE_TITLE_HISTORY' => 'Process History',
     'LBL_PMSE_TITLE_IMAGE_GENERATOR' => 'Process #%s: Current Status',
+    'LBL_PMSE_TITLE_IMAGE_GENERATOR_OBJ' => 'Process #{{id}}: Current Status',
     'LBL_PMSE_TITLE_LOG_VIEWER' => 'Process Author Log Viewer',
     'LBL_PMSE_TITLE_PROCESS_NOTES' => 'Process Notes',
 

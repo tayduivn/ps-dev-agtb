@@ -280,6 +280,9 @@
                     'include/javascript/sugar7/plugins/ResizableColumns.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ToggleMoreLess.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'modules/Contacts/clients/base/plugins/ContactsPortalMetadataFilter.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    'modules/pmse_Inbox/clients/base/plugins/ProcessAuthorActions.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    //END SUGARCRM flav=ent ONLY
                     'include/javascript/sugar7/plugins/HistoricalSummary.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/MetadataEventDriven.js' =>
                         'include/javascript/sugar_sidecar.min.js',
@@ -376,37 +379,6 @@
                 'include/javascript/sugar7/shortcuts.js' => 'portal2/sugar_portal.min.js',
             ),
 
-            $pmse_br = array(
-                'include/javascript/pmse/ui/utils.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/style.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/arraylist.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/base.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/proxy.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/element.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/sugar_proxy.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/expression_container.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/decision_table.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/data_item.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/single_item.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/list_item.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/close_list_item.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/item_container_control.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/field_panel_item.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/field_panel_button.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/field_panel_button_group.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/collapsible_panel.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/form_panel.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/list_panel.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/multiple_collapsible_panel.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/field_panel_item_factory.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/field_panel.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/dropdown_selector.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/ui/expression_builder2.js' => 'include/javascript/pmse.br.min.js',
-                //including next files to original file to have one request only
-                'include/javascript/pmse/utils.js' => 'include/javascript/pmse.br.min.js',
-                'include/javascript/pmse/business_rules.js' => 'include/javascript/pmse.br.min.js',
-            ),
-
             $pmse_designer = array(
                 'include/javascript/pmse/tree.js' => 'include/javascript/pmse.designer.min.js',
                 'include/javascript/pmse/drag_behavior.js' => 'include/javascript/pmse.designer.min.js',
@@ -437,7 +409,6 @@
                 'include/javascript/pmse/ErrorListItem.js' => 'include/javascript/pmse.designer.min.js',
                 'include/javascript/pmse/ErrorListPanel.js' => 'include/javascript/pmse.designer.min.js',
                 //including next files to original file to have one request only
-                'include/javascript/pmse/utils.js' => 'include/javascript/pmse.designer.min.js',
                 'include/javascript/pmse/designer.js' => 'include/javascript/pmse.designer.min.js',
             ),
 
@@ -513,6 +484,11 @@
                 'include/javascript/pmse/ui/email_picker.js' => 'include/javascript/pmse.ui.min.js',
                 'include/javascript/pmse/ui/expression_builder2.js' => 'include/javascript/pmse.ui.min.js',
                 'include/javascript/pmse/ui/criteria_field.js' => 'include/javascript/pmse.ui.min.js',
+                // Since there won't be a js for BR anymore, its files
+                'include/javascript/pmse/ui/expression_container.js' => 'include/javascript/pmse.ui.min.js',
+                'include/javascript/pmse/ui/decision_table.js' => 'include/javascript/pmse.ui.min.js',
+                'include/javascript/pmse/ui/close_list_item.js' => 'include/javascript/pmse.ui.min.js',
+                'include/javascript/pmse/ui/dropdown_selector.js' => 'include/javascript/pmse.ui.min.js',
             ),
 
             //Grouping for TBA configuration.

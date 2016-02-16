@@ -69,6 +69,10 @@ class SidecarView extends SugarView
             $this->ss->assign('voodooFile', $voodooFile);
         }
 
+        //BEGIN SUGARCRM flav=ent ONLY
+        $this->ss->assign('processAuthorFiles', true);
+        //END SUGARCRM flav=ent ONLY
+
         //Load sidecar theme css
         $theme = new SidecarTheme();
         $this->ss->assign("css_url", $theme->getCSSURL());
