@@ -315,8 +315,8 @@ class ParserDropDown extends ModuleBuilderParser
             // We need to copy the NULLs if they are not set in the new dropdown
             // because return_app_list_strings_language() removes them from the array
             $files = SugarAutoLoader::existing(
-                "custom/application/Ext/Language/$selectedLang.lang.ext.php",
-                "custom/include/language/$selectedLang.lang.php"
+                "custom/include/language/$selectedLang.lang.php",
+                "custom/application/Ext/Language/$selectedLang.lang.ext.php"
             );
 
             foreach ($files as $customLanguage) {
