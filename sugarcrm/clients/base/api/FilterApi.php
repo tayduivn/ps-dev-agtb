@@ -1058,9 +1058,11 @@ class FilterApi extends SugarApi
             array('alias' => 'tracker')
         );
 
-        // Now, if they want tracker records, so let's order it by the tracker date_modified
-        $q->order_by = array();
-        $q->orderByRaw('tracker.track_max', 'DESC');
+        if (empty($q->order_by)) {
+            // Now, if they want tracker records without specific order, so let's order it by the tracker date_modified
+            $q->order_by = array();
+            $q->orderByRaw('tracker.track_max', 'DESC');
+        }
         $q->distinct(false);
     }
 
