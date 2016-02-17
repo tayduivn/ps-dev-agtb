@@ -33,12 +33,14 @@ class Bug60114Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testOrganizerDefaultAcceptance()
     {
-        global $current_user, $db;
+        global $current_user, $db, $timedate;
 
         $_POST['user_invitees'] = $current_user->id;
         $_POST['module'] = 'Calls';
         $_POST['action'] = 'Save';
         $_POST['assigned_user_id'] = $current_user->id;
+        $_POST['time_start'] = $timedate->asUserTime($timedate->getNow());
+        $_POST['date_start'] = $timedate->asUserDate($timedate->getNow());
 
         $formBase = new CallFormBase();
         $call = $formBase->handleSave('', false, false);

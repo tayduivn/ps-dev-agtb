@@ -69,7 +69,7 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 		$GLOBALS['db']->query("DELETE FROM leads WHERE id = '{$this->lead->id}'");
 		unset($this->lead);
 
-        $GLOBALS['db']->query("DELETE FROM addressees WHERE id = " . $GLOBALS['db']->quote($this->addressee->id));
+        $GLOBALS['db']->query("DELETE FROM addressees WHERE id = " . $GLOBALS['db']->quoted($this->addressee->id));
         unset($this->addressee);
 
         SugarTestHelper::tearDown();
