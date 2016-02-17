@@ -15,7 +15,7 @@ var path = require('path');
 
 var teamData = {
     ty: {
-        fullName: "sugarcrm/eng-typhoon"
+        fullName: 'sugarcrm/eng-typhoon'
         // to have a custom filter, put "filter" as a function here
     }
 };

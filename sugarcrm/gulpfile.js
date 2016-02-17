@@ -225,7 +225,7 @@ gulp.task('check-license', function(done) {
 });
 
 gulp.task('find-todos', function(done) {
-    var teams = require('./grunt/tasks/team.js');
+    var teams = require('./gulp/plugins/team/team.js');
     commander
         .option('--teams <list>', 'Choose teams to filter by', splitByCommas)
         .option('--path <path>', 'Set output path')
