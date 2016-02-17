@@ -34,6 +34,7 @@ class CalDavEventCollection extends SugarBean
     public $module_name = 'CalDavEvents';
     public $object_name = 'CalDavEventCollection';
     public $table_name = 'caldav_events';
+    public $disable_custom_fields = true;
 
     /**
      * Event ID

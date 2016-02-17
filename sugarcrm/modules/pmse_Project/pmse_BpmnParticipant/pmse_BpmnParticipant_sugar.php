@@ -23,6 +23,7 @@ class pmse_BpmnParticipant_sugar extends Basic {
 	var $object_name = 'pmse_BpmnParticipant';
 	var $table_name = 'pmse_bpmn_participant';
 	var $importable = false;
+    var $disable_custom_fields = true;
     var $id;
     var $name;
     var $date_entered;

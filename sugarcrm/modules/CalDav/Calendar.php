@@ -26,6 +26,7 @@ class CalDavCalendar extends SugarBean
     public $module_name = 'CalDavCalendars';
     public $object_name = 'CalDavCalendar';
     public $table_name = 'caldav_calendars';
+    public $disable_custom_fields = true;
 
     /**
      * Calendar ID

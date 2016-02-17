@@ -23,6 +23,7 @@ class pmse_BpmRelatedDependency_sugar extends Basic {
 	var $object_name = 'pmse_BpmRelatedDependency';
 	var $table_name = 'pmse_bpm_related_dependency';
 	var $importable = false;
+    var $disable_custom_fields = true;
         var $id;
 		var $name;
 		var $date_entered;

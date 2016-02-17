@@ -23,6 +23,7 @@ class pmse_BpmnBound_sugar extends Basic {
 	var $object_name = 'pmse_BpmnBound';
 	var $table_name = 'pmse_bpmn_bound';
 	var $importable = false;
+	var $disable_custom_fields = true;
         var $id;
 		var $name;
 		var $date_entered;

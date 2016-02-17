@@ -23,6 +23,7 @@ class pmse_BpmFlow_sugar extends Basic {
 	var $object_name = 'pmse_BpmFlow';
 	var $table_name = 'pmse_bpm_flow';
 	var $importable = false;
+    var $disable_custom_fields = true;
         var $id;
 		var $name;
 		var $date_entered;
