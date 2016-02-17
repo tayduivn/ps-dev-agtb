@@ -20,6 +20,12 @@ require_once('include/connectors/sources/SourceFactory.php');
  */
 abstract class ExternalAPIBase implements ExternalAPIPlugin
 {
+    /**
+     * Flag that indicates that this connector is currently in test
+     * @var boolean
+     */
+    protected $inTest = false;
+
     public $account_name;
     public $account_password;
     public $authMethod = 'password';
@@ -34,6 +40,22 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
      * @var EAPM
      */
     protected $authData;
+
+    /**
+     * Sets this connector into test mode
+     */
+    public function setInTest()
+    {
+        $this->inTest = true;
+    }
+
+    /**
+     * Sets this connector out of test mode
+     */
+    public function setOutOfTest()
+    {
+        $this->inTest = false;
+    }
 
     /**
      * Load authorization data

@@ -308,6 +308,7 @@
     storeValues: function(e) {
         this.value = app.utils.deepCopy(this.value) || [];
         if (e.added) {
+            app.analytics.trackEvent('click', 'tag_pill_added');
             // Check if added is an array or a single object
             if (_.isArray(e.added)) {
                 // Even if it is an array, only one object gets added at a time,
@@ -324,6 +325,7 @@
                 this.value.push(e.added.text);
             }
         } else if (e.removed) {
+            app.analytics.trackEvent('click', 'tag_pill_removed');
             // Remove the tag
             this.value = _.reject(this.value, function(record) {
                 if (_.isString(record)) {

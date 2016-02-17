@@ -32,13 +32,14 @@ class SugarUpgradeAddNewModulesToMegamenu extends UpgradeScript
      *  - toFlavor
      *  - fromVersion (this MUST be an array which specifies a version and evaluator)
      *  - toVersion (this MUST be an array which specifies a version and evaluator)
-     * 
+     *
      * These attributes will be checked to confirm that the upgrade criteria are
      * met before adding the modules to the tab controller.
      *
      * @var array
      */
     public $newModuleDefs = array(
+        // Upgrade from 7.6.X and below to 7.7+
         array(
             'name' => 'Tags Module',
             'fromVersion' => array('7.7.0', '<'),
@@ -46,10 +47,24 @@ class SugarUpgradeAddNewModulesToMegamenu extends UpgradeScript
                 'Tags',
             ),
         ),
+        // Upgrade from 7.5.X and below to 7.6+ on ent
         array(
             'name' => 'PMSE Modules',
-            'toFlavor' => 'ent',
+            'toFlavor' => array('ent', 'ult'),
             'fromVersion' => array('7.6.0', '<'),
+            'modules' => array(
+                'pmse_Project',
+                'pmse_Inbox',
+                'pmse_Business_Rules',
+                'pmse_Emails_Templates',
+            ),
+        ),
+        // Conversion from CORP or PRO to ENT or ULT on 7.7+
+        array(
+            'name' => 'PMSE Modules',
+            'fromFlavor' => array('corp', 'pro'),
+            'toFlavor' => array('ent', 'ult'),
+            'fromVersion' => array('7.7', '>='),
             'modules' => array(
                 'pmse_Project',
                 'pmse_Inbox',
@@ -61,6 +76,12 @@ class SugarUpgradeAddNewModulesToMegamenu extends UpgradeScript
 
     public function run()
     {
+        // Get the tab controller object
+        $tc = $this->getTabController();
+
+        // Get the existing tabs
+        $tabs = $this->getExistingTabs($tc);
+
         foreach ($this->newModuleDefs as $def) {
             // Build our boolean criteria check
             $check = $this->buildCheckCriteria($def);
@@ -70,14 +91,8 @@ class SugarUpgradeAddNewModulesToMegamenu extends UpgradeScript
                 continue;
             }
 
-            // Get the tab controller object
-            $tc = $this->getTabController();
-
             // Get the newly added modules mixed with existing tabs
-            $tabs = $this->getModifiedTabs($tc, $def);
-
-            // Save the module list
-            $this->saveModifiedTabs($tc, $tabs);
+            $tabs = $this->getNewTabsList($tabs, $def);
 
             // Get the log message
             $logMessage = $this->getMessageToLog($def);
@@ -85,6 +100,9 @@ class SugarUpgradeAddNewModulesToMegamenu extends UpgradeScript
             // Log it and be done
             $this->log($logMessage);
         }
+
+        // Save the module list
+        $this->saveModifiedTabs($tc, $tabs);
     }
 
     /**
@@ -107,11 +125,11 @@ class SugarUpgradeAddNewModulesToMegamenu extends UpgradeScript
 
         // Handle the froms and tos
         if (isset($def['fromFlavor'])) {
-            $check = $check && $this->fromFlavor($def['fromFlavor']);
+            $check = $this->getFromFlavorCheck($check, $def['fromFlavor']);
         }
 
         if (isset($def['toFlavor'])) {
-            $check = $check && $this->toFlavor($def['toFlavor']);
+            $check = $this->getToFlavorCheck($check, $def['toFlavor']);
         }
 
         // From and To version criteria MUST specify a version and evaluator
@@ -121,6 +139,62 @@ class SugarUpgradeAddNewModulesToMegamenu extends UpgradeScript
 
         if (isset($def['toVersion'])) {
             $check = $check && version_compare($this->to_version, $def['toVersion'][0], $def['toVersion'][1]);
+        }
+
+        return $check;
+    }
+
+    /**
+     * Wrapper to get a FROM flavor check
+     * @param boolean $check Current state of the check
+     * @param string|array $flavor The definition for the flavor
+     * @return boolean
+     */
+    protected function getFromFlavorCheck($check, $flavor)
+    {
+        return $this->getFlavorCheck($check, $flavor, 'from');
+    }
+
+    /**
+     * Wrapper to get a TO flavor check
+     * @param boolean $check Current state of the check
+     * @param string|array $flavor The definition for the flavor
+     * @return boolean
+     */
+    protected function getToFlavorCheck($check, $flavor)
+    {
+        return $this->getFlavorCheck($check, $flavor, 'to');
+    }
+
+    /**
+     * Checks flavor definitions for whether or not to run
+     * @param boolean $check Current state of the check
+     * @param string|array $flavor The definition for the flavor
+     * @param string $type Either 'to' or 'from'
+     * @return boolean
+     */
+    protected function getFlavorCheck($check, $flavor, $type)
+    {
+        if ($type === 'from' || $type === 'to') {
+            // Set our check method based on type
+            $method = $type . 'Flavor';
+
+            // For an array of flavors, loop and check
+            if (is_array($flavor)) {
+                foreach ($flavor as $flav) {
+                    // If this is the first time through, set the evaluation
+                    if (!isset($checkFlavor)) {
+                        $checkFlavor = $this->$method($flav);
+                    } else {
+                        // Otherwise, combine the evaluation
+                        $checkFlavor = $checkFlavor || $this->$method($flav);
+                    }
+                }
+
+                $check = $check && $checkFlavor;
+            } else {
+                $check = $check && $this->$method($flavor);
+            }
         }
 
         return $check;
@@ -138,16 +212,24 @@ class SugarUpgradeAddNewModulesToMegamenu extends UpgradeScript
     }
 
     /**
-     * Gets the existing tabs with the new modules added into them
-     *
-     * @param TabController $tc TabController object
-     * @param Array $def New module definition
+     * Gets the current setup of modules in the megamenu
+     * @param TabController $tc The TabController object
+     * @return array
      */
-    public function getModifiedTabs(TabController $tc, Array $def)
+    public function getExistingTabs(TabController $tc)
     {
         // Get the existing tabs
-        $tabs = $tc->get_system_tabs();
+        return $tc->get_system_tabs();
+    }
 
+    /**
+     * Gets the tabs list with new modules added to it
+     * @param Array $tabs Current list of modules in the megamenu
+     * @param Array $def Defs that contain a modules array to add
+     * @return array
+     */
+    public function getNewTabsList(Array $tabs, Array $def)
+    {
         // Add in our new modules
         foreach ($def['modules'] as $m) {
             $tabs[$m] = $m;
@@ -162,7 +244,7 @@ class SugarUpgradeAddNewModulesToMegamenu extends UpgradeScript
      * @param TabController $tc TabController object
      * @param Array $tabs Array of new modules to be saved to the tab list
      */
-    public function saveModifiedTabs(TabController $tc, Array $tabs)
+    protected function saveModifiedTabs(TabController $tc, Array $tabs)
     {
         $tc->set_system_tabs($tabs);
     }

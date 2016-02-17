@@ -118,6 +118,7 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
         array(
             'layout' => 'subpanel',
             'label' => 'LBL_QUOTES_BILLTO',
+            'override_paneltop_view' => 'panel-top-for-accounts',
             'override_subpanel_list_view' => 'subpanel-for-accounts',
             'context' => array(
                 'link' => 'quotes',
@@ -127,6 +128,7 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
         array(
             'layout' => 'subpanel',
             'label' => 'LBL_QUOTES_SHIPTO',
+            'override_paneltop_view' => 'panel-top-for-accounts',
             'override_subpanel_list_view' => 'subpanel-for-accounts',
             'context' => array(
                 'link' => 'quotes_shipto',
