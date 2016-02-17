@@ -114,6 +114,7 @@ abstract class AdapterAbstract implements AdapterInterface
             $bean->id,
             $rootBeanId,
             $recurringParam,
+            $bean->created_by,
         );
 
         if ($action == 'delete') {
@@ -152,7 +153,7 @@ abstract class AdapterAbstract implements AdapterInterface
     {
         $isChanged = false;
         list($beanData, $changedFields, $invitees) = $data;
-        list($action, $beanModuleName, $beanId, $rootBeanId, $recurringParam) = $beanData;
+        list($action, $beanModuleName, $beanId, $rootBeanId, $recurringParam, $organizerId) = $beanData;
 
         if ($action == 'delete' && !$rootBeanId) {
             return static::DELETE;
@@ -258,7 +259,7 @@ abstract class AdapterAbstract implements AdapterInterface
                 unset($data[1]['date_end']);
             }
         }
-        $changes = $this->setCalDavInvitees($invitees, $event, $action == 'override');
+        $changes = $this->setCalDavInvitees($invitees, $event, $action == 'override', $organizerId);
         if ($changes) {
             $isChanged = true;
             $data[2] = $changes;
@@ -1128,9 +1129,10 @@ abstract class AdapterAbstract implements AdapterInterface
      * @param array $value
      * @param Event $event
      * @param bool $override
+     * @param string $organizerId
      * @return bool
      */
-    protected function setCalDavInvitees(array $value, Event $event, $override = false)
+    protected function setCalDavInvitees(array $value, Event $event, $override = false, $organizerId = null)
     {
         $result = false;
         $participantHelper = $this->getParticipantHelper();
@@ -1200,14 +1202,16 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
         $participantsCount = count($event->getParticipants());
-        if (!$event->getOrganizer() && $participantsCount && $GLOBALS['current_user'] instanceof \User) {
-            $email = $GLOBALS['current_user']->emailAddress->getPrimaryAddress($GLOBALS['current_user']);
+        $organizerBean = $organizerId ?
+            \BeanFactory::getBean('Users', $organizerId, array('strict_retrieve' => true)) : $GLOBALS['current_user'];
+        if (!$event->getOrganizer() && $participantsCount && $organizerBean instanceof \User) {
+            $email = $organizerBean->emailAddress->getPrimaryAddress($organizerBean);
             $organizer = $participantHelper->sugarArrayToParticipant(array(
-                $GLOBALS['current_user']->module_name,
-                $GLOBALS['current_user']->id,
+                $organizerBean->module_name,
+                $organizerBean->id,
                 $email,
                 'accept',
-                $GLOBALS['current_user']->full_name,
+                $organizerBean->full_name,
             ));
             $event->setOrganizer($organizer);
         }
