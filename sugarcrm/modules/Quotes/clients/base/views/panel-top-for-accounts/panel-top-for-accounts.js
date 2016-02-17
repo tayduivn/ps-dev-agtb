@@ -1,4 +1,3 @@
-{{!--
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,14 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-<div class="quicksearch-tags-wrapper">
-	<div class="quicksearch-tags dropdown-menu hide">
-	    <span class="qs-tags-row qs-tag-icon"><i class="fa fa-tag"></i></span>
-	    {{#if tagCollection}}
-	        {{#each tagCollection}}
-	            <span class="qs-tags-row qs-tag"><a track="click:{{name}}" href="javascript:void(0);">{{name}}</a></span>
-	        {{/each}}
-	    {{/if}}
-	</div>
-</div>
+/**
+ * @class View.Views.Quotes.PanelTopForAccountsView
+ * @alias SUGAR.App.view.views.QuotesPanelTopForAccountsView
+ * @extends View.Views.Base.PanelTopView
+ */
+({
+    extendsFrom: 'PanelTopView'
+});

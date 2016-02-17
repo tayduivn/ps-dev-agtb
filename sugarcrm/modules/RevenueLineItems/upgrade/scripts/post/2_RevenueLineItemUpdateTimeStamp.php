@@ -19,6 +19,12 @@ class SugarUpgradeRevenueLineItemUpdateTimeStamp extends UpgradeScript
     public function run()
     {
 
+        // if we are coming from 7.6, don't run this again.
+        if (version_compare($this->from_version, '7.6', '>=')) {
+            $this->log('Timestamps already added; Skipping Upgrade Script');
+            return;
+        }
+
         // are we going to 7.6 or newer?
         // if we are and we are not using RLI's this can be skipped
         $settings = Opportunity::getSettings();

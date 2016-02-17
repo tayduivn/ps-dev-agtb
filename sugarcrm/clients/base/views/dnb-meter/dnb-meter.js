@@ -51,7 +51,14 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this.dnbChartIds = _.keys(this.meterDD.productCode.productMapping);
-        this.chart = nv.models.pieChart()
+        this.chart = this.createChart();
+    },
+
+    /**
+     * Return pie chart model
+     */
+    createChart: function () {
+        return nv.models.pieChart()
             .x(function(d) { return d.key })
             .margin({top: 5, right: 5, bottom: 5, left: 5})
             .startAngle(function(d) { return (d.startAngle - Math.PI) / 2 })
@@ -65,7 +72,6 @@
             .showLegend(false)
             .direction(app.lang.direction)
             .tooltipContent(function(key, x, y, e, graph) {
-//                return '<p><b>' + parseInt(y, 10) + '</b></p>';
                 return '<p><b>' + key + ': ' + y.replace('.00','') + '</b></p>';
             });
     },
@@ -96,34 +102,27 @@
         _.each(this.chartCollection, function(chartDetails, chartId) {
             this.$('div#dnb' + chartId).removeClass('hide');
             var chartSelector = 'svg#' + chartId;
-            this.chart.hole(function(data, node) {
-                    var text = d3.select(node),
-                        wrap = d3.select(node.parentNode),
-                        total = d3.sum(
-                            data
-                                .filter(function(d) {
-                                    return d.key === 'Used';
-                                })
-                                .map(function(d) {
-                                    return d.value;
-                                })
-                        );
-                    text.attr('dy', '-.2em')
-                        .classed('nv-pie-hole-value', true);
-                    wrap.append('text')
-                        .text(chartDetails.chartLabel)
-                        .attr('text-anchor', 'middle')
-                        .attr('class', 'nv-pie-hole-label')
-                        .attr('dy', '.8em')
-                        .style('fill', '#333')
-                        .style('font-size', '11px');
-                    return total;
-                }
-            );
+            var dnbChart = this.createChart();
+            dnbChart.hole(chartDetails.chartData.data[0].value);
+            dnbChart.holeFormat(function(wrap, data) {
+                var wrapEnter = wrap.selectAll('text').data([null]).enter().append('g')
+                    .attr('transform', 'translate(0,-1)');
+                wrapEnter.append('text')
+                    .text(chartDetails.chartData.data[0].value)
+                    .attr('dy', '-.2em')
+                    .attr('class', 'nv-pie-hole-value');
+                wrapEnter.append('text')
+                    .text(chartDetails.chartLabel)
+                    .attr('text-anchor', 'middle')
+                    .attr('class', 'nv-pie-hole-label')
+                    .attr('dy', '.8em')
+                    .style('fill', '#333')
+                    .style('font-size', '11px');
+            });
             d3.select(this.el).select(chartSelector)
                 .datum(chartDetails.chartData)
                 .transition().duration(500)
-                .call(this.chart);
+                .call(dnbChart);
         }, this);
     },
 

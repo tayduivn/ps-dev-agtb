@@ -16,7 +16,7 @@
         {{#each value}}
             <span class="tag-wrapper">
                 <span class="tag-name ellipsis_inline" rel="tooltip" data-placement="bottom" title="{{#if name}}{{name}}{{else}}{{this}}{{/if}}">
-                <a class="tag-name ellipsis-inline" href="#search/?tags={{encodedValue}}" data-action="tag-search" data-tag="{{#if name}}{{name}}{{else}}{{this}}{{/if}}">
+                <a class="tag-name ellipsis-inline" href="#search/?tags={{encodedValue}}" track="click:{{name}}" data-action="tag-search" data-tag="{{#if name}}{{name}}{{else}}{{this}}{{/if}}">
                     {{#if name}}{{name}}{{else}}{{this}}{{/if}}
                 </a>
                 </span>

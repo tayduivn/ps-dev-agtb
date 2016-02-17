@@ -860,7 +860,7 @@ class ExtAPIDnb extends ExternalAPIBase
         global $current_user;
 
         // In test, these values will be set AFTER contruction, so load them now
-        if (empty($this->dnbUsername) || empty($this->dnbPassword)) {
+        if ($this->inTest || empty($this->dnbUsername) || empty($this->dnbPassword)) {
             $this->loadConnectionCredentials();
         }
 

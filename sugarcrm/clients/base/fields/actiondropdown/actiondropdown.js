@@ -297,6 +297,8 @@
         this._updateCaret();
         this._renderDefaultActionBtn();
         this.$el.toggleClass('btn-group', !_.isEmpty(this.dropdownFields));
+
+        return this;
     },
 
     /**
