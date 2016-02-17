@@ -66,10 +66,6 @@ describe("Emails.Views.Compose", function() {
         sandbox.restore();
     });
 
-    it("Initialize - model should not be empty", function() {
-        expect(view.model.isNotEmpty).toBe(true);
-    });
-
     describe('Render', function() {
         var setTitleStub, prepopulateStub;
 

@@ -21,7 +21,6 @@
 
     initialize: function(options) {
         this._super("initialize", [options]);
-        this.model.isNotEmpty = true;
     },
 
     /**

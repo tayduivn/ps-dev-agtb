@@ -59,21 +59,21 @@
      * @inheritdoc
      */
     _render: function() {
+        var prepopulateValues;
+
         this._super('_render');
         if (this.createMode) {
             this.setTitle(app.lang.get('LBL_COMPOSEEMAIL', this.module));
         }
 
-        if (this.model.isNotEmpty) {
-            var prepopulateValues = this.context.get('prepopulate');
-            if (!_.isEmpty(prepopulateValues)) {
-                this.prepopulate(prepopulateValues);
-            }
-            this.addSenderOptions();
+        prepopulateValues = this.context.get('prepopulate');
+        if (!_.isEmpty(prepopulateValues)) {
+            this.prepopulate(prepopulateValues);
+        }
+        this.addSenderOptions();
 
-            if (this.model.isNew()) {
-                this._updateEditorWithSignature(this._lastSelectedSignature);
-            }
+        if (this.model.isNew()) {
+            this._updateEditorWithSignature(this._lastSelectedSignature);
         }
 
         this.notifyConfigurationStatus();
