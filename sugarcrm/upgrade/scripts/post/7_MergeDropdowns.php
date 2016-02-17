@@ -70,8 +70,25 @@ class SugarUpgradeMergeDropdowns extends UpgradeScript
      */
     public function run()
     {
-        if (version_compare($this->from_version, '7.6.1.0', '>=')) {
+        if (version_compare($this->from_version, '7.6.2.1', '>=')) {
+            $this->log('**** Skipped Dropdown Lists Merge **** Sugar version is too new');
             return;
+        }
+        //In 7.6.0 through 7.6.2, the load order for custom language files dependend on mtime.
+        //If custom/include was the last file touched before upgrade, we need to run this script.
+        if (version_compare($this->from_version, '7.6.0', '>=')) {
+            //Check for each language if the custom/include file was the last touched.
+            foreach ($this->upgrader->state['dropdowns_to_merge'] as $language => $dropdowns) {
+
+                if ($dropdowns['mtime']['include'] < $dropdowns['mtime']['ext']) {
+                    unset($this->upgrader->state['dropdowns_to_merge'][$language]);
+                }
+            }
+            //If there was nothing left to upgrade, return.
+            if ((empty($this->upgrader->state['dropdowns_to_merge']))) {
+                $this->log('**** Skipped Dropdown Lists Merge **** Nothing left to merge as mtime elimated all options');
+                return;
+            }
         }
 
         if (empty($this->context['new_source_dir'])) {
