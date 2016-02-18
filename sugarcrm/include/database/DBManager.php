@@ -114,6 +114,7 @@ abstract class DBManager
 
     /**
      * default state for using Prepared Statements
+	 * @deprecated("Will be deprecated in 7.8 version and above")
      */
     public $usePreparedStatements = false;
 
@@ -716,6 +717,7 @@ protected function checkQuery($sql, $object_name = false)
 	{
 		$tablename =  $bean->getTableName();
 		$msg = "Error inserting into table: $tablename:";
+		// usePreparedStatements will be deprecated in 7.8 version and above
 	    if ($this->usePreparedStatements) {
 	        list($sql, $data, $clob) = $this->insertSQL($bean, true);
 	        // Prepare and execute the statement
@@ -762,6 +764,7 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param array $data Key/value to insert
 	 * @param array $field_map Fields map from SugarBean
 	 * @param bool $execute Execute or return query?
+	 * @param bool usePreparedStatements(will be deprecated in 7.8 version and above)
      * @return bool query result
      */
 	public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePreparedStatements = false)
@@ -853,6 +856,7 @@ protected function checkQuery($sql, $object_name = false)
 	{
 		$tablename = $bean->getTableName();
 		$msg = "Error updating table: $tablename:";
+		// usePreparedStatements will be deprecated in 7.8 version and above
 	    if($this->usePreparedStatements) {
             list($sql, $data, $lobs) = $this->updateSQL($bean, $where, true);
             // Prepare and execute the statement
@@ -876,6 +880,7 @@ protected function checkQuery($sql, $object_name = false)
 	{
 	    $tablename =  $bean->getTableName();
 	    $msg = "Error deleting from table: $tablename:";
+		// usePreparedStatements will be deprecated in 7.8 version and above
 	    if($this->usePreparedStatements) {
 	        list($sql, $data) = $this->deleteSQL($bean, $where, true);
 	        // Prepare and execute the statement
@@ -900,6 +905,7 @@ protected function checkQuery($sql, $object_name = false)
 	{
 		$tablename =  $bean->getTableName();
 	    $msg = "Error retriving values from table: $tablename:";
+		// usePreparedStatements will be deprecated in 7.8 version and above
 	    if($this->usePreparedStatements) {
 	        list($sql, $data) = $this->retrieveSQL($bean, $where, true);
 	        // Prepare and execute the statement
@@ -2489,6 +2495,7 @@ protected function checkQuery($sql, $object_name = false)
 	 * Generates SQL for insert statement.
 	 *
 	 * @param  SugarBean $bean SugarBean instance
+	 * @param bool usePreparedStatements (will be deprecated in 7.8 version and above)
 	 * @return string SQL Create Table statement
 	 */
 	public function insertSQL(SugarBean $bean, $usePreparedStatements = false)
@@ -2503,6 +2510,7 @@ protected function checkQuery($sql, $object_name = false)
 	 *
 	 * @param  SugarBean $bean SugarBean instance
 	 * @param  array  $where Optional, where conditions in an array
+	 * @param bool usePreparedStatements (will be deprecated in 7.8 version and above)
 	 * @return string SQL Create Table statement
 	 */
 	public function updateSQL(SugarBean $bean, array $where = array(), $usePreparedStatements = false)
@@ -2561,7 +2569,7 @@ protected function checkQuery($sql, $object_name = false)
      * @param array $where Key/value for where
      * @param array $field_map Fields map from SugarBean
      * @param bool $execute Execute or return query?
-     * @param bool $usePreparedStatements
+     * @param bool $usePreparedStatements (will be deprecated in 7.8 version and above)
      *
      * @return bool|string|array|PreparedStatement query result
      */
@@ -2968,6 +2976,7 @@ protected function checkQuery($sql, $object_name = false)
      *
      * @param SugarBean $bean SugarBean instance
      * @param array $where where conditions in an array
+	 * @param bool $usePreparedStatements (will be deprecated in 7.8 version and above)
      * @return string SQL Update Statement
      */
     public function deleteSQL(SugarBean $bean, array $where, $usePreparedStatements = false)
@@ -2987,6 +2996,7 @@ protected function checkQuery($sql, $object_name = false)
      *
      * @param SugarBean $bean SugarBean instance
      * @param array $where where conditions in an array
+	 * @param bool $usePreparedStatements (will be deprecated in 7.8 version and above)
      * @return string SQL Select Statement
      */
     public function retrieveSQL(SugarBean $bean, array $where, $usePreparedStatements = false)
