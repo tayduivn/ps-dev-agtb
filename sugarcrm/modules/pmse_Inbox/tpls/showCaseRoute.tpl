@@ -28,6 +28,7 @@
     <input type="hidden" name="team_id" id="team_id" value="{$team_id}"/>
     <input type="hidden" name="moduleName" id="moduleName" value="{$caseData.cas_sugar_module}"/>
     <input type="hidden" name="beanId" id="beanId" value="{$caseData.cas_sugar_object_id}"/>
+    <input type="hidden" name="idInbox" id="idInbox" value="{$idInbox}"/>
     <input type="hidden" name="cas_index" id="cas_index" value="{$cas_index}"/>
     <input type="hidden" name="cas_current_user_id" id="cas_current_user_id" value="{$cas_current_user_id}"/>
     <input type="hidden" name="act_adhoc_behavior" id="act_adhoc_behavior" value="{$act_adhoc_behavior}"/>

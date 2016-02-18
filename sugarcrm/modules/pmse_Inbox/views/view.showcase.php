@@ -161,7 +161,7 @@ class pmse_InboxViewShowCase extends SugarView
                 'name' => 'Type',
                 'value' => 'Claim',
                 'type' => 'button',
-                'onclick' => 'javascript:claim_case(\'' . $casId . '\', \'' . $casIndex . '\', \'' . $title . '\', \'' . $idInbox . '\');'
+                'onclick' => 'javascript:claim_case(\'' . $casId . '\', \'' . $casIndex . '\', \'' .  htmlentities($title, ENT_QUOTES) . '\', \'' . $idInbox . '\');'
             ),
             'approve' => array(
                 'id' => 'ApproveBtn',
@@ -242,20 +242,30 @@ class pmse_InboxViewShowCase extends SugarView
         $expected_time_message = '';
 
         global $current_user;
+
         //extract cas_id and cas_index
         $beanFlow = BeanFactory::retrieveBean('pmse_BpmFlow', $id_flow, array('encode' => false));
         $cas_id = $beanFlow->cas_id;
         $cas_index = $beanFlow->cas_index;
 
-        $caseBean = BeanFactory::newBean('pmse_Inbox');
-        $joinTables = array(
-            array('LEFT', 'pmse_bpm_flow', 'pmse_inbox.cas_id = pmse_bpm_flow.cas_id'),
-            array('INNER', 'pmse_bpmn_process', 'pmse_inbox.pro_id = pmse_bpmn_process.id'),
-        );
-        $records = $this->wrapper->getSelectRows($caseBean, 'cas_id desc',
-            "pmse_bpm_flow.cas_id = $cas_id and cas_index = $cas_index ", 0, -1, -1, array('*'), $joinTables);
-        $totalRecords = $records['totalRows'];
-        $caseData = $records['rowList'][0];
+        $query = new SugarQuery();
+        $query->from(BeanFactory::getBean('pmse_Inbox'));
+        $query->joinTable('pmse_bpm_flow', array('alias' => 'bpmFlow', 'joinType' => 'LEFT', 'linkingTable' => true))
+            ->on()
+            ->equalsField('bpmFlow.cas_id', 'pmse_inbox.cas_id');
+        $query->joinTable('pmse_bpmn_process', array('alias' => 'bpmnProcess', 'joinType' => 'INNER', 'linkingTable' => true))
+            ->on()
+            ->equalsField('pmse_inbox.pro_id', 'bpmnProcess.id');
+
+        // pmse_inbox fields
+        $fields = array('id','name','cas_id','cas_title');
+        // pmse_bpm_flow fields
+        $fields = array_merge($fields, array('bpmFlow.cas_index','bpmFlow.bpmn_id','bpmFlow.cas_flow_status','bpmFlow.cas_sugar_module','bpmFlow.cas_sugar_object_id','bpmFlow.cas_sugar_action','bpmFlow.cas_adhoc_type','bpmFlow.cas_task_start_date','bpmFlow.cas_delegate_date','bpmFlow.cas_start_date','bpmFlow.cas_due_date'));
+
+        $query->select($fields);
+        $query->where()->queryAnd()->equals("bpmFlow.cas_id", $cas_id)->equals("bpmFlow.cas_index", $cas_index);
+        $record = $query->execute();
+        $caseData = current($record);
 
         $totalNotes = 0;
 
@@ -357,6 +367,7 @@ FLIST;
 
                 //ASSIGN SECTION
                 $smarty->assign('cas_id', $cas_id);
+                $smarty->assign('idInbox', $caseData['id']);
                 $smarty->assign('cas_index', $cas_index);
                 $smarty->assign('cas_current_user_id', $current_user->id);
                 $smarty->assign('act_name', $activityName);
@@ -626,7 +637,7 @@ FLIST;
         }
 
         foreach ($this->fieldDefs as $field) {
-            if (isset($field['viewType']) && ($field['viewType'] == 'DetailView')) {
+            if (isset($field['viewType']) && ($field['viewType'] == 'DetailView') && !empty($field['name'])) {
                 $arrReadOnlyFields[] = $field['name'];
             }
             if (!empty($field['required'])) {
