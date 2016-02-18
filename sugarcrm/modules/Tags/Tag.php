@@ -139,16 +139,14 @@ class Tag extends Basic
 
         $tableAlias = $this->db->getValidDBName($focus->table_name . '_id', false, 'alias');
 
-        $sql = "SELECT tags.id, tags.name, {$focus->table_name}.id as {$tableAlias}";
-        $sql .= " FROM {$focus->table_name} INNER JOIN tag_bean_rel ON {$focus->table_name}.id=tag_bean_rel.bean_id";
-        $sql .= " INNER JOIN tags ON tags.id=tag_bean_rel.tag_id";
-        $sql .= " WHERE {$focus->table_name}.id in ($ids) AND tag_bean_rel.deleted=0";
+        $sql = "SELECT tags.id, tags.name, tbr.bean_id as {$tableAlias}";
+        $sql .= " FROM tags INNER JOIN tag_bean_rel tbr ON tags.id=tbr.tag_id";
+        $sql .= " WHERE tbr.bean_module = '{$focus->module_name}' AND tbr.bean_id in ($ids) AND tbr.deleted=0";
         $sql .= " ORDER BY tags.name ASC";
 
-        $db = DBManagerFactory::getInstance();
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
         $returnArray = array();
-        while ($data = $db->fetchByAssoc($result)) {
+        while ($data = $this->db->fetchByAssoc($result)) {
             $returnArray[$data[$tableAlias]][] = array("id" => $data["id"], "name"=>$data["name"]);
         }
         return $returnArray;

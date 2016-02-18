@@ -551,6 +551,7 @@ class OracleManager extends DBManager
     {
         $this->tableName = $bean->getTableName();
         $msg = "Error updating table: ".$this->tableName;
+        // usePreparedStatements will be deprecated in 7.8 version and above
         if($this->usePreparedStatements) {
             list($sql, $data, $lobs) = $this->updateSQL($bean, $where, true);
             return $this->preparedQuery($sql, $data, $lobs, $msg);
@@ -570,6 +571,7 @@ class OracleManager extends DBManager
     {
         $this->tableName = $bean->getTableName();
         $msg = "Error inserting into table: ".$this->tableName;
+        // usePreparedStatements will be deprecated in 7.8 version and above
         if($this->usePreparedStatements) {
             list($sql, $data, $lobs) = $this->insertSQL($bean, true);
             return $this->preparedQuery($sql, $data, $lobs, $msg);
