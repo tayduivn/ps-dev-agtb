@@ -39,6 +39,7 @@
     height: 42px;
     display: block;
     cursor: pointer;
+    position: relative;
     &:hover {
       background-color: darken(@grayLighter,2%);
     }
@@ -64,6 +65,9 @@
     .btn-toolbar {
       margin: 7px 0 0;
       padding-left: 0;
+      position: absolute;
+      top: 0;
+      right: 0;
       //needed for iPad (dont' remove)
       &> span[class^="panel-top"]:first-child {
         float: left;
@@ -79,6 +83,16 @@
         &.open {
           z-index: 999999;
         }
+      }
+    }
+    .a11y-wrapper {
+      width: 100%;
+      height: 42px;
+      .calcWidth(~"100% - 1px");
+      box-sizing: border-box;
+      &:focus {
+        outline: 3px auto -webkit-focus-ring-color;
+        outline-offset: -3px;
       }
     }
   }

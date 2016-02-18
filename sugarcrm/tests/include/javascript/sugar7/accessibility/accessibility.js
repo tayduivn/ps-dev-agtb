@@ -137,4 +137,40 @@ describe('accessibility', function() {
             expect(field.$el.find(field.fieldTag).attr('aria-label')).toBeUndefined();
         });
     });
+
+    describe('keyclick handler', function() {
+        var $el, e;
+
+        beforeEach(function() {
+            $el = $('<div/>').on('click', function(evt) {
+                $(this).addClass('clicked');
+            }).on('keydown', function(evt) {
+                app.accessibility.handleKeyClick(evt, $(this));
+            });
+            e = $.Event('keydown');
+        });
+
+        afterEach(function() {
+            $el = null;
+            e = null;
+        });
+
+        it('should fire the click event for enter keydown event on element', function() {
+            e.which = 13; // Character 'enter'
+            $el.trigger(e);
+            expect($el.hasClass('clicked')).toBe(true);
+        });
+
+        it('should fire the click event for spacebar keydown event on element', function() {
+            e.which = 32; // Character 'spacebar'
+            $el.trigger(e);
+            expect($el.hasClass('clicked')).toBe(true);
+        });
+
+        it('should not fire the click event for any other keydown event on element', function() {
+            e.which = 69; // Character 'not spacebar or enter'
+            $el.trigger(e);
+            expect($el.hasClass('clicked')).toBe(false);
+        });
+    });
 });

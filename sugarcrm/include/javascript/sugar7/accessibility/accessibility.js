@@ -147,6 +147,27 @@
             }
 
             return attributes.join('');
+        },
+
+        /**
+         * Allows for calling `click` event on element if
+         * spacebar or enter keydown event is fired.
+         *
+         * @param {Event} evt The `keydown` event.
+         * @param {jQuery} $el The element that should receive click event.
+         */
+        handleKeyClick: function(evt, $el) {
+            var code = evt.which;
+            // 13 = Return, 32 = Space
+            if ((code === 13) || (code === 32)) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                // prevent key autorepeat from calling click
+                if (evt.originalEvent && evt.originalEvent.repeat) {
+                    return;
+                }
+                $el.click();
+            }
         }
     }, false);
 })(SUGAR.App);
