@@ -33,6 +33,52 @@ and (orientation: portrait) {
 
   .navbar {
     min-width: 320px;
+
+    .module-list {
+      > .nav.megamenu {
+        li:not(:first-child) {
+          > .btn-group {
+            padding-right: 1px;
+            padding-left: 1px;
+            > .btn {
+              width: 58px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              padding-left: 2px;
+            }
+            .dropdown-toggle {
+              padding-right: 0;
+              padding-left: 0;
+              width: 18px;
+            }
+          }
+          &.more {
+            padding-right: 2px;
+            padding-left: 2px;
+            width: 36px;
+          }
+        }
+        li:first-child > .btn-group {
+          &.home,
+          &.home.open {
+            padding-right: 2px;
+            padding-left: 2px;
+          }
+        }
+      }
+    }
+    .module-list, .search {
+      z-index: 1;
+    }
+    .search.expanded {
+      padding: 7px 6px 7px;
+    }
+    .avatar-btn .fa-caret-down {
+      margin-left: -4px;
+    }
+    #userActions > .btn-group {
+      padding-right: 0;
+    }
   }
 
   .preview-pane {
@@ -161,43 +207,6 @@ and (orientation: portrait) {
     left: auto;
   }
 
-  #searchForm {
-    .search-query {
-      position: absolute;
-      right: 0;
-    }
-    .navbar-search {
-      position: relative;
-      width: 120px;
-      height: 28px;
-      right: 0;
-      background: @grayLight;
-      .border-radius(3px);
-    }
-  }
-
-  #searchForm:not(.active) {
-    .search-query {
-      display: none;
-    }
-    .navbar-search {
-      width: 28px;
-    }
-    .advanced {
-      .btn-group {
-        .advanced {
-          display: none;
-        }
-        .btn {
-          .border-radius(3px);
-          .buttonBackground(@btnInverseBackground, @btnInverseBackgroundHighlight);
-          .fa-caret-down {
-            color: #bbb;
-          }
-        }
-      }
-    }
-  }
   // Revert back to normal size on smaller screens
   .modal-wide {
     width: 560px;
@@ -218,7 +227,7 @@ and (orientation: portrait) {
 @media (max-width: 540px) {
   .navbar {
     .search {
-        min-width: 36px !important;
+        min-width: 8px !important;
         .navbar-search {
           display: none;
         }
@@ -248,6 +257,9 @@ and (orientation: portrait) {
           }
         }
       }
+    }
+    .dropdown.notification-list > .btn-group {
+      padding: 8px 4px;
     }
   }
 }
