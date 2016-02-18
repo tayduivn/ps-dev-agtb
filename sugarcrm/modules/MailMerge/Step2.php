@@ -10,18 +10,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
- // $Id: Step2.php 45763 2009-04-01 19:16:18Z majed $
-
-/*
- * Created on Oct 4, 2005
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
-
-
-
 //require_once('include/utils.php');
 require_once('include/json_config.php');
 $json_config = new json_config();
@@ -42,13 +30,13 @@ $xtpl->assign('JSON_CONFIG_JAVASCRIPT', $json_config->get_static_json_server(fal
 
 if(isset($_POST['mailmerge_module']))
 {
-	$_SESSION['MAILMERGE_MODULE'] = $_POST['mailmerge_module'];	
+	$_SESSION['MAILMERGE_MODULE'] = $_POST['mailmerge_module'];
     if($_SESSION['MAILMERGE_MODULE'] == 'Campaigns'){
         $_SESSION['MAILMERGE_MODULE'] = 'CampaignProspects';
     }
 	if($_SESSION['MAILMERGE_MODULE'] == 'Contacts' || $_SESSION['MAILMERGE_MODULE'] == 'Leads'|| $_SESSION['MAILMERGE_MODULE'] == 'CampaignProspects')
 	{
-		
+
 		$_SESSION['MAILMERGE_SKIP_REL'] = true;
 	}
 }
@@ -69,12 +57,12 @@ if(!empty($_SESSION['SELECTED_OBJECTS_DEF'])){
                 $_SESSION['MAILMERGE_WHERE'] = $where;
                 $_SESSION['MAILMERGE_CAMPAIGN_ID'] = $key;
                 $idArray = array();
-                break; 
-            }   
+                break;
+            }
         }
 	}
-                   
-    $xtpl->assign("MAILMERGE_WHERE", $_SESSION['MAILMERGE_WHERE']); 
+
+    $xtpl->assign("MAILMERGE_WHERE", $_SESSION['MAILMERGE_WHERE']);
 	$xtpl->assign("MAILMERGE_PRESELECTED_OBJECTS", get_select_options_with_id($idArray, '0'));
 	$step_txt .= "Refine list of ".$_SESSION['MAILMERGE_MODULE']." to merge.";
 	$xtpl->assign("MAILMERGE_GET_OBJECTS", 0);
@@ -87,17 +75,17 @@ else
 
 if(isset($_SESSION['MAILMERGE_SKIP_REL']) && $_SESSION['MAILMERGE_SKIP_REL'])
 {
-	$xtpl->assign("STEP", "4");	
-	
+	$xtpl->assign("STEP", "4");
+
 }
 else
 {
 
 	$selected = '';
 	if(isset($_SESSION['MAILMERGE_CONTAINS_CONTACT_INFO']) && $_SESSION['MAILMERGE_CONTAINS_CONTACT_INFO']){
-		$selected = $_SESSION['MAILMERGE_CONTAINS_CONTACT_INFO'];	
+		$selected = $_SESSION['MAILMERGE_CONTAINS_CONTACT_INFO'];
 	}
-	$xtpl->assign("STEP", "3");	
+	$xtpl->assign("STEP", "3");
 	//$xtpl->assign("MAIL_MERGE_CONTAINS_CONTACT_INFO", '<table><tr><td><input id="contains_contact_info" name="contains_contact_info" class="checkbox" type="checkbox" '.$checked.'/></td><td>'.$mod_strings['LBL_CONTAINS_CONTACT_INFO'].'</td></tr></table>');
 	$rel_options = array(""=>"--None--");
 	$seed = BeanFactory::getBean($_SESSION['MAILMERGE_MODULE']);
@@ -122,7 +110,7 @@ $xtpl->assign("MAIL_MERGE_HEADER_STEP_2", $step_txt);
 if($_SESSION['MAILMERGE_MODULE'] == 'CampaignProspects'){
     $rel_options = array("Contacts"=>"Contacts", "Leads" => "Leads", "Prospects" => "Prospects", "Users"=>"Users");
     $xtpl->assign("MAIL_MERGE_CAMPAIGN_PROSPECT_SELECTOR", '<select id="campaign_prospect_type" name="campaign_prospect_type">'.get_select_options_with_id($rel_options, 'Prospects').'</select>');
-        
+
 }
 
 if(!empty($_POST['document_id']))

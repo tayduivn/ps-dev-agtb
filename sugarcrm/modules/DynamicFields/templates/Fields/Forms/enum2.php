@@ -9,18 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*
- * Created on Jul 18, 2007
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
  function get_body(&$ss, $vardef){
  	$multi = false;
     $radio = false;
  	if (isset ($vardef['type']) && $vardef['type'] == 'multienum')
  		$multi = true;
- 		
+
  	$selected_options = "";
  	if ($multi && !empty($vardef['default'])) {
  		$selected_options = unencodeMultienum( $vardef['default']);
@@ -53,7 +47,7 @@
     	$key = $dropdowns[0];
     	$default_dropdowns = $my_list_strings[$key];
     }
-    
+
     $selected_dropdown = '';
     if(!empty($vardef['options'])){
     	$selected_dropdown = $vardef['options'];

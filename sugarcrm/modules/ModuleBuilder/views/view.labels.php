@@ -9,13 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-/*
- * Created on Jul 24, 2007
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
 require_once 'modules/ModuleBuilder/MB/AjaxCompose.php';
 require_once 'modules/ModuleBuilder/views/view.modulefields.php';
 require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
@@ -104,8 +97,8 @@ class ViewLabels extends ViewModulefields
         $formatted_mod_strings = array();
 
          // we shouldn't set the $refresh=true here, or will lost template language
-         // mod_strings. 
-         // return_module_language($selected_lang, $editModule,false) : 
+         // mod_strings.
+         // return_module_language($selected_lang, $editModule,false) :
          // the mod_strings will be included from cache files here.
         foreach (return_module_language($selected_lang, $editModule,false) as $name=>$label) {
             //#25294
@@ -162,7 +155,7 @@ class ViewLabels extends ViewModulefields
                 MB_DETAILVIEW => 'DetailView',
                 MB_QUICKCREATE => 'QuickCreate',
             );
-            
+
             $hideQuickCreateForModules = array(
                 'Campaigns',
                 'Quotes',

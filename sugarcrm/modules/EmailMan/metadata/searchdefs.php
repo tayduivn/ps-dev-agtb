@@ -9,18 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*
- * Created on May 29, 2007
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
   $searchdefs['EmailMan'] = array(
 					'templateMeta' => array(
-							'maxColumns' => '3', 'maxColumnsBasic' => '4', 
-                            'widths' => array('label' => '10', 'field' => '30'),                 
+							'maxColumns' => '3', 'maxColumnsBasic' => '4',
+                            'widths' => array('label' => '10', 'field' => '30'),
                            ),
-                    'layout' => array(  					
+                    'layout' => array(
 						'basic_search' => array(
 						    array('name'=>'campaign_name', 'label'=>'LBL_LIST_CAMPAIGN',),
 						 	array('name'=>'current_user_only', 'label'=>'LBL_CURRENT_USER_FILTER', 'type'=>'bool'),

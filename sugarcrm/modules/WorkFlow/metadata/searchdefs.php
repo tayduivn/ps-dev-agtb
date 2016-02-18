@@ -9,32 +9,26 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*
- * Created on May 29, 2007
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
   $searchdefs['WorkFlow'] = array(
 					'templateMeta' => array(
-							'maxColumns' => '3', 'maxColumnsBasic' => '4', 
-                            'widths' => array('label' => '10', 'field' => '30'),                 
+							'maxColumns' => '3', 'maxColumnsBasic' => '4',
+                            'widths' => array('label' => '10', 'field' => '30'),
                            ),
-                    'layout' => array(  					
+                    'layout' => array(
 						'basic_search' => array(
 						    'name' => array('name' => 'name', 'label' => 'LBL_NAME',),
 						 	),
 						'advanced_search' => array(
 						    'name' => array('name' => 'name', 'label' => 'LBL_NAME',),
-						    'base_module' => 
+						    'base_module' =>
                               array (
                                 'name' => 'base_module',
                                 'type' => 'enum',
                                 'label' => 'LBL_BASE_MODULE',
-                                'function' => 
+                                'function' =>
                                 array (
                                   'name' => 'get_module_map',
-                                  'params' => 
+                                  'params' =>
                                   array (
                                     0 => false,
                                   ),

@@ -9,18 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*
- * Created on Aug 2, 2007
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
  $module_name = '<module_name>';
  $_module_name = '<_module_name>';
   $searchdefs[$module_name] = array(
 					'templateMeta' => array(
 							'maxColumns' => '3',
-  							'maxColumnsBasic' => '4', 
+  							'maxColumnsBasic' => '4',
                             'widths' => array('label' => '10', 'field' => '30'),
                            ),
                     'layout' => array(

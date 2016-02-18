@@ -9,12 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*
- * Created on Aug 14, 2007
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
 $object_name = strtolower($object_name);
  $app_list_strings = array (
 

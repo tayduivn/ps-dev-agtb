@@ -9,12 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*
- * Created on May 29, 2007
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
   $searchdefs['Accounts'] = array(
 					  'templateMeta' => array(
 							'maxColumns' => '3', 

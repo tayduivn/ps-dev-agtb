@@ -9,20 +9,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*
- * Created on Mar 23, 2007
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
  require_once('include/MVC/Controller/SugarController.php');
-  
-  
+
+
  class NotesController extends SugarController
 {
 	function action_save(){
 		require_once('include/upload_file.php');
-		
+
 		// CCL - Bugs 41103 and 43751.  41103 address the issue where the parent_id is set, but
 		// the relate_id field overrides the relationship.  43751 fixes the problem where the relate_id and
 		// parent_id are the same value (in which case it should just use relate_id) by adding the != check
@@ -30,7 +24,7 @@
 		{
 			$_REQUEST['relate_id'] = false;
 		}
-		
+
 		$GLOBALS['log']->debug('PERFORMING NOTES SAVE');
 		$upload_file = new UploadFile('uploadfile');
 		$do_final_move = 0;
@@ -50,7 +44,7 @@
 		{
 	       	 $this->bean->filename = $_REQUEST['old_filename'];
 		}
-		
+
 		$check_notify = false;
 		if(!empty($_POST['assigned_user_id']) &&
 		    (empty($this->bean->fetched_row) || $this->bean->fetched_row['assigned_user_id'] != $_POST['assigned_user_id']) &&
@@ -58,7 +52,7 @@
 		        $check_notify = true;
 		}
 	    $this->bean->save($check_notify);
-	    
+
 		if ($do_final_move)
 		{
        		 $upload_file->final_move($this->bean->id);
@@ -68,7 +62,7 @@
        	 	$upload_file->duplicate_file($_REQUEST['old_id'], $this->bean->id, $this->bean->filename);
 		}
 	}
-	
+
     function action_editview(){
 		$this->view = 'edit';
 		$GLOBALS['view'] = $this->view;
@@ -79,6 +73,6 @@
 		}
 
 	}
-	
+
 }
 ?>
