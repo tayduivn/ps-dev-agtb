@@ -163,6 +163,11 @@ function process_action_update_rel($focus, $action_array){
 				$new_value = process_advanced_actions($focus, $field, $meta_array, $rel_object);
 				$rel_object->$field = $new_value;
 			}
+            if (!empty($focus->shipping_account_id) && $focus->shipping_account_id == $rel_object->id) {
+                $rel_object->not_use_rel_in_req = true;
+                $rel_object->new_rel_id = $focus->id;
+                $rel_object->new_rel_relname = strtolower($focus->module_dir) . "_shipto";
+            }
             $rel_object->in_workflow = true;
             if($old_owner != $rel_object->assigned_user_id) $check_notify = true;
             if(!empty($_REQUEST['massupdate']) && $_REQUEST['massupdate']=='true') $check_notify = false;//if in a massupdate, the notification will not be sent, because it will take a long time.
