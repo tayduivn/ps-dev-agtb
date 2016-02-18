@@ -23,12 +23,36 @@ class PMSECaseFlowHandler
     protected $sugarQueryObject;
 
     /**
+     * @var DBManager
+     */
+    protected $db;
+
+    /**
      * Class Constructor
      * @codeCoverageIgnore
      */
     public function __construct()
     {
         $this->sugarQueryObject = new SugarQuery();
+    }
+
+    /**
+     * @return DBManager
+     */
+    public function getDb()
+    {
+        if (!$this->db) {
+            $this->db = DBManagerFactory::getInstance();
+        }
+        return $this->db;
+    }
+
+    /**
+     * @param DBManager $db
+     */
+    public function setDb(DBManager $db)
+    {
+        $this->db = $db;
     }
 
     /**
@@ -236,28 +260,20 @@ class PMSECaseFlowHandler
      */
     public function retrieveMaxIndex($flowData)
     {
-        // set the bpmFlow attribute in this line for performance reasons
-        $this->getBpmFlow();
         if (!isset($flowData['cas_id']) || empty($flowData['cas_id'])) {
             return 0;
         }
 
-        $sugarQueryObject = $this->retrieveSugarQueryObject();
-        $sugarQueryObject->select(array('cas_index'));
+        // set the bpmFlow attribute in this line for performance reasons
+        $this->getBpmFlow();
 
-        $sugarQueryObject->from($this->bpmFlow);
-        $sugarQueryObject->where()
-            ->queryAnd()
-            ->addRaw('cas_id=' . $flowData['cas_id']);
-
-        $result = $sugarQueryObject->execute();
-        $maxIndex = 1;
-
-        foreach ($result as $value) {
-            $maxIndex = max($maxIndex, $value['cas_index']);
-        }
-
-        return $maxIndex;
+        $query = sprintf(
+            'SELECT MAX(cas_index) max_index FROM %s flow WHERE flow.deleted = 0 AND flow.cas_id = %s',
+            $this->bpmFlow->getTableName(),
+            $flowData['cas_id']
+        );
+        $result = (int) $this->getDb()->getOne($query);
+        return max(1, $result);
     }
 
     /**
