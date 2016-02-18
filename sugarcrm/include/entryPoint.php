@@ -148,6 +148,7 @@ foreach (SugarAutoLoader::existing('include/custom_utils.php', 'custom/include/c
 
 require_once('include/modules.php'); // provides $moduleList, $beanList, $beanFiles, $modInvisList, $adminOnlyList, $modInvisListActivities
 require_once('modules/Administration/updater_utils.php');
+require_once 'modules/Currencies/Currency.php';
 
 UploadStream::register();
 
