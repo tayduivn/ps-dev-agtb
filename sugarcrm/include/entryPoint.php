@@ -108,6 +108,7 @@ if(empty($GLOBALS['installing']) &&empty($sugar_config['dbconfig']['db_name']))
 
 if (!empty($sugar_config['xhprof_config']))
 {
+    require_once 'include/SugarXHprof/SugarXHprof.php';
     SugarXHprof::getInstance()->start();
 }
 
