@@ -43,6 +43,7 @@
         this._dateFormat = null;
         this._timeFormat = null;
         this._isApplyingColumnScrolling = null;
+        this.invalidFieldAlertKey = 'DecisionTableInvalidField';
         DecisionTable.prototype.initObject.call(this, options || {});
     };
 
@@ -285,12 +286,58 @@
         return this;
     };
 
+    /**
+     * Scan through the fields list in the current rule set for any invalid fields
+     * Toggle save button states and error alert
+     * @param {boolean} whether to show error alert
+     */
+    DecisionTable.prototype.validateFields = function(showAlert) {
+        var scanArray = function(input) {
+            var i;
+            for(i = 0; i < input.length; i++) {
+                if(!input[i].fieldValid && (input[i].field != '' || input[i].module != '')) {
+                    return false;
+                }
+            }
+            return true;
+        };
+        var valid = scanArray(this.conditions);
+        if (valid) {
+            valid = scanArray(this.conclusions);
+        }
+        if (valid) {
+            $(".btn-primary[name='project_save_button']").removeClass("disabled");
+            $(".btn-primary[name='project_finish_button']").removeClass("disabled");
+            App.alert.dismiss(this.invalidFieldAlertKey);
+        } else {
+            $(".btn-primary[name='project_save_button']").addClass("disabled");
+            $(".btn-primary[name='project_finish_button']").addClass("disabled");
+            if (showAlert) {
+                App.alert.show(this.invalidFieldAlertKey, {
+                    level: "error",
+                    messages: this.language.ERROR_NOT_EXISTING_FIELDS
+                });
+            }
+        }
+    };
+
+    /**
+     * Utility function to construct a module field concatenation to be used
+     * mostly as an identifier
+     * @param {string} module name
+     * @param {string} field name
+     * @return {string} concatenation
+     */
+    DecisionTable.prototype.getModuleFieldConcat = function(module, field) {
+        return module + this.moduleFieldSeparator + field;
+    };
+
     DecisionTable.prototype.setRuleset = function(ruleset) {
         var i, j,
             condition_column_helper = {},
             conclusion_column_helper = {},
             aux,
-            conditions, conclusions, errorHTML = "", auxHTML = {}, auxKey;
+            conditions, conclusions, auxKey;
 
         //fill the column helper for conditions
         for(i = 0; i < this.conditions.length; i+=1) {
@@ -310,62 +357,29 @@
             conditions = ruleset[i].conditions;
             aux = {};
             for(j = 0; j < conditions.length; j+=1) {
-                auxKey = conditions[j].variable_module + this.moduleFieldSeparator + conditions[j].variable_name;
+                auxKey = this.getModuleFieldConcat(conditions[j].variable_module, conditions[j].variable_name);
                 if(typeof aux[auxKey] === 'undefined') {
                     aux[auxKey] = -1;
                 }
                 aux[auxKey] +=1;
                 if(typeof condition_column_helper[auxKey] !== 'undefined') {
                     this.conditions[condition_column_helper[auxKey][aux[auxKey]]].addValue(conditions[j].value, conditions[j].condition);
-                } else {
-                    if (!auxHTML[conditions[j].variable_module]) {
-                        auxHTML[conditions[j].variable_module] = {};
-                    }
-                    auxHTML[conditions[j].variable_module][conditions[j].variable_name] = 0;
                 }
             }
 
             conclusions = ruleset[i].conclusions;
             for(j = 0; j < conclusions.length; j+=1) {
-                auxKey = (conclusions[j].conclusion_type === "return" ? "result" : this.base_module
-                    + this.moduleFieldSeparator + conclusions[j].conclusion_value);
+                auxKey = (conclusions[j].conclusion_type === "return" ? "result" : this.getModuleFieldConcat(this.base_module, conclusions[j].conclusion_value));
                 if(typeof conclusion_column_helper[auxKey] !== 'undefined') {
                     this.conclusions[conclusion_column_helper[auxKey]].addValue(conclusions[j].value);
-                } else {
-                    if (!auxHTML[this.base_module]) {
-                        auxHTML[this.base_module] = {};
-                    }
-                    auxHTML[this.base_module][auxKey] = 0;
                 }
             }
 
             this.addDecisionRow();
         }
 
-        for (i in auxHTML) {
-            if (auxHTML.hasOwnProperty(i)) {
-                for (j in auxHTML[i]) {
-                    errorHTML += ", " + i + "::" + j;
-                }
-            }
-        }
-        errorHTML = errorHTML.slice(2);
-        if(errorHTML) {
-            aux = this.html.parentElement;
-            $(this.html).remove();
-            auxHTML = this.createHTMLElement('p');
-            auxHTML.textContent = this.language.ERROR_NOT_EXISTING_FIELDS.replace(/\%s/, errorHTML);
-            this.html = this.createHTMLElement('div');
-            this.html.appendChild(auxHTML);
-            aux.appendChild(this.html);
-            App.alert.show(null, {
-                level: "error",
-                messages: this.html.textContent
-            });
-        } else {
-            this.correctlyBuilt = true;
-        }
-
+        this.validateFields(true);
+        this.correctlyBuilt = true;
         this.updateDimensions();
         return this;
     };
@@ -1449,6 +1463,7 @@
         this.field = null;
         this.fieldType = null;
         this.module = null;
+        this.fieldValid = true;
 
         this.values = [];
         this.fields = null;
@@ -1515,60 +1530,82 @@
         this.onChangeValue = defaults.onChangeValue;
     };
 
+    /**
+     * Utility function to retrieve the option tag with a certain value
+     * @param {string} the value for the option
+     * @return {jQuery elements} matched elements
+     */
+    DecisionTableVariable.prototype.getOption = function (value) {
+        return $(this.select).children("option[value='" + value + "']");
+    }
+
     DecisionTableVariable.prototype.setField = function (newField) {
         var i,
+            label,
+            option,
             currentField,
             field,
             module,
             moduleFieldConcat;
-
-        if (this.isReturnType) {
-            return this;
-        }
-
-        if (newField) {
-            if (typeof newField === 'string') {
-                moduleFieldConcat = newField;
-                field = newField.split(this.parent.moduleFieldSeparator);
-                module = field[0];
-                field = field[1];
-            } else {
-                module = newField.module;
-                field = newField.field;
-                moduleFieldConcat = module + this.parent.moduleFieldSeparator + field;
-            }
-            for (i = 0; i < this.inputFields.length; i += 1) {
-                currentField = this.inputFields[i];
-                if (currentField.value === field && currentField.moduleValue === module) {
-                    this.field = field;
-                    this.fieldName = currentField.label;
-                    this.fieldType = currentField.type;
-                    this.module = module;
-                    this.select.value = moduleFieldConcat;
-                    return this;
+        if (!this.isReturnType) {
+            if (!this.fieldValid) {
+                moduleFieldConcat = this.parent.getModuleFieldConcat(this.module, this.field);
+                option = this.getOption(moduleFieldConcat);
+                if (option.length) {
+                    this.select.removeChild(option[0]);
                 }
             }
+            if (newField) {
+                if (typeof newField === 'string') {
+                    moduleFieldConcat = newField;
+                    field = newField.split(this.parent.moduleFieldSeparator);
+                    module = field[0];
+                    field = field[1];
+                } else {
+                    module = newField.module;
+                    field = newField.field;
+                    moduleFieldConcat = this.parent.getModuleFieldConcat(module, field);
+                }
+                label = module + ':' + field;
+            } else {
+                module = '';
+                field = '';
+                moduleFieldConcat = this.parent.getModuleFieldConcat(module, field);
+                label = '';
+            }
+            this.field = field;
+            this.fieldName = null;
+            this.fieldType = null;
+            this.module = module;
+            this.fieldValid = false;
             for (i = 0; i < this.fields.length; i += 1) {
                 currentField = this.fields[i];
                 if (currentField.value === field && currentField.moduleValue === module) {
-                    this.field = field;
                     this.fieldName = currentField.label;
                     this.fieldType = currentField.type;
-                    this.module = module;
-                    this.select.value = moduleFieldConcat;
-                    return this;
+                    this.fieldValid = true;
+                    break;
                 }
             }
-        } else {
-            this.field = null;
-            this.fieldName = null;
-            this.fieldType = null;
-            this.module = null;
+            if (this.fieldValid) {
+                $(this.select).removeClass('field-invalid');
+            } else {
+                if (this.field == '' && this.module == '') {
+                    $(this.select).removeClass('field-invalid');
+                } else {
+                    $(this.select).addClass('field-invalid');
+                }
+                option = this.getOption(moduleFieldConcat);
+                if (!option.length) {
+                    option = this.createHTMLElement('option');
+                    option.label = label;
+                    option.value = moduleFieldConcat;
+                    this.select.insertBefore(option, this.select.firstChild);
+                }
+            }
+            this.select.value = moduleFieldConcat;
+            this.parent.validateFields(false);
         }
-        if (this.select) {
-            this.select.selectedIndex = -1;
-        }
-
         return this;
     };
 
@@ -1609,13 +1646,7 @@
         select = this.createHTMLElement('select');
 
         if (this.fields.length) {
-
-            //Create first option
-            option = this.createHTMLElement('option');
-            select.appendChild(option);
-
             currentGroup = {};
-
             for(i = 0; i < this.fields.length; i += 1) {
                 if (this.variableMode === 'conclusion' && !this.isReturnType && this.fields[i].value === 'email1') {
                     continue;
