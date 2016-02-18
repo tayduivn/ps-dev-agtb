@@ -10,12 +10,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*
- * Created on Oct 4, 2005
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
 $local_location = $_SESSION['mail_merge_file_location'];
 $name = $_SESSION['mail_merge_file_name'];
 $download_location= $_SESSION['mail_merge_file_location'];
@@ -31,8 +25,8 @@ header("Content-Length: " . filesize($local_location));
 		@ob_end_clean();
 		ob_start();
 
-		
+
 	        echo file_get_contents($download_location);
-	   
+
 		@ob_flush();
 ?>

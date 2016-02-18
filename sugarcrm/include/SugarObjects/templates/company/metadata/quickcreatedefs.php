@@ -10,12 +10,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*
- * Created on Aug 2, 2007
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
 $module_name = '<module_name>';
 $_object_name = '<_object_name>';
 $viewdefs[$module_name]['QuickCreate'] = array(
@@ -38,7 +32,7 @@ $viewdefs[$module_name]['QuickCreate'] = array(
 			      array('name'=>'team_name', 'displayParams'=>array('display'=>true)),
 			    ),
 		        array('industry', array('name'=>'phone_office')),
-		        array($_object_name . '_type',  'phone_fax'), 
+		        array($_object_name . '_type',  'phone_fax'),
 		         array('annual_revenue', ''),
 	   ),
   	   'lbl_email_addresses'=>array(

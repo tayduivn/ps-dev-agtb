@@ -9,30 +9,24 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*
- * Created on May 29, 2007
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
 $module_name = '<module_name>';
 $_object_name = '<_object_name>';
   $searchdefs[$module_name] = array(
 					'templateMeta' => array(
-							'maxColumns' => '3', 
-							'maxColumnsBasic' => '4', 
-                            'widths' => array('label' => '10', 'field' => '30'),                 
+							'maxColumns' => '3',
+							'maxColumnsBasic' => '4',
+                            'widths' => array('label' => '10', 'field' => '30'),
                            ),
-                    'layout' => array(  					
+                    'layout' => array(
 						'basic_search' => array(
-						 	'name', 
+						 	'name',
 							array('name'=>'current_user_only', 'label'=>'LBL_CURRENT_USER_FILTER', 'type'=>'bool'),
 							array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
 							array ('name' => 'open_only', 'label' => 'LBL_OPEN_ITEMS', 'type' => 'bool', 'default' => false, 'width' => '10%'),
 							),
 						'advanced_search' => array(
-							$_object_name. '_number', 
-							'name', 
+							$_object_name. '_number',
+							'name',
 							'resolution',
 							'status',
 							'priority',

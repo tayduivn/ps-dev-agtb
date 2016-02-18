@@ -9,14 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*
- * Created on Jun 1, 2007
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
  $metafiles['Contacts'] = array(
-	'detailviewdefs'  => 	'modules/Contacts/metadata/detailviewdefs.php', 	
+	'detailviewdefs'  => 	'modules/Contacts/metadata/detailviewdefs.php',
 	'editviewdefs'    => 	'modules/Contacts/metadata/editviewdefs.php',
  	'listviewdefs'    => 	'modules/Contacts/metadata/listviewdefs.php',
  	'searchdefs'      =>    'modules/Contacts/metadata/searchdefs.php',
