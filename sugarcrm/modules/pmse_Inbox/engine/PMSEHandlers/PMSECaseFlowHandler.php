@@ -906,12 +906,10 @@ class PMSECaseFlowHandler
     public function numberOfCasesByStatus($flowData, $status = 'IN PROGRESS')
     {
         $q = $this->retrieveSugarQueryObject();
-        $q->select(array('id'));
+        $q->select->setCountQuery();
         $q->from(BeanFactory::retrieveBean('pmse_BpmFlow'));
         $q->where()->equals("cas_id", $flowData['cas_id']);
         $q->where()->equals("cas_flow_status", $status);
-        $query = $q->compileSql();
-        $rows = $q->execute();
-        return sizeof($rows);
+        return (int) $q->getOne();
     }
 }
