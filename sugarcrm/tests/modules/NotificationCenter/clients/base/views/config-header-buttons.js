@@ -87,6 +87,7 @@ describe('NotificationCenter.View.ConfigHeaderButtons', function() {
             server = sandbox.useFakeServer();
             server.respondWith("PUT", urlRegExp, [200, {  "Content-Type": "application/json"}, JSON.stringify({})]);
             updateAddresses = sandbox.stub(view.model, 'updateCarriersAddresses');
+            sandbox.stub(view, 'showSavedConfirmation');
         });
 
         it('should ask model to update carriers\' addresses', function() {
@@ -97,7 +98,6 @@ describe('NotificationCenter.View.ConfigHeaderButtons', function() {
 
         it('should navigate browser back on successful model save', function() {
             var goBack = sandbox.spy(app.router, 'goBack');
-            sandbox.stub(view, 'showSavedConfirmation');
 
             view._saveConfig();
             server.respond();
