@@ -42,6 +42,7 @@ $config['builds']['ult']['languages']= array(
 'ru_RU',
 'sv_SE',
 'tr_TR',
+'zh_TW',
 'zh_CN',
 'pt_BR',
 'ca_ES',
