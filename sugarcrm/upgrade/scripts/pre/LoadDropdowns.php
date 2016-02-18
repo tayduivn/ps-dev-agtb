@@ -124,8 +124,8 @@ class SugarUpgradeLoadDropdowns extends UpgradeScript
                 'custom' => $custom,
                 //track the mtime on the custom files to determine if we need to upgrade custom/include again...
                 'mtime' => array(
-                    'include' => filemtime($customFile),
-                    'ext' => $extfile ? filemtime($extfile) : 0
+                    'include' => $this->getFileMTime($customFile),
+                    'ext' => $this->getFileMTime($extfile)
                 )
             );
 
@@ -148,6 +148,21 @@ class SugarUpgradeLoadDropdowns extends UpgradeScript
         }
 
         return null;
+    }
+
+    /**
+     * Wrapper for returning the modification time of a given file.
+     * @param $file
+     *
+     * @return int
+     */
+    protected function getFileMTime($file)
+    {
+        if ($file && file_exists($file)) {
+            return filemtime($file);
+        }
+
+        return 0;
     }
 
     /**
