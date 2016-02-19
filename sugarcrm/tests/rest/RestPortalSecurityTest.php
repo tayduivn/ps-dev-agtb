@@ -34,6 +34,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
      * @group rest
      */
     public function testPortalSecurity() {
+        // FIXME TY-1316: investigate why this test fails
         $cts = array_keys($GLOBALS['app_list_strings']['opportunity_relationship_type_dom']);
         // The first element is blank, ignore it
         array_shift($cts);

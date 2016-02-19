@@ -115,6 +115,8 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testValidDatetimeDifferentFormat()
     {
+        // FIXME TY-1319: figure out why this test is failing
+        // looks like it's due to locale differences
         $userTZ = 'America/New_York';
         $userMock = $this->setupUserMockWithTZ($userTZ);
 
@@ -174,6 +176,8 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testValidDatetimeDateEntered()
     {
+        // FIXME TY-1319: figure out why this test is failing
+        // looks like it's due to locale differences
         $userTZ = 'Atlantic/Cape_Verde';
         $userMock = $this->setupUserMockWithTZ($userTZ);
 

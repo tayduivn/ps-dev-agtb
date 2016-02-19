@@ -49,6 +49,7 @@ class Bug57454Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSAMLEncoding()
     {
+        // FIXME TY-1326: figure out why this test is failing
         global $sugar_config;
         $sugar_config['SAML_loginurl'] = 'http://loginURL.example.com/';
         $sugar_config['SAML_X509Cert'] = 'TestCert';

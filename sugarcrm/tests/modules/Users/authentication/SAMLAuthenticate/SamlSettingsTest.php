@@ -52,6 +52,7 @@ class SamlAuthTest extends  Sugar_PHPUnit_Framework_TestCase
 
     public function testSettingsBC()
     {
+        // FIXME TY-1332: figure out why this test is failing
         $contents = <<<EOQ
 <?php
 \$settings = new SamlSettings();
@@ -74,6 +75,7 @@ EOQ;
 
     public function testSettingsIssuer()
     {
+        // FIXME TY-1332: figure out why this test is failing
         global $sugar_config;
         $sugar_config['SAML_issuer'] = 'testIssuer';
         $contents = <<<EOQ

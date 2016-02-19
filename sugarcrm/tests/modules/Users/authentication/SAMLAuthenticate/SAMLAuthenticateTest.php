@@ -36,6 +36,7 @@ class SAMLAuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testLoginUrl()
     {
+        // FIXME TY-1327: figure out why this test is failing
         global $sugar_config;
 
         $sugar_config['SAML_loginurl'] = 'http://loginURL.example.com/';

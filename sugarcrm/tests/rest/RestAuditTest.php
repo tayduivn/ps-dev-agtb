@@ -31,6 +31,7 @@ class RestAuditTest extends RestTestBase
     }
            
     public function testViewChangeLog() {
+        // FIXME TY-1311: investigate why this test fails
         // For some unknown reason, creating an account directly will cause a 'out of memory' error in SugarBean::retrieve()
         // when we call AuditApi below. This has something to do with how an account is created, not the api.
         // The api works fine when tested using Postman

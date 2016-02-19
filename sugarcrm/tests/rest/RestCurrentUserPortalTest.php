@@ -29,6 +29,7 @@ class RestCurrentUserPortalTest extends RestTestPortalBase {
      * @group rest
      */
     public function testAcls() {
+        // FIXME TY-1312: investigate why this test fails
         $allowedModules = array(
                                 'Accounts' => array( 'edit' => 'no', 'create' => 'no'),
                                 'Bugs' => array('edit' => 'no', 'create' => 'yes'), 
@@ -52,6 +53,7 @@ class RestCurrentUserPortalTest extends RestTestPortalBase {
      * @group rest
      */
     public function testUpdate() {
+        // FIXME TY-1312: investigate why this test fails
         $restReply = $this->_restCall("me", json_encode(array('first_name' => 'UNIT TEST - AFTER')), "PUT");
         $this->assertNotEquals(stripos($restReply['reply']['current_user']['full_name'], 'UNIT TEST - AFTER'), false);
     }

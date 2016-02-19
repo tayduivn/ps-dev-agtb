@@ -28,6 +28,7 @@ class CanGetUserListTest extends SOAPTestCase
 
     public function testGetUserList()
     {
+        // FIXME TY-1317: investigate why this test fails
         $this->_login();
         $result = $this->_soapClient->call('get_entry_list',
                                            array('session'=>$this->_sessionId,
