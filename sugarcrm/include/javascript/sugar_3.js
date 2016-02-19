@@ -3304,46 +3304,44 @@ SUGAR.util = function () {
 	    evalScript:function(text){
             var elements = $.parseHTML(text, document, true);
             YUI({comboBase: 'index.php?entryPoint=getYUIComboFile&'}).use("io-base", "get", function(Y) {
-                _.each(elements, function(el) {
-                    if (el.tagName && el.tagName.toUpperCase() == "SCRIPT") {
-                        try {
-                            if (el.src) {
-                                // Check is ulr cross domain or not
-                                var r1 = /:\/\//igm;
-                                if (r1.test(el.src) && el.src.indexOf(window.location.hostname) == -1) {
-                                    // if script is cross domain it cannot be loaded via ajax request
-                                    // try load script asynchronous by creating script element in the body
-                                    // YUI 3.3 doesn't allow load scripts synchronously
-                                    // YUI 3.5 do it
-                                    Y.Get.script(el.src, {
-                                        autopurge: false,
-                                        onSuccess: function(o) {},
-                                        onFailure: function(o) {},
-                                        onTimeout: function(o) {}
-                                    });
-                                }
-                                else {
-                                    // Bug #49205 : Subpanels fail to load when selecting subpanel tab
-                                    // Create a YUI instance using the io-base module.
-                                    Y.io(el.src, {
-                                        method: 'GET',
-                                        sync: true,
-                                        on: {
-                                            success: function(transactionid, response, arguments) {
-                                                SUGAR.util.globalEval(response.responseText);
-                                            }
-                                        }
-                                    });
-                                }
+                var scripts = $("<div/>").append(elements).find("script");
+                _.each(scripts, function(el) {
+                    try {
+                        if (el.src) {
+                            // Check if the URL is absolute and thus possibly points to another origin
+                            var r1 = /:\/\//igm;
+                            if (r1.test(el.src) && el.src.indexOf(window.location.hostname) == -1) {
+                                // if script is cross domain it cannot be loaded via ajax request
+                                // try load script asynchronous by creating script element in the body
+                                // YUI 3.3 doesn't allow load scripts synchronously
+                                // YUI 3.5 do it
+                                Y.Get.script(el.src, {
+                                    autopurge: false,
+                                    onSuccess: function(o) {},
+                                    onFailure: function(o) {},
+                                    onTimeout: function(o) {}
+                                });
                             } else {
-                                SUGAR.util.globalEval(el.innerHTML || el.innerText);
+                                // Bug #49205 : Subpanels fail to load when selecting subpanel tab
+                                // Create a YUI instance using the io-base module.
+                                Y.io(el.src, {
+                                    method: 'GET',
+                                    sync: true,
+                                    on: {
+                                        success: function(transactionid, response, arguments) {
+                                            SUGAR.util.globalEval(response.responseText);
+                                        }
+                                    }
+                                });
                             }
-                        } catch (e) {
-                            if (typeof(console) != "undefined" && typeof(console.log) == "function") {
-                                console.log("error adding script");
-                                console.log(e);
-                                console.log(el.src || el.innerHTML || el.innerText);
-                            }
+                        } else {
+                            SUGAR.util.globalEval(el.innerHTML || el.innerText);
+                        }
+                    } catch (e) {
+                        if (typeof(console) != "undefined" && typeof(console.log) == "function") {
+                            console.log("error adding script");
+                            console.log(e);
+                            console.log(el.src || el.innerHTML || el.innerText);
                         }
                     }
                 });
