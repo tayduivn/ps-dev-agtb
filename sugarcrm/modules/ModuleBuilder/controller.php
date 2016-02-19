@@ -1062,7 +1062,7 @@ class ModuleBuilderController extends SugarController
         $parser->handleSave();
 
         if ($view != MB_POPUPSEARCH) {
-            $parser = ParserFactory::getParser(MB_POPUPLIST, $viewNodule, $packageName);
+            $parser = ParserFactory::getParser(MB_POPUPLIST, $viewModule, $packageName);
             $parser->handleSave();
         }
 
