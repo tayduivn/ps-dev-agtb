@@ -202,6 +202,12 @@
   border-right-width: 2px;
 }
 
+select.field-invalid {
+  border-style: solid;
+  border-width: 3px;
+  border-color: #e61718;
+}
+
 table.decision-table-index span {
   padding-left: 0px;
   padding-right: 0px;
