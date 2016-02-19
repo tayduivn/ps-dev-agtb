@@ -152,11 +152,9 @@ class Call extends SugarBean {
 
         $check_notify = $this->send_invites;
         if ($this->send_invites == false) {
-            if ((!empty($_SESSION['workflow_cron']) || !empty($_SESSION['process_author_cron'])) && empty(CalendarEvents::$old_assigned_user_id)) {
-                $ce = new CalendarEvents();
-                $ce->setOldAssignedUser($this->module_dir, $this->id);
-            }
-            $old_assigned_user_id = CalendarEvents::$old_assigned_user_id;
+
+            $old_assigned_user_id = CalendarEvents::getOldAssignedUser($this->module_dir, $this->id);
+
             if ((empty($GLOBALS['installing']) || $GLOBALS['installing'] != true) &&
                 (!empty($this->assigned_user_id) &&
                     $this->assigned_user_id != $old_assigned_user_id &&
@@ -164,7 +162,7 @@ class Call extends SugarBean {
             ) {
                 $this->special_notification = true;
                 $check_notify = true;
-                CalendarEvents::$old_assigned_user_id = $this->assigned_user_id;
+                CalendarEvents::setOldAssignedUserValue($this->assigned_user_id);
                 if (isset($_REQUEST['assigned_user_name'])) {
                     $this->new_assigned_user_name = $_REQUEST['assigned_user_name'];
                 }
