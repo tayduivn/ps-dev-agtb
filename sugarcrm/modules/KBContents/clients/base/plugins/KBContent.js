@@ -635,8 +635,10 @@
              * Remove validation on the model.
              */
             onDetach: function() {
-                this.model.removeValidationTask('exp_date_publish');
-                this.model.removeValidationTask('active_date_approve');
+                if (this.model) {
+                    this.model.removeValidationTask('exp_date_publish');
+                    this.model.removeValidationTask('active_date_approve');
+                }
             },
 
             /**
